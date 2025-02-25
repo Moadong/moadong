@@ -2,6 +2,7 @@ import React from 'react';
 import * as Styled from './MobileHeader.styles';
 import MainIcon from '@/assets/images/mainIcon.png';
 import SearchIcon from '@/assets/images/searchIcon.png';
+import MenuBar from '@/assets/images/menubar.png';
 import { useNavigate } from 'react-router-dom';
 
 const MainMobileHeader = () => {
@@ -22,7 +23,7 @@ const MainMobileHeader = () => {
             <img src={SearchIcon} />
           </Styled.MobileSearchIcon>
           <Styled.MobileMenu>
-            <img src={SearchIcon} />
+            <img src={MenuBar} />
           </Styled.MobileMenu>
         </Styled.MobileSubContainer>
       </Styled.MobileHeaderWrapper>
