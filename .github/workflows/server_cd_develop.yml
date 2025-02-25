@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - 'develop/be'
-      - 'chore/#82-zero-downtime-deployment'
     paths:
       - 'backend/**'
       - '.github/workflows/**'
