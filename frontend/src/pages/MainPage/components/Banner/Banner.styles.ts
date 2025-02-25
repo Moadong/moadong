@@ -5,6 +5,11 @@ export interface BannerProps {
 }
 
 export const BannerContainer = styled.div`
+  padding: 0 40px;
+  max-width: 1180px;
+  margin: 0 auto;
+  width: 100%;
+
   display: flex;
   justify-content: center;
   align-items: center;
@@ -13,6 +18,7 @@ export const BannerContainer = styled.div`
 
   @media (max-width: 500px) {
     margin-top: 42px;
+    padding: 0;
   }
 `;
 
