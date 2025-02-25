@@ -62,7 +62,7 @@ export default getAvailablePort(DEFAULT_PORT).then((port) => {
       },
     ],
     devServer: {
-      port, // 동적으로 설정된 포트 사용
+      port,
       open: true,
       historyApiFallback: true,
     },
