@@ -51,6 +51,7 @@
     "chromatic": "^11.25.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
+    "detect-port": "^2.1.0",
     "eslint": "^9.17.0",
     "eslint-plugin-react": "^7.37.3",
     "eslint-plugin-storybook": "^0.11.2",
