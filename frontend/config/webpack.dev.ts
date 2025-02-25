@@ -12,9 +12,8 @@ async function getAvailablePort(defaultPort: number): Promise<number> {
   return await detectPort(defaultPort);
 }
 
-async function createWebpackConfig(): Promise<webpack.Configuration> {
-  const port = await getAvailablePort(DEFAULT_PORT);
-  console.log(port);
+export default getAvailablePort(DEFAULT_PORT).then((port) => {
+  console.log(`🚀 Using available port: ${port}`);
 
   const configuration: webpack.Configuration = {
     mode: 'development',
@@ -63,7 +62,7 @@ async function createWebpackConfig(): Promise<webpack.Configuration> {
       },
     ],
     devServer: {
-      port,
+      port, // 동적으로 설정된 포트 사용
       open: true,
       historyApiFallback: true,
     },
@@ -76,7 +75,4 @@ async function createWebpackConfig(): Promise<webpack.Configuration> {
   };
 
   return merge(common, configuration);
-}
-
-// Webpack이 비동기 설정을 지원하지 않기 때문에, `export default`로 직접 반환할 수 없음
-export default createWebpackConfig();
+});
