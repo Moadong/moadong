@@ -42,8 +42,8 @@ const MainPage = () => {
     <>
       <Header />
       <MainMobileHeader />
+      <Banner banners={BannerImageList} />
       <Styled.PageContainer>
-        <Banner banners={BannerImageList} />
         {/* 검색 입력창 추가 */}
         {/* setKeyword()로 검색 키워드 지정해주면 된다 */}
         <CategoryButtonList onCategorySelect={setSelectedCategory} />

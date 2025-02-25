@@ -10,8 +10,7 @@ export const MobileHeaderContainer = styled.header`
     left: 0;
     right: 0;
     height: 46px;
-    padding: 10px 20px;
-    max-width: 500px;
+    padding: 0px 20px;
     margin: 0 auto;
     z-index: 2;
     background-color: white;
@@ -52,8 +51,8 @@ export const MobileSubContainer = styled.div`
 `;
 
 export const MobileSearchIcon = styled.button`
-  width: 23px;
-  height: 23px;
+  width: 20px;
+  height: 20px;
   background-color: transparent;
   border: none;
   cursor: pointer;
@@ -66,8 +65,8 @@ export const MobileSearchIcon = styled.button`
 `;
 
 export const MobileMenu = styled.button`
-  width: 23px;
-  height: 23px;
+  width: 20px;
+  height: 20px;
   background-color: transparent;
   border: none;
   cursor: pointer;
