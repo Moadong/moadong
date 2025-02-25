@@ -38,6 +38,11 @@ export const BannerWrapper = styled.div<BannerProps>`
     background-size: cover;
     background-position: center;
     `}
+
+  @media (max-width: 500px) {
+    width: 100vw;
+    border-radius: 0;
+  }
 `;
 
 export const SlideWrapper = styled.div<{ isAnimating: boolean }>`
