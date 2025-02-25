@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - 'develop/be'
+      - 'chore/#82-zero-downtime-deployment-test'
     paths:
       - 'backend/**'
       - '.github/workflows/**'
@@ -80,8 +81,8 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           cd backend
-          docker build -t ${{ secrets.DOCKER_IMAGE_DEV }} .
-          docker push ${{ secrets.DOCKER_IMAGE_DEV }}
+          docker build -t ${{ secrets.DOCKER_IMAGE_DEV }}:${{ github.sha }}
+          docker push ${{ secrets.DOCKER_IMAGE_DEV }}:${{ github.sha }}
 
   deploy:
     name: Deploy
@@ -114,9 +115,9 @@ jobs:
           sudo usermod -aG docker $USER
           newgrp docker
           
-          docker pull ${{ secrets.DOCKER_IMAGE_DEV }}
+          docker pull ${{ secrets.DOCKER_IMAGE_DEV }}:latest
           
-          export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_DEV }}
+          export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_DEV }}:latest
           sudo chmod +x /home/g11_27_proro/deploy.sh # 실행 권한 부여
           sudo -E /home/g11_27_proro/deploy.sh # su권한으로 환경 변수 유지 및 실행
           
