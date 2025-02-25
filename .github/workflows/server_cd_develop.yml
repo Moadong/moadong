@@ -81,7 +81,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           cd backend
-          docker build -t ${{ secrets.DOCKER_IMAGE_DEV }}:${{ github.sha }} -t ${{ secrets.DOCKER_IMAGE_DEV }}:${{ github.sha }}:latest .
+          docker build -t ${{ secrets.DOCKER_IMAGE_DEV }}:${{ github.sha }} -t ${{ secrets.DOCKER_IMAGE_DEV }}:latest .
           docker push -a ${{ secrets.DOCKER_IMAGE_DEV }}
 
   deploy:
