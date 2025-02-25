@@ -2,6 +2,7 @@ package moadong.club.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.ClubCreateRequest;
 import moadong.club.payload.request.ClubUpdateRequest;
@@ -9,6 +10,7 @@ import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.service.ClubCommandService;
 import moadong.club.service.ClubDetailedPageService;
+import moadong.club.service.ClubMetricService;
 import moadong.club.service.ClubSearchService;
 import moadong.global.payload.Response;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +32,7 @@ public class ClubController {
     private final ClubCommandService clubCommandService;
     private final ClubDetailedPageService clubDetailedPageService;
     private final ClubSearchService clubSearchService;
+    private final ClubMetricService clubMetricService;
 
     @PostMapping("")
     @Operation(summary = "클럽 생성", description = "클럽을 생성합니다.")
@@ -47,10 +50,14 @@ public class ClubController {
 
     @GetMapping("/{clubId}")
     @Operation(summary = "클럽 상세 정보 조회", description = "클럽 상세 정보를 조회합니다.")
-    public ResponseEntity<?> getClubDetailedPage(@PathVariable String clubId) {
+    public ResponseEntity<?> getClubDetailedPage(
+        HttpServletRequest request,
+        @PathVariable String clubId) {
+        clubMetricService.patch(clubId, request.getRemoteAddr());
         ClubDetailedResponse clubDetailedPageResponse = clubDetailedPageService.getClubDetailedPage(clubId);
         return Response.ok(clubDetailedPageResponse);
     }
+
     @GetMapping("/search/")
     @Operation(summary = "키워드에 맞는 클럽을 검색합니다.(모집,분과,종류에 따른 구분)",
             description = "모집,분과,종류에 필터링 이후 이름,태그,소개에 따라 검색합니다.<br>"
