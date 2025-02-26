@@ -9,11 +9,13 @@ const ClubInfoEditTab = () => {
 
     return (
         <div>
+            {/* 동아리 명 */}
             <InputField
                 label="동아리 명"
                 placeholder="동아리 명을 입력해주세요"
                 value={clubName}
                 onChange={(e) => setClubName(e.target.value)}
+                onClear={() => setClubName("")}
                 maxLength={80}
                 showMaxChar={true}
             />
@@ -23,8 +25,9 @@ const ClubInfoEditTab = () => {
                 placeholder="동아리 대표의 이름을 입력해주세요"
                 type="text"
                 value={clubPresidentName}
-                maxLength={5}
                 onChange={(e) => setClubPresidentName(e.target.value)}
+                onClear={() => setClubPresidentName("")}
+                maxLength={5}
             />
 
             <InputField
@@ -33,8 +36,8 @@ const ClubInfoEditTab = () => {
                 maxLength={13}
                 value={telephoneNumber}
                 onChange={(e) => setTelephoneNumber(e.target.value)}
+                onClear={() => setTelephoneNumber("")}
             />
-
 
             <InputField
                 label="한줄소개"
@@ -44,6 +47,7 @@ const ClubInfoEditTab = () => {
                 showMaxChar={true}
                 value={introduction}
                 onChange={(e) => setIntroduction(e.target.value)}
+                onClear={() => setIntroduction("")}
             />
         </div>
     );
