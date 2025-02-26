@@ -23,12 +23,20 @@ export const HeaderContainer = styled.div`
   justify-content: space-between;
   width: 100%;
   gap: 80px;
+
+  @media (max-width: 698px) {
+    gap: 50px;
+  }
 `;
 
 export const TextCoverStyles = styled.div`
   display: flex;
   width: 365px;
   white-space: nowrap;
+
+  @media (max-width: 698px) {
+    width: 220px;
+  }
 `;
 
 export const LogoButtonStyles = styled.button`
@@ -44,6 +52,15 @@ export const LogoButtonStyles = styled.button`
     height: auto;
     object-fit: cover;
   }
+
+  @media (max-width: 698px) {
+    width: 117px;
+    height: 41px;
+
+    img {
+      width: 117px;
+    }
+  }
 `;
 
 export const IntroduceButtonStyles = styled.a`
@@ -53,6 +70,10 @@ export const IntroduceButtonStyles = styled.a`
   font-weight: 500;
   font-size: 14px;
   line-height: 42px;
-  letter-spacing: -0.02em;
   cursor: pointer;
+
+  @media (max-width: 698px) {
+    width: 63px;
+    height: 43px;
+  }
 `;
