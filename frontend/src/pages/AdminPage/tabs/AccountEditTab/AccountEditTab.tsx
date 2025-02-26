@@ -14,6 +14,7 @@ const AccountEditTab = () => {
                 placeholder="아이디를 입력해주세요"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                onClear={() => setUsername("")}
                 maxLength={20}
                 disabled={true}
             />
@@ -24,16 +25,17 @@ const AccountEditTab = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onClear={() => setPassword("")}
                 maxLength={20}
                 disabled={true}
             />
-
 
             <InputField
                 label="아이디"
                 placeholder="아이디를 입력해주세요"
                 value={username}
                 onChange={(e) => setUsername(e.target.value)}
+                onClear={() => setUsername("")}
                 maxLength={20}
             />
 
@@ -43,6 +45,7 @@ const AccountEditTab = () => {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+                onClear={() => setPassword("")}
                 maxLength={20}
             />
         </div>
