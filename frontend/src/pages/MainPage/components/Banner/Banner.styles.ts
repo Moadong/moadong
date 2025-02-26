@@ -90,7 +90,7 @@ export const SlideButton = styled.button`
     object-fit: cover;
   }
 
-  @media (max-width: 500px) {
+  @media (max-width: 698px) {
     width: 35px;
     padding: 6px 12px;
   }
