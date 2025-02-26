@@ -51,7 +51,7 @@ const InputField = ({
                     onChange={onChange}
                     placeholder={placeholder}
                     maxLength={maxLength}
-                    disabled={disabled} // ✅ 비활성화 적용
+                    disabled={disabled}
                 />
                 {showClearButton && !disabled && (
                     <Styled.ClearButton type="button" onClick={clearInput}>
@@ -63,7 +63,6 @@ const InputField = ({
                         {isPasswordVisible ? "숨기기" : "보기"}
                     </Styled.ToggleButton>
                 )}
-                {/* ✅ showMaxChar이 true이고 비활성화가 아닐 때만 글자 수 표시 */}
                 {showMaxChar && maxLength !== undefined && (
                     <Styled.CharCount>{value.length}/{maxLength}</Styled.CharCount>
                 )}

@@ -2,8 +2,8 @@ import React, { useState } from "react";
 import InputField from "@/components/InputField/InputField";
 
 const AccountEditTab = () => {
-    const [username, setUsername] = useState(""); // 아이디
-    const [password, setPassword] = useState(""); // 비밀번호
+    const [username, setUsername] = useState("");
+    const [password, setPassword] = useState("");
 
     return (
         <div>
