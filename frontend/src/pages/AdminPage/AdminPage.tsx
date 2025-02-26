@@ -6,20 +6,19 @@ import { Outlet } from 'react-router-dom';
 import * as Styled from './AdminPage.styles';
 
 const AdminPage = () => {
-
-    return (
-        <>
-            <Header />
-            <PageContainer>
-                <Styled.AdminPageContainer>
-                    <SideBar />
-                    <Styled.Content>
-                        <Outlet />
-                    </Styled.Content>
-                </Styled.AdminPageContainer>
-            </PageContainer>
-        </>
-    );
+  return (
+    <>
+      <Header />
+      <PageContainer>
+        <Styled.AdminPageContainer>
+          <SideBar />
+          <Styled.Content>
+            <Outlet />
+          </Styled.Content>
+        </Styled.AdminPageContainer>
+      </PageContainer>
+    </>
+  );
 };
 
 export default AdminPage;

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const InputContainer = styled.div<{ width: string }>`
   width: ${(props) => props.width};
@@ -13,7 +13,6 @@ export const Label = styled.label`
   font-weight: 600;
 `;
 
-
 export const InputWrapper = styled.div`
   position: relative;
   display: flex;
@@ -24,22 +23,23 @@ export const Input = styled.input`
   flex: 1;
   height: 45px;
   padding: 12px 80px 12px 18px;
-  border: 1px solid #C5C5C5;
+  border: 1px solid #c5c5c5;
   border-radius: 6px;
   outline: none;
-    font-size: 1.125rem;
-    letter-spacing: 0;
+  font-size: 1.125rem;
+  letter-spacing: 0;
   color: rgba(0, 0, 0, 0.5);
-  
+
   &:focus {
     border-color: #007bff;
     box-shadow: 0 0 3px rgba(0, 123, 255, 0.5);
   }
 
-  ${({ disabled }) => disabled && `
+  ${({ disabled }) =>
+    disabled &&
+    `
     background-color: rgba(0, 0, 0, 0.05); 
   `}
-  
 `;
 
 export const ClearButton = styled.button`
@@ -78,12 +78,10 @@ export const ToggleButton = styled.button`
 
 export const CharCount = styled.span`
   position: absolute;
-  color : #C5C5C5;
+  color: #c5c5c5;
   transform: translateY(-50%);
   top: 50%;
   right: 44px;
   font-size: 12px;
   letter-spacing: -0.96px;
 `;
-
-
