@@ -37,15 +37,23 @@ const Banner = ({ banners }: BannerComponentProps) => {
     }
   }, [currentSlideIndex, slideWidth]);
 
-  const moveToNextSlide = () => {
+  const moveToNextSlide = useCallback(() => {
     setCurrentSlideIndex((prev) => (prev + 1) % banners.length);
-  };
+  }, [banners.length]);
 
   const moveToPrevSlide = () => {
     setCurrentSlideIndex(
       (prev) => (prev - 1 + banners.length) % banners.length,
     );
   };
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      moveToNextSlide();
+    }, 3000);
+
+    return () => clearInterval(interval);
+  }, [moveToNextSlide]);
 
   return (
     <Styled.BannerContainer>
