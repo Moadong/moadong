@@ -13,6 +13,7 @@ interface CustomInputProps {
     disabled?: boolean;
     value?: string;
     onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
+    onClear?: () => void;
 }
 
 const InputField = ({
@@ -26,6 +27,7 @@ const InputField = ({
                         disabled = false,
                         value = "",
                         onChange,
+                        onClear,
                     }: CustomInputProps) => {
     const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -36,8 +38,8 @@ const InputField = ({
     };
 
     const clearInput = () => {
-        if (!disabled && onChange) {
-            onChange({ target: { value: "" } } as React.ChangeEvent<HTMLInputElement>);
+        if (!disabled && onClear) {
+            onClear();
         }
     };
 
