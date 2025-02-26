@@ -14,7 +14,8 @@ export const SearchBoxStyles = styled.form`
 `;
 
 export const SearchInputStyles = styled.input`
-  background-color: #eeeeee;
+  width: 100%;
+  background-color: transparent;
   height: 36px;
   border: none;
   outline: none;
@@ -26,6 +27,10 @@ export const SearchInputStyles = styled.input`
   &:focus::placeholder {
     opacity: 0;
   }
+
+  @media (max-width: 550px) {
+    font-size: 10px;
+  }
 `;
 
 export const SearchButton = styled.button`
@@ -33,8 +38,24 @@ export const SearchButton = styled.button`
   background-color: transparent;
   font-size: 16px;
   cursor: pointer;
+  margin-top: 2px;
+
   img {
     width: 16px;
-    height: auto;
+    height: 16px;
+  }
+
+  @media (max-width: 698px) {
+    img {
+      width: 14px;
+      height: 14px;
+    }
+  }
+
+  @media (max-width: 550px) {
+    img {
+      width: 12px;
+      height: 12px;
+    }
   }
 `;
