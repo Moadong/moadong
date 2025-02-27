@@ -1,3 +1,4 @@
+import React from "react";
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import GlobalStyles from '@/styles/Global.styles';
@@ -19,12 +20,12 @@ const App = () => {
           <Route path='/' element={<MainPage />} />
           <Route path='/ClubDetail' element={<ClubDetailPage />} />
           <Route path='/admin' element={<AdminPage />}>
-            <Route index element={<Navigate to="club-info" replace />} />
-            <Route path="club-info" element={<ClubInfoEditTab />} />
-            <Route path="recruit-edit" element={<RecruitEditTab />} />
-            <Route path="account-edit" element={<AccountEditTab />} />
+            <Route index element={<Navigate to='club-info' replace />} />
+            <Route path='club-info' element={<ClubInfoEditTab />} />
+            <Route path='recruit-edit' element={<RecruitEditTab />} />
+            <Route path='account-edit' element={<AccountEditTab />} />
           </Route>
-          <Route path="*" element={<Navigate to="/" replace />} />
+          <Route path='*' element={<Navigate to='/' replace />} />
         </Routes>
       </BrowserRouter>
     </QueryClientProvider>

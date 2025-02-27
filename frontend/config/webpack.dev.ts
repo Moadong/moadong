@@ -49,9 +49,9 @@ export default getAvailablePort(DEFAULT_PORT).then((port) => {
 --------------------------------------------------------
 🎉  WEBPACK BUILD SUCCESSFULLY COMPLETED!
 ✅  Files Generated: ${stats
-                .toJson()
-                .assets.map((asset) => asset.name)
-                .join(', ')}
+              .toJson()
+              .assets.map((asset) => asset.name)
+              .join(', ')}
 ⏱️  Build Time: ${stats.endTime - stats.startTime} ms
 🌐  Server Running at: http://localhost:${port}
 --------------------------------------------------------
