@@ -9,13 +9,12 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ClubState;
-import moadong.club.payload.request.ClubUpdateRequest;
+import moadong.club.payload.request.ClubInfoRequest;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("club")
 @AllArgsConstructor
 @Getter
-@Builder
 public class Club {
 
     @Id
@@ -37,7 +36,15 @@ public class Club {
     @NotNull
     private ClubState state;
 
-    public void update(ClubUpdateRequest request) {
+    @Builder
+    public Club(String name, String classification, String division) {
+        this.name = name;
+        this.classification = classification;
+        this.division = division;
+        this.state = ClubState.UNAVAILABLE;
+    }
+
+    public void update(ClubInfoRequest request) {
         this.name = request.name();
         this.classification = request.classification();
         this.division = request.division();

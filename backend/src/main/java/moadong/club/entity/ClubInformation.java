@@ -11,7 +11,8 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.RecruitmentStatus;
-import moadong.club.payload.request.ClubUpdateRequest;
+import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.payload.request.ClubInfoRequest;
 import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -56,10 +57,9 @@ public class ClubInformation {
     @NotNull
     private RecruitmentStatus recruitmentStatus;
 
-    public void update(ClubUpdateRequest request) {
+    public void updateInfo(ClubInfoRequest request) {
         this.logo = request.thumbnail();
         this.introduction = request.introduction();
-        this.description = request.description();
         this.presidentName = request.clubPresidentName();
         this.presidentTelephoneNumber = request.telephoneNumber();
         this.recruitmentStart = request.recruitmentStart();
@@ -74,5 +74,9 @@ public class ClubInformation {
 
     public void updateRecruitmentStatus(RecruitmentStatus status) {
         this.recruitmentStatus = status;
+    }
+
+    public void updateDescription(ClubDescriptionUpdateRequest request) {
+        this.description = request.description();
     }
 }

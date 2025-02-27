@@ -5,9 +5,9 @@ import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubInformation;
 import moadong.club.entity.ClubTag;
-import moadong.club.enums.ClubState;
 import moadong.club.payload.request.ClubCreateRequest;
-import moadong.club.payload.request.ClubUpdateRequest;
+import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.repository.ClubInformationRepository;
 import moadong.club.repository.ClubRepository;
 import moadong.club.repository.ClubTagRepository;
@@ -29,7 +29,6 @@ public class ClubCommandService {
             .name(request.name())
             .classification(request.classification())
             .division(request.division())
-            .state(ClubState.UNAVAILABLE)
             .build();
         clubRepository.save(club);
 
@@ -41,7 +40,7 @@ public class ClubCommandService {
         return club.getId();
     }
 
-    public String updateClub(ClubUpdateRequest request) {
+    public String updateClubInfo(ClubInfoRequest request) {
         Club club = clubRepository.findById(request.clubId())
             .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         ClubInformation clubInformation = clubInformationRepository.findByClubId(request.clubId())
@@ -50,7 +49,7 @@ public class ClubCommandService {
         club.update(request);
         clubRepository.save(club);
 
-        clubInformation.update(request);
+        clubInformation.updateInfo(request);
         clubInformationRepository.save(clubInformation);
 
         //태그
@@ -71,4 +70,10 @@ public class ClubCommandService {
         return club.getId();
     }
 
+    public void updateClubDescription(ClubDescriptionUpdateRequest request) {
+        ClubInformation clubInformation = clubInformationRepository.findByClubId(request.clubId())
+            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_INFORMATION_NOT_FOUND));
+        clubInformation.updateDescription(request);
+        clubInformationRepository.save(clubInformation);
+    }
 }

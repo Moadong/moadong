@@ -5,7 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.ClubCreateRequest;
-import moadong.club.payload.request.ClubUpdateRequest;
+import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.service.ClubCommandService;
@@ -41,10 +42,17 @@ public class ClubController {
         return Response.ok("success create club", "clubId : " + clubId);
     }
 
-    @PutMapping("")
+    @PutMapping("/info")
     @Operation(summary = "클럽 수정", description = "클럽을 수정합니다.")
-    public ResponseEntity<?> updateClub(@RequestBody ClubUpdateRequest request) {
-        clubCommandService.updateClub(request);
+    public ResponseEntity<?> updateClubInfo(@RequestBody ClubInfoRequest request) {
+        clubCommandService.updateClubInfo(request);
+        return Response.ok("success update club");
+    }
+
+    @PutMapping("/description")
+    @Operation(summary = "클럽 상세소개 수정", description = "클럽의 상세소개 내용을 수정합니다.")
+    public ResponseEntity<?> updateClubDescription(@RequestBody ClubDescriptionUpdateRequest request) {
+        clubCommandService.updateClubDescription(request);
         return Response.ok("success update club");
     }
 
