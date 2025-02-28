@@ -1,7 +1,10 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import * as Styled from './Banner.styles';
-import { BannerProps } from './Banner.styles';
 import { SlideButton } from '@/utils/banners';
+
+export interface BannerProps {
+  backgroundImage?: string;
+}
 
 interface BannerComponentProps {
   banners: BannerProps[];
