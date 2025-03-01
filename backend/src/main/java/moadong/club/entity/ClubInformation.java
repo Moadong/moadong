@@ -17,7 +17,7 @@ import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("club_information")
+@Document("club_informations")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)

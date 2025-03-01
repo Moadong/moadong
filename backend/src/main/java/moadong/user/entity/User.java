@@ -24,7 +24,7 @@ import java.util.Date;
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("user")
+@Document("users")
 public class User implements UserDetails {
     @Id
     private String id;
