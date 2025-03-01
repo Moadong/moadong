@@ -3,7 +3,6 @@ package moadong.user.entity;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Pattern;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -12,6 +11,7 @@ import moadong.global.annotation.Korean;
 import moadong.global.annotation.PhoneNumber;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+
 @Entity
 @Getter
 @Builder
@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @NoArgsConstructor
 @Document("user_informations")
 public class UserInformation {
+
     @Id
     private String id;
     @NotNull
