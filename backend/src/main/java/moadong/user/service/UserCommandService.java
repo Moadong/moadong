@@ -9,6 +9,7 @@ import moadong.global.util.JwtProvider;
 import moadong.user.entity.User;
 import moadong.user.payload.request.UserLoginRequest;
 import moadong.user.payload.request.UserRegisterRequest;
+import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.AccessTokenResponse;
 import moadong.user.repository.UserInformationRepository;
 import moadong.user.repository.UserRepository;
@@ -72,5 +73,14 @@ public class UserCommandService {
         return new AccessTokenResponse(accessToken);
 
 
+    }
+
+    public void update(String userId, UserUpdateRequest userUpdateRequest) {
+        User user = userRepository.findUserByUserId(userId)
+            .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+
+        user.update(userUpdateRequest);
+
+        userRepository.save(user);
     }
 }

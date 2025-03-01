@@ -5,8 +5,11 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import moadong.global.payload.Response;
+import moadong.user.annotation.CurrentUser;
+import moadong.user.payload.CustomUserDetails;
 import moadong.user.payload.request.UserLoginRequest;
 import moadong.user.payload.request.UserRegisterRequest;
+import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.AccessTokenResponse;
 import moadong.user.service.UserCommandService;
 import moadong.user.view.UserSwaggerView;
@@ -41,6 +44,13 @@ public class UserController {
     public ResponseEntity<?> refresh(@CookieValue(value = "refresh_token", required = false) String refreshToken) {
         AccessTokenResponse accessTokenResponse = userCommandService.refreshAccessToken(refreshToken);
         return Response.ok(accessTokenResponse);
+    }
+
+    @PutMapping("/")
+    public ResponseEntity<?> update(@CurrentUser CustomUserDetails user,
+        @RequestBody @Validated UserUpdateRequest userUpdateRequest) {
+        userCommandService.update(user.getUserId(), userUpdateRequest);
+        return Response.ok("success update");
     }
 
 }

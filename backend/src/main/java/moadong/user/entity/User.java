@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moadong.global.annotation.UserId;
 import moadong.user.entity.enums.UserStatus;
+import moadong.user.payload.request.UserUpdateRequest;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
@@ -65,5 +66,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return userId;
+    }
+
+    public void update(UserUpdateRequest userUpdateRequest) {
+        this.userId = userUpdateRequest.userId();
+        this.password = userUpdateRequest.password();
     }
 }
