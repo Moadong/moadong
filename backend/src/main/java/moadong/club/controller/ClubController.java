@@ -14,7 +14,10 @@ import moadong.club.service.ClubDetailedPageService;
 import moadong.club.service.ClubMetricService;
 import moadong.club.service.ClubSearchService;
 import moadong.global.payload.Response;
+import moadong.user.annotation.CurrentUser;
+import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -37,7 +40,7 @@ public class ClubController {
 
     @PostMapping("")
     @Operation(summary = "클럽 생성", description = "클럽을 생성합니다.")
-    public ResponseEntity<?> createClub(@RequestBody ClubCreateRequest request) {
+    public ResponseEntity<?> createClub(@CurrentUser CustomUserDetails user, @RequestBody ClubCreateRequest request) {
         String clubId = clubCommandService.createClub(request);
         return Response.ok("success create club", "clubId : " + clubId);
     }
