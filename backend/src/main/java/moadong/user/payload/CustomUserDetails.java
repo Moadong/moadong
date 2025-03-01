@@ -11,11 +11,13 @@ public class CustomUserDetails implements UserDetails {
 
     private String id;
     private String userId;
+    private String password;
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(User user) {
         this.id = user.getId();
         this.userId = user.getUserId();
+        this.password = user.getPassword();
         this.authorities = user.getAuthorities();
     }
 
@@ -26,12 +28,12 @@ public class CustomUserDetails implements UserDetails {
 
     @Override
     public String getUsername() {
-        return "";
+        return userId;
     }
 
     @Override
     public String getPassword() {
-        return "";
+        return password;
     }
 
 }
