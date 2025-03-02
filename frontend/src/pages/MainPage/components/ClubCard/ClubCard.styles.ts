@@ -26,7 +26,7 @@ const ClubProfile = styled.div`
 `;
 
 const ClubName = styled.h2`
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: bold;
 `;
 
