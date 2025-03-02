@@ -15,7 +15,6 @@ const AccountEditTab = () => {
         value={username}
         onChange={(e) => setUsername(e.target.value)}
         onClear={() => setUsername('')}
-        
         maxLength={20}
         disabled={true}
       />

@@ -1,14 +1,14 @@
-import React from "react";
-import styled from "styled-components";
+import React from 'react';
+import styled from 'styled-components';
 
 interface ButtonProps {
-    width?: string;
-    children: React.ReactNode;
-    onClick: () => void;
+  width?: string;
+  children: React.ReactNode;
+  onClick: () => void;
 }
 
 const StyledButton = styled.button<ButtonProps>`
-  background-color: #3A3A3A;
+  background-color: #3a3a3a;
   color: #ffffff;
   height: 45px;
   border-radius: 10px;
@@ -17,7 +17,7 @@ const StyledButton = styled.button<ButtonProps>`
   font-size: 1.25rem;
   cursor: pointer;
   transition: background-color 0.2s;
-  width: ${({ width }) => width || "auto"};
+  width: ${({ width }) => width || 'auto'};
 
   &:hover {
     background-color: #333333;
@@ -25,11 +25,11 @@ const StyledButton = styled.button<ButtonProps>`
 `;
 
 function Button({ width, children, onClick }: ButtonProps) {
-    return (
-        <StyledButton width={width} onClick={onClick}>
-            {children}
-        </StyledButton>
-    );
+  return (
+    <StyledButton width={width} onClick={onClick}>
+      {children}
+    </StyledButton>
+  );
 }
 
 export default Button;

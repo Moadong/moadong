@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import deleteIcon from "@/assets/images/delete_icon.png";
+import deleteIcon from '@/assets/images/delete_icon.png';
 
 export const Label = styled.label`
   display: block;
@@ -25,7 +25,7 @@ export const TagItem = styled.div`
 
 export const Hashtag = styled.span`
   margin-right: 4px;
-  color: #4B4B4B;
+  color: #4b4b4b;
   font-weight: bold;
   font-size: 0.875rem;
 `;
@@ -35,7 +35,7 @@ export const TagTextInput = styled.input`
   outline: none;
   background: transparent;
   font-size: 0.875rem;
-  color: #4B4B4B;
+  color: #4b4b4b;
   width: 110px;
   padding-right: 10px;
 `;

@@ -1,4 +1,4 @@
-import styled from "styled-components";
+import styled from 'styled-components';
 
 export const InfoTitle = styled.h2`
   font-size: 1.5rem;
@@ -10,7 +10,7 @@ export const InfoTitle = styled.h2`
 export const InfoGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 30px; 
+  gap: 30px;
   margin-bottom: 140px;
 `;
 
@@ -23,5 +23,5 @@ export const PresidentContainer = styled.div`
 export const TagEditGroup = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 30px; 
+  gap: 30px;
 `;
