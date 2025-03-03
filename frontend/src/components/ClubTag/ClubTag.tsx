@@ -22,7 +22,7 @@ const StyledTag = styled.span<{ color: string }>`
   padding: 5px 8px;
   border-radius: 4px;
   background-color: ${({ color }) => color};
-  font-size: 0.75rem;
+  font-size: 0.875rem;
   font-weight: 600;
   color: #3a3a3a;
 `;

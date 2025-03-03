@@ -3,7 +3,7 @@ import { useGetCardList } from '@/hooks/queries/club/useGetCardList';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import StatusRadioButton from '@/pages/MainPage/components/StatusRadioButton/StatusRadioButton';
-import Footer from '@/components/@common/Footer/Footer';
+import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
 import { BannerImageList } from '@/utils/banners';
@@ -20,7 +20,7 @@ const MainPage = () => {
   const [selectedCategory, setSelectedCategory] = useState('all');
   // const [keyword, setKeyword] = useState('');
 
-  const recruitmentStatus = isFilterActive ? 'open' : 'all';
+  const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
   const classification = selectedCategory;
   const division = 'all';
 

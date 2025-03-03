@@ -5,7 +5,7 @@ import ClubDetailHeader from '@/pages/ClubDetailPage/components/ClubDetailHeader
 import InfoTabs from '@/pages/ClubDetailPage/components/InfoTabs/InfoTabs';
 import InfoBox from '@/pages/ClubDetailPage/components/InfoBox/InfoBox';
 import IntroduceBox from '@/pages/ClubDetailPage/components/IntroduceBox/IntroduceBox';
-import Footer from '@/components/@common/Footer/Footer';
+import Footer from '@/components/common/Footer/Footer';
 import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter/ClubDetailFooter';
 import * as Styled from '@/styles/PageContainer.styles';
 import useAutoScroll from '@/hooks/useAutoScroll';
