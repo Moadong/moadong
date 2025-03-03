@@ -24,19 +24,6 @@ const RecruitEditTab = () => {
     }, 0);
   };
 
-  const transformLineBreaks = (text: string) => {
-    return text.split(/\n\n/).map((paragraph, index) => (
-      <p key={index}>
-        {paragraph.split('\n').map((line, i) => (
-          <span key={i}>
-            {line}
-            {i !== paragraph.split('\n').length - 1 && <br />}{' '}
-          </span>
-        ))}
-      </p>
-    ));
-  };
-
   return (
     <Styled.RecruitEditorContainer>
       <Styled.EditorContainer>
@@ -61,11 +48,7 @@ const RecruitEditTab = () => {
           remarkPlugins={[remarkGfm]}
           components={{
             p({ children }) {
-              return (
-                <Styled.Paragraph>
-                  {transformLineBreaks(String(children))}
-                </Styled.Paragraph>
-              );
+              return <Styled.Paragraph>{children}</Styled.Paragraph>;
             },
             blockquote({ children }) {
               return <Styled.Blockquote>{children}</Styled.Blockquote>;
