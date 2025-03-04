@@ -55,6 +55,7 @@ export const DescriptionWrapper = styled.div`
 
 export const LeftText = styled.p`
   color: #9d9d9d;
+  white-space: nowrap;
 `;
 
 export const RightText = styled.p`
