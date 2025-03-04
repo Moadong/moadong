@@ -8,3 +8,13 @@ export interface Club {
   classification: string;
   introduction: string;
 }
+
+export interface ClubDetail extends Club {
+  state: string;
+  feeds: string[];
+  description: string;
+  presidentName: string;
+  presidentPhoneNumber: string;
+  recruitmentPeriod: string;
+  recruitmentTarget: string;
+}
