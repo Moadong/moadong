@@ -3,14 +3,26 @@ import * as Styled from './ClubDetailHeader.styles';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
 
-const ClubDetailHeader = () => {
+interface ClubDetailHeaderProps {
+  name: string;
+  classification: string;
+  division: string;
+  tags: string[];
+}
+
+const ClubDetailHeader = ({
+  name,
+  classification,
+  division,
+  tags,
+}: ClubDetailHeaderProps) => {
   return (
     <Styled.ClubDetailHeaderContainer>
       <ClubProfile
-        name={'WAP'}
-        classification={'중동'}
-        division={'학술'}
-        tags={['프로젝트', '소프트웨어']}
+        name={name}
+        classification={classification}
+        division={division}
+        tags={tags}
       />
       <ClubApplyButton />
     </Styled.ClubDetailHeaderContainer>
