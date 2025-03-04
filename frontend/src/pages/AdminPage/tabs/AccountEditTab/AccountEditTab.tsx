@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import InputField from '@/components/InputField/InputField';
+import InputField from '@/components/common/InputField/InputField';
 
 const AccountEditTab = () => {
   const [username, setUsername] = useState('');
