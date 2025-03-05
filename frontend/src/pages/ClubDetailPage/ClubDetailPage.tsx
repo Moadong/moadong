@@ -28,6 +28,8 @@ const ClubDetailPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // [x]TODO: 로딩화면 구현해야 함
+
   if (!clubDetail) {
     return <div>Loading...</div>;
   }
