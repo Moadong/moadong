@@ -28,6 +28,11 @@ export default getAvailablePort(DEFAULT_PORT).then((port) => {
         {
           test: /\.css$/,
           use: ['style-loader', 'css-loader'],
+          include: path.resolve(__dirname, '../node_modules/react-datepicker/dist'),
+        },
+        {
+          test: /\.css$/,
+          use: ['style-loader', 'css-loader'],
           exclude: /node_modules/,
         },
       ],
