@@ -47,7 +47,10 @@ const ClubDetailPage = () => {
         />
         <InfoTabs onTabClick={scrollToSection} />
         <InfoBox sectionRefs={sectionRefs} clubDetail={clubDetail} />
-        <IntroduceBox sectionRefs={sectionRefs} />
+        <IntroduceBox
+          sectionRefs={sectionRefs}
+          description={clubDetail.description}
+        />
       </Styled.PageContainer>
       <Footer />
       <ClubDetailFooter />
