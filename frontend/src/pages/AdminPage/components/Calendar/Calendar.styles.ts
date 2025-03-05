@@ -1,14 +1,14 @@
 import styled from 'styled-components';
-import "react-datepicker/dist/react-datepicker.css";
+import 'react-datepicker/dist/react-datepicker.css';
 
-const primaryColor = "rgba(255, 84, 20, 0.8)";
-const whiteColor = "#FFFFFF";
-const grayColor = "rgba(0, 0, 0, 0.5)";
-const inputBgColor = "rgba(0, 0, 0, 0.05)";
+const primaryColor = 'rgba(255, 84, 20, 0.8)';
+const whiteColor = '#FFFFFF';
+const grayColor = 'rgba(0, 0, 0, 0.5)';
+const inputBgColor = 'rgba(0, 0, 0, 0.05)';
 
 export const Tidle = styled.p`
-    font-size: 1.375rem;
-`
+  font-size: 1.375rem;
+`;
 
 export const DatepickerContainer = styled.div`
   display: flex;
@@ -125,7 +125,9 @@ export const DatepickerContainer = styled.div`
     font-size: 1.125rem;
     padding: 12px 20px;
     cursor: pointer;
-    transition: background-color 0.1s ease-in-out, color 0.1s ease-in-out;
+    transition:
+      background-color 0.1s ease-in-out,
+      color 0.1s ease-in-out;
 
     &:focus {
       outline: none;

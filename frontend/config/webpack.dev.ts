@@ -28,7 +28,10 @@ export default getAvailablePort(DEFAULT_PORT).then((port) => {
         {
           test: /\.css$/,
           use: ['style-loader', 'css-loader'],
-          include: path.resolve(__dirname, '../node_modules/react-datepicker/dist'),
+          include: path.resolve(
+            __dirname,
+            '../node_modules/react-datepicker/dist',
+          ),
         },
         {
           test: /\.css$/,
@@ -54,9 +57,9 @@ export default getAvailablePort(DEFAULT_PORT).then((port) => {
 --------------------------------------------------------
 🎉  WEBPACK BUILD SUCCESSFULLY COMPLETED!
 ✅  Files Generated: ${stats
-              .toJson()
-              .assets.map((asset) => asset.name)
-              .join(', ')}
+                .toJson()
+                .assets.map((asset) => asset.name)
+                .join(', ')}
 ⏱️  Build Time: ${stats.endTime - stats.startTime} ms
 🌐  Server Running at: http://localhost:${port}
 --------------------------------------------------------
