@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-const CardContainer = styled.div<{ state: string }>`
+const CardContainer = styled.div<{ state: string; isClicked: boolean }>`
   display: flex;
   flex-direction: column;
   border-radius: 14px;
@@ -12,6 +12,20 @@ const CardContainer = styled.div<{ state: string }>`
     state === 'open'
       ? '0 0 14px rgba(0, 166, 255, 0.15)'
       : '0 0 14px rgba(0, 0, 0, 0.08)'};
+  transition:
+    transform 0.2s ease-in-out,
+    box-shadow 0.2s ease-in-out;
+  transform: ${({ isClicked }) => (isClicked ? 'scale(1.05)' : 'scale(1)')};
+  cursor: pointer;
+
+  &:hover {
+    transform: ${({ isClicked }) =>
+      isClicked ? 'scale(1.05)' : 'scale(1.03)'};
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
 `;
 
 const CardHeader = styled.div`
