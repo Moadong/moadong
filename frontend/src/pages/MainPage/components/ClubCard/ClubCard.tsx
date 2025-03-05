@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import ClubLogo from '@/components/ClubLogo/ClubLogo';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
@@ -8,14 +8,20 @@ import { useNavigate } from 'react-router-dom';
 
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();
+  const [isClicked, setIsClicked] = useState(false);
 
   const handleNavigate = () => {
-    navigate(`/club/${club.id}`);
+    setIsClicked(true);
+    setTimeout(() => {
+      setIsClicked(false);
+      navigate(`/club/${club.id}`);
+    }, 150);
   };
 
   return (
     <Styled.CardContainer
       state={club.recruitmentStatus}
+      isClicked={isClicked}
       onClick={handleNavigate}>
       <Styled.CardHeader>
         <Styled.ClubProfile>
