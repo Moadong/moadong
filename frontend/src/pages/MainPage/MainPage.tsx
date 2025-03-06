@@ -1,4 +1,6 @@
 import React, { useState, useMemo } from 'react';
+
+import useTrackPageView from '@/hooks/useTrackPageView';
 import { useGetCardList } from '@/hooks/queries/club/useGetCardList';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
@@ -16,6 +18,8 @@ import MainMobileHeader from '@/pages/MainPage/components/MobileHeader/MobileHea
 // 2. 로딩, 에러, 빈 데이터 UI 추가
 
 const MainPage = () => {
+  useTrackPageView('MainPage');
+
   const [isFilterActive, setIsFilterActive] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState('all');
   // const [keyword, setKeyword] = useState('');
