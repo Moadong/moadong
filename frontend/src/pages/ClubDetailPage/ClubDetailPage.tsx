@@ -29,14 +29,12 @@ const ClubDetailPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // [x]TODO: 로딩화면 구현해야 함
+  useTrackPageView(`ClubDetailPage ${clubDetail?.name || ''}`);
 
+  // [x]TODO: 로딩화면 구현해야 함
   if (!clubDetail) {
     return <div>Loading...</div>;
   }
-
-  useTrackPageView(`ClubDetailPage ${clubDetail.name}`);
-
   if (error) return <p>Error: {error.message}</p>;
 
   return (
