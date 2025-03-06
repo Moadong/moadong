@@ -25,8 +25,8 @@ const MainPage = () => {
   // const [keyword, setKeyword] = useState('');
 
   const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
-  const classification = selectedCategory;
-  const division = 'all';
+  const division = selectedCategory;
+  const classification = 'all';
 
   // 검색 기능 추가 후 ''는 keyword로 대체
   const {
