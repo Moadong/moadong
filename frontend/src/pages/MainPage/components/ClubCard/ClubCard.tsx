@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import mixpanel from 'mixpanel-browser';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import ClubLogo from '@/components/ClubLogo/ClubLogo';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
@@ -12,6 +13,13 @@ const ClubCard = ({ club }: { club: Club }) => {
 
   const handleNavigate = () => {
     setIsClicked(true);
+
+    mixpanel.track('ClubCard Clicked', {
+      club_id: club.id,
+      club_name: club.name,
+      recruitment_status: club.recruitmentStatus,
+    });
+
     setTimeout(() => {
       setIsClicked(false);
       navigate(`/club/${club.id}`);

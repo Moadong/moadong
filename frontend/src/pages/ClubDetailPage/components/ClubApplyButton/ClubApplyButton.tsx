@@ -1,4 +1,5 @@
 import React from 'react';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import styled from 'styled-components';
 
 interface ButtonProps {
@@ -35,7 +36,17 @@ const Button = styled.button`
 `;
 
 const ClubApplyButton = ({ onClick }: ButtonProps) => {
-  return <Button onClick={onClick}>지원하기</Button>;
+  const trackEvent = useMixpanelTrack(); // Mixpanel 훅 사용
+
+  const handleClick = () => {
+    trackEvent('Club Apply Button Clicked');
+
+    if (onClick) {
+      onClick();
+    }
+  };
+
+  return <Button onClick={handleClick}>지원하기</Button>;
 };
 
 export default ClubApplyButton;
