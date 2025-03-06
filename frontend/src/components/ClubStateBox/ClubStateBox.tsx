@@ -5,17 +5,17 @@ const stateStyles: Record<
   string,
   { backgroundColor: string; color: string; text: string }
 > = {
-  모집중: {
+  OPEN: {
     backgroundColor: 'rgba(0, 166, 255, 0.1)',
     color: '#00A6FF',
     text: '모집중',
   },
-  모집예정: {
+  UPCOMING: {
     backgroundColor: 'rgba(230, 247, 255, 1)',
     color: '#818181',
     text: '모집예정',
   },
-  모집마감: {
+  CLOSED: {
     backgroundColor: 'rgba(239, 239, 239, 0.8)',
     color: '#818181',
     text: '모집마감',
