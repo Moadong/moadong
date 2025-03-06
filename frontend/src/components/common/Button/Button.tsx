@@ -24,12 +24,10 @@ const StyledButton = styled.button<ButtonProps>`
   }
 `;
 
-function Button({ width, children, onClick }: ButtonProps) {
-  return (
+const Button = ({ width, children, onClick } : ButtonProps) => (
     <StyledButton width={width} onClick={onClick}>
       {children}
     </StyledButton>
-  );
-}
+);
 
 export default Button;
