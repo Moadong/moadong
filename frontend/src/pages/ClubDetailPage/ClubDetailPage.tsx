@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import useTrackPageView from '@/hooks/useTrackPageView';
 import Header from '@/components/common/Header/Header';
 import BackNavigationBar from '@/pages/ClubDetailPage/components/BackNavigationBar/BackNavigationBar';
 import ClubDetailHeader from '@/pages/ClubDetailPage/components/ClubDetailHeader/ClubDetailHeader';
@@ -33,6 +34,8 @@ const ClubDetailPage = () => {
   if (!clubDetail) {
     return <div>Loading...</div>;
   }
+
+  useTrackPageView(`ClubDetailPage ${clubDetail.name}`);
 
   if (error) return <p>Error: {error.message}</p>;
 
