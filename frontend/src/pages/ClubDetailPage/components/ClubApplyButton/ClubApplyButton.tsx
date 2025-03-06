@@ -36,7 +36,7 @@ const Button = styled.button`
 `;
 
 const ClubApplyButton = ({ onClick }: ButtonProps) => {
-  const trackEvent = useMixpanelTrack(); // Mixpanel 훅 사용
+  const trackEvent = useMixpanelTrack();
 
   const handleClick = () => {
     trackEvent('Club Apply Button Clicked');
