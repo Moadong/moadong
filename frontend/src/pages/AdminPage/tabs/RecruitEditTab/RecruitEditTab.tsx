@@ -1,9 +1,21 @@
 import React, { useState, useRef } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import Calendar from '@/pages/AdminPage/components/Calendar/Calendar';
+import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 import * as Styled from './RecruitEditTab.styles';
 
 const RecruitEditTab = () => {
+  const recruitmentPeriod = '2025.01.04 00:00 ~ 2025.06.04 00:00';
+
+  const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
+    parseRecruitmentPeriod(recruitmentPeriod);
+  const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(
+    initialStart,
+  );
+  const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(initialEnd);
+  
+  
   const [markdown, setMarkdown] = useState<string>(
     '# Markdown Editor\n\nType here...',
   );
@@ -26,6 +38,15 @@ const RecruitEditTab = () => {
 
   return (
     <Styled.RecruitEditorContainer>
+      <div>
+      <h2>모집 기간 설정</h2>
+      <Calendar
+        recruitmentStart={recruitmentStart}
+        recruitmentEnd={recruitmentEnd}
+        onChangeStart={setRecruitmentStart}
+        onChangeEnd={setRecruitmentEnd}
+      />
+    </div>
       <Styled.EditorContainer>
         <Styled.Toolbar>
           <button onClick={() => insertAtCursor('# 제목\n')}>제목1</button>
