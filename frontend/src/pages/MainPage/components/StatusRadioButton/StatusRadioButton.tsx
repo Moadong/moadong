@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './StatusRadioButton.styles';
 
 interface StatusRadioButtonProps {
@@ -7,11 +8,17 @@ interface StatusRadioButtonProps {
 
 const StatusRadioButton = ({ onChange }: StatusRadioButtonProps) => {
   const [isActive, setIsActive] = useState(false);
+  const trackEvent = useMixpanelTrack();
 
   const handleToggle = () => {
     setIsActive((prev) => {
       const newStatus = !prev;
       onChange(newStatus);
+
+      trackEvent('StatusRadioButton Clicked', {
+        new_status: newStatus ? 'OPEN' : 'ALL',
+      });
+
       return newStatus;
     });
   };
