@@ -8,18 +8,25 @@ interface MakeTagsProps {
 
 const MakeTags = ({ value, onChange }: MakeTagsProps) => {
   const updateTag = (index: number, newValue: string) => {
-    if (newValue.length > 5) {
-      alert('태그는 최대 5자까지만 입력할 수 있습니다.');
-      return;
-    }
-    const updatedTags = [...value];
-    updatedTags[index] = newValue;
+    const updatedTags = value.map((tag, i) => {
+      if (i === index) {
+        return newValue;
+      }
+      return tag;
+    });
+
     onChange(updatedTags);
   };
 
+  // 특정 인덱스의 태그를 초기화하는 함수
   const clearTag = (index: number) => {
-    const updatedTags = [...value];
-    updatedTags[index] = '';
+    const updatedTags = value.map((tag, i) => {
+      if (i === index) {
+        return '';
+      }
+      return tag;
+    });
+
     onChange(updatedTags);
   };
 
