@@ -18,7 +18,7 @@ const App = () => {
         <GlobalStyles />
         <Routes>
           <Route path='/' element={<MainPage />} />
-          <Route path='/ClubDetail' element={<ClubDetailPage />} />
+          <Route path='/club/:clubId' element={<ClubDetailPage />} />
           <Route path='/admin' element={<AdminPage />}>
             <Route index element={<Navigate to='club-info' replace />} />
             <Route path='club-info' element={<ClubInfoEditTab />} />

@@ -1,29 +1,31 @@
 import React from 'react';
 import * as Styled from './InfoBox.styles';
 import { InfoList } from '@/types/Info';
+import { ClubDetail } from '@/types/club';
 
-const infoData: InfoList[] = [
-  {
-    title: '모집정보',
-    descriptions: [
-      { label: '모집기간', value: '2025.02.24' },
-      { label: '모집대상', value: '부경대학교 재학생' },
-    ],
-  },
-  {
-    title: '동아리정보',
-    descriptions: [
-      { label: '회장이름', value: '이제희' },
-      { label: '전화번호', value: '010-1234-5678' },
-    ],
-  },
-];
-
-const InfoBox = ({
-  sectionRefs,
-}: {
+interface InfoBoxProps {
   sectionRefs: React.RefObject<(HTMLDivElement | null)[]>;
-}) => {
+  clubDetail: ClubDetail;
+}
+
+const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
+  const infoData: InfoList[] = [
+    {
+      title: '모집정보',
+      descriptions: [
+        { label: '모집기간', value: clubDetail.recruitmentPeriod },
+        { label: '모집대상', value: clubDetail.recruitmentTarget },
+      ],
+    },
+    {
+      title: '동아리정보',
+      descriptions: [
+        { label: '회장이름', value: clubDetail.presidentName },
+        { label: '전화번호', value: clubDetail.presidentPhoneNumber },
+      ],
+    },
+  ];
+
   return (
     <Styled.InfoBoxWrapper>
       {infoData.map((info, index) => (

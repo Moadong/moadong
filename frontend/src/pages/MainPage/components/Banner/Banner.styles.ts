@@ -1,8 +1,5 @@
 import styled from 'styled-components';
-
-export interface BannerProps {
-  backgroundImage?: string;
-}
+import { BannerProps } from './Banner';
 
 export const BannerContainer = styled.div`
   padding: 0 40px;
