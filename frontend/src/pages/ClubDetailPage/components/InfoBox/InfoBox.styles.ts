@@ -60,6 +60,11 @@ export const LeftText = styled.p`
 
 export const RightText = styled.p`
   flex-grow: 1;
+  white-space: nowrap;
+
+  @media (max-width: 900px) {
+    white-space: normal;
+  }
 
   @media (max-width: 500px) {
     white-space: nowrap;
