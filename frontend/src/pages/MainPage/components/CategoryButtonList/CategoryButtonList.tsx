@@ -69,7 +69,7 @@ const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
       url: window.location.href,
     });
 
-    onCategorySelect(category.id);
+    onCategorySelect(category.name);
   };
 
   return (
