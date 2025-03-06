@@ -26,6 +26,10 @@ const CardContainer = styled.div<{ state: string; isClicked: boolean }>`
   &:active {
     transform: scale(0.98);
   }
+
+  @media (max-width: 300px) {
+    height: auto;
+  }
 `;
 
 const CardHeader = styled.div`
