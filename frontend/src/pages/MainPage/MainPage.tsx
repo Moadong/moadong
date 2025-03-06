@@ -24,8 +24,8 @@ const MainPage = () => {
 
   const { keyword } = useSearch();
   const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
-  const classification = selectedCategory;
-  const division = 'all';
+  const division = selectedCategory;
+  const classification = 'all';
 
   const {
     data: clubs,

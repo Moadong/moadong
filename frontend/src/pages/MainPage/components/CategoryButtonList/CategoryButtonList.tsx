@@ -23,37 +23,37 @@ interface CategoryButtonListProps {
 const clubCategories: Category[] = [
   { id: 'all', name: '전체', icon: iconAll, eventName: 'Category_All_Clicked' },
   {
-    id: 'volunteering',
+    id: '봉사',
     name: '봉사',
     icon: iconVolunteer,
     eventName: 'Category_Volunteering_Clicked',
   },
   {
-    id: 'religion',
+    id: '종교',
     name: '종교',
     icon: iconReligion,
     eventName: 'Category_Religion_Clicked',
   },
   {
-    id: 'hobby',
+    id: '취미교양',
     name: '취미교양',
     icon: iconHobby,
     eventName: 'Category_Hobby_Clicked',
   },
   {
-    id: 'study',
+    id: '학술',
     name: '학술',
     icon: iconAcademic,
     eventName: 'Category_Study_Clicked',
   },
   {
-    id: 'sport',
+    id: '운동',
     name: '운동',
     icon: iconSport,
     eventName: 'Category_Sport_Clicked',
   },
   {
-    id: 'performance',
+    id: '공연',
     name: '공연',
     icon: iconPerformance,
     eventName: 'Category_Performance_Clicked',
@@ -69,7 +69,7 @@ const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
       url: window.location.href,
     });
 
-    onCategorySelect(category.name);
+    onCategorySelect(category.id);
   };
 
   return (
