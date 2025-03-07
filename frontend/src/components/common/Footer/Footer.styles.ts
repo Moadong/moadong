@@ -3,11 +3,7 @@ import styled from 'styled-components';
 export const FooterContainer = styled.footer`
   text-align: left;
   font-size: 0.75rem;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  background-color: white;
+  margin-top: 50px;
 `;
 
 export const Divider = styled.hr`

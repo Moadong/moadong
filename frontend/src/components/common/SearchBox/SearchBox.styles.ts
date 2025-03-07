@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 
 export const SearchBoxStyles = styled.form`
-  margin-top: 5px;
   display: flex;
   align-items: center;
   justify-content: space-between;
