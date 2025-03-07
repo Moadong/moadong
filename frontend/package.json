@@ -53,6 +53,7 @@
     "@types/webpack": "^5.28.5",
     "@types/webpack-dev-server": "^4.7.1",
     "chromatic": "^11.25.0",
+    "copy-webpack-plugin": "^13.0.0",
     "css-loader": "^7.1.2",
     "css-minimizer-webpack-plugin": "^7.0.0",
     "detect-port": "^2.1.0",
