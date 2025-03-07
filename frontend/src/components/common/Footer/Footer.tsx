@@ -13,7 +13,7 @@ const Footer = () => {
             Copyright © moodong. All Rights Reserved
           </Styled.CopyRightText>
           <Styled.EmailText>
-            e-mail: <a href='mailto:pknu.moadong@gmail.com'>example@example.com</a>
+            e-mail: <a href='mailto:pknu.moadong@gmail.com'>pknu.moadong@gmail.com</a>
           </Styled.EmailText>
         </Styled.FooterContent>
       </Styled.FooterContainer>
