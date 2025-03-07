@@ -1,7 +1,8 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
-const Dotenv = require('dotenv-webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const configuration: webpack.Configuration = {
   // 모듈 해석 방법 설정
@@ -45,6 +46,18 @@ const configuration: webpack.Configuration = {
       systemvars: true,
       safe: true,
       ignoreStub: true,
+    }),
+
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '..', 'public'),
+          to: path.resolve(__dirname, '..', 'dist'),
+          globOptions: {
+            ignore: ['**/index.html'],
+          },
+        },
+      ],
     }),
   ],
 };
