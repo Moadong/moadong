@@ -1,7 +1,8 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
-// plugin
 const HtmlWebpackPlugin = require('html-webpack-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
+const Dotenv = require('dotenv-webpack');
 
 const configuration: webpack.Configuration = {
   // 모듈 해석 방법 설정
@@ -11,7 +12,7 @@ const configuration: webpack.Configuration = {
 
     // 절대 경로
     alias: {
-      '@src': path.resolve(__dirname, '/src/'),
+      '@': path.resolve(__dirname, '../src'),
     },
   },
 
@@ -25,6 +26,13 @@ const configuration: webpack.Configuration = {
         use: ['ts-loader'],
         exclude: /node_modules/,
       },
+      {
+        test: /\.(png|jpe?g|svg)$/i,
+        type: 'asset/resource',
+        generator: {
+          filename: 'images/[hash][ext][query]',
+        },
+      },
     ],
   },
 
@@ -33,6 +41,24 @@ const configuration: webpack.Configuration = {
       template: path.resolve(__dirname, '..', 'public', 'index.html'),
     }),
     new webpack.ProvidePlugin({ React: 'react' }),
+    new Dotenv({
+      path: './.env',
+      systemvars: true,
+      safe: true,
+      ignoreStub: true,
+    }),
+
+    new CopyWebpackPlugin({
+      patterns: [
+        {
+          from: path.resolve(__dirname, '..', 'public'),
+          to: path.resolve(__dirname, '..', 'dist'),
+          globOptions: {
+            ignore: ['**/index.html'],
+          },
+        },
+      ],
+    }),
   ],
 };
 

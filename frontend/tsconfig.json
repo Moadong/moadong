@@ -10,8 +10,14 @@
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
     "skipDefaultLibCheck": true,
-    "forceConsistentCasingInFileNames": true
+    "forceConsistentCasingInFileNames": true,
+    "baseUrl": "./",
+    "paths": {
+      "@/*": ["src/*"],
+    }
   },
-  "include": ["src"],
+  "include": ["src",
+    "src/types/global.d.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }
