@@ -34,7 +34,7 @@ export const CardList = styled.div`
     grid-template-columns: repeat(2, 1fr);
   }
 
-  @media (max-width: 700px) {
+  @media (max-width: 750px) {
     grid-template-columns: repeat(1, 1fr);
   }
   @media (max-width: 500px) {
