@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import useTrackPageView from '@/hooks/useTrackPageView';
 import Header from '@/components/common/Header/Header';
 import BackNavigationBar from '@/pages/ClubDetailPage/components/BackNavigationBar/BackNavigationBar';
 import ClubDetailHeader from '@/pages/ClubDetailPage/components/ClubDetailHeader/ClubDetailHeader';
@@ -28,12 +29,12 @@ const ClubDetailPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  // [x]TODO: 로딩화면 구현해야 함
+  useTrackPageView(`ClubDetailPage ${clubDetail?.name || ''}`);
 
+  // [x]TODO: 로딩화면 구현해야 함
   if (!clubDetail) {
     return <div>Loading...</div>;
   }
-
   if (error) return <p>Error: {error.message}</p>;
 
   return (
