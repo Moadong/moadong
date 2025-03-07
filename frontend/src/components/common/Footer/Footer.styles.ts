@@ -3,11 +3,11 @@ import styled from 'styled-components';
 export const FooterContainer = styled.footer`
   text-align: left;
   font-size: 0.75rem;
-  padding: 0 140px;
-
-  @media (max-width: 500px) {
-    padding: 0 20px;
-  }
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  width: 100%;
+  background-color: white;
 `;
 
 export const Divider = styled.hr`
@@ -18,12 +18,13 @@ export const Divider = styled.hr`
 export const FooterContent = styled.div`
   display: flex;
   flex-direction: column;
-  padding: 20px 0 30px 0;
+  padding: 20px 140px 30px 140px;
   line-height: 1.25rem;
   color: #818181;
 
   @media (max-width: 500px) {
     font-size: 0.625rem;
+    padding: 20px 20px 30px 20px;
   }
 `;
 
