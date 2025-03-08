@@ -16,7 +16,7 @@ import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("club_information")
+@Document("club_informations")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
@@ -69,7 +69,8 @@ public class ClubInformation {
     }
 
     public ClubInformation updateLogo(String logo) {
-        return this.toBuilder().logo(logo).build();
+        this.logo = logo;
+        return this;
     }
 
     public void updateRecruitmentStatus(RecruitmentStatus status) {

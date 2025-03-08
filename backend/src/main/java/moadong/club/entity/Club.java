@@ -12,7 +12,7 @@ import moadong.club.enums.ClubState;
 import moadong.club.payload.request.ClubUpdateRequest;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("club")
+@Document("clubs")
 @AllArgsConstructor
 @Getter
 @Builder
