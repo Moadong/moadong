@@ -57,7 +57,6 @@ public class ClubInformation {
     private RecruitmentStatus recruitmentStatus;
 
     public void update(ClubUpdateRequest request) {
-        this.logo = request.thumbnail();
         this.introduction = request.introduction();
         this.description = request.description();
         this.presidentName = request.clubPresidentName();

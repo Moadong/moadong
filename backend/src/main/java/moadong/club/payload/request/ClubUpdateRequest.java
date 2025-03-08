@@ -9,7 +9,6 @@ public record ClubUpdateRequest(
     String classification,
     String division,
     List<String> tags,
-    String thumbnail,
     String introduction,
     String description,
     String clubPresidentName,
