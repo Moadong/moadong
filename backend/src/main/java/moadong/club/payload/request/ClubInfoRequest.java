@@ -14,7 +14,6 @@ public record ClubInfoRequest(
     @NotBlank
     String division,
     List<String> tags,
-    String thumbnail,
     String introduction,
     String clubPresidentName,
     String telephoneNumber,

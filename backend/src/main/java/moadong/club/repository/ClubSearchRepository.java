@@ -22,7 +22,7 @@ public class ClubSearchRepository {
     public List<ClubSearchResult> searchResult(String keyword, String recruitmentStatus, String division, String classification) {
         List<AggregationOperation> operations = new ArrayList<>();
 
-        operations.add(Aggregation.lookup("club_information", "_id", "clubId", "club_info"));
+        operations.add(Aggregation.lookup("club_informations", "_id", "clubId", "club_info"));
         operations.add(Aggregation.lookup("club_tags", "_id", "clubId", "club_tags"));
         operations.add(Aggregation.match(
                 new Criteria().andOperator(
@@ -61,7 +61,7 @@ public class ClubSearchRepository {
                         .and("tags").as("tags"));
 
         Aggregation aggregation = Aggregation.newAggregation(operations);
-        AggregationResults<ClubSearchResult> results = mongoTemplate.aggregate(aggregation, "club", ClubSearchResult.class);
+        AggregationResults<ClubSearchResult> results = mongoTemplate.aggregate(aggregation, "clubs", ClubSearchResult.class);
         return results.getMappedResults();
     }
 

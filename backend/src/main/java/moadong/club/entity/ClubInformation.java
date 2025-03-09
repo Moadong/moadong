@@ -58,7 +58,6 @@ public class ClubInformation {
     private RecruitmentStatus recruitmentStatus;
 
     public void updateInfo(ClubInfoRequest request) {
-        this.logo = request.thumbnail();
         this.introduction = request.introduction();
         this.presidentName = request.clubPresidentName();
         this.presidentTelephoneNumber = request.telephoneNumber();
@@ -69,7 +68,8 @@ public class ClubInformation {
     }
 
     public ClubInformation updateLogo(String logo) {
-        return this.toBuilder().logo(logo).build();
+        this.logo = logo;
+        return this;
     }
 
     public void updateRecruitmentStatus(RecruitmentStatus status) {
@@ -78,5 +78,9 @@ public class ClubInformation {
 
     public void updateDescription(ClubDescriptionUpdateRequest request) {
         this.description = request.description();
+    }
+
+    public boolean hasRecruitmentPeriod() {
+        return recruitmentStart != null && recruitmentEnd != null;
     }
 }
