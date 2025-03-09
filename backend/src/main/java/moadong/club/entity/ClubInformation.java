@@ -75,4 +75,8 @@ public class ClubInformation {
     public void updateRecruitmentStatus(RecruitmentStatus status) {
         this.recruitmentStatus = status;
     }
+
+    public boolean hasRecruitmentPeriod() {
+        return recruitmentStart != null && recruitmentEnd != null;
+    }
 }
