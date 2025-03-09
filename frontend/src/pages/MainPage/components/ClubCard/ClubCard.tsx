@@ -40,8 +40,8 @@ const ClubCard = ({ club }: { club: Club }) => {
       </Styled.CardHeader>
       <Styled.Introduction>{club.introduction}</Styled.Introduction>
       <Styled.TagsContainer>
-        <ClubTag type={club.division} />
         <ClubTag type={club.classification} />
+        <ClubTag type={club.division} />
         {club.tags.map((tag) => (
           <ClubTag key={tag} type={'자유'}>
             {tag}
