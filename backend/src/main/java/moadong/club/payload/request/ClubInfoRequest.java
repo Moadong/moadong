@@ -10,7 +10,7 @@ public record ClubInfoRequest(
     @NotBlank
     String name,
     @NotBlank
-    String classification,
+    String category,
     @NotBlank
     String division,
     List<String> tags,

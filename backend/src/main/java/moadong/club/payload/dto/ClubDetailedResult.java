@@ -19,7 +19,7 @@ public record ClubDetailedResult(
     String presidentPhoneNumber,
     String recruitmentPeriod,
     String recruitmentTarget,
-    String classification,
+    String category,
     String division
 ) {
 
@@ -37,7 +37,7 @@ public record ClubDetailedResult(
         return ClubDetailedResult.builder()
             .id(club.getId())
             .name(club.getName())
-            .classification(club.getClassification())
+            .category(club.getCategory())
             .division(club.getDivision())
             .state(club.getState().getDesc())
             .description(clubInformation.getDescription())

@@ -25,7 +25,7 @@ public class Club {
 
     @NotNull
     @Column(length = 20)
-    private String classification;
+    private String category;
 
     @NotNull
     @Column(length = 20)
@@ -37,14 +37,14 @@ public class Club {
 
     public Club() {
         this.name = "";
-        this.classification = "";
+        this.category = "";
         this.division = "";
         this.state = ClubState.UNAVAILABLE;
     }
 
     public void update(ClubInfoRequest request) {
         this.name = request.name();
-        this.classification = request.classification();
+        this.category = request.category();
         this.division = request.division();
         this.state = ClubState.AVAILABLE;
     }

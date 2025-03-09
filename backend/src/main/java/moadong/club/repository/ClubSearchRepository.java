@@ -19,7 +19,7 @@ import java.util.List;
 public class ClubSearchRepository {
     private final MongoTemplate mongoTemplate;
 
-    public List<ClubSearchResult> searchResult(String keyword, String recruitmentStatus, String division, String classification) {
+    public List<ClubSearchResult> searchResult(String keyword, String recruitmentStatus, String division, String category) {
         List<AggregationOperation> operations = new ArrayList<>();
 
         operations.add(Aggregation.lookup("club_informations", "_id", "clubId", "club_info"));
@@ -29,7 +29,7 @@ public class ClubSearchRepository {
                         Criteria.where("state").is(ClubState.AVAILABLE.getName()))
         ));
 
-        Criteria criteria = getMatchedCriteria(recruitmentStatus, division, classification);
+        Criteria criteria = getMatchedCriteria(recruitmentStatus, division, category);
 
         if (!criteria.getCriteriaObject().isEmpty()) {
             operations.add(Aggregation.match(criteria));
@@ -48,13 +48,13 @@ public class ClubSearchRepository {
         operations.add(Aggregation.group("_id")
                 .first("name").as("name")
                 .first("state").as("state")
-                .first("classification").as("classification")
+                .first("category").as("category")
                 .first("division").as("division")
                 .first("club_info").as("club_info")
                 .push("club_tags.tag").as("tags"));
 
         operations.add(
-                Aggregation.project("name", "state", "classification", "division")
+                Aggregation.project("name", "state", "category", "division")
                         .and("club_info.introduction").as("introduction")
                         .and("club_info.recruitmentStatus").as("recruitmentStatus")
                         .and("club_info.logo").as("logo")
@@ -65,7 +65,7 @@ public class ClubSearchRepository {
         return results.getMappedResults();
     }
 
-    private Criteria getMatchedCriteria(String recruitmentStatus, String division, String classification) {
+    private Criteria getMatchedCriteria(String recruitmentStatus, String division, String category) {
         List<Criteria> criteriaList = new ArrayList<>();
 
         if (recruitmentStatus != null && !"all".equalsIgnoreCase(recruitmentStatus)) {
@@ -74,8 +74,8 @@ public class ClubSearchRepository {
         if (division != null && !"all".equalsIgnoreCase(division)) {
             criteriaList.add(Criteria.where("division").is(division));
         }
-        if (classification != null && !"all".equalsIgnoreCase(classification)) {
-            criteriaList.add(Criteria.where("classification").is(classification));
+        if (category != null && !"all".equalsIgnoreCase(category)) {
+            criteriaList.add(Criteria.where("category").is(category));
         }
 
         if (!criteriaList.isEmpty()) {
