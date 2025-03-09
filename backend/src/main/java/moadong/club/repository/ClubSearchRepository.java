@@ -3,6 +3,7 @@ package moadong.club.repository;
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.dto.ClubSearchResult;
+import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
@@ -59,6 +60,8 @@ public class ClubSearchRepository {
                         .and("club_info.recruitmentStatus").as("recruitmentStatus")
                         .and("club_info.logo").as("logo")
                         .and("tags").as("tags"));
+
+        operations.add(Aggregation.sort(Sort.by(Sort.Order.asc("division"), Sort.Order.asc("category"))));
 
         Aggregation aggregation = Aggregation.newAggregation(operations);
         AggregationResults<ClubSearchResult> results = mongoTemplate.aggregate(aggregation, "clubs", ClubSearchResult.class);
