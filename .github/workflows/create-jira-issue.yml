@@ -1,0 +1,91 @@
+name: Create Jira issue
+on:
+  issues:
+    types:
+      - opened
+jobs:
+  create-issue:
+    name: Create Jira issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Login
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+
+      - name: Checkout main code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Issue Parser
+        uses: stefanbuck/github-issue-praser@v3
+        id: issue-parser
+        with:
+          template-path: .github/ISSUE_TEMPLATE/issue-form.yml
+
+      - name: Log Issue Parser
+        run: |
+          echo '${{ steps.issue-parser.outputs.issueparser_parentKey }}'
+          echo '${{ steps.issue-parser.outputs.__ticket_number }}'
+          echo '${{ steps.issue-parser.outputs.jsonString }}'
+
+      - name: Convert markdown to Jira Syntax
+        uses: peter-evans/jira2md@v1
+        id: md2jira
+        with:
+          input-text: |
+            ### Github Issue Link
+            - ${{ github.event.issue.html_url }}
+
+            ${{ github.event.issue.body }}
+          mode: md2jira
+
+      - name: Create Issue
+        id: create
+        uses: atlassian/gajira-create@v3
+        with:
+          project: SKP
+          issuetype: Task
+          summary: '${{ github.event.issue.title }}'
+          description: '${{ steps.md2jira.outputs.output-text }}'
+          fields: |
+            {
+              "parent": {
+                "key": "${{ steps.issue-parser.outputs.issueparser_parentKey }}"
+              }
+            }
+
+      - name: Log created issue
+        run: echo "Jira Issue ${{ steps.issue-parser.outputs.parentKey }}/${{ steps.create.outputs.issue }} was created"
+
+      - name: Checkout develop code
+        uses: actions/checkout@v4
+        with:
+          ref: develop
+
+      - name: Create branch with Ticket number
+        run: |
+          ISSUE_NUMBER="${{ steps.create.outputs.issue }}"
+          ISSUE_TITLE="${{ steps.issue-parser.outputs.issueparser_branch}}"
+          BRANCH_NAME="${ISSUE_NUMBER}-$(echo ${ISSUE_TITLE} | sed 's/ /-/g')"
+          git checkout -b "${BRANCH_NAME}"
+          git push origin "${BRANCH_NAME}"
+
+      - name: Update issue title
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'update-issue'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: '[${{ steps.create.outputs.issue }}] ${{ github.event.issue.title }}'
+
+      - name: Add comment with Jira issue link
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: 'Jira Issue Created: [${{ steps.create.outputs.issue }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create.outputs.issue }})'
+      
