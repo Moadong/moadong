@@ -80,7 +80,7 @@ jobs:
       - name: Build and Push Docker Image
         run: |
           cd backend
-          docker build -t ${{ secrets.DOCKER_IMAGE_RELEASE }}:${{ github.sha }} -t ${{ secrets.DOCKER_IMAGE_DEV }}:latest .
+          docker build -t ${{ secrets.DOCKER_IMAGE_RELEASE }}:${{ github.sha }} -t ${{ secrets.DOCKER_IMAGE_RELEASE }}:latest .
           docker push -a ${{ secrets.DOCKER_IMAGE_RELEASE }}
 
   deploy:
