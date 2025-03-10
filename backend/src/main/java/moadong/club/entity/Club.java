@@ -6,16 +6,14 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ClubState;
-import moadong.club.payload.request.ClubUpdateRequest;
+import moadong.club.payload.request.ClubInfoRequest;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("clubs")
 @AllArgsConstructor
 @Getter
-@Builder
 public class Club {
 
     @Id
@@ -27,7 +25,7 @@ public class Club {
 
     @NotNull
     @Column(length = 20)
-    private String classification;
+    private String category;
 
     @NotNull
     @Column(length = 20)
@@ -37,9 +35,16 @@ public class Club {
     @NotNull
     private ClubState state;
 
-    public void update(ClubUpdateRequest request) {
+    public Club() {
+        this.name = "";
+        this.category = "";
+        this.division = "";
+        this.state = ClubState.UNAVAILABLE;
+    }
+
+    public void update(ClubInfoRequest request) {
         this.name = request.name();
-        this.classification = request.classification();
+        this.category = request.category();
         this.division = request.division();
         this.state = ClubState.AVAILABLE;
     }
