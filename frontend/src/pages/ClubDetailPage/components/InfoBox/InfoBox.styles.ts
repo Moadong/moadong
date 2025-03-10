@@ -4,7 +4,7 @@ export const InfoBoxWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 50px;
+  gap: 34px;
   margin-top: 100px;
 
   @media (max-width: 500px) {
