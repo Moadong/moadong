@@ -21,7 +21,7 @@ export const IntroduceBoxWrapper = styled.div`
 
 export const IntroduceTitle = styled.p`
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 500;
 `;
 
 export const IntroduceContentBox = styled.div`

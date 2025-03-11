@@ -4,7 +4,7 @@ export const InfoBoxWrapper = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
-  gap: 50px;
+  gap: 34px;
   margin-top: 100px;
 
   @media (max-width: 500px) {
@@ -31,7 +31,7 @@ export const InfoBox = styled.div`
 
 export const Title = styled.p`
   font-size: 20px;
-  font-weight: 400;
+  font-weight: 500;
   letter-spacing: -0.02px;
 `;
 
