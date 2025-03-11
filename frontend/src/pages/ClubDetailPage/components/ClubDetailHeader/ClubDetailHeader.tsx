@@ -5,14 +5,14 @@ import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/C
 
 interface ClubDetailHeaderProps {
   name: string;
-  classification: string;
+  category: string;
   division: string;
   tags: string[];
 }
 
 const ClubDetailHeader = ({
   name,
-  classification,
+  category,
   division,
   tags,
 }: ClubDetailHeaderProps) => {
@@ -20,7 +20,7 @@ const ClubDetailHeader = ({
     <Styled.ClubDetailHeaderContainer>
       <ClubProfile
         name={name}
-        classification={classification}
+        category={category}
         division={division}
         tags={tags}
       />

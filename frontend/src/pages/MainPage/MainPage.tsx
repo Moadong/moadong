@@ -25,13 +25,13 @@ const MainPage = () => {
   const { keyword } = useSearch();
   const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
   const division = selectedCategory;
-  const classification = 'all';
+  const category = 'all';
 
   const {
     data: clubs,
     isLoading,
     error,
-  } = useGetCardList(keyword, recruitmentStatus, classification, division);
+  } = useGetCardList(keyword, recruitmentStatus, division, category);
 
   const hasData = clubs && clubs.length > 0;
 

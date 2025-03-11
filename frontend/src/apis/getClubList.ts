@@ -3,14 +3,14 @@ import API_BASE_URL from '@/constants/api';
 export const getClubList = async (
   keyword: string = '',
   recruitmentStatus: string = 'all',
-  classification: string = 'all',
+  category: string = 'all',
   division: string = 'all',
 ) => {
   const url = new URL(`${API_BASE_URL}/api/club/search/`);
   const params = new URLSearchParams({
     keyword,
     recruitmentStatus,
-    classification,
+    category,
     division,
   });
 

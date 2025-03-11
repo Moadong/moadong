@@ -5,7 +5,7 @@ export interface Club {
   tags: string[];
   recruitmentStatus: string;
   division: string;
-  classification: string;
+  category: string;
   introduction: string;
 }
 

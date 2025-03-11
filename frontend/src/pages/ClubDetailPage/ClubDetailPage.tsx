@@ -44,7 +44,7 @@ const ClubDetailPage = () => {
       <Styled.PageContainer>
         <ClubDetailHeader
           name={clubDetail.name}
-          classification={clubDetail.classification}
+          category={clubDetail.category}
           division={clubDetail.division}
           tags={clubDetail.tags}
         />
