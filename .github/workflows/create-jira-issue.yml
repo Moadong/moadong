@@ -21,7 +21,7 @@ jobs:
           ref: main
 
       - name: Issue Parser
-        uses: stefanbuck/github-issue-parser@v3  # 오타 수정 (praser -> parser)
+        uses: stefanbuck/github-issue-parser@v3
         id: issue-parser
         with:
           template-path: .github/ISSUE_TEMPLATE/issue-form.yml
@@ -54,10 +54,10 @@ jobs:
       - name: Log created issue
         run: echo "Jira Issue ${{ steps.issue-parser.outputs.issueparser_parentKey || 'UNKNOWN' }}/${{ steps.create.outputs.issue || 'UNKNOWN' }} was created"
 
-      - name: Checkout develop code
+      - name: Checkout develop/fe branch
         uses: actions/checkout@v4
         with:
-          ref: develop
+          ref: develop/fe
 
       - name: Create branch with Ticket number
         run: |
