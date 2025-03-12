@@ -67,12 +67,20 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
 
+      - name: Define issue number with fallback
+        run: |
+          if [ -z "${{ steps.create.outputs.issue }}" ]; then
+            echo "ISSUE_NUMBER=UNKNOWN" >> $GITHUB_ENV
+          else
+            echo "ISSUE_NUMBER=${{ steps.create.outputs.issue }}" >> $GITHUB_ENV
+          fi
+
       - name: Update issue title
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'update-issue'
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: '[${{ steps.create.outputs.issue || "UNKNOWN" }}] ${{ github.event.issue.title }}'
+          title: '[${{ env.ISSUE_NUMBER }}] ${{ github.event.issue.title }}'
 
       - name: Add comment with Jira issue link
         uses: actions-cool/issues-helper@v3
@@ -80,4 +88,4 @@ jobs:
           actions: 'create-comment'
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
-          body: 'Jira Issue Created: [${{ steps.create.outputs.issue || "UNKNOWN" }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create.outputs.issue || "UNKNOWN" }})'
+          body: 'Jira Issue Created: [${{ env.ISSUE_NUMBER }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ env.ISSUE_NUMBER }})'
