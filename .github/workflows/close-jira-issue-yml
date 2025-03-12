@@ -2,7 +2,7 @@ name: Close Jira Issue
 on:
   issues:
     types:
-      - closed
+      - Closed
 
 jobs:
   close-issue:
