@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
+import moadong.club.payload.request.ClubCreateRequest;
 import moadong.club.payload.request.ClubDescriptionUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
@@ -13,10 +14,13 @@ import moadong.club.service.ClubDetailedPageService;
 import moadong.club.service.ClubMetricService;
 import moadong.club.service.ClubSearchService;
 import moadong.global.payload.Response;
+import moadong.user.annotation.CurrentUser;
+import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -33,6 +37,13 @@ public class ClubController {
     private final ClubDetailedPageService clubDetailedPageService;
     private final ClubSearchService clubSearchService;
     private final ClubMetricService clubMetricService;
+
+    @PostMapping("")
+    @Operation(summary = "클럽 생성", description = "클럽을 생성합니다.")
+    public ResponseEntity<?> createClub(@CurrentUser CustomUserDetails user, @RequestBody ClubCreateRequest request) {
+        String clubId = clubCommandService.createClub(request);
+        return Response.ok("success create club", "clubId : " + clubId);
+    }
 
     @PutMapping("/info")
     @Operation(summary = "클럽 수정", description = "클럽을 수정합니다.")

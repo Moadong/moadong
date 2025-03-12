@@ -5,6 +5,7 @@ import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubInformation;
 import moadong.club.entity.ClubTag;
+import moadong.club.payload.request.ClubCreateRequest;
 import moadong.club.payload.request.ClubDescriptionUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.repository.ClubInformationRepository;
@@ -22,6 +23,22 @@ public class ClubCommandService {
     private final ClubInformationRepository clubInformationRepository;
     private final ClubTagRepository clubTagRepository;
     private final RecruitmentScheduler recruitmentScheduler;
+
+    public String createClub(ClubCreateRequest request) {
+        Club club = Club.builder()
+            .name(request.name())
+            .category(request.category())
+            .division(request.division())
+            .build();
+        clubRepository.save(club);
+
+        ClubInformation clubInformation = ClubInformation.builder()
+            .clubId(club.getId())
+            .build();
+        clubInformationRepository.save(clubInformation);
+
+        return club.getId();
+    }
 
     public String updateClubInfo(ClubInfoRequest request) {
         Club club = clubRepository.findById(request.clubId())

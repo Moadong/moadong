@@ -6,6 +6,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.request.ClubInfoRequest;
@@ -40,6 +41,13 @@ public class Club {
         this.category = "";
         this.division = "";
         this.state = ClubState.UNAVAILABLE;
+    }
+
+    @Builder
+    public Club(String name, String category, String division) {
+        this.name = name;
+        this.category = category;
+        this.division = division;
     }
 
     public void update(ClubInfoRequest request) {
