@@ -64,8 +64,10 @@ public class ClubCommandService {
         }
 
         //모집일정을 동적스케쥴러에 달아둠
-        recruitmentScheduler.scheduleRecruitment(club.getId(), request.recruitmentStart(),
-            request.recruitmentEnd());
+        if (request.recruitmentStart() != null && request.recruitmentEnd() != null) {
+            recruitmentScheduler.scheduleRecruitment(club.getId(), request.recruitmentStart(),
+                request.recruitmentEnd());
+        }
 
         return club.getId();
     }
