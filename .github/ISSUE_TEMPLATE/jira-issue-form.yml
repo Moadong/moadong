@@ -1,4 +1,4 @@
-name: '이슈 생성'
+name: 'Jira 이슈 생성'
 description: 'Repo에 이슈를 생성하며, 생성된 이슈는 Jira와 연동됩니다.'
 labels: [feat]
 title: '이슈 이름을 작성해주세요'
