@@ -21,16 +21,16 @@ jobs:
           ref: main
 
       - name: Issue Parser
-        uses: stefanbuck/github-issue-praser@v3
+        uses: stefanbuck/github-issue-parser@v3  # 오타 수정 (praser -> parser)
         id: issue-parser
         with:
           template-path: .github/ISSUE_TEMPLATE/issue-form.yml
 
       - name: Log Issue Parser
         run: |
-          echo '${{ steps.issue-parser.outputs.issueparser_parentKey }}'
-          echo '${{ steps.issue-parser.outputs.__ticket_number }}'
-          echo '${{ steps.issue-parser.outputs.jsonString }}'
+          echo 'Parent Key: ${{ steps.issue-parser.outputs.issueparser_parentKey }}'
+          echo 'Ticket Number: ${{ steps.issue-parser.outputs.issueparser_branch }}'
+          echo 'Parsed JSON: ${{ steps.issue-parser.outputs.jsonString }}'
 
       - name: Convert markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
@@ -41,7 +41,6 @@ jobs:
             - ${{ github.event.issue.html_url }}
 
             ${{ github.event.issue.body }}
-          mode: md2jira
 
       - name: Create Issue
         id: create
@@ -51,15 +50,9 @@ jobs:
           issuetype: Task
           summary: '${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
-          fields: |
-            {
-              "parent": {
-                "key": "${{ steps.issue-parser.outputs.issueparser_parentKey }}"
-              }
-            }
 
       - name: Log created issue
-        run: echo "Jira Issue ${{ steps.issue-parser.outputs.parentKey }}/${{ steps.create.outputs.issue }} was created"
+        run: echo "Jira Issue ${{ steps.issue-parser.outputs.issueparser_parentKey || 'UNKNOWN' }}/${{ steps.create.outputs.issue || 'UNKNOWN' }} was created"
 
       - name: Checkout develop code
         uses: actions/checkout@v4
@@ -69,8 +62,8 @@ jobs:
       - name: Create branch with Ticket number
         run: |
           ISSUE_NUMBER="${{ steps.create.outputs.issue }}"
-          ISSUE_TITLE="${{ steps.issue-parser.outputs.issueparser_branch}}"
-          BRANCH_NAME="${ISSUE_NUMBER}-$(echo ${ISSUE_TITLE} | sed 's/ /-/g')"
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+          BRANCH_NAME="${ISSUE_NUMBER}-$(echo ${ISSUE_TITLE} | tr ' ' '-')"
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
 
@@ -79,7 +72,7 @@ jobs:
         with:
           actions: 'update-issue'
           token: ${{ secrets.GITHUB_TOKEN }}
-          title: '[${{ steps.create.outputs.issue }}] ${{ github.event.issue.title }}'
+          title: '[${{ steps.create.outputs.issue || "UNKNOWN" }}] ${{ github.event.issue.title }}'
 
       - name: Add comment with Jira issue link
         uses: actions-cool/issues-helper@v3
@@ -87,5 +80,4 @@ jobs:
           actions: 'create-comment'
           token: ${{ secrets.GITHUB_TOKEN }}
           issue-number: ${{ github.event.issue.number }}
-          body: 'Jira Issue Created: [${{ steps.create.outputs.issue }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create.outputs.issue }})'
-      
+          body: 'Jira Issue Created: [${{ steps.create.outputs.issue || "UNKNOWN" }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ steps.create.outputs.issue || "UNKNOWN" }})'
