@@ -31,7 +31,7 @@ jobs:
         uses: atlassian/gajira-transition@v3
         with:
           issue: ${{ env.JIRA_ISSUE_KEY }}
-          transition: "Done"
+          transition: "완료"
 
       - name: Add comment on GitHub issue
         if: env.JIRA_ISSUE_KEY != ''
