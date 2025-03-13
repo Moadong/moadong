@@ -14,7 +14,10 @@ jobs:
         id: extract-key
         run: |
           TITLE="${{ github.event.issue.title }}"
-          ISSUE_KEY=$(echo "$TITLE" | grep -oE '\[[A-Z]+-[0-9]+\]' | tr -d '[]')
+
+          # Jira 이슈 키 패턴 추출 (예: FE-123, BE-456 등)
+          ISSUE_KEY=$(echo "$TITLE" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+
           echo "JIRA_ISSUE_KEY=$ISSUE_KEY" >> $GITHUB_ENV
           echo "Extracted Jira Issue Key: $ISSUE_KEY"
 
