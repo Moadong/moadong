@@ -62,8 +62,13 @@ jobs:
       - name: Create branch with Ticket number
         run: |
           ISSUE_NUMBER="${{ steps.create.outputs.issue }}"
-          ISSUE_TITLE="${{ github.event.issue.title }}"
-          BRANCH_NAME="${ISSUE_NUMBER}-$(echo ${ISSUE_TITLE} | tr ' ' '-')"
+          JIRA_ISSUE_KEY="${{ steps.create.outputs.issue }}"
+          CUSTOM_BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branch }}"
+
+          SAFE_BRANCH_NAME=$(echo "${CUSTOM_BRANCH_NAME}" | tr ' ' '-' | tr -cd '[:alnum:]-')
+
+          BRANCH_NAME="${SAFE_BRANCH_NAME}"
+
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
 
