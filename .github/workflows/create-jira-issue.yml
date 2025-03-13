@@ -68,11 +68,22 @@ jobs:
           # 사용자 입력 브랜치명에서 공백 제거 및 특수문자 처리
           SAFE_BRANCH_NAME=$(echo "${CUSTOM_BRANCH_NAME}" | tr ' ' '-' | tr -cd '[:alnum:]/-')
 
-          # 최종 브랜치명: "브랜치명/#깃허브이슈번호-브랜치명-지라이슈번호"
-          BRANCH_NAME="${SAFE_BRANCH_NAME}/#${GITHUB_ISSUE_NUMBER}-${SAFE_BRANCH_NAME}-${JIRA_ISSUE_KEY}"
-          
+          # 최종 브랜치명: "브랜치타입/#깃허브이슈번호-나머지-지라이슈번호"
+          # 브랜치 타입과 상세명을 분리하기 위해 "/"를 기준으로 나누고, 첫 번째 부분은 따로 저장
+          BRANCH_TYPE=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f1)
+          BRANCH_DETAIL=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f2-)
+
+          # 만약 사용자가 "/" 없이 단일 브랜치명을 입력했다면, BRANCH_DETAIL을 그대로 사용
+          if [ -z "$BRANCH_DETAIL" ]; then
+            BRANCH_DETAIL="$BRANCH_TYPE"
+          fi
+
+          # 최종 브랜치명 조합
+          BRANCH_NAME="${BRANCH_TYPE}/#${GITHUB_ISSUE_NUMBER}-${BRANCH_DETAIL}-${JIRA_ISSUE_KEY}"
+
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
+
 
       - name: Define issue number with fallback
         run: |
