@@ -23,12 +23,9 @@ public record ClubDetailedResult(
     String division
 ) {
 
-    public static ClubDetailedResult of(
-        Club club,
-        ClubRecruitmentInformation clubRecruitmentInformation,
-        List<String> clubFeedImages,
-        List<String> clubTags) {
+    public static ClubDetailedResult of(Club club) {
         String period = "미정";
+        ClubRecruitmentInformation clubRecruitmentInformation = club.getClubRecruitmentInformation();
         if (clubRecruitmentInformation.hasRecruitmentPeriod()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
             period = clubRecruitmentInformation.getRecruitmentStart().format(formatter) + " ~ "
@@ -43,8 +40,8 @@ public record ClubDetailedResult(
             .description(clubRecruitmentInformation.getDescription())
             .presidentName(clubRecruitmentInformation.getPresidentName())
             .presidentPhoneNumber(clubRecruitmentInformation.getPresidentTelephoneNumber())
-            .feeds(clubFeedImages)
-            .tags(clubTags)
+            .feeds(clubRecruitmentInformation.getFeedImages())
+            .tags(clubRecruitmentInformation.getTags())
             .recruitmentPeriod(period)
             .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget())
             .build();

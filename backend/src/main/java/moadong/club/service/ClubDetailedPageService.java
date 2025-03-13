@@ -25,25 +25,8 @@ public class ClubDetailedPageService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        ClubRecruitmentInformation clubRecruitmentInformation = clubInformationRepository.findByClubId(clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_INFORMATION_NOT_FOUND));
-
-        List<String> clubFeedImages = clubFeedImageRepository.findAllByClubId(clubId)
-                .stream()
-                .map(ClubFeedImageProjection::getImage)
-                .toList();
-
-        List<String> clubTags = clubTagRepository.findAllByClubId(clubId)
-                .orElse(Collections.emptyList())
-                .stream()
-                .map(ClubTagProjection::getTag)
-                .toList();
-        
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(
-                club,
-                clubRecruitmentInformation,
-                clubFeedImages,
-                clubTags
+                club
         );
         return new ClubDetailedResponse(clubDetailedResult);
     }
