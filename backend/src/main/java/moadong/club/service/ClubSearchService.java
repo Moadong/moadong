@@ -16,8 +16,6 @@ import org.springframework.stereotype.Service;
 public class ClubSearchService {
 
     private final ClubSearchRepository clubSearchRepository;
-    private final ClubInformationRepository clubInformationRepository;
-    private final ClubTagRepository clubTagRepository;
 
     public ClubSearchResponse searchClubsByKeyword(String keyword,
         String recruitmentStatus,
@@ -30,28 +28,11 @@ public class ClubSearchService {
             division,
             category
         );
-
-        List<ClubSearchResult> result = assignInformation(clubSearchResults);
+        //TODO: 변경된 컬렉션 구조에 맞춰 수정할 것
+        List<ClubSearchResult> result = new ArrayList<>();
 
         return ClubSearchResponse.builder()
             .clubs(result)
             .build();
-    }
-
-    private List<ClubSearchResult> assignInformation(List<ClubSearchResult> clubSearchResults) {
-        List<ClubSearchResult> list = new ArrayList<>();
-        for (ClubSearchResult clubSearchResult : clubSearchResults) {
-            ClubRecruitmentInformation clubRecruitmentInformation = clubInformationRepository.findByClubId(
-                    clubSearchResult.id())
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_INFORMATION_NOT_FOUND));
-
-            List<ClubTag> tags = clubTagRepository.findClubTagsByClubId(clubSearchResult.id());
-            List<String> tagNames = tags.stream()
-                .map(ClubTag::getTag)
-                .toList();
-
-            list.add(ClubSearchResult.of(clubSearchResult, clubRecruitmentInformation, tagNames));
-        }
-        return list;
     }
 }
