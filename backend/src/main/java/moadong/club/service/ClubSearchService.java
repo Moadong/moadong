@@ -3,8 +3,7 @@ package moadong.club.service;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import moadong.club.entity.ClubInformation;
-import moadong.club.entity.ClubTag;
+import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.repository.ClubInformationRepository;
@@ -44,7 +43,7 @@ public class ClubSearchService {
     private List<ClubSearchResult> assignInformation(List<ClubSearchResult> clubSearchResults) {
         List<ClubSearchResult> list = new ArrayList<>();
         for (ClubSearchResult clubSearchResult : clubSearchResults) {
-            ClubInformation clubInformation = clubInformationRepository.findByClubId(
+            ClubRecruitmentInformation clubRecruitmentInformation = clubInformationRepository.findByClubId(
                     clubSearchResult.id())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_INFORMATION_NOT_FOUND));
 
@@ -53,7 +52,7 @@ public class ClubSearchService {
                 .map(ClubTag::getTag)
                 .toList();
 
-            list.add(ClubSearchResult.of(clubSearchResult, clubInformation, tagNames));
+            list.add(ClubSearchResult.of(clubSearchResult, clubRecruitmentInformation, tagNames));
         }
         return list;
     }

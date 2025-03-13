@@ -2,10 +2,8 @@ package moadong.club.service;
 
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubInformation;
+import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.payload.dto.ClubDetailedResult;
-import moadong.club.payload.dto.ClubFeedImageProjection;
-import moadong.club.payload.dto.ClubTagProjection;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.repository.ClubFeedImageRepository;
 import moadong.club.repository.ClubInformationRepository;
@@ -33,7 +31,7 @@ public class ClubDetailedPageService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        ClubInformation clubInformation = clubInformationRepository.findByClubId(clubId)
+        ClubRecruitmentInformation clubRecruitmentInformation = clubInformationRepository.findByClubId(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_INFORMATION_NOT_FOUND));
 
         List<String> clubFeedImages = clubFeedImageRepository.findAllByClubId(clubId)
@@ -49,7 +47,7 @@ public class ClubDetailedPageService {
         
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(
                 club,
-                clubInformation,
+                clubRecruitmentInformation,
                 clubFeedImages,
                 clubTags
         );

@@ -2,16 +2,14 @@ package moadong.club.repository;
 
 import jakarta.validation.constraints.NotNull;
 import java.util.Optional;
-import moadong.club.entity.ClubInformation;
-import moadong.club.payload.dto.ClubLogoProjection;
+import moadong.club.entity.ClubRecruitmentInformation;
 import org.checkerframework.common.aliasing.qual.Unique;
-import moadong.club.payload.dto.ClubInformationSearchProjection;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-public interface ClubInformationRepository extends MongoRepository<ClubInformation, String> {
+public interface ClubInformationRepository extends MongoRepository<ClubRecruitmentInformation, String> {
 
-    Optional<ClubInformation> findByClubId(String clubId);
+    Optional<ClubRecruitmentInformation> findByClubId(String clubId);
     Optional<ClubLogoProjection> findLogoByClubId(@NotNull String clubId);
-    Optional<ClubInformation> findByLogo(@Unique String logo);
+    Optional<ClubRecruitmentInformation> findByLogo(@Unique String logo);
     Optional<ClubInformationSearchProjection> findInformationByClubId(String clubId);
 }

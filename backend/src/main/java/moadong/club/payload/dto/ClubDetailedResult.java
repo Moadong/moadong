@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.Builder;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubInformation;
+import moadong.club.entity.ClubRecruitmentInformation;
 
 @Builder
 public record ClubDetailedResult(
@@ -25,14 +25,14 @@ public record ClubDetailedResult(
 
     public static ClubDetailedResult of(
         Club club,
-        ClubInformation clubInformation,
+        ClubRecruitmentInformation clubRecruitmentInformation,
         List<String> clubFeedImages,
         List<String> clubTags) {
         String period = "미정";
-        if (clubInformation.hasRecruitmentPeriod()) {
+        if (clubRecruitmentInformation.hasRecruitmentPeriod()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-            period = clubInformation.getRecruitmentStart().format(formatter) + " ~ "
-                + clubInformation.getRecruitmentEnd().format(formatter);
+            period = clubRecruitmentInformation.getRecruitmentStart().format(formatter) + " ~ "
+                + clubRecruitmentInformation.getRecruitmentEnd().format(formatter);
         }
         return ClubDetailedResult.builder()
             .id(club.getId())
@@ -40,13 +40,13 @@ public record ClubDetailedResult(
             .category(club.getCategory())
             .division(club.getDivision())
             .state(club.getState().getDesc())
-            .description(clubInformation.getDescription())
-            .presidentName(clubInformation.getPresidentName())
-            .presidentPhoneNumber(clubInformation.getPresidentTelephoneNumber())
+            .description(clubRecruitmentInformation.getDescription())
+            .presidentName(clubRecruitmentInformation.getPresidentName())
+            .presidentPhoneNumber(clubRecruitmentInformation.getPresidentTelephoneNumber())
             .feeds(clubFeedImages)
             .tags(clubTags)
             .recruitmentPeriod(period)
-            .recruitmentTarget(clubInformation.getRecruitmentTarget())
+            .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget())
             .build();
     }
 

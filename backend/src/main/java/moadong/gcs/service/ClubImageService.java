@@ -7,8 +7,7 @@ import java.text.Normalizer;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
-import moadong.club.entity.ClubFeedImage;
-import moadong.club.entity.ClubInformation;
+import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubFeedImageRepository;
 import moadong.club.repository.ClubInformationRepository;
 import moadong.global.exception.ErrorCode;
@@ -34,7 +33,7 @@ public class ClubImageService {
 
     public String uploadLogo(String clubId, MultipartFile file) {
 
-        ClubInformation clubInfo = clubInformationRepository.findByClubId(clubId)
+        ClubRecruitmentInformation clubInfo = clubInformationRepository.findByClubId(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_INFORMATION_NOT_FOUND));
         if (clubInfo.getLogo() != null) {
             deleteFile(clubInfo.getLogo());
@@ -98,9 +97,9 @@ public class ClubImageService {
             clubFeedImageRepository.deleteAllByImage(filePath);
 
         } else if (fileType.equals("logo")) {
-            ClubInformation clubInformation = clubInformationRepository.findByLogo(filePath)
+            ClubRecruitmentInformation clubRecruitmentInformation = clubInformationRepository.findByLogo(filePath)
                     .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_INFORMATION_NOT_FOUND));
-            clubInformationRepository.save(clubInformation.updateLogo(null));
+            clubInformationRepository.save(clubRecruitmentInformation.updateLogo(null));
         }
     }
 

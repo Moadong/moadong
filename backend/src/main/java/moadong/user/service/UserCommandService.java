@@ -4,7 +4,7 @@ import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubInformation;
+import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubInformationRepository;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
@@ -54,10 +54,10 @@ public class UserCommandService {
         Club club = new Club();
         clubRepository.save(club);
 
-        ClubInformation clubInformation = ClubInformation.builder()
+        ClubRecruitmentInformation clubRecruitmentInformation = ClubRecruitmentInformation.builder()
             .clubId(club.getId())
             .build();
-        clubInformationRepository.save(clubInformation);
+        clubInformationRepository.save(clubRecruitmentInformation);
     }
 
     public AccessTokenResponse loginUser(UserLoginRequest userLoginRequest,
