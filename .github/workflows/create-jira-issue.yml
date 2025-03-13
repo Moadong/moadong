@@ -93,15 +93,16 @@ jobs:
             echo "ISSUE_NUMBER=${{ steps.create.outputs.issue }}" >> $GITHUB_ENV
           fi
 
-      - name: Update issue title with branch type
+      - name: Update issue title with branch type and Jira issue key
         run: |
           CUSTOM_BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branch }}"
+          JIRA_ISSUE_KEY="${{ steps.create.outputs.issue }}"
 
           # 브랜치명의 제일 앞부분(예: feature, hotfix, refactor 등) 추출
           BRANCH_TYPE=$(echo "${CUSTOM_BRANCH_NAME}" | cut -d'/' -f1)
 
-          # 이슈 타이틀 업데이트
-          echo "NEW_TITLE=[${BRANCH_TYPE}] ${{ github.event.issue.title }}" >> $GITHUB_ENV
+          # 최종 이슈 타이틀 조합 (Jira 이슈 키에 [] 없이 삽입)
+          echo "NEW_TITLE=[${BRANCH_TYPE}] ${JIRA_ISSUE_KEY} ${{ github.event.issue.title }}" >> $GITHUB_ENV
 
       - name: Apply updated issue title
         uses: actions-cool/issues-helper@v3
