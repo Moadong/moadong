@@ -5,6 +5,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -13,9 +14,6 @@ import moadong.club.payload.request.ClubDescriptionUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Document("clubs")
 @AllArgsConstructor
@@ -44,6 +42,7 @@ public class Club {
 
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
+
     public Club() {
         this.name = "";
         this.category = "";
@@ -53,7 +52,8 @@ public class Club {
     }
 
     @Builder
-    public Club(String name, String category, String division, ClubRecruitmentInformation clubRecruitmentInformation) {
+    public Club(String name, String category, String division,
+        ClubRecruitmentInformation clubRecruitmentInformation) {
         this.name = name;
         this.category = category;
         this.division = division;
@@ -67,25 +67,25 @@ public class Club {
         this.state = ClubState.AVAILABLE;
 
         this.clubRecruitmentInformation = ClubRecruitmentInformation.builder()
-                .presidentName(request.clubPresidentName())
-                .presidentTelephoneNumber(request.telephoneNumber())
-                .introduction(request.introduction())
-                .recruitmentStart(request.recruitmentStart())
-                .recruitmentEnd(request.recruitmentEnd())
-                .recruitmentTarget(request.recruitmentTarget())
-                .tags(request.tags())
-                .build();
+            .presidentName(request.clubPresidentName())
+            .presidentTelephoneNumber(request.telephoneNumber())
+            .introduction(request.introduction())
+            .recruitmentStart(request.recruitmentStart())
+            .recruitmentEnd(request.recruitmentEnd())
+            .recruitmentTarget(request.recruitmentTarget())
+            .tags(request.tags())
+            .build();
     }
 
-    public void update(ClubDescriptionUpdateRequest request){
+    public void update(ClubDescriptionUpdateRequest request) {
         clubRecruitmentInformation.updateDescription(request);
     }
 
-    public void updateLogo(String logo){
+    public void updateLogo(String logo) {
         this.clubRecruitmentInformation.updateLogo(logo);
     }
 
-    public void updateFeedImages(List<String> feedImages){
+    public void updateFeedImages(List<String> feedImages) {
         this.clubRecruitmentInformation.updateFeedImages(feedImages);
     }
 }
