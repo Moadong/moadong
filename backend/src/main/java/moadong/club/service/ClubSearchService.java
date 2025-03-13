@@ -2,13 +2,12 @@ package moadong.club.service;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import lombok.AllArgsConstructor;
-import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
+import moadong.club.repository.ClubRepository;
 import moadong.club.repository.ClubSearchRepository;
-import moadong.global.exception.ErrorCode;
-import moadong.global.exception.RestApiException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -22,14 +21,14 @@ public class ClubSearchService {
         String division,
         String category
     ) {
-        List<ClubSearchResult> clubSearchResults = clubSearchRepository.searchResult(
+        List<ClubSearchResult> clubSearchResults = clubSearchRepository.searchClubsByKeyword(
             keyword,
             recruitmentStatus,
             division,
             category
         );
         //TODO: 변경된 컬렉션 구조에 맞춰 수정할 것
-        List<ClubSearchResult> result = new ArrayList<>();
+        List<ClubSearchResult> result = clubSearchResults;
 
         return ClubSearchResponse.builder()
             .clubs(result)
