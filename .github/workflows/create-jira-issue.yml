@@ -61,14 +61,16 @@ jobs:
 
       - name: Create branch with Ticket number
         run: |
-          ISSUE_NUMBER="${{ steps.create.outputs.issue }}"
+          GITHUB_ISSUE_NUMBER="${{ github.event.issue.number }}"
           JIRA_ISSUE_KEY="${{ steps.create.outputs.issue }}"
           CUSTOM_BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branch }}"
 
-          SAFE_BRANCH_NAME=$(echo "${CUSTOM_BRANCH_NAME}" | tr ' ' '-' | tr -cd '[:alnum:]-')
+          # 사용자 입력 브랜치명에서 공백 제거 및 특수문자 처리
+          SAFE_BRANCH_NAME=$(echo "${CUSTOM_BRANCH_NAME}" | tr ' ' '-' | tr -cd '[:alnum:]/-')
 
-          BRANCH_NAME="${SAFE_BRANCH_NAME}"
-
+          # 최종 브랜치명: "브랜치명/#깃허브이슈번호-브랜치명-지라이슈번호"
+          BRANCH_NAME="${SAFE_BRANCH_NAME}/#${GITHUB_ISSUE_NUMBER}-${SAFE_BRANCH_NAME}-${JIRA_ISSUE_KEY}"
+          
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
 
