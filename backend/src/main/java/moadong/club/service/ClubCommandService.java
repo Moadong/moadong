@@ -1,15 +1,11 @@
 package moadong.club.service;
 
-import java.util.List;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.payload.request.ClubCreateRequest;
 import moadong.club.payload.request.ClubDescriptionUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
-import moadong.club.repository.ClubInformationRepository;
 import moadong.club.repository.ClubRepository;
-import moadong.club.repository.ClubTagRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.springframework.stereotype.Service;
@@ -19,8 +15,6 @@ import org.springframework.stereotype.Service;
 public class ClubCommandService {
 
     private final ClubRepository clubRepository;
-    private final ClubInformationRepository clubInformationRepository;
-    private final ClubTagRepository clubTagRepository;
     private final RecruitmentScheduler recruitmentScheduler;
 
     public String createClub(ClubCreateRequest request) {

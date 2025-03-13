@@ -10,7 +10,6 @@ import java.util.concurrent.ScheduledFuture;
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.RecruitmentStatus;
-import moadong.club.repository.ClubInformationRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.springframework.scheduling.TaskScheduler;

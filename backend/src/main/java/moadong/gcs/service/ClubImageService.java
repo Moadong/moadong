@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.ClubRecruitmentInformation;
-import moadong.club.repository.ClubFeedImageRepository;
-import moadong.club.repository.ClubInformationRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.RandomStringUtil;

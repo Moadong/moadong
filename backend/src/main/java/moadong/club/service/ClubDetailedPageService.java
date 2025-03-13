@@ -5,10 +5,7 @@ import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.payload.dto.ClubDetailedResult;
 import moadong.club.payload.response.ClubDetailedResponse;
-import moadong.club.repository.ClubFeedImageRepository;
-import moadong.club.repository.ClubInformationRepository;
 import moadong.club.repository.ClubRepository;
-import moadong.club.repository.ClubTagRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.bson.types.ObjectId;
@@ -22,9 +19,6 @@ import java.util.List;
 public class ClubDetailedPageService {
 
     private final ClubRepository clubRepository;
-    private final ClubInformationRepository clubInformationRepository;
-    private final ClubFeedImageRepository clubFeedImageRepository;
-    private final ClubTagRepository clubTagRepository;
 
     public ClubDetailedResponse getClubDetailedPage(String clubId) {
         ObjectId objectId = new ObjectId(clubId);
