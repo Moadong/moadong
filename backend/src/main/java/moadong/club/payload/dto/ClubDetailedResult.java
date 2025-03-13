@@ -19,7 +19,7 @@ public record ClubDetailedResult(
     String presidentPhoneNumber,
     String recruitmentPeriod,
     String recruitmentTarget,
-    String classification,
+    String category,
     String division
 ) {
 
@@ -28,11 +28,16 @@ public record ClubDetailedResult(
         ClubInformation clubInformation,
         List<String> clubFeedImages,
         List<String> clubTags) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+        String period = "미정";
+        if (clubInformation.hasRecruitmentPeriod()) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+            period = clubInformation.getRecruitmentStart().format(formatter) + " ~ "
+                + clubInformation.getRecruitmentEnd().format(formatter);
+        }
         return ClubDetailedResult.builder()
             .id(club.getId())
             .name(club.getName())
-            .classification(club.getClassification())
+            .category(club.getCategory())
             .division(club.getDivision())
             .state(club.getState().getDesc())
             .description(clubInformation.getDescription())
@@ -40,8 +45,7 @@ public record ClubDetailedResult(
             .presidentPhoneNumber(clubInformation.getPresidentTelephoneNumber())
             .feeds(clubFeedImages)
             .tags(clubTags)
-            .recruitmentPeriod(clubInformation.getRecruitmentStart().format(formatter) + " ~ "
-                + clubInformation.getRecruitmentEnd().format(formatter))
+            .recruitmentPeriod(period)
             .recruitmentTarget(clubInformation.getRecruitmentTarget())
             .build();
     }

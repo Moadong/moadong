@@ -25,13 +25,13 @@ public class ClubSearchService {
     public ClubSearchResponse searchClubsByKeyword(String keyword,
         String recruitmentStatus,
         String division,
-        String classification
+        String category
     ) {
         List<ClubSearchResult> clubSearchResults = clubSearchRepository.searchResult(
             keyword,
             recruitmentStatus,
             division,
-            classification
+            category
         );
 
         List<ClubSearchResult> result = assignInformation(clubSearchResults);

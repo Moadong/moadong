@@ -1,5 +1,6 @@
 package moadong.club.entity;
 
+import com.google.type.DateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -7,16 +8,20 @@ import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.RecruitmentStatus;
-import moadong.club.payload.request.ClubUpdateRequest;
+import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.payload.request.ClubInfoRequest;
 import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("club_information")
+@Document("club_informations")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
@@ -56,10 +61,8 @@ public class ClubInformation {
     @NotNull
     private RecruitmentStatus recruitmentStatus;
 
-    public void update(ClubUpdateRequest request) {
-        this.logo = request.thumbnail();
+    public void updateInfo(ClubInfoRequest request) {
         this.introduction = request.introduction();
-        this.description = request.description();
         this.presidentName = request.clubPresidentName();
         this.presidentTelephoneNumber = request.telephoneNumber();
         this.recruitmentStart = request.recruitmentStart();
@@ -69,10 +72,29 @@ public class ClubInformation {
     }
 
     public ClubInformation updateLogo(String logo) {
-        return this.toBuilder().logo(logo).build();
+        this.logo = logo;
+        return this;
     }
 
     public void updateRecruitmentStatus(RecruitmentStatus status) {
         this.recruitmentStatus = status;
+    }
+
+    public void updateDescription(ClubDescriptionUpdateRequest request) {
+        this.description = request.description();
+    }
+
+    public boolean hasRecruitmentPeriod() {
+        return recruitmentStart != null && recruitmentEnd != null;
+    }
+
+    public ZonedDateTime getRecruitmentStart() {
+        ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        return recruitmentStart.atZone(seoulZone);
+    }
+
+    public ZonedDateTime getRecruitmentEnd() {
+        ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        return recruitmentEnd.atZone(seoulZone);
     }
 }

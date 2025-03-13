@@ -11,7 +11,7 @@ public record ClubSearchResult(
     String logo,
     List<String> tags,
     String state,
-    String classification,
+    String category,
     String division,
     String introduction,
     String recruitmentStatus
@@ -25,7 +25,7 @@ public record ClubSearchResult(
             .logo(search.logo())
             .tags(tags)
             .state(search.state())
-            .classification(search.classification())
+            .category(search.category())
             .division(search.division())
             .introduction(information.getIntroduction())
             .recruitmentStatus(information.getRecruitmentStatus().toString())

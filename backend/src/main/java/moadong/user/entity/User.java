@@ -2,30 +2,30 @@ package moadong.user.entity;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.util.Collection;
+import java.util.Date;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moadong.global.annotation.UserId;
 import moadong.user.entity.enums.UserStatus;
+import moadong.user.payload.request.UserUpdateRequest;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import java.util.Collection;
-import java.util.Date;
 
 @Entity
 @Builder
 @Getter
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("user")
+@Document("users")
 public class User implements UserDetails {
+
     @Id
     private String id;
 
@@ -66,5 +66,10 @@ public class User implements UserDetails {
     @Override
     public String getUsername() {
         return userId;
+    }
+
+    public void update(UserUpdateRequest userUpdateRequest) {
+        this.userId = userUpdateRequest.userId();
+        this.password = userUpdateRequest.password();
     }
 }
