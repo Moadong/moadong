@@ -59,16 +59,7 @@ public class ClubRecruitmentInformation {
     @NotNull
     private RecruitmentStatus recruitmentStatus;
 
-    public void updateInfo(ClubInfoRequest request) {
-        this.introduction = request.introduction();
-        this.presidentName = request.clubPresidentName();
-        this.presidentTelephoneNumber = request.telephoneNumber();
-        this.recruitmentStart = request.recruitmentStart();
-        this.recruitmentEnd = request.recruitmentEnd();
-        this.recruitmentTarget = request.recruitmentTarget();
-        this.recruitmentStatus = RecruitmentStatus.UPCOMING;
-        this.tags = request.tags();
-    }
+    private String recruitmentForm;
 
     public ClubRecruitmentInformation updateLogo(String logo) {
         this.logo = logo;
