@@ -1,6 +1,5 @@
 package moadong.club.entity;
 
-import com.google.type.DateTime;
 import jakarta.persistence.Column;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -10,7 +9,8 @@ import jakarta.validation.constraints.Pattern;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -21,18 +21,13 @@ import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("club_informations")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
-public class ClubInformation {
+public class ClubRecruitmentInformation {
 
     @Id
     private String id;
-
-    @NotNull
-    @Column(unique = true, nullable = false)
-    private String clubId;
 
     @Column(length = 1024)
     @Unique
@@ -57,6 +52,9 @@ public class ClubInformation {
 
     private String recruitmentTarget;
 
+    private List<String> feedImages;
+    private List<String> tags;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private RecruitmentStatus recruitmentStatus;
@@ -69,9 +67,10 @@ public class ClubInformation {
         this.recruitmentEnd = request.recruitmentEnd();
         this.recruitmentTarget = request.recruitmentTarget();
         this.recruitmentStatus = RecruitmentStatus.UPCOMING;
+        this.tags = request.tags();
     }
 
-    public ClubInformation updateLogo(String logo) {
+    public ClubRecruitmentInformation updateLogo(String logo) {
         this.logo = logo;
         return this;
     }
@@ -96,5 +95,13 @@ public class ClubInformation {
     public ZonedDateTime getRecruitmentEnd() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
         return recruitmentEnd.atZone(seoulZone);
+    }
+
+    public int getFeedAmounts(){
+        return this.feedImages.size();
+    }
+
+    public void updateFeedImages(List<String> feedImages){
+        this.feedImages = feedImages;
     }
 }

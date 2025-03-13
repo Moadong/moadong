@@ -4,7 +4,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.List;
 import lombok.Builder;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubInformation;
+import moadong.club.entity.ClubRecruitmentInformation;
 
 @Builder
 public record ClubDetailedResult(
@@ -23,16 +23,13 @@ public record ClubDetailedResult(
     String division
 ) {
 
-    public static ClubDetailedResult of(
-        Club club,
-        ClubInformation clubInformation,
-        List<String> clubFeedImages,
-        List<String> clubTags) {
+    public static ClubDetailedResult of(Club club) {
         String period = "미정";
-        if (clubInformation.hasRecruitmentPeriod()) {
+        ClubRecruitmentInformation clubRecruitmentInformation = club.getClubRecruitmentInformation();
+        if (clubRecruitmentInformation.hasRecruitmentPeriod()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-            period = clubInformation.getRecruitmentStart().format(formatter) + " ~ "
-                + clubInformation.getRecruitmentEnd().format(formatter);
+            period = clubRecruitmentInformation.getRecruitmentStart().format(formatter) + " ~ "
+                + clubRecruitmentInformation.getRecruitmentEnd().format(formatter);
         }
         return ClubDetailedResult.builder()
             .id(club.getId())
@@ -40,13 +37,13 @@ public record ClubDetailedResult(
             .category(club.getCategory())
             .division(club.getDivision())
             .state(club.getState().getDesc())
-            .description(clubInformation.getDescription())
-            .presidentName(clubInformation.getPresidentName())
-            .presidentPhoneNumber(clubInformation.getPresidentTelephoneNumber())
-            .feeds(clubFeedImages)
-            .tags(clubTags)
+            .description(clubRecruitmentInformation.getDescription())
+            .presidentName(clubRecruitmentInformation.getPresidentName())
+            .presidentPhoneNumber(clubRecruitmentInformation.getPresidentTelephoneNumber())
+            .feeds(clubRecruitmentInformation.getFeedImages())
+            .tags(clubRecruitmentInformation.getTags())
             .recruitmentPeriod(period)
-            .recruitmentTarget(clubInformation.getRecruitmentTarget())
+            .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget())
             .build();
     }
 

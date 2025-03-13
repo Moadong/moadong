@@ -2,7 +2,7 @@ package moadong.club.payload.dto;
 
 import java.util.List;
 import lombok.Builder;
-import moadong.club.entity.ClubInformation;
+import moadong.club.entity.ClubRecruitmentInformation;
 
 @Builder
 public record ClubSearchResult(
@@ -17,7 +17,7 @@ public record ClubSearchResult(
     String recruitmentStatus
 ) {
 
-    public static ClubSearchResult of(ClubSearchResult search, ClubInformation information,
+    public static ClubSearchResult of(ClubSearchResult search, ClubRecruitmentInformation information,
         List<String> tags) {
         return ClubSearchResult.builder()
             .id(search.id())
