@@ -34,7 +34,6 @@ public class UserCommandService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final ClubRepository clubRepository;
-    private final ClubInformationRepository clubInformationRepository;
 
     public void registerUser(UserRegisterRequest userRegisterRequest) {
         try {
@@ -52,11 +51,6 @@ public class UserCommandService {
     private void createClub() {
         Club club = new Club();
         clubRepository.save(club);
-
-        ClubRecruitmentInformation clubRecruitmentInformation = ClubRecruitmentInformation.builder()
-            .clubId(club.getId())
-            .build();
-        clubInformationRepository.save(clubRecruitmentInformation);
     }
 
     public AccessTokenResponse loginUser(UserLoginRequest userLoginRequest,

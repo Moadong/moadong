@@ -80,4 +80,12 @@ public class Club {
     public void update(ClubDescriptionUpdateRequest request){
         clubRecruitmentInformation.updateDescription(request);
     }
+
+    public void updateLogo(String logo){
+        this.clubRecruitmentInformation.updateLogo(logo);
+    }
+
+    public void updateFeedImages(List<String> feedImages){
+        this.clubRecruitmentInformation.updateFeedImages(feedImages);
+    }
 }

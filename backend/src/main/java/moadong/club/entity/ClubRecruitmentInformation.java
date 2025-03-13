@@ -96,4 +96,12 @@ public class ClubRecruitmentInformation {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
         return recruitmentEnd.atZone(seoulZone);
     }
+
+    public int getFeedAmounts(){
+        return this.feedImages.size();
+    }
+
+    public void updateFeedImages(List<String> feedImages){
+        this.feedImages = feedImages;
+    }
 }
