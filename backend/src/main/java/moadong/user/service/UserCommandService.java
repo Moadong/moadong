@@ -4,8 +4,7 @@ import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubInformation;
-import moadong.club.repository.ClubInformationRepository;
+import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
@@ -35,7 +34,6 @@ public class UserCommandService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final ClubRepository clubRepository;
-    private final ClubInformationRepository clubInformationRepository;
 
     public void registerUser(UserRegisterRequest userRegisterRequest) {
         try {
@@ -53,11 +51,6 @@ public class UserCommandService {
     private void createClub() {
         Club club = new Club();
         clubRepository.save(club);
-
-        ClubInformation clubInformation = ClubInformation.builder()
-            .clubId(club.getId())
-            .build();
-        clubInformationRepository.save(clubInformation);
     }
 
     public AccessTokenResponse loginUser(UserLoginRequest userLoginRequest,

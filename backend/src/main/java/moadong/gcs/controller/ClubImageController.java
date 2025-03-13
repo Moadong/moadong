@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -31,7 +30,7 @@ public class ClubImageController {
 
     @PostMapping(value = "/{clubId}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "로고 이미지 업로드", description = "로고 이미지를 저장소에 업로드합니다.")
-    public ResponseEntity<?> uploadLogo(@PathVariable String clubId,
+    public ResponseEntity<?> uploadFeed(@PathVariable String clubId,
                                         @RequestPart("logo") MultipartFile file) {
         String fileUrl = clubImageService.uploadLogo(clubId, file);
         return Response.ok(fileUrl);
@@ -46,7 +45,7 @@ public class ClubImageController {
 
     @PostMapping(value = "/{clubId}/feeds", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "피드 이미지 업로드", description = "피드 이미지를 저장소에 업로드합니다.")
-    public ResponseEntity<?> uploadLogo(@PathVariable String clubId,
+    public ResponseEntity<?> uploadFeed(@PathVariable String clubId,
                                         @RequestPart("feeds") List<MultipartFile> files) {
         clubImageService.uploadFeeds(clubId, files);
         return Response.ok("success upload feeds");

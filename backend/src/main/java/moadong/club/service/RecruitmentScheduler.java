@@ -8,11 +8,13 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import lombok.RequiredArgsConstructor;
-import moadong.club.entity.ClubInformation;
+import moadong.club.entity.Club;
+import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.RecruitmentStatus;
-import moadong.club.repository.ClubInformationRepository;
+import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import org.bson.types.ObjectId;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
 
@@ -21,9 +23,9 @@ import org.springframework.stereotype.Component;
 public class RecruitmentScheduler {
 
     private final TaskScheduler taskScheduler;
-    private final ClubInformationRepository clubInformationRepository;
-
     private final Map<String, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
+
+    private final ClubRepository clubRepository;
 
     public void scheduleRecruitment(String clubId, LocalDateTime startDate,
         LocalDateTime endDate) {
@@ -52,11 +54,12 @@ public class RecruitmentScheduler {
 
     @Transactional
     public void updateRecruitmentStatus(String clubId, RecruitmentStatus status) {
-        ClubInformation clubInformation = clubInformationRepository.findByClubId(clubId)
-            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_INFORMATION_NOT_FOUND));
+        ObjectId objectId = new ObjectId(clubId);
+        Club club = clubRepository.findClubById(objectId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        clubInformation.updateRecruitmentStatus(status);
-        clubInformationRepository.save(clubInformation);
+        club.getClubRecruitmentInformation().updateRecruitmentStatus(status);
+        clubRepository.save(club);
     }
 
 }
