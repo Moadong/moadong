@@ -33,7 +33,8 @@ export const IntroduceContentBox = styled.div`
   overflow-wrap: break-word;
   white-space: normal;
 
-  ol {
+  ol,
+  ul {
     padding-left: 20px;
   }
 `;
