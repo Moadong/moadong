@@ -19,6 +19,7 @@ export const EditorContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 400px;
 `;
 
 export const PreviewContainer = styled.div`
