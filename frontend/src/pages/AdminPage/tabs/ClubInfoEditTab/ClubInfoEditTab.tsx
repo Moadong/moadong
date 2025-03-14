@@ -3,26 +3,38 @@ import InputField from '@/components/common/InputField/InputField';
 import SelectTags from '@/pages/AdminPage/components/SelectTags/SelectTags';
 import MakeTags from '@/pages/AdminPage/components/MakeTags/MakeTags';
 import * as Styled from './ClubInfoEditTab.styles';
+import { useOutletContext } from 'react-router-dom';
+import { ClubDetail } from '@/types/club';
 
 const ClubInfoEditTab = () => {
-  //TODO: 추후 API 연동 시, 기존 정보 불러와서 초기화
+  const clubDetail = useOutletContext<ClubDetail | null>();
+
   const [clubName, setClubName] = useState('');
   const [clubPresidentName, setClubPresidentName] = useState('');
-  const [introduction, setIntroduction] = useState('');
   const [telephoneNumber, setTelephoneNumber] = useState('');
-  const [selectedClassification, setSelectedClassification] =
-    useState<string>('중등');
-  const [selectedDivision, setSelectedDivision] = useState<string>('학술');
+  const [introduction, setIntroduction] = useState('');
+  const [selectedDivision, setSelectedDivision] = useState<string>('');
+  const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [clubTags, setClubTags] = useState<string[]>(() => ['', '']);
 
-  const categories = ['중등', '과동'];
-  const tags = ['봉사', '종교', '취미교양', '학술', '운동', '공연'];
+  const divisions = ['중동', '과동'];
+  const categories = ['봉사', '종교', '취미교양', '학술', '운동', '공연'];
 
   useEffect(() => {
+    if (clubDetail) {
+      setClubName(clubDetail.name);
+      setClubPresidentName(clubDetail.presidentName);
+      setTelephoneNumber(clubDetail.presidentPhoneNumber);
+      setIntroduction(clubDetail.introduction);
+      setSelectedDivision(clubDetail.division);
+      setSelectedCategory(clubDetail.category);
+      setClubTags(clubDetail.tags);
+    }
+
     if (clubTags.length < 2) {
       setClubTags((prevTags) => [...prevTags, ''].slice(0, 2));
     }
-  }, [clubTags]);
+  }, [clubDetail, clubTags]);
 
   return (
     <>
@@ -68,7 +80,7 @@ const ClubInfoEditTab = () => {
           label='한줄소개'
           placeholder='한줄소개를 입력해주세요'
           type='text'
-          maxLength={40}
+          maxLength={20}
           showMaxChar={true}
           value={introduction}
           onChange={(e) => setIntroduction(e.target.value)}
@@ -77,16 +89,16 @@ const ClubInfoEditTab = () => {
 
         <SelectTags
           label='분류'
-          tags={categories}
-          selected={selectedClassification}
-          onChange={setSelectedClassification}
+          tags={divisions}
+          selected={selectedDivision}
+          onChange={setSelectedDivision}
         />
 
         <SelectTags
           label='분과'
-          tags={tags}
-          selected={selectedDivision}
-          onChange={setSelectedDivision}
+          tags={categories}
+          selected={selectedCategory}
+          onChange={setSelectedCategory}
         />
 
         <MakeTags value={clubTags} onChange={setClubTags} />
