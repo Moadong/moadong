@@ -69,48 +69,50 @@ const RecruitEditTab = () => {
           maxLength={10}
         />
       </div>
-      <Styled.EditorContainer>
-        <h3>소개글</h3>
-        <br />
-        <Styled.Toolbar>
-          <button onClick={() => insertAtCursor('# 제목\n')}>제목1</button>
-          <button onClick={() => insertAtCursor('## 소제목\n')}>제목2</button>
-          <button onClick={() => insertAtCursor('**굵게**')}>B</button>
-          <button onClick={() => insertAtCursor('_기울임_')}>I</button>
-          <button onClick={() => insertAtCursor('> 인용문\n')}>“</button>
-        </Styled.Toolbar>
 
-        <Styled.Editor
-          ref={textareaRef}
-          value={markdown}
-          onChange={(e) => setMarkdown(e.target.value)}
-          placeholder='소개글을 작성해주세요...'
-        />
-      </Styled.EditorContainer>
+      <h3>소개글</h3>
+      <Styled.EditorPreviewContainer>
+        <Styled.EditorContainer>
+          <Styled.Toolbar>
+            <button onClick={() => insertAtCursor('# 제목\n')}>제목1</button>
+            <button onClick={() => insertAtCursor('## 소제목\n')}>제목2</button>
+            <button onClick={() => insertAtCursor('**굵게**')}>B</button>
+            <button onClick={() => insertAtCursor('_기울임_')}>I</button>
+            <button onClick={() => insertAtCursor('> 인용문\n')}>“</button>
+          </Styled.Toolbar>
 
-      <Styled.PreviewContainer>
-        <ReactMarkdown
-          remarkPlugins={[remarkGfm]}
-          components={{
-            p({ children }) {
-              return <Styled.Paragraph>{children}</Styled.Paragraph>;
-            },
-            blockquote({ children }) {
-              return <Styled.Blockquote>{children}</Styled.Blockquote>;
-            },
-            ol({ children }) {
-              return <Styled.OrderedList>{children}</Styled.OrderedList>;
-            },
-            ul({ children }) {
-              return <Styled.UnorderedList>{children}</Styled.UnorderedList>;
-            },
-            li({ children }) {
-              return <Styled.ListItem>{children}</Styled.ListItem>;
-            },
-          }}>
-          {markdown}
-        </ReactMarkdown>
-      </Styled.PreviewContainer>
+          <Styled.Editor
+            ref={textareaRef}
+            value={markdown}
+            onChange={(e) => setMarkdown(e.target.value)}
+            placeholder='소개글을 작성해주세요...'
+          />
+        </Styled.EditorContainer>
+
+        <Styled.PreviewContainer>
+          <ReactMarkdown
+            remarkPlugins={[remarkGfm]}
+            components={{
+              p({ children }) {
+                return <Styled.Paragraph>{children}</Styled.Paragraph>;
+              },
+              blockquote({ children }) {
+                return <Styled.Blockquote>{children}</Styled.Blockquote>;
+              },
+              ol({ children }) {
+                return <Styled.OrderedList>{children}</Styled.OrderedList>;
+              },
+              ul({ children }) {
+                return <Styled.UnorderedList>{children}</Styled.UnorderedList>;
+              },
+              li({ children }) {
+                return <Styled.ListItem>{children}</Styled.ListItem>;
+              },
+            }}>
+            {markdown}
+          </ReactMarkdown>
+        </Styled.PreviewContainer>
+      </Styled.EditorPreviewContainer>
     </Styled.RecruitEditorContainer>
   );
 };

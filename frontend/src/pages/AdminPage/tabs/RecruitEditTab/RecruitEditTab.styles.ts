@@ -7,6 +7,14 @@ export const RecruitEditorContainer = styled.div`
   gap: 16px;
 `;
 
+export const EditorPreviewContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  width: 100%;
+  height: 100%;
+`;
+
 export const EditorContainer = styled.div`
   flex: 1;
   display: flex;
