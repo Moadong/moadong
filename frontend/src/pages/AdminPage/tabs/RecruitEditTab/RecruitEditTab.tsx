@@ -1,25 +1,33 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Calendar from '@/pages/AdminPage/components/Calendar/Calendar';
 import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 import * as Styled from './RecruitEditTab.styles';
+import InputField from '@/components/common/InputField/InputField';
+import { useOutletContext } from 'react-router-dom';
+import { ClubDetail } from '@/types/club';
 
 const RecruitEditTab = () => {
-  const recruitmentPeriod = '2025.01.04 00:00 ~ 2025.06.04 00:00';
+  const clubDetail = useOutletContext<ClubDetail | null>();
 
-  const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
-    parseRecruitmentPeriod(recruitmentPeriod);
-  const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(
-    initialStart,
-  );
-  const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(initialEnd);
-  
-  
-  const [markdown, setMarkdown] = useState<string>(
-    '# Markdown Editor\n\nType here...',
-  );
+  const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
+  const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
+  const [recruitmentTarget, setRecruitmentTarget] = useState('');
+  const [markdown, setMarkdown] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (clubDetail) {
+      const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
+        parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
+
+      setRecruitmentStart(initialStart);
+      setRecruitmentEnd(initialEnd);
+      setRecruitmentTarget(clubDetail.recruitmentTarget || '');
+      setMarkdown(clubDetail.description || '');
+    }
+  }, [clubDetail]);
 
   const insertAtCursor = (text: string) => {
     if (!textareaRef.current) return;
@@ -39,15 +47,31 @@ const RecruitEditTab = () => {
   return (
     <Styled.RecruitEditorContainer>
       <div>
-      <h2>모집 기간 설정</h2>
-      <Calendar
-        recruitmentStart={recruitmentStart}
-        recruitmentEnd={recruitmentEnd}
-        onChangeStart={setRecruitmentStart}
-        onChangeEnd={setRecruitmentEnd}
-      />
-    </div>
+        <h3>모집 기간 설정</h3>
+        <br />
+        <Calendar
+          recruitmentStart={recruitmentStart}
+          recruitmentEnd={recruitmentEnd}
+          onChangeStart={setRecruitmentStart}
+          onChangeEnd={setRecruitmentEnd}
+        />
+      </div>
+      <div>
+        <h3>모집 대상</h3>
+        <br />
+        <InputField
+          label=''
+          placeholder='모집 대상을 입력해주세요.'
+          type='text'
+          value={recruitmentTarget}
+          onChange={(e) => setRecruitmentTarget(e.target.value)}
+          onClear={() => setRecruitmentTarget('')}
+          maxLength={10}
+        />
+      </div>
       <Styled.EditorContainer>
+        <h3>소개글</h3>
+        <br />
         <Styled.Toolbar>
           <button onClick={() => insertAtCursor('# 제목\n')}>제목1</button>
           <button onClick={() => insertAtCursor('## 소제목\n')}>제목2</button>
