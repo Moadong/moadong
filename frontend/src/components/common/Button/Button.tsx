@@ -14,7 +14,7 @@ const StyledButton = styled.button<ButtonProps>`
   border-radius: 10px;
   border: none;
   font-weight: 600;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   cursor: pointer;
   transition: background-color 0.2s;
   width: ${({ width }) => width || 'auto'};
@@ -24,10 +24,10 @@ const StyledButton = styled.button<ButtonProps>`
   }
 `;
 
-const Button = ({ width, children, onClick } : ButtonProps) => (
-    <StyledButton width={width} onClick={onClick}>
-      {children}
-    </StyledButton>
+const Button = ({ width, children, onClick }: ButtonProps) => (
+  <StyledButton width={width} onClick={onClick}>
+    {children}
+  </StyledButton>
 );
 
 export default Button;
