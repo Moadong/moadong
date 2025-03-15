@@ -9,6 +9,7 @@ import AdminPage from './pages/AdminPage/AdminPage';
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import RecruitEditTab from './pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import AccountEditTab from './pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
+import LoginTab from './pages/AdminPage/tabs/LoginTab/LoginTab';
 
 const queryClient = new QueryClient();
 
@@ -21,6 +22,7 @@ const App = () => {
           <Routes>
             <Route path='/' element={<MainPage />} />
             <Route path='/club/:clubId' element={<ClubDetailPage />} />
+            <Route path='login' element={<LoginTab />} />
             <Route path='/admin' element={<AdminPage />}>
               <Route index element={<Navigate to='club-info' replace />} />
               <Route path='club-info' element={<ClubInfoEditTab />} />
