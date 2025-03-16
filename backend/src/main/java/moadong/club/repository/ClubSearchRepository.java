@@ -1,5 +1,7 @@
 package moadong.club.repository;
 
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.dto.ClubSearchResult;
@@ -11,21 +13,20 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
-import java.util.ArrayList;
-import java.util.List;
-
 
 @Repository
 @AllArgsConstructor
 public class ClubSearchRepository {
+
     private final MongoTemplate mongoTemplate;
 
-    public List<ClubSearchResult> searchClubsByKeyword(String keyword, String recruitmentStatus, String division, String category) {
+    public List<ClubSearchResult> searchClubsByKeyword(String keyword, String recruitmentStatus,
+        String division, String category) {
         List<AggregationOperation> operations = new ArrayList<>();
 
         operations.add(Aggregation.match(
-                new Criteria().andOperator(
-                        Criteria.where("state").is(ClubState.AVAILABLE.getName()))
+            new Criteria().andOperator(
+                Criteria.where("state").is(ClubState.AVAILABLE.getName()))
         ));
 
         Criteria criteria = getMatchedCriteria(recruitmentStatus, division, category);
@@ -36,33 +37,37 @@ public class ClubSearchRepository {
 
         if (keyword != null && !keyword.trim().isEmpty()) {
             operations.add(Aggregation.match(new Criteria().orOperator(
-                    Criteria.where("name").regex(keyword, "i"),
-                    Criteria.where("recruitmentInformation.introduction").regex(keyword, "i"),
-                    Criteria.where("recruitmentInformation.description").regex(keyword, "i"),
-                    Criteria.where("recruitmentInformation.tags").regex(keyword, "i")
+                Criteria.where("name").regex(keyword, "i"),
+                Criteria.where("recruitmentInformation.introduction").regex(keyword, "i"),
+                Criteria.where("recruitmentInformation.description").regex(keyword, "i"),
+                Criteria.where("recruitmentInformation.tags").regex(keyword, "i")
             )));
         }
         operations.add(Aggregation.unwind("club_tags", true));
 
         operations.add(
-                Aggregation.project("name", "state", "category", "division")
-                        .and("recruitmentInformation.introduction").as("introduction")
-                        .and("recruitmentInformation.recruitmentStatus").as("recruitmentStatus")
-                        .and("recruitmentInformation.logo").as("logo")
-                        .and("recruitmentInformation.tags").as("tags"));
+            Aggregation.project("name", "state", "category", "division")
+                .and("recruitmentInformation.introduction").as("introduction")
+                .and("recruitmentInformation.recruitmentStatus").as("recruitmentStatus")
+                .and("recruitmentInformation.logo").as("logo")
+                .and("recruitmentInformation.tags").as("tags"));
 
-        operations.add(Aggregation.sort(Sort.by(Sort.Order.asc("division"), Sort.Order.asc("category"))));
+        operations.add(
+            Aggregation.sort(Sort.by(Sort.Order.asc("division"), Sort.Order.asc("category"))));
 
         Aggregation aggregation = Aggregation.newAggregation(operations);
-        AggregationResults<ClubSearchResult> results = mongoTemplate.aggregate(aggregation, "clubs", ClubSearchResult.class);
+        AggregationResults<ClubSearchResult> results = mongoTemplate.aggregate(aggregation, "clubs",
+            ClubSearchResult.class);
         return results.getMappedResults();
     }
 
-    private Criteria getMatchedCriteria(String recruitmentStatus, String division, String category) {
+    private Criteria getMatchedCriteria(String recruitmentStatus, String division,
+        String category) {
         List<Criteria> criteriaList = new ArrayList<>();
 
         if (recruitmentStatus != null && !"all".equalsIgnoreCase(recruitmentStatus)) {
-            criteriaList.add(Criteria.where("recruitmentInformation.recruitmentStatus").is(recruitmentStatus));
+            criteriaList.add(
+                Criteria.where("recruitmentInformation.recruitmentStatus").is(recruitmentStatus));
         }
         if (division != null && !"all".equalsIgnoreCase(division)) {
             criteriaList.add(Criteria.where("division").is(division));
@@ -74,6 +79,6 @@ public class ClubSearchRepository {
         if (!criteriaList.isEmpty()) {
             return new Criteria().andOperator(criteriaList.toArray(new Criteria[0]));
         }
-        return null;
+        return new Criteria();
     }
 }
