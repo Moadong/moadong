@@ -12,7 +12,7 @@ const AdminPage = () => {
     data: clubDetail,
     isLoading,
     error,
-  } = useGetClubDetail('67d2e3b9b15c136c6acbf209');
+  } = useGetClubDetail('67d2e3b9b15c136c6acbf204');
 
   return (
     <>
