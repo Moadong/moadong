@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 
-interface ButtonProps {
+export interface ButtonProps {
   width?: string;
   children: React.ReactNode;
   onClick: () => void;
@@ -24,10 +24,10 @@ const StyledButton = styled.button<ButtonProps>`
   }
 `;
 
-const Button = ({ width, children, onClick } : ButtonProps) => (
-    <StyledButton width={width} onClick={onClick}>
-      {children}
-    </StyledButton>
+const Button = ({ width, children, onClick }: ButtonProps) => (
+  <StyledButton width={width} onClick={onClick}>
+    {children}
+  </StyledButton>
 );
 
 export default Button;
