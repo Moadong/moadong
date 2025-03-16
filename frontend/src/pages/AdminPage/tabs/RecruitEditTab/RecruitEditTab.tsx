@@ -7,27 +7,18 @@ import * as Styled from './RecruitEditTab.styles';
 import InputField from '@/components/common/InputField/InputField';
 import { useOutletContext } from 'react-router-dom';
 import { ClubDetail } from '@/types/club';
+import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
+import AnimatedButton from '@/components/common/Button/AnimatedButton';
 
 const RecruitEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
+  const { mutate: updateClub } = useUpdateClubDetail();
 
   const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
   const [markdown, setMarkdown] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (clubDetail) {
-      const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
-        parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
-
-      setRecruitmentStart(initialStart);
-      setRecruitmentEnd(initialEnd);
-      setRecruitmentTarget(clubDetail.recruitmentTarget || '');
-      setMarkdown(clubDetail.description || '');
-    }
-  }, [clubDetail]);
 
   const insertAtCursor = (text: string) => {
     if (!textareaRef.current) return;
@@ -44,17 +35,65 @@ const RecruitEditTab = () => {
     }, 0);
   };
 
+  useEffect(() => {
+    if (clubDetail) {
+      const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
+        parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
+
+      setRecruitmentStart(initialStart);
+      setRecruitmentEnd(initialEnd);
+      setRecruitmentTarget(clubDetail.recruitmentTarget || '');
+      setMarkdown(clubDetail.description || '');
+    }
+  }, [clubDetail]);
+
+  const handleUpdateClub = () => {
+    if (!clubDetail) return;
+
+    const updatedData: Omit<Partial<ClubDetail>, 'id'> & {
+      clubId: string;
+      recruitmentStart: string | undefined;
+      recruitmentEnd: string | undefined;
+    } = {
+      clubId: clubDetail.id,
+      name: clubDetail.name,
+      category: clubDetail.category,
+      division: clubDetail.division,
+      tags: clubDetail.tags,
+      introduction: clubDetail.introduction,
+      clubPresidentName: clubDetail.clubPresidentName,
+      telephoneNumber: clubDetail.telephoneNumber,
+      recruitmentStart: recruitmentStart?.toISOString(),
+      recruitmentEnd: recruitmentEnd?.toISOString(),
+      recruitmentTarget: recruitmentTarget,
+    };
+
+    updateClub(updatedData, {
+      onSuccess: () => {
+        alert('동아리 정보가 성공적으로 수정되었습니다.');
+      },
+      onError: (error) => {
+        alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
+      },
+    });
+  };
+
   return (
     <Styled.RecruitEditorContainer>
       <div>
         <h3>모집 기간 설정</h3>
         <br />
-        <Calendar
-          recruitmentStart={recruitmentStart}
-          recruitmentEnd={recruitmentEnd}
-          onChangeStart={setRecruitmentStart}
-          onChangeEnd={setRecruitmentEnd}
-        />
+        <Styled.EditButtonContainer>
+          <Calendar
+            recruitmentStart={recruitmentStart}
+            recruitmentEnd={recruitmentEnd}
+            onChangeStart={setRecruitmentStart}
+            onChangeEnd={setRecruitmentEnd}
+          />
+          <AnimatedButton width={'150px'} onClick={handleUpdateClub}>
+            수정하기
+          </AnimatedButton>
+        </Styled.EditButtonContainer>
       </div>
       <div>
         <h3>모집 대상</h3>
