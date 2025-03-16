@@ -7,6 +7,12 @@ export const RecruitEditorContainer = styled.div`
   gap: 16px;
 `;
 
+export const EditButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
 export const EditorPreviewContainer = styled.div`
   display: flex;
   flex-direction: row;
