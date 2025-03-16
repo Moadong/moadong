@@ -1,11 +1,10 @@
-// Login.tsx
 import React, { useState } from 'react';
 import * as Styled from './LoginTab.styles';
 import InputField from '@/components/common/InputField/InputField';
 import Button from '@/components/common/Button/Button';
 import moadong_name_logo from '@/assets/images/moadong_name_logo.svg';
 
-const Login: React.FC = () => {
+const LoginTab = () => {
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
@@ -43,15 +42,15 @@ const Login: React.FC = () => {
         </Styled.ButtonWrapper>
 
         <Styled.ForgotLinks>
-          <a href='#signup'>회원가입</a>
+          <a href=''>회원가입</a>
           <span>|</span>
-          <a href='#find-id'>아이디 찾기</a>
+          <a href=''>아이디 찾기</a>
           <span>|</span>
-          <a href='#find-pw'>비밀번호 찾기</a>
+          <a href=''>비밀번호 찾기</a>
         </Styled.ForgotLinks>
       </Styled.LoginBox>
     </Styled.LoginContainer>
   );
 };
 
-export default Login;
+export default LoginTab;
