@@ -5,9 +5,13 @@ import MakeTags from '@/pages/AdminPage/components/MakeTags/MakeTags';
 import * as Styled from './ClubInfoEditTab.styles';
 import { useOutletContext } from 'react-router-dom';
 import { ClubDetail } from '@/types/club';
+import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
+import AnimatedButton from '@/components/common/Button/AnimatedButton';
+import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 
 const ClubInfoEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
+  const { mutate: updateClub } = useUpdateClubDetail();
 
   const [clubName, setClubName] = useState('');
   const [clubPresidentName, setClubPresidentName] = useState('');
@@ -23,22 +27,71 @@ const ClubInfoEditTab = () => {
   useEffect(() => {
     if (clubDetail) {
       setClubName(clubDetail.name);
-      setClubPresidentName(clubDetail.presidentName);
-      setTelephoneNumber(clubDetail.presidentPhoneNumber);
+      setClubPresidentName(clubDetail.clubPresidentName);
+      setTelephoneNumber(clubDetail.telephoneNumber);
       setIntroduction(clubDetail.introduction);
       setSelectedDivision(clubDetail.division);
       setSelectedCategory(clubDetail.category);
-      setClubTags(clubDetail.tags);
+      setClubTags(
+        clubDetail.tags.length >= 2
+          ? clubDetail.tags
+          : [...clubDetail.tags, ''],
+      );
     }
+  }, [clubDetail]);
 
-    if (clubTags.length < 2) {
-      setClubTags((prevTags) => [...prevTags, ''].slice(0, 2));
-    }
-  }, [clubDetail, clubTags]);
+  const handleUpdateClub = () => {
+    if (!clubDetail) return;
+
+    const { recruitmentStart, recruitmentEnd } = clubDetail.recruitmentPeriod
+      ? parseRecruitmentPeriod(clubDetail.recruitmentPeriod)
+      : { recruitmentStart: null, recruitmentEnd: null };
+
+    const recruitmentStartISO = recruitmentStart
+      ? recruitmentStart.toISOString()
+      : null;
+
+    const recruitmentEndISO = recruitmentEnd
+      ? recruitmentEnd.toISOString()
+      : null;
+
+    const updatedData: Omit<Partial<ClubDetail>, 'id'> & {
+      clubId: string;
+      recruitmentStart: string | null;
+      recruitmentEnd: string | null;
+    } = {
+      clubId: clubDetail.id,
+      name: clubName,
+      category: selectedCategory,
+      division: selectedDivision,
+      tags: clubTags,
+      introduction: introduction,
+      clubPresidentName: clubPresidentName,
+      telephoneNumber: telephoneNumber,
+      recruitmentStart: recruitmentStartISO,
+      recruitmentEnd: recruitmentEndISO,
+      recruitmentTarget: clubDetail.recruitmentTarget,
+    };
+
+    updateClub(updatedData, {
+      onSuccess: () => {
+        alert('동아리 정보가 성공적으로 수정되었습니다.');
+      },
+      onError: (error) => {
+        alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
+      },
+    });
+  };
 
   return (
     <>
-      <Styled.InfoTitle>동아리 정보 수정</Styled.InfoTitle>
+      <Styled.TitleButtonContainer>
+        <Styled.InfoTitle>동아리 정보 수정</Styled.InfoTitle>
+        <AnimatedButton width={'150px'} onClick={handleUpdateClub}>
+          수정하기
+        </AnimatedButton>
+      </Styled.TitleButtonContainer>
+
       <Styled.InfoGroup>
         <InputField
           label='동아리 명'
