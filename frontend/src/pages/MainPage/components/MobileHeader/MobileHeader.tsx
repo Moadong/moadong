@@ -27,18 +27,19 @@ const MainMobileHeader = () => {
     <Styled.MobileHeaderContainer>
       <Styled.MobileHeaderWrapper>
         <Styled.MobileMainIcon>
-          <img src={MainIcon} onClick={handleHomeClick} />
+          <img src={MainIcon} alt='홈 버튼' onClick={handleHomeClick} />
         </Styled.MobileMainIcon>
         <Styled.MobileSubContainer>
           <Styled.MobileSearchIcon>
-            <img src={SearchIcon} onClick={handleSearchClick} />
+            <img src={SearchIcon} alt='검색 버튼' onClick={handleSearchClick} />
           </Styled.MobileSearchIcon>
           <Styled.MobileMenu>
-            <img src={MenuBar} onClick={handleMenuClick} />
+            <img src={MenuBar} alt='메뉴 버튼' onClick={handleMenuClick} />
           </Styled.MobileMenu>
         </Styled.MobileSubContainer>
       </Styled.MobileHeaderWrapper>
     </Styled.MobileHeaderContainer>
   );
 };
+
 export default MainMobileHeader;
