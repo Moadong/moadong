@@ -18,3 +18,8 @@ export interface ClubDetail extends Club {
   recruitmentPeriod: string;
   recruitmentTarget: string;
 }
+
+export interface ClubDescription {
+  clubId: string;
+  description: string | null;
+}
