@@ -4,12 +4,12 @@ import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
 import com.google.cloud.storage.Storage;
 import java.text.Normalizer;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
+import moadong.gcs.domain.FileType;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.RandomStringUtil;
@@ -31,6 +31,7 @@ public class ClubImageService {
     private final int MAX_FEED_COUNT = 5;
 
 
+    // TODO : Signed URL 을 통한 업로드로 추후 변경
     public String uploadLogo(String clubId, MultipartFile file) {
         ObjectId objectId = new ObjectId(clubId);
         Club club = clubRepository.findClubById(objectId)
@@ -40,7 +41,7 @@ public class ClubImageService {
             deleteFile(club, club.getClubRecruitmentInformation().getLogo());
         }
 
-        String filePath = uploadFile(clubId, file, "logo");
+        String filePath = uploadFile(clubId, file, FileType.LOGO);
         club.updateLogo(filePath);
         clubRepository.save(club);
         return filePath;
@@ -56,55 +57,26 @@ public class ClubImageService {
         }
     }
 
-    public void putFeeds(String clubId, List<MultipartFile> files) {
+    public void updateFeeds(String clubId, List<String> newFeedImageList) {
         ObjectId objectId = new ObjectId(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        if (files.isEmpty()) {
+        if (newFeedImageList.isEmpty()) {
             throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
-        } else if (files.size() > MAX_FEED_COUNT) {
+        } else if (newFeedImageList.size() > MAX_FEED_COUNT) {
             throw new RestApiException(ErrorCode.TOO_MANY_FILES);
         }
-        // 새로운 feedsImages 리스트
-        List<String> feedImages = new ArrayList<>();
-        uploadFeedList(clubId, files, club, feedImages);
-    }
 
-    public void uploadFeeds(String clubId, List<MultipartFile> files) {
-        ObjectId objectId = new ObjectId(clubId);
-        Club club = clubRepository.findClubById(objectId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-
-        if (files.isEmpty()) {
-            throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
-        } else if (files.size() + club.getClubRecruitmentInformation().getFeedAmounts() > MAX_FEED_COUNT) {
-            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
-        }
-        // 기존 feedsImages 리스트
         List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
-        uploadFeedList(clubId, files, club, feedImages);
-    }
-
-    private void uploadFeedList(String clubId, List<MultipartFile> files, Club club, List<String> feedImages) {
-        for (MultipartFile file : files) {
-            if (file == null) {
-                throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
-            }
-            String filePath = uploadFile(clubId, file, "feed");
-            feedImages.add(filePath);
+        if (feedImages != null) {
+            updateFeedList(club, feedImages, newFeedImageList);
         }
-
-        club.updateFeedImages(feedImages);
+        club.updateFeedImages(newFeedImageList);
         clubRepository.save(club);
     }
 
-    public void deleteFeeds(String clubId, List<String> newFeedImages) {
-        ObjectId objectId = new ObjectId(clubId);
-        Club club = clubRepository.findClubById(objectId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-        List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
-
+    private void updateFeedList(Club club, List<String> feedImages, List<String> newFeedImages) {
         for (String feedsImage : feedImages) {
             if (!newFeedImages.contains(feedsImage)) {
                 deleteFile(club, feedsImage);
@@ -114,8 +86,8 @@ public class ClubImageService {
         clubRepository.save(club);
     }
 
-    private String uploadFile(String clubId, MultipartFile file, String fileType) {
-
+    // TODO : Signed URL 을 통한 업로드 URL 반환으로 추후 변경
+    public String uploadFile(String clubId, MultipartFile file, FileType fileType) {
         if (file == null) {
             throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
         }
@@ -152,7 +124,7 @@ public class ClubImageService {
     }
 
     // BlobInfo 생성 (버킷 이름, 파일 이름 지정)
-    private BlobInfo getBlobInfo(String clubId, String fileType, MultipartFile file) {
+    private BlobInfo getBlobInfo(String clubId, FileType fileType, MultipartFile file) {
         String originalFileName = file.getOriginalFilename();
         String contentType = file.getContentType().split("/")[1];
 
@@ -161,7 +133,7 @@ public class ClubImageService {
         }
 
         // 한글이 포함된 파일 이름일 경우 랜덤 영어 문자열로 변환
-        String fileName = clubId + "/" + fileType + "/" + originalFileName;
+        String fileName = clubId + "/" + fileType.getPath() + "/" + originalFileName;
         BlobId blobId = BlobId.of(bucketName, fileName);
 
         return BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
@@ -176,4 +148,5 @@ public class ClubImageService {
         text = Normalizer.normalize(text, Normalizer.Form.NFC);
         return Pattern.matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*", text);
     }
+
 }
