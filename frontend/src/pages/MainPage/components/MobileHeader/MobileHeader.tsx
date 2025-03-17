@@ -1,9 +1,9 @@
 import React from 'react';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './MobileHeader.styles';
-import MainIcon from '@/assets/images/mainIcon.png';
-import SearchIcon from '@/assets/images/searchIcon.png';
-import MenuBar from '@/assets/images/menubar.png';
+import MainIcon from '@/assets/images/logos/moadong_name_logo.svg';
+import SearchIcon from '@/assets/images/icons/search_button_icon.svg';
+import MenuBar from '@/assets/images/icons/menu_button_icon.svg';
 import { useNavigate } from 'react-router-dom';
 
 const MainMobileHeader = () => {

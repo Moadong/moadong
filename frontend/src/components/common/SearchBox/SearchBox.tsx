@@ -2,7 +2,7 @@ import React from 'react';
 import { useSearch } from '@/context/SearchContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './SearchBox.styles';
-import SearchIcon from '@/assets/images/searchIcon.png';
+import SearchIcon from '@/assets/images/icons/search_button_icon.svg';
 
 const SearchBox = () => {
   const { keyword, setKeyword } = useSearch();
