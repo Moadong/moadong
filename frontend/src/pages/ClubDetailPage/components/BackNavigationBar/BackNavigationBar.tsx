@@ -2,7 +2,7 @@ import React from 'react';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { useNavigate } from 'react-router-dom';
 import * as Styled from './BackNavigationBar.styles';
-import BackIcon from '@/assets/images/backIcon.png';
+import BackIcon from '@/assets/images/icons/back_button_icon.svg';
 
 const BackNavigationBar = () => {
   const navigate = useNavigate();
