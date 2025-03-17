@@ -1,7 +1,7 @@
-import FirstSlideImage from '../assets/images/banner_desktop1.png';
-import SecondSlideImage from '../assets/images/banner_desktop2.png';
-import PrevButton from '../assets/images/prevButton.png';
-import NextButton from '../assets/images/nextButton.png';
+import FirstSlideImage from '@/assets/images/banners/banner_desktop1.png';
+import SecondSlideImage from '@/assets/images/banners/banner_desktop2.png';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import NextButton from '@/assets/images/icons/next_button_icon.svg';
 
 export const BannerImageList = [
   {
