@@ -11,7 +11,7 @@ export const useUpdateClubDescription = () => {
 
     onSuccess: async () => {
       await queryClient.invalidateQueries({
-        queryKey: ['clubDetail Description'],
+        queryKey: ['clubDetail'],
       });
     },
 
