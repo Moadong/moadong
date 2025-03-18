@@ -6,7 +6,7 @@ import java.util.List;
 
 public record ClubInfoRequest(
     @NotBlank
-    String clubId,
+    String id,
     @NotBlank
     String name,
     @NotBlank
@@ -15,8 +15,8 @@ public record ClubInfoRequest(
     String division,
     List<String> tags,
     String introduction,
-    String clubPresidentName,
-    String telephoneNumber,
+    String presidentName,
+    String presidentPhoneNumber,
     LocalDateTime recruitmentStart,
     LocalDateTime recruitmentEnd,
     String recruitmentTarget
