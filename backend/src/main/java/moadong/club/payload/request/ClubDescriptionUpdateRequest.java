@@ -1,8 +1,13 @@
 package moadong.club.payload.request;
 
-public record ClubDescriptionUpdateRequest (
+import java.time.LocalDateTime;
+
+public record ClubDescriptionUpdateRequest(
     String id,
+    LocalDateTime recruitmentStart,
+    LocalDateTime recruitmentEnd,
+    String recruitmentTarget,
     String description
-){
+) {
 
 }

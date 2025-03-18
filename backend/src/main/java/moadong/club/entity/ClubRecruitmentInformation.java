@@ -72,6 +72,9 @@ public class ClubRecruitmentInformation {
 
     public void updateDescription(ClubDescriptionUpdateRequest request) {
         this.description = request.description();
+        this.recruitmentStart = request.recruitmentStart();
+        this.recruitmentEnd = request.recruitmentEnd();
+        this.recruitmentTarget = request.recruitmentTarget();
     }
 
     public boolean hasRecruitmentPeriod() {
@@ -94,5 +97,13 @@ public class ClubRecruitmentInformation {
 
     public void updateFeedImages(List<String> feedImages){
         this.feedImages = feedImages;
+    }
+
+    public void update(ClubInfoRequest request) {
+        this.introduction = request.introduction();
+        this.presidentName = request.presidentName();
+        this.presidentTelephoneNumber = request.presidentPhoneNumber();
+        this.tags = request.tags();
+        this.recruitmentForm = request.recruitmentForm();
     }
 }

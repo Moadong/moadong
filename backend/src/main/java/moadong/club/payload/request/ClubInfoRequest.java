@@ -1,7 +1,6 @@
 package moadong.club.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
-import java.time.LocalDateTime;
 import java.util.List;
 
 public record ClubInfoRequest(
@@ -17,9 +16,7 @@ public record ClubInfoRequest(
     String introduction,
     String presidentName,
     String presidentPhoneNumber,
-    LocalDateTime recruitmentStart,
-    LocalDateTime recruitmentEnd,
-    String recruitmentTarget
+    String recruitmentForm
 ) {
 
 }

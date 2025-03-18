@@ -29,9 +29,18 @@ public class ClubCommandService {
     }
 
     public String updateClubInfo(ClubInfoRequest request) {
-        Club club = clubRepository.findById(request.clubId())
+        Club club = clubRepository.findById(request.id())
             .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
+        club.update(request);
+        clubRepository.save(club);
+
+        return club.getId();
+    }
+
+    public void updateClubDescription(ClubDescriptionUpdateRequest request) {
+        Club club = clubRepository.findById(request.id())
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
         clubRepository.save(club);
 
@@ -40,14 +49,5 @@ public class ClubCommandService {
             recruitmentScheduler.scheduleRecruitment(club.getId(), request.recruitmentStart(),
                 request.recruitmentEnd());
         }
-
-        return club.getId();
-    }
-
-    public void updateClubDescription(ClubDescriptionUpdateRequest request) {
-        Club club = clubRepository.findById(request.clubId())
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-        club.update(request);
-        clubRepository.save(club);
     }
 }

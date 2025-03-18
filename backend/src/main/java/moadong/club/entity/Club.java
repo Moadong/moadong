@@ -66,15 +66,7 @@ public class Club {
         this.division = request.division();
         this.state = ClubState.AVAILABLE;
 
-        this.clubRecruitmentInformation = ClubRecruitmentInformation.builder()
-            .presidentName(request.clubPresidentName())
-            .presidentTelephoneNumber(request.telephoneNumber())
-            .introduction(request.introduction())
-            .recruitmentStart(request.recruitmentStart())
-            .recruitmentEnd(request.recruitmentEnd())
-            .recruitmentTarget(request.recruitmentTarget())
-            .tags(request.tags())
-            .build();
+        this.clubRecruitmentInformation.update(request);
     }
 
     public void update(ClubDescriptionUpdateRequest request) {
