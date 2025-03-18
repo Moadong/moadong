@@ -6,28 +6,31 @@ import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 import * as Styled from './RecruitEditTab.styles';
 import InputField from '@/components/common/InputField/InputField';
 import { useOutletContext } from 'react-router-dom';
-import { ClubDetail } from '@/types/club';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
+import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
 import AnimatedButton from '@/components/common/Button/AnimatedButton';
+import { ClubDetail, ClubDescription } from '@/types/club';
 
 const RecruitEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
+  const { mutate: updateClubDescription } = useUpdateClubDescription();
 
   const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
-  const [markdown, setMarkdown] = useState('');
+  const [description, setDescription] = useState('');
+
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const insertAtCursor = (text: string) => {
     if (!textareaRef.current) return;
     const { selectionStart, selectionEnd } = textareaRef.current;
-    const beforeText = markdown.slice(0, selectionStart);
-    const afterText = markdown.slice(selectionEnd);
-    const newMarkdown = beforeText + text + afterText;
+    const beforeText = description.slice(0, selectionStart);
+    const afterText = description.slice(selectionEnd);
+    const markedDownDescription = beforeText + text + afterText;
 
-    setMarkdown(newMarkdown);
+    setDescription(markedDownDescription);
     setTimeout(() => {
       textareaRef.current!.selectionStart = selectionStart + text.length;
       textareaRef.current!.selectionEnd = selectionStart + text.length;
@@ -36,18 +39,18 @@ const RecruitEditTab = () => {
   };
 
   useEffect(() => {
-    if (clubDetail) {
-      const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
-        parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
+    if (!clubDetail) return;
 
-      setRecruitmentStart(initialStart);
-      setRecruitmentEnd(initialEnd);
-      setRecruitmentTarget(clubDetail.recruitmentTarget || '');
-      setMarkdown(clubDetail.description || '');
-    }
+    const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
+      parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
+
+    setRecruitmentStart((prev) => prev ?? initialStart);
+    setRecruitmentEnd((prev) => prev ?? initialEnd);
+    setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
+    setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
 
-  const handleUpdateClub = () => {
+  const handleUpdateClub = async () => {
     if (!clubDetail) return;
 
     const updatedData: Omit<Partial<ClubDetail>, 'id'> & {
@@ -61,6 +64,7 @@ const RecruitEditTab = () => {
       division: clubDetail.division,
       tags: clubDetail.tags,
       introduction: clubDetail.introduction,
+      description: description,
       clubPresidentName: clubDetail.clubPresidentName,
       telephoneNumber: clubDetail.telephoneNumber,
       recruitmentStart: recruitmentStart?.toISOString(),
@@ -68,14 +72,51 @@ const RecruitEditTab = () => {
       recruitmentTarget: recruitmentTarget,
     };
 
-    updateClub(updatedData, {
-      onSuccess: () => {
-        alert('동아리 정보가 성공적으로 수정되었습니다.');
-      },
-      onError: (error) => {
-        alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
-      },
-    });
+    const updatedDescription: ClubDescription = {
+      clubId: clubDetail.id,
+      description: description || clubDetail.description,
+    };
+
+    const results = await Promise.allSettled([
+      new Promise((resolve, reject) => {
+        updateClub(updatedData, {
+          onSuccess: () => {
+            setDescription(updatedData.description || '');
+            resolve(null);
+          },
+          onError: reject,
+        });
+      }),
+      new Promise((resolve, reject) => {
+        updateClubDescription(updatedDescription, {
+          onSuccess: () => {
+            setDescription(updatedDescription.description || '');
+            resolve(null);
+          },
+          onError: reject,
+        });
+      }),
+    ]);
+
+    const clubUpdateResult = results[0];
+    const descriptionUpdateResult = results[1];
+
+    if (clubUpdateResult.status === 'fulfilled') {
+      alert('동아리 정보가 성공적으로 수정되었습니다.');
+    } else {
+      alert(
+        `동아리 정보 수정에 실패했습니다: ${clubUpdateResult.reason.message}`,
+      );
+    }
+
+    if (descriptionUpdateResult.status === 'fulfilled') {
+      alert('소개글이 성공적으로 수정되었습니다.');
+      console.log(updatedDescription);
+    } else {
+      alert(
+        `소개글 수정에 실패했습니다: ${descriptionUpdateResult.reason.message}`,
+      );
+    }
   };
 
   return (
@@ -122,8 +163,8 @@ const RecruitEditTab = () => {
 
           <Styled.Editor
             ref={textareaRef}
-            value={markdown}
-            onChange={(e) => setMarkdown(e.target.value)}
+            value={description}
+            onChange={(e) => setDescription(e.target.value)}
             placeholder='소개글을 작성해주세요...'
           />
         </Styled.EditorContainer>
@@ -148,7 +189,7 @@ const RecruitEditTab = () => {
                 return <Styled.ListItem>{children}</Styled.ListItem>;
               },
             }}>
-            {markdown}
+            {description}
           </ReactMarkdown>
         </Styled.PreviewContainer>
       </Styled.EditorPreviewContainer>
