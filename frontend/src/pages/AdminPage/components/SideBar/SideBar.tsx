@@ -1,6 +1,6 @@
 import React from 'react';
 import * as Styled from './SideBar.styles';
-import defaultLogo from '@/assets/images/defaultLogo.png';
+import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
 
 const tabs = [
