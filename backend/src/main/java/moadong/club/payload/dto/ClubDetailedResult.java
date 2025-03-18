@@ -49,7 +49,7 @@ public record ClubDetailedResult(
             .presidentPhoneNumber(clubRecruitmentInformation.getPresidentTelephoneNumber())
             .recruitmentPeriod(period)
             .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget())
-            .recruitmentStatus(clubRecruitmentInformation.getRecruitmentStatus().toString())
+            .recruitmentStatus(clubRecruitmentInformation.getRecruitmentStatus().getDescription())
             .recruitmentForm(clubRecruitmentInformation.getRecruitmentForm())
             .build();
     }
