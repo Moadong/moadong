@@ -101,21 +101,13 @@ const RecruitEditTab = () => {
     const clubUpdateResult = results[0];
     const descriptionUpdateResult = results[1];
 
-    if (clubUpdateResult.status === 'fulfilled') {
+    if (
+      clubUpdateResult.status === 'fulfilled' &&
+      descriptionUpdateResult.status === 'fulfilled'
+    ) {
       alert('동아리 정보가 성공적으로 수정되었습니다.');
     } else {
-      alert(
-        `동아리 정보 수정에 실패했습니다: ${clubUpdateResult.reason.message}`,
-      );
-    }
-
-    if (descriptionUpdateResult.status === 'fulfilled') {
-      alert('소개글이 성공적으로 수정되었습니다.');
-      console.log(updatedDescription);
-    } else {
-      alert(
-        `소개글 수정에 실패했습니다: ${descriptionUpdateResult.reason.message}`,
-      );
+      alert(`동아리 정보 수정에 실패했습니다`);
     }
   };
 
