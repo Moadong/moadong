@@ -1,6 +1,7 @@
 package moadong.user.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
@@ -14,6 +15,7 @@ import moadong.user.payload.response.AccessTokenResponse;
 import moadong.user.service.UserCommandService;
 import moadong.user.view.UserSwaggerView;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.CookieValue;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -56,6 +58,8 @@ public class UserController {
     }
 
     @PutMapping("/")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> update(@CurrentUser CustomUserDetails user,
         @RequestBody @Validated UserUpdateRequest userUpdateRequest) {
         userCommandService.update(user.getUserId(), userUpdateRequest);
