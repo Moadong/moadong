@@ -1,14 +1,14 @@
 import React, { useState, useRef, useEffect } from 'react';
+import * as Styled from './RecruitEditTab.styles';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Calendar from '@/pages/AdminPage/components/Calendar/Calendar';
-import { parseRecruitmentPeriod } from '@/utils/stringToDate';
-import * as Styled from './RecruitEditTab.styles';
+import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
+import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 import { useOutletContext } from 'react-router-dom';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
-import AnimatedButton from '@/components/common/Button/AnimatedButton';
 import { ClubDetail, ClubDescription } from '@/types/club';
 
 const RecruitEditTab = () => {
@@ -123,9 +123,9 @@ const RecruitEditTab = () => {
             onChangeStart={setRecruitmentStart}
             onChangeEnd={setRecruitmentEnd}
           />
-          <AnimatedButton width={'150px'} onClick={handleUpdateClub}>
+          <Button width={'150px'} animated onClick={handleUpdateClub}>
             수정하기
-          </AnimatedButton>
+          </Button>
         </Styled.EditButtonContainer>
       </div>
       <div>

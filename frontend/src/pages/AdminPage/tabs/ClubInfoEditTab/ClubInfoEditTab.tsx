@@ -1,12 +1,12 @@
 import React, { useState, useEffect } from 'react';
+import * as Styled from './ClubInfoEditTab.styles';
 import InputField from '@/components/common/InputField/InputField';
 import SelectTags from '@/pages/AdminPage/components/SelectTags/SelectTags';
 import MakeTags from '@/pages/AdminPage/components/MakeTags/MakeTags';
-import * as Styled from './ClubInfoEditTab.styles';
+import Button from '@/components/common/Button/Button';
 import { useOutletContext } from 'react-router-dom';
 import { ClubDetail } from '@/types/club';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
-import AnimatedButton from '@/components/common/Button/AnimatedButton';
 import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 
 const ClubInfoEditTab = () => {
@@ -88,9 +88,9 @@ const ClubInfoEditTab = () => {
     <>
       <Styled.TitleButtonContainer>
         <Styled.InfoTitle>동아리 정보 수정</Styled.InfoTitle>
-        <AnimatedButton width={'150px'} onClick={handleUpdateClub}>
+        <Button width={'150px'} animated onClick={handleUpdateClub}>
           수정하기
-        </AnimatedButton>
+        </Button>
       </Styled.TitleButtonContainer>
 
       <Styled.InfoGroup>
