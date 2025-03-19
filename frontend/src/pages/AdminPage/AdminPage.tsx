@@ -5,7 +5,6 @@ import SideBar from '@/pages/AdminPage/components/SideBar/SideBar';
 import { Outlet } from 'react-router-dom';
 import * as Styled from './AdminPage.styles';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import { Suspense } from 'react';
 
 const AdminPage = () => {
   const {
@@ -14,6 +13,11 @@ const AdminPage = () => {
     error,
   } = useGetClubDetail('67d2e3b9b15c136c6acbf20b');
 
+  if (!clubDetail) {
+    return <div>Loading...</div>;
+  }
+  if (error) return <p>Error: {error.message}</p>;
+
   return (
     <>
       <Header />
@@ -21,13 +25,7 @@ const AdminPage = () => {
         <Styled.AdminPageContainer>
           <SideBar clubName={clubDetail?.name || ''} />
           <Styled.Content>
-            <Suspense fallback={<div>Loading...</div>}>
-              {error ? (
-                <p>Error: {error.message}</p>
-              ) : (
-                <Outlet context={clubDetail} />
-              )}
-            </Suspense>
+            <Outlet context={clubDetail} />
           </Styled.Content>
         </Styled.AdminPageContainer>
       </PageContainer>
