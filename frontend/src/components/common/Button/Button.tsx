@@ -21,7 +21,7 @@ const StyledButton = styled.button<ButtonProps>`
   border-radius: 10px;
   border: none;
   font-weight: 600;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   cursor: pointer;
   transition: background-color 0.2s;
   width: ${({ width }) => width || 'auto'};
@@ -39,6 +39,7 @@ const StyledButton = styled.button<ButtonProps>`
     transform: ${({ animated }) => (animated ? 'scale(0.95)' : 'none')};
   }
 `;
+
 
 const Button = ({
   width,

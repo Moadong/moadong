@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import deleteIcon from '@/assets/images/delete_icon.png';
+import deleteIcon from '@/assets/images/icons/delete_button_icon.svg';
 
 export const Label = styled.label`
   display: block;

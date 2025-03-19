@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import * as Styled from './InputField.styles';
-import clearIcon from '@/assets/images/delete_icon.png';
+import clearIcon from '@/assets/images/icons/delete_button_icon.svg';
 
 interface CustomInputProps {
   placeholder?: string;
