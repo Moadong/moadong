@@ -12,24 +12,25 @@ export const updateClubDescription = async (
     body: JSON.stringify(updatedData),
   });
 
-  let result;
-  try {
-    result = await response.json();
-  } catch (error) {
-    console.error('📌 JSON 파싱 실패:', error);
-    result = null;
-  }
-
   if (!response.ok) {
-    const errorMessage = result?.message
-      ? `Failed to update club (HTTP ${response.status}): ${result.message}`
-      : `Failed to update club (HTTP ${response.status})`;
+    let errorMessage = `Failed to update club (HTTP ${response.status})`;
+
+    try {
+      const errorResult = await response.json();
+      if (errorResult?.message) {
+        errorMessage += `: ${errorResult.message}`;
+      }
+    } catch (error) {
+      console.error('📌 오류 응답 JSON 파싱 실패:', error);
+    }
 
     throw new Error(errorMessage);
   }
 
-  if (!result?.data) {
-    console.error('📌 API 응답에 data 필드가 없음:', result);
-    throw new Error('Unexpected API response: Missing data field');
+  try {
+    await response.json();
+  } catch (error) {
+    console.error('📌 JSON 파싱 실패:', error);
+    throw new Error('Invalid JSON response from API');
   }
 };
