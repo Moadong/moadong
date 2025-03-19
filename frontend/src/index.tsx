@@ -8,6 +8,10 @@ mixpanel.init(process.env.REACT_APP_MIXPANEL_TOKEN || '', {
   debug: true,
 });
 
+if (window.location.hostname === 'localhost') {
+  mixpanel.disable();
+}
+
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
 );
