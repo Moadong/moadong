@@ -2,14 +2,30 @@ import styled from 'styled-components';
 
 export const RecruitEditorContainer = styled.div`
   display: flex;
+  flex-direction: column;
   width: 100%;
   gap: 16px;
+`;
+
+export const EditButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
+export const EditorPreviewContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  width: 100%;
+  height: 100%;
 `;
 
 export const EditorContainer = styled.div`
   flex: 1;
   display: flex;
   flex-direction: column;
+  min-height: 400px;
 `;
 
 export const PreviewContainer = styled.div`
@@ -43,8 +59,8 @@ export const Toolbar = styled.div`
 `;
 
 export const Editor = styled.textarea`
+  flex-grow: 1;
   width: 100%;
-  height: 300px;
   padding: 10px;
   font-size: 16px;
   border: 1px solid #ddd;

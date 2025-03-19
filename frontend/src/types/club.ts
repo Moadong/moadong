@@ -13,8 +13,13 @@ export interface ClubDetail extends Club {
   state: string;
   feeds: string[];
   description: string;
-  presidentName: string;
-  presidentPhoneNumber: string;
+  clubPresidentName: string;
+  telephoneNumber: string;
   recruitmentPeriod: string;
   recruitmentTarget: string;
+}
+
+export interface ClubDescription {
+  clubId: string;
+  description: string | null;
 }
