@@ -65,7 +65,6 @@ public class Club {
         this.category = request.category();
         this.division = request.division();
         this.state = ClubState.AVAILABLE;
-
         this.clubRecruitmentInformation.update(request);
     }
 

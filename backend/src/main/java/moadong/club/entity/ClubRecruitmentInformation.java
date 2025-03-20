@@ -66,6 +66,16 @@ public class ClubRecruitmentInformation {
         return this;
     }
 
+    public void update(ClubInfoRequest clubInfoRequest){
+        this.recruitmentEnd = clubInfoRequest.recruitmentEnd();
+        this.recruitmentStart = clubInfoRequest.recruitmentStart();
+        this.presidentName = clubInfoRequest.clubPresidentName();
+        this.presidentTelephoneNumber = clubInfoRequest.telephoneNumber();
+        this.recruitmentTarget = clubInfoRequest.recruitmentTarget();
+        this.introduction = clubInfoRequest.introduction();
+        this.tags = clubInfoRequest.tags();
+    }
+
     public void updateRecruitmentStatus(RecruitmentStatus status) {
         this.recruitmentStatus = status;
     }
