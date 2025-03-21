@@ -18,7 +18,7 @@ const ClubDetailPage = () => {
   const { sectionRefs, scrollToSection } = useAutoScroll();
   const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
 
-  const { data: clubDetail, isLoading, error } = useGetClubDetail(clubId || '');
+  const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useEffect(() => {
     const handleResize = () => {
@@ -31,11 +31,13 @@ const ClubDetailPage = () => {
 
   useTrackPageView(`ClubDetailPage ${clubDetail?.name || ''}`);
 
-  // [x]TODO: 로딩화면 구현해야 함
   if (!clubDetail) {
-    return <div>Loading...</div>;
+    return null;
   }
-  if (error) return <p>Error: {error.message}</p>;
+
+  if (error) {
+    return <div>에러가 발생했습니다.</div>;
+  }
 
   return (
     <>
