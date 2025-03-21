@@ -5,12 +5,8 @@ const CopyWebpackPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
 
 const configuration: webpack.Configuration = {
-  // 모듈 해석 방법 설정
   resolve: {
-    // 생략할 확장자
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
-
-    // 절대 경로
     alias: {
       '@': path.resolve(__dirname, '../src'),
     },
@@ -18,7 +14,6 @@ const configuration: webpack.Configuration = {
 
   entry: './src/index',
 
-  // 로더
   module: {
     rules: [
       {
