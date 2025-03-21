@@ -3,6 +3,7 @@ import * as webpack from 'webpack';
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const configuration: webpack.Configuration = {
   resolve: {
@@ -58,6 +59,7 @@ const configuration: webpack.Configuration = {
         },
       ],
     }),
+    new ForkTsCheckerWebpackPlugin(),
   ],
 };
 
