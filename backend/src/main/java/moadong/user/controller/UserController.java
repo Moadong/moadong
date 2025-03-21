@@ -12,6 +12,7 @@ import moadong.user.payload.request.UserLoginRequest;
 import moadong.user.payload.request.UserRegisterRequest;
 import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.AccessTokenResponse;
+import moadong.user.payload.response.LoginResponse;
 import moadong.user.service.UserCommandService;
 import moadong.user.view.UserSwaggerView;
 import org.springframework.http.ResponseEntity;
@@ -45,8 +46,8 @@ public class UserController {
     @PostMapping("/login")
     public ResponseEntity<?> loginUser(@RequestBody @Validated UserLoginRequest request,
         HttpServletResponse response) {
-        AccessTokenResponse accessTokenResponse = userCommandService.loginUser(request, response);
-        return Response.ok(accessTokenResponse);
+        LoginResponse loginResponse = userCommandService.loginUser(request, response);
+        return Response.ok(loginResponse);
     }
 
     @PostMapping("/refresh")
