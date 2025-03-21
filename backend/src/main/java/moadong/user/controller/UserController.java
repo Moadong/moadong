@@ -6,24 +6,22 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import moadong.global.payload.Response;
+import moadong.global.util.JwtProvider;
 import moadong.user.annotation.CurrentUser;
 import moadong.user.payload.CustomUserDetails;
 import moadong.user.payload.request.UserLoginRequest;
 import moadong.user.payload.request.UserRegisterRequest;
 import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.AccessTokenResponse;
+import moadong.user.payload.response.FindUserClubResponse;
 import moadong.user.payload.response.LoginResponse;
 import moadong.user.service.UserCommandService;
 import moadong.user.view.UserSwaggerView;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth/user")
@@ -32,6 +30,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserCommandService userCommandService;
+    private final JwtProvider jwtProvider;
 
     @PostMapping("/register")
     @Operation(
@@ -65,6 +64,13 @@ public class UserController {
         @RequestBody @Validated UserUpdateRequest userUpdateRequest) {
         userCommandService.update(user.getUserId(), userUpdateRequest);
         return Response.ok("success update");
+    }
+
+    @PostMapping("/find/club")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> findUserClub(@AuthenticationPrincipal CustomUserDetails userDetails){
+        return Response.ok(new FindUserClubResponse(userDetails.getId()));
     }
 
 }
