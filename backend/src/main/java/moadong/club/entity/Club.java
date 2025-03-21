@@ -39,6 +39,8 @@ public class Club {
     @NotNull
     private ClubState state;
 
+    private String userId;
+
 
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
