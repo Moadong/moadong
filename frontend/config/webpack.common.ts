@@ -43,11 +43,7 @@ const configuration: webpack.Configuration = {
     new webpack.ProvidePlugin({ React: 'react' }),
     new Dotenv({
       path: './.env',
-      systemvars: true,
-      safe: true,
-      ignoreStub: true,
     }),
-
     new CopyWebpackPlugin({
       patterns: [
         {
