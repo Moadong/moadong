@@ -2,7 +2,7 @@ import React from 'react';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './Header.styles';
 import SearchBox from '@/components/common/SearchBox/SearchBox';
-import MainIcon from '@/assets/images/logos/moadong_name_logo.svg';
+import MainIcon from '@/assets/images/moadong_name_logo.svg';
 import { useNavigate } from 'react-router-dom';
 
 const Header = () => {
