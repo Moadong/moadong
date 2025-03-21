@@ -7,15 +7,14 @@ import * as Styled from './AdminPage.styles';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
 const AdminPage = () => {
-  const {
-    data: clubDetail,
-    isLoading,
-    error,
-  } = useGetClubDetail('67d2e3b9b15c136c6acbf20b');
+  const { data: clubDetail, error } = useGetClubDetail(
+    '67d2e3b9b15c136c6acbf20b',
+  );
 
   if (!clubDetail) {
-    return <div>Loading...</div>;
+    return null;
   }
+
   if (error) return <p>Error: {error.message}</p>;
 
   return (
