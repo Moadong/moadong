@@ -18,7 +18,11 @@ const configuration: webpack.Configuration = {
     rules: [
       {
         test: /\.(ts|tsx|js|jsx)$/,
-        use: ['ts-loader'],
+        loader: 'esbuild-loader',
+        options: {
+          loader: 'tsx',
+          target: 'es2015',
+        },
         exclude: /node_modules/,
       },
       {
