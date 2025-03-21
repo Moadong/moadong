@@ -40,7 +40,6 @@ const configuration: webpack.Configuration = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '..', 'public', 'index.html'),
     }),
-    new webpack.ProvidePlugin({ React: 'react' }),
     new Dotenv({
       path: './.env',
     }),
