@@ -42,6 +42,7 @@ const configuration: webpack.Configuration = {
     }),
     new Dotenv({
       path: './.env',
+      systemvars: true,
     }),
     new CopyWebpackPlugin({
       patterns: [
