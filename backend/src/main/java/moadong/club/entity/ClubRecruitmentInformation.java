@@ -66,22 +66,15 @@ public class ClubRecruitmentInformation {
         return this;
     }
 
-    public void update(ClubInfoRequest clubInfoRequest){
-        this.recruitmentEnd = clubInfoRequest.recruitmentEnd();
-        this.recruitmentStart = clubInfoRequest.recruitmentStart();
-        this.presidentName = clubInfoRequest.clubPresidentName();
-        this.presidentTelephoneNumber = clubInfoRequest.telephoneNumber();
-        this.recruitmentTarget = clubInfoRequest.recruitmentTarget();
-        this.introduction = clubInfoRequest.introduction();
-        this.tags = clubInfoRequest.tags();
-    }
-
     public void updateRecruitmentStatus(RecruitmentStatus status) {
         this.recruitmentStatus = status;
     }
 
     public void updateDescription(ClubDescriptionUpdateRequest request) {
         this.description = request.description();
+        this.recruitmentStart = request.recruitmentStart();
+        this.recruitmentEnd = request.recruitmentEnd();
+        this.recruitmentTarget = request.recruitmentTarget();
     }
 
     public boolean hasRecruitmentPeriod() {
@@ -104,5 +97,13 @@ public class ClubRecruitmentInformation {
 
     public void updateFeedImages(List<String> feedImages){
         this.feedImages = feedImages;
+    }
+
+    public void update(ClubInfoRequest request) {
+        this.introduction = request.introduction();
+        this.presidentName = request.presidentName();
+        this.presidentTelephoneNumber = request.presidentPhoneNumber();
+        this.tags = request.tags();
+        this.recruitmentForm = request.recruitmentForm();
     }
 }

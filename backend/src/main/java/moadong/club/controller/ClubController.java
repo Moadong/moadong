@@ -50,7 +50,7 @@ public class ClubController {
     }
 
     @PutMapping("/info")
-    @Operation(summary = "클럽 수정", description = "클럽을 수정합니다.")
+    @Operation(summary = "클럽 약력 수정", description = "클럽 약력을 수정합니다.")
     @PreAuthorize("isAuthenticated()")  // 인증 필요
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updateClubInfo(@RequestBody @Validated ClubInfoRequest request) {
@@ -59,7 +59,7 @@ public class ClubController {
     }
 
     @PutMapping("/description")
-    @Operation(summary = "클럽 상세소개 수정", description = "클럽의 상세소개 내용을 수정합니다.")
+    @Operation(summary = "클럽 모집정보 수정", description = "클럽의 모집정보 내용을 수정합니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updateClubDescription(
