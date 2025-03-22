@@ -13,9 +13,6 @@ import { Club } from '@/types/club';
 import * as Styled from './MainPage.styles';
 import MainMobileHeader from '@/pages/MainPage/components/MobileHeader/MobileHeader';
 
-//Todo
-// - 로딩, 에러, 빈 데이터 UI 추가
-
 const MainPage = () => {
   useTrackPageView('MainPage');
 
@@ -26,11 +23,12 @@ const MainPage = () => {
   const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
   const division = 'all';
 
-  const {
-    data: clubs,
-    isLoading,
-    error,
-  } = useGetCardList(keyword, recruitmentStatus, division, selectedCategory);
+  const { data: clubs, error } = useGetCardList(
+    keyword,
+    recruitmentStatus,
+    division,
+    selectedCategory,
+  );
 
   const hasData = clubs && clubs.length > 0;
 
@@ -38,6 +36,10 @@ const MainPage = () => {
     if (!hasData) return null;
     return clubs.map((club: Club) => <ClubCard key={club.id} club={club} />);
   }, [clubs, hasData]);
+
+  if (error) {
+    return <div>에러가 발생했습니다.</div>;
+  }
 
   return (
     <>
@@ -50,15 +52,7 @@ const MainPage = () => {
           <StatusRadioButton onChange={setIsFilterActive} />
         </Styled.FilterWrapper>
         <Styled.ContentWrapper>
-          <Styled.CardList>
-            {/* 로딩 UI */}
-            {/*isLoading && <Loading />*/}
-            {/* 에러 UI */}
-            {/*error && <ErrorMessage />*/}
-            {/* 빈 데이터 UI */}
-            {/*!isLoading && !error && !hasData && <EmptyState />*/}
-            {!isLoading && !error && hasData && clubList}
-          </Styled.CardList>
+          <Styled.CardList>{hasData && clubList}</Styled.CardList>
         </Styled.ContentWrapper>
       </Styled.PageContainer>
       <Footer />
