@@ -12,6 +12,33 @@ async function getAvailablePort(defaultPort: number): Promise<number> {
   return await detectPort(defaultPort);
 }
 
+function createBuildLogger(port: number) {
+  return {
+    apply: (compiler) => {
+      compiler.hooks.done.tap('done', (stats) => {
+        if (stats.hasErrors()) {
+          console.error('❌ Webpack Build Failed! Please check errors above.');
+          console.error(stats.toJson().errors);
+        } else if (stats.hasWarnings()) {
+          console.warn('⚠️ Webpack Build Completed with Warnings.');
+        } else {
+          console.log(`
+--------------------------------------------------------
+🎉  WEBPACK BUILD SUCCESSFULLY COMPLETED!
+✅  Files Generated: ${stats
+            .toJson()
+            .assets.map((asset) => asset.name)
+            .join(', ')}
+⏱️  Build Time: ${stats.endTime - stats.startTime} ms
+🌐  Server Running at: http://localhost:${port}
+--------------------------------------------------------
+              `);
+        }
+      });
+    },
+  };
+}
+
 export default getAvailablePort(DEFAULT_PORT).then((port) => {
   console.log(`🚀 Using available port: ${port}`);
 
@@ -40,35 +67,7 @@ export default getAvailablePort(DEFAULT_PORT).then((port) => {
         },
       ],
     },
-    plugins: [
-      new RefreshWebpackPlugin(),
-      {
-        apply: (compiler) => {
-          compiler.hooks.done.tap('done', (stats) => {
-            if (stats.hasErrors()) {
-              console.error(
-                '❌ Webpack Build Failed! Please check errors above.',
-              );
-              console.error(stats.toJson().errors);
-            } else if (stats.hasWarnings()) {
-              console.warn('⚠️ Webpack Build Completed with Warnings.');
-            } else {
-              console.log(`
---------------------------------------------------------
-🎉  WEBPACK BUILD SUCCESSFULLY COMPLETED!
-✅  Files Generated: ${stats
-                .toJson()
-                .assets.map((asset) => asset.name)
-                .join(', ')}
-⏱️  Build Time: ${stats.endTime - stats.startTime} ms
-🌐  Server Running at: http://localhost:${port}
---------------------------------------------------------
-              `);
-            }
-          });
-        },
-      },
-    ],
+    plugins: [new RefreshWebpackPlugin(), createBuildLogger(port)],
     devServer: {
       port,
       open: true,

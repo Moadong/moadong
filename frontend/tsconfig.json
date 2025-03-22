@@ -9,15 +9,14 @@
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
-    "skipDefaultLibCheck": true,
+    "skipLibCheck": true,
     "forceConsistentCasingInFileNames": true,
+    "incremental": true,
     "baseUrl": "./",
     "paths": {
       "@/*": ["src/*"],
     }
   },
-  "include": ["src",
-    "src/types/global.d.ts"
-  ],
+  "include": ["src"],
   "exclude": ["node_modules", "dist"]
 }
