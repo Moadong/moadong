@@ -6,6 +6,12 @@ const useTrackPageView = (pageName: string) => {
   const location = useLocation();
 
   useEffect(() => {
+    if (!mixpanel || typeof mixpanel.track !== 'function') {
+      console.error(
+        '[Mixpanel] 초기화되지 않았거나, mixpanel.track을 사용할 수 없습니다.',
+      );
+      return;
+    }
     const startTime = Date.now();
 
     // 페이지 방문 이벤트
