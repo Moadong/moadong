@@ -14,6 +14,8 @@ import org.springframework.stereotype.Repository;
 public interface ClubRepository extends MongoRepository<Club, String> {
     Optional<Club> findClubById(ObjectId id);
     Optional<List<Club>> findClubByState(ClubState clubState);
+
+    Optional<Club> findClubByUserId(String userId);
     @Query("{'division': {$regex: '^?0$', $options: 'i'}}")
     Optional<List<Club>> findClubByDivisionIgnoreCaseExact(String division);
 
