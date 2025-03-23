@@ -21,20 +21,38 @@ const App = () => {
       <SearchProvider>
         <BrowserRouter>
           <GlobalStyles />
-          <Suspense fallback={null}>
-            <Routes>
-              <Route path='/' element={<MainPage />} />
-              <Route path='/club/:clubId' element={<ClubDetailPage />} />
-              <Route path='login' element={<LoginTab />} />
-              <Route path='/admin' element={<AdminPage />}>
-                <Route index element={<Navigate to='club-info' replace />} />
-                <Route path='club-info' element={<ClubInfoEditTab />} />
-                <Route path='recruit-edit' element={<RecruitEditTab />} />
-                <Route path='account-edit' element={<AccountEditTab />} />
-              </Route>
-              <Route path='*' element={<Navigate to='/' replace />} />
-            </Routes>
-          </Suspense>
+          <Routes>
+            <Route
+              path='/'
+              element={
+                <Suspense fallback={null}>
+                  <MainPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='/club/:clubId'
+              element={
+                <Suspense fallback={null}>
+                  <ClubDetailPage />
+                </Suspense>
+              }
+            />
+            <Route path='login' element={<LoginTab />} />
+            <Route
+              path='/admin'
+              element={
+                <Suspense fallback={null}>
+                  <AdminPage />
+                </Suspense>
+              }>
+              <Route index element={<Navigate to='club-info' replace />} />
+              <Route path='club-info' element={<ClubInfoEditTab />} />
+              <Route path='recruit-edit' element={<RecruitEditTab />} />
+              <Route path='account-edit' element={<AccountEditTab />} />
+            </Route>
+            <Route path='*' element={<Navigate to='/' replace />} />
+          </Routes>
         </BrowserRouter>
       </SearchProvider>
     </QueryClientProvider>
