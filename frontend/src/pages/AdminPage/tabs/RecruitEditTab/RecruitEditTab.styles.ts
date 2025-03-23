@@ -98,3 +98,22 @@ export const ListItem = styled.li`
   padding-left: 5px;
   margin-bottom: 4px;
 `;
+
+export const ImageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 37px;
+  margin-top: 140px;
+  overflow: hidden;
+`;
+
+export const ImageListContainer = styled.div`
+  width: 100%;
+`;
+
+export const ImageGrid = styled.div`
+  overflow-x: auto;
+  white-space: nowrap;
+  overflow-y: hidden;
+  padding-bottom: 24px;
+`;
