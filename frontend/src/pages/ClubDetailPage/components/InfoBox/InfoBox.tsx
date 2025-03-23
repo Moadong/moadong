@@ -20,8 +20,8 @@ const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
     {
       title: '동아리정보',
       descriptions: [
-        { label: '회장이름', value: clubDetail.clubPresidentName },
-        { label: '전화번호', value: clubDetail.telephoneNumber },
+        { label: '회장이름', value: clubDetail.presidentName },
+        { label: '전화번호', value: clubDetail.presidentPhoneNumber },
       ],
     },
   ];

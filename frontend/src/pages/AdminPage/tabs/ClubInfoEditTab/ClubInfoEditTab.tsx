@@ -28,8 +28,8 @@ const ClubInfoEditTab = () => {
     if (clubDetail) {
       // [x] FIXME: 동아리회장 이름, 번호 필드명 수정해야 함
       setClubName(clubDetail.name);
-      setClubPresidentName(clubDetail.clubPresidentName);
-      setTelephoneNumber(clubDetail.telephoneNumber);
+      setClubPresidentName(clubDetail.presidentName);
+      setTelephoneNumber(clubDetail.presidentPhoneNumber);
       setIntroduction(clubDetail.introduction);
       setSelectedDivision(clubDetail.division);
       setSelectedCategory(clubDetail.category);
@@ -67,8 +67,8 @@ const ClubInfoEditTab = () => {
       division: selectedDivision,
       tags: clubTags,
       introduction: introduction,
-      clubPresidentName: clubPresidentName,
-      telephoneNumber: telephoneNumber,
+      presidentName: clubPresidentName,
+      presidentPhoneNumber: telephoneNumber,
       recruitmentStart: recruitmentStartISO,
       recruitmentEnd: recruitmentEndISO,
       recruitmentTarget: clubDetail.recruitmentTarget,
