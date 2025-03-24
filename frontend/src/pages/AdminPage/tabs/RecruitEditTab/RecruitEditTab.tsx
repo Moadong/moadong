@@ -10,6 +10,10 @@ import { useOutletContext } from 'react-router-dom';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
 import { ClubDetail, ClubDescription } from '@/types/club';
+import ImageUpload from '@/pages/AdminPage/components/ImageUpload/ImageUpload';
+import { ImagePreview } from '../../components/ImagePreview/ImagePreview';
+import useUpdateFeedImages from '@/hooks/queries/club/useUpdateFeedImages';
+
 
 const RecruitEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
@@ -36,6 +40,26 @@ const RecruitEditTab = () => {
       textareaRef.current!.selectionEnd = selectionStart + text.length;
       textareaRef.current!.focus();
     }, 0);
+  };
+
+  const MAX_IMAGES = 5;
+  const TEMP_CLUB_ID = '67d5529c1b38fc41fad7660a';
+
+  const [imageList, setImageList] = useState<string[]>([]);
+
+  const { mutate: updateFeedImages } = useUpdateFeedImages();
+
+  const addImage = (newImage: string) => {
+    updateFeedImages({ feeds: [...imageList, newImage], clubId: TEMP_CLUB_ID });
+    setImageList([...imageList, newImage]);
+  };
+
+  const deleteImage = (index: number) => {
+    updateFeedImages({
+      feeds: imageList.filter((_, i) => i !== index),
+      clubId: TEMP_CLUB_ID,
+    });
+    setImageList(imageList.filter((_, i) => i !== index));
   };
 
   useEffect(() => {
@@ -185,6 +209,25 @@ const RecruitEditTab = () => {
           </ReactMarkdown>
         </Styled.PreviewContainer>
       </Styled.EditorPreviewContainer>
+      <Styled.ImageContainer>
+        <h2>활동 사진 편집</h2>
+        <Styled.ImageGrid>
+          {imageList.map((image, index) => (
+            <ImagePreview
+              key={`${image}-${index}`}
+              image={image}
+              onDelete={() => deleteImage(index)}
+            />
+          ))}
+          {imageList.length < MAX_IMAGES && (
+            <ImageUpload
+              key='add-image'
+              onChangeImageList={addImage}
+              clubId={TEMP_CLUB_ID}
+            />
+          )}
+        </Styled.ImageGrid>
+      </Styled.ImageContainer>
     </Styled.RecruitEditorContainer>
   );
 };
