@@ -1,29 +1,34 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useOutletContext } from 'react-router-dom';
 import * as Styled from './RecruitEditTab.styles';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import Calendar from '@/pages/AdminPage/components/Calendar/Calendar';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
-import { parseRecruitmentPeriod } from '@/utils/stringToDate';
-import { useOutletContext } from 'react-router-dom';
+import ImageUpload from '@/pages/AdminPage/components/ImageUpload/ImageUpload';
+import { ImagePreview } from '@/pages/AdminPage/components/ImagePreview/ImagePreview';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
-import { ClubDetail, ClubDescription } from '@/types/club';
-import ImageUpload from '@/pages/AdminPage/components/ImageUpload/ImageUpload';
-import { ImagePreview } from '../../components/ImagePreview/ImagePreview';
 import useUpdateFeedImages from '@/hooks/queries/club/useUpdateFeedImages';
+import { parseRecruitmentPeriod } from '@/utils/stringToDate';
+import { ClubDetail, ClubDescription } from '@/types/club';
 
+const MAX_IMAGES = 5;
+const TEMP_CLUB_ID = '67d5529c1b38fc41fad7660a';
 
 const RecruitEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
+
   const { mutate: updateClub } = useUpdateClubDetail();
   const { mutate: updateClubDescription } = useUpdateClubDescription();
+  const { mutate: updateFeedImages } = useUpdateFeedImages();
 
   const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
   const [description, setDescription] = useState('');
+  const [imageList, setImageList] = useState<string[]>([]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -41,13 +46,6 @@ const RecruitEditTab = () => {
       textareaRef.current!.focus();
     }, 0);
   };
-
-  const MAX_IMAGES = 5;
-  const TEMP_CLUB_ID = '67d5529c1b38fc41fad7660a';
-
-  const [imageList, setImageList] = useState<string[]>([]);
-
-  const { mutate: updateFeedImages } = useUpdateFeedImages();
 
   const addImage = (newImage: string) => {
     updateFeedImages({ feeds: [...imageList, newImage], clubId: TEMP_CLUB_ID });
@@ -134,7 +132,7 @@ const RecruitEditTab = () => {
       alert(`동아리 정보 수정에 실패했습니다`);
     }
   };
-
+  // [x]FIXME: div 컴포넌트 수정
   return (
     <Styled.RecruitEditorContainer>
       <div>
@@ -209,8 +207,9 @@ const RecruitEditTab = () => {
           </ReactMarkdown>
         </Styled.PreviewContainer>
       </Styled.EditorPreviewContainer>
+
+      <h3>활동 사진 편집</h3>
       <Styled.ImageContainer>
-        <h2>활동 사진 편집</h2>
         <Styled.ImageGrid>
           {imageList.map((image, index) => (
             <ImagePreview
