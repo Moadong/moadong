@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
-import useTrackPageView from '@/hooks/useTrackPageView';
+import * as Styled from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
 import BackNavigationBar from '@/pages/ClubDetailPage/components/BackNavigationBar/BackNavigationBar';
 import ClubDetailHeader from '@/pages/ClubDetailPage/components/ClubDetailHeader/ClubDetailHeader';
@@ -9,7 +9,7 @@ import InfoBox from '@/pages/ClubDetailPage/components/InfoBox/InfoBox';
 import IntroduceBox from '@/pages/ClubDetailPage/components/IntroduceBox/IntroduceBox';
 import Footer from '@/components/common/Footer/Footer';
 import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter/ClubDetailFooter';
-import * as Styled from '@/styles/PageContainer.styles';
+import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
