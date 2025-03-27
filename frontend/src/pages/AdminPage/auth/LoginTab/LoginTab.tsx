@@ -4,6 +4,7 @@ import * as Styled from './LoginTab.styles';
 import InputField from '@/components/common/InputField/InputField';
 import Button from '@/components/common/Button/Button';
 import { login } from '@/apis/auth/login';
+import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
 
 const LoginTab = () => {
   const [userId, setUserId] = useState<string>('');
@@ -33,6 +34,7 @@ const LoginTab = () => {
   return (
     <Styled.LoginContainer>
       <Styled.LoginBox>
+        <Styled.Logo src={moadong_name_logo} alt='Moadong Logo' />
         <Styled.Title>Log in</Styled.Title>
 
         <Styled.InputFieldsContainer>
