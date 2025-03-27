@@ -54,11 +54,13 @@ export const ForgotLinks = styled.div`
   gap: 10px;
   justify-content: center;
   color: rgba(0, 0, 0, 0.3);
+
   a {
     color: #666;
     text-decoration: none;
     font-size: 14px;
   }
+
   span {
     color: #ccc;
   }
