@@ -1,3 +1,6 @@
+// 카드의 최소 너비
+const MIN_CARD_WIDTH = 400;
+
 const usePhotoNavigation = ({
   currentIndex,
   setCurrentIndex,
@@ -17,7 +20,9 @@ const usePhotoNavigation = ({
 }) => {
   const isLastCard = currentIndex === photosLength - 1;
   const isLastCardInMiddle =
-    isLastCard && containerWidth > 0 && translateX > -(containerWidth - 400);
+    isLastCard &&
+    containerWidth > 0 &&
+    translateX > -(containerWidth - MIN_CARD_WIDTH);
   const isSecondLastCardAtStart =
     currentIndex === photosLength - 2 && translateX === 0;
 
@@ -45,7 +50,7 @@ const usePhotoNavigation = ({
       const nextIndex = currentIndex + 1;
       setCurrentIndex(nextIndex);
       if (nextIndex === photosLength - 1) {
-        setTranslateX(containerWidth - 400);
+        setTranslateX(containerWidth - MIN_CARD_WIDTH);
       } else {
         setTranslateX((prev) => prev - cardWidth);
       }
