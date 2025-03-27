@@ -3,12 +3,16 @@ import * as Styled from './PhotoList.styles';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
 import { usePhotoSwipe } from '@/hooks/usePhotoSwipe';
 import usePhotoNavigation from '@/hooks/usePhotoNavigation';
-import LazyImage from '@/hooks/LazyImage';
+import LazyImage from '@/components/common/LazyImage/LazyImage';
 
 interface PhotoListProps {
   feeds: string[];
   sectionRefs: React.RefObject<(HTMLDivElement | null)[]>;
 }
+
+const cardContentWidth = 400;
+const cardGap = 28;
+const cardWidth = cardContentWidth + cardGap;
 
 const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -20,7 +24,6 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   );
   const containerRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
-  const cardWidth = 428; // 400px + 28px gap
 
   const convertedUrls = useMemo(
     () =>
@@ -93,7 +96,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
       const diff = newIndex - currentIndex;
       setCurrentIndex(newIndex);
       if (newIndex === photos.length - 1) {
-        setTranslateX(containerWidth - 400);
+        setTranslateX(containerWidth - cardContentWidth);
       } else {
         setTranslateX((prev) => prev - diff * cardWidth);
       }
