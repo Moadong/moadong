@@ -17,18 +17,4 @@ public record ClubSearchResult(
     String recruitmentStatus
 ) {
 
-    public static ClubSearchResult of(ClubSearchResult search, ClubRecruitmentInformation information,
-        List<String> tags) {
-        return ClubSearchResult.builder()
-            .id(search.id())
-            .name(search.name())
-            .logo(search.logo())
-            .tags(tags)
-            .state(search.state())
-            .category(search.category())
-            .division(search.division())
-            .introduction(information.getIntroduction())
-            .recruitmentStatus(information.getRecruitmentStatus().toString())
-            .build();
-    }
 }

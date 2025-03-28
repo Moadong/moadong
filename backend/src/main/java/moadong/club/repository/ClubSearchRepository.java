@@ -10,6 +10,7 @@ import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
+import org.springframework.data.mongodb.core.aggregation.ConditionalOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
@@ -49,8 +50,10 @@ public class ClubSearchRepository {
             Aggregation.project("name", "state", "category", "division")
                 .and("recruitmentInformation.introduction").as("introduction")
                 .and("recruitmentInformation.recruitmentStatus").as("recruitmentStatus")
-                .and("recruitmentInformation.logo").as("logo")
-                .and("recruitmentInformation.tags").as("tags"));
+                    .and(ConditionalOperators.ifNull("$recruitmentInformation.logo").then(""))
+                    .as("logo")
+                    .and(ConditionalOperators.ifNull("$recruitmentInformation.tags").then(""))
+                    .as("tags"));
 
         operations.add(
             Aggregation.sort(Sort.by(Sort.Order.asc("division"), Sort.Order.asc("category"))));
