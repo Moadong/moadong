@@ -102,8 +102,7 @@ export const ListItem = styled.li`
 export const ImageContainer = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 37px;
-  margin-top: 140px;
+  gap: 15px;
   overflow: hidden;
 `;
 
