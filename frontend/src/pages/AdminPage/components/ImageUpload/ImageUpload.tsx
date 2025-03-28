@@ -2,14 +2,12 @@ import React, { useRef } from 'react';
 import * as Styled from './ImageUpload.styles';
 import UploadAddIcon from '@/assets/images/upload-add.png';
 import useCreateFeedImage from '@/hooks/queries/club/useCreateFeedImage';
+import { ImageUploadProps } from '@/types/club';
 
 export const ImageUpload = ({
   clubId,
   onChangeImageList,
-}: {
-  clubId: string;
-  onChangeImageList: (image: string) => void;
-}) => {
+}: ImageUploadProps) => {
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onSuccessUploadImage = (data: string) => {
