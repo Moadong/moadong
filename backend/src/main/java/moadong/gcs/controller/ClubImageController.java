@@ -3,7 +3,6 @@ package moadong.gcs.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import moadong.gcs.domain.FileType;
 import moadong.gcs.dto.FeedUpdateRequest;
@@ -33,9 +32,9 @@ public class ClubImageController {
 
 
     @PostMapping(value = "/{clubId}/logo", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "로고 이미지 업로드", description = "로고 이미지를 저장소에 업로드합니다.")
+    @Operation(summary = "로고 이미지 업데이트", description = "로고 이미지를 업데이트합니다.")
     public ResponseEntity<?> uploadLogo(@PathVariable String clubId,
-                                        @RequestPart("logo") MultipartFile file) {
+        @RequestPart("logo") MultipartFile file) {
         String fileUrl = clubImageService.uploadLogo(clubId, file);
         return Response.ok(fileUrl);
     }
@@ -49,16 +48,16 @@ public class ClubImageController {
 
     // TODO : Signed URL 을 통한 업로드로 추후 변경
     @PostMapping(value = "/{clubId}/feed", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @Operation(summary = "피드 이미지 업로드", description = "피드 이미지를 저장소에 추가합니다.")
+    @Operation(summary = "피드 이미지 업로드", description = "피드에 사용할 이미지를 업로드하고 주소를 반환받습니다.")
     public ResponseEntity<?> uploadFeed(@PathVariable String clubId,
-                                        @RequestPart("feed") MultipartFile file) {
+        @RequestPart("feed") MultipartFile file) {
         return Response.ok(clubImageService.uploadFile(clubId, file, FileType.FEED));
     }
 
     @PostMapping(value = "/{clubId}/feeds")
-    @Operation(summary = "피드 정보 갱신", description = "피드 이미지를 저장소(gcs)에 새로 업로드합니다.")
+    @Operation(summary = "피드 이미지 업데이트", description = "피드 이미지들을 업데이트 합니다.")
     public ResponseEntity<?> putFeeds(@PathVariable String clubId,
-                                      @RequestBody FeedUpdateRequest feeds) {
+        @RequestBody FeedUpdateRequest feeds) {
         clubImageService.updateFeeds(clubId, feeds.feeds());
         return Response.ok("success put feeds");
     }

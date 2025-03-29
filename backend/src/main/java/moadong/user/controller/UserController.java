@@ -21,7 +21,12 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth/user")
@@ -50,6 +55,7 @@ public class UserController {
     }
 
     @PostMapping("/refresh")
+    @Operation(summary = "토큰 재발급", description = "refresh token을 이용하여 access token을 재발급합니다.")
     public ResponseEntity<?> refresh(
         @CookieValue(value = "refresh_token", required = false) String refreshToken) {
         AccessTokenResponse accessTokenResponse = userCommandService.refreshAccessToken(
@@ -69,7 +75,7 @@ public class UserController {
     @PostMapping("/find/club")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> findUserClub(@AuthenticationPrincipal CustomUserDetails userDetails){
+    public ResponseEntity<?> findUserClub(@AuthenticationPrincipal CustomUserDetails userDetails) {
         return Response.ok(new FindUserClubResponse(userDetails.getId()));
     }
 
