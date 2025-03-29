@@ -47,7 +47,10 @@ public class UserController {
         return Response.ok("success register");
     }
 
-    @PostMapping("/login")
+    @PostMapping("/login")@Operation(
+        summary = UserSwaggerView.ADMIN_LOGIN_SUMMARY,
+        description = UserSwaggerView.ADMIN_LOGIN_DESCRIPTION
+    )
     public ResponseEntity<?> loginUser(@RequestBody @Validated UserLoginRequest request,
         HttpServletResponse response) {
         LoginResponse loginResponse = userCommandService.loginUser(request, response);
@@ -64,6 +67,7 @@ public class UserController {
     }
 
     @PutMapping("/")
+    @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> update(@CurrentUser CustomUserDetails user,
@@ -73,6 +77,7 @@ public class UserController {
     }
 
     @PostMapping("/find/club")
+    @Operation(summary = "사용자 동아리 조회", description = "사용자의 동아리를 조회합니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> findUserClub(@AuthenticationPrincipal CustomUserDetails userDetails) {
