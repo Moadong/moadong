@@ -41,7 +41,8 @@ public class ClubController {
     private final ClubMetricService clubMetricService;
 
     @PostMapping("")
-    @Operation(summary = "클럽 생성", description = "클럽을 생성합니다.")
+    @Operation(summary = "클럽 생성", description = "클럽을 생성합니다.<br>"
+        + "category는 분류(취미교양 등), division은 분과(중동 등)입니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> createClub(@CurrentUser CustomUserDetails user, @RequestBody ClubCreateRequest request) {
@@ -50,7 +51,9 @@ public class ClubController {
     }
 
     @PutMapping("/info")
-    @Operation(summary = "클럽 약력 수정", description = "클럽 약력을 수정합니다.")
+    @Operation(summary = "클럽 약력 수정", description = "클럽 약력을 수정합니다.<br>"
+        + "tags는 최대 2개, 5글자 이내로 입력해야 합니다.<br>"
+        + "introduction은 24글자 이내로 입력해야 합니다.")
     @PreAuthorize("isAuthenticated()")  // 인증 필요
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updateClubInfo(@RequestBody @Validated ClubInfoRequest request) {
