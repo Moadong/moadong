@@ -127,7 +127,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
     setImageErrors((prev) => ({ ...prev, [index]: true }));
   };
 
-  const progress = ((currentIndex + 1) / photos.length) * 100;
+  const progress = ((currentIndex + 2) / photos.length) * 100;
 
   return (
     <Styled.PhotoListContainer
