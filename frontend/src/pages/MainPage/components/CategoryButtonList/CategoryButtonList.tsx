@@ -1,13 +1,13 @@
 import React from 'react';
 import mixpanel from 'mixpanel-browser';
 import * as Styled from './CategoryButtonList.styles';
-import iconAll from '@/assets/images/icon_all.png';
-import iconVolunteer from '@/assets/images/icon_volunteer.png';
-import iconReligion from '@/assets/images/icon_religion.png';
-import iconHobby from '@/assets/images/icon_hobby.png';
-import iconAcademic from '@/assets/images/icon_academic.png';
-import iconSport from '@/assets/images/icon_sport.png';
-import iconPerformance from '@/assets/images/icon_performance.png';
+import iconAll from '@/assets/images/icons/category_button/category_all_button_icon.svg';
+import iconVolunteer from '@/assets/images/icons/category_button/category_volunteer_button_icon.svg';
+import iconReligion from '@/assets/images/icons/category_button/category_religion_button_icon.svg';
+import iconHobby from '@/assets/images/icons/category_button/category_hobby_button_icon.svg';
+import iconStudy from '@/assets/images/icons/category_button/category_study_button_icon.svg';
+import iconSport from '@/assets/images/icons/category_button/category_sport_button_icon.svg';
+import iconPerformance from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
 
 interface Category {
   id: string;
@@ -43,7 +43,7 @@ const clubCategories: Category[] = [
   {
     id: '학술',
     name: '학술',
-    icon: iconAcademic,
+    icon: iconStudy,
     eventName: 'Category_Study_Clicked',
   },
   {

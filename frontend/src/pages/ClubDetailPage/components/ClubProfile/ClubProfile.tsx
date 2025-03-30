@@ -2,6 +2,7 @@ import React from 'react';
 import ClubLogo from '@/components/ClubLogo/ClubLogo';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import * as Styled from './ClubProfile.styles';
+import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 
 interface ClubProfileProps {
   logo?: string;
@@ -20,7 +21,8 @@ const ClubProfile = ({
 }: ClubProfileProps) => {
   return (
     <Styled.ClubContainer>
-      <ClubLogo variant='detail' imageSrc={logo} />
+      {/* todo 기본 로고 적용: 추후 <ClubLogo variant='detail' imageSrc={logo} /> */}
+      <ClubLogo variant='detail' imageSrc={defaultLogo || logo} />
       <Styled.ClubInfo>
         <Styled.ClubName>{name}</Styled.ClubName>
         <Styled.TagContainer>

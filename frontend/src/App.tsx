@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SearchProvider } from '@/context/SearchContext';
@@ -12,7 +12,10 @@ import AccountEditTab from './pages/AdminPage/tabs/AccountEditTab/AccountEditTab
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 
+
 const queryClient = new QueryClient();
+
+// [x]TODO: fallback component 추가
 
 const App = () => {
   return (
@@ -20,11 +23,24 @@ const App = () => {
       <SearchProvider>
         <BrowserRouter>
           <GlobalStyles />
-          <Routes>
-            <Route path='/' element={<MainPage />} />
-            <Route path='/club/:clubId' element={<ClubDetailPage />} />
+          <Routes>            
+            <Route
+              path='/'
+              element={
+                <Suspense fallback={null}>
+                  <MainPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='/club/:clubId'
+              element={
+                <Suspense fallback={null}>
+                  <ClubDetailPage />
+                </Suspense>
+              }
+            />
             <Route path='/admin/login' element={<LoginTab />} />
-
             <Route
               path='/admin/*'
               element={
@@ -43,7 +59,6 @@ const App = () => {
                 </PrivateRoute>
               }
             />
-
             <Route path='*' element={<Navigate to='/' replace />} />
           </Routes>
         </BrowserRouter>

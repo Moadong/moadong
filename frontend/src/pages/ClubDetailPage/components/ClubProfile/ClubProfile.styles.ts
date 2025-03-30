@@ -20,7 +20,7 @@ const ClubInfo = styled.div`
   display: flex;
   flex-direction: column;
   justify-content: space-between;
-  height: auto;
+  height: 100%;
 
   @media (max-width: 500px) {
     display: contents;

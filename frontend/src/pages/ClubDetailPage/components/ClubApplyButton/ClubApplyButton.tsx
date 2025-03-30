@@ -44,6 +44,8 @@ const ClubApplyButton = ({ onClick }: ButtonProps) => {
     if (onClick) {
       onClick();
     }
+    // []FIXME: 모집 마감 시 alert창 띄우기
+    alert('모집이 마감되었습니다. 다음에 지원해 주세요.');
   };
 
   return <Button onClick={handleClick}>지원하기</Button>;

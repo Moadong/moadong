@@ -18,3 +18,18 @@ export interface ClubDetail extends Club {
   recruitmentPeriod: string;
   recruitmentTarget: string;
 }
+
+export interface ClubDescription {
+  clubId: string;
+  description: string | null;
+}
+
+export interface ImageUploadProps {
+  clubId: string;
+  onChangeImageList: (image: string) => void;
+}
+
+export interface ImagePreviewProps {
+  image: string;
+  onDelete: () => void;
+}
