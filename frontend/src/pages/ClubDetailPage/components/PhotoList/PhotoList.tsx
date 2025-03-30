@@ -89,7 +89,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
       translateX,
       currentIndex,
       photosLength: photos.length,
-      cardWidth,
+      cardWidth: DESKTOP_CARD_WIDTH,
       containerWidth,
       handleNext,
       handlePrev,
