@@ -22,6 +22,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [translateX, setTranslateX] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
 
   const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>(
     {},
@@ -68,6 +69,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
     containerWidth,
     translateX,
     setTranslateX,
+    isMobile,
   });
 
   const { isDragging, handleTouchStart, handleTouchMove, handleTouchEnd } =
