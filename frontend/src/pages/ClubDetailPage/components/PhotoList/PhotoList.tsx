@@ -11,9 +11,12 @@ interface PhotoListProps {
   sectionRefs: React.RefObject<(HTMLDivElement | null)[]>;
 }
 
-const cardContentWidth = 400;
-const cardGap = 28;
-const cardWidth = cardContentWidth + cardGap;
+const DESKTOP_CARD_CONTENT_WIDTH = 400;
+const CARD_GAP = 28;
+const DESKTOP_CARD_WIDTH = DESKTOP_CARD_CONTENT_WIDTH + CARD_GAP;
+
+const MOBILE_CARD_CONTENT_WIDTH = 313;
+const MOBILE_CARD_WIDTH = MOBILE_CARD_CONTENT_WIDTH + CARD_GAP;
 
 const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   const [currentIndex, setCurrentIndex] = useState(0);
