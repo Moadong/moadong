@@ -92,7 +92,6 @@ export const NavigationButton = styled.button<{ direction: 'left' | 'right' }>`
   justify-content: center;
   font-size: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  /* z-index: 2; */
   transition: all 0.3s ease;
 
   &:hover {
