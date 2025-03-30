@@ -70,8 +70,8 @@ export const PhotoCard = styled.div<{ photoCount: number }>`
   }
 
   @media (max-width: 500px) {
-    width: 100%;
-    height: 350px;
+    width: 300px;
+    height: 300px;
   }
 `;
 
