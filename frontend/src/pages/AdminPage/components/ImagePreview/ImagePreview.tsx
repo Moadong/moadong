@@ -1,13 +1,8 @@
 import React from 'react';
 import * as Styled from './ImagePreview.styles';
+import { ImagePreviewProps } from '@/types/club';
 
-export const ImagePreview = ({
-  image,
-  onDelete,
-}: {
-  image: string;
-  onDelete: () => void;
-}) => {
+export const ImagePreview = ({ image, onDelete }: ImagePreviewProps) => {
   return (
     <Styled.ImagePreviewContainer>
       <img src={image} alt='preview' />
