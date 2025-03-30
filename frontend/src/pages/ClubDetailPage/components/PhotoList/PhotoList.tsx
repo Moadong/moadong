@@ -44,18 +44,25 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   }, [isMobile]);
 
   useEffect(() => {
-    const updateContainerWidth = () => {
+    const updateLayout = () => {
+      const newIsMobile = window.innerWidth <= 500;
+      setIsMobile(newIsMobile);
+    };
+
+    const updateContainer = () => {
       if (containerRef.current) {
         setContainerWidth(containerRef.current.offsetWidth);
       }
     };
 
-    updateContainerWidth();
-    window.addEventListener('resize', updateContainerWidth);
-
-    return () => {
-      window.removeEventListener('resize', updateContainerWidth);
+    const handleResize = () => {
+      updateLayout();
+      updateContainer();
     };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
   }, []);
 
   const {
