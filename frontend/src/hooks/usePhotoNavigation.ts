@@ -1,5 +1,4 @@
-// 카드의 최소 너비
-const MIN_CARD_WIDTH = 400;
+import { useEffect } from 'react';
 
 const usePhotoNavigation = ({
   currentIndex,
@@ -9,6 +8,7 @@ const usePhotoNavigation = ({
   containerWidth,
   translateX,
   setTranslateX,
+  isMobile,
 }: {
   currentIndex: number;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -17,22 +17,37 @@ const usePhotoNavigation = ({
   containerWidth: number;
   translateX: number;
   setTranslateX: React.Dispatch<React.SetStateAction<number>>;
+  isMobile: boolean;
 }) => {
+  useEffect(() => {
+    if (currentIndex === photosLength - 1) {
+      setTranslateX(containerWidth - cardWidth);
+    } else {
+      setTranslateX(-currentIndex * cardWidth);
+    }
+  }, [
+    currentIndex,
+    containerWidth,
+    cardWidth,
+    photosLength,
+    setTranslateX,
+    isMobile,
+  ]);
+
   const isLastCard = currentIndex === photosLength - 1;
-  const isLastCardInMiddle =
+  const isLastCardPartiallyVisible =
     isLastCard &&
     containerWidth > 0 &&
-    translateX > -(containerWidth - MIN_CARD_WIDTH);
+    translateX > -(containerWidth - cardWidth);
   const isSecondLastCardAtStart =
     currentIndex === photosLength - 2 && translateX === 0;
 
   const canScrollLeft = currentIndex > 0 && photosLength > 2;
-  const canScrollRight =
-    currentIndex < photosLength - 1 &&
-    !isLastCardInMiddle &&
-    !isSecondLastCardAtStart &&
-    currentIndex < photosLength - 2 &&
-    photosLength > 2;
+  const canScrollRight = isMobile
+    ? currentIndex < photosLength - 1 && photosLength > 2
+    : currentIndex < photosLength - 2 &&
+      !isSecondLastCardAtStart &&
+      photosLength > 2;
 
   const handlePrev = () => {
     if (currentIndex > 0) {
@@ -42,18 +57,16 @@ const usePhotoNavigation = ({
   };
 
   const handleNext = () => {
-    if (
-      currentIndex < photosLength - 1 &&
-      !isLastCardInMiddle &&
-      !isSecondLastCardAtStart
-    ) {
-      const nextIndex = currentIndex + 1;
-      setCurrentIndex(nextIndex);
-      if (nextIndex === photosLength - 1) {
-        setTranslateX(containerWidth - MIN_CARD_WIDTH);
-      } else {
-        setTranslateX((prev) => prev - cardWidth);
-      }
+    if (currentIndex === photosLength - 2) return;
+
+    const nextIndex = currentIndex + 1;
+    if (nextIndex >= photosLength) return;
+    setCurrentIndex(nextIndex);
+
+    if (nextIndex === photosLength - 1) {
+      setTranslateX(containerWidth - cardWidth);
+    } else {
+      setTranslateX((prev) => prev - cardWidth);
     }
   };
 
@@ -61,7 +74,7 @@ const usePhotoNavigation = ({
     handlePrev,
     handleNext,
     isLastCard,
-    isLastCardInMiddle,
+    isLastCardInMiddle: isLastCardPartiallyVisible,
     isSecondLastCardAtStart,
     canScrollLeft,
     canScrollRight,
