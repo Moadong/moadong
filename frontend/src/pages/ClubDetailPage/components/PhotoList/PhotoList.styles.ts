@@ -107,10 +107,10 @@ export const NavigationButton = styled.button<{ direction: 'left' | 'right' }>`
   }
 
   @media (max-width: 500px) {
-    width: 36px;
-    height: 36px;
-    font-size: 18px;
-    ${({ direction }) => (direction === 'left' ? 'left: 5px;' : 'right: 5px;')}
+    width: 30px;
+    height: 30px;
+    font-size: 15px;
+    ${({ direction }) => (direction === 'left' ? 'left: 5px;' : 'right: 17px;')}
   }
 `;
 
