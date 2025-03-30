@@ -9,7 +9,9 @@ import AdminPage from './pages/AdminPage/AdminPage';
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import RecruitEditTab from './pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import AccountEditTab from './pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
-import LoginTab from './pages/AdminPage/tabs/LoginTab/LoginTab';
+import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
+import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
+
 
 const queryClient = new QueryClient();
 
@@ -21,7 +23,7 @@ const App = () => {
       <SearchProvider>
         <BrowserRouter>
           <GlobalStyles />
-          <Routes>
+          <Routes>            
             <Route
               path='/'
               element={
@@ -38,19 +40,25 @@ const App = () => {
                 </Suspense>
               }
             />
-            <Route path='login' element={<LoginTab />} />
+            <Route path='/admin/login' element={<LoginTab />} />
             <Route
-              path='/admin'
+              path='/admin/*'
               element={
-                <Suspense fallback={null}>
-                  <AdminPage />
-                </Suspense>
-              }>
-              <Route index element={<Navigate to='club-info' replace />} />
-              <Route path='club-info' element={<ClubInfoEditTab />} />
-              <Route path='recruit-edit' element={<RecruitEditTab />} />
-              <Route path='account-edit' element={<AccountEditTab />} />
-            </Route>
+                <PrivateRoute>
+                  <Routes>
+                    <Route path='' element={<AdminPage />}>
+                      <Route
+                        index
+                        element={<Navigate to='club-info' replace />}
+                      />
+                      <Route path='club-info' element={<ClubInfoEditTab />} />
+                      <Route path='recruit-edit' element={<RecruitEditTab />} />
+                      <Route path='account-edit' element={<AccountEditTab />} />
+                    </Route>
+                  </Routes>
+                </PrivateRoute>
+              }
+            />
             <Route path='*' element={<Navigate to='/' replace />} />
           </Routes>
         </BrowserRouter>
