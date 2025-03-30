@@ -39,7 +39,7 @@ export const usePhotoSwipe = ({
     if (!isDragging) return;
 
     const currentX = e.touches[0].clientX;
-    const diff = currentX - startX;
+    const diff = startX - currentX;
     const maxSlideDistance = window.innerWidth <= 500 ? 100 : cardWidth;
 
     const newTranslate =
