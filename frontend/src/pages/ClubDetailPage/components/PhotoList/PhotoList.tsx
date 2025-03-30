@@ -4,6 +4,7 @@ import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
 import { usePhotoSwipe } from '@/hooks/usePhotoSwipe';
 import usePhotoNavigation from '@/hooks/usePhotoNavigation';
 import LazyImage from '@/components/common/LazyImage/LazyImage';
+import { SECTION_INDEX } from '@/constants/section';
 
 interface PhotoListProps {
   feeds: string[];
@@ -112,7 +113,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   return (
     <Styled.PhotoListContainer
       ref={(el) => {
-        sectionRefs.current[3] = el;
+        sectionRefs.current[SECTION_INDEX.PHOTO_LIST_TAB] = el;
       }}>
       <h3>활동 사진</h3>
 
