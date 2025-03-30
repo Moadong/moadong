@@ -39,6 +39,10 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
     [photos],
   );
 
+  const cardWidth = useMemo(() => {
+    return isMobile ? MOBILE_CARD_WIDTH : DESKTOP_CARD_WIDTH;
+  }, [isMobile]);
+
   useEffect(() => {
     const updateContainerWidth = () => {
       if (containerRef.current) {
