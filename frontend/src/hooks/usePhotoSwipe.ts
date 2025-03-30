@@ -72,7 +72,7 @@ export const usePhotoSwipe = ({
     setIsDragging(false);
 
     const diff = currentTranslate - translateX;
-    const threshold = window.innerWidth <= 500 ? 50 : 100;
+    const threshold = cardWidth * 0.2;
 
     if (Math.abs(diff) > threshold) {
       if (diff > 0 && currentIndex > 0) {
