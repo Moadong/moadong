@@ -30,6 +30,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
+  // [x]FIXME: 백엔드에서 Url구조 수정 후 fix 예정
   const convertedUrls = useMemo(
     () =>
       Array.isArray(photos)
