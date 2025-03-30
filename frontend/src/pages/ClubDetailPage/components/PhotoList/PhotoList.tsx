@@ -142,6 +142,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
           translateX={translateX}
           isLastCard={isLastCard}
           containerWidth={containerWidth}
+          cardWidth={cardWidth}
           isDragging={isDragging}
           photoCount={photos.length}
           onTouchStart={handleTouchStart}

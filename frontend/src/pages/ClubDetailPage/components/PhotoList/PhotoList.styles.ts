@@ -31,16 +31,23 @@ export const PhotoList = styled.div<{
   containerWidth: number;
   isDragging: boolean;
   photoCount: number;
+  cardWidth: number;
 }>`
   display: flex;
   flex-direction: row;
   gap: 28px;
   transition: ${({ isDragging }) =>
     isDragging ? 'none' : 'transform 0.3s ease-in-out'};
-  transform: ${({ translateX, isLastCard, containerWidth, photoCount }) => {
+  transform: ${({
+    translateX,
+    isLastCard,
+    containerWidth,
+    photoCount,
+    cardWidth,
+  }) => {
     if (photoCount <= 2) return 'none';
     if (isLastCard) {
-      const maxTranslate = containerWidth - 400;
+      const maxTranslate = containerWidth - cardWidth;
       return `translateX(${maxTranslate}px)`;
     }
     return `translateX(${translateX}px)`;
