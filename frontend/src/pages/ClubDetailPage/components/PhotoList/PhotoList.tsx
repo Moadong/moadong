@@ -114,9 +114,11 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
       const diff = newIndex - currentIndex;
       setCurrentIndex(newIndex);
       if (newIndex === photos.length - 1) {
-        setTranslateX(containerWidth - cardContentWidth);
+        const totalContentWidth = photos.length * cardWidth;
+        const maxTranslateX = totalContentWidth - containerWidth;
+        setTranslateX(Math.max(0, maxTranslateX));
       } else {
-        setTranslateX((prev) => prev - diff * cardWidth);
+        setTranslateX((prev) => prev - diff * DESKTOP_CARD_WIDTH);
       }
     }
   };
