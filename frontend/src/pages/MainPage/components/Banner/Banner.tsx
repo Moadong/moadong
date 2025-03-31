@@ -47,7 +47,6 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
     if (isAnimating) {
       slideRef.current.style.transform = `translateX(-${currentSlideIndex * slideWidth}px)`;
     } else {
-      // 애니메이션 없이 즉시 이동
       if (currentSlideIndex === 1) {
         slideRef.current.style.transform = `translateX(-${slideWidth}px)`;
       } else if (currentSlideIndex === banners.length) {
