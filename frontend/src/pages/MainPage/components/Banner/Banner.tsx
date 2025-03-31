@@ -111,15 +111,7 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
         <Styled.SlideWrapper ref={slideRef} isAnimating={isAnimating}>
           {extendedBanners.map((banner, index) => (
             <Styled.BannerItem key={index}>
-              <img
-                src={banner.backgroundImage}
-                alt={`banner-${index}`}
-                style={{
-                  width: '100%',
-                  height: '100%',
-                  objectFit: 'cover',
-                }}
-              />
+              <img src={banner.backgroundImage} alt={`banner-${index}`} />
             </Styled.BannerItem>
           ))}
         </Styled.SlideWrapper>
