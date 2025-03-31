@@ -94,8 +94,7 @@ export const SlideButton = styled.button`
     padding: 6px 12px;
   }
 
-  @media (max-width: 375px) {
-    width: 30px;
-    padding: 4px 8px;
+  @media (max-width: 500px) {
+    display: none;
   }
 `;
