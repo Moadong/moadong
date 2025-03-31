@@ -37,8 +37,8 @@ export const BannerWrapper = styled.div<BannerProps>`
     `}
 
   @media (max-width: 500px) {
-    width: 100vw;
-    height: 250px;
+    width: 100%;
+    aspect-ratio: 1.8;
     border-radius: 0;
   }
 `;
