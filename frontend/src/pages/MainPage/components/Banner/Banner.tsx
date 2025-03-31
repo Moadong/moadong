@@ -1,6 +1,6 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import * as Styled from './Banner.styles';
-import { SlideButton } from '@/utils/banners';
+import { SlideButton } from '@/constants/banners';
 import debounce from '@/utils/debounce';
 
 export interface BannerProps {
