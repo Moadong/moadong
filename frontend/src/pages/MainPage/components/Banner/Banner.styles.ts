@@ -38,6 +38,7 @@ export const BannerWrapper = styled.div<BannerProps>`
 
   @media (max-width: 500px) {
     width: 100vw;
+    height: 250px;
     border-radius: 0;
   }
 `;
@@ -56,6 +57,7 @@ export const BannerItem = styled.div`
   flex: none;
   width: 100%;
   height: 100%;
+
   img {
     width: 100%;
     height: 100%;
