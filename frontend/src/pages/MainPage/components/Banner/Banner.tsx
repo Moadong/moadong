@@ -7,10 +7,11 @@ export interface BannerProps {
 }
 
 interface BannerComponentProps {
-  banners: BannerProps[];
+  desktopBanners: BannerProps[];
+  mobileBanners: BannerProps[];
 }
 
-const Banner = ({ banners }: BannerComponentProps) => {
+const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   const slideRef = useRef<HTMLDivElement>(null);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
   const [slideWidth, setSlideWidth] = useState(0);
