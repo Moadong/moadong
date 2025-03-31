@@ -37,7 +37,7 @@ const SearchBox = () => {
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
       />
-      <Styled.SearchButton onClick={handleSearchClick}>
+      <Styled.SearchButton type='button' onClick={handleSearchClick}>
         <img src={SearchIcon} alt='Search Button' />
       </Styled.SearchButton>
     </Styled.SearchBoxStyles>
