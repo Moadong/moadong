@@ -14,7 +14,7 @@ interface BannerComponentProps {
 
 const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   const slideRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth < 500);
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
   const [slideWidth, setSlideWidth] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
