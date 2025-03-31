@@ -1,7 +1,6 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import * as Styled from './PhotoList.styles';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
-import { usePhotoSwipe } from '@/hooks/usePhotoSwipe';
 import usePhotoNavigation from '@/hooks/usePhotoNavigation';
 import LazyImage from '@/components/common/LazyImage/LazyImage';
 import { SECTION_INDEX } from '@/constants/section';
@@ -23,7 +22,6 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   const [translateX, setTranslateX] = useState(0);
   const [containerWidth, setContainerWidth] = useState(0);
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
-
   const [imageErrors, setImageErrors] = useState<{ [key: number]: boolean }>(
     {},
   );
@@ -65,37 +63,16 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
     return () => window.removeEventListener('resize', handleWindowResize);
   }, []);
 
-  const {
-    handlePrev,
-    handleNext,
-    isLastCard,
-    isLastCardInMiddle,
-    isSecondLastCardAtStart,
-    canScrollLeft,
-    canScrollRight,
-  } = usePhotoNavigation({
-    currentIndex,
-    setCurrentIndex,
-    photosLength: photos.length,
-    cardWidth,
-    containerWidth,
-    translateX,
-    setTranslateX,
-    isMobile,
-  });
-
-  const { isDragging, handleTouchStart, handleTouchMove, handleTouchEnd } =
-    usePhotoSwipe({
-      translateX,
+  const { handlePrev, handleNext, isLastCard, canScrollLeft, canScrollRight } =
+    usePhotoNavigation({
       currentIndex,
+      setCurrentIndex,
       photosLength: photos.length,
-      cardWidth: DESKTOP_CARD_WIDTH,
+      cardWidth,
       containerWidth,
-      handleNext,
-      handlePrev,
-      isLastCardInMiddle,
-      isSecondLastCardAtStart,
+      translateX,
       setTranslateX,
+      isMobile,
     });
 
   const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
@@ -143,11 +120,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
           isLastCard={isLastCard}
           containerWidth={containerWidth}
           cardWidth={cardWidth}
-          isDragging={isDragging}
-          photoCount={photos.length}
-          onTouchStart={handleTouchStart}
-          onTouchMove={handleTouchMove}
-          onTouchEnd={handleTouchEnd}>
+          photoCount={photos.length}>
           {convertedUrls.map((url, index) => (
             <Styled.PhotoCard key={index} photoCount={photos.length}>
               {!imageErrors[index] ? (

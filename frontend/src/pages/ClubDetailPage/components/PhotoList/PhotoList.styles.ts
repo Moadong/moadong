@@ -29,15 +29,15 @@ export const PhotoList = styled.div<{
   translateX: number;
   isLastCard: boolean;
   containerWidth: number;
-  isDragging: boolean;
+
   photoCount: number;
   cardWidth: number;
 }>`
   display: flex;
   flex-direction: row;
   gap: 28px;
-  transition: ${({ isDragging }) =>
-    isDragging ? 'none' : 'transform 0.3s ease-in-out'};
+  transition: transform 0.3s ease;
+
   transform: ${({
     translateX,
     isLastCard,
