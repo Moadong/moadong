@@ -13,11 +13,13 @@ interface BannerComponentProps {
 
 const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   const slideRef = useRef<HTMLDivElement>(null);
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 500);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
   const [slideWidth, setSlideWidth] = useState(0);
   const [isAnimating, setIsAnimating] = useState(true);
   const [isTransitioning, setIsTransitioning] = useState(false);
 
+  const banners = isMobile ? mobileBanners : desktopBanners;
   const extendedBanners = [banners[banners.length - 1], ...banners, banners[0]];
 
   const updateSlideWidth = useCallback(() => {
@@ -28,11 +30,14 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   }, [currentSlideIndex]);
 
   useEffect(() => {
-    updateSlideWidth();
-    window.addEventListener('resize', updateSlideWidth);
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 500);
+      updateSlideWidth();
+    };
 
+    window.addEventListener('resize', handleResize);
     return () => {
-      window.removeEventListener('resize', updateSlideWidth);
+      window.removeEventListener('resize', handleResize);
     };
   }, [updateSlideWidth]);
 
