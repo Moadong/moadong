@@ -1,6 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from 'react';
 import * as Styled from './Banner.styles';
 import { SlideButton } from '@/utils/banners';
+import debounce from '@/utils/debounce';
 
 export interface BannerProps {
   backgroundImage?: string;
@@ -30,10 +31,10 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   }, [currentSlideIndex]);
 
   useEffect(() => {
-    const handleResize = () => {
+    const handleResize = debounce(() => {
       setIsMobile(window.innerWidth <= 500);
       updateSlideWidth();
-    };
+    }, 200);
 
     window.addEventListener('resize', handleResize);
     return () => {
