@@ -1,14 +1,26 @@
-import FirstSlideImage from '@/assets/images/banners/banner_desktop1.png';
-import SecondSlideImage from '@/assets/images/banners/banner_desktop2.png';
+import FirstSlideDesktopImage from '@/assets/images/banners/banner_desktop1.png';
+import SecondSlideDesktopImage from '@/assets/images/banners/banner_desktop2.png';
+import FirstSlideMobileImage from '@/assets/images/banners/banner_mobile1.png';
+import SecondSlideMobileImage from '@/assets/images/banners/banner_mobile2.png';
+
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 
-export const BannerImageList = [
+export const DesktopBannerImageList = [
   {
-    backgroundImage: FirstSlideImage,
+    backgroundImage: FirstSlideDesktopImage,
   },
   {
-    backgroundImage: SecondSlideImage,
+    backgroundImage: SecondSlideDesktopImage,
+  },
+];
+
+export const MobileBannerImageList = [
+  {
+    backgroundImage: FirstSlideMobileImage,
+  },
+  {
+    backgroundImage: SecondSlideMobileImage,
   },
 ];
 
