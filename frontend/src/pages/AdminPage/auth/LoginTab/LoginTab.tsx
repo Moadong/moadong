@@ -29,18 +29,19 @@ const LoginTab = () => {
       localStorage.setItem('accessToken', accessToken);
       alert('로그인 성공! 관리자 페이지로 이동합니다.');
       navigate('/admin');
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('로그인 실패:', error);
-      const errorMessage =
-        error?.message ||
+      let errorMessage =
         '로그인에 실패했습니다. 아이디 또는 비밀번호를 확인해주세요.';
+      if (error instanceof Error) {
+        errorMessage = error.message;
+      }
       alert(errorMessage);
     } finally {
       setLoading(false);
     }
   };
 
-  // 로그인 여부 확인 중일 때 로딩 (optional)
   if (authLoading) return <div>로딩 중...</div>;
 
   return (
@@ -48,7 +49,6 @@ const LoginTab = () => {
       <Styled.LoginBox>
         <Styled.Logo src={moadong_name_logo} alt='Moadong Logo' />
         <Styled.Title>Log in</Styled.Title>
-
         <Styled.InputFieldsContainer>
           <InputField
             type='text'
