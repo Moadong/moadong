@@ -17,6 +17,7 @@ import moadong.user.payload.response.AccessTokenResponse;
 import moadong.user.payload.response.LoginResponse;
 import moadong.user.repository.UserInformationRepository;
 import moadong.user.repository.UserRepository;
+import moadong.user.util.CookieMaker;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -34,6 +35,7 @@ public class UserCommandService {
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final ClubRepository clubRepository;
+    private final CookieMaker cookieMaker;
 
     public void registerUser(UserRegisterRequest userRegisterRequest) {
         try {
@@ -59,12 +61,7 @@ public class UserCommandService {
             String accessToken = jwtProvider.generateAccessToken(userDetails.getUsername());
             String refreshToken = jwtProvider.generateRefreshToken(userDetails.getUsername());
 
-            ResponseCookie cookie = ResponseCookie.from("refresh_token", refreshToken)
-                    .httpOnly(true)
-                    .path("/")
-                    .maxAge(7 * 24 * 60 * 60)
-                    .secure(true)
-                    .build();
+            ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(refreshToken);
             response.addHeader("Set-Cookie", cookie.toString());
 
             Club club = clubRepository.findClubByUserId(userDetails.getId())
@@ -98,12 +95,7 @@ public class UserCommandService {
         userRepository.save(user);
 
         String newRefreshToken = jwtProvider.generateRefreshToken(user.getUsername());
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", newRefreshToken)
-                .httpOnly(true)
-                .path("/")
-                .maxAge(7 * 24 * 60 * 60) // 7일 유효 기간 설정
-                .secure(true)
-                .build();
+        ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(newRefreshToken);
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
