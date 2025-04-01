@@ -72,7 +72,6 @@ public class UserCommandService {
                 .build();
             response.addHeader("Set-Cookie", cookie.toString());
 
-            System.out.println(userDetails.getId());
             Club club = clubRepository.findClubByUserId(userDetails.getId())
                     .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
@@ -97,8 +96,7 @@ public class UserCommandService {
     public void update(String userId, UserUpdateRequest userUpdateRequest) {
         User user = userRepository.findUserByUserId(userId)
             .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
-
-        user.update(userUpdateRequest);
+        user.update(userUpdateRequest.encryptPassword(passwordEncoder));
 
         userRepository.save(user);
     }
