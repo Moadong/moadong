@@ -2,6 +2,7 @@ import React from 'react';
 import * as Styled from './SideBar.styles';
 import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
+import LogoutButton from '@/pages/AdminPage/components/LogoutButton/LogoutButton';
 
 interface SideBarProps {
   clubName: string;
@@ -39,6 +40,9 @@ const SideBar = ({ clubName }: SideBarProps) => {
           </Styled.SidebarButton>
         ))}
       </Styled.SidebarButtonContainer>
+      <div style={{ marginTop: 'auto' }}>
+        <LogoutButton />
+      </div>
     </Styled.SidebarWrapper>
   );
 };
