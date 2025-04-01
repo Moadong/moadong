@@ -4,7 +4,6 @@ import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
@@ -22,11 +21,8 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
-import java.util.Optional;
 
 @Service
 @AllArgsConstructor
@@ -105,5 +101,11 @@ public class UserCommandService {
         user.update(userUpdateRequest);
 
         userRepository.save(user);
+    }
+
+    public String findClubIdByUserId(String userID){
+        Club club = clubRepository.findClubByUserId(userID)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        return club.getId();
     }
 }
