@@ -7,7 +7,11 @@ export const CategoryButtonContainer = styled.div`
   margin-top: 60px;
 
   @media (max-width: 500px) {
+    background-color: white;
     margin-top: 42px;
+    position: sticky;
+    top: 46px;
+    z-index: 1;
   }
 `;
 
