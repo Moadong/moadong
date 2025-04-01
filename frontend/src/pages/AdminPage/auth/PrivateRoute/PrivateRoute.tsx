@@ -1,7 +1,7 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Navigate } from 'react-router-dom';
 import { getClubIdByToken } from '@/apis/auth/getClubIdByToken';
-// import { ClubContext } from '@/context/ClubContext'; // 연결 예정
+import { useClubContext } from '@/context/clubContext';
 
 interface PrivateRouteProps {
   children: ReactNode;
@@ -10,7 +10,7 @@ interface PrivateRouteProps {
 const PrivateRoute = ({ children }: PrivateRouteProps) => {
   const [authChecked, setAuthChecked] = useState(false);
   const [authorized, setAuthorized] = useState(false);
-  const [clubId, setClubId] = useState<string | null>(null);
+  const { setClubId } = useClubContext();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -24,20 +24,13 @@ const PrivateRoute = ({ children }: PrivateRouteProps) => {
         setAuthChecked(true);
       }
     };
-
     checkAuth();
-  }, []);
+  }, [setClubId]);
 
   if (!authChecked) return <div>로딩 중...</div>;
-
   if (!authorized) return <Navigate to='/admin/login' replace />;
 
-  return (
-    // TODO: ClubContext.Provider로 감싸기 (Context 구현되면 주석 해제)
-    // <ClubContext.Provider value={{ clubId }}>
-    <>{children}</>
-    // </ClubContext.Provider>
-  );
+  return <>{children}</>;
 };
 
 export default PrivateRoute;
