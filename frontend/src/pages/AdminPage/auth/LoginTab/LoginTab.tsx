@@ -1,16 +1,25 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import * as Styled from './LoginTab.styles';
 import InputField from '@/components/common/InputField/InputField';
 import Button from '@/components/common/Button/Button';
 import { login } from '@/apis/auth/login';
 import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
+import useAuth from '@/hooks/useAuth'; // 여기 추가!
 
 const LoginTab = () => {
   const [userId, setUserId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
+  const { isAuthenticated, isLoading: authLoading } = useAuth();
+
+  useEffect(() => {
+    if (!authLoading && isAuthenticated) {
+      navigate('/admin', { replace: true });
+    }
+  }, [authLoading, isAuthenticated, navigate]);
 
   const handleLogin = async () => {
     if (loading) return;
@@ -30,6 +39,9 @@ const LoginTab = () => {
       setLoading(false);
     }
   };
+
+  // 로그인 여부 확인 중일 때 로딩 (optional)
+  if (authLoading) return <div>로딩 중...</div>;
 
   return (
     <Styled.LoginContainer>
