@@ -31,6 +31,7 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   }, [currentSlideIndex]);
 
   useEffect(() => {
+    updateSlideWidth();
     const handleResize = debounce(() => {
       setIsMobile(window.innerWidth <= 500);
       updateSlideWidth();
@@ -90,12 +91,13 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   }, [isTransitioning]);
 
   useEffect(() => {
+    if (slideWidth === 0) return;
     const interval = setInterval(() => {
       moveToNextSlide();
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [moveToNextSlide]);
+  }, [moveToNextSlide, slideWidth]);
 
   return (
     <Styled.BannerContainer>
