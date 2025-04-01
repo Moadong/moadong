@@ -11,7 +11,7 @@ interface SearchProviderProps {
 
 const SearchContext = createContext<SearchContextType | undefined>(undefined);
 
-export const SearchProvider: React.FC<SearchProviderProps> = ({ children }) => {
+export const SearchProvider = ({ children }: SearchProviderProps) => {
   const [keyword, setKeyword] = useState<string>('');
 
   return (
