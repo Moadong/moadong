@@ -21,12 +21,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth/user")
@@ -39,20 +34,21 @@ public class UserController {
 
     @PostMapping("/register")
     @Operation(
-        summary = UserSwaggerView.ADMIN_REGISTER_SUMMARY,
-        description = UserSwaggerView.ADMIN_PWD_ROLE_DESCRIPTION
+            summary = UserSwaggerView.ADMIN_REGISTER_SUMMARY,
+            description = UserSwaggerView.ADMIN_PWD_ROLE_DESCRIPTION
     )
     public ResponseEntity<?> registerUser(@RequestBody @Validated UserRegisterRequest request) {
         userCommandService.registerUser(request);
         return Response.ok("success register");
     }
 
-    @PostMapping("/login")@Operation(
-        summary = UserSwaggerView.ADMIN_LOGIN_SUMMARY,
-        description = UserSwaggerView.ADMIN_LOGIN_DESCRIPTION
+    @PostMapping("/login")
+    @Operation(
+            summary = UserSwaggerView.ADMIN_LOGIN_SUMMARY,
+            description = UserSwaggerView.ADMIN_LOGIN_DESCRIPTION
     )
     public ResponseEntity<?> loginUser(@RequestBody @Validated UserLoginRequest request,
-        HttpServletResponse response) {
+                                       HttpServletResponse response) {
         LoginResponse loginResponse = userCommandService.loginUser(request, response);
         return Response.ok(loginResponse);
     }
@@ -60,9 +56,9 @@ public class UserController {
     @PostMapping("/refresh")
     @Operation(summary = "토큰 재발급", description = "refresh token을 이용하여 access token을 재발급합니다.")
     public ResponseEntity<?> refresh(
-        @CookieValue(value = "refresh_token", required = false) String refreshToken) {
+            @CookieValue(value = "refresh_token", required = false) String refreshToken) {
         AccessTokenResponse accessTokenResponse = userCommandService.refreshAccessToken(
-            refreshToken);
+                refreshToken);
         return Response.ok(accessTokenResponse);
     }
 
@@ -71,8 +67,9 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> update(@CurrentUser CustomUserDetails user,
-        @RequestBody @Validated UserUpdateRequest userUpdateRequest) {
-        userCommandService.update(user.getUserId(), userUpdateRequest);
+                                    @RequestBody @Validated UserUpdateRequest userUpdateRequest,
+                                    HttpServletResponse response) {
+        userCommandService.update(user.getUserId(), userUpdateRequest, response);
         return Response.ok("success update");
     }
 
