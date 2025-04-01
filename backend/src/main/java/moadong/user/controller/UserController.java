@@ -81,7 +81,8 @@ public class UserController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> findUserClub(@AuthenticationPrincipal CustomUserDetails userDetails) {
-        return Response.ok(new FindUserClubResponse(userDetails.getId()));
+        String clubId = userCommandService.findClubIdByUserId(userDetails.getId());
+        return Response.ok(new FindUserClubResponse(clubId));
     }
 
 }
