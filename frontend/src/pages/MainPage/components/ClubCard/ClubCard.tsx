@@ -8,6 +8,8 @@ import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
 import default_profile_logo from '@/assets/images/logos/default_profile_image.svg';
 
+const CATEGORY_BUTTON_LIST_OFFSET = 120;
+
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();
   const [isClicked, setIsClicked] = useState(false);
@@ -33,7 +35,7 @@ const ClubCard = ({ club }: { club: Club }) => {
       if (window.innerWidth > 500 || !clubCardRef.current) return;
 
       const rect = clubCardRef.current.getBoundingClientRect();
-      setIsTouchingCategory(rect.top > 120);
+      setIsTouchingCategory(rect.top > CATEGORY_BUTTON_LIST_OFFSET);
     };
 
     checkCardPosition();
