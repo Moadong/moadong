@@ -26,7 +26,11 @@ const ClubCard = ({ club }: { club: Club }) => {
 
     setTimeout(() => {
       setIsClicked(false);
-      navigate(`/club/${club.id}`);
+      navigate(`/club/${encodeURIComponent(club.name)}`, {
+        state: {
+          clubId: club.id,
+        },
+      });
     }, 150);
   };
 
