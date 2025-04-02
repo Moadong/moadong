@@ -47,19 +47,51 @@ const RecruitEditTab = () => {
   };
 
   const addImage = (newImage: string) => {
-    updateFeedImages({
-      feeds: [...imageList, newImage],
-      clubId: clubDetail.id,
+    setImageList((prev) => {
+      const updatedList = [...prev, newImage];
+
+      updateFeedImages(
+        {
+          feeds: updatedList,
+          clubId: clubDetail.id,
+        },
+        {
+          onSuccess: () => {
+            alert('이미지가 성공적으로 추가되었습니다.');
+            queryClient.invalidateQueries({
+              queryKey: ['clubDetail', clubDetail.id],
+            });
+          },
+          onError: (error) => {
+            alert(`이미지 추가에 실패했습니다: ${error.message}`);
+          },
+        },
+      );
+
+      return updatedList;
     });
-    setImageList([...imageList, newImage]);
   };
 
   const deleteImage = (index: number) => {
-    updateFeedImages({
-      feeds: imageList.filter((_, i) => i !== index),
-      clubId: clubDetail.id,
-    });
-    setImageList(imageList.filter((_, i) => i !== index));
+    const newList = imageList.filter((_, i) => i !== index);
+    updateFeedImages(
+      {
+        feeds: newList,
+        clubId: clubDetail.id,
+      },
+      {
+        onSuccess: () => {
+          alert('이미지가 성공적으로 삭제되었습니다.');
+          setImageList(newList);
+          queryClient.invalidateQueries({
+            queryKey: ['clubDetail', clubDetail.id],
+          });
+        },
+        onError: (error) => {
+          alert(`이미지 삭제에 실패했습니다: ${error.message}`);
+        },
+      },
+    );
   };
 
   useEffect(() => {
