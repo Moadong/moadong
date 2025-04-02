@@ -7,7 +7,7 @@ import Button from '@/components/common/Button/Button';
 import { useOutletContext } from 'react-router-dom';
 import { ClubDetail } from '@/types/club';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
-import { parseRecruitmentPeriod } from '@/utils/stringToDate';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ClubInfoEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
@@ -67,6 +67,9 @@ const ClubInfoEditTab = () => {
     updateClub(updatedData, {
       onSuccess: () => {
         alert('동아리 정보가 성공적으로 수정되었습니다.');
+        queryClient.invalidateQueries({
+          queryKey: ['clubDetail', clubDetail.id],
+        });
       },
       onError: (error) => {
         alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
