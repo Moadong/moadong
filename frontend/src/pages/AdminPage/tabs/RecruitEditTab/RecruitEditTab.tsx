@@ -8,19 +8,17 @@ import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import ImageUpload from '@/pages/AdminPage/components/ImageUpload/ImageUpload';
 import { ImagePreview } from '@/pages/AdminPage/components/ImagePreview/ImagePreview';
-import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
 import useUpdateFeedImages from '@/hooks/queries/club/useUpdateFeedImages';
 import { parseRecruitmentPeriod } from '@/utils/stringToDate';
-import { ClubDetail, ClubDescription } from '@/types/club';
+import { ClubDetail } from '@/types/club';
+import { useQueryClient } from '@tanstack/react-query';
 
 const MAX_IMAGES = 5;
-const TEMP_CLUB_ID = '67d5529c1b38fc41fad7660a';
 
 const RecruitEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail>();
 
-  const { mutate: updateClub } = useUpdateClubDetail();
   const { mutate: updateClubDescription } = useUpdateClubDescription();
   const { mutate: updateFeedImages } = useUpdateFeedImages();
 
@@ -31,6 +29,7 @@ const RecruitEditTab = () => {
   const [imageList, setImageList] = useState<string[]>([]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const queryClient = useQueryClient();
 
   const insertAtCursor = (text: string) => {
     if (!textareaRef.current) return;
@@ -85,45 +84,19 @@ const RecruitEditTab = () => {
       recruitmentTarget: recruitmentTarget,
       description: description,
     };
-
-    const updatedDescription: ClubDescription = {
-      clubId: clubDetail.id,
-      description: description || clubDetail.description,
-    };
-
-    const results = await Promise.allSettled([
-      new Promise((resolve, reject) => {
-        updateClub(updatedData, {
-          onSuccess: () => {
-            setDescription(updatedData.description || '');
-            resolve(null);
-          },
-          onError: reject,
+    updateClubDescription(updatedData, {
+      onSuccess: () => {
+        alert('동아리 정보가 성공적으로 수정되었습니다.');
+        queryClient.invalidateQueries({
+          queryKey: ['clubDetail', clubDetail.id],
         });
-      }),
-      new Promise((resolve, reject) => {
-        updateClubDescription(updatedDescription, {
-          onSuccess: () => {
-            setDescription(updatedDescription.description || '');
-            resolve(null);
-          },
-          onError: reject,
-        });
-      }),
-    ]);
-
-    const clubUpdateResult = results[0];
-    const descriptionUpdateResult = results[1];
-
-    if (
-      clubUpdateResult.status === 'fulfilled' &&
-      descriptionUpdateResult.status === 'fulfilled'
-    ) {
-      alert('동아리 정보가 성공적으로 수정되었습니다.');
-    } else {
-      alert(`동아리 정보 수정에 실패했습니다`);
-    }
+      },
+      onError: (error) => {
+        alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
+      },
+    });
   };
+
   // [x]FIXME: div 컴포넌트 수정
   return (
     <Styled.RecruitEditorContainer>
