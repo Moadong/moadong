@@ -26,14 +26,12 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
     {},
   );
   const containerRef = useRef<HTMLDivElement>(null);
-  const progressBarRef = useRef<HTMLDivElement>(null);
 
   // [x]FIXME: 백엔드에서 Url구조 수정 후 fix 예정
   const convertedUrls = useMemo(() => {
     const realPhotos = Array.isArray(photos)
       ? photos.map((photo) => convertGoogleDriveUrl(photo))
       : [];
-    // 가짜 카드 추가
     return [...realPhotos, 'placeholder'];
   }, [photos]);
 
@@ -72,39 +70,11 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
       containerWidth,
       translateX,
       setTranslateX,
-      isMobile,
     });
-
-  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!progressBarRef.current) return;
-
-    const rect = progressBarRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const percentage = (x / rect.width) * 100;
-    const newIndex = Math.floor((percentage / 100) * photos.length);
-
-    if (
-      newIndex !== currentIndex &&
-      newIndex >= 0 &&
-      newIndex < photos.length
-    ) {
-      const diff = newIndex - currentIndex;
-      setCurrentIndex(newIndex);
-      if (newIndex === photos.length - 1) {
-        const totalContentWidth = photos.length * cardWidth;
-        const maxTranslateX = totalContentWidth - containerWidth;
-        setTranslateX(Math.max(0, maxTranslateX));
-      } else {
-        setTranslateX((prev) => prev - diff * DESKTOP_CARD_WIDTH);
-      }
-    }
-  };
 
   const handleImageError = (index: number) => {
     setImageErrors((prev) => ({ ...prev, [index]: true }));
   };
-
-  const progress = ((currentIndex + 2) / photos.length) * 100;
 
   return (
     <Styled.PhotoListContainer
@@ -112,7 +82,6 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
         sectionRefs.current[INFOTABS_SCROLL_INDEX.PHOTO_LIST_TAB] = el;
       }}>
       <h3>활동 사진</h3>
-
       <Styled.PhotoListWrapper>
         <Styled.PhotoList
           ref={containerRef}
@@ -141,7 +110,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
                   </Styled.NoImageContainer>
                 )
               ) : (
-                <></> // 가짜 카드는 비워둠
+                <></>
               )}
             </Styled.PhotoCard>
           ))}
@@ -157,13 +126,6 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
           </Styled.NavigationButton>
         )}
       </Styled.PhotoListWrapper>
-      {photos.length > 2 && (
-        <Styled.ProgressBarContainer
-          ref={progressBarRef}
-          onClick={handleProgressBarClick}>
-          <Styled.ProgressBar progress={progress} />
-        </Styled.ProgressBarContainer>
-      )}
     </Styled.PhotoListContainer>
   );
 };
