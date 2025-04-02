@@ -20,7 +20,8 @@ const ClubInfoEditTab = () => {
   const [selectedDivision, setSelectedDivision] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [clubTags, setClubTags] = useState<string[]>(() => ['', '']);
-
+  const [recruitmentForm] = useState<string>('');
+  const queryClient = useQueryClient();
   const divisions = ['중동', '과동'];
   const categories = ['봉사', '종교', '취미교양', '학술', '운동', '공연'];
 

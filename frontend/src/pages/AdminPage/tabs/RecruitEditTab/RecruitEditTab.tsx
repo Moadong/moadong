@@ -18,7 +18,7 @@ const MAX_IMAGES = 5;
 const TEMP_CLUB_ID = '67d5529c1b38fc41fad7660a';
 
 const RecruitEditTab = () => {
-  const clubDetail = useOutletContext<ClubDetail | null>();
+  const clubDetail = useOutletContext<ClubDetail>();
 
   const { mutate: updateClub } = useUpdateClubDetail();
   const { mutate: updateClubDescription } = useUpdateClubDescription();
@@ -48,14 +48,17 @@ const RecruitEditTab = () => {
   };
 
   const addImage = (newImage: string) => {
-    updateFeedImages({ feeds: [...imageList, newImage], clubId: TEMP_CLUB_ID });
+    updateFeedImages({
+      feeds: [...imageList, newImage],
+      clubId: clubDetail.id,
+    });
     setImageList([...imageList, newImage]);
   };
 
   const deleteImage = (index: number) => {
     updateFeedImages({
       feeds: imageList.filter((_, i) => i !== index),
-      clubId: TEMP_CLUB_ID,
+      clubId: clubDetail.id,
     });
     setImageList(imageList.filter((_, i) => i !== index));
   };
@@ -75,23 +78,12 @@ const RecruitEditTab = () => {
   const handleUpdateClub = async () => {
     if (!clubDetail) return;
 
-    const updatedData: Omit<Partial<ClubDetail>, 'id'> & {
-      clubId: string;
-      recruitmentStart: string | undefined;
-      recruitmentEnd: string | undefined;
-    } = {
-      clubId: clubDetail.id,
-      name: clubDetail.name,
-      category: clubDetail.category,
-      division: clubDetail.division,
-      tags: clubDetail.tags,
-      introduction: clubDetail.introduction,
-      description: description,
-      presidentName: clubDetail.presidentName,
-      presidentPhoneNumber: clubDetail.presidentPhoneNumber,
+    const updatedData = {
+      id: clubDetail.id,
       recruitmentStart: recruitmentStart?.toISOString(),
       recruitmentEnd: recruitmentEnd?.toISOString(),
       recruitmentTarget: recruitmentTarget,
+      description: description,
     };
 
     const updatedDescription: ClubDescription = {
@@ -222,7 +214,7 @@ const RecruitEditTab = () => {
             <ImageUpload
               key='add-image'
               onChangeImageList={addImage}
-              clubId={TEMP_CLUB_ID}
+              clubId={clubDetail.id}
             />
           )}
         </Styled.ImageGrid>
