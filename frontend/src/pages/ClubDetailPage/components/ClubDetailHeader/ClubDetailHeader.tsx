@@ -8,6 +8,7 @@ interface ClubDetailHeaderProps {
   category: string;
   division: string;
   tags: string[];
+  logo: string;
 }
 
 const ClubDetailHeader = ({
@@ -15,6 +16,7 @@ const ClubDetailHeader = ({
   category,
   division,
   tags,
+  logo,
 }: ClubDetailHeaderProps) => {
   return (
     <Styled.ClubDetailHeaderContainer>
@@ -23,6 +25,7 @@ const ClubDetailHeader = ({
         category={category}
         division={division}
         tags={tags}
+        logo={logo}
       />
       <ClubApplyButton />
     </Styled.ClubDetailHeaderContainer>
