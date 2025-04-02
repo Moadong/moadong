@@ -5,7 +5,7 @@ import InputField from '@/components/common/InputField/InputField';
 import Button from '@/components/common/Button/Button';
 import { login } from '@/apis/auth/login';
 import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
-import useAuth from '@/hooks/useAuth'; // 여기 추가!
+import useAuth from '@/hooks/useAuth';
 
 const LoginTab = () => {
   const [userId, setUserId] = useState<string>('');
