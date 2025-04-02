@@ -29,7 +29,6 @@ export const PhotoList = styled.div<{
   translateX: number;
   isLastCard: boolean;
   containerWidth: number;
-
   photoCount: number;
   cardWidth: number;
 }>`
@@ -117,38 +116,6 @@ export const NavigationButton = styled.button<{ direction: 'left' | 'right' }>`
     height: 30px;
     font-size: 15px;
     ${({ direction }) => (direction === 'left' ? 'left: 5px;' : 'right: 5px;')}
-  }
-`;
-
-export const ProgressBarContainer = styled.div`
-  width: 100%;
-  height: 10px;
-  background-color: transparent;
-  border-radius: 18px;
-  overflow: visible;
-  cursor: pointer;
-  display: flex;
-  justify-content: center;
-  gap: 8px;
-  padding: 10px 0;
-
-  @media (min-width: 501px) {
-    height: 10px;
-    background-color: #dcdcdc;
-    overflow: hidden;
-    display: block;
-    padding: 0;
-  }
-`;
-
-export const ProgressBar = styled.div<{ progress: number }>`
-  width: ${({ progress }) => progress}%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.2);
-  transition: width 0.3s ease;
-
-  @media (max-width: 500px) {
-    display: none;
   }
 `;
 
