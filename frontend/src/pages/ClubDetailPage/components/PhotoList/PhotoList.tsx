@@ -3,7 +3,7 @@ import * as Styled from './PhotoList.styles';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
 import usePhotoNavigation from '@/hooks/usePhotoNavigation';
 import LazyImage from '@/components/common/LazyImage/LazyImage';
-import { SECTION_INDEX } from '@/constants/section';
+import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
 
 interface PhotoListProps {
   feeds: string[];
@@ -109,7 +109,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   return (
     <Styled.PhotoListContainer
       ref={(el) => {
-        sectionRefs.current[SECTION_INDEX.PHOTO_LIST_TAB] = el;
+        sectionRefs.current[INFOTABS_SCROLL_INDEX.PHOTO_LIST_TAB] = el;
       }}>
       <h3>활동 사진</h3>
 

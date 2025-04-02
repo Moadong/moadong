@@ -2,7 +2,7 @@ import React from 'react';
 import * as Styled from './InfoBox.styles';
 import { InfoList } from '@/types/Info';
 import { ClubDetail } from '@/types/club';
-import { SECTION_INDEX } from '@/constants/section';
+import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
 
 interface InfoBoxProps {
   sectionRefs: React.RefObject<(HTMLDivElement | null)[]>;
@@ -10,7 +10,7 @@ interface InfoBoxProps {
 }
 
 type InfoListWithRef = InfoList & {
-  refIndex: SECTION_INDEX;
+  refIndex: INFOTABS_SCROLL_INDEX;
 };
 
 const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
@@ -21,7 +21,7 @@ const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
         { label: '모집기간', value: clubDetail.recruitmentPeriod },
         { label: '모집대상', value: clubDetail.recruitmentTarget },
       ],
-      refIndex: SECTION_INDEX.INTRODUCE_INFO_TAB,
+      refIndex: INFOTABS_SCROLL_INDEX.INTRODUCE_INFO_TAB,
     },
     {
       title: '동아리정보',
@@ -29,7 +29,7 @@ const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
         { label: '회장이름', value: clubDetail.presidentName },
         { label: '전화번호', value: clubDetail.presidentPhoneNumber },
       ],
-      refIndex: SECTION_INDEX.CLUB_INFO_TAB,
+      refIndex: INFOTABS_SCROLL_INDEX.CLUB_INFO_TAB,
     },
   ];
 
