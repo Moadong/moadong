@@ -230,5 +230,4 @@ const RecruitEditTab = () => {
     </Styled.RecruitEditorContainer>
   );
 };
-
 export default RecruitEditTab;
