@@ -21,8 +21,7 @@ const ClubProfile = ({
 }: ClubProfileProps) => {
   return (
     <Styled.ClubContainer>
-      {/* todo 기본 로고 적용: 추후 <ClubLogo variant='detail' imageSrc={logo} /> */}
-      <ClubLogo variant='detail' imageSrc={defaultLogo || logo} />
+      <ClubLogo variant='detail' imageSrc={logo || defaultLogo} />
       <Styled.ClubInfo>
         <Styled.ClubName>{name}</Styled.ClubName>
         <Styled.TagContainer>
