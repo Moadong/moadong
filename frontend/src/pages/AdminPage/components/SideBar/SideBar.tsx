@@ -23,6 +23,14 @@ const SideBar = ({ clubName }: SideBarProps) => {
     [location.pathname],
   );
 
+  const handleTabClick = (tab: (typeof tabs)[number], index: number) => {
+    if (tab.label === '회원 정보 관리') {
+      alert('회원 정보 관리 탭은 준비 중입니다☺️');
+      return;
+    }
+    navigate(tab.path);
+  };
+
   return (
     <Styled.SidebarWrapper>
       <Styled.SidebarHeader>설정</Styled.SidebarHeader>
@@ -35,7 +43,7 @@ const SideBar = ({ clubName }: SideBarProps) => {
           <Styled.SidebarButton
             key={tab.label}
             className={activeTab === index ? 'active' : ''}
-            onClick={() => navigate(tab.path)}>
+            onClick={() => handleTabClick(tab, index)}>
             {tab.label}
           </Styled.SidebarButton>
         ))}
