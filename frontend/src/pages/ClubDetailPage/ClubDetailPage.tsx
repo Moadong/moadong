@@ -50,6 +50,7 @@ const ClubDetailPage = () => {
           category={clubDetail.category}
           division={clubDetail.division}
           tags={clubDetail.tags}
+          logo={clubDetail.logo}
         />
         <InfoTabs onTabClick={scrollToSection} />
         <InfoBox sectionRefs={sectionRefs} clubDetail={clubDetail} />
