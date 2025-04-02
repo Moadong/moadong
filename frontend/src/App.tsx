@@ -2,7 +2,7 @@ import React, { Suspense } from 'react';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { SearchProvider } from '@/context/SearchContext';
-import { ClubProvider } from '@/context/clubContext';
+import { AdminClubProvider } from '@/context/AdminClubContext';
 import GlobalStyles from '@/styles/Global.styles';
 import MainPage from '@/pages/MainPage/MainPage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
@@ -44,7 +44,7 @@ const App = () => {
             <Route
               path='/admin/*'
               element={
-                <ClubProvider>
+                <AdminClubProvider>
                   <PrivateRoute>
                     <Routes>
                       <Route path='' element={<AdminPage />}>
@@ -64,7 +64,7 @@ const App = () => {
                       </Route>
                     </Routes>
                   </PrivateRoute>
-                </ClubProvider>
+                </AdminClubProvider>
               }
             />
             <Route path='*' element={<Navigate to='/' replace />} />

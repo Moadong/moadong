@@ -1,11 +1,11 @@
 import { useEffect } from 'react';
 import useAuth from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import { useClubContext } from '@/context/clubContext';
+import { useAdminClubContext } from '@/context/AdminClubContext';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isLoading, isAuthenticated, clubId } = useAuth();
-  const { setClubId } = useClubContext();
+  const { setClubId } = useAdminClubContext();
 
   useEffect(() => {
     if (clubId) setClubId(clubId);

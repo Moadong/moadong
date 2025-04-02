@@ -5,11 +5,10 @@ import SideBar from '@/pages/AdminPage/components/SideBar/SideBar';
 import { Outlet } from 'react-router-dom';
 import * as Styled from './AdminPage.styles';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import { useClubContext } from '@/context/clubContext';
+import { useAdminClubContext } from '@/context/AdminClubContext';
 
 const AdminPage = () => {
-  const { clubId } = useClubContext();
-
+  const { clubId } = useAdminClubContext();
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   if (!clubDetail) {
