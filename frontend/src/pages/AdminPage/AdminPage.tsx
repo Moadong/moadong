@@ -22,7 +22,10 @@ const AdminPage = () => {
       <Header />
       <PageContainer>
         <Styled.AdminPageContainer>
-          <SideBar clubName={clubDetail?.name || ''} />
+          <SideBar
+            clubLogo={clubDetail?.logo}
+            clubName={clubDetail?.name || ''}
+          />
           <Styled.Content>
             <Outlet context={clubDetail} />
           </Styled.Content>
