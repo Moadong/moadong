@@ -4,6 +4,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm'; // 링크 및 마크다운 확장 지원
 import rehypeRaw from 'rehype-raw'; // HTML 태그를 지원하려면 필요
 import rehypeSanitize from 'rehype-sanitize';
+import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
 
 const IntroduceBox = ({
   sectionRefs,
@@ -15,7 +16,7 @@ const IntroduceBox = ({
   return (
     <Styled.IntroduceBoxWrapper
       ref={(el) => {
-        sectionRefs.current[2] = el;
+        sectionRefs.current[INFOTABS_SCROLL_INDEX.DESCRIPTION_TAB] = el;
       }}>
       <Styled.IntroduceTitle>소개글</Styled.IntroduceTitle>
       <Styled.IntroduceContentBox>

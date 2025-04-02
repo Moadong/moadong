@@ -4,6 +4,7 @@ export const InfoTabWrapper = styled.div`
   display: none;
   position: sticky;
   top: 70px;
+  z-index: 1;
 
   @media (max-width: 500px) {
     display: flex;

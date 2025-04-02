@@ -7,8 +7,9 @@ export const ClubDetailHeaderContainer = styled.div`
   margin-top: 150px;
 
   @media (max-width: 500px) {
-    & > button { 
+    & > button {
       display: none;
     }
     margin-top: 40px;
+  }
 `;
