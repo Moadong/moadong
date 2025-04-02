@@ -16,6 +16,7 @@ import useAutoScroll from '@/hooks/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
 const ClubDetailPage = () => {
+  const { clubName } = useParams<{ clubName: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
   const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
 
