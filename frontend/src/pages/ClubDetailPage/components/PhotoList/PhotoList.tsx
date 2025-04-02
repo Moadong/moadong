@@ -29,13 +29,13 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
   const progressBarRef = useRef<HTMLDivElement>(null);
 
   // [x]FIXME: 백엔드에서 Url구조 수정 후 fix 예정
-  const convertedUrls = useMemo(
-    () =>
-      Array.isArray(photos)
-        ? photos.map((photo) => convertGoogleDriveUrl(photo))
-        : [],
-    [photos],
-  );
+  const convertedUrls = useMemo(() => {
+    const realPhotos = Array.isArray(photos)
+      ? photos.map((photo) => convertGoogleDriveUrl(photo))
+      : [];
+    // 가짜 카드 추가
+    return [...realPhotos, 'placeholder'];
+  }, [photos]);
 
   const cardWidth = useMemo(() => {
     return isMobile ? MOBILE_CARD_WIDTH : DESKTOP_CARD_WIDTH;
@@ -67,7 +67,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
     usePhotoNavigation({
       currentIndex,
       setCurrentIndex,
-      photosLength: photos.length,
+      photosLength: convertedUrls.length,
       cardWidth,
       containerWidth,
       translateX,
@@ -122,19 +122,26 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
           cardWidth={cardWidth}
           photoCount={photos.length}>
           {convertedUrls.map((url, index) => (
-            <Styled.PhotoCard key={index} photoCount={photos.length}>
-              {!imageErrors[index] ? (
-                <LazyImage
-                  src={url}
-                  alt={`활동 사진 ${index + 1}`}
-                  index={index}
-                  delayMs={200}
-                  onError={() => handleImageError(index)}
-                />
+            <Styled.PhotoCard
+              key={index}
+              photoCount={photos.length}
+              isPlaceholder={url === 'placeholder'}>
+              {url !== 'placeholder' ? (
+                !imageErrors[index] ? (
+                  <LazyImage
+                    src={url}
+                    alt={`활동 사진 ${index + 1}`}
+                    index={index}
+                    delayMs={200}
+                    onError={() => handleImageError(index)}
+                  />
+                ) : (
+                  <Styled.NoImageContainer>
+                    이미지 준비중..
+                  </Styled.NoImageContainer>
+                )
               ) : (
-                <Styled.NoImageContainer>
-                  이미지 준비중..
-                </Styled.NoImageContainer>
+                <></> // 가짜 카드는 비워둠
               )}
             </Styled.PhotoCard>
           ))}

@@ -60,7 +60,10 @@ export const PhotoList = styled.div<{
   }
 `;
 
-export const PhotoCard = styled.div<{ photoCount: number }>`
+export const PhotoCard = styled.div<{
+  photoCount: number;
+  isPlaceholder?: boolean;
+}>`
   flex-shrink: 0;
   border-radius: 18px;
   width: 400px;
@@ -68,6 +71,9 @@ export const PhotoCard = styled.div<{ photoCount: number }>`
   background-color: #cdcdcd;
   overflow: hidden;
   touch-action: none;
+
+  visibility: ${({ isPlaceholder }) => (isPlaceholder ? 'hidden' : 'visible')};
+  opacity: ${({ isPlaceholder }) => (isPlaceholder ? 0 : 1)};
 
   img {
     width: 100%;
