@@ -6,6 +6,7 @@ import LogoutButton from '@/pages/AdminPage/components/LogoutButton/LogoutButton
 
 interface SideBarProps {
   clubName: string;
+  clubLogo: string;
 }
 
 const tabs = [
@@ -14,7 +15,7 @@ const tabs = [
   { label: '회원 정보 관리', path: '/admin/account-edit' },
 ];
 
-const SideBar = ({ clubName }: SideBarProps) => {
+const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -26,7 +27,7 @@ const SideBar = ({ clubName }: SideBarProps) => {
   return (
     <Styled.SidebarWrapper>
       <Styled.SidebarHeader>설정</Styled.SidebarHeader>
-      <Styled.ClubLogo src={defaultLogo} alt='Club Logo' />
+      <Styled.ClubLogo src={clubLogo || defaultLogo} alt='Club Logo' />
       <Styled.ClubTitle>{clubName}</Styled.ClubTitle>
       <Styled.divider />
 
