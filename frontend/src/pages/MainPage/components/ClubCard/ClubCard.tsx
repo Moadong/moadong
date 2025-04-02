@@ -6,7 +6,6 @@ import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import * as Styled from './ClubCard.styles';
 import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
-import default_profile_logo from '@/assets/images/logos/default_profile_image.svg';
 
 const CATEGORY_BUTTON_LIST_OFFSET = 120;
 
@@ -57,8 +56,7 @@ const ClubCard = ({ club }: { club: Club }) => {
       onClick={handleNavigate}>
       <Styled.CardHeader>
         <Styled.ClubProfile>
-          <ClubLogo imageSrc={default_profile_logo} />
-          {/* TODO: 동아리 로고 이미지가 추가 되면 <ClubLogo imageSrc={club.logo} /> */}
+          <ClubLogo imageSrc={club.logo} />
           <Styled.ClubName>{club.name}</Styled.ClubName>
         </Styled.ClubProfile>
         <ClubStateBox state={club.recruitmentStatus} />
