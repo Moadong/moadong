@@ -33,9 +33,35 @@ export const IntroduceContentBox = styled.div`
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
+`;
 
-  ol,
-  ul {
-    padding-left: 20px;
-  }
+export const Paragraph = styled.p`
+  line-height: 1.6;
+  white-space: pre-wrap;
+  /* margin-bottom: 16px; */
+`;
+
+export const Blockquote = styled.blockquote`
+  padding-left: 10px;
+  border-left: 4px solid #ccc;
+  color: #555;
+`;
+
+export const OrderedList = styled.ol`
+  padding-left: 20px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  line-height: 1.6;
+`;
+
+export const UnorderedList = styled.ul`
+  padding-left: 20px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  line-height: 1.6;
+`;
+
+export const ListItem = styled.li`
+  padding-left: 5px;
+  margin-bottom: 4px;
 `;
