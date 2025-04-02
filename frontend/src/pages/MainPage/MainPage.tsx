@@ -7,11 +7,12 @@ import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import StatusRadioButton from '@/pages/MainPage/components/StatusRadioButton/StatusRadioButton';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import MainMobileHeader from '@/pages/MainPage/components/MobileHeader/MobileHeader';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
-import { BannerImageList } from '@/utils/banners';
+import { DesktopBannerImageList } from '@/constants/banners';
+import { MobileBannerImageList } from '@/constants/banners';
 import { Club } from '@/types/club';
 import * as Styled from './MainPage.styles';
-import MainMobileHeader from '@/pages/MainPage/components/MobileHeader/MobileHeader';
 
 const MainPage = () => {
   useTrackPageView('MainPage');
@@ -45,7 +46,10 @@ const MainPage = () => {
     <>
       <Header />
       <MainMobileHeader />
-      <Banner banners={BannerImageList} />
+      <Banner
+        desktopBanners={DesktopBannerImageList}
+        mobileBanners={MobileBannerImageList}
+      />
       <Styled.PageContainer>
         <CategoryButtonList onCategorySelect={setSelectedCategory} />
         <Styled.FilterWrapper>
