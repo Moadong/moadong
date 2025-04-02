@@ -23,4 +23,5 @@ export const DeleteButton = styled.button`
   background-color: #fff;
   border-radius: 50%;
   z-index: 2;
+  cursor: pointer;
 `;
