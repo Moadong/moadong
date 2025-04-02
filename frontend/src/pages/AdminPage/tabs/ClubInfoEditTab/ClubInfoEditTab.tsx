@@ -42,26 +42,17 @@ const ClubInfoEditTab = () => {
   }, [clubDetail]);
 
   const handleUpdateClub = () => {
-    if (!clubDetail) return;
+    if (!clubDetail || !clubDetail.id) {
+      alert('클럽 정보가 로드되지 않았습니다.');
+      console.error(
+        '[ERROR] clubDetail or clubDetail.id is undefined:',
+        clubDetail,
+      );
+      return;
+    }
 
-    const { recruitmentStart, recruitmentEnd } = clubDetail.recruitmentPeriod
-      ? parseRecruitmentPeriod(clubDetail.recruitmentPeriod)
-      : { recruitmentStart: null, recruitmentEnd: null };
-
-    const recruitmentStartISO = recruitmentStart
-      ? recruitmentStart.toISOString()
-      : null;
-
-    const recruitmentEndISO = recruitmentEnd
-      ? recruitmentEnd.toISOString()
-      : null;
-
-    const updatedData: Omit<Partial<ClubDetail>, 'id'> & {
-      clubId: string;
-      recruitmentStart: string | null;
-      recruitmentEnd: string | null;
-    } = {
-      clubId: clubDetail.id,
+    const updatedData = {
+      id: clubDetail.id,
       name: clubName,
       category: selectedCategory,
       division: selectedDivision,
@@ -69,9 +60,7 @@ const ClubInfoEditTab = () => {
       introduction: introduction,
       presidentName: clubPresidentName,
       presidentPhoneNumber: telephoneNumber,
-      recruitmentStart: recruitmentStartISO,
-      recruitmentEnd: recruitmentEndISO,
-      recruitmentTarget: clubDetail.recruitmentTarget,
+      recruitmentForm: recruitmentForm,
     };
 
     updateClub(updatedData, {
