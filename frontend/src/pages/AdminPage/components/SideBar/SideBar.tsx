@@ -2,7 +2,6 @@ import React from 'react';
 import * as Styled from './SideBar.styles';
 import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
-import LogoutButton from '@/pages/AdminPage/components/LogoutButton/LogoutButton';
 
 interface SideBarProps {
   clubName: string;
@@ -32,6 +31,11 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     navigate(tab.path);
   };
 
+  const handleLogout = () => {
+    localStorage.removeItem('accessToken');
+    navigate('/admin/login', { replace: true });
+  };
+
   return (
     <Styled.SidebarWrapper>
       <Styled.SidebarHeader>설정</Styled.SidebarHeader>
@@ -49,9 +53,10 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
           </Styled.SidebarButton>
         ))}
       </Styled.SidebarButtonContainer>
-      <div style={{ marginTop: 'auto' }}>
-        <LogoutButton />
-      </div>
+      <Styled.divider />
+      <Styled.SidebarButton onClick={handleLogout}>
+        로그아웃
+      </Styled.SidebarButton>
     </Styled.SidebarWrapper>
   );
 };
