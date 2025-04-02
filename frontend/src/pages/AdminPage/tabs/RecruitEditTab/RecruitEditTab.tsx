@@ -72,6 +72,8 @@ const RecruitEditTab = () => {
     setRecruitmentEnd((prev) => prev ?? initialEnd);
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
     setDescription((prev) => prev || clubDetail.description || '');
+
+    setImageList(clubDetail.feeds || []);
   }, [clubDetail]);
 
   const handleUpdateClub = async () => {
