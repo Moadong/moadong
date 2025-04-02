@@ -1,10 +1,11 @@
 import API_BASE_URL from '@/constants/api';
 import { ClubDescription } from '@/types/club';
+import { secureFetch } from '@/apis/auth/secureFetch';
 
 export const updateClubDescription = async (
   updatedData: ClubDescription,
 ): Promise<void> => {
-  const response = await fetch(`${API_BASE_URL}/api/club/description`, {
+  const response = await secureFetch(`${API_BASE_URL}/api/club/description`, {
     method: 'PUT',
     headers: {
       'Content-Type': 'application/json',

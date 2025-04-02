@@ -9,7 +9,6 @@ export const useGetCardList = (
 ) => {
   return useQuery({
     queryKey: ['clubs', keyword, recruitmentStatus, division, category],
-    queryFn: () =>
-      getClubList(keyword, recruitmentStatus,  division,  category),
+    queryFn: () => getClubList(keyword, recruitmentStatus, division, category),
   });
 };

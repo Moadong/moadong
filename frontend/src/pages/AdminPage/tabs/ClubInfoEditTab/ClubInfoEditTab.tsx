@@ -7,7 +7,7 @@ import Button from '@/components/common/Button/Button';
 import { useOutletContext } from 'react-router-dom';
 import { ClubDetail } from '@/types/club';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
-import { parseRecruitmentPeriod } from '@/utils/stringToDate';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ClubInfoEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
@@ -20,7 +20,8 @@ const ClubInfoEditTab = () => {
   const [selectedDivision, setSelectedDivision] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [clubTags, setClubTags] = useState<string[]>(() => ['', '']);
-
+  const [recruitmentForm] = useState<string>('');
+  const queryClient = useQueryClient();
   const divisions = ['중동', '과동'];
   const categories = ['봉사', '종교', '취미교양', '학술', '운동', '공연'];
 
@@ -42,26 +43,17 @@ const ClubInfoEditTab = () => {
   }, [clubDetail]);
 
   const handleUpdateClub = () => {
-    if (!clubDetail) return;
+    if (!clubDetail || !clubDetail.id) {
+      alert('클럽 정보가 로드되지 않았습니다.');
+      console.error(
+        '[ERROR] clubDetail or clubDetail.id is undefined:',
+        clubDetail,
+      );
+      return;
+    }
 
-    const { recruitmentStart, recruitmentEnd } = clubDetail.recruitmentPeriod
-      ? parseRecruitmentPeriod(clubDetail.recruitmentPeriod)
-      : { recruitmentStart: null, recruitmentEnd: null };
-
-    const recruitmentStartISO = recruitmentStart
-      ? recruitmentStart.toISOString()
-      : null;
-
-    const recruitmentEndISO = recruitmentEnd
-      ? recruitmentEnd.toISOString()
-      : null;
-
-    const updatedData: Omit<Partial<ClubDetail>, 'id'> & {
-      clubId: string;
-      recruitmentStart: string | null;
-      recruitmentEnd: string | null;
-    } = {
-      clubId: clubDetail.id,
+    const updatedData = {
+      id: clubDetail.id,
       name: clubName,
       category: selectedCategory,
       division: selectedDivision,
@@ -69,14 +61,15 @@ const ClubInfoEditTab = () => {
       introduction: introduction,
       presidentName: clubPresidentName,
       presidentPhoneNumber: telephoneNumber,
-      recruitmentStart: recruitmentStartISO,
-      recruitmentEnd: recruitmentEndISO,
-      recruitmentTarget: clubDetail.recruitmentTarget,
+      recruitmentForm: recruitmentForm,
     };
 
     updateClub(updatedData, {
       onSuccess: () => {
         alert('동아리 정보가 성공적으로 수정되었습니다.');
+        queryClient.invalidateQueries({
+          queryKey: ['clubDetail', clubDetail.id],
+        });
       },
       onError: (error) => {
         alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);

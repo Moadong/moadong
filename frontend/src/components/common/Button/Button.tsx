@@ -40,7 +40,6 @@ const StyledButton = styled.button<ButtonProps>`
   }
 `;
 
-
 const Button = ({
   width,
   children,

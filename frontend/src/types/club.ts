@@ -17,10 +17,11 @@ export interface ClubDetail extends Club {
   presidentPhoneNumber: string;
   recruitmentPeriod: string;
   recruitmentTarget: string;
+  recruitmentForm: string;
 }
 
 export interface ClubDescription {
-  clubId: string;
+  id: string;
   description: string | null;
 }
 

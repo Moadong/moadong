@@ -6,6 +6,7 @@ import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import * as Styled from './ClubCard.styles';
 import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
+import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
 
 const CATEGORY_BUTTON_LIST_OFFSET = 120;
 
@@ -56,7 +57,7 @@ const ClubCard = ({ club }: { club: Club }) => {
       onClick={handleNavigate}>
       <Styled.CardHeader>
         <Styled.ClubProfile>
-          <ClubLogo imageSrc={club.logo} />
+          <ClubLogo imageSrc={club.logo || default_profile_image} />
           <Styled.ClubName>{club.name}</Styled.ClubName>
         </Styled.ClubProfile>
         <ClubStateBox state={club.recruitmentStatus} />

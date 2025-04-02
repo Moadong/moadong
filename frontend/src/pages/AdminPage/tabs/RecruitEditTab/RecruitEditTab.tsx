@@ -8,19 +8,17 @@ import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import ImageUpload from '@/pages/AdminPage/components/ImageUpload/ImageUpload';
 import { ImagePreview } from '@/pages/AdminPage/components/ImagePreview/ImagePreview';
-import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
 import useUpdateFeedImages from '@/hooks/queries/club/useUpdateFeedImages';
 import { parseRecruitmentPeriod } from '@/utils/stringToDate';
-import { ClubDetail, ClubDescription } from '@/types/club';
+import { ClubDetail } from '@/types/club';
+import { useQueryClient } from '@tanstack/react-query';
 
 const MAX_IMAGES = 5;
-const TEMP_CLUB_ID = '67d5529c1b38fc41fad7660a';
 
 const RecruitEditTab = () => {
-  const clubDetail = useOutletContext<ClubDetail | null>();
+  const clubDetail = useOutletContext<ClubDetail>();
 
-  const { mutate: updateClub } = useUpdateClubDetail();
   const { mutate: updateClubDescription } = useUpdateClubDescription();
   const { mutate: updateFeedImages } = useUpdateFeedImages();
 
@@ -31,6 +29,7 @@ const RecruitEditTab = () => {
   const [imageList, setImageList] = useState<string[]>([]);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const queryClient = useQueryClient();
 
   const insertAtCursor = (text: string) => {
     if (!textareaRef.current) return;
@@ -48,16 +47,51 @@ const RecruitEditTab = () => {
   };
 
   const addImage = (newImage: string) => {
-    updateFeedImages({ feeds: [...imageList, newImage], clubId: TEMP_CLUB_ID });
-    setImageList([...imageList, newImage]);
+    setImageList((prev) => {
+      const updatedList = [...prev, newImage];
+
+      updateFeedImages(
+        {
+          feeds: updatedList,
+          clubId: clubDetail.id,
+        },
+        {
+          onSuccess: () => {
+            alert('이미지가 성공적으로 추가되었습니다.');
+            queryClient.invalidateQueries({
+              queryKey: ['clubDetail', clubDetail.id],
+            });
+          },
+          onError: (error) => {
+            alert(`이미지 추가에 실패했습니다: ${error.message}`);
+          },
+        },
+      );
+
+      return updatedList;
+    });
   };
 
   const deleteImage = (index: number) => {
-    updateFeedImages({
-      feeds: imageList.filter((_, i) => i !== index),
-      clubId: TEMP_CLUB_ID,
-    });
-    setImageList(imageList.filter((_, i) => i !== index));
+    const newList = imageList.filter((_, i) => i !== index);
+    updateFeedImages(
+      {
+        feeds: newList,
+        clubId: clubDetail.id,
+      },
+      {
+        onSuccess: () => {
+          alert('이미지가 성공적으로 삭제되었습니다.');
+          setImageList(newList);
+          queryClient.invalidateQueries({
+            queryKey: ['clubDetail', clubDetail.id],
+          });
+        },
+        onError: (error) => {
+          alert(`이미지 삭제에 실패했습니다: ${error.message}`);
+        },
+      },
+    );
   };
 
   useEffect(() => {
@@ -70,68 +104,33 @@ const RecruitEditTab = () => {
     setRecruitmentEnd((prev) => prev ?? initialEnd);
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
     setDescription((prev) => prev || clubDetail.description || '');
+
+    setImageList(clubDetail.feeds || []);
   }, [clubDetail]);
 
   const handleUpdateClub = async () => {
     if (!clubDetail) return;
 
-    const updatedData: Omit<Partial<ClubDetail>, 'id'> & {
-      clubId: string;
-      recruitmentStart: string | undefined;
-      recruitmentEnd: string | undefined;
-    } = {
-      clubId: clubDetail.id,
-      name: clubDetail.name,
-      category: clubDetail.category,
-      division: clubDetail.division,
-      tags: clubDetail.tags,
-      introduction: clubDetail.introduction,
-      description: description,
-      presidentName: clubDetail.presidentName,
-      presidentPhoneNumber: clubDetail.presidentPhoneNumber,
+    const updatedData = {
+      id: clubDetail.id,
       recruitmentStart: recruitmentStart?.toISOString(),
       recruitmentEnd: recruitmentEnd?.toISOString(),
       recruitmentTarget: recruitmentTarget,
+      description: description,
     };
-
-    const updatedDescription: ClubDescription = {
-      clubId: clubDetail.id,
-      description: description || clubDetail.description,
-    };
-
-    const results = await Promise.allSettled([
-      new Promise((resolve, reject) => {
-        updateClub(updatedData, {
-          onSuccess: () => {
-            setDescription(updatedData.description || '');
-            resolve(null);
-          },
-          onError: reject,
+    updateClubDescription(updatedData, {
+      onSuccess: () => {
+        alert('동아리 정보가 성공적으로 수정되었습니다.');
+        queryClient.invalidateQueries({
+          queryKey: ['clubDetail', clubDetail.id],
         });
-      }),
-      new Promise((resolve, reject) => {
-        updateClubDescription(updatedDescription, {
-          onSuccess: () => {
-            setDescription(updatedDescription.description || '');
-            resolve(null);
-          },
-          onError: reject,
-        });
-      }),
-    ]);
-
-    const clubUpdateResult = results[0];
-    const descriptionUpdateResult = results[1];
-
-    if (
-      clubUpdateResult.status === 'fulfilled' &&
-      descriptionUpdateResult.status === 'fulfilled'
-    ) {
-      alert('동아리 정보가 성공적으로 수정되었습니다.');
-    } else {
-      alert(`동아리 정보 수정에 실패했습니다`);
-    }
+      },
+      onError: (error) => {
+        alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
+      },
+    });
   };
+
   // [x]FIXME: div 컴포넌트 수정
   return (
     <Styled.RecruitEditorContainer>
@@ -222,7 +221,7 @@ const RecruitEditTab = () => {
             <ImageUpload
               key='add-image'
               onChangeImageList={addImage}
-              clubId={TEMP_CLUB_ID}
+              clubId={clubDetail.id}
             />
           )}
         </Styled.ImageGrid>

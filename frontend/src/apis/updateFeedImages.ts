@@ -1,14 +1,18 @@
 import API_BASE_URL from '@/constants/api';
+import { secureFetch } from '@/apis/auth/secureFetch';
 
 export const updateFeedImages = async (feeds: string[], clubId: string) => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/feeds`, {
-      headers: {
-        'Content-Type': 'application/json',
+    const response = await secureFetch(
+      `${API_BASE_URL}/api/club/${clubId}/feeds`,
+      {
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        method: 'POST',
+        body: JSON.stringify({ feeds }),
       },
-      method: 'POST',
-      body: JSON.stringify({ feeds }),
-    });
+    );
     if (!response.ok) {
       throw new Error('피드 이미지 업로드에 실패했습니다');
     }
