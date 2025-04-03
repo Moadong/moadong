@@ -12,7 +12,7 @@ import PhotoList from '@/pages/ClubDetailPage/components/PhotoList/PhotoList';
 import Footer from '@/components/common/Footer/Footer';
 import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter/ClubDetailFooter';
 import useTrackPageView from '@/hooks/useTrackPageView';
-import useAutoScroll from '@/hooks/useAutoScroll';
+import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
 const ClubDetailPage = () => {

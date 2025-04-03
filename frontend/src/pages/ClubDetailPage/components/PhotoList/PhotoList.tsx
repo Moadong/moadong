@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import * as Styled from './PhotoList.styles';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
-import usePhotoNavigation from '@/hooks/usePhotoNavigation';
+import usePhotoNavigation from '@/hooks/PhotoList/usePhotoNavigation';
 import LazyImage from '@/components/common/LazyImage/LazyImage';
 import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
 
