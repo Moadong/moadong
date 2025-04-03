@@ -56,6 +56,7 @@ public class UserController {
     //TODO : 토큰 회전 방식 + DB 리프레쉬 토큰 저장
 
     @GetMapping("/logout")
+    @Operation(summary = "로그아웃", description = "클라이언트의 refresh token을 제거합니다.")
     public ResponseEntity<?> logout(
             @CookieValue(value = "refresh_token", required = false) String refreshToken,
             HttpServletResponse response) {
