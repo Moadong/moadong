@@ -45,7 +45,8 @@ public class ClubController {
         + "category는 분류(취미교양 등), division은 분과(중동 등)입니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> createClub(@CurrentUser CustomUserDetails user, @RequestBody ClubCreateRequest request) {
+    public ResponseEntity<?> createClub(@CurrentUser CustomUserDetails user,
+        @RequestBody ClubCreateRequest request) {
         String clubId = clubCommandService.createClub(request);
         return Response.ok("success create club", "clubId : " + clubId);
     }
@@ -76,7 +77,11 @@ public class ClubController {
     public ResponseEntity<?> getClubDetailedPage(
         HttpServletRequest request,
         @PathVariable String clubId) {
-        clubMetricService.patch(clubId, request.getRemoteAddr());
+        String ip = request.getHeader("X-Forwarded-For");
+        if (ip == null || ip.isEmpty()) {
+            ip = request.getRemoteAddr();
+        }
+        clubMetricService.patch(clubId, ip);
         ClubDetailedResponse clubDetailedPageResponse = clubDetailedPageService.getClubDetailedPage(
             clubId);
         return Response.ok(clubDetailedPageResponse);
