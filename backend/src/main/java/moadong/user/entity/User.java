@@ -1,6 +1,5 @@
 package moadong.user.entity;
 
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
@@ -15,10 +14,10 @@ import moadong.user.entity.enums.UserStatus;
 import moadong.user.payload.request.UserUpdateRequest;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
-@Entity
 @Builder
 @Getter
 @AllArgsConstructor
@@ -49,6 +48,9 @@ public class User implements UserDetails {
 
     private Date lastLoginAt;
 
+    @Field("refreshToken")
+    private RefreshToken refreshToken;
+
     @Builder.Default
     @NotNull
     private UserStatus status = UserStatus.ACTIVE;
@@ -68,8 +70,12 @@ public class User implements UserDetails {
         return userId;
     }
 
-    public void update(UserUpdateRequest userUpdateRequest) {
+    public void updateUserProfile(UserUpdateRequest userUpdateRequest) {
         this.userId = userUpdateRequest.userId();
         this.password = userUpdateRequest.password();
     }
+    public void updateRefreshToken(RefreshToken refreshToken) {
+        this.refreshToken = refreshToken;
+    }
+
 }

@@ -44,13 +44,20 @@ public class Club {
 
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
-
     public Club() {
         this.name = "";
         this.category = "";
         this.division = "";
         this.state = ClubState.UNAVAILABLE;
         this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
+    }
+    public Club(String userId) {
+        this.name = "";
+        this.category = "";
+        this.division = "";
+        this.state = ClubState.UNAVAILABLE;
+        this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
+        this.userId = userId;
     }
 
     @Builder

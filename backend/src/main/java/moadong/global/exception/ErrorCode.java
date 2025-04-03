@@ -17,7 +17,8 @@ public enum ErrorCode {
     USER_NOT_EXIST(HttpStatus.BAD_REQUEST, "700-2","존재하지 않는 계정입니다."),
     USER_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "700-3","올바르지 않은 유저 형식입니다."),
     USER_INVALID_LOGIN(HttpStatus.BAD_REQUEST, "700-4","올바르지 않은 로그인"),
-    TOKEN_INVALID(HttpStatus.BAD_REQUEST, "701-1", "올바르지 않은 토큰 양식입니다."),
+    TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "701-1", "올바르지 않은 토큰 양식입니다."),
+    TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "701-2", "토큰이 만료되었습니다."),
     ;
 
     private final HttpStatus httpStatus;
