@@ -81,7 +81,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
       ref={(el) => {
         sectionRefs.current[INFOTABS_SCROLL_INDEX.PHOTO_LIST_TAB] = el;
       }}>
-      <h3>활동 사진</h3>
+      <Styled.PhotoListTitle>활동 사진</Styled.PhotoListTitle>
       <Styled.PhotoListWrapper>
         <Styled.PhotoList
           ref={containerRef}

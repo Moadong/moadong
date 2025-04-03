@@ -1,5 +1,10 @@
 import styled from 'styled-components';
 
+export const PhotoListTitle = styled.p`
+  font-size: 20px;
+  font-weight: 500;
+`;
+
 export const PhotoListContainer = styled.div`
   display: flex;
   flex-direction: column;
