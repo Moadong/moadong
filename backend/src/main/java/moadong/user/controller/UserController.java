@@ -65,6 +65,8 @@ public class UserController {
                 .path("/")
                 .maxAge(0)
                 .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
                 .build();
         response.addHeader("Set-Cookie", cookie.toString());
         return Response.ok("success logout");
