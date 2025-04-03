@@ -69,7 +69,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     try {
       await logout();
       localStorage.removeItem('accessToken');
-      navigate('/admin/login', { replace: true }); // 로그인 페이지로 이동
+      navigate('/admin/login', { replace: true });
     } catch (error) {
       console.error(error);
       alert('로그아웃에 실패했습니다.');
