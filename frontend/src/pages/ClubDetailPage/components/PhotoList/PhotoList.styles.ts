@@ -34,7 +34,7 @@ export const PhotoList = styled.div<{
 }>`
   display: flex;
   flex-direction: row;
-  gap: 28px;
+  gap: 20px;
   transition: transform 0.3s ease;
 
   transform: ${({
