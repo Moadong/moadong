@@ -4,23 +4,23 @@ import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.JwtProvider;
 import moadong.user.entity.User;
+import moadong.user.payload.CustomUserDetails;
 import moadong.user.payload.request.UserLoginRequest;
 import moadong.user.payload.request.UserRegisterRequest;
 import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.AccessTokenResponse;
+import moadong.user.payload.response.LoginResponse;
 import moadong.user.repository.UserInformationRepository;
 import moadong.user.repository.UserRepository;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -53,14 +53,14 @@ public class UserCommandService {
         clubRepository.save(club);
     }
 
-    public AccessTokenResponse loginUser(UserLoginRequest userLoginRequest,
-        HttpServletResponse response) {
+    public LoginResponse loginUser(UserLoginRequest userLoginRequest,
+                                   HttpServletResponse response) {
         try {
             Authentication authenticate = authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(userLoginRequest.userId(),
                     userLoginRequest.password()));
 
-            UserDetails userDetails = (UserDetails) authenticate.getPrincipal();
+            CustomUserDetails userDetails = (CustomUserDetails) authenticate.getPrincipal();
             String accessToken = jwtProvider.generateAccessToken(userDetails.getUsername());
             String refreshToken = jwtProvider.generateRefreshToken(userDetails.getUsername());
 
@@ -72,7 +72,10 @@ public class UserCommandService {
                 .build();
             response.addHeader("Set-Cookie", cookie.toString());
 
-            return new AccessTokenResponse(accessToken);
+            Club club = clubRepository.findClubByUserId(userDetails.getId())
+                    .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+            return new LoginResponse(accessToken,club.getId());
         } catch (MongoWriteException e) {
             throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);
         }
@@ -93,9 +96,14 @@ public class UserCommandService {
     public void update(String userId, UserUpdateRequest userUpdateRequest) {
         User user = userRepository.findUserByUserId(userId)
             .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
-
-        user.update(userUpdateRequest);
+        user.update(userUpdateRequest.encryptPassword(passwordEncoder));
 
         userRepository.save(user);
+    }
+
+    public String findClubIdByUserId(String userID){
+        Club club = clubRepository.findClubByUserId(userID)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        return club.getId();
     }
 }

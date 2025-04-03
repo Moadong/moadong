@@ -1,6 +1,7 @@
 package moadong.club.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
@@ -17,6 +18,7 @@ import moadong.global.payload.Response;
 import moadong.user.annotation.CurrentUser;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -39,21 +41,30 @@ public class ClubController {
     private final ClubMetricService clubMetricService;
 
     @PostMapping("")
-    @Operation(summary = "클럽 생성", description = "클럽을 생성합니다.")
+    @Operation(summary = "클럽 생성", description = "클럽을 생성합니다.<br>"
+        + "category는 분류(취미교양 등), division은 분과(중동 등)입니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> createClub(@CurrentUser CustomUserDetails user, @RequestBody ClubCreateRequest request) {
         String clubId = clubCommandService.createClub(request);
         return Response.ok("success create club", "clubId : " + clubId);
     }
 
     @PutMapping("/info")
-    @Operation(summary = "클럽 수정", description = "클럽을 수정합니다.")
+    @Operation(summary = "클럽 약력 수정", description = "클럽 약력을 수정합니다.<br>"
+        + "tags는 최대 2개, 5글자 이내로 입력해야 합니다.<br>"
+        + "introduction은 24글자 이내로 입력해야 합니다.")
+    @PreAuthorize("isAuthenticated()")  // 인증 필요
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updateClubInfo(@RequestBody @Validated ClubInfoRequest request) {
         clubCommandService.updateClubInfo(request);
         return Response.ok("success update club");
     }
 
     @PutMapping("/description")
-    @Operation(summary = "클럽 상세소개 수정", description = "클럽의 상세소개 내용을 수정합니다.")
+    @Operation(summary = "클럽 모집정보 수정", description = "클럽의 모집정보 내용을 수정합니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updateClubDescription(
         @RequestBody ClubDescriptionUpdateRequest request) {
         clubCommandService.updateClubDescription(request);

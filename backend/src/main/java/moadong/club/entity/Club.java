@@ -39,6 +39,8 @@ public class Club {
     @NotNull
     private ClubState state;
 
+    private String userId;
+
 
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
@@ -65,16 +67,7 @@ public class Club {
         this.category = request.category();
         this.division = request.division();
         this.state = ClubState.AVAILABLE;
-
-        this.clubRecruitmentInformation = ClubRecruitmentInformation.builder()
-            .presidentName(request.clubPresidentName())
-            .presidentTelephoneNumber(request.telephoneNumber())
-            .introduction(request.introduction())
-            .recruitmentStart(request.recruitmentStart())
-            .recruitmentEnd(request.recruitmentEnd())
-            .recruitmentTarget(request.recruitmentTarget())
-            .tags(request.tags())
-            .build();
+        this.clubRecruitmentInformation.update(request);
     }
 
     public void update(ClubDescriptionUpdateRequest request) {

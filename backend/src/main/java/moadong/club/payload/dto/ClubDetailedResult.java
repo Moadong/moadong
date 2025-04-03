@@ -35,23 +35,24 @@ public record ClubDetailedResult(
                 + clubRecruitmentInformation.getRecruitmentEnd().format(formatter);
         }
         return ClubDetailedResult.builder()
-            .id(club.getId())
-            .name(club.getName())
-            .logo(club.getClubRecruitmentInformation().getLogo())
-            .tags(clubRecruitmentInformation.getTags())
-            .state(club.getState().getDesc())
-            .feeds(clubRecruitmentInformation.getFeedImages())
-            .category(club.getCategory())
-            .division(club.getDivision())
-            .introduction(clubRecruitmentInformation.getIntroduction())
-            .description(clubRecruitmentInformation.getDescription())
-            .presidentName(clubRecruitmentInformation.getPresidentName())
-            .presidentPhoneNumber(clubRecruitmentInformation.getPresidentTelephoneNumber())
-            .recruitmentPeriod(period)
-            .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget())
-            .recruitmentStatus(clubRecruitmentInformation.getRecruitmentStatus().toString())
-            .recruitmentForm(clubRecruitmentInformation.getRecruitmentForm())
-            .build();
+                .id(club.getId() == null ? "" : club.getId())
+                .name(club.getName() == null ? "" : club.getName())
+                .logo(clubRecruitmentInformation.getLogo() == null ? "" : clubRecruitmentInformation.getLogo())
+                .tags(clubRecruitmentInformation.getTags() == null ? List.of() : clubRecruitmentInformation.getTags())
+                .state(club.getState() == null ? "" : club.getState().getDesc())
+                .feeds(clubRecruitmentInformation.getFeedImages() == null ? List.of() : clubRecruitmentInformation.getFeedImages())
+                .category(club.getCategory() == null ? "" : club.getCategory())
+                .division(club.getDivision() == null ? "" : club.getDivision())
+                .introduction(clubRecruitmentInformation.getIntroduction() == null ? "" : clubRecruitmentInformation.getIntroduction())
+                .description(clubRecruitmentInformation.getDescription() == null ? "" : clubRecruitmentInformation.getDescription())
+                .presidentName(clubRecruitmentInformation.getPresidentName() == null ? "" : clubRecruitmentInformation.getPresidentName())
+                .presidentPhoneNumber(clubRecruitmentInformation.getPresidentTelephoneNumber() == null ? "" : clubRecruitmentInformation.getPresidentTelephoneNumber())
+                .recruitmentPeriod(period)
+                .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget() == null ? "" : clubRecruitmentInformation.getRecruitmentTarget())
+                .recruitmentStatus(clubRecruitmentInformation.getRecruitmentStatus() == null
+                        ? "" : clubRecruitmentInformation.getRecruitmentStatus().getDescription())
+                .recruitmentForm(clubRecruitmentInformation.getRecruitmentForm() == null ? "" : clubRecruitmentInformation.getRecruitmentForm())
+                .build();
     }
 
 }
