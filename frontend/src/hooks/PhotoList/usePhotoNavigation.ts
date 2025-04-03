@@ -17,6 +17,7 @@ const usePhotoNavigation = ({
   translateX: number;
   setTranslateX: React.Dispatch<React.SetStateAction<number>>;
 }) => {
+  const trackEvent = useMixpanelTrack();
 
   const calculateTranslateX = useCallback(
     (index: number) => {
@@ -43,6 +44,8 @@ const usePhotoNavigation = ({
     if (currentIndex <= 0) return;
     setCurrentIndex(currentIndex - 1);
 
+    trackEvent('Photo Navigation', { action: 'prev', index: currentIndex - 1 });
+  };
 
   const isLastCard = currentIndex === photosLength - 1;
   const canScrollLeft = currentIndex > 0 && photosLength > 2;
