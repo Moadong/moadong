@@ -9,6 +9,7 @@ import {
   useUploadClubLogo,
   useDeleteClubLogo,
 } from '@/hooks/queries/club/useClubLogo';
+import { logout } from '@/apis/auth/logout';
 
 interface SideBarProps {
   clubName: string;
@@ -64,9 +65,15 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     navigate(tab.path);
   };
 
-  const handleLogout = () => {
-    localStorage.removeItem('accessToken');
-    navigate('/admin/login', { replace: true });
+  const handleLogout = async () => {
+    try {
+      await logout();
+      localStorage.removeItem('accessToken');
+      navigate('/admin/login', { replace: true }); // 로그인 페이지로 이동
+    } catch (error) {
+      console.error(error);
+      alert('로그아웃에 실패했습니다.');
+    }
   };
 
   return (
