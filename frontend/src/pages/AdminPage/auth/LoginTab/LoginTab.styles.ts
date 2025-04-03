@@ -65,3 +65,18 @@ export const ForgotLinks = styled.div`
     color: #ccc;
   }
 `;
+
+export const LinkButton = styled.button`
+  background: none;
+  border: none;
+  color: #666;
+  text-decoration: none;
+  cursor: pointer;
+  padding: 0;
+  font: inherit;
+  font-size: 14px;
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;

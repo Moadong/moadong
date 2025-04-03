@@ -66,6 +66,9 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   };
 
   const handleLogout = async () => {
+    const confirmed = window.confirm('정말 로그아웃하시겠습니까?');
+    if (!confirmed) return;
+
     try {
       await logout();
       localStorage.removeItem('accessToken');
