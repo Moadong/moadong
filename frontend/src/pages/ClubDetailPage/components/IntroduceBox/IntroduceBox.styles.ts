@@ -17,7 +17,6 @@ export const IntroduceBoxWrapper = styled.div`
     border: none;
     border-radius: 0;
     border-bottom: 1px solid #dcdcdc;
-    padding: 25px;
   }
 `;
 

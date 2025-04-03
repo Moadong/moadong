@@ -26,7 +26,6 @@ export const InfoBox = styled.div`
     border: none;
     border-radius: 0;
     border-bottom: 1px solid #dcdcdc;
-    padding: 25px;
   }
 `;
 
