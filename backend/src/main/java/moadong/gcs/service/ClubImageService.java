@@ -78,7 +78,7 @@ public class ClubImageService {
         }
 
         List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
-        if (feedImages != null) {
+        if (feedImages != null  && !feedImages.isEmpty()) {
             deleteFeedImages(club, feedImages, newFeedImageList);
         }
         club.updateFeedImages(newFeedImageList);
