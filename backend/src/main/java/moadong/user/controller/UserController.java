@@ -12,11 +12,12 @@ import moadong.user.payload.CustomUserDetails;
 import moadong.user.payload.request.UserLoginRequest;
 import moadong.user.payload.request.UserRegisterRequest;
 import moadong.user.payload.request.UserUpdateRequest;
-import moadong.user.payload.response.AccessTokenResponse;
 import moadong.user.payload.response.FindUserClubResponse;
 import moadong.user.payload.response.LoginResponse;
+import moadong.user.payload.response.RefreshResponse;
 import moadong.user.service.UserCommandService;
 import moadong.user.view.UserSwaggerView;
+import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -52,15 +53,32 @@ public class UserController {
         LoginResponse loginResponse = userCommandService.loginUser(request, response);
         return Response.ok(loginResponse);
     }
+    //TODO : 토큰 회전 방식 + DB 리프레쉬 토큰 저장
+
+    @GetMapping("/logout")
+    public ResponseEntity<?> logout(
+            @CookieValue(value = "refresh_token", required = false) String refreshToken,
+            HttpServletResponse response) {
+        userCommandService.logoutUser(refreshToken);
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(true)
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
+        return Response.ok("success logout");
+    }
 
     @PostMapping("/refresh")
     @Operation(summary = "토큰 재발급", description = "refresh token을 이용하여 access token을 재발급합니다.")
     public ResponseEntity<?> refresh(
-            @CookieValue(value = "refresh_token", required = false) String refreshToken) {
-        AccessTokenResponse accessTokenResponse = userCommandService.refreshAccessToken(
-                refreshToken);
-        return Response.ok(accessTokenResponse);
+            @CookieValue(value = "refresh_token", required = false) String refreshToken,
+            HttpServletResponse response) {
+        RefreshResponse refreshResponse = userCommandService.refreshAccessToken(
+                refreshToken, response);
+        return Response.ok(refreshResponse);
     }
+
 
     @PutMapping("/")
     @Operation(summary = "사용자 정보 수정", description = "사용자 정보를 수정합니다.")
@@ -81,5 +99,6 @@ public class UserController {
         String clubId = userCommandService.findClubIdByUserId(userDetails.getId());
         return Response.ok(new FindUserClubResponse(clubId));
     }
+
 
 }
