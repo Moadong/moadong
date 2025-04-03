@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import * as Styled from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
@@ -16,12 +15,10 @@ import useAutoScroll from '@/hooks/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
 const ClubDetailPage = () => {
-  const { clubName } = useParams<{ clubName: string }>();
+  const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
   const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
 
-  const location = useLocation();
-  const clubId = (location.state as { clubId?: string })?.clubId;
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useEffect(() => {
