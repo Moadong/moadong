@@ -7,7 +7,11 @@ export const CategoryButtonContainer = styled.div`
   margin-top: 60px;
 
   @media (max-width: 500px) {
+    background-color: white;
     margin-top: 42px;
+    position: sticky;
+    top: 46px;
+    z-index: 1;
   }
 `;
 
@@ -22,7 +26,8 @@ export const CategoryButton = styled.button`
   img {
     width: 36px;
     height: 36px;
-    @media (max-width: 480px) {
+    @media (max-width: 500px) {
+      margin-top: 5px;
       width: 30px;
       height: 30px;
     }
@@ -44,10 +49,11 @@ export const CategoryButton = styled.button`
       margin-top: 10px;
     }
 
-    @media (max-width: 480px) {
+    @media (max-width: 500px) {
       font-size: 12px;
       margin-top: 11px;
       line-height: normal;
+      margin-bottom: 5px;
     }
 
     @media (max-width: 375px) {

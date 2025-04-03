@@ -1,24 +1,28 @@
 import React, { useEffect, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
-import useTrackPageView from '@/hooks/useTrackPageView';
+import * as Styled from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
 import BackNavigationBar from '@/pages/ClubDetailPage/components/BackNavigationBar/BackNavigationBar';
 import ClubDetailHeader from '@/pages/ClubDetailPage/components/ClubDetailHeader/ClubDetailHeader';
 import InfoTabs from '@/pages/ClubDetailPage/components/InfoTabs/InfoTabs';
 import InfoBox from '@/pages/ClubDetailPage/components/InfoBox/InfoBox';
 import IntroduceBox from '@/pages/ClubDetailPage/components/IntroduceBox/IntroduceBox';
+import PhotoList from '@/pages/ClubDetailPage/components/PhotoList/PhotoList';
 import Footer from '@/components/common/Footer/Footer';
 import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter/ClubDetailFooter';
-import * as Styled from '@/styles/PageContainer.styles';
+import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
 const ClubDetailPage = () => {
-  const { clubId } = useParams<{ clubId: string }>();
+  const { clubName } = useParams<{ clubName: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
   const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
 
-  const { data: clubDetail, isLoading, error } = useGetClubDetail(clubId || '');
+  const location = useLocation();
+  const clubId = (location.state as { clubId?: string })?.clubId;
+  const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useEffect(() => {
     const handleResize = () => {
@@ -31,11 +35,13 @@ const ClubDetailPage = () => {
 
   useTrackPageView(`ClubDetailPage ${clubDetail?.name || ''}`);
 
-  // [x]TODO: 로딩화면 구현해야 함
   if (!clubDetail) {
-    return <div>Loading...</div>;
+    return null;
   }
-  if (error) return <p>Error: {error.message}</p>;
+
+  if (error) {
+    return <div>에러가 발생했습니다.</div>;
+  }
 
   return (
     <>
@@ -44,9 +50,10 @@ const ClubDetailPage = () => {
       <Styled.PageContainer>
         <ClubDetailHeader
           name={clubDetail.name}
-          classification={clubDetail.classification}
+          category={clubDetail.category}
           division={clubDetail.division}
           tags={clubDetail.tags}
+          logo={clubDetail.logo}
         />
         <InfoTabs onTabClick={scrollToSection} />
         <InfoBox sectionRefs={sectionRefs} clubDetail={clubDetail} />
@@ -54,6 +61,7 @@ const ClubDetailPage = () => {
           sectionRefs={sectionRefs}
           description={clubDetail.description}
         />
+        <PhotoList sectionRefs={sectionRefs} feeds={clubDetail.feeds} />
       </Styled.PageContainer>
       <Footer />
       <ClubDetailFooter />

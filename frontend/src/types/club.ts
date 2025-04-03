@@ -5,7 +5,7 @@ export interface Club {
   tags: string[];
   recruitmentStatus: string;
   division: string;
-  classification: string;
+  category: string;
   introduction: string;
 }
 
@@ -17,4 +17,20 @@ export interface ClubDetail extends Club {
   presidentPhoneNumber: string;
   recruitmentPeriod: string;
   recruitmentTarget: string;
+  recruitmentForm: string;
+}
+
+export interface ClubDescription {
+  id: string;
+  description: string | null;
+}
+
+export interface ImageUploadProps {
+  clubId: string;
+  onChangeImageList: (image: string) => void;
+}
+
+export interface ImagePreviewProps {
+  image: string;
+  onDelete: () => void;
 }

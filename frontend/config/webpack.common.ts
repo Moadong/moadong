@@ -3,14 +3,11 @@ import * as webpack from 'webpack';
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const CopyWebpackPlugin = require('copy-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const configuration: webpack.Configuration = {
-  // 모듈 해석 방법 설정
   resolve: {
-    // 생략할 확장자
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
-
-    // 절대 경로
     alias: {
       '@': path.resolve(__dirname, '../src'),
     },
@@ -18,12 +15,15 @@ const configuration: webpack.Configuration = {
 
   entry: './src/index',
 
-  // 로더
   module: {
     rules: [
       {
         test: /\.(ts|tsx|js|jsx)$/,
-        use: ['ts-loader'],
+        loader: 'esbuild-loader',
+        options: {
+          loader: 'tsx',
+          target: 'es2015',
+        },
         exclude: /node_modules/,
       },
       {
@@ -40,14 +40,10 @@ const configuration: webpack.Configuration = {
     new HtmlWebpackPlugin({
       template: path.resolve(__dirname, '..', 'public', 'index.html'),
     }),
-    new webpack.ProvidePlugin({ React: 'react' }),
     new Dotenv({
       path: './.env',
       systemvars: true,
-      safe: true,
-      ignoreStub: true,
     }),
-
     new CopyWebpackPlugin({
       patterns: [
         {
@@ -59,6 +55,7 @@ const configuration: webpack.Configuration = {
         },
       ],
     }),
+    new ForkTsCheckerWebpackPlugin(),
   ],
 };
 

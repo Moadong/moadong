@@ -1,5 +1,11 @@
 import styled from 'styled-components';
 
+export const TitleButtonContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+`;
+
 export const InfoTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: bold;

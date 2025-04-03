@@ -37,7 +37,8 @@ export const BannerWrapper = styled.div<BannerProps>`
     `}
 
   @media (max-width: 500px) {
-    width: 100vw;
+    width: 100%;
+    aspect-ratio: 1.8;
     border-radius: 0;
   }
 `;
@@ -56,6 +57,7 @@ export const BannerItem = styled.div`
   flex: none;
   width: 100%;
   height: 100%;
+
   img {
     width: 100%;
     height: 100%;
@@ -92,8 +94,7 @@ export const SlideButton = styled.button`
     padding: 6px 12px;
   }
 
-  @media (max-width: 375px) {
-    width: 30px;
-    padding: 4px 8px;
+  @media (max-width: 500px) {
+    display: none;
   }
 `;

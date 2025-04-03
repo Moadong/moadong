@@ -7,14 +7,12 @@ import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import StatusRadioButton from '@/pages/MainPage/components/StatusRadioButton/StatusRadioButton';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import MainMobileHeader from '@/pages/MainPage/components/MobileHeader/MobileHeader';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
-import { BannerImageList } from '@/utils/banners';
+import { DesktopBannerImageList } from '@/constants/banners';
+import { MobileBannerImageList } from '@/constants/banners';
 import { Club } from '@/types/club';
 import * as Styled from './MainPage.styles';
-import MainMobileHeader from '@/pages/MainPage/components/MobileHeader/MobileHeader';
-
-//Todo
-// - 로딩, 에러, 빈 데이터 UI 추가
 
 const MainPage = () => {
   useTrackPageView('MainPage');
@@ -24,14 +22,14 @@ const MainPage = () => {
 
   const { keyword } = useSearch();
   const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
-  const division = selectedCategory;
-  const classification = 'all';
+  const division = 'all';
 
-  const {
-    data: clubs,
-    isLoading,
-    error,
-  } = useGetCardList(keyword, recruitmentStatus, classification, division);
+  const { data: clubs, error } = useGetCardList(
+    keyword,
+    recruitmentStatus,
+    division,
+    selectedCategory,
+  );
 
   const hasData = clubs && clubs.length > 0;
 
@@ -40,26 +38,25 @@ const MainPage = () => {
     return clubs.map((club: Club) => <ClubCard key={club.id} club={club} />);
   }, [clubs, hasData]);
 
+  if (error) {
+    return <div>에러가 발생했습니다.</div>;
+  }
+
   return (
     <>
       <Header />
       <MainMobileHeader />
-      <Banner banners={BannerImageList} />
+      <Banner
+        desktopBanners={DesktopBannerImageList}
+        mobileBanners={MobileBannerImageList}
+      />
       <Styled.PageContainer>
         <CategoryButtonList onCategorySelect={setSelectedCategory} />
         <Styled.FilterWrapper>
           <StatusRadioButton onChange={setIsFilterActive} />
         </Styled.FilterWrapper>
         <Styled.ContentWrapper>
-          <Styled.CardList>
-            {/* 로딩 UI */}
-            {/*isLoading && <Loading />*/}
-            {/* 에러 UI */}
-            {/*error && <ErrorMessage />*/}
-            {/* 빈 데이터 UI */}
-            {/*!isLoading && !error && !hasData && <EmptyState />*/}
-            {!isLoading && !error && hasData && clubList}
-          </Styled.CardList>
+          <Styled.CardList>{hasData && clubList}</Styled.CardList>
         </Styled.ContentWrapper>
       </Styled.PageContainer>
       <Footer />

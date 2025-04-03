@@ -5,24 +5,27 @@ import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/C
 
 interface ClubDetailHeaderProps {
   name: string;
-  classification: string;
+  category: string;
   division: string;
   tags: string[];
+  logo: string;
 }
 
 const ClubDetailHeader = ({
   name,
-  classification,
+  category,
   division,
   tags,
+  logo,
 }: ClubDetailHeaderProps) => {
   return (
     <Styled.ClubDetailHeaderContainer>
       <ClubProfile
         name={name}
-        classification={classification}
+        category={category}
         division={division}
         tags={tags}
+        logo={logo}
       />
       <ClubApplyButton />
     </Styled.ClubDetailHeaderContainer>

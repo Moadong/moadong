@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 
-const CardContainer = styled.div<{ state: string; isClicked: boolean }>`
+const CardContainer = styled.div<{
+  state: string;
+  isClicked: boolean;
+  showShadow: boolean;
+}>`
   display: flex;
   flex-direction: column;
   border-radius: 14px;
@@ -8,10 +12,13 @@ const CardContainer = styled.div<{ state: string; isClicked: boolean }>`
   background-color: #fff;
   width: 100%;
   height: 170px;
-  box-shadow: ${({ state }) =>
-    state === 'open'
-      ? '0 0 14px rgba(0, 166, 255, 0.15)'
-      : '0 0 14px rgba(0, 0, 0, 0.08)'};
+  box-shadow: ${({ state, showShadow }) =>
+    !showShadow
+      ? 'none'
+      : state === 'open'
+        ? '0 0 14px rgba(0, 166, 255, 0.15)'
+        : '0 0 14px rgba(0, 0, 0, 0.08)'};
+
   transition:
     transform 0.2s ease-in-out,
     box-shadow 0.2s ease-in-out;
