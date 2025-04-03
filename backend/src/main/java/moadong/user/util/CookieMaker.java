@@ -15,7 +15,7 @@ public class CookieMaker {
                 .path("/")
                 .maxAge((long) refreshTokenExpirationHour * 60 * 60)
                 .secure(true)
-                .sameSite("Strict")
+                .sameSite("None")
                 .build();
     }
 }
