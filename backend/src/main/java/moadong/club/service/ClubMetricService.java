@@ -118,8 +118,12 @@ public class ClubMetricService {
 
         List<Club> clubs = clubRepository.findAllById(clubIds);
 
-        return clubs.stream()
-            .map(Club::getName)
+        return clubIds.stream()
+            .map(id -> clubs.stream()
+                .filter(club -> club.getId().equals(id))
+                .findFirst()
+                .map(Club::getName)
+                .orElse(null))
             .toList();
     }
 }
