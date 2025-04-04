@@ -54,7 +54,7 @@ public class ClubMetricController {
     }
 
     @GetMapping("/ranking")
-    @Operation(summary = "동아리 조회순 조회", description = "동아리 상세페이지를 조회한 순서대로 n개 출력합니다.<br>")
+    @Operation(summary = "동아리 조회순 조회", description = "당일 기준으로 동아리 상세페이지가 많이 조회된 동아리들을 순서대로 n개 조회합니다.<br>")
     public ResponseEntity<?> getClubDailyRanking(@RequestParam int n) {
         List<String> clubs = clubMetricService.getDailyRanking(n);
         return Response.ok(clubs);
