@@ -9,4 +9,6 @@ import java.util.Optional;
 @Repository
 public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findUserByUserId(String userId);
+
+    Optional<User> findUserByRefreshToken_Token(String token);
 }

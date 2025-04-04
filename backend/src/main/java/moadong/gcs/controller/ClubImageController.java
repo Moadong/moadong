@@ -49,17 +49,14 @@ public class ClubImageController {
     // TODO : Signed URL 을 통한 업로드로 추후 변경
     @PostMapping(value = "/{clubId}/feed", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "피드 이미지 업로드", description = "피드에 사용할 이미지를 업로드하고 주소를 반환받습니다.")
-    public ResponseEntity<?> uploadFeed(@PathVariable String clubId,
-        @RequestPart("feed") MultipartFile file) {
-        return Response.ok(clubImageService.uploadFile(clubId, file, FileType.FEED));
+    public ResponseEntity<?> uploadFeed(@PathVariable String clubId, @RequestPart("feed") MultipartFile file) {
+        return Response.ok(clubImageService.uploadFeed(clubId, file));
     }
 
     @PostMapping(value = "/{clubId}/feeds")
-    @Operation(summary = "피드 이미지 업데이트", description = "피드 이미지들을 업데이트 합니다.")
-    public ResponseEntity<?> putFeeds(@PathVariable String clubId,
-        @RequestBody FeedUpdateRequest feeds) {
+    @Operation(summary = "저장된 피드 이미지 업데이트(순서, 삭제 등..)", description = "피드 이미지의 설정을 업데이트 합니다.")
+    public ResponseEntity<?> putFeeds(@PathVariable String clubId, @RequestBody FeedUpdateRequest feeds) {
         clubImageService.updateFeeds(clubId, feeds.feeds());
         return Response.ok("success put feeds");
     }
-
 }

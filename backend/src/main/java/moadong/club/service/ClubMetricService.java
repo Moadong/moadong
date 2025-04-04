@@ -5,17 +5,24 @@ import java.time.Period;
 import java.time.YearMonth;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import moadong.club.entity.Club;
 import moadong.club.entity.ClubMetric;
 import moadong.club.repository.ClubMetricRepository;
+import moadong.club.repository.ClubRepository;
 import org.springframework.stereotype.Service;
 
 @Service
 @AllArgsConstructor
 public class ClubMetricService {
 
+    private final ClubRepository clubRepository;
     private final ClubMetricRepository clubMetricRepository;
 
     public void patch(String clubId, String remoteAddr) {
@@ -79,7 +86,8 @@ public class ClubMetricService {
         YearMonth currentMonth = YearMonth.from(now); // 현재 년-월
         YearMonth fromMonth = currentMonth.minusMonths(12); // 12개월 전
 
-        List<ClubMetric> metrics = clubMetricRepository.findByClubIdAndDateAfter(clubId, fromMonth.atDay(1));
+        List<ClubMetric> metrics = clubMetricRepository.findByClubIdAndDateAfter(clubId,
+            fromMonth.atDay(1));
 
         // 12개월간의 통계를 월별로 저장할 배열
         int[] monthlyMetric = new int[12];
@@ -94,5 +102,28 @@ public class ClubMetricService {
         }
 
         return monthlyMetric;
+    }
+
+    public List<String> getDailyRanking(int n) {
+        List<ClubMetric> todayMetrics = clubMetricRepository.findAllByDate(LocalDate.now());
+        Map<String, Long> clubViewCount = todayMetrics.stream()
+            .collect(Collectors.groupingBy(ClubMetric::getClubId, Collectors.counting()));
+        List<Map.Entry<String, Long>> sortedList = new ArrayList<>(clubViewCount.entrySet());
+        sortedList.sort((a, b) -> Math.toIntExact(b.getValue()) - Math.toIntExact(a.getValue()));
+
+        List<String> clubIds = sortedList.stream()
+            .limit(n)
+            .map(Entry::getKey)
+            .collect(Collectors.toList());
+
+        List<Club> clubs = clubRepository.findAllById(clubIds);
+
+        return clubIds.stream()
+            .map(id -> clubs.stream()
+                .filter(club -> club.getId().equals(id))
+                .findFirst()
+                .map(Club::getName)
+                .orElse(null))
+            .toList();
     }
 }

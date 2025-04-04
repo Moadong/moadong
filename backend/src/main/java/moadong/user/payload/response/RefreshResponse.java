@@ -1,6 +1,6 @@
 package moadong.user.payload.response;
 
-public record AccessTokenResponse(
+public record RefreshResponse(
         String accessToken
 ) {
 }
