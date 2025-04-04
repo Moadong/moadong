@@ -31,7 +31,6 @@ public class ClubImageService {
     private final int MAX_FEED_COUNT = 5;
 
 
-    // TODO : Signed URL 을 통한 업로드로 추후 변경
     public String uploadLogo(String clubId, MultipartFile file) {
         ObjectId objectId = new ObjectId(clubId);
         Club club = clubRepository.findClubById(objectId)
@@ -57,37 +56,45 @@ public class ClubImageService {
         }
     }
 
+    public String uploadFeed(String clubId, MultipartFile file) {
+        ObjectId objectId = new ObjectId(clubId);
+        int feedImagesCount = clubRepository.findClubById(objectId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND))
+                .getClubRecruitmentInformation().getFeedImages().size();
+
+        if (feedImagesCount + 1 > MAX_FEED_COUNT) {
+            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
+        }
+        return uploadFile(clubId, file, FileType.FEED);
+    }
+
     public void updateFeeds(String clubId, List<String> newFeedImageList) {
         ObjectId objectId = new ObjectId(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        if (newFeedImageList.isEmpty()) {
-            throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
-        } else if (newFeedImageList.size() > MAX_FEED_COUNT) {
+        if (newFeedImageList.size() > MAX_FEED_COUNT) {
             throw new RestApiException(ErrorCode.TOO_MANY_FILES);
         }
 
         List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
-        if (feedImages != null) {
-            updateFeedList(club, feedImages, newFeedImageList);
+        if (feedImages != null  && !feedImages.isEmpty()) {
+            deleteFeedImages(club, feedImages, newFeedImageList);
         }
         club.updateFeedImages(newFeedImageList);
         clubRepository.save(club);
     }
 
-    private void updateFeedList(Club club, List<String> feedImages, List<String> newFeedImages) {
+    private void deleteFeedImages(Club club, List<String> feedImages, List<String> newFeedImages) {
         for (String feedsImage : feedImages) {
             if (!newFeedImages.contains(feedsImage)) {
                 deleteFile(club, feedsImage);
             }
         }
-        club.updateFeedImages(newFeedImages);
-        clubRepository.save(club);
     }
 
     // TODO : Signed URL 을 통한 업로드 URL 반환으로 추후 변경
-    public String uploadFile(String clubId, MultipartFile file, FileType fileType) {
+    private String uploadFile(String clubId, MultipartFile file, FileType fileType) {
         if (file == null) {
             throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
         }
