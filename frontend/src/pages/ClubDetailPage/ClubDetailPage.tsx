@@ -43,6 +43,7 @@ const ClubDetailPage = () => {
     return <div>에러가 발생했습니다.</div>;
   }
 
+  console.log(clubDetail.recruitmentPeriod);
   return (
     <>
       {showHeader && <Header />}
@@ -64,7 +65,7 @@ const ClubDetailPage = () => {
         <PhotoList sectionRefs={sectionRefs} feeds={clubDetail.feeds} />
       </Styled.PageContainer>
       <Footer />
-      <ClubDetailFooter />
+      <ClubDetailFooter recruitmentPeriod={clubDetail.recruitmentPeriod} />
     </>
   );
 };
