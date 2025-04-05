@@ -9,6 +9,7 @@ import {
   useUploadClubLogo,
   useDeleteClubLogo,
 } from '@/hooks/queries/club/useClubLogo';
+import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 
 interface SideBarProps {
   clubName: string;
@@ -33,6 +34,11 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      alert('파일 크기가 10MB를 초과합니다.');
+      return;
+    }
 
     uploadMutation.mutate(file, {
       onError: () => {
