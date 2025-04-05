@@ -18,8 +18,10 @@ const SearchBox = () => {
       return;
     }
 
-    trackEvent('Search Executed', { keyword });
-    console.log(`검색 실행: ${keyword}`);
+    trackEvent('Search Executed', {
+      keyword,
+      page: window.location.pathname,
+    });
 
     setKeyword(keyword);
   };

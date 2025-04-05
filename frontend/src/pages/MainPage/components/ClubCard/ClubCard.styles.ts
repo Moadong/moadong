@@ -3,7 +3,6 @@ import styled from 'styled-components';
 const CardContainer = styled.div<{
   state: string;
   isClicked: boolean;
-  showShadow: boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -12,12 +11,10 @@ const CardContainer = styled.div<{
   background-color: #fff;
   width: 100%;
   height: 170px;
-  box-shadow: ${({ state, showShadow }) =>
-    !showShadow
-      ? 'none'
-      : state === 'open'
-        ? '0 0 14px rgba(0, 166, 255, 0.15)'
-        : '0 0 14px rgba(0, 0, 0, 0.08)'};
+  box-shadow: ${({ state }) =>
+    state === 'open'
+      ? '0 0 14px rgba(0, 166, 255, 0.15)'
+      : '0 0 14px rgba(0, 0, 0, 0.08)'};
 
   transition:
     transform 0.2s ease-in-out,

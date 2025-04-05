@@ -39,6 +39,7 @@ export const CardList = styled.div`
   }
   @media (max-width: 500px) {
     gap: 16px;
+    margin-top: 16px;
   }
 `;
 

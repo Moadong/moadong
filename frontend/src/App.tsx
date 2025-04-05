@@ -33,7 +33,7 @@ const App = () => {
               }
             />
             <Route
-              path='/club/:clubName'
+              path='/club/:clubId'
               element={
                 <Suspense fallback={null}>
                   <ClubDetailPage />

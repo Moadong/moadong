@@ -1,4 +1,5 @@
 import { useCallback, useEffect } from 'react';
+import useMixpanelTrack from '../useMixpanelTrack';
 
 const usePhotoNavigation = ({
   currentIndex,
@@ -16,6 +17,8 @@ const usePhotoNavigation = ({
   translateX: number;
   setTranslateX: React.Dispatch<React.SetStateAction<number>>;
 }) => {
+  const trackEvent = useMixpanelTrack();
+
   const calculateTranslateX = useCallback(
     (index: number) => {
       return index === photosLength - 1
@@ -33,11 +36,15 @@ const usePhotoNavigation = ({
     const nextIndex = currentIndex + 1;
     if (nextIndex >= photosLength) return;
     setCurrentIndex(nextIndex);
+
+    trackEvent('Photo Navigation', { action: 'next', index: nextIndex });
   };
 
   const handlePrev = () => {
     if (currentIndex <= 0) return;
     setCurrentIndex(currentIndex - 1);
+
+    trackEvent('Photo Navigation', { action: 'prev', index: currentIndex - 1 });
   };
 
   const isLastCard = currentIndex === photosLength - 1;
