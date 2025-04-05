@@ -129,3 +129,12 @@ export const NoImageContainer = styled.div`
   background-color: #f5f5f5;
   color: #666;
 `;
+
+export const ImagePlaceholder = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eee;
+`;
