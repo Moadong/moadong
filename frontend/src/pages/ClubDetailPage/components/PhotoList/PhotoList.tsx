@@ -93,7 +93,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
           isLastCard={isLastCard}
           containerWidth={containerWidth}
           cardWidth={cardWidth}
-          photoCount={photos.length}>
+          photoCount={convertedUrls.length}>
           {convertedUrls.map((url, index) => (
             <Styled.PhotoCard
               key={index}
