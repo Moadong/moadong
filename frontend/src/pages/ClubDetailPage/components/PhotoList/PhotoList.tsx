@@ -114,7 +114,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
                   </Styled.NoImageContainer>
                 )
               ) : (
-                <></>
+                <Styled.ImagePlaceholder />
               )}
             </Styled.PhotoCard>
           ))}
