@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect, useMemo } from 'react';
 import * as Styled from './PhotoList.styles';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
-import usePhotoNavigation from '@/hooks/usePhotoNavigation';
+import usePhotoNavigation from '@/hooks/PhotoList/usePhotoNavigation';
 import LazyImage from '@/components/common/LazyImage/LazyImage';
 import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
 
@@ -81,7 +81,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
       ref={(el) => {
         sectionRefs.current[INFOTABS_SCROLL_INDEX.PHOTO_LIST_TAB] = el;
       }}>
-      <h3>활동 사진</h3>
+      <Styled.PhotoListTitle>활동 사진</Styled.PhotoListTitle>
       <Styled.PhotoListWrapper>
         <Styled.PhotoList
           ref={containerRef}
