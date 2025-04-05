@@ -3,6 +3,7 @@ import * as Styled from './ImageUpload.styles';
 import UploadAddIcon from '@/assets/images/upload-add.png';
 import useCreateFeedImage from '@/hooks/queries/club/useCreateFeedImage';
 import { ImageUploadProps } from '@/types/club';
+import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 
 export const ImageUpload = ({
   clubId,
@@ -19,8 +20,16 @@ export const ImageUpload = ({
 
   const changeImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = event.target.files;
+
     if (files) {
-      createFeedImage({ file: files[0], clubId });
+      const file = files[0];
+
+      if (file.size > MAX_FILE_SIZE) {
+        alert('파일 크기가 10MB를 초과합니다.');
+        return;
+      }
+
+      createFeedImage({ file, clubId });
     }
   };
 
