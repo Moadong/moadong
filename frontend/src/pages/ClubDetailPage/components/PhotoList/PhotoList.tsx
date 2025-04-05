@@ -11,10 +11,10 @@ interface PhotoListProps {
 }
 
 const DESKTOP_CARD_CONTENT_WIDTH = 400;
-const CARD_GAP = 28;
+const CARD_GAP = 20;
 const DESKTOP_CARD_WIDTH = DESKTOP_CARD_CONTENT_WIDTH + CARD_GAP;
 
-const MOBILE_CARD_CONTENT_WIDTH = 300;
+const MOBILE_CARD_CONTENT_WIDTH = 350;
 const MOBILE_CARD_WIDTH = MOBILE_CARD_CONTENT_WIDTH + CARD_GAP;
 
 const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
@@ -29,6 +29,10 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
 
   // [x]FIXME: 백엔드에서 Url구조 수정 후 fix 예정
   const convertedUrls = useMemo(() => {
+    if (!Array.isArray(photos) || photos.length === 0) {
+      return [];
+    }
+
     const realPhotos = Array.isArray(photos)
       ? photos.map((photo) => convertGoogleDriveUrl(photo))
       : [];
@@ -89,7 +93,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
           isLastCard={isLastCard}
           containerWidth={containerWidth}
           cardWidth={cardWidth}
-          photoCount={photos.length}>
+          photoCount={convertedUrls.length}>
           {convertedUrls.map((url, index) => (
             <Styled.PhotoCard
               key={index}
@@ -110,7 +114,7 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
                   </Styled.NoImageContainer>
                 )
               ) : (
-                <></>
+                <Styled.ImagePlaceholder />
               )}
             </Styled.PhotoCard>
           ))}
