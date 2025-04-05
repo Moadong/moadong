@@ -29,6 +29,10 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
 
   // [x]FIXME: 백엔드에서 Url구조 수정 후 fix 예정
   const convertedUrls = useMemo(() => {
+    if (!Array.isArray(photos) || photos.length === 0) {
+      return [];
+    }
+
     const realPhotos = Array.isArray(photos)
       ? photos.map((photo) => convertGoogleDriveUrl(photo))
       : [];
