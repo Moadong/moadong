@@ -83,8 +83,8 @@ export const PhotoCard = styled.div<{
   }
 
   @media (max-width: 500px) {
-    width: 300px;
-    height: 300px;
+    width: 350px;
+    height: 350px;
   }
 `;
 
