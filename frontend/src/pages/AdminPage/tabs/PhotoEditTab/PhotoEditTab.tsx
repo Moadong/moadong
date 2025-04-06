@@ -73,9 +73,18 @@ const RecruitEditTab = () => {
   };
 
   return (
-    <Styled.RecruitEditorContainer>
+    <Styled.PhotoEditorContainer>
       <Styled.InfoTitle>활동 사진 편집</Styled.InfoTitle>
+      <Styled.Label>활동사진 추가 (최대 5장)</Styled.Label>
       <Styled.ImageContainer>
+        <ImageUpload
+          key='add-image'
+          onChangeImageList={addImage}
+          clubId={clubDetail.id}
+          imageCount={imageList.length}
+        />
+        <br />
+        <Styled.Label>활동사진 수정</Styled.Label>
         <Styled.ImageGrid>
           {imageList.map((image, index) => (
             <ImagePreview
@@ -84,16 +93,16 @@ const RecruitEditTab = () => {
               onDelete={() => deleteImage(index)}
             />
           ))}
-          {imageList.length < MAX_IMAGES && (
-            <ImageUpload
-              key='add-image'
-              onChangeImageList={addImage}
-              clubId={clubDetail.id}
-            />
-          )}
+          {/*{imageList.length < MAX_IMAGES && (*/}
+          {/*  <ImageUpload*/}
+          {/*    key='add-image'*/}
+          {/*    onChangeImageList={addImage}*/}
+          {/*    clubId={clubDetail.id}*/}
+          {/*  />*/}
+          {/*)}*/}
         </Styled.ImageGrid>
       </Styled.ImageContainer>
-    </Styled.RecruitEditorContainer>
+    </Styled.PhotoEditorContainer>
   );
 };
 export default RecruitEditTab;
