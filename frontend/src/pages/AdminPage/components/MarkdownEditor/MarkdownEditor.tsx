@@ -52,6 +52,14 @@ const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
         <button onClick={() => insertAtCursor('**굵게**')}>B</button>
         <button onClick={() => insertAtCursor('_기울임_')}>I</button>
         <button onClick={() => insertAtCursor('> 인용문\n')}>“</button>
+        <Styled.Spacer />
+        <button onClick={() => setShowPreview((prev) => !prev)}>
+          <img
+            src={showPreview ? pencil_icon : eye_icon}
+            alt={showPreview ? '소개글 편집하기' : '소개글 미리보기'}
+          />
+          {showPreview ? '소개글 편집하기' : '소개글 미리보기'}
+        </button>
       </Styled.Toolbar>
 
       {!showPreview && (
