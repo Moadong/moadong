@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 export const InputContainer = styled.div<{ width: string }>`
   width: ${(props) => props.width};
-  min-width: 400px;
+  min-width: 385px;
   display: flex;
   flex-direction: column;
 `;

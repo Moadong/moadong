@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 export const ImageUploadContainer = styled.div`
   display: inline-block;
-  width: 350px;
-  height: 350px;
+  width: 300px;
+  height: 300px;
   border: 1px dashed #c8c8c8;
   border-radius: 18px;
   cursor: pointer;
