@@ -1,7 +1,12 @@
 import API_BASE_URL from '@/constants/api';
 import { secureFetch } from '@/apis/auth/secureFetch';
+import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 
 export const uploadClubLogo = async (clubId: string, file: File) => {
+  if (file.size > MAX_FILE_SIZE) {
+    throw new Error('파일 크기가 10MB를 초과합니다.');
+  }
+
   const formData = new FormData();
   formData.append('logo', file);
 

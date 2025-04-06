@@ -1,5 +1,10 @@
 import styled from 'styled-components';
 
+export const PhotoListTitle = styled.p`
+  font-size: 20px;
+  font-weight: 500;
+`;
+
 export const PhotoListContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -15,6 +20,7 @@ export const PhotoListContainer = styled.div`
     width: 100%;
     border: none;
     border-radius: 0;
+    padding: 20px;
   }
 `;
 
@@ -34,7 +40,7 @@ export const PhotoList = styled.div<{
 }>`
   display: flex;
   flex-direction: row;
-  gap: 28px;
+  gap: 20px;
   transition: transform 0.3s ease;
 
   transform: ${({
@@ -82,8 +88,8 @@ export const PhotoCard = styled.div<{
   }
 
   @media (max-width: 500px) {
-    width: 300px;
-    height: 300px;
+    width: 350px;
+    height: 350px;
   }
 `;
 
@@ -127,4 +133,13 @@ export const NoImageContainer = styled.div`
   justify-content: center;
   background-color: #f5f5f5;
   color: #666;
+`;
+
+export const ImagePlaceholder = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: #eee;
 `;

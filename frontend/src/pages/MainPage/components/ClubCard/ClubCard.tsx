@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState } from 'react';
 import mixpanel from 'mixpanel-browser';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import ClubLogo from '@/components/ClubLogo/ClubLogo';
@@ -8,13 +8,9 @@ import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
 
-const CATEGORY_BUTTON_LIST_OFFSET = 120;
-
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();
   const [isClicked, setIsClicked] = useState(false);
-  const [isTouchingCategory, setIsTouchingCategory] = useState(true);
-  const clubCardRef = useRef<HTMLDivElement>(null);
 
   const handleNavigate = () => {
     setIsClicked(true);
@@ -26,38 +22,14 @@ const ClubCard = ({ club }: { club: Club }) => {
 
     setTimeout(() => {
       setIsClicked(false);
-      navigate(`/club/${encodeURIComponent(club.name)}`, {
-        state: {
-          clubId: club.id,
-        },
-      });
+      navigate(`/club/${club.id}`);
     }, 150);
   };
 
-  useEffect(() => {
-    const checkCardPosition = () => {
-      if (window.innerWidth > 500 || !clubCardRef.current) return;
-
-      const rect = clubCardRef.current.getBoundingClientRect();
-      setIsTouchingCategory(rect.top > CATEGORY_BUTTON_LIST_OFFSET);
-    };
-
-    checkCardPosition();
-    window.addEventListener('scroll', checkCardPosition);
-    window.addEventListener('resize', checkCardPosition);
-
-    return () => {
-      window.removeEventListener('scroll', checkCardPosition);
-      window.removeEventListener('resize', checkCardPosition);
-    };
-  }, []);
-
   return (
     <Styled.CardContainer
-      ref={clubCardRef}
       state={club.recruitmentStatus}
       isClicked={isClicked}
-      showShadow={isTouchingCategory}
       onClick={handleNavigate}>
       <Styled.CardHeader>
         <Styled.ClubProfile>
