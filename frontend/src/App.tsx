@@ -12,6 +12,7 @@ import RecruitEditTab from './pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab
 import AccountEditTab from './pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
+import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 
 const queryClient = new QueryClient();
 
@@ -57,6 +58,7 @@ const App = () => {
                           path='recruit-edit'
                           element={<RecruitEditTab />}
                         />
+                        <Route path='photo-edit' element={<PhotoEditTab />} />
                         <Route
                           path='account-edit'
                           element={<AccountEditTab />}
