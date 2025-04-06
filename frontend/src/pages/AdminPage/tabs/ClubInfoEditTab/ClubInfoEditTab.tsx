@@ -80,7 +80,7 @@ const ClubInfoEditTab = () => {
   return (
     <>
       <Styled.TitleButtonContainer>
-        <Styled.InfoTitle>동아리 정보 수정</Styled.InfoTitle>
+        <Styled.InfoTitle>동아리 기본 정보 수정</Styled.InfoTitle>
         <Button width={'150px'} animated onClick={handleUpdateClub}>
           수정하기
         </Button>
