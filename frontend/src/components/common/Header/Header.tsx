@@ -3,10 +3,11 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './Header.styles';
 import SearchBox from '@/components/common/SearchBox/SearchBox';
 import MainIcon from '@/assets/images/moadong_name_logo.svg';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 
 const Header = () => {
   const navigate = useNavigate();
+  const location = useLocation(); // 현재 경로 가져오기
   const trackEvent = useMixpanelTrack();
 
   const handleHomeClick = () => {
@@ -20,6 +21,8 @@ const Header = () => {
       'https://valiant-schooner-12c.notion.site/1a64ac84bab3805287e0cef50b563370';
   };
 
+  const isAdminPage = location.pathname.startsWith('/admin');
+
   return (
     <Styled.HeaderStyles>
       <Styled.HeaderContainer>
@@ -27,11 +30,14 @@ const Header = () => {
           <Styled.LogoButtonStyles>
             <img src={MainIcon} alt='홈 버튼' onClick={handleHomeClick} />
           </Styled.LogoButtonStyles>
-          <Styled.IntroduceButtonStyles onClick={handleIntroduceClick}>
-            모아동 소개
-          </Styled.IntroduceButtonStyles>
+          {!isAdminPage && (
+            <Styled.IntroduceButtonStyles onClick={handleIntroduceClick}>
+              모아동 소개
+            </Styled.IntroduceButtonStyles>
+          )}
         </Styled.TextCoverStyles>
-        <SearchBox />
+
+        {!isAdminPage && <SearchBox />}
       </Styled.HeaderContainer>
     </Styled.HeaderStyles>
   );
