@@ -5,7 +5,6 @@ import Calendar from '@/pages/AdminPage/components/Calendar/Calendar';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
-import useUpdateFeedImages from '@/hooks/queries/club/useUpdateFeedImages';
 import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
@@ -58,29 +57,26 @@ const RecruitEditTab = () => {
     });
   };
 
-  // [x]FIXME: div 컴포넌트 수정
   return (
     <Styled.RecruitEditorContainer>
-      <div>
-        <h3>모집 기간 설정</h3>
-        <br />
-        <Styled.EditButtonContainer>
+      <Styled.TitleButtonContainer>
+        <Styled.InfoTitle>동아리 모집 정보 수정</Styled.InfoTitle>
+        <Button width={'150px'} animated onClick={handleUpdateClub}>
+          수정하기
+        </Button>
+      </Styled.TitleButtonContainer>
+      <Styled.InfoGroup>
+        <div>
+          <Styled.Label>모집 기간 설정</Styled.Label>
           <Calendar
             recruitmentStart={recruitmentStart}
             recruitmentEnd={recruitmentEnd}
             onChangeStart={setRecruitmentStart}
             onChangeEnd={setRecruitmentEnd}
           />
-          <Button width={'150px'} animated onClick={handleUpdateClub}>
-            수정하기
-          </Button>
-        </Styled.EditButtonContainer>
-      </div>
-      <div>
-        <h3>모집 대상 설정</h3>
-        <br />
+        </div>
         <InputField
-          label=''
+          label='모집 대상 설정'
           placeholder='모집 대상을 입력해주세요.'
           type='text'
           value={recruitmentTarget}
@@ -88,10 +84,12 @@ const RecruitEditTab = () => {
           onClear={() => setRecruitmentTarget('')}
           maxLength={10}
         />
-      </div>
 
-      <h3>소개글 수정</h3>
-      <MarkdownEditor value={description} onChange={setDescription} />
+        <div>
+          <Styled.Label>소개글 수정</Styled.Label>
+          <MarkdownEditor value={description} onChange={setDescription} />
+        </div>
+      </Styled.InfoGroup>
     </Styled.RecruitEditorContainer>
   );
 };
