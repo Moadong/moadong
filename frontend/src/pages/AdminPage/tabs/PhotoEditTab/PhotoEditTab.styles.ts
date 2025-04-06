@@ -19,6 +19,7 @@ export const ImageGrid = styled.div`
   white-space: nowrap;
   overflow-y: hidden;
   padding-bottom: 24px;
+  max-width: 770px;
 `;
 
 export const InfoTitle = styled.h2`
