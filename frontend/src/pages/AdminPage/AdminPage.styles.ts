@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 export const AdminPageContainer = styled.div`
   display: flex;
-  gap: 34.5px;
-  margin-top: 98.5px;
+  gap: 34px;
+  margin-top: 98px;
 `;
 
 export const Content = styled.main`
@@ -11,4 +11,5 @@ export const Content = styled.main`
   border: 1px solid #dcdcdc;
   border-radius: 18px;
   padding: 62px 58px;
+  max-width: 977px;
 `;
