@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import * as Styled from './LoginTab.styles';
 import InputField from '@/components/common/InputField/InputField';
 import Button from '@/components/common/Button/Button';
@@ -73,11 +73,35 @@ const LoginTab = () => {
         </Styled.ButtonWrapper>
 
         <Styled.ForgotLinks>
-          <Link to=''>회원가입</Link>
+          <Styled.LinkButton
+            type='button'
+            onClick={() =>
+              alert(
+                '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
+              )
+            }>
+            회원가입
+          </Styled.LinkButton>
           <span>|</span>
-          <Link to=''>아이디 찾기</Link>
+          <Styled.LinkButton
+            type='button'
+            onClick={() =>
+              alert(
+                '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
+              )
+            }>
+            아이디 찾기
+          </Styled.LinkButton>
           <span>|</span>
-          <Link to=''>비밀번호 찾기</Link>
+          <Styled.LinkButton
+            type='button'
+            onClick={() =>
+              alert(
+                '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
+              )
+            }>
+            비밀번호 찾기
+          </Styled.LinkButton>
         </Styled.ForgotLinks>
       </Styled.LoginBox>
     </Styled.LoginContainer>

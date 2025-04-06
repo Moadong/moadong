@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 import { useParams } from 'react-router-dom';
 import * as Styled from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
@@ -12,16 +11,14 @@ import PhotoList from '@/pages/ClubDetailPage/components/PhotoList/PhotoList';
 import Footer from '@/components/common/Footer/Footer';
 import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter/ClubDetailFooter';
 import useTrackPageView from '@/hooks/useTrackPageView';
-import useAutoScroll from '@/hooks/useAutoScroll';
+import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
 const ClubDetailPage = () => {
-  const { clubName } = useParams<{ clubName: string }>();
+  const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
   const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
 
-  const location = useLocation();
-  const clubId = (location.state as { clubId?: string })?.clubId;
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useEffect(() => {
@@ -43,6 +40,7 @@ const ClubDetailPage = () => {
     return <div>에러가 발생했습니다.</div>;
   }
 
+  console.log(clubDetail.recruitmentPeriod);
   return (
     <>
       {showHeader && <Header />}
@@ -64,7 +62,7 @@ const ClubDetailPage = () => {
         <PhotoList sectionRefs={sectionRefs} feeds={clubDetail.feeds} />
       </Styled.PageContainer>
       <Footer />
-      <ClubDetailFooter />
+      <ClubDetailFooter recruitmentPeriod={clubDetail.recruitmentPeriod} />
     </>
   );
 };

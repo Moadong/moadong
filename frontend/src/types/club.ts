@@ -28,6 +28,7 @@ export interface ClubDescription {
 export interface ImageUploadProps {
   clubId: string;
   onChangeImageList: (image: string) => void;
+  imageCount: number;
 }
 
 export interface ImagePreviewProps {
