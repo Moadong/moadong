@@ -1,8 +1,6 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import * as Styled from './RecruitEditTab.styles';
-import ReactMarkdown from 'react-markdown';
-import remarkGfm from 'remark-gfm';
 import Calendar from '@/pages/AdminPage/components/Calendar/Calendar';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
@@ -13,8 +11,7 @@ import useUpdateFeedImages from '@/hooks/queries/club/useUpdateFeedImages';
 import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
-
-const MAX_IMAGES = 5;
+import MarkdownEditor from '@/pages/AdminPage/components/MarkdownEditor/MarkdownEditor';
 
 const RecruitEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail>();
@@ -162,69 +159,8 @@ const RecruitEditTab = () => {
         />
       </div>
 
-      <h3>소개글</h3>
-      <Styled.EditorPreviewContainer>
-        <Styled.EditorContainer>
-          <Styled.Toolbar>
-            <button onClick={() => insertAtCursor('# 제목\n')}>제목1</button>
-            <button onClick={() => insertAtCursor('## 소제목\n')}>제목2</button>
-            <button onClick={() => insertAtCursor('**굵게**')}>B</button>
-            <button onClick={() => insertAtCursor('_기울임_')}>I</button>
-            <button onClick={() => insertAtCursor('> 인용문\n')}>“</button>
-          </Styled.Toolbar>
-
-          <Styled.Editor
-            ref={textareaRef}
-            value={description}
-            onChange={(e) => setDescription(e.target.value)}
-            placeholder='소개글을 작성해주세요...'
-          />
-        </Styled.EditorContainer>
-
-        <Styled.PreviewContainer>
-          <ReactMarkdown
-            remarkPlugins={[remarkGfm]}
-            components={{
-              p({ children }) {
-                return <Styled.Paragraph>{children}</Styled.Paragraph>;
-              },
-              blockquote({ children }) {
-                return <Styled.Blockquote>{children}</Styled.Blockquote>;
-              },
-              ol({ children }) {
-                return <Styled.OrderedList>{children}</Styled.OrderedList>;
-              },
-              ul({ children }) {
-                return <Styled.UnorderedList>{children}</Styled.UnorderedList>;
-              },
-              li({ children }) {
-                return <Styled.ListItem>{children}</Styled.ListItem>;
-              },
-            }}>
-            {description}
-          </ReactMarkdown>
-        </Styled.PreviewContainer>
-      </Styled.EditorPreviewContainer>
-
-      <h3>활동 사진 편집</h3>
-      <Styled.ImageContainer>
-        <Styled.ImageGrid>
-          {imageList.map((image, index) => (
-            <ImagePreview
-              key={`${image}-${index}`}
-              image={image}
-              onDelete={() => deleteImage(index)}
-            />
-          ))}
-          {imageList.length < MAX_IMAGES && (
-            <ImageUpload
-              key='add-image'
-              onChangeImageList={addImage}
-              clubId={clubDetail.id}
-            />
-          )}
-        </Styled.ImageGrid>
-      </Styled.ImageContainer>
+      <h3>소개글 수정</h3>
+      <MarkdownEditor value={description} onChange={setDescription} />
     </Styled.RecruitEditorContainer>
   );
 };
