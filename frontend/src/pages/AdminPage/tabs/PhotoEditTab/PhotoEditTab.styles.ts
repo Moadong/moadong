@@ -20,3 +20,10 @@ export const ImageGrid = styled.div`
   overflow-y: hidden;
   padding-bottom: 24px;
 `;
+
+export const InfoTitle = styled.h2`
+  font-size: 1.5rem;
+  font-weight: bold;
+  letter-spacing: 0;
+  margin-bottom: 46px;
+`;

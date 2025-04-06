@@ -74,7 +74,7 @@ const RecruitEditTab = () => {
 
   return (
     <Styled.RecruitEditorContainer>
-      <h3>활동 사진 편집</h3>
+      <Styled.InfoTitle>활동 사진 편집</Styled.InfoTitle>
       <Styled.ImageContainer>
         <Styled.ImageGrid>
           {imageList.map((image, index) => (
