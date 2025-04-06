@@ -18,10 +18,16 @@ export const DeleteButton = styled.button`
   position: absolute;
   top: 20px;
   right: 20px;
-  width: 32px;
-  height: 32px;
-  background-color: #fff;
-  border-radius: 50%;
-  z-index: 2;
+  border: none;
   cursor: pointer;
+  background-color: transparent;
+
+  img {
+    width: 32px;
+    height: 32px;
+  }
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
