@@ -146,7 +146,7 @@ const RecruitEditTab = () => {
         </Styled.EditButtonContainer>
       </div>
       <div>
-        <h3>모집 대상</h3>
+        <h3>모집 대상 설정</h3>
         <br />
         <InputField
           label=''
