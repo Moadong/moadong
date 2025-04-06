@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 export const ImagePreviewContainer = styled.div`
   display: inline-block;
-  width: 350px;
-  height: 350px;
+  width: 300px;
+  height: 300px;
   border-radius: 18px;
   overflow: hidden;
   position: relative;
