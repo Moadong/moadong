@@ -24,6 +24,7 @@ export const PresidentContainer = styled.div`
   display: flex;
   gap: 10px;
   align-items: flex-end;
+  max-width: 700px;
 `;
 
 export const TagEditGroup = styled.div`
