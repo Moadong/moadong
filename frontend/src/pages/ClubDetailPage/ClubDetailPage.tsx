@@ -40,7 +40,6 @@ const ClubDetailPage = () => {
     return <div>에러가 발생했습니다.</div>;
   }
 
-  console.log(clubDetail.recruitmentPeriod);
   return (
     <>
       {showHeader && <Header />}
