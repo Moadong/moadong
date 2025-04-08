@@ -67,6 +67,7 @@
     "fork-ts-checker-webpack-plugin": "^9.0.2",
     "html-webpack-plugin": "^5.6.3",
     "jest": "^29.7.0",
+    "jest-environment-jsdom": "^29.7.0",
     "jest-fetch-mock": "^3.0.3",
     "mini-css-extract-plugin": "^2.9.2",
     "path": "^0.12.7",
