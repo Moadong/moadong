@@ -3,7 +3,8 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import styled from 'styled-components';
 
 interface ButtonProps {
-  onClick?: () => void;
+  recruitmentForm?: string;
+  presidentPhoneNumber?: string;
 }
 
 const Button = styled.button`
@@ -35,17 +36,21 @@ const Button = styled.button`
   }
 `;
 
-const ClubApplyButton = ({ onClick }: ButtonProps) => {
+const ClubApplyButton = ({
+  recruitmentForm,
+  presidentPhoneNumber,
+}: ButtonProps) => {
   const trackEvent = useMixpanelTrack();
 
   const handleClick = () => {
     trackEvent('Club Apply Button Clicked');
 
-    if (onClick) {
-      onClick();
+    // [x] FIXME: recruitmentForm 있을 때는 리다이렉트
+    if (presidentPhoneNumber) {
+      alert(`${presidentPhoneNumber} 으로 연락하여 지원해 주세요.`);
+    } else {
+      alert('모집이 마감되었습니다. 다음에 지원해 주세요.');
     }
-    // []FIXME: 모집 마감 시 alert창 띄우기
-    alert('모집이 마감되었습니다. 다음에 지원해 주세요.');
   };
 
   return <Button onClick={handleClick}>지원하기</Button>;
