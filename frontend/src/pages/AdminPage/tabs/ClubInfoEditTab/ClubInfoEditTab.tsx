@@ -27,7 +27,6 @@ const ClubInfoEditTab = () => {
 
   useEffect(() => {
     if (clubDetail) {
-      // [x] FIXME: 동아리회장 이름, 번호 필드명 수정해야 함
       setClubName(clubDetail.name);
       setClubPresidentName(clubDetail.presidentName);
       setTelephoneNumber(clubDetail.presidentPhoneNumber);
