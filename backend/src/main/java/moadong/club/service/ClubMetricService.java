@@ -6,10 +6,12 @@ import java.time.YearMonth;
 import java.time.temporal.ChronoField;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
@@ -125,5 +127,22 @@ public class ClubMetricService {
                 .map(Club::getName)
                 .orElse(null))
             .toList();
+    }
+
+    public int[] getDailyActiveUser(int n) {
+        LocalDate fromDate = LocalDate.now().minusDays(n);
+        List<ClubMetric> metrics = clubMetricRepository.findAllByDateAfter(fromDate);
+
+        Map<LocalDate, Set<String>> daus = metrics.stream()
+            .collect(Collectors.groupingBy(ClubMetric::getDate,
+                Collectors.mapping(ClubMetric::getIp, Collectors.toSet())));
+
+        int[] dausCount = new int[n];
+        for (int i = 0; i < n; i++) {
+            LocalDate targetDate = LocalDate.now().minusDays(i);
+            dausCount[i] = daus.getOrDefault(targetDate, Collections.emptySet()).size();
+        }
+
+        return dausCount;
     }
 }
