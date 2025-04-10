@@ -130,7 +130,8 @@ public class ClubMetricService {
     }
 
     public int[] getDailyActiveUser(int n) {
-        LocalDate fromDate = LocalDate.now().minusDays(n);
+        LocalDate today = LocalDate.now();
+        LocalDate fromDate = today.minusDays(n);
         List<ClubMetric> metrics = clubMetricRepository.findAllByDateAfter(fromDate);
 
         Map<LocalDate, Set<String>> daus = metrics.stream()
@@ -139,7 +140,7 @@ public class ClubMetricService {
 
         int[] dausCount = new int[n];
         for (int i = 0; i < n; i++) {
-            LocalDate targetDate = LocalDate.now().minusDays(i);
+            LocalDate targetDate = today.minusDays(i);
             dausCount[i] = daus.getOrDefault(targetDate, Collections.emptySet()).size();
         }
 
