@@ -38,6 +38,8 @@ const SearchBox = () => {
         placeholder='어떤 동아리를 찾으세요?'
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
+        onFocus={() => setIsSearchBoxClicked(true)}
+        onBlur={() => setIsSearchBoxClicked(false)}
       />
       <Styled.SearchButton type='button' onClick={handleSearchClick}>
         <img src={SearchIcon} alt='Search Button' />
