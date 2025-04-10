@@ -27,7 +27,7 @@ const MainMobileHeader = () => {
           <img src={MainIcon} alt='홈 버튼' onClick={handleHomeClick} />
         </Styled.MobileMainIcon>
         <SearchBox />
-        <Styled.MobileMenu>
+        <Styled.MobileMenu aria-label='메뉴 버튼'>
           <img src={MenuBar} alt='메뉴 버튼' onClick={handleMenuClick} />
         </Styled.MobileMenu>
       </Styled.MobileHeaderWrapper>

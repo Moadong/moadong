@@ -40,11 +40,13 @@ const SearchBox = () => {
         onChange={(e) => setKeyword(e.target.value)}
         onFocus={() => setIsSearchBoxClicked(true)}
         onBlur={() => setIsSearchBoxClicked(false)}
+        aria-label='동아리 검색창'
       />
       <Styled.SearchButton
         type='button'
         onClick={handleSearchClick}
         isFocused={isSearchBoxClicked}
+        aria-label='검색'>
         <img src={SearchIcon} alt='Search Button' />
       </Styled.SearchButton>
     </Styled.SearchBoxContainer>
