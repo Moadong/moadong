@@ -29,14 +29,14 @@ export const MobileHeaderWrapper = styled.div`
 `;
 
 export const MobileMainIcon = styled.button`
-  width: 90px;
-  height: 26px;
+  width: 26px;
+  height: 22px;
   background-color: transparent;
   border: none;
   cursor: pointer;
 
   img {
-    width: 90px;
+    width: 26px;
     height: auto;
     object-fit: cover;
   }
