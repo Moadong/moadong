@@ -11,6 +11,11 @@ export const SearchBoxContainer = styled.form<{ isFocused: boolean }>`
     ${({ isFocused }) => (isFocused ? 'rgba(255, 84, 20, 0.8)' : 'transparent')};
   border-radius: 41px;
   background-color: #eeeeee;
+
+  @media (max-width: 500px) {
+    width: 270px;
+    height: 28px;
+  }
 `;
 
 export const SearchInputStyles = styled.input`
