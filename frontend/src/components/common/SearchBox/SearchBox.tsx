@@ -15,7 +15,6 @@ const SearchBox = () => {
     redirectToMainIfSearchTriggeredOutside();
 
     if (!keyword.trim()) {
-      console.log('검색어가 비어 있어 트래킹하지 않습니다.');
       return;
     }
 
