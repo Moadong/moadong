@@ -38,7 +38,7 @@ export const SearchInputStyles = styled.input`
   }
 `;
 
-export const SearchButton = styled.button`
+export const SearchButton = styled.button<{ isFocused: boolean }>`
   border: none;
   background-color: transparent;
   font-size: 16px;
@@ -49,6 +49,11 @@ export const SearchButton = styled.button`
     width: 16px;
     height: 16px;
   }
+
+  filter: ${({ isFocused }) =>
+    isFocused
+      ? 'invert(36%) sepia(83%) saturate(746%) hue-rotate(359deg) brightness(95%) contrast(92%)'
+      : 'none'};
 
   @media (max-width: 698px) {
     img {

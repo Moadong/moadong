@@ -41,7 +41,10 @@ const SearchBox = () => {
         onFocus={() => setIsSearchBoxClicked(true)}
         onBlur={() => setIsSearchBoxClicked(false)}
       />
-      <Styled.SearchButton type='button' onClick={handleSearchClick}>
+      <Styled.SearchButton
+        type='button'
+        onClick={handleSearchClick}
+        isFocused={isSearchBoxClicked}
         <img src={SearchIcon} alt='Search Button' />
       </Styled.SearchButton>
     </Styled.SearchBoxContainer>
