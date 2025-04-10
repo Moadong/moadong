@@ -16,8 +16,8 @@ export const MobileHeaderContainer = styled.header`
     background-color: white;
   }
 
-  @media (max-width: 375px) {
-    padding: 0 10px;
+  @media (max-width: 500px) {
+    padding: 0 20px;
   }
 `;
 
