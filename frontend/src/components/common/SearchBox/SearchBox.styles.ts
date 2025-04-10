@@ -7,14 +7,17 @@ export const SearchBoxContainer = styled.form<{ isFocused: boolean }>`
   width: 300px;
   height: 36px;
   padding: 10px 20px;
-  border: 1px solid
-    ${({ isFocused }) => (isFocused ? 'rgba(255, 84, 20, 0.8)' : 'transparent')};
+  border: transparent;
   border-radius: 41px;
   background-color: #eeeeee;
 
   @media (max-width: 500px) {
     width: 270px;
     height: 28px;
+
+    border: 1px solid
+      ${({ isFocused }) =>
+        isFocused ? 'rgba(255, 84, 20, 0.8)' : 'transparent'};
   }
 `;
 
@@ -50,11 +53,6 @@ export const SearchButton = styled.button<{ isFocused: boolean }>`
     height: 16px;
   }
 
-  filter: ${({ isFocused }) =>
-    isFocused
-      ? 'invert(36%) sepia(83%) saturate(746%) hue-rotate(359deg) brightness(95%) contrast(92%)'
-      : 'none'};
-
   @media (max-width: 698px) {
     img {
       width: 14px;
@@ -67,5 +65,12 @@ export const SearchButton = styled.button<{ isFocused: boolean }>`
       width: 12px;
       height: 12px;
     }
+  }
+
+  @media (max-width: 500px) {
+    filter: ${({ isFocused }) =>
+      isFocused
+        ? 'invert(36%) sepia(83%) saturate(746%) hue-rotate(359deg) brightness(95%) contrast(92%)'
+        : 'none'};
   }
 `;
