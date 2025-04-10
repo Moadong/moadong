@@ -1,13 +1,14 @@
 import styled from 'styled-components';
 
-export const SearchBoxStyles = styled.form`
+export const SearchBoxContainer = styled.form<{ isFocused: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 300px;
   height: 36px;
   padding: 10px 20px;
-  border: none;
+  border: 1px solid
+    ${({ isFocused }) => (isFocused ? 'rgba(255, 84, 20, 0.8)' : 'transparent')};
   border-radius: 41px;
   background-color: #eeeeee;
 `;
