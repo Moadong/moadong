@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSearch } from '@/context/SearchContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './SearchBox.styles';
@@ -6,6 +6,7 @@ import SearchIcon from '@/assets/images/icons/search_button_icon.svg';
 import { useNavigate } from 'react-router-dom';
 
 const SearchBox = () => {
+  const [isSearchBoxClicked, setIsSearchBoxClicked] = useState(false);
   const { keyword, setKeyword } = useSearch();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
@@ -14,7 +15,6 @@ const SearchBox = () => {
     redirectToMainIfSearchTriggeredOutside();
 
     if (!keyword.trim()) {
-      console.log('검색어가 비어 있어 트래킹하지 않습니다.');
       return;
     }
 
@@ -33,16 +33,23 @@ const SearchBox = () => {
   };
 
   return (
-    <Styled.SearchBoxStyles>
+    <Styled.SearchBoxContainer isFocused={isSearchBoxClicked}>
       <Styled.SearchInputStyles
         placeholder='어떤 동아리를 찾으세요?'
         value={keyword}
         onChange={(e) => setKeyword(e.target.value)}
+        onFocus={() => setIsSearchBoxClicked(true)}
+        onBlur={() => setIsSearchBoxClicked(false)}
+        aria-label='동아리 검색창'
       />
-      <Styled.SearchButton type='button' onClick={handleSearchClick}>
+      <Styled.SearchButton
+        type='button'
+        onClick={handleSearchClick}
+        isFocused={isSearchBoxClicked}
+        aria-label='검색'>
         <img src={SearchIcon} alt='Search Button' />
       </Styled.SearchButton>
-    </Styled.SearchBoxStyles>
+    </Styled.SearchBoxContainer>
   );
 };
 
