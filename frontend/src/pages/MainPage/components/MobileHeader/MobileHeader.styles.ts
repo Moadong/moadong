@@ -65,14 +65,14 @@ export const MobileSearchIcon = styled.button`
 `;
 
 export const MobileMenu = styled.button`
-  width: 20px;
-  height: 20px;
+  width: 18px;
+  height: 14px;
   background-color: transparent;
   border: none;
   cursor: pointer;
 
   img {
-    width: 23px;
+    width: 18px;
     height: auto;
     object-fit: cover;
   }
