@@ -10,14 +10,14 @@ public enum ClubCategory {
     공연(5),
 
     기타(6);
-    private final int order;
+    private final int priority;
 
-    ClubCategory(int order) {
-        this.order = order;
+    ClubCategory(int priority) {
+        this.priority = priority;
     }
 
-    public int getOrder() {
-        return order;
+    public int getPriority() {
+        return priority;
     }
 
     public static ClubCategory fromString(String category) {
@@ -28,8 +28,8 @@ public enum ClubCategory {
         }
         return null;
     }
-    public static int getOrderFromString(String category) {
+    public static int getPriorityFromString(String category) {
         ClubCategory c = fromString(category);
-        return (c != null) ? c.getOrder() : Integer.MAX_VALUE;
+        return (c != null) ? c.getPriority() : Integer.MAX_VALUE;
     }
 }

@@ -10,19 +10,19 @@ public enum RecruitmentStatus {
 ;
 
     private final String description;
-    private final int order;
+    private final int priority;
 
-    RecruitmentStatus(String description, int order) {
+    RecruitmentStatus(String description, int priority) {
         this.description = description;
-        this.order = order;
+        this.priority = priority;
     }
 
     public String getDescription() {
         return description;
     }
 
-    public int getOrder() {
-        return order;
+    public int getPriority() {
+        return priority;
     }
 
     public static RecruitmentStatus fromString(String status) {
@@ -31,8 +31,8 @@ public enum RecruitmentStatus {
                 .findFirst()
                 .orElse(null);
     }
-    public static int getOrderFromString(String status) {
+    public static int getPriorityFromString(String status) {
         RecruitmentStatus rs = fromString(status);
-        return (rs != null) ? rs.getOrder() : Integer.MAX_VALUE;
+        return (rs != null) ? rs.getPriority() : Integer.MAX_VALUE;
     }
 }
