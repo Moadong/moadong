@@ -54,10 +54,10 @@ jobs:
       - name: Log created issue
         run: echo "Jira Issue ${{ steps.issue-parser.outputs.issueparser_parentKey || 'UNKNOWN' }}/${{ steps.create.outputs.issue || 'UNKNOWN' }} was created"
 
-      - name: Checkout develop/fe branch
+      - name: Checkout develop-fe branch
         uses: actions/checkout@v4
         with:
-          ref: develop/fe
+          ref: develop-fe
 
       - name: Create branch with Ticket number
         run: |
