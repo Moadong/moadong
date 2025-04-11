@@ -28,4 +28,8 @@ public enum ClubCategory {
         }
         return null;
     }
+    public static int getOrderFromString(String category) {
+        ClubCategory c = fromString(category);
+        return (c != null) ? c.getOrder() : Integer.MAX_VALUE;
+    }
 }
