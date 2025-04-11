@@ -3,7 +3,8 @@ package moadong.club.enums;
 public enum RecruitmentStatus {
     OPEN("모집중"),
     CLOSED("모집마감"),
-    UPCOMING("모집예정");
+    UPCOMING("모집예정"),
+    ALWAYS("상시모집");
 
     private final String description;
 
