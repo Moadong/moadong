@@ -1,14 +1,16 @@
 package moadong.club.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
+import moadong.club.enums.ClubCategory;
+import moadong.club.enums.RecruitmentStatus;
 import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
-import moadong.club.repository.ClubRepository;
 import moadong.club.repository.ClubSearchRepository;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -17,21 +19,26 @@ public class ClubSearchService {
     private final ClubSearchRepository clubSearchRepository;
 
     public ClubSearchResponse searchClubsByKeyword(String keyword,
-        String recruitmentStatus,
-        String division,
-        String category
+                                                   String recruitmentStatus,
+                                                   String division,
+                                                   String category
     ) {
-        List<ClubSearchResult> clubSearchResults = clubSearchRepository.searchClubsByKeyword(
-            keyword,
-            recruitmentStatus,
-            division,
-            category
+        List<ClubSearchResult> result = clubSearchRepository.searchClubsByKeyword(
+                keyword,
+                recruitmentStatus,
+                division,
+                category
         );
-        //TODO: 변경된 컬렉션 구조에 맞춰 수정할 것
-        List<ClubSearchResult> result = clubSearchResults;
+        // 정렬
+        result = result.stream()
+                .sorted(
+                        //
+                        Comparator.comparingInt((ClubSearchResult club) -> RecruitmentStatus.getPriorityFromString(club.recruitmentStatus()))
+                                .thenComparingInt((ClubSearchResult club) -> ClubCategory.getPriorityFromString(club.category())))
+                .collect(Collectors.toList());
 
         return ClubSearchResponse.builder()
-            .clubs(result)
-            .build();
+                .clubs(result)
+                .build();
     }
 }
