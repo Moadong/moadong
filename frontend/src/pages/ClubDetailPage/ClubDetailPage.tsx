@@ -40,7 +40,6 @@ const ClubDetailPage = () => {
     return <div>에러가 발생했습니다.</div>;
   }
 
-  console.log(clubDetail.recruitmentPeriod);
   return (
     <>
       {showHeader && <Header />}
@@ -52,6 +51,9 @@ const ClubDetailPage = () => {
           division={clubDetail.division}
           tags={clubDetail.tags}
           logo={clubDetail.logo}
+          recruitmentPeriod={clubDetail.recruitmentPeriod}
+          recruitmentForm={clubDetail.recruitmentForm}
+          presidentPhoneNumber={clubDetail.presidentPhoneNumber}
         />
         <InfoTabs onTabClick={scrollToSection} />
         <InfoBox sectionRefs={sectionRefs} clubDetail={clubDetail} />
@@ -62,7 +64,11 @@ const ClubDetailPage = () => {
         <PhotoList sectionRefs={sectionRefs} feeds={clubDetail.feeds} />
       </Styled.PageContainer>
       <Footer />
-      <ClubDetailFooter recruitmentPeriod={clubDetail.recruitmentPeriod} />
+      <ClubDetailFooter
+        recruitmentPeriod={clubDetail.recruitmentPeriod}
+        recruitmentForm={clubDetail.recruitmentForm}
+        presidentPhoneNumber={clubDetail.presidentPhoneNumber}
+      />
     </>
   );
 };

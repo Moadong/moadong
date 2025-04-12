@@ -2,13 +2,17 @@ import React from 'react';
 import * as Styled from './ClubDetailHeader.styles';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
-
+import { parseRecruitmentPeriod } from '@/utils/stringToDate';
+import getDeadlineText from '@/utils/getDeadLineText';
 interface ClubDetailHeaderProps {
   name: string;
   category: string;
   division: string;
   tags: string[];
   logo: string;
+  recruitmentPeriod: string;
+  recruitmentForm?: string;
+  presidentPhoneNumber?: string;
 }
 
 const ClubDetailHeader = ({
@@ -17,7 +21,19 @@ const ClubDetailHeader = ({
   division,
   tags,
   logo,
+  recruitmentPeriod,
+  recruitmentForm,
+  presidentPhoneNumber,
 }: ClubDetailHeaderProps) => {
+  const { recruitmentStart, recruitmentEnd } =
+    parseRecruitmentPeriod(recruitmentPeriod);
+
+  const deadlineText = getDeadlineText(
+    recruitmentStart,
+    recruitmentEnd,
+    new Date(),
+  );
+
   return (
     <Styled.ClubDetailHeaderContainer>
       <ClubProfile
@@ -27,7 +43,12 @@ const ClubDetailHeader = ({
         tags={tags}
         logo={logo}
       />
-      <ClubApplyButton />
+      <ClubApplyButton
+        {...(deadlineText !== '모집 마감' && {
+          recruitmentForm,
+          presidentPhoneNumber,
+        })}
+      />
     </Styled.ClubDetailHeaderContainer>
   );
 };
