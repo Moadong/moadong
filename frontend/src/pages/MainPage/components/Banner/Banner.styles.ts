@@ -64,6 +64,7 @@ export const BannerItem = styled.div`
     object-fit: cover;
   }
 `;
+
 export const ButtonContainer = styled.div`
   position: absolute;
   width: 100%;
