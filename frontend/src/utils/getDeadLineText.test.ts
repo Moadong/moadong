@@ -31,4 +31,13 @@ describe('getDeadlineText 함수 테스트', () => {
   it('모집 기간이 null인 경우 모집 마감을 반환해야 한다', () => {
     expect(getDeadlineText(null, null)).toBe('모집 마감');
   });
+
+  it('모집 시작일이 아직 남은 경우 모집 전을 반환해야 한다.', () => {
+    const recruitmentStart = new Date('2025-04-01');
+    const recruitmentEnd = new Date('2025-04-10');
+    const today = new Date('2025-03-30');
+    expect(getDeadlineText(recruitmentStart, recruitmentEnd, today)).toBe(
+      '모집 전',
+    );
+  });
 });
