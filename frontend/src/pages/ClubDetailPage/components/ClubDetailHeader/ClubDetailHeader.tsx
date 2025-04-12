@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 import * as Styled from './ClubDetailHeader.styles';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
@@ -28,11 +28,11 @@ const ClubDetailHeader = ({
   const { recruitmentStart, recruitmentEnd } =
     parseRecruitmentPeriod(recruitmentPeriod);
 
-  const today = useMemo(() => new Date(), []);
-
-  const deadlineText = useMemo(() => {
-    return getDeadlineText(recruitmentStart, recruitmentEnd, today);
-  }, [recruitmentStart, recruitmentEnd, today]);
+  const deadlineText = getDeadlineText(
+    recruitmentStart,
+    recruitmentEnd,
+    new Date(),
+  );
 
   return (
     <Styled.ClubDetailHeaderContainer>
