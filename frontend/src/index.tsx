@@ -16,9 +16,11 @@ if (window.location.hostname === 'localhost') {
 }
 
 ChannelService.loadScript();
-ChannelService.boot({
-  pluginKey: process.env.REACT_APP_CHANNEL_PLUGIN_KEY!,
-});
+if (process.env.CHANNEL_PLUGIN_KEY) {
+  ChannelService.boot({
+    pluginKey: process.env.CHANNEL_PLUGIN_KEY,
+  });
+}
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,
