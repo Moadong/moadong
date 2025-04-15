@@ -32,7 +32,9 @@ const SearchBox = () => {
     e.preventDefault();
   };
   return (
-    <Styled.SearchBoxContainer isFocused={isSearchBoxClicked}>
+    <Styled.SearchBoxContainer
+      isFocused={isSearchBoxClicked}
+      onSubmit={handleSubmit}>
       <Styled.SearchInputStyles
         type='text'
         placeholder='어떤 동아리를 찾으세요?'
