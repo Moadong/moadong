@@ -12,6 +12,12 @@ const SearchBox = () => {
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
 
+  const redirectToMainIfSearchTriggeredOutside = () => {
+    if (window.location.pathname !== '/') {
+      navigate('/');
+    }
+  };
+
   const handleSearchClick = () => {
     redirectToMainIfSearchTriggeredOutside();
 
@@ -25,14 +31,6 @@ const SearchBox = () => {
       inputValue,
       page: window.location.pathname,
     });
-
-    setKeyword(keyword);
-  };
-
-  const redirectToMainIfSearchTriggeredOutside = () => {
-    if (window.location.pathname !== '/') {
-      navigate('/');
-    }
   };
 
   return (
