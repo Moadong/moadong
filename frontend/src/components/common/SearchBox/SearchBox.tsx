@@ -7,19 +7,22 @@ import { useNavigate } from 'react-router-dom';
 
 const SearchBox = () => {
   const [isSearchBoxClicked, setIsSearchBoxClicked] = useState(false);
-  const { keyword, setKeyword } = useSearch();
+  const [inputValue, setInputValue] = useState('');
+  const { setKeyword } = useSearch();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
 
   const handleSearchClick = () => {
     redirectToMainIfSearchTriggeredOutside();
 
-    if (!keyword.trim()) {
+    if (!inputValue.trim()) {
       return;
     }
 
+    setKeyword(inputValue);
+
     trackEvent('Search Executed', {
-      keyword,
+      inputValue,
       page: window.location.pathname,
     });
 
@@ -35,9 +38,10 @@ const SearchBox = () => {
   return (
     <Styled.SearchBoxContainer isFocused={isSearchBoxClicked}>
       <Styled.SearchInputStyles
+        type='text'
         placeholder='어떤 동아리를 찾으세요?'
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
         onFocus={() => setIsSearchBoxClicked(true)}
         onBlur={() => setIsSearchBoxClicked(false)}
         aria-label='동아리 검색창'
