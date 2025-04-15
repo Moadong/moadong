@@ -33,8 +33,11 @@ public class ClubSearchService {
         result = result.stream()
                 .sorted(
                         //
-                        Comparator.comparingInt((ClubSearchResult club) -> RecruitmentStatus.getPriorityFromString(club.recruitmentStatus()))
-                                .thenComparingInt((ClubSearchResult club) -> ClubCategory.getPriorityFromString(club.category())))
+                        Comparator
+                                .comparingInt((ClubSearchResult club) -> RecruitmentStatus.getPriorityFromString(club.recruitmentStatus()))
+                                .thenComparingInt((ClubSearchResult club) -> ClubCategory.getPriorityFromString(club.category()))
+                                .thenComparing(ClubSearchResult::name)
+                )
                 .collect(Collectors.toList());
 
         return ClubSearchResponse.builder()
