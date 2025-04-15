@@ -18,19 +18,25 @@ const SearchBox = () => {
     }
   };
 
-  const handleSearchClick = () => {
+  const handleSearch = () => {
     redirectToMainIfSearchTriggeredOutside();
     setKeyword(inputValue);
 
     trackEvent('Search Executed', {
-      inputValue,
+      inputValue: inputValue,
       page: window.location.pathname,
     });
   };
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    handleSearch();
   };
+
+  const handleSearchClick = () => {
+    handleSearch();
+  };
+
   return (
     <Styled.SearchBoxContainer
       isFocused={isSearchBoxClicked}
