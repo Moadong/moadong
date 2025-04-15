@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSearch } from '@/context/SearchContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './SearchBox.styles';
@@ -12,6 +12,8 @@ const SearchBox = () => {
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
   const redirectToMainIfSearchTriggeredOutside = () => {
     if (window.location.pathname !== '/') {
       navigate('/');
@@ -21,6 +23,8 @@ const SearchBox = () => {
   const handleSearch = () => {
     redirectToMainIfSearchTriggeredOutside();
     setKeyword(inputValue);
+
+    inputRef.current?.blur();
 
     trackEvent('Search Executed', {
       inputValue: inputValue,
@@ -42,6 +46,7 @@ const SearchBox = () => {
       isFocused={isSearchBoxClicked}
       onSubmit={handleSubmit}>
       <Styled.SearchInputStyles
+        ref={inputRef}
         type='text'
         placeholder='어떤 동아리를 찾으세요?'
         value={inputValue}
