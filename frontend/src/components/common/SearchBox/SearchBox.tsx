@@ -28,6 +28,9 @@ const SearchBox = () => {
     });
   };
 
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+  };
   return (
     <Styled.SearchBoxContainer isFocused={isSearchBoxClicked}>
       <Styled.SearchInputStyles
@@ -40,7 +43,7 @@ const SearchBox = () => {
         aria-label='동아리 검색창'
       />
       <Styled.SearchButton
-        type='button'
+        type='submit'
         onClick={handleSearchClick}
         isFocused={isSearchBoxClicked}
         aria-label='검색'>
