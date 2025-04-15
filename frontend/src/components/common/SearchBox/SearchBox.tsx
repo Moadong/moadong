@@ -20,11 +20,6 @@ const SearchBox = () => {
 
   const handleSearchClick = () => {
     redirectToMainIfSearchTriggeredOutside();
-
-    if (!inputValue.trim()) {
-      return;
-    }
-
     setKeyword(inputValue);
 
     trackEvent('Search Executed', {
