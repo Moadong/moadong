@@ -14,12 +14,11 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import moadong.club.enums.RecruitmentStatus;
+import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.payload.request.ClubDescriptionUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @AllArgsConstructor
 @Getter
@@ -57,7 +56,7 @@ public class ClubRecruitmentInformation {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private RecruitmentStatus recruitmentStatus;
+    private ClubRecruitmentStatus clubRecruitmentStatus;
 
     private String recruitmentForm;
 
@@ -66,8 +65,8 @@ public class ClubRecruitmentInformation {
         return this;
     }
 
-    public void updateRecruitmentStatus(RecruitmentStatus status) {
-        this.recruitmentStatus = status;
+    public void updateRecruitmentStatus(ClubRecruitmentStatus status) {
+        this.clubRecruitmentStatus = status;
     }
 
     public void updateDescription(ClubDescriptionUpdateRequest request) {

@@ -49,8 +49,8 @@ public record ClubDetailedResult(
                 .presidentPhoneNumber(clubRecruitmentInformation.getPresidentTelephoneNumber() == null ? "" : clubRecruitmentInformation.getPresidentTelephoneNumber())
                 .recruitmentPeriod(period)
                 .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget() == null ? "" : clubRecruitmentInformation.getRecruitmentTarget())
-                .recruitmentStatus(clubRecruitmentInformation.getRecruitmentStatus() == null
-                        ? "" : clubRecruitmentInformation.getRecruitmentStatus().getDescription())
+                .recruitmentStatus(clubRecruitmentInformation.getClubRecruitmentStatus() == null
+                        ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().getDescription())
                 .recruitmentForm(clubRecruitmentInformation.getRecruitmentForm() == null ? "" : clubRecruitmentInformation.getRecruitmentForm())
                 .build();
     }

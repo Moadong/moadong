@@ -1,5 +1,10 @@
 package moadong.club.enums;
 
+import lombok.Getter;
+
+import java.util.Arrays;
+
+@Getter
 public enum ClubCategory {
     //봉사,종교,취미교양,학술,운동,공연
     봉사(0),
@@ -16,17 +21,11 @@ public enum ClubCategory {
         this.priority = priority;
     }
 
-    public int getPriority() {
-        return priority;
-    }
-
     public static ClubCategory fromString(String category) {
-        for (ClubCategory c : values()) {
-            if (c.name().equals(category)) {
-                return c;
-            }
-        }
-        return null;
+        return Arrays.stream(values())
+                .filter(rs -> rs.name().equalsIgnoreCase(category))
+                .findFirst()
+                .orElse(null);
     }
     public static int getPriorityFromString(String category) {
         ClubCategory c = fromString(category);
