@@ -10,6 +10,7 @@ import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
@@ -31,13 +32,15 @@ public class ClubProfileService {
         return club.getId();
     }
 
-    public void updateClubInfo(ClubInfoRequest request) {
+    public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
         Club club = clubRepository.findById(request.id())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        if (!user.getId().equals(club.getUserId())){
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
 
         club.update(request);
         clubRepository.save(club);
-
     }
 
     public void updateClubDescription(ClubDescriptionUpdateRequest request) {
