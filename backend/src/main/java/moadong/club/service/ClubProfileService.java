@@ -54,7 +54,12 @@ public class ClubProfileService {
     }
 
     public ClubDetailedResponse getClubDetail(String clubId) {
-        ObjectId objectId = new ObjectId(clubId);
+        ObjectId objectId;
+        try{
+            objectId = new ObjectId(clubId);
+        } catch (IllegalArgumentException e){
+            throw new RestApiException(ErrorCode.CLUB_ID_INVALID);
+        }
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
