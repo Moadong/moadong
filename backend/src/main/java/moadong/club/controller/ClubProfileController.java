@@ -71,8 +71,9 @@ public class ClubProfileController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updateClubDescription(
+            @CurrentUser CustomUserDetails user,
             @RequestBody ClubDescriptionUpdateRequest request) {
-        clubProfileService.updateClubDescription(request);
+        clubProfileService.updateClubDescription(request, user);
         return Response.ok("success update club");
     }
 }

@@ -33,19 +33,15 @@ public class ClubProfileService {
     }
 
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
-        Club club = clubRepository.findById(request.id())
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-        if (!user.getId().equals(club.getUserId())){
-            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
-        }
+        Club club = validateClubUpdateRequest(request.id(), user);
 
         club.update(request);
         clubRepository.save(club);
     }
 
-    public void updateClubDescription(ClubDescriptionUpdateRequest request) {
-        Club club = clubRepository.findById(request.id())
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+    public void updateClubDescription(ClubDescriptionUpdateRequest request, CustomUserDetails user) {
+        Club club = validateClubUpdateRequest(request.id(), user);
+
         club.update(request);
         clubRepository.save(club);
 
@@ -70,5 +66,14 @@ public class ClubProfileService {
                 club
         );
         return new ClubDetailedResponse(clubDetailedResult);
+    }
+
+    private Club validateClubUpdateRequest(String clubId, CustomUserDetails user){
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        if (!user.getId().equals(club.getUserId())){
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+        return club;
     }
 }
