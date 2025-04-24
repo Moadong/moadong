@@ -15,7 +15,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ClubRecruitmentStatus;
-import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
@@ -69,7 +69,7 @@ public class ClubRecruitmentInformation {
         this.clubRecruitmentStatus = status;
     }
 
-    public void updateDescription(ClubDescriptionUpdateRequest request) {
+    public void updateDescription(ClubRecruitmentInfoUpdateRequest request) {
         this.description = request.description();
         this.recruitmentStart = request.recruitmentStart();
         this.recruitmentEnd = request.recruitmentEnd();

@@ -4,7 +4,7 @@ import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubDetailedResult;
 import moadong.club.payload.request.ClubCreateRequest;
-import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.repository.ClubRepository;
@@ -39,7 +39,7 @@ public class ClubProfileService {
         clubRepository.save(club);
     }
 
-    public void updateClubDescription(ClubDescriptionUpdateRequest request, CustomUserDetails user) {
+    public void updateClubRecruitmentInfo(ClubRecruitmentInfoUpdateRequest request, CustomUserDetails user) {
         Club club = validateClubUpdateRequest(request.id(), user);
 
         club.update(request);

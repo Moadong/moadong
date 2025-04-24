@@ -10,7 +10,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ClubState;
-import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -77,7 +77,7 @@ public class Club {
         this.clubRecruitmentInformation.update(request);
     }
 
-    public void update(ClubDescriptionUpdateRequest request) {
+    public void update(ClubRecruitmentInfoUpdateRequest request) {
         clubRecruitmentInformation.updateDescription(request);
     }
 
