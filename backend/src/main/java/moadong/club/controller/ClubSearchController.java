@@ -5,6 +5,8 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.service.ClubSearchService;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
 import moadong.global.payload.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -29,15 +31,19 @@ public class ClubSearchController {
     public ResponseEntity<?> searchClubsByKeyword(
             @RequestParam(value = "keyword", required = false, defaultValue = "") String keyword,
             @RequestParam(value = "recruitmentStatus", required = false, defaultValue = "all") String recruitmentStatus,
-            @RequestParam(value = "category", required = false, defaultValue = "all") String category,
-            @RequestParam(value = "division", required = false, defaultValue = "all") String division
+            @RequestParam(value = "division", required = false, defaultValue = "all") String division,
+            @RequestParam(value = "category", required = false, defaultValue = "all") String category
     ) {
-        ClubSearchResponse clubSearchResponse = clubSearchService.searchClubsByKeyword(
-                keyword,
-                recruitmentStatus,
-                division,
-                category
-        );
-        return Response.ok(clubSearchResponse);
+        try {
+            ClubSearchResponse clubSearchResponse = clubSearchService.searchClubsByKeyword(
+                    keyword,
+                    recruitmentStatus,
+                    division,
+                    category
+            );
+            return Response.ok(clubSearchResponse);
+        } catch (Exception e) {
+            throw new RestApiException(ErrorCode.CLUB_SEARCH_FAILED);
+        }
     }
 }
