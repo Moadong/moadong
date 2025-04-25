@@ -7,8 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 const SearchBox = () => {
   const [isSearchBoxClicked, setIsSearchBoxClicked] = useState(false);
-  const [inputValue, setInputValue] = useState('');
-  const { setKeyword } = useSearch();
+  const { setKeyword, inputValue, setInputValue } = useSearch();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
 

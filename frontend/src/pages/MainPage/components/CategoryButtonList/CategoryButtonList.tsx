@@ -62,7 +62,7 @@ const clubCategories: Category[] = [
 ];
 
 const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
-  const { setKeyword } = useSearch();
+  const { setKeyword, setInputValue } = useSearch();
 
   const handleCategoryClick = (category: Category) => {
     mixpanel.track(category.eventName, {
@@ -73,6 +73,7 @@ const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
     });
 
     setKeyword('');
+    setInputValue('');
 
     onCategorySelect(category.id);
   };
