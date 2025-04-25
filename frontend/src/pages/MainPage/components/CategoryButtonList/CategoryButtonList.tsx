@@ -8,6 +8,7 @@ import iconHobby from '@/assets/images/icons/category_button/category_hobby_butt
 import iconStudy from '@/assets/images/icons/category_button/category_study_button_icon.svg';
 import iconSport from '@/assets/images/icons/category_button/category_sport_button_icon.svg';
 import iconPerformance from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
+import { useSearch } from '@/context/SearchContext';
 
 interface Category {
   id: string;
@@ -61,6 +62,8 @@ const clubCategories: Category[] = [
 ];
 
 const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
+  const { setKeyword } = useSearch();
+
   const handleCategoryClick = (category: Category) => {
     mixpanel.track(category.eventName, {
       category_id: category.id,
@@ -68,6 +71,8 @@ const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
       timestamp: Date.now(),
       url: window.location.href,
     });
+
+    setKeyword('');
 
     onCategorySelect(category.id);
   };
