@@ -9,7 +9,7 @@ import { useSearch } from '@/context/SearchContext';
 const Header = () => {
   const { setKeyword, setInputValue } = useSearch();
   const navigate = useNavigate();
-  const location = useLocation(); // 현재 경로 가져오기
+  const location = useLocation();
   const trackEvent = useMixpanelTrack();
 
   const handleHomeClick = () => {
