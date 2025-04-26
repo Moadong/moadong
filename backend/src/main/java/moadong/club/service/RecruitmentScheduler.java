@@ -13,6 +13,7 @@ import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.global.util.ObjectIdConverter;
 import org.bson.types.ObjectId;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
@@ -53,7 +54,7 @@ public class RecruitmentScheduler {
 
     @Transactional
     public void updateRecruitmentStatus(String clubId, ClubRecruitmentStatus status) {
-        ObjectId objectId = new ObjectId(clubId);
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 

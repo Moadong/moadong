@@ -10,6 +10,7 @@ import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.global.util.ObjectIdConverter;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
@@ -53,12 +54,7 @@ public class ClubProfileService {
     }
 
     public ClubDetailedResponse getClubDetail(String clubId) {
-        ObjectId objectId;
-        try{
-            objectId = new ObjectId(clubId);
-        } catch (IllegalArgumentException e){
-            throw new RestApiException(ErrorCode.CLUB_ID_INVALID);
-        }
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
