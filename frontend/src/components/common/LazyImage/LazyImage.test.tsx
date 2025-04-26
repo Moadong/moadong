@@ -3,7 +3,6 @@ import { render, screen, act, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import LazyImage from './LazyImage';
 
-// IntersectionObserver 모킹
 const mockIntersectionObserver = jest.fn();
 const mockDisconnect = jest.fn();
 const mockObserve = jest.fn();
