@@ -1,24 +1,28 @@
 import React from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './Header.styles';
 import SearchBox from '@/components/common/SearchBox/SearchBox';
 import MainIcon from '@/assets/images/moadong_name_logo.svg';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useSearch } from '@/context/SearchContext';
 
 const Header = () => {
+  const { setKeyword, setInputValue } = useSearch();
   const navigate = useNavigate();
-  const location = useLocation(); // 현재 경로 가져오기
+  const location = useLocation();
   const trackEvent = useMixpanelTrack();
 
   const handleHomeClick = () => {
-    trackEvent('Home Button Clicked');
     navigate('/');
+    setKeyword('');
+    setInputValue('');
+    trackEvent('Home Button Clicked');
   };
 
   const handleIntroduceClick = () => {
-    trackEvent('Introduce Button Clicked');
     window.location.href =
       'https://valiant-schooner-12c.notion.site/1a64ac84bab3805287e0cef50b563370';
+    trackEvent('Introduce Button Clicked');
   };
 
   const isAdminPage = location.pathname.startsWith('/admin');

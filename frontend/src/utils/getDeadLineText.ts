@@ -5,7 +5,6 @@ const getDeadlineText = (
   recruitmentEnd: Date | null,
   today: Date = new Date(),
 ): string => {
-  console.log(recruitmentEnd, recruitmentStart);
   if (!recruitmentStart || !recruitmentEnd) return '모집 마감';
   if (isBefore(today, recruitmentStart)) return '모집 전';
   if (isAfter(today, recruitmentEnd)) return '모집 마감';
