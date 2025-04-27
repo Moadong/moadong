@@ -3,18 +3,19 @@ import { useSearch } from '@/context/SearchContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './SearchBox.styles';
 import SearchIcon from '@/assets/images/icons/search_button_icon.svg';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SearchBox = () => {
   const [isSearchBoxClicked, setIsSearchBoxClicked] = useState(false);
   const { setKeyword, inputValue, setInputValue } = useSearch();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
+  const location = useLocation();
 
   const inputRef = useRef<HTMLInputElement>(null);
 
   const redirectToMainIfSearchTriggeredOutside = () => {
-    if (window.location.pathname !== '/') {
+    if (location.pathname !== '/') {
       navigate('/');
     }
   };
