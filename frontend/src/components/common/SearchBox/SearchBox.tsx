@@ -14,14 +14,14 @@ const SearchBox = () => {
 
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const redirectToMainIfSearchTriggeredOutside = () => {
+  const redirectToHome = () => {
     if (location.pathname !== '/') {
       navigate('/');
     }
   };
 
   const handleSearch = () => {
-    redirectToMainIfSearchTriggeredOutside();
+    redirectToHome();
     setKeyword(inputValue);
 
     inputRef.current?.blur();
