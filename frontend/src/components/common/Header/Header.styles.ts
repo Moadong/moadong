@@ -93,10 +93,6 @@ export const MobileHeaderContainer = styled.header`
     z-index: 2;
     background-color: white;
   }
-
-  @media (max-width: 500px) {
-    padding: 0 20px;
-  }
 `;
 
 export const MobileHeaderWrapper = styled.div`
@@ -115,28 +111,6 @@ export const MobileMainIcon = styled.button`
 
   img {
     width: 26px;
-    height: auto;
-    object-fit: cover;
-  }
-`;
-
-export const MobileSubContainer = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  width: 71px;
-  height: 24px;
-`;
-
-export const MobileSearchIcon = styled.button`
-  width: 20px;
-  height: 20px;
-  background-color: transparent;
-  border: none;
-  cursor: pointer;
-
-  img {
-    width: 23px;
     height: auto;
     object-fit: cover;
   }
