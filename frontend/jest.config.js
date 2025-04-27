@@ -3,7 +3,7 @@ module.exports = {
   setupFiles: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jsdom',
   transform: {
-    '^.+\.tsx?$': ['ts-jest', {}],
+    '^.+\\.tsx?$': ['ts-jest', {}],
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
