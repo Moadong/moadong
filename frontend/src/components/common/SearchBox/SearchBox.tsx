@@ -36,10 +36,6 @@ const SearchBox = () => {
     handleSearch();
   };
 
-  const handleSearchClick = () => {
-    handleSearch();
-  };
-
   return (
     <Styled.SearchBoxContainer
       isFocused={isSearchBoxClicked}
@@ -56,7 +52,6 @@ const SearchBox = () => {
       />
       <Styled.SearchButton
         type='submit'
-        onClick={handleSearchClick}
         isFocused={isSearchBoxClicked}
         aria-label='검색'>
         <img src={SearchIcon} alt='Search Button' />
