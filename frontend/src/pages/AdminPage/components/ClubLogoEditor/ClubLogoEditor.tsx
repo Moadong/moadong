@@ -1,19 +1,32 @@
-import React from 'react';
-import * as Styled from './ClubLogoEditor.styles';
-import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
+import { useCallback, useRef, useState } from 'react';
+import { useUploadClubLogo, useDeleteClubLogo } from '@/hooks/queries/club/useClubLogo';
+import { useAdminClubContext } from '@/context/AdminClubContext';
+import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 
-interface ClubLogoEditorProps {
-  clubLogo?: string | null;
-}
+...
 
-const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
-  const displayedClubLogo = clubLogo ?? defaultLogo;
+const { clubId } = useAdminClubContext();
+const uploadMutation = useUploadClubLogo(clubId!);
+const deleteMutation = useDeleteClubLogo(clubId!);
 
-  return (
-    <Styled.ClubLogoWrapper>
-      <Styled.ClubLogo src={displayedClubLogo} alt='Club Logo' />
-    </Styled.ClubLogoWrapper>
-  );
-};
+const handleFileChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-export default ClubLogoEditor;
+    if (file.size > MAX_FILE_SIZE) {
+        alert('파일 크기가 10MB를 초과합니다.');
+        return;
+    }
+
+    uploadMutation.mutate(file, {
+        onError: () => alert('로고 업로드 실패'),
+    });
+}, [uploadMutation]);
+
+const handleDeleteClick = useCallback(() => {
+    if (!window.confirm('정말 로고를 초기화하시겠습니까?')) return;
+
+    deleteMutation.mutate(undefined, {
+        onError: () => alert('로고 초기화 실패'),
+    });
+}, [deleteMutation]);
