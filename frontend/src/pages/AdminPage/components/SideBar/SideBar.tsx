@@ -1,14 +1,8 @@
 import React, { useMemo } from 'react';
 import * as Styled from './SideBar.styles';
 import { useNavigate, useLocation } from 'react-router-dom';
-import { useAdminClubContext } from '@/context/AdminClubContext';
-import {
-  useUploadClubLogo,
-  useDeleteClubLogo,
-} from '@/hooks/queries/club/useClubLogo';
 import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
 
-import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import { logout } from '@/apis/auth/logout';
 
 interface SideBarProps {
@@ -26,11 +20,6 @@ const tabs = [
 const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const { clubId } = useAdminClubContext();
-
-  if (!clubId) return null;
-  const uploadMutation = useUploadClubLogo(clubId);
-  const deleteMutation = useDeleteClubLogo(clubId);
 
   const activeTab = useMemo(
     () => tabs.findIndex((tab) => location.pathname.startsWith(tab.path)),
