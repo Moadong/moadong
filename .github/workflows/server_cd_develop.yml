@@ -6,6 +6,7 @@ on:
   push:
     branches:
       - 'develop/be'
+      - 'fix/#346-fix_cicd'
     paths:
       - 'backend/**'
       - '.github/workflows/**'
