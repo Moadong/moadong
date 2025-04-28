@@ -64,32 +64,3 @@ export const SidebarButton = styled.li`
     font-weight: bold;
   }
 `;
-
-export const ClubLogoWrapper = styled.div`
-  position: relative;
-  width: 168px;
-  height: 168px;
-`;
-
-export const EditLabel = styled.label`
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  cursor: pointer;
-`;
-
-export const LogoEditIcon = styled.img`
-  width: 32px;
-  height: 32px;
-  padding: 4px;
-  cursor: pointer;
-`;
-
-export const LogoDeleteIcon = styled.img`
-  position: absolute;
-  top: 8px;
-  right: 8px;
-  width: 20px;
-  height: 20px;
-  cursor: pointer;
-`;
