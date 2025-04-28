@@ -116,7 +116,7 @@ jobs:
           
           docker pull ${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
           
-          export USERNAME=${{ secrets.INSTANCE_USERNAME }} # docker compose 파일에서 사용할 변수명 설정
+          export USERNAME=${{ secrets.GCE_INSTANCE_USER }} # docker compose 파일에서 사용할 변수명 설정
           export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
           sudo chmod +x /home/${{ secrets.GCE_INSTANCE_USER }}/deploy.sh # 실행 권한 부여
           sudo -E /home/${{ secrets.GCE_INSTANCE_USER }}/deploy.sh # su권한으로 환경 변수 유지 및 실행
