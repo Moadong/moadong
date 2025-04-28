@@ -20,9 +20,9 @@ export const EditButton = styled.button`
   right: 8px;
   width: 32px;
   height: 32px;
-  padding: 4px;
-  background: white;
+  background: transparent;
   border: none;
+  outline: none;
   border-radius: 50%;
   display: flex;
   align-items: center;
@@ -45,7 +45,7 @@ export const EditMenu = styled.div`
   border-radius: 18px;
   overflow: hidden;
   min-width: 160px;
-  z-index: 10;
+  z-index: 2;
 `;
 
 export const EditMenuItem = styled.button`
@@ -62,20 +62,20 @@ export const EditMenuItem = styled.button`
   transition: background-color 0.2s;
 
   &:hover {
-    background-color: #f9f9f9;
+    background-color: #f1f1f1;
   }
 
   img {
-    width: 18px;
-    height: 18px;
+    width: 15px;
+    height: 15px;
   }
 `;
 
 export const Divider = styled.div`
   width: 90%;
   height: 1px;
-  background-color: #e0e0e0;
-  margin: 4px auto;
+  background: rgba(0, 0, 0, 0.12);
+  margin: 0 auto;
 `;
 
 export const HiddenFileInput = styled.input`
