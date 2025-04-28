@@ -1,18 +1,15 @@
 import React, { useMemo } from 'react';
 import * as Styled from './SideBar.styles';
-import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import changeImageIcon from '@/assets/images/icons/change_image_button_icon.svg';
-import deleteImageIcon from '@/assets/images/icons/delete_button_icon.svg';
 import {
   useUploadClubLogo,
   useDeleteClubLogo,
 } from '@/hooks/queries/club/useClubLogo';
+import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
 
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import { logout } from '@/apis/auth/logout';
-
 
 interface SideBarProps {
   clubName: string;
@@ -34,32 +31,6 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   if (!clubId) return null;
   const uploadMutation = useUploadClubLogo(clubId);
   const deleteMutation = useDeleteClubLogo(clubId);
-
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-
-    if (file.size > MAX_FILE_SIZE) {
-      alert('파일 크기가 10MB를 초과합니다.');
-      return;
-    }
-
-    uploadMutation.mutate(file, {
-      onError: () => {
-        alert('로고 업로드 실패');
-      },
-    });
-  };
-
-  const handleDeleteClick = () => {
-    if (!window.confirm('정말 로고를 초기화하시겠습니까?')) return;
-
-    deleteMutation.mutate(undefined, {
-      onError: () => {
-        alert('로고 초기화 실패');
-      },
-    });
-  };
 
   const activeTab = useMemo(
     () => tabs.findIndex((tab) => location.pathname.startsWith(tab.path)),
@@ -92,25 +63,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     <Styled.SidebarWrapper>
       <Styled.SidebarHeader>설정</Styled.SidebarHeader>
 
-      <Styled.ClubLogoWrapper>
-        <Styled.ClubLogo src={clubLogo || defaultLogo} alt='Club Logo' />
-        <Styled.EditLabel htmlFor='logo-upload'>
-          <Styled.LogoEditIcon src={changeImageIcon} alt='Edit Logo' />
-        </Styled.EditLabel>
-        <input
-          type='file'
-          id='logo-upload'
-          accept='image/*'
-          onChange={handleFileChange}
-          style={{ display: 'none' }}
-        />
-
-        <Styled.LogoDeleteIcon
-          src={deleteImageIcon}
-          alt='Delete Logo'
-          onClick={handleDeleteClick}
-        />
-      </Styled.ClubLogoWrapper>
+      <ClubLogoEditor clubLogo={clubLogo} />
 
       <Styled.ClubTitle>{clubName}</Styled.ClubTitle>
       <Styled.divider />
