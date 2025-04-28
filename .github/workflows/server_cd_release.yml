@@ -109,7 +109,7 @@ jobs:
         run: |
           gcloud compute ssh ${{ secrets.GCE_INSTANCE_RELEASE }} --zone=${{ secrets.GCP_REGION }} --command="
           gcloud auth configure-docker asia-northeast3-docker.pkg.dev
-          gcloud auth activate-service-account --key-file=/home/g11_27_proro/gce_sa_key.json
+          gcloud auth activate-service-account --key-file=/home/${{ secrets.GCE_INSTANCE_USER }}/gce_sa_key.json
           
           sudo usermod -aG docker $USER
           newgrp docker
@@ -117,8 +117,8 @@ jobs:
           docker pull ${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
           
           export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
-          sudo chmod +x /home/g11_27_proro/deploy.sh # 실행 권한 부여
-          sudo -E /home/g11_27_proro/deploy.sh # su권한으로 환경 변수 유지 및 실행
+          sudo chmod +x /home/${{ secrets.GCE_INSTANCE_USER }}/deploy.sh # 실행 권한 부여
+          sudo -E /home/${{ secrets.GCE_INSTANCE_USER }}/deploy.sh # su권한으로 환경 변수 유지 및 실행
           
           docker image prune -af
           docker ps -a"
