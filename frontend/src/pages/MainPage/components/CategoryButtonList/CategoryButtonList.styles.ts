@@ -23,7 +23,6 @@ export const CategoryButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-  border-radius: 12px;
   padding: 8px;
   transition: transform 0.1s ease;
 
