@@ -18,12 +18,14 @@ interface ClubLogoEditorProps {
 
 const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
   const { clubId } = useAdminClubContext();
+  if (!clubId) return null;
+
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const uploadMutation = useUploadClubLogo(clubId!);
-  const deleteMutation = useDeleteClubLogo(clubId!);
+  const uploadMutation = useUploadClubLogo(clubId);
+  const deleteMutation = useDeleteClubLogo(clubId);
 
   const isClubLogoEmpty = !clubLogo || clubLogo.trim() === '';
   const displayedLogo = isClubLogoEmpty ? defaultLogo : clubLogo;
@@ -32,29 +34,26 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
     setIsMenuOpen((prev) => !prev);
   }, []);
 
-  const handleFileSelect = useCallback(
-    (e: React.ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) return;
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
 
-      if (file.size > MAX_FILE_SIZE) {
-        alert('파일 크기가 너무 커요! 10MB 이하 이미지만 업로드할 수 있어요.');
-        return;
-      }
+    if (file.size > MAX_FILE_SIZE) {
+      alert('파일 크기가 너무 커요! 10MB 이하 이미지만 업로드할 수 있어요.');
+      return;
+    }
 
-      uploadMutation.mutate(file, {
-        onError: () => alert('로고 업로드에 실패했어요. 다시 시도해주세요!'),
-      });
-    },
-    [uploadMutation],
-  );
+    uploadMutation.mutate(file, {
+      onError: () => alert('로고 업로드에 실패했어요. 다시 시도해주세요!'),
+    });
+  };
 
-  const triggerFileInput = useCallback(() => {
-    fileInputRef.current?.click();
-    setIsMenuOpen(false);
-  }, []);
+  const triggerFileInput = () => {
+    if (!fileInputRef.current) return;
+    fileInputRef.current.click();
+  };
 
-  const handleLogoReset = useCallback(() => {
+  const handleLogoReset = () => {
     if (isClubLogoEmpty) {
       alert('이미 기본 로고예요!');
       return;
@@ -66,7 +65,7 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
       onError: () =>
         alert('로고 초기화에 실패했어요. 잠시 후 다시 시도해 주세요.'),
     });
-  }, [deleteMutation, isClubLogoEmpty]);
+  };
 
   useEffect(() => {
     if (!isMenuOpen) return;
@@ -76,13 +75,13 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
         setIsMenuOpen(false);
       }
     };
+
     document.addEventListener('mousedown', handleOutsideClick);
+
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
   }, [isMenuOpen]);
-
-  if (!clubId) return null;
 
   return (
     <Styled.ClubLogoWrapper>
@@ -97,14 +96,22 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
 
       {isMenuOpen && (
         <Styled.EditMenu ref={menuRef}>
-          <Styled.EditMenuItem onClick={triggerFileInput}>
+          <Styled.EditMenuItem
+            onClick={() => {
+              triggerFileInput();
+              setIsMenuOpen(false);
+            }}>
             <img src={editIcon} alt='사진 수정 아이콘' />
             사진 수정하기
           </Styled.EditMenuItem>
 
           <Styled.Divider />
 
-          <Styled.EditMenuItem onClick={handleLogoReset}>
+          <Styled.EditMenuItem
+            onClick={() => {
+              handleLogoReset();
+              setIsMenuOpen(false);
+            }}>
             <img src={deleteIcon} alt='초기화 아이콘' />
             초기화하기
           </Styled.EditMenuItem>
