@@ -41,7 +41,7 @@ export const EditMenu = styled.div`
   transform: translateY(-50%);
   margin-left: 8px;
   background: #fff;
-  box-shadow: 0px 4px 20px 0px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.4);
   border-radius: 18px;
   overflow: hidden;
   min-width: 160px;
