@@ -53,6 +53,7 @@ const LazyImage = ({
   ) : (
     <div
       ref={imgRef}
+      data-testid='lazy-image-placeholder'
       style={{
         width: '100%',
         height: '100%',
