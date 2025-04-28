@@ -20,8 +20,6 @@ const useHeaderService = () => {
   };
 
   const goIntroducePage = () => {
-    window.location.href =
-      'https://valiant-schooner-12c.notion.site/1a64ac84bab3805287e0cef50b563370';
     trackEvent('Introduce Button Clicked');
   };
 
