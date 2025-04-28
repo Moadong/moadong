@@ -1,4 +1,4 @@
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { getClubList } from '@/apis/getClubList';
 
 export const useGetCardList = (
@@ -10,5 +10,6 @@ export const useGetCardList = (
   return useQuery({
     queryKey: ['clubs', keyword, recruitmentStatus, division, category],
     queryFn: () => getClubList(keyword, recruitmentStatus, division, category),
+    placeholderData: keepPreviousData,
   });
 };

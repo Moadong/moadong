@@ -3,7 +3,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import * as Styled from './MarkdownEditor.styles';
 import eye_icon from '@/assets/images/icons/eye_icon.svg';
-import pencil_icon from '@/assets/images/icons/pencil_icon.svg';
+import pencil_icon from '@/assets/images/icons/pencil_icon_1.svg';
 interface MarkdownEditorProps {
   value: string;
   onChange: (value: string) => void;

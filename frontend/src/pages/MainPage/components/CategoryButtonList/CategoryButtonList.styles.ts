@@ -23,10 +23,18 @@ export const CategoryButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
+  padding: 8px;
+  transition: transform 0.1s ease;
+
+  &:active {
+    transform: scale(0.95);
+  }
 
   img {
     width: 36px;
     height: 36px;
+    transition: transform 0.2s ease;
+
     @media (max-width: 500px) {
       margin-top: 5px;
       width: 30px;

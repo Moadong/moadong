@@ -1,50 +1,58 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import { useSearch } from '@/context/SearchContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './SearchBox.styles';
 import SearchIcon from '@/assets/images/icons/search_button_icon.svg';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 const SearchBox = () => {
   const [isSearchBoxClicked, setIsSearchBoxClicked] = useState(false);
-  const { keyword, setKeyword } = useSearch();
+  const { setKeyword, inputValue, setInputValue } = useSearch();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const handleSearchClick = () => {
-    redirectToMainIfSearchTriggeredOutside();
+  const inputRef = useRef<HTMLInputElement>(null);
 
-    if (!keyword.trim()) {
-      return;
-    }
-
-    trackEvent('Search Executed', {
-      keyword,
-      page: window.location.pathname,
-    });
-
-    setKeyword(keyword);
-  };
-
-  const redirectToMainIfSearchTriggeredOutside = () => {
-    if (window.location.pathname !== '/') {
+  const redirectToHome = () => {
+    if (location.pathname !== '/') {
       navigate('/');
     }
   };
 
+  const handleSearch = () => {
+    redirectToHome();
+    setKeyword(inputValue);
+
+    inputRef.current?.blur();
+
+    trackEvent('Search Executed', {
+      inputValue: inputValue,
+      page: window.location.pathname,
+    });
+  };
+
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    handleSearch();
+  };
+
   return (
-    <Styled.SearchBoxContainer isFocused={isSearchBoxClicked}>
+    <Styled.SearchBoxContainer
+      isFocused={isSearchBoxClicked}
+      onSubmit={handleSubmit}>
       <Styled.SearchInputStyles
+        ref={inputRef}
+        type='text'
         placeholder='어떤 동아리를 찾으세요?'
-        value={keyword}
-        onChange={(e) => setKeyword(e.target.value)}
+        value={inputValue}
+        onChange={(e) => setInputValue(e.target.value)}
         onFocus={() => setIsSearchBoxClicked(true)}
         onBlur={() => setIsSearchBoxClicked(false)}
         aria-label='동아리 검색창'
       />
       <Styled.SearchButton
-        type='button'
-        onClick={handleSearchClick}
+        type='submit'
         isFocused={isSearchBoxClicked}
         aria-label='검색'>
         <img src={SearchIcon} alt='Search Button' />

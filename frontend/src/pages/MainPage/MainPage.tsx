@@ -7,7 +7,6 @@ import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import StatusRadioButton from '@/pages/MainPage/components/StatusRadioButton/StatusRadioButton';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
-import MainMobileHeader from '@/pages/MainPage/components/MobileHeader/MobileHeader';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
 import { DesktopBannerImageList } from '@/constants/banners';
 import { MobileBannerImageList } from '@/constants/banners';
@@ -45,7 +44,6 @@ const MainPage = () => {
   return (
     <>
       <Header />
-      <MainMobileHeader />
       <Banner
         desktopBanners={DesktopBannerImageList}
         mobileBanners={MobileBannerImageList}
