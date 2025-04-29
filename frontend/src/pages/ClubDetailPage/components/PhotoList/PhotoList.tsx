@@ -104,8 +104,6 @@ const PhotoList = ({ feeds: photos, sectionRefs }: PhotoListProps) => {
                   <LazyImage
                     src={url}
                     alt={`활동 사진 ${index + 1}`}
-                    index={index}
-                    delayMs={200}
                     onError={() => handleImageError(index)}
                   />
                 ) : (
