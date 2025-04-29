@@ -71,6 +71,13 @@ export const IntroduceButtonStyles = styled.a`
   font-size: 14px;
   line-height: 42px;
   cursor: pointer;
+  color: inherit;
+  text-decoration: none;
+
+  &:visited {
+    color: inherit;
+    text-decoration: none;
+  }
 
   @media (max-width: 698px) {
     width: 63px;
