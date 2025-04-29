@@ -4,43 +4,32 @@ interface LazyImageProps {
   src: string;
   alt: string;
   onError?: () => void;
-  index?: number;
-  delayMs?: number;
 }
 
-const LazyImage = ({
-  src,
-  alt,
-  onError,
-  index = 0,
-  delayMs = 200,
-}: LazyImageProps) => {
+const LazyImage = ({ src, alt, onError }: LazyImageProps) => {
   const [shouldLoad, setShouldLoad] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          const delay = index * delayMs;
-          const timeout = setTimeout(() => {
-            setShouldLoad(true);
-          }, delay);
-          observer.disconnect();
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) {
+        const delay = 200;
+        const timeout = setTimeout(() => {
+          setShouldLoad(true);
+        }, delay);
+        observer.disconnect();
 
-          return () => clearTimeout(timeout);
-        }
-      },
-      { threshold: 0.1 },
-    );
+        return () => clearTimeout(timeout);
+      }
+    });
 
     if (imgRef.current) {
       observer.observe(imgRef.current);
     }
 
     return () => observer.disconnect();
-  }, [index, delayMs]);
+  }, []);
 
   useEffect(() => {
     if (shouldLoad) {
