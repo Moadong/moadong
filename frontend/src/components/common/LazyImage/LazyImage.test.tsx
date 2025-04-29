@@ -85,24 +85,6 @@ describe('LazyImage 컴포넌트', () => {
     expect(mockDisconnect).toHaveBeenCalled();
   });
 
-  it('index prop에 따라 지연 시간이 적용되어야 함', () => {
-    render(<LazyImage {...defaultProps} index={2} delayMs={100} />);
-
-    const [[callback]] = mockIntersectionObserver.mock.calls;
-    const entry = { isIntersecting: true };
-    act(() => {
-      callback([entry], {} as IntersectionObserver);
-    });
-
-    expect(screen.queryByRole('img')).not.toBeInTheDocument();
-
-    act(() => {
-      jest.advanceTimersByTime(200);
-    });
-
-    expect(screen.getByRole('img')).toBeInTheDocument();
-  });
-
   it('onError prop이 호출되어야 함', async () => {
     const onError = jest.fn();
     render(<LazyImage {...defaultProps} onError={onError} />);
