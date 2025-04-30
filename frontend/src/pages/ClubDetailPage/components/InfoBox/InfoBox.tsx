@@ -18,12 +18,12 @@ interface InfoBoxProps {
   clubDetail: ClubDetail;
 }
 
-type InfoListWithRef = InfoList & {
+interface ClubInfoSectionWithRef extends ClubInfoSection {
   refIndex: INFOTABS_SCROLL_INDEX;
-};
+}
 
 const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
-  const infoData: InfoListWithRef[] = [
+  const infoData: ClubInfoSectionWithRef[] = [
     {
       title: '모집정보',
       descriptions: [
