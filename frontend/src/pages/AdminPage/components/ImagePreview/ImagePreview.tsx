@@ -1,7 +1,10 @@
 import React from 'react';
 import * as Styled from './ImagePreview.styles';
-import { ImagePreviewProps } from '@/types/club';
 import delete_button_icon from '@/assets/images/icons/delete_button_icon.svg';
+interface ImagePreviewProps {
+  image: string;
+  onDelete: () => void;
+}
 
 export const ImagePreview = ({ image, onDelete }: ImagePreviewProps) => {
   return (
