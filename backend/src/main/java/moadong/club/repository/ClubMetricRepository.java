@@ -15,4 +15,6 @@ public interface ClubMetricRepository extends MongoRepository<ClubMetric, String
     List<ClubMetric> findByClubIdAndDateAfter(String clubId, LocalDate date);
 
     List<ClubMetric> findAllByDate(LocalDate now);
+
+    List<ClubMetric> findAllByDateAfter(LocalDate fromDate);
 }

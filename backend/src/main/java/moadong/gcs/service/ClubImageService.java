@@ -12,6 +12,7 @@ import moadong.club.repository.ClubRepository;
 import moadong.gcs.domain.FileType;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.global.util.ObjectIdConverter;
 import moadong.global.util.RandomStringUtil;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
@@ -32,7 +33,7 @@ public class ClubImageService {
 
 
     public String uploadLogo(String clubId, MultipartFile file) {
-        ObjectId objectId = new ObjectId(clubId);
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
@@ -47,7 +48,7 @@ public class ClubImageService {
     }
 
     public void deleteLogo(String clubId) {
-        ObjectId objectId = new ObjectId(clubId);
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
@@ -57,7 +58,7 @@ public class ClubImageService {
     }
 
     public String uploadFeed(String clubId, MultipartFile file) {
-        ObjectId objectId = new ObjectId(clubId);
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
         int feedImagesCount = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND))
                 .getClubRecruitmentInformation().getFeedImages().size();
@@ -69,7 +70,7 @@ public class ClubImageService {
     }
 
     public void updateFeeds(String clubId, List<String> newFeedImageList) {
-        ObjectId objectId = new ObjectId(clubId);
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 

@@ -60,4 +60,13 @@ public class ClubMetricController {
         return Response.ok(clubs);
     }
 
+    @GetMapping("/dau")
+    @Operation(summary = "일일 활성 사용자수 조회", description = "당일부터 n일 이내의 일일 활성 사용자수를 순서대로 조회합니다.<br>"
+        + "ip가 중복된 경우 1로 카운트합니다.<br>"
+        + "동아리 상세페이지를 조회한 기록을 활용합니다.")
+    public ResponseEntity<?> getDailyActiveUser(@RequestParam int n) {
+        int[] daus = clubMetricService.getDailyActiveUser(n);
+        return Response.ok(daus);
+    }
+
 }
