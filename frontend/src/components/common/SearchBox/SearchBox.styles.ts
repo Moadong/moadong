@@ -49,6 +49,7 @@ export const SearchInputStyles = styled.input`
 `;
 
 export const SearchButton = styled.button<{ isFocused: boolean }>`
+  flex-shrink: 0;
   border: none;
   background-color: transparent;
   font-size: 16px;
