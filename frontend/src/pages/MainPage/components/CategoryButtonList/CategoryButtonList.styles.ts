@@ -11,7 +11,7 @@ export const CategoryButtonContainer = styled.div`
     margin-top: 16px;
     background-color: white;
     position: sticky;
-    top: 46px;
+    top: 56px;
     z-index: 1;
   }
 `;
