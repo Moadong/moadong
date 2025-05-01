@@ -55,30 +55,17 @@ export const SearchButton = styled.button<{ isFocused: boolean }>`
   font-size: 16px;
   cursor: pointer;
 
+  width: 16px;
+  height: 16px;
+
   img {
-    width: 16px;
-    height: 16px;
-  }
-
-  @media (max-width: 698px) {
-    img {
-      width: 14px;
-      height: 14px;
-    }
-  }
-
-  @media (max-width: 550px) {
-    img {
-      width: 12px;
-      height: 12px;
-    }
+    width: 100%;
+    height: 100%;
   }
 
   @media (max-width: 500px) {
-    img {
-      width: 14px;
-      height: 14px;
-    }
+    width: 14px;
+    height: 14px;
 
     filter: ${({ isFocused }) =>
       isFocused
