@@ -23,7 +23,7 @@ export const SearchBoxContainer = styled.form<{ isFocused: boolean }>`
 `;
 
 export const SearchInputStyles = styled.input`
-  width: 100%;
+  width: calc(100% - 32px);
   background-color: transparent;
   height: 36px;
   border: none;
