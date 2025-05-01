@@ -12,15 +12,15 @@ const LazyImage = ({ src, alt, onError }: LazyImageProps) => {
   const imgRef = useRef<HTMLImageElement | null>(null);
 
   useEffect(() => {
+    let timeout: ReturnType<typeof setTimeout>;
+
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
         const delay = 200;
-        const timeout = setTimeout(() => {
+        timeout = setTimeout(() => {
           setShouldLoad(true);
         }, delay);
         observer.disconnect();
-
-        return () => clearTimeout(timeout);
       }
     });
 
@@ -28,7 +28,10 @@ const LazyImage = ({ src, alt, onError }: LazyImageProps) => {
       observer.observe(imgRef.current);
     }
 
-    return () => observer.disconnect();
+    return () => {
+      observer.disconnect();
+      clearTimeout(timeout);
+    };
   }, []);
 
   useEffect(() => {
