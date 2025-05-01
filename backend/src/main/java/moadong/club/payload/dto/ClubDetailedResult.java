@@ -61,7 +61,7 @@ public record ClubDetailedResult(
                 : clubRecruitmentInformation.getRecruitmentTarget())
             .recruitmentStatus(clubRecruitmentInformation.getClubRecruitmentStatus() == null
                 ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().getDescription())
-            .socialLinks(club.getSocialLinks() == null ? null
+            .socialLinks(club.getSocialLinks() == null ? Map.of()
                 : club.getSocialLinks())
             .build();
     }
