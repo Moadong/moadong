@@ -3,17 +3,18 @@ import styled from 'styled-components';
 export const SearchBoxContainer = styled.form<{ isFocused: boolean }>`
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  width: 300px;
+  justify-content: center;
+  width: 345px;
   height: 36px;
-  padding: 10px 20px;
+  padding: 3px 20px;
   border: transparent;
   border-radius: 41px;
   background-color: #eeeeee;
 
   @media (max-width: 500px) {
-    width: 270px;
-    height: 28px;
+    width: 255x;
+    height: 36px;
+    padding: 6px 16px;
 
     border: 1px solid
       ${({ isFocused }) =>
@@ -39,6 +40,10 @@ export const SearchInputStyles = styled.input`
   @media (max-width: 550px) {
     font-size: 10px;
   }
+
+  @media (max-width: 500px) {
+    font-size: 14px;
+  }
 `;
 
 export const SearchButton = styled.button<{ isFocused: boolean }>`
@@ -46,7 +51,6 @@ export const SearchButton = styled.button<{ isFocused: boolean }>`
   background-color: transparent;
   font-size: 16px;
   cursor: pointer;
-  margin-top: 2px;
 
   img {
     width: 16px;
@@ -68,6 +72,9 @@ export const SearchButton = styled.button<{ isFocused: boolean }>`
   }
 
   @media (max-width: 500px) {
+    width: 14px;
+    height: 14px;
+
     filter: ${({ isFocused }) =>
       isFocused
         ? 'invert(36%) sepia(83%) saturate(746%) hue-rotate(359deg) brightness(95%) contrast(92%)'
