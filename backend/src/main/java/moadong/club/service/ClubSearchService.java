@@ -2,7 +2,7 @@ package moadong.club.service;
 
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubCategory;
-import moadong.club.enums.RecruitmentStatus;
+import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.repository.ClubSearchRepository;
@@ -34,7 +34,7 @@ public class ClubSearchService {
                 .sorted(
                         //
                         Comparator
-                                .comparingInt((ClubSearchResult club) -> RecruitmentStatus.getPriorityFromString(club.recruitmentStatus()))
+                                .comparingInt((ClubSearchResult club) -> ClubRecruitmentStatus.getPriorityFromString(club.recruitmentStatus()))
                                 .thenComparingInt((ClubSearchResult club) -> ClubCategory.getPriorityFromString(club.category()))
                                 .thenComparing(ClubSearchResult::name)
                 )

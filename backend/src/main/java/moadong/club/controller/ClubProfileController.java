@@ -6,7 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.ClubCreateRequest;
-import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.service.ClubMetricService;
@@ -33,8 +33,7 @@ public class ClubProfileController {
             + "category는 분류(취미교양 등), division은 분과(중동 등)입니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> createClub(@CurrentUser CustomUserDetails user,
-                                        @RequestBody ClubCreateRequest request) {
+    public ResponseEntity<?> createClub(@RequestBody ClubCreateRequest request) {
         String clubId = clubProfileService.createClub(request);
         return Response.ok("success create club", "clubId : " + clubId);
     }
@@ -60,8 +59,10 @@ public class ClubProfileController {
             + "introduction은 24글자 이내로 입력해야 합니다.")
     @PreAuthorize("isAuthenticated()")  // 인증 필요
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> updateClubInfo(@RequestBody @Validated ClubInfoRequest request) {
-        clubProfileService.updateClubInfo(request);
+    public ResponseEntity<?> updateClubInfo(
+            @CurrentUser CustomUserDetails user,
+            @RequestBody @Validated ClubInfoRequest request) {
+        clubProfileService.updateClubInfo(request, user);
         return Response.ok("success update club");
     }
 
@@ -69,9 +70,10 @@ public class ClubProfileController {
     @Operation(summary = "클럽 모집정보 수정", description = "클럽의 모집정보 내용을 수정합니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> updateClubDescription(
-            @RequestBody ClubDescriptionUpdateRequest request) {
-        clubProfileService.updateClubDescription(request);
+    public ResponseEntity<?> updateClubRecruitmentInfo(
+            @CurrentUser CustomUserDetails user,
+            @RequestBody ClubRecruitmentInfoUpdateRequest request) {
+        clubProfileService.updateClubRecruitmentInfo(request, user);
         return Response.ok("success update club");
     }
 }
