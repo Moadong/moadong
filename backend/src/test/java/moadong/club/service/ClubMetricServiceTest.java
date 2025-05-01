@@ -54,7 +54,7 @@ public class ClubMetricServiceTest {
     @Test
     void 일일_활성_사용자수_검증() {
         // given
-        String clubId = "test-club";
+        String clubId = "testClubId";
         LocalDate now = LocalDate.now();
 
         List<ClubMetric> metrics = List.of(
