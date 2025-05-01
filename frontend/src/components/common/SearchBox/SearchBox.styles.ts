@@ -23,6 +23,7 @@ export const SearchBoxContainer = styled.form<{ isFocused: boolean }>`
 `;
 
 export const SearchInputStyles = styled.input`
+  flex: 1;
   width: calc(100% - 32px);
   background-color: transparent;
   height: 36px;
@@ -33,6 +34,7 @@ export const SearchInputStyles = styled.input`
   &::placeholder {
     transition: opacity 0.3s;
   }
+
   &:focus::placeholder {
     opacity: 0;
   }
