@@ -7,7 +7,6 @@ interface LazyImageProps {
 }
 
 const LazyImage = ({ src, alt, onError }: LazyImageProps) => {
-  const [shouldLoad, setShouldLoad] = useState(false);
   const [isVisible, setIsVisible] = useState(false);
   const imgRef = useRef<HTMLImageElement | null>(null);
 
@@ -18,7 +17,7 @@ const LazyImage = ({ src, alt, onError }: LazyImageProps) => {
       if (entry.isIntersecting) {
         const delay = 200;
         timeout = setTimeout(() => {
-          setShouldLoad(true);
+          setIsVisible(true);
         }, delay);
         observer.disconnect();
       }
@@ -33,12 +32,6 @@ const LazyImage = ({ src, alt, onError }: LazyImageProps) => {
       clearTimeout(timeout);
     };
   }, []);
-
-  useEffect(() => {
-    if (shouldLoad) {
-      setIsVisible(true);
-    }
-  }, [shouldLoad]);
 
   return isVisible ? (
     <img ref={imgRef} src={src} alt={alt} onError={onError} />
