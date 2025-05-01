@@ -12,7 +12,7 @@ export const SearchBoxContainer = styled.form<{ isFocused: boolean }>`
   background-color: #eeeeee;
 
   @media (max-width: 500px) {
-    width: 255x;
+    width: 255px;
     height: 36px;
     padding: 6px 16px;
 
