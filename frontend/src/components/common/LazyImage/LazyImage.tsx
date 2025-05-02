@@ -15,7 +15,7 @@ const LazyImage = ({ src, alt, onError }: LazyImageProps) => {
 
     const observer = new IntersectionObserver(([entry]) => {
       if (entry.isIntersecting) {
-        const delay = 200;
+        const delay = 100;
         timeout = setTimeout(() => {
           setIsVisible(true);
         }, delay);
