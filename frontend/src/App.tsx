@@ -7,6 +7,7 @@ import GlobalStyles from '@/styles/Global.styles';
 import MainPage from '@/pages/MainPage/MainPage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import AdminPage from './pages/AdminPage/AdminPage';
+import IntroducePage from './pages/IntroducePage/IntroducePage';
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import RecruitEditTab from './pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import AccountEditTab from './pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
@@ -41,6 +42,7 @@ const App = () => {
                 </Suspense>
               }
             />
+            <Route path='/introduce' element={<IntroducePage />} />
             <Route path='/admin/login' element={<LoginTab />} />
             <Route
               path='/admin/*'
