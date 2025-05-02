@@ -56,11 +56,7 @@ const DesktopHeader = ({
           />
         </Styled.LogoButtonStyles>
         {!isAdminPage && (
-          <Styled.IntroduceButtonStyles
-            onClick={handleIntroduceClick}
-            href='https://valiant-schooner-12c.notion.site/1a64ac84bab3805287e0cef50b563370'
-            target='_blank'
-            rel='noopener noreferrer'>
+          <Styled.IntroduceButtonStyles onClick={handleIntroduceClick}>
             모아동 소개
           </Styled.IntroduceButtonStyles>
         )}
