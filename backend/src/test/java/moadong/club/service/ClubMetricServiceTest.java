@@ -1,6 +1,8 @@
 package moadong.club.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -10,10 +12,14 @@ import java.time.YearMonth;
 import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Optional;
+import moadong.club.entity.Club;
 import moadong.club.entity.ClubMetric;
+import moadong.club.fixture.ClubFixture;
 import moadong.club.fixture.MetricFixture;
 import moadong.club.repository.ClubMetricRepository;
 import moadong.club.repository.ClubRepository;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -131,7 +137,8 @@ public class ClubMetricServiceTest {
             MetricFixture.createClubMetric(currentMonth.minusMonths(11).atDay(15))
         );
 
-        when(clubMetricRepository.findByClubIdAndDateAfter(eq(clubId), eq(currentMonth.minusMonths(12).atDay(1))))
+        when(clubMetricRepository.findByClubIdAndDateAfter(eq(clubId),
+            eq(currentMonth.minusMonths(12).atDay(1))))
             .thenReturn(metrics);
 
         // when
@@ -146,6 +153,46 @@ public class ClubMetricServiceTest {
             if (i != 1 && i != 3 && i != 11) {
                 assertEquals(0, result[i], "Expected 0 at index " + i);
             }
+        }
+    }
+
+    @Nested
+    @DisplayName("getDailyRanking 메서드")
+    class getDailyRanking {
+
+        @Test
+        void 일부_Club_정보가_누락되어도_null_포함하여_정상_동작() {
+            // given
+            LocalDate today = LocalDate.now();
+
+            List<ClubMetric> metrics = List.of(
+                MetricFixture.createClubMetric("club1", today),
+                MetricFixture.createClubMetric("club1", today),
+                MetricFixture.createClubMetric("club2", today)
+            );
+
+            when(clubMetricRepository.findAllByDate(eq(today))).thenReturn(metrics);
+
+            Club club1 = ClubFixture.createClub("club1", "클럽1");
+            when(clubRepository.findAllById(List.of("club1", "club2"))).thenReturn(
+                List.of(club1)); //club2 누락
+
+            // when
+            List<String> ranking = clubMetricService.getDailyRanking(2);
+
+            // then
+            assertEquals(2, ranking.size());
+            assertEquals("클럽1", ranking.get(0));
+            assertNull(ranking.get(1));
+        }
+
+        @Test
+        void 반드시_1개_이상의_동아리를_조회해야_한다() {
+            // when
+            List<String> ranking = clubMetricService.getDailyRanking(0);
+
+            // then
+            assertTrue(ranking.isEmpty());
         }
     }
 
