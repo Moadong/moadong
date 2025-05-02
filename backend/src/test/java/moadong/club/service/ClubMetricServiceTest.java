@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Optional;
@@ -103,6 +104,38 @@ public class ClubMetricServiceTest {
 
         // when
         int[] result = clubMetricService.getWeeklyActiveUserWitClub(clubId);
+
+        // then
+        assertEquals(1, result[1]);
+        assertEquals(2, result[3]);
+        assertEquals(1, result[11]);
+
+        for (int i = 0; i < result.length; i++) {
+            if (i != 1 && i != 3 && i != 11) {
+                assertEquals(0, result[i], "Expected 0 at index " + i);
+            }
+        }
+    }
+
+    @Test
+    void 월간_활성_사용자수_검증() {
+        // given
+        String clubId = "testClubId";
+        LocalDate now = LocalDate.now();
+        YearMonth currentMonth = YearMonth.from(now);
+
+        List<ClubMetric> metrics = List.of(
+            MetricFixture.createClubMetric(currentMonth.minusMonths(1).atDay(10)),
+            MetricFixture.createClubMetric(currentMonth.minusMonths(3).atDay(5)),
+            MetricFixture.createClubMetric(currentMonth.minusMonths(3).atEndOfMonth()),
+            MetricFixture.createClubMetric(currentMonth.minusMonths(11).atDay(15))
+        );
+
+        when(clubMetricRepository.findByClubIdAndDateAfter(eq(clubId), eq(currentMonth.minusMonths(12).atDay(1))))
+            .thenReturn(metrics);
+
+        // when
+        int[] result = clubMetricService.getMonthlyActiveUserWitClub(clubId);
 
         // then
         assertEquals(1, result[1]);
