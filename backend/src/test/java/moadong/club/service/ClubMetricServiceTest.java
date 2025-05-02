@@ -6,6 +6,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoField;
 import java.util.List;
 import java.util.Optional;
 import moadong.club.entity.ClubMetric;
@@ -78,6 +79,38 @@ public class ClubMetricServiceTest {
         // 나머지 날짜는 0이어야 함
         for (int i = 0; i < result.length; i++) {
             if (i != 1 && i != 3 && i != 29) {
+                assertEquals(0, result[i], "Expected 0 at index " + i);
+            }
+        }
+    }
+
+    @Test
+    void 주간_활성_사용자수_검증() {
+        // given
+        String clubId = "testClubId";
+        LocalDate now = LocalDate.now();
+        LocalDate thisWeekMonday = now.with(ChronoField.DAY_OF_WEEK, 1);
+
+        List<ClubMetric> metrics = List.of(
+            MetricFixture.createClubMetric(thisWeekMonday.minusWeeks(1).plusDays(2)),
+            MetricFixture.createClubMetric(thisWeekMonday.minusWeeks(3)),
+            MetricFixture.createClubMetric(thisWeekMonday.minusWeeks(3).plusDays(5)),
+            MetricFixture.createClubMetric(thisWeekMonday.minusWeeks(11))
+        );
+
+        when(clubMetricRepository.findByClubIdAndDateAfter(eq(clubId), eq(now.minusDays(84))))
+            .thenReturn(metrics);
+
+        // when
+        int[] result = clubMetricService.getWeeklyActiveUserWitClub(clubId);
+
+        // then
+        assertEquals(1, result[1]);
+        assertEquals(2, result[3]);
+        assertEquals(1, result[11]);
+
+        for (int i = 0; i < result.length; i++) {
+            if (i != 1 && i != 3 && i != 11) {
                 assertEquals(0, result[i], "Expected 0 at index " + i);
             }
         }
