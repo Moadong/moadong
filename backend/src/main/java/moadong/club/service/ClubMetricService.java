@@ -134,6 +134,10 @@ public class ClubMetricService {
     }
 
     public int[] getDailyActiveUser(int n) {
+        if (n <= 0) {
+            return new int[0];
+        }
+
         LocalDate today = LocalDate.now();
         LocalDate fromDate = today.minusDays(n);
         List<ClubMetric> metrics = clubMetricRepository.findAllByDateAfter(fromDate);

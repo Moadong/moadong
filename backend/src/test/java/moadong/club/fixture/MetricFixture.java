@@ -21,4 +21,11 @@ public class MetricFixture {
         return metric;
     }
 
+    public static ClubMetric createClubMetric(LocalDate date, String ip) {
+        ClubMetric metric = mock(ClubMetric.class);
+        when(metric.getDate()).thenReturn(date);
+        when(metric.getIp()).thenReturn(ip);
+        return metric;
+    }
+
 }

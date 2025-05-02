@@ -18,7 +18,6 @@ import moadong.club.fixture.ClubFixture;
 import moadong.club.fixture.MetricFixture;
 import moadong.club.repository.ClubMetricRepository;
 import moadong.club.repository.ClubRepository;
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
@@ -157,7 +156,6 @@ public class ClubMetricServiceTest {
     }
 
     @Nested
-    @DisplayName("getDailyRanking 메서드")
     class getDailyRanking {
 
         @Test
@@ -193,6 +191,47 @@ public class ClubMetricServiceTest {
 
             // then
             assertTrue(ranking.isEmpty());
+        }
+    }
+
+    @Nested
+    class getDailyActiveUser {
+
+        @Test
+        void 하루_미만의_사용자수_요청시_빈배열을_반환한다() {
+            //when
+            int[] result = clubMetricService.getDailyActiveUser(-2);
+
+            //then
+            assertEquals(0, result.length);
+        }
+
+        @Test
+        void ip_중복을_제거하여_카운트_한다() {
+            // given
+            int n = 3;
+            LocalDate today = LocalDate.now();
+
+            List<ClubMetric> metrics = List.of(
+                MetricFixture.createClubMetric(today.minusDays(0), "192.0.2.1"),
+                MetricFixture.createClubMetric(today.minusDays(0), "192.0.2.2"),
+                MetricFixture.createClubMetric(today.minusDays(0), "192.0.2.1"),
+                MetricFixture.createClubMetric(today.minusDays(1), "192.0.2.3"),
+                MetricFixture.createClubMetric(today.minusDays(2), "192.0.2.4"),
+                MetricFixture.createClubMetric(today.minusDays(2), "192.0.2.5")
+            );
+
+            when(clubMetricRepository.findAllByDateAfter(today.minusDays(n)))
+                .thenReturn(metrics);
+
+            // when
+            int[] result = clubMetricService.getDailyActiveUser(n);
+
+            // then
+            assertEquals(3, result.length);
+            assertEquals(2, result[0]);
+            assertEquals(1, result[1]);
+            assertEquals(2, result[2]);
         }
     }
 
