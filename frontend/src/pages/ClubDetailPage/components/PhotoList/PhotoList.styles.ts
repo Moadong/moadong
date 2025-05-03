@@ -89,6 +89,7 @@ export const NavigationButton = styled.button<{ direction: 'left' | 'right' }>`
   font-size: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     background-color: rgba(255, 255, 255, 1);

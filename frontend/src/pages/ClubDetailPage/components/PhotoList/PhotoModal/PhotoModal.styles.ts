@@ -136,6 +136,8 @@ export const NavButton = styled.button<{ position: 'left' | 'right' }>`
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.2s;
   user-select: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
 
   img {
     width: 28px;
