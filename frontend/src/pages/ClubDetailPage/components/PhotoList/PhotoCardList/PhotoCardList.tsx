@@ -4,7 +4,6 @@ import LazyImage from '@/components/common/LazyImage/LazyImage';
 
 interface PhotoCardListProps {
   photoUrls: string[];
-  photoCount: number;
   imageErrors: Record<number, boolean>;
   onImageClick: (index: number) => void;
   onImageError: (index: number) => void;
@@ -12,7 +11,6 @@ interface PhotoCardListProps {
 
 const PhotoCardList = ({
   photoUrls,
-  photoCount,
   imageErrors,
   onImageClick,
   onImageError,
@@ -20,11 +18,7 @@ const PhotoCardList = ({
   return (
     <>
       {photoUrls.map((url, index) => (
-        <Styled.PhotoCard
-          key={index}
-          photoCount={photoCount}
-          isPlaceholder={false}
-          onClick={() => onImageClick(index)}>
+        <Styled.PhotoCard key={index} onClick={() => onImageClick(index)}>
           {!imageErrors[index] ? (
             <LazyImage
               src={url}
@@ -36,9 +30,6 @@ const PhotoCardList = ({
           )}
         </Styled.PhotoCard>
       ))}
-      <Styled.PhotoCard isPlaceholder photoCount={photoCount}>
-        <Styled.ImagePlaceholder />
-      </Styled.PhotoCard>
     </>
   );
 };

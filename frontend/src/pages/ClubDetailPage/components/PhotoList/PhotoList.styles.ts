@@ -33,42 +33,20 @@ export const PhotoListWrapper = styled.div`
 
 export const PhotoList = styled.div<{
   translateX: number;
-  isLastCard: boolean;
-  containerWidth: number;
   photoCount: number;
-  cardWidth: number;
 }>`
   display: flex;
   flex-direction: row;
   gap: 20px;
   transition: transform 0.3s ease;
 
-  transform: ${({
-    translateX,
-    isLastCard,
-    containerWidth,
-    photoCount,
-    cardWidth,
-  }) => {
-    if (photoCount <= 2) return 'none';
-    if (isLastCard) {
-      const maxTranslate = containerWidth - cardWidth;
-      return `translateX(${maxTranslate}px)`;
-    }
-    return `translateX(${translateX}px)`;
-  }};
-  cursor: ${({ photoCount }) => (photoCount > 2 ? 'grab' : 'default')};
-  user-select: none;
+  transform: ${({ translateX, photoCount }) =>
+    photoCount <= 2 ? 'none' : `translateX(${translateX}px)`};
 
-  &:active {
-    cursor: ${({ photoCount }) => (photoCount > 2 ? 'grabbing' : 'default')};
-  }
+  user-select: none;
 `;
 
-export const PhotoCard = styled.div<{
-  photoCount: number;
-  isPlaceholder?: boolean;
-}>`
+export const PhotoCard = styled.div`
   flex-shrink: 0;
   border-radius: 18px;
   width: 400px;
@@ -76,9 +54,7 @@ export const PhotoCard = styled.div<{
   background-color: #cdcdcd;
   overflow: hidden;
   touch-action: none;
-
-  visibility: ${({ isPlaceholder }) => (isPlaceholder ? 'hidden' : 'visible')};
-  opacity: ${({ isPlaceholder }) => (isPlaceholder ? 0 : 1)};
+  cursor: pointer;
 
   img {
     width: 100%;
@@ -90,8 +66,8 @@ export const PhotoCard = styled.div<{
   }
 
   @media (max-width: 500px) {
-    width: 300px;
-    height: 300px;
+    width: 350px;
+    height: 350px;
   }
 `;
 
