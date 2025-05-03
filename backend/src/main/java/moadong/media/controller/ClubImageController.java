@@ -1,6 +1,7 @@
 package moadong.media.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import moadong.media.dto.FeedUpdateRequest;
@@ -8,6 +9,7 @@ import moadong.global.payload.Response;
 import moadong.media.service.ClubImageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -21,8 +23,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/api/club")
 @RequiredArgsConstructor
 @Tag(name = "ClubImage", description = "클럽 이미지 관련 API")
-//@PreAuthorize("isAuthenticated()")
-//@SecurityRequirement(name = "BearerAuth")
+@PreAuthorize("isAuthenticated()")
+@SecurityRequirement(name = "BearerAuth")
 public class ClubImageController {
 
     private final ClubImageService clubImageService;
