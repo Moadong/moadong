@@ -23,7 +23,7 @@ export const useResponsiveLayout = (
       updateContainerWidth();
     };
 
-    handleResize(); // 초기 실행
+    handleResize();
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, [ref, breakPoint]);
