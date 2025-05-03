@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 import { HeaderStyles } from '@/components/common/Header/Header.styles';
 
-export const CustomHeader = styled(HeaderStyles)`
-  background-color: transparent;
+export const IntroducePageHeader = styled(HeaderStyles)`
+  max-width: none;
 `;
 
 export const IntroduceImage = styled.img`

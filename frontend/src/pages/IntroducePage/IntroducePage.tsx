@@ -6,7 +6,9 @@ import IntroduceImage from '@/assets/images/Introduce.png';
 const IntroducePage = () => {
   return (
     <>
-      <Header />
+      <Styled.IntroducePageHeader>
+        <Header />
+      </Styled.IntroducePageHeader>
       <Styled.IntroduceImage src={IntroduceImage} alt='소개 이미지' />
     </>
   );
