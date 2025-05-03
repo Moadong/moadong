@@ -10,28 +10,17 @@ export interface Club {
 }
 
 export interface ClubDetail extends Club {
+  description: string;
   state: string;
   feeds: string[];
-  description: string;
   presidentName: string;
   presidentPhoneNumber: string;
+  recruitmentForm: string;
   recruitmentPeriod: string;
   recruitmentTarget: string;
-  recruitmentForm: string;
 }
 
 export interface ClubDescription {
   id: string;
   description: string | null;
-}
-
-export interface ImageUploadProps {
-  clubId: string;
-  onChangeImageList: (image: string) => void;
-  imageCount: number;
-}
-
-export interface ImagePreviewProps {
-  image: string;
-  onDelete: () => void;
 }
