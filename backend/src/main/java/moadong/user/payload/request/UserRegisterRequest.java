@@ -7,6 +7,7 @@ import moadong.global.annotation.PhoneNumber;
 import moadong.global.annotation.UserId;
 import moadong.user.entity.User;
 import moadong.user.entity.UserInformation;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 public record UserRegisterRequest(
         @NotNull
@@ -21,16 +22,16 @@ public record UserRegisterRequest(
         @PhoneNumber
         String phoneNumber
 ) {
-    public User toUserEntity(String password) {
+    public User toUserEntity(PasswordEncoder passwordEncoder) {
         return User.builder()
                 .userId(userId)
-                .password(password)
+                .password(passwordEncoder.encode(password))
+                .userInformation(new UserInformation(name,phoneNumber))
                 .build();
     }
 
     public UserInformation toUserInformationEntity(String userId) {
         return UserInformation.builder()
-                .userId(userId)
                 .name(name)
                 .phoneNumber(phoneNumber)
                 .build();

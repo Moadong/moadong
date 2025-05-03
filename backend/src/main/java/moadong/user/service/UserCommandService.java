@@ -16,7 +16,6 @@ import moadong.user.payload.request.UserRegisterRequest;
 import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.LoginResponse;
 import moadong.user.payload.response.RefreshResponse;
-import moadong.user.repository.UserInformationRepository;
 import moadong.user.repository.UserRepository;
 import moadong.user.util.CookieMaker;
 import org.springframework.http.ResponseCookie;
@@ -33,7 +32,6 @@ import java.util.Date;
 public class UserCommandService {
 
     private final UserRepository userRepository;
-    private final UserInformationRepository userInformationRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
@@ -42,10 +40,7 @@ public class UserCommandService {
 
     public void registerUser(UserRegisterRequest userRegisterRequest) {
         try {
-            String encodedPw = passwordEncoder.encode(userRegisterRequest.password());
-            User user = userRepository.save(userRegisterRequest.toUserEntity(encodedPw));
-            userInformationRepository.save(
-                    userRegisterRequest.toUserInformationEntity(user.getId()));
+            User user = userRepository.save(userRegisterRequest.toUserEntity(passwordEncoder));
             createClub(user.getId());
         } catch (MongoWriteException e) {
             throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);

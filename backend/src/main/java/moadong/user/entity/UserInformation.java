@@ -17,17 +17,19 @@ import org.springframework.data.mongodb.core.mapping.Document;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Document("user_informations")
 public class UserInformation {
 
     @Id
     private String id;
-    @NotNull
-    @Indexed(unique = true)
-    private String userId;
+
     @NotNull
     @Korean
     private String name;
     @PhoneNumber
     private String phoneNumber;
+
+    public UserInformation(String name, String phoneNumber) {
+        this.name = name;
+        this.phoneNumber = phoneNumber;
+    }
 }
