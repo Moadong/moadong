@@ -1,6 +1,8 @@
 package moadong.user.payload.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import moadong.global.annotation.Korean;
 import moadong.global.annotation.Password;
 import moadong.global.annotation.PhoneNumber;
@@ -10,13 +12,13 @@ import moadong.user.entity.UserInformation;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public record UserRegisterRequest(
-        @NotNull
+        @NotBlank
         @UserId
         String userId,
-        @NotNull
+        @NotBlank
         @Password
         String password,
-        @NotNull
+        @NotBlank
         @Korean
         String name,
         @PhoneNumber

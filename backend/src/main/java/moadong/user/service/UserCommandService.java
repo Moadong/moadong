@@ -38,10 +38,11 @@ public class UserCommandService {
     private final ClubRepository clubRepository;
     private final CookieMaker cookieMaker;
 
-    public void registerUser(UserRegisterRequest userRegisterRequest) {
+    public User registerUser(UserRegisterRequest userRegisterRequest) {
         try {
             User user = userRepository.save(userRegisterRequest.toUserEntity(passwordEncoder));
             createClub(user.getId());
+            return user;
         } catch (MongoWriteException e) {
             throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);
         }
