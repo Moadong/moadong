@@ -45,6 +45,29 @@ dependencies {
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 }
 
-tasks.named('test') {
+//전체 테스트
+test {
+	description = 'Runs the total tests.'
 	useJUnitPlatform()
+}
+
+//유닛 테스트
+task unitTest(type: Test) {
+	group = 'verification'
+	description = 'Runs the unit tests.'
+	useJUnitPlatform{
+		includeTags 'UnitTest'
+		excludeTags 'IntegrationTest'
+
+	}
+}
+
+//통합 테스트
+task integrationTest(type: Test) {
+	group = 'verification'
+	description = 'Runs the integration tests.'
+	useJUnitPlatform{
+		includeTags 'IntegrationTest'
+		excludeTags 'UnitTest'
+	}
 }
