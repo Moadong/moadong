@@ -17,7 +17,7 @@ import org.springframework.core.io.ClassPathResource;
 @Configuration
 public class GoogleDriveConfig {
 
-    @Value("${spring.cloud.gcp.credentials.location}")
+    @Value("${google.drive.credentials.file}")
     private String credentialsLocation;
 
     @Value("${google.application.name}")
