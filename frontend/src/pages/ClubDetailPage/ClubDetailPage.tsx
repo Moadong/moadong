@@ -61,7 +61,11 @@ const ClubDetailPage = () => {
           sectionRefs={sectionRefs}
           description={clubDetail.description}
         />
-        <PhotoList sectionRefs={sectionRefs} feeds={clubDetail.feeds} />
+        <PhotoList
+          sectionRefs={sectionRefs}
+          feeds={clubDetail.feeds}
+          clubName={clubDetail.name}
+        />
       </Styled.PageContainer>
       <Footer />
       <ClubDetailFooter
