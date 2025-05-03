@@ -1,4 +1,4 @@
-package moadong.gcs.dto;
+package moadong.media.dto;
 
 import java.util.List;
 

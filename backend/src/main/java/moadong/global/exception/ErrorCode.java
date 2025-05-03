@@ -15,6 +15,7 @@ public enum ErrorCode {
     TOO_MANY_FILES(HttpStatus.PAYLOAD_TOO_LARGE, "601-3", "이미지 파일이 최대치보다 많습니다."),
     IMAGE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "601-4", "이미지 삭제에 실패하였습니다"),
     KOREAN_FILE_NAME(HttpStatus.INTERNAL_SERVER_ERROR, "601-5", "파일명의 한국어를 인코딩할 수 없습니다."),
+    FILE_TRANSFER_ERROR(HttpStatus.BAD_REQUEST, "601-6", "파일을 올바른 형식으로 변경할 수 없습니다."),
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "700-1","이미 존재하는 계정입니다."),
     USER_NOT_EXIST(HttpStatus.BAD_REQUEST, "700-2","존재하지 않는 계정입니다."),
     USER_INVALID_FORMAT(HttpStatus.BAD_REQUEST, "700-3","올바르지 않은 유저 형식입니다."),
