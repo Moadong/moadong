@@ -89,12 +89,13 @@ export const ModalBody = styled.div`
 
 export const ImageContainer = styled.div`
   width: 100%;
-  height: calc(100% - 80px);
+  height: 100%;
+  min-height: 400px;
+  position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
   padding: 0 60px;
-  position: relative;
 
   @media (max-width: 600px) {
     padding: 0 16px;
