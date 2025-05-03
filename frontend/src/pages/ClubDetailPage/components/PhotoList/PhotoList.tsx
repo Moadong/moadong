@@ -1,7 +1,7 @@
 import React, { useState, useRef, useMemo, useCallback } from 'react';
 import * as Styled from './PhotoList.styles';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
-import usePhotoNavigation from '@/hooks/PhotoList/usePhotoNavigation';
+import { usePhotoNavigation } from '@/hooks/PhotoList/usePhotoNavigation';
 import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoList/PhotoModal/PhotoModal';
 import { SlideButton } from '@/constants/banners';
@@ -27,9 +27,10 @@ const PhotoList = ({ feeds, sectionRefs, clubName }: PhotoListProps) => {
   const { isOpen, index, open, close, setIndex } = usePhotoModal();
 
   const containerRef = useRef<HTMLDivElement>(null);
-  const { containerWidth, cardWidth } = useResponsiveLayout(containerRef);
+  const { isMobile, containerWidth, cardWidth } =
+    useResponsiveLayout(containerRef);
 
-  const { isLastCard, handlePrev, handleNext, canScrollLeft, canScrollRight } =
+  const { handlePrev, handleNext, canScrollLeft, canScrollRight } =
     usePhotoNavigation({
       currentIndex,
       setCurrentIndex,
@@ -38,6 +39,7 @@ const PhotoList = ({ feeds, sectionRefs, clubName }: PhotoListProps) => {
       containerWidth,
       translateX,
       setTranslateX,
+      isMobile,
     });
 
   const handleImageError = useCallback((index: number) => {
@@ -54,15 +56,9 @@ const PhotoList = ({ feeds, sectionRefs, clubName }: PhotoListProps) => {
       <Styled.PhotoListTitle>활동 사진</Styled.PhotoListTitle>
 
       <Styled.PhotoListWrapper>
-        <Styled.PhotoList
-          translateX={translateX}
-          isLastCard={isLastCard}
-          containerWidth={containerWidth}
-          photoCount={photoUrls.length}
-          cardWidth={cardWidth}>
+        <Styled.PhotoList translateX={translateX} photoCount={photoUrls.length}>
           <PhotoCardList
             photoUrls={photoUrls}
-            photoCount={feeds.length}
             imageErrors={imageErrors}
             onImageClick={openModalAt}
             onImageError={handleImageError}
