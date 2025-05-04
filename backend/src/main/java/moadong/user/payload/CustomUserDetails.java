@@ -8,8 +8,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 @Getter
 public class CustomUserDetails implements UserDetails {
-
+    // 유저 다큐먼트 _id
     private String id;
+    // 로그인에 쓰는 유저 아이디
     private String userId;
     private String password;
     private Collection<? extends GrantedAuthority> authorities;

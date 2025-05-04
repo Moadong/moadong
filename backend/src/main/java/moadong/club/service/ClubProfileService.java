@@ -4,12 +4,14 @@ import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubDetailedResult;
 import moadong.club.payload.request.ClubCreateRequest;
-import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.global.util.ObjectIdConverter;
+import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
@@ -31,18 +33,16 @@ public class ClubProfileService {
         return club.getId();
     }
 
-    public void updateClubInfo(ClubInfoRequest request) {
-        Club club = clubRepository.findById(request.id())
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+    public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
+        Club club = validateClubUpdateRequest(request.id(), user);
 
         club.update(request);
         clubRepository.save(club);
-
     }
 
-    public void updateClubDescription(ClubDescriptionUpdateRequest request) {
-        Club club = clubRepository.findById(request.id())
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+    public void updateClubRecruitmentInfo(ClubRecruitmentInfoUpdateRequest request, CustomUserDetails user) {
+        Club club = validateClubUpdateRequest(request.id(), user);
+
         club.update(request);
         clubRepository.save(club);
 
@@ -54,7 +54,7 @@ public class ClubProfileService {
     }
 
     public ClubDetailedResponse getClubDetail(String clubId) {
-        ObjectId objectId = new ObjectId(clubId);
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
@@ -62,5 +62,14 @@ public class ClubProfileService {
                 club
         );
         return new ClubDetailedResponse(clubDetailedResult);
+    }
+
+    private Club validateClubUpdateRequest(String clubId, CustomUserDetails user){
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        if (!user.getId().equals(club.getUserId())){
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+        return club;
     }
 }

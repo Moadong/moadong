@@ -9,10 +9,11 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.club.enums.RecruitmentStatus;
+import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.global.util.ObjectIdConverter;
 import org.bson.types.ObjectId;
 import org.springframework.scheduling.TaskScheduler;
 import org.springframework.stereotype.Component;
@@ -33,12 +34,12 @@ public class RecruitmentScheduler {
 
         // 모집 시작 스케줄링
         ScheduledFuture<?> startFuture = taskScheduler.schedule(
-            () -> updateRecruitmentStatus(clubId, RecruitmentStatus.OPEN),
+            () -> updateRecruitmentStatus(clubId, ClubRecruitmentStatus.OPEN),
             Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
 
         // 모집 종료 스케줄링
         ScheduledFuture<?> endFuture = taskScheduler.schedule(
-            () -> updateRecruitmentStatus(clubId, RecruitmentStatus.CLOSED),
+            () -> updateRecruitmentStatus(clubId, ClubRecruitmentStatus.CLOSED),
             Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant()));
 
         scheduledTasks.put(clubId, startFuture);
@@ -53,8 +54,8 @@ public class RecruitmentScheduler {
     }
 
     @Transactional
-    public void updateRecruitmentStatus(String clubId, RecruitmentStatus status) {
-        ObjectId objectId = new ObjectId(clubId);
+    public void updateRecruitmentStatus(String clubId, ClubRecruitmentStatus status) {
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
             .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 

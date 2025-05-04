@@ -10,16 +10,14 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import moadong.club.enums.RecruitmentStatus;
-import moadong.club.payload.request.ClubDescriptionUpdateRequest;
+import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.payload.request.ClubInfoRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @AllArgsConstructor
 @Getter
@@ -53,24 +51,23 @@ public class ClubRecruitmentInformation {
     private String recruitmentTarget;
 
     private List<String> feedImages;
+
     private List<String> tags;
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private RecruitmentStatus recruitmentStatus;
-
-    private String recruitmentForm;
+    private ClubRecruitmentStatus clubRecruitmentStatus;
 
     public ClubRecruitmentInformation updateLogo(String logo) {
         this.logo = logo;
         return this;
     }
 
-    public void updateRecruitmentStatus(RecruitmentStatus status) {
-        this.recruitmentStatus = status;
+    public void updateRecruitmentStatus(ClubRecruitmentStatus status) {
+        this.clubRecruitmentStatus = status;
     }
 
-    public void updateDescription(ClubDescriptionUpdateRequest request) {
+    public void updateDescription(ClubRecruitmentInfoUpdateRequest request) {
         this.description = request.description();
         this.recruitmentStart = request.recruitmentStart();
         this.recruitmentEnd = request.recruitmentEnd();
@@ -91,11 +88,11 @@ public class ClubRecruitmentInformation {
         return recruitmentEnd.atZone(seoulZone);
     }
 
-    public int getFeedAmounts(){
+    public int getFeedAmounts() {
         return this.feedImages.size();
     }
 
-    public void updateFeedImages(List<String> feedImages){
+    public void updateFeedImages(List<String> feedImages) {
         this.feedImages = feedImages;
     }
 
@@ -104,6 +101,5 @@ public class ClubRecruitmentInformation {
         this.presidentName = request.presidentName();
         this.presidentTelephoneNumber = request.presidentPhoneNumber();
         this.tags = request.tags();
-        this.recruitmentForm = request.recruitmentForm();
     }
 }
