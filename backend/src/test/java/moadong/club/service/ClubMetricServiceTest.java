@@ -41,7 +41,7 @@ public class ClubMetricServiceTest {
     @Test
     void 메트릭이_이미_존재한다면_최신화() {
         // given
-        String clubId = "testClubId";
+        String clubId = "club-1";
         String ip = "192.168.0.1";
         LocalDate today = LocalDate.now();
 
@@ -61,7 +61,7 @@ public class ClubMetricServiceTest {
     @Test
     void 일일_활성_사용자수_검증() {
         // given
-        String clubId = "testClubId";
+        String clubId = "club-1";
         LocalDate now = LocalDate.now();
 
         List<ClubMetric> metrics = List.of(
@@ -93,7 +93,7 @@ public class ClubMetricServiceTest {
     @Test
     void 주간_활성_사용자수_검증() {
         // given
-        String clubId = "testClubId";
+        String clubId = "club-1";
         LocalDate now = LocalDate.now();
         LocalDate thisWeekMonday = now.with(ChronoField.DAY_OF_WEEK, 1);
 
@@ -125,7 +125,7 @@ public class ClubMetricServiceTest {
     @Test
     void 월간_활성_사용자수_검증() {
         // given
-        String clubId = "testClubId";
+        String clubId = "club-1";
         LocalDate now = LocalDate.now();
         YearMonth currentMonth = YearMonth.from(now);
 
