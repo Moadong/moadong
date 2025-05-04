@@ -13,8 +13,14 @@ import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
+import moadong.club.entity.Club;
+import moadong.club.enums.RecruitmentStatus;
 import moadong.club.repository.ClubRepository;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
+import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -108,6 +114,46 @@ public class RecruitmentSchedulerTest {
             // then
             verify(scheduledFuture).cancel(false);
             assert (scheduledTasks.get(clubId) == null); // 태스크가 맵에서 제거되었는지 확인
+        }
+    }
+
+    @Nested
+    class updateRecruitmentStatus {
+
+        @Test
+        void 모집상태_업데이트_성공() {
+            // given
+            String clubId = new ObjectId().toHexString();
+            RecruitmentStatus status = RecruitmentStatus.OPEN;
+
+            Club club = new Club();
+
+            when(clubRepository.findClubById(any(ObjectId.class))).thenReturn(Optional.of(club));
+
+            // when
+            recruitmentScheduler.updateRecruitmentStatus(clubId, status);
+
+            // then
+            verify(clubRepository).findClubById(any(ObjectId.class));
+            verify(clubRepository).save(club);
+        }
+
+        @Test
+        void 모집상태_업데이트_실패_존재하지않는_클럽() {
+            // given
+            String clubId = new ObjectId().toHexString();
+            RecruitmentStatus status = RecruitmentStatus.OPEN;
+
+            when(clubRepository.findClubById(any(ObjectId.class))).thenReturn(Optional.empty());
+
+            // when, then
+            try {
+                recruitmentScheduler.updateRecruitmentStatus(clubId, status);
+            } catch (Exception e) {
+                assert (e instanceof RestApiException);
+                assert (((RestApiException) e).getErrorCode().equals(
+                    ErrorCode.CLUB_NOT_FOUND));
+            }
         }
     }
 }
