@@ -11,11 +11,11 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ScheduledFuture;
 import moadong.club.repository.ClubRepository;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -41,13 +41,18 @@ public class RecruitmentSchedulerTest {
     @Mock
     private TaskScheduler taskScheduler;
 
-    private final Map<String, ScheduledFuture<?>> scheduledTasks = new HashMap<>();
-
     @Captor
     private ArgumentCaptor<Runnable> runnableCaptor;
 
     @Captor
     private ArgumentCaptor<Date> dateCaptor;
+
+    private Map<String, ScheduledFuture<?>> scheduledTasks;
+
+    @BeforeEach
+    void setUp() {
+        scheduledTasks = recruitmentScheduler.getScheduledTasks();
+    }
 
     @Nested
     class scheduleRecruitment {
@@ -88,5 +93,21 @@ public class RecruitmentSchedulerTest {
         }
     }
 
+    @Nested
+    class cancelScheduledTask {
 
+        @Test
+        void 기존_스케줄_취소_성공() {
+            // given
+            String clubId = "club123";
+            scheduledTasks.put(clubId, scheduledFuture);
+
+            // when
+            recruitmentScheduler.cancelScheduledTask(clubId);
+
+            // then
+            verify(scheduledFuture).cancel(false);
+            assert (scheduledTasks.get(clubId) == null); // 태스크가 맵에서 제거되었는지 확인
+        }
+    }
 }

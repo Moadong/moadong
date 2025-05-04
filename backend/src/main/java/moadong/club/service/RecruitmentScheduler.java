@@ -9,7 +9,6 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ScheduledFuture;
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.RecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
@@ -23,6 +22,7 @@ import org.springframework.stereotype.Component;
 public class RecruitmentScheduler {
 
     private final TaskScheduler taskScheduler;
+
     private final Map<String, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
 
     private final ClubRepository clubRepository;
@@ -56,10 +56,13 @@ public class RecruitmentScheduler {
     public void updateRecruitmentStatus(String clubId, RecruitmentStatus status) {
         ObjectId objectId = new ObjectId(clubId);
         Club club = clubRepository.findClubById(objectId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
         club.getClubRecruitmentInformation().updateRecruitmentStatus(status);
         clubRepository.save(club);
     }
 
+    public Map<String, ScheduledFuture<?>> getScheduledTasks() {
+        return scheduledTasks;
+    }
 }
