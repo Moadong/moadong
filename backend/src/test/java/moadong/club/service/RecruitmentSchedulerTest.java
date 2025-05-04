@@ -16,7 +16,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.ScheduledFuture;
 import moadong.club.entity.Club;
-import moadong.club.enums.RecruitmentStatus;
+import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
@@ -124,7 +124,7 @@ public class RecruitmentSchedulerTest {
         void 모집상태_업데이트_성공() {
             // given
             String clubId = new ObjectId().toHexString();
-            RecruitmentStatus status = RecruitmentStatus.OPEN;
+            ClubRecruitmentStatus status = ClubRecruitmentStatus.OPEN;
 
             Club club = new Club();
 
@@ -142,7 +142,7 @@ public class RecruitmentSchedulerTest {
         void 모집상태_업데이트_실패_존재하지않는_클럽() {
             // given
             String clubId = new ObjectId().toHexString();
-            RecruitmentStatus status = RecruitmentStatus.OPEN;
+            ClubRecruitmentStatus status = ClubRecruitmentStatus.OPEN;
 
             when(clubRepository.findClubById(any(ObjectId.class))).thenReturn(Optional.empty());
 
