@@ -13,11 +13,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.util.ResourceUtils;
 
 @Configuration
 public class GoogleDriveConfig {
 
-    @Value("${google.drive.credentials.file}")
+    @Value("${spring.cloud.gcp.credentials.location}")
     private String credentialsLocation;
 
     @Value("${google.application.name}")
@@ -25,7 +26,7 @@ public class GoogleDriveConfig {
 
     @Bean
     public Drive googleDriveService() throws Exception {
-        InputStream in = new ClassPathResource(credentialsLocation).getInputStream();
+        InputStream in = ResourceUtils.getURL(credentialsLocation).openStream();
         GoogleCredentials credentials = GoogleCredentials.fromStream(in)
                 .createScoped(Collections.singleton(DriveScopes.DRIVE));
 
