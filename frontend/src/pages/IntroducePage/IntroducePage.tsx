@@ -20,9 +20,9 @@ const IntroducePage = () => {
         style={{ display: loading ? 'none' : 'block' }}
         onLoad={() => setLoading(false)}
       />
-      <Styled.IntroduceFooter>
+      <Styled.IntroducePageFooter>
         <Footer />
-      </Styled.IntroduceFooter>
+      </Styled.IntroducePageFooter>
     </>
   );
 };

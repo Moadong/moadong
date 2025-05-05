@@ -6,7 +6,7 @@ export const IntroducePageHeader = styled(HeaderStyles)`
   max-width: none;
 `;
 
-export const IntroduceFooter = styled(FooterContainer)`
+export const IntroducePageFooter = styled(FooterContainer)`
   margin-top: -50px;
 `;
 
