@@ -14,7 +14,7 @@ export const BannerContainer = styled.div`
   position: relative;
 
   @media (max-width: 500px) {
-    margin-top: 42px;
+    margin-top: 56px;
     padding: 0;
   }
 `;

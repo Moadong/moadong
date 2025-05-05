@@ -94,7 +94,7 @@ export const MobileHeaderContainer = styled.header`
     top: 0;
     left: 0;
     right: 0;
-    height: 46px;
+    height: 56px;
     padding: 0px 20px;
     margin: 0 auto;
     z-index: 2;
@@ -110,28 +110,28 @@ export const MobileHeaderWrapper = styled.div`
 `;
 
 export const MobileMainIcon = styled.button`
-  width: 26px;
-  height: 22px;
+  width: 32.562px;
+  height: 26px;
   background-color: transparent;
   border: none;
   cursor: pointer;
 
   img {
-    width: 26px;
+    width: 32.562px;
     height: auto;
     object-fit: cover;
   }
 `;
 
 export const MobileMenu = styled.button`
-  width: 18px;
-  height: 14px;
+  width: 20px;
+  height: 16px;
   background-color: transparent;
   border: none;
   cursor: pointer;
 
   img {
-    width: 18px;
+    width: 20px;
     height: auto;
     object-fit: cover;
   }
