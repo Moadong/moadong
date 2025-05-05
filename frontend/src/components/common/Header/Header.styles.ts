@@ -112,7 +112,6 @@ export const MobileHeaderWrapper = styled.div`
 export const MobileMainIcon = styled.button`
   width: 32.562px;
   height: 26px;
-  aspect-ratio: 32.56/26;
   background-color: transparent;
   border: none;
   cursor: pointer;
