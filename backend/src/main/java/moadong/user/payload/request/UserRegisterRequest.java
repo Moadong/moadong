@@ -27,7 +27,7 @@ public record UserRegisterRequest(
         String phoneNumber
 ) {
     public UserRegisterRequest{
-        if (userId().equals(password)) {
+        if (userId.equals(password)) {
             throw new RestApiException(ErrorCode.USER_INVALID_FORMAT);
         }
     }
