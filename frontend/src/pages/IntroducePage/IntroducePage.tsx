@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import * as Styled from './IntroducePage.styles';
 import Header from '@/components/common/Header/Header';
+import Footer from '@/components/common/Footer/Footer';
 import Spinner from '@/components/common/Spinner/Spinner';
 import IntroduceImage from '@/assets/images/Introduce.png';
 
@@ -19,6 +20,9 @@ const IntroducePage = () => {
         style={{ display: loading ? 'none' : 'block' }}
         onLoad={() => setLoading(false)}
       />
+      <Styled.IntroduceFooter>
+        <Footer />
+      </Styled.IntroduceFooter>
     </>
   );
 };
