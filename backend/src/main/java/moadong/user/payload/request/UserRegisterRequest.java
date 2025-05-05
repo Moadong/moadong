@@ -7,6 +7,8 @@ import moadong.global.annotation.Korean;
 import moadong.global.annotation.Password;
 import moadong.global.annotation.PhoneNumber;
 import moadong.global.annotation.UserId;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
 import moadong.user.entity.User;
 import moadong.user.entity.UserInformation;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -24,6 +26,12 @@ public record UserRegisterRequest(
         @PhoneNumber
         String phoneNumber
 ) {
+    public UserRegisterRequest{
+        if (userId().equals(password)) {
+            throw new RestApiException(ErrorCode.USER_INVALID_FORMAT);
+        }
+    }
+
     public User toUserEntity(PasswordEncoder passwordEncoder) {
         return User.builder()
                 .userId(userId)
