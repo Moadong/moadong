@@ -166,7 +166,7 @@ export const DrawerHeader = styled.div`
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  gap: 280px;
+  gap: 150px;
 `;
 
 export const DrawerMainIcon = styled.img`
