@@ -4,6 +4,10 @@ import { FooterContainer } from '@/components/common/Footer/Footer.styles';
 
 export const IntroducePageHeader = styled(HeaderStyles)`
   max-width: none;
+
+  @media (max-width: 500px) {
+    display: flex;
+  }
 `;
 
 export const IntroducePageFooter = styled(FooterContainer)`
