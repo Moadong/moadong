@@ -1,13 +1,12 @@
-package moadong.gcs.controller;
+package moadong.media.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
-import moadong.gcs.domain.FileType;
-import moadong.gcs.dto.FeedUpdateRequest;
-import moadong.gcs.service.ClubImageService;
+import moadong.media.dto.FeedUpdateRequest;
 import moadong.global.payload.Response;
+import moadong.media.service.ClubImageService;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -46,7 +45,6 @@ public class ClubImageController {
         return Response.ok("success delete logo");
     }
 
-    // TODO : Signed URL 을 통한 업로드로 추후 변경
     @PostMapping(value = "/{clubId}/feed", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "피드 이미지 업로드", description = "피드에 사용할 이미지를 업로드하고 주소를 반환받습니다.")
     public ResponseEntity<?> uploadFeed(@PathVariable String clubId, @RequestPart("feed") MultipartFile file) {
