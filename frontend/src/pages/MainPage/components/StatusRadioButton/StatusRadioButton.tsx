@@ -30,8 +30,8 @@ const StatusRadioButton = ({ onChange }: StatusRadioButtonProps) => {
         checked={isActive}
         onChange={handleToggle}
       />
-      <Styled.CustomRadio isActive={isActive} />
-      <Styled.RadioText isActive={isActive}>
+      <Styled.CustomRadio $isActive={isActive} />
+      <Styled.RadioText $isActive={isActive}>
         모집중/모집예정 보기
       </Styled.RadioText>
     </Styled.RadioLabel>
