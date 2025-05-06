@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 
 const CardContainer = styled.div<{
-  state: string;
+  $state: string;
   isClicked: boolean;
 }>`
   display: flex;
@@ -11,8 +11,8 @@ const CardContainer = styled.div<{
   background-color: #fff;
   width: 100%;
   height: 170px;
-  box-shadow: ${({ state }) =>
-    state === 'open'
+  box-shadow: ${({ $state }) =>
+    $state === 'open'
       ? '0 0 14px rgba(0, 166, 255, 0.15)'
       : '0 0 14px rgba(0, 0, 0, 0.08)'};
 
