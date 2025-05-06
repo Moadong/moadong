@@ -1,8 +1,9 @@
-import React, { useState } from 'react';
+import React from 'react';
 import { useLocation } from 'react-router-dom';
 import * as Styled from './Header.styles';
 import SearchBox from '@/components/common/SearchBox/SearchBox';
 import useHeaderService from '@/services/header/useHeaderService';
+import useMobileMenu from '@/services/header/useMobileMenu';
 import useIsMobile from '@/hooks/useIsMobile';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
@@ -111,14 +112,9 @@ const Header = () => {
   const { handleHomeClick, handleIntroduceClick, handleMenuClick } =
     useHeaderService();
 
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
-
-  const openMenu = () => {
-    handleMenuClick();
-    setIsMenuOpen((prev) => !prev);
-  };
-
-  const closeMenu = () => setIsMenuOpen(false);
+  const { isMenuOpen, openMenu, closeMenu } = useMobileMenu({
+    handleMenuClick,
+  });
 
   return isMobile ? (
     <>
