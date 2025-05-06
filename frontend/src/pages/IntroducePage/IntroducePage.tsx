@@ -3,7 +3,7 @@ import * as Styled from './IntroducePage.styles';
 import Header from '@/components/common/Header/Header';
 import Footer from '@/components/common/Footer/Footer';
 import Spinner from '@/components/common/Spinner/Spinner';
-import IntroduceImage from '@/assets/images/Introduce.png';
+import IntroduceImage from '@/assets/images/introduce/Introduce.png';
 
 const IntroducePage = () => {
   const [loading, setLoading] = useState(true);
