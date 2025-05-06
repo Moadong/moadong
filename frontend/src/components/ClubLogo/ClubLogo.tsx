@@ -4,7 +4,7 @@ import styled, { css } from 'styled-components';
 type LogoVariant = 'main' | 'detail';
 
 interface ClubLogoProps {
-  imageSrc?: string;
+  $imageSrc?: string;
   variant?: LogoVariant;
 }
 
@@ -19,15 +19,15 @@ const presets = {
   },
 };
 
-const StyledClubLogo = styled.div<{ variant: LogoVariant; imageSrc?: string }>`
-  ${({ variant, imageSrc }) => css`
+const StyledClubLogo = styled.div<{ variant: LogoVariant; $imageSrc?: string }>`
+  ${({ variant, $imageSrc }) => css`
     width: ${presets[variant].desktop.width};
     height: ${presets[variant].desktop.height};
     border-radius: ${presets[variant].desktop.radius};
     background-color: #efefef;
     background-size: cover;
     background-position: center;
-    background-image: ${imageSrc ? `url(${imageSrc})` : 'none'};
+    background-image: ${$imageSrc ? `url(${$imageSrc})` : 'none'};
   `}
 
   @media (max-width: 480px) {
@@ -39,8 +39,8 @@ const StyledClubLogo = styled.div<{ variant: LogoVariant; imageSrc?: string }>`
   }
 `;
 
-const ClubLogo = ({ imageSrc, variant = 'main' }: ClubLogoProps) => {
-  return <StyledClubLogo imageSrc={imageSrc} variant={variant} />;
+const ClubLogo = ({ $imageSrc, variant = 'main' }: ClubLogoProps) => {
+  return <StyledClubLogo $imageSrc={$imageSrc} variant={variant} />;
 };
 
 export default ClubLogo;

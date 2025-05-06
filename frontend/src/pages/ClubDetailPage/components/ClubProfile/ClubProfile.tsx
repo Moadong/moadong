@@ -21,7 +21,7 @@ const ClubProfile = ({
 }: ClubProfileProps) => {
   return (
     <Styled.ClubContainer>
-      <ClubLogo variant='detail' imageSrc={logo || defaultLogo} />
+      <ClubLogo variant='detail' $imageSrc={logo || defaultLogo} />
       <Styled.ClubInfo>
         <Styled.ClubName>{name}</Styled.ClubName>
         <Styled.TagContainer>
