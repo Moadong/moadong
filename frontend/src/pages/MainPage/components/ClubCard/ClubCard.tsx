@@ -29,7 +29,7 @@ const ClubCard = ({ club }: { club: Club }) => {
   return (
     <Styled.CardContainer
       $state={club.recruitmentStatus}
-      isClicked={isClicked}
+      $isClicked={isClicked}
       onClick={handleNavigate}>
       <Styled.CardHeader>
         <Styled.ClubProfile>
