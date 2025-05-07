@@ -105,7 +105,4 @@ class ClubSearchServiceTest {
     }
 
 
-
-
-
 }
