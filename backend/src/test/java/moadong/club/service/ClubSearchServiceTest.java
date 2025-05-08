@@ -1,6 +1,7 @@
 package moadong.club.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
@@ -50,10 +51,7 @@ class ClubSearchServiceTest {
 
         // then
         List<ClubSearchResult> sorted = response.clubs();
-        assertEquals("club4", sorted.get(0).name());
-        assertEquals("club1", sorted.get(1).name());
-        assertEquals("club3", sorted.get(2).name());
-        assertEquals("club2", sorted.get(3).name());
+        assertIterableEquals(sorted, List.of(club4, club1, club3, club2));
     }
 
     @Test

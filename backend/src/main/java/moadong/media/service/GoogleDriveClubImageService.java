@@ -116,7 +116,7 @@ public class GoogleDriveClubImageService implements ClubImageService {
         }
     }
 
-    private String uploadFile(String clubId, MultipartFile file, FileType fileType) {
+    public String uploadFile(String clubId, MultipartFile file, FileType fileType) {
         if (file == null) {
             throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
         }
@@ -164,8 +164,7 @@ public class GoogleDriveClubImageService implements ClubImageService {
             tempFile.delete();
         }
         // 공유 링크 반환
-        String publicUrl = "https://drive.google.com/file/d/" + uploadedFile.getId() + "/view";
-        return publicUrl;
+        return "https://drive.google.com/file/d/" + uploadedFile.getId() + "/view";
     }
 
 }
