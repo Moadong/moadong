@@ -23,6 +23,7 @@ import org.springframework.stereotype.Component;
 public class RecruitmentScheduler {
 
     private final TaskScheduler taskScheduler;
+
     private final Map<String, ScheduledFuture<?>> scheduledTasks = new ConcurrentHashMap<>();
 
     private final ClubRepository clubRepository;
@@ -34,12 +35,12 @@ public class RecruitmentScheduler {
         // 모집 시작 스케줄링
         ScheduledFuture<?> startFuture = taskScheduler.schedule(
             () -> updateRecruitmentStatus(clubId, ClubRecruitmentStatus.OPEN),
-            Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
+            Date.from(startDate.atZone(ZoneId.of("Asia/Seoul")).toInstant()));
 
         // 모집 종료 스케줄링
         ScheduledFuture<?> endFuture = taskScheduler.schedule(
             () -> updateRecruitmentStatus(clubId, ClubRecruitmentStatus.CLOSED),
-            Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant()));
+            Date.from(endDate.atZone(ZoneId.of("Asia/Seoul")).toInstant()));
 
         scheduledTasks.put(clubId, startFuture);
         scheduledTasks.put(clubId, endFuture);
@@ -56,10 +57,13 @@ public class RecruitmentScheduler {
     public void updateRecruitmentStatus(String clubId, ClubRecruitmentStatus status) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
         club.getClubRecruitmentInformation().updateRecruitmentStatus(status);
         clubRepository.save(club);
     }
 
+    public Map<String, ScheduledFuture<?>> getScheduledTasks() {
+        return scheduledTasks;
+    }
 }
