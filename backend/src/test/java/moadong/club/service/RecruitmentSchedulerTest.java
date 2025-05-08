@@ -67,13 +67,14 @@ public class RecruitmentSchedulerTest {
         void 모집_스케줄링_성공() {
             // given
             String clubId = "club-1";
+            ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
 
             LocalDateTime startDate = LocalDateTime.now().plusDays(1);
-            Instant expectedStartInstant = startDate.atZone(ZoneId.of("Asia/Seoul")).toInstant()
+            Instant expectedStartInstant = startDate.atZone(koreaZoneId).toInstant()
                 .truncatedTo(ChronoUnit.MILLIS);
 
             LocalDateTime endDate = LocalDateTime.now().plusDays(2);
-            Instant expectedEndInstant = endDate.atZone(ZoneId.of("Asia/Seoul")).toInstant()
+            Instant expectedEndInstant = endDate.atZone(koreaZoneId).toInstant()
                 .truncatedTo(ChronoUnit.MILLIS);
 
             when(taskScheduler.schedule(any(Runnable.class), any(Date.class)))

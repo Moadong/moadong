@@ -35,12 +35,12 @@ public class RecruitmentScheduler {
         // 모집 시작 스케줄링
         ScheduledFuture<?> startFuture = taskScheduler.schedule(
             () -> updateRecruitmentStatus(clubId, ClubRecruitmentStatus.OPEN),
-            Date.from(startDate.atZone(ZoneId.systemDefault()).toInstant()));
+            Date.from(startDate.atZone(ZoneId.of("Asia/Seoul")).toInstant()));
 
         // 모집 종료 스케줄링
         ScheduledFuture<?> endFuture = taskScheduler.schedule(
             () -> updateRecruitmentStatus(clubId, ClubRecruitmentStatus.CLOSED),
-            Date.from(endDate.atZone(ZoneId.systemDefault()).toInstant()));
+            Date.from(endDate.atZone(ZoneId.of("Asia/Seoul")).toInstant()));
 
         scheduledTasks.put(clubId, startFuture);
         scheduledTasks.put(clubId, endFuture);
