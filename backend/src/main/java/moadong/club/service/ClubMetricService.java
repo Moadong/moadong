@@ -107,6 +107,10 @@ public class ClubMetricService {
     }
 
     public List<String> getDailyRanking(int n) {
+        if (n <= 0) {
+            return Collections.emptyList();
+        }
+
         List<ClubMetric> todayMetrics = clubMetricRepository.findAllByDate(LocalDate.now());
         Map<String, Long> clubViewCount = todayMetrics.stream()
             .collect(Collectors.groupingBy(ClubMetric::getClubId, Collectors.counting()));
@@ -130,6 +134,10 @@ public class ClubMetricService {
     }
 
     public int[] getDailyActiveUser(int n) {
+        if (n <= 0) {
+            return new int[0];
+        }
+
         LocalDate today = LocalDate.now();
         LocalDate fromDate = today.minusDays(n);
         List<ClubMetric> metrics = clubMetricRepository.findAllByDateAfter(fromDate);
