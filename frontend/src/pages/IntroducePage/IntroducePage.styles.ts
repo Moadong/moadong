@@ -17,6 +17,5 @@ export const IntroducePageFooter = styled(FooterContainer)`
 export const IntroduceImage = styled.img`
   width: 100vw;
   height: auto;
-  object-fit: cover;
   margin-top: 62px;
 `;
