@@ -110,7 +110,7 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
             <img src={SlideButton[1]} alt='Next Slide' />
           </Styled.SlideButton>
         </Styled.ButtonContainer>
-        <Styled.SlideWrapper ref={slideRef} isAnimating={isAnimating}>
+        <Styled.SlideWrapper ref={slideRef} $isAnimating={isAnimating}>
           {extendedBanners.map((banner, index) => (
             <Styled.BannerItem key={index}>
               <img src={banner.backgroundImage} alt={`banner-${index}`} />

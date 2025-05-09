@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const SearchBoxContainer = styled.form<{ isFocused: boolean }>`
+export const SearchBoxContainer = styled.form<{ $isFocused: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -17,8 +17,8 @@ export const SearchBoxContainer = styled.form<{ isFocused: boolean }>`
     padding: 6px 16px;
 
     border: 1px solid
-      ${({ isFocused }) =>
-        isFocused ? 'rgba(255, 84, 20, 0.8)' : 'transparent'};
+      ${({ $isFocused }) =>
+        $isFocused ? 'rgba(255, 84, 20, 0.8)' : 'transparent'};
   }
 `;
 
@@ -48,7 +48,7 @@ export const SearchInputStyles = styled.input`
   }
 `;
 
-export const SearchButton = styled.button<{ isFocused: boolean }>`
+export const SearchButton = styled.button<{ $isFocused: boolean }>`
   flex-shrink: 0;
   border: none;
   background-color: transparent;
@@ -67,8 +67,8 @@ export const SearchButton = styled.button<{ isFocused: boolean }>`
     width: 14px;
     height: 14px;
 
-    filter: ${({ isFocused }) =>
-      isFocused
+    filter: ${({ $isFocused }) =>
+      $isFocused
         ? 'invert(36%) sepia(83%) saturate(746%) hue-rotate(359deg) brightness(95%) contrast(92%)'
         : 'none'};
   }
