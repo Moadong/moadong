@@ -1,16 +1,27 @@
 import React from 'react';
 import styled, { keyframes } from 'styled-components';
 
+interface SpinnerWrapperProps {
+  height?: string;
+}
+
+interface SpinnerProps {
+  height?: string;
+}
+
 const spin = keyframes`
   0% { transform: rotate(0deg);}
   100% { transform: rotate(360deg);}
 `;
 
-const SpinnerWrapper = styled.div`
+const SpinnerWrapper = styled.div.attrs<SpinnerWrapperProps>(() => ({
+  role: 'status',
+  'aria-label': '로딩 중',
+}))<SpinnerWrapperProps>`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 800px;
+  height: ${({ height }) => height || '100vh'};
 `;
 
 const SpinnerCircle = styled.div`
@@ -22,7 +33,7 @@ const SpinnerCircle = styled.div`
   animation: ${spin} 1s linear infinite;
 `;
 
-const Spinner = () => (
+const Spinner = ({ height }: SpinnerProps) => (
   <SpinnerWrapper>
     <SpinnerCircle />
   </SpinnerWrapper>
