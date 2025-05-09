@@ -19,13 +19,10 @@ export const useResponsiveLayout = (
       }
     };
 
-    const handleResize = debounce(
-      () => () => {
-        updateIsMobile();
-        updateContainerWidth();
-      },
-      200,
-    );
+    const handleResize = debounce(() => {
+      updateIsMobile();
+      updateContainerWidth();
+    }, 200);
 
     handleResize();
     window.addEventListener('resize', handleResize);
