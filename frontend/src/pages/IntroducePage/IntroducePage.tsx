@@ -13,7 +13,7 @@ const IntroducePage = () => {
       <Styled.IntroducePageHeader>
         <Header />
       </Styled.IntroducePageHeader>
-      {loading && <Spinner />}
+      {loading && <Spinner height='800px' />}
       <Styled.IntroduceImage
         src={IntroduceImage}
         alt='소개 이미지'
