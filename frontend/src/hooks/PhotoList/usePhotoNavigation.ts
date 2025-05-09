@@ -1,13 +1,14 @@
 import { useCallback, useEffect } from 'react';
 import useMixpanelTrack from '../useMixpanelTrack';
 
-const usePhotoNavigation = ({
+export const usePhotoNavigation = ({
   currentIndex,
   setCurrentIndex,
   photosLength,
   cardWidth,
   containerWidth,
   setTranslateX,
+  isMobile,
 }: {
   currentIndex: number;
   setCurrentIndex: React.Dispatch<React.SetStateAction<number>>;
@@ -16,16 +17,13 @@ const usePhotoNavigation = ({
   containerWidth: number;
   translateX: number;
   setTranslateX: React.Dispatch<React.SetStateAction<number>>;
+  isMobile: boolean;
 }) => {
   const trackEvent = useMixpanelTrack();
 
   const calculateTranslateX = useCallback(
-    (index: number) => {
-      return index === photosLength - 1
-        ? containerWidth - cardWidth
-        : -index * cardWidth;
-    },
-    [photosLength, cardWidth, containerWidth],
+    (index: number) => -index * cardWidth,
+    [cardWidth],
   );
 
   useEffect(() => {
@@ -36,28 +34,24 @@ const usePhotoNavigation = ({
     const nextIndex = currentIndex + 1;
     if (nextIndex >= photosLength) return;
     setCurrentIndex(nextIndex);
-
     trackEvent('Photo Navigation', { action: 'next', index: nextIndex });
   };
 
   const handlePrev = () => {
     if (currentIndex <= 0) return;
     setCurrentIndex(currentIndex - 1);
-
     trackEvent('Photo Navigation', { action: 'prev', index: currentIndex - 1 });
   };
 
-  const isLastCard = currentIndex === photosLength - 1;
-  const canScrollLeft = currentIndex > 0 && photosLength > 2;
-  const canScrollRight = photosLength > 2 && currentIndex < photosLength - 2;
+  const canScrollLeft = currentIndex > 0 && photosLength > 1;
+  const canScrollRight = isMobile
+    ? currentIndex < photosLength - 1
+    : currentIndex < photosLength - 2;
 
   return {
     handlePrev,
     handleNext,
-    isLastCard,
     canScrollLeft,
     canScrollRight,
   };
 };
-
-export default usePhotoNavigation;

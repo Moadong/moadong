@@ -33,42 +33,20 @@ export const PhotoListWrapper = styled.div`
 
 export const PhotoList = styled.div<{
   translateX: number;
-  isLastCard: boolean;
-  containerWidth: number;
   photoCount: number;
-  cardWidth: number;
 }>`
   display: flex;
   flex-direction: row;
   gap: 20px;
   transition: transform 0.3s ease;
 
-  transform: ${({
-    translateX,
-    isLastCard,
-    containerWidth,
-    photoCount,
-    cardWidth,
-  }) => {
-    if (photoCount <= 2) return 'none';
-    if (isLastCard) {
-      const maxTranslate = containerWidth - cardWidth;
-      return `translateX(${maxTranslate}px)`;
-    }
-    return `translateX(${translateX}px)`;
-  }};
-  cursor: ${({ photoCount }) => (photoCount > 2 ? 'grab' : 'default')};
-  user-select: none;
+  transform: ${({ translateX, photoCount }) =>
+    photoCount <= 2 ? 'none' : `translateX(${translateX}px)`};
 
-  &:active {
-    cursor: ${({ photoCount }) => (photoCount > 2 ? 'grabbing' : 'default')};
-  }
+  user-select: none;
 `;
 
-export const PhotoCard = styled.div<{
-  photoCount: number;
-  isPlaceholder?: boolean;
-}>`
+export const PhotoCard = styled.div`
   flex-shrink: 0;
   border-radius: 18px;
   width: 400px;
@@ -76,15 +54,15 @@ export const PhotoCard = styled.div<{
   background-color: #cdcdcd;
   overflow: hidden;
   touch-action: none;
-
-  visibility: ${({ isPlaceholder }) => (isPlaceholder ? 'hidden' : 'visible')};
-  opacity: ${({ isPlaceholder }) => (isPlaceholder ? 0 : 1)};
+  cursor: pointer;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
     pointer-events: none;
+    user-select: none;
+    -webkit-user-drag: none;
   }
 
   @media (max-width: 500px) {
@@ -111,6 +89,7 @@ export const NavigationButton = styled.button<{ direction: 'left' | 'right' }>`
   font-size: 20px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   transition: all 0.3s ease;
+  -webkit-tap-highlight-color: transparent;
 
   &:hover {
     background-color: rgba(255, 255, 255, 1);

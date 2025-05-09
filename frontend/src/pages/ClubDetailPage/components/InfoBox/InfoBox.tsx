@@ -1,20 +1,29 @@
 import React from 'react';
 import * as Styled from './InfoBox.styles';
-import { InfoList } from '@/types/Info';
 import { ClubDetail } from '@/types/club';
 import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
+
+interface ClubInfoItem {
+  label: string;
+  value: string;
+}
+
+interface ClubInfoSection {
+  title: string;
+  descriptions: ClubInfoItem[];
+}
 
 interface InfoBoxProps {
   sectionRefs: React.RefObject<(HTMLDivElement | null)[]>;
   clubDetail: ClubDetail;
 }
 
-type InfoListWithRef = InfoList & {
+interface ClubInfoSectionWithRef extends ClubInfoSection {
   refIndex: INFOTABS_SCROLL_INDEX;
-};
+}
 
 const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
-  const infoData: InfoListWithRef[] = [
+  const infoData: ClubInfoSectionWithRef[] = [
     {
       title: '모집정보',
       descriptions: [
