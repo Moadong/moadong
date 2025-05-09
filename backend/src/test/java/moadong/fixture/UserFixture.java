@@ -26,8 +26,8 @@ public class UserFixture {
         return new CustomUserDetails(
                 User.builder()
                         .id(userId)
-                        .userInformation(new UserInformation("testuser","010-1234-5677"))
-                        .password("password")
+                        .userInformation(new UserInformation(collectUserId,collectPhoneNumber))
+                        .password(collectPassword)
                         .build()
         );
     }
