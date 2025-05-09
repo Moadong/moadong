@@ -1,5 +1,6 @@
 import { useEffect, useState, useMemo } from 'react';
 import { DESKTOP_CARD_WIDTH, MOBILE_CARD_WIDTH } from '@/constants/photoLayout';
+import debounce from '@/utils/debounce';
 
 export const useResponsiveLayout = (
   ref: React.RefObject<HTMLElement | null>,
@@ -18,10 +19,13 @@ export const useResponsiveLayout = (
       }
     };
 
-    const handleResize = () => {
-      updateIsMobile();
-      updateContainerWidth();
-    };
+    const handleResize = debounce(
+      () => () => {
+        updateIsMobile();
+        updateContainerWidth();
+      },
+      200,
+    );
 
     handleResize();
     window.addEventListener('resize', handleResize);
