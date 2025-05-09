@@ -12,7 +12,10 @@ export const ModalOverlay = styled.div`
   z-index: 100;
   animation: fadeIn 0.2s ease-in-out;
   background-color: rgba(0, 0, 0, 0.7);
-  backdrop-filter: blur(4px);
++  @supports (backdrop-filter: blur(4px)) {
++    backdrop-filter: blur(4px);
++    background-color: rgba(0, 0, 0, 0.6);
++  }
 
   @keyframes fadeIn {
     from {
