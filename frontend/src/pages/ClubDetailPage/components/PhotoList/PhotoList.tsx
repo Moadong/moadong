@@ -52,10 +52,11 @@ const PhotoList = ({ feeds, sectionRefs, clubName }: PhotoListProps) => {
     <Styled.PhotoListContainer
       ref={(el) => {
         sectionRefs.current[INFOTABS_SCROLL_INDEX.PHOTO_LIST_TAB] = el;
-      }}>
+      }}
+    >
       <Styled.PhotoListTitle>활동 사진</Styled.PhotoListTitle>
 
-      <Styled.PhotoListWrapper>
+      <Styled.PhotoListWrapper ref={containerRef}>
         <Styled.PhotoList translateX={translateX} photoCount={photoUrls.length}>
           <PhotoCardList
             photoUrls={photoUrls}
