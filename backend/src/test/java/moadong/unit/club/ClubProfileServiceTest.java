@@ -8,6 +8,7 @@ import moadong.club.repository.ClubRepository;
 import moadong.club.service.ClubProfileService;
 import moadong.club.service.RecruitmentScheduler;
 import moadong.fixture.ClubFixture;
+import moadong.fixture.ClubRequestFixture;
 import moadong.global.exception.RestApiException;
 import moadong.user.payload.CustomUserDetails;
 import moadong.util.annotations.UnitTest;
@@ -51,7 +52,7 @@ public class ClubProfileServiceTest {
     @Test
     void 정상적으로_클럽_약력을_업데이트한다() {
         // Given
-        ClubInfoRequest request = ClubFixture.createValidClubInfoRequest();
+        ClubInfoRequest request = ClubRequestFixture.createValidClubInfoRequest();
         CustomUserDetails user = createUserDetails(userId);
         Club mockClub = mock(Club.class);
 
@@ -70,7 +71,7 @@ public class ClubProfileServiceTest {
     void 클럽이_없을_땐_클럽_약력_업데이트가_실패한다() {
         when(clubRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(RestApiException.class,
-                () -> clubProfileService.updateClubInfo(ClubFixture.createValidClubInfoRequest(), createUserDetails(userId)));
+                () -> clubProfileService.updateClubInfo(ClubRequestFixture.createValidClubInfoRequest(), createUserDetails(userId)));
     }
 
     @Test
@@ -80,7 +81,7 @@ public class ClubProfileServiceTest {
         when(mockClub.getUserId()).thenReturn("different_user");
 
         assertThrows(RestApiException.class,
-                () -> clubProfileService.updateClubInfo(ClubFixture.createValidClubInfoRequest(), createUserDetails(userId)));
+                () -> clubProfileService.updateClubInfo(ClubRequestFixture.createValidClubInfoRequest(), createUserDetails(userId)));
     }
 
 

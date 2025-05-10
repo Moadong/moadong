@@ -8,6 +8,7 @@ import jakarta.validation.ValidatorFactory;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.fixture.UserFixture;
+import moadong.fixture.UserRequestFixture;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.JwtProvider;
 import moadong.user.entity.User;
@@ -69,7 +70,7 @@ class UserRegisterTest {
                 .when(userRepository).save(any(User.class));
         doReturn(new Club(userId)).when(clubRepository).save(any(Club.class));
 
-        UserRegisterRequest request = UserFixture.createUserRegisterRequest(userId, password, name, phoneNumber);
+        UserRegisterRequest request = UserRequestFixture.createUserRegisterRequest(userId, password, name, phoneNumber);
 
         // when
         User userResponse = userCommandService.registerUser(request);
@@ -118,7 +119,7 @@ class UserRegisterTest {
         String phoneNumber = UserFixture.collectPhoneNumber;
         //  when
         try {
-            UserRegisterRequest request = UserFixture.createUserRegisterRequest(userId, password, name, phoneNumber);
+            UserRegisterRequest request = UserRequestFixture.createUserRegisterRequest(userId, password, name, phoneNumber);
             Set<ConstraintViolation<UserRegisterRequest>> violations = validator.validate(request);
             // then
             if (violations.isEmpty()) {
@@ -161,7 +162,7 @@ class UserRegisterTest {
 
         //  when
         try {
-            UserRegisterRequest request = UserFixture.createUserRegisterRequest(userId, password, name, phoneNumber);
+            UserRegisterRequest request = UserRequestFixture.createUserRegisterRequest(userId, password, name, phoneNumber);
             Set<ConstraintViolation<UserRegisterRequest>> violations = validator.validate(request);
             // then
             if (violations.isEmpty()) {
