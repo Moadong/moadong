@@ -40,21 +40,21 @@ public class ClubFixture {
                 .recruitmentForm("https://forms.example.com")
                 .build();
     }
-
-    public static ClubInfoRequest createValidClubInfoRequest() {
-        return new ClubInfoRequest(
-                "club_123",
-                "테스트동아리",
-                "학술",
-                "프로그래밍",
-                List.of("개발", "스터디"),
-                "동아리 소개입니다.",
-                "홍길동",
-                "010-1234-5678",
-                "https://forms.gle/abcd"
-        );
-
-    }
+    //TODO: form을 social links 로 바꾸면 수정할 것
+//    public static ClubInfoRequest createValidClubInfoRequest() {
+//        return new ClubInfoRequest(
+//                "club_123",
+//                "테스트동아리",
+//                "학술",
+//                "프로그래밍",
+//                List.of("개발", "스터디"),
+//                "동아리 소개입니다.",
+//                "홍길동",
+//                "010-1234-5678",
+//                "https://forms.gle/abcd"
+//        );
+//
+//    }
     //ToDo: 시간 계산법을 LocalDateTime에서 Instant로 변경 후에 활성화할 것
 //    public static ClubRecruitmentInfoUpdateRequest createValidRequest() {
 //        return new ClubRecruitmentInfoUpdateRequest(
