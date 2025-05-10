@@ -34,6 +34,9 @@ public class GoogleDriveClubImageService implements ClubImageService {
     private final Drive googleDrive;
     private final ClubRepository clubRepository;
 
+    private final String PREFIX = "https://drive.google.com/file/d/";
+    private final String SUFFIX = "/view";
+
     @Override
     public String uploadLogo(String clubId, MultipartFile file) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
@@ -164,8 +167,7 @@ public class GoogleDriveClubImageService implements ClubImageService {
             tempFile.delete();
         }
         // 공유 링크 반환
-        String publicUrl = "https://drive.google.com/file/d/" + uploadedFile.getId() + "/view";
-        return publicUrl;
+        return PREFIX + uploadedFile.getId() + SUFFIX;
     }
 
 }
