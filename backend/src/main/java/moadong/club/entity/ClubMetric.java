@@ -3,6 +3,8 @@ package moadong.club.entity;
 import jakarta.persistence.Id;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -30,7 +32,7 @@ public class ClubMetric {
 
     @Builder
     public ClubMetric(String clubId, String ip) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         this.clubId = clubId;
         this.ip = ip;
         this.inAt = now;
@@ -39,6 +41,6 @@ public class ClubMetric {
     }
 
     public void update() {
-        this.outAt = LocalDateTime.now();
+        this.outAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
     }
 }

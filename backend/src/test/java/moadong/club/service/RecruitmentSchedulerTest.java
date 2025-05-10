@@ -9,6 +9,7 @@ import static org.mockito.Mockito.when;
 import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
@@ -67,13 +68,13 @@ public class RecruitmentSchedulerTest {
         void 모집_스케줄링_성공() {
             // given
             String clubId = "club-1";
-            ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
 
-            LocalDateTime startDate = LocalDateTime.now().plusDays(1);
+            ZoneId koreaZoneId = ZoneId.of("Asia/Seoul");
+            LocalDateTime now = ZonedDateTime.now(koreaZoneId).toLocalDateTime();
+            LocalDateTime startDate = now.plusDays(1);
             Instant expectedStartInstant = startDate.atZone(koreaZoneId).toInstant()
                 .truncatedTo(ChronoUnit.MILLIS);
-
-            LocalDateTime endDate = LocalDateTime.now().plusDays(2);
+            LocalDateTime endDate = now.plusDays(2);
             Instant expectedEndInstant = endDate.atZone(koreaZoneId).toInstant()
                 .truncatedTo(ChronoUnit.MILLIS);
 
