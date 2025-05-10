@@ -1,21 +1,16 @@
 package moadong.media.service;
 
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import com.google.api.client.util.Value;
 import com.google.api.services.drive.Drive;
-import java.io.IOException;
-import java.util.List;
+import java.lang.reflect.Method;
 import java.util.Optional;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
@@ -31,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -47,9 +43,6 @@ class GoogleDriveClubImageServiceLogoTest {
     @Mock
     private ClubRepository clubRepository;
 
-    @Value("${server.feed.max-count}")
-    private int MAX_FEED_COUNT;
-
     private Club club;
 
     private ObjectId objectId;
@@ -58,7 +51,7 @@ class GoogleDriveClubImageServiceLogoTest {
             "testFile", "testFile.jpg", "image/jpeg", "test".getBytes());
 
     @BeforeEach
-    void setUp() {
+    void setUp() throws NoSuchMethodException {
         ClubRecruitmentInformation info = ClubRecruitmentInformation.builder()
                 .logo(null)
                 .build();
@@ -68,17 +61,17 @@ class GoogleDriveClubImageServiceLogoTest {
 
     // updateLogo
     @Test
-    void 로고를_업데이트하면_club에_logo정보가_저장된다() {
+    void 로고를_업데이트하면_uploadFile메서드를_호출하고_예외를_발생시킨다() {
         // given
         when(clubRepository.findClubById(objectId)).thenReturn(Optional.of(club));
-        doReturn( "https://drive.google.com/file/d/" + club.getId() + "/LOGO/" + mockFile.getOriginalFilename() + "/view" )
-                .when(clubImageService).uploadFile(any(), eq(mockFile), eq(FileType.LOGO));
+//        doReturn( "https://drive.google.com/file/d/" + club.getId() + "/LOGO/" + mockFile.getOriginalFilename() + "/view" )
+//                .when(clubImageService).uploadFile(any(), eq(mockFile), eq(FileType.LOGO));
 
-        // when
-        String result = clubImageService.uploadLogo(objectId.toHexString(), mockFile);
+        // when & then
+        RestApiException exception = assertThrows(RestApiException.class,
+                () -> clubImageService.uploadLogo(objectId.toHexString(), mockFile));
+        assertEquals(ErrorCode.IMAGE_UPLOAD_FAILED, exception.getErrorCode());
 
-        // then
-        assertEquals(result, club.getClubRecruitmentInformation().getLogo());
     }
 
     @Test

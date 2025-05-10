@@ -34,6 +34,9 @@ public class GoogleDriveClubImageService implements ClubImageService {
     private final Drive googleDrive;
     private final ClubRepository clubRepository;
 
+    private final String PREFIX = "https://drive.google.com/file/d/";
+    private final String SUFFIX = "/view";
+
     @Override
     public String uploadLogo(String clubId, MultipartFile file) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
@@ -116,7 +119,7 @@ public class GoogleDriveClubImageService implements ClubImageService {
         }
     }
 
-    public String uploadFile(String clubId, MultipartFile file, FileType fileType) {
+    private String uploadFile(String clubId, MultipartFile file, FileType fileType) {
         if (file == null) {
             throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
         }
@@ -164,7 +167,7 @@ public class GoogleDriveClubImageService implements ClubImageService {
             tempFile.delete();
         }
         // 공유 링크 반환
-        return "https://drive.google.com/file/d/" + uploadedFile.getId() + "/view";
+        return PREFIX + uploadedFile.getId() + SUFFIX;
     }
 
 }
