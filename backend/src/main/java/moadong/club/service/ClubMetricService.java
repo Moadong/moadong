@@ -49,7 +49,7 @@ public class ClubMetricService {
     }
 
     public int[] getDailyActiveUserWitClub(String clubId) {
-        LocalDate now = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+        LocalDate now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         LocalDate from = now.minusDays(30);
         List<ClubMetric> metrics = clubMetricRepository.findByClubIdAndDateAfter(clubId, from);
 
@@ -65,7 +65,7 @@ public class ClubMetricService {
     }
 
     public int[] getWeeklyActiveUserWitClub(String clubId) {
-        LocalDate now = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+        LocalDate now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         LocalDate from = now.minusDays(84);
         List<ClubMetric> metrics = clubMetricRepository.findByClubIdAndDateAfter(clubId, from);
 
@@ -86,7 +86,7 @@ public class ClubMetricService {
     }
 
     public int[] getMonthlyActiveUserWitClub(String clubId) {
-        LocalDate now = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+        LocalDate now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         YearMonth currentMonth = YearMonth.from(now); // 현재 년-월
         YearMonth fromMonth = currentMonth.minusMonths(12); // 12개월 전
 
@@ -113,7 +113,7 @@ public class ClubMetricService {
             return Collections.emptyList();
         }
 
-        LocalDate now = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+        LocalDate now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         List<ClubMetric> todayMetrics = clubMetricRepository.findAllByDate(now);
         Map<String, Long> clubViewCount = todayMetrics.stream()
             .collect(Collectors.groupingBy(ClubMetric::getClubId, Collectors.counting()));
@@ -141,7 +141,7 @@ public class ClubMetricService {
             return new int[0];
         }
 
-        LocalDate today = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+        LocalDate today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         LocalDate fromDate = today.minusDays(n);
         List<ClubMetric> metrics = clubMetricRepository.findAllByDateAfter(fromDate);
 

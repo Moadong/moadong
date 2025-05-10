@@ -45,7 +45,7 @@ public class ClubMetricServiceTest {
         // given
         String clubId = "club-1";
         String ip = "192.168.0.1";
-        LocalDate today = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+        LocalDate today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
 
         ClubMetric existingMetric = Mockito.mock(ClubMetric.class);
 
@@ -64,7 +64,7 @@ public class ClubMetricServiceTest {
     void 일일_활성_사용자수_검증() {
         // given
         String clubId = "club-1";
-        LocalDate now = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+        LocalDate now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
 
         List<ClubMetric> metrics = List.of(
             MetricFixture.createClubMetric(now.minusDays(1)),
@@ -96,7 +96,7 @@ public class ClubMetricServiceTest {
     void 주간_활성_사용자수_검증() {
         // given
         String clubId = "club-1";
-        LocalDate now = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+        LocalDate now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         LocalDate thisWeekMonday = now.with(ChronoField.DAY_OF_WEEK, 1);
 
         List<ClubMetric> metrics = List.of(
@@ -128,7 +128,7 @@ public class ClubMetricServiceTest {
     void 월간_활성_사용자수_검증() {
         // given
         String clubId = "club-1";
-        LocalDate now = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+        LocalDate now = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         YearMonth currentMonth = YearMonth.from(now);
 
         List<ClubMetric> metrics = List.of(
@@ -163,7 +163,7 @@ public class ClubMetricServiceTest {
         @Test
         void 일부_Club_정보가_누락되어도_null_포함하여_정상_동작() {
             // given
-            LocalDate today = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+            LocalDate today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
 
             List<ClubMetric> metrics = List.of(
                 MetricFixture.createClubMetric("club1", today),
@@ -212,7 +212,7 @@ public class ClubMetricServiceTest {
         void ip_중복을_제거하여_카운트_한다() {
             // given
             int n = 3;
-            LocalDate today = ZonedDateTime.now(ZoneId.of("Aisa/Seoul")).toLocalDate();
+            LocalDate today = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
 
             List<ClubMetric> metrics = List.of(
                 MetricFixture.createClubMetric(today.minusDays(0), "192.0.2.1"),
