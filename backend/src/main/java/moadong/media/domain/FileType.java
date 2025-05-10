@@ -1,4 +1,4 @@
-package moadong.gcs.domain;
+package moadong.media.domain;
 
 import lombok.Getter;
 
