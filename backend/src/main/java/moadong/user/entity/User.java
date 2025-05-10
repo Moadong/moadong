@@ -51,6 +51,9 @@ public class User implements UserDetails {
     @Field("refreshToken")
     private RefreshToken refreshToken;
 
+    @Field("userInformation")
+    private UserInformation userInformation;
+
     @Builder.Default
     @NotNull
     private UserStatus status = UserStatus.ACTIVE;
