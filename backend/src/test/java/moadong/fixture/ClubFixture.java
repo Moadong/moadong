@@ -11,6 +11,7 @@ import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.Map;
 
 public class ClubFixture {
     public static final ClubState DEFAULT_STATE = ClubState.UNAVAILABLE;
@@ -22,7 +23,6 @@ public class ClubFixture {
                 .clubRecruitmentInformation(createRecruitmentInfo())
                 .build();
     }
-
     public static ClubRecruitmentInformation createRecruitmentInfo() {
         return ClubRecruitmentInformation.builder()
                 .id("recruit_789")
@@ -37,24 +37,22 @@ public class ClubFixture {
                 .feedImages(List.of("image1.jpg", "image2.jpg"))
                 .tags(List.of("개발", "프로그래밍", "스터디"))
                 .clubRecruitmentStatus(ClubRecruitmentStatus.OPEN)
-                .recruitmentForm("https://forms.example.com")
                 .build();
     }
-    //TODO: form을 social links 로 바꾸면 수정할 것
-//    public static ClubInfoRequest createValidClubInfoRequest() {
-//        return new ClubInfoRequest(
-//                "club_123",
-//                "테스트동아리",
-//                "학술",
-//                "프로그래밍",
-//                List.of("개발", "스터디"),
-//                "동아리 소개입니다.",
-//                "홍길동",
-//                "010-1234-5678",
-//                "https://forms.gle/abcd"
-//        );
-//
-//    }
+    public static ClubInfoRequest createValidClubInfoRequest() {
+        return new ClubInfoRequest(
+                "club_123",
+                "테스트동아리",
+                "학술",
+                "프로그래밍",
+                List.of("개발", "스터디"),
+                "동아리 소개입니다.",
+                "홍길동",
+                "010-1234-5678",
+                Map.of("insta","https://test")
+        );
+
+    }
     //ToDo: 시간 계산법을 LocalDateTime에서 Instant로 변경 후에 활성화할 것
 //    public static ClubRecruitmentInfoUpdateRequest createValidRequest() {
 //        return new ClubRecruitmentInfoUpdateRequest(
