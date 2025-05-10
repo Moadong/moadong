@@ -1,4 +1,4 @@
-package moadong.global.util;
+package moadong.util.annotations;
 
 import lombok.AccessLevel;
 import lombok.NoArgsConstructor;

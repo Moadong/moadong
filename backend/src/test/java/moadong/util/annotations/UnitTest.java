@@ -2,7 +2,6 @@ package moadong.util.annotations;
 
 
 
-import moadong.global.util.TestTypeConstants;
 import org.junit.jupiter.api.Tag;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
