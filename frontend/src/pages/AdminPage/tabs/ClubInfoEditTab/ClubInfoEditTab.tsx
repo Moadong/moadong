@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import * as Styled from './ClubInfoEditTab.styles';
 import InputField from '@/components/common/InputField/InputField';
-import SelectTags from '@/pages/AdminPage/components/SelectTags/SelectTags';
-import MakeTags from '@/pages/AdminPage/components/MakeTags/MakeTags';
+import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
+import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
 import Button from '@/components/common/Button/Button';
 import { useOutletContext } from 'react-router-dom';
 import { ClubDetail } from '@/types/club';
