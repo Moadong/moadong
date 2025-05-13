@@ -65,4 +65,24 @@ public class RecruitmentStateCheckerTest {
         verify(club).updateRecruitmentStatus(ClubRecruitmentStatus.UPCOMING);
         verify(clubRepository).save(club);
     }
+
+    @Test
+    void 모집기간중이면_OPEN() {
+        Club club = mock(Club.class);
+        ClubRecruitmentInformation info = mock(ClubRecruitmentInformation.class);
+
+        ZonedDateTime start = NOW.minusDays(1);
+        ZonedDateTime end = NOW.plusDays(5);
+
+        when(club.getClubRecruitmentInformation()).thenReturn(info);
+        when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.CLOSED);
+        when(info.getRecruitmentStart()).thenReturn(start);
+        when(info.getRecruitmentEnd()).thenReturn(end);
+        when(clubRepository.findAll()).thenReturn(List.of(club));
+
+        recruitmentStateChecker.performTask();
+
+        verify(club).updateRecruitmentStatus(ClubRecruitmentStatus.OPEN);
+        verify(clubRepository).save(club);
+    }
 }
