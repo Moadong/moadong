@@ -1,3 +1,5 @@
+import { SNS_CONFIG } from '@/constants/snsConfig';
+
 export interface Club {
   id: string;
   name: string;
@@ -9,6 +11,8 @@ export interface Club {
   introduction: string;
 }
 
+export type SNSPlatform = keyof typeof SNS_CONFIG;
+
 export interface ClubDetail extends Club {
   description: string;
   state: string;
@@ -18,7 +22,7 @@ export interface ClubDetail extends Club {
   recruitmentForm: string;
   recruitmentPeriod: string;
   recruitmentTarget: string;
-  socialLinks: { [platform: string]: string };
+  socialLinks: Record<SNSPlatform, string>;
 }
 
 export interface ClubDescription {
