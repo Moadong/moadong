@@ -18,6 +18,7 @@ export interface ClubDetail extends Club {
   recruitmentForm: string;
   recruitmentPeriod: string;
   recruitmentTarget: string;
+  socialLinks: { [platform: string]: string };
 }
 
 export interface ClubDescription {
