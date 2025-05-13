@@ -1,4 +1,5 @@
-import { SNS_CONFIG, SNSPlatform } from '@/constants/snsConfig';
+import { SNS_CONFIG } from '@/constants/snsConfig';
+import { SNSPlatform } from '@/types/club';
 
 export const validateSocialLink = (key: SNSPlatform, value: string): string => {
   const { regex, label } = SNS_CONFIG[key];
