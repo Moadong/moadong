@@ -15,5 +15,3 @@ export const SNS_CONFIG = {
     regex: /^https:\/\/(www\.)?x\.com\/[A-Za-z0-9._%-]+\/?$/,
   },
 } as const;
-
-export type SNSPlatform = keyof typeof SNS_CONFIG;
