@@ -9,7 +9,7 @@ import { ClubDetail } from '@/types/club';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import { useQueryClient } from '@tanstack/react-query';
 import { validateSocialLink } from '@/utils/validateSocialLink';
-import { SnsConfig, SNSPlatform } from '@/constants/snsConfig';
+import { SNS_CONFIG, SNSPlatform } from '@/constants/snsConfig';
 
 const ClubInfoEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
@@ -184,22 +184,26 @@ const ClubInfoEditTab = () => {
 
       <Styled.InfoTitle>동아리 SNS 링크</Styled.InfoTitle>
       <Styled.SNSInputGroup>
-        {SnsConfig.map(({ key, label, placeholder }) => (
-          <Styled.SNSRow key={key}>
-            <Styled.SNSCheckboxLabel>{label}</Styled.SNSCheckboxLabel>
-            <InputField
-              placeholder={placeholder}
-              value={socialLinks[key]}
-              onChange={(e) => handleSocialLinkChange(key, e.target.value)}
-              onClear={() => {
-                setSocialLinks((prev) => ({ ...prev, [key]: '' }));
-                setSnsErrors((prev) => ({ ...prev, [key]: '' }));
-              }}
-              isError={!!snsErrors[key]}
-              helperText={snsErrors[key]}
-            />
-          </Styled.SNSRow>
-        ))}
+        {Object.entries(SNS_CONFIG).map(([rawKey, { label, placeholder }]) => {
+          const key = rawKey as SNSPlatform;
+
+          return (
+            <Styled.SNSRow key={key}>
+              <Styled.SNSCheckboxLabel>{label}</Styled.SNSCheckboxLabel>
+              <InputField
+                placeholder={placeholder}
+                value={socialLinks[key]}
+                onChange={(e) => handleSocialLinkChange(key, e.target.value)}
+                onClear={() => {
+                  setSocialLinks((prev) => ({ ...prev, [key]: '' }));
+                  setSnsErrors((prev) => ({ ...prev, [key]: '' }));
+                }}
+                isError={snsErrors[key] !== ''}
+                helperText={snsErrors[key]}
+              />
+            </Styled.SNSRow>
+          );
+        })}
       </Styled.SNSInputGroup>
     </>
   );
