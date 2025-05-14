@@ -10,7 +10,7 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
   useEffect(() => {
     mixpanel.track(`${pageName} Visited`, {
       url: window.location.href,
-      timestamp: startTime,
+      timestamp: startTime.current,
       referrer: document.referrer || 'direct',
       clubName,
     });
