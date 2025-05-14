@@ -1,13 +1,16 @@
 import React, { useState, useEffect } from 'react';
-import * as Styled from './ClubInfoEditTab.styles';
-import InputField from '@/components/common/InputField/InputField';
-import SelectTags from '@/pages/AdminPage/components/SelectTags/SelectTags';
-import MakeTags from '@/pages/AdminPage/components/MakeTags/MakeTags';
-import Button from '@/components/common/Button/Button';
 import { useOutletContext } from 'react-router-dom';
-import { ClubDetail } from '@/types/club';
-import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import { useQueryClient } from '@tanstack/react-query';
+import { ClubDetail } from '@/types/club';
+import { SNSPlatform } from '@/types/club';
+import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
+import { validateSocialLink } from '@/utils/validateSocialLink';
+import { SNS_CONFIG } from '@/constants/snsConfig';
+import InputField from '@/components/common/InputField/InputField';
+import Button from '@/components/common/Button/Button';
+import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
+import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
+import * as Styled from './ClubInfoEditTab.styles';
 
 const ClubInfoEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
@@ -20,7 +23,18 @@ const ClubInfoEditTab = () => {
   const [selectedDivision, setSelectedDivision] = useState<string>('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [clubTags, setClubTags] = useState<string[]>(() => ['', '']);
-  const [recruitmentForm] = useState<string>('');
+  const [socialLinks, setSocialLinks] = useState<Record<SNSPlatform, string>>({
+    instagram: '',
+    youtube: '',
+    x: '',
+  });
+
+  const [snsErrors, setSnsErrors] = useState<Record<SNSPlatform, string>>({
+    instagram: '',
+    youtube: '',
+    x: '',
+  });
+
   const queryClient = useQueryClient();
   const divisions = ['중동', '과동'];
   const categories = ['봉사', '종교', '취미교양', '학술', '운동', '공연'];
@@ -39,7 +53,20 @@ const ClubInfoEditTab = () => {
           : [...clubDetail.tags, ''],
       );
     }
+    if (clubDetail?.socialLinks) {
+      setSocialLinks({
+        instagram: clubDetail.socialLinks.instagram || '',
+        youtube: clubDetail.socialLinks.youtube || '',
+        x: clubDetail.socialLinks.x || '',
+      });
+    }
   }, [clubDetail]);
+
+  const handleSocialLinkChange = (key: SNSPlatform, value: string) => {
+    const errorMsg = validateSocialLink(key, value);
+    setSnsErrors((prev) => ({ ...prev, [key]: errorMsg }));
+    setSocialLinks((prev) => ({ ...prev, [key]: value }));
+  };
 
   const handleUpdateClub = () => {
     if (!clubDetail || !clubDetail.id) {
@@ -48,6 +75,12 @@ const ClubInfoEditTab = () => {
         '[ERROR] clubDetail or clubDetail.id is undefined:',
         clubDetail,
       );
+      return;
+    }
+
+    const hasSnsErrors = Object.values(snsErrors).some((error) => error !== '');
+    if (hasSnsErrors) {
+      alert('SNS 링크에 오류가 있어요. 수정 후 다시 시도해주세요!');
       return;
     }
 
@@ -60,7 +93,7 @@ const ClubInfoEditTab = () => {
       introduction: introduction,
       presidentName: clubPresidentName,
       presidentPhoneNumber: telephoneNumber,
-      recruitmentForm: recruitmentForm,
+      socialLinks: socialLinks,
     };
 
     updateClub(updatedData, {
@@ -149,6 +182,30 @@ const ClubInfoEditTab = () => {
 
         <MakeTags value={clubTags} onChange={setClubTags} />
       </Styled.TagEditGroup>
+
+      <Styled.InfoTitle>동아리 SNS 링크</Styled.InfoTitle>
+      <Styled.SNSInputGroup>
+        {Object.entries(SNS_CONFIG).map(([rawKey, { label, placeholder }]) => {
+          const key = rawKey as SNSPlatform;
+
+          return (
+            <Styled.SNSRow key={key}>
+              <Styled.SNSCheckboxLabel>{label}</Styled.SNSCheckboxLabel>
+              <InputField
+                placeholder={placeholder}
+                value={socialLinks[key]}
+                onChange={(e) => handleSocialLinkChange(key, e.target.value)}
+                onClear={() => {
+                  setSocialLinks((prev) => ({ ...prev, [key]: '' }));
+                  setSnsErrors((prev) => ({ ...prev, [key]: '' }));
+                }}
+                isError={snsErrors[key] !== ''}
+                helperText={snsErrors[key]}
+              />
+            </Styled.SNSRow>
+          );
+        })}
+      </Styled.SNSInputGroup>
     </>
   );
 };

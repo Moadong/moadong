@@ -17,7 +17,8 @@ const SelectTags = ({ label, tags, selected, onChange }: SelectTagsProps) => {
           <Styled.Button
             key={index}
             onClick={() => onChange(tag)}
-            selected={selected === tag}>
+            selected={selected === tag}
+          >
             #{tag}
           </Styled.Button>
         ))}
