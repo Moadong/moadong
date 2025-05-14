@@ -14,7 +14,7 @@ public record ClubApplyRequest(
             @NotNull
             int id,
             @NotNull //빈칸 상관없음
-            String answer
+            String value
     ) {
     }
 }
