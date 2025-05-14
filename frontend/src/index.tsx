@@ -25,7 +25,7 @@ if (process.env.CHANNEL_PLUGIN_KEY) {
 
 Sentry.init({
   dsn: process.env.SENTRY_DSN,
-  sendDefaultPii: true,
+  sendDefaultPii: false,
   release: process.env.SENTRY_RELEASE,
   tracesSampleRate: 0.1,
 });
