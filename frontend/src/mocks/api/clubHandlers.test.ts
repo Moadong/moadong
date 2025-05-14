@@ -9,7 +9,7 @@ afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
 describe('MSW 클럽 핸들러 테스트 (fetch)', () => {
-  it('클럽 지원서 API 테스트 (정상 요청)', async () => {
+  it('클럽 지원서 GET 테스트', async () => {
     const response = await fetch('http://localhost/api/club/123/apply');
     const data = await response.json();
 
@@ -63,7 +63,7 @@ describe('MSW 클럽 핸들러 테스트 (fetch)', () => {
     });
   });
 
-  describe('클럽 지원서 보내기 API 테스트', () => {
+  describe('클럽 지원서 POST 테스트', () => {
     it('지원서 제출 성공', async () => {
       const response = await fetch('http://localhost/api/club/123/apply', {
         method: 'POST',
