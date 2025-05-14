@@ -51,7 +51,7 @@ public class ClubApplyService {
         List<ClubQuestionAnswer> answers = request.questions()
                 .stream().map(answer -> ClubQuestionAnswer.builder()
                         .id(answer.id())
-                        .value(answer.answer())
+                        .value(answer.value())
                         .build()
                 ).toList();
 
