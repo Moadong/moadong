@@ -8,9 +8,9 @@ import java.util.List;
 public record ClubApplyRequest(
         @NotNull
         @Valid
-        List<ClubApplyAnswer> questions
+        List<Answer> questions
 ) {
-    public record ClubApplyAnswer(
+    public record Answer(
             @NotNull
             int id,
             @NotNull //빈칸 상관없음
