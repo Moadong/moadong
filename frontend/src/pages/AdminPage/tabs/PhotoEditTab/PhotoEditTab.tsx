@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import * as Styled from './PhotoEditTab.styles';
-import ImageUpload from '@/pages/AdminPage/components/ImageUpload/ImageUpload';
-import { ImagePreview } from '@/pages/AdminPage/components/ImagePreview/ImagePreview';
+import ImageUpload from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImageUpload/ImageUpload';
+import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
 import useUpdateFeedImages from '@/hooks/queries/club/useUpdateFeedImages';
 
 import { ClubDetail } from '@/types/club';

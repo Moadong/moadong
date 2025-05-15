@@ -1,6 +1,5 @@
 import React, { useRef } from 'react';
 import * as Styled from './ImageUpload.styles';
-// import UploadAddIcon from '@/assets/images/upload-add.png';
 import useCreateFeedImage from '@/hooks/queries/club/useCreateFeedImage';
 import Button from '@/components/common/Button/Button';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
@@ -52,7 +51,8 @@ export const ImageUpload = ({
             return;
           }
           inputRef.current?.click();
-        }}>
+        }}
+      >
         이미지 업로드
       </Button>
       {/*<img src={UploadAddIcon} alt='Upload Add Icon' />*/}
