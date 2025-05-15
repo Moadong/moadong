@@ -10,6 +10,7 @@ import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
@@ -92,5 +93,9 @@ public class Club {
 
     public void updateFeedImages(List<String> feedImages) {
         this.clubRecruitmentInformation.updateFeedImages(feedImages);
+    }
+
+    public void updateRecruitmentStatus(ClubRecruitmentStatus clubRecruitmentStatus) {
+        this.clubRecruitmentInformation.updateRecruitmentStatus(clubRecruitmentStatus);
     }
 }
