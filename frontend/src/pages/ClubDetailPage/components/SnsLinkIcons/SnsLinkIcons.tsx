@@ -8,6 +8,7 @@ interface SnsLinkIconsProps {
 }
 
 const SnsLinkIcons = ({ apiSocialLinks }: SnsLinkIconsProps) => {
+  if (!apiSocialLinks) return null;
   return (
     <Styled.SnsIconGroup>
       {Object.entries(apiSocialLinks).map(([platform, url]) => {
