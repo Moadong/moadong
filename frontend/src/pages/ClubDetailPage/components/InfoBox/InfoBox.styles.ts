@@ -16,7 +16,7 @@ export const InfoBoxWrapper = styled.div`
 
 export const InfoBox = styled.div`
   width: 573px;
-  height: 164px;
+  height: 197px;
   border-radius: 18px;
   border: 1px solid #dcdcdc;
   padding: 30px;
