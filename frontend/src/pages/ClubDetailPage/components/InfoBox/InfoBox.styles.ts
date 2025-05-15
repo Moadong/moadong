@@ -52,11 +52,15 @@ export const DescriptionWrapper = styled.div`
   align-items: center;
   gap: 50px;
   font-size: 14px;
+  @media (max-width: 500px) {
+    gap: 40px;
+  }
 `;
 
 export const LeftText = styled.p`
   color: #9d9d9d;
   white-space: nowrap;
+  width: 30px;
 `;
 
 export const RightText = styled.p`
