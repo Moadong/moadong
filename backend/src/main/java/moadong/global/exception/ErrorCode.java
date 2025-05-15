@@ -23,6 +23,7 @@ public enum ErrorCode {
     USER_UNAUTHORIZED(HttpStatus.FORBIDDEN, "700-5","권한이 없습니다."),
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "701-1", "올바르지 않은 토큰 양식입니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "701-2", "토큰이 만료되었습니다."),
+    APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "701-3", "지원서가 존재하지 않습니다."),
     ;
 
     private final HttpStatus httpStatus;
