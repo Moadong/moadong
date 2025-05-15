@@ -45,9 +45,10 @@ const Button = ({
   width,
   children,
   onClick,
+  type,
   animated = false,
 }: ButtonProps) => (
-  <StyledButton width={width} onClick={onClick} animated={animated}>
+  <StyledButton width={width} onClick={onClick} animated={animated} type={type}>
     {children}
   </StyledButton>
 );
