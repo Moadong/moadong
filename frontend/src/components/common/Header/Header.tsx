@@ -1,4 +1,3 @@
-import React from 'react';
 import { useLocation } from 'react-router-dom';
 import * as Styled from './Header.styles';
 import SearchBox from '@/components/common/SearchBox/SearchBox';

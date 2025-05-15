@@ -1,4 +1,3 @@
-import React from 'react';
 import * as Styled from './IntroduceBox.styles';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm'; // 링크 및 마크다운 확장 지원

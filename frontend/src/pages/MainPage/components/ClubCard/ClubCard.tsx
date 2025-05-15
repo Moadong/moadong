@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import mixpanel from 'mixpanel-browser';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import ClubLogo from '@/components/ClubLogo/ClubLogo';

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import { useRef, useState } from 'react';
 import { useSearch } from '@/context/SearchContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './SearchBox.styles';
