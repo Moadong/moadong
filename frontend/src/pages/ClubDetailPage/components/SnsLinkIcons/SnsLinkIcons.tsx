@@ -1,33 +1,30 @@
 import React from 'react';
 import * as Styled from './SnsLinkIcons.styles';
 import { SNS_CONFIG } from '@/constants/snsConfig';
+import { SNSPlatform } from '@/types/club';
 
 interface SnsLinkIconsProps {
-  links: {
-    instagram?: string;
-    youtube?: string;
-    x?: string;
-  };
+  apiSocialLinks: Partial<Record<SNSPlatform, string>>;
 }
 
-const SnsLinkIcons = ({ links }: SnsLinkIconsProps) => {
+const SnsLinkIcons = ({ apiSocialLinks }: SnsLinkIconsProps) => {
   return (
     <Styled.SnsIconGroup>
-      {links.instagram && (
-        <Styled.SnsLink href={links.instagram} target='_blank' rel='noreferrer'>
-          <Styled.SnsIcon src={SNS_CONFIG.instagram.icon} alt='instagram' />
-        </Styled.SnsLink>
-      )}
-      {links.youtube && (
-        <Styled.SnsLink href={links.youtube} target='_blank' rel='noreferrer'>
-          <Styled.SnsIcon src={SNS_CONFIG.youtube.icon} alt='youtube' />
-        </Styled.SnsLink>
-      )}
-      {links.x && (
-        <Styled.SnsLink href={links.x} target='_blank' rel='noreferrer'>
-          <Styled.SnsIcon src={SNS_CONFIG.x.icon} alt='x' />
-        </Styled.SnsLink>
-      )}
+      {Object.entries(apiSocialLinks).map(([platform, url]) => {
+        if (!url) return null;
+
+        const config = SNS_CONFIG[platform as SNSPlatform];
+        return (
+          <Styled.SnsLink
+            key={platform}
+            href={url}
+            target='_blank'
+            rel='noreferrer'
+          >
+            <Styled.SnsIcon src={config.icon} alt={config.label} />
+          </Styled.SnsLink>
+        );
+      })}
     </Styled.SnsIconGroup>
   );
 };
