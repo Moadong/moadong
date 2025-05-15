@@ -9,7 +9,7 @@ export const InfoBoxWrapper = styled.div`
 
   @media (max-width: 500px) {
     flex-direction: column;
-    gap: 0px;
+    gap: 0;
     margin-top: 40px;
   }
 `;
