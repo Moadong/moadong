@@ -30,7 +30,7 @@ const ClubDetailPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useTrackPageView(`ClubDetailPage visited`, clubDetail?.name);
+  useTrackPageView(`ClubDetailPage`, clubDetail?.name);
 
   if (!clubDetail) {
     return null;
