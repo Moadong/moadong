@@ -4,7 +4,7 @@ import styled, { keyframes, css } from 'styled-components';
 export interface ButtonProps {
   width?: string;
   children: React.ReactNode;
-  onClick: () => void;
+  onClick?: () => void;
   animated?: boolean;
 }
 
