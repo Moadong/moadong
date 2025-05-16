@@ -4,6 +4,7 @@ module.exports = {
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {}],
+    '\\.(svg|png|jpg|jpeg|gif)$': 'jest-transform-stub',
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
