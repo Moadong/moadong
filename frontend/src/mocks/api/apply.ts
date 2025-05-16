@@ -1,6 +1,12 @@
 import { http, HttpResponse } from 'msw';
 import { mockData } from '../data/mockData';
 
+const validateClubId = (clubId: string | undefined) => {
+  if (!clubId) return false;
+  const numericClubId = parseInt(clubId, 10);
+  return !isNaN(numericClubId) && numericClubId > 0;
+};
+
 export const clubHandlers = [
   http.get('http://localhost/api/club/apply', () => {
     return HttpResponse.json(
@@ -11,8 +17,8 @@ export const clubHandlers = [
 
   http.get('http://localhost/api/club/:clubId/apply', ({ params }) => {
     const clubId = String(params.clubId);
-    const numericClubId = parseInt(clubId, 10);
-    if (isNaN(numericClubId) || numericClubId === 0) {
+
+    if (!validateClubId(clubId)) {
       return HttpResponse.json(
         { message: '유효하지 않은 클럽 ID입니다.' },
         { status: 400 },
@@ -21,7 +27,7 @@ export const clubHandlers = [
 
     return HttpResponse.json(
       {
-        clubId: numericClubId,
+        clubId: parseInt(clubId, 10),
         form_title: mockData.form_title,
         questions: mockData.questions,
       },
@@ -33,9 +39,8 @@ export const clubHandlers = [
     'http://localhost/api/club/:clubId/apply',
     async ({ params, request }) => {
       const clubId = String(params.clubId);
-      const numericClubId = parseInt(clubId, 10);
 
-      if (isNaN(numericClubId) || numericClubId === 0) {
+      if (!validateClubId(clubId)) {
         return HttpResponse.json(
           { message: '유효하지 않은 클럽 ID입니다.' },
           { status: 400 },
@@ -44,7 +49,7 @@ export const clubHandlers = [
 
       return HttpResponse.json(
         {
-          clubId: numericClubId,
+          clubId: parseInt(clubId, 10),
           message: '지원서가 성공적으로 제출되었습니다.',
           submittedAt: new Date().toISOString(),
         },
