@@ -25,6 +25,10 @@ export function initializeChannelService() {
 }
 
 export function initializeSentry() {
+  if (process.env.NODE_ENV === 'development') {
+    return;
+  }
+
   Sentry.init({
     dsn: process.env.SENTRY_DSN,
     sendDefaultPii: false,
