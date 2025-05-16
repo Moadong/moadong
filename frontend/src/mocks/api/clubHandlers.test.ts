@@ -1,11 +1,8 @@
 import { clubHandlers } from './apply';
 import { setupServer } from 'msw/node';
 import { Question } from '../data/mockData';
-import { API_BASE } from '../constants/api';
+import { createApiUrl } from '../utils/createApiUrl';
 
-const createApiUrl = (clubId: string | number, action: string = 'apply') => {
-  return clubId ? `${API_BASE}/${clubId}/${action}` : `${API_BASE}/${action}`;
-};
 interface ClubApplyResponse {
   clubId: number;
   form_title: string;
