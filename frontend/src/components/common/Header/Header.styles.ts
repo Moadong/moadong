@@ -136,3 +136,58 @@ export const MobileMenu = styled.button`
     object-fit: cover;
   }
 `;
+
+export const DrawerContainer = styled.div<{ isOpen: boolean }>`
+  position: fixed;
+  top: ${({ isOpen }) => (isOpen ? '0' : '-175px')};
+  height: 175px;
+  left: 0;
+  right: 0;
+  border-radius: 0px 0px 20px 20px;
+  background: #fff;
+  box-shadow: 0px 20px 30px 0px rgba(0, 0, 0, 0.25);
+  transition: top 0.2s ease-in-out;
+  z-index: 2;
+  padding: 20px;
+
+  visibility: ${({ isOpen }) => (isOpen ? 'visible' : 'hidden')};
+`;
+
+export const DrawerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 34.75px;
+`;
+
+export const DrawerHeader = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  gap: 150px;
+`;
+
+export const DrawerMainIcon = styled.img`
+  width: 158px;
+  height: 32.25px;
+  flex-shrink: 0;
+  cursor: pointer;
+`;
+
+export const DrawerDeleteIcon = styled.img`
+  width: 17px;
+  height: 17px;
+  flex-shrink: 0;
+`;
+
+export const MenubarIntroduceBox = styled.div`
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 36px;
+  border-radius: 52px;
+  background: rgba(255, 84, 20, 0.08);
+  cursor: pointer;
+`;

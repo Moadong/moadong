@@ -17,23 +17,33 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
   const [slideWidth, setSlideWidth] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(true);
+  const [isAnimating, setIsAnimating] = useState(false);
   const [isTransitioning, setIsTransitioning] = useState(false);
+  const [isReady, setIsReady] = useState(false);
 
   const banners = isMobile ? mobileBanners : desktopBanners;
   const extendedBanners = [banners[banners.length - 1], ...banners, banners[0]];
 
   const updateSlideWidth = useCallback(() => {
     if (slideRef.current) {
-      setSlideWidth(slideRef.current.offsetWidth);
-      slideRef.current.style.transform = `translateX(-${currentSlideIndex * slideRef.current.offsetWidth}px)`;
+      const width = slideRef.current.offsetWidth;
+      setSlideWidth(width);
+      if (width > 0) {
+        slideRef.current.style.transform = `translateX(-${currentSlideIndex * width}px)`;
+        if (!isReady) {
+          setIsReady(true);
+          setIsAnimating(true);
+        }
+      }
     }
-  }, [currentSlideIndex]);
+  }, [currentSlideIndex, isReady]);
 
   useEffect(() => {
     updateSlideWidth();
     const handleResize = debounce(() => {
       setIsMobile(window.innerWidth <= 500);
+      setIsReady(false);
+      setIsAnimating(false);
       updateSlideWidth();
     }, 200);
 
@@ -44,7 +54,7 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   }, [updateSlideWidth]);
 
   useEffect(() => {
-    if (!slideRef.current) return;
+    if (!slideRef.current || slideWidth === 0) return;
 
     if (isAnimating) {
       slideRef.current.style.transform = `translateX(-${currentSlideIndex * slideWidth}px)`;
@@ -77,27 +87,28 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   }, [currentSlideIndex, slideWidth, banners.length, isAnimating]);
 
   const moveToNextSlide = useCallback(() => {
-    if (isTransitioning) return;
+    if (isTransitioning || !isReady) return;
     setIsTransitioning(true);
     setIsAnimating(true);
     setCurrentSlideIndex((prev) => prev + 1);
-  }, [isTransitioning]);
+  }, [isTransitioning, isReady]);
 
   const moveToPrevSlide = useCallback(() => {
-    if (isTransitioning) return;
+    if (isTransitioning || !isReady) return;
     setIsTransitioning(true);
     setIsAnimating(true);
     setCurrentSlideIndex((prev) => prev - 1);
-  }, [isTransitioning]);
+  }, [isTransitioning, isReady]);
 
   useEffect(() => {
-    if (slideWidth === 0) return;
+    if (slideWidth === 0 || !isReady) return;
+
     const interval = setInterval(() => {
       moveToNextSlide();
     }, 3000);
 
     return () => clearInterval(interval);
-  }, [moveToNextSlide, slideWidth]);
+  }, [moveToNextSlide, slideWidth, isReady]);
 
   return (
     <Styled.BannerContainer>
@@ -110,7 +121,7 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
             <img src={SlideButton[1]} alt='Next Slide' />
           </Styled.SlideButton>
         </Styled.ButtonContainer>
-        <Styled.SlideWrapper ref={slideRef} isAnimating={isAnimating}>
+        <Styled.SlideWrapper ref={slideRef} $isAnimating={isAnimating}>
           {extendedBanners.map((banner, index) => (
             <Styled.BannerItem key={index}>
               <img src={banner.backgroundImage} alt={`banner-${index}`} />

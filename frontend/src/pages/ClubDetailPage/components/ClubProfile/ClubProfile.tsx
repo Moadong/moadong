@@ -21,17 +21,23 @@ const ClubProfile = ({
 }: ClubProfileProps) => {
   return (
     <Styled.ClubContainer>
-      <ClubLogo variant='detail' imageSrc={logo || defaultLogo} />
+      <ClubLogo $variant='detail' $imageSrc={logo || defaultLogo} />
       <Styled.ClubInfo>
         <Styled.ClubName>{name}</Styled.ClubName>
         <Styled.TagContainer>
-          <ClubTag type={division}>{division}</ClubTag>
-          <ClubTag type={category}>{category}</ClubTag>
-          {tags.map((tag) => (
-            <ClubTag key={tag} type='자유'>
-              {tag}
-            </ClubTag>
-          ))}
+          <ClubTag key={`division-${name}`} type={division}>
+            {division}
+          </ClubTag>
+          <ClubTag key={`category-${name}`} type={category}>
+            {category}
+          </ClubTag>
+          {tags
+            .filter((tag) => tag.trim())
+            .map((tag) => (
+              <ClubTag key={`tag-${name}-${tag}`} type='자유'>
+                {tag}
+              </ClubTag>
+            ))}
         </Styled.TagContainer>
       </Styled.ClubInfo>
     </Styled.ClubContainer>

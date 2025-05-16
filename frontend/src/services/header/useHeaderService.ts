@@ -20,6 +20,7 @@ const useHeaderService = () => {
   };
 
   const goIntroducePage = () => {
+    navigate('/introduce');
     trackEvent('Introduce Button Clicked');
   };
 

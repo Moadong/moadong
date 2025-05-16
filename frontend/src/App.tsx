@@ -6,10 +6,11 @@ import { AdminClubProvider } from '@/context/AdminClubContext';
 import GlobalStyles from '@/styles/Global.styles';
 import MainPage from '@/pages/MainPage/MainPage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
-import AdminPage from './pages/AdminPage/AdminPage';
+import AdminPage from '@/pages/AdminPage/AdminPage';
+import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
-import RecruitEditTab from './pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
-import AccountEditTab from './pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
+import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
+import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
@@ -41,6 +42,7 @@ const App = () => {
                 </Suspense>
               }
             />
+            <Route path='/introduce' element={<IntroducePage />} />
             <Route path='/admin/login' element={<LoginTab />} />
             <Route
               path='/admin/*'

@@ -14,6 +14,8 @@ interface CustomInputProps {
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLInputElement>) => void;
   onClear?: () => void;
+  isError?: boolean;
+  helperText?: string;
 }
 
 const InputField = ({
@@ -28,6 +30,8 @@ const InputField = ({
   value = '',
   onChange,
   onClear,
+  isError,
+  helperText,
 }: CustomInputProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -64,6 +68,7 @@ const InputField = ({
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
+          hasError={isError}
         />
         {showClearButton && !disabled && (
           <Styled.ClearButton type='button' onClick={clearInput}>
@@ -81,6 +86,9 @@ const InputField = ({
           </Styled.CharCount>
         )}
       </Styled.InputWrapper>
+      {isError && helperText && (
+        <Styled.HelperText>{helperText}</Styled.HelperText>
+      )}
     </Styled.InputContainer>
   );
 };
