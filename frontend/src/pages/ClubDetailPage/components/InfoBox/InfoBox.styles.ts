@@ -9,14 +9,14 @@ export const InfoBoxWrapper = styled.div`
 
   @media (max-width: 500px) {
     flex-direction: column;
-    gap: 0px;
+    gap: 0;
     margin-top: 40px;
   }
 `;
 
 export const InfoBox = styled.div`
   width: 573px;
-  height: 164px;
+  height: 197px;
   border-radius: 18px;
   border: 1px solid #dcdcdc;
   padding: 30px;
@@ -52,11 +52,15 @@ export const DescriptionWrapper = styled.div`
   align-items: center;
   gap: 50px;
   font-size: 14px;
+  @media (max-width: 500px) {
+    gap: 40px;
+  }
 `;
 
 export const LeftText = styled.p`
   color: #9d9d9d;
   white-space: nowrap;
+  width: 30px;
 `;
 
 export const RightText = styled.p`

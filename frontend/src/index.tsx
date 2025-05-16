@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import mixpanel from 'mixpanel-browser';
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
+import * as Sentry from '@sentry/react';
 
 if (process.env.REACT_APP_MIXPANEL_TOKEN) {
   mixpanel.init(process.env.REACT_APP_MIXPANEL_TOKEN, {
@@ -21,6 +22,13 @@ if (process.env.CHANNEL_PLUGIN_KEY) {
     pluginKey: process.env.CHANNEL_PLUGIN_KEY,
   });
 }
+
+Sentry.init({
+  dsn: process.env.SENTRY_DSN,
+  sendDefaultPii: false,
+  release: process.env.SENTRY_RELEASE,
+  tracesSampleRate: 0.1,
+});
 
 const root = ReactDOM.createRoot(
   document.getElementById('root') as HTMLElement,

@@ -36,6 +36,12 @@ export const Title = styled.h2`
   align-self: flex-start;
 `;
 
+export const LoginForm = styled.form`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+`;
+
 export const InputFieldsContainer = styled.div`
   width: 100%;
   display: flex;

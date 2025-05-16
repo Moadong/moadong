@@ -1,33 +1,33 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
 
-const useTrackPageView = (pageName: string) => {
+const useTrackPageView = (pageName: string, clubName?: string) => {
   const location = useLocation();
+  const isTracked = useRef(false);
+  const startTime = useRef(Date.now());
 
   useEffect(() => {
-    const startTime = Date.now();
-
-    // 페이지 방문 이벤트
     mixpanel.track(`${pageName} Visited`, {
       url: window.location.href,
-      timestamp: startTime,
+      timestamp: startTime.current,
       referrer: document.referrer || 'direct',
+      clubName,
     });
 
     const trackPageDuration = () => {
-      const duration = Date.now() - startTime;
+      if (isTracked.current) return;
+      const duration = Date.now() - startTime.current;
       mixpanel.track(`${pageName} Duration`, {
         url: window.location.href,
-        duration: duration, // milliseconds
-        duration_seconds: Math.round(duration / 1000), // Convert to seconds
+        duration: duration,
+        duration_seconds: Math.round(duration / 1000),
+        clubName,
       });
+      isTracked.current = true;
     };
 
-    // 사용자가 페이지를 떠날 때 (페이지 종료 또는 새 페이지 이동)
     window.addEventListener('beforeunload', trackPageDuration);
-
-    // 사용자가 탭을 변경하거나 백그라운드로 이동할 때
     document.addEventListener('visibilitychange', () => {
       if (document.hidden) {
         trackPageDuration();
@@ -35,10 +35,11 @@ const useTrackPageView = (pageName: string) => {
     });
 
     return () => {
+      trackPageDuration();
       window.removeEventListener('beforeunload', trackPageDuration);
       document.removeEventListener('visibilitychange', trackPageDuration);
     };
-  }, [location.pathname]);
+  }, [location.pathname, clubName]);
 };
 
 export default useTrackPageView;
