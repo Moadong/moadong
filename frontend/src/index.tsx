@@ -11,8 +11,18 @@ initializeMixpanel();
 initializeChannelService();
 initializeSentry();
 
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement,
-);
+async function startApp() {
+  if (process.env.NODE_ENV === 'development') {
+    const { worker } = await import('./mocks/browser');
+    await worker.start({
+      onUnhandledRequest: 'bypass',
+    });
+  }
 
-root.render(<App />);
+  const root = ReactDOM.createRoot(
+    document.getElementById('root') as HTMLElement,
+  );
+  root.render(<App />);
+}
+
+startApp();
