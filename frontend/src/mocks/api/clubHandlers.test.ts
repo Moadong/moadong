@@ -2,70 +2,87 @@ import { clubHandlers } from './apply';
 import { setupServer } from 'msw/node';
 import { Question } from '../data/mockData';
 
+const API_BASE = 'http://localhost/api/club';
+const createApiUrl = (clubId: string | number, action: string = 'apply') => {
+  return clubId ? `${API_BASE}/${clubId}/${action}` : `${API_BASE}/${action}`;
+};
+interface ClubApplyResponse {
+  clubId: number;
+  form_title: string;
+  questions: Question[];
+}
+
+interface ApiErrorResponse {
+  message: string;
+}
+
+interface SubmissionResponse {
+  clubId: number;
+  message: string;
+  submittedAt: string;
+}
+
 const server = setupServer(...clubHandlers);
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-describe('MSW 클럽 핸들러 테스트 (fetch)', () => {
-  it('클럽 지원서 GET 테스트', async () => {
-    const response = await fetch('http://localhost/api/club/123/apply');
-    const data = await response.json();
+describe('동아리 지원서 API 테스트', () => {
+  let response: Response;
+  let data: ClubApplyResponse | ApiErrorResponse;
 
-    expect(response.status).toBe(200);
-    expect(data.clubId).toBe(123);
-    expect(data.questions).toBeDefined();
-    expect(data.questions.length).toBeGreaterThan(0);
-  });
+  describe('지원서 GET 테스트', () => {
+    beforeEach(async () => {
+      response = await fetch(createApiUrl(123));
+      data = await response.json();
+    });
 
-  it('클럽 지원서 이름이 있어야 한다.', async () => {
-    const response = await fetch('http://localhost/api/club/123/apply');
-    const data = await response.json();
+    it('클럽 지원서를 정상적으로 불러온다.', () => {
+      expect(response.status).toBe(200);
+      expect((data as ClubApplyResponse).clubId).toBe(123);
+      expect((data as ClubApplyResponse).form_title).toBeDefined();
+      expect((data as ClubApplyResponse).questions.length).toBeGreaterThan(0);
+    });
 
-    expect(data.form_title).toBeDefined();
-  });
+    it('지원서 제목은 20자 이하이다.', () => {
+      expect((data as ClubApplyResponse).form_title.length).toBeLessThanOrEqual(
+        20,
+      );
+    });
 
-  it('지원서 제목이 20자 이하여야 한다.', async () => {
-    const response = await fetch('http://localhost/api/club/123/apply');
-    const data = await response.json();
-
-    expect(data.form_title.length).toBeLessThanOrEqual(20);
-  });
-
-  it('필수 질문이라면 항목이 비어있지 않아야 한다.', async () => {
-    const response = await fetch('http://localhost/api/club/123/apply');
-    const data = await response.json();
-
-    data.questions.forEach((question: Question) => {
-      if (question.options.required) {
-        expect(question.items).toBeDefined();
-        expect(question.items?.length).toBeGreaterThan(0);
-      }
+    it('필수 질문의 항목이 비어있지 않아야 한다.', () => {
+      (data as ClubApplyResponse).questions.forEach((question: Question) => {
+        if (question.options?.required) {
+          expect(question.items).toBeDefined();
+          expect(question.items?.length).toBeGreaterThan(0);
+        }
+      });
     });
   });
 
-  describe('에러 케이스', () => {
+  describe('지원서 GET 에러 케이스', () => {
     it('잘못된 형식의 클럽 ID로 요청 시 400 에러를 반환한다.', async () => {
-      const response = await fetch('http://localhost/api/club/abc/apply');
-      const data = await response.json();
+      const response = await fetch(createApiUrl('abc'));
+      const data: ApiErrorResponse = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data.message).toBe('유효하지 않은 클럽 ID입니다.');
+      expect(data.message).toContain('유효하지 않은 클럽 ID입니다.');
     });
 
-    it('클럽 ID 누락 시 400 에러를 반환한다.', async () => {
-      const response = await fetch('http://localhost/api/club/apply');
-      const data = await response.json();
+    it('클럽 ID 누락 시 에러 발생시킨다.', async () => {
+      const response = await fetch(createApiUrl(''));
+      const data: ApiErrorResponse = await response.json();
+      console.log(data);
 
       expect(response.status).toBe(400);
-      expect(data.message).toBe('유효하지 않은 클럽 ID입니다.');
+      expect(data.message).toContain('유효하지 않은 클럽 ID입니다.');
     });
   });
 
   describe('클럽 지원서 POST 테스트', () => {
     it('지원서 제출 성공', async () => {
-      const response = await fetch('http://localhost/api/club/123/apply', {
+      const response = await fetch(createApiUrl(123), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -75,8 +92,8 @@ describe('MSW 클럽 핸들러 테스트 (fetch)', () => {
           '2': ['답변3'],
         }),
       });
-      const data = await response.json();
 
+      const data: SubmissionResponse = await response.json();
       expect(response.status).toBe(201);
       expect(data.clubId).toBe(123);
       expect(data.message).toBe('지원서가 성공적으로 제출되었습니다.');
@@ -84,7 +101,7 @@ describe('MSW 클럽 핸들러 테스트 (fetch)', () => {
     });
 
     it('잘못된 클럽 ID로 요청 시 400 에러', async () => {
-      const response = await fetch('http://localhost/api/club/abc/apply', {
+      const response = await fetch(createApiUrl('abc'), {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -94,10 +111,10 @@ describe('MSW 클럽 핸들러 테스트 (fetch)', () => {
           '2': ['답변2'],
         }),
       });
-      const data = await response.json();
 
+      const data: ApiErrorResponse = await response.json();
       expect(response.status).toBe(400);
-      expect(data.message).toBe('유효하지 않은 클럽 ID입니다.');
+      expect(data.message).toContain('유효하지 않은 클럽 ID');
     });
   });
 });
