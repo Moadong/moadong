@@ -1,6 +1,6 @@
 package moadong.media.service;
 
-import static moadong.media.util.ClubImageUtil.containsKorean;
+import static moadong.media.util.ClubImageUtil.containsKoreanOrBlank;
 
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
@@ -22,7 +22,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service
+@Service("googleDrive")
 @RequiredArgsConstructor
 public class GoogleDriveClubImageService implements ClubImageService {
 
@@ -135,7 +135,7 @@ public class GoogleDriveClubImageService implements ClubImageService {
         // 메타데이터 생성
         File fileMetadata = new File();
         String fileName = file.getOriginalFilename();
-        if (containsKorean(fileName)) {
+        if (containsKoreanOrBlank(fileName)) {
             fileName = RandomStringUtil.generateRandomString(10);
         }
 

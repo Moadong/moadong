@@ -1,6 +1,6 @@
 package moadong.media.service;
 
-import static moadong.media.util.ClubImageUtil.containsKorean;
+import static moadong.media.util.ClubImageUtil.containsKoreanOrBlank;
 
 import com.google.cloud.storage.BlobId;
 import com.google.cloud.storage.BlobInfo;
@@ -16,7 +16,6 @@ import moadong.global.util.RandomStringUtil;
 import moadong.media.domain.FileType;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 //@Service
@@ -141,7 +140,7 @@ public class GcsClubImageService implements ClubImageService {
         String originalFileName = file.getOriginalFilename();
         String contentType = file.getContentType().split("/")[1];
 
-        if (containsKorean(originalFileName)) {
+        if (containsKoreanOrBlank(originalFileName)) {
             originalFileName = RandomStringUtil.generateRandomString(10) + "." + contentType;
         }
 
