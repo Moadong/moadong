@@ -31,7 +31,7 @@ export const clubHandlers = [
     );
   }),
 
-  http.post(`${API_BASE}/:clubId/apply`, async ({ params, request }) => {
+  http.post(`${API_BASE}/:clubId/apply`, async ({ params }) => {
     const clubId = String(params.clubId);
 
     if (!validateClubId(clubId)) {
