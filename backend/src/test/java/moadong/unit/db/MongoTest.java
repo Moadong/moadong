@@ -22,11 +22,12 @@ public class MongoTest extends MongoTestContainerSupport {
 
         assertNotNull(clubRepository);
 
-        Club club = new Club();
+        Club club = Club.builder().name("test").build();
         clubRepository.save(club);
         List<Club> all = clubRepository.findAll();
-        assertEquals( 1, all.size());
-        assertEquals( club.getId(), all.get(0).getId());
+        assertEquals(1, all.size());
+        assertEquals(club.getId(), all.get(0).getId());
+        assertEquals(club.getName(), all.get(0).getName());
     }
 }
 
