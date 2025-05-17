@@ -87,7 +87,7 @@ describe('동아리 지원서 API 테스트', () => {
     });
 
     it('잘못된 클럽 ID로 요청 시 400 에러', async () => {
-      const response = await fetch(createApiUrl('abc'), {
+      const response = await fetch(`${API_BASE}/invalid-id/apply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -100,7 +100,7 @@ describe('동아리 지원서 API 테스트', () => {
 
       const data: ApiErrorResponse = await response.json();
       expect(response.status).toBe(400);
-      expect(data.message).toContain('유효하지 않은 클럽 ID');
+      expect(data.message).toContain('유효하지 않은 클럽 ID입니다.');
     });
   });
 });
