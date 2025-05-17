@@ -1,23 +1,20 @@
-package moadong.media.service;
+package moadong.unit.media;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import com.google.api.services.drive.Drive;
-import java.lang.reflect.Method;
 import java.util.Optional;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
-import moadong.media.domain.FileType;
+import moadong.media.service.GoogleDriveClubImageService;
+import moadong.util.annotations.UnitTest;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -26,11 +23,11 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
+@UnitTest
 class GoogleDriveClubImageServiceLogoTest {
 
     @Spy
