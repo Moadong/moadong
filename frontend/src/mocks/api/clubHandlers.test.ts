@@ -17,7 +17,6 @@ interface ApiErrorResponse {
 interface SubmissionResponse {
   clubId: number;
   message: string;
-  submittedAt: string;
 }
 
 const server = setupServer(...clubHandlers);
