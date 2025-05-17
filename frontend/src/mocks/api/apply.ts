@@ -1,11 +1,10 @@
 import { http, HttpResponse } from 'msw';
 import { mockData } from '../data/mockData';
-import { API_BASE } from '../constants/api';
+import { API_BASE } from '../constants/clubApi';
 
-const validateClubId = (clubId: string | undefined) => {
+const validateClubId = (clubId: string) => {
   if (!clubId) return false;
-  const numericClubId = parseInt(clubId, 10);
-  return !isNaN(numericClubId) && numericClubId > 0;
+  return /^[0-9a-fA-F]{24}$/.test(clubId);
 };
 
 export const clubHandlers = [
@@ -28,7 +27,7 @@ export const clubHandlers = [
 
     return HttpResponse.json(
       {
-        clubId: parseInt(clubId, 10),
+        clubId,
         form_title: mockData.form_title,
         questions: mockData.questions,
       },
@@ -48,11 +47,10 @@ export const clubHandlers = [
 
     return HttpResponse.json(
       {
-        clubId: parseInt(clubId, 10),
+        clubId,
         message: '지원서가 성공적으로 제출되었습니다.',
-        submittedAt: new Date().toISOString(),
       },
-      { status: 201 },
+      { status: 200 },
     );
   }),
 ];
