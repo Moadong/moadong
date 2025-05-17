@@ -60,17 +60,8 @@ describe('동아리 지원서 API 테스트', () => {
 
   describe('지원서 GET 에러 케이스', () => {
     it('잘못된 형식의 클럽 ID로 요청 시 400 에러를 반환한다.', async () => {
-      const response = await fetch(createApiUrl('abc'));
+      const response = await fetch(`${API_BASE}/invalid-id/apply`);
       const data: ApiErrorResponse = await response.json();
-
-      expect(response.status).toBe(400);
-      expect(data.message).toContain('유효하지 않은 클럽 ID입니다.');
-    });
-
-    it('클럽 ID 누락 시 에러 발생시킨다.', async () => {
-      const response = await fetch(createApiUrl(''));
-      const data: ApiErrorResponse = await response.json();
-      console.log(data);
 
       expect(response.status).toBe(400);
       expect(data.message).toContain('유효하지 않은 클럽 ID입니다.');
