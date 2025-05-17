@@ -1,11 +1,7 @@
 import { http, HttpResponse } from 'msw';
 import { mockData } from '../data/mockData';
 import { API_BASE } from '../constants/clubApi';
-
-const validateClubId = (clubId: string) => {
-  if (!clubId) return false;
-  return /^[0-9a-fA-F]{24}$/.test(clubId);
-};
+import { validateClubId } from '../utils/validateClubId';
 
 export const clubHandlers = [
   http.get(`${API_BASE}/apply`, () => {
