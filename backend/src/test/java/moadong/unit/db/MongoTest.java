@@ -18,7 +18,7 @@ public class MongoTest extends MongoTestContainerSupport {
     private ClubRepository clubRepository;
 
     @Test
-    public void testMongoDBConnection() {
+    public void 몽디디비_연결_테스트() {
 
         assertNotNull(clubRepository);
 
@@ -29,3 +29,4 @@ public class MongoTest extends MongoTestContainerSupport {
         assertEquals( club.getId(), all.get(0).getId());
     }
 }
+
