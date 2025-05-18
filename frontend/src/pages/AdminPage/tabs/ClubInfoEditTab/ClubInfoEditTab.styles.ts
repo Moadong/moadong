@@ -10,7 +10,7 @@ export const InfoTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: bold;
   letter-spacing: 0;
-  margin-bottom: 46px;
+  margin-bottom: 30px;
 `;
 
 export const InfoGroup = styled.div`
