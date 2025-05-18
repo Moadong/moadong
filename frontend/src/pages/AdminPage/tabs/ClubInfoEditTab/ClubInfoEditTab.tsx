@@ -201,6 +201,7 @@ const ClubInfoEditTab = () => {
                 }}
                 isError={snsErrors[key] !== ''}
                 helperText={snsErrors[key]}
+                disabled={true}
               />
             </Styled.SNSRow>
           );
