@@ -183,29 +183,31 @@ const ClubInfoEditTab = () => {
         <MakeTags value={clubTags} onChange={setClubTags} />
       </Styled.TagEditGroup>
 
-      <Styled.InfoTitle>동아리 SNS 링크</Styled.InfoTitle>
-      <Styled.SNSInputGroup>
-        {Object.entries(SNS_CONFIG).map(([rawKey, { label, placeholder }]) => {
-          const key = rawKey as SNSPlatform;
+      {/*<Styled.InfoTitle>동아리 SNS 링크</Styled.InfoTitle>*/}
+      {/*<p>현재 준비 중인 기능입니다. 조금만 기다려 주세요!</p>*/}
+      {/*<Styled.SNSInputGroup>*/}
+      {/*  {Object.entries(SNS_CONFIG).map(([rawKey, { label, placeholder }]) => {*/}
+      {/*    const key = rawKey as SNSPlatform;*/}
 
-          return (
-            <Styled.SNSRow key={key}>
-              <Styled.SNSCheckboxLabel>{label}</Styled.SNSCheckboxLabel>
-              <InputField
-                placeholder={placeholder}
-                value={socialLinks[key]}
-                onChange={(e) => handleSocialLinkChange(key, e.target.value)}
-                onClear={() => {
-                  setSocialLinks((prev) => ({ ...prev, [key]: '' }));
-                  setSnsErrors((prev) => ({ ...prev, [key]: '' }));
-                }}
-                isError={snsErrors[key] !== ''}
-                helperText={snsErrors[key]}
-              />
-            </Styled.SNSRow>
-          );
-        })}
-      </Styled.SNSInputGroup>
+      {/*    return (*/}
+      {/*      <Styled.SNSRow key={key}>*/}
+      {/*        <Styled.SNSCheckboxLabel>{label}</Styled.SNSCheckboxLabel>*/}
+      {/*        <InputField*/}
+      {/*          placeholder={placeholder}*/}
+      {/*          value={socialLinks[key]}*/}
+      {/*          onChange={(e) => handleSocialLinkChange(key, e.target.value)}*/}
+      {/*          onClear={() => {*/}
+      {/*            setSocialLinks((prev) => ({ ...prev, [key]: '' }));*/}
+      {/*            setSnsErrors((prev) => ({ ...prev, [key]: '' }));*/}
+      {/*          }}*/}
+      {/*          isError={snsErrors[key] !== ''}*/}
+      {/*          helperText={snsErrors[key]}*/}
+      {/*          disabled={true}*/}
+      {/*        />*/}
+      {/*      </Styled.SNSRow>*/}
+      {/*    );*/}
+      {/*  })}*/}
+      {/*</Styled.SNSInputGroup>*/}
     </>
   );
 };
