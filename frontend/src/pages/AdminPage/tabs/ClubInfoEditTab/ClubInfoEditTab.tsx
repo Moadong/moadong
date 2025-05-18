@@ -184,6 +184,7 @@ const ClubInfoEditTab = () => {
       </Styled.TagEditGroup>
 
       <Styled.InfoTitle>동아리 SNS 링크</Styled.InfoTitle>
+      <p>현재 준비 중인 기능입니다. 조금만 기다려 주세요!</p>
       <Styled.SNSInputGroup>
         {Object.entries(SNS_CONFIG).map(([rawKey, { label, placeholder }]) => {
           const key = rawKey as SNSPlatform;
