@@ -7,7 +7,7 @@ import java.util.List;
 
 @Builder
 public record ClubApplicationResponse(
-        String form_title,
+        String title,
         List<ClubApplicationQuestion> questions
 ) {
 }

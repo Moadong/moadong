@@ -49,7 +49,7 @@ public class ClubApplyService {
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
         ClubApplicationResponse clubApplicationResponse = ClubApplicationResponse.builder()
-                .form_title(clubQuestion.getForm_title())
+                .title(clubQuestion.getTitle())
                 .questions(clubQuestion.getQuestions())
                 .build();
 
@@ -144,7 +144,7 @@ public class ClubApplyService {
                 .toList();
 
         clubQuestion.updateQuestions(newQuestions);
-        clubQuestion.updateFormTitle(request.form_title());
+        clubQuestion.updateFormTitle(request.title());
 
         return clubQuestion;
     }
@@ -171,7 +171,7 @@ public class ClubApplyService {
                 .toList();
 
         clubQuestion.updateQuestions(newQuestions);
-        clubQuestion.updateFormTitle(request.form_title());
+        clubQuestion.updateFormTitle(request.title());
 
         return clubQuestion;
     }

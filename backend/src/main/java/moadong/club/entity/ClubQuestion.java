@@ -26,7 +26,7 @@ public class ClubQuestion {
 
     @NotBlank
     @Builder.Default
-    private String form_title = "";
+    private String title = "";
 
     @Builder.Default
     private List<ClubApplicationQuestion> questions = new ArrayList<>();
@@ -38,7 +38,7 @@ public class ClubQuestion {
     private LocalDateTime editedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
     public void updateFormTitle(String title) {
-        this.form_title = title;
+        this.title = title;
     }
 
     public void updateQuestions(List<ClubApplicationQuestion> newQuestions) {
