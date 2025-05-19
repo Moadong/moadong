@@ -12,7 +12,7 @@ public record ClubApplyRequest(
 ) {
     public record Answer(
             @NotNull
-            int id,
+            Long id,
             @NotNull //빈칸 상관없음
             String value
     ) {
