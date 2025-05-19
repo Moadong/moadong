@@ -17,6 +17,7 @@ import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -123,25 +124,32 @@ public class ClubApplyService {
     }
 
     private ClubQuestion createQuestions(ClubQuestion clubQuestion, ClubApplicationCreateRequest request) {
-        List<ClubApplicationQuestion> newQuestions = request.questions().stream()
-                .map(question -> ClubApplicationQuestion.builder()
-                        .id(question.id())
-                        .title(question.title())
-                        .description(question.description())
-                        .type(question.type())
-                        .options(
-                                ClubQuestionOption.builder()
-                                        .required(question.options().required())
-                                        .build()
-                        )
-                        .items(question.items().stream()
-                                .map(item ->
-                                        ClubQuestionItem.builder()
-                                                .value(item.value())
-                                                .build())
-                                .toList())
-                        .build())
-                .toList();
+        List<ClubApplicationQuestion> newQuestions = new ArrayList<>();
+
+        for (var question : request.questions()) {
+            List<ClubQuestionItem> items = new ArrayList<>();
+
+            for (var item : question.items()) {
+                items.add(ClubQuestionItem.builder()
+                        .value(item.value())
+                        .build());
+            }
+
+            ClubQuestionOption options = ClubQuestionOption.builder()
+                    .required(question.options().required())
+                    .build();
+
+            ClubApplicationQuestion clubApplicationQuestion = ClubApplicationQuestion.builder()
+                    .id(question.id())
+                    .title(question.title())
+                    .description(question.description())
+                    .type(question.type())
+                    .options(options)
+                    .items(items)
+                    .build();
+
+            newQuestions.add(clubApplicationQuestion);
+        }
 
         clubQuestion.updateQuestions(newQuestions);
         clubQuestion.updateFormTitle(request.title());
@@ -150,25 +158,32 @@ public class ClubApplyService {
     }
 
     private ClubQuestion updateQuestions(ClubQuestion clubQuestion, ClubApplicationEditRequest request) {
-        List<ClubApplicationQuestion> newQuestions = request.questions().stream()
-                .map(question -> ClubApplicationQuestion.builder()
-                        .id(question.id())
-                        .title(question.title())
-                        .description(question.description())
-                        .type(question.type())
-                        .options(
-                                ClubQuestionOption.builder()
-                                        .required(question.options().required())
-                                        .build()
-                        )
-                        .items(question.items().stream()
-                                .map(item ->
-                                        ClubQuestionItem.builder()
-                                                .value(item.value())
-                                                .build())
-                                .toList())
-                        .build())
-                .toList();
+        List<ClubApplicationQuestion> newQuestions = new ArrayList<>();
+
+        for (var question : request.questions()) {
+            List<ClubQuestionItem> items = new ArrayList<>();
+
+            for (var item : question.items()) {
+                items.add(ClubQuestionItem.builder()
+                        .value(item.value())
+                        .build());
+            }
+
+            ClubQuestionOption options = ClubQuestionOption.builder()
+                    .required(question.options().required())
+                    .build();
+
+            ClubApplicationQuestion clubApplicationQuestion = ClubApplicationQuestion.builder()
+                    .id(question.id())
+                    .title(question.title())
+                    .description(question.description())
+                    .type(question.type())
+                    .options(options)
+                    .items(items)
+                    .build();
+
+            newQuestions.add(clubApplicationQuestion);
+        }
 
         clubQuestion.updateQuestions(newQuestions);
         clubQuestion.updateFormTitle(request.title());
