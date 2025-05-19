@@ -40,6 +40,7 @@ public class ClubApplyService {
     public void editClubApplication(String clubId, CustomUserDetails user, ClubApplicationEditRequest request) {
         ClubQuestion clubQuestion = getOrCreateClubQuestion(clubId, user);
 
+        clubQuestion.updateEditedAt();
         clubQuestionRepository.save(updateQuestions(clubQuestion, request));
     }
 
@@ -109,7 +110,7 @@ public class ClubApplyService {
     private void validateAnswerLength(String value, ClubApplicationQuestionType type) {
         switch (type) {
             case SHORT_TEXT -> {
-                if (value.length() > 20) {
+                if (value.length() > 50) {
                     throw new RestApiException(ErrorCode.SHORT_EXCEED_LENGTH);
                 }
             }
