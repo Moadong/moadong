@@ -110,7 +110,7 @@ public class ClubApplyService {
     private void validateAnswerLength(String value, ClubApplicationQuestionType type) {
         switch (type) {
             case SHORT_TEXT -> {
-                if (value.length() > 50) {
+                if (value.length() > 30) {
                     throw new RestApiException(ErrorCode.SHORT_EXCEED_LENGTH);
                 }
             }
