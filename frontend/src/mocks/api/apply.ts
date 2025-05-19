@@ -44,7 +44,26 @@ export const clubHandlers = [
     return HttpResponse.json(
       {
         clubId,
-        message: '지원서가 성공적으로 제출되었습니다.',
+        message: '지원서가 성공적으로 제작되었습니다.',
+      },
+      { status: 200 },
+    );
+  }),
+
+  http.put(`${API_BASE}/:clubId/apply`, async ({ params }) => {
+    const clubId = String(params.clubId);
+
+    if (!validateClubId(clubId)) {
+      return HttpResponse.json(
+        { message: '유효하지 않은 클럽 ID입니다.' },
+        { status: 400 },
+      );
+    }
+
+    return HttpResponse.json(
+      {
+        clubId,
+        message: '지원서가 성공적으로 수정되었습니다.',
       },
       { status: 200 },
     );
