@@ -25,6 +25,20 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
+const submitApplication = async (
+  clubId: string,
+  answers: Record<number, string[]>,
+) => {
+  const response = await fetch(createApiUrl(clubId), {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(answers),
+  });
+  return response;
+};
+
 describe('동아리 지원서 API 테스트', () => {
   let response: Response;
   let data: ClubApplyResponse | ApiErrorResponse;
@@ -68,17 +82,65 @@ describe('동아리 지원서 API 테스트', () => {
   });
 
   describe('클럽 지원서 POST 테스트', () => {
-    it('지원서 제출 성공', async () => {
-      const response = await fetch(createApiUrl(CLUB_ID), {
+    it('지원서 제작 성공', async () => {
+      const answers = {
+        '1': ['답변1', '답변2'],
+        '2': ['답변3'],
+      };
+
+      const response = await submitApplication(CLUB_ID, answers);
+      const data: SubmissionResponse = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.message).toBe('지원서가 성공적으로 제작되었습니다.');
+    });
+
+    it('객관식 질문 답변 제출 성공', async () => {
+      const answers = {
+        1: ['선택 1번입니다'],
+        99: ['선택 1번입니다', '선택 2번입니다'],
+      };
+
+      const response = await submitApplication(CLUB_ID, answers);
+      const data: SubmissionResponse = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.message).toBe('지원서가 성공적으로 제작되었습니다.');
+    });
+
+    it('주관식 질문 답변 제출 성공', async () => {
+      const answers = {
+        101: ['주관식 단답형 답변입니다'],
+        103: ['주관식 서술형 답변입니다. 자세한 내용을 작성합니다.'],
+        104: ['test@example.com'],
+        105: ['010-1234-5678'],
+        106: ['홍길동'],
+      };
+
+      const response = await submitApplication(CLUB_ID, answers);
+      const data: SubmissionResponse = await response.json();
+
+      expect(response.status).toBe(200);
+      expect(data.message).toBe('지원서가 성공적으로 제작되었습니다.');
+    });
+
+    it('잘못된 클럽 ID로 요청 시 400 에러', async () => {
+      const response = await fetch(`${API_BASE}/invalid-id/apply`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          '1': ['답변1', '답변2'],
-          '2': ['답변3'],
+          '1': ['답변1'],
+          '2': ['답변2'],
         }),
       });
+
+      const data: ApiErrorResponse = await response.json();
+      expect(response.status).toBe(400);
+      expect(data.message).toContain('유효하지 않은 클럽 ID입니다.');
+    });
+  });
 
       const data: SubmissionResponse = await response.json();
       expect(response.status).toBe(200);
