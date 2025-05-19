@@ -2,19 +2,26 @@ package moadong.club.service;
 
 import lombok.AllArgsConstructor;
 import moadong.club.entity.*;
+import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.payload.request.ClubApplicationCreateRequest;
 import moadong.club.payload.request.ClubApplicationEditRequest;
 import moadong.club.payload.request.ClubApplyRequest;
+import moadong.club.payload.response.ClubApplicationResponse;
 import moadong.club.repository.ClubApplicationRepository;
 import moadong.club.repository.ClubQuestionRepository;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.global.payload.Response;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
@@ -25,13 +32,13 @@ public class ClubApplyService {
     private final ClubApplicationRepository clubApplicationRepository;
 
     public void createClubApplication(String clubId, CustomUserDetails user, ClubApplicationCreateRequest request) {
-        ClubQuestion clubQuestion = validateClubApplicationRequest(clubId, user);
+        ClubQuestion clubQuestion = getOrCreateClubQuestion(clubId, user);
 
         clubQuestionRepository.save(createQuestions(clubQuestion, request));
     }
 
     public void editClubApplication(String clubId, CustomUserDetails user, ClubApplicationEditRequest request) {
-        ClubQuestion clubQuestion = validateClubApplicationRequest(clubId, user);
+        ClubQuestion clubQuestion = getOrCreateClubQuestion(clubId, user);
 
         clubQuestionRepository.save(updateQuestions(clubQuestion, request));
     }
@@ -40,14 +47,20 @@ public class ClubApplyService {
         ClubQuestion clubQuestion = clubQuestionRepository.findByClubId(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        return ResponseEntity.ok(clubQuestion);
+        ClubApplicationResponse clubApplicationResponse = ClubApplicationResponse.builder()
+                .form_title(clubQuestion.getForm_title())
+                .questions(clubQuestion.getQuestions())
+                .build();
+
+        return Response.ok(clubApplicationResponse);
     }
 
-    public ResponseEntity<?> applyToClub(String clubId, ClubApplyRequest request) {
+    public void applyToClub(String clubId, ClubApplyRequest request) {
         ClubQuestion clubQuestion = clubQuestionRepository.findByClubId(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        //질문자의 응답에대해 따로 검증 진행하지 않음, 프론트에서 제한하는것만으로도 충분하다 생각
+        validateAnswers(request.questions(), clubQuestion);
+
         List<ClubQuestionAnswer> answers = request.questions()
                 .stream().map(answer -> ClubQuestionAnswer.builder()
                         .id(answer.id())
@@ -57,15 +70,58 @@ public class ClubApplyService {
 
         ClubApplication application = ClubApplication.builder()
                 .questionId(clubQuestion.getClubId())
-                .answers(answers).build();
+                .answers(answers)
+                .build();
 
         clubApplicationRepository.save(application);
+    }
 
-        return ResponseEntity.ok("success apply");
+    private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubQuestion clubQuestion) {
+        // 미리 질문과 응답 id 만들어두기
+        Map<Long, ClubApplicationQuestion> questionMap = clubQuestion.getQuestions().stream()
+                .collect(Collectors.toMap(ClubApplicationQuestion::getId, Function.identity()));
+
+        Set<Long> answerIds = answers.stream()
+                .map(ClubApplyRequest.Answer::id)
+                .collect(Collectors.toSet());
+
+        // 필수 질문이 누락되었는지 검증
+        for (ClubApplicationQuestion question : clubQuestion.getQuestions()) {
+            if (question.getOptions().getRequired() && !answerIds.contains(question.getId())) {
+                throw new RestApiException(ErrorCode.REQUIRED_QUESTION_MISSING);
+            }
+        }
+
+        // 답변 유효성 검증
+        for (ClubApplyRequest.Answer answer : answers) {
+            ClubApplicationQuestion question = questionMap.get(answer.id());
+
+            // 질문이 없을 경우 예외 처리
+            if (question == null) {
+                throw new RestApiException(ErrorCode.QUESTION_NOT_FOUND);
+            }
+
+            validateAnswerLength(answer.value(), question.getType());
+        }
+    }
+
+
+    private void validateAnswerLength(String value, ClubApplicationQuestionType type) {
+        switch (type) {
+            case SHORT_TEXT -> {
+                if (value.length() > 20) {
+                    throw new RestApiException(ErrorCode.SHORT_EXCEED_LENGTH);
+                }
+            }
+            case LONG_TEXT -> {
+                if (value.length() > 500) {
+                    throw new RestApiException(ErrorCode.LONG_EXCEED_LENGTH);
+                }
+            }
+        }
     }
 
     private ClubQuestion createQuestions(ClubQuestion clubQuestion, ClubApplicationCreateRequest request) {
-        //지금은 지원서 하나만
         List<ClubApplicationQuestion> newQuestions = request.questions().stream()
                 .map(question -> ClubApplicationQuestion.builder()
                         .id(question.id())
@@ -87,13 +143,12 @@ public class ClubApplyService {
                 .toList();
 
         clubQuestion.updateQuestions(newQuestions);
-        clubQuestion.updateFormTitle(request.title());
+        clubQuestion.updateFormTitle(request.form_title());
 
         return clubQuestion;
     }
 
     private ClubQuestion updateQuestions(ClubQuestion clubQuestion, ClubApplicationEditRequest request) {
-        //지금은 지원서 하나만
         List<ClubApplicationQuestion> newQuestions = request.questions().stream()
                 .map(question -> ClubApplicationQuestion.builder()
                         .id(question.id())
@@ -115,20 +170,20 @@ public class ClubApplyService {
                 .toList();
 
         clubQuestion.updateQuestions(newQuestions);
-        clubQuestion.updateFormTitle(request.title());
+        clubQuestion.updateFormTitle(request.form_title());
 
         return clubQuestion;
     }
 
-    private ClubQuestion validateClubApplicationRequest(String clubId, CustomUserDetails user){
+    private ClubQuestion getOrCreateClubQuestion(String clubId, CustomUserDetails user) {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-        if (!user.getId().equals(club.getUserId())){
+        if (!user.getId().equals(club.getUserId())) {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
 
         return clubQuestionRepository.findByClubId(club.getId())
-                        .orElseGet(() -> ClubQuestion.builder()
+                .orElseGet(() -> ClubQuestion.builder()
                         .clubId(club.getId())
                         .build());
     }
