@@ -9,7 +9,7 @@ import lombok.Getter;
 @Builder(toBuilder = true)
 public class ClubQuestionAnswer {
 
-    private int id;
+    private Long id;
 
     private String value;
 
