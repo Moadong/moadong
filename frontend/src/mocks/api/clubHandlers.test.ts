@@ -142,20 +142,43 @@ describe('동아리 지원서 API 테스트', () => {
     });
   });
 
+  describe('클럽 지원서 PUT 테스트', () => {
+    const updateApplication = async (
+      clubId: string,
+      answers: Record<string, string[]>,
+    ) => {
+      const response = await fetch(createApiUrl(clubId), {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(answers),
+      });
+      return response;
+    };
+
+    it('지원서 수정 성공', async () => {
+      const answers = {
+        '1': ['수정된 답변1', '수정된 답변2'],
+        '2': ['수정된 답변3'],
+      };
+
+      const response = await updateApplication(CLUB_ID, answers);
       const data: SubmissionResponse = await response.json();
+
       expect(response.status).toBe(200);
-      expect(data.message).toBe('지원서가 성공적으로 제출되었습니다.');
+      expect(data.message).toBe('지원서가 성공적으로 수정되었습니다.');
     });
 
-    it('잘못된 클럽 ID로 요청 시 400 에러', async () => {
+    it('잘못된 클럽 ID로 수정 요청 시 400 에러', async () => {
       const response = await fetch(`${API_BASE}/invalid-id/apply`, {
-        method: 'POST',
+        method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
-          '1': ['답변1'],
-          '2': ['답변2'],
+          '1': ['수정된 답변1'],
+          '2': ['수정된 답변2'],
         }),
       });
 
