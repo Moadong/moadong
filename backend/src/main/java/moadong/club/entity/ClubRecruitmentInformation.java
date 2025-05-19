@@ -80,11 +80,17 @@ public class ClubRecruitmentInformation {
 
     public ZonedDateTime getRecruitmentStart() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        if (recruitmentStart == null) {
+            return null;
+        }
         return recruitmentStart.atZone(seoulZone);
     }
 
     public ZonedDateTime getRecruitmentEnd() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        if (recruitmentEnd == null) {
+            return null;
+        }
         return recruitmentEnd.atZone(seoulZone);
     }
 
