@@ -7,7 +7,6 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ClubApplicationQuestionType;
-import moadong.club.payload.request.ClubApplicationRequest;
 
 import java.util.List;
 
@@ -30,9 +29,9 @@ public class ClubApplicationQuestion {
     private ClubApplicationQuestionType type;
 
     @NotNull
-    private ClubApplicationRequest.Options options;
+    private ClubQuestionOption options;
 
     @NotNull
-    private List<ClubApplicationRequest.QuestionItem> items;
+    private List<ClubQuestionItem> items;
 
 }
