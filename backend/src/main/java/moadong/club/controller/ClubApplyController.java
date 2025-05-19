@@ -53,7 +53,7 @@ public class ClubApplyController {
     }
 
     @PostMapping("/apply")
-    @Operation(summary = "클럽 저원", description = "클럽에 지원합니다")
+    @Operation(summary = "클럽 지원", description = "클럽에 지원합니다")
     public ResponseEntity<?>  applyToClub(@PathVariable String clubId,
                                           @RequestBody @Validated ClubApplyRequest request) {
         clubApplyService.applyToClub(clubId, request);
