@@ -1,6 +1,6 @@
 package moadong.media.service;
 
-import static moadong.media.util.ClubImageUtil.containsKoreanOrBlank;
+import static moadong.media.util.ClubImageUtil.containsInvalidChars;
 
 import com.google.api.client.http.FileContent;
 import com.google.api.services.drive.Drive;
@@ -135,7 +135,7 @@ public class GoogleDriveClubImageService implements ClubImageService {
         // 메타데이터 생성
         File fileMetadata = new File();
         String fileName = file.getOriginalFilename();
-        if (containsKoreanOrBlank(fileName)) {
+        if (containsInvalidChars(fileName)) {
             fileName = RandomStringUtil.generateRandomString(10);
         }
 

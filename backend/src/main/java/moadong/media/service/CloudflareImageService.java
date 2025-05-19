@@ -1,6 +1,8 @@
 package moadong.media.service;
 
-import static moadong.media.util.ClubImageUtil.containsKoreanOrBlank;
+import static moadong.media.util.ClubImageUtil.containsInvalidChars;
+import static moadong.media.util.ClubImageUtil.isImageExtension;
+import static moadong.media.util.ClubImageUtil.resizeImage;
 
 import java.io.IOException;
 import java.util.List;
@@ -36,6 +38,8 @@ public class CloudflareImageService implements ClubImageService{
     private String bucketName;
     @Value("${cloud.aws.s3.view-endpoint}")
     private String viewEndpoint;
+    @Value("${server.image.max-size}")
+    private long MAX_SIZE;
 
     @Override
     public String uploadLogo(String clubId, MultipartFile file) {
@@ -123,8 +127,19 @@ public class CloudflareImageService implements ClubImageService{
 
         // 파일명 처리
         String fileName = file.getOriginalFilename();
-        if (containsKoreanOrBlank(fileName)) {
+
+        if (!isImageExtension(fileName)) {
+            throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
+        }
+        if (containsInvalidChars(fileName)) {
             fileName = RandomStringUtil.generateRandomString(10);
+        }
+        if (file.getSize() > MAX_SIZE) {
+            try {
+                file = resizeImage(file, MAX_SIZE);
+            } catch (IOException e) {
+                throw new RestApiException(ErrorCode.FILE_TRANSFER_ERROR);
+            }
         }
 
         // S3에 저장할 key 경로 생성
@@ -153,4 +168,5 @@ public class CloudflareImageService implements ClubImageService{
         // 공유 가능한 공개 URL 반환
         return viewEndpoint + "/" + key;
     }
+
 }

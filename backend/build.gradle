@@ -57,6 +57,11 @@ dependencies {
 	implementation platform('software.amazon.awssdk:bom:2.25.8') // 최신 BOM 관리
 	implementation 'software.amazon.awssdk:s3'
 	implementation 'software.amazon.awssdk:auth'
+
+	// resize tool
+	implementation 'net.coobird:thumbnailator:0.4.14'
+	implementation 'org.springframework:spring-test'
+
 }
 
 //전체 테스트
