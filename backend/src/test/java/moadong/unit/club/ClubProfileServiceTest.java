@@ -1,13 +1,19 @@
 package moadong.unit.club;
 
+import static moadong.fixture.UserFixture.createUserDetails;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 import moadong.club.entity.Club;
 import moadong.club.payload.request.ClubCreateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
-import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.repository.ClubRepository;
 import moadong.club.service.ClubProfileService;
-import moadong.club.service.RecruitmentScheduler;
-import moadong.fixture.ClubFixture;
 import moadong.fixture.ClubRequestFixture;
 import moadong.global.exception.RestApiException;
 import moadong.user.payload.CustomUserDetails;
@@ -16,24 +22,13 @@ import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 
-import java.time.Instant;
-import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
-import java.util.Optional;
-
-import static moadong.fixture.UserFixture.createUserDetails;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
-
 @UnitTest
 public class ClubProfileServiceTest {
+
     private final String clubId = "club_123";
     private final String userId = "user_456";
     @Mock
     private ClubRepository clubRepository;
-    @Mock
-    private RecruitmentScheduler recruitmentScheduler;
     @InjectMocks
     private ClubProfileService clubProfileService;
 
@@ -49,6 +44,7 @@ public class ClubProfileServiceTest {
         // Then
         verify(clubRepository, times(1)).save(any(Club.class));
     }
+
     @Test
     void 정상적으로_클럽_약력을_업데이트한다() {
         // Given
@@ -71,7 +67,8 @@ public class ClubProfileServiceTest {
     void 클럽이_없을_땐_클럽_약력_업데이트가_실패한다() {
         when(clubRepository.findById(any())).thenReturn(Optional.empty());
         assertThrows(RestApiException.class,
-                () -> clubProfileService.updateClubInfo(ClubRequestFixture.createValidClubInfoRequest(), createUserDetails(userId)));
+            () -> clubProfileService.updateClubInfo(ClubRequestFixture.createValidClubInfoRequest(),
+                createUserDetails(userId)));
     }
 
     @Test
@@ -81,9 +78,9 @@ public class ClubProfileServiceTest {
         when(mockClub.getUserId()).thenReturn("different_user");
 
         assertThrows(RestApiException.class,
-                () -> clubProfileService.updateClubInfo(ClubRequestFixture.createValidClubInfoRequest(), createUserDetails(userId)));
+            () -> clubProfileService.updateClubInfo(ClubRequestFixture.createValidClubInfoRequest(),
+                createUserDetails(userId)));
     }
-
 
 //    ToDo: 시간 계산법을 LocalDateTime에서 Instant로 변경 후에 활성화할 것
 //    @Test
