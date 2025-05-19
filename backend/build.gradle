@@ -54,7 +54,7 @@ dependencies {
 	implementation 'com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0'
 
 	// S3
-	implementation platform('software.amazon.awssdk:bom:2.25.8') // 최신 BOM 관리
+	implementation platform('software.amazon.awssdk:bom:2.25.8')
 	implementation 'software.amazon.awssdk:s3'
 	implementation 'software.amazon.awssdk:auth'
 
