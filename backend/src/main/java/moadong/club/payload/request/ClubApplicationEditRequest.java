@@ -9,6 +9,7 @@ import java.util.List;
 
 public record ClubApplicationEditRequest(
         @NotBlank
+        @Size(max = 20)
         String form_title,
 
         @NotNull

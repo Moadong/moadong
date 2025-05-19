@@ -12,7 +12,7 @@ public record ClubApplyQuestion(
         @NotNull
         Long id,
         @NotBlank
-        @Size(max = 10)
+        @Size(max = 20)
         String title,
         @NotNull //빈칸 허용
         String description,
