@@ -46,4 +46,8 @@ public class ClubQuestion {
         this.questions.addAll(newQuestions);
     }
 
+    public void updateEditedAt() {
+       this.editedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+    }
+
 }
