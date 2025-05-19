@@ -4,7 +4,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import moadong.club.payload.request.ClubApplicationRequest;
+import moadong.club.payload.request.ClubApplicationCreateRequest;
+import moadong.club.payload.request.ClubApplicationEditRequest;
 import moadong.club.payload.request.ClubApplyRequest;
 import moadong.club.service.ClubApplyService;
 import moadong.global.payload.Response;
@@ -29,7 +30,7 @@ public class ClubApplyController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> createClubApplication(@PathVariable String clubId,
                                                @CurrentUser CustomUserDetails user,
-                                               @RequestBody @Validated ClubApplicationRequest request) {
+                                               @RequestBody @Validated ClubApplicationCreateRequest request) {
         clubApplyService.createClubApplication(clubId, user, request);
         return Response.ok("success create application");
     }
@@ -40,7 +41,7 @@ public class ClubApplyController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> editClubApplication(@PathVariable String clubId,
                                              @CurrentUser CustomUserDetails user,
-                                             @RequestBody @Validated ClubApplicationRequest request) {
+                                             @RequestBody @Validated ClubApplicationEditRequest request) {
         clubApplyService.editClubApplication(clubId, user, request);
         return Response.ok("success edit application");
     }
@@ -55,7 +56,8 @@ public class ClubApplyController {
     @Operation(summary = "클럽 저원", description = "클럽에 지원합니다")
     public ResponseEntity<?>  applyToClub(@PathVariable String clubId,
                                           @RequestBody @Validated ClubApplyRequest request) {
-        return clubApplyService.applyToClub(clubId, request);
+        clubApplyService.applyToClub(clubId, request);
+        return Response.ok("success apply");
     }
 
 }
