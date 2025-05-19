@@ -34,7 +34,6 @@ public class ClubImageUtil {
 
         while (true) {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
-
             Thumbnails.of(file.getInputStream())
                     .size(maxDim, maxDim)
                     .outputQuality(quality)
@@ -43,14 +42,11 @@ public class ClubImageUtil {
 
             result = baos.toByteArray();
 
-
             if (result.length <= maxSizeBytes || (quality <= 0.3 && maxDim <= 800)) {
                 break;
             }
-
             quality -= 0.1;
             maxDim -= 200;
-
             file = new MockMultipartFile(file.getName(), file.getOriginalFilename(),
                     file.getContentType(), new ByteArrayInputStream(file.getBytes()));
         }
