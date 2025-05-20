@@ -1,17 +1,13 @@
 name: Run tests and upload coverage
-
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
+  push:
     branches:
-      - '*'
-  workflow_dispatch: 
-
+      - 'main'
+      - 'develop-fe'
 jobs:
   test:
     name: Run tests and collect coverage
     runs-on: ubuntu-latest
-    if: github.event.pull_request.base.ref == 'develop-fe'
     steps:
       - name: Checkout
         uses: actions/checkout@v4
