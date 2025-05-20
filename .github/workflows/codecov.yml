@@ -37,3 +37,5 @@ jobs:
           flags: unittests
           name: codecov-coverage
           fail_ci_if_error: true
+          notify:
+            require_ci_to_pass: no
