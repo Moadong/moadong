@@ -4,6 +4,8 @@ import { Question } from '../data/mockData';
 import { createApiUrl } from '../utils/createApiUrl';
 import { API_BASE, CLUB_ID } from '../constants/clubApi';
 import { ERROR_MESSAGE } from '../constants/error';
+import { submitApplication, updateApplication } from './utils/request';
+
 interface ClubApplyResponse {
   clubId: string;
   form_title: string;
@@ -24,31 +26,6 @@ const server = setupServer(...clubHandlers);
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
-
-const sendApiRequest = async (
-  clubId: string,
-  answers: Record<number, string[]>,
-  method: 'POST' | 'PUT',
-) => {
-  const response = await fetch(createApiUrl(clubId), {
-    method,
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(answers),
-  });
-  return response;
-};
-
-const submitApplication = (
-  clubId: string,
-  answers: Record<number | string, string[]>,
-) => sendApiRequest(clubId, answers, 'POST');
-
-const updateApplication = (
-  clubId: string,
-  answers: Record<number | string, string[]>,
-) => sendApiRequest(clubId, answers, 'PUT');
 
 describe('동아리 지원서 API 테스트', () => {
   describe('지원서 GET 테스트', () => {
