@@ -4,6 +4,10 @@ on:
     branches:
       - 'main'
       - 'develop-fe'
+  pull_request:
+    branches:
+      - 'develop-fe'
+    
 jobs:
   test:
     name: Run tests and collect coverage
@@ -36,3 +40,5 @@ jobs:
           name: codecov-coverage
           fail_ci_if_error: false
           verbose: true
+          comment:
+            require_changes: false
