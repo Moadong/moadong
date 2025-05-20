@@ -21,12 +21,12 @@ export interface Question {
 }
 
 export interface FormData {
-  form_title: string;
+  title: string;
   questions: Question[];
 }
 
 export const mockData: FormData = {
-  form_title: '2025_2_지원서',
+  title: '2025_2_지원서',
   questions: [
     {
       id: 12,
