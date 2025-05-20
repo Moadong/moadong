@@ -40,9 +40,6 @@ const sendApiRequest = async (
   return response;
 };
 
-describe('동아리 지원서 API 테스트', () => {
-  let response: Response;
-  let data: ClubApplyResponse | ApiErrorResponse;
 const submitApplication = (
   clubId: string,
   answers: Record<number | string, string[]>,
@@ -53,7 +50,11 @@ const updateApplication = (
   answers: Record<number | string, string[]>,
 ) => sendApiRequest(clubId, answers, 'PUT');
 
+describe('동아리 지원서 API 테스트', () => {
   describe('지원서 GET 테스트', () => {
+    let response: Response;
+    let data: ClubApplyResponse | ApiErrorResponse;
+
     beforeEach(async () => {
       response = await fetch(createApiUrl(CLUB_ID));
       data = await response.json();
