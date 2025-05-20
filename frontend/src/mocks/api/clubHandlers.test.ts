@@ -25,12 +25,13 @@ beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
 afterAll(() => server.close());
 
-const submitApplication = async (
+const sendApiRequest = async (
   clubId: string,
   answers: Record<number, string[]>,
+  method: 'POST' | 'PUT',
 ) => {
   const response = await fetch(createApiUrl(clubId), {
-    method: 'POST',
+    method,
     headers: {
       'Content-Type': 'application/json',
     },
@@ -42,6 +43,15 @@ const submitApplication = async (
 describe('동아리 지원서 API 테스트', () => {
   let response: Response;
   let data: ClubApplyResponse | ApiErrorResponse;
+const submitApplication = (
+  clubId: string,
+  answers: Record<number | string, string[]>,
+) => sendApiRequest(clubId, answers, 'POST');
+
+const updateApplication = (
+  clubId: string,
+  answers: Record<number | string, string[]>,
+) => sendApiRequest(clubId, answers, 'PUT');
 
   describe('지원서 GET 테스트', () => {
     beforeEach(async () => {
@@ -143,20 +153,6 @@ describe('동아리 지원서 API 테스트', () => {
   });
 
   describe('클럽 지원서 PUT 테스트', () => {
-    const updateApplication = async (
-      clubId: string,
-      answers: Record<string, string[]>,
-    ) => {
-      const response = await fetch(createApiUrl(clubId), {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(answers),
-      });
-      return response;
-    };
-
     it('지원서 수정 성공', async () => {
       const answers = {
         '1': ['수정된 답변1', '수정된 답변2'],
