@@ -1,10 +1,4 @@
-codecov:
-  require_ci_to_pass: yes
-
 comment:
-  layout: "reach,diff,flags,files,footer"
-  behavior: default
+  layout: "diff, flags, files"  # PR 리포트에 diff, flags, files 섹션 포함
   require_changes: false
-  branches:
-    - develop-fe
-    - main
+  require_base: false
