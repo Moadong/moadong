@@ -27,7 +27,7 @@ jobs:
 
       - name: Run tests
         working-directory: frontend
-        run: npx jest --coverage
+        run: npx jest --coverage --config jest.config.js
 
       - name: Upload results to Codecov
         uses: codecov/codecov-action@v5
