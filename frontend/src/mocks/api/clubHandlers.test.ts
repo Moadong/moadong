@@ -3,7 +3,7 @@ import { setupServer } from 'msw/node';
 import { Question } from '../data/mockData';
 import { createApiUrl } from '../utils/createApiUrl';
 import { API_BASE, CLUB_ID } from '../constants/clubApi';
-
+import { ERROR_MESSAGE } from '../constants/error';
 interface ClubApplyResponse {
   clubId: string;
   form_title: string;
@@ -88,7 +88,7 @@ describe('동아리 지원서 API 테스트', () => {
       const data: ApiErrorResponse = await response.json();
 
       expect(response.status).toBe(400);
-      expect(data.message).toContain('유효하지 않은 클럽 ID입니다.');
+      expect(data.message).toContain(ERROR_MESSAGE.INVALID_CLUB_ID);
     });
   });
 
@@ -103,7 +103,7 @@ describe('동아리 지원서 API 테스트', () => {
       const data: SubmissionResponse = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.message).toBe('지원서가 성공적으로 제작되었습니다.');
+      expect(data.message).toBe(ERROR_MESSAGE.POST_APPLICATION_SUCCESS);
     });
 
     it('객관식 질문 답변 제출 성공', async () => {
@@ -116,7 +116,7 @@ describe('동아리 지원서 API 테스트', () => {
       const data: SubmissionResponse = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.message).toBe('지원서가 성공적으로 제작되었습니다.');
+      expect(data.message).toBe(ERROR_MESSAGE.POST_APPLICATION_SUCCESS);
     });
 
     it('주관식 질문 답변 제출 성공', async () => {
@@ -132,7 +132,7 @@ describe('동아리 지원서 API 테스트', () => {
       const data: SubmissionResponse = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.message).toBe('지원서가 성공적으로 제작되었습니다.');
+      expect(data.message).toBe(ERROR_MESSAGE.POST_APPLICATION_SUCCESS);
     });
 
     it('잘못된 클럽 ID로 요청 시 400 에러', async () => {
@@ -149,7 +149,7 @@ describe('동아리 지원서 API 테스트', () => {
 
       const data: ApiErrorResponse = await response.json();
       expect(response.status).toBe(400);
-      expect(data.message).toContain('유효하지 않은 클럽 ID입니다.');
+      expect(data.message).toContain(ERROR_MESSAGE.INVALID_CLUB_ID);
     });
   });
 
@@ -164,7 +164,7 @@ describe('동아리 지원서 API 테스트', () => {
       const data: SubmissionResponse = await response.json();
 
       expect(response.status).toBe(200);
-      expect(data.message).toBe('지원서가 성공적으로 수정되었습니다.');
+      expect(data.message).toBe(ERROR_MESSAGE.PUT_APPLICATION_SUCCESS);
     });
 
     it('잘못된 클럽 ID로 수정 요청 시 400 에러', async () => {
@@ -181,7 +181,7 @@ describe('동아리 지원서 API 테스트', () => {
 
       const data: ApiErrorResponse = await response.json();
       expect(response.status).toBe(400);
-      expect(data.message).toContain('유효하지 않은 클럽 ID입니다.');
+      expect(data.message).toContain(ERROR_MESSAGE.INVALID_CLUB_ID);
     });
   });
 });
