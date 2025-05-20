@@ -5,7 +5,7 @@ import { createApiUrl } from '../utils/createApiUrl';
 import { API_BASE, CLUB_ID } from '../constants/clubApi';
 
 interface ClubApplyResponse {
-  clubId: number;
+  clubId: string;
   form_title: string;
   questions: Question[];
 }
@@ -15,7 +15,7 @@ interface ApiErrorResponse {
 }
 
 interface SubmissionResponse {
-  clubId: number;
+  clubId: string;
   message: string;
 }
 
