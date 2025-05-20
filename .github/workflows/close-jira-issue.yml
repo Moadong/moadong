@@ -1,0 +1,46 @@
+name: Close Jira Issue
+on:
+  issues:
+    types:
+      - closed 
+
+
+jobs:
+  close-issue:
+    name: Close Jira Issue
+    runs-on: ubuntu-latest
+    steps:
+      - name: Extract Jira Issue Key from Title
+        id: extract-key
+        run: |
+          TITLE="${{ github.event.issue.title }}"
+
+          # Jira 이슈 키 패턴 추출 (예: FE-123, BE-456 등)
+          ISSUE_KEY=$(echo "$TITLE" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+
+          echo "JIRA_ISSUE_KEY=$ISSUE_KEY" >> $GITHUB_ENV
+          echo "Extracted Jira Issue Key: $ISSUE_KEY"
+
+      - name: Login to Jira
+        if: env.JIRA_ISSUE_KEY != ''
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+
+      - name: Transition Jira Issue to Done
+        if: env.JIRA_ISSUE_KEY != ''
+        uses: atlassian/gajira-transition@v3
+        with:
+          issue: ${{ env.JIRA_ISSUE_KEY }}
+          transition: "완료"
+
+      - name: Add comment on GitHub issue
+        if: env.JIRA_ISSUE_KEY != ''
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: 'Jira Issue Closed: [${{ env.JIRA_ISSUE_KEY }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ env.JIRA_ISSUE_KEY }}) ✅'
