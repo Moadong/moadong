@@ -17,8 +17,6 @@ import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 
 const queryClient = new QueryClient();
 
-// [x]TODO: fallback component 추가
-
 const App = () => {
   return (
     <QueryClientProvider client={queryClient}>
