@@ -2,7 +2,7 @@ import { createApiUrl } from '@/mocks/utils/createApiUrl';
 
 export const sendApiRequest = async (
   clubId: string,
-  answers: Record<number, string[]>,
+  answers: Record<number | string, string[]>,
   method: 'POST' | 'PUT',
 ) => {
   const response = await fetch(createApiUrl(clubId), {
