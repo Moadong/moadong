@@ -1,9 +1,12 @@
 package moadong.club.entity;
 
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import moadong.club.enums.ApplicationStatus;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -22,6 +25,10 @@ public class ClubApplication {
     private String id;
 
     private String questionId;
+
+    @Enumerated(EnumType.STRING)
+    @Builder.Default
+    ApplicationStatus status = ApplicationStatus.SUBMITTED;
 
     @Builder.Default
     private List<ClubQuestionAnswer> answers = new ArrayList<>();
