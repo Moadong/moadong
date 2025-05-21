@@ -33,13 +33,13 @@ public class ClubApplyService {
     private final ClubApplicationRepository clubApplicationRepository;
 
     public void createClubApplication(String clubId, CustomUserDetails user, ClubApplicationCreateRequest request) {
-        ClubQuestion clubQuestion = getOrCreateClubQuestion(clubId, user);
+        ClubQuestion clubQuestion = getClubQuestion(clubId, user);
 
         clubQuestionRepository.save(createQuestions(clubQuestion, request));
     }
 
     public void editClubApplication(String clubId, CustomUserDetails user, ClubApplicationEditRequest request) {
-        ClubQuestion clubQuestion = getOrCreateClubQuestion(clubId, user);
+        ClubQuestion clubQuestion = getClubQuestion(clubId, user);
 
         clubQuestion.updateEditedAt();
         clubQuestionRepository.save(updateQuestions(clubQuestion, request));
@@ -191,7 +191,7 @@ public class ClubApplyService {
         return clubQuestion;
     }
 
-    private ClubQuestion getOrCreateClubQuestion(String clubId, CustomUserDetails user) {
+    private ClubQuestion getClubQuestion(String clubId, CustomUserDetails user) {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         if (!user.getId().equals(club.getUserId())) {
