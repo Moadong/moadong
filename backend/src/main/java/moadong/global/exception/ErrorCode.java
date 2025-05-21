@@ -23,6 +23,11 @@ public enum ErrorCode {
     USER_UNAUTHORIZED(HttpStatus.FORBIDDEN, "700-5","권한이 없습니다."),
     TOKEN_INVALID(HttpStatus.UNAUTHORIZED, "701-1", "올바르지 않은 토큰 양식입니다."),
     TOKEN_EXPIRED(HttpStatus.UNAUTHORIZED, "701-2", "토큰이 만료되었습니다."),
+    APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-1", "지원서가 존재하지 않습니다."),
+    SHORT_EXCEED_LENGTH(HttpStatus.BAD_REQUEST, "800-2", "단답형 최대 글자를 초과하였습니다."),
+    LONG_EXCEED_LENGTH(HttpStatus.BAD_REQUEST, "800-3", "장문형 최대 글자를 초과하였습니다."),
+    QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-4", "존재하지 않은 질문입니다."),
+    REQUIRED_QUESTION_MISSING(HttpStatus.BAD_REQUEST, "800-5", "필수 응답 질문이 누락되었습니다."),
     ;
 
     private final HttpStatus httpStatus;
