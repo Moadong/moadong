@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as Styled from './InfoTabs.styles';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 

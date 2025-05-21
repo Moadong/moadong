@@ -1,4 +1,3 @@
-import React from 'react';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import styled from 'styled-components';
 

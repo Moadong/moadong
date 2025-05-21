@@ -1,14 +1,54 @@
-import globals from "globals";
-import pluginJs from "@eslint/js";
-import tseslint from "typescript-eslint";
-import pluginReact from "eslint-plugin-react";
+import typescript from '@typescript-eslint/eslint-plugin';
+import parser from '@typescript-eslint/parser';
+import react from 'eslint-plugin-react';
+import storybook from 'eslint-plugin-storybook';
+import configPrettier from 'eslint-config-prettier';
 
-
-/** @type {import('eslint').Linter.Config[]} */
-export default [
-  {files: ["**/*.{js,mjs,cjs,ts,jsx,tsx}"]},
-  {languageOptions: { globals: globals.browser }},
-  pluginJs.configs.recommended,
-  ...tseslint.configs.recommended,
-  pluginReact.configs.flat.recommended,
+const config = [
+  {
+    files: ['src/**/*.{js,ts,jsx,tsx}'],
+    ignores: [
+      'dist/**',
+      'node_modules/**',
+      'coverage/**',
+      'public/**',
+      'jest.config.js',
+      'jest.setup.ts',
+      'netlify.toml',
+    ],
+    languageOptions: {
+      parser,
+      parserOptions: {
+        ecmaVersion: 'latest',
+        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    plugins: {
+      '@typescript-eslint': typescript,
+      react,
+      storybook,
+    },
+    rules: {
+      semi: ['error', 'always'],
+      quotes: ['error', 'single'],
+      'no-console': 'warn',
+      'react/react-in-jsx-scope': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'warn',
+        { argsIgnorePattern: '^_' },
+      ],
+      '@typescript-eslint/explicit-function-return-type': 'off',
+    },
+    settings: {
+      react: {
+        version: 'detect',
+      },
+    },
+  },
+  configPrettier,
 ];
+
+export default config;

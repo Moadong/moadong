@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './StatusRadioButton.styles';
 

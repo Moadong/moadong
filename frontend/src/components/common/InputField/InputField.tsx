@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import * as Styled from './InputField.styles';
 import clearIcon from '@/assets/images/icons/delete_button_icon.svg';
 

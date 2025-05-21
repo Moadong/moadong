@@ -1,4 +1,3 @@
-import React from 'react';
 import * as Styled from './InfoBox.styles';
 import { ClubDetail } from '@/types/club';
 import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';

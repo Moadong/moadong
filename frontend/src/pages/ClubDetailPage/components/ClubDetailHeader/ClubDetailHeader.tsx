@@ -1,4 +1,3 @@
-import React from 'react';
 import * as Styled from './ClubDetailHeader.styles';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';

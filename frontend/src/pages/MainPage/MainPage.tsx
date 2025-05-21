@@ -1,4 +1,4 @@
-import React, { useState, useMemo } from 'react';
+import { useState, useMemo } from 'react';
 import { useSearch } from '@/context/SearchContext';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import { useGetCardList } from '@/hooks/queries/club/useGetCardList';
