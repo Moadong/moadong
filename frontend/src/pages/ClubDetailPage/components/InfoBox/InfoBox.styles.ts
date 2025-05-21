@@ -51,8 +51,9 @@ export const DescriptionWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 50px;
-  font-size: 14px;
+  font-size: 16px;
   @media (max-width: 500px) {
+    font-size: 14px;
     gap: 40px;
   }
 `;
