@@ -10,6 +10,5 @@
   "arrowParens": "always",
   "endOfLine": "auto",
   "prefer-const": true,
-  "singleAttributePerLine": false,
-  "bracketSameLine": true
+  "singleAttributePerLine": false
 }

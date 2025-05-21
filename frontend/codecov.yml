@@ -1,0 +1,4 @@
+comment:
+  layout: "diff, flags, files"  # PR 리포트에 diff, flags, files 섹션 포함
+  require_changes: false
+  require_base: false

@@ -49,28 +49,35 @@ const LoginTab = () => {
       <Styled.LoginBox>
         <Styled.Logo src={moadong_name_logo} alt='Moadong Logo' />
         <Styled.Title>Log in</Styled.Title>
-        <Styled.InputFieldsContainer>
-          <InputField
-            type='text'
-            placeholder='아이디'
-            showClearButton={false}
-            value={userId}
-            onChange={(e) => setUserId(e.target.value)}
-          />
-          <InputField
-            type='password'
-            placeholder='비밀번호'
-            showClearButton={false}
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-          />
-        </Styled.InputFieldsContainer>
+        <Styled.LoginForm
+          onSubmit={(e) => {
+            e.preventDefault();
+            handleLogin();
+          }}
+        >
+          <Styled.InputFieldsContainer>
+            <InputField
+              type='text'
+              placeholder='아이디'
+              showClearButton={false}
+              value={userId}
+              onChange={(e) => setUserId(e.target.value)}
+            />
+            <InputField
+              type='password'
+              placeholder='비밀번호'
+              showClearButton={false}
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+            />
+          </Styled.InputFieldsContainer>
 
-        <Styled.ButtonWrapper>
-          <Button width='100%' onClick={handleLogin}>
-            {loading ? '로그인 중...' : '로그인'}
-          </Button>
-        </Styled.ButtonWrapper>
+          <Styled.ButtonWrapper>
+            <Button width='100%' type='submit'>
+              {loading ? '로그인 중...' : '로그인'}
+            </Button>
+          </Styled.ButtonWrapper>
+        </Styled.LoginForm>
 
         <Styled.ForgotLinks>
           <Styled.LinkButton
@@ -79,7 +86,8 @@ const LoginTab = () => {
               alert(
                 '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
               )
-            }>
+            }
+          >
             회원가입
           </Styled.LinkButton>
           <span>|</span>
@@ -89,7 +97,8 @@ const LoginTab = () => {
               alert(
                 '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
               )
-            }>
+            }
+          >
             아이디 찾기
           </Styled.LinkButton>
           <span>|</span>
@@ -99,7 +108,8 @@ const LoginTab = () => {
               alert(
                 '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
               )
-            }>
+            }
+          >
             비밀번호 찾기
           </Styled.LinkButton>
         </Styled.ForgotLinks>

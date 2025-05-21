@@ -10,7 +10,7 @@ export const InfoTitle = styled.h2`
   font-size: 1.5rem;
   font-weight: bold;
   letter-spacing: 0;
-  margin-bottom: 46px;
+  margin-bottom: 30px;
 `;
 
 export const InfoGroup = styled.div`
@@ -31,4 +31,27 @@ export const TagEditGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 30px;
+  margin-bottom: 120px;
+`;
+
+export const SNSInputGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 30px;
+  margin-top: 30px;
+`;
+
+export const SNSRow = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  align-items: flex-start;
+`;
+
+export const SNSCheckboxLabel = styled.label`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-weight: 600;
 `;

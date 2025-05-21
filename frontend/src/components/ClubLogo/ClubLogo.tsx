@@ -3,8 +3,8 @@ import styled, { css } from 'styled-components';
 type LogoVariant = 'main' | 'detail';
 
 interface ClubLogoProps {
-  imageSrc?: string;
-  variant?: LogoVariant;
+  $imageSrc?: string;
+  $variant?: LogoVariant;
 }
 
 const presets = {
@@ -18,28 +18,31 @@ const presets = {
   },
 };
 
-const StyledClubLogo = styled.div<{ variant: LogoVariant; imageSrc?: string }>`
-  ${({ variant, imageSrc }) => css`
-    width: ${presets[variant].desktop.width};
-    height: ${presets[variant].desktop.height};
-    border-radius: ${presets[variant].desktop.radius};
+const StyledClubLogo = styled.div<{
+  $variant: LogoVariant;
+  $imageSrc?: string;
+}>`
+  ${({ $variant, $imageSrc }) => css`
+    width: ${presets[$variant].desktop.width};
+    height: ${presets[$variant].desktop.height};
+    border-radius: ${presets[$variant].desktop.radius};
     background-color: #efefef;
     background-size: cover;
     background-position: center;
-    background-image: ${imageSrc ? `url(${imageSrc})` : 'none'};
+    background-image: ${$imageSrc ? `url(${$imageSrc})` : 'none'};
   `}
 
   @media (max-width: 480px) {
-    ${({ variant }) => css`
-      width: ${presets[variant].mobile.width};
-      height: ${presets[variant].mobile.height};
-      border-radius: ${presets[variant].mobile.radius};
+    ${({ $variant }) => css`
+      width: ${presets[$variant].mobile.width};
+      height: ${presets[$variant].mobile.height};
+      border-radius: ${presets[$variant].mobile.radius};
     `}
   }
 `;
 
-const ClubLogo = ({ imageSrc, variant = 'main' }: ClubLogoProps) => {
-  return <StyledClubLogo imageSrc={imageSrc} variant={variant} />;
+const ClubLogo = ({ $imageSrc, $variant = 'main' }: ClubLogoProps) => {
+  return <StyledClubLogo $imageSrc={$imageSrc} $variant={$variant} />;
 };
 
 export default ClubLogo;

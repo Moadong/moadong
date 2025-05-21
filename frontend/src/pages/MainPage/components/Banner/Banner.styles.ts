@@ -43,12 +43,12 @@ export const BannerWrapper = styled.div<BannerProps>`
   }
 `;
 
-export const SlideWrapper = styled.div<{ isAnimating: boolean }>`
+export const SlideWrapper = styled.div<{ $isAnimating: boolean }>`
   display: flex;
   width: 100%;
   height: 100%;
-  ${({ isAnimating }) =>
-    isAnimating
+  ${({ $isAnimating }) =>
+    $isAnimating
       ? 'transition: transform 0.5s ease-in-out;'
       : 'transition: none;'}
 `;

@@ -21,7 +21,7 @@ const stateStyles: Record<
   },
 };
 
-const StyledBox = styled.div<{ bgColor: string; textColor: string }>`
+const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -30,8 +30,8 @@ const StyledBox = styled.div<{ bgColor: string; textColor: string }>`
   height: 30px;
   padding: 8px 21px;
   border-radius: 8px;
-  background-color: ${({ bgColor }) => bgColor};
-  color: ${({ textColor }) => textColor};
+  background-color: ${({ $bgColor }) => $bgColor};
+  color: ${({ $textColor }) => $textColor};
   font-size: 0.75rem;
   font-weight: 500;
 `;
@@ -48,7 +48,7 @@ const ClubStateBox = ({ state }: ClubStateBoxProps) => {
   };
 
   return (
-    <StyledBox bgColor={style.backgroundColor} textColor={style.color}>
+    <StyledBox $bgColor={style.backgroundColor} $textColor={style.color}>
       {style.text}
     </StyledBox>
   );
