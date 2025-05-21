@@ -17,6 +17,7 @@ import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.util.annotations.UnitTest;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -31,6 +32,7 @@ import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
+@UnitTest
 class GoogleDriveClubImageServiceFeedTest {
 
     @Spy
