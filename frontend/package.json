@@ -13,7 +13,7 @@
     "build-storybook": "storybook build",
     "chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
     "test": "jest",
-    "coverage": "jest --coverage"
+    "coverage": "jest --coverage --config jest.config.js"
   },
   "keywords": [],
   "author": "",
@@ -21,6 +21,8 @@
   "description": "",
   "dependencies": {
     "@channel.io/channel-web-sdk-loader": "^2.0.0",
+    "@sentry/react": "^9.18.0",
+    "@sentry/webpack-plugin": "^3.4.0",
     "@tanstack/react-query": "^5.66.0",
     "date-fns": "^4.1.0",
     "dotenv-webpack": "^8.1.0",
@@ -76,6 +78,7 @@
     "jest": "^29.7.0",
     "jest-environment-jsdom": "^29.7.0",
     "jest-fetch-mock": "^3.0.3",
+    "jest-transform-stub": "^2.0.0",
     "mini-css-extract-plugin": "^2.9.2",
     "path": "^0.12.7",
     "prettier": "^3.4.2",

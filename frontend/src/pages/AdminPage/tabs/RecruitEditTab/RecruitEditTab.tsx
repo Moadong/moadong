@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import * as Styled from './RecruitEditTab.styles';
-import Calendar from '@/pages/AdminPage/components/Calendar/Calendar';
+import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
 import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
-import MarkdownEditor from '@/pages/AdminPage/components/MarkdownEditor/MarkdownEditor';
+import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
 
 const RecruitEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail>();

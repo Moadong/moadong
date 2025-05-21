@@ -10,17 +10,17 @@ export const RadioInput = styled.input`
   display: none;
 `;
 
-export const CustomRadio = styled.span<{ isActive: boolean }>`
+export const CustomRadio = styled.span<{ $isActive: boolean }>`
   width: 20px;
   height: 20px;
   border-radius: 50%;
-  border: 1px solid ${({ isActive }) => (isActive ? '#00a6ff' : '#ccc')};
+  border: 1px solid ${({ $isActive }) => ($isActive ? '#00a6ff' : '#ccc')};
   background-color: #d9d9d9;
   position: relative;
   margin-right: 8px;
 
-  ${({ isActive }) =>
-    isActive &&
+  ${({ $isActive }) =>
+    $isActive &&
     `
     background-color: #fff;
     &::after {
@@ -37,9 +37,9 @@ export const CustomRadio = styled.span<{ isActive: boolean }>`
   `}
 `;
 
-export const RadioText = styled.span<{ isActive: boolean }>`
+export const RadioText = styled.span<{ $isActive: boolean }>`
   font-size: 0.75rem;
-  color: ${({ isActive }) => (isActive ? '#818181' : '#aaa')};
+  color: ${({ $isActive }) => ($isActive ? '#818181' : '#aaa')};
   font-weight: 500;
   user-select: none;
 `;

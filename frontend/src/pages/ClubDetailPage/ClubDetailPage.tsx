@@ -30,7 +30,7 @@ const ClubDetailPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useTrackPageView(`ClubDetailPage ${clubDetail?.name || ''}`);
+  useTrackPageView(`ClubDetailPage`, clubDetail?.name);
 
   if (!clubDetail) {
     return null;
@@ -61,7 +61,11 @@ const ClubDetailPage = () => {
           sectionRefs={sectionRefs}
           description={clubDetail.description}
         />
-        <PhotoList sectionRefs={sectionRefs} feeds={clubDetail.feeds} />
+        <PhotoList
+          sectionRefs={sectionRefs}
+          feeds={clubDetail.feeds}
+          clubName={clubDetail.name}
+        />
       </Styled.PageContainer>
       <Footer />
       <ClubDetailFooter

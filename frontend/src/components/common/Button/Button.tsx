@@ -3,7 +3,8 @@ import styled, { keyframes, css } from 'styled-components';
 export interface ButtonProps {
   width?: string;
   children: React.ReactNode;
-  onClick: () => void;
+  type?: string;
+  onClick?: () => void;
   animated?: boolean;
 }
 
@@ -43,9 +44,10 @@ const Button = ({
   width,
   children,
   onClick,
+  type,
   animated = false,
 }: ButtonProps) => (
-  <StyledButton width={width} onClick={onClick} animated={animated}>
+  <StyledButton width={width} onClick={onClick} animated={animated} type={type}>
     {children}
   </StyledButton>
 );

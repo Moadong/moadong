@@ -1,9 +1,11 @@
 /** @type {import('ts-jest').JestConfigWithTsJest} **/
+
 module.exports = {
   setupFiles: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jsdom',
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {}],
+    '\\.(svg|png|jpg|jpeg|gif)$': 'jest-transform-stub',
   },
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
