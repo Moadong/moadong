@@ -1,5 +1,5 @@
 export const stringToDate = (s: string): Date => {
-  const [datePart, timePart] = s.split(' ');
+  const [datePart, timePart] = s.split(' ') as [string, string];
   const isoDate = datePart.replace(/\./g, '-');
   return new Date(`${isoDate}T${timePart}:00`);
 };
