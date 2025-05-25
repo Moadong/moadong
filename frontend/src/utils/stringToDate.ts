@@ -1,7 +1,20 @@
 export const stringToDate = (s: string): Date => {
   const [datePart, timePart] = s.split(' ') as [string, string];
+  if (!datePart || !timePart) {
+    throw new Error(
+      '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
+    );
+  }
+
   const isoDate = datePart.replace(/\./g, '-');
-  return new Date(`${isoDate}T${timePart}:00`);
+  const date = new Date(`${isoDate}T${timePart}:00`);
+
+  if (isNaN(date.getTime())) {
+    throw new Error(
+      '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
+    );
+  }
+  return date;
 };
 
 export const parseRecruitmentPeriod = (
