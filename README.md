@@ -12,11 +12,17 @@
 ✅ 실시간 업데이트 – 모집 기간과 상관없이 항상 최신 정보 제공<br/>
 ✅ 운영진의 홍보 부담 감소 - 반복적인 홍보 없이도 손쉬운 노출과 관리
 
-#### 🔗 서비스 소개 페이지
-[Moadong](https://valiant-schooner-12c.notion.site/1a64ac84bab3805287e0cef50b563370)
+#### 🔗 서비스 주소
+[모아동](https://www.moadong.com/)  
+  
+[모아동 소개 페이지](https://valiant-schooner-12c.notion.site/1a64ac84bab3805287e0cef50b563370)
+  
+  
+![1280~1919](https://github.com/user-attachments/assets/04eb208a-40ff-4a8a-9e4b-cea517e00a76)
 
 
 ## 현재 프로젝트 참여자
+
 ### 프론트
 <table>
   <tr>
@@ -89,6 +95,6 @@
 <br/>
 
 ### 백엔드
-![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) <img src="https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white"/> <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/> ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white)
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) <img src="https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white"/> <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/> ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white) ![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=Cloudflare&logoColor=white)
 
 <br/>
