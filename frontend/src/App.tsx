@@ -72,6 +72,7 @@ const App = () => {
               }
             />
             <Route path='view-application' element={<ApplicationForm />} />
+            {/*TODO: CreateForm은 관리자 기능이므로 추후 /admin/* 경로 안으로 이동 필요*/}
             <Route path='create-application' element={<CreateForm />} />
             <Route path='*' element={<Navigate to='/' replace />} />
           </Routes>
