@@ -16,8 +16,11 @@ type QuestionType =
 type Question = {
   title: string;
   description: string;
-  items?: { value: string }[];
   type: QuestionType;
+  options: {
+    required: boolean;
+  };
+  items?: { value: string }[];
 };
 
 const CreateForm = () => {
@@ -25,12 +28,17 @@ const CreateForm = () => {
     1: {
       title: '이름을 입력해주세요',
       description: '본명을 입력해 주세요',
+      options: {
+        required: true,
+      },
       type: 'SHORT_TEXT',
-      items: [],
     },
     2: {
       title: '지원 분야를 선택해주세요',
       description: '중복 선택은 불가능합니다',
+      options: {
+        required: false,
+      },
       items: [
         { value: '프론트엔드' },
         { value: '백엔드' },
@@ -88,7 +96,7 @@ const CreateForm = () => {
           id={Number(id)}
           title={question.title}
           description={question.description}
-          required={true}
+          required={question.options?.required ?? false}
           options={question.items}
           onTitleChange={handleTitleChange(Number(id))}
           onDescriptionChange={handleDescriptionChange(Number(id))}
