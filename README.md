@@ -7,16 +7,13 @@
 또한, 동아리 운영진도 매번 새롭게 홍보 글을 작성해야 하는 번거로움이 있었습니다.  
 
 
-#### 📌 "모아동"이 해결할 문제  
-✅ 한눈에 보기 – 부경대의 모든 동아리를 한곳에서 쉽게 확인  
-✅ 항상 최신 정보 제공 – 모집 기간과 상관없이 언제나 업데이트  
-✅ 손쉬운 홍보 – 동아리 운영진의 반복적인 홍보 부담 감소  
+#### 📌 모아동이 해결합니다
+✅ 한눈에 보기 – 부경대의 모든 동아리를 한 곳에서 쉽게 확인<br/>
+✅ 실시간 업데이트 – 모집 기간과 상관없이 항상 최신 정보 제공<br/>
+✅ 운영진의 홍보 부담 감소 - 반복적인 홍보 없이도 손쉬운 노출과 관리
 
 #### 🔗 서비스 소개 페이지
-https://valiant-schooner-12c.notion.site/1a64ac84bab3805287e0cef50b563370
-
-#### 🔗 모아동 사이트
-https://www.moadong.com
+[Moadong](https://valiant-schooner-12c.notion.site/1a64ac84bab3805287e0cef50b563370)
 
 
 ## 현재 프로젝트 참여자
@@ -36,22 +33,15 @@ https://www.moadong.com
     <td align="center">
         <img src="" width="120px;"/> 
         <br />
-        <a href="https://github.com/YJeongs" title="Code"><b></b></a>
-    </td> 
-    <td align="center">
-        <img src="" width="120px;"/> 
-        <br />
         <a href="https://github.com/newdesigner" title="Code"><b></b></a>
     </td> 
   </tr>
   <tr>
     <td align="center"><b>서성원</b></td>
     <td align="center"><b>김준서</b></td>
-    <td align="center"><b>유하경</b></td>
     <td align="center"><b>김상희</b></td>
   </tr>
   <tr>
-    <td align="center"><b>FrontEnd</b></td>
     <td align="center"><b>FrontEnd</b></td>
     <td align="center"><b>FrontEnd</b></td>
     <td align="center"><b>Design</b></td>
@@ -88,11 +78,6 @@ https://www.moadong.com
     <td align="center"><b>Server</b></td>
   </tr>
 </table>
-
-<details>
-  <summary>초기 개발자</summary>
-  https://github.com/orgs/Moadong/teams/team
-</details>
 
 
 ## ✨ 기술 스택 (Tech Stack)
