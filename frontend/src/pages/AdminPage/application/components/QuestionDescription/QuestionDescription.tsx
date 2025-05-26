@@ -22,13 +22,15 @@ const QuestionDescription = ({
   onChange,
 }: QuestionDescriptionProps) => {
   return (
-    <div>
+    <>
       <QuestionDescriptionText
         value={description}
+        placeholder='질문에 대한 설명을 입력하세요'
+        aria-label='질문 설명'
         readOnly={mode === 'answer'}
         onChange={(e) => onChange?.(e.target.value)}
       />
-    </div>
+    </>
   );
 };
 
