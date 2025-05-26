@@ -17,7 +17,7 @@ interface QuestionBuilderProps {
   id: number;
   title: string;
   description: string;
-  options?: { value: string }[];
+  items?: { value: string }[];
   type: QuestionType;
   required: boolean;
   onTitleChange: (value: string) => void;
@@ -31,7 +31,7 @@ const QuestionBuilder = ({
   title,
   description,
   required,
-  options,
+  items,
   type,
   onTitleChange,
   onItemsChange,
@@ -79,7 +79,7 @@ const QuestionBuilder = ({
             required={isRequired}
             description={description}
             mode='builder'
-            items={options}
+            items={items}
             onTitleChange={onTitleChange}
             onDescriptionChange={onDescriptionChange}
             onItemsChange={onItemsChange}
