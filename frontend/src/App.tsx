@@ -14,6 +14,8 @@ import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
+import ApplicationForm from '@/pages/AdminPage/application/ApplicationForm';
+import CreateForm from '@/pages/AdminPage/application/CreateForm';
 
 const queryClient = new QueryClient();
 
@@ -69,6 +71,8 @@ const App = () => {
                 </AdminClubProvider>
               }
             />
+            <Route path='view-application' element={<ApplicationForm />} />
+            <Route path='create-application' element={<CreateForm />} />
             <Route path='*' element={<Navigate to='/' replace />} />
           </Routes>
         </BrowserRouter>
