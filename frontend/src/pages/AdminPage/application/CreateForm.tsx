@@ -1,4 +1,6 @@
 // 지원서 제작하기 : 지원서 제작 컴포넌트
+// 지원서 수정과 제작을 맡을 컴포넌트
+// Todo: 질문 삭제 및 질문 추가 기능 구현
 import { useState } from 'react';
 import QuestionBuilder from '@/pages/AdminPage/application/components/QuestionBuilder/QuestionBuilder';
 
