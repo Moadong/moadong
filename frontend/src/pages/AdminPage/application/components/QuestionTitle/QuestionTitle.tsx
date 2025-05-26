@@ -51,6 +51,8 @@ const QuestionTitle = ({
       <QuestionTitleText
         type='text'
         value={title}
+        placeholder='질문 제목을 입력하세요'
+        aria-label='질문 제목'
         readOnly={mode === 'answer'}
         onChange={(e) => onChange?.(e.target.value)}
       />
