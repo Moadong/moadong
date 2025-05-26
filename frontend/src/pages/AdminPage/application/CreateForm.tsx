@@ -35,7 +35,7 @@ const CreateForm = () => {
     },
     2: {
       title: '지원 분야를 선택해주세요',
-      description: '중복 선택은 불가능합니다',
+      description: '중복 선택 가능합니다',
       options: {
         required: false,
       },
