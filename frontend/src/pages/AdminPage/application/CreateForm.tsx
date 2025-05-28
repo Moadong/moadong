@@ -79,6 +79,32 @@ const CreateForm = () => {
   };
 
   const handleTypeChange = (id: number) => (newType: QuestionType) => {
+    setQuestions((prev) => {
+      const prevQuestion = prev[id];
+      const isChoiceType = newType === 'CHOICE' || newType === 'MULTI_CHOICE';
+
+      const updatedQuestion: Question = {
+        ...prevQuestion,
+        type: newType,
+      };
+
+      if (isChoiceType) {
+        updatedQuestion.items =
+          !prevQuestion.items || prevQuestion.items.length < 2
+            ? [{ value: '' }, { value: '' }]
+            : prevQuestion.items;
+      } else {
+        delete updatedQuestion.items;
+      }
+
+      return {
+        ...prev,
+        [id]: updatedQuestion,
+      };
+    });
+  };
+
+  const handleRequiredChange = (id: number) => (value: boolean) => {
     setQuestions((prev) => ({
       ...prev,
       [id]: {

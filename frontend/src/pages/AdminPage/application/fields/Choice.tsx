@@ -63,19 +63,10 @@ const Choice = ({
   isMulti,
   onItemsChange,
 }: ChoiceProps) => {
-  const filledItems =
-    items.length >= MIN_ITEMS
-      ? items
-      : [
-          ...items,
-          ...Array.from({ length: MIN_ITEMS - items.length }, () => ({
-            value: '',
-          })),
-        ];
-
   const handleItemChange = (index: number, newValue: string) => {
-    const updated = [...items];
-    updated[index].value = newValue;
+    const updated = items.map((item, i) =>
+      i === index ? { ...item, value: newValue } : item,
+    );
     onItemsChange?.(updated);
   };
 
@@ -104,7 +95,7 @@ const Choice = ({
         mode={mode}
         onChange={onDescriptionChange}
       />
-      {filledItems.map((item, index) => (
+      {items.map((item, index) => (
         <ItemWrapper key={index}>
           <InputField
             value={item.value}
