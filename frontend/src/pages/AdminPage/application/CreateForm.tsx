@@ -83,7 +83,10 @@ const CreateForm = () => {
       ...prev,
       [id]: {
         ...prev[id],
-        type: newType,
+        options: {
+          ...prev[id].options,
+          required: value,
+        },
       },
     }));
   };
@@ -102,6 +105,7 @@ const CreateForm = () => {
           onDescriptionChange={handleDescriptionChange(Number(id))}
           onItemsChange={handleItemsChange(Number(id))}
           onTypeChange={handleTypeChange(Number(id))}
+          onRequiredChange={handleRequiredChange(Number(id))}
           type={question.type}
         />
       ))}

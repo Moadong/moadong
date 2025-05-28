@@ -24,6 +24,7 @@ interface QuestionBuilderProps {
   onDescriptionChange: (value: string) => void;
   onItemsChange?: (newItems: { value: string }[]) => void;
   onTypeChange?: (type: QuestionType) => void;
+  onRequiredChange?: (required: boolean) => void;
 }
 
 const QuestionBuilder = ({
@@ -37,8 +38,8 @@ const QuestionBuilder = ({
   onItemsChange,
   onDescriptionChange,
   onTypeChange,
+  onRequiredChange,
 }: QuestionBuilderProps) => {
-  const [isRequired, setIsRequired] = useState(required);
   const [selectionType, setSelectionType] = useState<'single' | 'multi'>(
     type === 'MULTI_CHOICE' ? 'multi' : 'single',
   );
@@ -62,7 +63,7 @@ const QuestionBuilder = ({
           <ShortText
             id={id}
             title={title}
-            required={isRequired}
+            required={required}
             description={description}
             mode='builder'
             onTitleChange={onTitleChange}
@@ -76,7 +77,7 @@ const QuestionBuilder = ({
           <Choice
             id={id}
             title={title}
-            required={isRequired}
+            required={required}
             description={description}
             mode='builder'
             items={items}
@@ -124,9 +125,11 @@ const QuestionBuilder = ({
   return (
     <Styled.QuestionWrapper>
       <Styled.QuestionMenu>
-        <Styled.RequiredToggleButton onClick={() => setIsRequired(!isRequired)}>
+        <Styled.RequiredToggleButton
+          onClick={() => onRequiredChange?.(!required)}
+        >
           답변 필수
-          <Styled.RequiredToggleCircle active={isRequired} />
+          <Styled.RequiredToggleCircle active={required} />
         </Styled.RequiredToggleButton>
         <Styled.DropDownWrapper>
           <Styled.DropdownIcon
@@ -138,7 +141,7 @@ const QuestionBuilder = ({
             onChange={(e) => {
               const selectedType = e.target.value as QuestionType;
               setQuestionType(selectedType);
-              onTypeChange?.(selectedType); // 상위 상태도 업데이트
+              onTypeChange?.(selectedType);
             }}
           >
             <option value='CHOICE'>객관식</option>
