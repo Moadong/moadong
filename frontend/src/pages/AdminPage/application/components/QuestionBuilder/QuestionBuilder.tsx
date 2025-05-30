@@ -43,7 +43,6 @@ const QuestionBuilder = ({
   const [selectionType, setSelectionType] = useState<'single' | 'multi'>(
     type === 'MULTI_CHOICE' ? 'multi' : 'single',
   );
-  const [questionType, setQuestionType] = useState<QuestionType>(type);
 
   useEffect(() => {
     if (type === 'MULTI_CHOICE') {
@@ -54,7 +53,7 @@ const QuestionBuilder = ({
   }, [type]);
 
   const renderFieldByQuestionType = () => {
-    switch (questionType) {
+    switch (type) {
       case 'SHORT_TEXT':
       case 'NAME':
       case 'EMAIL':
@@ -84,7 +83,7 @@ const QuestionBuilder = ({
             onTitleChange={onTitleChange}
             onDescriptionChange={onDescriptionChange}
             onItemsChange={onItemsChange}
-            isMulti={questionType === 'MULTI_CHOICE'}
+            isMulti={type === 'MULTI_CHOICE'}
           />
         );
       default:
@@ -93,8 +92,7 @@ const QuestionBuilder = ({
   };
 
   const renderSelectionToggle = () => {
-    if (questionType !== 'CHOICE' && questionType !== 'MULTI_CHOICE')
-      return null;
+    if (type !== 'CHOICE' && type !== 'MULTI_CHOICE') return null;
 
     return (
       <Styled.SelectionToggleWrapper>
@@ -102,7 +100,6 @@ const QuestionBuilder = ({
           active={selectionType === 'single'}
           onClick={() => {
             setSelectionType('single');
-            setQuestionType('CHOICE');
             onTypeChange?.('CHOICE');
           }}
         >
@@ -112,7 +109,6 @@ const QuestionBuilder = ({
           active={selectionType === 'multi'}
           onClick={() => {
             setSelectionType('multi');
-            setQuestionType('MULTI_CHOICE');
             onTypeChange?.('MULTI_CHOICE');
           }}
         >
@@ -137,10 +133,9 @@ const QuestionBuilder = ({
             alt={'질문 타입 선택하기'}
           ></Styled.DropdownIcon>
           <Styled.Dropdown
-            value={questionType}
+            value={type}
             onChange={(e) => {
               const selectedType = e.target.value as QuestionType;
-              setQuestionType(selectedType);
               onTypeChange?.(selectedType);
             }}
           >
