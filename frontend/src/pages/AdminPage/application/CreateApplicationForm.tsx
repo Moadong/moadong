@@ -16,6 +16,27 @@ const CreateApplicationForm = () => {
     mockData ?? INITIAL_FORM_DATA,
   );
 
+  const addQuestion = () => {
+    const newQuestion: Question = {
+      id: formData.questions.length + 1,
+      title: '',
+      description: '',
+      type: 'SHORT_TEXT',
+      options: { required: false },
+    };
+    setFormData((prev) => ({
+      ...prev,
+      questions: [...prev.questions, newQuestion],
+    }));
+  };
+
+  const removeQuestion = (id: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      questions: prev.questions.filter((q) => q.id !== id),
+    }));
+  };
+
   const updateQuestionField = <K extends keyof Question>(
     id: number,
     key: K,
@@ -97,9 +118,13 @@ const CreateApplicationForm = () => {
               onItemsChange={handleItemsChange(question.id)}
               onTypeChange={handleTypeChange(question.id)}
               onRequiredChange={handleRequiredChange(question.id)}
+              onRemoveQuestion={() => removeQuestion(question.id)}
             />
           ))}
         </Styled.QuestionContainer>
+        <Styled.AddQuestionButton onClick={addQuestion}>
+          질문 추가 +
+        </Styled.AddQuestionButton>
       </PageContainer>
     </>
   );
