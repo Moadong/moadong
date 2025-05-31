@@ -13,7 +13,7 @@ initializeSentry();
 
 async function startApp() {
   if (process.env.NODE_ENV === 'development') {
-    const { worker } = await import('./mocks/mswDevSetup');
+    const { worker } = await import('./mocks/mswDevSetup');
     await worker.start({
       onUnhandledRequest: 'bypass',
     });

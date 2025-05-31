@@ -22,3 +22,15 @@ export const QuestionContainer = styled.div`
   flex-direction: column;
   gap: 83px;
 `;
+
+export const AddQuestionButton = styled.button`
+  padding: 8px 12px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  font-size: 0.875rem;
+  font-weight: 500;
+  background: white;
+  color: #555;
+  margin-top: 8px;
+  cursor: pointer;
+`;

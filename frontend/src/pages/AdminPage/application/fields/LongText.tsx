@@ -1,10 +1,10 @@
 import QuestionTitle from '@/pages/AdminPage/application/components/QuestionTitle/QuestionTitle';
 import QuestionDescription from '@/pages/AdminPage/application/components/QuestionDescription/QuestionDescription';
-import InputField from '@/components/common/InputField/InputField';
 import APPLICATION_FORM from '@/constants/APPLICATION_FORM';
 import { TextProps } from '@/types/application';
+import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 
-const ShortText = ({
+const LongText = ({
   id,
   title,
   description,
@@ -29,14 +29,18 @@ const ShortText = ({
         mode={mode}
         onDescriptionChange={onDescriptionChange}
       />
-      <InputField
+      <CustomTextArea
         value={answer}
-        onChange={(e) => onAnswerChange?.(e.target.value)}
-        placeholder={APPLICATION_FORM.SHORT_TEXT.placeholder}
+        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+          onAnswerChange?.(e.target.value)
+        }
+        placeholder={APPLICATION_FORM.LONG_TEXT.placeholder}
         disabled={mode === 'builder'}
+        showMaxChar={mode === 'answer'}
+        maxLength={APPLICATION_FORM.LONG_TEXT.maxLength}
       />
     </div>
   );
 };
 
-export default ShortText;
+export default LongText;
