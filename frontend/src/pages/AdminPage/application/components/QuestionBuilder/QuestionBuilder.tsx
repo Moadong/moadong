@@ -3,29 +3,7 @@ import ShortText from '@/pages/AdminPage/application/fields/ShortText';
 import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
 import Choice from '@/pages/AdminPage/application/fields/Choice';
 import * as Styled from './QuestionBuilder.styles';
-
-type QuestionType =
-  | 'CHOICE'
-  | 'MULTI_CHOICE'
-  | 'SHORT_TEXT'
-  | 'LONG_TEXT'
-  | 'PHONE_NUMBER'
-  | 'EMAIL'
-  | 'NAME';
-
-interface QuestionBuilderProps {
-  id: number;
-  title: string;
-  description: string;
-  items?: { value: string }[];
-  type: QuestionType;
-  required: boolean;
-  onTitleChange: (value: string) => void;
-  onDescriptionChange: (value: string) => void;
-  onItemsChange?: (newItems: { value: string }[]) => void;
-  onTypeChange?: (type: QuestionType) => void;
-  onRequiredChange?: (required: boolean) => void;
-}
+import { QuestionType } from '@/types/application';
 
 const QuestionBuilder = ({
   id,
