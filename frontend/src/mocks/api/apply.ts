@@ -25,7 +25,7 @@ export const applyHandlers = [
     return HttpResponse.json(
       {
         clubId,
-        form_title: mockData.title,
+        form_title: mockData.form_title,
         questions: mockData.questions,
       },
       { status: 200 },
