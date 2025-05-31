@@ -51,7 +51,7 @@ const Choice = ({
       <QuestionDescription
         description={description}
         mode={mode}
-        onChange={onDescriptionChange}
+        onDescriptionChange={onDescriptionChange}
       />
       {items.map((item, index) => (
         <ItemWrapper key={index}>

@@ -38,7 +38,7 @@ const ShortText = ({
       <QuestionDescription
         description={description}
         mode={mode}
-        onChange={onDescriptionChange}
+        onDescriptionChange={onDescriptionChange}
       />
       <InputField
         value={answer}
