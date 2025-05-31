@@ -1,3 +1,5 @@
+import { ApplicationFormData } from '@/types/application';
+
 type QuestionType =
   | 'CHOICE'
   | 'MULTI_CHOICE'
@@ -20,13 +22,8 @@ export interface Question {
   items?: { value: string }[];
 }
 
-export interface FormData {
-  title: string;
-  questions: Question[];
-}
-
-export const mockData: FormData = {
-  title: '2025_2_지원서',
+export const mockData: ApplicationFormData = {
+  form_title: '2025_2_지원서',
   questions: [
     {
       id: 1,
