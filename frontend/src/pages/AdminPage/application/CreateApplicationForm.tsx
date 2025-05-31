@@ -11,7 +11,7 @@ import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './CreateApplicationForm.styles';
 import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
 
-const CreateForm = () => {
+const CreateApplicationForm = () => {
   const [formData, setFormData] = useState<ApplicationFormData>(
     mockData ?? INITIAL_FORM_DATA,
   );
@@ -105,4 +105,4 @@ const CreateForm = () => {
   );
 };
 
-export default CreateForm;
+export default CreateApplicationForm;
