@@ -9,6 +9,7 @@ import { Question } from '@/types/application';
 const CreateForm = () => {
   const [questions, setQuestions] = useState<Record<number, Question>>({
     1: {
+      id: 1,
       title: '이름을 입력해주세요',
       description: '본명을 입력해 주세요',
       options: {
@@ -17,6 +18,7 @@ const CreateForm = () => {
       type: 'SHORT_TEXT',
     },
     2: {
+      id: 2,
       title: '지원 분야를 선택해주세요',
       description: '중복 선택 가능합니다',
       options: {
