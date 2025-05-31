@@ -16,3 +16,9 @@ export const FormTitle = styled.input`
     opacity: 0;
   }
 `;
+
+export const QuestionContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 83px;
+`;
