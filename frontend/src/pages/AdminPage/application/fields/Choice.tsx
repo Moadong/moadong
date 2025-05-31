@@ -54,7 +54,7 @@ const Choice = ({
         onDescriptionChange={onDescriptionChange}
       />
       {items.map((item, index) => (
-        <ItemWrapper key={index}>
+        <Styled.ItemWrapper key={index}>
           <InputField
             value={item.value}
             onChange={(e) => handleItemChange(index, e.target.value)}
@@ -62,15 +62,17 @@ const Choice = ({
             disabled={mode === 'answer'}
           />
           {mode === 'builder' && items.length > MIN_ITEMS && (
-            <DeleteButton onClick={() => handleDeleteItem(index)}>
+            <Styled.DeleteButton onClick={() => handleDeleteItem(index)}>
               삭제
-            </DeleteButton>
+            </Styled.DeleteButton>
           )}
-        </ItemWrapper>
+        </Styled.ItemWrapper>
       ))}
 
       {mode === 'builder' && items.length < MAX_ITEMS && (
-        <AddItemButton onClick={handleAddItem}>+ 추가항목</AddItemButton>
+        <Styled.AddItemButton onClick={handleAddItem}>
+          + 추가항목
+        </Styled.AddItemButton>
       )}
     </div>
   );
