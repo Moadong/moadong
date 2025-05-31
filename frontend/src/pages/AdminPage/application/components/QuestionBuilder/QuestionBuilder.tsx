@@ -4,6 +4,7 @@ import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
 import Choice from '@/pages/AdminPage/application/fields/Choice';
 import * as Styled from './QuestionBuilder.styles';
 import { QuestionType } from '@/types/application';
+import { QuestionBuilderProps } from '@/types/application';
 
 const QuestionBuilder = ({
   id,
