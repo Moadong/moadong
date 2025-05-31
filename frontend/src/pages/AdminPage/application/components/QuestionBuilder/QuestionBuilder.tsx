@@ -124,7 +124,9 @@ const QuestionBuilder = ({
         </Styled.DropDownWrapper>
         {renderSelectionToggle()}
       </Styled.QuestionMenu>
-      {renderFieldByQuestionType()}
+      <Styled.QuestionFieldContainer>
+        {renderFieldByQuestionType()}
+      </Styled.QuestionFieldContainer>
     </Styled.QuestionWrapper>
   );
 };

@@ -7,6 +7,10 @@ export const QuestionMenu = styled.div`
   gap: 4px;
 `;
 
+export const QuestionFieldContainer = styled.div`
+  width: 100%;
+`;
+
 export const RequiredToggleButton = styled.div`
   display: flex;
   border: none;
