@@ -16,9 +16,9 @@ const QuestionTitle = ({
   onTitleChange,
 }: QuestionTitleProps) => {
   return (
-    <QuestionTitleContainer>
-      {id && <QuestionTitleId>{id}.</QuestionTitleId>}
-      <QuestionTitleText
+    <Styled.QuestionTitleContainer>
+      {id && <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>}
+      <Styled.QuestionTitleText
         type='text'
         value={title}
         placeholder='질문 제목을 입력하세요'
@@ -26,8 +26,8 @@ const QuestionTitle = ({
         readOnly={mode === 'answer'}
         onChange={(e) => onTitleChange?.(e.target.value)}
       />
-      {mode === 'answer' && required && <QuestionRequired />}
-    </QuestionTitleContainer>
+      {mode === 'answer' && required && <Styled.QuestionRequired />}
+    </Styled.QuestionTitleContainer>
   );
 };
 
