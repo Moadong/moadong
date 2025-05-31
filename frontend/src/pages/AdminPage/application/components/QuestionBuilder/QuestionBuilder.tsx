@@ -10,7 +10,7 @@ const QuestionBuilder = ({
   id,
   title,
   description,
-  required,
+  options,
   items,
   type,
   onTitleChange,
@@ -41,7 +41,7 @@ const QuestionBuilder = ({
           <ShortText
             id={id}
             title={title}
-            required={required}
+            required={options?.required}
             description={description}
             mode='builder'
             onTitleChange={onTitleChange}
@@ -55,7 +55,7 @@ const QuestionBuilder = ({
           <Choice
             id={id}
             title={title}
-            required={required}
+            required={options?.required}
             description={description}
             mode='builder'
             items={items}
@@ -101,10 +101,10 @@ const QuestionBuilder = ({
     <Styled.QuestionWrapper>
       <Styled.QuestionMenu>
         <Styled.RequiredToggleButton
-          onClick={() => onRequiredChange?.(!required)}
+          onClick={() => onRequiredChange?.(!options?.required)}
         >
           답변 필수
-          <Styled.RequiredToggleCircle active={required} />
+          <Styled.RequiredToggleCircle active={options?.required} />
         </Styled.RequiredToggleButton>
         <Styled.DropDownWrapper>
           <Styled.DropdownIcon

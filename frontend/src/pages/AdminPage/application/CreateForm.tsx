@@ -125,7 +125,7 @@ const CreateForm = () => {
           id={Number(id)}
           title={question.title}
           description={question.description}
-          required={question.options?.required ?? false}
+          options={question.options ?? false}
           items={question.items}
           onTitleChange={handleTitleChange(Number(id))}
           onDescriptionChange={handleDescriptionChange(Number(id))}
