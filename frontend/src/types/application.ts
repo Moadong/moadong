@@ -41,7 +41,7 @@ interface QuestionComponentProps {
   onDescriptionChange?: (value: string) => void;
 }
 
-export interface ShortTextProps extends QuestionComponentProps {
+export interface TextProps extends QuestionComponentProps {
   answer?: string;
   onAnswerChange?: (value: string) => void;
 }

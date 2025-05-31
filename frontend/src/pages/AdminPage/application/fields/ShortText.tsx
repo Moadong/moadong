@@ -2,7 +2,7 @@ import QuestionTitle from '@/pages/AdminPage/application/components/QuestionTitl
 import QuestionDescription from '@/pages/AdminPage/application/components/QuestionDescription/QuestionDescription';
 import InputField from '@/components/common/InputField/InputField';
 import APPLICATION_FORM from '@/constants/APPLICATION_FORM';
-import { ShortTextProps } from '@/types/application';
+import { TextProps } from '@/types/application';
 
 const ShortText = ({
   id,
@@ -14,7 +14,7 @@ const ShortText = ({
   onAnswerChange,
   onTitleChange,
   onDescriptionChange,
-}: ShortTextProps) => {
+}: TextProps) => {
   return (
     <div>
       <QuestionTitle
