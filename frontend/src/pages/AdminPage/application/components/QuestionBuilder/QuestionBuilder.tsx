@@ -19,6 +19,7 @@ const QuestionBuilder = ({
   onDescriptionChange,
   onTypeChange,
   onRequiredChange,
+  onRemoveQuestion,
 }: QuestionBuilderProps) => {
   if (!QUESTION_TYPE_LIST.includes(type as QuestionType)) {
     return null;
@@ -129,6 +130,7 @@ const QuestionBuilder = ({
           </Styled.Dropdown>
         </Styled.DropDownWrapper>
         {renderSelectionToggle()}
+        <button onClick={() => onRemoveQuestion()}>삭제</button>
       </Styled.QuestionMenu>
       <Styled.QuestionFieldContainer>
         {renderFieldByQuestionType()}
