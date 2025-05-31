@@ -1,51 +1,9 @@
-import styled from 'styled-components';
+import * as Styled from './Choice.styles';
 import QuestionTitle from '@/pages/AdminPage/application/components/QuestionTitle/QuestionTitle';
 import QuestionDescription from '@/pages/AdminPage/application/components/QuestionDescription/QuestionDescription';
 import InputField from '@/components/common/InputField/InputField';
 import APPLICATION_FORM from '@/constants/APPLICATION_FORM';
-
-interface ChoiceProps {
-  id: number;
-  title: string;
-  description: string;
-  required: boolean;
-  mode: 'builder' | 'answer';
-  onTitleChange?: (value: string) => void;
-  onDescriptionChange?: (value: string) => void;
-  items?: { value: string }[];
-  answer?: string;
-  isMulti?: boolean;
-  onItemsChange?: (newItems: { value: string }[]) => void;
-}
-
-const AddItemButton = styled.button`
-  padding: 8px 12px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background: white;
-  color: #555;
-  margin-top: 8px;
-  cursor: pointer;
-`;
-
-const ItemWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  margin-bottom: 8px;
-`;
-
-const DeleteButton = styled.button`
-  font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background-color: #ffecec;
-  color: #e33;
-  border: 1px solid #f99;
-  cursor: pointer;
-`;
+import { ChoiceProps } from '@/types/application';
 
 const MIN_ITEMS = 2;
 const MAX_ITEMS = 6;
@@ -88,15 +46,15 @@ const Choice = ({
         title={title}
         required={required}
         mode={mode}
-        onChange={onTitleChange}
+        onTitleChange={onTitleChange}
       />
       <QuestionDescription
         description={description}
         mode={mode}
-        onChange={onDescriptionChange}
+        onDescriptionChange={onDescriptionChange}
       />
       {items.map((item, index) => (
-        <ItemWrapper key={index}>
+        <Styled.ItemWrapper key={index}>
           <InputField
             value={item.value}
             onChange={(e) => handleItemChange(index, e.target.value)}
@@ -104,15 +62,17 @@ const Choice = ({
             disabled={mode === 'answer'}
           />
           {mode === 'builder' && items.length > MIN_ITEMS && (
-            <DeleteButton onClick={() => handleDeleteItem(index)}>
+            <Styled.DeleteButton onClick={() => handleDeleteItem(index)}>
               삭제
-            </DeleteButton>
+            </Styled.DeleteButton>
           )}
-        </ItemWrapper>
+        </Styled.ItemWrapper>
       ))}
 
       {mode === 'builder' && items.length < MAX_ITEMS && (
-        <AddItemButton onClick={handleAddItem}>+ 추가항목</AddItemButton>
+        <Styled.AddItemButton onClick={handleAddItem}>
+          + 추가항목
+        </Styled.AddItemButton>
       )}
     </div>
   );

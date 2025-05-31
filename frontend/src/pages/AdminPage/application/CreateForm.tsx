@@ -3,29 +3,13 @@
 // Todo: 질문 삭제 및 질문 추가 기능 구현
 import { useState } from 'react';
 import QuestionBuilder from '@/pages/AdminPage/application/components/QuestionBuilder/QuestionBuilder';
-
-type QuestionType =
-  | 'SHORT_TEXT'
-  | 'LONG_TEXT'
-  | 'CHOICE'
-  | 'MULTI_CHOICE'
-  | 'EMAIL'
-  | 'PHONE_NUMBER'
-  | 'NAME';
-
-type Question = {
-  title: string;
-  description: string;
-  type: QuestionType;
-  options: {
-    required: boolean;
-  };
-  items?: { value: string }[];
-};
+import { QuestionType } from '@/types/application';
+import { Question } from '@/types/application';
 
 const CreateForm = () => {
   const [questions, setQuestions] = useState<Record<number, Question>>({
     1: {
+      id: 1,
       title: '이름을 입력해주세요',
       description: '본명을 입력해 주세요',
       options: {
@@ -34,6 +18,7 @@ const CreateForm = () => {
       type: 'SHORT_TEXT',
     },
     2: {
+      id: 2,
       title: '지원 분야를 선택해주세요',
       description: '중복 선택 가능합니다',
       options: {
@@ -125,7 +110,7 @@ const CreateForm = () => {
           id={Number(id)}
           title={question.title}
           description={question.description}
-          required={question.options?.required ?? false}
+          options={question.options ?? false}
           items={question.items}
           onTitleChange={handleTitleChange(Number(id))}
           onDescriptionChange={handleDescriptionChange(Number(id))}

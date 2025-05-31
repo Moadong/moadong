@@ -2,18 +2,7 @@ import QuestionTitle from '@/pages/AdminPage/application/components/QuestionTitl
 import QuestionDescription from '@/pages/AdminPage/application/components/QuestionDescription/QuestionDescription';
 import InputField from '@/components/common/InputField/InputField';
 import APPLICATION_FORM from '@/constants/APPLICATION_FORM';
-
-interface ShortTextProps {
-  id: number;
-  title: string;
-  description: string;
-  required: boolean;
-  mode: 'builder' | 'answer';
-  answer?: string;
-  onChange?: (value: string) => void;
-  onTitleChange?: (value: string) => void;
-  onDescriptionChange?: (value: string) => void;
-}
+import { ShortTextProps } from '@/types/application';
 
 const ShortText = ({
   id,
@@ -22,7 +11,7 @@ const ShortText = ({
   required,
   answer,
   mode,
-  onChange,
+  onAnswerChange,
   onTitleChange,
   onDescriptionChange,
 }: ShortTextProps) => {
@@ -33,16 +22,16 @@ const ShortText = ({
         title={title}
         required={required}
         mode={mode}
-        onChange={onTitleChange}
+        onTitleChange={onTitleChange}
       />
       <QuestionDescription
         description={description}
         mode={mode}
-        onChange={onDescriptionChange}
+        onDescriptionChange={onDescriptionChange}
       />
       <InputField
         value={answer}
-        onChange={(e) => onChange?.(e.target.value)}
+        onChange={(e) => onAnswerChange?.(e.target.value)}
         placeholder={APPLICATION_FORM.SHORT_TEXT.placeholder}
         disabled={mode === 'builder'}
       />

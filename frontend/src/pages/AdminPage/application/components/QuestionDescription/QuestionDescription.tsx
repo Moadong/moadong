@@ -3,7 +3,7 @@ import styled from 'styled-components';
 interface QuestionDescriptionProps {
   description: string;
   mode: 'builder' | 'answer';
-  onChange?: (value: string) => void;
+  onDescriptionChange?: (value: string) => void;
 }
 
 const QuestionDescriptionText = styled.input`
@@ -19,7 +19,7 @@ const QuestionDescriptionText = styled.input`
 const QuestionDescription = ({
   description,
   mode,
-  onChange,
+  onDescriptionChange,
 }: QuestionDescriptionProps) => {
   return (
     <>
@@ -28,7 +28,7 @@ const QuestionDescription = ({
         placeholder='질문에 대한 설명을 입력하세요'
         aria-label='질문 설명'
         readOnly={mode === 'answer'}
-        onChange={(e) => onChange?.(e.target.value)}
+        onChange={(e) => onDescriptionChange?.(e.target.value)}
       />
     </>
   );

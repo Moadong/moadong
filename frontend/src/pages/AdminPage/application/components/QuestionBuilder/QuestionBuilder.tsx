@@ -3,35 +3,14 @@ import ShortText from '@/pages/AdminPage/application/fields/ShortText';
 import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
 import Choice from '@/pages/AdminPage/application/fields/Choice';
 import * as Styled from './QuestionBuilder.styles';
-
-type QuestionType =
-  | 'CHOICE'
-  | 'MULTI_CHOICE'
-  | 'SHORT_TEXT'
-  | 'LONG_TEXT'
-  | 'PHONE_NUMBER'
-  | 'EMAIL'
-  | 'NAME';
-
-interface QuestionBuilderProps {
-  id: number;
-  title: string;
-  description: string;
-  items?: { value: string }[];
-  type: QuestionType;
-  required: boolean;
-  onTitleChange: (value: string) => void;
-  onDescriptionChange: (value: string) => void;
-  onItemsChange?: (newItems: { value: string }[]) => void;
-  onTypeChange?: (type: QuestionType) => void;
-  onRequiredChange?: (required: boolean) => void;
-}
+import { QuestionType } from '@/types/application';
+import { QuestionBuilderProps } from '@/types/application';
 
 const QuestionBuilder = ({
   id,
   title,
   description,
-  required,
+  options,
   items,
   type,
   onTitleChange,
@@ -62,7 +41,7 @@ const QuestionBuilder = ({
           <ShortText
             id={id}
             title={title}
-            required={required}
+            required={options?.required}
             description={description}
             mode='builder'
             onTitleChange={onTitleChange}
@@ -76,7 +55,7 @@ const QuestionBuilder = ({
           <Choice
             id={id}
             title={title}
-            required={required}
+            required={options?.required}
             description={description}
             mode='builder'
             items={items}
@@ -122,10 +101,10 @@ const QuestionBuilder = ({
     <Styled.QuestionWrapper>
       <Styled.QuestionMenu>
         <Styled.RequiredToggleButton
-          onClick={() => onRequiredChange?.(!required)}
+          onClick={() => onRequiredChange?.(!options?.required)}
         >
           답변 필수
-          <Styled.RequiredToggleCircle active={required} />
+          <Styled.RequiredToggleCircle active={options?.required} />
         </Styled.RequiredToggleButton>
         <Styled.DropDownWrapper>
           <Styled.DropdownIcon
