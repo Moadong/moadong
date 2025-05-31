@@ -8,6 +8,7 @@ import { Question } from '@/types/application';
 import { mockData } from '@/mocks/data/mockData';
 import { ApplicationFormData } from '@/types/application';
 import { PageContainer } from '@/styles/PageContainer.styles';
+import * as Styled from './CreateApplicationForm.styles';
 
 const CreateForm = () => {
   const [formData, setFormData] = useState<ApplicationFormData>(mockData);
@@ -22,6 +23,13 @@ const CreateForm = () => {
       questions: prev.questions.map((q) =>
         q.id === id ? { ...q, [key]: value } : q,
       ),
+    }));
+  };
+
+  const handleFormTitleChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      form_title: value,
     }));
   };
 
@@ -65,22 +73,30 @@ const CreateForm = () => {
   return (
     <>
       <PageContainer>
-        {formData.questions.map((question) => (
-          <QuestionBuilder
-            key={question.id}
-            id={question.id}
-            title={question.title}
-            description={question.description}
-            options={question.options}
-            items={question.items}
-            type={question.type}
-            onTitleChange={handleTitleChange(question.id)}
-            onDescriptionChange={handleDescriptionChange(question.id)}
-            onItemsChange={handleItemsChange(question.id)}
-            onTypeChange={handleTypeChange(question.id)}
-            onRequiredChange={handleRequiredChange(question.id)}
-          />
-        ))}
+        <Styled.FormTitle
+          type='text'
+          value={formData.form_title}
+          onChange={(e) => handleFormTitleChange(e.target.value)}
+          placeholder='지원서 제목을 입력하세요'
+        ></Styled.FormTitle>
+        <Styled.QuestionContainer>
+          {formData.questions.map((question) => (
+            <QuestionBuilder
+              key={question.id}
+              id={question.id}
+              title={question.title}
+              description={question.description}
+              options={question.options}
+              items={question.items}
+              type={question.type}
+              onTitleChange={handleTitleChange(question.id)}
+              onDescriptionChange={handleDescriptionChange(question.id)}
+              onItemsChange={handleItemsChange(question.id)}
+              onTypeChange={handleTypeChange(question.id)}
+              onRequiredChange={handleRequiredChange(question.id)}
+            />
+          ))}
+        </Styled.QuestionContainer>
       </PageContainer>
     </>
   );
