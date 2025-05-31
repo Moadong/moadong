@@ -5,6 +5,7 @@ import Choice from '@/pages/AdminPage/application/fields/Choice';
 import * as Styled from './QuestionBuilder.styles';
 import { QuestionType } from '@/types/application';
 import { QuestionBuilderProps } from '@/types/application';
+import { QUESTION_TYPE_LIST } from '@/types/application';
 
 const QuestionBuilder = ({
   id,
@@ -19,6 +20,10 @@ const QuestionBuilder = ({
   onTypeChange,
   onRequiredChange,
 }: QuestionBuilderProps) => {
+  if (!QUESTION_TYPE_LIST.includes(type as QuestionType)) {
+    return null;
+  }
+
   const [selectionType, setSelectionType] = useState<'single' | 'multi'>(
     type === 'MULTI_CHOICE' ? 'multi' : 'single',
   );
@@ -37,6 +42,7 @@ const QuestionBuilder = ({
       case 'NAME':
       case 'EMAIL':
       case 'PHONE_NUMBER':
+      case 'LONG_TEXT':
         return (
           <ShortText
             id={id}
