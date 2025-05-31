@@ -1,34 +1,4 @@
-import styled from 'styled-components';
-
-const QuestionTitleContainer = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 4px;
-`;
-
-const QuestionTitleId = styled.p`
-  color: #ff5414;
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: normal;
-`;
-
-const QuestionTitleText = styled.input`
-  border: none;
-  outline: none;
-  color: #111;
-  font-size: 1.25rem;
-  font-weight: 700;
-  line-height: normal;
-`;
-
-const QuestionRequired = styled.div`
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background-color: #ff5414;
-  margin-left: 14px;
-`;
+import * as Styled from './QuestionTitle.styles';
 
 interface QuestionTitleProps {
   id: number;
