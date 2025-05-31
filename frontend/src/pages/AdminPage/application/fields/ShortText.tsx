@@ -11,7 +11,7 @@ const ShortText = ({
   required,
   answer,
   mode,
-  onChange,
+  onAnswerChange,
   onTitleChange,
   onDescriptionChange,
 }: ShortTextProps) => {
@@ -31,7 +31,7 @@ const ShortText = ({
       />
       <InputField
         value={answer}
-        onChange={(e) => onChange?.(e.target.value)}
+        onChange={(e) => onAnswerChange?.(e.target.value)}
         placeholder={APPLICATION_FORM.SHORT_TEXT.placeholder}
         disabled={mode === 'builder'}
       />
