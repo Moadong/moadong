@@ -2,7 +2,7 @@
 
 module.exports = {
   setupFiles: ['<rootDir>/jest.setup.ts'],
-  testEnvironment: 'jsdom',
+  testEnvironment: 'jest-fixed-jsdom',
   transform: {
     '^.+\\.tsx?$': ['ts-jest', {}],
     '\\.(svg|png|jpg|jpeg|gif)$': 'jest-transform-stub',
