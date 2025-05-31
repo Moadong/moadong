@@ -1,3 +1,3 @@
-import { clubHandlers } from './apply';
+import { applyHandlers } from './apply';
 
-export const handlers = [...clubHandlers];
+export const handlers = [...applyHandlers];

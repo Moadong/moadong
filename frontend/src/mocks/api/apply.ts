@@ -4,7 +4,7 @@ import { API_BASE } from '../constants/clubApi';
 import { validateClubId } from '../utils/validateClubId';
 import { ERROR_MESSAGE } from '../constants/error';
 
-export const clubHandlers = [
+export const applyHandlers = [
   http.get(`${API_BASE}/apply`, () => {
     return HttpResponse.json(
       { message: ERROR_MESSAGE.INVALID_CLUB_ID },

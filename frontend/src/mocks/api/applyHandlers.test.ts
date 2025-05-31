@@ -1,4 +1,4 @@
-import { clubHandlers } from './apply';
+import { applyHandlers } from './apply';
 import { setupServer } from 'msw/node';
 import { Question } from '../data/mockData';
 import { createApiUrl } from '../utils/createApiUrl';
@@ -21,7 +21,7 @@ interface SubmissionResponse {
   message: string;
 }
 
-const server = setupServer(...clubHandlers);
+const server = setupServer(...applyHandlers);
 
 beforeAll(() => server.listen());
 afterEach(() => server.resetHandlers());
