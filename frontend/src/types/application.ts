@@ -29,6 +29,7 @@ export interface QuestionBuilderProps extends Question {
   onItemsChange?: (newItems: { value: string }[]) => void;
   onTypeChange?: (type: QuestionType) => void;
   onRequiredChange?: (required: boolean) => void;
+  onRemoveQuestion: () => void;
 }
 
 interface QuestionComponentProps {
