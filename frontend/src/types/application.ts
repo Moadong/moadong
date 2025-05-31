@@ -1,11 +1,16 @@
-export type QuestionType =
-  | 'SHORT_TEXT'
-  | 'LONG_TEXT'
-  | 'CHOICE'
-  | 'MULTI_CHOICE'
-  | 'EMAIL'
-  | 'PHONE_NUMBER'
-  | 'NAME';
+// types/application.ts
+
+export const QUESTION_TYPE_LIST = [
+  'SHORT_TEXT',
+  'CHOICE',
+  'LONG_TEXT',
+  'MULTI_CHOICE',
+  'EMAIL',
+  'PHONE_NUMBER',
+  'NAME',
+] as const;
+
+export type QuestionType = (typeof QUESTION_TYPE_LIST)[number];
 
 export interface Question {
   id: number;
@@ -45,4 +50,9 @@ export interface ChoiceProps extends QuestionComponentProps {
   items?: { value: string }[];
   isMulti?: boolean;
   onItemsChange?: (newItems: { value: string }[]) => void;
+}
+
+export interface ApplicationFormData {
+  form_title: string;
+  questions: Question[];
 }
