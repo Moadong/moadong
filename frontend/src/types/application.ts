@@ -25,3 +25,24 @@ export interface QuestionBuilderProps extends Question {
   onTypeChange?: (type: QuestionType) => void;
   onRequiredChange?: (required: boolean) => void;
 }
+
+interface QuestionComponentProps {
+  id: number;
+  title: string;
+  description: string;
+  required: boolean;
+  mode: 'builder' | 'answer';
+  onTitleChange?: (value: string) => void;
+  onDescriptionChange?: (value: string) => void;
+}
+
+export interface ShortTextProps extends QuestionComponentProps {
+  answer?: string;
+  onAnswerChange?: (value: string) => void;
+}
+
+export interface ChoiceProps extends QuestionComponentProps {
+  items?: { value: string }[];
+  isMulti?: boolean;
+  onItemsChange?: (newItems: { value: string }[]) => void;
+}
