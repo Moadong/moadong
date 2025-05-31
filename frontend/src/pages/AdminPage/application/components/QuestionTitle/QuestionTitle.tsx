@@ -5,7 +5,7 @@ interface QuestionTitleProps {
   title: string;
   required?: boolean;
   mode: 'builder' | 'answer';
-  onChange?: (value: string) => void;
+  onTitleChange?: (value: string) => void;
 }
 
 const QuestionTitle = ({
@@ -13,7 +13,7 @@ const QuestionTitle = ({
   title,
   required,
   mode,
-  onChange,
+  onTitleChange,
 }: QuestionTitleProps) => {
   return (
     <QuestionTitleContainer>
@@ -24,7 +24,7 @@ const QuestionTitle = ({
         placeholder='질문 제목을 입력하세요'
         aria-label='질문 제목'
         readOnly={mode === 'answer'}
-        onChange={(e) => onChange?.(e.target.value)}
+        onChange={(e) => onTitleChange?.(e.target.value)}
       />
       {mode === 'answer' && required && <QuestionRequired />}
     </QuestionTitleContainer>

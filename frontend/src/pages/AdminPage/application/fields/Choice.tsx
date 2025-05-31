@@ -46,7 +46,7 @@ const Choice = ({
         title={title}
         required={required}
         mode={mode}
-        onChange={onTitleChange}
+        onTitleChange={onTitleChange}
       />
       <QuestionDescription
         description={description}
