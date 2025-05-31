@@ -9,9 +9,12 @@ import { mockData } from '@/mocks/data/mockData';
 import { ApplicationFormData } from '@/types/application';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './CreateApplicationForm.styles';
+import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
 
 const CreateForm = () => {
-  const [formData, setFormData] = useState<ApplicationFormData>(mockData);
+  const [formData, setFormData] = useState<ApplicationFormData>(
+    mockData ?? INITIAL_FORM_DATA,
+  );
 
   const updateQuestionField = <K extends keyof Question>(
     id: number,
