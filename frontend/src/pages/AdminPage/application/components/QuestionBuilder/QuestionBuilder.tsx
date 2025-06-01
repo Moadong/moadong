@@ -4,8 +4,8 @@ import Choice from '@/pages/AdminPage/application/fields/Choice';
 import LongText from '@/pages/AdminPage/application/fields/LongText';
 import { QuestionType } from '@/types/application';
 import { QuestionBuilderProps } from '@/types/application';
-import { QUESTION_TYPE_LIST } from '@/types/application';
-import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
+import { QUESTION_LABEL_MAP } from '@/constants/APPLICATION_FORM';
+import { DROPDOWN_OPTIONS } from '@/constants/APPLICATION_FORM';
 import * as Styled from './QuestionBuilder.styles';
 
 const QuestionBuilder = ({
