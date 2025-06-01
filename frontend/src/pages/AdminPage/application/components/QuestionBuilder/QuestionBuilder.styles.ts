@@ -25,6 +25,7 @@ export const RequiredToggleButton = styled.div`
   color: #787878;
   font-size: 0.875rem;
   font-weight: 600;
+  user-select: none;
 `;
 
 export const RequiredToggleCircle = styled.span<{ active?: boolean }>`
@@ -32,30 +33,23 @@ export const RequiredToggleCircle = styled.span<{ active?: boolean }>`
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1px solid ${(props) => (props.active ? '#ff5000' : '#ccc')};
-  background-color: ${(props) => (props.active ? '#ff5000' : 'white')};
+  border: 1px solid ${({ active }) => (active ? '#ff5000' : '#ccc')};
+  background-color: #fff;
+  transition: background-color 0.2s ease;
 
-  ${({ active }) =>
-    active &&
-    `
-    background-color: #fff;
-    &::after {
-      content: '';
-      width: 10px;
-      height: 10px;
-      background-color: #ff5000;
-      border-radius: 50%;
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-    }
-  `}
-`;
-
-export const DropDownWrapper = styled.div`
-  position: relative;
-  width: 100%;
+  &::after {
+    content: '';
+    width: 10px;
+    height: 10px;
+    background-color: #ff5000;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    opacity: ${({ active }) => (active ? 1 : 0)};
+    transition: opacity 0.1s ease;
+  }
 `;
 
 export const SelectionToggleWrapper = styled.div`
@@ -76,6 +70,9 @@ export const SelectionToggleButton = styled.button<{ active: boolean }>`
   cursor: pointer;
   letter-spacing: -0.42px;
   white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease;
 `;
 
 export const QuestionWrapper = styled.div`
