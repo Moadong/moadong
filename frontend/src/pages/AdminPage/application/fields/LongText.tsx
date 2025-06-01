@@ -31,9 +31,7 @@ const LongText = ({
       />
       <CustomTextArea
         value={answer}
-        onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-          onAnswerChange?.(e.target.value)
-        }
+        onChange={(e) => onAnswerChange?.(e.target.value)}
         placeholder={APPLICATION_FORM.LONG_TEXT.placeholder}
         disabled={mode === 'builder'}
         showMaxChar={mode === 'answer'}
