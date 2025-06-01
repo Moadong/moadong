@@ -67,7 +67,6 @@ const QuestionBuilder = ({
             onDescriptionChange={onDescriptionChange}
           />
         );
-      // Todo case 'LONG_TEXT': 와 같은 다른 케이스도 여기서 렌더링 가능
       case 'CHOICE':
       case 'MULTI_CHOICE':
         return (
