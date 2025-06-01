@@ -2,7 +2,8 @@ import styled from 'styled-components';
 
 export const QuestionMenu = styled.div`
   display: flex;
-  width: 140px;
+  max-width: 140px;
+  width: 100%;
   flex-direction: column;
   gap: 4px;
 `;

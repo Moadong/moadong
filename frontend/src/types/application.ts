@@ -29,6 +29,7 @@ export interface QuestionBuilderProps extends Question {
   onItemsChange?: (newItems: { value: string }[]) => void;
   onTypeChange?: (type: QuestionType) => void;
   onRequiredChange?: (required: boolean) => void;
+  onRemoveQuestion: () => void;
 }
 
 interface QuestionComponentProps {
@@ -41,7 +42,7 @@ interface QuestionComponentProps {
   onDescriptionChange?: (value: string) => void;
 }
 
-export interface ShortTextProps extends QuestionComponentProps {
+export interface TextProps extends QuestionComponentProps {
   answer?: string;
   onAnswerChange?: (value: string) => void;
 }

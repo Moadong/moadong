@@ -15,6 +15,34 @@ const CreateApplicationForm = () => {
   const [formData, setFormData] = useState<ApplicationFormData>(
     mockData ?? INITIAL_FORM_DATA,
   );
+  const [nextId, setNextId] = useState(() => {
+    const questions = mockData?.questions ?? INITIAL_FORM_DATA.questions;
+    if (questions.length === 0) return 1;
+    const maxId = Math.max(...questions.map((q) => q.id));
+    return maxId + 1;
+  });
+
+  const addQuestion = () => {
+    const newQuestion: Question = {
+      id: nextId,
+      title: '',
+      description: '',
+      type: 'SHORT_TEXT',
+      options: { required: false },
+    };
+    setFormData((prev) => ({
+      ...prev,
+      questions: [...prev.questions, newQuestion],
+    }));
+    setNextId((currentId) => currentId + 1);
+  };
+
+  const removeQuestion = (id: number) => {
+    setFormData((prev) => ({
+      ...prev,
+      questions: prev.questions.filter((q) => q.id !== id),
+    }));
+  };
 
   const updateQuestionField = <K extends keyof Question>(
     id: number,
@@ -97,9 +125,13 @@ const CreateApplicationForm = () => {
               onItemsChange={handleItemsChange(question.id)}
               onTypeChange={handleTypeChange(question.id)}
               onRequiredChange={handleRequiredChange(question.id)}
+              onRemoveQuestion={() => removeQuestion(question.id)}
             />
           ))}
         </Styled.QuestionContainer>
+        <Styled.AddQuestionButton onClick={addQuestion}>
+          질문 추가 +
+        </Styled.AddQuestionButton>
       </PageContainer>
     </>
   );

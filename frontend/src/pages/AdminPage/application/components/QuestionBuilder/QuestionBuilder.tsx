@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import ShortText from '@/pages/AdminPage/application/fields/ShortText';
-import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
 import Choice from '@/pages/AdminPage/application/fields/Choice';
-import * as Styled from './QuestionBuilder.styles';
+import LongText from '@/pages/AdminPage/application/fields/LongText';
 import { QuestionType } from '@/types/application';
 import { QuestionBuilderProps } from '@/types/application';
 import { QUESTION_TYPE_LIST } from '@/types/application';
+import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
+import * as Styled from './QuestionBuilder.styles';
 
 const QuestionBuilder = ({
   id,
@@ -19,6 +20,7 @@ const QuestionBuilder = ({
   onDescriptionChange,
   onTypeChange,
   onRequiredChange,
+  onRemoveQuestion,
 }: QuestionBuilderProps) => {
   if (!QUESTION_TYPE_LIST.includes(type as QuestionType)) {
     return null;
@@ -42,7 +44,6 @@ const QuestionBuilder = ({
       case 'NAME':
       case 'EMAIL':
       case 'PHONE_NUMBER':
-      case 'LONG_TEXT':
         return (
           <ShortText
             id={id}
@@ -54,7 +55,18 @@ const QuestionBuilder = ({
             onDescriptionChange={onDescriptionChange}
           />
         );
-      // Todo case 'LONG_TEXT': 와 같은 다른 케이스도 여기서 렌더링 가능
+      case 'LONG_TEXT':
+        return (
+          <LongText
+            id={id}
+            title={title}
+            required={options?.required}
+            description={description}
+            mode='builder'
+            onTitleChange={onTitleChange}
+            onDescriptionChange={onDescriptionChange}
+          />
+        );
       case 'CHOICE':
       case 'MULTI_CHOICE':
         return (
@@ -124,11 +136,13 @@ const QuestionBuilder = ({
               onTypeChange?.(selectedType);
             }}
           >
-            <option value='CHOICE'>객관식</option>
+            <option value='LONG_TEXT'>장문형</option>
             <option value='SHORT_TEXT'>단답형</option>
+            <option value='CHOICE'>객관식</option>
           </Styled.Dropdown>
         </Styled.DropDownWrapper>
         {renderSelectionToggle()}
+        <button onClick={() => onRemoveQuestion()}>삭제</button>
       </Styled.QuestionMenu>
       <Styled.QuestionFieldContainer>
         {renderFieldByQuestionType()}
