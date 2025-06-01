@@ -82,10 +82,9 @@ export const ToggleButton = styled.button`
 export const CharCount = styled.span`
   position: absolute;
   color: #c5c5c5;
-  transform: translateY(-50%);
-  top: 50%;
-  right: 44px;
-  font-size: 12px;
+  top: 110%;
+  right: 0;
+  font-size: 14px;
   letter-spacing: -0.96px;
 `;
 
