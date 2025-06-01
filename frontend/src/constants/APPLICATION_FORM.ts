@@ -20,4 +20,20 @@ export const APPLICATION_FORM = {
     maxLength: 20,
   },
 } as const;
-export default APPLICATION_FORM;
+
+export const QUESTION_LABEL_MAP = {
+  SHORT_TEXT: '단답형',
+  LONG_TEXT: '장문형',
+  CHOICE: '객관식',
+  MULTI_CHOICE: '객관식',
+  EMAIL: '이메일',
+  PHONE_NUMBER: '전화번호',
+  NAME: '이름',
+} as const;
+
+const DROPDOWN_QUESTION_TYPES = ['LONG_TEXT', 'SHORT_TEXT', 'CHOICE'] as const;
+
+export const DROPDOWN_OPTIONS = DROPDOWN_QUESTION_TYPES.map((type) => ({
+  value: type,
+  label: QUESTION_LABEL_MAP[type],
+}));
