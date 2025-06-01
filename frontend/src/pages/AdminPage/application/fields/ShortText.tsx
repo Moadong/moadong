@@ -34,6 +34,10 @@ const ShortText = ({
         onChange={(e) => onAnswerChange?.(e.target.value)}
         placeholder={APPLICATION_FORM.SHORT_TEXT.placeholder}
         disabled={mode === 'builder'}
+        showMaxChar={mode === 'answer'}
+        maxLength={APPLICATION_FORM.SHORT_TEXT.maxLength}
+        showClearButton={false}
+        width={'60%'}
       />
     </div>
   );
