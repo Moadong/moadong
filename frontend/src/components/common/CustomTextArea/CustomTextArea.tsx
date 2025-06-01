@@ -1,6 +1,8 @@
 import { useEffect, useRef } from 'react';
 import * as Styled from './CustomTextArea.styles';
 
+//Todo : InputField 컴포넌트와 중복되는 부분이 많아 추후 리팩토링 검토
+
 interface CustomTextAreaProps {
   placeholder?: string;
   width?: string;
