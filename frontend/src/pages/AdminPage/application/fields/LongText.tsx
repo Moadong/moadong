@@ -1,6 +1,6 @@
 import QuestionTitle from '@/pages/AdminPage/application/components/QuestionTitle/QuestionTitle';
 import QuestionDescription from '@/pages/AdminPage/application/components/QuestionDescription/QuestionDescription';
-import APPLICATION_FORM from '@/constants/APPLICATION_FORM';
+import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { TextProps } from '@/types/application';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 
