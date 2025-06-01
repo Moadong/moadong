@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const InputContainer = styled.div<{ width: string }>`
+export const TextAreaContainer = styled.div<{ width: string }>`
   width: ${(props) => props.width};
   min-width: 385px;
   display: flex;
@@ -13,7 +13,7 @@ export const Label = styled.label`
   font-weight: 600;
 `;
 
-export const InputWrapper = styled.div`
+export const TextAreaWrapper = styled.div`
   position: relative;
   display: flex;
   align-items: center;
@@ -22,13 +22,15 @@ export const InputWrapper = styled.div`
 export const TextArea = styled.textarea<{ hasError?: boolean }>`
   flex: 1;
   height: 45px;
-  padding: 12px 80px 12px 18px;
+  padding: 12px 18px;
   border: 1px solid ${({ hasError }) => (hasError ? 'red' : '#c5c5c5')};
   border-radius: 6px;
   outline: none;
   font-size: 1.125rem;
   letter-spacing: 0;
   color: rgba(0, 0, 0, 0.8);
+  overflow: hidden;
+  resize: none;
 
   &:focus {
     border-color: ${({ hasError }) => (hasError ? 'red' : '#007bff')};
@@ -37,11 +39,9 @@ export const TextArea = styled.textarea<{ hasError?: boolean }>`
         hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
   }
 
-  ${({ disabled }) =>
-    disabled &&
-    `
-    background-color: rgba(0, 0, 0, 0.05); 
-  `}
+  &:disabled {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
   &::placeholder {
     color: rgba(0, 0, 0, 0.3);
   }
