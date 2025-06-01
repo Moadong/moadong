@@ -20,6 +20,15 @@ body:
       placeholder: 'feature/add-login-page'
     validations:
       required: true
+
+  - type: input
+    id: baseBranch
+    attributes:
+      label: '🧭 분기할 브랜치 선택'
+      description: '브랜치를 선택하거나 직접 입력하세요. 예: develop-fe, develop/be'
+      placeholder: 'develop-fe'
+    validations:
+      required: true
       
   - type: input
     id: description
