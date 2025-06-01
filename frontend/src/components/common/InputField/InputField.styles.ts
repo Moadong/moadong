@@ -37,11 +37,9 @@ export const Input = styled.input<{ hasError?: boolean }>`
         hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
   }
 
-  ${({ disabled }) =>
-    disabled &&
-    `
-    background-color: rgba(0, 0, 0, 0.05); 
-  `}
+  &:disabled {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
   &::placeholder {
     color: rgba(0, 0, 0, 0.3);
   }
