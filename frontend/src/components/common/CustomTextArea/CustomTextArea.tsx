@@ -44,9 +44,8 @@ const CustomTextArea = ({
           maxLength={maxLength}
           disabled={disabled}
           hasError={isError}
-        >
-          {value}
-        </Styled.TextArea>
+          value={value}
+        />
         {showMaxChar && maxLength !== undefined && (
           <Styled.CharCount>
             {value.length}/{maxLength}
