@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import * as Styled from './CustomTextArea.styles';
 
 interface CustomInputProps {
@@ -26,6 +27,19 @@ const CustomTextArea = ({
   isError,
   helperText,
 }: CustomInputProps) => {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (disabled) {
+      return;
+    }
+    const el = textAreaRef.current;
+    if (el) {
+      el.style.height = 'auto'; // 초기화
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  }, [value]);
+
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value;
     if (maxLength !== undefined && inputValue.length > maxLength) {
@@ -35,10 +49,11 @@ const CustomTextArea = ({
   };
 
   return (
-    <Styled.InputContainer width={width}>
+    <Styled.TextAreaContainer width={width}>
       {label && <Styled.Label>{label}</Styled.Label>}
-      <Styled.InputWrapper>
+      <Styled.TextAreaWrapper>
         <Styled.TextArea
+          ref={textAreaRef}
           onChange={handleChange}
           placeholder={placeholder}
           maxLength={maxLength}
@@ -51,11 +66,11 @@ const CustomTextArea = ({
             {value.length}/{maxLength}
           </Styled.CharCount>
         )}
-      </Styled.InputWrapper>
+      </Styled.TextAreaWrapper>
       {isError && helperText && (
         <Styled.HelperText>{helperText}</Styled.HelperText>
       )}
-    </Styled.InputContainer>
+    </Styled.TextAreaContainer>
   );
 };
 
