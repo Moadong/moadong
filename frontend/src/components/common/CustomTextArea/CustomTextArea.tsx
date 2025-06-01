@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import * as Styled from './CustomTextArea.styles';
 
-interface CustomInputProps {
+interface CustomTextAreaProps {
   placeholder?: string;
   width?: string;
   maxLength?: number;
@@ -26,7 +26,7 @@ const CustomTextArea = ({
   onChange,
   isError,
   helperText,
-}: CustomInputProps) => {
+}: CustomTextAreaProps) => {
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
