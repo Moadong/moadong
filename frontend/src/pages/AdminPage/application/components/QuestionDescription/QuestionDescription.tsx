@@ -8,7 +8,7 @@ interface QuestionDescriptionProps {
   onDescriptionChange?: (value: string) => void;
 }
 
-const QuestionDescriptionText = styled.input`
+const QuestionDescriptionText = styled.textarea`
   border: none;
   outline: none;
   color: #c5c5c5;
@@ -53,10 +53,16 @@ const QuestionDescription = ({
       <QuestionDescriptionText
         ref={textAreaRef}
         value={description}
-        placeholder='질문에 대한 설명을 입력하세요'
+        maxLength={APPLICATION_FORM.QUESTION_DESCRIPTION.maxLength}
+        placeholder={APPLICATION_FORM.QUESTION_DESCRIPTION.placeholder}
         aria-label='질문 설명'
         readOnly={mode === 'answer'}
-        onChange={(e) => onDescriptionChange?.(e.target.value)}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (value.length <= APPLICATION_FORM.QUESTION_DESCRIPTION.maxLength) {
+            onDescriptionChange?.(value);
+          }
+        }}
       />
     </>
   );
