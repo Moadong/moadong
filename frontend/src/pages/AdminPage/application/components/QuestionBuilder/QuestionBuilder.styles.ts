@@ -58,28 +58,6 @@ export const DropDownWrapper = styled.div`
   width: 100%;
 `;
 
-export const Dropdown = styled.select`
-  display: flex;
-  width: 100%;
-  border: none;
-  padding: 12px 16px;
-  border-radius: 0.375rem;
-  background: #f5f5f5;
-  color: #787878;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  appearance: none;
-`;
-
-export const DropdownIcon = styled.img`
-  position: absolute;
-  top: 50%;
-  right: 19px;
-  transform: translateY(-50%);
-  pointer-events: none;
-`;
-
 export const SelectionToggleWrapper = styled.div`
   display: flex;
   background-color: #f7f7f7;
