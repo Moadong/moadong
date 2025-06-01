@@ -30,11 +30,22 @@ jobs:
         with:
           template-path: .github/ISSUE_TEMPLATE/jira-issue-form.yml
 
+      - name: Check if base branch exists
+        id: check-branch
+        run: |
+          BASE_BRANCH="${{ steps.issue-parser.outputs.issueparser_baseBranch }}"
+          echo "Checking branch: $BASE_BRANCH"
+          if git ls-remote --exit-code origin "refs/heads/${BASE_BRANCH}"; then
+            echo "BRANCH_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "BRANCH_EXISTS=false" >> $GITHUB_ENV
+          fi
+
       - name: Log Issue Parser
         run: |
           echo 'Parent Key: ${{ steps.issue-parser.outputs.issueparser_parentKey }}'
-          echo 'Ticket Number: ${{ steps.issue-parser.outputs.issueparser_branch }}'
-          echo 'Parsed JSON: ${{ steps.issue-parser.outputs.jsonString }}'
+          echo 'Branch Name: ${{ steps.issue-parser.outputs.issueparser_branch }}'
+          echo 'Base Branch: ${{ steps.issue-parser.outputs.issueparser_baseBranch }}'
 
       - name: Convert markdown to Jira Syntax
         uses: peter-evans/jira2md@v1
@@ -46,8 +57,8 @@ jobs:
 
             ${{ github.event.issue.body }}
 
-      - name: Create Issue
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-')
+      - name: Create Jira Issue
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
         id: create
         uses: atlassian/gajira-create@v3
         with:
@@ -57,24 +68,23 @@ jobs:
           description: '${{ steps.md2jira.outputs.output-text }}'
 
       - name: Log created issue
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-')
-        run: echo "Jira Issue ${{ steps.issue-parser.outputs.issueparser_parentKey || 'UNKNOWN' }}/${{ steps.create.outputs.issue || 'UNKNOWN' }} was created"
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
+        run: echo "Jira Issue ${{ steps.create.outputs.issue || 'UNKNOWN' }} was created"
 
-      - name: Checkout selected base branch
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-')
+      - name: Checkout base branch
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
         uses: actions/checkout@v4
         with:
           ref: ${{ steps.issue-parser.outputs.issueparser_baseBranch }}
 
-      - name: Create branch with Ticket number
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-')
+      - name: Create branch with Jira Ticket number
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
         run: |
           GITHUB_ISSUE_NUMBER="${{ github.event.issue.number }}"
           JIRA_ISSUE_KEY="${{ steps.create.outputs.issue }}"
           CUSTOM_BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branch }}"
 
           SAFE_BRANCH_NAME=$(echo "${CUSTOM_BRANCH_NAME}" | tr ' ' '-' | tr -cd '[:alnum:]/-')
-
           BRANCH_TYPE=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f1)
           BRANCH_DETAIL=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f2-)
 
@@ -87,26 +97,21 @@ jobs:
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
 
-      - name: Define issue number with fallback
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-')
+      - name: Define ISSUE_NUMBER fallback
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
         run: |
-          if [ -z "${{ steps.create.outputs.issue }}" ]; then
-            echo "ISSUE_NUMBER=UNKNOWN" >> $GITHUB_ENV
-          else
-            echo "ISSUE_NUMBER=${{ steps.create.outputs.issue }}" >> $GITHUB_ENV
-          fi
+          echo "ISSUE_NUMBER=${{ steps.create.outputs.issue || 'UNKNOWN' }}" >> $GITHUB_ENV
 
-      - name: Update issue title with branch type and Jira issue key
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-')
+      - name: Update GitHub Issue Title
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
         run: |
           CUSTOM_BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branch }}"
           JIRA_ISSUE_KEY="${{ steps.create.outputs.issue }}"
           BRANCH_TYPE=$(echo "${CUSTOM_BRANCH_NAME}" | cut -d'/' -f1)
-
           echo "NEW_TITLE=[${BRANCH_TYPE}] ${JIRA_ISSUE_KEY} ${{ github.event.issue.title }}" >> $GITHUB_ENV
 
-      - name: Apply updated issue title
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-')
+      - name: Apply new title
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'update-issue'
@@ -114,7 +119,7 @@ jobs:
           title: '${{ env.NEW_TITLE }}'
 
       - name: Add comment with Jira issue link
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-')
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'create-comment'
