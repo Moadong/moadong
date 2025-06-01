@@ -12,7 +12,6 @@ interface CustomTextAreaProps {
   disabled?: boolean;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-  onClear?: () => void;
   isError?: boolean;
   helperText?: string;
 }
