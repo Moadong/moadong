@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
+import { useEffect, useRef } from 'react';
 
 interface QuestionDescriptionProps {
   description: string;
@@ -14,6 +16,18 @@ const QuestionDescriptionText = styled.input`
   font-weight: 400;
   line-height: normal;
   letter-spacing: -0.26px;
+  width: 100%;
+  overflow: hidden;
+  resize: none;
+
+  &::placeholder {
+    color: #c5c5c5;
+    transition: opacity 0.15s;
+  }
+
+  &:focus::placeholder {
+    opacity: 0;
+  }
 `;
 
 const QuestionDescription = ({
@@ -21,9 +35,23 @@ const QuestionDescription = ({
   mode,
   onDescriptionChange,
 }: QuestionDescriptionProps) => {
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  useEffect(() => {
+    if (mode === 'answer') {
+      return;
+    }
+    const el = textAreaRef.current;
+    if (el) {
+      el.style.height = 'auto';
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  }, [description]);
+
   return (
     <>
       <QuestionDescriptionText
+        ref={textAreaRef}
         value={description}
         placeholder='질문에 대한 설명을 입력하세요'
         aria-label='질문 설명'
