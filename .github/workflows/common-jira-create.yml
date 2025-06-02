@@ -50,7 +50,7 @@ jobs:
             - ${{ github.event.issue.html_url }}
 
             ${{ github.event.issue.body }}
-            
+
       - name: Build fields JSON
         id: issue-fields
         run: |
@@ -68,7 +68,23 @@ jobs:
           )
           [ -n "$DUE_DATE" ] && FIELDS=$(echo "$FIELDS" | jq --arg duedate "$DUE_DATE" -c '. + { duedate: $duedate }')
           FIELDS=$(echo "$FIELDS" | jq -c '.')
-          echo "fields=$FIELDS" >> $GITHUB_OUTPUT            
+          echo "fields=$FIELDS" >> $GITHUB_OUTPUT
+
+      - name: Map GitHub username to Jira accountId
+        id: assignee
+        run: |
+          declare -A user_map
+          user_map["seongwon030"]="63fdbcfdc6e77744a1dc6e22"
+          user_map["oesnuj"]="712020:c32b5510-c9b4-4e27-9b25-33747e95329d"
+          user_map["Zepelown"]="5ca1e91260d95a751f0ec237"
+          user_map["Due-IT"]="712020:e2ee3ef0-9ba3-4693-8f25-f2bb11179265"
+          user_map["PororoAndFriends"]="712020:90f2cabb-3312-48b0-9408-f219de662211"
+          user_map["lepitaaar"]="712020:f9cbe715-b414-43eb-9533-14e598b81bca"
+
+          FORM_ASSIGNEE="${{ steps.issue-parser.outputs.issueparser_assignee }}"
+          ACCOUNT_ID=${user_map[$FORM_ASSIGNEE]}
+
+          echo "accountId=$ACCOUNT_ID" >> $GITHUB_OUTPUT
 
       - name: Create Jira Issue
         if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
@@ -79,11 +95,12 @@ jobs:
           issuetype: Task
           summary: '${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
+          assignee: '${{ steps.assignee.outputs.accountId }}'
           fields: '${{ steps.issue-fields.outputs.fields }}'
 
       - name: Log created issue
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
-        run: echo "Jira Issue ${{ steps.create.outputs.issue || 'UNKNOWN' }} was created"
+        if: steps.create.outputs.issue != ''
+        run: echo "Jira Issue ${{ steps.create.outputs.issue }} was created"
 
       - name: Checkout base branch
         if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
@@ -112,7 +129,6 @@ jobs:
           git push origin "${BRANCH_NAME}"
 
       - name: Define ISSUE_NUMBER fallback
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
         run: |
           echo "ISSUE_NUMBER=${{ steps.create.outputs.issue || 'UNKNOWN' }}" >> $GITHUB_ENV
 
