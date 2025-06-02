@@ -3,7 +3,6 @@ package moadong.club.service;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubDetailedResult;
-import moadong.club.payload.request.ClubCreateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
@@ -22,7 +21,8 @@ public class ClubProfileService {
     private final ClubRepository clubRepository;
 
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
-        Club club = validateClubUpdateRequest(request.id(), user);
+        Club club = clubRepository.findClubByUserId(user.getId())
+            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
         club.update(request);
         clubRepository.save(club);
@@ -30,7 +30,8 @@ public class ClubProfileService {
 
     public void updateClubRecruitmentInfo(ClubRecruitmentInfoUpdateRequest request,
         CustomUserDetails user) {
-        Club club = validateClubUpdateRequest(request.id(), user);
+        Club club = clubRepository.findClubByUserId(user.getId())
+            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
         clubRepository.save(club);
     }
@@ -44,14 +45,5 @@ public class ClubProfileService {
             club
         );
         return new ClubDetailedResponse(clubDetailedResult);
-    }
-
-    private Club validateClubUpdateRequest(String clubId, CustomUserDetails user) {
-        Club club = clubRepository.findById(clubId)
-            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-        if (!user.getId().equals(club.getUserId())) {
-            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
-        }
-        return club;
     }
 }

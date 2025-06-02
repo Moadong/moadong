@@ -6,8 +6,6 @@ import java.util.Map;
 
 public record ClubInfoRequest(
     @NotBlank
-    String id,
-    @NotBlank
     String name,
     @NotBlank
     String category,
