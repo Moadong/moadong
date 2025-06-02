@@ -28,16 +28,6 @@ public class ClubProfileController {
     private final ClubProfileService clubProfileService;
     private final ClubMetricService clubMetricService;
 
-    @PostMapping("")
-    @Operation(summary = "클럽 생성", description = "클럽을 생성합니다.<br>"
-            + "category는 분류(취미교양 등), division은 분과(중동 등)입니다.")
-    @PreAuthorize("isAuthenticated()")
-    @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> createClub(@RequestBody ClubCreateRequest request) {
-        String clubId = clubProfileService.createClub(request);
-        return Response.ok("success create club", "clubId : " + clubId);
-    }
-
     @GetMapping("/{clubId}")
     @Operation(summary = "클럽 상세 정보 조회", description = "클럽 상세 정보를 조회합니다.")
     public ResponseEntity<?> getClubDetail(

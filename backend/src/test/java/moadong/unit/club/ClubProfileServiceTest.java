@@ -33,19 +33,6 @@ public class ClubProfileServiceTest {
     private ClubProfileService clubProfileService;
 
     @Test
-    public void 정상적으로_클럽을_생성한다() {
-        // Given
-        ClubCreateRequest request = new ClubCreateRequest("테스트", "카테고리", "분과");
-        when(clubRepository.save(any())).thenReturn(mock(Club.class));
-
-        // When
-        clubProfileService.createClub(request);
-
-        // Then
-        verify(clubRepository, times(1)).save(any(Club.class));
-    }
-
-    @Test
     void 정상적으로_클럽_약력을_업데이트한다() {
         // Given
         ClubInfoRequest request = ClubRequestFixture.createValidClubInfoRequest();
