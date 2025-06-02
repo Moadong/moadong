@@ -31,6 +31,13 @@ export const AddQuestionButton = styled.button`
   font-weight: 500;
   background: white;
   color: #555;
-  margin-top: 8px;
+  margin-bottom: 200px;
   cursor: pointer;
+`;
+
+export const QuestionDivider = styled.hr`
+  margin-top: 40px;
+  margin-bottom: 40px;
+  border: none;
+  border-top: 1px solid #ddd;
 `;
