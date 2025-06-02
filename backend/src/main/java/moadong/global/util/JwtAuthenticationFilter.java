@@ -1,9 +1,13 @@
 package moadong.global.util;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
+import moadong.global.payload.Response;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -33,7 +37,19 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         // 헤더에서 JWT 추출
         if (authorizationHeader != null && authorizationHeader.startsWith("Bearer ")) {
             token = authorizationHeader.substring(7);
-            username = jwtProvider.extractUsername(token);
+            try{
+                username = jwtProvider.extractUsername(token);
+            } catch (RestApiException e) {
+                response.setStatus(HttpServletResponse.SC_UNAUTHORIZED);
+                response.setContentType("application/json;charset=UTF-8");
+
+                Response errorResponse = new Response(e.getErrorCode().getCode(), e.getErrorCode().getMessage(), null);
+
+                ObjectMapper objectMapper = new ObjectMapper();
+                String json = objectMapper.writeValueAsString(errorResponse);
+                response.getWriter().write(json);
+                return;
+            }
         }
 
         // 토큰이 유효하고 SecurityContext에 인증 정보가 없는 경우
