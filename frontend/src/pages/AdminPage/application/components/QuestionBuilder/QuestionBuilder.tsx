@@ -4,9 +4,10 @@ import Choice from '@/pages/AdminPage/application/fields/Choice';
 import LongText from '@/pages/AdminPage/application/fields/LongText';
 import { QuestionType } from '@/types/application';
 import { QuestionBuilderProps } from '@/types/application';
-import { QUESTION_TYPE_LIST } from '@/types/application';
-import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
+import { QUESTION_LABEL_MAP } from '@/constants/APPLICATION_FORM';
+import { DROPDOWN_OPTIONS } from '@/constants/APPLICATION_FORM';
 import * as Styled from './QuestionBuilder.styles';
+import CustomDropdown from '@/components/common/CustomDropDown/CustomDropDown';
 
 const QuestionBuilder = ({
   id,
@@ -22,7 +23,7 @@ const QuestionBuilder = ({
   onRequiredChange,
   onRemoveQuestion,
 }: QuestionBuilderProps) => {
-  if (!QUESTION_TYPE_LIST.includes(type as QuestionType)) {
+  if (!(type in QUESTION_LABEL_MAP)) {
     return null;
   }
 
@@ -124,23 +125,13 @@ const QuestionBuilder = ({
           답변 필수
           <Styled.RequiredToggleCircle active={options?.required} />
         </Styled.RequiredToggleButton>
-        <Styled.DropDownWrapper>
-          <Styled.DropdownIcon
-            src={dropdown_icon}
-            alt={'질문 타입 선택하기'}
-          ></Styled.DropdownIcon>
-          <Styled.Dropdown
-            value={type}
-            onChange={(e) => {
-              const selectedType = e.target.value as QuestionType;
-              onTypeChange?.(selectedType);
-            }}
-          >
-            <option value='LONG_TEXT'>장문형</option>
-            <option value='SHORT_TEXT'>단답형</option>
-            <option value='CHOICE'>객관식</option>
-          </Styled.Dropdown>
-        </Styled.DropDownWrapper>
+        <CustomDropdown
+          selected={type === 'MULTI_CHOICE' ? 'CHOICE' : type}
+          options={DROPDOWN_OPTIONS}
+          onSelect={(value) => {
+            onTypeChange?.(value as QuestionType);
+          }}
+        />
         {renderSelectionToggle()}
         <button onClick={() => onRemoveQuestion()}>삭제</button>
       </Styled.QuestionMenu>

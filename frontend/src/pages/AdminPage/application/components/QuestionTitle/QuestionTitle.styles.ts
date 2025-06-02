@@ -20,6 +20,16 @@ export const QuestionTitleText = styled.input`
   font-size: 1.25rem;
   font-weight: 700;
   line-height: normal;
+  width: 100%;
+
+  &::placeholder {
+    color: #c5c5c5;
+    transition: opacity 0.15s;
+  }
+
+  &:focus::placeholder {
+    opacity: 0;
+  }
 `;
 
 export const QuestionRequired = styled.div`

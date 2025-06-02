@@ -1,16 +1,6 @@
-// types/application.ts
+import { QUESTION_LABEL_MAP } from '@/constants/APPLICATION_FORM';
 
-export const QUESTION_TYPE_LIST = [
-  'SHORT_TEXT',
-  'CHOICE',
-  'LONG_TEXT',
-  'MULTI_CHOICE',
-  'EMAIL',
-  'PHONE_NUMBER',
-  'NAME',
-] as const;
-
-export type QuestionType = (typeof QUESTION_TYPE_LIST)[number];
+export type QuestionType = keyof typeof QUESTION_LABEL_MAP;
 
 export interface Question {
   id: number;

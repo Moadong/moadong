@@ -1,4 +1,5 @@
 import * as Styled from './QuestionTitle.styles';
+import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 
 interface QuestionTitleProps {
   id: number;
@@ -21,10 +22,16 @@ const QuestionTitle = ({
       <Styled.QuestionTitleText
         type='text'
         value={title}
-        placeholder='질문 제목을 입력하세요'
+        maxLength={APPLICATION_FORM.QUESTION_TITLE.maxLength}
+        placeholder={APPLICATION_FORM.QUESTION_TITLE.placeholder}
         aria-label='질문 제목'
         readOnly={mode === 'answer'}
-        onChange={(e) => onTitleChange?.(e.target.value)}
+        onChange={(e) => {
+          const value = e.target.value;
+          if (value.length <= APPLICATION_FORM.QUESTION_TITLE.maxLength) {
+            onTitleChange?.(value);
+          }
+        }}
       />
       {mode === 'answer' && required && <Styled.QuestionRequired />}
     </Styled.QuestionTitleContainer>

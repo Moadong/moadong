@@ -10,6 +10,7 @@ import { ApplicationFormData } from '@/types/application';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './CreateApplicationForm.styles';
 import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
+import { QuestionDivider } from './CreateApplicationForm.styles';
 
 const CreateApplicationForm = () => {
   const [formData, setFormData] = useState<ApplicationFormData>(
@@ -111,10 +112,10 @@ const CreateApplicationForm = () => {
           placeholder='지원서 제목을 입력하세요'
         ></Styled.FormTitle>
         <Styled.QuestionContainer>
-          {formData.questions.map((question) => (
+          {formData.questions.map((question, index) => (
             <QuestionBuilder
               key={question.id}
-              id={question.id}
+              id={index + 1}
               title={question.title}
               description={question.description}
               options={question.options}
@@ -129,6 +130,7 @@ const CreateApplicationForm = () => {
             />
           ))}
         </Styled.QuestionContainer>
+        <QuestionDivider />
         <Styled.AddQuestionButton onClick={addQuestion}>
           질문 추가 +
         </Styled.AddQuestionButton>

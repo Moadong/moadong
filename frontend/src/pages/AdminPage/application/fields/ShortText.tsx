@@ -1,7 +1,7 @@
 import QuestionTitle from '@/pages/AdminPage/application/components/QuestionTitle/QuestionTitle';
 import QuestionDescription from '@/pages/AdminPage/application/components/QuestionDescription/QuestionDescription';
 import InputField from '@/components/common/InputField/InputField';
-import APPLICATION_FORM from '@/constants/APPLICATION_FORM';
+import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { TextProps } from '@/types/application';
 
 const ShortText = ({
@@ -34,6 +34,10 @@ const ShortText = ({
         onChange={(e) => onAnswerChange?.(e.target.value)}
         placeholder={APPLICATION_FORM.SHORT_TEXT.placeholder}
         disabled={mode === 'builder'}
+        showMaxChar={mode === 'answer'}
+        maxLength={APPLICATION_FORM.SHORT_TEXT.maxLength}
+        showClearButton={false}
+        width={'60%'}
       />
     </div>
   );
