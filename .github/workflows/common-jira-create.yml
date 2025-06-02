@@ -68,10 +68,13 @@ jobs:
           # Jira API 호출: 특정 프로젝트에 할당 가능한 사용자 검색
           # API 응답은 JSON 배열 형태이며, 첫 번째 일치하는 사용자의 accountId를 가져옴
           # 오류 처리: 사용자를 찾지 못하면 ACCOUNT_ID는 빈 문자열이 됨
+          # ACCOUNT_ID=$(curl -s -u "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+          #   -H "Accept: application/json" \
+          #   "${JIRA_BASE_URL}/rest/api/3/user/assignable/search?projectKeys=${PROJECT_KEY}&query=${JIRA_USERNAME_TO_SEARCH}" | \
+          #   jq -r '.[0].accountId // empty') # jq: 첫 번째 결과의 accountId, 없으면 empty
           ACCOUNT_ID=$(curl -s -u "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
             -H "Accept: application/json" \
-            "${JIRA_BASE_URL}/rest/api/3/user/assignable/search?projectKeys=${PROJECT_KEY}&query=${JIRA_USERNAME_TO_SEARCH}" | \
-            jq -r '.[0].accountId // empty') # jq: 첫 번째 결과의 accountId, 없으면 empty
+            "${JIRA_BASE_URL}/rest/api/3/user/assignable/search?projectKeys=${PROJECT_KEY}&query=${JIRA_USERNAME_TO_SEARCH}")
 
           if [ -z "$ACCOUNT_ID" ]; then
             echo "::warning::Jira user '$JIRA_USERNAME_TO_SEARCH' not found or not assignable to project '$PROJECT_KEY'."
