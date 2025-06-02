@@ -10,6 +10,20 @@ body:
       placeholder: '2025-05-07'
     validations:
       required: false
+
+  - type: dropdown
+    id: assignee
+    attributes:
+      label: '🙋 담당자(Assignee)'
+      options:
+        - seongwon030
+        - oesnuj
+        - Zepelown
+        - Due-IT
+        - PororoAndFriends
+        - lepitaaar 
+    validations:
+      required: true
       
   - type: input
     id: parentKey
