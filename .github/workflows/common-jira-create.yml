@@ -50,6 +50,25 @@ jobs:
             - ${{ github.event.issue.html_url }}
 
             ${{ github.event.issue.body }}
+            
+      - name: Build fields JSON
+        id: issue-fields
+        run: |
+          EPIC_ID="${{ steps.issue-parser.outputs.issueparser_parentKey }}"
+          DUE_DATE="${{ steps.issue-parser.outputs.issueparser_dueDate }}"
+          DESCRIPTION="${{ steps.md2jira.outputs.output-text }}"
+
+          FIELDS=$(jq -nc \
+            --arg parent "$EPIC_ID" \
+            --arg description "$DESCRIPTION" \
+            '{
+              parent: { key: $parent },
+              description: $description
+            }'
+          )
+          [ -n "$DUE_DATE" ] && FIELDS=$(echo "$FIELDS" | jq --arg duedate "$DUE_DATE" -c '. + { duedate: $duedate }')
+          FIELDS=$(echo "$FIELDS" | jq -c '.')
+          echo "fields=$FIELDS" >> $GITHUB_OUTPUT            
 
       - name: Create Jira Issue
         if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
@@ -60,6 +79,7 @@ jobs:
           issuetype: Task
           summary: '${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
+          fields: '${{ steps.issue-fields.outputs.fields }}'
 
       - name: Log created issue
         if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
