@@ -33,20 +33,13 @@ jobs:
       - name: Map GitHub username to Jira accountId
         id: assignee
         run: |
-          declare -A user_map
-          user_map["seongwon030"]="63fdbcfdc6e77744a1dc6e22"
-          user_map["oesnuj"]="712020:c32b5510-c9b4-4e27-9b25-33747e95329d"
-          user_map["Zepelown"]="5ca1e91260d95a751f0ec237"
-          user_map["Due-IT"]="712020:e2ee3ef0-9ba3-4693-8f25-f2bb11179265"
-          user_map["PororoAndFriends"]="712020:90f2cabb-3312-48b0-9408-f219de662211"
-          user_map["lepitaaar"]="712020:f9cbe715-b414-43eb-9533-14e598b81bca"
-
+          echo '${{ secrets.JIRA_USER_MAP }}' > user_map.json
           FORM_ASSIGNEE="${{ steps.issue-parser.outputs.issueparser_assignee }}"
-          ACCOUNT_ID=${user_map[$FORM_ASSIGNEE]}
-
-          echo "Parsed FORM_ASSIGNEE: $FORM_ASSIGNEE"
-          echo "Resolved ACCOUNT_ID: $ACCOUNT_ID"
+          ACCOUNT_ID=$(jq -r --arg user "$FORM_ASSIGNEE" '.[$user]' user_map.json)
+      
+          echo "Resolved accountId for $FORM_ASSIGNEE → $ACCOUNT_ID"
           echo "accountId=$ACCOUNT_ID" >> $GITHUB_OUTPUT
+
 
       - name: Check if base branch exists
         id: check-branch
