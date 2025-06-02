@@ -10,7 +10,15 @@ body:
       description: '담당자 이름을 작성해주세요.'
     validations:
       required: false
-
+      
+  - type: input
+    id: dueDate
+    attributes:
+      label: '🗓️ 마감일'
+      placeholder: '2025-05-07'
+    validations:
+      required: false
+      
   - type: input
     id: parentKey
     attributes:
