@@ -61,7 +61,7 @@ jobs:
           JIRA_API_TOKEN="${{ secrets.JIRA_API_TOKEN }}"
           JIRA_BASE_URL="${{ secrets.JIRA_BASE_URL }}"
           JIRA_USER_EMAIL="${{ secrets.JIRA_USER_EMAIL }}"
-          PROJECT_KEY="${{ secrets.JIRA_PROJECT_KEY"}}"
+          PROJECT_KEY="${{ secrets.JIRA_PROJECT_KEY }}"
 
           echo "Searching for Jira user '$JIRA_USERNAME_TO_SEARCH' assignable to project '$PROJECT_KEY'"
 
