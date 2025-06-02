@@ -4,14 +4,6 @@ labels: [feat]
 title: '이슈이름은 feature를 넣지 않아도 됩니다.'
 body:
   - type: input
-    id: assignee
-    attributes:
-      label: '☺️ 담당자(Assignee)'
-      description: '담당자 이름을 작성해주세요.'
-    validations:
-      required: false
-      
-  - type: input
     id: dueDate
     attributes:
       label: '🗓️ 마감일'
