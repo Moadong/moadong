@@ -1,9 +1,14 @@
 package moadong.club.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import java.util.Arrays;
 import lombok.Getter;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
 
 @Getter
+@JsonFormat(shape = JsonFormat.Shape.STRING)
 public enum ClubDivision {
     중동(1);
 
@@ -20,8 +25,12 @@ public enum ClubDivision {
             .orElse(null);
     }
 
-    public static int getPriorityFromString(String division) {
-        ClubDivision c = fromString(division);
-        return (c != null) ? c.getPriority() : Integer.MAX_VALUE;
+    @JsonCreator
+    public static ClubDivision from(String value) {
+        try {
+            return ClubDivision.valueOf(value.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new RestApiException(ErrorCode.CLUB_DIVISION_INVALID);
+        }
     }
 }
