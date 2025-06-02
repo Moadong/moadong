@@ -76,8 +76,8 @@ public class Club {
 
     public void update(ClubInfoRequest request) {
         this.name = request.name();
-        this.category = request.category();
-        this.division = request.division();
+        this.category = request.category().name();
+        this.division = request.division().name();
         this.state = ClubState.AVAILABLE;
         this.socialLinks = request.socialLinks();
         this.clubRecruitmentInformation.update(request);
