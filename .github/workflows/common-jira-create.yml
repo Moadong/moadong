@@ -56,19 +56,24 @@ jobs:
         run: |
           EPIC_ID="${{ steps.issue-parser.outputs.issueparser_parentKey }}"
           DUE_DATE="${{ steps.issue-parser.outputs.issueparser_dueDate }}"
+          ASSIGNEE_ID="${{ steps.assignee.outputs.accountId }}"
           DESCRIPTION="${{ steps.md2jira.outputs.output-text }}"
 
           FIELDS=$(jq -nc \
             --arg parent "$EPIC_ID" \
             --arg description "$DESCRIPTION" \
+            --arg assignee "$ASSIGNEE_ID" \
             '{
               parent: { key: $parent },
-              description: $description
+              description: $description,
+              assignee: { id: $assignee }
             }'
           )
+
           [ -n "$DUE_DATE" ] && FIELDS=$(echo "$FIELDS" | jq --arg duedate "$DUE_DATE" -c '. + { duedate: $duedate }')
-          FIELDS=$(echo "$FIELDS" | jq -c '.')
+
           echo "fields=$FIELDS" >> $GITHUB_OUTPUT
+
 
       - name: Map GitHub username to Jira accountId
         id: assignee
