@@ -10,6 +10,7 @@ import { ApplicationFormData } from '@/types/application';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './CreateApplicationForm.styles';
 import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
+import { QuestionDivider } from './CreateApplicationForm.styles';
 
 const CreateApplicationForm = () => {
   const [formData, setFormData] = useState<ApplicationFormData>(
@@ -129,6 +130,7 @@ const CreateApplicationForm = () => {
             />
           ))}
         </Styled.QuestionContainer>
+        <QuestionDivider />
         <Styled.AddQuestionButton onClick={addQuestion}>
           질문 추가 +
         </Styled.AddQuestionButton>
