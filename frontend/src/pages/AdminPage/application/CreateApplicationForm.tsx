@@ -112,10 +112,10 @@ const CreateApplicationForm = () => {
           placeholder='지원서 제목을 입력하세요'
         ></Styled.FormTitle>
         <Styled.QuestionContainer>
-          {formData.questions.map((question) => (
+          {formData.questions.map((question, index) => (
             <QuestionBuilder
               key={question.id}
-              id={question.id}
+              id={index + 1}
               title={question.title}
               description={question.description}
               options={question.options}
