@@ -8,7 +8,11 @@ import { ChoiceProps } from '@/types/application';
 const MIN_ITEMS = 2;
 const MAX_ITEMS = 6;
 
-//todo isMulti나 질문 타입을 props로 받아서 다중 선택이 가능하도록 기능 추가 필요
+// todo inputField clear 버튼 빼기
+// todo 입력 필드안에 항목 삭제 아이콘 추가
+// todo mode : answer일때 다중, 단일 조건에 따라 선택 가능하도록 UI 및 기능 추가 필요
+// todo isMulti나 질문 타입을 props로 받아서 단일 / 다중 판단 하면 될듯
+
 const Choice = ({
   id,
   title,
@@ -60,6 +64,7 @@ const Choice = ({
             onChange={(e) => handleItemChange(index, e.target.value)}
             placeholder={APPLICATION_FORM.CHOICE.placeholder}
             disabled={mode === 'answer'}
+            showClearButton={false}
           />
           {mode === 'builder' && items.length > MIN_ITEMS && (
             <Styled.DeleteButton onClick={() => handleDeleteItem(index)}>
