@@ -18,6 +18,7 @@ jobs:
           JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_PROJECT_KEY: ${{ secrets.JIRA_PROJECT_KEY }}
 
       - name: Checkout main code
         uses: actions/checkout@v4
@@ -51,14 +52,45 @@ jobs:
 
             ${{ github.event.issue.body }}
             
+      - name: Lookup Jira User Account ID in Project
+        id: lookup-jira-user
+        # issue-parser가 담당자 사용자 이름을 제공한 경우에만 실행
+        if: steps.issue-parser.outputs.issueparser_assignee != ''
+        run: |
+          JIRA_USERNAME_TO_SEARCH="${{ steps.issue-parser.outputs.issueparser_assignee }}"
+          JIRA_API_TOKEN="${{ secrets.JIRA_API_TOKEN }}"
+          JIRA_BASE_URL="${{ secrets.JIRA_BASE_URL }}"
+          JIRA_USER_EMAIL="${{ secrets.JIRA_USER_EMAIL }}"
+          PROJECT_KEY="${{ secrets.JIRA_PROJECT_KEY"}}"
+
+          echo "Searching for Jira user '$JIRA_USERNAME_TO_SEARCH' assignable to project '$PROJECT_KEY'"
+
+          # Jira API 호출: 특정 프로젝트에 할당 가능한 사용자 검색
+          # API 응답은 JSON 배열 형태이며, 첫 번째 일치하는 사용자의 accountId를 가져옴
+          # 오류 처리: 사용자를 찾지 못하면 ACCOUNT_ID는 빈 문자열이 됨
+          ACCOUNT_ID=$(curl -s -u "${JIRA_USER_EMAIL}:${JIRA_API_TOKEN}" \
+            -H "Accept: application/json" \
+            "${JIRA_BASE_URL}/rest/api/3/user/assignable/search?projectKeys=${PROJECT_KEY}&query=${JIRA_USERNAME_TO_SEARCH}" | \
+            jq -r '.[0].accountId // empty') # jq: 첫 번째 결과의 accountId, 없으면 empty
+
+          if [ -z "$ACCOUNT_ID" ]; then
+            echo "::warning::Jira user '$JIRA_USERNAME_TO_SEARCH' not found or not assignable to project '$PROJECT_KEY'."
+            echo "jira_account_id=" >> $GITHUB_OUTPUT
+          else
+            echo "Found Jira Account ID: $ACCOUNT_ID for user '$JIRA_USERNAME_TO_SEARCH' assignable to project '$PROJECT_KEY'"
+            echo "jira_account_id=$ACCOUNT_ID" >> $GITHUB_OUTPUT
+          fi
+        shell: bash
+            
       - name: Build fields JSON
         id: issue-fields
         run: |
           EPIC_ID="${{ steps.issue-parser.outputs.issueparser_parentKey }}"
           DUE_DATE="${{ steps.issue-parser.outputs.issueparser_dueDate }}"
           DESCRIPTION="${{ steps.md2jira.outputs.output-text }}"
+          LOOKED_UP_ASSIGNEE_ACCOUNT_ID="${{ steps.lookup-jira-user.outputs.jira_account_id }}"
 
-          FIELDS=$(jq -nc \
+          _fields_json=$(jq -nc \
             --arg parent "$EPIC_ID" \
             --arg description "$DESCRIPTION" \
             '{
@@ -66,9 +98,20 @@ jobs:
               description: $description
             }'
           )
-          [ -n "$DUE_DATE" ] && FIELDS=$(echo "$FIELDS" | jq --arg duedate "$DUE_DATE" -c '. + { duedate: $duedate }')
-          FIELDS=$(echo "$FIELDS" | jq -c '.')
-          echo "fields=$FIELDS" >> $GITHUB_OUTPUT            
+          # 마감 기한 추가
+          if [ -n "$DUE_DATE" ]; then
+            _fields_json=$(echo "$FIELDS_JSON" | jq --arg duedate "$DUE_DATE" -c '. + { duedate: $duedate }')
+          fi
+
+          # 담당자 추가 (템플릿에서 입력받은 값이 있을 경우)
+          if [ -n "$LOOKED_UP_ASSIGNEE_ACCOUNT_ID" ]; then
+            _fields_json=$(echo "$_fields_json" | jq --arg assignee_id "$LOOKED_UP_ASSIGNEE_ACCOUNT_ID" -c '. + { assignee: { accountId: $assignee_id } }')
+          else
+            echo "Jira assignee will not be set as Account ID was not found or provided."
+          fi
+          
+          _final_fields_json=$(echo "$_fields_json" | jq -c '.')
+          echo "fields=$_final_fields_json" >> $GITHUB_OUTPUT    
 
       - name: Create Jira Issue
         if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
