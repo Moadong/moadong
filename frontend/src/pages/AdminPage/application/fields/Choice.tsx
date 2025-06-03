@@ -100,6 +100,11 @@ const Choice = ({
                   : 'rgba(0,0,0,0.3)'
                 : undefined
             }
+            borderColor={
+              mode === 'answer' && selected.includes(index)
+                ? '#FF5414'
+                : undefined
+            }
           />
           {mode === 'builder' && items.length > MIN_ITEMS && (
             <Styled.DeleteButton
