@@ -5,6 +5,11 @@ export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
   min-width: 385px;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    min-width: 0;
+    width: 100%;
+  }
 `;
 
 export const Label = styled.label`
