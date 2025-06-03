@@ -1,8 +1,10 @@
 package moadong.media.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
@@ -18,6 +20,8 @@ import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.media.domain.FileType;
+import moadong.media.util.ClubImageUtil;
+import moadong.util.annotations.UnitTest;
 import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -123,5 +127,25 @@ class GoogleDriveClubImageServiceLogoTest {
         RestApiException exception = assertThrows(RestApiException.class,
                 () -> clubImageService.deleteLogo(objectId.toHexString()));
         assertEquals(ErrorCode.CLUB_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void 파일명에_적절하지않은_기호나_한글이_포함되어있으면_true를_반환한다(){
+        // 정상 케이스
+        assertFalse(ClubImageUtil.containsInvalidChars("normal-file.jpg"));
+
+        // 한글 포함
+        assertTrue(ClubImageUtil.containsInvalidChars("file 이름.png"));
+
+        // 퍼센트 인코딩 포함
+        assertTrue(ClubImageUtil.containsInvalidChars("file%20name.png"));
+        assertTrue(ClubImageUtil.containsInvalidChars("%3Ahidden.jpg"));
+
+        // 공백 포함
+        assertTrue(ClubImageUtil.containsInvalidChars("file name.png"));
+        assertTrue(ClubImageUtil.containsInvalidChars(" tab\tname.png"));
+
+        // 여러 조건 섞인 경우
+        assertTrue(ClubImageUtil.containsInvalidChars("%22한글 space.png"));
     }
 }
