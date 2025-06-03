@@ -4,6 +4,7 @@ import QuestionDescription from '@/pages/AdminPage/application/components/Questi
 import InputField from '@/components/common/InputField/InputField';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { ChoiceProps } from '@/types/application';
+import { useState } from 'react';
 
 const MIN_ITEMS = 2;
 const MAX_ITEMS = 6;
@@ -25,6 +26,8 @@ const Choice = ({
   isMulti,
   onItemsChange,
 }: ChoiceProps) => {
+  const [selected, setSelected] = useState<number[]>([]);
+
   const handleItemChange = (index: number, newValue: string) => {
     const updated = items.map((item, i) =>
       i === index ? { ...item, value: newValue } : item,
@@ -43,6 +46,19 @@ const Choice = ({
     onItemsChange?.(updated);
   };
 
+  const handleSelect = (index: number) => {
+    if (mode !== 'answer') return;
+    if (isMulti) {
+      setSelected((prev) =>
+        prev.includes(index)
+          ? prev.filter((i) => i !== index)
+          : [...prev, index],
+      );
+    } else {
+      setSelected([index]);
+    }
+  };
+
   return (
     <div>
       <QuestionTitle
@@ -58,16 +74,40 @@ const Choice = ({
         onDescriptionChange={onDescriptionChange}
       />
       {items.map((item, index) => (
-        <Styled.ItemWrapper key={index}>
+        <Styled.ItemWrapper
+          key={index}
+          onClick={() => handleSelect(index)}
+          data-selected={
+            mode === 'answer' && selected.includes(index) ? 'true' : undefined
+          }
+        >
           <InputField
             value={item.value}
             onChange={(e) => handleItemChange(index, e.target.value)}
             placeholder={APPLICATION_FORM.CHOICE.placeholder}
-            disabled={mode === 'answer'}
+            disabled={false}
+            readOnly={mode === 'answer'}
             showClearButton={false}
+            bgColor={
+              mode === 'answer' && selected.includes(index)
+                ? '#FFE4DA'
+                : undefined
+            }
+            textColor={
+              mode === 'answer'
+                ? selected.includes(index)
+                  ? 'rgba(0,0,0,0.8)'
+                  : 'rgba(0,0,0,0.3)'
+                : undefined
+            }
           />
           {mode === 'builder' && items.length > MIN_ITEMS && (
-            <Styled.DeleteButton onClick={() => handleDeleteItem(index)}>
+            <Styled.DeleteButton
+              onClick={(e) => {
+                e.stopPropagation();
+                handleDeleteItem(index);
+              }}
+            >
               삭제
             </Styled.DeleteButton>
           )}
