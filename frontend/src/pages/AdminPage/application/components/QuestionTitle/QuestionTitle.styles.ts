@@ -20,7 +20,7 @@ export const QuestionTitleText = styled.input`
   font-size: 1.25rem;
   font-weight: 700;
   line-height: normal;
-  width: 100%;
+  field-sizing: content;
 
   &::placeholder {
     color: #c5c5c5;
