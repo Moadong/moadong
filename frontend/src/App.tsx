@@ -14,7 +14,7 @@ import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
-import ApplicationForm from '@/pages/AdminPage/application/ApplicationForm';
+import AnswerApplicationForm from '@/pages/AdminPage/application/answer/AnswerApplicationForm';
 import CreateApplicationForm from '@/pages/AdminPage/application/CreateApplicationForm';
 
 const queryClient = new QueryClient();
@@ -65,6 +65,10 @@ const App = () => {
                           path='account-edit'
                           element={<AccountEditTab />}
                         />
+                        <Route
+                          path='application-edit'
+                          element={<CreateApplicationForm />}
+                        />
                       </Route>
                     </Routes>
                   </PrivateRoute>
@@ -74,10 +78,6 @@ const App = () => {
             <Route
               path='/application/:clubId'
               element={<AnswerApplicationForm />}
-            />
-            <Route
-              path='create-application'
-              element={<CreateApplicationForm />}
             />
             <Route path='*' element={<Navigate to='/' replace />} />
           </Routes>
