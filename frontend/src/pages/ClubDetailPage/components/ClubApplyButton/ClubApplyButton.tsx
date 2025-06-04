@@ -1,5 +1,7 @@
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import styled from 'styled-components';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
 interface ButtonProps {
   recruitmentForm?: string;
