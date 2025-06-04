@@ -71,7 +71,7 @@ const App = () => {
                 </AdminClubProvider>
               }
             />
-            //todo /:clubid로 수정 필요
+            {/*//todo /:clubid로 수정 필요*/}
             {/*<Route*/}
             {/*  path='/application/:clubid'*/}
             {/*  element={<AnswerApplicationForm />}*/}
