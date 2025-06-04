@@ -47,14 +47,13 @@ const QuestionAnswerer = ({
     case 'CHOICE':
     case 'MULTI_CHOICE':
       return (
-        <></>
-        // <Choice
-        //   {...baseProps}
-        //   items={question.items}
-        //   isMulti={question.type === 'MULTI_CHOICE'}
-        //   answer={selectedAnswers}
-        //   onAnswerChange={(value) => onChange(question.id, value)}
-        // />
+        <Choice
+          {...baseProps}
+          items={question.items}
+          isMulti={question.type === 'MULTI_CHOICE'}
+          answer={selectedAnswers}
+          onAnswerChange={(value) => onChange(question.id, value)}
+        />
       );
 
     default:
