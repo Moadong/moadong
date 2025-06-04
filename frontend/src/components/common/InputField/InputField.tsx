@@ -79,7 +79,7 @@ const InputField = ({
           hasError={isError}
           readOnly={readOnly}
           style={{
-            background: bgColor || '#F5F5F5',
+            background: bgColor || '#FFF',
             color: textColor,
             borderColor: borderColor,
           }}
