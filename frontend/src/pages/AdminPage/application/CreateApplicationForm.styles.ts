@@ -31,7 +31,7 @@ export const AddQuestionButton = styled.button`
   font-weight: 500;
   background: white;
   color: #555;
-  margin-bottom: 200px;
+  margin-bottom: 60px;
   cursor: pointer;
 `;
 
@@ -40,4 +40,31 @@ export const QuestionDivider = styled.hr`
   margin-bottom: 40px;
   border: none;
   border-top: 1px solid #ddd;
+`;
+
+export const ButtonWrapper = styled.div`
+  display: flex;
+  justify-content: flex-end;
+`;
+
+export const submitButton = styled.button`
+  padding: 10px 56px;
+  background-color: #ff5414;
+  border-radius: 10px;
+  border: none;
+  color: #fff;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  transition: background-color 0.2s;
+  margin: 50px 0;
+
+  &:hover {
+    background-color: #ffad8e;
+    animation: pulse 0.4s ease-in-out;
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
 `;
