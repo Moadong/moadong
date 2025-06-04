@@ -47,3 +47,8 @@ export interface ApplicationFormData {
   form_title: string;
   questions: Question[];
 }
+
+export interface AnswerItem {
+  id: number;
+  answer: string;
+}
