@@ -1,10 +1,15 @@
 import styled from 'styled-components';
 
-export const InputContainer = styled.div<{ width: string }>`
+export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
   width: ${(props) => props.width};
   min-width: 385px;
   display: flex;
   flex-direction: column;
+
+  @media (max-width: 768px) {
+    min-width: 0;
+    width: 100%;
+  }
 `;
 
 export const Label = styled.label`
@@ -19,7 +24,7 @@ export const InputWrapper = styled.div`
   align-items: center;
 `;
 
-export const Input = styled.input<{ hasError?: boolean }>`
+export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean }>`
   flex: 1;
   height: 45px;
   padding: 12px 80px 12px 18px;
@@ -29,17 +34,25 @@ export const Input = styled.input<{ hasError?: boolean }>`
   font-size: 1.125rem;
   letter-spacing: 0;
   color: rgba(0, 0, 0, 0.8);
+  ${({ readOnly }) => readOnly && 'cursor: pointer;'}
+  transition: background 0.2s;
 
-  &:focus {
-    border-color: ${({ hasError }) => (hasError ? 'red' : '#007bff')};
-    box-shadow: 0 0 3px
-      ${({ hasError }) =>
-        hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
+  :hover {
+    ${({ readOnly }) => readOnly && 'cursor: pointer;'}
+  }
+
+  :focus {
+    outline: none;
+    box-shadow: 0 0 3px;
+    border-color: ${({ hasError, readOnly }) =>
+      readOnly ? '#c5c5c5' : hasError ? 'red' : '#007bff'};
+    ${({ readOnly }) => readOnly && 'cursor: pointer;'}
   }
 
   &:disabled {
     background-color: rgba(0, 0, 0, 0.05);
   }
+
   &::placeholder {
     color: rgba(0, 0, 0, 0.3);
   }
