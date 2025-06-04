@@ -14,7 +14,7 @@ import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
-import ApplicationForm from '@/pages/AdminPage/application/ApplicationForm';
+import AnswerApplicationForm from '@/pages/AdminPage/application/answer/AnswerApplicationForm';
 import CreateApplicationForm from '@/pages/AdminPage/application/CreateApplicationForm';
 
 const queryClient = new QueryClient();

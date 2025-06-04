@@ -9,7 +9,6 @@ import { useAnswers } from '@/hooks/useAnswers';
 import QuestionAnswerer from '@/pages/AdminPage/application/components/QuestionAnswerer/QuestionAnswerer';
 
 const AnswerApplicationForm = () => {
-  //ToDO: useParams를 사용하여 clubId를 동적으로 가져오도록 수정
   const { clubId } = useParams<{ clubId: string }>();
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
   const { onAnswerChange, getAnswersById } = useAnswers();
