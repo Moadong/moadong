@@ -41,10 +41,15 @@ const ClubApplyButton = ({
   recruitmentForm,
   presidentPhoneNumber,
 }: ButtonProps) => {
+  const { clubId } = useParams<{ clubId: string }>();
   const trackEvent = useMixpanelTrack();
+  const navigate = useNavigate();
 
   const handleClick = () => {
     trackEvent('Club Apply Button Clicked');
+
+    //TODO: 지원서를 작성한 동아리의 경우에만 리다이렉트
+    //navigate(`/application/${clubId}`);
 
     // [x] FIXME: recruitmentForm 있을 때는 리다이렉트
     if (presidentPhoneNumber) {
