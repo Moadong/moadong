@@ -33,14 +33,16 @@ const AnswerApplicationForm = () => {
           tags={clubDetail.tags}
         />
         <Styled.FormTitle>{mockData.form_title}</Styled.FormTitle>
-        {mockData.questions.map((q) => (
-          <QuestionAnswerer
-            key={q.id}
-            question={q}
-            selectedAnswers={getAnswersById(q.id)}
-            onChange={onAnswerChange}
-          />
-        ))}
+        <Styled.QuestionsWrapper>
+          {mockData.questions.map((q) => (
+            <QuestionAnswerer
+              key={q.id}
+              question={q}
+              selectedAnswers={getAnswersById(q.id)}
+              onChange={onAnswerChange}
+            />
+          ))}
+        </Styled.QuestionsWrapper>
         <Styled.ButtonWrapper>
           <Styled.submitButton>제출하기</Styled.submitButton>
         </Styled.ButtonWrapper>
