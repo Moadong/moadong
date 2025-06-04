@@ -51,7 +51,7 @@ const QuestionBuilder = ({
             title={title}
             required={options?.required}
             description={description}
-            mode='answer'
+            mode='builder'
             onTitleChange={onTitleChange}
             onDescriptionChange={onDescriptionChange}
           />
@@ -63,7 +63,7 @@ const QuestionBuilder = ({
             title={title}
             required={options?.required}
             description={description}
-            mode='answer'
+            mode='builder'
             onTitleChange={onTitleChange}
             onDescriptionChange={onDescriptionChange}
           />
@@ -76,7 +76,7 @@ const QuestionBuilder = ({
             title={title}
             required={options?.required}
             description={description}
-            mode='answer'
+            mode='builder'
             items={items}
             onTitleChange={onTitleChange}
             onDescriptionChange={onDescriptionChange}
