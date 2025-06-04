@@ -4,15 +4,9 @@ import QuestionDescription from '@/pages/AdminPage/application/components/Questi
 import InputField from '@/components/common/InputField/InputField';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { ChoiceProps } from '@/types/application';
-import { useState } from 'react';
 
 const MIN_ITEMS = 2;
 const MAX_ITEMS = 6;
-
-// todo inputField clear 버튼 빼기
-// todo 입력 필드안에 항목 삭제 아이콘 추가
-// todo mode : answer일때 다중, 단일 조건에 따라 선택 가능하도록 UI 및 기능 추가 필요
-// todo isMulti나 질문 타입을 props로 받아서 단일 / 다중 판단 하면 될듯
 
 const Choice = ({
   id,
@@ -25,9 +19,10 @@ const Choice = ({
   items = [],
   isMulti,
   onItemsChange,
+  answer = [],
+  onAnswerChange,
 }: ChoiceProps) => {
-  const [selected, setSelected] = useState<number[]>([]);
-
+  // — 아이템 텍스트 변경(빌더 모드 전용)
   const handleItemChange = (index: number, newValue: string) => {
     const updated = items.map((item, i) =>
       i === index ? { ...item, value: newValue } : item,
@@ -35,27 +30,36 @@ const Choice = ({
     onItemsChange?.(updated);
   };
 
+  // — 아이템 추가(빌더 모드 전용)
   const handleAddItem = () => {
     if (items.length >= MAX_ITEMS) return;
     onItemsChange?.([...items, { value: '' }]);
   };
 
+  // — 아이템 삭제(빌더 모드 전용)
   const handleDeleteItem = (index: number) => {
     if (items.length <= MIN_ITEMS) return;
     const updated = items.filter((_, i) => i !== index);
     onItemsChange?.(updated);
   };
 
-  const handleSelect = (index: number) => {
+  const handleSelect = (idx: number) => {
     if (mode !== 'answer') return;
+    const value = items[idx].value;
+    if (!value) return;
+
     if (isMulti) {
-      setSelected((prev) =>
-        prev.includes(index)
-          ? prev.filter((i) => i !== index)
-          : [...prev, index],
-      );
+      if (Array.isArray(answer)) {
+        if (answer.includes(value)) {
+          onAnswerChange?.(answer.filter((v) => v !== value));
+        } else {
+          onAnswerChange?.([...answer, value]);
+        }
+      }
+      // 다중 선택: 이미 포함되어 있으면 제거, 아니면 추가
     } else {
-      setSelected([index]);
+      // 단일 선택: 클릭된 값만 넘김
+      onAnswerChange?.(value);
     }
   };
 
@@ -73,51 +77,47 @@ const Choice = ({
         mode={mode}
         onDescriptionChange={onDescriptionChange}
       />
-      {items.map((item, index) => (
-        <Styled.ItemWrapper
-          key={index}
-          onClick={() => handleSelect(index)}
-          data-selected={
-            mode === 'answer' && selected.includes(index) ? 'true' : undefined
-          }
-        >
-          <InputField
-            value={item.value}
-            onChange={(e) => handleItemChange(index, e.target.value)}
-            placeholder={APPLICATION_FORM.CHOICE.placeholder}
-            disabled={false}
-            readOnly={mode === 'answer'}
-            showClearButton={false}
-            bgColor={
-              mode === 'answer' && selected.includes(index)
-                ? '#FFE4DA'
-                : undefined
-            }
-            textColor={
-              mode === 'answer'
-                ? selected.includes(index)
-                  ? 'rgba(0,0,0,0.8)'
-                  : 'rgba(0,0,0,0.3)'
-                : undefined
-            }
-            borderColor={
-              mode === 'answer' && selected.includes(index)
-                ? '#FF5414'
-                : undefined
-            }
-          />
-          {mode === 'builder' && items.length > MIN_ITEMS && (
-            <Styled.DeleteButton
-              onClick={(e) => {
-                e.stopPropagation();
-                handleDeleteItem(index);
-              }}
-            >
-              삭제
-            </Styled.DeleteButton>
-          )}
-        </Styled.ItemWrapper>
-      ))}
+
+      {items.map((item, index) => {
+        // ▶ selected 대신, answer.includes(item.value)로 판별
+        const isSelected = mode === 'answer' && answer.includes(item.value);
+
+        return (
+          <Styled.ItemWrapper
+            key={index}
+            onClick={() => handleSelect(index)}
+            data-selected={isSelected ? 'true' : undefined}
+          >
+            <InputField
+              value={item.value}
+              onChange={(e) => handleItemChange(index, e.target.value)}
+              placeholder={APPLICATION_FORM.CHOICE.placeholder}
+              readOnly={mode === 'answer'}
+              showClearButton={false}
+              bgColor={isSelected ? '#FFE4DA' : '#F5F5F5'}
+              textColor={
+                mode === 'answer'
+                  ? isSelected
+                    ? 'rgba(0,0,0,0.8)'
+                    : 'rgba(0,0,0,0.3)'
+                  : undefined
+              }
+              borderColor={isSelected ? '#FF5414' : undefined}
+            />
+
+            {mode === 'builder' && items.length > MIN_ITEMS && (
+              <Styled.DeleteButton
+                onClick={(e) => {
+                  e.stopPropagation();
+                  handleDeleteItem(index);
+                }}
+              >
+                삭제
+              </Styled.DeleteButton>
+            )}
+          </Styled.ItemWrapper>
+        );
+      })}
 
       {mode === 'builder' && items.length < MAX_ITEMS && (
         <Styled.AddItemButton onClick={handleAddItem}>
