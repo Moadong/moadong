@@ -9,6 +9,12 @@ export const FormTitle = styled.h1`
   margin-bottom: 46px;
 `;
 
+export const QuestionsWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
+`;
+
 export const ButtonWrapper = styled.div`
   display: flex;
   justify-content: flex-end;
