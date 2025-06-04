@@ -65,6 +65,10 @@ const App = () => {
                           path='account-edit'
                           element={<AccountEditTab />}
                         />
+                        <Route
+                          path='application-edit'
+                          element={<CreateApplicationForm />}
+                        />
                       </Route>
                     </Routes>
                   </PrivateRoute>

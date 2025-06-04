@@ -15,6 +15,7 @@ const tabs = [
   { label: '모집 정보 수정', path: '/admin/recruit-edit' },
   { label: '활동 사진 수정', path: '/admin/photo-edit' },
   { label: '계정 관리', path: '/admin/account-edit' },
+  { label: '지원서 관리', path: '/admin/application-edit' },
 ];
 
 const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
@@ -62,7 +63,8 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
           <Styled.SidebarButton
             key={tab.label}
             className={activeTab === index ? 'active' : ''}
-            onClick={() => handleTabClick(tab)}>
+            onClick={() => handleTabClick(tab)}
+          >
             {tab.label}
           </Styled.SidebarButton>
         ))}
