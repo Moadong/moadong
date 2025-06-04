@@ -65,17 +65,23 @@ const App = () => {
                           path='account-edit'
                           element={<AccountEditTab />}
                         />
-                        <Route
-                          path='application-edit'
-                          element={<CreateApplicationForm />}
-                        />
                       </Route>
                     </Routes>
                   </PrivateRoute>
                 </AdminClubProvider>
               }
             />
-            <Route path='view-application' element={<ApplicationForm />} />
+            //todo /:clubid로 수정 필요
+            {/*<Route*/}
+            {/*  path='/application/:clubid'*/}
+            {/*  element={<AnswerApplicationForm />}*/}
+            {/*/>*/}
+            <Route path='/application' element={<AnswerApplicationForm />} />
+            {/*TODO: CreateForm은 관리자 기능이므로 추후 /admin/* 경로 안으로 이동 필요*/}
+            <Route
+              path='create-application'
+              element={<CreateApplicationForm />}
+            />
             <Route path='*' element={<Navigate to='/' replace />} />
           </Routes>
         </BrowserRouter>
