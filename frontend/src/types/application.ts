@@ -10,7 +10,7 @@ export interface Question {
   options: {
     required: boolean;
   };
-  items?: { value: string }[];
+  items: { value: string }[];
 }
 
 export interface QuestionBuilderProps extends Question {

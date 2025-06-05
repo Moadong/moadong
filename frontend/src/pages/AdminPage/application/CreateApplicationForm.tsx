@@ -29,6 +29,7 @@ const CreateApplicationForm = () => {
       title: '',
       description: '',
       type: 'SHORT_TEXT',
+      items: [],
       options: { required: false },
     };
     setFormData((prev) => ({
@@ -87,7 +88,7 @@ const CreateApplicationForm = () => {
             ? q.items && q.items.length >= 2
               ? q.items
               : [{ value: '' }, { value: '' }]
-            : undefined,
+            : [],
         };
       }),
     }));

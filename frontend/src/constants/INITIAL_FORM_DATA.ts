@@ -9,6 +9,7 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
       description: '',
       type: 'SHORT_TEXT',
       options: { required: true },
+      items: [],
     },
     {
       id: 2,
