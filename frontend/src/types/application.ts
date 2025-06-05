@@ -41,6 +41,8 @@ export interface ChoiceProps extends QuestionComponentProps {
   items?: { value: string }[];
   isMulti?: boolean;
   onItemsChange?: (newItems: { value: string }[]) => void;
+  answer?: string | string[];
+  onAnswerChange?: (value: string[] | string) => void;
 }
 
 export interface ApplicationFormData {

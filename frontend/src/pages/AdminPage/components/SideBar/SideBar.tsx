@@ -14,8 +14,8 @@ const tabs = [
   { label: '기본 정보 수정', path: '/admin/club-info' },
   { label: '모집 정보 수정', path: '/admin/recruit-edit' },
   { label: '활동 사진 수정', path: '/admin/photo-edit' },
-  { label: '계정 관리', path: '/admin/account-edit' },
   { label: '지원서 관리', path: '/admin/application-edit' },
+  { label: '계정 관리', path: '/admin/account-edit' },
 ];
 
 const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
@@ -44,7 +44,6 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
       localStorage.removeItem('accessToken');
       navigate('/admin/login', { replace: true });
     } catch (error) {
-      console.error(error);
       alert('로그아웃에 실패했습니다.');
     }
   };

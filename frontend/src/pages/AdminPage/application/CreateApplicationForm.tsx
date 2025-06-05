@@ -134,6 +134,9 @@ const CreateApplicationForm = () => {
         <Styled.AddQuestionButton onClick={addQuestion}>
           질문 추가 +
         </Styled.AddQuestionButton>
+        <Styled.ButtonWrapper>
+          <Styled.submitButton>제출하기</Styled.submitButton>
+        </Styled.ButtonWrapper>
       </PageContainer>
     </>
   );
