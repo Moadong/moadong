@@ -11,6 +11,7 @@ import Banner from '@/pages/MainPage/components/Banner/Banner';
 import { DesktopBannerImageList } from '@/constants/banners';
 import { MobileBannerImageList } from '@/constants/banners';
 import { Club } from '@/types/club';
+import Spinner from '@/components/common/Spinner/Spinner';
 import * as Styled from './MainPage.styles';
 
 const MainPage = () => {
@@ -23,13 +24,12 @@ const MainPage = () => {
   const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
   const division = 'all';
 
-  const { data: clubs, error } = useGetCardList(
-    keyword,
-    recruitmentStatus,
-    division,
-    selectedCategory,
-  );
-
+  const {
+    data: clubs,
+    error,
+    isLoading,
+  } = useGetCardList(keyword, recruitmentStatus, division, selectedCategory);
+  const isEmpty = !isLoading && (!clubs || clubs.length === 0);
   const hasData = clubs && clubs.length > 0;
 
   const clubList = useMemo(() => {
@@ -54,7 +54,17 @@ const MainPage = () => {
           <StatusRadioButton onChange={setIsFilterActive} />
         </Styled.FilterWrapper>
         <Styled.ContentWrapper>
-          <Styled.CardList>{hasData && clubList}</Styled.CardList>
+          {isLoading ? (
+            <Spinner />
+          ) : isEmpty ? (
+            <Styled.EmptyResult>
+              앗, 조건에 맞는 동아리가 없어요.
+              <br />
+              다른 키워드나 조건으로 다시 시도해보세요!
+            </Styled.EmptyResult>
+          ) : (
+            <Styled.CardList>{clubList}</Styled.CardList>
+          )}
         </Styled.ContentWrapper>
       </Styled.PageContainer>
       <Footer />
