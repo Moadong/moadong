@@ -1,4 +1,3 @@
-import { mockData } from '@/mocks/data/mockData';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './AnswerApplicationForm.styles';
 import Header from '@/components/common/Header/Header';
@@ -7,13 +6,23 @@ import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
 import { useAnswers } from '@/hooks/useAnswers';
 import QuestionAnswerer from '@/pages/AdminPage/application/components/QuestionAnswerer/QuestionAnswerer';
+import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
+import { Question } from '@/types/application';
 
 const AnswerApplicationForm = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
+  const {
+    data: formData,
+    isLoading,
+    isError,
+  } = useGetApplication(clubId || '');
+  if (!clubId) return null;
+  if (!clubDetail) return null;
   const { onAnswerChange, getAnswersById } = useAnswers();
-  if (!clubDetail) {
-    return null;
+
+  if (!clubId || isLoading || !formData || !clubDetail) {
+    return <div>로딩 중...</div>;
   }
 
   if (error) {
@@ -31,9 +40,9 @@ const AnswerApplicationForm = () => {
           category={clubDetail.category}
           tags={clubDetail.tags}
         />
-        <Styled.FormTitle>{mockData.form_title}</Styled.FormTitle>
+        <Styled.FormTitle>{formData.title}</Styled.FormTitle>
         <Styled.QuestionsWrapper>
-          {mockData.questions.map((q) => (
+          {formData.questions.map((q: Question) => (
             <QuestionAnswerer
               key={q.id}
               question={q}
