@@ -46,7 +46,7 @@ export interface ChoiceProps extends QuestionComponentProps {
 }
 
 export interface ApplicationFormData {
-  form_title: string;
+  title: string;
   questions: Question[];
 }
 
