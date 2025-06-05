@@ -114,6 +114,31 @@ const CreateApplicationForm = () => {
     }));
   };
 
+  const handleSubmit = async () => {
+    if (!clubId) return;
+    const reorderedQuestions = formData.questions.map((q, idx) => ({
+      ...q,
+      id: idx + 1,
+    }));
+
+    const payload: ApplicationFormData = {
+      ...formData,
+      questions: reorderedQuestions,
+    };
+    try {
+      if (data) {
+        await updateApplication(payload, clubId);
+        alert('지원서가 성공적으로 수정되었습니다.');
+      } else {
+        await createApplication(payload, clubId);
+        alert('지원서가 성공적으로 생성되었습니다.');
+      }
+    } catch (error) {
+      alert('지원서 저장에 실패했습니다.');
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <PageContainer>
