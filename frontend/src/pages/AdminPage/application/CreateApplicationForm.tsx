@@ -1,25 +1,36 @@
-// 지원서 제작하기 : 지원서 제작 컴포넌트
-// 지원서 수정과 제작을 맡을 컴포넌트
-// Todo: 질문 삭제 및 질문 추가 기능 구현
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import QuestionBuilder from '@/pages/AdminPage/application/components/QuestionBuilder/QuestionBuilder';
 import { QuestionType } from '@/types/application';
 import { Question } from '@/types/application';
-import { mockData } from '@/mocks/data/mockData';
 import { ApplicationFormData } from '@/types/application';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './CreateApplicationForm.styles';
 import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
 import { QuestionDivider } from './CreateApplicationForm.styles';
+import { useAdminClubContext } from '@/context/AdminClubContext';
+import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
+import createApplication from '@/apis/application/createApplication';
+import updateApplication from '@/apis/application/updateApplication';
 
 const CreateApplicationForm = () => {
-  const [formData, setFormData] = useState<ApplicationFormData>(
-    mockData ?? INITIAL_FORM_DATA,
-  );
+  const { clubId } = useAdminClubContext();
+  if (!clubId) return null;
+
+  const { data, isLoading, isError } = useGetApplication(clubId);
+
+  const [formData, setFormData] =
+    useState<ApplicationFormData>(INITIAL_FORM_DATA);
+
+  useEffect(() => {
+    if (data) {
+      setFormData(data);
+    }
+  }, [data]);
+
   const [nextId, setNextId] = useState(() => {
-    const questions = mockData?.questions ?? INITIAL_FORM_DATA.questions;
+    const questions = data?.questions ?? INITIAL_FORM_DATA.questions;
     if (questions.length === 0) return 1;
-    const maxId = Math.max(...questions.map((q) => q.id));
+    const maxId = Math.max(...questions.map((q: Question) => q.id));
     return maxId + 1;
   });
 
@@ -62,7 +73,7 @@ const CreateApplicationForm = () => {
   const handleFormTitleChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
-      form_title: value,
+      title: value,
     }));
   };
 
@@ -108,7 +119,7 @@ const CreateApplicationForm = () => {
       <PageContainer>
         <Styled.FormTitle
           type='text'
-          value={formData.form_title}
+          value={formData.title}
           onChange={(e) => handleFormTitleChange(e.target.value)}
           placeholder='지원서 제목을 입력하세요'
         ></Styled.FormTitle>
@@ -136,7 +147,9 @@ const CreateApplicationForm = () => {
           질문 추가 +
         </Styled.AddQuestionButton>
         <Styled.ButtonWrapper>
-          <Styled.submitButton>제출하기</Styled.submitButton>
+          <Styled.submitButton onClick={handleSubmit}>
+            저장하기
+          </Styled.submitButton>
         </Styled.ButtonWrapper>
       </PageContainer>
     </>
