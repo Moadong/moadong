@@ -48,3 +48,16 @@ export const FilterWrapper = styled.div`
   justify-content: right;
   margin: 20px 0;
 `;
+
+export const EmptyResult = styled.div`
+  padding: 80px 20px;
+  text-align: center;
+  color: #555;
+  font-size: 1.125rem;
+  line-height: 1.6;
+  white-space: pre-line;
+
+  @media (max-width: 500px) {
+    font-size: 0.95rem;
+  }
+`;
