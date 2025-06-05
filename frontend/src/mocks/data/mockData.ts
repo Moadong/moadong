@@ -23,7 +23,7 @@ export interface Question {
 }
 
 export const mockData: ApplicationFormData = {
-  form_title: '2025_2_지원서',
+  title: '2025_2_지원서',
   questions: [
     {
       id: 1,

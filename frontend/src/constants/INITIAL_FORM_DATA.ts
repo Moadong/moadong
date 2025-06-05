@@ -1,7 +1,7 @@
 import { ApplicationFormData } from '@/types/application';
 
 const INITIAL_FORM_DATA: ApplicationFormData = {
-  form_title: '',
+  title: '',
   questions: [
     {
       id: 1,
@@ -9,6 +9,7 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
       description: '',
       type: 'SHORT_TEXT',
       options: { required: true },
+      items: [],
     },
     {
       id: 2,
