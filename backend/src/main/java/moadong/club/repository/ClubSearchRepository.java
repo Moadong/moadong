@@ -70,7 +70,7 @@ public class ClubSearchRepository {
 
         if (recruitmentStatus != null && !"all".equalsIgnoreCase(recruitmentStatus)) {
             criteriaList.add(
-                Criteria.where("recruitmentInformation.recruitmentStatus").is(recruitmentStatus));
+                Criteria.where("recruitmentInformation.clubRecruitmentStatus").is(recruitmentStatus));
         }
         if (division != null && !"all".equalsIgnoreCase(division)) {
             criteriaList.add(Criteria.where("division").is(division));
