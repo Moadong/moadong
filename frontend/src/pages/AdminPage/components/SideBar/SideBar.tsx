@@ -14,6 +14,7 @@ const tabs = [
   { label: '기본 정보 수정', path: '/admin/club-info' },
   { label: '모집 정보 수정', path: '/admin/recruit-edit' },
   { label: '활동 사진 수정', path: '/admin/photo-edit' },
+  { label: '지원 관리', path: '/admin/application-edit' },
   { label: '계정 관리', path: '/admin/account-edit' },
 ];
 
@@ -28,7 +29,10 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
 
   const handleTabClick = (tab: (typeof tabs)[number]) => {
     if (tab.label === '계정 관리') {
-      alert('계정 관리 탭은 준비 중입니다☺️');
+      alert('계정 관리 기능은 아직 준비 중이에요. ☺️');
+      return;
+    } else if (tab.label === '지원 관리') {
+      alert('동아리 지원 관리 기능은 곧 오픈돼요!\n조금만 기다려주세요 🚀');
       return;
     }
     navigate(tab.path);
@@ -43,7 +47,6 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
       localStorage.removeItem('accessToken');
       navigate('/admin/login', { replace: true });
     } catch (error) {
-      console.error(error);
       alert('로그아웃에 실패했습니다.');
     }
   };
@@ -62,7 +65,8 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
           <Styled.SidebarButton
             key={tab.label}
             className={activeTab === index ? 'active' : ''}
-            onClick={() => handleTabClick(tab)}>
+            onClick={() => handleTabClick(tab)}
+          >
             {tab.label}
           </Styled.SidebarButton>
         ))}

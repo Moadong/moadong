@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 
 const TagColors: Record<string, string> = {

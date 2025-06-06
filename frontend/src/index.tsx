@@ -1,37 +1,28 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import mixpanel from 'mixpanel-browser';
-import * as ChannelService from '@channel.io/channel-web-sdk-loader';
-import * as Sentry from '@sentry/react';
+import {
+  initializeMixpanel,
+  initializeChannelService,
+  initializeSentry,
+} from './utils/initSDK';
 
-if (process.env.REACT_APP_MIXPANEL_TOKEN) {
-  mixpanel.init(process.env.REACT_APP_MIXPANEL_TOKEN, {
-    ip: false,
-    debug: false,
-  });
+initializeMixpanel();
+initializeChannelService();
+initializeSentry();
+
+async function startApp() {
+  if (process.env.NODE_ENV === 'development') {
+    const { worker } = await import('./mocks/mswDevSetup');
+    await worker.start({
+      onUnhandledRequest: 'bypass',
+    });
+  }
+
+  const root = ReactDOM.createRoot(
+    document.getElementById('root') as HTMLElement,
+  );
+  root.render(<App />);
 }
 
-if (window.location.hostname === 'localhost') {
-  mixpanel.disable();
-}
-
-ChannelService.loadScript();
-if (process.env.CHANNEL_PLUGIN_KEY) {
-  ChannelService.boot({
-    pluginKey: process.env.CHANNEL_PLUGIN_KEY,
-  });
-}
-
-Sentry.init({
-  dsn: process.env.SENTRY_DSN,
-  sendDefaultPii: false,
-  release: process.env.SENTRY_RELEASE,
-  tracesSampleRate: 0.1,
-});
-
-const root = ReactDOM.createRoot(
-  document.getElementById('root') as HTMLElement,
-);
-
-root.render(<App />);
+startApp();

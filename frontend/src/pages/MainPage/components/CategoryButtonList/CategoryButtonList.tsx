@@ -1,4 +1,3 @@
-import React from 'react';
 import mixpanel from 'mixpanel-browser';
 import * as Styled from './CategoryButtonList.styles';
 import iconAll from '@/assets/images/icons/category_button/category_all_button_icon.svg';

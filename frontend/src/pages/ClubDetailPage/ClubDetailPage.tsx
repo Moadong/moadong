@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import * as Styled from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';

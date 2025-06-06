@@ -1,4 +1,3 @@
-import React from 'react';
 import ClubLogo from '@/components/ClubLogo/ClubLogo';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import * as Styled from './ClubProfile.styles';

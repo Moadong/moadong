@@ -16,7 +16,7 @@ export const InfoBoxWrapper = styled.div`
 
 export const InfoBox = styled.div`
   width: 573px;
-  height: 164px; //todo 추후 197로 수정 필요
+  height: 197px;
   border-radius: 18px;
   border: 1px solid #dcdcdc;
   padding: 30px;
@@ -51,8 +51,9 @@ export const DescriptionWrapper = styled.div`
   justify-content: space-between;
   align-items: center;
   gap: 50px;
-  font-size: 14px;
+  font-size: 16px;
   @media (max-width: 500px) {
+    font-size: 14px;
     gap: 40px;
   }
 `;
