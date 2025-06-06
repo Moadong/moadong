@@ -1,37 +1,43 @@
-package moadong.gcs.service;
+package moadong.media.service;
 
-import com.google.cloud.storage.BlobId;
-import com.google.cloud.storage.BlobInfo;
-import com.google.cloud.storage.Storage;
-import java.text.Normalizer;
+import static moadong.media.util.ClubImageUtil.containsInvalidChars;
+
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.Drive;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.Permission;
+import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
-import java.util.regex.Pattern;
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
-import moadong.gcs.domain.FileType;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
 import moadong.global.util.RandomStringUtil;
+import moadong.media.domain.FileType;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-@Service
+@Service("googleDrive")
 @RequiredArgsConstructor
-public class ClubImageService {
+public class GoogleDriveClubImageService implements ClubImageService {
 
+    @Value("${google.drive.share-file-id}")
+    String shareFileId;
+    @Value("${server.feed.max-count}")
+    private int MAX_FEED_COUNT;
+
+    private final Drive googleDrive;
     private final ClubRepository clubRepository;
 
-    @Value("${google.cloud.storage.bucket.name}")
-    private String bucketName;
+    private final String PREFIX = "https://drive.google.com/file/d/";
+    private final String SUFFIX = "/view";
 
-    private final Storage storage;
-    private final int MAX_FEED_COUNT = 5;
-
-
+    @Override
     public String uploadLogo(String clubId, MultipartFile file) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
@@ -47,6 +53,7 @@ public class ClubImageService {
         return filePath;
     }
 
+    @Override
     public void deleteLogo(String clubId) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
@@ -55,8 +62,11 @@ public class ClubImageService {
         if (club.getClubRecruitmentInformation().getLogo() != null) {
             deleteFile(club, club.getClubRecruitmentInformation().getLogo());
         }
+        club.updateLogo(null);
+        clubRepository.save(club);
     }
 
+    @Override
     public String uploadFeed(String clubId, MultipartFile file) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
         int feedImagesCount = clubRepository.findClubById(objectId)
@@ -69,6 +79,7 @@ public class ClubImageService {
         return uploadFile(clubId, file, FileType.FEED);
     }
 
+    @Override
     public void updateFeeds(String clubId, List<String> newFeedImageList) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
@@ -94,67 +105,69 @@ public class ClubImageService {
         }
     }
 
-    // TODO : Signed URL 을 통한 업로드 URL 반환으로 추후 변경
+    @Override
+    public void deleteFile(Club club, String filePath) {
+        //"https://drive.google.com/file/d/{fileId}/view" -> {fileId}
+        String fileId = filePath.split("/")[5];
+        try {
+            googleDrive.files()
+                    .delete(fileId)
+                    .setSupportsAllDrives(true) // 공유 드라이브(Shared Drive)도 지원할 경우
+                    .execute();
+        } catch (IOException e) {
+            throw new RestApiException(ErrorCode.IMAGE_DELETE_FAILED);
+        }
+    }
+
     private String uploadFile(String clubId, MultipartFile file, FileType fileType) {
         if (file == null) {
             throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
         }
-
-        BlobInfo blobInfo = getBlobInfo(clubId, fileType, file);
+        // MultipartFile → java.io.File 변환
+        java.io.File tempFile;
         try {
-            storage.create(blobInfo, file.getBytes()); // 파일 업로드
+            tempFile = java.io.File.createTempFile("upload-", file.getOriginalFilename());
+            file.transferTo(tempFile);
+        } catch (IOException e) {
+            throw new RestApiException(ErrorCode.FILE_TRANSFER_ERROR);
+        }
+
+        // 메타데이터 생성
+        File fileMetadata = new File();
+        String fileName = file.getOriginalFilename();
+        if (containsInvalidChars(fileName)) {
+            fileName = RandomStringUtil.generateRandomString(10);
+        }
+
+        fileMetadata.setName(clubId + "/" + fileType + "/" + fileName);
+        fileMetadata.setMimeType(file.getContentType());
+        // 공유 ID 설정
+        fileMetadata.setParents(Collections.singletonList(shareFileId));
+
+        // 파일 업로드
+        FileContent mediaContent = new FileContent(file.getContentType(), tempFile);
+        // 전체 공개 권한 설정
+        Permission publicPermission = new Permission()
+                .setType("anyone")         // 누구나
+                .setRole("reader");        // 읽기 권한
+
+        File uploadedFile;
+        try {
+             uploadedFile= googleDrive.files().create(fileMetadata, mediaContent)
+                    .setFields("id")
+                    .execute();
+
+            googleDrive.permissions().create(uploadedFile.getId(), publicPermission)
+                    .setFields("id")
+                    .execute();
         } catch (Exception e) {
             throw new RestApiException(ErrorCode.IMAGE_UPLOAD_FAILED);
+        }finally {
+            // 임시 파일 삭제
+            tempFile.delete();
         }
-
-        return "https://storage.googleapis.com/" + bucketName + "/" + blobInfo.getName();
-    }
-
-    public void deleteFile(Club club, String filePath) {
-        // 삭제할 파일의 BlobId를 생성
-        BlobId blobId = BlobId.of(bucketName,splitPath(filePath));
-
-        try {
-            boolean deleted = storage.delete(blobId);
-            if (!deleted) {
-                throw new RestApiException(ErrorCode.IMAGE_DELETE_FAILED);
-            }
-        } catch (Exception e) {
-            throw new RestApiException(ErrorCode.IMAGE_DELETE_FAILED);
-        }
-
-        // https://storage.googleapis.com/{bucketName}/{clubId}/{fileType}/{filePath} -> {fileType}
-        String fileType = filePath.split("/")[5];
-        if (fileType.equals("logo")) {
-            club.updateLogo(null);
-            clubRepository.save(club);
-        }
-    }
-
-    // BlobInfo 생성 (버킷 이름, 파일 이름 지정)
-    private BlobInfo getBlobInfo(String clubId, FileType fileType, MultipartFile file) {
-        String originalFileName = file.getOriginalFilename();
-        String contentType = file.getContentType().split("/")[1];
-
-        if (containsKorean(originalFileName)) {
-            originalFileName = RandomStringUtil.generateRandomString(10) + "." + contentType;
-        }
-
-        // 한글이 포함된 파일 이름일 경우 랜덤 영어 문자열로 변환
-        String fileName = clubId + "/" + fileType.getPath() + "/" + originalFileName;
-        BlobId blobId = BlobId.of(bucketName, fileName);
-
-        return BlobInfo.newBuilder(blobId).setContentType(file.getContentType()).build();
-    }
-
-    private String splitPath(String path) {
-        // https://storage.googleapis.com/{bucketName}/{clubId}/{fileType}/{filePath} -> {filePath}
-        return path.split("/",5)[4];
-    }
-
-    private boolean containsKorean(String text) {
-        text = Normalizer.normalize(text, Normalizer.Form.NFC);
-        return Pattern.matches(".*[ㄱ-ㅎㅏ-ㅣ가-힣]+.*", text);
+        // 공유 링크 반환
+        return PREFIX + uploadedFile.getId() + SUFFIX;
     }
 
 }

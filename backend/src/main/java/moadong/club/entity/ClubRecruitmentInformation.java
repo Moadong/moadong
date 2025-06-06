@@ -10,13 +10,12 @@ import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ClubRecruitmentStatus;
-import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
 
@@ -52,13 +51,12 @@ public class ClubRecruitmentInformation {
     private String recruitmentTarget;
 
     private List<String> feedImages;
+
     private List<String> tags;
 
     @Enumerated(EnumType.STRING)
     @NotNull
     private ClubRecruitmentStatus clubRecruitmentStatus;
-
-    private String recruitmentForm;
 
     public ClubRecruitmentInformation updateLogo(String logo) {
         this.logo = logo;
@@ -82,19 +80,25 @@ public class ClubRecruitmentInformation {
 
     public ZonedDateTime getRecruitmentStart() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        if (recruitmentStart == null) {
+            return null;
+        }
         return recruitmentStart.atZone(seoulZone);
     }
 
     public ZonedDateTime getRecruitmentEnd() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        if (recruitmentEnd == null) {
+            return null;
+        }
         return recruitmentEnd.atZone(seoulZone);
     }
 
-    public int getFeedAmounts(){
+    public int getFeedAmounts() {
         return this.feedImages.size();
     }
 
-    public void updateFeedImages(List<String> feedImages){
+    public void updateFeedImages(List<String> feedImages) {
         this.feedImages = feedImages;
     }
 
@@ -103,6 +107,5 @@ public class ClubRecruitmentInformation {
         this.presidentName = request.presidentName();
         this.presidentTelephoneNumber = request.presidentPhoneNumber();
         this.tags = request.tags();
-        this.recruitmentForm = request.recruitmentForm();
     }
 }

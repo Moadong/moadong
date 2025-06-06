@@ -6,12 +6,14 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
-import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -41,9 +43,11 @@ public class Club {
 
     private String userId;
 
+    private Map<String, String> socialLinks;
 
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
+
     public Club() {
         this.name = "";
         this.category = "";
@@ -51,6 +55,7 @@ public class Club {
         this.state = ClubState.UNAVAILABLE;
         this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
     }
+
     public Club(String userId) {
         this.name = "";
         this.category = "";
@@ -74,6 +79,7 @@ public class Club {
         this.category = request.category();
         this.division = request.division();
         this.state = ClubState.AVAILABLE;
+        this.socialLinks = request.socialLinks();
         this.clubRecruitmentInformation.update(request);
     }
 
@@ -87,5 +93,9 @@ public class Club {
 
     public void updateFeedImages(List<String> feedImages) {
         this.clubRecruitmentInformation.updateFeedImages(feedImages);
+    }
+
+    public void updateRecruitmentStatus(ClubRecruitmentStatus clubRecruitmentStatus) {
+        this.clubRecruitmentInformation.updateRecruitmentStatus(clubRecruitmentStatus);
     }
 }
