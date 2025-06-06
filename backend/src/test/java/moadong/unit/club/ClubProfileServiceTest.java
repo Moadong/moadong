@@ -4,13 +4,11 @@ import static moadong.fixture.UserFixture.createUserDetails;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
 import moadong.club.entity.Club;
-import moadong.club.payload.request.ClubCreateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.repository.ClubRepository;
 import moadong.club.service.ClubProfileService;
@@ -39,8 +37,7 @@ public class ClubProfileServiceTest {
         CustomUserDetails user = createUserDetails(userId);
         Club mockClub = mock(Club.class);
 
-        when(clubRepository.findById(clubId)).thenReturn(Optional.of(mockClub));
-        when(mockClub.getUserId()).thenReturn(userId);
+        when(clubRepository.findClubByUserId(userId)).thenReturn(Optional.of(mockClub));
 
         // When
         clubProfileService.updateClubInfo(request, user);
@@ -51,19 +48,8 @@ public class ClubProfileServiceTest {
     }
 
     @Test
-    void 클럽이_없을_땐_클럽_약력_업데이트가_실패한다() {
-        when(clubRepository.findById(any())).thenReturn(Optional.empty());
-        assertThrows(RestApiException.class,
-            () -> clubProfileService.updateClubInfo(ClubRequestFixture.createValidClubInfoRequest(),
-                createUserDetails(userId)));
-    }
-
-    @Test
-    void 권한이_없는_클럽은_클럽_약력_업데이트_할_수_없다() {
-        Club mockClub = mock(Club.class);
-        when(clubRepository.findById(clubId)).thenReturn(Optional.of(mockClub));
-        when(mockClub.getUserId()).thenReturn("different_user");
-
+    void 계정의_클럽이_없을_땐_클럽_약력_업데이트가_실패한다() {
+        when(clubRepository.findClubByUserId(any())).thenReturn(Optional.empty());
         assertThrows(RestApiException.class,
             () -> clubProfileService.updateClubInfo(ClubRequestFixture.createValidClubInfoRequest(),
                 createUserDetails(userId)));

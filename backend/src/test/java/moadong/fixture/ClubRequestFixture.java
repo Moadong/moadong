@@ -1,5 +1,7 @@
 package moadong.fixture;
 
+import moadong.club.enums.ClubCategory;
+import moadong.club.enums.ClubDivision;
 import moadong.club.payload.request.ClubInfoRequest;
 
 import java.util.List;
@@ -9,9 +11,8 @@ public class ClubRequestFixture {
     public static ClubInfoRequest createValidClubInfoRequest() {
         return new ClubInfoRequest(
                 "club_123",
-                "테스트동아리",
-                "학술",
-                "프로그래밍",
+                ClubCategory.학술,
+                ClubDivision.중동,
                 List.of("개발", "스터디"),
                 "동아리 소개입니다.",
                 "홍길동",
