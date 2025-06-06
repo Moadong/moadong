@@ -8,25 +8,30 @@ import { useAnswers } from '@/hooks/useAnswers';
 import QuestionAnswerer from '@/pages/AdminPage/application/components/QuestionAnswerer/QuestionAnswerer';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import { Question } from '@/types/application';
+import Spinner from '@/components/common/Spinner/Spinner';
 
 const AnswerApplicationForm = () => {
   const { clubId } = useParams<{ clubId: string }>();
-  const { data: clubDetail, error } = useGetClubDetail(clubId || '');
-  const {
-    data: formData,
-    isLoading,
-    isError,
-  } = useGetApplication(clubId || '');
   if (!clubId) return null;
-  if (!clubDetail) return null;
+
+  const { data: clubDetail, error } = useGetClubDetail(clubId);
+  const { data: formData, isLoading, isError } = useGetApplication(clubId);
+
   const { onAnswerChange, getAnswersById } = useAnswers();
 
-  if (!clubId || isLoading || !formData || !clubDetail) {
-    return <div>로딩 중...</div>;
+  if (isLoading) return <Spinner />;
+
+  if (error || isError) {
+    return <div>문제가 발생했어요. 잠시 후 다시 시도해 주세요.</div>;
   }
 
-  if (error) {
-    return <div>에러가 발생했습니다.</div>;
+  if (!formData || !clubDetail) {
+    return (
+      <div>
+        지원서 정보를 불러오지 못했어요. 새로고침하거나 잠시 후 다시 시도해
+        주세요.
+      </div>
+    );
   }
 
   return (
