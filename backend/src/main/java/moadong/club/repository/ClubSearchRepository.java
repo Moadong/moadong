@@ -49,7 +49,7 @@ public class ClubSearchRepository {
         operations.add(
             Aggregation.project("name", "state", "category", "division")
                 .and("recruitmentInformation.introduction").as("introduction")
-                .and("recruitmentInformation.recruitmentStatus").as("recruitmentStatus")
+                .and("recruitmentInformation.clubRecruitmentStatus").as("recruitmentStatus")
                     .and(ConditionalOperators.ifNull("$recruitmentInformation.logo").then(""))
                     .as("logo")
                     .and(ConditionalOperators.ifNull("$recruitmentInformation.tags").then(""))
