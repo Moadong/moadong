@@ -5,8 +5,6 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
-import java.util.List;
-import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +16,9 @@ import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.List;
+import java.util.Map;
 
 @Document("clubs")
 @AllArgsConstructor
@@ -69,7 +70,7 @@ public class Club {
 
     @Builder
     public Club(String name, String category, String division,
-        ClubRecruitmentInformation clubRecruitmentInformation) {
+                ClubRecruitmentInformation clubRecruitmentInformation) {
         this.name = name;
         this.category = category;
         this.division = division;

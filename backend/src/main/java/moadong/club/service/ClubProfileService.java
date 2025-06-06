@@ -7,6 +7,7 @@ import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.repository.ClubRepository;
+import moadong.club.util.RecruitmentStateCalculator;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
@@ -33,16 +34,21 @@ public class ClubProfileService {
         Club club = clubRepository.findClubByUserId(user.getId())
             .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
+        RecruitmentStateCalculator.calculate(
+                club,
+                club.getClubRecruitmentInformation().getRecruitmentStart(),
+                club.getClubRecruitmentInformation().getRecruitmentEnd()
+        );
         clubRepository.save(club);
     }
 
     public ClubDetailedResponse getClubDetail(String clubId) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
-            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(
-            club
+                club
         );
         return new ClubDetailedResponse(clubDetailedResult);
     }
