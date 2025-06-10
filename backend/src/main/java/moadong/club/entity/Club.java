@@ -12,6 +12,8 @@ import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -76,12 +78,33 @@ public class Club {
     }
 
     public void update(ClubInfoRequest request) {
+        validateTags(request.tags());
+        validateIntroduction(request.introduction());
+
         this.name = request.name();
-        this.category = request.category();
-        this.division = request.division();
+        this.category = request.category().name();
+        this.division = request.division().name();
         this.state = ClubState.AVAILABLE;
         this.socialLinks = request.socialLinks();
         this.clubRecruitmentInformation.update(request);
+    }
+
+    private void validateTags(List<String> tags) {
+        if (tags.size() > 3) {
+            throw new RestApiException(ErrorCode.TOO_MANY_TAGS);
+        }
+
+        for (String tag : tags) {
+            if (tag.length() > 5) {
+                throw new RestApiException(ErrorCode.TOO_LONG_TAG);
+            }
+        }
+    }
+
+    private void validateIntroduction(String introduction) {
+        if (introduction.length() > 24) {
+            throw new RestApiException(ErrorCode.TOO_LONG_INTRODUCTION);
+        }
     }
 
     public void update(ClubRecruitmentInfoUpdateRequest request) {
