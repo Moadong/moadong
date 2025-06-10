@@ -50,7 +50,7 @@ const MainPage = () => {
         mobileBanners={MobileBannerImageList}
       />
       <Styled.PageContainer>
-        <CategoryButtonList onCategorySelect={setSelectedCategory} />
+        <CategoryButtonList />
         <Styled.FilterWrapper>
           <StatusRadioButton onChange={setIsFilterActive} />
         </Styled.FilterWrapper>

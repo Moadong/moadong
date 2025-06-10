@@ -17,10 +17,6 @@ interface Category {
   eventName: string;
 }
 
-interface CategoryButtonListProps {
-  onCategorySelect: (division: string) => void;
-}
-
 const clubCategories: Category[] = [
   { id: 'all', name: '전체', icon: iconAll, eventName: 'Category_All_Clicked' },
   {
@@ -61,7 +57,7 @@ const clubCategories: Category[] = [
   },
 ];
 
-const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
+const CategoryButtonList = () => {
   const { setKeyword, setInputValue } = useSearch();
   const { setSelectedCategory } = useCategory();
 
@@ -77,7 +73,7 @@ const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
     setInputValue('');
 
     setSelectedCategory(category.id);
-    onCategorySelect(category.id);
+
   };
 
   return (
