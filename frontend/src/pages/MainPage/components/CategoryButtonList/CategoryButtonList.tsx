@@ -63,7 +63,7 @@ const clubCategories: Category[] = [
 
 const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
   const { setKeyword, setInputValue } = useSearch();
-  const { selectedCategory, setSelectedCategory } = useCategory();
+  const { setSelectedCategory } = useCategory();
 
   const handleCategoryClick = (category: Category) => {
     mixpanel.track(category.eventName, {
