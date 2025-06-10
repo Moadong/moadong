@@ -8,7 +8,14 @@ const CategoryContext = createContext<{
   setSelectedCategory: () => {},
 });
 
-export const useCategory = () => useContext(CategoryContext);
+export const useCategory = () => {
+  const context = useContext(CategoryContext);
+  if (!context)
+    throw new Error(
+      'useCategory는 CategoryProvider 내부에서만 사용할 수 있습니다',
+    );
+  return context;
+};
 
 export const CategoryProvider = ({
   children,
