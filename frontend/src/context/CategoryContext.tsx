@@ -1,4 +1,4 @@
-import { createContext, useContext, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 
 const CategoryContext = createContext<{
   selectedCategory: string;
@@ -22,7 +22,25 @@ export const CategoryProvider = ({
 }: {
   children: React.ReactNode;
 }) => {
-  const [selectedCategory, setSelectedCategory] = useState('all');
+  const [selectedCategory, setSelectedCategoryState] = useState(() => {
+    return localStorage.getItem('selectedCategory') || 'all';
+  });
+
+  const setSelectedCategory = (category: string) => {
+    setSelectedCategoryState(category);
+    localStorage.setItem('selectedCategory', category);
+  };
+
+  useEffect(() => {
+    const handler = () => {
+      setSelectedCategoryState(
+        localStorage.getItem('selectedCategory') || 'all',
+      );
+    };
+    window.addEventListener('storage', handler);
+    return () => window.removeEventListener('storage', handler);
+  }, []);
+
   return (
     <CategoryContext.Provider value={{ selectedCategory, setSelectedCategory }}>
       {children}
