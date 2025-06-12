@@ -133,8 +133,8 @@ jobs:
 
             export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
             export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_DEV }}:latest
-            chmod +x /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
-            ./home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
+            sudo chmod +x /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
+            sudo ./home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
 
             docker image prune -af
           
