@@ -111,18 +111,18 @@ jobs:
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.ORACLE_INSTANCE_DEV_IP }}
-          username: ${{ secrets.ORACLE_INSTANCE_DEV_USER }}
+          username: ${{ secrets.ORACLE_INSTANCE_USER }}
           key: ${{ secrets.ORACLE_INSTANCE_DEV_PRIVATE_KEY }}
           port: ${{ secrets.ORACLE_INSTANCE_DEV_PORT }}
           script: |
             gcloud auth configure-docker asia-northeast3-docker.pkg.dev
-            gcloud auth activate-service-account --key-file=/home/${{ secrets.ORACLE_INSTANCE_DEV_USER }}/gce_sa_key.json
+            gcloud auth activate-service-account --key-file=/home/${{ secrets.ORACLE_INSTANCE_USER }}/gce_sa_key.json
             
             sudo usermod -aG docker $USER
             newgrp docker
             docker pull ${{ secrets.DOCKER_IMAGE_DEV }}:latest
 
-            export USERNAME=${{ secrets.ORACLE_INSTANCE_DEV_USER }}
+            export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
             export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_DEV }}:latest
 #            sudo chmod +x /home/${{ secrets.ORACLE_INSTANCE_DEV_USER }}/deploy.sh
 #            sudo -E /home/${{ secrets.ORACLE_INSTANCE_DEV_USER }}/deploy.sh
