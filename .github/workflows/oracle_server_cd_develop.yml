@@ -125,8 +125,10 @@ jobs:
           port: ${{ secrets.ORACLE_INSTANCE_DEV_PORT }}
           script: |
             gcloud auth activate-service-account --key-file=/home/${{ secrets.ORACLE_INSTANCE_USER }}/gce_sa_key.json
-            gcloud auth configure-docker asia-northeast3-docker.pkg.dev
-            
+            ACCESS_TOKEN=$(gcloud auth print-access-token)
+            docker login -u oauth2accesstoken --password-stdin https://asia-northeast3-docker.pkg.dev
+            docker pull asia-northeast3-docker.pkg.dev/pristine-valve-457508-k7/moadong/moadong-dev:latest
+  
             sudo usermod -aG docker $USER
             newgrp docker
             docker pull ${{ secrets.DOCKER_IMAGE_DEV }}:latest
