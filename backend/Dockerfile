@@ -1,5 +1,5 @@
 #경량 리눅스 배포판, 도커 이미지 크기를 줄이는데 유용함
-FROM openjdk:17-alpine
+FROM openjdk:17-slim
 
 #도커 이미지 내의 작업 디렉토리 정의
 WORKDIR /moadong/backend
