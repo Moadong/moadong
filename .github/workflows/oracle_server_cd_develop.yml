@@ -1,6 +1,6 @@
-# .github/workflows/server_cd_develop.yml
+# .github/workflows/oracle_server_cd_develop.yml
 
-name: Develop Server CD
+name: Oracle Develop Server CD
 
 on:
   push:
