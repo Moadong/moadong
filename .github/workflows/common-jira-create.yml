@@ -94,7 +94,7 @@ jobs:
         uses: atlassian/gajira-create@v3
         with:
           project: MOA
-          issuetype: Sub-task
+          issuetype: 하위 작업
           summary: '${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
           fields: '${{ steps.issue-fields.outputs.fields }}'
