@@ -62,16 +62,19 @@ jobs:
 
             ${{ github.event.issue.body }}
 
+
       - name: Build fields JSON
         id: issue-fields
         run: |
-          EPIC_ID="${{ steps.issue-parser.outputs.issueparser_parentKey }}"
+          # 💡 변경점 1: 변수명을 더 명확하게 변경 (가독성 향상)
+          PARENT_STORY_KEY="${{ steps.issue-parser.outputs.issueparser_parentKey }}"
           DUE_DATE="${{ steps.issue-parser.outputs.issueparser_dueDate }}"
           ASSIGNEE_ID="${{ steps.assignee.outputs.accountId }}"
           DESCRIPTION="${{ steps.md2jira.outputs.output-text }}"
 
+          # 'parent' 필드는 스토리-서브태스크 관계에서도 동일하게 사용됩니다.
           FIELDS=$(jq -nc \
-            --arg parent "$EPIC_ID" \
+            --arg parent "$PARENT_STORY_KEY" \
             --arg description "$DESCRIPTION" \
             --arg assignee "$ASSIGNEE_ID" \
             '{
@@ -91,7 +94,7 @@ jobs:
         uses: atlassian/gajira-create@v3
         with:
           project: MOA
-          issuetype: Task
+          issuetype: Sub-task
           summary: '${{ github.event.issue.title }}'
           description: '${{ steps.md2jira.outputs.output-text }}'
           fields: '${{ steps.issue-fields.outputs.fields }}'
