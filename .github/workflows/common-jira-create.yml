@@ -7,7 +7,7 @@ on:
 
 jobs:
   create-issue:
-    if: contains(github.event.issue.body, '🎟️ 상위 작업 (Ticket Number)')
+    if: contains(github.event.issue.body, '🎟️ 상위 스토리 (Story Key)')
     name: Create Jira issue
     runs-on: ubuntu-latest
 
