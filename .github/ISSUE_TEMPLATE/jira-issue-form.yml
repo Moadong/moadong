@@ -28,9 +28,9 @@ body:
   - type: input
     id: parentKey
     attributes:
-      label: '🎟️ 상위 작업 (Ticket Number)'
-      description: '상위 작업의 Ticket Number를 기입해주세요'
-      placeholder: 'FE-00'
+      label: '🎟️ 상위 스토리 (Story Key)'
+      description: '이 하위 작업이 속할 상위 스토리의 키를 입력해주세요 (예: MOA-42).'
+      placeholder: 'MOA-42'
     validations:
       required: true
 
