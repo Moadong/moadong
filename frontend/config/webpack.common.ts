@@ -6,6 +6,9 @@ const Dotenv = require('dotenv-webpack');
 const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 
 const configuration: webpack.Configuration = {
+  cache: {
+    type: 'filesystem',
+  },
   resolve: {
     extensions: ['.ts', '.tsx', '.js', '.jsx'],
     alias: {
