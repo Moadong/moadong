@@ -38,7 +38,16 @@ export const CategoryProvider = ({
       );
     };
     window.addEventListener('storage', handler);
-    return () => window.removeEventListener('storage', handler);
+
+    const handleBeforeUnload = () => {
+      localStorage.removeItem('selectedCategory');
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('storage', handler);
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+    };
   }, []);
 
   return (
