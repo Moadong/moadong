@@ -3,10 +3,13 @@ package moadong.club.service;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
+import moadong.club.enums.ApplicationStatus;
+import moadong.club.payload.dto.ClubApplicantsResult;
 import moadong.club.payload.request.ClubApplicationCreateRequest;
 import moadong.club.payload.request.ClubApplicationEditRequest;
 import moadong.club.payload.request.ClubApplyRequest;
 import moadong.club.payload.response.ClubApplicationResponse;
+import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.repository.ClubApplicationRepository;
 import moadong.club.repository.ClubQuestionRepository;
 import moadong.club.repository.ClubRepository;
@@ -76,6 +79,54 @@ public class ClubApplyService {
                 .build();
 
         clubApplicationRepository.save(application);
+    }
+
+    public ClubApplyInfoResponse getClubApplyInfo(String clubId, CustomUserDetails user) {
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        if (!user.getId().equals(club.getUserId())) {
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+
+        List<ClubApplication> allApplications = clubApplicationRepository.findAllByQuestionId(clubId);
+
+        List<ClubApplication> submittedApplications = allApplications.stream()
+                .filter(app -> app.getStatus() != null && app.getStatus() != ApplicationStatus.DRAFT)
+                .toList();
+        
+        List<ClubApplicantsResult> applications = submittedApplications
+                .stream().map(applicant -> ClubApplicantsResult.builder()
+                        .questionId(applicant.getQuestionId())
+                        .status(applicant.getStatus())
+                        .answers(applicant.getAnswers())
+                        .build())
+                .toList();
+
+        long reviewRequired = submittedApplications.stream()
+                .filter(app -> app.getStatus() == ApplicationStatus.SUBMITTED || 
+                              app.getStatus() == ApplicationStatus.SCREENING)
+                .count();
+                
+        long scheduledInterview = submittedApplications.stream()
+                .filter(app -> app.getStatus() == ApplicationStatus.SCREENING_PASSED ||
+                              app.getStatus() == ApplicationStatus.INTERVIEW_SCHEDULED ||
+                              app.getStatus() == ApplicationStatus.INTERVIEW_IN_PROGRESS)
+                .count();
+                
+        long accepted = submittedApplications.stream()
+                .filter(app -> app.getStatus() == ApplicationStatus.INTERVIEW_PASSED ||
+                              app.getStatus() == ApplicationStatus.OFFERED ||
+                              app.getStatus() == ApplicationStatus.ACCEPTED)
+                .count();
+
+        return ClubApplyInfoResponse.builder()
+                .total(applications.size())
+                .reviewRequired((int) reviewRequired)
+                .scheduledInterview((int) scheduledInterview)
+                .accepted((int) accepted)
+                .applicants(applications)
+                .build();
     }
 
     private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubQuestion clubQuestion) {
