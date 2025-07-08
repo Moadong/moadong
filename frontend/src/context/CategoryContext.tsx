@@ -23,24 +23,24 @@ export const CategoryProvider = ({
   children: React.ReactNode;
 }) => {
   const [selectedCategory, setSelectedCategoryState] = useState(() => {
-    return localStorage.getItem('selectedCategory') || 'all';
+    return sessionStorage.getItem('selectedCategory') || 'all';
   });
 
   const setSelectedCategory = (category: string) => {
     setSelectedCategoryState(category);
-    localStorage.setItem('selectedCategory', category);
+    sessionStorage.setItem('selectedCategory', category);
   };
 
   useEffect(() => {
     const handler = () => {
       setSelectedCategoryState(
-        localStorage.getItem('selectedCategory') || 'all',
+        sessionStorage.getItem('selectedCategory') || 'all',
       );
     };
     window.addEventListener('storage', handler);
 
     const handleBeforeUnload = () => {
-      localStorage.removeItem('selectedCategory');
+      sessionStorage.removeItem('selectedCategory');
     };
     window.addEventListener('beforeunload', handleBeforeUnload);
 
