@@ -39,14 +39,8 @@ export const CategoryProvider = ({
     };
     window.addEventListener('storage', handler);
 
-    const handleBeforeUnload = () => {
-      sessionStorage.removeItem('selectedCategory');
-    };
-    window.addEventListener('beforeunload', handleBeforeUnload);
-
     return () => {
       window.removeEventListener('storage', handler);
-      window.removeEventListener('beforeunload', handleBeforeUnload);
     };
   }, []);
 
