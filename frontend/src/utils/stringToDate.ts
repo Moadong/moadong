@@ -1,14 +1,12 @@
+import { parse, isValid } from 'date-fns';
+
 export const stringToDate = (s: string): Date => {
-  const [datePart, timePart] = s.split(' ') as [string, string];
-  if (!datePart || !timePart) {
+  const date = parse(s, 'yyyy.MM.dd HH:mm', new Date());
+  if (!isValid(date)) {
     throw new Error(
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
     );
   }
-
-  const isoDate = datePart.replace(/\./g, '-');
-  const date = new Date(`${isoDate}T${timePart}:00`);
-
   return date;
 };
 
