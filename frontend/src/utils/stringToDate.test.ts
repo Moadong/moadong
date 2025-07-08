@@ -40,4 +40,11 @@ describe('stringToDate 함수 테스트', () => {
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
     );
   });
+
+  it('YYYY.MM.DD HH:mm 형식이 아닌 입력에 대해 에러를 던진다', () => {
+    const input = '1.1.1 1:1';
+    expect(() => stringToDate(input)).toThrow(
+      '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
+    );
+  });
 });
