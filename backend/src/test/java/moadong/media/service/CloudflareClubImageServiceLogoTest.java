@@ -12,14 +12,12 @@ import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.when;
 
 import com.google.api.services.drive.Drive;
-import java.lang.reflect.Method;
 import java.util.Optional;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
-import moadong.media.domain.FileType;
 import moadong.media.util.ClubImageUtil;
 import moadong.util.annotations.UnitTest;
 import org.bson.types.ObjectId;
@@ -30,19 +28,16 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
-class GoogleDriveClubImageServiceLogoTest {
+@UnitTest
+class CloudflareClubImageServiceLogoTest {
 
     @Spy
     @InjectMocks
-    private GoogleDriveClubImageService clubImageService;
-
-    @Mock
-    private Drive googleDrive;
+    private CloudflareImageService clubImageService;
 
     @Mock
     private ClubRepository clubRepository;
@@ -61,21 +56,6 @@ class GoogleDriveClubImageServiceLogoTest {
                 .build();
         club = Club.builder().clubRecruitmentInformation(info).build();
         objectId = new ObjectId();
-    }
-
-    // updateLogo
-    @Test
-    void 로고를_업데이트하면_uploadFile메서드를_호출하고_예외를_발생시킨다() {
-        // given
-        when(clubRepository.findClubById(objectId)).thenReturn(Optional.of(club));
-//        doReturn( "https://drive.google.com/file/d/" + club.getId() + "/LOGO/" + mockFile.getOriginalFilename() + "/view" )
-//                .when(clubImageService).uploadFile(any(), eq(mockFile), eq(FileType.LOGO));
-
-        // when & then
-        RestApiException exception = assertThrows(RestApiException.class,
-                () -> clubImageService.uploadLogo(objectId.toHexString(), mockFile));
-        assertEquals(ErrorCode.IMAGE_UPLOAD_FAILED, exception.getErrorCode());
-
     }
 
     @Test
