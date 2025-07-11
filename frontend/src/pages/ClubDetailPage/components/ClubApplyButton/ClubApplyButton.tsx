@@ -4,8 +4,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
 interface ButtonProps {
-  recruitmentForm?: string;
-  presidentPhoneNumber?: string;
+  isRecruiting: boolean;
 }
 
 const Button = styled.button`
@@ -38,8 +37,7 @@ const Button = styled.button`
 `;
 
 const ClubApplyButton = ({
-  recruitmentForm,
-  presidentPhoneNumber,
+  isRecruiting
 }: ButtonProps) => {
   const { clubId } = useParams<{ clubId: string }>();
   const trackEvent = useMixpanelTrack();
@@ -49,14 +47,11 @@ const ClubApplyButton = ({
     trackEvent('Club Apply Button Clicked');
 
     //TODO: 지원서를 작성한 동아리의 경우에만 리다이렉트
+    if (!isRecruiting) {
+      alert('지원모집이 마감되었습니다. 다음에 지원해 주세요.')
+      return;
+    }
     navigate(`/application/${clubId}`);
-
-    // [x] FIXME: recruitmentForm 있을 때는 리다이렉트
-    // if (presidentPhoneNumber) {
-    //   alert(`${presidentPhoneNumber} 으로 연락하여 지원해 주세요.`);
-    // } else {
-    //   alert('모집이 마감되었습니다. 다음에 지원해 주세요.');
-    // }
   };
 
   return <Button onClick={handleClick}>지원하기</Button>;
