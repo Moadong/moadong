@@ -79,5 +79,5 @@ export const QuestionWrapper = styled.div<{readOnly?: boolean}>`
   display: flex;
   gap: 36px;
   pointer-events: ${({ readOnly }) => (readOnly ? 'none' : 'auto')};
-  cursor: not-allowed;
+  cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'auto')};
 `;
