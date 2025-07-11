@@ -89,12 +89,8 @@ public class ClubApplyService {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
 
-        List<ClubApplication> allApplications = clubApplicationRepository.findAllByQuestionId(clubId);
+        List<ClubApplication> submittedApplications = clubApplicationRepository.findAllByQuestionId(clubId);
 
-        List<ClubApplication> submittedApplications = allApplications.stream()
-                .filter(app -> app.getStatus() != null && app.getStatus() != ApplicationStatus.DRAFT)
-                .toList();
-        
         List<ClubApplicantsResult> applications = submittedApplications
                 .stream().map(applicant -> ClubApplicantsResult.builder()
                         .questionId(applicant.getQuestionId())
