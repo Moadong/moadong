@@ -26,7 +26,7 @@ const AnswerApplicationForm = () => {
   if (isError) {
     alert(applicationError.message)
     navigate(`/club/${clubId}`)
-    return;
+    return <div>문제가 발생했어요. 잠시 후 다시 시도해 주세요.</div>;
   }
 
   if (error) {
