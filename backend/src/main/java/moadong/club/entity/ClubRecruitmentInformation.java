@@ -37,9 +37,6 @@ public class ClubRecruitmentInformation {
     @Column(length = 20000)
     private String description;
 
-    @Column(length = 20000)
-    private String faq;
-
     @Column(length = 5)
     private String presidentName;
 
@@ -56,6 +53,8 @@ public class ClubRecruitmentInformation {
     private List<String> feedImages;
 
     private List<String> tags;
+
+    private List<Faq> faqs;
 
     @Enumerated(EnumType.STRING)
     @NotNull
@@ -74,7 +73,7 @@ public class ClubRecruitmentInformation {
         this.recruitmentStart = request.recruitmentStart();
         this.recruitmentEnd = request.recruitmentEnd();
         this.recruitmentTarget = request.recruitmentTarget();
-        this.faq = request.faq();
+        this.faqs = request.faqs();
     }
 
     public boolean hasRecruitmentPeriod() {
