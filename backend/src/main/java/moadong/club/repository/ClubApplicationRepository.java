@@ -7,6 +7,6 @@ import org.springframework.data.mongodb.repository.Query;
 import java.util.List;
 
 public interface ClubApplicationRepository extends MongoRepository<ClubApplication, String> {
-    @Query("{ 'questionId': ?0, 'status': { $ne: 'DRAFT' } }")
+    @Query("{ 'questionId': ?0, 'status': { $exists: true, $ne: 'DRAFT' } }")
     List<ClubApplication> findAllByQuestionId(String questionId);
 }
