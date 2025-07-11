@@ -26,21 +26,17 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.multipart.MultipartFile;
 
 @ExtendWith(MockitoExtension.class)
 @UnitTest
-class GoogleDriveClubImageServiceFeedTest {
+class CloudflareClubImageServiceFeedTest {
 
     @Spy
     @InjectMocks
-    private GoogleDriveClubImageService clubImageService;
-
-    @Mock
-    private Drive googleDrive;
+    private CloudflareImageService clubImageService;
 
     @Mock
     private ClubRepository clubRepository;
