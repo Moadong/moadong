@@ -49,14 +49,14 @@ const ClubApplyButton = ({
     trackEvent('Club Apply Button Clicked');
 
     //TODO: 지원서를 작성한 동아리의 경우에만 리다이렉트
-    //navigate(`/application/${clubId}`);
+    navigate(`/application/${clubId}`);
 
     // [x] FIXME: recruitmentForm 있을 때는 리다이렉트
-    if (presidentPhoneNumber) {
-      alert(`${presidentPhoneNumber} 으로 연락하여 지원해 주세요.`);
-    } else {
-      alert('모집이 마감되었습니다. 다음에 지원해 주세요.');
-    }
+    // if (presidentPhoneNumber) {
+    //   alert(`${presidentPhoneNumber} 으로 연락하여 지원해 주세요.`);
+    // } else {
+    //   alert('모집이 마감되었습니다. 다음에 지원해 주세요.');
+    // }
   };
 
   return <Button onClick={handleClick}>지원하기</Button>;
