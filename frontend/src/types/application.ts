@@ -52,5 +52,5 @@ export interface ApplicationFormData {
 
 export interface AnswerItem {
   id: number;
-  answer: string;
+  value: string;
 }

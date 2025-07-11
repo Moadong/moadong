@@ -9,6 +9,7 @@ import QuestionAnswerer from '@/pages/AdminPage/application/components/QuestionA
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import { Question } from '@/types/application';
 import Spinner from '@/components/common/Spinner/Spinner';
+import applyToClub from '@/apis/application/applyToClub';
 
 const AnswerApplicationForm = () => {
   const { clubId } = useParams<{ clubId: string }>();
@@ -17,7 +18,7 @@ const AnswerApplicationForm = () => {
   const { data: clubDetail, error } = useGetClubDetail(clubId);
   const { data: formData, isLoading, isError } = useGetApplication(clubId);
 
-  const { onAnswerChange, getAnswersById } = useAnswers();
+  const { onAnswerChange, getAnswersById, answers } = useAnswers();
 
   if (isLoading) return <Spinner />;
 
@@ -33,6 +34,16 @@ const AnswerApplicationForm = () => {
       </div>
     );
   }
+
+  const handleSubmit = async () => {
+    try {
+      await applyToClub(clubId, answers);
+      alert('답변이 성공적으로 제출되었습니다.');
+      // TODO: 필요시 페이지 이동 등 추가
+    } catch (e) {
+      alert('답변 제출에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  };
 
   return (
     <>
@@ -57,7 +68,7 @@ const AnswerApplicationForm = () => {
           ))}
         </Styled.QuestionsWrapper>
         <Styled.ButtonWrapper>
-          <Styled.submitButton>제출하기</Styled.submitButton>
+          <Styled.submitButton onClick={handleSubmit}>제출하기</Styled.submitButton>
         </Styled.ButtonWrapper>
       </PageContainer>
     </>
