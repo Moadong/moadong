@@ -63,7 +63,7 @@ public class ClubImageController {
     @PostMapping(value = "/{clubId}/cover", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @Operation(summary = "커버 이미지 업데이트", description = "cloudflare 상에 커버 이미지를 업데이트합니다.")
     public ResponseEntity<?> uploadCover(@PathVariable String clubId,
-                                         @RequestPart("logo") MultipartFile file) {
+                                         @RequestPart("cover") MultipartFile file) {
         String fileUrl = clubImageService.uploadCover(clubId, file);
         return Response.ok(fileUrl);
     }
