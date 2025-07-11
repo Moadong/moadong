@@ -65,6 +65,7 @@ public class ClubApplyController {
     }
 
     @GetMapping("/apply/info")
+    @Operation(summary = "클럽 지원자 현황", description = "클럽 지원자 현황을 불러옵니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getApplyInfo(@PathVariable String clubId,
