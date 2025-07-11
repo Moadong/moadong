@@ -58,13 +58,14 @@ public class ClubRecruitmentInformation {
 
     private List<String> tags;
 
+    private List<Faq> faqs;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private ClubRecruitmentStatus clubRecruitmentStatus;
 
-    public ClubRecruitmentInformation updateLogo(String logo) {
+    public void updateLogo(String logo) {
         this.logo = logo;
-        return this;
     }
 
     public void updateRecruitmentStatus(ClubRecruitmentStatus status) {
@@ -76,6 +77,7 @@ public class ClubRecruitmentInformation {
         this.recruitmentStart = request.recruitmentStart();
         this.recruitmentEnd = request.recruitmentEnd();
         this.recruitmentTarget = request.recruitmentTarget();
+        this.faqs = request.faqs();
     }
 
     public boolean hasRecruitmentPeriod() {

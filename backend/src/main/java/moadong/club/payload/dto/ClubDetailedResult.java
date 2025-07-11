@@ -1,11 +1,13 @@
 package moadong.club.payload.dto;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
+import moadong.club.entity.Faq;
 
 @Builder
 public record ClubDetailedResult(
@@ -25,7 +27,8 @@ public record ClubDetailedResult(
     String recruitmentStatus,
     Map<String, String> socialLinks,
     String category,
-    String division
+    String division,
+    List<Faq> faqs
 ) {
 
     public static ClubDetailedResult of(Club club) {
@@ -66,6 +69,8 @@ public record ClubDetailedResult(
                 ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().getDescription())
             .socialLinks(club.getSocialLinks() == null ? Map.of()
                 : club.getSocialLinks())
+            .faqs(club.getClubRecruitmentInformation().getFaqs() == null ? List.of()
+                    : club.getClubRecruitmentInformation().getFaqs())
             .build();
     }
 
