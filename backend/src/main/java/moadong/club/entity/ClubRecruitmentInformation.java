@@ -37,6 +37,9 @@ public class ClubRecruitmentInformation {
     @Column(length = 20000)
     private String description;
 
+    @Column(length = 20000)
+    private String faq;
+
     @Column(length = 5)
     private String presidentName;
 
@@ -58,9 +61,8 @@ public class ClubRecruitmentInformation {
     @NotNull
     private ClubRecruitmentStatus clubRecruitmentStatus;
 
-    public ClubRecruitmentInformation updateLogo(String logo) {
+    public void updateLogo(String logo) {
         this.logo = logo;
-        return this;
     }
 
     public void updateRecruitmentStatus(ClubRecruitmentStatus status) {
@@ -72,6 +74,7 @@ public class ClubRecruitmentInformation {
         this.recruitmentStart = request.recruitmentStart();
         this.recruitmentEnd = request.recruitmentEnd();
         this.recruitmentTarget = request.recruitmentTarget();
+        this.faq = request.faq();
     }
 
     public boolean hasRecruitmentPeriod() {

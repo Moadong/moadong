@@ -24,7 +24,8 @@ public record ClubDetailedResult(
     String recruitmentStatus,
     Map<String, String> socialLinks,
     String category,
-    String division
+    String division,
+    String faq
 ) {
 
     public static ClubDetailedResult of(Club club) {
@@ -63,6 +64,8 @@ public record ClubDetailedResult(
                 ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().getDescription())
             .socialLinks(club.getSocialLinks() == null ? Map.of()
                 : club.getSocialLinks())
+            .faq(club.getClubRecruitmentInformation().getFaq() == null ? ""
+                    : club.getClubRecruitmentInformation().getFaq())
             .build();
     }
 

@@ -6,7 +6,8 @@ public record ClubRecruitmentInfoUpdateRequest(
     LocalDateTime recruitmentStart,
     LocalDateTime recruitmentEnd,
     String recruitmentTarget,
-    String description
+    String description,
+    String faq
 ) {
 
 }
