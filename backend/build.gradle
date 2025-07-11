@@ -54,9 +54,9 @@ dependencies {
 	implementation 'com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0'
 
 	// S3
-	implementation platform('software.amazon.awssdk:bom:2.25.8')
-	implementation 'software.amazon.awssdk:s3'
-	implementation 'software.amazon.awssdk:auth'
+	implementation 'software.amazon.awssdk:s3:2.26.0'
+	implementation 'software.amazon.awssdk:auth:2.26.0'
+//	implementation 'software.amazon.awssdk:netty-nio-client:2.26.0'
 
 	// resize tool
 	implementation 'net.coobird:thumbnailator:0.4.14'

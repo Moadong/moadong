@@ -12,6 +12,7 @@ public record ClubDetailedResult(
     String id,
     String name,
     String logo,
+    String cover,
     List<String> tags,
     String state,
     List<String> feeds,
@@ -40,6 +41,8 @@ public record ClubDetailedResult(
             .name(club.getName() == null ? "" : club.getName())
             .logo(clubRecruitmentInformation.getLogo() == null ? ""
                 : clubRecruitmentInformation.getLogo())
+            .cover(clubRecruitmentInformation.getCover() == null ? ""
+                    : clubRecruitmentInformation.getCover())
             .tags(clubRecruitmentInformation.getTags() == null ? List.of()
                 : clubRecruitmentInformation.getTags())
             .state(club.getState() == null ? "" : club.getState().getDesc())

@@ -120,6 +120,31 @@ public class CloudflareImageService implements ClubImageService{
         s3Client.deleteObject(deleteRequest);
     }
 
+    @Override
+    public String uploadCover(String clubId, MultipartFile file) {
+        Club club = getClub(clubId);
+
+        if (club.getClubRecruitmentInformation().getCover() != null) {
+            deleteFile(club, club.getClubRecruitmentInformation().getCover());
+        }
+
+        String filePath = uploadFile(clubId, file, FileType.COVER);
+        club.updateCover(filePath);
+        clubRepository.save(club);
+        return filePath;
+    }
+
+    @Override
+    public void deleteCover(String clubId) {
+        Club club = getClub(clubId);
+
+        if (club.getClubRecruitmentInformation().getCover() != null) {
+            deleteFile(club, club.getClubRecruitmentInformation().getCover());
+        }
+        club.updateCover(null);
+        clubRepository.save(club);
+    }
+
     private String uploadFile(String clubId, MultipartFile file, FileType fileType) {
         if (file == null || file.isEmpty()) {
             throw new RestApiException(ErrorCode.FILE_NOT_FOUND);

@@ -31,6 +31,10 @@ public class ClubRecruitmentInformation {
     @Unique
     private String logo;
 
+    @Column(length = 1024)
+    @Unique
+    private String cover;
+
     @Column(length = 30)
     private String introduction;
 
@@ -107,5 +111,9 @@ public class ClubRecruitmentInformation {
         this.presidentName = request.presidentName();
         this.presidentTelephoneNumber = request.presidentPhoneNumber();
         this.tags = request.tags();
+    }
+
+    public void updateCover(String cover) {
+        this.cover = cover;
     }
 }

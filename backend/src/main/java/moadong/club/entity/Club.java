@@ -115,6 +115,10 @@ public class Club {
         this.clubRecruitmentInformation.updateLogo(logo);
     }
 
+    public void updateCover(String cover) {
+        this.clubRecruitmentInformation.updateCover(cover);
+    }
+
     public void updateFeedImages(List<String> feedImages) {
         this.clubRecruitmentInformation.updateFeedImages(feedImages);
     }

@@ -59,4 +59,19 @@ public class ClubImageController {
         clubImageService.updateFeeds(clubId, feeds.feeds());
         return Response.ok("success put feeds");
     }
+
+    @PostMapping(value = "/{clubId}/cover", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @Operation(summary = "커버 이미지 업데이트", description = "cloudflare 상에 커버 이미지를 업데이트합니다.")
+    public ResponseEntity<?> uploadCover(@PathVariable String clubId,
+                                         @RequestPart("logo") MultipartFile file) {
+        String fileUrl = clubImageService.uploadCover(clubId, file);
+        return Response.ok(fileUrl);
+    }
+
+    @DeleteMapping(value = "/{clubId}/cover")
+    @Operation(summary = "커버 이미지 삭제", description = "cloudflare 상에 커버 이미지를 저장소에서 삭제합니다.")
+    public ResponseEntity<?> deleteCover(@PathVariable String clubId) {
+        clubImageService.deleteCover(clubId);
+        return Response.ok("success delete cover");
+    }
 }
