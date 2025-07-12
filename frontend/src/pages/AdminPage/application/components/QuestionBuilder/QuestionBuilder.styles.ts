@@ -75,7 +75,9 @@ export const SelectionToggleButton = styled.button<{ active: boolean }>`
     color 0.2s ease;
 `;
 
-export const QuestionWrapper = styled.div`
+export const QuestionWrapper = styled.div<{readOnly?: boolean}>`
   display: flex;
   gap: 36px;
+  pointer-events: ${({ readOnly }) => (readOnly ? 'none' : 'auto')};
+  cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'auto')};
 `;

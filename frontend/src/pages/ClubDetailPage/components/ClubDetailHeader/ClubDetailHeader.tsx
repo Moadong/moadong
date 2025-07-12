@@ -43,10 +43,7 @@ const ClubDetailHeader = ({
         logo={logo}
       />
       <ClubApplyButton
-        {...(deadlineText !== '모집 마감' && {
-          recruitmentForm,
-          presidentPhoneNumber,
-        })}
+        isRecruiting={deadlineText !== '모집 마감'}
       />
     </Styled.ClubDetailHeaderContainer>
   );

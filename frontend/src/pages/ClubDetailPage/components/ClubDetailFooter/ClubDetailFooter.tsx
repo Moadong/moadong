@@ -28,10 +28,7 @@ const ClubDetailFooter = ({
     <Styled.ClubDetailFooterContainer>
       <DeadlineBadge deadlineText={deadlineText} />
       <ClubApplyButton
-        {...(deadlineText !== '모집 마감' && {
-          recruitmentForm,
-          presidentPhoneNumber,
-        })}
+        isRecruiting={deadlineText !== '모집 마감'}
       />
     </Styled.ClubDetailFooterContainer>
   );
