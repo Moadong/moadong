@@ -54,6 +54,8 @@ const ClubDetailPage = () => {
           recruitmentPeriod={clubDetail.recruitmentPeriod}
           recruitmentForm={clubDetail.recruitmentForm}
           presidentPhoneNumber={clubDetail.presidentPhoneNumber}
+          clubId={clubId || ''}
+          description={clubDetail.description}
         />
         <InfoTabs onTabClick={scrollToSection} />
         <InfoBox sectionRefs={sectionRefs} clubDetail={clubDetail} />
