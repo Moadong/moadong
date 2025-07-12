@@ -91,30 +91,24 @@ public class ClubApplyService {
 
         List<ClubApplication> submittedApplications = clubApplicationRepository.findAllByQuestionId(clubId);
 
-        List<ClubApplicantsResult> applications = submittedApplications
-                .stream().map(applicant -> ClubApplicantsResult.builder()
-                        .questionId(applicant.getQuestionId())
-                        .status(applicant.getStatus())
-                        .answers(applicant.getAnswers())
-                        .build())
-                .toList();
+        List<ClubApplicantsResult> applications = new ArrayList<>();
+        int reviewRequired = 0;
+        int scheduledInterview = 0;
+        int accepted = 0;
 
-        long reviewRequired = submittedApplications.stream()
-                .filter(app -> app.getStatus() == ApplicationStatus.SUBMITTED || 
-                              app.getStatus() == ApplicationStatus.SCREENING)
-                .count();
-                
-        long scheduledInterview = submittedApplications.stream()
-                .filter(app -> app.getStatus() == ApplicationStatus.SCREENING_PASSED ||
-                              app.getStatus() == ApplicationStatus.INTERVIEW_SCHEDULED ||
-                              app.getStatus() == ApplicationStatus.INTERVIEW_IN_PROGRESS)
-                .count();
-                
-        long accepted = submittedApplications.stream()
-                .filter(app -> app.getStatus() == ApplicationStatus.INTERVIEW_PASSED ||
-                              app.getStatus() == ApplicationStatus.OFFERED ||
-                              app.getStatus() == ApplicationStatus.ACCEPTED)
-                .count();
+        for (ClubApplication app : submittedApplications) {
+            applications.add(ClubApplicantsResult.builder()
+                    .questionId(app.getQuestionId())
+                    .status(app.getStatus())
+                    .answers(app.getAnswers())
+                    .build());
+
+            switch (app.getStatus()) {
+                case SUBMITTED, SCREENING -> reviewRequired++;
+                case SCREENING_PASSED, INTERVIEW_SCHEDULED, INTERVIEW_IN_PROGRESS -> scheduledInterview++;
+                case INTERVIEW_PASSED, OFFERED, ACCEPTED -> accepted++;
+            }
+        }
 
         return ClubApplyInfoResponse.builder()
                 .total(applications.size())
