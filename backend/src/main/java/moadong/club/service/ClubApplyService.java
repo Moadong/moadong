@@ -3,10 +3,13 @@ package moadong.club.service;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
+import moadong.club.enums.ApplicationStatus;
+import moadong.club.payload.dto.ClubApplicantsResult;
 import moadong.club.payload.request.ClubApplicationCreateRequest;
 import moadong.club.payload.request.ClubApplicationEditRequest;
 import moadong.club.payload.request.ClubApplyRequest;
 import moadong.club.payload.response.ClubApplicationResponse;
+import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.repository.ClubApplicationRepository;
 import moadong.club.repository.ClubQuestionRepository;
 import moadong.club.repository.ClubRepository;
@@ -76,6 +79,40 @@ public class ClubApplyService {
                 .build();
 
         clubApplicationRepository.save(application);
+    }
+
+    public ClubApplyInfoResponse getClubApplyInfo(String clubId, CustomUserDetails user) {
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        if (!user.getId().equals(club.getUserId())) {
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+
+        List<ClubApplication> submittedApplications = clubApplicationRepository.findAllByQuestionId(clubId);
+
+        List<ClubApplicantsResult> applications = new ArrayList<>();
+        int reviewRequired = 0;
+        int scheduledInterview = 0;
+        int accepted = 0;
+
+        for (ClubApplication app : submittedApplications) {
+            applications.add(ClubApplicantsResult.of(app));
+
+            switch (app.getStatus()) {
+                case SUBMITTED, SCREENING -> reviewRequired++;
+                case SCREENING_PASSED, INTERVIEW_SCHEDULED, INTERVIEW_IN_PROGRESS -> scheduledInterview++;
+                case INTERVIEW_PASSED, OFFERED, ACCEPTED -> accepted++;
+            }
+        }
+
+        return ClubApplyInfoResponse.builder()
+                .total(applications.size())
+                .reviewRequired(reviewRequired)
+                .scheduledInterview(scheduledInterview)
+                .accepted(accepted)
+                .applicants(applications)
+                .build();
     }
 
     private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubQuestion clubQuestion) {
