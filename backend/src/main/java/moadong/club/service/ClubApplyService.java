@@ -97,11 +97,7 @@ public class ClubApplyService {
         int accepted = 0;
 
         for (ClubApplication app : submittedApplications) {
-            applications.add(ClubApplicantsResult.builder()
-                    .questionId(app.getQuestionId())
-                    .status(app.getStatus())
-                    .answers(app.getAnswers())
-                    .build());
+            applications.add(ClubApplicantsResult.of(app));
 
             switch (app.getStatus()) {
                 case SUBMITTED, SCREENING -> reviewRequired++;
@@ -112,9 +108,9 @@ public class ClubApplyService {
 
         return ClubApplyInfoResponse.builder()
                 .total(applications.size())
-                .reviewRequired((int) reviewRequired)
-                .scheduledInterview((int) scheduledInterview)
-                .accepted((int) accepted)
+                .reviewRequired(reviewRequired)
+                .scheduledInterview(scheduledInterview)
+                .accepted(accepted)
                 .applicants(applications)
                 .build();
     }
