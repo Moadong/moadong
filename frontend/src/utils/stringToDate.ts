@@ -1,20 +1,31 @@
-export function parseRecruitmentPeriod(periodStr: string): {
-  recruitmentStart: Date | null;
-  recruitmentEnd: Date | null;
-} {
+import { parse, isValid } from 'date-fns';
+
+export const stringToDate = (s: string): Date => {
+  const regex = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}$/;
+  if (!regex.test(s)) {
+    throw new Error(
+      '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
+    );
+  }
+  const date = parse(s, 'yyyy.MM.dd HH:mm', new Date());
+  if (!isValid(date)) {
+    throw new Error(
+      '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
+    );
+  }
+  return date;
+};
+
+export const parseRecruitmentPeriod = (
+  periodStr: string,
+): { recruitmentStart: Date | null; recruitmentEnd: Date | null } => {
   const parts = periodStr.split('~').map((s) => s.trim());
   if (parts.length !== 2) {
     return { recruitmentStart: null, recruitmentEnd: null };
   }
 
-  const convertToDate = (s: string): Date => {
-    const [datePart, timePart] = s.split(' ');
-    const isoDate = datePart.replace(/\./g, '-');
-    return new Date(`${isoDate}T${timePart}:00`);
-  };
-
   return {
-    recruitmentStart: convertToDate(parts[0]),
-    recruitmentEnd: convertToDate(parts[1]),
+    recruitmentStart: stringToDate(parts[0]),
+    recruitmentEnd: stringToDate(parts[1]),
   };
-}
+};
