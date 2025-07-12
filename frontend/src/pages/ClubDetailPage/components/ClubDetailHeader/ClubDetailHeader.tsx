@@ -3,6 +3,7 @@ import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfi
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
 import { parseRecruitmentPeriod } from '@/utils/stringToDate';
 import getDeadlineText from '@/utils/getDeadLineText';
+import ShareButton from '../Share/ShareButton/ShareButton';
 interface ClubDetailHeaderProps {
   name: string;
   category: string;
@@ -12,6 +13,8 @@ interface ClubDetailHeaderProps {
   recruitmentPeriod: string;
   recruitmentForm?: string;
   presidentPhoneNumber?: string;
+  clubId: string;
+  description: string;
 }
 
 const ClubDetailHeader = ({
@@ -23,6 +26,8 @@ const ClubDetailHeader = ({
   recruitmentPeriod,
   recruitmentForm,
   presidentPhoneNumber,
+  clubId,
+  description
 }: ClubDetailHeaderProps) => {
   const { recruitmentStart, recruitmentEnd } =
     parseRecruitmentPeriod(recruitmentPeriod);
@@ -33,6 +38,10 @@ const ClubDetailHeader = ({
     new Date(),
   );
 
+  const shareUrl = `${window.location.origin}/club/${clubId}`;
+  const shareTitle = `${name} - 동아리 정보`;
+  const shareText = `${description}`;
+
   return (
     <Styled.ClubDetailHeaderContainer>
       <ClubProfile
@@ -42,12 +51,21 @@ const ClubDetailHeader = ({
         tags={tags}
         logo={logo}
       />
-      <ClubApplyButton
-        {...(deadlineText !== '모집 마감' && {
-          recruitmentForm,
-          presidentPhoneNumber,
-        })}
-      />
+      <Styled.ButtonContainer>
+        <ClubApplyButton
+          {...(deadlineText !== '모집 마감' && {
+            recruitmentForm,
+            presidentPhoneNumber,
+          })}
+        />
+        <ShareButton
+          url={shareUrl}
+          title={shareTitle}
+          text={shareText}
+          buttonText="공유"
+          className="share-button"
+        />
+      </Styled.ButtonContainer>
     </Styled.ClubDetailHeaderContainer>
   );
 };
