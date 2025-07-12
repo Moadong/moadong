@@ -54,6 +54,9 @@ const MainPage = () => {
         <Styled.FilterWrapper>
           <StatusRadioButton onChange={setIsFilterActive} />
         </Styled.FilterWrapper>
+        <Styled.ClubInfoText>
+          현재 30개의 동아리가 함께하고 있어요
+        </Styled.ClubInfoText>
         <Styled.ContentWrapper>
           {isLoading ? (
             <Spinner />

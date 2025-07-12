@@ -23,7 +23,7 @@ export const CardList = styled.div`
   width: 100%;
   max-width: 100%;
   gap: 35px;
-  margin-top: 50px;
+  margin-top: 20px;
   transition:
     gap 0.5s ease,
     grid-template-columns 0.5s ease;
@@ -60,4 +60,11 @@ export const EmptyResult = styled.div`
   @media (max-width: 500px) {
     font-size: 0.95rem;
   }
+`;
+
+export const ClubInfoText = styled.p`
+  font-size: 14px;
+  font-weight: 500;
+  margin-left: 10px;
+  color: #555; /* 진한 회색 */
 `;
