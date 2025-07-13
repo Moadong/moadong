@@ -1,6 +1,6 @@
 import { parse, isValid } from 'date-fns';
 
-export const stringToDate = (s: string): Date => {
+export const parseRecruitmentDateString = (s: string): Date => {
   const regex = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}$/;
   if (!regex.test(s)) {
     throw new Error(
@@ -25,7 +25,7 @@ export const parseRecruitmentPeriod = (
   }
 
   return {
-    recruitmentStart: stringToDate(parts[0]),
-    recruitmentEnd: stringToDate(parts[1]),
+    recruitmentStart: parseRecruitmentDateString(parts[0]),
+    recruitmentEnd: parseRecruitmentDateString(parts[1]),
   };
 };
