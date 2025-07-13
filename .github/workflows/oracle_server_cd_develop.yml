@@ -12,7 +12,6 @@ on:
       - '.github/workflows/**'
 
 jobs:
-
   build:
     runs-on: ubuntu-latest
     permissions:
