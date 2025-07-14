@@ -6,7 +6,7 @@ on:
   push:
     branches:
       - 'develop/be'
-      - 'feature/#517-oracle-cicd'
+      - "setting/#542-oracle_cloud"
     paths:
       - 'backend/**'
       - '.github/workflows/**'
@@ -32,12 +32,15 @@ jobs:
         uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
 
       - name: Cache Gradle dependencies
-        uses: actions/cache@v4  # Gradle 의존성 캐시 설정
+        uses: actions/cache@v4
         with:
-          path: ~/.gradle/caches  # Gradle 캐시 경로
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*') }}  # Gradle 파일 해시값 기반 키
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
           restore-keys: |
             ${{ runner.os }}-gradle-
+
 
       - name: make application.properties
         run: |
@@ -51,31 +54,13 @@ jobs:
         run: |
           cd backend
           ./gradlew clean build -x test
-
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
+          
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          credentials_json: ${{ secrets.GCE_SA_KEY }}
+          username: ${{ secrets.SERVER_DOCKER_USERNAME }}
+          password: ${{ secrets.SERVER_DOCKER_PASSWORD }}
 
-      # GCloud SDK 캐시 설정
-      - name: Cache Google Cloud SDK
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache
-          key: gcloud-sdk-${{ runner.os }}
-          restore-keys: |
-            gcloud-sdk-
-
-      # Google Cloud CLI 설정
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCE_PROJECT }}
-
-      # Docker 인증
-      - name: Authenticate Docker to Google Cloud Container Registry (GCR)
-        run: |
-          gcloud auth configure-docker asia-northeast3-docker.pkg.dev
 
       # Docker 이미지 빌드 및 GCR 업로드
       # ARM 전용 이미지 배포
@@ -103,17 +88,11 @@ jobs:
     
     steps:
 
-      # gcloud-setup workflow 호출
-      - id: 'auth'
-        uses: 'google-github-actions/auth@v2'
+      - name: Log in to Docker Hub
+        uses: docker/login-action@v2
         with:
-          credentials_json: ${{ secrets.GCE_SA_KEY }}
-
-      # Google Cloud CLI 설정
-      - name: Set up Google Cloud SDK
-        uses: google-github-actions/setup-gcloud@v2
-        with:
-          project_id: ${{ secrets.GCE_PROJECT }}
+          username: ${{ secrets.SERVER_DOCKER_USERNAME }}
+          password: ${{ secrets.SERVER_DOCKER_PASSWORD }}
 
       # oracle ssh 접속 후 배포
       - name: Update Container on VM
@@ -124,13 +103,6 @@ jobs:
           key: ${{ secrets.ORACLE_INSTANCE_DEV_PRIVATE_KEY }}
           port: ${{ secrets.ORACLE_INSTANCE_DEV_PORT }}
           script: |
-            gcloud auth activate-service-account --key-file=/home/${{ secrets.ORACLE_INSTANCE_USER }}/gce_sa_key.json
-            ACCESS_TOKEN=$(gcloud auth print-access-token)
-            docker login -u oauth2accesstoken --password-stdin https://asia-northeast3-docker.pkg.dev
-            docker pull asia-northeast3-docker.pkg.dev/pristine-valve-457508-k7/moadong/moadong-dev:latest
-  
-            sudo usermod -aG docker $USER
-            newgrp docker
             docker pull ${{ secrets.DOCKER_IMAGE_DEV }}:latest
 
             export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
