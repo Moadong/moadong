@@ -105,6 +105,7 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_IMAGE_DEV }}:latest
 
+            echo whoami
             export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
             export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_DEV }}:latest
             sudo chmod +x /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
