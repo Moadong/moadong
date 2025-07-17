@@ -16,6 +16,7 @@ const QuestionBuilder = ({
   options,
   items,
   type,
+  readOnly,
   onTitleChange,
   onItemsChange,
   onDescriptionChange,
@@ -117,7 +118,7 @@ const QuestionBuilder = ({
   };
 
   return (
-    <Styled.QuestionWrapper>
+    <Styled.QuestionWrapper readOnly={readOnly}>
       <Styled.QuestionMenu>
         <Styled.RequiredToggleButton
           onClick={() => onRequiredChange?.(!options?.required)}
@@ -133,7 +134,9 @@ const QuestionBuilder = ({
           }}
         />
         {renderSelectionToggle()}
-        <button onClick={() => onRemoveQuestion()}>삭제</button>
+        {!readOnly && (
+          <button onClick={() => onRemoveQuestion()}>삭제</button>
+        )}
       </Styled.QuestionMenu>
       <Styled.QuestionFieldContainer>
         {renderFieldByQuestionType()}

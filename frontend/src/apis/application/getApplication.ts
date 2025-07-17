@@ -4,7 +4,8 @@ const getApplication = async (clubId: string) => {
   try {
     const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
     if (!response.ok) {
-      throw new Error(`Failed to fetch: ${response.statusText}`);
+      console.error(`Failed to fetch: ${response.statusText}`)
+      throw new Error((await response.json()).message);
     }
 
     const result = await response.json();

@@ -1,7 +1,7 @@
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './AnswerApplicationForm.styles';
 import Header from '@/components/common/Header/Header';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
 import { useAnswers } from '@/hooks/useAnswers';
@@ -9,19 +9,27 @@ import QuestionAnswerer from '@/pages/AdminPage/application/components/QuestionA
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import { Question } from '@/types/application';
 import Spinner from '@/components/common/Spinner/Spinner';
+import applyToClub from '@/apis/application/applyToClub';
 
 const AnswerApplicationForm = () => {
   const { clubId } = useParams<{ clubId: string }>();
+  const navigate = useNavigate();
   if (!clubId) return null;
 
   const { data: clubDetail, error } = useGetClubDetail(clubId);
-  const { data: formData, isLoading, isError } = useGetApplication(clubId);
+  const { data: formData, isLoading, isError, error: applicationError } = useGetApplication(clubId);
 
-  const { onAnswerChange, getAnswersById } = useAnswers();
+  const { onAnswerChange, getAnswersById, answers } = useAnswers();
 
   if (isLoading) return <Spinner />;
+  
+  if (isError) {
+    alert(applicationError.message)
+    navigate(`/club/${clubId}`)
+    return <div>문제가 발생했어요. 잠시 후 다시 시도해 주세요.</div>;
+  }
 
-  if (error || isError) {
+  if (error) {
     return <div>문제가 발생했어요. 잠시 후 다시 시도해 주세요.</div>;
   }
 
@@ -33,6 +41,16 @@ const AnswerApplicationForm = () => {
       </div>
     );
   }
+
+  const handleSubmit = async () => {
+    try {
+      await applyToClub(clubId, answers);
+      alert('답변이 성공적으로 제출되었습니다.');
+      // TODO: 필요시 페이지 이동 등 추가
+    } catch (e) {
+      alert('답변 제출에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  };
 
   return (
     <>
@@ -57,7 +75,7 @@ const AnswerApplicationForm = () => {
           ))}
         </Styled.QuestionsWrapper>
         <Styled.ButtonWrapper>
-          <Styled.submitButton>제출하기</Styled.submitButton>
+          <Styled.submitButton onClick={handleSubmit}>제출하기</Styled.submitButton>
         </Styled.ButtonWrapper>
       </PageContainer>
     </>
