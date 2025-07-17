@@ -84,12 +84,6 @@ jobs:
     
     steps:
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.SERVER_DOCKER_USERNAME }}
-          password: ${{ secrets.SERVER_DOCKER_PASSWORD }}
-
       # oracle ssh 접속 후 배포
       - name: Update Container on VM
         uses: appleboy/ssh-action@master
@@ -99,7 +93,7 @@ jobs:
           key: ${{ secrets.ORACLE_INSTANCE_RELEASE_PRIVATE_KEY }}
           port: ${{ secrets.ORACLE_INSTANCE_RELEASE_PORT }}
           script: |
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login -u "${{ secrets.DOCKER_USERNAME }}" --password-stdin
+            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             
             docker pull ${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
             
