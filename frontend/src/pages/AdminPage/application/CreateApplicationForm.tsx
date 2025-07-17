@@ -158,7 +158,7 @@ const CreateApplicationForm = () => {
               options={question.options}
               items={question.items}
               type={question.type}
-              readOnly={index == 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
+              readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
               onTitleChange={handleTitleChange(question.id)}
               onDescriptionChange={handleDescriptionChange(question.id)}
               onItemsChange={handleItemsChange(question.id)}

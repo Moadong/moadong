@@ -6,8 +6,8 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
     //맨 처음은 이름
     {
       id: 1,
-      title: '이름',
-      description: '지원자의 이름을 입력해주세요.',
+      title: '이름을 입력해주세요',
+      description: '지원자의 이름을 입력해주세요. (예: 홍길동)',
       type: 'SHORT_TEXT',
       options: { required: true },
       items: [],
