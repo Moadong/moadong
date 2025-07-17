@@ -8,7 +8,6 @@ on:
       - 'develop/be'
     paths:
       - 'backend/**'
-      - '.github/workflows/**'
 
 jobs:
 
@@ -85,12 +84,6 @@ jobs:
     
     steps:
 
-      - name: Log in to Docker Hub
-        uses: docker/login-action@v2
-        with:
-          username: ${{ secrets.SERVER_DOCKER_USERNAME }}
-          password: ${{ secrets.SERVER_DOCKER_PASSWORD }}
-
       # oracle ssh 접속 후 배포
       - name: Update Container on VM
         uses: appleboy/ssh-action@master
@@ -102,7 +95,6 @@ jobs:
           script: |
             docker pull ${{ secrets.DOCKER_IMAGE_DEV }}:latest
 
-            echo $(whoami)
             export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
             export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_DEV }}:latest
             sudo chmod +x /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh

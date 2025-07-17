@@ -5,7 +5,6 @@ on:
   push:
     branches:
       - 'main'
-      - "setting/#542-oracle_cloud"
     paths:
       - 'backend/**'
       - '.github/workflows/**'
@@ -93,11 +92,9 @@ jobs:
           key: ${{ secrets.ORACLE_INSTANCE_RELEASE_PRIVATE_KEY }}
           port: ${{ secrets.ORACLE_INSTANCE_RELEASE_PORT }}
           script: |
-            echo "${{ secrets.DOCKER_PASSWORD }}" | docker login --username "${{ secrets.DOCKER_USERNAME }}" --password-stdin
             
             docker pull ${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
             
-            echo $(whoami)
             export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
             export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
             sudo chmod +x /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
