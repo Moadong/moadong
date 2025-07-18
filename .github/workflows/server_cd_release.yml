@@ -5,6 +5,7 @@ on:
   push:
     branches:
       - 'main'
+      - 'setting/#542-oracle_cloud'
     paths:
       - 'backend/**'
       - '.github/workflows/**'

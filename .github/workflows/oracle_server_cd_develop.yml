@@ -6,7 +6,6 @@ on:
   push:
     branches:
       - 'develop/be'
-      - 'setting/#542-oracle_cloud'
     paths:
       - 'backend/**'
 
