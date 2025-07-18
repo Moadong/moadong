@@ -40,8 +40,8 @@ public class SecurityConfig {
 
     private final JwtProvider jwtProvider;
     private final CustomUserDetailService userDetailsService;
-    @Value("${spring.cloud.gcp.credentials.location}")
-    private String credentialsLocation;
+//    @Value("${spring.cloud.gcp.credentials.location}")
+//    private String credentialsLocation;
 
     public SecurityConfig(JwtProvider jwtProvider, CustomUserDetailService userDetailsService) {
         this.jwtProvider = jwtProvider;
@@ -62,14 +62,14 @@ public class SecurityConfig {
         return http.build();
     }
 
-    @Bean
-    public Storage storage() throws IOException {
-        InputStream keyFile = ResourceUtils.getURL(credentialsLocation).openStream();
-        return StorageOptions.newBuilder()
-                .setCredentials(GoogleCredentials.fromStream(keyFile))
-                .build()
-                .getService();
-    }
+//    @Bean
+//    public Storage storage() throws IOException {
+//        InputStream keyFile = ResourceUtils.getURL(credentialsLocation).openStream();
+//        return StorageOptions.newBuilder()
+//                .setCredentials(GoogleCredentials.fromStream(keyFile))
+//                .build()
+//                .getService();
+//    }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
