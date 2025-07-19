@@ -28,6 +28,10 @@ public class ClubQuestion {
     @Builder.Default
     private String title = "";
 
+    @NotBlank
+    @Builder.Default
+    private String description = "";
+
     @Builder.Default
     private List<ClubApplicationQuestion> questions = new ArrayList<>();
 
@@ -39,6 +43,10 @@ public class ClubQuestion {
 
     public void updateFormTitle(String title) {
         this.title = title;
+    }
+
+    public void updateFormDescription(String description) {
+        this.description = description;
     }
 
     public void updateQuestions(List<ClubApplicationQuestion> newQuestions) {
