@@ -11,7 +11,7 @@ interface QuestionDescriptionProps {
 const QuestionDescriptionText = styled.textarea`
   border: none;
   outline: none;
-  color: #c5c5c5;
+  color: #787878;
   font-size: 0.8125rem;
   font-weight: 400;
   line-height: normal;
