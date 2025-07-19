@@ -9,8 +9,12 @@ import java.util.List;
 
 public record ClubApplicationEditRequest(
         @NotBlank
-        @Size(max = 20)
+        @Size(max = 50)
         String title,
+
+        @NotBlank
+        @Size(max = 500)
+        String description,
 
         @NotNull
         @Valid

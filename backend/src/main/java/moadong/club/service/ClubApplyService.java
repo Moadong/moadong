@@ -20,10 +20,7 @@ import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -54,6 +51,7 @@ public class ClubApplyService {
 
         ClubApplicationResponse clubApplicationResponse = ClubApplicationResponse.builder()
                 .title(clubQuestion.getTitle())
+                .description(Optional.ofNullable(clubQuestion.getDescription()).orElse(""))
                 .questions(clubQuestion.getQuestions())
                 .build();
 
@@ -190,10 +188,14 @@ public class ClubApplyService {
 
         clubQuestion.updateQuestions(newQuestions);
         clubQuestion.updateFormTitle(request.title());
+        clubQuestion.updateFormDescription(request.description());
 
         return clubQuestion;
     }
 
+    /**
+     * update와 create 메서드는 추후 변경예정
+     */
     private ClubQuestion updateQuestions(ClubQuestion clubQuestion, ClubApplicationEditRequest request) {
         List<ClubApplicationQuestion> newQuestions = new ArrayList<>();
 
@@ -224,6 +226,7 @@ public class ClubApplyService {
 
         clubQuestion.updateQuestions(newQuestions);
         clubQuestion.updateFormTitle(request.title());
+        clubQuestion.updateFormDescription(request.description());
 
         return clubQuestion;
     }
