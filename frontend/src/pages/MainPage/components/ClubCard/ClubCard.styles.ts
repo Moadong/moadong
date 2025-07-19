@@ -9,7 +9,8 @@ const CardContainer = styled.div<{
   flex-direction: column;
   border-radius: 14px;
   padding: 20px;
-  background-color: #fff;
+  background-color: ${({ $isBlockedClub }) =>
+    $isBlockedClub ? '#F5F5F5' : '#fff'};
   width: 100%;
   height: 170px;
   box-shadow: ${({ $state }) =>
