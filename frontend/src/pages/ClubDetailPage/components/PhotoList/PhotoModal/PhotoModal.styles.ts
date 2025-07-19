@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -39,7 +40,7 @@ export const ModalContent = styled.div`
   position: relative;
   overflow: hidden;
 
-  @media (max-width: 600px) {
+  ${media.mobile} {
     width: 100vw;
     height: 100vh;
     border-radius: 0;
@@ -100,7 +101,7 @@ export const ImageContainer = styled.div`
   align-items: center;
   padding: 0 60px;
 
-  @media (max-width: 600px) {
+  ${media.mobile} {
     padding: 0 16px;
   }
 `;
@@ -116,7 +117,7 @@ export const Image = styled.img`
   -webkit-user-drag: none;
   pointer-events: none;
 
-  @media (max-width: 600px) {
+  ${media.mobile} {
     max-height: 100%;
   }
 `;
@@ -155,7 +156,7 @@ export const NavButton = styled.button<{ position: 'left' | 'right' }>`
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
-  @media (max-width: 600px) {
+  ${media.mobile} {
     ${({ position }) => (position === 'left' ? 'left: 8px;' : 'right: 8px;')}
     width: 38px;
     height: 38px;
@@ -176,7 +177,7 @@ export const ThumbnailContainer = styled.div`
   justify-content: center;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.03), transparent);
 
-  @media (max-width: 600px) {
+  ${media.mobile} {
     height: 80px;
     padding: 0 15px;
   }
@@ -204,7 +205,7 @@ export const ThumbnailList = styled.div`
     border-radius: 4px;
   }
 
-  @media (max-width: 600px) {
+  ${media.mobile} {
     gap: 6px;
     padding: 8px;
   }
@@ -235,7 +236,7 @@ export const Thumbnail = styled.button<{ isActive: boolean }>`
     pointer-events: none;
   }
 
-  @media (max-width: 600px) {
+  ${media.mobile} {
     width: 36px;
     height: 36px;
   }
