@@ -50,7 +50,7 @@ export const PhotoList = styled.div<{
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 12px;
-    transform: none !important;
+    transform: none;
   }
 `;
 
