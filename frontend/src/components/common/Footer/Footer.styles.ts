@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const FooterContainer = styled.footer`
   text-align: left;
@@ -18,7 +19,7 @@ export const FooterContent = styled.div`
   line-height: 1.25rem;
   color: #818181;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     font-size: 0.625rem;
     padding: 20px 20px 30px 20px;
   }
