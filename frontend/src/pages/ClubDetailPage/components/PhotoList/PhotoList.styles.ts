@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const PhotoListTitle = styled.p`
   font-size: 20px;
@@ -15,7 +16,7 @@ export const PhotoListContainer = styled.div`
   padding: 30px;
   gap: 30px;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     margin-top: 0;
     width: 100%;
     border: none;
@@ -44,6 +45,13 @@ export const PhotoList = styled.div<{
     photoCount <= 2 ? 'none' : `translateX(${translateX}px)`};
 
   user-select: none;
+
+  ${media.mobile} {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 12px;
+    transform: none !important;
+  }
 `;
 
 export const PhotoCard = styled.div`
@@ -65,9 +73,13 @@ export const PhotoCard = styled.div`
     -webkit-user-drag: none;
   }
 
-  @media (max-width: 500px) {
-    width: 350px;
-    height: 350px;
+  ${media.mobile} {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    height: auto;
+    min-width: 0;
+    min-height: 0;
+    border-radius: 8px;
   }
 `;
 
@@ -96,7 +108,7 @@ export const NavigationButton = styled.button<{ direction: 'left' | 'right' }>`
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
   }
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     width: 30px;
     height: 30px;
     font-size: 15px;
