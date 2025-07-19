@@ -2,6 +2,7 @@ package moadong.club.entity;
 
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,11 +25,11 @@ public class ClubQuestion {
 
     private String clubId;
 
-    @NotBlank
+    @NotNull
     @Builder.Default
     private String title = "";
 
-    @NotBlank
+    @NotNull
     @Builder.Default
     private String description = "";
 
