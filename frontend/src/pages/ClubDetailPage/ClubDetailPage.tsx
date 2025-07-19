@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import * as Styled from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
 import BackNavigationBar from '@/pages/ClubDetailPage/components/BackNavigationBar/BackNavigationBar';
@@ -14,12 +14,70 @@ import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 
+const notJoinedClubNames = [
+  'PKNUO',
+  'UCDC',
+  '울림',
+  '쇳물결',
+  '한누리',
+  '씨사운드',
+  '백경클래식기타연구회',
+  '남천로타렉트',
+  '동반',
+  '민심사랑',
+  '절영회',
+  '청심회',
+  '피어드림',
+  '버드',
+  '모비딕',
+  '후라',
+  '어택',
+  '홍백',
+  '바구니',
+  '산악부',
+  '한판',
+  '리얼겟',
+  '조정부',
+  '조나단',
+  '불교학생회',
+  'JDM',
+  'SFC',
+  '가톨릭학생회',
+  'CCC',
+  'PAS',
+  '300',
+  '백경 유스호스텔',
+  '짚신 유스호스텔',
+  '수석회',
+  '포시즌',
+  'O.S.T',
+  'SIC',
+  'CERT-IS',
+  'testaa',
+];
+
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
   const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
 
+  const navigate = useNavigate();
+  const [blockState, setBlockState] = useState<
+    'checking' | 'blocked' | 'allowed'
+  >('checking');
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
+
+  useEffect(() => {
+    if (!clubDetail) return;
+
+    if (notJoinedClubNames.includes(clubDetail?.name || '')) {
+      setBlockState('blocked');
+      alert('참여하지 않는 동아리입니다.');
+      navigate('/', { replace: true });
+    } else {
+      setBlockState('allowed');
+    }
+  }, [clubDetail, navigate]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -32,7 +90,7 @@ const ClubDetailPage = () => {
 
   useTrackPageView(`ClubDetailPage`, clubDetail?.name);
 
-  if (!clubDetail) {
+  if (!clubDetail || blockState !== 'allowed') {
     return null;
   }
 
