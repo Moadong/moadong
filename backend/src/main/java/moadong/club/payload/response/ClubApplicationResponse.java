@@ -8,6 +8,7 @@ import java.util.List;
 @Builder
 public record ClubApplicationResponse(
         String title,
+        String description,
         List<ClubApplicationQuestion> questions
 ) {
 }
