@@ -7,7 +7,7 @@ import * as Styled from './ClubCard.styles';
 import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
-import { joinedClubNames } from '@/constants/notJoinedClubNames';
+import { joinedClubNames } from '@/constants/joinedClubNames';
 
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();
