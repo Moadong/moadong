@@ -13,48 +13,7 @@ import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-
-const notJoinedClubNames = [
-  'PKNUO',
-  'UCDC',
-  '울림',
-  '쇳물결',
-  '한누리',
-  '씨사운드',
-  '백경클래식기타연구회',
-  '남천로타렉트',
-  '동반',
-  '민심사랑',
-  '절영회',
-  '청심회',
-  '피어드림',
-  '버드',
-  '모비딕',
-  '후라',
-  '어택',
-  '홍백',
-  '바구니',
-  '산악부',
-  '한판',
-  '리얼겟',
-  '조정부',
-  '조나단',
-  '불교학생회',
-  'JDM',
-  'SFC',
-  '가톨릭학생회',
-  'CCC',
-  'PAS',
-  '300',
-  '백경 유스호스텔',
-  '짚신 유스호스텔',
-  '수석회',
-  '포시즌',
-  'O.S.T',
-  'SIC',
-  'CERT-IS',
-  'testaa',
-];
+import { joinedClubNames } from '@/constants/joinedClubNames';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
@@ -70,7 +29,7 @@ const ClubDetailPage = () => {
   useEffect(() => {
     if (!clubDetail) return;
 
-    if (notJoinedClubNames.includes(clubDetail?.name || '')) {
+    if (!joinedClubNames.includes(clubDetail?.name || '')) {
       setBlockState('blocked');
       alert('참여하지 않는 동아리입니다.');
       navigate('/', { replace: true });
