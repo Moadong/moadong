@@ -13,7 +13,7 @@ import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import { joinedClubNames } from '@/constants/notJoinedClubNames';
+import { joinedClubNames } from '@/constants/joinedClubNames';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
