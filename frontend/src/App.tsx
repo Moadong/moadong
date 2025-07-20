@@ -12,14 +12,11 @@ import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
+import ApplicationEditTab from './pages/AdminPage/tabs/ApplicationEditTab/ApplicationEditTab';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
-import AnswerApplicationForm from './pages/AdminPage/application/answer/AnswerApplicationForm';
-import CreateApplicationForm from './pages/AdminPage/application/CreateApplicationForm';
-// TODO: 지원서 개발 완료 후 활성화
-// import AnswerApplicationForm from '@/pages/AdminPage/application/answer/AnswerApplicationForm';
-// import CreateApplicationForm from '@/pages/AdminPage/application/CreateApplicationForm';
+import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
 
 const queryClient = new QueryClient();
 
@@ -77,7 +74,7 @@ const App = () => {
                           {/*develop-fe 브랜치에서는 접근 가능하도록 풀고 개발 예정*/}
                           <Route
                             path='application-edit'
-                            element={<CreateApplicationForm />}
+                            element={<ApplicationEditTab />}
                           />
                         </Route>
                       </Routes>
@@ -89,7 +86,7 @@ const App = () => {
               {/*🛠 develop-fe에서는 다시 노출 예정*/}
               <Route
                 path='/application/:clubId'
-                element={<AnswerApplicationForm />}
+                element={<ApplicationFormPage />}
               />
               <Route path='*' element={<Navigate to='/' replace />} />
             </Routes>
