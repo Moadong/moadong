@@ -1,10 +1,10 @@
-import QuestionTitle from '@/pages/AdminPage/application/components/QuestionTitle/QuestionTitle';
-import QuestionDescription from '@/pages/AdminPage/application/components/QuestionDescription/QuestionDescription';
-import InputField from '@/components/common/InputField/InputField';
+import QuestionTitle from '@/components/application/QuestionTitle/QuestionTitle';
+import QuestionDescription from '@/components/application/QuestionDescription/QuestionDescription';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { TextProps } from '@/types/application';
+import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 
-const ShortText = ({
+const LongText = ({
   id,
   title,
   description,
@@ -29,18 +29,16 @@ const ShortText = ({
         mode={mode}
         onDescriptionChange={onDescriptionChange}
       />
-      <InputField
+      <CustomTextArea
         value={answer}
         onChange={(e) => onAnswerChange?.(e.target.value)}
-        placeholder={APPLICATION_FORM.SHORT_TEXT.placeholder}
+        placeholder={APPLICATION_FORM.LONG_TEXT.placeholder}
         disabled={mode === 'builder'}
         showMaxChar={mode === 'answer'}
-        maxLength={APPLICATION_FORM.SHORT_TEXT.maxLength}
-        showClearButton={false}
-        width={'60%'}
+        maxLength={APPLICATION_FORM.LONG_TEXT.maxLength}
       />
     </div>
   );
 };
 
-export default ShortText;
+export default LongText;
