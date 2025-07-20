@@ -7,7 +7,6 @@ import * as Styled from './ClubCard.styles';
 import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
-import { joinedClubNames } from '@/constants/joinedClubNames';
 
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();
@@ -29,11 +28,9 @@ const ClubCard = ({ club }: { club: Club }) => {
 
   return (
     <Styled.CardContainer
-      $isBlockedClub={!joinedClubNames.includes(club.name)}
       $state={club.recruitmentStatus}
       $isClicked={isClicked}
-      onClick={handleNavigate}
-    >
+      onClick={handleNavigate}>
       <Styled.CardHeader>
         <Styled.ClubProfile>
           <ClubLogo $imageSrc={club.logo || default_profile_image} />

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import * as Styled from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
 import BackNavigationBar from '@/pages/ClubDetailPage/components/BackNavigationBar/BackNavigationBar';
@@ -13,30 +13,13 @@ import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import { joinedClubNames } from '@/constants/joinedClubNames';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
   const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
 
-  const navigate = useNavigate();
-  const [blockState, setBlockState] = useState<
-    'checking' | 'blocked' | 'allowed'
-  >('checking');
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
-
-  useEffect(() => {
-    if (!clubDetail) return;
-
-    if (!joinedClubNames.includes(clubDetail?.name || '')) {
-      setBlockState('blocked');
-      alert('참여하지 않는 동아리입니다.');
-      navigate('/', { replace: true });
-    } else {
-      setBlockState('allowed');
-    }
-  }, [clubDetail, navigate]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -49,7 +32,7 @@ const ClubDetailPage = () => {
 
   useTrackPageView(`ClubDetailPage`, clubDetail?.name);
 
-  if (!clubDetail || blockState !== 'allowed') {
+  if (!clubDetail) {
     return null;
   }
 

@@ -3,14 +3,12 @@ import styled from 'styled-components';
 const CardContainer = styled.div<{
   $state: string;
   $isClicked: boolean;
-  $isBlockedClub: boolean;
 }>`
   display: flex;
   flex-direction: column;
   border-radius: 14px;
   padding: 20px;
-  background-color: ${({ $isBlockedClub }) =>
-    $isBlockedClub ? '#F5F5F5' : '#fff'};
+  background-color: #fff;
   width: 100%;
   height: 170px;
   box-shadow: ${({ $state }) =>
@@ -25,10 +23,8 @@ const CardContainer = styled.div<{
   cursor: pointer;
 
   &:hover {
-    ${({ $isBlockedClub, $isClicked }) =>
-      $isBlockedClub
-        ? 'transform: none; cursor: not-allowed;'
-        : `transform: ${$isClicked ? 'scale(1.05)' : 'scale(1.03)'};`}
+    transform: ${({ $isClicked }) =>
+      $isClicked ? 'scale(1.05)' : 'scale(1.03)'};
   }
 
   &:active {
