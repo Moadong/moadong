@@ -1,4 +1,4 @@
-import { useState, useRef } from 'react';
+import React, { useState, useRef, Fragment } from 'react';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
 import { useNavigate, useParams } from 'react-router-dom';
@@ -12,6 +12,32 @@ import Spinner from '@/components/common/Spinner/Spinner';
 import applyToClub from '@/apis/application/applyToClub';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import * as Styled from './ApplicationFormPage.styles';
+
+const parseDescriptionWithLinks = (text: string): React.ReactNode => {
+    const urlRegex = /(https?:\/\/[^\s]+)/g;
+
+    const parts = text.split(urlRegex);
+
+    return parts.map((part, index) => {
+        if (urlRegex.test(part)) {
+            return (
+                <a
+                    key={index}
+                    href={part}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    style={{ color: '#0077cc', textDecoration: 'underline' }}
+                >
+                    {part}
+                </a>
+            );
+        } else {
+            return <Fragment key={index}>{part}</Fragment>;
+        }
+    });
+}
+
+
 
 const AnswerApplicationForm = () => {
     const { clubId } = useParams<{ clubId: string }>();
@@ -95,14 +121,22 @@ const AnswerApplicationForm = () => {
         <>
             <Header />
             <PageContainer style={{ paddingTop: '100px' }}>
-                <ClubProfile
+                {/* <ClubProfile
                     name={clubDetail.name}
                     logo={clubDetail.logo}
                     division={clubDetail.division}
                     category={clubDetail.category}
                     tags={clubDetail.tags}
-                />
+                /> */}
                 <Styled.FormTitle>{formData.title}</Styled.FormTitle>
+                {/*
+                지원서 설명 받았다고 치고
+                {formData.description && (
+                    <Styled.FormDescription>
+                        {parseDescriptionWithLinks(formData.description)}
+                    </Styled.FormDescription>
+
+                )} */}
                 <Styled.QuestionsWrapper>
                     {formData.questions.map((q: Question, i: number) => (
                         <QuestionContainer
