@@ -29,6 +29,7 @@ export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean }>`
   height: 45px;
   padding: 12px 80px 12px 18px;
   border: 1px solid ${({ hasError }) => (hasError ? 'red' : '#c5c5c5')};
+  background-color: transparent;
   border-radius: 6px;
   outline: none;
   font-size: 1.125rem;
@@ -45,7 +46,7 @@ export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean }>`
     outline: none;
     box-shadow: 0 0 3px;
     border-color: ${({ hasError, readOnly }) =>
-      readOnly ? '#c5c5c5' : hasError ? 'red' : '#007bff'};
+    readOnly ? '#c5c5c5' : hasError ? 'red' : '#007bff'};
     ${({ readOnly }) => readOnly && 'cursor: pointer;'}
   }
 
@@ -55,6 +56,11 @@ export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean }>`
 
   &::placeholder {
     color: rgba(0, 0, 0, 0.3);
+    transition: color 0.25s ease;
+  }
+  
+  &:focus::placeholder {
+    color: transparent;
   }
 `;
 
