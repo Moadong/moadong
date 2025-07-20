@@ -3,7 +3,6 @@ import styled from 'styled-components';
 const CardContainer = styled.div<{
   $state: string;
   $isClicked: boolean;
-  $isBlockedClub: boolean;
 }>`
   display: flex;
   flex-direction: column;
@@ -24,10 +23,8 @@ const CardContainer = styled.div<{
   cursor: pointer;
 
   &:hover {
-    ${({ $isBlockedClub, $isClicked }) =>
-      $isBlockedClub
-        ? 'transform: none; cursor: not-allowed;'
-        : `transform: ${$isClicked ? 'scale(1.05)' : 'scale(1.03)'};`}
+    transform: ${({ $isClicked }) =>
+      $isClicked ? 'scale(1.05)' : 'scale(1.03)'};
   }
 
   &:active {
