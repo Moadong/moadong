@@ -94,7 +94,7 @@ const AnswerApplicationForm = () => {
     return (
         <>
             <Header />
-            <PageContainer style={{ paddingTop: '172px' }}>
+            <PageContainer style={{ paddingTop: '100px' }}>
                 <ClubProfile
                     name={clubDetail.name}
                     logo={clubDetail.logo}
