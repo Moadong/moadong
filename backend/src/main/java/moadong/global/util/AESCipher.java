@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.Cipher;
+import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import java.nio.charset.StandardCharsets;
@@ -26,10 +27,10 @@ public class AESCipher {
      * @throws Exception 암호화 중 오류 발생 시
      */
     public String encrypt(String text) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes(StandardCharsets.UTF_8));
-        cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivParameterSpec);
+        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, iv.getBytes(StandardCharsets.UTF_8));
+        cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
 
         byte[] encrypted = cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
         return Base64.getEncoder().encodeToString(encrypted);
@@ -43,10 +44,10 @@ public class AESCipher {
      * @throws Exception 복호화 중 오류 발생 시
      */
     public String decrypt(String cipherText) throws Exception {
-        Cipher cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
         SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
-        IvParameterSpec ivParameterSpec = new IvParameterSpec(iv.getBytes(StandardCharsets.UTF_8));
-        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivParameterSpec);
+        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, iv.getBytes(StandardCharsets.UTF_8));
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmParameterSpec);
 
         byte[] decodedBytes = Base64.getDecoder().decode(cipherText);
         byte[] decrypted = cipher.doFinal(decodedBytes);
