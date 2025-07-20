@@ -5,7 +5,7 @@ export const FormTitle = styled.h1`
   font-weight: 700;
   border: none;
   outline: none;
-  margin-top: 20px;
+  margin-top: 30px;
   margin-bottom: 46px;
 `;
 
@@ -15,7 +15,7 @@ export const QuestionsWrapper = styled.div`
   gap: 50px;
 
   @media (max-width: 500px) {
-    gap: 30px;
+    gap: 10px;
   }
 
 `;
