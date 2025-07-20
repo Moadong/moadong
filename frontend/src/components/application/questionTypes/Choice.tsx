@@ -4,7 +4,7 @@ import QuestionDescription from '@/components/application/QuestionDescription/Qu
 import InputField from '@/components/common/InputField/InputField';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { ChoiceProps } from '@/types/application';
-import ChoiceItem from '@/pages/AdminPage/application/components/ChoiceItem/ChoiceItem';
+import ChoiceItem from '@/pages/ApplicationFormPage/components/ChoiceItem/ChoiceItem';
 
 const MIN_ITEMS = 1;
 const MAX_ITEMS = 6;
