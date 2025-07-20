@@ -1,6 +1,5 @@
 import { useState, useRef } from 'react';
 import { PageContainer } from '@/styles/PageContainer.styles';
-import * as Styled from './AnswerApplicationForm.styles';
 import Header from '@/components/common/Header/Header';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
@@ -12,6 +11,7 @@ import { Question } from '@/types/application';
 import Spinner from '@/components/common/Spinner/Spinner';
 import applyToClub from '@/apis/application/applyToClub';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
+import * as Styled from './ApplicationFormPage.styles';
 
 const AnswerApplicationForm = () => {
     const { clubId } = useParams<{ clubId: string }>();

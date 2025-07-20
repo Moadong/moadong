@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import QuestionBuilder from '@/pages/AdminPage/application/components/QuestionBuilder/QuestionBuilder';
+import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import { QuestionType } from '@/types/application';
 import { Question } from '@/types/application';
 import { ApplicationFormData } from '@/types/application';
