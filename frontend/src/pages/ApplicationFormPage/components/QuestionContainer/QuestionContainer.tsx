@@ -4,7 +4,7 @@ import { forwardRef } from 'react';
 const Container = styled.div<{ hasError?: boolean }>`
   border: ${({ hasError }) => (hasError ? '1px solid #FF5414' : 'transparent')};
   border-radius: 16px;
-  padding: 24px;
+  padding: 26px 15px;
   position: relative;
   scroll-margin-top: 120px;
   transition: border 0.2s ease;
