@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const FormTitle = styled.h1`
   font-size: 2.2rem;
@@ -19,14 +20,8 @@ export const FormDescription = styled.div`
   margin-bottom: 48px;
   padding: 0 15px;
 
-  a {
-    color: #0077cc;
-    text-decoration: underline;
-    word-break: break-all;
-  }
-
-  @media (max-width: 500px) {
-    font-size: 0.95rem;
+  ${media.mobile} {
+      font-size: 0.95rem;
     line-height: 1.5;
   }
 `;
@@ -37,7 +32,7 @@ export const QuestionsWrapper = styled.div`
   flex-direction: column;
   gap: 20px;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     gap: 10px;
   }
 
