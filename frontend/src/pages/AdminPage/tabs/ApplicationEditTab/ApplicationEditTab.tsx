@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import { QuestionType } from '@/types/application';
 import { Question } from '@/types/application';
@@ -20,6 +20,9 @@ const ApplicationEditTab = () => {
 
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
+
+  const [description, setDescription] = useState('');
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (data) {
@@ -75,6 +78,15 @@ const ApplicationEditTab = () => {
       ...prev,
       title: value,
     }));
+  };
+
+  const handleFormDescriptionChange = (value: string) => {
+    setDescription(value);
+    if (descriptionRef.current) {
+      descriptionRef.current.style.height = 'auto';
+      descriptionRef.current.style.height =
+        descriptionRef.current.scrollHeight + 'px';
+    }
   };
 
   const handleTitleChange = (id: number) => (value: string) =>
@@ -148,6 +160,12 @@ const ApplicationEditTab = () => {
           onChange={(e) => handleFormTitleChange(e.target.value)}
           placeholder='지원서 제목을 입력하세요'
         ></Styled.FormTitle>
+        <Styled.FormDescription
+          ref={descriptionRef}
+          value={description}
+          onInput={(e) => handleFormDescriptionChange(e.currentTarget.value)}
+          placeholder='지원서 설명을 입력하세요'
+        ></Styled.FormDescription>
         <Styled.QuestionContainer>
           {formData.questions.map((question, index) => (
             <QuestionBuilder
