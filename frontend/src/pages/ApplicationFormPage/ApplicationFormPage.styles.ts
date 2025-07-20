@@ -13,6 +13,11 @@ export const QuestionsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   gap: 50px;
+
+  @media (max-width: 500px) {
+    gap: 30px;
+  }
+
 `;
 
 export const ButtonWrapper = styled.div`

@@ -1,18 +1,18 @@
 import { useState, useEffect } from 'react';
-import QuestionBuilder from '@/pages/AdminPage/application/components/QuestionBuilder/QuestionBuilder';
+import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import { QuestionType } from '@/types/application';
 import { Question } from '@/types/application';
 import { ApplicationFormData } from '@/types/application';
 import { PageContainer } from '@/styles/PageContainer.styles';
-import * as Styled from './CreateApplicationForm.styles';
+import * as Styled from './ApplicationEditTab.styles';
 import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
-import { QuestionDivider } from './CreateApplicationForm.styles';
+import { QuestionDivider } from './ApplicationEditTab.styles';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import createApplication from '@/apis/application/createApplication';
 import updateApplication from '@/apis/application/updateApplication';
 
-const CreateApplicationForm = () => {
+const ApplicationEditTab = () => {
   const { clubId } = useAdminClubContext();
   if (!clubId) return null;
 
@@ -96,9 +96,9 @@ const CreateApplicationForm = () => {
           ...q,
           type: newType,
           items: isChoice
-            ? q.items && q.items.length >= 2
+            ? q.items && q.items.length >= 1
               ? q.items
-              : [{ value: '' }, { value: '' }]
+              : [{ value: '' }]
             : [],
         };
       }),
@@ -182,4 +182,4 @@ const CreateApplicationForm = () => {
   );
 };
 
-export default CreateApplicationForm;
+export default ApplicationEditTab;
