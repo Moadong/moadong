@@ -21,7 +21,6 @@ const ApplicationEditTab = () => {
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
 
-  const [description, setDescription] = useState('');
   const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
@@ -81,7 +80,10 @@ const ApplicationEditTab = () => {
   };
 
   const handleFormDescriptionChange = (value: string) => {
-    setDescription(value);
+    setFormData((prev) => ({
+      ...prev,
+      description: value,
+    }));
     if (descriptionRef.current) {
       descriptionRef.current.style.height = 'auto';
       descriptionRef.current.style.height =
@@ -162,7 +164,7 @@ const ApplicationEditTab = () => {
         ></Styled.FormTitle>
         <Styled.FormDescription
           ref={descriptionRef}
-          value={description}
+          value={formData.description}
           onInput={(e) => handleFormDescriptionChange(e.currentTarget.value)}
           placeholder='지원서 설명을 입력하세요'
         ></Styled.FormDescription>
