@@ -2,6 +2,7 @@ import { ApplicationFormData } from '@/types/application';
 
 const INITIAL_FORM_DATA: ApplicationFormData = {
   title: '',
+  description: '',
   questions: [
     //맨 처음은 이름
     {
