@@ -7,7 +7,7 @@ export const parseDescriptionWithLinks = (text: string): React.ReactNode => {
         const isUrl = /^https?:\/\/[^\s]+$/.test(part);
         return isUrl ? (
             <a
-                key={index}
+                key={`${part}-${index}`}
                 href={part}
                 target="_blank"
                 rel="noopener noreferrer"
@@ -16,7 +16,7 @@ export const parseDescriptionWithLinks = (text: string): React.ReactNode => {
                 {part}
             </a>
         ) : (
-            <Fragment key={index}>{part}</Fragment>
+            <Fragment key={`${part}-${index}`}>{part}</Fragment>
         );
     });
 };
