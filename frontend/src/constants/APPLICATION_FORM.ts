@@ -9,15 +9,15 @@ export const APPLICATION_FORM = {
   },
   SHORT_TEXT: {
     placeholder: '답변입력란(최대 20자)',
-    maxLength: 20,
+    maxLength: 30,
   },
   LONG_TEXT: {
     placeholder: '답변입력란(최대 500자)',
-    maxLength: 500,
+    maxLength: 1000,
   },
   CHOICE: {
     placeholder: '항목(최대 20자)',
-    maxLength: 20,
+    maxLength: 30,
   },
 } as const;
 
