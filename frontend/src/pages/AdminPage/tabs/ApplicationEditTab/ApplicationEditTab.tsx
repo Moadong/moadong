@@ -22,8 +22,6 @@ const ApplicationEditTab = () => {
 
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
-  const [descriptionError, setDescriptionError] = useState<string | null>(null);
-
 
   useEffect(() => {
     if (data) {
