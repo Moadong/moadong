@@ -17,34 +17,10 @@ export const FormTitle = styled.input`
   }
 `;
 
-export const FormDescription = styled.textarea`
-  width: 100%;
-  min-height: 120px;
-  height: auto;
-  resize: none;
-  overflow: hidden;
-  border: none;
-  outline: none;
-  margin-bottom: 24px;
-  padding: 12px;
-
-  &::placeholder {
-    color: #c5c5c5;
-    transition: opacity 0.15s;
-  }
-
-  &:focus::placeholder {
-    opacity: 0;
-  }
-
-  &:hover {
-    border: 1px solid #ccc;
-  }
-`;
-
 export const QuestionContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top : 40px;
   gap: 83px;
 `;
 
