@@ -11,6 +11,8 @@ import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import createApplication from '@/apis/application/createApplication';
 import updateApplication from '@/apis/application/updateApplication';
+import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
+import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 
 const ApplicationEditTab = () => {
   const { clubId } = useAdminClubContext();
@@ -20,8 +22,6 @@ const ApplicationEditTab = () => {
 
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
-
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
 
   useEffect(() => {
     if (data) {
@@ -84,11 +84,6 @@ const ApplicationEditTab = () => {
       ...prev,
       description: value,
     }));
-    if (descriptionRef.current) {
-      descriptionRef.current.style.height = 'auto';
-      descriptionRef.current.style.height =
-        descriptionRef.current.scrollHeight + 'px';
-    }
   };
 
   const handleTitleChange = (id: number) => (value: string) =>
@@ -162,13 +157,16 @@ const ApplicationEditTab = () => {
           onChange={(e) => handleFormTitleChange(e.target.value)}
           placeholder='지원서 제목을 입력하세요'
         ></Styled.FormTitle>
-        <Styled.FormDescription
-          ref={descriptionRef}
+        <CustomTextArea
+          label="지원서 설명"
           value={formData.description}
-          onInput={(e) => handleFormDescriptionChange(e.currentTarget.value)}
-          placeholder='지원서 설명을 입력하세요'
-        ></Styled.FormDescription>
-        <Styled.QuestionContainer>
+          onChange={(e) => handleFormDescriptionChange(e.target.value)}
+          placeholder={APPLICATION_FORM.APPLICATION_DESCRIPTION.placeholder}
+          maxLength={APPLICATION_FORM.APPLICATION_DESCRIPTION.maxLength}
+          showMaxChar
+          width="100%"
+        />
+        <Styled.QuestionContainer  >
           {formData.questions.map((question, index) => (
             <QuestionBuilder
               key={question.id}

@@ -1,19 +1,23 @@
 export const APPLICATION_FORM = {
+  APPLICATION_DESCRIPTION: {
+    placeholder: '지원서 설명을 입력해주세요 (최대 3000자)',
+    maxLength: 3000,
+  },
   QUESTION_TITLE: {
-    placeholder: '질문 제목을 입력해주세요(최대 20자)',
-    maxLength: 20,
+    placeholder: '질문 제목을 입력해주세요(최대 50자)',
+    maxLength: 50,
   },
   QUESTION_DESCRIPTION: {
-    placeholder: '질문 설명을 입력해주세요(최대 300자)',
-    maxLength: 300,
+    placeholder: '질문 설명을 입력해주세요(최대 200자)',
+    maxLength: 200,
   },
   SHORT_TEXT: {
-    placeholder: '답변입력란(최대 20자)',
-    maxLength: 20,
+    placeholder: '답변입력란(최대 100자)',
+    maxLength: 100,
   },
   LONG_TEXT: {
-    placeholder: '답변입력란(최대 500자)',
-    maxLength: 500,
+    placeholder: '답변입력란(최대 1000자)',
+    maxLength: 1000,
   },
   CHOICE: {
     placeholder: '항목(최대 20자)',
