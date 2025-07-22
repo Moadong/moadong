@@ -1,11 +1,11 @@
 export const APPLICATION_FORM = {
   QUESTION_TITLE: {
     placeholder: '질문 제목을 입력해주세요(최대 20자)',
-    maxLength: 20,
+    maxLength: 50,
   },
   QUESTION_DESCRIPTION: {
     placeholder: '질문 설명을 입력해주세요(최대 300자)',
-    maxLength: 300,
+    maxLength: 200,
   },
   SHORT_TEXT: {
     placeholder: '답변입력란(최대 20자)',
