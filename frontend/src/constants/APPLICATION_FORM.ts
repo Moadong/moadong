@@ -12,8 +12,8 @@ export const APPLICATION_FORM = {
     maxLength: 200,
   },
   SHORT_TEXT: {
-    placeholder: '답변입력란(최대 30자)',
-    maxLength: 30,
+    placeholder: '답변입력란(최대 100자)',
+    maxLength: 100,
   },
   LONG_TEXT: {
     placeholder: '답변입력란(최대 1000자)',
