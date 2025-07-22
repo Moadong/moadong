@@ -1,9 +1,9 @@
 package moadong.club.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
-import moadong.club.enums.ApplicationStatus;
 import moadong.club.payload.dto.ClubApplicantsResult;
 import moadong.club.payload.request.ClubApplicationCreateRequest;
 import moadong.club.payload.request.ClubApplicationEditRequest;
@@ -16,6 +16,7 @@ import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.payload.Response;
+import moadong.global.util.AESCipher;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -26,11 +27,12 @@ import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ClubApplyService {
-
     private final ClubRepository clubRepository;
     private final ClubQuestionRepository clubQuestionRepository;
     private final ClubApplicationRepository clubApplicationRepository;
+    private final AESCipher cipher;
 
     public void createClubApplication(String clubId, CustomUserDetails user, ClubApplicationCreateRequest request) {
         ClubQuestion clubQuestion = getClubQuestion(clubId, user);
@@ -64,12 +66,20 @@ public class ClubApplyService {
 
         validateAnswers(request.questions(), clubQuestion);
 
-        List<ClubQuestionAnswer> answers = request.questions()
-                .stream().map(answer -> ClubQuestionAnswer.builder()
+        List<ClubQuestionAnswer> answers = new ArrayList<>();
+
+        try {
+            for (ClubApplyRequest.Answer answer : request.questions()) {
+                String encryptedValue = cipher.encrypt(answer.value());
+                answers.add(ClubQuestionAnswer.builder()
                         .id(answer.id())
-                        .value(answer.value())
-                        .build()
-                ).toList();
+                        .value(encryptedValue)
+                        .build());
+            }
+        } catch (Exception e) {
+            log.error("AES_CIPHER_ERROR", e);
+            throw new RestApiException(ErrorCode.AES_CIPHER_ERROR);
+        }
 
         ClubApplication application = ClubApplication.builder()
                 .questionId(clubQuestion.getClubId())
@@ -95,7 +105,7 @@ public class ClubApplyService {
         int accepted = 0;
 
         for (ClubApplication app : submittedApplications) {
-            applications.add(ClubApplicantsResult.of(app));
+            applications.add(ClubApplicantsResult.of(app, cipher));
 
             switch (app.getStatus()) {
                 case SUBMITTED, SCREENING -> reviewRequired++;

@@ -1,5 +1,5 @@
 //package moadong.media.util;
-//
+
 //import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 //import com.google.api.client.json.jackson2.JacksonFactory;
 //import com.google.api.services.drive.Drive;
@@ -12,7 +12,9 @@
 //import org.springframework.context.annotation.Bean;
 //import org.springframework.context.annotation.Configuration;
 //import org.springframework.util.ResourceUtils;
-//
+
+
+
 //@Configuration
 //public class GoogleDriveConfig {
 //
