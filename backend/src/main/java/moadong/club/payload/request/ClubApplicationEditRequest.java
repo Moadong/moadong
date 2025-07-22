@@ -13,7 +13,7 @@ public record ClubApplicationEditRequest(
         String title,
 
         @NotBlank
-        @Size(max = 500)
+        @Size(max = 3000)
         String description,
 
         @NotNull

@@ -156,12 +156,12 @@ public class ClubApplyService {
     private void validateAnswerLength(String value, ClubApplicationQuestionType type) {
         switch (type) {
             case SHORT_TEXT -> {
-                if (value.length() > 30) {
+                if (value.length() > 100) {
                     throw new RestApiException(ErrorCode.SHORT_EXCEED_LENGTH);
                 }
             }
             case LONG_TEXT -> {
-                if (value.length() > 500) {
+                if (value.length() > 1000) {
                     throw new RestApiException(ErrorCode.LONG_EXCEED_LENGTH);
                 }
             }
