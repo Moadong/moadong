@@ -31,6 +31,10 @@ public class ClubRecruitmentInformation {
     @Unique
     private String logo;
 
+    @Column(length = 1024)
+    @Unique
+    private String cover;
+
     @Column(length = 30)
     private String introduction;
 
@@ -54,13 +58,14 @@ public class ClubRecruitmentInformation {
 
     private List<String> tags;
 
+    private List<Faq> faqs;
+
     @Enumerated(EnumType.STRING)
     @NotNull
     private ClubRecruitmentStatus clubRecruitmentStatus;
 
-    public ClubRecruitmentInformation updateLogo(String logo) {
+    public void updateLogo(String logo) {
         this.logo = logo;
-        return this;
     }
 
     public void updateRecruitmentStatus(ClubRecruitmentStatus status) {
@@ -72,6 +77,7 @@ public class ClubRecruitmentInformation {
         this.recruitmentStart = request.recruitmentStart();
         this.recruitmentEnd = request.recruitmentEnd();
         this.recruitmentTarget = request.recruitmentTarget();
+        this.faqs = request.faqs();
     }
 
     public boolean hasRecruitmentPeriod() {
@@ -80,11 +86,17 @@ public class ClubRecruitmentInformation {
 
     public ZonedDateTime getRecruitmentStart() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        if (recruitmentStart == null) {
+            return null;
+        }
         return recruitmentStart.atZone(seoulZone);
     }
 
     public ZonedDateTime getRecruitmentEnd() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        if (recruitmentEnd == null) {
+            return null;
+        }
         return recruitmentEnd.atZone(seoulZone);
     }
 
@@ -101,5 +113,9 @@ public class ClubRecruitmentInformation {
         this.presidentName = request.presidentName();
         this.presidentTelephoneNumber = request.presidentPhoneNumber();
         this.tags = request.tags();
+    }
+
+    public void updateCover(String cover) {
+        this.cover = cover;
     }
 }

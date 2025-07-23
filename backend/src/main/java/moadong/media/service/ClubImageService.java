@@ -16,4 +16,7 @@ public interface ClubImageService {
 
     void deleteFile(Club club, String filePath);
 
+    String uploadCover(String clubId, MultipartFile file);
+
+    void deleteCover(String clubId);
 }

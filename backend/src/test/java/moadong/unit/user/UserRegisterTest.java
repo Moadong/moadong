@@ -153,7 +153,6 @@ class UserRegisterTest {
             "1234!@#$",             // 숫자 + 특수문자, 문자 없음
             "Abcdef12()",           // 괄호 포함 (허용되지 않은 특수문자)
             "ABCD1234~",            // `~` 특수문자 허용 안됨
-            "abc1234^",             // `^`는 허용되지만 문자 형식에 따라 위험성 있음
     })
     void 회원가입시_유저_비밀번호가_조건에_맞지_않으면_실패한다(String password) {
         String userId = UserFixture.collectUserId;

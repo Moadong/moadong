@@ -54,6 +54,16 @@ dependencies {
 	implementation 'com.google.apis:google-api-services-drive:v3-rev20220815-2.0.0'
 	testImplementation 'org.testcontainers:testcontainers'
 	testImplementation 'org.testcontainers:mongodb:1.19.0'
+
+	// S3
+	implementation 'software.amazon.awssdk:s3:2.26.0'
+	implementation 'software.amazon.awssdk:auth:2.26.0'
+//	implementation 'software.amazon.awssdk:netty-nio-client:2.26.0'
+
+	// resize tool
+	implementation 'net.coobird:thumbnailator:0.4.14'
+	implementation 'org.springframework:spring-test'
+
 }
 
 //전체 테스트

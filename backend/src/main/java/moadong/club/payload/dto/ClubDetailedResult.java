@@ -1,17 +1,20 @@
 package moadong.club.payload.dto;
 
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.Builder;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
+import moadong.club.entity.Faq;
 
 @Builder
 public record ClubDetailedResult(
     String id,
     String name,
     String logo,
+    String cover,
     List<String> tags,
     String state,
     List<String> feeds,
@@ -24,7 +27,8 @@ public record ClubDetailedResult(
     String recruitmentStatus,
     Map<String, String> socialLinks,
     String category,
-    String division
+    String division,
+    List<Faq> faqs
 ) {
 
     public static ClubDetailedResult of(Club club) {
@@ -40,6 +44,8 @@ public record ClubDetailedResult(
             .name(club.getName() == null ? "" : club.getName())
             .logo(clubRecruitmentInformation.getLogo() == null ? ""
                 : clubRecruitmentInformation.getLogo())
+            .cover(clubRecruitmentInformation.getCover() == null ? ""
+                    : clubRecruitmentInformation.getCover())
             .tags(clubRecruitmentInformation.getTags() == null ? List.of()
                 : clubRecruitmentInformation.getTags())
             .state(club.getState() == null ? "" : club.getState().getDesc())
@@ -63,6 +69,8 @@ public record ClubDetailedResult(
                 ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().getDescription())
             .socialLinks(club.getSocialLinks() == null ? Map.of()
                 : club.getSocialLinks())
+            .faqs(club.getClubRecruitmentInformation().getFaqs() == null ? List.of()
+                    : club.getClubRecruitmentInformation().getFaqs())
             .build();
     }
 

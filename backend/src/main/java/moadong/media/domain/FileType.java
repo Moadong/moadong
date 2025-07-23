@@ -5,7 +5,8 @@ import lombok.Getter;
 @Getter
 public enum FileType {
     LOGO("logo"),
-    FEED("feed");
+    FEED("feed"),
+    COVER("cover");
 
     // 저장된 값 리턴
     private final String path;

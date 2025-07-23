@@ -31,7 +31,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserCommandService userCommandService;
-    private final JwtProvider jwtProvider;
 
     @PostMapping("/register")
     @Operation(
