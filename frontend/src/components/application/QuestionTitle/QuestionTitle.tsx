@@ -1,5 +1,6 @@
 import * as Styled from './QuestionTitle.styles';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface QuestionTitleProps {
   id: number;
@@ -16,16 +17,17 @@ const QuestionTitle = ({
   mode,
   onTitleChange,
 }: QuestionTitleProps) => {
+  const isMobile = useIsMobile();
   return (
-    <Styled.QuestionTitleContainer>
-      {id && <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>}
+    <Styled.QuestionTitleRow>
+      {!isMobile && id && <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>}
       <Styled.QuestionTitleText
-        type='text'
+        as="textarea"
         value={title}
-        maxLength={APPLICATION_FORM.QUESTION_TITLE.maxLength}
-        placeholder={APPLICATION_FORM.QUESTION_TITLE.placeholder}
-        aria-label='질문 제목'
+        rows={1}
         readOnly={mode === 'answer'}
+        placeholder={APPLICATION_FORM.QUESTION_TITLE.placeholder}
+        maxLength={APPLICATION_FORM.QUESTION_TITLE.maxLength}
         onChange={(e) => {
           const value = e.target.value;
           if (value.length <= APPLICATION_FORM.QUESTION_TITLE.maxLength) {
@@ -34,7 +36,8 @@ const QuestionTitle = ({
         }}
       />
       {mode === 'answer' && required && <Styled.QuestionRequired />}
-    </Styled.QuestionTitleContainer>
+    </Styled.QuestionTitleRow>
+
   );
 };
 
