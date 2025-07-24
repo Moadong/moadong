@@ -1,16 +1,19 @@
 import styled from 'styled-components';
 
-export const ItemWrapper = styled.div<{ 'data-selected'?: string }>`
+export const ItemWrapper = styled.div`
   flex: 1;
   height: 45px;
   padding: 12px 18px;
   border: none;
   border-radius: 6px;
   font-size: 1.125rem;
-  background-color: ${({ 'data-selected': selected }) =>
-        selected === 'true' ? '#FFECE5' : '#F5F5F5'};
-  color: ${({ 'data-selected': selected }) =>
-        selected === 'true' ? '#111111' : '#818181'};
+  background-color: #f5f5f5;
+  color: #818181;
+
+  &[data-selected='true'] {
+    background-color: #FFD9CB;
+    color: #111111;
+  }
   cursor: pointer;
   transition: background-color 0.2s, border-color 0.2s;
 `;
