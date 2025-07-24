@@ -2,13 +2,12 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 
 export const QuestionTitleContainer = styled.div`
-  display: flex;
+  display: inline-flex;
   flex-direction: column;
 `;
 
 export const QuestionTitleRow = styled.div`
   display: flex;
-  align-items: flex-start;
   gap: 6px;
   width: 100%;
 `;
@@ -25,8 +24,17 @@ export const QuestionTitleId = styled.p`
   }
 `;
 
-export const QuestionTitleText = styled.textarea`
-  flex: 1;
+export const QuestionTitleTextContainer = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 4px;
+  width: fit-content;
+  max-width: calc(100% - 20px);
+`;
+
+export const QuestionTitleText = styled.div`
+  display: inline-block;
+  min-width: 100px;
   resize: none;
   overflow-wrap: break-word;
   white-space: pre-wrap;
@@ -36,14 +44,13 @@ export const QuestionTitleText = styled.textarea`
   font-weight: 700;
   line-height: 1.5;
   color: #111;
-  field-sizing: content;
 
-  &::placeholder {
+  &:empty:before {
+    content: attr(data-placeholder);
     color: #c5c5c5;
-    transition: opacity 0.15s;
   }
 
-  &:focus::placeholder {
+  &:focus:before {
     opacity: 0;
   }
 
@@ -56,7 +63,9 @@ export const QuestionTitleText = styled.textarea`
 export const QuestionRequired = styled.div`
   width: 8px;
   height: 8px;
-  margin-top: 4px;
+  margin-top: 10px;
+  margin-left: 10px;
   border-radius: 50%;
   background-color: #ff5414;
+  flex-shrink: 0;
 `;

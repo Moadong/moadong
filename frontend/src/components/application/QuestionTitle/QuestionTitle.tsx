@@ -18,26 +18,28 @@ const QuestionTitle = ({
   onTitleChange,
 }: QuestionTitleProps) => {
   const isMobile = useIsMobile();
+  
   return (
     <Styled.QuestionTitleRow>
       {!isMobile && id && (
         <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>
       )}
-      <Styled.QuestionTitleText
-        as='textarea'
-        value={title}
-        rows={1}
-        readOnly={mode === 'answer'}
-        placeholder={APPLICATION_FORM.QUESTION_TITLE.placeholder}
-        maxLength={APPLICATION_FORM.QUESTION_TITLE.maxLength}
-        onChange={(e) => {
-          const value = e.target.value;
-          if (value.length <= APPLICATION_FORM.QUESTION_TITLE.maxLength) {
-            onTitleChange?.(value);
-          }
-        }}
-      />
-      {mode === 'answer' && required && <Styled.QuestionRequired />}
+      <Styled.QuestionTitleTextContainer>
+        <Styled.QuestionTitleText
+          contentEditable={mode !== 'answer'}
+          suppressContentEditableWarning={true}
+          onInput={(e) => {
+            const value = e.currentTarget.textContent || '';
+            if (value.length <= APPLICATION_FORM.QUESTION_TITLE.maxLength) {
+              onTitleChange?.(value);
+            }
+          }}
+          data-placeholder={title ? '' : APPLICATION_FORM.QUESTION_TITLE.placeholder}
+        >
+          {title}
+        </Styled.QuestionTitleText>
+        {mode === 'answer' && required && <Styled.QuestionRequired />}
+      </Styled.QuestionTitleTextContainer>
     </Styled.QuestionTitleRow>
   );
 };
