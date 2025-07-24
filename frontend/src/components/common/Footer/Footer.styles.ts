@@ -25,7 +25,17 @@ export const FooterContent = styled.div`
   }
 `;
 
-export const PolicyText = styled.p``;
+export const PolicyLink = styled.a`
+  color: #787878;
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
+
 
 export const CopyRightText = styled.p``;
 
