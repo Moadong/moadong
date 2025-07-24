@@ -20,9 +20,11 @@ const QuestionTitle = ({
   const isMobile = useIsMobile();
   return (
     <Styled.QuestionTitleRow>
-      {!isMobile && id && <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>}
+      {!isMobile && id && (
+        <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>
+      )}
       <Styled.QuestionTitleText
-        as="textarea"
+        as='textarea'
         value={title}
         rows={1}
         readOnly={mode === 'answer'}
@@ -37,7 +39,6 @@ const QuestionTitle = ({
       />
       {mode === 'answer' && required && <Styled.QuestionRequired />}
     </Styled.QuestionTitleRow>
-
   );
 };
 

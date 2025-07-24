@@ -11,11 +11,13 @@ export const ItemWrapper = styled.div`
   color: #818181;
 
   &[data-selected='true'] {
-    background-color: #FFD9CB;
+    background-color: #ffd9cb;
     color: #111111;
   }
   cursor: pointer;
-  transition: background-color 0.2s, border-color 0.2s;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
 `;
 
 export const Label = styled.span`

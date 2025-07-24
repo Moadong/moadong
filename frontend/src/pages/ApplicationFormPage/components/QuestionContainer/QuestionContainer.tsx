@@ -11,26 +11,26 @@ const Container = styled.div<{ hasError?: boolean }>`
 `;
 
 const ErrorText = styled.div`
-  color: #FF5414;
+  color: #ff5414;
   font-size: 0.9rem;
   font-weight: 600;
   margin-bottom: 8px;
 `;
 
 interface Props {
-    hasError?: boolean;
-    children: React.ReactNode;
+  hasError?: boolean;
+  children: React.ReactNode;
 }
 
 const QuestionContainer = forwardRef<HTMLDivElement, Props>(
-    ({ hasError, children }, ref) => {
-        return (
-            <Container hasError={hasError} ref={ref}>
-                {hasError && <ErrorText>‼️ 필수 입력 문항입니다</ErrorText>}
-                {children}
-            </Container>
-        );
-    }
+  ({ hasError, children }, ref) => {
+    return (
+      <Container hasError={hasError} ref={ref}>
+        {hasError && <ErrorText>‼️ 필수 입력 문항입니다</ErrorText>}
+        {children}
+      </Container>
+    );
+  },
 );
 
 export default QuestionContainer;

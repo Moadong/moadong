@@ -60,4 +60,3 @@ export const QuestionRequired = styled.div`
   border-radius: 50%;
   background-color: #ff5414;
 `;
-

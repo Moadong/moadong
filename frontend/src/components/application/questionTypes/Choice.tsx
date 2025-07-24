@@ -120,8 +120,6 @@ const Choice = ({
         );
       })}
 
-
-
       {mode === 'builder' && items.length < MAX_ITEMS && (
         <Styled.AddItemButton onClick={handleAddItem}>
           + 추가항목
