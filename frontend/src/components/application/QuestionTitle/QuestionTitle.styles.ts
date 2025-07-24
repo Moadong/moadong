@@ -1,25 +1,41 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const QuestionTitleContainer = styled.div`
   display: flex;
-  align-items: center;
-  gap: 4px;
+  flex-direction: column;
+`;
+
+export const QuestionTitleRow = styled.div`
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+  width: 100%;
 `;
 
 export const QuestionTitleId = styled.p`
   color: #ff5414;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-weight: 700;
-  line-height: normal;
+  margin: 0;
+  line-height: 1.5;
+  ${media.mobile} {
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
 `;
 
-export const QuestionTitleText = styled.input`
+export const QuestionTitleText = styled.textarea`
+  flex: 1;
+  resize: none;
+  overflow-wrap: break-word;
+  white-space: pre-wrap;
   border: none;
   outline: none;
-  color: #111;
   font-size: 1.25rem;
   font-weight: 700;
-  line-height: normal;
+  line-height: 1.5;
+  color: #111;
   field-sizing: content;
 
   &::placeholder {
@@ -30,12 +46,18 @@ export const QuestionTitleText = styled.input`
   &:focus::placeholder {
     opacity: 0;
   }
+
+  ${media.mobile} {
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
 `;
 
 export const QuestionRequired = styled.div`
   width: 8px;
   height: 8px;
+  margin-top: 4px;
   border-radius: 50%;
   background-color: #ff5414;
-  margin-left: 14px;
 `;
+
