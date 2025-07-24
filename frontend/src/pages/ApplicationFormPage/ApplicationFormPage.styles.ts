@@ -21,11 +21,10 @@ export const FormDescription = styled.div`
   padding: 0 15px;
 
   ${media.mobile} {
-      font-size: 0.95rem;
+    font-size: 0.95rem;
     line-height: 1.5;
   }
 `;
-
 
 export const QuestionsWrapper = styled.div`
   display: flex;
@@ -35,7 +34,6 @@ export const QuestionsWrapper = styled.div`
   ${media.mobile} {
     gap: 10px;
   }
-
 `;
 
 export const ButtonWrapper = styled.div`

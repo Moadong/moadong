@@ -36,9 +36,7 @@ const Button = styled.button`
   }
 `;
 
-const ClubApplyButton = ({
-  isRecruiting
-}: ButtonProps) => {
+const ClubApplyButton = ({ isRecruiting }: ButtonProps) => {
   const { clubId } = useParams<{ clubId: string }>();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
@@ -48,7 +46,7 @@ const ClubApplyButton = ({
 
     //TODO: 지원서를 작성한 동아리의 경우에만 리다이렉트
     if (!isRecruiting) {
-      alert('지원모집이 마감되었습니다. 다음에 지원해 주세요.')
+      alert('지원모집이 마감되었습니다. 다음에 지원해 주세요.');
       return;
     }
     navigate(`/application/${clubId}`);

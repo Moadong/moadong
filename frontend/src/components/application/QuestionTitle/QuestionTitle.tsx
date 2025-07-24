@@ -1,5 +1,6 @@
 import * as Styled from './QuestionTitle.styles';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
+import useIsMobile from '@/hooks/useIsMobile';
 
 interface QuestionTitleProps {
   id: number;
@@ -16,25 +17,30 @@ const QuestionTitle = ({
   mode,
   onTitleChange,
 }: QuestionTitleProps) => {
+  const isMobile = useIsMobile();
+  
   return (
-    <Styled.QuestionTitleContainer>
-      {id && <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>}
-      <Styled.QuestionTitleText
-        type='text'
-        value={title}
-        maxLength={APPLICATION_FORM.QUESTION_TITLE.maxLength}
-        placeholder={APPLICATION_FORM.QUESTION_TITLE.placeholder}
-        aria-label='질문 제목'
-        readOnly={mode === 'answer'}
-        onChange={(e) => {
-          const value = e.target.value;
-          if (value.length <= APPLICATION_FORM.QUESTION_TITLE.maxLength) {
-            onTitleChange?.(value);
-          }
-        }}
-      />
-      {mode === 'answer' && required && <Styled.QuestionRequired />}
-    </Styled.QuestionTitleContainer>
+    <Styled.QuestionTitleRow>
+      {!isMobile && id && (
+        <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>
+      )}
+      <Styled.QuestionTitleTextContainer>
+        <Styled.QuestionTitleText
+          contentEditable={mode !== 'answer'}
+          suppressContentEditableWarning={true}
+          onInput={(e) => {
+            const value = e.currentTarget.textContent || '';
+            if (value.length <= APPLICATION_FORM.QUESTION_TITLE.maxLength) {
+              onTitleChange?.(value);
+            }
+          }}
+          data-placeholder={title ? '' : APPLICATION_FORM.QUESTION_TITLE.placeholder}
+        >
+          {title}
+        </Styled.QuestionTitleText>
+        {mode === 'answer' && required && <Styled.QuestionRequired />}
+      </Styled.QuestionTitleTextContainer>
+    </Styled.QuestionTitleRow>
   );
 };
 
