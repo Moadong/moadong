@@ -57,10 +57,13 @@ const Choice = ({
           onAnswerChange?.([...answer, value]);
         }
       }
-      // 다중 선택: 이미 포함되어 있으면 제거, 아니면 추가
     } else {
-      // 단일 선택: 클릭된 값만 넘김
-      onAnswerChange?.(value);
+      // 단일 선택일 때 선택/해제 가능하게 처리
+      if (String(answer) === value) {
+        onAnswerChange?.('');
+      } else {
+        onAnswerChange?.(value);
+      }
     }
   };
 
@@ -80,7 +83,11 @@ const Choice = ({
       />
 
       {items.map((item, index) => {
-        const isSelected = mode === 'answer' && answer.includes(item.value);
+        const isSelected =
+          mode === 'answer' &&
+          (isMulti
+            ? Array.isArray(answer) && answer.includes(item.value)
+            : String(answer) === item.value);
 
         return (
           <Styled.ItemWrapper key={index}>
