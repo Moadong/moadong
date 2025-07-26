@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
-import ShortText from '@/pages/AdminPage/application/fields/ShortText';
-import Choice from '@/pages/AdminPage/application/fields/Choice';
-import LongText from '@/pages/AdminPage/application/fields/LongText';
+import ShortText from '@/components/application/questionTypes/ShortText';
+import Choice from '@/components/application/questionTypes/Choice';
+import LongText from '@/components/application/questionTypes/LongText';
 import { QuestionType } from '@/types/application';
 import { QuestionBuilderProps } from '@/types/application';
 import { QUESTION_LABEL_MAP } from '@/constants/APPLICATION_FORM';
@@ -16,6 +16,7 @@ const QuestionBuilder = ({
   options,
   items,
   type,
+  readOnly,
   onTitleChange,
   onItemsChange,
   onDescriptionChange,
@@ -117,7 +118,7 @@ const QuestionBuilder = ({
   };
 
   return (
-    <Styled.QuestionWrapper>
+    <Styled.QuestionWrapper readOnly={readOnly}>
       <Styled.QuestionMenu>
         <Styled.RequiredToggleButton
           onClick={() => onRequiredChange?.(!options?.required)}
@@ -133,7 +134,9 @@ const QuestionBuilder = ({
           }}
         />
         {renderSelectionToggle()}
-        <button onClick={() => onRemoveQuestion()}>삭제</button>
+        {!readOnly && (
+          <button onClick={() => onRemoveQuestion()}>삭제</button>
+        )}
       </Styled.QuestionMenu>
       <Styled.QuestionFieldContainer>
         {renderFieldByQuestionType()}

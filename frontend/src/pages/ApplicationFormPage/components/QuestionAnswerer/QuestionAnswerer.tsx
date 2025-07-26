@@ -1,7 +1,7 @@
 import { Question } from '@/types/application';
-import ShortText from '@/pages/AdminPage/application/fields/ShortText';
-import LongText from '@/pages/AdminPage/application/fields/LongText';
-import Choice from '@/pages/AdminPage/application/fields/Choice';
+import ShortText from '@/components/application/questionTypes/ShortText';
+import LongText from '@/components/application/questionTypes/LongText';
+import Choice from '@/components/application/questionTypes/Choice';
 
 interface QuestionAnswererProps {
   question: Question;

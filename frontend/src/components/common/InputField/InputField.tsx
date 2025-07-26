@@ -17,9 +17,6 @@ interface CustomInputProps {
   isError?: boolean;
   helperText?: string;
   readOnly?: boolean;
-  bgColor?: string;
-  textColor?: string;
-  borderColor?: string;
 }
 
 const InputField = ({
@@ -37,9 +34,6 @@ const InputField = ({
   isError,
   helperText,
   readOnly = false,
-  bgColor,
-  textColor,
-  borderColor,
 }: CustomInputProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -78,11 +72,6 @@ const InputField = ({
           disabled={disabled}
           hasError={isError}
           readOnly={readOnly}
-          style={{
-            background: bgColor || '#FFF',
-            color: textColor,
-            borderColor: borderColor,
-          }}
         />
         {showClearButton && !disabled && (
           <Styled.ClearButton type='button' onClick={clearInput}>

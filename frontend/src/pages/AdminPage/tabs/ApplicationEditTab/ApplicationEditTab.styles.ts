@@ -20,6 +20,7 @@ export const FormTitle = styled.input`
 export const QuestionContainer = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top : 40px;
   gap: 83px;
 `;
 

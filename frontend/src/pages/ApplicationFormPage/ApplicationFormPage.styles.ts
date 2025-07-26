@@ -1,18 +1,39 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const FormTitle = styled.h1`
-  font-size: 2.5rem;
+  font-size: 2.2rem;
   font-weight: 700;
   border: none;
   outline: none;
-  margin-top: 20px;
-  margin-bottom: 46px;
+  margin-top: 30px;
+  margin-bottom: 30px;
+  padding: 0 15px;
+`;
+
+export const FormDescription = styled.div`
+  white-space: pre-line;
+  font-size: 1rem;
+  line-height: 1.6;
+  color: #444;
+  margin-top: -20px;
+  margin-bottom: 48px;
+  padding: 0 15px;
+
+  ${media.mobile} {
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
 `;
 
 export const QuestionsWrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 50px;
+  gap: 20px;
+
+  ${media.mobile} {
+    gap: 10px;
+  }
 `;
 
 export const ButtonWrapper = styled.div`

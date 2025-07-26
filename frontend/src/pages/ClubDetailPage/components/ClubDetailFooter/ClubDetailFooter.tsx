@@ -1,7 +1,7 @@
 import * as Styled from './ClubDetailFooter.styles';
 import DeadlineBadge from '@/pages/ClubDetailPage/components/DeadlineBadge/DeadlineBadge';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
-import { parseRecruitmentPeriod } from '@/utils/stringToDate';
+import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser.ts';
 import getDeadlineText from '@/utils/getDeadLineText';
 
 interface ClubDetailFooterProps {
@@ -28,10 +28,7 @@ const ClubDetailFooter = ({
     <Styled.ClubDetailFooterContainer>
       <DeadlineBadge deadlineText={deadlineText} />
       <ClubApplyButton
-        {...(deadlineText !== '모집 마감' && {
-          recruitmentForm,
-          presidentPhoneNumber,
-        })}
+        isRecruiting={deadlineText !== '모집 마감'}
       />
     </Styled.ClubDetailFooterContainer>
   );

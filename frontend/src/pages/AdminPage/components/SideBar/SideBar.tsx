@@ -31,9 +31,6 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     if (tab.label === '계정 관리') {
       alert('계정 관리 기능은 아직 준비 중이에요. ☺️');
       return;
-    } else if (tab.label === '지원 관리') {
-      alert('동아리 지원 관리 기능은 곧 오픈돼요!\n조금만 기다려주세요 🚀');
-      return;
     }
     navigate(tab.path);
   };

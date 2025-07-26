@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 export const TextAreaContainer = styled.div<{ width: string }>`
   width: ${(props) => props.width};
-  min-width: 385px;
+  min-width: 300px;
   display: flex;
   flex-direction: column;
 `;
@@ -38,7 +38,7 @@ export const TextArea = styled.textarea<{ hasError?: boolean }>`
     border-color: ${({ hasError }) => (hasError ? 'red' : '#007bff')};
     box-shadow: 0 0 3px
       ${({ hasError }) =>
-        hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
+    hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
   }
 
   &:disabled {

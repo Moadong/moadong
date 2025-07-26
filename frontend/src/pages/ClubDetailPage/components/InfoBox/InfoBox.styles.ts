@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const InfoBoxWrapper = styled.div`
   display: flex;
@@ -7,7 +8,11 @@ export const InfoBoxWrapper = styled.div`
   gap: 34px;
   margin-top: 100px;
 
-  @media (max-width: 500px) {
+  @media (max-width: 800px) {
+    flex-direction: column;
+  }
+
+  ${media.mobile} {
     flex-direction: column;
     gap: 0;
     margin-top: 40px;
@@ -21,7 +26,11 @@ export const InfoBox = styled.div`
   border: 1px solid #dcdcdc;
   padding: 30px;
 
-  @media (max-width: 500px) {
+  @media (max-width: 800px) {
+    width: 100%;
+  }
+
+  ${media.mobile} {
     width: 100%;
     border: none;
     border-radius: 0;
@@ -52,7 +61,7 @@ export const DescriptionWrapper = styled.div`
   align-items: center;
   gap: 50px;
   font-size: 16px;
-  @media (max-width: 500px) {
+  ${media.mobile} {
     font-size: 14px;
     gap: 40px;
   }
@@ -72,7 +81,7 @@ export const RightText = styled.p`
     white-space: normal;
   }
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     white-space: nowrap;
   }
 `;

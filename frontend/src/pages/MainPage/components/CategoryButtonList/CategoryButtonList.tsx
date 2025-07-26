@@ -8,16 +8,13 @@ import iconStudy from '@/assets/images/icons/category_button/category_study_butt
 import iconSport from '@/assets/images/icons/category_button/category_sport_button_icon.svg';
 import iconPerformance from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
 import { useSearch } from '@/context/SearchContext';
+import { useCategory } from '@/context/CategoryContext';
 
 interface Category {
   id: string;
   name: string;
   icon: string;
   eventName: string;
-}
-
-interface CategoryButtonListProps {
-  onCategorySelect: (division: string) => void;
 }
 
 const clubCategories: Category[] = [
@@ -60,8 +57,9 @@ const clubCategories: Category[] = [
   },
 ];
 
-const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
+const CategoryButtonList = () => {
   const { setKeyword, setInputValue } = useSearch();
+  const { setSelectedCategory } = useCategory();
 
   const handleCategoryClick = (category: Category) => {
     mixpanel.track(category.eventName, {
@@ -74,7 +72,8 @@ const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
     setKeyword('');
     setInputValue('');
 
-    onCategorySelect(category.id);
+    setSelectedCategory(category.id);
+
   };
 
   return (
@@ -82,7 +81,8 @@ const CategoryButtonList = ({ onCategorySelect }: CategoryButtonListProps) => {
       {clubCategories.map((category) => (
         <Styled.CategoryButton
           key={category.id}
-          onClick={() => handleCategoryClick(category)}>
+          onClick={() => handleCategoryClick(category)}
+        >
           <img src={category.icon} alt={category.name} />
           <span>{category.name}</span>
         </Styled.CategoryButton>

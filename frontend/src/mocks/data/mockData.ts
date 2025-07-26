@@ -24,6 +24,7 @@ export interface Question {
 
 export const mockData: ApplicationFormData = {
   title: '2025_2_지원서',
+  description: '2025_2_지원서 설문지입니다.',
   questions: [
     {
       id: 1,
