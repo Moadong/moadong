@@ -5,7 +5,7 @@ import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
-import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser.ts';
+import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
 import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';

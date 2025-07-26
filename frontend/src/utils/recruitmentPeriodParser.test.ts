@@ -1,4 +1,4 @@
-import { parseRecruitmentDateString } from './recruitmentPeriodParser.ts';
+import { parseRecruitmentDateString } from './recruitmentPeriodParser';
 
 describe('parseRecruitmentPeriod 함수 테스트', () => {
   it('날짜와 시간이 포함된 문자열을 Date 객체로 정확히 바꾼다', () => {
