@@ -3,6 +3,7 @@ node_modules
 
 # Build artifacts, compiled files not needed in version control.
 dist
+build-storybook.log
 
 ### Environment Variable ###
 .env
@@ -13,3 +14,8 @@ dist
 *.crt
 *.key
 *.csr
+
+*storybook.log
+coverage/ 
+# Sentry Config File
+.env.sentry-build-plugin

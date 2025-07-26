@@ -1,0 +1,6 @@
+{
+  "onlyChanged": true,
+  "projectId": "${PROJECT_ID}",
+  "storybookBaseDir": "frontend",
+  "zip": true
+}

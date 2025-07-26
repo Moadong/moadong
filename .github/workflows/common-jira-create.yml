@@ -1,0 +1,162 @@
+name: Create Jira issue
+
+on:
+  issues:
+    types:
+      - opened
+
+jobs:
+  create-issue:
+    if: contains(github.event.issue.body, '🎟️ 상위 스토리 (Story Key)')
+    name: Create Jira issue
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Login
+        uses: atlassian/gajira-login@v3
+        env:
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+
+      - name: Checkout main code
+        uses: actions/checkout@v4
+        with:
+          ref: main
+
+      - name: Issue Parser
+        uses: stefanbuck/github-issue-parser@v3
+        id: issue-parser
+        with:
+          template-path: .github/ISSUE_TEMPLATE/jira-issue-form.yml
+
+      - name: Map GitHub username to Jira accountId
+        id: assignee
+        run: |
+          echo '${{ secrets.JIRA_USER_MAP }}' > user_map.json
+          FORM_ASSIGNEE="${{ steps.issue-parser.outputs.issueparser_assignee }}"
+          ACCOUNT_ID=$(jq -r --arg user "$FORM_ASSIGNEE" '.[$user]' user_map.json)
+      
+          echo "Resolved accountId for $FORM_ASSIGNEE → $ACCOUNT_ID"
+          echo "accountId=$ACCOUNT_ID" >> $GITHUB_OUTPUT
+
+
+      - name: Check if base branch exists
+        id: check-branch
+        run: |
+          BASE_BRANCH="${{ steps.issue-parser.outputs.issueparser_baseBranch }}"
+          echo "Checking branch: $BASE_BRANCH"
+          if git ls-remote --exit-code origin "refs/heads/${BASE_BRANCH}"; then
+            echo "BRANCH_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "BRANCH_EXISTS=false" >> $GITHUB_ENV
+          fi
+
+      - name: Convert markdown to Jira Syntax
+        uses: peter-evans/jira2md@v1
+        id: md2jira
+        with:
+          input-text: |
+            ### Github Issue Link
+            - ${{ github.event.issue.html_url }}
+
+            ${{ github.event.issue.body }}
+
+
+      - name: Build fields JSON
+        id: issue-fields
+        run: |
+          # 💡 변경점 1: 변수명을 더 명확하게 변경 (가독성 향상)
+          PARENT_STORY_KEY="${{ steps.issue-parser.outputs.issueparser_parentKey }}"
+          DUE_DATE="${{ steps.issue-parser.outputs.issueparser_dueDate }}"
+          ASSIGNEE_ID="${{ steps.assignee.outputs.accountId }}"
+          DESCRIPTION="${{ steps.md2jira.outputs.output-text }}"
+
+          # 'parent' 필드는 스토리-서브태스크 관계에서도 동일하게 사용됩니다.
+          FIELDS=$(jq -nc \
+            --arg parent "$PARENT_STORY_KEY" \
+            --arg description "$DESCRIPTION" \
+            --arg assignee "$ASSIGNEE_ID" \
+            '{
+              parent: { key: $parent },
+              description: $description,
+              assignee: { id: $assignee }
+            }'
+          )
+
+          [ -n "$DUE_DATE" ] && FIELDS=$(echo "$FIELDS" | jq --arg duedate "$DUE_DATE" -c '. + { duedate: $duedate }')
+
+          echo "fields=$FIELDS" >> $GITHUB_OUTPUT
+
+      - name: Create Jira Issue
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
+        id: create
+        uses: atlassian/gajira-create@v3
+        with:
+          project: MOA
+          issuetype: 하위 작업
+          summary: '${{ github.event.issue.title }}'
+          description: '${{ steps.md2jira.outputs.output-text }}'
+          fields: '${{ steps.issue-fields.outputs.fields }}'
+
+      - name: Log created issue
+        if: steps.create.outputs.issue != ''
+        run: echo "Jira Issue ${{ steps.create.outputs.issue }} was created"
+
+      - name: Checkout base branch
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ steps.issue-parser.outputs.issueparser_baseBranch }}
+
+      - name: Create branch with Jira Ticket number
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
+        run: |
+          GITHUB_ISSUE_NUMBER="${{ github.event.issue.number }}"
+          JIRA_ISSUE_KEY="${{ steps.create.outputs.issue }}"
+          CUSTOM_BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branch }}"
+
+          SAFE_BRANCH_NAME=$(echo "${CUSTOM_BRANCH_NAME}" | tr ' ' '-' | tr -cd '[:alnum:]/-')
+          BRANCH_TYPE=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f1)
+          BRANCH_DETAIL=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f2-)
+
+          if [ -z "$BRANCH_DETAIL" ]; then
+            BRANCH_DETAIL="$BRANCH_TYPE"
+          fi
+
+          BRANCH_NAME="${BRANCH_TYPE}/#${GITHUB_ISSUE_NUMBER}-${BRANCH_DETAIL}-${JIRA_ISSUE_KEY}"
+
+          git checkout -b "${BRANCH_NAME}"
+          git push origin "${BRANCH_NAME}"
+
+      - name: Define ISSUE_NUMBER fallback
+        run: |
+          echo "ISSUE_NUMBER=${{ steps.create.outputs.issue || 'UNKNOWN' }}" >> $GITHUB_ENV
+
+      - name: Update GitHub Issue Title
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
+        run: |
+          CUSTOM_BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branch }}"
+          JIRA_ISSUE_KEY="${{ steps.create.outputs.issue }}"
+          ISSUE_TITLE="${{ github.event.issue.title }}"
+          BRANCH_TYPE=$(echo "${CUSTOM_BRANCH_NAME}" | cut -d'/' -f1)
+
+          NEW_TITLE="[${BRANCH_TYPE}] ${JIRA_ISSUE_KEY} ${ISSUE_TITLE}"
+          echo "NEW_TITLE=${NEW_TITLE}" >> $GITHUB_ENV
+
+      - name: Apply new title
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'update-issue'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          title: '${{ env.NEW_TITLE }}'
+
+      - name: Add comment with Jira issue link
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
+        uses: actions-cool/issues-helper@v3
+        with:
+          actions: 'create-comment'
+          token: ${{ secrets.GITHUB_TOKEN }}
+          issue-number: ${{ github.event.issue.number }}
+          body: 'Jira Issue Created: [${{ env.ISSUE_NUMBER }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ env.ISSUE_NUMBER }})'

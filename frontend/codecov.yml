@@ -1,0 +1,12 @@
+comment:
+  layout: "diff, flags, files"  # PR 리포트에 diff, flags, files 섹션 포함
+  require_changes: false
+  require_base: false
+coverage:
+  status:
+    project:
+      default:
+        enabled: false   # 전체 프로젝트 레벨의 status 체크 비활성화
+    patch:
+      default:
+        enabled: false   # PR(patch) 레벨의 status 체크 비활성화

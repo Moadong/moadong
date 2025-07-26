@@ -74,6 +74,7 @@ jobs:
             ${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
             ${{ secrets.DOCKER_IMAGE_RELEASE }}:${{ github.sha }}
 
+
   deploy:
     name: Deploy
     runs-on: ubuntu-latest
