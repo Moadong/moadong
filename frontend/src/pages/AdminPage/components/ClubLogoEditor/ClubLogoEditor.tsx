@@ -36,6 +36,9 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
+
+    e.target.value = '';
+
     if (!file) return;
 
     if (file.size > MAX_FILE_SIZE) {
@@ -100,7 +103,8 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
             onClick={() => {
               triggerFileInput();
               setIsMenuOpen(false);
-            }}>
+            }}
+          >
             <img src={editIcon} alt='사진 수정 아이콘' />
             사진 수정하기
           </Styled.EditMenuItem>
@@ -111,7 +115,8 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
             onClick={() => {
               handleLogoReset();
               setIsMenuOpen(false);
-            }}>
+            }}
+          >
             <img src={deleteIcon} alt='초기화 아이콘' />
             초기화하기
           </Styled.EditMenuItem>

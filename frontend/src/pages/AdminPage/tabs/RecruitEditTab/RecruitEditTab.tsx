@@ -5,7 +5,7 @@ import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
-import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser.ts';
+import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
 import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
@@ -76,7 +76,7 @@ const RecruitEditTab = () => {
           />
         </div>
         <InputField
-          label='모집 대상 설정'
+          label='모집 대상'
           placeholder='모집 대상을 입력해주세요.'
           type='text'
           value={recruitmentTarget}
