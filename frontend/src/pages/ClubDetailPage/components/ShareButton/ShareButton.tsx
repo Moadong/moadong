@@ -5,7 +5,7 @@ import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 
 interface ShareButtonProps {
-  clubId: string | undefined;
+  clubId: string;
 }
 
 const ShareButton = ({ clubId }: ShareButtonProps) => {
