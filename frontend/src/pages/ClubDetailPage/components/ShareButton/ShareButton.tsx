@@ -8,6 +8,10 @@ interface ShareButtonProps {
   clubId: string;
 }
 
+const MOADONG_BASE_URL = 'https://www.moadong.com/club/';
+const DEFAULT_IMAGE_URL =
+  'https://avatars.githubusercontent.com/u/200371900?s=200&v=4';
+
 const ShareButton = ({ clubId }: ShareButtonProps) => {
   const { data: clubDetail } = useGetClubDetail(clubId);
   const trackEvent = useMixpanelTrack();
@@ -23,20 +27,18 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
       content: {
         title: clubDetail.name,
         description: clubDetail.description,
-        imageUrl: clubDetail.logo
-          ? clubDetail.logo
-          : 'https://avatars.githubusercontent.com/u/200371900?s=200&v=4',
+        imageUrl: clubDetail.logo ? clubDetail.logo : DEFAULT_IMAGE_URL,
         link: {
-          mobileWebUrl: `https://www.moadong.com/club/${clubDetail.id}`,
-          webUrl: `https://www.moadong.com/club/${clubDetail.id}`,
+          mobileWebUrl: `${MOADONG_BASE_URL}${clubDetail.id}`,
+          webUrl: `${MOADONG_BASE_URL}${clubDetail.id}`,
         },
       },
       buttons: [
         {
           title: '모아동에서 지원하기',
           link: {
-            mobileWebUrl: `https://www.moadong.com/club/${clubDetail.id}`,
-            webUrl: `https://www.moadong.com/club/${clubDetail.id}`,
+            mobileWebUrl: `${MOADONG_BASE_URL}${clubDetail.id}`,
+            webUrl: `${MOADONG_BASE_URL}${clubDetail.id}`,
           },
         },
       ],
