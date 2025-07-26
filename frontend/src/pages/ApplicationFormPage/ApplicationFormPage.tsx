@@ -20,22 +20,18 @@ const AnswerApplicationForm = () => {
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
 
-  // ===== 1. 유효성: clubId가 없을 경우 =====
   if (!clubId) return null;
 
-  // ===== 2. 로컬스토리지 초기값 불러오기 =====
   const STORAGE_KEY = `applicationAnswers_${clubId}`;
   const saved = localStorage.getItem(STORAGE_KEY);
   const initialAnswers = saved ? JSON.parse(saved) : [];
 
-  // ===== 3. useAnswers 훅 =====
   const {
     onAnswerChange: rawOnAnswerChange,
     getAnswersById,
     answers,
   } = useAnswers(initialAnswers);
 
-  // ===== 4. 쿼리 호출 =====
   const { data: clubDetail, error: clubError } = useGetClubDetail(clubId);
   const {
     data: formData,
@@ -44,12 +40,10 @@ const AnswerApplicationForm = () => {
     error: applicationError,
   } = useGetApplication(clubId);
 
-  // ===== 5. 자동 저장 =====
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
   }, [answers]);
 
-  // ===== 6. 로딩/에러 처리 =====
   if (isLoading) return <Spinner />;
   if (isError || clubError) {
     alert(applicationError?.message || '문제가 발생했어요.');
@@ -65,7 +59,6 @@ const AnswerApplicationForm = () => {
     );
   }
 
-  // ===== 7. 핸들러 =====
   const onAnswerChange = (id: number, value: string | string[]) => {
     rawOnAnswerChange(id, value);
 
@@ -103,7 +96,6 @@ const AnswerApplicationForm = () => {
     }
   };
 
-  // ===== 8. 렌더 =====
   return (
     <>
       <Header />
