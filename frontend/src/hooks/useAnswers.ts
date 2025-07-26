@@ -1,13 +1,13 @@
 import { useState } from 'react';
 import { AnswerItem } from '@/types/application';
 
-export const useAnswers = () => {
-  const [answers, setAnswers] = useState<AnswerItem[]>([]);
+export const useAnswers = (initialAnswers: AnswerItem[] = []) => {
+  const [answers, setAnswers] = useState<AnswerItem[]>(initialAnswers);
 
   const updateSingleAnswer = (id: number, value: string) => {
     setAnswers((prev) => [
       ...prev.filter((a) => a.id !== id),
-      { id, value: value },
+      { id, value },
     ]);
   };
 
@@ -26,7 +26,7 @@ export const useAnswers = () => {
     }
   };
 
-  const getAnswersById = (id: number) =>
+  const getAnswersById = (id: number): string[] =>
     answers.filter((a) => a.id === id).map((a) => a.value);
 
   return { onAnswerChange, getAnswersById, answers };
