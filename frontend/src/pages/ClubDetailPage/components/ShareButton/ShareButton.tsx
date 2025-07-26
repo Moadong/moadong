@@ -45,7 +45,11 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
   };
 
   return (
-    <Styled.ShareButtonContainer onClick={handleShare}>
+    <Styled.ShareButtonContainer
+      onClick={handleShare}
+      role='button'
+      aria-label='카카오톡으로 동아리 정보 공유하기'
+    >
       <img src={ShareIcon} alt='카카오톡 공유' />
     </Styled.ShareButtonContainer>
   );
