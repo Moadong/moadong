@@ -76,7 +76,7 @@ const RecruitEditTab = () => {
           />
         </div>
         <InputField
-          label='모집 대상 설정'
+          label='모집 대상'
           placeholder='모집 대상을 입력해주세요.'
           type='text'
           value={recruitmentTarget}
