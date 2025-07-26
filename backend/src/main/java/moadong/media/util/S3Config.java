@@ -1,7 +1,5 @@
 package moadong.media.util;
 
-import com.google.storage.v2.ListBucketsResponse;
-import jakarta.annotation.PostConstruct;
 import java.net.URI;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -29,7 +27,7 @@ public class S3Config {
         return S3Client.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
                 .endpointOverride(URI.create(endpoint))
-                .region(Region.US_EAST_1) // Region은 아무거나 넣어도 되지만 필수
+                .region(Region.US_EAST_1)
                 .serviceConfiguration(S3Configuration.builder()
                         .pathStyleAccessEnabled(true) // Cloudflare R2에서 필수
                         .build())

@@ -2,6 +2,7 @@ package moadong.club.entity;
 
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -24,9 +25,13 @@ public class ClubQuestion {
 
     private String clubId;
 
-    @NotBlank
+    @NotNull
     @Builder.Default
     private String title = "";
+
+    @NotNull
+    @Builder.Default
+    private String description = "";
 
     @Builder.Default
     private List<ClubApplicationQuestion> questions = new ArrayList<>();
@@ -39,6 +44,10 @@ public class ClubQuestion {
 
     public void updateFormTitle(String title) {
         this.title = title;
+    }
+
+    public void updateFormDescription(String description) {
+        this.description = description;
     }
 
     public void updateQuestions(List<ClubApplicationQuestion> newQuestions) {

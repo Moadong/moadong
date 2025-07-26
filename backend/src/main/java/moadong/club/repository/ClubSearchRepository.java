@@ -3,6 +3,7 @@ package moadong.club.repository;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
+import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.dto.ClubSearchResult;
 import org.springframework.data.domain.Sort;
@@ -69,8 +70,19 @@ public class ClubSearchRepository {
         List<Criteria> criteriaList = new ArrayList<>();
 
         if (recruitmentStatus != null && !"all".equalsIgnoreCase(recruitmentStatus)) {
+            List<String> targetStatuses = new ArrayList<>();
+
+            if (recruitmentStatus.equalsIgnoreCase(ClubRecruitmentStatus.OPEN.toString())) {
+                targetStatuses.add(ClubRecruitmentStatus.ALWAYS.toString());
+                targetStatuses.add(ClubRecruitmentStatus.OPEN.toString());
+                targetStatuses.add(ClubRecruitmentStatus.UPCOMING.toString());
+            } else {
+                targetStatuses.add(recruitmentStatus);
+            }
+
             criteriaList.add(
-                Criteria.where("recruitmentInformation.recruitmentStatus").is(recruitmentStatus));
+                    Criteria.where("recruitmentInformation.clubRecruitmentStatus").in(targetStatuses)
+            );
         }
         if (division != null && !"all".equalsIgnoreCase(division)) {
             criteriaList.add(Criteria.where("division").is(division));

@@ -13,7 +13,7 @@ public record ClubApplyQuestion(
         @NotNull
         Long id,
         @NotBlank
-        @Size(max = 20)
+        @Size(max = 200)
         String title,
         @NotNull //빈칸 허용
         String description,
@@ -32,7 +32,7 @@ public record ClubApplyQuestion(
 
     public record QuestionItem(
             @NotNull
-            @Size(max = 20)
+            @Size(max = 200)
             String value
     ) {}
 }
