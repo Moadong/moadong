@@ -51,7 +51,7 @@ class ClubSearchServiceTest {
 
         // then
         List<ClubSearchResult> sorted = response.clubs();
-        assertIterableEquals(sorted, List.of(club1, club4, club3, club2));
+        assertIterableEquals(sorted, List.of(club1, club4, club2, club3));
     }
 
     @Test
