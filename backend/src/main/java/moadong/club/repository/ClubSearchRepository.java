@@ -75,6 +75,7 @@ public class ClubSearchRepository {
             if (recruitmentStatus.equalsIgnoreCase(ClubRecruitmentStatus.OPEN.toString())) {
                 targetStatuses.add(ClubRecruitmentStatus.ALWAYS.toString());
                 targetStatuses.add(ClubRecruitmentStatus.OPEN.toString());
+                targetStatuses.add(ClubRecruitmentStatus.UPCOMING.toString());
             } else {
                 targetStatuses.add(recruitmentStatus);
             }
