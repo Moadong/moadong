@@ -36,3 +36,7 @@ export function initializeSentry() {
     tracesSampleRate: 0.1,
   });
 }
+
+export function initializeKakaoSDK() {
+  window.Kakao.init(`${process.env.KAKAO_JAVASCRIPT_KEY}`);
+}
