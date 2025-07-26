@@ -15,7 +15,7 @@ import { parseDescriptionWithLinks } from '@/utils/parseDescriptionWithLinks';
 import { validateAnswers } from '@/hooks/useValidateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
 
-const AnswerApplicationForm = () => {
+const ApplicationFormPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const navigate = useNavigate();
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
@@ -142,4 +142,4 @@ const AnswerApplicationForm = () => {
   );
 };
 
-export default AnswerApplicationForm;
+export default ApplicationFormPage;
