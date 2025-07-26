@@ -36,3 +36,21 @@ export function initializeSentry() {
     tracesSampleRate: 0.1,
   });
 }
+
+export function initializeKakaoSDK() {
+  if (!process.env.KAKAO_JAVASCRIPT_KEY) {
+    console.warn('환경변수가 설정되어 있지 않습니다.');
+    return;
+  }
+
+  if (!window.Kakao) {
+    console.error('카카오 SDK가 로드되지 않았습니다.');
+    return;
+  }
+
+  try {
+    window.Kakao.init(`${process.env.KAKAO_JAVASCRIPT_KEY}`);
+  } catch (error) {
+    console.error('카카오 SDK 초기화에 실패했습니다:', error);
+  }
+}
