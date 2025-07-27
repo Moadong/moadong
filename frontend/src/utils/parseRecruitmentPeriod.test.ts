@@ -1,4 +1,4 @@
-import { parseRecruitmentPeriod } from './recruitmentPeriodParser.ts';
+import { parseRecruitmentPeriod } from './recruitmentPeriodParser';
 
 describe('parseRecruitmentPeriod 함수 테스트', () => {
   it('올바른 형식의 날짜를 파싱한다.', () => {

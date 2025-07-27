@@ -1,7 +1,7 @@
 import * as Styled from './ClubDetailHeader.styles';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
-import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser.ts';
+import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 import getDeadlineText from '@/utils/getDeadLineText';
 interface ClubDetailHeaderProps {
   name: string;
@@ -42,9 +42,7 @@ const ClubDetailHeader = ({
         tags={tags}
         logo={logo}
       />
-      <ClubApplyButton
-        isRecruiting={deadlineText !== '모집 마감'}
-      />
+      <ClubApplyButton isRecruiting={deadlineText !== '모집 마감'} />
     </Styled.ClubDetailHeaderContainer>
   );
 };
