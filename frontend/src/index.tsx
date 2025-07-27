@@ -5,11 +5,13 @@ import {
   initializeMixpanel,
   initializeChannelService,
   initializeSentry,
+  initializeKakaoSDK,
 } from './utils/initSDK';
 
 initializeMixpanel();
 initializeChannelService();
 initializeSentry();
+initializeKakaoSDK();
 
 async function startApp() {
   if (process.env.NODE_ENV === 'development') {
