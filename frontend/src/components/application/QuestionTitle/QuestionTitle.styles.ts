@@ -14,7 +14,7 @@ export const QuestionTitleRow = styled.div`
 
 export const QuestionTitleId = styled.p`
   color: #ff5414;
-  font-size: 1.125rem;
+  font-size: 1.25rem;
   font-weight: 700;
   margin: 0;
   line-height: 1.5;
