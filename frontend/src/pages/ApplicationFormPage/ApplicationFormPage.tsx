@@ -1,9 +1,8 @@
-import { useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-//import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
 import { useAnswers } from '@/hooks/useAnswers';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
@@ -21,72 +20,35 @@ const AnswerApplicationForm = () => {
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
 
+  if (!clubId) return null;
+
+  const STORAGE_KEY = `applicationAnswers_${clubId}`;
+  const saved = localStorage.getItem(STORAGE_KEY);
+  const initialAnswers = saved ? JSON.parse(saved) : [];
+
   const {
     onAnswerChange: rawOnAnswerChange,
     getAnswersById,
     answers,
-  } = useAnswers();
-  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId ?? '');
+  } = useAnswers(initialAnswers);
 
+  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId);
   const {
     data: formData,
     isLoading,
     isError,
     error: applicationError,
-  } = useGetApplication(clubId ?? '');
+  } = useGetApplication(clubId);
 
-  if (!clubId) return null;
-  if (isLoading) return <Spinner />;
+  useEffect(() => {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
+  }, [answers]);
 
-  const onAnswerChange = (id: number, value: string | string[]) => {
-    rawOnAnswerChange(id, value);
-
-    // 입력이 생겼다면 해당 질문의 오류 제거
-    const isEmpty =
-      (Array.isArray(value) && value.every((v) => v.trim() === '')) ||
-      (!Array.isArray(value) && value.trim() === '');
-
-    if (!isEmpty && invalidQuestionIds.includes(id)) {
-      setInvalidQuestionIds((prev) => prev.filter((qid) => qid !== id));
-    }
-  };
-
-  const handleScrollToInvalid = (invalidIds: number[]) => {
-    const firstInvalidIndex = formData?.questions.findIndex((q: Question) =>
-      invalidIds.includes(q.id),
-    );
-    const targetEl =
-      firstInvalidIndex !== undefined
-        ? questionRefs.current[firstInvalidIndex]
-        : null;
-    targetEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  };
-
-  const handleSubmit = async () => {
-    if (!formData) return;
-
-    const invalidIds = validateAnswers(formData.questions, getAnswersById);
-
-    if (invalidIds.length > 0) {
-      setInvalidQuestionIds(invalidIds);
-      handleScrollToInvalid(invalidIds);
-      return;
-    }
-
-    try {
-      await applyToClub(clubId!, answers);
-      alert('답변이 성공적으로 제출되었습니다.');
-    } catch {
-      alert('답변 제출에 실패했습니다. 잠시 후 다시 시도해 주세요.');
-    }
-  };
-
-  if (!clubId) return null;
   if (isLoading) return <Spinner />;
   if (isError || clubError) {
     alert(applicationError?.message || '문제가 발생했어요.');
     navigate(`/club/${clubId}`);
-    return <div>문제가 발생했어요. 잠시 후 다시 시도해 주세요.</div>;
+    return null;
   }
   if (!formData || !clubDetail) {
     return (
@@ -97,17 +59,47 @@ const AnswerApplicationForm = () => {
     );
   }
 
+  const onAnswerChange = (id: number, value: string | string[]) => {
+    rawOnAnswerChange(id, value);
+
+    const isEmpty =
+      (Array.isArray(value) && value.every((v) => v.trim() === '')) ||
+      (!Array.isArray(value) && value.trim() === '');
+
+    if (!isEmpty && invalidQuestionIds.includes(id)) {
+      setInvalidQuestionIds((prev) => prev.filter((qid) => qid !== id));
+    }
+  };
+
+  const handleScrollToInvalid = (invalidIds: number[]) => {
+    const firstInvalidIndex = formData.questions.findIndex((q: Question) =>
+      invalidIds.includes(q.id),
+    );
+    const targetEl = questionRefs.current[firstInvalidIndex];
+    targetEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  };
+
+  const handleSubmit = async () => {
+    const invalidIds = validateAnswers(formData.questions, getAnswersById);
+    if (invalidIds.length > 0) {
+      setInvalidQuestionIds(invalidIds);
+      handleScrollToInvalid(invalidIds);
+      return;
+    }
+
+    try {
+      await applyToClub(clubId, answers);
+      localStorage.removeItem(STORAGE_KEY);
+      alert('답변이 성공적으로 제출되었습니다.');
+    } catch {
+      alert('답변 제출에 실패했습니다. 잠시 후 다시 시도해 주세요.');
+    }
+  };
+
   return (
     <>
       <Header />
       <PageContainer style={{ paddingTop: '80px' }}>
-        {/* <ClubProfile
-                    name={clubDetail.name}
-                    logo={clubDetail.logo}
-                    division={clubDetail.division}
-                    category={clubDetail.category}
-                    tags={clubDetail.tags}
-                /> */}
         <Styled.FormTitle>{formData.title}</Styled.FormTitle>
         {formData.description && (
           <Styled.FormDescription>
