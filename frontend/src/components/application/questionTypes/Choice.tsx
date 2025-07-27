@@ -1,11 +1,12 @@
 import * as Styled from './Choice.styles';
-import QuestionTitle from '@/pages/AdminPage/application/components/QuestionTitle/QuestionTitle';
-import QuestionDescription from '@/pages/AdminPage/application/components/QuestionDescription/QuestionDescription';
+import QuestionTitle from '@/components/application/QuestionTitle/QuestionTitle';
+import QuestionDescription from '@/components/application/QuestionDescription/QuestionDescription';
 import InputField from '@/components/common/InputField/InputField';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { ChoiceProps } from '@/types/application';
+import ChoiceItem from '@/pages/ApplicationFormPage/components/ChoiceItem/ChoiceItem';
 
-const MIN_ITEMS = 2;
+const MIN_ITEMS = 1;
 const MAX_ITEMS = 6;
 
 const Choice = ({
@@ -56,10 +57,13 @@ const Choice = ({
           onAnswerChange?.([...answer, value]);
         }
       }
-      // 다중 선택: 이미 포함되어 있으면 제거, 아니면 추가
     } else {
-      // 단일 선택: 클릭된 값만 넘김
-      onAnswerChange?.(value);
+      // 단일 선택일 때 선택/해제 가능하게 처리
+      if (String(answer) === value) {
+        onAnswerChange?.('');
+      } else {
+        onAnswerChange?.(value);
+      }
     }
   };
 
@@ -79,31 +83,28 @@ const Choice = ({
       />
 
       {items.map((item, index) => {
-        // ▶ selected 대신, answer.includes(item.value)로 판별
-        const isSelected = mode === 'answer' && answer.includes(item.value);
+        const isSelected =
+          mode === 'answer' &&
+          (isMulti
+            ? Array.isArray(answer) && answer.includes(item.value)
+            : String(answer) === item.value);
 
         return (
-          <Styled.ItemWrapper
-            key={index}
-            onClick={() => handleSelect(index)}
-            data-selected={isSelected ? 'true' : undefined}
-          >
-            <InputField
-              value={item.value}
-              onChange={(e) => handleItemChange(index, e.target.value)}
-              placeholder={APPLICATION_FORM.CHOICE.placeholder}
-              readOnly={mode === 'answer'}
-              showClearButton={false}
-              bgColor={isSelected ? '#FFE4DA' : '#F5F5F5'}
-              textColor={
-                mode === 'answer'
-                  ? isSelected
-                    ? 'rgba(0,0,0,0.8)'
-                    : 'rgba(0,0,0,0.3)'
-                  : undefined
-              }
-              borderColor={isSelected ? '#FF5414' : undefined}
-            />
+          <Styled.ItemWrapper key={index}>
+            {mode === 'answer' ? (
+              <ChoiceItem
+                label={item.value}
+                selected={isSelected}
+                onClick={() => handleSelect(index)}
+              />
+            ) : (
+              <InputField
+                value={item.value}
+                onChange={(e) => handleItemChange(index, e.target.value)}
+                placeholder={APPLICATION_FORM.CHOICE.placeholder}
+                showClearButton={false}
+              />
+            )}
 
             {mode === 'builder' && items.length > MIN_ITEMS && (
               <Styled.DeleteButton

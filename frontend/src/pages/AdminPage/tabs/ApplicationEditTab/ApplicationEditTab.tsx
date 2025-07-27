@@ -1,18 +1,20 @@
-import { useState, useEffect } from 'react';
-import QuestionBuilder from '@/pages/AdminPage/application/components/QuestionBuilder/QuestionBuilder';
+import { useState, useEffect, useRef } from 'react';
+import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import { QuestionType } from '@/types/application';
 import { Question } from '@/types/application';
 import { ApplicationFormData } from '@/types/application';
 import { PageContainer } from '@/styles/PageContainer.styles';
-import * as Styled from './CreateApplicationForm.styles';
+import * as Styled from './ApplicationEditTab.styles';
 import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
-import { QuestionDivider } from './CreateApplicationForm.styles';
+import { QuestionDivider } from './ApplicationEditTab.styles';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import createApplication from '@/apis/application/createApplication';
 import updateApplication from '@/apis/application/updateApplication';
+import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
+import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 
-const CreateApplicationForm = () => {
+const ApplicationEditTab = () => {
   const { clubId } = useAdminClubContext();
   if (!clubId) return null;
 
@@ -77,6 +79,13 @@ const CreateApplicationForm = () => {
     }));
   };
 
+  const handleFormDescriptionChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      description: value,
+    }));
+  };
+
   const handleTitleChange = (id: number) => (value: string) =>
     updateQuestionField(id, 'title', value);
 
@@ -96,9 +105,9 @@ const CreateApplicationForm = () => {
           ...q,
           type: newType,
           items: isChoice
-            ? q.items && q.items.length >= 2
+            ? q.items && q.items.length >= 1
               ? q.items
-              : [{ value: '' }, { value: '' }]
+              : [{ value: '' }]
             : [],
         };
       }),
@@ -148,7 +157,16 @@ const CreateApplicationForm = () => {
           onChange={(e) => handleFormTitleChange(e.target.value)}
           placeholder='지원서 제목을 입력하세요'
         ></Styled.FormTitle>
-        <Styled.QuestionContainer>
+        <CustomTextArea
+          label="지원서 설명"
+          value={formData.description}
+          onChange={(e) => handleFormDescriptionChange(e.target.value)}
+          placeholder={APPLICATION_FORM.APPLICATION_DESCRIPTION.placeholder}
+          maxLength={APPLICATION_FORM.APPLICATION_DESCRIPTION.maxLength}
+          showMaxChar
+          width="100%"
+        />
+        <Styled.QuestionContainer  >
           {formData.questions.map((question, index) => (
             <QuestionBuilder
               key={question.id}
@@ -158,6 +176,7 @@ const CreateApplicationForm = () => {
               options={question.options}
               items={question.items}
               type={question.type}
+              readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
               onTitleChange={handleTitleChange(question.id)}
               onDescriptionChange={handleDescriptionChange(question.id)}
               onItemsChange={handleItemsChange(question.id)}
@@ -181,4 +200,4 @@ const CreateApplicationForm = () => {
   );
 };
 
-export default CreateApplicationForm;
+export default ApplicationEditTab;

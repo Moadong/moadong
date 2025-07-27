@@ -14,6 +14,7 @@ export interface Question {
 }
 
 export interface QuestionBuilderProps extends Question {
+  readOnly: boolean;
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onItemsChange?: (newItems: { value: string }[]) => void;
@@ -47,10 +48,11 @@ export interface ChoiceProps extends QuestionComponentProps {
 
 export interface ApplicationFormData {
   title: string;
+  description: string;
   questions: Question[];
 }
 
 export interface AnswerItem {
   id: number;
-  answer: string;
+  value: string;
 }

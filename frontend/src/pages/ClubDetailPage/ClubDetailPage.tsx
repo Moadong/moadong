@@ -13,6 +13,7 @@ import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import ShareButton from '@/pages/ClubDetailPage/components/ShareButton/ShareButton';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
@@ -55,6 +56,7 @@ const ClubDetailPage = () => {
           recruitmentForm={clubDetail.recruitmentForm}
           presidentPhoneNumber={clubDetail.presidentPhoneNumber}
         />
+        <ShareButton clubId={clubId as string} />
         <InfoTabs onTabClick={scrollToSection} />
         <InfoBox sectionRefs={sectionRefs} clubDetail={clubDetail} />
         <IntroduceBox

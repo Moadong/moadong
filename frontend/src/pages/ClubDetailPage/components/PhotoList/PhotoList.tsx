@@ -65,12 +65,12 @@ const PhotoList = ({ feeds, sectionRefs, clubName }: PhotoListProps) => {
             onImageError={handleImageError}
           />
         </Styled.PhotoList>
-        {canScrollLeft && (
+        {!isMobile && canScrollLeft && (
           <Styled.NavigationButton direction='left' onClick={handlePrev}>
             <img src={SlideButton[0]} alt='이전 사진' draggable={false} />
           </Styled.NavigationButton>
         )}
-        {canScrollRight && (
+        {!isMobile && canScrollRight && (
           <Styled.NavigationButton direction='right' onClick={handleNext}>
             <img src={SlideButton[1]} alt='다음 사진' draggable={false} />
           </Styled.NavigationButton>
