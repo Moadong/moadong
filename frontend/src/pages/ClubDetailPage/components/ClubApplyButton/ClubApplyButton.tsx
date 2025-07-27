@@ -49,7 +49,7 @@ const ClubApplyButton = ({ isRecruiting }: ButtonProps) => {
       alert('지원모집이 마감되었습니다. 다음에 지원해 주세요.');
       return;
     }
-    navigate(`/application/${clubId}`, { replace: true });
+    navigate(`/application/${clubId}`);
   };
 
   return <Button onClick={handleClick}>지원하기</Button>;
