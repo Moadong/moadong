@@ -9,6 +9,7 @@ public record ClubRecruitmentInfoUpdateRequest(
     LocalDateTime recruitmentEnd,
     String recruitmentTarget,
     String description,
+    String externalApplicationUrl,
     List<Faq> faqs
 ) {
 
