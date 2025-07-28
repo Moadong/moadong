@@ -18,11 +18,15 @@ export const FormDescription = styled.div`
   color: #444;
   margin-top: -20px;
   margin-bottom: 48px;
-  padding: 0 15px;
+  padding: 12px 18px;
+  background-color: #f5f5f5;
+  border-radius: 6px;
 
   ${media.mobile} {
     font-size: 0.95rem;
     line-height: 1.5;
+
+    padding: 4px 6px;
   }
 `;
 
