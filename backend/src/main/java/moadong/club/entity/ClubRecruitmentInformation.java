@@ -54,6 +54,8 @@ public class ClubRecruitmentInformation {
 
     private String recruitmentTarget;
 
+    String externalApplicationUrl;
+
     private List<String> feedImages;
 
     private List<String> tags;
@@ -77,6 +79,7 @@ public class ClubRecruitmentInformation {
         this.recruitmentStart = request.recruitmentStart();
         this.recruitmentEnd = request.recruitmentEnd();
         this.recruitmentTarget = request.recruitmentTarget();
+        this.externalApplicationUrl = request.externalApplicationUrl();
         this.faqs = request.faqs();
     }
 
