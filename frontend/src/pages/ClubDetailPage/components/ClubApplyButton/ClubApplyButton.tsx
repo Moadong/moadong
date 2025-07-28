@@ -1,11 +1,10 @@
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import styled from 'styled-components';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-
-interface ButtonProps {
-  isRecruiting: boolean;
-}
+import getApplication from '@/apis/application/getApplication';
+import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
+import getDeadlineText from '@/utils/getDeadLineText';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 
 const Button = styled.button`
   display: flex;
@@ -36,20 +35,45 @@ const Button = styled.button`
   }
 `;
 
-const ClubApplyButton = ({ isRecruiting }: ButtonProps) => {
+const ClubApplyButton = () => {
   const { clubId } = useParams<{ clubId: string }>();
-  const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
+  const trackEvent = useMixpanelTrack();
 
-  const handleClick = () => {
+  const { data: clubDetail } = useGetClubDetail(clubId!);
+
+  const handleClick = async () => {
+    if (!clubId || !clubDetail) return;
+
     trackEvent('Club Apply Button Clicked');
 
-    //TODO: 지원서를 작성한 동아리의 경우에만 리다이렉트
-    if (!isRecruiting) {
-      alert('지원모집이 마감되었습니다. 다음에 지원해 주세요.');
+    const { recruitmentStart, recruitmentEnd } = parseRecruitmentPeriod(
+      clubDetail.recruitmentPeriod,
+    );
+    const deadlineText = getDeadlineText(
+      recruitmentStart,
+      recruitmentEnd,
+      new Date(),
+    );
+
+    if (deadlineText === '모집 마감') {
+      alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
       return;
     }
-    navigate(`/application/${clubId}`);
+
+    // 모아동 지원서 확인
+    try {
+      await getApplication(clubId);
+      navigate(`/application/${clubId}`);
+    } catch (err: unknown) {
+      const externalFormLink = clubDetail.externalApplicationUrl?.trim();
+
+      if (externalFormLink) {
+        window.open(externalFormLink, '_blank', 'noopener,noreferrer');
+      } else {
+        alert('동아리 모집 정보를 확인해주세요.');
+      }
+    }
   };
 
   return <Button onClick={handleClick}>지원하기</Button>;
