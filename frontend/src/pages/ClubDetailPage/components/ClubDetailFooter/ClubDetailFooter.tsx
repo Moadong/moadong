@@ -11,9 +11,7 @@ interface ClubDetailFooterProps {
 }
 
 const ClubDetailFooter = ({
-  recruitmentPeriod,
-  recruitmentForm,
-  presidentPhoneNumber,
+  recruitmentPeriod
 }: ClubDetailFooterProps) => {
   const { recruitmentStart, recruitmentEnd } =
     parseRecruitmentPeriod(recruitmentPeriod);
@@ -24,10 +22,10 @@ const ClubDetailFooter = ({
     new Date(),
   );
 
-  return (
+  return ( 
     <Styled.ClubDetailFooterContainer>
       <DeadlineBadge deadlineText={deadlineText} />
-      <ClubApplyButton isRecruiting={deadlineText !== '모집 마감'} />
+      <ClubApplyButton />
     </Styled.ClubDetailFooterContainer>
   );
 };

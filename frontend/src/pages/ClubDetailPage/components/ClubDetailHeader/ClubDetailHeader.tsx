@@ -1,8 +1,7 @@
 import * as Styled from './ClubDetailHeader.styles';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
-import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
-import getDeadlineText from '@/utils/getDeadLineText';
+
 interface ClubDetailHeaderProps {
   name: string;
   category: string;
@@ -20,19 +19,7 @@ const ClubDetailHeader = ({
   division,
   tags,
   logo,
-  recruitmentPeriod,
-  recruitmentForm,
-  presidentPhoneNumber,
 }: ClubDetailHeaderProps) => {
-  const { recruitmentStart, recruitmentEnd } =
-    parseRecruitmentPeriod(recruitmentPeriod);
-
-  const deadlineText = getDeadlineText(
-    recruitmentStart,
-    recruitmentEnd,
-    new Date(),
-  );
-
   return (
     <Styled.ClubDetailHeaderContainer>
       <ClubProfile
@@ -42,7 +29,7 @@ const ClubDetailHeader = ({
         tags={tags}
         logo={logo}
       />
-      <ClubApplyButton isRecruiting={deadlineText !== '모집 마감'} />
+      <ClubApplyButton />
     </Styled.ClubDetailHeaderContainer>
   );
 };
