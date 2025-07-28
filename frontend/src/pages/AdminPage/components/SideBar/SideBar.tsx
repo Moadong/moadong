@@ -14,7 +14,8 @@ const tabs = [
   { label: '기본 정보 수정', path: '/admin/club-info' },
   { label: '모집 정보 수정', path: '/admin/recruit-edit' },
   { label: '활동 사진 수정', path: '/admin/photo-edit' },
-  { label: '지원 관리', path: '/admin/application-edit' },
+  { label: '지원서 관리', path: '/admin/application-edit' },
+  { label: '지원 관리', path: '/admin/applicants' },
   { label: '계정 관리', path: '/admin/account-edit' },
 ];
 
