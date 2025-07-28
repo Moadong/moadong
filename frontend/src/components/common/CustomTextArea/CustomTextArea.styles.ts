@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 export const TextAreaContainer = styled.div<{ width: string }>`
   width: ${(props) => props.width};
-  min-width: 300px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
 `;

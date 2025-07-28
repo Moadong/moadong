@@ -2,12 +2,11 @@ import styled from 'styled-components';
 
 export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
   width: ${(props) => props.width};
-  min-width: 300px;
+  max-width: 100%;
   display: flex;
   flex-direction: column;
 
   @media (max-width: 768px) {
-    min-width: 0;
     width: 100%;
   }
 `;
@@ -27,7 +26,7 @@ export const InputWrapper = styled.div`
 export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean }>`
   flex: 1;
   height: 45px;
-  padding: 12px 80px 12px 18px;
+  padding: 12px 18px;
   border: 1px solid ${({ hasError }) => (hasError ? 'red' : '#c5c5c5')};
   background-color: transparent;
   border-radius: 6px;
