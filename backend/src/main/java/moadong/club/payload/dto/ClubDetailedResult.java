@@ -25,6 +25,7 @@ public record ClubDetailedResult(
     String recruitmentPeriod,
     String recruitmentTarget,
     String recruitmentStatus,
+    String externalApplicationUrl,
     Map<String, String> socialLinks,
     String category,
     String division,
@@ -67,6 +68,8 @@ public record ClubDetailedResult(
                 : clubRecruitmentInformation.getRecruitmentTarget())
             .recruitmentStatus(clubRecruitmentInformation.getClubRecruitmentStatus() == null
                 ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().getDescription())
+                .externalApplicationUrl(club.getClubRecruitmentInformation().getExternalApplicationUrl()== null ? "" :
+                        club.getClubRecruitmentInformation().getExternalApplicationUrl())
             .socialLinks(club.getSocialLinks() == null ? Map.of()
                 : club.getSocialLinks())
             .faqs(club.getClubRecruitmentInformation().getFaqs() == null ? List.of()
