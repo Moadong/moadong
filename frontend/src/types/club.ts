@@ -23,6 +23,7 @@ export interface ClubDetail extends Club {
   recruitmentPeriod: string;
   recruitmentTarget: string;
   socialLinks: Record<SNSPlatform, string>;
+  externalApplicationUrl?: string;
 }
 
 export interface ClubDescription {
