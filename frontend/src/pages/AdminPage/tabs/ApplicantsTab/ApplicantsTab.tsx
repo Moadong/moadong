@@ -1,106 +1,121 @@
-import { useAdminClubContext } from "@/context/AdminClubContext";
-import { useGetApplicants } from "@/hooks/queries/applicants/useGetApplicants";
-import { Applicant, ApplicantsInfo } from "@/types/applicants";
-import React, { useEffect, useState } from "react";
-import * as styled from "./ApplicantsTab.styles";
-import { useNavigate } from "react-router-dom";
+import { useAdminClubContext } from '@/context/AdminClubContext';
+import { useGetApplicants } from '@/hooks/queries/applicants/useGetApplicants';
+import { Applicant, ApplicantsInfo } from '@/types/applicants';
+import React, { useEffect, useState } from 'react';
+import * as Styled from './ApplicantsTab.styles';
+import { useNavigate } from 'react-router-dom';
 
 const ApplicantsTab = () => {
+  const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
   if (!clubId) return null;
-  const navigate = useNavigate();
 
   return (
     <>
-      <styled.TopBar>
-        <styled.PageTitle>지원 현황</styled.PageTitle>
-        {/* <styled.SemesterSelect> */}
-          {/* <option>25년 2학기</option> */}
-          {/* ...다른 학기 */}
-        {/* </styled.SemesterSelect> */}
-      </styled.TopBar>
+      <Styled.ApplicationHeader>
+        <Styled.ApplicationTitle>지원 현황</Styled.ApplicationTitle>
+        {/* <styled.SemesterSelect>
+          <option>25년 2학기</option>
+          ...다른 학기 */
+        /*{' '}
+        </styled.SemesterSelect> */}
+      </Styled.ApplicationHeader>
 
-      <styled.SummaryWrapper>
-        <styled.SummaryCard bg={"#F5F5F5"}>
-          <styled.SummaryLabel>전체 지원자 수</styled.SummaryLabel>
-          <styled.SummaryValue>
+      <Styled.SummaryWrapper>
+        <Styled.SummaryCard bgColor={'#F5F5F5'}>
+          <Styled.SummaryLabel>전체 지원자 수</Styled.SummaryLabel>
+          <Styled.SummaryValue>
             {applicantsData?.total}
-            <span>명</span>
-          </styled.SummaryValue>
-        </styled.SummaryCard>
-        <styled.SummaryCard bg={"#E6F4FB"}>
-          <styled.SummaryLabel>서류 검토 필요</styled.SummaryLabel>
-          <styled.SummaryValue>
+            <Styled.SummaryPeople>명</Styled.SummaryPeople>
+          </Styled.SummaryValue>
+        </Styled.SummaryCard>
+        <Styled.SummaryCard bgColor={'#E6F4FB'}>
+          <Styled.SummaryLabel>서류 검토 필요</Styled.SummaryLabel>
+          <Styled.SummaryValue>
             {applicantsData?.reviewRequired}
-            <span>명</span>
-          </styled.SummaryValue>
-        </styled.SummaryCard>
-        <styled.SummaryCard bg={"#E6FBF0"}>
-          <styled.SummaryLabel>면접 예정</styled.SummaryLabel>
-          <styled.SummaryValue>
+            <Styled.SummaryPeople>명</Styled.SummaryPeople>
+          </Styled.SummaryValue>
+        </Styled.SummaryCard>
+        <Styled.SummaryCard bgColor={'#E6FBF0'}>
+          <Styled.SummaryLabel>면접 예정</Styled.SummaryLabel>
+          <Styled.SummaryValue>
             {applicantsData?.scheduledInterview}
-            <span>명</span>
-          </styled.SummaryValue>
-        </styled.SummaryCard>
-        <styled.SummaryCard bg={"#F5F5F5"}>
-          <styled.SummaryLabel>합격</styled.SummaryLabel>
-          <styled.SummaryValue>
+            <Styled.SummaryPeople>명</Styled.SummaryPeople>
+          </Styled.SummaryValue>
+        </Styled.SummaryCard>
+        <Styled.SummaryCard bgColor={'#F5F5F5'}>
+          <Styled.SummaryLabel>합격</Styled.SummaryLabel>
+          <Styled.SummaryValue>
             {applicantsData?.accepted}
-            <span>명</span>
-          </styled.SummaryValue>
-        </styled.SummaryCard>
-      </styled.SummaryWrapper>
+            <Styled.SummaryPeople>명</Styled.SummaryPeople>
+          </Styled.SummaryValue>
+        </Styled.SummaryCard>
+      </Styled.SummaryWrapper>
 
-      <styled.ApplicantsSection>
-        <styled.Title>지원자 목록</styled.Title>
-        <styled.FilterRow>
-          <styled.FilterSelect>
+      <Styled.ApplicantListWrapper>
+        <Styled.ApplicantListTitle>지원자 목록</Styled.ApplicantListTitle>
+        <Styled.ApplicantListHeader>
+          <Styled.ApplicantFilterSelect>
             <option>전체</option>
-          </styled.FilterSelect>
-          <styled.FilterSelect>
+          </Styled.ApplicantFilterSelect>
+          <Styled.ApplicantFilterSelect>
             <option>제출순</option>
-          </styled.FilterSelect>
-          <styled.SearchInput placeholder="지원자 이름을 입력해주세요" />
-        </styled.FilterRow>
-        <styled.Table>
-          <styled.Thead>
-            <styled.Tr>
-              <styled.Th style={{ width: 40 }}></styled.Th>
-              <styled.Th style={{ width: 120 }}>현재상태</styled.Th>
-              <styled.Th style={{ width: 160 }}>이름</styled.Th>
-              <styled.Th>메모</styled.Th>
-              <styled.Th style={{ width: 140 }}>제출날짜</styled.Th>
-            </styled.Tr>
-          </styled.Thead>
+          </Styled.ApplicantFilterSelect>
+          <Styled.ApplicantSearchBox placeholder='지원자 이름을 입력해주세요' />
+        </Styled.ApplicantListHeader>
+        <Styled.ApplicantTable>
+          <Styled.ApplicantTableHeaderWrapper>
+            <Styled.ApplicantTableRow>
+              <Styled.ApplicantTableHeader
+                style={{ width: 40 }}
+              ></Styled.ApplicantTableHeader>
+              <Styled.ApplicantTableHeader style={{ width: 120 }}>
+                현재상태
+              </Styled.ApplicantTableHeader>
+              <Styled.ApplicantTableHeader style={{ width: 160 }}>
+                이름
+              </Styled.ApplicantTableHeader>
+              <Styled.ApplicantTableHeader>메모</Styled.ApplicantTableHeader>
+              <Styled.ApplicantTableHeader style={{ width: 140 }}>
+                제출날짜
+              </Styled.ApplicantTableHeader>
+            </Styled.ApplicantTableRow>
+          </Styled.ApplicantTableHeaderWrapper>
           <tbody>
-            {
-              applicantsData?.applicants.map((item: Applicant, index: number) => (
-                <styled.Tr
+            {applicantsData?.applicants.map(
+              (item: Applicant, index: number) => (
+                <Styled.ApplicantTableRow
                   key={index}
-                  style={{ cursor: "pointer" }}
-                  onClick={() => navigate(`/admin/applicants/${item.questionId}`)}
+                  style={{ cursor: 'pointer' }}
+                  onClick={() =>
+                    navigate(`/admin/applicants/${item.questionId}`)
+                  }
                 >
-                  <styled.Td>
+                  <Styled.ApplicantTableCol>
                     <input
-                      type="checkbox"
+                      type='checkbox'
                       style={{ width: 24, height: 24, borderRadius: 6 }}
-                      onClick={(e: React.MouseEvent<HTMLInputElement>) => e.stopPropagation()}
+                      onClick={(e: React.MouseEvent<HTMLInputElement>) =>
+                        e.stopPropagation()
+                      }
                     />
-                  </styled.Td>
-                  <styled.Td>
+                  </Styled.ApplicantTableCol>
+                  <Styled.ApplicantTableCol>
                     {/* <styled.StatusBadge status={APPLICATION_STATUS_KR[item.status]}>{APPLICATION_STATUS_KR[item.status]}</styled.StatusBadge> */}
-                  </styled.Td>
-                  <styled.Td>{item.answers[0].value}</styled.Td>
-                  <styled.Td>
+                  </Styled.ApplicantTableCol>
+                  <Styled.ApplicantTableCol>
+                    {item.answers[0].value}
+                  </Styled.ApplicantTableCol>
+                  <Styled.ApplicantTableCol>
                     <p>메모</p>
-                  </styled.Td>
-                  <styled.Td>날짜</styled.Td>
-                </styled.Tr>
-              ))
-            }
+                  </Styled.ApplicantTableCol>
+                  <Styled.ApplicantTableCol>날짜</Styled.ApplicantTableCol>
+                </Styled.ApplicantTableRow>
+              ),
+            )}
           </tbody>
-        </styled.Table>
-      </styled.ApplicantsSection>
+        </Styled.ApplicantTable>
+      </Styled.ApplicantListWrapper>
     </>
   );
 };
