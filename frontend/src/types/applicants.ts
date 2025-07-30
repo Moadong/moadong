@@ -16,22 +16,6 @@ export enum ApplicationStatus {
   CANCELED_BY_APPLICANT = 'CANCELED_BY_APPLICANT', // 지원자 자진 철회
 }
 
-export const APPLICATION_STATUS_KR: Record<ApplicationStatus, string> = {
-  [ApplicationStatus.DRAFT]: '작성 중',
-  [ApplicationStatus.SUBMITTED]: '제출 완료',
-  [ApplicationStatus.SCREENING]: '서류 심사 중',
-  [ApplicationStatus.SCREENING_PASSED]: '서류 통과',
-  [ApplicationStatus.SCREENING_FAILED]: '서류 탈락',
-  [ApplicationStatus.INTERVIEW_SCHEDULED]: '면접 일정 확정',
-  [ApplicationStatus.INTERVIEW_IN_PROGRESS]: '면접 진행 중',
-  [ApplicationStatus.INTERVIEW_PASSED]: '면접 통과',
-  [ApplicationStatus.INTERVIEW_FAILED]: '면접 탈락',
-  [ApplicationStatus.OFFERED]: '최종 합격 제안',
-  [ApplicationStatus.ACCEPTED]: '제안 수락',
-  [ApplicationStatus.DECLINED]: '제안 거절',
-  [ApplicationStatus.CANCELED_BY_APPLICANT]: '지원자 자진 철회',
-};
-
 export interface ApplicantsInfo {
   total: number;
   reviewRequired: number;
