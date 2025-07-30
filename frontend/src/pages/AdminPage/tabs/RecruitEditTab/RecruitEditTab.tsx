@@ -43,6 +43,7 @@ const RecruitEditTab = () => {
       recruitmentEnd: recruitmentEnd?.toISOString(),
       recruitmentTarget: recruitmentTarget,
       description: description,
+      externalApplicationUrl: clubDetail.externalApplicationUrl ?? ''
     };
     updateClubDescription(updatedData, {
       onSuccess: () => {
