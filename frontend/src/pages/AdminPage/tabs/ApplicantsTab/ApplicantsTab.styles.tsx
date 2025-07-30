@@ -7,7 +7,7 @@ export const TopBar = styled.div`
   margin-bottom: 32px;
 `;
 
-export const PageTitle = styled.h1`
+export const PageTitle = styled.h2`
   font-size: 28px;
   font-weight: 700;
   margin: 0;
@@ -22,7 +22,7 @@ export const SemesterSelect = styled.select`
 `;
 
 // 통계 카드 스타일
-export const SummaryContainer = styled.div`
+export const SummaryWrapper = styled.div`
   display: flex;
   gap: 12px;
   margin-bottom: 40px;
