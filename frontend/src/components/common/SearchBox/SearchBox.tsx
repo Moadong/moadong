@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import { useSearch } from '@/context/SearchContext';
+import { useCategory } from '@/context/CategoryContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './SearchBox.styles';
 import SearchIcon from '@/assets/images/icons/search_button_icon.svg';
@@ -7,7 +8,8 @@ import { useLocation, useNavigate } from 'react-router-dom';
 
 const SearchBox = () => {
   const [isSearchBoxClicked, setIsSearchBoxClicked] = useState(false);
-  const { setKeyword, inputValue, setInputValue } = useSearch();
+  const { setKeyword, inputValue, setInputValue, setIsSearching } = useSearch();
+  const { setSelectedCategory } = useCategory();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
   const location = useLocation();
@@ -23,6 +25,8 @@ const SearchBox = () => {
   const handleSearch = () => {
     redirectToHome();
     setKeyword(inputValue);
+    setSelectedCategory('all');
+    setIsSearching(true);
 
     inputRef.current?.blur();
 
@@ -40,7 +44,8 @@ const SearchBox = () => {
   return (
     <Styled.SearchBoxContainer
       $isFocused={isSearchBoxClicked}
-      onSubmit={handleSubmit}>
+      onSubmit={handleSubmit}
+    >
       <Styled.SearchInputStyles
         ref={inputRef}
         type='text'
@@ -54,7 +59,8 @@ const SearchBox = () => {
       <Styled.SearchButton
         type='submit'
         $isFocused={isSearchBoxClicked}
-        aria-label='검색'>
+        aria-label='검색'
+      >
         <img src={SearchIcon} alt='Search Button' />
       </Styled.SearchButton>
     </Styled.SearchBoxContainer>

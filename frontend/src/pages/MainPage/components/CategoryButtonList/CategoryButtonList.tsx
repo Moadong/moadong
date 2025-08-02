@@ -58,7 +58,7 @@ const clubCategories: Category[] = [
 ];
 
 const CategoryButtonList = () => {
-  const { setKeyword, setInputValue } = useSearch();
+  const { setKeyword, setInputValue, setIsSearching } = useSearch();
   const { setSelectedCategory } = useCategory();
 
   const handleCategoryClick = (category: Category) => {
@@ -71,9 +71,9 @@ const CategoryButtonList = () => {
 
     setKeyword('');
     setInputValue('');
+    setIsSearching(false);
 
     setSelectedCategory(category.id);
-
   };
 
   return (
