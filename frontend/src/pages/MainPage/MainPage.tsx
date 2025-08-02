@@ -21,15 +21,16 @@ const MainPage = () => {
   const [isFilterActive, setIsFilterActive] = useState(false);
   const { selectedCategory, setSelectedCategory } = useCategory();
 
-  const { keyword } = useSearch();
+  const { keyword, isSearching } = useSearch();
   const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
   const division = 'all';
+  const searchCategory = isSearching ? 'all' : selectedCategory;
 
   const {
     data: clubs,
     error,
     isLoading,
-  } = useGetCardList(keyword, recruitmentStatus, division, selectedCategory);
+  } = useGetCardList(keyword, recruitmentStatus, division, searchCategory);
   const isEmpty = !isLoading && (!clubs || clubs.length === 0);
   const hasData = clubs && clubs.length > 0;
 
