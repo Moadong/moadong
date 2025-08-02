@@ -2,12 +2,15 @@ import React from 'react';
 import * as Styled from './SnsLinkIcons.styles';
 import { SNS_CONFIG } from '@/constants/snsConfig';
 import { SNSPlatform } from '@/types/club';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 
 interface SnsLinkIconsProps {
   apiSocialLinks: Partial<Record<SNSPlatform, string>>;
 }
 
 const SnsLinkIcons = ({ apiSocialLinks }: SnsLinkIconsProps) => {
+  const trackEvent = useMixpanelTrack();
+
   if (!apiSocialLinks) return null;
   return (
     <Styled.SnsIconGroup>
@@ -22,7 +25,11 @@ const SnsLinkIcons = ({ apiSocialLinks }: SnsLinkIconsProps) => {
             target='_blank'
             rel='noreferrer'
           >
-            <Styled.SnsIcon src={config.icon} alt={config.label} />
+            <Styled.SnsIcon
+              src={config.icon}
+              alt={config.label}
+              onClick={() => trackEvent('sns링크 버튼 클릭', { platform })}
+            />
           </Styled.SnsLink>
         );
       })}
