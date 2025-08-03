@@ -43,7 +43,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
         },
       ],
     });
-    trackEvent(`${clubDetail.name} 공유하기 버튼 클릭`);
+    trackEvent('공유하기 버튼 클릭', { clubName: clubDetail.name });
   };
 
   return (
