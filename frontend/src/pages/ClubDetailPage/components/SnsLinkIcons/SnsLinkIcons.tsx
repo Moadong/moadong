@@ -6,9 +6,10 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 
 interface SnsLinkIconsProps {
   apiSocialLinks: Partial<Record<SNSPlatform, string>>;
+  clubName?: string;
 }
 
-const SnsLinkIcons = ({ apiSocialLinks }: SnsLinkIconsProps) => {
+const SnsLinkIcons = ({ apiSocialLinks, clubName }: SnsLinkIconsProps) => {
   const trackEvent = useMixpanelTrack();
 
   if (!apiSocialLinks) return null;
