@@ -24,12 +24,14 @@ const SnsLinkIcons = ({ apiSocialLinks }: SnsLinkIconsProps) => {
             href={url}
             target='_blank'
             rel='noreferrer'
+            onClick={() =>
+              trackEvent('sns링크 버튼 클릭', {
+                platform,
+                clubName,
+              })
+            }
           >
-            <Styled.SnsIcon
-              src={config.icon}
-              alt={config.label}
-              onClick={() => trackEvent('sns링크 버튼 클릭', { platform })}
-            />
+            <Styled.SnsIcon src={config.icon} alt={config.label} />
           </Styled.SnsLink>
         );
       })}
