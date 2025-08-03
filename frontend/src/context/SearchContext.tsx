@@ -5,6 +5,8 @@ interface SearchContextType {
   setKeyword: (keyword: string) => void;
   inputValue: string;
   setInputValue: (value: string) => void;
+  isSearching: boolean;
+  setIsSearching: (isSearching: boolean) => void;
 }
 
 interface SearchProviderProps {
@@ -16,6 +18,7 @@ const SearchContext = createContext<SearchContextType | undefined>(undefined);
 export const SearchProvider = ({ children }: SearchProviderProps) => {
   const [keyword, setKeyword] = useState<string>('');
   const [inputValue, setInputValue] = useState('');
+  const [isSearching, setIsSearching] = useState(false);
 
   return (
     <SearchContext.Provider
@@ -24,7 +27,10 @@ export const SearchProvider = ({ children }: SearchProviderProps) => {
         setKeyword,
         inputValue,
         setInputValue,
-      }}>
+        isSearching,
+        setIsSearching,
+      }}
+    >
       {children}
     </SearchContext.Provider>
   );
