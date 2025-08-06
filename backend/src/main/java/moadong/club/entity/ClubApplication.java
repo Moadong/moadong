@@ -31,6 +31,9 @@ public class ClubApplication {
     ApplicationStatus status = ApplicationStatus.SUBMITTED;
 
     @Builder.Default
+    private String memo = "";
+
+    @Builder.Default
     private List<ClubQuestionAnswer> answers = new ArrayList<>();
 
     @Builder.Default
