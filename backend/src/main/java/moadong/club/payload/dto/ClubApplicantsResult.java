@@ -9,15 +9,17 @@ import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.AESCipher;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
 @Builder
 @Slf4j
 public record ClubApplicantsResult(
-        String questionId,
+        String id,
         ApplicationStatus status,
-        List<ClubQuestionAnswer> answers
+        List<ClubQuestionAnswer> answers,
+        LocalDateTime createdAt
 ) {
     public static ClubApplicantsResult of(ClubApplication application, AESCipher cipher) {
         List<ClubQuestionAnswer> decryptedAnswers = new ArrayList<>();
@@ -35,9 +37,10 @@ public record ClubApplicantsResult(
         }
 
         return ClubApplicantsResult.builder()
-                .questionId(application.getQuestionId())
+                .id(application.getId())
                 .status(application.getStatus())
                 .answers(decryptedAnswers)
+                .createdAt(application.getCreatedAt())
                 .build();
     }
 }
