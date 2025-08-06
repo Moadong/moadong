@@ -25,7 +25,9 @@ export interface ApplicantsInfo {
 }
 
 export interface Applicant {
-  questionId: number;
+  id: string;
   status: ApplicationStatus;
   answers: AnswerItem[]
+  memo: string;
+  createdAt: string;
 }

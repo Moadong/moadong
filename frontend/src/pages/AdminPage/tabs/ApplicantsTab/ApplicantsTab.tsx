@@ -1,9 +1,27 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { useGetApplicants } from '@/hooks/queries/applicants/useGetApplicants';
-import { Applicant, ApplicantsInfo } from '@/types/applicants';
-import React, { useEffect, useState } from 'react';
+import { Applicant } from '@/types/applicants';
+import React from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
+
+function applicationStatusMapping(status: Applicant['status']): string {
+  switch (status) {
+    case 'DRAFT':
+    case 'SUBMITTED':
+    case 'SCREENING':
+      return '서류검토';
+    case 'SCREENING_PASSED':
+    case 'INTERVIEW_SCHEDULED':
+    case 'INTERVIEW_IN_PROGRESS':
+      return '면접예정';
+    case 'INTERVIEW_PASSED':
+    case 'OFFERED':
+    case 'ACCEPTED':
+      return '합격';
+    default:
+      return '';
+  }
+}
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
@@ -88,7 +106,7 @@ const ApplicantsTab = () => {
                   key={index}
                   style={{ cursor: 'pointer' }}
                   onClick={() =>
-                    navigate(`/admin/applicants/${item.questionId}`)
+                    navigate(`/admin/applicants/${item.id}`)
                   }
                 >
                   <Styled.ApplicantTableCol>
@@ -101,15 +119,27 @@ const ApplicantsTab = () => {
                     />
                   </Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCol>
-                    {/* <styled.StatusBadge status={APPLICATION_STATUS_KR[item.status]}>{APPLICATION_STATUS_KR[item.status]}</styled.StatusBadge> */}
+                    <Styled.ApplicantStatusBadge status={applicationStatusMapping(item.status)}>{applicationStatusMapping(item.status)}</Styled.ApplicantStatusBadge>
                   </Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCol>
                     {item.answers[0].value}
                   </Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCol>
-                    <p>메모</p>
+                    {item.memo}
                   </Styled.ApplicantTableCol>
-                  <Styled.ApplicantTableCol>날짜</Styled.ApplicantTableCol>
+                  <Styled.ApplicantTableCol>
+                    {
+                      // createdAt을 yyyy-mm-dd 형식으로 변환
+                      // 임시로.. 나중에 변경해야함
+                      (() => {
+                        const date = new Date(item.createdAt);
+                        const year = date.getFullYear();
+                        const month = String(date.getMonth() + 1).padStart(2, '0');
+                        const day = String(date.getDate()).padStart(2, '0');
+                        return `${year}-${month}-${day}`;
+                      })()
+                    }
+                  </Styled.ApplicantTableCol>
                 </Styled.ApplicantTableRow>
               ),
             )}

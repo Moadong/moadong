@@ -102,7 +102,7 @@ export const ApplicantTableHeader = styled.th`
   font-size: 16px;
   font-weight: 500;
   color: #888;
-  text-align: left;
+  text-align: center;
 `;
 
 export const ApplicantTableRow = styled.tr`
@@ -110,6 +110,7 @@ export const ApplicantTableRow = styled.tr`
   &:hover {
     background: #f7faff;
   }
+  text-align: center;
 `;
 
 export const ApplicantTableCol = styled.td`

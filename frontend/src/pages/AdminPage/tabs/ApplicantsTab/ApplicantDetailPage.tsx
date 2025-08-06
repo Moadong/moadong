@@ -27,7 +27,7 @@ const ApplicantDetailPage = () => {
 
   // questionId로 지원자 찾기
   const applicant = applicantsData.applicants.find(
-    (a) => String(a.questionId) === String(questionId)
+    (a) => a.id === questionId
   );
   if (!applicant) {
     return <div>해당 지원자를 찾을 수 없습니다.</div>;
@@ -45,7 +45,18 @@ const ApplicantDetailPage = () => {
       <Header />
       <PageContainer style={{ paddingTop: '80px' }}>
         {/* FormTitle과 백아이콘을 한 줄에 배치 */}
-        <div style={{ display: 'flex', alignItems: 'center', gap: 12, marginBottom: 16 }}>
+        <div
+          style={{
+            position: 'sticky',
+            top: 25,
+            zIndex: 10,
+            background: '#fff',
+            display: 'flex',
+            alignItems: 'center',
+            gap: 12,
+            marginBottom: 16,
+          }}
+        >
           <button
             onClick={() => navigate(-1)}
             style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
