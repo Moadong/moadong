@@ -7,7 +7,6 @@ export const SidebarWrapper = styled.aside`
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
-
   width: 168px;
 `;
 
