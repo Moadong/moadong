@@ -31,8 +31,15 @@ public class ClubApplication {
     ApplicationStatus status = ApplicationStatus.SUBMITTED;
 
     @Builder.Default
+    private String memo = "";
+
+    @Builder.Default
     private List<ClubQuestionAnswer> answers = new ArrayList<>();
 
     @Builder.Default
     LocalDateTime createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+
+    public void updateDetail(String memo) {
+        this.memo = memo;
+    }
 }
