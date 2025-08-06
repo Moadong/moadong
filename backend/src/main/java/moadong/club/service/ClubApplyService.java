@@ -137,7 +137,7 @@ public class ClubApplyService {
         ClubApplication application = clubApplicationRepository.findByIdAndQuestionId(appId, clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
 
-        application.updateDetail(request.memo());
+        application.updateDetail(request.memo(), request.status());
 
         clubApplicationRepository.save(application);
     }
