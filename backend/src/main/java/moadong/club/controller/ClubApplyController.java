@@ -73,7 +73,7 @@ public class ClubApplyController {
     @PutMapping("/apply/{appId}")
     @Operation(summary = "지원서 변경",
             description = "클럽 자원자의 지원서 정보를 수정합니다.<br>"
-        + "appId - 지원서 아이디"
+                    + "appId - 지원서 아이디"
     )
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
@@ -83,6 +83,20 @@ public class ClubApplyController {
                                                  @CurrentUser CustomUserDetails user) {
         clubApplyService.editApplicantDetail(clubId, appId, request, user);
         return Response.ok("success edit applicant");
+    }
+
+    @DeleteMapping("/apply/{appId}")
+    @Operation(summary = "지원서 삭제",
+            description = "클럽 자원자의 지원서를 삭제합니다.<br>"
+                    + "appId - 지원서 아이디"
+    )
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> removeApplicant(@PathVariable String clubId,
+                                             @PathVariable String appId,
+                                             @CurrentUser CustomUserDetails user) {
+        clubApplyService.deleteApplicant(clubId, appId, user);
+        return Response.ok("success delete applicant");
     }
 
 }

@@ -142,6 +142,21 @@ public class ClubApplyService {
         clubApplicationRepository.save(application);
     }
 
+    @Transactional
+    public void deleteApplicant(String clubId, String appId, CustomUserDetails user) {
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        if (!user.getId().equals(club.getUserId())) {
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+
+        ClubApplication application = clubApplicationRepository.findByIdAndQuestionId(appId, clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
+
+        clubApplicationRepository.delete(application);
+    }
+
     private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubQuestion clubQuestion) {
         // 미리 질문과 응답 id 만들어두기
         Map<Long, ClubApplicationQuestion> questionMap = clubQuestion.getQuestions().stream()
