@@ -38,4 +38,8 @@ public class ClubApplication {
 
     @Builder.Default
     LocalDateTime createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+
+    public void updateDetail(String memo) {
+        this.memo = memo;
+    }
 }
