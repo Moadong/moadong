@@ -41,7 +41,9 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     if (!confirmed) return;
 
     try {
-      await logout();
+      if (document.cookie.split(';').some((cookie) => cookie.trim().startsWith('refreshToken='))) {
+        await logout();
+      }
       localStorage.removeItem('accessToken');
       navigate('/admin/login', { replace: true });
     } catch (error) {
