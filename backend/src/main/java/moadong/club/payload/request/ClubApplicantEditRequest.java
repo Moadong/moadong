@@ -9,6 +9,7 @@ public record ClubApplicantEditRequest(
         @Size(max = 500)
         String memo,
 
+        @NotNull
         ApplicationStatus status
 ) {
 }
