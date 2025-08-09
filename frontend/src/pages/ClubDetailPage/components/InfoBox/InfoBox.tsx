@@ -40,7 +40,12 @@ const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
         { label: '전화번호', value: clubDetail.presidentPhoneNumber },
         {
           label: 'SNS',
-          render: <SnsLinkIcons apiSocialLinks={clubDetail.socialLinks} />,
+          render: (
+            <SnsLinkIcons
+              apiSocialLinks={clubDetail.socialLinks}
+              clubName={clubDetail.name}
+            />
+          ),
         },
       ],
       refIndex: INFOTABS_SCROLL_INDEX.CLUB_INFO_TAB,
