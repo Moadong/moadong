@@ -1,10 +1,12 @@
 package moadong.club.service;
 
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.payload.dto.ClubApplicantsResult;
+import moadong.club.payload.request.ClubApplicantEditRequest;
 import moadong.club.payload.request.ClubApplicationCreateRequest;
 import moadong.club.payload.request.ClubApplicationEditRequest;
 import moadong.club.payload.request.ClubApplyRequest;
@@ -121,6 +123,38 @@ public class ClubApplyService {
                 .accepted(accepted)
                 .applicants(applications)
                 .build();
+    }
+
+    @Transactional
+    public void editApplicantDetail(String clubId, String appId, ClubApplicantEditRequest request, CustomUserDetails user) {
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        if (!user.getId().equals(club.getUserId())) {
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+
+        ClubApplication application = clubApplicationRepository.findByIdAndQuestionId(appId, clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
+
+        application.updateDetail(request.memo(), request.status());
+
+        clubApplicationRepository.save(application);
+    }
+
+    @Transactional
+    public void deleteApplicant(String clubId, String appId, CustomUserDetails user) {
+        Club club = clubRepository.findById(clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        if (!user.getId().equals(club.getUserId())) {
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+
+        ClubApplication application = clubApplicationRepository.findByIdAndQuestionId(appId, clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
+
+        clubApplicationRepository.delete(application);
     }
 
     private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubQuestion clubQuestion) {
