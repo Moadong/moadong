@@ -1,8 +1,13 @@
 import API_BASE_URL from '@/constants/api';
-import { secureFetch } from '@/apis/auth/secureFetch';
 
 export const logout = async (): Promise<void> => {
-  const response = await secureFetch(`${API_BASE_URL}/auth/user/logout`, {
+  const accessToken = localStorage.getItem('accessToken');
+
+  if (!accessToken) {
+    return;
+  }
+
+  const response = await fetch(`${API_BASE_URL}/auth/user/logout`, {
     method: 'GET',
     credentials: 'include',
   });

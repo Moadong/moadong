@@ -6,7 +6,9 @@ export const SNS_CONFIG = {
   instagram: {
     label: '인스타그램',
     placeholder: 'https://www.instagram.com/id',
-    regex: /^https:\/\/(www\.)?instagram\.com\/[A-Za-z0-9._%-]+\/?$/,
+    // username 뒤에 슬래시 및 쿼리스트링(예: ?igsh=...&utm_source=...) 허용
+    regex:
+      /^https:\/\/(www\.)?instagram\.com\/(?!redirect(?:\/|\?|$))[A-Za-z0-9._%-]+\/?(?:\?.*)?$/,
     icon: instagram_icon,
   },
   youtube: {
