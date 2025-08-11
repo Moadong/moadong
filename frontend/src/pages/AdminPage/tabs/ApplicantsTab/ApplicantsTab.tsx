@@ -1,6 +1,6 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { Applicant } from '@/types/applicants';
-import React from 'react';
+import React, { useEffect } from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
 
@@ -125,7 +125,13 @@ const ApplicantsTab = () => {
                     {item.answers[0].value}
                   </Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCol>
-                    {item.memo}
+                    {
+                      item.memo && item.memo.length > 0 ? (
+                        item.memo
+                      ) : (
+                        <span style={{ color: '#989898' }}>메모를 입력하지 않았습니다.</span>
+                      )
+                    }
                   </Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCol>
                     {
