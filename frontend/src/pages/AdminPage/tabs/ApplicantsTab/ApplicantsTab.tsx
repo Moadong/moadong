@@ -1,27 +1,9 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { Applicant } from '@/types/applicants';
+import { Applicant, ApplicationStatus } from '@/types/applicants';
 import React from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
-
-function applicationStatusMapping(status: Applicant['status']): string {
-  switch (status) {
-    case 'DRAFT':
-    case 'SUBMITTED':
-    case 'SCREENING':
-      return '서류검토';
-    case 'SCREENING_PASSED':
-    case 'INTERVIEW_SCHEDULED':
-    case 'INTERVIEW_IN_PROGRESS':
-      return '면접예정';
-    case 'INTERVIEW_PASSED':
-    case 'OFFERED':
-    case 'ACCEPTED':
-      return '합격';
-    default:
-      return '';
-  }
-}
+import mapStatusToGroup from '@/utils/mapStatusToGroup';
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
@@ -119,7 +101,7 @@ const ApplicantsTab = () => {
                     />
                   </Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCol>
-                    <Styled.ApplicantStatusBadge status={applicationStatusMapping(item.status)}>{applicationStatusMapping(item.status)}</Styled.ApplicantStatusBadge>
+                    <Styled.ApplicantStatusBadge status={mapStatusToGroup(item.status).label}>{mapStatusToGroup(item.status).label}</Styled.ApplicantStatusBadge>
                   </Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCol>
                     {item.answers[0].value}
