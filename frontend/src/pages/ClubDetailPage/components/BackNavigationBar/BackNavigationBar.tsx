@@ -2,13 +2,14 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { useNavigate } from 'react-router-dom';
 import * as Styled from './BackNavigationBar.styles';
 import BackIcon from '@/assets/images/icons/back_button_icon.svg';
+import { EVENT_NAME } from '@/constants/eventName';
 
 const BackNavigationBar = () => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
   const handleBackClick = () => {
-    trackEvent('Back Button Clicked');
+    trackEvent(EVENT_NAME.BACK_BUTTON_CLICKED);
     navigate('/');
   };
 

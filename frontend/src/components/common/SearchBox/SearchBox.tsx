@@ -5,6 +5,7 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './SearchBox.styles';
 import SearchIcon from '@/assets/images/icons/search_button_icon.svg';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { EVENT_NAME } from '@/constants/eventName';
 
 const SearchBox = () => {
   const [isSearchBoxClicked, setIsSearchBoxClicked] = useState(false);
@@ -30,7 +31,7 @@ const SearchBox = () => {
 
     inputRef.current?.blur();
 
-    trackEvent('Search Executed', {
+    trackEvent(EVENT_NAME.SEARCH_BOX_CLICKED, {
       inputValue: inputValue,
       page: window.location.pathname,
     });

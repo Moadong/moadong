@@ -3,6 +3,7 @@ import * as Styled from './ShareButton.styles';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import KakaoIcon from '@/assets/images/icons/kakaotalk_sharing_btn_small.png';
+import { EVENT_NAME } from '@/constants/eventName';
 
 interface ShareButtonProps {
   clubId: string;
@@ -43,7 +44,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
         },
       ],
     });
-    trackEvent('공유하기 버튼 클릭', { clubName: clubDetail.name });
+    trackEvent(EVENT_NAME.SHARE_BUTTON_CLICKED, { clubName: clubDetail.name });
   };
 
   return (

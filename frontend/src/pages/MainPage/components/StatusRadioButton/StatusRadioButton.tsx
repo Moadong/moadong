@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './StatusRadioButton.styles';
+import { EVENT_NAME } from '@/constants/eventName';
 
 interface StatusRadioButtonProps {
   onChange: (selectedStatus: boolean) => void;
@@ -15,7 +16,7 @@ const StatusRadioButton = ({ onChange }: StatusRadioButtonProps) => {
       const newStatus = !prev;
       onChange(newStatus);
 
-      trackEvent('StatusRadioButton Clicked', {
+      trackEvent(EVENT_NAME.STATUS_RADIO_BUTTON_CLICKED, {
         new_status: newStatus ? 'OPEN' : 'ALL',
       });
 
