@@ -9,6 +9,7 @@ import iconSport from '@/assets/images/icons/category_button/category_sport_butt
 import iconPerformance from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
 import { useSearch } from '@/context/SearchContext';
 import { useCategory } from '@/context/CategoryContext';
+import { EVENT_NAME } from '@/constants/eventName';
 
 interface Category {
   id: string;
@@ -32,7 +33,7 @@ const CategoryButtonList = () => {
   const trackEvent = useMixpanelTrack();
 
   const handleCategoryClick = (category: Category) => {
-    trackEvent('categoryButton Clicked', {
+    trackEvent(EVENT_NAME.CATEGORY_BUTTON_CLICKED, {
       category_id: category.id,
       category_name: category.name,
     });

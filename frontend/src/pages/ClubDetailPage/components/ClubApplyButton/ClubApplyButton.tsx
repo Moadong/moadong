@@ -5,6 +5,7 @@ import getApplication from '@/apis/application/getApplication';
 import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 import getDeadlineText from '@/utils/getDeadLineText';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { EVENT_NAME } from '@/constants/eventName';
 
 const Button = styled.button`
   display: flex;
@@ -45,7 +46,7 @@ const ClubApplyButton = () => {
   const handleClick = async () => {
     if (!clubId || !clubDetail) return;
 
-    trackEvent('Club Apply Button Clicked');
+    trackEvent(EVENT_NAME.CLUB_APPLY_BUTTON_CLICKED);
 
     const { recruitmentStart, recruitmentEnd } = parseRecruitmentPeriod(
       clubDetail.recruitmentPeriod,
