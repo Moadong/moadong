@@ -1,6 +1,6 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { Applicant } from '@/types/applicants';
-import React, { useEffect } from 'react';
+import React from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
 
