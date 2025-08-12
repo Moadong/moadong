@@ -1,6 +1,6 @@
 import { useLocation } from 'react-router-dom';
 import * as Styled from './Header.styles';
-import SearchBox from '@/components/common/SearchBox/SearchBox';
+import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import useHeaderService from '@/services/header/useHeaderService';
 import useMobileMenu from '@/services/header/useMobileMenu';
 import useIsMobile from '@/hooks/useIsMobile';
