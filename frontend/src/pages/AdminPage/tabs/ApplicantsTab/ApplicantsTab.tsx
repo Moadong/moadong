@@ -1,6 +1,6 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { Applicant, ApplicationStatus } from '@/types/applicants';
-import React from 'react';
+import { Applicant } from '@/types/applicants';
+import React, { useState, useMemo, ChangeEvent } from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
@@ -8,7 +8,22 @@ import mapStatusToGroup from '@/utils/mapStatusToGroup';
 const ApplicantsTab = () => {
   const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
+  const [keyword, setKeyword] = useState('');
   if (!clubId) return null;
+
+  const filteredApplicants = useMemo(() => {
+    if (!applicantsData?.applicants) return [];
+
+    if (!keyword.trim()) return applicantsData.applicants;
+    
+    return applicantsData.applicants.filter((user: Applicant) =>
+      user.answers[0].value.toLowerCase().includes(keyword.trim().toLowerCase())
+    );
+  }, [applicantsData, keyword]);
+
+  const handleKeywordChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setKeyword(e.target.value);
+  };
 
   return (
     <>
@@ -61,7 +76,11 @@ const ApplicantsTab = () => {
           <Styled.ApplicantFilterSelect>
             <option>제출순</option>
           </Styled.ApplicantFilterSelect>
-          <Styled.ApplicantSearchBox placeholder='지원자 이름을 입력해주세요' />
+          <Styled.ApplicantSearchBox
+            onChange={handleKeywordChange}
+            value={keyword}
+            placeholder='지원자 이름을 입력해주세요'
+          />
         </Styled.ApplicantListHeader>
         <Styled.ApplicantTable>
           <Styled.ApplicantTableHeaderWrapper>
@@ -82,7 +101,7 @@ const ApplicantsTab = () => {
             </Styled.ApplicantTableRow>
           </Styled.ApplicantTableHeaderWrapper>
           <tbody>
-            {applicantsData?.applicants.map(
+            {filteredApplicants.map(
               (item: Applicant, index: number) => (
                 <Styled.ApplicantTableRow
                   key={index}
