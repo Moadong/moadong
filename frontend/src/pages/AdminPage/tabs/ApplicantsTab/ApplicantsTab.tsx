@@ -5,7 +5,6 @@ import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
 import SearchField from '@/components/common/SearchField/SearchField';
 
-
 function applicationStatusMapping(status: Applicant['status']): string {
   switch (status) {
     case 'DRAFT':
@@ -86,12 +85,14 @@ const ApplicantsTab = () => {
       <Styled.ApplicantListWrapper>
         <Styled.ApplicantListTitle>지원자 목록</Styled.ApplicantListTitle>
         <Styled.ApplicantListHeader>
-          <Styled.ApplicantFilterSelect>
-            <option>전체</option>
-          </Styled.ApplicantFilterSelect>
-          <Styled.ApplicantFilterSelect>
-            <option>제출순</option>
-          </Styled.ApplicantFilterSelect>
+          <Styled.FilterContainer>
+            <Styled.ApplicantFilterSelect>
+              <option>전체</option>
+            </Styled.ApplicantFilterSelect>
+            <Styled.ApplicantFilterSelect>
+              <option>제출순</option>
+            </Styled.ApplicantFilterSelect>
+          </Styled.FilterContainer>
           <SearchField
             value={keyword}
             onChange={setKeyword}

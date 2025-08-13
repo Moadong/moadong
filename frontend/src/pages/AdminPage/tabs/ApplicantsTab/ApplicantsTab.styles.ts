@@ -64,9 +64,16 @@ export const ApplicantListTitle = styled.h2`
 
 export const ApplicantListHeader = styled.div`
   display: flex;
-
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+  gap: 8px;
+`;
+
+export const FilterContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
   gap: 8px;
 `;
 
