@@ -2,17 +2,17 @@ import { ApplicationStatus } from "@/types/applicants";
 
 const mapStatusToGroup = (status: ApplicationStatus): { status: ApplicationStatus, label: string } => {
   switch (status) {
-    case 'DRAFT':
-    case 'SUBMITTED':
-    case 'SCREENING':
+    case ApplicationStatus.DRAFT:
+    case ApplicationStatus.SUBMITTED:
+    case ApplicationStatus.SCREENING:
       return { status: ApplicationStatus.DRAFT, label: '서류검토' };
-    case 'SCREENING_PASSED':
-    case 'INTERVIEW_SCHEDULED':
-    case 'INTERVIEW_IN_PROGRESS':
+    case ApplicationStatus.SCREENING_PASSED:
+    case ApplicationStatus.INTERVIEW_SCHEDULED:
+    case ApplicationStatus.INTERVIEW_IN_PROGRESS:
       return { status: ApplicationStatus.INTERVIEW_SCHEDULED, label: '면접예정' };
-    case 'INTERVIEW_PASSED':
-    case 'OFFERED':
-    case 'ACCEPTED':
+    case ApplicationStatus.INTERVIEW_PASSED:
+    case ApplicationStatus.OFFERED:
+    case ApplicationStatus.ACCEPTED:
       return { status: ApplicationStatus.ACCEPTED, label: '합격' };
     default:
       return { status: ApplicationStatus.DRAFT, label: '서류검토'};
