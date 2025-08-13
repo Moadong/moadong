@@ -28,7 +28,6 @@ const ApplicantsTab = () => {
   const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
   const [keyword, setKeyword] = useState('');
-  if (!clubId) return null;
 
   const applicants: Applicant[] = applicantsData?.applicants ?? [];
   const filteredApplicants = useMemo(() => {
@@ -39,6 +38,8 @@ const ApplicantsTab = () => {
       return name.includes(lower);
     });
   }, [applicants, keyword]);
+
+  if (!clubId) return null;
 
   return (
     <>
