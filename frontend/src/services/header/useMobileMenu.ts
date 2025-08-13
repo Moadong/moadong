@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { EVENT_NAME } from '@/constants/eventName';
 
 interface MobileMenuProp {
   handleMenuClick: () => void;
@@ -16,7 +17,7 @@ const useMobileMenu = ({ handleMenuClick }: MobileMenuProp) => {
 
   const closeMenu = useCallback(() => {
     setIsMenuOpen(false);
-    trackEvent('Mobile Menubar delete Button Clicked');
+    trackEvent(EVENT_NAME.MOBILE_MENU_DELETE_BUTTON_CLICKED);
   }, []);
 
   useEffect(() => {

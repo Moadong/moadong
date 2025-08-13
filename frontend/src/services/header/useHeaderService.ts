@@ -1,10 +1,11 @@
 import { useNavigate } from 'react-router-dom';
 import { useSearch } from '@/context/SearchContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { EVENT_NAME } from '@/constants/eventName';
 
 const trackEventNames = {
-  desktop: 'Home Button Clicked',
-  mobile: 'Mobile Home Button Clicked',
+  desktop: EVENT_NAME.HOME_BUTTON_CLICKED,
+  mobile: EVENT_NAME.MOBILE_HOME_BUTTON_CLICKED,
 } as const;
 
 const useHeaderService = () => {
@@ -21,11 +22,11 @@ const useHeaderService = () => {
 
   const goIntroducePage = () => {
     navigate('/introduce');
-    trackEvent('Introduce Button Clicked');
+    trackEvent(EVENT_NAME.INTRODUCE_BUTTON_CLICKED);
   };
 
   const handleMenuClick = () => {
-    trackEvent('Mobile Menu Button Clicked');
+    trackEvent(EVENT_NAME.MOBILE_MENU_BUTTON_CLICKED);
   };
 
   return {

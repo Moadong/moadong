@@ -1,8 +1,9 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { Applicant } from '@/types/applicants';
-import React, { useState, useMemo, ChangeEvent } from 'react';
+import React, { useMemo, useState } from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
+import SearchField from '@/components/common/SearchField/SearchField';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 
 const ApplicantsTab = () => {
@@ -70,16 +71,21 @@ const ApplicantsTab = () => {
       <Styled.ApplicantListWrapper>
         <Styled.ApplicantListTitle>지원자 목록</Styled.ApplicantListTitle>
         <Styled.ApplicantListHeader>
-          <Styled.ApplicantFilterSelect>
-            <option>전체</option>
-          </Styled.ApplicantFilterSelect>
-          <Styled.ApplicantFilterSelect>
-            <option>제출순</option>
-          </Styled.ApplicantFilterSelect>
-          <Styled.ApplicantSearchBox
-            onChange={handleKeywordChange}
+          <Styled.FilterContainer>
+            <Styled.ApplicantFilterSelect>
+              <option>전체</option>
+            </Styled.ApplicantFilterSelect>
+            <Styled.ApplicantFilterSelect>
+              <option>제출순</option>
+            </Styled.ApplicantFilterSelect>
+          </Styled.FilterContainer>
+          <SearchField
             value={keyword}
+            onChange={setKeyword}
+            onSubmit={() => {}}
+            autoBlur={false}
             placeholder='지원자 이름을 입력해주세요'
+            ariaLabel='지원자 검색창'
           />
         </Styled.ApplicantListHeader>
         <Styled.ApplicantTable>
@@ -100,57 +106,50 @@ const ApplicantsTab = () => {
               </Styled.ApplicantTableHeader>
             </Styled.ApplicantTableRow>
           </Styled.ApplicantTableHeaderWrapper>
-          <tbody>
-            {filteredApplicants.map(
-              (item: Applicant, index: number) => (
-                <Styled.ApplicantTableRow
-                  key={index}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() =>
-                    navigate(`/admin/applicants/${item.id}`)
+          {filteredApplicants.map((item: Applicant, index: number) => (
+            <Styled.ApplicantTableRow
+              key={index}
+              onClick={() => navigate(`/admin/applicants/${item.id}`)}
+            >
+              <Styled.ApplicantTableCol>
+                <input
+                  type='checkbox'
+                  style={{ width: 24, height: 24, borderRadius: 6 }}
+                  onClick={(e: React.MouseEvent<HTMLInputElement>) =>
+                    e.stopPropagation()
                   }
-                >
-                  <Styled.ApplicantTableCol>
-                    <input
-                      type='checkbox'
-                      style={{ width: 24, height: 24, borderRadius: 6 }}
-                      onClick={(e: React.MouseEvent<HTMLInputElement>) =>
-                        e.stopPropagation()
-                      }
-                    />
-                  </Styled.ApplicantTableCol>
-                  <Styled.ApplicantTableCol>
-                    <Styled.ApplicantStatusBadge status={mapStatusToGroup(item.status).label}>{mapStatusToGroup(item.status).label}</Styled.ApplicantStatusBadge>
-                  </Styled.ApplicantTableCol>
-                  <Styled.ApplicantTableCol>
-                    {item.answers[0].value}
-                  </Styled.ApplicantTableCol>
-                  <Styled.ApplicantTableCol>
-                    {
-                      item.memo && item.memo.length > 0 ? (
-                        item.memo
-                      ) : (
-                        <span style={{ color: '#989898' }}>메모를 입력하지 않았습니다.</span>
-                      )
-                    }
-                  </Styled.ApplicantTableCol>
-                  <Styled.ApplicantTableCol>
-                    {
-                      // createdAt을 yyyy-mm-dd 형식으로 변환
-                      // 임시로.. 나중에 변경해야함
-                      (() => {
-                        const date = new Date(item.createdAt);
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        return `${year}-${month}-${day}`;
-                      })()
-                    }
-                  </Styled.ApplicantTableCol>
-                </Styled.ApplicantTableRow>
-              ),
-            )}
-          </tbody>
+                />
+              </Styled.ApplicantTableCol>
+              <Styled.ApplicantTableCol>
+                <Styled.ApplicantStatusBadge status={mapStatusToGroup(item.status).label}>{mapStatusToGroup(item.status).label}</Styled.ApplicantStatusBadge>
+              </Styled.ApplicantTableCol>
+              <Styled.ApplicantTableCol>
+                {item.answers[0].value}
+              </Styled.ApplicantTableCol>
+              <Styled.ApplicantTableCol>
+                {
+                  item.memo && item.memo.length > 0 ? (
+                    item.memo
+                  ) : (
+                    <span style={{ color: '#989898' }}>메모를 입력하지 않았습니다.</span>
+                  )
+                }
+              </Styled.ApplicantTableCol>
+              <Styled.ApplicantTableCol>
+                {
+                  // createdAt을 yyyy-mm-dd 형식으로 변환
+                  // 임시로.. 나중에 변경해야함
+                  (() => {
+                    const date = new Date(item.createdAt);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                  })()
+                }
+              </Styled.ApplicantTableCol>
+            </Styled.ApplicantTableRow>
+          ))}
         </Styled.ApplicantTable>
       </Styled.ApplicantListWrapper>
     </>
