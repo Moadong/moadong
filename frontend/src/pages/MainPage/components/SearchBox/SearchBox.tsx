@@ -18,6 +18,7 @@ const SearchBox = () => {
   };
 
   const handleSearch = () => {
+    const currentPage = location.pathname;
     redirectToHome();
     setKeyword(inputValue);
     setSelectedCategory('all');
@@ -25,7 +26,7 @@ const SearchBox = () => {
 
     trackEvent('Search Executed', {
       inputValue: inputValue,
-      page: window.location.pathname,
+      page: currentPage,
     });
   };
 
