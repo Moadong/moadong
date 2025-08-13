@@ -34,7 +34,7 @@ const ApplicantsTab = () => {
     const lower = keyword.trim().toLowerCase();
     if (!lower) return applicants; // 검색어가 없는 경우 모든 지원자 반환
     return applicants.filter((item) => {
-      const name = (item.answers?.[0]?.value ?? '').toString().toLowerCase();
+      const name = String(item.answers?.[0]?.value ?? '').toLowerCase();
       return name.includes(lower);
     });
   }, [applicants, keyword]);
