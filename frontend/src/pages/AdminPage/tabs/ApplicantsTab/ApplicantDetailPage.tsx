@@ -132,7 +132,7 @@ const ApplicantDetailPage = () => {
           >
             {applicantsData.applicants.map((a) => (
               <option key={a.id} value={a.id}>
-                {a.answers[0].value} {/* 화면엔 이름 표시 */}
+                {a.answers[0].value}
               </option>
             ))}
           </select>
