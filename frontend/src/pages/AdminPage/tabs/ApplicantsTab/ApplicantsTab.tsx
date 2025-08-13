@@ -22,10 +22,6 @@ const ApplicantsTab = () => {
     );
   }, [applicantsData, keyword]);
 
-  const handleKeywordChange = (e: ChangeEvent<HTMLInputElement>) => {
-    setKeyword(e.target.value);
-  };
-
   return (
     <>
       <Styled.ApplicationHeader>
