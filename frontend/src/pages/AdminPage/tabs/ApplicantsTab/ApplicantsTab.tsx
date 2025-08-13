@@ -4,42 +4,23 @@ import React, { useMemo, useState } from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
 import SearchField from '@/components/common/SearchField/SearchField';
-
-function applicationStatusMapping(status: Applicant['status']): string {
-  switch (status) {
-    case 'DRAFT':
-    case 'SUBMITTED':
-    case 'SCREENING':
-      return '서류검토';
-    case 'SCREENING_PASSED':
-    case 'INTERVIEW_SCHEDULED':
-    case 'INTERVIEW_IN_PROGRESS':
-      return '면접예정';
-    case 'INTERVIEW_PASSED':
-    case 'OFFERED':
-    case 'ACCEPTED':
-      return '합격';
-    default:
-      return '';
-  }
-}
+import mapStatusToGroup from '@/utils/mapStatusToGroup';
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
   const [keyword, setKeyword] = useState('');
-
-  const applicants: Applicant[] = applicantsData?.applicants ?? [];
-  const filteredApplicants = useMemo(() => {
-    const lower = keyword.trim().toLowerCase();
-    if (!lower) return applicants; // 검색어가 없는 경우 모든 지원자 반환
-    return applicants.filter((item) => {
-      const name = String(item.answers?.[0]?.value ?? '').toLowerCase();
-      return name.includes(lower);
-    });
-  }, [applicants, keyword]);
-
   if (!clubId) return null;
+
+  const filteredApplicants = useMemo(() => {
+    if (!applicantsData?.applicants) return [];
+
+    if (!keyword.trim()) return applicantsData.applicants;
+    
+    return applicantsData.applicants.filter((user: Applicant) =>
+      user.answers[0].value.toLowerCase().includes(keyword.trim().toLowerCase())
+    );
+  }, [applicantsData, keyword]);
 
   return (
     <>
@@ -136,16 +117,20 @@ const ApplicantsTab = () => {
                 />
               </Styled.ApplicantTableCol>
               <Styled.ApplicantTableCol>
-                <Styled.ApplicantStatusBadge
-                  status={applicationStatusMapping(item.status)}
-                >
-                  {applicationStatusMapping(item.status)}
-                </Styled.ApplicantStatusBadge>
+                <Styled.ApplicantStatusBadge status={mapStatusToGroup(item.status).label}>{mapStatusToGroup(item.status).label}</Styled.ApplicantStatusBadge>
               </Styled.ApplicantTableCol>
               <Styled.ApplicantTableCol>
                 {item.answers[0].value}
               </Styled.ApplicantTableCol>
-              <Styled.ApplicantTableCol>{item.memo}</Styled.ApplicantTableCol>
+              <Styled.ApplicantTableCol>
+                {
+                  item.memo && item.memo.length > 0 ? (
+                    item.memo
+                  ) : (
+                    <span style={{ color: '#989898' }}>메모를 입력하지 않았습니다.</span>
+                  )
+                }
+              </Styled.ApplicantTableCol>
               <Styled.ApplicantTableCol>
                 {
                   // createdAt을 yyyy-mm-dd 형식으로 변환
