@@ -64,6 +64,7 @@ export const ApplicantListTitle = styled.h2`
 
 export const ApplicantListHeader = styled.div`
   display: flex;
+
   align-items: center;
   margin-bottom: 16px;
   gap: 8px;
@@ -107,10 +108,11 @@ export const ApplicantTableHeader = styled.th`
 
 export const ApplicantTableRow = styled.tr`
   border-bottom: 1px solid #f0f0f0;
+  text-align: center;
+  cursor: pointer;
   &:hover {
     background: #f7faff;
   }
-  text-align: center;
 `;
 
 export const ApplicantTableCol = styled.td`
