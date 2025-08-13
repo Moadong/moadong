@@ -8,11 +8,13 @@ import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionCo
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import Spinner from '@/components/common/Spinner/Spinner';
-import backButtonIcon from '@/assets/images/icons/back_button_icon.svg';
+import BackButton from '@/assets/images/icons/back_arrow_icon.svg';
+import ForwardButton from '@/assets/images/icons/forward_arrow_icon.svg';
 import debounce from '@/utils/debounce';
 import updateApplicantMemo from '@/apis/application/updateApplicantDetail';
 import { ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
+import { Question } from '@/types/application';
 
 const AVAILABLE_STATUSES = [
   ApplicationStatus.SCREENING, // 서류검토
@@ -25,14 +27,16 @@ const ApplicantDetailPage = () => {
   const navigate = useNavigate();
   const [applicantMemo, setAppMemo] = useState('');
   const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>();
-  const { applicantsData, clubId } = useAdminClubContext();
+  const { applicantsData, clubId, setApplicantsData } = useAdminClubContext();
 
   const { data: formData, isLoading, isError } = useGetApplication(clubId!);
 
-  const applicant = useMemo(
-    () => applicantsData?.applicants.find((a) => a.id === questionId),
-    [applicantsData, questionId],
-  );
+  const { applicant, applicantIndex } = useMemo(() => {
+    const index = applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
+    const _applicant = applicantsData?.applicants[index];
+
+    return { applicant: _applicant, applicantIndex: index };
+  }, [applicantsData, questionId]);
 
   useEffect(() => {
     if (applicant) {
@@ -67,17 +71,41 @@ const ApplicantDetailPage = () => {
       .map((ans) => ans.value);
   };
 
+  const updateApplicantInContext = (memo: string, status: ApplicationStatus) => {
+    if (!applicantsData || applicantIndex === -1) return;
 
-  const handleMemoChange = (e: any) => {
+    const updatedApplicants = [...applicantsData.applicants];
+    updatedApplicants[applicantIndex] = { ...applicant, memo, status };
+
+    setApplicantsData({ ...applicantsData, applicants: updatedApplicants });
+  };
+
+  const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newMemo = e.target.value;
     setAppMemo(newMemo);
+    updateApplicantInContext(newMemo, applicantStatus!);
     updateApplicantDetail(newMemo, applicantStatus);
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value as ApplicationStatus;
     setApplicantStatus(newStatus);
+    updateApplicantInContext(applicantMemo, newStatus);
     updateApplicantDetail(applicantMemo, newStatus);
+  };
+
+  const previousApplicant = () => {
+    const previousData = applicantsData.applicants[applicantIndex - 1];
+    if (applicantIndex < 0 || !previousData) return;
+
+    navigate(`/admin/applicants/${previousData.id}`);
+  };
+
+  const nextApplicant = () => {
+    const nextData = applicantsData.applicants[applicantIndex + 1];
+    if (applicantIndex < 0 || !nextData) return;
+
+    navigate(`/admin/applicants/${nextData.id}`);
   };
 
   return (
@@ -96,13 +124,19 @@ const ApplicantDetailPage = () => {
             marginBottom: 16,
           }}
         >
-          <button
-            onClick={() => navigate(-1)}
-            style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0 }}
-            aria-label="뒤로가기"
+          <img style={{cursor: 'pointer'}} onClick={previousApplicant} src={BackButton} alt="이전 지원자" />
+          <select
+            id="applicantSelect"
+            value={applicant.id}
+            onChange={(e) => navigate(`/admin/applicants/${e.target.value}`)}
           >
-            <img src={backButtonIcon} alt="뒤로가기" style={{ width: 16, height: 16 }} />
-          </button>
+            {applicantsData.applicants.map((a) => (
+              <option key={a.id} value={a.id}>
+                {a.answers[0].value} {/* 화면엔 이름 표시 */}
+              </option>
+            ))}
+          </select>
+          <img style={{cursor: 'pointer'}} onClick={nextApplicant} src={ForwardButton} alt="다음 지원자" />
         </div>
         <textarea onInput={handleMemoChange} placeholder='메모를 입력해주세요' value={applicantMemo}></textarea>
 
@@ -115,7 +149,7 @@ const ApplicantDetailPage = () => {
         </select>
 
         <Styled.QuestionsWrapper style={{ cursor: 'default' }}>
-          {formData.questions.map((q: import('@/types/application').Question, i: number) => (
+          {formData.questions.map((q: Question, i: number) => (
             <QuestionContainer key={q.id} hasError={false}>
               <QuestionAnswerer
                 question={q}
