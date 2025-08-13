@@ -1,8 +1,9 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { Applicant } from '@/types/applicants';
-import React from 'react';
+import React, { useMemo, useState } from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
+import SearchField from '@/components/common/SearchField/SearchField';
 
 function applicationStatusMapping(status: Applicant['status']): string {
   switch (status) {
@@ -26,6 +27,18 @@ function applicationStatusMapping(status: Applicant['status']): string {
 const ApplicantsTab = () => {
   const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
+  const [keyword, setKeyword] = useState('');
+
+  const applicants: Applicant[] = applicantsData?.applicants ?? [];
+  const filteredApplicants = useMemo(() => {
+    const lower = keyword.trim().toLowerCase();
+    if (!lower) return applicants; // 검색어가 없는 경우 모든 지원자 반환
+    return applicants.filter((item) => {
+      const name = String(item.answers?.[0]?.value ?? '').toLowerCase();
+      return name.includes(lower);
+    });
+  }, [applicants, keyword]);
+
   if (!clubId) return null;
 
   return (
@@ -73,13 +86,22 @@ const ApplicantsTab = () => {
       <Styled.ApplicantListWrapper>
         <Styled.ApplicantListTitle>지원자 목록</Styled.ApplicantListTitle>
         <Styled.ApplicantListHeader>
-          <Styled.ApplicantFilterSelect>
-            <option>전체</option>
-          </Styled.ApplicantFilterSelect>
-          <Styled.ApplicantFilterSelect>
-            <option>제출순</option>
-          </Styled.ApplicantFilterSelect>
-          <Styled.ApplicantSearchBox placeholder='지원자 이름을 입력해주세요' />
+          <Styled.FilterContainer>
+            <Styled.ApplicantFilterSelect>
+              <option>전체</option>
+            </Styled.ApplicantFilterSelect>
+            <Styled.ApplicantFilterSelect>
+              <option>제출순</option>
+            </Styled.ApplicantFilterSelect>
+          </Styled.FilterContainer>
+          <SearchField
+            value={keyword}
+            onChange={setKeyword}
+            onSubmit={() => {}}
+            autoBlur={false}
+            placeholder='지원자 이름을 입력해주세요'
+            ariaLabel='지원자 검색창'
+          />
         </Styled.ApplicantListHeader>
         <Styled.ApplicantTable>
           <Styled.ApplicantTableHeaderWrapper>
@@ -99,51 +121,46 @@ const ApplicantsTab = () => {
               </Styled.ApplicantTableHeader>
             </Styled.ApplicantTableRow>
           </Styled.ApplicantTableHeaderWrapper>
-          <tbody>
-            {applicantsData?.applicants.map(
-              (item: Applicant, index: number) => (
-                <Styled.ApplicantTableRow
-                  key={index}
-                  style={{ cursor: 'pointer' }}
-                  onClick={() =>
-                    navigate(`/admin/applicants/${item.id}`)
+          {filteredApplicants.map((item: Applicant, index: number) => (
+            <Styled.ApplicantTableRow
+              key={index}
+              onClick={() => navigate(`/admin/applicants/${item.id}`)}
+            >
+              <Styled.ApplicantTableCol>
+                <input
+                  type='checkbox'
+                  style={{ width: 24, height: 24, borderRadius: 6 }}
+                  onClick={(e: React.MouseEvent<HTMLInputElement>) =>
+                    e.stopPropagation()
                   }
+                />
+              </Styled.ApplicantTableCol>
+              <Styled.ApplicantTableCol>
+                <Styled.ApplicantStatusBadge
+                  status={applicationStatusMapping(item.status)}
                 >
-                  <Styled.ApplicantTableCol>
-                    <input
-                      type='checkbox'
-                      style={{ width: 24, height: 24, borderRadius: 6 }}
-                      onClick={(e: React.MouseEvent<HTMLInputElement>) =>
-                        e.stopPropagation()
-                      }
-                    />
-                  </Styled.ApplicantTableCol>
-                  <Styled.ApplicantTableCol>
-                    <Styled.ApplicantStatusBadge status={applicationStatusMapping(item.status)}>{applicationStatusMapping(item.status)}</Styled.ApplicantStatusBadge>
-                  </Styled.ApplicantTableCol>
-                  <Styled.ApplicantTableCol>
-                    {item.answers[0].value}
-                  </Styled.ApplicantTableCol>
-                  <Styled.ApplicantTableCol>
-                    {item.memo}
-                  </Styled.ApplicantTableCol>
-                  <Styled.ApplicantTableCol>
-                    {
-                      // createdAt을 yyyy-mm-dd 형식으로 변환
-                      // 임시로.. 나중에 변경해야함
-                      (() => {
-                        const date = new Date(item.createdAt);
-                        const year = date.getFullYear();
-                        const month = String(date.getMonth() + 1).padStart(2, '0');
-                        const day = String(date.getDate()).padStart(2, '0');
-                        return `${year}-${month}-${day}`;
-                      })()
-                    }
-                  </Styled.ApplicantTableCol>
-                </Styled.ApplicantTableRow>
-              ),
-            )}
-          </tbody>
+                  {applicationStatusMapping(item.status)}
+                </Styled.ApplicantStatusBadge>
+              </Styled.ApplicantTableCol>
+              <Styled.ApplicantTableCol>
+                {item.answers[0].value}
+              </Styled.ApplicantTableCol>
+              <Styled.ApplicantTableCol>{item.memo}</Styled.ApplicantTableCol>
+              <Styled.ApplicantTableCol>
+                {
+                  // createdAt을 yyyy-mm-dd 형식으로 변환
+                  // 임시로.. 나중에 변경해야함
+                  (() => {
+                    const date = new Date(item.createdAt);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}-${month}-${day}`;
+                  })()
+                }
+              </Styled.ApplicantTableCol>
+            </Styled.ApplicantTableRow>
+          ))}
         </Styled.ApplicantTable>
       </Styled.ApplicantListWrapper>
     </>
