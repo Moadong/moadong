@@ -102,50 +102,52 @@ const ApplicantsTab = () => {
               </Styled.ApplicantTableHeader>
             </Styled.ApplicantTableRow>
           </Styled.ApplicantTableHeaderWrapper>
-          {filteredApplicants.map((item: Applicant, index: number) => (
-            <Styled.ApplicantTableRow
-              key={index}
-              onClick={() => navigate(`/admin/applicants/${item.id}`)}
-            >
-              <Styled.ApplicantTableCol>
-                <input
-                  type='checkbox'
-                  style={{ width: 24, height: 24, borderRadius: 6 }}
-                  onClick={(e: React.MouseEvent<HTMLInputElement>) =>
-                    e.stopPropagation()
+          <tbody>
+            {filteredApplicants.map((item: Applicant, index: number) => (
+              <Styled.ApplicantTableRow
+                key={index}
+                onClick={() => navigate(`/admin/applicants/${item.id}`)}
+              >
+                <Styled.ApplicantTableCol>
+                  <input
+                    type='checkbox'
+                    style={{ width: 24, height: 24, borderRadius: 6 }}
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) =>
+                      e.stopPropagation()
+                    }
+                  />
+                </Styled.ApplicantTableCol>
+                <Styled.ApplicantTableCol>
+                  <Styled.ApplicantStatusBadge status={mapStatusToGroup(item.status).label}>{mapStatusToGroup(item.status).label}</Styled.ApplicantStatusBadge>
+                </Styled.ApplicantTableCol>
+                <Styled.ApplicantTableCol>
+                  {item.answers[0].value}
+                </Styled.ApplicantTableCol>
+                <Styled.ApplicantTableCol>
+                  {
+                    item.memo && item.memo.length > 0 ? (
+                      item.memo
+                    ) : (
+                      <span style={{ color: '#989898' }}>메모를 입력하지 않았습니다.</span>
+                    )
                   }
-                />
-              </Styled.ApplicantTableCol>
-              <Styled.ApplicantTableCol>
-                <Styled.ApplicantStatusBadge status={mapStatusToGroup(item.status).label}>{mapStatusToGroup(item.status).label}</Styled.ApplicantStatusBadge>
-              </Styled.ApplicantTableCol>
-              <Styled.ApplicantTableCol>
-                {item.answers[0].value}
-              </Styled.ApplicantTableCol>
-              <Styled.ApplicantTableCol>
-                {
-                  item.memo && item.memo.length > 0 ? (
-                    item.memo
-                  ) : (
-                    <span style={{ color: '#989898' }}>메모를 입력하지 않았습니다.</span>
-                  )
-                }
-              </Styled.ApplicantTableCol>
-              <Styled.ApplicantTableCol>
-                {
-                  // createdAt을 yyyy-mm-dd 형식으로 변환
-                  // 임시로.. 나중에 변경해야함
-                  (() => {
-                    const date = new Date(item.createdAt);
-                    const year = date.getFullYear();
-                    const month = String(date.getMonth() + 1).padStart(2, '0');
-                    const day = String(date.getDate()).padStart(2, '0');
-                    return `${year}-${month}-${day}`;
-                  })()
-                }
-              </Styled.ApplicantTableCol>
-            </Styled.ApplicantTableRow>
-          ))}
+                </Styled.ApplicantTableCol>
+                <Styled.ApplicantTableCol>
+                  {
+                    // createdAt을 yyyy-mm-dd 형식으로 변환
+                    // 임시로.. 나중에 변경해야함
+                    (() => {
+                      const date = new Date(item.createdAt);
+                      const year = date.getFullYear();
+                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const day = String(date.getDate()).padStart(2, '0');
+                      return `${year}-${month}-${day}`;
+                    })()
+                  }
+                </Styled.ApplicantTableCol>
+              </Styled.ApplicantTableRow>
+            ))}
+          </tbody>
         </Styled.ApplicantTable>
       </Styled.ApplicantListWrapper>
     </>
