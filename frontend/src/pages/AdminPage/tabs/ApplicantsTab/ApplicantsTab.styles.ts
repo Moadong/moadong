@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import checkIcon from '@/assets/images/icons/checkBox.svg';
 
 export const ApplicationHeader = styled.div`
   display: flex;
@@ -125,6 +126,21 @@ export const ApplicantTableRow = styled.tr`
 export const ApplicantTableCol = styled.td`
   padding: 12px 8px;
   font-size: 16px;
+`;
+
+export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 10px;
+  border: 2px solid #f5f5f5;
+  background-color: #fff;
+  cursor: pointer;
+
+  &:checked {
+    background: #ffe7de url(${checkIcon}) center/24px 24px no-repeat;
+  }
 `;
 
 export const ApplicantStatusBadge = styled.span<{ status: string }>`
