@@ -16,9 +16,11 @@ const ApplicantsTab = () => {
     if (!applicantsData?.applicants) return [];
 
     if (!keyword.trim()) return applicantsData.applicants;
-    
+
     return applicantsData.applicants.filter((user: Applicant) =>
-      user.answers[0].value.toLowerCase().includes(keyword.trim().toLowerCase())
+      user.answers[0].value
+        .toLowerCase()
+        .includes(keyword.trim().toLowerCase()),
     );
   }, [applicantsData, keyword]);
 
@@ -109,28 +111,30 @@ const ApplicantsTab = () => {
                 onClick={() => navigate(`/admin/applicants/${item.id}`)}
               >
                 <Styled.ApplicantTableCol>
-                  <input
-                    type='checkbox'
-                    style={{ width: 24, height: 24, borderRadius: 6 }}
+                  <Styled.ApplicantTableCheckbox
                     onClick={(e: React.MouseEvent<HTMLInputElement>) =>
                       e.stopPropagation()
                     }
                   />
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
-                  <Styled.ApplicantStatusBadge status={mapStatusToGroup(item.status).label}>{mapStatusToGroup(item.status).label}</Styled.ApplicantStatusBadge>
+                  <Styled.ApplicantStatusBadge
+                    status={mapStatusToGroup(item.status).label}
+                  >
+                    {mapStatusToGroup(item.status).label}
+                  </Styled.ApplicantStatusBadge>
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
                   {item.answers[0].value}
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
-                  {
-                    item.memo && item.memo.length > 0 ? (
-                      item.memo
-                    ) : (
-                      <span style={{ color: '#989898' }}>메모를 입력하지 않았습니다.</span>
-                    )
-                  }
+                  {item.memo && item.memo.length > 0 ? (
+                    item.memo
+                  ) : (
+                    <span style={{ color: '#989898' }}>
+                      메모를 입력하지 않았습니다.
+                    </span>
+                  )}
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
                   {
@@ -139,7 +143,10 @@ const ApplicantsTab = () => {
                     (() => {
                       const date = new Date(item.createdAt);
                       const year = date.getFullYear();
-                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const month = String(date.getMonth() + 1).padStart(
+                        2,
+                        '0',
+                      );
                       const day = String(date.getDate()).padStart(2, '0');
                       return `${year}-${month}-${day}`;
                     })()
