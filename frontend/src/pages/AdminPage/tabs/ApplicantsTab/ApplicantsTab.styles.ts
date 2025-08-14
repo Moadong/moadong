@@ -78,12 +78,32 @@ export const FilterContainer = styled.div`
   gap: 8px;
 `;
 
+export const SelectWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+export const Arrow = styled.img`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+`;
+
 export const ApplicantFilterSelect = styled.select`
-  padding: 8px 16px;
+  height: 35px;
+  padding: 4px 32px 4px 14px;
   border-radius: 8px;
-  border: 1px solid #ddd;
-  background: #fff;
+  border: none;
+  background: var(--f5, #f5f5f5);
   font-size: 16px;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 `;
 
 export const ApplicantSearchBox = styled.input`

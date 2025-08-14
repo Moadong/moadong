@@ -5,6 +5,7 @@ import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
 import SearchField from '@/components/common/SearchField/SearchField';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
+import selectIcon from '@/assets/images/icons/selectArrow.svg';
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
@@ -70,12 +71,18 @@ const ApplicantsTab = () => {
         <Styled.ApplicantListTitle>지원자 목록</Styled.ApplicantListTitle>
         <Styled.ApplicantListHeader>
           <Styled.FilterContainer>
-            <Styled.ApplicantFilterSelect>
-              <option>전체</option>
-            </Styled.ApplicantFilterSelect>
-            <Styled.ApplicantFilterSelect>
-              <option>제출순</option>
-            </Styled.ApplicantFilterSelect>
+            <Styled.SelectWrapper>
+              <Styled.ApplicantFilterSelect>
+                <option>전체</option>
+              </Styled.ApplicantFilterSelect>
+              <Styled.Arrow src={selectIcon} />
+            </Styled.SelectWrapper>
+            <Styled.SelectWrapper>
+              <Styled.ApplicantFilterSelect>
+                <option>제출순</option>
+              </Styled.ApplicantFilterSelect>
+              <Styled.Arrow src={selectIcon} />
+            </Styled.SelectWrapper>
           </Styled.FilterContainer>
           <SearchField
             value={keyword}
