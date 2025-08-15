@@ -97,16 +97,14 @@ const ApplicantsTab = () => {
           <Styled.ApplicantTableHeaderWrapper>
             <Styled.ApplicantTableRow>
               <Styled.ApplicantTableHeader
-                style={{ width: 40 }}
+                width={40}
               ></Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader style={{ width: 120 }}>
+              <Styled.ApplicantTableHeader width={120}>
                 현재상태
               </Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader style={{ width: 160 }}>
+              <Styled.ApplicantTableHeader width={80} borderLeft={true}>
                 이름
               </Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader>메모</Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader style={{ width: 140 }}>
                 제출날짜
               </Styled.ApplicantTableHeader>
             </Styled.ApplicantTableRow>
@@ -116,6 +114,7 @@ const ApplicantsTab = () => {
               <Styled.ApplicantTableRow
                 key={index}
                 onClick={() => navigate(`/admin/applicants/${item.id}`)}
+                style={{ cursor: 'pointer' }}
               >
                 <Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCheckbox

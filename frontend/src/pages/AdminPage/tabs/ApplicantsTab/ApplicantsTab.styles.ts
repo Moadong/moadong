@@ -127,13 +127,31 @@ export const ApplicantTableHeaderWrapper = styled.thead`
   background: #fafafa;
 `;
 
-export const ApplicantTableHeader = styled.th`
+export const ApplicantTableHeader = styled.th<{
+  width?: number | string;
+  borderLeft?: boolean;
+  position: relative;
   background: #fafafa;
   padding: 12px 8px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #888;
-  text-align: center;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--78, #787878);
+  width: ${({ width }) => (width ? `${width}px` : 'auto')};
+
+  ${({ borderLeft }) =>
+    borderLeft &&
+    `
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 30%;
+      height: 40%;
+      width: 1px;
+      background: #DCDCDC;
+    }
+  `}
 `;
 
 export const ApplicantTableRow = styled.tr`
