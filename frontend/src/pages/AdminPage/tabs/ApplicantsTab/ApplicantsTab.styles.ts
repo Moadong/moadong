@@ -122,6 +122,8 @@ export const ApplicantTable = styled.table`
 `;
 
 export const ApplicantTableHeaderWrapper = styled.thead`
+  border-top: 1px solid #c5c5c5;
+  border-bottom: 1px solid var(--light-line, #dcdcdc);
   background: #fafafa;
 `;
 
