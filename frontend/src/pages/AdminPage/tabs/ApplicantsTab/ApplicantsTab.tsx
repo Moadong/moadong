@@ -5,6 +5,7 @@ import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
 import SearchField from '@/components/common/SearchField/SearchField';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
+import selectIcon from '@/assets/images/icons/selectArrow.svg';
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
@@ -16,9 +17,11 @@ const ApplicantsTab = () => {
     if (!applicantsData?.applicants) return [];
 
     if (!keyword.trim()) return applicantsData.applicants;
-    
+
     return applicantsData.applicants.filter((user: Applicant) =>
-      user.answers[0].value.toLowerCase().includes(keyword.trim().toLowerCase())
+      user.answers[0].value
+        .toLowerCase()
+        .includes(keyword.trim().toLowerCase()),
     );
   }, [applicantsData, keyword]);
 
@@ -68,12 +71,18 @@ const ApplicantsTab = () => {
         <Styled.ApplicantListTitle>지원자 목록</Styled.ApplicantListTitle>
         <Styled.ApplicantListHeader>
           <Styled.FilterContainer>
-            <Styled.ApplicantFilterSelect>
-              <option>전체</option>
-            </Styled.ApplicantFilterSelect>
-            <Styled.ApplicantFilterSelect>
-              <option>제출순</option>
-            </Styled.ApplicantFilterSelect>
+            <Styled.SelectWrapper>
+              <Styled.ApplicantFilterSelect>
+                <option>전체</option>
+              </Styled.ApplicantFilterSelect>
+              <Styled.Arrow src={selectIcon} />
+            </Styled.SelectWrapper>
+            <Styled.SelectWrapper>
+              <Styled.ApplicantFilterSelect>
+                <option>제출순</option>
+              </Styled.ApplicantFilterSelect>
+              <Styled.Arrow src={selectIcon} />
+            </Styled.SelectWrapper>
           </Styled.FilterContainer>
           <SearchField
             value={keyword}
@@ -88,16 +97,18 @@ const ApplicantsTab = () => {
           <Styled.ApplicantTableHeaderWrapper>
             <Styled.ApplicantTableRow>
               <Styled.ApplicantTableHeader
-                style={{ width: 40 }}
+                width={40}
               ></Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader style={{ width: 120 }}>
+              <Styled.ApplicantTableHeader width={120}>
                 현재상태
               </Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader style={{ width: 160 }}>
+              <Styled.ApplicantTableHeader width={80} borderLeft={true}>
                 이름
               </Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader>메모</Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader style={{ width: 140 }}>
+              <Styled.ApplicantTableHeader borderLeft={true} isMemo={true}>
+                메모
+              </Styled.ApplicantTableHeader>
+              <Styled.ApplicantTableHeader width={140} borderLeft={true}>
                 제출날짜
               </Styled.ApplicantTableHeader>
             </Styled.ApplicantTableRow>
@@ -107,30 +118,33 @@ const ApplicantsTab = () => {
               <Styled.ApplicantTableRow
                 key={index}
                 onClick={() => navigate(`/admin/applicants/${item.id}`)}
+                style={{ cursor: 'pointer' }}
               >
                 <Styled.ApplicantTableCol>
-                  <input
-                    type='checkbox'
-                    style={{ width: 24, height: 24, borderRadius: 6 }}
+                  <Styled.ApplicantTableCheckbox
                     onClick={(e: React.MouseEvent<HTMLInputElement>) =>
                       e.stopPropagation()
                     }
                   />
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
-                  <Styled.ApplicantStatusBadge status={mapStatusToGroup(item.status).label}>{mapStatusToGroup(item.status).label}</Styled.ApplicantStatusBadge>
+                  <Styled.ApplicantStatusBadge
+                    status={mapStatusToGroup(item.status).label}
+                  >
+                    {mapStatusToGroup(item.status).label}
+                  </Styled.ApplicantStatusBadge>
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
                   {item.answers[0].value}
                 </Styled.ApplicantTableCol>
-                <Styled.ApplicantTableCol>
-                  {
-                    item.memo && item.memo.length > 0 ? (
-                      item.memo
-                    ) : (
-                      <span style={{ color: '#989898' }}>메모를 입력하지 않았습니다.</span>
-                    )
-                  }
+                <Styled.ApplicantTableCol isMemo={true}>
+                  {item.memo && item.memo.length > 0 ? (
+                    item.memo
+                  ) : (
+                    <span style={{ color: '#989898' }}>
+                      메모를 입력하지 않았습니다.
+                    </span>
+                  )}
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
                   {
@@ -139,7 +153,10 @@ const ApplicantsTab = () => {
                     (() => {
                       const date = new Date(item.createdAt);
                       const year = date.getFullYear();
-                      const month = String(date.getMonth() + 1).padStart(2, '0');
+                      const month = String(date.getMonth() + 1).padStart(
+                        2,
+                        '0',
+                      );
                       const day = String(date.getDate()).padStart(2, '0');
                       return `${year}-${month}-${day}`;
                     })()
