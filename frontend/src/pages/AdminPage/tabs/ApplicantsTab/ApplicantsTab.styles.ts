@@ -130,6 +130,8 @@ export const ApplicantTableHeaderWrapper = styled.thead`
 export const ApplicantTableHeader = styled.th<{
   width?: number | string;
   borderLeft?: boolean;
+  isMemo?: boolean;
+}>`
   position: relative;
   background: #fafafa;
   padding: 12px 8px;
@@ -138,6 +140,8 @@ export const ApplicantTableHeader = styled.th<{
   font-weight: 600;
   color: var(--78, #787878);
   width: ${({ width }) => (width ? `${width}px` : 'auto')};
+  text-align: ${({ isMemo }) => (isMemo ? 'left' : 'center')};
+  padding-left: ${({ isMemo }) => (isMemo ? '30px' : 'none')};
 
   ${({ borderLeft }) =>
     borderLeft &&
@@ -157,15 +161,17 @@ export const ApplicantTableHeader = styled.th<{
 export const ApplicantTableRow = styled.tr`
   border-bottom: 1px solid #f0f0f0;
   text-align: center;
-  cursor: pointer;
+
   &:hover {
     background: #f7faff;
   }
 `;
 
-export const ApplicantTableCol = styled.td`
+export const ApplicantTableCol = styled.td<{ isMemo?: boolean }>`
   padding: 12px 8px;
   font-size: 16px;
+  text-align: ${({ isMemo }) => (isMemo ? 'left' : 'center')};
+  padding-left: ${({ isMemo }) => (isMemo ? '30px' : 'none')};
 `;
 
 export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`

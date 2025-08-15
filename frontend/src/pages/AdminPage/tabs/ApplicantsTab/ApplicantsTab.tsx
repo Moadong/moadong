@@ -105,6 +105,10 @@ const ApplicantsTab = () => {
               <Styled.ApplicantTableHeader width={80} borderLeft={true}>
                 이름
               </Styled.ApplicantTableHeader>
+              <Styled.ApplicantTableHeader borderLeft={true} isMemo={true}>
+                메모
+              </Styled.ApplicantTableHeader>
+              <Styled.ApplicantTableHeader width={140} borderLeft={true}>
                 제출날짜
               </Styled.ApplicantTableHeader>
             </Styled.ApplicantTableRow>
@@ -133,7 +137,7 @@ const ApplicantsTab = () => {
                 <Styled.ApplicantTableCol>
                   {item.answers[0].value}
                 </Styled.ApplicantTableCol>
-                <Styled.ApplicantTableCol>
+                <Styled.ApplicantTableCol isMemo={true}>
                   {item.memo && item.memo.length > 0 ? (
                     item.memo
                   ) : (
