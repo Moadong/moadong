@@ -1,26 +1,39 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import * as Styled from './ApplicantDetailPage.styles';
 import { useParams, useNavigate } from 'react-router-dom';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import Header from '@/components/common/Header/Header';
-import { PageContainer } from '@/styles/PageContainer.styles';
-import * as Styled from '@/pages/ApplicationFormPage/ApplicationFormPage.styles';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
-import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import Spinner from '@/components/common/Spinner/Spinner';
-import BackButton from '@/assets/images/icons/back_arrow_icon.svg';
-import ForwardButton from '@/assets/images/icons/forward_arrow_icon.svg';
 import debounce from '@/utils/debounce';
 import updateApplicantMemo from '@/apis/application/updateApplicantDetail';
+import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import { ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import { Question } from '@/types/application';
+import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
+import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
 
 const AVAILABLE_STATUSES = [
-  ApplicationStatus.SCREENING, // 서류검토
+  ApplicationStatus.SCREENING, // 서류검토 (SUBMITTED 포함)
   ApplicationStatus.INTERVIEW_SCHEDULED, // 면접예정
   ApplicationStatus.ACCEPTED, // 합격
-];
+] as const;
+
+const getStatusColor = (status: ApplicationStatus | undefined): string => {
+  switch (status) {
+    case ApplicationStatus.ACCEPTED:
+      return 'var(--f5, #F5F5F5)';
+    case ApplicationStatus.SCREENING:
+    case ApplicationStatus.SUBMITTED:
+      return '#E5F6FF';
+    case ApplicationStatus.INTERVIEW_SCHEDULED:
+      return '#E9FFF1';
+    default:
+      return 'var(--f5, #F5F5F5)';
+  }
+};
 
 const ApplicantDetailPage = () => {
   const { questionId } = useParams<{ questionId: string }>();
@@ -32,7 +45,8 @@ const ApplicantDetailPage = () => {
   const { data: formData, isLoading, isError } = useGetApplication(clubId!);
 
   const { applicant, applicantIndex } = useMemo(() => {
-    const index = applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
+    const index =
+      applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
     const _applicant = applicantsData?.applicants[index];
 
     return { applicant: _applicant, applicantIndex: index };
@@ -48,7 +62,12 @@ const ApplicantDetailPage = () => {
   const updateApplicantDetail = useMemo(
     () =>
       debounce((memo: any, status: any) => {
-        updateApplicantMemo(memo as string, status as ApplicationStatus, clubId!, questionId!);
+        updateApplicantMemo(
+          memo as string,
+          status as ApplicationStatus,
+          clubId!,
+          questionId!,
+        );
       }, 400),
     [clubId, questionId],
   );
@@ -71,7 +90,10 @@ const ApplicantDetailPage = () => {
       .map((ans) => ans.value);
   };
 
-  const updateApplicantInContext = (memo: string, status: ApplicationStatus) => {
+  const updateApplicantInContext = (
+    memo: string,
+    status: ApplicationStatus,
+  ) => {
     if (!applicantsData || applicantIndex === -1) return;
 
     const updatedApplicants = [...applicantsData.applicants];
@@ -111,43 +133,56 @@ const ApplicantDetailPage = () => {
   return (
     <>
       <Header />
-      <PageContainer style={{ paddingTop: '80px' }}>
-        <div
-          style={{
-            position: 'sticky',
-            top: 25,
-            zIndex: 10,
-            background: '#fff',
-            display: 'flex',
-            alignItems: 'center',
-            gap: 12,
-            marginBottom: 16,
-          }}
-        >
-          <img style={{cursor: 'pointer'}} onClick={previousApplicant} src={BackButton} alt="이전 지원자" />
-          <select
-            id="applicantSelect"
-            value={applicant.id}
-            onChange={(e) => navigate(`/admin/applicants/${e.target.value}`)}
+      <Styled.Wrapper>
+        <Styled.HeaderContainer>
+          <Styled.ApplicantContainer>
+            <Styled.NavigationButton
+              onClick={previousApplicant}
+              src={PrevApplicantButton}
+              alt='이전 지원자'
+            />
+            <select
+              id='applicantSelect'
+              value={applicant.id}
+              onChange={(e) => navigate(`/admin/applicants/${e.target.value}`)}
+            >
+              {applicantsData.applicants.map((a) => (
+                <option key={a.id} value={a.id}>
+                  {a.answers[0].value}
+                </option>
+              ))}
+            </select>
+            <Styled.NavigationButton
+              onClick={nextApplicant}
+              src={NextApplicantButton}
+              alt='다음 지원자'
+            />
+          </Styled.ApplicantContainer>
+          <Styled.StatusSelect
+            id='statusSelect'
+            value={applicantStatus}
+            onChange={handleStatusChange}
+            $backgroundColor={getStatusColor(applicantStatus)}
           >
-            {applicantsData.applicants.map((a) => (
-              <option key={a.id} value={a.id}>
-                {a.answers[0].value}
+            {AVAILABLE_STATUSES.map((status) => (
+              <option key={status} value={status}>
+                {mapStatusToGroup(status).label}
               </option>
             ))}
-          </select>
-          <img style={{cursor: 'pointer'}} onClick={nextApplicant} src={ForwardButton} alt="다음 지원자" />
-        </div>
-        <textarea onInput={handleMemoChange} placeholder='메모를 입력해주세요' value={applicantMemo}></textarea>
+          </Styled.StatusSelect>
+        </Styled.HeaderContainer>
 
-        <select id="statusSelect" value={applicantStatus} onChange={handleStatusChange}>
-          {AVAILABLE_STATUSES.map((status) => (
-            <option key={status} value={status}>
-              {mapStatusToGroup(status).label}
-            </option>
-          ))}
-        </select>
+        <Styled.MemoContainer>
+          <Styled.MemoLabel>메모</Styled.MemoLabel>
+          <Styled.MemoTextarea
+            onInput={handleMemoChange}
+            placeholder='메모를 입력해주세요'
+            value={applicantMemo}
+          ></Styled.MemoTextarea>
+        </Styled.MemoContainer>
+      </Styled.Wrapper>
 
+      <Styled.ApplicantInfoContainer>
         <Styled.QuestionsWrapper style={{ cursor: 'default' }}>
           {formData.questions.map((q: Question, i: number) => (
             <QuestionContainer key={q.id} hasError={false}>
@@ -159,9 +194,9 @@ const ApplicantDetailPage = () => {
             </QuestionContainer>
           ))}
         </Styled.QuestionsWrapper>
-      </PageContainer>
+      </Styled.ApplicantInfoContainer>
     </>
   );
 };
 
-export default ApplicantDetailPage; 
+export default ApplicantDetailPage;

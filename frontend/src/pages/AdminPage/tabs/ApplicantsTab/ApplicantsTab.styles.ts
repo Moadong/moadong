@@ -141,7 +141,7 @@ export const ApplicantTableHeader = styled.th<{
   color: var(--78, #787878);
   width: ${({ width }) => (width ? `${width}px` : 'auto')};
   text-align: ${({ isMemo }) => (isMemo ? 'left' : 'center')};
-  padding-left: ${({ isMemo }) => (isMemo ? '30px' : 'none')};
+  padding-left: ${({ isMemo }) => (isMemo ? '30px' : '8px')};
 
   ${({ borderLeft }) =>
     borderLeft &&
@@ -171,7 +171,7 @@ export const ApplicantTableCol = styled.td<{ isMemo?: boolean }>`
   padding: 12px 8px;
   font-size: 16px;
   text-align: ${({ isMemo }) => (isMemo ? 'left' : 'center')};
-  padding-left: ${({ isMemo }) => (isMemo ? '30px' : 'none')};
+  padding-left: ${({ isMemo }) => (isMemo ? '30px' : '8px')};
 `;
 
 export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`

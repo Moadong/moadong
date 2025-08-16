@@ -18,7 +18,7 @@ import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
 import ApplicantsTab from './pages/AdminPage/tabs/ApplicantsTab/ApplicantsTab';
-import ApplicantDetailPage from './pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage';
+import ApplicantDetailPage from './pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPage';
 
 const queryClient = new QueryClient();
 
@@ -78,11 +78,11 @@ const App = () => {
                             path='application-edit'
                             element={<ApplicationEditTab />}
                           />
-                          <Route 
+                          <Route
                             path='applicants'
                             element={<ApplicantsTab />}
                           />
-                          <Route 
+                          <Route
                             path='applicants/:questionId'
                             element={<ApplicantDetailPage />}
                           />
