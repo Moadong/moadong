@@ -65,6 +65,40 @@ public class ClubSearchRepository {
         return results.getMappedResults();
     }
 
+    public List<ClubSearchResult> searchRecommendClubs(String category, String excludeClubId) {
+
+        List<AggregationOperation> operations = new ArrayList<>();
+        // 모집 상태 & 같은 category & 제외할 club _id 필터
+        operations.add(Aggregation.match(
+                new Criteria()
+                        .and("state").is(ClubState.AVAILABLE.getName())
+                        .and("category").is(category)
+                        .and("_id").ne(excludeClubId)
+                        .and("recruitmentInformation.clubRecruitmentStatus")
+                        .in(
+                                ClubRecruitmentStatus.ALWAYS.toString(),
+                                ClubRecruitmentStatus.OPEN.toString(),
+                                ClubRecruitmentStatus.UPCOMING.toString()
+                        )
+        ));
+        // 랜덤 추출 (5개)
+        operations.add(Aggregation.sample(5L));
+        // 필요한 필드만 매핑
+        operations.add(
+                Aggregation.project("name", "state", "category", "division")
+                        .and("recruitmentInformation.introduction").as("introduction")
+                        .and("recruitmentInformation.clubRecruitmentStatus").as("recruitmentStatus")
+                        .and(ConditionalOperators.ifNull("$recruitmentInformation.logo").then("")).as("logo")
+                        .and(ConditionalOperators.ifNull("$recruitmentInformation.tags").then("")).as("tags")
+        );
+
+        Aggregation aggregation = Aggregation.newAggregation(operations);
+        AggregationResults<ClubSearchResult> results = mongoTemplate.aggregate(aggregation, "clubs",
+                ClubSearchResult.class);
+
+        return results.getMappedResults();
+    }
+
     private Criteria getMatchedCriteria(String recruitmentStatus, String division,
         String category) {
         List<Criteria> criteriaList = new ArrayList<>();

@@ -3,10 +3,12 @@ package moadong.club.service;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubDetailedResult;
+import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.repository.ClubRepository;
+import moadong.club.repository.ClubSearchRepository;
 import moadong.club.util.RecruitmentStateCalculator;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
@@ -15,11 +17,14 @@ import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 @AllArgsConstructor
 public class ClubProfileService {
 
     private final ClubRepository clubRepository;
+    private final ClubSearchRepository clubSearchRepository;
 
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
         Club club = clubRepository.findClubByUserId(user.getId())
@@ -47,8 +52,10 @@ public class ClubProfileService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
+        List<ClubSearchResult> clubSearchResults = clubSearchRepository.searchRecommendClubs(club.getCategory(), clubId);
+
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(
-                club
+                club,clubSearchResults
         );
         return new ClubDetailedResponse(clubDetailedResult);
     }
