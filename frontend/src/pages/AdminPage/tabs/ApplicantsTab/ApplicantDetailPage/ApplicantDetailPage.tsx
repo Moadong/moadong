@@ -182,17 +182,19 @@ const ApplicantDetailPage = () => {
         </Styled.MemoContainer>
       </Styled.Wrapper>
 
-      <Styled.QuestionsWrapper style={{ cursor: 'default' }}>
-        {formData.questions.map((q: Question, i: number) => (
-          <QuestionContainer key={q.id} hasError={false}>
-            <QuestionAnswerer
-              question={q}
-              selectedAnswers={getAnswerByQuestionId(q.id)}
-              onChange={() => {}}
-            />
-          </QuestionContainer>
-        ))}
-      </Styled.QuestionsWrapper>
+      <Styled.ApplicantInfoContainer>
+        <Styled.QuestionsWrapper style={{ cursor: 'default' }}>
+          {formData.questions.map((q: Question, i: number) => (
+            <QuestionContainer key={q.id} hasError={false}>
+              <QuestionAnswerer
+                question={q}
+                selectedAnswers={getAnswerByQuestionId(q.id)}
+                onChange={() => {}}
+              />
+            </QuestionContainer>
+          ))}
+        </Styled.QuestionsWrapper>
+      </Styled.ApplicantInfoContainer>
     </>
   );
 };

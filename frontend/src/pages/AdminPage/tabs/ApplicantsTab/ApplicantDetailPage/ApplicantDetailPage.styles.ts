@@ -137,6 +137,14 @@ export const MemoTextarea = styled.textarea`
   }
 `;
 
+export const ApplicantInfoContainer = styled.div`
+  display: block;
+  width: 100%;
+  padding: 10px 30px;
+  border-radius: 10px;
+  border: 1px solid #f2f2f2;
+`;
+
 export const QuestionsWrapper = styled(
   ApplicationFormPageStyles.QuestionsWrapper,
 )`
