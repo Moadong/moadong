@@ -19,6 +19,7 @@ public record ClubApplicantsResult(
         String id,
         ApplicationStatus status,
         List<ClubQuestionAnswer> answers,
+        String memo,
         LocalDateTime createdAt
 ) {
     public static ClubApplicantsResult of(ClubApplication application, AESCipher cipher) {
@@ -40,6 +41,7 @@ public record ClubApplicantsResult(
                 .id(application.getId())
                 .status(application.getStatus())
                 .answers(decryptedAnswers)
+                .memo(application.getMemo())
                 .createdAt(application.getCreatedAt())
                 .build();
     }
