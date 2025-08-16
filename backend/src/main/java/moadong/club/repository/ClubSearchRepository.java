@@ -1,7 +1,7 @@
 package moadong.club.repository;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
+
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
@@ -66,38 +66,138 @@ public class ClubSearchRepository {
     }
 
     public List<ClubSearchResult> searchRecommendClubs(String category, String excludeClubId) {
+        Set<String> excludeIds = new HashSet<>();
+        if (excludeClubId != null) {
+            excludeIds.add(excludeClubId);
+        }
 
-        List<AggregationOperation> operations = new ArrayList<>();
-        // 모집 상태 & 같은 category & 제외할 club _id 필터
-        operations.add(Aggregation.match(
-                new Criteria()
-                        .and("state").is(ClubState.AVAILABLE.getName())
-                        .and("category").is(category)
-                        .and("_id").ne(excludeClubId)
-                        .and("recruitmentInformation.clubRecruitmentStatus")
-                        .in(
-                                ClubRecruitmentStatus.ALWAYS.toString(),
-                                ClubRecruitmentStatus.OPEN.toString(),
-                                ClubRecruitmentStatus.UPCOMING.toString()
-                        )
-        ));
-        // 랜덤 추출 (5개)
-        operations.add(Aggregation.sample(5L));
-        // 필요한 필드만 매핑
-        operations.add(
+        List<ClubSearchResult> result = new ArrayList<>();
+
+        // 1. 같은 카테고리 모집중 + (모집마감 포함) 동아리 최대 4개 추출 (모집상태 우선)
+        int maxCategoryCount = 4;
+        List<ClubSearchResult> categoryClubs = findClubsByCategoryAndState(category, excludeIds, true, maxCategoryCount);
+        addClubs(result, excludeIds, categoryClubs);
+
+        int remainCount = maxCategoryCount - categoryClubs.size();
+
+        // 2. 부족하면 마감 동아리로 채우기
+        if (remainCount > 0) {
+            List<ClubSearchResult> categoryClosedClubs = findClubsByCategoryAndState(category, excludeIds, false, remainCount);
+            addClubs(result, excludeIds, categoryClosedClubs);
+        }
+
+        // 3. 나머지 전체 랜덤 2개(모집상태 우선)로 채우기
+        int totalNeeded = 6;
+        int randomNeeded = totalNeeded - result.size();
+
+        if (randomNeeded > 0) {
+            List<ClubSearchResult> randomPool = findRandomClubs(excludeIds, 10);
+
+            List<ClubSearchResult> selectedRandomClubs = selectClubsByStatePriority(randomPool, randomNeeded);
+            addClubs(result, excludeIds, selectedRandomClubs);
+        }
+
+        return result.isEmpty() ? Collections.emptyList() : result;
+    }
+
+    // 같은 카테고리 & 주어진 모집 상태별 랜덤 n개 동아리 조회
+    private List<ClubSearchResult> findClubsByCategoryAndState(String category, Set<String> excludeIds,
+                                                               boolean onlyRecruitAvailable, int limit) {
+        List<AggregationOperation> ops = new ArrayList<>();
+
+        Criteria criteria = Criteria.where("category").is(category)
+                .and("_id").nin(excludeIds);
+
+        if (onlyRecruitAvailable) {
+            criteria = criteria.and("recruitmentInformation.clubRecruitmentStatus")
+                    .in(
+                            ClubRecruitmentStatus.ALWAYS.toString(),
+                            ClubRecruitmentStatus.OPEN.toString()
+                    );
+        }
+
+        ops.add(Aggregation.match(criteria));
+        ops.add(Aggregation.sample((long) limit));
+
+        // searchClubsByKeyword 와 동일한 project 단계 적용
+        ops.add(
                 Aggregation.project("name", "state", "category", "division")
                         .and("recruitmentInformation.introduction").as("introduction")
                         .and("recruitmentInformation.clubRecruitmentStatus").as("recruitmentStatus")
-                        .and(ConditionalOperators.ifNull("$recruitmentInformation.logo").then("")).as("logo")
-                        .and(ConditionalOperators.ifNull("$recruitmentInformation.tags").then("")).as("tags")
+                        .and(ConditionalOperators.ifNull("$recruitmentInformation.logo").then(""))
+                        .as("logo")
+                        .and(ConditionalOperators.ifNull("$recruitmentInformation.tags").then(Collections.emptyList()))
+                        .as("tags")
         );
 
-        Aggregation aggregation = Aggregation.newAggregation(operations);
-        AggregationResults<ClubSearchResult> results = mongoTemplate.aggregate(aggregation, "clubs",
-                ClubSearchResult.class);
-
-        return results.getMappedResults();
+        return mongoTemplate.aggregate(Aggregation.newAggregation(ops), "clubs", ClubSearchResult.class)
+                .getMappedResults();
     }
+
+    // 중복 ID 추적하며 클럽 리스트에 추가
+    private void addClubs(List<ClubSearchResult> result, Set<String> excludeIds, List<ClubSearchResult> clubs) {
+        for (ClubSearchResult club : clubs) {
+            if (!excludeIds.contains(club.id())) {
+                result.add(club);
+                excludeIds.add(club.id());
+            }
+        }
+    }
+
+    // 전체 랜덤 풀에서 모집중 우선으로 n개, 부족하면 마감 동아리로 채움
+    private boolean isRecruiting(ClubSearchResult club) {
+        String status = club.recruitmentStatus();
+        return ClubRecruitmentStatus.ALWAYS.toString().equals(status) || ClubRecruitmentStatus.OPEN.toString().equals(status);
+    }
+
+    private List<ClubSearchResult> selectClubsByStatePriority(List<ClubSearchResult> pool, int maxCount) {
+        List<ClubSearchResult> selected = new ArrayList<>();
+        Set<String> ids = new HashSet<>();
+
+        // 모집중 우선 선택
+        for (ClubSearchResult club : pool) {
+            if (selected.size() >= maxCount) break;
+            if (isRecruiting(club) && !ids.contains(club.id())) {
+                selected.add(club);
+                ids.add(club.id());
+            }
+        }
+
+        // 부족하면 모집 마감 동아리 추가
+        if (selected.size() < maxCount) {
+            for (ClubSearchResult club : pool) {
+                if (selected.size() >= maxCount) break;
+                if (!isRecruiting(club) && !ids.contains(club.id())) {
+                    selected.add(club);
+                    ids.add(club.id());
+                }
+            }
+        }
+
+        return selected;
+    }
+
+    // 전체 클럽에서 랜덤 n개 뽑기 (중복 제거용 excludeIds는 외부에서 처리)
+    private List<ClubSearchResult> findRandomClubs(Set<String> excludeIds, int sampleSize) {
+        List<AggregationOperation> ops = new ArrayList<>();
+        ops.add(Aggregation.match(Criteria.where("_id").nin(excludeIds)));
+        ops.add(Aggregation.sample((long) sampleSize));
+
+        ops.add(
+                Aggregation.project("name", "state", "category", "division")
+                        .and("recruitmentInformation.introduction").as("introduction")
+                        .and("recruitmentInformation.clubRecruitmentStatus").as("recruitmentStatus")
+                        .and(ConditionalOperators.ifNull("$recruitmentInformation.logo").then(""))
+                        .as("logo")
+                        .and(ConditionalOperators.ifNull("$recruitmentInformation.tags").then(Collections.emptyList()))
+                        .as("tags")
+        );
+
+        return mongoTemplate.aggregate(Aggregation.newAggregation(ops), "clubs", ClubSearchResult.class)
+                .getMappedResults();
+    }
+
+
 
     private Criteria getMatchedCriteria(String recruitmentStatus, String division,
         String category) {
