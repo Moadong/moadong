@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
@@ -23,7 +23,8 @@ const CustomHeader = ({
       onClick={decreaseMonth}
       disabled={prevMonthButtonDisabled}
       className='react-datepicker__navigation--custom react-datepicker__navigation--previous--custom'
-      onMouseDown={(e) => e.preventDefault()}>
+      onMouseDown={(e) => e.preventDefault()}
+    >
       {'<'}
     </button>
     <span className='react-datepicker__current-month'>
@@ -33,7 +34,8 @@ const CustomHeader = ({
       onClick={increaseMonth}
       disabled={nextMonthButtonDisabled}
       className='react-datepicker__navigation--custom react-datepicker__navigation--next--custom'
-      onMouseDown={(e) => e.preventDefault()}>
+      onMouseDown={(e) => e.preventDefault()}
+    >
       {'>'}
     </button>
   </div>
@@ -45,49 +47,54 @@ const Calendar = ({
   onChangeStart,
   onChangeEnd,
 }: CalendarProps) => {
-  const selectedStart = useMemo(() => recruitmentStart, [recruitmentStart]);
-  const selectedEnd = useMemo(() => recruitmentEnd, [recruitmentEnd]);
-
   const handleStartChange = useCallback(
     (date: Date | null) => {
       onChangeStart(date);
+      if (recruitmentEnd && date && date > recruitmentEnd) {
+        onChangeEnd(date);
+      }
     },
-    [onChangeStart],
+    [onChangeStart, onChangeEnd, recruitmentEnd],
   );
 
   const handleEndChange = useCallback(
     (date: Date | null) => {
       onChangeEnd(date);
+      if (recruitmentStart && date && date < recruitmentStart) {
+        onChangeStart(date);
+      }
     },
-    [onChangeEnd],
+    [onChangeStart, onChangeEnd, recruitmentStart],
   );
 
   return (
     <Styled.DatepickerContainer>
       <DatePicker
         locale={ko}
-        selected={selectedStart}
+        selected={recruitmentStart}
         onChange={handleStartChange}
-        selectsStart
-        startDate={selectedStart}
-        endDate={selectedEnd}
-        dateFormat='yyyy.MM.dd'
-        maxDate={selectedEnd ?? undefined}
+        showTimeSelect
+        timeIntervals={30}
+        timeCaption='시간'
+        dateFormat='yyyy.MM.dd (eee) HH:mm'
+        shouldCloseOnSelect={false}
         popperPlacement='bottom-start'
         renderCustomHeader={(props) => <CustomHeader {...props} />}
+        onChangeRaw={(e: any) => e.preventDefault()}
       />
       <Styled.Tidle>~</Styled.Tidle>
       <DatePicker
         locale={ko}
-        selected={selectedEnd}
+        selected={recruitmentEnd}
         onChange={handleEndChange}
-        selectsEnd
-        startDate={selectedStart}
-        endDate={selectedEnd}
-        minDate={selectedStart ?? undefined}
-        dateFormat='yyyy.MM.dd'
+        showTimeSelect
+        timeIntervals={30}
+        timeCaption='시간'
+        dateFormat='yyyy.MM.dd (eee) HH:mm'
+        shouldCloseOnSelect={false}
         popperPlacement='bottom-start'
         renderCustomHeader={(props) => <CustomHeader {...props} />}
+        onChangeRaw={(e: any) => e.preventDefault()}
       />
     </Styled.DatepickerContainer>
   );
