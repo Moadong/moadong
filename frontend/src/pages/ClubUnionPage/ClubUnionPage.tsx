@@ -30,9 +30,6 @@ const ClubUnionPage = () => {
                 <Styled.Role>{member.role}</Styled.Role>
                 <Styled.Name>{member.name}</Styled.Name>
                 <Styled.Description>{member.description}</Styled.Description>
-                {member.contact && (
-                  <Styled.Contact>{member.contact}</Styled.Contact>
-                )}
               </Styled.InfoOverlay>
             </Styled.ProfileCardContainer>
           ))}
