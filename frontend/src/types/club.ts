@@ -24,7 +24,7 @@ export interface ClubDetail extends Club {
   recruitmentTarget: string;
   socialLinks: Record<SNSPlatform, string>;
   externalApplicationUrl?: string;
-  recommendClubs?: Club
+  recommendClubs?: Club[]
 }
 
 export interface ClubDescription {
