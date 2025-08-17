@@ -172,6 +172,15 @@ export const ApplicantTableCol = styled.td<{ isMemo?: boolean }>`
   font-size: 16px;
   text-align: ${({ isMemo }) => (isMemo ? 'left' : 'center')};
   padding-left: ${({ isMemo }) => (isMemo ? '30px' : '8px')};
+
+  ${({ isMemo }) =>
+    isMemo &&
+    `
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 0; /* 테이블 셀에서 text-overflow 작동을 위해 필요 */
+  `}
 `;
 
 export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
