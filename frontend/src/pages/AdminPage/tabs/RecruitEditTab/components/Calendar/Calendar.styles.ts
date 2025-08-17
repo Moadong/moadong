@@ -9,8 +9,8 @@ const inputBg = 'rgba(0,0,0,0.05)';
 
 /* 재사용 블록 */
 const selected = css`
-  background-color: ${primary};
-  color: ${white};
+  background-color: ${primary} !important;
+  color: ${white} !important;
 `;
 const selectedHover = css`
   background-color: ${primaryHover};
@@ -121,7 +121,7 @@ export const DatepickerContainer = styled.div`
 
   /* 입력 필드 */
   .react-datepicker__input-container input {
-    width: 220px;
+    width: 270px;
     height: 45px;
     border: none;
     border-radius: 6px;
@@ -139,7 +139,7 @@ export const DatepickerContainer = styled.div`
     }
   }
 
-  /* ===== 날짜 셀 스타일 ===== */
+  /*  날짜 셀 스타일  */
   .react-datepicker__day {
     ${cellBase};
   }
@@ -196,21 +196,24 @@ export const DatepickerContainer = styled.div`
     padding: 4px 0;
   }
 
-  .react-datepicker .react-datepicker__time-list-item {
+  .react-datepicker__time-list-item {
     ${cellBase};
     height: 40px;
     line-height: 24px;
     margin: 0;
     padding: 8px 12px;
     cursor: pointer;
-  }
-  .react-datepicker .react-datepicker__time-list-item:hover {
-    background: rgba(255, 84, 20, 0.12);
-  }
-  .react-datepicker .react-datepicker__time-list-item--selected {
-    ${selected};
-  }
-  .react-datepicker .react-datepicker__time-list-item--selected:hover {
-    ${selectedHover};
+
+    &:hover {
+      background: rgba(255, 84, 20, 0.12);
+    }
+
+    &--selected {
+      ${selected};
+
+      &:hover {
+        ${selectedHover};
+      }
+    }
   }
 `;
