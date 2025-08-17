@@ -75,7 +75,20 @@ export const SelectionToggleButton = styled.button<{ active: boolean }>`
     color 0.2s ease;
 `;
 
-export const QuestionWrapper = styled.div<{readOnly?: boolean}>`
+export const DeleteButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid #ffded2;
+  background: #fff;
+  cursor: pointer;
+`;
+
+export const QuestionWrapper = styled.div<{ readOnly?: boolean }>`
   display: flex;
   gap: 36px;
   pointer-events: ${({ readOnly }) => (readOnly ? 'none' : 'auto')};
