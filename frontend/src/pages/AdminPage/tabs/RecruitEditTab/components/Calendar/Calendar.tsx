@@ -76,7 +76,7 @@ const Calendar = ({
         showTimeSelect
         timeIntervals={30}
         timeCaption='시간'
-        dateFormat='yyyy.MM.dd (eee) HH:mm'
+        dateFormat='yyyy년 MM월 dd일 (eee) HH:mm'
         shouldCloseOnSelect={false}
         popperPlacement='bottom-start'
         renderCustomHeader={(props) => <CustomHeader {...props} />}
@@ -90,7 +90,7 @@ const Calendar = ({
         showTimeSelect
         timeIntervals={30}
         timeCaption='시간'
-        dateFormat='yyyy.MM.dd (eee) HH:mm'
+        dateFormat='yyyy년 MM월 dd일 (eee) HH:mm'
         shouldCloseOnSelect={false}
         popperPlacement='bottom-start'
         renderCustomHeader={(props) => <CustomHeader {...props} />}
