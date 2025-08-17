@@ -139,11 +139,7 @@ const ApplicantsTab = () => {
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol isMemo={true}>
                   {item.memo && item.memo.length > 0 ? (
-                    item.memo.length > 26 ? (
-                      `${item.memo.slice(0, 23)}...`
-                    ) : (
-                      item.memo
-                    )
+                    item.memo
                   ) : (
                     <span style={{ color: '#989898' }}>
                       메모를 입력하지 않았습니다.
