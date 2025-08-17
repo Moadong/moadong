@@ -21,15 +21,16 @@ const RecruitEditTab = () => {
   const [description, setDescription] = useState('');
 
   const queryClient = useQueryClient();
-
   useEffect(() => {
     if (!clubDetail) return;
 
     const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
       parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
 
-    setRecruitmentStart((prev) => prev ?? initialStart);
-    setRecruitmentEnd((prev) => prev ?? initialEnd);
+    const now = new Date();
+
+    setRecruitmentStart((prev) => prev ?? initialStart ?? now);
+    setRecruitmentEnd((prev) => prev ?? initialEnd ?? now);
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
     setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
@@ -43,7 +44,7 @@ const RecruitEditTab = () => {
       recruitmentEnd: recruitmentEnd?.toISOString(),
       recruitmentTarget: recruitmentTarget,
       description: description,
-      externalApplicationUrl: clubDetail.externalApplicationUrl ?? ''
+      externalApplicationUrl: clubDetail.externalApplicationUrl ?? '',
     };
     updateClubDescription(updatedData, {
       onSuccess: () => {
