@@ -4,13 +4,29 @@ import { media } from '@/styles/mediaQuery';
 export const Title = styled.h1`
   font-size: 2.5rem;
   font-weight: 800;
+  margin-top: 100px;
   margin-bottom: 40px;
   text-align: center;
   color: #222;
 
   ${media.mobile} {
     font-size: 2rem;
+    margin-top: 80px;
     margin-bottom: 30px;
+  }
+`;
+
+export const IntroductionText = styled.p`
+  font-size: 1.1rem;
+  line-height: 1.7;
+  text-align: center;
+  color: #555;
+  max-width: 600px;
+  margin: 0 auto 60px;
+
+  ${media.mobile} {
+    font-size: 1rem;
+    margin-bottom: 40px;
   }
 `;
 
@@ -44,7 +60,7 @@ export const InfoOverlay = styled.div`
   justify-content: center;
   text-align: center;
   padding: 15px;
-  opacity: 0; // 평소에는 투명
+  opacity: 0;
   transition: opacity 0.3s ease;
   border-radius: 50%;
   box-sizing: border-box;
