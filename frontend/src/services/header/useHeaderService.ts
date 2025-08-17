@@ -1,3 +1,4 @@
+import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useSearch } from '@/context/SearchContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
@@ -13,25 +14,34 @@ const useHeaderService = () => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
-  const navigateToHome = (device: keyof typeof trackEventNames) => {
-    navigate('/');
-    setKeyword('');
-    setInputValue('');
-    trackEvent(trackEventNames[device]);
-  };
+  const navigateToHome = useCallback(
+    (device: keyof typeof trackEventNames) => {
+      navigate('/');
+      setKeyword('');
+      setInputValue('');
+      trackEvent(trackEventNames[device]);
+    },
+    [navigate, setKeyword, setInputValue, trackEvent],
+  );
 
-  const goIntroducePage = () => {
+  const handleIntroduceClick = useCallback(() => {
     navigate('/introduce');
     trackEvent(EVENT_NAME.INTRODUCE_BUTTON_CLICKED);
-  };
+  }, [navigate, trackEvent]);
 
-  const handleMenuClick = () => {
+  const handleClubUnionClick = useCallback(() => {
+    navigate('/club-union');
+    trackEvent(EVENT_NAME.CLUB_UNION_BUTTON_CLICKED);
+  }, [navigate, trackEvent]);
+
+  const handleMenuClick = useCallback(() => {
     trackEvent(EVENT_NAME.MOBILE_MENU_BUTTON_CLICKED);
-  };
+  }, [trackEvent]);
 
   return {
     handleHomeClick: navigateToHome,
-    handleIntroduceClick: goIntroducePage,
+    handleIntroduceClick,
+    handleClubUnionClick,
     handleMenuClick,
   };
 };
