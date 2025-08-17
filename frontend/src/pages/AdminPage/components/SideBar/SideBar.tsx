@@ -15,7 +15,7 @@ const tabs = [
   { label: '모집 정보 수정', path: '/admin/recruit-edit' },
   { label: '활동 사진 수정', path: '/admin/photo-edit' },
   { label: '지원서 관리', path: '/admin/application-edit' },
-  { label: '지원자 관리', path: '/admin/applicants' },
+  { label: '지원자 현황', path: '/admin/applicants' },
   { label: '계정 관리', path: '/admin/account-edit' },
 ];
 
@@ -41,7 +41,11 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     if (!confirmed) return;
 
     try {
-      if (document.cookie.split(';').some((cookie) => cookie.trim().startsWith('refreshToken='))) {
+      if (
+        document.cookie
+          .split(';')
+          .some((cookie) => cookie.trim().startsWith('refreshToken='))
+      ) {
         await logout();
       }
       localStorage.removeItem('accessToken');
