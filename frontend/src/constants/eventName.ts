@@ -5,6 +5,7 @@ export const EVENT_NAME = {
   BACK_BUTTON_CLICKED: 'Back Button Clicked' as const,
   CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked' as const,
   TAB_CLICKED: 'Tab Clicked' as const,
+  RECOMMENDED_CLUB_CLICKED: 'Recommended Club Clicked' as const,
   SHARE_BUTTON_CLICKED: '공유하기 버튼 클릭' as const,
   SNS_LINK_CLICKED: 'sns링크 버튼 클릭' as const,
   STATUS_RADIO_BUTTON_CLICKED: 'StatusRadioButton Clicked' as const,

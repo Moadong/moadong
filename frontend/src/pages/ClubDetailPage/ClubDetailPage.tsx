@@ -70,7 +70,8 @@ const ClubDetailPage = () => {
           feeds={clubDetail.feeds}
           clubName={clubDetail.name}
         />
-        <RecommendedClubs clubs={(clubDetail.recommendClubs ?? []) as Club[]} />
+        <RecommendedClubs
+        clubs={clubDetail.recommendClubs ?? []} />
         
       </Styled.PageContainer>
       <Footer />

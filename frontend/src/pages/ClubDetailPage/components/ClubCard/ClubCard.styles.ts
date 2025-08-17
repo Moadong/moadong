@@ -15,7 +15,7 @@ const CardContainer = styled.div<{
   border: 1px solid #dcdcdc;
 
   transition:
-    transform 0.2s ease-in-out,
+    transform 0.2s ease-in-out;
 
   transform: ${({ $isClicked }) => ($isClicked ? 'scale(1.05)' : 'scale(1)')};
   cursor: pointer;

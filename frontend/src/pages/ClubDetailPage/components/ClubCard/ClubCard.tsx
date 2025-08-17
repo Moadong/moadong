@@ -7,14 +7,18 @@ import * as Styled from './ClubCard.styles';
 import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { EVENT_NAME } from '@/constants/eventName';
 
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();
   const [isClicked, setIsClicked] = useState(false);
+  const trackEvent = useMixpanelTrack();
 
   const handleNavigate = () => {
     setIsClicked(true);
-    mixpanel.track('Recommended ClubCard Clicked', {
+    
+    trackEvent(EVENT_NAME.RECOMMENDED_CLUB_CLICKED, {
       club_id: club.id,
       club_name: club.name,
       recruitment_status: club.recruitmentStatus,
