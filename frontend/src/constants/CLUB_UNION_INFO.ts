@@ -12,7 +12,6 @@ export interface ClubUnionMember {
   role: string;
   description: string;
   imageSrc: string;
-  contact?: string;
 }
 
 const MEMBER_AVATARS = {
@@ -35,7 +34,6 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '회장',
     description: '부경대학교의 중앙동아리, 온 총동아리연합회가 책임지겠습니다.',
     imageSrc: MEMBER_AVATARS.PRESIDENT,
-    contact: '010-1234-5678',
   },
   {
     id: 2,
