@@ -7,7 +7,7 @@ export const parseRecruitmentDateString = (s: string): Date => {
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
     );
   }
-  const date = parse(s, 'yyyy.MM.dd HH:mm', new Date());
+  const date = parse(s + ' +0000', 'yyyy.MM.dd HH:mm X', new Date());
   if (!isValid(date)) {
     throw new Error(
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
