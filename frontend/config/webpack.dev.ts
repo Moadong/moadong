@@ -55,10 +55,10 @@ export default getAvailablePort(DEFAULT_PORT).then((port) => {
         {
           test: /\.css$/,
           use: ['style-loader', 'css-loader'],
-          include: path.resolve(
-            __dirname,
-            '../node_modules/react-datepicker/dist',
-          ),
+          include: [
+          path.resolve(__dirname, '../node_modules/react-datepicker/dist'),
+          path.resolve(__dirname, '../node_modules/swiper'),
+        ],
         },
         {
           test: /\.css$/,
