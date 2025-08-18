@@ -27,6 +27,8 @@ const MEMBER_AVATARS = {
   SPORT: SportAvatar,
 };
 
+// 개발자 가이드: description 필드는 UI가 깨지지 않도록 글자 수를 제한합니다.
+// (권장) 모바일: 50자 이내, 데스크톱: 100자 이내
 export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
   {
     id: 1,
