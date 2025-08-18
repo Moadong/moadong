@@ -6,11 +6,11 @@ export const updateApplicantDetail = async (
   memo: string,
   status: ApplicationStatus,
   clubId: string,
-  appId: string,
+  applicantId: string,
 ) => {
   try {
     const response = await secureFetch(
-      `${API_BASE_URL}/api/club/${clubId}/apply/${appId}`,
+      `${API_BASE_URL}/api/club/${clubId}/apply/${applicantId}`,
       {
         method: 'PUT',
         headers: {

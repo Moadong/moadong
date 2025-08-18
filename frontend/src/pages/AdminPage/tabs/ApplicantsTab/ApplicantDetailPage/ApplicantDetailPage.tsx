@@ -16,7 +16,7 @@ import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
 import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
 
 const AVAILABLE_STATUSES = [
-  ApplicationStatus.SCREENING, // 서류검토 (SUBMITTED 포함)
+  ApplicationStatus.SUBMITTED, // 서류검토 (SUBMITTED 포함)
   ApplicationStatus.INTERVIEW_SCHEDULED, // 면접예정
   ApplicationStatus.ACCEPTED, // 합격
 ] as const;
@@ -25,7 +25,6 @@ const getStatusColor = (status: ApplicationStatus | undefined): string => {
   switch (status) {
     case ApplicationStatus.ACCEPTED:
       return 'var(--f5, #F5F5F5)';
-    case ApplicationStatus.SCREENING:
     case ApplicationStatus.SUBMITTED:
       return '#E5F6FF';
     case ApplicationStatus.INTERVIEW_SCHEDULED:
@@ -45,13 +44,9 @@ const ApplicantDetailPage = () => {
   const { data: formData, isLoading, isError } = useGetApplication(clubId!);
   const { mutate: updateApplicant } = useUpdateApplicant(clubId!, questionId!);
 
-  const { applicant, applicantIndex } = useMemo(() => {
-    const index =
-      applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
-    const _applicant = applicantsData?.applicants[index];
-
-    return { applicant: _applicant, applicantIndex: index };
-  }, [applicantsData, questionId]);
+  const applicantIndex =
+    applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
+  const applicant = applicantsData?.applicants[applicantIndex];
 
   useEffect(() => {
     if (applicant) {
