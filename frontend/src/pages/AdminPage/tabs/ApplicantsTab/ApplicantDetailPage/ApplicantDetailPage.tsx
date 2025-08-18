@@ -7,7 +7,6 @@ import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionCo
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import Spinner from '@/components/common/Spinner/Spinner';
 import debounce from '@/utils/debounce';
-import updateApplicantMemo from '@/apis/application/updateApplicantDetail';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import { ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';

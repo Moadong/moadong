@@ -1,4 +1,4 @@
-import updateApplicantDetail from "@/apis/application/updateApplicantDetail";
+import { updateApplicantDetail } from "@/apis/application/updateApplicantDetail";
 import { ApplicationStatus } from "@/types/applicants";
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
