@@ -110,9 +110,9 @@ public class ClubApplyService {
             applications.add(ClubApplicantsResult.of(app, cipher));
 
             switch (app.getStatus()) {
-                case SUBMITTED, SCREENING -> reviewRequired++;
-                case SCREENING_PASSED, INTERVIEW_SCHEDULED, INTERVIEW_IN_PROGRESS -> scheduledInterview++;
-                case INTERVIEW_PASSED, OFFERED, ACCEPTED -> accepted++;
+                case SUBMITTED -> reviewRequired++;
+                case INTERVIEW_SCHEDULED -> scheduledInterview++;
+                case ACCEPTED -> accepted++;
             }
         }
 
