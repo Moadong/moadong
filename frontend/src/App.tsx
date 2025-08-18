@@ -19,6 +19,8 @@ import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
 import ApplicantsTab from './pages/AdminPage/tabs/ApplicantsTab/ApplicantsTab';
 import ApplicantDetailPage from './pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPage';
+import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
+
 
 const queryClient = new QueryClient();
 
@@ -72,8 +74,6 @@ const App = () => {
                             path='account-edit'
                             element={<AccountEditTab />}
                           />
-                          {/*🔒 메인 브랜치에서는 접근 차단 (배포용 차단 목적)*/}
-                          {/*develop-fe 브랜치에서는 접근 가능하도록 풀고 개발 예정*/}
                           <Route
                             path='application-edit'
                             element={<ApplicationEditTab />}
@@ -92,12 +92,11 @@ const App = () => {
                   </AdminClubProvider>
                 }
               />
-              {/*🔒 사용자용 지원서 작성 페이지도 메인에서는 비활성화 처리 */}
-              {/*🛠 develop-fe에서는 다시 노출 예정*/}
               <Route
                 path='/application/:clubId'
                 element={<ApplicationFormPage />}
               />
+              <Route path='/club-union' element={<ClubUnionPage />} />
               <Route path='*' element={<Navigate to='/' replace />} />
             </Routes>
           </BrowserRouter>
