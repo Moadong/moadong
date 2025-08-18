@@ -45,13 +45,9 @@ const ApplicantDetailPage = () => {
   const { data: formData, isLoading, isError } = useGetApplication(clubId!);
   const { mutate: updateApplicant } = useUpdateApplicant(clubId!, questionId!);
 
-  const { applicant, applicantIndex } = useMemo(() => {
-    const index =
-      applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
-    const _applicant = applicantsData?.applicants[index];
-
-    return { applicant: _applicant, applicantIndex: index };
-  }, [applicantsData, questionId]);
+  const applicantIndex =
+    applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
+  const applicant = applicantsData?.applicants[applicantIndex];
 
   useEffect(() => {
     if (applicant) {
