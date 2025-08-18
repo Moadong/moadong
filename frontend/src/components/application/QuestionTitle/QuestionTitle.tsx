@@ -28,7 +28,7 @@ const QuestionTitle = ({
         <Styled.QuestionTitleText
           contentEditable={mode !== 'answer'}
           suppressContentEditableWarning={true}
-          onInput={(e) => {
+          onChange={(e) => {
             const value = e.currentTarget.textContent || '';
             if (value.length <= APPLICATION_FORM.QUESTION_TITLE.maxLength) {
               onTitleChange?.(value);
