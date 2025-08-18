@@ -63,7 +63,15 @@ const ApplicantDetailPage = () => {
 
   const updateApplicantDetail = useMemo(
     () =>
-      debounce((memo: string, status: ApplicationStatus) => {
+      debounce((memo, status) => {
+
+        function isApplicationStatus(v: unknown): v is ApplicationStatus {
+          return typeof v === 'string' && Object.values(ApplicationStatus).includes(v as ApplicationStatus);
+        }
+
+        if (typeof memo !== 'string') return;
+        if (!isApplicationStatus(status)) return;
+
         updateApplicant(
           {
             memo, 
