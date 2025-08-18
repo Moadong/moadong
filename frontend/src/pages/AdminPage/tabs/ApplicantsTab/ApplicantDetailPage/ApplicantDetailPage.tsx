@@ -7,13 +7,13 @@ import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionCo
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import Spinner from '@/components/common/Spinner/Spinner';
 import debounce from '@/utils/debounce';
-import updateApplicantMemo from '@/apis/application/updateApplicantDetail';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import { ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import { Question } from '@/types/application';
 import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
 import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
+import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
 
 const AVAILABLE_STATUSES = [
   ApplicationStatus.SCREENING, // 서류검토 (SUBMITTED 포함)
@@ -39,10 +39,11 @@ const ApplicantDetailPage = () => {
   const { questionId } = useParams<{ questionId: string }>();
   const navigate = useNavigate();
   const [applicantMemo, setAppMemo] = useState('');
-  const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>();
-  const { applicantsData, clubId, setApplicantsData } = useAdminClubContext();
+  const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(ApplicationStatus.SUBMITTED);
+  const { applicantsData, clubId } = useAdminClubContext();
 
   const { data: formData, isLoading, isError } = useGetApplication(clubId!);
+  const { mutate: updateApplicant } = useUpdateApplicant(clubId!, questionId!);
 
   const { applicant, applicantIndex } = useMemo(() => {
     const index =
@@ -61,12 +62,20 @@ const ApplicantDetailPage = () => {
 
   const updateApplicantDetail = useMemo(
     () =>
-      debounce((memo: any, status: any) => {
-        updateApplicantMemo(
-          memo as string,
-          status as ApplicationStatus,
-          clubId!,
-          questionId!,
+      debounce((memo, status) => {
+
+        function isApplicationStatus(v: unknown): v is ApplicationStatus {
+          return typeof v === 'string' && Object.values(ApplicationStatus).includes(v as ApplicationStatus);
+        }
+
+        if (typeof memo !== 'string') return;
+        if (!isApplicationStatus(status)) return;
+
+        updateApplicant(
+          {
+            memo, 
+            status
+          }
         );
       }, 400),
     [clubId, questionId],
@@ -90,29 +99,15 @@ const ApplicantDetailPage = () => {
       .map((ans) => ans.value);
   };
 
-  const updateApplicantInContext = (
-    memo: string,
-    status: ApplicationStatus,
-  ) => {
-    if (!applicantsData || applicantIndex === -1) return;
-
-    const updatedApplicants = [...applicantsData.applicants];
-    updatedApplicants[applicantIndex] = { ...applicant, memo, status };
-
-    setApplicantsData({ ...applicantsData, applicants: updatedApplicants });
-  };
-
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newMemo = e.target.value;
     setAppMemo(newMemo);
-    updateApplicantInContext(newMemo, applicantStatus!);
     updateApplicantDetail(newMemo, applicantStatus);
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const newStatus = e.target.value as ApplicationStatus;
     setApplicantStatus(newStatus);
-    updateApplicantInContext(applicantMemo, newStatus);
     updateApplicantDetail(applicantMemo, newStatus);
   };
 
