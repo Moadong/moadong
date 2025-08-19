@@ -39,7 +39,7 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
       window.removeEventListener('beforeunload', trackPageDuration);
       document.removeEventListener('visibilitychange', trackPageDuration);
     };
-  }, [location.pathname, clubName]);
+  }, [location.pathname]);
 };
 
 export default useTrackPageView;
