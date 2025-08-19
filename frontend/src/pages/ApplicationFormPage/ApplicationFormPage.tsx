@@ -29,7 +29,10 @@ const ApplicationFormPage = () => {
     error: applicationError,
   } = useGetApplication(clubId!);
 
-  useTrackPageView('ApplicationFormPage', clubDetail?.name);
+  useTrackPageView(
+    'ApplicationFormPage',
+    clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
+  );
 
   if (!clubId) return null;
 
