@@ -21,6 +21,16 @@ const ApplicationFormPage = () => {
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
 
+  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId!);
+  const {
+    data: formData,
+    isLoading,
+    isError,
+    error: applicationError,
+  } = useGetApplication(clubId!);
+
+  useTrackPageView('ApplicationFormPage', clubDetail?.name);
+
   if (!clubId) return null;
 
   const STORAGE_KEY = `applicationAnswers_${clubId}`;
@@ -32,16 +42,6 @@ const ApplicationFormPage = () => {
     getAnswersById,
     answers,
   } = useAnswers(initialAnswers);
-
-  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId);
-  const {
-    data: formData,
-    isLoading,
-    isError,
-    error: applicationError,
-  } = useGetApplication(clubId);
-
-  useTrackPageView('ApplicationFormPage', clubDetail?.name);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
