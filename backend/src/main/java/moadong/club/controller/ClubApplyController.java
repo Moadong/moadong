@@ -72,7 +72,7 @@ public class ClubApplyController {
 
     @PutMapping("/apply/{appId}")
     @Operation(summary = "지원서 변경",
-            description = "클럽 자원자의 지원서 정보를 수정합니다.<br>"
+            description = "클럽 지원자의 지원서 정보를 수정합니다.<br>"
                     + "appId - 지원서 아이디"
     )
     @PreAuthorize("isAuthenticated()")
@@ -87,7 +87,7 @@ public class ClubApplyController {
 
     @DeleteMapping("/apply/{appId}")
     @Operation(summary = "지원서 삭제",
-            description = "클럽 자원자의 지원서를 삭제합니다.<br>"
+            description = "클럽 지원자의 지원서를 삭제합니다.<br>"
                     + "appId - 지원서 아이디"
     )
     @PreAuthorize("isAuthenticated()")
