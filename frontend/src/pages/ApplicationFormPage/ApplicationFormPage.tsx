@@ -3,6 +3,7 @@ import { PageContainer } from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import useTrackPageView from '@/hooks/useTrackPageView';
 import { useAnswers } from '@/hooks/useAnswers';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
@@ -39,6 +40,8 @@ const ApplicationFormPage = () => {
     isError,
     error: applicationError,
   } = useGetApplication(clubId);
+
+  useTrackPageView('ApplicationFormPage', clubDetail?.name);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
