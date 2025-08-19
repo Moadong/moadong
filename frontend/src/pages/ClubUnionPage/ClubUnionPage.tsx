@@ -1,10 +1,13 @@
 import Header from '@/components/common/Header/Header';
 import * as Styled from './ClubUnionPage.styles';
+import useTrackPageView from '@/hooks/useTrackPageView';
 import { CLUB_UNION_MEMBERS } from '@/constants/CLUB_UNION_INFO';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import Footer from '@/components/common/Footer/Footer';
 
 const ClubUnionPage = () => {
+  useTrackPageView('ClubUnionPage');
+
   return (
     <>
       <Header />
