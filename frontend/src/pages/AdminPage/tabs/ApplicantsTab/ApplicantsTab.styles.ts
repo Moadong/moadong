@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import checkIcon from '@/assets/images/icons/checkBox.svg';
 
 export const ApplicationHeader = styled.div`
   display: flex;
@@ -64,17 +65,45 @@ export const ApplicantListTitle = styled.h2`
 
 export const ApplicantListHeader = styled.div`
   display: flex;
+  justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
   gap: 8px;
 `;
 
+export const FilterContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const SelectWrapper = styled.div`
+  position: relative;
+  display: inline-block;
+`;
+
+export const Arrow = styled.img`
+  position: absolute;
+  right: 12px;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+`;
+
 export const ApplicantFilterSelect = styled.select`
-  padding: 8px 16px;
+  height: 35px;
+  padding: 4px 32px 4px 14px;
   border-radius: 8px;
-  border: 1px solid #ddd;
-  background: #fff;
+  border: none;
+  background: var(--f5, #f5f5f5);
   font-size: 16px;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
 `;
 
 export const ApplicantSearchBox = styled.input`
@@ -93,29 +122,80 @@ export const ApplicantTable = styled.table`
 `;
 
 export const ApplicantTableHeaderWrapper = styled.thead`
+  border-top: 1px solid #c5c5c5;
+  border-bottom: 1px solid var(--light-line, #dcdcdc);
   background: #fafafa;
 `;
 
-export const ApplicantTableHeader = styled.th`
+export const ApplicantTableHeader = styled.th<{
+  width?: number | string;
+  borderLeft?: boolean;
+  isMemo?: boolean;
+}>`
+  position: relative;
   background: #fafafa;
   padding: 12px 8px;
-  font-size: 16px;
-  font-weight: 500;
-  color: #888;
-  text-align: center;
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  color: var(--78, #787878);
+  width: ${({ width }) => (width ? `${width}px` : 'auto')};
+  text-align: ${({ isMemo }) => (isMemo ? 'left' : 'center')};
+  padding-left: ${({ isMemo }) => (isMemo ? '30px' : '8px')};
+
+  ${({ borderLeft }) =>
+    borderLeft &&
+    `
+    &::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 30%;
+      height: 40%;
+      width: 1px;
+      background: #DCDCDC;
+    }
+  `}
 `;
 
 export const ApplicantTableRow = styled.tr`
   border-bottom: 1px solid #f0f0f0;
+  text-align: center;
+
   &:hover {
     background: #f7faff;
   }
-  text-align: center;
 `;
 
-export const ApplicantTableCol = styled.td`
+export const ApplicantTableCol = styled.td<{ isMemo?: boolean }>`
   padding: 12px 8px;
   font-size: 16px;
+  text-align: ${({ isMemo }) => (isMemo ? 'left' : 'center')};
+  padding-left: ${({ isMemo }) => (isMemo ? '30px' : '8px')};
+
+  ${({ isMemo }) =>
+    isMemo &&
+    `
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 0; /* 테이블 셀에서 text-overflow 작동을 위해 필요 */
+  `}
+`;
+
+export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 10px;
+  border: 2px solid #f5f5f5;
+  background-color: #fff;
+  cursor: pointer;
+
+  &:checked {
+    background: #ffe7de url(${checkIcon}) center/24px 24px no-repeat;
+  }
 `;
 
 export const ApplicantStatusBadge = styled.span<{ status: string }>`

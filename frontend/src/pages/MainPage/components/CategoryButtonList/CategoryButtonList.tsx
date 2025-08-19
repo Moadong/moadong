@@ -1,4 +1,4 @@
-import mixpanel from 'mixpanel-browser';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './CategoryButtonList.styles';
 import iconAll from '@/assets/images/icons/category_button/category_all_button_icon.svg';
 import iconVolunteer from '@/assets/images/icons/category_button/category_volunteer_button_icon.svg';
@@ -9,64 +9,33 @@ import iconSport from '@/assets/images/icons/category_button/category_sport_butt
 import iconPerformance from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
 import { useSearch } from '@/context/SearchContext';
 import { useCategory } from '@/context/CategoryContext';
+import { EVENT_NAME } from '@/constants/eventName';
 
 interface Category {
   id: string;
   name: string;
   icon: string;
-  eventName: string;
 }
 
 const clubCategories: Category[] = [
-  { id: 'all', name: '전체', icon: iconAll, eventName: 'Category_All_Clicked' },
-  {
-    id: '봉사',
-    name: '봉사',
-    icon: iconVolunteer,
-    eventName: 'Category_Volunteering_Clicked',
-  },
-  {
-    id: '종교',
-    name: '종교',
-    icon: iconReligion,
-    eventName: 'Category_Religion_Clicked',
-  },
-  {
-    id: '취미교양',
-    name: '취미교양',
-    icon: iconHobby,
-    eventName: 'Category_Hobby_Clicked',
-  },
-  {
-    id: '학술',
-    name: '학술',
-    icon: iconStudy,
-    eventName: 'Category_Study_Clicked',
-  },
-  {
-    id: '운동',
-    name: '운동',
-    icon: iconSport,
-    eventName: 'Category_Sport_Clicked',
-  },
-  {
-    id: '공연',
-    name: '공연',
-    icon: iconPerformance,
-    eventName: 'Category_Performance_Clicked',
-  },
+  { id: 'all', name: '전체', icon: iconAll },
+  { id: '봉사', name: '봉사', icon: iconVolunteer },
+  { id: '종교', name: '종교', icon: iconReligion },
+  { id: '취미교양', name: '취미교양', icon: iconHobby },
+  { id: '학술', name: '학술', icon: iconStudy },
+  { id: '운동', name: '운동', icon: iconSport },
+  { id: '공연', name: '공연', icon: iconPerformance },
 ];
 
 const CategoryButtonList = () => {
   const { setKeyword, setInputValue, setIsSearching } = useSearch();
   const { setSelectedCategory } = useCategory();
+  const trackEvent = useMixpanelTrack();
 
   const handleCategoryClick = (category: Category) => {
-    mixpanel.track(category.eventName, {
+    trackEvent(EVENT_NAME.CATEGORY_BUTTON_CLICKED, {
       category_id: category.id,
       category_name: category.name,
-      timestamp: Date.now(),
-      url: window.location.href,
     });
 
     setKeyword('');

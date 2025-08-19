@@ -3,6 +3,7 @@ import * as Styled from './SnsLinkIcons.styles';
 import { SNS_CONFIG } from '@/constants/snsConfig';
 import { SNSPlatform } from '@/types/club';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { EVENT_NAME } from '@/constants/eventName';
 
 interface SnsLinkIconsProps {
   apiSocialLinks: Partial<Record<SNSPlatform, string>>;
@@ -26,7 +27,7 @@ const SnsLinkIcons = ({ apiSocialLinks, clubName }: SnsLinkIconsProps) => {
             target='_blank'
             rel='noreferrer'
             onClick={() =>
-              trackEvent('sns링크 버튼 클릭', {
+              trackEvent(EVENT_NAME.SNS_LINK_CLICKED, {
                 platform,
                 clubName,
               })
