@@ -26,17 +26,17 @@ const QuestionTitle = ({
       )}
       <Styled.QuestionTitleTextContainer>
         <Styled.QuestionTitleText
-          contentEditable={mode !== 'answer'}
+          readOnly={mode === 'answer'}
           suppressContentEditableWarning={true}
           onChange={(e) => {
-            const value = e.currentTarget.textContent || '';
+            const value = e.target.value || '';
             if (value.length <= APPLICATION_FORM.QUESTION_TITLE.maxLength) {
               onTitleChange?.(value);
             }
           }}
+          value={title}
           data-placeholder={title ? '' : APPLICATION_FORM.QUESTION_TITLE.placeholder}
         >
-          {title}
         </Styled.QuestionTitleText>
         {mode === 'answer' && required && <Styled.QuestionRequired />}
       </Styled.QuestionTitleTextContainer>
