@@ -3,6 +3,7 @@ import { PageContainer } from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import useTrackPageView from '@/hooks/useTrackPageView';
 import { useAnswers } from '@/hooks/useAnswers';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
@@ -20,6 +21,19 @@ const ApplicationFormPage = () => {
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
 
+  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId!);
+  const {
+    data: formData,
+    isLoading,
+    isError,
+    error: applicationError,
+  } = useGetApplication(clubId!);
+
+  useTrackPageView(
+    'ApplicationFormPage',
+    clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
+  );
+
   if (!clubId) return null;
 
   const STORAGE_KEY = `applicationAnswers_${clubId}`;
@@ -31,14 +45,6 @@ const ApplicationFormPage = () => {
     getAnswersById,
     answers,
   } = useAnswers(initialAnswers);
-
-  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId);
-  const {
-    data: formData,
-    isLoading,
-    isError,
-    error: applicationError,
-  } = useGetApplication(clubId);
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
