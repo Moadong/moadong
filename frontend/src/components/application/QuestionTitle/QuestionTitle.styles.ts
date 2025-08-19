@@ -32,18 +32,20 @@ export const QuestionTitleTextContainer = styled.div`
   max-width: calc(100% - 20px);
 `;
 
-export const QuestionTitleText = styled.div`
+export const QuestionTitleText = styled.textarea`
   display: inline-block;
   min-width: 100px;
   resize: none;
-  overflow-wrap: break-word;
-  white-space: pre-wrap;
   border: none;
   outline: none;
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.5;
   color: #111;
+  field-sizing: content;
+  white-space: pre-wrap;
+  overflow-wrap: break-word;
+  overflow: hidden;
 
   &:empty:before {
     content: attr(data-placeholder);
