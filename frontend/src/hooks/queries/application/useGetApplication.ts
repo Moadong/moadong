@@ -6,5 +6,6 @@ export const useGetApplication = (clubId: string) => {
     queryKey: ['applicationForm', clubId],
     queryFn: () => getApplication(clubId),
     retry: false,
+    enabled: !!clubId,
   });
 };
