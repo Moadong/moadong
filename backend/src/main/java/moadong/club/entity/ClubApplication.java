@@ -39,8 +39,16 @@ public class ClubApplication {
     @Builder.Default
     LocalDateTime createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
-    public void updateDetail(String memo, ApplicationStatus status) {
+    public void updateMemo(String memo) {
         this.memo = memo;
+    }
+
+    public void updateStatus(ApplicationStatus status) {
         this.status = status;
+    }
+
+    public void updateAnswers(List<ClubQuestionAnswer> answers) {
+        this.answers.clear();
+        this.answers.addAll(answers);
     }
 }
