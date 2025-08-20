@@ -99,6 +99,8 @@ public class ClubApplyService {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
 
+        ClubQuestion clubApplication = clubQuestionRepository.findByClubId(clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
         List<ClubApplication> submittedApplications = clubApplicationRepository.findAllByQuestionId(clubId);
 
         List<ClubApplicantsResult> applications = new ArrayList<>();
@@ -107,7 +109,8 @@ public class ClubApplyService {
         int accepted = 0;
 
         for (ClubApplication app : submittedApplications) {
-            applications.add(ClubApplicantsResult.of(app, cipher));
+            ClubApplication sortedApp = sortApplicationAnswers(clubApplication, app);
+            applications.add(ClubApplicantsResult.of(sortedApp, cipher));
 
             switch (app.getStatus()) {
                 case SUBMITTED -> reviewRequired++;
@@ -125,6 +128,19 @@ public class ClubApplyService {
                 .build();
     }
 
+    private ClubApplication sortApplicationAnswers(ClubQuestion application, ClubApplication app) {
+        Map<Long, ClubQuestionAnswer> answerMap = app.getAnswers().stream()
+                .collect(Collectors.toMap(ClubQuestionAnswer::getId, answer -> answer));
+
+        List<ClubQuestionAnswer> sortedAnswers = application.getQuestions().stream()
+                .map(question -> answerMap.get(question.getId()))
+                .filter(Objects::nonNull)
+                .collect(Collectors.toList());
+
+        app.updateAnswers(sortedAnswers);
+        return app;
+    }
+
     @Transactional
     public void editApplicantDetail(String clubId, String appId, ClubApplicantEditRequest request, CustomUserDetails user) {
         Club club = clubRepository.findById(clubId)
@@ -137,7 +153,8 @@ public class ClubApplyService {
         ClubApplication application = clubApplicationRepository.findByIdAndQuestionId(appId, clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
 
-        application.updateDetail(request.memo(), request.status());
+        application.updateMemo(request.memo());
+        application.updateStatus(request.status());
 
         clubApplicationRepository.save(application);
     }
