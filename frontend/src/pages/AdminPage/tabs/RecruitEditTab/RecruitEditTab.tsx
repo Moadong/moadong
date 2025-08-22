@@ -35,13 +35,18 @@ const RecruitEditTab = () => {
     setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
 
+  const correctKoreanDate = (date: Date | null): string | undefined => {
+    if (!date) return undefined;
+    return new Date(date?.getTime() + 9 * 60 * 60 * 1000).toISOString();
+  }
+
   const handleUpdateClub = async () => {
     if (!clubDetail) return;
 
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: recruitmentStart?.toISOString(),
-      recruitmentEnd: recruitmentEnd?.toISOString(),
+      recruitmentStart: correctKoreanDate(recruitmentStart),
+      recruitmentEnd: correctKoreanDate(recruitmentEnd),
       recruitmentTarget: recruitmentTarget,
       description: description,
       externalApplicationUrl: clubDetail.externalApplicationUrl ?? '',
