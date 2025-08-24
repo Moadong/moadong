@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import checkIcon from '@/assets/images/icons/checkBox.svg';
+import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
 
 export const ApplicationHeader = styled.div`
   display: flex;
@@ -74,23 +75,48 @@ export const ApplicantListHeader = styled.div`
 export const FilterContainer = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   gap: 8px;
 `;
 
 export const SelectWrapper = styled.div`
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
 `;
 
-export const Arrow = styled.img`
+export const Arrow = styled.img<{ width?: number; height?: number }>`
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  width: 12px;
-  height: 12px;
+  width: ${({ width }) => (width ? `${width}px` : '12px')};
+  height: ${({ height }) => (height ? `${height}px` : '12px')};
   pointer-events: none;
+`;
+
+export const VerticalLine = styled.div`
+  width: 1px;
+  height: auto;
+  background-color: #dcdcdc;
+  margin: 8px 4px;
+`;
+
+export const StatusSelect = styled.select`
+  height: 30px;
+  border: 1px solid #DCDCDC;
+  background: #fff;
+  border-radius: 55px;
+  padding: 0px 22px 0px 8px;
+  margin: 5px 0px 5px 0px;
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  &:hover {
+    background: #F5F5F5;
+  }
 `;
 
 export const ApplicantFilterSelect = styled.select`
@@ -104,6 +130,16 @@ export const ApplicantFilterSelect = styled.select`
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+
+  &:hover {
+    background: #EBEBEB;
+  }
+`;
+
+export const DeleteButton = styled.img`
+  &:hover {
+    content: url(${hoverDeleteIcon});
+  }
 `;
 
 export const ApplicantSearchBox = styled.input`

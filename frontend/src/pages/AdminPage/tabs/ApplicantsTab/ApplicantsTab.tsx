@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import SearchField from '@/components/common/SearchField/SearchField';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
+import deleteIcon from '@/assets/images/icons/applicant_delete.svg';
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
@@ -93,6 +94,14 @@ const ApplicantsTab = () => {
               </Styled.ApplicantFilterSelect>
               <Styled.Arrow src={selectIcon} />
             </Styled.SelectWrapper>
+            <Styled.VerticalLine />
+            <Styled.SelectWrapper>
+              <Styled.StatusSelect>
+                <option value="상태변경">상태변경</option>
+              </Styled.StatusSelect>
+              <Styled.Arrow width={8} height={8} src={selectIcon} />
+            </Styled.SelectWrapper>
+            <Styled.DeleteButton src={deleteIcon} alt='삭제'/>
           </Styled.FilterContainer>
           <SearchField
             value={keyword}
