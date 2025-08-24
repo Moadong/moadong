@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import checkIcon from '@/assets/images/icons/checkBox.svg';
 import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
+import disabledDeleteIcon from '@/assets/images/icons/applicant_delete_disabled.svg';
 
 export const ApplicationHeader = styled.div`
   display: flex;
@@ -104,19 +105,20 @@ export const VerticalLine = styled.div`
 
 export const StatusSelect = styled.select`
   height: 30px;
-  border: 1px solid #DCDCDC;
+  border: 1px solid #dcdcdc;
   background: #fff;
   border-radius: 55px;
   padding: 0px 22px 0px 8px;
   margin: 5px 0px 5px 0px;
   font-weight: 700;
+  color: ${({ disabled }) => (disabled ? '#000' : '#DCDCDC')};
 
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 
-  &:hover {
-    background: #F5F5F5;
+  &:disabled:hover {
+    background: #f5f5f5;
   }
 `;
 
@@ -133,14 +135,19 @@ export const ApplicantFilterSelect = styled.select`
   appearance: none;
 
   &:hover {
-    background: #EBEBEB;
+    background: #ebebeb;
   }
 `;
 
-export const DeleteButton = styled.img`
-  &:hover {
-    content: url(${hoverDeleteIcon});
-  }
+export const DeleteButton = styled.img<{ disabled?: boolean }>`
+  ${({ disabled }) =>
+    !disabled
+      ? `content: url(${disabledDeleteIcon});`
+      : `
+        &:hover {
+          content: url(${hoverDeleteIcon});
+        }
+    `};
 `;
 
 export const ApplicantSearchBox = styled.input`
@@ -226,7 +233,7 @@ export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
   width: 24px;
   height: 24px;
   border-radius: 6px;
-  border: 2px solid #DCDCDC;
+  border: 2px solid #dcdcdc;
   background-color: #fff;
   cursor: pointer;
 
@@ -236,7 +243,9 @@ export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
   }
 `;
 
-export const ApplicantTableAllSelectCheckbox = styled.input.attrs({ type: 'checkbox' })`
+export const ApplicantTableAllSelectCheckbox = styled.input.attrs({
+  type: 'checkbox',
+})`
   -webkit-appearance: none;
   appearance: none;
   width: 24px;

@@ -123,7 +123,9 @@ const ApplicantsTab = () => {
             </Styled.SelectWrapper>
             <Styled.VerticalLine />
             <Styled.SelectWrapper>
-              <Styled.StatusSelect>
+              <Styled.StatusSelect
+                disabled={Array.from(checkedItem.values()).some((v) => v)}
+              >
                 <option value='상태변경'>상태변경</option>
               </Styled.StatusSelect>
               <Styled.Arrow width={8} height={8} src={selectIcon} />
@@ -131,6 +133,7 @@ const ApplicantsTab = () => {
             <Styled.DeleteButton
               src={deleteIcon}
               alt='삭제'
+              disabled={Array.from(checkedItem.values()).some((v) => v)}
               onClick={() => {
                 const toBeDeleted = Array.from(checkedItem.entries())
                   .filter(([_, isChecked]) => isChecked)
