@@ -109,6 +109,7 @@ export const StatusSelect = styled.select`
   border-radius: 55px;
   padding: 0px 22px 0px 8px;
   margin: 5px 0px 5px 0px;
+  font-weight: 700;
 
   -webkit-appearance: none;
   -moz-appearance: none;
