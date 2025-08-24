@@ -1,5 +1,5 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { Applicant } from '@/types/applicants';
+import { Applicant, ApplicationStatus } from '@/types/applicants';
 import React, { useEffect, useMemo, useState } from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
@@ -18,6 +18,7 @@ const ApplicantsTab = () => {
     new Map(),
   );
   const [selectAll, setSelectAll] = useState(false);
+  const [open, setOpen] = useState(false);
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
   if (!clubId) return null;
 
@@ -41,6 +42,12 @@ const ApplicantsTab = () => {
     setCheckedItem(newMap);
   }, [filteredApplicants]);
 
+  useEffect(() => {
+    const all =
+      checkedItem.size > 0 && Array.from(checkedItem.values()).every(Boolean);
+    setSelectAll(all);
+  }, [checkedItem]);
+
   const deleteSelectApplicants = (ids: string[]) => {
     if (ids.length === 0) return;
 
@@ -53,7 +60,6 @@ const ApplicantsTab = () => {
       { applicantIds: ids },
       {
         onSuccess: () => {
-          setSelectAll(false);
           setCheckedItem(new Map());
           alert('삭제되었습니다.');
         },
@@ -64,22 +70,42 @@ const ApplicantsTab = () => {
     );
   };
 
-  const allSelectApplicants = () => {
-    if (checkedItem.size === 0) return;
+  const selectApplicantsByStatus = (
+    mode: 'all' | 'filter',
+    ...args: ApplicationStatus[]
+  ) => {
+    if (checkedItem.size === 0 || filteredApplicants.length === 0) return;
 
-    setSelectAll((prev) => {
-      const newSelect = !prev;
+    setCheckedItem((prev) => {
+      const newMap = new Map(prev);
 
-      setCheckedItem((prev) => {
-        const newMap = new Map(prev);
-        newMap.forEach((_, key) => {
-          newMap.set(key, newSelect);
-        });
+      const isAllChecked = Array.from(checkedItem.values()).every(Boolean);
+
+      if (mode === 'all') {
+        newMap.forEach((_, key) => newMap.set(key, !isAllChecked));
         return newMap;
+      }
+
+      newMap.forEach((_, key) => {
+        newMap.set(key, false);
       });
 
-      return newSelect;
+      filteredApplicants
+        .filter((applicant) => args.includes(applicant.status))
+        .forEach((applicant) => {
+          newMap.set(applicant.id, true);
+        });
+      return newMap;
     });
+
+    if (open) setOpen(false);
+  };
+
+  const checkoutAllApplicants = () => {
+    checkedItem.forEach((_, key) => {
+      checkedItem.set(key, false);
+    });
+    setCheckedItem(new Map(checkedItem));
   };
 
   return (
@@ -143,7 +169,7 @@ const ApplicantsTab = () => {
             <Styled.VerticalLine />
             <Styled.SelectWrapper>
               <Styled.StatusSelect
-                disabled={Array.from(checkedItem.values()).some((v) => v)}
+                disabled={!Array.from(checkedItem.values()).some(Boolean)}
               >
                 <option value='상태변경'>상태변경</option>
               </Styled.StatusSelect>
@@ -180,16 +206,55 @@ const ApplicantsTab = () => {
                     checked={selectAll}
                     onClick={(e: React.MouseEvent<HTMLInputElement>) => {
                       e.stopPropagation();
-                      allSelectApplicants();
+                      selectApplicantsByStatus('all');
                     }}
                   />
                   <Styled.ApplicantAllSelectArrow
                     src={selectAllIcon}
                     alt='전체선택'
-                    onClick={() => {
-                      alert('이거 언제 구현하지');
-                    }}
+                    onClick={() => setOpen((prev) => !prev)}
                   />
+                  <Styled.ApplicantAllSelectMenu open={open}>
+                    <Styled.ApplicantAllSelectMenuItem
+                      onClick={() => {
+                        if (selectAll) {
+                          setOpen(false);
+                          return;
+                        }
+                        selectApplicantsByStatus('all');
+                      }}
+                    >
+                      전체선택
+                    </Styled.ApplicantAllSelectMenuItem>
+                    <Styled.ApplicantAllSelectMenuItem
+                      onClick={() => {
+                        selectApplicantsByStatus(
+                          'filter',
+                          ApplicationStatus.SUBMITTED,
+                        );
+                      }}
+                    >
+                      서류 검토 필요
+                    </Styled.ApplicantAllSelectMenuItem>
+                    <Styled.ApplicantAllSelectMenuItem
+                      onClick={() => {
+                        selectApplicantsByStatus(
+                          'filter',
+                          ApplicationStatus.INTERVIEW_SCHEDULED,
+                        );
+                      }}
+                    >
+                      면접예정
+                    </Styled.ApplicantAllSelectMenuItem>
+                    <Styled.ApplicantAllSelectMenuItem
+                      onClick={() => {
+                        setOpen(false);
+                        checkoutAllApplicants();
+                      }}
+                    >
+                      선택해제
+                    </Styled.ApplicantAllSelectMenuItem>
+                  </Styled.ApplicantAllSelectMenu>
                 </Styled.ApplicantAllSelectWrapper>
               </Styled.ApplicantTableHeader>
               <Styled.ApplicantTableHeader width={120}>

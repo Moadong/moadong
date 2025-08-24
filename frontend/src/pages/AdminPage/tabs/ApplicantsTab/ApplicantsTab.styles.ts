@@ -111,13 +111,13 @@ export const StatusSelect = styled.select`
   padding: 0px 22px 0px 8px;
   margin: 5px 0px 5px 0px;
   font-weight: 700;
-  color: ${({ disabled }) => (disabled ? '#000' : '#DCDCDC')};
+  color: ${({ disabled }) => (disabled ? '#DCDCDC' : '#000')};
 
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
 
-  &:disabled:hover {
+  &:not(disabled):hover {
     background: #f5f5f5;
   }
 `;
@@ -256,6 +256,33 @@ export const ApplicantAllSelectArrow = styled.img`
   height: 16px;
   object-fit: none;
   cursor: pointer;
+`;
+
+export const ApplicantAllSelectMenu = styled.div<{ open: boolean }>`
+  display: ${({ open }) => (open ? 'block' : 'none')};
+  position: absolute;
+  top: 80%;
+  width: 110px;
+  height: auto;
+  background: #fff;
+  left: 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  box-shadow: 0px 1px 8px 0px #0000001f;
+  z-index: 10;
+  padding: 8px 0;
+`;
+
+export const ApplicantAllSelectMenuItem = styled.div`
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 13px;
+  cursor: pointer;
+  text-align: left;
+  padding-left: 20px;
+  &:hover {
+    background: #f5f5f5;
+  }
 `;
 
 export const ApplicantTableAllSelectCheckbox = styled.input.attrs({
