@@ -7,13 +7,17 @@ import SearchField from '@/components/common/SearchField/SearchField';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import deleteIcon from '@/assets/images/icons/applicant_delete.svg';
+import { useDeleteApplicants } from '@/hooks/queries/applicants/useDeleteApplicants';
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
   const [keyword, setKeyword] = useState('');
-  const [checkedItem, setCheckedItem] = useState<Map<string, boolean>>(new Map());
+  const [checkedItem, setCheckedItem] = useState<Map<string, boolean>>(
+    new Map(),
+  );
   const [selectAll, setSelectAll] = useState(false);
+  const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
   if (!clubId) return null;
 
   const filteredApplicants = useMemo(() => {
@@ -35,6 +39,29 @@ const ApplicantsTab = () => {
     });
     setCheckedItem(newMap);
   }, [filteredApplicants]);
+
+  const deleteSelectApplicants = (ids: string[]) => {
+    if (ids.length === 0) return;
+
+    const check = confirm(
+      `${ids.length}개의 지원자를 정말로 삭제하시겠습니까?\n삭제된 지원자는 복구할 수 없습니다.`,
+    );
+    if (!check) return;
+
+    deleteApplicants(
+      { applicantIds: ids },
+      {
+        onSuccess: () => {
+          setSelectAll(false);
+          setCheckedItem(new Map());
+          alert('삭제되었습니다.');
+        },
+        onError: () => {
+          alert('지원자 삭제에 실패했습니다. 다시 시도해주세요.');
+        },
+      },
+    );
+  };
 
   return (
     <>
@@ -97,11 +124,21 @@ const ApplicantsTab = () => {
             <Styled.VerticalLine />
             <Styled.SelectWrapper>
               <Styled.StatusSelect>
-                <option value="상태변경">상태변경</option>
+                <option value='상태변경'>상태변경</option>
               </Styled.StatusSelect>
               <Styled.Arrow width={8} height={8} src={selectIcon} />
             </Styled.SelectWrapper>
-            <Styled.DeleteButton src={deleteIcon} alt='삭제'/>
+            <Styled.DeleteButton
+              src={deleteIcon}
+              alt='삭제'
+              onClick={() => {
+                const toBeDeleted = Array.from(checkedItem.entries())
+                  .filter(([_, isChecked]) => isChecked)
+                  .map(([id, _]) => id);
+
+                deleteSelectApplicants(toBeDeleted);
+              }}
+            />
           </Styled.FilterContainer>
           <SearchField
             value={keyword}
@@ -117,25 +154,27 @@ const ApplicantsTab = () => {
             <Styled.ApplicantTableRow>
               <Styled.ApplicantTableHeader width={40}>
                 <Styled.ApplicantTableAllSelectCheckbox
-                    checked={selectAll}
-                    onClick={(e: React.MouseEvent<HTMLInputElement>) => {
-                        e.stopPropagation();
-                        setSelectAll((prev) => {
-                          const newSelect = !prev;
+                  checked={selectAll}
+                  onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                    e.stopPropagation();
 
-                          setCheckedItem((prev) => {
-                            const newMap = new Map(prev);
-                            newMap.forEach((_, key) => {
-                              newMap.set(key, newSelect);
-                            });
-                            return newMap;
-                          });
+                    if (checkedItem.size === 0) return;
 
-                          return newSelect
+                    setSelectAll((prev) => {
+                      const newSelect = !prev;
+
+                      setCheckedItem((prev) => {
+                        const newMap = new Map(prev);
+                        newMap.forEach((_, key) => {
+                          newMap.set(key, newSelect);
                         });
-                      }
-                    }
-                  />
+                        return newMap;
+                      });
+
+                      return newSelect;
+                    });
+                  }}
+                />
               </Styled.ApplicantTableHeader>
               <Styled.ApplicantTableHeader width={120}>
                 현재상태
@@ -161,15 +200,14 @@ const ApplicantsTab = () => {
                 <Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCheckbox
                     checked={checkedItem.get(item.id)}
-                    onClick={(e: React.MouseEvent<HTMLInputElement>) =>{
-                        e.stopPropagation();
-                        setCheckedItem((prev) => {
-                          const newMap = new Map(prev);
-                          newMap.set(item.id, !newMap.get(item.id));
-                          return newMap;
-                        });
-                      }
-                    }
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                      e.stopPropagation();
+                      setCheckedItem((prev) => {
+                        const newMap = new Map(prev);
+                        newMap.set(item.id, !newMap.get(item.id));
+                        return newMap;
+                      });
+                    }}
                   />
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
