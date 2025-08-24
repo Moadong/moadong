@@ -188,12 +188,29 @@ export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
   appearance: none;
   width: 24px;
   height: 24px;
-  border-radius: 10px;
-  border: 2px solid #f5f5f5;
+  border-radius: 6px;
+  border: 2px solid #DCDCDC;
   background-color: #fff;
   cursor: pointer;
 
   &:checked {
+    border: 0px;
+    background: #ffe7de url(${checkIcon}) center/24px 24px no-repeat;
+  }
+`;
+
+export const ApplicantTableAllSelectCheckbox = styled.input.attrs({ type: 'checkbox' })`
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid #787878;
+  background-color: #fff;
+  cursor: pointer;
+
+  &:checked {
+    border: 0px;
     background: #ffe7de url(${checkIcon}) center/24px 24px no-repeat;
   }
 `;

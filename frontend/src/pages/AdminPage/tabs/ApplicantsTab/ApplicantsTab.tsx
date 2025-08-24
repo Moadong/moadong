@@ -1,6 +1,6 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { Applicant } from '@/types/applicants';
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
 import SearchField from '@/components/common/SearchField/SearchField';
@@ -11,6 +11,8 @@ const ApplicantsTab = () => {
   const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
   const [keyword, setKeyword] = useState('');
+  const [checkedItem, setCheckedItem] = useState<Map<string, boolean>>(new Map());
+  const [selectAll, setSelectAll] = useState(false);
   if (!clubId) return null;
 
   const filteredApplicants = useMemo(() => {
@@ -24,6 +26,14 @@ const ApplicantsTab = () => {
         .includes(keyword.trim().toLowerCase()),
     );
   }, [applicantsData, keyword]);
+
+  useEffect(() => {
+    const newMap = new Map<string, boolean>();
+    filteredApplicants.forEach((user: Applicant) => {
+      newMap.set(user.id, false);
+    });
+    setCheckedItem(newMap);
+  }, [filteredApplicants]);
 
   return (
     <>
@@ -96,9 +106,28 @@ const ApplicantsTab = () => {
         <Styled.ApplicantTable>
           <Styled.ApplicantTableHeaderWrapper>
             <Styled.ApplicantTableRow>
-              <Styled.ApplicantTableHeader
-                width={40}
-              ></Styled.ApplicantTableHeader>
+              <Styled.ApplicantTableHeader width={40}>
+                <Styled.ApplicantTableAllSelectCheckbox
+                    checked={selectAll}
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                        e.stopPropagation();
+                        setSelectAll((prev) => {
+                          const newSelect = !prev;
+
+                          setCheckedItem((prev) => {
+                            const newMap = new Map(prev);
+                            newMap.forEach((_, key) => {
+                              newMap.set(key, newSelect);
+                            });
+                            return newMap;
+                          });
+
+                          return newSelect
+                        });
+                      }
+                    }
+                  />
+              </Styled.ApplicantTableHeader>
               <Styled.ApplicantTableHeader width={120}>
                 현재상태
               </Styled.ApplicantTableHeader>
@@ -122,8 +151,15 @@ const ApplicantsTab = () => {
               >
                 <Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCheckbox
-                    onClick={(e: React.MouseEvent<HTMLInputElement>) =>
-                      e.stopPropagation()
+                    checked={checkedItem.get(item.id)}
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) =>{
+                        e.stopPropagation();
+                        setCheckedItem((prev) => {
+                          const newMap = new Map(prev);
+                          newMap.set(item.id, !newMap.get(item.id));
+                          return newMap;
+                        });
+                      }
                     }
                   />
                 </Styled.ApplicantTableCol>
