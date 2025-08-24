@@ -243,6 +243,21 @@ export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
   }
 `;
 
+export const ApplicantAllSelectWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ApplicantAllSelectArrow = styled.img`
+  position: absolute;
+  right: -1px;
+  width: 16px;
+  height: 16px;
+  object-fit: none;
+  cursor: pointer;
+`;
+
 export const ApplicantTableAllSelectCheckbox = styled.input.attrs({
   type: 'checkbox',
 })`

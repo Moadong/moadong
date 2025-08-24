@@ -3,11 +3,12 @@ import { Applicant } from '@/types/applicants';
 import React, { useEffect, useMemo, useState } from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
+import { useDeleteApplicants } from '@/hooks/queries/applicants/useDeleteApplicants';
 import SearchField from '@/components/common/SearchField/SearchField';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import deleteIcon from '@/assets/images/icons/applicant_delete.svg';
-import { useDeleteApplicants } from '@/hooks/queries/applicants/useDeleteApplicants';
+import selectAllIcon from '@/assets/images/icons/applicant_select_arrow.svg';
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
@@ -61,6 +62,24 @@ const ApplicantsTab = () => {
         },
       },
     );
+  };
+
+  const allSelectApplicants = () => {
+    if (checkedItem.size === 0) return;
+
+    setSelectAll((prev) => {
+      const newSelect = !prev;
+
+      setCheckedItem((prev) => {
+        const newMap = new Map(prev);
+        newMap.forEach((_, key) => {
+          newMap.set(key, newSelect);
+        });
+        return newMap;
+      });
+
+      return newSelect;
+    });
   };
 
   return (
@@ -155,29 +174,23 @@ const ApplicantsTab = () => {
         <Styled.ApplicantTable>
           <Styled.ApplicantTableHeaderWrapper>
             <Styled.ApplicantTableRow>
-              <Styled.ApplicantTableHeader width={40}>
-                <Styled.ApplicantTableAllSelectCheckbox
-                  checked={selectAll}
-                  onClick={(e: React.MouseEvent<HTMLInputElement>) => {
-                    e.stopPropagation();
-
-                    if (checkedItem.size === 0) return;
-
-                    setSelectAll((prev) => {
-                      const newSelect = !prev;
-
-                      setCheckedItem((prev) => {
-                        const newMap = new Map(prev);
-                        newMap.forEach((_, key) => {
-                          newMap.set(key, newSelect);
-                        });
-                        return newMap;
-                      });
-
-                      return newSelect;
-                    });
-                  }}
-                />
+              <Styled.ApplicantTableHeader width={55}>
+                <Styled.ApplicantAllSelectWrapper>
+                  <Styled.ApplicantTableAllSelectCheckbox
+                    checked={selectAll}
+                    onClick={(e: React.MouseEvent<HTMLInputElement>) => {
+                      e.stopPropagation();
+                      allSelectApplicants();
+                    }}
+                  />
+                  <Styled.ApplicantAllSelectArrow
+                    src={selectAllIcon}
+                    alt='전체선택'
+                    onClick={() => {
+                      alert('이거 언제 구현하지');
+                    }}
+                  />
+                </Styled.ApplicantAllSelectWrapper>
               </Styled.ApplicantTableHeader>
               <Styled.ApplicantTableHeader width={120}>
                 현재상태
