@@ -11,7 +11,7 @@ export const useDeleteApplicants = (clubId: string) => {
       queryClient.invalidateQueries({ queryKey: ['clubApplicants'] });
     },
     onError: (error) => {
-      console.log(`Error delete applicants detail: ${error}`);
+      console.error(`Error delete applicants detail: ${error}`);
     },
   });
 };
