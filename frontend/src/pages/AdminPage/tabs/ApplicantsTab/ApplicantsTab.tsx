@@ -181,7 +181,7 @@ const ApplicantsTab = () => {
             <Styled.DeleteButton
               src={deleteIcon}
               alt='삭제'
-              disabled={Array.from(checkedItem.values()).some(Boolean)}
+              disabled={!Array.from(checkedItem.values()).some(Boolean)}
               onClick={() => {
                 const toBeDeleted = Array.from(checkedItem.entries())
                   .filter(([_, isChecked]) => isChecked)

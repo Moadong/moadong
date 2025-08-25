@@ -117,7 +117,7 @@ export const StatusSelect = styled.select`
   -moz-appearance: none;
   appearance: none;
 
-  &:not(disabled):hover {
+  &:not(:disabled):hover {
     background: #f5f5f5;
   }
 `;
@@ -141,7 +141,7 @@ export const ApplicantFilterSelect = styled.select`
 
 export const DeleteButton = styled.img<{ disabled?: boolean }>`
   ${({ disabled }) =>
-    !disabled
+    disabled
       ? `content: url(${disabledDeleteIcon});`
       : `
         &:hover {
