@@ -73,8 +73,8 @@ public class ClubApplyController {
 
     @PutMapping("/applicant")
     @Operation(summary = "지원자의 지원서 정보 변경",
-            description = "클럽 지원자의 지원서 정보를 수정합니다.<br>"
-                    + "appId - 지원서 아이디"
+            description = "여러 지원자의 지원서 정보를 일괄 수정합니다.<br>"
+                    + "요청 본문은 ClubApplicantEditRequest 객체의 배열이며, 각 원소는 applicantId, memo, status를 포함합니다."
     )
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
