@@ -14,6 +14,8 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/api/club/{clubId}")
 @AllArgsConstructor
@@ -75,10 +77,9 @@ public class ClubApplyController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> editApplicantDetail(@PathVariable String clubId,
-                                                 @PathVariable String appId,
-                                                 @RequestBody @Validated ClubApplicantEditRequest request,
+                                                 @RequestBody @Validated List<ClubApplicantEditRequest> request,
                                                  @CurrentUser CustomUserDetails user) {
-        clubApplyService.editApplicantDetail(clubId, appId, request, user);
+        clubApplyService.editApplicantDetail(clubId, request, user);
         return Response.ok("success edit applicant");
     }
 
