@@ -1,5 +1,7 @@
 import styled from 'styled-components';
 import checkIcon from '@/assets/images/icons/checkBox.svg';
+import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
+import disabledDeleteIcon from '@/assets/images/icons/applicant_delete_disabled.svg';
 
 export const ApplicationHeader = styled.div`
   display: flex;
@@ -74,23 +76,50 @@ export const ApplicantListHeader = styled.div`
 export const FilterContainer = styled.div`
   display: flex;
   justify-content: center;
-  align-items: center;
+  align-items: stretch;
   gap: 8px;
 `;
 
 export const SelectWrapper = styled.div`
   position: relative;
-  display: inline-block;
+  display: flex;
+  align-items: center;
 `;
 
-export const Arrow = styled.img`
+export const Arrow = styled.img<{ width?: number; height?: number }>`
   position: absolute;
   right: 12px;
   top: 50%;
   transform: translateY(-50%);
-  width: 12px;
-  height: 12px;
+  width: ${({ width }) => (width ? `${width}px` : '12px')};
+  height: ${({ height }) => (height ? `${height}px` : '12px')};
   pointer-events: none;
+`;
+
+export const VerticalLine = styled.div`
+  width: 1px;
+  height: auto;
+  background-color: #dcdcdc;
+  margin: 8px 4px;
+`;
+
+export const StatusSelect = styled.select`
+  height: 30px;
+  border: 1px solid #dcdcdc;
+  background: #fff;
+  border-radius: 55px;
+  padding: 0px 22px 0px 8px;
+  margin: 5px 0px 5px 0px;
+  font-weight: 700;
+  color: ${({ disabled }) => (disabled ? '#DCDCDC' : '#000')};
+
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  appearance: none;
+
+  &:not(:disabled):hover {
+    background: #f5f5f5;
+  }
 `;
 
 export const ApplicantFilterSelect = styled.select`
@@ -104,6 +133,21 @@ export const ApplicantFilterSelect = styled.select`
   -webkit-appearance: none;
   -moz-appearance: none;
   appearance: none;
+
+  &:hover {
+    background: #ebebeb;
+  }
+`;
+
+export const DeleteButton = styled.img<{ disabled?: boolean }>`
+  ${({ disabled }) =>
+    disabled
+      ? `content: url(${disabledDeleteIcon});`
+      : `
+        &:hover {
+          content: url(${hoverDeleteIcon});
+        }
+    `};
 `;
 
 export const ApplicantSearchBox = styled.input`
@@ -188,12 +232,73 @@ export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
   appearance: none;
   width: 24px;
   height: 24px;
-  border-radius: 10px;
-  border: 2px solid #f5f5f5;
+  border-radius: 6px;
+  border: 2px solid #dcdcdc;
   background-color: #fff;
   cursor: pointer;
 
   &:checked {
+    border: 0px;
+    background: #ffe7de url(${checkIcon}) center/24px 24px no-repeat;
+  }
+`;
+
+export const ApplicantAllSelectWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ApplicantAllSelectArrow = styled.img`
+  position: absolute;
+  right: -1px;
+  width: 16px;
+  height: 16px;
+  object-fit: none;
+  cursor: pointer;
+`;
+
+export const ApplicantAllSelectMenu = styled.div<{ open: boolean }>`
+  display: ${({ open }) => (open ? 'block' : 'none')};
+  position: absolute;
+  top: 80%;
+  width: 110px;
+  height: auto;
+  background: #fff;
+  left: 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  box-shadow: 0px 1px 8px 0px #0000001f;
+  z-index: 10;
+  padding: 8px 0;
+`;
+
+export const ApplicantAllSelectMenuItem = styled.div`
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 13px;
+  cursor: pointer;
+  text-align: left;
+  padding-left: 20px;
+  &:hover {
+    background: #f5f5f5;
+  }
+`;
+
+export const ApplicantTableAllSelectCheckbox = styled.input.attrs({
+  type: 'checkbox',
+})`
+  -webkit-appearance: none;
+  appearance: none;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  border: 2px solid #787878;
+  background-color: #fff;
+  cursor: pointer;
+
+  &:checked {
+    border: 0px;
     background: #ffe7de url(${checkIcon}) center/24px 24px no-repeat;
   }
 `;
