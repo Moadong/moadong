@@ -1,11 +1,16 @@
 import styled from 'styled-components';
 
 export const FormTitle = styled.input`
+  width: 100%;
+  padding: 10px 12px;
+  align-items: center;
+  border-radius: 10px;
+  background: var(--f5, #f5f5f5);
   font-size: 2.5rem;
   font-weight: 700;
   border: none;
   outline: none;
-  margin: 76px 0;
+  margin: 60px 0px 35px 0px;
 
   &::placeholder {
     color: #c5c5c5;
@@ -20,7 +25,7 @@ export const FormTitle = styled.input`
 export const QuestionContainer = styled.div`
   display: flex;
   flex-direction: column;
-  margin-top : 40px;
+  margin-top: 40px;
   gap: 83px;
 `;
 

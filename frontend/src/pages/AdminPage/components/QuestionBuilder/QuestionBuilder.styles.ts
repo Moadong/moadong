@@ -75,9 +75,29 @@ export const SelectionToggleButton = styled.button<{ active: boolean }>`
     color 0.2s ease;
 `;
 
-export const QuestionWrapper = styled.div<{readOnly?: boolean}>`
+export const DeleteButton = styled.button`
   display: flex;
-  gap: 36px;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  width: 100%;
+  height: 20px;
+  border-radius: 6px;
+  border: 1px solid #ffded2;
+  background: #fff;
+  cursor: pointer;
+`;
+
+export const QuestionWrapper = styled.div<{ readOnly?: boolean }>`
+  display: flex;
+  padding: 26px 20px;
+  gap: 20px;
+  border-radius: 10px;
+  border: 1px solid #f0f0f0;
   pointer-events: ${({ readOnly }) => (readOnly ? 'none' : 'auto')};
   cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'auto')};
+
+  &:hover {
+    box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);
+  }
 `;

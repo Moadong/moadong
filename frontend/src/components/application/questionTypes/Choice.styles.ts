@@ -20,11 +20,10 @@ export const ItemWrapper = styled.div`
 `;
 
 export const DeleteButton = styled.button`
+  position: relative;
+  right: 45px;
   font-size: 0.75rem;
-  padding: 4px 8px;
-  border-radius: 4px;
-  background-color: #ffecec;
-  color: #e33;
-  border: 1px solid #f99;
+  background-color: transparent;
+  border: none;
   cursor: pointer;
 `;
