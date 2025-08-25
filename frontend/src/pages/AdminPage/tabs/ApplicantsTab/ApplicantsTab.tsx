@@ -102,10 +102,13 @@ const ApplicantsTab = () => {
   };
 
   const checkoutAllApplicants = () => {
-    checkedItem.forEach((_, key) => {
-      checkedItem.set(key, false);
+    setCheckedItem((prev) => {
+      const newMap = new Map(prev);
+      newMap.forEach((_, key) => {
+        newMap.set(key, false);
+      });
+      return newMap;
     });
-    setCheckedItem(new Map(checkedItem));
   };
 
   return (
