@@ -3,6 +3,8 @@ package moadong.club.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.*;
 import moadong.club.service.ClubApplyService;
@@ -77,7 +79,7 @@ public class ClubApplyController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> editApplicantDetail(@PathVariable String clubId,
-                                                 @RequestBody @Validated List<ClubApplicantEditRequest> request,
+                                                 @RequestBody @Valid @NotEmpty List<ClubApplicantEditRequest> request,
                                                  @CurrentUser CustomUserDetails user) {
         clubApplyService.editApplicantDetail(clubId, request, user);
         return Response.ok("success edit applicant");
