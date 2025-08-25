@@ -20,7 +20,6 @@ const ApplicantsTab = () => {
   const [selectAll, setSelectAll] = useState(false);
   const [open, setOpen] = useState(false);
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
-  if (!clubId) return null;
 
   const filteredApplicants = useMemo(() => {
     if (!applicantsData?.applicants) return [];
@@ -47,6 +46,8 @@ const ApplicantsTab = () => {
       checkedItem.size > 0 && Array.from(checkedItem.values()).every(Boolean);
     setSelectAll(all);
   }, [checkedItem]);
+
+  if (!clubId) return null;
 
   const deleteSelectApplicants = (ids: string[]) => {
     if (ids.length === 0) return;
