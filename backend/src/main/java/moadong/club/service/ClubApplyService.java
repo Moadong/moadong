@@ -148,7 +148,8 @@ public class ClubApplyService {
         }
 
         Map<String, ClubApplicantEditRequest> requestMap = request.stream()
-                .collect(Collectors.toMap(ClubApplicantEditRequest::applicantId, Function.identity()));
+                .collect(Collectors.toMap(ClubApplicantEditRequest::applicantId,
+                        Function.identity(), (prev, next) -> next));
 
         List<String> applicationIds = new ArrayList<>(requestMap.keySet());
         List<ClubApplication> application = clubApplicationRepository.findAllByIdInAndQuestionId(applicationIds, clubId);
