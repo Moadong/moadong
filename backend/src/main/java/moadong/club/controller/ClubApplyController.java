@@ -69,7 +69,7 @@ public class ClubApplyController {
         return Response.ok(clubApplyService.getClubApplyInfo(clubId, user));
     }
 
-    @PutMapping("/apply/{appId}")
+    @PutMapping("/applicant")
     @Operation(summary = "지원자의 지원서 정보 변경",
             description = "클럽 지원자의 지원서 정보를 수정합니다.<br>"
                     + "appId - 지원서 아이디"
