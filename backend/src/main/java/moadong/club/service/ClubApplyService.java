@@ -6,10 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.payload.dto.ClubApplicantsResult;
-import moadong.club.payload.request.ClubApplicantEditRequest;
-import moadong.club.payload.request.ClubApplicationCreateRequest;
-import moadong.club.payload.request.ClubApplicationEditRequest;
-import moadong.club.payload.request.ClubApplyRequest;
+import moadong.club.payload.request.*;
 import moadong.club.payload.response.ClubApplicationResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.repository.ClubApplicationRepository;
@@ -160,7 +157,7 @@ public class ClubApplyService {
     }
 
     @Transactional
-    public void deleteApplicant(String clubId, String appId, CustomUserDetails user) {
+    public void deleteApplicant(String clubId, ClubApplicantDeleteRequest request, CustomUserDetails user) {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
@@ -168,10 +165,13 @@ public class ClubApplyService {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
 
-        ClubApplication application = clubApplicationRepository.findByIdAndQuestionId(appId, clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
+        List<ClubApplication> applicants = clubApplicationRepository.findAllByIdInAndQuestionId(request.applicantIds(), clubId);
 
-        clubApplicationRepository.delete(application);
+        if (applicants.size() != request.applicantIds().size()) {
+            throw new RestApiException(ErrorCode.APPLICANT_NOT_FOUND);
+        }
+
+        clubApplicationRepository.deleteAll(applicants);
     }
 
     private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubQuestion clubQuestion) {
