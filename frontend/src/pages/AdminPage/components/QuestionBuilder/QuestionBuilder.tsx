@@ -136,8 +136,8 @@ const QuestionBuilder = ({
         />
         {renderSelectionToggle()}
         {!readOnly && (
-          <Styled.DeleteButton onClick={() => onRemoveQuestion()}>
-            삭제 <img src={DeleteIcon} alt='삭제' />
+          <Styled.DeleteButton type='button' onClick={() => onRemoveQuestion()}>
+            삭제 <img src={DeleteIcon} alt='' aria-hidden='true' />
           </Styled.DeleteButton>
         )}
       </Styled.QuestionMenu>
