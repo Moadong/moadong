@@ -5,6 +5,7 @@ import InputField from '@/components/common/InputField/InputField';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { ChoiceProps } from '@/types/application';
 import ChoiceItem from '@/pages/ApplicationFormPage/components/ChoiceItem/ChoiceItem';
+import DeleteIcon from '@/assets/images/icons/delete_choice.svg';
 
 const MIN_ITEMS = 1;
 const MAX_ITEMS = 6;
@@ -113,7 +114,7 @@ const Choice = ({
                   handleDeleteItem(index);
                 }}
               >
-                삭제
+                <img src={DeleteIcon} />
               </Styled.DeleteButton>
             )}
           </Styled.ItemWrapper>

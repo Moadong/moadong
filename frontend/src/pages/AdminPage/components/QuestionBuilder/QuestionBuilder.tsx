@@ -8,6 +8,7 @@ import { QUESTION_LABEL_MAP } from '@/constants/APPLICATION_FORM';
 import { DROPDOWN_OPTIONS } from '@/constants/APPLICATION_FORM';
 import * as Styled from './QuestionBuilder.styles';
 import CustomDropdown from '@/components/common/CustomDropDown/CustomDropDown';
+import DeleteIcon from '@/assets/images/icons/delete_question.svg';
 
 const QuestionBuilder = ({
   id,
@@ -135,7 +136,9 @@ const QuestionBuilder = ({
         />
         {renderSelectionToggle()}
         {!readOnly && (
-          <button onClick={() => onRemoveQuestion()}>삭제</button>
+          <Styled.DeleteButton type='button' onClick={() => onRemoveQuestion()}>
+            삭제 <img src={DeleteIcon} alt='' aria-hidden='true' />
+          </Styled.DeleteButton>
         )}
       </Styled.QuestionMenu>
       <Styled.QuestionFieldContainer>
