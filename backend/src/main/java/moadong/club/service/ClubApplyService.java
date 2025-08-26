@@ -159,9 +159,9 @@ public class ClubApplyService {
         }
 
         application.forEach(app -> {
-            ClubApplicantEditRequest _request = requestMap.get(app.getId());
-            app.updateMemo(_request.memo());
-            app.updateStatus(_request.status());
+            ClubApplicantEditRequest editRequest = requestMap.get(app.getId());
+            app.updateMemo(editRequest.memo());
+            app.updateStatus(editRequest.status());
         });
 
         clubApplicationRepository.saveAll(application);
