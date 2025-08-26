@@ -80,7 +80,7 @@ const ApplicantsTab = () => {
     setCheckedItem((prev) => {
       const newMap = new Map(prev);
 
-      const isAllChecked = Array.from(checkedItem.values()).every(Boolean);
+      const isAllChecked = Array.from(prev.values()).every(Boolean);
 
       if (mode === 'all') {
         newMap.forEach((_, key) => newMap.set(key, !isAllChecked));
