@@ -49,16 +49,24 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   }, []);
 
   const activeTab = useMemo(
-    () => tabs.findIndex((tab) => location.pathname.startsWith(tab.path)),
+    () => allItems.findIndex((item) => location.pathname.startsWith(item.path)),
     [location.pathname],
   );
 
-  const handleTabClick = (tab: (typeof tabs)[number]) => {
-    if (tab.label === '계정 관리') {
-      alert('계정 관리 기능은 아직 준비 중이에요. ☺️');
+  const handleTabClick = (item: (typeof allItems)[number]) => {
+    if (item.label === '휴지통') {
+      alert('휴지통 기능은 아직 준비 중이에요. ☺️');
       return;
     }
-    navigate(tab.path);
+    if (item.label === '아이디/비밀번호 수정') {
+      alert('아이디/비밀번호 수정 기능은 아직 준비 중이에요. ☺️');
+      return;
+    }
+    if (item.label === '회원탈퇴') {
+      alert('회원탈퇴 기능은 아직 준비 중이에요. ☺️');
+      return;
+    }
+    navigate(item.path);
   };
 
   const handleLogout = async () => {
@@ -90,14 +98,19 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
       <Styled.divider />
 
       <Styled.SidebarButtonContainer>
-        {tabs.map((tab, index) => (
-          <Styled.SidebarButton
-            key={tab.label}
-            className={activeTab === index ? 'active' : ''}
-            onClick={() => handleTabClick(tab)}
-          >
-            {tab.label}
-          </Styled.SidebarButton>
+        {tabs.map((tab, tabIndex) => (
+          <div key={tab.category}>
+            <Styled.SidebarCategoryTitle>{tab.category}</Styled.SidebarCategoryTitle>
+            {tab.items.map((item, itemIndex) => (
+              <Styled.SidebarButton
+                key={item.label}
+                className={activeTab === itemIndex ? 'active' : ''}
+                onClick={() => handleTabClick(item)}
+              >
+                {item.label}
+              </Styled.SidebarButton>
+            ))}
+          </div>
         ))}
       </Styled.SidebarButtonContainer>
       <Styled.divider />
