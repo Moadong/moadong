@@ -44,6 +44,10 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
+  const allItems = useMemo(() => {
+    return tabs.flatMap((tab) => tab.items);
+  }, []);
+
   const activeTab = useMemo(
     () => tabs.findIndex((tab) => location.pathname.startsWith(tab.path)),
     [location.pathname],
