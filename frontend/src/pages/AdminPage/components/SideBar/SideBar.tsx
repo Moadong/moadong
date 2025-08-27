@@ -11,15 +11,33 @@ interface SideBarProps {
 }
 
 const tabs = [
-  { label: '기본 정보 수정', path: '/admin/club-info' },
-  { label: '모집 정보 수정', path: '/admin/recruit-edit' },
-  { label: '활동 사진 수정', path: '/admin/photo-edit' },
-  { label: '지원서 관리', path: '/admin/application-edit' },
-  { label: '지원자 현황', path: '/admin/applicants' },
-  { label: '휴지통', path: '/admin/recycle-bean'},
-  // { label: '계정 관리', path: '/admin/account-edit' },
-  { label: '아이디/비밀번호 수정', path: '/admin/account-update'},
-  { label: '회원탈퇴', path: '/admin/user-delete'},
+  {
+    category: '기본 정보',
+    items: [{ label: '기본 정보 수정', path: '/admin/club-info' }],
+  },
+  {
+    category: '모집 정보',
+    items: [
+      { label: '모집 정보 수정', path: '/admin/recruit-edit' },
+      { label: '활동 사진 수정', path: '/admin/photo-edit' },
+    ],
+  },
+    {
+    category: '지원 관리',
+    items: [
+      { label: '지원서 관리', path: '/admin/application-edit' },
+      { label: '지원자 현황', path: '/admin/applicants' },
+      { label: '휴지통', path: '/admin/recycle-bean'},
+    ],
+  },
+    {
+    category: '계정 관리',
+    items: [
+      // { label: '계정 관리', path: '/admin/account-edit' },
+      { label: '아이디/비밀번호 수정', path: '/admin/account-update'},
+      { label: '회원탈퇴', path: '/admin/user-delete'},
+    ],
+  },
 ];
 
 const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
