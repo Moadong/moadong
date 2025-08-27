@@ -139,7 +139,7 @@ public class ClubApplyService {
     }
 
     @Transactional
-    public void editApplicantDetail(String clubId, String appId, ClubApplicantEditRequest request, CustomUserDetails user) {
+    public void editApplicantDetail(String clubId, List<ClubApplicantEditRequest> request, CustomUserDetails user) {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
@@ -147,13 +147,24 @@ public class ClubApplyService {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
 
-        ClubApplication application = clubApplicationRepository.findByIdAndQuestionId(appId, clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
+        Map<String, ClubApplicantEditRequest> requestMap = request.stream()
+                .collect(Collectors.toMap(ClubApplicantEditRequest::applicantId,
+                        Function.identity(), (prev, next) -> next));
 
-        application.updateMemo(request.memo());
-        application.updateStatus(request.status());
+        List<String> applicationIds = new ArrayList<>(requestMap.keySet());
+        List<ClubApplication> application = clubApplicationRepository.findAllByIdInAndQuestionId(applicationIds, clubId);
 
-        clubApplicationRepository.save(application);
+        if (application.size() != applicationIds.size()) {
+            throw new RestApiException(ErrorCode.APPLICANT_NOT_FOUND);
+        }
+
+        application.forEach(app -> {
+            ClubApplicantEditRequest editRequest = requestMap.get(app.getId());
+            app.updateMemo(editRequest.memo());
+            app.updateStatus(editRequest.status());
+        });
+
+        clubApplicationRepository.saveAll(application);
     }
 
     @Transactional
