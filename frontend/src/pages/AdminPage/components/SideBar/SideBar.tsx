@@ -16,7 +16,10 @@ const tabs = [
   { label: '활동 사진 수정', path: '/admin/photo-edit' },
   { label: '지원서 관리', path: '/admin/application-edit' },
   { label: '지원자 현황', path: '/admin/applicants' },
-  { label: '계정 관리', path: '/admin/account-edit' },
+  { label: '휴지통', path: '/admin/recycle-bean'},
+  // { label: '계정 관리', path: '/admin/account-edit' },
+  { label: '아이디/비밀번호 수정', path: '/admin/account-update'},
+  { label: '회원탈퇴', path: '/admin/user-delete'},
 ];
 
 const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
