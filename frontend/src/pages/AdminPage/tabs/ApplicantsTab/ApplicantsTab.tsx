@@ -149,22 +149,20 @@ const ApplicantsTab = () => {
     updateDetailApplicants(
       applicantsData!.applicants
         .filter((applicant) => checkedItem.get(applicant.id))
-        .map(
-          (applicant) => ({
-            applicantId: applicant.id,
-            memo: applicant.memo,
-            status: status,
-          }),
-          {
-            onSuccess: () => {
-              checkoutAllApplicants();
-              setStatusOpen(false);
-            },
-            onError: () => {
-              alert('지원자 상태 변경에 실패했습니다. 다시 시도해주세요.');
-            },
-          },
-        ),
+        .map((applicant) => ({
+          applicantId: applicant.id,
+          memo: applicant.memo,
+          status: status,
+        })),
+      {
+        onSuccess: () => {
+          checkoutAllApplicants();
+          setStatusOpen(false);
+        },
+        onError: () => {
+          alert('지원자 상태 변경에 실패했습니다. 다시 시도해주세요.');
+        },
+      },
     );
   };
 
