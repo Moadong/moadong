@@ -44,16 +44,13 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const allItems = useMemo(() => {
-    return tabs.flatMap((tab) => tab.items);
-  }, []);
+  const activeTab = useMemo(() => { 
+    return tabs.map((tab) =>
+      tab.items.findIndex((item) => location.pathname.startsWith(item.path)),
+    );
+  }, [location.pathname]);
 
-  const activeTab = useMemo(
-    () => allItems.findIndex((item) => location.pathname.startsWith(item.path)),
-    [location.pathname],
-  );
-
-  const handleTabClick = (item: (typeof allItems)[number]) => {
+  const handleTabClick = (item: (typeof tabs)[number]['items'][number]) => {
     if (item.label === '휴지통') {
       alert('휴지통 기능은 아직 준비 중이에요. ☺️');
       return;
@@ -104,7 +101,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
             {tab.items.map((item, itemIndex) => (
               <Styled.SidebarButton
                 key={item.label}
-                className={activeTab === itemIndex ? 'active' : ''}
+                className={activeTab[tabIndex] === itemIndex ? 'active' : ''}
                 onClick={() => handleTabClick(item)}
               >
                 {item.label}
