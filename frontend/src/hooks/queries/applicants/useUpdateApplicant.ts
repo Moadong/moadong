@@ -1,18 +1,18 @@
-import { updateApplicantDetail } from "@/apis/application/updateApplicantDetail";
-import { ApplicationStatus } from "@/types/applicants";
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { updateApplicantDetail } from '@/apis/application/updateApplicantDetail';
+import { UpdateApplicantParams } from '@/types/applicants';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const useUpdateApplicant = (clubId: string, applicantId: string) => {
+export const useUpdateApplicant = (clubId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: ({memo, status}: { memo: string, status: ApplicationStatus }) => 
-      updateApplicantDetail(memo, status, clubId, applicantId),
+    mutationFn: (applicant: UpdateApplicantParams[]) =>
+      updateApplicantDetail(applicant, clubId!),
     onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["clubApplicants"] });
+      queryClient.invalidateQueries({ queryKey: ['clubApplicants'] });
     },
     onError: (error) => {
       console.log(`Error updating applicant detail: ${error}`);
-    }
-  })
-}
+    },
+  });
+};

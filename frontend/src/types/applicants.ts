@@ -1,4 +1,4 @@
-import { AnswerItem } from "./application";
+import { AnswerItem } from './application';
 
 export enum ApplicationStatus {
   SUBMITTED = 'SUBMITTED', // 제출 완료
@@ -11,14 +11,20 @@ export interface ApplicantsInfo {
   total: number;
   reviewRequired: number;
   scheduledInterview: number;
-  accepted: number;    
-  applicants: Applicant[]
+  accepted: number;
+  applicants: Applicant[];
 }
 
 export interface Applicant {
   id: string;
   status: ApplicationStatus;
-  answers: AnswerItem[]
+  answers: AnswerItem[];
   memo: string;
   createdAt: string;
+}
+
+export interface UpdateApplicantParams {
+  memo: string;
+  status: ApplicationStatus;
+  applicantId: string | undefined;
 }
