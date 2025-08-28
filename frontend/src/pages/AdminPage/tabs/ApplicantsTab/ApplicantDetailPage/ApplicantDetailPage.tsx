@@ -19,6 +19,7 @@ const AVAILABLE_STATUSES = [
   ApplicationStatus.SUBMITTED, // 서류검토 (SUBMITTED 포함)
   ApplicationStatus.INTERVIEW_SCHEDULED, // 면접예정
   ApplicationStatus.ACCEPTED, // 합격
+  ApplicationStatus.DECLINED, // 불합격
 ] as const;
 
 const getStatusColor = (status: ApplicationStatus | undefined): string => {
@@ -29,6 +30,8 @@ const getStatusColor = (status: ApplicationStatus | undefined): string => {
       return '#E5F6FF';
     case ApplicationStatus.INTERVIEW_SCHEDULED:
       return '#E9FFF1';
+    case ApplicationStatus.DECLINED:
+      return '#FFE8E8';
     default:
       return 'var(--f5, #F5F5F5)';
   }

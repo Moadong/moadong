@@ -316,6 +316,8 @@ export const ApplicantStatusBadge = styled.span<{ status: string }>`
         ? '#E6FBF0'
         : status === '합격'
           ? '#F5F5F5'
-          : '#eee'};
+          : status === '불합'
+            ? '#FFE8E8'
+            : '#eee'};
   color: ${({ status }) => (status === '합격' ? '#888' : '#222')};
 `;
