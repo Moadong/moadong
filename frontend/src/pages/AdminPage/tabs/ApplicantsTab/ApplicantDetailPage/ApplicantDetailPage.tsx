@@ -38,11 +38,13 @@ const ApplicantDetailPage = () => {
   const { questionId } = useParams<{ questionId: string }>();
   const navigate = useNavigate();
   const [applicantMemo, setAppMemo] = useState('');
-  const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(ApplicationStatus.SUBMITTED);
+  const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
+    ApplicationStatus.SUBMITTED,
+  );
   const { applicantsData, clubId } = useAdminClubContext();
 
   const { data: formData, isLoading, isError } = useGetApplication(clubId!);
-  const { mutate: updateApplicant } = useUpdateApplicant(clubId!, questionId!);
+  const { mutate: updateApplicant } = useUpdateApplicant(clubId!);
 
   const applicantIndex =
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
@@ -58,20 +60,23 @@ const ApplicantDetailPage = () => {
   const updateApplicantDetail = useMemo(
     () =>
       debounce((memo, status) => {
-
         function isApplicationStatus(v: unknown): v is ApplicationStatus {
-          return typeof v === 'string' && Object.values(ApplicationStatus).includes(v as ApplicationStatus);
+          return (
+            typeof v === 'string' &&
+            Object.values(ApplicationStatus).includes(v as ApplicationStatus)
+          );
         }
 
         if (typeof memo !== 'string') return;
         if (!isApplicationStatus(status)) return;
 
-        updateApplicant(
+        updateApplicant([
           {
-            memo, 
-            status
-          }
-        );
+            memo,
+            status,
+            applicantId: questionId,
+          },
+        ]);
       }, 400),
     [clubId, questionId],
   );
