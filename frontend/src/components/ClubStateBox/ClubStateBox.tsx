@@ -20,8 +20,8 @@ const stateStyles: Record<
     text: '모집마감',
   },
   ALWAYS: {
-    backgroundColor: 'rgba(0, 231, 89, 0.1)',
-    color: '#00E759',
+    backgroundColor: 'rgba(235, 250, 241, 1)',
+    color: '#3ACD73',
     text: '상시모집'
   }
 };
