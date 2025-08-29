@@ -11,29 +11,53 @@ interface SideBarProps {
 }
 
 const tabs = [
-  { label: '기본 정보 수정', path: '/admin/club-info' },
-  { label: '모집 정보 수정', path: '/admin/recruit-edit' },
-  { label: '활동 사진 수정', path: '/admin/photo-edit' },
-  { label: '지원서 관리', path: '/admin/application-edit' },
-  { label: '지원자 현황', path: '/admin/applicants' },
-  { label: '계정 관리', path: '/admin/account-edit' },
+  {
+    category: '기본 정보',
+    items: [{ label: '기본 정보 수정', path: '/admin/club-info' }],
+  },
+  {
+    category: '모집 정보',
+    items: [
+      { label: '모집 정보 수정', path: '/admin/recruit-edit' },
+      { label: '활동 사진 수정', path: '/admin/photo-edit' },
+    ],
+  },
+    {
+    category: '지원 관리',
+    items: [
+      { label: '지원서 관리', path: '/admin/application-edit' },
+      { label: '지원자 현황', path: '/admin/applicants' },
+    ],
+  },
+    {
+    category: '계정 관리',
+    items: [
+      { label: '아이디/비밀번호 수정', path: '/admin/account-edit'},
+      { label: '회원탈퇴', path: '/admin/user-delete'},
+    ],
+  },
 ];
 
 const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const activeTab = useMemo(
-    () => tabs.findIndex((tab) => location.pathname.startsWith(tab.path)),
-    [location.pathname],
-  );
+  const activeTab = useMemo(() => { 
+    return tabs.map((tab) =>
+      tab.items.findIndex((item) => location.pathname.startsWith(item.path)),
+    );
+  }, [location.pathname]);
 
-  const handleTabClick = (tab: (typeof tabs)[number]) => {
-    if (tab.label === '계정 관리') {
-      alert('계정 관리 기능은 아직 준비 중이에요. ☺️');
+  const handleTabClick = (item: (typeof tabs)[number]['items'][number]) => {
+    if (item.label === '아이디/비밀번호 수정') {
+      alert('아이디/비밀번호 수정 기능은 아직 준비 중이에요. ☺️');
       return;
     }
-    navigate(tab.path);
+    if (item.label === '회원탈퇴') {
+      alert('회원탈퇴 기능은 아직 준비 중이에요. ☺️');
+      return;
+    }
+    navigate(item.path);
   };
 
   const handleLogout = async () => {
@@ -65,14 +89,19 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
       <Styled.divider />
 
       <Styled.SidebarButtonContainer>
-        {tabs.map((tab, index) => (
-          <Styled.SidebarButton
-            key={tab.label}
-            className={activeTab === index ? 'active' : ''}
-            onClick={() => handleTabClick(tab)}
-          >
-            {tab.label}
-          </Styled.SidebarButton>
+        {tabs.map((tab, tabIndex) => (
+          <div key={tab.category}>
+            <Styled.SidebarCategoryTitle>{tab.category}</Styled.SidebarCategoryTitle>
+            {tab.items.map((item, itemIndex) => (
+              <Styled.SidebarButton
+                key={item.label}
+                className={activeTab[tabIndex] === itemIndex ? 'active' : ''}
+                onClick={() => handleTabClick(item)}
+              >
+                {item.label}
+              </Styled.SidebarButton>
+            ))}
+          </div>
         ))}
       </Styled.SidebarButtonContainer>
       <Styled.divider />

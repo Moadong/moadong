@@ -15,7 +15,7 @@ export const SidebarHeader = styled.p`
   font-weight: bold;
   letter-spacing: 0;
   margin-left: 11px;
-  margin-bottom: 24px;
+  margin-bottom: 19px;
 `;
 
 export const ClubLogo = styled.img`
@@ -36,15 +36,25 @@ export const ClubTitle = styled.p`
 
 export const divider = styled.hr`
   width: 100%;
-  color: black;
-  margin: 14px 0px 29px 0px;
+  border: 1px solid;
+  color: #C5C5C5;
+  height: 0;
+  margin: 16px 0px 16px 0px;
 `;
 
 export const SidebarButtonContainer = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 8.5px;
+  gap: 16px;
   list-style: none;
+`;
+
+export const SidebarCategoryTitle = styled.p`
+  align-items: center;
+  padding: 6px 0px 6px 10px;
+  font-size: 0.75rem;
+  font-weight: medium;
+  color: #989898;
 `;
 
 export const SidebarButton = styled.li`
@@ -54,12 +64,14 @@ export const SidebarButton = styled.li`
   border-radius: 10px;
   display: flex;
   align-items: center;
-  padding: 9px 11px;
+  padding-left: 10px;
   transition: background-color 0.1s ease;
+  font-size: 1rem;
+  font-weight: medium;
 
   &.active {
-    background-color: rgba(255, 84, 20, 0.8);
+    background-color: rgba(255, 117, 67, 1);
     color: white;
-    font-weight: bold;
+    font-weight: medium;
   }
 `;
