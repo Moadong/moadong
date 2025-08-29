@@ -21,7 +21,7 @@
 ![1280~1919](https://github.com/user-attachments/assets/04eb208a-40ff-4a8a-9e4b-cea517e00a76)
 
 
-## 현재 프로젝트 참여자
+## contributors
 
 ### 프론트
 <table>
@@ -37,6 +37,11 @@
         <a href="https://github.com/oesnuj" title="Code"><b>oesnuj</b></a>
     </td>
     <td align="center">
+        <img src="https://avatars.githubusercontent.com/u/163711629?v=4" width="120px;"/> 
+        <br />
+        <a href="https://github.com/suhyun113" title="Code"><b>suhyun113</b></a>
+    </td> 
+    <td align="center">
         <img src="" width="120px;"/> 
         <br />
         <a href="https://github.com/newdesigner" title="Code"><b></b></a>
@@ -45,9 +50,11 @@
   <tr>
     <td align="center"><b>서성원</b></td>
     <td align="center"><b>김준서</b></td>
+    <td align="center"><b>김수현</b></td>
     <td align="center"><b>김상희</b></td>
   </tr>
   <tr>
+    <td align="center"><b>FrontEnd</b></td>
     <td align="center"><b>FrontEnd</b></td>
     <td align="center"><b>FrontEnd</b></td>
     <td align="center"><b>Design</b></td>
@@ -55,6 +62,7 @@
 </table>
 
 ### 백엔드
+
 <table>
   <tr>
     <td align="center">
@@ -72,14 +80,21 @@
         <br />
         <a href="https://github.com/FhRh" title="Code"><b>FhRh</b></a>
     </td>
+    <td align="center">
+       <img src="https://avatars.githubusercontent.com/u/66681282?v=4" width="120px;"/>   
+        <br />
+        <a href="https://github.com/lepitaaar" title="Code"><b>lepitaaar</b></a>
+    </td>
   </tr>
   <tr>
     <td align="center"><b>함규빈</b></td>
     <td align="center"><b>윤성원</b></td>
     <td align="center"><b>양두영</b></td>
+    <td align="center"><b>이은호</b></td>
   </tr>
   <tr>
     <td align="center"><b>DevOps</b></td>
+    <td align="center"><b>Server</b></td>
     <td align="center"><b>Server</b></td>
     <td align="center"><b>Server</b></td>
   </tr>
