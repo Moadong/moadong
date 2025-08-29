@@ -27,14 +27,12 @@ const tabs = [
     items: [
       { label: '지원서 관리', path: '/admin/application-edit' },
       { label: '지원자 현황', path: '/admin/applicants' },
-      { label: '휴지통', path: '/admin/recycle-bean'},
     ],
   },
     {
     category: '계정 관리',
     items: [
-      // { label: '계정 관리', path: '/admin/account-edit' },
-      { label: '아이디/비밀번호 수정', path: '/admin/account-update'},
+      { label: '아이디/비밀번호 수정', path: '/admin/account-edit'},
       { label: '회원탈퇴', path: '/admin/user-delete'},
     ],
   },
@@ -51,10 +49,6 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   }, [location.pathname]);
 
   const handleTabClick = (item: (typeof tabs)[number]['items'][number]) => {
-    if (item.label === '휴지통') {
-      alert('휴지통 기능은 아직 준비 중이에요. ☺️');
-      return;
-    }
     if (item.label === '아이디/비밀번호 수정') {
       alert('아이디/비밀번호 수정 기능은 아직 준비 중이에요. ☺️');
       return;
