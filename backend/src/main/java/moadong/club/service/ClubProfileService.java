@@ -15,7 +15,11 @@ import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
+import org.springframework.dao.DataAccessException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -26,10 +30,10 @@ public class ClubProfileService {
     private final ClubRepository clubRepository;
     private final ClubSearchRepository clubSearchRepository;
 
+    @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
         Club club = clubRepository.findClubByUserId(user.getId())
-            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
         clubRepository.save(club);
     }
