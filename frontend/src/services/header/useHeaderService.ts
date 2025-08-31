@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSearch } from '@/context/SearchContext';
+import { useSearchStore } from '@/context/useSearchStore';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 
@@ -10,18 +10,18 @@ const trackEventNames = {
 } as const;
 
 const useHeaderService = () => {
-  const { setKeyword, setInputValue } = useSearch();
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
   const navigateToHome = useCallback(
     (device: keyof typeof trackEventNames) => {
       navigate('/');
+      const { setKeyword, setInputValue } = useSearchStore.getState();
       setKeyword('');
       setInputValue('');
       trackEvent(trackEventNames[device]);
     },
-    [navigate, setKeyword, setInputValue, trackEvent],
+    [navigate, trackEvent],
   );
 
   const handleIntroduceClick = useCallback(() => {
