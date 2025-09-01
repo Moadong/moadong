@@ -21,26 +21,6 @@ export const useSearchStore = create<SearchStore>()(
   })),
 );
 
-export const useSearch = () => {
-  const {
-    keyword,
-    setKeyword,
-    inputValue,
-    setInputValue,
-    isSearching,
-    setIsSearching,
-  } = useSearchStore();
-
-  return {
-    keyword,
-    setKeyword,
-    inputValue,
-    setInputValue,
-    isSearching,
-    setIsSearching,
-  };
-};
-
 export const useSearchKeyword = () => {
   const keyword = useSearchStore((state) => state.keyword);
   const setKeyword = useSearchStore((state) => state.setKeyword);
