@@ -23,6 +23,7 @@ body:
         - PororoAndFriends
         - lepitaaar 
         - suhyun113
+        - alsdddk
     validations:
       required: true
       
