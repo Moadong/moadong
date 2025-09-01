@@ -1,4 +1,4 @@
-import { useSearchInput } from '@/context/useSearchStore';
+import { useSearchInput } from '@/store/useSearchStore';
 import { useCategory } from '@/context/CategoryContext';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import SearchField from '@/components/common/SearchField/SearchField';

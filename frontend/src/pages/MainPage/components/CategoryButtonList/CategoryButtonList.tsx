@@ -7,7 +7,7 @@ import iconHobby from '@/assets/images/icons/category_button/category_hobby_butt
 import iconStudy from '@/assets/images/icons/category_button/category_study_button_icon.svg';
 import iconSport from '@/assets/images/icons/category_button/category_sport_button_icon.svg';
 import iconPerformance from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
-import { useSearchStore } from '@/context/useSearchStore';
+import { useSearchStore } from '@/store/useSearchStore';
 import { useCategory } from '@/context/CategoryContext';
 import { EVENT_NAME } from '@/constants/eventName';
 

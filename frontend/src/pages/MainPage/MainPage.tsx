@@ -1,8 +1,5 @@
 import { useState, useMemo } from 'react';
-import {
-  useSearchKeyword,
-  useSearchIsSearching,
-} from '@/context/useSearchStore';
+import { useSearchKeyword, useSearchIsSearching } from '@/store/useSearchStore';
 import { useCategory } from '@/context/CategoryContext';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import { useGetCardList } from '@/hooks/queries/club/useGetCardList';
