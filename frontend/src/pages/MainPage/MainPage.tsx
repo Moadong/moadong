@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { useSearch } from '@/context/SearchContext';
+import { useSearchKeyword, useSearchIsSearching } from '@/store/useSearchStore';
 import { useCategory } from '@/context/CategoryContext';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import { useGetCardList } from '@/hooks/queries/club/useGetCardList';
@@ -21,7 +21,8 @@ const MainPage = () => {
   const [isFilterActive, setIsFilterActive] = useState(false);
   const { selectedCategory, setSelectedCategory } = useCategory();
 
-  const { keyword, isSearching } = useSearch();
+  const { keyword } = useSearchKeyword();
+  const { isSearching } = useSearchIsSearching();
   const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
   const division = 'all';
   const searchCategory = isSearching ? 'all' : selectedCategory;
