@@ -10,7 +10,17 @@ interface SideBarProps {
   clubLogo: string;
 }
 
-const tabs = [
+interface TabItem {
+  label: string;
+  path: string;
+}
+
+interface TabCategory {
+  category: string;
+  items: TabItem[];
+}
+
+const tabs: TabCategory[] = [
   {
     category: '기본 정보',
     items: [{ label: '기본 정보 수정', path: '/admin/club-info' }],
@@ -48,7 +58,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     );
   }, [location.pathname]);
 
-  const handleTabClick = (item: (typeof tabs)[number]['items'][number]) => {
+  const handleTabClick = (item: TabItem) => {
     if (item.label === '아이디/비밀번호 수정') {
       alert('아이디/비밀번호 수정 기능은 아직 준비 중이에요. ☺️');
       return;
@@ -86,11 +96,11 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
       <ClubLogoEditor clubLogo={clubLogo} />
 
       <Styled.ClubTitle>{clubName}</Styled.ClubTitle>
-      <Styled.divider />
+      <Styled.Divider />
 
       <Styled.SidebarButtonContainer>
         {tabs.map((tab, tabIndex) => (
-          <div key={tab.category}>
+          <li key={tab.category}>
             <Styled.SidebarCategoryTitle>{tab.category}</Styled.SidebarCategoryTitle>
             {tab.items.map((item, itemIndex) => (
               <Styled.SidebarButton
@@ -101,10 +111,10 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
                 {item.label}
               </Styled.SidebarButton>
             ))}
-          </div>
+          </li>
         ))}
       </Styled.SidebarButtonContainer>
-      <Styled.divider />
+      <Styled.Divider />
       <Styled.SidebarButton onClick={handleLogout}>
         로그아웃
       </Styled.SidebarButton>

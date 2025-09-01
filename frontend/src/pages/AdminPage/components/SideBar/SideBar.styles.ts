@@ -34,7 +34,7 @@ export const ClubTitle = styled.p`
   max-width: 163px;
 `;
 
-export const divider = styled.hr`
+export const Divider = styled.hr`
   width: 100%;
   border: 1px solid;
   color: #C5C5C5;
@@ -57,17 +57,23 @@ export const SidebarCategoryTitle = styled.p`
   color: #989898;
 `;
 
-export const SidebarButton = styled.li`
+export const SidebarButton = styled.button`
+  all: unset;
+  box-sizing: border-box;
+  display: flex;
+  align-items: center;
   cursor: pointer;
+
   width: 100%;
   height: 37px;
   border-radius: 10px;
-  display: flex;
-  align-items: center;
+
   padding-left: 10px;
-  transition: background-color 0.1s ease;
+
   font-size: 1rem;
   font-weight: medium;
+
+  transition: background-color 0.1s ease;
 
   &.active {
     background-color: rgba(255, 117, 67, 1);
@@ -75,3 +81,4 @@ export const SidebarButton = styled.li`
     font-weight: medium;
   }
 `;
+
