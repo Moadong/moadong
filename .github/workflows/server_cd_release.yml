@@ -10,6 +10,10 @@ on:
       - 'backend/**'
       - '.github/workflows/**'
 
+env:
+  ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
+  ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME }} 
+
 jobs:
 
   build:
@@ -17,6 +21,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -52,6 +57,19 @@ jobs:
         run: |
           cd backend
           ./gradlew clean build -x test
+      # --- ECR 및 Docker Hub 인증 ---
+      # AWS 자격 증명 구성
+      - name: Configure AWS credentials
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          aws-region: ap-northeast-2 # 본인의 AWS 리전에 맞게 수정
+
+      # Amazon ECR 로그인
+      - name: Log in to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
 
       # Docker 인증
       - name: Log in to Docker Hub
@@ -73,7 +91,8 @@ jobs:
           tags: |
             ${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
             ${{ secrets.DOCKER_IMAGE_RELEASE }}:${{ github.sha }}
-
+            ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
+            ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
   deploy:
     name: Deploy
