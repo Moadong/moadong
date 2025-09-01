@@ -9,6 +9,7 @@ on:
     paths:
       - 'backend/**'
       - '.github/workflows/**'
+  workflow_dispatch:
 
 env:
   ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
