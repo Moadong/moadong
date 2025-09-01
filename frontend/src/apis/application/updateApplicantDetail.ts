@@ -1,25 +1,20 @@
 import API_BASE_URL from '@/constants/api';
 import { secureFetch } from '@/apis/auth/secureFetch';
-import { ApplicationStatus } from '@/types/applicants';
+import { UpdateApplicantParams } from '@/types/applicants';
 
 export const updateApplicantDetail = async (
-  memo: string,
-  status: ApplicationStatus,
+  applicant: UpdateApplicantParams[],
   clubId: string,
-  applicantId: string,
 ) => {
   try {
     const response = await secureFetch(
-      `${API_BASE_URL}/api/club/${clubId}/apply/${applicantId}`,
+      `${API_BASE_URL}/api/club/${clubId}/applicant`,
       {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({
-          memo,
-          status
-        })
+        body: JSON.stringify(applicant),
       },
     );
 

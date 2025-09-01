@@ -103,21 +103,52 @@ export const VerticalLine = styled.div`
   margin: 8px 4px;
 `;
 
-export const StatusSelect = styled.select`
+export const StatusSelect = styled.p<{ disabled: boolean }>`
   height: 30px;
   border: 1px solid #dcdcdc;
   background: #fff;
   border-radius: 55px;
-  padding: 0px 22px 0px 8px;
-  margin: 5px 0px 5px 0px;
-  font-weight: 700;
-  color: ${({ disabled }) => (disabled ? '#DCDCDC' : '#000')};
+  padding: 0 22px 0 8px;
+  margin: 5px 0;
 
-  -webkit-appearance: none;
-  -moz-appearance: none;
-  appearance: none;
+  ${({ disabled }) =>
+    disabled
+      ? 'color: #DCDCDC'
+      : 'color: #000; &:hover { background: #f5f5f5; }'};
 
-  &:not(:disabled):hover {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: default;
+
+  display: inline-flex;
+  align-items: center;
+`;
+
+export const StatusSelectMenu = styled.div<{ open: boolean }>`
+  display: ${({ open }) => (open ? 'block' : 'none')};
+  position: absolute;
+  top: 100%;
+  height: auto;
+  background: #fff;
+  left: 0;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  box-shadow: 0px 1px 8px 0px #0000001f;
+  z-index: 10;
+  padding: 8px 0;
+  color: #787878;
+`;
+
+export const StatusSelectMenuItem = styled.div`
+  font-size: 12px;
+  font-weight: 600;
+  padding: 8px 13px;
+  cursor: pointer;
+  text-align: left;
+  &:hover {
     background: #f5f5f5;
   }
 `;

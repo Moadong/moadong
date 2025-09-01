@@ -1,6 +1,6 @@
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import * as Styled from './ApplicantsTab.styles';
 import { useNavigate } from 'react-router-dom';
 import { useDeleteApplicants } from '@/hooks/queries/applicants/useDeleteApplicants';
@@ -9,6 +9,7 @@ import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import deleteIcon from '@/assets/images/icons/applicant_delete.svg';
 import selectAllIcon from '@/assets/images/icons/applicant_select_arrow.svg';
+import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
@@ -19,7 +20,12 @@ const ApplicantsTab = () => {
   );
   const [selectAll, setSelectAll] = useState(false);
   const [open, setOpen] = useState(false);
+  const [statusOpen, setStatusOpen] = useState(false);
+  const [isChecked, setIsChecked] = useState(false);
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
+  const { mutate: updateDetailApplicants } = useUpdateApplicant(clubId!);
+  const allSelectRef = useRef<HTMLDivElement | null>(null);
+  const statusSelectRef = useRef<HTMLDivElement | null>(null);
 
   const filteredApplicants = useMemo(() => {
     if (!applicantsData?.applicants) return [];
@@ -34,6 +40,32 @@ const ApplicantsTab = () => {
   }, [applicantsData, keyword]);
 
   useEffect(() => {
+    const handleOutsideClick = (e: MouseEvent) => {
+      const target = e.target as Node;
+
+      if (
+        open &&
+        allSelectRef.current &&
+        !allSelectRef.current.contains(target)
+      ) {
+        setOpen(false);
+      }
+      if (
+        statusOpen &&
+        statusSelectRef.current &&
+        !statusSelectRef.current.contains(target)
+      ) {
+        setStatusOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleOutsideClick);
+    return () => {
+      document.removeEventListener('mousedown', handleOutsideClick);
+    };
+  }, [open, statusOpen]);
+
+  useEffect(() => {
     const newMap = new Map<string, boolean>();
     filteredApplicants.forEach((user: Applicant) => {
       newMap.set(user.id, false);
@@ -45,6 +77,7 @@ const ApplicantsTab = () => {
     const all =
       checkedItem.size > 0 && Array.from(checkedItem.values()).every(Boolean);
     setSelectAll(all);
+    setIsChecked(Array.from(checkedItem.values()).some(Boolean));
   }, [checkedItem]);
 
   if (!clubId) return null;
@@ -80,7 +113,7 @@ const ApplicantsTab = () => {
     setCheckedItem((prev) => {
       const newMap = new Map(prev);
 
-      const isAllChecked = Array.from(checkedItem.values()).every(Boolean);
+      const isAllChecked = Array.from(prev.values()).every(Boolean);
 
       if (mode === 'all') {
         newMap.forEach((_, key) => newMap.set(key, !isAllChecked));
@@ -110,6 +143,27 @@ const ApplicantsTab = () => {
       });
       return newMap;
     });
+  };
+
+  const updateAllApplicants = (status: ApplicationStatus) => {
+    updateDetailApplicants(
+      applicantsData!.applicants
+        .filter((applicant) => checkedItem.get(applicant.id))
+        .map((applicant) => ({
+          applicantId: applicant.id,
+          memo: applicant.memo,
+          status: status,
+        })),
+      {
+        onSuccess: () => {
+          checkoutAllApplicants();
+          setStatusOpen(false);
+        },
+        onError: () => {
+          alert('지원자 상태 변경에 실패했습니다. 다시 시도해주세요.');
+        },
+      },
+    );
   };
 
   return (
@@ -171,18 +225,52 @@ const ApplicantsTab = () => {
               <Styled.Arrow src={selectIcon} />
             </Styled.SelectWrapper>
             <Styled.VerticalLine />
-            <Styled.SelectWrapper>
-              <Styled.StatusSelect
-                disabled={!Array.from(checkedItem.values()).some(Boolean)}
-              >
-                <option value='상태변경'>상태변경</option>
+            <Styled.SelectWrapper
+              ref={statusSelectRef}
+              onClick={() => {
+                if (!isChecked) return;
+                setStatusOpen((prev) => !prev);
+              }}
+            >
+              <Styled.StatusSelect disabled={!isChecked}>
+                상태변경
               </Styled.StatusSelect>
               <Styled.Arrow width={8} height={8} src={selectIcon} />
+              <Styled.StatusSelectMenu open={statusOpen}>
+                <Styled.StatusSelectMenuItem
+                  onClick={() => {
+                    updateAllApplicants(ApplicationStatus.SUBMITTED);
+                  }}
+                >
+                  서류검토
+                </Styled.StatusSelectMenuItem>
+                <Styled.StatusSelectMenuItem
+                  onClick={() => {
+                    updateAllApplicants(ApplicationStatus.INTERVIEW_SCHEDULED);
+                  }}
+                >
+                  면접예정
+                </Styled.StatusSelectMenuItem>
+                <Styled.StatusSelectMenuItem
+                  onClick={() => {
+                    updateAllApplicants(ApplicationStatus.ACCEPTED);
+                  }}
+                >
+                  합격
+                </Styled.StatusSelectMenuItem>
+                <Styled.StatusSelectMenuItem
+                  onClick={() => {
+                    updateAllApplicants(ApplicationStatus.DECLINED);
+                  }}
+                >
+                  불합격
+                </Styled.StatusSelectMenuItem>
+              </Styled.StatusSelectMenu>
             </Styled.SelectWrapper>
             <Styled.DeleteButton
               src={deleteIcon}
               alt='삭제'
-              disabled={!Array.from(checkedItem.values()).some(Boolean)}
+              disabled={!isChecked}
               onClick={() => {
                 const toBeDeleted = Array.from(checkedItem.entries())
                   .filter(([_, isChecked]) => isChecked)
@@ -205,7 +293,7 @@ const ApplicantsTab = () => {
           <Styled.ApplicantTableHeaderWrapper>
             <Styled.ApplicantTableRow>
               <Styled.ApplicantTableHeader width={55}>
-                <Styled.ApplicantAllSelectWrapper>
+                <Styled.ApplicantAllSelectWrapper ref={allSelectRef}>
                   <Styled.ApplicantTableAllSelectCheckbox
                     checked={selectAll}
                     onClick={(e: React.MouseEvent<HTMLInputElement>) => {
