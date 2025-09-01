@@ -1,0 +1,14 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# base 디렉터리의 모든 설정을 가져옵니다.
+resources:
+- ../../base
+
+# 'spring-app-secrets' Secret을 생성하는 규칙을 덮어씁니다.
+secretGenerator:
+- name: spring-app-secrets
+  # CI/CD 환경 변수로부터 실제 application.properties 내용을 가져와 주입합니다.
+  # GitHub Actions에서 `env.APPLICATION_PROD_RELEASE`로 전달됩니다.
+  literals:
+  - application.properties=${APPLICATION_PROD_RELEASE}

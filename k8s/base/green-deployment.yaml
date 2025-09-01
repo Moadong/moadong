@@ -1,0 +1,42 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-server-green 
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-server
+      color: green 
+  template:
+    metadata:
+      labels:
+        app: spring-server
+        color: green
+    spec:
+      containers:
+      - name: spring-container
+        image: placeholder/spring-server:latest
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8082
+          initialDelaySeconds: 20
+          periodSeconds: 10
+        volumeMounts:
+        - name: config-volume
+          mountPath: /workspace/config
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+      volumes:
+      - name: config-volume
+        secret:
+          secretName: spring-app-secrets

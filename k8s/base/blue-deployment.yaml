@@ -1,0 +1,45 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: spring-server-blue
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: spring-server
+      color: blue
+  template:
+    metadata:
+      labels:
+        app: spring-server
+        color: blue
+    spec:
+      containers:
+      - name: spring-container
+        # 이 이미지는 kustomization.yaml에 의해 동적으로 교체됩니다.
+        image: placeholder/spring-server:latest
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          httpGet:
+            path: /actuator/health/readiness
+            port: 8082
+          initialDelaySeconds: 20
+          periodSeconds: 10
+        volumeMounts:
+        # 'spring-app-secrets' Secret을 /config 경로에 마운트합니다.
+        - name: config-volume
+          mountPath: /workspace/config
+          readOnly: true
+        resources:
+          requests:
+            memory: "256Mi"
+            cpu: "100m"
+          limits:
+            memory: "1Gi"
+            cpu: "1"
+      volumes:
+      # 'spring-app-secrets'라는 이름의 Secret을 볼륨으로 사용합니다.
+      - name: config-volume
+        secret:
+          secretName: spring-app-secrets

@@ -1,23 +1,19 @@
-
 name: Release Server CD
 
 on:
   push:
     branches:
       - 'main'
-      - 'setting/#542-oracle_cloud'
-    paths:
-      - 'backend/**'
-      - '.github/workflows/**'
   workflow_dispatch:
 
 env:
   ECR_REGISTRY: ${{ secrets.AWS_ECR_REGISTRY }}
-  ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME }} 
+  ECR_REPOSITORY: ${{ secrets.AWS_ECR_REPOSITORY_NAME }}
+  IMAGE_TAG: ${{ github.sha }}
 
 jobs:
-
-  build:
+  build-and-push:
+    name: Build and Push All Images
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -25,54 +21,39 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
       - name: Set up JDK 17
         uses: actions/setup-java@v4
         with:
           java-version: '17'
           distribution: 'temurin'
-          cache: gradle  # Gradle 캐싱 활성화
-
-      - name: Setup Gradle
-        uses: gradle/actions/setup-gradle@af1da67850ed9a4cedd57bfd976089dd991e2582 # v4.0.0
-
-      - name: Cache Gradle dependencies
-        uses: actions/cache@v4
-        with:
-          path: |
-            ~/.gradle/caches
-            ~/.gradle/wrapper
-          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
-          restore-keys: |
-            ${{ runner.os }}-gradle-
-
-      - name: make application.properties
+      
+      - name: Grant execute permission for gradlew
+        run: chmod +x ./backend/gradlew
+      
+      - name: Make application.properties for Oracle Server
         run: |
           cd ./backend/src/main/resources
           echo "${{ secrets.APPLICATION_PROD_RELEASE }}" > ./application.properties
-
-      - name: Grant execute permission for gradlew
-        run: chmod +x ./backend/gradlew
 
       - name: Build with Gradle
         run: |
           cd backend
           ./gradlew clean build -x test
-      # --- ECR 및 Docker Hub 인증 ---
-      # AWS 자격 증명 구성
+
       - name: Configure AWS credentials
         uses: aws-actions/configure-aws-credentials@v4
         with:
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          aws-region: ap-northeast-2 # 본인의 AWS 리전에 맞게 수정
+          aws-region: ap-northeast-2
 
-      # Amazon ECR 로그인
       - name: Log in to Amazon ECR
         id: login-ecr
         uses: aws-actions/amazon-ecr-login@v2
 
-      # Docker 인증
       - name: Log in to Docker Hub
         uses: docker/login-action@v2
         with:
@@ -82,7 +63,7 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
-      - name: Build and Push ARM64 Docker Image
+      - name: Build and Push Docker Image to ECR and Docker Hub
         uses: docker/build-push-action@v5
         with:
           context: ./backend
@@ -90,23 +71,20 @@ jobs:
           platforms: linux/arm64,linux/amd64
           push: true
           tags: |
+            # 백업 서버를 위한 Docker Hub 태그
             ${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
-            ${{ secrets.DOCKER_IMAGE_RELEASE }}:${{ github.sha }}
+            ${{ secrets.DOCKER_IMAGE_RELEASE }}:${{ env.IMAGE_TAG }}
+            # 쿠버네티스 배포를 위한 ECR 태그
+            ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
             ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
-            ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ github.sha }}
 
-  deploy:
-    name: Deploy
+  deploy-to-oracle:
+    name: Deploy to Oracle Server
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    needs: build
-    
-    steps:
+    needs: build-and-push # 빌드 잡이 성공해야 실행
 
-      # oracle ssh 접속 후 배포
-      - name: Update Container on VM
+    steps:
+      - name: Update Container on Oracle via SSH
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.ORACLE_INSTANCE_RELEASE_IP }}
@@ -114,7 +92,6 @@ jobs:
           key: ${{ secrets.ORACLE_INSTANCE_RELEASE_PRIVATE_KEY }}
           port: ${{ secrets.ORACLE_INSTANCE_RELEASE_PORT }}
           script: |
-            
             docker pull ${{ secrets.DOCKER_IMAGE_RELEASE }}:latest
             
             export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
@@ -123,3 +100,62 @@ jobs:
             sudo -E /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
             
             docker image prune -af
+
+  deploy-to-kubernetes:
+    name: Deploy to Kubernetes with Blue/Green
+    runs-on: ubuntu-latest
+    needs: build-and-push # 빌드 잡이 성공해야 실행
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Kustomize and kubectl
+        uses: imranismail/setup-kustomize@v2
+      - uses: azure/setup-kubectl@v3
+
+      - name: Setup kubeconfig
+        run: |
+          mkdir -p ~/.kube
+          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > ~/.kube/config
+          chmod 600 ~/.kube/config
+          
+      - name: Blue/Green Deployment Logic
+        env:
+          APPLICATION_PROD_RELEASE: ${{ secrets.APPLICATION_PROD_RELEASE }}
+        run: |
+          # 1. 현재 라이브(Live) 환경이 블루인지 그린인지 확인
+          LIVE_COLOR=$(kubectl get ingress spring-server-ingress -o jsonpath='{.spec.rules[0].http.paths[0].backend.service.name}' | cut -d'-' -f3)
+          if [ "$LIVE_COLOR" == "blue" ]; then
+            NEW_COLOR="green"
+            OLD_COLOR="blue"
+          else
+            NEW_COLOR="blue"
+            OLD_COLOR="green"
+          fi
+          echo "INFO: Current LIVE color is $LIVE_COLOR. Deploying new version to $NEW_COLOR."
+
+          # 2. Kustomize를 사용하여 새 버전(NEW_COLOR) 배포 준비
+          cd k8s/overlays/production
+          
+          echo "INFO: Updating image tag to ${{ env.IMAGE_TAG }} in kustomization..."
+          kustomize edit set image placeholder/spring-server=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
+          
+          echo "INFO: Applying new '$NEW_COLOR' deployment and service..."
+          kustomize build . | kubectl apply -f - --selector="color=$NEW_COLOR"
+
+          # 3. 새 버전 헬스체크 및 검증
+          echo "INFO: Waiting for '$NEW_COLOR' deployment to be ready..."
+          kubectl rollout status deployment/spring-server-$NEW_COLOR --timeout=5m
+          
+          # 4. 트래픽 전환
+          echo "INFO: All checks passed. Switching live traffic to '$NEW_COLOR' version..."
+          kubectl patch ingress spring-server-ingress --type='json' -p='[{"op": "replace", "path": "/spec/rules/0/http/paths/0/backend/service/name", "value":"spring-server-'$NEW_COLOR'-svc"}]'
+          echo "INFO: Traffic successfully switched to $NEW_COLOR."
+
+          # 5. 이전 버전(OLD_COLOR) 리소스 정리
+          echo "INFO: Waiting for 60 seconds before cleaning up old '$OLD_COLOR' version..."
+          sleep 60
+          kubectl delete deployment spring-server-$OLD_COLOR --prune=true --grace-period=0 --force
+          kubectl delete service spring-server-$OLD_COLOR-svc
+          echo "INFO: Old '$OLD_COLOR' version has been cleaned up."

@@ -1,0 +1,21 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+# 이 kustomization에 포함될 모든 리소스 파일 목록
+resources:
+  - blue-deployment.yaml
+  - blue-service.yaml
+  - green-deployment.yaml
+  - green-service.yaml
+  - ingress.yaml
+
+images:
+  - name: placeholder/spring-server
+    newName: ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY_NAME }}
+    newTag: latest # 이 태그는 CI에서 동적으로 덮어씁니다.
+
+# Secret을 생성하는 방법 정의
+secretGenerator:
+- name: spring-app-secrets # 이 이름으로 Secret 객체를 생성합니다.
+  files:
+  - application.properties
