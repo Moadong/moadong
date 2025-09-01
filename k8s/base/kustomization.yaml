@@ -13,9 +13,3 @@ images:
   - name: placeholder/spring-server
     newName: ${{ secrets.AWS_ECR_REGISTRY }}/${{ secrets.AWS_ECR_REPOSITORY_NAME }}
     newTag: latest # 이 태그는 CI에서 동적으로 덮어씁니다.
-
-# Secret을 생성하는 방법 정의
-secretGenerator:
-- name: spring-app-secrets # 이 이름으로 Secret 객체를 생성합니다.
-  files:
-  - application.properties
