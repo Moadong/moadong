@@ -8,6 +8,7 @@ interface SearchStore {
   setInputValue: (value: string) => void;
   isSearching: boolean;
   setIsSearching: (isSearching: boolean) => void;
+  resetSearch: () => void;
 }
 
 export const useSearchStore = create<SearchStore>()(
@@ -18,6 +19,7 @@ export const useSearchStore = create<SearchStore>()(
     setInputValue: (value) => set({ inputValue: value }),
     isSearching: false,
     setIsSearching: (isSearching) => set({ isSearching }),
+    resetSearch: () => set({ keyword: '', inputValue: '', isSearching: false }),
   })),
 );
 

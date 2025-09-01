@@ -16,9 +16,8 @@ const useHeaderService = () => {
   const navigateToHome = useCallback(
     (device: keyof typeof trackEventNames) => {
       navigate('/');
-      const { setKeyword, setInputValue } = useSearchStore.getState();
-      setKeyword('');
-      setInputValue('');
+      const { resetSearch } = useSearchStore.getState();
+      resetSearch();
       trackEvent(trackEventNames[device]);
     },
     [navigate, trackEvent],

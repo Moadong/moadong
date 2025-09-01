@@ -37,11 +37,8 @@ const CategoryButtonList = () => {
       category_name: category.name,
     });
 
-    const { setKeyword, setInputValue, setIsSearching } =
-      useSearchStore.getState();
-    setKeyword('');
-    setInputValue('');
-    setIsSearching(false);
+    const { resetSearch } = useSearchStore.getState();
+    resetSearch();
 
     setSelectedCategory(category.id);
   };
