@@ -73,7 +73,6 @@ jobs:
           platforms: linux/arm64,linux/amd64
           push: true
           tags: |
-            # 쿠버네티스 배포를 위한 ECR 태그
             ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
             ${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:latest
 
