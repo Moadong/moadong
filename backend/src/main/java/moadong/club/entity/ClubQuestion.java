@@ -67,6 +67,6 @@ public class ClubQuestion  implements Persistable<String> {
 
     @Override
     public boolean isNew() {
-        return this.id == null;
+        return this.version == null;
     }
 }

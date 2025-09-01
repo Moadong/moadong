@@ -10,7 +10,7 @@ import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -41,7 +41,7 @@ public class Club implements Persistable<String> {
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
 
-    @org.springframework.data.annotation.Version
+    @Version
     private Long version;
 
     public Club() {
@@ -122,6 +122,6 @@ public class Club implements Persistable<String> {
 
     @Override
     public boolean isNew() {
-        return id == null;
+        return this.version == null;
     }
 }

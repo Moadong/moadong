@@ -15,9 +15,6 @@ import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
-import org.springframework.dao.DataAccessException;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
