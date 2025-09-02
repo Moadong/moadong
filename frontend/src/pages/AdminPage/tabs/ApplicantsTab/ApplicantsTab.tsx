@@ -10,6 +10,7 @@ import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import deleteIcon from '@/assets/images/icons/applicant_delete.svg';
 import selectAllIcon from '@/assets/images/icons/applicant_select_arrow.svg';
 import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
+import { AVAILABLE_STATUSES } from '@/constants/status';
 
 const ApplicantsTab = () => {
   const navigate = useNavigate();
@@ -237,34 +238,15 @@ const ApplicantsTab = () => {
               </Styled.StatusSelect>
               <Styled.Arrow width={8} height={8} src={selectIcon} />
               <Styled.StatusSelectMenu open={statusOpen}>
-                <Styled.StatusSelectMenuItem
-                  onClick={() => {
-                    updateAllApplicants(ApplicationStatus.SUBMITTED);
-                  }}
-                >
-                  서류검토
-                </Styled.StatusSelectMenuItem>
-                <Styled.StatusSelectMenuItem
-                  onClick={() => {
-                    updateAllApplicants(ApplicationStatus.INTERVIEW_SCHEDULED);
-                  }}
-                >
-                  면접예정
-                </Styled.StatusSelectMenuItem>
-                <Styled.StatusSelectMenuItem
-                  onClick={() => {
-                    updateAllApplicants(ApplicationStatus.ACCEPTED);
-                  }}
-                >
-                  합격
-                </Styled.StatusSelectMenuItem>
-                <Styled.StatusSelectMenuItem
-                  onClick={() => {
-                    updateAllApplicants(ApplicationStatus.DECLINED);
-                  }}
-                >
-                  불합격
-                </Styled.StatusSelectMenuItem>
+                {AVAILABLE_STATUSES.map((status) => (
+                  <Styled.StatusSelectMenuItem
+                    onClick={() => {
+                      updateAllApplicants(status);
+                    }}
+                  >
+                    {mapStatusToGroup(status).label}
+                  </Styled.StatusSelectMenuItem>
+                ))}
               </Styled.StatusSelectMenu>
             </Styled.SelectWrapper>
             <Styled.DeleteButton

@@ -14,13 +14,7 @@ import { Question } from '@/types/application';
 import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
 import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
 import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
-
-const AVAILABLE_STATUSES = [
-  ApplicationStatus.SUBMITTED, // 서류검토 (SUBMITTED 포함)
-  ApplicationStatus.INTERVIEW_SCHEDULED, // 면접예정
-  ApplicationStatus.ACCEPTED, // 합격
-  ApplicationStatus.DECLINED, // 불합격
-] as const;
+import { AVAILABLE_STATUSES } from '@/constants/status';
 
 const getStatusColor = (status: ApplicationStatus | undefined): string => {
   switch (status) {
