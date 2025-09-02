@@ -74,7 +74,6 @@ public class User implements UserDetails {
     }
 
     public void updateUserProfile(UserUpdateRequest userUpdateRequest) {
-        this.userId = userUpdateRequest.userId();
         this.password = userUpdateRequest.password();
     }
     public void updateRefreshToken(RefreshToken refreshToken) {
