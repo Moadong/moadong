@@ -76,6 +76,10 @@ public class User implements UserDetails {
     public void updateUserProfile(UserUpdateRequest userUpdateRequest) {
         this.password = userUpdateRequest.password();
     }
+
+    public void resetPassword(String encodedPassword) { //초기화된 비밀번호 업데이트
+        this.password = encodedPassword;
+    }
     public void updateRefreshToken(RefreshToken refreshToken) {
         this.refreshToken = refreshToken;
     }
