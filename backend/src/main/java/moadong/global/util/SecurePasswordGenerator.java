@@ -10,7 +10,7 @@ public class SecurePasswordGenerator {
     // 알파벳 대소문자와 특수문자 배열
     private static final String ALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz";
     private static final String NUMBERS = "0123456789";
-    private static final String SPECIAL = "!@#$%^&*?/";
+    private static final String SPECIAL = "!@#$%^";
 
     private static final String ALL = ALPHABET + NUMBERS + SPECIAL;
 
