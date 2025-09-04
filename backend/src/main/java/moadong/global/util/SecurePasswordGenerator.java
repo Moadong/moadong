@@ -18,13 +18,16 @@ public class SecurePasswordGenerator {
 
     //영어, 숫자, 특수문자 각각 최소 1개씩
     public String generate(int length) {
+        if (length < 8) {
+            throw new IllegalArgumentException("Length must be at least 8");}
+        
         StringBuilder password = new StringBuilder(length);
 
         password.append(ALPHABET.charAt(secureRandom.nextInt(ALPHABET.length())));
         password.append(NUMBERS.charAt(secureRandom.nextInt(NUMBERS.length())));
         password.append(SPECIAL.charAt(secureRandom.nextInt(SPECIAL.length())));
 
-        for (int i = 0; i < length; i++) {
+        for (int i = 3; i < length; i++) {
             int index = secureRandom.nextInt(ALL.length());
             password.append(ALL.charAt(index));
         }
