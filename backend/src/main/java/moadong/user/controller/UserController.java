@@ -97,8 +97,18 @@ public class UserController {
     @Operation(summary = "사용자 비밀번호 초기화", description = "사용자 비밀번호를 초기화합니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> reset(@CurrentUser CustomUserDetails user) {
+    public ResponseEntity<?> reset(@CurrentUser CustomUserDetails user,
+                                   HttpServletResponse response) {
         TempPasswordResponse tempPwdResponse = userCommandService.reset(user.getUserId());
+
+        ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
+                .path("/")
+                .maxAge(0)
+                .httpOnly(true)
+                .sameSite("None")
+                .secure(true)
+                .build();
+        response.addHeader("Set-Cookie", cookie.toString());
         return Response.ok(tempPwdResponse);
     }
 
