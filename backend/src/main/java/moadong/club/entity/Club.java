@@ -1,10 +1,5 @@
 package moadong.club.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -14,6 +9,9 @@ import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import org.springframework.data.annotation.Id;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -23,25 +21,17 @@ import java.util.Map;
 @Document("clubs")
 @AllArgsConstructor
 @Getter
-public class Club {
+public class Club implements Persistable<String> {
 
     @Id
     private String id;
 
-    @NotNull
-    @Column(length = 20)
     private String name;
 
-    @NotNull
-    @Column(length = 20)
     private String category;
 
-    @NotNull
-    @Column(length = 20)
     private String division;
 
-    @Enumerated(EnumType.STRING)
-    @NotNull
     private ClubState state;
 
     private String userId;
@@ -50,6 +40,9 @@ public class Club {
 
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
+
+    @Version
+    private Long version;
 
     public Club() {
         this.name = "";
@@ -125,5 +118,10 @@ public class Club {
 
     public void updateRecruitmentStatus(ClubRecruitmentStatus clubRecruitmentStatus) {
         this.clubRecruitmentInformation.updateRecruitmentStatus(clubRecruitmentStatus);
+    }
+
+    @Override
+    public boolean isNew() {
+        return this.version == null;
     }
 }

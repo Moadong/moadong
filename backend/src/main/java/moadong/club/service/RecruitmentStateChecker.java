@@ -6,6 +6,7 @@ import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.club.util.RecruitmentStateCalculator;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 
@@ -14,6 +15,7 @@ import java.util.List;
 
 @Component
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "scheduling.enabled", havingValue = "true", matchIfMissing = true)
 public class RecruitmentStateChecker {
 
     private final ClubRepository clubRepository;
