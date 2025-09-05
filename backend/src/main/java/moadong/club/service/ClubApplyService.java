@@ -38,6 +38,7 @@ public class ClubApplyService {
 
         clubQuestionRepository.save(createQuestions(clubQuestion, request));
     }
+
     @Transactional
     public void editClubApplication(String clubId, CustomUserDetails user, ClubApplicationEditRequest request) {
         ClubQuestion clubQuestion = getClubQuestion(clubId, user);
@@ -45,6 +46,7 @@ public class ClubApplyService {
         clubQuestion.updateEditedAt();
         clubQuestionRepository.save(updateQuestions(clubQuestion, request));
     }
+
     @Transactional
     public void editClubApplicationQuestion(String questionId, CustomUserDetails user, ClubApplicationEditRequest request) {
         ClubQuestion clubQuestion = clubQuestionRepository.findById(questionId)

@@ -1,5 +1,6 @@
 package moadong.club.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.artsok.RepeatedIfExceptionsTest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.fixture.ClubRequestFixture;
@@ -11,8 +12,11 @@ import moadong.util.annotations.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -20,22 +24,30 @@ import java.util.concurrent.atomic.AtomicInteger;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @IntegrationTest
+@AutoConfigureMockMvc
 public class ClubProfileServiceTest {
     @Autowired
     private ClubProfileService clubProfileService;
     @Autowired
     private UserRepository userRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     private CustomUserDetails userDetails;
 
     @BeforeEach
     void setUp() {
+        if (userRepository.findUserByUserId(UserFixture.collectUserId).isEmpty()) {
+            userRepository.save(UserFixture.createUser(passwordEncoder));
+        }
         User user = userRepository.findUserByUserId(UserFixture.collectUserId).get();
-        userDetails = new CustomUserDetails(user);
+        this.userDetails = new CustomUserDetails(user);
     }
+
 
     @DisplayName("여러 스레드에서 동시에 수정 요청 시, 한 번만 성공하고 나머지는 실패해야 한다")
     @RepeatedIfExceptionsTest(repeats = 3, exceptions = org.opentest4j.AssertionFailedError.class)
-    void optimistic_lock_multi_thread_test() throws InterruptedException {
+    void 낙관적_락_테스트_시에_1개만_동작해야한다() throws InterruptedException {
         // GIVEN
         int numberOfThreads = 4;
         ExecutorService executorService = Executors.newFixedThreadPool(numberOfThreads);
@@ -50,13 +62,8 @@ public class ClubProfileServiceTest {
             executorService.submit(() -> {
                 try {
                     ClubInfoRequest request = ClubRequestFixture.createValidClubInfoRequest();
-
-                    // --- 핵심 변경점 ---
-                    // 모든 스레드가 이 지점에서 대기.
-                    // 마지막 스레드가 barrier.await()을 호출하면 모든 스레드가 동시에 다음 코드를 실행.
                     barrier.await();
 
-                    // 모든 스레드가 거의 동시에 이 메서드를 호출하게 되어 충돌 가능성이 극대화됨
                     clubProfileService.updateClubInfo(request, userDetails);
                     successCount.incrementAndGet();
                 } catch (OptimisticLockingFailureException e) {
