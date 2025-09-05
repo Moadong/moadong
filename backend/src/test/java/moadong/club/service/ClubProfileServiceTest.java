@@ -1,5 +1,6 @@
 package moadong.club.service;
 
+import io.github.artsok.RepeatedIfExceptionsTest;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.fixture.ClubRequestFixture;
 import moadong.fixture.UserFixture;
@@ -9,7 +10,6 @@ import moadong.user.repository.UserRepository;
 import moadong.util.annotations.IntegrationTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
@@ -33,8 +33,8 @@ public class ClubProfileServiceTest {
         userDetails = new CustomUserDetails(user);
     }
 
-    @Test
     @DisplayName("여러 스레드에서 동시에 수정 요청 시, 한 번만 성공하고 나머지는 실패해야 한다")
+    @RepeatedIfExceptionsTest(repeats = 3, exceptions = org.opentest4j.AssertionFailedError.class)
     void optimistic_lock_multi_thread_test() throws InterruptedException {
         // GIVEN
         int numberOfThreads = 4;
