@@ -114,6 +114,16 @@ public class UserCommandService {
         HttpServletResponse response) {
         User user = userRepository.findUserByUserId(userId)
             .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+
+        //아이디와 동일한지
+        if (userId.equals(userUpdateRequest.password())) {
+            throw new RestApiException(ErrorCode.PASSWORD_SAME_AS_USERID);
+        }
+        //기존 비밀번호와 동일한지
+        if (passwordEncoder.matches(userUpdateRequest.password(), user.getPassword())) {
+            throw new RestApiException(ErrorCode.PASSWORD_SAME_AS_OLD);
+        }
+
         user.updateUserProfile(userUpdateRequest.encryptPassword(passwordEncoder));
 
         userRepository.save(user);
