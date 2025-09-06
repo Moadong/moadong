@@ -8,7 +8,7 @@ import iconStudy from '@/assets/images/icons/category_button/category_study_butt
 import iconSport from '@/assets/images/icons/category_button/category_sport_button_icon.svg';
 import iconPerformance from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
 import { useSearchStore } from '@/store/useSearchStore';
-import { useCategory } from '@/context/CategoryContext';
+import { useSelectedCategory } from '@/store/useCategoryStore';
 import { EVENT_NAME } from '@/constants/eventName';
 
 interface Category {
@@ -28,7 +28,7 @@ const clubCategories: Category[] = [
 ];
 
 const CategoryButtonList = () => {
-  const { setSelectedCategory } = useCategory();
+  const { setSelectedCategory } = useSelectedCategory();
   const trackEvent = useMixpanelTrack();
 
   const handleCategoryClick = (category: Category) => {
