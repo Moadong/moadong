@@ -10,6 +10,7 @@ import moadong.user.annotation.CurrentUser;
 import moadong.user.payload.CustomUserDetails;
 import moadong.user.payload.request.UserLoginRequest;
 import moadong.user.payload.request.UserRegisterRequest;
+import moadong.user.payload.request.UserResetRequest;
 import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.FindUserClubResponse;
 import moadong.user.payload.response.LoginResponse;
@@ -95,20 +96,8 @@ public class UserController {
 
     @PostMapping("/reset")
     @Operation(summary = "사용자 비밀번호 초기화", description = "사용자 비밀번호를 초기화합니다.")
-    @PreAuthorize("isAuthenticated()")
-    @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> reset(@CurrentUser CustomUserDetails user,
-                                   HttpServletResponse response) {
-        TempPasswordResponse tempPwdResponse = userCommandService.reset(user.getUserId());
-
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
-                .path("/")
-                .maxAge(0)
-                .httpOnly(true)
-                .sameSite("None")
-                .secure(true)
-                .build();
-        response.addHeader("Set-Cookie", cookie.toString());
+    public ResponseEntity<?> reset(@RequestBody @Validated UserResetRequest userResetRequest) {
+        TempPasswordResponse tempPwdResponse = userCommandService.reset(userResetRequest.userId());
         return Response.ok(tempPwdResponse);
     }
 
