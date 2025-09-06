@@ -42,7 +42,7 @@ const tabs: TabCategory[] = [
     {
     category: '계정 관리',
     items: [
-      { label: '아이디/비밀번호 수정', path: '/admin/account-edit'},
+      { label: '비밀번호 수정', path: '/admin/account-edit'},
       { label: '회원탈퇴', path: '/admin/user-delete'},
     ],
   },
@@ -59,10 +59,10 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   }, [location.pathname]);
 
   const handleTabClick = (item: TabItem) => {
-    if (item.label === '아이디/비밀번호 수정') {
-      alert('아이디/비밀번호 수정 기능은 아직 준비 중이에요. ☺️');
-      return;
-    }
+    // if (item.label === '아이디/비밀번호 수정') {
+    //   alert('아이디/비밀번호 수정 기능은 아직 준비 중이에요. ☺️');
+    //   return;
+    // }
     if (item.label === '회원탈퇴') {
       alert('회원탈퇴 기능은 아직 준비 중이에요. ☺️');
       return;
