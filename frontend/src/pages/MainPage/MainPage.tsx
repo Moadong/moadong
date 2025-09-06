@@ -19,7 +19,7 @@ const MainPage = () => {
   useTrackPageView('MainPage');
 
   const [isFilterActive, setIsFilterActive] = useState(false);
-  const { selectedCategory, setSelectedCategory } = useSelectedCategory();
+  const { selectedCategory } = useSelectedCategory();
 
   const { keyword } = useSearchKeyword();
   const { isSearching } = useSearchIsSearching();
