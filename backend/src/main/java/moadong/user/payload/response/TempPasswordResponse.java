@@ -5,6 +5,5 @@ import moadong.global.annotation.Password;
 
 public record TempPasswordResponse(
         @NotNull
-        @Password
         String tempPassword
 ){ }
