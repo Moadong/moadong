@@ -23,11 +23,13 @@ export const InputWrapper = styled.div`
   align-items: center;
 `;
 
-export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean }>`
+export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean; isSuccess?: boolean; }>`
   flex: 1;
   height: 45px;
   padding: 12px 18px;
-  border: 1px solid ${({ hasError }) => (hasError ? 'red' : '#c5c5c5')};
+  border: 1px solid
+    ${({ hasError, isSuccess }) =>
+    hasError ? 'red' : isSuccess ? '#28a745' : '#c5c5c5'};
   background-color: transparent;
   border-radius: 6px;
   outline: none;
@@ -44,8 +46,14 @@ export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean }>`
   :focus {
     outline: none;
     box-shadow: 0 0 3px;
-    border-color: ${({ hasError, readOnly }) =>
-    readOnly ? '#c5c5c5' : hasError ? 'red' : '#007bff'};
+    border-color: ${({ hasError, isSuccess, readOnly }) =>
+      readOnly
+        ? '#c5c5c5'
+        : hasError
+        ? 'red'
+        : isSuccess
+        ? '#28a745'
+        : '#007bff'};
     ${({ readOnly }) => readOnly && 'cursor: pointer;'}
   }
 
@@ -117,3 +125,4 @@ export const HelperText = styled.div`
   white-space: nowrap;
   z-index: 1;
 `;
+
