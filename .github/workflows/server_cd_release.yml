@@ -113,48 +113,63 @@ jobs:
         uses: imranismail/setup-kustomize@v2
       - uses: azure/setup-kubectl@v3
 
-      - name: Setup kubeconfig
-        run: |
-          mkdir -p ~/.kube
-          echo "${{ secrets.KUBE_CONFIG_DATA }}" | base64 -d > ~/.kube/config
-          chmod 600 ~/.kube/config
-          
-      - name: Blue/Green Deployment Logic
+      - name: Blue/Green Intelligent Deployment Logic
         env:
           APPLICATION_PROD_RELEASE: ${{ secrets.APPLICATION_PROD_RELEASE }}
         run: |
-          # 1. 현재 라이브(Live) 환경이 블루인지 그린인지 확인
-          LIVE_COLOR=$(kubectl get ingress spring-server-ingress -o jsonpath='{.spec.rules[0].http.paths[0].backend.service.name}' | cut -d'-' -f3)
-          if [ "$LIVE_COLOR" == "blue" ]; then
-            NEW_COLOR="green"
-            OLD_COLOR="blue"
+          # 1. Ingress 존재 여부 확인하여 최초 배포인지 업데이트인지 판단
+          if kubectl get ingress spring-server-ingress > /dev/null 2>&1; then
+            # Ingress가 존재함 -> 업데이트 배포
+            echo "INFO: Ingress 'spring-server-ingress' found. Starting UPDATE deployment."
+            LIVE_COLOR=$(kubectl get ingress spring-server-ingress -o jsonpath='{.spec.rules[0].http.paths.backend.service.name}' | cut -d'-' -f3)
+            if [ "$LIVE_COLOR" == "blue" ]; then
+              NEW_COLOR="green"
+              OLD_COLOR="blue"
+            else
+              NEW_COLOR="blue"
+              OLD_COLOR="green"
+            fi
           else
+            # Ingress가 존재하지 않음 -> 최초 배포
+            echo "INFO: Ingress 'spring-server-ingress' not found. Starting INITIAL deployment."
+            # 최초 배포 시에는 'blue'를 먼저 배포하고, 이전 버전(OLD_COLOR)은 없음
             NEW_COLOR="blue"
-            OLD_COLOR="green"
+            OLD_COLOR="none" 
           fi
-          echo "INFO: Current LIVE color is $LIVE_COLOR. Deploying new version to $NEW_COLOR."
-
-          # 2. Kustomize를 사용하여 새 버전(NEW_COLOR) 배포 준비
-          cd k8s/overlays/production
           
+          echo "INFO: Deploying new version to $NEW_COLOR."
+
+          # 2. Kustomize 배포 준비
+          cd k8s/overlays/production
           echo "INFO: Updating image tag to ${{ env.IMAGE_TAG }} in kustomization..."
           kustomize edit set image placeholder/spring-server=${{ env.ECR_REGISTRY }}/${{ env.ECR_REPOSITORY }}:${{ env.IMAGE_TAG }}
           
+          # 3. 새 버전(NEW_COLOR) 배포
           echo "INFO: Applying new '$NEW_COLOR' deployment and service..."
           kustomize build . | kubectl apply -f - --selector="color=$NEW_COLOR"
 
-          # 3. 새 버전 헬스체크 및 검증
+          # 4. 최초 배포 시 Ingress 생성
+          if [ "$OLD_COLOR" == "none" ]; then
+            echo "INFO: Creating Ingress for the first time..."
+            kustomize build . | kubectl apply -f - --selector=app=ingress # Ingress YAML에 app=ingress 라벨을 추가해야 함
+          fi
+
+          # 5. 새 버전 헬스체크
           echo "INFO: Waiting for '$NEW_COLOR' deployment to be ready..."
           kubectl rollout status deployment/spring-server-$NEW_COLOR --timeout=5m
           
-          # 4. 트래픽 전환
-          echo "INFO: All checks passed. Switching live traffic to '$NEW_COLOR' version..."
-          kubectl patch ingress spring-server-ingress --type='json' -p='[{"op": "replace", "path": "/spec/rules/0/http/paths/0/backend/service/name", "value":"spring-server-'$NEW_COLOR'-svc"}]'
-          echo "INFO: Traffic successfully switched to $NEW_COLOR."
+          # 6. 트래픽 전환 (업데이트 배포 시에만 실행)
+          if [ "$OLD_COLOR" != "none" ]; then
+            echo "INFO: Switching live traffic to '$NEW_COLOR' version..."
+            kubectl patch ingress spring-server-ingress --type='json' -p='[{"op": "replace", "path": "/spec/rules/0/http/paths/0/backend/service/name", "value":"spring-server-'$NEW_COLOR'-svc"}]'
+            echo "INFO: Traffic successfully switched to $NEW_COLOR."
 
-          # 5. 이전 버전(OLD_COLOR) 리소스 정리
-          echo "INFO: Waiting for 60 seconds before cleaning up old '$OLD_COLOR' version..."
-          sleep 60
-          kubectl delete deployment spring-server-$OLD_COLOR --prune=true --grace-period=0 --force
-          kubectl delete service spring-server-$OLD_COLOR-svc
-          echo "INFO: Old '$OLD_COLOR' version has been cleaned up."
+            # 7. 이전 버전(OLD_COLOR) 정리 (업데이트 배포 시에만 실행)
+            echo "INFO: Waiting for 60 seconds before cleaning up old '$OLD_COLOR' version..."
+            sleep 60
+            kubectl delete deployment spring-server-$OLD_COLOR
+            kubectl delete service spring-server-$OLD_COLOR-svc
+            echo "INFO: Old '$OLD_COLOR' version has been cleaned up."
+          fi
+
+          echo "INFO: Deployment process finished successfully."
