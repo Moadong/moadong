@@ -102,7 +102,7 @@ jobs:
 
   deploy-to-kubernetes:
     name: Deploy to Kubernetes with Blue/Green
-    runs-on: ubuntu-latest
+    runs-on: kube
     needs: build-and-push # 빌드 잡이 성공해야 실행
 
     steps:
