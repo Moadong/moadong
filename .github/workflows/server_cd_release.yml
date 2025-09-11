@@ -113,7 +113,7 @@ jobs:
         uses: imranismail/setup-kustomize@v2
       - uses: azure/setup-kubectl@v3
 
-      - name: Blue/Green Intelligent Deployment Logic
+      - name: Blue/Green Deployment Logic
         env:
           APPLICATION_PROD_RELEASE: ${{ secrets.APPLICATION_PROD_RELEASE }}
         run: |

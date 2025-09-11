@@ -1,7 +1,9 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: spring-server-green 
+  name: spring-server-green
+  labels:
+    color: green
 spec:
   replicas: 2
   selector:
