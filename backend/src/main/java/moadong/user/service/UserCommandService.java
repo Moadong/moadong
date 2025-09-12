@@ -9,6 +9,7 @@ import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.JwtProvider;
+import moadong.global.util.SecurePasswordGenerator;
 import moadong.user.entity.RefreshToken;
 import moadong.user.entity.User;
 import moadong.user.payload.CustomUserDetails;
@@ -17,6 +18,7 @@ import moadong.user.payload.request.UserRegisterRequest;
 import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.LoginResponse;
 import moadong.user.payload.response.RefreshResponse;
+import moadong.user.payload.response.TempPasswordResponse;
 import moadong.user.repository.UserRepository;
 import moadong.user.util.CookieMaker;
 import org.springframework.http.ResponseCookie;
@@ -36,6 +38,7 @@ public class UserCommandService {
     private final PasswordEncoder passwordEncoder;
     private final ClubRepository clubRepository;
     private final CookieMaker cookieMaker;
+    private final SecurePasswordGenerator securePasswordGenerator;
 
     public User registerUser(UserRegisterRequest userRegisterRequest) {
         try {
@@ -111,6 +114,16 @@ public class UserCommandService {
         HttpServletResponse response) {
         User user = userRepository.findUserByUserId(userId)
             .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+
+        //아이디와 동일한지
+        if (userId.equals(userUpdateRequest.password())) {
+            throw new RestApiException(ErrorCode.PASSWORD_SAME_AS_USERID);
+        }
+        //기존 비밀번호와 동일한지
+        if (passwordEncoder.matches(userUpdateRequest.password(), user.getPassword())) {
+            throw new RestApiException(ErrorCode.PASSWORD_SAME_AS_OLD);
+        }
+
         user.updateUserProfile(userUpdateRequest.encryptPassword(passwordEncoder));
 
         userRepository.save(user);
@@ -118,6 +131,23 @@ public class UserCommandService {
         String newRefreshToken = jwtProvider.generateRefreshToken(user.getUsername()).getToken();
         ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(newRefreshToken);
         response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    public TempPasswordResponse reset(String userId) {
+        User user = userRepository.findUserByUserId(userId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+
+        //랜덤 임시 비밀번호 생성
+        TempPasswordResponse tempPwdResponse = new TempPasswordResponse(
+                securePasswordGenerator.generate(8));
+
+        //암호화
+        user.resetPassword(passwordEncoder.encode(tempPwdResponse.tempPassword()));
+
+        user.updateRefreshToken(null);
+        userRepository.save(user);
+
+        return tempPwdResponse;
     }
 
     public String findClubIdByUserId(String userID) {
@@ -130,4 +160,5 @@ public class UserCommandService {
         Club club = new Club(userId);
         clubRepository.save(club);
     }
+
 }

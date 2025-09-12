@@ -12,4 +12,6 @@ public interface ClubApplicationRepository extends MongoRepository<ClubApplicati
     List<ClubApplication> findAllByQuestionId(String questionId);
 
     Optional<ClubApplication> findByIdAndQuestionId(String id, String questionId);
+
+    List<ClubApplication> findAllByIdInAndQuestionId(List<String> ids, String clubId);
 }

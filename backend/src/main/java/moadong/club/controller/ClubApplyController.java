@@ -3,11 +3,10 @@ package moadong.club.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import moadong.club.payload.request.ClubApplicantEditRequest;
-import moadong.club.payload.request.ClubApplicationCreateRequest;
-import moadong.club.payload.request.ClubApplicationEditRequest;
-import moadong.club.payload.request.ClubApplyRequest;
+import moadong.club.payload.request.*;
 import moadong.club.service.ClubApplyService;
 import moadong.global.payload.Response;
 import moadong.user.annotation.CurrentUser;
@@ -16,6 +15,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/club/{clubId}")
@@ -70,32 +71,30 @@ public class ClubApplyController {
         return Response.ok(clubApplyService.getClubApplyInfo(clubId, user));
     }
 
-    @PutMapping("/apply/{appId}")
-    @Operation(summary = "지원서 변경",
-            description = "클럽 지원자의 지원서 정보를 수정합니다.<br>"
-                    + "appId - 지원서 아이디"
+    @PutMapping("/applicant")
+    @Operation(summary = "지원자의 지원서 정보 변경",
+            description = "여러 지원자의 지원서 정보를 일괄 수정합니다.<br>"
+                    + "요청 본문은 ClubApplicantEditRequest 객체의 배열이며, 각 원소는 applicantId, memo, status를 포함합니다."
     )
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> editApplicantDetail(@PathVariable String clubId,
-                                                 @PathVariable String appId,
-                                                 @RequestBody @Validated ClubApplicantEditRequest request,
+                                                 @RequestBody @Valid @NotEmpty List<ClubApplicantEditRequest> request,
                                                  @CurrentUser CustomUserDetails user) {
-        clubApplyService.editApplicantDetail(clubId, appId, request, user);
+        clubApplyService.editApplicantDetail(clubId, request, user);
         return Response.ok("success edit applicant");
     }
 
-    @DeleteMapping("/apply/{appId}")
-    @Operation(summary = "지원서 삭제",
-            description = "클럽 지원자의 지원서를 삭제합니다.<br>"
-                    + "appId - 지원서 아이디"
+    @DeleteMapping("/applicant")
+    @Operation(summary = "지원자 삭제",
+            description = "클럽 지원자의 지원서를 삭제합니다"
     )
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> removeApplicant(@PathVariable String clubId,
-                                             @PathVariable String appId,
+                                             @RequestBody @Validated ClubApplicantDeleteRequest request,
                                              @CurrentUser CustomUserDetails user) {
-        clubApplyService.deleteApplicant(clubId, appId, user);
+        clubApplyService.deleteApplicant(clubId, request, user);
         return Response.ok("success delete applicant");
     }
 

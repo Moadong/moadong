@@ -6,10 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.payload.dto.ClubApplicantsResult;
-import moadong.club.payload.request.ClubApplicantEditRequest;
-import moadong.club.payload.request.ClubApplicationCreateRequest;
-import moadong.club.payload.request.ClubApplicationEditRequest;
-import moadong.club.payload.request.ClubApplyRequest;
+import moadong.club.payload.request.*;
 import moadong.club.payload.response.ClubApplicationResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.repository.ClubApplicationRepository;
@@ -42,11 +39,23 @@ public class ClubApplyService {
         clubQuestionRepository.save(createQuestions(clubQuestion, request));
     }
 
+    @Transactional
     public void editClubApplication(String clubId, CustomUserDetails user, ClubApplicationEditRequest request) {
         ClubQuestion clubQuestion = getClubQuestion(clubId, user);
 
         clubQuestion.updateEditedAt();
         clubQuestionRepository.save(updateQuestions(clubQuestion, request));
+    }
+
+    @Transactional
+    public void editClubApplicationQuestion(String questionId, CustomUserDetails user, ClubApplicationEditRequest request) {
+        ClubQuestion clubQuestion = clubQuestionRepository.findById(questionId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.QUESTION_NOT_FOUND));
+
+        updateQuestions(clubQuestion, request);
+        clubQuestion.updateEditedAt();
+
+        clubQuestionRepository.save(clubQuestion);
     }
 
     public ResponseEntity<?> getClubApplication(String clubId) {
@@ -142,7 +151,7 @@ public class ClubApplyService {
     }
 
     @Transactional
-    public void editApplicantDetail(String clubId, String appId, ClubApplicantEditRequest request, CustomUserDetails user) {
+    public void editApplicantDetail(String clubId, List<ClubApplicantEditRequest> request, CustomUserDetails user) {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
@@ -150,17 +159,28 @@ public class ClubApplyService {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
 
-        ClubApplication application = clubApplicationRepository.findByIdAndQuestionId(appId, clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
+        Map<String, ClubApplicantEditRequest> requestMap = request.stream()
+                .collect(Collectors.toMap(ClubApplicantEditRequest::applicantId,
+                        Function.identity(), (prev, next) -> next));
 
-        application.updateMemo(request.memo());
-        application.updateStatus(request.status());
+        List<String> applicationIds = new ArrayList<>(requestMap.keySet());
+        List<ClubApplication> application = clubApplicationRepository.findAllByIdInAndQuestionId(applicationIds, clubId);
 
-        clubApplicationRepository.save(application);
+        if (application.size() != applicationIds.size()) {
+            throw new RestApiException(ErrorCode.APPLICANT_NOT_FOUND);
+        }
+
+        application.forEach(app -> {
+            ClubApplicantEditRequest editRequest = requestMap.get(app.getId());
+            app.updateMemo(editRequest.memo());
+            app.updateStatus(editRequest.status());
+        });
+
+        clubApplicationRepository.saveAll(application);
     }
 
     @Transactional
-    public void deleteApplicant(String clubId, String appId, CustomUserDetails user) {
+    public void deleteApplicant(String clubId, ClubApplicantDeleteRequest request, CustomUserDetails user) {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
@@ -168,10 +188,13 @@ public class ClubApplyService {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
 
-        ClubApplication application = clubApplicationRepository.findByIdAndQuestionId(appId, clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
+        List<ClubApplication> applicants = clubApplicationRepository.findAllByIdInAndQuestionId(request.applicantIds(), clubId);
 
-        clubApplicationRepository.delete(application);
+        if (applicants.size() != request.applicantIds().size()) {
+            throw new RestApiException(ErrorCode.APPLICANT_NOT_FOUND);
+        }
+
+        clubApplicationRepository.deleteAll(applicants);
     }
 
     private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubQuestion clubQuestion) {

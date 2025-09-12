@@ -6,6 +6,9 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import org.springframework.data.annotation.Transient;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -18,7 +21,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
-public class ClubQuestion {
+public class ClubQuestion  implements Persistable<String> {
 
     @Id
     private String id;
@@ -42,6 +45,9 @@ public class ClubQuestion {
     @Builder.Default
     private LocalDateTime editedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
 
+    @Version
+    private Long version;
+
     public void updateFormTitle(String title) {
         this.title = title;
     }
@@ -59,4 +65,8 @@ public class ClubQuestion {
        this.editedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
     }
 
+    @Override
+    public boolean isNew() {
+        return this.version == null;
+    }
 }
