@@ -30,11 +30,13 @@ export const QuestionTitleTextContainer = styled.div`
   gap: 4px;
   width: fit-content;
   max-width: calc(100% - 20px);
+  flex: 1;
 `;
 
 export const QuestionTitleText = styled.textarea`
   display: inline-block;
   min-width: 100px;
+  width: 100%;
   resize: none;
   border: none;
   outline: none;

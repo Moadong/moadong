@@ -1,6 +1,7 @@
 import * as Styled from './QuestionTitle.styles';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import useIsMobile from '@/hooks/useIsMobile';
+import { useEffect, useLayoutEffect, useRef } from 'react';
 
 interface QuestionTitleProps {
   id: number;
@@ -18,6 +19,18 @@ const QuestionTitle = ({
   onTitleChange,
 }: QuestionTitleProps) => {
   const isMobile = useIsMobile();
+  const textAreaRef = useRef<HTMLTextAreaElement>(null);
+
+  useLayoutEffect(() => {
+    if (textAreaRef.current) {
+      const el = textAreaRef.current;
+      if (mode === 'answer') {
+        el.style.width = el.value.length + "ch";
+      }
+      el.style.height = '0px';
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  }, [title]);
   
   return (
     <Styled.QuestionTitleRow>
@@ -26,6 +39,8 @@ const QuestionTitle = ({
       )}
       <Styled.QuestionTitleTextContainer>
         <Styled.QuestionTitleText
+          ref={textAreaRef}
+          rows={1}
           readOnly={mode === 'answer'}
           suppressContentEditableWarning={true}
           onChange={(e) => {

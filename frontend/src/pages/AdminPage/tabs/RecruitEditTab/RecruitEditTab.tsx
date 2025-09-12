@@ -29,19 +29,29 @@ const RecruitEditTab = () => {
 
     const now = new Date();
 
-    setRecruitmentStart((prev) => prev ?? initialStart ?? now);
-    setRecruitmentEnd((prev) => prev ?? initialEnd ?? now);
+    setRecruitmentStart((prev) => prev ?? correctResponseKoreanDate(initialStart) ?? now);
+    setRecruitmentEnd((prev) => prev ?? correctResponseKoreanDate(initialEnd) ?? now);
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
     setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
+
+  const correctRequestKoreanDate = (date: Date | null): Date | null => {
+    if (!date) return null;
+    return new Date(date?.getTime() + 9 * 60 * 60 * 1000);
+  }
+
+  const correctResponseKoreanDate = (date: Date | null): Date | null => {
+    if (!date) return null;
+    return new Date(date?.getTime() - 9 * 60 * 60 * 1000);
+  }
 
   const handleUpdateClub = async () => {
     if (!clubDetail) return;
 
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: recruitmentStart?.toISOString(),
-      recruitmentEnd: recruitmentEnd?.toISOString(),
+      recruitmentStart: correctRequestKoreanDate(recruitmentStart)?.toISOString(),
+      recruitmentEnd: correctRequestKoreanDate(recruitmentEnd)?.toISOString(),
       recruitmentTarget: recruitmentTarget,
       description: description,
       externalApplicationUrl: clubDetail.externalApplicationUrl ?? '',

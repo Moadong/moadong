@@ -7,8 +7,8 @@ import iconHobby from '@/assets/images/icons/category_button/category_hobby_butt
 import iconStudy from '@/assets/images/icons/category_button/category_study_button_icon.svg';
 import iconSport from '@/assets/images/icons/category_button/category_sport_button_icon.svg';
 import iconPerformance from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
-import { useSearch } from '@/context/SearchContext';
-import { useCategory } from '@/context/CategoryContext';
+import { useSearchStore } from '@/store/useSearchStore';
+import { useSelectedCategory } from '@/store/useCategoryStore';
 import { EVENT_NAME } from '@/constants/eventName';
 
 interface Category {
@@ -28,8 +28,7 @@ const clubCategories: Category[] = [
 ];
 
 const CategoryButtonList = () => {
-  const { setKeyword, setInputValue, setIsSearching } = useSearch();
-  const { setSelectedCategory } = useCategory();
+  const { setSelectedCategory } = useSelectedCategory();
   const trackEvent = useMixpanelTrack();
 
   const handleCategoryClick = (category: Category) => {
@@ -38,9 +37,8 @@ const CategoryButtonList = () => {
       category_name: category.name,
     });
 
-    setKeyword('');
-    setInputValue('');
-    setIsSearching(false);
+    const { resetSearch } = useSearchStore.getState();
+    resetSearch();
 
     setSelectedCategory(category.id);
   };
