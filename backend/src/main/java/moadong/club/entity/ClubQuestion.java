@@ -6,6 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import moadong.club.enums.SemesterTerm;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
@@ -44,6 +45,14 @@ public class ClubQuestion  implements Persistable<String> {
 
     @Builder.Default
     private LocalDateTime editedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+
+    @NotNull
+    @Builder.Default
+    private Integer semesterYear = 2025;
+
+    @NotNull
+    @Builder.Default
+    private SemesterTerm semesterTerm = SemesterTerm.SECOND; //1학기, 2학기
 
     @Version
     private Long version;
