@@ -26,6 +26,16 @@ public class ClubApplyController {
 
     private final ClubApplyService clubApplyService;
 
+    @GetMapping("/semesters")
+    @Operation(summary = "클럽 지원서 생성 가능 학기 불러오기", description = "생성 가능한 학기를 불러옵니다<br>"
+    + "<br>"
+    + "기준일로부터 이번 학기, 다음 학기, 다다음 학기를 불러옴<br>"
+    + "ex) 2025/09/01 -> 2025-2학기, 2025-겨울학기, 2026-1학기")
+    public ResponseEntity<?> getSemesterOption(@PathVariable String clubId,
+                                                @RequestParam(value = "option", required = false, defaultValue = "3") int count) {
+        return Response.ok(clubApplyService.getSemesterOption(clubId, count));
+    }
+
     @PostMapping("/application")
     @Operation(summary = "클럽 지원서 생성", description = "클럽 지원서를 생성합니다")
     @PreAuthorize("isAuthenticated()")

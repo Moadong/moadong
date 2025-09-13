@@ -5,10 +5,12 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
+import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ClubApplicantsResult;
 import moadong.club.payload.request.*;
 import moadong.club.payload.response.ClubApplicationResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
+import moadong.club.payload.response.SemesterOption;
 import moadong.club.repository.ClubApplicationRepository;
 import moadong.club.repository.ClubQuestionRepository;
 import moadong.club.repository.ClubRepository;
@@ -20,6 +22,9 @@ import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -32,6 +37,53 @@ public class ClubApplyService {
     private final ClubQuestionRepository clubQuestionRepository;
     private final ClubApplicationRepository clubApplicationRepository;
     private final AESCipher cipher;
+
+    public List<SemesterOption> getSemesterOption(String clubId, int count) {
+        LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
+        List<OptionItem> items = buildOptionItems(baseDate, count);
+
+        //TODO: cludId랑 semester로 각 학기 지원서의 exist
+        return items.stream()
+                .map(it -> SemesterOption.builder()
+                        .semesterYear(it.year())
+                        .term(it.term())
+                        .build())
+                .toList();
+        
+    }
+    private record OptionItem(int year, SemesterTerm term) {}
+    private List<OptionItem> buildOptionItems(LocalDate baseDate, int count) {
+        List<OptionItem> candidates = new ArrayList<>();
+
+        int year = baseDate.getYear();
+        int month = baseDate.getMonthValue();
+
+        SemesterTerm startTerm = (month >= 3 && month <=6) ? SemesterTerm.FIRST
+                : (month >= 7 && month <= 8) ? SemesterTerm.SUMMER
+                : (month >= 9 && month <= 12) ? SemesterTerm.SECOND : SemesterTerm.WINTER;
+
+        int semesterYear = year;
+        SemesterTerm semesterTerm = startTerm;
+        for (int i =0; i < count; i++) {
+            candidates.add(new OptionItem(semesterYear, semesterTerm));
+            switch (semesterTerm) {
+                case FIRST:
+                    semesterTerm = SemesterTerm.SUMMER;
+                    break;
+                case SUMMER:
+                    semesterTerm = SemesterTerm.SECOND;
+                    break;
+                case SECOND:
+                    semesterTerm = SemesterTerm.WINTER;
+                    break;
+                case WINTER:
+                    semesterTerm = SemesterTerm.FIRST;
+                    semesterYear += 1;
+                    break;
+            }
+        }
+        return candidates;
+    }
 
     public void createClubApplication(String clubId, CustomUserDetails user, ClubApplicationCreateRequest request) {
         ClubQuestion clubQuestion = getClubQuestion(clubId, user);
