@@ -2,6 +2,7 @@ package moadong.club.service;
 
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubQuestion;
+import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.request.ClubApplicationEditRequest;
 import moadong.club.repository.ClubQuestionRepository;
 import moadong.club.repository.ClubRepository;
@@ -18,6 +19,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
 
+import java.time.LocalDate;
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -50,6 +53,37 @@ public class ClubApplyServiceTest {
         this.clubQuestion = clubQuestionRepository.findByClubId(club.getId())
                 .orElseThrow(() -> new NoSuchElementException("테스트를 위한 ClubQuestion 문서가 DB에 존재하지 않습니다. 먼저 문서를 생성해주세요."));
     }
+
+
+//   TODO: OptionItem private 삭제
+    
+//    @Test
+//    void 현재학기_SECOND이면_내년_FIRST까지() {
+//        LocalDate base = LocalDate.of(2025,11,12);
+//
+//        List<ClubApplyService.OptionItem> items = clubApplyService.buildOptionItems(base, 3);
+//
+//        List<ClubApplyService.OptionItem> expected = List.of(
+//                new ClubApplyService.OptionItem(2025, SemesterTerm.SECOND),
+//                new ClubApplyService.OptionItem(2025, SemesterTerm.WINTER),
+//                new ClubApplyService.OptionItem(2026, SemesterTerm.FIRST)
+//        );
+//        assertEquals(expected, items);
+//    }
+//
+//    @Test
+//    void 현재학기_SUMMER이면_내년_WINTTER까지() {
+//        LocalDate base = LocalDate.of(2025,7,12);
+//
+//        List<ClubApplyService.OptionItem> items = clubApplyService.buildOptionItems(base, 3);
+//
+//        List<ClubApplyService.OptionItem> expected = List.of(
+//                new ClubApplyService.OptionItem(2025, SemesterTerm.SUMMER),
+//                new ClubApplyService.OptionItem(2025, SemesterTerm.SECOND),
+//                new ClubApplyService.OptionItem(2025, SemesterTerm.WINTER)
+//        );
+//        assertEquals(expected, items);
+//    }
 
     @Test
     @DisplayName("DB에 이미 존재하는 문서에 대해 동시 수정 시, 한 스레드만 성공하고 나머지는 실패해야 한다")
