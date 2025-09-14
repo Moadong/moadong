@@ -47,14 +47,15 @@ public class ClubApplyController {
         return Response.ok("success create application");
     }
 
-    @PutMapping("/application")
+    @PutMapping("/application/{clubQuestionId}")
     @Operation(summary = "클럽 지원서 수정", description = "클럽 지원서를 수정합니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> editClubApplication(@PathVariable String clubId,
+                                                 @PathVariable String clubQuestionId,
                                              @CurrentUser CustomUserDetails user,
                                              @RequestBody @Validated ClubApplicationEditRequest request) {
-        clubApplyService.editClubApplication(clubId, user, request);
+        clubApplyService.editClubApplication(clubId, clubQuestionId, user, request);
         return Response.ok("success edit application");
     }
 

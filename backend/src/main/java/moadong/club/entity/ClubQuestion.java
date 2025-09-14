@@ -48,11 +48,12 @@ public class ClubQuestion  implements Persistable<String> {
 
     @NotNull
     @Builder.Default
-    private Integer semesterYear = 2025;
+    private Integer semesterYear = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getYear();
 
     @NotNull
     @Builder.Default
-    private SemesterTerm semesterTerm = SemesterTerm.SECOND; //1학기, 2학기
+    private SemesterTerm semesterTerm = (ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getMonthValue() <= 7)
+            ? SemesterTerm.FIRST : SemesterTerm.SECOND; //1학기, 2학기
 
     @Version
     private Long version;
@@ -72,6 +73,14 @@ public class ClubQuestion  implements Persistable<String> {
 
     public void updateEditedAt() {
        this.editedAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+    }
+
+    public void updateSemesterYear(Integer semesterYear) {
+        this.semesterYear = semesterYear;
+    }
+
+    public void updateSemesterTerm(SemesterTerm semesterTerm) {
+        this.semesterTerm = semesterTerm;
     }
 
     @Override

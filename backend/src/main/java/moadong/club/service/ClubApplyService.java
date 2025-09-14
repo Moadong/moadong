@@ -86,13 +86,22 @@ public class ClubApplyService {
     }
 
     public void createClubApplication(String clubId, CustomUserDetails user, ClubApplicationCreateRequest request) {
-        ClubQuestion clubQuestion = getClubQuestion(clubId, user);
+        validateClubOwner(clubId, user);
 
+        ClubQuestion clubQuestion = createQuestions(
+                ClubQuestion.builder()
+                        .clubId(clubId).semesterYear(request.semesterYear())
+                        .semesterTerm(request.semesterTerm())
+                        .build(),
+                request);
         clubQuestionRepository.save(createQuestions(clubQuestion, request));
     }
     @Transactional
-    public void editClubApplication(String clubId, CustomUserDetails user, ClubApplicationEditRequest request) {
-        ClubQuestion clubQuestion = getClubQuestion(clubId, user);
+    public void editClubApplication(String clubId, String clubQuestionId, CustomUserDetails user, ClubApplicationEditRequest request) {
+        validateClubOwner(clubId, user);
+
+        ClubQuestion clubQuestion = clubQuestionRepository.findById(clubQuestionId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.QUESTION_NOT_FOUND));
 
         clubQuestion.updateEditedAt();
         clubQuestionRepository.save(updateQuestions(clubQuestion, request));
@@ -323,6 +332,8 @@ public class ClubApplyService {
         clubQuestion.updateQuestions(newQuestions);
         clubQuestion.updateFormTitle(request.title());
         clubQuestion.updateFormDescription(request.description());
+        clubQuestion.updateSemesterYear(request.semesterYear());
+        clubQuestion.updateSemesterTerm(request.semesterTerm());
 
         return clubQuestion;
     }
@@ -365,16 +376,10 @@ public class ClubApplyService {
         return clubQuestion;
     }
 
-    private ClubQuestion getClubQuestion(String clubId, CustomUserDetails user) {
+    private void validateClubOwner(String clubId, CustomUserDetails user) {
         Club club = clubRepository.findById(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         if (!user.getId().equals(club.getUserId())) {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
-
-        return clubQuestionRepository.findByClubId(club.getId())
-                .orElseGet(() -> ClubQuestion.builder()
-                        .clubId(club.getId())
-                        .build());
-    }
-}
+    }}

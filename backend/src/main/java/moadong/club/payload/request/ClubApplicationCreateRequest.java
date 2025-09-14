@@ -1,9 +1,8 @@
 package moadong.club.payload.request;
 
 import jakarta.validation.Valid;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.*;
+import moadong.club.enums.SemesterTerm;
 
 import java.util.List;
 
@@ -18,6 +17,14 @@ public record ClubApplicationCreateRequest(
 
         @NotNull
         @Valid
-        List<ClubApplyQuestion> questions
+        List<ClubApplyQuestion> questions,
+
+        @NotNull
+        @Min(2000)
+        @Max(2999)
+        Integer semesterYear,
+
+        @NotNull
+        SemesterTerm semesterTerm
 ) {
 }
