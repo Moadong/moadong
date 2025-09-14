@@ -1,6 +1,5 @@
 package moadong.global.exception;
 
-import com.google.api.Http;
 import lombok.Getter;
 import org.springframework.http.HttpStatus;
 

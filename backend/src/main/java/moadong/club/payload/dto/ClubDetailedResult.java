@@ -1,10 +1,8 @@
 package moadong.club.payload.dto;
 
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
-
 import lombok.Builder;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;

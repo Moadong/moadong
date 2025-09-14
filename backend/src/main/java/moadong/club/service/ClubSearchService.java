@@ -1,5 +1,8 @@
 package moadong.club.service;
 
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubRecruitmentStatus;
@@ -7,10 +10,6 @@ import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.repository.ClubSearchRepository;
 import org.springframework.stereotype.Service;
-
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @AllArgsConstructor

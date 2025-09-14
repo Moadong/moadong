@@ -44,7 +44,6 @@ public class ClubProfileServiceTest {
         this.userDetails = new CustomUserDetails(user);
     }
 
-
     @DisplayName("여러 스레드에서 동시에 수정 요청 시, 한 번만 성공하고 나머지는 실패해야 한다")
     @RepeatedIfExceptionsTest(repeats = 3, exceptions = org.opentest4j.AssertionFailedError.class)
     void 낙관적_락_테스트_시에_1개만_동작해야한다() throws InterruptedException {

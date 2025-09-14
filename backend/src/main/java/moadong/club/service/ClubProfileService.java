@@ -1,5 +1,6 @@
 package moadong.club.service;
 
+import java.util.List;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubDetailedResult;
@@ -17,8 +18,6 @@ import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 @AllArgsConstructor

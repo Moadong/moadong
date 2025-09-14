@@ -1,15 +1,12 @@
 package moadong.fixture;
 
-import moadong.club.entity.ClubQuestionOption;
-import moadong.club.enums.ClubApplicationQuestionType;
-import moadong.club.payload.request.ClubApplicationEditRequest;
-import moadong.club.payload.request.ClubApplyQuestion;
-
 import java.util.ArrayList;
+import moadong.club.payload.request.ClubApplicationEditRequest;
 
 public class ClubApplicationEditFixture {
     public static ClubApplicationEditRequest createClubApplicationEditRequest(){
 //        ClubApplyQuestion clubApplyQuestion = new ClubApplyQuestion(
+
 //                1,
 //                "타이틀",
 //                "설명",
