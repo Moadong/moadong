@@ -10,5 +10,6 @@ import java.util.Optional;
 public interface ClubQuestionRepository extends MongoRepository<ClubQuestion, String> {
 
     Optional<ClubQuestion> findByClubId(String clubId);
+    Optional<ClubQuestion> findByClubIdAndId(String clubId, String id);
 
 }

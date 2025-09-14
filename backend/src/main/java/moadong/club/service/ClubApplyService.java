@@ -117,21 +117,23 @@ public class ClubApplyService {
         clubQuestionRepository.save(clubQuestion);
     }
 
-    public ResponseEntity<?> getClubApplication(String clubId) {
-        ClubQuestion clubQuestion = clubQuestionRepository.findByClubId(clubId)
+    public ResponseEntity<?> getClubApplication(String clubId, String clubQuestionId) {
+        ClubQuestion clubQuestion = clubQuestionRepository.findByClubIdAndId(clubId, clubQuestionId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
         ClubApplicationResponse clubApplicationResponse = ClubApplicationResponse.builder()
                 .title(clubQuestion.getTitle())
                 .description(Optional.ofNullable(clubQuestion.getDescription()).orElse(""))
                 .questions(clubQuestion.getQuestions())
+                .semesterYear(clubQuestion.getSemesterYear())
+                .semesterTerm(clubQuestion.getSemesterTerm())
                 .build();
 
         return Response.ok(clubApplicationResponse);
     }
 
-    public void applyToClub(String clubId, ClubApplyRequest request) {
-        ClubQuestion clubQuestion = clubQuestionRepository.findByClubId(clubId)
+    public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest request) {
+        ClubQuestion clubQuestion = clubQuestionRepository.findByClubIdAndId(clubId, clubQuestionId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
         validateAnswers(request.questions(), clubQuestion);
@@ -152,7 +154,7 @@ public class ClubApplyService {
         }
 
         ClubApplication application = ClubApplication.builder()
-                .questionId(clubQuestion.getClubId())
+                .questionId(clubQuestionId)
                 .answers(answers)
                 .build();
 

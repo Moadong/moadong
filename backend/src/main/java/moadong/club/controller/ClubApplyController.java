@@ -59,17 +59,19 @@ public class ClubApplyController {
         return Response.ok("success edit application");
     }
 
-    @GetMapping("/apply")
+    @GetMapping("/apply/{clubQuestionId}")
     @Operation(summary = "클럽 지원서 불러오기", description = "클럽 지원서를 불러옵니다")
-    public ResponseEntity<?> getClubApplication(@PathVariable String clubId) {
-        return clubApplyService.getClubApplication(clubId);
+    public ResponseEntity<?> getClubApplication(@PathVariable String clubId,
+                                                @PathVariable String clubQuestionId) {
+        return clubApplyService.getClubApplication(clubId, clubQuestionId);
     }
 
-    @PostMapping("/apply")
+    @PostMapping("/apply/{clubQuestionId}")
     @Operation(summary = "클럽 지원", description = "클럽에 지원합니다")
     public ResponseEntity<?>  applyToClub(@PathVariable String clubId,
+                                          @PathVariable String clubQuestionId,
                                           @RequestBody @Validated ClubApplyRequest request) {
-        clubApplyService.applyToClub(clubId, request);
+        clubApplyService.applyToClub(clubId, clubQuestionId, request);
         return Response.ok("success apply");
     }
 
