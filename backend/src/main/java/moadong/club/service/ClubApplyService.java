@@ -10,7 +10,7 @@ import moadong.club.payload.dto.ClubApplicantsResult;
 import moadong.club.payload.request.*;
 import moadong.club.payload.response.ClubApplicationResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
-import moadong.club.payload.response.SemesterOption;
+import moadong.club.payload.response.SemesterOptionResponse;
 import moadong.club.repository.ClubApplicationRepository;
 import moadong.club.repository.ClubQuestionRepository;
 import moadong.club.repository.ClubRepository;
@@ -38,13 +38,13 @@ public class ClubApplyService {
     private final ClubApplicationRepository clubApplicationRepository;
     private final AESCipher cipher;
 
-    public List<SemesterOption> getSemesterOption(String clubId, int count) {
+    public List<SemesterOptionResponse> getSemesterOption(String clubId, int count) {
         LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         List<OptionItem> items = buildOptionItems(baseDate, count);
 
         //TODO: cludId랑 semester로 각 학기 지원서의 exist
         return items.stream()
-                .map(it -> SemesterOption.builder()
+                .map(it -> SemesterOptionResponse.builder()
                         .semesterYear(it.year())
                         .term(it.term())
                         .build())
@@ -53,7 +53,7 @@ public class ClubApplyService {
     }
     private record OptionItem(int year, SemesterTerm term) {}
     private List<OptionItem> buildOptionItems(LocalDate baseDate, int count) {
-        List<OptionItem> candidates = new ArrayList<>();
+        List<OptionItem> items = new ArrayList<>();
 
         int year = baseDate.getYear();
         int month = baseDate.getMonthValue();
@@ -65,7 +65,7 @@ public class ClubApplyService {
         int semesterYear = year;
         SemesterTerm semesterTerm = startTerm;
         for (int i =0; i < count; i++) {
-            candidates.add(new OptionItem(semesterYear, semesterTerm));
+            items.add(new OptionItem(semesterYear, semesterTerm));
             switch (semesterTerm) {
                 case FIRST:
                     semesterTerm = SemesterTerm.SUMMER;
@@ -82,7 +82,7 @@ public class ClubApplyService {
                     break;
             }
         }
-        return candidates;
+        return items;
     }
 
     public void createClubApplication(String clubId, CustomUserDetails user, ClubApplicationCreateRequest request) {
