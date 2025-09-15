@@ -282,7 +282,8 @@ export const ApplicantAllSelectWrapper = styled.div`
 
 export const ApplicantAllSelectArrow = styled.img`
   position: absolute;
-  right: -1px;
+  right: -18px;
+  top: -7px;
   width: 16px;
   height: 16px;
   object-fit: none;
