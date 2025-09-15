@@ -58,28 +58,17 @@ public class ClubApplyService {
         int year = baseDate.getYear();
         int month = baseDate.getMonthValue();
 
-        SemesterTerm startTerm = (month >= 3 && month <=6) ? SemesterTerm.FIRST
-                : (month >= 7 && month <= 8) ? SemesterTerm.SUMMER
-                : (month >= 9 && month <= 12) ? SemesterTerm.SECOND : SemesterTerm.WINTER;
+        SemesterTerm startTerm = (month >= 1 && month <=6) ? SemesterTerm.FIRST : SemesterTerm.SECOND;
 
         int semesterYear = year;
         SemesterTerm semesterTerm = startTerm;
         for (int i =0; i < count; i++) {
             items.add(new OptionItem(semesterYear, semesterTerm));
-            switch (semesterTerm) {
-                case FIRST:
-                    semesterTerm = SemesterTerm.SUMMER;
-                    break;
-                case SUMMER:
-                    semesterTerm = SemesterTerm.SECOND;
-                    break;
-                case SECOND:
-                    semesterTerm = SemesterTerm.WINTER;
-                    break;
-                case WINTER:
-                    semesterTerm = SemesterTerm.FIRST;
-                    semesterYear += 1;
-                    break;
+            if(semesterTerm == SemesterTerm.FIRST) {
+                semesterTerm = SemesterTerm.SECOND;
+            } else {
+                semesterTerm = SemesterTerm.FIRST;
+                semesterYear += 1;
             }
         }
         return items;

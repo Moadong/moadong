@@ -52,7 +52,7 @@ public class ClubQuestion  implements Persistable<String> {
 
     @NotNull
     @Builder.Default
-    private SemesterTerm semesterTerm = (ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getMonthValue() <= 7)
+    private SemesterTerm semesterTerm = (ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getMonthValue() < 7)
             ? SemesterTerm.FIRST : SemesterTerm.SECOND; //1학기, 2학기
 
     @Version
