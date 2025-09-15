@@ -5,27 +5,18 @@ export const DropDownWrapper = styled.div`
   width: 100%;
 `;
 
-export const Selected = styled.div<{ open: boolean }>`
-  padding: 12px 16px;
-  border-radius: 0.375rem;
-  background: ${({ open }) => (open ? '#fff' : '#f5f5f5')};
-  color: #787878;
-  font-size: 0.875rem;
-  font-weight: 600;
-  cursor: pointer;
-  border: 1px solid ${({ open }) => (open ? '#c5c5c5' : 'transparent')};
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease;
+interface OptionListProps {
+  top?: string;
+  width?: string;
+  right?: string;
+}
 
-  user-select: none;
-`;
-
-export const OptionList = styled.ul`
+export const OptionList = styled.ul<OptionListProps>`
   position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
+  top: ${({ top }) => top || '100%'};
+  left: ${({ right }) => (right ? 'auto' : '0')};
+  width: ${({ width }) => width || '100%'};
+  right: ${({ right }) => right || 'auto'};
   background: #fff;
   border-radius: 6px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
@@ -49,12 +40,4 @@ export const OptionItem = styled.li<{ isSelected: boolean }>`
 
   transition: background-color 0.2s ease;
   user-select: none;
-`;
-
-export const Icon = styled.img`
-  position: absolute;
-  top: 50%;
-  right: 19px;
-  transform: translateY(-50%);
-  pointer-events: none;
 `;
