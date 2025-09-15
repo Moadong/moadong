@@ -85,15 +85,22 @@
         <br />
         <a href="https://github.com/lepitaaar" title="Code"><b>lepitaaar</b></a>
     </td>
+    <td align="center">
+       <img src="https://avatars.githubusercontent.com/u/143075401?v=4" width="120px;"/>   
+        <br />
+        <a href="https://github.com/alsdddk" title="Code"><b>alsdddk</b></a>
+    </td>
   </tr>
   <tr>
     <td align="center"><b>함규빈</b></td>
     <td align="center"><b>윤성원</b></td>
     <td align="center"><b>양두영</b></td>
     <td align="center"><b>이은호</b></td>
+    <td align="center"><b>김민아</b></td>
   </tr>
   <tr>
     <td align="center"><b>DevOps</b></td>
+    <td align="center"><b>Server</b></td>
     <td align="center"><b>Server</b></td>
     <td align="center"><b>Server</b></td>
     <td align="center"><b>Server</b></td>
