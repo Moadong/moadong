@@ -47,6 +47,12 @@ public class ClubApplyController {
         return Response.ok("success create application");
     }
 
+    @GetMapping("/apply")
+    @Operation(summary = "클럽 지원서들 불러오기", description = "클럽 지원서들을 학기 별로 분류하여 불러옵니다")
+    public ResponseEntity<?> getClubApplications(@PathVariable String clubId) {
+        return Response.ok(clubApplyService.getClubApplications(clubId));
+    }
+
     @PutMapping("/application/{clubQuestionId}")
     @Operation(summary = "클럽 지원서 수정", description = "클럽 지원서를 수정합니다")
     @PreAuthorize("isAuthenticated()")

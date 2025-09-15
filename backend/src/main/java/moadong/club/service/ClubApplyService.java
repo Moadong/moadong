@@ -7,12 +7,15 @@ import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ClubApplicantsResult;
+import moadong.club.payload.dto.ClubQuestionsResult;
 import moadong.club.payload.request.*;
 import moadong.club.payload.response.ClubApplicationResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
+import moadong.club.payload.response.ClubQuestionsResponse;
 import moadong.club.payload.response.SemesterOptionResponse;
 import moadong.club.repository.ClubApplicationRepository;
 import moadong.club.repository.ClubQuestionRepository;
+import moadong.club.repository.ClubQuestionsRepository;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
@@ -37,6 +40,7 @@ public class ClubApplyService {
     private final ClubQuestionRepository clubQuestionRepository;
     private final ClubApplicationRepository clubApplicationRepository;
     private final AESCipher cipher;
+    private final ClubQuestionsRepository clubQuestionsRepository;
 
     public List<SemesterOptionResponse> getSemesterOption(String clubId, int count) {
         LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
@@ -119,6 +123,12 @@ public class ClubApplyService {
                 .build();
 
         return Response.ok(clubApplicationResponse);
+    }
+
+    public ClubQuestionsResponse getClubApplications(String clubId) {
+        return ClubQuestionsResponse.builder()
+                .clubQuestions(clubQuestionsRepository.findClubQuestionsByClubId(clubId))
+                .build();
     }
 
     public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest request) {
