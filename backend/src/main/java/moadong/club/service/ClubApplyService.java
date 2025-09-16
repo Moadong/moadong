@@ -40,7 +40,7 @@ public class ClubApplyService {
     private final ClubApplicationFormsRepository clubApplicationFormsRepository;
     private final ClubApplicantsRepository clubApplicantsRepository;
     private final AESCipher cipher;
-    private final ClubApplicationFormRepositoryCustom clubApplicationFormRepositoryCustom;
+    private final ClubApplicationFormsRepositoryCustom clubApplicationFormsRepositoryCustom;
 
     public List<SemesterOptionResponse> getSemesterOption(String clubId, int count) {
         LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
@@ -129,16 +129,16 @@ public class ClubApplyService {
 
     public ClubApplicationFormsResponse getClubApplicationForms(String clubId) {
         return ClubApplicationFormsResponse.builder()
-                .forms(clubApplicationFormRepositoryCustom.findClubQuestionsByClubId(clubId))
+                .forms(clubApplicationFormsRepositoryCustom.findClubApplicationFormsByClubId(clubId))
                 .build();
     }
     public ClubApplicationFormsResponse getGroupedClubApplicationForms(String clubId) {
         Sort sort = Sort.by(Sort.Direction.DESC, "editedAt")
                 .and(Sort.by(Sort.Direction.DESC, "id"));
-        List<ClubQuestionSlim> questionSlims = clubApplicationFormsRepository.findClubQuestionsByClubId(clubId, sort);
+        List<ClubApplicationFormSlim> questionSlims = clubApplicationFormsRepository.findClubApplicationFormsByClubId(clubId, sort);
 
         Map<SemesterKey, List<ClubApplicationFormsResultItem>> grouped = new LinkedHashMap<>();
-        for (ClubQuestionSlim s : questionSlims) {
+        for (ClubApplicationFormSlim s : questionSlims) {
             Integer year = s.getSemesterYear();
             SemesterTerm term = s.getSemesterTerm();
             LocalDateTime editedAt = s.getEditedAt();
@@ -151,7 +151,7 @@ public class ClubApplyService {
                     ));
         }
 
-        //그룹 정렬: 연도 DESC, 학기순 DESC(SECOND > FIRST)
+        //그룹 정렬 -> 연도 DESC, 학기순 DESC(SECOND > FIRST)
         Comparator<Map.Entry<SemesterKey, List<ClubApplicationFormsResultItem>>> groupComparator =
                 Comparator.comparing(
                                 (Map.Entry<SemesterKey, List<ClubApplicationFormsResultItem>> e) -> e.getKey().year(),

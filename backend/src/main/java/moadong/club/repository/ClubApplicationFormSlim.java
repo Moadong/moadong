@@ -4,7 +4,7 @@ import moadong.club.enums.SemesterTerm;
 
 import java.time.LocalDateTime;
 
-public interface ClubQuestionSlim {
+public interface ClubApplicationFormSlim {
     String getId();
     String getTitle();
     LocalDateTime getEditedAt();
