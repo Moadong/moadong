@@ -49,7 +49,11 @@ public class ClubApplyController {
 
     @GetMapping("/apply")
     @Operation(summary = "클럽 지원서들 불러오기", description = "클럽 지원서들을 학기 별로 분류하여 불러옵니다")
-    public ResponseEntity<?> getClubApplications(@PathVariable String clubId) {
+    public ResponseEntity<?> getClubApplications(@PathVariable String clubId,
+                                                 @RequestParam(defaultValue = "agg") String mode) {
+        if("server".equalsIgnoreCase(mode)) {
+            return Response.ok(clubApplyService.getGroupedClubApplications(clubId));
+        }
         return Response.ok(clubApplyService.getClubApplications(clubId));
     }
 

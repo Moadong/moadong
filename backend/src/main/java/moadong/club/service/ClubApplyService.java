@@ -7,25 +7,25 @@ import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ClubApplicantsResult;
+import moadong.club.payload.dto.ClubQuestionResultItem;
 import moadong.club.payload.dto.ClubQuestionsResult;
 import moadong.club.payload.request.*;
 import moadong.club.payload.response.ClubApplicationResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.payload.response.ClubQuestionsResponse;
 import moadong.club.payload.response.SemesterOptionResponse;
-import moadong.club.repository.ClubApplicationRepository;
-import moadong.club.repository.ClubQuestionRepository;
-import moadong.club.repository.ClubQuestionsRepository;
-import moadong.club.repository.ClubRepository;
+import moadong.club.repository.*;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.payload.Response;
 import moadong.global.util.AESCipher;
 import moadong.user.payload.CustomUserDetails;
+import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -40,7 +40,7 @@ public class ClubApplyService {
     private final ClubQuestionRepository clubQuestionRepository;
     private final ClubApplicationRepository clubApplicationRepository;
     private final AESCipher cipher;
-    private final ClubQuestionsRepository clubQuestionsRepository;
+    private final ClubQuestionRepositoryCustom clubQuestionsRepository;
 
     public List<SemesterOptionResponse> getSemesterOption(String clubId, int count) {
         LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
@@ -130,8 +130,64 @@ public class ClubApplyService {
                 .clubQuestions(clubQuestionsRepository.findClubQuestionsByClubId(clubId))
                 .build();
     }
+    public ClubQuestionsResponse getGroupedClubApplications(String clubId) {
+        Sort sort = Sort.by(Sort.Direction.DESC, "editedAt")
+                .and(Sort.by(Sort.Direction.DESC, "id"));
+        List<ClubQuestionSlim> questionSlims = clubQuestionRepository.findClubQuestionsByClubId(clubId, sort);
 
-    public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest request) {
+        Map<SemesterKey, List<ClubQuestionResultItem>> grouped = new LinkedHashMap<>();
+        for (ClubQuestionSlim s : questionSlims) {
+            Integer year = s.getSemesterYear();
+            SemesterTerm term = s.getSemesterTerm();
+            LocalDateTime editedAt = s.getEditedAt();
+
+            grouped.computeIfAbsent(new SemesterKey(year, term), k -> new ArrayList<>())
+                    .add(new ClubQuestionResultItem(
+                            s.getId(),
+                            s.getTitle(),
+                            editedAt
+                    ));
+        }
+
+        //그룹 정렬: 연도 DESC, 학기순 DESC(SECOND > FIRST)
+        Comparator<Map.Entry<SemesterKey, List<ClubQuestionResultItem>>> groupComparator =
+                Comparator.comparing(
+                                (Map.Entry<SemesterKey, List<ClubQuestionResultItem>> e) -> e.getKey().year(),
+                                Comparator.nullsLast(Comparator.reverseOrder()))
+                        .thenComparing(
+                                e -> termRank(e.getKey().term()),
+                                Comparator.nullsLast(Comparator.reverseOrder()))
+                        .thenComparing(
+                                e -> termName(e.getKey().term()),
+                                Comparator.nullsLast(Comparator.reverseOrder()));
+
+        return ClubQuestionsResponse.builder()
+                .clubQuestions(grouped.entrySet().stream()
+                        .sorted(groupComparator)
+                        .map(e -> new ClubQuestionsResult(
+                                e.getKey().year,
+                                e.getKey().term,
+                                e.getValue()
+                        ))
+                        .collect(Collectors.toList()))
+                .build();
+    }
+    private static int termRank(SemesterTerm term) {
+        if (term == null) return -1;
+        return switch (term) {
+            case SECOND -> 2;
+            case FIRST  -> 1;
+            default     -> 0;
+        };
+    }
+    private static String termName(SemesterTerm term) {
+        return term == null ? "" : term.name();
+    }
+    private record SemesterKey(Integer year, SemesterTerm term) {}
+
+
+
+public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest request) {
         ClubQuestion clubQuestion = clubQuestionRepository.findByClubIdAndId(clubId, clubQuestionId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
