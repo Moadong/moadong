@@ -1,6 +1,6 @@
 package moadong.club.repository;
 
-import moadong.club.entity.ClubQuestion;
+import moadong.club.entity.ClubApplicationForm;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
@@ -10,10 +10,10 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface ClubQuestionRepository extends MongoRepository<ClubQuestion, String> {
+public interface ClubApplicationFormsRepository extends MongoRepository<ClubApplicationForm, String> {
 
-    Optional<ClubQuestion> findByClubId(String clubId);
-    Optional<ClubQuestion> findByClubIdAndId(String clubId, String id);
+    Optional<ClubApplicationForm> findByClubId(String clubId);
+    Optional<ClubApplicationForm> findByClubIdAndId(String clubId, String id);
 
     @Query(
             value = "{'clubId':  ?0}",

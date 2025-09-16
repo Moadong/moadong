@@ -1,10 +1,9 @@
 package moadong.club.service;
 
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubQuestion;
-import moadong.club.enums.SemesterTerm;
-import moadong.club.payload.request.ClubApplicationEditRequest;
-import moadong.club.repository.ClubQuestionRepository;
+import moadong.club.entity.ClubApplicationForm;
+import moadong.club.payload.request.ClubApplicationFormEditRequest;
+import moadong.club.repository.ClubApplicationFormsRepository;
 import moadong.club.repository.ClubRepository;
 import moadong.fixture.ClubApplicationEditFixture;
 import moadong.fixture.UserFixture;
@@ -19,8 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
 
-import java.time.LocalDate;
-import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -38,10 +35,10 @@ public class ClubApplyServiceTest {
     @Autowired
     private ClubRepository clubRepository;
     @Autowired
-    private ClubQuestionRepository clubQuestionRepository;
+    private ClubApplicationFormsRepository clubApplicationFormsRepository;
 
     private CustomUserDetails userDetails;
-    private ClubQuestion clubQuestion;
+    private ClubApplicationForm clubApplicationForm;
 
     @BeforeEach
     void setUp() {
@@ -50,7 +47,7 @@ public class ClubApplyServiceTest {
         userDetails = new CustomUserDetails(user);
         Club club = clubRepository.findClubByUserId(user.getId()).get();
 
-        this.clubQuestion = clubQuestionRepository.findByClubId(club.getId())
+        this.clubApplicationForm = clubApplicationFormsRepository.findByClubId(club.getId())
                 .orElseThrow(() -> new NoSuchElementException("테스트를 위한 ClubQuestion 문서가 DB에 존재하지 않습니다. 먼저 문서를 생성해주세요."));
     }
 
@@ -100,10 +97,10 @@ public class ClubApplyServiceTest {
         for (int i = 0; i < numberOfThreads; i++) {
             executorService.submit(() -> {
                 try {
-                    ClubApplicationEditRequest request = ClubApplicationEditFixture.createClubApplicationEditRequest();
+                    ClubApplicationFormEditRequest request = ClubApplicationEditFixture.createClubApplicationEditRequest();
 
                     // 3. 조회해 둔 clubQuestion의 ID를 명확히 전달
-                    clubApplyService.editClubApplicationQuestion(this.clubQuestion.getId(), userDetails, request);
+                    clubApplyService.editClubApplicationQuestion(this.clubApplicationForm.getId(), userDetails, request);
                     successCount.incrementAndGet();
                 } catch (OptimisticLockingFailureException e) {
                     conflictCount.incrementAndGet();

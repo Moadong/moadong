@@ -3,8 +3,8 @@ package moadong.club.payload.dto;
 import moadong.club.enums.SemesterTerm;
 import java.util.List;
 
-public record ClubQuestionsResult (
+public record ClubApplicationFormsResult(
         Integer semesterYear,
         SemesterTerm semesterTerm,
-        List<ClubQuestionResultItem> questions
+        List<ClubApplicationFormsResultItem> forms
 ){ }

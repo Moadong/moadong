@@ -2,9 +2,9 @@ package moadong.club.payload.dto;
 
 import lombok.Builder;
 import lombok.extern.slf4j.Slf4j;
-import moadong.club.entity.ClubApplication;
+import moadong.club.entity.ClubApplicant;
 import moadong.club.entity.ClubQuestionAnswer;
-import moadong.club.enums.ApplicationStatus;
+import moadong.club.enums.ApplicantStatus;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.AESCipher;
@@ -17,12 +17,12 @@ import java.util.List;
 @Slf4j
 public record ClubApplicantsResult(
         String id,
-        ApplicationStatus status,
+        ApplicantStatus status,
         List<ClubQuestionAnswer> answers,
         String memo,
         LocalDateTime createdAt
 ) {
-    public static ClubApplicantsResult of(ClubApplication application, AESCipher cipher) {
+    public static ClubApplicantsResult of(ClubApplicant application, AESCipher cipher) {
         List<ClubQuestionAnswer> decryptedAnswers = new ArrayList<>();
         try {
             for (ClubQuestionAnswer answer : application.getAnswers()) {

@@ -1,13 +1,11 @@
 package moadong.club.entity;
 
 import jakarta.persistence.Id;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.SemesterTerm;
-import org.springframework.data.annotation.Transient;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -18,11 +16,11 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document("club_questions")
+@Document("club_application_forms")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
-public class ClubQuestion  implements Persistable<String> {
+public class ClubApplicationForm implements Persistable<String> {
 
     @Id
     private String id;
@@ -38,7 +36,7 @@ public class ClubQuestion  implements Persistable<String> {
     private String description = "";
 
     @Builder.Default
-    private List<ClubApplicationQuestion> questions = new ArrayList<>();
+    private List<ClubApplicationFormQuestion> questions = new ArrayList<>();
 
     @Builder.Default
     private LocalDateTime createdAt = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime();
@@ -66,7 +64,7 @@ public class ClubQuestion  implements Persistable<String> {
         this.description = description;
     }
 
-    public void updateQuestions(List<ClubApplicationQuestion> newQuestions) {
+    public void updateQuestions(List<ClubApplicationFormQuestion> newQuestions) {
         this.questions.clear();
         this.questions.addAll(newQuestions);
     }

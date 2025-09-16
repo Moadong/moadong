@@ -13,7 +13,7 @@ import java.util.List;
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
-public class ClubApplicationQuestion {
+public class ClubApplicationFormQuestion {
 
     @NotNull
     private Long id;

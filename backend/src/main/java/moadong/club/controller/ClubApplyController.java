@@ -37,51 +37,51 @@ public class ClubApplyController {
     }
 
     @PostMapping("/application")
-    @Operation(summary = "클럽 지원서 생성", description = "클럽 지원서를 생성합니다")
+    @Operation(summary = "클럽 지원서 양식 생성", description = "클럽 지원서 양식을 생성합니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> createClubApplication(@PathVariable String clubId,
+    public ResponseEntity<?> createClubApplicationForm(@PathVariable String clubId,
                                                @CurrentUser CustomUserDetails user,
-                                               @RequestBody @Validated ClubApplicationCreateRequest request) {
-        clubApplyService.createClubApplication(clubId, user, request);
+                                               @RequestBody @Validated ClubApplicationFormCreateRequest request) {
+        clubApplyService.createClubApplicationForm(clubId, user, request);
         return Response.ok("success create application");
     }
 
     @GetMapping("/apply")
-    @Operation(summary = "클럽 지원서들 불러오기", description = "클럽 지원서들을 학기 별로 분류하여 불러옵니다")
+    @Operation(summary = "클럽 지원서 양식들 불러오기", description = "클럽 지원서 양식들을 학기별로 분류하여 불러옵니다")
     public ResponseEntity<?> getClubApplications(@PathVariable String clubId,
-                                                 @RequestParam(defaultValue = "agg") String mode) {
+                                                 @RequestParam(defaultValue = "agg") String mode) {  //agg면 aggregation사용, server면, 서비스에서 그룹 및 정렬
         if("server".equalsIgnoreCase(mode)) {
-            return Response.ok(clubApplyService.getGroupedClubApplications(clubId));
+            return Response.ok(clubApplyService.getGroupedClubApplicationForms(clubId));
         }
-        return Response.ok(clubApplyService.getClubApplications(clubId));
+        return Response.ok(clubApplyService.getClubApplicationForms(clubId));
     }
 
-    @PutMapping("/application/{clubQuestionId}")
-    @Operation(summary = "클럽 지원서 수정", description = "클럽 지원서를 수정합니다")
+    @PutMapping("/application/{applicationFormId}")
+    @Operation(summary = "클럽 지원서 양식 수정", description = "클럽 지원서 양식을 수정합니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> editClubApplication(@PathVariable String clubId,
-                                                 @PathVariable String clubQuestionId,
-                                             @CurrentUser CustomUserDetails user,
-                                             @RequestBody @Validated ClubApplicationEditRequest request) {
-        clubApplyService.editClubApplication(clubId, clubQuestionId, user, request);
+    public ResponseEntity<?> editClubApplicationForm(@PathVariable String clubId,
+                                                     @PathVariable String applicationFormId,
+                                                     @CurrentUser CustomUserDetails user,
+                                                     @RequestBody @Validated ClubApplicationFormEditRequest request) {
+        clubApplyService.editClubApplication(clubId, applicationFormId, user, request);
         return Response.ok("success edit application");
     }
 
-    @GetMapping("/apply/{clubQuestionId}")
-    @Operation(summary = "클럽 지원서 불러오기", description = "클럽 지원서를 불러옵니다")
+    @GetMapping("/apply/{applicationFormId}")
+    @Operation(summary = "클럽 지원서 양식 불러오기", description = "클럽 지원서 양식을 불러옵니다")
     public ResponseEntity<?> getClubApplication(@PathVariable String clubId,
-                                                @PathVariable String clubQuestionId) {
-        return clubApplyService.getClubApplication(clubId, clubQuestionId);
+                                                @PathVariable String applicationFormId) {
+        return clubApplyService.getClubApplicationForm(clubId, applicationFormId);
     }
 
-    @PostMapping("/apply/{clubQuestionId}")
+    @PostMapping("/apply/{applicationFormId}")
     @Operation(summary = "클럽 지원", description = "클럽에 지원합니다")
     public ResponseEntity<?>  applyToClub(@PathVariable String clubId,
-                                          @PathVariable String clubQuestionId,
+                                          @PathVariable String applicationFormId,
                                           @RequestBody @Validated ClubApplyRequest request) {
-        clubApplyService.applyToClub(clubId, clubQuestionId, request);
+        clubApplyService.applyToClub(clubId, applicationFormId, request);
         return Response.ok("success apply");
     }
 

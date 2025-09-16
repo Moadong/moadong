@@ -7,12 +7,12 @@ import moadong.club.entity.*;
 import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ClubApplicantsResult;
-import moadong.club.payload.dto.ClubQuestionResultItem;
-import moadong.club.payload.dto.ClubQuestionsResult;
+import moadong.club.payload.dto.ClubApplicationFormsResultItem;
+import moadong.club.payload.dto.ClubApplicationFormsResult;
 import moadong.club.payload.request.*;
-import moadong.club.payload.response.ClubApplicationResponse;
+import moadong.club.payload.response.ClubApplicationFormResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
-import moadong.club.payload.response.ClubQuestionsResponse;
+import moadong.club.payload.response.ClubApplicationFormsResponse;
 import moadong.club.payload.response.SemesterOptionResponse;
 import moadong.club.repository.*;
 import moadong.global.exception.ErrorCode;
@@ -37,10 +37,10 @@ import java.util.stream.Collectors;
 @Slf4j
 public class ClubApplyService {
     private final ClubRepository clubRepository;
-    private final ClubQuestionRepository clubQuestionRepository;
-    private final ClubApplicationRepository clubApplicationRepository;
+    private final ClubApplicationFormsRepository clubApplicationFormsRepository;
+    private final ClubApplicantsRepository clubApplicantsRepository;
     private final AESCipher cipher;
-    private final ClubQuestionRepositoryCustom clubQuestionsRepository;
+    private final ClubApplicationFormRepositoryCustom clubApplicationFormRepositoryCustom;
 
     public List<SemesterOptionResponse> getSemesterOption(String clubId, int count) {
         LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
@@ -78,71 +78,73 @@ public class ClubApplyService {
         return items;
     }
 
-    public void createClubApplication(String clubId, CustomUserDetails user, ClubApplicationCreateRequest request) {
+    public void createClubApplicationForm(String clubId, CustomUserDetails user, ClubApplicationFormCreateRequest request) {
         validateClubOwner(clubId, user);
 
-        ClubQuestion clubQuestion = createQuestions(
-                ClubQuestion.builder()
-                        .clubId(clubId).semesterYear(request.semesterYear())
+        ClubApplicationForm clubApplicationForm = createQuestions(
+                ClubApplicationForm.builder()
+                        .clubId(clubId)
+                        .semesterYear(request.semesterYear())
                         .semesterTerm(request.semesterTerm())
                         .build(),
                 request);
-        clubQuestionRepository.save(createQuestions(clubQuestion, request));
+        clubApplicationFormsRepository.save(createQuestions(clubApplicationForm, request));
     }
     @Transactional
-    public void editClubApplication(String clubId, String clubQuestionId, CustomUserDetails user, ClubApplicationEditRequest request) {
+    public void editClubApplication(String clubId, String clubQuestionId, CustomUserDetails user, ClubApplicationFormEditRequest request) {
         validateClubOwner(clubId, user);
 
-        ClubQuestion clubQuestion = clubQuestionRepository.findById(clubQuestionId)
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(clubQuestionId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.QUESTION_NOT_FOUND));
 
-        clubQuestion.updateEditedAt();
-        clubQuestionRepository.save(updateQuestions(clubQuestion, request));
+        clubApplicationForm.updateEditedAt();
+        clubApplicationFormsRepository.save(updateQuestions(clubApplicationForm, request));
     }
     @Transactional
-    public void editClubApplicationQuestion(String questionId, CustomUserDetails user, ClubApplicationEditRequest request) {
-        ClubQuestion clubQuestion = clubQuestionRepository.findById(questionId)
+    public void editClubApplicationQuestion(String questionId, CustomUserDetails user, ClubApplicationFormEditRequest request) {
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(questionId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.QUESTION_NOT_FOUND));
 
-        updateQuestions(clubQuestion, request);
-        clubQuestion.updateEditedAt();
+        updateQuestions(clubApplicationForm, request);
+        clubApplicationForm.updateEditedAt();
 
-        clubQuestionRepository.save(clubQuestion);
+        clubApplicationFormsRepository.save(clubApplicationForm);
     }
 
-    public ResponseEntity<?> getClubApplication(String clubId, String clubQuestionId) {
-        ClubQuestion clubQuestion = clubQuestionRepository.findByClubIdAndId(clubId, clubQuestionId)
+    public ResponseEntity<?> getClubApplicationForm(String clubId, String applicationFormId) {
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        ClubApplicationResponse clubApplicationResponse = ClubApplicationResponse.builder()
-                .title(clubQuestion.getTitle())
-                .description(Optional.ofNullable(clubQuestion.getDescription()).orElse(""))
-                .questions(clubQuestion.getQuestions())
-                .semesterYear(clubQuestion.getSemesterYear())
-                .semesterTerm(clubQuestion.getSemesterTerm())
+
+        ClubApplicationFormResponse clubApplicationFormResponse = ClubApplicationFormResponse.builder()
+                .title(clubApplicationForm.getTitle())
+                .description(Optional.ofNullable(clubApplicationForm.getDescription()).orElse(""))
+                .questions(clubApplicationForm.getQuestions())
+                .semesterYear(clubApplicationForm.getSemesterYear())
+                .semesterTerm(clubApplicationForm.getSemesterTerm())
                 .build();
 
-        return Response.ok(clubApplicationResponse);
+        return Response.ok(clubApplicationFormResponse);
     }
 
-    public ClubQuestionsResponse getClubApplications(String clubId) {
-        return ClubQuestionsResponse.builder()
-                .clubQuestions(clubQuestionsRepository.findClubQuestionsByClubId(clubId))
+    public ClubApplicationFormsResponse getClubApplicationForms(String clubId) {
+        return ClubApplicationFormsResponse.builder()
+                .forms(clubApplicationFormRepositoryCustom.findClubQuestionsByClubId(clubId))
                 .build();
     }
-    public ClubQuestionsResponse getGroupedClubApplications(String clubId) {
+    public ClubApplicationFormsResponse getGroupedClubApplicationForms(String clubId) {
         Sort sort = Sort.by(Sort.Direction.DESC, "editedAt")
                 .and(Sort.by(Sort.Direction.DESC, "id"));
-        List<ClubQuestionSlim> questionSlims = clubQuestionRepository.findClubQuestionsByClubId(clubId, sort);
+        List<ClubQuestionSlim> questionSlims = clubApplicationFormsRepository.findClubQuestionsByClubId(clubId, sort);
 
-        Map<SemesterKey, List<ClubQuestionResultItem>> grouped = new LinkedHashMap<>();
+        Map<SemesterKey, List<ClubApplicationFormsResultItem>> grouped = new LinkedHashMap<>();
         for (ClubQuestionSlim s : questionSlims) {
             Integer year = s.getSemesterYear();
             SemesterTerm term = s.getSemesterTerm();
             LocalDateTime editedAt = s.getEditedAt();
 
             grouped.computeIfAbsent(new SemesterKey(year, term), k -> new ArrayList<>())
-                    .add(new ClubQuestionResultItem(
+                    .add(new ClubApplicationFormsResultItem(
                             s.getId(),
                             s.getTitle(),
                             editedAt
@@ -150,9 +152,9 @@ public class ClubApplyService {
         }
 
         //그룹 정렬: 연도 DESC, 학기순 DESC(SECOND > FIRST)
-        Comparator<Map.Entry<SemesterKey, List<ClubQuestionResultItem>>> groupComparator =
+        Comparator<Map.Entry<SemesterKey, List<ClubApplicationFormsResultItem>>> groupComparator =
                 Comparator.comparing(
-                                (Map.Entry<SemesterKey, List<ClubQuestionResultItem>> e) -> e.getKey().year(),
+                                (Map.Entry<SemesterKey, List<ClubApplicationFormsResultItem>> e) -> e.getKey().year(),
                                 Comparator.nullsLast(Comparator.reverseOrder()))
                         .thenComparing(
                                 e -> termRank(e.getKey().term()),
@@ -161,10 +163,10 @@ public class ClubApplyService {
                                 e -> termName(e.getKey().term()),
                                 Comparator.nullsLast(Comparator.reverseOrder()));
 
-        return ClubQuestionsResponse.builder()
-                .clubQuestions(grouped.entrySet().stream()
+        return ClubApplicationFormsResponse.builder()
+                .forms(grouped.entrySet().stream()
                         .sorted(groupComparator)
-                        .map(e -> new ClubQuestionsResult(
+                        .map(e -> new ClubApplicationFormsResult(
                                 e.getKey().year,
                                 e.getKey().term,
                                 e.getValue()
@@ -187,11 +189,11 @@ public class ClubApplyService {
 
 
 
-public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest request) {
-        ClubQuestion clubQuestion = clubQuestionRepository.findByClubIdAndId(clubId, clubQuestionId)
+public void applyToClub(String clubId, String applicationFormId, ClubApplyRequest request) {
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        validateAnswers(request.questions(), clubQuestion);
+        validateAnswers(request.questions(), clubApplicationForm);
 
         List<ClubQuestionAnswer> answers = new ArrayList<>();
 
@@ -208,12 +210,12 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
             throw new RestApiException(ErrorCode.AES_CIPHER_ERROR);
         }
 
-        ClubApplication application = ClubApplication.builder()
-                .questionId(clubQuestionId)
+        ClubApplicant application = ClubApplicant.builder()
+                .formId(applicationFormId)
                 .answers(answers)
                 .build();
 
-        clubApplicationRepository.save(application);
+        clubApplicantsRepository.save(application);
     }
 
     public ClubApplyInfoResponse getClubApplyInfo(String clubId, CustomUserDetails user) {
@@ -224,17 +226,17 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
 
-        ClubQuestion clubApplication = clubQuestionRepository.findByClubId(clubId)
+        ClubApplicationForm clubApplication = clubApplicationFormsRepository.findByClubId(clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
-        List<ClubApplication> submittedApplications = clubApplicationRepository.findAllByQuestionId(clubId);
+        List<ClubApplicant> submittedApplications = clubApplicantsRepository.findAllByFormId(clubId);
 
         List<ClubApplicantsResult> applications = new ArrayList<>();
         int reviewRequired = 0;
         int scheduledInterview = 0;
         int accepted = 0;
 
-        for (ClubApplication app : submittedApplications) {
-            ClubApplication sortedApp = sortApplicationAnswers(clubApplication, app);
+        for (ClubApplicant app : submittedApplications) {
+            ClubApplicant sortedApp = sortApplicationAnswers(clubApplication, app);
             applications.add(ClubApplicantsResult.of(sortedApp, cipher));
 
             switch (app.getStatus()) {
@@ -253,7 +255,7 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
                 .build();
     }
 
-    private ClubApplication sortApplicationAnswers(ClubQuestion application, ClubApplication app) {
+    private ClubApplicant sortApplicationAnswers(ClubApplicationForm application, ClubApplicant app) {
         Map<Long, ClubQuestionAnswer> answerMap = app.getAnswers().stream()
                 .collect(Collectors.toMap(ClubQuestionAnswer::getId, answer -> answer));
 
@@ -280,7 +282,7 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
                         Function.identity(), (prev, next) -> next));
 
         List<String> applicationIds = new ArrayList<>(requestMap.keySet());
-        List<ClubApplication> application = clubApplicationRepository.findAllByIdInAndQuestionId(applicationIds, clubId);
+        List<ClubApplicant> application = clubApplicantsRepository.findAllByIdInAndFormId(applicationIds, clubId);
 
         if (application.size() != applicationIds.size()) {
             throw new RestApiException(ErrorCode.APPLICANT_NOT_FOUND);
@@ -292,7 +294,7 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
             app.updateStatus(editRequest.status());
         });
 
-        clubApplicationRepository.saveAll(application);
+        clubApplicantsRepository.saveAll(application);
     }
 
     @Transactional
@@ -304,26 +306,26 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
 
-        List<ClubApplication> applicants = clubApplicationRepository.findAllByIdInAndQuestionId(request.applicantIds(), clubId);
+        List<ClubApplicant> applicants = clubApplicantsRepository.findAllByIdInAndFormId(request.applicantIds(), clubId);
 
         if (applicants.size() != request.applicantIds().size()) {
             throw new RestApiException(ErrorCode.APPLICANT_NOT_FOUND);
         }
 
-        clubApplicationRepository.deleteAll(applicants);
+        clubApplicantsRepository.deleteAll(applicants);
     }
 
-    private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubQuestion clubQuestion) {
+    private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubApplicationForm clubApplicationForm) {
         // 미리 질문과 응답 id 만들어두기
-        Map<Long, ClubApplicationQuestion> questionMap = clubQuestion.getQuestions().stream()
-                .collect(Collectors.toMap(ClubApplicationQuestion::getId, Function.identity()));
+        Map<Long, ClubApplicationFormQuestion> questionMap = clubApplicationForm.getQuestions().stream()
+                .collect(Collectors.toMap(ClubApplicationFormQuestion::getId, Function.identity()));
 
         Set<Long> answerIds = answers.stream()
                 .map(ClubApplyRequest.Answer::id)
                 .collect(Collectors.toSet());
 
         // 필수 질문이 누락되었는지 검증
-        for (ClubApplicationQuestion question : clubQuestion.getQuestions()) {
+        for (ClubApplicationFormQuestion question : clubApplicationForm.getQuestions()) {
             if (question.getOptions().getRequired() && !answerIds.contains(question.getId())) {
                 throw new RestApiException(ErrorCode.REQUIRED_QUESTION_MISSING);
             }
@@ -331,7 +333,7 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
 
         // 답변 유효성 검증
         for (ClubApplyRequest.Answer answer : answers) {
-            ClubApplicationQuestion question = questionMap.get(answer.id());
+            ClubApplicationFormQuestion question = questionMap.get(answer.id());
 
             // 질문이 없을 경우 예외 처리
             if (question == null) {
@@ -358,8 +360,8 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
         }
     }
 
-    private ClubQuestion createQuestions(ClubQuestion clubQuestion, ClubApplicationCreateRequest request) {
-        List<ClubApplicationQuestion> newQuestions = new ArrayList<>();
+    private ClubApplicationForm createQuestions(ClubApplicationForm clubApplicationForm, ClubApplicationFormCreateRequest request) {
+        List<ClubApplicationFormQuestion> newQuestions = new ArrayList<>();
 
         for (var question : request.questions()) {
             List<ClubQuestionItem> items = new ArrayList<>();
@@ -374,7 +376,7 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
                     .required(question.options().required())
                     .build();
 
-            ClubApplicationQuestion clubApplicationQuestion = ClubApplicationQuestion.builder()
+            ClubApplicationFormQuestion clubApplicationFormQuestion = ClubApplicationFormQuestion.builder()
                     .id(question.id())
                     .title(question.title())
                     .description(question.description())
@@ -383,23 +385,23 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
                     .items(items)
                     .build();
 
-            newQuestions.add(clubApplicationQuestion);
+            newQuestions.add(clubApplicationFormQuestion);
         }
 
-        clubQuestion.updateQuestions(newQuestions);
-        clubQuestion.updateFormTitle(request.title());
-        clubQuestion.updateFormDescription(request.description());
-        clubQuestion.updateSemesterYear(request.semesterYear());
-        clubQuestion.updateSemesterTerm(request.semesterTerm());
+        clubApplicationForm.updateQuestions(newQuestions);
+        clubApplicationForm.updateFormTitle(request.title());
+        clubApplicationForm.updateFormDescription(request.description());
+        clubApplicationForm.updateSemesterYear(request.semesterYear());
+        clubApplicationForm.updateSemesterTerm(request.semesterTerm());
 
-        return clubQuestion;
+        return clubApplicationForm;
     }
 
     /**
      * update와 create 메서드는 추후 변경예정
      */
-    private ClubQuestion updateQuestions(ClubQuestion clubQuestion, ClubApplicationEditRequest request) {
-        List<ClubApplicationQuestion> newQuestions = new ArrayList<>();
+    private ClubApplicationForm updateQuestions(ClubApplicationForm clubApplicationForm, ClubApplicationFormEditRequest request) {
+        List<ClubApplicationFormQuestion> newQuestions = new ArrayList<>();
 
         for (var question : request.questions()) {
             List<ClubQuestionItem> items = new ArrayList<>();
@@ -414,7 +416,7 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
                     .required(question.options().required())
                     .build();
 
-            ClubApplicationQuestion clubApplicationQuestion = ClubApplicationQuestion.builder()
+            ClubApplicationFormQuestion clubApplicationFormQuestion = ClubApplicationFormQuestion.builder()
                     .id(question.id())
                     .title(question.title())
                     .description(question.description())
@@ -423,14 +425,14 @@ public void applyToClub(String clubId, String clubQuestionId, ClubApplyRequest r
                     .items(items)
                     .build();
 
-            newQuestions.add(clubApplicationQuestion);
+            newQuestions.add(clubApplicationFormQuestion);
         }
 
-        clubQuestion.updateQuestions(newQuestions);
-        clubQuestion.updateFormTitle(request.title());
-        clubQuestion.updateFormDescription(request.description());
+        clubApplicationForm.updateQuestions(newQuestions);
+        clubApplicationForm.updateFormTitle(request.title());
+        clubApplicationForm.updateFormDescription(request.description());
 
-        return clubQuestion;
+        return clubApplicationForm;
     }
 
     private void validateClubOwner(String clubId, CustomUserDetails user) {

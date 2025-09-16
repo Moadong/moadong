@@ -6,7 +6,7 @@ import jakarta.persistence.Id;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import moadong.club.enums.ApplicationStatus;
+import moadong.club.enums.ApplicantStatus;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
@@ -15,20 +15,20 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Document("club_applications")
+@Document("club_applicants")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
-public class ClubApplication {
+public class ClubApplicant {
 
     @Id
     private String id;
 
-    private String questionId;
+    private String formId;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    ApplicationStatus status = ApplicationStatus.SUBMITTED;
+    ApplicantStatus status = ApplicantStatus.SUBMITTED;
 
     @Builder.Default
     private String memo = "";
@@ -43,7 +43,7 @@ public class ClubApplication {
         this.memo = memo;
     }
 
-    public void updateStatus(ApplicationStatus status) {
+    public void updateStatus(ApplicantStatus status) {
         this.status = status;
     }
 

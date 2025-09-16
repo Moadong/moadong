@@ -2,7 +2,7 @@ package moadong.club.repository;
 
 import com.mongodb.BasicDBObject;
 import lombok.AllArgsConstructor;
-import moadong.club.payload.dto.ClubQuestionsResult;
+import moadong.club.payload.dto.ClubApplicationFormsResult;
 import org.bson.Document;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -19,11 +19,11 @@ import java.util.List;
 
 @Repository
 @AllArgsConstructor
-public class ClubQuestionRepositoryCustom {
+public class ClubApplicationFormRepositoryCustom {
 
     private final MongoTemplate mongoTemplate;
 
-    public List<ClubQuestionsResult> findClubQuestionsByClubId(String clubId) {
+    public List<ClubApplicationFormsResult> findClubQuestionsByClubId(String clubId) {
         List<AggregationOperation> operations = new ArrayList<>();
 
         operations.add(Aggregation.match(Criteria.where("clubId").is(clubId)));
@@ -60,7 +60,7 @@ public class ClubQuestionRepositoryCustom {
 
         Aggregation aggregation = Aggregation.newAggregation(operations);
         return mongoTemplate
-                .aggregate(aggregation, "club_questions", ClubQuestionsResult.class)
+                .aggregate(aggregation, "club_questions", ClubApplicationFormsResult.class)
                 .getMappedResults();
 
     }

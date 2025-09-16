@@ -6,7 +6,7 @@ import moadong.club.enums.SemesterTerm;
 
 import java.util.List;
 
-public record ClubApplicationCreateRequest(
+public record ClubApplicationFormCreateRequest(
         @NotBlank
         @Size(max = 50)
         String title,
