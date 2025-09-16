@@ -77,9 +77,22 @@ public class ClubApplyService {
         }
         return items;
     }
+    private static final int SEMESTER_OPTION_COUNT = 3;
+    private void validateSemester(Integer semesterYear, SemesterTerm semesterTerm) {
+        LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
+        List<OptionItem> items = buildOptionItems(baseDate, SEMESTER_OPTION_COUNT);
+
+        boolean allowed = items.stream()
+                .anyMatch(it -> it.year() == semesterYear && it.term() == semesterTerm);
+        if (!allowed) {
+            throw new IllegalArgumentException("Invalid semester selection");
+        }
+
+    }
 
     public void createClubApplicationForm(String clubId, CustomUserDetails user, ClubApplicationFormCreateRequest request) {
         validateClubOwner(clubId, user);
+        validateSemester(request.semesterYear(), request.semesterTerm());
 
         ClubApplicationForm clubApplicationForm = createQuestions(
                 ClubApplicationForm.builder()
@@ -90,6 +103,7 @@ public class ClubApplyService {
                 request);
         clubApplicationFormsRepository.save(createQuestions(clubApplicationForm, request));
     }
+
     @Transactional
     public void editClubApplication(String clubId, String clubQuestionId, CustomUserDetails user, ClubApplicationFormEditRequest request) {
         validateClubOwner(clubId, user);
