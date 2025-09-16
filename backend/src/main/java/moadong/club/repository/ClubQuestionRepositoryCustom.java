@@ -19,7 +19,7 @@ import java.util.List;
 
 @Repository
 @AllArgsConstructor
-public class ClubQuestionsRepository {
+public class ClubQuestionRepositoryCustom {
 
     private final MongoTemplate mongoTemplate;
 
