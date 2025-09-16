@@ -8,8 +8,6 @@ export const AdminPageContainer = styled.div`
 
 export const Content = styled.main`
   width: 100%;
-  border: 1px solid #dcdcdc;
-  border-radius: 18px;
   padding: 62px 58px;
   max-width: 977px;
 `;
