@@ -26,7 +26,7 @@ const ApplicantsTab = () => {
   const [isChecked, setIsChecked] = useState(false);
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
   const { mutate: updateDetailApplicants } = useUpdateApplicant(clubId!);
-  const allSelectRef = useRef<HTMLDivElement | null>(null);
+  const dropdwonRef = useRef<Array<HTMLDivElement | null>>([]);
 
   const filteredApplicants = useMemo(() => {
     if (!applicantsData?.applicants) return [];
@@ -43,13 +43,12 @@ const ApplicantsTab = () => {
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node;
-
       if (
-        open &&
-        allSelectRef.current &&
-        !allSelectRef.current.contains(target)
+        dropdwonRef.current &&
+        !dropdwonRef.current.some((ref) => ref && ref.contains(target))
       ) {
-        setOpen(false);
+        if (open) setOpen(false);
+        if (isStatusDropdownOpen) setIsStatusDropdownOpen(false);
       }
     };
 
@@ -228,7 +227,11 @@ const ApplicantsTab = () => {
               <Styled.Arrow src={selectIcon} />
             </Styled.SelectWrapper>
             <Styled.VerticalLine />
-            <Styled.SelectWrapper>
+            <Styled.SelectWrapper
+              ref={(el) => {
+                dropdwonRef.current[0] = el;
+              }}
+            >
               <CustomDropDown
                 options={statusOptions}
                 onSelect={(status) =>
@@ -291,7 +294,11 @@ const ApplicantsTab = () => {
           <Styled.ApplicantTableHeaderWrapper>
             <Styled.ApplicantTableRow>
               <Styled.ApplicantTableHeader width={55}>
-                <Styled.ApplicantAllSelectWrapper ref={allSelectRef}>
+                <Styled.ApplicantAllSelectWrapper
+                  ref={(el) => {
+                    dropdwonRef.current[1] = el;
+                  }}
+                >
                   <Styled.ApplicantTableAllSelectCheckbox
                     checked={selectAll}
                     onClick={(e: React.MouseEvent<HTMLInputElement>) => {
