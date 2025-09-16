@@ -5,6 +5,7 @@ import { Outlet } from 'react-router-dom';
 import * as Styled from './AdminPage.styles';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import { useAdminClubContext } from '@/context/AdminClubContext';
+import { Divider } from './components/SideBar/SideBar.styles';
 
 const AdminPage = () => {
   const { clubId } = useAdminClubContext();
@@ -25,6 +26,7 @@ const AdminPage = () => {
             clubLogo={clubDetail?.logo}
             clubName={clubDetail?.name || ''}
           />
+          <Styled.Divider />
           <Styled.Content>
             <Outlet context={clubDetail} />
           </Styled.Content>
