@@ -1,5 +1,7 @@
 package moadong.club.service;
 
+import java.time.ZonedDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
@@ -9,9 +11,6 @@ import moadong.club.util.RecruitmentStateCalculator;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-
-import java.time.ZonedDateTime;
-import java.util.List;
 
 @Component
 @RequiredArgsConstructor

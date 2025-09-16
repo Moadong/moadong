@@ -2,9 +2,8 @@ package moadong.global.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import moadong.global.annotation.Korean;
-
 import java.util.regex.Pattern;
+import moadong.global.annotation.Korean;
 
 public class KoreanValidator implements ConstraintValidator<Korean, String> {
     // 1 ~ 10자 오직 한글만 가능, 단 자음 또는 모음만 있는 경우는 제외

@@ -1,11 +1,10 @@
 package moadong.club.repository;
 
+import java.util.List;
+import java.util.Optional;
 import moadong.club.entity.ClubApplication;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
-
-import java.util.List;
-import java.util.Optional;
 
 public interface ClubApplicationRepository extends MongoRepository<ClubApplication, String> {
     @Query("{ 'questionId': ?0, 'status': { $exists: true, $ne: 'DRAFT' } }")

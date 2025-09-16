@@ -3,12 +3,10 @@ package moadong.club.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import jakarta.servlet.http.HttpServletRequest;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
-import moadong.club.service.ClubMetricService;
 import moadong.club.service.ClubProfileService;
 import moadong.global.payload.Response;
 import moadong.user.annotation.CurrentUser;
@@ -30,20 +28,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClubProfileController {
 
     private final ClubProfileService clubProfileService;
-    private final ClubMetricService clubMetricService;
 
     @GetMapping("/{clubId}")
     @Operation(summary = "클럽 상세 정보 조회", description = "클럽 상세 정보를 조회합니다.")
-    public ResponseEntity<?> getClubDetail(
-        HttpServletRequest request,
-        @PathVariable String clubId) {
-        String ip = request.getHeader("X-Forwarded-For");
-        if (ip == null || ip.isEmpty()) {
-            ip = request.getRemoteAddr();
-        }
-        clubMetricService.patch(clubId, ip);
-        ClubDetailedResponse clubDetailedPageResponse = clubProfileService.getClubDetail(
-            clubId);
+    public ResponseEntity<?> getClubDetail(@PathVariable String clubId) {
+        ClubDetailedResponse clubDetailedPageResponse = clubProfileService.getClubDetail(clubId);
         return Response.ok(clubDetailedPageResponse);
     }
 
