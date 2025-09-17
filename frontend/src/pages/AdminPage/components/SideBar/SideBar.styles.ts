@@ -8,6 +8,9 @@ export const SidebarWrapper = styled.aside`
   overflow-wrap: break-word;
   white-space: normal;
   width: 168px;
+  position: sticky;
+  top: 98px;
+  height: fit-content;
 `;
 
 export const SidebarHeader = styled.p`
