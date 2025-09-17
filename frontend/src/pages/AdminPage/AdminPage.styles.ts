@@ -20,5 +20,5 @@ export const Divider = styled.div`
 export const Content = styled.main`
   width: 100%;
   max-width: 977px;
-  padding: 62px 58px 62px 58px;
+  padding: 62px 58px;
 `;
