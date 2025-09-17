@@ -1,13 +1,12 @@
 package moadong.club.repository;
 
+import java.util.List;
+import java.util.Optional;
 import moadong.club.entity.ClubApplicationForm;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
 import org.springframework.stereotype.Repository;
-
-import java.util.List;
-import java.util.Optional;
 
 @Repository
 public interface ClubApplicationFormsRepository extends MongoRepository<ClubApplicationForm, String> {

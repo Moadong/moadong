@@ -3,7 +3,6 @@ package moadong.club.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
-import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.service.ClubSearchService;
 import moadong.global.exception.ErrorCode;

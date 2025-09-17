@@ -2,9 +2,8 @@ package moadong.global.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import moadong.global.annotation.PhoneNumber;
-
 import java.util.regex.Pattern;
+import moadong.global.annotation.PhoneNumber;
 
 public class PhoneNumberValidator implements ConstraintValidator<PhoneNumber, String> {
     /*

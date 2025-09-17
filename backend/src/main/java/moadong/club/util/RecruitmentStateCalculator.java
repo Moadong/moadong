@@ -1,11 +1,10 @@
 package moadong.club.util;
 
-import moadong.club.entity.Club;
-import moadong.club.enums.ClubRecruitmentStatus;
-
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.temporal.ChronoUnit;
+import moadong.club.entity.Club;
+import moadong.club.enums.ClubRecruitmentStatus;
 
 public class RecruitmentStateCalculator {
     public static final int ALWAYS_RECRUIT_YEAR = 2999;
