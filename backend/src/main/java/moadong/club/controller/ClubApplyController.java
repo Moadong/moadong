@@ -97,16 +97,17 @@ public class ClubApplyController {
         return Response.ok("success apply");
     }
 
-    @GetMapping("/apply/info")
+    @GetMapping("/apply/info/{applicationFormId}")
     @Operation(summary = "클럽 지원자 현황", description = "클럽 지원자 현황을 불러옵니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getApplyInfo(@PathVariable String clubId,
+                                          @PathVariable String applicationFormId,
                                           @CurrentUser CustomUserDetails user) {
-        return Response.ok(clubApplyService.getClubApplyInfo(clubId, user));
+        return Response.ok(clubApplyService.getClubApplyInfo(clubId, applicationFormId, user));
     }
 
-    @PutMapping("/applicant")
+    @PutMapping("/applicant/{applicationFormId}")
     @Operation(summary = "지원자의 지원서 정보 변경",
             description = "여러 지원자의 지원서 정보를 일괄 수정합니다.<br>"
                     + "요청 본문은 ClubApplicantEditRequest 객체의 배열이며, 각 원소는 applicantId, memo, status를 포함합니다."
@@ -114,22 +115,24 @@ public class ClubApplyController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> editApplicantDetail(@PathVariable String clubId,
+                                                 @PathVariable String applicationFormId,
                                                  @RequestBody @Valid @NotEmpty List<ClubApplicantEditRequest> request,
                                                  @CurrentUser CustomUserDetails user) {
-        clubApplyService.editApplicantDetail(clubId, request, user);
+        clubApplyService.editApplicantDetail(clubId, applicationFormId, request, user);
         return Response.ok("success edit applicant");
     }
 
-    @DeleteMapping("/applicant")
+    @DeleteMapping("/applicant/{applicationFormId}")
     @Operation(summary = "지원자 삭제",
             description = "클럽 지원자의 지원서를 삭제합니다"
     )
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> removeApplicant(@PathVariable String clubId,
+                                             @PathVariable String applicationFormId,
                                              @RequestBody @Validated ClubApplicantDeleteRequest request,
                                              @CurrentUser CustomUserDetails user) {
-        clubApplyService.deleteApplicant(clubId, request, user);
+        clubApplyService.deleteApplicant(clubId,applicationFormId, request, user);
         return Response.ok("success delete applicant");
     }
 

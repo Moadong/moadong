@@ -9,5 +9,5 @@ public interface ClubApplicantsRepository extends MongoRepository<ClubApplicant,
     @Query("{ 'formId': ?0, 'status': { $exists: true, $ne: 'DRAFT' } }")
     List<ClubApplicant> findAllByFormId(String questionId);
 
-    List<ClubApplicant> findAllByIdInAndFormId(List<String> ids, String clubId);
+    List<ClubApplicant> findAllByIdInAndFormId(List<String> ids, String formId);
 }

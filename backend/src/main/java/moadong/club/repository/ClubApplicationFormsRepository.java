@@ -11,7 +11,7 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ClubApplicationFormsRepository extends MongoRepository<ClubApplicationForm, String> {
 
-    Optional<ClubApplicationForm> findByClubId(String clubId);
+    Optional<ClubApplicationForm> findById(String formId);
     Optional<ClubApplicationForm> findByClubIdAndId(String clubId, String id);
 
     @Query(

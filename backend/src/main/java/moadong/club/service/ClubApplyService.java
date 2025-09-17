@@ -116,19 +116,19 @@ public class ClubApplyService {
     }
 
     @Transactional
-    public void editClubApplication(String clubId, String clubQuestionId, CustomUserDetails user, ClubApplicationFormEditRequest request) {
+    public void editClubApplication(String clubId, String applicationFormId, CustomUserDetails user, ClubApplicationFormEditRequest request) {
         validateClubOwner(clubId, user);
 
-        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(clubQuestionId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.QUESTION_NOT_FOUND));
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(applicationFormId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
         clubApplicationForm.updateEditedAt();
         clubApplicationFormsRepository.save(updateQuestions(clubApplicationForm, request));
     }
-    @Transactional
-    public void editClubApplicationQuestion(String questionId, CustomUserDetails user, ClubApplicationFormEditRequest request) {
-        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(questionId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.QUESTION_NOT_FOUND));
+    @Transactional //test 사용
+    public void editClubApplicationQuestion(String applicationFormId, CustomUserDetails user, ClubApplicationFormEditRequest request) {
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(applicationFormId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
         updateQuestions(clubApplicationForm, request);
         clubApplicationForm.updateEditedAt();
@@ -243,17 +243,13 @@ public void applyToClub(String clubId, String applicationFormId, ClubApplyReques
         clubApplicantsRepository.save(application);
     }
 
-    public ClubApplyInfoResponse getClubApplyInfo(String clubId, CustomUserDetails user) {
-        Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+    public ClubApplyInfoResponse getClubApplyInfo(String clubId, String applicationFormId, CustomUserDetails user) {
+       validateClubOwner(clubId, user);
 
-        if (!user.getId().equals(club.getUserId())) {
-            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
-        }
-
-        ClubApplicationForm clubApplication = clubApplicationFormsRepository.findByClubId(clubId)
+        ClubApplicationForm applicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
-        List<ClubApplicant> submittedApplications = clubApplicantsRepository.findAllByFormId(clubId);
+
+        List<ClubApplicant> submittedApplications = clubApplicantsRepository.findAllByFormId(applicationFormId);
 
         List<ClubApplicantsResult> applications = new ArrayList<>();
         int reviewRequired = 0;
@@ -261,7 +257,7 @@ public void applyToClub(String clubId, String applicationFormId, ClubApplyReques
         int accepted = 0;
 
         for (ClubApplicant app : submittedApplications) {
-            ClubApplicant sortedApp = sortApplicationAnswers(clubApplication, app);
+            ClubApplicant sortedApp = sortApplicationAnswers(applicationForm, app);
             applications.add(ClubApplicantsResult.of(sortedApp, cipher));
 
             switch (app.getStatus()) {
@@ -294,20 +290,15 @@ public void applyToClub(String clubId, String applicationFormId, ClubApplyReques
     }
 
     @Transactional
-    public void editApplicantDetail(String clubId, List<ClubApplicantEditRequest> request, CustomUserDetails user) {
-        Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-
-        if (!user.getId().equals(club.getUserId())) {
-            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
-        }
+    public void editApplicantDetail(String clubId, String applicationFormId, List<ClubApplicantEditRequest> request, CustomUserDetails user) {
+        validateClubOwner(clubId, user);
 
         Map<String, ClubApplicantEditRequest> requestMap = request.stream()
                 .collect(Collectors.toMap(ClubApplicantEditRequest::applicantId,
                         Function.identity(), (prev, next) -> next));
 
         List<String> applicationIds = new ArrayList<>(requestMap.keySet());
-        List<ClubApplicant> application = clubApplicantsRepository.findAllByIdInAndFormId(applicationIds, clubId);
+        List<ClubApplicant> application = clubApplicantsRepository.findAllByIdInAndFormId(applicationIds, applicationFormId);
 
         if (application.size() != applicationIds.size()) {
             throw new RestApiException(ErrorCode.APPLICANT_NOT_FOUND);
@@ -323,15 +314,10 @@ public void applyToClub(String clubId, String applicationFormId, ClubApplyReques
     }
 
     @Transactional
-    public void deleteApplicant(String clubId, ClubApplicantDeleteRequest request, CustomUserDetails user) {
-        Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+    public void deleteApplicant(String clubId, String applicationFormId, ClubApplicantDeleteRequest request, CustomUserDetails user) {
+        validateClubOwner(clubId, user);
 
-        if (!user.getId().equals(club.getUserId())) {
-            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
-        }
-
-        List<ClubApplicant> applicants = clubApplicantsRepository.findAllByIdInAndFormId(request.applicantIds(), clubId);
+        List<ClubApplicant> applicants = clubApplicantsRepository.findAllByIdInAndFormId(request.applicantIds(), applicationFormId);
 
         if (applicants.size() != request.applicantIds().size()) {
             throw new RestApiException(ErrorCode.APPLICANT_NOT_FOUND);
