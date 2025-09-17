@@ -46,6 +46,7 @@ public class ClubApplyService {
         LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         List<OptionItem> items = buildOptionItems(baseDate, count);
 
+
         //TODO: cludId랑 semester로 각 학기 지원서의 exist
         return items.stream()
                 .map(it -> SemesterOptionResponse.builder()
@@ -181,8 +182,8 @@ public class ClubApplyService {
                 .forms(grouped.entrySet().stream()
                         .sorted(groupComparator)
                         .map(e -> new ClubApplicationFormsResult(
-                                e.getKey().year,
-                                e.getKey().term,
+                                e.getKey().year(),
+                                e.getKey().term(),
                                 e.getValue()
                         ))
                         .collect(Collectors.toList()))
