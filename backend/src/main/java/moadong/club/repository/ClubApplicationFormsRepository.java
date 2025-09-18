@@ -3,6 +3,7 @@ package moadong.club.repository;
 import java.util.List;
 import java.util.Optional;
 import moadong.club.entity.ClubApplicationForm;
+import moadong.club.payload.dto.ClubApplicationFormSlim;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;

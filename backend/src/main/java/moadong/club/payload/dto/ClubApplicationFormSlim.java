@@ -1,4 +1,4 @@
-package moadong.club.repository;
+package moadong.club.payload.dto;
 
 import moadong.club.enums.SemesterTerm;
 

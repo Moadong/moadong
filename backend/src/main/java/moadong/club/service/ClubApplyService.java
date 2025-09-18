@@ -21,6 +21,7 @@ import moadong.club.entity.ClubQuestionOption;
 import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ClubApplicantsResult;
+import moadong.club.payload.dto.ClubApplicationFormSlim;
 import moadong.club.payload.dto.ClubApplicationFormsResultItem;
 import moadong.club.payload.dto.ClubApplicationFormsResult;
 import moadong.club.payload.request.ClubApplicationFormCreateRequest;
