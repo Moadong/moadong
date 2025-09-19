@@ -3,6 +3,7 @@ package moadong.club.repository;
 import java.util.List;
 import java.util.Optional;
 import moadong.club.entity.ClubApplicationForm;
+import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ClubApplicationFormSlim;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -20,5 +21,7 @@ public interface ClubApplicationFormsRepository extends MongoRepository<ClubAppl
             fields = "{'_id':  1, 'title':  1, 'editedAt': 1, 'semesterYear':  1, 'semesterTerm':  1}"
     ) //필드 5개만 가져옴
     List<ClubApplicationFormSlim> findClubApplicationFormsByClubId(String clubId, Sort sort);
+
+    boolean existsByClubIdAndSemesterYearAndSemesterTerm(String clubId, Integer semesterYear, SemesterTerm semesterTerm);
 
 }

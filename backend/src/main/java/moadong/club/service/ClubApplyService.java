@@ -57,12 +57,11 @@ public class ClubApplyService {
         LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
         List<OptionItem> items = buildOptionItems(baseDate, count);
 
-
-        //TODO: cludId랑 semester로 각 학기 지원서의 exist
         return items.stream()
                 .map(it -> SemesterOptionResponse.builder()
                         .semesterYear(it.year())
                         .term(it.term())
+                        .isExist(clubApplicationFormsRepository.existsByClubIdAndSemesterYearAndSemesterTerm(clubId, it.year(), it.term()))
                         .build())
                 .toList();
 
@@ -74,7 +73,7 @@ public class ClubApplyService {
         int year = baseDate.getYear();
         int month = baseDate.getMonthValue();
 
-        SemesterTerm startTerm = (month >= 1 && month <=6) ? SemesterTerm.FIRST : SemesterTerm.SECOND;
+        SemesterTerm startTerm = (month < 7) ? SemesterTerm.FIRST : SemesterTerm.SECOND;
 
         int semesterYear = year;
         SemesterTerm semesterTerm = startTerm;
