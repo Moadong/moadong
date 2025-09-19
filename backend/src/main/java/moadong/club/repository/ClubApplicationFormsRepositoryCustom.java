@@ -1,6 +1,5 @@
 package moadong.club.repository;
 
-import com.mongodb.BasicDBObject;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.dto.ClubApplicationFormsResult;
 import org.bson.Document;
@@ -8,7 +7,6 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
-import org.springframework.data.mongodb.core.aggregation.ConditionalOperators;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
@@ -42,7 +40,7 @@ public class ClubApplicationFormsRepositoryCustom {
 
         //그룹화
         GroupOperation groupOperation = Aggregation.group("semesterYear","semesterTerm")
-                .push(new Document("id", "$id")
+                .push(new Document("_id", "$_id")
                         .append("title", "$title")
                         .append("editedAt", "$editedAt"))
                 .as("forms");
