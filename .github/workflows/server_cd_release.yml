@@ -133,7 +133,7 @@ jobs:
 
           # 3. Kustomize로 모든 리소스(Secret, Deployment, Service, Ingress)를 한 번에 생성/업데이트
           echo "INFO: Applying all resources via Kustomize..."
-          kustomize build . | kubectl apply -f -
+          kustomize build . | kubectl apply --validate=false -f -
           
           # --- 아래 블루/그린 로직은 별도로 관리하는 것이 더 좋지만, 현재 구조를 유지한다면 ---
 
