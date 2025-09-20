@@ -6,6 +6,7 @@ import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 import getDeadlineText from '@/utils/getDeadLineText';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
+import { useState, useEffect } from 'react';
 
 const Button = styled.button`
   display: flex;
@@ -32,21 +33,46 @@ const Button = styled.button`
   @media (max-width: 500px) {
     width: 256px;
     height: 44px;
-    font-size: 1rem;
+
+    font-size: 16px;
+    font-style: normal;
+    font-weight: 500;
+    color: #fff;
+    text-align: center;
+
+    img {
+      font-size: 12px;
+      font-weight: 600;
+    }
   }
 `;
 
-const ClubApplyButton = () => {
+interface ClubApplyButtonProps {
+  deadlineText?: string;
+}
+
+const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const { clubId } = useParams<{ clubId: string }>();
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
+  const [ShareButtonComponent, setShareButtonComponent] =
+    useState<React.ComponentType<{ clubId: string }> | null>(null);
+
   const { data: clubDetail } = useGetClubDetail(clubId!);
 
-  const handleClick = async () => {
-    if (!clubId || !clubDetail) return;
+  useEffect(() => {
+    if (deadlineText) {
+      import('../ShareButton/ShareButton').then((module) => {
+        setShareButtonComponent(() => module.default);
+      });
+    }
+  }, [deadlineText]);
 
+  const handleClick = async () => {
     trackEvent(EVENT_NAME.CLUB_APPLY_BUTTON_CLICKED);
+
+    if (!clubId || !clubDetail) return;
 
     const { recruitmentStart, recruitmentEnd } = parseRecruitmentPeriod(
       clubDetail.recruitmentPeriod,
@@ -62,22 +88,34 @@ const ClubApplyButton = () => {
       return;
     }
 
-    // 모아동 지원서 확인
     try {
       await getApplication(clubId);
       navigate(`/application/${clubId}`);
     } catch (err: unknown) {
       const externalFormLink = clubDetail.externalApplicationUrl?.trim();
 
-      if (externalFormLink) {
-        window.open(externalFormLink, '_blank', 'noopener,noreferrer');
-      } else {
+      if (!externalFormLink) {
         alert('동아리 모집 정보를 확인해주세요.');
+        return;
       }
+      window.open(externalFormLink, '_blank', 'noopener,noreferrer');
     }
   };
 
-  return <Button onClick={handleClick}>지원하기</Button>;
+  return (
+    <>
+      {ShareButtonComponent && <ShareButtonComponent clubId={clubId!} />}
+      <Button onClick={handleClick}>
+        지원하기
+        {deadlineText && (
+          <>
+            <span style={{ margin: '0 8px', color: '#787878' }}>|</span>
+            {deadlineText}
+          </>
+        )}
+      </Button>
+    </>
+  );
 };
 
 export default ClubApplyButton;
