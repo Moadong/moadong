@@ -3,52 +3,45 @@ import type { Club } from '@/types/club';
 // 동아리 목업 데이터
 export const floatingClubs: Club[] = [
   {
-    id: 'wap',
-    name: 'WAP',
-    logo: '',
-    tags: ['프로젝트', '소프트웨어'],
-    recruitmentStatus: '모집중',
-    division: '중앙동아리',
-    category: '학술',
-    introduction: '개발자들이 모여있습니다.',
-  },
-  {
     id: 'moadong',
     name: '모아동',
     logo: '',
-    tags: ['취미교양', '동아리'],
-    recruitmentStatus: '모집중',
-    division: '중앙동아리',
-    category: '모임',
-    introduction: '모여서 만드는 동아리',
+    tags: ['학술', '스터디'],
+    recruitmentStatus: 'OPEN',
+    division: '중동',
+    category: '학술',
+    introduction: '다양한 전공 학생들이 모여 학문을 함께 나누는 동아리',
   },
   {
     id: 'moaboza',
     name: '모아보자',
     logo: '',
-    tags: ['학술', '프로젝트'],
-    recruitmentStatus: '모집마감',
-    division: '단과대',
-    category: '소프트웨어',
-    introduction: '데이터로 모아보는 동아리',
+    tags: ['봉사', '지역사회'],
+    recruitmentStatus: 'UPCOMING',
+    division: '중동',
+    category: '봉사',
+    introduction: '지역 사회와 함께 봉사하며 따뜻함을 전하는 동아리',
   },
   {
-    id: 'dddddd',
-    name: '모아보즈아앙',
+    id: 'moamoa',
+    name: '모아모아',
     logo: '',
-    tags: ['학술', '프로젝트'],
-    recruitmentStatus: '모집마감',
-    division: '단과대',
-    category: '소프트웨어',
-    introduction: '데이터로 모아보는 동아리',
+    tags: ['취미', '교양'],
+    recruitmentStatus: 'OPEN',
+    division: '중동',
+    category: '취미교양',
+    introduction: '다양한 취미를 가진 사람들이 모여 교류하는 동아리',
   },
-];
-
-export const cardPositions = [
-  { top: '10%', left: '15%' }, // 1번 카드: 좌측 상단
-  { top: '25%', right: '10%' }, // 2번 카드: 우측 상단
-  { top: '55%', left: '5%' }, // 3번 카드: 좌측 하단
-  { top: '70%', right: '18%' }, // 4번 카드: 우측 하단
+  {
+    id: 'moajup',
+    name: '모아운동',
+    logo: '',
+    tags: ['스포츠', '팀워크'],
+    recruitmentStatus: 'CLOSED',
+    division: '중동',
+    category: '운동',
+    introduction: '함께 운동을 즐기며 건강과 팀워크를 다지는 동아리',
+  },
 ];
 
 export const tagsRow1 = [
