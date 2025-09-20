@@ -57,7 +57,6 @@ const ClubDetailPage = () => {
           recruitmentForm={clubDetail.recruitmentForm}
           presidentPhoneNumber={clubDetail.presidentPhoneNumber}
         />
-        <ShareButton clubId={clubId as string} />
         <InfoTabs onTabClick={scrollToSection} />
         <InfoBox sectionRefs={sectionRefs} clubDetail={clubDetail} />
         <IntroduceBox
