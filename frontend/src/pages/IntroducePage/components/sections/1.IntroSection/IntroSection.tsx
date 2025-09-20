@@ -1,7 +1,13 @@
 import { useNavigate } from 'react-router-dom';
 import * as Styled from './IntroSection.styles';
-import { stagger, fadeIn, fade, fadeUp, VIEWPORT_CONFIG } from '@/pages/IntroducePage/constants/animations';
-import { floatingClubs, cardPositions } from '@/pages/IntroducePage/constants/mockData';
+import {
+  stagger,
+  fadeIn,
+  fade,
+  fadeUp,
+  VIEWPORT_CONFIG,
+} from '@/pages/IntroducePage/constants/animations';
+import { floatingClubs } from '@/pages/IntroducePage/constants/mockData';
 import {
   BackgroundTwistLeft,
   BackgroundTwistRight,
@@ -14,6 +20,13 @@ import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 
 const IntroSection = () => {
   const navigate = useNavigate();
+
+  const cardPositions = [
+    { top: '300px', left: '-300px' },
+    { top: '300px', left: '-630px' },
+    { top: '280px', right: '-220px' },
+    { top: '310px', right: '-580px' },
+  ];
 
   return (
     <Styled.IntroSection
@@ -45,10 +58,7 @@ const IntroSection = () => {
           <Styled.IntroSubtitle variants={fadeIn}>
             부경대학교의 모든 동아리를 한눈에
           </Styled.IntroSubtitle>
-          <Styled.IntroButton
-            variants={fadeIn}
-            onClick={() => navigate('/')}
-          >
+          <Styled.IntroButton variants={fadeIn} onClick={() => navigate('/')}>
             동아리 모아보기
             <img
               src={search_button_icon}
@@ -64,17 +74,17 @@ const IntroSection = () => {
               src={introduce_phone_mockup}
               alt='모아동아리 앱 화면 목업'
             />
+            {floatingClubs.map((club, index) => (
+              <Styled.CardImage
+                key={club.id}
+                variants={fadeUp}
+                {...cardPositions[index]}
+                style={{ pointerEvents: 'none' }}
+              >
+                <ClubCard club={club} />
+              </Styled.CardImage>
+            ))}
           </Styled.PhoneImageWrapper>
-
-          {floatingClubs.map((club, index) => (
-            <Styled.CardImage
-              key={club.id}
-              variants={fadeUp}
-              {...cardPositions[index]}
-            >
-              <ClubCard club={club} />
-            </Styled.CardImage>
-          ))}
         </Styled.VisualWrapper>
       </Styled.Container>
     </Styled.IntroSection>
