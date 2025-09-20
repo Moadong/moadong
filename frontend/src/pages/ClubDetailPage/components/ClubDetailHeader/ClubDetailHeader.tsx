@@ -1,6 +1,5 @@
 import * as Styled from './ClubDetailHeader.styles';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
-import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
 
 interface ClubDetailHeaderProps {
   name: string;
@@ -13,7 +12,6 @@ interface ClubDetailHeaderProps {
   presidentPhoneNumber?: string;
 }
 
-// 데스크탑용 상세페이지 헤더
 const ClubDetailHeader = ({
   name,
   category,
@@ -30,7 +28,6 @@ const ClubDetailHeader = ({
         tags={tags}
         logo={logo}
       />
-      <ClubApplyButton />
     </Styled.ClubDetailHeaderContainer>
   );
 };
