@@ -14,12 +14,15 @@ import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionCo
 import { parseDescriptionWithLinks } from '@/utils/parseDescriptionWithLinks';
 import { validateAnswers } from '@/hooks/useValidateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { EVENT_NAME } from '@/constants/eventName';
 
 const ApplicationFormPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const navigate = useNavigate();
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
+  const trackEvent = useMixpanelTrack();
 
   const { data: clubDetail, error: clubError } = useGetClubDetail(clubId!);
   const {
@@ -86,6 +89,10 @@ const ApplicationFormPage = () => {
   };
 
   const handleSubmit = async () => {
+    trackEvent(EVENT_NAME.APPLICATION_FORM_SUBMITTED, {
+      clubName: clubDetail?.name,
+    });
+
     const invalidIds = validateAnswers(formData.questions, getAnswersById);
     if (invalidIds.length > 0) {
       setInvalidQuestionIds(invalidIds);
@@ -95,12 +102,19 @@ const ApplicationFormPage = () => {
 
     try {
       await applyToClub(clubId, answers);
+      trackEvent(EVENT_NAME.APPLICATION_FORM_SUBMIT_SUCCESS, {
+        clubName: clubDetail?.name,
+      });
       localStorage.removeItem(STORAGE_KEY);
       alert(
         `"${clubDetail.name}" 동아리에 성공적으로 지원되었습니다.\n좋은 결과 있으시길 바랍니다🤗`,
       );
       navigate(`/club/${clubId}`, { replace: true });
-    } catch {
+    } catch (error) {
+      trackEvent(EVENT_NAME.APPLICATION_FORM_SUBMIT_FAILED, {
+        clubName: clubDetail?.name,
+        errorMessage: error instanceof Error ? error.message : String(error),
+      });
       alert(
         '⚠️ 답변 제출에 실패했어요.\n네트워크 상태를 확인하거나 잠시 후 다시 시도해 주세요.',
       );
