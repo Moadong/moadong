@@ -2,11 +2,9 @@ import * as Styled from './ClubApplyButton.styles';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import getApplication from '@/apis/application/getApplication';
-import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
-import getDeadlineText from '@/utils/getDeadLineText';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
-import ShareButton from '../ShareButton/ShareButton';
+import ShareButton from '@/pages/ClubDetailPage/components/ShareButton/ShareButton';
 
 interface ClubApplyButtonProps {
   deadlineText?: string;
@@ -19,19 +17,10 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
 
   const { data: clubDetail } = useGetClubDetail(clubId!);
 
+  if (!clubId || !clubDetail) return;
+
   const handleClick = async () => {
     trackEvent(EVENT_NAME.CLUB_APPLY_BUTTON_CLICKED);
-
-    if (!clubId || !clubDetail) return;
-
-    const { recruitmentStart, recruitmentEnd } = parseRecruitmentPeriod(
-      clubDetail.recruitmentPeriod,
-    );
-    const deadlineText = getDeadlineText(
-      recruitmentStart,
-      recruitmentEnd,
-      new Date(),
-    );
 
     if (deadlineText === '모집 마감') {
       alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
@@ -52,16 +41,24 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     }
   };
 
-  // 모집 마감 시 "모집 마감 "
-  // 상시 모집 시 span, deadlineText 제거
+  const isRecruitmentClosed = deadlineText === '모집 마감';
 
   return (
     <Styled.ApplyButtonContainer>
-      <ShareButton clubId={clubId!} />
+      <ShareButton clubId={clubId} />
       <Styled.ApplyButton onClick={handleClick}>
-        지원하기
-        <span style={{ margin: '0 8px', color: '#787878' }}>|</span>
-        {deadlineText}
+        {!isRecruitmentClosed && (
+          <>
+            지원하기
+            {deadlineText && deadlineText !== '상시 모집' && (
+              <>
+                <span style={{ margin: '0 8px', color: '#787878' }}>|</span>
+                {deadlineText}
+              </>
+            )}
+          </>
+        )}
+        {isRecruitmentClosed && '모집 마감'}
       </Styled.ApplyButton>
     </Styled.ApplyButtonContainer>
   );
