@@ -47,9 +47,9 @@ public class ClubApplyServiceTest {
         Club club = clubRepository.findClubByUserId(user.getId()).get();
 
         // 테스트 전에 문서를 한 번만 조회하여 ID를 확보
-        //ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(club.getId()) //clubid 대신 formId 넣어야 함
-        //        .orElseThrow(() -> new NoSuchElementException("테스트를 위한 ClubApplicationForm 문서가 DB에 존재하지 않습니다. 먼저 문서를 생성해주세요."));
-        //this.clubApplicationFormId = clubApplicationForm.getId();
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(club.getId()) //clubid 대신 formId 넣어야 함
+                .orElseThrow(() -> new NoSuchElementException("테스트를 위한 ClubApplicationForm 문서가 DB에 존재하지 않습니다. 먼저 문서를 생성해주세요."));
+        this.clubApplicationFormId = clubApplicationForm.getId();
     }
 
 
