@@ -55,7 +55,12 @@ export const ContactTitle = styled.h2`
   }
 `;
 
-export const ContactButton = styled.button`
+export const ContactButton = styled.a`
+  display: inline-block;
+  text-decoration: none;
+  cursor: pointer;
+  z-index: 1;
+
   background: #ffffff;
   color: #ff5414;
   font-size: 1rem;
@@ -63,19 +68,22 @@ export const ContactButton = styled.button`
   padding: 14px 64px;
   border: 1px solid #ff5414;
   border-radius: 50px;
+  transition: all 0.3s ease;
+
+  &:hover {
+    background: #ff5414;
+    color: #ffffff;
+  }
 
   ${media.laptop} {
-    font-size: 0.9rem;
     padding: 12px 56px;
   }
 
   ${media.tablet} {
-    font-size: 0.85rem;
     padding: 10px 48px;
   }
 
   ${media.mobile} {
-    font-size: 0.8rem;
     padding: 8px 40px;
   }
 `;
