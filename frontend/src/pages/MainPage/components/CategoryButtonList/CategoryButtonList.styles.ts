@@ -4,7 +4,7 @@ export const CategoryButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: nowrap;
-  margin-top: 60px;
+  margin-top: 32px;
 
   @media (max-width: 500px) {
     margin: 0 -10px;
@@ -23,7 +23,7 @@ export const CategoryButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 8px 0px;
   transition: transform 0.1s ease;
 
   &:active {
@@ -31,8 +31,8 @@ export const CategoryButton = styled.button`
   }
 
   img {
-    width: 36px;
-    height: 36px;
+    width: 56px;
+    height: 56px;
     transition: transform 0.2s ease;
 
     @media (max-width: 500px) {
