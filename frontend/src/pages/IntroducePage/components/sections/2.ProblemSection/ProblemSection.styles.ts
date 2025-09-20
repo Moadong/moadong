@@ -79,6 +79,7 @@ export const SpeechBubble = styled(motion.div)`
   border-radius: 37.5px;
   background: rgba(255, 84, 20, 0.08);
   font-size: 20px;
+  text-align: center;
 
   ${media.laptop} {
     padding: 12px 32px;
@@ -94,5 +95,6 @@ export const SpeechBubble = styled(motion.div)`
     padding: 8px 24px;
     font-size: 14px;
     border-radius: 30px;
+    max-width: 280px;
   }
 `;
