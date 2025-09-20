@@ -14,6 +14,7 @@ const TagColors: Record<string, string> = {
 interface TagProps {
   type: string;
   children?: React.ReactNode;
+  className?: string;
 }
 
 const StyledTag = styled.span<{ color: string }>`
@@ -25,11 +26,15 @@ const StyledTag = styled.span<{ color: string }>`
   font-weight: 600;
   color: #3a3a3a;
 `;
+``;
 
-const ClubTag = ({ type, children }: TagProps) => {
+const ClubTag = ({ type, children, className }: TagProps) => {
   const backgroundColor = TagColors[type] || 'rgba(237, 237, 237, 1)';
   return (
-    <StyledTag color={backgroundColor}>{`#${children || type}`}</StyledTag>
+    <StyledTag
+      color={backgroundColor}
+      className={className}
+    >{`#${children || type}`}</StyledTag>
   );
 };
 
