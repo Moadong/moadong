@@ -64,8 +64,8 @@ export const CategoryButton = styled.button`
     }
 
     @media (max-width: 375px) {
-      font-size: 8px;
-      margin-top: 8px;
+      font-size: 10px;
+      margin-top: 2px;
       line-height: normal;
     }
   }
