@@ -2,7 +2,6 @@ import * as Styled from './ShareButton.styles';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import ShareIcon from '@/assets/images/icons/share_filled_icon.svg';
-
 import { EVENT_NAME } from '@/constants/eventName';
 
 interface ShareButtonProps {
@@ -17,12 +16,14 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
   const { data: clubDetail } = useGetClubDetail(clubId);
   const trackEvent = useMixpanelTrack();
 
+  if (!clubDetail) return;
+
   const handleShare = () => {
     if (!window.Kakao || !window.Kakao.isInitialized()) {
       alert('카카오 SDK가 아직 준비되지 않았습니다.');
       return;
     }
-    if (!clubDetail) return;
+
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
