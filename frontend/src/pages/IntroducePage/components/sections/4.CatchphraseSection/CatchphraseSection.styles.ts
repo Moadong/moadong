@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { media } from '@/styles/mediaQuery';
 
 export const CatchphraseSection = styled(motion.section)`
   width: 100%;
@@ -11,6 +12,21 @@ export const CatchphraseSection = styled(motion.section)`
   position: relative;
   overflow: hidden;
   margin-top: 114px;
+
+  ${media.laptop} {
+    padding: 100px 0;
+    margin-top: 80px;
+  }
+
+  ${media.tablet} {
+    padding: 80px 0;
+    margin-top: 60px;
+  }
+
+  ${media.mobile} {
+    padding: 60px 0;
+    margin-top: 40px;
+  }
 `;
 
 export const BackgroundBrandImage = styled(motion.img)`
@@ -39,10 +55,34 @@ export const CatchphraseSubtitle = styled(motion.p)`
   color: #121212;
   font-weight: bold;
   margin-bottom: 2px;
+
+  ${media.laptop} {
+    font-size: 26px;
+  }
+
+  ${media.tablet} {
+    font-size: 22px;
+  }
+
+  ${media.mobile} {
+    font-size: 18px;
+  }
 `;
 
 export const CatchphraseTitle = styled(motion.h2)`
   font-size: 48px;
   font-weight: bold;
   color: #ff5414;
+
+  ${media.laptop} {
+    font-size: 40px;
+  }
+
+  ${media.tablet} {
+    font-size: 32px;
+  }
+
+  ${media.mobile} {
+    font-size: 24px;
+  }
 `;

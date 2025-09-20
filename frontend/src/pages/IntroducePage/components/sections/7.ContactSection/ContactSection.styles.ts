@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { media } from '@/styles/mediaQuery';
 
 export const ContactSection = styled(motion.section)`
   width: 100%;
@@ -13,6 +14,22 @@ export const ContactSection = styled(motion.section)`
   justify-content: center;
   align-items: center;
   gap: 53px;
+
+  ${media.laptop} {
+    height: 400px;
+    gap: 40px;
+  }
+
+  ${media.tablet} {
+    height: 350px;
+    gap: 32px;
+  }
+
+  ${media.mobile} {
+    height: 300px;
+    gap: 24px;
+    padding: 0 20px;
+  }
 `;
 
 export const ContactTitle = styled.h2`
@@ -20,6 +37,22 @@ export const ContactTitle = styled.h2`
   font-size: 3rem;
   font-weight: bold;
   color: #ff5414;
+
+  ${media.laptop} {
+    margin-top: 40px;
+    font-size: 2.5rem;
+  }
+
+  ${media.tablet} {
+    margin-top: 30px;
+    font-size: 2rem;
+  }
+
+  ${media.mobile} {
+    margin-top: 20px;
+    font-size: 1.5rem;
+    text-align: center;
+  }
 `;
 
 export const ContactButton = styled.button`
@@ -30,6 +63,21 @@ export const ContactButton = styled.button`
   padding: 14px 64px;
   border: 1px solid #ff5414;
   border-radius: 50px;
+
+  ${media.laptop} {
+    font-size: 0.9rem;
+    padding: 12px 56px;
+  }
+
+  ${media.tablet} {
+    font-size: 0.85rem;
+    padding: 10px 48px;
+  }
+
+  ${media.mobile} {
+    font-size: 0.8rem;
+    padding: 8px 40px;
+  }
 `;
 
 export const Shape = styled.div<{

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { media } from '@/styles/mediaQuery';
 
 export const QuestionSection = styled(motion.section)`
   width: 100%;
@@ -11,6 +12,18 @@ export const QuestionSection = styled(motion.section)`
   justify-content: center;
   position: relative;
   overflow: hidden;
+
+  ${media.laptop} {
+    padding: 120px 0;
+  }
+
+  ${media.tablet} {
+    padding: 100px 0;
+  }
+
+  ${media.mobile} {
+    padding: 80px 0;
+  }
 `;
 
 export const QuestionTitle = styled(motion.h2)`
@@ -18,6 +31,20 @@ export const QuestionTitle = styled(motion.h2)`
   color: #333;
   font-weight: bold;
   z-index: 1;
+
+  ${media.laptop} {
+    font-size: 26px;
+  }
+
+  ${media.tablet} {
+    font-size: 22px;
+  }
+
+  ${media.mobile} {
+    font-size: 18px;
+    text-align: center;
+    padding: 0 20px;
+  }
 `;
 
 export const BackgroundQuestionMark = styled(motion.div)`
@@ -32,4 +59,19 @@ export const BackgroundQuestionMark = styled(motion.div)`
   filter: blur(19px);
   user-select: none;
   line-height: 619px;
+
+  ${media.laptop} {
+    font-size: 320px;
+    line-height: 500px;
+  }
+
+  ${media.tablet} {
+    font-size: 240px;
+    line-height: 380px;
+  }
+
+  ${media.mobile} {
+    font-size: 180px;
+    line-height: 280px;
+  }
 `;

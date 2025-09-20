@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import { media } from '@/styles/mediaQuery';
 
 export const IntroSection = styled(motion.section)`
   width: 100%;
@@ -12,6 +13,18 @@ export const IntroSection = styled(motion.section)`
   );
   position: relative;
   overflow: hidden;
+
+  ${media.laptop} {
+    padding: 60px 0 120px;
+  }
+
+  ${media.tablet} {
+    padding: 40px 0 80px;
+  }
+
+  ${media.mobile} {
+    padding: 30px 0 60px;
+  }
 `;
 
 export const Container = styled.div`
@@ -19,6 +32,18 @@ export const Container = styled.div`
   margin: 0 auto;
   position: relative;
   z-index: 1;
+
+  ${media.laptop} {
+    width: min(900px, 90vw);
+  }
+
+  ${media.tablet} {
+    width: min(600px, 88vw);
+  }
+
+  ${media.mobile} {
+    width: min(400px, 85vw);
+  }
 `;
 
 export const Shape = styled.div<{
@@ -40,11 +65,35 @@ export const TextWrapper = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   margin-top: 80px;
+
+  ${media.laptop} {
+    margin-top: 60px;
+  }
+
+  ${media.tablet} {
+    margin-top: 40px;
+  }
+
+  ${media.mobile} {
+    margin-top: 30px;
+  }
 `;
 
 export const IntroTitle = styled(motion.h1)`
   color: #ff5414;
   font-size: 80px;
+
+  ${media.laptop} {
+    font-size: 64px;
+  }
+
+  ${media.tablet} {
+    font-size: 48px;
+  }
+
+  ${media.mobile} {
+    font-size: 36px;
+  }
 `;
 
 export const IntroSubtitle = styled(motion.h2)`
@@ -52,6 +101,18 @@ export const IntroSubtitle = styled(motion.h2)`
   color: rgba(0, 0, 0, 0.5);
   font-weight: bold;
   margin-bottom: 0.75rem;
+
+  ${media.laptop} {
+    font-size: 28px;
+  }
+
+  ${media.tablet} {
+    font-size: 24px;
+  }
+
+  ${media.mobile} {
+    font-size: 20px;
+  }
 `;
 
 export const IntroButton = styled(motion.button)`
@@ -80,10 +141,33 @@ export const IntroButton = styled(motion.button)`
       background 0.3s,
       box-shadow 0.3s;
   }
+
+  ${media.laptop} {
+    padding: 12px 40px 12px 44px;
+    font-size: 15px;
+    margin-top: 24px;
+  }
+
+  ${media.tablet} {
+    padding: 10px 36px 10px 40px;
+    font-size: 14px;
+    margin-top: 20px;
+  }
+
+  ${media.mobile} {
+    padding: 8px 32px 8px 36px;
+    font-size: 13px;
+    margin-top: 16px;
+    gap: 8px;
+
+    .icon {
+      width: 12px;
+      height: 12px;
+    }
+  }
 `;
 
 export const VisualWrapper = styled(motion.div)`
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -92,12 +176,24 @@ export const VisualWrapper = styled(motion.div)`
 `;
 
 export const PhoneImageWrapper = styled(motion.div)`
-  /* 필요에 따라 위치 조정을 위한 스타일 추가 가능 */
+  position: relative;
 `;
 
 export const PhoneImage = styled.img`
   width: 375px;
   height: auto;
+
+  ${media.laptop} {
+    width: 310px;
+  }
+
+  ${media.tablet} {
+    width: 290px;
+  }
+
+  ${media.mobile} {
+    width: 270px;
+  }
 `;
 
 export const CardImage = styled(motion.div)<{
@@ -113,4 +209,9 @@ export const CardImage = styled(motion.div)<{
   right: ${({ right }) => right || 'auto'};
   bottom: ${({ bottom }) => bottom || 'auto'};
   transform: ${({ transform }) => transform || 'none'};
+  z-index: 2;
+
+  ${media.mobile} {
+    display: none;
+  }
 `;

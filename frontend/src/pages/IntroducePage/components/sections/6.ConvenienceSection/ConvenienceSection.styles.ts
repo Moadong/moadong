@@ -56,9 +56,25 @@ export const Card4 = styled(FeatureCard)`
 `;
 
 export const ConvenienceTitle = styled.h2`
-  font-size: 2rem;
+  font-size: 32px;
   font-weight: 700;
   color: #111;
   margin-bottom: 24px;
   text-align: center;
+
+  ${media.laptop} {
+    font-size: 28px;
+    margin-bottom: 20px;
+  }
+
+  ${media.tablet} {
+    font-size: 24px;
+    margin-bottom: 18px;
+  }
+
+  ${media.mobile} {
+    font-size: 20px;
+    margin-bottom: 16px;
+    padding: 0 20px;
+  }
 `;
