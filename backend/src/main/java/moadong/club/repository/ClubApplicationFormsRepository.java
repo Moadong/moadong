@@ -2,6 +2,8 @@ package moadong.club.repository;
 
 import java.util.List;
 import java.util.Optional;
+
+import moadong.club.entity.Club;
 import moadong.club.entity.ClubApplicationForm;
 import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ClubApplicationFormSlim;
@@ -15,6 +17,7 @@ public interface ClubApplicationFormsRepository extends MongoRepository<ClubAppl
 
     Optional<ClubApplicationForm> findById(String formId);
     Optional<ClubApplicationForm> findByClubIdAndId(String clubId, String id);
+    List<ClubApplicationForm> findByClubId(String clubId);
 
     @Query(
             value = "{'clubId':  ?0}",
