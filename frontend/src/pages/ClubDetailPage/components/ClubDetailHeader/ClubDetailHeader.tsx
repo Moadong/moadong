@@ -13,6 +13,7 @@ interface ClubDetailHeaderProps {
   presidentPhoneNumber?: string;
 }
 
+// 데스크탑용 상세페이지 헤더
 const ClubDetailHeader = ({
   name,
   category,
