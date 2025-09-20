@@ -11,23 +11,23 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import moadong.club.enums.ApplicantStatus;
+import moadong.club.enums.ApplicationStatus;
 import org.springframework.data.mongodb.core.mapping.Document;
 
-@Document("club_applicants")
+@Document("club_applications")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
-public class ClubApplicant {
+public class ClubApplication {
 
     @Id
     private String id;
 
-    private String formId;
+    private String questionId;
 
     @Enumerated(EnumType.STRING)
     @Builder.Default
-    ApplicantStatus status = ApplicantStatus.SUBMITTED;
+    ApplicationStatus status = ApplicationStatus.SUBMITTED;
 
     @Builder.Default
     private String memo = "";
@@ -42,7 +42,7 @@ public class ClubApplicant {
         this.memo = memo;
     }
 
-    public void updateStatus(ApplicantStatus status) {
+    public void updateStatus(ApplicationStatus status) {
         this.status = status;
     }
 
