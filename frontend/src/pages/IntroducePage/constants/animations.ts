@@ -23,15 +23,14 @@ export const stagger: Variants = {
 };
 
 export const scrollVariants: Variants = {
-  scrolling: (direction: 'left' | 'right') => ({
-    x: direction === 'left' ? ['0%', '-100%'] : ['-100%', '0%'],
-    transition: {
-      ease: 'linear',
-      duration: 40,
-      repeat: Infinity,
-      repeatType: 'loop',
-    },
-  }),
+  left: {
+    x: ['0%', '-50%'],
+    transition: { ease: 'linear', duration: 20, repeat: Infinity },
+  },
+  right: {
+    x: ['-50%', '0%'],
+    transition: { ease: 'linear', duration: 20, repeat: Infinity },
+  },
 };
 
 export const VIEWPORT_CONFIG = {
