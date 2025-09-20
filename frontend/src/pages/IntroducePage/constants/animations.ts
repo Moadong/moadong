@@ -33,6 +33,25 @@ export const scrollVariants: Variants = {
   },
 };
 
+export const cardVariants: Record<string, Variants> = {
+  left: {
+    hidden: { opacity: 0, x: -100 },
+    show: { opacity: 1, x: 0, transition: transDefault },
+  },
+  right: {
+    hidden: { opacity: 0, x: 100 },
+    show: { opacity: 1, x: 0, transition: transDefault },
+  },
+  top: {
+    hidden: { opacity: 0, y: -100 },
+    show: { opacity: 1, y: 0, transition: transDefault },
+  },
+  bottom: {
+    hidden: { opacity: 0, y: 100 },
+    show: { opacity: 1, y: 0, transition: transDefault },
+  },
+};
+
 export const VIEWPORT_CONFIG = {
   once: true,
   amount: 0.2,
