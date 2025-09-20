@@ -35,7 +35,6 @@ export const CategoryButton = styled.button`
     transition: transform 0.2s ease;
 
     @media (max-width: 500px) {
-      margin-top: 5px;
       width: 40px;
       height: 40px;
     }
@@ -54,19 +53,18 @@ export const CategoryButton = styled.button`
     white-space: nowrap;
 
     @media (max-width: 768px) {
-      font-size: 14px;
+      font-size: 12px;
       margin-top: 10px;
     }
 
     @media (max-width: 500px) {
       font-size: 10px;
-      margin-top: 11px;
+      margin-top: 4px;
       line-height: normal;
-      margin-bottom: 5px;
     }
 
     @media (max-width: 375px) {
-      font-size: 11px;
+      font-size: 8px;
       margin-top: 8px;
       line-height: normal;
     }
