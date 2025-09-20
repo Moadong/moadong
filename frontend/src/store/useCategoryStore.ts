@@ -27,8 +27,6 @@ export const useCategoryStore = create<CategoryStore>()(
 
 export const useSelectedCategory = () => {
   const selectedCategory = useCategoryStore((state) => state.selectedCategory);
-  const setSelectedCategory = useCategoryStore(
-    (state) => state.setSelectedCategory,
-  );
+  const setSelectedCategory = useCategoryStore((state) => state.setSelectedCategory);
   return { selectedCategory, setSelectedCategory };
 };
