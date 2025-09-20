@@ -10,6 +10,8 @@ const getDeadlineText = (
   if (isAfter(today, recruitmentEnd)) return '모집 마감';
 
   const days = differenceInCalendarDays(recruitmentEnd, today);
+
+  if (days > 365) return '상시 모집';
   return days > 0 ? `D-${days}` : 'D-Day';
 };
 
