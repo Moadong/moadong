@@ -18,15 +18,54 @@ import search_button_icon from '@/assets/images/icons/search_button_icon.svg';
 import introduce_phone_mockup from '@/assets/images/introduce/introduce_phone_mockup.png';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 
+const cardPositions = [
+  { top: '300px', left: '-300px' },
+  { top: '300px', left: '-630px' },
+  { top: '280px', right: '-220px' },
+  { top: '310px', right: '-580px' },
+];
+
+const SHAPES = [
+  {
+    id: 'twistLeft',
+    component: BackgroundTwistLeft,
+    top: '-40px',
+    left: '20px',
+    laptop: { top: '-30px', left: '-20px' },
+    tablet: { top: '-20px', left: '-50px' },
+    mobile: { top: '-15px', left: '-100px' },
+  },
+  {
+    id: 'twistRight',
+    component: BackgroundTwistRight,
+    top: '163px',
+    right: '-10px',
+    laptop: { top: '180px', right: '-0px' },
+    tablet: { top: '200px', right: '-50px' },
+    mobile: { top: '250px', right: '-80px' },
+  },
+  {
+    id: 'circleSmall',
+    component: BackgroundCircleSmall,
+    top: '575px',
+    left: '411px',
+    laptop: { top: '550px', left: '320px' },
+    tablet: { top: '500px', left: '110px' },
+    mobile: { top: '380px', left: '20px' },
+  },
+  {
+    id: 'circleLarge',
+    component: BackgroundCircleLarge,
+    top: '380px',
+    right: '477px',
+    laptop: { top: '300px', right: '350px' },
+    tablet: { top: '120px', right: '50px' },
+    mobile: { top: '180px', right: '-10px' },
+  },
+];
+
 const IntroSection = () => {
   const navigate = useNavigate();
-
-  const cardPositions = [
-    { top: '300px', left: '-300px' },
-    { top: '300px', left: '-630px' },
-    { top: '280px', right: '-220px' },
-    { top: '310px', right: '-580px' },
-  ];
 
   return (
     <Styled.IntroSection
@@ -36,19 +75,11 @@ const IntroSection = () => {
       viewport={VIEWPORT_CONFIG}
       aria-labelledby='intro-title'
     >
-      {/* 배경 도형 */}
-      <Styled.Shape top='-40px' left='20px'>
-        <BackgroundTwistLeft />
-      </Styled.Shape>
-      <Styled.Shape top='163px' right='-10px'>
-        <BackgroundTwistRight />
-      </Styled.Shape>
-      <Styled.Shape top='575px' left='411px'>
-        <BackgroundCircleSmall />
-      </Styled.Shape>
-      <Styled.Shape top='380px' right='477px'>
-        <BackgroundCircleLarge />
-      </Styled.Shape>
+      {SHAPES.map(({ id, component: Shape, ...pos }) => (
+        <Styled.Shape key={id} {...pos}>
+          <Shape />
+        </Styled.Shape>
+      ))}
 
       <Styled.Container>
         <Styled.TextWrapper>
