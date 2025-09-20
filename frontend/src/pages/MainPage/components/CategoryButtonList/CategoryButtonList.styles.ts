@@ -7,8 +7,7 @@ export const CategoryButtonContainer = styled.div`
   margin-top: 32px;
 
   @media (max-width: 500px) {
-    margin: 0 -10px;
-    margin-top: 16px;
+    margin: 16px 0 12px 0; 
     background-color: white;
     position: sticky;
     top: 56px;
@@ -37,19 +36,20 @@ export const CategoryButton = styled.button`
 
     @media (max-width: 500px) {
       margin-top: 5px;
-      width: 30px;
-      height: 30px;
+      width: 40px;
+      height: 40px;
     }
     @media (max-width: 360px) {
-      width: 25px;
-      height: 25px;
+      width: 23px;
+      height: 23px;
     }
   }
 
   span {
-    font-size: 1rem;
+    font-size: 14px;
     font-weight: 500;
-    margin-top: 11px;
+    color: #787878;
+    margin-top: 8px;
     line-height: 30px;
     white-space: nowrap;
 
@@ -59,7 +59,7 @@ export const CategoryButton = styled.button`
     }
 
     @media (max-width: 500px) {
-      font-size: 12px;
+      font-size: 10px;
       margin-top: 11px;
       line-height: normal;
       margin-bottom: 5px;
