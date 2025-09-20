@@ -1,7 +1,13 @@
 import * as Styled from './FeatureSection.styles';
-import { stagger, fadeUp, fade, scrollVariants, VIEWPORT_CONFIG } from '@/pages/IntroducePage/constants/animations';
+import {
+  stagger,
+  fadeUp,
+  fade,
+  scrollVariants,
+  VIEWPORT_CONFIG,
+} from '@/pages/IntroducePage/constants/animations';
 import { tagsRow1, tagsRow2 } from '@/pages/IntroducePage/constants/mockData';
-import ClubTag from '@/components/ClubTag/ClubTag';
+import search_button_icon from '@/assets/images/icons/search_button_icon.svg';
 
 const FeatureSection = () => {
   return (
@@ -18,29 +24,35 @@ const FeatureSection = () => {
         키워드로 검색해서 간편하게 찾아보세요
       </Styled.FeatureSubtitle>
 
+      <Styled.SearchWrapper variants={fadeUp}>
+        <Styled.TypingText>
+          원하는 동아리를 키워드로 검색해보세요!
+        </Styled.TypingText>
+        <Styled.SearchButton>
+          <img src={search_button_icon} alt='검색 아이콘' />
+        </Styled.SearchButton>
+      </Styled.SearchWrapper>
+
       <Styled.TagsContainer variants={fade}>
-        <Styled.TagRow
-          variants={scrollVariants}
-          animate='scrolling'
-          custom='left'
-        >
-          {[...tagsRow1].map((tag, index) => (
-            <ClubTag key={index} type={tag.type}>
-              {tag.label}
-            </ClubTag>
-          ))}
-        </Styled.TagRow>
-        <Styled.TagRow
-          variants={scrollVariants}
-          animate='scrolling'
-          custom='right'
-        >
-          {[...tagsRow2].map((tag, index) => (
-            <ClubTag key={index} type={tag.type}>
-              {tag.label}
-            </ClubTag>
-          ))}
-        </Styled.TagRow>
+        <Styled.TagWindow>
+          <Styled.TagRow variants={scrollVariants} animate='left'>
+            {[...tagsRow1, ...tagsRow1].map((tag, index) => (
+              <Styled.CustomTag key={index} type={tag.type}>
+                {tag.label}
+              </Styled.CustomTag>
+            ))}
+          </Styled.TagRow>
+        </Styled.TagWindow>
+
+        <Styled.TagWindow>
+          <Styled.TagRow variants={scrollVariants} animate='right'>
+            {[...tagsRow2, ...tagsRow2].map((tag, index) => (
+              <Styled.CustomTag key={index} type={tag.type}>
+                {tag.label}
+              </Styled.CustomTag>
+            ))}
+          </Styled.TagRow>
+        </Styled.TagWindow>
       </Styled.TagsContainer>
     </Styled.FeatureSection>
   );
