@@ -1,5 +1,4 @@
 import * as Styled from './ClubDetailFooter.styles';
-import DeadlineBadge from '@/pages/ClubDetailPage/components/DeadlineBadge/DeadlineBadge';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
 import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 import getDeadlineText from '@/utils/getDeadLineText';
@@ -7,12 +6,9 @@ import getDeadlineText from '@/utils/getDeadLineText';
 interface ClubDetailFooterProps {
   recruitmentPeriod: string;
   recruitmentForm: string;
-  presidentPhoneNumber: string;
 }
 
-const ClubDetailFooter = ({
-  recruitmentPeriod
-}: ClubDetailFooterProps) => {
+const ClubDetailFooter = ({ recruitmentPeriod }: ClubDetailFooterProps) => {
   const { recruitmentStart, recruitmentEnd } =
     parseRecruitmentPeriod(recruitmentPeriod);
 
@@ -22,10 +18,9 @@ const ClubDetailFooter = ({
     new Date(),
   );
 
-  return ( 
+  return (
     <Styled.ClubDetailFooterContainer>
-      <DeadlineBadge deadlineText={deadlineText} />
-      <ClubApplyButton />
+      <ClubApplyButton deadlineText={deadlineText} />
     </Styled.ClubDetailFooterContainer>
   );
 };
