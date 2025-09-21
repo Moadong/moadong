@@ -153,7 +153,9 @@ export const StatusSelectMenuItem = styled.div`
   }
 `;
 
-export const ApplicantFilterSelect = styled.select`
+export const ApplicantFilterSelect = styled.div`
+  display: flex;
+  align-items: center;
   height: 35px;
   padding: 4px 32px 4px 14px;
   border-radius: 8px;

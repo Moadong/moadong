@@ -262,7 +262,6 @@ const ApplicantsTab = () => {
               >
                 <CustomDropDown.Trigger>
                   <Styled.ApplicantFilterSelect
-                    as='div'
                     onClick={() => setIsFilterOpen((prev) => !prev)}
                   >
                     {
@@ -271,14 +270,15 @@ const ApplicantsTab = () => {
                       )?.label
                     }
                   </Styled.ApplicantFilterSelect>
-                  <Styled.Arrow
-                    src={selectIcon}
-                    onClick={() => setIsFilterOpen((prev) => !prev)}
-                  />
+                  <Styled.Arrow src={selectIcon} />
                 </CustomDropDown.Trigger>
                 <CustomDropDown.Menu>
                   {filterOptions.map(({ value, label }) => (
-                    <CustomDropDown.Item key={value} value={value}>
+                    <CustomDropDown.Item
+                      key={value}
+                      value={value}
+                      style={{ fontSize: '12px' }}
+                    >
                       {label}
                     </CustomDropDown.Item>
                   ))}
@@ -306,19 +306,19 @@ const ApplicantsTab = () => {
               >
                 <CustomDropDown.Trigger>
                   <Styled.ApplicantFilterSelect
-                    as='div'
                     onClick={() => setIsSortOpen((prev) => !prev)}
                   >
                     {selectedSort.label}
                   </Styled.ApplicantFilterSelect>
-                  <Styled.Arrow
-                    src={selectIcon}
-                    onClick={() => setIsSortOpen((prev) => !prev)}
-                  />
+                  <Styled.Arrow src={selectIcon} />
                 </CustomDropDown.Trigger>
                 <CustomDropDown.Menu>
                   {sortOptions.map(({ value, label }) => (
-                    <CustomDropDown.Item key={value} value={value}>
+                    <CustomDropDown.Item
+                      key={value}
+                      value={value}
+                      style={{ fontSize: '12px' }}
+                    >
                       {label}
                     </CustomDropDown.Item>
                   ))}
