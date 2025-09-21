@@ -5,20 +5,20 @@ import { media } from '@/styles/mediaQuery';
 export const ConvenienceSection = styled.section`
   max-width: 1180px;
   width: 100%;
-  margin: 0 auto 150px;
+  margin: 50px auto 150px;
 
   ${media.laptop} {
     max-width: 700px;
-    margin: 0 auto 100px;
+    margin: 30px auto 100px;
   }
   ${media.tablet} {
     max-width: 500px;
-    margin: 0 auto 100px;
+    margin: 20px auto 100px;
   }
 
   ${media.mobile} {
     padding: 0 20px;
-    margin: 0 auto 40px;
+    margin: 10px auto 40px;
   }
 `;
 
