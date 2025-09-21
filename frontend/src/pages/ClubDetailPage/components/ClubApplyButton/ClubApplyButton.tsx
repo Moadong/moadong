@@ -46,24 +46,29 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     }
   };
 
-  const isRecruitmentClosed = deadlineText === RECRUITMENT_STATUS.CLOSED;
+  const renderButtonContent = () => {
+    if (deadlineText === RECRUITMENT_STATUS.CLOSED) {
+      return RECRUITMENT_STATUS.CLOSED;
+    }
+
+    return (
+      <>
+        지원하기
+        {deadlineText && deadlineText !== RECRUITMENT_STATUS.ALWAYS && (
+          <>
+            <span style={{ margin: '0 8px', color: '#787878' }}>|</span>
+            {deadlineText}
+          </>
+        )}
+      </>
+    );
+  };
 
   return (
     <Styled.ApplyButtonContainer>
       <ShareButton clubId={clubId} />
       <Styled.ApplyButton onClick={handleClick}>
-        {!isRecruitmentClosed && (
-          <>
-            지원하기
-            {deadlineText && deadlineText !== RECRUITMENT_STATUS.ALWAYS && (
-              <>
-                <span style={{ margin: '0 8px', color: '#787878' }}>|</span>
-                {deadlineText}
-              </>
-            )}
-          </>
-        )}
-        {isRecruitmentClosed && RECRUITMENT_STATUS.CLOSED}
+        {renderButtonContent()}
       </Styled.ApplyButton>
     </Styled.ApplyButtonContainer>
   );
