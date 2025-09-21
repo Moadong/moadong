@@ -32,7 +32,7 @@ export const OptionItem = styled.li<{ isSelected: boolean }>`
   padding: 10px;
   font-weight: 600;
   color: #787878;
-  background-color: ${({ isSelected }) => (isSelected ? '#DCDCDC' : '#fff')};
+  background-color: ${({ isSelected }) => (isSelected ? '#f5f5f5' : '#fff')};
   cursor: pointer;
   padding: 8px 13px;
 
