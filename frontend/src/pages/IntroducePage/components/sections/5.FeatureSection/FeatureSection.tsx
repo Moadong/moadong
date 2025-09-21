@@ -25,9 +25,7 @@ const FeatureSection = () => {
       </Styled.FeatureSubtitle>
 
       <Styled.SearchWrapper variants={fadeUp}>
-        <Styled.TypingText>
-          원하는 동아리를 키워드로 검색해보세요!
-        </Styled.TypingText>
+        <Styled.TypingText>축구하는 동아리</Styled.TypingText>
         <Styled.SearchButton>
           <img src={search_button_icon} alt='검색 아이콘' />
         </Styled.SearchButton>
