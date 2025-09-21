@@ -14,6 +14,23 @@ import { AVAILABLE_STATUSES } from '@/constants/status';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
 
 const ApplicantsTab = () => {
+  const statusOptions = AVAILABLE_STATUSES.map((status) => ({
+    value: status,
+    label: mapStatusToGroup(status).label,
+  }));
+
+  const filterOptions = ['ALL', ...Object.values(ApplicationStatus)].map(
+    (status) => ({
+      value: status,
+      label: mapStatusToGroup(status as ApplicationStatus).label,
+    }),
+  );
+
+  const sortOptions = [
+    { value: 'date', label: '제출순' },
+    { value: 'name', label: '이름순' },
+  ];
+
   const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
   const [keyword, setKeyword] = useState('');
@@ -24,6 +41,10 @@ const ApplicantsTab = () => {
   const [open, setOpen] = useState(false);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('ALL');
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [selectedSort, setSelectedSort] = useState(sortOptions[0]);
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
   const { mutate: updateDetailApplicants } = useUpdateApplicant(clubId!);
   const dropdwonRef = useRef<Array<HTMLDivElement | null>>([]);
@@ -31,14 +52,35 @@ const ApplicantsTab = () => {
   const filteredApplicants = useMemo(() => {
     if (!applicantsData?.applicants) return [];
 
-    if (!keyword.trim()) return applicantsData.applicants;
+    let applicants = [...applicantsData.applicants];
 
-    return applicantsData.applicants.filter((user: Applicant) =>
-      user.answers[0].value
-        .toLowerCase()
-        .includes(keyword.trim().toLowerCase()),
-    );
-  }, [applicantsData, keyword]);
+    if (selectedFilter !== 'ALL') {
+      applicants = applicants.filter(
+        (applicant) => applicant.status === selectedFilter,
+      );
+    }
+
+    if (keyword.trim()) {
+      applicants = applicants.filter((user: Applicant) =>
+        user.answers[0].value
+          .toLowerCase()
+          .includes(keyword.trim().toLowerCase()),
+      );
+    }
+
+    if (selectedSort.value === 'name') {
+      applicants.sort((a, b) =>
+        a.answers[0].value.localeCompare(b.answers[0].value),
+      );
+    } else {
+      applicants.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+    }
+
+    return applicants;
+  }, [applicantsData, keyword, selectedFilter, selectedSort.value]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -49,6 +91,8 @@ const ApplicantsTab = () => {
       ) {
         if (open) setOpen(false);
         if (isStatusDropdownOpen) setIsStatusDropdownOpen(false);
+        if (isFilterOpen) setIsFilterOpen(false);
+        if (isSortOpen) setIsSortOpen(false);
       }
     };
 
@@ -56,7 +100,7 @@ const ApplicantsTab = () => {
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [open]);
+  }, [open, isStatusDropdownOpen, isFilterOpen, isSortOpen]);
 
   useEffect(() => {
     const newMap = new Map<string, boolean>();
@@ -156,18 +200,6 @@ const ApplicantsTab = () => {
     );
   };
 
-  const statusOptions = AVAILABLE_STATUSES.map((status) => ({
-    value: status,
-    label: mapStatusToGroup(status).label,
-  }));
-
-  const filterOptions = ['ALL', ...Object.values(ApplicationStatus)].map(
-    (status) => ({
-      value: status,
-      label: mapStatusToGroup(status as ApplicationStatus).label,
-    }),
-  );
-
   return (
     <>
       <Styled.ApplicationHeader>
@@ -214,17 +246,84 @@ const ApplicantsTab = () => {
         <Styled.ApplicantListTitle>지원자 목록</Styled.ApplicantListTitle>
         <Styled.ApplicantListHeader>
           <Styled.FilterContainer>
-            <Styled.SelectWrapper>
-              <Styled.ApplicantFilterSelect disabled={true}>
-                <option>전체</option>
-              </Styled.ApplicantFilterSelect>
-              <Styled.Arrow src={selectIcon} />
+            <Styled.SelectWrapper
+              ref={(el) => {
+                dropdwonRef.current[2] = el;
+              }}
+            >
+              <CustomDropDown
+                options={filterOptions}
+                onSelect={(value) => {
+                  setSelectedFilter(value as string);
+                  setIsFilterOpen(false);
+                }}
+                open={isFilterOpen}
+                onToggle={() => setIsFilterOpen((prev) => !prev)}
+              >
+                <CustomDropDown.Trigger>
+                  <Styled.ApplicantFilterSelect
+                    as='div'
+                    onClick={() => setIsFilterOpen((prev) => !prev)}
+                  >
+                    {
+                      filterOptions.find(
+                        (option) => option.value === selectedFilter,
+                      )?.label
+                    }
+                  </Styled.ApplicantFilterSelect>
+                  <Styled.Arrow
+                    src={selectIcon}
+                    onClick={() => setIsFilterOpen((prev) => !prev)}
+                  />
+                </CustomDropDown.Trigger>
+                <CustomDropDown.Menu>
+                  {filterOptions.map(({ value, label }) => (
+                    <CustomDropDown.Item key={value} value={value}>
+                      {label}
+                    </CustomDropDown.Item>
+                  ))}
+                </CustomDropDown.Menu>
+              </CustomDropDown>
             </Styled.SelectWrapper>
-            <Styled.SelectWrapper>
-              <Styled.ApplicantFilterSelect disabled={true}>
-                <option>제출순</option>
-              </Styled.ApplicantFilterSelect>
-              <Styled.Arrow src={selectIcon} />
+            <Styled.SelectWrapper
+              ref={(el) => {
+                dropdwonRef.current[3] = el;
+              }}
+            >
+              <CustomDropDown
+                options={sortOptions}
+                onSelect={(value) => {
+                  const selected = sortOptions.find(
+                    (option) => option.value === value,
+                  );
+                  if (selected) {
+                    setSelectedSort(selected);
+                  }
+                  setIsSortOpen(false);
+                }}
+                open={isSortOpen}
+                onToggle={() => setIsSortOpen((prev) => !prev)}
+              >
+                <CustomDropDown.Trigger>
+                  <Styled.ApplicantFilterSelect
+                    as='div'
+                    onClick={() => setIsSortOpen((prev) => !prev)}
+                  >
+                    {selectedSort.label}
+                  </Styled.ApplicantFilterSelect>
+                  <Styled.Arrow
+                    src={selectIcon}
+                    onClick={() => setIsSortOpen((prev) => !prev)}
+                  />
+                </CustomDropDown.Trigger>
+                <CustomDropDown.Menu>
+                  {sortOptions.map(({ value, label }) => (
+                    <CustomDropDown.Item key={value} value={value}>
+                      {label}
+                    </CustomDropDown.Item>
+                  ))}
+                </CustomDropDown.Menu>
+              </CustomDropDown>
             </Styled.SelectWrapper>
             <Styled.VerticalLine />
             <Styled.SelectWrapper
@@ -339,47 +438,6 @@ const ApplicantsTab = () => {
                       ))}
                     </CustomDropDown.Menu>
                   </CustomDropDown>
-                  {/* <Styled.ApplicantAllSelectMenu open={open}>
-                    <Styled.ApplicantAllSelectMenuItem
-                      onClick={() => {
-                        if (selectAll) {
-                          setOpen(false);
-                          return;
-                        }
-                        selectApplicantsByStatus('all');
-                      }}
-                    >
-                      전체선택
-                    </Styled.ApplicantAllSelectMenuItem>
-                    <Styled.ApplicantAllSelectMenuItem
-                      onClick={() => {
-                        selectApplicantsByStatus(
-                          'filter',
-                          ApplicationStatus.SUBMITTED,
-                        );
-                      }}
-                    >
-                      서류 검토 필요
-                    </Styled.ApplicantAllSelectMenuItem>
-                    <Styled.ApplicantAllSelectMenuItem
-                      onClick={() => {
-                        selectApplicantsByStatus(
-                          'filter',
-                          ApplicationStatus.INTERVIEW_SCHEDULED,
-                        );
-                      }}
-                    >
-                      면접예정
-                    </Styled.ApplicantAllSelectMenuItem>
-                    <Styled.ApplicantAllSelectMenuItem
-                      onClick={() => {
-                        setOpen(false);
-                        checkoutAllApplicants();
-                      }}
-                    >
-                      선택해제
-                    </Styled.ApplicantAllSelectMenuItem>
-                  </Styled.ApplicantAllSelectMenu> */}
                 </Styled.ApplicantAllSelectWrapper>
               </Styled.ApplicantTableHeader>
               <Styled.ApplicantTableHeader width={120}>
