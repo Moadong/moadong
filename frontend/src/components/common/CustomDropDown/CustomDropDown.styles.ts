@@ -17,25 +17,27 @@ export const OptionList = styled.ul<OptionListProps>`
   left: ${({ right }) => (right ? 'auto' : '0')};
   width: ${({ width }) => width || '100%'};
   right: ${({ right }) => right || 'auto'};
-  background: #fff;
   border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dcdcdc;
+  background: #fff;
+  box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.12);
+  padding: 6px 0;
   z-index: 10;
+  height: auto;
   list-style: none;
 `;
 
 export const OptionItem = styled.li<{ isSelected: boolean }>`
   text-align: center;
   padding: 10px;
-  margin: 4px;
   font-weight: 600;
-  border-radius: 6px;
   color: #787878;
   background-color: ${({ isSelected }) => (isSelected ? '#DCDCDC' : '#fff')};
   cursor: pointer;
+  padding: 8px 13px;
 
   &:hover {
-    background-color: #dcdcdc;
+    background-color: #f5f5f5;
   }
 
   transition: background-color 0.2s ease;
