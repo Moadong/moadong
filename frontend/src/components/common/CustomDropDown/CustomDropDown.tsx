@@ -1,10 +1,4 @@
-import React, {
-  createContext,
-  useContext,
-  useMemo,
-  ReactNode,
-  useEffect,
-} from 'react';
+import React, { createContext, useContext, useMemo, ReactNode } from 'react';
 import * as Styled from './CustomDropDown.styles';
 
 interface DropdownOption<TValue> {

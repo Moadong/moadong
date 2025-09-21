@@ -13,7 +13,7 @@ interface OptionListProps {
 
 export const OptionList = styled.ul<OptionListProps>`
   position: absolute;
-  top: ${({ top }) => top || '100%'};
+  top: ${({ top }) => top || '110%'};
   left: ${({ right }) => (right ? 'auto' : '0')};
   width: ${({ width }) => width || '100%'};
   right: ${({ right }) => right || 'auto'};

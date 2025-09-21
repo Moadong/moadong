@@ -272,7 +272,7 @@ const ApplicantsTab = () => {
                   </Styled.ApplicantFilterSelect>
                   <Styled.Arrow src={selectIcon} />
                 </CustomDropDown.Trigger>
-                <CustomDropDown.Menu>
+                <CustomDropDown.Menu top='115%'>
                   {filterOptions.map(({ value, label }) => (
                     <CustomDropDown.Item
                       key={value}
@@ -312,7 +312,7 @@ const ApplicantsTab = () => {
                   </Styled.ApplicantFilterSelect>
                   <Styled.Arrow src={selectIcon} />
                 </CustomDropDown.Trigger>
-                <CustomDropDown.Menu>
+                <CustomDropDown.Menu top='115%'>
                   {sortOptions.map(({ value, label }) => (
                     <CustomDropDown.Item
                       key={value}
