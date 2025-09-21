@@ -10,6 +10,11 @@ interface ClubApplyButtonProps {
   deadlineText?: string;
 }
 
+const RECRUITMENT_STATUS = {
+  ALWAYS: '상시 모집',
+  CLOSED: '모집 마감',
+};
+
 const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const { clubId } = useParams<{ clubId: string }>();
   const navigate = useNavigate();
@@ -22,7 +27,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const handleClick = async () => {
     trackEvent(EVENT_NAME.CLUB_APPLY_BUTTON_CLICKED);
 
-    if (deadlineText === '모집 마감') {
+    if (deadlineText === RECRUITMENT_STATUS.CLOSED) {
       alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
       return;
     }
@@ -41,7 +46,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     }
   };
 
-  const isRecruitmentClosed = deadlineText === '모집 마감';
+  const isRecruitmentClosed = deadlineText === RECRUITMENT_STATUS.CLOSED;
 
   return (
     <Styled.ApplyButtonContainer>
@@ -50,7 +55,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
         {!isRecruitmentClosed && (
           <>
             지원하기
-            {deadlineText && deadlineText !== '상시 모집' && (
+            {deadlineText && deadlineText !== RECRUITMENT_STATUS.ALWAYS && (
               <>
                 <span style={{ margin: '0 8px', color: '#787878' }}>|</span>
                 {deadlineText}
@@ -58,7 +63,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
             )}
           </>
         )}
-        {isRecruitmentClosed && '모집 마감'}
+        {isRecruitmentClosed && RECRUITMENT_STATUS.CLOSED}
       </Styled.ApplyButton>
     </Styled.ApplyButtonContainer>
   );
