@@ -12,7 +12,7 @@ import moadong.club.enums.ClubApplicationQuestionType;
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
-public class ClubApplicationFormQuestion {
+public class ClubApplicationQuestion {
 
     @NotNull
     private Long id;
