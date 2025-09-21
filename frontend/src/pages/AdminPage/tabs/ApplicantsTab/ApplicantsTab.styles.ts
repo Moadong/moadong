@@ -160,6 +160,7 @@ export const ApplicantFilterSelect = styled.select`
   border: none;
   background: var(--f5, #f5f5f5);
   font-size: 16px;
+  color: #000;
 
   -webkit-appearance: none;
   -moz-appearance: none;

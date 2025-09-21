@@ -215,13 +215,13 @@ const ApplicantsTab = () => {
         <Styled.ApplicantListHeader>
           <Styled.FilterContainer>
             <Styled.SelectWrapper>
-              <Styled.ApplicantFilterSelect>
+              <Styled.ApplicantFilterSelect disabled={true}>
                 <option>전체</option>
               </Styled.ApplicantFilterSelect>
               <Styled.Arrow src={selectIcon} />
             </Styled.SelectWrapper>
             <Styled.SelectWrapper>
-              <Styled.ApplicantFilterSelect>
+              <Styled.ApplicantFilterSelect disabled={true}>
                 <option>제출순</option>
               </Styled.ApplicantFilterSelect>
               <Styled.Arrow src={selectIcon} />
