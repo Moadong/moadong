@@ -27,7 +27,7 @@ const MainPage = () => {
   const division = 'all';
   const searchCategory = isSearching ? 'all' : selectedCategory;
 
-  const tabs = ['중앙동아리', '가동아리', '과동아리'] as const;
+  const tabs = ['중앙동아리'] as const;
   const [active, setActive] = useState<typeof tabs[number]>('중앙동아리');
   
   const {
