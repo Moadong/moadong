@@ -5,7 +5,6 @@ import useTrackPageView from '@/hooks/useTrackPageView';
 import { useGetCardList } from '@/hooks/queries/club/useGetCardList';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
-import StatusRadioButton from '@/pages/MainPage/components/StatusRadioButton/StatusRadioButton';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
@@ -18,15 +17,13 @@ import * as Styled from './MainPage.styles';
 const MainPage = () => {
   useTrackPageView('MainPage');
 
-  const [isFilterActive, setIsFilterActive] = useState(false);
   const { selectedCategory } = useSelectedCategory();
 
   const { keyword } = useSearchKeyword();
   const { isSearching } = useSearchIsSearching();
-  const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
+  const recruitmentStatus = 'all';
   const division = 'all';
   const searchCategory = isSearching ? 'all' : selectedCategory;
-
   const tabs = ['중앙동아리'] as const;
   const [active, setActive] = useState<typeof tabs[number]>('중앙동아리');
   
