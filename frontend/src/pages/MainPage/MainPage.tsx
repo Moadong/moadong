@@ -27,6 +27,9 @@ const MainPage = () => {
   const division = 'all';
   const searchCategory = isSearching ? 'all' : selectedCategory;
 
+  const tabs = ['중앙동아리', '가동아리', '과동아리'] as const;
+  const [active, setActive] = useState<typeof tabs[number]>('중앙동아리');
+  
   const {
     data: clubs,
     error,
@@ -53,9 +56,14 @@ const MainPage = () => {
       />
       <Styled.PageContainer>
         <CategoryButtonList />
-        <Styled.FilterWrapper>
-          <StatusRadioButton onChange={setIsFilterActive} />
-        </Styled.FilterWrapper>
+        <Styled.SectionTabs>
+          {tabs
+            .map((tab) =>(
+            <Styled.Tab key={tab} $active={active===tab} onClick={() => setActive(tab)}>
+              {tab}
+            </Styled.Tab>
+          ))}
+        </Styled.SectionTabs>
         <Styled.ContentWrapper>
           {isLoading ? (
             <Spinner />
