@@ -1,15 +1,16 @@
 import styled from 'styled-components';
+import {media} from '@/styles/mediaQuery';
 
 export const PageContainer = styled.div`
   padding: 0 40px;
   max-width: 1180px;
   margin: 0 auto;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     padding: 0 20px;
   }
 
-  @media (max-width: 375px) {
+  ${media.mini_mobile} {
     padding: 0 10px;
   }
 `;
@@ -23,7 +24,7 @@ export const SectionTabs = styled.nav`
   gap: 18px;
   margin: 60px 8px 24px;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
   gap: 16px;
   margin: 32px 4px 16px;
   }
@@ -53,7 +54,7 @@ export const Tab = styled.button<{$active?: boolean}>`
     transition: transform 0.2s ease;
   }
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     font-size: 14px
   }
 `;
@@ -69,7 +70,7 @@ export const CardList = styled.div`
 
   grid-template-columns: repeat(3, 1fr);
 
-  @media (max-width: 1280px) {
+  ${media.laptop} {
     grid-template-columns: repeat(2, 1fr);
   }
 
@@ -77,7 +78,7 @@ export const CardList = styled.div`
     grid-template-columns: repeat(1, 1fr);
   }
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     gap: 16px;
     margin-top: 16px;
   }
@@ -91,7 +92,7 @@ export const EmptyResult = styled.div`
   line-height: 1.6;
   white-space: pre-line;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     font-size: 0.95rem;
   }
 `;
