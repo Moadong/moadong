@@ -28,22 +28,8 @@ export const IntroSection = styled(motion.section)`
 `;
 
 export const Container = styled.div`
-  width: min(1120px, 92vw);
-  margin: 0 auto;
   position: relative;
   z-index: 1;
-
-  ${media.laptop} {
-    width: min(900px, 90vw);
-  }
-
-  ${media.tablet} {
-    width: min(600px, 88vw);
-  }
-
-  ${media.mobile} {
-    width: min(400px, 85vw);
-  }
 `;
 
 export const Shape = styled.div<{
