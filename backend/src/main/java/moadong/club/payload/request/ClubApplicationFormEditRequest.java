@@ -6,7 +6,7 @@ import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.List;
 
-public record ClubApplicationEditRequest(
+public record ClubApplicationFormEditRequest(
         @NotBlank
         @Size(max = 50)
         String title,
@@ -14,6 +14,8 @@ public record ClubApplicationEditRequest(
         @NotBlank
         @Size(max = 3000)
         String description,
+
+        boolean active,
 
         @NotNull
         @Valid

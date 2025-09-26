@@ -3,7 +3,7 @@ package moadong.club.payload.request;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-import moadong.club.enums.ApplicationStatus;
+import moadong.club.enums.ApplicantStatus;
 
 public record ClubApplicantEditRequest(
         @NotBlank
@@ -14,6 +14,6 @@ public record ClubApplicantEditRequest(
         String memo,
 
         @NotNull
-        ApplicationStatus status
+        ApplicantStatus status
 ) {
 }

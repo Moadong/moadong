@@ -7,8 +7,8 @@ import moadong.user.payload.request.UserRegisterRequest;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public class UserFixture {
-    public static final String collectUserId = "test123458";
-    public static final String collectPassword = "test12345@";
+    public static final String collectUserId = "test1112";
+    public static final String collectPassword = "test1112@";
     public static final String collectName = "테스터";
     public static final String collectPhoneNumber = "010-1234-5678";
 
