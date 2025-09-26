@@ -23,7 +23,6 @@ import org.mockito.Mock;
 @UnitTest
 public class ClubProfileServiceTest {
 
-    private final String clubId = "club_123";
     private final String userId = "user_456";
     @Mock
     private ClubRepository clubRepository;
@@ -54,39 +53,5 @@ public class ClubProfileServiceTest {
             () -> clubProfileService.updateClubInfo(ClubRequestFixture.createValidClubInfoRequest(),
                 createUserDetails(userId)));
     }
-
-//    ToDo: 시간 계산법을 LocalDateTime에서 Instant로 변경 후에 활성화할 것
-//    @Test
-//    void updateClubRecruitmentInfo_WithDates_SchedulesRecruitment() {
-//        // Given
-//        Instant start = Instant.now().plus(1, ChronoUnit.DAYS);
-//        Instant end = Instant.now().plus(7,ChronoUnit.DAYS);
-//        ClubRecruitmentInfoUpdateRequest request = new ClubRecruitmentInfoUpdateRequest(
-//               "testId",start,end,"모집대상테스트","테스트용 설명" );
-//        Club mockClub = mock(Club.class);
-//
-//        when(clubRepository.findById(clubId)).thenReturn(Optional.of(mockClub));
-//        when(mockClub.getUserId()).thenReturn(userId);
-//
-//        // When
-//        clubProfileService.updateClubRecruitmentInfo(request, createUserDetails(userId));
-//
-//        // Then
-//        verify(recruitmentScheduler).scheduleRecruitment(clubId, start, end);
-//        verify(mockClub).update(request);
-//    }
-//
-//    @Test
-//    void updateClubRecruitmentInfo_NoDates_NoScheduling() {
-//        // Given
-//        ClubRecruitmentInfoUpdateRequest request = new ClubRecruitmentInfoUpdateRequest(
-//                clubId, null, null, /* other fields */);
-//
-//        // When
-//        clubProfileService.updateClubRecruitmentInfo(request, createUserDetails(userId));
-//
-//        // Then
-//        verifyNoInteractions(recruitmentScheduler);
-//    }
 
 }

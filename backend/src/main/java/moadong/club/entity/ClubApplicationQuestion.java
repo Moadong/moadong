@@ -3,12 +3,11 @@ package moadong.club.entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.validation.constraints.NotNull;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ClubApplicationQuestionType;
-
-import java.util.List;
 
 @AllArgsConstructor
 @Getter

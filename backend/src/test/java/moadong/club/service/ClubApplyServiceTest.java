@@ -1,7 +1,15 @@
 package moadong.club.service;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+
+import java.util.NoSuchElementException;
+import java.util.concurrent.BrokenBarrierException;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.CyclicBarrier;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubApplicationQuestion;
 import moadong.club.entity.ClubQuestion;
 import moadong.club.payload.request.ClubApplicationEditRequest;
 import moadong.club.repository.ClubQuestionRepository;
@@ -12,19 +20,11 @@ import moadong.user.entity.User;
 import moadong.user.payload.CustomUserDetails;
 import moadong.user.repository.UserRepository;
 import moadong.util.annotations.IntegrationTest;
-import org.bson.types.ObjectId;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
-import org.springframework.dao.OptimisticLockingFailureException;
-
-import java.util.NoSuchElementException;
-import java.util.concurrent.*;
-import java.util.concurrent.atomic.AtomicInteger;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @IntegrationTest
 public class ClubApplyServiceTest {

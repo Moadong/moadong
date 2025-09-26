@@ -1,7 +1,10 @@
 package moadong.club.repository;
 
-import java.util.*;
-
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;

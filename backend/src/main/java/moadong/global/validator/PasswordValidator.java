@@ -2,9 +2,8 @@ package moadong.global.validator;
 
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import moadong.global.annotation.Password;
-
 import java.util.regex.Pattern;
+import moadong.global.annotation.Password;
 
 public class PasswordValidator implements ConstraintValidator<Password, String> {
     private static final String REGEX = "^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^])(?!.*\\s).{8,20}$";
