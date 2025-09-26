@@ -57,6 +57,7 @@ public class ClubSearchService {
 
         return ClubSearchResponse.builder()
                 .clubs(result)
+                .totalCount(result.size())
                 .build();
     }
 }
