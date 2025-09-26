@@ -53,19 +53,6 @@ public class ClubApplyService {
     private final AESCipher cipher;
     private final ClubApplicationFormsRepositoryCustom clubApplicationFormsRepositoryCustom;
 
-    public List<SemesterOptionResponse> getSemesterOption(String clubId, int count) {
-        LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
-        List<OptionItem> items = buildOptionItems(baseDate, count);
-
-        return items.stream()
-                .map(it -> SemesterOptionResponse.builder()
-                        .semesterYear(it.year())
-                        .term(it.term())
-                        .isExist(clubApplicationFormsRepository.existsByClubIdAndSemesterYearAndSemesterTerm(clubId, it.year(), it.term()))
-                        .build())
-                .toList();
-
-    }
     private record OptionItem(int year, SemesterTerm term) {}
     private List<OptionItem> buildOptionItems(LocalDate baseDate, int count) {
         List<OptionItem> items = new ArrayList<>();
@@ -88,11 +75,10 @@ public class ClubApplyService {
         }
         return items;
     }
-    private static final int SEMESTER_OPTION_COUNT = 3;
+
     private void validateSemester(Integer semesterYear, SemesterTerm semesterTerm) {
         LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
-        List<OptionItem> items = buildOptionItems(baseDate, SEMESTER_OPTION_COUNT);
-
+        List<OptionItem> items = buildOptionItems(baseDate, 3);
         boolean allowed = items.stream()
                 .anyMatch(it -> it.year() == semesterYear && it.term() == semesterTerm);
         if (!allowed) {
