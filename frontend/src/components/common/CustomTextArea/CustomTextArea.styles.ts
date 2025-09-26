@@ -13,6 +13,7 @@ export const Label = styled.label`
   font-size: 1.125rem;
   margin-bottom: 12px;
   font-weight: 600;
+  color: #787878;
 `;
 
 export const TextAreaWrapper = styled.div`
@@ -25,8 +26,9 @@ export const TextArea = styled.textarea<{ hasError?: boolean }>`
   flex: 1;
   height: 45px;
   padding: 12px 18px;
-  border: 1px solid ${({ hasError }) => (hasError ? 'red' : '#c5c5c5')};
-  border-radius: 6px;
+  border: 1px solid ${({ hasError }) => (hasError ? 'red' : '#f5f5f5')};
+  border-radius: 10px;
+  background: var(--f5, #f5f5f5);
   outline: none;
   font-size: 1.125rem;
   letter-spacing: 0;
@@ -38,7 +40,7 @@ export const TextArea = styled.textarea<{ hasError?: boolean }>`
     border-color: ${({ hasError }) => (hasError ? 'red' : '#007bff')};
     box-shadow: 0 0 3px
       ${({ hasError }) =>
-    hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
+        hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
   }
 
   &:disabled {

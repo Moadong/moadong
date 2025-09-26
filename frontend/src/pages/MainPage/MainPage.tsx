@@ -1,11 +1,10 @@
 import { useState, useMemo } from 'react';
-import { useSearch } from '@/context/SearchContext';
-import { useCategory } from '@/context/CategoryContext';
+import { useSearchKeyword, useSearchIsSearching } from '@/store/useSearchStore';
+import { useSelectedCategory } from '@/store/useCategoryStore';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import { useGetCardList } from '@/hooks/queries/club/useGetCardList';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
-import StatusRadioButton from '@/pages/MainPage/components/StatusRadioButton/StatusRadioButton';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
@@ -18,14 +17,18 @@ import * as Styled from './MainPage.styles';
 const MainPage = () => {
   useTrackPageView('MainPage');
 
-  const [isFilterActive, setIsFilterActive] = useState(false);
-  const { selectedCategory, setSelectedCategory } = useCategory();
+  const { selectedCategory } = useSelectedCategory();
 
-  const { keyword, isSearching } = useSearch();
-  const recruitmentStatus = isFilterActive ? 'OPEN' : 'all';
+  const { keyword } = useSearchKeyword();
+  const { isSearching } = useSearchIsSearching();
+  const recruitmentStatus = 'all';
   const division = 'all';
   const searchCategory = isSearching ? 'all' : selectedCategory;
-
+  const tabs = ['중앙동아리'] as const;
+  const [active, setActive] = useState<typeof tabs[number]>('중앙동아리');
+  // TODO: 추후 확정되면 DivisionKey(중동/가동/과동) 같은 타입을
+  // types/club.ts에 정의해서 tabs 관리하도록 리팩터링하기
+  
   const {
     data: clubs,
     error,
@@ -52,9 +55,14 @@ const MainPage = () => {
       />
       <Styled.PageContainer>
         <CategoryButtonList />
-        <Styled.FilterWrapper>
-          <StatusRadioButton onChange={setIsFilterActive} />
-        </Styled.FilterWrapper>
+        <Styled.SectionTabs>
+          {tabs
+            .map((tab) =>(
+            <Styled.Tab key={tab} $active={active===tab} onClick={() => setActive(tab)}>
+              {tab}
+            </Styled.Tab>
+          ))}
+        </Styled.SectionTabs>
         <Styled.ContentWrapper>
           {isLoading ? (
             <Spinner />

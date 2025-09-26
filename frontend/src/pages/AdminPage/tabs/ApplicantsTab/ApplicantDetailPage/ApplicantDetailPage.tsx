@@ -14,12 +14,7 @@ import { Question } from '@/types/application';
 import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
 import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
 import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
-
-const AVAILABLE_STATUSES = [
-  ApplicationStatus.SUBMITTED, // 서류검토 (SUBMITTED 포함)
-  ApplicationStatus.INTERVIEW_SCHEDULED, // 면접예정
-  ApplicationStatus.ACCEPTED, // 합격
-] as const;
+import { AVAILABLE_STATUSES } from '@/constants/status';
 
 const getStatusColor = (status: ApplicationStatus | undefined): string => {
   switch (status) {
@@ -29,6 +24,8 @@ const getStatusColor = (status: ApplicationStatus | undefined): string => {
       return '#E5F6FF';
     case ApplicationStatus.INTERVIEW_SCHEDULED:
       return '#E9FFF1';
+    case ApplicationStatus.DECLINED:
+      return '#FFE8E8';
     default:
       return 'var(--f5, #F5F5F5)';
   }
@@ -38,11 +35,13 @@ const ApplicantDetailPage = () => {
   const { questionId } = useParams<{ questionId: string }>();
   const navigate = useNavigate();
   const [applicantMemo, setAppMemo] = useState('');
-  const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(ApplicationStatus.SUBMITTED);
+  const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
+    ApplicationStatus.SUBMITTED,
+  );
   const { applicantsData, clubId } = useAdminClubContext();
 
   const { data: formData, isLoading, isError } = useGetApplication(clubId!);
-  const { mutate: updateApplicant } = useUpdateApplicant(clubId!, questionId!);
+  const { mutate: updateApplicant } = useUpdateApplicant(clubId!);
 
   const applicantIndex =
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
@@ -58,20 +57,23 @@ const ApplicantDetailPage = () => {
   const updateApplicantDetail = useMemo(
     () =>
       debounce((memo, status) => {
-
         function isApplicationStatus(v: unknown): v is ApplicationStatus {
-          return typeof v === 'string' && Object.values(ApplicationStatus).includes(v as ApplicationStatus);
+          return (
+            typeof v === 'string' &&
+            Object.values(ApplicationStatus).includes(v as ApplicationStatus)
+          );
         }
 
         if (typeof memo !== 'string') return;
         if (!isApplicationStatus(status)) return;
 
-        updateApplicant(
+        updateApplicant([
           {
-            memo, 
-            status
-          }
-        );
+            memo,
+            status,
+            applicantId: questionId,
+          },
+        ]);
       }, 400),
     [clubId, questionId],
   );
