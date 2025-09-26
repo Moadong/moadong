@@ -49,14 +49,17 @@ public class ClubApplyController {
         return Response.ok("success create application");
     }
 
-    @GetMapping("/apply")
+    @GetMapping("/application")
     @Operation(summary = "클럽 지원서 양식들 불러오기", description = "클럽 지원서 양식들을 학기별로 분류하여 불러옵니다")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getClubApplications(@PathVariable String clubId,
+                                                 @CurrentUser CustomUserDetails user,
                                                  @RequestParam(defaultValue = "agg") String mode) {  //agg면 aggregation사용, server면, 서비스에서 그룹 및 정렬
         if("server".equalsIgnoreCase(mode)) {
-            return Response.ok(clubApplyService.getGroupedClubApplicationForms(clubId));
+            return Response.ok(clubApplyService.getGroupedClubApplicationForms(clubId, user));
         }
-        return Response.ok(clubApplyService.getClubApplicationForms(clubId));
+        return Response.ok(clubApplyService.getClubApplicationForms(clubId, user));
     }
 
     @PutMapping("/application/{applicationFormId}")

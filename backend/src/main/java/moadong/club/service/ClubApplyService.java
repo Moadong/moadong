@@ -138,12 +138,16 @@ public class ClubApplyService {
         return Response.ok(clubApplicationFormResponse);
     }
 
-    public ClubApplicationFormsResponse getClubApplicationForms(String clubId) {
+    public ClubApplicationFormsResponse getClubApplicationForms(String clubId, CustomUserDetails user) {
+        validateClubOwner(clubId, user);
+
         return ClubApplicationFormsResponse.builder()
                 .forms(clubApplicationFormsRepositoryCustom.findClubApplicationFormsByClubId(clubId))
                 .build();
     }
-    public ClubApplicationFormsResponse getGroupedClubApplicationForms(String clubId) {
+    public ClubApplicationFormsResponse getGroupedClubApplicationForms(String clubId, CustomUserDetails user) {
+        validateClubOwner(clubId, user);
+
         Sort sort = Sort.by(Sort.Direction.DESC, "editedAt")
                 .and(Sort.by(Sort.Direction.DESC, "id"));
         List<ClubApplicationFormSlim> questionSlims = clubApplicationFormsRepository.findClubApplicationFormsByClubId(clubId, sort);
