@@ -1,6 +1,5 @@
 import * as Styled from './ClubDetailHeader.styles';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
-import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
 
 interface ClubDetailHeaderProps {
   name: string;
@@ -29,7 +28,6 @@ const ClubDetailHeader = ({
         tags={tags}
         logo={logo}
       />
-      <ClubApplyButton />
     </Styled.ClubDetailHeaderContainer>
   );
 };

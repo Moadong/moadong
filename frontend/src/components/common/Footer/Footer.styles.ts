@@ -4,7 +4,6 @@ import { media } from '@/styles/mediaQuery';
 export const FooterContainer = styled.footer`
   text-align: left;
   font-size: 0.75rem;
-  margin-top: 50px;
 `;
 
 export const Divider = styled.hr`
@@ -35,7 +34,6 @@ export const PolicyLink = styled.a`
     opacity: 0.8;
   }
 `;
-
 
 export const CopyRightText = styled.p``;
 

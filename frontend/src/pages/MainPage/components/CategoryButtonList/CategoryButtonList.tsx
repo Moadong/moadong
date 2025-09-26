@@ -1,12 +1,6 @@
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './CategoryButtonList.styles';
-import iconAll from '@/assets/images/icons/category_button/category_all_button_icon.svg';
-import iconVolunteer from '@/assets/images/icons/category_button/category_volunteer_button_icon.svg';
-import iconReligion from '@/assets/images/icons/category_button/category_religion_button_icon.svg';
-import iconHobby from '@/assets/images/icons/category_button/category_hobby_button_icon.svg';
-import iconStudy from '@/assets/images/icons/category_button/category_study_button_icon.svg';
-import iconSport from '@/assets/images/icons/category_button/category_sport_button_icon.svg';
-import iconPerformance from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
+import { inactiveCategoryIcons, activeCategoryIcons } from '@/assets/images/icons/category_button';
 import { useSearchStore } from '@/store/useSearchStore';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { EVENT_NAME } from '@/constants/eventName';
@@ -14,21 +8,21 @@ import { EVENT_NAME } from '@/constants/eventName';
 interface Category {
   id: string;
   name: string;
-  icon: string;
+  type: string;
 }
 
 const clubCategories: Category[] = [
-  { id: 'all', name: '전체', icon: iconAll },
-  { id: '봉사', name: '봉사', icon: iconVolunteer },
-  { id: '종교', name: '종교', icon: iconReligion },
-  { id: '취미교양', name: '취미교양', icon: iconHobby },
-  { id: '학술', name: '학술', icon: iconStudy },
-  { id: '운동', name: '운동', icon: iconSport },
-  { id: '공연', name: '공연', icon: iconPerformance },
+  { id: 'all', name: '전체', type: 'all' },
+  { id: '봉사', name: '봉사', type: 'volunteer' },
+  { id: '종교', name: '종교', type: 'religion' },
+  { id: '취미교양', name: '취미교양', type: 'hobby' },
+  { id: '학술', name: '학술', type: 'study' },
+  { id: '운동', name: '운동', type: 'sport' },
+  { id: '공연', name: '공연', type: 'performance' },
 ];
 
 const CategoryButtonList = () => {
-  const { setSelectedCategory } = useSelectedCategory();
+  const { selectedCategory, setSelectedCategory } = useSelectedCategory();
   const trackEvent = useMixpanelTrack();
 
   const handleCategoryClick = (category: Category) => {
@@ -50,7 +44,10 @@ const CategoryButtonList = () => {
           key={category.id}
           onClick={() => handleCategoryClick(category)}
         >
-          <img src={category.icon} alt={category.name} />
+          <img src={selectedCategory === category.id ? 
+            activeCategoryIcons[category.type] : inactiveCategoryIcons[category.type]} 
+            alt={category.name} 
+          />
           <span>{category.name}</span>
         </Styled.CategoryButton>
       ))}

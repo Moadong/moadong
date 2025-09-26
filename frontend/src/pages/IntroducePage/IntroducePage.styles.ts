@@ -1,21 +1,18 @@
 import styled from 'styled-components';
-import { HeaderStyles } from '@/components/common/Header/Header.styles';
-import { FooterContainer } from '@/components/common/Footer/Footer.styles';
 
-export const IntroducePageHeader = styled(HeaderStyles)`
-  max-width: none;
-
-  @media (max-width: 500px) {
-    display: flex;
-  }
+export const IntroducePageHeader = styled.header`
+  width: 100%;
+  background: #fff;
 `;
-
-export const IntroducePageFooter = styled(FooterContainer)`
-  margin-top: -50px;
+export const IntroducePageFooter = styled.footer`
+  background: #fff;
+  border-top: 1px solid #eee;
 `;
-
-export const IntroduceImage = styled.img`
-  width: 100vw;
-  height: auto;
-  margin-top: 62px;
+export const Main = styled.main`
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  overflow-x: hidden;
 `;

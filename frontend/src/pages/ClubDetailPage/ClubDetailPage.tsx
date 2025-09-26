@@ -13,9 +13,7 @@ import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import ShareButton from '@/pages/ClubDetailPage/components/ShareButton/ShareButton';
 import RecommendedClubs from '@/pages/ClubDetailPage/components/RecommendedClubs/RecommendedClubs';
-import { Club } from '@/types/club';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
@@ -58,7 +56,6 @@ const ClubDetailPage = () => {
           recruitmentForm={clubDetail.recruitmentForm}
           presidentPhoneNumber={clubDetail.presidentPhoneNumber}
         />
-        <ShareButton clubId={clubId as string} />
         <InfoTabs onTabClick={scrollToSection} />
         <InfoBox sectionRefs={sectionRefs} clubDetail={clubDetail} />
         <IntroduceBox
@@ -70,15 +67,12 @@ const ClubDetailPage = () => {
           feeds={clubDetail.feeds}
           clubName={clubDetail.name}
         />
-        <RecommendedClubs
-        clubs={clubDetail.recommendClubs ?? []} />
-        
+        <RecommendedClubs clubs={clubDetail.recommendClubs ?? []} />
       </Styled.PageContainer>
       <Footer />
       <ClubDetailFooter
         recruitmentPeriod={clubDetail.recruitmentPeriod}
         recruitmentForm={clubDetail.recruitmentForm}
-        presidentPhoneNumber={clubDetail.presidentPhoneNumber}
       />
     </>
   );

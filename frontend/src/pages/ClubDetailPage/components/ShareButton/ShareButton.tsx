@@ -1,8 +1,7 @@
-import React from 'react';
 import * as Styled from './ShareButton.styles';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import KakaoIcon from '@/assets/images/icons/kakaotalk_sharing_btn_small.png';
+import ShareIcon from '@/assets/images/icons/share_filled_icon.svg';
 import { EVENT_NAME } from '@/constants/eventName';
 
 interface ShareButtonProps {
@@ -17,12 +16,14 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
   const { data: clubDetail } = useGetClubDetail(clubId);
   const trackEvent = useMixpanelTrack();
 
+  if (!clubDetail) return;
+
   const handleShare = () => {
     if (!window.Kakao || !window.Kakao.isInitialized()) {
       alert('카카오 SDK가 아직 준비되지 않았습니다.');
       return;
     }
-    if (!clubDetail) return;
+
     window.Kakao.Share.sendDefault({
       objectType: 'feed',
       content: {
@@ -53,7 +54,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
       role='button'
       aria-label='카카오톡으로 동아리 정보 공유하기'
     >
-      <img src={KakaoIcon} alt='카카오톡 공유' />
+      <img src={ShareIcon} alt='카카오톡 공유' />
     </Styled.ShareButtonContainer>
   );
 };
