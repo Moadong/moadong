@@ -30,7 +30,8 @@ const ClubCard = ({ club }: { club: Club }) => {
     <Styled.CardContainer
       $state={club.recruitmentStatus}
       $isClicked={isClicked}
-      onClick={handleNavigate}>
+      onClick={handleNavigate}
+    >
       <Styled.CardHeader>
         <Styled.ClubProfile>
           <ClubLogo $imageSrc={club.logo || default_profile_image} />

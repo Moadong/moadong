@@ -14,7 +14,7 @@ interface BannerComponentProps {
 
 const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   const slideRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
+  const [isMobile, setIsMobile] = useState(false);
   const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
   const [slideWidth, setSlideWidth] = useState(0);
   const [isAnimating, setIsAnimating] = useState(false);
@@ -39,9 +39,12 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   }, [currentSlideIndex, isReady]);
 
   useEffect(() => {
+    const checkIsMobile = () => window.innerWidth <= 500;
+    setIsMobile(checkIsMobile());
+
     updateSlideWidth();
     const handleResize = debounce(() => {
-      setIsMobile(window.innerWidth <= 500);
+      setIsMobile(checkIsMobile());
       setIsReady(false);
       setIsAnimating(false);
       updateSlideWidth();

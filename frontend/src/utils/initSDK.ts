@@ -3,8 +3,8 @@ import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import * as Sentry from '@sentry/react';
 
 export function initializeMixpanel() {
-  if (process.env.REACT_APP_MIXPANEL_TOKEN) {
-    mixpanel.init(process.env.REACT_APP_MIXPANEL_TOKEN, {
+  if (import.meta.env.VITE_MIXPANEL_TOKEN) {
+    mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
       ip: false,
       debug: false,
     });
