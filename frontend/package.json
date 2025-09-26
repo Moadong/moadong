@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "vike preview",
     "build": "vike build",
-    "build:dev": "tsx ./node_modules/webpack-cli/bin/cli.js --config config/webpack.dev.ts",
-    "build:prod": "tsx ./node_modules/webpack-cli/bin/cli.js --config config/webpack.prod.ts",
+    "build:dev": "vike build",
+    "build:prod": "vike build",
     "clean": "rm -rf dist",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,css,scss}\"",
     "lint": "eslint --fix",
