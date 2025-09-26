@@ -85,6 +85,10 @@ public class ClubApplicationForm implements Persistable<String> {
         this.semesterTerm = semesterTerm;
     }
 
+    public void updateFormStatus(boolean activeFlag) {
+        this.status = ApplicationFormStatus.fromFlag(this.status, activeFlag);
+    }
+
     @Override
     public boolean isNew() {
         return this.version == null;

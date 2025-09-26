@@ -15,6 +15,8 @@ public record ClubApplicationFormEditRequest(
         @Size(max = 3000)
         String description,
 
+        boolean active,
+
         @NotNull
         @Valid
         List<ClubApplyQuestion> questions

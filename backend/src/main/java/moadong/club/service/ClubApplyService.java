@@ -94,8 +94,6 @@ public class ClubApplyService {
         ClubApplicationForm clubApplicationForm = createQuestions(
                 ClubApplicationForm.builder()
                         .clubId(clubId)
-                        .semesterYear(request.semesterYear())
-                        .semesterTerm(request.semesterTerm())
                         .build(),
                 request);
         clubApplicationFormsRepository.save(createQuestions(clubApplicationForm, request));
@@ -432,6 +430,7 @@ public void applyToClub(String clubId, String applicationFormId, ClubApplyReques
         clubApplicationForm.updateQuestions(newQuestions);
         clubApplicationForm.updateFormTitle(request.title());
         clubApplicationForm.updateFormDescription(request.description());
+        clubApplicationForm.updateFormStatus(request.active());
 
         return clubApplicationForm;
     }
