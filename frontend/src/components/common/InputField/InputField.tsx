@@ -17,6 +17,7 @@ interface CustomInputProps {
   isError?: boolean;
   helperText?: string;
   readOnly?: boolean;
+  isSuccess?: boolean;
 }
 
 const InputField = ({
@@ -34,6 +35,7 @@ const InputField = ({
   isError,
   helperText,
   readOnly = false,
+  isSuccess,
 }: CustomInputProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
@@ -71,6 +73,7 @@ const InputField = ({
           maxLength={maxLength}
           disabled={disabled}
           hasError={isError}
+          isSuccess={isSuccess}
           readOnly={readOnly}
         />
         {showClearButton && !disabled && (

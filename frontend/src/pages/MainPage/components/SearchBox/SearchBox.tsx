@@ -1,12 +1,13 @@
-import { useSearch } from '@/context/SearchContext';
-import { useCategory } from '@/context/CategoryContext';
+import { useSearchInput } from '@/store/useSearchStore';
+import { useSelectedCategory } from '@/store/useCategoryStore';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import SearchField from '@/components/common/SearchField/SearchField';
 import { useLocation, useNavigate } from 'react-router-dom';
 
 const SearchBox = () => {
-  const { setKeyword, inputValue, setInputValue, setIsSearching } = useSearch();
-  const { setSelectedCategory } = useCategory();
+  const { setKeyword, inputValue, setInputValue, setIsSearching } =
+    useSearchInput();
+  const { setSelectedCategory } = useSelectedCategory();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
   const location = useLocation();

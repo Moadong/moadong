@@ -19,6 +19,11 @@ const stateStyles: Record<
     color: '#818181',
     text: '모집마감',
   },
+  ALWAYS: {
+    backgroundColor: 'rgba(235, 250, 241, 1)',
+    color: '#3ACD73',
+    text: '상시모집'
+  }
 };
 
 const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
