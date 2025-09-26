@@ -17,6 +17,7 @@ public class ClubApplicationEditFixture {
         return new ClubApplicationFormEditRequest(
                 "테스트123",
                 "테스트 지원서입니다",
+                false,
                 new ArrayList<>()
         );
     }
