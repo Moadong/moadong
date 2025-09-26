@@ -231,6 +231,7 @@ export const CardImage = styled(motion.div)<{
   transform?: string;
 }>`
   position: absolute;
+  pointer-events: none;
   top: ${({ top }) => top || 'auto'};
   left: ${({ left }) => left || 'auto'};
   right: ${({ right }) => right || 'auto'};

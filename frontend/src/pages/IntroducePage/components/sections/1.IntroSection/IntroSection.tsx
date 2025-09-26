@@ -110,7 +110,6 @@ const IntroSection = () => {
                 key={club.id}
                 variants={fadeUp}
                 {...cardPositions[index]}
-                style={{ pointerEvents: 'none' }}
               >
                 <ClubCard club={club} />
               </Styled.CardImage>
