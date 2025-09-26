@@ -10,6 +10,8 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import moadong.club.enums.ApplicantStatus;
+import moadong.club.enums.ApplicationFormStatus;
 import moadong.club.enums.SemesterTerm;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
@@ -51,6 +53,9 @@ public class ClubApplicationForm implements Persistable<String> {
     @Builder.Default
     private SemesterTerm semesterTerm = (ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getMonthValue() < 7)
             ? SemesterTerm.FIRST : SemesterTerm.SECOND; //1학기, 2학기
+
+    @Builder.Default
+    private ApplicationFormStatus status = ApplicationFormStatus.UNPUBLISHED;
 
     @Version
     private Long version;
