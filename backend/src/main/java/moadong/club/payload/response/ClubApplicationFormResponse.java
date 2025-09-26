@@ -2,6 +2,7 @@ package moadong.club.payload.response;
 
 import lombok.Builder;
 import moadong.club.entity.ClubApplicationFormQuestion;
+import moadong.club.enums.ApplicationFormStatus;
 import moadong.club.enums.SemesterTerm;
 
 import java.util.List;
@@ -12,6 +13,7 @@ public record ClubApplicationFormResponse(
         String description,
         List<ClubApplicationFormQuestion> questions,
         Integer semesterYear,
-        SemesterTerm semesterTerm
+        SemesterTerm semesterTerm,
+        ApplicationFormStatus status
 ) {
 }

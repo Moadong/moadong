@@ -131,6 +131,7 @@ public class ClubApplyService {
                 .questions(clubApplicationForm.getQuestions())
                 .semesterYear(clubApplicationForm.getSemesterYear())
                 .semesterTerm(clubApplicationForm.getSemesterTerm())
+                .status(clubApplicationForm.getStatus())
                 .build();
 
         return Response.ok(clubApplicationFormResponse);
