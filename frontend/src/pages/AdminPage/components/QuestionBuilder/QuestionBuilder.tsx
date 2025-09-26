@@ -7,8 +7,9 @@ import { QuestionBuilderProps } from '@/types/application';
 import { QUESTION_LABEL_MAP } from '@/constants/APPLICATION_FORM';
 import { DROPDOWN_OPTIONS } from '@/constants/APPLICATION_FORM';
 import * as Styled from './QuestionBuilder.styles';
-import CustomDropdown from '@/components/common/CustomDropDown/CustomDropDown';
 import DeleteIcon from '@/assets/images/icons/delete_question.svg';
+import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
+import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
 
 const QuestionBuilder = ({
   id,
@@ -32,6 +33,8 @@ const QuestionBuilder = ({
   const [selectionType, setSelectionType] = useState<'single' | 'multi'>(
     type === 'MULTI_CHOICE' ? 'multi' : 'single',
   );
+
+  const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
   useEffect(() => {
     if (type === 'MULTI_CHOICE') {
@@ -118,6 +121,11 @@ const QuestionBuilder = ({
     );
   };
 
+  const selectedType = type === 'MULTI_CHOICE' ? 'CHOICE' : type;
+  const selectedLabel = DROPDOWN_OPTIONS.find(
+    (option) => option.value === selectedType,
+  )?.label;
+
   return (
     <Styled.QuestionWrapper readOnly={readOnly}>
       <Styled.QuestionMenu>
@@ -127,13 +135,32 @@ const QuestionBuilder = ({
           답변 필수
           <Styled.RequiredToggleCircle active={options?.required} />
         </Styled.RequiredToggleButton>
-        <CustomDropdown
-          selected={type === 'MULTI_CHOICE' ? 'CHOICE' : type}
+        <CustomDropDown
+          selected={selectedType}
           options={DROPDOWN_OPTIONS}
           onSelect={(value) => {
             onTypeChange?.(value as QuestionType);
           }}
-        />
+          open={isDropdownOpen}
+          onToggle={() => setIsDropdownOpen((prev) => !prev)}
+        >
+          <CustomDropDown.Trigger>
+            <Styled.Selected
+              open={isDropdownOpen}
+              onClick={() => setIsDropdownOpen((prev) => !prev)}
+            >
+              <span>{selectedLabel}</span>
+              <Styled.Icon src={dropdown_icon} alt='드롭다운 버튼' />
+            </Styled.Selected>
+          </CustomDropDown.Trigger>
+          <CustomDropDown.Menu>
+            {DROPDOWN_OPTIONS.map(({ label, value }) => (
+              <CustomDropDown.Item key={value} value={value}>
+                {label}
+              </CustomDropDown.Item>
+            ))}
+          </CustomDropDown.Menu>
+        </CustomDropDown>
         {renderSelectionToggle()}
         {!readOnly && (
           <Styled.DeleteButton type='button' onClick={() => onRemoveQuestion()}>
