@@ -9,8 +9,6 @@ import jakarta.validation.constraints.Size;
 import java.util.List;
 import moadong.club.enums.SemesterTerm;
 
-import java.util.List;
-
 public record ClubApplicationFormCreateRequest(
         @NotBlank
         @Size(max = 50)

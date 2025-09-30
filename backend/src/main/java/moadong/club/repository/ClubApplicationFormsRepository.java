@@ -24,7 +24,4 @@ public interface ClubApplicationFormsRepository extends MongoRepository<ClubAppl
             fields = "{'_id':  1, 'title':  1, 'editedAt': 1, 'semesterYear':  1, 'semesterTerm':  1}"
     ) //필드 5개만 가져옴
     List<ClubApplicationFormSlim> findClubApplicationFormsByClubId(String clubId, Sort sort);
-
-    boolean existsByClubIdAndSemesterYearAndSemesterTerm(String clubId, Integer semesterYear, SemesterTerm semesterTerm);
-
 }
