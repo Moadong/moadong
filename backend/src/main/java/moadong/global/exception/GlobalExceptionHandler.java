@@ -21,8 +21,8 @@ public class GlobalExceptionHandler {
         String finalErrorMessage = field + " : " + message;
 
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(new Response("BAD_REQUEST", finalErrorMessage, null));
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new Response("BAD_REQUEST", finalErrorMessage, null));
     }
 
     @ExceptionHandler({OptimisticLockingFailureException.class, UncategorizedMongoDbException.class})
@@ -41,8 +41,7 @@ public class GlobalExceptionHandler {
 
     private ResponseEntity<Response> handleExceptionInternal(ErrorCode errorCode) {
         return ResponseEntity
-            .status(errorCode.getHttpStatus())
-            .body(new Response(errorCode.getCode(), errorCode.getMessage(), null));
+                .status(errorCode.getHttpStatus())
+                .body(new Response(errorCode.getCode(), errorCode.getMessage(), null));
     }
 }
-
