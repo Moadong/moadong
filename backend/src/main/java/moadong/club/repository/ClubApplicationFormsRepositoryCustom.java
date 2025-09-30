@@ -26,7 +26,7 @@ public class ClubApplicationFormsRepositoryCustom {
 
         operations.add(Aggregation.match(Criteria.where("clubId").is(clubId)));
         operations.add(Aggregation.project()
-                .and("_id").as("id")
+                .and("_id").as("_id")
                 .and("title").as("title")
                 .and("editedAt").as("editedAt")
                 .and("semesterYear").as("semesterYear")
