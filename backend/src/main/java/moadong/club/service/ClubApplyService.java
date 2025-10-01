@@ -20,19 +20,13 @@ import moadong.club.entity.ClubQuestionItem;
 import moadong.club.entity.ClubQuestionOption;
 import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.enums.SemesterTerm;
-import moadong.club.payload.dto.ClubApplicantsResult;
-import moadong.club.payload.dto.ClubApplicationFormSlim;
-import moadong.club.payload.dto.ClubApplicationFormsResultItem;
-import moadong.club.payload.dto.ClubApplicationFormsResult;
+import moadong.club.payload.dto.*;
 import moadong.club.payload.request.ClubApplicationFormCreateRequest;
 import moadong.club.payload.request.ClubApplicationFormEditRequest;
 import moadong.club.payload.request.ClubApplicantEditRequest;
 import moadong.club.payload.request.ClubApplicantDeleteRequest;
 import moadong.club.payload.request.ClubApplyRequest;
-import moadong.club.payload.response.ClubApplicationFormResponse;
-import moadong.club.payload.response.ClubApplyInfoResponse;
-import moadong.club.payload.response.ClubApplicationFormsResponse;
-import moadong.club.payload.response.SemesterOptionResponse;
+import moadong.club.payload.response.*;
 import moadong.club.repository.*;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
@@ -103,7 +97,7 @@ public class ClubApplyService {
     public void editClubApplication(String clubId, String applicationFormId, CustomUserDetails user, ClubApplicationFormEditRequest request) {
         validateClubOwner(clubId, user);
 
-        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(applicationFormId)
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
         clubApplicationForm.updateEditedAt();
@@ -202,8 +196,29 @@ public class ClubApplyService {
     private record SemesterKey(Integer year, SemesterTerm term) {}
 
 
+    public ClubActiveFormsResponse getActiveApplicationForms(String clubId) {
+        List<ClubActiveFormSlim> forms = clubApplicationFormsRepository.findClubActiveFormsByClubId(clubId);
 
-public void applyToClub(String clubId, String applicationFormId, ClubApplyRequest request) {
+        if(forms == null || forms.isEmpty())
+            throw new RestApiException(ErrorCode.ACTIVE_APPLICATION_NOT_FOUND);
+
+        List<ClubActiveFormResult> results = new ArrayList<>();
+        for (ClubActiveFormSlim form : forms) {
+            ClubActiveFormResult result = ClubActiveFormResult.builder()
+                    .id(form.getId())
+                    .title(form.getTitle())
+                    .description(form.getDescription())
+                    .build();
+            results.add(result);
+        }
+
+        return ClubActiveFormsResponse.builder()
+                .forms(results)
+                .build();
+
+    }
+
+    public void applyToClub(String clubId, String applicationFormId, ClubApplyRequest request) {
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 

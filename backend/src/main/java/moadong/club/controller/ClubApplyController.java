@@ -49,19 +49,6 @@ public class ClubApplyController {
         return Response.ok("success create application");
     }
 
-    @GetMapping("/application")
-    @Operation(summary = "클럽 지원서 양식들 불러오기", description = "클럽 지원서 양식들을 학기별로 분류하여 불러옵니다")
-    @PreAuthorize("isAuthenticated()")
-    @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> getClubApplications(@PathVariable String clubId,
-                                                 @CurrentUser CustomUserDetails user,
-                                                 @RequestParam(defaultValue = "agg") String mode) {  //agg면 aggregation사용, server면, 서비스에서 그룹 및 정렬
-        if("server".equalsIgnoreCase(mode)) {
-            return Response.ok(clubApplyService.getGroupedClubApplicationForms(clubId, user));
-        }
-        return Response.ok(clubApplyService.getClubApplicationForms(clubId, user));
-    }
-
     @PutMapping("/application/{applicationFormId}")
     @Operation(summary = "클럽 지원서 양식 수정", description = "클럽 지원서 양식을 수정합니다")
     @PreAuthorize("isAuthenticated()")
@@ -74,6 +61,19 @@ public class ClubApplyController {
         return Response.ok("success edit application");
     }
 
+    @GetMapping("/application")
+    @Operation(summary = "클럽의 모든 지원서 양식 목록 불러오기", description = "클럽의 모든 지원서 양식들을 학기별로 분류하여 불러옵니다")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> getClubApplications(@PathVariable String clubId,
+                                                 @CurrentUser CustomUserDetails user,
+                                                 @RequestParam(defaultValue = "agg") String mode) {  //agg면 aggregation사용, server면, 서비스에서 그룹 및 정렬
+        if("server".equalsIgnoreCase(mode)) {
+            return Response.ok(clubApplyService.getGroupedClubApplicationForms(clubId, user));
+        }
+        return Response.ok(clubApplyService.getClubApplicationForms(clubId, user));
+    }
+
     @GetMapping("/apply/{applicationFormId}")
     @Operation(summary = "클럽 지원서 양식 불러오기", description = "클럽 지원서 양식을 불러옵니다")
     public ResponseEntity<?> getClubApplication(@PathVariable String clubId,
@@ -83,11 +83,17 @@ public class ClubApplyController {
 
     @PostMapping("/apply/{applicationFormId}")
     @Operation(summary = "클럽 지원", description = "클럽에 지원합니다")
-    public ResponseEntity<?>  applyToClub(@PathVariable String clubId,
+    public ResponseEntity<?> applyToClub(@PathVariable String clubId,
                                           @PathVariable String applicationFormId,
                                           @RequestBody @Validated ClubApplyRequest request) {
         clubApplyService.applyToClub(clubId, applicationFormId, request);
         return Response.ok("success apply");
+    }
+
+    @GetMapping("/apply")
+    @Operation(summary = "클럽의 활성화된 지원서 목록 불러오기", description = "클럽의 활성화된 모든 지원서 목록을 불러옵니다")
+    public ResponseEntity<?> getActiveApplicationForms(@PathVariable String clubId) {
+        return Response.ok(clubApplyService.getActiveApplicationForms(clubId));
     }
 
     @GetMapping("/apply/info/{applicationFormId}")
