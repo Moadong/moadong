@@ -90,11 +90,11 @@ public class ClubApplyController {
         return Response.ok("success apply");
     }
 
-    @GetMapping("/apply")
+    /*@GetMapping("/apply")
     @Operation(summary = "클럽의 활성화된 지원서 목록 불러오기", description = "클럽의 활성화된 모든 지원서 목록을 불러옵니다")
     public ResponseEntity<?> getActiveApplicationForms(@PathVariable String clubId) {
         return Response.ok(clubApplyService.getActiveApplicationForms(clubId));
-    }
+    }*/
 
     @GetMapping("/apply/info/{applicationFormId}")
     @Operation(summary = "클럽 지원자 현황", description = "클럽 지원자 현황을 불러옵니다")
@@ -121,7 +121,7 @@ public class ClubApplyController {
         return Response.ok("success edit applicant");
     }
 
-    @DeleteMapping("/applicant/{applicationFormId}")
+    @DeleteMapping("/applicant/{applicationFormId}") //
     @Operation(summary = "지원자 삭제",
             description = "클럽 지원자의 지원서를 삭제합니다"
     )

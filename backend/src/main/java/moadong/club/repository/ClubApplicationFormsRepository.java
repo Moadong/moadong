@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 
 import moadong.club.entity.ClubApplicationForm;
+import moadong.club.enums.ApplicationFormStatus;
 import moadong.club.payload.dto.ClubActiveFormSlim;
 import moadong.club.payload.dto.ClubApplicationFormSlim;
 import org.springframework.data.domain.Sort;
@@ -29,4 +30,8 @@ public interface ClubApplicationFormsRepository extends MongoRepository<ClubAppl
             fields = "{'_id': 1, 'title':  1, 'description': 1}"
     )
     List<ClubActiveFormSlim> findClubActiveFormsByClubId(String clubId);
+
+    //clubApply api v1 종료 후 삭제 예정
+    Optional<ClubApplicationForm> findTopByClubIdAndStatusOrderByEditedAtDesc(String clubId, ApplicationFormStatus status);
 }
+
