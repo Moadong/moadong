@@ -20,7 +20,7 @@ public interface ClubApplicationFormsRepository extends MongoRepository<ClubAppl
 
     @Query(
             value = "{'clubId':  ?0}",
-            fields = "{'_id':  1, 'title':  1, 'editedAt': 1, 'semesterYear':  1, 'semesterTerm':  1}"
+            fields = "{'_id':  1, 'title':  1, 'editedAt': 1, 'semesterYear':  1, 'semesterTerm':  1, 'status':  1}"
     ) //필드 5개만 가져옴
     List<ClubApplicationFormSlim> findClubApplicationFormsByClubId(String clubId, Sort sort);
 

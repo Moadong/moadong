@@ -155,7 +155,9 @@ public class ClubApplyService {
                     .add(new ClubApplicationFormsResultItem(
                             s.getId(),
                             s.getTitle(),
-                            editedAt
+                            editedAt,
+                            s.getStatus()
+
                     ));
         }
 
