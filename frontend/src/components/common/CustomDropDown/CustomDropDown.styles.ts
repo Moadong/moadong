@@ -6,18 +6,16 @@ export const DropDownWrapper = styled.div`
   cursor: pointer;
 `;
 
-interface OptionListProps {
-  top?: string;
-  width?: string;
-  right?: string;
-}
-
-export const OptionList = styled.ul<OptionListProps>`
+export const OptionList = styled.ul<{
+  $top?: string;
+  $width?: string;
+  $right?: string;
+}>`
   position: absolute;
-  top: ${({ top }) => top || '110%'};
-  left: ${({ right }) => (right ? 'auto' : '0')};
-  width: ${({ width }) => width || '100%'};
-  right: ${({ right }) => right || 'auto'};
+  top: ${({ $top }) => $top || '110%'};
+  left: ${({ $right }) => ($right ? 'auto' : '0')};
+  width: ${({ $width }) => $width || '100%'};
+  right: ${({ $right }) => $right || 'auto'};
   border-radius: 6px;
   border: 1px solid #dcdcdc;
   background: #fff;
@@ -28,14 +26,14 @@ export const OptionList = styled.ul<OptionListProps>`
   list-style: none;
 `;
 
-export const OptionItem = styled.li<{ isSelected: boolean }>`
+export const OptionItem = styled.li<{ $isSelected: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
   text-align: center;
   font-weight: 600;
   color: #787878;
-  background-color: ${({ isSelected }) => (isSelected ? '#f5f5f5' : '#fff')};
+  background-color: ${({ $isSelected }) => ($isSelected ? '#f5f5f5' : '#fff')};
   cursor: pointer;
   padding: 8px 13px;
   height: 27px;

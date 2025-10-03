@@ -67,7 +67,7 @@ interface MenuProps {
 const Menu = ({ children, top, width, right }: MenuProps) => {
   const { open } = useDropDownContext();
   return open ? (
-    <Styled.OptionList top={top} width={width} right={right}>
+    <Styled.OptionList $top={top} $width={width} $right={right}>
       {children}
     </Styled.OptionList>
   ) : null;
@@ -77,7 +77,7 @@ const Item = ({ value, children, style }: ItemProps<any>) => {
   const { selected, handleSelect } = useDropDownContext();
   return (
     <Styled.OptionItem
-      isSelected={value === selected}
+      $isSelected={value === selected}
       onClick={() => handleSelect(value)}
       style={style}
     >
