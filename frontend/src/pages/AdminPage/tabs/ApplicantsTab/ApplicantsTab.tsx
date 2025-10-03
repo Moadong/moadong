@@ -45,6 +45,14 @@ const ApplicantsTab = () => {
   const [selectedFilter, setSelectedFilter] = useState('ALL');
   const [isSortOpen, setIsSortOpen] = useState(false);
   const [selectedSort, setSelectedSort] = useState(sortOptions[0]);
+
+  // 모든 드롭다운을 닫는 함수
+  const closeAllDropdowns = () => {
+    if (open) setOpen(false);
+    if (isStatusDropdownOpen) setIsStatusDropdownOpen(false);
+    if (isFilterOpen) setIsFilterOpen(false);
+    if (isSortOpen) setIsSortOpen(false);
+  };
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
   const { mutate: updateDetailApplicants } = useUpdateApplicant(clubId!);
   const dropdwonRef = useRef<Array<HTMLDivElement | null>>([]);
@@ -89,10 +97,7 @@ const ApplicantsTab = () => {
         dropdwonRef.current &&
         !dropdwonRef.current.some((ref) => ref && ref.contains(target))
       ) {
-        if (open) setOpen(false);
-        if (isStatusDropdownOpen) setIsStatusDropdownOpen(false);
-        if (isFilterOpen) setIsFilterOpen(false);
-        if (isSortOpen) setIsSortOpen(false);
+        closeAllDropdowns();
       }
     };
 
@@ -254,16 +259,21 @@ const ApplicantsTab = () => {
               <CustomDropDown
                 options={filterOptions}
                 onSelect={(value) => {
-                  setSelectedFilter(value as string);
-                  setIsFilterOpen(false);
+                  setSelectedFilter(value);
                 }}
                 open={isFilterOpen}
-                onToggle={() => setIsFilterOpen((prev) => !prev)}
+                onToggle={() => {
+                  closeAllDropdowns();
+                  setIsFilterOpen(true);
+                }}
                 style={{ width: '101px' }}
               >
                 <CustomDropDown.Trigger>
                   <Styled.ApplicantFilterSelect
-                    onClick={() => setIsFilterOpen((prev) => !prev)}
+                    onClick={() => {
+                      closeAllDropdowns();
+                      setIsFilterOpen(true);
+                    }}
                   >
                     {
                       filterOptions.find(
@@ -300,15 +310,20 @@ const ApplicantsTab = () => {
                   if (selected) {
                     setSelectedSort(selected);
                   }
-                  setIsSortOpen(false);
                 }}
                 open={isSortOpen}
-                onToggle={() => setIsSortOpen((prev) => !prev)}
+                onToggle={() => {
+                  closeAllDropdowns();
+                  setIsSortOpen(true);
+                }}
                 style={{ width: '101px' }}
               >
                 <CustomDropDown.Trigger>
                   <Styled.ApplicantFilterSelect
-                    onClick={() => setIsSortOpen((prev) => !prev)}
+                    onClick={() => {
+                      closeAllDropdowns();
+                      setIsSortOpen(true);
+                    }}
                   >
                     {selectedSort.label}
                   </Styled.ApplicantFilterSelect>
@@ -341,7 +356,8 @@ const ApplicantsTab = () => {
                 open={isStatusDropdownOpen}
                 onToggle={() => {
                   if (!isChecked) return;
-                  setIsStatusDropdownOpen((prev) => !prev);
+                  closeAllDropdowns();
+                  setIsStatusDropdownOpen(true);
                 }}
               >
                 <CustomDropDown.Trigger>
@@ -349,7 +365,8 @@ const ApplicantsTab = () => {
                     disabled={!isChecked}
                     onClick={() => {
                       if (!isChecked) return;
-                      setIsStatusDropdownOpen((prev) => !prev);
+                      closeAllDropdowns();
+                      setIsStatusDropdownOpen(true);
                     }}
                   >
                     상태변경
@@ -420,7 +437,8 @@ const ApplicantsTab = () => {
                       }
                     }}
                     onToggle={() => {
-                      setOpen((prev) => !prev);
+                      closeAllDropdowns();
+                      setOpen(true);
                     }}
                     open={open}
                     style={{ width: '0' }}
@@ -429,7 +447,10 @@ const ApplicantsTab = () => {
                       <Styled.ApplicantAllSelectArrow
                         src={selectAllIcon}
                         alt='전체선택'
-                        onClick={() => setOpen((prev) => !prev)}
+                        onClick={() => {
+                          closeAllDropdowns();
+                          setOpen(true);
+                        }}
                       />
                     </CustomDropDown.Trigger>
                     <CustomDropDown.Menu top='16px' width='110px' right='-84px'>
