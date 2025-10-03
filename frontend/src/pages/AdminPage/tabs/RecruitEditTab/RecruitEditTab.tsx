@@ -19,6 +19,8 @@ const RecruitEditTab = () => {
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
   const [description, setDescription] = useState('');
+  const [always, setAlways] = useState(false);
+  const toggleAlways = () => setAlways((prev) => !prev);
 
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -80,12 +82,22 @@ const RecruitEditTab = () => {
       <Styled.InfoGroup>
         <div>
           <Styled.Label>모집 기간 설정</Styled.Label>
-          <Calendar
-            recruitmentStart={recruitmentStart}
-            recruitmentEnd={recruitmentEnd}
-            onChangeStart={setRecruitmentStart}
-            onChangeEnd={setRecruitmentEnd}
-          />
+          <Styled.RecruitmentPeriodContainer>
+            <Calendar
+              recruitmentStart={recruitmentStart}
+              recruitmentEnd={recruitmentEnd}
+              onChangeStart={setRecruitmentStart}
+              onChangeEnd={setRecruitmentEnd}
+            />
+            <Styled.AlwaysRecruitButton
+              type="button"
+              $active={always}
+              onClick={toggleAlways}
+              aria-pressed={always}
+            >
+              상시모집
+            </Styled.AlwaysRecruitButton>
+          </Styled.RecruitmentPeriodContainer>
         </div>
         <InputField
           label='모집 대상'
