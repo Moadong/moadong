@@ -69,10 +69,19 @@ const RecruitEditTab = () => {
   const handleUpdateClub = async () => {
     if (!clubDetail) return;
 
+    let startForSave: Date | null = recruitmentStart;
+    let endForSave: Date | null = recruitmentEnd;
+
+    if (always) {
+      const now = new Date();
+      startForSave = now;
+      endForSave = setYear(now, FAR_FUTURE_YEAR);
+    }
+
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: correctRequestKoreanDate(recruitmentStart)?.toISOString(),
-      recruitmentEnd: correctRequestKoreanDate(recruitmentEnd)?.toISOString(),
+      recruitmentStart: correctRequestKoreanDate(startForSave)?.toISOString(),
+      recruitmentEnd: correctRequestKoreanDate(endForSave)?.toISOString(),
       recruitmentTarget: recruitmentTarget,
       description: description,
       externalApplicationUrl: clubDetail.externalApplicationUrl ?? '',
