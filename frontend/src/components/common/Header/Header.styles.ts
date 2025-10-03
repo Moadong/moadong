@@ -207,8 +207,7 @@ export const DropdownContainer = styled.div`
   text-decoration: none;
 `;
 
-// 실제로 나타나는 드롭다운 메뉴 스타일입니다.
-// position: absolute; 로 부모(DropdownContainer) 기준으로 위치를 잡습니다.
+
 export const DropdownMenu = styled.div`
   display: block;
   position: absolute;
@@ -222,7 +221,6 @@ export const DropdownMenu = styled.div`
   padding: 8px 0;
 `;
 
-// 드롭다운 메뉴 안의 각 아이템 스타일입니다.
 export const DropdownItem = styled.div`
   color: black;
   padding: 4px 16px;
