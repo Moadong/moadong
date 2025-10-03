@@ -128,6 +128,7 @@ const RecruitEditTab = () => {
               recruitmentEnd={recruitmentEnd}
               onChangeStart={setRecruitmentStart}
               onChangeEnd={setRecruitmentEnd}
+              disabled={always}
             />
             <Styled.AlwaysRecruitButton
               type="button"

@@ -9,6 +9,7 @@ interface CalendarProps {
   recruitmentEnd: Date | null;
   onChangeStart: (date: Date | null) => void;
   onChangeEnd: (date: Date | null) => void;
+  disabled?: boolean;
 }
 
 const CustomHeader = ({
@@ -46,30 +47,34 @@ const Calendar = ({
   recruitmentEnd,
   onChangeStart,
   onChangeEnd,
+  disabled = false,
 }: CalendarProps) => {
   const handleStartChange = useCallback(
     (date: Date | null) => {
+      if (!disabled) return;
       onChangeStart(date);
       if (recruitmentEnd && date && date > recruitmentEnd) {
         onChangeEnd(date);
       }
     },
-    [onChangeStart, onChangeEnd, recruitmentEnd],
+    [disabled, onChangeStart, onChangeEnd, recruitmentEnd],
   );
 
   const handleEndChange = useCallback(
     (date: Date | null) => {
+      if (!disabled) return;
       onChangeEnd(date);
       if (recruitmentStart && date && date < recruitmentStart) {
         onChangeStart(date);
       }
     },
-    [onChangeStart, onChangeEnd, recruitmentStart],
+    [disabled, onChangeStart, onChangeEnd, recruitmentStart],
   );
 
   return (
-    <Styled.DatepickerContainer>
+    <Styled.DatepickerContainer data-disabled={disabled ? true : false}>
       <DatePicker
+        disabled={disabled}
         locale={ko}
         selected={recruitmentStart}
         onChange={handleStartChange}
@@ -84,6 +89,7 @@ const Calendar = ({
       />
       <Styled.Tidle>~</Styled.Tidle>
       <DatePicker
+        disabled={disabled}
         locale={ko}
         selected={recruitmentEnd}
         onChange={handleEndChange}
