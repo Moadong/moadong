@@ -262,19 +262,15 @@ const ApplicantsTab = () => {
                   setSelectedFilter(value);
                 }}
                 open={isFilterOpen}
-                onToggle={() => {
+                onToggle={(isOpen) => {
                   closeAllDropdowns();
-                  setIsFilterOpen(true);
+                  setIsFilterOpen(!isOpen);
                 }}
+                selected={selectedFilter}
                 style={{ width: '101px' }}
               >
                 <CustomDropDown.Trigger>
-                  <Styled.ApplicantFilterSelect
-                    onClick={() => {
-                      closeAllDropdowns();
-                      setIsFilterOpen(true);
-                    }}
-                  >
+                  <Styled.ApplicantFilterSelect>
                     {
                       filterOptions.find(
                         (option) => option.value === selectedFilter,
@@ -312,19 +308,15 @@ const ApplicantsTab = () => {
                   }
                 }}
                 open={isSortOpen}
-                onToggle={() => {
+                selected={selectedSort.value}
+                onToggle={(isOpen) => {
                   closeAllDropdowns();
-                  setIsSortOpen(true);
+                  setIsSortOpen(!isOpen);
                 }}
                 style={{ width: '101px' }}
               >
                 <CustomDropDown.Trigger>
-                  <Styled.ApplicantFilterSelect
-                    onClick={() => {
-                      closeAllDropdowns();
-                      setIsSortOpen(true);
-                    }}
-                  >
+                  <Styled.ApplicantFilterSelect>
                     {selectedSort.label}
                   </Styled.ApplicantFilterSelect>
                   <Styled.Arrow src={selectIcon} />
@@ -354,21 +346,14 @@ const ApplicantsTab = () => {
                   updateAllApplicants(status as ApplicationStatus)
                 }
                 open={isStatusDropdownOpen}
-                onToggle={() => {
+                onToggle={(isOpen) => {
                   if (!isChecked) return;
                   closeAllDropdowns();
-                  setIsStatusDropdownOpen(true);
+                  setIsStatusDropdownOpen(!isOpen);
                 }}
               >
                 <CustomDropDown.Trigger>
-                  <Styled.StatusSelect
-                    disabled={!isChecked}
-                    onClick={() => {
-                      if (!isChecked) return;
-                      closeAllDropdowns();
-                      setIsStatusDropdownOpen(true);
-                    }}
-                  >
+                  <Styled.StatusSelect disabled={!isChecked}>
                     상태변경
                   </Styled.StatusSelect>
                   <Styled.Arrow width={8} height={8} src={selectIcon} />
@@ -436,9 +421,9 @@ const ApplicantsTab = () => {
                         );
                       }
                     }}
-                    onToggle={() => {
+                    onToggle={(isOpen) => {
                       closeAllDropdowns();
-                      setOpen(true);
+                      setOpen(!isOpen);
                     }}
                     open={open}
                     style={{ width: '0' }}
@@ -447,15 +432,15 @@ const ApplicantsTab = () => {
                       <Styled.ApplicantAllSelectArrow
                         src={selectAllIcon}
                         alt='전체선택'
-                        onClick={() => {
-                          closeAllDropdowns();
-                          setOpen(true);
-                        }}
                       />
                     </CustomDropDown.Trigger>
                     <CustomDropDown.Menu top='16px' width='110px' right='-84px'>
                       {filterOptions.map(({ value, label }) => (
-                        <CustomDropDown.Item key={value} value={value} style={{ justifyContent: 'flex-start' }}>
+                        <CustomDropDown.Item
+                          key={value}
+                          value={value}
+                          style={{ justifyContent: 'flex-start' }}
+                        >
                           {label}
                         </CustomDropDown.Item>
                       ))}
