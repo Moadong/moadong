@@ -12,6 +12,7 @@ import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEdit
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
 import ApplicationEditTab from './pages/AdminPage/tabs/ApplicationEditTab/ApplicationEditTab';
+import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
@@ -62,9 +63,10 @@ const App = () => {
                       <Route path='photo-edit' element={<PhotoEditTab />} />
                       <Route path='account-edit' element={<AccountEditTab />} />
                       <Route
-                        path='application-edit'
-                        element={<ApplicationEditTab />}
+                        path='application-list'
+                        element={<ApplicationListTab />}
                       />
+                      <Route path='application-list/edit' element={<ApplicationEditTab />} />
                       <Route path='applicants' element={<ApplicantsTab />} />
                       <Route
                         path='applicants/:questionId'
