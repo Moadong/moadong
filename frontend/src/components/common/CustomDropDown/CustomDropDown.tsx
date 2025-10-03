@@ -67,7 +67,7 @@ interface MenuProps {
 const Menu = ({ children, top, width, right }: MenuProps) => {
   const { open } = useDropDownContext();
   return open ? (
-    <Styled.OptionList $top={top} $width={width} $right={right}>
+    <Styled.OptionList role='listbox' $top={top} $width={width} $right={right}>
       {children}
     </Styled.OptionList>
   ) : null;
