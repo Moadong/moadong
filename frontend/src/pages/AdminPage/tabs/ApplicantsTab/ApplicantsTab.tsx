@@ -11,8 +11,29 @@ import deleteIcon from '@/assets/images/icons/applicant_delete.svg';
 import selectAllIcon from '@/assets/images/icons/applicant_select_arrow.svg';
 import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
 import { AVAILABLE_STATUSES } from '@/constants/status';
+import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
 
 const ApplicantsTab = () => {
+  const statusOptions = AVAILABLE_STATUSES.map((status) => ({
+    value: status,
+    label: mapStatusToGroup(status).label,
+  }));
+
+  const filterOptions = ['ALL', ...Object.values(ApplicationStatus)].map(
+    (status) => ({
+      value: status,
+      label:
+        status === 'ALL'
+          ? '전체'
+          : mapStatusToGroup(status as ApplicationStatus).label,
+    }),
+  );
+
+  const sortOptions = [
+    { value: 'date', label: '제출순' },
+    { value: 'name', label: '이름순' },
+  ] as const;
+
   const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
   const [keyword, setKeyword] = useState('');
@@ -21,42 +42,67 @@ const ApplicantsTab = () => {
   );
   const [selectAll, setSelectAll] = useState(false);
   const [open, setOpen] = useState(false);
-  const [statusOpen, setStatusOpen] = useState(false);
+  const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [isChecked, setIsChecked] = useState(false);
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+  const [selectedFilter, setSelectedFilter] = useState('ALL');
+  const [isSortOpen, setIsSortOpen] = useState(false);
+  const [selectedSort, setSelectedSort] = useState<
+    (typeof sortOptions)[number]
+  >(sortOptions[0]);
+
+  // 모든 드롭다운을 닫는 함수
+  const closeAllDropdowns = () => {
+    if (open) setOpen(false);
+    if (isStatusDropdownOpen) setIsStatusDropdownOpen(false);
+    if (isFilterOpen) setIsFilterOpen(false);
+    if (isSortOpen) setIsSortOpen(false);
+  };
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
   const { mutate: updateDetailApplicants } = useUpdateApplicant(clubId!);
-  const allSelectRef = useRef<HTMLDivElement | null>(null);
-  const statusSelectRef = useRef<HTMLDivElement | null>(null);
+  const dropdownRef = useRef<Array<HTMLDivElement | null>>([]);
 
   const filteredApplicants = useMemo(() => {
     if (!applicantsData?.applicants) return [];
 
-    if (!keyword.trim()) return applicantsData.applicants;
+    let applicants = [...applicantsData.applicants];
 
-    return applicantsData.applicants.filter((user: Applicant) =>
-      user.answers[0].value
-        .toLowerCase()
-        .includes(keyword.trim().toLowerCase()),
-    );
-  }, [applicantsData, keyword]);
+    if (selectedFilter !== 'ALL') {
+      applicants = applicants.filter(
+        (applicant) => applicant.status === selectedFilter,
+      );
+    }
+
+    if (keyword.trim()) {
+      applicants = applicants.filter((user: Applicant) =>
+        user.answers?.[0]?.value
+          ?.toLowerCase()
+          .includes(keyword.trim().toLowerCase()),
+      );
+    }
+
+    if (selectedSort.value === 'name') {
+      applicants.sort((a, b) =>
+        a.answers?.[0]?.value.localeCompare(b.answers?.[0]?.value),
+      );
+    } else {
+      applicants.sort(
+        (a, b) =>
+          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
+      );
+    }
+
+    return applicants;
+  }, [applicantsData, keyword, selectedFilter, selectedSort.value]);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node;
-
       if (
-        open &&
-        allSelectRef.current &&
-        !allSelectRef.current.contains(target)
+        dropdownRef.current &&
+        !dropdownRef.current.some((ref) => ref && ref.contains(target))
       ) {
-        setOpen(false);
-      }
-      if (
-        statusOpen &&
-        statusSelectRef.current &&
-        !statusSelectRef.current.contains(target)
-      ) {
-        setStatusOpen(false);
+        closeAllDropdowns();
       }
     };
 
@@ -64,7 +110,7 @@ const ApplicantsTab = () => {
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [open, statusOpen]);
+  }, [open, isStatusDropdownOpen, isFilterOpen, isSortOpen]);
 
   useEffect(() => {
     const newMap = new Map<string, boolean>();
@@ -132,8 +178,6 @@ const ApplicantsTab = () => {
         });
       return newMap;
     });
-
-    if (open) setOpen(false);
   };
 
   const checkoutAllApplicants = () => {
@@ -158,7 +202,6 @@ const ApplicantsTab = () => {
       {
         onSuccess: () => {
           checkoutAllApplicants();
-          setStatusOpen(false);
         },
         onError: () => {
           alert('지원자 상태 변경에 실패했습니다. 다시 시도해주세요.');
@@ -171,11 +214,11 @@ const ApplicantsTab = () => {
     <>
       <Styled.ApplicationHeader>
         <Styled.ApplicationTitle>지원 현황</Styled.ApplicationTitle>
-        {/* <styled.SemesterSelect>
+        {/* 
+        <Styled.SemesterSelect>
           <option>25년 2학기</option>
-          ...다른 학기 */
-        /*{' '}
-        </styled.SemesterSelect> */}
+        </Styled.SemesterSelect>
+        */}
       </Styled.ApplicationHeader>
 
       <Styled.SummaryWrapper>
@@ -213,41 +256,125 @@ const ApplicantsTab = () => {
         <Styled.ApplicantListTitle>지원자 목록</Styled.ApplicantListTitle>
         <Styled.ApplicantListHeader>
           <Styled.FilterContainer>
-            <Styled.SelectWrapper>
-              <Styled.ApplicantFilterSelect>
-                <option>전체</option>
-              </Styled.ApplicantFilterSelect>
-              <Styled.Arrow src={selectIcon} />
+            <Styled.SelectWrapper
+              ref={(el) => {
+                dropdownRef.current[2] = el;
+              }}
+            >
+              <CustomDropDown
+                options={filterOptions}
+                onSelect={(value) => {
+                  setSelectedFilter(value);
+                }}
+                open={isFilterOpen}
+                onToggle={(isOpen) => {
+                  closeAllDropdowns();
+                  setIsFilterOpen(!isOpen);
+                }}
+                selected={selectedFilter}
+                style={{ width: '101px' }}
+              >
+                <CustomDropDown.Trigger>
+                  <Styled.ApplicantFilterSelect>
+                    {
+                      filterOptions.find(
+                        (option) => option.value === selectedFilter,
+                      )?.label
+                    }
+                  </Styled.ApplicantFilterSelect>
+                  <Styled.Arrow src={selectIcon} />
+                </CustomDropDown.Trigger>
+                <CustomDropDown.Menu top='115%'>
+                  {filterOptions.map(({ value, label }) => (
+                    <CustomDropDown.Item
+                      key={value}
+                      value={value}
+                      style={{ fontSize: '12px' }}
+                    >
+                      {label}
+                    </CustomDropDown.Item>
+                  ))}
+                </CustomDropDown.Menu>
+              </CustomDropDown>
             </Styled.SelectWrapper>
-            <Styled.SelectWrapper>
-              <Styled.ApplicantFilterSelect>
-                <option>제출순</option>
-              </Styled.ApplicantFilterSelect>
-              <Styled.Arrow src={selectIcon} />
+            <Styled.SelectWrapper
+              ref={(el) => {
+                dropdownRef.current[3] = el;
+              }}
+            >
+              <CustomDropDown
+                options={sortOptions}
+                onSelect={(value) => {
+                  const selected = sortOptions.find(
+                    (option) => option.value === value,
+                  );
+                  if (selected) {
+                    setSelectedSort(selected);
+                  }
+                }}
+                open={isSortOpen}
+                selected={selectedSort.value}
+                onToggle={(isOpen) => {
+                  closeAllDropdowns();
+                  setIsSortOpen(!isOpen);
+                }}
+                style={{ width: '101px' }}
+              >
+                <CustomDropDown.Trigger>
+                  <Styled.ApplicantFilterSelect>
+                    {selectedSort.label}
+                  </Styled.ApplicantFilterSelect>
+                  <Styled.Arrow src={selectIcon} />
+                </CustomDropDown.Trigger>
+                <CustomDropDown.Menu top='115%'>
+                  {sortOptions.map(({ value, label }) => (
+                    <CustomDropDown.Item
+                      key={value}
+                      value={value}
+                      style={{ fontSize: '12px' }}
+                    >
+                      {label}
+                    </CustomDropDown.Item>
+                  ))}
+                </CustomDropDown.Menu>
+              </CustomDropDown>
             </Styled.SelectWrapper>
             <Styled.VerticalLine />
             <Styled.SelectWrapper
-              ref={statusSelectRef}
-              onClick={() => {
-                if (!isChecked) return;
-                setStatusOpen((prev) => !prev);
+              ref={(el) => {
+                dropdownRef.current[0] = el;
               }}
             >
-              <Styled.StatusSelect disabled={!isChecked}>
-                상태변경
-              </Styled.StatusSelect>
-              <Styled.Arrow width={8} height={8} src={selectIcon} />
-              <Styled.StatusSelectMenu open={statusOpen}>
-                {AVAILABLE_STATUSES.map((status) => (
-                  <Styled.StatusSelectMenuItem
-                    onClick={() => {
-                      updateAllApplicants(status);
-                    }}
-                  >
-                    {mapStatusToGroup(status).label}
-                  </Styled.StatusSelectMenuItem>
-                ))}
-              </Styled.StatusSelectMenu>
+              <CustomDropDown
+                options={statusOptions}
+                onSelect={(status) =>
+                  updateAllApplicants(status as ApplicationStatus)
+                }
+                open={isStatusDropdownOpen}
+                onToggle={(isOpen) => {
+                  if (!isChecked) return;
+                  closeAllDropdowns();
+                  setIsStatusDropdownOpen(!isOpen);
+                }}
+              >
+                <CustomDropDown.Trigger>
+                  <Styled.StatusSelect disabled={!isChecked}>
+                    상태변경
+                  </Styled.StatusSelect>
+                  <Styled.Arrow width={8} height={8} src={selectIcon} />
+                </CustomDropDown.Trigger>
+                <CustomDropDown.Menu>
+                  {statusOptions.map(({ value, label }) => (
+                    <CustomDropDown.Item
+                      key={value}
+                      value={value}
+                      style={{ fontSize: '12px' }}
+                    >
+                      {label}
+                    </CustomDropDown.Item>
+                  ))}
+                </CustomDropDown.Menu>
+              </CustomDropDown>
             </Styled.SelectWrapper>
             <Styled.DeleteButton
               src={deleteIcon}
@@ -275,7 +402,11 @@ const ApplicantsTab = () => {
           <Styled.ApplicantTableHeaderWrapper>
             <Styled.ApplicantTableRow>
               <Styled.ApplicantTableHeader width={55}>
-                <Styled.ApplicantAllSelectWrapper ref={allSelectRef}>
+                <Styled.ApplicantAllSelectWrapper
+                  ref={(el) => {
+                    dropdownRef.current[1] = el;
+                  }}
+                >
                   <Styled.ApplicantTableAllSelectCheckbox
                     checked={selectAll}
                     onClick={(e: React.MouseEvent<HTMLInputElement>) => {
@@ -283,52 +414,43 @@ const ApplicantsTab = () => {
                       selectApplicantsByStatus('all');
                     }}
                   />
-                  <Styled.ApplicantAllSelectArrow
-                    src={selectAllIcon}
-                    alt='전체선택'
-                    onClick={() => setOpen((prev) => !prev)}
-                  />
-                  <Styled.ApplicantAllSelectMenu open={open}>
-                    <Styled.ApplicantAllSelectMenuItem
-                      onClick={() => {
-                        if (selectAll) {
-                          setOpen(false);
-                          return;
-                        }
+                  <CustomDropDown
+                    options={filterOptions}
+                    onSelect={(status) => {
+                      if (status === 'ALL') {
                         selectApplicantsByStatus('all');
-                      }}
-                    >
-                      전체선택
-                    </Styled.ApplicantAllSelectMenuItem>
-                    <Styled.ApplicantAllSelectMenuItem
-                      onClick={() => {
+                      } else {
                         selectApplicantsByStatus(
                           'filter',
-                          ApplicationStatus.SUBMITTED,
+                          status as ApplicationStatus,
                         );
-                      }}
-                    >
-                      서류 검토 필요
-                    </Styled.ApplicantAllSelectMenuItem>
-                    <Styled.ApplicantAllSelectMenuItem
-                      onClick={() => {
-                        selectApplicantsByStatus(
-                          'filter',
-                          ApplicationStatus.INTERVIEW_SCHEDULED,
-                        );
-                      }}
-                    >
-                      면접예정
-                    </Styled.ApplicantAllSelectMenuItem>
-                    <Styled.ApplicantAllSelectMenuItem
-                      onClick={() => {
-                        setOpen(false);
-                        checkoutAllApplicants();
-                      }}
-                    >
-                      선택해제
-                    </Styled.ApplicantAllSelectMenuItem>
-                  </Styled.ApplicantAllSelectMenu>
+                      }
+                    }}
+                    onToggle={(isOpen) => {
+                      closeAllDropdowns();
+                      setOpen(!isOpen);
+                    }}
+                    open={open}
+                    style={{ width: '0' }}
+                  >
+                    <CustomDropDown.Trigger>
+                      <Styled.ApplicantAllSelectArrow
+                        src={selectAllIcon}
+                        alt='전체선택'
+                      />
+                    </CustomDropDown.Trigger>
+                    <CustomDropDown.Menu top='16px' width='110px' right='-84px'>
+                      {filterOptions.map(({ value, label }) => (
+                        <CustomDropDown.Item
+                          key={value}
+                          value={value}
+                          style={{ justifyContent: 'flex-start' }}
+                        >
+                          {label}
+                        </CustomDropDown.Item>
+                      ))}
+                    </CustomDropDown.Menu>
+                  </CustomDropDown>
                 </Styled.ApplicantAllSelectWrapper>
               </Styled.ApplicantTableHeader>
               <Styled.ApplicantTableHeader width={120}>

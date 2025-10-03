@@ -153,13 +153,16 @@ export const StatusSelectMenuItem = styled.div`
   }
 `;
 
-export const ApplicantFilterSelect = styled.select`
+export const ApplicantFilterSelect = styled.div`
+  display: flex;
+  align-items: center;
   height: 35px;
   padding: 4px 32px 4px 14px;
   border-radius: 8px;
   border: none;
   background: var(--f5, #f5f5f5);
   font-size: 16px;
+  color: #000;
 
   -webkit-appearance: none;
   -moz-appearance: none;
@@ -282,7 +285,8 @@ export const ApplicantAllSelectWrapper = styled.div`
 
 export const ApplicantAllSelectArrow = styled.img`
   position: absolute;
-  right: -1px;
+  right: -18px;
+  top: -7px;
   width: 16px;
   height: 16px;
   object-fit: none;
