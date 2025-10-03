@@ -8,7 +8,7 @@ interface DropdownOption<TValue> {
 
 interface CustomDropDownContextProps<TValue> {
   open: boolean;
-  selected: TValue;
+  selected?: TValue;
   options: DropdownOption<TValue>[];
   onToggle: (isOpen: boolean) => void;
   handleSelect: (value: TValue) => void;
