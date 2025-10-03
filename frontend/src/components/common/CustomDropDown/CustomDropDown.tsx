@@ -73,10 +73,15 @@ const Menu = ({ children, top, width, right }: MenuProps) => {
   ) : null;
 };
 
-const Item = ({ value, children, style }: ItemProps<any>) => {
+const Item = <TValue extends string | number = string>({
+  value,
+  children,
+  style,
+}: ItemProps<TValue>) => {
   const { selected, handleSelect } = useDropDownContext();
   return (
     <Styled.OptionItem
+      role='option'
       $isSelected={value === selected}
       onClick={() => handleSelect(value)}
       style={style}
