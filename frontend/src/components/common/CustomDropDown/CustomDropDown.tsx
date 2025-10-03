@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useMemo, ReactNode } from 'react';
+import React, { createContext, useContext, ReactNode } from 'react';
 import * as Styled from './CustomDropDown.styles';
 
 interface DropdownOption<TValue> {
@@ -105,10 +105,7 @@ export function CustomDropDown<T extends string | number = string>({
     onToggle(open);
   };
 
-  const value = useMemo(
-    () => ({ open, selected, options, onToggle, handleSelect }),
-    [open, selected, options, onToggle, onSelect],
-  );
+  const value = { open, selected, options, onToggle, handleSelect };
 
   return (
     <CustomDropDownContext.Provider value={value}>
