@@ -1,4 +1,4 @@
-import { memo } from 'react';
+import { memo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as Styled from './Header.styles';
 
@@ -36,7 +36,10 @@ interface MobileMenuDrawerProps {
 }
 
 const DesktopHeader = memo(
-  ({ isAdminPage, navLinks, onHomeClick }: DesktopHeaderProps) => (
+  ({ isAdminPage, navLinks, onHomeClick }: DesktopHeaderProps) => {
+    const [isDropdownOpen, setDropdownOpen] = useState(false);
+
+    return (
     <Styled.HeaderStyles>
       <Styled.HeaderContainer>
         <Styled.TextCoverStyles>
@@ -46,6 +49,7 @@ const DesktopHeader = memo(
           >
             <img src={DesktopMainIcon} alt='모아동 로고' />
           </Styled.LogoButtonStyles>
+
           {!isAdminPage &&
             navLinks.map((link) => (
               <Styled.IntroduceButtonStyles
@@ -55,11 +59,41 @@ const DesktopHeader = memo(
                 {link.label}
               </Styled.IntroduceButtonStyles>
             ))}
+          {/*드랍 다운 페이지*/}
+          {!isAdminPage && (
+              <Styled.DropdownContainer
+                onMouseEnter={() => setDropdownOpen(true)}
+                onMouseLeave={() => setDropdownOpen(false)}
+              >
+                {/* <Styled.IntroduceButtonStyles as='div'>
+                  공지사항
+                </Styled.IntroduceButtonStyles> */}
+                <span>공지사항</span>
+                
+                {isDropdownOpen && (
+                  <Styled.DropdownMenu>
+                    <Styled.DropdownItem
+                      onClick={() =>
+                        window.open(
+                          'https://honorable-cough-8f9.notion.site/1e8aad232096804f9ea9ee4f5cf0cd10',
+                          '_blank',
+                        )
+                      }
+                    >
+                      패치 노트
+                    </Styled.DropdownItem>
+                    {/* 다른 메뉴 아이템이 필요하면 여기에 추가할 수 있습니다. */}
+                  </Styled.DropdownMenu>
+                )}
+              </Styled.DropdownContainer>
+            )}
+
         </Styled.TextCoverStyles>
         {!isAdminPage && <SearchBox />}
       </Styled.HeaderContainer>
     </Styled.HeaderStyles>
-  ),
+  );
+  },
 );
 
 const MobileMenuDrawer = memo(
@@ -125,11 +159,6 @@ const Header = () => {
   const navLinks: NavLinkData[] = [
     { label: '모아동 소개', handler: handleIntroduceClick },
     { label: '총동아리연합회 소개', handler: handleClubUnionClick },
-    {
-      label: '패치 노트',
-      handler: () =>
-        window.open('https://honorable-cough-8f9.notion.site/1e8aad232096804f9ea9ee4f5cf0cd10?pvs=74', '_blank'),
-    },
   ];
 
   return (

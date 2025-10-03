@@ -192,3 +192,49 @@ export const MenubarIntroduceBox = styled.div`
   background: rgba(255, 84, 20, 0.08);
   cursor: pointer;
 `;
+
+
+export const DropdownContainer = styled.div`
+  position: relative;
+  display: inline-block;
+  margin-left: 45px;
+  cursor: pointer;
+
+  height: 43px;
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 42px; /* 텍스트 수직 정렬의 핵심입니다! */
+  color: inherit;
+  text-decoration: none;
+`;
+
+// 실제로 나타나는 드롭다운 메뉴 스타일입니다.
+// position: absolute; 로 부모(DropdownContainer) 기준으로 위치를 잡습니다.
+export const DropdownMenu = styled.div`
+  display: block;
+  position: absolute;
+  top: 100%; // 부모 요소 바로 아래에 위치시킵니다.
+  left: 50%;
+  transform: translateX(-50%); // 가운데 정렬합니다.
+  background-color: white;
+  min-width: 120px; // 최소 너비
+  box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
+  z-index: 3; // 다른 요소들 위에 보이도록 z-index를 높게 설정합니다.
+  padding: 8px 0;
+`;
+
+// 드롭다운 메뉴 안의 각 아이템 스타일입니다.
+export const DropdownItem = styled.div`
+  color: black;
+  padding: 12px 16px;
+  text-decoration: none;
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  white-space: nowrap;
+
+  &:hover {
+    background-color: #f1f1f1;
+  }
+`;
