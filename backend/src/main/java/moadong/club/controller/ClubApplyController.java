@@ -121,7 +121,7 @@ public class ClubApplyController {
         return Response.ok("success edit applicant");
     }
 
-    @DeleteMapping("/applicant/{applicationFormId}") //
+    @DeleteMapping("/applicant/{applicationFormId}")
     @Operation(summary = "지원자 삭제",
             description = "클럽 지원자의 지원서를 삭제합니다"
     )
