@@ -32,7 +32,7 @@ const StyledClubLogo = styled.div<{
     background-image: ${$imageSrc ? `url(${$imageSrc})` : 'none'};
   `}
 
-  @media (max-width: 480px) {
+  @media (max-width: 500px) {
     ${({ $variant }) => css`
       width: ${presets[$variant].mobile.width};
       height: ${presets[$variant].mobile.height};
