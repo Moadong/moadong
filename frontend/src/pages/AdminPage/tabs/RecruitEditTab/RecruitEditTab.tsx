@@ -32,9 +32,21 @@ const RecruitEditTab = () => {
       parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
 
     const now = new Date();
+    const start = correctResponseKoreanDate(initialStart);
+    const end = correctResponseKoreanDate(initialEnd);
 
-    setRecruitmentStart((prev) => prev ?? correctResponseKoreanDate(initialStart) ?? now);
-    setRecruitmentEnd((prev) => prev ?? correctResponseKoreanDate(initialEnd) ?? now);
+    const isAlways = !!end && end.getFullYear() === FAR_FUTURE_YEAR;
+    
+    if (isAlways) {
+      setAlways(true);
+      setBackupRange({ start, end });
+      setRecruitmentStart(start ?? now);
+      setRecruitmentEnd(end ?? setYear(now, FAR_FUTURE_YEAR));
+    } else {
+      setRecruitmentStart((prev) => prev ?? start ?? now);
+      setRecruitmentEnd((prev) => prev ?? end ?? now);
+    }
+    
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
     setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
