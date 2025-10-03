@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const DropDownWrapper = styled.div`
   position: relative;
   width: 100%;
+  cursor: pointer;
 `;
 
 interface OptionListProps {
