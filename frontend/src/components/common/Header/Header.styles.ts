@@ -65,7 +65,8 @@ export const LogoButtonStyles = styled.button`
 
 export const IntroduceButtonStyles = styled.a`
   margin-left: 45px;
-  width: 63px;
+  // width: 63px;
+  flex-shrink: 0
   height: 43px;
   font-weight: 500;
   font-size: 14px;

@@ -125,6 +125,11 @@ const Header = () => {
   const navLinks: NavLinkData[] = [
     { label: '모아동 소개', handler: handleIntroduceClick },
     { label: '총동아리연합회 소개', handler: handleClubUnionClick },
+    {
+      label: '패치 노트',
+      handler: () =>
+        window.open('https://honorable-cough-8f9.notion.site/1e8aad232096804f9ea9ee4f5cf0cd10?pvs=74', '_blank'),
+    },
   ];
 
   return (
