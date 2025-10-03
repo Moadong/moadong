@@ -21,6 +21,7 @@ const RecruitEditTab = () => {
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
   const [description, setDescription] = useState('');
   const FAR_FUTURE_YEAR = 2999;
+  const isFarFuture = (date: Date | null) => !!date && date.getFullYear() === FAR_FUTURE_YEAR;
   const [always, setAlways] = useState(false);
   const [backupRange, setBackupRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
 
@@ -63,16 +64,25 @@ const RecruitEditTab = () => {
 
   const toggleAlways = () => {
     setAlways((prev) => {
+      const now = new Date();
+
       if (!prev) {
         // 상시모집 활성화
         setBackupRange({ start: recruitmentStart, end: recruitmentEnd });
-        const now = new Date();
         setRecruitmentStart(now);
         setRecruitmentEnd(setYear(now, FAR_FUTURE_YEAR));
       } else {
         // 상시모집 비활성화
-        setRecruitmentStart(backupRange.start) ?? new Date;
-        setRecruitmentEnd(backupRange.end) ?? new Date;
+        const backupWasAlways = isFarFuture(backupRange.end);
+        if (backupWasAlways) {
+          // 백업이 상시모집인 경우
+          setRecruitmentStart(now);
+          setRecruitmentEnd(now);
+        } else {
+          // 백업이 상시모집이 아닌 경우
+          setRecruitmentStart(backupRange.start ?? new Date());
+          setRecruitmentEnd(backupRange.end ?? new Date());
+        }
       }
       return !prev;
     });
