@@ -26,14 +26,19 @@ const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  width: 83px;
-  height: 30px;
+  width: 66px;
+  height: 28px;
   padding: 8px 21px;
   border-radius: 8px;
   background-color: ${({ $bgColor }) => $bgColor};
   color: ${({ $textColor }) => $textColor};
   font-size: 0.75rem;
   font-weight: 500;
+
+  @media (max-width: 500px) {
+    width: 50px;
+    height: 25px;
+  }
 `;
 
 interface ClubStateBoxProps {
