@@ -22,7 +22,10 @@ const ApplicantsTab = () => {
   const filterOptions = ['ALL', ...Object.values(ApplicationStatus)].map(
     (status) => ({
       value: status,
-      label: mapStatusToGroup(status as ApplicationStatus).label,
+      label:
+        status === 'ALL'
+          ? '전체'
+          : mapStatusToGroup(status as ApplicationStatus).label,
     }),
   );
 
