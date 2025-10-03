@@ -10,7 +10,7 @@ interface CustomDropDownContextProps<TValue> {
   open: boolean;
   selected: TValue;
   options: DropdownOption<TValue>[];
-  onToggle: () => void;
+  onToggle: (isOpen: boolean) => void;
   handleSelect: (value: TValue) => void;
 }
 
@@ -20,7 +20,7 @@ interface CustomDropDownProps<TValue> {
   selected?: TValue;
   onSelect: (value: TValue) => void;
   open: boolean;
-  onToggle: () => void;
+  onToggle: (isOpen: boolean) => void;
   style?: React.CSSProperties;
 }
 
@@ -45,7 +45,16 @@ const useDropDownContext = () => {
 };
 
 const Trigger = ({ children }: { children: ReactNode }) => {
-  return <>{children}</>;
+  const { onToggle, open } = useDropDownContext();
+  return (
+    <div
+      onClick={() => {
+        onToggle(open);
+      }}
+    >
+      {children}
+    </div>
+  );
 };
 
 interface MenuProps {
@@ -88,7 +97,7 @@ export function CustomDropDown<T extends string | number = string>({
 }: CustomDropDownProps<T>) {
   const handleSelect = (value: T) => {
     onSelect(value);
-    onToggle();
+    onToggle(open);
   };
 
   const value = useMemo(
@@ -98,9 +107,7 @@ export function CustomDropDown<T extends string | number = string>({
 
   return (
     <CustomDropDownContext.Provider value={value}>
-      <Styled.DropDownWrapper style={style}>
-        {children}
-      </Styled.DropDownWrapper>
+      <Styled.DropDownWrapper style={style}>{children}</Styled.DropDownWrapper>
     </CustomDropDownContext.Provider>
   );
 }
