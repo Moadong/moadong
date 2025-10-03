@@ -75,15 +75,15 @@ const ApplicantsTab = () => {
 
     if (keyword.trim()) {
       applicants = applicants.filter((user: Applicant) =>
-        user.answers[0].value
-          .toLowerCase()
+        user.answers?.[0]?.value
+          ?.toLowerCase()
           .includes(keyword.trim().toLowerCase()),
       );
     }
 
     if (selectedSort.value === 'name') {
       applicants.sort((a, b) =>
-        a.answers[0].value.localeCompare(b.answers[0].value),
+        a.answers?.[0]?.value.localeCompare(b.answers?.[0]?.value),
       );
     } else {
       applicants.sort(
