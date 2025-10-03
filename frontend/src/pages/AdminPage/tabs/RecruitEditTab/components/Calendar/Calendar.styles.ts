@@ -5,7 +5,9 @@ const primary = 'rgba(255, 84, 20, 0.8)';
 const primaryHover = 'rgba(255, 84, 20, 0.95)';
 const white = '#fff';
 const gray = 'rgba(0,0,0,0.5)';
+const disabledGray = 'rgba(0,0,0,0.2)';
 const inputBg = 'rgba(0,0,0,0.05)';
+const inputDisabledBg = '#DFDFDF';
 
 /* 재사용 블록 */
 const selected = css`
@@ -137,6 +139,13 @@ export const DatepickerContainer = styled.div`
       outline: none;
       ${selected};
     }
+  }
+
+  /* 비활성화 입력 필드 */
+  .react-datepicker__input-container input:disabled {
+    background: ${inputDisabledBg};
+    color: ${disabledGray};
+    cursor: not-allowed;
   }
 
   /*  날짜 셀 스타일  */
