@@ -22,13 +22,13 @@ export const CardList = styled.div`
   display: grid;
   width: 100%;
   max-width: 100%;
-  gap: 35px;
+  gap: 20px;
   margin-top: 50px;
   transition:
     gap 0.5s ease,
     grid-template-columns 0.5s ease;
 
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 
   @media (max-width: 1280px) {
     grid-template-columns: repeat(2, 1fr);
@@ -38,7 +38,7 @@ export const CardList = styled.div`
     grid-template-columns: repeat(1, 1fr);
   }
   @media (max-width: 500px) {
-    gap: 16px;
+    gap: 6px;
     margin-top: 16px;
   }
 `;
