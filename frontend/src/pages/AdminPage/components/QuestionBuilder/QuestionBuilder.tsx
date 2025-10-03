@@ -142,20 +142,24 @@ const QuestionBuilder = ({
             onTypeChange?.(value as QuestionType);
           }}
           open={isDropdownOpen}
-          onToggle={() => setIsDropdownOpen((prev) => !prev)}
+          onToggle={(isOpen) => setIsDropdownOpen(!isOpen)}
         >
           <CustomDropDown.Trigger>
-            <Styled.Selected
-              open={isDropdownOpen}
-              onClick={() => setIsDropdownOpen((prev) => !prev)}
-            >
+            <Styled.Selected open={isDropdownOpen}>
               <span>{selectedLabel}</span>
               <Styled.Icon src={dropdown_icon} alt='드롭다운 버튼' />
             </Styled.Selected>
           </CustomDropDown.Trigger>
           <CustomDropDown.Menu>
             {DROPDOWN_OPTIONS.map(({ label, value }) => (
-              <CustomDropDown.Item key={value} value={value}>
+              <CustomDropDown.Item
+                key={value}
+                value={value}
+                style={{
+                  fontSize: '14px',
+                  height: '35px',
+                }}
+              >
                 {label}
               </CustomDropDown.Item>
             ))}
