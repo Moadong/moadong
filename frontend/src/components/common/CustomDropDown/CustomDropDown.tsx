@@ -14,14 +14,14 @@ interface CustomDropDownContextProps<TValue> {
   handleSelect: (value: TValue) => void;
 }
 
-interface CustomDropDownProps<TValue>
-  extends Omit<React.ComponentPropsWithoutRef<'div'>, 'onSelect'> {
+interface CustomDropDownProps<TValue> {
   children: ReactNode;
   options: DropdownOption<TValue>[];
   selected?: TValue;
   onSelect: (value: TValue) => void;
   open: boolean;
   onToggle: () => void;
+  style?: React.CSSProperties;
 }
 
 interface ItemProps<TValue> {
@@ -84,7 +84,7 @@ export function CustomDropDown<T extends string | number = string>({
   onSelect,
   open,
   onToggle,
-  ...rest
+  style,
 }: CustomDropDownProps<T>) {
   const handleSelect = (value: T) => {
     onSelect(value);
@@ -98,7 +98,9 @@ export function CustomDropDown<T extends string | number = string>({
 
   return (
     <CustomDropDownContext.Provider value={value}>
-      <Styled.DropDownWrapper {...rest}>{children}</Styled.DropDownWrapper>
+      <Styled.DropDownWrapper style={style}>
+        {children}
+      </Styled.DropDownWrapper>
     </CustomDropDownContext.Provider>
   );
 }
