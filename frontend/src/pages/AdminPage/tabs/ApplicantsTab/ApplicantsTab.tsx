@@ -60,7 +60,7 @@ const ApplicantsTab = () => {
   };
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
   const { mutate: updateDetailApplicants } = useUpdateApplicant(clubId!);
-  const dropdwonRef = useRef<Array<HTMLDivElement | null>>([]);
+  const dropdownRef = useRef<Array<HTMLDivElement | null>>([]);
 
   const filteredApplicants = useMemo(() => {
     if (!applicantsData?.applicants) return [];
@@ -99,8 +99,8 @@ const ApplicantsTab = () => {
     const handleOutsideClick = (e: MouseEvent) => {
       const target = e.target as Node;
       if (
-        dropdwonRef.current &&
-        !dropdwonRef.current.some((ref) => ref && ref.contains(target))
+        dropdownRef.current &&
+        !dropdownRef.current.some((ref) => ref && ref.contains(target))
       ) {
         closeAllDropdowns();
       }
@@ -258,7 +258,7 @@ const ApplicantsTab = () => {
           <Styled.FilterContainer>
             <Styled.SelectWrapper
               ref={(el) => {
-                dropdwonRef.current[2] = el;
+                dropdownRef.current[2] = el;
               }}
             >
               <CustomDropDown
@@ -299,7 +299,7 @@ const ApplicantsTab = () => {
             </Styled.SelectWrapper>
             <Styled.SelectWrapper
               ref={(el) => {
-                dropdwonRef.current[3] = el;
+                dropdownRef.current[3] = el;
               }}
             >
               <CustomDropDown
@@ -342,7 +342,7 @@ const ApplicantsTab = () => {
             <Styled.VerticalLine />
             <Styled.SelectWrapper
               ref={(el) => {
-                dropdwonRef.current[0] = el;
+                dropdownRef.current[0] = el;
               }}
             >
               <CustomDropDown
@@ -404,7 +404,7 @@ const ApplicantsTab = () => {
               <Styled.ApplicantTableHeader width={55}>
                 <Styled.ApplicantAllSelectWrapper
                   ref={(el) => {
-                    dropdwonRef.current[1] = el;
+                    dropdownRef.current[1] = el;
                   }}
                 >
                   <Styled.ApplicantTableAllSelectCheckbox
