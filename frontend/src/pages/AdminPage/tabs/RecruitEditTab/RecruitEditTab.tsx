@@ -9,6 +9,7 @@ import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
 import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
+import { setYear } from 'date-fns';
 
 const RecruitEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail>();
@@ -19,8 +20,9 @@ const RecruitEditTab = () => {
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
   const [description, setDescription] = useState('');
+  const FAR_FUTURE_YEAR = 2999;
   const [always, setAlways] = useState(false);
-  const toggleAlways = () => setAlways((prev) => !prev);
+  const [backupRange, setBackupRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
 
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -46,6 +48,23 @@ const RecruitEditTab = () => {
     if (!date) return null;
     return new Date(date?.getTime() - 9 * 60 * 60 * 1000);
   }
+
+  const toggleAlways = () => {
+    setAlways((prev) => {
+      if (!prev) {
+        // 상시모집 활성화
+        setBackupRange({ start: recruitmentStart, end: recruitmentEnd });
+        const now = new Date();
+        setRecruitmentStart(now);
+        setRecruitmentEnd(setYear(now, FAR_FUTURE_YEAR));
+      } else {
+        // 상시모집 비활성화
+        setRecruitmentStart(backupRange.start) ?? new Date;
+        setRecruitmentEnd(backupRange.end) ?? new Date;
+      }
+      return !prev;
+    });
+  };
 
   const handleUpdateClub = async () => {
     if (!clubDetail) return;
