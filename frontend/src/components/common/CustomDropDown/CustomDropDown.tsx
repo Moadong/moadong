@@ -9,14 +9,14 @@ interface DropdownOption<TValue> {
 interface CustomDropDownContextProps<TValue> {
   open: boolean;
   selected?: TValue;
-  options: DropdownOption<TValue>[];
+  options: readonly DropdownOption<TValue>[];
   onToggle: (isOpen: boolean) => void;
   handleSelect: (value: TValue) => void;
 }
 
 interface CustomDropDownProps<TValue> {
   children: ReactNode;
-  options: DropdownOption<TValue>[];
+  options: readonly DropdownOption<TValue>[];
   selected?: TValue;
   onSelect: (value: TValue) => void;
   open: boolean;

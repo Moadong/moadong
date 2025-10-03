@@ -32,7 +32,7 @@ const ApplicantsTab = () => {
   const sortOptions = [
     { value: 'date', label: '제출순' },
     { value: 'name', label: '이름순' },
-  ];
+  ] as const;
 
   const navigate = useNavigate();
   const { clubId, applicantsData } = useAdminClubContext();
@@ -47,7 +47,9 @@ const ApplicantsTab = () => {
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('ALL');
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState(sortOptions[0]);
+  const [selectedSort, setSelectedSort] = useState<
+    (typeof sortOptions)[number]
+  >(sortOptions[0]);
 
   // 모든 드롭다운을 닫는 함수
   const closeAllDropdowns = () => {
