@@ -28,13 +28,16 @@ export const OptionList = styled.ul<OptionListProps>`
 `;
 
 export const OptionItem = styled.li<{ isSelected: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 10px;
   font-weight: 600;
   color: #787878;
   background-color: ${({ isSelected }) => (isSelected ? '#f5f5f5' : '#fff')};
   cursor: pointer;
   padding: 8px 13px;
+  height: 27px;
 
   &:hover {
     background-color: #f5f5f5;

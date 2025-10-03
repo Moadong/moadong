@@ -259,6 +259,7 @@ const ApplicantsTab = () => {
                 }}
                 open={isFilterOpen}
                 onToggle={() => setIsFilterOpen((prev) => !prev)}
+                style={{ width: '101px' }}
               >
                 <CustomDropDown.Trigger>
                   <Styled.ApplicantFilterSelect
@@ -303,6 +304,7 @@ const ApplicantsTab = () => {
                 }}
                 open={isSortOpen}
                 onToggle={() => setIsSortOpen((prev) => !prev)}
+                style={{ width: '101px' }}
               >
                 <CustomDropDown.Trigger>
                   <Styled.ApplicantFilterSelect
@@ -432,7 +434,7 @@ const ApplicantsTab = () => {
                     </CustomDropDown.Trigger>
                     <CustomDropDown.Menu top='16px' width='110px' right='-84px'>
                       {filterOptions.map(({ value, label }) => (
-                        <CustomDropDown.Item key={value} value={value}>
+                        <CustomDropDown.Item key={value} value={value} style={{ justifyContent: 'flex-start' }}>
                           {label}
                         </CustomDropDown.Item>
                       ))}
