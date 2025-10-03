@@ -199,7 +199,6 @@ export const DropdownContainer = styled.div`
   display: inline-block;
   margin-left: 45px;
   cursor: pointer;
-
   height: 43px;
   font-weight: 500;
   font-size: 14px;
@@ -217,7 +216,6 @@ export const DropdownMenu = styled.div`
   left: 50%;
   transform: translateX(-50%); // 가운데 정렬합니다.
   background-color: white;
-  min-width: 120px; // 최소 너비
   box-shadow: 0px 8px 16px 0px rgba(0, 0, 0, 0.1);
   border-radius: 8px;
   z-index: 3; // 다른 요소들 위에 보이도록 z-index를 높게 설정합니다.
@@ -227,7 +225,7 @@ export const DropdownMenu = styled.div`
 // 드롭다운 메뉴 안의 각 아이템 스타일입니다.
 export const DropdownItem = styled.div`
   color: black;
-  padding: 12px 16px;
+  padding: 4px 16px;
   text-decoration: none;
   display: block;
   text-align: center;
