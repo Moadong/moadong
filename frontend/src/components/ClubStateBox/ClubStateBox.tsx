@@ -5,25 +5,20 @@ const stateStyles: Record<
   { backgroundColor: string; color: string; text: string }
 > = {
   OPEN: {
-    backgroundColor: 'rgba(0, 166, 255, 0.1)',
-    color: '#00A6FF',
+    backgroundColor: '#3DBBFF',
+    color: '#FFFFFF',
     text: '모집중',
   },
-  UPCOMING: {
-    backgroundColor: 'rgba(230, 247, 255, 1)',
-    color: '#818181',
-    text: '모집예정',
-  },
   CLOSED: {
-    backgroundColor: 'rgba(239, 239, 239, 0.8)',
-    color: '#818181',
+    backgroundColor: '#C5C5C5',
+    color: '#FFFFFF',
     text: '모집마감',
   },
   ALWAYS: {
-    backgroundColor: 'rgba(235, 250, 241, 1)',
-    color: '#3ACD73',
-    text: '상시모집'
-  }
+    backgroundColor: '#49D5AD',
+    color: '#FFFFFF',
+    text: '상시모집',
+  },
 };
 
 const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
@@ -31,14 +26,19 @@ const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  width: 83px;
-  height: 30px;
+  width: 66px;
+  height: 28px;
   padding: 8px 21px;
   border-radius: 8px;
   background-color: ${({ $bgColor }) => $bgColor};
   color: ${({ $textColor }) => $textColor};
   font-size: 0.75rem;
   font-weight: 500;
+
+  @media (max-width: 500px) {
+    width: 50px;
+    height: 25px;
+  }
 `;
 
 interface ClubStateBoxProps {

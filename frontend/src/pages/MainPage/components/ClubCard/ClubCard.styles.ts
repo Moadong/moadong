@@ -6,11 +6,12 @@ const CardContainer = styled.div<{
 }>`
   display: flex;
   flex-direction: column;
-  border-radius: 14px;
+  border-radius: 20px;
   padding: 20px;
   background-color: #fff;
   width: 100%;
-  height: 170px;
+  gap: 16px;
+
   box-shadow: ${({ $state }) =>
     $state === 'open'
       ? '0 0 14px rgba(0, 166, 255, 0.15)'
@@ -44,7 +45,13 @@ const CardHeader = styled.div`
 const ClubProfile = styled.div`
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 20px;
+`;
+
+const ClubInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
 `;
 
 const ClubName = styled.h2`
@@ -52,18 +59,33 @@ const ClubName = styled.h2`
   font-weight: bold;
 `;
 
+export const StateBoxTagContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
+`;
+
 const TagsContainer = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 5px;
   flex-wrap: wrap;
+
+  @media (max-width: 500px) {
+    gap: 6px;
+  }
 `;
 
 const Introduction = styled.p`
   font-size: 0.875rem;
-  margin: 22px 3px 22px 5px;
+  margin: 10px 0px 0px 0px;
   color: rgba(129, 129, 129, 1);
   line-height: 16px;
   white-space: nowrap;
+
+  @media (max-width: 500px) {
+    margin: 6px 0px 0px 0px;
+  }
 `;
 
 export {
@@ -71,6 +93,7 @@ export {
   CardHeader,
   ClubProfile,
   ClubName,
+  ClubInfo,
   TagsContainer,
   Introduction,
 };

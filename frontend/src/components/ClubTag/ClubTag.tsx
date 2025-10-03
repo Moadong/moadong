@@ -19,12 +19,18 @@ interface TagProps {
 
 const StyledTag = styled.span<{ color: string }>`
   display: inline-block;
-  padding: 5px 8px;
-  border-radius: 4px;
+  padding: 4px 8px;
+  border-radius: 8px;
   background-color: ${({ color }) => color};
   font-size: 0.875rem;
   font-weight: 600;
   color: #3a3a3a;
+
+  @media (max-width: 500px) {
+    height: 25px;
+    padding: 4px 6px;
+    border-radius: 6px;
+  }
 `;
 ``;
 
