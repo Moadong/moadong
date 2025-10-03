@@ -51,7 +51,7 @@ const Calendar = ({
 }: CalendarProps) => {
   const handleStartChange = useCallback(
     (date: Date | null) => {
-      if (!disabled) return;
+      if (disabled) return;
       onChangeStart(date);
       if (recruitmentEnd && date && date > recruitmentEnd) {
         onChangeEnd(date);
@@ -62,7 +62,7 @@ const Calendar = ({
 
   const handleEndChange = useCallback(
     (date: Date | null) => {
-      if (!disabled) return;
+      if (disabled) return;
       onChangeEnd(date);
       if (recruitmentStart && date && date < recruitmentStart) {
         onChangeStart(date);

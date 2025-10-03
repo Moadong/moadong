@@ -145,7 +145,6 @@ export const DatepickerContainer = styled.div`
   .react-datepicker__input-container input:disabled {
     background: ${inputDisabledBg};
     color: ${disabledGray};
-    cursor: not-allowed;
   }
 
   /*  날짜 셀 스타일  */
