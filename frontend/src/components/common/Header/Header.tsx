@@ -156,9 +156,23 @@ const Header = () => {
     handleMenuClick,
   });
 
-  const navLinks: NavLinkData[] = [
+  const desktopNavLinks: NavLinkData[] = [
     { label: '모아동 소개', handler: handleIntroduceClick },
     { label: '총동아리연합회 소개', handler: handleClubUnionClick },
+  ];
+
+
+  const mobileNavLinks: NavLinkData[] = [
+    { label: '모아동 소개', handler: handleIntroduceClick },
+    { label: '총동아리연합회 소개', handler: handleClubUnionClick },
+    {
+      label: '패치 노트',
+      handler: () =>
+        window.open(
+          'https://honorable-cough-8f9.notion.site/1e8aad232096804f9ea9ee4f5cf0cd10',
+          '_blank',
+        ),
+    },
   ];
 
   return (
@@ -171,14 +185,14 @@ const Header = () => {
       ) : (
         <DesktopHeader
           isAdminPage={isAdminPage}
-          navLinks={navLinks}
+          navLinks={desktopNavLinks}
           onHomeClick={() => handleHomeClick('desktop')}
         />
       )}
       <MobileMenuDrawer
         isOpen={isMenuOpen}
         onClose={closeMenu}
-        navLinks={navLinks}
+        navLinks={mobileNavLinks}
         onHomeClick={() => {
           handleHomeClick('mobile');
           closeMenu();
