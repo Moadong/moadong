@@ -1,155 +1,73 @@
-import { memo } from 'react';
+import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import * as Styled from './Header.styles';
 
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
-import useIsMobile from '@/hooks/useIsMobile';
-import useMobileMenu from '@/services/header/useMobileMenu';
 import useHeaderService from '@/services/header/useHeaderService';
 
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
-import MenuBarIcon from '@/assets/images/icons/menu_button_icon.svg';
-import DeleteIcon from '@/assets/images/introduce/delete.png';
-
-interface NavLinkData {
-  label: string;
-  handler: () => void;
-}
-
-interface DesktopHeaderProps {
-  isAdminPage: boolean;
-  navLinks: NavLinkData[];
-  onHomeClick: () => void;
-}
-
-interface MobileHeaderProps {
-  onHomeClick: () => void;
-  onMenuClick: () => void;
-}
-
-interface MobileMenuDrawerProps {
-  isOpen: boolean;
-  onClose: () => void;
-  navLinks: NavLinkData[];
-  onHomeClick: () => void;
-}
-
-const DesktopHeader = memo(
-  ({ isAdminPage, navLinks, onHomeClick }: DesktopHeaderProps) => (
-    <Styled.HeaderStyles>
-      <Styled.HeaderContainer>
-        <Styled.TextCoverStyles>
-          <Styled.LogoButtonStyles
-            onClick={onHomeClick}
-            aria-label='홈으로 이동'
-          >
-            <img src={DesktopMainIcon} alt='모아동 로고' />
-          </Styled.LogoButtonStyles>
-          {!isAdminPage &&
-            navLinks.map((link) => (
-              <Styled.IntroduceButtonStyles
-                key={link.label}
-                onClick={link.handler}
-              >
-                {link.label}
-              </Styled.IntroduceButtonStyles>
-            ))}
-        </Styled.TextCoverStyles>
-        {!isAdminPage && <SearchBox />}
-      </Styled.HeaderContainer>
-    </Styled.HeaderStyles>
-  ),
-);
-
-const MobileMenuDrawer = memo(
-  ({ isOpen, onClose, navLinks, onHomeClick }: MobileMenuDrawerProps) => (
-    <Styled.DrawerContainer isOpen={isOpen}>
-      <Styled.DrawerHeader>
-        <Styled.DrawerMainIcon
-          src={DesktopMainIcon}
-          alt='모아동 로고'
-          onClick={onHomeClick}
-        />
-        <Styled.DrawerDeleteIcon
-          src={DeleteIcon}
-          alt='메뉴 닫기'
-          onClick={onClose}
-        />
-      </Styled.DrawerHeader>
-      {navLinks.map((link) => (
-        <Styled.MenubarIntroduceBox
-          key={link.label}
-          onClick={() => {
-            link.handler();
-            onClose();
-          }}
-        >
-          {link.label}
-        </Styled.MenubarIntroduceBox>
-      ))}
-    </Styled.DrawerContainer>
-  ),
-);
-
-const MobileHeader = memo(({ onHomeClick, onMenuClick }: MobileHeaderProps) => (
-  <Styled.MobileHeaderContainer>
-    <Styled.MobileHeaderWrapper>
-      <Styled.MobileMainIcon onClick={onHomeClick} aria-label='홈으로 이동'>
-        <img src={MobileMainIcon} alt='모아동 로고' />
-      </Styled.MobileMainIcon>
-      <SearchBox />
-      <Styled.MobileMenu onClick={onMenuClick} aria-label='메뉴 열기'>
-        <img src={MenuBarIcon} alt='' />
-      </Styled.MobileMenu>
-    </Styled.MobileHeaderWrapper>
-  </Styled.MobileHeaderContainer>
-));
 
 const Header = () => {
-  const isMobile = useIsMobile();
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');
+  const [isMenuOpen, setIsMenuOpen] = useState(false);
 
   const {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
-    handleMenuClick,
   } = useHeaderService();
 
-  const { isMenuOpen, openMenu, closeMenu } = useMobileMenu({
-    handleMenuClick,
-  });
-
-  const navLinks: NavLinkData[] = [
-    { label: '모아동 소개', handler: handleIntroduceClick },
-    { label: '총동아리연합회 소개', handler: handleClubUnionClick },
+  const navLinks = [
+    { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
+    { label: '총동아리연합회 소개', handler: handleClubUnionClick, path: '/club-union' },
+    { label: '패치노트', handler: () => {}, path: '/patch-note' },
   ];
+
+  const closeMenu = () => setIsMenuOpen(false);
+  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   return (
     <>
-      {isMobile ? (
-        <MobileHeader
-          onHomeClick={() => handleHomeClick('mobile')}
-          onMenuClick={openMenu}
-        />
-      ) : (
-        <DesktopHeader
-          isAdminPage={isAdminPage}
-          navLinks={navLinks}
-          onHomeClick={() => handleHomeClick('desktop')}
-        />
-      )}
-      <MobileMenuDrawer
-        isOpen={isMenuOpen}
-        onClose={closeMenu}
-        navLinks={navLinks}
-        onHomeClick={() => {
-          handleHomeClick('mobile');
-          closeMenu();
-        }}
-      />
+      <Styled.Header>
+        <Styled.Container>
+          <Styled.LogoButton onClick={handleHomeClick} aria-label="홈으로 이동">
+            <img className="desktop-logo" src={DesktopMainIcon} alt="모아동 로고" />
+            <img className="mobile-logo" src={MobileMainIcon} alt="모아동 로고" />
+          </Styled.LogoButton>
+
+          {!isAdminPage && (
+            <Styled.Nav isOpen={isMenuOpen}>
+              {navLinks.map((link) => (
+                <Styled.NavLink
+                  key={link.label}
+                  isActive={location.pathname === link.path}
+                  onClick={() => {
+                    link.handler();
+                    closeMenu();
+                  }}
+                >
+                  {link.label}
+                </Styled.NavLink>
+              ))}
+            </Styled.Nav>
+          )}
+
+          {/* TODO 동아리 관리자 프로필 추가 */}
+          {!isAdminPage && <SearchBox />}
+
+          <Styled.MenuButton 
+            onClick={toggleMenu} 
+            isOpen={isMenuOpen}
+            aria-label={isMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
+          >
+            <span />
+            <span />
+            <span />
+          </Styled.MenuButton>
+        </Styled.Container>
+      </Styled.Header>
     </>
   );
 };
