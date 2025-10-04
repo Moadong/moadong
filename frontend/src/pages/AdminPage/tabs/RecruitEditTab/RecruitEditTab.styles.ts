@@ -25,7 +25,7 @@ export const InfoGroup = styled.div`
   margin-bottom: 140px;
 `;
 
-export const RecruitmentPeriodContainer = styled.div`
+export const RecruitPeriodContainer = styled.div`
   display: flex; 
   gap: 16px; 
   max-width: 706px;
@@ -38,6 +38,7 @@ export const AlwaysRecruitButton = styled.button<{ $active: boolean }>`
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
+  flex-shrink: 0;
 
   color: ${({ $active }) => ($active ? '#fff' : '#797979')};
   background: ${({ $active }) => ($active ? '#FF7543' : 'rgba(0,0,0,0.05)')};
