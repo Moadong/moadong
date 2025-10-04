@@ -35,7 +35,6 @@ const RecruitEditTab = () => {
     const now = new Date();
     const start = correctResponseKoreanDate(initialStart);
     const end = correctResponseKoreanDate(initialEnd);
-
     const isAlways = !!end && end.getFullYear() === FAR_FUTURE_YEAR;
     
     if (isAlways) {
@@ -44,13 +43,19 @@ const RecruitEditTab = () => {
       setRecruitmentStart(start ?? now);
       setRecruitmentEnd(end ?? setYear(now, FAR_FUTURE_YEAR));
     } else {
-      setRecruitmentStart((prev) => prev ?? start ?? now);
-      setRecruitmentEnd((prev) => prev ?? end ?? now);
+      setRecruitmentStart(start ?? now);
+      setRecruitmentEnd(end ?? now);
     }
     
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
     setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
+
+  useEffect(() => {
+  if (always && recruitmentStart) {
+    setRecruitmentEnd(setYear(recruitmentStart, FAR_FUTURE_YEAR));
+  }
+}, [always, recruitmentStart]);
 
   const correctRequestKoreanDate = (date: Date | null): Date | null => {
     if (!date) return null;
@@ -69,19 +74,18 @@ const RecruitEditTab = () => {
       if (!prev) {
         // 상시모집 활성화
         setBackupRange({ start: recruitmentStart, end: recruitmentEnd });
-        setRecruitmentStart(now);
-        setRecruitmentEnd(setYear(now, FAR_FUTURE_YEAR));
       } else {
         // 상시모집 비활성화
         const backupWasAlways = isFarFuture(backupRange.end);
         if (backupWasAlways) {
           // 백업이 상시모집인 경우
-          setRecruitmentStart(now);
-          setRecruitmentEnd(now);
+          const base = backupRange.start ?? now;
+          setRecruitmentStart(base);
+          setRecruitmentEnd(base);
         } else {
           // 백업이 상시모집이 아닌 경우
-          setRecruitmentStart(backupRange.start ?? new Date());
-          setRecruitmentEnd(backupRange.end ?? new Date());
+          setRecruitmentStart(backupRange.start ?? now);
+          setRecruitmentEnd(backupRange.end ?? now);
         }
       }
       return !prev;
@@ -95,9 +99,9 @@ const RecruitEditTab = () => {
     let endForSave: Date | null = recruitmentEnd;
 
     if (always) {
-      const now = new Date();
-      startForSave = now;
-      endForSave = setYear(now, FAR_FUTURE_YEAR);
+      const base = recruitmentStart ?? new Date();
+      startForSave = base;
+      endForSave = setYear(base, FAR_FUTURE_YEAR);
     }
 
     const updatedData = {
@@ -138,7 +142,7 @@ const RecruitEditTab = () => {
               recruitmentEnd={recruitmentEnd}
               onChangeStart={setRecruitmentStart}
               onChangeEnd={setRecruitmentEnd}
-              disabled={always}
+              disabledEnd={always}
             />
             <Styled.AlwaysRecruitButton
               type="button"
