@@ -41,7 +41,6 @@ const RecruitEditTab = () => {
       setAlways(true);
       setBackupRange({ start, end });
       setRecruitmentStart(start ?? now);
-      setRecruitmentEnd(end ?? setYear(now, FAR_FUTURE_YEAR));
     } else {
       setRecruitmentStart(start ?? now);
       setRecruitmentEnd(end ?? now);
@@ -52,9 +51,9 @@ const RecruitEditTab = () => {
   }, [clubDetail]);
 
   useEffect(() => {
-  if (always && recruitmentStart) {
-    setRecruitmentEnd(setYear(recruitmentStart, FAR_FUTURE_YEAR));
-  }
+    if (always && recruitmentStart) {
+      setRecruitmentEnd(setYear(recruitmentStart, FAR_FUTURE_YEAR));
+    }
 }, [always, recruitmentStart]);
 
   const correctRequestKoreanDate = (date: Date | null): Date | null => {
