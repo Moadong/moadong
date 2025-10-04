@@ -132,7 +132,7 @@ const RecruitEditTab = () => {
       <Styled.InfoGroup>
         <div>
           <Styled.Label>모집 기간 설정</Styled.Label>
-          <Styled.RecruitmentPeriodContainer>
+          <Styled.RecruitPeriodContainer>
             <Calendar
               recruitmentStart={recruitmentStart}
               recruitmentEnd={recruitmentEnd}
@@ -148,7 +148,7 @@ const RecruitEditTab = () => {
             >
               상시모집
             </Styled.AlwaysRecruitButton>
-          </Styled.RecruitmentPeriodContainer>
+          </Styled.RecruitPeriodContainer>
         </div>
         <InputField
           label='모집 대상'
