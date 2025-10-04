@@ -1,193 +1,171 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
-export const HeaderStyles = styled.header`
+export const Header = styled.header`
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
+  width: 100%;
   height: 62px;
   padding: 10px 40px;
-  max-width: 1180px;
-  margin: 0 auto;
-  z-index: 2;
   background-color: white;
+  z-index: 2;
 
-  @media (max-width: 500px) {
-    display: none;
+  ${media.tablet} {
+    height: 56px;
+    padding: 10px 40px;
+  }
+
+  ${media.mobile}{
+    padding: 5px 20px;
+  }
+
+  ${media.mobile}{
+    padding: 5px 10px;
   }
 `;
 
-export const HeaderContainer = styled.div`
+export const Container = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  gap: 80px;
+  max-width: 1100px;
+  margin: 0 auto;
+  gap: 50px;
 
-  @media (max-width: 698px) {
-    gap: 50px;
+  ${media.tablet} {
+    gap: 35px;
+  }
+  ${media.mobile} {
+    gap: 30px;
+  }
+  ${media.mini_mobile} {
+    gap: 15px;
   }
 `;
 
-export const TextCoverStyles = styled.div`
-  display: flex;
-  width: 365px;
-  white-space: nowrap;
-
-  @media (max-width: 698px) {
-    width: 220px;
-  }
-`;
-
-export const LogoButtonStyles = styled.button`
-  width: 152px;
-  height: 43px;
-  background-color: transparent;
+export const LogoButton = styled.button`
+  background: none;
   border: none;
-  color: #000000;
   cursor: pointer;
+  padding: 0;
 
-  img {
+  .desktop-logo {
+    display: block;
     width: 152px;
     height: auto;
-    object-fit: cover;
   }
 
-  @media (max-width: 698px) {
-    width: 117px;
-    height: 41px;
+  .mobile-logo {
+    display: none;
+  }
 
-    img {
-      width: 117px;
+  @media (max-width: 870px) {
+    .desktop-logo {
+      display: none;
+    }
+    .mobile-logo {
+      display: block;
+      width: 32px;
+      height: auto;
     }
   }
 `;
 
-export const IntroduceButtonStyles = styled.a`
-  margin-left: 45px;
-  width: 63px;
-  height: 43px;
-  font-weight: 500;
-  font-size: 14px;
-  line-height: 42px;
-  cursor: pointer;
-  color: inherit;
-  text-decoration: none;
+export const Nav = styled.nav<{ isOpen: boolean }>`
+  display: flex;
+  align-items: center;
+  gap: 45px;
 
-  &:visited {
-    color: inherit;
-    text-decoration: none;
-  }
-
-  @media (max-width: 698px) {
-    width: 63px;
-    height: 43px;
-  }
-`;
-
-export const MobileHeaderContainer = styled.header`
-  display: none;
-
-  @media (max-width: 500px) {
+  ${media.tablet} {
     position: fixed;
-    display: flex;
-    top: 0;
+    top: 56px;
     left: 0;
     right: 0;
-    height: 56px;
-    padding: 0px 20px;
-    margin: 0 auto;
-    z-index: 2;
-    background-color: white;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0;
+    background: #fff;
+    margin-bottom: 16px;
+    border-radius: 0 0 20px 20px;
+    box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.16);
+    transform: translateY(${({ isOpen }) => (isOpen ? '0' : '-200%')});
+    transition: opacity 0.3s ease-in-out;
+    z-index: 1;
   }
 `;
 
-export const MobileHeaderWrapper = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-`;
-
-export const MobileMainIcon = styled.button`
-  width: 32.562px;
-  height: 26px;
-  background-color: transparent;
+export const NavLink = styled.button<{ isActive?: boolean }>`
   border: none;
+  font-weight: 500;
+  font-size: 14px;
   cursor: pointer;
+  white-space: nowrap;
+  color: ${({ isActive }) => (isActive ? '#FF5414' : '#3A3A3A')};
+  background: transparent;
+  transition: all 0.2s ease-in-out;
 
-  img {
-    width: 32.562px;
-    height: auto;
-    object-fit: cover;
+  &:hover {
+    opacity: 0.7;
+  }
+
+  ${media.tablet} {
+    display: inline-flex;
+    padding: 12px 24px;
+    background: ${({ isActive }) => (isActive ? 'rgba(255, 84, 20, 0.08)' : 'none')};
+    
+    &:last-child {
+      margin-bottom: 16px;
+    }
   }
 `;
 
-export const MobileMenu = styled.button`
-  width: 20px;
-  height: 16px;
-  background-color: transparent;
+export const MenuButton = styled.button<{ isOpen: boolean }>`
+  display: none;
+  background: none;
   border: none;
   cursor: pointer;
+  padding: 0;
+  width: 24px;
+  height: 18px;
+  position: relative;
+  z-index: 3;
 
-  img {
+  ${media.tablet} {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+  }
+
+  ${media.mobile} {
     width: 20px;
-    height: auto;
-    object-fit: cover;
   }
-`;
 
-export const DrawerContainer = styled.div<{ isOpen: boolean }>`
-  position: fixed;
-  top: ${({ isOpen }) => (isOpen ? '0' : '-175px')};
-  height: 175px;
-  left: 0;
-  right: 0;
-  border-radius: 0px 0px 20px 20px;
-  background: #fff;
-  box-shadow: 0px 20px 30px 0px rgba(0, 0, 0, 0.25);
-  transition: top 0.2s ease-in-out;
-  z-index: 2;
-  padding: 20px;
+  span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: #4B4B4B;
+    border-radius: 2px;
+    transition: all 0.3s ease-in-out;
+    transform-origin: center;
+  }
 
-  visibility: ${({ isOpen }) => (isOpen ? 'visible' : 'hidden')};
-`;
-
-export const DrawerWrapper = styled.div`
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 34.75px;
-`;
-
-export const DrawerHeader = styled.div`
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  gap: 150px;
-`;
-
-export const DrawerMainIcon = styled.img`
-  width: 158px;
-  height: 32.25px;
-  flex-shrink: 0;
-  cursor: pointer;
-`;
-
-export const DrawerDeleteIcon = styled.img`
-  width: 17px;
-  height: 17px;
-  flex-shrink: 0;
-`;
-
-export const MenubarIntroduceBox = styled.div`
-  display: inline-flex;
-  justify-content: center;
-  align-items: center;
-  padding: 6px 36px;
-  border-radius: 52px;
-  background: rgba(255, 84, 20, 0.08);
-  cursor: pointer;
+  ${({ isOpen }) =>
+    isOpen &&
+    `
+    span:nth-child(1) {
+      transform: translateY(8.25px) rotate(45deg);
+    }
+    
+    span:nth-child(2) {
+      opacity: 0;
+    }
+    
+    span:nth-child(3) {
+      transform: translateY(-8.25px) rotate(-45deg);
+    }
+  `}
 `;
