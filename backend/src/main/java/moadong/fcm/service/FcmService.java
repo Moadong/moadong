@@ -11,10 +11,18 @@ public class FcmService {
     private final FcmTokenRepository fcmTokenRepository;
 
     public void saveFcmToken(String fcmTokenString) {
-        FcmToken fcmToken = FcmToken.builder()
-                .fcmToken(fcmTokenString)
-                .build();
+        FcmToken existToken = fcmTokenRepository.findFcmTokenByToken(fcmTokenString);
 
-        fcmTokenRepository.insert(fcmToken);
+        if (existToken == null) {
+            FcmToken fcmToken = FcmToken.builder()
+                    .token(fcmTokenString)
+                    .build();
+
+            fcmTokenRepository.save(fcmToken);
+            return;
+        }
+
+        existToken.updateTimestamp();
+        fcmTokenRepository.save(existToken);
     }
 }

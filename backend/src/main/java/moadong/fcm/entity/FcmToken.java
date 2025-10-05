@@ -17,7 +17,12 @@ public class FcmToken {
     @Id
     String id;
 
-    String fcmToken;
+    String token;
 
-    LocalDateTime timestamp;
+    @Builder.Default
+    LocalDateTime timestamp = LocalDateTime.now();
+
+    public void updateTimestamp() {
+        this.timestamp = LocalDateTime.now();
+    }
 }
