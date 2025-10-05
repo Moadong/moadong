@@ -1,22 +1,37 @@
 import styled from 'styled-components';
 
+const STATE_COLORS = {
+  OPEN: {
+    backgroundColor: '#3DBBFF',
+    textColor: '#FFFFFF',
+  },
+  CLOSED: {
+    backgroundColor: '#C5C5C5',
+    textColor: '#FFFFFF',
+  },
+  ALWAYS: {
+    backgroundColor: '#49D5AD',
+    textColor: '#FFFFFF',
+  },
+};
+
 const stateStyles: Record<
   string,
   { backgroundColor: string; color: string; text: string }
 > = {
   OPEN: {
-    backgroundColor: '#3DBBFF',
-    color: '#FFFFFF',
+    backgroundColor: STATE_COLORS.OPEN.backgroundColor,
+    color: STATE_COLORS.OPEN.textColor,
     text: '모집중',
   },
   CLOSED: {
-    backgroundColor: '#C5C5C5',
-    color: '#FFFFFF',
+    backgroundColor: STATE_COLORS.CLOSED.backgroundColor,
+    color: STATE_COLORS.CLOSED.textColor,
     text: '모집마감',
   },
   ALWAYS: {
-    backgroundColor: '#49D5AD',
-    color: '#FFFFFF',
+    backgroundColor: STATE_COLORS.ALWAYS.backgroundColor,
+    color: STATE_COLORS.ALWAYS.textColor,
     text: '상시모집',
   },
 };
