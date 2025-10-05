@@ -76,15 +76,24 @@ const TagsContainer = styled.div`
   }
 `;
 
+const INTRODUCTION_MARGIN = {
+  desktop: {
+    margin: '10px 0px 0px 0px',
+  },
+  mobile: {
+    margin: '6px 0px 0px 0px',
+  },
+} as const;
+
 const Introduction = styled.p`
   font-size: 0.875rem;
-  margin: 10px 0px 0px 0px;
+  margin: ${INTRODUCTION_MARGIN.desktop.margin};
   color: rgba(129, 129, 129, 1);
   line-height: 16px;
   white-space: nowrap;
 
   @media (max-width: 500px) {
-    margin: 6px 0px 0px 0px;
+    margin: ${INTRODUCTION_MARGIN.mobile.margin};
   }
 `;
 
