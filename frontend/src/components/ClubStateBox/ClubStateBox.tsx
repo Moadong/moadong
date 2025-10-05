@@ -34,15 +34,26 @@ const stateStyles: Record<
     color: STATE_COLORS.ALWAYS.textColor,
     text: '상시모집',
   },
-};
+} as const;
+
+const BOX_DIMENSIONS = {
+  desktop: {
+    width: '66px',
+    height: '28px',
+  },
+  mobile: {
+    width: '50px',
+    height: '25px',
+  },
+} as const;
 
 const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  width: 66px;
-  height: 28px;
+  width: ${BOX_DIMENSIONS.desktop.width};
+  height: ${BOX_DIMENSIONS.desktop.height};
   border-radius: 8px;
   background-color: ${({ $bgColor }) => $bgColor};
   color: ${({ $textColor }) => $textColor};
@@ -50,8 +61,8 @@ const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   font-weight: 500;
 
   @media (max-width: 500px) {
-    width: 50px;
-    height: 25px;
+    width: ${BOX_DIMENSIONS.mobile.width};
+    height: ${BOX_DIMENSIONS.mobile.height};
   }
 `;
 
