@@ -26,7 +26,7 @@ const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  width: 55px;
+  width: 66px;
   height: 28px;
   border-radius: 8px;
   background-color: ${({ $bgColor }) => $bgColor};
