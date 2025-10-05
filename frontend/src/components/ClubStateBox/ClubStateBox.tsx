@@ -1,44 +1,69 @@
 import styled from 'styled-components';
 
+const STATE_COLORS = {
+  OPEN: {
+    backgroundColor: '#3DBBFF',
+    textColor: '#FFFFFF',
+  },
+  CLOSED: {
+    backgroundColor: '#C5C5C5',
+    textColor: '#FFFFFF',
+  },
+  ALWAYS: {
+    backgroundColor: '#49D5AD',
+    textColor: '#FFFFFF',
+  },
+};
+
 const stateStyles: Record<
   string,
   { backgroundColor: string; color: string; text: string }
 > = {
   OPEN: {
-    backgroundColor: 'rgba(0, 166, 255, 0.1)',
-    color: '#00A6FF',
+    backgroundColor: STATE_COLORS.OPEN.backgroundColor,
+    color: STATE_COLORS.OPEN.textColor,
     text: '모집중',
   },
-  UPCOMING: {
-    backgroundColor: 'rgba(230, 247, 255, 1)',
-    color: '#818181',
-    text: '모집예정',
-  },
   CLOSED: {
-    backgroundColor: 'rgba(239, 239, 239, 0.8)',
-    color: '#818181',
+    backgroundColor: STATE_COLORS.CLOSED.backgroundColor,
+    color: STATE_COLORS.CLOSED.textColor,
     text: '모집마감',
   },
   ALWAYS: {
-    backgroundColor: 'rgba(235, 250, 241, 1)',
-    color: '#3ACD73',
-    text: '상시모집'
-  }
-};
+    backgroundColor: STATE_COLORS.ALWAYS.backgroundColor,
+    color: STATE_COLORS.ALWAYS.textColor,
+    text: '상시모집',
+  },
+} as const;
+
+const BOX_DIMENSIONS = {
+  desktop: {
+    width: '66px',
+    height: '28px',
+  },
+  mobile: {
+    width: '50px',
+    height: '25px',
+  },
+} as const;
 
 const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
   white-space: nowrap;
-  width: 83px;
-  height: 30px;
-  padding: 8px 21px;
+  width: ${BOX_DIMENSIONS.desktop.width};
+  height: ${BOX_DIMENSIONS.desktop.height};
   border-radius: 8px;
   background-color: ${({ $bgColor }) => $bgColor};
   color: ${({ $textColor }) => $textColor};
   font-size: 0.75rem;
   font-weight: 500;
+
+  @media (max-width: 500px) {
+    width: ${BOX_DIMENSIONS.mobile.width};
+    height: ${BOX_DIMENSIONS.mobile.height};
+  }
 `;
 
 interface ClubStateBoxProps {

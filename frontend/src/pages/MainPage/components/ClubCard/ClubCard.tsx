@@ -30,26 +30,31 @@ const ClubCard = ({ club }: { club: Club }) => {
     <Styled.CardContainer
       $state={club.recruitmentStatus}
       $isClicked={isClicked}
-      onClick={handleNavigate}>
+      onClick={handleNavigate}
+    >
       <Styled.CardHeader>
         <Styled.ClubProfile>
           <ClubLogo $imageSrc={club.logo || default_profile_image} />
-          <Styled.ClubName>{club.name}</Styled.ClubName>
+          <Styled.ClubInfo>
+            <Styled.ClubName>{club.name}</Styled.ClubName>
+            <Styled.Introduction>{club.introduction}</Styled.Introduction>
+          </Styled.ClubInfo>
         </Styled.ClubProfile>
-        <ClubStateBox state={club.recruitmentStatus} />
       </Styled.CardHeader>
-      <Styled.Introduction>{club.introduction}</Styled.Introduction>
-      <Styled.TagsContainer>
-        <ClubTag key={`division-${club.id}`} type={club.division} />
-        <ClubTag key={`category-${club.id}`} type={club.category} />
-        {club.tags
-          .filter((tag) => tag.trim())
-          .map((tag) => (
-            <ClubTag key={`tag-${club.id}-${tag}`} type={'자유'}>
-              {tag}
-            </ClubTag>
-          ))}
-      </Styled.TagsContainer>
+
+      <Styled.StateBoxTagContainer>
+        <ClubStateBox state={club.recruitmentStatus} />
+        <Styled.TagsContainer>
+          <ClubTag key={`category-${club.id}`} type={club.category} />
+          {club.tags
+            .filter((tag) => tag.trim())
+            .map((tag) => (
+              <ClubTag key={`tag-${club.id}-${tag}`} type={'자유'}>
+                {tag}
+              </ClubTag>
+            ))}
+        </Styled.TagsContainer>
+      </Styled.StateBoxTagContainer>
     </Styled.CardContainer>
   );
 };

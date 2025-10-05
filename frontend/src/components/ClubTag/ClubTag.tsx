@@ -17,14 +17,31 @@ interface TagProps {
   className?: string;
 }
 
+const TAG_STYLES = {
+  desktop: {
+    padding: '4px 8px',
+    borderRadius: '8px',
+  },
+  mobile: {
+    padding: '4px 6px',
+    borderRadius: '6px',
+  },
+} as const;
+
 const StyledTag = styled.span<{ color: string }>`
   display: inline-block;
-  padding: 5px 8px;
-  border-radius: 4px;
+  padding: ${TAG_STYLES.desktop.padding};
+  border-radius: ${TAG_STYLES.desktop.borderRadius};
   background-color: ${({ color }) => color};
   font-size: 0.875rem;
   font-weight: 600;
   color: #3a3a3a;
+
+  @media (max-width: 500px) {
+    height: 25px;
+    padding: ${TAG_STYLES.mobile.padding};
+    border-radius: ${TAG_STYLES.mobile.borderRadius};
+  }
 `;
 ``;
 
