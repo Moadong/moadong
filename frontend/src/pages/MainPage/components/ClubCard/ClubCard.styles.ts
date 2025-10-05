@@ -1,16 +1,22 @@
 import styled from 'styled-components';
 
+const CARD_STYLES = {
+  borderRadius: '20px',
+  padding: '20px',
+  gap: '16px',
+} as const;
+
 const CardContainer = styled.div<{
   $state: string;
   $isClicked: boolean;
 }>`
+  width: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 20px;
-  padding: 20px;
+  border-radius: ${CARD_STYLES.borderRadius};
+  padding: ${CARD_STYLES.padding};
+  gap: ${CARD_STYLES.gap};
   background-color: #fff;
-  width: 100%;
-  gap: 16px;
 
   box-shadow: ${({ $state }) =>
     $state === 'open'
