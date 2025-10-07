@@ -3,8 +3,8 @@ package moadong.fcm.repository;
 import moadong.fcm.entity.FcmToken;
 import org.springframework.data.mongodb.repository.MongoRepository;
 
-import java.util.List;
+import java.util.Optional;
 
 public interface FcmTokenRepository extends MongoRepository<FcmToken, String> {
-    FcmToken findFcmTokenByToken(String fcmToken);
+    Optional<FcmToken> findFcmTokenByToken(String fcmToken);
 }
