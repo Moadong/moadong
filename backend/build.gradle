@@ -56,7 +56,7 @@ dependencies {
 	implementation 'net.coobird:thumbnailator:0.4.14'
 	implementation 'org.springframework:spring-test'
 
-
+	implementation 'com.google.firebase:firebase-admin:9.7.0'
 
 }
 
