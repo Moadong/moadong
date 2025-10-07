@@ -29,6 +29,7 @@ public class ClubApplicationFormsRepositoryCustom {
                 .and("_id").as("_id")
                 .and("title").as("title")
                 .and("editedAt").as("editedAt")
+                .and("status").as("status")
                 .and("semesterYear").as("semesterYear")
                 .and("semesterTerm").as("semesterTerm"));
 
@@ -42,7 +43,8 @@ public class ClubApplicationFormsRepositoryCustom {
         GroupOperation groupOperation = Aggregation.group("semesterYear","semesterTerm")
                 .push(new Document("_id", "$_id")
                         .append("title", "$title")
-                        .append("editedAt", "$editedAt"))
+                        .append("editedAt", "$editedAt")
+                        .append("status","$status"))
                 .as("forms");
         operations.add(groupOperation);
 
