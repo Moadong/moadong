@@ -31,10 +31,8 @@ public class FcmController {
     }
 
     @GetMapping("/subscribe")
-    public ResponseEntity<?> subscribeRecruitment(@RequestBody
-                                                  @Validated
-                                                  @NotNull String fcmToken) {
-
+    public ResponseEntity<?> getSubscribedClubs(@RequestParam("fcmToken")
+                                                @Validated @NotNull String fcmToken) {
         return Response.ok(fcmService.getSubscribeClubs(fcmToken));
     }
 }
