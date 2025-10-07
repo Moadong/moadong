@@ -19,7 +19,7 @@ public class RecruitmentStateChecker {
 
     private final ClubRepository clubRepository;
 
-    @Scheduled(fixedRate = 60 * 60 * 1000) // 5분마다 실행
+    @Scheduled(fixedRate = 60 * 60 * 1000) // 1시간마다 실행
     public void performTask() {
         List<Club> clubs = clubRepository.findAll();
         for (Club club : clubs) {
