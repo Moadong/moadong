@@ -7,6 +7,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 
 @Document("fcm_tokens")
 @AllArgsConstructor
@@ -18,6 +19,9 @@ public class FcmToken {
     String id;
 
     String token;
+
+    @Builder.Default
+    ArrayList<String> clubIds = new ArrayList<>();
 
     @Builder.Default
     LocalDateTime timestamp = LocalDateTime.now();
