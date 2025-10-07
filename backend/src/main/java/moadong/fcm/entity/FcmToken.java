@@ -29,4 +29,8 @@ public class FcmToken {
     public void updateTimestamp() {
         this.timestamp = LocalDateTime.now();
     }
+
+    public void updateClubIds(ArrayList<String> clubIds) {
+        this.clubIds = clubIds;
+    }
 }
