@@ -12,7 +12,7 @@ import moadong.club.payload.request.ClubApplicantDeleteRequest;
 import moadong.club.payload.request.ClubApplicantEditRequest;
 import moadong.club.payload.request.ClubApplyRequest;
 import moadong.club.repository.ClubApplicationFormsRepository;
-import moadong.club.service.ClubApplyService;
+import moadong.club.service.ClubApplyServiceV1;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.payload.Response;
@@ -30,12 +30,12 @@ import java.util.List;
 @AllArgsConstructor
 @Tag(name = "Club_Apply_V1",
         description = "클럽 지원서 수정 전 API <br>"
-                + "구버전 호환을 위한 임시 API입니다. <br>"
+                + "구버전 호환을 위한 임시 API 입니다. <br>"
                 + "프론트에서 formId 기반 신규 규격으로 전환하기 전까지 clubId 기반 요청을 한시적으로 지원합니다. <br>"
                 + "(clubId로 활성화된 최신 지원서 양식의 formId를 가져옴)")
 public class ClubApplyControllerV1 {
 
-    private final ClubApplyService clubApplyService;
+    private final ClubApplyServiceV1 clubApplyServiceV1;
     private final ClubApplicationFormsRepository clubApplicationFormsRepository;
 
     @GetMapping("/apply") //
@@ -44,7 +44,7 @@ public class ClubApplyControllerV1 {
                     + "<br>v2 api : /api/club/{clubId}/apply/{applicationFormId}")
     public ResponseEntity<?> getClubApplication(@PathVariable String clubId) {
 
-        return clubApplyService.getClubApplicationForm(clubId, convertClubIdToFormId(clubId));
+        return clubApplyServiceV1.getClubApplicationForm(clubId, convertClubIdToFormId(clubId));
     }
 
     @PostMapping("/apply")
@@ -52,7 +52,7 @@ public class ClubApplyControllerV1 {
                     + "<br>v2 api : /api/club/{clubId}/apply/{applicationFormId}")
     public ResponseEntity<?> applyToClub(@PathVariable String clubId,
                                          @RequestBody @Validated ClubApplyRequest request) {
-        clubApplyService.applyToClub(clubId, convertClubIdToFormId(clubId), request);
+        clubApplyServiceV1.applyToClub(clubId, convertClubIdToFormId(clubId), request);
         return Response.ok("success apply");
     }
 
@@ -63,7 +63,7 @@ public class ClubApplyControllerV1 {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getApplyInfo(@PathVariable String clubId,
                                           @CurrentUser CustomUserDetails user) {
-        return Response.ok(clubApplyService.getClubApplyInfo(clubId, convertClubIdToFormId(clubId), user));
+        return Response.ok(clubApplyServiceV1.getClubApplyInfo(clubId, convertClubIdToFormId(clubId), user));
     }
 
     @PutMapping("/applicant")
@@ -77,7 +77,7 @@ public class ClubApplyControllerV1 {
     public ResponseEntity<?> editApplicantDetail(@PathVariable String clubId,
                                                  @RequestBody @Valid @NotEmpty List<ClubApplicantEditRequest> request,
                                                  @CurrentUser CustomUserDetails user) {
-        clubApplyService.editApplicantDetail(clubId, convertClubIdToFormId(clubId), request, user);
+        clubApplyServiceV1.editApplicantDetail(clubId, convertClubIdToFormId(clubId), request, user);
         return Response.ok("success edit applicant");
     }
 
@@ -91,7 +91,7 @@ public class ClubApplyControllerV1 {
     public ResponseEntity<?> removeApplicant(@PathVariable String clubId,
                                              @RequestBody @Validated ClubApplicantDeleteRequest request,
                                              @CurrentUser CustomUserDetails user) {
-        clubApplyService.deleteApplicant(clubId,convertClubIdToFormId(clubId), request, user);
+        clubApplyServiceV1.deleteApplicant(clubId,convertClubIdToFormId(clubId), request, user);
         return Response.ok("success delete applicant");
     }
 
