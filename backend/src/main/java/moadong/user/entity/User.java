@@ -42,6 +42,9 @@ public class User implements UserDetails {
     @NotNull
     private Boolean emailVerified = false;
 
+    @NotNull
+    private String clubId;
+
     @Builder.Default
     @NotNull
     private Date createdAt = new Date();
@@ -80,6 +83,11 @@ public class User implements UserDetails {
     public void resetPassword(String encodedPassword) { //초기화된 비밀번호 업데이트
         this.password = encodedPassword;
     }
+
+    public void updateClubId(String clubId) {
+        this.clubId = clubId;
+    }
+
     public void updateRefreshToken(RefreshToken refreshToken) {
         this.refreshToken = refreshToken;
     }

@@ -43,8 +43,11 @@ public class UserCommandService {
     public User registerUser(UserRegisterRequest userRegisterRequest) {
         try {
             User user = userRepository.save(userRegisterRequest.toUserEntity(passwordEncoder));
-            createClub(user.getId());
-            return user;
+
+            String clubId = createClub(user.getId());
+            user.updateClubId(clubId);
+
+            return userRepository.save(user);
         } catch (MongoWriteException e) {
             throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);
         }
@@ -156,9 +159,9 @@ public class UserCommandService {
         return club.getId();
     }
 
-    private void createClub(String userId) {
-        Club club = new Club(userId);
-        clubRepository.save(club);
+    private String createClub(String userId) {
+        Club club = clubRepository.save(new Club(userId));
+        return club.getId();
     }
 
 }
