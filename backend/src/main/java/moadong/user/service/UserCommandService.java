@@ -49,7 +49,7 @@ public class UserCommandService {
         String clubId = new ObjectId().toHexString();
 
         try {
-            User user = userRepository.insert(createUser(userRegisterRequest, userId, clubId));
+            User user = userRepository.save(createUser(userRegisterRequest, userId, clubId));
             createClub(clubId, userId);
 
             return user;
@@ -172,7 +172,7 @@ public class UserCommandService {
     }
     private void createClub(String clubId, String userId) {
         Club club = new Club(clubId, userId);
-        clubRepository.insert(club);
+        clubRepository.save(club);
     }
 
 }
