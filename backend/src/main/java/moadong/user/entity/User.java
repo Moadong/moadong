@@ -1,6 +1,5 @@
 package moadong.user.entity;
 
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Collection;
@@ -12,6 +11,7 @@ import lombok.NoArgsConstructor;
 import moadong.global.annotation.UserId;
 import moadong.user.entity.enums.UserStatus;
 import moadong.user.payload.request.UserUpdateRequest;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
@@ -41,6 +41,9 @@ public class User implements UserDetails {
     @Builder.Default
     @NotNull
     private Boolean emailVerified = false;
+
+    @NotNull
+    private String clubId;
 
     @Builder.Default
     @NotNull
@@ -73,6 +76,10 @@ public class User implements UserDetails {
         return userId;
     }
 
+    public void updateId(String id) {
+        this.id = id;
+    }
+
     public void updateUserProfile(UserUpdateRequest userUpdateRequest) {
         this.password = userUpdateRequest.password();
     }
@@ -80,6 +87,11 @@ public class User implements UserDetails {
     public void resetPassword(String encodedPassword) { //초기화된 비밀번호 업데이트
         this.password = encodedPassword;
     }
+
+    public void updateClubId(String clubId) {
+        this.clubId = clubId;
+    }
+
     public void updateRefreshToken(RefreshToken refreshToken) {
         this.refreshToken = refreshToken;
     }

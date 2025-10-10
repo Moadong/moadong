@@ -3,6 +3,8 @@ package moadong.user.service;
 import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
+
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
@@ -21,6 +23,7 @@ import moadong.user.payload.response.RefreshResponse;
 import moadong.user.payload.response.TempPasswordResponse;
 import moadong.user.repository.UserRepository;
 import moadong.user.util.CookieMaker;
+import org.bson.types.ObjectId;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -40,10 +43,15 @@ public class UserCommandService {
     private final CookieMaker cookieMaker;
     private final SecurePasswordGenerator securePasswordGenerator;
 
+    @Transactional
     public User registerUser(UserRegisterRequest userRegisterRequest) {
+        String userId = new ObjectId().toHexString();
+        String clubId = new ObjectId().toHexString();
+
         try {
-            User user = userRepository.save(userRegisterRequest.toUserEntity(passwordEncoder));
-            createClub(user.getId());
+            User user = userRepository.save(createUser(userRegisterRequest, userId, clubId));
+            createClub(clubId, userId);
+
             return user;
         } catch (MongoWriteException e) {
             throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);
@@ -156,8 +164,14 @@ public class UserCommandService {
         return club.getId();
     }
 
-    private void createClub(String userId) {
-        Club club = new Club(userId);
+    private User createUser(UserRegisterRequest request, String userId, String clubId) {
+        User user = request.toUserEntity(passwordEncoder);
+        user.updateId(userId);
+        user.updateClubId(clubId);
+        return user;
+    }
+    private void createClub(String clubId, String userId) {
+        Club club = new Club(clubId, userId);
         clubRepository.save(club);
     }
 

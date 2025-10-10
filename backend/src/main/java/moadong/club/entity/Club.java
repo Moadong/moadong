@@ -60,6 +60,16 @@ public class Club implements Persistable<String> {
         this.userId = userId;
     }
 
+    public Club(String id, String userId) {
+        this.id = id;
+        this.name = "";
+        this.category = "";
+        this.division = "";
+        this.state = ClubState.UNAVAILABLE;
+        this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
+        this.userId = userId;
+    }
+
     @Builder
     public Club(String name, String category, String division,
                 ClubRecruitmentInformation clubRecruitmentInformation) {
