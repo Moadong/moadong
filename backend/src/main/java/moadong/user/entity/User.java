@@ -1,6 +1,5 @@
 package moadong.user.entity;
 
-import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import java.util.Collection;
@@ -12,6 +11,7 @@ import lombok.NoArgsConstructor;
 import moadong.global.annotation.UserId;
 import moadong.user.entity.enums.UserStatus;
 import moadong.user.payload.request.UserUpdateRequest;
+import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
