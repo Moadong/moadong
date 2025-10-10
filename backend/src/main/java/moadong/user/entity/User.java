@@ -76,6 +76,10 @@ public class User implements UserDetails {
         return userId;
     }
 
+    public void updateId(String id) {
+        this.id = id;
+    }
+
     public void updateUserProfile(UserUpdateRequest userUpdateRequest) {
         this.password = userUpdateRequest.password();
     }
