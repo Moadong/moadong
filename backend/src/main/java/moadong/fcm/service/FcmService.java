@@ -65,33 +65,24 @@ public class FcmService {
             throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
         }
 
-        try {
-            // 새로운 동아리 구독
-            if (!clubsToSubscribe.isEmpty()) {
-                for (String clubId : clubsToSubscribe) {
-                    FirebaseMessaging.getInstance().subscribeToTopic(Collections.singletonList(token), clubId);
-                }
+        // 새로운 동아리 구독
+        if (!clubsToSubscribe.isEmpty()) {
+            for (String clubId : clubsToSubscribe) {
+                FirebaseMessaging.getInstance().subscribeToTopicAsync(Collections.singletonList(token), clubId);
             }
-
-            // 더 이상 구독하지 않는 동아리 구독 해제
-            if (!clubsToUnsubscribe.isEmpty()) {
-                for (String clubId : clubsToUnsubscribe) {
-                    FirebaseMessaging.getInstance().unsubscribeFromTopic(Collections.singletonList(token), clubId);
-                }
-            }
-
-            // DB에 최신 동아리 목록으로 업데이트
-            existToken.updateClubIds(newClubIds);
-            fcmTokenRepository.save(existToken);
-
-        } catch (FirebaseMessagingException e) {
-            if (e.getMessagingErrorCode() == MessagingErrorCode.UNREGISTERED) {
-                fcmTokenRepository.delete(existToken);
-            } else {
-                log.error("Failed to update FCM subscriptions for token {}: {}", token, e.getMessage());
-            }
-            throw new RestApiException(ErrorCode.FCMTOKEN_SUBSCRIBE_ERROR);
         }
+
+        // 더 이상 구독하지 않는 동아리 구독 해제
+        if (!clubsToUnsubscribe.isEmpty()) {
+            for (String clubId : clubsToUnsubscribe) {
+                FirebaseMessaging.getInstance().unsubscribeFromTopicAsync(Collections.singletonList(token), clubId);
+            }
+        }
+
+        // DB에 최신 동아리 목록으로 업데이트
+        existToken.updateClubIds(newClubIds);
+        fcmTokenRepository.save(existToken);
+
     }
 
     public ClubSubscribeListResponse getSubscribeClubs(String token) {
