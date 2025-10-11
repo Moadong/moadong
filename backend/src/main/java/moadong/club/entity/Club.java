@@ -12,6 +12,7 @@ import com.google.firebase.messaging.Notification;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.request.ClubInfoRequest;
@@ -24,6 +25,7 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+@Slf4j
 @Document("clubs")
 @AllArgsConstructor
 @Getter
@@ -157,7 +159,7 @@ public class Club implements Persistable<String> {
         try {
             FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
-            System.out.println("FirebaseMessagingException: " + e.getMessage());
+            log.error("FirebaseMessagingException: {}", e.getMessage());
         }
     }
 
