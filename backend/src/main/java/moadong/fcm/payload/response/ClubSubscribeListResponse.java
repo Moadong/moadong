@@ -1,8 +1,8 @@
 package moadong.fcm.payload.response;
 
-import java.util.ArrayList;
+import java.util.List;
 
 public record ClubSubscribeListResponse(
-        ArrayList<String> clubIds
+        List<String> clubIds
 ) {
 }
