@@ -6,7 +6,7 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
-import useHeaderService from '@/components/common/Header/useHeaderNavigation';
+import useHeaderNavigation from '@/components/common/Header/useHeaderNavigation';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 
@@ -21,7 +21,7 @@ const Header = () => {
     handleIntroduceClick,
     handleClubUnionClick,
     handlePatchNoteClick,
-  } = useHeaderService();
+  } = useHeaderNavigation();
 
   const navLinks = [
     { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },

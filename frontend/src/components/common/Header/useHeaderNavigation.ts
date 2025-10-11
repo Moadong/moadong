@@ -4,7 +4,7 @@ import { useSearchStore } from '@/store/useSearchStore';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 
-const useHeaderService = () => {
+const useHeaderNavigation = () => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
@@ -43,4 +43,4 @@ const useHeaderService = () => {
   };
 };
 
-export default useHeaderService;
+export default useHeaderNavigation;
