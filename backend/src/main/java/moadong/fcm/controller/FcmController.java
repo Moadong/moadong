@@ -1,5 +1,6 @@
 package moadong.fcm.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
@@ -18,18 +19,21 @@ import org.springframework.web.bind.annotation.*;
 public class FcmController {
     private final FcmService fcmService;
 
+    @Operation(summary = "FCM 토큰 저장", description = "FCM 토큰을 서버에 저장합니다.")
     @PostMapping
     public ResponseEntity<?> saveFcmToken(@RequestBody @Validated FcmSaveRequest request) {
         fcmService.saveFcmToken(request.fcmToken());
         return Response.ok("success save fcm token");
     }
 
+    @Operation(summary = "동아리 모집정보 알림 구독", description = "특정 동아리들의 모집 정보가 변경되면저거 하면  알림을 받도록 구독합니다.")
     @PostMapping("/subscribe")
     public ResponseEntity<?> subscribeRecruitment(@RequestBody @Validated ClubSubscribeRequest request) {
         fcmService.subscribeClubs(request.fcmToken(), request.clubIds());
         return Response.ok("success subscribe club");
     }
 
+    @Operation(summary = "구독한 동아리 목록 조회", description = "FCM 토큰을 기준으로 구독중인 동아리 목록을 조회합니다.")
     @GetMapping("/subscribe")
     public ResponseEntity<?> getSubscribedClubs(@RequestParam("fcmToken")
                                                 @Validated @NotNull String fcmToken) {
