@@ -12,6 +12,9 @@ import moadong.fcm.entity.FcmToken;
 import moadong.fcm.repository.FcmTokenRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import org.springframework.dao.DataAccessException;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -27,6 +30,11 @@ public class FcmAsyncService {
 
     @Async
     @Transactional
+    @Retryable(
+        retryFor = DataAccessException.class,
+        maxAttempts = 3,
+        backoff = @Backoff(delay = 100)
+    )
     public void updateSubscriptions(String token, Set<String> newClubIds, Set<String> clubsToSubscribe, Set<String> clubsToUnsubscribe) {
         List<ApiFuture<TopicManagementResponse>> futures = new ArrayList<>();
 
