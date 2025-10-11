@@ -24,9 +24,14 @@ export const applyHandlers = [
 
     return HttpResponse.json(
       {
-        clubId,
-        form_title: mockData.title,
-        questions: mockData.questions,
+        status: '200',
+        message: 'OK',
+        data: {
+          clubId,
+          title: mockData.title,
+          description: mockData.description,
+          questions: mockData.questions,
+        },
       },
       { status: 200 },
     );
