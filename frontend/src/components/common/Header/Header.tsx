@@ -77,9 +77,9 @@ const Header = () => {
             isOpen={isMenuOpen}
             aria-label={isMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
           >
-            <span />
-            <span />
-            <span />
+            <Styled.MenuBar />
+            <Styled.MenuBar />
+            <Styled.MenuBar />
           </Styled.MenuButton>
         </Styled.Container>
       </Styled.Header>

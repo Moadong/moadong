@@ -17,11 +17,11 @@ export const Header = styled.header`
     padding: 10px 40px;
   }
 
-  ${media.mobile}{
+  ${media.mobile} {
     padding: 5px 20px;
   }
 
-  ${media.mobile}{
+  ${media.mobile} {
     padding: 5px 10px;
   }
 `;
@@ -114,12 +114,23 @@ export const NavLink = styled.button<{ isActive?: boolean }>`
   ${media.tablet} {
     display: inline-flex;
     padding: 12px 24px;
-    background: ${({ isActive }) => (isActive ? 'rgba(255, 84, 20, 0.08)' : 'none')};
-    
+    background: ${({ isActive }) =>
+      isActive ? 'rgba(255, 84, 20, 0.08)' : 'none'};
+
     &:last-child {
       margin-bottom: 16px;
     }
   }
+`;
+
+export const MenuBar = styled.span`
+  display: block;
+  width: 100%;
+  height: 2px;
+  background-color: #4b4b4b;
+  border-radius: 2px;
+  transition: all 0.3s ease-in-out;
+  transform-origin: center;
 `;
 
 export const MenuButton = styled.button<{ isOpen: boolean }>`
@@ -143,29 +154,17 @@ export const MenuButton = styled.button<{ isOpen: boolean }>`
     width: 20px;
   }
 
-  span {
-    display: block;
-    width: 100%;
-    height: 2px;
-    background-color: #4B4B4B;
-    border-radius: 2px;
-    transition: all 0.3s ease-in-out;
-    transform-origin: center;
+  ${MenuBar}:nth-child(1) {
+    transform: ${({ isOpen }) =>
+      isOpen ? 'translateY(8.25px) rotate(45deg)' : 'none'};
   }
 
-  ${({ isOpen }) =>
-    isOpen &&
-    `
-    span:nth-child(1) {
-      transform: translateY(8.25px) rotate(45deg);
-    }
-    
-    span:nth-child(2) {
-      opacity: 0;
-    }
-    
-    span:nth-child(3) {
-      transform: translateY(-8.25px) rotate(-45deg);
-    }
-  `}
+  ${MenuBar}:nth-child(2) {
+    opacity: ${({ isOpen }) => (isOpen ? 0 : 1)};
+  }
+
+  ${MenuBar}:nth-child(3) {
+    transform: ${({ isOpen }) =>
+      isOpen ? 'translateY(-8.25px) rotate(-45deg)' : 'none'};
+  }
 `;
