@@ -5,10 +5,11 @@ import { UpdateApplicantParams } from '@/types/applicants';
 export const updateApplicantDetail = async (
   applicant: UpdateApplicantParams[],
   clubId: string,
+  applicationFormId: string,
 ) => {
   try {
     const response = await secureFetch(
-      `${API_BASE_URL}/api/club/${clubId}/applicant`,
+      `${API_BASE_URL}/api/club/${clubId}/applicant/${applicationFormId}`,
       {
         method: 'PUT',
         headers: {

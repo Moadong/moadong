@@ -1,9 +1,13 @@
 import API_BASE_URL from '@/constants/api';
 import { secureFetch } from '../auth/secureFetch';
 
-const deleteApplicants = async (applicantIds: string[], clubId: string) => {
+const deleteApplicants = async (
+  applicantIds: string[],
+  clubId: string,
+  applicationFormId: string,
+) => {
   try {
-    const response = await secureFetch(`${API_BASE_URL}/api/club/${clubId}/applicant`, {
+    const response = await secureFetch(`${API_BASE_URL}/api/club/${clubId}/applicant/${applicationFormId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',
