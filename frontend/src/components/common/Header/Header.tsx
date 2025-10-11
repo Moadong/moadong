@@ -6,7 +6,7 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
-import useHeaderService from '@/services/header/useHeaderService';
+import useHeaderService from '@/components/common/Header/useHeaderNavigation';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 
@@ -16,8 +16,12 @@ const Header = () => {
   const isAdminPage = location.pathname.startsWith('/admin');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
 
-  const { handleHomeClick, handleIntroduceClick, handleClubUnionClick } =
-    useHeaderService();
+  const {
+    handleHomeClick,
+    handleIntroduceClick,
+    handleClubUnionClick,
+    handlePatchNoteClick,
+  } = useHeaderService();
 
   const navLinks = [
     { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
@@ -26,7 +30,7 @@ const Header = () => {
       handler: handleClubUnionClick,
       path: '/club-union',
     },
-    { label: '패치노트', handler: () => {}, path: '/patch-note' },
+    { label: '패치노트', handler: handlePatchNoteClick, path: '/patch-note' },
   ];
 
   const closeMenu = () => {
