@@ -8,20 +8,20 @@ export const Header = styled.header`
   right: 0;
   width: 100%;
   height: 62px;
-  padding: 10px 40px;
+  padding: 10px 20px;
   background-color: white;
   z-index: 2;
 
   ${media.tablet} {
     height: 56px;
-    padding: 10px 40px;
+    padding: 10px 20px;
   }
 
   ${media.mobile} {
     padding: 5px 20px;
   }
 
-  ${media.mobile} {
+  ${media.mini_mobile} {
     padding: 5px 10px;
   }
 `;
