@@ -8,6 +8,8 @@ import com.google.firebase.messaging.TopicManagementResponse;
 import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.club.entity.Club;
+import moadong.club.repository.ClubRepository;
 import moadong.fcm.entity.FcmToken;
 import moadong.fcm.payload.response.ClubSubscribeListResponse;
 import moadong.fcm.repository.FcmTokenRepository;
@@ -18,12 +20,14 @@ import org.springframework.stereotype.Service;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 @Slf4j
 @Service
 @AllArgsConstructor
 public class FcmService {
     private final FcmTokenRepository fcmTokenRepository;
+    private final ClubRepository clubRepository;
 
     public void saveFcmToken(String token) {
         FcmToken existToken = fcmTokenRepository.findFcmTokenByToken(token).orElse(null);
@@ -54,6 +58,12 @@ public class FcmService {
         // 구독 해제할 목록
         ArrayList<String> clubsToUnsubscribe = new ArrayList<>(oldClubIds);
         clubsToUnsubscribe.removeAll(newClubIds);
+
+        List<Club> allClubs = clubRepository.findAllById(clubsToSubscribe);
+
+        if (allClubs.size() != clubsToSubscribe.size()) {
+            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
+        }
 
         try {
             // 새로운 동아리 구독
