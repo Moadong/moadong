@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.List;
 
 @Document("fcm_tokens")
 @AllArgsConstructor
@@ -21,7 +22,7 @@ public class FcmToken {
     String token;
 
     @Builder.Default
-    ArrayList<String> clubIds = new ArrayList<>();
+    List<String> clubIds = new ArrayList<>();
 
     @Builder.Default
     LocalDateTime timestamp = LocalDateTime.now();
@@ -30,7 +31,7 @@ public class FcmToken {
         this.timestamp = LocalDateTime.now();
     }
 
-    public void updateClubIds(ArrayList<String> clubIds) {
+    public void updateClubIds(List<String> clubIds) {
         this.clubIds = clubIds;
     }
 }
