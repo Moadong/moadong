@@ -17,4 +17,5 @@ export const EVENT_NAME = {
     'Mobile Menubar delete Button Clicked' as const,
   CLUB_UNION_BUTTON_CLICKED: 'Club Union Button Clicked' as const,
   APPLICATION_FORM_SUBMITTED: 'Application Form Submitted' as const,
+  PATCH_NOTE_BUTTON_CLICKED: 'Patch Note Button Clicked' as const,
 } as const;
