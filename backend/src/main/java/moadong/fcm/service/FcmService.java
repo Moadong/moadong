@@ -1,14 +1,8 @@
 package moadong.fcm.service;
 
-import com.google.firebase.FirebaseException;
 import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.MessagingErrorCode;
-import com.google.firebase.messaging.TopicManagementResponse;
-import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.fcm.entity.FcmToken;
 import moadong.fcm.payload.response.ClubSubscribeListResponse;
@@ -18,9 +12,9 @@ import moadong.global.exception.RestApiException;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Slf4j
 @Service
@@ -51,17 +45,17 @@ public class FcmService {
 
         ArrayList<String> oldClubIds = existToken.getClubIds();
 
-        // 구독할 목록
-        ArrayList<String> clubsToSubscribe = new ArrayList<>(newClubIds);
-        clubsToSubscribe.removeAll(oldClubIds);
+        Set<String> newClubIdSet = Set.copyOf(newClubIds);
+        Set<String> oldClubIdSet = Set.copyOf(oldClubIds);
 
-        // 구독 해제할 목록
-        ArrayList<String> clubsToUnsubscribe = new ArrayList<>(oldClubIds);
-        clubsToUnsubscribe.removeAll(newClubIds);
+        Set<String> clubsToSubscribe = new HashSet<>(newClubIdSet);
+        clubsToSubscribe.removeAll(oldClubIdSet);
 
-        List<Club> allClubs = clubRepository.findAllById(clubsToSubscribe);
+        Set<String> clubsToUnsubscribe = new HashSet<>(oldClubIdSet);
+        clubsToUnsubscribe.removeAll(newClubIdSet);
+        Long countClub = clubRepository.countByIdIn(clubsToSubscribe.stream().toList());
 
-        if (allClubs.size() != clubsToSubscribe.size()) {
+        if (countClub != clubsToSubscribe.size()) {
             throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
         }
 
