@@ -1,5 +1,5 @@
 import { http, HttpResponse } from 'msw';
-import { mockData } from '../data/mockData';
+import { mockData, mockOptions } from '../data/mockData';
 import { API_BASE } from '../constants/clubApi';
 import { validateClubId } from '../utils/validateClubId';
 import { ERROR_MESSAGE } from '../constants/error';
@@ -68,5 +68,17 @@ export const applyHandlers = [
       },
       { status: 200 },
     );
+  }),
+
+  http.get(`${API_BASE}/:clubId/applications`, ({ params }) => {
+    const clubId = String(params.clubId);
+    if (!validateClubId(clubId)) {
+      return HttpResponse.json(
+        { message: ERROR_MESSAGE.INVALID_CLUB_ID },
+        { status: 400 },
+      );
+    } 
+    const list = mockOptions[clubId] ?? [];
+    return HttpResponse.json({data: list}, {status: 200});
   }),
 ];
