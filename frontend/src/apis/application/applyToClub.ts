@@ -4,10 +4,11 @@ import { AnswerItem } from '@/types/application';
 export const applyToClub = async (
   clubId: string,
   answers: AnswerItem[],
+  applicationFormId: string,
 ) => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/club/${clubId}/apply`,
+      `${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`,
       {
         method: 'POST',
         headers: {
