@@ -13,7 +13,7 @@ const useHeaderService = () => {
     useSearchStore.getState().resetSearch();
     // 속성으로 관리
     trackEvent(EVENT_NAME.HOME_BUTTON_CLICKED, {
-      device_type: window.innerWidth <= 700 ? 'mobile' : 'desktop'
+      device_type: window.innerWidth <= 700 ? 'mobile' : 'desktop',
     });
   }, [navigate, trackEvent]);
 
@@ -27,10 +27,19 @@ const useHeaderService = () => {
     trackEvent(EVENT_NAME.CLUB_UNION_BUTTON_CLICKED);
   }, [navigate, trackEvent]);
 
+  const handlePatchNoteClick = useCallback(() => {
+    window.open(
+      'https://honorable-cough-8f9.notion.site/1e8aad232096804f9ea9ee4f5cf0cd10',
+      '_blank',
+    );
+    trackEvent(EVENT_NAME.PATCH_NOTE_BUTTON_CLICKED);
+  }, [trackEvent]);
+
   return {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
+    handlePatchNoteClick,
   };
 };
 
