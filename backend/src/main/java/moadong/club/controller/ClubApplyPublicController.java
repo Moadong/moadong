@@ -34,11 +34,11 @@ public class ClubApplyPublicController {
         return Response.ok("success apply");
     }
 
-     /*@GetMapping("/apply")
+     @GetMapping("/apply")
     @Operation(summary = "클럽의 활성화된 지원서 목록 불러오기", description = "클럽의 활성화된 모든 지원서 목록을 불러옵니다")
     public ResponseEntity<?> getActiveApplicationForms(@PathVariable String clubId) {
-        return Response.ok(clubApplyService.getActiveApplicationForms(clubId));
-    }*/
+        return Response.ok(clubApplyPublicService.getActiveApplicationForms(clubId));
+    }
 
 
 

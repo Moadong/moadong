@@ -7,11 +7,13 @@ import moadong.club.entity.ClubApplicationForm;
 import moadong.club.entity.ClubApplicationFormQuestion;
 import moadong.club.entity.ClubQuestionAnswer;
 import moadong.club.enums.ClubApplicationQuestionType;
+import moadong.club.payload.dto.ClubActiveFormResult;
+import moadong.club.payload.dto.ClubActiveFormSlim;
 import moadong.club.payload.request.ClubApplyRequest;
+import moadong.club.payload.response.ClubActiveFormsResponse;
 import moadong.club.payload.response.ClubApplicationFormResponse;
 import moadong.club.repository.ClubApplicantsRepository;
 import moadong.club.repository.ClubApplicationFormsRepository;
-import moadong.club.repository.ClubApplicationFormsRepositoryCustom;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.payload.Response;
@@ -30,8 +32,28 @@ public class ClubApplyPublicService {
     private final ClubApplicationFormsRepository clubApplicationFormsRepository;
     private final ClubApplicantsRepository clubApplicantsRepository;
     private final AESCipher cipher;
-    private final ClubApplicationFormsRepositoryCustom clubApplicationFormsRepositoryCustom;
 
+
+    public ClubActiveFormsResponse getActiveApplicationForms(String clubId) {
+        List<ClubActiveFormSlim> forms = clubApplicationFormsRepository.findClubActiveFormsByClubId(clubId);
+
+        if (forms == null || forms.isEmpty())
+            throw new RestApiException(ErrorCode.ACTIVE_APPLICATION_NOT_FOUND);
+
+        List<ClubActiveFormResult> results = new ArrayList<>();
+        for (ClubActiveFormSlim form : forms) {
+            ClubActiveFormResult result = ClubActiveFormResult.builder()
+                    .id(form.getId())
+                    .title(form.getTitle())
+                    .build();
+            results.add(result);
+        }
+
+        return ClubActiveFormsResponse.builder()
+                .forms(results)
+                .build();
+
+    }
 
     public ResponseEntity<?> getClubApplicationForm(String clubId, String applicationFormId) {
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)

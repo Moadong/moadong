@@ -176,30 +176,6 @@ public class ClubApplyAdminService {
     private record SemesterKey(Integer year, SemesterTerm term) {
     }
 
-
-    public ClubActiveFormsResponse getActiveApplicationForms(String clubId) {
-        List<ClubActiveFormSlim> forms = clubApplicationFormsRepository.findClubActiveFormsByClubId(clubId);
-
-        if (forms == null || forms.isEmpty())
-            throw new RestApiException(ErrorCode.ACTIVE_APPLICATION_NOT_FOUND);
-
-        List<ClubActiveFormResult> results = new ArrayList<>();
-        for (ClubActiveFormSlim form : forms) {
-            ClubActiveFormResult result = ClubActiveFormResult.builder()
-                    .id(form.getId())
-                    .title(form.getTitle())
-                    .description(form.getDescription())
-                    .build();
-            results.add(result);
-        }
-
-        return ClubActiveFormsResponse.builder()
-                .forms(results)
-                .build();
-
-    }
-
-    //V1
     public ClubApplyInfoResponse getClubApplyInfo(String applicationFormId, CustomUserDetails user) {
         ClubApplicationForm applicationForm = clubApplicationFormsRepository.findByClubIdAndId(user.getClubId(), applicationFormId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
