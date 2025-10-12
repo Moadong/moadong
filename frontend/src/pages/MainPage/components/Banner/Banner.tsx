@@ -1,9 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import * as Styled from './Banner.styles';
 import { SlideButton } from '@/constants/banners';
+import useDevice from '@/hooks/useDevice';
 
 export interface BannerProps {
   backgroundImage?: string;
@@ -15,19 +16,10 @@ interface BannerComponentProps {
 }
 
 const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
+  const { isMobile } = useDevice();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
   const banners = isMobile ? mobileBanners : desktopBanners;
-
-  useEffect(() => {
-    const handleResize = () => {
-      setIsMobile(window.innerWidth <= 500);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   const handlePrev = () => {
     swiperInstance?.slidePrev();
