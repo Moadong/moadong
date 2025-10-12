@@ -66,7 +66,7 @@ public class FcmAsyncService {
                         return null;
                     }
 
-                    log.error("FCM topic op failed for {}. errors={}", token, response.getErrors());
+                    log.error("FCM topic sub failed for {}. errors={}", token, response.getErrors());
                     throw new RestApiException(ErrorCode.FCMTOKEN_SUBSCRIBE_ERROR);
                 }
             }
