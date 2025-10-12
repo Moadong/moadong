@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { BannerProps } from './Banner';
+import { media } from '@/styles/mediaQuery';
 
 export const BannerContainer = styled.div`
   padding: 0 40px;
@@ -12,7 +13,7 @@ export const BannerContainer = styled.div`
   margin-top: 90px;
   position: relative;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     margin-top: 56px;
     padding: 0;
   }
@@ -28,7 +29,7 @@ export const BannerWrapper = styled.div<BannerProps>`
   overflow: hidden;
   background-color: transparent;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     width: 100%;
     aspect-ratio: 1.8;
     border-radius: 0;
@@ -74,12 +75,11 @@ export const SlideButton = styled.button`
     object-fit: cover;
   }
 
-  @media (max-width: 698px) {
-    width: 35px;
+  ${media.tablet} {
     padding: 6px 12px;
   }
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     display: none;
   }
 `;
