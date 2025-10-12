@@ -57,7 +57,11 @@ public class FcmService {
             }
         }
 
-        fcmAsyncService.updateSubscriptions(token, newClubIdSet, clubsToSubscribe, clubsToUnsubscribe);
+        fcmAsyncService.updateSubscriptions(token, newClubIdSet, clubsToSubscribe, clubsToUnsubscribe)
+                .exceptionally(ex -> {
+                    log.error("FCM Token subscription error: {}", ex.getMessage());
+                    throw new RuntimeException(ex);
+                });
     }
 
     public ClubSubscribeListResponse getSubscribeClubs(String token) {
