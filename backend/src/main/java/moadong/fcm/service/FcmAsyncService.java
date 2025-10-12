@@ -28,30 +28,31 @@ public class FcmAsyncService {
 
     private final FcmTxService fcmTxService;
 
+    private final FirebaseMessaging firebaseMessaging;
+
     @Value("${fcm.topic.timeout-seconds:5}")
     private int timeoutSeconds;
 
     @Async
     public CompletableFuture<Void> updateSubscriptions(String token, Set<String> newClubIds, Set<String> clubsToSubscribe, Set<String> clubsToUnsubscribe) {
         List<ApiFuture<TopicManagementResponse>> futures = new ArrayList<>();
-        FirebaseMessaging fm = FirebaseMessaging.getInstance();
 
         // 새로운 동아리 구독
         if (!clubsToSubscribe.isEmpty()) {
             for (String clubId : clubsToSubscribe) {
-                futures.add(fm.subscribeToTopicAsync(Collections.singletonList(token), clubId));
+                futures.add(firebaseMessaging.subscribeToTopicAsync(Collections.singletonList(token), clubId));
             }
         }
 
         // 더 이상 구독하지 않는 동아리 구독 해제
         if (!clubsToUnsubscribe.isEmpty()) {
             for (String clubId : clubsToUnsubscribe) {
-                futures.add(fm.unsubscribeFromTopicAsync(Collections.singletonList(token), clubId));
+                futures.add(firebaseMessaging.unsubscribeFromTopicAsync(Collections.singletonList(token), clubId));
             }
         }
 
         try {
-            if (futures.isEmpty()) return CompletableFuture.completedFuture(null);
+            if (futures.isEmpty()) return null;
 
             List<TopicManagementResponse> responses = ApiFutures.allAsList(futures).get(timeoutSeconds, TimeUnit.SECONDS);
 
@@ -62,7 +63,7 @@ public class FcmAsyncService {
 
                     if (notRegistered) {
                         fcmTxService.deleteUnregisteredFcmToken(token);
-                        return CompletableFuture.completedFuture(null);
+                        return null;
                     }
 
                     log.error("FCM topic op failed for {}. errors={}", token, response.getErrors());
@@ -80,6 +81,6 @@ public class FcmAsyncService {
             throw new RuntimeException(e);
         }
 
-        return CompletableFuture.completedFuture(null);
+        return null;
     }
 }

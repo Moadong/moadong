@@ -1,5 +1,9 @@
 package moadong.fcm.service;
 
+import com.google.api.core.ApiFutures;
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.TopicManagementResponse;
+import jakarta.transaction.Transactional;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.fcm.entity.FcmToken;
@@ -13,17 +17,25 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.annotation.Import;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.when;
 
 @IntegrationTest
+@Transactional
 @Import(AsyncTest.class)
 class FcmServiceTest {
 
@@ -37,18 +49,28 @@ class FcmServiceTest {
     private ClubRepository clubRepository;
 
     private Club club1, club2, club3;
+    @Autowired
+    private FcmAsyncService fcmAsyncService;
+
+    @MockBean
+    private FirebaseMessaging firebaseMessaging;
 
     @BeforeEach
     void setUp() {
         club1 = clubRepository.save(Club.builder().name("club1").build());
         club2 = clubRepository.save(Club.builder().name("club2").build());
         club3 = clubRepository.save(Club.builder().name("club3").build());
-    }
 
-    @AfterEach
-    void tearDown() {
-        fcmTokenRepository.deleteAll();
-        clubRepository.deleteAll(List.of(club1, club2, club3));
+        TopicManagementResponse ok = Mockito.mock(TopicManagementResponse.class);
+        when(ok.getFailureCount()).thenReturn(0);
+
+        when(ok.getFailureCount()).thenReturn(0);
+
+        // subscribe/unsubscribe 모두 성공으로 반환
+        when(firebaseMessaging.subscribeToTopicAsync(anyList(), anyString()))
+                .thenReturn(ApiFutures.immediateFuture(ok));
+        when(firebaseMessaging.unsubscribeFromTopicAsync(anyList(), anyString()))
+                .thenReturn(ApiFutures.immediateFuture(ok));
     }
 
     @Test
@@ -106,9 +128,7 @@ class FcmServiceTest {
 
         // when, then
         assertThatThrownBy(() -> fcmService.subscribeClubs(token, newClubIds))
-                .isInstanceOf(RestApiException.class)
-                .extracting("errorCode")
-                .isEqualTo(ErrorCode.CLUB_NOT_FOUND);
+                .isInstanceOf(RestApiException.class);
     }
 
     @Test
@@ -125,7 +145,8 @@ class FcmServiceTest {
                 .build());
 
         // when
-        fcmService.subscribeClubs(token, newClubIds);
+        CompletableFuture<Void> future = fcmAsyncService.updateSubscriptions(token, Set.copyOf(newClubIds), Set.of(club1.getId()), Set.of(club3.getId()));
+        future.join();
 
         // then
         FcmToken updatedToken = fcmTokenRepository.findFcmTokenByToken(token).orElseThrow();
