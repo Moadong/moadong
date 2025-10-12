@@ -69,7 +69,7 @@ export const SlideButton = styled.button`
   pointer-events: auto;
 
   img {
-    width: 100%;
+    width: 28px;
     height: auto;
     object-fit: cover;
   }
