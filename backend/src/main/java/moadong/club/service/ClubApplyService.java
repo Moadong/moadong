@@ -36,6 +36,8 @@ import moadong.user.payload.CustomUserDetails;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+import java.util.concurrent.ConcurrentHashMap;
 
 @Service
 @AllArgsConstructor
@@ -46,6 +48,9 @@ public class ClubApplyService {
     private final ClubApplicantsRepository clubApplicantsRepository;
     private final AESCipher cipher;
     private final ClubApplicationFormsRepositoryCustom clubApplicationFormsRepositoryCustom;
+    
+    // SSE 연결 관리
+    private final Map<String, SseEmitter> sseConnections = new ConcurrentHashMap<>();
 
     private record OptionItem(int year, SemesterTerm term) {}
     private List<OptionItem> buildOptionItems(LocalDate baseDate, int count) {
@@ -314,6 +319,17 @@ public class ClubApplyService {
             ClubApplicantEditRequest editRequest = requestMap.get(app.getId());
             app.updateMemo(editRequest.memo());
             app.updateStatus(editRequest.status());
+            
+            // SSE 이벤트 발송
+            ApplicantStatusEvent event = new ApplicantStatusEvent(
+                app.getId(),
+                editRequest.status(),
+                editRequest.memo(),
+                LocalDateTime.now(),
+                clubId,
+                applicationFormId
+            );
+            sendStatusChangeEvent(clubId, applicationFormId, event);
         });
 
         clubApplicantsRepository.saveAll(application);
@@ -459,4 +475,37 @@ public class ClubApplyService {
         if (!user.getId().equals(club.getUserId())) {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
-    }}
+    }
+    
+    // SSE 연결 생성
+    public SseEmitter createSseConnection(String clubId, String applicationFormId, CustomUserDetails user) {
+        validateClubOwner(clubId, user);
+        
+        String connectionKey = clubId + "_" + applicationFormId + "_" + user.getUserId();
+        SseEmitter emitter = new SseEmitter(30000L); // 30초 타임아웃
+        
+        sseConnections.put(connectionKey, emitter);
+        
+        emitter.onCompletion(() -> sseConnections.remove(connectionKey));
+        emitter.onTimeout(() -> sseConnections.remove(connectionKey));
+        emitter.onError((ex) -> sseConnections.remove(connectionKey));
+        
+        return emitter;
+    }
+    
+    // 이벤트 발송
+    private void sendStatusChangeEvent(String clubId, String applicationFormId, ApplicantStatusEvent event) {
+        String connectionKey = clubId + "_" + applicationFormId;
+        
+        sseConnections.entrySet().stream()
+            .filter(entry -> entry.getKey().startsWith(connectionKey))
+            .forEach(entry -> {
+                try {
+                    entry.getValue().send(event);
+                } catch (Exception e) {
+                    log.warn("SSE 이벤트 발송 실패: {}", e.getMessage());
+                    sseConnections.remove(entry.getKey());
+                }
+            });
+    }
+}

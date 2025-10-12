@@ -28,6 +28,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 @RestController
@@ -133,6 +134,17 @@ public class ClubApplyController {
                                              @CurrentUser CustomUserDetails user) {
         clubApplyService.deleteApplicant(clubId,applicationFormId, request, user);
         return Response.ok("success delete applicant");
+    }
+
+    @GetMapping("/applicant/{applicationFormId}/events")
+    @Operation(summary = "지원자 상태 변경 실시간 이벤트", 
+               description = "지원자의 상태 변경을 실시간으로 받아볼 수 있는 SSE 엔드포인트입니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public SseEmitter getApplicantStatusEvents(@PathVariable String clubId,
+                                               @PathVariable String applicationFormId,
+                                               @CurrentUser CustomUserDetails user) {
+        return clubApplyService.createSseConnection(clubId, applicationFormId, user);
     }
 
 }
