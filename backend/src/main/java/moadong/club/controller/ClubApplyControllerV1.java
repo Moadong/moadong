@@ -38,15 +38,6 @@ public class ClubApplyControllerV1 {
     private final ClubApplyServiceV1 clubApplyServiceV1;
     private final ClubApplicationFormsRepository clubApplicationFormsRepository;
 
-    @GetMapping("/apply") //
-    @Operation(summary = "클럽 지원서 양식 불러오기",
-            description = "clubId를 기반으로 활성화된 최신 지원서를 반환합니다. <br>"
-                    + "<br>v2 api : /api/club/{clubId}/apply/{applicationFormId}")
-    public ResponseEntity<?> getClubApplication(@PathVariable String clubId) {
-
-        return clubApplyServiceV1.getClubApplicationForm(clubId, convertClubIdToFormId(clubId));
-    }
-
     @PostMapping("/apply")
     @Operation(summary = "클럽 지원", description = "clubId를 기반으로 활성화된 최신 지원서에 지원합니다. <br>"
                     + "<br>v2 api : /api/club/{clubId}/apply/{applicationFormId}")

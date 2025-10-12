@@ -37,23 +37,6 @@ public class ClubApplyServiceV1 {
     private final ClubApplicantsRepository clubApplicantsRepository;
     private final AESCipher cipher;
 
-    public ResponseEntity<?> getClubApplicationForm(String clubId, String applicationFormId) {
-        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
-
-
-        ClubApplicationFormResponse clubApplicationFormResponse = ClubApplicationFormResponse.builder()
-                .title(clubApplicationForm.getTitle())
-                .description(Optional.ofNullable(clubApplicationForm.getDescription()).orElse(""))
-                .questions(clubApplicationForm.getQuestions())
-                .semesterYear(clubApplicationForm.getSemesterYear())
-                .semesterTerm(clubApplicationForm.getSemesterTerm())
-                .status(clubApplicationForm.getStatus())
-                .build();
-
-        return Response.ok(clubApplicationFormResponse);
-    }
-
     public void applyToClub(String clubId, String applicationFormId, ClubApplyRequest request) {
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));

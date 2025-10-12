@@ -27,7 +27,7 @@ public interface ClubApplicationFormsRepository extends MongoRepository<ClubAppl
 
     @Query(
             value = "{'clubId':  ?0, 'status': 'ACTIVE'}",
-            fields = "{'_id': 1, 'title':  1, 'description': 1}"
+            fields = "{'_id': 1, 'title':  1}"
     )
     List<ClubActiveFormSlim> findClubActiveFormsByClubId(String clubId);
 
