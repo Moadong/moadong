@@ -22,7 +22,7 @@ export const CategoryButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-  padding: 8px 0px;
+  padding: 10px 0px;
   transition: transform 0.1s ease;
 
   &:active {
@@ -49,7 +49,7 @@ export const CategoryButton = styled.button`
     font-weight: 500;
     color: #787878;
     margin-top: 8px;
-    line-height: 30px;
+    line-height: 17px;
     white-space: nowrap;
 
     @media (max-width: 768px) {
