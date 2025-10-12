@@ -5,9 +5,11 @@ import type { Swiper as SwiperType } from 'swiper';
 import * as Styled from './Banner.styles';
 import { SlideButton } from '@/constants/banners';
 import useDevice from '@/hooks/useDevice';
+import useNavigator from '@/hooks/useNavigator';
 
 export interface BannerProps {
   backgroundImage?: string;
+  linkTo?: string;
 }
 
 interface BannerComponentProps {
@@ -17,6 +19,7 @@ interface BannerComponentProps {
 
 const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   const { isMobile } = useDevice();
+  const handleLink = useNavigator();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
 
   const banners = isMobile ? mobileBanners : desktopBanners;
@@ -27,6 +30,12 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
 
   const handleNext = () => {
     swiperInstance?.slideNext();
+  };
+
+  const handleBannerClick = (url?: string) => {
+    if (url) {
+      handleLink(url);
+    }
   };
 
   return (
@@ -53,7 +62,10 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
         >
           {banners.map((banner, index) => (
             <SwiperSlide key={index}>
-              <Styled.BannerItem>
+              <Styled.BannerItem
+                isClickable={!!banner.linkTo}
+                onClick={() => handleBannerClick(banner.linkTo)}
+              >
                 <img src={banner.backgroundImage} alt={`banner-${index}`} />
               </Styled.BannerItem>
             </SwiperSlide>
