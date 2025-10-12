@@ -4,11 +4,10 @@ export const CategoryButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: nowrap;
-  margin-top: 60px;
+  margin-top: 32px;
 
   @media (max-width: 500px) {
-    margin: 0 -10px;
-    margin-top: 16px;
+    margin: 16px 0 12px 0; 
     background-color: white;
     position: sticky;
     top: 56px;
@@ -23,7 +22,7 @@ export const CategoryButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 8px 0px;
   transition: transform 0.1s ease;
 
   &:active {
@@ -31,43 +30,42 @@ export const CategoryButton = styled.button`
   }
 
   img {
-    width: 36px;
-    height: 36px;
+    width: 56px;
+    height: 56px;
     transition: transform 0.2s ease;
 
     @media (max-width: 500px) {
-      margin-top: 5px;
-      width: 30px;
-      height: 30px;
+      width: 40px;
+      height: 40px;
     }
     @media (max-width: 360px) {
-      width: 25px;
-      height: 25px;
+      width: 23px;
+      height: 23px;
     }
   }
 
   span {
-    font-size: 1rem;
+    font-size: 14px;
     font-weight: 500;
-    margin-top: 11px;
+    color: #787878;
+    margin-top: 8px;
     line-height: 30px;
     white-space: nowrap;
 
     @media (max-width: 768px) {
-      font-size: 14px;
+      font-size: 12px;
       margin-top: 10px;
     }
 
     @media (max-width: 500px) {
-      font-size: 12px;
-      margin-top: 11px;
+      font-size: 10px;
+      margin-top: 4px;
       line-height: normal;
-      margin-bottom: 5px;
     }
 
     @media (max-width: 375px) {
-      font-size: 11px;
-      margin-top: 8px;
+      font-size: 10px;
+      margin-top: 2px;
       line-height: normal;
     }
   }

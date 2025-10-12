@@ -1,10 +1,4 @@
-import PresidentAvatar from '@/assets/images/icons/category_button/category_all_button_icon.svg';
-import ReligionAvatar from '@/assets/images/icons/category_button/category_religion_button_icon.svg';
-import HobbyAvatar from '@/assets/images/icons/category_button/category_hobby_button_icon.svg';
-import StudyAvatar from '@/assets/images/icons/category_button/category_study_button_icon.svg';
-import VolunteerAvatar from '@/assets/images/icons/category_button/category_volunteer_button_icon.svg';
-import PerformanceAvatar from '@/assets/images/icons/category_button/category_performance_button_icon.svg';
-import SportAvatar from '@/assets/images/icons/category_button/category_sport_button_icon.svg';
+import {inactiveCategoryIcons} from '@/assets/images/icons/category_button';
 
 export interface ClubUnionMember {
   id: number;
@@ -15,16 +9,16 @@ export interface ClubUnionMember {
 }
 
 const MEMBER_AVATARS = {
-  PRESIDENT: PresidentAvatar,
-  VICE_PRESIDENT: PresidentAvatar,
-  SECRETARY: PresidentAvatar,
-  PROMOTION: PresidentAvatar,
-  RELIGION: ReligionAvatar,
-  HOBBY: HobbyAvatar,
-  STUDY: StudyAvatar,
-  VOLUNTEER: VolunteerAvatar,
-  PERFORMANCE: PerformanceAvatar,
-  SPORT: SportAvatar,
+  PRESIDENT: inactiveCategoryIcons.all,
+  VICE_PRESIDENT: inactiveCategoryIcons.all,
+  SECRETARY: inactiveCategoryIcons.all,
+  PROMOTION: inactiveCategoryIcons.all,
+  RELIGION: inactiveCategoryIcons.religion,
+  HOBBY: inactiveCategoryIcons.hobby,
+  STUDY: inactiveCategoryIcons.study,
+  VOLUNTEER: inactiveCategoryIcons.volunteer,
+  PERFORMANCE: inactiveCategoryIcons.performance,
+  SPORT: inactiveCategoryIcons.sport,
 };
 
 // 개발자 가이드: description 필드는 UI가 깨지지 않도록 글자 수를 제한합니다.
