@@ -1,5 +1,6 @@
-import { ReactNode} from "react";
+import { MouseEvent, ReactNode } from "react";
 import * as Styled from './Modal.styles';
+import { RemoveScroll } from "react-remove-scroll";
 
 export interface ModalProps {
   isOpen: boolean;
@@ -10,11 +11,12 @@ export interface ModalProps {
 }
 
 const Modal = ({ isOpen, onClose, title, description, children }: ModalProps) => {
-    if (!isOpen) return null;
+  if (!isOpen) return null;
 
-   return (
+  return (
     <Styled.Overlay isOpen={isOpen} onClick={onClose} aria-modal="true">
-      <Styled.Container isOpen={isOpen} onClick={(event) => event.stopPropagation()}>
+      <RemoveScroll enabled={isOpen}>
+      <Styled.Container isOpen={isOpen} onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
         <Styled.Header> 
             {title && <Styled.Title>{title}</Styled.Title>}
           <Styled.IconButton aria-label="close" type="button" onClick={onClose}>✕</Styled.IconButton>
@@ -22,6 +24,7 @@ const Modal = ({ isOpen, onClose, title, description, children }: ModalProps) =>
         {description && <Styled.Description>{description}</Styled.Description>}
         <Styled.Body>{children}</Styled.Body>
       </Styled.Container>
+      </RemoveScroll>
     </Styled.Overlay>
   );
 }
