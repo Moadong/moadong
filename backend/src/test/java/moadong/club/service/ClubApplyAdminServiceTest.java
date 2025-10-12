@@ -16,7 +16,6 @@ import moadong.club.repository.ClubApplicationFormsRepository;
 import moadong.club.repository.ClubRepository;
 import moadong.fixture.ClubApplicationEditFixture;
 import moadong.fixture.UserFixture;
-import moadong.global.exception.RestApiException;
 import moadong.user.entity.User;
 import moadong.user.payload.CustomUserDetails;
 import moadong.user.repository.UserRepository;
@@ -28,9 +27,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
 
 @IntegrationTest
-public class ClubApplyServiceTest {
+public class ClubApplyAdminServiceTest {
     @Autowired
-    private ClubApplyService clubApplyService;
+    private ClubApplyAdminService clubApplyAdminService;
     @Autowired
     private UserRepository userRepository;
     @Autowired

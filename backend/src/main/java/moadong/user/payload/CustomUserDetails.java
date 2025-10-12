@@ -13,12 +13,14 @@ public class CustomUserDetails implements UserDetails {
     // 로그인에 쓰는 유저 아이디
     private String userId;
     private String password;
+    private String clubId;
     private Collection<? extends GrantedAuthority> authorities;
 
     public CustomUserDetails(User user) {
         this.id = user.getId();
         this.userId = user.getUserId();
         this.password = user.getPassword();
+        this.clubId = user.getClubId();
         this.authorities = user.getAuthorities();
     }
 
