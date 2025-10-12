@@ -1,7 +1,6 @@
 import Modal from "@/components/common/Modal/Modal";
 import * as Styled from './ApplicationSelectModal.styles';
 import { ApplicationOption } from "@/types/application";
-import { useNavigate, useParams } from "react-router-dom";
 
 export interface ApplicationSelectModalProps {
   isOpen: boolean;
