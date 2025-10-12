@@ -6,7 +6,6 @@ export const BannerContainer = styled.div`
   max-width: 1180px;
   margin: 0 auto;
   width: 100%;
-
   display: flex;
   justify-content: center;
   align-items: center;
@@ -28,13 +27,6 @@ export const BannerWrapper = styled.div<BannerProps>`
   border-radius: 26px;
   overflow: hidden;
   background-color: transparent;
-  ${({ backgroundImage }) =>
-    backgroundImage &&
-    `
-    background-image: url(${backgroundImage});
-    background-size: cover;
-    background-position: center;
-    `}
 
   @media (max-width: 500px) {
     width: 100%;
@@ -43,18 +35,7 @@ export const BannerWrapper = styled.div<BannerProps>`
   }
 `;
 
-export const SlideWrapper = styled.div<{ $isAnimating: boolean }>`
-  display: flex;
-  width: 100%;
-  height: 100%;
-  ${({ $isAnimating }) =>
-    $isAnimating
-      ? 'transition: transform 0.5s ease-in-out;'
-      : 'transition: none;'}
-`;
-
 export const BannerItem = styled.div`
-  flex: none;
   width: 100%;
   height: 100%;
 
@@ -73,7 +54,8 @@ export const ButtonContainer = styled.div`
   align-items: center;
   justify-content: space-between;
   transform: translateY(-50%);
-  z-index: 1;
+  z-index: 2;
+  pointer-events: none;
 `;
 
 export const SlideButton = styled.button`
@@ -83,6 +65,7 @@ export const SlideButton = styled.button`
   border: none;
   background-color: transparent;
   cursor: pointer;
+  pointer-events: auto;
 
   img {
     width: 100%;
