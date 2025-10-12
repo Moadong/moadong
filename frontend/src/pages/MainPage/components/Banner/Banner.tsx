@@ -21,6 +21,7 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
   const { isMobile } = useDevice();
   const handleLink = useNavigator();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const banners = isMobile ? mobileBanners : desktopBanners;
 
@@ -52,6 +53,7 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
 
         <Swiper
           modules={[Navigation, Autoplay]}
+          onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex)}
           onSwiper={setSwiperInstance}
           loop={true}
           autoplay={{
@@ -71,6 +73,19 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
             </SwiperSlide>
           ))}
         </Swiper>
+        {isMobile && (
+          <Styled.NumericPagination>
+            {currentIndex + 1} / {banners.length}
+          </Styled.NumericPagination>
+        )}
+
+        {!isMobile && (
+          <Styled.DotPagination>
+            {banners.map((_, index) => (
+              <Styled.Dot key={index} active={currentIndex === index} />
+            ))}
+          </Styled.DotPagination>
+        )}
       </Styled.BannerWrapper>
     </Styled.BannerContainer>
   );
