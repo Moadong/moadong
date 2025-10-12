@@ -1,8 +1,9 @@
 import API_BASE_URL from "@/constants/api";
+import { API_BASE } from "@/mocks/constants/clubApi";
 
 const getApplicationOptions = async (clubId: string) => {
     try {
-        const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/applications`);
+        const response = await fetch(`${API_BASE}/${clubId}/applications`);
         if (!response.ok) {
             console.error(`Failed to fetch options: ${response.statusText}`);
             throw new Error((await response.json()).message);
