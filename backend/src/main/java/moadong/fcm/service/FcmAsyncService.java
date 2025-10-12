@@ -7,7 +7,6 @@ import com.google.firebase.messaging.TopicManagementResponse;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moadong.club.repository.ClubRepository;
 import moadong.fcm.entity.FcmToken;
 import moadong.fcm.repository.FcmTokenRepository;
 import moadong.global.exception.ErrorCode;
@@ -19,6 +18,7 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.concurrent.ExecutionException;
 
 @Slf4j
 @Service
@@ -26,7 +26,6 @@ import java.util.*;
 public class FcmAsyncService {
 
     private final FcmTokenRepository fcmTokenRepository;
-    private final ClubRepository clubRepository;
 
     @Async
     @Transactional
@@ -52,6 +51,8 @@ public class FcmAsyncService {
             }
         }
 
+        FcmToken existToken = fcmTokenRepository.findFcmTokenByToken(token).get();
+
         try {
             if (!futures.isEmpty()) {
                 List<TopicManagementResponse> responses = ApiFutures.allAsList(futures).get();
@@ -59,15 +60,21 @@ public class FcmAsyncService {
                 for (TopicManagementResponse response : responses) {
                     if (response.getFailureCount() > 0) {
                         log.error("Fcm topic subscription failed token {}. Response: {}", token, response.getErrors());
+
+                        for (TopicManagementResponse.Error error : response.getErrors()) {
+                            if (!error.getReason().equals("registration-token-not-registered")) continue;
+
+                            fcmTokenRepository.delete(existToken);
+                            throw new RestApiException(ErrorCode.FCMTOKEN_NOT_FOUND);
+                        }
                     }
                 }
             }
-        } catch (Exception e) {
+        } catch (ExecutionException | InterruptedException e) {
             log.error("error: {}", e.getMessage());
-            throw new RestApiException(ErrorCode.FCMTOKEN_SUBSCRIBE_ERROR);
+            throw new RuntimeException(e);
         }
 
-        FcmToken existToken = fcmTokenRepository.findFcmTokenByToken(token).get();
         existToken.updateClubIds(newClubIds.stream().toList());
         fcmTokenRepository.save(existToken);
     }
