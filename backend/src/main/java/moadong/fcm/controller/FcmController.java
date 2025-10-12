@@ -27,7 +27,7 @@ public class FcmController {
     }
 
     @Operation(summary = "동아리 모집정보 알림 구독", description = "특정 동아리들의 모집 정보가 변경되면저거 하면  알림을 받도록 구독합니다.")
-    @PostMapping("/subscribe")
+    @PutMapping("/subscribe")
     public ResponseEntity<?> subscribeRecruitment(@RequestBody @Validated ClubSubscribeRequest request) {
         fcmService.subscribeClubs(request.fcmToken(), request.clubIds());
         return Response.ok("success subscribe club");
