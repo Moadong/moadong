@@ -3,7 +3,10 @@ package moadong.fcm.service;
 import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.fcm.entity.FcmToken;
 import moadong.fcm.repository.FcmTokenRepository;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
 import org.springframework.dao.DataAccessException;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -31,8 +34,9 @@ public class FcmTxService {
 
     @Transactional
     public void updateFcmToken(String token, Set<String> newClubIds) {
-        fcmTokenRepository.findFcmTokenByToken(token).ifPresent(fcmToken ->
-                fcmToken.updateClubIds(newClubIds.stream().toList())
-        );
+        FcmToken fcmToken = fcmTokenRepository.findFcmTokenByToken(token).orElseThrow(() -> new RestApiException(ErrorCode.FCMTOKEN_NOT_FOUND));
+        fcmToken.updateClubIds(newClubIds.stream().toList());
+
+        fcmTokenRepository.save(fcmToken);
     }
 }

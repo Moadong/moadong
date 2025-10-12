@@ -32,6 +32,7 @@ public class FcmToken {
     }
 
     public void updateClubIds(List<String> clubIds) {
-        this.clubIds = clubIds;
+        this.clubIds.clear();
+        this.clubIds.addAll(clubIds);
     }
 }
