@@ -19,6 +19,8 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
 @Slf4j
 @Service
@@ -56,7 +58,7 @@ public class FcmAsyncService {
 
         try {
             if (!futures.isEmpty()) {
-                List<TopicManagementResponse> responses = ApiFutures.allAsList(futures).get();
+                List<TopicManagementResponse> responses = ApiFutures.allAsList(futures).get(5, TimeUnit.SECONDS);
 
                 for (TopicManagementResponse response : responses) {
                     if (response.getFailureCount() > 0) {
@@ -71,7 +73,7 @@ public class FcmAsyncService {
                     }
                 }
             }
-        } catch (ExecutionException | InterruptedException e) {
+        } catch (ExecutionException | InterruptedException | TimeoutException e) {
             log.error("error: {}", e.getMessage());
             throw new RuntimeException(e);
         }
