@@ -62,14 +62,17 @@ public class FcmAsyncService {
 
                 for (TopicManagementResponse response : responses) {
                     if (response.getFailureCount() > 0) {
-                        log.error("Fcm topic subscription failed token {}. Response: {}", token, response.getErrors());
+                        boolean notRegistered = response.getErrors().stream()
+                                .anyMatch(e -> "registration-token-not-registered".equals(e.getReason()));
 
-                        for (TopicManagementResponse.Error error : response.getErrors()) {
-                            if (!error.getReason().equals("registration-token-not-registered")) continue;
-
+                        if (notRegistered) {
                             fcmTokenRepository.delete(existToken);
-                            throw new RestApiException(ErrorCode.FCMTOKEN_NOT_FOUND);
+                            log.info("Deleted unregistered FCM token {}", token);
+                            return;
                         }
+
+                        log.error("FCM topic op failed for {}. errors={}", token, response.getErrors());
+                        throw new RestApiException(ErrorCode.FCMTOKEN_SUBSCRIBE_ERROR);
                     }
                 }
             }
