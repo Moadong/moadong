@@ -42,8 +42,6 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
     updateSlideWidth();
     const handleResize = debounce(() => {
       setIsMobile(window.innerWidth <= 500);
-      setIsReady(false);
-      setIsAnimating(false);
       updateSlideWidth();
     }, 200);
 
