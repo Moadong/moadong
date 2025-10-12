@@ -36,18 +36,19 @@ public class FcmAsyncService {
     )
     public void updateSubscriptions(String token, Set<String> newClubIds, Set<String> clubsToSubscribe, Set<String> clubsToUnsubscribe) {
         List<ApiFuture<TopicManagementResponse>> futures = new ArrayList<>();
+        FirebaseMessaging fm = FirebaseMessaging.getInstance();
 
         // 새로운 동아리 구독
         if (!clubsToSubscribe.isEmpty()) {
             for (String clubId : clubsToSubscribe) {
-                futures.add(FirebaseMessaging.getInstance().subscribeToTopicAsync(Collections.singletonList(token), clubId));
+                futures.add(fm.subscribeToTopicAsync(Collections.singletonList(token), clubId));
             }
         }
 
         // 더 이상 구독하지 않는 동아리 구독 해제
         if (!clubsToUnsubscribe.isEmpty()) {
             for (String clubId : clubsToUnsubscribe) {
-                futures.add(FirebaseMessaging.getInstance().unsubscribeFromTopicAsync(Collections.singletonList(token), clubId));
+                futures.add(fm.unsubscribeFromTopicAsync(Collections.singletonList(token), clubId));
             }
         }
 
