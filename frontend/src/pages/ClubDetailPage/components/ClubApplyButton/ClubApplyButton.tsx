@@ -5,6 +5,10 @@ import getApplication from '@/apis/application/getApplication';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 import ShareButton from '@/pages/ClubDetailPage/components/ShareButton/ShareButton';
+import { useState } from 'react';
+import { ApplicationOption } from '@/types/application';
+import getApplicationOptions from '@/apis/application/getApplicationOptions';
+import ApplicationSelectModal from '@/components/application/modals/ApplicationSelectModal';
 
 interface ClubApplyButtonProps {
   deadlineText?: string;
@@ -19,10 +23,25 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const { clubId } = useParams<{ clubId: string }>();
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
-
   const { data: clubDetail } = useGetClubDetail(clubId!);
 
-  if (!clubId || !clubDetail) return;
+  // 모달 옵션 상태
+  const [isOpen, setIsOpen] = useState(false);
+  const [options, setOptions] = useState<ApplicationOption[]>([])
+
+  const openByOption = (option?: ApplicationOption) => {
+    if (!clubId) return;
+    if (option?.url) {
+      // 외부 폼
+      window.open(option.url, '_blank'); 
+    } else {
+      // 내부 폼
+      navigate(`/application/${clubId}`); 
+    }
+    setIsOpen(false);
+  };
+
+  if (!clubId || !clubDetail) return null;
 
   const handleClick = async () => {
     trackEvent(EVENT_NAME.CLUB_APPLY_BUTTON_CLICKED);
@@ -33,18 +52,38 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     }
 
     try {
-      await getApplication(clubId);
-      navigate(`/application/${clubId}`);
-    } catch (err: unknown) {
-      const externalFormLink = clubDetail.externalApplicationUrl?.trim();
+      const list = await getApplicationOptions(clubId);
 
-      if (!externalFormLink) {
-        alert('동아리 모집 정보를 확인해주세요.');
+      if (list.length === 1) {
+        openByOption(list[0]);
         return;
       }
-      window.open(externalFormLink, '_blank', 'noopener,noreferrer');
+
+      if (list.length >= 2) {
+        setOptions(list);
+        setIsOpen(true);
+        return;
+      }
+      setOptions([]);
+      setIsOpen(true);
+      return;
+
+    } catch {
+      try {
+        await getApplication(clubId);
+        navigate(`/application/${clubId}`);
+        setIsOpen(false);
+      } catch {
+        const externalForm = clubDetail.externalApplicationUrl?.trim();
+        if (externalForm) {
+          window.open(externalForm, '_blank');
+          setIsOpen(false);
+        } else {
+          setOptions([]);
+        }
+      }
     }
-  };
+  }; 
 
   const renderButtonContent = () => {
     if (deadlineText === RECRUITMENT_STATUS.CLOSED) {
@@ -70,6 +109,12 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
       <Styled.ApplyButton onClick={handleClick}>
         {renderButtonContent()}
       </Styled.ApplyButton>
+      <ApplicationSelectModal
+        isOpen={isOpen}
+        onClose={() => setIsOpen(false)}
+        options={options}
+        onSelect={openByOption}
+      />
     </Styled.ApplyButtonContainer>
   );
 };
