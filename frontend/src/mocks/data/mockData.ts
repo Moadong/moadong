@@ -1,5 +1,5 @@
 import { ApplicationFormData, ApplicationOption } from '@/types/application';
-import { CLUB_BOB, CLUB_IVF } from '../constants/clubApi';
+import { CLUB_BACK, CLUB_BOB, CLUB_IVF, CLUB_TEST } from '../constants/clubApi';
 
 type QuestionType =
   | 'CHOICE'
@@ -128,10 +128,17 @@ export const mockOptions: Record<string, ApplicationOption[]> = {
   [CLUB_BOB]: [
   { id: 101, name: '개발자로 지원하기' },
   { id: 102, name: '디자이너로 지원하기', url: 'https://docs.google.com/forms/d/e/1FAIpQLSeL0p3y7Z2YFymaPThXv5dYBU-wVIKqr3TrQlwHLyJneE6CcA/viewform' },
+  { id: 103, name: '기획자로 지원하기' },  
   ],
   /*IVF*/
   [CLUB_IVF]: [ 
     { id: 201, name: '선수로 지원하기' },
     { id: 202, name: '매니저로 지원하기' },
   ],
+  /*백경예술연구회*/
+  [CLUB_BACK]: [
+    { id: 301, name: '백경예술연구회 지원하기' },
+  ],
+  /*테스트*/
+  [CLUB_TEST]: [],
 };
