@@ -481,7 +481,7 @@ public class ClubApplyService {
     public SseEmitter createSseConnection(String clubId, String applicationFormId, CustomUserDetails user) {
         validateClubOwner(clubId, user);
         
-        String connectionKey = clubId + "_" + applicationFormId + "_" + user.getUserId();
+        String connectionKey = clubId + "_" + applicationFormId + "_" + user.getId();
         SseEmitter emitter = new SseEmitter(30000L); // 30초 타임아웃
         
         sseConnections.put(connectionKey, emitter);
