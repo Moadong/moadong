@@ -329,7 +329,7 @@ public class ClubApplyService {
                 clubId,
                 applicationFormId
             );
-            sendStatusChangeEvent(clubId, applicationFormId, event);
+            CompletableFuture.runAsync(() -> sendStatusChangeEvent(clubId, applicationFormId, event));
         });
 
         clubApplicantsRepository.saveAll(application);
