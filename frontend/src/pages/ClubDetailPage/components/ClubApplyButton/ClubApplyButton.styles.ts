@@ -17,21 +17,16 @@ export const ApplyButton = styled.button`
   border-radius: 10px;
   cursor: pointer;
   transition: transform 0.2s ease-in-out;
-  background-color: #3a3a3a;
+  background-color: #ff7543;
 
   padding: 10px 40px;
   width: 517px;
   height: 44px;
-  font-size: 16px;
+  font-size: 20px;
   font-style: normal;
-  font-weight: 500;
+  font-weight: 700;
   color: #fff;
   text-align: center;
-
-  &:hover {
-    background-color: #555;
-    transform: scale(1.03);
-  }
 
   img {
     font-size: 12px;
