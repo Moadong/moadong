@@ -56,7 +56,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
         지원하기
         {deadlineText && deadlineText !== RECRUITMENT_STATUS.ALWAYS && (
           <>
-            <span style={{ margin: '0 8px', color: '#787878' }}>|</span>
+            <Styled.Separator />
             {deadlineText}
           </>
         )}
