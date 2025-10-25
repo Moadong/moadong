@@ -21,7 +21,7 @@ export const ApplyButton = styled.button`
 
   padding: 10px 40px;
   width: 517px;
-  height: 44px;
+  height: 60px;
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
