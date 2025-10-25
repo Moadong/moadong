@@ -4,7 +4,7 @@ export const ClubDetailFooterContainer = styled.div`
   position: sticky;
   bottom: 0;
   width: 100%;
-  height: 65px;
+  height: 94px;
   z-index: 100;
   padding: 10px 40px;
 
