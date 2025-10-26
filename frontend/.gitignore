@@ -19,3 +19,10 @@ build-storybook.log
 coverage/ 
 # Sentry Config File
 .env.sentry-build-plugin
+
+# Playwright
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
+/playwright/.auth/
