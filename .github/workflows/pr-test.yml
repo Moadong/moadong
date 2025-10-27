@@ -36,6 +36,11 @@ jobs:
         run: | 
           cd ./backend/src/main/resources
           echo "${{ secrets.APPLICATION_PR_TEST }}" > ./application.properties
+
+      - name: make firebase.json
+        run: |
+          cd ./backend/src/main/resources
+          echo "${{ secrets.FIREBASE_PR_TEST }}" > ./firebase.json
       
       - name: create-json
         id: create-json
