@@ -40,7 +40,7 @@ jobs:
       - name: make firebase.json
         run: |
           cd ./backend/src/main/resources
-          echo "${{ secrets.FIREBASE_PR_TEST }}" > ./firebase.json
+          echo "${{ secrets.FIREBASE_PR_TEST }}" | base64 -d > ./firebase.json
       
       - name: create-json
         id: create-json
