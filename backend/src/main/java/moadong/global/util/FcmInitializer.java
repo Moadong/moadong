@@ -18,15 +18,20 @@ public class FcmInitializer {
 
     @PostConstruct
     public void init() throws IOException {
-        ClassPathResource serviceAccount =
-                new ClassPathResource("firebase.json");
+        try {
 
-        FirebaseOptions.Builder options = FirebaseOptions.builder();
-        options.setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()));
+            ClassPathResource serviceAccount =
+                    new ClassPathResource("firebase.json");
 
-        if (FirebaseApp.getApps().isEmpty()) {
-            FirebaseApp.initializeApp(options.build());
-            log.info("Firebase app has been initialized");
+            FirebaseOptions.Builder options = FirebaseOptions.builder();
+            options.setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()));
+
+            if (FirebaseApp.getApps().isEmpty()) {
+                FirebaseApp.initializeApp(options.build());
+                log.info("Firebase app has been initialized");
+            }
+        } catch (Exception e) {
+            log.error("Firebase app initialization failed", e);
         }
     }
 
