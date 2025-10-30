@@ -9,18 +9,19 @@ import moadong.club.repository.ClubRepository;
 import moadong.fcm.entity.FcmToken;
 import moadong.fcm.payload.response.ClubSubscribeListResponse;
 import moadong.fcm.repository.FcmTokenRepository;
-import moadong.global.AsyncTest;
-import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.util.annotations.IntegrationTest;
-import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.TestConfiguration;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Primary;
+import org.springframework.core.task.SyncTaskExecutor;
+import org.springframework.core.task.TaskExecutor;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -36,8 +37,16 @@ import static org.mockito.Mockito.when;
 
 @IntegrationTest
 @Transactional
-@Import(AsyncTest.class)
 class FcmServiceTest {
+
+    @TestConfiguration
+    static class TestAsyncConfig {
+        @Bean(name = "fcmAsync")
+        @Primary
+        public TaskExecutor taskExecutor() {
+            return new SyncTaskExecutor();
+        }
+    }
 
     @Autowired
     private FcmService fcmService;
@@ -62,8 +71,6 @@ class FcmServiceTest {
         club3 = clubRepository.save(Club.builder().name("club3").build());
 
         TopicManagementResponse ok = Mockito.mock(TopicManagementResponse.class);
-        when(ok.getFailureCount()).thenReturn(0);
-
         when(ok.getFailureCount()).thenReturn(0);
 
         // subscribe/unsubscribe 모두 성공으로 반환
@@ -145,7 +152,7 @@ class FcmServiceTest {
                 .build());
 
         // when
-        CompletableFuture<Void> future = fcmAsyncService.updateSubscriptions(token, Set.copyOf(newClubIds), Set.of(club1.getId()), Set.of(club3.getId()));
+        CompletableFuture<Void> future = fcmAsyncService.updateSubscriptions(token, Set.copyOf(newClubIds), Set.of(club3.getId()), Set.of(club1.getId()));
         future.join();
 
         // then

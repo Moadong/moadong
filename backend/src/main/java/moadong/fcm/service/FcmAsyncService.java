@@ -33,7 +33,7 @@ public class FcmAsyncService {
     @Value("${fcm.topic.timeout-seconds:5}")
     private int timeoutSeconds;
 
-    @Async
+    @Async("fcmAsync")
     public CompletableFuture<Void> updateSubscriptions(String token, Set<String> newClubIds, Set<String> clubsToSubscribe, Set<String> clubsToUnsubscribe) {
         List<ApiFuture<TopicManagementResponse>> futures = new ArrayList<>();
 
