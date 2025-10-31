@@ -11,6 +11,7 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 @Slf4j
 @Component
@@ -19,19 +20,27 @@ public class FcmInitializer {
     @PostConstruct
     public void init() throws IOException {
         try {
-
             ClassPathResource serviceAccount =
-                    new ClassPathResource("firebase.json");
+                    new ClassPathResource("firebase2.json");
+
+            if (!serviceAccount.exists()) {
+                throw new IOException("Firebase service account file not found");
+            }
+
+            InputStream in = serviceAccount.getInputStream();
 
             FirebaseOptions.Builder options = FirebaseOptions.builder();
-            options.setCredentials(GoogleCredentials.fromStream(serviceAccount.getInputStream()));
+            options.setCredentials(GoogleCredentials.fromStream(in));
 
             if (FirebaseApp.getApps().isEmpty()) {
                 FirebaseApp.initializeApp(options.build());
                 log.info("Firebase app has been initialized");
             }
+
+            in.close();
         } catch (Exception e) {
             log.error("Firebase app initialization failed", e);
+            throw e;
         }
     }
 
