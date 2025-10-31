@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import * as Styled from './RecruitEditTab.styles';
 import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
@@ -23,7 +23,7 @@ const RecruitEditTab = () => {
   const FAR_FUTURE_YEAR = 2999;
   const isFarFuture = (date: Date | null) => !!date && date.getFullYear() === FAR_FUTURE_YEAR;
   const [always, setAlways] = useState(false);
-  const [backupRange, setBackupRange] = useState<{ start: Date | null; end: Date | null }>({ start: null, end: null });
+  const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({ start: null, end: null });
 
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -39,7 +39,7 @@ const RecruitEditTab = () => {
     
     if (isAlways) {
       setAlways(true);
-      setBackupRange({ start, end });
+      backupRangeRef.current = { start, end };
       setRecruitmentStart(start ?? now);
     } else {
       setRecruitmentStart(start ?? now);
@@ -72,19 +72,20 @@ const RecruitEditTab = () => {
 
       if (!prev) {
         // 상시모집 활성화
-        setBackupRange({ start: recruitmentStart, end: recruitmentEnd });
+        backupRangeRef.current = { start: recruitmentStart, end: recruitmentEnd };
       } else {
         // 상시모집 비활성화
-        const backupWasAlways = isFarFuture(backupRange.end);
+        const { start, end } = backupRangeRef.current;
+        const backupWasAlways = isFarFuture(end);
         if (backupWasAlways) {
           // 백업이 상시모집인 경우
-          const base = backupRange.start ?? now;
+          const base = start ?? now;          
           setRecruitmentStart(base);
           setRecruitmentEnd(base);
         } else {
           // 백업이 상시모집이 아닌 경우
-          setRecruitmentStart(backupRange.start ?? now);
-          setRecruitmentEnd(backupRange.end ?? now);
+          setRecruitmentStart(start ?? now);
+          setRecruitmentEnd(end ?? now);
         }
       }
       return !prev;
