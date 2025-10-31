@@ -3,7 +3,6 @@ package moadong.fcm.service;
 import com.google.api.core.ApiFutures;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.TopicManagementResponse;
-import jakarta.transaction.Transactional;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.fcm.entity.FcmToken;
@@ -22,6 +21,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.task.SyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
