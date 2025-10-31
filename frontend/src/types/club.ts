@@ -31,8 +31,3 @@ export interface ClubDescription {
   id: string;
   description: string | null;
 }
-
-export interface ClubSearchResponse {
-  clubs: Club[];
-  totalCount: number;
-}

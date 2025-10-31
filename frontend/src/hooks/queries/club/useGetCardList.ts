@@ -1,12 +1,7 @@
 import { useQuery, keepPreviousData } from '@tanstack/react-query';
 import { getClubList } from '@/apis/getClubList';
-import { Club } from '@/types/club';
+import { ClubSearchResponse } from '@/types/club.responses';
 import convertToDriveUrl from '@/utils/convertGoogleDriveUrl';
-
-export interface ClubSearchResponse {
-  clubs: Club[];
-  totalCount: number;
-}
 
 export const useGetCardList = (
   keyword: string,
