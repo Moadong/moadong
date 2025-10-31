@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import * as Styled from './RecruitEditTab.styles';
 import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
@@ -9,6 +9,7 @@ import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
 import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
+import { setYear } from 'date-fns';
 
 const RecruitEditTab = () => {
   const clubDetail = useOutletContext<ClubDetail>();
@@ -19,6 +20,10 @@ const RecruitEditTab = () => {
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
   const [description, setDescription] = useState('');
+  const FAR_FUTURE_YEAR = 2999;
+  const isFarFuture = (date: Date | null) => !!date && date.getFullYear() === FAR_FUTURE_YEAR;
+  const [always, setAlways] = useState(false);
+  const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({ start: null, end: null });
 
   const queryClient = useQueryClient();
   useEffect(() => {
@@ -28,12 +33,28 @@ const RecruitEditTab = () => {
       parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
 
     const now = new Date();
-
-    setRecruitmentStart((prev) => prev ?? correctResponseKoreanDate(initialStart) ?? now);
-    setRecruitmentEnd((prev) => prev ?? correctResponseKoreanDate(initialEnd) ?? now);
+    const start = correctResponseKoreanDate(initialStart);
+    const end = correctResponseKoreanDate(initialEnd);
+    const isAlways = clubDetail.recruitmentStatus === '상시모집';
+    
+    if (isAlways) {
+      setAlways(true);
+      backupRangeRef.current = { start, end };
+      setRecruitmentStart(start ?? now);
+    } else {
+      setRecruitmentStart(start ?? now);
+      setRecruitmentEnd(end ?? now);
+    }
+    
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
     setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
+
+  useEffect(() => {
+    if (always && recruitmentStart) {
+      setRecruitmentEnd(setYear(recruitmentStart, FAR_FUTURE_YEAR));
+    }
+}, [always, recruitmentStart]);
 
   const correctRequestKoreanDate = (date: Date | null): Date | null => {
     if (!date) return null;
@@ -45,13 +66,48 @@ const RecruitEditTab = () => {
     return new Date(date?.getTime() - 9 * 60 * 60 * 1000);
   }
 
+  const toggleAlways = () => {
+    setAlways((prev) => {
+      const now = new Date();
+
+      if (!prev) {
+        // 상시모집 활성화
+        backupRangeRef.current = { start: recruitmentStart, end: recruitmentEnd };
+      } else {
+        // 상시모집 비활성화
+        const { start, end } = backupRangeRef.current;
+        const backupWasAlways = isFarFuture(end);
+        if (backupWasAlways) {
+          // 백업이 상시모집인 경우
+          const base = start ?? now;          
+          setRecruitmentStart(base);
+          setRecruitmentEnd(base);
+        } else {
+          // 백업이 상시모집이 아닌 경우
+          setRecruitmentStart(start ?? now);
+          setRecruitmentEnd(end ?? now);
+        }
+      }
+      return !prev;
+    });
+  };
+
   const handleUpdateClub = async () => {
     if (!clubDetail) return;
 
+    let startForSave: Date | null = recruitmentStart;
+    let endForSave: Date | null = recruitmentEnd;
+
+    if (always) {
+      const base = recruitmentStart ?? new Date();
+      startForSave = base;
+      endForSave = setYear(base, FAR_FUTURE_YEAR);
+    }
+
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: correctRequestKoreanDate(recruitmentStart)?.toISOString(),
-      recruitmentEnd: correctRequestKoreanDate(recruitmentEnd)?.toISOString(),
+      recruitmentStart: correctRequestKoreanDate(startForSave)?.toISOString(),
+      recruitmentEnd: correctRequestKoreanDate(endForSave)?.toISOString(),
       recruitmentTarget: recruitmentTarget,
       description: description,
       externalApplicationUrl: clubDetail.externalApplicationUrl ?? '',
@@ -80,12 +136,23 @@ const RecruitEditTab = () => {
       <Styled.InfoGroup>
         <div>
           <Styled.Label>모집 기간 설정</Styled.Label>
-          <Calendar
-            recruitmentStart={recruitmentStart}
-            recruitmentEnd={recruitmentEnd}
-            onChangeStart={setRecruitmentStart}
-            onChangeEnd={setRecruitmentEnd}
-          />
+          <Styled.RecruitPeriodContainer>
+            <Calendar
+              recruitmentStart={recruitmentStart}
+              recruitmentEnd={recruitmentEnd}
+              onChangeStart={setRecruitmentStart}
+              onChangeEnd={setRecruitmentEnd}
+              disabledEnd={always}
+            />
+            <Styled.AlwaysRecruitButton
+              type="button"
+              $active={always}
+              onClick={toggleAlways}
+              aria-pressed={always}
+            >
+              상시모집
+            </Styled.AlwaysRecruitButton>
+          </Styled.RecruitPeriodContainer>
         </div>
         <InputField
           label='모집 대상'
