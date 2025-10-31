@@ -35,7 +35,7 @@ const RecruitEditTab = () => {
     const now = new Date();
     const start = correctResponseKoreanDate(initialStart);
     const end = correctResponseKoreanDate(initialEnd);
-    const isAlways = !!end && end.getFullYear() === FAR_FUTURE_YEAR;
+    const isAlways = clubDetail.recruitmentStatus === '상시모집';
     
     if (isAlways) {
       setAlways(true);
