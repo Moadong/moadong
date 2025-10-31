@@ -2,7 +2,6 @@ import * as Styled from './InfoBox.styles';
 import { ClubDetail } from '@/types/club';
 import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
 import SnsLinkIcons from '@/pages/ClubDetailPage/components/SnsLinkIcons/SnsLinkIcons';
-import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 
 interface ClubInfoItem {
   label: string;
@@ -24,12 +23,9 @@ interface ClubInfoSectionWithRef extends ClubInfoSection {
   refIndex: INFOTABS_SCROLL_INDEX;
 }
 
-const FAR_FUTURE_YEAR = 2999;
-
 const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
   const recruitmentPeriodDisplay = (() => {
-    const { recruitmentEnd } = parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
-    const isAlways = !!recruitmentEnd && recruitmentEnd.getFullYear() === FAR_FUTURE_YEAR;
+    const isAlways = clubDetail.recruitmentStatus === '상시모집';
     return isAlways ? '상시모집' : clubDetail.recruitmentPeriod;  
   })();
   
