@@ -28,8 +28,10 @@ public class FcmTxService {
 
     @Transactional
     public void deleteUnregisteredFcmToken(String token) {
-        fcmTokenRepository.findFcmTokenByToken(token).ifPresent(fcmTokenRepository::delete);
-        log.info("Deleted unregistered FCM token {}", token);
+        fcmTokenRepository.findFcmTokenByToken(token).ifPresent(t -> {
+            fcmTokenRepository.delete(t);
+            log.info("Deleted unregistered FCM token {}", token);
+        });
     }
 
     @Transactional

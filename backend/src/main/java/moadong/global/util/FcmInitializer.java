@@ -21,7 +21,7 @@ public class FcmInitializer {
     public void init() throws IOException {
         try {
             ClassPathResource serviceAccount =
-                    new ClassPathResource("firebase2.json");
+                    new ClassPathResource("firebase.json");
 
             if (!serviceAccount.exists()) {
                 throw new IOException("Firebase service account file not found");
