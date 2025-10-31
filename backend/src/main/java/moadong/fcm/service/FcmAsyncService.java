@@ -52,7 +52,7 @@ public class FcmAsyncService {
         }
 
         try {
-            if (futures.isEmpty()) return null;
+            if (futures.isEmpty()) return CompletableFuture.completedFuture(null);
 
             List<TopicManagementResponse> responses = ApiFutures.allAsList(futures).get(timeoutSeconds, TimeUnit.SECONDS);
 
@@ -63,7 +63,7 @@ public class FcmAsyncService {
 
                     if (notRegistered) {
                         fcmTxService.deleteUnregisteredFcmToken(token);
-                        return null;
+                        return CompletableFuture.completedFuture(null);
                     }
 
                     log.error("FCM topic sub failed for {}. errors={}", token, response.getErrors());
@@ -81,6 +81,6 @@ public class FcmAsyncService {
             throw new RuntimeException(e);
         }
 
-        return null;
+        return CompletableFuture.completedFuture(null);
     }
 }
