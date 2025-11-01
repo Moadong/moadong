@@ -49,7 +49,7 @@ public class FcmService {
         Set<String> clubsToUnsubscribe = new HashSet<>(oldClubIdSet);
         clubsToUnsubscribe.removeAll(newClubIdSet);
 
-        if (!clubsToUnsubscribe.isEmpty()) {
+        if (!clubsToSubscribe.isEmpty()) {
             Long countClub = clubRepository.countByIdIn(clubsToSubscribe.stream().toList());
 
             if (countClub != clubsToSubscribe.size()) {
