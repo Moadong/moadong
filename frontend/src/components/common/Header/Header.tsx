@@ -9,12 +9,14 @@ import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
+import { useScroll } from '@/hooks/useScroll';
 
 const Header = () => {
   const trackEvent = useMixpanelTrack();
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const isScrolled = useScroll();
 
   const {
     handleHomeClick,
@@ -41,7 +43,7 @@ const Header = () => {
 
   return (
     <>
-      <Styled.Header>
+      <Styled.Header isScrolled={isScrolled}>
         <Styled.Container>
           <Styled.LogoButton onClick={handleHomeClick} aria-label='홈으로 이동'>
             <img
