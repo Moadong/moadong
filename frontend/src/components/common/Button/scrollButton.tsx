@@ -4,7 +4,7 @@ import styled from 'styled-components';
 
 const StyledButton = styled.button<{ $isVisible: boolean }>`
   position: fixed;
-  bottom: 20px;
+  bottom: 80px;
   right: 20px;
   z-index: 1000;
   opacity: ${({ $isVisible }) => ($isVisible ? 1 : 0)};
