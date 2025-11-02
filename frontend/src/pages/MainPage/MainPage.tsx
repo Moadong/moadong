@@ -66,7 +66,7 @@ const MainPage = () => {
           ))}
         </Styled.SectionTabs>
         <Styled.TotalCountResult role="status">
-          {`총 ${isLoading ? 0 : totalCount}개의 동아리가 검색되었습니다`}
+          {`전체 ${isLoading ? 0 : totalCount}개의 동아리`}
         </Styled.TotalCountResult>
         </Styled.SectionBar>
       
