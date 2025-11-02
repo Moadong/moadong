@@ -3,11 +3,10 @@ import { secureFetch } from '../auth/secureFetch';
 
 const deleteApplicants = async (
   applicantIds: string[],
-  clubId: string,
   applicationFormId: string,
 ) => {
   try {
-    const response = await secureFetch(`${API_BASE_URL}/api/club/${clubId}/applicant/${applicationFormId}`, {
+    const response = await secureFetch(`${API_BASE_URL}/api/club/applicant/${applicationFormId}`, {
         method: 'DELETE',
         headers: {
           'Content-Type': 'application/json',

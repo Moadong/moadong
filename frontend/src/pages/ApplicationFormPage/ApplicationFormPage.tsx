@@ -18,7 +18,7 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 
 const ApplicationFormPage = () => {
-  const { clubId } = useParams<{ clubId: string }>();
+  const { clubId, formId } = useParams<{ clubId: string, formId: string }>();
   const navigate = useNavigate();
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
@@ -30,16 +30,16 @@ const ApplicationFormPage = () => {
     isLoading,
     isError,
     error: applicationError,
-  } = useGetApplication(clubId!);
+  } = useGetApplication(clubId!, formId!);
 
   useTrackPageView(
     'ApplicationFormPage',
     clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
   );
 
-  if (!clubId) return null;
+  if (!clubId || !formId) return null;
 
-  const STORAGE_KEY = `applicationAnswers_${clubId}`;
+  const STORAGE_KEY = `applicationAnswers_${formId}`;
   const saved = localStorage.getItem(STORAGE_KEY);
   const initialAnswers = saved ? JSON.parse(saved) : [];
 
@@ -101,7 +101,7 @@ const ApplicationFormPage = () => {
     }
 
     try {
-      await applyToClub(clubId, answers);
+      await applyToClub(clubId, formId, answers);
       localStorage.removeItem(STORAGE_KEY);
       alert(
         `"${clubDetail.name}" 동아리에 성공적으로 지원되었습니다.\n좋은 결과 있으시길 바랍니다🤗`,

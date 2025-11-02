@@ -4,12 +4,11 @@ import { ApplicationFormData } from '@/types/application';
 
 export const updateApplication = async (
   data: ApplicationFormData,
-  clubId: string,
   applicationFormId: string,
 ) => {
   try {
     const response = await secureFetch(
-      `${API_BASE_URL}/api/club/${clubId}/application/${applicationFormId}`,
+      `${API_BASE_URL}/api/club/application/${applicationFormId}`,
       {
         method: 'PUT',
         headers: {

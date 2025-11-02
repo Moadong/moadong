@@ -4,11 +4,10 @@ import { ApplicationFormData } from '@/types/application';
 
 export const createApplication = async (
   data: ApplicationFormData,
-  clubId: string,
 ) => {
   try {
     const response = await secureFetch(
-      `${API_BASE_URL}/api/club/${clubId}/application`,
+      `${API_BASE_URL}/api/club/application`,
       {
         method: 'POST',
         headers: {

@@ -3,8 +3,8 @@ import { AnswerItem } from '@/types/application';
 
 export const applyToClub = async (
   clubId: string,
-  answers: AnswerItem[],
   applicationFormId: string,
+  answers: AnswerItem[],
 ) => {
   try {
     const response = await fetch(

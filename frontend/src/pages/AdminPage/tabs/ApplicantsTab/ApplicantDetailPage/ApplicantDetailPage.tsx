@@ -40,12 +40,13 @@ const ApplicantDetailPage = () => {
   );
   const { applicantsData, clubId } = useAdminClubContext();
 
-  const { data: formData, isLoading, isError } = useGetApplication(clubId!);
-  const { mutate: updateApplicant } = useUpdateApplicant(clubId!);
-
   const applicantIndex =
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
   const applicant = applicantsData?.applicants[applicantIndex];
+  const applicationFormId = applicant?.applicationFormId;
+
+  const { data: formData, isLoading, isError } = useGetApplication(clubId!, applicationFormId);
+  const { mutate: updateApplicant } = useUpdateApplicant(clubId!);
 
   useEffect(() => {
     if (applicant) {

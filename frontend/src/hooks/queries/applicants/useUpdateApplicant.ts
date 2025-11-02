@@ -2,14 +2,14 @@ import { updateApplicantDetail } from '@/apis/application/updateApplicantDetail'
 import { UpdateApplicantParams } from '@/types/applicants';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 
-export const useUpdateApplicant = (clubId: string) => {
+export const useUpdateApplicant = (applicationFormId: string) => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: (applicant: UpdateApplicantParams[]) =>
-      updateApplicantDetail(applicant, clubId!),
+      updateApplicantDetail(applicant, applicationFormId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clubApplicants'] });
+      queryClient.invalidateQueries({ queryKey: ['clubApplicants', applicationFormId] });
     },
     onError: (error) => {
       console.log(`Error updating applicant detail: ${error}`);
