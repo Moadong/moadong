@@ -6,7 +6,7 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
-import useHeaderNavigation from '@/components/common/Header/useHeaderNavigation';
+import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 
