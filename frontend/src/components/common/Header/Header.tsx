@@ -45,35 +45,40 @@ const Header = () => {
     <>
       <Styled.Header isScrolled={isScrolled}>
         <Styled.Container>
-          <Styled.LogoButton onClick={handleHomeClick} aria-label='홈으로 이동'>
-            <img
-              className='desktop-logo'
-              src={DesktopMainIcon}
-              alt='모아동 로고'
-            />
-            <img
-              className='mobile-logo'
-              src={MobileMainIcon}
-              alt='모아동 로고'
-            />
-          </Styled.LogoButton>
+          <Styled.LeftSection>
+            <Styled.LogoButton
+              onClick={handleHomeClick}
+              aria-label='홈으로 이동'
+            >
+              <img
+                className='desktop-logo'
+                src={DesktopMainIcon}
+                alt='모아동 로고'
+              />
+              <img
+                className='mobile-logo'
+                src={MobileMainIcon}
+                alt='모아동 로고'
+              />
+            </Styled.LogoButton>
 
-          {!isAdminPage && (
-            <Styled.Nav isOpen={isMenuOpen}>
-              {navLinks.map((link) => (
-                <Styled.NavLink
-                  key={link.label}
-                  isActive={location.pathname === link.path}
-                  onClick={() => {
-                    link.handler();
-                    closeMenu();
-                  }}
-                >
-                  {link.label}
-                </Styled.NavLink>
-              ))}
-            </Styled.Nav>
-          )}
+            {!isAdminPage && (
+              <Styled.Nav isOpen={isMenuOpen}>
+                {navLinks.map((link) => (
+                  <Styled.NavLink
+                    key={link.label}
+                    isActive={location.pathname === link.path}
+                    onClick={() => {
+                      link.handler();
+                      closeMenu();
+                    }}
+                  >
+                    {link.label}
+                  </Styled.NavLink>
+                ))}
+              </Styled.Nav>
+            )}
+          </Styled.LeftSection>
 
           {/* TODO 동아리 관리자 프로필 추가 */}
           {!isAdminPage && <SearchBox />}

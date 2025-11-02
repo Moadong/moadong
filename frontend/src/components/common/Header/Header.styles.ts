@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { e } from 'msw/lib/core/HttpResponse-Bls5AXtT.mjs';
 
 export const Header = styled.header<{ isScrolled: boolean }>`
   position: fixed;
@@ -48,6 +49,12 @@ export const Container = styled.div`
   ${media.mini_mobile} {
     gap: 15px;
   }
+`;
+
+export const LeftSection = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 45px;
 `;
 
 export const LogoButton = styled.button`
