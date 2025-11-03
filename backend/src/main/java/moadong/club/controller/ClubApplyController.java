@@ -136,7 +136,7 @@ public class ClubApplyController {
         return Response.ok("success delete applicant");
     }
 
-    @GetMapping("/applicant/{applicationFormId}/events")
+    @GetMapping(value = "/applicant/{applicationFormId}/events",produces = "text/event-stream")
     @Operation(summary = "지원자 상태 변경 실시간 이벤트", 
                description = "지원자의 상태 변경을 실시간으로 받아볼 수 있는 SSE 엔드포인트입니다.")
     @PreAuthorize("isAuthenticated()")
