@@ -483,7 +483,7 @@ public class ClubApplyService {
         validateClubOwner(clubId, user);
         
         String connectionKey = clubId + "_" + applicationFormId + "_" + user.getId();
-        SseEmitter emitter = new SseEmitter(30000L); // 30초 타임아웃
+        SseEmitter emitter = new SseEmitter(300000L); // 5분 타임아웃
         
         sseConnections.put(connectionKey, emitter);
         
