@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 
+const SCROLL_TO_TOP_THRESHOLD = 500;
+
 export const useScrollToTop = () => {
   const [isVisibleButton, setIsVisibleButton] = useState(false);
 
   const handleScroll = () => {
-    if (window.scrollY > 500) {
+    if (window.scrollY > SCROLL_TO_TOP_THRESHOLD) {
       setIsVisibleButton(true);
     } else {
       setIsVisibleButton(false);
