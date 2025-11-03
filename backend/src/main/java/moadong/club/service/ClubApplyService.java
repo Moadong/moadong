@@ -493,20 +493,27 @@ public class ClubApplyService {
         
         return emitter;
     }
-    
+
     // 이벤트 발송
     private void sendStatusChangeEvent(String clubId, String applicationFormId, ApplicantStatusEvent event) {
-        String connectionKey = clubId + "_" + applicationFormId;
-        
+        // 안전한 prefix (뒤에 "_" 추가)
+        String connectionKeyPrefix = clubId + "_" + applicationFormId + "_";
+
         sseConnections.entrySet().stream()
-            .filter(entry -> entry.getKey().startsWith(connectionKey))
-            .forEach(entry -> {
-                try {
-                    entry.getValue().send(event);
-                } catch (Exception e) {
-                    log.warn("SSE 이벤트 발송 실패: {}", e.getMessage());
-                    sseConnections.remove(entry.getKey());
-                }
-            });
+                .filter(entry -> entry.getKey().startsWith(connectionKeyPrefix))
+                .forEach(entry -> {
+                    try {
+                        entry.getValue().send(SseEmitter.event()
+                                .name("applicant-status-changed")   // 이벤트 이름 지정
+                                .data(event));                      // 실제 데이터
+                    } catch (Exception e) {
+                        log.warn("SSE 이벤트 발송 실패: {}", e.getMessage());
+                        sseConnections.remove(entry.getKey());
+                        try {
+                            entry.getValue().completeWithError(e); // emitter 쪽도 정상 종료
+                        } catch (Exception ignore) {}
+                    }
+                });
     }
+
 }
