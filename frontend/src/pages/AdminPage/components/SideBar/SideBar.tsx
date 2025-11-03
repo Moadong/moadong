@@ -32,18 +32,18 @@ const tabs: TabCategory[] = [
       { label: '활동 사진 수정', path: '/admin/photo-edit' },
     ],
   },
-    {
+  {
     category: '지원 관리',
     items: [
       { label: '지원서 관리', path: '/admin/application-list' },
       { label: '지원자 현황', path: '/admin/applicants' },
     ],
   },
-    {
+  {
     category: '계정 관리',
     items: [
-      { label: '비밀번호 수정', path: '/admin/account-edit'},
-      { label: '회원탈퇴', path: '/admin/user-delete'},
+      { label: '비밀번호 수정', path: '/admin/account-edit' },
+      { label: '회원탈퇴', path: '/admin/user-delete' },
     ],
   },
 ];
@@ -52,7 +52,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const activeTab = useMemo(() => { 
+  const activeTab = useMemo(() => {
     return tabs.map((tab) =>
       tab.items.findIndex((item) => location.pathname.startsWith(item.path)),
     );
@@ -101,7 +101,9 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
       <Styled.SidebarButtonContainer>
         {tabs.map((tab, tabIndex) => (
           <li key={tab.category}>
-            <Styled.SidebarCategoryTitle>{tab.category}</Styled.SidebarCategoryTitle>
+            <Styled.SidebarCategoryTitle>
+              {tab.category}
+            </Styled.SidebarCategoryTitle>
             {tab.items.map((item, itemIndex) => (
               <Styled.SidebarButton
                 key={item.label}

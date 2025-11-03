@@ -1,21 +1,50 @@
 import * as Styled from './ApplicationListTab.styles';
 import Plus from '@/assets/images/icons/Plus.svg';
-import Separation_bar from '@/assets/images/icons/Separation_bar.svg';
-import MoreButton from '@/assets/images/icons/MoreButton.svg';
+import Morebutton from '@/assets/images/icons/Morebutton.svg';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useRef, useEffect } from 'react';
 import ApplicationMenu from './ApplicationMenu';
 
 const initialdata = {
   '2025 2학기': [
-    { id: 1, title: '○○동아리 8기 신입 지원서', date: '오후 12:46', active: true },
-    { id: 2, title: '○○동아리 8기 신입 지원서', date: '오후 4:46', active: false },
-    { id: 3, title: '○○동아리 8기 신입 지원서', date: '오후 4:46', active: false },
+    {
+      id: 1,
+      title: '○○동아리 8기 신입 지원서',
+      date: '오후 12:46',
+      active: true,
+    },
+    {
+      id: 2,
+      title: '○○동아리 8기 신입 지원서',
+      date: '오후 4:46',
+      active: false,
+    },
+    {
+      id: 3,
+      title: '○○동아리 8기 신입 지원서',
+      date: '오후 4:46',
+      active: false,
+    },
   ],
   '2025 1학기': [
-    { id: 4, title: '○○동아리 7기 신입 지원서', date: '2025. 4. 26', active: true },
-    { id: 5, title: '○○동아리 7기 신입 지원서', date: '2025. 4. 26', active: false },
-    { id: 6, title: '○○동아리 7기 신입 지원서', date: '2025. 4. 26', active: false },
+    {
+      id: 4,
+      title: '○○동아리 7기 신입 지원서',
+      date: '2025. 4. 26',
+      active: true,
+    },
+    {
+      id: 5,
+      title: '○○동아리 7기 신입 지원서',
+      date: '2025. 4. 26',
+      active: false,
+    },
+    {
+      id: 6,
+      title: '○○동아리 7기 신입 지원서',
+      date: '2025. 4. 26',
+      active: false,
+    },
   ],
 };
 
@@ -58,30 +87,43 @@ const ApplicationListTab = () => {
     <Styled.Container>
       <Styled.Title>지원서 목록</Styled.Title>
       <Styled.Header>
-        <Styled.AddButton onClick={handleGoToNewForm}>새 양식 만들기 <Styled.PlusIcon src={Plus} /> </Styled.AddButton>
+        <Styled.AddButton onClick={handleGoToNewForm}>
+          새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
+        </Styled.AddButton>
       </Styled.Header>
       {Object.entries(data).map(([semester, applications]) => (
         <Styled.ApplicationList key={semester}>
           <Styled.ListHeader>
             <Styled.SemesterTitle>{semester}</Styled.SemesterTitle>
-            <Styled.DateHeader><Styled.Separation_Bar src={Separation_bar} />최종 수정 날짜</Styled.DateHeader>
+            <Styled.DateHeader>
+              <Styled.Separation_Bar />
+              최종 수정 날짜
+            </Styled.DateHeader>
           </Styled.ListHeader>
-          {applications.map((app) =>
-            <Styled.ApplicationRow key={app.id}>
-              <Styled.ApplicationTitle $active={app.active}>
-                {app.title}
+          {applications.map((application) => (
+            <Styled.ApplicationRow key={application.id}>
+              <Styled.ApplicationTitle $active={application.active}>
+                {application.title}
               </Styled.ApplicationTitle>
               <Styled.ApplicationDatetable>
-                <Styled.ApplicationDate>{app.date}</Styled.ApplicationDate>
-                  <Styled.MoreButtonContainer ref={openMenuId === app.id ? menuRef : null}>
-                    <Styled.MoreButton onClick={(e) => handleMoreButtonClick(e, app.id)}>
-                      <Styled.MoreButtonIcon src={MoreButton}/>
-                    </Styled.MoreButton>
-                    {openMenuId === app.id && <ApplicationMenu isActive={app.active} />}
-                  </Styled.MoreButtonContainer>  
+                <Styled.ApplicationDate>
+                  {application.date}
+                </Styled.ApplicationDate>
+                <Styled.MoreButtonContainer
+                  ref={openMenuId === application.id ? menuRef : null}
+                >
+                  <Styled.MoreButton
+                    onClick={(e) => handleMoreButtonClick(e, application.id)}
+                  >
+                    <Styled.MoreButtonIcon src={Morebutton} />
+                  </Styled.MoreButton>
+                  {openMenuId === application.id && (
+                    <ApplicationMenu isActive={application.active} />
+                  )}
+                </Styled.MoreButtonContainer>
               </Styled.ApplicationDatetable>
             </Styled.ApplicationRow>
-          )}
+          ))}
         </Styled.ApplicationList>
       ))}
     </Styled.Container>

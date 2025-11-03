@@ -66,7 +66,10 @@ const App = () => {
                         path='application-list'
                         element={<ApplicationListTab />}
                       />
-                      <Route path='application-list/edit' element={<ApplicationEditTab />} />
+                      <Route
+                        path='application-list/edit'
+                        element={<ApplicationEditTab />}
+                      />
                       <Route path='applicants' element={<ApplicantsTab />} />
                       <Route
                         path='applicants/:questionId'

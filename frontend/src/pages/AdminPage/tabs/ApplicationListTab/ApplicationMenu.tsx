@@ -17,15 +17,19 @@ const ApplicationMenu = ({ isActive }: ApplicationMenuProps) => {
 
   return (
     <Styled.MenuContainer>
-      <Styled.MenuItem onClick={onSetDefault} className="default">
-        {isActive ? <Styled.MenuIcon src={checkBox} /> : <Styled.MenuIcon src={check_inactive} />}
+      <Styled.MenuItem onClick={onSetDefault} className='default'>
+        {isActive ? (
+          <Styled.MenuIcon src={checkBox} />
+        ) : (
+          <Styled.MenuIcon src={check_inactive} />
+        )}
         기본지원서로 설정
       </Styled.MenuItem>
-      <Styled.Separator/>
+      <Styled.Separator />
       <Styled.MenuItem onClick={onEditTitle}>
         <Styled.MenuIcon src={Pencil} /> 제목 수정하기
       </Styled.MenuItem>
-      <Styled.MenuItem onClick={onDelete} className="delete">
+      <Styled.MenuItem onClick={onDelete} className='delete'>
         <Styled.MenuIcon src={Delete_applicant} /> 삭제
       </Styled.MenuItem>
     </Styled.MenuContainer>

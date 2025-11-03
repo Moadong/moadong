@@ -29,7 +29,7 @@ export const AddButton = styled.button`
   padding: 8px 16px 8px 16px;
   border: none;
   border-radius: 20px;
-  background-color: #F5F5F5;
+  background-color: #f5f5f5;
   font-size: 14px;
   font-weight: 600;
   color: #333;
@@ -42,7 +42,7 @@ export const AddButton = styled.button`
 `;
 
 export const PlusIcon = styled.img`
-  width: 19px;  /* 아이콘 너비 */
+  width: 19px; /* 아이콘 너비 */
   height: 19px; /* 아이콘 높이 */
 `;
 
@@ -72,15 +72,17 @@ export const SemesterTitle = styled.span`
 `;
 
 export const DateHeader = styled.span`
+  display: flex;
   font-size: 12px;
   color: #787878;
-  margin-right: 35px
+  margin-right: 35px;
 `;
 
-export const Separation_Bar = styled.img`
-  width: 12px;  /* 아이콘 너비 */
+export const Separation_Bar = styled.div`
+  width: 1px; /* 아이콘 너비 */
   height: 12px; /* 아이콘 높이 */
-  margin-right: 25px
+  margin-right: 25px;
+  background-color: #DCDCDC;
 `;
 
 // 개별 지원서 한 줄 (Row)
@@ -96,7 +98,7 @@ export const ApplicationRow = styled.div`
   &:last-child {
     border-bottom: none;
   }
-  
+
   &:hover {
     background-color: #f8f9fa;
     &:last-child {
@@ -106,13 +108,11 @@ export const ApplicationRow = styled.div`
   }
 `;
 
-
-
 // 지원서 제목 (활성화 상태에 따라 스타일 변경)
-export const ApplicationTitle = styled.span<{ $active: boolean; }>`
+export const ApplicationTitle = styled.span<{ $active: boolean }>`
   flex-grow: 1; // 남은 공간을 모두 차지하도록 설정
   font-size: 16px;
-  color: #4B3B4B;
+  color: #4b3b4b;
 
   // active prop이 true일 때 적용될 스타일
   ${(props) =>
@@ -138,7 +138,7 @@ export const ApplicationTitle = styled.span<{ $active: boolean; }>`
 `;
 
 export const ApplicationDatetable = styled.div`
-  display: flex;       
+  display: flex;
   align-items: center;
   gap: 10px;
 `;
@@ -164,9 +164,9 @@ export const MoreButton = styled.button`
 
 export const MoreButtonIcon = styled.img`
   svg {
-    width: 12px;  /* 아이콘 너비 */
+    width: 12px; /* 아이콘 너비 */
     height: 12px; /* 아이콘 높이 */
-  };
+  }
 `;
 
 export const MoreButtonContainer = styled.div`
@@ -175,9 +175,9 @@ export const MoreButtonContainer = styled.div`
 
 export const MenuContainer = styled.div`
   position: absolute; /* MoreButtonContainer를 기준으로 위치 결정 */
-  top: 100%;          /* 버튼 바로 아래에 위치 */
-  left: 0;           /* 오른쪽에 정렬 */
-  margin-top: 8px;    /* 버튼과의 간격 */
+  top: 100%; /* 버튼 바로 아래에 위치 */
+  left: 0; /* 오른쪽에 정렬 */
+  margin-top: 8px; /* 버튼과의 간격 */
   width: 150px;
   height: 107px;
   background-color: white;
@@ -193,19 +193,18 @@ export const MenuItem = styled.div`
   align-items: center;
   padding: 8px 12px;
   gap: 11px;
-  
+
   font-weight: 600;
   font-size: 12px;
   line-height: 1.4; /* 140% */
   letter-spacing: -0.02em; /* -2% */
-  
 
   color: #343a40; /* 텍스트 색상을 지정합니다 (추천) */
   cursor: pointer;
   box-sizing: border-box; /* 패딩을 포함하여 너비 계산 */
   width: 100%;
   height: 28px;
-    
+
   &:hover {
     background-color: #f5f5f5;
   }
@@ -218,7 +217,7 @@ export const MenuItem = styled.div`
 `;
 
 export const MenuIcon = styled.img`
-  width: 12px;  /* 아이콘 너비 */
+  width: 12px; /* 아이콘 너비 */
   height: 12px; /* 아이콘 높이 */
 `;
 export const Separator = styled.div`
