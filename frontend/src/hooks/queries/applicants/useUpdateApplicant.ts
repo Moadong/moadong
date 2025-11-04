@@ -9,7 +9,9 @@ export const useUpdateApplicant = (applicationFormId: string) => {
     mutationFn: (applicant: UpdateApplicantParams[]) =>
       updateApplicantDetail(applicant, applicationFormId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clubApplicants', applicationFormId] });
+      queryClient.invalidateQueries({
+        queryKey: ['clubApplicants', applicationFormId],
+      });
     },
     onError: (error) => {
       console.log(`Error updating applicant detail: ${error}`);

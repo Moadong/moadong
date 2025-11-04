@@ -8,7 +8,9 @@ export const useDeleteApplicants = (applicationFormId: string) => {
     mutationFn: ({ applicantIds }: { applicantIds: string[] }) =>
       deleteApplicants(applicantIds, applicationFormId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['clubApplicants', applicationFormId] });
+      queryClient.invalidateQueries({
+        queryKey: ['clubApplicants', applicationFormId],
+      });
     },
     onError: (error) => {
       console.error(`Error delete applicants detail: ${error}`);

@@ -11,10 +11,11 @@ const deleteApplicants = async (
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({applicantIds: applicantIds}),
-    });
+        body: JSON.stringify({ applicantIds: applicantIds }),
+      },
+    );
     if (!response.ok) {
-      console.error(`Failed to fetch: ${response.statusText}`)
+      console.error(`Failed to fetch: ${response.statusText}`);
       throw new Error((await response.json()).message);
     }
 

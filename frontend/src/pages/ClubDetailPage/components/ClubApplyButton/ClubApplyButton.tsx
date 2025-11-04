@@ -1,7 +1,7 @@
 import * as Styled from './ClubApplyButton.styles';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import getApplication from '@/apis/application/getApplication';
+import getActiveApplications from '@/apis/application/getActiveApplications';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 import ShareButton from '@/pages/ClubDetailPage/components/ShareButton/ShareButton';
@@ -33,8 +33,16 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     }
 
     try {
-      await getApplication(clubId);
-      navigate(`/application/${clubId}`);
+      const activeForms = await getActiveApplications(clubId);
+      if (activeForms && activeForms.length > 0) {
+        // (API 응답 구조에 따라 'id' 또는 'formId'일 수 있습니다)
+        const formIdToUse = activeForms[0].id; // id 또는 formId 수정필요
+        
+        navigate(`/club/${clubId}/apply/${formIdToUse}`);
+      } else {
+        throw new Error('활성화된 지원서가 없습니다.');
+      }
+      // navigate(`/application/${clubId}`);
     } catch (err: unknown) {
       const externalFormLink = clubDetail.externalApplicationUrl?.trim();
 

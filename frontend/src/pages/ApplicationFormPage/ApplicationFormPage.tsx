@@ -18,7 +18,7 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 
 const ApplicationFormPage = () => {
-  const { clubId, formId } = useParams<{ clubId: string, formId: string }>();
+  const { clubId, formId } = useParams<{ clubId: string; formId: string }>();
   const navigate = useNavigate();
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);

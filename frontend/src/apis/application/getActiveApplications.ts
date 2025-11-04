@@ -1,10 +1,9 @@
 import API_BASE_URL from '@/constants/api';
-import { secureFetch } from '@/apis/auth/secureFetch';
 
-const getAllApplicationForms = async () => {
+const getActiveApplications = async (clubId: string) => {
   try {
-    const response = await secureFetch(
-      `${API_BASE_URL}/api/club/application`,
+    const response = await fetch(
+      `${API_BASE_URL}/api/club/${clubId}/apply`,
     );
 
     if (!response.ok) {
@@ -15,9 +14,9 @@ const getAllApplicationForms = async () => {
     const result = await response.json();
     return result.data;
   } catch (error) {
-    console.error('모든 지원서 양식 조회 중 오류 발생:', error);
+    console.error('활성화된 지원서 목록 조회 중 오류 발생:', error);
     throw error;
   }
 };
 
-export default getAllApplicationForms;
+export default getActiveApplications;

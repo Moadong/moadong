@@ -2,20 +2,15 @@ import API_BASE_URL from '@/constants/api';
 import { secureFetch } from '@/apis/auth/secureFetch';
 import { ApplicationFormData } from '@/types/application';
 
-export const createApplication = async (
-  data: ApplicationFormData,
-) => {
+export const createApplication = async (data: ApplicationFormData) => {
   try {
-    const response = await secureFetch(
-      `${API_BASE_URL}/api/club/application`,
-      {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(data),
+    const response = await secureFetch(`${API_BASE_URL}/api/club/application`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
       },
-    );
+      body: JSON.stringify(data),
+    });
 
     if (!response.ok) {
       throw new Error('지원서 제출에 실패했습니다.');

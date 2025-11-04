@@ -19,8 +19,7 @@ export const applyToClub = async (
             ...answers
           ]
          }),
-      },
-    );
+      });
 
     if (!response.ok) {
       throw new Error('답변 제출에 실패했습니다.');
@@ -34,4 +33,4 @@ export const applyToClub = async (
   }
 };
 
-export default applyToClub; 
+export default applyToClub;

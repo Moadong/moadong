@@ -45,8 +45,12 @@ const ApplicantDetailPage = () => {
   const applicant = applicantsData?.applicants[applicantIndex];
   const applicationFormId = applicant?.applicationFormId;
 
-  const { data: formData, isLoading, isError } = useGetApplication(clubId!, applicationFormId);
-  const { mutate: updateApplicant } = useUpdateApplicant(clubId!);
+  const {
+    data: formData,
+    isLoading,
+    isError,
+  } = useGetApplication(clubId!, applicationFormId);
+  const { mutate: updateApplicant } = useUpdateApplicant(applicationFormId!);
 
   useEffect(() => {
     if (applicant) {
@@ -76,7 +80,7 @@ const ApplicantDetailPage = () => {
           },
         ]);
       }, 400),
-    [clubId, questionId],
+    [updateApplicant, questionId],
   );
 
   if (!applicantsData) {
