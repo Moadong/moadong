@@ -17,6 +17,8 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
 
     const trackPageDuration = () => {
       if (isTracked.current) return;
+      isTracked.current = true;
+
       const duration = Date.now() - startTime.current;
       mixpanel.track(`${pageName} Duration`, {
         url: window.location.href,
@@ -24,7 +26,6 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
         duration_seconds: Math.round(duration / 1000),
         clubName,
       });
-      isTracked.current = true;
     };
 
     window.addEventListener('beforeunload', trackPageDuration);
