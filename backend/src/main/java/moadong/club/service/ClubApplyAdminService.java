@@ -365,6 +365,10 @@ public class ClubApplyAdminService {
     public SseEmitter createSseConnection(String applicationFormId, CustomUserDetails user) {
         String clubId = user.getClubId();
 
+        clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
+
+
         String connectionKey = clubId + "_" + applicationFormId + "_" + user.getId();
         SseEmitter emitter = new SseEmitter(SSE_EMITTER_TIME_OUT);
 
