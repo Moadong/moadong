@@ -493,11 +493,25 @@ public class ClubApplyService {
         String connectionKey = clubId + "_" + applicationFormId + "_" + user.getId();
         SseEmitter emitter = new SseEmitter(300000L); // 5분 타임아웃
         
-        sseConnections.put(connectionKey, emitter);
+        // 기존 연결이 있으면 명시적으로 종료하여 리소스 누수 방지
+        SseEmitter prev = sseConnections.put(connectionKey, emitter);
+        if (prev != null) {
+            try { 
+                prev.complete(); 
+            } catch (Exception ignored) {}
+        }
         
         emitter.onCompletion(() -> sseConnections.remove(connectionKey));
         emitter.onTimeout(() -> sseConnections.remove(connectionKey));
         emitter.onError((ex) -> sseConnections.remove(connectionKey));
+        
+        // 초기 핸드셰이크 이벤트 전송 (프록시/버퍼로 인한 지연 감소)
+        try {
+            emitter.send(SseEmitter.event().name("connected").data("ok"));
+        } catch (Exception e) {
+            sseConnections.remove(connectionKey);
+            emitter.completeWithError(e);
+        }
         
         return emitter;
     }
