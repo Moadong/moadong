@@ -39,6 +39,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CompletableFuture;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.transaction.support.TransactionSynchronization;
 
 @Service
 @AllArgsConstructor
@@ -326,11 +328,17 @@ public class ClubApplyService {
                 app.getId(),
                 editRequest.status(),
                 editRequest.memo(),
-                LocalDateTime.now(),
+                ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(),
                 clubId,
                 applicationFormId
             );
-            CompletableFuture.runAsync(() -> sendStatusChangeEvent(clubId, applicationFormId, event));
+
+            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+                @Override
+                public void afterCommit() {
+                    CompletableFuture.runAsync(() -> sendStatusChangeEvent(clubId, applicationFormId, event));
+                }
+            });
         });
 
         clubApplicantsRepository.saveAll(application);
