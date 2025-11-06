@@ -60,7 +60,7 @@ public class FcmService {
         fcmAsyncService.updateSubscriptions(token, newClubIdSet, clubsToSubscribe, clubsToUnsubscribe)
                 .exceptionally(ex -> {
                     log.error("FCM Token subscription error: {}", ex.getMessage());
-                    throw new RuntimeException(ex);
+                    return null;
                 });
     }
 
