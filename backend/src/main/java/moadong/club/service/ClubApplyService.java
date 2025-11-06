@@ -54,6 +54,9 @@ public class ClubApplyService {
     
     // SSE 연결 관리
     private final Map<String, SseEmitter> sseConnections = new ConcurrentHashMap<>();
+    
+    // SSE Emitter 타임아웃 (5분)
+    private static final long SSE_EMITTER_TIME_OUT = 300000L;
 
     private record OptionItem(int year, SemesterTerm term) {}
     private List<OptionItem> buildOptionItems(LocalDate baseDate, int count) {
@@ -491,7 +494,7 @@ public class ClubApplyService {
         validateClubOwner(clubId, user);
         
         String connectionKey = clubId + "_" + applicationFormId + "_" + user.getId();
-        SseEmitter emitter = new SseEmitter(300000L); // 5분 타임아웃
+        SseEmitter emitter = new SseEmitter(SSE_EMITTER_TIME_OUT);
         
         // 기존 연결이 있으면 명시적으로 종료하여 리소스 누수 방지
         SseEmitter prev = sseConnections.put(connectionKey, emitter);
