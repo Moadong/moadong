@@ -11,7 +11,6 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moadong.club.entity.Club;
 import moadong.club.entity.ClubApplicant;
 import moadong.club.entity.ClubApplicationForm;
 import moadong.club.entity.ClubQuestionAnswer;
@@ -236,7 +235,6 @@ public class ClubApplyAdminService {
     @Transactional
     public void editApplicantDetail(String applicationFormId, List<ClubApplicantEditRequest> request, CustomUserDetails user) {
         String clubId = user.getClubId();
-        validateClubOwner(clubId, user);
 
         Map<String, ClubApplicantEditRequest> requestMap = request.stream()
                 .collect(Collectors.toMap(ClubApplicantEditRequest::applicantId,
@@ -362,18 +360,10 @@ public class ClubApplyAdminService {
         return clubApplicationForm;
     }
 
-    private void validateClubOwner(String clubId, CustomUserDetails user) {
-        Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-        if (!user.getId().equals(club.getUserId())) {
-            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
-        }
-    }
 
     // SSE 연결 생성
     public SseEmitter createSseConnection(String applicationFormId, CustomUserDetails user) {
         String clubId = user.getClubId();
-        validateClubOwner(clubId, user);
 
         String connectionKey = clubId + "_" + applicationFormId + "_" + user.getId();
         SseEmitter emitter = new SseEmitter(SSE_EMITTER_TIME_OUT);
