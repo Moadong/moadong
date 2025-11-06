@@ -378,23 +378,25 @@ public class ClubApplyAdminService {
         String connectionKey = clubId + "_" + applicationFormId + "_" + user.getId();
         SseEmitter emitter = new SseEmitter(SSE_EMITTER_TIME_OUT);
 
-        // 기존 연결이 있으면 명시적으로 종료하여 리소스 누수 방지
-        SseEmitter prev = sseConnections.put(connectionKey, emitter);
+        // 기존 연결이 있으면 먼저 맵에서 제거한 뒤 정리하여 race condition 방지
+        SseEmitter prev = sseConnections.remove(connectionKey);
         if (prev != null) {
             try {
                 prev.complete();
             } catch (Exception ignored) {}
         }
 
-        emitter.onCompletion(() -> sseConnections.remove(connectionKey));
-        emitter.onTimeout(() -> sseConnections.remove(connectionKey));
-        emitter.onError((ex) -> sseConnections.remove(connectionKey));
+        sseConnections.put(connectionKey, emitter);
+
+        emitter.onCompletion(() -> sseConnections.remove(connectionKey, emitter));
+        emitter.onTimeout(() -> sseConnections.remove(connectionKey, emitter));
+        emitter.onError((ex) -> sseConnections.remove(connectionKey, emitter));
 
         // 초기 핸드셰이크 이벤트 전송 (프록시/버퍼로 인한 지연 감소)
         try {
             emitter.send(SseEmitter.event().name("connected").data("ok"));
         } catch (Exception e) {
-            sseConnections.remove(connectionKey);
+            sseConnections.remove(connectionKey, emitter);
             emitter.completeWithError(e);
         }
 
@@ -406,21 +408,28 @@ public class ClubApplyAdminService {
         // 안전한 prefix (뒤에 "_" 추가)
         String connectionKeyPrefix = clubId + "_" + applicationFormId + "_";
 
-        sseConnections.entrySet().stream()
+        // 동시성 문제 방지: 스냅샷을 만들어서 순회
+        List<Map.Entry<String, SseEmitter>> entries = sseConnections.entrySet().stream()
                 .filter(entry -> entry.getKey().startsWith(connectionKeyPrefix))
-                .forEach(entry -> {
-                    try {
-                        entry.getValue().send(SseEmitter.event()
-                                .name("applicant-status-changed")   // 이벤트 이름 지정
-                                .data(event));                      // 실제 데이터
-                    } catch (Exception e) {
-                        log.warn("SSE 이벤트 발송 실패: {}", e.getMessage());
-                        sseConnections.remove(entry.getKey());
-                        try {
-                            entry.getValue().completeWithError(e); // emitter 쪽도 정상 종료
-                        } catch (Exception ignore) {}
-                    }
-                });
+                .collect(Collectors.toList());
+
+        entries.forEach(entry -> {
+            String key = entry.getKey();
+            SseEmitter emitter = entry.getValue();
+            
+            try {
+                emitter.send(SseEmitter.event()
+                        .name("applicant-status-changed")   // 이벤트 이름 지정
+                        .data(event));                      // 실제 데이터
+            } catch (Exception e) {
+                log.warn("SSE 이벤트 발송 실패: {}", e.getMessage());
+                // 동일 인스턴스일 때만 제거하여 race condition 방지
+                sseConnections.remove(key, emitter);
+                try {
+                    emitter.completeWithError(e); // emitter 쪽도 정상 종료
+                } catch (Exception ignore) {}
+            }
+        });
     }
 
 }
