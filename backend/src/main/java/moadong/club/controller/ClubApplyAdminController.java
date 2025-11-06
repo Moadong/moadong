@@ -112,10 +112,9 @@ public class ClubApplyAdminController {
                description = "지원자의 상태 변경을 실시간으로 받아볼 수 있는 SSE 엔드포인트입니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public SseEmitter getApplicantStatusEvents(@PathVariable String clubId,
-                                               @PathVariable String applicationFormId,
+    public SseEmitter getApplicantStatusEvents(@PathVariable String applicationFormId,
                                                @CurrentUser CustomUserDetails user) {
-        return clubApplyService.createSseConnection(clubId, applicationFormId, user);
+        return clubApplyAdminService.createSseConnection(applicationFormId, user);
     }
 
 }

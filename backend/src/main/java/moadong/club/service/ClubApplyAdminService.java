@@ -11,6 +11,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.club.entity.Club;
 import moadong.club.entity.ClubApplicant;
 import moadong.club.entity.ClubApplicationForm;
 import moadong.club.entity.ClubQuestionAnswer;
@@ -41,6 +42,7 @@ import org.springframework.transaction.support.TransactionSynchronization;
 @AllArgsConstructor
 @Slf4j
 public class ClubApplyAdminService {
+    private final ClubRepository clubRepository;
     private final ClubApplicationFormsRepository clubApplicationFormsRepository;
     private final ClubApplicantsRepository clubApplicantsRepository;
     private final AESCipher cipher;
@@ -233,6 +235,9 @@ public class ClubApplyAdminService {
 
     @Transactional
     public void editApplicantDetail(String applicationFormId, List<ClubApplicantEditRequest> request, CustomUserDetails user) {
+        String clubId = user.getClubId();
+        validateClubOwner(clubId, user);
+
         Map<String, ClubApplicantEditRequest> requestMap = request.stream()
                 .collect(Collectors.toMap(ClubApplicantEditRequest::applicantId,
                         Function.identity(), (prev, next) -> next));
@@ -366,7 +371,8 @@ public class ClubApplyAdminService {
     }
 
     // SSE 연결 생성
-    public SseEmitter createSseConnection(String clubId, String applicationFormId, CustomUserDetails user) {
+    public SseEmitter createSseConnection(String applicationFormId, CustomUserDetails user) {
+        String clubId = user.getClubId();
         validateClubOwner(clubId, user);
 
         String connectionKey = clubId + "_" + applicationFormId + "_" + user.getId();
