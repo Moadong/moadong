@@ -32,6 +32,8 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.retry:spring-retry'
 	implementation 'com.google.cloud:spring-cloud-gcp-storage:5.8.0'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -56,7 +58,7 @@ dependencies {
 	implementation 'net.coobird:thumbnailator:0.4.14'
 	implementation 'org.springframework:spring-test'
 
-
+	implementation 'com.google.firebase:firebase-admin:9.7.0'
 
 }
 
