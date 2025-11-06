@@ -14,4 +14,6 @@ public interface ClubRepository extends MongoRepository<Club, String> {
 
     Optional<Club> findClubByUserId(String userId);
     List<Club> findAllByName(List<String> clubs);
+
+    Long countByIdIn(List<String> id);
 }

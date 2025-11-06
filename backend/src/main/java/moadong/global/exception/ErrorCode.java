@@ -46,6 +46,9 @@ public enum ErrorCode {
 
     AES_CIPHER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "900-1", "암호화 중 오류가 발생했습니다."),
     APPLICANT_NOT_FOUND(HttpStatus.NOT_FOUND, "900-2", "지원서가 존재하지 않습니다."),
+    
+    FCMTOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "901-1", "존재하지 않는 토큰입니다."),
+    FCMTOKEN_SUBSCRIBE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901-2", "동아리 구독중에 오류가 발생 하였습니다.");
     ;
 
     private final HttpStatus httpStatus;

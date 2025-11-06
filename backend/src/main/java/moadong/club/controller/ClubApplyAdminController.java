@@ -11,8 +11,7 @@ import moadong.club.payload.request.ClubApplicantDeleteRequest;
 import moadong.club.payload.request.ClubApplicantEditRequest;
 import moadong.club.payload.request.ClubApplicationFormCreateRequest;
 import moadong.club.payload.request.ClubApplicationFormEditRequest;
-import moadong.club.payload.request.ClubApplyRequest;
-import moadong.club.service.ClubApplyService;
+import moadong.club.service.ClubApplyAdminService;
 import moadong.global.payload.Response;
 import moadong.user.annotation.CurrentUser;
 import moadong.user.payload.CustomUserDetails;
@@ -32,21 +31,20 @@ import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 
 @RestController
-@RequestMapping("/api/club/{clubId}")
+@RequestMapping("/api/club")
 @AllArgsConstructor
-@Tag(name = "Club_Apply", description = "클럽 지원서 API")
-public class ClubApplyController {
+@Tag(name = "Club_Apply_Admin", description = "클럽 지원서 관리자 API")
+public class ClubApplyAdminController {
 
-    private final ClubApplyService clubApplyService;
+    private final ClubApplyAdminService clubApplyAdminService;
 
     @PostMapping("/application")
     @Operation(summary = "클럽 지원서 양식 생성", description = "클럽 지원서 양식을 생성합니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> createClubApplicationForm(@PathVariable String clubId,
-                                               @CurrentUser CustomUserDetails user,
+    public ResponseEntity<?> createClubApplicationForm(@CurrentUser CustomUserDetails user,
                                                @RequestBody @Validated ClubApplicationFormCreateRequest request) {
-        clubApplyService.createClubApplicationForm(clubId, user, request);
+        clubApplyAdminService.createClubApplicationForm(user, request);
         return Response.ok("success create application");
     }
 
@@ -54,11 +52,10 @@ public class ClubApplyController {
     @Operation(summary = "클럽 지원서 양식 수정", description = "클럽 지원서 양식을 수정합니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> editClubApplicationForm(@PathVariable String clubId,
-                                                     @PathVariable String applicationFormId,
+    public ResponseEntity<?> editClubApplicationForm(@PathVariable String applicationFormId,
                                                      @CurrentUser CustomUserDetails user,
                                                      @RequestBody @Validated ClubApplicationFormEditRequest request) {
-        clubApplyService.editClubApplication(clubId, applicationFormId, user, request);
+        clubApplyAdminService.editClubApplication(applicationFormId, user, request);
         return Response.ok("success edit application");
     }
 
@@ -66,45 +63,21 @@ public class ClubApplyController {
     @Operation(summary = "클럽의 모든 지원서 양식 목록 불러오기", description = "클럽의 모든 지원서 양식들을 학기별로 분류하여 불러옵니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> getClubApplications(@PathVariable String clubId,
-                                                 @CurrentUser CustomUserDetails user,
+    public ResponseEntity<?> getClubApplications(@CurrentUser CustomUserDetails user,
                                                  @RequestParam(defaultValue = "agg") String mode) {  //agg면 aggregation사용, server면, 서비스에서 그룹 및 정렬
         if("server".equalsIgnoreCase(mode)) {
-            return Response.ok(clubApplyService.getGroupedClubApplicationForms(clubId, user));
+            return Response.ok(clubApplyAdminService.getGroupedClubApplicationForms(user));
         }
-        return Response.ok(clubApplyService.getClubApplicationForms(clubId, user));
+        return Response.ok(clubApplyAdminService.getClubApplicationForms(user));
     }
-
-    @GetMapping("/apply/{applicationFormId}")
-    @Operation(summary = "클럽 지원서 양식 불러오기", description = "클럽 지원서 양식을 불러옵니다")
-    public ResponseEntity<?> getClubApplication(@PathVariable String clubId,
-                                                @PathVariable String applicationFormId) {
-        return clubApplyService.getClubApplicationForm(clubId, applicationFormId);
-    }
-
-    @PostMapping("/apply/{applicationFormId}")
-    @Operation(summary = "클럽 지원", description = "클럽에 지원합니다")
-    public ResponseEntity<?> applyToClub(@PathVariable String clubId,
-                                          @PathVariable String applicationFormId,
-                                          @RequestBody @Validated ClubApplyRequest request) {
-        clubApplyService.applyToClub(clubId, applicationFormId, request);
-        return Response.ok("success apply");
-    }
-
-    /*@GetMapping("/apply")
-    @Operation(summary = "클럽의 활성화된 지원서 목록 불러오기", description = "클럽의 활성화된 모든 지원서 목록을 불러옵니다")
-    public ResponseEntity<?> getActiveApplicationForms(@PathVariable String clubId) {
-        return Response.ok(clubApplyService.getActiveApplicationForms(clubId));
-    }*/
 
     @GetMapping("/apply/info/{applicationFormId}")
     @Operation(summary = "클럽 지원자 현황", description = "클럽 지원자 현황을 불러옵니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> getApplyInfo(@PathVariable String clubId,
-                                          @PathVariable String applicationFormId,
+    public ResponseEntity<?> getApplyInfo(@PathVariable String applicationFormId,
                                           @CurrentUser CustomUserDetails user) {
-        return Response.ok(clubApplyService.getClubApplyInfo(clubId, applicationFormId, user));
+        return Response.ok(clubApplyAdminService.getClubApplyInfo(applicationFormId, user));
     }
 
     @PutMapping("/applicant/{applicationFormId}")
@@ -114,11 +87,10 @@ public class ClubApplyController {
     )
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> editApplicantDetail(@PathVariable String clubId,
-                                                 @PathVariable String applicationFormId,
+    public ResponseEntity<?> editApplicantDetail(@PathVariable String applicationFormId,
                                                  @RequestBody @Valid @NotEmpty List<ClubApplicantEditRequest> request,
                                                  @CurrentUser CustomUserDetails user) {
-        clubApplyService.editApplicantDetail(clubId, applicationFormId, request, user);
+        clubApplyAdminService.editApplicantDetail(applicationFormId, request, user);
         return Response.ok("success edit applicant");
     }
 
@@ -128,11 +100,10 @@ public class ClubApplyController {
     )
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> removeApplicant(@PathVariable String clubId,
-                                             @PathVariable String applicationFormId,
+    public ResponseEntity<?> removeApplicant(@PathVariable String applicationFormId,
                                              @RequestBody @Validated ClubApplicantDeleteRequest request,
                                              @CurrentUser CustomUserDetails user) {
-        clubApplyService.deleteApplicant(clubId,applicationFormId, request, user);
+        clubApplyAdminService.deleteApplicant(applicationFormId, request, user);
         return Response.ok("success delete applicant");
     }
 
