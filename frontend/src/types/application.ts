@@ -57,8 +57,7 @@ export interface AnswerItem {
   value: string;
 }
 
-export interface ApplicationOption {
-  id: number;
-  name: string;
-  url?: string; // 존재하면 외부 링크, 없으면 내부
+export interface ApplicationForm {
+  id: string;
+  title: string;
 }
