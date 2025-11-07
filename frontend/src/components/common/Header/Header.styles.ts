@@ -21,14 +21,6 @@ export const Header = styled.header<{ isScrolled: boolean }>`
     height: 56px;
     padding: 10px 20px;
   }
-
-  ${media.mobile} {
-    padding: 5px 20px;
-  }
-
-  ${media.mini_mobile} {
-    padding: 5px 10px;
-  }
 `;
 
 export const Container = styled.div`
