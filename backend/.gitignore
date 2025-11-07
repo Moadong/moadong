@@ -36,6 +36,9 @@ out/
 ### VS Code ###
 .vscode/
 
+### k6 ###
+summary*.html
+
 
 application.properties
 moadong.json
