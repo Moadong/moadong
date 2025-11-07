@@ -4,11 +4,20 @@ const getApplicationForms = async (clubId: string) => {
     try {
         const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
         if (!response.ok) {
-            console.error(`Failed to fetch options: ${response.statusText}`);
-            throw new Error((await response.json()).message);
+            let message = response.statusText;
+            try {
+                const errorData = await response.json();
+                if (errorData?.message) message = errorData.message;
+            } catch {}
+            console.error(`Failed to fetch options: ${message}`);
+            throw new Error(message);
         }
+
         const result = await response.json();
-        const forms = Array.isArray(result?.data?.forms) ? result.data.forms : [];
+        let forms: Array<{ id: string; title: string }> = [];
+        if (result && result.data && Array.isArray(result.data.forms)) {
+            forms = result.data.forms;
+        }
         return forms.map((form: { id: string; title: string }) => ({
             id: form.id,
             title: form.title,
