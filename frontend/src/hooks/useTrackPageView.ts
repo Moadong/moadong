@@ -16,6 +16,7 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
     });
 
     const trackPageDuration = () => {
+      // 레이스 컨디션 방지: 체크와 설정을 원자적으로 처리
       if (isTracked.current) return;
       isTracked.current = true;
 
