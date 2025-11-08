@@ -18,7 +18,6 @@ const MainPage = () => {
   useTrackPageView('MainPage');
 
   const { selectedCategory } = useSelectedCategory();
-
   const { keyword } = useSearchKeyword();
   const { isSearching } = useSearchIsSearching();
   const recruitmentStatus = 'all';
@@ -29,13 +28,14 @@ const MainPage = () => {
   // TODO: 추후 확정되면 DivisionKey(중동/가동/과동) 같은 타입을
   // types/club.ts에 정의해서 tabs 관리하도록 리팩터링하기
   
-  const {
-    data: clubs,
-    error,
-    isLoading,
-  } = useGetCardList(keyword, recruitmentStatus, division, searchCategory);
-  const isEmpty = !isLoading && (!clubs || clubs.length === 0);
-  const hasData = clubs && clubs.length > 0;
+  const { data, error, isLoading } = 
+    useGetCardList(keyword, recruitmentStatus, division, searchCategory);
+  
+  const clubs = data?.clubs || [];
+  const totalCount = data?.totalCount || 0;
+
+  const isEmpty = !isLoading && totalCount === 0;
+  const hasData = totalCount > 0;
 
   const clubList = useMemo(() => {
     if (!hasData) return null;
@@ -55,7 +55,9 @@ const MainPage = () => {
       />
       <Styled.PageContainer>
         <CategoryButtonList />
-        <Styled.SectionTabs>
+
+        <Styled.SectionBar>
+          <Styled.SectionTabs>
           {tabs
             .map((tab) =>(
             <Styled.Tab key={tab} $active={active===tab} onClick={() => setActive(tab)}>
@@ -63,6 +65,11 @@ const MainPage = () => {
             </Styled.Tab>
           ))}
         </Styled.SectionTabs>
+        <Styled.TotalCountResult role="status">
+          {`전체 ${isLoading ? 0 : totalCount}개의 동아리`}
+        </Styled.TotalCountResult>
+        </Styled.SectionBar>
+      
         <Styled.ContentWrapper>
           {isLoading ? (
             <Spinner />

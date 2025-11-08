@@ -2,10 +2,14 @@ import styled from 'styled-components';
 import {media} from '@/styles/mediaQuery';
 
 export const PageContainer = styled.div`
-  padding: 0 40px;
   max-width: 1180px;
   margin: 0 auto;
 
+  @media (max-width: 1280px) {
+    padding: 0 20px;
+  }
+
+  @media (max-width: 500px) {
   ${media.mobile} {
     padding: 0 20px;
   }
@@ -19,14 +23,23 @@ export const ContentWrapper = styled.div`
   width: 100%;
 `;
 
-export const SectionTabs = styled.nav`
+export const SectionBar = styled.div`
   display: flex;
-  gap: 18px;
+  align-items: center;
+  justify-content: space-between;
   margin: 60px 8px 24px;
 
   ${media.mobile} {
+    margin: 32px 4px 16px;
+  }
+`;
+
+export const SectionTabs = styled.nav`
+  display: flex;
+  gap: 18px;
+
+  ${media.mobile} {
   gap: 16px;
-  margin: 32px 4px 16px;
   }
 `;
 
@@ -59,16 +72,28 @@ export const Tab = styled.button<{$active?: boolean}>`
   }
 `;
 
+export const TotalCountResult = styled.span`
+  font-size: 18px;
+  font-weight: bold;
+  color: #787878;
+  padding-top: 13px;
+
+  ${media.mobile} {
+    font-size: 12px;
+  }
+`;
+
 export const CardList = styled.div`
   display: grid;
   width: 100%;
   max-width: 100%;
-  gap: 35px;
+  gap: 20px;
+  margin-top: 50px;
   transition:
     gap 0.5s ease,
     grid-template-columns 0.5s ease;
 
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(3, minmax(0, 1fr));
 
   ${media.laptop} {
     grid-template-columns: repeat(2, 1fr);
@@ -77,9 +102,9 @@ export const CardList = styled.div`
   @media (max-width: 750px) {
     grid-template-columns: repeat(1, 1fr);
   }
-
-  ${media.mobile} {
-    gap: 16px;
+  
+  @media (max-width: 500px) {
+    gap: 6px;
     margin-top: 16px;
   }
 `;

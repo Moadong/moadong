@@ -3,7 +3,6 @@ import { BannerProps } from './Banner';
 import { media } from '@/styles/mediaQuery';
 
 export const BannerContainer = styled.div`
-  padding: 0 40px;
   max-width: 1180px;
   margin: 0 auto;
   width: 100%;

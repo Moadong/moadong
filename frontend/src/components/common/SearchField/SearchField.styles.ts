@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const SearchBoxContainer = styled.form<{ $isFocused: boolean }>`
   display: flex;
@@ -7,18 +8,18 @@ export const SearchBoxContainer = styled.form<{ $isFocused: boolean }>`
   width: 345px;
   height: 36px;
   padding: 3px 20px;
-  border: transparent;
+  border: 1px solid transparent;
   border-radius: 41px;
-  background-color: #eeeeee;
+  background-color: ${({ $isFocused }) =>
+    $isFocused ? '#ffffff' : '#eeeeee'};
+  transition: all 0.2s ease-in-out;
 
-  @media (max-width: 500px) {
+  border-color: ${({ $isFocused }) =>
+    $isFocused ? 'rgba(255, 84, 20, 0.8)' : 'transparent'};
+  ${media.mobile} {
     width: 255px;
     height: 36px;
     padding: 6px 16px;
-
-    border: 1px solid
-      ${({ $isFocused }) =>
-        $isFocused ? 'rgba(255, 84, 20, 0.8)' : 'transparent'};
   }
 `;
 
@@ -39,12 +40,12 @@ export const SearchInputStyles = styled.input`
     opacity: 0;
   }
 
-  @media (max-width: 550px) {
-    font-size: 10px;
+  ${media.mobile} {
+    font-size: 12px;
   }
 
-  @media (max-width: 500px) {
-    font-size: 14px;
+  ${media.mini_mobile} {
+    font-size: 11px;
   }
 `;
 
@@ -54,6 +55,7 @@ export const SearchButton = styled.button<{ $isFocused: boolean }>`
   background-color: transparent;
   font-size: 16px;
   cursor: pointer;
+  transition: all 0.2s ease-in-out;
 
   width: 16px;
   height: 16px;
@@ -61,15 +63,16 @@ export const SearchButton = styled.button<{ $isFocused: boolean }>`
   img {
     width: 100%;
     height: 100%;
+    transition: filter 0.2s ease-in-out;
   }
 
-  @media (max-width: 500px) {
+  filter: ${({ $isFocused }) =>
+    $isFocused
+      ? 'invert(36%) sepia(83%) saturate(746%) hue-rotate(359deg) brightness(95%) contrast(92%)'
+      : 'none'};
+
+  ${media.mobile} {
     width: 14px;
     height: 14px;
-
-    filter: ${({ $isFocused }) =>
-      $isFocused
-        ? 'invert(36%) sepia(83%) saturate(746%) hue-rotate(359deg) brightness(95%) contrast(92%)'
-        : 'none'};
   }
 `;
