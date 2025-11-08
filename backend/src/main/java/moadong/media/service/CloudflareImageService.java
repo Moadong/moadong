@@ -2,11 +2,15 @@ package moadong.media.service;
 
 import static moadong.media.util.ClubImageUtil.containsInvalidChars;
 import static moadong.media.util.ClubImageUtil.isImageExtension;
-import static moadong.media.util.ClubImageUtil.resizeImage;
 
-import java.io.IOException;
+import jakarta.annotation.PostConstruct;
+import java.time.Duration;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
@@ -14,16 +18,22 @@ import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
 import moadong.global.util.RandomStringUtil;
 import moadong.media.domain.FileType;
+import moadong.media.dto.PresignedUploadResponse;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.core.sync.RequestBody;
+import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
-import software.amazon.awssdk.services.s3.model.ObjectCannedACL;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
+@Slf4j
 @Service("cloudflare")
 @RequiredArgsConstructor
 public class CloudflareImageService implements ClubImageService{
@@ -32,6 +42,8 @@ public class CloudflareImageService implements ClubImageService{
 
     private final S3Client s3Client;
 
+    private final S3Presigner s3Presigner;
+
     @Value("${server.feed.max-count}")
     private int MAX_FEED_COUNT;
     @Value("${cloud.aws.s3.bucket}")
@@ -39,25 +51,22 @@ public class CloudflareImageService implements ClubImageService{
     @Value("${cloud.aws.s3.view-endpoint}")
     private String viewEndpoint;
     @Value("${server.image.max-size}")
-    private long MAX_SIZE;
+    private long maxImageSizeBytes;
+    @Value("${server.file-url.max-length}")
+    private int maxFileUrlLength;
+    private String normalizedViewEndpoint;
 
-    @Override
-    public String uploadLogo(String clubId, MultipartFile file) {
-        Club club = getClub(clubId);
-
-        if (club.getClubRecruitmentInformation().getLogo() != null) {
-            deleteFile(club, club.getClubRecruitmentInformation().getLogo());
-        }
-
-        String filePath = uploadFile(clubId, file, FileType.LOGO);
-        club.updateLogo(filePath);
-        clubRepository.save(club);
-        return filePath;
+    @PostConstruct
+    private void init() {
+        // viewEndpoint 정규화: 후행 슬래시 제거
+        normalizedViewEndpoint = viewEndpoint != null ? viewEndpoint.replaceAll("/+$", "") : "";
     }
 
     @Override
+    @Transactional
     public void deleteLogo(String clubId) {
         Club club = getClub(clubId);
+        validateClubRecruitmentInformation(club);
 
         if (club.getClubRecruitmentInformation().getLogo() != null) {
             deleteFile(club, club.getClubRecruitmentInformation().getLogo());
@@ -67,21 +76,27 @@ public class CloudflareImageService implements ClubImageService{
     }
 
     @Override
-    public String uploadFeed(String clubId, MultipartFile file) {
-        int feedImagesCount = getClub(clubId).getClubRecruitmentInformation().getFeedImages().size();
-
-        if (feedImagesCount + 1 > MAX_FEED_COUNT) {
-            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
-        }
-        return uploadFile(clubId, file, FileType.FEED);
-    }
-
-    @Override
+    @Transactional
     public void updateFeeds(String clubId, List<String> newFeedImageList) {
         Club club = getClub(clubId);
+        validateClubRecruitmentInformation(club);
 
         if (newFeedImageList.size() > MAX_FEED_COUNT) {
             throw new RestApiException(ErrorCode.TOO_MANY_FILES);
+        }
+        // 각 URL에 대한 제약 검증 수행(기존 URL은 스킵)
+        List<String> existing = club.getClubRecruitmentInformation().getFeedImages();
+        if (existing == null || existing.isEmpty()) {
+            for (String url : newFeedImageList) {
+                validateFileConstraints(url);
+            }
+        } else {
+            java.util.HashSet<String> existingSet = new java.util.HashSet<>(existing);
+            for (String url : newFeedImageList) {
+                if (!existingSet.contains(url)) {
+                    validateFileConstraints(url);
+                }
+            }
         }
 
         List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
@@ -109,34 +124,37 @@ public class CloudflareImageService implements ClubImageService{
 
     @Override
     public void deleteFile(Club club, String filePath) {
-        // https://pub-8655aea549d544239ad12d0385aa98aa.r2.dev/{key} -> {key}
-        String key = filePath.substring(viewEndpoint.length()+1);
+        if (filePath == null || filePath.isEmpty()) {
+            log.warn("deleteFile called with null or empty filePath for club: {}", club.getId());
+            return;
+        }
+
+        String key = extractKeyOrNull(filePath);
+        if (key == null) {
+            log.warn("Invalid filePath format for club {}: expected prefix {}", club.getId(), normalizedViewEndpoint + "/");
+            return;
+        }
 
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
                 .bucket(bucketName)
                 .key(key)
                 .build();
 
-        s3Client.deleteObject(deleteRequest);
-    }
-
-    @Override
-    public String uploadCover(String clubId, MultipartFile file) {
-        Club club = getClub(clubId);
-
-        if (club.getClubRecruitmentInformation().getCover() != null) {
-            deleteFile(club, club.getClubRecruitmentInformation().getCover());
+        try {
+            s3Client.deleteObject(deleteRequest);
+        } catch (S3Exception e) {
+            // 파일이 이미 없거나 삭제 권한이 없는 경우 로그만 남기고 계속 진행
+            log.warn("Failed to delete file from S3 for club {}: key={}, error={}", club.getId(), key, e.getMessage());
+        } catch (Exception e) {
+            log.warn("Unexpected error while deleting file from S3 for club {}: key={}, error={}", club.getId(), key, e.getMessage());
         }
-
-        String filePath = uploadFile(clubId, file, FileType.COVER);
-        club.updateCover(filePath);
-        clubRepository.save(club);
-        return filePath;
     }
 
     @Override
+    @Transactional
     public void deleteCover(String clubId) {
         Club club = getClub(clubId);
+        validateClubRecruitmentInformation(club);
 
         if (club.getClubRecruitmentInformation().getCover() != null) {
             deleteFile(club, club.getClubRecruitmentInformation().getCover());
@@ -145,53 +163,187 @@ public class CloudflareImageService implements ClubImageService{
         clubRepository.save(club);
     }
 
-    private String uploadFile(String clubId, MultipartFile file, FileType fileType) {
-        if (file == null || file.isEmpty()) {
-            throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
+    @Override
+    public PresignedUploadResponse generateLogoUploadUrl(String clubId, String fileName, String contentType) {
+        validateFileName(fileName);
+        return generatePresignedUrl(clubId, fileName, contentType, FileType.LOGO);
+    }
+
+    @Override
+    public PresignedUploadResponse generateFeedUploadUrl(String clubId, String fileName, String contentType) {
+        validateFileName(fileName);
+        Club club = getClub(clubId);
+        validateClubRecruitmentInformation(club);
+
+        List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
+        int feedImagesCount = (feedImages == null) ? 0 : feedImages.size();
+        if (feedImagesCount + 1 > MAX_FEED_COUNT) {
+            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
+        }
+        return generatePresignedUrl(clubId, fileName, contentType, FileType.FEED);
+    }
+
+    @Override
+    public PresignedUploadResponse generateCoverUploadUrl(String clubId, String fileName, String contentType) {
+        validateFileName(fileName);
+        return generatePresignedUrl(clubId, fileName, contentType, FileType.COVER);
+    }
+
+    @Override
+    @Transactional
+    public void completeLogoUpload(String clubId, String fileUrl) {
+        validateFileConstraints(fileUrl);
+        Club club = getClub(clubId);
+        validateClubRecruitmentInformation(club);
+
+        if (club.getClubRecruitmentInformation().getLogo() != null) {
+            deleteFile(club, club.getClubRecruitmentInformation().getLogo());
         }
 
-        // 파일명 처리
-        String fileName = file.getOriginalFilename();
+        club.updateLogo(fileUrl);
+        clubRepository.save(club);
+    }
 
-        if (!isImageExtension(fileName)) {
-            throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
+    @Override
+    @Transactional
+    public void completeFeedUpload(String clubId, String fileUrl) {
+        validateFileConstraints(fileUrl);
+
+        // 트랜잭션 내에서 최신 데이터를 다시 조회하여 Race Condition 방지
+        Club club = getClub(clubId);
+        validateClubRecruitmentInformation(club);
+
+        List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
+        if (feedImages == null) {
+            feedImages = new ArrayList<>();
         }
-        if (containsInvalidChars(fileName)) {
-            fileName = RandomStringUtil.generateRandomString(10);
+
+        // 동시 요청 시 최신 상태를 다시 확인
+        if (feedImages.size() + 1 > MAX_FEED_COUNT) {
+            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
         }
-        if (file.getSize() > MAX_SIZE) {
-            try {
-                file = resizeImage(file, MAX_SIZE);
-            } catch (IOException e) {
-                throw new RestApiException(ErrorCode.FILE_TRANSFER_ERROR);
+
+        feedImages.add(fileUrl);
+        club.updateFeedImages(feedImages);
+        clubRepository.save(club);
+    }
+
+    @Override
+    @Transactional
+    public void completeCoverUpload(String clubId, String fileUrl) {
+        validateFileConstraints(fileUrl);
+        Club club = getClub(clubId);
+        validateClubRecruitmentInformation(club);
+
+        if (club.getClubRecruitmentInformation().getCover() != null) {
+            deleteFile(club, club.getClubRecruitmentInformation().getCover());
+        }
+
+        club.updateCover(fileUrl);
+        clubRepository.save(club);
+    }
+
+
+    private void validateFileConstraints(String fileUrl) {
+        if (fileUrl == null || fileUrl.length() > maxFileUrlLength) {
+            throw new RestApiException(ErrorCode.INVALID_FILE_URL);
+        }
+        String key = extractKeyOrNull(fileUrl);
+        if (key == null) {
+            throw new RestApiException(ErrorCode.INVALID_FILE_URL);
+        }
+        // R2 HEAD로 사이즈 확인
+        try {
+            HeadObjectRequest headReq = HeadObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .build();
+            long contentLength = s3Client.headObject(headReq).contentLength();
+            if (contentLength > maxImageSizeBytes) {
+                // 초과 시 삭제 후 예외
+                try {
+                    DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                        .bucket(bucketName)
+                        .key(key)
+                        .build();
+                    s3Client.deleteObject(deleteRequest);
+                } catch (S3Exception e) {
+                    log.warn("Failed to delete oversized object from R2: key={}, error={}", key, e.getMessage());
+                }
+                throw new RestApiException(ErrorCode.FILE_TOO_LARGE);
             }
+        } catch (NoSuchKeyException e) {
+            throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
+        } catch (S3Exception e) {
+            throw new RestApiException(ErrorCode.IMAGE_UPLOAD_FAILED);
+        }
+    }
+
+    /**
+     * viewEndpoint 접두를 검증하고 S3 key를 추출한다.
+     * 접두 불일치나 비정상 URL이면 null을 반환한다(호출자에서 처리).
+     */
+    private String extractKeyOrNull(String fileUrl) {
+        String prefix = normalizedViewEndpoint + "/";
+        if (fileUrl == null || !fileUrl.startsWith(prefix)) {
+            return null;
+        }
+        return fileUrl.substring(prefix.length());
+    }
+
+    private PresignedUploadResponse generatePresignedUrl(String clubId, String fileName, String contentType, FileType fileType) {
+        // 파일명 처리
+        String processedFileName = fileName;
+        if (containsInvalidChars(fileName)) {
+            String extension = "";
+            if (fileName.contains(".")) {
+                extension = fileName.substring(fileName.lastIndexOf("."));
+            }
+            processedFileName = RandomStringUtil.generateRandomString(10) + extension;
         }
 
         // S3에 저장할 key 경로 생성
-        String key = clubId + "/" + fileType + "/" + fileName;
+        String key = clubId + "/" + fileType.getPath() + "/" + processedFileName;
 
-        // S3 업로드 요청
-        try {
-            PutObjectRequest putRequest = PutObjectRequest.builder()
-                    .bucket(bucketName)
-                    .key(key)
-                    .contentType(file.getContentType())
-                    .acl(ObjectCannedACL.PUBLIC_READ)  // 공개 URL 용도
-                    .build();
+        // PutObjectRequest 생성
+        PutObjectRequest putObjectRequest = PutObjectRequest.builder()
+                .bucket(bucketName)
+                .key(key)
+                .contentType(contentType)
+                .build();
 
-            s3Client.putObject(putRequest, RequestBody.fromInputStream(
-                    file.getInputStream(),
-                    file.getSize()
-            ));
+        // Presigned URL 생성 (10분 유효)
+        PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
+                .signatureDuration(Duration.ofMinutes(10))
+                .putObjectRequest(putObjectRequest)
+                .build();
 
-        } catch (IOException e) {
-            throw new RestApiException(ErrorCode.FILE_TRANSFER_ERROR);
-        } catch (Exception e) {
-            throw new RestApiException(ErrorCode.IMAGE_UPLOAD_FAILED);
+        PresignedPutObjectRequest presignedRequest = s3Presigner.presignPutObject(presignRequest);
+        String presignedUrl = presignedRequest.url().toString();
+        // 정규화된 viewEndpoint 사용하여 finalUrl 생성
+        String finalUrl = normalizedViewEndpoint + "/" + key;
+
+        // 클라이언트가 파일 업로드 시 필요한 헤더 정보 생성
+        Map<String, String> requiredHeaders = new HashMap<>();
+        requiredHeaders.put("Content-Type", contentType);
+
+        return new PresignedUploadResponse(presignedUrl, finalUrl, requiredHeaders);
+    }
+
+    private void validateFileName(String fileName) {
+        if (fileName == null || fileName.isEmpty()) {
+            throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
         }
+        if (!isImageExtension(fileName)) {
+            throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
+        }
+    }
 
-        // 공유 가능한 공개 URL 반환
-        return viewEndpoint + "/" + key;
+    private void validateClubRecruitmentInformation(Club club) {
+        if (club.getClubRecruitmentInformation() == null) {
+            log.error("ClubRecruitmentInformation is null for club: {}", club.getId());
+            throw new RestApiException(ErrorCode.CLUB_INFORMATION_NOT_FOUND);
+        }
     }
 
 }
