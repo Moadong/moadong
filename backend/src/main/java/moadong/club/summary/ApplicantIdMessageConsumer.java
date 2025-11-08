@@ -6,7 +6,7 @@ import moadong.club.entity.ClubApplicant;
 import moadong.club.entity.ClubApplicationForm;
 import moadong.club.entity.ClubApplicationFormQuestion;
 import moadong.club.entity.ClubQuestionAnswer;
-import moadong.club.payload.dto.ApplicationSummaryMessage;
+import moadong.club.payload.dto.ApplicantSummaryMessage;
 import moadong.club.repository.ClubApplicantsRepository;
 import moadong.club.repository.ClubApplicationFormsRepository;
 import moadong.gemma.dto.AIResponse;
@@ -33,7 +33,7 @@ public class ApplicantIdMessageConsumer {
     private final ApplicantIdMessagePublisher publisher;
 
     @RabbitListener(queues = "${rabbitmq.summary.queue}", concurrency = "1")
-    public void receiveMessage(ApplicationSummaryMessage message) {
+    public void receiveMessage(ApplicantSummaryMessage message) {
         StringBuilder prompt = new StringBuilder("너는 전문 면접관이다. 다음은 동아리 application의 질문과 지원자의 답변이다. 질문은 무시하고, 지원자의 '답변'에서 핵심만 뽑아라. summarize max length 100 response format: '{response: summarize}'. application: ");
         ClubApplicant clubApplicant = clubApplicantsRepository.findById(message.applicantId()).orElseThrow(() -> new RestApiException(ErrorCode.APPLICANT_NOT_FOUND));
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(message.applicationFormId()).orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));

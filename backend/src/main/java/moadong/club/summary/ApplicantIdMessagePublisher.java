@@ -1,7 +1,7 @@
 package moadong.club.summary;
 
 import lombok.RequiredArgsConstructor;
-import moadong.club.payload.dto.ApplicationSummaryMessage;
+import moadong.club.payload.dto.ApplicantSummaryMessage;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
@@ -18,7 +18,7 @@ public class ApplicantIdMessagePublisher {
     private final RabbitTemplate rabbitTemplate;
 
     public void addApplicantIdToQueue(String applicationFormId, String applicantId) {
-        ApplicationSummaryMessage message = new ApplicationSummaryMessage(applicationFormId, applicantId);
+        ApplicantSummaryMessage message = new ApplicantSummaryMessage(applicationFormId, applicantId);
 
         rabbitTemplate.convertAndSend(exchange, routingKey, message);
     }
