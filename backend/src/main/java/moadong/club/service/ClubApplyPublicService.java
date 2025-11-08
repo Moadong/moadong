@@ -14,6 +14,7 @@ import moadong.club.payload.response.ClubActiveFormsResponse;
 import moadong.club.payload.response.ClubApplicationFormResponse;
 import moadong.club.repository.ClubApplicantsRepository;
 import moadong.club.repository.ClubApplicationFormsRepository;
+import moadong.club.summary.ApplicantIdMessagePublisher;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.payload.Response;
@@ -32,49 +33,34 @@ public class ClubApplyPublicService {
     private final ClubApplicationFormsRepository clubApplicationFormsRepository;
     private final ClubApplicantsRepository clubApplicantsRepository;
     private final AESCipher cipher;
-
+    private final ApplicantIdMessagePublisher applicantIdMessagePublisher;
 
     public ClubActiveFormsResponse getActiveApplicationForms(String clubId) {
         List<ClubActiveFormSlim> forms = clubApplicationFormsRepository.findClubActiveFormsByClubId(clubId);
 
-        if (forms == null || forms.isEmpty())
-            throw new RestApiException(ErrorCode.ACTIVE_APPLICATION_NOT_FOUND);
+        if (forms == null || forms.isEmpty()) throw new RestApiException(ErrorCode.ACTIVE_APPLICATION_NOT_FOUND);
 
         List<ClubActiveFormResult> results = new ArrayList<>();
         for (ClubActiveFormSlim form : forms) {
-            ClubActiveFormResult result = ClubActiveFormResult.builder()
-                    .id(form.getId())
-                    .title(form.getTitle())
-                    .build();
+            ClubActiveFormResult result = ClubActiveFormResult.builder().id(form.getId()).title(form.getTitle()).build();
             results.add(result);
         }
 
-        return ClubActiveFormsResponse.builder()
-                .forms(results)
-                .build();
+        return ClubActiveFormsResponse.builder().forms(results).build();
 
     }
 
     public ResponseEntity<?> getClubApplicationForm(String clubId, String applicationFormId) {
-        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId).orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
 
-        ClubApplicationFormResponse clubApplicationFormResponse = ClubApplicationFormResponse.builder()
-                .title(clubApplicationForm.getTitle())
-                .description(Optional.ofNullable(clubApplicationForm.getDescription()).orElse(""))
-                .questions(clubApplicationForm.getQuestions())
-                .semesterYear(clubApplicationForm.getSemesterYear())
-                .semesterTerm(clubApplicationForm.getSemesterTerm())
-                .status(clubApplicationForm.getStatus())
-                .build();
+        ClubApplicationFormResponse clubApplicationFormResponse = ClubApplicationFormResponse.builder().title(clubApplicationForm.getTitle()).description(Optional.ofNullable(clubApplicationForm.getDescription()).orElse("")).questions(clubApplicationForm.getQuestions()).semesterYear(clubApplicationForm.getSemesterYear()).semesterTerm(clubApplicationForm.getSemesterTerm()).status(clubApplicationForm.getStatus()).build();
 
         return Response.ok(clubApplicationFormResponse);
     }
 
     public void applyToClub(String clubId, String applicationFormId, ClubApplyRequest request) {
-        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
+        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId).orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
         validateAnswers(request.questions(), clubApplicationForm);
 
@@ -83,32 +69,25 @@ public class ClubApplyPublicService {
         try {
             for (ClubApplyRequest.Answer answer : request.questions()) {
                 String encryptedValue = cipher.encrypt(answer.value());
-                answers.add(ClubQuestionAnswer.builder()
-                        .id(answer.id())
-                        .value(encryptedValue)
-                        .build());
+                answers.add(ClubQuestionAnswer.builder().id(answer.id()).value(encryptedValue).build());
             }
         } catch (Exception e) {
             log.error("AES_CIPHER_ERROR", e);
             throw new RestApiException(ErrorCode.AES_CIPHER_ERROR);
         }
 
-        ClubApplicant application = ClubApplicant.builder()
-                .formId(applicationFormId)
-                .answers(answers)
-                .build();
+        ClubApplicant applicant = ClubApplicant.builder().formId(applicationFormId).answers(answers).build();
 
-        clubApplicantsRepository.save(application);
+        clubApplicantsRepository.save(applicant);
+
+        applicantIdMessagePublisher.addApplicantIdToQueue(applicationFormId, applicant.getId());
     }
 
     private void validateAnswers(List<ClubApplyRequest.Answer> answers, ClubApplicationForm clubApplicationForm) {
         // 미리 질문과 응답 id 만들어두기
-        Map<Long, ClubApplicationFormQuestion> questionMap = clubApplicationForm.getQuestions().stream()
-                .collect(Collectors.toMap(ClubApplicationFormQuestion::getId, Function.identity()));
+        Map<Long, ClubApplicationFormQuestion> questionMap = clubApplicationForm.getQuestions().stream().collect(Collectors.toMap(ClubApplicationFormQuestion::getId, Function.identity()));
 
-        Set<Long> answerIds = answers.stream()
-                .map(ClubApplyRequest.Answer::id)
-                .collect(Collectors.toSet());
+        Set<Long> answerIds = answers.stream().map(ClubApplyRequest.Answer::id).collect(Collectors.toSet());
 
         // 필수 질문이 누락되었는지 검증
         for (ClubApplicationFormQuestion question : clubApplicationForm.getQuestions()) {
