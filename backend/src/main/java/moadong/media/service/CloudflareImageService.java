@@ -52,7 +52,7 @@ public class CloudflareImageService implements ClubImageService{
     private String viewEndpoint;
     @Value("${server.image.max-size}")
     private long maxImageSizeBytes;
-    @Value("${server.file-url.max-length}")
+    @Value("${server.file-url.max-length:200}")
     private int maxFileUrlLength;
     private String normalizedViewEndpoint;
 
@@ -88,13 +88,13 @@ public class CloudflareImageService implements ClubImageService{
         List<String> existing = club.getClubRecruitmentInformation().getFeedImages();
         if (existing == null || existing.isEmpty()) {
             for (String url : newFeedImageList) {
-                validateFileConstraints(url);
+                validateFileConstraints(club.getId(), FileType.FEED, url);
             }
         } else {
             java.util.HashSet<String> existingSet = new java.util.HashSet<>(existing);
             for (String url : newFeedImageList) {
                 if (!existingSet.contains(url)) {
-                    validateFileConstraints(url);
+                    validateFileConstraints(club.getId(), FileType.FEED, url);
                 }
             }
         }
@@ -192,7 +192,7 @@ public class CloudflareImageService implements ClubImageService{
     @Override
     @Transactional
     public void completeLogoUpload(String clubId, String fileUrl) {
-        validateFileConstraints(fileUrl);
+        validateFileConstraints(clubId, FileType.LOGO, fileUrl);
         Club club = getClub(clubId);
         validateClubRecruitmentInformation(club);
 
@@ -207,7 +207,7 @@ public class CloudflareImageService implements ClubImageService{
     @Override
     @Transactional
     public void completeFeedUpload(String clubId, String fileUrl) {
-        validateFileConstraints(fileUrl);
+        validateFileConstraints(clubId, FileType.FEED, fileUrl);
 
         // 트랜잭션 내에서 최신 데이터를 다시 조회하여 Race Condition 방지
         Club club = getClub(clubId);
@@ -231,7 +231,7 @@ public class CloudflareImageService implements ClubImageService{
     @Override
     @Transactional
     public void completeCoverUpload(String clubId, String fileUrl) {
-        validateFileConstraints(fileUrl);
+        validateFileConstraints(clubId, FileType.COVER, fileUrl);
         Club club = getClub(clubId);
         validateClubRecruitmentInformation(club);
 
@@ -244,12 +244,12 @@ public class CloudflareImageService implements ClubImageService{
     }
 
 
-    private void validateFileConstraints(String fileUrl) {
+    private void validateFileConstraints(String clubId, FileType fileType, String fileUrl) {
         if (fileUrl == null || fileUrl.length() > maxFileUrlLength) {
             throw new RestApiException(ErrorCode.INVALID_FILE_URL);
         }
         String key = extractKeyOrNull(fileUrl);
-        if (key == null) {
+        if (key == null || !key.startsWith(clubId + "/" + fileType.getPath() + "/")) {
             throw new RestApiException(ErrorCode.INVALID_FILE_URL);
         }
         // R2 HEAD로 사이즈 확인
