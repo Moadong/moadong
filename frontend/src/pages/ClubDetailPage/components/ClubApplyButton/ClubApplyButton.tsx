@@ -6,9 +6,10 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 import ShareButton from '@/pages/ClubDetailPage/components/ShareButton/ShareButton';
 import { useState } from 'react';
-import { ApplicationOption } from '@/types/application';
+import { ApplicationForm } from '@/types/application';
 import getApplicationOptions from '@/apis/application/getApplicationOptions';
 import ApplicationSelectModal from '@/components/application/modals/ApplicationSelectModal';
+import { set } from 'date-fns';
 
 interface ClubApplyButtonProps {
   deadlineText?: string;
@@ -27,21 +28,25 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
 
   // 모달 옵션 상태
   const [isOpen, setIsOpen] = useState(false);
-  const [options, setOptions] = useState<ApplicationOption[]>([])
-
-  const openByOption = (option?: ApplicationOption) => {
-    if (!clubId) return;
-    if (option?.url) {
-      // 외부 폼
-      window.open(option.url, '_blank'); 
-    } else {
-      // 내부 폼
-      navigate(`/application/${clubId}`); 
-    }
-    setIsOpen(false);
-  };
+  const [options, setOptions] = useState<ApplicationForm[]>([]);
 
   if (!clubId || !clubDetail) return null;
+
+  const goWithForm = async (formId: string) => {
+    try {
+      const formDetail = await getApplication(clubId, formId);
+      navigate(`/application/${clubId}/${formId}`, { state: { formDetail } });
+      setIsOpen(false);
+    } catch (error) {
+      console.error('지원서 조회 중 오류가 발생했습니다', error);
+      alert('지원서 정보를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.');
+    }
+  };
+
+  const openByOption = (option?: ApplicationForm) => {
+    if (!option) return;
+    void goWithForm(option.id);
+  };
 
   const handleClick = async () => {
     trackEvent(EVENT_NAME.CLUB_APPLY_BUTTON_CLICKED);
@@ -54,34 +59,17 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     try {
       const list = await getApplicationOptions(clubId);
 
-      if (list.length === 1) {
-        openByOption(list[0]);
-        return;
-      }
-
-      if (list.length >= 2) {
+      if (list.length <= 0) {
+        alert('현재 지원 가능한 지원서가 없습니다.');
+      } else if (list.length === 1) {
+        await goWithForm(list[0].id);
+      } else {
         setOptions(list);
         setIsOpen(true);
-        return;
       }
-      setOptions([]);
-      setIsOpen(true);
-      return;
-
-    } catch {
-      try {
-        await getApplication(clubId);
-        navigate(`/application/${clubId}`);
-        setIsOpen(false);
-      } catch {
-        const externalForm = clubDetail.externalApplicationUrl?.trim();
-        if (externalForm) {
-          window.open(externalForm, '_blank');
-          setIsOpen(false);
-        } else {
-          setOptions([]);
-        }
-      }
+    } catch (e) {
+      console.error('지원서 옵션 조회 중 오류가 발생했습니다.', e);
+      alert('지원서 정보를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
   }; 
 
