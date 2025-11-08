@@ -1,6 +1,6 @@
 import API_BASE_URL from "@/constants/api";
 
-const getApplicationForms = async (clubId: string) => {
+const getApplicationOptions = async (clubId: string) => {
     try {
         const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
         if (!response.ok) {
@@ -28,4 +28,4 @@ const getApplicationForms = async (clubId: string) => {
     }
 };
 
-export default getApplicationForms;
+export default getApplicationOptions;
