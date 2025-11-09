@@ -21,6 +21,7 @@ import moadong.global.payload.Response;
 import moadong.global.util.AESCipher;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.*;
 import java.util.function.Function;
@@ -59,6 +60,7 @@ public class ClubApplyPublicService {
         return Response.ok(clubApplicationFormResponse);
     }
 
+    @Transactional
     public void applyToClub(String clubId, String applicationFormId, ClubApplyRequest request) {
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId).orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
