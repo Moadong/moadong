@@ -31,6 +31,8 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
 
   if (!clubId || !clubDetail) return null;
 
+
+  // 내부 폼 이동
   const goWithForm = async (formId: string) => {
     try {
       const formDetail = await getApplication(clubId, formId);
@@ -42,6 +44,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     }
   };
 
+  // url 존재 시 외부, 내부 지원서 옵션에 따른 처리
   const openByOption = (option?: ApplicationForm) => {
     if (!option) return;
     void goWithForm(option.id);
@@ -59,14 +62,23 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
       const list = await getApplicationOptions(clubId);
 
       if (list.length <= 0) {
-        alert('현재 지원 가능한 지원서가 없습니다.');
-      } else if (list.length === 1) {
+        return;
+      } 
+      
+      if (list.length === 1) {
         await goWithForm(list[0].id);
       } else {
         setOptions(list);
         setIsOpen(true);
       }
     } catch (e) {
+      const externalApplicationUrl = clubDetail.externalApplicationUrl?.trim();
+      if (externalApplicationUrl) {
+        window.open(externalApplicationUrl, '_blank');
+        return;
+      }
+      setOptions([]);
+      setIsOpen(true);
       console.error('지원서 옵션 조회 중 오류가 발생했습니다.', e);
       alert('지원서 정보를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.');
     }
