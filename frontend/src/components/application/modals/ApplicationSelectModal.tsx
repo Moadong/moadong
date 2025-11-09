@@ -33,9 +33,7 @@ const OptionsList = ({ options, onSelect }: OptionsListProps) => {
 
 const ApplicationSelectModal = ({ isOpen, onClose, options, onSelect, onBackdropClick }: ApplicationSelectModalProps) => {
     const handleOverlayClick = () => {
-        const result = onBackdropClick?.();
-        if (result === false) return;
-        onClose();
+        return false;
     };
 
     return (
