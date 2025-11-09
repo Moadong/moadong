@@ -8,13 +8,20 @@ export interface ModalProps {
   title: string;
   description?: string;
   children?: ReactNode;
+  onBackdropClick?: () => boolean | void;
 }
 
-const Modal = ({ isOpen, onClose, title, description, children }: ModalProps) => {
+const Modal = ({ isOpen, onClose, title, description, children, onBackdropClick }: ModalProps) => {
   if (!isOpen) return null;
 
+  const handleOverlayClick = () => {
+    const result = onBackdropClick?.();
+    if (result === false) return;
+    onClose();
+  };
+
   return (
-    <Styled.Overlay isOpen={isOpen} onClick={onClose} aria-modal="true">
+    <Styled.Overlay isOpen={isOpen} onClick={handleOverlayClick} aria-modal="true">
       <RemoveScroll enabled={isOpen}>
       <Styled.Container isOpen={isOpen} onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
         <Styled.Header> 

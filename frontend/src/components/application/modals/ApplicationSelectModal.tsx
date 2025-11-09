@@ -16,13 +16,14 @@ const ApplicationSelectModal = ({ isOpen, onClose, options, onSelect }: Applicat
             onClose={onClose}
             title="지원 분야 선택"
             description="지원할 분야를 선택해주세요"
+            onBackdropClick={() => {return false;}}
         >
             {options.length === 0 ? (
                 <Styled.EmptyMessage>지원 가능한 분야가 없습니다.</Styled.EmptyMessage>
             ) : (
             <Styled.List>
                 {options.map((option) => (
-                    <Styled.OptionButton key={option.id} onClick={() => onSelect(option)}>
+                    <Styled.OptionButton key={option.id} onClick={() => {onSelect(option); onClose();}}>
                         {option.title}
                     </Styled.OptionButton>
                 ))}
