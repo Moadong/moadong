@@ -1,8 +1,6 @@
 import * as Styled from './RecommendedClubs.styles';
 import ClubCard from '@/pages/ClubDetailPage/components/ClubCard/ClubCard';
 import { Club } from '@/types/club';
-import 'swiper/css';
-
 
 const RecommendedClubs = ({ clubs }: { clubs: Club[] }) => {
 
