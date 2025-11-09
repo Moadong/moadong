@@ -67,10 +67,10 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
       
       if (list.length === 1) {
         await goWithForm(list[0].id);
-      } else {
-        setOptions(list);
-        setIsOpen(true);
+        return;
       }
+      setOptions(list);
+      setIsOpen(true);
     } catch (e) {
       const externalApplicationUrl = clubDetail.externalApplicationUrl?.trim();
       if (externalApplicationUrl) {
