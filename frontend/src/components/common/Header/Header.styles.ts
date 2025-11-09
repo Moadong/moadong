@@ -1,6 +1,5 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
-import { e } from 'msw/lib/core/HttpResponse-Bls5AXtT.mjs';
 
 export const Header = styled.header<{ isScrolled: boolean }>`
   position: fixed;
@@ -11,7 +10,7 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   height: 62px;
   padding: 10px 20px;
   background-color: white;
-  z-index: 2;
+  z-index: 1000;
 
   box-shadow: ${({ isScrolled }) =>
     isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
@@ -28,7 +27,7 @@ export const Container = styled.div`
   align-items: center;
   justify-content: space-between;
   width: 100%;
-  max-width: 1100px;
+  max-width: 1180px;
   margin: 0 auto;
   gap: 50px;
 
