@@ -1,3 +1,4 @@
+import { media } from '@/styles/mediaQuery';
 import styled from 'styled-components';
 
 export const Overlay = styled.div<{ isOpen: boolean }>`
@@ -12,7 +13,8 @@ export const Overlay = styled.div<{ isOpen: boolean }>`
 `;
 
 export const Container = styled.div<{ isOpen: boolean }>`
-  min-width: 500px;
+  max-width: 500px;
+  width: 100%;
   max-height: 90vh;
   background: #fff;
   border-radius: 10px;
