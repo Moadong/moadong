@@ -56,14 +56,6 @@ public class ApplicantIdMessageConsumer {
 
         AIResponse summarizeContent = gemmaService.getSummarizeContent(prompt.toString());
 
-        if (summarizeContent == null || summarizeContent.response() == null) {
-            /*
-              추후 dlx, dlq 학습 후 공부해보죠...
-              현재 재시도 기준이없어 무한 리트라이됨
-              **/
-            publisher.addApplicantIdToQueue(message.applicationFormId(), message.applicantId());
-            return;
-        }
         clubApplicant.updateMemo(summarizeContent.response());
 
         clubApplicantsRepository.save(clubApplicant);
