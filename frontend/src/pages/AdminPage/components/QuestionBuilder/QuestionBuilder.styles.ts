@@ -75,6 +75,30 @@ export const SelectionToggleButton = styled.button<{ active: boolean }>`
     color 0.2s ease;
 `;
 
+export const Selected = styled.div<{ open: boolean }>`
+  padding: 12px 16px;
+  border-radius: 0.375rem;
+  background: ${({ open }) => (open ? '#fff' : '#f5f5f5')};
+  color: #787878;
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1px solid ${({ open }) => (open ? '#c5c5c5' : 'transparent')};
+  transition:
+    border-color 0.2s ease,
+    background-color 0.2s ease;
+
+  user-select: none;
+`;
+
+export const Icon = styled.img`
+  position: absolute;
+  top: 50%;
+  right: 19px;
+  transform: translateY(-50%);
+  pointer-events: none;
+`;
+
 export const DeleteButton = styled.button`
   display: flex;
   align-items: center;

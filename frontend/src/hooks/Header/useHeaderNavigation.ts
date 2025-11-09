@@ -4,24 +4,18 @@ import { useSearchStore } from '@/store/useSearchStore';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 
-const trackEventNames = {
-  desktop: EVENT_NAME.HOME_BUTTON_CLICKED,
-  mobile: EVENT_NAME.MOBILE_HOME_BUTTON_CLICKED,
-} as const;
-
-const useHeaderService = () => {
+const useHeaderNavigation = () => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
-  const navigateToHome = useCallback(
-    (device: keyof typeof trackEventNames) => {
-      navigate('/');
-      const { resetSearch } = useSearchStore.getState();
-      resetSearch();
-      trackEvent(trackEventNames[device]);
-    },
-    [navigate, trackEvent],
-  );
+  const handleHomeClick = useCallback(() => {
+    navigate('/');
+    useSearchStore.getState().resetSearch();
+    // 속성으로 관리
+    trackEvent(EVENT_NAME.HOME_BUTTON_CLICKED, {
+      device_type: window.innerWidth <= 700 ? 'mobile' : 'desktop',
+    });
+  }, [navigate, trackEvent]);
 
   const handleIntroduceClick = useCallback(() => {
     navigate('/introduce');
@@ -33,16 +27,21 @@ const useHeaderService = () => {
     trackEvent(EVENT_NAME.CLUB_UNION_BUTTON_CLICKED);
   }, [navigate, trackEvent]);
 
-  const handleMenuClick = useCallback(() => {
-    trackEvent(EVENT_NAME.MOBILE_MENU_BUTTON_CLICKED);
+  const handlePatchNoteClick = useCallback(() => {
+    window.open(
+      'https://honorable-cough-8f9.notion.site/1e8aad232096804f9ea9ee4f5cf0cd10',
+      '_blank',
+      'noopener,noreferrer',
+    );
+    trackEvent(EVENT_NAME.PATCH_NOTE_BUTTON_CLICKED);
   }, [trackEvent]);
 
   return {
-    handleHomeClick: navigateToHome,
+    handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
-    handleMenuClick,
+    handlePatchNoteClick,
   };
 };
 
-export default useHeaderService;
+export default useHeaderNavigation;

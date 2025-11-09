@@ -13,7 +13,6 @@ import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import RecommendedClubs from '@/pages/ClubDetailPage/components/RecommendedClubs/RecommendedClubs';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
@@ -67,7 +66,7 @@ const ClubDetailPage = () => {
           feeds={clubDetail.feeds}
           clubName={clubDetail.name}
         />
-        <RecommendedClubs clubs={clubDetail.recommendClubs ?? []} />
+        {/* <RecommendedClubs clubs={clubDetail.recommendClubs ?? []} /> */}
       </Styled.PageContainer>
       <Footer />
       <ClubDetailFooter
