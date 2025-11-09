@@ -31,6 +31,7 @@ const useHeaderNavigation = () => {
     window.open(
       'https://honorable-cough-8f9.notion.site/1e8aad232096804f9ea9ee4f5cf0cd10',
       '_blank',
+      'noopener,noreferrer',
     );
     trackEvent(EVENT_NAME.PATCH_NOTE_BUTTON_CLICKED);
   }, [trackEvent]);
