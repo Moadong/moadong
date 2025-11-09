@@ -35,7 +35,7 @@ const tabs: TabCategory[] = [
   {
     category: '지원 관리',
     items: [
-      { label: '지원서 관리', path: '/admin/application-edit' },
+      { label: '지원서 관리', path: '/admin/application-list' },
       { label: '지원자 현황', path: '/admin/applicants' },
     ],
   },
