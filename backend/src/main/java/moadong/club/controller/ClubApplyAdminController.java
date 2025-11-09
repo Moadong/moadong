@@ -5,7 +5,6 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.ClubApplicantDeleteRequest;
 import moadong.club.payload.request.ClubApplicantEditRequest;
@@ -18,16 +17,10 @@ import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
+
+import java.util.List;
 
 
 @RestController
@@ -43,7 +36,7 @@ public class ClubApplyAdminController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> createClubApplicationForm(@CurrentUser CustomUserDetails user,
-                                               @RequestBody @Validated ClubApplicationFormCreateRequest request) {
+                                                       @RequestBody @Validated ClubApplicationFormCreateRequest request) {
         clubApplyAdminService.createClubApplicationForm(user, request);
         return Response.ok("success create application");
     }
@@ -65,7 +58,7 @@ public class ClubApplyAdminController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getClubApplications(@CurrentUser CustomUserDetails user,
                                                  @RequestParam(defaultValue = "agg") String mode) {  //agg면 aggregation사용, server면, 서비스에서 그룹 및 정렬
-        if("server".equalsIgnoreCase(mode)) {
+        if ("server".equalsIgnoreCase(mode)) {
             return Response.ok(clubApplyAdminService.getGroupedClubApplicationForms(user));
         }
         return Response.ok(clubApplyAdminService.getClubApplicationForms(user));
