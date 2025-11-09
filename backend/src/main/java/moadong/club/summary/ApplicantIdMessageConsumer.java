@@ -43,8 +43,10 @@ public class ApplicantIdMessageConsumer {
         try {
             for (ClubQuestionAnswer answer : clubApplicant.getAnswers()) {
                 String decryptedValue = cipher.decrypt(answer.getValue());
-                prompt.append(answer.getId()).append(". ").append(questionMap.get(answer.getId()).getTitle());
-                prompt.append(decryptedValue);
+                prompt.append(answer.getId()).append(". ")
+                        .append(questionMap.get(answer.getId()).getTitle())
+                        .append(": ")
+                        .append(decryptedValue);
                 prompt.append(",");
             }
         } catch (Exception e) {
