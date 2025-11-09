@@ -15,10 +15,10 @@ import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 
 const ApplicationEditTab = () => {
-  const { clubId } = useAdminClubContext();
-  if (!clubId) return null;
+  const { clubId, applicationFormId } = useAdminClubContext();
+  if (!clubId || !applicationFormId) return null;
 
-  const { data, isLoading, isError } = useGetApplication(clubId);
+  const { data, isLoading, isError } = useGetApplication(clubId, applicationFormId);
 
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
