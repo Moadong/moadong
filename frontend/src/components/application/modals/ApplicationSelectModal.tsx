@@ -7,6 +7,7 @@ export interface ApplicationSelectModalProps {
   onClose: () => void;
   options: ApplicationForm[];
   onSelect: (option: ApplicationForm) => void;
+  onBackdropClick?: () => boolean | void;
 }
 
 interface OptionsListProps {
@@ -30,14 +31,20 @@ const OptionsList = ({ options, onSelect }: OptionsListProps) => {
     )
 };
 
-const ApplicationSelectModal = ({ isOpen, onClose, options, onSelect }: ApplicationSelectModalProps) => {
+const ApplicationSelectModal = ({ isOpen, onClose, options, onSelect, onBackdropClick }: ApplicationSelectModalProps) => {
+    const handleOverlayClick = () => {
+        const result = onBackdropClick?.();
+        if (result === false) return;
+        onClose();
+    };
+
     return (
         <Modal
             isOpen={isOpen}
             onClose={onClose}
             title="지원 분야 선택"
             description="지원할 분야를 선택해주세요"
-            onBackdropClick={() => {return false;}}
+            onBackdropClick={handleOverlayClick}
         >
             <OptionsList options={options} onSelect={onSelect} />
         </Modal>
