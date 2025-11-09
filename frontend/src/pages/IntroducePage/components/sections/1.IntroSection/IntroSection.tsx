@@ -19,8 +19,8 @@ import introduce_phone_mockup from '@/assets/images/introduce/introduce_phone_mo
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 
 const cardPositions = [
-  { top: '300px', left: '-300px' },
-  { top: '300px', left: '-630px' },
+  { top: '280px', left: '-300px' },
+  { top: '330px', left: '-630px' },
   { top: '280px', right: '-220px' },
   { top: '310px', right: '-580px' },
 ];
