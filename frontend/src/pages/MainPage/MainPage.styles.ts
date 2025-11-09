@@ -20,6 +20,7 @@ export const PageContainer = styled.div`
 
 export const ContentWrapper = styled.div`
   width: 100%;
+  margin-bottom: 60px;
 `;
 
 export const SectionBar = styled.div`
