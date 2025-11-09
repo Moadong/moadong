@@ -29,7 +29,7 @@ const MainPage = () => {
   // types/club.ts에 정의해서 tabs 관리하도록 리팩터링하기
   
   const { data, error, isLoading } = 
-    useGetCardList(keyword, recruitmentStatus, division, searchCategory);
+    useGetCardList({ keyword, recruitmentStatus, category: searchCategory, division });
   
   const clubs = data?.clubs || [];
   const totalCount = data?.totalCount || 0;
