@@ -9,7 +9,6 @@ import { useState } from 'react';
 import { ApplicationForm } from '@/types/application';
 import getApplicationOptions from '@/apis/application/getApplicationOptions';
 import ApplicationSelectModal from '@/components/application/modals/ApplicationSelectModal';
-import { set } from 'date-fns';
 
 interface ClubApplyButtonProps {
   deadlineText?: string;

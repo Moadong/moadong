@@ -51,7 +51,7 @@ const ApplicationFormPage = () => {
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
-  }, [answers]);
+  }, [answers, clubId, applicationFormId]);
 
   if (isLoading) return <Spinner />;
   if (isError || clubError) {
