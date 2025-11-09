@@ -12,16 +12,16 @@ export interface ModalProps {
 
 
 const Modal = ({ isOpen, onClose, title, description, children, onBackdropClick }: ModalProps) => {
-  if (!isOpen) return null;
-
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
     } 
     return () => {
-      document.body.style.overflow = 'auto';
+      document.body.style.overflow = '';
     };
   }, [isOpen]);
+
+  if (!isOpen) return null;
 
   return (
     <Styled.Overlay isOpen={isOpen} onClick={onBackdropClick} aria-modal="true">
