@@ -54,7 +54,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
       role='button'
       aria-label='카카오톡으로 동아리 정보 공유하기'
     >
-      <img src={ShareIcon} width={60} height={60} alt='카카오톡 공유' />
+      <img src={ShareIcon} width={50} height={50} alt='카카오톡 공유' />
     </Styled.ShareButtonContainer>
   );
 };
