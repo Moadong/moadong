@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode } from "react";
+import { MouseEvent, ReactNode, useEffect } from "react";
 import * as Styled from './Modal.styles';
 import { RemoveScroll } from "react-remove-scroll";
 
@@ -11,8 +11,18 @@ export interface ModalProps {
   onBackdropClick?: () => boolean | void;
 }
 
+
 const Modal = ({ isOpen, onClose, title, description, children, onBackdropClick }: ModalProps) => {
   if (!isOpen) return null;
+
+  useEffect(() => {
+    if (isOpen) {
+      document.body.style.overflow = 'hidden';
+    } 
+    return () => {
+      document.body.style.overflow = 'auto';
+    };
+  }, [isOpen]);
 
   return (
     <Styled.Overlay isOpen={isOpen} onClick={onBackdropClick} aria-modal="true">
