@@ -16,7 +16,10 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
     });
 
     const trackPageDuration = () => {
+      // 레이스 컨디션 방지: 체크와 설정을 원자적으로 처리
       if (isTracked.current) return;
+      isTracked.current = true;
+
       const duration = Date.now() - startTime.current;
       mixpanel.track(`${pageName} Duration`, {
         url: window.location.href,
@@ -24,7 +27,6 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
         duration_seconds: Math.round(duration / 1000),
         clubName,
       });
-      isTracked.current = true;
     };
 
     window.addEventListener('beforeunload', trackPageDuration);

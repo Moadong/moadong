@@ -3,58 +3,45 @@ import styled from 'styled-components';
 export const DropDownWrapper = styled.div`
   position: relative;
   width: 100%;
-`;
-
-export const Selected = styled.div<{ open: boolean }>`
-  padding: 12px 16px;
-  border-radius: 0.375rem;
-  background: ${({ open }) => (open ? '#fff' : '#f5f5f5')};
-  color: #787878;
-  font-size: 0.875rem;
-  font-weight: 600;
   cursor: pointer;
-  border: 1px solid ${({ open }) => (open ? '#c5c5c5' : 'transparent')};
-  transition:
-    border-color 0.2s ease,
-    background-color 0.2s ease;
-
-  user-select: none;
 `;
 
-export const OptionList = styled.ul`
+export const OptionList = styled.ul<{
+  $top?: string;
+  $width?: string;
+  $right?: string;
+}>`
   position: absolute;
-  top: 100%;
-  left: 0;
-  width: 100%;
-  background: #fff;
+  top: ${({ $top }) => $top || '110%'};
+  left: ${({ $right }) => ($right ? 'auto' : '0')};
+  width: ${({ $width }) => $width || '100%'};
+  right: ${({ $right }) => $right || 'auto'};
   border-radius: 6px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.05);
+  border: 1px solid #dcdcdc;
+  background: #fff;
+  box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.12);
+  padding: 6px 0;
   z-index: 10;
+  height: auto;
   list-style: none;
 `;
 
-export const OptionItem = styled.li<{ isSelected: boolean }>`
+export const OptionItem = styled.li<{ $isSelected: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
   text-align: center;
-  padding: 10px;
-  margin: 4px;
   font-weight: 600;
-  border-radius: 6px;
   color: #787878;
-  background-color: ${({ isSelected }) => (isSelected ? '#DCDCDC' : '#fff')};
+  background-color: ${({ $isSelected }) => ($isSelected ? '#f5f5f5' : '#fff')};
   cursor: pointer;
+  padding: 8px 13px;
+  height: 27px;
 
   &:hover {
-    background-color: #dcdcdc;
+    background-color: #f5f5f5;
   }
 
   transition: background-color 0.2s ease;
   user-select: none;
-`;
-
-export const Icon = styled.img`
-  position: absolute;
-  top: 50%;
-  right: 19px;
-  transform: translateY(-50%);
-  pointer-events: none;
 `;
