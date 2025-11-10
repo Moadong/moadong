@@ -114,6 +114,7 @@ const INTRODUCTION_MARGIN = {
 
 const Introduction = styled.p`
   font-size: 0.875rem;
+  font-weight: normal;
   margin: ${INTRODUCTION_MARGIN.desktop.margin};
   color: rgba(129, 129, 129, 1);
   line-height: 16px;
