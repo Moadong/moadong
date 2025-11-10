@@ -20,15 +20,11 @@ public class RecruitmentStateCalculator {
         ClubRecruitmentStatus newStatus = calculateRecruitmentStatus(recruitmentStartDate, recruitmentEndDate);
         club.updateRecruitmentStatus(newStatus);
 
-        if (diffRecruitmentStatus(oldStatus, newStatus))
+        if (oldStatus == newStatus)
             return;
 
         Message message = buildRecruitmentMessage(club, newStatus);
         club.sendPushNotification(message);
-    }
-
-    public static boolean diffRecruitmentStatus(ClubRecruitmentStatus oldStatus, ClubRecruitmentStatus newStatus) {
-        return oldStatus == newStatus;
     }
 
     public static ClubRecruitmentStatus calculateRecruitmentStatus(ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
