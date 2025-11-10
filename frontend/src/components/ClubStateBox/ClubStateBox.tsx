@@ -47,6 +47,15 @@ const BOX_DIMENSIONS = {
   },
 } as const;
 
+const BOX_FONT_SIZE = {
+  desktop: {
+    fontSize: '0.875rem',
+  },
+  mobile: {
+    fontSize: '0.75rem',
+  },
+} as const;
+
 const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   display: flex;
   justify-content: center;
@@ -57,13 +66,13 @@ const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   border-radius: 8px;
   background-color: ${({ $bgColor }) => $bgColor};
   color: ${({ $textColor }) => $textColor};
-  font-size: 0.875rem;
+  font-size: ${BOX_FONT_SIZE.desktop.fontSize};
   font-weight: 500;
 
   @media (max-width: 500px) {
     width: ${BOX_DIMENSIONS.mobile.width};
     height: ${BOX_DIMENSIONS.mobile.height};
-    font-size: 0.75rem;
+    font-size: ${BOX_FONT_SIZE.mobile.fontSize};
   }
 `;
 
