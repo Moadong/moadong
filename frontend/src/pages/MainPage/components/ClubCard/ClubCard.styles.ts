@@ -1,9 +1,16 @@
 import styled from 'styled-components';
 
 const CARD_STYLES = {
-  borderRadius: '20px',
-  padding: '20px',
-  gap: '16px',
+  desktop: {
+    borderRadius: '20px',
+    padding: '20px',
+    gap: '16px',
+  },
+  mobile: {
+    borderRadius: '16px',
+    padding: '16px',
+    gap: '8px',
+  },
 } as const;
 
 const CardContainer = styled.div<{
@@ -13,9 +20,9 @@ const CardContainer = styled.div<{
   width: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: ${CARD_STYLES.borderRadius};
-  padding: ${CARD_STYLES.padding};
-  gap: ${CARD_STYLES.gap};
+  border-radius: ${CARD_STYLES.desktop.borderRadius};
+  padding: ${CARD_STYLES.desktop.padding};
+  gap: ${CARD_STYLES.desktop.gap};
   background-color: #fff;
 
   box-shadow: ${({ $state }) =>
@@ -28,6 +35,13 @@ const CardContainer = styled.div<{
     box-shadow 0.2s ease-in-out;
   transform: ${({ $isClicked }) => ($isClicked ? 'scale(1.05)' : 'scale(1)')};
   cursor: pointer;
+
+  @media (max-width: 500px) {
+    border-radius: ${CARD_STYLES.mobile.borderRadius};
+    padding: ${CARD_STYLES.mobile.padding};
+    gap: ${CARD_STYLES.mobile.gap};
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.10);
+  }
 
   &:hover {
     transform: ${({ $isClicked }) =>
