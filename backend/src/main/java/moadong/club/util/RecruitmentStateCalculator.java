@@ -16,11 +16,19 @@ public class RecruitmentStateCalculator {
     public static final int ALWAYS_RECRUIT_YEAR = 2999;
 
     public static void calculate(Club club, ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
+        ClubRecruitmentStatus oldStatus = club.getClubRecruitmentInformation().getClubRecruitmentStatus();
         ClubRecruitmentStatus newStatus = calculateRecruitmentStatus(recruitmentStartDate, recruitmentEndDate);
         club.updateRecruitmentStatus(newStatus);
 
+        if (diffRecruitmentStatus(oldStatus, newStatus))
+            return;
+
         Message message = buildRecruitmentMessage(club, newStatus);
         club.sendPushNotification(message);
+    }
+
+    public static boolean diffRecruitmentStatus(ClubRecruitmentStatus oldStatus, ClubRecruitmentStatus newStatus) {
+        return oldStatus == newStatus;
     }
 
     public static ClubRecruitmentStatus calculateRecruitmentStatus(ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
