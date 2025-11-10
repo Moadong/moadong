@@ -9,18 +9,22 @@ import NextButton from '@/assets/images/icons/next_button_icon.svg';
 export const DesktopBannerImageList = [
   {
     backgroundImage: FirstSlideDesktopImage,
+    linkTo: '/introduce',
   },
   {
     backgroundImage: SecondSlideDesktopImage,
+    linkTo: '/introduce',
   },
 ];
 
 export const MobileBannerImageList = [
   {
     backgroundImage: FirstSlideMobileImage,
+    linkTo: '/introduce',
   },
   {
     backgroundImage: SecondSlideMobileImage,
+    linkTo: '/introduce',
   },
 ];
 

@@ -24,11 +24,16 @@ interface ClubInfoSectionWithRef extends ClubInfoSection {
 }
 
 const InfoBox = ({ sectionRefs, clubDetail }: InfoBoxProps) => {
+  const recruitmentPeriodDisplay = (() => {
+    const isAlways = clubDetail.recruitmentStatus === '상시모집';
+    return isAlways ? '상시모집' : clubDetail.recruitmentPeriod;  
+  })();
+  
   const infoData: ClubInfoSectionWithRef[] = [
     {
       title: '모집정보',
       descriptions: [
-        { label: '모집기간', value: clubDetail.recruitmentPeriod },
+        { label: '모집기간', value: recruitmentPeriodDisplay },
         { label: '모집대상', value: clubDetail.recruitmentTarget },
       ],
       refIndex: INFOTABS_SCROLL_INDEX.INTRODUCE_INFO_TAB,

@@ -18,24 +18,29 @@ const MainPage = () => {
   useTrackPageView('MainPage');
 
   const { selectedCategory } = useSelectedCategory();
-
   const { keyword } = useSearchKeyword();
   const { isSearching } = useSearchIsSearching();
   const recruitmentStatus = 'all';
   const division = 'all';
   const searchCategory = isSearching ? 'all' : selectedCategory;
   const tabs = ['중앙동아리'] as const;
-  const [active, setActive] = useState<typeof tabs[number]>('중앙동아리');
+  const [active, setActive] = useState<(typeof tabs)[number]>('중앙동아리');
   // TODO: 추후 확정되면 DivisionKey(중동/가동/과동) 같은 타입을
   // types/club.ts에 정의해서 tabs 관리하도록 리팩터링하기
-  
-  const {
-    data: clubs,
-    error,
-    isLoading,
-  } = useGetCardList(keyword, recruitmentStatus, division, searchCategory);
-  const isEmpty = !isLoading && (!clubs || clubs.length === 0);
-  const hasData = clubs && clubs.length > 0;
+
+  const { data, error, isLoading } = useGetCardList({
+    keyword,
+    recruitmentStatus,
+    category: searchCategory,
+    division,
+  });
+
+  const clubs = data?.clubs || [];
+  // const totalCount = data?.totalCount || 0; // ⚠️ 백엔드 업데이트 전까지 임시 주석
+  const totalCount = data?.totalCount ?? clubs.length;
+
+  const isEmpty = !isLoading && clubs.length === 0;
+  const hasData = clubs.length > 0;
 
   const clubList = useMemo(() => {
     if (!hasData) return null;
@@ -55,14 +60,24 @@ const MainPage = () => {
       />
       <Styled.PageContainer>
         <CategoryButtonList />
-        <Styled.SectionTabs>
-          {tabs
-            .map((tab) =>(
-            <Styled.Tab key={tab} $active={active===tab} onClick={() => setActive(tab)}>
-              {tab}
-            </Styled.Tab>
-          ))}
-        </Styled.SectionTabs>
+
+        <Styled.SectionBar>
+          <Styled.SectionTabs>
+            {tabs.map((tab) => (
+              <Styled.Tab
+                key={tab}
+                $active={active === tab}
+                onClick={() => setActive(tab)}
+              >
+                {tab}
+              </Styled.Tab>
+            ))}
+          </Styled.SectionTabs>
+          <Styled.TotalCountResult role='status'>
+            {`전체 ${isLoading ? 0 : totalCount}개의 동아리`}
+          </Styled.TotalCountResult>
+        </Styled.SectionBar>
+
         <Styled.ContentWrapper>
           {isLoading ? (
             <Spinner />
