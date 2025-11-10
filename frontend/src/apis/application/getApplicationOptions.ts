@@ -18,10 +18,7 @@ const getApplicationOptions = async (clubId: string) => {
         if (result && result.data && Array.isArray(result.data.forms)) {
             forms = result.data.forms;
         }
-        return forms.map((form: { id: string; title: string }) => ({
-            id: form.id,
-            title: form.title,
-        }));
+        return forms;
     } catch (error) {
         console.error('지원서 옵션 조회 중 오류가 발생했습니다.', error);
         throw error;
