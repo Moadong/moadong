@@ -41,8 +41,17 @@ public class ClubApplyAdminController {
         return Response.ok("success create application");
     }
 
-    @PutMapping("/application/{applicationFormId}")
-    @Operation(summary = "클럽 지원서 양식 수정", description = "클럽 지원서 양식을 수정합니다")
+    @PatchMapping("/application/{applicationFormId}")
+    @Operation(summary = "클럽 지원서 양식 수정",
+            description = "클럽 지원서 양식을 부분적으로 수정합니다.<br>" +
+                    "수정 가능한 정보는 다음과 같습니다.<br>" +
+                    "- 지원서 제목 (title)<br>" +
+                    "- 지원서 설명 (description)<br>" +
+                    "- 활성화 여부 (active)<br>" +
+                    "- 질문 목록 (questions)<br>" +
+                    "- 모집 학년도 (semesterYear)<br>" +
+                    "- 모집 학기 (semesterTerm)"
+    )
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> editClubApplicationForm(@PathVariable String applicationFormId,
