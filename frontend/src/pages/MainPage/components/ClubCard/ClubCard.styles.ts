@@ -74,9 +74,13 @@ const ClubInfo = styled.div`
   align-items: flex-start;
 `;
 
-const ClubName = styled.h2`
-  font-size: 1.25rem;
+const ClubName = styled.p`
+  font-size: 1.375rem;
   font-weight: bold;
+
+  @media (max-width: 500px) {
+    font-size: 1rem;
+  }
 `;
 
 export const StateBoxTagContainer = styled.div`
@@ -114,6 +118,7 @@ const Introduction = styled.p`
 
   @media (max-width: 500px) {
     margin: ${INTRODUCTION_MARGIN.mobile.margin};
+    font-size: 0.75rem;
   }
 `;
 
