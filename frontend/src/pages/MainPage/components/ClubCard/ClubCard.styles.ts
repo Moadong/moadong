@@ -35,6 +35,7 @@ const CardContainer = styled.div<{
     box-shadow 0.2s ease-in-out;
   transform: ${({ $isClicked }) => ($isClicked ? 'scale(1.05)' : 'scale(1)')};
   cursor: pointer;
+  touch-action: manipulation;
 
   @media (max-width: 500px) {
     border-radius: ${CARD_STYLES.mobile.borderRadius};
@@ -43,9 +44,11 @@ const CardContainer = styled.div<{
     box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.10);
   }
 
-  &:hover {
-    transform: ${({ $isClicked }) =>
-      $isClicked ? 'scale(1.05)' : 'scale(1.03)'};
+  @media (hover: hover) {
+    &:hover {
+      transform: ${({ $isClicked }) =>
+        $isClicked ? 'scale(1.05)' : 'scale(1.03)'};
+    }
   }
 
   &:active {
