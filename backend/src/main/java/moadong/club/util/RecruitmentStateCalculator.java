@@ -16,8 +16,12 @@ public class RecruitmentStateCalculator {
     public static final int ALWAYS_RECRUIT_YEAR = 2999;
 
     public static void calculate(Club club, ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
+        ClubRecruitmentStatus oldStatus = club.getClubRecruitmentInformation().getClubRecruitmentStatus();
         ClubRecruitmentStatus newStatus = calculateRecruitmentStatus(recruitmentStartDate, recruitmentEndDate);
         club.updateRecruitmentStatus(newStatus);
+
+        if (oldStatus == newStatus)
+            return;
 
         Message message = buildRecruitmentMessage(club, newStatus);
         club.sendPushNotification(message);
