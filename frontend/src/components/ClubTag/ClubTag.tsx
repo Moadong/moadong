@@ -38,6 +38,7 @@ const StyledTag = styled.span<{ color: string }>`
   color: #3a3a3a;
 
   @media (max-width: 500px) {
+  font-size: 0.75rem;
     height: 25px;
     padding: ${TAG_STYLES.mobile.padding};
     border-radius: ${TAG_STYLES.mobile.borderRadius};
