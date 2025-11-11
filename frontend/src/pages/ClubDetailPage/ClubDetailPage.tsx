@@ -13,6 +13,8 @@ import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import RecommendedClubs from '@/pages/ClubDetailPage/components/RecommendedClubs/RecommendedClubs';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
@@ -43,7 +45,7 @@ const ClubDetailPage = () => {
   return (
     <>
       {showHeader && <Header />}
-      <BackNavigationBar />
+      {!isInAppWebView() && <BackNavigationBar />}
       <Styled.PageContainer>
         <ClubDetailHeader
           name={clubDetail.name}
