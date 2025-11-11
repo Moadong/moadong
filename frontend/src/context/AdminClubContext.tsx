@@ -6,6 +6,8 @@ interface AdminClubContextType {
   setClubId: (id: string | null) => void;
   applicantsData: ApplicantsInfo | null;
   setApplicantsData: (data: ApplicantsInfo | null) => void;
+  applicationFormId: string | null;
+  setApplicationFormId: (id: string | null) => void;
 }
 
 const AdminClubContext = createContext<AdminClubContextType | undefined>(
@@ -19,9 +21,16 @@ export const AdminClubProvider = ({
 }) => {
   const [clubId, setClubId] = useState<string | null>(null);
   const [applicantsData, setApplicantsData] = useState<ApplicantsInfo | null>(null);
+  const [applicationFormId, setApplicationFormId] = useState<string | null>(null);
 
   return (
-    <AdminClubContext.Provider value={{ clubId, setClubId, applicantsData, setApplicantsData }}>
+    <AdminClubContext.Provider 
+      value={{ 
+        clubId, setClubId, 
+        applicantsData, setApplicantsData, 
+        applicationFormId, setApplicationFormId,
+      }}
+    >
       {children}
     </AdminClubContext.Provider>
   );
