@@ -4,15 +4,14 @@ import useTrackPageView from '@/hooks/useTrackPageView';
 import { CLUB_UNION_MEMBERS } from '@/constants/CLUB_UNION_INFO';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import Footer from '@/components/common/Footer/Footer';
-import useIsWebView from '@/hooks/useIsWebview';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const ClubUnionPage = () => {
   useTrackPageView('ClubUnionPage');
-  const { isWebView } = useIsWebView();
 
   return (
     <>
-      {!isWebView && <Header />}
+      {!isInAppWebView() && <Header />}
       <PageContainer>
         <Styled.Title>총동아리연합회 소개</Styled.Title>
         <Styled.IntroductionText>

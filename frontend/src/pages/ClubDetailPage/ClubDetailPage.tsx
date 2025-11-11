@@ -14,13 +14,12 @@ import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import RecommendedClubs from '@/pages/ClubDetailPage/components/RecommendedClubs/RecommendedClubs';
-import useIsWebView from '@/hooks/useIsWebview';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
   const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
-  const { isWebView } = useIsWebView();
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
@@ -46,7 +45,7 @@ const ClubDetailPage = () => {
   return (
     <>
       {showHeader && <Header />}
-      {!isWebView && <BackNavigationBar />}
+      {!isInAppWebView() && <BackNavigationBar />}
       <Styled.PageContainer>
         <ClubDetailHeader
           name={clubDetail.name}

@@ -2,14 +2,13 @@ import { useState } from 'react';
 import * as Styled from './InfoTabs.styles';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
-import useIsWebView from '@/hooks/useIsWebview';
+import useIsWebView from '@/utils/isInAppWebView';
 
 const tabLabels = ['모집정보', '동아리정보', '소개글', '활동사진'];
 
 const InfoTabs = ({ onTabClick }: { onTabClick: (index: number) => void }) => {
   const [activeTab, setActiveTab] = useState(0);
   const trackEvent = useMixpanelTrack();
-  const { isWebView } = useIsWebView();
 
   const handleTabClick = (index: number) => {
     setActiveTab(index);
@@ -22,7 +21,7 @@ const InfoTabs = ({ onTabClick }: { onTabClick: (index: number) => void }) => {
   };
 
   return (
-    <Styled.InfoTabWrapper isWebView={isWebView}>
+    <Styled.InfoTabWrapper isInAppWebView={isInAppWebView()}>
       {tabLabels.map((label, index) => (
         <Styled.InfoTabButton
           key={label}

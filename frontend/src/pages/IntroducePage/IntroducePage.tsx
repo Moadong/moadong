@@ -8,15 +8,13 @@ import CatchphraseSection from './components/sections/4.CatchphraseSection/Catch
 import FeatureSection from './components/sections/5.FeatureSection/FeatureSection';
 import ConvenienceSection from './components/sections/6.ConvenienceSection/ConvenienceSection';
 import ContactSection from './components/sections/7.ContactSection/ContactSection';
-import useIsWebView from '@/hooks/useIsWebview';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const IntroducePage = () => {
-  const { isWebView } = useIsWebView();
-
   return (
     <>
       <Styled.IntroducePageHeader>
-        {!isWebView && <Header />}
+        {!isInAppWebView() && <Header />}
       </Styled.IntroducePageHeader>
       <Styled.Main>
         <IntroSection />

@@ -1,9 +1,9 @@
 import styled from 'styled-components';
 
-export const InfoTabWrapper = styled.div<{ isWebView?: boolean }>`
+export const InfoTabWrapper = styled.div<{ isInAppWebView?: boolean }>`
   display: none;
   position: sticky;
-  top: ${({ isWebView }) => (isWebView ? '0px' : '70px')};
+  top: ${({ isInAppWebView }) => (isInAppWebView ? '0px' : '70px')};
   z-index: 1;
 
   @media (max-width: 500px) {
