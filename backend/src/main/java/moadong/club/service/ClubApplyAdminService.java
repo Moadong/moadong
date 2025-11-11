@@ -300,6 +300,15 @@ public class ClubApplyAdminService {
         if (request.active() != null)
             clubApplicationForm.updateFormStatus(request.active());
 
+        if (request.semesterYear() != null || request.semesterTerm() != null) {
+            Integer semesterYear = Optional.ofNullable(request.semesterYear()).orElse(clubApplicationForm.getSemesterYear());
+            SemesterTerm semesterTerm = Optional.ofNullable(request.semesterTerm()).orElse(clubApplicationForm.getSemesterTerm());
+            validateSemester(request.semesterYear(), request.semesterTerm());
+
+            clubApplicationForm.updateSemesterYear(semesterYear);
+            clubApplicationForm.updateSemesterTerm(semesterTerm);
+        }
+
         return clubApplicationForm;
     }
 
