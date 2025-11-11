@@ -303,7 +303,7 @@ public class ClubApplyAdminService {
         if (request.semesterYear() != null || request.semesterTerm() != null) {
             Integer semesterYear = Optional.ofNullable(request.semesterYear()).orElse(clubApplicationForm.getSemesterYear());
             SemesterTerm semesterTerm = Optional.ofNullable(request.semesterTerm()).orElse(clubApplicationForm.getSemesterTerm());
-            validateSemester(request.semesterYear(), request.semesterTerm());
+            validateSemester(semesterYear, semesterTerm);
 
             clubApplicationForm.updateSemesterYear(semesterYear);
             clubApplicationForm.updateSemesterTerm(semesterTerm);
