@@ -2,7 +2,7 @@ import { useState } from 'react';
 import * as Styled from './InfoTabs.styles';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
-import useIsWebView from '@/utils/isInAppWebView';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const tabLabels = ['모집정보', '동아리정보', '소개글', '활동사진'];
 
