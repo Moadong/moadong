@@ -1,4 +1,5 @@
-import { ApplicationFormData } from '@/types/application';
+import { ApplicationFormData, ApplicationForm } from '@/types/application';
+import { CLUB_BACK, CLUB_BOB, CLUB_IVF, CLUB_TEST } from '../constants/clubApi';
 
 type QuestionType =
   | 'CHOICE'
@@ -120,4 +121,23 @@ export const mockData: ApplicationFormData = {
       items: [{ value: '' }],
     },
   ],
+};
+
+export const mockOptions: Record<string, ApplicationForm[]> = {
+  /*보블리스*/
+  [CLUB_BOB]: [
+  { id: 'string101', title: '개발자로 지원하기' },
+  { id: 'string103', title: '기획자로 지원하기' },  
+  ],
+  /*IVF*/
+  [CLUB_IVF]: [ 
+    { id: 'string201', title: '선수로 지원하기' },
+    { id: 'string202', title: '매니저로 지원하기' },
+  ],
+  /*백경예술연구회*/
+  [CLUB_BACK]: [
+    { id: 'string301', title: '백경예술연구회 지원하기' },
+  ],
+  /*테스트*/
+  [CLUB_TEST]: [],
 };

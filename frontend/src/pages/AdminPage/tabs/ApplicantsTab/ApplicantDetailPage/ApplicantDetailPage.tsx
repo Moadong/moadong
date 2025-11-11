@@ -38,9 +38,9 @@ const ApplicantDetailPage = () => {
   const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
     ApplicationStatus.SUBMITTED,
   );
-  const { applicantsData, clubId } = useAdminClubContext();
+  const { applicantsData, clubId, applicationFormId } = useAdminClubContext();
 
-  const { data: formData, isLoading, isError } = useGetApplication(clubId!);
+  const { data: formData, isLoading, isError } = useGetApplication(clubId!, applicationFormId!);
   const { mutate: updateApplicant } = useUpdateApplicant(clubId!);
 
   const applicantIndex =
@@ -75,7 +75,7 @@ const ApplicantDetailPage = () => {
           },
         ]);
       }, 400),
-    [clubId, questionId],
+    [clubId, questionId, updateApplicant],
   );
 
   if (!applicantsData) {

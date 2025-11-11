@@ -83,7 +83,7 @@ const App = () => {
             }
           />
           <Route
-            path='/application/:clubId'
+            path='/application/:clubId/:applicationFormId'
             element={<ApplicationFormPage />}
           />
           <Route path='/club-union' element={<ClubUnionPage />} />
