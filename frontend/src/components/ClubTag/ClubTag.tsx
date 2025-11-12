@@ -23,7 +23,7 @@ const TAG_STYLES = {
     borderRadius: '8px',
   },
   mobile: {
-    padding: '4px 6px',
+    padding: '4px 8px',
     borderRadius: '6px',
   },
 } as const;
@@ -38,8 +38,10 @@ const TAG_FONT_SIZE = {
 } as const;
 
 const StyledTag = styled.span<{ color: string }>`
-  display: inline-block;
+  display: flex;
+  align-items: center;
   padding: ${TAG_STYLES.desktop.padding};
+  height: 28px;
   border-radius: ${TAG_STYLES.desktop.borderRadius};
   background-color: ${({ color }) => color};
   font-size: ${TAG_FONT_SIZE.desktop.fontSize};
