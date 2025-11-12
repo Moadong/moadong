@@ -27,7 +27,7 @@ export const SectionBar = styled.div`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 60px 8px 24px;
+  margin: 60px 0px 24px 8px;
 
   ${media.mobile} {
     margin: 32px 4px 16px;
@@ -76,7 +76,6 @@ export const TotalCountResult = styled.span`
   font-size: 18px;
   font-weight: bold;
   color: #787878;
-  padding-top: 13px;
 
   ${media.mobile} {
     font-size: 12px;
@@ -88,7 +87,6 @@ export const CardList = styled.div`
   width: 100%;
   max-width: 100%;
   gap: 20px;
-  margin-top: 50px;
   transition:
     gap 0.5s ease,
     grid-template-columns 0.5s ease;
