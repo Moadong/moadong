@@ -25,7 +25,7 @@ export const ContentWrapper = styled.div`
 
 export const SectionBar = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
   margin: 60px 0px 24px 8px;
 
