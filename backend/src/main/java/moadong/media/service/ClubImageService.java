@@ -23,7 +23,5 @@ public interface ClubImageService {
 
     void completeLogoUpload(String clubId, String fileUrl);
 
-    void completeFeedUpload(String clubId, List<String> newFeedImageList);
-
     void completeCoverUpload(String clubId, String fileUrl);
 }

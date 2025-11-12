@@ -77,18 +77,30 @@ public class CloudflareImageService implements ClubImageService{
     @Override
     @Transactional
     public void updateFeeds(String clubId, List<String> newFeedImageList) {
-        Club club = getClub(clubId);
+		Club club = getClub(clubId);
+		validateClubRecruitmentInformation(club);
 
-        if (newFeedImageList.size() > MAX_FEED_COUNT) {
-            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
-        }
+		if (newFeedImageList == null) {
+			newFeedImageList = java.util.Collections.emptyList();
+		}
 
-        List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
-        if (feedImages != null  && !feedImages.isEmpty()) {
-            deleteFeedImages(club, feedImages, newFeedImageList);
-        }
-        club.updateFeedImages(newFeedImageList);
-        clubRepository.save(club);
+		if (newFeedImageList.size() > MAX_FEED_COUNT) {
+			throw new RestApiException(ErrorCode.TOO_MANY_FILES);
+		}
+
+		//리스트에 대해 URL 제약 검증
+		for (String url : newFeedImageList) {
+			validateFileConstraints(club.getId(), FileType.FEED, url);
+		}
+
+		//검증 통과 후 누락된 기존 파일만 삭제
+		List<String> existingFeedImages = club.getClubRecruitmentInformation().getFeedImages();
+		if (existingFeedImages != null && !existingFeedImages.isEmpty()) {
+			deleteFeedImages(club, existingFeedImages, newFeedImageList);
+		}
+
+		club.updateFeedImages(newFeedImageList);
+		clubRepository.save(club);
 
     }
 
@@ -186,30 +198,6 @@ public class CloudflareImageService implements ClubImageService{
 
         club.updateLogo(fileUrl);
         clubRepository.save(club);
-    }
-
-
-    @Transactional
-    public void completeFeedUpload(String clubId, List<String> newFeedImageList) {
-        Club club = getClub(clubId);
-
-        // 각 URL에 대한 제약 검증 수행(기존 URL은 스킵)
-		List<String> existing = club.getClubRecruitmentInformation().getFeedImages();
-		java.util.HashSet<String> existingSet = existing == null ? new java.util.HashSet<>() : new java.util.HashSet<>(existing);
-		java.util.HashSet<String> newDistinct = new java.util.HashSet<>();
-		for (String url : newFeedImageList) {
-			if (!existingSet.contains(url)) {
-				validateFileConstraints(club.getId(), FileType.FEED, url);
-				newDistinct.add(url);
-			}
-		}
-
-		// 총 개수 검증: 기존 + 신규(중복 제외) <= MAX_FEED_COUNT
-		int existingCount = existing == null ? 0 : existing.size();
-		if (existingCount + newDistinct.size() > MAX_FEED_COUNT) {
-            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
-        }
-
     }
 
     @Override

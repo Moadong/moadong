@@ -7,7 +7,6 @@ import moadong.global.payload.Response;
 import moadong.media.dto.FeedUpdateRequest;
 import moadong.media.dto.PresignedUploadResponse;
 import moadong.media.dto.UploadCompleteRequest;
-import moadong.media.dto.UploadCompleteListRequest;
 import moadong.media.dto.UploadUrlRequest;
 import moadong.media.service.ClubImageService;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -81,13 +80,7 @@ public class ClubImageController {
         return Response.ok(response);
     }
 
-    @PostMapping("/{clubId}/feed/complete")
-    @Operation(summary = "피드 이미지 업로드 완료", description = "클라이언트가 Presigned URL로 업로드한 후 호출하는 완료 API입니다.")
-    public ResponseEntity<?> completeFeedUpload(@PathVariable String clubId,
-                                                @RequestBody UploadCompleteListRequest request) {
-        clubImageService.completeFeedUpload(clubId, request.fileUrls());
-        return Response.ok("success upload feed");
-    }
+    // feed complete API는 더 이상 사용하지 않습니다. (검증은 updateFeeds에서 수행)
 
     @PostMapping("/{clubId}/cover/upload-url")
     @Operation(summary = "커버 이미지 업로드 URL 생성", description = "커버 이미지 업로드를 위한 Presigned URL을 생성합니다.")
