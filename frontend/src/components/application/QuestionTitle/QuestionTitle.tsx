@@ -25,13 +25,12 @@ const QuestionTitle = ({
     if (textAreaRef.current) {
       const el = textAreaRef.current;
       if (mode === 'answer') {
-        el.style.width = el.value.length + "ch";
+        el.style.width = el.value.length + 'ch';
       }
       el.style.height = '0px';
       el.style.height = `${el.scrollHeight}px`;
     }
   }, [title]);
-  
   return (
     <Styled.QuestionTitleRow>
       {!isMobile && id && (
@@ -50,9 +49,8 @@ const QuestionTitle = ({
             }
           }}
           value={title}
-          data-placeholder={title ? '' : APPLICATION_FORM.QUESTION_TITLE.placeholder}
-        >
-        </Styled.QuestionTitleText>
+          placeholder={title ? '' : APPLICATION_FORM.QUESTION_TITLE.placeholder}
+        ></Styled.QuestionTitleText>
         {mode === 'answer' && required && <Styled.QuestionRequired />}
       </Styled.QuestionTitleTextContainer>
     </Styled.QuestionTitleRow>
