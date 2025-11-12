@@ -5,7 +5,6 @@ import static moadong.media.util.ClubImageUtil.isImageExtension;
 
 import jakarta.annotation.PostConstruct;
 import java.time.Duration;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -79,24 +78,9 @@ public class CloudflareImageService implements ClubImageService{
     @Transactional
     public void updateFeeds(String clubId, List<String> newFeedImageList) {
         Club club = getClub(clubId);
-        validateClubRecruitmentInformation(club);
 
         if (newFeedImageList.size() > MAX_FEED_COUNT) {
             throw new RestApiException(ErrorCode.TOO_MANY_FILES);
-        }
-        // 각 URL에 대한 제약 검증 수행(기존 URL은 스킵)
-        List<String> existing = club.getClubRecruitmentInformation().getFeedImages();
-        if (existing == null || existing.isEmpty()) {
-            for (String url : newFeedImageList) {
-                validateFileConstraints(club.getId(), FileType.FEED, url);
-            }
-        } else {
-            java.util.HashSet<String> existingSet = new java.util.HashSet<>(existing);
-            for (String url : newFeedImageList) {
-                if (!existingSet.contains(url)) {
-                    validateFileConstraints(club.getId(), FileType.FEED, url);
-                }
-            }
         }
 
         List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
@@ -204,28 +188,28 @@ public class CloudflareImageService implements ClubImageService{
         clubRepository.save(club);
     }
 
-    @Override
+
     @Transactional
-    public void completeFeedUpload(String clubId, String fileUrl) {
-        validateFileConstraints(clubId, FileType.FEED, fileUrl);
-
-        // 트랜잭션 내에서 최신 데이터를 다시 조회하여 Race Condition 방지
+    public void completeFeedUpload(String clubId, List<String> newFeedImageList) {
         Club club = getClub(clubId);
-        validateClubRecruitmentInformation(club);
 
-        List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
-        if (feedImages == null) {
-            feedImages = new ArrayList<>();
-        }
+        // 각 URL에 대한 제약 검증 수행(기존 URL은 스킵)
+		List<String> existing = club.getClubRecruitmentInformation().getFeedImages();
+		java.util.HashSet<String> existingSet = existing == null ? new java.util.HashSet<>() : new java.util.HashSet<>(existing);
+		java.util.HashSet<String> newDistinct = new java.util.HashSet<>();
+		for (String url : newFeedImageList) {
+			if (!existingSet.contains(url)) {
+				validateFileConstraints(club.getId(), FileType.FEED, url);
+				newDistinct.add(url);
+			}
+		}
 
-        // 동시 요청 시 최신 상태를 다시 확인
-        if (feedImages.size() + 1 > MAX_FEED_COUNT) {
+		// 총 개수 검증: 기존 + 신규(중복 제외) <= MAX_FEED_COUNT
+		int existingCount = existing == null ? 0 : existing.size();
+		if (existingCount + newDistinct.size() > MAX_FEED_COUNT) {
             throw new RestApiException(ErrorCode.TOO_MANY_FILES);
         }
 
-        feedImages.add(fileUrl);
-        club.updateFeedImages(feedImages);
-        clubRepository.save(club);
     }
 
     @Override
