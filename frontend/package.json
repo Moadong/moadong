@@ -4,8 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite --config ./config/vite.config.ts",
-    "build:dev": "vite --config ./config/vite.config.ts",
-    "build:prod": "vitebuild --config ./config/vite.config.ts",
+    "build:dev": "vite build --config ./config/vite.config.ts",
+    "build:prod": "vite build --config ./config/vite.config.ts",
     "webpack:dev": "tsx --no-cache ./node_modules/webpack-cli/bin/cli.js serve --config config/webpack.dev.ts",
     "webpack:build:dev": "tsx ./node_modules/webpack-cli/bin/cli.js --config config/webpack.dev.ts",
     "webpack:build:prod": "tsx ./node_modules/webpack-cli/bin/cli.js --config config/webpack.prod.ts",
