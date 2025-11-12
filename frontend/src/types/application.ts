@@ -50,6 +50,9 @@ export interface ApplicationFormData {
   title: string;
   description: string;
   questions: Question[];
+  semesterYear: number;
+  semesterTerm: string;
+  active: string;
 }
 
 export interface AnswerItem {

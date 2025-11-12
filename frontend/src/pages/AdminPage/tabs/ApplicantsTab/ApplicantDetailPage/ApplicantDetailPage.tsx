@@ -45,12 +45,16 @@ const ApplicantDetailPage = () => {
   const applicant = applicantsData?.applicants[applicantIndex];
   const applicationFormId = applicant?.applicationFormId;
 
+  if (!applicationFormId) {
+    return <div>지원서 정보를 불러올 수 없습니다.</div>;
+  }
+
   const {
     data: formData,
     isLoading,
     isError,
   } = useGetApplication(clubId!, applicationFormId);
-  const { mutate: updateApplicant } = useUpdateApplicant(applicationFormId!);
+  const { mutate: updateApplicant } = useUpdateApplicant(applicationFormId);
 
   useEffect(() => {
     if (applicant) {

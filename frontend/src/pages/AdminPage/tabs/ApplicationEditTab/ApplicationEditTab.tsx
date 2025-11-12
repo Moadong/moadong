@@ -15,15 +15,14 @@ import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useParams, useNavigate } from 'react-router-dom';
+import Spinner from '@/components/common/Spinner/Spinner';
 
 const ApplicationEditTab = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { clubId } = useAdminClubContext();
-  const { formId } = useParams<{ formId: string }>();
-  if (!clubId) return null;
-
-  const { data:existingFormData, isLoading, isError, error} = useGetApplication(clubId, formId ?? '');
+  const { clubId, isClubLoading, applicationFormId: formId } = useAdminClubContext();
+  
+  const { data:existingFormData, isLoading, isError, error} = useGetApplication(clubId ?? undefined, formId ?? '');
 
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
@@ -56,13 +55,24 @@ const ApplicationEditTab = () => {
       updateApplication(data, applicationFormId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allApplicationForms'] });
-      queryClient.invalidateQueries({ queryKey: ['applicationForm', formId] });
+      queryClient.invalidateQueries({ queryKey: ['applicationForm', clubId, formId] });
       alert('지원서가 성공적으로 수정되었습니다.');
       navigate('/admin/applicants');
     },
     onError: (err: Error) => alert(`지원서 수정에 실패했습니다: ${err.message}`),
   });
-    
+  
+  if (isClubLoading) {
+    return <Spinner />;
+  }
+  if (!clubId) return <div>클럽 정보가 없습니다.</div>;
+  
+  if (isLoading) {
+    return <div>지원서 정보를 불러오는 중...</div>;
+  }
+  if (isError) {
+    return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
+  }
 
   const addQuestion = () => {
     const newQuestion: Question = {
@@ -161,6 +171,7 @@ const ApplicationEditTab = () => {
     const payload = {
       ...formData,
       questions: reorderedQuestions,
+      active: formData.active ?? false,
     };
     if (formId) {
       updateMutate({
@@ -171,13 +182,6 @@ const ApplicationEditTab = () => {
       createMutate(payload);
     }
   };
-
-  if (isLoading) {
-    return <div>지원서 정보를 불러오는 중...</div>;
-  }
-  if (isError) {
-    return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
-  }
 
   return (
     <>
