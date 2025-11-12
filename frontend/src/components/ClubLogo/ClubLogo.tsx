@@ -9,8 +9,8 @@ interface ClubLogoProps {
 
 const presets = {
   main: {
-    desktop: { width: '66px', height: '66px', radius: '6px' },
-    mobile: { width: '50px', height: '50px', radius: '6px' },
+    desktop: { width: '66px', height: '66px', radius: '14px' },
+    mobile: { width: '50px', height: '50px', radius: '10px' },
   },
   detail: {
     desktop: { width: '80px', height: '80px', radius: '10px' },
