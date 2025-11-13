@@ -20,6 +20,7 @@ import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage
 import ApplicantsTab from './pages/AdminPage/tabs/ApplicantsTab/ApplicantsTab';
 import ApplicantDetailPage from './pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPage';
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
+import { ScrollButton } from '@/components/common/Button/scrollButton';
 import 'swiper/css';
 
 const queryClient = new QueryClient();
@@ -29,6 +30,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <GlobalStyles />
+        <ScrollButton />
         <Routes>
           <Route
             path='/'
