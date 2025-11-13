@@ -18,28 +18,28 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { EVENT_NAME } from '@/constants/eventName';
 
 const ApplicationFormPage = () => {
-  const { clubId, formId } = useParams<{ clubId: string; formId: string }>();
+  const { clubId, applicationFormId } = useParams<{ clubId: string; applicationFormId: string }>();
   const navigate = useNavigate();
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
   const trackEvent = useMixpanelTrack();
 
-  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId!);
+  if (!clubId || !applicationFormId) return null;
+
+  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId);
   const {
     data: formData,
     isLoading,
     isError,
     error: applicationError,
-  } = useGetApplication(clubId!, formId!);
+  } = useGetApplication(clubId, applicationFormId);
 
   useTrackPageView(
     'ApplicationFormPage',
     clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
   );
 
-  if (!clubId || !formId) return null;
-
-  const STORAGE_KEY = `applicationAnswers_${formId}`;
+  const STORAGE_KEY = `applicationAnswers_${clubId}_${applicationFormId}`;
   const saved = localStorage.getItem(STORAGE_KEY);
   const initialAnswers = saved ? JSON.parse(saved) : [];
 
@@ -51,7 +51,7 @@ const ApplicationFormPage = () => {
 
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
-  }, [answers]);
+  }, [answers, clubId, applicationFormId]);
 
   if (isLoading) return <Spinner />;
   if (isError || clubError) {
@@ -101,15 +101,15 @@ const ApplicationFormPage = () => {
     }
 
     try {
-      await applyToClub(clubId, formId, answers);
+      await applyToClub(clubId, applicationFormId, answers);
       localStorage.removeItem(STORAGE_KEY);
       alert(
-        `"${clubDetail.name}" 동아리에 성공적으로 지원되었습니다.\n좋은 결과 있으시길 바랍니다🤗`,
+        `"${clubDetail.name}" 동아리에 성공적으로 지원되었습니다.\n좋은 결과 있으시길 바랍니다`,
       );
       navigate(`/club/${clubId}`, { replace: true });
     } catch (error) {
       alert(
-        '⚠️ 답변 제출에 실패했어요.\n네트워크 상태를 확인하거나 잠시 후 다시 시도해 주세요.',
+        '답변 제출에 실패했어요.\n네트워크 상태를 확인하거나 잠시 후 다시 시도해 주세요.',
       );
     }
   };

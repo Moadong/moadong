@@ -12,6 +12,10 @@ export const BannerContainer = styled.div`
   margin-top: 90px;
   position: relative;
 
+  ${media.laptop} {
+    padding: 0 20px;
+  }
+
   ${media.mobile} {
     margin-top: 56px;
     padding: 0;

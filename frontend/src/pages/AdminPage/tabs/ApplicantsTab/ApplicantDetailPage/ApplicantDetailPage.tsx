@@ -38,12 +38,11 @@ const ApplicantDetailPage = () => {
   const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
     ApplicationStatus.SUBMITTED,
   );
-  const { applicantsData, clubId } = useAdminClubContext();
+  const { applicantsData, clubId, applicationFormId } = useAdminClubContext();
 
   const applicantIndex =
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
   const applicant = applicantsData?.applicants[applicantIndex];
-  const applicationFormId = applicant?.applicationFormId;
 
   if (!applicationFormId) {
     return <div>지원서 정보를 불러올 수 없습니다.</div>;
@@ -84,7 +83,7 @@ const ApplicantDetailPage = () => {
           },
         ]);
       }, 400),
-    [updateApplicant, questionId],
+    [clubId, questionId, updateApplicant],
   );
 
   if (!applicantsData) {

@@ -1,15 +1,14 @@
 import styled from 'styled-components';
-import {media} from '@/styles/mediaQuery';
+import { media } from '@/styles/mediaQuery';
 
 export const PageContainer = styled.div`
   max-width: 1180px;
   margin: 0 auto;
 
-  @media (max-width: 1280px) {
+  ${media.laptop} {
     padding: 0 20px;
   }
 
-  @media (max-width: 500px) {
   ${media.mobile} {
     padding: 0 20px;
   }
@@ -21,13 +20,14 @@ export const PageContainer = styled.div`
 
 export const ContentWrapper = styled.div`
   width: 100%;
+  margin-bottom: 60px;
 `;
 
 export const SectionBar = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-end;
   justify-content: space-between;
-  margin: 60px 8px 24px;
+  margin: 60px 0px 24px 8px;
 
   ${media.mobile} {
     margin: 32px 4px 16px;
@@ -39,16 +39,16 @@ export const SectionTabs = styled.nav`
   gap: 18px;
 
   ${media.mobile} {
-  gap: 16px;
+    gap: 16px;
   }
 `;
 
-export const Tab = styled.button<{$active?: boolean}>`
+export const Tab = styled.button<{ $active?: boolean }>`
   display: flex;
   position: relative;
   font-size: 24px;
   font-weight: bold;
-  color: ${({$active}) => $active ? '#787878' : '#DCDCDC'};
+  color: ${({ $active }) => ($active ? '#787878' : '#DCDCDC')};
   border: none;
   background: none;
   cursor: pointer;
@@ -62,13 +62,13 @@ export const Tab = styled.button<{$active?: boolean}>`
     height: 1.5px;
     background: #787878;
     border-radius: 1.5px;
-    transform: ${({$active}) => $active ? 'scaleX(1)' : 'scaleX(0)'};
+    transform: ${({ $active }) => ($active ? 'scaleX(1)' : 'scaleX(0)')};
     transform-origin: center;
     transition: transform 0.2s ease;
   }
 
   ${media.mobile} {
-    font-size: 14px
+    font-size: 14px;
   }
 `;
 
@@ -76,7 +76,6 @@ export const TotalCountResult = styled.span`
   font-size: 18px;
   font-weight: bold;
   color: #787878;
-  padding-top: 13px;
 
   ${media.mobile} {
     font-size: 12px;
@@ -88,7 +87,6 @@ export const CardList = styled.div`
   width: 100%;
   max-width: 100%;
   gap: 20px;
-  margin-top: 50px;
   transition:
     gap 0.5s ease,
     grid-template-columns 0.5s ease;
@@ -102,7 +100,7 @@ export const CardList = styled.div`
   @media (max-width: 750px) {
     grid-template-columns: repeat(1, 1fr);
   }
-  
+
   @media (max-width: 500px) {
     gap: 6px;
     margin-top: 16px;

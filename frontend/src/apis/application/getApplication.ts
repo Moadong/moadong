@@ -2,12 +2,15 @@ import API_BASE_URL from '@/constants/api';
 
 const getApplication = async (clubId: string, applicationFormId: string) => {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`,
-    );
+    const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`);
     if (!response.ok) {
-      console.error(`Failed to fetch: ${response.statusText}`);
-      throw new Error((await response.json()).message);
+      let message = response.statusText;
+      try {
+        const errorData = await response.json();
+        if (errorData?.message) message = errorData.message;
+      } catch {}
+      console.error(`Failed to fetch: ${message}`);
+      throw new Error(message);
     }
 
     const result = await response.json();

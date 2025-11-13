@@ -59,3 +59,8 @@ export interface AnswerItem {
   id: number;
   value: string;
 }
+
+export interface ApplicationForm {
+  id: string;
+  title: string;
+}
