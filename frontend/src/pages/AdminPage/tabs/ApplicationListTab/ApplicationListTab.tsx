@@ -105,13 +105,8 @@ const ApplicationListTab = () => {
         </Styled.AddButton>
       </Styled.Header>
       {semesterGroups.map((group: any) => {
-        const semesterTerm = group.semesterTerm;
-        if(semesterTerm === 'FIRST') {
-          group.semesterTerm = '1학기';
-        } else {
-          group.semesterTerm = '2학기';
-        }
-        const semesterTitle = `${group.semesterYear}년 ${group.semesterTerm}`;
+        const semesterTermLabel = group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
+        const semesterTitle = `${group.semesterYear}년 ${semesterTermLabel}`;
         return (
         <Styled.ApplicationList key={semesterTitle}>
           <Styled.ListHeader>
