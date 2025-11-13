@@ -15,12 +15,10 @@ import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.repository.ClubApplicantsRepository;
 import moadong.club.repository.ClubApplicationFormsRepository;
 import moadong.club.repository.ClubApplicationFormsRepositoryCustom;
-import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.AESCipher;
 import moadong.user.payload.CustomUserDetails;
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import java.util.concurrent.ConcurrentHashMap;
@@ -29,7 +27,6 @@ import org.springframework.transaction.support.TransactionSynchronizationManager
 import org.springframework.transaction.support.TransactionSynchronization;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -40,7 +37,6 @@ import java.util.stream.Collectors;
 @AllArgsConstructor
 @Slf4j
 public class ClubApplyAdminService {
-    private final ClubRepository clubRepository;
     private final ClubApplicationFormsRepository clubApplicationFormsRepository;
     private final ClubApplicantsRepository clubApplicantsRepository;
     private final AESCipher cipher;
@@ -83,7 +79,7 @@ public class ClubApplyAdminService {
         boolean allowed = items.stream()
                 .anyMatch(it -> it.year() == semesterYear && it.term() == semesterTerm);
         if (!allowed) {
-            throw new IllegalArgumentException("Invalid semester selection");
+            throw new RestApiException(ErrorCode.APPLICATION_SEMESTER_INVALID);
         }
 
     }
@@ -124,67 +120,6 @@ public class ClubApplyAdminService {
         return ClubApplicationFormsResponse.builder()
                 .forms(clubApplicationFormsRepositoryCustom.findClubApplicationFormsByClubId(user.getClubId()))
                 .build();
-    }
-
-    public ClubApplicationFormsResponse getGroupedClubApplicationForms(CustomUserDetails user) {
-        Sort sort = Sort.by(Sort.Direction.DESC, "editedAt")
-                .and(Sort.by(Sort.Direction.DESC, "id"));
-        List<ClubApplicationFormSlim> questionSlims = clubApplicationFormsRepository.findClubApplicationFormsByClubId(user.getClubId(), sort);
-
-        Map<SemesterKey, List<ClubApplicationFormsResultItem>> grouped = new LinkedHashMap<>();
-        for (ClubApplicationFormSlim s : questionSlims) {
-            Integer year = s.getSemesterYear();
-            SemesterTerm term = s.getSemesterTerm();
-            LocalDateTime editedAt = s.getEditedAt();
-
-            grouped.computeIfAbsent(new SemesterKey(year, term), k -> new ArrayList<>())
-                    .add(new ClubApplicationFormsResultItem(
-                            s.getId(),
-                            s.getTitle(),
-                            editedAt,
-                            s.getStatus()
-
-                    ));
-        }
-
-        //그룹 정렬 -> 연도 DESC, 학기순 DESC(SECOND > FIRST)
-        Comparator<Map.Entry<SemesterKey, List<ClubApplicationFormsResultItem>>> groupComparator =
-                Comparator.comparing(
-                                (Map.Entry<SemesterKey, List<ClubApplicationFormsResultItem>> e) -> e.getKey().year(),
-                                Comparator.nullsLast(Comparator.reverseOrder()))
-                        .thenComparing(
-                                e -> termRank(e.getKey().term()),
-                                Comparator.nullsLast(Comparator.reverseOrder()))
-                        .thenComparing(
-                                e -> termName(e.getKey().term()),
-                                Comparator.nullsLast(Comparator.reverseOrder()));
-
-        return ClubApplicationFormsResponse.builder()
-                .forms(grouped.entrySet().stream()
-                        .sorted(groupComparator)
-                        .map(e -> new ClubApplicationFormsResult(
-                                e.getKey().year(),
-                                e.getKey().term(),
-                                e.getValue()
-                        ))
-                        .collect(Collectors.toList()))
-                .build();
-    }
-
-    private static int termRank(SemesterTerm term) {
-        if (term == null) return -1;
-        return switch (term) {
-            case SECOND -> 2;
-            case FIRST -> 1;
-            default -> 0;
-        };
-    }
-
-    private static String termName(SemesterTerm term) {
-        return term == null ? "" : term.name();
-    }
-
-    private record SemesterKey(Integer year, SemesterTerm term) {
     }
 
     public ClubApplyInfoResponse getClubApplyInfo(String applicationFormId, CustomUserDetails user) {

@@ -56,11 +56,7 @@ public class ClubApplyAdminController {
     @Operation(summary = "클럽의 모든 지원서 양식 목록 불러오기", description = "클럽의 모든 지원서 양식들을 학기별로 분류하여 불러옵니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> getClubApplications(@CurrentUser CustomUserDetails user,
-                                                 @RequestParam(defaultValue = "agg") String mode) {  //agg면 aggregation사용, server면, 서비스에서 그룹 및 정렬
-        if ("server".equalsIgnoreCase(mode)) {
-            return Response.ok(clubApplyAdminService.getGroupedClubApplicationForms(user));
-        }
+    public ResponseEntity<?> getClubApplications(@CurrentUser CustomUserDetails user) {
         return Response.ok(clubApplyAdminService.getClubApplicationForms(user));
     }
 
