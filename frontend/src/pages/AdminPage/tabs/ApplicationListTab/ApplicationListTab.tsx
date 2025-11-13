@@ -7,12 +7,14 @@ import ApplicationMenu from './ApplicationMenu';
 import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { useAdminClubContext } from '@/context/AdminClubContext';
+// import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
 
 
 const ApplicationListTab = () => {
   const {data: allforms, isLoading, isError, error} = useGetApplicationlist();
   const navigate = useNavigate();
   const { setApplicationFormId } = useAdminClubContext();
+  // const { mutate: deleteApplication } = useDeleteApplication();
 
   const handleGoToNewForm = () => {
     setApplicationFormId(null);
@@ -22,6 +24,20 @@ const ApplicationListTab = () => {
     setApplicationFormId(applicationFormId);
     navigate(`/admin/application-list/edit`);
   }
+
+  // const handleDeleteApplication = (applicationFormId: string) => {
+  //   // 사용자에게 재확인
+  //   if (window.confirm('지원서 양식을 정말 삭제하시겠습니까?\n삭제된 양식은 복구할 수 없습니다.')) {
+  //     deleteApplication(applicationFormId, {
+  //       onSuccess: () => {
+  //         setOpenMenuId(null);
+  //         // 성공 알림
+  //         alert('삭제되었습니다.');
+  //       },
+  //     });
+  //   }
+  // };
+
   const [openMenuId, setOpenMenuId] = useState<number | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
@@ -125,7 +141,10 @@ const ApplicationListTab = () => {
                     <Styled.MoreButtonIcon src={Morebutton} />
                   </Styled.MoreButton>
                   {openMenuId === application.id && (
-                    <ApplicationMenu isActive={isActive} />
+                    <ApplicationMenu
+                      isActive={isActive}
+                      // onDelete={() => handleDeleteApplication(application.id)}
+                    />
                   )}
                 </Styled.MoreButtonContainer>
               </Styled.ApplicationDatetable>
