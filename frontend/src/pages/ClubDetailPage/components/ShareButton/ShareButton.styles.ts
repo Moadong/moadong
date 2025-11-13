@@ -5,3 +5,8 @@ export const ShareButtonContainer = styled.div`
   justify-content: flex-end;
   cursor: pointer;
 `;
+
+export const ShareButtonIcon = styled.img`
+  width: 50px;
+  height: 50px;
+`;

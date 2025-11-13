@@ -12,6 +12,7 @@ import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEdit
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
 import ApplicationEditTab from './pages/AdminPage/tabs/ApplicationEditTab/ApplicationEditTab';
+import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
@@ -20,6 +21,7 @@ import ApplicantsTab from './pages/AdminPage/tabs/ApplicantsTab/ApplicantsTab';
 import ApplicantDetailPage from './pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPage';
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import { ScrollButton } from '@/components/common/Button/scrollButton';
+import 'swiper/css';
 
 const queryClient = new QueryClient();
 
@@ -64,7 +66,11 @@ const App = () => {
                       <Route path='photo-edit' element={<PhotoEditTab />} />
                       <Route path='account-edit' element={<AccountEditTab />} />
                       <Route
-                        path='application-edit'
+                        path='application-list'
+                        element={<ApplicationListTab />}
+                      />
+                      <Route
+                        path='application-list/edit'
                         element={<ApplicationEditTab />}
                       />
                       <Route path='applicants' element={<ApplicantsTab />} />
@@ -79,7 +85,7 @@ const App = () => {
             }
           />
           <Route
-            path='/application/:clubId'
+            path='/application/:clubId/:applicationFormId'
             element={<ApplicationFormPage />}
           />
           <Route path='/club-union' element={<ClubUnionPage />} />

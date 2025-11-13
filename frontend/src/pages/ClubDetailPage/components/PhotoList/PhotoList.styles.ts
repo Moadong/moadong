@@ -15,6 +15,7 @@ export const PhotoListContainer = styled.div`
   border: 1px solid #dcdcdc;
   padding: 30px;
   gap: 30px;
+  margin-bottom: 60px;
 
   ${media.mobile} {
     margin-top: 0;

@@ -23,5 +23,8 @@ export const getClubList = async (
   }
 
   const result = await response.json();
-  return result.data.clubs;
+  return {
+    clubs: result.data.clubs,
+    totalCount: result.data.totalCount,
+  };
 };
