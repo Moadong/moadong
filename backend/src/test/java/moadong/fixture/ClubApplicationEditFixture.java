@@ -1,5 +1,6 @@
 package moadong.fixture;
 
+import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.request.ClubApplicationFormEditRequest;
 import java.util.ArrayList;
 
@@ -18,7 +19,9 @@ public class ClubApplicationEditFixture {
                 "테스트123",
                 "테스트 지원서입니다",
                 false,
-                new ArrayList<>()
+                new ArrayList<>(),
+                2025,
+                SemesterTerm.SECOND
         );
     }
 }

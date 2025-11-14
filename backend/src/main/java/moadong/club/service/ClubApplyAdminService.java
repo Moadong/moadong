@@ -6,10 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
 import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.*;
-import moadong.club.payload.request.ClubApplicantDeleteRequest;
-import moadong.club.payload.request.ClubApplicantEditRequest;
-import moadong.club.payload.request.ClubApplicationFormCreateRequest;
-import moadong.club.payload.request.ClubApplicationFormEditRequest;
+import moadong.club.payload.request.*;
 import moadong.club.payload.response.ClubApplicationFormsResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.repository.ClubApplicantsRepository;
@@ -20,16 +17,16 @@ import moadong.global.exception.RestApiException;
 import moadong.global.util.AESCipher;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.stereotype.Service;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CompletableFuture;
-import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -87,12 +84,12 @@ public class ClubApplyAdminService {
     public void createClubApplicationForm(CustomUserDetails user, ClubApplicationFormCreateRequest request) {
         validateSemester(request.semesterYear(), request.semesterTerm());
 
-        ClubApplicationForm clubApplicationForm = createQuestions(
+        ClubApplicationForm clubApplicationForm = createApplicationForm(
                 ClubApplicationForm.builder()
                         .clubId(user.getClubId())
                         .build(),
                 request);
-        clubApplicationFormsRepository.save(createQuestions(clubApplicationForm, request));
+        clubApplicationFormsRepository.save(clubApplicationForm);
     }
 
     @Transactional
@@ -102,7 +99,7 @@ public class ClubApplyAdminService {
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
         clubApplicationForm.updateEditedAt();
-        clubApplicationFormsRepository.save(updateQuestions(clubApplicationForm, request));
+        clubApplicationFormsRepository.save(updateApplicationForm(clubApplicationForm, request));
     }
 
     @Transactional //test 사용
@@ -110,7 +107,7 @@ public class ClubApplyAdminService {
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findById(applicationFormId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        updateQuestions(clubApplicationForm, request);
+        updateApplicationForm(clubApplicationForm, request);
         clubApplicationForm.updateEditedAt();
 
         clubApplicationFormsRepository.save(clubApplicationForm);
@@ -188,12 +185,12 @@ public class ClubApplyAdminService {
 
             // SSE 이벤트 발송
             ApplicantStatusEvent event = new ApplicantStatusEvent(
-                app.getId(),
-                editRequest.status(),
-                editRequest.memo(),
-                ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(),
-                clubId,
-                applicationFormId
+                    app.getId(),
+                    editRequest.status(),
+                    editRequest.memo(),
+                    ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(),
+                    clubId,
+                    applicationFormId
             );
 
             TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
@@ -218,35 +215,8 @@ public class ClubApplyAdminService {
         clubApplicantsRepository.deleteAll(applicants);
     }
 
-    private ClubApplicationForm createQuestions(ClubApplicationForm clubApplicationForm, ClubApplicationFormCreateRequest request) {
-        List<ClubApplicationFormQuestion> newQuestions = new ArrayList<>();
-
-        for (var question : request.questions()) {
-            List<ClubQuestionItem> items = new ArrayList<>();
-
-            for (var item : question.items()) {
-                items.add(ClubQuestionItem.builder()
-                        .value(item.value())
-                        .build());
-            }
-
-            ClubQuestionOption options = ClubQuestionOption.builder()
-                    .required(question.options().required())
-                    .build();
-
-            ClubApplicationFormQuestion clubApplicationFormQuestion = ClubApplicationFormQuestion.builder()
-                    .id(question.id())
-                    .title(question.title())
-                    .description(question.description())
-                    .type(question.type())
-                    .options(options)
-                    .items(items)
-                    .build();
-
-            newQuestions.add(clubApplicationFormQuestion);
-        }
-
-        clubApplicationForm.updateQuestions(newQuestions);
+    private ClubApplicationForm createApplicationForm(ClubApplicationForm clubApplicationForm, ClubApplicationFormCreateRequest request) {
+        clubApplicationForm.updateQuestions(buildClubFormQuestions(request.questions()));
         clubApplicationForm.updateFormTitle(request.title());
         clubApplicationForm.updateFormDescription(request.description());
         clubApplicationForm.updateSemesterYear(request.semesterYear());
@@ -255,13 +225,32 @@ public class ClubApplyAdminService {
         return clubApplicationForm;
     }
 
-    /**
-     * update와 create 메서드는 추후 변경예정
-     */
-    private ClubApplicationForm updateQuestions(ClubApplicationForm clubApplicationForm, ClubApplicationFormEditRequest request) {
-        List<ClubApplicationFormQuestion> newQuestions = new ArrayList<>();
+    private ClubApplicationForm updateApplicationForm(ClubApplicationForm clubApplicationForm, ClubApplicationFormEditRequest request) {
+        if (request.questions() != null)
+            clubApplicationForm.updateQuestions(buildClubFormQuestions(request.questions()));
+        if (request.title() != null)
+            clubApplicationForm.updateFormTitle(request.title());
+        if (request.description() != null)
+            clubApplicationForm.updateFormDescription(request.description());
+        if (request.active() != null)
+            clubApplicationForm.updateFormStatus(request.active());
 
-        for (var question : request.questions()) {
+        if (request.semesterYear() != null || request.semesterTerm() != null) {
+            Integer semesterYear = Optional.ofNullable(request.semesterYear()).orElse(clubApplicationForm.getSemesterYear());
+            SemesterTerm semesterTerm = Optional.ofNullable(request.semesterTerm()).orElse(clubApplicationForm.getSemesterTerm());
+            validateSemester(semesterYear, semesterTerm);
+
+            clubApplicationForm.updateSemesterYear(semesterYear);
+            clubApplicationForm.updateSemesterTerm(semesterTerm);
+        }
+
+        return clubApplicationForm;
+    }
+
+    private List<ClubApplicationFormQuestion> buildClubFormQuestions(List<ClubApplyQuestion> questions) {
+        List<ClubApplicationFormQuestion> formQuestions = new ArrayList<>();
+
+        for (var question : questions) {
             List<ClubQuestionItem> items = new ArrayList<>();
 
             for (var item : question.items()) {
@@ -283,17 +272,11 @@ public class ClubApplyAdminService {
                     .items(items)
                     .build();
 
-            newQuestions.add(clubApplicationFormQuestion);
+            formQuestions.add(clubApplicationFormQuestion);
         }
 
-        clubApplicationForm.updateQuestions(newQuestions);
-        clubApplicationForm.updateFormTitle(request.title());
-        clubApplicationForm.updateFormDescription(request.description());
-        clubApplicationForm.updateFormStatus(request.active());
-
-        return clubApplicationForm;
+        return formQuestions;
     }
-
 
     // SSE 연결 생성
     public SseEmitter createSseConnection(String applicationFormId, CustomUserDetails user) {
@@ -311,7 +294,8 @@ public class ClubApplyAdminService {
         if (prev != null) {
             try {
                 prev.complete();
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {
+            }
         }
 
         sseConnections.put(connectionKey, emitter);
@@ -344,7 +328,7 @@ public class ClubApplyAdminService {
         entries.forEach(entry -> {
             String key = entry.getKey();
             SseEmitter emitter = entry.getValue();
-            
+
             try {
                 emitter.send(SseEmitter.event()
                         .name("applicant-status-changed")   // 이벤트 이름 지정
@@ -355,7 +339,8 @@ public class ClubApplyAdminService {
                 sseConnections.remove(key, emitter);
                 try {
                     emitter.completeWithError(e); // emitter 쪽도 정상 종료
-                } catch (Exception ignore) {}
+                } catch (Exception ignore) {
+                }
             }
         });
     }
