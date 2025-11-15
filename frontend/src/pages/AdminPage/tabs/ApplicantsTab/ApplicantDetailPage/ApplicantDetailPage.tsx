@@ -44,16 +44,12 @@ const ApplicantDetailPage = () => {
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
   const applicant = applicantsData?.applicants[applicantIndex];
 
-  if (!applicationFormId) {
-    return <div>지원서 정보를 불러올 수 없습니다.</div>;
-  }
-
   const {
     data: formData,
     isLoading,
     isError,
-  } = useGetApplication(clubId!, applicationFormId);
-  const { mutate: updateApplicant } = useUpdateApplicant(applicationFormId);
+  } = useGetApplication(clubId!, applicationFormId ?? undefined);
+  const { mutate: updateApplicant } = useUpdateApplicant(applicationFormId ?? undefined);
 
   useEffect(() => {
     if (applicant) {
@@ -85,6 +81,10 @@ const ApplicantDetailPage = () => {
       }, 400),
     [clubId, questionId, updateApplicant],
   );
+
+  if (!applicationFormId) {
+    return <div>지원서 정보를 불러올 수 없습니다.</div>;
+  }
 
   if (!applicantsData) {
     return <div>지원자 데이터를 불러올 수 없습니다.</div>;
@@ -120,14 +120,14 @@ const ApplicantDetailPage = () => {
     const previousData = applicantsData.applicants[applicantIndex - 1];
     if (applicantIndex < 0 || !previousData) return;
 
-    navigate(`/admin/applicants-list/${applicationFormId}/${previousData.id}`);
+    navigate(`/admin/applicants/${previousData.id}`);
   };
 
   const nextApplicant = () => {
     const nextData = applicantsData.applicants[applicantIndex + 1];
     if (applicantIndex < 0 || !nextData) return;
 
-    navigate(`/admin/applicants-list/${applicationFormId}/${nextData.id}`);
+    navigate(`/admin/applicants/${nextData.id}`);
   };
 
   return (
@@ -144,7 +144,7 @@ const ApplicantDetailPage = () => {
             <select
               id='applicantSelect'
               value={applicant.id}
-              onChange={(e) => navigate(`/admin/applicants-list/${applicationFormId}/${e.target.value}`)}
+              onChange={(e) => navigate(`/admin/applicants-lsit/${e.target.value}`)}
             >
               {applicantsData.applicants.map((a) => (
                 <option key={a.id} value={a.id}>

@@ -4,7 +4,7 @@ import { UpdateApplicantParams } from '@/types/applicants';
 
 export const updateApplicantDetail = async (
   applicant: UpdateApplicantParams[],
-  applicationFormId: string,
+  applicationFormId: string | undefined,
 ) => {
   try {
     const response = await secureFetch(
