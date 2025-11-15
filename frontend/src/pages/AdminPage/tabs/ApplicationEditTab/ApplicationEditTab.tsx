@@ -45,7 +45,7 @@ const ApplicationEditTab = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({queryKey: ['allApplicationForms']});
       alert('지원서가 성공적으로 생성되었습니다.');
-      navigate(`/admin/applicants`);
+      navigate(`/admin/application-list`);
     },
     onError: (err:Error) => alert(`지원서 생성에 실패했습니다.: ${err.message}`),
   });
