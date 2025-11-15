@@ -30,9 +30,9 @@ export function initializeSentry() {
   }
 
   Sentry.init({
-    dsn: import.meta.env.SENTRY_DSN,
+    dsn: import.meta.env.VITE_SENTRY_DSN,
     sendDefaultPii: false,
-    release: import.meta.env.SENTRY_RELEASE,
+    release: import.meta.env.VITE_SENTRY_RELEASE,
     tracesSampleRate: 0.1,
   });
 }
