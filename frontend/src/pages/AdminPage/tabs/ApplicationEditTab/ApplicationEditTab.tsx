@@ -57,7 +57,7 @@ const ApplicationEditTab = () => {
       queryClient.invalidateQueries({ queryKey: ['allApplicationForms'] });
       queryClient.invalidateQueries({ queryKey: ['applicationForm', clubId, formId] });
       alert('지원서가 성공적으로 수정되었습니다.');
-      navigate('/admin/applicants');
+      navigate('/admin/application-list');
     },
     onError: (err: Error) => alert(`지원서 수정에 실패했습니다: ${err.message}`),
   });
