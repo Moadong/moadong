@@ -25,14 +25,14 @@ export function initializeChannelService() {
 }
 
 export function initializeSentry() {
-  if (process.env.NODE_ENV === 'development') {
+  if (import.meta.env.NODE_ENV === 'development') {
     return;
   }
 
   Sentry.init({
-    dsn: process.env.SENTRY_DSN,
+    dsn: import.meta.env.SENTRY_DSN,
     sendDefaultPii: false,
-    release: process.env.SENTRY_RELEASE,
+    release: import.meta.env.SENTRY_RELEASE,
     tracesSampleRate: 0.1,
   });
 }
