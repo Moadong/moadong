@@ -21,6 +21,7 @@ export interface Applicant {
   answers: AnswerItem[];
   memo: string;
   createdAt: string;
+  applicationFormId: string;
 }
 
 export interface UpdateApplicantParams {

@@ -121,6 +121,9 @@ export const mockData: ApplicationFormData = {
       items: [{ value: '' }],
     },
   ],
+  semesterYear: 2025,
+  semesterTerm: 'SECOND',
+  active: 'Unpublished',
 };
 
 export const mockOptions: Record<string, ApplicationForm[]> = {

@@ -30,6 +30,9 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
       items: [{ value: '' }, { value: '' }],
     },
   ],
+  semesterYear: 2025,
+  semesterTerm: 'SECOND',
+  active: 'Unpublished',
 };
 
 export default INITIAL_FORM_DATA;

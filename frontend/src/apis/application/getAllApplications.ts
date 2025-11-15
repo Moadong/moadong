@@ -1,9 +1,12 @@
 import API_BASE_URL from '@/constants/api';
-import { secureFetch } from '../auth/secureFetch';
+import { secureFetch } from '@/apis/auth/secureFetch';
 
-const getClubApplicants = async (applicationFormId: string) => {
+const getAllApplicationForms = async () => {
   try {
-    const response = await secureFetch(`${API_BASE_URL}/api/club/apply/info/${applicationFormId}`);
+    const response = await secureFetch(
+      `${API_BASE_URL}/api/club/application`,
+    );
+
     if (!response.ok) {
       console.error(`Failed to fetch: ${response.statusText}`);
       throw new Error((await response.json()).message);
@@ -12,9 +15,9 @@ const getClubApplicants = async (applicationFormId: string) => {
     const result = await response.json();
     return result.data;
   } catch (error) {
-    console.error('Error fetching club applicants', error);
+    console.error('모든 지원서 양식 조회 중 오류 발생:', error);
     throw error;
   }
 };
 
-export default getClubApplicants;
+export default getAllApplicationForms;

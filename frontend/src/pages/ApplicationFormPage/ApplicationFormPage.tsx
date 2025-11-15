@@ -101,7 +101,7 @@ const ApplicationFormPage = () => {
     }
 
     try {
-      await applyToClub(clubId, answers);
+      await applyToClub(clubId, applicationFormId, answers);
       localStorage.removeItem(STORAGE_KEY);
       alert(
         `"${clubDetail.name}" 동아리에 성공적으로 지원되었습니다.\n좋은 결과 있으시길 바랍니다`,
