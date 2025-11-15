@@ -14,13 +14,12 @@ import { updateApplication } from '@/apis/application/updateApplication';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useParams, useNavigate } from 'react-router-dom';
-import Spinner from '@/components/common/Spinner/Spinner';
+import { useNavigate } from 'react-router-dom';
 
 const ApplicationEditTab = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { clubId, isClubLoading, applicationFormId: formId } = useAdminClubContext();
+  const { clubId, applicationFormId: formId } = useAdminClubContext();
   
   const { data:existingFormData, isLoading, isError, error} = useGetApplication(clubId ?? undefined, formId ?? '');
 
@@ -62,9 +61,6 @@ const ApplicationEditTab = () => {
     onError: (err: Error) => alert(`지원서 수정에 실패했습니다: ${err.message}`),
   });
   
-  if (isClubLoading) {
-    return <Spinner />;
-  }
   if (!clubId) return <div>클럽 정보가 없습니다.</div>;
   
   if (isLoading) {

@@ -7,17 +7,16 @@ import Spinner from '@/components/common/Spinner/Spinner';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isLoading, isAuthenticated, clubId } = useAuth();
-  const {setClubId, setIsClubLoading} = useAdminClubContext();
+  const {setClubId} = useAdminClubContext();
   // const { setClubId, setApplicantsData } = useAdminClubContext();
   // const { data: applicantsData } = useGetApplicants(clubId ?? '');
 
   useEffect(() => {
-    setIsClubLoading(isLoading);
-    if (!isLoading && clubId) {
+    if (clubId) {
       setClubId(clubId);
     }
-  }, [isLoading, clubId, setClubId, setIsClubLoading]);
-
+  }, [clubId, setClubId]);
+  
   // useEffect(() => {
   //   if (clubId && applicantsData) {
   //     setApplicantsData(applicantsData);

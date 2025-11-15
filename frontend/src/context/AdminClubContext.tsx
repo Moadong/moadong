@@ -6,8 +6,6 @@ interface AdminClubContextType {
   setClubId: (id: string | null) => void;
   applicantsData: ApplicantsInfo | null;
   setApplicantsData: (data: ApplicantsInfo | null) => void;
-  isClubLoading: boolean;
-  setIsClubLoading: (isLoading: boolean) => void;
   applicationFormId: string | null; 
   setApplicationFormId: (id: string | null) => void;
 }
@@ -23,7 +21,6 @@ export const AdminClubProvider = ({
 }) => {
   const [clubId, setClubId] = useState<string | null>(null);
   const [applicantsData, setApplicantsData] = useState<ApplicantsInfo | null>(null);
-  const [isClubLoading, setIsClubLoading] = useState<boolean>(true);
   const [applicationFormId, setApplicationFormId] = useState<string | null>(null);
 
   return (
@@ -32,8 +29,6 @@ export const AdminClubProvider = ({
       setClubId, 
       applicantsData, 
       setApplicantsData, 
-      isClubLoading, 
-      setIsClubLoading,
       applicationFormId,
       setApplicationFormId,
     }}>
