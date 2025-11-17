@@ -38,7 +38,7 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
   ],
   semesterYear: currentYear,
   semesterTerm: currentSemesterTerm,
-  active: 'Unpublished',
+  active: 'unpublished',
 };
 
 export default INITIAL_FORM_DATA;

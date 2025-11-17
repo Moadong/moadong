@@ -52,7 +52,7 @@ export interface ApplicationFormData {
   questions: Question[];
   semesterYear: number;
   semesterTerm: string;
-  active: string;
+  active: 'active' | 'published' | 'unpublished';
 }
 
 export interface AnswerItem {
