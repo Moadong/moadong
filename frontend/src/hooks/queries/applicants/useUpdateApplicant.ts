@@ -6,8 +6,12 @@ export const useUpdateApplicant = (applicationFormId: string | undefined) => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: (applicant: UpdateApplicantParams[]) =>
-      updateApplicantDetail(applicant, applicationFormId),
+    mutationFn: (applicant: UpdateApplicantParams[]) =>{
+      if (!applicationFormId) {
+        throw new Error('Application Form ID가 유효하지 않습니다.');
+      }
+      return updateApplicantDetail(applicant, applicationFormId);
+    },
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: ['clubApplicants', applicationFormId],

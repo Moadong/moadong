@@ -67,7 +67,7 @@ const ApplicantsTab = () => {
     if (isSortOpen) setIsSortOpen(false);
   };
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
-  const { mutate: updateDetailApplicants } = useUpdateApplicant(clubId!);
+  const { mutate: updateDetailApplicants } = useUpdateApplicant(applicationFormId ?? '');
   const dropdownRef = useRef<Array<HTMLDivElement | null>>([]);
 
   const filteredApplicants = useMemo(() => {
