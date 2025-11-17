@@ -8,7 +8,7 @@ import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplica
 import Spinner from '@/components/common/Spinner/Spinner';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 // import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
-
+import { ApplicationFormItem, SemesterGroup } from '@/types/application';
 
 const ApplicationListTab = () => {
   const {data: allforms, isLoading, isError, error} = useGetApplicationlist();
@@ -38,10 +38,10 @@ const ApplicationListTab = () => {
   //   }
   // };
 
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const handleMoreButtonClick = (e: React.MouseEvent, id: number) => {
+  const handleMoreButtonClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation(); // 이벤트 버블링 방지 (row 전체가 클릭되지 않도록)
     setOpenMenuId(openMenuId === id ? null : id); // 같은 버튼 누르면 닫기, 다른 버튼 누르면 열기
   };
@@ -73,7 +73,7 @@ const ApplicationListTab = () => {
     return <div>오류가 발생했습니다: {error.message}</div>;
   }
 
-  const semesterGroups = allforms?.forms || [];
+  const semesterGroups: SemesterGroup[] = allforms?.forms || [];
 
   const formatDateTime = (dateTimeString: string) => {
     const now = new Date();
@@ -104,7 +104,7 @@ const ApplicationListTab = () => {
           새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
         </Styled.AddButton>
       </Styled.Header>
-      {semesterGroups.map((group: any) => {
+      {semesterGroups.map((group: SemesterGroup) => {
         const semesterTermLabel = group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
         const semesterTitle = `${group.semesterYear}년 ${semesterTermLabel}`;
         return (
@@ -116,7 +116,7 @@ const ApplicationListTab = () => {
               최종 수정 날짜
             </Styled.DateHeader>
           </Styled.ListHeader>
-          {(group.forms.map((application: any) => {
+          {(group.forms.map((application: ApplicationFormItem) => {
             const isActive = application.status === 'active';
             return (
             <Styled.ApplicationRow key={application.id}>
