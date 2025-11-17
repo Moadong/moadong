@@ -167,7 +167,7 @@ const ApplicationEditTab = () => {
     const payload = {
       ...formData,
       questions: reorderedQuestions,
-      active: formData.active ?? false,
+      active: formData.active ?? '',
     };
     if (formId) {
       updateMutate({
