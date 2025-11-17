@@ -13,6 +13,7 @@ import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab
 import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
 import ApplicationEditTab from './pages/AdminPage/tabs/ApplicationEditTab/ApplicationEditTab';
 import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab';
+import ApplicantsListTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/ApplicantsListTab';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
@@ -71,9 +72,13 @@ const App = () => {
                         path='application-list/edit'
                         element={<ApplicationEditTab />}
                       />
-                      <Route path='applicants' element={<ApplicantsTab />} />
                       <Route
-                        path='applicants/:questionId'
+                        path='applicants-list'
+                        element={<ApplicantsListTab />}
+                      />
+                      <Route path='applicants-list/:applicationFormId' element={<ApplicantsTab />} />
+                      <Route
+                        path='applicants-list/:applicationFormId/:questionId'
                         element={<ApplicantDetailPage />}
                       />
                     </Route>

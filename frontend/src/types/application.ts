@@ -50,6 +50,9 @@ export interface ApplicationFormData {
   title: string;
   description: string;
   questions: Question[];
+  semesterYear: number;
+  semesterTerm: string;
+  active: 'active' | 'published' | 'unpublished';
 }
 
 export interface AnswerItem {
@@ -60,4 +63,17 @@ export interface AnswerItem {
 export interface ApplicationForm {
   id: string;
   title: string;
+}
+
+export interface ApplicationFormItem {
+  id: string;
+  title: string;
+  editedAt: string;
+  status: 'active' | 'published' | 'unpublished';
+}
+
+export interface SemesterGroup {
+  semesterYear: number;
+  semesterTerm: string;
+  forms: ApplicationFormItem[];
 }

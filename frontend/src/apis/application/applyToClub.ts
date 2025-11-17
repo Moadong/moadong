@@ -3,11 +3,12 @@ import { AnswerItem } from '@/types/application';
 
 export const applyToClub = async (
   clubId: string,
+  applicationFormId: string,
   answers: AnswerItem[],
 ) => {
   try {
     const response = await fetch(
-      `${API_BASE_URL}/api/club/${clubId}/apply`,
+      `${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`,
       {
         method: 'POST',
         headers: {
@@ -18,8 +19,7 @@ export const applyToClub = async (
             ...answers
           ]
          }),
-      },
-    );
+      });
 
     if (!response.ok) {
       throw new Error('답변 제출에 실패했습니다.');
@@ -33,4 +33,4 @@ export const applyToClub = async (
   }
 };
 
-export default applyToClub; 
+export default applyToClub;

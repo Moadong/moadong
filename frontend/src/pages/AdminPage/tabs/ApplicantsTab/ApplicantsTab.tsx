@@ -12,6 +12,7 @@ import selectAllIcon from '@/assets/images/icons/applicant_select_arrow.svg';
 import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
+import { useGetApplicants } from '@/hooks/queries/applicants/useGetApplicants';
 
 const ApplicantsTab = () => {
   const statusOptions = AVAILABLE_STATUSES.map((status) => ({
@@ -35,7 +36,8 @@ const ApplicantsTab = () => {
   ] as const;
 
   const navigate = useNavigate();
-  const { clubId, applicantsData } = useAdminClubContext();
+  const { clubId, applicantsData, applicationFormId, setApplicantsData } = useAdminClubContext();
+  const { data: fetchData, isLoading, isError } = useGetApplicants(applicationFormId ?? '');
   const [keyword, setKeyword] = useState('');
   const [checkedItem, setCheckedItem] = useState<Map<string, boolean>>(
     new Map(),
@@ -51,6 +53,12 @@ const ApplicantsTab = () => {
     (typeof sortOptions)[number]
   >(sortOptions[0]);
 
+  useEffect(() => {
+    if (fetchData) {
+      setApplicantsData(fetchData);
+    } 
+  }, [fetchData, setApplicantsData]);
+
   // 모든 드롭다운을 닫는 함수
   const closeAllDropdowns = () => {
     if (open) setOpen(false);
@@ -59,7 +67,7 @@ const ApplicantsTab = () => {
     if (isSortOpen) setIsSortOpen(false);
   };
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
-  const { mutate: updateDetailApplicants } = useUpdateApplicant(clubId!);
+  const { mutate: updateDetailApplicants } = useUpdateApplicant(applicationFormId ?? '');
   const dropdownRef = useRef<Array<HTMLDivElement | null>>([]);
 
   const filteredApplicants = useMemo(() => {
@@ -471,7 +479,7 @@ const ApplicantsTab = () => {
             {filteredApplicants.map((item: Applicant, index: number) => (
               <Styled.ApplicantTableRow
                 key={index}
-                onClick={() => navigate(`/admin/applicants/${item.id}`)}
+                onClick={() => navigate(`/admin/applicants-list/${applicationFormId}/${item.id}`)}
                 style={{ cursor: 'pointer' }}
               >
                 <Styled.ApplicantTableCol>
