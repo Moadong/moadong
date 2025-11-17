@@ -10,7 +10,7 @@ export const FormTitle = styled.input`
   font-weight: 700;
   border: none;
   outline: none;
-  margin: 60px 0px 35px 0px;
+  margin: 35px 0px;
 
   &::placeholder {
     color: #c5c5c5;
