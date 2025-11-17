@@ -6,6 +6,9 @@ export const updateApplicantDetail = async (
   applicant: UpdateApplicantParams[],
   applicationFormId: string | undefined,
 ) => {
+  if(!applicationFormId) {
+    throw new Error('applicationFormId가 존재하지 않아 지원자 정보를 수정할 수 없습니다.');
+  }
   try {
     const response = await secureFetch(
       `${API_BASE_URL}/api/club/applicant/${applicationFormId}`,
