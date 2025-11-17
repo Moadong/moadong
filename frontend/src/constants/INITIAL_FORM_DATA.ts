@@ -1,5 +1,11 @@
 import { ApplicationFormData } from '@/types/application';
 
+const now = new Date();
+const currentYear = now.getFullYear();
+const currentMonth = now.getMonth();
+
+const currentSemesterTerm = (currentMonth <= 6) ? 'FIRST' : 'SECOND';
+
 const INITIAL_FORM_DATA: ApplicationFormData = {
   title: '',
   description: '',
@@ -30,8 +36,8 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
       items: [{ value: '' }, { value: '' }],
     },
   ],
-  semesterYear: 2025,
-  semesterTerm: 'SECOND',
+  semesterYear: currentYear,
+  semesterTerm: currentSemesterTerm,
   active: 'Unpublished',
 };
 
