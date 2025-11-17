@@ -52,6 +52,8 @@ public class CloudflareImageService implements ClubImageService{
     private long maxImageSizeBytes;
     @Value("${server.file-url.max-length:200}")
     private int maxFileUrlLength;
+    @Value("${server.file-url.expiration-time:10}")
+    private int expirationTime;
     private String normalizedViewEndpoint;
 
     @PostConstruct
@@ -281,7 +283,7 @@ public class CloudflareImageService implements ClubImageService{
 
         // Presigned URL 생성 (10분 유효)
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(10))
+                .signatureDuration(Duration.ofMinutes(expirationTime))
                 .putObjectRequest(putObjectRequest)
                 .build();
 
