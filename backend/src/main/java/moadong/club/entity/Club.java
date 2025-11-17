@@ -1,10 +1,18 @@
 package moadong.club.entity;
 
+import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+
+import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.Message;
+import com.google.firebase.messaging.Notification;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.extern.slf4j.Slf4j;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.request.ClubInfoRequest;
@@ -17,6 +25,7 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+@Slf4j
 @Document("clubs")
 @AllArgsConstructor
 @Getter
@@ -52,6 +61,16 @@ public class Club implements Persistable<String> {
     }
 
     public Club(String userId) {
+        this.name = "";
+        this.category = "";
+        this.division = "";
+        this.state = ClubState.UNAVAILABLE;
+        this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
+        this.userId = userId;
+    }
+
+    public Club(String id, String userId) {
+        this.id = id;
         this.name = "";
         this.category = "";
         this.division = "";
@@ -117,6 +136,14 @@ public class Club implements Persistable<String> {
 
     public void updateRecruitmentStatus(ClubRecruitmentStatus clubRecruitmentStatus) {
         this.clubRecruitmentInformation.updateRecruitmentStatus(clubRecruitmentStatus);
+    }
+
+    public void sendPushNotification(Message message) {
+        try {
+            FirebaseMessaging.getInstance().send(message);
+        } catch (FirebaseMessagingException e) {
+            log.error("FirebaseSendNotificationError: {}", e.getMessage());
+        }
     }
 
     @Override

@@ -37,14 +37,19 @@ public enum ErrorCode {
     PASSWORD_SAME_AS_USERID(HttpStatus.BAD_REQUEST, "702-1", "아이디와 동일한 비밀번호는 설정할 수 없습니다."),
     PASSWORD_SAME_AS_OLD(HttpStatus.BAD_REQUEST,"702-2","이전 비밀번호와 동일한 비밀번호는 설정할 수 없습니다."),
 
-    APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-1", "지원서가 존재하지 않습니다."),
+    APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-1", "지원서 양식이 존재하지 않습니다."),
     SHORT_EXCEED_LENGTH(HttpStatus.BAD_REQUEST, "800-2", "단답형 최대 글자를 초과하였습니다."),
     LONG_EXCEED_LENGTH(HttpStatus.BAD_REQUEST, "800-3", "장문형 최대 글자를 초과하였습니다."),
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-4", "존재하지 않은 질문입니다."),
     REQUIRED_QUESTION_MISSING(HttpStatus.BAD_REQUEST, "800-5", "필수 응답 질문이 누락되었습니다."),
+    ACTIVE_APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-6", "활성화된 지원서 양식이 존재하지 않습니다."),
+    APPLICATION_SEMESTER_INVALID(HttpStatus.BAD_REQUEST, "800-7", "올바르지 않은 학기입니다."),
 
     AES_CIPHER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "900-1", "암호화 중 오류가 발생했습니다."),
     APPLICANT_NOT_FOUND(HttpStatus.NOT_FOUND, "900-2", "지원서가 존재하지 않습니다."),
+    
+    FCMTOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "901-1", "존재하지 않는 토큰입니다."),
+    FCMTOKEN_SUBSCRIBE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901-2", "동아리 구독중에 오류가 발생 하였습니다.");
     ;
 
     private final HttpStatus httpStatus;

@@ -54,6 +54,7 @@ public class RecruitmentStateCheckerTest {
         ZonedDateTime start = NOW.plusDays(10);
         ZonedDateTime end = NOW.plusDays(20);
 
+        when(club.getId()).thenReturn("1");
         when(club.getClubRecruitmentInformation()).thenReturn(info);
         when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.CLOSED);
         when(info.getRecruitmentStart()).thenReturn(start);
@@ -74,6 +75,7 @@ public class RecruitmentStateCheckerTest {
         ZonedDateTime start = NOW.minusDays(1);
         ZonedDateTime end = NOW.plusDays(5);
 
+        when(club.getId()).thenReturn("1");
         when(club.getClubRecruitmentInformation()).thenReturn(info);
         when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.CLOSED);
         when(info.getRecruitmentStart()).thenReturn(start);
@@ -94,6 +96,7 @@ public class RecruitmentStateCheckerTest {
         ZonedDateTime start = NOW.minusDays(10);
         ZonedDateTime end = NOW.minusDays(1);
 
+        when(club.getId()).thenReturn("1");
         when(club.getClubRecruitmentInformation()).thenReturn(info);
         when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.OPEN);
         when(info.getRecruitmentStart()).thenReturn(start);
@@ -111,6 +114,7 @@ public class RecruitmentStateCheckerTest {
         Club club = mock(Club.class);
         ClubRecruitmentInformation info = mock(ClubRecruitmentInformation.class);
 
+        when(club.getId()).thenReturn("1");
         when(club.getClubRecruitmentInformation()).thenReturn(info);
         when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.OPEN);
         when(info.getRecruitmentStart()).thenReturn(null);
