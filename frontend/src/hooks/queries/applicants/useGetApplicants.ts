@@ -3,7 +3,7 @@ import { useQuery } from '@tanstack/react-query';
 
 export const useGetApplicants = (applicationFormId: string | undefined) => {
   return useQuery({
-    queryKey: ['applicationForm', applicationFormId],
+    queryKey: ['clubApplicants', applicationFormId],
     queryFn: () => getClubApplicants(applicationFormId!),
     retry: false,
     enabled: !!applicationFormId,
