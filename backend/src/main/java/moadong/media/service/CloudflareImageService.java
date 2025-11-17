@@ -1,6 +1,5 @@
 package moadong.media.service;
 
-import static moadong.media.util.ClubImageUtil.containsInvalidChars;
 import static moadong.media.util.ClubImageUtil.isImageExtension;
 
 import jakarta.annotation.PostConstruct;
@@ -264,15 +263,11 @@ public class CloudflareImageService implements ClubImageService{
     }
 
     private PresignedUploadResponse generatePresignedUrl(String clubId, String fileName, String contentType, FileType fileType) {
-        // 파일명 처리
-        String processedFileName = fileName;
-        if (containsInvalidChars(fileName)) {
-            String extension = "";
-            if (fileName.contains(".")) {
-                extension = fileName.substring(fileName.lastIndexOf("."));
-            }
-            processedFileName = RandomStringUtil.generateRandomString(10) + extension;
+        String extension = "";
+        if (fileName.contains(".")) {
+            extension = fileName.substring(fileName.lastIndexOf("."));
         }
+        String processedFileName = RandomStringUtil.generateRandomString(10) + extension;
 
         // S3에 저장할 key 경로 생성
         String key = clubId + "/" + fileType.getPath() + "/" + processedFileName;
