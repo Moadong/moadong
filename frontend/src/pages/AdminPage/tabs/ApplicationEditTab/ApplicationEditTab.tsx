@@ -16,8 +16,12 @@ import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 
 const ApplicationEditTab = () => {
   const { clubId, applicationFormId } = useAdminClubContext();
-  const { data, isLoading, isError } = useGetApplication(clubId, applicationFormId);
-  const [formData, setFormData] = useState<ApplicationFormData>(INITIAL_FORM_DATA);
+  const { data, isLoading, isError } = useGetApplication(
+    clubId,
+    applicationFormId,
+  );
+  const [formData, setFormData] =
+    useState<ApplicationFormData>(INITIAL_FORM_DATA);
 
   useEffect(() => {
     if (data) {
@@ -149,6 +153,16 @@ const ApplicationEditTab = () => {
   return (
     <>
       <PageContainer>
+        <Styled.HeaderContainer>
+          <Styled.ChangeButtonWrapper>
+            <Styled.ApplicationFormChangeButton $active={true}>
+              모아동지원서
+            </Styled.ApplicationFormChangeButton>
+            <Styled.ApplicationFormChangeButton $active={false}>
+              외부지원서
+            </Styled.ApplicationFormChangeButton>
+          </Styled.ChangeButtonWrapper>
+        </Styled.HeaderContainer>
         <Styled.FormTitle
           type='text'
           value={formData.title}
@@ -156,15 +170,15 @@ const ApplicationEditTab = () => {
           placeholder='지원서 제목을 입력하세요'
         ></Styled.FormTitle>
         <CustomTextArea
-          label="지원서 설명"
+          label='지원서 설명'
           value={formData.description}
           onChange={(e) => handleFormDescriptionChange(e.target.value)}
           placeholder={APPLICATION_FORM.APPLICATION_DESCRIPTION.placeholder}
           maxLength={APPLICATION_FORM.APPLICATION_DESCRIPTION.maxLength}
           showMaxChar
-          width="100%"
+          width='100%'
         />
-        <Styled.QuestionContainer  >
+        <Styled.QuestionContainer>
           {formData.questions.map((question, index) => (
             <QuestionBuilder
               key={question.id}

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const FormTitle = styled.input`
   width: 100%;
@@ -73,4 +73,46 @@ export const submitButton = styled.button`
   &:active {
     transform: scale(0.95);
   }
+`;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+`;
+
+export const ChangeButtonWrapper = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  height: 33px;
+  align-items: center;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--Gray-400, #dcdcdc) inset;
+  width: fit-content;
+`;
+
+export const ApplicationFormChangeButton = styled.button<{ $active: Boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 8px 12px;
+  white-space: nowrap;
+  color: #787878;
+  border: 0px;
+  background: transparent;
+  align-self: stretch;
+
+  ${(props) =>
+    props.$active &&
+    css`
+      border: 1px solid #ff5414;
+      background: var(--Main-Primary-500, #ffece5);
+      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
+      color: var(--Main-Primary-900, #ff5414);
+    `}
+
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
 `;
