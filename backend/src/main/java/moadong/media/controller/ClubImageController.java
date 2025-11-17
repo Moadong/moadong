@@ -33,21 +33,21 @@ public class ClubImageController {
     private final ClubImageService clubImageService;
 
     @DeleteMapping(value = "/{clubId}/logo")
-    @Operation(summary = "로고 이미지 삭제", description = "cloudflare 상에 로고 이미지를 저장소에서 삭제합니다.")
+    @Operation(summary = "로고 이미지 삭제", description = "로고 이미지를 저장소에서 삭제합니다.")
     public ResponseEntity<?> deleteLogo(@PathVariable String clubId) {
         clubImageService.deleteLogo(clubId);
         return Response.ok("success delete logo");
     }
 
     @PostMapping(value = "/{clubId}/feeds")
-    @Operation(summary = "저장된 피드 이미지 업데이트(순서, 삭제 등..)", description = "cloudflare 상에 피드 이미지의 설정을 업데이트 합니다.")
+    @Operation(summary = "저장된 피드 이미지 업데이트(순서, 삭제 등..)", description = "피드 이미지의 설정을 업데이트 합니다.")
     public ResponseEntity<?> putFeeds(@PathVariable String clubId, @RequestBody FeedUpdateRequest feeds) {
         clubImageService.updateFeeds(clubId, feeds.feeds());
         return Response.ok("success put feeds");
     }
 
     @DeleteMapping(value = "/{clubId}/cover")
-    @Operation(summary = "커버 이미지 삭제", description = "cloudflare 상에 커버 이미지를 저장소에서 삭제합니다.")
+    @Operation(summary = "커버 이미지 삭제", description = "커버 이미지를 저장소에서 삭제합니다.")
     public ResponseEntity<?> deleteCover(@PathVariable String clubId) {
         clubImageService.deleteCover(clubId);
         return Response.ok("success delete cover");
