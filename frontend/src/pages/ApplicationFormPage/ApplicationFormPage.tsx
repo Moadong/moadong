@@ -15,7 +15,7 @@ import { parseDescriptionWithLinks } from '@/utils/parseDescriptionWithLinks';
 import { validateAnswers } from '@/hooks/useValidateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT, PAGE_VIEW } from '@/constants/eventName';
 
 const ApplicationFormPage = () => {
   const { clubId, applicationFormId } = useParams<{ clubId: string; applicationFormId: string }>();
@@ -35,7 +35,7 @@ const ApplicationFormPage = () => {
   } = useGetApplication(clubId, applicationFormId);
 
   useTrackPageView(
-    'ApplicationFormPage',
+    PAGE_VIEW.APPLICATION_FORM_PAGE,
     clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
   );
 
@@ -89,8 +89,9 @@ const ApplicationFormPage = () => {
   };
 
   const handleSubmit = async () => {
-    trackEvent(EVENT_NAME.APPLICATION_FORM_SUBMITTED, {
-      clubName: clubDetail?.name,
+    trackEvent(USER_EVENT.APPLICATION_FORM_SUBMITTED, {
+      club_id: clubId,
+      club_name: clubDetail?.name,
     });
 
     const invalidIds = validateAnswers(formData.questions, getAnswersById);

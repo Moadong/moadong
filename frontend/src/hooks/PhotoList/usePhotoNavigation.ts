@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
 import useMixpanelTrack from '../useMixpanelTrack';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT } from '@/constants/eventName';
 
 export const usePhotoNavigation = ({
   currentIndex,
@@ -35,7 +35,7 @@ export const usePhotoNavigation = ({
     const nextIndex = currentIndex + 1;
     if (nextIndex >= photosLength) return;
     setCurrentIndex(nextIndex);
-    trackEvent(EVENT_NAME.PHOTO_NAVIGATION_CLICKED, {
+    trackEvent(USER_EVENT.PHOTO_NAVIGATION_CLICKED, {
       action: 'next',
       index: nextIndex,
     });
@@ -44,7 +44,7 @@ export const usePhotoNavigation = ({
   const handlePrev = () => {
     if (currentIndex <= 0) return;
     setCurrentIndex(currentIndex - 1);
-    trackEvent(EVENT_NAME.PHOTO_NAVIGATION_CLICKED, {
+    trackEvent(USER_EVENT.PHOTO_NAVIGATION_CLICKED, {
       action: 'prev',
       index: currentIndex - 1,
     });

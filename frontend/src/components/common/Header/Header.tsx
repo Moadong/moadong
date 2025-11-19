@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 import * as Styled from './Header.styles';
 
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT } from '@/constants/eventName';
 
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import AdminProfile from '@/components/common/Header/admin/AdminProfile';
@@ -38,7 +38,7 @@ const Header = () => {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
-    trackEvent(EVENT_NAME.MOBILE_MENU_DELETE_BUTTON_CLICKED);
+    trackEvent(USER_EVENT.MOBILE_MENU_DELETE_BUTTON_CLICKED);
   };
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 

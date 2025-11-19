@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import getApplication from '@/apis/application/getApplication';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT } from '@/constants/eventName';
 import ShareButton from '@/pages/ClubDetailPage/components/ShareButton/ShareButton';
 import { useState } from 'react';
 import { ApplicationForm } from '@/types/application';
@@ -51,7 +51,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   };
 
   const handleClick = async () => {
-    trackEvent(EVENT_NAME.CLUB_APPLY_BUTTON_CLICKED);
+    trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED);
 
     if (deadlineText === RECRUITMENT_STATUS.CLOSED) {
       alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
