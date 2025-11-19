@@ -6,6 +6,7 @@ import moadong.club.entity.ClubApplicant;
 import moadong.club.entity.ClubApplicationForm;
 import moadong.club.entity.ClubApplicationFormQuestion;
 import moadong.club.entity.ClubQuestionAnswer;
+import moadong.club.enums.ApplicationFormMode;
 import moadong.club.enums.ClubApplicationQuestionType;
 import moadong.club.payload.dto.ClubActiveFormResult;
 import moadong.club.payload.dto.ClubActiveFormSlim;
@@ -64,6 +65,7 @@ public class ClubApplyPublicService {
     public void applyToClub(String clubId, String applicationFormId, ClubApplyRequest request) {
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId).orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
+        if (clubApplicationForm.getFormMode() == ApplicationFormMode.EXTERNAL) throw new RestApiException(ErrorCode.APPLICATION_NOT_FOUND);
         validateAnswers(request.questions(), clubApplicationForm);
 
         List<ClubQuestionAnswer> answers = new ArrayList<>();
