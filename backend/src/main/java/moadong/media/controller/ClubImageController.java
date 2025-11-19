@@ -12,6 +12,7 @@ import moadong.media.service.ClubImageService;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -42,7 +43,7 @@ public class ClubImageController {
 
     @PostMapping(value = "/{clubId}/feeds")
     @Operation(summary = "저장된 피드 이미지 업데이트(순서, 삭제 등..)", description = "피드 이미지의 설정을 업데이트 합니다.")
-    public ResponseEntity<?> putFeeds(@PathVariable String clubId, @RequestBody FeedUpdateRequest feeds) {
+    public ResponseEntity<?> putFeeds(@PathVariable String clubId, @RequestBody @Valid FeedUpdateRequest feeds) {
         clubImageService.updateFeeds(clubId, feeds.feeds());
         return Response.ok("success put feeds");
     }
@@ -57,7 +58,7 @@ public class ClubImageController {
     @PostMapping("/{clubId}/logo/upload-url")
     @Operation(summary = "로고 이미지 업로드 URL 생성", description = "로고 이미지 업로드를 위한 Presigned URL을 생성합니다.")
     public ResponseEntity<?> generateLogoUploadUrl(@PathVariable String clubId,
-                                                   @RequestBody UploadUrlRequest request) {
+                                                   @RequestBody @Valid UploadUrlRequest request) {
         PresignedUploadResponse response = clubImageService.generateLogoUploadUrl(
                 clubId, request.fileName(), request.contentType());
         return Response.ok(response);
@@ -66,7 +67,7 @@ public class ClubImageController {
     @PostMapping("/{clubId}/logo/complete")
     @Operation(summary = "로고 이미지 업로드 완료", description = "클라이언트가 Presigned URL로 업로드한 후 호출하는 완료 API입니다.")
     public ResponseEntity<?> completeLogoUpload(@PathVariable String clubId,
-                                                @RequestBody UploadCompleteRequest request) {
+                                                @RequestBody @Valid UploadCompleteRequest request) {
         clubImageService.completeLogoUpload(clubId, request.fileUrl());
         return Response.ok("success upload logo");
     }
@@ -74,7 +75,7 @@ public class ClubImageController {
     @PostMapping("/{clubId}/feed/upload-url")
     @Operation(summary = "피드 이미지 업로드 URL들 생성", description = "피드 이미지 업로드를 위한 Presigned URL을 여러 개 한 번에 생성합니다.")
     public ResponseEntity<?> generateFeedUploadUrl(@PathVariable String clubId,
-                                                   @RequestBody List<UploadUrlRequest> requests) {
+                                                   @RequestBody @Valid List<UploadUrlRequest> requests) {
         List<PresignedUploadResponse> results = clubImageService.generateFeedUploadUrls(clubId, requests);
         return Response.ok(results);
     }
@@ -84,7 +85,7 @@ public class ClubImageController {
     @PostMapping("/{clubId}/cover/upload-url")
     @Operation(summary = "커버 이미지 업로드 URL 생성", description = "커버 이미지 업로드를 위한 Presigned URL을 생성합니다.")
     public ResponseEntity<?> generateCoverUploadUrl(@PathVariable String clubId,
-                                                    @RequestBody UploadUrlRequest request) {
+                                                    @RequestBody @Valid UploadUrlRequest request) {
         PresignedUploadResponse response = clubImageService.generateCoverUploadUrl(
                 clubId, request.fileName(), request.contentType());
         return Response.ok(response);
@@ -93,7 +94,7 @@ public class ClubImageController {
     @PostMapping("/{clubId}/cover/complete")
     @Operation(summary = "커버 이미지 업로드 완료", description = "클라이언트가 Presigned URL로 업로드한 후 호출하는 완료 API입니다.")
     public ResponseEntity<?> completeCoverUpload(@PathVariable String clubId,
-                                                 @RequestBody UploadCompleteRequest request) {
+                                                 @RequestBody @Valid UploadCompleteRequest request) {
         clubImageService.completeCoverUpload(clubId, request.fileUrl());
         return Response.ok("success upload cover");
     }

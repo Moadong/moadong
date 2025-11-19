@@ -1,5 +1,10 @@
 package moadong.media.dto;
 
-public record UploadCompleteRequest(String fileUrl) {
+import jakarta.validation.constraints.NotBlank;
+
+public record UploadCompleteRequest(
+        @NotBlank
+        String fileUrl
+) {
 }
 
