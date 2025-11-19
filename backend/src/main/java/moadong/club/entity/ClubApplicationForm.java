@@ -11,6 +11,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ApplicantStatus;
+import moadong.club.enums.ApplicationFormMode;
 import moadong.club.enums.ApplicationFormStatus;
 import moadong.club.enums.SemesterTerm;
 import org.springframework.data.annotation.Version;
@@ -56,6 +57,10 @@ public class ClubApplicationForm implements Persistable<String> {
 
     @Builder.Default
     private ApplicationFormStatus status = ApplicationFormStatus.UNPUBLISHED;
+
+    @NotNull
+    @Builder.Default
+    private ApplicationFormMode formMode = ApplicationFormMode.INTERNAL;
 
     @Version
     private Long version;
