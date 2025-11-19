@@ -29,3 +29,11 @@ export const USER_EVENT = {
   APPLICATION_FORM_SUBMITTED: 'Application Form Submitted' as const,
   PATCH_NOTE_BUTTON_CLICKED: 'Patch Note Button Clicked' as const,
 } as const;
+
+export const PAGE_VIEW = {
+  APPLICATION_FORM_PAGE: 'ApplicationFormPage' as const,
+  CLUB_DETAIL_PAGE: 'ClubDetailPage' as const,
+  MAIN_PAGE: 'MainPage' as const,
+  INTRODUCE_PAGE: 'IntroducePage' as const,
+  CLUB_UNION_PAGE: 'ClubUnionPage' as const,
+} as const;
