@@ -62,6 +62,9 @@ public class ClubApplicationForm implements Persistable<String> {
     @Builder.Default
     private ApplicationFormMode formMode = ApplicationFormMode.INTERNAL;
 
+    @Builder.Default
+    private String externalApplicationUrl = "";
+
     @Version
     private Long version;
 
