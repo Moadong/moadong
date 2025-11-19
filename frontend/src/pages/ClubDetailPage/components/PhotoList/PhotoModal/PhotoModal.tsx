@@ -1,7 +1,8 @@
-import React, { useEffect, useCallback } from 'react';
-import { SlideButton } from '@/constants/banners';
-import * as Styled from './PhotoModal.styles';
+import { useEffect, useCallback } from 'react';
 import useModalNavigation from '@/hooks/PhotoModal/useModalNavigation';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import NextButton from '@/assets/images/icons/next_button_icon.svg';
+import * as Styled from './PhotoModal.styles';
 
 interface PhotoModalProps {
   isOpen: boolean;
@@ -66,14 +67,16 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
                 <Styled.NavButton
                   onClick={handlePrev}
                   position='left'
-                  aria-label='이전 사진'>
-                  <img src={SlideButton[0]} alt='이전 사진' />
+                  aria-label='이전 사진'
+                >
+                  <img src={PrevButton} alt='이전 사진' />
                 </Styled.NavButton>
                 <Styled.NavButton
                   onClick={handleNext}
                   position='right'
-                  aria-label='다음 사진'>
-                  <img src={SlideButton[1]} alt='다음 사진' />
+                  aria-label='다음 사진'
+                >
+                  <img src={NextButton} alt='다음 사진' />
                 </Styled.NavButton>
               </>
             )}
@@ -84,7 +87,8 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
                 <Styled.Thumbnail
                   key={url}
                   isActive={idx === currentIndex}
-                  onClick={() => onChangeIndex(idx)}>
+                  onClick={() => onChangeIndex(idx)}
+                >
                   <img src={url} alt='썸네일' />
                 </Styled.Thumbnail>
               ))}
