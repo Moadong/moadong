@@ -1,10 +1,10 @@
-import { useScrollToTop } from '@/hooks/useScrollToTop';
+import { useScrollTrigger } from '@/hooks/useScrollTrigger';
 import scrollButtonIcon from '@/assets/images/icons/scroll_icon.svg';
 import * as Styled from './ScrollButton.styles';
 
 
 export const ScrollButton = () => {
-  const { isTriggered } = useScrollToTop();
+  const { isTriggered } = useScrollTrigger();
 
   const handleScrollToTop = () => {
     window.scrollTo({ top: 0, behavior: 'smooth' });
