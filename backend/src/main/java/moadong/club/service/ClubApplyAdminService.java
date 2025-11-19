@@ -1,6 +1,5 @@
 package moadong.club.service;
 
-import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
@@ -17,6 +16,7 @@ import moadong.global.exception.RestApiException;
 import moadong.global.util.AESCipher;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
