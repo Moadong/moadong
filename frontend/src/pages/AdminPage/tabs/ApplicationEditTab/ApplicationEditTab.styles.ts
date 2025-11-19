@@ -102,13 +102,15 @@ export const ApplicationFormChangeButton = styled.button<{ $active: Boolean }>`
   border: 0px;
   background: transparent;
   align-self: stretch;
+  transition: all 0.3s ease-in-out;
 
   ${(props) =>
     props.$active &&
     css`
-      border: 1px solid #ff5414;
+      box-shadow:
+        0 0 0 1px var(--Main-Primary-900, #ff5414) inset,
+        0 1px 2px 0 rgba(0, 0, 0, 0.2);
       background: var(--Main-Primary-500, #ffece5);
-      box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.2);
       color: var(--Main-Primary-900, #ff5414);
     `}
 
