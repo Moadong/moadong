@@ -59,8 +59,11 @@ public class CloudflareImageService implements ClubImageService{
 
     @PostConstruct
     private void init() {
+        if (viewEndpoint == null || viewEndpoint.isEmpty()) {
+            throw new IllegalStateException("cloud.aws.s3.view-endpoint must be configured");
+        }
         // viewEndpoint 정규화: 후행 슬래시 제거
-        normalizedViewEndpoint = viewEndpoint != null ? viewEndpoint.replaceAll("/+$", "") : "";
+        normalizedViewEndpoint = viewEndpoint.replaceAll("/+$", "");
     }
 
     @Override
