@@ -101,6 +101,10 @@ public class ClubApplicationForm implements Persistable<String> {
         this.formMode = formMode;
     }
 
+    public void updateExternalApplicationUrl(String externalApplicationUrl) {
+        this.externalApplicationUrl = externalApplicationUrl;
+    }
+
     @Override
     public boolean isNew() {
         return this.version == null;

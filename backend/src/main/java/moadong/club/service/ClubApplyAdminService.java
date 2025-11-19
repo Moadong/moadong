@@ -82,12 +82,12 @@ public class ClubApplyAdminService {
     }
 
     public void createClubApplicationForm(CustomUserDetails user, ClubApplicationFormCreateRequest request) {
+        if (request.questions() == null || request.externalApplicationUrl() == null) throw new RestApiException(ErrorCode.APPLICATION_OPTIONS_MISSING);
         validateSemester(request.semesterYear(), request.semesterTerm());
 
         ClubApplicationForm clubApplicationForm = createApplicationForm(
                 ClubApplicationForm.builder()
                         .clubId(user.getClubId())
-                        .formMode(request.formMode())
                         .build(),
                 request);
         clubApplicationFormsRepository.save(clubApplicationForm);
@@ -222,6 +222,8 @@ public class ClubApplyAdminService {
         clubApplicationForm.updateFormDescription(request.description());
         clubApplicationForm.updateSemesterYear(request.semesterYear());
         clubApplicationForm.updateSemesterTerm(request.semesterTerm());
+        clubApplicationForm.updateFormMode(request.formMode());
+        clubApplicationForm.updateExternalApplicationUrl(request.externalApplicationUrl());
 
         return clubApplicationForm;
     }

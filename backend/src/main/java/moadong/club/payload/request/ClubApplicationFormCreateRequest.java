@@ -20,12 +20,13 @@ public record ClubApplicationFormCreateRequest(
         @Size(max = 3000)
         String description,
 
-        @NotNull
         @Valid
         List<ClubApplyQuestion> questions,
 
         @NotNull
         ApplicationFormMode formMode,
+
+        String externalApplicationUrl,
 
         @NotNull
         @Min(2000)
