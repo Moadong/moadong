@@ -119,6 +119,15 @@ public class ClubApplyAdminService {
                 .build();
     }
 
+    @Transactional
+    public void deleteClubApplicationForm(String applicationFormId, CustomUserDetails user) {
+        ClubApplicationForm applicationForm = clubApplicationFormsRepository.findByClubIdAndId(user.getClubId(), applicationFormId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
+
+        clubApplicantsRepository.deleteAllByFormId(applicationForm.getId());
+        clubApplicationFormsRepository.delete(applicationForm);
+    }
+
     public ClubApplyInfoResponse getClubApplyInfo(String applicationFormId, CustomUserDetails user) {
         ClubApplicationForm applicationForm = clubApplicationFormsRepository.findByClubIdAndId(user.getClubId(), applicationFormId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
