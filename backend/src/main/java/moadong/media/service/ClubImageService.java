@@ -3,6 +3,7 @@ package moadong.media.service;
 import java.util.List;
 import moadong.club.entity.Club;
 import moadong.media.dto.PresignedUploadResponse;
+import moadong.media.dto.UploadUrlRequest;
 
 public interface ClubImageService {
 
@@ -17,7 +18,7 @@ public interface ClubImageService {
     // Presigned URL 방식 메서드
     PresignedUploadResponse generateLogoUploadUrl(String clubId, String fileName, String contentType);
 
-    PresignedUploadResponse generateFeedUploadUrl(String clubId, String fileName, String contentType);
+    List<PresignedUploadResponse> generateFeedUploadUrls(String clubId, List<UploadUrlRequest> requests);
 
     PresignedUploadResponse generateCoverUploadUrl(String clubId, String fileName, String contentType);
 

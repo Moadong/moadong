@@ -18,6 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/club")
@@ -53,7 +54,6 @@ public class ClubImageController {
         return Response.ok("success delete cover");
     }
 
-    // Presigned URL 방식 엔드포인트
     @PostMapping("/{clubId}/logo/upload-url")
     @Operation(summary = "로고 이미지 업로드 URL 생성", description = "로고 이미지 업로드를 위한 Presigned URL을 생성합니다.")
     public ResponseEntity<?> generateLogoUploadUrl(@PathVariable String clubId,
@@ -72,12 +72,11 @@ public class ClubImageController {
     }
 
     @PostMapping("/{clubId}/feed/upload-url")
-    @Operation(summary = "피드 이미지 업로드 URL 생성", description = "피드 이미지 업로드를 위한 Presigned URL을 생성합니다.")
+    @Operation(summary = "피드 이미지 업로드 URL들 생성", description = "피드 이미지 업로드를 위한 Presigned URL을 여러 개 한 번에 생성합니다.")
     public ResponseEntity<?> generateFeedUploadUrl(@PathVariable String clubId,
-                                                   @RequestBody UploadUrlRequest request) {
-        PresignedUploadResponse response = clubImageService.generateFeedUploadUrl(
-                clubId, request.fileName(), request.contentType());
-        return Response.ok(response);
+                                                   @RequestBody List<UploadUrlRequest> requests) {
+        List<PresignedUploadResponse> results = clubImageService.generateFeedUploadUrls(clubId, requests);
+        return Response.ok(results);
     }
 
     // feed complete API는 더 이상 사용하지 않습니다. (검증은 updateFeeds에서 수행)

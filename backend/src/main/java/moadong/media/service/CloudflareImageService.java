@@ -17,6 +17,7 @@ import moadong.global.util.ObjectIdConverter;
 import moadong.global.util.RandomStringUtil;
 import moadong.media.domain.FileType;
 import moadong.media.dto.PresignedUploadResponse;
+import moadong.media.dto.UploadUrlRequest;
 import org.bson.types.ObjectId;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -167,17 +168,35 @@ public class CloudflareImageService implements ClubImageService{
     }
 
     @Override
-    public PresignedUploadResponse generateFeedUploadUrl(String clubId, String fileName, String contentType) {
-        validateFileName(fileName);
+    public List<PresignedUploadResponse> generateFeedUploadUrls(String clubId, List<UploadUrlRequest> requests) {
         Club club = getClub(clubId);
         validateClubRecruitmentInformation(club);
-
-        List<String> feedImages = club.getClubRecruitmentInformation().getFeedImages();
-        int feedImagesCount = (feedImages == null) ? 0 : feedImages.size();
-        if (feedImagesCount + 1 > MAX_FEED_COUNT) {
-            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
+        int existingCount = (club.getClubRecruitmentInformation().getFeedImages() == null)
+            ? 0
+            : club.getClubRecruitmentInformation().getFeedImages().size();
+        int remaining = Math.max(0, MAX_FEED_COUNT - existingCount);
+        if (remaining == 0) {
+            return java.util.List.of(errorResponse(ErrorCode.TOO_MANY_FILES));
         }
-        return generatePresignedUrl(clubId, fileName, contentType, FileType.FEED);
+
+        int limit = Math.min(remaining, requests.size());
+        java.util.ArrayList<PresignedUploadResponse> results = new java.util.ArrayList<>(limit + 1);
+        for (int i = 0; i < limit; i++) {
+            UploadUrlRequest req = requests.get(i);
+            try {
+                validateFileName(req.fileName());
+                results.add(generatePresignedUrl(clubId, req.fileName(), req.contentType(), FileType.FEED));
+            } catch (RestApiException e) {
+                results.add(errorResponse(e.getErrorCode()));
+            } catch (Exception e) {
+                log.error("Unexpected error generating presigned URL: clubId={}, fileName={}", clubId, req.fileName(), e);
+                results.add(errorResponse(ErrorCode.IMAGE_UPLOAD_FAILED));
+            }
+        }
+        if (requests.size() > limit) {
+            results.add(errorResponse(ErrorCode.TOO_MANY_FILES));
+        }
+        return results;
     }
 
     @Override
@@ -296,9 +315,12 @@ public class CloudflareImageService implements ClubImageService{
         Map<String, String> requiredHeaders = new HashMap<>();
         requiredHeaders.put("Content-Type", contentType);
 
-        return new PresignedUploadResponse(presignedUrl, finalUrl, requiredHeaders);
+        return new PresignedUploadResponse(presignedUrl, finalUrl, requiredHeaders, true, null);
     }
 
+    private PresignedUploadResponse errorResponse(ErrorCode code) {
+        return new PresignedUploadResponse(null, null, null, false, code.getMessage());
+    }
     private void validateFileName(String fileName) {
         if (fileName == null || fileName.isEmpty()) {
             throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
