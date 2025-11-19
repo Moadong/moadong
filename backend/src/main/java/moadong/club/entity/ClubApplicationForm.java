@@ -2,27 +2,31 @@ package moadong.club.entity;
 
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Getter;
+import moadong.club.enums.ApplicationFormMode;
+import moadong.club.enums.ApplicationFormStatus;
+import moadong.club.enums.SemesterTerm;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
+import org.springframework.data.annotation.Version;
+import org.springframework.data.domain.Persistable;
+import org.springframework.data.mongodb.core.mapping.Document;
+
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import moadong.club.enums.ApplicantStatus;
-import moadong.club.enums.ApplicationFormMode;
-import moadong.club.enums.ApplicationFormStatus;
-import moadong.club.enums.SemesterTerm;
-import org.springframework.data.annotation.Version;
-import org.springframework.data.domain.Persistable;
-import org.springframework.data.mongodb.core.mapping.Document;
 
 @Document("club_application_forms")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
 public class ClubApplicationForm implements Persistable<String> {
+    private static String[] externalApplicationUrlAllowed = {"https://forms.gle", "https://docs.google.com/forms", "https://form.naver.com", "https://naver.me"};
 
     @Id
     private String id;
@@ -102,6 +106,13 @@ public class ClubApplicationForm implements Persistable<String> {
     }
 
     public void updateExternalApplicationUrl(String externalApplicationUrl) {
+        boolean allowed = Arrays.stream(externalApplicationUrlAllowed)
+                .anyMatch(externalApplicationUrl::startsWith);
+
+        if (!allowed) {
+            throw new RestApiException(ErrorCode.NOT_ALLOWED_EXTERNAL_URL);
+        }
+
         this.externalApplicationUrl = externalApplicationUrl;
     }
 

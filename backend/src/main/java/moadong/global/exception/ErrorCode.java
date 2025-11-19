@@ -55,6 +55,7 @@ public enum ErrorCode {
     ACTIVE_APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-6", "활성화된 지원서 양식이 존재하지 않습니다."),
     APPLICATION_SEMESTER_INVALID(HttpStatus.BAD_REQUEST, "800-7", "올바르지 않은 학기입니다."),
     APPLICATION_OPTIONS_MISSING(HttpStatus.BAD_REQUEST, "800-8", "지원서 생성에 필요한 필드가 누락되었습니다."),
+    NOT_ALLOWED_EXTERNAL_URL(HttpStatus.BAD_REQUEST, "800-9", "형식에 맞지않은 외부지원서 URL 입니다."),
 
     // 900xx: 기타 시스템 오류
     AES_CIPHER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "900-1", "암호화 중 오류가 발생했습니다."),
