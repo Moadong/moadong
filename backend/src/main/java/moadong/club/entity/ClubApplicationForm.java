@@ -94,6 +94,10 @@ public class ClubApplicationForm implements Persistable<String> {
         this.status = ApplicationFormStatus.fromFlag(this.status, activeFlag);
     }
 
+    public void updateFormMode(ApplicationFormMode formMode) {
+        this.formMode = formMode;
+    }
+
     @Override
     public boolean isNew() {
         return this.version == null;

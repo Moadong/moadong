@@ -87,6 +87,7 @@ public class ClubApplyAdminService {
         ClubApplicationForm clubApplicationForm = createApplicationForm(
                 ClubApplicationForm.builder()
                         .clubId(user.getClubId())
+                        .formMode(request.formMode())
                         .build(),
                 request);
         clubApplicationFormsRepository.save(clubApplicationForm);
@@ -234,6 +235,8 @@ public class ClubApplyAdminService {
             clubApplicationForm.updateFormDescription(request.description());
         if (request.active() != null)
             clubApplicationForm.updateFormStatus(request.active());
+        if (request.formMode() != null)
+            clubApplicationForm.updateFormMode(request.formMode());
 
         if (request.semesterYear() != null || request.semesterTerm() != null) {
             Integer semesterYear = Optional.ofNullable(request.semesterYear()).orElse(clubApplicationForm.getSemesterYear());
