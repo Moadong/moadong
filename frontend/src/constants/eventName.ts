@@ -21,8 +21,8 @@ export const USER_EVENT = {
   CLUB_UNION_BUTTON_CLICKED: 'Club Union Button Clicked' as const,
 
   // 공유 버튼
-  SHARE_BUTTON_CLICKED: '공유하기 버튼 클릭' as const,
-  SNS_LINK_CLICKED: 'sns링크 버튼 클릭' as const,
+  SHARE_BUTTON_CLICKED: 'Share Button Clicked' as const,
+  SNS_LINK_CLICKED: 'SNS Link Button Clicked' as const,
 
   STATUS_RADIO_BUTTON_CLICKED: 'StatusRadioButton Clicked' as const,
   INTRODUCE_BUTTON_CLICKED: 'Introduce Button Clicked' as const,
