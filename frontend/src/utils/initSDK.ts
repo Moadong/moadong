@@ -2,7 +2,7 @@ import mixpanel from 'mixpanel-browser';
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import * as Sentry from '@sentry/react';
 
-const PRODUCTION_URL = 'https://moadong.com/';
+const PRODUCTION_URL = 'https://moadong.com';
 
 export function initializeMixpanel() {
   if (process.env.REACT_APP_MIXPANEL_TOKEN) {
