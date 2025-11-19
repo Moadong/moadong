@@ -2,7 +2,7 @@ import * as Styled from './ShareButton.styles';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import ShareIcon from '@/assets/images/icons/share_icon.svg';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT } from '@/constants/eventName';
 
 interface ShareButtonProps {
   clubId: string;
@@ -45,7 +45,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
         },
       ],
     });
-    trackEvent(EVENT_NAME.SHARE_BUTTON_CLICKED, { clubName: clubDetail.name });
+    trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, { clubName: clubDetail.name });
   };
 
   return (
