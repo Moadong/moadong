@@ -69,7 +69,7 @@ export interface ApplicationFormItem {
   id: string;
   title: string;
   editedAt: string;
-  status: 'active' | 'published' | 'unpublished';
+  status: 'ACTIVE' | 'PUBLISHED' | 'UNPUBLISHED';
 }
 
 export interface SemesterGroup {
