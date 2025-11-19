@@ -19,6 +19,8 @@ public record ClubApplicationFormEditRequest(
         @Valid
         List<ClubApplyQuestion> questions,
 
+        String externalApplicationUrl,
+
         ApplicationFormMode formMode,
 
         @Min(2000)

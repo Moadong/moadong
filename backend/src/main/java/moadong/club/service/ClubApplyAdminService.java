@@ -239,6 +239,8 @@ public class ClubApplyAdminService {
             clubApplicationForm.updateFormStatus(request.active());
         if (request.formMode() != null)
             clubApplicationForm.updateFormMode(request.formMode());
+        if (request.externalApplicationUrl() != null)
+            clubApplicationForm.updateExternalApplicationUrl(request.externalApplicationUrl());
 
         if (request.semesterYear() != null || request.semesterTerm() != null) {
             Integer semesterYear = Optional.ofNullable(request.semesterYear()).orElse(clubApplicationForm.getSemesterYear());
