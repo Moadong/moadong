@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/react';
 export function initializeMixpanel() {
   if (process.env.REACT_APP_MIXPANEL_TOKEN) {
     mixpanel.init(process.env.REACT_APP_MIXPANEL_TOKEN, {
-      ip: false,
+      ignore_dnt: true, // do not track이라는 브라우저 옵션 켜져 있어도 track
       debug: false,
     });
   }
