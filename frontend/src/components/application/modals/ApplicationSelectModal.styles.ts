@@ -24,8 +24,8 @@ export const OptionButton = styled.button`
   transition: background-color .15s ease, color .15s ease, border-color .15s ease;
 
   &:hover {
-    background: #ff7a00;
+    background: #ff7543;
     color: #fff;
-    border-color: #ff7a00;
+    border-color: #ff7543;
   }
 `;
