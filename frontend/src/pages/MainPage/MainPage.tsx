@@ -13,9 +13,10 @@ import { MobileBannerImageList } from '@/constants/banners';
 import { Club } from '@/types/club';
 import Spinner from '@/components/common/Spinner/Spinner';
 import * as Styled from './MainPage.styles';
+import { PAGE_VIEW } from '@/constants/eventName';
 
 const MainPage = () => {
-  useTrackPageView('MainPage');
+  useTrackPageView(PAGE_VIEW.MAIN_PAGE);
 
   const { selectedCategory } = useSelectedCategory();
   const { keyword } = useSearchKeyword();

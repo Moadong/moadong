@@ -9,8 +9,12 @@ import FeatureSection from './components/sections/5.FeatureSection/FeatureSectio
 import ConvenienceSection from './components/sections/6.ConvenienceSection/ConvenienceSection';
 import ContactSection from './components/sections/7.ContactSection/ContactSection';
 import isInAppWebView from '@/utils/isInAppWebView';
+import { PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/useTrackPageView';
 
 const IntroducePage = () => {
+  useTrackPageView(PAGE_VIEW.INTRODUCE_PAGE);
+  
   return (
     <>
       <Styled.IntroducePageHeader>

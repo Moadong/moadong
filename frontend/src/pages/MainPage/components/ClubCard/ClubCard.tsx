@@ -7,6 +7,7 @@ import * as Styled from './ClubCard.styles';
 import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
+import { USER_EVENT } from '@/constants/eventName';
 
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const ClubCard = ({ club }: { club: Club }) => {
 
   const handleNavigate = () => {
     setIsClicked(true);
-    mixpanel.track('ClubCard Clicked', {
+    mixpanel.track(USER_EVENT.CLUB_CARD_CLICKED, {
       club_id: club.id,
       club_name: club.name,
       recruitment_status: club.recruitmentStatus,
