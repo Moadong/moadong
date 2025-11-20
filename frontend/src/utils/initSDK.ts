@@ -12,7 +12,8 @@ export function initializeMixpanel() {
     });
   }
 
-  if (!window.location.href.startsWith(PRODUCTION_URL)) {
+  const isProductionHost = window.location.hostname === 'moadong.com';
+  if (!isProductionHost) {
     mixpanel.disable();
   }
 }
