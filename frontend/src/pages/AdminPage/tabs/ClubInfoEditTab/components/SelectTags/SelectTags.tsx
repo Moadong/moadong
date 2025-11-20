@@ -1,5 +1,6 @@
-import React from 'react';
 import * as Styled from './SelectTags.styles';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { ADMIN_EVENT } from '@/constants/eventName';
 
 interface SelectTagsProps {
   label: string;
@@ -9,6 +10,8 @@ interface SelectTagsProps {
 }
 
 const SelectTags = ({ label, tags, selected, onChange }: SelectTagsProps) => {
+  const trackEvent = useMixpanelTrack();
+  
   return (
     <div>
       <Styled.Label>{label}</Styled.Label>
@@ -16,7 +19,13 @@ const SelectTags = ({ label, tags, selected, onChange }: SelectTagsProps) => {
         {tags.map((tag, index) => (
           <Styled.Button
             key={index}
-            onClick={() => onChange(tag)}
+            onClick={() => {
+              trackEvent(ADMIN_EVENT.CLUB_TAG_SELECT_BUTTON_CLICKED, {
+                tagName: tag,
+                category: label,
+              });
+              onChange(tag);
+            }}
             selected={selected === tag}
           >
             #{tag}
