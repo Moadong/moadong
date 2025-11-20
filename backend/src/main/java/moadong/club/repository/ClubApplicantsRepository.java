@@ -10,4 +10,6 @@ public interface ClubApplicantsRepository extends MongoRepository<ClubApplicant,
     List<ClubApplicant> findAllByFormId(String questionId);
 
     List<ClubApplicant> findAllByIdInAndFormId(List<String> ids, String formId);
+
+    void deleteAllByFormId(String formId);
 }
