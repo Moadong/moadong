@@ -35,7 +35,6 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
   const displayedLogo = isClubLogoEmpty ? defaultLogo : clubLogo;
 
   const toggleMenu = useCallback(() => {
-    trackEvent(ADMIN_EVENT.CLUB_LOGO_UPLOAD_BUTTON_CLICKED);
     setIsMenuOpen((prev) => !prev);
   }, [trackEvent]);
 
