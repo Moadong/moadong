@@ -5,7 +5,7 @@ import * as Sentry from '@sentry/react';
 export function initializeMixpanel() {
   if (import.meta.env.VITE_MIXPANEL_TOKEN) {
     mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
-      ip: false,
+      ignore_dnt: true,
       debug: false,
     });
   }
