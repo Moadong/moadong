@@ -150,6 +150,7 @@ export const MenuButton = styled.button<{ isOpen: boolean }>`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    order: 2;
   }
 
   ${media.mobile} {
