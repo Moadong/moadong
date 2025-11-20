@@ -4,61 +4,44 @@ import Morebutton from '@/assets/images/icons/Morebutton.svg';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useRef, useEffect } from 'react';
 import ApplicationMenu from './ApplicationMenu';
-
-const initialdata = {
-  '2025 2학기': [
-    {
-      id: 1,
-      title: '○○동아리 8기 신입 지원서',
-      date: '오후 12:46',
-      active: true,
-    },
-    {
-      id: 2,
-      title: '○○동아리 8기 신입 지원서',
-      date: '오후 4:46',
-      active: false,
-    },
-    {
-      id: 3,
-      title: '○○동아리 8기 신입 지원서',
-      date: '오후 4:46',
-      active: false,
-    },
-  ],
-  '2025 1학기': [
-    {
-      id: 4,
-      title: '○○동아리 7기 신입 지원서',
-      date: '2025. 4. 26',
-      active: true,
-    },
-    {
-      id: 5,
-      title: '○○동아리 7기 신입 지원서',
-      date: '2025. 4. 26',
-      active: false,
-    },
-    {
-      id: 6,
-      title: '○○동아리 7기 신입 지원서',
-      date: '2025. 4. 26',
-      active: false,
-    },
-  ],
-};
+import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
+import Spinner from '@/components/common/Spinner/Spinner';
+import { useAdminClubContext } from '@/context/AdminClubContext';
+// import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
+import { ApplicationFormItem, SemesterGroup } from '@/types/application';
 
 const ApplicationListTab = () => {
-  const [data, setData] = useState(initialdata);
+  const {data: allforms, isLoading, isError, error} = useGetApplicationlist();
   const navigate = useNavigate();
+  const { setApplicationFormId } = useAdminClubContext();
+  // const { mutate: deleteApplication } = useDeleteApplication();
+
   const handleGoToNewForm = () => {
-    // 새 지원서 생성 경로로 이동합니다.
+    setApplicationFormId(null);
     navigate('/admin/application-list/edit');
   };
-  const [openMenuId, setOpenMenuId] = useState<number | null>(null);
+  const handleGoToEditForm = (applicationFormId: string) => {
+    setApplicationFormId(applicationFormId);
+    navigate(`/admin/application-list/edit`);
+  }
+
+  // const handleDeleteApplication = (applicationFormId: string) => {
+  //   // 사용자에게 재확인
+  //   if (window.confirm('지원서 양식을 정말 삭제하시겠습니까?\n삭제된 양식은 복구할 수 없습니다.')) {
+  //     deleteApplication(applicationFormId, {
+  //       onSuccess: () => {
+  //         setOpenMenuId(null);
+  //         // 성공 알림
+  //         alert('삭제되었습니다.');
+  //       },
+  //     });
+  //   }
+  // };
+
+  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const handleMoreButtonClick = (e: React.MouseEvent, id: number) => {
+  const handleMoreButtonClick = (e: React.MouseEvent, id: string) => {
     e.stopPropagation(); // 이벤트 버블링 방지 (row 전체가 클릭되지 않도록)
     setOpenMenuId(openMenuId === id ? null : id); // 같은 버튼 누르면 닫기, 다른 버튼 누르면 열기
   };
@@ -83,6 +66,36 @@ const ApplicationListTab = () => {
     };
   }, [openMenuId]); // openMenuId가 변경될 때마다 이 훅을 다시 실행합니다.
 
+  if (isLoading) {
+    return <Spinner />;
+  }
+  if (isError) {
+    return <div>오류가 발생했습니다: {error.message}</div>;
+  }
+
+  const semesterGroups: SemesterGroup[] = allforms?.forms || [];
+
+  const formatDateTime = (dateTimeString: string) => {
+    const now = new Date();
+    const date = new Date(dateTimeString);
+    const isToday = now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate();
+    if (isToday) {
+      // [오늘 날짜인 경우] 시간만 표시
+      return date.toLocaleString('ko-KR', {
+        hour: 'numeric',
+        minute: '2-digit',
+        hour12: true,
+      });
+    } else {
+      // [오늘 날짜가 아닌 경우] 날짜만 표시
+      return date.toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+      });
+    }
+  };
+
   return (
     <Styled.Container>
       <Styled.Title>지원서 목록</Styled.Title>
@@ -91,23 +104,28 @@ const ApplicationListTab = () => {
           새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
         </Styled.AddButton>
       </Styled.Header>
-      {Object.entries(data).map(([semester, applications]) => (
-        <Styled.ApplicationList key={semester}>
+      {semesterGroups.map((group: SemesterGroup) => {
+        const semesterTermLabel = group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
+        const semesterTitle = `${group.semesterYear}년 ${semesterTermLabel}`;
+        return (
+        <Styled.ApplicationList key={semesterTitle}>
           <Styled.ListHeader>
-            <Styled.SemesterTitle>{semester}</Styled.SemesterTitle>
+            <Styled.SemesterTitle>{semesterTitle}</Styled.SemesterTitle>
             <Styled.DateHeader>
               <Styled.Separation_Bar />
               최종 수정 날짜
             </Styled.DateHeader>
           </Styled.ListHeader>
-          {applications.map((application) => (
+          {(group.forms.map((application: ApplicationFormItem) => {
+            const isActive = application.status === 'active';
+            return (
             <Styled.ApplicationRow key={application.id}>
-              <Styled.ApplicationTitle $active={application.active}>
+              <Styled.ApplicationTitle $active={isActive} onClick={() => handleGoToEditForm(application.id)}>
                 {application.title}
               </Styled.ApplicationTitle>
               <Styled.ApplicationDatetable>
                 <Styled.ApplicationDate>
-                  {application.date}
+                  {formatDateTime(application.editedAt)}
                 </Styled.ApplicationDate>
                 <Styled.MoreButtonContainer
                   ref={openMenuId === application.id ? menuRef : null}
@@ -118,14 +136,18 @@ const ApplicationListTab = () => {
                     <Styled.MoreButtonIcon src={Morebutton} />
                   </Styled.MoreButton>
                   {openMenuId === application.id && (
-                    <ApplicationMenu isActive={application.active} />
+                    <ApplicationMenu
+                      isActive={isActive}
+                      // onDelete={() => handleDeleteApplication(application.id)}
+                    />
                   )}
                 </Styled.MoreButtonContainer>
               </Styled.ApplicationDatetable>
             </Styled.ApplicationRow>
-          ))}
+            );
+          }))}
         </Styled.ApplicationList>
-      ))}
+      )})}
     </Styled.Container>
   );
 };

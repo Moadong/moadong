@@ -8,14 +8,13 @@ import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
-import { DesktopBannerImageList } from '@/constants/banners';
-import { MobileBannerImageList } from '@/constants/banners';
 import { Club } from '@/types/club';
 import Spinner from '@/components/common/Spinner/Spinner';
 import * as Styled from './MainPage.styles';
+import { PAGE_VIEW } from '@/constants/eventName';
 
 const MainPage = () => {
-  useTrackPageView('MainPage');
+  useTrackPageView(PAGE_VIEW.MAIN_PAGE);
 
   const { selectedCategory } = useSelectedCategory();
   const { keyword } = useSearchKeyword();
@@ -54,10 +53,7 @@ const MainPage = () => {
   return (
     <>
       <Header />
-      <Banner
-        desktopBanners={DesktopBannerImageList}
-        mobileBanners={MobileBannerImageList}
-      />
+      <Banner />
       <Styled.PageContainer>
         <CategoryButtonList />
 

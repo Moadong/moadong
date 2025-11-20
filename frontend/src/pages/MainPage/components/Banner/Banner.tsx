@@ -3,27 +3,17 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
 import * as Styled from './Banner.styles';
-import { SlideButton } from '@/constants/banners';
+import BANNERS from './bannerData';
 import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import NextButton from '@/assets/images/icons/next_button_icon.svg';
 
-export interface BannerProps {
-  backgroundImage?: string;
-  linkTo?: string;
-}
-
-interface BannerComponentProps {
-  desktopBanners: BannerProps[];
-  mobileBanners: BannerProps[];
-}
-
-const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
+const Banner = () => {
   const { isMobile } = useDevice();
   const handleLink = useNavigator();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-
-  const banners = isMobile ? mobileBanners : desktopBanners;
 
   const handlePrev = () => {
     swiperInstance?.slidePrev();
@@ -43,11 +33,11 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
     <Styled.BannerContainer>
       <Styled.BannerWrapper>
         <Styled.ButtonContainer>
-          <Styled.SlideButton onClick={handlePrev}>
-            <img src={SlideButton[0]} alt='Previous Slide' />
+          <Styled.SlideButton onClick={handlePrev} aria-label='이전 배너'>
+            <img src={PrevButton} alt='' />
           </Styled.SlideButton>
-          <Styled.SlideButton onClick={handleNext}>
-            <img src={SlideButton[1]} alt='Next Slide' />
+          <Styled.SlideButton onClick={handleNext} aria-label='다음 배너'>
+            <img src={NextButton} alt='' />
           </Styled.SlideButton>
         </Styled.ButtonContainer>
 
@@ -62,26 +52,29 @@ const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
           }}
           speed={500}
         >
-          {banners.map((banner, index) => (
-            <SwiperSlide key={index}>
+          {BANNERS.map((banner) => (
+            <SwiperSlide key={banner.id}>
               <Styled.BannerItem
                 isClickable={!!banner.linkTo}
                 onClick={() => handleBannerClick(banner.linkTo)}
               >
-                <img src={banner.backgroundImage} alt={`banner-${index}`} />
+                <img
+                  src={isMobile ? banner.mobileImage : banner.desktopImage}
+                  alt={banner.alt}
+                />
               </Styled.BannerItem>
             </SwiperSlide>
           ))}
         </Swiper>
         {isMobile && (
           <Styled.NumericPagination>
-            {currentIndex + 1} / {banners.length}
+            {currentIndex + 1} / {BANNERS.length}
           </Styled.NumericPagination>
         )}
 
         {!isMobile && (
           <Styled.DotPagination>
-            {banners.map((_, index) => (
+            {BANNERS.map((_, index) => (
               <Styled.Dot key={index} active={currentIndex === index} />
             ))}
           </Styled.DotPagination>

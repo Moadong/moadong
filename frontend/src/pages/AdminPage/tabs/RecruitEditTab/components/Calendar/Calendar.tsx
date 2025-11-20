@@ -3,6 +3,8 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
 import * as Styled from './Calendar.styles';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { ADMIN_EVENT } from '@/constants/eventName';
 
 interface CalendarProps {
   recruitmentStart: Date | null;
@@ -49,14 +51,19 @@ const Calendar = ({
   onChangeEnd,
   disabledEnd = false,
 }: CalendarProps) => {
+  const trackEvent = useMixpanelTrack();
+
   const handleStartChange = useCallback(
     (date: Date | null) => {
       onChangeStart(date);
       if (recruitmentEnd && date && date > recruitmentEnd) {
         onChangeEnd(date);
       }
+      trackEvent(ADMIN_EVENT.RECRUITMENT_START_CHANGED, {
+        recruitmentStartDate: date?.toISOString() ?? null,
+      });
     },
-    [onChangeStart, onChangeEnd, recruitmentEnd],
+    [onChangeStart, onChangeEnd, recruitmentEnd, trackEvent],
   );
 
   const handleEndChange = useCallback(
@@ -66,8 +73,11 @@ const Calendar = ({
       if (recruitmentStart && date && date < recruitmentStart) {
         onChangeStart(date);
       }
+      trackEvent(ADMIN_EVENT.RECRUITMENT_END_CHANGED, {
+        recruitmentEndDate: date?.toISOString() ?? null,
+      });
     },
-    [disabledEnd, onChangeStart, onChangeEnd, recruitmentStart],
+    [disabledEnd, onChangeStart, onChangeEnd, recruitmentStart, trackEvent],
   );
 
   return (

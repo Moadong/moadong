@@ -1,4 +1,3 @@
-import { media } from '@/styles/mediaQuery';
 import styled from 'styled-components';
 
 export const Overlay = styled.div<{ isOpen: boolean }>`

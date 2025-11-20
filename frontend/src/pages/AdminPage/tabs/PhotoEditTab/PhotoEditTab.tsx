@@ -4,13 +4,18 @@ import * as Styled from './PhotoEditTab.styles';
 import ImageUpload from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImageUpload/ImageUpload';
 import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
 import useUpdateFeedImages from '@/hooks/queries/club/useUpdateFeedImages';
-
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/useTrackPageView';
 
 const MAX_IMAGES = 5;
 
-const RecruitEditTab = () => {
+const PhotoEditTab = () => {
+  const trackEvent = useMixpanelTrack();
+  useTrackPageView(PAGE_VIEW.PHOTO_EDIT_PAGE);
+  
   const clubDetail = useOutletContext<ClubDetail>();
 
   const { mutate: updateFeedImages } = useUpdateFeedImages();
@@ -90,7 +95,10 @@ const RecruitEditTab = () => {
             <ImagePreview
               key={`${image}-${index}`}
               image={image}
-              onDelete={() => deleteImage(index)}
+              onDelete={() => {
+                trackEvent(ADMIN_EVENT.IMAGE_DELETE_BUTTON_CLICKED);
+                deleteImage(index);
+              }}
             />
           ))}
           {/*{imageList.length < MAX_IMAGES && (*/}
@@ -105,4 +113,4 @@ const RecruitEditTab = () => {
     </Styled.PhotoEditorContainer>
   );
 };
-export default RecruitEditTab;
+export default PhotoEditTab;
