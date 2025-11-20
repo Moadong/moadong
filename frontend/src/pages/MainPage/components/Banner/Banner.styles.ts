@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { BannerProps } from './Banner';
 import { media } from '@/styles/mediaQuery';
 
 export const BannerContainer = styled.div`
@@ -22,7 +21,7 @@ export const BannerContainer = styled.div`
   }
 `;
 
-export const BannerWrapper = styled.div<BannerProps>`
+export const BannerWrapper = styled.div`
   position: relative;
   width: 100%;
   max-width: 1180px;

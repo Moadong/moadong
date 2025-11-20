@@ -4,10 +4,11 @@ import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
 import { usePhotoNavigation } from '@/hooks/PhotoList/usePhotoNavigation';
 import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoList/PhotoModal/PhotoModal';
-import { SlideButton } from '@/constants/banners';
 import { useResponsiveLayout } from '@/hooks/PhotoList/useResponsiveLayout';
 import PhotoCardList from '@/pages/ClubDetailPage/components/PhotoList/PhotoCardList/PhotoCardList';
 import { usePhotoModal } from '@/hooks/PhotoList/usePhotoModal';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import NextButton from '@/assets/images/icons/next_button_icon.svg';
 
 interface PhotoListProps {
   feeds: string[];
@@ -67,12 +68,12 @@ const PhotoList = ({ feeds, sectionRefs, clubName }: PhotoListProps) => {
         </Styled.PhotoList>
         {!isMobile && canScrollLeft && (
           <Styled.NavigationButton direction='left' onClick={handlePrev}>
-            <img src={SlideButton[0]} alt='이전 사진' draggable={false} />
+            <img src={PrevButton} alt='이전 사진' draggable={false} />
           </Styled.NavigationButton>
         )}
         {!isMobile && canScrollRight && (
           <Styled.NavigationButton direction='right' onClick={handleNext}>
-            <img src={SlideButton[1]} alt='다음 사진' draggable={false} />
+            <img src={NextButton} alt='다음 사진' draggable={false} />
           </Styled.NavigationButton>
         )}
       </Styled.PhotoListWrapper>
