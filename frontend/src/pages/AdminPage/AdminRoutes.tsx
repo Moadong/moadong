@@ -7,7 +7,7 @@ import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab
 import ApplicationEditTab from '@/pages/AdminPage/tabs/ApplicationEditTab/ApplicationEditTab';
 import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
-import ApplicantsTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsTab';
+import ApplicantsListTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/ApplicantsListTab';
 import ApplicantDetailPage from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPage';
 
 export default function AdminRoutes() {
@@ -21,9 +21,13 @@ export default function AdminRoutes() {
         <Route path='account-edit' element={<AccountEditTab />} />
         <Route path='application-list' element={<ApplicationListTab />} />
         <Route path='application-list/edit' element={<ApplicationEditTab />} />
-        <Route path='applicants' element={<ApplicantsTab />} />
+        <Route path='applicants-list' element={<ApplicantsListTab />} />
         <Route
-          path='applicants/:questionId'
+          path='applicants-list/:applicationFormId'
+          element={<ApplicantsListTab />}
+        />
+        <Route
+          path='applicants-list/:applicationFormId/:questionId'
           element={<ApplicantDetailPage />}
         />
       </Route>
