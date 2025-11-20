@@ -2,7 +2,7 @@ import mixpanel from 'mixpanel-browser';
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import * as Sentry from '@sentry/react';
 
-const PRODUCTION_URL = 'https://moadong.com';
+const PRODUCTION_HOSTNAMES = ['moadong.com', 'www.moadong.com'];
 
 export function initializeMixpanel() {
   if (import.meta.env.VITE_MIXPANEL_TOKEN) {
@@ -12,7 +12,7 @@ export function initializeMixpanel() {
     });
   }
 
-  const isProductionHost = window.location.hostname === 'moadong.com';
+  const isProductionHost = PRODUCTION_HOSTNAMES.includes(window.location.hostname);
   if (!isProductionHost) {
     mixpanel.disable();
   }
