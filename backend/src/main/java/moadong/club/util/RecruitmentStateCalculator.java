@@ -32,10 +32,6 @@ public class RecruitmentStateCalculator {
             return ClubRecruitmentStatus.CLOSED;
         }
 
-        if (recruitmentEndDate.getYear() == ALWAYS_RECRUIT_YEAR) {
-            return ClubRecruitmentStatus.ALWAYS;
-        }
-
         ZonedDateTime now = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
         if (now.isBefore(recruitmentStartDate)) {
@@ -46,7 +42,9 @@ public class RecruitmentStateCalculator {
         }
 
         if (now.isAfter(recruitmentStartDate) && now.isBefore(recruitmentEndDate)) {
-            return ClubRecruitmentStatus.OPEN;
+            return (recruitmentEndDate.getYear() == ALWAYS_RECRUIT_YEAR)
+                    ? ClubRecruitmentStatus.ALWAYS
+                    : ClubRecruitmentStatus.OPEN;
         }
 
         return ClubRecruitmentStatus.CLOSED;
