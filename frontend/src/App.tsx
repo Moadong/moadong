@@ -10,6 +10,7 @@ import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton/ScrollToTopButton';
 import 'swiper/css';
 
 const queryClient = new QueryClient();
@@ -21,6 +22,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <BrowserRouter>
         <GlobalStyles />
+        <ScrollToTopButton />
         <Routes>
           <Route
             path='/'

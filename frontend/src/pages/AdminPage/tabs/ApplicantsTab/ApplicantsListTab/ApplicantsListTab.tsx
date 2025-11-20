@@ -1,9 +1,9 @@
-import * as Styled from './ApplicationListTab.styles';
+import * as Styled from './ApplicantsListTab.styles';
 import Plus from '@/assets/images/icons/Plus.svg';
 import Morebutton from '@/assets/images/icons/Morebutton.svg';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useRef, useEffect } from 'react';
-import ApplicationMenu from './ApplicationMenu';
+import ApplicationMenu from '../../ApplicationListTab/ApplicationMenu';
 import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { useAdminClubContext } from '@/context/AdminClubContext';
@@ -20,9 +20,9 @@ const ApplicationListTab = () => {
     setApplicationFormId(null);
     navigate('/admin/application-list/edit');
   };
-  const handleGoToEditForm = (applicationFormId: string) => {
+  const handleGoToDetailForm = (applicationFormId: string) => {
     setApplicationFormId(applicationFormId);
-    navigate(`/admin/application-list/edit`);
+    navigate(`/admin/applicants-list/${applicationFormId}`);
   }
 
   // const handleDeleteApplication = (applicationFormId: string) => {
@@ -73,7 +73,7 @@ const ApplicationListTab = () => {
     return <div>오류가 발생했습니다: {error.message}</div>;
   }
 
-  const semesterGroups: SemesterGroup[] = allforms?.forms || [];
+  const semesterGroups = allforms?.forms || [];
 
   const formatDateTime = (dateTimeString: string) => {
     const now = new Date();
@@ -120,7 +120,7 @@ const ApplicationListTab = () => {
             const isActive = application.status === 'active';
             return (
             <Styled.ApplicationRow key={application.id}>
-              <Styled.ApplicationTitle $active={isActive} onClick={() => handleGoToEditForm(application.id)}>
+              <Styled.ApplicationTitle $active={isActive} onClick={() => handleGoToDetailForm(application.id)}>
                 {application.title}
               </Styled.ApplicationTitle>
               <Styled.ApplicationDatetable>

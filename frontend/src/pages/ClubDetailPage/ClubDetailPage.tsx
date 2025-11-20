@@ -13,8 +13,8 @@ import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import RecommendedClubs from '@/pages/ClubDetailPage/components/RecommendedClubs/RecommendedClubs';
 import isInAppWebView from '@/utils/isInAppWebView';
+import { PAGE_VIEW } from '@/constants/eventName';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
@@ -32,7 +32,7 @@ const ClubDetailPage = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useTrackPageView(`ClubDetailPage`, clubDetail?.name);
+  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name);
 
   if (!clubDetail) {
     return null;

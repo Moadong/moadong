@@ -3,9 +3,10 @@ import { useLocation } from 'react-router-dom';
 import * as Styled from './Header.styles';
 
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT } from '@/constants/eventName';
 
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
+import AdminProfile from '@/components/common/Header/admin/AdminProfile';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
@@ -37,52 +38,44 @@ const Header = () => {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
-    trackEvent(EVENT_NAME.MOBILE_MENU_DELETE_BUTTON_CLICKED);
+    trackEvent(USER_EVENT.MOBILE_MENU_DELETE_BUTTON_CLICKED);
   };
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   return (
-    <>
-      <Styled.Header isScrolled={isScrolled}>
-        <Styled.Container>
-          <Styled.LeftSection>
-            <Styled.LogoButton
-              onClick={handleHomeClick}
-              aria-label='홈으로 이동'
-            >
-              <img
-                className='desktop-logo'
-                src={DesktopMainIcon}
-                alt='모아동 로고'
-              />
-              <img
-                className='mobile-logo'
-                src={MobileMainIcon}
-                alt='모아동 로고'
-              />
-            </Styled.LogoButton>
+    <Styled.Header isScrolled={isScrolled}>
+      <Styled.Container>
+        <Styled.LeftSection>
+          <Styled.LogoButton onClick={handleHomeClick} aria-label='홈으로 이동'>
+            <img
+              className='desktop-logo'
+              src={DesktopMainIcon}
+              alt='모아동 로고'
+            />
+            <img
+              className='mobile-logo'
+              src={MobileMainIcon}
+              alt='모아동 로고'
+            />
+          </Styled.LogoButton>
 
-            {!isAdminPage && (
-              <Styled.Nav isOpen={isMenuOpen}>
-                {navLinks.map((link) => (
-                  <Styled.NavLink
-                    key={link.label}
-                    isActive={location.pathname === link.path}
-                    onClick={() => {
-                      link.handler();
-                      closeMenu();
-                    }}
-                  >
-                    {link.label}
-                  </Styled.NavLink>
-                ))}
-              </Styled.Nav>
-            )}
-          </Styled.LeftSection>
+          <Styled.Nav isOpen={isMenuOpen}>
+            {navLinks.map((link) => (
+              <Styled.NavLink
+                key={link.label}
+                isActive={location.pathname === link.path}
+                onClick={() => {
+                  link.handler();
+                  closeMenu();
+                }}
+              >
+                {link.label}
+              </Styled.NavLink>
+            ))}
+          </Styled.Nav>
+        </Styled.LeftSection>
 
-          {/* TODO 동아리 관리자 프로필 추가 */}
-          {!isAdminPage && <SearchBox />}
-
+        {!isAdminPage && (
           <Styled.MenuButton
             onClick={toggleMenu}
             isOpen={isMenuOpen}
@@ -92,9 +85,11 @@ const Header = () => {
             <Styled.MenuBar />
             <Styled.MenuBar />
           </Styled.MenuButton>
-        </Styled.Container>
-      </Styled.Header>
-    </>
+        )}
+
+        {isAdminPage ? <AdminProfile /> : <SearchBox />}
+      </Styled.Container>
+    </Styled.Header>
   );
 };
 

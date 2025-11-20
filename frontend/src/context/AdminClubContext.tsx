@@ -6,7 +6,7 @@ interface AdminClubContextType {
   setClubId: (id: string | null) => void;
   applicantsData: ApplicantsInfo | null;
   setApplicantsData: (data: ApplicantsInfo | null) => void;
-  applicationFormId: string | null;
+  applicationFormId: string | null; 
   setApplicationFormId: (id: string | null) => void;
 }
 
@@ -24,13 +24,14 @@ export const AdminClubProvider = ({
   const [applicationFormId, setApplicationFormId] = useState<string | null>(null);
 
   return (
-    <AdminClubContext.Provider 
-      value={{ 
-        clubId, setClubId, 
-        applicantsData, setApplicantsData, 
-        applicationFormId, setApplicationFormId,
-      }}
-    >
+    <AdminClubContext.Provider value={{ 
+      clubId, 
+      setClubId, 
+      applicantsData, 
+      setApplicantsData, 
+      applicationFormId,
+      setApplicationFormId,
+    }}>
       {children}
     </AdminClubContext.Provider>
   );

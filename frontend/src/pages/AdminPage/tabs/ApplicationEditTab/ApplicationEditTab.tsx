@@ -9,30 +9,66 @@ import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
 import { QuestionDivider } from './ApplicationEditTab.styles';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
-import createApplication from '@/apis/application/createApplication';
-import updateApplication from '@/apis/application/updateApplication';
+import { createApplication } from '@/apis/application/createApplication';
+import { updateApplication } from '@/apis/application/updateApplication';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 const ApplicationEditTab = () => {
-  const { clubId, applicationFormId } = useAdminClubContext();
-  const { data, isLoading, isError } = useGetApplication(clubId, applicationFormId);
-  const [formData, setFormData] = useState<ApplicationFormData>(INITIAL_FORM_DATA);
+  const navigate = useNavigate();
+  const queryClient = useQueryClient();
+  const { clubId, applicationFormId: formId } = useAdminClubContext();
+  
+  const { data:existingFormData, isLoading, isError, error} = useGetApplication(clubId ?? undefined, formId ?? '');
 
+  const [formData, setFormData] =
+    useState<ApplicationFormData>(INITIAL_FORM_DATA);
+
+  const [nextId, setNextId] = useState(1);
   useEffect(() => {
-    if (data) {
-      setFormData(data);
-    }
-  }, [data]);
+    if (existingFormData) {
+      setFormData(existingFormData);
 
-  const [nextId, setNextId] = useState(() => {
-    const questions = data?.questions ?? INITIAL_FORM_DATA.questions;
-    if (questions.length === 0) return 1;
-    const maxId = Math.max(...questions.map((q: Question) => q.id));
-    return maxId + 1;
+      const questions = existingFormData.questions;
+      if (questions.length > 0) {
+        const maxId = Math.max(...questions.map((q: Question) => q.id));
+        setNextId(maxId + 1);
+      }
+    }
+  }, [existingFormData]);
+
+  const {mutate: createMutate, isPending: isCreating} = useMutation({
+    mutationFn: (payload: ApplicationFormData) => createApplication(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({queryKey: ['allApplicationForms']});
+      alert('지원서가 성공적으로 생성되었습니다.');
+      navigate(`/admin/application-list`);
+    },
+    onError: (err:Error) => alert(`지원서 생성에 실패했습니다.: ${err.message}`),
   });
 
-  if (!clubId || !applicationFormId) return null;
+  const { mutate: updateMutate, isPending: isUpdating } = useMutation({
+    mutationFn: ({ data, applicationFormId }: { data: ApplicationFormData; applicationFormId: string }) => 
+      updateApplication(data, applicationFormId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['allApplicationForms'] });
+      queryClient.invalidateQueries({ queryKey: ['applicationForm', clubId, formId] });
+      alert('지원서가 성공적으로 수정되었습니다.');
+      navigate('/admin/application-list');
+    },
+    onError: (err: Error) => alert(`지원서 수정에 실패했습니다: ${err.message}`),
+  });
+  
+  if (!clubId) return <div>클럽 정보가 없습니다.</div>;
+  
+  if (isLoading) {
+    return <div>지원서 정보를 불러오는 중...</div>;
+  }
+  if (isError) {
+    return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
+  }
 
   const addQuestion = () => {
     const newQuestion: Question = {
@@ -128,21 +164,18 @@ const ApplicationEditTab = () => {
       id: idx + 1,
     }));
 
-    const payload: ApplicationFormData = {
+    const payload = {
       ...formData,
       questions: reorderedQuestions,
+      active: formData.active ?? '',
     };
-    try {
-      if (data) {
-        await updateApplication(payload, clubId);
-        alert('지원서가 성공적으로 수정되었습니다.');
-      } else {
-        await createApplication(payload, clubId);
-        alert('지원서가 성공적으로 생성되었습니다.');
-      }
-    } catch (error) {
-      alert('지원서 저장에 실패했습니다.');
-      console.error(error);
+    if (formId) {
+      updateMutate({
+        data: payload,
+        applicationFormId: formId,
+    });
+    } else {
+      createMutate(payload);
     }
   };
 
