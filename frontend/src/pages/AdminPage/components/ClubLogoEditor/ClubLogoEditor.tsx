@@ -11,12 +11,16 @@ import {
 } from '@/hooks/queries/club/useClubLogo';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 
 interface ClubLogoEditorProps {
   clubLogo?: string | null;
 }
 
 const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
+  const trackEvent = useMixpanelTrack();
+
   const { clubId } = useAdminClubContext();
   if (!clubId) return null;
 
@@ -31,8 +35,9 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
   const displayedLogo = isClubLogoEmpty ? defaultLogo : clubLogo;
 
   const toggleMenu = useCallback(() => {
+    trackEvent(ADMIN_EVENT.CLUB_LOGO_UPLOAD_BUTTON_CLICKED);
     setIsMenuOpen((prev) => !prev);
-  }, []);
+  }, [trackEvent]);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -101,6 +106,7 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
         <Styled.EditMenu ref={menuRef}>
           <Styled.EditMenuItem
             onClick={() => {
+              trackEvent(ADMIN_EVENT.CLUB_LOGO_EDIT_BUTTON_CLICKED);
               triggerFileInput();
               setIsMenuOpen(false);
             }}
@@ -113,6 +119,7 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
 
           <Styled.EditMenuItem
             onClick={() => {
+              trackEvent(ADMIN_EVENT.CLUB_LOGO_RESET_BUTTON_CLICKED);
               handleLogoReset();
               setIsMenuOpen(false);
             }}

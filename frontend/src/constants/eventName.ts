@@ -38,6 +38,9 @@ export const ADMIN_EVENT = {
   FORGOT_PASSWORD_BUTTON_CLICKED: '비밀번호 찾기 버튼클릭' as const,
 
   // 사이드바
+  CLUB_LOGO_UPLOAD_BUTTON_CLICKED: '동아리 로고 업로드 버튼클릭' as const,
+  CLUB_LOGO_EDIT_BUTTON_CLICKED: '동아리 로고 수정 버튼클릭' as const,
+  CLUB_LOGO_RESET_BUTTON_CLICKED: '동아리 로고 초기화 버튼클릭' as const,
   TAB_CLICKED: '사이드바 탭 클릭' as const,
   LOGOUT_BUTTON_CLICKED: '로그아웃 버튼클릭' as const,
 
