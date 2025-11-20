@@ -40,8 +40,7 @@ const ApplicationSelectModal = ({ isOpen, onClose, options, onSelect, onBackdrop
         <Modal
             isOpen={isOpen}
             onClose={onClose}
-            title="지원 분야 선택"
-            description="지원할 분야를 선택해주세요"
+            title="지원서 선택"
             onBackdropClick={handleOverlayClick}
         >
             <OptionsList options={options} onSelect={onSelect} />
