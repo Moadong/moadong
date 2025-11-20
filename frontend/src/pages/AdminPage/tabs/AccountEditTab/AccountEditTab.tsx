@@ -1,14 +1,18 @@
-// AccountEditTab.tsx
-
-import React, { useState } from 'react'; // useMemo 제거
+import { useState } from 'react';
 import * as Styled from './AccountEditTab.styles';
 import InputField from '@/components/common/InputField/InputField';
 import Button from '@/components/common/Button/Button';
 import { changePassword } from '@/apis/auth/changePassword';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/useTrackPageView';
 
 const PASSWORD_REGEX = /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^])(?!.*\s).{8,20}$/;
 
 const AccountEditTab = () => {
+  const trackEvent = useMixpanelTrack();
+  useTrackPageView(PAGE_VIEW.ADMIN_ACCOUNT_EDIT_PAGE);
+  
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [successMessage, setSuccessMessage] = useState('');
@@ -40,6 +44,12 @@ const AccountEditTab = () => {
 
     try {
       await changePassword({ password: newPassword });
+
+      trackEvent(ADMIN_EVENT.PASSWORD_CHANGE_BUTTON_CLICKED, {
+        newPasswordLength: newPassword.length,
+        confirmPasswordLength: confirmPassword.length,
+      });
+
       setSuccessMessage('비밀번호가 성공적으로 변경되었습니다.');
       setNewPassword('');
       setConfirmPassword('');
@@ -72,7 +82,10 @@ const AccountEditTab = () => {
         type='password'
         value={newPassword}
         onChange={(e) => setNewPassword(e.target.value)}
-        onClear={() => setNewPassword('')}
+        onClear={() => {
+          setNewPassword('');
+          trackEvent(ADMIN_EVENT.NEW_PASSWORD_CLEAR_BUTTON_CLICKED);
+        }}
         maxLength={20}
         isError={isPasswordValid}
         isSuccess={newPassword.length > 0 && !isPasswordValid}
@@ -85,7 +98,10 @@ const AccountEditTab = () => {
         type='password'
         value={confirmPassword}
         onChange={(e) => setConfirmPassword(e.target.value)}
-        onClear={() => setConfirmPassword('')}
+        onClear={() => {
+          setConfirmPassword('');
+          trackEvent(ADMIN_EVENT.CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED);
+        }}
         maxLength={20}
         isError={isPasswordMatching}
         isSuccess={confirmPassword.length > 0 && !isPasswordMatching}

@@ -11,8 +11,15 @@ import Button from '@/components/common/Button/Button';
 import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
 import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
 import * as Styled from './ClubInfoEditTab.styles';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useTrackPageView from '@/hooks/useTrackPageView';
+
 
 const ClubInfoEditTab = () => {
+  const trackEvent = useMixpanelTrack();
+  useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
+
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
 
@@ -69,6 +76,8 @@ const ClubInfoEditTab = () => {
   };
 
   const handleUpdateClub = () => {
+    trackEvent(ADMIN_EVENT.UPDATE_CLUB_BUTTON_CLICKED);
+
     if (!clubDetail || !clubDetail.id) {
       alert('클럽 정보가 로드되지 않았습니다.');
       console.error(
@@ -124,7 +133,10 @@ const ClubInfoEditTab = () => {
           placeholder='동아리 명을 입력해주세요'
           value={clubName}
           onChange={(e) => setClubName(e.target.value)}
-          onClear={() => setClubName('')}
+          onClear={() => {
+            trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED);
+            setClubName('');
+          }}
           width='40%'
           maxLength={10}
           showMaxChar={true}
@@ -137,7 +149,10 @@ const ClubInfoEditTab = () => {
             type='text'
             value={clubPresidentName}
             onChange={(e) => setClubPresidentName(e.target.value)}
-            onClear={() => setClubPresidentName('')}
+            onClear={() => {
+              trackEvent(ADMIN_EVENT.CLUB_PRESIDENT_CLEAR_BUTTON_CLICKED);
+              setClubPresidentName('');
+            }}
             maxLength={5}
           />
 
@@ -148,7 +163,10 @@ const ClubInfoEditTab = () => {
             maxLength={13}
             value={telephoneNumber}
             onChange={(e) => setTelephoneNumber(e.target.value)}
-            onClear={() => setTelephoneNumber('')}
+            onClear={() => {
+              trackEvent(ADMIN_EVENT.TELEPHONE_NUMBER_CLEAR_BUTTON_CLICKED);
+              setTelephoneNumber('');
+            }}
           />
         </Styled.PresidentContainer>
       </Styled.InfoGroup>
@@ -163,7 +181,10 @@ const ClubInfoEditTab = () => {
           showMaxChar={true}
           value={introduction}
           onChange={(e) => setIntroduction(e.target.value)}
-          onClear={() => setIntroduction('')}
+          onClear={() => {
+            trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED);
+            setIntroduction('');
+          }}
         />
 
         <SelectTags
@@ -196,6 +217,9 @@ const ClubInfoEditTab = () => {
                 value={socialLinks[key]}
                 onChange={(e) => handleSocialLinkChange(key, e.target.value)}
                 onClear={() => {
+                  trackEvent(ADMIN_EVENT.CLUB_SNS_LINK_CLEAR_BUTTON_CLICKED, {
+                    snsPlatform: label,
+                  });
                   setSocialLinks((prev) => ({ ...prev, [key]: '' }));
                   setSnsErrors((prev) => ({ ...prev, [key]: '' }));
                 }}

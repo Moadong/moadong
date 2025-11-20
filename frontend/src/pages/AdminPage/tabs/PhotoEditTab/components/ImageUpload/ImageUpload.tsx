@@ -3,6 +3,9 @@ import * as Styled from './ImageUpload.styles';
 import useCreateFeedImage from '@/hooks/queries/club/useCreateFeedImage';
 import Button from '@/components/common/Button/Button';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { ADMIN_EVENT } from '@/constants/eventName';
+
 interface ImageUploadProps {
   clubId: string;
   onChangeImageList: (image: string) => void;
@@ -14,6 +17,8 @@ export const ImageUpload = ({
   onChangeImageList,
   imageCount,
 }: ImageUploadProps) => {
+  const trackEvent = useMixpanelTrack();
+
   const inputRef = useRef<HTMLInputElement>(null);
 
   const onSuccessUploadImage = (data: string) => {
@@ -46,6 +51,7 @@ export const ImageUpload = ({
       <Button
         width={'30%'}
         onClick={() => {
+          trackEvent(ADMIN_EVENT.IMAGE_UPLOAD_BUTTON_CLICKED);
           if (imageCount >= 5) {
             alert('이미지는 최대 5장까지만 업로드할 수 있어요.');
             return;

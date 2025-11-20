@@ -6,8 +6,14 @@ import Button from '@/components/common/Button/Button';
 import { login } from '@/apis/auth/login';
 import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
 import useAuth from '@/hooks/useAuth';
+import useTrackPageView from '@/hooks/useTrackPageView';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 
 const LoginTab = () => {
+  useTrackPageView(PAGE_VIEW.LOGIN_PAGE);
+  const trackEvent = useMixpanelTrack();
+  
   const [userId, setUserId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -40,6 +46,7 @@ const LoginTab = () => {
     } finally {
       setLoading(false);
     }
+    trackEvent(ADMIN_EVENT.LOGIN_BUTTON_CLICKED);
   };
 
   if (authLoading) return <div>로딩 중...</div>;
@@ -82,33 +89,36 @@ const LoginTab = () => {
         <Styled.ForgotLinks>
           <Styled.LinkButton
             type='button'
-            onClick={() =>
+            onClick={() => {
+              trackEvent(ADMIN_EVENT.SIGNUP_BUTTON_CLICKED);
               alert(
                 '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
-              )
-            }
+              );
+            }}
           >
             회원가입
           </Styled.LinkButton>
           <span>|</span>
           <Styled.LinkButton
             type='button'
-            onClick={() =>
+            onClick={() => {
+              trackEvent(ADMIN_EVENT.FORGOT_ID_BUTTON_CLICKED);
               alert(
                 '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
-              )
-            }
+              );
+            }}
           >
             아이디 찾기
           </Styled.LinkButton>
           <span>|</span>
           <Styled.LinkButton
             type='button'
-            onClick={() =>
+            onClick={() => {
+              trackEvent(ADMIN_EVENT.FORGOT_PASSWORD_BUTTON_CLICKED);
               alert(
                 '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
-              )
-            }
+              );
+            }}
           >
             비밀번호 찾기
           </Styled.LinkButton>
