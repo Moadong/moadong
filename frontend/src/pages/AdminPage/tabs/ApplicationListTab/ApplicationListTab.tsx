@@ -11,6 +11,7 @@ import { useAdminClubContext } from '@/context/AdminClubContext';
 import { ApplicationFormItem, SemesterGroup } from '@/types/application';
 import { updateApplicationStatus } from '@/apis/application/updateApplication';
 import { useQueryClient } from '@tanstack/react-query';
+import styled from 'styled-components';
 
 const ApplicationListTab = () => {
   const {data: allforms, isLoading, isError, error} = useGetApplicationlist();
@@ -18,6 +19,8 @@ const ApplicationListTab = () => {
   const navigate = useNavigate();
   const { setApplicationFormId } = useAdminClubContext();
   // const { mutate: deleteApplication } = useDeleteApplication();
+  const [isExpanded, setIsExpanded] = useState(false);
+  const MAX_INITIAL_ITEMS = 3;
 
   const handleGoToNewForm = () => {
     setApplicationFormId(null);
@@ -42,25 +45,30 @@ const ApplicationListTab = () => {
   // };
 
   const handleToggleClick = async (applicationFormId: string, currentStatus: string) => {
-  try {
-    await updateApplicationStatus(
-      applicationFormId,
-      currentStatus
-    );
-    queryClient.invalidateQueries({ queryKey: ['applicationForm'] });
-    setOpenMenuId(null);
-  } catch (error) {
-    console.error('지원서 상태 변경 실패:', error);
-    alert("상태 변경에 실패했습니다.");
-  }
-};
+    try {
+      await updateApplicationStatus(
+        applicationFormId,
+        currentStatus
+      );
+      queryClient.invalidateQueries({ queryKey: ['applicationForm'] });
+      setOpenMenuId(null);
+    } catch (error) {
+      console.error('지원서 상태 변경 실패:', error);
+      alert("상태 변경에 실패했습니다.");
+    }
+  };
+
+  const handleToggleExpand = () => {
+    setIsExpanded(prev => !prev);
+  };
 
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const handleMoreButtonClick = (e: React.MouseEvent, id: string) => {
+  const handleMoreButtonClick = (e: React.MouseEvent, id: string, contextPrefix: string) => {
     e.stopPropagation(); // 이벤트 버블링 방지 (row 전체가 클릭되지 않도록)
-    setOpenMenuId(openMenuId === id ? null : id); // 같은 버튼 누르면 닫기, 다른 버튼 누르면 열기
+    const uniqueKey = `${contextPrefix}-${id}`;
+    setOpenMenuId(openMenuId === uniqueKey ? null : uniqueKey); // 같은 버튼 누르면 닫기, 다른 버튼 누르면 열기
   };
 
   useEffect(() => {
@@ -113,9 +121,74 @@ const ApplicationListTab = () => {
     }
   };
 
+  const activeForms = semesterGroups.flatMap(group => group.forms).filter(form => form.status === 'ACTIVE');
+
+  const formsToDisplay = isExpanded ? activeForms : activeForms.slice(0, MAX_INITIAL_ITEMS);
+  const showExpandButton = activeForms.length >= MAX_INITIAL_ITEMS;
+
+  const ActiveListBody = styled(Styled.ApplicationList)`
+    border-top-left-radius: 0;
+  `;
+  const ActiveApplicationRow = styled(Styled.ApplicationRow)`
+    &:hover {
+      background-color: #f8f9fa;
+      &:first-child {
+        border-top-right-radius: 20px;
+      }
+    }
+  `;
+
   return (
     <Styled.Container>
       <Styled.Title>지원서 목록</Styled.Title>
+      {activeForms.length > 0 && (
+        <Styled.ActiveLIstContainer>
+          <Styled.ActiveListTitleBox>
+            <Styled.ActiveListTitle>대표지원서 모아보기</Styled.ActiveListTitle>
+          </Styled.ActiveListTitleBox>
+          
+          <ActiveListBody>
+            {formsToDisplay.map((application: ApplicationFormItem) => {
+              const isActive = true;
+              const uniqueKeyPrefix = 'activelist';
+              const currentMenuKey = `${uniqueKeyPrefix}-${application.id}`;
+              return (
+                <ActiveApplicationRow key={application.id}>
+                  <Styled.ApplicationTitle $active={isActive} onClick={() => handleGoToEditForm(application.id)}>
+                    {application.title}
+                  </Styled.ApplicationTitle>
+                  <Styled.ApplicationDatetable>
+                    <Styled.ApplicationDate>
+                      {formatDateTime(application.editedAt)}
+                    </Styled.ApplicationDate>
+                    <Styled.MoreButtonContainer
+                      ref={openMenuId === currentMenuKey ? menuRef : null}
+                    >
+                      <Styled.MoreButton
+                        onClick={(e) => handleMoreButtonClick(e, application.id, uniqueKeyPrefix)}
+                      >
+                        <Styled.MoreButtonIcon src={Morebutton} />
+                      </Styled.MoreButton>
+                      {openMenuId === currentMenuKey && (
+                        <ApplicationMenu
+                          isActive={isActive}
+                          onToggleStatus={() => handleToggleClick(application.id, application.status)}
+                        />
+                      )}
+                    </Styled.MoreButtonContainer>
+                  </Styled.ApplicationDatetable>
+                </ActiveApplicationRow>
+              );
+            })}
+            {showExpandButton && (
+                <Styled.ExpandButton onClick={handleToggleExpand}>
+                  {isExpanded ? '접기' : '펼쳐보기'}
+                  {/* CSS에서 꺾쇠 아이콘(⌄)을 추가했습니다. */}
+                </Styled.ExpandButton>
+            )}
+          </ActiveListBody>
+        </Styled.ActiveLIstContainer>
+      )}
       <Styled.Header>
         <Styled.AddButton onClick={handleGoToNewForm}>
           새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
@@ -124,6 +197,7 @@ const ApplicationListTab = () => {
       {semesterGroups.map((group: SemesterGroup) => {
         const semesterTermLabel = group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
         const semesterTitle = `${group.semesterYear}년 ${semesterTermLabel}`;
+        const groupUniqueKeyPrefix = `group_${group.semesterYear}_${group.semesterTerm}`;
         return (
         <Styled.ApplicationList key={semesterTitle}>
           <Styled.ListHeader>
@@ -135,6 +209,7 @@ const ApplicationListTab = () => {
           </Styled.ListHeader>
           {(group.forms.map((application: ApplicationFormItem) => {
             const isActive = application.status === 'ACTIVE';
+            const currentMenuKey = `${groupUniqueKeyPrefix}-${application.id}`;
             return (
             <Styled.ApplicationRow key={application.id}>
               <Styled.ApplicationTitle $active={isActive} onClick={() => handleGoToEditForm(application.id)}>
@@ -145,14 +220,14 @@ const ApplicationListTab = () => {
                   {formatDateTime(application.editedAt)}
                 </Styled.ApplicationDate>
                 <Styled.MoreButtonContainer
-                  ref={openMenuId === application.id ? menuRef : null}
+                  ref={openMenuId === currentMenuKey ? menuRef : null}
                 >
                   <Styled.MoreButton
-                    onClick={(e) => handleMoreButtonClick(e, application.id)}
+                    onClick={(e) => handleMoreButtonClick(e, application.id, groupUniqueKeyPrefix)}
                   >
                     <Styled.MoreButtonIcon src={Morebutton} />
                   </Styled.MoreButton>
-                  {openMenuId === application.id && (
+                  {openMenuId === currentMenuKey && (
                     <ApplicationMenu
                       isActive={isActive}
                       // onDelete={() => handleDeleteApplication(application.id)}
