@@ -41,7 +41,7 @@ public class RecruitmentStateCalculator {
                     : ClubRecruitmentStatus.CLOSED;
         }
 
-        if (now.isAfter(recruitmentStartDate) && now.isBefore(recruitmentEndDate)) {
+        if (!now.isBefore(recruitmentStartDate) && now.isBefore(recruitmentEndDate)) {
             return (recruitmentEndDate.getYear() == ALWAYS_RECRUIT_YEAR)
                     ? ClubRecruitmentStatus.ALWAYS
                     : ClubRecruitmentStatus.OPEN;
