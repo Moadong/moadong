@@ -37,7 +37,7 @@ const ClubCard = ({ club }: { club: Club }) => {
     >
       <Styled.CardHeader>
         <Styled.ClubProfile>
-          <ClubLogo $imageSrc={club.logo || `"${default_profile_image}"`} />
+          <ClubLogo $imageSrc={club.logo || default_profile_image} />
           <Styled.ClubName>{club.name}</Styled.ClubName>
         </Styled.ClubProfile>
         <ClubStateBox state={club.recruitmentStatus} />
