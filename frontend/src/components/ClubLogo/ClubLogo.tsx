@@ -29,7 +29,7 @@ const StyledClubLogo = styled.div<{
     background-color: #efefef;
     background-size: cover;
     background-position: center;
-    background-image: ${$imageSrc ? `url(${$imageSrc})` : 'none'};
+    background-image: ${$imageSrc ? `url("${$imageSrc}")` : 'none'};
   `}
 
   @media (max-width: 500px) {

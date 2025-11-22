@@ -16,7 +16,7 @@ const ClubCard = ({ club }: { club: Club }) => {
 
   const handleNavigate = () => {
     setIsClicked(true);
-    
+
     trackEvent(USER_EVENT.RECOMMENDED_CLUB_CLICKED, {
       club_id: club.id,
       club_name: club.name,
@@ -33,7 +33,8 @@ const ClubCard = ({ club }: { club: Club }) => {
     <Styled.CardContainer
       $state={club.recruitmentStatus}
       $isClicked={isClicked}
-      onClick={handleNavigate}>
+      onClick={handleNavigate}
+    >
       <Styled.CardHeader>
         <Styled.ClubProfile>
           <ClubLogo $imageSrc={club.logo || default_profile_image} />
