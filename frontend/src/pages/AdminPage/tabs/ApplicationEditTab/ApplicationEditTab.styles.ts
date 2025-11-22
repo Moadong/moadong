@@ -118,3 +118,47 @@ export const ApplicationFormChangeButton = styled.button<{ $active: Boolean }>`
   font-style: normal;
   font-weight: 600;
 `;
+
+export const ExternalApplicationFormContainer = styled.div`
+  margin-top: 32px;
+  display: flex;
+  padding: 6px 8px;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  background: var(--Gray-100, #f5f5f5);
+`;
+
+export const ExternalApplicationFormTitle = styled.div`
+  display: inline-flex;
+  height: 32px;
+  padding: 6px 14px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 16px;
+  font-weight: 600;
+`;
+
+export const ExternalApplicationFormLinkInput = styled.input`
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 400;
+  outline: none;
+  width: 100%;
+  &::placeholder {
+    color: var(--Gray-600, #989898);
+  }
+`;
+
+export const ExternalApplicationFormHint = styled.div`
+  color: var(--Gray-600, #989898);
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 8px;
+  margin-left: 4px;
+`;

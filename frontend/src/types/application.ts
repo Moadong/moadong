@@ -77,3 +77,11 @@ export interface SemesterGroup {
   semesterTerm: string;
   forms: ApplicationFormItem[];
 }
+
+export const ApplicationFormMode = {
+  INTERNAL: 'INTERNAL',
+  EXTERNAL: 'EXTERNAL',
+} as const;
+
+export type ApplicationFormMode =
+  (typeof ApplicationFormMode)[keyof typeof ApplicationFormMode];

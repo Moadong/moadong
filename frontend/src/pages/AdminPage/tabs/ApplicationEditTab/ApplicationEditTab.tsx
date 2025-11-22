@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import { QuestionType } from '@/types/application';
 import { Question } from '@/types/application';
-import { ApplicationFormData } from '@/types/application';
+import { ApplicationFormData, ApplicationFormMode } from '@/types/application';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './ApplicationEditTab.styles';
 import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
@@ -15,6 +15,7 @@ import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import Button from '@/components/common/Button/Button';
 
 const ApplicationEditTab = () => {
   const navigate = useNavigate();
@@ -32,9 +33,14 @@ const ApplicationEditTab = () => {
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
 
   const [nextId, setNextId] = useState(1);
+
+  const [applicationFormMode, setApplicationFormMode] =
+    useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
+
   useEffect(() => {
     if (existingFormData) {
       setFormData(existingFormData);
+      setApplicationFormMode(existingFormData.mode);
 
       const questions = existingFormData.questions;
       if (questions.length > 0) {
@@ -84,6 +90,84 @@ const ApplicationEditTab = () => {
     return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
   }
 
+  const handleSubmit = async () => {
+    if (!clubId) return;
+    const reorderedQuestions = formData.questions.map((q, idx) => ({
+      ...q,
+      id: idx + 1,
+    }));
+
+    const payload = {
+      ...formData,
+      questions: reorderedQuestions,
+      active: formData.active ?? '',
+    };
+    if (formId) {
+      updateMutate({
+        data: payload,
+        applicationFormId: formId,
+      });
+    } else {
+      createMutate(payload);
+    }
+  };
+
+  return (
+    <>
+      <PageContainer>
+        <Styled.HeaderContainer>
+          <Styled.ChangeButtonWrapper>
+            <Styled.ApplicationFormChangeButton
+              $active={applicationFormMode === ApplicationFormMode.INTERNAL}
+              onClick={() =>
+                setApplicationFormMode(ApplicationFormMode.INTERNAL)
+              }
+            >
+              모아동지원서
+            </Styled.ApplicationFormChangeButton>
+            <Styled.ApplicationFormChangeButton
+              $active={applicationFormMode === ApplicationFormMode.EXTERNAL}
+              onClick={() =>
+                setApplicationFormMode(ApplicationFormMode.EXTERNAL)
+              }
+            >
+              외부지원서
+            </Styled.ApplicationFormChangeButton>
+          </Styled.ChangeButtonWrapper>
+        </Styled.HeaderContainer>
+        {applicationFormMode === ApplicationFormMode.INTERNAL ? (
+          <InternalApplicationComponent
+            formData={formData}
+            setFormData={setFormData}
+            nextId={nextId}
+            setNextId={setNextId}
+          />
+        ) : (
+          <ExternalApplicationComponent />
+        )}
+        <Styled.ButtonWrapper>
+          <Button width={'150px'} animated onClick={handleSubmit}>
+            저장하기
+          </Button>
+        </Styled.ButtonWrapper>
+      </PageContainer>
+    </>
+  );
+};
+
+interface InternalApplicationComponentProps {
+  formData: ApplicationFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ApplicationFormData>>;
+  nextId: number;
+  setNextId: React.Dispatch<React.SetStateAction<number>>;
+}
+
+const InternalApplicationComponent = ({
+  formData,
+  setFormData,
+  nextId,
+  setNextId,
+}: InternalApplicationComponentProps) => {
   const addQuestion = () => {
     const newQuestion: Question = {
       id: nextId,
@@ -171,86 +255,63 @@ const ApplicationEditTab = () => {
     }));
   };
 
-  const handleSubmit = async () => {
-    if (!clubId) return;
-    const reorderedQuestions = formData.questions.map((q, idx) => ({
-      ...q,
-      id: idx + 1,
-    }));
-
-    const payload = {
-      ...formData,
-      questions: reorderedQuestions,
-      active: formData.active ?? '',
-    };
-    if (formId) {
-      updateMutate({
-        data: payload,
-        applicationFormId: formId,
-      });
-    } else {
-      createMutate(payload);
-    }
-  };
-
   return (
     <>
-      <PageContainer>
-        <Styled.HeaderContainer>
-          <Styled.ChangeButtonWrapper>
-            <Styled.ApplicationFormChangeButton $active={true}>
-              모아동지원서
-            </Styled.ApplicationFormChangeButton>
-            <Styled.ApplicationFormChangeButton $active={false}>
-              외부지원서
-            </Styled.ApplicationFormChangeButton>
-          </Styled.ChangeButtonWrapper>
-        </Styled.HeaderContainer>
-        <Styled.FormTitle
-          type='text'
-          value={formData.title}
-          onChange={(e) => handleFormTitleChange(e.target.value)}
-          placeholder='지원서 제목을 입력하세요'
-        ></Styled.FormTitle>
-        <CustomTextArea
-          label='지원서 설명'
-          value={formData.description}
-          onChange={(e) => handleFormDescriptionChange(e.target.value)}
-          placeholder={APPLICATION_FORM.APPLICATION_DESCRIPTION.placeholder}
-          maxLength={APPLICATION_FORM.APPLICATION_DESCRIPTION.maxLength}
-          showMaxChar
-          width='100%'
-        />
-        <Styled.QuestionContainer>
-          {formData.questions.map((question, index) => (
-            <QuestionBuilder
-              key={question.id}
-              id={index + 1}
-              title={question.title}
-              description={question.description}
-              options={question.options}
-              items={question.items}
-              type={question.type}
-              readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
-              onTitleChange={handleTitleChange(question.id)}
-              onDescriptionChange={handleDescriptionChange(question.id)}
-              onItemsChange={handleItemsChange(question.id)}
-              onTypeChange={handleTypeChange(question.id)}
-              onRequiredChange={handleRequiredChange(question.id)}
-              onRemoveQuestion={() => removeQuestion(question.id)}
-            />
-          ))}
-        </Styled.QuestionContainer>
-        <QuestionDivider />
-        <Styled.AddQuestionButton onClick={addQuestion}>
-          질문 추가 +
-        </Styled.AddQuestionButton>
-        <Styled.ButtonWrapper>
-          <Styled.submitButton onClick={handleSubmit}>
-            저장하기
-          </Styled.submitButton>
-        </Styled.ButtonWrapper>
-      </PageContainer>
+      <Styled.FormTitle
+        type='text'
+        value={formData.title}
+        onChange={(e) => handleFormTitleChange(e.target.value)}
+        placeholder='지원서 제목을 입력하세요'
+      ></Styled.FormTitle>
+      <CustomTextArea
+        label='지원서 설명'
+        value={formData.description}
+        onChange={(e) => handleFormDescriptionChange(e.target.value)}
+        placeholder={APPLICATION_FORM.APPLICATION_DESCRIPTION.placeholder}
+        maxLength={APPLICATION_FORM.APPLICATION_DESCRIPTION.maxLength}
+        showMaxChar
+        width='100%'
+      />
+      <Styled.QuestionContainer>
+        {formData.questions.map((question, index) => (
+          <QuestionBuilder
+            key={question.id}
+            id={index + 1}
+            title={question.title}
+            description={question.description}
+            options={question.options}
+            items={question.items}
+            type={question.type}
+            readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
+            onTitleChange={handleTitleChange(question.id)}
+            onDescriptionChange={handleDescriptionChange(question.id)}
+            onItemsChange={handleItemsChange(question.id)}
+            onTypeChange={handleTypeChange(question.id)}
+            onRequiredChange={handleRequiredChange(question.id)}
+            onRemoveQuestion={() => removeQuestion(question.id)}
+          />
+        ))}
+      </Styled.QuestionContainer>
+      <QuestionDivider />
+      <Styled.AddQuestionButton onClick={addQuestion}>
+        질문 추가 +
+      </Styled.AddQuestionButton>
+    </>
+  );
+};
+
+const ExternalApplicationComponent = () => {
+  return (
+    <>
+      <Styled.ExternalApplicationFormContainer>
+        <Styled.ExternalApplicationFormTitle>
+          링크
+        </Styled.ExternalApplicationFormTitle>
+        <Styled.ExternalApplicationFormLinkInput placeholder='https://~~' />
+      </Styled.ExternalApplicationFormContainer>
+      <Styled.ExternalApplicationFormHint>
+        현재 구글폼, 네이버폼 링크만 제출가능합니다.
+      </Styled.ExternalApplicationFormHint>
     </>
   );
 };
