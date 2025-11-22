@@ -37,17 +37,24 @@ const ApplicationEditTab = () => {
   const [applicationFormMode, setApplicationFormMode] =
     useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
 
-  useEffect(() => {
-    if (existingFormData) {
-      setFormData(existingFormData);
-      setApplicationFormMode(existingFormData.mode);
+  const [externalApplicationUrl, setExternalApplicationUrl] = useState('');
 
-      const questions = existingFormData.questions;
-      if (questions.length > 0) {
-        const maxId = Math.max(...questions.map((q: Question) => q.id));
-        setNextId(maxId + 1);
-      }
-    }
+  useEffect(() => {
+    if (!existingFormData) return;
+
+    const {
+      formMode = ApplicationFormMode.INTERNAL,
+      externalApplicationUrl = '',
+      questions = [],
+    } = existingFormData;
+
+    const currentQuestions =
+      questions.length > 0 ? questions : INITIAL_FORM_DATA.questions!;
+
+    setApplicationFormMode(formMode);
+    setExternalApplicationUrl(externalApplicationUrl);
+    setNextId(Math.max(...currentQuestions.map((q) => q.id)) + 1);
+    setFormData({ ...existingFormData, questions: currentQuestions });
   }, [existingFormData]);
 
   const { mutate: createMutate, isPending: isCreating } = useMutation({
@@ -92,16 +99,26 @@ const ApplicationEditTab = () => {
 
   const handleSubmit = async () => {
     if (!clubId) return;
-    const reorderedQuestions = formData.questions.map((q, idx) => ({
+    const reorderedQuestions = formData.questions?.map((q, idx) => ({
       ...q,
       id: idx + 1,
     }));
 
-    const payload = {
-      ...formData,
-      questions: reorderedQuestions,
+    const payload: ApplicationFormData = {
+      title: formData.title,
+      description: formData.description,
+      semesterYear: formData.semesterYear,
+      semesterTerm: formData.semesterTerm,
+      formMode: applicationFormMode,
       active: formData.active ?? '',
     };
+
+    if (applicationFormMode === ApplicationFormMode.INTERNAL) {
+      payload.questions = reorderedQuestions;
+    } else if (applicationFormMode === ApplicationFormMode.EXTERNAL) {
+      payload.externalApplicationUrl = externalApplicationUrl;
+    }
+
     if (formId) {
       updateMutate({
         data: payload,
@@ -143,7 +160,10 @@ const ApplicationEditTab = () => {
             setNextId={setNextId}
           />
         ) : (
-          <ExternalApplicationComponent />
+          <ExternalApplicationComponent
+            externalApplicationUrl={externalApplicationUrl}
+            setExternalApplicationUrl={setExternalApplicationUrl}
+          />
         )}
         <Styled.ButtonWrapper>
           <Button width={'150px'} animated onClick={handleSubmit}>
@@ -179,15 +199,16 @@ const InternalApplicationComponent = ({
     };
     setFormData((prev) => ({
       ...prev,
-      questions: [...prev.questions, newQuestion],
+      questions: [...(prev.questions ?? []), newQuestion],
     }));
     setNextId((currentId) => currentId + 1);
   };
 
   const removeQuestion = (id: number) => {
+    if (!formData.questions) return;
     setFormData((prev) => ({
       ...prev,
-      questions: prev.questions.filter((q) => q.id !== id),
+      questions: prev.questions!.filter((q) => q.id !== id),
     }));
   };
 
@@ -196,9 +217,10 @@ const InternalApplicationComponent = ({
     key: K,
     value: Question[K],
   ) => {
+    if (!formData.questions) return;
     setFormData((prev) => ({
       ...prev,
-      questions: prev.questions.map((q) =>
+      questions: prev.questions!.map((q) =>
         q.id === id ? { ...q, [key]: value } : q,
       ),
     }));
@@ -228,9 +250,10 @@ const InternalApplicationComponent = ({
     updateQuestionField(id, 'items', items);
 
   const handleTypeChange = (id: number) => (newType: QuestionType) => {
+    if (!formData.questions) return;
     setFormData((prev) => ({
       ...prev,
-      questions: prev.questions.map((q) => {
+      questions: prev.questions!.map((q) => {
         if (q.id !== id) return q;
         const isChoice = newType === 'CHOICE' || newType === 'MULTI_CHOICE';
         return {
@@ -247,9 +270,10 @@ const InternalApplicationComponent = ({
   };
 
   const handleRequiredChange = (id: number) => (value: boolean) => {
+    if (!formData.questions) return;
     setFormData((prev) => ({
       ...prev,
-      questions: prev.questions.map((q) =>
+      questions: prev.questions!.map((q) =>
         q.id === id ? { ...q, options: { ...q.options, required: value } } : q,
       ),
     }));
@@ -273,7 +297,7 @@ const InternalApplicationComponent = ({
         width='100%'
       />
       <Styled.QuestionContainer>
-        {formData.questions.map((question, index) => (
+        {formData.questions?.map((question, index) => (
           <QuestionBuilder
             key={question.id}
             id={index + 1}
@@ -300,14 +324,24 @@ const InternalApplicationComponent = ({
   );
 };
 
-const ExternalApplicationComponent = () => {
+const ExternalApplicationComponent = ({
+  externalApplicationUrl,
+  setExternalApplicationUrl,
+}: {
+  externalApplicationUrl: string;
+  setExternalApplicationUrl: React.Dispatch<React.SetStateAction<string>>;
+}) => {
   return (
     <>
       <Styled.ExternalApplicationFormContainer>
         <Styled.ExternalApplicationFormTitle>
           링크
         </Styled.ExternalApplicationFormTitle>
-        <Styled.ExternalApplicationFormLinkInput placeholder='https://~~' />
+        <Styled.ExternalApplicationFormLinkInput
+          placeholder='https://~~'
+          value={externalApplicationUrl}
+          onChange={(e) => setExternalApplicationUrl(e.target.value)}
+        />
       </Styled.ExternalApplicationFormContainer>
       <Styled.ExternalApplicationFormHint>
         현재 구글폼, 네이버폼 링크만 제출가능합니다.
