@@ -20,6 +20,7 @@ import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 @Document("club_application_forms")
 @AllArgsConstructor
@@ -71,6 +72,10 @@ public class ClubApplicationForm implements Persistable<String> {
 
     @Version
     private Long version;
+
+    public ApplicationFormMode getFormMode() {
+        return Optional.ofNullable(this.formMode).orElse(ApplicationFormMode.INTERNAL);
+    }
 
     public void updateFormTitle(String title) {
         this.title = title;
