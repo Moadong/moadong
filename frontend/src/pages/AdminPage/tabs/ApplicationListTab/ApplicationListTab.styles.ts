@@ -1,12 +1,16 @@
 import styled, { css } from 'styled-components';
 
+interface MenuItemProps {
+  $ActiveMenu?: boolean;
+}
+
+
 // 전체 레이아웃을 감싸는 컨테이너
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
   font-family: 'Pretendard', sans-serif;
   line-height: 1.4;
-  letter-spacing: -0auto;
 `;
 
 export const Title = styled.div`
@@ -16,7 +20,6 @@ export const Title = styled.div`
 `;
 
 export const ActiveLIstContainer = styled.div`
-  display: vertical;
   flex-direction: column;
   width: auto;
   height: auto;
@@ -45,26 +48,27 @@ export const ActiveListTitle = styled.div`
 
 export const ExpandButton = styled.div`
   display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 14px;
-    color: #666;
-    border-top: 1px solid #EEEEEE; /* 리스트와 구분하는 선 */
-    
-    &:hover {
-      background-color: #F8F8F8;
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-    }
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 14px;
+  color: #666;
+  border-top: 1px solid #EEEEEE; /* 리스트와 구분하는 선 */
+  
+  &:hover {
+    background-color: #F8F8F8;
+    border-bottom-left-radius: 20px;
+    border-bottom-right-radius: 20px;
+  }
 
-    &::after {
-        content: 'v'; 
-        font-size: 18px;
-        margin-left: 4px;
-        /* 회전 로직은 ApplicationListTab.tsx에서 isExpanded 상태에 따라 스타일을 넘겨야 함 */
-    }
+  &::after {
+      content: 'v'; 
+      /* 이미지로 대체 해야 할것 같은데 아직 접어두기 아이콘이 없는거 같아서.. 일단 문자로 넣어둠 */
+      font-size: 18px;
+      margin-left: 4px;
+      /* TODO : 회전 로직은 ApplicationListTab.tsx에서 isExpanded 상태에 따라 스타일을 넘겨야 함 */
+  }
 `;
 
 // '새 양식 만들기' 버튼을 포함하는 헤더 영역
@@ -107,7 +111,7 @@ export const ApplicationList = styled.div`
   border-radius: 20px;
   border: 1px solid #dcdcdc;
   &:not(:last-child) {
-    margin-bottom: 20px; /* <--- 이렇게 수정 */
+    margin-bottom: 20px;
   };
 `;
 
@@ -242,7 +246,7 @@ export const MenuContainer = styled.div`
   z-index: 10;
 `;
 
-export const MenuItem = styled.div`
+export const MenuItem = styled.div<MenuItemProps>`
   display: flex;
   align-items: center;
   padding: 8px 12px;
@@ -266,9 +270,9 @@ export const MenuItem = styled.div`
     display: flex;
     align-items: center;
   }
-  &.default {
+  ${(props) => props.$ActiveMenu && css`
     font-weight: 500;
-  }
+  `}
 `;
 
 export const MenuIcon = styled.img`
@@ -280,3 +284,4 @@ export const Separator = styled.div`
   background-color: #f0f0f0; /* 선의 색상 */
   margin: 3px 5px; /* 위아래 여백 4px, 좌우 여백 12px */
 `;
+

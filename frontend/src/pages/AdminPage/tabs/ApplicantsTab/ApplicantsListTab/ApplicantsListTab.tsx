@@ -65,7 +65,7 @@ const ApplicationListTab = () => {
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const handleMoreButtonClick = (e: React.MouseEvent, id: string, contextPrefix: string) => {
+  const handleMenuToggle = (e: React.MouseEvent, id: string, contextPrefix: string) => {
     e.stopPropagation(); // 이벤트 버블링 방지 (row 전체가 클릭되지 않도록)
     const uniqueKey = `${contextPrefix}-${id}`;
     setOpenMenuId(openMenuId === uniqueKey ? null : uniqueKey); // 같은 버튼 누르면 닫기, 다른 버튼 누르면 열기
@@ -165,7 +165,7 @@ const ApplicationListTab = () => {
                       ref={openMenuId === currentMenuKey ? menuRef : null}
                     >
                       <Styled.MoreButton
-                        onClick={(e) => handleMoreButtonClick(e, application.id, uniqueKeyPrefix)}
+                        onClick={(e) => handleMenuToggle(e, application.id, uniqueKeyPrefix)}
                       >
                         <Styled.MoreButtonIcon src={Morebutton} />
                       </Styled.MoreButton>
@@ -223,7 +223,7 @@ const ApplicationListTab = () => {
                   ref={openMenuId === currentMenuKey ? menuRef : null}
                 >
                   <Styled.MoreButton
-                    onClick={(e) => handleMoreButtonClick(e, application.id, groupUniqueKeyPrefix)}
+                    onClick={(e) => handleMenuToggle(e, application.id, groupUniqueKeyPrefix)}
                   >
                     <Styled.MoreButtonIcon src={Morebutton} />
                   </Styled.MoreButton>

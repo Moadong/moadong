@@ -19,7 +19,7 @@ const ApplicationMenu = ({ isActive, onToggleStatus,
 
   return (
     <Styled.MenuContainer>
-      <Styled.MenuItem onClick={onToggleStatus} className='default'>
+      <Styled.MenuItem onClick={onToggleStatus} $ActiveMenu={true}>
         {isActive ? (
           <Styled.MenuIcon src={checkBox} />
         ) : (
