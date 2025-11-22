@@ -10,7 +10,7 @@ export const updateApplication = async (
     const response = await secureFetch(
       `${API_BASE_URL}/api/club/application/${applicationFormId}`,
       {
-        method: 'PUT',
+        method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
         },
