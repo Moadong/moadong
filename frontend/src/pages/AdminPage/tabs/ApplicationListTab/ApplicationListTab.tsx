@@ -9,9 +9,12 @@ import Spinner from '@/components/common/Spinner/Spinner';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 // import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
 import { ApplicationFormItem, SemesterGroup } from '@/types/application';
+import { updateApplicationStatus } from '@/apis/application/updateApplication';
+import { useQueryClient } from '@tanstack/react-query';
 
 const ApplicationListTab = () => {
   const {data: allforms, isLoading, isError, error} = useGetApplicationlist();
+  const queryClient = useQueryClient();
   const navigate = useNavigate();
   const { setApplicationFormId } = useAdminClubContext();
   // const { mutate: deleteApplication } = useDeleteApplication();
@@ -37,6 +40,20 @@ const ApplicationListTab = () => {
   //     });
   //   }
   // };
+
+  const handleToggleClick = async (applicationFormId: string, currentStatus: string) => {
+  try {
+    await updateApplicationStatus(
+      applicationFormId,
+      currentStatus
+    );
+    queryClient.invalidateQueries({ queryKey: ['applicationForm'] });
+    setOpenMenuId(null);
+  } catch (error) {
+    console.error('지원서 상태 변경 실패:', error);
+    alert("상태 변경에 실패했습니다.");
+  }
+};
 
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
@@ -117,7 +134,7 @@ const ApplicationListTab = () => {
             </Styled.DateHeader>
           </Styled.ListHeader>
           {(group.forms.map((application: ApplicationFormItem) => {
-            const isActive = application.status === 'active';
+            const isActive = application.status === 'ACTIVE';
             return (
             <Styled.ApplicationRow key={application.id}>
               <Styled.ApplicationTitle $active={isActive} onClick={() => handleGoToEditForm(application.id)}>
@@ -139,6 +156,7 @@ const ApplicationListTab = () => {
                     <ApplicationMenu
                       isActive={isActive}
                       // onDelete={() => handleDeleteApplication(application.id)}
+                      onToggleStatus={() => handleToggleClick(application.id, application.status)}
                     />
                   )}
                 </Styled.MoreButtonContainer>

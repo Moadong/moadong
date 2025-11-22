@@ -117,7 +117,7 @@ const ApplicationListTab = () => {
             </Styled.DateHeader>
           </Styled.ListHeader>
           {(group.forms.map((application: ApplicationFormItem) => {
-            const isActive = application.status === 'active';
+            const isActive = application.status === 'ACTIVE';
             return (
             <Styled.ApplicationRow key={application.id}>
               <Styled.ApplicationTitle $active={isActive} onClick={() => handleGoToDetailForm(application.id)}>
