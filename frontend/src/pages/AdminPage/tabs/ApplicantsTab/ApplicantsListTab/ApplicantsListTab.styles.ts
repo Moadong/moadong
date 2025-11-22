@@ -6,19 +6,72 @@ export const Container = styled.div`
   flex-direction: column;
   font-family: 'Pretendard', sans-serif;
   line-height: 1.4;
+  letter-spacing: -0auto;
 `;
 
 export const Title = styled.div`
-  font-size: 40px;
+  font-size: 24px;
   font-weight: 700;
   margin-bottom: 24px;
+`;
+
+export const ActiveLIstContainer = styled.div`
+  display: vertical;
+  flex-direction: column;
+  width: auto;
+  height: auto;
+  margin-bottom: 46px;
+`;
+
+export const ActiveListTitleBox= styled.div` 
+  width: 174px;
+  height: 46px;
+  display: Horizontal;
+  padding: 12px 24px;
+  border: 1px solid #DCDCDC;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  background-color: #FF7543; 
+`;
+
+export const ActiveListTitle = styled.div`
+  width: 126px;
+  height: 22px;
+  font-size: 16px;
+  font-weight: 600;
+  font-style: semibold;
+  color: #FFFFFF;
+`;
+
+export const ExpandButton = styled.div`
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    padding: 10px;
+    cursor: pointer;
+    font-size: 14px;
+    color: #666;
+    border-top: 1px solid #EEEEEE; /* 리스트와 구분하는 선 */
+    
+    &:hover {
+      background-color: #F8F8F8;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
+    }
+
+    &::after {
+        content: 'v'; 
+        font-size: 18px;
+        margin-left: 4px;
+        /* 회전 로직은 ApplicationListTab.tsx에서 isExpanded 상태에 따라 스타일을 넘겨야 함 */
+    }
 `;
 
 // '새 양식 만들기' 버튼을 포함하는 헤더 영역
 export const Header = styled.div`
   display: flex;
   justify-content: flex-end;
-  margin-bottom: 16px;
+  margin-bottom: 24px;
 `;
 
 // '새 양식 만들기' 버튼
@@ -48,13 +101,14 @@ export const PlusIcon = styled.img`
 
 // 학기별 지원서 목록을 감싸는 흰색 카드
 export const ApplicationList = styled.div`
-  width: 857px;
+  width: auto;
   height: auto;
   background-color: #ffffff;
-  border-radius: 14px;
+  border-radius: 20px;
   border: 1px solid #dcdcdc;
-  margin-bottom: 14px;
-  gap: 14px;
+  &:not(:last-child) {
+    margin-bottom: 20px; /* <--- 이렇게 수정 */
+  };
 `;
 
 // "2025 2학기", "최종 수정 날짜" 텍스트가 있는 헤더
@@ -100,10 +154,10 @@ export const ApplicationRow = styled.div`
   }
 
   &:hover {
-    background-color: #f8f9fa;
+    background-color: #f5f5f5;
     &:last-child {
-      border-bottom-left-radius: 14px;
-      border-bottom-right-radius: 14px;
+      border-bottom-left-radius: 20px;
+      border-bottom-right-radius: 20px;
     }
   }
 `;
@@ -194,15 +248,13 @@ export const MenuItem = styled.div`
   padding: 8px 12px;
   gap: 11px;
 
-  font-weight: 600;
-  font-size: 12px;
-  line-height: 1.4; /* 140% */
-  letter-spacing: -0.02em; /* -2% */
+  font-weight: 400;
+  font-size: 14px;
 
-  color: #343a40; /* 텍스트 색상을 지정합니다 (추천) */
+  color: #4b4b4b; /* 텍스트 색상을 지정합니다 (추천) */
   cursor: pointer;
   box-sizing: border-box; /* 패딩을 포함하여 너비 계산 */
-  width: 100%;
+  width: auto;
   height: 28px;
 
   &:hover {
@@ -213,6 +265,9 @@ export const MenuItem = styled.div`
   span {
     display: flex;
     align-items: center;
+  }
+  &.default {
+    font-weight: 500;
   }
 `;
 
