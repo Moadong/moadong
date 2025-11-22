@@ -90,7 +90,7 @@ export const ChangeButtonWrapper = styled.div`
   width: fit-content;
 `;
 
-export const ApplicationFormChangeButton = styled.button<{ $active: Boolean }>`
+export const ApplicationFormChangeButton = styled.button<{ $active: boolean }>`
   display: flex;
   justify-content: center;
   align-items: center;
