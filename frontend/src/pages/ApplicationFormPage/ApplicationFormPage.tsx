@@ -18,7 +18,10 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { USER_EVENT, PAGE_VIEW } from '@/constants/eventName';
 
 const ApplicationFormPage = () => {
-  const { clubId, applicationFormId } = useParams<{ clubId: string; applicationFormId: string }>();
+  const { clubId, applicationFormId } = useParams<{
+    clubId: string;
+    applicationFormId: string;
+  }>();
   const navigate = useNavigate();
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
@@ -59,7 +62,7 @@ const ApplicationFormPage = () => {
     navigate(`/club/${clubId}`);
     return null;
   }
-  if (!formData || !clubDetail) {
+  if (!formData || !clubDetail || !formData.questions) {
     return (
       <div>
         지원서 정보를 불러오지 못했어요. 새로고침하거나 잠시 후 다시 시도해
@@ -81,7 +84,7 @@ const ApplicationFormPage = () => {
   };
 
   const handleScrollToInvalid = (invalidIds: number[]) => {
-    const firstInvalidIndex = formData.questions.findIndex((q: Question) =>
+    const firstInvalidIndex = formData.questions!.findIndex((q: Question) =>
       invalidIds.includes(q.id),
     );
     const targetEl = questionRefs.current[firstInvalidIndex];
@@ -94,7 +97,7 @@ const ApplicationFormPage = () => {
       club_name: clubDetail?.name,
     });
 
-    const invalidIds = validateAnswers(formData.questions, getAnswersById);
+    const invalidIds = validateAnswers(formData.questions!, getAnswersById);
     if (invalidIds.length > 0) {
       setInvalidQuestionIds(invalidIds);
       handleScrollToInvalid(invalidIds);
