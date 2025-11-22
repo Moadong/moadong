@@ -55,15 +55,12 @@ public class ClubApplyPublicService {
     public ResponseEntity<?> getClubApplicationForm(String clubId, String applicationFormId) {
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId).orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        boolean isInternal = clubApplicationForm.getFormMode() == ApplicationFormMode.INTERNAL;
-        List<ClubApplicationFormQuestion> questions = isInternal ? clubApplicationForm.getQuestions() : null;
-        String externalApplicationUrl = isInternal ? null : clubApplicationForm.getExternalApplicationUrl();
-
         ClubApplicationFormResponse clubApplicationFormResponse = ClubApplicationFormResponse.builder()
                 .title(clubApplicationForm.getTitle())
                 .description(Optional.ofNullable(clubApplicationForm.getDescription()).orElse(""))
-                .questions(questions)
-                .externalApplicationUrl(externalApplicationUrl)
+                .questions(clubApplicationForm.getQuestions())
+                .formMode(clubApplicationForm.getFormMode())
+                .externalApplicationUrl(clubApplicationForm.getExternalApplicationUrl())
                 .semesterYear(clubApplicationForm.getSemesterYear())
                 .semesterTerm(clubApplicationForm.getSemesterTerm())
                 .status(clubApplicationForm.getStatus())
