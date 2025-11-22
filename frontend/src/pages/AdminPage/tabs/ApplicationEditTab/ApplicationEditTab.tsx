@@ -123,6 +123,24 @@ const ApplicationEditTab = () => {
     if (applicationFormMode === ApplicationFormMode.INTERNAL) {
       payload.questions = reorderedQuestions;
     } else if (applicationFormMode === ApplicationFormMode.EXTERNAL) {
+      const externalApplicationUrlAllowed = [
+        'https://forms.gle',
+        'https://docs.google.com/forms',
+        'https://form.naver.com',
+        'https://naver.me',
+      ];
+
+      const isValidUrl = externalApplicationUrlAllowed.some((url) =>
+        externalApplicationUrl.startsWith(url),
+      );
+
+      if (!isValidUrl) {
+        alert(
+          '외부 지원서 링크는 Google Forms 또는 Naver Form 링크여야 합니다.',
+        );
+        return;
+      }
+
       payload.externalApplicationUrl = externalApplicationUrl;
     }
 
