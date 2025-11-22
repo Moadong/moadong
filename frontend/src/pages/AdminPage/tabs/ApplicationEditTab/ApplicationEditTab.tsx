@@ -88,6 +88,13 @@ const ApplicationEditTab = () => {
       alert(`지원서 수정에 실패했습니다: ${err.message}`),
   });
 
+  const handleFormTitleChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      title: value,
+    }));
+  };
+
   if (!clubId) return <div>클럽 정보가 없습니다.</div>;
 
   if (isLoading) {
@@ -152,6 +159,12 @@ const ApplicationEditTab = () => {
             </Styled.ApplicationFormChangeButton>
           </Styled.ChangeButtonWrapper>
         </Styled.HeaderContainer>
+        <Styled.FormTitle
+          type='text'
+          value={formData.title}
+          onChange={(e) => handleFormTitleChange(e.target.value)}
+          placeholder='지원서 제목을 입력하세요'
+        ></Styled.FormTitle>
         {applicationFormMode === ApplicationFormMode.INTERNAL ? (
           <InternalApplicationComponent
             formData={formData}
@@ -226,13 +239,6 @@ const InternalApplicationComponent = ({
     }));
   };
 
-  const handleFormTitleChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      title: value,
-    }));
-  };
-
   const handleFormDescriptionChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -281,12 +287,6 @@ const InternalApplicationComponent = ({
 
   return (
     <>
-      <Styled.FormTitle
-        type='text'
-        value={formData.title}
-        onChange={(e) => handleFormTitleChange(e.target.value)}
-        placeholder='지원서 제목을 입력하세요'
-      ></Styled.FormTitle>
       <CustomTextArea
         label='지원서 설명'
         value={formData.description}

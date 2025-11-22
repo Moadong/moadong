@@ -120,7 +120,6 @@ export const ApplicationFormChangeButton = styled.button<{ $active: Boolean }>`
 `;
 
 export const ExternalApplicationFormContainer = styled.div`
-  margin-top: 32px;
   display: flex;
   padding: 6px 8px;
   align-items: center;
