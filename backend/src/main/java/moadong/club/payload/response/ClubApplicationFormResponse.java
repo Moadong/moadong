@@ -12,6 +12,7 @@ public record ClubApplicationFormResponse(
         String title,
         String description,
         List<ClubApplicationFormQuestion> questions,
+        String externalApplicationUrl,
         Integer semesterYear,
         SemesterTerm semesterTerm,
         ApplicationFormStatus status

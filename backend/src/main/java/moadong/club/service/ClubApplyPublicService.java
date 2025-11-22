@@ -55,8 +55,19 @@ public class ClubApplyPublicService {
     public ResponseEntity<?> getClubApplicationForm(String clubId, String applicationFormId) {
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId).orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
+        boolean isInternal = clubApplicationForm.getFormMode() == ApplicationFormMode.INTERNAL;
+        List<ClubApplicationFormQuestion> questions = isInternal ? clubApplicationForm.getQuestions() : null;
+        String externalApplicationUrl = isInternal ? null : clubApplicationForm.getExternalApplicationUrl();
 
-        ClubApplicationFormResponse clubApplicationFormResponse = ClubApplicationFormResponse.builder().title(clubApplicationForm.getTitle()).description(Optional.ofNullable(clubApplicationForm.getDescription()).orElse("")).questions(clubApplicationForm.getQuestions()).semesterYear(clubApplicationForm.getSemesterYear()).semesterTerm(clubApplicationForm.getSemesterTerm()).status(clubApplicationForm.getStatus()).build();
+        ClubApplicationFormResponse clubApplicationFormResponse = ClubApplicationFormResponse.builder()
+                .title(clubApplicationForm.getTitle())
+                .description(Optional.ofNullable(clubApplicationForm.getDescription()).orElse(""))
+                .questions(questions)
+                .externalApplicationUrl(externalApplicationUrl)
+                .semesterYear(clubApplicationForm.getSemesterYear())
+                .semesterTerm(clubApplicationForm.getSemesterTerm())
+                .status(clubApplicationForm.getStatus())
+                .build();
 
         return Response.ok(clubApplicationFormResponse);
     }
@@ -65,7 +76,8 @@ public class ClubApplyPublicService {
     public void applyToClub(String clubId, String applicationFormId, ClubApplyRequest request) {
         ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId).orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
 
-        if (clubApplicationForm.getFormMode() == ApplicationFormMode.EXTERNAL) throw new RestApiException(ErrorCode.APPLICATION_NOT_FOUND);
+        if (clubApplicationForm.getFormMode() == ApplicationFormMode.EXTERNAL)
+            throw new RestApiException(ErrorCode.APPLICATION_NOT_FOUND);
         validateAnswers(request.questions(), clubApplicationForm);
 
         List<ClubQuestionAnswer> answers = new ArrayList<>();
