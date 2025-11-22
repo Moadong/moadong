@@ -118,7 +118,7 @@ public class ClubApplicationForm implements Persistable<String> {
             throw new RestApiException(ErrorCode.NOT_ALLOWED_EXTERNAL_URL);
         }
 
-        this.externalApplicationUrl = externalApplicationUrl;
+        this.externalApplicationUrl = externalApplicationUrl.trim();
     }
 
     @Override
