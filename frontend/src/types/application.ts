@@ -52,6 +52,8 @@ export interface ApplicationFormData {
   questions: Question[];
   semesterYear: number;
   semesterTerm: string;
+  formMode: ApplicationFormMode;
+  externalApplicationUrl: string;
   active: 'active' | 'published' | 'unpublished';
 }
 
