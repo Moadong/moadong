@@ -1,10 +1,10 @@
-import { ApplicationFormData } from '@/types/application';
+import { ApplicationFormData, ApplicationFormMode } from '@/types/application';
 
 const now = new Date();
 const currentYear = now.getFullYear();
 const currentMonth = now.getMonth();
 
-const currentSemesterTerm = (currentMonth <= 6) ? 'FIRST' : 'SECOND';
+const currentSemesterTerm = currentMonth <= 6 ? 'FIRST' : 'SECOND';
 
 const INITIAL_FORM_DATA: ApplicationFormData = {
   title: '',
@@ -38,6 +38,8 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
   ],
   semesterYear: currentYear,
   semesterTerm: currentSemesterTerm,
+  formMode: ApplicationFormMode.INTERNAL,
+  externalApplicationUrl: '',
   active: 'unpublished',
 };
 

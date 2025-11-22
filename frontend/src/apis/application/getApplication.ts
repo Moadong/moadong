@@ -1,8 +1,14 @@
 import API_BASE_URL from '@/constants/api';
+import { ApplicationFormData } from '@/types/application';
 
-const getApplication = async (clubId: string, applicationFormId: string) => {
+const getApplication = async (
+  clubId: string,
+  applicationFormId: string,
+): Promise<ApplicationFormData> => {
   try {
-    const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`);
+    const response = await fetch(
+      `${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`,
+    );
     if (!response.ok) {
       let message = response.statusText;
       try {
