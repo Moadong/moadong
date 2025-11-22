@@ -82,7 +82,6 @@ public class ClubApplyAdminService {
     }
 
     public void createClubApplicationForm(CustomUserDetails user, ClubApplicationFormCreateRequest request) {
-        if (request.questions() == null || request.externalApplicationUrl() == null) throw new RestApiException(ErrorCode.APPLICATION_OPTIONS_MISSING);
         validateSemester(request.semesterYear(), request.semesterTerm());
 
         ClubApplicationForm clubApplicationForm = createApplicationForm(
@@ -217,13 +216,15 @@ public class ClubApplyAdminService {
     }
 
     private ClubApplicationForm createApplicationForm(ClubApplicationForm clubApplicationForm, ClubApplicationFormCreateRequest request) {
-        clubApplicationForm.updateQuestions(buildClubFormQuestions(request.questions()));
+        if (request.questions() != null)
+            clubApplicationForm.updateQuestions(buildClubFormQuestions(request.questions()));
+        if (request.externalApplicationUrl() != null)
+            clubApplicationForm.updateExternalApplicationUrl(request.externalApplicationUrl());
         clubApplicationForm.updateFormTitle(request.title());
         clubApplicationForm.updateFormDescription(request.description());
         clubApplicationForm.updateSemesterYear(request.semesterYear());
         clubApplicationForm.updateSemesterTerm(request.semesterTerm());
         clubApplicationForm.updateFormMode(request.formMode());
-        clubApplicationForm.updateExternalApplicationUrl(request.externalApplicationUrl());
 
         return clubApplicationForm;
     }
@@ -259,6 +260,9 @@ public class ClubApplyAdminService {
 
         for (var question : questions) {
             List<ClubQuestionItem> items = new ArrayList<>();
+
+            Set<ClubApplyQuestion.QuestionItem> distinctQuestionItemList = new HashSet<>(question.items());
+            if (distinctQuestionItemList.size() != question.items().size()) throw new RestApiException(ErrorCode.DUPLICATE_QUESTIONS_ITEMS);
 
             for (var item : question.items()) {
                 items.add(ClubQuestionItem.builder()

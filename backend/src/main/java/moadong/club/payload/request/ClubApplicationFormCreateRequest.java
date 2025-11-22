@@ -2,12 +2,11 @@ package moadong.club.payload.request;
 
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
-
-import java.util.List;
-
 import moadong.club.enums.ApplicationFormMode;
 import moadong.club.enums.SemesterTerm;
 import org.springframework.util.StringUtils;
+
+import java.util.List;
 
 public record ClubApplicationFormCreateRequest(
         @NotBlank
