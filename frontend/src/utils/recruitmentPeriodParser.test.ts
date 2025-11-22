@@ -3,13 +3,13 @@ import { parseRecruitmentDateString } from './recruitmentPeriodParser';
 describe('parseRecruitmentPeriod 함수 테스트', () => {
   it('날짜와 시간이 포함된 문자열을 Date 객체로 정확히 바꾼다', () => {
     const input = '2025.05.25 13:45';
-    const result = new Date('2025-05-25T13:45:00');
+    const result = new Date('2025-05-25T13:45:00Z');
     expect(parseRecruitmentDateString(input)).toEqual(result);
   });
 
   it('자정 시간 "YYYY.MM.DD 00:00" 형식을 올바르게 Date 객체로 변환한다', () => {
     const input = '2025.05.25 00:00';
-    const result = new Date('2025-05-25T00:00:00');
+    const result = new Date('2025-05-25T00:00:00Z');
     expect(parseRecruitmentDateString(input)).toEqual(result);
   });
 
