@@ -2,12 +2,18 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
 
-const useTrackPageView = (pageName: string, clubName?: string) => {
+const useTrackPageView = (
+  pageName: string,
+  clubName?: string,
+  skip: boolean = false,
+) => {
   const location = useLocation();
   const isTracked = useRef(false);
   const startTime = useRef(Date.now());
 
   useEffect(() => {
+    if (skip) return;
+
     mixpanel.track(`${pageName} Visited`, {
       url: window.location.href,
       timestamp: startTime.current,
@@ -41,7 +47,7 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
       window.removeEventListener('beforeunload', trackPageDuration);
       document.removeEventListener('visibilitychange', trackPageDuration);
     };
-  }, [location.pathname]);
+  }, [location.pathname, clubName, skip]);
 };
 
 export default useTrackPageView;
