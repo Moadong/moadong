@@ -10,15 +10,23 @@ const useTrackPageView = (
   const location = useLocation();
   const isTracked = useRef(false);
   const startTime = useRef(Date.now());
+  const clubNameRef = useRef(clubName);
+
+  useEffect(() => {
+    clubNameRef.current = clubName;
+  }, [clubName]);
 
   useEffect(() => {
     if (skip) return;
+
+    isTracked.current = false;
+    startTime.current = Date.now();
 
     mixpanel.track(`${pageName} Visited`, {
       url: window.location.href,
       timestamp: startTime.current,
       referrer: document.referrer || 'direct',
-      clubName,
+      clubName: clubNameRef.current,
     });
 
     const trackPageDuration = () => {
@@ -31,7 +39,7 @@ const useTrackPageView = (
         url: window.location.href,
         duration: duration,
         duration_seconds: Math.round(duration / 1000),
-        clubName,
+        clubName: clubNameRef.current,
       });
     };
 
