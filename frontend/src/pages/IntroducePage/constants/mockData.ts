@@ -17,7 +17,7 @@ export const floatingClubs: Club[] = [
     name: '모아보자',
     logo: '',
     tags: ['봉사', '지역사회'],
-    recruitmentStatus: 'UPCOMING',
+    recruitmentStatus: 'ALWAYS',
     division: '중동',
     category: '봉사',
     introduction: '지역 사회와 함께 봉사하며 따뜻함을 전하는 동아리',
