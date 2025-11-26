@@ -30,6 +30,7 @@ import java.util.List;
 @Tag(name = "Club_Apply_Admin", description = "클럽 지원서 관리자 API")
 public class ClubApplyAdminController {
 
+
     private final ClubApplyAdminService clubApplyAdminService;
 
     @PostMapping("/application")
