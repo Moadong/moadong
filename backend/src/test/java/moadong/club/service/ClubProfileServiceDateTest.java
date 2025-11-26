@@ -3,6 +3,7 @@ package moadong.club.service;
 import moadong.club.entity.Club;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.repository.ClubRepository;
+import moadong.club.repository.ClubSearchRepository;
 import moadong.club.util.RecruitmentStateCalculator;
 import moadong.fixture.ClubRequestFixture;
 import moadong.fixture.UserFixture;
@@ -31,12 +32,14 @@ import static org.mockito.Mockito.when;
 @UnitTest
 public class ClubProfileServiceDateTest {
 
-    @Spy
     @InjectMocks
     ClubProfileService clubProfileService;
 
     @Mock
     ClubRepository clubRepository;
+
+    @Mock
+    ClubSearchRepository clubSearchRepository;
 
     @DisplayName("모집글 수정 시 최근 업데이트 일자를 보여준다")
     @Test
