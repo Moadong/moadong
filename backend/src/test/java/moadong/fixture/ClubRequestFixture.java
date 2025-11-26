@@ -3,7 +3,9 @@ package moadong.fixture;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubDivision;
 import moadong.club.payload.request.ClubInfoRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +22,17 @@ public class ClubRequestFixture {
                 Map.of("insta", "https://test")
         );
 
+    }
+
+    public static ClubRecruitmentInfoUpdateRequest defaultRequest() {
+        return new ClubRecruitmentInfoUpdateRequest(
+                LocalDateTime.now(),
+                LocalDateTime.now().plusDays(7),
+                "테스트 대상",
+                "테스트 설명",
+                "https://fake-url.com",
+                List.of()
+        );
     }
     //ToDo: 시간 계산법을 LocalDateTime에서 Instant로 변경 후에 활성화할 것
 //    public static ClubRecruitmentInfoUpdateRequest createValidRequest() {
