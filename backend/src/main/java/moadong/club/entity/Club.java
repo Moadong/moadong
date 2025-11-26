@@ -52,7 +52,6 @@ public class Club implements Persistable<String> {
     private Long version;
 
     @Setter
-    @Getter
     private LocalDateTime lastModified;
 
     public Club() {
