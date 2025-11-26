@@ -1,17 +1,16 @@
 package moadong.club.entity;
 
-import java.time.format.DateTimeFormatter;
+import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
@@ -51,6 +50,10 @@ public class Club implements Persistable<String> {
 
     @Version
     private Long version;
+
+    @Setter
+    @Getter
+    private LocalDateTime lastModified;
 
     public Club() {
         this.name = "";
