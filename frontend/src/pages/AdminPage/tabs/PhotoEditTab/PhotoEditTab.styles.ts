@@ -19,6 +19,10 @@ export const ImageGrid = styled.div`
   overflow-y: hidden;
   padding-bottom: 24px;
   max-width: 770px;
+
+  @media (max-width: 768px) {
+    max-width: 100%;
+  }
 `;
 
 export const InfoTitle = styled.h2`

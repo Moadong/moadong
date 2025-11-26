@@ -55,6 +55,10 @@ export const ApplicationList = styled.div`
   border: 1px solid #dcdcdc;
   margin-bottom: 14px;
   gap: 14px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 // "2025 2학기", "최종 수정 날짜" 텍스트가 있는 헤더
@@ -63,6 +67,11 @@ export const ListHeader = styled.div`
   justify-content: space-between;
   padding: 16px 24px;
   border-bottom: 1px solid #dcdcdc;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 `;
 
 export const SemesterTitle = styled.span`
@@ -76,13 +85,17 @@ export const DateHeader = styled.span`
   font-size: 12px;
   color: #787878;
   margin-right: 35px;
+
+  @media (max-width: 768px) {
+    margin-right: 0;
+  }
 `;
 
 export const Separation_Bar = styled.div`
   width: 1px; /* 아이콘 너비 */
   height: 12px; /* 아이콘 높이 */
   margin-right: 25px;
-  background-color: #DCDCDC;
+  background-color: #dcdcdc;
 `;
 
 // 개별 지원서 한 줄 (Row)
@@ -105,6 +118,11 @@ export const ApplicationRow = styled.div`
       border-bottom-left-radius: 14px;
       border-bottom-right-radius: 14px;
     }
+  }
+
+  @media (max-width: 768px) {
+    padding: 10px 16px;
+    height: auto;
   }
 `;
 

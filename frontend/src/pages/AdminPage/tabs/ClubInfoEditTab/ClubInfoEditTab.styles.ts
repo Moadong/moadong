@@ -4,6 +4,11 @@ export const TitleButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 `;
 
 export const InfoTitle = styled.h2`
@@ -25,6 +30,11 @@ export const PresidentContainer = styled.div`
   gap: 10px;
   align-items: flex-end;
   max-width: 700px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 export const TagEditGroup = styled.div`

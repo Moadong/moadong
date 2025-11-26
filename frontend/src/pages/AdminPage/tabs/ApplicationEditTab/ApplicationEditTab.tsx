@@ -1,27 +1,30 @@
-import { useState, useEffect, useRef } from 'react';
-import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
+import { useState, useEffect } from 'react';
 import { QuestionType } from '@/types/application';
 import { Question } from '@/types/application';
 import { ApplicationFormData } from '@/types/application';
-import { PageContainer } from '@/styles/PageContainer.styles';
-import * as Styled from './ApplicationEditTab.styles';
 import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
-import { QuestionDivider } from './ApplicationEditTab.styles';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
 import { createApplication } from '@/apis/application/createApplication';
 import { updateApplication } from '@/apis/application/updateApplication';
-import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
-import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { useNavigate } from 'react-router-dom';
+import useIsMobileView from '@/hooks/useIsMobileView';
+import DesktopApplicationEditTab from './DesktopApplicationEditTab';
+import MobileApplicationEditTab from './MobileApplicationEditTab';
 
 const ApplicationEditTab = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { clubId, applicationFormId: formId } = useAdminClubContext();
-  
-  const { data:existingFormData, isLoading, isError, error} = useGetApplication(clubId ?? undefined, formId ?? '');
+  const isMobile = useIsMobileView();
+
+  const {
+    data: existingFormData,
+    isLoading,
+    isError,
+    error,
+  } = useGetApplication(clubId ?? undefined, formId ?? '');
 
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
@@ -39,30 +42,39 @@ const ApplicationEditTab = () => {
     }
   }, [existingFormData]);
 
-  const {mutate: createMutate, isPending: isCreating} = useMutation({
+  const { mutate: createMutate, isPending: isCreating } = useMutation({
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({queryKey: ['allApplicationForms']});
+      queryClient.invalidateQueries({ queryKey: ['allApplicationForms'] });
       alert('지원서가 성공적으로 생성되었습니다.');
       navigate(`/admin/application-list`);
     },
-    onError: (err:Error) => alert(`지원서 생성에 실패했습니다.: ${err.message}`),
+    onError: (err: Error) =>
+      alert(`지원서 생성에 실패했습니다.: ${err.message}`),
   });
 
   const { mutate: updateMutate, isPending: isUpdating } = useMutation({
-    mutationFn: ({ data, applicationFormId }: { data: ApplicationFormData; applicationFormId: string }) => 
-      updateApplication(data, applicationFormId),
+    mutationFn: ({
+      data,
+      applicationFormId,
+    }: {
+      data: ApplicationFormData;
+      applicationFormId: string;
+    }) => updateApplication(data, applicationFormId),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['allApplicationForms'] });
-      queryClient.invalidateQueries({ queryKey: ['applicationForm', clubId, formId] });
+      queryClient.invalidateQueries({
+        queryKey: ['applicationForm', clubId, formId],
+      });
       alert('지원서가 성공적으로 수정되었습니다.');
       navigate('/admin/application-list');
     },
-    onError: (err: Error) => alert(`지원서 수정에 실패했습니다: ${err.message}`),
+    onError: (err: Error) =>
+      alert(`지원서 수정에 실패했습니다: ${err.message}`),
   });
-  
+
   if (!clubId) return <div>클럽 정보가 없습니다.</div>;
-  
+
   if (isLoading) {
     return <div>지원서 정보를 불러오는 중...</div>;
   }
@@ -173,61 +185,30 @@ const ApplicationEditTab = () => {
       updateMutate({
         data: payload,
         applicationFormId: formId,
-    });
+      });
     } else {
       createMutate(payload);
     }
   };
 
-  return (
-    <>
-      <PageContainer>
-        <Styled.FormTitle
-          type='text'
-          value={formData.title}
-          onChange={(e) => handleFormTitleChange(e.target.value)}
-          placeholder='지원서 제목을 입력하세요'
-        ></Styled.FormTitle>
-        <CustomTextArea
-          label="지원서 설명"
-          value={formData.description}
-          onChange={(e) => handleFormDescriptionChange(e.target.value)}
-          placeholder={APPLICATION_FORM.APPLICATION_DESCRIPTION.placeholder}
-          maxLength={APPLICATION_FORM.APPLICATION_DESCRIPTION.maxLength}
-          showMaxChar
-          width="100%"
-        />
-        <Styled.QuestionContainer  >
-          {formData.questions.map((question, index) => (
-            <QuestionBuilder
-              key={question.id}
-              id={index + 1}
-              title={question.title}
-              description={question.description}
-              options={question.options}
-              items={question.items}
-              type={question.type}
-              readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
-              onTitleChange={handleTitleChange(question.id)}
-              onDescriptionChange={handleDescriptionChange(question.id)}
-              onItemsChange={handleItemsChange(question.id)}
-              onTypeChange={handleTypeChange(question.id)}
-              onRequiredChange={handleRequiredChange(question.id)}
-              onRemoveQuestion={() => removeQuestion(question.id)}
-            />
-          ))}
-        </Styled.QuestionContainer>
-        <QuestionDivider />
-        <Styled.AddQuestionButton onClick={addQuestion}>
-          질문 추가 +
-        </Styled.AddQuestionButton>
-        <Styled.ButtonWrapper>
-          <Styled.submitButton onClick={handleSubmit}>
-            저장하기
-          </Styled.submitButton>
-        </Styled.ButtonWrapper>
-      </PageContainer>
-    </>
+  const props = {
+    formData,
+    handleFormTitleChange,
+    handleFormDescriptionChange,
+    handleTitleChange,
+    handleDescriptionChange,
+    handleItemsChange,
+    handleTypeChange,
+    handleRequiredChange,
+    removeQuestion,
+    addQuestion,
+    handleSubmit,
+  };
+
+  return isMobile ? (
+    <MobileApplicationEditTab {...props} />
+  ) : (
+    <DesktopApplicationEditTab {...props} />
   );
 };
 

@@ -8,6 +8,12 @@ export const ApplicationHeader = styled.div`
   align-items: center;
   justify-content: space-between;
   margin-bottom: 32px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 10px;
+  }
 `;
 
 export const ApplicationTitle = styled.h2`
@@ -29,6 +35,10 @@ export const SummaryWrapper = styled.div`
   display: flex;
   gap: 12px;
   margin-bottom: 40px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const SummaryCard = styled.div<{ bgColor: string }>`
@@ -71,6 +81,11 @@ export const ApplicantListHeader = styled.div`
   align-items: center;
   margin-bottom: 16px;
   gap: 8px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 export const FilterContainer = styled.div`
@@ -78,6 +93,11 @@ export const FilterContainer = styled.div`
   justify-content: center;
   align-items: stretch;
   gap: 8px;
+
+  @media (max-width: 768px) {
+    flex-wrap: wrap;
+    justify-content: flex-start;
+  }
 `;
 
 export const SelectWrapper = styled.div`
@@ -191,12 +211,23 @@ export const ApplicantSearchBox = styled.input`
   border: 1px solid #ddd;
   width: 240px;
   font-size: 16px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    margin-left: 0;
+  }
 `;
 
 export const ApplicantTable = styled.table`
   width: 100%;
   border-collapse: collapse;
   background: #fff;
+
+  @media (max-width: 768px) {
+    display: block;
+    overflow-x: auto;
+    white-space: nowrap;
+  }
 `;
 
 export const ApplicantTableHeaderWrapper = styled.thead`

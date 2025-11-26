@@ -20,6 +20,11 @@ export const FormTitle = styled.input`
   &:focus::placeholder {
     opacity: 0;
   }
+
+  @media (max-width: 768px) {
+    font-size: 1.5rem;
+    margin: 30px 0px 20px 0px;
+  }
 `;
 
 export const QuestionContainer = styled.div`
@@ -27,6 +32,10 @@ export const QuestionContainer = styled.div`
   flex-direction: column;
   margin-top: 40px;
   gap: 83px;
+
+  @media (max-width: 768px) {
+    gap: 40px;
+  }
 `;
 
 export const AddQuestionButton = styled.button`

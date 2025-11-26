@@ -17,6 +17,12 @@ export const HeaderContainer = styled.div`
   gap: 10px;
   width: 100%;
   height: 58px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    height: auto;
+    align-items: flex-start;
+  }
 `;
 
 export const ApplicantContainer = styled.div`
@@ -46,6 +52,13 @@ export const ApplicantContainer = styled.div`
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+  }
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+    padding: 20px;
   }
 `;
 
@@ -77,6 +90,10 @@ export const StatusSelect = styled.select<{ $backgroundColor: string }>`
   &:focus {
     outline: none;
   }
+
+  @media (max-width: 768px) {
+    width: 100%;
+  }
 `;
 
 export const MemoContainer = styled.div`
@@ -89,6 +106,10 @@ export const MemoContainer = styled.div`
   min-height: 100px;
   background: var(--f5, #f5f5f5);
   border-radius: 10px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const MemoLabel = styled.label`

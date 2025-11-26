@@ -9,6 +9,11 @@ export const TitleButtonContainer = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    gap: 10px;
+  }
 `;
 
 export const InfoTitle = styled.h2`
@@ -26,15 +31,19 @@ export const InfoGroup = styled.div`
 `;
 
 export const RecruitPeriodContainer = styled.div`
-  display: flex; 
-  gap: 16px; 
+  display: flex;
+  gap: 16px;
   max-width: 706px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+  }
 `;
 
 export const AlwaysRecruitButton = styled.button<{ $active: boolean }>`
   border-radius: 6px;
   height: 45px;
-  padding: 0px 16px ;
+  padding: 0px 16px;
   font-weight: 600;
   font-size: 1rem;
   cursor: pointer;
@@ -43,10 +52,12 @@ export const AlwaysRecruitButton = styled.button<{ $active: boolean }>`
   color: ${({ $active }) => ($active ? '#fff' : '#797979')};
   background: ${({ $active }) => ($active ? '#FF7543' : 'rgba(0,0,0,0.05)')};
   border: ${({ $active }) => ($active ? 'none' : '1px solid #C5C5C5')};
-  transition: background-color 0.12s ease, transform 0.06s ease;
+  transition:
+    background-color 0.12s ease,
+    transform 0.06s ease;
 
   &:active {
-    transform: translateY(1px); 
+    transform: translateY(1px);
   }
 `;
 

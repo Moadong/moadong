@@ -5,6 +5,11 @@ export const IdInputContainer = styled.div`
   flex-direction: row;
   align-items: flex-end;
   gap: 10px;
+
+  @media (max-width: 768px) {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 `;
 
 export const ForgotPasswordText = styled.h3`

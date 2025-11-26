@@ -1,19 +1,17 @@
-import * as Styled from './ApplicantsListTab.styles';
-import Plus from '@/assets/images/icons/Plus.svg';
-import Morebutton from '@/assets/images/icons/Morebutton.svg';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useRef, useEffect } from 'react';
-import ApplicationMenu from '../../ApplicationListTab/ApplicationMenu';
 import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-// import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
-import { ApplicationFormItem, SemesterGroup } from '@/types/application';
+import useIsMobileView from '@/hooks/useIsMobileView';
+import DesktopApplicantsListTab from './DesktopApplicantsListTab';
+import MobileApplicantsListTab from './MobileApplicantsListTab';
 
 const ApplicationListTab = () => {
-  const {data: allforms, isLoading, isError, error} = useGetApplicationlist();
+  const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
   const navigate = useNavigate();
   const { setApplicationFormId } = useAdminClubContext();
+  const isMobile = useIsMobileView();
   // const { mutate: deleteApplication } = useDeleteApplication();
 
   const handleGoToNewForm = () => {
@@ -23,7 +21,7 @@ const ApplicationListTab = () => {
   const handleGoToDetailForm = (applicationFormId: string) => {
     setApplicationFormId(applicationFormId);
     navigate(`/admin/applicants-list/${applicationFormId}`);
-  }
+  };
 
   // const handleDeleteApplication = (applicationFormId: string) => {
   //   // 사용자에게 재확인
@@ -78,7 +76,10 @@ const ApplicationListTab = () => {
   const formatDateTime = (dateTimeString: string) => {
     const now = new Date();
     const date = new Date(dateTimeString);
-    const isToday = now.getFullYear() === date.getFullYear() && now.getMonth() === date.getMonth() && now.getDate() === date.getDate();
+    const isToday =
+      now.getFullYear() === date.getFullYear() &&
+      now.getMonth() === date.getMonth() &&
+      now.getDate() === date.getDate();
     if (isToday) {
       // [오늘 날짜인 경우] 시간만 표시
       return date.toLocaleString('ko-KR', {
@@ -96,59 +97,20 @@ const ApplicationListTab = () => {
     }
   };
 
-  return (
-    <Styled.Container>
-      <Styled.Title>지원서 목록</Styled.Title>
-      <Styled.Header>
-        <Styled.AddButton onClick={handleGoToNewForm}>
-          새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
-        </Styled.AddButton>
-      </Styled.Header>
-      {semesterGroups.map((group: SemesterGroup) => {
-        const semesterTermLabel = group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
-        const semesterTitle = `${group.semesterYear}년 ${semesterTermLabel}`;
-        return (
-        <Styled.ApplicationList key={semesterTitle}>
-          <Styled.ListHeader>
-            <Styled.SemesterTitle>{semesterTitle}</Styled.SemesterTitle>
-            <Styled.DateHeader>
-              <Styled.Separation_Bar />
-              최종 수정 날짜
-            </Styled.DateHeader>
-          </Styled.ListHeader>
-          {(group.forms.map((application: ApplicationFormItem) => {
-            const isActive = application.status === 'ACTIVE';
-            return (
-            <Styled.ApplicationRow key={application.id}>
-              <Styled.ApplicationTitle $active={isActive} onClick={() => handleGoToDetailForm(application.id)}>
-                {application.title}
-              </Styled.ApplicationTitle>
-              <Styled.ApplicationDatetable>
-                <Styled.ApplicationDate>
-                  {formatDateTime(application.editedAt)}
-                </Styled.ApplicationDate>
-                <Styled.MoreButtonContainer
-                  ref={openMenuId === application.id ? menuRef : null}
-                >
-                  <Styled.MoreButton
-                    onClick={(e) => handleMoreButtonClick(e, application.id)}
-                  >
-                    <Styled.MoreButtonIcon src={Morebutton} />
-                  </Styled.MoreButton>
-                  {openMenuId === application.id && (
-                    <ApplicationMenu
-                      isActive={isActive}
-                      // onDelete={() => handleDeleteApplication(application.id)}
-                    />
-                  )}
-                </Styled.MoreButtonContainer>
-              </Styled.ApplicationDatetable>
-            </Styled.ApplicationRow>
-            );
-          }))}
-        </Styled.ApplicationList>
-      )})}
-    </Styled.Container>
+  const props = {
+    semesterGroups,
+    handleGoToNewForm,
+    handleGoToDetailForm,
+    openMenuId,
+    handleMoreButtonClick,
+    menuRef,
+    formatDateTime,
+  };
+
+  return isMobile ? (
+    <MobileApplicantsListTab {...props} />
+  ) : (
+    <DesktopApplicantsListTab {...props} />
   );
 };
 

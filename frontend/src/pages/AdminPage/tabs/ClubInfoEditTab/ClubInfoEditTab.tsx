@@ -5,20 +5,17 @@ import { ClubDetail } from '@/types/club';
 import { SNSPlatform } from '@/types/club';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import { validateSocialLink } from '@/utils/validateSocialLink';
-import { SNS_CONFIG } from '@/constants/snsConfig';
-import InputField from '@/components/common/InputField/InputField';
-import Button from '@/components/common/Button/Button';
-import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
-import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
-import * as Styled from './ClubInfoEditTab.styles';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
-
+import useIsMobileView from '@/hooks/useIsMobileView';
+import DesktopClubInfoEditTab from './DesktopClubInfoEditTab';
+import MobileClubInfoEditTab from './MobileClubInfoEditTab';
 
 const ClubInfoEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
+  const isMobile = useIsMobileView();
 
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
@@ -118,119 +115,36 @@ const ClubInfoEditTab = () => {
     });
   };
 
-  return (
-    <>
-      <Styled.TitleButtonContainer>
-        <Styled.InfoTitle>동아리 기본 정보 수정</Styled.InfoTitle>
-        <Button width={'150px'} animated onClick={handleUpdateClub}>
-          수정하기
-        </Button>
-      </Styled.TitleButtonContainer>
+  const props = {
+    clubName,
+    setClubName,
+    clubPresidentName,
+    setClubPresidentName,
+    telephoneNumber,
+    setTelephoneNumber,
+    introduction,
+    setIntroduction,
+    selectedDivision,
+    setSelectedDivision,
+    selectedCategory,
+    setSelectedCategory,
+    clubTags,
+    setClubTags,
+    socialLinks,
+    handleSocialLinkChange,
+    setSocialLinks,
+    snsErrors,
+    setSnsErrors,
+    handleUpdateClub,
+    trackEvent,
+    divisions,
+    categories,
+  };
 
-      <Styled.InfoGroup>
-        <InputField
-          label='동아리 명'
-          placeholder='동아리 명을 입력해주세요'
-          value={clubName}
-          onChange={(e) => setClubName(e.target.value)}
-          onClear={() => {
-            trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED);
-            setClubName('');
-          }}
-          width='40%'
-          maxLength={10}
-          showMaxChar={true}
-        />
-
-        <Styled.PresidentContainer>
-          <InputField
-            label='회장 정보'
-            placeholder='동아리 대표의 이름을 입력해주세요'
-            type='text'
-            value={clubPresidentName}
-            onChange={(e) => setClubPresidentName(e.target.value)}
-            onClear={() => {
-              trackEvent(ADMIN_EVENT.CLUB_PRESIDENT_CLEAR_BUTTON_CLICKED);
-              setClubPresidentName('');
-            }}
-            maxLength={5}
-          />
-
-          <InputField
-            label=''
-            placeholder='전화번호를 입력해주세요'
-            type='text'
-            maxLength={13}
-            value={telephoneNumber}
-            onChange={(e) => setTelephoneNumber(e.target.value)}
-            onClear={() => {
-              trackEvent(ADMIN_EVENT.TELEPHONE_NUMBER_CLEAR_BUTTON_CLICKED);
-              setTelephoneNumber('');
-            }}
-          />
-        </Styled.PresidentContainer>
-      </Styled.InfoGroup>
-
-      <Styled.InfoTitle>동아리 태그 수정</Styled.InfoTitle>
-      <Styled.TagEditGroup>
-        <InputField
-          label='한줄소개'
-          placeholder='한줄소개를 입력해주세요'
-          type='text'
-          maxLength={20}
-          showMaxChar={true}
-          value={introduction}
-          onChange={(e) => setIntroduction(e.target.value)}
-          onClear={() => {
-            trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED);
-            setIntroduction('');
-          }}
-        />
-
-        <SelectTags
-          label='분류'
-          tags={divisions}
-          selected={selectedDivision}
-          onChange={setSelectedDivision}
-        />
-
-        <SelectTags
-          label='분과'
-          tags={categories}
-          selected={selectedCategory}
-          onChange={setSelectedCategory}
-        />
-
-        <MakeTags value={clubTags} onChange={setClubTags} />
-      </Styled.TagEditGroup>
-
-      <Styled.InfoTitle>동아리 SNS 링크</Styled.InfoTitle>
-      <Styled.SNSInputGroup>
-        {Object.entries(SNS_CONFIG).map(([rawKey, { label, placeholder }]) => {
-          const key = rawKey as SNSPlatform;
-
-          return (
-            <Styled.SNSRow key={key}>
-              <Styled.SNSCheckboxLabel>{label}</Styled.SNSCheckboxLabel>
-              <InputField
-                placeholder={placeholder}
-                value={socialLinks[key]}
-                onChange={(e) => handleSocialLinkChange(key, e.target.value)}
-                onClear={() => {
-                  trackEvent(ADMIN_EVENT.CLUB_SNS_LINK_CLEAR_BUTTON_CLICKED, {
-                    snsPlatform: label,
-                  });
-                  setSocialLinks((prev) => ({ ...prev, [key]: '' }));
-                  setSnsErrors((prev) => ({ ...prev, [key]: '' }));
-                }}
-                isError={snsErrors[key] !== ''}
-                helperText={snsErrors[key]}
-              />
-            </Styled.SNSRow>
-          );
-        })}
-      </Styled.SNSInputGroup>
-    </>
+  return isMobile ? (
+    <MobileClubInfoEditTab {...props} />
+  ) : (
+    <DesktopClubInfoEditTab {...props} />
   );
 };
 

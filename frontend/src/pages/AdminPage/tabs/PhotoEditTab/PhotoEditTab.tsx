@@ -1,21 +1,22 @@
 import React, { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import * as Styled from './PhotoEditTab.styles';
-import ImageUpload from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImageUpload/ImageUpload';
-import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
 import useUpdateFeedImages from '@/hooks/queries/club/useUpdateFeedImages';
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/useTrackPageView';
+import useIsMobileView from '@/hooks/useIsMobileView';
+import DesktopPhotoEditTab from './DesktopPhotoEditTab';
+import MobilePhotoEditTab from './MobilePhotoEditTab';
 
 const MAX_IMAGES = 5;
 
 const PhotoEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.PHOTO_EDIT_PAGE);
-  
+  const isMobile = useIsMobileView();
+
   const clubDetail = useOutletContext<ClubDetail>();
 
   const { mutate: updateFeedImages } = useUpdateFeedImages();
@@ -77,40 +78,18 @@ const PhotoEditTab = () => {
     );
   };
 
-  return (
-    <Styled.PhotoEditorContainer>
-      <Styled.InfoTitle>활동 사진 편집</Styled.InfoTitle>
-      <Styled.Label>활동사진 추가 (최대 5장)</Styled.Label>
-      <Styled.ImageContainer>
-        <ImageUpload
-          key='add-image'
-          onChangeImageList={addImage}
-          clubId={clubDetail.id}
-          imageCount={imageList.length}
-        />
-        <br />
-        <Styled.Label>활동사진 수정</Styled.Label>
-        <Styled.ImageGrid>
-          {imageList.map((image, index) => (
-            <ImagePreview
-              key={`${image}-${index}`}
-              image={image}
-              onDelete={() => {
-                trackEvent(ADMIN_EVENT.IMAGE_DELETE_BUTTON_CLICKED);
-                deleteImage(index);
-              }}
-            />
-          ))}
-          {/*{imageList.length < MAX_IMAGES && (*/}
-          {/*  <ImageUpload*/}
-          {/*    key='add-image'*/}
-          {/*    onChangeImageList={addImage}*/}
-          {/*    clubId={clubDetail.id}*/}
-          {/*  />*/}
-          {/*)}*/}
-        </Styled.ImageGrid>
-      </Styled.ImageContainer>
-    </Styled.PhotoEditorContainer>
+  const props = {
+    clubDetail,
+    imageList,
+    addImage,
+    deleteImage,
+    trackEvent,
+  };
+
+  return isMobile ? (
+    <MobilePhotoEditTab {...props} />
+  ) : (
+    <DesktopPhotoEditTab {...props} />
   );
 };
 export default PhotoEditTab;
