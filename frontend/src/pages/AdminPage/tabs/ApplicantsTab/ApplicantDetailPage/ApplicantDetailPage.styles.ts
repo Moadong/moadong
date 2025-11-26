@@ -55,8 +55,9 @@ export const ApplicantContainer = styled.div`
   }
 
   @media (max-width: 768px) {
-    flex-direction: column;
-    gap: 20px;
+    flex-direction: row;
+    justify-content: space-between;
+    gap: 0;
     width: 100%;
     padding: 20px;
   }
@@ -109,6 +110,7 @@ export const MemoContainer = styled.div`
 
   @media (max-width: 768px) {
     flex-direction: column;
+    gap: 12px;
   }
 `;
 

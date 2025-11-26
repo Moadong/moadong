@@ -123,6 +123,9 @@ export const ApplicationRow = styled.div`
   @media (max-width: 768px) {
     padding: 10px 16px;
     height: auto;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
   }
 `;
 
@@ -159,6 +162,11 @@ export const ApplicationDatetable = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
+
+  @media (max-width: 768px) {
+    width: 100%;
+    justify-content: space-between;
+  }
 `;
 
 // 수정 날짜

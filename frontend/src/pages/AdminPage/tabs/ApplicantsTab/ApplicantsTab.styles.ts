@@ -37,7 +37,9 @@ export const SummaryWrapper = styled.div`
   margin-bottom: 40px;
 
   @media (max-width: 768px) {
-    flex-direction: column;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
   }
 `;
 
@@ -47,6 +49,10 @@ export const SummaryCard = styled.div<{ bgColor: string }>`
   border-radius: 10px;
   padding: 32px 0;
   text-align: center;
+
+  @media (max-width: 768px) {
+    padding: 20px 0;
+  }
 `;
 
 export const SummaryLabel = styled.div`
@@ -97,6 +103,7 @@ export const FilterContainer = styled.div`
   @media (max-width: 768px) {
     flex-wrap: wrap;
     justify-content: flex-start;
+    gap: 8px;
   }
 `;
 

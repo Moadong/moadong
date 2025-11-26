@@ -123,7 +123,8 @@ export const DatepickerContainer = styled.div`
 
   /* 입력 필드 */
   .react-datepicker__input-container input {
-    width: 270px;
+    width: 100%;
+    max-width: 270px;
     height: 45px;
     border: none;
     border-radius: 6px;
