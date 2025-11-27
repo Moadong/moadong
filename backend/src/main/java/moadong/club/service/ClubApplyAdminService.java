@@ -225,11 +225,15 @@ public class ClubApplyAdminService {
     }
 
     private ClubApplicationForm createApplicationForm(ClubApplicationForm clubApplicationForm, ClubApplicationFormCreateRequest request) {
-        clubApplicationForm.updateQuestions(buildClubFormQuestions(request.questions()));
+        if (request.questions() != null)
+            clubApplicationForm.updateQuestions(buildClubFormQuestions(request.questions()));
+        if (request.externalApplicationUrl() != null)
+            clubApplicationForm.updateExternalApplicationUrl(request.externalApplicationUrl());
         clubApplicationForm.updateFormTitle(request.title());
         clubApplicationForm.updateFormDescription(request.description());
         clubApplicationForm.updateSemesterYear(request.semesterYear());
         clubApplicationForm.updateSemesterTerm(request.semesterTerm());
+        clubApplicationForm.updateFormMode(request.formMode());
 
         return clubApplicationForm;
     }
@@ -243,6 +247,10 @@ public class ClubApplyAdminService {
             clubApplicationForm.updateFormDescription(request.description());
         if (request.active() != null)
             clubApplicationForm.updateFormStatus(request.active());
+        if (request.formMode() != null)
+            clubApplicationForm.updateFormMode(request.formMode());
+        if (request.externalApplicationUrl() != null)
+            clubApplicationForm.updateExternalApplicationUrl(request.externalApplicationUrl());
 
         if (request.semesterYear() != null || request.semesterTerm() != null) {
             Integer semesterYear = Optional.ofNullable(request.semesterYear()).orElse(clubApplicationForm.getSemesterYear());
@@ -261,6 +269,9 @@ public class ClubApplyAdminService {
 
         for (var question : questions) {
             List<ClubQuestionItem> items = new ArrayList<>();
+
+            Set<ClubApplyQuestion.QuestionItem> distinctQuestionItemList = new HashSet<>(question.items());
+            if (distinctQuestionItemList.size() != question.items().size()) throw new RestApiException(ErrorCode.DUPLICATE_QUESTIONS_ITEMS);
 
             for (var item : question.items()) {
                 items.add(ClubQuestionItem.builder()
