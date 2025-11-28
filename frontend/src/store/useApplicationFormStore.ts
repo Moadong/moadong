@@ -6,8 +6,8 @@ import {
 } from 'zustand/middleware';
 
 interface ApplicationFormStore {
-  applicationFormId: string;
-  setApplicationFormId: (id: string) => void;
+  applicationFormId: string | null;
+  setApplicationFormId: (id: string | null) => void;
 }
 
 export const useApplicationFormStore = create<ApplicationFormStore>()(
@@ -15,7 +15,8 @@ export const useApplicationFormStore = create<ApplicationFormStore>()(
     persist(
       (set) => ({
         applicationFormId: '',
-        setApplicationFormId: (id: string) => set({ applicationFormId: id }),
+        setApplicationFormId: (id: string | null) =>
+          set({ applicationFormId: id }),
       }),
       {
         name: 'application-form-storage',
