@@ -10,22 +10,18 @@ import Spinner from '@/components/common/Spinner/Spinner';
 import { ApplicationFormItem, SemesterGroup } from '@/types/application';
 import { updateApplicationStatus } from '@/apis/application/updateApplication';
 import { useQueryClient } from '@tanstack/react-query';
-import { useApplicationFormId } from '@/store/useApplicationFormStore';
 
 const ApplicationListTab = () => {
   const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { setApplicationFormId } = useApplicationFormId();
   // const { mutate: deleteApplication } = useDeleteApplication();
 
   const handleGoToNewForm = () => {
-    setApplicationFormId(null);
     navigate('/admin/application-list/edit');
   };
   const handleGoToEditForm = (applicationFormId: string) => {
-    setApplicationFormId(applicationFormId);
-    navigate(`/admin/application-list/edit`);
+    navigate(`/admin/application-list/${applicationFormId}/edit`);
   };
 
   // const handleDeleteApplication = (applicationFormId: string) => {

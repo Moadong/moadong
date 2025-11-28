@@ -14,13 +14,16 @@ import { updateApplication } from '@/apis/application/updateApplication';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import Button from '@/components/common/Button/Button';
 
 const ApplicationEditTab = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
-  const { clubId, applicationFormId: formId } = useAdminClubContext();
+  const { applicationFormId: formId } = useParams<{
+    applicationFormId: string;
+  }>();
+  const { clubId } = useAdminClubContext();
 
   const {
     data: existingFormData,

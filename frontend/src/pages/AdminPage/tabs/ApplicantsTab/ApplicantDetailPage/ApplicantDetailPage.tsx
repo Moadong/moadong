@@ -32,13 +32,17 @@ const getStatusColor = (status: ApplicationStatus | undefined): string => {
 };
 
 const ApplicantDetailPage = () => {
-  const { questionId } = useParams<{ questionId: string }>();
+  const { questionId, applicationFormId } = useParams<{
+    questionId: string;
+    applicationFormId: string;
+  }>();
+
   const navigate = useNavigate();
   const [applicantMemo, setAppMemo] = useState('');
   const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
     ApplicationStatus.SUBMITTED,
   );
-  const { applicantsData, clubId, applicationFormId } = useAdminClubContext();
+  const { applicantsData, clubId } = useAdminClubContext();
 
   const applicantIndex =
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
@@ -49,7 +53,9 @@ const ApplicantDetailPage = () => {
     isLoading,
     isError,
   } = useGetApplication(clubId!, applicationFormId ?? undefined);
-  const { mutate: updateApplicant } = useUpdateApplicant(applicationFormId ?? undefined);
+  const { mutate: updateApplicant } = useUpdateApplicant(
+    applicationFormId ?? undefined,
+  );
 
   useEffect(() => {
     if (applicant) {
@@ -144,7 +150,9 @@ const ApplicantDetailPage = () => {
             <select
               id='applicantSelect'
               value={applicant.id}
-              onChange={(e) => navigate(`/admin/applicants-lsit/${e.target.value}`)}
+              onChange={(e) =>
+                navigate(`/admin/applicants-lsit/${e.target.value}`)
+              }
             >
               {applicantsData.applicants.map((a) => (
                 <option key={a.id} value={a.id}>
@@ -184,7 +192,7 @@ const ApplicantDetailPage = () => {
 
       <Styled.ApplicantInfoContainer>
         <Styled.QuestionsWrapper style={{ cursor: 'default' }}>
-          {formData.questions.map((q: Question, i: number) => (
+          {formData.questions?.map((q: Question, i: number) => (
             <QuestionContainer key={q.id} hasError={false}>
               <QuestionAnswerer
                 question={q}

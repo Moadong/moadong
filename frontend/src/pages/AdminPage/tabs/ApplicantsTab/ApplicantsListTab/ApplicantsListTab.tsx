@@ -8,20 +8,16 @@ import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplica
 import Spinner from '@/components/common/Spinner/Spinner';
 // import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
 import { ApplicationFormItem, SemesterGroup } from '@/types/application';
-import { useApplicationFormId } from '@/store/useApplicationFormStore';
 
 const ApplicationListTab = () => {
   const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
   const navigate = useNavigate();
-  const { setApplicationFormId } = useApplicationFormId();
   // const { mutate: deleteApplication } = useDeleteApplication();
 
   const handleGoToNewForm = () => {
-    setApplicationFormId(null);
     navigate('/admin/application-list/edit');
   };
   const handleGoToDetailForm = (applicationFormId: string) => {
-    setApplicationFormId(applicationFormId);
     navigate(`/admin/applicants-list/${applicationFormId}`);
   };
 
