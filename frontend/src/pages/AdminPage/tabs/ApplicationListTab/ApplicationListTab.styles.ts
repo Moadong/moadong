@@ -4,6 +4,10 @@ interface MenuItemProps {
   $ActiveMenu?: boolean;
 }
 
+interface ExpandButtonProps {
+  $isExpanded: boolean;
+}
+
 
 // 전체 레이아웃을 감싸는 컨테이너
 export const Container = styled.div`
@@ -18,58 +22,92 @@ export const Title = styled.div`
   font-weight: 700;
   margin-bottom: 24px;
 `;
-
-export const ActiveLIstContainer = styled.div`
+// 활성화된 지원서 목록을 감싸는 컨테이너
+export const ActiveListContainer = styled.div`
   flex-direction: column;
   width: auto;
   height: auto;
   margin-bottom: 46px;
 `;
-
+// "게시된 지원서" 타이틀 박스
 export const ActiveListTitleBox= styled.div` 
-  width: 174px;
+  width: fit-content; /* 텍스트 크기에 맞게 조절 */
   height: 46px;
-  display: Horizontal;
+  display: flex;
   padding: 12px 24px;
   border: 1px solid #DCDCDC;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
   background-color: #FF7543; 
 `;
-
+// "게시된 지원서" 타이틀 텍스트
 export const ActiveListTitle = styled.div`
-  width: 126px;
-  height: 22px;
+  width: auto;
   font-size: 16px;
   font-weight: 600;
-  font-style: semibold;
   color: #FFFFFF;
+  white-space: nowrap;
 `;
-
+// 펼쳐보기 / 접어두기 버튼
 export const ExpandButton = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  gap: 6px;
   padding: 10px;
   cursor: pointer;
   font-size: 14px;
-  color: #666;
-  border-top: 1px solid #EEEEEE; /* 리스트와 구분하는 선 */
+  color: #787878;
+  border-top: 1px solid #DCDCDC; /* 리스트와 구분하는 선 */
   
   &:hover {
-    background-color: #F8F8F8;
+    background-color: #F2F2F2;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
-  }
-
-  &::after {
-      content: 'v'; 
-      /* 이미지로 대체 해야 할것 같은데 아직 접어두기 아이콘이 없는거 같아서.. 일단 문자로 넣어둠 */
-      font-size: 18px;
-      margin-left: 4px;
-      /* TODO : 회전 로직은 ApplicationListTab.tsx에서 isExpanded 상태에 따라 스타일을 넘겨야 함 */
-  }
+  } }
 `;
+
+export const ExpandArrow = styled.img<ExpandButtonProps>`
+  width: 19px;
+  height: 19px;
+  ${(props) => props.$isExpanded && css`
+      transform: rotate(180deg); /* 접어두기일때 180도 회전*/
+  `}
+`;
+
+// 활성화된 지원서가 없을경우 보여주는 메시지 컨테이너
+export const MessageContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  margin-top: 25px;
+  margin-bottom: 25px;
+`;
+
+export const NoActiveFormsMessage = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: auto;
+  height: auto;
+  padding-top: 2px;
+  margin-bottom: 6px;
+  font-size: 16px;
+  font-weight: 600;
+  color: #FF5414;
+`;
+
+export const suggestionText = styled.div`
+  font-size: 14px;
+  font-weight: 500;
+  color: #787878;
+`;
+
+
 
 // '새 양식 만들기' 버튼을 포함하는 헤더 영역
 export const Header = styled.div`
@@ -137,98 +175,10 @@ export const DateHeader = styled.span`
 `;
 
 export const Separation_Bar = styled.div`
-  width: 1px; /* 아이콘 너비 */
-  height: 12px; /* 아이콘 높이 */
+  width: 1px;
+  height: 12px;
   margin-right: 25px;
   background-color: #DCDCDC;
-`;
-
-// 개별 지원서 한 줄 (Row)
-export const ApplicationRow = styled.div`
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  height: 50px;
-  padding: 18px 24px;
-  transition: background-color 0.2s;
-  border-bottom: 1px solid #f2f2f2;
-
-  &:last-child {
-    border-bottom: none;
-  }
-
-  &:hover {
-    background-color: #f5f5f5;
-    &:last-child {
-      border-bottom-left-radius: 20px;
-      border-bottom-right-radius: 20px;
-    }
-  }
-`;
-
-// 지원서 제목 (활성화 상태에 따라 스타일 변경)
-export const ApplicationTitle = styled.span<{ $active: boolean }>`
-  flex-grow: 1; // 남은 공간을 모두 차지하도록 설정
-  font-size: 16px;
-  color: #4b3b4b;
-
-  // active prop이 true일 때 적용될 스타일
-  ${(props) =>
-    props.$active &&
-    css`
-      color: #ff5414;
-      font-weight: 600;
-      position: relative;
-      padding-left: 16px;
-
-      &::before {
-        content: '';
-        position: absolute;
-        left: 0;
-        top: 50%;
-        transform: translateY(-50%);
-        width: 10px;
-        height: 10px;
-        background-color: #ff5414;
-        border-radius: 50%;
-      }
-    `}
-`;
-
-export const ApplicationDatetable = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 10px;
-`;
-
-// 수정 날짜
-export const ApplicationDate = styled.span`
-  width: auto;
-  text-align: right;
-  font-size: 16px;
-  color: #4b4b4b;
-`;
-
-// 더보기(...) 버튼
-export const MoreButton = styled.button`
-  background: none;
-  border: none;
-  font-size: 18px;
-  font-weight: bold;
-  color: #adb5bd;
-  cursor: pointer;
-  padding: 0 8px;
-`;
-
-export const MoreButtonIcon = styled.img`
-  svg {
-    width: 12px; /* 아이콘 너비 */
-    height: 12px; /* 아이콘 높이 */
-  }
-`;
-
-export const MoreButtonContainer = styled.div`
-  position: relative;
 `;
 
 export const MenuContainer = styled.div`

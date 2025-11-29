@@ -7,15 +7,15 @@ import check_inactive from '@/assets/images/icons/check_inactive.svg';
 
 interface ApplicationMenuProps {
   isActive: boolean;
-  // onDelete: () => void;
+  onDelete: () => void;
   onToggleStatus?: () => void;
 }
 
 const ApplicationMenu = ({ isActive, onToggleStatus, 
-  // onDelete
+  onDelete
  }: ApplicationMenuProps) => {
   const onEditTitle = () => console.log('제목 수정하기');
-  const toggleButtonText = isActive ? '기본지원서 해제' : '기본지원서로 설정';
+  const toggleButtonText = isActive ? '지원서 비활성화' : '지원서 활성화';
 
   return (
     <Styled.MenuContainer>
@@ -31,7 +31,7 @@ const ApplicationMenu = ({ isActive, onToggleStatus,
       <Styled.MenuItem onClick={onEditTitle}>
         <Styled.MenuIcon src={Pencil} /> 제목 수정하기
       </Styled.MenuItem>
-      <Styled.MenuItem /*onClick={onDelete}*/ className='delete'>
+      <Styled.MenuItem onClick={onDelete} className='delete'>
         <Styled.MenuIcon src={Delete_applicant} /> 삭제
       </Styled.MenuItem>
     </Styled.MenuContainer>
