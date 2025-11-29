@@ -64,7 +64,7 @@ export const ExpandButton = styled.div`
     // background-color: #F2F2F2; /* 호버 시 배경색 변경 물어보기.. */
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
-  } }
+  }
 `;
 
 export const ExpandArrow = styled.img<ExpandButtonProps>`
