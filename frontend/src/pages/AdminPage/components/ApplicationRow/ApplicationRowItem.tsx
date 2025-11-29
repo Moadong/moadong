@@ -66,7 +66,7 @@ const ApplicationRowItem = ({
           <Styled.MoreButton
             onClick={(e) => onMenuToggle(e, application.id, uniqueKeyPrefix)}
           >
-            <Styled.MoreButtonIcon src={Morebutton} />
+          <Styled.MoreButtonIcon src={Morebutton} />
           </Styled.MoreButton>
           
           {isMenuOpen && (

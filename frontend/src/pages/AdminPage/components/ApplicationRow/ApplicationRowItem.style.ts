@@ -23,7 +23,7 @@ export const ApplicationRow = styled.div`
   }
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: #F2F2F2;
     &:last-child {
       border-bottom-left-radius: 20px;
       border-bottom-right-radius: 20px;
@@ -35,7 +35,7 @@ export const ApplicationRow = styled.div`
 export const ApplicationTitle = styled.span<{ $active: boolean }>`
   flex-grow: 1; // 남은 공간을 모두 차지하도록 설정
   font-size: 16px;
-  color: #4b3b4b;
+  color: #4b4b4b;
 
   // active prop이 true일 때 적용될 스타일
   ${(props) =>
@@ -78,11 +78,17 @@ export const ApplicationDate = styled.span`
 export const MoreButton = styled.button`
   background: none;
   border: none;
-  font-size: 18px;
-  font-weight: bold;
-  color: #adb5bd;
   cursor: pointer;
-  padding: 0 8px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  &:hover {
+    background-color: #DCDCDC;
+  }
 `;
 
 export const MoreButtonIcon = styled.img`

@@ -61,7 +61,7 @@ export const ExpandButton = styled.div`
   border-top: 1px solid #DCDCDC; /* 리스트와 구분하는 선 */
   
   &:hover {
-    background-color: #F2F2F2;
+    // background-color: #F2F2F2; /* 호버 시 배경색 변경 물어보기.. */
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
   } }
@@ -107,8 +107,6 @@ export const suggestionText = styled.div`
   color: #787878;
 `;
 
-
-
 // '새 양식 만들기' 버튼을 포함하는 헤더 영역
 export const Header = styled.div`
   display: flex;
@@ -126,14 +124,14 @@ export const AddButton = styled.button`
   border-radius: 20px;
   background-color: #f5f5f5;
   font-size: 14px;
-  font-weight: 600;
-  color: #333;
+  font-weight: 500;
+  color: #111111;
   cursor: pointer;
   transition: background-color 0.2s;
 
-  &:hover {
-    background-color: #f1f3f5;
-  }
+  // &:hover { /* 새양식 만들기 버튼 호버시 색상 변경할지 물어보기*/
+  //   background-color: #F2F2F2;
+  // }
 `;
 
 export const PlusIcon = styled.img`
@@ -183,15 +181,13 @@ export const Separation_Bar = styled.div`
 
 export const MenuContainer = styled.div`
   position: absolute; /* MoreButtonContainer를 기준으로 위치 결정 */
-  top: 100%; /* 버튼 바로 아래에 위치 */
-  left: 0; /* 오른쪽에 정렬 */
-  margin-top: 8px; /* 버튼과의 간격 */
+  top: 55%; /* 버튼 중앙 바로 아래에 위치 */
+  left: 30%; /* 첫번째 점부분에 정렬 */
   width: 150px;
   height: 107px;
   background-color: white;
   border-radius: 8px;
-  border: 1px solid #f1f3f5;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.12);
   padding: 8px 0;
   z-index: 10;
 `;
@@ -205,9 +201,9 @@ export const MenuItem = styled.div<MenuItemProps>`
   font-weight: 400;
   font-size: 14px;
 
-  color: #4b4b4b; /* 텍스트 색상을 지정합니다 (추천) */
+  color: #4b4b4b;
   cursor: pointer;
-  box-sizing: border-box; /* 패딩을 포함하여 너비 계산 */
+  box-sizing: border-box; 
   width: auto;
   height: 28px;
 
@@ -215,7 +211,6 @@ export const MenuItem = styled.div<MenuItemProps>`
     background-color: #f5f5f5;
   }
 
-  /* 아이콘(span)과 텍스트의 정렬을 위한 추가 스타일 */
   span {
     display: flex;
     align-items: center;
@@ -230,8 +225,8 @@ export const MenuIcon = styled.img`
   height: 12px; /* 아이콘 높이 */
 `;
 export const Separator = styled.div`
-  height: 1px; /* 선의 두께 */
-  background-color: #f0f0f0; /* 선의 색상 */
-  margin: 3px 5px; /* 위아래 여백 4px, 좌우 여백 12px */
+  height: 1px; 
+  background-color: #f2f2f2;
+  margin: 3px 5px;
 `;
 
