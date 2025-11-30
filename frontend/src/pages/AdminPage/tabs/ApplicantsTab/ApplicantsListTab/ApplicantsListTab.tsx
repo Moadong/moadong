@@ -21,6 +21,10 @@ const ApplicationListTab = () => {
     navigate(`/admin/applicants-list/${applicationFormId}`);
   };
 
+  /**
+   * @TODO
+   * 백엔드 지원서 삭제 API 구현 후 주석 해제
+   */
   // const handleDeleteApplication = (applicationFormId: string) => {
   //   // 사용자에게 재확인
   //   if (window.confirm('지원서 양식을 정말 삭제하시겠습니까?\n삭제된 양식은 복구할 수 없습니다.')) {
