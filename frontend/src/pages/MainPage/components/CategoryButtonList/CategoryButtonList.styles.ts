@@ -13,9 +13,16 @@ export const CategoryButtonContainer = styled.div`
     position: sticky;
     top: 56px;
     z-index: 1;
+
+    margin-left: -20px;
+    margin-right: -20px;
+    padding: 0 20px;
   }
 
   ${media.mini_mobile} {
+    margin-left: -10px;
+    margin-right: -10px;
+    padding: 0 10px;
   }
 `;
 
