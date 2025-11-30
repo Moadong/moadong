@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const CategoryButtonContainer = styled.div`
   display: flex;
@@ -6,12 +7,15 @@ export const CategoryButtonContainer = styled.div`
   flex-wrap: nowrap;
   margin-top: 32px;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     margin: 16px 0 12px 0; 
     background-color: white;
     position: sticky;
     top: 56px;
     z-index: 1;
+  }
+
+  ${media.mini_mobile} {
   }
 `;
 
@@ -34,11 +38,11 @@ export const CategoryButton = styled.button`
     height: 56px;
     transition: transform 0.2s ease;
 
-    @media (max-width: 500px) {
+    ${media.mobile} {
       width: 40px;
       height: 40px;
     }
-    @media (max-width: 360px) {
+    ${media.mini_mobile} {
       width: 23px;
       height: 23px;
     }
@@ -52,18 +56,18 @@ export const CategoryButton = styled.button`
     line-height: 17px;
     white-space: nowrap;
 
-    @media (max-width: 768px) {
+    ${media.tablet} {
       font-size: 12px;
       margin-top: 10px;
     }
 
-    @media (max-width: 500px) {
+    ${media.mobile} {
       font-size: 10px;
       margin-top: 4px;
       line-height: normal;
     }
 
-    @media (max-width: 375px) {
+    ${media.mini_mobile} {
       font-size: 10px;
       margin-top: 2px;
       line-height: normal;
