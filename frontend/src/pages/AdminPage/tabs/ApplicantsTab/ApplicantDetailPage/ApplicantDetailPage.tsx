@@ -151,7 +151,7 @@ const ApplicantDetailPage = () => {
               id='applicantSelect'
               value={applicant.id}
               onChange={(e) =>
-                navigate(`/admin/applicants-lsit/${e.target.value}`)
+                navigate(`/admin/applicants-list/${e.target.value}`)
               }
             >
               {applicantsData.applicants.map((a) => (
