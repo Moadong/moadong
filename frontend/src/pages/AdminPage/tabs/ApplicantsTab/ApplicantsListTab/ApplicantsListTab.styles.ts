@@ -1,3 +1,4 @@
+import { Z_INDEX } from '@/styles/zIndex';
 import styled, { css } from 'styled-components';
 
 // 전체 레이아웃을 감싸는 컨테이너
@@ -185,7 +186,7 @@ export const MenuContainer = styled.div`
   border: 1px solid #f1f3f5;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 8px 0;
-  z-index: 10;
+  z-index: ${Z_INDEX.dropdown};
 `;
 
 export const MenuItem = styled.div`

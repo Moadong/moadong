@@ -1,10 +1,11 @@
+import { Z_INDEX } from '@/styles/zIndex';
 import styled from 'styled-components';
 
 export const ClubDetailFooterContainer = styled.div`
   position: sticky;
   bottom: 0;
   width: 100%;
-  z-index: 100;
+  z-index: ${Z_INDEX.sticky};
   padding: 10px 40px;
 
   display: flex;

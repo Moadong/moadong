@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import checkIcon from '@/assets/images/icons/checkBox.svg';
 import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
 import disabledDeleteIcon from '@/assets/images/icons/applicant_delete_disabled.svg';
+import { Z_INDEX } from '@/styles/zIndex';
 
 export const ApplicationHeader = styled.div`
   display: flex;
@@ -137,7 +138,7 @@ export const StatusSelectMenu = styled.div<{ open: boolean }>`
   border: 1px solid #dcdcdc;
   border-radius: 6px;
   box-shadow: 0px 1px 8px 0px #0000001f;
-  z-index: 10;
+  z-index: ${Z_INDEX.dropdown};
   padding: 8px 0;
   color: #787878;
 `;
@@ -304,7 +305,7 @@ export const ApplicantAllSelectMenu = styled.div<{ open: boolean }>`
   border: 1px solid #dcdcdc;
   border-radius: 6px;
   box-shadow: 0px 1px 8px 0px #0000001f;
-  z-index: 10;
+  z-index: ${Z_INDEX.dropdown};
   padding: 8px 0;
 `;
 

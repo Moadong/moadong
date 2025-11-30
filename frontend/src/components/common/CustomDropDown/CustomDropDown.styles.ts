@@ -1,3 +1,4 @@
+import { Z_INDEX } from '@/styles/zIndex';
 import styled from 'styled-components';
 
 export const DropDownWrapper = styled.div`
@@ -21,7 +22,7 @@ export const OptionList = styled.ul<{
   background: #fff;
   box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.12);
   padding: 6px 0;
-  z-index: 10;
+  z-index: ${Z_INDEX.dropdown};
   height: auto;
   list-style: none;
 `;
