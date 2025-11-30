@@ -2,7 +2,6 @@ import { Z_INDEX } from '@/styles/zIndex';
 import styled from 'styled-components';
 
 export const Overlay = styled.div<{ isOpen: boolean }>`
-  position: fixed;
   inset: 0;
   position: fixed;
   z-index: ${Z_INDEX.overlay};
