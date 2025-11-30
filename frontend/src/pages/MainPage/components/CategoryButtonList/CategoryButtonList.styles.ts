@@ -46,12 +46,12 @@ export const CategoryButton = styled.button`
     transition: transform 0.2s ease;
 
     ${media.mobile} {
-      width: 40px;
-      height: 40px;
+      width: 45px;
+      height: 45px;
     }
     ${media.mini_mobile} {
-      width: 38px;
-      height: 38px;
+      width: 40px;
+      height: 40px;
     }
   }
 
