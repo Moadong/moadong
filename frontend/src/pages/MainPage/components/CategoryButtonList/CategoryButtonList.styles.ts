@@ -43,8 +43,8 @@ export const CategoryButton = styled.button`
       height: 40px;
     }
     ${media.mini_mobile} {
-      width: 23px;
-      height: 23px;
+      width: 38px;
+      height: 38px;
     }
   }
 
@@ -57,12 +57,12 @@ export const CategoryButton = styled.button`
     white-space: nowrap;
 
     ${media.tablet} {
-      font-size: 12px;
+      font-size: 14px;
       margin-top: 10px;
     }
 
     ${media.mobile} {
-      font-size: 10px;
+      font-size: 12px;
       margin-top: 4px;
       line-height: normal;
     }
