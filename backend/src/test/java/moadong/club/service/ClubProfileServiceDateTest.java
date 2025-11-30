@@ -63,11 +63,13 @@ public class ClubProfileServiceDateTest {
             clubProfileService.updateClubRecruitmentInfo(request, customUserDetails);
 
             //THEN
-            assertNotNull(club.getLastModified());
+            assertNotNull(club.getClubRecruitmentInformation().getLastModifiedDate());
             //1초 전후 차이로 살펴보기
             LocalDateTime now = LocalDateTime.now();
-            assertTrue(club.getLastModified().isAfter(now.minusSeconds(1)));
-            assertTrue(club.getLastModified().isBefore(now.plusSeconds(1)));
+            assertTrue(club.getClubRecruitmentInformation().
+                    getLastModifiedDate().isAfter(now.minusSeconds(1)));
+            assertTrue(club.getClubRecruitmentInformation().
+                    getLastModifiedDate().isBefore(now.plusSeconds(1)));
         }
     }
 }
