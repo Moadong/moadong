@@ -13,6 +13,7 @@ import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.Setter;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
@@ -65,6 +66,8 @@ public class ClubRecruitmentInformation {
     @Enumerated(EnumType.STRING)
     @NotNull
     private ClubRecruitmentStatus clubRecruitmentStatus;
+
+    private LocalDateTime lastModifiedDate;
 
     public void updateLogo(String logo) {
         this.logo = logo;
@@ -120,5 +123,13 @@ public class ClubRecruitmentInformation {
 
     public void updateCover(String cover) {
         this.cover = cover;
+    }
+
+    private void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public void updateLastModifiedDate() {
+        setLastModifiedDate(LocalDateTime.now());
     }
 }

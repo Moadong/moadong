@@ -45,7 +45,7 @@ public class ClubProfileService {
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
         );
-        club.setLastModified(LocalDateTime.now());
+        club.getClubRecruitmentInformation().updateLastModifiedDate();
         clubRepository.save(club);
     }
 
