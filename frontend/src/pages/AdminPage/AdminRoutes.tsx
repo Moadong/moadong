@@ -21,6 +21,10 @@ export default function AdminRoutes() {
         <Route path='photo-edit' element={<PhotoEditTab />} />
         <Route path='account-edit' element={<AccountEditTab />} />
         <Route path='application-list' element={<ApplicationListTab />} />
+        <Route
+          path='application-list/:applicationFormId/edit'
+          element={<ApplicationEditTab />}
+        />
         <Route path='application-list/edit' element={<ApplicationEditTab />} />
         <Route path='applicants-list' element={<ApplicantsListTab />} />
         <Route
