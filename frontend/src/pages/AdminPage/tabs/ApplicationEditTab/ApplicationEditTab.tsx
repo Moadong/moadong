@@ -21,7 +21,7 @@ const ApplicationEditTab = () => {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
   const { applicationFormId: formId } = useParams<{
-    applicationFormId: string;
+    applicationFormId?: string;
   }>();
   const { clubId } = useAdminClubContext();
 
