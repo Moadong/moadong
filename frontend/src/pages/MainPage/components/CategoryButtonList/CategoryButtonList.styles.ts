@@ -8,21 +8,18 @@ export const CategoryButtonContainer = styled.div`
   margin-top: 32px;
 
   ${media.mobile} {
-    margin: 16px 0 12px 0; 
     background-color: white;
     position: sticky;
     top: 56px;
     z-index: 1;
 
-    margin-left: -20px;
-    margin-right: -20px;
-    padding: 0 20px;
+    margin: 0px -20px;
+    padding: 6px 20px 12px;
   }
 
   ${media.mini_mobile} {
-    margin-left: -10px;
-    margin-right: -10px;
-    padding: 0 10px;
+    margin: -10px -10px;
+    padding: 16px 10px 12px;
   }
 `;
 
@@ -35,6 +32,10 @@ export const CategoryButton = styled.button`
   cursor: pointer;
   padding: 10px 0px;
   transition: transform 0.1s ease;
+
+  ${media.mobile} {
+    padding: 0px;
+  }
 
   &:active {
     transform: scale(0.95);
