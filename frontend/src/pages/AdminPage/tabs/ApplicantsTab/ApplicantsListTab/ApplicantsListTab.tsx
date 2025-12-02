@@ -111,14 +111,14 @@ const ApplicationListTab = () => {
   const ActiveListBody = styled(Styled.ApplicationList)`
     border-top-left-radius: 0;
   `;
-  // const ActiveApplicationRow = styled(Styled.ApplicationRow)`
-  //   &:hover {
-  //     background-color: #f8f9fa;
-  //     &:first-child {
-  //       border-top-right-radius: 20px;
-  //     }
-  //   }
-  // `;
+  const ActiveApplicationRow = styled(ApplicationRowItem)`
+    &:hover {
+      background-color: #f8f9fa;
+      &:first-child {
+        border-top-right-radius: 20px;
+      }
+    }
+  `;
 
   return (
     <Styled.Container>
@@ -130,7 +130,7 @@ const ApplicationListTab = () => {
           {activeForms.length >0 ? (
           <ActiveListBody>
             {formsToDisplay.map((application: ApplicationFormItem) => (
-              <ApplicationRowItem
+              <ActiveApplicationRow
                   key={application.id}
                   isActive={true}
                   application={application}
