@@ -61,7 +61,7 @@ export const ExpandButton = styled.div`
   border-top: 1px solid #DCDCDC; /* 리스트와 구분하는 선 */
   
   &:hover {
-    // background-color: #F2F2F2; /* 호버 시 배경색 변경 물어보기.. */
+    background-color: #F2F2F2;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
   }
@@ -101,7 +101,7 @@ export const NoActiveFormsMessage = styled.div`
   color: #FF5414;
 `;
 
-export const suggestionText = styled.div`
+export const SuggestionText = styled.div`
   font-size: 14px;
   font-weight: 500;
   color: #787878;
@@ -129,9 +129,6 @@ export const AddButton = styled.button`
   cursor: pointer;
   transition: background-color 0.2s;
 
-  // &:hover { /* 새양식 만들기 버튼 호버시 색상 변경할지 물어보기*/
-  //   background-color: #F2F2F2;
-  // }
 `;
 
 export const PlusIcon = styled.img`
