@@ -1,9 +1,7 @@
 import * as Styled from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab.styles';
 import Plus from '@/assets/images/icons/Plus.svg';
-import Morebutton from '@/assets/images/icons/Morebutton.svg';
 import { useNavigate } from 'react-router-dom';
 import React, { useState, useRef, useEffect } from 'react';
-import ApplicationMenu from '../../ApplicationListTab/ApplicationMenu';
 import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { useAdminClubContext } from '@/context/AdminClubContext';
