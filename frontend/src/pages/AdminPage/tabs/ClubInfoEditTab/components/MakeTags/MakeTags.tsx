@@ -1,5 +1,6 @@
-import React from 'react';
 import * as Styled from './MakeTags.styles';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { ADMIN_EVENT } from '@/constants/eventName';
 
 interface MakeTagsProps {
   value: string[];
@@ -7,6 +8,8 @@ interface MakeTagsProps {
 }
 
 const MakeTags = ({ value, onChange }: MakeTagsProps) => {
+  const trackEvent = useMixpanelTrack();
+
   const updateTag = (index: number, newValue: string) => {
     const updatedTags = value.map((tag, i) => {
       if (i === index) {
@@ -25,6 +28,10 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
         return '';
       }
       return tag;
+    });
+    
+    trackEvent(ADMIN_EVENT.CLUB_TAG_CLEAR_BUTTON_CLICKED, {
+      tagIndex: index + 1,
     });
 
     onChange(updatedTags);

@@ -3,10 +3,10 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import getApplication from '@/apis/application/getApplication';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT } from '@/constants/eventName';
 import ShareButton from '@/pages/ClubDetailPage/components/ShareButton/ShareButton';
 import { useState } from 'react';
-import { ApplicationForm } from '@/types/application';
+import { ApplicationForm, ApplicationFormMode } from '@/types/application';
 import getApplicationOptions from '@/apis/application/getApplicationOptions';
 import ApplicationSelectModal from '@/components/application/modals/ApplicationSelectModal';
 
@@ -31,16 +31,25 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
 
   if (!clubId || !clubDetail) return null;
 
-
   // 내부 폼 이동
   const goWithForm = async (formId: string) => {
     try {
       const formDetail = await getApplication(clubId, formId);
+      if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
+        const externalApplicationUrl =
+          formDetail.externalApplicationUrl?.trim();
+        if (externalApplicationUrl) {
+          window.open(externalApplicationUrl, '_blank', 'noopener,noreferrer');
+          return;
+        }
+      }
       navigate(`/application/${clubId}/${formId}`, { state: { formDetail } });
       setIsOpen(false);
     } catch (error) {
       console.error('지원서 조회 중 오류가 발생했습니다', error);
-      alert('지원서 정보를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.');
+      alert(
+        '지원서 정보를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.',
+      );
     }
   };
 
@@ -51,7 +60,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   };
 
   const handleClick = async () => {
-    trackEvent(EVENT_NAME.CLUB_APPLY_BUTTON_CLICKED);
+    trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED);
 
     if (deadlineText === RECRUITMENT_STATUS.CLOSED) {
       alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
@@ -63,8 +72,8 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
 
       if (list.length <= 0) {
         return;
-      } 
-      
+      }
+
       if (list.length === 1) {
         await goWithForm(list[0].id);
         return;
@@ -72,16 +81,11 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
       setOptions(list);
       setIsOpen(true);
     } catch (e) {
-      const externalApplicationUrl = clubDetail.externalApplicationUrl?.trim();
-      if (externalApplicationUrl) {
-        window.open(externalApplicationUrl, '_blank');
-        return;
-      }
       setOptions([]);
       setIsOpen(true);
       console.error('지원서 옵션 조회 중 오류가 발생했습니다.', e);
     }
-  }; 
+  };
 
   const renderButtonContent = () => {
     if (deadlineText === RECRUITMENT_STATUS.CLOSED) {

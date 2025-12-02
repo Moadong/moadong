@@ -5,8 +5,8 @@ describe('parseRecruitmentPeriod 함수 테스트', () => {
     const input = '2024.03.20 14:00 ~ 2024.03.25 18:00';
     const result = parseRecruitmentPeriod(input);
 
-    expect(result.recruitmentStart).toEqual(new Date('2024-03-20T14:00:00'));
-    expect(result.recruitmentEnd).toEqual(new Date('2024-03-25T18:00:00'));
+    expect(result.recruitmentStart).toEqual(new Date('2024-03-20T14:00:00Z'));
+    expect(result.recruitmentEnd).toEqual(new Date('2024-03-25T18:00:00Z'));
   });
 
   it('날짜가 기간형식이 아닌 단일 날짜 형식인 경우 null을 반환한다.', () => {

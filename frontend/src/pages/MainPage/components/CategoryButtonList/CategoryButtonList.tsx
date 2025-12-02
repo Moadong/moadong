@@ -3,7 +3,7 @@ import * as Styled from './CategoryButtonList.styles';
 import { inactiveCategoryIcons, activeCategoryIcons } from '@/assets/images/icons/category_button';
 import { useSearchStore } from '@/store/useSearchStore';
 import { useSelectedCategory } from '@/store/useCategoryStore';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT } from '@/constants/eventName';
 
 interface Category {
   id: string;
@@ -26,7 +26,7 @@ const CategoryButtonList = () => {
   const trackEvent = useMixpanelTrack();
 
   const handleCategoryClick = (category: Category) => {
-    trackEvent(EVENT_NAME.CATEGORY_BUTTON_CLICKED, {
+    trackEvent(USER_EVENT.CATEGORY_BUTTON_CLICKED, {
       category_id: category.id,
       category_name: category.name,
     });

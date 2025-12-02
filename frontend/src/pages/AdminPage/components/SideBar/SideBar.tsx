@@ -2,8 +2,9 @@ import React, { useMemo } from 'react';
 import * as Styled from './SideBar.styles';
 import { useNavigate, useLocation } from 'react-router-dom';
 import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
-
 import { logout } from '@/apis/auth/logout';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { ADMIN_EVENT } from '@/constants/eventName';
 
 interface SideBarProps {
   clubName: string;
@@ -49,6 +50,7 @@ const tabs: TabCategory[] = [
 ];
 
 const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
+  const trackEvent = useMixpanelTrack();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -59,6 +61,9 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   }, [location.pathname]);
 
   const handleTabClick = (item: TabItem) => {
+    trackEvent(ADMIN_EVENT.TAB_CLICKED, {
+      tabName: item.label,
+    });
     // if (item.label === '아이디/비밀번호 수정') {
     //   alert('아이디/비밀번호 수정 기능은 아직 준비 중이에요. ☺️');
     //   return;
@@ -82,6 +87,9 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
       ) {
         await logout();
       }
+
+      trackEvent(ADMIN_EVENT.LOGOUT_BUTTON_CLICKED);
+      
       localStorage.removeItem('accessToken');
       navigate('/admin/login', { replace: true });
     } catch (error) {

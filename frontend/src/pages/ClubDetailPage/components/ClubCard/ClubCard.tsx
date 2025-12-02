@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import mixpanel from 'mixpanel-browser';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import ClubLogo from '@/components/ClubLogo/ClubLogo';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
@@ -8,7 +7,7 @@ import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT } from '@/constants/eventName';
 
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();
@@ -17,8 +16,8 @@ const ClubCard = ({ club }: { club: Club }) => {
 
   const handleNavigate = () => {
     setIsClicked(true);
-    
-    trackEvent(EVENT_NAME.RECOMMENDED_CLUB_CLICKED, {
+
+    trackEvent(USER_EVENT.RECOMMENDED_CLUB_CLICKED, {
       club_id: club.id,
       club_name: club.name,
       recruitment_status: club.recruitmentStatus,
@@ -34,7 +33,8 @@ const ClubCard = ({ club }: { club: Club }) => {
     <Styled.CardContainer
       $state={club.recruitmentStatus}
       $isClicked={isClicked}
-      onClick={handleNavigate}>
+      onClick={handleNavigate}
+    >
       <Styled.CardHeader>
         <Styled.ClubProfile>
           <ClubLogo $imageSrc={club.logo || default_profile_image} />

@@ -15,10 +15,13 @@ import { parseDescriptionWithLinks } from '@/utils/parseDescriptionWithLinks';
 import { validateAnswers } from '@/hooks/useValidateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { EVENT_NAME } from '@/constants/eventName';
+import { USER_EVENT, PAGE_VIEW } from '@/constants/eventName';
 
 const ApplicationFormPage = () => {
-  const { clubId, applicationFormId } = useParams<{ clubId: string; applicationFormId: string }>();
+  const { clubId, applicationFormId } = useParams<{
+    clubId: string;
+    applicationFormId: string;
+  }>();
   const navigate = useNavigate();
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
@@ -35,7 +38,7 @@ const ApplicationFormPage = () => {
   } = useGetApplication(clubId, applicationFormId);
 
   useTrackPageView(
-    'ApplicationFormPage',
+    PAGE_VIEW.APPLICATION_FORM_PAGE,
     clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
   );
 
@@ -59,7 +62,7 @@ const ApplicationFormPage = () => {
     navigate(`/club/${clubId}`);
     return null;
   }
-  if (!formData || !clubDetail) {
+  if (!formData || !clubDetail || !formData.questions) {
     return (
       <div>
         지원서 정보를 불러오지 못했어요. 새로고침하거나 잠시 후 다시 시도해
@@ -81,7 +84,7 @@ const ApplicationFormPage = () => {
   };
 
   const handleScrollToInvalid = (invalidIds: number[]) => {
-    const firstInvalidIndex = formData.questions.findIndex((q: Question) =>
+    const firstInvalidIndex = formData.questions!.findIndex((q: Question) =>
       invalidIds.includes(q.id),
     );
     const targetEl = questionRefs.current[firstInvalidIndex];
@@ -89,11 +92,12 @@ const ApplicationFormPage = () => {
   };
 
   const handleSubmit = async () => {
-    trackEvent(EVENT_NAME.APPLICATION_FORM_SUBMITTED, {
-      clubName: clubDetail?.name,
+    trackEvent(USER_EVENT.APPLICATION_FORM_SUBMITTED, {
+      club_id: clubId,
+      club_name: clubDetail?.name,
     });
 
-    const invalidIds = validateAnswers(formData.questions, getAnswersById);
+    const invalidIds = validateAnswers(formData.questions!, getAnswersById);
     if (invalidIds.length > 0) {
       setInvalidQuestionIds(invalidIds);
       handleScrollToInvalid(invalidIds);

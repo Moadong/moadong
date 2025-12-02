@@ -150,6 +150,7 @@ export const MenuButton = styled.button<{ isOpen: boolean }>`
     display: flex;
     flex-direction: column;
     justify-content: space-between;
+    order: 2;
   }
 
   ${media.mobile} {
@@ -169,4 +170,25 @@ export const MenuButton = styled.button<{ isOpen: boolean }>`
     transform: ${({ isOpen }) =>
       isOpen ? 'translateY(-8.25px) rotate(-45deg)' : 'none'};
   }
+`;
+
+export const AdminProfileContainer = styled.div`
+  display: flex;
+  gap: 20px;
+  align-items: center;
+`;
+
+export const AdminProfileText = styled.div`
+  font-size: 14px;
+  color: #767676;
+
+  ${media.mobile} {
+    display: none;
+  }
+`;
+
+export const AdminProfileImage = styled.img`
+  width: 40px;
+  height: auto;
+  border-radius: 50%;
 `;

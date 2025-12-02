@@ -4,7 +4,6 @@ import { useNavigate } from 'react-router-dom';
 import React, { useState, useRef, useEffect } from 'react';
 import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
 import Spinner from '@/components/common/Spinner/Spinner';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
 import { ApplicationFormItem, SemesterGroup } from '@/types/application';
 import { updateApplicationStatus } from '@/apis/application/updateApplication';
@@ -17,19 +16,16 @@ const ApplicationListTab = () => {
   const {data: allforms, isLoading, isError, error} = useGetApplicationlist();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { setApplicationFormId } = useAdminClubContext();
   const { mutate: deleteApplication } = useDeleteApplication();
   const [isExpanded, setIsExpanded] = useState(false);
   const MAX_INITIAL_ITEMS = 3;
 
   const handleGoToNewForm = () => {
-    setApplicationFormId(null);
     navigate('/admin/application-list/edit');
   };
   const handleGoToDetailForm = (applicationFormId: string) => {
-    setApplicationFormId(applicationFormId);
     navigate(`/admin/applicants-list/${applicationFormId}`);
-  }
+  };
 
   const handleDeleteApplication = (applicationFormId: string) => {
     // 사용자에게 재확인
@@ -165,7 +161,8 @@ const ApplicationListTab = () => {
         </Styled.AddButton>
       </Styled.Header>
       {semesterGroups.map((group: SemesterGroup) => {
-        const semesterTermLabel = group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
+        const semesterTermLabel =
+          group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
         const semesterTitle = `${group.semesterYear}년 ${semesterTermLabel}`;
         const groupUniqueKeyPrefix = `group_${group.semesterYear}_${group.semesterTerm}`;
         return (

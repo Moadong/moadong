@@ -14,22 +14,19 @@ import styled from 'styled-components';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 
 const ApplicationListTab = () => {
-  const {data: allforms, isLoading, isError, error} = useGetApplicationlist();
+  const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { setApplicationFormId } = useAdminClubContext();
   const { mutate: deleteApplication } = useDeleteApplication();
   const [isExpanded, setIsExpanded] = useState(false);
   const MAX_INITIAL_ITEMS = 3;
 
   const handleGoToNewForm = () => {
-    setApplicationFormId(null);
     navigate('/admin/application-list/edit');
   };
   const handleGoToEditForm = (applicationFormId: string) => {
-    setApplicationFormId(applicationFormId);
-    navigate(`/admin/application-list/edit`);
-  }
+    navigate(`/admin/application-list/${applicationFormId}/edit`);
+  };
 
   const handleDeleteApplication = (applicationFormId: string) => {
     // 사용자에게 재확인
@@ -165,7 +162,8 @@ const ApplicationListTab = () => {
         </Styled.AddButton>
       </Styled.Header>
       {semesterGroups.map((group: SemesterGroup) => {
-        const semesterTermLabel = group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
+        const semesterTermLabel =
+          group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
         const semesterTitle = `${group.semesterYear}년 ${semesterTermLabel}`;
         const groupUniqueKeyPrefix = `group_${group.semesterYear}_${group.semesterTerm}`;
         return (

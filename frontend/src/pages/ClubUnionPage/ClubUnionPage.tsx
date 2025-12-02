@@ -5,9 +5,10 @@ import { CLUB_UNION_MEMBERS } from '@/constants/CLUB_UNION_INFO';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import Footer from '@/components/common/Footer/Footer';
 import isInAppWebView from '@/utils/isInAppWebView';
+import { PAGE_VIEW } from '@/constants/eventName';
 
 const ClubUnionPage = () => {
-  useTrackPageView('ClubUnionPage');
+  useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
 
   return (
     <>

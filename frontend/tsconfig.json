@@ -14,9 +14,20 @@
     "incremental": true,
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"],
-    }
+      "@/*": [
+        "src/*"
+      ]
+    },
+    "types": [
+      "vite/client"
+    ]
   },
-  "include": ["src","eslint.config.mjs"],
-  "exclude": ["node_modules", "dist"]
+  "include": [
+    "src",
+    "eslint.config.mjs"
+  ],
+  "exclude": [
+    "node_modules",
+    "dist"
+  ]
 }

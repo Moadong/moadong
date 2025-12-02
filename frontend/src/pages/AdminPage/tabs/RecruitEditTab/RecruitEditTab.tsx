@@ -10,8 +10,14 @@ import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
 import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
 import { setYear } from 'date-fns';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/useTrackPageView';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 
 const RecruitEditTab = () => {
+  const trackEvent = useMixpanelTrack();
+  useTrackPageView(PAGE_VIEW.RECRUITMENT_INFO_EDIT_PAGE);
+
   const clubDetail = useOutletContext<ClubDetail>();
 
   const { mutate: updateClubDescription } = useUpdateClubDescription();
@@ -26,6 +32,7 @@ const RecruitEditTab = () => {
   const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({ start: null, end: null });
 
   const queryClient = useQueryClient();
+
   useEffect(() => {
     if (!clubDetail) return;
 
@@ -67,6 +74,7 @@ const RecruitEditTab = () => {
   }
 
   const toggleAlways = () => {
+    trackEvent(ADMIN_EVENT.ALWAYS_RECRUIT_BUTTON_CLICKED);
     setAlways((prev) => {
       const now = new Date();
 
@@ -93,6 +101,7 @@ const RecruitEditTab = () => {
   };
 
   const handleUpdateClub = async () => {
+    trackEvent(ADMIN_EVENT.UPDATE_RECRUIT_BUTTON_CLICKED);
     if (!clubDetail) return;
 
     let startForSave: Date | null = recruitmentStart;
@@ -160,7 +169,10 @@ const RecruitEditTab = () => {
           type='text'
           value={recruitmentTarget}
           onChange={(e) => setRecruitmentTarget(e.target.value)}
-          onClear={() => setRecruitmentTarget('')}
+          onClear={() => {
+            trackEvent(ADMIN_EVENT.RECRUITMENT_TARGET_CLEAR_BUTTON_CLICKED);
+            setRecruitmentTarget('');
+          }}
           maxLength={10}
         />
 

@@ -2,17 +2,30 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
 
-const useTrackPageView = (pageName: string, clubName?: string) => {
+const useTrackPageView = (
+  pageName: string,
+  clubName?: string,
+  skip: boolean = false,
+) => {
   const location = useLocation();
   const isTracked = useRef(false);
   const startTime = useRef(Date.now());
+  const clubNameRef = useRef(clubName);
+
 
   useEffect(() => {
+    clubNameRef.current = clubName;
+
+    if (skip) return;
+
+    isTracked.current = false;
+    startTime.current = Date.now();
+
     mixpanel.track(`${pageName} Visited`, {
       url: window.location.href,
       timestamp: startTime.current,
       referrer: document.referrer || 'direct',
-      clubName,
+      clubName: clubNameRef.current,
     });
 
     const trackPageDuration = () => {
@@ -25,7 +38,7 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
         url: window.location.href,
         duration: duration,
         duration_seconds: Math.round(duration / 1000),
-        clubName,
+        clubName: clubNameRef.current,
       });
     };
 
@@ -41,7 +54,7 @@ const useTrackPageView = (pageName: string, clubName?: string) => {
       window.removeEventListener('beforeunload', trackPageDuration);
       document.removeEventListener('visibilitychange', trackPageDuration);
     };
-  }, [location.pathname]);
+  }, [location.pathname, clubName, skip]);
 };
 
 export default useTrackPageView;
