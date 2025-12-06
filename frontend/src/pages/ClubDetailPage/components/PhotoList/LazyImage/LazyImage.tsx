@@ -11,15 +11,12 @@ interface LazyImageProps {
   isEager?: boolean;
 }
 
-const LAZY_LOAD_ROOT_MARGIN = '50%';
-
 const LazyImage = ({
   src,
   alt,
   onError,
   placeholder = '#f0f0f0',
   threshold = 0.01,
-  rootMargin = LAZY_LOAD_ROOT_MARGIN,
   isEager = false,
 }: LazyImageProps) => {
   const [isVisible, setIsVisible] = useState(isEager);
@@ -39,14 +36,13 @@ const LazyImage = ({
       },
       {
         threshold,
-        rootMargin,
       }
     );
 
     observer.observe(rootRef.current);
 
     return () => observer.disconnect();
-  }, [threshold, rootMargin, isEager]);
+  }, [threshold, isEager]);
 
   return (
     <Styled.ImageContainer ref={rootRef} $isLoaded={isLoaded} $placeholder={placeholder}>
