@@ -6,6 +6,8 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
+
+import java.time.Instant;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
@@ -49,9 +51,9 @@ public class ClubRecruitmentInformation {
     @Column(length = 13)
     private String presidentTelephoneNumber;
 
-    private LocalDateTime recruitmentStart;
+    private Instant recruitmentStart;
 
-    private LocalDateTime recruitmentEnd;
+    private Instant recruitmentEnd;
 
     private String recruitmentTarget;
 
