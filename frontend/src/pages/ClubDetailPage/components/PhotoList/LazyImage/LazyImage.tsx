@@ -7,7 +7,6 @@ interface LazyImageProps {
   onError?: () => void;
   placeholder?: string;
   threshold?: number;
-  rootMargin?: string;
   isEager?: boolean;
 }
 
