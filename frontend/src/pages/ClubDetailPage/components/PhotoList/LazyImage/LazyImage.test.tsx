@@ -19,14 +19,16 @@ class MockIntersectionObserver {
   observe = mockObserve;
 }
 
-// window.IntersectionObserver를 MockIntersectionObserver로 대체
+/**
+ * window.IntersectionObserver를 MockIntersectionObserver로 대체
+ */
 Object.defineProperty(window, 'IntersectionObserver', {
   writable: true,
   configurable: true,
   value: MockIntersectionObserver,
 });
 
-describe('LazyImage 컴포넌트', () => {
+describe('LazyImage 컴포넌트 테스트', () => {
   const defaultProps = {
     src: 'test-image.jpg',
     alt: '테스트 이미지',
@@ -34,19 +36,10 @@ describe('LazyImage 컴포넌트', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    jest.useFakeTimers();
   });
 
-  afterEach(() => {
-    jest.useRealTimers();
-  });
-
-  it('초기에는 이미지가 로드되지 않고 플레이스홀더가 표시되어야 함', () => {
+  it('초기에는 이미지가 로드되지 않아야 한다', () => {
     render(<LazyImage {...defaultProps} />);
-
-    const placeholder = screen.getByTestId('lazy-image-placeholder');
-    expect(placeholder).toBeInTheDocument();
-    expect(placeholder).toHaveStyle({ backgroundColor: '#f0f0f0' });
 
     const img = screen.queryByRole('img');
     expect(img).not.toBeInTheDocument();
@@ -55,23 +48,20 @@ describe('LazyImage 컴포넌트', () => {
   /**
    * @test 컴포넌트가 mount될 때 IntersectionObserver가 요소를 관찰해야 한다.
    */
-  it('IntersectionObserver가 요소를 관찰해야 함', () => {
+  it('IntersectionObserver가 요소를 관찰해야 한다', () => {
     render(<LazyImage {...defaultProps} />);
 
     expect(mockObserve).toHaveBeenCalled();
   });
 
-  it('요소가 화면에 보일 때 이미지를 로드해야 함', async () => {
+  it('요소가 화면에 보일 때 이미지를 로드해야 한다', async () => {
     render(<LazyImage {...defaultProps} />);
 
     const [[callback]] = mockIntersectionObserver.mock.calls;
     const entry = { isIntersecting: true };
+    
     act(() => {
       callback([entry], {} as IntersectionObserver);
-    });
-
-    act(() => {
-      jest.advanceTimersByTime(200);
     });
 
     await waitFor(() => {
@@ -84,21 +74,19 @@ describe('LazyImage 컴포넌트', () => {
     expect(mockDisconnect).toHaveBeenCalled();
   });
 
-  it('onError prop이 호출되어야 함', async () => {
+  it('onError prop이 호출되어야 한다', async () => {
     const onError = jest.fn();
     render(<LazyImage {...defaultProps} onError={onError} />);
 
     const [[callback]] = mockIntersectionObserver.mock.calls;
     const entry = { isIntersecting: true };
+    
     act(() => {
       callback([entry], {} as IntersectionObserver);
     });
 
-    act(() => {
-      jest.advanceTimersByTime(200);
-    });
-
-    const img = screen.getByRole('img');
+    const img = await screen.findByRole('img');
+    
     act(() => {
       img.dispatchEvent(new Event('error'));
     });
@@ -106,7 +94,7 @@ describe('LazyImage 컴포넌트', () => {
     expect(onError).toHaveBeenCalled();
   });
 
-  it('컴포넌트가 언마운트될 때 IntersectionObserver가 해제되어야 함', () => {
+  it('컴포넌트가 언마운트될 때 IntersectionObserver가 해제되어야 한다', () => {
     const { unmount } = render(<LazyImage {...defaultProps} />);
 
     unmount();

@@ -11,11 +11,13 @@ interface LazyImageProps {
   isEager?: boolean;
 }
 
+const PLACEHOLDER_COLOR = '#f0f0f0';
+
 const LazyImage = ({
   src,
   alt,
   onError,
-  placeholder = '#f0f0f0',
+  placeholder = PLACEHOLDER_COLOR,
   threshold = 0.01,
   isEager = false,
 }: LazyImageProps) => {
