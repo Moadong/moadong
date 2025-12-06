@@ -13,18 +13,16 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-          if (id.includes('node_modules')) {
             if (
-              id.includes('@tanstack/react-query') ||
-              id.includes('date-fns') ||
-              id.includes('framer-motion') ||
-              id.includes('zustand')
+              id.includes('node_modules/@tanstack/react-query') ||
+              id.includes('node_modules/date-fns') ||
+              id.includes('node_modules/framer-motion') ||
+              id.includes('node_modules/zustand')
             ) {
               return '@libs-vendor';
             }
 
             return 'vendor';
-          }
         },
       },
     },
