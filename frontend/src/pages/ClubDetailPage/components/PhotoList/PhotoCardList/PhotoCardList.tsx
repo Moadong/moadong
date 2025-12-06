@@ -1,4 +1,3 @@
-import React from 'react';
 import * as Styled from '../PhotoList.styles';
 import LazyImage from '@/components/common/LazyImage/LazyImage';
 
@@ -8,6 +7,8 @@ interface PhotoCardListProps {
   onImageClick: (index: number) => void;
   onImageError: (index: number) => void;
 }
+
+const IMAGE_EAGER_LOADING_COUNT = 4;
 
 const PhotoCardList = ({
   photoUrls,
@@ -24,6 +25,7 @@ const PhotoCardList = ({
               src={url}
               alt={`활동 사진 ${index + 1}`}
               onError={() => onImageError(index)}
+              isEager={index < IMAGE_EAGER_LOADING_COUNT}
             />
           ) : (
             <Styled.NoImageContainer>이미지 준비중..</Styled.NoImageContainer>
