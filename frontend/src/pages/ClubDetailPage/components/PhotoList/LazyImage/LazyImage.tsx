@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import * as Styled from './LazyImage.styles';
 
 interface LazyImageProps {
   src: string;
@@ -48,33 +49,18 @@ const LazyImage = ({
   }, [threshold, rootMargin, isEager]);
 
   return (
-    <div
-      ref={rootRef}
-      style={{
-        position: 'relative',
-        width: '100%',
-        height: '100%',
-        backgroundColor: isLoaded ? 'transparent' : placeholder,
-        transition: 'background-color 0.3s',
-      }}
-    >
+    <Styled.ImageContainer ref={rootRef} $isLoaded={isLoaded} $placeholder={placeholder}>
       {isVisible && (
-        <img
+        <Styled.StyledImage
           src={src}
           alt={alt}
           onError={onError}
           onLoad={() => setIsLoaded(true)}
           loading={isEager ? 'eager' : 'lazy'}
-          style={{
-            opacity: isLoaded ? 1 : 0,
-            transition: 'opacity 0.3s ease-in',
-            width: '100%',
-            height: '100%',
-            objectFit: 'cover',
-          }}
+          $isLoaded={isLoaded}
         />
       )}
-    </div>
+    </Styled.ImageContainer>
   );
 };
 

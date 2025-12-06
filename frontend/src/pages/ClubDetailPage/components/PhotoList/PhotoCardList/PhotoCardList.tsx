@@ -1,5 +1,5 @@
 import * as Styled from '../PhotoList.styles';
-import LazyImage from '@/components/common/LazyImage/LazyImage';
+import LazyImage from '@/pages/ClubDetailPage/components/PhotoList/LazyImage/LazyImage';
 
 interface PhotoCardListProps {
   photoUrls: string[];
