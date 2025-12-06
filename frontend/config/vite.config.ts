@@ -21,8 +21,6 @@ export default defineConfig({
             ) {
               return '@libs-vendor';
             }
-
-            return 'vendor';
         },
       },
     },
