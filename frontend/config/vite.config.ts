@@ -13,13 +13,16 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-            if (id.includes('node_modules')) {
-              if (id.includes('react') || id.includes('react-dom') || id.includes('react-router-dom')) {
-                return '@react-vendor';
-              }
-              if (id.includes('@tanstack/react-query') || id.includes('date-fns') || id.includes('framer-motion') || id.includes('zustand')) {
-                return '@libs-vendor';
-              }
+            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
+              return '@react-vendor';
+            }
+            if (
+              id.includes('node_modules/@tanstack/react-query') ||
+              id.includes('node_modules/date-fns') ||
+              id.includes('node_modules/framer-motion') ||
+              id.includes('node_modules/zustand')
+            ) {
+              return '@libs-vendor';
             }
         },
       },
