@@ -17,7 +17,6 @@ export default defineConfig({
               return '@react-vendor';
             }
             if (
-              id.includes('node_modules/@tanstack/react-query') ||
               id.includes('node_modules/date-fns') ||
               id.includes('node_modules/framer-motion') ||
               id.includes('node_modules/zustand')
