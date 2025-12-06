@@ -13,16 +13,9 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: (id) => {
-            if (id.includes('node_modules/react') || id.includes('node_modules/react-dom') || id.includes('node_modules/react-router-dom')) {
-              return '@react-vendor';
-            }
-            if (
-              id.includes('node_modules/date-fns') ||
-              id.includes('node_modules/framer-motion') ||
-              id.includes('node_modules/zustand')
-            ) {
-              return '@libs-vendor';
-            }
+          if (id.includes("node_modules/react/") || id.includes("node_modules/react-dom/") || id.includes("node_modules/react-router-dom/")) {
+            return "@react-vendor";
+          }
         },
       },
     },
