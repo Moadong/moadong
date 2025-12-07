@@ -1,4 +1,3 @@
-import { Z_INDEX } from '@/styles/zIndex';
 import styled, { css } from 'styled-components';
 
 // 전체 레이아웃을 감싸는 컨테이너

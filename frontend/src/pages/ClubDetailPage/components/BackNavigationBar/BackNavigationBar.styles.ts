@@ -1,4 +1,3 @@
-import { Z_INDEX } from '@/styles/zIndex';
 import styled from 'styled-components';
 
 export const BackNavigationContainer = styled.div`
