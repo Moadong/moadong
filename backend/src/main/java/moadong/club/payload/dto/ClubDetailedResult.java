@@ -29,6 +29,7 @@ public record ClubDetailedResult(
         String category,
         String division,
         List<Faq> faqs,
+        String lastModifiedDate,
         List<ClubSearchResult> recommendClubs
 ) {
 
@@ -39,6 +40,12 @@ public record ClubDetailedResult(
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
             period = clubRecruitmentInformation.getRecruitmentStart().format(formatter) + " ~ "
                     + clubRecruitmentInformation.getRecruitmentEnd().format(formatter);
+        }
+
+        String lastModifiedDate = "";
+        if (club.getClubRecruitmentInformation().getLastModifiedDate() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+            lastModifiedDate = club.getClubRecruitmentInformation().getLastModifiedDate().format(formatter);
         }
         return ClubDetailedResult.builder()
                 .id(club.getId() == null ? "" : club.getId())
@@ -74,6 +81,7 @@ public record ClubDetailedResult(
                         : club.getSocialLinks())
                 .faqs(club.getClubRecruitmentInformation().getFaqs() == null ? List.of()
                         : club.getClubRecruitmentInformation().getFaqs())
+                .lastModifiedDate(lastModifiedDate)
                 .recommendClubs(recommendClubs)
                 .build();
     }

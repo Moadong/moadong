@@ -1,5 +1,6 @@
 package moadong.club.service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
@@ -44,6 +45,7 @@ public class ClubProfileService {
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
         );
+        club.getClubRecruitmentInformation().updateLastModifiedDate();
         clubRepository.save(club);
     }
 

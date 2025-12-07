@@ -1,14 +1,11 @@
 package moadong.club.entity;
 
-import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,7 +48,6 @@ public class Club implements Persistable<String> {
 
     @Version
     private Long version;
-
     public Club() {
         this.name = "";
         this.category = "";
