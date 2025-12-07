@@ -1,10 +1,11 @@
+import { Z_INDEX } from '@/styles/zIndex';
 import styled from 'styled-components';
 
 export const ScrollButton = styled.button<{ $isVisible: boolean }>`
   position: fixed;
   bottom: 80px;
   right: 30px;
-  z-index: 1000;
+  z-index: ${Z_INDEX.floatingButton};
   opacity: ${({ $isVisible }) => ($isVisible ? 1 : 0)};
   visibility: ${({ $isVisible }) => ($isVisible ? 'visible' : 'hidden')};
   transition: opacity 0.3s, visibility 0.3s;

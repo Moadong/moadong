@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { Z_INDEX } from '@/styles/zIndex';
 
 export const ModalOverlay = styled.div`
   position: fixed;
@@ -10,13 +11,13 @@ export const ModalOverlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 100;
+  z-index: ${Z_INDEX.overlay};
   animation: fadeIn 0.2s ease-in-out;
   background-color: rgba(0, 0, 0, 0.7);
-+  @supports (backdrop-filter: blur(4px)) {
-+    backdrop-filter: blur(4px);
-+    background-color: rgba(0, 0, 0, 0.6);
-+  }
+  @supports (backdrop-filter: blur(4px)) {
+  backdrop-filter: blur(4px);
+  background-color: rgba(0, 0, 0, 0.6);
+  }
 
   @keyframes fadeIn {
     from {

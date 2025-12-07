@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { Z_INDEX } from '@/styles/zIndex';
 
 export const Header = styled.header<{ isScrolled: boolean }>`
   position: fixed;
@@ -10,7 +11,7 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   height: 62px;
   padding: 10px 20px;
   background-color: white;
-  z-index: 1000;
+  z-index: ${Z_INDEX.header};
 
   box-shadow: ${({ isScrolled }) =>
     isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};

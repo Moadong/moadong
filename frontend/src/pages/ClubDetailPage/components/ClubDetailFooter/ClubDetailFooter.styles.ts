@@ -4,7 +4,7 @@ export const ClubDetailFooterContainer = styled.div`
   position: sticky;
   bottom: 0;
   width: 100%;
-  z-index: 100;
+  z-index: 1050; // TODO: Portal로 모달 분리 후 header보다 낮게 재조정
   padding: 10px 40px;
 
   display: flex;
