@@ -138,7 +138,7 @@ export const StatusSelectMenu = styled.div<{ open: boolean }>`
   border: 1px solid #dcdcdc;
   border-radius: 6px;
   box-shadow: 0px 1px 8px 0px #0000001f;
-  z-index: ${Z_INDEX.dropdown};
+  z-index: 10;
   padding: 8px 0;
   color: #787878;
 `;
@@ -305,7 +305,7 @@ export const ApplicantAllSelectMenu = styled.div<{ open: boolean }>`
   border: 1px solid #dcdcdc;
   border-radius: 6px;
   box-shadow: 0px 1px 8px 0px #0000001f;
-  z-index: ${Z_INDEX.dropdown};
+  z-index: 10;
   padding: 8px 0;
 `;
 

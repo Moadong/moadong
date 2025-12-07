@@ -186,7 +186,7 @@ export const MenuContainer = styled.div`
   border: 1px solid #f1f3f5;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
   padding: 8px 0;
-  z-index: ${Z_INDEX.dropdown};
+  z-index: 10;
 `;
 
 export const MenuItem = styled.div`

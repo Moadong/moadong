@@ -22,7 +22,7 @@ export const OptionList = styled.ul<{
   background: #fff;
   box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.12);
   padding: 6px 0;
-  z-index: ${Z_INDEX.dropdown};
+  z-index: 10;
   height: auto;
   list-style: none;
 `;
