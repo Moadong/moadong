@@ -1,7 +1,7 @@
 import * as Styled from './QuestionTitle.styles';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
-import useIsMobile from '@/hooks/useIsMobile';
-import { useEffect, useLayoutEffect, useRef } from 'react';
+import useDevice from '@/hooks/useDevice';
+import { useLayoutEffect, useRef } from 'react';
 
 interface QuestionTitleProps {
   id: number;
@@ -18,7 +18,7 @@ const QuestionTitle = ({
   mode,
   onTitleChange,
 }: QuestionTitleProps) => {
-  const isMobile = useIsMobile();
+  const { isMobile } = useDevice();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   useLayoutEffect(() => {
