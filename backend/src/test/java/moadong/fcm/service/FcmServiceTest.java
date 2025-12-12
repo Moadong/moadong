@@ -66,6 +66,7 @@ class FcmServiceTest {
 
     @BeforeEach
     void setUp() {
+        fcmTokenRepository.deleteFcmTokenByToken("existing_token");
         club1 = clubRepository.save(Club.builder().name("club1").build());
         club2 = clubRepository.save(Club.builder().name("club2").build());
         club3 = clubRepository.save(Club.builder().name("club3").build());

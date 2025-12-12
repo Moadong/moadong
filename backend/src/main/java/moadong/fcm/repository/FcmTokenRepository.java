@@ -7,4 +7,5 @@ import java.util.Optional;
 
 public interface FcmTokenRepository extends MongoRepository<FcmToken, String> {
     Optional<FcmToken> findFcmTokenByToken(String fcmToken);
+    void deleteFcmTokenByToken(String fcmToken);
 }
