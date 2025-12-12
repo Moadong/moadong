@@ -5,7 +5,9 @@ import moadong.club.enums.ClubDivision;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -26,8 +28,8 @@ public class ClubRequestFixture {
 
     public static ClubRecruitmentInfoUpdateRequest defaultRequest() {
         return new ClubRecruitmentInfoUpdateRequest(
-                LocalDateTime.now(),
-                LocalDateTime.now().plusDays(7),
+                Instant.now(),
+                Instant.now().plus(7, ChronoUnit.DAYS),
                 "테스트 대상",
                 "테스트 설명",
                 "https://fake-url.com",
