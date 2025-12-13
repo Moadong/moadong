@@ -92,6 +92,7 @@
     "path": "^0.12.7",
     "prettier": "^3.4.2",
     "react-refresh": "^0.16.0",
+    "rollup-plugin-visualizer": "^5.14.0",
     "storybook": "^8.5.0",
     "style-loader": "^4.0.0",
     "tough-cookie": "^6.0.0",
