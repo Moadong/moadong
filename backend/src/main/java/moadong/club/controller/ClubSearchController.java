@@ -29,7 +29,7 @@ public class ClubSearchController {
             + "keyword에 빈칸 입력 시 전체 검색<br>"
             + "recruitmentStatus, category, division에 all 입력 시 전체 검색<br>"
             + "<br>"
-            + "keyword는 대소문자 구분 없이 자유롭게 검색"
+            + "keyword는 대소문자 구분 없이 자유롭게 검색<br>"
             + "recruitmentStatus은 모집상태로 ALWAYS(상시모집), OPEN(모집중), CLOSED(모집마감), UPCOMING(모집예정)<br>"
             + "division은 분과로 중동<br>"
             + "category는 종류로 봉사, 종교, 취미교양, 학술, 운동, 공연, 기타<br>")

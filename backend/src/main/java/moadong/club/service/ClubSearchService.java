@@ -23,8 +23,10 @@ public class ClubSearchService {
                                                    String division,
                                                    String category
     ) {
+        String normalizedKeyword = normalizeKeyword(keyword);
+
         List<ClubSearchResult> result = clubSearchRepository.searchClubsByKeyword(
-                keyword,
+                normalizedKeyword,
                 recruitmentStatus,
                 division,
                 category
@@ -59,5 +61,14 @@ public class ClubSearchService {
                 .clubs(result)
                 .totalCount(result.size())
                 .build();
+    }
+
+    private String normalizeKeyword(String keyword) {
+        if (keyword == null) return null;
+
+        String trimmedKeyword = keyword.trim();
+        if (trimmedKeyword.isEmpty()) return "";
+
+        return trimmedKeyword.replaceAll("[^0-9A-Za-z가-힣\\s]", "").trim();
     }
 }
