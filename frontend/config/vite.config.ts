@@ -20,49 +20,42 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks(id) {
-          const n = id.replace(/\\/g, "/");
-          if (!n.includes("/node_modules/")) return;
+          if (!id.includes("node_modules")) return;
 
-          if (n.includes("/node_modules/react-router")) return "router";
-          if (n.includes("/node_modules/react-datepicker")) return "dates";
+          if (id.includes("react-router")) return "router";
+          if (id.includes("react-datepicker")) return "dates";
           if (
-            n.includes("/node_modules/react-markdown/") ||
-            n.includes("/node_modules/remark-") ||
-            n.includes("/node_modules/rehype-") ||
-            n.includes("/node_modules/unified/") ||
-            n.includes("/node_modules/micromark") ||
-            n.includes("/node_modules/mdast-") ||
-            n.includes("/node_modules/hast-") ||
-            n.includes("/node_modules/parse5/")
+            id.includes("react-markdown") ||
+            id.includes("remark-") ||
+            id.includes("rehype-") ||
+            id.includes("unified") ||
+            id.includes("micromark") ||
+            id.includes("mdast-") ||
+            id.includes("hast-") ||
+            id.includes("parse5")
           ) {
             return "markdown";
           }
 
           if (
-            n.includes("/node_modules/react/") ||
-            n.includes("/node_modules/react-dom/") ||
-            n.includes("/node_modules/scheduler/")
+            id.includes("node_modules/react/") ||
+            id.includes("node_modules/react-dom/") ||
+            id.includes("scheduler")
           ) {
             return "react-vendor";
           }
 
-          if (
-            n.includes("/node_modules/zustand/") ||
-            n.includes("/node_modules/@tanstack/react-query/")
-          ) {
+          if (id.includes("zustand") || id.includes("@tanstack/react-query")) {
             return "state";
           }
 
-          if (
-            n.includes("/node_modules/mixpanel-browser/") ||
-            n.includes("/node_modules/@sentry/")
-          ) {
+          if (id.includes("mixpanel-browser") || id.includes("@sentry")) {
             return "analytics";
           }
 
-          if (n.includes("/node_modules/framer-motion/") || n.includes("/node_modules/motion-dom/")) return "motion";
-          if (n.includes("/node_modules/swiper/")) return "swiper";
-          if (n.includes("/node_modules/date-fns/")) return "dates";
+          if (id.includes("framer-motion") || id.includes("motion-dom")) return "motion";
+          if (id.includes("swiper")) return "swiper";
+          if (id.includes("date-fns")) return "dates";
 
           return "vendor";
         },
