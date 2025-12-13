@@ -9,12 +9,6 @@ export default defineConfig({
   plugins: [
     react(),
     tsconfigPaths(),
-    visualizer({
-      open: true,
-      gzipSize: true,
-      brotliSize: true,
-      filename: 'dist/stats.html',
-    }),
   ],
   build: {
     rollupOptions: {
@@ -26,12 +20,12 @@ export default defineConfig({
           if (id.includes("react-datepicker")) return "dates";
           if (
             id.includes("react-markdown") ||
-            id.includes("remark-") ||
-            id.includes("rehype-") ||
+            id.includes("remark") ||
+            id.includes("rehype") ||
             id.includes("unified") ||
             id.includes("micromark") ||
-            id.includes("mdast-") ||
-            id.includes("hast-") ||
+            id.includes("mdast") ||
+            id.includes("hast") ||
             id.includes("parse5")
           ) {
             return "markdown";
@@ -45,13 +39,11 @@ export default defineConfig({
             return "react-vendor";
           }
 
-          if (id.includes("zustand") || id.includes("@tanstack/react-query")) {
-            return "state";
-          }
+          if (id.includes("zustand")) return "state";
+          if (id.includes("@tanstack/react-query")) return "react-query";
 
-          if (id.includes("mixpanel-browser") || id.includes("@sentry")) {
-            return "analytics";
-          }
+          if (id.includes("mixpanel-browser")) return "analytics";
+          if (id.includes("@sentry")) return "sentry";
 
           if (id.includes("framer-motion") || id.includes("motion-dom")) return "motion";
           if (id.includes("swiper")) return "swiper";
