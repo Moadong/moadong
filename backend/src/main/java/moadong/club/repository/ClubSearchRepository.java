@@ -43,8 +43,7 @@ public class ClubSearchRepository {
         if (keyword != null && !keyword.trim().isEmpty()) {
             operations.add(Aggregation.match(new Criteria().orOperator(
                 Criteria.where("name").regex(keyword, "i"),
-                Criteria.where("recruitmentInformation.introduction").regex(keyword, "i"),
-                Criteria.where("recruitmentInformation.description").regex(keyword, "i"),
+                Criteria.where("category").regex(keyword, "i"),
                 Criteria.where("recruitmentInformation.tags").regex(keyword, "i")
             )));
         }
