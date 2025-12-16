@@ -22,8 +22,8 @@ const MainPage = () => {
   const recruitmentStatus = 'all';
   const division = 'all';
   const searchCategory = isSearching ? 'all' : selectedCategory;
-  const tabs = ['중앙동아리'] as const;
-  const [active, setActive] = useState<(typeof tabs)[number]>('중앙동아리');
+  const tabs = ['부경대학교 중앙동아리'] as const;
+  const [active, setActive] = useState<(typeof tabs)[number]>('부경대학교 중앙동아리');
   // TODO: 추후 확정되면 DivisionKey(중동/가동/과동) 같은 타입을
   // types/club.ts에 정의해서 tabs 관리하도록 리팩터링하기
 
