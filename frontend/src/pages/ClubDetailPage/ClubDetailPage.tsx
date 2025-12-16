@@ -16,23 +16,25 @@ import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import isInAppWebView from '@/utils/isInAppWebView';
 import { PAGE_VIEW } from '@/constants/eventName';
 
+const MobileWindowWidth = 500;
+
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
-  const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
+  const [showHeader, setShowHeader] = useState(window.innerWidth > MobileWindowWidth);
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useEffect(() => {
     const handleResize = () => {
-      setShowHeader(window.innerWidth > 500);
+      setShowHeader(window.innerWidth > MobileWindowWidth);
     };
 
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name);
+  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
   if (!clubDetail) {
     return null;
@@ -68,7 +70,6 @@ const ClubDetailPage = () => {
           feeds={clubDetail.feeds}
           clubName={clubDetail.name}
         />
-        {/* <RecommendedClubs clubs={clubDetail.recommendClubs ?? []} /> */}
       </Styled.PageContainer>
       <Footer />
       <ClubDetailFooter

@@ -7,31 +7,31 @@ import check_inactive from '@/assets/images/icons/check_inactive.svg';
 
 interface ApplicationMenuProps {
   isActive: boolean;
-  // onDelete: () => void;
+  onDelete: () => void;
+  onToggleStatus?: () => void;
 }
 
-const ApplicationMenu = ({ isActive, 
-  // onDelete
+const ApplicationMenu = ({ isActive, onToggleStatus, 
+  onDelete
  }: ApplicationMenuProps) => {
-  // 각 메뉴 아이템 클릭 시 실행될 함수 (지금은 비워둠)
-  const onSetDefault = () => console.log('기본지원서로 설정');
   const onEditTitle = () => console.log('제목 수정하기');
+  const toggleButtonText = isActive ? '지원서 비활성화' : '지원서 활성화';
 
   return (
     <Styled.MenuContainer>
-      <Styled.MenuItem onClick={onSetDefault} className='default'>
+      <Styled.MenuItem onClick={onToggleStatus} $ActiveMenu={true}>
         {isActive ? (
           <Styled.MenuIcon src={checkBox} />
         ) : (
           <Styled.MenuIcon src={check_inactive} />
         )}
-        기본지원서로 설정
+        {toggleButtonText}
       </Styled.MenuItem>
       <Styled.Separator />
       <Styled.MenuItem onClick={onEditTitle}>
         <Styled.MenuIcon src={Pencil} /> 제목 수정하기
       </Styled.MenuItem>
-      <Styled.MenuItem /*onClick={onDelete}*/ className='delete'>
+      <Styled.MenuItem onClick={onDelete} className='delete'>
         <Styled.MenuIcon src={Delete_applicant} /> 삭제
       </Styled.MenuItem>
     </Styled.MenuContainer>

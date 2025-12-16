@@ -23,7 +23,7 @@ const Header = () => {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
-    handlePatchNoteClick,
+    handleAdminClick,
   } = useHeaderNavigation();
 
   const navLinks = [
@@ -33,7 +33,8 @@ const Header = () => {
       handler: handleClubUnionClick,
       path: '/club-union',
     },
-    { label: '패치노트', handler: handlePatchNoteClick, path: '/patch-note' },
+    { label: '관리자 페이지', handler: handleAdminClick, path: '/admin' },
+    // { label: '패치노트', handler: handlePatchNoteClick, path: '/patch-note' },
   ];
 
   const closeMenu = () => {

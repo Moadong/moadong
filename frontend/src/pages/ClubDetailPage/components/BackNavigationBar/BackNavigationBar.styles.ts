@@ -11,7 +11,7 @@ export const BackNavigationContainer = styled.div`
     align-items: center;
     width: 100%;
     height: 70px;
-    z-index: 1;
+    z-index: 100;
     background-color: white;
   }
 `;

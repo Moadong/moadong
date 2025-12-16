@@ -1,9 +1,10 @@
+import { Z_INDEX } from '@/styles/zIndex';
 import styled from 'styled-components';
 
 export const Overlay = styled.div<{ isOpen: boolean }>`
-  position: fixed;
   inset: 0;
-  z-index: 1000;
+  position: fixed;
+  z-index: ${Z_INDEX.overlay};
   background: rgba(0,0,0, ${({ isOpen }) => (isOpen ? 0.45 : 0)});
   display: grid;
   place-items: center;
@@ -12,6 +13,8 @@ export const Overlay = styled.div<{ isOpen: boolean }>`
 `;
 
 export const Container = styled.div<{ isOpen: boolean }>`
+  position: relative;
+  z-index: ${Z_INDEX.modal};
   max-width: 500px;
   width: 100%;
   max-height: 90vh;
