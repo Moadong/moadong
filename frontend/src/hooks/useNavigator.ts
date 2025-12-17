@@ -9,7 +9,7 @@ const useNavigator = () => {
       const trimmedUrl = url?.trim();
       if (!trimmedUrl) return;
 
-      const isExternalUrl = trimmedUrl.startsWith('https://');
+      const isExternalUrl = /^(https?|itms-apps):\/\//.test(trimmedUrl);
 
       if (isExternalUrl) {
         window.open(trimmedUrl, '_blank', 'noopener,noreferrer');
