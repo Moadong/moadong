@@ -9,10 +9,13 @@ const useNavigator = () => {
       const trimmedUrl = url?.trim();
       if (!trimmedUrl) return;
 
+      const isDangerousProtocol = /^(javascript|data|vbscript):/i.test(trimmedUrl);
+      if (isDangerousProtocol) return;
+
       const isExternalUrl = /^(https?|itms-apps):\/\//.test(trimmedUrl);
 
       if (isExternalUrl) {
-        window.open(trimmedUrl, '_blank', 'noopener,noreferrer');
+        window.location.href = trimmedUrl;
       } else {
         navigate(trimmedUrl);
       }
