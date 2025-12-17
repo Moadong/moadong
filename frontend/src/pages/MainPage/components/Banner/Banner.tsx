@@ -6,6 +6,8 @@ import * as Styled from './Banner.styles';
 import BANNERS from './bannerData';
 import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { USER_EVENT } from '@/constants/eventName';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 
@@ -25,14 +27,13 @@ const getAppStoreLink = (): string => {
   if (/android/.test(userAgent)) {
     return APP_STORE_LINKS.android;
   }
-
-  
   return APP_STORE_LINKS.default;
 };
 
 const Banner = () => {
   const { isMobile } = useDevice();
   const handleLink = useNavigator();
+  const trackEvent = useMixpanelTrack();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -44,14 +45,21 @@ const Banner = () => {
     swiperInstance?.slideNext();
   };
 
-  const handleBannerClick = (url?: string) => {
+  const handleBannerClick = (bannerId: string, bannerName: string, url?: string) => {
     if (!url) return;
 
     if (url === 'APP_STORE_LINK') {
       const storeLink = getAppStoreLink();
+      trackEvent(USER_EVENT.APP_DOWNLOAD_BANNER_CLICKED, {
+        bannerId,
+        bannerName,
+        platform: /iphone|ipad|ipod|macintosh/.test(navigator.userAgent.toLowerCase()) ? 'ios' : 'android',
+      });
       handleLink(storeLink);
       return;
     }
+
+    trackEvent(USER_EVENT.BANNER_CLICKED, { bannerId, bannerName, linkTo: url });
     handleLink(url);
   };
 
@@ -82,7 +90,7 @@ const Banner = () => {
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
                 isClickable={!!banner.linkTo}
-                onClick={() => handleBannerClick(banner.linkTo)}
+                onClick={() => handleBannerClick(banner.id, banner.alt, banner.linkTo)}
               >
                 <img
                   src={isMobile ? banner.mobileImage : banner.desktopImage}

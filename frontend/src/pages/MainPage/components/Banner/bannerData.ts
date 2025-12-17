@@ -19,7 +19,7 @@ const BANNERS: BannerItem[] = [
     desktopImage: AppReleaseDesktopImage,
     mobileImage: AppReleaseMobileImage,
     linkTo: 'APP_STORE_LINK',
-    alt: '모아동 12월 앱 릴리즈 안내 - 앱 다운로드 링크',
+    alt: '앱 다운로드 배너',
   },
   {
     id: 'all-clubs-in-one-place',
