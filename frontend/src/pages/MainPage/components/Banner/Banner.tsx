@@ -9,6 +9,28 @@ import useNavigator from '@/hooks/useNavigator';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 
+
+const APP_STORE_LINKS = {
+  ios: 'itms-apps://itunes.apple.com/app/6755062085',
+  android: 'https://play.google.com/store/apps/details?id=com.moadong.moadong&pcampaignid=web_share',
+  default: 'https://play.google.com/store/apps/details?id=com.moadong.moadong&pcampaignid=web_share',
+};
+
+const getAppStoreLink = (): string => {
+  const userAgent = navigator.userAgent.toLowerCase();
+  console.log(userAgent);
+
+  if (/iphone|ipad|ipod|macintosh/.test(userAgent)) {
+    return APP_STORE_LINKS.ios;
+  }
+  if (/android/.test(userAgent)) {
+    return APP_STORE_LINKS.android;
+  }
+
+  
+  return APP_STORE_LINKS.default;
+};
+
 const Banner = () => {
   const { isMobile } = useDevice();
   const handleLink = useNavigator();
@@ -24,9 +46,14 @@ const Banner = () => {
   };
 
   const handleBannerClick = (url?: string) => {
-    if (url) {
-      handleLink(url);
+    if (!url) return;
+
+    if (url === 'APP_STORE_LINK') {
+      const storeLink = getAppStoreLink();
+      handleLink(storeLink);
+      return;
     }
+    handleLink(url);
   };
 
   return (
