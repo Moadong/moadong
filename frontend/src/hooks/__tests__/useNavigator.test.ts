@@ -52,36 +52,14 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
   });
 
   describe('악성 링크를 클릭하면', () => {
-    it('javascript 실행 링크는 차단된다', () => {
+    it.each([
+      ['javascript', 'javascript:alert("XSS")'],
+      ['data', 'data:text/html,<script>alert("XSS")</script>'],
+      ['vbscript', 'vbscript:msgbox("XSS")'],
+      ['대문자 javascript', 'JAVASCRIPT:alert("XSS")'],
+    ])('%s 프로토콜 링크는 차단된다', (_, maliciousUrl) => {
       // When
-      handleLink.result.current('javascript:alert("XSS")');
-
-      // Then
-      expect(mockNavigate).not.toHaveBeenCalled();
-      expect(window.location.href).toBe('');
-    });
-
-    it('data 스키마 링크는 차단된다', () => {
-      // When
-      handleLink.result.current('data:text/html,<script>alert("XSS")</script>');
-
-      // Then
-      expect(mockNavigate).not.toHaveBeenCalled();
-      expect(window.location.href).toBe('');
-    });
-
-    it('vbscript 링크는 차단된다', () => {
-      // When
-      handleLink.result.current('vbscript:msgbox("XSS")');
-
-      // Then
-      expect(mockNavigate).not.toHaveBeenCalled();
-      expect(window.location.href).toBe('');
-    });
-
-    it('대문자로 된 악성 링크도 차단된다', () => {
-      // When
-      handleLink.result.current('JAVASCRIPT:alert("XSS")');
+      handleLink.result.current(maliciousUrl);
 
       // Then
       expect(mockNavigate).not.toHaveBeenCalled();
@@ -90,30 +68,16 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
   });
 
   describe('외부 사이트 링크를 클릭하면', () => {
-    it('https 링크는 해당 사이트로 이동한다', () => {
+    it.each([
+      ['https', 'https://example.com'],
+      ['http', 'http://example.com'],
+      ['App Store (itms-apps)', 'itms-apps://itunes.apple.com/app/123456'],
+    ])('%s 링크는 해당 사이트로 이동한다', (_, externalUrl) => {
       // When
-      handleLink.result.current('https://example.com');
+      handleLink.result.current(externalUrl);
 
       // Then
-      expect(window.location.href).toBe('https://example.com');
-      expect(mockNavigate).not.toHaveBeenCalled();
-    });
-
-    it('http 링크는 해당 사이트로 이동한다', () => {
-      // When
-      handleLink.result.current('http://example.com');
-
-      // Then
-      expect(window.location.href).toBe('http://example.com');
-      expect(mockNavigate).not.toHaveBeenCalled();
-    });
-
-    it('App Store 링크는 앱스토어로 이동한다', () => {
-      // When
-      handleLink.result.current('itms-apps://itunes.apple.com/app/123456');
-
-      // Then
-      expect(window.location.href).toBe('itms-apps://itunes.apple.com/app/123456');
+      expect(window.location.href).toBe(externalUrl);
       expect(mockNavigate).not.toHaveBeenCalled();
     });
   });
