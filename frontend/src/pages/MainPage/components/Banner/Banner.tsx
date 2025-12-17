@@ -18,8 +18,7 @@ const APP_STORE_LINKS = {
 
 const getAppStoreLink = (): string => {
   const userAgent = navigator.userAgent.toLowerCase();
-  console.log(userAgent);
-
+  
   if (/iphone|ipad|ipod|macintosh/.test(userAgent)) {
     return APP_STORE_LINKS.ios;
   }
