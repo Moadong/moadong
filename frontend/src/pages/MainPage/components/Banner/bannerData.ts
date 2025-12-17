@@ -15,6 +15,13 @@ interface BannerItem {
 
 const BANNERS: BannerItem[] = [
   {
+    id: 'app-release-december-2025',
+    desktopImage: AppReleaseDesktopImage,
+    mobileImage: AppReleaseMobileImage,
+    linkTo: 'APP_STORE_LINK',
+    alt: '모아동 12월 앱 릴리즈 안내 - 앱 다운로드 링크',
+  },
+  {
     id: 'all-clubs-in-one-place',
     desktopImage: AllClubsDesktopImage,
     mobileImage: AllClubsMobileImage,
@@ -27,13 +34,6 @@ const BANNERS: BannerItem[] = [
     mobileImage: StartNowMobileImage,
     linkTo: '/introduce',
     alt: '지금 바로 모아동에서 시작하세요',
-  },
-  {
-    id: 'app-release-december-2025',
-    desktopImage: AppReleaseDesktopImage,
-    mobileImage: AppReleaseMobileImage,
-    linkTo: 'APP_STORE_LINK',
-    alt: '모아동 12월 앱 릴리즈 안내 - 앱 다운로드 링크',
   },
 ];
 
