@@ -1,6 +1,7 @@
 package moadong.club.service;
 
 import java.util.*;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubCategory;
@@ -23,10 +24,10 @@ public class ClubSearchService {
                                                    String division,
                                                    String category
     ) {
-        String normalizedKeyword = normalizeKeyword(keyword);
+        String quotedKeyword = quotedKeyword(keyword);
 
         List<ClubSearchResult> result = clubSearchRepository.searchClubsByKeyword(
-                normalizedKeyword,
+                quotedKeyword,
                 recruitmentStatus,
                 division,
                 category
@@ -63,12 +64,7 @@ public class ClubSearchService {
                 .build();
     }
 
-    private String normalizeKeyword(String keyword) {
-        if (keyword == null) return null;
-
-        String trimmedKeyword = keyword.trim();
-        if (trimmedKeyword.isEmpty()) return "";
-
-        return trimmedKeyword.replaceAll("[^0-9A-Za-z가-힣\\s]", "").trim();
+    private String quotedKeyword(String keyword) {
+        return (keyword == null || keyword.trim().isEmpty()) ? keyword : Pattern.quote(keyword.trim());
     }
 }
