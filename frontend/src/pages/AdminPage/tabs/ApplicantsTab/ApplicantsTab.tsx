@@ -13,6 +13,7 @@ import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplican
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
 import { useGetApplicants } from '@/hooks/queries/applicants/useGetApplicants';
+import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 
 const ApplicantsTab = () => {
   const { applicationFormId } = useParams<{ applicationFormId: string }>();
@@ -228,14 +229,9 @@ const ApplicantsTab = () => {
 
   return (
     <>
-      <Styled.ApplicationHeader>
-        <Styled.ApplicationTitle>지원 현황</Styled.ApplicationTitle>
-        {/* 
-        <Styled.SemesterSelect>
-          <option>25년 2학기</option>
-        </Styled.SemesterSelect>
-        */}
-      </Styled.ApplicationHeader>
+      <div style={{ marginBottom: '32px' }}>
+        <ContentSection.Header title='지원 현황' />
+      </div>
 
       <Styled.SummaryWrapper>
         <Styled.SummaryCard bgColor={'#F5F5F5'}>
