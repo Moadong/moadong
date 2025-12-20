@@ -6,9 +6,9 @@ import changeImageIconHover from '@/assets/images/icons/change_image_button_icon
 import editIcon from '@/assets/images/icons/pencil_icon_2.svg';
 import deleteIcon from '@/assets/images/icons/cancel_button_icon.svg';
 import {
-  useUploadClubLogo,
-  useDeleteClubLogo,
-} from '@/hooks/queries/club/useClubLogo';
+  useUploadLogo,
+  useDeleteLogo,
+} from '@/hooks/queries/club/images/useLogoMutation';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import { ADMIN_EVENT } from '@/constants/eventName';
@@ -28,8 +28,8 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
   const menuRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const uploadMutation = useUploadClubLogo(clubId);
-  const deleteMutation = useDeleteClubLogo(clubId);
+  const uploadMutation = useUploadLogo();
+  const deleteMutation = useDeleteLogo();
 
   const isClubLogoEmpty = !clubLogo || clubLogo.trim() === '';
   const displayedLogo = isClubLogoEmpty ? defaultLogo : clubLogo;
@@ -50,9 +50,7 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
       return;
     }
 
-    uploadMutation.mutate(file, {
-      onError: () => alert('로고 업로드에 실패했어요. 다시 시도해주세요!'),
-    });
+    uploadMutation.mutate({ clubId, file });
   };
 
   const triggerFileInput = () => {
@@ -68,10 +66,7 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
 
     if (!window.confirm('정말 로고를 기본 이미지로 되돌릴까요?')) return;
 
-    deleteMutation.mutate(undefined, {
-      onError: () =>
-        alert('로고 초기화에 실패했어요. 잠시 후 다시 시도해 주세요.'),
-    });
+    deleteMutation.mutate(clubId);
   };
 
   useEffect(() => {
