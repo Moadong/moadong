@@ -26,27 +26,50 @@ export const useUploadFeed = () => {
       }));
       const feedResArr = await feedApi.getUploadUrls(clubId, uploadRequests);
 
-      // 2. r2에 병렬 업로드
-      await Promise.all(
+      // 2. r2에 병렬 업로드 (개별 성공/실패 추적)
+      const uploadResults = await Promise.allSettled(
         files.map((file, i) =>
           uploadToStorage(feedResArr[i].presignedUrl, file),
         ),
       );
 
-      // 3. 새로 업로드된 URL 추출
-      const newUrls = feedResArr.map((res) => res.finalUrl);
+      // 3. 성공한 파일만 추출
+      const successfulUrls: string[] = [];
+      const failedFiles: string[] = [];
 
-      // 4. 기존 URL과 합쳐서 전체 배열 생성
-      const allUrls = [...existingUrls, ...newUrls];
+      uploadResults.forEach((result, i) => {
+        if (result.status === 'fulfilled') {
+          successfulUrls.push(feedResArr[i].finalUrl);
+        } else {
+          failedFiles.push(files[i].name);
+        }
+      });
 
-      // 5. 서버에 전체 배열 PUT으로 갱신 (업로드 + 기존 피드 동기화)
+      // 4. 성공한 파일이 없으면 에러
+      if (successfulUrls.length === 0) {
+        throw new Error('모든 파일 업로드에 실패했습니다.');
+      }
+
+      // 5. 기존 URL과 성공한 URL만 합쳐서 전체 배열 생성
+      const allUrls = [...existingUrls, ...successfulUrls];
+
+      // 6. 서버에 전체 배열 PUT으로 갱신
       await feedApi.updateFeeds(clubId, allUrls);
 
-      return { clubId };
+      // 7. 실패한 파일 정보 반환
+      return { clubId, failedFiles };
     },
 
     onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['clubDetail', data.clubId] });
+
+      // 부분 실패한 경우 사용자에게 알림
+      if (data.failedFiles.length > 0) {
+        const failedFileNames = data.failedFiles.join(', ');
+        alert(
+          `일부 파일 업로드에 실패했어요.\n실패한 파일: ${failedFileNames}\n\n성공한 파일은 정상적으로 등록되었어요.`,
+        );
+      }
     },
     // TODO: 각 API 에러 응답에 따른 세분화된 에러 메시지 전달
     // 참고: feedApi.updateFeeds, uploadToStorage 에러 스펙 확인 후 분기
