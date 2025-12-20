@@ -76,13 +76,20 @@ const PhotoEditTab = () => {
             multiple={true}
             style={{ display: 'none' }}
             onChange={(e) => {
-              const file = e.target.files?.[0];
-              if (!file) return;
-              if (file.size > MAX_FILE_SIZE) {
-                alert('선택한 사진 용량이 10MB를 초과합니다.');
+              const files = e.target.files;
+              if (!files || files.length === 0) return;
+
+              const oversizedFile = Array.from(files).find(
+                (file) => file.size > MAX_FILE_SIZE,
+              );
+              if (oversizedFile) {
+                alert(
+                  `선택한 사진 중 ${oversizedFile.name}의 용량이 10MB를 초과합니다.`,
+                );
+                e.target.value = '';
                 return;
               }
-              handleFiles(e.target.files);
+              handleFiles(files);
             }}
           />
           <Button width='30%' onClick={handleUploadClick} disabled={isLoading}>
