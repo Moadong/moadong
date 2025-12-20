@@ -11,7 +11,7 @@ import {
   useUpdateFeed,
 } from '@/hooks/queries/club/images/useFeedMutation';
 import Button from '@/components/common/Button/Button';
-import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
+import { MAX_FILE_SIZE, MAX_FILE_COUNT } from '@/constants/uploadLimit';
 
 const PhotoEditTab = () => {
   const trackEvent = useMixpanelTrack();
@@ -47,8 +47,8 @@ const PhotoEditTab = () => {
   const handleUploadClick = () => {
     if (isLoading) return;
     trackEvent(ADMIN_EVENT.IMAGE_UPLOAD_BUTTON_CLICKED);
-    if (imageList.length >= 5) {
-      alert('이미지는 최대 5장까지만 업로드할 수 있어요.');
+    if (imageList.length >= MAX_FILE_COUNT) {
+      alert(`이미지는 최대 ${MAX_FILE_COUNT}장까지만 업로드할 수 있어요.`);
       return;
     }
     inputRef.current?.click();
