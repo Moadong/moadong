@@ -17,6 +17,7 @@ import useTrackPageView from '@/hooks/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import * as Styled from './ClubInfoEditTab.styles';
 
+
 const ClubInfoEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
