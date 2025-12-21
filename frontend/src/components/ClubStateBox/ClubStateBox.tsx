@@ -1,39 +1,10 @@
 import styled from 'styled-components';
+import { STATUS_COLORS } from '@/styles/clubTags';
 
-const STATE_COLORS = {
-  OPEN: {
-    backgroundColor: '#3DBBFF',
-    textColor: '#FFFFFF',
-  },
-  CLOSED: {
-    backgroundColor: '#C5C5C5',
-    textColor: '#FFFFFF',
-  },
-  ALWAYS: {
-    backgroundColor: '#49D5AD',
-    textColor: '#FFFFFF',
-  },
-};
-
-const stateStyles: Record<
-  string,
-  { backgroundColor: string; color: string; text: string }
-> = {
-  OPEN: {
-    backgroundColor: STATE_COLORS.OPEN.backgroundColor,
-    color: STATE_COLORS.OPEN.textColor,
-    text: '모집중',
-  },
-  CLOSED: {
-    backgroundColor: STATE_COLORS.CLOSED.backgroundColor,
-    color: STATE_COLORS.CLOSED.textColor,
-    text: '모집마감',
-  },
-  ALWAYS: {
-    backgroundColor: STATE_COLORS.ALWAYS.backgroundColor,
-    color: STATE_COLORS.ALWAYS.textColor,
-    text: '상시모집',
-  },
+const STATE_TEXT: Record<string, string> = {
+  OPEN: '모집중',
+  CLOSED: '모집마감',
+  ALWAYS: '상시모집',
 } as const;
 
 const BOX_DIMENSIONS = {
@@ -56,7 +27,7 @@ const BOX_FONT_SIZE = {
   },
 } as const;
 
-const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
+const StyledBox = styled.div<{ $backgroundColor: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -64,8 +35,8 @@ const StyledBox = styled.div<{ $bgColor: string; $textColor: string }>`
   width: ${BOX_DIMENSIONS.desktop.width};
   height: ${BOX_DIMENSIONS.desktop.height};
   border-radius: 8px;
-  background-color: ${({ $bgColor }) => $bgColor};
-  color: ${({ $textColor }) => $textColor};
+  background-color: ${({ $backgroundColor }) => $backgroundColor};
+  color: #ffffff;
   font-size: ${BOX_FONT_SIZE.desktop.fontSize};
   font-weight: 500;
 
@@ -81,17 +52,10 @@ interface ClubStateBoxProps {
 }
 
 const ClubStateBox = ({ state }: ClubStateBoxProps) => {
-  const style = stateStyles[state] || {
-    backgroundColor: '#f5f5f5',
-    color: '#000',
-    text: '알 수 없음',
-  };
+  const text = STATE_TEXT[state] || '알 수 없음';
+  const backgroundColor = STATUS_COLORS[text] || '#f5f5f5';
 
-  return (
-    <StyledBox $bgColor={style.backgroundColor} $textColor={style.color}>
-      {style.text}
-    </StyledBox>
-  );
+  return <StyledBox $backgroundColor={backgroundColor}>{text}</StyledBox>;
 };
 
 export default ClubStateBox;
