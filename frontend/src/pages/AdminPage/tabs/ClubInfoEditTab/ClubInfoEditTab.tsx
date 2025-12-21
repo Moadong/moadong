@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import { ClubDetail } from '@/types/club';
@@ -14,7 +14,6 @@ import * as Styled from './ClubInfoEditTab.styles';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
-
 
 const ClubInfoEditTab = () => {
   const trackEvent = useMixpanelTrack();
