@@ -9,14 +9,18 @@ import InputField from '@/components/common/InputField/InputField';
 import Button from '@/components/common/Button/Button';
 import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
 import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
-import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
-
+import { TAG_COLORS } from '@/styles/clubTags';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
-import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';       
 import * as Styled from './ClubInfoEditTab.styles';
 
+const DIVISION_LABELS: Record<string, string> = {
+  중동: '중앙동아리',
+  과동: '과동아리',
+};
 
 const ClubInfoEditTab = () => {
   const trackEvent = useMixpanelTrack();
@@ -45,8 +49,26 @@ const ClubInfoEditTab = () => {
   });
 
   const queryClient = useQueryClient();
-  const divisions = ['중동', '과동'];
-  const categories = ['봉사', '종교', '취미교양', '학술', '운동', '공연'];
+  const divisions = [
+    {
+      value: '중동',
+      label: DIVISION_LABELS['중동'],
+      color: TAG_COLORS['중동'],
+    },
+    {
+      value: '과동',
+      label: DIVISION_LABELS['과동'],
+      color: TAG_COLORS['과동'],
+    },
+  ];
+  const categories = [
+    { value: '봉사', label: '봉사', color: TAG_COLORS['봉사'] },
+    { value: '종교', label: '종교', color: TAG_COLORS['종교'] },
+    { value: '취미교양', label: '취미교양', color: TAG_COLORS['취미교양'] },
+    { value: '학술', label: '학술', color: TAG_COLORS['학술'] },
+    { value: '운동', label: '운동', color: TAG_COLORS['운동'] },
+    { value: '공연', label: '공연', color: TAG_COLORS['공연'] },
+  ];
 
   useEffect(() => {
     if (clubDetail) {
