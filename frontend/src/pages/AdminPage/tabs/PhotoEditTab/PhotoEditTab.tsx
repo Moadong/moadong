@@ -1,11 +1,15 @@
 import { useEffect, useState, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
+
 import * as Styled from './PhotoEditTab.styles';
 import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
+import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+
 import { ClubDetail } from '@/types/club';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/useTrackPageView';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+
 import {
   useUploadFeed,
   useUpdateFeed,
@@ -18,8 +22,10 @@ const PhotoEditTab = () => {
   useTrackPageView(PAGE_VIEW.PHOTO_EDIT_PAGE);
 
   const clubDetail = useOutletContext<ClubDetail>();
-  const { mutate: updateFeed, isPending: isUpdating } = useUpdateFeed();
+
   const { mutate: uploadFeed, isPending: isUploading } = useUploadFeed();
+  const { mutate: updateFeed, isPending: isUpdating } = useUpdateFeed();
+
   const [imageList, setImageList] = useState<string[]>([]);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -33,83 +39,103 @@ const PhotoEditTab = () => {
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
-    const fileArray = Array.from(files);
     uploadFeed({
       clubId: clubDetail.id,
-      files: fileArray,
+      files: Array.from(files),
       existingUrls: imageList,
     });
   };
 
   const handleUploadClick = () => {
     if (isLoading) return;
+
     trackEvent(ADMIN_EVENT.IMAGE_UPLOAD_BUTTON_CLICKED);
+
     if (imageList.length >= MAX_FILE_COUNT) {
       alert(`이미지는 최대 ${MAX_FILE_COUNT}장까지만 업로드할 수 있어요.`);
       return;
     }
+
     inputRef.current?.click();
   };
 
+  /** 파일 선택 변경 */
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const oversizedFile = Array.from(files).find(
+      (file) => file.size > MAX_FILE_SIZE,
+    );
+
+    if (oversizedFile) {
+      alert(
+        `선택한 사진 중 ${oversizedFile.name}의 용량이 제한을 초과했습니다.`,
+      );
+      e.target.value = '';
+      return;
+    }
+
+    handleFiles(files);
+  };
+
+  /** 이미지 삭제 */
   const deleteImage = (index: number) => {
     if (isLoading) return;
+
     const newList = imageList.filter((_, i) => i !== index);
     setImageList(newList);
-    updateFeed({ clubId: clubDetail.id, urls: newList });
+
+    updateFeed({
+      clubId: clubDetail.id,
+      urls: newList,
+    });
   };
 
   return (
-    <Styled.PhotoEditorContainer>
-      <Styled.InfoTitle>활동 사진 편집</Styled.InfoTitle>
+    <Styled.Container>
+      <ContentSection>
+        <ContentSection.Header title='활동 사진' />
 
-      <Styled.Label>활동사진 추가 (최대 5장)</Styled.Label>
-      <Styled.ImageContainer>
-        <div>
-          <input
-            ref={inputRef}
-            type='file'
-            accept='image/*'
-            multiple={true}
-            style={{ display: 'none' }}
-            onChange={(e) => {
-              const files = e.target.files;
-              if (!files || files.length === 0) return;
+        <ContentSection.Body>
+          <Styled.Label>활동사진 추가 (최대 {MAX_FILE_COUNT}장)</Styled.Label>
 
-              const oversizedFile = Array.from(files).find(
-                (file) => file.size > MAX_FILE_SIZE,
-              );
-              if (oversizedFile) {
-                alert(
-                  `선택한 사진 중 ${oversizedFile.name}의 용량이 10MB를 초과합니다.`,
-                );
-                e.target.value = '';
-                return;
-              }
-              handleFiles(files);
-            }}
-          />
-          <Button width='30%' onClick={handleUploadClick} disabled={isLoading}>
-            {isUploading ? '업로드 중...' : '이미지 업로드'}
-          </Button>
-        </div>
-
-        <br />
-        <Styled.Label>활동사진 수정</Styled.Label>
-        <Styled.ImageGrid>
-          {imageList.map((image, index) => (
-            <ImagePreview
-              key={`${image}-${index}`}
-              image={image}
-              onDelete={() => {
-                trackEvent(ADMIN_EVENT.IMAGE_DELETE_BUTTON_CLICKED);
-                deleteImage(index);
-              }}
-              disabled={isLoading}
+          <div>
+            <input
+              ref={inputRef}
+              type='file'
+              accept='image/*'
+              multiple
+              hidden
+              onChange={handleFileChange}
             />
-          ))}
-        </Styled.ImageGrid>
-      </Styled.ImageContainer>
-    </Styled.PhotoEditorContainer>
+
+            <Button
+              width={'150px'}
+              onClick={handleUploadClick}
+              disabled={isLoading}
+            >
+              {isUploading ? '업로드 중...' : '이미지 업로드'}
+            </Button>
+          </div>
+
+          <Styled.Label>활동사진 수정</Styled.Label>
+          <Styled.ImageGrid>
+            {imageList.map((image, index) => (
+              <ImagePreview
+                key={`${image}-${index}`}
+                image={image}
+                disabled={isLoading}
+                onDelete={() => {
+                  trackEvent(ADMIN_EVENT.IMAGE_DELETE_BUTTON_CLICKED);
+                  deleteImage(index);
+                }}
+              />
+            ))}
+          </Styled.ImageGrid>
+        </ContentSection.Body>
+      </ContentSection>
+    </Styled.Container>
   );
 };
 

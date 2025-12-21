@@ -1,15 +1,9 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
 import * as Styled from './SideBar.styles';
 import { useNavigate, useLocation } from 'react-router-dom';
-import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
 import { logout } from '@/apis/auth/logout';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { ADMIN_EVENT } from '@/constants/eventName';
-
-interface SideBarProps {
-  clubName: string;
-  clubLogo: string;
-}
 
 interface TabItem {
   label: string;
@@ -42,13 +36,11 @@ const tabs: TabCategory[] = [
   },
   {
     category: '계정 관리',
-    items: [
-      { label: '비밀번호 수정', path: '/admin/account-edit' },
-    ],
+    items: [{ label: '비밀번호 수정', path: '/admin/account-edit' }],
   },
 ];
 
-const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
+const SideBar = () => {
   const trackEvent = useMixpanelTrack();
   const location = useLocation();
   const navigate = useNavigate();
@@ -80,7 +72,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
       }
 
       trackEvent(ADMIN_EVENT.LOGOUT_BUTTON_CLICKED);
-      
+
       localStorage.removeItem('accessToken');
       navigate('/admin/login', { replace: true });
     } catch (error) {
@@ -91,11 +83,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   return (
     <Styled.SidebarWrapper>
       <Styled.SidebarHeader>설정</Styled.SidebarHeader>
-
-      <ClubLogoEditor clubLogo={clubLogo} />
-
-      <Styled.ClubTitle>{clubName}</Styled.ClubTitle>
-      <Styled.Divider />
+      <Styled.SidebarDivider />
 
       <Styled.SidebarButtonContainer>
         {tabs.map((tab, tabIndex) => (
@@ -115,7 +103,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
           </li>
         ))}
       </Styled.SidebarButtonContainer>
-      <Styled.Divider />
+      <Styled.SidebarDivider />
       <Styled.SidebarButton onClick={handleLogout}>
         로그아웃
       </Styled.SidebarButton>

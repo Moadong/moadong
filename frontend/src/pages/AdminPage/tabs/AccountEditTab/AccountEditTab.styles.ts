@@ -1,16 +1,9 @@
 import styled from 'styled-components';
 
-export const IdInputContainer = styled.div`
+export const Container = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: flex-end;
-  gap: 10px;
-`;
-
-export const ForgotPasswordText = styled.h3`
-  color: #cdcdcd;
-  font-weight: 300;
-  margin-bottom: 5px;
+  flex-direction: column;
+  gap: 60px;
 `;
 
 export const SuccessMessage = styled.p`
@@ -31,10 +24,9 @@ export const ErrorMessage = styled.p`
 
 export const GuidanceBox = styled.div`
   padding: 16px;
-  margin-bottom: 24px; /* 입력 필드와의 간격 */
-  background-color: #f8f9fa; /* 부드러운 배경색 */
-  border-radius: 8px; /* 둥근 모서리 */
-  border: 1px solid #e9ecef; /* 옅은 테두리 */
+  background-color: #f8f9fa;
+  border-radius: 8px;
+  border: 1px solid #e9ecef;
 `;
 
 export const GuidanceText = styled.p`
