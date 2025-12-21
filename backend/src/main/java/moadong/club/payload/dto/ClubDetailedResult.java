@@ -21,7 +21,8 @@ public record ClubDetailedResult(
         String description,
         String presidentName,
         String presidentPhoneNumber,
-        String recruitmentPeriod,
+        String recruitmentStart,
+        String recruitmentEnd,
         String recruitmentTarget,
         String recruitmentStatus,
         String externalApplicationUrl,
@@ -34,12 +35,14 @@ public record ClubDetailedResult(
 ) {
 
     public static ClubDetailedResult of(Club club, List<ClubSearchResult> recommendClubs) {
-        String period = "미정";
         ClubRecruitmentInformation clubRecruitmentInformation = club.getClubRecruitmentInformation();
+
+        String start = "미정";
+        String end = "미정";
         if (clubRecruitmentInformation.hasRecruitmentPeriod()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-            period = clubRecruitmentInformation.getRecruitmentStart().format(formatter) + " ~ "
-                    + clubRecruitmentInformation.getRecruitmentEnd().format(formatter);
+            start = clubRecruitmentInformation.getRecruitmentStart().format(formatter);
+            end = clubRecruitmentInformation.getRecruitmentEnd().format(formatter);
         }
 
         String lastModifiedDate = "";
@@ -70,7 +73,8 @@ public record ClubDetailedResult(
                 .presidentPhoneNumber(
                         clubRecruitmentInformation.getPresidentTelephoneNumber() == null ? ""
                                 : clubRecruitmentInformation.getPresidentTelephoneNumber())
-                .recruitmentPeriod(period)
+                .recruitmentStart(start)
+                .recruitmentEnd(end)
                 .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget() == null ? ""
                         : clubRecruitmentInformation.getRecruitmentTarget())
                 .recruitmentStatus(clubRecruitmentInformation.getClubRecruitmentStatus() == null
