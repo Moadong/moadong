@@ -16,6 +16,6 @@ export const ImageGrid = styled.div`
 
 export const Label = styled.p`
   font-size: 1.125rem;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-weight: 600;
 `;
