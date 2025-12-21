@@ -7,8 +7,6 @@ interface ClubDetailHeaderProps {
   division: string;
   tags: string[];
   logo: string;
-  recruitmentStart: string;
-  recruitmentEnd: string;
   presidentPhoneNumber?: string;
 }
 

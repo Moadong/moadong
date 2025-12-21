@@ -57,8 +57,6 @@ const ClubDetailPage = () => {
           division={clubDetail.division}
           tags={clubDetail.tags}
           logo={clubDetail.logo}
-          recruitmentStart={clubDetail.recruitmentStart}
-          recruitmentEnd={clubDetail.recruitmentEnd}
           presidentPhoneNumber={clubDetail.presidentPhoneNumber}
         />
         <InfoTabs onTabClick={scrollToSection} />
