@@ -5,7 +5,7 @@ import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
-import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
+import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import { ClubDetail } from '@/types/club';
 import { useQueryClient } from '@tanstack/react-query';
 import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
@@ -14,36 +14,43 @@ import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 
+const FAR_FUTURE_YEAR = 2999;
+
 const RecruitEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.RECRUITMENT_INFO_EDIT_PAGE);
 
   const clubDetail = useOutletContext<ClubDetail>();
 
+  const queryClient = useQueryClient();
   const { mutate: updateClubDescription } = useUpdateClubDescription();
 
   const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
   const [description, setDescription] = useState('');
-  const FAR_FUTURE_YEAR = 2999;
-  const isFarFuture = (date: Date | null) => !!date && date.getFullYear() === FAR_FUTURE_YEAR;
   const [always, setAlways] = useState(false);
-  const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({ start: null, end: null });
 
-  const queryClient = useQueryClient();
+  const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({
+    start: null,
+    end: null,
+  });
+
+  const isFarFuture = (date: Date | null) =>
+    !!date && date.getFullYear() === FAR_FUTURE_YEAR;
 
   useEffect(() => {
     if (!clubDetail) return;
 
-    const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
-      parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
-
     const now = new Date();
-    const start = correctResponseKoreanDate(initialStart);
-    const end = correctResponseKoreanDate(initialEnd);
+    const start = clubDetail.recruitmentStart
+      ? recruitmentDateParser(clubDetail.recruitmentStart)
+      : null;
+    const end = clubDetail.recruitmentEnd
+      ? recruitmentDateParser(clubDetail.recruitmentEnd)
+      : null;
     const isAlways = clubDetail.recruitmentStatus === '상시모집';
-    
+
     if (isAlways) {
       setAlways(true);
       backupRangeRef.current = { start, end };
@@ -52,7 +59,7 @@ const RecruitEditTab = () => {
       setRecruitmentStart(start ?? now);
       setRecruitmentEnd(end ?? now);
     }
-    
+
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
     setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
@@ -61,17 +68,7 @@ const RecruitEditTab = () => {
     if (always && recruitmentStart) {
       setRecruitmentEnd(setYear(recruitmentStart, FAR_FUTURE_YEAR));
     }
-}, [always, recruitmentStart]);
-
-  const correctRequestKoreanDate = (date: Date | null): Date | null => {
-    if (!date) return null;
-    return new Date(date?.getTime() + 9 * 60 * 60 * 1000);
-  }
-
-  const correctResponseKoreanDate = (date: Date | null): Date | null => {
-    if (!date) return null;
-    return new Date(date?.getTime() - 9 * 60 * 60 * 1000);
-  }
+  }, [always, recruitmentStart]);
 
   const toggleAlways = () => {
     trackEvent(ADMIN_EVENT.ALWAYS_RECRUIT_BUTTON_CLICKED);
@@ -80,14 +77,17 @@ const RecruitEditTab = () => {
 
       if (!prev) {
         // 상시모집 활성화
-        backupRangeRef.current = { start: recruitmentStart, end: recruitmentEnd };
+        backupRangeRef.current = {
+          start: recruitmentStart,
+          end: recruitmentEnd,
+        };
       } else {
         // 상시모집 비활성화
         const { start, end } = backupRangeRef.current;
         const backupWasAlways = isFarFuture(end);
         if (backupWasAlways) {
           // 백업이 상시모집인 경우
-          const base = start ?? now;          
+          const base = start ?? now;
           setRecruitmentStart(base);
           setRecruitmentEnd(base);
         } else {
@@ -115,12 +115,13 @@ const RecruitEditTab = () => {
 
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: correctRequestKoreanDate(startForSave)?.toISOString(),
-      recruitmentEnd: correctRequestKoreanDate(endForSave)?.toISOString(),
+      recruitmentStart: startForSave?.toISOString(),
+      recruitmentEnd: endForSave?.toISOString(),
       recruitmentTarget: recruitmentTarget,
       description: description,
       externalApplicationUrl: clubDetail.externalApplicationUrl ?? '',
     };
+
     updateClubDescription(updatedData, {
       onSuccess: () => {
         alert('동아리 정보가 성공적으로 수정되었습니다.');
@@ -154,7 +155,7 @@ const RecruitEditTab = () => {
               disabledEnd={always}
             />
             <Styled.AlwaysRecruitButton
-              type="button"
+              type='button'
               $active={always}
               onClick={toggleAlways}
               aria-pressed={always}

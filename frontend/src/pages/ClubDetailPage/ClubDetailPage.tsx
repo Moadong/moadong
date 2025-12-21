@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import * as Styled from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
@@ -15,24 +14,14 @@ import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import isInAppWebView from '@/utils/isInAppWebView';
 import { PAGE_VIEW } from '@/constants/eventName';
-
-const MobileWindowWidth = 500;
+import useDevice from '@/hooks/useDevice';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
-  const [showHeader, setShowHeader] = useState(window.innerWidth > MobileWindowWidth);
+  const { isMobile } = useDevice();
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
-
-  useEffect(() => {
-    const handleResize = () => {
-      setShowHeader(window.innerWidth > MobileWindowWidth);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
@@ -46,7 +35,7 @@ const ClubDetailPage = () => {
 
   return (
     <>
-      {showHeader && <Header />}
+      {!isMobile && <Header />}
       {!isInAppWebView() && <BackNavigationBar />}
       <Styled.PageContainer>
         <ClubDetailHeader
@@ -55,8 +44,6 @@ const ClubDetailPage = () => {
           division={clubDetail.division}
           tags={clubDetail.tags}
           logo={clubDetail.logo}
-          recruitmentPeriod={clubDetail.recruitmentPeriod}
-          recruitmentForm={clubDetail.recruitmentForm}
           presidentPhoneNumber={clubDetail.presidentPhoneNumber}
         />
         <InfoTabs onTabClick={scrollToSection} />
@@ -73,8 +60,8 @@ const ClubDetailPage = () => {
       </Styled.PageContainer>
       <Footer />
       <ClubDetailFooter
-        recruitmentPeriod={clubDetail.recruitmentPeriod}
-        recruitmentForm={clubDetail.recruitmentForm}
+        recruitmentStart={clubDetail.recruitmentStart}
+        recruitmentEnd={clubDetail.recruitmentEnd}
       />
     </>
   );
