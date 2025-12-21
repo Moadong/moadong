@@ -1,47 +1,47 @@
 import { recruitmentDateParser } from './recruitmentDateParser';
 
-describe('parseRecruitmentDateString 함수 테스트', () => {
-  it('날짜와 시간이 포함된 문자열을 Date 객체로 정확히 바꾼다 (KST → UTC 변환)', () => {
-    const input = '2025.05.25 13:45'; // KST 13:45
-    const result = new Date('2025-05-25T04:45:00Z'); // UTC 04:45 (KST - 9시간)
+describe('모집 마감 날짜 입력 처리', () => {
+  it('사용자가 날짜와 시간을 정상 형식으로 입력하면 정확한 날짜로 변환된다', () => {
+    const input = '2025.05.25 13:45';
+    const result = new Date('2025-05-25T04:45:00Z');
     expect(recruitmentDateParser(input)).toEqual(result);
   });
 
-  it('자정 시간 "YYYY.MM.DD 00:00" 형식을 올바르게 Date 객체로 변환한다 (KST → UTC 변환)', () => {
-    const input = '2025.05.25 00:00'; // KST 00:00
-    const result = new Date('2025-05-24T15:00:00Z'); // UTC 전날 15:00 (KST - 9시간)
+  it('사용자가 자정(00:00) 시간을 입력해도 올바른 날짜로 처리된다', () => {
+    const input = '2025.05.25 00:00';
+    const result = new Date('2025-05-24T15:00:00Z');
     expect(recruitmentDateParser(input)).toEqual(result);
   });
 
-  it('공백이 없는 문자열이라면 예외가 발생한다.', () => {
+  it('날짜와 시간 사이 공백이 없으면 입력 오류로 처리된다', () => {
     const input = '2025.05.2513:45';
     expect(() => recruitmentDateParser(input)).toThrow(
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
     );
   });
 
-  it('시간 부분이 누락된 경우 예외가 발생한다', () => {
+  it('시간을 입력하지 않으면 오류 메시지를 보여준다', () => {
     const input = '2025.05.25 ';
     expect(() => recruitmentDateParser(input)).toThrow(
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
     );
   });
 
-  it('날짜 부분이 누락된 경우 예외가 발생한다', () => {
+  it('날짜를 입력하지 않으면 오류 메시지를 보여준다', () => {
     const input = ' 13:45';
     expect(() => recruitmentDateParser(input)).toThrow(
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
     );
   });
 
-  it('빈 문자열이 주어지면 예외가 발생한다', () => {
+  it('아무 값도 입력하지 않으면 오류가 발생한다', () => {
     const input = '';
     expect(() => recruitmentDateParser(input)).toThrow(
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
     );
   });
 
-  it('YYYY.MM.DD HH:mm 형식이 아닌 입력에 대해 에러를 던진다', () => {
+  it('사용자가 지정된 형식이 아닌 날짜를 입력하면 오류를 안내한다', () => {
     const input = '1.1.1 1:1';
     expect(() => recruitmentDateParser(input)).toThrow(
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
