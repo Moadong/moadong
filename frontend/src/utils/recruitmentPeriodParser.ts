@@ -16,16 +16,3 @@ export const parseRecruitmentDateString = (s: string): Date => {
   return date;
 };
 
-export const parseRecruitmentPeriod = (
-  periodStr: string,
-): { recruitmentStart: Date | null; recruitmentEnd: Date | null } => {
-  const parts = periodStr.split('~').map((s) => s.trim());
-  if (parts.length !== 2) {
-    return { recruitmentStart: null, recruitmentEnd: null };
-  }
-
-  return {
-    recruitmentStart: parseRecruitmentDateString(parts[0]),
-    recruitmentEnd: parseRecruitmentDateString(parts[1]),
-  };
-};
