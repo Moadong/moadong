@@ -15,21 +15,19 @@ import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import isInAppWebView from '@/utils/isInAppWebView';
 import { PAGE_VIEW } from '@/constants/eventName';
-
-const MobileWindowWidth = 500;
+import useDevice from '@/hooks/useDevice';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
-  const [showHeader, setShowHeader] = useState(
-    window.innerWidth > MobileWindowWidth,
-  );
+  const { isMobile } = useDevice();
+  const [showHeader, setShowHeader] = useState(!isMobile);
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useEffect(() => {
     const handleResize = () => {
-      setShowHeader(window.innerWidth > MobileWindowWidth);
+      setShowHeader(!isMobile);
     };
 
     window.addEventListener('resize', handleResize);
