@@ -21,7 +21,9 @@ const MobileWindowWidth = 500;
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
-  const [showHeader, setShowHeader] = useState(window.innerWidth > MobileWindowWidth);
+  const [showHeader, setShowHeader] = useState(
+    window.innerWidth > MobileWindowWidth,
+  );
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
@@ -55,7 +57,8 @@ const ClubDetailPage = () => {
           division={clubDetail.division}
           tags={clubDetail.tags}
           logo={clubDetail.logo}
-          recruitmentPeriod={clubDetail.recruitmentPeriod}
+          recruitmentStart={clubDetail.recruitmentStart}
+          recruitmentEnd={clubDetail.recruitmentEnd}
           recruitmentForm={clubDetail.recruitmentForm}
           presidentPhoneNumber={clubDetail.presidentPhoneNumber}
         />
@@ -73,7 +76,8 @@ const ClubDetailPage = () => {
       </Styled.PageContainer>
       <Footer />
       <ClubDetailFooter
-        recruitmentPeriod={clubDetail.recruitmentPeriod}
+        recruitmentStart={clubDetail.recruitmentStart}
+        recruitmentEnd={clubDetail.recruitmentEnd}
         recruitmentForm={clubDetail.recruitmentForm}
       />
     </>
