@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { ClubDetail } from '@/types/club';
-import { SNSPlatform } from '@/types/club';
+import { ClubDetail, SNSPlatform } from '@/types/club';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import { validateSocialLink } from '@/utils/validateSocialLink';
 import { SNS_CONFIG } from '@/constants/snsConfig';
@@ -10,11 +9,13 @@ import InputField from '@/components/common/InputField/InputField';
 import Button from '@/components/common/Button/Button';
 import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
 import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
-import * as Styled from './ClubInfoEditTab.styles';
+import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
+
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import * as Styled from './ClubInfoEditTab.styles';
 
 const ClubInfoEditTab = () => {
   const trackEvent = useMixpanelTrack();
@@ -131,6 +132,7 @@ const ClubInfoEditTab = () => {
         />
 
         <ContentSection.Body>
+          <ClubLogoEditor clubLogo={clubDetail?.logo} />
           <InputField
             label='동아리명'
             placeholder='동아리명'
