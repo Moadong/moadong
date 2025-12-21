@@ -12,6 +12,7 @@ const ClubDetailFooter = ({
   recruitmentStart,
   recruitmentEnd,
 }: ClubDetailFooterProps) => {
+  // [ ] TODO: 예외 처리 추가
   const startDate = recruitmentStart
     ? recruitmentDateParser(recruitmentStart)
     : null;
