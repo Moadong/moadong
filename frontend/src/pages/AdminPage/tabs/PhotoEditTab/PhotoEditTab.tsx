@@ -25,13 +25,11 @@ const PhotoEditTab = () => {
 
   const isLoading = isUploading || isUpdating;
 
-  // 초기 이미지 목록 세팅
   useEffect(() => {
     if (!clubDetail) return;
     setImageList(clubDetail.feeds || []);
   }, [clubDetail]);
 
-  // 파일 업로드 처리
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
@@ -43,7 +41,6 @@ const PhotoEditTab = () => {
     });
   };
 
-  // 이미지 업로드 버튼 클릭
   const handleUploadClick = () => {
     if (isLoading) return;
     trackEvent(ADMIN_EVENT.IMAGE_UPLOAD_BUTTON_CLICKED);
@@ -54,7 +51,6 @@ const PhotoEditTab = () => {
     inputRef.current?.click();
   };
 
-  // 이미지 삭제
   const deleteImage = (index: number) => {
     if (isLoading) return;
     const newList = imageList.filter((_, i) => i !== index);
