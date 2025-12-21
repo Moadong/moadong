@@ -2,13 +2,11 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import {
   initializeMixpanel,
-  initializeChannelService,
   initializeSentry,
   initializeKakaoSDK,
 } from './utils/initSDK';
 
 initializeMixpanel();
-initializeChannelService();
 initializeSentry();
 initializeKakaoSDK();
 
