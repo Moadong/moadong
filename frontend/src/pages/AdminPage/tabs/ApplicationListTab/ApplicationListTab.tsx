@@ -12,6 +12,7 @@ import { updateApplicationStatus } from '@/apis/application/updateApplication';
 import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
+import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 
 const ApplicationListTab = () => {
   const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
@@ -117,7 +118,9 @@ const ApplicationListTab = () => {
 
   return (
     <Styled.Container>
-      <Styled.Title>지원서 목록</Styled.Title>
+      <div style={{ marginBottom: '24px' }}>
+        <ContentSection.Header title='지원서 목록' />
+      </div>
         <Styled.ActiveListContainer>
           <Styled.ActiveListTitleBox>
             <Styled.ActiveListTitle>게시된 지원서</Styled.ActiveListTitle>

@@ -1,23 +1,15 @@
 import styled from 'styled-components';
 
-export const TitleButtonContainer = styled.div`
+export const Container = styled.div`
   display: flex;
-  flex-direction: row;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 60px;
 `;
 
-export const InfoTitle = styled.h2`
-  font-size: 1.5rem;
-  font-weight: bold;
-  letter-spacing: 0;
-  margin-bottom: 30px;
-`;
-
-export const InfoGroup = styled.div`
+export const FieldGroup = styled.div`
   display: flex;
   flex-direction: column;
   gap: 30px;
-  margin-bottom: 140px;
 `;
 
 export const PresidentContainer = styled.div`
@@ -25,20 +17,6 @@ export const PresidentContainer = styled.div`
   gap: 10px;
   align-items: flex-end;
   max-width: 700px;
-`;
-
-export const TagEditGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  margin-bottom: 120px;
-`;
-
-export const SNSInputGroup = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 30px;
-  margin-top: 30px;
 `;
 
 export const SNSRow = styled.div`
@@ -49,7 +27,7 @@ export const SNSRow = styled.div`
   align-items: flex-start;
 `;
 
-export const SNSCheckboxLabel = styled.label`
+export const SNSLabel = styled.label`
   display: flex;
   align-items: center;
   gap: 10px;

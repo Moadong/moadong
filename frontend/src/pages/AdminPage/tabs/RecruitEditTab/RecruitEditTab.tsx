@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import * as Styled from './RecruitEditTab.styles';
 import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
@@ -13,6 +13,7 @@ import { setYear } from 'date-fns';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 
 const FAR_FUTURE_YEAR = 2999;
 
@@ -136,53 +137,59 @@ const RecruitEditTab = () => {
   };
 
   return (
-    <Styled.RecruitEditorContainer>
-      <Styled.TitleButtonContainer>
-        <Styled.InfoTitle>동아리 모집 정보 수정</Styled.InfoTitle>
-        <Button width={'150px'} animated onClick={handleUpdateClub}>
-          수정하기
-        </Button>
-      </Styled.TitleButtonContainer>
-      <Styled.InfoGroup>
-        <div>
-          <Styled.Label>모집 기간 설정</Styled.Label>
-          <Styled.RecruitPeriodContainer>
-            <Calendar
-              recruitmentStart={recruitmentStart}
-              recruitmentEnd={recruitmentEnd}
-              onChangeStart={setRecruitmentStart}
-              onChangeEnd={setRecruitmentEnd}
-              disabledEnd={always}
-            />
-            <Styled.AlwaysRecruitButton
-              type='button'
-              $active={always}
-              onClick={toggleAlways}
-              aria-pressed={always}
-            >
-              상시모집
-            </Styled.AlwaysRecruitButton>
-          </Styled.RecruitPeriodContainer>
-        </div>
-        <InputField
-          label='모집 대상'
-          placeholder='모집 대상을 입력해주세요.'
-          type='text'
-          value={recruitmentTarget}
-          onChange={(e) => setRecruitmentTarget(e.target.value)}
-          onClear={() => {
-            trackEvent(ADMIN_EVENT.RECRUITMENT_TARGET_CLEAR_BUTTON_CLICKED);
-            setRecruitmentTarget('');
-          }}
-          maxLength={10}
+    <Styled.Container>
+      <ContentSection>
+        <ContentSection.Header
+          title='모집 정보'
+          action={
+            <Button width={'150px'} animated onClick={handleUpdateClub}>
+              저장하기
+            </Button>
+          }
         />
 
-        <div>
-          <Styled.Label>소개글 수정</Styled.Label>
-          <MarkdownEditor value={description} onChange={setDescription} />
-        </div>
-      </Styled.InfoGroup>
-    </Styled.RecruitEditorContainer>
+        <ContentSection.Body>
+          <div>
+            <Styled.Label>모집 기간</Styled.Label>
+            <Styled.RecruitPeriodContainer>
+              <Calendar
+                recruitmentStart={recruitmentStart}
+                recruitmentEnd={recruitmentEnd}
+                onChangeStart={setRecruitmentStart}
+                onChangeEnd={setRecruitmentEnd}
+                disabledEnd={always}
+              />
+              <Styled.AlwaysRecruitButton
+                type="button"
+                $active={always}
+                onClick={toggleAlways}
+                aria-pressed={always}
+              >
+                상시모집
+              </Styled.AlwaysRecruitButton>
+            </Styled.RecruitPeriodContainer>
+          </div>
+
+          <InputField
+            label='모집 대상'
+            placeholder='모집대상을 입력해주세요'
+            type='text'
+            value={recruitmentTarget}
+            onChange={(e) => setRecruitmentTarget(e.target.value)}
+            onClear={() => {
+              trackEvent(ADMIN_EVENT.RECRUITMENT_TARGET_CLEAR_BUTTON_CLICKED);
+              setRecruitmentTarget('');
+            }}
+            maxLength={10}
+          />
+
+          <div>
+            <Styled.Label>소개글</Styled.Label>
+            <MarkdownEditor value={description} onChange={setDescription} />
+          </div>
+        </ContentSection.Body>
+      </ContentSection>
+    </Styled.Container>
   );
 };
 export default RecruitEditTab;

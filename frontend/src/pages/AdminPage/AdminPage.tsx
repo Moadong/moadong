@@ -1,11 +1,10 @@
 import Header from '@/components/common/Header/Header';
-import { PageContainer } from '@/styles/PageContainer.styles';
 import SideBar from '@/pages/AdminPage/components/SideBar/SideBar';
 import { Outlet } from 'react-router-dom';
-import * as Styled from './AdminPage.styles';
+
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { Divider } from './components/SideBar/SideBar.styles';
+import * as Styled from './AdminPage.styles';
 
 const AdminPage = () => {
   const { clubId } = useAdminClubContext();
@@ -20,18 +19,14 @@ const AdminPage = () => {
   return (
     <>
       <Header />
-      <PageContainer>
-        <Styled.AdminPageContainer>
-          <SideBar
-            clubLogo={clubDetail?.logo}
-            clubName={clubDetail?.name || ''}
-          />
-          <Styled.Divider />
-          <Styled.Content>
+      <Styled.Background>
+        <Styled.Layout>
+          <SideBar />
+          <Styled.MainContent>
             <Outlet context={clubDetail} />
-          </Styled.Content>
-        </Styled.AdminPageContainer>
-      </PageContainer>
+          </Styled.MainContent>
+        </Styled.Layout>
+      </Styled.Background>
     </>
   );
 };
