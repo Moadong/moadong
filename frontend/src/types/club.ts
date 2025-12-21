@@ -20,11 +20,12 @@ export interface ClubDetail extends Club {
   presidentName: string;
   presidentPhoneNumber: string;
   recruitmentForm: string;
-  recruitmentPeriod: string;
+  recruitmentStart: string;
+  recruitmentEnd: string;
   recruitmentTarget: string;
   socialLinks: Record<SNSPlatform, string>;
   externalApplicationUrl?: string;
-  recommendClubs?: Club[]
+  recommendClubs?: Club[];
 }
 
 export interface ClubDescription {
