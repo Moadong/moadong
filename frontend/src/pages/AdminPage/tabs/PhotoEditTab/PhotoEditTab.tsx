@@ -81,9 +81,7 @@ const PhotoEditTab = () => {
         <ContentSection.Header title='활동 사진' />
 
         <ContentSection.Body>
-          <Styled.Label>
-            활동사진 추가 (최대 {MAX_FILE_COUNT}장)
-          </Styled.Label>
+          <Styled.Label>활동사진 추가 (최대 {MAX_FILE_COUNT}장)</Styled.Label>
 
           <div>
             <input
@@ -112,7 +110,11 @@ const PhotoEditTab = () => {
               }}
             />
 
-            <Button onClick={handleUploadClick} disabled={isLoading}>
+            <Button
+              width={'150px'}
+              onClick={handleUploadClick}
+              disabled={isLoading}
+            >
               {isUploading ? '업로드 중...' : '이미지 업로드'}
             </Button>
           </div>
