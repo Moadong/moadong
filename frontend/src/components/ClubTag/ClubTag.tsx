@@ -45,7 +45,6 @@ const StyledTag = styled.span<{ color: string }>`
     border-radius: ${TAG_STYLES.mobile.borderRadius};
   }
 `;
-``;
 
 const ClubTag = ({ type, children, className }: TagProps) => {
   const backgroundColor = TAG_COLORS[type] || 'rgba(237, 237, 237, 1)';
