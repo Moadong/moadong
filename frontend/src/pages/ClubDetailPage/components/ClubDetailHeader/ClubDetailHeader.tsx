@@ -9,7 +9,6 @@ interface ClubDetailHeaderProps {
   logo: string;
   recruitmentStart: string;
   recruitmentEnd: string;
-  recruitmentForm?: string;
   presidentPhoneNumber?: string;
 }
 

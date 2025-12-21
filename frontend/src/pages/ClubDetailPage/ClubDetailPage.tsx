@@ -59,7 +59,6 @@ const ClubDetailPage = () => {
           logo={clubDetail.logo}
           recruitmentStart={clubDetail.recruitmentStart}
           recruitmentEnd={clubDetail.recruitmentEnd}
-          recruitmentForm={clubDetail.recruitmentForm}
           presidentPhoneNumber={clubDetail.presidentPhoneNumber}
         />
         <InfoTabs onTabClick={scrollToSection} />
@@ -78,7 +77,6 @@ const ClubDetailPage = () => {
       <ClubDetailFooter
         recruitmentStart={clubDetail.recruitmentStart}
         recruitmentEnd={clubDetail.recruitmentEnd}
-        recruitmentForm={clubDetail.recruitmentForm}
       />
     </>
   );

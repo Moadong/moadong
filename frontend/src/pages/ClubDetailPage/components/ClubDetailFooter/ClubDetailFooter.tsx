@@ -6,7 +6,6 @@ import getDeadlineText from '@/utils/getDeadLineText';
 interface ClubDetailFooterProps {
   recruitmentStart: string;
   recruitmentEnd: string;
-  recruitmentForm: string;
 }
 
 const ClubDetailFooter = ({
