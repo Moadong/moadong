@@ -36,7 +36,7 @@ const StyledBox = styled.div<{ $backgroundColor: string }>`
   height: ${BOX_DIMENSIONS.desktop.height};
   border-radius: 8px;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
-  color: #ffffff;
+  color: ${({ theme }) => theme.colors.base.white};
   font-size: ${BOX_FONT_SIZE.desktop.fontSize};
   font-weight: 500;
 
