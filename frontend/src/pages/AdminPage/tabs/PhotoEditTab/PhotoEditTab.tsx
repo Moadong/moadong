@@ -62,6 +62,26 @@ const PhotoEditTab = () => {
     inputRef.current?.click();
   };
 
+  /** 파일 선택 변경 */
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const files = e.target.files;
+    if (!files || files.length === 0) return;
+
+    const oversizedFile = Array.from(files).find(
+      (file) => file.size > MAX_FILE_SIZE,
+    );
+
+    if (oversizedFile) {
+      alert(
+        `선택한 사진 중 ${oversizedFile.name}의 용량이 제한을 초과했습니다.`,
+      );
+      e.target.value = '';
+      return;
+    }
+
+    handleFiles(files);
+  };
+
   /** 이미지 삭제 */
   const deleteImage = (index: number) => {
     if (isLoading) return;
@@ -90,24 +110,7 @@ const PhotoEditTab = () => {
               accept='image/*'
               multiple
               hidden
-              onChange={(e) => {
-                const files = e.target.files;
-                if (!files || files.length === 0) return;
-
-                const oversizedFile = Array.from(files).find(
-                  (file) => file.size > MAX_FILE_SIZE,
-                );
-
-                if (oversizedFile) {
-                  alert(
-                    `선택한 사진 중 ${oversizedFile.name}의 용량이 제한을 초과했습니다.`,
-                  );
-                  e.target.value = '';
-                  return;
-                }
-
-                handleFiles(files);
-              }}
+              onChange={handleFileChange}
             />
 
             <Button
