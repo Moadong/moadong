@@ -1,5 +1,5 @@
-import { renderHook, RenderHookResult } from '@testing-library/react';
 import { useNavigate } from 'react-router-dom';
+import { renderHook, RenderHookResult } from '@testing-library/react';
 import useNavigator from '../useNavigator';
 
 jest.mock('react-router-dom', () => ({
@@ -102,4 +102,3 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
     });
   });
 });
-

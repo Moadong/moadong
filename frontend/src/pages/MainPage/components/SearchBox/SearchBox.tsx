@@ -1,8 +1,8 @@
-import { useSearchInput } from '@/store/useSearchStore';
-import { useSelectedCategory } from '@/store/useCategoryStore';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import SearchField from '@/components/common/SearchField/SearchField';
 import { useLocation, useNavigate } from 'react-router-dom';
+import SearchField from '@/components/common/SearchField/SearchField';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { useSelectedCategory } from '@/store/useCategoryStore';
+import { useSearchInput } from '@/store/useSearchStore';
 
 const SearchBox = () => {
   const { setKeyword, inputValue, setInputValue, setIsSearching } =

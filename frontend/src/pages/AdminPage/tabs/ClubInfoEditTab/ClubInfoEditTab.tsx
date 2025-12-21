@@ -1,20 +1,20 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { ClubDetail, SNSPlatform } from '@/types/club';
-import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
-import { validateSocialLink } from '@/utils/validateSocialLink';
-import { SNS_CONFIG } from '@/constants/snsConfig';
-import InputField from '@/components/common/InputField/InputField';
 import Button from '@/components/common/Button/Button';
-import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
-import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
-import { TAG_COLORS } from '@/styles/clubTags';
+import InputField from '@/components/common/InputField/InputField';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
-import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import { SNS_CONFIG } from '@/constants/snsConfig';
+import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
-import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';       
+import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
+import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
+import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
+import { TAG_COLORS } from '@/styles/clubTags';
+import { ClubDetail, SNSPlatform } from '@/types/club';
+import { validateSocialLink } from '@/utils/validateSocialLink';
 import * as Styled from './ClubInfoEditTab.styles';
 
 const DIVISION_LABELS: Record<string, string> = {

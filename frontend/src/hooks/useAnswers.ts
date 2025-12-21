@@ -5,10 +5,7 @@ export const useAnswers = (initialAnswers: AnswerItem[] = []) => {
   const [answers, setAnswers] = useState<AnswerItem[]>(initialAnswers);
 
   const updateSingleAnswer = (id: number, value: string) => {
-    setAnswers((prev) => [
-      ...prev.filter((a) => a.id !== id),
-      { id, value },
-    ]);
+    setAnswers((prev) => [...prev.filter((a) => a.id !== id), { id, value }]);
   };
 
   const updateMultiAnswer = (id: number, values: string[]) => {

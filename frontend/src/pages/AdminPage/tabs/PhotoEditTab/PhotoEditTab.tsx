@@ -1,21 +1,18 @@
-import { useEffect, useState, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-
-import * as Styled from './PhotoEditTab.styles';
-import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
-import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-
-import { ClubDetail } from '@/types/club';
+import Button from '@/components/common/Button/Button';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { MAX_FILE_COUNT, MAX_FILE_SIZE } from '@/constants/uploadLimit';
+import {
+  useUpdateFeed,
+  useUploadFeed,
+} from '@/hooks/queries/club/images/useFeedMutation';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
-import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
-
-import {
-  useUploadFeed,
-  useUpdateFeed,
-} from '@/hooks/queries/club/images/useFeedMutation';
-import Button from '@/components/common/Button/Button';
-import { MAX_FILE_SIZE, MAX_FILE_COUNT } from '@/constants/uploadLimit';
+import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
+import { ClubDetail } from '@/types/club';
+import * as Styled from './PhotoEditTab.styles';
 
 const PhotoEditTab = () => {
   const trackEvent = useMixpanelTrack();

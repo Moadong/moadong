@@ -1,14 +1,14 @@
 import React, { useRef } from 'react';
-import * as Styled from './ClubLogoEditor.styles';
 import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
-import {
-  useUploadLogo,
-  useDeleteLogo,
-} from '@/hooks/queries/club/images/useLogoMutation';
-import { useAdminClubContext } from '@/context/AdminClubContext';
-import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import { ADMIN_EVENT } from '@/constants/eventName';
+import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
+import { useAdminClubContext } from '@/context/AdminClubContext';
+import {
+  useDeleteLogo,
+  useUploadLogo,
+} from '@/hooks/queries/club/images/useLogoMutation';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import * as Styled from './ClubLogoEditor.styles';
 
 interface ClubLogoEditorProps {
   clubLogo?: string | null;

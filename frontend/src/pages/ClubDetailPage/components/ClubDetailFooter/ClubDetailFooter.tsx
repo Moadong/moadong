@@ -1,7 +1,7 @@
-import * as Styled from './ClubDetailFooter.styles';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
-import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import getDeadlineText from '@/utils/getDeadLineText';
+import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import * as Styled from './ClubDetailFooter.styles';
 
 interface ClubDetailFooterProps {
   recruitmentStart: string;

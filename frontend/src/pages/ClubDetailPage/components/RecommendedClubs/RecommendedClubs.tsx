@@ -1,9 +1,8 @@
-import * as Styled from './RecommendedClubs.styles';
 import ClubCard from '@/pages/ClubDetailPage/components/ClubCard/ClubCard';
 import { Club } from '@/types/club';
+import * as Styled from './RecommendedClubs.styles';
 
 const RecommendedClubs = ({ clubs }: { clubs: Club[] }) => {
-
   if (!clubs || clubs.length === 0) return null;
 
   const displayClubs = clubs.slice(0, 6);

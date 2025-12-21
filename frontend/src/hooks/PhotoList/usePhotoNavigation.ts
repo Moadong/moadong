@@ -1,6 +1,6 @@
 import { useCallback, useEffect } from 'react';
-import useMixpanelTrack from '../useMixpanelTrack';
 import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '../useMixpanelTrack';
 
 export const usePhotoNavigation = ({
   currentIndex,

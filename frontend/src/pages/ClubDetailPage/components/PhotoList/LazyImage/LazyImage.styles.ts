@@ -1,6 +1,9 @@
 import styled from 'styled-components';
 
-export const ImageContainer = styled.div<{ $isLoaded: boolean; $placeholder: string }>`
+export const ImageContainer = styled.div<{
+  $isLoaded: boolean;
+  $placeholder: string;
+}>`
   position: relative;
   width: 100%;
   height: 100%;

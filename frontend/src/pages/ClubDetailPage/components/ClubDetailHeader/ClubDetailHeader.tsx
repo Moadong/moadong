@@ -1,5 +1,5 @@
-import * as Styled from './ClubDetailHeader.styles';
 import ClubProfile from '@/pages/ClubDetailPage/components/ClubProfile/ClubProfile';
+import * as Styled from './ClubDetailHeader.styles';
 
 interface ClubDetailHeaderProps {
   name: string;

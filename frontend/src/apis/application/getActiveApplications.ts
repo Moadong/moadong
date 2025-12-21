@@ -2,9 +2,7 @@ import API_BASE_URL from '@/constants/api';
 
 const getActiveApplications = async (clubId: string) => {
   try {
-    const response = await fetch(
-      `${API_BASE_URL}/api/club/${clubId}/apply`,
-    );
+    const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
 
     if (!response.ok) {
       console.error(`Failed to fetch: ${response.statusText}`);

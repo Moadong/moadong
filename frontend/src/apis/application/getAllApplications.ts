@@ -1,11 +1,9 @@
-import API_BASE_URL from '@/constants/api';
 import { secureFetch } from '@/apis/auth/secureFetch';
+import API_BASE_URL from '@/constants/api';
 
 const getAllApplicationForms = async () => {
   try {
-    const response = await secureFetch(
-      `${API_BASE_URL}/api/club/application`,
-    );
+    const response = await secureFetch(`${API_BASE_URL}/api/club/application`);
 
     if (!response.ok) {
       console.error(`Failed to fetch: ${response.statusText}`);

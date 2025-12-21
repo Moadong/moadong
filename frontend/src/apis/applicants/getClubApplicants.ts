@@ -3,7 +3,9 @@ import { secureFetch } from '../auth/secureFetch';
 
 const getClubApplicants = async (applicationFormId: string) => {
   try {
-    const response = await secureFetch(`${API_BASE_URL}/api/club/apply/info/${applicationFormId}`);
+    const response = await secureFetch(
+      `${API_BASE_URL}/api/club/apply/info/${applicationFormId}`,
+    );
     if (!response.ok) {
       console.error(`Failed to fetch: ${response.statusText}`);
       throw new Error((await response.json()).message);

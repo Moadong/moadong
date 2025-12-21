@@ -8,7 +8,6 @@ interface ExpandButtonProps {
   $isExpanded: boolean;
 }
 
-
 // 전체 레이아웃을 감싸는 컨테이너
 export const Container = styled.div`
   display: flex;
@@ -30,22 +29,22 @@ export const ActiveListContainer = styled.div`
   margin-bottom: 46px;
 `;
 // "게시된 지원서" 타이틀 박스
-export const ActiveListTitleBox= styled.div` 
+export const ActiveListTitleBox = styled.div`
   width: fit-content; /* 텍스트 크기에 맞게 조절 */
   height: 46px;
   display: flex;
   padding: 12px 24px;
-  border: 1px solid #DCDCDC;
+  border: 1px solid #dcdcdc;
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  background-color: #FF7543; 
+  background-color: #ff7543;
 `;
 // "게시된 지원서" 타이틀 텍스트
 export const ActiveListTitle = styled.div`
   width: auto;
   font-size: 16px;
   font-weight: 600;
-  color: #FFFFFF;
+  color: #ffffff;
   white-space: nowrap;
 `;
 // 펼쳐보기 / 접어두기 버튼
@@ -58,10 +57,10 @@ export const ExpandButton = styled.div`
   cursor: pointer;
   font-size: 14px;
   color: #787878;
-  border-top: 1px solid #DCDCDC; /* 리스트와 구분하는 선 */
-  
+  border-top: 1px solid #dcdcdc; /* 리스트와 구분하는 선 */
+
   &:hover {
-    background-color: #F2F2F2;
+    background-color: #f2f2f2;
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
   }
@@ -70,9 +69,11 @@ export const ExpandButton = styled.div`
 export const ExpandArrow = styled.img<ExpandButtonProps>`
   width: 19px;
   height: 19px;
-  ${(props) => props.$isExpanded && css`
+  ${(props) =>
+    props.$isExpanded &&
+    css`
       transform: rotate(180deg); /* 접어두기일때 180도 회전*/
-  `}
+    `}
 `;
 
 // 활성화된 지원서가 없을경우 보여주는 메시지 컨테이너
@@ -98,7 +99,7 @@ export const NoActiveFormsMessage = styled.div`
   margin-bottom: 6px;
   font-size: 16px;
   font-weight: 600;
-  color: #FF5414;
+  color: #ff5414;
 `;
 
 export const SuggestionText = styled.div`
@@ -128,7 +129,6 @@ export const AddButton = styled.button`
   color: #111111;
   cursor: pointer;
   transition: background-color 0.2s;
-
 `;
 
 export const PlusIcon = styled.img`
@@ -145,7 +145,7 @@ export const ApplicationList = styled.div`
   border: 1px solid #dcdcdc;
   &:not(:last-child) {
     margin-bottom: 20px;
-  };
+  }
 `;
 
 // "2025 2학기", "최종 수정 날짜" 텍스트가 있는 헤더
@@ -173,7 +173,7 @@ export const Separation_Bar = styled.div`
   width: 1px;
   height: 12px;
   margin-right: 25px;
-  background-color: #DCDCDC;
+  background-color: #dcdcdc;
 `;
 
 export const MenuContainer = styled.div`
@@ -200,7 +200,7 @@ export const MenuItem = styled.div<MenuItemProps>`
 
   color: #4b4b4b;
   cursor: pointer;
-  box-sizing: border-box; 
+  box-sizing: border-box;
   width: auto;
   height: 28px;
 
@@ -212,9 +212,11 @@ export const MenuItem = styled.div<MenuItemProps>`
     display: flex;
     align-items: center;
   }
-  ${(props) => props.$ActiveMenu && css`
-    font-weight: 500;
-  `}
+  ${(props) =>
+    props.$ActiveMenu &&
+    css`
+      font-weight: 500;
+    `}
 `;
 
 export const MenuIcon = styled.img`
@@ -222,8 +224,7 @@ export const MenuIcon = styled.img`
   height: 12px; /* 아이콘 높이 */
 `;
 export const Separator = styled.div`
-  height: 1px; 
+  height: 1px;
   background-color: #f2f2f2;
   margin: 3px 5px;
 `;
-

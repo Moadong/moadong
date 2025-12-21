@@ -1,5 +1,5 @@
-import deleteApplicants from '@/apis/applicants/deleteApplicants';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import deleteApplicants from '@/apis/applicants/deleteApplicants';
 
 export const useDeleteApplicants = (applicationFormId: string) => {
   const queryClient = useQueryClient();

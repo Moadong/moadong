@@ -1,7 +1,7 @@
-import { useEffect, useCallback } from 'react';
-import useModalNavigation from '@/hooks/PhotoModal/useModalNavigation';
-import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import { useCallback, useEffect } from 'react';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import useModalNavigation from '@/hooks/PhotoModal/useModalNavigation';
 import * as Styled from './PhotoModal.styles';
 
 interface PhotoModalProps {

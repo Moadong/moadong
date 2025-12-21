@@ -1,19 +1,19 @@
-import { useState, useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import * as Styled from './RecruitEditTab.styles';
-import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
+import { useQueryClient } from '@tanstack/react-query';
+import { setYear } from 'date-fns';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
-import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
-import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
-import { ClubDetail } from '@/types/club';
-import { useQueryClient } from '@tanstack/react-query';
-import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
-import { setYear } from 'date-fns';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
-import useTrackPageView from '@/hooks/useTrackPageView';
+import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useTrackPageView from '@/hooks/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
+import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
+import { ClubDetail } from '@/types/club';
+import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import * as Styled from './RecruitEditTab.styles';
 
 const FAR_FUTURE_YEAR = 2999;
 
@@ -160,7 +160,7 @@ const RecruitEditTab = () => {
                 disabledEnd={always}
               />
               <Styled.AlwaysRecruitButton
-                type="button"
+                type='button'
                 $active={always}
                 onClick={toggleAlways}
                 aria-pressed={always}

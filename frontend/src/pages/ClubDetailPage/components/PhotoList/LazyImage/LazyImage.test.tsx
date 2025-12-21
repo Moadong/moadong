@@ -1,4 +1,4 @@
-import { render, screen, act, waitFor } from '@testing-library/react';
+import { act, render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import LazyImage from './LazyImage';
 
@@ -59,7 +59,7 @@ describe('LazyImage 컴포넌트 테스트', () => {
 
     const [[callback]] = mockIntersectionObserver.mock.calls;
     const entry = { isIntersecting: true };
-    
+
     act(() => {
       callback([entry], {} as IntersectionObserver);
     });
@@ -80,13 +80,13 @@ describe('LazyImage 컴포넌트 테스트', () => {
 
     const [[callback]] = mockIntersectionObserver.mock.calls;
     const entry = { isIntersecting: true };
-    
+
     act(() => {
       callback([entry], {} as IntersectionObserver);
     });
 
     const img = await screen.findByRole('img');
-    
+
     act(() => {
       img.dispatchEvent(new Event('error'));
     });

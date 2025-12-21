@@ -1,15 +1,16 @@
 import { useEffect, useState } from 'react';
-import ShortText from '@/components/application/questionTypes/ShortText';
+import DeleteIcon from '@/assets/images/icons/delete_question.svg';
+import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
 import Choice from '@/components/application/questionTypes/Choice';
 import LongText from '@/components/application/questionTypes/LongText';
-import { QuestionType } from '@/types/application';
-import { QuestionBuilderProps } from '@/types/application';
-import { QUESTION_LABEL_MAP } from '@/constants/APPLICATION_FORM';
-import { DROPDOWN_OPTIONS } from '@/constants/APPLICATION_FORM';
-import * as Styled from './QuestionBuilder.styles';
-import DeleteIcon from '@/assets/images/icons/delete_question.svg';
+import ShortText from '@/components/application/questionTypes/ShortText';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
-import dropdown_icon from '@/assets/images/icons/drop_button_icon.svg';
+import {
+  DROPDOWN_OPTIONS,
+  QUESTION_LABEL_MAP,
+} from '@/constants/APPLICATION_FORM';
+import { QuestionBuilderProps, QuestionType } from '@/types/application';
+import * as Styled from './QuestionBuilder.styles';
 
 const QuestionBuilder = ({
   id,

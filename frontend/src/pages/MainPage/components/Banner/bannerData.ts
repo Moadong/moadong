@@ -1,8 +1,8 @@
 import AllClubsDesktopImage from '@/assets/images/banners/banner_desktop1.png';
 import StartNowDesktopImage from '@/assets/images/banners/banner_desktop2.png';
+import AppReleaseDesktopImage from '@/assets/images/banners/banner_desktop4.png';
 import AllClubsMobileImage from '@/assets/images/banners/banner_mobile1.png';
 import StartNowMobileImage from '@/assets/images/banners/banner_mobile2.png';
-import AppReleaseDesktopImage from '@/assets/images/banners/banner_desktop4.png';
 import AppReleaseMobileImage from '@/assets/images/banners/banner_mobile4.png';
 
 interface BannerItem {

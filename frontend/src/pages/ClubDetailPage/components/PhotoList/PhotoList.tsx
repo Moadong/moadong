@@ -1,14 +1,14 @@
-import { useState, useRef, useMemo, useCallback } from 'react';
-import * as Styled from './PhotoList.styles';
-import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
-import { usePhotoNavigation } from '@/hooks/PhotoList/usePhotoNavigation';
+import { useCallback, useMemo, useRef, useState } from 'react';
+import NextButton from '@/assets/images/icons/next_button_icon.svg';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
-import PhotoModal from '@/pages/ClubDetailPage/components/PhotoList/PhotoModal/PhotoModal';
+import { usePhotoModal } from '@/hooks/PhotoList/usePhotoModal';
+import { usePhotoNavigation } from '@/hooks/PhotoList/usePhotoNavigation';
 import { useResponsiveLayout } from '@/hooks/PhotoList/useResponsiveLayout';
 import PhotoCardList from '@/pages/ClubDetailPage/components/PhotoList/PhotoCardList/PhotoCardList';
-import { usePhotoModal } from '@/hooks/PhotoList/usePhotoModal';
-import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
-import NextButton from '@/assets/images/icons/next_button_icon.svg';
+import PhotoModal from '@/pages/ClubDetailPage/components/PhotoList/PhotoModal/PhotoModal';
+import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
+import * as Styled from './PhotoList.styles';
 
 interface PhotoListProps {
   feeds: string[];
