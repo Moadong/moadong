@@ -1,22 +1,24 @@
 import * as Styled from './ClubDetailFooter.styles';
 import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
-import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
+import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import getDeadlineText from '@/utils/getDeadLineText';
 
 interface ClubDetailFooterProps {
-  recruitmentPeriod: string;
-  recruitmentForm: string;
+  recruitmentStart: string;
+  recruitmentEnd: string;
 }
 
-const ClubDetailFooter = ({ recruitmentPeriod }: ClubDetailFooterProps) => {
-  const { recruitmentStart, recruitmentEnd } =
-    parseRecruitmentPeriod(recruitmentPeriod);
+const ClubDetailFooter = ({
+  recruitmentStart,
+  recruitmentEnd,
+}: ClubDetailFooterProps) => {
+  // [ ] TODO: 예외 처리 추가
+  const startDate = recruitmentStart
+    ? recruitmentDateParser(recruitmentStart)
+    : null;
+  const endDate = recruitmentEnd ? recruitmentDateParser(recruitmentEnd) : null;
 
-  const deadlineText = getDeadlineText(
-    recruitmentStart,
-    recruitmentEnd,
-    new Date(),
-  );
+  const deadlineText = getDeadlineText(startDate, endDate, new Date());
 
   return (
     <Styled.ClubDetailFooterContainer>
