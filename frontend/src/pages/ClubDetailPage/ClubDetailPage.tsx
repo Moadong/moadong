@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import * as Styled from '@/styles/PageContainer.styles';
 import Header from '@/components/common/Header/Header';
@@ -21,18 +20,8 @@ const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { sectionRefs, scrollToSection } = useAutoScroll();
   const { isMobile } = useDevice();
-  const [showHeader, setShowHeader] = useState(!isMobile);
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
-
-  useEffect(() => {
-    const handleResize = () => {
-      setShowHeader(!isMobile);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
@@ -46,7 +35,7 @@ const ClubDetailPage = () => {
 
   return (
     <>
-      {showHeader && <Header />}
+      {!isMobile && <Header />}
       {!isInAppWebView() && <BackNavigationBar />}
       <Styled.PageContainer>
         <ClubDetailHeader
