@@ -59,7 +59,6 @@ const PhotoEditTab = () => {
     inputRef.current?.click();
   };
 
-<<<<<<< HEAD
   /** 파일 선택 변경 */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
@@ -81,8 +80,6 @@ const PhotoEditTab = () => {
   };
 
   /** 이미지 삭제 */
-=======
->>>>>>> 1b1874a8dfde7305f4ae0a1ff678f966accf6714
   const deleteImage = (index: number) => {
     if (isLoading) return;
 
