@@ -37,7 +37,7 @@ const LazyImage = ({
       },
       {
         threshold,
-      }
+      },
     );
 
     observer.observe(rootRef.current);
@@ -46,7 +46,11 @@ const LazyImage = ({
   }, [threshold, isEager]);
 
   return (
-    <Styled.ImageContainer ref={rootRef} $isLoaded={isLoaded} $placeholder={placeholder}>
+    <Styled.ImageContainer
+      ref={rootRef}
+      $isLoaded={isLoaded}
+      $placeholder={placeholder}
+    >
       {isVisible && (
         <Styled.StyledImage
           src={src}

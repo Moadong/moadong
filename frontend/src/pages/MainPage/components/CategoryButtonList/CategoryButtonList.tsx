@@ -1,9 +1,12 @@
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import * as Styled from './CategoryButtonList.styles';
-import { inactiveCategoryIcons, activeCategoryIcons } from '@/assets/images/icons/category_button';
-import { useSearchStore } from '@/store/useSearchStore';
-import { useSelectedCategory } from '@/store/useCategoryStore';
+import {
+  activeCategoryIcons,
+  inactiveCategoryIcons,
+} from '@/assets/images/icons/category_button';
 import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { useSelectedCategory } from '@/store/useCategoryStore';
+import { useSearchStore } from '@/store/useSearchStore';
+import * as Styled from './CategoryButtonList.styles';
 
 interface Category {
   id: string;
@@ -44,9 +47,13 @@ const CategoryButtonList = () => {
           key={category.id}
           onClick={() => handleCategoryClick(category)}
         >
-          <img src={selectedCategory === category.id ? 
-            activeCategoryIcons[category.type] : inactiveCategoryIcons[category.type]} 
-            alt={category.name} 
+          <img
+            src={
+              selectedCategory === category.id
+                ? activeCategoryIcons[category.type]
+                : inactiveCategoryIcons[category.type]
+            }
+            alt={category.name}
           />
           <span>{category.name}</span>
         </Styled.CategoryButton>

@@ -1,13 +1,13 @@
 import React from 'react';
-import * as Styled from './ApplicationRowItem.style';
 import Morebutton from '@/assets/images/icons/Morebutton.svg';
 import ApplicationMenu from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationMenu';
 import { ApplicationFormItem } from '@/types/application';
+import * as Styled from './ApplicationRowItem.style';
 
 interface ApplicationRowItemProps {
   application: ApplicationFormItem;
   isActive: boolean;
-  uniqueKeyPrefix: string; 
+  uniqueKeyPrefix: string;
   openMenuId: string | null;
   menuRef: React.RefObject<HTMLDivElement | null>;
   onToggleStatus: (id: string, status: string) => void;
@@ -29,7 +29,6 @@ const ApplicationRowItem = ({
   onDelete,
   className,
 }: ApplicationRowItemProps) => {
-  
   const currentMenuKey = `${uniqueKeyPrefix}-${application.id}`; // 더보기 메뉴 한곳에서만 열리도록 고유키 생성
   const isMenuOpen = openMenuId === currentMenuKey;
   // 최종 수정날짜 포맷팅 함수
@@ -40,7 +39,7 @@ const ApplicationRowItem = ({
       now.getFullYear() === date.getFullYear() &&
       now.getMonth() === date.getMonth() &&
       now.getDate() === date.getDate();
-    
+
     const options: Intl.DateTimeFormatOptions = isToday
       ? { hour: 'numeric', minute: '2-digit', hour12: true }
       : { year: 'numeric', month: '2-digit', day: '2-digit' };
@@ -56,24 +55,26 @@ const ApplicationRowItem = ({
       >
         {application.title}
       </Styled.ApplicationTitle>
-      
+
       <Styled.ApplicationDatetable>
         <Styled.ApplicationDate>
           {formatDateTime(application.editedAt)}
         </Styled.ApplicationDate>
-        
+
         <Styled.MoreButtonContainer ref={isMenuOpen ? menuRef : null}>
           <Styled.MoreButton
             onClick={(e) => onMenuToggle(e, application.id, uniqueKeyPrefix)}
           >
-          <Styled.MoreButtonIcon src={Morebutton} />
+            <Styled.MoreButtonIcon src={Morebutton} />
           </Styled.MoreButton>
-          
+
           {isMenuOpen && (
             <ApplicationMenu
               isActive={isActive}
               onDelete={() => onDelete(application.id)}
-              onToggleStatus={() => onToggleStatus(application.id, application.status)}
+              onToggleStatus={() =>
+                onToggleStatus(application.id, application.status)
+              }
             />
           )}
         </Styled.MoreButtonContainer>

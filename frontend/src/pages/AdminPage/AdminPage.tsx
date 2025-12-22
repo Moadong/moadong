@@ -1,9 +1,8 @@
-import Header from '@/components/common/Header/Header';
-import SideBar from '@/pages/AdminPage/components/SideBar/SideBar';
 import { Outlet } from 'react-router-dom';
-
-import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import Header from '@/components/common/Header/Header';
 import { useAdminClubContext } from '@/context/AdminClubContext';
+import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import SideBar from '@/pages/AdminPage/components/SideBar/SideBar';
 import * as Styled from './AdminPage.styles';
 
 const AdminPage = () => {

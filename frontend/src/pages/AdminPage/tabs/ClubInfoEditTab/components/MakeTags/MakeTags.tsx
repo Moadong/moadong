@@ -1,7 +1,7 @@
-import * as Styled from './MakeTags.styles';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { ADMIN_EVENT } from '@/constants/eventName';
 import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import * as Styled from './MakeTags.styles';
 
 interface MakeTagsProps {
   value: string[];

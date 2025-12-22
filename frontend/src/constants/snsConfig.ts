@@ -1,6 +1,6 @@
-import youtube_icon from '@/assets/images/icons/sns/youtube_icon.svg';
 import instagram_icon from '@/assets/images/icons/sns/instagram_icon.png';
 import x_icon from '@/assets/images/icons/sns/x_icon.svg';
+import youtube_icon from '@/assets/images/icons/sns/youtube_icon.svg';
 
 export const SNS_CONFIG = {
   instagram: {

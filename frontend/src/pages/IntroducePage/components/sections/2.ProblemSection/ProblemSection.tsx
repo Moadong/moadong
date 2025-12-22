@@ -1,5 +1,9 @@
+import {
+  fadeUp,
+  stagger,
+  VIEWPORT_CONFIG,
+} from '@/pages/IntroducePage/constants/animations';
 import * as Styled from './ProblemSection.styles';
-import { stagger, fadeUp, VIEWPORT_CONFIG } from '@/pages/IntroducePage/constants/animations';
 
 const ProblemSection = () => {
   return (

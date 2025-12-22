@@ -12,7 +12,6 @@ const useTrackPageView = (
   const startTime = useRef(Date.now());
   const clubNameRef = useRef(clubName);
 
-
   useEffect(() => {
     clubNameRef.current = clubName;
 

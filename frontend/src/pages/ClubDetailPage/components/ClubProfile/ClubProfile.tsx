@@ -1,7 +1,7 @@
+import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import ClubLogo from '@/components/ClubLogo/ClubLogo';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import * as Styled from './ClubProfile.styles';
-import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 
 interface ClubProfileProps {
   logo?: string;

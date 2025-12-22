@@ -1,4 +1,4 @@
-import { parse, isValid } from 'date-fns';
+import { isValid, parse } from 'date-fns';
 
 export const recruitmentDateParser = (s: string): Date => {
   const regex = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}$/;

@@ -1,22 +1,22 @@
 import { useNavigate } from 'react-router-dom';
-import * as Styled from './IntroSection.styles';
+import search_button_icon from '@/assets/images/icons/search_button_icon.svg';
+import introduce_phone_mockup from '@/assets/images/introduce/introduce_phone_mockup.png';
 import {
-  stagger,
-  fadeIn,
+  BackgroundCircleLarge,
+  BackgroundCircleSmall,
+  BackgroundTwistLeft,
+  BackgroundTwistRight,
+} from '@/pages/IntroducePage/components/BackgroundShapes';
+import {
   fade,
+  fadeIn,
   fadeUp,
+  stagger,
   VIEWPORT_CONFIG,
 } from '@/pages/IntroducePage/constants/animations';
 import { floatingClubs } from '@/pages/IntroducePage/constants/mockData';
-import {
-  BackgroundTwistLeft,
-  BackgroundTwistRight,
-  BackgroundCircleSmall,
-  BackgroundCircleLarge,
-} from '@/pages/IntroducePage/components/BackgroundShapes';
-import search_button_icon from '@/assets/images/icons/search_button_icon.svg';
-import introduce_phone_mockup from '@/assets/images/introduce/introduce_phone_mockup.png';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
+import * as Styled from './IntroSection.styles';
 
 const cardPositions = [
   { top: '280px', left: '-300px' },

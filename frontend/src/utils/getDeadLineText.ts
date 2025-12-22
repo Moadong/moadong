@@ -1,4 +1,4 @@
-import { isAfter, isBefore, differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, isAfter, isBefore } from 'date-fns';
 
 const getDeadlineText = (
   recruitmentStart: Date | null,

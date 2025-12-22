@@ -1,6 +1,6 @@
 import {
-  ApplicationFormData,
   ApplicationForm,
+  ApplicationFormData,
   ApplicationFormMode,
 } from '@/types/application';
 import { CLUB_BACK, CLUB_BOB, CLUB_IVF, CLUB_TEST } from '../constants/clubApi';

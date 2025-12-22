@@ -1,20 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import * as Styled from './ApplicantDetailPage.styles';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAdminClubContext } from '@/context/AdminClubContext';
-import Header from '@/components/common/Header/Header';
-import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
-import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
-import Spinner from '@/components/common/Spinner/Spinner';
-import debounce from '@/utils/debounce';
-import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
-import { ApplicationStatus } from '@/types/applicants';
-import mapStatusToGroup from '@/utils/mapStatusToGroup';
-import { Question } from '@/types/application';
-import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
+import { useNavigate, useParams } from 'react-router-dom';
 import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
-import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
+import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
+import Header from '@/components/common/Header/Header';
+import Spinner from '@/components/common/Spinner/Spinner';
 import { AVAILABLE_STATUSES } from '@/constants/status';
+import { useAdminClubContext } from '@/context/AdminClubContext';
+import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
+import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
+import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
+import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
+import { ApplicationStatus } from '@/types/applicants';
+import { Question } from '@/types/application';
+import debounce from '@/utils/debounce';
+import mapStatusToGroup from '@/utils/mapStatusToGroup';
+import * as Styled from './ApplicantDetailPage.styles';
 
 const getStatusColor = (status: ApplicationStatus | undefined): string => {
   switch (status) {

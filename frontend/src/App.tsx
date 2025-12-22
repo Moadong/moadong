@@ -1,18 +1,18 @@
-import { Suspense, lazy } from 'react';
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { lazy, Suspense } from 'react';
+import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ThemeProvider } from 'styled-components';
+import { ScrollToTopButton } from '@/components/common/ScrollToTopButton/ScrollToTopButton';
 import { AdminClubProvider } from '@/context/AdminClubContext';
-import GlobalStyles from '@/styles/Global.styles';
-import MainPage from '@/pages/MainPage/MainPage';
-import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
+import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
+import MainPage from '@/pages/MainPage/MainPage';
+import GlobalStyles from '@/styles/Global.styles';
+import { theme } from '@/styles/theme';
 import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
-import { ScrollToTopButton } from '@/components/common/ScrollToTopButton/ScrollToTopButton';
-import { ThemeProvider } from 'styled-components';
-import { theme } from '@/styles/theme';
 import 'swiper/css';
 
 const queryClient = new QueryClient();

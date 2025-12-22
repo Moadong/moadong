@@ -18,10 +18,7 @@ const ContentSectionRoot = ({ children }: ContentSectionProps) => {
   return <Styled.ContentSection>{children}</Styled.ContentSection>;
 };
 
-const ContentSectionHeader = ({
-  title,
-  action,
-}: ContentSectionHeaderProps) => {
+const ContentSectionHeader = ({ title, action }: ContentSectionHeaderProps) => {
   return (
     <Styled.ContentSectionHeader>
       <Styled.ContentSectionTitle>{title}</Styled.ContentSectionTitle>

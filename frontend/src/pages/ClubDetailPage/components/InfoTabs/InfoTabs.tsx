@@ -1,8 +1,8 @@
 import { useState } from 'react';
-import * as Styled from './InfoTabs.styles';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import isInAppWebView from '@/utils/isInAppWebView';
+import * as Styled from './InfoTabs.styles';
 
 const tabLabels = ['모집정보', '동아리정보', '소개글', '활동사진'];
 

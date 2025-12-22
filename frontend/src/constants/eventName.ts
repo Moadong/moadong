@@ -5,7 +5,6 @@ export const USER_EVENT = {
   // 배너 클릭
   BANNER_CLICKED: 'Banner Clicked',
   APP_DOWNLOAD_BANNER_CLICKED: 'App Download Banner Clicked',
-  
 
   // 네비게이션
   BACK_BUTTON_CLICKED: 'Back Button Clicked',
@@ -91,4 +90,4 @@ export const PAGE_VIEW = {
   RECRUITMENT_INFO_EDIT_PAGE: '동아리 모집 정보 수정 페이지',
   PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
-} as const; 
+} as const;

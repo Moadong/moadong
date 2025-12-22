@@ -1,18 +1,18 @@
-import * as Styled from './ApplicationListTab.styles';
-import Plus from '@/assets/images/icons/Plus.svg';
-import expandArrow from '@/assets/images/icons/ExpandArrow.svg';
+import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import React, { useState, useRef, useEffect } from 'react';
-import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
+import { useQueryClient } from '@tanstack/react-query';
+import styled from 'styled-components';
+import { updateApplicationStatus } from '@/apis/application/updateApplication';
+import expandArrow from '@/assets/images/icons/ExpandArrow.svg';
+import Plus from '@/assets/images/icons/Plus.svg';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
-import { ApplicationFormItem, SemesterGroup } from '@/types/application';
-import { updateApplicationStatus } from '@/apis/application/updateApplication';
-import { useQueryClient } from '@tanstack/react-query';
-import styled from 'styled-components';
+import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import { ApplicationFormItem, SemesterGroup } from '@/types/application';
+import * as Styled from './ApplicationListTab.styles';
 
 const ApplicationListTab = () => {
   const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
@@ -31,7 +31,11 @@ const ApplicationListTab = () => {
 
   const handleDeleteApplication = (applicationFormId: string) => {
     // 사용자에게 재확인
-    if (window.confirm('지원서 양식을 정말 삭제하시겠습니까?\n삭제된 양식은 복구할 수 없습니다.')) {
+    if (
+      window.confirm(
+        '지원서 양식을 정말 삭제하시겠습니까?\n삭제된 양식은 복구할 수 없습니다.',
+      )
+    ) {
       deleteApplication(applicationFormId, {
         onSuccess: () => {
           setOpenMenuId(null);
@@ -42,28 +46,32 @@ const ApplicationListTab = () => {
     }
   };
 
-  const handleToggleClick = async (applicationFormId: string, currentStatus: string) => {
+  const handleToggleClick = async (
+    applicationFormId: string,
+    currentStatus: string,
+  ) => {
     try {
-      await updateApplicationStatus(
-        applicationFormId,
-        currentStatus
-      );
+      await updateApplicationStatus(applicationFormId, currentStatus);
       queryClient.invalidateQueries({ queryKey: ['applicationForm'] });
       setOpenMenuId(null);
     } catch (error) {
       console.error('지원서 상태 변경 실패:', error);
-      alert("상태 변경에 실패했습니다.");
+      alert('상태 변경에 실패했습니다.');
     }
   };
 
   const handleToggleExpand = () => {
-    setIsExpanded(prev => !prev);
+    setIsExpanded((prev) => !prev);
   };
 
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
 
   const menuRef = useRef<HTMLDivElement | null>(null);
-  const handleMenuToggle = (e: React.MouseEvent, id: string, contextPrefix: string) => {
+  const handleMenuToggle = (
+    e: React.MouseEvent,
+    id: string,
+    contextPrefix: string,
+  ) => {
     e.stopPropagation(); // 이벤트 버블링 방지 (row 전체가 클릭되지 않도록)
     const uniqueKey = `${contextPrefix}-${id}`;
     setOpenMenuId(openMenuId === uniqueKey ? null : uniqueKey); // 같은 버튼 누르면 닫기, 다른 버튼 누르면 열기
@@ -98,9 +106,13 @@ const ApplicationListTab = () => {
 
   const semesterGroups: SemesterGroup[] = allforms?.forms || [];
 
-  const activeForms = semesterGroups.flatMap(group => group.forms).filter(form => form.status === 'ACTIVE');
+  const activeForms = semesterGroups
+    .flatMap((group) => group.forms)
+    .filter((form) => form.status === 'ACTIVE');
 
-  const formsToDisplay = isExpanded ? activeForms : activeForms.slice(0, MAX_INITIAL_ITEMS);
+  const formsToDisplay = isExpanded
+    ? activeForms
+    : activeForms.slice(0, MAX_INITIAL_ITEMS);
   const showExpandButton = activeForms.length > MAX_INITIAL_ITEMS;
   const overCount = activeForms.length - MAX_INITIAL_ITEMS;
 
@@ -109,7 +121,7 @@ const ApplicationListTab = () => {
   `;
   const ActiveApplicationRow = styled(ApplicationRowItem)`
     &:hover {
-      background-color: #F2F2F2;
+      background-color: #f2f2f2;
       &:first-child {
         border-top-right-radius: 20px;
       }
@@ -121,44 +133,49 @@ const ApplicationListTab = () => {
       <div style={{ marginBottom: '24px' }}>
         <ContentSection.Header title='지원서 목록' />
       </div>
-        <Styled.ActiveListContainer>
-          <Styled.ActiveListTitleBox>
-            <Styled.ActiveListTitle>게시된 지원서</Styled.ActiveListTitle>
-          </Styled.ActiveListTitleBox>
-          {activeForms.length >0 ? (
+      <Styled.ActiveListContainer>
+        <Styled.ActiveListTitleBox>
+          <Styled.ActiveListTitle>게시된 지원서</Styled.ActiveListTitle>
+        </Styled.ActiveListTitleBox>
+        {activeForms.length > 0 ? (
           <ActiveListBody>
             {formsToDisplay.map((application: ApplicationFormItem) => (
               <ActiveApplicationRow
-                  key={application.id}
-                  isActive={true}
-                  application={application}
-                  uniqueKeyPrefix="activelist"
-                  openMenuId={openMenuId}
-                  menuRef={menuRef}
-                  onToggleStatus={handleToggleClick}
-                  onEdit={handleGoToEditForm}
-                  onMenuToggle={handleMenuToggle}
-                  onDelete={handleDeleteApplication}
-                />
+                key={application.id}
+                isActive={true}
+                application={application}
+                uniqueKeyPrefix='activelist'
+                openMenuId={openMenuId}
+                menuRef={menuRef}
+                onToggleStatus={handleToggleClick}
+                onEdit={handleGoToEditForm}
+                onMenuToggle={handleMenuToggle}
+                onDelete={handleDeleteApplication}
+              />
             ))}
             {showExpandButton && (
-                <Styled.ExpandButton onClick={handleToggleExpand}>
-                  {isExpanded ? '접어두기' : `펼쳐보기 (외 ${overCount}개)`}
-                  <Styled.ExpandArrow src={expandArrow} $isExpanded={isExpanded} />
-                </Styled.ExpandButton>
+              <Styled.ExpandButton onClick={handleToggleExpand}>
+                {isExpanded ? '접어두기' : `펼쳐보기 (외 ${overCount}개)`}
+                <Styled.ExpandArrow
+                  src={expandArrow}
+                  $isExpanded={isExpanded}
+                />
+              </Styled.ExpandButton>
             )}
           </ActiveListBody>
-          ) : (
-            <ActiveListBody>
-              <Styled.MessageContainer>
-                <Styled.NoActiveFormsMessage>활성화된 지원서 없음</Styled.NoActiveFormsMessage>
-                <Styled.SuggestionText>
-                    지원서 카드 우측 메뉴에서 지원서 활성화를 선택해 보세요.
-                </Styled.SuggestionText>
-              </Styled.MessageContainer>
-            </ActiveListBody>
-          )}
-        </Styled.ActiveListContainer>
+        ) : (
+          <ActiveListBody>
+            <Styled.MessageContainer>
+              <Styled.NoActiveFormsMessage>
+                활성화된 지원서 없음
+              </Styled.NoActiveFormsMessage>
+              <Styled.SuggestionText>
+                지원서 카드 우측 메뉴에서 지원서 활성화를 선택해 보세요.
+              </Styled.SuggestionText>
+            </Styled.MessageContainer>
+          </ActiveListBody>
+        )}
+      </Styled.ActiveListContainer>
       <Styled.Header>
         <Styled.AddButton onClick={handleGoToNewForm}>
           새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
@@ -170,30 +187,31 @@ const ApplicationListTab = () => {
         const semesterTitle = `${group.semesterYear}년 ${semesterTermLabel}`;
         const groupUniqueKeyPrefix = `group_${group.semesterYear}_${group.semesterTerm}`;
         return (
-        <Styled.ApplicationList key={semesterTitle}>
-          <Styled.ListHeader>
-            <Styled.SemesterTitle>{semesterTitle}</Styled.SemesterTitle>
-            <Styled.DateHeader>
-              <Styled.Separation_Bar />
-              최종 수정 날짜
-            </Styled.DateHeader>
-          </Styled.ListHeader>
-          {(group.forms.map((application: ApplicationFormItem) => (
-            <ApplicationRowItem
-                 key={application.id}
-                 application={application}
-                 isActive={application.status === 'ACTIVE'}
-                 uniqueKeyPrefix={groupUniqueKeyPrefix}
-                 openMenuId={openMenuId}
-                 menuRef={menuRef}
-                 onEdit={handleGoToEditForm}
-                 onMenuToggle={handleMenuToggle}
-                 onToggleStatus={handleToggleClick}
-                 onDelete={handleDeleteApplication}
-               />
-      )))}
-        </Styled.ApplicationList>
-      )})}
+          <Styled.ApplicationList key={semesterTitle}>
+            <Styled.ListHeader>
+              <Styled.SemesterTitle>{semesterTitle}</Styled.SemesterTitle>
+              <Styled.DateHeader>
+                <Styled.Separation_Bar />
+                최종 수정 날짜
+              </Styled.DateHeader>
+            </Styled.ListHeader>
+            {group.forms.map((application: ApplicationFormItem) => (
+              <ApplicationRowItem
+                key={application.id}
+                application={application}
+                isActive={application.status === 'ACTIVE'}
+                uniqueKeyPrefix={groupUniqueKeyPrefix}
+                openMenuId={openMenuId}
+                menuRef={menuRef}
+                onEdit={handleGoToEditForm}
+                onMenuToggle={handleMenuToggle}
+                onToggleStatus={handleToggleClick}
+                onDelete={handleDeleteApplication}
+              />
+            ))}
+          </Styled.ApplicationList>
+        );
+      })}
     </Styled.Container>
   );
 };

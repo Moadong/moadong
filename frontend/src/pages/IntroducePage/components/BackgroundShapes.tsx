@@ -1,8 +1,8 @@
 import { motion } from 'framer-motion';
+import CircleLarge from '@/assets/images/introduce/background-circle-large.svg';
+import CircleSmall from '@/assets/images/introduce/background-circle-small.svg';
 import TwistLeft from '@/assets/images/introduce/background-twist-left.svg';
 import TwistRight from '@/assets/images/introduce/background-twist-right.svg';
-import CircleSmall from '@/assets/images/introduce/background-circle-small.svg';
-import CircleLarge from '@/assets/images/introduce/background-circle-large.svg';
 
 export const BackgroundTwistLeft = () => (
   <motion.img

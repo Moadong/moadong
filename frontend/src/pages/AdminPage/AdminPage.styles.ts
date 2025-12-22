@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+
 export const Background = styled.div`
   background-color: #f2f2f2;
   min-height: 100vh;

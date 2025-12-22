@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './StatusRadioButton.styles';
-import { USER_EVENT } from '@/constants/eventName';
 
 interface StatusRadioButtonProps {
   onChange: (selectedStatus: boolean) => void;

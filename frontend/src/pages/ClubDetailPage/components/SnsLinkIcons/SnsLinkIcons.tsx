@@ -1,9 +1,9 @@
 import React from 'react';
-import * as Styled from './SnsLinkIcons.styles';
-import { SNS_CONFIG } from '@/constants/snsConfig';
-import { SNSPlatform } from '@/types/club';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { USER_EVENT } from '@/constants/eventName';
+import { SNS_CONFIG } from '@/constants/snsConfig';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { SNSPlatform } from '@/types/club';
+import * as Styled from './SnsLinkIcons.styles';
 
 interface SnsLinkIconsProps {
   apiSocialLinks: Partial<Record<SNSPlatform, string>>;

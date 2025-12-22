@@ -23,7 +23,7 @@ export const ApplicationRow = styled.div`
   }
 
   &:hover {
-    background-color: #F2F2F2;
+    background-color: #f2f2f2;
     &:last-child {
       border-bottom-left-radius: 20px;
       border-bottom-right-radius: 20px;
@@ -87,13 +87,13 @@ export const MoreButton = styled.button`
   height: 30px;
   border-radius: 50%;
   &:hover {
-    background-color: #DCDCDC;
+    background-color: #dcdcdc;
   }
 `;
 
 export const MoreButtonIcon = styled.img`
-    width: 12px;
-    height: 12px;
+  width: 12px;
+  height: 12px;
 `;
 
 export const MoreButtonContainer = styled.div`

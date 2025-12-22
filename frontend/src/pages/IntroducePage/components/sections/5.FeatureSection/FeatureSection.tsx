@@ -1,13 +1,13 @@
-import * as Styled from './FeatureSection.styles';
+import search_button_icon from '@/assets/images/icons/search_button_icon.svg';
 import {
-  stagger,
-  fadeUp,
   fade,
+  fadeUp,
   scrollVariants,
+  stagger,
   VIEWPORT_CONFIG,
 } from '@/pages/IntroducePage/constants/animations';
 import { tagsRow1, tagsRow2 } from '@/pages/IntroducePage/constants/mockData';
-import search_button_icon from '@/assets/images/icons/search_button_icon.svg';
+import * as Styled from './FeatureSection.styles';
 
 const FeatureSection = () => {
   return (

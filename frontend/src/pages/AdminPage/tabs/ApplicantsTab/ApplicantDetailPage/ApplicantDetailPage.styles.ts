@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import * as ApplicationFormPageStyles from '@/pages/ApplicationFormPage/ApplicationFormPage.styles';
 import DropdownArrow from '@/assets/images/icons/applicant_drop.svg';
+import * as ApplicationFormPageStyles from '@/pages/ApplicationFormPage/ApplicationFormPage.styles';
 
 export const Wrapper = styled.div`
   display: flex;

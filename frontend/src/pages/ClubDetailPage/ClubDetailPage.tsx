@@ -1,20 +1,20 @@
 import { useParams } from 'react-router-dom';
-import * as Styled from '@/styles/PageContainer.styles';
-import Header from '@/components/common/Header/Header';
-import BackNavigationBar from '@/pages/ClubDetailPage/components/BackNavigationBar/BackNavigationBar';
-import ClubDetailHeader from '@/pages/ClubDetailPage/components/ClubDetailHeader/ClubDetailHeader';
-import InfoTabs from '@/pages/ClubDetailPage/components/InfoTabs/InfoTabs';
-import InfoBox from '@/pages/ClubDetailPage/components/InfoBox/InfoBox';
-import IntroduceBox from '@/pages/ClubDetailPage/components/IntroduceBox/IntroduceBox';
-import PhotoList from '@/pages/ClubDetailPage/components/PhotoList/PhotoList';
 import Footer from '@/components/common/Footer/Footer';
-import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter/ClubDetailFooter';
-import useTrackPageView from '@/hooks/useTrackPageView';
+import Header from '@/components/common/Header/Header';
+import { PAGE_VIEW } from '@/constants/eventName';
 import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import isInAppWebView from '@/utils/isInAppWebView';
-import { PAGE_VIEW } from '@/constants/eventName';
 import useDevice from '@/hooks/useDevice';
+import useTrackPageView from '@/hooks/useTrackPageView';
+import BackNavigationBar from '@/pages/ClubDetailPage/components/BackNavigationBar/BackNavigationBar';
+import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter/ClubDetailFooter';
+import ClubDetailHeader from '@/pages/ClubDetailPage/components/ClubDetailHeader/ClubDetailHeader';
+import InfoBox from '@/pages/ClubDetailPage/components/InfoBox/InfoBox';
+import InfoTabs from '@/pages/ClubDetailPage/components/InfoTabs/InfoTabs';
+import IntroduceBox from '@/pages/ClubDetailPage/components/IntroduceBox/IntroduceBox';
+import PhotoList from '@/pages/ClubDetailPage/components/PhotoList/PhotoList';
+import * as Styled from '@/styles/PageContainer.styles';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const ClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();

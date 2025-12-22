@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
-import * as Styled from './SideBar.styles';
-import { useNavigate, useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '@/apis/auth/logout';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import * as Styled from './SideBar.styles';
 
 interface TabItem {
   label: string;

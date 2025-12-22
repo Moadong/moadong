@@ -1,4 +1,4 @@
-import { useEffect, useState, useMemo } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { DESKTOP_CARD_WIDTH, MOBILE_CARD_WIDTH } from '@/constants/photoLayout';
 import debounce from '@/utils/debounce';
 

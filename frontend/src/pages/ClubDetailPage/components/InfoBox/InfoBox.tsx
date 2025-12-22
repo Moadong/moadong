@@ -1,7 +1,7 @@
-import * as Styled from './InfoBox.styles';
-import { ClubDetail } from '@/types/club';
 import { INFOTABS_SCROLL_INDEX } from '@/constants/scrollSections';
 import SnsLinkIcons from '@/pages/ClubDetailPage/components/SnsLinkIcons/SnsLinkIcons';
+import { ClubDetail } from '@/types/club';
+import * as Styled from './InfoBox.styles';
 
 interface ClubInfoItem {
   label: string;
