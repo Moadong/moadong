@@ -98,6 +98,8 @@ public class Club implements Persistable<String> {
         this.state = ClubState.AVAILABLE;
         this.socialLinks = request.socialLinks();
         this.clubRecruitmentInformation.update(request);
+        this.description = request.description();
+        this.faqs = request.faqs();
     }
 
     private void validateTags(List<String> tags) {
