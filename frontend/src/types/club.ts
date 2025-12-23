@@ -32,3 +32,44 @@ export interface ClubDescription {
   id: string;
   description: string | null;
 }
+
+export interface Award {
+  semester: string;
+  achievements: string[];
+}
+
+export interface IdealCandidate {
+  tags: string[];
+  content: string;
+}
+
+export interface FAQ {
+  question: string;
+  answer: string;
+}
+
+export interface DetailedDescription {
+  introDescription: string;
+  activityDescription: string;
+  awards: Award[];
+  idealCandidate: IdealCandidate;
+  benefits: string;
+  faqs: FAQ[];
+}
+
+export interface ClubApiResponse {
+  id: string;
+  name: string;
+  logo: string;
+  cover: string;
+  tags: string[];
+  state: string;
+  introduction: string;
+  description: DetailedDescription;
+  recruitmentPeriod: string;
+  recruitmentStatus: string;
+  externalApplicationUrl: string;
+  socialLinks: Record<SNSPlatform, string>;
+  category: string;
+  division: string;
+}
