@@ -1,7 +1,10 @@
-import { useCallback, useEffect } from 'react';
+import { useEffect, useRef } from 'react';
+import type { Swiper as SwiperType } from 'swiper';
+import { Keyboard, Navigation } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import 'swiper/css/navigation';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
-import useModalNavigation from '@/hooks/PhotoModal/useModalNavigation';
 import * as Styled from './PhotoModal.styles';
 
 interface PhotoModalProps {
@@ -17,12 +20,20 @@ interface PhotoModalProps {
 
 const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
   const { currentIndex, urls, onChangeIndex } = photos;
+  const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
+  const swiperRef = useRef<SwiperType | null>(null);
 
-  const { handlePrev, handleNext } = useModalNavigation(
-    currentIndex,
-    urls.length,
-    onChangeIndex,
-  );
+  // 현재 인덱스가 변경되면 해당 썸네일로 스크롤
+  useEffect(() => {
+    const currentThumbnail = thumbnailRefs.current[currentIndex];
+    if (currentThumbnail) {
+      currentThumbnail.scrollIntoView({
+        behavior: 'smooth',
+        block: 'nearest',
+        inline: 'center',
+      });
+    }
+  }, [currentIndex]);
 
   useEffect(() => {
     if (isOpen) {
@@ -32,21 +43,6 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
       document.body.style.overflow = '';
     };
   }, [isOpen]);
-
-  const handleKeyDown = useCallback(
-    (e: KeyboardEvent) => {
-      if (!isOpen) return;
-      if (e.key === 'Escape') return onClose();
-      if (e.key === 'ArrowLeft') return handlePrev();
-      if (e.key === 'ArrowRight') return handleNext();
-    },
-    [isOpen, onClose, handlePrev, handleNext],
-  );
-
-  useEffect(() => {
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [handleKeyDown]);
 
   if (!isOpen) return null;
 
@@ -61,18 +57,54 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
         </Styled.ModalHeader>
         <Styled.ModalBody>
           <Styled.ImageContainer>
-            <Styled.Image src={urls[currentIndex]} alt='활동 사진' />
+            <Swiper
+              modules={[Navigation, Keyboard]}
+              initialSlide={currentIndex}
+              onSwiper={(swiper) => (swiperRef.current = swiper)}
+              onSlideChange={(swiper) => onChangeIndex(swiper.realIndex)}
+              navigation={{
+                prevEl: '.swiper-button-prev-custom',
+                nextEl: '.swiper-button-next-custom',
+              }}
+              keyboard={{
+                enabled: true,
+              }}
+              loop={urls.length > 1}
+              spaceBetween={0}
+              slidesPerView={1}
+              style={{
+                width: '100%',
+                height: '100%',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'center',
+              }}
+            >
+              {urls.map((url, idx) => (
+                <SwiperSlide
+                  key={url}
+                  style={{
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    height: '100%',
+                  }}
+                >
+                  <Styled.Image src={url} alt={`활동 사진 ${idx + 1}`} />
+                </SwiperSlide>
+              ))}
+            </Swiper>
             {urls.length > 1 && (
               <>
                 <Styled.NavButton
-                  onClick={handlePrev}
+                  className='swiper-button-prev-custom'
                   position='left'
                   aria-label='이전 사진'
                 >
                   <img src={PrevButton} alt='이전 사진' />
                 </Styled.NavButton>
                 <Styled.NavButton
-                  onClick={handleNext}
+                  className='swiper-button-next-custom'
                   position='right'
                   aria-label='다음 사진'
                 >
@@ -86,8 +118,15 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
               {urls.map((url, idx) => (
                 <Styled.Thumbnail
                   key={url}
+                  ref={(el) => {
+                    thumbnailRefs.current[idx] = el;
+                  }}
                   isActive={idx === currentIndex}
-                  onClick={() => onChangeIndex(idx)}
+                  onClick={() => {
+                    if (swiperRef.current) {
+                      swiperRef.current.slideToLoop(idx, 300);
+                    }
+                  }}
                 >
                   <img src={url} alt='썸네일' />
                 </Styled.Thumbnail>
