@@ -3,6 +3,10 @@ import defaultCover from '@/assets/images/logos/default_profile_image.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import { useAdminClubContext } from '@/context/AdminClubContext';
+import {
+  useDeleteCover,
+  useUploadCover,
+} from '@/hooks/queries/club/cover/useCoverMutation';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as Styled from './ClubCoverEditor.styles';
 
@@ -17,12 +21,13 @@ const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
 
   if (!clubId) return null;
 
-  // TODO: useCoverMutation 추가 예정
-  // const uploadMutation = useUploadCover();
-  // const deleteMutation = useDeleteCover();
+  const uploadMutation = useUploadCover();
+  const deleteMutation = useDeleteCover();
 
   const isCoverImageEmpty = !coverImage?.trim();
-  const displayedCover = isCoverImageEmpty ? defaultCover : coverImage;
+  const displayedCover: string = isCoverImageEmpty
+    ? defaultCover
+    : (coverImage ?? defaultCover);
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -37,7 +42,7 @@ const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
     }
 
     trackEvent(ADMIN_EVENT.CLUB_LOGO_UPLOAD_BUTTON_CLICKED);
-    // TODO: uploadMutation.mutate({ clubId, file });
+    uploadMutation.mutate({ clubId, file });
     console.log('Cover image upload:', file);
   };
 
@@ -55,7 +60,7 @@ const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
     if (!window.confirm('정말 커버 이미지를 기본 이미지로 되돌릴까요?')) return;
 
     trackEvent(ADMIN_EVENT.CLUB_LOGO_RESET_BUTTON_CLICKED);
-    // TODO: deleteMutation.mutate(clubId);
+    deleteMutation.mutate(clubId);
     console.log('Cover image delete');
   };
 
