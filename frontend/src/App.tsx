@@ -7,7 +7,6 @@ import { AdminClubProvider } from '@/context/AdminClubContext';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
-import ClubFeedTestPage from '@/pages/clubDetailPage2/ClubFeedTestPage';
 import MainPage from '@/pages/MainPage/MainPage';
 import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
@@ -61,7 +60,6 @@ const App = () => {
               element={<ApplicationFormPage />}
             />
             <Route path='/club-union' element={<ClubUnionPage />} />
-            <Route path='/test/club-feed' element={<ClubFeedTestPage />} />
             <Route path='*' element={<Navigate to='/' replace />} />
           </Routes>
         </BrowserRouter>
