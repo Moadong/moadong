@@ -12,6 +12,7 @@ export const Container = styled.div`
 
   ${media.tablet} {
     max-width: none;
+    border-radius: 0;
   }
 `;
 

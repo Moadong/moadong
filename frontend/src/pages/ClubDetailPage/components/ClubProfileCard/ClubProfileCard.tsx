@@ -1,14 +1,15 @@
-import { SNSPlatform } from '@/types/club';
-import * as Styled from './ClubProfileCard.styles';
 import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
+import DefaultCover from '@/assets/images/logos/default_cover_image.png';
+import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
-
+import { SNSPlatform } from '@/types/club';
+import * as Styled from './ClubProfileCard.styles';
 
 interface Props {
   name: string;
-  logo: string;
-  cover: string;
+  logo?: string;
+  cover?: string;
   recruitmentStatus: string;
   socialLinks: Record<SNSPlatform, string>;
   activityDescription: string;
@@ -48,11 +49,11 @@ const ClubProfileCard = ({
   return (
     <Styled.Container>
       {/* 커버 이미지 */}
-      <Styled.CoverImage src={cover || '/default-cover.jpg'} alt="클럽 커버" />
+      <Styled.CoverImage src={cover || DefaultCover} alt='클럽 커버' />
 
       {/* 로고 */}
       <Styled.LogoWrapper>
-        <Styled.Logo src={logo || '/default-logo.jpg'} alt={`${name} 로고`} />
+        <Styled.Logo src={logo || DefaultLogo} alt={`${name} 로고`} />
       </Styled.LogoWrapper>
 
       {/* 클럽 정보 */}
@@ -60,9 +61,7 @@ const ClubProfileCard = ({
         {/* 클럽명 + 뱃지 */}
         <Styled.Header>
           <Styled.ClubName>{name}</Styled.ClubName>
-          {recruitmentStatus && (
-            <ClubStateBox state={recruitmentStatus} />
-          )}
+          {recruitmentStatus && <ClubStateBox state={recruitmentStatus} />}
         </Styled.Header>
 
         {/* SNS 링크들 */}
@@ -70,20 +69,21 @@ const ClubProfileCard = ({
           {getActiveSocials().map(({ platform, url }) => {
             const icon = getSocialIcon(platform);
             if (!icon) return null;
-            
-            const cleanUrl = url.replace(/^https?:\/\//, '').replace(/^www\./, '');
-            
+
+            const username = url.split('/').filter(Boolean).pop() || '';
+            const displayName = `@${username}`;
+
             return (
               <Styled.SocialLinkItem
                 key={platform}
                 href={url}
-                target="_blank"
-                rel="noopener noreferrer"
+                target='_blank'
+                rel='noopener noreferrer'
               >
                 <Styled.SocialIcon src={icon} alt={platform} />
                 <Styled.SocialText>
                   {name} {getSocialPlatformName(platform)}{' '}
-                  <Styled.SocialUrl>{cleanUrl}</Styled.SocialUrl>
+                  <Styled.SocialUrl>{displayName}</Styled.SocialUrl>
                 </Styled.SocialText>
               </Styled.SocialLinkItem>
             );
@@ -93,11 +93,13 @@ const ClubProfileCard = ({
         {/* 소개 섹션 */}
         <Styled.IntroSection>
           <Styled.IntroTitle>{name}를 소개할게요</Styled.IntroTitle>
-          <Styled.IntroDescription>{activityDescription}</Styled.IntroDescription>
+          <Styled.IntroDescription>
+            {activityDescription}
+          </Styled.IntroDescription>
         </Styled.IntroSection>
       </Styled.Content>
     </Styled.Container>
   );
-}
+};
 
 export default ClubProfileCard;
