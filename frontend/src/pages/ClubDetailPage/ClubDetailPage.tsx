@@ -7,13 +7,12 @@ import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import useDevice from '@/hooks/useDevice';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
+import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
+import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import * as Styled from './ClubDetailPage.styles';
-import { mockClubApi } from './mockData';
 
-const ClubDetailPage2 = () => {
-  // TODO: mockClubApi 대신 실제 clubDetail 데이터 사용하도록 변경 필요
-  const club = mockClubApi;
+const ClubDetailPage = () => {
   const [activeTab, setActiveTab] = useState<'intro' | 'photos'>('intro');
 
   const { clubId } = useParams<{ clubId: string }>();
@@ -38,12 +37,12 @@ const ClubDetailPage2 = () => {
       <Styled.Container>
         <Styled.ContentWrapper>
           <ClubProfileCard
-            name={club.name}
-            logo={club.logo}
-            cover={club.cover}
-            recruitmentStatus={club.recruitmentStatus}
-            socialLinks={club.socialLinks}
-            activityDescription={club.description.activityDescription}
+            name={clubDetail.name}
+            logo={clubDetail.logo}
+            cover={clubDetail.cover}
+            recruitmentStatus={clubDetail.recruitmentStatus}
+            socialLinks={clubDetail.socialLinks}
+            activityDescription={clubDetail.description.activityDescription}
           />
 
           <Styled.RightSection>
@@ -69,8 +68,12 @@ const ClubDetailPage2 = () => {
             </Styled.TabList>
 
             <Styled.TabContent>
-              {activeTab === 'intro' && <p>소개 내용 컴포넌트 추가 예정</p>}
-              {activeTab === 'photos' && <p>활동 사진 컴포넌트 추가 예정</p>}
+              {activeTab === 'intro' && (
+                <ClubIntroContent {...clubDetail.description} />
+              )}
+              {activeTab === 'photos' && (
+                <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
+              )}
             </Styled.TabContent>
           </Styled.RightSection>
         </Styled.ContentWrapper>
@@ -80,4 +83,4 @@ const ClubDetailPage2 = () => {
   );
 };
 
-export default ClubDetailPage2;
+export default ClubDetailPage;
