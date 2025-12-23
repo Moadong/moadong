@@ -1,12 +1,13 @@
 package moadong.club.payload.dto;
 
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
 import lombok.Builder;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.entity.Faq;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
 
 @Builder
 public record ClubDetailedResult(
@@ -65,8 +66,8 @@ public record ClubDetailedResult(
                 .division(club.getDivision() == null ? "" : club.getDivision())
                 .introduction(clubRecruitmentInformation.getIntroduction() == null ? ""
                         : clubRecruitmentInformation.getIntroduction())
-                .description(clubRecruitmentInformation.getDescription() == null ? ""
-                        : clubRecruitmentInformation.getDescription())
+                .description(club.getDescription() == null ? ""
+                        : club.getDescription())
                 .presidentName(clubRecruitmentInformation.getPresidentName() == null ? ""
                         : clubRecruitmentInformation.getPresidentName())
                 .presidentPhoneNumber(
@@ -82,8 +83,8 @@ public record ClubDetailedResult(
                         club.getClubRecruitmentInformation().getExternalApplicationUrl())
                 .socialLinks(club.getSocialLinks() == null ? Map.of()
                         : club.getSocialLinks())
-                .faqs(club.getClubRecruitmentInformation().getFaqs() == null ? List.of()
-                        : club.getClubRecruitmentInformation().getFaqs())
+                .faqs(club.getFaqs() == null ? List.of()
+                        : club.getFaqs())
                 .lastModifiedDate(lastModifiedDate)
                 .build();
     }
