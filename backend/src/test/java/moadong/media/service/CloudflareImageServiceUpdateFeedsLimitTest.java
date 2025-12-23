@@ -52,7 +52,7 @@ class CloudflareImageServiceUpdateFeedsLimitTest {
 		ClubRecruitmentInformation info = ClubRecruitmentInformation.builder()
 			.feedImages(List.of())
 			.build();
-		club = Club.builder().clubRecruitmentInformation(info).build();
+		club = Club.builder().userId("").clubRecruitmentInformation(info).build();
 		objectId = new ObjectId();
 	}
 
@@ -63,14 +63,14 @@ class CloudflareImageServiceUpdateFeedsLimitTest {
 		ClubRecruitmentInformation info = ClubRecruitmentInformation.builder()
 				.feedImages(tooMany)
 				.build();
-		club = Club.builder().clubRecruitmentInformation(info).build();
-		when(clubRepository.findClubById(any())).thenReturn(Optional.of(club));
+		club = Club.builder().userId("").clubRecruitmentInformation(info).build();
 
 		// when
-		RestApiException exception = assertThrows(RestApiException.class,
-			() -> cloudflareImageService.updateFeeds(objectId.toHexString(), tooMany));
+		when(clubRepository.findClubById(any())).thenReturn(Optional.of(club));
 
 		// then
+		RestApiException exception = assertThrows(RestApiException.class,
+				() -> cloudflareImageService.updateFeeds(objectId.toHexString(), "", tooMany));
 		assertEquals(ErrorCode.TOO_MANY_FILES, exception.getErrorCode());
 	}
 }

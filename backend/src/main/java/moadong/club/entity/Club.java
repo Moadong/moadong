@@ -83,10 +83,12 @@ public class Club implements Persistable<String> {
 
     @Builder
     public Club(String name, String category, String division,
+                String userId,
                 ClubRecruitmentInformation clubRecruitmentInformation) {
         this.name = name;
         this.category = category;
         this.division = division;
+        this.userId = userId;
         this.clubRecruitmentInformation = clubRecruitmentInformation;
         this.clubDescription = ClubDescription.builder().build();
     }
