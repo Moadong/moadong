@@ -18,6 +18,8 @@ export const USER_EVENT = {
   TAB_CLICKED: 'Tab Clicked',
   PHOTO_NAVIGATION_CLICKED: 'Photo Navigation',
   CLUB_CARD_CLICKED: 'ClubCard Clicked',
+  CLUB_INTRO_TAB_CLICKED: 'Club Intro Tab Clicked',
+  CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',
 
   // 동아리 지원
   CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked',
