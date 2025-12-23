@@ -7,8 +7,8 @@ import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import useDevice from '@/hooks/useDevice';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
-import ClubProfileCard from '@/pages/clubDetailPage2/components/ClubProfileCard/ClubProfileCard';
-import * as Styled from './ClubDetailPage2.styles';
+import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
+import * as Styled from './ClubDetailPage.styles';
 import { mockClubApi } from './mockData';
 
 const ClubDetailPage2 = () => {

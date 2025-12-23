@@ -1,5 +1,5 @@
 import { usePhotoModal } from '@/hooks/PhotoList/usePhotoModal';
-import PhotoModal from '@/pages/ClubDetailPage/components/PhotoList/PhotoModal/PhotoModal';
+import PhotoModal from '@/pages/clubDetailPage2/components/PhotoModal/PhotoModal';
 import * as Styled from './ClubFeed.styles';
 
 interface Props {
