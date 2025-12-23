@@ -10,7 +10,6 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
-import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
 import { ClubDetail } from '@/types/club';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import * as Styled from './RecruitEditTab.styles';
@@ -21,15 +20,15 @@ const RecruitEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.RECRUITMENT_INFO_EDIT_PAGE);
 
-  const clubDetail = useOutletContext<ClubDetail>();
-
   const queryClient = useQueryClient();
   const { mutate: updateClubDescription } = useUpdateClubDescription();
+
+  const clubDetail = useOutletContext<ClubDetail>();
 
   const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
-  const [description, setDescription] = useState('');
+
   const [always, setAlways] = useState(false);
 
   const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({
@@ -62,7 +61,6 @@ const RecruitEditTab = () => {
     }
 
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
-    setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
 
   useEffect(() => {
@@ -116,22 +114,20 @@ const RecruitEditTab = () => {
 
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: startForSave?.toISOString(),
-      recruitmentEnd: endForSave?.toISOString(),
+      recruitmentStart: startForSave?.toISOString() ?? null,
+      recruitmentEnd: endForSave?.toISOString() ?? null,
       recruitmentTarget: recruitmentTarget,
-      description: description,
-      externalApplicationUrl: clubDetail.externalApplicationUrl ?? '',
     };
 
     updateClubDescription(updatedData, {
       onSuccess: () => {
-        alert('동아리 정보가 성공적으로 수정되었습니다.');
+        alert('모집 정보가 성공적으로 수정되었습니다.');
         queryClient.invalidateQueries({
           queryKey: ['clubDetail', clubDetail.id],
         });
       },
       onError: (error) => {
-        alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
+        alert(`모집 정보 수정에 실패했습니다: ${error.message}`);
       },
     });
   };
@@ -182,11 +178,6 @@ const RecruitEditTab = () => {
             }}
             maxLength={10}
           />
-
-          <div>
-            <Styled.Label>소개글</Styled.Label>
-            <MarkdownEditor value={description} onChange={setDescription} />
-          </div>
         </ContentSection.Body>
       </ContentSection>
     </Styled.Container>
