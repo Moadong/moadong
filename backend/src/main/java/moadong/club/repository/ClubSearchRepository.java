@@ -67,41 +67,6 @@ public class ClubSearchRepository {
         return results.getMappedResults();
     }
 
-    public List<ClubSearchResult> searchRecommendClubs(String category, String excludeClubId) {
-        Set<String> excludeIds = new HashSet<>();
-        if (excludeClubId != null) {
-            excludeIds.add(excludeClubId);
-        }
-
-        List<ClubSearchResult> result = new ArrayList<>();
-
-        // 1. 같은 카테고리 모집중 + (모집마감 포함) 동아리 최대 4개 추출 (모집상태 우선)
-        int maxCategoryCount = 4;
-        List<ClubSearchResult> categoryClubs = findClubsByCategoryAndState(category, excludeIds, true, maxCategoryCount);
-        addClubs(result, excludeIds, categoryClubs);
-
-        int remainCount = maxCategoryCount - categoryClubs.size();
-
-        // 2. 부족하면 마감 동아리로 채우기
-        if (remainCount > 0) {
-            List<ClubSearchResult> categoryClosedClubs = findClubsByCategoryAndState(category, excludeIds, false, remainCount);
-            addClubs(result, excludeIds, categoryClosedClubs);
-        }
-
-        // 3. 나머지 전체 랜덤 2개(모집상태 우선)로 채우기
-        int totalNeeded = 6;
-        int randomNeeded = totalNeeded - result.size();
-
-        if (randomNeeded > 0) {
-            List<ClubSearchResult> randomPool = findRandomClubs(excludeIds, 10);
-
-            List<ClubSearchResult> selectedRandomClubs = selectClubsByStatePriority(randomPool, randomNeeded);
-            addClubs(result, excludeIds, selectedRandomClubs);
-        }
-
-        return result.isEmpty() ? Collections.emptyList() : result;
-    }
-
     // 같은 카테고리 & 주어진 모집 상태별 랜덤 n개 동아리 조회
     private List<ClubSearchResult> findClubsByCategoryAndState(String category, Set<String> excludeIds,
                                                                boolean onlyRecruitAvailable, int limit) {

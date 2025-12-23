@@ -30,11 +30,10 @@ public record ClubDetailedResult(
         String category,
         String division,
         List<Faq> faqs,
-        String lastModifiedDate,
-        List<ClubSearchResult> recommendClubs
+        String lastModifiedDate
 ) {
 
-    public static ClubDetailedResult of(Club club, List<ClubSearchResult> recommendClubs) {
+    public static ClubDetailedResult of(Club club) {
         ClubRecruitmentInformation clubRecruitmentInformation = club.getClubRecruitmentInformation();
 
         String start = "미정";
@@ -86,7 +85,6 @@ public record ClubDetailedResult(
                 .faqs(club.getClubRecruitmentInformation().getFaqs() == null ? List.of()
                         : club.getClubRecruitmentInformation().getFaqs())
                 .lastModifiedDate(lastModifiedDate)
-                .recommendClubs(recommendClubs)
                 .build();
     }
 
