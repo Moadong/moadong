@@ -75,7 +75,7 @@ public record ClubDetailedResult(
                 .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget() == null ? ""
                         : clubRecruitmentInformation.getRecruitmentTarget())
                 .recruitmentStatus(clubRecruitmentInformation.getClubRecruitmentStatus() == null
-                        ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().getDescription())
+                        ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().toString())
                 .externalApplicationUrl(club.getClubRecruitmentInformation().getExternalApplicationUrl() == null ? "" :
                         club.getClubRecruitmentInformation().getExternalApplicationUrl())
                 .socialLinks(club.getSocialLinks() == null ? Map.of()
