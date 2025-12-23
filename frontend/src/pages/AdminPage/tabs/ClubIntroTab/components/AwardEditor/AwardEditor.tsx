@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
-import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
+import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
-import { Award } from '../../ClubDetailTab';
+import { Award } from '../../ClubIntroTab';
 import * as Styled from './AwardEditor.styles';
 
 interface AwardEditorProps {
@@ -218,8 +218,8 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
                   onClick={() => handleRemoveSemester(originalIndex)}
                 >
                   <img src={deleteButton} alt='삭제' />
-              </Styled.RemoveButton>
-            </Styled.SemesterHeader>
+                </Styled.RemoveButton>
+              </Styled.SemesterHeader>
 
               <Styled.AchievementsList>
                 {award.achievements.map((achievement, achievementIndex) => (
@@ -242,7 +242,10 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
                     {award.achievements.length > 1 && (
                       <Styled.AchievementRemoveButton
                         onClick={() =>
-                          handleRemoveAchievement(originalIndex, achievementIndex)
+                          handleRemoveAchievement(
+                            originalIndex,
+                            achievementIndex,
+                          )
                         }
                       >
                         <img src={deleteButton} alt='삭제' />

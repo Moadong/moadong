@@ -9,9 +9,9 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ClubDetail } from '@/types/club';
+import * as Styled from './ClubIntroTab.styles';
 import AwardEditor from './components/AwardEditor/AwardEditor';
 import FAQEditor from './components/FAQEditor/FAQEditor';
-import * as Styled from './ClubDetailTab.styles';
 
 export interface Award {
   semester: string;
@@ -28,7 +28,7 @@ export interface IdealCandidate {
   content: string;
 }
 
-const ClubDetailTab = () => {
+const ClubIntroTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
 
@@ -136,7 +136,7 @@ const ClubDetailTab = () => {
           />
 
           <CustomTextArea
-            label='🎁 부원이 가지는 혜택'
+            label='🎁 부원이 되면 이런 혜택이 있어요'
             placeholder='동아리 부원이 누릴 수 있는 혜택을 입력해주세요'
             value={benefits}
             onChange={(e) => setBenefits(e.target.value)}
@@ -151,4 +151,4 @@ const ClubDetailTab = () => {
   );
 };
 
-export default ClubDetailTab;
+export default ClubIntroTab;

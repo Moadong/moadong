@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
-import { FAQ } from '../../ClubDetailTab';
+import { FAQ } from '../../ClubIntroTab';
 import * as Styled from './FAQEditor.styles';
 
 interface FAQEditorProps {

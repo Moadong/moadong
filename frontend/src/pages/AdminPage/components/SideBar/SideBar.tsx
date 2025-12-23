@@ -18,14 +18,15 @@ interface TabCategory {
 const tabs: TabCategory[] = [
   {
     category: '동아리 정보',
-    items: [{ label: '기본 정보 수정', path: '/admin/club-info' }, {label: '상세 정보 수정', path: '/admin/club-detail' } ,{ label: '활동 사진 수정', path: '/admin/photo-edit' }],
+    items: [
+      { label: '기본 정보 수정', path: '/admin/club-info' },
+      { label: '소개 정보 수정', path: '/admin/club-intro' },
+      { label: '활동 사진 수정', path: '/admin/photo-edit' },
+    ],
   },
   {
     category: '모집 정보',
-    items: [
-      { label: '모집 정보 수정', path: '/admin/recruit-edit' },
-
-    ],
+    items: [{ label: '모집 정보 수정', path: '/admin/recruit-edit' }],
   },
   {
     category: '지원 관리',
