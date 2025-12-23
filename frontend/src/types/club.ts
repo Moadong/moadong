@@ -4,6 +4,7 @@ export interface Club {
   id: string;
   name: string;
   logo: string;
+  cover?: string;
   tags: string[];
   recruitmentStatus: string;
   division: string;
