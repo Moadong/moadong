@@ -46,7 +46,8 @@ public class Club implements Persistable<String> {
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
 
-    private ClubDescription description;
+    @Field("description")
+    private ClubDescription clubDescription;
 
     @Version
     private Long version;
@@ -56,7 +57,7 @@ public class Club implements Persistable<String> {
         this.division = "";
         this.state = ClubState.UNAVAILABLE;
         this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
-        this.description = ClubDescription.builder().build();
+        this.clubDescription = ClubDescription.builder().build();
     }
 
     public Club(String userId) {
@@ -66,7 +67,7 @@ public class Club implements Persistable<String> {
         this.state = ClubState.UNAVAILABLE;
         this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
         this.userId = userId;
-        this.description = ClubDescription.builder().build();
+        this.clubDescription = ClubDescription.builder().build();
     }
 
     public Club(String id, String userId) {
@@ -77,7 +78,7 @@ public class Club implements Persistable<String> {
         this.state = ClubState.UNAVAILABLE;
         this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
         this.userId = userId;
-        this.description = ClubDescription.builder().build();
+        this.clubDescription = ClubDescription.builder().build();
     }
 
     @Builder
@@ -87,7 +88,7 @@ public class Club implements Persistable<String> {
         this.category = category;
         this.division = division;
         this.clubRecruitmentInformation = clubRecruitmentInformation;
-        this.description = ClubDescription.builder().build();
+        this.clubDescription = ClubDescription.builder().build();
     }
 
     public void update(ClubInfoRequest request) {
@@ -100,7 +101,7 @@ public class Club implements Persistable<String> {
         this.state = ClubState.AVAILABLE;
         this.socialLinks = request.socialLinks();
         this.clubRecruitmentInformation.update(request);
-        this.description = request.description();
+        this.clubDescription = request.description();
     }
 
     private void validateTags(List<String> tags) {

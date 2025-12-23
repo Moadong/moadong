@@ -67,7 +67,7 @@ public record ClubDetailedResult(
                 .division(club.getDivision() == null ? "" : club.getDivision())
                 .introduction(clubRecruitmentInformation.getIntroduction() == null ? ""
                         : clubRecruitmentInformation.getIntroduction())
-                .description(club.getDescription())
+                .description(club.getClubDescription())
                 .presidentName(clubRecruitmentInformation.getPresidentName() == null ? ""
                         : clubRecruitmentInformation.getPresidentName())
                 .presidentPhoneNumber(
@@ -83,8 +83,8 @@ public record ClubDetailedResult(
                         club.getClubRecruitmentInformation().getExternalApplicationUrl())
                 .socialLinks(club.getSocialLinks() == null ? Map.of()
                         : club.getSocialLinks())
-                .faqs(club.getDescription().getFaqs() == null ? List.of()
-                        : club.getDescription().getFaqs())
+                .faqs(club.getClubDescription().getFaqs() == null ? List.of()
+                        : club.getClubDescription().getFaqs())
                 .lastModifiedDate(lastModifiedDate)
                 .build();
     }
