@@ -29,7 +29,6 @@ public record ClubDetailedResult(
         Map<String, String> socialLinks,
         String category,
         String division,
-        List<FaqDto> faqs,
         String lastModifiedDate
 ) {
 
@@ -81,8 +80,6 @@ public record ClubDetailedResult(
                         club.getClubRecruitmentInformation().getExternalApplicationUrl())
                 .socialLinks(club.getSocialLinks() == null ? Map.of()
                         : club.getSocialLinks())
-                .faqs(club.getClubDescription().getFaqs() == null ? List.of()
-                        : club.getClubDescription().getFaqs().stream().map(FaqDto::from).toList())
                 .lastModifiedDate(lastModifiedDate)
                 .build();
     }
