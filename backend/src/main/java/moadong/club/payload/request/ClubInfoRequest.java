@@ -1,14 +1,13 @@
 package moadong.club.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
-import java.util.List;
-import java.util.Map;
-
-import moadong.club.entity.Faq;
 import moadong.club.entity.ClubDescription;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubDivision;
 import moadong.global.annotation.PhoneNumber;
+
+import java.util.List;
+import java.util.Map;
 
 public record ClubInfoRequest(
     @NotBlank
@@ -19,7 +18,6 @@ public record ClubInfoRequest(
     String introduction,
     String presidentName,
     ClubDescription description,
-    List<Faq> faqs,
     @PhoneNumber
     String presidentPhoneNumber,
     Map<String, String> socialLinks

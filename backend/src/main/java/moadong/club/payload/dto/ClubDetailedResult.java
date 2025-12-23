@@ -83,8 +83,8 @@ public record ClubDetailedResult(
                         club.getClubRecruitmentInformation().getExternalApplicationUrl())
                 .socialLinks(club.getSocialLinks() == null ? Map.of()
                         : club.getSocialLinks())
-                .faqs(club.getFaqs() == null ? List.of()
-                        : club.getFaqs())
+                .faqs(club.getDescription().getFaqs() == null ? List.of()
+                        : club.getDescription().getFaqs())
                 .lastModifiedDate(lastModifiedDate)
                 .build();
     }

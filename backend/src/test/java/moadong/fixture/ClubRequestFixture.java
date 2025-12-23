@@ -1,14 +1,12 @@
 package moadong.fixture;
 
 import moadong.club.entity.ClubDescription;
-import moadong.club.entity.Faq;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubDivision;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 
 import java.time.Instant;
-import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
@@ -23,7 +21,6 @@ public class ClubRequestFixture {
                 "동아리 소개입니다.",
                 "홍길동",
                 ClubDescription.builder().build(),
-                List.of(),
                 "010-1234-5678",
                 Map.of("insta", "https://test")
         );
