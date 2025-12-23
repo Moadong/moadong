@@ -32,6 +32,7 @@ export const USER_EVENT = {
   INTRODUCE_BUTTON_CLICKED: 'Introduce Button Clicked',
   APPLICATION_FORM_SUBMITTED: 'Application Form Submitted',
   PATCH_NOTE_BUTTON_CLICKED: 'Patch Note Button Clicked',
+  FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
 } as const;
 
 export const ADMIN_EVENT = {

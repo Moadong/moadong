@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import * as S from './ClubDetailContent.styles';
 
 export interface Award {
@@ -33,13 +35,22 @@ const ClubDetailContent = ({
   benefits,
   faqs,
 }: ClubDetailContentProps) => {
-  /* FAQ State */
+  const trackEvent = useMixpanelTrack();
+
   const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([]);
 
   const handleToggleFaq = (index: number) => {
+    const isOpening = !openFaqIndices.includes(index);
     setOpenFaqIndices((prev) =>
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
+
+    if (faqs && faqs[index]) {
+      trackEvent(USER_EVENT.FAQ_TOGGLE_CLICKED, {
+        question: faqs[index].question,
+        action: isOpening ? 'open' : 'close',
+      });
+    }
   };
 
   return (
