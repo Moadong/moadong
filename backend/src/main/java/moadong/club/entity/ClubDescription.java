@@ -17,4 +17,5 @@ public class ClubDescription {
     private List<ClubAward> awards;
     private ClubIdealCandidate idealCandidate;
     private String benefits;
+    private List<Faq> faqs;
 }

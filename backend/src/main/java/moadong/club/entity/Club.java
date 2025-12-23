@@ -48,8 +48,6 @@ public class Club implements Persistable<String> {
 
     private ClubDescription description;
 
-    private List<Faq> faqs;
-
     @Version
     private Long version;
     public Club() {
@@ -99,7 +97,6 @@ public class Club implements Persistable<String> {
         this.socialLinks = request.socialLinks();
         this.clubRecruitmentInformation.update(request);
         this.description = request.description();
-        this.faqs = request.faqs();
     }
 
     private void validateTags(List<String> tags) {
