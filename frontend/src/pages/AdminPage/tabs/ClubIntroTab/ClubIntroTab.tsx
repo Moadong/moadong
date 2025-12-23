@@ -8,26 +8,10 @@ import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import { ClubDetail } from '@/types/club';
+import { Award, ClubDetail, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroTab.styles';
 import AwardEditor from './components/AwardEditor/AwardEditor';
 import FAQEditor from './components/FAQEditor/FAQEditor';
-
-export interface Award {
-  semester: string;
-  achievements: string[];
-}
-
-export interface FAQ {
-  id: string;
-  question: string;
-  answer: string;
-}
-
-export interface IdealCandidate {
-  tags: string[];
-  content: string;
-}
 
 const ClubIntroTab = () => {
   const trackEvent = useMixpanelTrack();
@@ -49,14 +33,15 @@ const ClubIntroTab = () => {
   const queryClient = useQueryClient();
 
   useEffect(() => {
-    if (clubDetail) {
-      // TODO: API 연동 시 실제 데이터로 대체
-      setIntroDescription('');
-      setActivityDescription('');
-      setAwards([]);
-      setIdealCandidate({ tags: [], content: '' });
-      setBenefits('');
-      setFaqs([]);
+    if (clubDetail?.description) {
+      setIntroDescription(clubDetail.description.introDescription || '');
+      setActivityDescription(clubDetail.description.activityDescription || '');
+      setAwards(clubDetail.description.awards || []);
+      setIdealCandidate(
+        clubDetail.description.idealCandidate || { tags: [], content: '' },
+      );
+      setBenefits(clubDetail.description.benefits || '');
+      setFaqs(clubDetail.description.faqs || []);
     }
   }, [clubDetail]);
 
@@ -69,16 +54,24 @@ const ClubIntroTab = () => {
     trackEvent(ADMIN_EVENT.UPDATE_CLUB_BUTTON_CLICKED);
 
     const updatedData = {
-      id: clubDetail.id,
-      introDescription,
-      activityDescription,
-      awards,
-      idealCandidate,
-      benefits,
-      faqs,
+      name: clubDetail.name,
+      category: clubDetail.category,
+      division: clubDetail.division,
+      tags: clubDetail.tags,
+      introduction: clubDetail.introduction,
+      presidentName: clubDetail.presidentName,
+      presidentPhoneNumber: clubDetail.presidentPhoneNumber,
+      socialLinks: clubDetail.socialLinks,
+      description: {
+        introDescription,
+        activityDescription,
+        awards,
+        idealCandidate,
+        benefits,
+        faqs,
+      },
     };
 
-    // TODO: API 연동
     updateClub(updatedData as any, {
       onSuccess: () => {
         alert('동아리 상세 정보가 성공적으로 수정되었습니다.');
