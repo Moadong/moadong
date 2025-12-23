@@ -1,16 +1,16 @@
 import { usePhotoModal } from '@/hooks/PhotoList/usePhotoModal';
-import PhotoModal from '@/pages/clubDetailPage2/components/PhotoModal/PhotoModal';
+import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
 import * as Styled from './ClubFeed.styles';
 
 interface Props {
-  photos: string[];
+  feed: string[];
   clubName?: string;
 }
 
-export function ClubFeed({ photos, clubName = '동아리' }: Props) {
+const ClubFeed = ({ feed, clubName = '동아리' }: Props) => {
   const { isOpen, index, open, close, setIndex } = usePhotoModal();
 
-  if (!photos || photos.length === 0) {
+  if (!feed || feed.length === 0) {
     return (
       <Styled.EmptyState>
         <Styled.EmptyText>등록된 활동사진이 없습니다</Styled.EmptyText>
@@ -22,13 +22,10 @@ export function ClubFeed({ photos, clubName = '동아리' }: Props) {
     <>
       <Styled.Container>
         <Styled.PhotoGrid>
-          {photos.map((photo, index) => (
-            <Styled.PhotoItem
-              key={`${photo}-${index}`}
-              onClick={() => open(index)}
-            >
+          {feed.map((f, index) => (
+            <Styled.PhotoItem key={`${f}-${index}`} onClick={() => open(index)}>
               <Styled.PhotoImage
-                src={photo}
+                src={f}
                 alt={`활동사진 ${index + 1}`}
                 loading='lazy'
               />
@@ -43,10 +40,12 @@ export function ClubFeed({ photos, clubName = '동아리' }: Props) {
         clubName={clubName}
         photos={{
           currentIndex: index,
-          urls: photos,
+          urls: feed,
           onChangeIndex: setIndex,
         }}
       />
     </>
   );
-}
+};
+
+export default ClubFeed;
