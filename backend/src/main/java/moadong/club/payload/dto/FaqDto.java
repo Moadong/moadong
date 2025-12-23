@@ -14,4 +14,8 @@ public record FaqDto(
         if (faq == null) return null;
         return new FaqDto(faq.getQuestion(), faq.getAnswer());
     }
+
+    public Faq toEntity() {
+        return new Faq(question, answer);
+    }
 }

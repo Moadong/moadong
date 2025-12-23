@@ -36,4 +36,15 @@ public record ClubDescriptionDto(
             description.getFaqs() == null ? null : description.getFaqs().stream().map(FaqDto::from).toList()
         );
     }
+
+    public ClubDescription toEntity() {
+        return ClubDescription.builder()
+                .introDescription(introDescription)
+                .activityDescription(activityDescription)
+                .awards(awards == null ? null : awards.stream().map(ClubAwardDto::toEntity).toList())
+                .idealCandidate(idealCandidate == null ? null : idealCandidate.toEntity())
+                .benefits(benefits)
+                .faqs(faqs == null ? null : faqs.stream().map(FaqDto::toEntity).toList())
+                .build();
+    }
 }

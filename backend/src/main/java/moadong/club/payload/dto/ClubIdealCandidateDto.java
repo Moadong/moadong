@@ -15,4 +15,11 @@ public record ClubIdealCandidateDto(
         if (candidate == null) return null;
         return new ClubIdealCandidateDto(candidate.getTags(), candidate.getContent());
     }
+
+    public ClubIdealCandidate toEntity() {
+        return ClubIdealCandidate.builder()
+                .tags(tags)
+                .content(content)
+                .build();
+    }
 }

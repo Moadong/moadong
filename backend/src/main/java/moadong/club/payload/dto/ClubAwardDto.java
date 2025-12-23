@@ -15,4 +15,11 @@ public record ClubAwardDto(
         if (clubAward == null) return null;
         return new ClubAwardDto(clubAward.getSemester(), clubAward.getAchievements());
     }
+
+    public ClubAward toEntity() {
+        return ClubAward.builder()
+                .semester(semester)
+                .achievements(achievements)
+                .build();
+    }
 }
