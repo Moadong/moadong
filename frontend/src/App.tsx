@@ -7,6 +7,7 @@ import { AdminClubProvider } from '@/context/AdminClubContext';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
+import ClubDetailPage2 from '@/pages/clubDetailPage2/ClubDetailPage2';
 import MainPage from '@/pages/MainPage/MainPage';
 import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
@@ -40,6 +41,14 @@ const App = () => {
               element={
                 <Suspense fallback={null}>
                   <ClubDetailPage />
+                </Suspense>
+              }
+            />
+            <Route
+              path='/club2/:clubId'
+              element={
+                <Suspense fallback={null}>
+                  <ClubDetailPage2 />
                 </Suspense>
               }
             />
