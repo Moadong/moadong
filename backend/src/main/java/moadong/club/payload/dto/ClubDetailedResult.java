@@ -3,7 +3,6 @@ package moadong.club.payload.dto;
 import lombok.Builder;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
-import moadong.club.entity.Faq;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
@@ -19,7 +18,7 @@ public record ClubDetailedResult(
         String state,
         List<String> feeds,
         String introduction,
-        String description,
+        ClubDescriptionDto description,
         String presidentName,
         String presidentPhoneNumber,
         String recruitmentStart,
@@ -30,7 +29,6 @@ public record ClubDetailedResult(
         Map<String, String> socialLinks,
         String category,
         String division,
-        List<Faq> faqs,
         String lastModifiedDate
 ) {
 
@@ -66,8 +64,7 @@ public record ClubDetailedResult(
                 .division(club.getDivision() == null ? "" : club.getDivision())
                 .introduction(clubRecruitmentInformation.getIntroduction() == null ? ""
                         : clubRecruitmentInformation.getIntroduction())
-                .description(club.getDescription() == null ? ""
-                        : club.getDescription())
+                .description(ClubDescriptionDto.from(club.getClubDescription()))
                 .presidentName(clubRecruitmentInformation.getPresidentName() == null ? ""
                         : clubRecruitmentInformation.getPresidentName())
                 .presidentPhoneNumber(
@@ -83,8 +80,6 @@ public record ClubDetailedResult(
                         club.getClubRecruitmentInformation().getExternalApplicationUrl())
                 .socialLinks(club.getSocialLinks() == null ? Map.of()
                         : club.getSocialLinks())
-                .faqs(club.getFaqs() == null ? List.of()
-                        : club.getFaqs())
                 .lastModifiedDate(lastModifiedDate)
                 .build();
     }
