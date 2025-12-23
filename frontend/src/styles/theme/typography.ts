@@ -6,6 +6,7 @@ export const typography = {
     title4: { size: '22px', weight: 700 },
     title5: { size: '20px', weight: 700 },
     title6: { size: '18px', weight: 700 },
+    title7: { size: '16px', weight: 700 },
   },
   paragraph: {
     p1: { size: '20px', weight: 600 },
