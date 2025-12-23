@@ -17,14 +17,14 @@ interface TabCategory {
 
 const tabs: TabCategory[] = [
   {
-    category: '기본 정보',
-    items: [{ label: '기본 정보 수정', path: '/admin/club-info' }],
+    category: '동아리 정보',
+    items: [{ label: '기본 정보 수정', path: '/admin/club-info' }, {label: '상세 정보 수정', path: '/admin/club-detail' } ,{ label: '활동 사진 수정', path: '/admin/photo-edit' }],
   },
   {
     category: '모집 정보',
     items: [
       { label: '모집 정보 수정', path: '/admin/recruit-edit' },
-      { label: '활동 사진 수정', path: '/admin/photo-edit' },
+
     ],
   },
   {
