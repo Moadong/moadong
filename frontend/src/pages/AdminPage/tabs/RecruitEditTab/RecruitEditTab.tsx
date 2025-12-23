@@ -114,8 +114,8 @@ const RecruitEditTab = () => {
 
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: startForSave?.toISOString() ?? '',
-      recruitmentEnd: endForSave?.toISOString() ?? '',
+      recruitmentStart: startForSave?.toISOString() ?? null,
+      recruitmentEnd: endForSave?.toISOString() ?? null,
       recruitmentTarget: recruitmentTarget,
     };
 

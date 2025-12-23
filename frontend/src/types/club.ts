@@ -20,8 +20,8 @@ export interface ClubDetail extends Club {
   presidentName: string;
   presidentPhoneNumber: string;
   recruitmentForm: string;
-  recruitmentStart: string;
-  recruitmentEnd: string;
+  recruitmentStart: string | null;
+  recruitmentEnd: string | null;
   recruitmentTarget: string;
   socialLinks: Record<SNSPlatform, string>;
   externalApplicationUrl?: string;
@@ -29,7 +29,7 @@ export interface ClubDetail extends Club {
 
 export interface ClubDescription {
   id: string;
-  recruitmentStart: string;
-  recruitmentEnd: string;
+  recruitmentStart: string | null;
+  recruitmentEnd: string | null;
   recruitmentTarget: string;
 }
