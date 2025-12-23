@@ -15,15 +15,19 @@ export interface Club {
 export type SNSPlatform = keyof typeof SNS_CONFIG;
 
 export interface ClubDetail extends Club {
-  description: string;
+  description: DetailedDescription;
+
   state: string;
   feeds: string[];
+
   presidentName: string;
   presidentPhoneNumber: string;
+
   recruitmentForm: string;
   recruitmentStart: string | null;
   recruitmentEnd: string | null;
   recruitmentTarget: string;
+
   socialLinks: Record<SNSPlatform, string>;
   externalApplicationUrl?: string;
 }
