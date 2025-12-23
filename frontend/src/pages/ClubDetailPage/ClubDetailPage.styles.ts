@@ -22,6 +22,7 @@ export const ContentWrapper = styled.div`
   ${media.tablet} {
     flex-direction: column;
     padding: 0;
+    gap: 0;
     max-width: 100%;
     margin-top: 0;
   }
@@ -34,27 +35,35 @@ export const RightSection = styled.div`
 export const TabList = styled.div`
   display: flex;
   gap: 8px;
-  border-bottom: 1px solid ${colors.gray[300]};
-  padding: 0 20px;
+  margin-bottom: 16px;
+  border-bottom: 1px solid ${colors.gray[200]};
+
+  ${media.tablet} {
+    padding-left: 20px;
+  }
+
+  ${media.mobile} {
+    justify-content: center;
+  }
 `;
 
 export const TabButton = styled.button<{ $active: boolean }>`
-  padding: 12px 20px;
-  font-size: 16px;
-  font-weight: ${({ $active }) => ($active ? 700 : 400)};
-  color: ${({ $active }) => ($active ? colors.base.black : colors.gray[600])};
+  font-size: 14px;
+  font-weight: 700;
+  width: 167px;
+  padding-bottom: 4px;
+  color: ${({ $active }) => ($active ? colors.gray[800] : colors.gray[400])};
   background: none;
   border: none;
   border-bottom: 2px solid
-    ${({ $active }) => ($active ? colors.base.black : 'transparent')};
+    ${({ $active }) => ($active ? colors.gray[800] : colors.gray[400])};
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    color: ${colors.base.black};
+    color: ${colors.gray[800]};
+    border-bottom: 2px solid ${colors.gray[800]};
   }
 `;
 
-export const TabContent = styled.div`
-  padding: 20px;
-`;
+export const TabContent = styled.div``;
