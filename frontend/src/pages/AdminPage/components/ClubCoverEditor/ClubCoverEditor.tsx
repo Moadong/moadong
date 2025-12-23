@@ -13,10 +13,9 @@ interface ClubCoverEditorProps {
 const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
   const trackEvent = useMixpanelTrack();
   const { clubId } = useAdminClubContext();
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!clubId) return null;
-
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   // TODO: useCoverMutation 추가 예정
   // const uploadMutation = useUploadCover();
