@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import * as S from './ClubDetailContent.styles';
+import * as Styled from './ClubDetailContent.styles';
 
 export interface Award {
   semester: string;
@@ -54,69 +54,69 @@ const ClubDetailContent = ({
   };
 
   return (
-    <S.Container>
+    <Styled.Container>
       {introDescription && (
-        <S.Section>
-          <S.Text>{introDescription}</S.Text>
-        </S.Section>
+        <Styled.Section>
+          <Styled.Text>{introDescription}</Styled.Text>
+        </Styled.Section>
       )}
 
       {activityDescription && (
-        <S.Section>
-          <S.SectionTitle>이런 활동을 해요</S.SectionTitle>
-          <S.TextContainer>
-            <S.Text>{activityDescription}</S.Text>
-          </S.TextContainer>
-        </S.Section>
+        <Styled.Section>
+          <Styled.SectionTitle>이런 활동을 해요</Styled.SectionTitle>
+          <Styled.TextContainer>
+            <Styled.Text>{activityDescription}</Styled.Text>
+          </Styled.TextContainer>
+        </Styled.Section>
       )}
 
       {awards && awards.length > 0 && (
-        <S.Section>
-          <S.SectionTitle>🏆 동아리 수상</S.SectionTitle>
-          <S.TextContainer>
+        <Styled.Section>
+          <Styled.SectionTitle>🏆 동아리 수상</Styled.SectionTitle>
+          <Styled.TextContainer>
             {awards.map((award, index) => (
-              <S.AwardGroup key={index}>
-                <S.SemesterBadge>{award.semester}</S.SemesterBadge>
-                <S.AwardList>
+              <Styled.AwardGroup key={index}>
+                <Styled.SemesterBadge>{award.semester}</Styled.SemesterBadge>
+                <Styled.AwardList>
                   {award.achievements.map((item, idx) => (
-                    <S.AwardItem key={idx}>{item}</S.AwardItem>
+                    <Styled.AwardItem key={idx}>{item}</Styled.AwardItem>
                   ))}
-                </S.AwardList>
-              </S.AwardGroup>
+                </Styled.AwardList>
+              </Styled.AwardGroup>
             ))}
-          </S.TextContainer>
-        </S.Section>
+          </Styled.TextContainer>
+        </Styled.Section>
       )}
 
       {idealCandidate && (
-        <S.Section>
-          <S.SectionTitle>이런 사람이 오면 좋아요</S.SectionTitle>
-          <S.TextContainer>
-            <S.Text>{idealCandidate.content}</S.Text>
-          </S.TextContainer>
-        </S.Section>
+        <Styled.Section>
+          <Styled.SectionTitle>이런 사람이 오면 좋아요</Styled.SectionTitle>
+          <Styled.TextContainer>
+            <Styled.Text>{idealCandidate.content}</Styled.Text>
+          </Styled.TextContainer>
+        </Styled.Section>
       )}
 
       {benefits && (
-        <S.Section>
-          <S.SectionTitle>동아리 부원이 가지는 혜택</S.SectionTitle>
-          <S.TextContainer>
-            <S.Text>{benefits}</S.Text>
-          </S.TextContainer>
-        </S.Section>
+        <Styled.Section>
+          <Styled.SectionTitle>동아리 부원이 가지는 혜택</Styled.SectionTitle>
+          <Styled.TextContainer>
+            <Styled.Text>{benefits}</Styled.Text>
+          </Styled.TextContainer>
+        </Styled.Section>
       )}
 
       {faqs && faqs.length > 0 && (
-        <S.FaqSection>
-          <S.FaqHeader>FAQ</S.FaqHeader>
-          <S.FaqList>
+        <Styled.FaqSection>
+          <Styled.FaqHeader>FAQ</Styled.FaqHeader>
+          <Styled.FaqList>
             {faqs.map((faq, index) => {
               const isOpen = openFaqIndices.includes(index);
               return (
-                <S.FaqItem key={index}>
-                  <S.QuestionRow onClick={() => handleToggleFaq(index)}>
-                    <S.QuestionText>{faq.question}</S.QuestionText>
-                    <S.ArrowIcon
+                <Styled.FaqItem key={index}>
+                  <Styled.QuestionRow onClick={() => handleToggleFaq(index)}>
+                    <Styled.QuestionText>{faq.question}</Styled.QuestionText>
+                    <Styled.ArrowIcon
                       $isOpen={isOpen}
                       viewBox='0 0 24 24'
                       fill='none'
@@ -129,20 +129,20 @@ const ClubDetailContent = ({
                         strokeLinecap='round'
                         strokeLinejoin='round'
                       />
-                    </S.ArrowIcon>
-                  </S.QuestionRow>
+                    </Styled.ArrowIcon>
+                  </Styled.QuestionRow>
                   {isOpen && (
-                    <S.AnswerContainer>
-                      <S.AnswerBox>{faq.answer}</S.AnswerBox>
-                    </S.AnswerContainer>
+                    <Styled.AnswerContainer>
+                      <Styled.AnswerBox>{faq.answer}</Styled.AnswerBox>
+                    </Styled.AnswerContainer>
                   )}
-                </S.FaqItem>
+                </Styled.FaqItem>
               );
             })}
-          </S.FaqList>
-        </S.FaqSection>
+          </Styled.FaqList>
+        </Styled.FaqSection>
       )}
-    </S.Container>
+    </Styled.Container>
   );
 };
 
