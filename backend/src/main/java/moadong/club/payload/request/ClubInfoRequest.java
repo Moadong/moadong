@@ -1,7 +1,7 @@
 package moadong.club.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
-import moadong.club.entity.ClubDescription;
+import moadong.club.payload.dto.ClubDescriptionDto;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubDivision;
 import moadong.global.annotation.PhoneNumber;
@@ -17,7 +17,7 @@ public record ClubInfoRequest(
     List<String> tags,
     String introduction,
     String presidentName,
-    ClubDescription description,
+    ClubDescriptionDto description,
     @PhoneNumber
     String presidentPhoneNumber,
     Map<String, String> socialLinks

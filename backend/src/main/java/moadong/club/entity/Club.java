@@ -101,7 +101,7 @@ public class Club implements Persistable<String> {
         this.state = ClubState.AVAILABLE;
         this.socialLinks = request.socialLinks();
         this.clubRecruitmentInformation.update(request);
-        this.clubDescription = request.description();
+        this.clubDescription = ClubDescription.from(request.description());
     }
 
     private void validateTags(List<String> tags) {

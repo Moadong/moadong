@@ -3,6 +3,7 @@ package moadong.fixture;
 import moadong.club.entity.ClubDescription;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubDivision;
+import moadong.club.payload.dto.ClubDescriptionDto;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 
@@ -20,7 +21,7 @@ public class ClubRequestFixture {
                 List.of("개발", "스터디"),
                 "동아리 소개입니다.",
                 "홍길동",
-                ClubDescription.builder().build(),
+                ClubDescriptionDto.from(ClubDescription.builder().build()),
                 "010-1234-5678",
                 Map.of("insta", "https://test")
         );
