@@ -8,9 +8,6 @@ export const ModalOverlay = styled.div`
   left: 0;
   right: 0;
   bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
   z-index: ${Z_INDEX.overlay};
   animation: fadeIn 0.2s ease-in-out;
   background-color: rgba(0, 0, 0, 0.7);
@@ -30,22 +27,13 @@ export const ModalOverlay = styled.div`
 `;
 
 export const ModalContent = styled.div`
-  width: 90vw;
-  height: 90vh;
-  max-width: 1200px;
+  width: 100vw;
+  height: 100vh;
   background: #fff;
-  border-radius: 18px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   display: flex;
   flex-direction: column;
   position: relative;
   overflow: hidden;
-
-  ${media.mobile} {
-    width: 100vw;
-    height: 100vh;
-    border-radius: 0;
-  }
 `;
 
 export const CloseButton = styled.button`
@@ -56,6 +44,7 @@ export const CloseButton = styled.button`
   font-size: 2.5rem;
   cursor: pointer;
   padding: 10px;
+  color: #000;
   opacity: 0.7;
   transition: opacity 0.2s;
   z-index: 3;
@@ -71,15 +60,17 @@ export const ModalHeader = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 0 32px;
+  padding: 0 24px;
   position: absolute;
   top: 0;
   left: 0;
   z-index: 2;
+  background: rgba(255, 255, 255, 0.95);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
 `;
 
 export const ClubName = styled.div`
-  font-size: 1.3rem;
+  font-size: 1.2rem;
   font-weight: 600;
   color: #000;
 `;
@@ -94,33 +85,23 @@ export const ModalBody = styled.div`
 
 export const ImageContainer = styled.div`
   width: 100%;
-  height: 100%;
-  min-height: 400px;
+  flex: 1;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
-  padding: 0 60px;
-
-  ${media.mobile} {
-    padding: 0 16px;
-  }
+  margin-top: 60px;
 `;
 
 export const Image = styled.img`
   max-width: 100%;
-  max-height: 85%;
+  max-height: 100%;
   width: auto;
   height: auto;
   object-fit: contain;
-  border-radius: 8px;
   user-select: none;
   -webkit-user-drag: none;
   pointer-events: none;
-
-  ${media.mobile} {
-    max-height: 100%;
-  }
 `;
 
 export const NavButton = styled.button<{ position: 'left' | 'right' }>`
@@ -158,68 +139,56 @@ export const NavButton = styled.button<{ position: 'left' | 'right' }>`
   }
 
   ${media.mobile} {
-    ${({ position }) => (position === 'left' ? 'left: 8px;' : 'right: 8px;')}
-    width: 38px;
-    height: 38px;
+    display: none;
+  }
 
-    img {
-      width: 22px;
-      height: 22px;
-    }
+  ${media.tablet} {
+    display: none;
   }
 `;
 
 export const ThumbnailContainer = styled.div`
   width: 100%;
-  height: 100px;
-  padding: 0 20px;
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.03), transparent);
+  background: #f5f5f5;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  padding: 10px 12px;
 
   ${media.mobile} {
-    height: 80px;
-    padding: 0 15px;
+    padding: 8px 10px;
   }
 `;
 
 export const ThumbnailList = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 12px;
   max-width: 100%;
   overflow-x: auto;
-  padding: 10px;
+  overflow-y: hidden;
   align-items: center;
-  justify-content: center;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
 
   &::-webkit-scrollbar {
-    height: 4px;
-  }
-
-  &::-webkit-scrollbar-track {
-    background: transparent;
-  }
-
-  &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 4px;
+    display: none;
   }
 
   ${media.mobile} {
-    gap: 6px;
-    padding: 8px;
+    gap: 8px;
   }
 `;
 
 export const Thumbnail = styled.button<{ isActive: boolean }>`
   border: 2px solid ${({ isActive }) => (isActive ? '#ff5414' : 'transparent')};
-  border-radius: 6px;
+  border-radius: 8px;
   padding: 0;
   background: none;
   cursor: pointer;
-  width: 44px;
-  height: 44px;
+  width: 50px;
+  height: 50px;
   flex-shrink: 0;
   overflow: hidden;
   transition: all 0.2s;
