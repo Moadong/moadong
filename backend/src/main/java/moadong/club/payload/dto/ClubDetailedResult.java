@@ -1,12 +1,12 @@
 package moadong.club.payload.dto;
 
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
 import lombok.Builder;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
-import moadong.club.entity.Faq;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
 
 @Builder
 public record ClubDetailedResult(
@@ -18,7 +18,7 @@ public record ClubDetailedResult(
         String state,
         List<String> feeds,
         String introduction,
-        String description,
+        ClubDescriptionDto description,
         String presidentName,
         String presidentPhoneNumber,
         String recruitmentStart,
@@ -29,12 +29,10 @@ public record ClubDetailedResult(
         Map<String, String> socialLinks,
         String category,
         String division,
-        List<Faq> faqs,
-        String lastModifiedDate,
-        List<ClubSearchResult> recommendClubs
+        String lastModifiedDate
 ) {
 
-    public static ClubDetailedResult of(Club club, List<ClubSearchResult> recommendClubs) {
+    public static ClubDetailedResult of(Club club) {
         ClubRecruitmentInformation clubRecruitmentInformation = club.getClubRecruitmentInformation();
 
         String start = "미정";
@@ -66,8 +64,7 @@ public record ClubDetailedResult(
                 .division(club.getDivision() == null ? "" : club.getDivision())
                 .introduction(clubRecruitmentInformation.getIntroduction() == null ? ""
                         : clubRecruitmentInformation.getIntroduction())
-                .description(clubRecruitmentInformation.getDescription() == null ? ""
-                        : clubRecruitmentInformation.getDescription())
+                .description(ClubDescriptionDto.from(club.getClubDescription()))
                 .presidentName(clubRecruitmentInformation.getPresidentName() == null ? ""
                         : clubRecruitmentInformation.getPresidentName())
                 .presidentPhoneNumber(
@@ -83,10 +80,7 @@ public record ClubDetailedResult(
                         club.getClubRecruitmentInformation().getExternalApplicationUrl())
                 .socialLinks(club.getSocialLinks() == null ? Map.of()
                         : club.getSocialLinks())
-                .faqs(club.getClubRecruitmentInformation().getFaqs() == null ? List.of()
-                        : club.getClubRecruitmentInformation().getFaqs())
                 .lastModifiedDate(lastModifiedDate)
-                .recommendClubs(recommendClubs)
                 .build();
     }
 

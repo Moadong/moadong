@@ -1,11 +1,8 @@
 package moadong.club.service;
 
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubDetailedResult;
-import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
@@ -36,9 +33,9 @@ public class ClubProfileService {
     }
 
     public void updateClubRecruitmentInfo(ClubRecruitmentInfoUpdateRequest request,
-        CustomUserDetails user) {
+                                          CustomUserDetails user) {
         Club club = clubRepository.findClubByUserId(user.getId())
-            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
         RecruitmentStateCalculator.calculate(
                 club,
@@ -54,10 +51,8 @@ public class ClubProfileService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        List<ClubSearchResult> clubSearchResults = clubSearchRepository.searchRecommendClubs(club.getCategory(), clubId);
-
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(
-                club,clubSearchResults
+                club
         );
         return new ClubDetailedResponse(clubDetailedResult);
     }

@@ -1,8 +1,5 @@
 package moadong.club.entity;
 
-import java.util.List;
-import java.util.Map;
-
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -21,6 +18,9 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
+
+import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @Document("clubs")
@@ -46,6 +46,9 @@ public class Club implements Persistable<String> {
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
 
+    @Field("description")
+    private ClubDescription clubDescription;
+
     @Version
     private Long version;
     public Club() {
@@ -54,6 +57,7 @@ public class Club implements Persistable<String> {
         this.division = "";
         this.state = ClubState.UNAVAILABLE;
         this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
+        this.clubDescription = ClubDescription.builder().build();
     }
 
     public Club(String userId) {
@@ -63,6 +67,7 @@ public class Club implements Persistable<String> {
         this.state = ClubState.UNAVAILABLE;
         this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
         this.userId = userId;
+        this.clubDescription = ClubDescription.builder().build();
     }
 
     public Club(String id, String userId) {
@@ -73,6 +78,7 @@ public class Club implements Persistable<String> {
         this.state = ClubState.UNAVAILABLE;
         this.clubRecruitmentInformation = ClubRecruitmentInformation.builder().build();
         this.userId = userId;
+        this.clubDescription = ClubDescription.builder().build();
     }
 
     @Builder
@@ -82,6 +88,7 @@ public class Club implements Persistable<String> {
         this.category = category;
         this.division = division;
         this.clubRecruitmentInformation = clubRecruitmentInformation;
+        this.clubDescription = ClubDescription.builder().build();
     }
 
     public void update(ClubInfoRequest request) {
@@ -94,6 +101,7 @@ public class Club implements Persistable<String> {
         this.state = ClubState.AVAILABLE;
         this.socialLinks = request.socialLinks();
         this.clubRecruitmentInformation.update(request);
+        this.clubDescription = request.description().toEntity();
     }
 
     private void validateTags(List<String> tags) {
