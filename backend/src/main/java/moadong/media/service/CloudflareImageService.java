@@ -68,8 +68,8 @@ public class CloudflareImageService implements ClubImageService{
 
     @Override
     @Transactional
-    public void deleteLogo(String clubId) {
-        Club club = getClub(clubId);
+    public void deleteLogo(String clubId, String userId) {
+        Club club = getAuthorizedClub(clubId, userId);
         validateClubRecruitmentInformation(club);
 
         if (club.getClubRecruitmentInformation().getLogo() != null) {
@@ -81,8 +81,8 @@ public class CloudflareImageService implements ClubImageService{
 
     @Override
     @Transactional
-    public void updateFeeds(String clubId, List<String> newFeedImageList) {
-		Club club = getClub(clubId);
+    public void updateFeeds(String clubId, String userId, List<String> newFeedImageList) {
+		Club club = getAuthorizedClub(clubId, userId);
 		validateClubRecruitmentInformation(club);
 
 		if (newFeedImageList == null) {
@@ -109,10 +109,15 @@ public class CloudflareImageService implements ClubImageService{
 
     }
 
-    private Club getClub(String clubId) {
+    private Club getAuthorizedClub(String clubId, String userId) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
-        return clubRepository.findClubById(objectId)
+        Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        if (!club.getUserId().equals(userId)) {
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+        return club;
     }
 
     private void deleteFeedImages(Club club, List<String> feedImages, List<String> newFeedImages) {
@@ -153,8 +158,8 @@ public class CloudflareImageService implements ClubImageService{
 
     @Override
     @Transactional
-    public void deleteCover(String clubId) {
-        Club club = getClub(clubId);
+    public void deleteCover(String clubId, String userId) {
+        Club club = getAuthorizedClub(clubId, userId);
         validateClubRecruitmentInformation(club);
 
         if (club.getClubRecruitmentInformation().getCover() != null) {
@@ -165,14 +170,15 @@ public class CloudflareImageService implements ClubImageService{
     }
 
     @Override
-    public PresignedUploadResponse generateLogoUploadUrl(String clubId, String fileName, String contentType) {
+    public PresignedUploadResponse generateLogoUploadUrl(String clubId, String userId, String fileName, String contentType) {
+        getAuthorizedClub(clubId, userId);
         validateFileName(fileName);
         return generatePresignedUrl(clubId, fileName, contentType, FileType.LOGO);
     }
 
     @Override
-    public List<PresignedUploadResponse> generateFeedUploadUrls(String clubId, List<UploadUrlRequest> requests) {
-        Club club = getClub(clubId);
+    public List<PresignedUploadResponse> generateFeedUploadUrls(String clubId, String userId, List<UploadUrlRequest> requests) {
+        Club club = getAuthorizedClub(clubId, userId);
         validateClubRecruitmentInformation(club);
         int existingCount = (club.getClubRecruitmentInformation().getFeedImages() == null)
             ? 0
@@ -203,16 +209,17 @@ public class CloudflareImageService implements ClubImageService{
     }
 
     @Override
-    public PresignedUploadResponse generateCoverUploadUrl(String clubId, String fileName, String contentType) {
+    public PresignedUploadResponse generateCoverUploadUrl(String clubId, String userId, String fileName, String contentType) {
+        getAuthorizedClub(clubId, userId);
         validateFileName(fileName);
         return generatePresignedUrl(clubId, fileName, contentType, FileType.COVER);
     }
 
     @Override
     @Transactional
-    public void completeLogoUpload(String clubId, String fileUrl) {
+    public void completeLogoUpload(String clubId, String userId, String fileUrl) {
         validateFileConstraints(clubId, FileType.LOGO, fileUrl);
-        Club club = getClub(clubId);
+        Club club = getAuthorizedClub(clubId, userId);
         validateClubRecruitmentInformation(club);
 
         if (club.getClubRecruitmentInformation().getLogo() != null) {
@@ -225,9 +232,9 @@ public class CloudflareImageService implements ClubImageService{
 
     @Override
     @Transactional
-    public void completeCoverUpload(String clubId, String fileUrl) {
+    public void completeCoverUpload(String clubId, String userId, String fileUrl) {
         validateFileConstraints(clubId, FileType.COVER, fileUrl);
-        Club club = getClub(clubId);
+        Club club = getAuthorizedClub(clubId, userId);
         validateClubRecruitmentInformation(club);
 
         if (club.getClubRecruitmentInformation().getCover() != null) {
