@@ -2,6 +2,7 @@ package moadong.club.payload.dto;
 
 import lombok.Builder;
 import moadong.club.entity.Club;
+import moadong.club.entity.ClubDescription;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.entity.Faq;
 
@@ -19,7 +20,7 @@ public record ClubDetailedResult(
         String state,
         List<String> feeds,
         String introduction,
-        String description,
+        ClubDescription description,
         String presidentName,
         String presidentPhoneNumber,
         String recruitmentStart,
@@ -66,8 +67,7 @@ public record ClubDetailedResult(
                 .division(club.getDivision() == null ? "" : club.getDivision())
                 .introduction(clubRecruitmentInformation.getIntroduction() == null ? ""
                         : clubRecruitmentInformation.getIntroduction())
-                .description(club.getDescription() == null ? ""
-                        : club.getDescription())
+                .description(club.getDescription())
                 .presidentName(clubRecruitmentInformation.getPresidentName() == null ? ""
                         : clubRecruitmentInformation.getPresidentName())
                 .presidentPhoneNumber(

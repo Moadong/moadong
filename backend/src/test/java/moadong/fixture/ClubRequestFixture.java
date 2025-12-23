@@ -1,5 +1,7 @@
 package moadong.fixture;
 
+import moadong.club.entity.ClubDescription;
+import moadong.club.entity.Faq;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubDivision;
 import moadong.club.payload.request.ClubInfoRequest;
@@ -20,6 +22,8 @@ public class ClubRequestFixture {
                 List.of("개발", "스터디"),
                 "동아리 소개입니다.",
                 "홍길동",
+                ClubDescription.builder().build(),
+                List.of(),
                 "010-1234-5678",
                 Map.of("insta", "https://test")
         );
@@ -31,9 +35,7 @@ public class ClubRequestFixture {
                 Instant.now(),
                 Instant.now().plus(7, ChronoUnit.DAYS),
                 "테스트 대상",
-                "테스트 설명",
-                "https://fake-url.com",
-                List.of()
+                "https://fake-url.com"
         );
     }
     //ToDo: 시간 계산법을 LocalDateTime에서 Instant로 변경 후에 활성화할 것

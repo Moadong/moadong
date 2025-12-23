@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import moadong.club.entity.Faq;
+import moadong.club.entity.ClubDescription;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubDivision;
 import moadong.global.annotation.PhoneNumber;
@@ -17,7 +18,7 @@ public record ClubInfoRequest(
     List<String> tags,
     String introduction,
     String presidentName,
-    String description,
+    ClubDescription description,
     List<Faq> faqs,
     @PhoneNumber
     String presidentPhoneNumber,

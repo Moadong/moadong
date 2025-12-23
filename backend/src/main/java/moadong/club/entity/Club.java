@@ -46,7 +46,7 @@ public class Club implements Persistable<String> {
     @Field("recruitmentInformation")
     private ClubRecruitmentInformation clubRecruitmentInformation;
 
-    private String description;
+    private ClubDescription description;
 
     private List<Faq> faqs;
 
