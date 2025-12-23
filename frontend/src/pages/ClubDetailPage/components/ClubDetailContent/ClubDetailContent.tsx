@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import * as S from './ClubDetailContent.styles';
 
 export interface Award {
@@ -32,6 +33,15 @@ const ClubDetailContent = ({
   benefits,
   faqs,
 }: ClubDetailContentProps) => {
+  /* FAQ State */
+  const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([]);
+
+  const handleToggleFaq = (index: number) => {
+    setOpenFaqIndices((prev) =>
+      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
+    );
+  };
+
   return (
     <S.Container>
       {introDescription && (
@@ -83,6 +93,43 @@ const ClubDetailContent = ({
             <S.Text>{benefits}</S.Text>
           </S.TextContainer>
         </S.Section>
+      )}
+
+      {faqs && faqs.length > 0 && (
+        <S.FaqSection>
+          <S.FaqHeader>FAQ</S.FaqHeader>
+          <S.FaqList>
+            {faqs.map((faq, index) => {
+              const isOpen = openFaqIndices.includes(index);
+              return (
+                <S.FaqItem key={index}>
+                  <S.QuestionRow onClick={() => handleToggleFaq(index)}>
+                    <S.QuestionText>{faq.question}</S.QuestionText>
+                    <S.ArrowIcon
+                      $isOpen={isOpen}
+                      viewBox='0 0 24 24'
+                      fill='none'
+                      xmlns='http://www.w3.org/2000/svg'
+                    >
+                      <path
+                        d='M6 9L12 15L18 9'
+                        stroke='currentColor'
+                        strokeWidth='2'
+                        strokeLinecap='round'
+                        strokeLinejoin='round'
+                      />
+                    </S.ArrowIcon>
+                  </S.QuestionRow>
+                  {isOpen && (
+                    <S.AnswerContainer>
+                      <S.AnswerBox>{faq.answer}</S.AnswerBox>
+                    </S.AnswerContainer>
+                  )}
+                </S.FaqItem>
+              );
+            })}
+          </S.FaqList>
+        </S.FaqSection>
       )}
     </S.Container>
   );

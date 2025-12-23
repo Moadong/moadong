@@ -109,3 +109,110 @@ export const AwardItem = styled.li`
     ${setTypography(typography.paragraph.p6)};
   }
 `;
+
+export const FaqSection = styled.div`
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid ${colors.gray[300]};
+`;
+
+export const FaqHeader = styled.div`
+  padding: 16px;
+  border-radius: 14px;
+  background-color: ${colors.gray[100]};
+  ${setTypography(typography.title.title5)};
+  color: ${colors.gray[800]};
+
+  ${media.mobile} {
+    ${setTypography(typography.title.title7)};
+  }
+`;
+
+export const FaqList = styled.div`
+  display: flex;
+  flex-direction: column;
+`;
+
+export const FaqItem = styled.div`
+  display: flex;
+  flex-direction: column;
+
+  &:not(:last-child) {
+    border-bottom: 1px solid ${colors.gray[200]};
+  }
+`;
+
+export const QuestionRow = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 20px;
+  cursor: pointer;
+
+  ${media.mobile} {
+    padding: 16px;
+  }
+`;
+
+export const QuestionText = styled.span`
+  ${setTypography(typography.paragraph.p2)};
+  font-weight: 600;
+  color: ${colors.gray[800]};
+  display: flex;
+  gap: 8px;
+  text-align: left;
+  flex: 1;
+
+  &::before {
+    content: 'Q.';
+    color: ${colors.gray[800]};
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  ${media.mobile} {
+    ${setTypography(typography.paragraph.p6)};
+  }
+`;
+
+export const ArrowIcon = styled.svg<{ $isOpen: boolean }>`
+  width: 24px;
+  height: 24px;
+  color: ${colors.gray[400]};
+  transition: transform 0.3s ease;
+  transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
+  flex-shrink: 0;
+`;
+
+export const AnswerContainer = styled.div`
+  padding: 0 20px 20px 20px;
+
+  ${media.mobile} {
+    padding: 0 16px 16px 16px;
+  }
+`;
+
+export const AnswerBox = styled.div`
+  background-color: ${colors.gray[100]};
+  border-radius: 10px;
+  padding: 16px;
+  ${setTypography(typography.paragraph.p3)};
+  color: ${colors.gray[800]};
+  line-height: 1.5;
+  display: flex;
+  gap: 8px;
+
+  ${media.mobile} {
+    ${setTypography(typography.paragraph.p6)};
+    padding: 12px;
+  }
+
+  &::before {
+    content: 'A.';
+    font-weight: 700;
+    color: ${colors.gray[800]};
+    flex-shrink: 0;
+  }
+`;
