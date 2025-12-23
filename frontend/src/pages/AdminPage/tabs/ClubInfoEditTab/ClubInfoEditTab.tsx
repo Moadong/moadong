@@ -9,6 +9,7 @@ import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
+import ClubCoverEditor from '@/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
 import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
@@ -146,7 +147,7 @@ const ClubInfoEditTab = () => {
     <Styled.Container>
       <ContentSection>
         <ContentSection.Header
-          title='동아리 카드 정보 수정'
+          title='기본 정보 수정'
           action={
             <Button width={'150px'} animated onClick={handleUpdateClub}>
               저장하기
@@ -156,6 +157,7 @@ const ClubInfoEditTab = () => {
 
         <ContentSection.Body>
           <ClubLogoEditor clubLogo={clubDetail?.logo} />
+          <ClubCoverEditor coverImage={clubDetail?.cover} />
           <InputField
             label='동아리명'
             placeholder='동아리명'
