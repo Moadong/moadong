@@ -41,9 +41,8 @@ const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
       return;
     }
 
-    trackEvent(ADMIN_EVENT.CLUB_LOGO_UPLOAD_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.CLUB_COVER_UPLOAD_BUTTON_CLICKED);
     uploadMutation.mutate({ clubId, file });
-    console.log('Cover image upload:', file);
   };
 
   const triggerFileInput = () => {
@@ -59,9 +58,8 @@ const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
 
     if (!window.confirm('정말 커버 이미지를 기본 이미지로 되돌릴까요?')) return;
 
-    trackEvent(ADMIN_EVENT.CLUB_LOGO_RESET_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.CLUB_COVER_RESET_BUTTON_CLICKED);
     deleteMutation.mutate(clubId);
-    console.log('Cover image delete');
   };
 
   return (

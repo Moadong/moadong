@@ -45,6 +45,8 @@ export const ADMIN_EVENT = {
   FORGOT_PASSWORD_BUTTON_CLICKED: '비밀번호 찾기 버튼클릭',
 
   // 사이드바
+  CLUB_COVER_UPLOAD_BUTTON_CLICKED: '동아리 커버 업로드 버튼클릭',
+  CLUB_COVER_RESET_BUTTON_CLICKED: '동아리 커버 초기화 버튼클릭',
   CLUB_LOGO_UPLOAD_BUTTON_CLICKED: '동아리 로고 업로드 버튼클릭',
   CLUB_LOGO_EDIT_BUTTON_CLICKED: '동아리 로고 수정 버튼클릭',
   CLUB_LOGO_RESET_BUTTON_CLICKED: '동아리 로고 초기화 버튼클릭',
