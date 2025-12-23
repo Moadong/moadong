@@ -69,17 +69,18 @@ const ClubDetailContent = ({
           </Styled.TextContainer>
         </Styled.Section>
       )}
-
       {awards && awards.length > 0 && (
         <Styled.Section>
           <Styled.SectionTitle>🏆 동아리 수상</Styled.SectionTitle>
           <Styled.TextContainer>
-            {awards.map((award, index) => (
-              <Styled.AwardGroup key={index}>
+            {awards.map((award) => (
+              <Styled.AwardGroup key={award.semester}>
                 <Styled.SemesterBadge>{award.semester}</Styled.SemesterBadge>
                 <Styled.AwardList>
                   {award.achievements.map((item, idx) => (
-                    <Styled.AwardItem key={idx}>{item}</Styled.AwardItem>
+                    <Styled.AwardItem key={`${award.semester}-${idx}`}>
+                      {item}
+                    </Styled.AwardItem>
                   ))}
                 </Styled.AwardList>
               </Styled.AwardGroup>
@@ -113,7 +114,7 @@ const ClubDetailContent = ({
             {faqs.map((faq, index) => {
               const isOpen = openFaqIndices.includes(index);
               return (
-                <Styled.FaqItem key={index}>
+                <Styled.FaqItem key={faq.question}>
                   <Styled.QuestionRow onClick={() => handleToggleFaq(index)}>
                     <Styled.QuestionText>{faq.question}</Styled.QuestionText>
                     <Styled.ArrowIcon
