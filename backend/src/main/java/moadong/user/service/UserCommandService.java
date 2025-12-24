@@ -76,7 +76,7 @@ public class UserCommandService {
             ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(refreshToken.getToken());
             response.addHeader("Set-Cookie", cookie.toString());
 
-            user.updateRefreshToken(refreshToken);
+            user.addRefreshToken(refreshToken);
             userRepository.save(user);
             return new LoginResponse(accessToken, club.getId());
         } catch (MongoWriteException e) {
@@ -85,10 +85,10 @@ public class UserCommandService {
     }
 
     public void logoutUser(String refreshToken) {
-        User user = userRepository.findUserByRefreshToken_Token(refreshToken)
+        User user = userRepository.findUserByRefreshTokens_Token(refreshToken)
             .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
 
-        user.updateRefreshToken(null);
+        user.removeRefreshToken(refreshToken);
         userRepository.save(user);
     }
 
@@ -102,14 +102,25 @@ public class UserCommandService {
         User user = userRepository.findUserByUserId(userId)
             .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
 
-        if (!user.getRefreshToken().getToken().equals(refreshToken)
-            || jwtProvider.isTokenExpired(refreshToken)) {
+        if (jwtProvider.isTokenExpired(refreshToken)) {
+            throw new RestApiException(ErrorCode.TOKEN_INVALID);
+        }
+        boolean hasToken = false;
+        if (user.getRefreshTokens() != null) {
+            for (RefreshToken t : user.getRefreshTokens()) {
+                if (t.getToken().equals(refreshToken)) {
+                    hasToken = true;
+                    break;
+                }
+            }
+        }
+        if (!hasToken) {
             throw new RestApiException(ErrorCode.TOKEN_INVALID);
         }
         String accessToken = jwtProvider.generateAccessToken(userId);
         String newRefreshToken = jwtProvider.generateRefreshToken(userId).getToken();
 
-        user.updateRefreshToken(new RefreshToken(newRefreshToken, new Date()));
+        user.replaceRefreshToken(refreshToken, new RefreshToken(newRefreshToken, new Date()));
         userRepository.save(user);
 
         ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(newRefreshToken);
@@ -134,10 +145,13 @@ public class UserCommandService {
 
         user.updateUserProfile(userUpdateRequest.encryptPassword(passwordEncoder));
 
+        user.removeAllRefreshTokens();
+        RefreshToken newRefreshToken = jwtProvider.generateRefreshToken(user.getUsername());
+        user.addRefreshToken(newRefreshToken);
+
         userRepository.save(user);
 
-        String newRefreshToken = jwtProvider.generateRefreshToken(user.getUsername()).getToken();
-        ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(newRefreshToken);
+        ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(newRefreshToken.getToken());
         response.addHeader("Set-Cookie", cookie.toString());
     }
 
@@ -152,7 +166,7 @@ public class UserCommandService {
         //암호화
         user.resetPassword(passwordEncoder.encode(tempPwdResponse.tempPassword()));
 
-        user.updateRefreshToken(null);
+        user.removeAllRefreshTokens();
         userRepository.save(user);
 
         return tempPwdResponse;
