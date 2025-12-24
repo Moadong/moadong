@@ -102,9 +102,6 @@ public class UserCommandService {
         User user = userRepository.findUserByUserId(userId)
             .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
 
-        if (jwtProvider.isTokenExpired(refreshToken)) {
-            throw new RestApiException(ErrorCode.TOKEN_INVALID);
-        }
         boolean hasToken = false;
         if (user.getRefreshTokens() != null) {
             for (RefreshToken t : user.getRefreshTokens()) {
@@ -115,6 +112,9 @@ public class UserCommandService {
             }
         }
         if (!hasToken) {
+            throw new RestApiException(ErrorCode.TOKEN_INVALID);
+        }
+        if (jwtProvider.isTokenExpired(refreshToken)) {
             throw new RestApiException(ErrorCode.TOKEN_INVALID);
         }
         String accessToken = jwtProvider.generateAccessToken(userId);
