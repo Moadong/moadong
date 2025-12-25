@@ -1,3 +1,5 @@
+import { useNavigate } from 'react-router-dom';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
 import DefaultCover from '@/assets/images/logos/default_cover_image.png';
@@ -23,6 +25,12 @@ const ClubProfileCard = ({
   socialLinks,
   activityDescription,
 }: Props) => {
+  const navigate = useNavigate();
+
+  const handleBackClick = () => {
+    navigate(-1);
+  };
+
   const getSocialPlatformName = (platform: string) => {
     const names: Record<string, string> = {
       instagram: '인스타그램',
@@ -49,7 +57,12 @@ const ClubProfileCard = ({
   return (
     <Styled.Container>
       {/* 커버 이미지 */}
-      <Styled.CoverImage src={cover || DefaultCover} alt='클럽 커버' />
+      <Styled.CoverImageWrapper>
+        <Styled.BackButton onClick={handleBackClick} aria-label='뒤로가기'>
+          <img src={PrevButton} alt='' />
+        </Styled.BackButton>
+        <Styled.CoverImage src={cover || DefaultCover} alt='클럽 커버' />
+      </Styled.CoverImageWrapper>
 
       {/* 로고 */}
       <Styled.LogoWrapper>
