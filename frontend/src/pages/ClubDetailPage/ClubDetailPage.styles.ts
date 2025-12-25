@@ -34,12 +34,11 @@ export const RightSection = styled.div`
 
 export const TabList = styled.div`
   display: flex;
-  gap: 8px;
   margin-bottom: 16px;
   border-bottom: 1px solid ${colors.gray[200]};
 
   ${media.tablet} {
-    padding-left: 20px;
+    padding: 0 20px;
   }
 
   ${media.mobile} {
@@ -63,6 +62,11 @@ export const TabButton = styled.button<{ $active: boolean }>`
   &:hover {
     color: ${colors.gray[800]};
     border-bottom: 2px solid ${colors.gray[800]};
+  }
+
+  ${media.tablet} {
+    flex: 1;
+    width: auto;
   }
 `;
 
