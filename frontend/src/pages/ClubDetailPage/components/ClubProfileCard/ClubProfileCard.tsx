@@ -70,7 +70,10 @@ const ClubProfileCard = ({
             const icon = getSocialIcon(platform);
             if (!icon) return null;
 
-            const username = url.split('/').filter(Boolean).pop() || '';
+            const username = (() => {
+              const lastSegment = url.split('/').filter(Boolean).pop() || '';
+              return lastSegment.split('?')[0].split('#')[0];
+            })();
             const displayName = `@${username}`;
 
             return (
