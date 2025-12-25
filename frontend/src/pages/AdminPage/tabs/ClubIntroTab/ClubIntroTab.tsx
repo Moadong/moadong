@@ -72,7 +72,7 @@ const ClubIntroTab = () => {
       },
     };
 
-    updateClub(updatedData as any, {
+    updateClub(updatedData, {
       onSuccess: () => {
         alert('동아리 상세 정보가 성공적으로 수정되었습니다.');
         queryClient.invalidateQueries({
