@@ -51,6 +51,9 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
       <Styled.ModalContent onClick={(e) => e.stopPropagation()}>
         <Styled.ModalHeader>
           <Styled.ClubName>{clubName}</Styled.ClubName>
+          <Styled.ImageCounter>
+            {currentIndex + 1} / {urls.length}
+          </Styled.ImageCounter>
           <Styled.CloseButton onClick={onClose} aria-label='닫기'>
             ×
           </Styled.CloseButton>
