@@ -53,7 +53,7 @@ const ClubIntroContent = ({
 
   return (
     <Styled.Container>
-      {activityDescription && (
+      {activityDescription?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>이런 활동을 해요</Styled.SectionTitle>
           <Styled.TextContainer>
@@ -63,7 +63,7 @@ const ClubIntroContent = ({
       )}
       {awards && awards.length > 0 && (
         <Styled.Section>
-          <Styled.SectionTitle>🏆 동아리 수상</Styled.SectionTitle>
+          <Styled.SectionTitle>🏆 동아리 성과</Styled.SectionTitle>
           <Styled.TextContainer>
             {awards.map((award) => (
               <Styled.AwardGroup key={award.semester}>
@@ -81,7 +81,7 @@ const ClubIntroContent = ({
         </Styled.Section>
       )}
 
-      {idealCandidate && (
+      {idealCandidate?.content?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>이런 사람이 오면 좋아요</Styled.SectionTitle>
           <Styled.TextContainer>
@@ -90,7 +90,7 @@ const ClubIntroContent = ({
         </Styled.Section>
       )}
 
-      {benefits && (
+      {benefits?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>동아리 부원이 가지는 혜택</Styled.SectionTitle>
           <Styled.TextContainer>
