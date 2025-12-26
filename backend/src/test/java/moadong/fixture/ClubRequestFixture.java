@@ -1,9 +1,14 @@
 package moadong.fixture;
 
+import moadong.club.entity.ClubDescription;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubDivision;
+import moadong.club.payload.dto.ClubDescriptionDto;
 import moadong.club.payload.request.ClubInfoRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.List;
 import java.util.Map;
 
@@ -16,10 +21,20 @@ public class ClubRequestFixture {
                 List.of("개발", "스터디"),
                 "동아리 소개입니다.",
                 "홍길동",
+                ClubDescriptionDto.from(ClubDescription.builder().build()),
                 "010-1234-5678",
                 Map.of("insta", "https://test")
         );
 
+    }
+
+    public static ClubRecruitmentInfoUpdateRequest defaultRequest() {
+        return new ClubRecruitmentInfoUpdateRequest(
+                Instant.now(),
+                Instant.now().plus(7, ChronoUnit.DAYS),
+                "테스트 대상",
+                "https://fake-url.com"
+        );
     }
     //ToDo: 시간 계산법을 LocalDateTime에서 Instant로 변경 후에 활성화할 것
 //    public static ClubRecruitmentInfoUpdateRequest createValidRequest() {

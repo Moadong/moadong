@@ -2,8 +2,12 @@ package moadong.user.entity;
 
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -51,8 +55,9 @@ public class User implements UserDetails {
 
     private Date lastLoginAt;
 
-    @Field("refreshToken")
-    private RefreshToken refreshToken;
+    @Builder.Default
+    @Field("refreshTokens")
+    private List<RefreshToken> refreshTokens = new ArrayList<>();
 
     @Field("userInformation")
     private UserInformation userInformation;
@@ -92,8 +97,38 @@ public class User implements UserDetails {
         this.clubId = clubId;
     }
 
-    public void updateRefreshToken(RefreshToken refreshToken) {
-        this.refreshToken = refreshToken;
+    public void addRefreshToken(RefreshToken refreshToken) {
+        if (this.refreshTokens == null) {
+            this.refreshTokens = new ArrayList<>();
+        }
+        this.refreshTokens.add(refreshToken);
     }
 
+    public void replaceRefreshToken(String oldToken, RefreshToken newToken) {
+        if (this.refreshTokens == null) {
+            this.refreshTokens = new ArrayList<>();
+            return;
+        }
+        for (int i = 0; i < this.refreshTokens.size(); i++) {
+            if (this.refreshTokens.get(i).getToken().equals(oldToken)) {
+                this.refreshTokens.set(i, newToken);
+                return;
+            }
+        }
+    }
+
+    public void removeRefreshToken(String refreshToken) {
+        if (this.refreshTokens == null) {
+            return;
+        }
+        this.refreshTokens.removeIf(t -> t.getToken().equals(refreshToken));
+    }
+
+    public void removeAllRefreshTokens() {
+        if (this.refreshTokens == null) {
+            this.refreshTokens = new ArrayList<>();
+            return;
+        }
+        this.refreshTokens.clear();
+    }
 }

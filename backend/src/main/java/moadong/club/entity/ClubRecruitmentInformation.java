@@ -6,10 +6,6 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -18,6 +14,12 @@ import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter
@@ -38,9 +40,6 @@ public class ClubRecruitmentInformation {
     @Column(length = 30)
     private String introduction;
 
-    @Column(length = 20000)
-    private String description;
-
     @Column(length = 5)
     private String presidentName;
 
@@ -48,9 +47,9 @@ public class ClubRecruitmentInformation {
     @Column(length = 13)
     private String presidentTelephoneNumber;
 
-    private LocalDateTime recruitmentStart;
+    private Instant recruitmentStart;
 
-    private LocalDateTime recruitmentEnd;
+    private Instant recruitmentEnd;
 
     private String recruitmentTarget;
 
@@ -60,11 +59,11 @@ public class ClubRecruitmentInformation {
 
     private List<String> tags;
 
-    private List<Faq> faqs;
-
     @Enumerated(EnumType.STRING)
     @NotNull
     private ClubRecruitmentStatus clubRecruitmentStatus;
+
+    private LocalDateTime lastModifiedDate;
 
     public void updateLogo(String logo) {
         this.logo = logo;
@@ -75,12 +74,10 @@ public class ClubRecruitmentInformation {
     }
 
     public void updateDescription(ClubRecruitmentInfoUpdateRequest request) {
-        this.description = request.description();
         this.recruitmentStart = request.recruitmentStart();
         this.recruitmentEnd = request.recruitmentEnd();
         this.recruitmentTarget = request.recruitmentTarget();
         this.externalApplicationUrl = request.externalApplicationUrl();
-        this.faqs = request.faqs();
     }
 
     public boolean hasRecruitmentPeriod() {
@@ -120,5 +117,13 @@ public class ClubRecruitmentInformation {
 
     public void updateCover(String cover) {
         this.cover = cover;
+    }
+
+    private void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public void updateLastModifiedDate() {
+        setLastModifiedDate(LocalDateTime.now());
     }
 }

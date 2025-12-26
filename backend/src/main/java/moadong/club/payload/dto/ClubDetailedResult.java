@@ -1,12 +1,12 @@
 package moadong.club.payload.dto;
 
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
 import lombok.Builder;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
-import moadong.club.entity.Faq;
+
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+import java.util.Map;
 
 @Builder
 public record ClubDetailedResult(
@@ -18,27 +18,35 @@ public record ClubDetailedResult(
         String state,
         List<String> feeds,
         String introduction,
-        String description,
+        ClubDescriptionDto description,
         String presidentName,
         String presidentPhoneNumber,
-        String recruitmentPeriod,
+        String recruitmentStart,
+        String recruitmentEnd,
         String recruitmentTarget,
         String recruitmentStatus,
         String externalApplicationUrl,
         Map<String, String> socialLinks,
         String category,
         String division,
-        List<Faq> faqs,
-        List<ClubSearchResult> recommendClubs
+        String lastModifiedDate
 ) {
 
-    public static ClubDetailedResult of(Club club, List<ClubSearchResult> recommendClubs) {
-        String period = "미정";
+    public static ClubDetailedResult of(Club club) {
         ClubRecruitmentInformation clubRecruitmentInformation = club.getClubRecruitmentInformation();
+
+        String start = "미정";
+        String end = "미정";
         if (clubRecruitmentInformation.hasRecruitmentPeriod()) {
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
-            period = clubRecruitmentInformation.getRecruitmentStart().format(formatter) + " ~ "
-                    + clubRecruitmentInformation.getRecruitmentEnd().format(formatter);
+            start = clubRecruitmentInformation.getRecruitmentStart().format(formatter);
+            end = clubRecruitmentInformation.getRecruitmentEnd().format(formatter);
+        }
+
+        String lastModifiedDate = "";
+        if (club.getClubRecruitmentInformation().getLastModifiedDate() != null) {
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
+            lastModifiedDate = club.getClubRecruitmentInformation().getLastModifiedDate().format(formatter);
         }
         return ClubDetailedResult.builder()
                 .id(club.getId() == null ? "" : club.getId())
@@ -56,25 +64,23 @@ public record ClubDetailedResult(
                 .division(club.getDivision() == null ? "" : club.getDivision())
                 .introduction(clubRecruitmentInformation.getIntroduction() == null ? ""
                         : clubRecruitmentInformation.getIntroduction())
-                .description(clubRecruitmentInformation.getDescription() == null ? ""
-                        : clubRecruitmentInformation.getDescription())
+                .description(ClubDescriptionDto.from(club.getClubDescription()))
                 .presidentName(clubRecruitmentInformation.getPresidentName() == null ? ""
                         : clubRecruitmentInformation.getPresidentName())
                 .presidentPhoneNumber(
                         clubRecruitmentInformation.getPresidentTelephoneNumber() == null ? ""
                                 : clubRecruitmentInformation.getPresidentTelephoneNumber())
-                .recruitmentPeriod(period)
+                .recruitmentStart(start)
+                .recruitmentEnd(end)
                 .recruitmentTarget(clubRecruitmentInformation.getRecruitmentTarget() == null ? ""
                         : clubRecruitmentInformation.getRecruitmentTarget())
                 .recruitmentStatus(clubRecruitmentInformation.getClubRecruitmentStatus() == null
-                        ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().getDescription())
+                        ? "" : clubRecruitmentInformation.getClubRecruitmentStatus().toString())
                 .externalApplicationUrl(club.getClubRecruitmentInformation().getExternalApplicationUrl() == null ? "" :
                         club.getClubRecruitmentInformation().getExternalApplicationUrl())
                 .socialLinks(club.getSocialLinks() == null ? Map.of()
                         : club.getSocialLinks())
-                .faqs(club.getClubRecruitmentInformation().getFaqs() == null ? List.of()
-                        : club.getClubRecruitmentInformation().getFaqs())
-                .recommendClubs(recommendClubs)
+                .lastModifiedDate(lastModifiedDate)
                 .build();
     }
 

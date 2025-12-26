@@ -23,7 +23,6 @@ public class ClubFixture {
             String id,
             String logo,
             String introduction,
-            String description,
             String presidentName,
             String presidentTelephoneNumber,
             LocalDateTime recruitmentStart,
@@ -34,7 +33,6 @@ public class ClubFixture {
         when(clubRecruitmentInfo.getId()).thenReturn(id);
         when(clubRecruitmentInfo.getLogo()).thenReturn(logo);
         when(clubRecruitmentInfo.getIntroduction()).thenReturn(introduction);
-        when(clubRecruitmentInfo.getDescription()).thenReturn(description);
         when(clubRecruitmentInfo.getPresidentName()).thenReturn(presidentName);
         when(clubRecruitmentInfo.getPresidentTelephoneNumber()).thenReturn(presidentTelephoneNumber);
         when(clubRecruitmentInfo.getRecruitmentStart()).thenReturn(ZonedDateTime.from(recruitmentStart));

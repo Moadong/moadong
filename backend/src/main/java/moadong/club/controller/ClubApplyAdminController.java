@@ -3,6 +3,7 @@ package moadong.club.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
@@ -69,6 +70,16 @@ public class ClubApplyAdminController {
         return Response.ok(clubApplyAdminService.getClubApplicationForms(user));
     }
 
+    @DeleteMapping("/application/{applicationFormId}")
+    @Operation(summary = "클럽 지원서 양식 삭제", description = "클럽의 지원서 양식을 삭제합니다")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> deleteClubApplicationForm(@PathVariable String applicationFormId,
+                                                       @CurrentUser CustomUserDetails user) {
+        clubApplyAdminService.deleteClubApplicationForm(applicationFormId, user);
+        return Response.ok("success delete application");
+    }
+
     @GetMapping("/apply/info/{applicationFormId}")
     @Operation(summary = "클럽 지원자 현황", description = "클럽 지원자 현황을 불러옵니다")
     @PreAuthorize("isAuthenticated()")
@@ -105,13 +116,16 @@ public class ClubApplyAdminController {
         return Response.ok("success delete applicant");
     }
 
-    @GetMapping(value = "/applicant/{applicationFormId}/events",produces = "text/event-stream")
-    @Operation(summary = "지원자 상태 변경 실시간 이벤트", 
-               description = "지원자의 상태 변경을 실시간으로 받아볼 수 있는 SSE 엔드포인트입니다.")
+    @GetMapping(value = "/applicant/{applicationFormId}/events", produces = "text/event-stream")
+    @Operation(summary = "지원자 상태 변경 실시간 이벤트",
+            description = "지원자의 상태 변경을 실시간으로 받아볼 수 있는 SSE 엔드포인트입니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
-    public SseEmitter getApplicantStatusEvents(@PathVariable String applicationFormId,
+    public SseEmitter getApplicantStatusEvents(HttpServletResponse response,
+                                               @PathVariable String applicationFormId,
                                                @CurrentUser CustomUserDetails user) {
+        response.addHeader("X-Accel-Buffering", "no");
+        response.addHeader("Cache-Control", "no-cache");
         return clubApplyAdminService.createSseConnection(applicationFormId, user);
     }
 

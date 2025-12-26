@@ -2,21 +2,27 @@ package moadong.media.service;
 
 import java.util.List;
 import moadong.club.entity.Club;
-import org.springframework.web.multipart.MultipartFile;
+import moadong.media.dto.PresignedUploadResponse;
+import moadong.media.dto.UploadUrlRequest;
 
 public interface ClubImageService {
 
-    String uploadLogo(String clubId, MultipartFile file);
+    void deleteLogo(String clubId, String userId);
 
-    void deleteLogo(String clubId);
-
-    String uploadFeed(String clubId, MultipartFile file);
-
-    void updateFeeds(String clubId, List<String> newFeedImageList);
+    void updateFeeds(String clubId, String userId, List<String> newFeedImageList);
 
     void deleteFile(Club club, String filePath);
 
-    String uploadCover(String clubId, MultipartFile file);
+    void deleteCover(String clubId, String userId);
 
-    void deleteCover(String clubId);
+    // Presigned URL 방식 메서드
+    PresignedUploadResponse generateLogoUploadUrl(String clubId, String userId, String fileName, String contentType);
+
+    List<PresignedUploadResponse> generateFeedUploadUrls(String clubId, String userId, List<UploadUrlRequest> requests);
+
+    PresignedUploadResponse generateCoverUploadUrl(String clubId, String userId, String fileName, String contentType);
+
+    void completeLogoUpload(String clubId, String userId, String fileUrl);
+
+    void completeCoverUpload(String clubId, String userId, String fileUrl);
 }

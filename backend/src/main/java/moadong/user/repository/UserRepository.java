@@ -9,5 +9,5 @@ import org.springframework.stereotype.Repository;
 public interface UserRepository extends MongoRepository<User, String> {
     Optional<User> findUserByUserId(String userId);
 
-    Optional<User> findUserByRefreshToken_Token(String token);
+    Optional<User> findUserByRefreshTokens_Token(String token);
 }
