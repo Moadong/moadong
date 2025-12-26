@@ -42,7 +42,7 @@ const ClubDetailPage = () => {
             cover={clubDetail.cover}
             recruitmentStatus={clubDetail.recruitmentStatus}
             socialLinks={clubDetail.socialLinks}
-            activityDescription={clubDetail.description.activityDescription}
+            introDescription={clubDetail.description.introDescription}
           />
 
           <Styled.RightSection>
