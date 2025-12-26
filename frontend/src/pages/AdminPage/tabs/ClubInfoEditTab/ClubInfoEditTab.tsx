@@ -8,8 +8,8 @@ import { SNS_CONFIG } from '@/constants/snsConfig';
 import { useUpdateClubDetail } from '@/hooks/queries/club/useUpdateClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
-import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
 import ClubCoverEditor from '@/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor';
+import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
 import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
@@ -119,7 +119,6 @@ const ClubInfoEditTab = () => {
     }
 
     const updatedData = {
-      id: clubDetail.id,
       name: clubName,
       category: selectedCategory,
       division: selectedDivision,
@@ -128,6 +127,7 @@ const ClubInfoEditTab = () => {
       presidentName: clubPresidentName,
       presidentPhoneNumber: telephoneNumber,
       socialLinks: socialLinks,
+      description: clubDetail.description,
     };
 
     updateClub(updatedData, {
