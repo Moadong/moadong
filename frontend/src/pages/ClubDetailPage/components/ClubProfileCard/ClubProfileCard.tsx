@@ -14,7 +14,7 @@ interface Props {
   cover?: string;
   recruitmentStatus: string;
   socialLinks: Record<SNSPlatform, string>;
-  activityDescription: string;
+  introDescription: string;
 }
 
 const ClubProfileCard = ({
@@ -23,7 +23,7 @@ const ClubProfileCard = ({
   cover,
   recruitmentStatus,
   socialLinks,
-  activityDescription,
+  introDescription,
 }: Props) => {
   const navigate = useNavigate();
 
@@ -110,7 +110,7 @@ const ClubProfileCard = ({
         <Styled.IntroSection>
           <Styled.IntroTitle>{name}를 소개할게요</Styled.IntroTitle>
           <Styled.IntroDescription>
-            {activityDescription}
+            {introDescription}
           </Styled.IntroDescription>
         </Styled.IntroSection>
       </Styled.Content>
