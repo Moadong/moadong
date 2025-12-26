@@ -1,5 +1,10 @@
+import {
+  fade,
+  fadeUp,
+  stagger,
+  VIEWPORT_CONFIG,
+} from '@/pages/IntroducePage/constants/animations';
 import * as Styled from './QuestionSection.styles';
-import { stagger, fade, fadeUp, VIEWPORT_CONFIG } from '@/pages/IntroducePage/constants/animations';
 
 const QuestionSection = () => {
   return (

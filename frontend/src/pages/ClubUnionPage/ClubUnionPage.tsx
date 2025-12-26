@@ -1,11 +1,11 @@
-import Header from '@/components/common/Header/Header';
-import * as Styled from './ClubUnionPage.styles';
-import useTrackPageView from '@/hooks/useTrackPageView';
-import { CLUB_UNION_MEMBERS } from '@/constants/CLUB_UNION_INFO';
-import { PageContainer } from '@/styles/PageContainer.styles';
 import Footer from '@/components/common/Footer/Footer';
-import isInAppWebView from '@/utils/isInAppWebView';
+import Header from '@/components/common/Header/Header';
+import { CLUB_UNION_MEMBERS } from '@/constants/CLUB_UNION_INFO';
 import { PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/useTrackPageView';
+import { PageContainer } from '@/styles/PageContainer.styles';
+import isInAppWebView from '@/utils/isInAppWebView';
+import * as Styled from './ClubUnionPage.styles';
 
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);

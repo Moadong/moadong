@@ -14,12 +14,11 @@ export const applyToClub = async (
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify({ 
-          questions: [
-            ...answers
-          ]
-         }),
-      });
+        body: JSON.stringify({
+          questions: [...answers],
+        }),
+      },
+    );
 
     if (!response.ok) {
       throw new Error('답변 제출에 실패했습니다.');

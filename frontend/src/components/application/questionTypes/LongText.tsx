@@ -1,8 +1,8 @@
-import QuestionTitle from '@/components/application/QuestionTitle/QuestionTitle';
 import QuestionDescription from '@/components/application/QuestionDescription/QuestionDescription';
+import QuestionTitle from '@/components/application/QuestionTitle/QuestionTitle';
+import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import { TextProps } from '@/types/application';
-import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 
 const LongText = ({
   id,

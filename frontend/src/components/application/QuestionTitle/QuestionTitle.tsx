@@ -1,7 +1,7 @@
-import * as Styled from './QuestionTitle.styles';
+import { useLayoutEffect, useRef } from 'react';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import useDevice from '@/hooks/useDevice';
-import { useLayoutEffect, useRef } from 'react';
+import * as Styled from './QuestionTitle.styles';
 
 interface QuestionTitleProps {
   id: number;

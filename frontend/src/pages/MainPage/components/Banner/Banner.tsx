@@ -1,26 +1,27 @@
 import { useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
+import { Autoplay, Navigation } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import NextButton from '@/assets/images/icons/next_button_icon.svg';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import { USER_EVENT } from '@/constants/eventName';
+import useDevice from '@/hooks/useDevice';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useNavigator from '@/hooks/useNavigator';
 import * as Styled from './Banner.styles';
 import BANNERS from './bannerData';
-import useDevice from '@/hooks/useDevice';
-import useNavigator from '@/hooks/useNavigator';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { USER_EVENT } from '@/constants/eventName';
-import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
-import NextButton from '@/assets/images/icons/next_button_icon.svg';
-
 
 const APP_STORE_LINKS = {
   ios: 'itms-apps://itunes.apple.com/app/6755062085',
-  android: 'https://play.google.com/store/apps/details?id=com.moadong.moadong&pcampaignid=web_share',
-  default: 'https://play.google.com/store/apps/details?id=com.moadong.moadong&pcampaignid=web_share',
+  android:
+    'https://play.google.com/store/apps/details?id=com.moadong.moadong&pcampaignid=web_share',
+  default:
+    'https://play.google.com/store/apps/details?id=com.moadong.moadong&pcampaignid=web_share',
 };
 
 const getAppStoreLink = (): string => {
   const userAgent = navigator.userAgent.toLowerCase();
-  
+
   if (/iphone|ipad|ipod|macintosh/.test(userAgent)) {
     return APP_STORE_LINKS.ios;
   }
@@ -45,7 +46,11 @@ const Banner = () => {
     swiperInstance?.slideNext();
   };
 
-  const handleBannerClick = (bannerId: string, bannerName: string, url?: string) => {
+  const handleBannerClick = (
+    bannerId: string,
+    bannerName: string,
+    url?: string,
+  ) => {
     if (!url) return;
 
     if (url === 'APP_STORE_LINK') {
@@ -53,13 +58,21 @@ const Banner = () => {
       trackEvent(USER_EVENT.APP_DOWNLOAD_BANNER_CLICKED, {
         bannerId,
         bannerName,
-        platform: /iphone|ipad|ipod|macintosh/.test(navigator.userAgent.toLowerCase()) ? 'ios' : 'android',
+        platform: /iphone|ipad|ipod|macintosh/.test(
+          navigator.userAgent.toLowerCase(),
+        )
+          ? 'ios'
+          : 'android',
       });
       handleLink(storeLink);
       return;
     }
 
-    trackEvent(USER_EVENT.BANNER_CLICKED, { bannerId, bannerName, linkTo: url });
+    trackEvent(USER_EVENT.BANNER_CLICKED, {
+      bannerId,
+      bannerName,
+      linkTo: url,
+    });
     handleLink(url);
   };
 
@@ -90,7 +103,9 @@ const Banner = () => {
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
                 isClickable={!!banner.linkTo}
-                onClick={() => handleBannerClick(banner.id, banner.alt, banner.linkTo)}
+                onClick={() =>
+                  handleBannerClick(banner.id, banner.alt, banner.linkTo)
+                }
               >
                 <img
                   src={isMobile ? banner.mobileImage : banner.desktopImage}

@@ -1,7 +1,7 @@
-import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { media } from '@/styles/mediaQuery';
+import styled from 'styled-components';
 import ClubTag from '@/components/ClubTag/ClubTag';
+import { media } from '@/styles/mediaQuery';
 
 export const FeatureSection = styled(motion.section)`
   width: 100%;

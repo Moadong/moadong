@@ -9,7 +9,9 @@ const useNavigator = () => {
       const trimmedUrl = url?.trim();
       if (!trimmedUrl) return;
 
-      const isDangerousProtocol = /^(javascript|data|vbscript):/i.test(trimmedUrl);
+      const isDangerousProtocol = /^(javascript|data|vbscript):/i.test(
+        trimmedUrl,
+      );
       if (isDangerousProtocol) return;
 
       const isExternalUrl = /^(https?|itms-apps):\/\//.test(trimmedUrl);

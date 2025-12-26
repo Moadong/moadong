@@ -1,21 +1,21 @@
 import { useEffect, useRef, useState } from 'react';
-import { PageContainer } from '@/styles/PageContainer.styles';
-import Header from '@/components/common/Header/Header';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import useTrackPageView from '@/hooks/useTrackPageView';
-import { useAnswers } from '@/hooks/useAnswers';
-import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
-import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
-import { Question } from '@/types/application';
-import Spinner from '@/components/common/Spinner/Spinner';
 import applyToClub from '@/apis/application/applyToClub';
-import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
-import { parseDescriptionWithLinks } from '@/utils/parseDescriptionWithLinks';
-import { validateAnswers } from '@/hooks/useValidateAnswers';
-import * as Styled from './ApplicationFormPage.styles';
+import Header from '@/components/common/Header/Header';
+import Spinner from '@/components/common/Spinner/Spinner';
+import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
+import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import { useAnswers } from '@/hooks/useAnswers';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { USER_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/useTrackPageView';
+import { validateAnswers } from '@/hooks/useValidateAnswers';
+import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
+import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
+import { PageContainer } from '@/styles/PageContainer.styles';
+import { Question } from '@/types/application';
+import { parseDescriptionWithLinks } from '@/utils/parseDescriptionWithLinks';
+import * as Styled from './ApplicationFormPage.styles';
 
 const ApplicationFormPage = () => {
   const { clubId, applicationFormId } = useParams<{

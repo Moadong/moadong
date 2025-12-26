@@ -1,8 +1,8 @@
 import typescript from '@typescript-eslint/eslint-plugin';
 import parser from '@typescript-eslint/parser';
+import configPrettier from 'eslint-config-prettier';
 import react from 'eslint-plugin-react';
 import storybook from 'eslint-plugin-storybook';
-import configPrettier from 'eslint-config-prettier';
 
 const config = [
   {

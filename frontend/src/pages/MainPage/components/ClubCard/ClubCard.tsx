@@ -1,13 +1,13 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
-import ClubTag from '@/components/ClubTag/ClubTag';
+import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
 import ClubLogo from '@/components/ClubLogo/ClubLogo';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
-import * as Styled from './ClubCard.styles';
-import { Club } from '@/types/club';
-import { useNavigate } from 'react-router-dom';
-import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
+import ClubTag from '@/components/ClubTag/ClubTag';
 import { USER_EVENT } from '@/constants/eventName';
+import { Club } from '@/types/club';
+import * as Styled from './ClubCard.styles';
 
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();

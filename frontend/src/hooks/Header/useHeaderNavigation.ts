@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSearchStore } from '@/store/useSearchStore';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { useSearchStore } from '@/store/useSearchStore';
 
 const useHeaderNavigation = () => {
   const navigate = useNavigate();
@@ -36,10 +36,10 @@ const useHeaderNavigation = () => {
     trackEvent(USER_EVENT.PATCH_NOTE_BUTTON_CLICKED);
   }, [trackEvent]);
 
-  const handleAdminClick = useCallback(()=>{
+  const handleAdminClick = useCallback(() => {
     navigate('/admin');
     trackEvent(USER_EVENT.ADMIN_BUTTON_CLICKED);
-  },[navigate, trackEvent]);
+  }, [navigate, trackEvent]);
 
   return {
     handleHomeClick,

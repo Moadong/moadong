@@ -1,5 +1,5 @@
-import styled from 'styled-components';
 import { motion } from 'framer-motion';
+import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 
 export const IntroSection = styled(motion.section)`

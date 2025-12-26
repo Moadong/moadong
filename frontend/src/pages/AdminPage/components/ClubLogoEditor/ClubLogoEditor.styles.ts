@@ -1,81 +1,83 @@
 import styled from 'styled-components';
 
+export const Label = styled.label`
+  display: block;
+  padding: 0 4px;
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+`;
+
+export const ContentWrapper = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 16px;
+`;
+
 export const ClubLogoWrapper = styled.div`
   position: relative;
-  width: 168px;
-  height: 168px;
+  width: 100px;
+  height: 100px;
 `;
 
 export const ClubLogo = styled.img`
-  width: 168px;
-  height: 168px;
+  width: 100px;
+  height: 100px;
   background: #ededed;
-  border-radius: 10px;
+  border-radius: 20px;
   object-fit: cover;
 `;
 
-export const EditButton = styled.button`
-  position: absolute;
-  bottom: 8px;
-  right: 8px;
-  width: 32px;
-  height: 32px;
-  background: transparent;
-  border: none;
-  outline: none;
-  border-radius: 50%;
+export const ButtonTextGroup = styled.div`
   display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
+  flex-direction: column;
+  gap: 6px;
 `;
 
-export const EditMenu = styled.div`
-  position: absolute;
-  left: 100%;
-  transform: translateY(-50%);
-  margin-left: 8px;
-  background: #fff;
-  box-shadow: 0 4px 20px 0 rgba(0, 0, 0, 0.4);
-  border-radius: 18px;
-  overflow: hidden;
-  min-width: 160px;
-  z-index: 2;
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 6px;
 `;
 
-export const EditMenuItem = styled.button`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px 16px;
+export const UploadButton = styled.button`
+  padding: 10px 20px;
+  border: 1px solid #ff6b35;
+  border-radius: 80px;
   background: white;
-  border: none;
-  font-size: 16px;
-  color: #333;
+  color: #ff6b35;
+  font-size: 12px;
+  line-height: 140%;
+  font-weight: 600;
   cursor: pointer;
-  transition: background-color 0.2s;
+  transition: all 0.2s;
 
   &:hover {
-    background-color: #f1f1f1;
-  }
-
-  img {
-    width: 15px;
-    height: 15px;
+    background: #ff6b35;
+    color: white;
   }
 `;
 
-export const Divider = styled.div`
-  width: 90%;
-  height: 1px;
-  background: rgba(0, 0, 0, 0.12);
-  margin: 0 auto;
+export const ResetButton = styled.button`
+  padding: 10px 20px;
+  border: 1px solid #999;
+  border-radius: 80px;
+  background: white;
+  color: #999;
+  font-size: 12px;
+  line-height: 140%;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    background: #999;
+    color: white;
+  }
+`;
+
+export const HelpText = styled.p`
+  font-size: 12px;
+  color: #c5c5c5;
 `;
 
 export const HiddenFileInput = styled.input`

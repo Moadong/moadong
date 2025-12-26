@@ -1,16 +1,14 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import * as Styled from './Header.styles';
-
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { USER_EVENT } from '@/constants/eventName';
-
-import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
-import AdminProfile from '@/components/common/Header/admin/AdminProfile';
-import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
-import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
+import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
+import AdminProfile from '@/components/common/Header/admin/AdminProfile';
+import { USER_EVENT } from '@/constants/eventName';
+import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { useScroll } from '@/hooks/useScroll';
+import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
+import * as Styled from './Header.styles';
 
 const Header = () => {
   const trackEvent = useMixpanelTrack();

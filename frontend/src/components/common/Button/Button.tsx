@@ -1,4 +1,4 @@
-import styled, { keyframes, css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 export interface ButtonProps {
   width?: string;
@@ -30,8 +30,8 @@ const StyledButton = styled.button<ButtonProps>`
   &:hover {
     background-color: #333333;
     ${({ animated }) =>
-    animated &&
-    css`
+      animated &&
+      css`
         animation: ${pulse} 0.4s ease-in-out;
       `}
   }
@@ -39,7 +39,7 @@ const StyledButton = styled.button<ButtonProps>`
   &:active {
     transform: ${({ animated }) => (animated ? 'scale(0.95)' : 'none')};
   }
-    
+
   &:disabled {
     background-color: #cccccc; /* 비활성화된 느낌의 회색 */
     color: #666666;
@@ -54,9 +54,15 @@ const Button = ({
   onClick,
   type,
   animated = false,
-  disabled = false
+  disabled = false,
 }: ButtonProps) => (
-  <StyledButton width={width} onClick={onClick} animated={animated} type={type} disabled={disabled}>
+  <StyledButton
+    width={width}
+    onClick={onClick}
+    animated={animated}
+    type={type}
+    disabled={disabled}
+  >
     {children}
   </StyledButton>
 );

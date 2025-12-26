@@ -1,5 +1,5 @@
-import API_BASE_URL from '@/constants/api';
 import { secureFetch } from '@/apis/auth/secureFetch';
+import API_BASE_URL from '@/constants/api';
 import { ApplicationFormData } from '@/types/application';
 
 export const updateApplication = async (
@@ -30,7 +30,7 @@ export const updateApplication = async (
   }
 };
 
-export const updateApplicationStatus = async ( 
+export const updateApplicationStatus = async (
   applicationFormId: string,
   currentStatus: string,
 ) => {
@@ -40,7 +40,7 @@ export const updateApplicationStatus = async (
       `${API_BASE_URL}/api/club/application/${applicationFormId}`,
       {
         method: 'PATCH',
-        headers: { 
+        headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({ active: newStatus }),
@@ -56,4 +56,3 @@ export const updateApplicationStatus = async (
     throw error;
   }
 };
-
