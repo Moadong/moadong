@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import * as Styled from './ClubDetailContent.styles';
+import * as Styled from './ClubIntroContent.styles';
 
 export interface Award {
   semester: string;
@@ -18,8 +18,7 @@ export interface Faq {
   answer: string;
 }
 
-interface ClubDetailContentProps {
-  introDescription?: string;
+interface ClubIntroContentProps {
   activityDescription?: string;
   awards?: Award[];
   idealCandidate?: IdealCandidate;
@@ -27,14 +26,13 @@ interface ClubDetailContentProps {
   faqs?: Faq[];
 }
 
-const ClubDetailContent = ({
-  introDescription,
+const ClubIntroContent = ({
   activityDescription,
   awards,
   idealCandidate,
   benefits,
   faqs,
-}: ClubDetailContentProps) => {
+}: ClubIntroContentProps) => {
   const trackEvent = useMixpanelTrack();
 
   const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([]);
@@ -55,13 +53,7 @@ const ClubDetailContent = ({
 
   return (
     <Styled.Container>
-      {introDescription && (
-        <Styled.Section>
-          <Styled.Text>{introDescription}</Styled.Text>
-        </Styled.Section>
-      )}
-
-      {activityDescription && (
+      {activityDescription?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>이런 활동을 해요</Styled.SectionTitle>
           <Styled.TextContainer>
@@ -71,7 +63,7 @@ const ClubDetailContent = ({
       )}
       {awards && awards.length > 0 && (
         <Styled.Section>
-          <Styled.SectionTitle>🏆 동아리 수상</Styled.SectionTitle>
+          <Styled.SectionTitle>🏆 동아리 성과</Styled.SectionTitle>
           <Styled.TextContainer>
             {awards.map((award) => (
               <Styled.AwardGroup key={award.semester}>
@@ -89,7 +81,7 @@ const ClubDetailContent = ({
         </Styled.Section>
       )}
 
-      {idealCandidate && (
+      {idealCandidate?.content?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>이런 사람이 오면 좋아요</Styled.SectionTitle>
           <Styled.TextContainer>
@@ -98,7 +90,7 @@ const ClubDetailContent = ({
         </Styled.Section>
       )}
 
-      {benefits && (
+      {benefits?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>동아리 부원이 가지는 혜택</Styled.SectionTitle>
           <Styled.TextContainer>
@@ -147,4 +139,4 @@ const ClubDetailContent = ({
   );
 };
 
-export default ClubDetailContent;
+export default ClubIntroContent;

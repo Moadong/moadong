@@ -12,6 +12,38 @@ export const Container = styled.div`
 
   ${media.tablet} {
     max-width: none;
+    border-radius: 0;
+  }
+`;
+
+export const CoverImageWrapper = styled.div`
+  position: relative;
+  width: 100%;
+`;
+
+export const BackButton = styled.button`
+  position: absolute;
+  top: 58px;
+  left: 25px;
+  width: 25px;
+  height: 25px;
+  padding: 0;
+  border: none;
+  background-color: transparent;
+  cursor: pointer;
+  z-index: 10;
+  display: none;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  ${media.tablet} {
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 `;
 
