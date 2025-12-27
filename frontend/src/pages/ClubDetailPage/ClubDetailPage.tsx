@@ -11,6 +11,7 @@ import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import * as Styled from './ClubDetailPage.styles';
+import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
 
 const ClubDetailPage = () => {
   const [activeTab, setActiveTab] = useState<'intro' | 'photos'>('intro');
@@ -79,6 +80,10 @@ const ClubDetailPage = () => {
         </Styled.ContentWrapper>
       </Styled.Container>
       <Footer />
+      <ClubDetailFooter
+        recruitmentStart={clubDetail.recruitmentStart}
+        recruitmentEnd={clubDetail.recruitmentEnd}
+      />
     </>
   );
 };

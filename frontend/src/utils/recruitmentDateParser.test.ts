@@ -34,11 +34,14 @@ describe('모집 마감 날짜 입력 처리', () => {
     );
   });
 
-  it('아무 값도 입력하지 않으면 오류가 발생한다', () => {
+  it('아무 값도 입력하지 않으면 null을 반환한다', () => {
     const input = '';
-    expect(() => recruitmentDateParser(input)).toThrow(
-      '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
-    );
+    expect(recruitmentDateParser(input)).toBeNull();
+  });
+
+  it("'미정'을 입력하면 null을 반환한다", () => {
+    const input = '미정';
+    expect(recruitmentDateParser(input)).toBeNull();
   });
 
   it('사용자가 지정된 형식이 아닌 날짜를 입력하면 오류를 안내한다', () => {
