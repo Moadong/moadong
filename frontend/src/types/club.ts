@@ -24,8 +24,8 @@ export interface ClubDetail extends Club {
   presidentPhoneNumber: string;
 
   recruitmentForm: string;
-  recruitmentStart: string | null;
-  recruitmentEnd: string | null;
+  recruitmentStart: string;
+  recruitmentEnd: string;
   recruitmentTarget: string;
 
   socialLinks: Record<SNSPlatform, string>;
