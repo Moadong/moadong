@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const ApplyButtonContainer = styled.div`
   width: 100%;
@@ -15,9 +16,9 @@ export const ApplyButton = styled.button`
   justify-content: center;
   border: none;
   border-radius: 10px;
-  cursor: pointer;
+  cursor: ${({disabled}) => (disabled ? 'default' : 'pointer')};
   transition: transform 0.2s ease-in-out;
-  background-color: #ff7543;
+  background-color: ${({ disabled }) => disabled ? colors.gray[400] : colors.primary[800]};
 
   padding: 10px 40px;
   width: 517px;
