@@ -88,9 +88,10 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   };
 
   const isUpcoming = deadlineText?.includes('모집 시작');
+  const isClosed = deadlineText === RECRUITMENT_STATUS.CLOSED;
 
   const renderButtonContent = () => {
-    if (deadlineText === RECRUITMENT_STATUS.CLOSED) {
+    if (isClosed) {
       return RECRUITMENT_STATUS.CLOSED;
     }
 
@@ -115,7 +116,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     <Styled.ApplyButtonContainer>
       <ShareButton clubId={clubId} />
       <Styled.ApplyButton 
-        disabled={isUpcoming}
+        disabled={isUpcoming || isClosed}
         onClick={handleClick}>
         {renderButtonContent()}
       </Styled.ApplyButton>
