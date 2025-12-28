@@ -8,8 +8,14 @@ const getDeadlineText = (
 ): string => {
   if (!recruitmentStart || !recruitmentEnd) return '모집 마감';
   if (isBefore(today, recruitmentStart)) {
-    const openDate = format(recruitmentStart, 'M월 d일 H시', { locale: ko });
-    return `${openDate} 모집 시작`;
+    const hour = recruitmentStart.getHours();
+    const minute = recruitmentStart.getMinutes();
+
+    let formatStr = 'M월 d일';
+    if (hour !== 0) formatStr = 'M월 d일 H시';
+    if (minute !== 0) formatStr = 'M월 d일 H시 m분';
+
+    return `${format(recruitmentStart, formatStr, { locale: ko })} 모집 시작`;
   } 
   if (isAfter(today, recruitmentEnd)) return '모집 마감';
 
