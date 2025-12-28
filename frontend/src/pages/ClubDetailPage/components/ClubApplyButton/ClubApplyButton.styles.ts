@@ -18,7 +18,7 @@ export const ApplyButton = styled.button`
   border-radius: 10px;
   cursor: ${({disabled}) => (disabled ? 'default' : 'pointer')};
   transition: transform 0.2s ease-in-out;
-  background-color: ${({ disabled }) => disabled ? colors.gray[400] : colors.primary[800]};
+  background-color: ${({ disabled }) => disabled ? colors.gray[500] : colors.primary[800]};
 
   padding: 10px 40px;
   width: 517px;
