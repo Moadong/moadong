@@ -5,6 +5,7 @@ const STATE_TEXT: Record<string, string> = {
   OPEN: '모집중',
   CLOSED: '모집마감',
   ALWAYS: '상시모집',
+  UPCOMING: '모집예정',
 } as const;
 
 const BOX_DIMENSIONS = {
