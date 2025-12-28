@@ -37,6 +37,9 @@ export const ApplyButton = styled.button`
 
   ${media.mobile} {
     width: 273px;
+    height: 44px;
+    font-size: 16px;
+    font-weight: 500;
     background-color: ${({ disabled }) => disabled ? colors.gray[500] : colors.gray[900]};
   }
 `;
