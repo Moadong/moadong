@@ -1,8 +1,8 @@
-import * as Styled from './ShareButton.styles';
-import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import ShareIcon from '@/assets/images/icons/share_icon.svg';
 import { USER_EVENT } from '@/constants/eventName';
+import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import * as Styled from './ShareButton.styles';
 
 interface ShareButtonProps {
   clubId: string;
@@ -28,7 +28,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
       objectType: 'feed',
       content: {
         title: clubDetail.name,
-        description: clubDetail.description,
+        description: clubDetail.description.introDescription,
         imageUrl: clubDetail.logo ? clubDetail.logo : DEFAULT_IMAGE_URL,
         link: {
           mobileWebUrl: `${MOADONG_BASE_URL}${clubDetail.id}`,
