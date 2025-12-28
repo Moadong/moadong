@@ -16,7 +16,6 @@ interface ClubApplyButtonProps {
 
 const RECRUITMENT_STATUS = {
   ALWAYS: '상시 모집',
-  UPCOMING: '모집 예정',
   CLOSED: '모집 마감',
 };
 
@@ -88,12 +87,14 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     }
   };
 
+  const isUpcoming = deadlineText?.includes('모집 시작');
+
   const renderButtonContent = () => {
     if (deadlineText === RECRUITMENT_STATUS.CLOSED) {
       return RECRUITMENT_STATUS.CLOSED;
     }
 
-    if (deadlineText?.includes(RECRUITMENT_STATUS.UPCOMING)) {
+    if (isUpcoming) {
       return deadlineText;
     }
 
@@ -113,7 +114,9 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   return (
     <Styled.ApplyButtonContainer>
       <ShareButton clubId={clubId} />
-      <Styled.ApplyButton onClick={handleClick}>
+      <Styled.ApplyButton 
+        disabled={isUpcoming}
+        onClick={handleClick}>
         {renderButtonContent()}
       </Styled.ApplyButton>
       <ApplicationSelectModal

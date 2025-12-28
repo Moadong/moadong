@@ -9,7 +9,7 @@ const getDeadlineText = (
   if (!recruitmentStart || !recruitmentEnd) return '모집 마감';
   if (isBefore(today, recruitmentStart)) {
     const openDate = format(recruitmentStart, 'M월 d일 H시', { locale: ko });
-    return `${openDate} 모집 예정`;
+    return `${openDate} 모집 시작`;
   } 
   if (isAfter(today, recruitmentEnd)) return '모집 마감';
 
