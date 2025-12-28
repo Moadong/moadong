@@ -1,6 +1,7 @@
 import { isValid, parse } from 'date-fns';
 
-export const recruitmentDateParser = (s: string): Date => {
+export const recruitmentDateParser = (s: string): Date | null => {
+  if (s === '미정' || !s) return null;
   const regex = /^\d{4}\.\d{2}\.\d{2} \d{2}:\d{2}$/;
   if (!regex.test(s)) {
     throw new Error(
