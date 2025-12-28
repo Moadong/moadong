@@ -18,4 +18,5 @@ export const STATUS_COLORS: Record<string, string> = {
   모집중: colors.accent[1][900],
   모집마감: colors.gray[500],
   상시모집: colors.accent[2][900],
+  모집예정: colors.accent[1][900],
 };
