@@ -7,6 +7,6 @@ export const ShareButtonContainer = styled.div`
 `;
 
 export const ShareButtonIcon = styled.img`
-  width: 50px;
-  height: 50px;
+  width: 60px;
+  height: 60px;
 `;

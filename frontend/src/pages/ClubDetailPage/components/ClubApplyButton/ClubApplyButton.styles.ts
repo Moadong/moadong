@@ -23,11 +23,11 @@ export const ApplyButton = styled.button`
 
   padding: 10px 40px;
   width: 517px;
-  height: 50px;
+  height: 60px;
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
-  color: #fff;
+  color: ${colors.gray[200]};
   text-align: center;
 
   img {
