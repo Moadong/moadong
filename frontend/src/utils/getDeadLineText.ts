@@ -11,10 +11,10 @@ const getDeadlineText = (
     const hour = recruitmentStart.getHours();
     const minute = recruitmentStart.getMinutes();
 
-    let formatStr = 'M월 d일';
-    if (hour !== 0) formatStr = 'M월 d일 H시';
-    if (minute !== 0) formatStr = 'M월 d일 H시 m분';
-
+    let formatStr = 
+    hour === 0 && minute === 0 
+    ? 'M월 d일'
+    : 'M월 d일 HH:mm';
     return `${format(recruitmentStart, formatStr, { locale: ko })} 모집 시작`;
   } 
   if (isAfter(today, recruitmentEnd)) return '모집 마감';
