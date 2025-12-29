@@ -1,3 +1,4 @@
+import { colors } from '@/styles/theme/colors';
 import styled from 'styled-components';
 
 export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
@@ -35,7 +36,7 @@ export const Input = styled.input<{
     ${({ hasError, isSuccess }) =>
       hasError ? 'red' : isSuccess ? '#28a745' : '#c5c5c5'};
   background-color: transparent;
-  border-radius: 6px;
+  border-radius: 10px;
   outline: none;
   font-size: 1.125rem;
   letter-spacing: 0;
@@ -66,7 +67,8 @@ export const Input = styled.input<{
   }
 
   &::placeholder {
-    color: rgba(0, 0, 0, 0.3);
+    color: ${colors.gray[400]};
+    font-size: 16px;
     transition: color 0.25s ease;
   }
 
