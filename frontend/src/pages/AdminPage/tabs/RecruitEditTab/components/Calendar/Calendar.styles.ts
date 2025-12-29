@@ -1,5 +1,7 @@
 import styled, { css } from 'styled-components';
 import 'react-datepicker/dist/react-datepicker.css';
+import { colors } from '@/styles/theme/colors';
+import { color } from 'framer-motion';
 
 const primary = 'rgba(255, 84, 20, 0.8)';
 const primaryHover = 'rgba(255, 84, 20, 0.95)';
@@ -11,12 +13,12 @@ const inputDisabledBg = '#DFDFDF';
 
 /* 재사용 블록 */
 const selected = css`
-  background-color: ${primary} !important;
-  color: ${white} !important;
+  background-color: ${colors.primary[800]} !important;
+  color: ${colors.base.white} !important;
 `;
 const selectedHover = css`
-  background-color: ${primaryHover};
-  color: ${white};
+  background-color: ${colors.primary[800]} !important;
+  color: ${colors.base.white};
 `;
 const cellBase = css`
   border-radius: 6px;
@@ -52,17 +54,17 @@ export const DatepickerContainer = styled.div`
   .react-datepicker__time-container {
     flex: 0 0 120px;
     border-left: 1px solid rgba(0, 0, 0, 0.08);
-    background: ${white};
+    background: ${colors.base.white};
   }
 
   /* 헤더 영역 */
   .react-datepicker__header {
     padding: 0 0 10px;
     border: none;
-    background: ${white};
+    background: ${colors.base.white};
   }
   .react-datepicker__header-custom {
-    background: ${primary};
+    background: ${colors.primary[800]};
     padding: 10px 0;
     display: flex;
     align-items: center;
@@ -70,7 +72,7 @@ export const DatepickerContainer = styled.div`
     position: relative;
   }
   .react-datepicker__current-month {
-    color: ${white};
+    color: ${colors.base.white};
     font-weight: 600;
     font-size: 18px;
   }
@@ -84,7 +86,7 @@ export const DatepickerContainer = styled.div`
     border: none;
     cursor: pointer;
     font-size: 25px;
-    color: ${white};
+    color: ${colors.base.white};
   }
   .react-datepicker__navigation--previous--custom {
     left: 10px;
@@ -126,11 +128,13 @@ export const DatepickerContainer = styled.div`
     width: 270px;
     height: 45px;
     border: none;
-    border-radius: 6px;
-    color: ${gray};
-    background: ${inputBg};
-    font-size: 1.125rem;
+    border-radius: 10px;
+    color: ${colors.gray[700]};
+    background: ${colors.gray[100]};
+    font-size: 16px;
+    font-weight: 400;
     padding: 12px 20px;
+    text-align: center;
     cursor: pointer;
     transition:
       background-color 0.1s ease,
@@ -143,8 +147,8 @@ export const DatepickerContainer = styled.div`
 
   /* 비활성화 입력 필드 */
   .react-datepicker__input-container input:disabled {
-    background: ${inputDisabledBg};
-    color: ${disabledGray};
+    background: ${colors.gray[400]};
+    color: ${colors.gray[500]};
   }
 
   /*  날짜 셀 스타일  */
@@ -185,7 +189,7 @@ export const DatepickerContainer = styled.div`
 
   /* 시간 패널 */
   .react-datepicker__time-container .react-datepicker__header {
-    background: ${white};
+    background: ${colors.base.white};
     padding: 10px 0;
   }
   .react-datepicker-time__header {
@@ -195,7 +199,7 @@ export const DatepickerContainer = styled.div`
   }
 
   .react-datepicker__time {
-    background: ${white};
+    background: ${colors.base.white};
   }
   .react-datepicker__time-box {
     width: 100%;
