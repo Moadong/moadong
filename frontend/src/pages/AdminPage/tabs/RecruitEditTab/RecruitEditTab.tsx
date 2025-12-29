@@ -49,7 +49,7 @@ const RecruitEditTab = () => {
     const end = clubDetail.recruitmentEnd
       ? recruitmentDateParser(clubDetail.recruitmentEnd)
       : null;
-    const isAlways = clubDetail.recruitmentStatus === '상시모집';
+    const isAlways = isFarFuture(end);
 
     if (isAlways) {
       setAlways(true);
