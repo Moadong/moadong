@@ -6,7 +6,7 @@ import AdminProfile from '@/components/common/Header/admin/AdminProfile';
 import { USER_EVENT } from '@/constants/eventName';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { useScroll } from '@/hooks/useScroll';
+import { useScrollDetection } from '@/hooks/useScrollDetection';
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import * as Styled from './Header.styles';
 
@@ -15,7 +15,7 @@ const Header = () => {
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isScrolled = useScroll();
+  const isScrolled = useScrollDetection();
 
   const {
     handleHomeClick,
@@ -32,7 +32,6 @@ const Header = () => {
       path: '/club-union',
     },
     { label: '관리자 페이지', handler: handleAdminClick, path: '/admin' },
-    // { label: '패치노트', handler: handlePatchNoteClick, path: '/patch-note' },
   ];
 
   const closeMenu = () => {
