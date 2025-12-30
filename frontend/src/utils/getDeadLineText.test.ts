@@ -68,4 +68,15 @@ describe('getDeadlineText 함수 테스트', () => {
     expect(
       getDeadlineText(null, null, 'CLOSED')).toBe('모집 마감');
   });
+  
+  it('모집 중 상태인데 모집 종료일까지 1년 이상 남으면 상시 모집을 반환해야 한다', () => {
+  expect(
+    getDeadlineText(
+      new Date('2025-01-01'),
+      new Date('2027-01-01'),
+      'OPEN',
+      new Date('2025-01-01'),
+    ),
+  ).toBe('상시 모집');
+});
 });
