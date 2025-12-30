@@ -1,12 +1,18 @@
 import { SNS_CONFIG } from '@/constants/snsConfig';
 
+export type RecruitmentStatus =
+  | 'OPEN'
+  | 'CLOSED'
+  | 'UPCOMING'
+  | 'ALWAYS';
+
 export interface Club {
   id: string;
   name: string;
   logo: string;
   cover?: string;
   tags: string[];
-  recruitmentStatus: string;
+  recruitmentStatus: RecruitmentStatus;
   division: string;
   category: string;
   introduction: string;

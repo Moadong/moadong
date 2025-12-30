@@ -14,11 +14,6 @@ interface ClubApplyButtonProps {
   deadlineText?: string;
 }
 
-const RECRUITMENT_STATUS = {
-  CLOSED: '모집 마감',
-};
-
-
 const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const { clubId } = useParams<{ clubId: string }>();
   const navigate = useNavigate();
@@ -62,7 +57,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const handleClick = async () => {
     trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED);
 
-    if (deadlineText === RECRUITMENT_STATUS.CLOSED) {
+    if (isClosed) {
       alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
       return;
     }
@@ -93,11 +88,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const isAlways = status === 'ALWAYS';
 
   const renderButtonContent = () => {
-    if (isClosed) {
-      return RECRUITMENT_STATUS.CLOSED;
-    }
-
-    if (isUpcoming) {
+    if (isClosed || isUpcoming) {
       return deadlineText;
     }
 

@@ -2,11 +2,12 @@ import getDeadlineText from '@/utils/getDeadLineText';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import ClubApplyButton from '../ClubApplyButton/ClubApplyButton';
 import * as Styled from './ClubDetailFooter.styles';
+import { RecruitmentStatus } from '@/types/club';
 
 interface ClubDetailFooterProps {
   recruitmentStart: string;
   recruitmentEnd: string;
-  recruitmentStatus: string;
+  recruitmentStatus: RecruitmentStatus;
 }
 
 const ClubDetailFooter = ({
