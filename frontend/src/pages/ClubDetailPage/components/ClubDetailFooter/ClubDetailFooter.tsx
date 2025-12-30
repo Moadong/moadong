@@ -6,16 +6,18 @@ import * as Styled from './ClubDetailFooter.styles';
 interface ClubDetailFooterProps {
   recruitmentStart: string;
   recruitmentEnd: string;
+  recruitmentStatus: string;
 }
 
 const ClubDetailFooter = ({
   recruitmentStart,
   recruitmentEnd,
+  recruitmentStatus,
 }: ClubDetailFooterProps) => {
   const deadlineText = getDeadlineText(
     recruitmentDateParser(recruitmentStart),
     recruitmentDateParser(recruitmentEnd),
-    new Date(),
+    recruitmentStatus,
   );
 
   return (
