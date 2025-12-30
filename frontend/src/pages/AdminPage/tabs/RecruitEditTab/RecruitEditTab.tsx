@@ -49,7 +49,7 @@ const RecruitEditTab = () => {
     const end = clubDetail.recruitmentEnd
       ? recruitmentDateParser(clubDetail.recruitmentEnd)
       : null;
-    const isAlways = clubDetail.recruitmentStatus === '상시모집';
+    const isAlways = isFarFuture(end);
 
     if (isAlways) {
       setAlways(true);
@@ -138,7 +138,7 @@ const RecruitEditTab = () => {
         <ContentSection.Header
           title='모집 정보'
           action={
-            <Button width={'150px'} animated onClick={handleUpdateClub}>
+            <Button width={'135px'} animated onClick={handleUpdateClub}>
               저장하기
             </Button>
           }
