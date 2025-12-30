@@ -8,7 +8,7 @@ describe('getDeadlineText 함수 테스트', () => {
     ['오늘이 모집 종료일인 경우', '2025-04-10', 'D-Day'],
     ['모집 종료일까지 5일 남은 경우', '2025-04-05', 'D-5'],
     ['오늘이 모집 종료일 이후인 경우', '2025-04-11', '모집 마감'],
-    ['모집 시작일이 아직 남은 경우', '2025-03-30', '모집 전'],
+    ['모집 시작일이 아직 남은 경우', '2025-03-30', '4월 1일 09:00 모집 시작'],
   ])('%s', (_, todayStr, expected) => {
     const today = new Date(todayStr);
     expect(getDeadlineText(recruitmentStart, recruitmentEnd, today)).toBe(
