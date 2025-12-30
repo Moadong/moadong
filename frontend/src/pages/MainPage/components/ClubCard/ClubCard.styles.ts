@@ -41,7 +41,7 @@ const CardContainer = styled.div<{
     border-radius: ${CARD_STYLES.mobile.borderRadius};
     padding: ${CARD_STYLES.mobile.padding};
     gap: ${CARD_STYLES.mobile.gap};
-    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.10);
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
   }
 
   @media (hover: hover) {

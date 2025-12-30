@@ -1,20 +1,23 @@
-import { useAdminClubContext } from '@/context/AdminClubContext';
-import { Applicant, ApplicationStatus } from '@/types/applicants';
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import * as Styled from './ApplicantsTab.styles';
-import { useNavigate } from 'react-router-dom';
-import { useDeleteApplicants } from '@/hooks/queries/applicants/useDeleteApplicants';
-import SearchField from '@/components/common/SearchField/SearchField';
-import mapStatusToGroup from '@/utils/mapStatusToGroup';
-import selectIcon from '@/assets/images/icons/selectArrow.svg';
+import { useNavigate, useParams } from 'react-router-dom';
 import deleteIcon from '@/assets/images/icons/applicant_delete.svg';
 import selectAllIcon from '@/assets/images/icons/applicant_select_arrow.svg';
-import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
-import { AVAILABLE_STATUSES } from '@/constants/status';
+import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
+import SearchField from '@/components/common/SearchField/SearchField';
+import { AVAILABLE_STATUSES } from '@/constants/status';
+import { useAdminClubContext } from '@/context/AdminClubContext';
+import { useDeleteApplicants } from '@/hooks/queries/applicants/useDeleteApplicants';
 import { useGetApplicants } from '@/hooks/queries/applicants/useGetApplicants';
+import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
+import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import { Applicant, ApplicationStatus } from '@/types/applicants';
+import mapStatusToGroup from '@/utils/mapStatusToGroup';
+import * as Styled from './ApplicantsTab.styles';
 
 const ApplicantsTab = () => {
+  const { applicationFormId } = useParams<{ applicationFormId: string }>();
+
   const statusOptions = AVAILABLE_STATUSES.map((status) => ({
     value: status,
     label: mapStatusToGroup(status).label,
@@ -36,8 +39,12 @@ const ApplicantsTab = () => {
   ] as const;
 
   const navigate = useNavigate();
-  const { clubId, applicantsData, applicationFormId, setApplicantsData } = useAdminClubContext();
-  const { data: fetchData, isLoading, isError } = useGetApplicants(applicationFormId ?? '');
+  const { clubId, applicantsData, setApplicantsData } = useAdminClubContext();
+  const {
+    data: fetchData,
+    isLoading,
+    isError,
+  } = useGetApplicants(applicationFormId ?? '');
   const [keyword, setKeyword] = useState('');
   const [checkedItem, setCheckedItem] = useState<Map<string, boolean>>(
     new Map(),
@@ -56,7 +63,7 @@ const ApplicantsTab = () => {
   useEffect(() => {
     if (fetchData) {
       setApplicantsData(fetchData);
-    } 
+    }
   }, [fetchData, setApplicantsData]);
 
   // 모든 드롭다운을 닫는 함수
@@ -67,7 +74,9 @@ const ApplicantsTab = () => {
     if (isSortOpen) setIsSortOpen(false);
   };
   const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
-  const { mutate: updateDetailApplicants } = useUpdateApplicant(applicationFormId ?? '');
+  const { mutate: updateDetailApplicants } = useUpdateApplicant(
+    applicationFormId ?? '',
+  );
   const dropdownRef = useRef<Array<HTMLDivElement | null>>([]);
 
   const filteredApplicants = useMemo(() => {
@@ -220,14 +229,9 @@ const ApplicantsTab = () => {
 
   return (
     <>
-      <Styled.ApplicationHeader>
-        <Styled.ApplicationTitle>지원 현황</Styled.ApplicationTitle>
-        {/* 
-        <Styled.SemesterSelect>
-          <option>25년 2학기</option>
-        </Styled.SemesterSelect>
-        */}
-      </Styled.ApplicationHeader>
+      <div style={{ marginBottom: '32px' }}>
+        <ContentSection.Header title='지원 현황' />
+      </div>
 
       <Styled.SummaryWrapper>
         <Styled.SummaryCard bgColor={'#F5F5F5'}>
@@ -479,7 +483,11 @@ const ApplicantsTab = () => {
             {filteredApplicants.map((item: Applicant, index: number) => (
               <Styled.ApplicantTableRow
                 key={index}
-                onClick={() => navigate(`/admin/applicants-list/${applicationFormId}/${item.id}`)}
+                onClick={() =>
+                  navigate(
+                    `/admin/applicants-list/${applicationFormId}/${item.id}`,
+                  )
+                }
                 style={{ cursor: 'pointer' }}
               >
                 <Styled.ApplicantTableCol>

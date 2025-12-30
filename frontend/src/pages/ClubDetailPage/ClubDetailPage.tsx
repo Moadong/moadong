@@ -1,38 +1,28 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useParams } from 'react-router-dom';
-import * as Styled from '@/styles/PageContainer.styles';
-import Header from '@/components/common/Header/Header';
-import BackNavigationBar from '@/pages/ClubDetailPage/components/BackNavigationBar/BackNavigationBar';
-import ClubDetailHeader from '@/pages/ClubDetailPage/components/ClubDetailHeader/ClubDetailHeader';
-import InfoTabs from '@/pages/ClubDetailPage/components/InfoTabs/InfoTabs';
-import InfoBox from '@/pages/ClubDetailPage/components/InfoBox/InfoBox';
-import IntroduceBox from '@/pages/ClubDetailPage/components/IntroduceBox/IntroduceBox';
-import PhotoList from '@/pages/ClubDetailPage/components/PhotoList/PhotoList';
 import Footer from '@/components/common/Footer/Footer';
-import ClubDetailFooter from '@/pages/ClubDetailPage/components/ClubDetailFooter/ClubDetailFooter';
-import useTrackPageView from '@/hooks/useTrackPageView';
-import useAutoScroll from '@/hooks/InfoTabs/useAutoScroll';
+import Header from '@/components/common/Header/Header';
+import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import isInAppWebView from '@/utils/isInAppWebView';
-import { PAGE_VIEW } from '@/constants/eventName';
+import useDevice from '@/hooks/useDevice';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useTrackPageView from '@/hooks/useTrackPageView';
+import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
+import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
+import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
+import * as Styled from './ClubDetailPage.styles';
+import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
 
 const ClubDetailPage = () => {
+  const [activeTab, setActiveTab] = useState<'intro' | 'photos'>('intro');
+
   const { clubId } = useParams<{ clubId: string }>();
-  const { sectionRefs, scrollToSection } = useAutoScroll();
-  const [showHeader, setShowHeader] = useState(window.innerWidth > 500);
+  const { isLaptop, isDesktop } = useDevice();
+  const trackEvent = useMixpanelTrack();
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
-  useEffect(() => {
-    const handleResize = () => {
-      setShowHeader(window.innerWidth > 500);
-    };
-
-    window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name);
+  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
   if (!clubDetail) {
     return null;
@@ -44,36 +34,56 @@ const ClubDetailPage = () => {
 
   return (
     <>
-      {showHeader && <Header />}
-      {!isInAppWebView() && <BackNavigationBar />}
-      <Styled.PageContainer>
-        <ClubDetailHeader
-          name={clubDetail.name}
-          category={clubDetail.category}
-          division={clubDetail.division}
-          tags={clubDetail.tags}
-          logo={clubDetail.logo}
-          recruitmentPeriod={clubDetail.recruitmentPeriod}
-          recruitmentForm={clubDetail.recruitmentForm}
-          presidentPhoneNumber={clubDetail.presidentPhoneNumber}
-        />
-        <InfoTabs onTabClick={scrollToSection} />
-        <InfoBox sectionRefs={sectionRefs} clubDetail={clubDetail} />
-        <IntroduceBox
-          sectionRefs={sectionRefs}
-          description={clubDetail.description}
-        />
-        <PhotoList
-          sectionRefs={sectionRefs}
-          feeds={clubDetail.feeds}
-          clubName={clubDetail.name}
-        />
-        {/* <RecommendedClubs clubs={clubDetail.recommendClubs ?? []} /> */}
-      </Styled.PageContainer>
+      {(isLaptop || isDesktop) && <Header />}
+      <Styled.Container>
+        <Styled.ContentWrapper>
+          <ClubProfileCard
+            name={clubDetail.name}
+            logo={clubDetail.logo}
+            cover={clubDetail.cover}
+            recruitmentStatus={clubDetail.recruitmentStatus}
+            socialLinks={clubDetail.socialLinks}
+            introDescription={clubDetail.description.introDescription}
+          />
+
+          <Styled.RightSection>
+            <Styled.TabList>
+              <Styled.TabButton
+                $active={activeTab === 'intro'}
+                onClick={() => {
+                  setActiveTab('intro');
+                  trackEvent(USER_EVENT.CLUB_INTRO_TAB_CLICKED);
+                }}
+              >
+                소개 내용
+              </Styled.TabButton>
+              <Styled.TabButton
+                $active={activeTab === 'photos'}
+                onClick={() => {
+                  setActiveTab('photos');
+                  trackEvent(USER_EVENT.CLUB_FEED_TAB_CLICKED);
+                }}
+              >
+                활동사진
+              </Styled.TabButton>
+            </Styled.TabList>
+
+            <Styled.TabContent>
+              {activeTab === 'intro' && (
+                <ClubIntroContent {...clubDetail.description} />
+              )}
+              {activeTab === 'photos' && (
+                <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
+              )}
+            </Styled.TabContent>
+          </Styled.RightSection>
+        </Styled.ContentWrapper>
+      </Styled.Container>
       <Footer />
       <ClubDetailFooter
-        recruitmentPeriod={clubDetail.recruitmentPeriod}
-        recruitmentForm={clubDetail.recruitmentForm}
+        recruitmentStart={clubDetail.recruitmentStart}
+        recruitmentEnd={clubDetail.recruitmentEnd}
+        recruitmentStatus={clubDetail.recruitmentStatus}
       />
     </>
   );

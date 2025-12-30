@@ -1,6 +1,6 @@
-import mixpanel from 'mixpanel-browser';
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import * as Sentry from '@sentry/react';
+import mixpanel from 'mixpanel-browser';
 
 const PRODUCTION_HOSTNAMES = ['moadong.com', 'www.moadong.com'];
 
@@ -12,7 +12,9 @@ export function initializeMixpanel() {
     });
   }
 
-  const isProductionHost = PRODUCTION_HOSTNAMES.includes(window.location.hostname);
+  const isProductionHost = PRODUCTION_HOSTNAMES.includes(
+    window.location.hostname,
+  );
   if (!isProductionHost) {
     mixpanel.disable();
   }

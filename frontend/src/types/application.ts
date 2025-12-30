@@ -49,9 +49,11 @@ export interface ChoiceProps extends QuestionComponentProps {
 export interface ApplicationFormData {
   title: string;
   description: string;
-  questions: Question[];
+  questions?: Question[];
   semesterYear: number;
   semesterTerm: string;
+  formMode?: ApplicationFormMode;
+  externalApplicationUrl?: string;
   active: 'active' | 'published' | 'unpublished';
 }
 
@@ -69,7 +71,7 @@ export interface ApplicationFormItem {
   id: string;
   title: string;
   editedAt: string;
-  status: 'active' | 'published' | 'unpublished';
+  status: 'ACTIVE' | 'PUBLISHED' | 'UNPUBLISHED';
 }
 
 export interface SemesterGroup {
@@ -77,3 +79,11 @@ export interface SemesterGroup {
   semesterTerm: string;
   forms: ApplicationFormItem[];
 }
+
+export const ApplicationFormMode = {
+  INTERNAL: 'INTERNAL',
+  EXTERNAL: 'EXTERNAL',
+} as const;
+
+export type ApplicationFormMode =
+  (typeof ApplicationFormMode)[keyof typeof ApplicationFormMode];

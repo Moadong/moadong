@@ -1,24 +1,24 @@
 import styled from 'styled-components';
 
-export const AdminPageContainer = styled.div`
+export const Background = styled.div`
+  background-color: #f2f2f2;
+  min-height: 100vh;
+`;
+
+export const Layout = styled.div`
   display: flex;
-  margin-top: 98px;
-  align-items: flex-start;
-`;
-
-export const Divider = styled.div`
-  position: sticky;
-  top: 98px;
-  width: 1px;
-  height: calc(100vh - 98px);
-  background-color: #dcdcdc;
-  margin: 0 34px;
-  flex-shrink: 0;
-`;
-
-
-export const Content = styled.main`
+  gap: 30px;
+  max-width: 1180px;
+  margin: 0 auto;
   width: 100%;
-  max-width: 977px;
-  padding: 62px 58px;
+  padding-top: 110px;
+`;
+
+export const MainContent = styled.main`
+  width: 100%;
+  max-width: 960px;
+  background-color: #ffffff;
+  padding: 54px;
+  border-radius: 20px;
+  margin-bottom: 50px;
 `;

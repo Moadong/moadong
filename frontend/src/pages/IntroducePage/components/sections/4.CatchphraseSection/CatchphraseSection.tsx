@@ -1,6 +1,11 @@
-import * as Styled from './CatchphraseSection.styles';
-import { stagger, fade, fadeUp, VIEWPORT_CONFIG } from '@/pages/IntroducePage/constants/animations';
 import moadong_logo_bg from '@/assets/images/logos/moadong_logo_bg.svg';
+import {
+  fade,
+  fadeUp,
+  stagger,
+  VIEWPORT_CONFIG,
+} from '@/pages/IntroducePage/constants/animations';
+import * as Styled from './CatchphraseSection.styles';
 
 const CatchphraseSection = () => {
   return (

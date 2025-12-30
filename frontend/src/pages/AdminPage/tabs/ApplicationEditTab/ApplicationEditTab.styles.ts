@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 
 export const FormTitle = styled.input`
   width: 100%;
@@ -10,7 +10,7 @@ export const FormTitle = styled.input`
   font-weight: 700;
   border: none;
   outline: none;
-  margin: 60px 0px 35px 0px;
+  margin: 35px 0px;
 
   &::placeholder {
     color: #c5c5c5;
@@ -73,4 +73,91 @@ export const submitButton = styled.button`
   &:active {
     transform: scale(0.95);
   }
+`;
+
+export const HeaderContainer = styled.div`
+  display: flex;
+`;
+
+export const ChangeButtonWrapper = styled.div`
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  height: 33px;
+  align-items: center;
+  border-radius: 6px;
+  box-shadow: 0 0 0 1px var(--Gray-400, #dcdcdc) inset;
+  width: fit-content;
+`;
+
+export const ApplicationFormChangeButton = styled.button<{ $active: boolean }>`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  border-radius: 6px;
+  cursor: pointer;
+  padding: 8px 12px;
+  white-space: nowrap;
+  color: #787878;
+  border: 0px;
+  background: transparent;
+  align-self: stretch;
+  transition: all 0.3s ease-in-out;
+
+  ${(props) =>
+    props.$active &&
+    css`
+      box-shadow:
+        0 0 0 1px var(--Main-Primary-900, #ff5414) inset,
+        0 1px 2px 0 rgba(0, 0, 0, 0.2);
+      background: var(--Main-Primary-500, #ffece5);
+      color: var(--Main-Primary-900, #ff5414);
+    `}
+
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+`;
+
+export const ExternalApplicationFormContainer = styled.div`
+  display: flex;
+  padding: 6px 8px;
+  align-items: center;
+  gap: 12px;
+  border-radius: 10px;
+  background: var(--Gray-100, #f5f5f5);
+`;
+
+export const ExternalApplicationFormTitle = styled.div`
+  display: inline-flex;
+  height: 32px;
+  padding: 6px 14px;
+  justify-content: center;
+  align-items: center;
+  gap: 4px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 16px;
+  font-weight: 600;
+`;
+
+export const ExternalApplicationFormLinkInput = styled.input`
+  background-color: transparent;
+  border: none;
+  font-size: 14px;
+  font-weight: 400;
+  outline: none;
+  width: 100%;
+  &::placeholder {
+    color: var(--Gray-600, #989898);
+  }
+`;
+
+export const ExternalApplicationFormHint = styled.div`
+  color: var(--Gray-600, #989898);
+  font-size: 12px;
+  font-weight: 400;
+  margin-top: 8px;
+  margin-left: 4px;
 `;

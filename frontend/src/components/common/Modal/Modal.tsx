@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode, useEffect } from "react";
+import { MouseEvent, ReactNode, useEffect } from 'react';
 import * as Styled from './Modal.styles';
 
 export interface ModalProps {
@@ -10,8 +10,14 @@ export interface ModalProps {
   onBackdropClick?: () => boolean | void;
 }
 
-
-const Modal = ({ isOpen, onClose, title, description, children, onBackdropClick }: ModalProps) => {
+const Modal = ({
+  isOpen,
+  onClose,
+  title,
+  description,
+  children,
+  onBackdropClick,
+}: ModalProps) => {
   useEffect(() => {
     if (isOpen) {
       document.body.style.overflow = 'hidden';
@@ -35,6 +41,6 @@ const Modal = ({ isOpen, onClose, title, description, children, onBackdropClick 
       </Styled.Container>
     </Styled.Overlay>
   );
-}
+};
 
 export default Modal;

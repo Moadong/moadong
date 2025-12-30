@@ -1,11 +1,13 @@
-import API_BASE_URL from "@/constants/api";
-import { secureFetch } from "./secureFetch";
+import API_BASE_URL from '@/constants/api';
+import { secureFetch } from './secureFetch';
 
 interface ChangePasswordPayload {
   password: string;
 }
 
-export const changePassword = async (payload: ChangePasswordPayload): Promise<void> => {
+export const changePassword = async (
+  payload: ChangePasswordPayload,
+): Promise<void> => {
   const response = await secureFetch(`${API_BASE_URL}/auth/user/`, {
     method: 'PUT',
     headers: {

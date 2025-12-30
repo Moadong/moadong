@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useSearchStore } from '@/store/useSearchStore';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { useSearchStore } from '@/store/useSearchStore';
 
 const useHeaderNavigation = () => {
   const navigate = useNavigate();
@@ -11,7 +11,7 @@ const useHeaderNavigation = () => {
   const handleHomeClick = useCallback(() => {
     navigate('/');
     useSearchStore.getState().resetSearch();
-    // 속성으로 관리
+
     trackEvent(USER_EVENT.HOME_BUTTON_CLICKED, {
       device_type: window.innerWidth <= 700 ? 'mobile' : 'desktop',
     });
@@ -36,11 +36,17 @@ const useHeaderNavigation = () => {
     trackEvent(USER_EVENT.PATCH_NOTE_BUTTON_CLICKED);
   }, [trackEvent]);
 
+  const handleAdminClick = useCallback(() => {
+    navigate('/admin');
+    trackEvent(USER_EVENT.ADMIN_BUTTON_CLICKED);
+  }, [navigate, trackEvent]);
+
   return {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
     handlePatchNoteClick,
+    handleAdminClick,
   };
 };
 

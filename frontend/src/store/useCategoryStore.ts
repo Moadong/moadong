@@ -1,8 +1,8 @@
 import { create } from 'zustand';
 import {
+  createJSONStorage,
   persist,
   subscribeWithSelector,
-  createJSONStorage,
 } from 'zustand/middleware';
 
 interface CategoryStore {
@@ -27,6 +27,8 @@ export const useCategoryStore = create<CategoryStore>()(
 
 export const useSelectedCategory = () => {
   const selectedCategory = useCategoryStore((state) => state.selectedCategory);
-  const setSelectedCategory = useCategoryStore((state) => state.setSelectedCategory);
+  const setSelectedCategory = useCategoryStore(
+    (state) => state.setSelectedCategory,
+  );
   return { selectedCategory, setSelectedCategory };
 };

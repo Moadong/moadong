@@ -1,10 +1,10 @@
-import * as Styled from './ContactSection.styles';
 import {
+  BackgroundCircleLarge,
+  BackgroundCircleSmall,
   BackgroundTwistLeft,
   BackgroundTwistRight,
-  BackgroundCircleSmall,
-  BackgroundCircleLarge,
 } from '@/pages/IntroducePage/components/BackgroundShapes';
+import * as Styled from './ContactSection.styles';
 
 const kakaoLink = 'https://open.kakao.com/o/s21dRWjh';
 

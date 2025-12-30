@@ -1,6 +1,6 @@
+import { secureFetch } from '@/apis/auth/secureFetch';
 import API_BASE_URL from '@/constants/api';
 import { ClubDescription } from '@/types/club';
-import { secureFetch } from '@/apis/auth/secureFetch';
 
 export const updateClubDescription = async (
   updatedData: ClubDescription,

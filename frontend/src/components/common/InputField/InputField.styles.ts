@@ -1,3 +1,4 @@
+import { colors } from '@/styles/theme/colors';
 import styled from 'styled-components';
 
 export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
@@ -13,7 +14,7 @@ export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
 
 export const Label = styled.label`
   font-size: 1.125rem;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-weight: 600;
 `;
 
@@ -23,15 +24,19 @@ export const InputWrapper = styled.div`
   align-items: center;
 `;
 
-export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean; isSuccess?: boolean; }>`
+export const Input = styled.input<{
+  hasError?: boolean;
+  readOnly?: boolean;
+  isSuccess?: boolean;
+}>`
   flex: 1;
   height: 45px;
   padding: 12px 18px;
   border: 1px solid
     ${({ hasError, isSuccess }) =>
-    hasError ? 'red' : isSuccess ? '#28a745' : '#c5c5c5'};
+      hasError ? 'red' : isSuccess ? '#28a745' : '#c5c5c5'};
   background-color: transparent;
-  border-radius: 6px;
+  border-radius: 10px;
   outline: none;
   font-size: 1.125rem;
   letter-spacing: 0;
@@ -50,10 +55,10 @@ export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean; isSu
       readOnly
         ? '#c5c5c5'
         : hasError
-        ? 'red'
-        : isSuccess
-        ? '#28a745'
-        : '#007bff'};
+          ? 'red'
+          : isSuccess
+            ? '#28a745'
+            : '#007bff'};
     ${({ readOnly }) => readOnly && 'cursor: pointer;'}
   }
 
@@ -62,10 +67,11 @@ export const Input = styled.input<{ hasError?: boolean; readOnly?: boolean; isSu
   }
 
   &::placeholder {
-    color: rgba(0, 0, 0, 0.3);
+    color: ${colors.gray[400]};
+    font-size: 16px;
     transition: color 0.25s ease;
   }
-  
+
   &:focus::placeholder {
     color: transparent;
   }
@@ -125,4 +131,3 @@ export const HelperText = styled.div`
   white-space: nowrap;
   z-index: 1;
 `;
-
