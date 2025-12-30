@@ -10,6 +10,13 @@ export function initializeMixpanel() {
       ignore_dnt: true,
       debug: false,
     });
+
+    const params = new URLSearchParams(window.location.search);
+    const nativeDistinctId = params.get('distinct_id');
+
+    if (nativeDistinctId) {
+      mixpanel.identify(nativeDistinctId);
+    }
   }
 
   const isProductionHost = PRODUCTION_HOSTNAMES.includes(
