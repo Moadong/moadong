@@ -13,8 +13,6 @@ const getDeadlineText = (
   recruitmentStatus: string,
   today: Date = new Date(),
 ): string => {
-  console.log(recruitmentStart, recruitmentEnd, recruitmentStatus, today);
-
   if (recruitmentStatus === 'CLOSED') {
     return RECRUITMENT_STATUS.CLOSED;
   }
