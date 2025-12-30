@@ -14,12 +14,11 @@ const getDeadlineText = (
   today: Date = new Date(),
 ): string => {
   console.log(recruitmentStart, recruitmentEnd, recruitmentStatus, today);
-  // 모집 마감
+
   if (recruitmentStatus === 'CLOSED') {
     return RECRUITMENT_STATUS.CLOSED;
   }
 
-  // 모집 전
   if (recruitmentStatus === 'UPCOMING') {
     if (!recruitmentStart) return RECRUITMENT_STATUS.CLOSED;
     const hour = recruitmentStart.getHours();
@@ -32,7 +31,6 @@ const getDeadlineText = (
     return `${format(recruitmentStart, formatStr, { locale: ko })} ${RECRUITMENT_STATUS.UPCOMING}`;
   }
 
-  // 모집 중 또는 상시 모집
   if (!recruitmentEnd) return RECRUITMENT_STATUS.CLOSED;
   const days = differenceInCalendarDays(recruitmentEnd, today);
 
