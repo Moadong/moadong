@@ -29,10 +29,9 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     try {
       const formDetail = await getApplication(clubId, formId);
       if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
-        const externalApplicationUrl =
-          formDetail.externalApplicationUrl?.trim();
-        if (externalApplicationUrl) {
-          window.open(externalApplicationUrl, '_blank', 'noopener,noreferrer');
+        const formLevelExternalApplicationUrl = formDetail.externalApplicationUrl?.trim();
+        if (formLevelExternalApplicationUrl) {
+          window.open(formLevelExternalApplicationUrl, '_blank', 'noopener,noreferrer');
           return;
         }
       }
@@ -56,6 +55,13 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
 
     if (isRecruitmentClosed) {
       alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
+      return;
+    }
+
+    const clubLevelExternalApplicationUrl = clubDetail.externalApplicationUrl?.trim();
+    
+    if (clubLevelExternalApplicationUrl) {
+      window.open(clubLevelExternalApplicationUrl, '_blank', 'noopener,noreferrer');
       return;
     }
 
