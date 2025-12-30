@@ -27,7 +27,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   if (!clubId || !clubDetail) return null;
 
   // 내부 폼 이동
-  const goWithForm = async (formId: string) => {
+  const navigateToApplicationForm = async (formId: string) => {
     try {
       const formDetail = await getApplication(clubId, formId);
       if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
@@ -51,7 +51,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   // url 존재 시 외부, 내부 지원서 옵션에 따른 처리
   const openByOption = (option?: ApplicationForm) => {
     if (!option) return;
-    void goWithForm(option.id);
+    void navigateToApplicationForm(option.id);
   };
 
   const handleClick = async () => {
@@ -70,7 +70,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
       }
 
       if (list.length === 1) {
-        await goWithForm(list[0].id);
+        await navigateToApplicationForm(list[0].id);
         return;
       }
       setOptions(list);
