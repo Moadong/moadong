@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import deleteIcon from '@/assets/images/icons/delete_button_icon.svg';
 
 export const Label = styled.label`
   display: block;
@@ -36,19 +35,32 @@ export const TagTextInput = styled.input`
   background: transparent;
   font-size: 0.875rem;
   color: #4b4b4b;
-  width: 110px;
-  padding-right: 10px;
+  width: 100px;
+  padding-right: 30px;
 `;
 
 export const RemoveButton = styled.button`
   position: absolute;
   top: 50%;
-  right: 10px;
+  right: 8px;
   transform: translateY(-50%);
-  width: 16px;
-  height: 16px;
-  background: url(${deleteIcon}) no-repeat center;
-  background-size: contain;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: transparent;
   border: none;
   cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 16px;
+    height: 16px;
+    opacity: 0.5;
+  }
+
+  &:hover img {
+    opacity: 1;
+  }
 `;

@@ -1,4 +1,4 @@
-import type { Variants, Transition } from 'framer-motion';
+import type { Transition, Variants } from 'framer-motion';
 
 export const transDefault: Transition = { duration: 0.5, ease: 'easeOut' };
 

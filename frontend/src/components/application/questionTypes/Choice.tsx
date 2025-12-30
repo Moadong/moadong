@@ -1,11 +1,11 @@
-import * as Styled from './Choice.styles';
-import QuestionTitle from '@/components/application/QuestionTitle/QuestionTitle';
+import DeleteIcon from '@/assets/images/icons/delete_choice.svg';
 import QuestionDescription from '@/components/application/QuestionDescription/QuestionDescription';
+import QuestionTitle from '@/components/application/QuestionTitle/QuestionTitle';
 import InputField from '@/components/common/InputField/InputField';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
-import { ChoiceProps } from '@/types/application';
 import ChoiceItem from '@/pages/ApplicationFormPage/components/ChoiceItem/ChoiceItem';
-import DeleteIcon from '@/assets/images/icons/delete_choice.svg';
+import { ChoiceProps } from '@/types/application';
+import * as Styled from './Choice.styles';
 
 const MIN_ITEMS = 1;
 const MAX_ITEMS = 6;

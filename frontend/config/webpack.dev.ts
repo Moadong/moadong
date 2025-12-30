@@ -1,10 +1,11 @@
 import * as path from 'path';
 import * as webpack from 'webpack';
 import { merge } from 'webpack-merge';
-const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 import 'webpack-dev-server';
-import common from './webpack.common';
 import detectPort from 'detect-port';
+import common from './webpack.common';
+
+const RefreshWebpackPlugin = require('@pmmmwh/react-refresh-webpack-plugin');
 
 const DEFAULT_PORT = 3000;
 
@@ -56,9 +57,9 @@ export default getAvailablePort(DEFAULT_PORT).then((port) => {
           test: /\.css$/,
           use: ['style-loader', 'css-loader'],
           include: [
-          path.resolve(__dirname, '../node_modules/react-datepicker/dist'),
-          path.resolve(__dirname, '../node_modules/swiper'),
-        ],
+            path.resolve(__dirname, '../node_modules/react-datepicker/dist'),
+            path.resolve(__dirname, '../node_modules/swiper'),
+          ],
         },
         {
           test: /\.css$/,

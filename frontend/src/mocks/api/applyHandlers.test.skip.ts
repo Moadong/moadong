@@ -1,9 +1,9 @@
-import { applyHandlers } from './apply';
 import { setupServer } from 'msw/node';
-import { Question } from '../data/mockData';
-import { createApiUrl } from '../utils/createApiUrl';
 import { API_BASE, CLUB_ID } from '../constants/clubApi';
 import { ERROR_MESSAGE } from '../constants/error';
+import { Question } from '../data/mockData';
+import { createApiUrl } from '../utils/createApiUrl';
+import { applyHandlers } from './apply';
 import { submitApplication, updateApplication } from './utils/request';
 
 interface ClubApplyResponse {

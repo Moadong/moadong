@@ -1,29 +1,27 @@
 import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
-import * as Styled from './Header.styles';
-
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { USER_EVENT } from '@/constants/eventName';
-
-import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
-import AdminProfile from '@/components/common/Header/admin/AdminProfile';
-import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
-import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
-import { useScroll } from '@/hooks/useScroll';
+import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
+import AdminProfile from '@/components/common/Header/admin/AdminProfile';
+import { USER_EVENT } from '@/constants/eventName';
+import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { useScrollDetection } from '@/hooks/useScrollDetection';
+import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
+import * as Styled from './Header.styles';
 
 const Header = () => {
   const trackEvent = useMixpanelTrack();
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const isScrolled = useScroll();
+  const isScrolled = useScrollDetection();
 
   const {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
-    handlePatchNoteClick,
+    handleAdminClick,
   } = useHeaderNavigation();
 
   const navLinks = [
@@ -33,7 +31,7 @@ const Header = () => {
       handler: handleClubUnionClick,
       path: '/club-union',
     },
-    { label: '패치노트', handler: handlePatchNoteClick, path: '/patch-note' },
+    { label: '관리자 페이지', handler: handleAdminClick, path: '/admin' },
   ];
 
   const closeMenu = () => {

@@ -1,5 +1,5 @@
-import getClubApplicants from '@/apis/applicants/getClubApplicants';
 import { useQuery } from '@tanstack/react-query';
+import getClubApplicants from '@/apis/applicants/getClubApplicants';
 
 export const useGetApplicants = (applicationFormId: string | undefined) => {
   return useQuery({

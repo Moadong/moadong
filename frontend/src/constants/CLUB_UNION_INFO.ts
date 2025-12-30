@@ -1,4 +1,4 @@
-import {inactiveCategoryIcons} from '@/assets/images/icons/category_button';
+import { inactiveCategoryIcons } from '@/assets/images/icons/category_button';
 
 export interface ClubUnionMember {
   id: number;

@@ -1,20 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import * as Styled from './ApplicantDetailPage.styles';
-import { useParams, useNavigate } from 'react-router-dom';
-import { useAdminClubContext } from '@/context/AdminClubContext';
-import Header from '@/components/common/Header/Header';
-import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
-import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
-import Spinner from '@/components/common/Spinner/Spinner';
-import debounce from '@/utils/debounce';
-import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
-import { ApplicationStatus } from '@/types/applicants';
-import mapStatusToGroup from '@/utils/mapStatusToGroup';
-import { Question } from '@/types/application';
-import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
+import { useNavigate, useParams } from 'react-router-dom';
 import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
-import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
+import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
+import Header from '@/components/common/Header/Header';
+import Spinner from '@/components/common/Spinner/Spinner';
 import { AVAILABLE_STATUSES } from '@/constants/status';
+import { useAdminClubContext } from '@/context/AdminClubContext';
+import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
+import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
+import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
+import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
+import { ApplicationStatus } from '@/types/applicants';
+import { Question } from '@/types/application';
+import debounce from '@/utils/debounce';
+import mapStatusToGroup from '@/utils/mapStatusToGroup';
+import * as Styled from './ApplicantDetailPage.styles';
 
 const getStatusColor = (status: ApplicationStatus | undefined): string => {
   switch (status) {
@@ -32,13 +32,17 @@ const getStatusColor = (status: ApplicationStatus | undefined): string => {
 };
 
 const ApplicantDetailPage = () => {
-  const { questionId } = useParams<{ questionId: string }>();
+  const { questionId, applicationFormId } = useParams<{
+    questionId: string;
+    applicationFormId: string;
+  }>();
+
   const navigate = useNavigate();
   const [applicantMemo, setAppMemo] = useState('');
   const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
     ApplicationStatus.SUBMITTED,
   );
-  const { applicantsData, clubId, applicationFormId } = useAdminClubContext();
+  const { applicantsData, clubId } = useAdminClubContext();
 
   const applicantIndex =
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
@@ -49,7 +53,9 @@ const ApplicantDetailPage = () => {
     isLoading,
     isError,
   } = useGetApplication(clubId!, applicationFormId ?? undefined);
-  const { mutate: updateApplicant } = useUpdateApplicant(applicationFormId ?? undefined);
+  const { mutate: updateApplicant } = useUpdateApplicant(
+    applicationFormId ?? undefined,
+  );
 
   useEffect(() => {
     if (applicant) {
@@ -144,7 +150,9 @@ const ApplicantDetailPage = () => {
             <select
               id='applicantSelect'
               value={applicant.id}
-              onChange={(e) => navigate(`/admin/applicants-lsit/${e.target.value}`)}
+              onChange={(e) =>
+                navigate(`/admin/applicants-list/${e.target.value}`)
+              }
             >
               {applicantsData.applicants.map((a) => (
                 <option key={a.id} value={a.id}>
@@ -184,7 +192,7 @@ const ApplicantDetailPage = () => {
 
       <Styled.ApplicantInfoContainer>
         <Styled.QuestionsWrapper style={{ cursor: 'default' }}>
-          {formData.questions.map((q: Question, i: number) => (
+          {formData.questions?.map((q: Question, i: number) => (
             <QuestionContainer key={q.id} hasError={false}>
               <QuestionAnswerer
                 question={q}

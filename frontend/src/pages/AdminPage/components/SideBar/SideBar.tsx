@@ -1,15 +1,9 @@
-import React, { useMemo } from 'react';
-import * as Styled from './SideBar.styles';
-import { useNavigate, useLocation } from 'react-router-dom';
-import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
+import { useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '@/apis/auth/logout';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { ADMIN_EVENT } from '@/constants/eventName';
-
-interface SideBarProps {
-  clubName: string;
-  clubLogo: string;
-}
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import * as Styled from './SideBar.styles';
 
 interface TabItem {
   label: string;
@@ -23,15 +17,16 @@ interface TabCategory {
 
 const tabs: TabCategory[] = [
   {
-    category: '기본 정보',
-    items: [{ label: '기본 정보 수정', path: '/admin/club-info' }],
+    category: '동아리 정보',
+    items: [
+      { label: '기본 정보 수정', path: '/admin/club-info' },
+      { label: '소개 정보 수정', path: '/admin/club-intro' },
+      { label: '활동 사진 수정', path: '/admin/photo-edit' },
+    ],
   },
   {
     category: '모집 정보',
-    items: [
-      { label: '모집 정보 수정', path: '/admin/recruit-edit' },
-      { label: '활동 사진 수정', path: '/admin/photo-edit' },
-    ],
+    items: [{ label: '모집 정보 수정', path: '/admin/recruit-edit' }],
   },
   {
     category: '지원 관리',
@@ -42,14 +37,11 @@ const tabs: TabCategory[] = [
   },
   {
     category: '계정 관리',
-    items: [
-      { label: '비밀번호 수정', path: '/admin/account-edit' },
-      { label: '회원탈퇴', path: '/admin/user-delete' },
-    ],
+    items: [{ label: '비밀번호 수정', path: '/admin/account-edit' }],
   },
 ];
 
-const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
+const SideBar = () => {
   const trackEvent = useMixpanelTrack();
   const location = useLocation();
   const navigate = useNavigate();
@@ -64,14 +56,6 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     trackEvent(ADMIN_EVENT.TAB_CLICKED, {
       tabName: item.label,
     });
-    // if (item.label === '아이디/비밀번호 수정') {
-    //   alert('아이디/비밀번호 수정 기능은 아직 준비 중이에요. ☺️');
-    //   return;
-    // }
-    if (item.label === '회원탈퇴') {
-      alert('회원탈퇴 기능은 아직 준비 중이에요. ☺️');
-      return;
-    }
     navigate(item.path);
   };
 
@@ -89,7 +73,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
       }
 
       trackEvent(ADMIN_EVENT.LOGOUT_BUTTON_CLICKED);
-      
+
       localStorage.removeItem('accessToken');
       navigate('/admin/login', { replace: true });
     } catch (error) {
@@ -100,11 +84,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   return (
     <Styled.SidebarWrapper>
       <Styled.SidebarHeader>설정</Styled.SidebarHeader>
-
-      <ClubLogoEditor clubLogo={clubLogo} />
-
-      <Styled.ClubTitle>{clubName}</Styled.ClubTitle>
-      <Styled.Divider />
+      <Styled.SidebarDivider />
 
       <Styled.SidebarButtonContainer>
         {tabs.map((tab, tabIndex) => (
@@ -124,7 +104,7 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
           </li>
         ))}
       </Styled.SidebarButtonContainer>
-      <Styled.Divider />
+      <Styled.SidebarDivider />
       <Styled.SidebarButton onClick={handleLogout}>
         로그아웃
       </Styled.SidebarButton>

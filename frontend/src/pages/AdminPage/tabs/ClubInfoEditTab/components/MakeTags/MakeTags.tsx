@@ -1,6 +1,7 @@
-import * as Styled from './MakeTags.styles';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import * as Styled from './MakeTags.styles';
 
 interface MakeTagsProps {
   value: string[];
@@ -29,7 +30,7 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
       }
       return tag;
     });
-    
+
     trackEvent(ADMIN_EVENT.CLUB_TAG_CLEAR_BUTTON_CLICKED, {
       tagIndex: index + 1,
     });
@@ -48,9 +49,17 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
               value={tag}
               maxLength={5}
               onChange={(e) => updateTag(index, e.target.value)}
+              placeholder={`자유 태그 ${index + 1}`}
+              aria-label={`자유 태그 ${index + 1}`}
             />
             {tag.length > 0 && (
-              <Styled.RemoveButton onClick={() => clearTag(index)} />
+              <Styled.RemoveButton
+                onClick={() => clearTag(index)}
+                aria-label={`자유 태그 ${index + 1} 삭제`}
+                type='button'
+              >
+                <img src={deleteButton} alt='' />
+              </Styled.RemoveButton>
             )}
           </Styled.TagItem>
         ))}

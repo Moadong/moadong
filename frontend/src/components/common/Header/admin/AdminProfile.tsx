@@ -1,7 +1,7 @@
-import * as Styled from '../Header.styles';
 import DefaultMoadongLogo from '@/assets/images/logos/default_profile_image.svg';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import * as Styled from '../Header.styles';
 
 const AdminProfile = () => {
   const { clubId } = useAdminClubContext();

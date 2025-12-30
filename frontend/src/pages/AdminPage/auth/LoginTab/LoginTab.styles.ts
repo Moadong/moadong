@@ -16,7 +16,6 @@ export const LoginBox = styled.div`
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
   background-color: rgba(255, 255, 255, 0.4);
   text-align: center;
-  z-index: 10;
   display: flex;
   flex-direction: column;
   align-items: center;

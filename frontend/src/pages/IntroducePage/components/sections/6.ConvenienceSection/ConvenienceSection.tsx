@@ -1,13 +1,13 @@
-import * as Styled from './ConvenienceSection.styles';
-import useDevice from '@/hooks/useDevice';
 import {
   desktopFeatures,
   mobileFeatures,
 } from '@/assets/images/introduce/features';
+import useDevice from '@/hooks/useDevice';
 import {
   cardVariants,
   VIEWPORT_CONFIG,
 } from '@/pages/IntroducePage/constants/animations';
+import * as Styled from './ConvenienceSection.styles';
 
 const ConvenienceSection = () => {
   const { isDesktop } = useDevice();
