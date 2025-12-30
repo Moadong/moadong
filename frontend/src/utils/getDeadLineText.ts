@@ -1,6 +1,12 @@
 import { format, differenceInCalendarDays } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
+const RECRUITMENT_STATUS = {
+  CLOSED: '모집 마감',
+  ALWAYS: '상시 모집',
+  UPCOMING: '모집 시작',
+};
+
 const getDeadlineText = (
   recruitmentStart: Date | null,
   recruitmentEnd: Date | null,
@@ -10,12 +16,12 @@ const getDeadlineText = (
   console.log(recruitmentStart, recruitmentEnd, recruitmentStatus, today);
   // 모집 마감
   if (recruitmentStatus === 'CLOSED') {
-    return '모집 마감';
+    return RECRUITMENT_STATUS.CLOSED;
   }
 
   // 모집 전
   if (recruitmentStatus === 'UPCOMING') {
-    if (!recruitmentStart) return '모집 마감';
+    if (!recruitmentStart) return RECRUITMENT_STATUS.CLOSED;
     const hour = recruitmentStart.getHours();
     const minute = recruitmentStart.getMinutes();
 
@@ -23,14 +29,14 @@ const getDeadlineText = (
     hour === 0 && minute === 0 
     ? 'M월 d일'
     : 'M월 d일 HH:mm';
-    return `${format(recruitmentStart, formatStr, { locale: ko })} 모집 시작`;
+    return `${format(recruitmentStart, formatStr, { locale: ko })} ${RECRUITMENT_STATUS.UPCOMING}`;
   }
 
   // 모집 중 또는 상시 모집
-  if (!recruitmentEnd) return '모집 마감';
+  if (!recruitmentEnd) return RECRUITMENT_STATUS.CLOSED;
   const days = differenceInCalendarDays(recruitmentEnd, today);
 
-  if (days > 365) return '상시 모집'; // D-day가 의미 없을 정도로 긴 경우 '상시 모집'으로 표시  
+  if (days > 365) return RECRUITMENT_STATUS.ALWAYS; // D-day가 의미 없을 정도로 긴 경우 '상시 모집'으로 표시  
   return days > 0 ? `D-${days}` : 'D-Day';
 };
 
