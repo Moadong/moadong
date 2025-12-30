@@ -17,6 +17,7 @@ interface ClubApplyButtonProps {
 const RECRUITMENT_STATUS = {
   ALWAYS: '상시 모집',
   CLOSED: '모집 마감',
+  UPCOMING: '모집 시작',
 };
 
 const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
@@ -87,7 +88,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     }
   };
 
-  const isUpcoming = deadlineText?.includes('모집 시작');
+  const isUpcoming = deadlineText?.includes(RECRUITMENT_STATUS.UPCOMING);
   const isClosed = deadlineText === RECRUITMENT_STATUS.CLOSED;
 
   const renderButtonContent = () => {
