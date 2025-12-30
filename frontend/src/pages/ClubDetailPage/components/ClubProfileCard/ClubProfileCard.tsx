@@ -5,6 +5,8 @@ import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
 import DefaultCover from '@/assets/images/logos/default_cover_image.png';
 import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { SNSPlatform } from '@/types/club';
 import * as Styled from './ClubProfileCard.styles';
 
@@ -25,6 +27,7 @@ const ClubProfileCard = ({
   socialLinks,
   introDescription,
 }: Props) => {
+  const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
 
   const handleBackClick = () => {
@@ -56,7 +59,6 @@ const ClubProfileCard = ({
 
   return (
     <Styled.Container>
-      {/* 커버 이미지 */}
       <Styled.CoverImageWrapper>
         <Styled.BackButton onClick={handleBackClick} aria-label='뒤로가기'>
           <img src={PrevButton} alt='' />
@@ -64,14 +66,11 @@ const ClubProfileCard = ({
         <Styled.CoverImage src={cover || DefaultCover} alt='클럽 커버' />
       </Styled.CoverImageWrapper>
 
-      {/* 로고 */}
       <Styled.LogoWrapper>
         <Styled.Logo src={logo || DefaultLogo} alt={`${name} 로고`} />
       </Styled.LogoWrapper>
 
-      {/* 클럽 정보 */}
       <Styled.Content>
-        {/* 클럽명 + 뱃지 */}
         <Styled.Header>
           <Styled.ClubName>{name}</Styled.ClubName>
           {recruitmentStatus && <ClubStateBox state={recruitmentStatus} />}
@@ -95,6 +94,13 @@ const ClubProfileCard = ({
                 href={url}
                 target='_blank'
                 rel='noopener noreferrer'
+                onClick={() => {
+                  trackEvent(USER_EVENT.SNS_LINK_CLICKED, {
+                    platform,
+                    url,
+                    clubName: name,
+                  });
+                }}
               >
                 <Styled.SocialIcon src={icon} alt={platform} />
                 <Styled.SocialText>
@@ -106,12 +112,9 @@ const ClubProfileCard = ({
           })}
         </Styled.SocialLinksWrapper>
 
-        {/* 소개 섹션 */}
         <Styled.IntroSection>
           <Styled.IntroTitle>{name}를 소개할게요</Styled.IntroTitle>
-          <Styled.IntroDescription>
-            {introDescription}
-          </Styled.IntroDescription>
+          <Styled.IntroDescription>{introDescription}</Styled.IntroDescription>
         </Styled.IntroSection>
       </Styled.Content>
     </Styled.Container>
