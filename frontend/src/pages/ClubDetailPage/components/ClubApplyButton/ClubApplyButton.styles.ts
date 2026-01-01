@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const ApplyButtonContainer = styled.div`
   width: 100%;
@@ -15,17 +17,17 @@ export const ApplyButton = styled.button`
   justify-content: center;
   border: none;
   border-radius: 10px;
-  cursor: pointer;
+  cursor: ${({disabled}) => (disabled ? 'default' : 'pointer')};
   transition: transform 0.2s ease-in-out;
-  background-color: #ff7543;
+  background-color: ${({ disabled }) => disabled ? colors.gray[500] : colors.primary[800]};
 
   padding: 10px 40px;
   width: 517px;
-  height: 50px;
+  height: 60px;
   font-size: 20px;
   font-style: normal;
   font-weight: 700;
-  color: #fff;
+  color: ${colors.gray[200]};
   text-align: center;
 
   img {
@@ -33,8 +35,12 @@ export const ApplyButton = styled.button`
     font-weight: 600;
   }
 
-  @media (max-width: 500px) {
-    width: 280px;
+  ${media.mobile} {
+    width: 273px;
+    height: 44px;
+    font-size: 16px;
+    font-weight: 500;
+    background-color: ${({ disabled }) => disabled ? colors.gray[500] : colors.gray[900]};
   }
 `;
 

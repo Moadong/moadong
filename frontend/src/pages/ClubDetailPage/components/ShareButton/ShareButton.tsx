@@ -1,7 +1,9 @@
 import ShareIcon from '@/assets/images/icons/share_icon.svg';
+import ShareIconMobile from '@/assets/images/icons/share_icon_mobile.svg';
 import { USER_EVENT } from '@/constants/eventName';
 import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useDevice from '@/hooks/useDevice';
 import * as Styled from './ShareButton.styles';
 
 interface ShareButtonProps {
@@ -13,6 +15,7 @@ const DEFAULT_IMAGE_URL =
   'https://avatars.githubusercontent.com/u/200371900?s=200&v=4';
 
 const ShareButton = ({ clubId }: ShareButtonProps) => {
+  const { isMobile } = useDevice();
   const { data: clubDetail } = useGetClubDetail(clubId);
   const trackEvent = useMixpanelTrack();
 
@@ -54,7 +57,10 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
       role='button'
       aria-label='카카오톡으로 동아리 정보 공유하기'
     >
-      <Styled.ShareButtonIcon src={ShareIcon} alt='카카오톡 공유' />
+      <Styled.ShareButtonIcon 
+        src={isMobile ? ShareIconMobile : ShareIcon} 
+        alt='카카오톡 공유' 
+      />
     </Styled.ShareButtonContainer>
   );
 };

@@ -18,11 +18,11 @@ const pulse = keyframes`
 const StyledButton = styled.button<ButtonProps>`
   background-color: #3a3a3a;
   color: #ffffff;
-  height: 45px;
+  height: 42px;
   border-radius: 10px;
   border: none;
   font-weight: 600;
-  font-size: 1.125rem;
+  font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s;
   width: ${({ width }) => width || 'auto'};

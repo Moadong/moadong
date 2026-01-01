@@ -1,3 +1,4 @@
+import { colors } from '@/styles/theme/colors';
 import styled from 'styled-components';
 
 export const Container = styled.div`
@@ -13,7 +14,8 @@ export const RecruitPeriodContainer = styled.div`
 `;
 
 export const AlwaysRecruitButton = styled.button<{ $active: boolean }>`
-  border-radius: 6px;
+  border-radius: 10px;
+  width: 120px;
   height: 45px;
   padding: 0px 16px;
   font-weight: 600;
@@ -21,9 +23,9 @@ export const AlwaysRecruitButton = styled.button<{ $active: boolean }>`
   cursor: pointer;
   flex-shrink: 0;
 
-  color: ${({ $active }) => ($active ? '#fff' : '#797979')};
-  background: ${({ $active }) => ($active ? '#FF7543' : 'rgba(0,0,0,0.05)')};
-  border: ${({ $active }) => ($active ? 'none' : '1px solid #C5C5C5')};
+  color: ${({ $active }) => ($active ? colors.base.white : colors.gray[700])};
+  background: ${({ $active }) => ($active ? colors.primary[800] : colors.gray[300])};
+  border: ${({ $active }) => ($active ? 'none' : `1px solid ${colors.gray[500]}`)};
   transition:
     background-color 0.12s ease,
     transform 0.06s ease;

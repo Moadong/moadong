@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'styled-components';
 import { ScrollToTopButton } from '@/components/common/ScrollToTopButton/ScrollToTopButton';
 import { AdminClubProvider } from '@/context/AdminClubContext';
+import { ScrollToTop } from '@/hooks/ScrollToTop';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
@@ -25,6 +26,7 @@ const App = () => {
       <ThemeProvider theme={theme}>
         <BrowserRouter>
           <GlobalStyles />
+          <ScrollToTop />
           <ScrollToTopButton />
           <Routes>
             <Route
