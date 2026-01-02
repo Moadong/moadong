@@ -63,16 +63,6 @@ public class ClubSearchRepository {
         Aggregation aggregation = Aggregation.newAggregation(operations);
         AggregationResults<ClubSearchResult> results = mongoTemplate.aggregate(aggregation, "clubs",
                 ClubSearchResult.class);
-        AggregationResults<Document> resultss = mongoTemplate.aggregate(aggregation, "clubs",
-                Document.class);
-
-        System.out.println("=== DEBUG: name | lastModifiedDate DESC ===");
-        for (Document doc : resultss.getMappedResults()) {
-            System.out.printf("%s | %s%n",
-                    doc.getString("name"),
-                    doc.getDate("lastModifiedDate")); // BSON Date면 getDate로 나옴
-        }
-        System.out.println("=== DEBUG END ===");
 
         return results.getMappedResults();
     }
