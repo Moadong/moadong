@@ -1,14 +1,10 @@
 package moadong.club.repository;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.dto.ClubSearchResult;
+import org.bson.Document;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -17,6 +13,9 @@ import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.aggregation.ConditionalOperators;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
+
+import java.util.ArrayList;
+import java.util.List;
 
 
 @Repository
@@ -47,10 +46,11 @@ public class ClubSearchRepository {
                 Criteria.where("recruitmentInformation.tags").regex(keyword, "i")
             )));
         }
+
         operations.add(Aggregation.unwind("club_tags", true));
 
         operations.add(
-            Aggregation.project("name", "state", "category", "division")
+            Aggregation.project("name", "state", "category", "division", "lastModifiedDate")
                 .and("recruitmentInformation.introduction").as("introduction")
                 .and("recruitmentInformation.clubRecruitmentStatus").as("recruitmentStatus")
                     .and(ConditionalOperators.ifNull("$recruitmentInformation.logo").then(""))
@@ -58,12 +58,22 @@ public class ClubSearchRepository {
                     .and(ConditionalOperators.ifNull("$recruitmentInformation.tags").then(""))
                     .as("tags"));
 
-        operations.add(
-            Aggregation.sort(Sort.by(Sort.Order.asc("division"), Sort.Order.asc("category"))));
+        operations.add(Aggregation.sort(Sort.by(Sort.Order.desc("lastModifiedDate"))));
 
         Aggregation aggregation = Aggregation.newAggregation(operations);
         AggregationResults<ClubSearchResult> results = mongoTemplate.aggregate(aggregation, "clubs",
-            ClubSearchResult.class);
+                ClubSearchResult.class);
+        AggregationResults<Document> resultss = mongoTemplate.aggregate(aggregation, "clubs",
+                Document.class);
+
+        System.out.println("=== DEBUG: name | lastModifiedDate DESC ===");
+        for (Document doc : resultss.getMappedResults()) {
+            System.out.printf("%s | %s%n",
+                    doc.getString("name"),
+                    doc.getDate("lastModifiedDate")); // BSON Date면 getDate로 나옴
+        }
+        System.out.println("=== DEBUG END ===");
+
         return results.getMappedResults();
     }
 

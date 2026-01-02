@@ -1,8 +1,5 @@
 package moadong.club.service;
 
-import java.util.*;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubRecruitmentStatus;
@@ -11,7 +8,11 @@ import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.repository.ClubSearchRepository;
 import org.springframework.stereotype.Service;
 
-import static java.util.Arrays.*;
+import java.util.*;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
+
+import static java.util.Arrays.asList;
 
 @Service
 @AllArgsConstructor
@@ -53,8 +54,6 @@ public class ClubSearchService {
                                         randomCategoryPriorities.getOrDefault(
                                                 club.category() != null ? club.category().toUpperCase() : null,
                                                 Integer.MAX_VALUE))
-                                // 3차: 이름순으로 정렬
-                                .thenComparing(ClubSearchResult::name)
                 )
                 .collect(Collectors.toList());
 
