@@ -2,6 +2,8 @@ import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
 
+const LOCALHOST_HOSTNAME = 'localhost';
+
 export function initializeMixpanel() {
   if (import.meta.env.VITE_MIXPANEL_TOKEN) {
     mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
@@ -10,7 +12,7 @@ export function initializeMixpanel() {
     });
   }
 
-  if (window.location.hostname === 'localhost') {
+  if (window.location.hostname === LOCALHOST_HOSTNAME) {
     mixpanel.disable();
   } else {
     const urlParams = new URLSearchParams(window.location.search);
