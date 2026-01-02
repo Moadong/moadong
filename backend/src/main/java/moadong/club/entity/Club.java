@@ -19,6 +19,7 @@ import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Map;
 
@@ -48,6 +49,8 @@ public class Club implements Persistable<String> {
 
     @Field("description")
     private ClubDescription clubDescription;
+
+    private Instant lastModifiedDate;
 
     @Version
     private Long version;
@@ -91,6 +94,7 @@ public class Club implements Persistable<String> {
         this.userId = userId;
         this.clubRecruitmentInformation = clubRecruitmentInformation;
         this.clubDescription = ClubDescription.builder().build();
+        updateLastModifiedDate();
     }
 
     public void update(ClubInfoRequest request) {
@@ -104,6 +108,7 @@ public class Club implements Persistable<String> {
         this.socialLinks = request.socialLinks();
         this.clubRecruitmentInformation.update(request);
         this.clubDescription = request.description().toEntity();
+        updateLastModifiedDate();
     }
 
     private void validateTags(List<String> tags) {
@@ -126,6 +131,11 @@ public class Club implements Persistable<String> {
 
     public void update(ClubRecruitmentInfoUpdateRequest request) {
         clubRecruitmentInformation.updateDescription(request);
+        updateLastModifiedDate();
+    }
+
+    private void updateLastModifiedDate() {
+        this.lastModifiedDate = Instant.now();
     }
 
     public void updateLogo(String logo) {
