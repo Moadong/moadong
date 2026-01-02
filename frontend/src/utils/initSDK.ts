@@ -2,8 +2,6 @@ import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
 
-const PRODUCTION_HOSTNAMES = ['moadong.com', 'www.moadong.com'];
-
 export function initializeMixpanel() {
   if (import.meta.env.VITE_MIXPANEL_TOKEN) {
     mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
@@ -12,11 +10,14 @@ export function initializeMixpanel() {
     });
   }
 
-  const isProductionHost = PRODUCTION_HOSTNAMES.includes(
-    window.location.hostname,
-  );
-  if (!isProductionHost) {
+  if (window.location.hostname === 'localhost') {
     mixpanel.disable();
+  }
+
+  const urlParams = new URLSearchParams(window.location.search);
+  const sessionId = urlParams.get('session_id');
+  if (sessionId) {
+    mixpanel.identify(sessionId);
   }
 }
 
