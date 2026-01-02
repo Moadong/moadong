@@ -12,12 +12,13 @@ export function initializeMixpanel() {
 
   if (window.location.hostname === 'localhost') {
     mixpanel.disable();
-  }
-
-  const urlParams = new URLSearchParams(window.location.search);
-  const sessionId = urlParams.get('session_id');
-  if (sessionId) {
-    mixpanel.identify(sessionId);
+  } else {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    if (sessionId) {
+      // TODO: sessoin_id 검증 추가
+      mixpanel.identify(sessionId);
+    }
   }
 }
 
