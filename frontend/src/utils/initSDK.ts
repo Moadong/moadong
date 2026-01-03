@@ -18,8 +18,13 @@ export function initializeMixpanel() {
     const urlParams = new URLSearchParams(window.location.search);
     const sessionId = urlParams.get('session_id');
     if (sessionId) {
-      // TODO: sessoin_id 검증 추가
       mixpanel.identify(sessionId);
+
+      urlParams.delete('session_id');
+      const newUrl =
+        window.location.pathname +
+        (urlParams.toString() ? '?' + urlParams.toString() : '');
+      window.history.replaceState({}, document.title, newUrl);
     }
   }
 }
