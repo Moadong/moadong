@@ -5,12 +5,15 @@ import mixpanel from 'mixpanel-browser';
 const LOCALHOST_HOSTNAME = 'localhost';
 
 export function initializeMixpanel() {
-  if (import.meta.env.VITE_MIXPANEL_TOKEN) {
-    mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
-      ignore_dnt: true,
-      debug: false,
-    });
+  if (!import.meta.env.VITE_MIXPANEL_TOKEN) {
+    console.warn('믹스패널 환경변수 설정이 안 되어 있습니다.');
+    return;
   }
+
+  mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
+    ignore_dnt: true,
+    debug: false,
+  });
 
   if (window.location.hostname === LOCALHOST_HOSTNAME) {
     mixpanel.disable();
