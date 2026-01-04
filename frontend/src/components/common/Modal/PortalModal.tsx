@@ -27,21 +27,21 @@ const PortalModal = ({
   if (!isOpen) return null;
 
   return createPortal(
-    <Styled.Overlay 
-      isOpen={isOpen} 
+    <Styled.Overlay
+      isOpen={isOpen}
       onClick={() => {
         const shouldClose = onBackdropClick?.();
         if (shouldClose !== false) onClose();
       }}
     >
-      <Styled.Container 
-        isOpen={isOpen} 
+      <Styled.Container
+        isOpen={isOpen}
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         {children}
       </Styled.Container>
     </Styled.Overlay>,
-    modalRoot
+    modalRoot,
   );
 };
 
