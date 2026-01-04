@@ -1,13 +1,13 @@
-import Modal from '@/components/common/Modal/PortalModal';
 import { ApplicationForm } from '@/types/application';
 import * as Styled from './ApplicationSelectModal.styles';
+import PortalModal from '@/components/common/Modal/PortalModal';
+import ModalLayout from '@/components/common/Modal/ModalLayout';
 
 export interface ApplicationSelectModalProps {
   isOpen: boolean;
   onClose: () => void;
   options: ApplicationForm[];
   onSelect: (option: ApplicationForm) => void;
-  onBackdropClick?: () => boolean | void;
 }
 
 interface OptionsListProps {
@@ -43,21 +43,17 @@ const ApplicationSelectModal = ({
   onClose,
   options,
   onSelect,
-  onBackdropClick,
 }: ApplicationSelectModalProps) => {
-  const handleOverlayClick = () => {
-    return false;
-  };
-
   return (
-    <Modal
+    <PortalModal
       isOpen={isOpen}
       onClose={onClose}
-      title='지원서 선택'
-      onBackdropClick={handleOverlayClick}
+      onBackdropClick={() => true}
     >
-      <OptionsList options={options} onSelect={onSelect} />
-    </Modal>
+      <ModalLayout title='지원서 선택' onClose={onClose}>
+        <OptionsList options={options} onSelect={onSelect} />
+      </ModalLayout>
+    </PortalModal>
   );
 };
 
