@@ -1,27 +1,24 @@
 import { MouseEvent, ReactNode, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import * as Styled from './Modal.styles';
 
-export interface ModalProps {
+interface PortalModalProps {
   isOpen: boolean;
   onClose: () => void;
-  title: string;
-  description?: string;
-  children?: ReactNode;
-  onBackdropClick?: () => boolean | void;
+  children: ReactNode;
+  onBackdropClick: () => boolean | void;
 }
 
-const Modal = ({
+const modalRoot = document.getElementById('modal-root') as HTMLElement;
+
+const PortalModal = ({
   isOpen,
   onClose,
-  title,
-  description,
   children,
   onBackdropClick,
-}: ModalProps) => {
+}: PortalModalProps) => {
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    }
+    if (isOpen) document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
     };
@@ -29,18 +26,23 @@ const Modal = ({
 
   if (!isOpen) return null;
 
-  return (
-    <Styled.Overlay isOpen={isOpen} onClick={onBackdropClick} aria-modal="true">
-      <Styled.Container isOpen={isOpen} onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
-        <Styled.Header>
-          {title && <Styled.Title>{title}</Styled.Title>}
-          <Styled.IconButton aria-label="close" type="button" onClick={onClose}>✕</Styled.IconButton>
-        </Styled.Header>
-        {description && <Styled.Description>{description}</Styled.Description>}
-        <Styled.Body>{children}</Styled.Body>
+  return createPortal(
+    <Styled.Overlay 
+      isOpen={isOpen} 
+      onClick={() => {
+        const shouldClose = onBackdropClick?.();
+        if (shouldClose !== false) onClose();
+      }}
+    >
+      <Styled.Container 
+        isOpen={isOpen} 
+        onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+      >
+        {children}
       </Styled.Container>
-    </Styled.Overlay>
+    </Styled.Overlay>,
+    modalRoot
   );
 };
 
-export default Modal;
+export default PortalModal;
