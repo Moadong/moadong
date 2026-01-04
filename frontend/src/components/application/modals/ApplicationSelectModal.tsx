@@ -1,4 +1,4 @@
-import Modal from '@/components/common/Modal/Modal';
+import Modal from '@/components/common/Modal/PortalModal';
 import { ApplicationForm } from '@/types/application';
 import * as Styled from './ApplicationSelectModal.styles';
 
