@@ -30,16 +30,11 @@ const Modal = ({
   if (!isOpen) return null;
 
   return (
-    <Styled.Overlay isOpen={isOpen} onClick={onBackdropClick} aria-modal='true'>
-      <Styled.Container
-        isOpen={isOpen}
-        onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
-      >
+    <Styled.Overlay isOpen={isOpen} onClick={onBackdropClick} aria-modal="true">
+      <Styled.Container isOpen={isOpen} onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}>
         <Styled.Header>
           {title && <Styled.Title>{title}</Styled.Title>}
-          <Styled.IconButton aria-label='close' type='button' onClick={onClose}>
-            ✕
-          </Styled.IconButton>
+          <Styled.IconButton aria-label="close" type="button" onClick={onClose}>✕</Styled.IconButton>
         </Styled.Header>
         {description && <Styled.Description>{description}</Styled.Description>}
         <Styled.Body>{children}</Styled.Body>
