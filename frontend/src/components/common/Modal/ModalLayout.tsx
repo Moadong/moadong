@@ -19,9 +19,15 @@ const ModalLayout = ({
       {(title || onClose) && (
         <Styled.Header>
           {title && <Styled.Title>{title}</Styled.Title>}
-          <Styled.IconButton aria-label='close' type='button' onClick={onClose}>
-            ✕
-          </Styled.IconButton>
+          {onClose && (
+            <Styled.IconButton 
+                aria-label='close' 
+                type='button' 
+                onClick={onClose}
+            >
+                ✕
+            </Styled.IconButton>
+          )}
         </Styled.Header>
       )}
       {description && <Styled.Description>{description}</Styled.Description>}

@@ -6,7 +6,7 @@ interface PortalModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
-  onBackdropClick: () => boolean | void;
+  shouldCloseOnBackdrop: () => boolean | void;
 }
 
 const modalRoot = document.getElementById('modal-root') as HTMLElement;
@@ -15,7 +15,7 @@ const PortalModal = ({
   isOpen,
   onClose,
   children,
-  onBackdropClick,
+  shouldCloseOnBackdrop,
 }: PortalModalProps) => {
   useEffect(() => {
     if (isOpen) document.body.style.overflow = 'hidden';
@@ -30,7 +30,7 @@ const PortalModal = ({
     <Styled.Overlay
       isOpen={isOpen}
       onClick={() => {
-        const shouldClose = onBackdropClick?.();
+        const shouldClose = shouldCloseOnBackdrop?.();
         if (shouldClose !== false) onClose();
       }}
     >
