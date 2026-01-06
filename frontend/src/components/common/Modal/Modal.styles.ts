@@ -1,31 +1,37 @@
 import styled from 'styled-components';
 import { Z_INDEX } from '@/styles/zIndex';
 
-export const Overlay = styled.div<{ isOpen: boolean }>`
+export const Overlay = styled.div`
   inset: 0;
   position: fixed;
   z-index: ${Z_INDEX.overlay};
-  background: rgba(0, 0, 0, ${({ isOpen }) => (isOpen ? 0.45 : 0)});
-  display: grid;
-  place-items: center;
-  padding: 24px;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transition: background-color 0.2s ease;
 `;
 
-export const Container = styled.div<{ isOpen: boolean }>`
+export const ContentWrapper = styled.div`
   position: relative;
   z-index: ${Z_INDEX.modal};
-  max-width: 500px;
-  width: 100%;
-  max-height: 90vh;
+  outline: none;
+  padding: 24px;
+  display: flex;
+  justify-content: center;
+  width: 100%; 
+  max-width: fit-content;
+`;
+
+export const StandardLayout = styled.div<{ $width?: string }>`
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
-  box-shadow: ${({ isOpen }) =>
-    isOpen ? '0 18px 44px rgba(0,0,0,.22)' : 'none'};
-  transition:
-    transform 0.2s ease,
-    box-shadow 0.2s ease;
+  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
+  display: flex;
+  flex-direction: column;
+  width: ${({ $width }) => $width || '400px'}; 
+  max-width: 100%;
 `;
 
 export const Header = styled.div`

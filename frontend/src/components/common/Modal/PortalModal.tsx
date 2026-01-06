@@ -16,31 +16,25 @@ const PortalModal = ({
   closeOnBackdrop = true,
 }: PortalModalProps) => {
   useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
+    if (isOpen) document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = ''; };
   }, [isOpen]);
 
   if (!isOpen) return null;
 
-  const modalRoot = document.getElementById('modal-root') as HTMLElement;
+  const modalRoot = document.getElementById('modal-root');
+  if (!modalRoot) return null;
 
   return createPortal(
     <Styled.Overlay
       isOpen={isOpen}
-      onClick={() => {
-        if (closeOnBackdrop) onClose();
-      }}
+      onClick={() => { if (closeOnBackdrop) onClose();}}
     >
-      <Styled.Container
-        isOpen={isOpen}
+      <Styled.ContentWrapper
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         {children}
-      </Styled.Container>
+      </Styled.ContentWrapper>
     </Styled.Overlay>,
     modalRoot,
   );
