@@ -70,11 +70,13 @@ const Popup = () => {
     };
   }, [isOpen]);
 
-  const handleClose = () => {
+  const handleClose = (
+    action: 'close_button' | 'backdrop_click' = 'close_button',
+  ) => {
     const abGroup = getABTestGroup();
     trackEvent(USER_EVENT.MAIN_POPUP_CLOSED, {
       popupType: 'app_download',
-      action: 'close_button',
+      action: action,
       abTestGroup: abGroup,
     });
     setIsOpen(false);
@@ -104,13 +106,7 @@ const Popup = () => {
 
   const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
-      const abGroup = getABTestGroup();
-      trackEvent(USER_EVENT.MAIN_POPUP_CLOSED, {
-        popupType: 'app_download',
-        action: 'backdrop_click',
-        abTestGroup: abGroup,
-      });
-      handleClose();
+      handleClose('backdrop_click');
     }
   };
 
@@ -135,7 +131,7 @@ const Popup = () => {
             <Styled.Button onClick={handleDontShowAgain}>
               다시 보지 않기
             </Styled.Button>
-            <Styled.Button onClick={handleClose}>닫기</Styled.Button>
+            <Styled.Button onClick={() => handleClose()}>닫기</Styled.Button>
           </Styled.ButtonGroup>
         </Styled.Container>
       </Styled.ModalContainer>
