@@ -46,6 +46,7 @@ const Popup = () => {
     const img = new Image();
     img.src = AppDownloadImage;
     img.onload = () => setImageLoaded(true);
+    img.onerror = () => setImageLoaded(true);
   }, []);
 
   useEffect(() => {
