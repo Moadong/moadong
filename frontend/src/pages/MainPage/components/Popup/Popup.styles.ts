@@ -20,7 +20,7 @@ export const ModalContainer = styled.div<{ isOpen: boolean }>`
   width: 100%;
   max-height: 90vh;
   background: transparent;
-  border-radius: 10px;
+  border-radius: 16px;
   overflow: visible;
   transition: transform 0.2s ease;
 `;
