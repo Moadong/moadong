@@ -16,7 +16,6 @@ export const ContentWrapper = styled.div`
   position: relative;
   z-index: ${Z_INDEX.modal};
   outline: none;
-  padding: 24px;
   display: flex;
   justify-content: center;
   width: 100%; 
@@ -27,6 +26,7 @@ export const StandardLayout = styled.div<{ $width?: string }>`
   background: #fff;
   border-radius: 10px;
   overflow: hidden;
+  margin: 24px;
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
   display: flex;
   flex-direction: column;
