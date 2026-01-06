@@ -9,6 +9,7 @@ import * as Styled from './Popup.styles';
 export const POPUP_STORAGE_KEY = 'mainpage_popup_hidden_date';
 export const AB_TEST_KEY = 'mainpage_popup_ab_group';
 export const DAYS_TO_HIDE = 7;
+const AB_TEST_SPLIT_RATIO = 0.5;
 
 type PopupABTestGroup = 'show_popup' | 'no_popup';
 
@@ -20,7 +21,7 @@ export const getABTestGroup = (): PopupABTestGroup => {
   }
 
   const group: PopupABTestGroup =
-    Math.random() < 0.5 ? 'show_popup' : 'no_popup';
+    Math.random() < AB_TEST_SPLIT_RATIO ? 'show_popup' : 'no_popup';
   localStorage.setItem(AB_TEST_KEY, group);
 
   return group;
