@@ -6,12 +6,13 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import * as Styled from './Popup.styles';
 
-const POPUP_STORAGE_KEY = 'mainpage_popup_hidden';
-const AB_TEST_KEY = 'mainpage_popup_ab_group';
+export const POPUP_STORAGE_KEY = 'mainpage_popup_hidden_date';
+export const AB_TEST_KEY = 'mainpage_popup_ab_group';
+export const DAYS_TO_HIDE = 7;
 
 type PopupABTestGroup = 'show_popup' | 'no_popup';
 
-const getABTestGroup = (): PopupABTestGroup => {
+export const getABTestGroup = (): PopupABTestGroup => {
   const savedGroup = localStorage.getItem(AB_TEST_KEY);
 
   if (savedGroup === 'show_popup' || savedGroup === 'no_popup') {
@@ -25,13 +26,22 @@ const getABTestGroup = (): PopupABTestGroup => {
   return group;
 };
 
+export const isPopupHidden = (): boolean => {
+  const hiddenDate = localStorage.getItem(POPUP_STORAGE_KEY);
+  if (!hiddenDate) return false;
+
+  const daysSinceHidden =
+    (Date.now() - parseInt(hiddenDate)) / (1000 * 60 * 60 * 24);
+  return daysSinceHidden < DAYS_TO_HIDE;
+};
+
 const Popup = () => {
   const [isOpen, setIsOpen] = useState(false);
   const { isMobile } = useDevice();
   const trackEvent = useMixpanelTrack();
 
   useEffect(() => {
-    const isHidden = localStorage.getItem(POPUP_STORAGE_KEY);
+    const isHidden = isPopupHidden();
     const abGroup = getABTestGroup();
 
     if (isMobile && !isHidden) {
@@ -76,7 +86,7 @@ const Popup = () => {
       action: 'dont_show_again',
       abTestGroup: abGroup,
     });
-    localStorage.setItem(POPUP_STORAGE_KEY, 'true');
+    localStorage.setItem(POPUP_STORAGE_KEY, Date.now().toString());
     setIsOpen(false);
   };
 
