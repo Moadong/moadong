@@ -6,6 +6,7 @@ interface ModalLayoutProps {
   title?: string;
   description?: string;
   children: ReactNode;
+  width?: string;
 }
 
 const ModalLayout = ({
@@ -13,9 +14,10 @@ const ModalLayout = ({
   title,
   description,
   children,
+  width,
 }: ModalLayoutProps) => {
   return (
-    <>
+    <Styled.StandardLayout $width={width}>
       {(title || onClose) && (
         <Styled.Header>
           {title && <Styled.Title>{title}</Styled.Title>}
@@ -32,7 +34,7 @@ const ModalLayout = ({
       )}
       {description && <Styled.Description>{description}</Styled.Description>}
       <Styled.Body>{children}</Styled.Body>
-    </>
+    </Styled.StandardLayout>
   );
 };
 

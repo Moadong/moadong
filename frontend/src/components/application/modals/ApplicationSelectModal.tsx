@@ -51,9 +51,9 @@ const ApplicationSelectModal = ({
     <PortalModal
       isOpen={isOpen}
       onClose={onClose}
-      shouldCloseOnBackdrop={() => true}
+      closeOnBackdrop={true}
     >
-      <ModalLayout title='지원서 선택' onClose={onClose}>
+      <ModalLayout title='지원서 선택' onClose={onClose} width="500px">
         <ApplicationOptions applicationOptions={applicationOptions} 
         onOptionSelect={onOptionSelect} 
       />
