@@ -2,6 +2,11 @@ export const USER_EVENT = {
   CATEGORY_BUTTON_CLICKED: 'CategoryButton Clicked',
   SEARCH_BOX_CLICKED: 'SearchBox Clicked',
 
+  // 메인 페이지 팝업
+  MAIN_POPUP_VIEWED: 'Main Popup Viewed',
+  MAIN_POPUP_CLOSED: 'Main Popup Closed',
+  APP_DOWNLOAD_POPUP_CLICKED: 'App Download Popup Clicked',
+
   // 배너 클릭
   BANNER_CLICKED: 'Banner Clicked',
   APP_DOWNLOAD_BANNER_CLICKED: 'App Download Banner Clicked',
