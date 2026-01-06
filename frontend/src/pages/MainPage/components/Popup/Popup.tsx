@@ -38,14 +38,21 @@ export const isPopupHidden = (): boolean => {
 
 const Popup = () => {
   const [isOpen, setIsOpen] = useState(false);
+  const [imageLoaded, setImageLoaded] = useState(false);
   const { isMobile } = useDevice();
   const trackEvent = useMixpanelTrack();
+
+  useEffect(() => {
+    const img = new Image();
+    img.src = AppDownloadImage;
+    img.onload = () => setImageLoaded(true);
+  }, []);
 
   useEffect(() => {
     const isHidden = isPopupHidden();
     const abGroup = getABTestGroup();
 
-    if (isMobile && !isHidden) {
+    if (isMobile && !isHidden && imageLoaded) {
       if (abGroup === 'show_popup') {
         setIsOpen(true);
         trackEvent(USER_EVENT.MAIN_POPUP_VIEWED, {
@@ -59,7 +66,7 @@ const Popup = () => {
         });
       }
     }
-  }, [isMobile, trackEvent]);
+  }, [isMobile, trackEvent, imageLoaded]);
 
   useEffect(() => {
     if (isOpen) {
