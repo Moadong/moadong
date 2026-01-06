@@ -4,6 +4,7 @@ export const USER_EVENT = {
 
   // 메인 페이지 팝업
   MAIN_POPUP_VIEWED: 'Main Popup Viewed',
+  MAIN_POPUP_NOT_SHOWN: 'Main Popup Not Shown',
   MAIN_POPUP_CLOSED: 'Main Popup Closed',
   APP_DOWNLOAD_POPUP_CLICKED: 'App Download Popup Clicked',
 
