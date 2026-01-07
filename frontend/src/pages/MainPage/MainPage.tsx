@@ -8,6 +8,7 @@ import useTrackPageView from '@/hooks/useTrackPageView';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
+import Popup from '@/pages/MainPage/components/Popup/Popup';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
 import { Club } from '@/types/club';
@@ -25,8 +26,6 @@ const MainPage = () => {
   const tabs = ['부경대학교 중앙동아리'] as const;
   const [active, setActive] =
     useState<(typeof tabs)[number]>('부경대학교 중앙동아리');
-  // TODO: 추후 확정되면 DivisionKey(중동/가동/과동) 같은 타입을
-  // types/club.ts에 정의해서 tabs 관리하도록 리팩터링하기
 
   const { data, error, isLoading } = useGetCardList({
     keyword,
@@ -53,6 +52,7 @@ const MainPage = () => {
 
   return (
     <>
+      <Popup />
       <Header />
       <Banner />
       <Styled.PageContainer>
