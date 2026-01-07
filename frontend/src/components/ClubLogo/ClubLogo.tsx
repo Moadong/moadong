@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 type LogoVariant = 'main' | 'detail';
 
@@ -25,8 +26,9 @@ const StyledClubLogo = styled.div<{
   ${({ $variant, $imageSrc }) => css`
     width: ${presets[$variant].desktop.width};
     height: ${presets[$variant].desktop.height};
+    border: 0.5px solid ${colors.gray[400]};
     border-radius: ${presets[$variant].desktop.radius};
-    background-color: #efefef;
+    background-color: ${colors.base.white};
     background-size: cover;
     background-position: center;
     background-image: ${$imageSrc ? `url("${$imageSrc}")` : 'none'};
