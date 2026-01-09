@@ -27,7 +27,6 @@ const PortalModal = ({
 
   return createPortal(
     <Styled.Overlay
-      isOpen={isOpen}
       onClick={() => { if (closeOnBackdrop) onClose();}}
     >
       <Styled.ContentWrapper
