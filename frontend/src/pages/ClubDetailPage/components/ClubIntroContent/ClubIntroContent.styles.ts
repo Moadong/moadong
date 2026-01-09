@@ -186,11 +186,18 @@ export const ArrowIcon = styled.svg<{ $isOpen: boolean }>`
   flex-shrink: 0;
 `;
 
-export const AnswerContainer = styled.div`
-  padding: 0 20px 20px 20px;
+export const AnswerContainer = styled.div<{ $isOpen: boolean }>`
+  max-height: ${({ $isOpen }) => ($isOpen ? '500px' : '0')};
+  opacity: ${({ $isOpen }) => ($isOpen ? '1' : '0')};
+  padding: ${({ $isOpen }) => ($isOpen ? '0 20px 20px 20px' : '0 20px')};
+  overflow: hidden;
+  transition:
+    max-height 0.3s ease-in-out,
+    opacity 0.3s ease-in-out,
+    padding 0.3s ease-in-out;
 
   ${media.mobile} {
-    padding: 0 16px 16px 16px;
+    padding: ${({ $isOpen }) => ($isOpen ? '0 16px 16px 16px' : '0 16px')};
   }
 `;
 
