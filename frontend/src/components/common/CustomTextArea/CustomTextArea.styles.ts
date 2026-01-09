@@ -11,9 +11,8 @@ export const TextAreaContainer = styled.div<{ width: string }>`
 
 export const Label = styled.label`
   font-size: 1.125rem;
-  margin-bottom: 12px;
+  margin-bottom: 8px;
   font-weight: 600;
-  color: #787878;
 `;
 
 export const TextAreaWrapper = styled.div`

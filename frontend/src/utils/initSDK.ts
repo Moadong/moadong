@@ -1,20 +1,34 @@
-import mixpanel from 'mixpanel-browser';
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import * as Sentry from '@sentry/react';
+import mixpanel from 'mixpanel-browser';
 
-const PRODUCTION_HOSTNAMES = ['moadong.com', 'www.moadong.com'];
+const LOCALHOST_HOSTNAME = 'localhost';
 
 export function initializeMixpanel() {
-  if (import.meta.env.VITE_MIXPANEL_TOKEN) {
-    mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
-      ignore_dnt: true,
-      debug: false,
-    });
+  if (!import.meta.env.VITE_MIXPANEL_TOKEN) {
+    console.warn('믹스패널 환경변수 설정이 안 되어 있습니다.');
+    return;
   }
 
-  const isProductionHost = PRODUCTION_HOSTNAMES.includes(window.location.hostname);
-  if (!isProductionHost) {
+  mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
+    ignore_dnt: true,
+    debug: false,
+  });
+
+  if (window.location.hostname === LOCALHOST_HOSTNAME) {
     mixpanel.disable();
+  } else {
+    const urlParams = new URLSearchParams(window.location.search);
+    const sessionId = urlParams.get('session_id');
+    if (sessionId) {
+      mixpanel.identify(sessionId);
+
+      urlParams.delete('session_id');
+      const newUrl =
+        window.location.pathname +
+        (urlParams.toString() ? '?' + urlParams.toString() : '');
+      window.history.replaceState({}, document.title, newUrl);
+    }
   }
 }
 

@@ -1,5 +1,5 @@
-import API_BASE_URL from '@/constants/api';
 import { secureFetch } from '@/apis/auth/secureFetch';
+import API_BASE_URL from '@/constants/api';
 import { ApplicationFormData } from '@/types/application';
 
 export const createApplication = async (data: ApplicationFormData) => {

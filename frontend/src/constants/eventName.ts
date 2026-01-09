@@ -2,6 +2,16 @@ export const USER_EVENT = {
   CATEGORY_BUTTON_CLICKED: 'CategoryButton Clicked',
   SEARCH_BOX_CLICKED: 'SearchBox Clicked',
 
+  // 메인 페이지 팝업
+  MAIN_POPUP_VIEWED: 'Main Popup Viewed',
+  MAIN_POPUP_NOT_SHOWN: 'Main Popup Not Shown',
+  MAIN_POPUP_CLOSED: 'Main Popup Closed',
+  APP_DOWNLOAD_POPUP_CLICKED: 'App Download Popup Clicked',
+
+  // 배너 클릭
+  BANNER_CLICKED: 'Banner Clicked',
+  APP_DOWNLOAD_BANNER_CLICKED: 'App Download Banner Clicked',
+
   // 네비게이션
   BACK_BUTTON_CLICKED: 'Back Button Clicked',
   HOME_BUTTON_CLICKED: 'Home Button Clicked',
@@ -14,6 +24,8 @@ export const USER_EVENT = {
   TAB_CLICKED: 'Tab Clicked',
   PHOTO_NAVIGATION_CLICKED: 'Photo Navigation',
   CLUB_CARD_CLICKED: 'ClubCard Clicked',
+  CLUB_INTRO_TAB_CLICKED: 'Club Intro Tab Clicked',
+  CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',
 
   // 동아리 지원
   CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked',
@@ -28,6 +40,7 @@ export const USER_EVENT = {
   INTRODUCE_BUTTON_CLICKED: 'Introduce Button Clicked',
   APPLICATION_FORM_SUBMITTED: 'Application Form Submitted',
   PATCH_NOTE_BUTTON_CLICKED: 'Patch Note Button Clicked',
+  FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
 } as const;
 
 export const ADMIN_EVENT = {
@@ -38,6 +51,8 @@ export const ADMIN_EVENT = {
   FORGOT_PASSWORD_BUTTON_CLICKED: '비밀번호 찾기 버튼클릭',
 
   // 사이드바
+  CLUB_COVER_UPLOAD_BUTTON_CLICKED: '동아리 커버 업로드 버튼클릭',
+  CLUB_COVER_RESET_BUTTON_CLICKED: '동아리 커버 초기화 버튼클릭',
   CLUB_LOGO_UPLOAD_BUTTON_CLICKED: '동아리 로고 업로드 버튼클릭',
   CLUB_LOGO_EDIT_BUTTON_CLICKED: '동아리 로고 수정 버튼클릭',
   CLUB_LOGO_RESET_BUTTON_CLICKED: '동아리 로고 초기화 버튼클릭',
@@ -86,4 +101,4 @@ export const PAGE_VIEW = {
   RECRUITMENT_INFO_EDIT_PAGE: '동아리 모집 정보 수정 페이지',
   PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
-} as const; 
+} as const;

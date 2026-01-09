@@ -6,7 +6,7 @@ const GlobalStyles = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
   }
-  textarea {
+  textarea, button, input, select {
     font-family: 'Pretendard', sans-serif;
   }
   body {

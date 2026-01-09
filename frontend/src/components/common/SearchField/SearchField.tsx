@@ -1,6 +1,6 @@
 import React, { useRef, useState } from 'react';
-import * as Styled from '@/components/common/SearchField/SearchField.styles';
 import searchButtonIcon from '@/assets/images/icons/search_button_icon.svg';
+import * as Styled from '@/components/common/SearchField/SearchField.styles';
 
 interface SearchFieldProps {
   value: string;

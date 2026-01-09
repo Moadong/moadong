@@ -1,5 +1,5 @@
-import { createApiUrl } from './createApiUrl';
 import { API_BASE, CLUB_ID } from '../constants/clubApi';
+import { createApiUrl } from './createApiUrl';
 
 describe('createApiUrl 함수 테스트', () => {
   it('올바른 클럽 ID로 URL이 정상 생성된다', () => {

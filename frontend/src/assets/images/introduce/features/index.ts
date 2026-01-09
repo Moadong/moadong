@@ -1,14 +1,13 @@
 // 데스크탑용
 import feature_category_mockup_desktop from './desktop/feature_category_mockup.png';
-import feature_recruitment_mockup_desktop from './desktop/feature_recruitment_mockup.png';
 import feature_info_mockup_desktop from './desktop/feature_info_mockup.png';
 import feature_introduction_mockup_desktop from './desktop/feature_introduction_mockup.png';
-
+import feature_recruitment_mockup_desktop from './desktop/feature_recruitment_mockup.png';
 // 모바일용
 import feature_category_mockup_mobile from './mobile/feature_category_mockup.png';
-import feature_recruitment_mockup_mobile from './mobile/feature_recruitment_mockup.png';
 import feature_info_mockup_mobile from './mobile/feature_info_mockup.png';
 import feature_introduction_mockup_mobile from './mobile/feature_introduction_mockup.png';
+import feature_recruitment_mockup_mobile from './mobile/feature_recruitment_mockup.png';
 
 export const desktopFeatures = [
   { src: feature_category_mockup_desktop, alt: '분과별 카테고리' },

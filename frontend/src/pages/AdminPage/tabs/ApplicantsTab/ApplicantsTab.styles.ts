@@ -1,7 +1,7 @@
 import styled from 'styled-components';
-import checkIcon from '@/assets/images/icons/checkBox.svg';
-import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
 import disabledDeleteIcon from '@/assets/images/icons/applicant_delete_disabled.svg';
+import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
+import checkIcon from '@/assets/images/icons/checkBox.svg';
 
 export const ApplicationHeader = styled.div`
   display: flex;

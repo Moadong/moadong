@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 interface ButtonProps {
   selected: boolean;
+  color?: string;
 }
 
 export const Button = styled.button<ButtonProps>`
@@ -11,12 +12,15 @@ export const Button = styled.button<ButtonProps>`
   border: none;
   transition: all 0.1s;
   font-weight: 600;
-  background-color: ${(props) =>
-    props.selected ? '#FF5414' : 'rgba(0, 0, 0, 0.05)'};
-  color: ${(props) => (props.selected ? 'white' : '#4B4B4B')};
   cursor: pointer;
+  background-color: ${(props) =>
+    props.selected ? props.color || '#FF5414' : 'rgba(0, 0, 0, 0.05)'};
+  color: ${(props) => (props.selected ? '#3a3a3a' : '#4B4B4B')};
+
   &:hover {
-    background-color: ${(props) => (props.selected ? '#ea580c' : '#d1d5db')};
+    opacity: ${(props) => (props.selected ? 0.9 : 1)};
+    background-color: ${(props) =>
+      props.selected ? props.color || '#ea580c' : '#d1d5db'};
   }
 `;
 

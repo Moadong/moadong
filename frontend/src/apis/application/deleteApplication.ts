@@ -1,11 +1,11 @@
 import API_BASE_URL from '@/constants/api';
 import { secureFetch } from '../auth/secureFetch';
 
-const deleteApplication = async (
-  applicationFormId: string,
-) => {
+const deleteApplication = async (applicationFormId: string) => {
   try {
-    const response = await secureFetch(`${API_BASE_URL}/api/club/application/${applicationFormId}`, {
+    const response = await secureFetch(
+      `${API_BASE_URL}/api/club/application/${applicationFormId}`,
+      {
         method: 'DELETE',
       },
     );

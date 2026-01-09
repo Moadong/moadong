@@ -1,9 +1,9 @@
 import React from 'react';
-import * as Styled from './ApplicationListTab.styles';
+import check_inactive from '@/assets/images/icons/check_inactive.svg';
 import checkBox from '@/assets/images/icons/checkBox.svg';
 import Delete_applicant from '@/assets/images/icons/Delete_applicant.svg';
 import Pencil from '@/assets/images/icons/pencil_icon_3.svg';
-import check_inactive from '@/assets/images/icons/check_inactive.svg';
+import * as Styled from './ApplicationListTab.styles';
 
 interface ApplicationMenuProps {
   isActive: boolean;
@@ -11,9 +11,11 @@ interface ApplicationMenuProps {
   onToggleStatus?: () => void;
 }
 
-const ApplicationMenu = ({ isActive, onToggleStatus, 
-  onDelete
- }: ApplicationMenuProps) => {
+const ApplicationMenu = ({
+  isActive,
+  onToggleStatus,
+  onDelete,
+}: ApplicationMenuProps) => {
   const onEditTitle = () => console.log('제목 수정하기');
   const toggleButtonText = isActive ? '지원서 비활성화' : '지원서 활성화';
 

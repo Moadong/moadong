@@ -1,13 +1,14 @@
 import { useEffect } from 'react';
-import useAuth from '@/hooks/useAuth';
 import { Navigate } from 'react-router-dom';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import Spinner from '@/components/common/Spinner/Spinner';
+import { useAdminClubContext } from '@/context/AdminClubContext';
+import useAuth from '@/hooks/useAuth';
+
 // import { useGetApplicants } from '@/hooks/queries/applicants/useGetApplicants';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isLoading, isAuthenticated, clubId } = useAuth();
-  const {setClubId} = useAdminClubContext();
+  const { setClubId } = useAdminClubContext();
   // const { setClubId, setApplicantsData } = useAdminClubContext();
   // const { data: applicantsData } = useGetApplicants(clubId ?? '');
 
@@ -16,7 +17,7 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
       setClubId(clubId);
     }
   }, [clubId, setClubId]);
-  
+
   // useEffect(() => {
   //   if (clubId && applicantsData) {
   //     setApplicantsData(applicantsData);

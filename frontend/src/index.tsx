@@ -1,9 +1,9 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import {
+  initializeKakaoSDK,
   initializeMixpanel,
   initializeSentry,
-  initializeKakaoSDK,
 } from './utils/initSDK';
 
 initializeMixpanel();

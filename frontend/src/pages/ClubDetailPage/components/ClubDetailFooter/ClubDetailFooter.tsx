@@ -1,21 +1,24 @@
-import * as Styled from './ClubDetailFooter.styles';
-import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
-import { parseRecruitmentPeriod } from '@/utils/recruitmentPeriodParser';
 import getDeadlineText from '@/utils/getDeadLineText';
+import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import ClubApplyButton from '../ClubApplyButton/ClubApplyButton';
+import * as Styled from './ClubDetailFooter.styles';
+import { RecruitmentStatus } from '@/types/club';
 
 interface ClubDetailFooterProps {
-  recruitmentPeriod: string;
-  recruitmentForm: string;
+  recruitmentStart: string;
+  recruitmentEnd: string;
+  recruitmentStatus: RecruitmentStatus;
 }
 
-const ClubDetailFooter = ({ recruitmentPeriod }: ClubDetailFooterProps) => {
-  const { recruitmentStart, recruitmentEnd } =
-    parseRecruitmentPeriod(recruitmentPeriod);
-
+const ClubDetailFooter = ({
+  recruitmentStart,
+  recruitmentEnd,
+  recruitmentStatus,
+}: ClubDetailFooterProps) => {
   const deadlineText = getDeadlineText(
-    recruitmentStart,
-    recruitmentEnd,
-    new Date(),
+    recruitmentDateParser(recruitmentStart),
+    recruitmentDateParser(recruitmentEnd),
+    recruitmentStatus,
   );
 
   return (

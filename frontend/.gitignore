@@ -15,6 +15,7 @@ build-storybook.log
 *.key
 *.csr
 
+/storybook-static
 *storybook.log
 coverage/ 
 # Sentry Config File

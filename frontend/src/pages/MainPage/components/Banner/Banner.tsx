@@ -1,17 +1,21 @@
 import { useState } from 'react';
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation, Autoplay } from 'swiper/modules';
 import type { Swiper as SwiperType } from 'swiper';
+import { Autoplay, Navigation } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import NextButton from '@/assets/images/icons/next_button_icon.svg';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import { USER_EVENT } from '@/constants/eventName';
+import useDevice from '@/hooks/useDevice';
+import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useNavigator from '@/hooks/useNavigator';
+import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import * as Styled from './Banner.styles';
 import BANNERS from './bannerData';
-import useDevice from '@/hooks/useDevice';
-import useNavigator from '@/hooks/useNavigator';
-import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
-import NextButton from '@/assets/images/icons/next_button_icon.svg';
 
 const Banner = () => {
   const { isMobile } = useDevice();
   const handleLink = useNavigator();
+  const trackEvent = useMixpanelTrack();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
 
@@ -23,10 +27,30 @@ const Banner = () => {
     swiperInstance?.slideNext();
   };
 
-  const handleBannerClick = (url?: string) => {
-    if (url) {
-      handleLink(url);
+  const handleBannerClick = (
+    bannerId: string,
+    bannerName: string,
+    url?: string,
+  ) => {
+    if (!url) return;
+
+    if (url === 'APP_STORE_LINK') {
+      const storeLink = getAppStoreLink();
+      trackEvent(USER_EVENT.APP_DOWNLOAD_BANNER_CLICKED, {
+        bannerId,
+        bannerName,
+        platform: detectPlatform(),
+      });
+      handleLink(storeLink);
+      return;
     }
+
+    trackEvent(USER_EVENT.BANNER_CLICKED, {
+      bannerId,
+      bannerName,
+      linkTo: url,
+    });
+    handleLink(url);
   };
 
   return (
@@ -56,7 +80,9 @@ const Banner = () => {
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
                 isClickable={!!banner.linkTo}
-                onClick={() => handleBannerClick(banner.linkTo)}
+                onClick={() =>
+                  handleBannerClick(banner.id, banner.alt, banner.linkTo)
+                }
               >
                 <img
                   src={isMobile ? banner.mobileImage : banner.desktopImage}

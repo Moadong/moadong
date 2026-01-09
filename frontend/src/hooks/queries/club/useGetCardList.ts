@@ -1,4 +1,4 @@
-import { useQuery, keepPreviousData } from '@tanstack/react-query';
+import { keepPreviousData, useQuery } from '@tanstack/react-query';
 import { getClubList } from '@/apis/getClubList';
 import { ClubSearchResponse } from '@/types/club.responses';
 import convertToDriveUrl from '@/utils/convertGoogleDriveUrl';
@@ -10,19 +10,22 @@ interface UseGetCardListProps {
   division: string;
 }
 
-export const useGetCardList = (
-  { keyword, recruitmentStatus, category, division }: UseGetCardListProps,
-) => {
+export const useGetCardList = ({
+  keyword,
+  recruitmentStatus,
+  category,
+  division,
+}: UseGetCardListProps) => {
   return useQuery<ClubSearchResponse, unknown, ClubSearchResponse>({
     queryKey: ['clubs', keyword, recruitmentStatus, category, division],
     queryFn: () => getClubList(keyword, recruitmentStatus, category, division),
     placeholderData: keepPreviousData,
     select: (data) => ({
       totalCount: data.totalCount,
-      clubs: (data.clubs.map((club) => ({
+      clubs: data.clubs.map((club) => ({
         ...club,
         logo: convertToDriveUrl(club.logo),
-      }))),
+      })),
     }),
   });
 };

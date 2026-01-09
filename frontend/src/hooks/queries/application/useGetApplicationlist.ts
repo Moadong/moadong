@@ -1,5 +1,5 @@
-import getAllApplications from '@/apis/application/getAllApplications';
 import { useQuery } from '@tanstack/react-query';
+import getAllApplications from '@/apis/application/getAllApplications';
 
 export const useGetApplicationlist = () => {
   return useQuery({

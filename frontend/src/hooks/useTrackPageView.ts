@@ -12,7 +12,6 @@ const useTrackPageView = (
   const startTime = useRef(Date.now());
   const clubNameRef = useRef(clubName);
 
-
   useEffect(() => {
     clubNameRef.current = clubName;
 
@@ -29,7 +28,6 @@ const useTrackPageView = (
     });
 
     const trackPageDuration = () => {
-      // 레이스 컨디션 방지: 체크와 설정을 원자적으로 처리
       if (isTracked.current) return;
       isTracked.current = true;
 
@@ -43,18 +41,20 @@ const useTrackPageView = (
     };
 
     window.addEventListener('beforeunload', trackPageDuration);
-    document.addEventListener('visibilitychange', () => {
+
+    const handleVisibilityChange = () => {
       if (document.hidden) {
         trackPageDuration();
       }
-    });
+    };
+    document.addEventListener('visibilitychange', handleVisibilityChange);
 
     return () => {
       trackPageDuration();
       window.removeEventListener('beforeunload', trackPageDuration);
-      document.removeEventListener('visibilitychange', trackPageDuration);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [location.pathname, clubName, skip]);
+  }, [location.pathname, clubName, skip, pageName]);
 };
 
 export default useTrackPageView;
