@@ -113,8 +113,8 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
       <ApplicationSelectModal
         isOpen={isApplicationModalOpen}
         onClose={() => setIsApplicationModalOpen(false)}
-        options={applicationOptions}
-        onSelect={handleSelectApplicationOption}
+        applicationOptions={applicationOptions}
+        onOptionSelect={handleSelectApplicationOption}
       />
     </Styled.ApplyButtonContainer>
   );
