@@ -14,7 +14,6 @@ export const Overlay = styled.div`
 
 export const ContentWrapper = styled.div`
   position: relative;
-  z-index: ${Z_INDEX.modal};
   outline: none;
   display: flex;
   justify-content: center;
