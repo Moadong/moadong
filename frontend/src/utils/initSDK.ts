@@ -13,6 +13,8 @@ export function initializeMixpanel() {
   mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
     ignore_dnt: true,
     debug: false,
+    record_heatmap_data: true,
+    record_sessions_percent: 1,
   });
 
   if (window.location.hostname === LOCALHOST_HOSTNAME) {
