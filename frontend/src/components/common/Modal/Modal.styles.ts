@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { Z_INDEX } from '@/styles/zIndex';
+import { colors } from '@/styles/theme/colors';
 
 export const Overlay = styled.div`
   inset: 0;
@@ -22,7 +23,7 @@ export const ContentWrapper = styled.div`
 `;
 
 export const StandardLayout = styled.div<{ $width?: string }>`
-  background: #fff;
+  background: ${colors.base.white};
   border-radius: 10px;
   overflow: hidden;
   margin: 24px;
@@ -35,7 +36,7 @@ export const StandardLayout = styled.div<{ $width?: string }>`
 
 export const Header = styled.div`
   padding: 30px;
-  border-bottom: 1px solid #dcdcdc;
+  border-bottom: 1px solid ${colors.gray[400]};
   display: flex;
   align-items: center;
 `;
@@ -52,7 +53,7 @@ export const IconButton = styled.button`
   background: transparent;
   font-size: 20px;
   font-weight: 800;
-  color: #9d9d9d;
+  color: ${colors.gray[600]};
   line-height: 1;
   cursor: pointer;
 `;
@@ -60,7 +61,7 @@ export const IconButton = styled.button`
 export const Description = styled.p`
   padding: 20px 32px 0px;
   text-align: left;
-  color: #9d9d9d;
+  color: ${colors.gray[600]};
   font-weight: 600;
 `;
 
