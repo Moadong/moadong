@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { transitions } from '@/styles/theme/transitions';
 import { typography } from '@/styles/theme/typography';
 
 const setTypography = (typo: { size: string; weight: number }) => `
@@ -181,7 +182,8 @@ export const ArrowIcon = styled.svg<{ $isOpen: boolean }>`
   width: 24px;
   height: 24px;
   color: ${colors.gray[400]};
-  transition: transform 0.3s ease;
+  transition: transform ${transitions.duration.normal}
+    ${transitions.easing.ease};
   transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   flex-shrink: 0;
 `;
@@ -192,9 +194,9 @@ export const AnswerContainer = styled.div<{ $isOpen: boolean }>`
   padding: ${({ $isOpen }) => ($isOpen ? '0 20px 20px 20px' : '0 20px')};
   overflow: hidden;
   transition:
-    max-height 0.3s ease-in-out,
-    opacity 0.3s ease-in-out,
-    padding 0.3s ease-in-out;
+    max-height ${transitions.duration.normal} ${transitions.easing.easeInOut},
+    opacity ${transitions.duration.normal} ${transitions.easing.easeInOut},
+    padding ${transitions.duration.normal} ${transitions.easing.easeInOut};
 
   ${media.mobile} {
     padding: ${({ $isOpen }) => ($isOpen ? '0 16px 16px 16px' : '0 16px')};

@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { transitions } from '@/styles/theme/transitions';
 
 export const Container = styled.div`
   width: 100%;
@@ -22,7 +23,7 @@ export const PhotoItem = styled.div`
   overflow: hidden;
   cursor: pointer;
   background-color: ${colors.gray[100]};
-  transition: all 0.3s ease;
+  transition: all ${transitions.duration.normal} ${transitions.easing.ease};
 
   &:hover {
     transform: translateY(-4px);

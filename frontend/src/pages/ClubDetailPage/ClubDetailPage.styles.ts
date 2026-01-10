@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { transitions } from '@/styles/theme/transitions';
 
 export const Container = styled.div`
   width: 100%;
@@ -57,12 +58,9 @@ export const TabButton = styled.button<{ $active: boolean }>`
   border-bottom: 2px solid
     ${({ $active }) => ($active ? colors.gray[800] : colors.gray[400])};
   cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    color: ${colors.gray[800]};
-    border-bottom: 2px solid ${colors.gray[800]};
-  }
+  transition:
+    color ${transitions.duration.normal} ${transitions.easing.easeInOut},
+    border-color ${transitions.duration.normal} ${transitions.easing.easeInOut};
 
   ${media.tablet} {
     flex: 1;
@@ -71,7 +69,8 @@ export const TabButton = styled.button<{ $active: boolean }>`
 `;
 
 export const TabContent = styled.div`
-  animation: fadeIn 0.3s ease-in-out;
+  animation: fadeIn ${transitions.duration.normal}
+    ${transitions.easing.easeInOut};
 
   @keyframes fadeIn {
     from {
