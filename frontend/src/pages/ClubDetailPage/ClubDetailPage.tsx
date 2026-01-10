@@ -1,5 +1,5 @@
-import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useCallback, useEffect, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
@@ -13,16 +13,40 @@ import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/C
 import * as Styled from './ClubDetailPage.styles';
 import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
 
+export const TAB_TYPE = {
+  INTRO: 'intro',
+  PHOTOS: 'photos',
+} as const;
+
+type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
+
 const ClubDetailPage = () => {
-  const [activeTab, setActiveTab] = useState<'intro' | 'photos'>('intro');
+  const trackEvent = useMixpanelTrack();
+
+  const [searchParams, setSearchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab') as TabType | null;
+
+  const activeTab: TabType =
+    tabParam && Object.values(TAB_TYPE).includes(tabParam)
+      ? tabParam
+      : TAB_TYPE.INTRO;
 
   const { clubId } = useParams<{ clubId: string }>();
   const { isLaptop, isDesktop } = useDevice();
-  const trackEvent = useMixpanelTrack();
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
+
+  const handleIntroTabClick = useCallback(() => {
+    setSearchParams({ tab: TAB_TYPE.INTRO });
+    trackEvent(USER_EVENT.CLUB_INTRO_TAB_CLICKED);
+  }, [setSearchParams, trackEvent]);
+
+  const handlePhotosTabClick = useCallback(() => {
+    setSearchParams({ tab: TAB_TYPE.PHOTOS });
+    trackEvent(USER_EVENT.CLUB_FEED_TAB_CLICKED);
+  }, [setSearchParams, trackEvent]);
 
   if (!clubDetail) {
     return null;
@@ -49,30 +73,24 @@ const ClubDetailPage = () => {
           <Styled.RightSection>
             <Styled.TabList>
               <Styled.TabButton
-                $active={activeTab === 'intro'}
-                onClick={() => {
-                  setActiveTab('intro');
-                  trackEvent(USER_EVENT.CLUB_INTRO_TAB_CLICKED);
-                }}
+                $active={activeTab === TAB_TYPE.INTRO}
+                onClick={handleIntroTabClick}
               >
                 소개 내용
               </Styled.TabButton>
               <Styled.TabButton
-                $active={activeTab === 'photos'}
-                onClick={() => {
-                  setActiveTab('photos');
-                  trackEvent(USER_EVENT.CLUB_FEED_TAB_CLICKED);
-                }}
+                $active={activeTab === TAB_TYPE.PHOTOS}
+                onClick={handlePhotosTabClick}
               >
                 활동사진
               </Styled.TabButton>
             </Styled.TabList>
 
             <Styled.TabContent>
-              {activeTab === 'intro' && (
+              {activeTab === TAB_TYPE.INTRO && (
                 <ClubIntroContent {...clubDetail.description} />
               )}
-              {activeTab === 'photos' && (
+              {activeTab === TAB_TYPE.PHOTOS && (
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
               )}
             </Styled.TabContent>
