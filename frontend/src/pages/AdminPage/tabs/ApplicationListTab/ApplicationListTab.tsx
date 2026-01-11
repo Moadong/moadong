@@ -30,7 +30,6 @@ const ApplicationListTab = () => {
   };
 
   const handleDeleteApplication = (applicationFormId: string) => {
-    // 사용자에게 재확인
     if (
       window.confirm(
         '지원서 양식을 정말 삭제하시겠습니까?\n삭제된 양식은 복구할 수 없습니다.',
@@ -39,8 +38,6 @@ const ApplicationListTab = () => {
       deleteApplication(applicationFormId, {
         onSuccess: () => {
           setOpenMenuId(null);
-          // 성공 알림
-          alert('삭제되었습니다.');
         },
       });
     }
@@ -72,30 +69,26 @@ const ApplicationListTab = () => {
     id: string,
     contextPrefix: string,
   ) => {
-    e.stopPropagation(); // 이벤트 버블링 방지 (row 전체가 클릭되지 않도록)
+    e.stopPropagation();
     const uniqueKey = `${contextPrefix}-${id}`;
-    setOpenMenuId(openMenuId === uniqueKey ? null : uniqueKey); // 같은 버튼 누르면 닫기, 다른 버튼 누르면 열기
+    setOpenMenuId(openMenuId === uniqueKey ? null : uniqueKey);
   };
 
   useEffect(() => {
-    //더보기 메뉴 외부 클릭 시 메뉴 닫기
     const handleOutsideClick = (e: MouseEvent) => {
-      // menuRef.current가 있고, 클릭된 영역이 메뉴 영역(menuRef.current)에 포함되지 않을 때
       if (menuRef.current && !menuRef.current.contains(e.target as Node)) {
-        setOpenMenuId(null); // 메뉴를 닫습니다.
+        setOpenMenuId(null);
       }
     };
 
-    // 메뉴가 열려 있을 때만 이벤트 리스너를 추가합니다.
     if (openMenuId !== null) {
       document.addEventListener('mousedown', handleOutsideClick);
     }
 
-    // 클린업 함수: 컴포넌트가 사라지거나, openMenuId가 바뀌기 전에 리스너를 제거합니다.
     return () => {
       document.removeEventListener('mousedown', handleOutsideClick);
     };
-  }, [openMenuId]); // openMenuId가 변경될 때마다 이 훅을 다시 실행합니다.
+  }, [openMenuId]);
 
   if (isLoading) {
     return <Spinner />;
