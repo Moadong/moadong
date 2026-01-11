@@ -4,6 +4,11 @@ import Delete_applicant from '@/assets/images/icons/Delete_applicant.svg';
 import Pencil from '@/assets/images/icons/pencil_icon_3.svg';
 import * as Styled from './ApplicationListTab.styles';
 
+const TOGGLE_BUTTON_TEXT = {
+  ACTIVE: '지원서 비활성화',
+  INACTIVE: '지원서 활성화',
+} as const;
+
 interface ApplicationMenuProps {
   isActive: boolean;
   onDelete: () => void;
@@ -17,7 +22,9 @@ const ApplicationMenu = ({
   onDelete,
   onDuplicate,
 }: ApplicationMenuProps) => {
-  const toggleButtonText = isActive ? '지원서 비활성화' : '지원서 활성화';
+  const toggleButtonText = isActive
+    ? TOGGLE_BUTTON_TEXT.ACTIVE
+    : TOGGLE_BUTTON_TEXT.INACTIVE;
 
   return (
     <Styled.MenuContainer>
