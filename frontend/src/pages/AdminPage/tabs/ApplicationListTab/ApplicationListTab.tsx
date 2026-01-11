@@ -6,25 +6,29 @@ import { updateApplicationStatus } from '@/apis/application/updateApplication';
 import expandArrow from '@/assets/images/icons/ExpandArrow.svg';
 import Plus from '@/assets/images/icons/Plus.svg';
 import Spinner from '@/components/common/Spinner/Spinner';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
+import { useDuplicateApplication } from '@/hooks/queries/application/useDuplicateApplication';
 import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ApplicationFormItem, SemesterGroup } from '@/types/application';
 import * as Styled from './ApplicationListTab.styles';
 
+const MAX_INITIAL_ITEMS = 3;
+
 const ApplicationListTab = () => {
-  const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
   const queryClient = useQueryClient();
   const navigate = useNavigate();
+  const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
   const { mutate: deleteApplication } = useDeleteApplication();
+  const { mutate: duplicateApplication } = useDuplicateApplication();
+
   const [isExpanded, setIsExpanded] = useState(false);
-  const MAX_INITIAL_ITEMS = 3;
 
   const handleGoToNewForm = () => {
     navigate('/admin/application-list/edit');
   };
+
   const handleGoToEditForm = (applicationFormId: string) => {
     navigate(`/admin/application-list/${applicationFormId}/edit`);
   };
@@ -39,8 +43,23 @@ const ApplicationListTab = () => {
         onSuccess: () => {
           setOpenMenuId(null);
         },
+        onError: () => {
+          alert('지원서 삭제에 실패했습니다.');
+        },
       });
     }
+  };
+
+  const handleDuplicateApplication = (applicationFormId: string) => {
+    duplicateApplication(applicationFormId, {
+      onSuccess: () => {
+        setOpenMenuId(null);
+        alert('지원서가 성공적으로 복제되었습니다.');
+      },
+      onError: () => {
+        alert('지원서 복제에 실패했습니다.');
+      },
+    });
   };
 
   const handleToggleClick = async (
@@ -144,6 +163,7 @@ const ApplicationListTab = () => {
                 onEdit={handleGoToEditForm}
                 onMenuToggle={handleMenuToggle}
                 onDelete={handleDeleteApplication}
+                onDuplicate={handleDuplicateApplication}
               />
             ))}
             {showExpandButton && (
@@ -200,6 +220,7 @@ const ApplicationListTab = () => {
                 onMenuToggle={handleMenuToggle}
                 onToggleStatus={handleToggleClick}
                 onDelete={handleDeleteApplication}
+                onDuplicate={handleDuplicateApplication}
               />
             ))}
           </Styled.ApplicationList>

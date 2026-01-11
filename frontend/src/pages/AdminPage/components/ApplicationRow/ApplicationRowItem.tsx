@@ -14,6 +14,7 @@ interface ApplicationRowItemProps {
   onEdit: (id: string) => void;
   onMenuToggle: (e: React.MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
+  onDuplicate: (id: string) => void;
   className?: string;
 }
 
@@ -27,6 +28,7 @@ const ApplicationRowItem = ({
   onEdit,
   onMenuToggle,
   onDelete,
+  onDuplicate,
   className,
 }: ApplicationRowItemProps) => {
   const currentMenuKey = `${uniqueKeyPrefix}-${application.id}`; // 더보기 메뉴 한곳에서만 열리도록 고유키 생성
@@ -75,6 +77,7 @@ const ApplicationRowItem = ({
               onToggleStatus={() =>
                 onToggleStatus(application.id, application.status)
               }
+              onDuplicate={() => onDuplicate(application.id)}
             />
           )}
         </Styled.MoreButtonContainer>
