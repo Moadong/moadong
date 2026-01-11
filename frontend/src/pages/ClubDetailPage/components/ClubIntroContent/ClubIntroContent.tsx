@@ -124,11 +124,9 @@ const ClubIntroContent = ({
                       />
                     </Styled.ArrowIcon>
                   </Styled.QuestionRow>
-                  {isOpen && (
-                    <Styled.AnswerContainer>
-                      <Styled.AnswerBox>{faq.answer}</Styled.AnswerBox>
-                    </Styled.AnswerContainer>
-                  )}
+                  <Styled.AnswerContainer $isOpen={isOpen}>
+                    <Styled.AnswerBox>{faq.answer}</Styled.AnswerBox>
+                  </Styled.AnswerContainer>
                 </Styled.FaqItem>
               );
             })}

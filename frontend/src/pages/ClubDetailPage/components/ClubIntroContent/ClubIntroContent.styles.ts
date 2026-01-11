@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { transitions } from '@/styles/theme/transitions';
 import { typography } from '@/styles/theme/typography';
 
 const setTypography = (typo: { size: string; weight: number }) => `
@@ -181,16 +182,24 @@ export const ArrowIcon = styled.svg<{ $isOpen: boolean }>`
   width: 24px;
   height: 24px;
   color: ${colors.gray[400]};
-  transition: transform 0.3s ease;
+  transition: transform ${transitions.duration.normal}
+    ${transitions.easing.ease};
   transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   flex-shrink: 0;
 `;
 
-export const AnswerContainer = styled.div`
-  padding: 0 20px 20px 20px;
+export const AnswerContainer = styled.div<{ $isOpen: boolean }>`
+  max-height: ${({ $isOpen }) => ($isOpen ? '500px' : '0')};
+  opacity: ${({ $isOpen }) => ($isOpen ? '1' : '0')};
+  padding: ${({ $isOpen }) => ($isOpen ? '0 20px 20px 20px' : '0 20px')};
+  overflow: hidden;
+  transition:
+    max-height ${transitions.duration.normal} ${transitions.easing.easeInOut},
+    opacity ${transitions.duration.normal} ${transitions.easing.easeInOut},
+    padding ${transitions.duration.normal} ${transitions.easing.easeInOut};
 
   ${media.mobile} {
-    padding: 0 16px 16px 16px;
+    padding: ${({ $isOpen }) => ($isOpen ? '0 16px 16px 16px' : '0 16px')};
   }
 `;
 
