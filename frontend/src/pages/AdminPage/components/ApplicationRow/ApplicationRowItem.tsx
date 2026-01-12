@@ -1,7 +1,7 @@
-import React from 'react';
 import Morebutton from '@/assets/images/icons/Morebutton.svg';
 import ApplicationMenu from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationMenu';
 import { ApplicationFormItem } from '@/types/application';
+import { formatRelativeDateTime } from '@/utils/formatRelativeDateTime';
 import * as Styled from './ApplicationRowItem.style';
 
 interface ApplicationRowItemProps {
@@ -14,6 +14,7 @@ interface ApplicationRowItemProps {
   onEdit: (id: string) => void;
   onMenuToggle: (e: React.MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
+  onDuplicate: (id: string) => void;
   className?: string;
 }
 
@@ -27,25 +28,11 @@ const ApplicationRowItem = ({
   onEdit,
   onMenuToggle,
   onDelete,
+  onDuplicate,
   className,
 }: ApplicationRowItemProps) => {
-  const currentMenuKey = `${uniqueKeyPrefix}-${application.id}`; // 더보기 메뉴 한곳에서만 열리도록 고유키 생성
+  const currentMenuKey = `${uniqueKeyPrefix}-${application.id}`;
   const isMenuOpen = openMenuId === currentMenuKey;
-  // 최종 수정날짜 포맷팅 함수
-  const formatDateTime = (dateTimeString: string) => {
-    const now = new Date();
-    const date = new Date(dateTimeString);
-    const isToday =
-      now.getFullYear() === date.getFullYear() &&
-      now.getMonth() === date.getMonth() &&
-      now.getDate() === date.getDate();
-
-    const options: Intl.DateTimeFormatOptions = isToday
-      ? { hour: 'numeric', minute: '2-digit', hour12: true }
-      : { year: 'numeric', month: '2-digit', day: '2-digit' };
-
-    return date.toLocaleString('ko-KR', options);
-  };
 
   return (
     <Styled.ApplicationRow className={className} key={application.id}>
@@ -58,7 +45,7 @@ const ApplicationRowItem = ({
 
       <Styled.ApplicationDatetable>
         <Styled.ApplicationDate>
-          {formatDateTime(application.editedAt)}
+          {formatRelativeDateTime(application.editedAt)}
         </Styled.ApplicationDate>
 
         <Styled.MoreButtonContainer ref={isMenuOpen ? menuRef : null}>
@@ -75,6 +62,7 @@ const ApplicationRowItem = ({
               onToggleStatus={() =>
                 onToggleStatus(application.id, application.status)
               }
+              onDuplicate={() => onDuplicate(application.id)}
             />
           )}
         </Styled.MoreButtonContainer>
