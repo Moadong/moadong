@@ -13,7 +13,7 @@ import * as Styled from './ClubIntroEditTab.styles';
 import AwardEditor from './components/AwardEditor/AwardEditor';
 import FAQEditor from './components/FAQEditor/FAQEditor';
 
-const ClubIntroTab = () => {
+const ClubIntroEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
 
@@ -99,7 +99,7 @@ const ClubIntroTab = () => {
 
         <ContentSection.Body>
           <CustomTextArea
-            label={`📝 ${clubDetail?.name || '동아리'}를 소개할게요`}
+            label='동아리를 소개할게요'
             placeholder='동아리 소개 문구를 입력해주세요'
             value={introDescription}
             onChange={(e) => setIntroDescription(e.target.value)}
@@ -108,7 +108,7 @@ const ClubIntroTab = () => {
           />
 
           <CustomTextArea
-            label='🎯 이런 활동을 해요'
+            label='이런 활동을 해요'
             placeholder='동아리에서 하는 활동 내용을 입력해주세요'
             value={activityDescription}
             onChange={(e) => setActivityDescription(e.target.value)}
@@ -119,7 +119,7 @@ const ClubIntroTab = () => {
           <AwardEditor awards={awards} onChange={setAwards} />
 
           <CustomTextArea
-            label='💡 이런 사람이 오면 좋아요'
+            label='이런 사람이 오면 좋아요'
             placeholder='동아리에 어울리는 사람의 특성을 입력해주세요'
             value={idealCandidate.content}
             onChange={(e) =>
@@ -130,7 +130,7 @@ const ClubIntroTab = () => {
           />
 
           <CustomTextArea
-            label='🎁 부원이 되면 이런 혜택이 있어요'
+            label='부원이 되면 이런 혜택이 있어요'
             placeholder='동아리 부원이 누릴 수 있는 혜택을 입력해주세요'
             value={benefits}
             onChange={(e) => setBenefits(e.target.value)}
@@ -145,4 +145,4 @@ const ClubIntroTab = () => {
   );
 };
 
-export default ClubIntroTab;
+export default ClubIntroEditTab;
