@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
-import { Award } from '../../ClubIntroTab';
+import { Award } from '../../ClubIntroEditTab';
 import * as Styled from './AwardEditor.styles';
 
 interface AwardEditorProps {

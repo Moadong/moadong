@@ -9,7 +9,7 @@ import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { Award, ClubDetail, FAQ, IdealCandidate } from '@/types/club';
-import * as Styled from './ClubIntroTab.styles';
+import * as Styled from './ClubIntroEditTab.styles';
 import AwardEditor from './components/AwardEditor/AwardEditor';
 import FAQEditor from './components/FAQEditor/FAQEditor';
 
