@@ -61,7 +61,7 @@ const ClubIntroContent = ({
           </Styled.TextContainer>
         </Styled.Section>
       )}
-      \
+
       {awards && awards.length > 0 && (
         <Styled.Section>
           <Styled.SectionTitle>동아리 성과</Styled.SectionTitle>
