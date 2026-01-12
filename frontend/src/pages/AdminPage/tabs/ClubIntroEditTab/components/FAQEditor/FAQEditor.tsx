@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
-import { FAQ } from '../../ClubIntroEditTab';
+import { FAQ } from '@/types/club';
 import * as Styled from './FAQEditor.styles';
 
 interface FAQEditorProps {
@@ -11,6 +11,17 @@ interface FAQEditorProps {
 const FAQEditor = ({ faqs, onChange }: FAQEditorProps) => {
   const [shouldFocusLast, setShouldFocusLast] = useState(false);
   const questionInputRefs = useRef<Record<string, HTMLInputElement | null>>({});
+
+  useEffect(() => {
+    const hasAnyMissingId = faqs.some((faq) => !faq.id);
+    if (hasAnyMissingId) {
+      const faqsWithIds = faqs.map((faq) => ({
+        ...faq,
+        id: faq.id || `faq-${Date.now()}-${Math.random()}`,
+      }));
+      onChange(faqsWithIds);
+    }
+  }, [faqs, onChange]);
 
   const handleAddFAQ = () => {
     const newFAQ: FAQ = {
@@ -43,9 +54,11 @@ const FAQEditor = ({ faqs, onChange }: FAQEditorProps) => {
   useEffect(() => {
     if (shouldFocusLast && faqs.length > 0) {
       const lastFAQ = faqs[faqs.length - 1];
-      const inputRef = questionInputRefs.current[lastFAQ.id];
-      if (inputRef) {
-        inputRef.focus();
+      if (lastFAQ.id) {
+        const inputRef = questionInputRefs.current[lastFAQ.id];
+        if (inputRef) {
+          inputRef.focus();
+        }
       }
       setShouldFocusLast(false);
     }
@@ -53,7 +66,7 @@ const FAQEditor = ({ faqs, onChange }: FAQEditorProps) => {
 
   return (
     <Styled.Container>
-      <Styled.Label>❓ 자주 묻는 질문 (FAQ)</Styled.Label>
+      <Styled.Label>자주 묻는 질문 (FAQ)</Styled.Label>
 
       <Styled.AddButton onClick={handleAddFAQ}>+ FAQ 추가</Styled.AddButton>
 
@@ -63,41 +76,44 @@ const FAQEditor = ({ faqs, onChange }: FAQEditorProps) => {
         </Styled.EmptyState>
       ) : (
         <Styled.FAQList>
-          {faqs.map((faq, index) => (
-            <Styled.FAQItem key={faq.id}>
-              <Styled.FAQHeader>
-                <Styled.FAQNumber>Q{index + 1}</Styled.FAQNumber>
-                <Styled.RemoveButton onClick={() => handleRemoveFAQ(faq.id)}>
-                  <img src={deleteButton} alt='삭제' />
-                </Styled.RemoveButton>
-              </Styled.FAQHeader>
+          {faqs
+            .filter((faq): faq is FAQ & { id: string } => !!faq.id)
+            .map((faq, index) => (
+              <Styled.FAQItem key={faq.id}>
+                <Styled.FAQHeader>
+                  <Styled.FAQNumber>Q{index + 1}</Styled.FAQNumber>
+                  <Styled.RemoveButton onClick={() => handleRemoveFAQ(faq.id)}>
+                    <img src={deleteButton} alt='삭제' />
+                  </Styled.RemoveButton>
+                </Styled.FAQHeader>
 
-              <Styled.QuestionInput
-                ref={(element) => {
-                  questionInputRefs.current[faq.id] = element;
-                }}
-                placeholder='질문을 입력하세요'
-                value={faq.question}
-                onChange={(event) =>
-                  handleUpdateQuestion(faq.id, event.target.value)
-                }
-                maxLength={100}
-              />
+                <Styled.QuestionInput
+                  ref={(element) => {
+                    questionInputRefs.current[faq.id] = element;
+                  }}
+                  placeholder='질문을 입력하세요'
+                  value={faq.question}
+                  onChange={(event) =>
+                    handleUpdateQuestion(faq.id, event.target.value)
+                  }
+                  maxLength={100}
+                />
 
-              <Styled.AnswerTextArea
-                placeholder='답변을 입력하세요'
-                value={faq.answer}
-                onChange={(event) =>
-                  handleUpdateAnswer(faq.id, event.target.value)
-                }
-                maxLength={300}
-              />
+                <Styled.AnswerTextArea
+                  placeholder='답변을 입력하세요'
+                  value={faq.answer}
+                  onChange={(event) =>
+                    handleUpdateAnswer(faq.id, event.target.value)
+                  }
+                  maxLength={300}
+                />
 
-              <Styled.CharCount>
-                질문: {faq.question.length}/100 | 답변: {faq.answer.length}/300
-              </Styled.CharCount>
-            </Styled.FAQItem>
-          ))}
+                <Styled.CharCount>
+                  질문: {faq.question.length}/100 | 답변: {faq.answer.length}
+                  /300
+                </Styled.CharCount>
+              </Styled.FAQItem>
+            ))}
         </Styled.FAQList>
       )}
     </Styled.Container>
