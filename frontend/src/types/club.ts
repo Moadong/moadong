@@ -1,10 +1,6 @@
 import { SNS_CONFIG } from '@/constants/snsConfig';
 
-export type RecruitmentStatus =
-  | 'OPEN'
-  | 'CLOSED'
-  | 'UPCOMING'
-  | 'ALWAYS';
+export type RecruitmentStatus = 'OPEN' | 'CLOSED' | 'UPCOMING' | 'ALWAYS';
 
 export interface Club {
   id: string;
@@ -56,6 +52,7 @@ export interface IdealCandidate {
 }
 
 export interface FAQ {
+  id?: string;
   question: string;
   answer: string;
 }
