@@ -210,6 +210,7 @@ export const AnswerBox = styled.div`
   ${setTypography(typography.paragraph.p3)};
   color: ${colors.gray[800]};
   line-height: 1.5;
+  white-space: pre-line;
   display: flex;
   gap: 8px;
 
