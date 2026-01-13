@@ -35,7 +35,6 @@ const MainPage = () => {
   });
 
   const clubs = data?.clubs || [];
-  // const totalCount = data?.totalCount || 0; // ⚠️ 백엔드 업데이트 전까지 임시 주석
   const totalCount = data?.totalCount ?? clubs.length;
 
   const isEmpty = !isLoading && clubs.length === 0;

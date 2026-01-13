@@ -2,10 +2,10 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
-import ClubLogo from '@/components/ClubLogo/ClubLogo';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import { USER_EVENT } from '@/constants/eventName';
+import ClubLogo from '@/pages/MainPage/components/ClubLogo/ClubLogo';
 import { Club } from '@/types/club';
 import * as Styled from './ClubCard.styles';
 

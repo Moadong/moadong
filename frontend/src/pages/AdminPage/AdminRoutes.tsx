@@ -9,7 +9,7 @@ import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEdit
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import ApplicantsTab from './tabs/ApplicantsTab/ApplicantsTab';
-import ClubIntroTab from './tabs/ClubIntroTab/ClubIntroTab';
+import ClubIntroEditTab from './tabs/ClubIntroEditTab/ClubIntroEditTab';
 
 export default function AdminRoutes() {
   return (
@@ -35,7 +35,7 @@ export default function AdminRoutes() {
           path='applicants-list/:applicationFormId/:questionId'
           element={<ApplicantDetailPage />}
         />
-        <Route path='club-intro' element={<ClubIntroTab />} />
+        <Route path='club-intro' element={<ClubIntroEditTab />} />
       </Route>
     </Routes>
   );

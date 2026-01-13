@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
-import { Award } from '../../ClubIntroTab';
+import { Award } from '@/types/club';
 import * as Styled from './AwardEditor.styles';
 
 interface AwardEditorProps {
@@ -140,7 +140,7 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
 
   return (
     <Styled.Container>
-      <Styled.Label>🏆 이런 상을 받았어요</Styled.Label>
+      <Styled.Label>이런 상을 받았어요</Styled.Label>
 
       <Styled.AddSemesterSection>
         <CustomDropDown

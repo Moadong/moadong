@@ -16,7 +16,7 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["vite/client"]
+    "types": ["vite/client", "jest"]
   },
   "include": ["src", "eslint.config.mjs"],
   "exclude": ["node_modules", "dist"]
