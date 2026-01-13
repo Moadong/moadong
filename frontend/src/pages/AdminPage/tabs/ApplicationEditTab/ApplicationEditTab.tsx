@@ -20,9 +20,17 @@ import {
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
 
+const externalApplicationUrlAllowed = [
+  'https://forms.gle',
+  'https://docs.google.com/forms',
+  'https://form.naver.com',
+  'https://naver.me',
+  'https://everytime.kr',
+];
+
 const ApplicationEditTab = () => {
-  const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { applicationFormId: formId } = useParams<{
     applicationFormId?: string;
   }>();
@@ -37,12 +45,9 @@ const ApplicationEditTab = () => {
 
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
-
   const [nextId, setNextId] = useState(1);
-
   const [applicationFormMode, setApplicationFormMode] =
     useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
-
   const [externalApplicationUrl, setExternalApplicationUrl] = useState('');
 
   useEffect(() => {
@@ -129,20 +134,13 @@ const ApplicationEditTab = () => {
     if (applicationFormMode === ApplicationFormMode.INTERNAL) {
       payload.questions = reorderedQuestions;
     } else if (applicationFormMode === ApplicationFormMode.EXTERNAL) {
-      const externalApplicationUrlAllowed = [
-        'https://forms.gle',
-        'https://docs.google.com/forms',
-        'https://form.naver.com',
-        'https://naver.me',
-      ];
-
       const isValidUrl = externalApplicationUrlAllowed.some((url) =>
         externalApplicationUrl.startsWith(url),
       );
 
       if (!isValidUrl) {
         alert(
-          '외부 지원서 링크는 Google Forms 또는 Naver Form 링크여야 합니다.',
+          '외부 지원서 링크는 Google Forms, Naver Form 또는 Everytime 링크여야 합니다.',
         );
         return;
       }
@@ -368,7 +366,7 @@ const ExternalApplicationComponent = ({
         />
       </Styled.ExternalApplicationFormContainer>
       <Styled.ExternalApplicationFormHint>
-        현재 구글폼, 네이버폼 링크만 제출가능합니다.
+        현재 구글폼, 네이버폼, 에브리타임 링크만 제출가능합니다.
       </Styled.ExternalApplicationFormHint>
     </>
   );

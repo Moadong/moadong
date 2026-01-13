@@ -23,9 +23,32 @@ const DIVISION_LABELS: Record<string, string> = {
   과동: '과동아리',
 };
 
+const divisions = [
+  {
+    value: '중동',
+    label: DIVISION_LABELS['중동'],
+    color: TAG_COLORS['중동'],
+  },
+  {
+    value: '과동',
+    label: DIVISION_LABELS['과동'],
+    color: TAG_COLORS['과동'],
+  },
+];
+
+const categories = [
+  { value: '봉사', label: '봉사', color: TAG_COLORS['봉사'] },
+  { value: '종교', label: '종교', color: TAG_COLORS['종교'] },
+  { value: '취미교양', label: '취미교양', color: TAG_COLORS['취미교양'] },
+  { value: '학술', label: '학술', color: TAG_COLORS['학술'] },
+  { value: '운동', label: '운동', color: TAG_COLORS['운동'] },
+  { value: '공연', label: '공연', color: TAG_COLORS['공연'] },
+];
+
 const ClubInfoEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
+  const queryClient = useQueryClient();
 
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
@@ -48,28 +71,6 @@ const ClubInfoEditTab = () => {
     youtube: '',
     x: '',
   });
-
-  const queryClient = useQueryClient();
-  const divisions = [
-    {
-      value: '중동',
-      label: DIVISION_LABELS['중동'],
-      color: TAG_COLORS['중동'],
-    },
-    {
-      value: '과동',
-      label: DIVISION_LABELS['과동'],
-      color: TAG_COLORS['과동'],
-    },
-  ];
-  const categories = [
-    { value: '봉사', label: '봉사', color: TAG_COLORS['봉사'] },
-    { value: '종교', label: '종교', color: TAG_COLORS['종교'] },
-    { value: '취미교양', label: '취미교양', color: TAG_COLORS['취미교양'] },
-    { value: '학술', label: '학술', color: TAG_COLORS['학술'] },
-    { value: '운동', label: '운동', color: TAG_COLORS['운동'] },
-    { value: '공연', label: '공연', color: TAG_COLORS['공연'] },
-  ];
 
   useEffect(() => {
     if (clubDetail) {

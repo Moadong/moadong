@@ -61,9 +61,10 @@ const ClubIntroContent = ({
           </Styled.TextContainer>
         </Styled.Section>
       )}
+
       {awards && awards.length > 0 && (
         <Styled.Section>
-          <Styled.SectionTitle>🏆 동아리 성과</Styled.SectionTitle>
+          <Styled.SectionTitle>동아리 성과</Styled.SectionTitle>
           <Styled.TextContainer>
             {awards.map((award) => (
               <Styled.AwardGroup key={award.semester}>
@@ -80,7 +81,6 @@ const ClubIntroContent = ({
           </Styled.TextContainer>
         </Styled.Section>
       )}
-
       {idealCandidate?.content?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>이런 사람이 오면 좋아요</Styled.SectionTitle>
@@ -89,7 +89,6 @@ const ClubIntroContent = ({
           </Styled.TextContainer>
         </Styled.Section>
       )}
-
       {benefits?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>동아리 부원이 가지는 혜택</Styled.SectionTitle>
@@ -98,7 +97,6 @@ const ClubIntroContent = ({
           </Styled.TextContainer>
         </Styled.Section>
       )}
-
       {faqs && faqs.length > 0 && (
         <Styled.FaqSection>
           <Styled.FaqHeader>FAQ</Styled.FaqHeader>
