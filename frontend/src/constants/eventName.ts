@@ -97,6 +97,7 @@ export const PAGE_VIEW = {
 
   // 관리자
   LOGIN_PAGE: '로그인페이지',
+  CLUB_INTRO_EDIT_PAGE: '동아리 소개 수정 페이지',
   CLUB_INFO_EDIT_PAGE: '동아리 기본 정보 수정 페이지',
   RECRUITMENT_INFO_EDIT_PAGE: '동아리 모집 정보 수정 페이지',
   PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',

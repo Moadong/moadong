@@ -15,7 +15,7 @@ import FAQEditor from './components/FAQEditor/FAQEditor';
 
 const ClubIntroEditTab = () => {
   const trackEvent = useMixpanelTrack();
-  useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
+  useTrackPageView(PAGE_VIEW.CLUB_INTRO_EDIT_PAGE);
 
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
