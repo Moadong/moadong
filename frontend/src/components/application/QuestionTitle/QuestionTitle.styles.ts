@@ -3,7 +3,7 @@ import { media } from '@/styles/mediaQuery';
 
 export const QuestionTitleRow = styled.div`
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   gap: 6px;
   width: 100%;
 `;
