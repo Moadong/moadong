@@ -126,14 +126,14 @@ const ApplicantDetailPage = () => {
     const previousData = applicantsData.applicants[applicantIndex - 1];
     if (applicantIndex < 0 || !previousData) return;
 
-    navigate(`/admin/applicants/${previousData.id}`);
+    navigate(`/admin/applicants-list/${applicationFormId}/${previousData.id}`);
   };
 
   const nextApplicant = () => {
     const nextData = applicantsData.applicants[applicantIndex + 1];
     if (applicantIndex < 0 || !nextData) return;
 
-    navigate(`/admin/applicants/${nextData.id}`);
+    navigate(`/admin/applicants-list/${applicationFormId}/${nextData.id}`);
   };
 
   return (
@@ -151,7 +151,9 @@ const ApplicantDetailPage = () => {
               id='applicantSelect'
               value={applicant.id}
               onChange={(e) =>
-                navigate(`/admin/applicants-list/${e.target.value}`)
+                navigate(
+                  `/admin/applicants-list/${applicationFormId}/${e.target.value}`,
+                )
               }
             >
               {applicantsData.applicants.map((a) => (
