@@ -7,6 +7,7 @@ import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import * as Styled from './Popup.styles';
 
 export const POPUP_STORAGE_KEY = 'mainpage_popup_hidden_date';
+export const POPUP_SESSION_KEY = 'mainpage_popup_closed';
 export const AB_TEST_KEY = 'mainpage_popup_ab_group';
 export const DAYS_TO_HIDE = 7;
 const AB_TEST_SPLIT_RATIO = 0.5;
@@ -28,6 +29,8 @@ export const getABTestGroup = (): PopupABTestGroup => {
 };
 
 export const isPopupHidden = (): boolean => {
+  if (sessionStorage.getItem(POPUP_SESSION_KEY)) return true;
+
   const hiddenDate = localStorage.getItem(POPUP_STORAGE_KEY);
   if (!hiddenDate) return false;
 
@@ -87,6 +90,7 @@ const Popup = () => {
       action: action,
       abTestGroup: abGroup,
     });
+    sessionStorage.setItem(POPUP_SESSION_KEY, 'true');
     setIsOpen(false);
   };
 
