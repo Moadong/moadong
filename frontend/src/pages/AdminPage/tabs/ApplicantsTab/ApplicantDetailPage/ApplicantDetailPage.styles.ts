@@ -23,8 +23,8 @@ export const ApplicantContainer = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 240px;
+  justify-content: space-between;
+  padding: 0 20px;
   width: 82%;
   height: 100%;
   border: none;
@@ -46,6 +46,12 @@ export const ApplicantContainer = styled.div`
     -webkit-appearance: none;
     -moz-appearance: none;
     appearance: none;
+  }
+
+  @media (max-width: 768px) {
+    select {
+      font-size: 18px;
+    }
   }
 `;
 
@@ -153,4 +159,5 @@ export const QuestionsWrapper = styled(
 
 export const NavigationButton = styled.img`
   cursor: pointer;
+  flex-shrink: 0;
 `;
