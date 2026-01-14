@@ -39,9 +39,6 @@ export const ImageWrapper = styled.div`
   position: relative;
   overflow: hidden;
   cursor: pointer;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
-  user-select: none;
 
   &:active {
     opacity: 0.95;
@@ -73,8 +70,6 @@ export const Button = styled.button`
   border: none;
   cursor: pointer;
   position: relative;
-  touch-action: manipulation;
-  -webkit-tap-highlight-color: transparent;
 
   &:first-child::after {
     content: '';
