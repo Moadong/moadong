@@ -1,5 +1,6 @@
-import { colors } from '@/styles/theme/colors';
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
+import { media } from '@/styles/mediaQuery';
 
 export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
   width: ${(props) => props.width};
@@ -74,6 +75,10 @@ export const Input = styled.input<{
 
   &:focus::placeholder {
     color: transparent;
+  }
+
+  ${media.mobile} {
+    width: 100%;
   }
 `;
 
