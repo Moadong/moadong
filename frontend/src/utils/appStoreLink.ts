@@ -1,5 +1,5 @@
 export const APP_STORE_LINKS = {
-  ios: 'itms-apps://itunes.apple.com/app/6755062085',
+  ios: 'https://apps.apple.com/app/id6755062085',
   android:
     'https://play.google.com/store/apps/details?id=com.moadong.moadong&pcampaignid=web_share',
   default:
