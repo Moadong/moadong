@@ -6,7 +6,7 @@ export const Container = styled.div`
   position: relative;
   width: 100%;
   max-width: 375px;
-  background-color: #ffffff;
+  background-color: ${colors.base.white};
   border-radius: 20px;
   overflow: hidden;
 
@@ -62,7 +62,7 @@ export const LogoWrapper = styled.div`
   width: 64px;
   height: 64px;
   border-radius: 16px;
-  background-color: #ffffff;
+  background-color: ${colors.base.white};
   padding: 2px;
   z-index: 3;
 `;
@@ -72,7 +72,7 @@ export const Logo = styled.img`
   height: 100%;
   border-radius: 14px;
   object-fit: cover;
-  border: 0.5px solid var(--Gray-400, #dcdcdc);
+  border: 0.5px solid var(--Gray-400, ${colors.gray[400]});
 `;
 
 export const Content = styled.div`
@@ -80,11 +80,11 @@ export const Content = styled.div`
   margin-top: -20px;
   position: relative;
   z-index: 2;
-  background-color: #f5f5f5;
+  background-color: ${colors.gray[100]};
   border-radius: 20px;
 
   ${media.tablet} {
-    background-color: #ffffff;
+    background-color: ${colors.base.white};
   }
 
   ${media.laptop} {
@@ -163,7 +163,7 @@ export const SocialText = styled.span`
 `;
 
 export const SocialUrl = styled.span`
-  color: #0066cc;
+  color: #009CF6;
   display: inline-block;
   max-width: 180px;
   overflow: hidden;
@@ -190,11 +190,10 @@ export const SocialUrl = styled.span`
 export const IntroSection = styled.section`
   padding: 16px;
   border-radius: 14px;
-  background-color: #ffffff;
+  background-color: ${colors.base.white};
 
   ${media.tablet} {
-    background-color: #f5f5f5;
-  }
+    background-color: ${colors.gray[100]};
 `;
 
 export const IntroTitle = styled.h3`
