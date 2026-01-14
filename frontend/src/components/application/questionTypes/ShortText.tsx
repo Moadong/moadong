@@ -2,6 +2,7 @@ import QuestionDescription from '@/components/application/QuestionDescription/Qu
 import QuestionTitle from '@/components/application/QuestionTitle/QuestionTitle';
 import InputField from '@/components/common/InputField/InputField';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
+import useDevice from '@/hooks/useDevice';
 import { TextProps } from '@/types/application';
 
 const ShortText = ({
@@ -15,8 +16,10 @@ const ShortText = ({
   onTitleChange,
   onDescriptionChange,
 }: TextProps) => {
+  const { isMobile } = useDevice();
+
   return (
-    <div>
+    <>
       <QuestionTitle
         id={id}
         title={title}
@@ -38,9 +41,9 @@ const ShortText = ({
         showMaxChar={mode === 'answer'}
         maxLength={APPLICATION_FORM.SHORT_TEXT.maxLength}
         showClearButton={false}
-        width={'60%'}
+        width={isMobile ? '100%' : '60%'}
       />
-    </div>
+    </>
   );
 };
 
