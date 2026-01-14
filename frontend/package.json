@@ -14,7 +14,7 @@
     "lint": "eslint --fix",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
-    "chromatic": "chromatic --project-token=$CHROMATIC_PROJECT_TOKEN",
+    "chromatic": "dotenv chromatic",
     "test": "jest",
     "coverage": "jest --coverage --config jest.config.js"
   },
