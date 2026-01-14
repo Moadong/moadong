@@ -9,6 +9,7 @@ import useAuth from '@/hooks/useAuth';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useTrackPageView from '@/hooks/useTrackPageView';
 import * as Styled from './LoginTab.styles';
+import Header from '@/components/common/Header/Header';
 
 const LoginTab = () => {
   useTrackPageView(PAGE_VIEW.LOGIN_PAGE);
@@ -52,6 +53,8 @@ const LoginTab = () => {
   if (authLoading) return <div>로딩 중...</div>;
 
   return (
+    <>
+    <Header />
     <Styled.LoginContainer>
       <Styled.LoginBox>
         <Styled.Logo src={moadong_name_logo} alt='Moadong Logo' />
@@ -125,6 +128,7 @@ const LoginTab = () => {
         </Styled.ForgotLinks>
       </Styled.LoginBox>
     </Styled.LoginContainer>
+    </>
   );
 };
 
