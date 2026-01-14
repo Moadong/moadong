@@ -102,14 +102,17 @@ const Popup = () => {
   };
 
   const handleDownload = () => {
+    console.log('[Popup] 다운로드 버튼 클릭됨');
     const storeLink = getAppStoreLink();
     const abGroup = getABTestGroup();
+    console.log('[Popup] 스토어 링크:', storeLink);
     trackEvent(USER_EVENT.APP_DOWNLOAD_POPUP_CLICKED, {
       popupType: 'app_download',
       platform: detectPlatform(),
       abTestGroup: abGroup,
     });
-    window.open(storeLink, '_blank');
+    // 웹뷰에서 window.open이 차단될 수 있으므로 location.href 사용
+    window.location.href = storeLink;
   };
 
   const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {

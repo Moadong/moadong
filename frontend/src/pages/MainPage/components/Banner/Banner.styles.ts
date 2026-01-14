@@ -41,11 +41,15 @@ export const BannerWrapper = styled.div`
 export const BannerItem = styled.div<{ isClickable: boolean }>`
   width: 100%;
   height: 100%;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
+    pointer-events: none;
   }
   cursor: ${(props) => (props.isClickable ? 'pointer' : 'default')};
 `;

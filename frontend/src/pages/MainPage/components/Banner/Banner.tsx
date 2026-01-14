@@ -32,10 +32,12 @@ const Banner = () => {
     bannerName: string,
     url?: string,
   ) => {
+    console.log('[Banner] 배너 클릭됨:', bannerId, url);
     if (!url) return;
 
     if (url === 'APP_STORE_LINK') {
       const storeLink = getAppStoreLink();
+      console.log('[Banner] 앱스토어 링크:', storeLink);
       trackEvent(USER_EVENT.APP_DOWNLOAD_BANNER_CLICKED, {
         bannerId,
         bannerName,
@@ -75,6 +77,9 @@ const Banner = () => {
             disableOnInteraction: false,
           }}
           speed={500}
+          touchStartPreventDefault={false}
+          preventClicks={false}
+          preventClicksPropagation={false}
         >
           {BANNERS.map((banner) => (
             <SwiperSlide key={banner.id}>
