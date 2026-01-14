@@ -1,5 +1,6 @@
 export const APP_STORE_LINKS = {
-  ios: 'https://apps.apple.com/app/id6755062085',
+  iphone: 'https://apps.apple.com/app/id6755062085',
+  apple: 'itms-apps://itunes.apple.com/app/6755062085',
   android:
     'https://play.google.com/store/apps/details?id=com.moadong.moadong&pcampaignid=web_share',
   default:
@@ -11,8 +12,13 @@ export type Platform = 'iOS' | 'Android' | 'Other';
 export const getAppStoreLink = (): string => {
   const userAgent = navigator.userAgent.toLowerCase();
 
-  if (/iphone|ipad|ipod|macintosh/.test(userAgent)) {
-    return APP_STORE_LINKS.ios;
+  // iPhone은 웹뷰 대응을 위해 HTTPS 링크 사용
+  if (/iphone/.test(userAgent)) {
+    return APP_STORE_LINKS.iphone;
+  }
+  // iPad, iPod, Mac은 itms-apps 딥링크 사용
+  if (/ipad|ipod|macintosh/.test(userAgent)) {
+    return APP_STORE_LINKS.apple;
   }
   if (/android/.test(userAgent)) {
     return APP_STORE_LINKS.android;

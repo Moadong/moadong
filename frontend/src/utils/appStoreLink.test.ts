@@ -95,7 +95,7 @@ describe('appStoreLink 유틸 함수 테스트', () => {
   });
 
   describe('getAppStoreLink', () => {
-    it('iOS 기기에서 App Store 링크를 반환한다', () => {
+    it('iPhone에서 HTTPS App Store 링크를 반환한다', () => {
       Object.defineProperty(global, 'navigator', {
         value: {
           userAgent:
@@ -105,7 +105,33 @@ describe('appStoreLink 유틸 함수 테스트', () => {
         configurable: true,
       });
 
-      expect(getAppStoreLink()).toBe(APP_STORE_LINKS.ios);
+      expect(getAppStoreLink()).toBe(APP_STORE_LINKS.iphone);
+    });
+
+    it('iPad에서 itms-apps 딥링크를 반환한다', () => {
+      Object.defineProperty(global, 'navigator', {
+        value: {
+          userAgent:
+            'Mozilla/5.0 (iPad; CPU OS 14_0 like Mac OS X) AppleWebKit/605.1.15',
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      expect(getAppStoreLink()).toBe(APP_STORE_LINKS.apple);
+    });
+
+    it('Mac에서 itms-apps 딥링크를 반환한다', () => {
+      Object.defineProperty(global, 'navigator', {
+        value: {
+          userAgent:
+            'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36',
+        },
+        writable: true,
+        configurable: true,
+      });
+
+      expect(getAppStoreLink()).toBe(APP_STORE_LINKS.apple);
     });
 
     it('Android 기기에서 Play Store 링크를 반환한다', () => {
@@ -136,9 +162,14 @@ describe('appStoreLink 유틸 함수 테스트', () => {
   });
 
   describe('APP_STORE_LINKS 상수', () => {
-    it('iOS 앱 스토어 링크가 올바른 형식이다', () => {
-      expect(APP_STORE_LINKS.ios).toContain('itms-apps://');
-      expect(APP_STORE_LINKS.ios).toContain('6755062085');
+    it('iPhone 앱 스토어 링크가 HTTPS 형식이다', () => {
+      expect(APP_STORE_LINKS.iphone).toContain('https://apps.apple.com');
+      expect(APP_STORE_LINKS.iphone).toContain('6755062085');
+    });
+
+    it('Apple 기기용 딥링크가 itms-apps 형식이다', () => {
+      expect(APP_STORE_LINKS.apple).toContain('itms-apps://');
+      expect(APP_STORE_LINKS.apple).toContain('6755062085');
     });
 
     it('Android Play Store 링크가 올바른 형식이다', () => {
