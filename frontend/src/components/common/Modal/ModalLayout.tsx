@@ -17,7 +17,11 @@ const ModalLayout = ({
   width,
 }: ModalLayoutProps) => {
   return (
-    <Styled.StandardLayout $width={width}>
+    <Styled.StandardLayout 
+      $width={width} 
+      role="dialog" 
+      aria-modal="true"
+      >
       {(title || onClose) && (
         <Styled.Header>
           {title && <Styled.Title>{title}</Styled.Title>}
