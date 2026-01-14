@@ -15,8 +15,9 @@ const ShortText = ({
   onTitleChange,
   onDescriptionChange,
 }: TextProps) => {
+
   return (
-    <div>
+    <>
       <QuestionTitle
         id={id}
         title={title}
@@ -40,7 +41,7 @@ const ShortText = ({
         showClearButton={false}
         width={'60%'}
       />
-    </div>
+    </>
   );
 };
 
