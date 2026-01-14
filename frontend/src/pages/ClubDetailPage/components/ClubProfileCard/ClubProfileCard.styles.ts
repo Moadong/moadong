@@ -158,11 +158,33 @@ export const SocialLinkItem = styled.a`
 `;
 
 export const SocialText = styled.span`
-  word-break: break-all;
+  display: inline-block;
+  gap: 4px;
 `;
 
 export const SocialUrl = styled.span`
   color: #0066cc;
+  display: inline-block;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+
+  ${media.laptop} {
+    max-width: 100px;
+  }
+  
+  ${media.tablet} {
+    max-width: 180px;
+  }
+  
+  ${media.mobile} {
+    max-width: 120px;
+  }
+
+  ${media.mini_mobile} {
+    max-width: 90px;
+  }
 `;
 
 export const IntroSection = styled.section`
