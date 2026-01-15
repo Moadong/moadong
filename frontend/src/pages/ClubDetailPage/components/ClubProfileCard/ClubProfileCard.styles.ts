@@ -169,6 +169,7 @@ export const SocialUrl = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
   vertical-align: bottom;
+  white-space: nowrap;
 
   ${media.laptop} {
     max-width: 100px;
