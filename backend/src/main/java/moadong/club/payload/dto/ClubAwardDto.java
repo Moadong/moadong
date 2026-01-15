@@ -3,10 +3,12 @@ package moadong.club.payload.dto;
 import jakarta.validation.constraints.Size;
 import moadong.club.entity.ClubAward;
 import moadong.club.enums.SemesterTerm;
+import org.hibernate.validator.constraints.Range;
 
 import java.util.List;
 
 public record ClubAwardDto(
+    @Range(min = 1900, max = 2050)
     int year,
     SemesterTerm semesterTerm,
     
