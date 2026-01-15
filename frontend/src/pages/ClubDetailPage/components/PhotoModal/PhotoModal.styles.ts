@@ -1,39 +1,12 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
-import { Z_INDEX } from '@/styles/zIndex';
-
-export const ModalOverlay = styled.div`
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  z-index: ${Z_INDEX.overlay};
-  animation: fadeIn 0.2s ease-in-out;
-  background-color: rgba(0, 0, 0, 0.7);
-  @supports (backdrop-filter: blur(4px)) {
-    backdrop-filter: blur(4px);
-    background-color: rgba(0, 0, 0, 0.6);
-  }
-
-  @keyframes fadeIn {
-    from {
-      opacity: 0;
-    }
-    to {
-      opacity: 1;
-    }
-  }
-`;
+import { colors } from '@/styles/theme/colors';
 
 export const ModalContent = styled.div`
   width: 90vw;
   height: 90vh;
   max-width: 1200px;
-  background: #fff;
+  background: ${colors.base.white};
   border-radius: 18px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.18);
   display: flex;
@@ -76,14 +49,14 @@ export const ModalHeader = styled.div`
   top: 0;
   left: 0;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.95);
+  background: ${colors.base.white};
   backdrop-filter: blur(10px);
 `;
 
 export const ClubName = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
-  color: #000;
+  color: ${colors.base.black};
 `;
 
 export const ImageCounter = styled.div`
@@ -92,7 +65,7 @@ export const ImageCounter = styled.div`
   transform: translateX(-50%);
   font-size: 0.95rem;
   font-weight: 500;
-  color: #666;
+  color: ${colors.gray[700]};
 `;
 
 export const ModalBody = styled.div`
@@ -227,7 +200,7 @@ export const ThumbnailList = styled.div`
 `;
 
 export const Thumbnail = styled.button<{ isActive: boolean }>`
-  border: 2px solid ${({ isActive }) => (isActive ? '#ff5414' : 'transparent')};
+  border: 2px solid ${({ isActive }) => (isActive ? colors.primary[900] : 'transparent')};
   border-radius: 6px;
   padding: 0;
   background: none;
@@ -239,7 +212,7 @@ export const Thumbnail = styled.button<{ isActive: boolean }>`
   transition: all 0.2s;
 
   &:hover {
-    border-color: ${({ isActive }) => (isActive ? '#ff5414' : '#ddd')};
+    border-color: ${({ isActive }) => (isActive ? colors.primary[900] : '#ddd')};
   }
 
   img {

@@ -6,6 +6,7 @@ import 'swiper/css/navigation';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import * as Styled from './PhotoModal.styles';
+import PortalModal from '@/components/common/Modal/PortalModal';
 
 interface PhotoModalProps {
   isOpen: boolean;
@@ -35,20 +36,15 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
     }
   }, [currentIndex]);
 
-  useEffect(() => {
-    if (isOpen) {
-      document.body.style.overflow = 'hidden';
-    }
-    return () => {
-      document.body.style.overflow = '';
-    };
-  }, [isOpen]);
-
   if (!isOpen) return null;
 
   return (
-    <Styled.ModalOverlay onClick={onClose}>
-      <Styled.ModalContent onClick={(e) => e.stopPropagation()}>
+    <PortalModal 
+      isOpen={isOpen} 
+      onClose={onClose}
+      closeOnBackdrop={true}
+      >
+        <Styled.ModalContent onClick={(e) => e.stopPropagation()}>
         <Styled.ModalHeader>
           <Styled.ClubName>{clubName}</Styled.ClubName>
           <Styled.ImageCounter>
@@ -138,7 +134,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
           </Styled.ThumbnailContainer>
         </Styled.ModalBody>
       </Styled.ModalContent>
-    </Styled.ModalOverlay>
+    </PortalModal>
   );
 };
 
