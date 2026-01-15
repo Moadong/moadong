@@ -14,6 +14,7 @@ const Header = () => {
   const trackEvent = useMixpanelTrack();
   const location = useLocation();
   const isAdminPage = location.pathname.startsWith('/admin');
+  const isAdminLoginPage = location.pathname.startsWith('/admin/login');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isScrolled = useScrollDetection();
 
@@ -85,7 +86,8 @@ const Header = () => {
           </Styled.MenuButton>
         )}
 
-        {isAdminPage ? <AdminProfile /> : <SearchBox />}
+        {!isAdminPage && <SearchBox />}
+        {isAdminPage && !isAdminLoginPage && <AdminProfile />}
       </Styled.Container>
     </Styled.Header>
   );
