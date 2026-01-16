@@ -14,19 +14,17 @@ import moadong.club.repository.ClubApplicationFormsRepositoryCustom;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.AESCipher;
+import moadong.sse.service.ApplicantsStatusShareSse;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -38,12 +36,7 @@ public class ClubApplyAdminService {
     private final ClubApplicantsRepository clubApplicantsRepository;
     private final AESCipher cipher;
     private final ClubApplicationFormsRepositoryCustom clubApplicationFormsRepositoryCustom;
-
-    // SSE 연결 관리
-    private final Map<String, SseEmitter> sseConnections = new ConcurrentHashMap<>();
-
-    // SSE Emitter 타임아웃 (5분)
-    private static final long SSE_EMITTER_TIME_OUT = 300000L;
+    private final ApplicantsStatusShareSse applicantsStatusShareSse;
 
     private record OptionItem(int year, SemesterTerm term) {
     }
@@ -187,27 +180,29 @@ public class ClubApplyAdminService {
             throw new RestApiException(ErrorCode.APPLICANT_NOT_FOUND);
         }
 
+        List<ApplicantStatusEvent> events = new ArrayList<>();
+
         application.forEach(app -> {
             ClubApplicantEditRequest editRequest = requestMap.get(app.getId());
             app.updateMemo(editRequest.memo());
             app.updateStatus(editRequest.status());
 
-            // SSE 이벤트 발송
-            ApplicantStatusEvent event = new ApplicantStatusEvent(
+            events.add(new ApplicantStatusEvent(
                     app.getId(),
                     editRequest.status(),
                     editRequest.memo(),
                     ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDateTime(),
                     clubId,
                     applicationFormId
-            );
+            ));
+        });
 
-            TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
-                @Override
-                public void afterCommit() {
-                    CompletableFuture.runAsync(() -> sendStatusChangeEvent(clubId, applicationFormId, event));
-                }
-            });
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                events.forEach(event ->
+                        applicantsStatusShareSse.publishStatusChangeEvent(clubId, applicationFormId, event));
+            }
         });
 
         clubApplicantsRepository.saveAll(application);
@@ -297,72 +292,4 @@ public class ClubApplyAdminService {
 
         return formQuestions;
     }
-
-    // SSE 연결 생성
-    public SseEmitter createSseConnection(String applicationFormId, CustomUserDetails user) {
-        String clubId = user.getClubId();
-
-        clubApplicationFormsRepository.findByClubIdAndId(clubId, applicationFormId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
-
-
-        String connectionKey = clubId + "_" + applicationFormId + "_" + user.getId();
-        SseEmitter emitter = new SseEmitter(SSE_EMITTER_TIME_OUT);
-
-        // 기존 연결이 있으면 먼저 맵에서 제거한 뒤 정리하여 race condition 방지
-        SseEmitter prev = sseConnections.remove(connectionKey);
-        if (prev != null) {
-            try {
-                prev.complete();
-            } catch (Exception ignored) {
-            }
-        }
-
-        sseConnections.put(connectionKey, emitter);
-
-        emitter.onCompletion(() -> sseConnections.remove(connectionKey, emitter));
-        emitter.onTimeout(() -> sseConnections.remove(connectionKey, emitter));
-        emitter.onError((ex) -> sseConnections.remove(connectionKey, emitter));
-
-        // 초기 핸드셰이크 이벤트 전송 (프록시/버퍼로 인한 지연 감소)
-        try {
-            emitter.send(SseEmitter.event().name("connected").data("ok"));
-        } catch (Exception e) {
-            sseConnections.remove(connectionKey, emitter);
-            emitter.completeWithError(e);
-        }
-
-        return emitter;
-    }
-
-    // 이벤트 발송
-    private void sendStatusChangeEvent(String clubId, String applicationFormId, ApplicantStatusEvent event) {
-        // 안전한 prefix (뒤에 "_" 추가)
-        String connectionKeyPrefix = clubId + "_" + applicationFormId + "_";
-
-        // 동시성 문제 방지: 스냅샷을 만들어서 순회
-        List<Map.Entry<String, SseEmitter>> entries = sseConnections.entrySet().stream()
-                .filter(entry -> entry.getKey().startsWith(connectionKeyPrefix))
-                .collect(Collectors.toList());
-
-        entries.forEach(entry -> {
-            String key = entry.getKey();
-            SseEmitter emitter = entry.getValue();
-
-            try {
-                emitter.send(SseEmitter.event()
-                        .name("applicant-status-changed")   // 이벤트 이름 지정
-                        .data(event));                      // 실제 데이터
-            } catch (Exception e) {
-                log.warn("SSE 이벤트 발송 실패: {}", e.getMessage());
-                // 동일 인스턴스일 때만 제거하여 race condition 방지
-                sseConnections.remove(key, emitter);
-                try {
-                    emitter.completeWithError(e); // emitter 쪽도 정상 종료
-                } catch (Exception ignore) {
-                }
-            }
-        });
-    }
-
 }

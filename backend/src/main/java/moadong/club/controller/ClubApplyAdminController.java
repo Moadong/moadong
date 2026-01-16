@@ -13,6 +13,7 @@ import moadong.club.payload.request.ClubApplicationFormCreateRequest;
 import moadong.club.payload.request.ClubApplicationFormEditRequest;
 import moadong.club.service.ClubApplyAdminService;
 import moadong.global.payload.Response;
+import moadong.sse.service.ApplicantsStatusShareSse;
 import moadong.user.annotation.CurrentUser;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
@@ -31,6 +32,7 @@ import java.util.List;
 public class ClubApplyAdminController {
 
     private final ClubApplyAdminService clubApplyAdminService;
+    private final ApplicantsStatusShareSse sse;
 
     @PostMapping("/application")
     @Operation(summary = "클럽 지원서 양식 생성", description = "클럽 지원서 양식을 생성합니다")
@@ -116,17 +118,17 @@ public class ClubApplyAdminController {
         return Response.ok("success delete applicant");
     }
 
-    @GetMapping(value = "/applicant/{applicationFormId}/events", produces = "text/event-stream")
+    @GetMapping(value = "/applicant/{applicationFormId}/sse", produces = "text/event-stream")
     @Operation(summary = "지원자 상태 변경 실시간 이벤트",
             description = "지원자의 상태 변경을 실시간으로 받아볼 수 있는 SSE 엔드포인트입니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public SseEmitter getApplicantStatusEvents(HttpServletResponse response,
-                                               @PathVariable String applicationFormId,
+                                              @PathVariable String applicationFormId,
                                                @CurrentUser CustomUserDetails user) {
         response.addHeader("X-Accel-Buffering", "no");
         response.addHeader("Cache-Control", "no-cache");
-        return clubApplyAdminService.createSseConnection(applicationFormId, user);
+        return sse.createSseSession(applicationFormId, user);
     }
 
 }
