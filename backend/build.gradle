@@ -62,6 +62,7 @@ dependencies {
 
 	implementation 'com.google.firebase:firebase-admin:9.7.0'
 
+    implementation 'org.javers:javers-spring-boot-starter-mongo:7.10.0'
 }
 
 //전체 테스트

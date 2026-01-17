@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Optional;
 import moadong.club.entity.Club;
 import org.bson.types.ObjectId;
+import org.javers.spring.annotation.JaversSpringDataAuditable;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.stereotype.Repository;
 

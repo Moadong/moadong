@@ -14,6 +14,7 @@ import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 
 import java.time.Instant;
 import java.time.LocalDateTime;
@@ -26,15 +27,17 @@ import java.util.List;
 @Builder(toBuilder = true)
 public class ClubRecruitmentInformation {
 
-    @Id
-    private String id;
+//    @Id
+//    private String id;
 
     @Column(length = 1024)
     @Unique
+    @DiffIgnore
     private String logo;
 
     @Column(length = 1024)
     @Unique
+    @DiffIgnore
     private String cover;
 
     @Column(length = 30)
@@ -45,6 +48,7 @@ public class ClubRecruitmentInformation {
 
     @Pattern(regexp = RegexConstants.PHONE_NUMBER, message = "전화번호 형식이 올바르지 않습니다.")
     @Column(length = 13)
+    @DiffIgnore
     private String presidentTelephoneNumber;
 
     private Instant recruitmentStart;
@@ -53,16 +57,20 @@ public class ClubRecruitmentInformation {
 
     private String recruitmentTarget;
 
+    @DiffIgnore
     String externalApplicationUrl;
 
+    @DiffIgnore
     private List<String> feedImages;
 
     private List<String> tags;
 
     @Enumerated(EnumType.STRING)
     @NotNull
+    @DiffIgnore
     private ClubRecruitmentStatus clubRecruitmentStatus;
 
+    @DiffIgnore
     private LocalDateTime lastModifiedDate;
 
     public void updateLogo(String logo) {
