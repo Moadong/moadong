@@ -77,13 +77,20 @@ const ApplicantDetailPage = () => {
         if (typeof memo !== 'string') return;
         if (!isApplicationStatus(status)) return;
 
-        updateApplicant([
+        updateApplicant(
+          [
+            {
+              memo,
+              status,
+              applicantId: questionId,
+            },
+          ],
           {
-            memo,
-            status,
-            applicantId: questionId,
+            onError: () => {
+              alert('지원자 정보 수정에 실패했습니다.');
+            },
           },
-        ]);
+        );
       }, 400),
     [clubId, questionId, updateApplicant],
   );
@@ -98,7 +105,6 @@ const ApplicantDetailPage = () => {
   if (isLoading) return <Spinner />;
   if (isError || !formData) return <div>지원서 정보를 불러올 수 없습니다.</div>;
 
-  // questionId로 지원자 찾기
   if (!applicant) {
     return <div>해당 지원자를 찾을 수 없습니다.</div>;
   }
