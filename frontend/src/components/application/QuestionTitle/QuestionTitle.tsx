@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
-import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
+import { APPLICATION_FORM } from '@/constants/applicationForm';
 import useDevice from '@/hooks/useDevice';
 import * as Styled from './QuestionTitle.styles';
 

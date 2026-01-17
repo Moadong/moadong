@@ -1,7 +1,7 @@
 import QuestionDescription from '@/components/application/QuestionDescription/QuestionDescription';
 import QuestionTitle from '@/components/application/QuestionTitle/QuestionTitle';
 import InputField from '@/components/common/InputField/InputField';
-import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
+import { APPLICATION_FORM } from '@/constants/applicationForm';
 import { TextProps } from '@/types/application';
 
 const ShortText = ({
