@@ -13,10 +13,10 @@ export const useGetApplication = (
   applicationFormId: string | undefined,
 ) => {
   return useQuery({
-    queryKey:
-      clubId && applicationFormId
-        ? queryKeys.application.detail(clubId, applicationFormId)
-        : queryKeys.application.all,
+    queryKey: queryKeys.application.detail(
+      clubId || 'unknown',
+      applicationFormId || 'unknown',
+    ),
     queryFn: () => getApplication(clubId!, applicationFormId!),
     enabled: !!clubId && !!applicationFormId,
   });
