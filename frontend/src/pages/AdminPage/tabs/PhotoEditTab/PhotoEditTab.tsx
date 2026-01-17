@@ -3,12 +3,9 @@ import { useOutletContext } from 'react-router-dom';
 import Button from '@/components/common/Button/Button';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import { MAX_FILE_COUNT, MAX_FILE_SIZE } from '@/constants/uploadLimit';
-import {
-  useUpdateFeed,
-  useUploadFeed,
-} from '@/hooks/Queries/useClubImages';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import { useUpdateFeed, useUploadFeed } from '@/hooks/Queries/useClubImages';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
 import { ClubDetail } from '@/types/club';
@@ -36,11 +33,26 @@ const PhotoEditTab = () => {
   const handleFiles = (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
-    uploadFeed({
-      clubId: clubDetail.id,
-      files: Array.from(files),
-      existingUrls: imageList,
-    });
+    uploadFeed(
+      {
+        clubId: clubDetail.id,
+        files: Array.from(files),
+        existingUrls: imageList,
+      },
+      {
+        onSuccess: (data) => {
+          if (data.failedFiles.length > 0) {
+            const failedFileNames = data.failedFiles.join(', ');
+            alert(
+              `일부 파일 업로드에 실패했어요.\n실패한 파일: ${failedFileNames}\n\n성공한 파일은 정상적으로 등록되었어요.`,
+            );
+          }
+        },
+        onError: () => {
+          alert('이미지 업로드에 실패했어요. 다시 시도해주세요!');
+        },
+      },
+    );
   };
 
   const handleUploadClick = () => {
@@ -56,7 +68,6 @@ const PhotoEditTab = () => {
     inputRef.current?.click();
   };
 
-  /** 파일 선택 변경 */
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const files = e.target.files;
     if (!files || files.length === 0) return;
@@ -76,17 +87,23 @@ const PhotoEditTab = () => {
     handleFiles(files);
   };
 
-  /** 이미지 삭제 */
   const deleteImage = (index: number) => {
     if (isLoading) return;
 
     const newList = imageList.filter((_, i) => i !== index);
     setImageList(newList);
 
-    updateFeed({
-      clubId: clubDetail.id,
-      urls: newList,
-    });
+    updateFeed(
+      {
+        clubId: clubDetail.id,
+        urls: newList,
+      },
+      {
+        onError: () => {
+          alert('이미지 삭제에 실패했어요. 다시 시도해주세요!');
+        },
+      },
+    );
   };
 
   return (

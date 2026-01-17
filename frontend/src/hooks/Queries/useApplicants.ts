@@ -10,7 +10,6 @@ export const useGetApplicants = (applicationFormId: string | undefined) => {
       ? queryKeys.applicants.detail(applicationFormId)
       : queryKeys.applicants.all,
     queryFn: () => getClubApplicants(applicationFormId!),
-    retry: false,
     enabled: !!applicationFormId,
   });
 };
@@ -50,7 +49,7 @@ export const useUpdateApplicant = (applicationFormId: string | undefined) => {
       }
     },
     onError: (error) => {
-      console.log(`Error updating applicant detail: ${error}`);
+      console.error(`Error updating applicant detail: ${error}`);
     },
   });
 };

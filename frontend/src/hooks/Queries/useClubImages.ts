@@ -68,17 +68,9 @@ export const useUploadFeed = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.club.detail(data.clubId),
       });
-
-      // 부분 실패한 경우 사용자에게 알림
-      if (data.failedFiles.length > 0) {
-        const failedFileNames = data.failedFiles.join(', ');
-        alert(
-          `일부 파일 업로드에 실패했어요.\n실패한 파일: ${failedFileNames}\n\n성공한 파일은 정상적으로 등록되었어요.`,
-        );
-      }
     },
     onError: () => {
-      alert('이미지 업로드에 실패했어요. 다시 시도해주세요!');
+      console.error('Error uploading feed images');
     },
   });
 };
@@ -97,12 +89,11 @@ export const useUpdateFeed = () => {
       });
     },
     onError: () => {
-      alert('이미지 수정에 실패했어요. 다시 시도해주세요!');
+      console.error('Error updating feed images');
     },
   });
 };
 
-// Logo Hooks
 export const useUploadLogo = () => {
   const queryClient = useQueryClient();
 
@@ -129,7 +120,7 @@ export const useUploadLogo = () => {
       });
     },
     onError: () => {
-      alert('로고 업로드에 실패했어요. 다시 시도해주세요!');
+      console.error('Error uploading logo');
     },
   });
 };
@@ -148,7 +139,7 @@ export const useDeleteLogo = () => {
       });
     },
     onError: () => {
-      alert('로고 초기화에 실패했어요. 다시 시도해 주세요.');
+      console.error('Error deleting logo');
     },
   });
 };

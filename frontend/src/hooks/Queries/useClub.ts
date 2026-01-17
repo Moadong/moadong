@@ -1,4 +1,9 @@
-import { keepPreviousData, useMutation, useQuery } from '@tanstack/react-query';
+import {
+  keepPreviousData,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import {
   getClubDetail,
   getClubList,
@@ -6,7 +11,7 @@ import {
   updateClubDetail,
 } from '@/apis/club';
 import { queryKeys } from '@/constants/queryKeys';
-import { ClubDetail, ClubDescription } from '@/types/club';
+import { ClubDescription, ClubDetail } from '@/types/club';
 import { ClubSearchResponse } from '@/types/club.responses';
 import convertToDriveUrl from '@/utils/convertGoogleDriveUrl';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
@@ -22,6 +27,7 @@ export const useGetClubDetail = (clubId: string) => {
   return useQuery<ClubDetail>({
     queryKey: queryKeys.club.detail(clubId),
     queryFn: () => getClubDetail(clubId as string),
+    staleTime: 60 * 1000,
     enabled: !!clubId,
     select: (data) =>
       ({
@@ -48,6 +54,7 @@ export const useGetCardList = ({
       division,
     ),
     queryFn: () => getClubList(keyword, recruitmentStatus, category, division),
+    staleTime: 60 * 1000,
     placeholderData: keepPreviousData,
     select: (data) => ({
       totalCount: data.totalCount,
@@ -60,10 +67,16 @@ export const useGetCardList = ({
 };
 
 export const useUpdateClubDescription = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (updatedData: ClubDescription) =>
       updateClubDescription(updatedData),
-
+    onSuccess: (_, variables) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.detail(variables.id),
+      });
+    },
     onError: (error) => {
       console.error('Error updating club detail:', error);
     },
@@ -71,9 +84,18 @@ export const useUpdateClubDescription = () => {
 };
 
 export const useUpdateClubDetail = () => {
+  const queryClient = useQueryClient();
+
   return useMutation({
     mutationFn: (updatedData: Partial<ClubDetail>) =>
       updateClubDetail(updatedData),
+    onSuccess: (_, variables) => {
+      if (variables.id) {
+        queryClient.invalidateQueries({
+          queryKey: queryKeys.club.detail(variables.id),
+        });
+      }
+    },
 
     onError: (error) => {
       console.error('Error updating club detail:', error);

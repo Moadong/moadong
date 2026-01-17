@@ -2,8 +2,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteApplication,
   duplicateApplication,
-  getApplication,
   getAllApplicationForms,
+  getApplication,
 } from '@/apis/application';
 import { queryKeys } from '@/constants/queryKeys';
 
@@ -17,7 +17,6 @@ export const useGetApplication = (
         ? queryKeys.application.detail(clubId, applicationFormId)
         : queryKeys.application.all,
     queryFn: () => getApplication(clubId!, applicationFormId!),
-    retry: false,
     enabled: !!clubId && !!applicationFormId,
   });
 };
@@ -26,7 +25,6 @@ export const useGetApplicationlist = () => {
   return useQuery({
     queryKey: queryKeys.application.all,
     queryFn: () => getAllApplicationForms(),
-    retry: false,
   });
 };
 

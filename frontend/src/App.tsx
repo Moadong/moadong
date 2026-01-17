@@ -16,7 +16,17 @@ import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
 import 'swiper/css';
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+      retry: 1,
+    },
+    mutations: {
+      retry: 0,
+    },
+  },
+});
 
 const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
 

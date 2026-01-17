@@ -5,9 +5,9 @@ import { setYear } from 'date-fns';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
-import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
 import { ClubDetail } from '@/types/club';
@@ -122,9 +122,6 @@ const RecruitEditTab = () => {
     updateClubDescription(updatedData, {
       onSuccess: () => {
         alert('모집 정보가 성공적으로 수정되었습니다.');
-        queryClient.invalidateQueries({
-          queryKey: ['clubDetail', clubDetail.id],
-        });
       },
       onError: (error) => {
         alert(`모집 정보 수정에 실패했습니다: ${error.message}`);

@@ -32,7 +32,7 @@ export const useUploadCover = () => {
     },
 
     onError: () => {
-      alert('커버 이미지 업로드에 실패했어요. 다시 시도해주세요!');
+      console.error('Error uploading cover');
     },
   });
 };
@@ -53,7 +53,7 @@ export const useDeleteCover = () => {
     },
 
     onError: () => {
-      alert('커버 이미지 삭제에 실패했어요. 다시 시도해주세요!');
+      console.error('Error deleting cover');
     },
   });
 };
