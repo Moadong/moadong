@@ -48,12 +48,12 @@ const ClubDetailPage = () => {
     trackEvent(USER_EVENT.CLUB_FEED_TAB_CLICKED);
   }, [setSearchParams, trackEvent]);
 
-  if (!clubDetail) {
-    return null;
-  }
-
   if (error) {
     return <div>에러가 발생했습니다.</div>;
+  }
+
+  if (!clubDetail) {
+    return null;
   }
 
   return (
