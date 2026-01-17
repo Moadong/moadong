@@ -1,29 +1,17 @@
 import { useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { Award, FAQ, IdealCandidate, SemesterTerm } from '@/types/club';
 import * as Styled from './ClubIntroContent.styles';
 
-export interface Award {
-  semester: string;
-  achievements: string[];
-}
 
-export interface IdealCandidate {
-  tags?: string[]; // TODO: tags가 추가될수도 있음
-  content: string;
-}
-
-export interface Faq {
-  question: string;
-  answer: string;
-}
 
 interface ClubIntroContentProps {
   activityDescription?: string;
   awards?: Award[];
   idealCandidate?: IdealCandidate;
   benefits?: string;
-  faqs?: Faq[];
+  faqs?: FAQ[];
 }
 
 const ClubIntroContent = ({
