@@ -1,5 +1,5 @@
-import { secureFetch } from './auth/secureFetch';
 import API_BASE_URL from '@/constants/api';
+import { secureFetch } from './auth/secureFetch';
 import { handleResponse, withErrorHandling } from './utils/apiHelpers';
 
 interface PresignedData {
@@ -43,7 +43,10 @@ export const coverApi = {
           body: JSON.stringify({ fileName, contentType }),
         },
       );
-      return handleResponse(response, `커버 업로드 URL 생성 실패 : ${response.status}`);
+      return handleResponse(
+        response,
+        `커버 업로드 URL 생성 실패 : ${response.status}`,
+      );
     }, '커버 업로드 URL 생성 중 오류 발생');
   },
 
@@ -57,7 +60,10 @@ export const coverApi = {
           body: JSON.stringify({ fileUrl }),
         },
       );
-      await handleResponse(response, `커버 업로드 완료 처리 실패 : ${response.status}`);
+      await handleResponse(
+        response,
+        `커버 업로드 완료 처리 실패 : ${response.status}`,
+      );
     }, '커버 업로드 완료 처리 중 오류 발생');
   },
 
@@ -89,7 +95,10 @@ export const feedApi = {
           body: JSON.stringify(uploadRequests),
         },
       );
-      return handleResponse(response, `피드 업로드 URL 생성 실패 : ${response.status}`);
+      return handleResponse(
+        response,
+        `피드 업로드 URL 생성 실패 : ${response.status}`,
+      );
     }, '피드 업로드 URL 생성 중 오류 발생');
   },
 
@@ -124,7 +133,10 @@ export const logoApi = {
           body: JSON.stringify({ fileName, contentType }),
         },
       );
-      return handleResponse(response, `업로드 URL 생성 실패 : ${response.status}`);
+      return handleResponse(
+        response,
+        `업로드 URL 생성 실패 : ${response.status}`,
+      );
     }, '로고 업로드 URL 생성 중 오류 발생');
   },
 
@@ -138,7 +150,10 @@ export const logoApi = {
           body: JSON.stringify({ fileUrl }),
         },
       );
-      await handleResponse(response, `업로드 완료 처리 실패 : ${response.status}`);
+      await handleResponse(
+        response,
+        `업로드 완료 처리 실패 : ${response.status}`,
+      );
     }, '로고 업로드 완료 처리 중 오류 발생');
   },
 

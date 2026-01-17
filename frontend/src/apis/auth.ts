@@ -40,19 +40,16 @@ export const logout = async (): Promise<void> => {
       method: 'GET',
       credentials: 'include',
     });
-    
+
     await handleResponse(response, '로그아웃에 실패하였습니다.');
   }, '로그아웃 중 오류 발생');
 };
 
 export const getClubIdByToken = async (): Promise<string> => {
   return withErrorHandling(async () => {
-    const response = await secureFetch(
-      `${API_BASE_URL}/auth/user/find/club`,
-      {
-        method: 'POST',
-      },
-    );
+    const response = await secureFetch(`${API_BASE_URL}/auth/user/find/club`, {
+      method: 'POST',
+    });
     const data = await handleResponse(response, '인증에 실패했습니다.');
     if (!data?.clubId) {
       throw new Error('ClubId를 가져올 수 없습니다.');

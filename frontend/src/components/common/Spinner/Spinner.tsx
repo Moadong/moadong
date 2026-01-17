@@ -17,7 +17,7 @@ const spin = keyframes`
 const SpinnerWrapper = styled.div.attrs<SpinnerWrapperProps>(() => ({
   role: 'status',
   'aria-label': '로딩 중',
-})) <SpinnerWrapperProps>`
+}))<SpinnerWrapperProps>`
   display: flex;
   justify-content: center;
   align-items: center;

@@ -1,7 +1,7 @@
 import API_BASE_URL from '@/constants/api';
-import { secureFetch } from './auth/secureFetch';
-import { AnswerItem, ApplicationFormData } from '@/types/application';
 import { UpdateApplicantParams } from '@/types/applicants';
+import { AnswerItem, ApplicationFormData } from '@/types/application';
+import { secureFetch } from './auth/secureFetch';
 import { handleResponse, withErrorHandling } from './utils/apiHelpers';
 
 export const applyToClub = async (
@@ -93,7 +93,7 @@ export const getApplicationOptions = async (clubId: string) => {
   return withErrorHandling(async () => {
     const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
     const data = await handleResponse(response);
-    
+
     let forms: Array<{ id: string; title: string }> = [];
     if (data && Array.isArray(data.forms)) {
       forms = data.forms;
@@ -123,7 +123,10 @@ export const updateApplicantDetail = async (
         body: JSON.stringify(applicant),
       },
     );
-    return handleResponse(response, '지원자의 지원서 정보 수정에 실패했습니다.');
+    return handleResponse(
+      response,
+      '지원자의 지원서 정보 수정에 실패했습니다.',
+    );
   }, '지원자의 지원서 정보 수정 중 오류 발생:');
 };
 

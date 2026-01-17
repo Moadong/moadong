@@ -200,7 +200,8 @@ export const ThumbnailList = styled.div`
 `;
 
 export const Thumbnail = styled.button<{ isActive: boolean }>`
-  border: 2px solid ${({ isActive }) => (isActive ? colors.primary[900] : 'transparent')};
+  border: 2px solid
+    ${({ isActive }) => (isActive ? colors.primary[900] : 'transparent')};
   border-radius: 6px;
   padding: 0;
   background: none;
@@ -212,7 +213,8 @@ export const Thumbnail = styled.button<{ isActive: boolean }>`
   transition: all 0.2s;
 
   &:hover {
-    border-color: ${({ isActive }) => (isActive ? colors.primary[900] : '#ddd')};
+    border-color: ${({ isActive }) =>
+      isActive ? colors.primary[900] : '#ddd'};
   }
 
   img {

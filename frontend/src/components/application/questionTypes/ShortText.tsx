@@ -15,7 +15,6 @@ const ShortText = ({
   onTitleChange,
   onDescriptionChange,
 }: TextProps) => {
-
   return (
     <>
       <QuestionTitle
