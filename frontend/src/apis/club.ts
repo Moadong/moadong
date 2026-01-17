@@ -7,6 +7,9 @@ export const getClubDetail = async (clubId: string): Promise<ClubDetail> => {
   return withErrorHandling(async () => {
     const response = await fetch(`${API_BASE_URL}/api/club/${clubId}`);
     const data = await handleResponse(response, '클럽 정보를 불러오는데 실패했습니다.');
+    if (!data?.club) {
+      throw new Error('클럽 정보를 가져올 수 없습니다.');
+    }
     return data.club;
   }, 'Error fetching club details');
 };
@@ -30,9 +33,13 @@ export const getClubList = async (
     const response = await fetch(url);
     const data = await handleResponse(response, '클럽 데이터를 불러오는데 실패했습니다.');
 
+    if (!data) {
+      throw new Error('클럽 데이터를 가져올 수 없습니다.');
+    }
+
     return {
-      clubs: data.clubs,
-      totalCount: data.totalCount,
+      clubs: data.clubs || [],
+      totalCount: data.totalCount || 0,
     };
   }, '클럽 데이터를 불러오는데 실패했습니다');
 };

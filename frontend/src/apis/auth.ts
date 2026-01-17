@@ -54,6 +54,9 @@ export const getClubIdByToken = async (): Promise<string> => {
       },
     );
     const data = await handleResponse(response, '인증에 실패했습니다.');
+    if (!data?.clubId) {
+      throw new Error('ClubId를 가져올 수 없습니다.');
+    }
     return data.clubId;
   }, 'ClubId 조회 중 오류 발생');
 };
