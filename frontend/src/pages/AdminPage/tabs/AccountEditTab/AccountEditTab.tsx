@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { changePassword } from '@/apis/auth/changePassword';
+import { changePassword } from '@/apis/auth';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';

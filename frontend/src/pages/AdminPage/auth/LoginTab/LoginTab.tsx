@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { login } from '@/apis/auth/login';
+import { login } from '@/apis/auth';
 import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';

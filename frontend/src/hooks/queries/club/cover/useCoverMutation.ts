@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { coverApi } from '@/apis/image/cover';
-import { uploadToStorage } from '@/apis/image/uploadToStorage';
+import { coverApi, uploadToStorage } from '@/apis/image';
 
 interface CoverUploadParams {
   clubId: string;

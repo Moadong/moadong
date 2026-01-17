@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { feedApi } from '@/apis/image/feed';
-import { uploadToStorage } from '@/apis/image/uploadToStorage';
+import { feedApi, uploadToStorage } from '@/apis/image';
 
 interface FeedUploadParams {
   clubId: string;

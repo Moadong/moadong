@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { getClubDetail } from '@/apis/getClubDetail';
+import { getClubDetail } from '@/apis/club';
 import { ClubDetail } from '@/types/club';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
 

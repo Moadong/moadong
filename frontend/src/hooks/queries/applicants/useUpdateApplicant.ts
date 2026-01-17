@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { updateApplicantDetail } from '@/apis/application/updateApplicantDetail';
+import { updateApplicantDetail } from '@/apis/application';
 import { UpdateApplicantParams } from '@/types/applicants';
 
 export const useUpdateApplicant = (applicationFormId: string | undefined) => {

@@ -1,12 +1,11 @@
 import * as Styled from './ClubApplyButton.styles';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useGetClubDetail } from '@/hooks/Queries/club/useGetClubDetail';
-import getApplication from '@/apis/application/getApplication';
+import { getApplication, getApplicationOptions } from '@/apis/application';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { USER_EVENT } from '@/constants/eventName';
 import { useState } from 'react';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
-import getApplicationOptions from '@/apis/application/getApplicationOptions';
 import ApplicationSelectModal from '@/components/application/modals/ApplicationSelectModal';
 import ShareButton from '../ShareButton/ShareButton';
 

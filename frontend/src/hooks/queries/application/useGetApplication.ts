@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import getApplication from '@/apis/application/getApplication';
+import { getApplication } from '@/apis/application';
 
 export const useGetApplication = (
   clubId: string | undefined,

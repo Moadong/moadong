@@ -1,10 +1,10 @@
 import { useQuery } from '@tanstack/react-query';
-import getAllApplications from '@/apis/application/getAllApplications';
+import { getAllApplicationForms } from '@/apis/application';
 
 export const useGetApplicationlist = () => {
   return useQuery({
     queryKey: ['applicationForm'],
-    queryFn: () => getAllApplications(),
+    queryFn: () => getAllApplicationForms(),
     retry: false,
   });
 };

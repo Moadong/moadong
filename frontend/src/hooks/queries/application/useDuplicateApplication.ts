@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { duplicateApplication } from '@/apis/application/duplicateApplication';
+import { duplicateApplication } from '@/apis/application';
 
 export const useDuplicateApplication = () => {
   const queryClient = useQueryClient();

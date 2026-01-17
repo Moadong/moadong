@@ -1,5 +1,5 @@
 import { keepPreviousData, useQuery } from '@tanstack/react-query';
-import { getClubList } from '@/apis/getClubList';
+import { getClubList } from '@/apis/club';
 import { ClubSearchResponse } from '@/types/club.responses';
 import convertToDriveUrl from '@/utils/convertGoogleDriveUrl';
 

@@ -1,5 +1,5 @@
 import { useMutation } from '@tanstack/react-query';
-import { updateClubDescription } from '@/apis/updateClubDescription';
+import { updateClubDescription } from '@/apis/club';
 import { ClubDescription } from '@/types/club';
 
 export const useUpdateClubDescription = () => {

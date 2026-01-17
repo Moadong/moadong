@@ -1,6 +1,5 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { logoApi } from '@/apis/image/logo';
-import { uploadToStorage } from '@/apis/image/uploadToStorage';
+import { logoApi, uploadToStorage } from '@/apis/image';
 
 interface LogoUploadParams {
   clubId: string;
