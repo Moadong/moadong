@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { logout } from '@/apis/auth/logout';
 import { ADMIN_EVENT } from '@/constants/eventName';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './SideBar.styles';
 
 interface TabItem {

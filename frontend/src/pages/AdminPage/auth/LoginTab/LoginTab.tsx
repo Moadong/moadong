@@ -6,8 +6,8 @@ import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useAuth from '@/hooks/useAuth';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import useTrackPageView from '@/hooks/useTrackPageView';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import * as Styled from './LoginTab.styles';
 import Header from '@/components/common/Header/Header';
 

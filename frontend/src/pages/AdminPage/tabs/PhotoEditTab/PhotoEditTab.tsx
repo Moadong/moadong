@@ -6,9 +6,9 @@ import { MAX_FILE_COUNT, MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import {
   useUpdateFeed,
   useUploadFeed,
-} from '@/hooks/queries/club/images/useFeedMutation';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import useTrackPageView from '@/hooks/useTrackPageView';
+} from '@/hooks/Queries/club/images/useFeedMutation';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
 import { ClubDetail } from '@/types/club';

@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import { renderHook, RenderHookResult } from '@testing-library/react';
-import useNavigator from '../useNavigator';
+import useNavigator from '@/hooks/useNavigator';
 
 jest.mock('react-router-dom', () => ({
   useNavigate: jest.fn(),

@@ -8,7 +8,7 @@ import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
 import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
+import { useGetApplication } from '@/hooks/Queries/application/useGetApplication';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import {

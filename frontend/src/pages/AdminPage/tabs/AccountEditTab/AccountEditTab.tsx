@@ -3,8 +3,8 @@ import { changePassword } from '@/apis/auth/changePassword';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import useTrackPageView from '@/hooks/useTrackPageView';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import * as Styled from './AccountEditTab.styles';
 

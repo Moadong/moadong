@@ -1,8 +1,8 @@
 import ShareIcon from '@/assets/images/icons/share_icon.svg';
 import ShareIconMobile from '@/assets/images/icons/share_icon_mobile.svg';
 import { USER_EVENT } from '@/constants/eventName';
-import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import { useGetClubDetail } from '@/hooks/Queries/club/useGetClubDetail';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
 import * as Styled from './ShareButton.styles';
 

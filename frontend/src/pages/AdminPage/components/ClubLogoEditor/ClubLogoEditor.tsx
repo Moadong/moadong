@@ -6,8 +6,8 @@ import { useAdminClubContext } from '@/context/AdminClubContext';
 import {
   useDeleteLogo,
   useUploadLogo,
-} from '@/hooks/queries/club/images/useLogoMutation';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+} from '@/hooks/Queries/club/images/useLogoMutation';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './ClubLogoEditor.styles';
 
 interface ClubLogoEditorProps {

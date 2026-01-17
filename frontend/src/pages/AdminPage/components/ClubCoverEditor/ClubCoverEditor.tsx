@@ -6,8 +6,8 @@ import { useAdminClubContext } from '@/context/AdminClubContext';
 import {
   useDeleteCover,
   useUploadCover,
-} from '@/hooks/queries/club/cover/useCoverMutation';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+} from '@/hooks/Queries/club/cover/useCoverMutation';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './ClubCoverEditor.styles';
 
 interface ClubCoverEditorProps {

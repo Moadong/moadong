@@ -2,7 +2,7 @@ import { MouseEvent, useEffect, useState } from 'react';
 import AppDownloadImage from '@/assets/images/popup/app-download.svg';
 import { USER_EVENT } from '@/constants/eventName';
 import useDevice from '@/hooks/useDevice';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import * as Styled from './Popup.styles';
 

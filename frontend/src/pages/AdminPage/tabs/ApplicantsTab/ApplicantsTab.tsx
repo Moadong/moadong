@@ -7,9 +7,9 @@ import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDow
 import SearchField from '@/components/common/SearchField/SearchField';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { useDeleteApplicants } from '@/hooks/queries/applicants/useDeleteApplicants';
-import { useGetApplicants } from '@/hooks/queries/applicants/useGetApplicants';
-import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
+import { useDeleteApplicants } from '@/hooks/Queries/applicants/useDeleteApplicants';
+import { useGetApplicants } from '@/hooks/Queries/applicants/useGetApplicants';
+import { useUpdateApplicant } from '@/hooks/Queries/applicants/useUpdateApplicant';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';

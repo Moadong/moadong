@@ -6,7 +6,7 @@ import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import { USER_EVENT } from '@/constants/eventName';
 import useDevice from '@/hooks/useDevice';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useNavigator from '@/hooks/useNavigator';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import * as Styled from './Banner.styles';

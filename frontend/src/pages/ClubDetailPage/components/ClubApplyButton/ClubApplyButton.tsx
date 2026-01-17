@@ -1,8 +1,8 @@
 import * as Styled from './ClubApplyButton.styles';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import { useGetClubDetail } from '@/hooks/Queries/club/useGetClubDetail';
 import getApplication from '@/apis/application/getApplication';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { USER_EVENT } from '@/constants/eventName';
 import { useState } from 'react';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
