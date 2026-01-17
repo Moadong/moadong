@@ -11,8 +11,7 @@ import {
   updateClubDetail,
 } from '@/apis/club';
 import { queryKeys } from '@/constants/queryKeys';
-import { ClubDescription, ClubDetail } from '@/types/club';
-import { ClubSearchResponse } from '@/types/club.responses';
+import { ClubDescription, ClubDetail, ClubSearchResponse } from '@/types/club';
 import convertToDriveUrl from '@/utils/convertGoogleDriveUrl';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
 
