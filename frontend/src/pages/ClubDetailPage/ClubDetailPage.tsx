@@ -39,12 +39,12 @@ const ClubDetailPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
   const handleIntroTabClick = useCallback(() => {
-    setSearchParams({ tab: TAB_TYPE.INTRO });
+    setSearchParams({ tab: TAB_TYPE.INTRO }, { replace: true });
     trackEvent(USER_EVENT.CLUB_INTRO_TAB_CLICKED);
   }, [setSearchParams, trackEvent]);
 
   const handlePhotosTabClick = useCallback(() => {
-    setSearchParams({ tab: TAB_TYPE.PHOTOS });
+    setSearchParams({ tab: TAB_TYPE.PHOTOS }, { replace: true });
     trackEvent(USER_EVENT.CLUB_FEED_TAB_CLICKED);
   }, [setSearchParams, trackEvent]);
 
