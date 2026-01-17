@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
-import { Award } from '@/types/club';
+import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
 import * as Styled from './AwardEditor.styles';
 
 interface AwardEditorProps {
@@ -12,12 +12,14 @@ interface AwardEditorProps {
 
 const START_YEAR = 2020;
 
-const parseSemester = (semester: string): number => {
-  const match = semester.match(/(\d{4})\s+(\d)학기/);
-  if (!match) return 0;
-  const year = parseInt(match[1], 10);
-  const semesterNumber = parseInt(match[2], 10);
-  return year * 10 + semesterNumber;
+const getSemesterSortValue = (award: Award): number => {
+  const semesterValue = award.semester === SemesterTerm.FIRST ? 1 : 2;
+  return award.year * 10 + semesterValue;
+};
+
+const formatSemesterLabel = (award: Award): string => {
+  const semesterLabel = award.semester === SemesterTerm.FIRST ? '1학기' : '2학기';
+  return `${award.year} ${semesterLabel}`;
 };
 
 const generateYearOptions = (currentYear: number) => {
@@ -32,44 +34,49 @@ const generateYearOptions = (currentYear: number) => {
 };
 
 const SEMESTER_OPTIONS = [
-  { value: '1', label: '1학기' },
-  { value: '2', label: '2학기' },
+  { value: SemesterTerm.FIRST, label: '1학기' },
+  { value: SemesterTerm.SECOND, label: '2학기' },
 ] as const;
 
 const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear.toString());
-  const [selectedSemester, setSelectedSemester] = useState('1');
+  const [selectedSemester, setSelectedSemester] =
+    useState<SemesterTermType>(SemesterTerm.FIRST);
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [isSemesterDropdownOpen, setIsSemesterDropdownOpen] = useState(false);
-  const [lastAddedSemester, setLastAddedSemester] = useState<string | null>(
-    null,
-  );
+  const [lastAddedKey, setLastAddedKey] = useState<string | null>(null);
   const inputRefs = useRef<Record<string, HTMLInputElement | null>>({});
 
   const yearOptions = generateYearOptions(currentYear);
 
   const sortedAwards = [...awards].sort(
     (awardA, awardB) =>
-      parseSemester(awardB.semester) - parseSemester(awardA.semester),
+      getSemesterSortValue(awardB) - getSemesterSortValue(awardA),
   );
 
-  const handleAddSemester = () => {
-    const semesterText = `${selectedYear} ${selectedSemester}학기`;
+  const getAwardKey = (award: Award): string =>
+    `${award.year}-${award.semester}`;
 
-    const isDuplicate = awards.some((award) => award.semester === semesterText);
+  const handleAddSemester = () => {
+    const year = parseInt(selectedYear, 10);
+
+    const isDuplicate = awards.some(
+      (award) => award.year === year && award.semester === selectedSemester,
+    );
     if (isDuplicate) {
       alert('이미 추가된 학기입니다.');
       return;
     }
 
     const newAward: Award = {
-      semester: semesterText,
+      year,
+      semester: selectedSemester,
       achievements: [''],
     };
 
     onChange([...awards, newAward]);
-    setLastAddedSemester(semesterText);
+    setLastAddedKey(getAwardKey(newAward));
   };
 
   const handleRemoveSemester = (semesterIndex: number) => {
@@ -83,7 +90,7 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
         : award,
     );
     onChange(updatedAwards);
-    setLastAddedSemester(awards[semesterIndex].semester);
+    setLastAddedKey(getAwardKey(awards[semesterIndex]));
   };
 
   const handleRemoveAchievement = (
@@ -122,21 +129,19 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
   };
 
   useEffect(() => {
-    if (lastAddedSemester) {
-      const award = awards.find(
-        (award) => award.semester === lastAddedSemester,
-      );
+    if (lastAddedKey) {
+      const award = awards.find((award) => getAwardKey(award) === lastAddedKey);
       if (award) {
         const lastIndex = award.achievements.length - 1;
-        const key = `${lastAddedSemester}-${lastIndex}`;
+        const key = `${lastAddedKey}-${lastIndex}`;
         const inputRef = inputRefs.current[key];
         if (inputRef) {
           inputRef.focus();
         }
       }
-      setLastAddedSemester(null);
+      setLastAddedKey(null);
     }
-  }, [awards, lastAddedSemester]);
+  }, [awards, lastAddedKey]);
 
   return (
     <Styled.Container>
@@ -174,7 +179,7 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
         <CustomDropDown
           options={SEMESTER_OPTIONS}
           selected={selectedSemester}
-          onSelect={setSelectedSemester}
+          onSelect={(value) => setSelectedSemester(value as SemesterTermType)}
           open={isSemesterDropdownOpen}
           onToggle={(isOpen) => setIsSemesterDropdownOpen(!isOpen)}
           style={{ width: '100px' }}
@@ -207,13 +212,16 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
 
       <Styled.AwardsList>
         {sortedAwards.map((award) => {
+          const awardKey = getAwardKey(award);
           const originalIndex = awards.findIndex(
-            (originalAward) => originalAward.semester === award.semester,
+            (originalAward) => getAwardKey(originalAward) === awardKey,
           );
           return (
-            <Styled.AwardItem key={award.semester}>
+            <Styled.AwardItem key={awardKey}>
               <Styled.SemesterHeader>
-                <Styled.SemesterTitle>{award.semester}</Styled.SemesterTitle>
+                <Styled.SemesterTitle>
+                  {formatSemesterLabel(award)}
+                </Styled.SemesterTitle>
                 <Styled.RemoveButton
                   onClick={() => handleRemoveSemester(originalIndex)}
                 >
@@ -226,7 +234,7 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
                   <Styled.AchievementItem key={achievementIndex}>
                     <Styled.AchievementInput
                       ref={(element) => {
-                        const key = `${award.semester}-${achievementIndex}`;
+                        const key = `${awardKey}-${achievementIndex}`;
                         inputRefs.current[key] = element;
                       }}
                       placeholder='수상 내역을 입력하세요'
