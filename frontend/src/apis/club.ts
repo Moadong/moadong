@@ -6,7 +6,7 @@ import { handleResponse, withErrorHandling } from './utils/apiHelpers';
 export const getClubDetail = async (clubId: string): Promise<ClubDetail> => {
   return withErrorHandling(async () => {
     const response = await fetch(`${API_BASE_URL}/api/club/${clubId}`);
-    const data = await handleResponse(response);
+    const data = await handleResponse(response, '클럽 정보를 불러오는데 실패했습니다.');
     return data.club;
   }, 'Error fetching club details');
 };
@@ -28,7 +28,7 @@ export const getClubList = async (
 
     url.search = params.toString();
     const response = await fetch(url);
-    const data = await handleResponse(response);
+    const data = await handleResponse(response, '클럽 데이터를 불러오는데 실패했습니다.');
 
     return {
       clubs: data.clubs,
@@ -48,7 +48,7 @@ export const updateClubDescription = async (
       },
       body: JSON.stringify(updatedData),
     });
-    await handleResponse(response);
+    await handleResponse(response, '클럽 설명 수정에 실패했습니다.');
   }, 'Failed to update club description');
 };
 
@@ -63,6 +63,6 @@ export const updateClubDetail = async (
       },
       body: JSON.stringify(updatedData),
     });
-    await handleResponse(response);
+    await handleResponse(response, '클럽 정보 수정에 실패했습니다.');
   }, 'Failed to update club detail');
 };

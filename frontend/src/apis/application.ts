@@ -22,7 +22,7 @@ export const applyToClub = async (
         }),
       },
     );
-    return handleResponse(response);
+    return handleResponse(response, '답변 제출에 실패했습니다.');
   }, '답변 제출 중 오류 발생:');
 };
 
@@ -35,7 +35,7 @@ export const createApplication = async (data: ApplicationFormData) => {
       },
       body: JSON.stringify(data),
     });
-    return handleResponse(response);
+    return handleResponse(response, '지원서 제출에 실패했습니다.');
   }, '지원서 제출 중 오류 발생:');
 };
 
@@ -59,7 +59,7 @@ export const duplicateApplication = async (applicationFormId: string) => {
         method: 'POST',
       },
     );
-    return handleResponse(response);
+    return handleResponse(response, '지원서 복제에 실패했습니다.');
   }, '지원서 복제 중 오류 발생:');
 };
 
@@ -123,7 +123,7 @@ export const updateApplicantDetail = async (
         body: JSON.stringify(applicant),
       },
     );
-    return handleResponse(response);
+    return handleResponse(response, '지원자의 지원서 정보 수정에 실패했습니다.');
   }, '지원자의 지원서 정보 수정 중 오류 발생:');
 };
 
@@ -142,7 +142,7 @@ export const updateApplication = async (
         body: JSON.stringify(data),
       },
     );
-    return handleResponse(response);
+    return handleResponse(response, '지원서 수정에 실패했습니다.');
   }, '지원서 수정 중 오류 발생:');
 };
 
@@ -163,6 +163,6 @@ export const updateApplicationStatus = async (
         body: JSON.stringify({ active: newStatus }),
       },
     );
-    return handleResponse(response);
+    return handleResponse(response, '지원서 상태 수정에 실패했습니다.');
   }, '지원서 상태 수정 중 오류 발생:');
 };

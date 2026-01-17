@@ -6,8 +6,10 @@ import { updateApplicationStatus } from '@/apis/application';
 import expandArrow from '@/assets/images/icons/ExpandArrow.svg';
 import Plus from '@/assets/images/icons/Plus.svg';
 import Spinner from '@/components/common/Spinner/Spinner';
-import { useDeleteApplication } from '@/hooks/Queries/application/useDeleteApplication';
-import { useGetApplicationlist } from '@/hooks/Queries/application/useGetApplicationlist';
+import {
+  useDeleteApplication,
+  useGetApplicationlist,
+} from '@/hooks/Queries/useApplication';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import * as Styled from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab.styles';

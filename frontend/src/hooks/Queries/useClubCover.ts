@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { coverApi, uploadToStorage } from '@/apis/image';
+import { queryKeys } from '@/constants/queryKeys';
 
 interface CoverUploadParams {
   clubId: string;
@@ -25,7 +26,9 @@ export const useUploadCover = () => {
     },
 
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['clubDetail', data.clubId] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.detail(data.clubId),
+      });
     },
 
     onError: () => {
@@ -44,7 +47,9 @@ export const useDeleteCover = () => {
     },
 
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['clubDetail', data.clubId] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.detail(data.clubId),
+      });
     },
 
     onError: () => {

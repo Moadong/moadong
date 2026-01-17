@@ -24,7 +24,7 @@ export const login = async (
       },
       body: JSON.stringify({ userId, password }),
     });
-    return handleResponse(response);
+    return handleResponse(response, '로그인에 실패하였습니다.');
   }, '로그인 중 오류 발생');
 };
 
@@ -41,7 +41,7 @@ export const logout = async (): Promise<void> => {
       credentials: 'include',
     });
     
-    await handleResponse(response);
+    await handleResponse(response, '로그아웃에 실패하였습니다.');
   }, '로그아웃 중 오류 발생');
 };
 
@@ -53,7 +53,7 @@ export const getClubIdByToken = async (): Promise<string> => {
         method: 'POST',
       },
     );
-    const data = await handleResponse(response);
+    const data = await handleResponse(response, '인증에 실패했습니다.');
     return data.clubId;
   }, 'ClubId 조회 중 오류 발생');
 };
@@ -69,6 +69,6 @@ export const changePassword = async (
       },
       body: JSON.stringify(payload),
     });
-    await handleResponse(response);
+    await handleResponse(response, '비밀번호 변경에 실패했습니다.');
   }, '비밀번호 변경 중 오류 발생');
 };

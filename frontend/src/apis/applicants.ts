@@ -7,7 +7,7 @@ export const getClubApplicants = async (applicationFormId: string) => {
     const response = await secureFetch(
       `${API_BASE_URL}/api/club/apply/info/${applicationFormId}`,
     );
-    return handleResponse(response);
+    return handleResponse(response, '지원자 목록을 불러오는데 실패했습니다.');
   }, 'Error fetching club applicants');
 };
 
@@ -26,6 +26,6 @@ export const deleteApplicants = async (
         body: JSON.stringify({ applicantIds: applicantIds }),
       },
     );
-    return handleResponse(response);
+    return handleResponse(response, '지원자 삭제에 실패했습니다.');
   }, 'Error fetching delete applicants');
 };

@@ -4,7 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
-import { useUpdateClubDetail } from '@/hooks/Queries/club/useUpdateClubDetail';
+import { useUpdateClubDetail } from '@/hooks/Queries/useClub';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';

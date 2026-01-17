@@ -5,7 +5,7 @@ import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import { SNS_CONFIG } from '@/constants/snsConfig';
-import { useUpdateClubDetail } from '@/hooks/Queries/club/useUpdateClubDetail';
+import { useUpdateClubDetail } from '@/hooks/Queries/useClub';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import ClubCoverEditor from '@/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor';

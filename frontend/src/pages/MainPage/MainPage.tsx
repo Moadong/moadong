@@ -3,7 +3,7 @@ import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { PAGE_VIEW } from '@/constants/eventName';
-import { useGetCardList } from '@/hooks/Queries/club/useGetCardList';
+import { useGetCardList } from '@/hooks/Queries/useClub';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';

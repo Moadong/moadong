@@ -1,5 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { feedApi, uploadToStorage } from '@/apis/image';
+import { feedApi, logoApi, uploadToStorage } from '@/apis/image';
+import { queryKeys } from '@/constants/queryKeys';
 
 interface FeedUploadParams {
   clubId: string;
@@ -12,7 +13,11 @@ interface FeedUpdateParams {
   urls: string[];
 }
 
-// 피드 업로드(새 파일 업로드 + 기존 피드와 합쳐서 서버 갱신)
+interface LogoUploadParams {
+  clubId: string;
+  file: File;
+}
+
 export const useUploadFeed = () => {
   const queryClient = useQueryClient();
 
@@ -60,7 +65,9 @@ export const useUploadFeed = () => {
     },
 
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['clubDetail', data.clubId] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.detail(data.clubId),
+      });
 
       // 부분 실패한 경우 사용자에게 알림
       if (data.failedFiles.length > 0) {
@@ -70,30 +77,78 @@ export const useUploadFeed = () => {
         );
       }
     },
-    // TODO: 각 API 에러 응답에 따른 세분화된 에러 메시지 전달
-    // 참고: feedApi.updateFeeds, uploadToStorage 에러 스펙 확인 후 분기
     onError: () => {
       alert('이미지 업로드에 실패했어요. 다시 시도해주세요!');
     },
   });
 };
 
-// 피드 업데이트 (기존 피드 URL 배열만 서버에 갱신)
 export const useUpdateFeed = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
     mutationFn: async ({ clubId, urls }: FeedUpdateParams) => {
-      // 1. 서버에 URL 배열 PUT으로 갱신
       await feedApi.updateFeeds(clubId, urls);
       return { clubId };
     },
     onSuccess: (data) => {
-      queryClient.invalidateQueries({ queryKey: ['clubDetail', data.clubId] });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.detail(data.clubId),
+      });
     },
-    // TODO: 각 API 에러 응답에 따른 세분화된 에러 메시지 전달
     onError: () => {
       alert('이미지 수정에 실패했어요. 다시 시도해주세요!');
+    },
+  });
+};
+
+// Logo Hooks
+export const useUploadLogo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ clubId, file }: LogoUploadParams) => {
+      // 1. presigned URL 받기
+      const { presignedUrl, finalUrl } = await logoApi.getUploadUrl(
+        clubId,
+        file.name,
+        file.type,
+      );
+
+      // 2. r2 업로드
+      await uploadToStorage(presignedUrl, file);
+
+      // 3. 완료 처리
+      await logoApi.completeUpload(clubId, finalUrl);
+
+      return { finalUrl, clubId };
+    },
+    onSuccess: (data) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.detail(data.clubId),
+      });
+    },
+    onError: () => {
+      alert('로고 업로드에 실패했어요. 다시 시도해주세요!');
+    },
+  });
+};
+
+export const useDeleteLogo = () => {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (clubId: string) => {
+      await logoApi.delete(clubId);
+      return clubId;
+    },
+    onSuccess: (clubId) => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.detail(clubId),
+      });
+    },
+    onError: () => {
+      alert('로고 초기화에 실패했어요. 다시 시도해 주세요.');
     },
   });
 };

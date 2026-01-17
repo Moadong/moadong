@@ -6,7 +6,7 @@ import { MAX_FILE_COUNT, MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import {
   useUpdateFeed,
   useUploadFeed,
-} from '@/hooks/Queries/club/images/useFeedMutation';
+} from '@/hooks/Queries/useClubImages';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
