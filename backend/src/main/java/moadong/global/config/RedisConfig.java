@@ -1,5 +1,7 @@
 package moadong.global.config;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.redis.connection.RedisConnectionFactory;
@@ -16,11 +18,16 @@ public class RedisConfig {
         RedisTemplate<String, Object> redisTemplate = new RedisTemplate<>();
         redisTemplate.setConnectionFactory(connectionFactory);
 
+        ObjectMapper objectMapper = new ObjectMapper();
+        objectMapper.registerModule(new JavaTimeModule());
+
+        GenericJackson2JsonRedisSerializer jsonSerializer = new GenericJackson2JsonRedisSerializer(objectMapper);
+
         redisTemplate.setKeySerializer(new StringRedisSerializer());
-        redisTemplate.setValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setValueSerializer(jsonSerializer);
 
         redisTemplate.setHashKeySerializer(new StringRedisSerializer());
-        redisTemplate.setHashValueSerializer(new GenericJackson2JsonRedisSerializer());
+        redisTemplate.setHashValueSerializer(jsonSerializer);
 
         return redisTemplate;
     }
@@ -32,3 +39,4 @@ public class RedisConfig {
         return container;
     }
 }
+
