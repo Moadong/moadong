@@ -6,7 +6,7 @@ import { handleResponse, withErrorHandling } from './utils/apiHelpers';
 export const getClubDetail = async (clubId: string): Promise<ClubDetail> => {
   return withErrorHandling(async () => {
     const response = await fetch(`${API_BASE_URL}/api/club/${clubId}`);
-    const data = await handleResponse(
+    const data = await handleResponse<{ club: ClubDetail }>(
       response,
       '클럽 정보를 불러오는데 실패했습니다.',
     );
@@ -34,10 +34,10 @@ export const getClubList = async (
 
     url.search = params.toString();
     const response = await fetch(url);
-    const data = await handleResponse(
-      response,
-      '클럽 데이터를 불러오는데 실패했습니다.',
-    );
+    const data = await handleResponse<{
+      clubs: ClubDetail[];
+      totalCount: number;
+    }>(response, '클럽 데이터를 불러오는데 실패했습니다.');
 
     if (!data) {
       throw new Error('클럽 데이터를 가져올 수 없습니다.');
