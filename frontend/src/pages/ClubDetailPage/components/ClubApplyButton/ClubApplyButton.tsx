@@ -27,33 +27,23 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   if (!clubId || !clubDetail) return null;
 
   const navigateToApplicationForm = async (formId: string) => {
-    const externalWindow = window.open('', '_blank', 'noopener,noreferrer');
-
     try {
       const formDetail = await getApplication(clubId, formId);
+
+      // 외부 지원서인 경우
       if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
         const externalApplicationUrl =
           formDetail.externalApplicationUrl?.trim();
         if (externalApplicationUrl) {
-          if (externalWindow) {
-            externalWindow.location.href = externalApplicationUrl;
-          } else {
-            window.location.href = externalApplicationUrl;
-          }
+          window.location.href = externalApplicationUrl;
           return;
         }
       }
 
-      if (externalWindow && !externalWindow.closed) {
-        externalWindow.close();
-      }
-
+      // 내부 지원서인 경우
       navigate(`/application/${clubId}/${formId}`, { state: { formDetail } });
       setIsApplicationModalOpen(false);
     } catch (error) {
-      if (externalWindow && !externalWindow.closed) {
-        externalWindow.close();
-      }
       console.error('지원서 조회 중 오류가 발생했습니다', error);
       alert(
         '지원서 정보를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.',
