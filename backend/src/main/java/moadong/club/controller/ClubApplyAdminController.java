@@ -80,6 +80,16 @@ public class ClubApplyAdminController {
         return Response.ok("success delete application");
     }
 
+    @PostMapping("/application/{applicationFormId}/duplicate")
+    @Operation(summary = "클럽 지원서 양식 복제", description = "클럽의 지원서 양식을 복제합니다")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> duplicateClubApplicationForm(@PathVariable String applicationFormId,
+                                                          @CurrentUser CustomUserDetails user) {
+        clubApplyAdminService.duplicateClubApplicationForm(applicationFormId, user);
+        return Response.ok("success duplicate application");
+    }
+
     @GetMapping("/apply/info/{applicationFormId}")
     @Operation(summary = "클럽 지원자 현황", description = "클럽 지원자 현황을 불러옵니다")
     @PreAuthorize("isAuthenticated()")
