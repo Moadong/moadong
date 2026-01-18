@@ -38,3 +38,7 @@ export interface ApplicantStatusEvent {
   clubId: string;
   applicationFormId: string;
 }
+
+export interface ApplicantSSECallbacks {
+  onStatusChange: (event: ApplicantStatusEvent) => void;
+}
