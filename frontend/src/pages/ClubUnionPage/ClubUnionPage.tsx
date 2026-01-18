@@ -1,8 +1,8 @@
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
-import { CLUB_UNION_MEMBERS } from '@/constants/CLUB_UNION_INFO';
+import { CLUB_UNION_MEMBERS } from '@/constants/clubUnionInfo';
 import { PAGE_VIEW } from '@/constants/eventName';
-import useTrackPageView from '@/hooks/useTrackPageView';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubUnionPage.styles';

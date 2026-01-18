@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { getClubIdByToken } from '@/apis/auth/getClubIdByToken';
+import { getClubIdByToken } from '@/apis/auth';
 
 const useAuth = () => {
   const [isLoading, setIsLoading] = useState(true);

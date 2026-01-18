@@ -1,5 +1,5 @@
-import { colors } from '@/styles/theme/colors';
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
   display: flex;
@@ -24,8 +24,10 @@ export const AlwaysRecruitButton = styled.button<{ $active: boolean }>`
   flex-shrink: 0;
 
   color: ${({ $active }) => ($active ? colors.base.white : colors.gray[700])};
-  background: ${({ $active }) => ($active ? colors.primary[800] : colors.gray[300])};
-  border: ${({ $active }) => ($active ? 'none' : `1px solid ${colors.gray[500]}`)};
+  background: ${({ $active }) =>
+    $active ? colors.primary[800] : colors.gray[300]};
+  border: ${({ $active }) =>
+    $active ? 'none' : `1px solid ${colors.gray[500]}`};
   transition:
     background-color 0.12s ease,
     transform 0.06s ease;

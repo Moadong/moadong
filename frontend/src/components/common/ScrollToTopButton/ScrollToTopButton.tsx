@@ -1,5 +1,5 @@
 import scrollButtonIcon from '@/assets/images/icons/scroll_icon.svg';
-import { useScrollTrigger } from '@/hooks/useScrollTrigger';
+import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
 import * as Styled from './ScrollToTopButton.styles';
 
 export const ScrollToTopButton = () => {

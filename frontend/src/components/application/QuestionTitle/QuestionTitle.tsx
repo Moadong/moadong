@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
-import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
+import { APPLICATION_FORM } from '@/constants/applicationForm';
 import useDevice from '@/hooks/useDevice';
 import * as Styled from './QuestionTitle.styles';
 
@@ -38,7 +38,9 @@ const QuestionTitle = ({
       {mode === 'answer' ? (
         <Styled.QuestionTitleReadOnly>
           {title}
-          {required && <Styled.RequiredStar aria-hidden="true">*</Styled.RequiredStar>}
+          {required && (
+            <Styled.RequiredStar aria-hidden='true'>*</Styled.RequiredStar>
+          )}
         </Styled.QuestionTitleReadOnly>
       ) : (
         <Styled.QuestionTitleTextWrapper>
@@ -55,7 +57,9 @@ const QuestionTitle = ({
             placeholder={APPLICATION_FORM.QUESTION_TITLE.placeholder}
             aria-required={required}
           />
-          {required && <Styled.RequiredStar aria-hidden="true">*</Styled.RequiredStar>}
+          {required && (
+            <Styled.RequiredStar aria-hidden='true'>*</Styled.RequiredStar>
+          )}
         </Styled.QuestionTitleTextWrapper>
       )}
     </Styled.QuestionTitleRow>
