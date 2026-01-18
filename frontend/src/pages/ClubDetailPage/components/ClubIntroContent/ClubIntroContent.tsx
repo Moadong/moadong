@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './ClubIntroContent.styles';
 
 export interface Award {

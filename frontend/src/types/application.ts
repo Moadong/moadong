@@ -1,4 +1,4 @@
-import { QUESTION_LABEL_MAP } from '@/constants/APPLICATION_FORM';
+import { QUESTION_LABEL_MAP } from '@/constants/applicationForm';
 
 export type QuestionType = keyof typeof QUESTION_LABEL_MAP;
 

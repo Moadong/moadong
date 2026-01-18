@@ -7,16 +7,25 @@ import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDow
 import SearchField from '@/components/common/SearchField/SearchField';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { useDeleteApplicants } from '@/hooks/queries/applicants/useDeleteApplicants';
-import { useGetApplicants } from '@/hooks/queries/applicants/useGetApplicants';
-import { useUpdateApplicant } from '@/hooks/queries/applicants/useUpdateApplicant';
+import {
+  useDeleteApplicants,
+  useGetApplicants,
+  useUpdateApplicant,
+} from '@/hooks/Queries/useApplicants';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantsTab.styles';
 
+const sortOptions = [
+  { value: 'date', label: '제출순' },
+  { value: 'name', label: '이름순' },
+] as const;
+
 const ApplicantsTab = () => {
+  const { clubId, applicantsData, setApplicantsData } = useAdminClubContext();
   const { applicationFormId } = useParams<{ applicationFormId: string }>();
+  const navigate = useNavigate();
 
   const statusOptions = AVAILABLE_STATUSES.map((status) => ({
     value: status,
@@ -33,13 +42,6 @@ const ApplicantsTab = () => {
     }),
   );
 
-  const sortOptions = [
-    { value: 'date', label: '제출순' },
-    { value: 'name', label: '이름순' },
-  ] as const;
-
-  const navigate = useNavigate();
-  const { clubId, applicantsData, setApplicantsData } = useAdminClubContext();
   const {
     data: fetchData,
     isLoading,
@@ -66,7 +68,6 @@ const ApplicantsTab = () => {
     }
   }, [fetchData, setApplicantsData]);
 
-  // 모든 드롭다운을 닫는 함수
   const closeAllDropdowns = () => {
     if (open) setOpen(false);
     if (isStatusDropdownOpen) setIsStatusDropdownOpen(false);

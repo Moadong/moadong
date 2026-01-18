@@ -3,7 +3,7 @@ import {
   inactiveCategoryIcons,
 } from '@/assets/images/icons/category_button';
 import { USER_EVENT } from '@/constants/eventName';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchStore } from '@/store/useSearchStore';
 import * as Styled from './CategoryButtonList.styles';

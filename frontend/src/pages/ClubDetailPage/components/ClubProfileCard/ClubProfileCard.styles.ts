@@ -163,7 +163,7 @@ export const SocialText = styled.span`
 `;
 
 export const SocialUrl = styled.span`
-  color: #009CF6;
+  color: #009cf6;
   display: inline-block;
   max-width: 180px;
   overflow: hidden;
@@ -174,11 +174,11 @@ export const SocialUrl = styled.span`
   ${media.laptop} {
     max-width: 100px;
   }
-  
+
   ${media.tablet} {
     max-width: 180px;
   }
-  
+
   ${media.mobile} {
     max-width: 120px;
   }

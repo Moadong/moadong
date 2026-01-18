@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { Z_INDEX } from '@/styles/zIndex';
 import { colors } from '@/styles/theme/colors';
+import { Z_INDEX } from '@/styles/zIndex';
 
 export const Overlay = styled.div`
   inset: 0;
@@ -18,7 +18,7 @@ export const ContentWrapper = styled.div`
   outline: none;
   display: flex;
   justify-content: center;
-  width: 100%; 
+  width: 100%;
   max-width: fit-content;
 `;
 
@@ -30,7 +30,7 @@ export const StandardLayout = styled.div<{ $width?: string }>`
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
   display: flex;
   flex-direction: column;
-  width: ${({ $width }) => $width || '400px'}; 
+  width: ${({ $width }) => $width || '400px'};
   max-width: 100%;
 `;
 

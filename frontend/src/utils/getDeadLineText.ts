@@ -1,4 +1,4 @@
-import { format, differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 
 const RECRUITMENT_STATUS = {
@@ -22,17 +22,14 @@ const getDeadlineText = (
     const hour = recruitmentStart.getHours();
     const minute = recruitmentStart.getMinutes();
 
-    let formatStr = 
-    hour === 0 && minute === 0 
-    ? 'M월 d일'
-    : 'M월 d일 HH:mm';
+    let formatStr = hour === 0 && minute === 0 ? 'M월 d일' : 'M월 d일 HH:mm';
     return `${format(recruitmentStart, formatStr, { locale: ko })} ${RECRUITMENT_STATUS.UPCOMING}`;
   }
 
   if (!recruitmentEnd) return RECRUITMENT_STATUS.CLOSED;
   const days = differenceInCalendarDays(recruitmentEnd, today);
 
-  if (days > 365) return RECRUITMENT_STATUS.ALWAYS; // D-day가 의미 없을 정도로 긴 경우 '상시 모집'으로 표시  
+  if (days > 365) return RECRUITMENT_STATUS.ALWAYS; // D-day가 의미 없을 정도로 긴 경우 '상시 모집'으로 표시
   return days > 0 ? `D-${days}` : 'D-Day';
 };
 

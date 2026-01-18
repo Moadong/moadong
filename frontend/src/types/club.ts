@@ -82,3 +82,8 @@ export interface ClubApiResponse {
   category: string;
   division: string;
 }
+
+export interface ClubSearchResponse {
+  clubs: Club[];
+  totalCount: number;
+}

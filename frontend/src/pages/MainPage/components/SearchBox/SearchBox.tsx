@@ -1,6 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import SearchField from '@/components/common/SearchField/SearchField';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchInput } from '@/store/useSearchStore';
 

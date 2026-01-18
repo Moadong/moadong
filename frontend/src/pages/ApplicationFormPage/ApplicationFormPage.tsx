@@ -1,20 +1,20 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import applyToClub from '@/apis/application/applyToClub';
+import { applyToClub } from '@/apis/application';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
-import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
-import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import { useAnswers } from '@/hooks/useAnswers';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import useTrackPageView from '@/hooks/useTrackPageView';
-import { validateAnswers } from '@/hooks/useValidateAnswers';
+import { useAnswers } from '@/hooks/Application/useAnswers';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import { useGetApplication } from '@/hooks/Queries/useApplication';
+import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import { Question } from '@/types/application';
 import { parseDescriptionWithLinks } from '@/utils/parseDescriptionWithLinks';
+import { validateAnswers } from '@/utils/useValidateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
 
 const ApplicationFormPage = () => {

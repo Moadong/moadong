@@ -3,10 +3,10 @@ import { useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
-import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import useDevice from '@/hooks/useDevice';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import useTrackPageView from '@/hooks/useTrackPageView';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
@@ -48,12 +48,12 @@ const ClubDetailPage = () => {
     trackEvent(USER_EVENT.CLUB_FEED_TAB_CLICKED);
   }, [setSearchParams, trackEvent]);
 
-  if (!clubDetail) {
-    return null;
-  }
-
   if (error) {
     return <div>에러가 발생했습니다.</div>;
+  }
+
+  if (!clubDetail) {
+    return null;
   }
 
   return (

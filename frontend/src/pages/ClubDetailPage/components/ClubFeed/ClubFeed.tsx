@@ -1,4 +1,4 @@
-import { usePhotoModal } from '@/hooks/PhotoList/usePhotoModal';
+import { useEffect, useState } from 'react';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
 import * as Styled from './ClubFeed.styles';
 
@@ -8,7 +8,23 @@ interface Props {
 }
 
 const ClubFeed = ({ feed, clubName = '동아리' }: Props) => {
-  const { isOpen, index, open, close, setIndex } = usePhotoModal();
+  const [isOpen, setIsOpen] = useState(false);
+  const [index, setIndex] = useState(0);
+
+  const open = (i: number) => {
+    setIndex(i);
+    setIsOpen(true);
+  };
+  const close = () => setIsOpen(false);
+
+  useEffect(() => {
+    if (!feed || feed.length === 0) {
+      setIsOpen(false);
+      setIndex(0);
+    } else if (index >= feed.length) {
+      setIndex(feed.length - 1);
+    }
+  }, [feed, index]);
 
   if (!feed || feed.length === 0) {
     return (

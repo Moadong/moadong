@@ -3,7 +3,7 @@ import { ko } from 'date-fns/locale';
 import 'react-datepicker/dist/react-datepicker.css';
 import DatePicker, { ReactDatePickerCustomHeaderProps } from 'react-datepicker';
 import { ADMIN_EVENT } from '@/constants/eventName';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './Calendar.styles';
 
 interface CalendarProps {

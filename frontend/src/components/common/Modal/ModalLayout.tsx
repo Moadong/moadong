@@ -17,21 +17,17 @@ const ModalLayout = ({
   width,
 }: ModalLayoutProps) => {
   return (
-    <Styled.StandardLayout 
-      $width={width} 
-      role="dialog" 
-      aria-modal="true"
-      >
+    <Styled.StandardLayout $width={width} role='dialog' aria-modal='true'>
       {(title || onClose) && (
         <Styled.Header>
           {title && <Styled.Title>{title}</Styled.Title>}
           {onClose && (
-            <Styled.IconButton 
-                aria-label='close' 
-                type='button' 
-                onClick={onClose}
+            <Styled.IconButton
+              aria-label='close'
+              type='button'
+              onClick={onClose}
             >
-                ✕
+              ✕
             </Styled.IconButton>
           )}
         </Styled.Header>

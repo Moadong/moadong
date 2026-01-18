@@ -1,7 +1,7 @@
+import ModalLayout from '@/components/common/Modal/ModalLayout';
+import PortalModal from '@/components/common/Modal/PortalModal';
 import { ApplicationForm } from '@/types/application';
 import * as Styled from './ApplicationSelectModal.styles';
-import PortalModal from '@/components/common/Modal/PortalModal';
-import ModalLayout from '@/components/common/Modal/ModalLayout';
 
 export interface ApplicationSelectModalProps {
   isOpen: boolean;
@@ -15,15 +15,13 @@ interface ApplicationOptionsProps {
   onOptionSelect: (application: ApplicationForm) => void;
 }
 
-const ApplicationOptions = ({ 
-  applicationOptions, 
+const ApplicationOptions = ({
+  applicationOptions,
   onOptionSelect,
- }: ApplicationOptionsProps) => {
+}: ApplicationOptionsProps) => {
   if (applicationOptions.length === 0) {
     return (
-      <Styled.EmptyMessage>
-        지원 가능한 분야가 없습니다.
-      </Styled.EmptyMessage>
+      <Styled.EmptyMessage>지원 가능한 분야가 없습니다.</Styled.EmptyMessage>
     );
   }
 
@@ -32,7 +30,9 @@ const ApplicationOptions = ({
       {applicationOptions.map((application) => (
         <Styled.OptionButton
           key={application.id}
-          onClick={() => {onOptionSelect(application)}}
+          onClick={() => {
+            onOptionSelect(application);
+          }}
         >
           {application.title}
         </Styled.OptionButton>
@@ -48,15 +48,12 @@ const ApplicationSelectModal = ({
   onOptionSelect,
 }: ApplicationSelectModalProps) => {
   return (
-    <PortalModal
-      isOpen={isOpen}
-      onClose={onClose}
-      closeOnBackdrop={true}
-    >
-      <ModalLayout title='지원서 선택' onClose={onClose} width="500px">
-        <ApplicationOptions applicationOptions={applicationOptions} 
-        onOptionSelect={onOptionSelect} 
-      />
+    <PortalModal isOpen={isOpen} onClose={onClose} closeOnBackdrop={true}>
+      <ModalLayout title='지원서 선택' onClose={onClose} width='500px'>
+        <ApplicationOptions
+          applicationOptions={applicationOptions}
+          onOptionSelect={onOptionSelect}
+        />
       </ModalLayout>
     </PortalModal>
   );

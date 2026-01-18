@@ -3,11 +3,8 @@ import defaultCover from '@/assets/images/logos/default_profile_image.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import {
-  useDeleteCover,
-  useUploadCover,
-} from '@/hooks/queries/club/cover/useCoverMutation';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import { useDeleteCover, useUploadCover } from '@/hooks/Queries/useClubCover';
 import * as Styled from './ClubCoverEditor.styles';
 
 interface ClubCoverEditorProps {
@@ -42,7 +39,14 @@ const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
     }
 
     trackEvent(ADMIN_EVENT.CLUB_COVER_UPLOAD_BUTTON_CLICKED);
-    uploadMutation.mutate({ clubId, file });
+    uploadMutation.mutate(
+      { clubId, file },
+      {
+        onError: () => {
+          alert('커버 이미지 업로드에 실패했어요. 다시 시도해주세요!');
+        },
+      },
+    );
   };
 
   const triggerFileInput = () => {
@@ -59,7 +63,11 @@ const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
     if (!window.confirm('정말 커버 이미지를 기본 이미지로 되돌릴까요?')) return;
 
     trackEvent(ADMIN_EVENT.CLUB_COVER_RESET_BUTTON_CLICKED);
-    deleteMutation.mutate(clubId);
+    deleteMutation.mutate(clubId, {
+      onError: () => {
+        alert('커버 이미지 초기화에 실패했어요. 다시 시도해주세요!');
+      },
+    });
   };
 
   return (

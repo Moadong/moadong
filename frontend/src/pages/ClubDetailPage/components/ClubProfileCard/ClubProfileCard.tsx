@@ -6,7 +6,7 @@ import DefaultCover from '@/assets/images/logos/default_cover_image.png';
 import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import { USER_EVENT } from '@/constants/eventName';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { SNSPlatform } from '@/types/club';
 import * as Styled from './ClubProfileCard.styles';
 

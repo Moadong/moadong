@@ -5,10 +5,11 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
 import useNavigator from '@/hooks/useNavigator';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
+import { getABTestGroup } from '@/pages/MainPage/components/Popup/Popup';
 import * as Styled from './Banner.styles';
 import BANNERS from './bannerData';
 
@@ -36,10 +37,12 @@ const Banner = () => {
 
     if (url === 'APP_STORE_LINK') {
       const storeLink = getAppStoreLink();
+      const abGroup = getABTestGroup();
       trackEvent(USER_EVENT.APP_DOWNLOAD_BANNER_CLICKED, {
         bannerId,
         bannerName,
         platform: detectPlatform(),
+        abTestGroup: abGroup,
       });
       handleLink(storeLink);
       return;

@@ -17,7 +17,9 @@ const PortalModal = ({
 }: PortalModalProps) => {
   useEffect(() => {
     if (isOpen) document.body.style.overflow = 'hidden';
-    return () => { document.body.style.overflow = ''; };
+    return () => {
+      document.body.style.overflow = '';
+    };
   }, [isOpen]);
 
   if (!isOpen) return null;
@@ -27,7 +29,9 @@ const PortalModal = ({
 
   return createPortal(
     <Styled.Overlay
-      onClick={() => { if (closeOnBackdrop) onClose();}}
+      onClick={() => {
+        if (closeOnBackdrop) onClose();
+      }}
     >
       <Styled.ContentWrapper
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}

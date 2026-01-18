@@ -4,7 +4,7 @@ import remarkGfm from 'remark-gfm';
 import eye_icon from '@/assets/images/icons/eye_icon.svg';
 import pencil_icon from '@/assets/images/icons/pencil_icon_1.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './MarkdownEditor.styles';
 
 interface MarkdownEditorProps {

@@ -8,7 +8,7 @@ import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDow
 import {
   DROPDOWN_OPTIONS,
   QUESTION_LABEL_MAP,
-} from '@/constants/APPLICATION_FORM';
+} from '@/constants/applicationForm';
 import { QuestionBuilderProps, QuestionType } from '@/types/application';
 import * as Styled from './QuestionBuilder.styles';
 
