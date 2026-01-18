@@ -80,19 +80,21 @@ export const getAllApplicationForms = async () => {
 export const getApplication = async (
   clubId: string,
   applicationFormId: string,
-): Promise<ApplicationFormData> => {
+): Promise<ApplicationFormData | undefined> => {
   return withErrorHandling(async () => {
     const response = await fetch(
       `${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`,
     );
-    return handleResponse(response);
+    return handleResponse<ApplicationFormData>(response);
   }, '지원서 조회 중 오류가 발생했습니다');
 };
 
 export const getApplicationOptions = async (clubId: string) => {
   return withErrorHandling(async () => {
     const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
-    const data = await handleResponse(response);
+    const data = await handleResponse<{
+      forms: Array<{ id: string; title: string }>;
+    }>(response);
 
     let forms: Array<{ id: string; title: string }> = [];
     if (data && Array.isArray(data.forms)) {

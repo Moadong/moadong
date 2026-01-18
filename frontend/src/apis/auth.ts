@@ -14,7 +14,7 @@ interface ChangePasswordPayload {
 export const login = async (
   userId: string,
   password: string,
-): Promise<LoginResponseData> => {
+): Promise<LoginResponseData | undefined> => {
   return withErrorHandling(async () => {
     const response = await fetch(`${API_BASE_URL}/auth/user/login`, {
       method: 'POST',
@@ -24,7 +24,10 @@ export const login = async (
       },
       body: JSON.stringify({ userId, password }),
     });
-    return handleResponse(response, '로그인에 실패하였습니다.');
+    return handleResponse<LoginResponseData>(
+      response,
+      '로그인에 실패하였습니다.',
+    );
   }, '로그인 중 오류 발생');
 };
 
@@ -50,7 +53,10 @@ export const getClubIdByToken = async (): Promise<string> => {
     const response = await secureFetch(`${API_BASE_URL}/auth/user/find/club`, {
       method: 'POST',
     });
-    const data = await handleResponse(response, '인증에 실패했습니다.');
+    const data = await handleResponse<{ clubId: string }>(
+      response,
+      '인증에 실패했습니다.',
+    );
     if (!data?.clubId) {
       throw new Error('ClubId를 가져올 수 없습니다.');
     }

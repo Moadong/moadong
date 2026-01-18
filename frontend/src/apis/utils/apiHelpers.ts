@@ -1,7 +1,7 @@
-export const handleResponse = async (
+export const handleResponse = async <T = unknown>(
   response: Response,
   customErrorMessage?: string,
-) => {
+): Promise<T | undefined> => {
   if (!response.ok) {
     if (customErrorMessage) {
       throw new Error(customErrorMessage);
@@ -32,10 +32,18 @@ export const handleResponse = async (
 
   try {
     const result = JSON.parse(text);
-    if (result && typeof result === 'object' && 'data' in result) {
-      return (result as { data: unknown }).data;
+    // wrapped 형식({ data: {...} })인 경우 data를 unwrap
+    // 단, data가 null/undefined가 아닌 유효한 값일 때만
+    if (
+      result &&
+      typeof result === 'object' &&
+      'data' in result &&
+      result.data !== null &&
+      result.data !== undefined
+    ) {
+      return result.data as T;
     }
-    return result;
+    return result as T;
   } catch {
     return undefined;
   }

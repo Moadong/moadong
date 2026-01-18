@@ -33,7 +33,7 @@ export const coverApi = {
     clubId: string,
     fileName: string,
     contentType: string,
-  ): Promise<PresignedData> => {
+  ): Promise<PresignedData | undefined> => {
     return withErrorHandling(async () => {
       const response = await secureFetch(
         `${API_BASE_URL}/api/club/${clubId}/cover/upload-url`,
@@ -43,7 +43,7 @@ export const coverApi = {
           body: JSON.stringify({ fileName, contentType }),
         },
       );
-      return handleResponse(
+      return handleResponse<PresignedData>(
         response,
         `커버 업로드 URL 생성 실패 : ${response.status}`,
       );
@@ -85,7 +85,7 @@ export const feedApi = {
   getUploadUrls: async (
     clubId: string,
     uploadRequests: FeedUploadRequest[],
-  ): Promise<PresignedData[]> => {
+  ): Promise<PresignedData[] | undefined> => {
     return withErrorHandling(async () => {
       const response = await secureFetch(
         `${API_BASE_URL}/api/club/${clubId}/feed/upload-url`,
@@ -95,7 +95,7 @@ export const feedApi = {
           body: JSON.stringify(uploadRequests),
         },
       );
-      return handleResponse(
+      return handleResponse<PresignedData[]>(
         response,
         `피드 업로드 URL 생성 실패 : ${response.status}`,
       );
@@ -123,7 +123,7 @@ export const logoApi = {
     clubId: string,
     fileName: string,
     contentType: string,
-  ): Promise<PresignedData> => {
+  ): Promise<PresignedData | undefined> => {
     return withErrorHandling(async () => {
       const response = await secureFetch(
         `${API_BASE_URL}/api/club/${clubId}/logo/upload-url`,
@@ -133,7 +133,7 @@ export const logoApi = {
           body: JSON.stringify({ fileName, contentType }),
         },
       );
-      return handleResponse(
+      return handleResponse<PresignedData>(
         response,
         `업로드 URL 생성 실패 : ${response.status}`,
       );
