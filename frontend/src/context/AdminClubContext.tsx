@@ -71,12 +71,24 @@ export const AdminClubProvider = ({
   useEffect(() => {
     if (!applicationFormId) return;
 
-    const sseConnection = createApplicantSSE(applicationFormId, {
-      onStatusChange: handleApplicantStatusChange,
-    });
+    let eventSource: EventSource | null = null;
+
+    const sseConnect = () => {
+      eventSource = createApplicantSSE(applicationFormId, {
+        onStatusChange: handleApplicantStatusChange,
+        onError: (error) => {
+          console.error('SSE connection error:', error);
+          setTimeout(() => {
+            sseConnect();
+          }, 2000);
+        },
+      });
+    };
+
+    sseConnect();
 
     return () => {
-      sseConnection?.close();
+      eventSource?.close();
     };
   }, [applicationFormId, handleApplicantStatusChange]);
 

@@ -41,4 +41,5 @@ export interface ApplicantStatusEvent {
 
 export interface ApplicantSSECallbacks {
   onStatusChange: (event: ApplicantStatusEvent) => void;
+  onError: (error: Error) => void;
 }

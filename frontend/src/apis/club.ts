@@ -119,11 +119,9 @@ export const createApplicantSSE = (
       }
     });
 
-    source.onerror = () => {
+    source.onerror = (error) => {
       source.close();
-      setTimeout(() => {
-        eventSource = connect();
-      }, 2000);
+      callbacks.onError(new Error(error?.message || 'SSE connection error'));
     };
 
     return source;
