@@ -120,6 +120,7 @@ const ClubInfoEditTab = () => {
     }
 
     const updatedData = {
+      id: clubDetail.id,
       name: clubName,
       category: selectedCategory,
       division: selectedDivision,
