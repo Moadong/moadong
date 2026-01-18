@@ -1,11 +1,24 @@
-import { createContext, useContext, useState } from 'react';
-import { ApplicantsInfo } from '@/types/applicants';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
+import { createApplicantSSE } from '@/apis/applicants/createApplicantSSE';
+import {
+  ApplicantsInfo,
+  ApplicantStatusEvent,
+  ApplicationStatus,
+} from '@/types/applicants';
 
 interface AdminClubContextType {
   clubId: string | null;
   setClubId: (id: string | null) => void;
   applicantsData: ApplicantsInfo | null;
   setApplicantsData: (data: ApplicantsInfo | null) => void;
+  applicationFormId: string | null;
+  setApplicationFormId: (id: string | null) => void;
 }
 
 const AdminClubContext = createContext<AdminClubContextType | undefined>(
@@ -21,6 +34,51 @@ export const AdminClubProvider = ({
   const [applicantsData, setApplicantsData] = useState<ApplicantsInfo | null>(
     null,
   );
+  const [applicationFormId, setApplicationFormId] = useState<string | null>(
+    null,
+  );
+
+  // SSE 이벤트 핸들러
+  const handleApplicantStatusChange = useCallback(
+    (event: ApplicantStatusEvent) => {
+      setApplicantsData((prevData) => {
+        if (!prevData) return null;
+
+        const updatedApplicants = prevData.applicants.map((applicant) =>
+          applicant.id === event.applicantId
+            ? { ...applicant, status: event.status, memo: event.memo }
+            : applicant,
+        );
+
+        return {
+          ...prevData,
+          applicants: updatedApplicants,
+          reviewRequired: updatedApplicants.filter(
+            (a) => a.status === ApplicationStatus.SUBMITTED,
+          ).length,
+          scheduledInterview: updatedApplicants.filter(
+            (a) => a.status === ApplicationStatus.INTERVIEW_SCHEDULED,
+          ).length,
+          accepted: updatedApplicants.filter(
+            (a) => a.status === ApplicationStatus.ACCEPTED,
+          ).length,
+        };
+      });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!applicationFormId) return;
+
+    const sseConnection = createApplicantSSE(applicationFormId, {
+      onStatusChange: handleApplicantStatusChange,
+    });
+
+    return () => {
+      sseConnection?.close();
+    };
+  }, [applicationFormId, handleApplicantStatusChange]);
 
   return (
     <AdminClubContext.Provider
@@ -29,6 +87,8 @@ export const AdminClubProvider = ({
         setClubId,
         applicantsData,
         setApplicantsData,
+        applicationFormId,
+        setApplicationFormId,
       }}
     >
       {children}
