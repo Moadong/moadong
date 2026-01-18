@@ -18,7 +18,8 @@ const getSemesterSortValue = (award: Award): number => {
 };
 
 const formatSemesterLabel = (award: Award): string => {
-  const semesterLabel = award.semester === SemesterTerm.FIRST ? '1학기' : '2학기';
+  const semesterLabel =
+    award.semester === SemesterTerm.FIRST ? '1학기' : '2학기';
   return `${award.year} ${semesterLabel}`;
 };
 
@@ -41,8 +42,9 @@ const SEMESTER_OPTIONS = [
 const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
   const currentYear = new Date().getFullYear();
   const [selectedYear, setSelectedYear] = useState(currentYear.toString());
-  const [selectedSemester, setSelectedSemester] =
-    useState<SemesterTermType>(SemesterTerm.FIRST);
+  const [selectedSemester, setSelectedSemester] = useState<SemesterTermType>(
+    SemesterTerm.FIRST,
+  );
   const [isYearDropdownOpen, setIsYearDropdownOpen] = useState(false);
   const [isSemesterDropdownOpen, setIsSemesterDropdownOpen] = useState(false);
   const [lastAddedKey, setLastAddedKey] = useState<string | null>(null);
@@ -55,8 +57,8 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
       getSemesterSortValue(awardB) - getSemesterSortValue(awardA),
   );
 
-  const getAwardKey = (award: Award): string =>
-    `${award.year}-${award.semester}`;
+  const getAwardKey = (award: Award, index: number): string =>
+    `${award.year}-${award.semester}-${index}`;
 
   const handleAddSemester = () => {
     const year = parseInt(selectedYear, 10);
@@ -75,8 +77,9 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
       achievements: [''],
     };
 
-    onChange([...awards, newAward]);
-    setLastAddedKey(getAwardKey(newAward));
+    const newAwards = [...awards, newAward];
+    onChange(newAwards);
+    setLastAddedKey(getAwardKey(newAward, newAwards.length - 1));
   };
 
   const handleRemoveSemester = (semesterIndex: number) => {
@@ -90,7 +93,7 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
         : award,
     );
     onChange(updatedAwards);
-    setLastAddedKey(getAwardKey(awards[semesterIndex]));
+    setLastAddedKey(getAwardKey(awards[semesterIndex], semesterIndex));
   };
 
   const handleRemoveAchievement = (
@@ -130,7 +133,10 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
 
   useEffect(() => {
     if (lastAddedKey) {
-      const award = awards.find((award) => getAwardKey(award) === lastAddedKey);
+      const awardIndex = awards.findIndex(
+        (award, index) => getAwardKey(award, index) === lastAddedKey,
+      );
+      const award = awardIndex !== -1 ? awards[awardIndex] : null;
       if (award) {
         const lastIndex = award.achievements.length - 1;
         const key = `${lastAddedKey}-${lastIndex}`;
@@ -211,11 +217,14 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
       </Styled.AddSemesterSection>
 
       <Styled.AwardsList>
-        {sortedAwards.map((award) => {
-          const awardKey = getAwardKey(award);
+        {sortedAwards.map((award, sortedIndex) => {
           const originalIndex = awards.findIndex(
-            (originalAward) => getAwardKey(originalAward) === awardKey,
+            (originalAward, idx) =>
+              originalAward.year === award.year &&
+              originalAward.semester === award.semester &&
+              originalAward.achievements === award.achievements,
           );
+          const awardKey = getAwardKey(award, originalIndex);
           return (
             <Styled.AwardItem key={awardKey}>
               <Styled.SemesterHeader>

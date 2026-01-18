@@ -1,15 +1,17 @@
 import { useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
-import { Award, FAQ, IdealCandidate, SemesterTerm } from '@/types/club';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import { Award, FAQ, IdealCandidate, SemesterTerm } from '@/types/club';
 import * as Styled from './ClubIntroContent.styles';
 
 const formatSemesterLabel = (award: Award): string => {
-  const semesterLabel = award.semester === SemesterTerm.FIRST ? '1학기' : '2학기';
+  const semesterLabel =
+    award.semester === SemesterTerm.FIRST ? '1학기' : '2학기';
   return `${award.year} ${semesterLabel}`;
 };
 
-const getAwardKey = (award: Award): string => `${award.year}-${award.semester}`;
+const getAwardKey = (award: Award, index: number): string =>
+  `${award.year}-${award.semester}-${index}`;
 
 interface ClubIntroContentProps {
   activityDescription?: string;
@@ -59,8 +61,8 @@ const ClubIntroContent = ({
         <Styled.Section>
           <Styled.SectionTitle>동아리 성과</Styled.SectionTitle>
           <Styled.TextContainer>
-            {awards.map((award) => {
-              const awardKey = getAwardKey(award);
+            {awards.map((award, index) => {
+              const awardKey = getAwardKey(award, index);
               return (
                 <Styled.AwardGroup key={awardKey}>
                   <Styled.SemesterBadge>
