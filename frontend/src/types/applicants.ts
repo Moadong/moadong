@@ -29,3 +29,17 @@ export interface UpdateApplicantParams {
   status: ApplicationStatus;
   applicantId: string | undefined;
 }
+
+export interface ApplicantStatusEvent {
+  applicantId: string;
+  status: ApplicationStatus;
+  memo: string;
+  timestamp: string;
+  clubId: string;
+  applicationFormId: string;
+}
+
+export interface ApplicantSSECallbacks {
+  onStatusChange: (event: ApplicantStatusEvent) => void;
+  onError: (error: Error) => void;
+}
