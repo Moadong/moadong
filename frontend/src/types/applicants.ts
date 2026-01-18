@@ -29,3 +29,12 @@ export interface UpdateApplicantParams {
   status: ApplicationStatus;
   applicantId: string | undefined;
 }
+
+export interface ApplicantStatusEvent {
+  applicantId: string;
+  status: ApplicationStatus;
+  memo: string;
+  timestamp: string;
+  clubId: string;
+  applicationFormId: string;
+}
