@@ -5,7 +5,7 @@ import {
   useEffect,
   useState,
 } from 'react';
-import { createApplicantSSE } from '@/apis/applicants/createApplicantSSE';
+import { createApplicantSSE } from '@/apis/club';
 import {
   ApplicantsInfo,
   ApplicantStatusEvent,
