@@ -27,8 +27,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   if (!clubId || !clubDetail) return null;
 
   const navigateToApplicationForm = async (formId: string) => {
-    // iOS Safari 팝업 차단 우회: API 호출 전에 미리 새 창 열기
-    let externalWindow: Window | null = null;
+    const externalWindow = window.open('', '_blank', 'noopener,noreferrer');
 
     try {
       const formDetail = await getApplication(clubId, formId);
@@ -36,23 +35,22 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
         const externalApplicationUrl =
           formDetail.externalApplicationUrl?.trim();
         if (externalApplicationUrl) {
-          // 사용자 제스처 컨텍스트 내에서 즉시 빈 창을 열고
-          externalWindow = window.open('', '_blank', 'noopener,noreferrer');
-
           if (externalWindow) {
-            // API 응답 후 URL 설정
             externalWindow.location.href = externalApplicationUrl;
           } else {
-            // 팝업이 차단된 경우 현재 탭에서 열기
             window.location.href = externalApplicationUrl;
           }
           return;
         }
       }
+
+      if (externalWindow && !externalWindow.closed) {
+        externalWindow.close();
+      }
+
       navigate(`/application/${clubId}/${formId}`, { state: { formDetail } });
       setIsApplicationModalOpen(false);
     } catch (error) {
-      // 에러 발생 시 열린 창 닫기
       if (externalWindow && !externalWindow.closed) {
         externalWindow.close();
       }
