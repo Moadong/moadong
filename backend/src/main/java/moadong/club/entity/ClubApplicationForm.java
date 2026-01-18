@@ -27,7 +27,7 @@ import java.util.Optional;
 @Getter
 @Builder(toBuilder = true)
 public class ClubApplicationForm implements Persistable<String> {
-    private static final String[] externalApplicationUrlAllowed = {"https://forms.gle", "https://docs.google.com/forms", "https://form.naver.com", "https://naver.me"};
+    private static final String[] externalApplicationUrlAllowed = {"https://forms.gle", "https://docs.google.com/forms", "https://form.naver.com", "https://naver.me", "https://everytime.kr"};
 
     @Id
     private String id;

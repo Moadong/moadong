@@ -4,7 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
 import moadong.club.enums.SemesterTerm;
-import moadong.club.payload.dto.*;
+import moadong.club.payload.dto.ApplicantStatusEvent;
+import moadong.club.payload.dto.ClubApplicantsResult;
 import moadong.club.payload.request.*;
 import moadong.club.payload.response.ClubApplicationFormsResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
@@ -126,6 +127,23 @@ public class ClubApplyAdminService {
 
         clubApplicantsRepository.deleteAllByFormId(applicationForm.getId());
         clubApplicationFormsRepository.delete(applicationForm);
+    }
+
+    @Transactional
+    public void duplicateClubApplicationForm(String applicationFormId, CustomUserDetails user) {
+        ClubApplicationForm oldApplicationForm = clubApplicationFormsRepository.findByClubIdAndId(user.getClubId(), applicationFormId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
+
+        ClubApplicationForm newApplicationForm = ClubApplicationForm.builder()
+                .title("무제")
+                .clubId(oldApplicationForm.getClubId())
+                .description(oldApplicationForm.getDescription())
+                .formMode(oldApplicationForm.getFormMode())
+                .questions(oldApplicationForm.getQuestions())
+                .externalApplicationUrl(oldApplicationForm.getExternalApplicationUrl())
+                .build();
+
+        clubApplicationFormsRepository.save(newApplicationForm);
     }
 
     public ClubApplyInfoResponse getClubApplyInfo(String applicationFormId, CustomUserDetails user) {
