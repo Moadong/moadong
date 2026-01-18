@@ -1,5 +1,5 @@
-import type { Preview } from '@storybook/react';
 import { useEffect } from 'react';
+import type { Preview } from '@storybook/react';
 
 const preview: Preview = {
   decorators: [

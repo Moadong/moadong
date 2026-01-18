@@ -2,13 +2,15 @@ import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
-import { updateApplicationStatus } from '@/apis/application/updateApplication';
+import { updateApplicationStatus } from '@/apis/application';
 import expandArrow from '@/assets/images/icons/ExpandArrow.svg';
 import Plus from '@/assets/images/icons/Plus.svg';
 import Spinner from '@/components/common/Spinner/Spinner';
-import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
-import { useDuplicateApplication } from '@/hooks/queries/application/useDuplicateApplication';
-import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
+import {
+  useDeleteApplication,
+  useDuplicateApplication,
+  useGetApplicationList,
+} from '@/hooks/Queries/useApplication';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ApplicationFormItem, SemesterGroup } from '@/types/application';
@@ -19,7 +21,7 @@ const MAX_INITIAL_ITEMS = 3;
 const ApplicationListTab = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
+  const { data: allforms, isLoading, isError, error } = useGetApplicationList();
   const { mutate: deleteApplication } = useDeleteApplication();
   const { mutate: duplicateApplication } = useDuplicateApplication();
 

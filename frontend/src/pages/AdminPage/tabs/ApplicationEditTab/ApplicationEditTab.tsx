@@ -1,14 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createApplication } from '@/apis/application/createApplication';
-import { updateApplication } from '@/apis/application/updateApplication';
+import { createApplication, updateApplication } from '@/apis/application';
 import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
-import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
-import INITIAL_FORM_DATA from '@/constants/INITIAL_FORM_DATA';
+import { APPLICATION_FORM } from '@/constants/applicationForm';
+import INITIAL_FORM_DATA from '@/constants/initialFormData';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { useGetApplication } from '@/hooks/queries/application/useGetApplication';
+import { useGetApplication } from '@/hooks/Queries/useApplication';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import {

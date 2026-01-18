@@ -1,6 +1,6 @@
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { APPLICATION_FORM } from '@/constants/APPLICATION_FORM';
+import { APPLICATION_FORM } from '@/constants/applicationForm';
 
 interface QuestionDescriptionProps {
   description: string;

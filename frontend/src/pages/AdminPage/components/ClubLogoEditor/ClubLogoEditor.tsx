@@ -3,11 +3,8 @@ import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import {
-  useDeleteLogo,
-  useUploadLogo,
-} from '@/hooks/queries/club/images/useLogoMutation';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import { useDeleteLogo, useUploadLogo } from '@/hooks/Queries/useClubImages';
 import * as Styled from './ClubLogoEditor.styles';
 
 interface ClubLogoEditorProps {
@@ -41,7 +38,14 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
     }
 
     trackEvent(ADMIN_EVENT.CLUB_LOGO_UPLOAD_BUTTON_CLICKED);
-    uploadMutation.mutate({ clubId, file });
+    uploadMutation.mutate(
+      { clubId, file },
+      {
+        onError: () => {
+          alert('로고 업로드에 실패했어요. 다시 시도해주세요!');
+        },
+      },
+    );
   };
 
   const triggerFileInput = () => {
@@ -58,7 +62,11 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
     if (!window.confirm('정말 로고를 기본 이미지로 되돌릴까요?')) return;
 
     trackEvent(ADMIN_EVENT.CLUB_LOGO_RESET_BUTTON_CLICKED);
-    deleteMutation.mutate(clubId);
+    deleteMutation.mutate(clubId, {
+      onError: () => {
+        alert('로고 초기화에 실패했어요. 다시 시도해 주세요.');
+      },
+    });
   };
 
   return (

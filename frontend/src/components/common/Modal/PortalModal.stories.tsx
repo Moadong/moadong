@@ -40,7 +40,9 @@ const ModalContent = ({
   text: string;
   onClose: () => void;
 }) => (
-  <div style={{ padding: 20, background: '#fff', color: '#000', borderRadius: 8 }}>
+  <div
+    style={{ padding: 20, background: '#fff', color: '#000', borderRadius: 8 }}
+  >
     {text}
     <div style={{ marginTop: 12 }}>
       <Button onClick={onClose}>닫기</Button>
@@ -62,20 +64,16 @@ export const Default: Story = {
     const handleClose = () => {
       setIsOpen(false);
       args.onClose();
-    }
+    };
 
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>모달 열기</Button>
-        <PortalModal
-          {...args}
-          isOpen={isOpen}
-          onClose={handleClose}
-        >
-        <ModalContent
-          text="배경 클릭 시 모달이 닫힙니다."
-          onClose={handleClose}
-        />
+        <PortalModal {...args} isOpen={isOpen} onClose={handleClose}>
+          <ModalContent
+            text='배경 클릭 시 모달이 닫힙니다.'
+            onClose={handleClose}
+          />
         </PortalModal>
       </>
     );
@@ -96,23 +94,19 @@ export const NoBackdropClose: Story = {
     const handleClose = () => {
       setOpen(false);
       args.onClose();
-    }
+    };
 
     return (
       <>
         <Button onClick={() => setOpen(true)}>모달 열기</Button>
 
-        <PortalModal
-          {...args}
-          isOpen={open}
-          onClose={handleClose}
-        >
-            <ModalContent
-            text="배경을 클릭해도 모달이 닫히지 않습니다."
+        <PortalModal {...args} isOpen={open} onClose={handleClose}>
+          <ModalContent
+            text='배경을 클릭해도 모달이 닫히지 않습니다.'
             onClose={handleClose}
           />
         </PortalModal>
       </>
     );
-  }
+  },
 };
