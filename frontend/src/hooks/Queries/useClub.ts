@@ -12,7 +12,6 @@ import {
 } from '@/apis/club';
 import { queryKeys } from '@/constants/queryKeys';
 import { ClubDescription, ClubDetail, ClubSearchResponse } from '@/types/club';
-import convertToDriveUrl from '@/utils/convertGoogleDriveUrl';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
 
 interface UseGetCardListProps {
@@ -59,7 +58,7 @@ export const useGetCardList = ({
       totalCount: data.totalCount,
       clubs: data.clubs.map((club) => ({
         ...club,
-        logo: convertToDriveUrl(club.logo),
+        logo: convertGoogleDriveUrl(club.logo),
       })),
     }),
   });
