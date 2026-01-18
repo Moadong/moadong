@@ -89,12 +89,12 @@ export const createApplicantSSE = (
   applicationFormId: string,
   callbacks: ApplicantSSECallbacks,
 ): EventSource | null => {
-  const accessToken = localStorage.getItem('accessToken');
-  if (!accessToken) return null;
-
   let eventSource: EventSource | null = null;
 
   const connect = (): EventSource | null => {
+    const accessToken = localStorage.getItem('accessToken');
+    if (!accessToken) return null;
+
     const source = new EventSource(
       `${API_BASE_URL}/api/club/applicant/${applicationFormId}/sse`,
       {
