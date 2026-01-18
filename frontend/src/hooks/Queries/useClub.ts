@@ -77,7 +77,7 @@ export const useUpdateClubDescription = () => {
       });
     },
     onError: (error) => {
-      console.error('Error updating club detail:', error);
+      console.error('Error updating club description:', error);
     },
   });
 };

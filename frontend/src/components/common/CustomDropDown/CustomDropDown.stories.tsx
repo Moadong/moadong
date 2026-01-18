@@ -79,7 +79,7 @@ export const Default: Story = {
     };
 
     const selectedLabel =
-      OPTIONS.find((opt) => opt.value === selected)?.label || '선택하세요';
+      args.options.find((opt) => opt.value === selected)?.label || '선택하세요';
 
     return (
       <CustomDropDown
@@ -97,7 +97,7 @@ export const Default: Story = {
           </StyledTrigger>
         </CustomDropDown.Trigger>
         <CustomDropDown.Menu width='150px'>
-          {OPTIONS.map((option) => (
+          {args.options.map((option) => (
             <CustomDropDown.Item key={option.value} value={option.value}>
               {option.label}
             </CustomDropDown.Item>

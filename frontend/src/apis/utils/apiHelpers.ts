@@ -32,7 +32,10 @@ export const handleResponse = async (
 
   try {
     const result = JSON.parse(text);
-    return result.data;
+    if (result && typeof result === 'object' && 'data' in result) {
+      return (result as { data: unknown }).data;
+    }
+    return result;
   } catch {
     return undefined;
   }
