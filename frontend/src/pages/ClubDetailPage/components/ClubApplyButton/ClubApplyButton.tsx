@@ -27,21 +27,35 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   if (!clubId || !clubDetail) return null;
 
   const navigateToApplicationForm = async (formId: string) => {
+    // iOS Safari 팝업 차단 우회: API 호출 전에 미리 새 창 열기
+    let externalWindow: Window | null = null;
+
     try {
       const formDetail = await getApplication(clubId, formId);
       if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
         const externalApplicationUrl =
           formDetail.externalApplicationUrl?.trim();
         if (externalApplicationUrl) {
-          // iOS Safari에서 비동기 컨텍스트의 window.open()이 차단되므로
-          // window.location.href를 사용하여 현재 탭에서 외부 링크로 이동
-          window.location.href = externalApplicationUrl;
+          // 사용자 제스처 컨텍스트 내에서 즉시 빈 창을 열고
+          externalWindow = window.open('', '_blank', 'noopener,noreferrer');
+
+          if (externalWindow) {
+            // API 응답 후 URL 설정
+            externalWindow.location.href = externalApplicationUrl;
+          } else {
+            // 팝업이 차단된 경우 현재 탭에서 열기
+            window.location.href = externalApplicationUrl;
+          }
           return;
         }
       }
       navigate(`/application/${clubId}/${formId}`, { state: { formDetail } });
       setIsApplicationModalOpen(false);
     } catch (error) {
+      // 에러 발생 시 열린 창 닫기
+      if (externalWindow && !externalWindow.closed) {
+        externalWindow.close();
+      }
       console.error('지원서 조회 중 오류가 발생했습니다', error);
       alert(
         '지원서 정보를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.',
