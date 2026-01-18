@@ -33,7 +33,9 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
         const externalApplicationUrl =
           formDetail.externalApplicationUrl?.trim();
         if (externalApplicationUrl) {
-          window.open(externalApplicationUrl, '_blank', 'noopener,noreferrer');
+          // iOS Safari에서 비동기 컨텍스트의 window.open()이 차단되므로
+          // window.location.href를 사용하여 현재 탭에서 외부 링크로 이동
+          window.location.href = externalApplicationUrl;
           return;
         }
       }
