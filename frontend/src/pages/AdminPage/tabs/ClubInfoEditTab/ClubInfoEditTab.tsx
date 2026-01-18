@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
@@ -48,7 +47,6 @@ const categories = [
 const ClubInfoEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
-  const queryClient = useQueryClient();
 
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
@@ -135,9 +133,6 @@ const ClubInfoEditTab = () => {
     updateClub(updatedData, {
       onSuccess: () => {
         alert('동아리 정보가 성공적으로 수정되었습니다.');
-        queryClient.invalidateQueries({
-          queryKey: ['clubDetail', clubDetail.id],
-        });
       },
       onError: (error) => {
         alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
