@@ -3,14 +3,7 @@
   "jsxSingleQuote": true,
   "useTabs": false,
   "endOfLine": "auto",
-  "plugins": [
-    "@ianvs/prettier-plugin-sort-imports"
-  ],
-  "importOrder": [
-    "^react",
-    "<THIRD_PARTY_MODULES>",
-    "^@/",
-    "^[./]"
-  ],
+  "plugins": ["@ianvs/prettier-plugin-sort-imports"],
+  "importOrder": ["^react", "<THIRD_PARTY_MODULES>", "^@/", "^[./]"],
   "importOrderSortSpecifiers": true
 }

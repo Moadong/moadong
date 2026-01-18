@@ -1,14 +1,13 @@
-import * as Styled from './ClubApplyButton.styles';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
-import getApplication from '@/apis/application/getApplication';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { USER_EVENT } from '@/constants/eventName';
 import { useState } from 'react';
-import { ApplicationForm, ApplicationFormMode } from '@/types/application';
-import getApplicationOptions from '@/apis/application/getApplicationOptions';
+import { useNavigate, useParams } from 'react-router-dom';
+import { getApplication, getApplicationOptions } from '@/apis/application';
 import ApplicationSelectModal from '@/components/application/modals/ApplicationSelectModal';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import { useGetClubDetail } from '@/hooks/Queries/useClub';
+import { ApplicationForm, ApplicationFormMode } from '@/types/application';
 import ShareButton from '../ShareButton/ShareButton';
+import * as Styled from './ClubApplyButton.styles';
 
 interface ClubApplyButtonProps {
   deadlineText?: string;
@@ -21,21 +20,27 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const { data: clubDetail } = useGetClubDetail(clubId!);
 
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
-  const [applicationOptions, setApplicationOptions] = useState<ApplicationForm[]>([]);
+  const [applicationOptions, setApplicationOptions] = useState<
+    ApplicationForm[]
+  >([]);
 
   if (!clubId || !clubDetail) return null;
 
   const navigateToApplicationForm = async (formId: string) => {
     try {
       const formDetail = await getApplication(clubId, formId);
+
+      // 외부 지원서인 경우
       if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
         const externalApplicationUrl =
           formDetail.externalApplicationUrl?.trim();
         if (externalApplicationUrl) {
-          window.open(externalApplicationUrl, '_blank', 'noopener,noreferrer');
+          window.location.href = externalApplicationUrl;
           return;
         }
       }
+
+      // 내부 지원서인 경우
       navigate(`/application/${clubId}/${formId}`, { state: { formDetail } });
       setIsApplicationModalOpen(false);
     } catch (error) {
@@ -105,9 +110,10 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   return (
     <Styled.ApplyButtonContainer>
       <ShareButton clubId={clubId} />
-      <Styled.ApplyButton 
+      <Styled.ApplyButton
         disabled={isRecruitmentUpcoming || isRecruitmentClosed}
-        onClick={handleApplyButtonClick}>
+        onClick={handleApplyButtonClick}
+      >
         {renderButtonContent()}
       </Styled.ApplyButton>
       <ApplicationSelectModal

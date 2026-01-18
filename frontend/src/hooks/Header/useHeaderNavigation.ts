@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useSearchStore } from '@/store/useSearchStore';
 
 const useHeaderNavigation = () => {

@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { colors } from '@/styles/theme/colors';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
   width: ${(props) => props.width};

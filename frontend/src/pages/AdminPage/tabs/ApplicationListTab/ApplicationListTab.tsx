@@ -1,14 +1,15 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
-import { updateApplicationStatus } from '@/apis/application/updateApplication';
 import expandArrow from '@/assets/images/icons/ExpandArrow.svg';
 import Plus from '@/assets/images/icons/Plus.svg';
 import Spinner from '@/components/common/Spinner/Spinner';
-import { useDeleteApplication } from '@/hooks/queries/application/useDeleteApplication';
-import { useDuplicateApplication } from '@/hooks/queries/application/useDuplicateApplication';
-import { useGetApplicationlist } from '@/hooks/queries/application/useGetApplicationlist';
+import {
+  useDeleteApplication,
+  useDuplicateApplication,
+  useGetApplicationList,
+  useUpdateApplicationStatus,
+} from '@/hooks/Queries/useApplication';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ApplicationFormItem, SemesterGroup } from '@/types/application';
@@ -17,11 +18,11 @@ import * as Styled from './ApplicationListTab.styles';
 const MAX_INITIAL_ITEMS = 3;
 
 const ApplicationListTab = () => {
-  const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
+  const { data: allforms, isLoading, isError, error } = useGetApplicationList();
   const { mutate: deleteApplication } = useDeleteApplication();
   const { mutate: duplicateApplication } = useDuplicateApplication();
+  const { mutate: updateStatus } = useUpdateApplicationStatus();
 
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -62,18 +63,21 @@ const ApplicationListTab = () => {
     });
   };
 
-  const handleToggleClick = async (
+  const handleToggleClick = (
     applicationFormId: string,
     currentStatus: string,
   ) => {
-    try {
-      await updateApplicationStatus(applicationFormId, currentStatus);
-      queryClient.invalidateQueries({ queryKey: ['applicationForm'] });
-      setOpenMenuId(null);
-    } catch (error) {
-      console.error('지원서 상태 변경 실패:', error);
-      alert('상태 변경에 실패했습니다.');
-    }
+    updateStatus(
+      { applicationFormId, currentStatus },
+      {
+        onSuccess: () => {
+          setOpenMenuId(null);
+        },
+        onError: () => {
+          alert('상태 변경에 실패했습니다.');
+        },
+      },
+    );
   };
 
   const handleToggleExpand = () => {

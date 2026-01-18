@@ -5,8 +5,8 @@ import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import AdminProfile from '@/components/common/Header/admin/AdminProfile';
 import { USER_EVENT } from '@/constants/eventName';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import { useScrollDetection } from '@/hooks/useScrollDetection';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import { useScrollDetection } from '@/hooks/Scroll/useScrollDetection';
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import * as Styled from './Header.styles';
 
