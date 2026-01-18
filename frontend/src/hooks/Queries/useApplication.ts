@@ -22,7 +22,7 @@ export const useGetApplication = (
   });
 };
 
-export const useGetApplicationlist = () => {
+export const useGetApplicationList = () => {
   return useQuery({
     queryKey: queryKeys.application.all,
     queryFn: () => getAllApplicationForms(),

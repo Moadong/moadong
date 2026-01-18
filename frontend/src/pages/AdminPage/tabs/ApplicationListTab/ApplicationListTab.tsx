@@ -9,7 +9,7 @@ import Spinner from '@/components/common/Spinner/Spinner';
 import {
   useDeleteApplication,
   useDuplicateApplication,
-  useGetApplicationlist,
+  useGetApplicationList,
 } from '@/hooks/Queries/useApplication';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
@@ -21,7 +21,7 @@ const MAX_INITIAL_ITEMS = 3;
 const ApplicationListTab = () => {
   const queryClient = useQueryClient();
   const navigate = useNavigate();
-  const { data: allforms, isLoading, isError, error } = useGetApplicationlist();
+  const { data: allforms, isLoading, isError, error } = useGetApplicationList();
   const { mutate: deleteApplication } = useDeleteApplication();
   const { mutate: duplicateApplication } = useDuplicateApplication();
 
