@@ -1,6 +1,5 @@
 package moadong.sse.service;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
@@ -13,7 +12,7 @@ import moadong.user.payload.CustomUserDetails;
 import org.springframework.data.redis.connection.Message;
 import org.springframework.data.redis.connection.MessageListener;
 import org.springframework.data.redis.core.RedisTemplate;
-import org.springframework.data.redis.listener.ChannelTopic;
+import org.springframework.data.redis.listener.PatternTopic;
 import org.springframework.data.redis.listener.RedisMessageListenerContainer;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -36,13 +35,13 @@ public class ApplicantsStatusShareSse implements MessageListener {
 
     private final Map<String, Map<String, SseEmitter>> sseConnections = new ConcurrentHashMap<>();
 
-    private static final long SSE_EMITTER_TIME_OUT = 60000L;
+    private static final long SSE_EMITTER_TIME_OUT = 60 * 60 * 1000L;
     private static final int MAX_SESSIONS_PER_CLUB = 20;
     private static final String CHANNEL_PREFIX = "sse:applicant-status:";
 
     @PostConstruct
     public void init() {
-        redisMessageListenerContainer.addMessageListener(this, new ChannelTopic(CHANNEL_PREFIX + "*"));
+        redisMessageListenerContainer.addMessageListener(this, new PatternTopic(CHANNEL_PREFIX + "*"));
     }
 
     public SseEmitter createSseSession(String applicationFormId, CustomUserDetails user) {
@@ -98,20 +97,13 @@ public class ApplicantsStatusShareSse implements MessageListener {
 
     public void publishStatusChangeEvent(String clubId, String applicationFormId, ApplicantStatusEvent event) {
         String channel = CHANNEL_PREFIX + clubId + ":" + applicationFormId;
-        try {
-            String message = objectMapper.writeValueAsString(event);
-            redisTemplate.convertAndSend(channel, message);
-            log.debug("Published SSE event to Redis channel: {}", channel);
-        } catch (JsonProcessingException e) {
-            log.error("Failed to serialize SSE event: {}", e.getMessage());
-        }
+        redisTemplate.convertAndSend(channel, event);
     }
 
     @Override
     public void onMessage(Message message, byte[] pattern) {
         try {
             String channel = new String(message.getChannel(), StandardCharsets.UTF_8);
-            String body = new String(message.getBody(), StandardCharsets.UTF_8);
 
             String channelSuffix = channel.substring(CHANNEL_PREFIX.length());
             String[] parts = channelSuffix.split(":", 2);
@@ -123,7 +115,7 @@ public class ApplicantsStatusShareSse implements MessageListener {
             String clubId = parts[0];
             String applicationFormId = parts[1];
 
-            ApplicantStatusEvent event = objectMapper.readValue(body, ApplicantStatusEvent.class);
+            ApplicantStatusEvent event = objectMapper.readValue(message.getBody(), ApplicantStatusEvent.class);
             broadcastToLocalConnections(clubId, applicationFormId, event);
 
         } catch (Exception e) {
