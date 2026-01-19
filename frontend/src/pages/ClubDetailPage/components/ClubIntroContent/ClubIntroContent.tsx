@@ -1,17 +1,9 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import { Award, FAQ, IdealCandidate, SemesterTerm } from '@/types/club';
+import { Award, FAQ, IdealCandidate } from '@/types/club';
+import { formatSemesterLabel, getAwardKey } from '@/utils/awardHelpers';
 import * as Styled from './ClubIntroContent.styles';
-
-const formatSemesterLabel = (award: Award): string => {
-  const semesterLabel =
-    award.semester === SemesterTerm.FIRST ? '1학기' : '2학기';
-  return `${award.year} ${semesterLabel}`;
-};
-
-const getAwardKey = (award: Award, index: number): string =>
-  `${award.year}-${award.semester}-${index}`;
 
 interface ClubIntroContentProps {
   activityDescription?: string;
@@ -30,21 +22,33 @@ const ClubIntroContent = ({
 }: ClubIntroContentProps) => {
   const trackEvent = useMixpanelTrack();
 
-  const [openFaqIndexes, setOpenFaqIndexes] = useState<number[]>([]);
+  const [openFaqIndexes, setOpenFaqIndexes] = useState<Set<number>>(new Set());
 
-  const handleToggleFaq = (index: number) => {
-    const isOpening = !openFaqIndexes.includes(index);
-    setOpenFaqIndexes((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
-    );
+  const validAwards = useMemo(
+    () => awards?.filter((award) => formatSemesterLabel(award) !== null) || [],
+    [awards],
+  );
 
-    if (faqs && faqs[index]) {
-      trackEvent(USER_EVENT.FAQ_TOGGLE_CLICKED, {
-        question: faqs[index].question,
-        action: isOpening ? 'open' : 'close',
+  const handleToggleFaq = useCallback(
+    (index: number) => {
+      const isOpening = !openFaqIndexes.has(index);
+
+      setOpenFaqIndexes((prev) => {
+        const newSet = new Set(prev);
+        if (isOpening) newSet.add(index);
+        else newSet.delete(index);
+        return newSet;
       });
-    }
-  };
+
+      if (faqs?.[index]) {
+        trackEvent(USER_EVENT.FAQ_TOGGLE_CLICKED, {
+          question: faqs[index].question,
+          action: isOpening ? 'open' : 'close',
+        });
+      }
+    },
+    [faqs, trackEvent, openFaqIndexes],
+  );
 
   return (
     <Styled.Container>
@@ -57,17 +61,16 @@ const ClubIntroContent = ({
         </Styled.Section>
       )}
 
-      {awards && awards.length > 0 && (
+      {validAwards.length > 0 && (
         <Styled.Section>
           <Styled.SectionTitle>동아리 성과</Styled.SectionTitle>
           <Styled.TextContainer>
-            {awards.map((award, index) => {
+            {validAwards.map((award, index) => {
+              const semesterLabel = formatSemesterLabel(award)!;
               const awardKey = getAwardKey(award, index);
               return (
                 <Styled.AwardGroup key={awardKey}>
-                  <Styled.SemesterBadge>
-                    {formatSemesterLabel(award)}
-                  </Styled.SemesterBadge>
+                  <Styled.SemesterBadge>{semesterLabel}</Styled.SemesterBadge>
                   <Styled.AwardList>
                     {award.achievements.map((item, idx) => (
                       <Styled.AwardItem key={`${awardKey}-${idx}`}>
@@ -102,7 +105,7 @@ const ClubIntroContent = ({
           <Styled.FaqHeader>FAQ</Styled.FaqHeader>
           <Styled.FaqList>
             {faqs.map((faq, index) => {
-              const isOpen = openFaqIndexes.includes(index);
+              const isOpen = openFaqIndexes.has(index);
               return (
                 <Styled.FaqItem key={faq.question}>
                   <Styled.QuestionRow onClick={() => handleToggleFaq(index)}>
