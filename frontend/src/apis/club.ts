@@ -87,7 +87,7 @@ export const updateClubDetail = async (
 
 export const createApplicantSSE = (
   applicationFormId: string,
-  callbacks: ApplicantSSECallbacks,
+  eventHandlers: ApplicantSSECallbacks,
 ): EventSource | null => {
   let eventSource: EventSource | null = null;
 
@@ -113,7 +113,7 @@ export const createApplicantSSE = (
     source.addEventListener('applicant-status-changed', (e) => {
       try {
         const eventData: ApplicantStatusEvent = JSON.parse(e.data);
-        callbacks.onStatusChange(eventData);
+        eventHandlers.onStatusChange(eventData);
       } catch (parseError) {
         console.error('SSE PARSING ERROR:', parseError);
       }
@@ -121,7 +121,9 @@ export const createApplicantSSE = (
 
     source.onerror = (error) => {
       source.close();
-      callbacks.onError(new Error(error?.message || 'SSE connection error'));
+      eventHandlers.onError(
+        new Error(error?.message || 'SSE connection error'),
+      );
     };
 
     return source;
