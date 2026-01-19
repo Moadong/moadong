@@ -31,27 +31,23 @@ const ClubIntroContent = ({
 
   const handleToggleFaq = useCallback(
     (index: number) => {
+      const isOpening = !openFaqIndexes.has(index);
+
       setOpenFaqIndexes((prev) => {
         const newSet = new Set(prev);
-        const isOpening = !newSet.has(index);
-
-        if (isOpening) {
-          newSet.add(index);
-        } else {
-          newSet.delete(index);
-        }
-
-        if (faqs?.[index]) {
-          trackEvent(USER_EVENT.FAQ_TOGGLE_CLICKED, {
-            question: faqs[index].question,
-            action: isOpening ? 'open' : 'close',
-          });
-        }
-
+        if (isOpening) newSet.add(index);
+        else newSet.delete(index);
         return newSet;
       });
+
+      if (faqs?.[index]) {
+        trackEvent(USER_EVENT.FAQ_TOGGLE_CLICKED, {
+          question: faqs[index].question,
+          action: isOpening ? 'open' : 'close',
+        });
+      }
     },
-    [faqs, trackEvent],
+    [faqs, trackEvent, openFaqIndexes],
   );
 
   return (
