@@ -23,7 +23,8 @@ const sortOptions = [
 ] as const;
 
 const ApplicantsTab = () => {
-  const { clubId, applicantsData, setApplicantsData } = useAdminClubContext();
+  const { clubId, applicantsData, setApplicantsData, setApplicationFormId } =
+    useAdminClubContext();
   const { applicationFormId } = useParams<{ applicationFormId: string }>();
   const navigate = useNavigate();
 
@@ -62,6 +63,13 @@ const ApplicantsTab = () => {
     (typeof sortOptions)[number]
   >(sortOptions[0]);
 
+  // SSE 연결 활성화
+  useEffect(() => {
+    setApplicationFormId(applicationFormId ?? null);
+    return () => setApplicationFormId(null);
+  }, [applicationFormId, setApplicationFormId]);
+
+  // 초기 데이터 로드
   useEffect(() => {
     if (fetchData) {
       setApplicantsData(fetchData);
