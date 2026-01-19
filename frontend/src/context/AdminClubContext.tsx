@@ -39,7 +39,7 @@ export const AdminClubProvider = ({
     null,
   );
   const eventSourceRef = useRef<EventSource | null>(null);
-  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const reconnectTimeoutRef = useRef<number | null>(null);
 
   // SSE 이벤트 핸들러
   const handleApplicantStatusChange = useCallback(
@@ -81,7 +81,11 @@ export const AdminClubProvider = ({
         onStatusChange: handleApplicantStatusChange,
         onError: (error) => {
           console.error('SSE connection error:', error);
-          reconnectTimeoutRef.current = setTimeout(() => {
+
+          if (reconnectTimeoutRef.current) return;
+
+          reconnectTimeoutRef.current = window.setTimeout(() => {
+            reconnectTimeoutRef.current = null;
             sseConnect();
           }, 2000);
         },
