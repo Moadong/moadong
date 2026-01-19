@@ -21,6 +21,13 @@ configurations {
 
 repositories {
 	mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+}
+
+ext {
+    // 최신 안정화된 마일스톤 버전 사용 (1.0.0-M1 이상 추천)
+    set('springAiVersion', "1.0.0-M6")
 }
 
 dependencies {
@@ -40,6 +47,10 @@ dependencies {
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
+
+    //Spring AI
+    implementation 'org.springframework.ai:spring-ai-ollama-spring-boot-starter'
+    implementation 'org.springframework.ai:spring-ai-mongodb-atlas-store-spring-boot-starter'
 
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	compileOnly 'org.projectlombok:lombok'
@@ -90,4 +101,10 @@ task integrationTest(type: Test) {
 		includeTags 'IntegrationTest'
 		excludeTags 'UnitTest'
 	}
+}
+
+dependencyManagement {
+    imports {
+        mavenBom "org.springframework.ai:spring-ai-bom:${springAiVersion}"
+    }
 }
