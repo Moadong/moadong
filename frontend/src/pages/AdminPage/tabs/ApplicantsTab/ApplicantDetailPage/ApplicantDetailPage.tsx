@@ -62,7 +62,7 @@ const ApplicantDetailPage = () => {
       setAppMemo(applicant.memo);
       setApplicantStatus(mapStatusToGroup(applicant.status).status);
     }
-  }, [applicant]);
+  }, [applicant, applicant?.status, applicant?.memo]);
 
   const updateApplicantDetail = useMemo(
     () =>

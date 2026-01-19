@@ -1,29 +1,16 @@
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import { Award, FAQ, IdealCandidate } from '@/types/club';
+import { formatSemesterLabel, getAwardKey } from '@/utils/awardHelpers';
 import * as Styled from './ClubIntroContent.styles';
-
-export interface Award {
-  semester: string;
-  achievements: string[];
-}
-
-export interface IdealCandidate {
-  tags?: string[]; // TODO: tags가 추가될수도 있음
-  content: string;
-}
-
-export interface Faq {
-  question: string;
-  answer: string;
-}
 
 interface ClubIntroContentProps {
   activityDescription?: string;
   awards?: Award[];
   idealCandidate?: IdealCandidate;
   benefits?: string;
-  faqs?: Faq[];
+  faqs?: FAQ[];
 }
 
 const ClubIntroContent = ({
@@ -35,21 +22,33 @@ const ClubIntroContent = ({
 }: ClubIntroContentProps) => {
   const trackEvent = useMixpanelTrack();
 
-  const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([]);
+  const [openFaqIndexes, setOpenFaqIndexes] = useState<Set<number>>(new Set());
 
-  const handleToggleFaq = (index: number) => {
-    const isOpening = !openFaqIndices.includes(index);
-    setOpenFaqIndices((prev) =>
-      prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
-    );
+  const validAwards = useMemo(
+    () => awards?.filter((award) => formatSemesterLabel(award) !== null) || [],
+    [awards],
+  );
 
-    if (faqs && faqs[index]) {
-      trackEvent(USER_EVENT.FAQ_TOGGLE_CLICKED, {
-        question: faqs[index].question,
-        action: isOpening ? 'open' : 'close',
+  const handleToggleFaq = useCallback(
+    (index: number) => {
+      const isOpening = !openFaqIndexes.has(index);
+
+      setOpenFaqIndexes((prev) => {
+        const newSet = new Set(prev);
+        if (isOpening) newSet.add(index);
+        else newSet.delete(index);
+        return newSet;
       });
-    }
-  };
+
+      if (faqs?.[index]) {
+        trackEvent(USER_EVENT.FAQ_TOGGLE_CLICKED, {
+          question: faqs[index].question,
+          action: isOpening ? 'open' : 'close',
+        });
+      }
+    },
+    [faqs, trackEvent, openFaqIndexes],
+  );
 
   return (
     <Styled.Container>
@@ -62,22 +61,26 @@ const ClubIntroContent = ({
         </Styled.Section>
       )}
 
-      {awards && awards.length > 0 && (
+      {validAwards.length > 0 && (
         <Styled.Section>
           <Styled.SectionTitle>동아리 성과</Styled.SectionTitle>
           <Styled.TextContainer>
-            {awards.map((award) => (
-              <Styled.AwardGroup key={award.semester}>
-                <Styled.SemesterBadge>{award.semester}</Styled.SemesterBadge>
-                <Styled.AwardList>
-                  {award.achievements.map((item, idx) => (
-                    <Styled.AwardItem key={`${award.semester}-${idx}`}>
-                      {item}
-                    </Styled.AwardItem>
-                  ))}
-                </Styled.AwardList>
-              </Styled.AwardGroup>
-            ))}
+            {validAwards.map((award, index) => {
+              const semesterLabel = formatSemesterLabel(award)!;
+              const awardKey = getAwardKey(award, index);
+              return (
+                <Styled.AwardGroup key={awardKey}>
+                  <Styled.SemesterBadge>{semesterLabel}</Styled.SemesterBadge>
+                  <Styled.AwardList>
+                    {award.achievements.map((item, idx) => (
+                      <Styled.AwardItem key={`${awardKey}-${idx}`}>
+                        {item}
+                      </Styled.AwardItem>
+                    ))}
+                  </Styled.AwardList>
+                </Styled.AwardGroup>
+              );
+            })}
           </Styled.TextContainer>
         </Styled.Section>
       )}
@@ -102,7 +105,7 @@ const ClubIntroContent = ({
           <Styled.FaqHeader>FAQ</Styled.FaqHeader>
           <Styled.FaqList>
             {faqs.map((faq, index) => {
-              const isOpen = openFaqIndices.includes(index);
+              const isOpen = openFaqIndexes.has(index);
               return (
                 <Styled.FaqItem key={faq.question}>
                   <Styled.QuestionRow onClick={() => handleToggleFaq(index)}>
