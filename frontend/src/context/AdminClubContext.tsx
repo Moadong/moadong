@@ -3,6 +3,7 @@ import {
   useCallback,
   useContext,
   useEffect,
+  useRef,
   useState,
 } from 'react';
 import { createApplicantSSE } from '@/apis/club';
@@ -37,6 +38,8 @@ export const AdminClubProvider = ({
   const [applicationFormId, setApplicationFormId] = useState<string | null>(
     null,
   );
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const reconnectTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   // SSE 이벤트 핸들러
   const handleApplicantStatusChange = useCallback(
@@ -71,14 +74,14 @@ export const AdminClubProvider = ({
   useEffect(() => {
     if (!applicationFormId) return;
 
-    let eventSource: EventSource | null = null;
-
     const sseConnect = () => {
-      eventSource = createApplicantSSE(applicationFormId, {
+      eventSourceRef.current?.close();
+
+      eventSourceRef.current = createApplicantSSE(applicationFormId, {
         onStatusChange: handleApplicantStatusChange,
         onError: (error) => {
           console.error('SSE connection error:', error);
-          setTimeout(() => {
+          reconnectTimeoutRef.current = setTimeout(() => {
             sseConnect();
           }, 2000);
         },
@@ -88,7 +91,12 @@ export const AdminClubProvider = ({
     sseConnect();
 
     return () => {
-      eventSource?.close();
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+      eventSourceRef.current?.close();
+      eventSourceRef.current = null;
     };
   }, [applicationFormId, handleApplicantStatusChange]);
 
