@@ -1,29 +1,24 @@
 import { useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import { Award, FAQ, IdealCandidate, SemesterTerm } from '@/types/club';
 import * as Styled from './ClubIntroContent.styles';
 
-export interface Award {
-  semester: string;
-  achievements: string[];
-}
+const formatSemesterLabel = (award: Award): string => {
+  const semesterLabel =
+    award.semester === SemesterTerm.FIRST ? '1학기' : '2학기';
+  return `${award.year} ${semesterLabel}`;
+};
 
-export interface IdealCandidate {
-  tags?: string[]; // TODO: tags가 추가될수도 있음
-  content: string;
-}
-
-export interface Faq {
-  question: string;
-  answer: string;
-}
+const getAwardKey = (award: Award, index: number): string =>
+  `${award.year}-${award.semester}-${index}`;
 
 interface ClubIntroContentProps {
   activityDescription?: string;
   awards?: Award[];
   idealCandidate?: IdealCandidate;
   benefits?: string;
-  faqs?: Faq[];
+  faqs?: FAQ[];
 }
 
 const ClubIntroContent = ({
@@ -35,11 +30,11 @@ const ClubIntroContent = ({
 }: ClubIntroContentProps) => {
   const trackEvent = useMixpanelTrack();
 
-  const [openFaqIndices, setOpenFaqIndices] = useState<number[]>([]);
+  const [openFaqIndexes, setOpenFaqIndexes] = useState<number[]>([]);
 
   const handleToggleFaq = (index: number) => {
-    const isOpening = !openFaqIndices.includes(index);
-    setOpenFaqIndices((prev) =>
+    const isOpening = !openFaqIndexes.includes(index);
+    setOpenFaqIndexes((prev) =>
       prev.includes(index) ? prev.filter((i) => i !== index) : [...prev, index],
     );
 
@@ -66,18 +61,23 @@ const ClubIntroContent = ({
         <Styled.Section>
           <Styled.SectionTitle>동아리 성과</Styled.SectionTitle>
           <Styled.TextContainer>
-            {awards.map((award) => (
-              <Styled.AwardGroup key={award.semester}>
-                <Styled.SemesterBadge>{award.semester}</Styled.SemesterBadge>
-                <Styled.AwardList>
-                  {award.achievements.map((item, idx) => (
-                    <Styled.AwardItem key={`${award.semester}-${idx}`}>
-                      {item}
-                    </Styled.AwardItem>
-                  ))}
-                </Styled.AwardList>
-              </Styled.AwardGroup>
-            ))}
+            {awards.map((award, index) => {
+              const awardKey = getAwardKey(award, index);
+              return (
+                <Styled.AwardGroup key={awardKey}>
+                  <Styled.SemesterBadge>
+                    {formatSemesterLabel(award)}
+                  </Styled.SemesterBadge>
+                  <Styled.AwardList>
+                    {award.achievements.map((item, idx) => (
+                      <Styled.AwardItem key={`${awardKey}-${idx}`}>
+                        {item}
+                      </Styled.AwardItem>
+                    ))}
+                  </Styled.AwardList>
+                </Styled.AwardGroup>
+              );
+            })}
           </Styled.TextContainer>
         </Styled.Section>
       )}
@@ -102,7 +102,7 @@ const ClubIntroContent = ({
           <Styled.FaqHeader>FAQ</Styled.FaqHeader>
           <Styled.FaqList>
             {faqs.map((faq, index) => {
-              const isOpen = openFaqIndices.includes(index);
+              const isOpen = openFaqIndexes.includes(index);
               return (
                 <Styled.FaqItem key={faq.question}>
                   <Styled.QuestionRow onClick={() => handleToggleFaq(index)}>

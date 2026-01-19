@@ -41,8 +41,16 @@ export interface ClubDescription {
   recruitmentTarget: string;
 }
 
+export const SemesterTerm = {
+  FIRST: 'FIRST',
+  SECOND: 'SECOND',
+} as const;
+
+export type SemesterTermType = (typeof SemesterTerm)[keyof typeof SemesterTerm];
+
 export interface Award {
-  semester: string;
+  year: number;
+  semester: SemesterTermType;
   achievements: string[];
 }
 
