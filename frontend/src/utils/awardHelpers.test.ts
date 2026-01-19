@@ -4,11 +4,11 @@ import { formatSemesterLabel, getAwardKey } from './awardHelpers';
 describe('awardHelpers', () => {
   const createAward = (
     year: number,
-    semester: SemesterTermType,
+    semesterTerm: SemesterTermType,
     achievements: string[] = [],
   ): Award => ({
     year,
-    semester,
+    semesterTerm,
     achievements,
   });
 
@@ -28,14 +28,14 @@ describe('awardHelpers', () => {
 
     it('year가 없으면 null을 반환해야 한다', () => {
       const award: Partial<Award> = {
-        semester: SemesterTerm.FIRST,
+        semesterTerm: SemesterTerm.FIRST,
         achievements: [],
       };
 
       expect(formatSemesterLabel(award as Award)).toBeNull();
     });
 
-    it('semester가 없으면 null을 반환해야 한다', () => {
+    it('semesterTerm이 없으면 null을 반환해야 한다', () => {
       const award: Partial<Award> = {
         year: 2024,
         achievements: [],
@@ -44,7 +44,7 @@ describe('awardHelpers', () => {
       expect(formatSemesterLabel(award as Award)).toBeNull();
     });
 
-    it('year와 semester가 모두 없으면 null을 반환해야 한다', () => {
+    it('year와 semesterTerm이 모두 없으면 null을 반환해야 한다', () => {
       const award: Partial<Award> = {
         achievements: [],
       };
@@ -67,7 +67,7 @@ describe('awardHelpers', () => {
   });
 
   describe('getAwardKey', () => {
-    it('year, semester, index를 조합한 고유 키를 생성해야 한다', () => {
+    it('year, semesterTerm, index를 조합한 고유 키를 생성해야 한다', () => {
       expect(getAwardKey(validAward2024First, 0)).toBe('2024-FIRST-0');
     });
 
