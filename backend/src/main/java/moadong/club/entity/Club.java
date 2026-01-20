@@ -13,6 +13,7 @@ import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
@@ -41,6 +42,7 @@ public class Club implements Persistable<String> {
 
     private String userId;
 
+    @DiffIgnore
     private Map<String, String> socialLinks;
 
     @Field("recruitmentInformation")
