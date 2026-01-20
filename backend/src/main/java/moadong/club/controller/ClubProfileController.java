@@ -7,6 +7,8 @@ import lombok.AllArgsConstructor;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
+import moadong.club.repository.ClubRepository;
+import moadong.club.service.ClubEmbeddingService;
 import moadong.club.service.ClubProfileService;
 import moadong.global.payload.Response;
 import moadong.user.annotation.CurrentUser;
@@ -14,12 +16,7 @@ import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/club")
@@ -28,6 +25,17 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClubProfileController {
 
     private final ClubProfileService clubProfileService;
+//  필요할 때 부활시키면 됨    
+//    private final ClubEmbeddingService embeddingService;
+//    private final ClubRepository clubRepository;
+//
+//    // POST /admin/vectors/sync-all
+//    @PostMapping("/sync-all")
+//    public ResponseEntity<String> syncAllClubs() {
+//        // 비동기로 돌려버리기 (응답은 바로 주고 작업은 뒤에서)
+//        embeddingService.syncAllClubsAsync();
+//        return ResponseEntity.ok("전체 동아리 벡터 동기화 작업이 시작되었습니다. 로그를 확인하세요.");
+//    }
 
     @GetMapping("/{clubId}")
     @Operation(summary = "클럽 상세 정보 조회", description = "클럽 상세 정보를 조회합니다.")
