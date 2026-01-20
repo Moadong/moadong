@@ -9,6 +9,7 @@ import moadong.fixture.ClubRequestFixture;
 import moadong.fixture.UserFixture;
 import moadong.user.payload.CustomUserDetails;
 import moadong.util.annotations.UnitTest;
+import org.javers.core.Javers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -42,6 +43,9 @@ public class ClubProfileServiceDateTest {
 
     @Mock
     RecruitmentStateCalculator recruitmentStateCalculator;
+  
+    @Mock
+    Javers javers;
 
     @DisplayName("모집글 수정 시 최근 업데이트 일자를 보여준다")
     @Test
