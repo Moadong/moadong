@@ -6,7 +6,6 @@ import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.TopicManagementResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import moadong.fcm.util.FcmTopicResolver;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,8 +30,6 @@ public class FcmAsyncService {
 
     private final FirebaseMessaging firebaseMessaging;
 
-    private final FcmTopicResolver fcmTopicResolver;
-
     @Value("${fcm.topic.timeout-seconds:5}")
     private int timeoutSeconds;
 
@@ -43,16 +40,14 @@ public class FcmAsyncService {
         // 새로운 동아리 구독
         if (!clubsToSubscribe.isEmpty()) {
             for (String clubId : clubsToSubscribe) {
-                String topic = fcmTopicResolver.resolveTopic(clubId);
-                futures.add(firebaseMessaging.subscribeToTopicAsync(Collections.singletonList(token), topic));
+                futures.add(firebaseMessaging.subscribeToTopicAsync(Collections.singletonList(token), clubId));
             }
         }
 
         // 더 이상 구독하지 않는 동아리 구독 해제
         if (!clubsToUnsubscribe.isEmpty()) {
             for (String clubId : clubsToUnsubscribe) {
-                String topic = fcmTopicResolver.resolveTopic(clubId);
-                futures.add(firebaseMessaging.unsubscribeFromTopicAsync(Collections.singletonList(token), topic));
+                futures.add(firebaseMessaging.unsubscribeFromTopicAsync(Collections.singletonList(token), clubId));
             }
         }
 
@@ -89,4 +84,3 @@ public class FcmAsyncService {
         return CompletableFuture.completedFuture(null);
     }
 }
-

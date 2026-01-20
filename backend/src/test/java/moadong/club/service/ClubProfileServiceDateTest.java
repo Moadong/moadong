@@ -14,6 +14,8 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
+import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
@@ -24,7 +26,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -40,9 +41,6 @@ public class ClubProfileServiceDateTest {
     @Mock
     ClubSearchRepository clubSearchRepository;
 
-    @Mock
-    RecruitmentStateCalculator recruitmentStateCalculator;
-
     @DisplayName("모집글 수정 시 최근 업데이트 일자를 보여준다")
     @Test
     void 모집글_수정_시_최근_업데이트_일자를_보여줘야한다(){
@@ -51,19 +49,27 @@ public class ClubProfileServiceDateTest {
         CustomUserDetails customUserDetails = UserFixture.createUserDetails("test");
         Club club = new Club();
         when(clubRepository.findClubByUserId(any())).thenReturn(Optional.of(club));
-        doNothing().when(recruitmentStateCalculator).calculate(any(), any(), any());
+        //updateClubRecruitmentInfo의 RecruitmentStateCalculator 무시
+        try (var mocked = Mockito.mockStatic(RecruitmentStateCalculator.class)) {
+            mocked.when(() ->
+                    RecruitmentStateCalculator.calculate(
+                            Mockito.any(moadong.club.entity.Club.class),
+                            Mockito.any(java.time.ZonedDateTime.class),
+                            Mockito.any(java.time.ZonedDateTime.class)
+                    )
+            ).thenAnswer(inv -> null);
 
-        //WHEN
-        clubProfileService.updateClubRecruitmentInfo(request, customUserDetails);
+            //WHEN
+            clubProfileService.updateClubRecruitmentInfo(request, customUserDetails);
 
-        //THEN
-        assertNotNull(club.getClubRecruitmentInformation().getLastModifiedDate());
-        //1초 전후 차이로 살펴보기
-        LocalDateTime now = LocalDateTime.now();
-        assertTrue(club.getClubRecruitmentInformation().
-                getLastModifiedDate().isAfter(now.minusSeconds(1)));
-        assertTrue(club.getClubRecruitmentInformation().
-                getLastModifiedDate().isBefore(now.plusSeconds(1)));
+            //THEN
+            assertNotNull(club.getClubRecruitmentInformation().getLastModifiedDate());
+            //1초 전후 차이로 살펴보기
+            LocalDateTime now = LocalDateTime.now();
+            assertTrue(club.getClubRecruitmentInformation().
+                    getLastModifiedDate().isAfter(now.minusSeconds(1)));
+            assertTrue(club.getClubRecruitmentInformation().
+                    getLastModifiedDate().isBefore(now.plusSeconds(1)));
+        }
     }
 }
-

@@ -21,7 +21,6 @@ import java.util.List;
 public class RecruitmentStateChecker {
 
     private final ClubRepository clubRepository;
-    private final RecruitmentStateCalculator recruitmentStateCalculator;
 
     @Scheduled(fixedRate = 60 * 60 * 1000) // 1시간마다 실행
     public void performTask() {
@@ -33,10 +32,9 @@ public class RecruitmentStateChecker {
             if (recruitInfo.getClubRecruitmentStatus() == ClubRecruitmentStatus.ALWAYS) {
                 continue;
             }
-            recruitmentStateCalculator.calculate(club, recruitmentStartDate, recruitmentEndDate);
+            RecruitmentStateCalculator.calculate(club, recruitmentStartDate, recruitmentEndDate);
 
             clubRepository.save(club);
         }
     }
 }
-

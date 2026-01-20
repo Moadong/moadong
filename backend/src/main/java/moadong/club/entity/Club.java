@@ -146,11 +146,9 @@ public class Club implements Persistable<String> {
 
     public void sendPushNotification(Message message) {
         try {
-            log.info("FCM 알림 전송 시작 - clubId: {}, clubName: {}", this.id, this.name);
-            String messageId = FirebaseMessaging.getInstance().send(message);
-            log.info("FCM 알림 전송 성공 - clubId: {}, messageId: {}", this.id, messageId);
+            FirebaseMessaging.getInstance().send(message);
         } catch (FirebaseMessagingException e) {
-            log.error("FCM 알림 전송 실패 - clubId: {}, error: {}", this.id, e.getMessage());
+            log.error("FirebaseSendNotificationError: {}", e.getMessage());
         }
     }
 
