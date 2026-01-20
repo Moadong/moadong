@@ -23,6 +23,7 @@ public class ClubProfileService {
 
     private final ClubRepository clubRepository;
     private final ClubSearchRepository clubSearchRepository;
+    private final RecruitmentStateCalculator recruitmentStateCalculator;
 
     @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
@@ -37,7 +38,7 @@ public class ClubProfileService {
         Club club = clubRepository.findClubByUserId(user.getId())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
-        RecruitmentStateCalculator.calculate(
+        recruitmentStateCalculator.calculate(
                 club,
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
@@ -57,3 +58,4 @@ public class ClubProfileService {
         return new ClubDetailedResponse(clubDetailedResult);
     }
 }
+

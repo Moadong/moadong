@@ -8,14 +8,21 @@ import java.util.Locale;
 
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
+import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
+import moadong.fcm.util.FcmTopicResolver;
+import org.springframework.stereotype.Component;
 
+@Component
+@RequiredArgsConstructor
 public class RecruitmentStateCalculator {
     public static final int ALWAYS_RECRUIT_YEAR = 2999;
 
-    public static void calculate(Club club, ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
+    private final FcmTopicResolver fcmTopicResolver;
+
+    public void calculate(Club club, ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
         ClubRecruitmentStatus oldStatus = club.getClubRecruitmentInformation().getClubRecruitmentStatus();
         ClubRecruitmentStatus newStatus = calculateRecruitmentStatus(recruitmentStartDate, recruitmentEndDate);
         club.updateRecruitmentStatus(newStatus);
@@ -50,7 +57,7 @@ public class RecruitmentStateCalculator {
         return ClubRecruitmentStatus.CLOSED;
     }
 
-    public static Message buildRecruitmentMessage(Club club, ClubRecruitmentStatus status) {
+    public Message buildRecruitmentMessage(Club club, ClubRecruitmentStatus status) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M월 d일 a h시 m분", Locale.KOREAN);
         ClubRecruitmentInformation info = club.getClubRecruitmentInformation();
 
@@ -72,7 +79,8 @@ public class RecruitmentStateCalculator {
                         .setTitle(club.getName())
                         .setBody(bodyMessage)
                         .build())
-                .setTopic(club.getId())
+                .setTopic(fcmTopicResolver.resolveTopic(club.getId()))
                 .build();
     }
 }
+
