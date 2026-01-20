@@ -1,6 +1,7 @@
 package moadong.club.service;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -13,6 +14,7 @@ import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
+import moadong.club.util.RecruitmentStateCalculator;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -28,6 +30,9 @@ public class RecruitmentStateCheckerTest {
     @Mock
     private ClubRepository clubRepository;
 
+    @Mock
+    private RecruitmentStateCalculator recruitmentStateCalculator;
+
     static final ZonedDateTime NOW = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
     @Test
@@ -42,19 +47,18 @@ public class RecruitmentStateCheckerTest {
 
         recruitmentStateChecker.performTask();
 
-        verify(club, never()).updateRecruitmentStatus(any());
+        verify(recruitmentStateCalculator, never()).calculate(any(), any(), any());
         verify(clubRepository, never()).save(club);
     }
 
     @Test
-    void 모집시작전_14일이내면_UPCOMING() {
+    void 모집시작전_14일이내면_calculate호출() {
         Club club = mock(Club.class);
         ClubRecruitmentInformation info = mock(ClubRecruitmentInformation.class);
 
         ZonedDateTime start = NOW.plusDays(10);
         ZonedDateTime end = NOW.plusDays(20);
 
-        when(club.getId()).thenReturn("1");
         when(club.getClubRecruitmentInformation()).thenReturn(info);
         when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.CLOSED);
         when(info.getRecruitmentStart()).thenReturn(start);
@@ -63,19 +67,18 @@ public class RecruitmentStateCheckerTest {
 
         recruitmentStateChecker.performTask();
 
-        verify(club).updateRecruitmentStatus(ClubRecruitmentStatus.UPCOMING);
+        verify(recruitmentStateCalculator).calculate(eq(club), eq(start), eq(end));
         verify(clubRepository).save(club);
     }
 
     @Test
-    void 모집기간중이면_OPEN() {
+    void 모집기간중이면_calculate호출() {
         Club club = mock(Club.class);
         ClubRecruitmentInformation info = mock(ClubRecruitmentInformation.class);
 
         ZonedDateTime start = NOW.minusDays(1);
         ZonedDateTime end = NOW.plusDays(5);
 
-        when(club.getId()).thenReturn("1");
         when(club.getClubRecruitmentInformation()).thenReturn(info);
         when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.CLOSED);
         when(info.getRecruitmentStart()).thenReturn(start);
@@ -84,19 +87,18 @@ public class RecruitmentStateCheckerTest {
 
         recruitmentStateChecker.performTask();
 
-        verify(club).updateRecruitmentStatus(ClubRecruitmentStatus.OPEN);
+        verify(recruitmentStateCalculator).calculate(eq(club), eq(start), eq(end));
         verify(clubRepository).save(club);
     }
 
     @Test
-    void 모집마감_이후면_CLOSED() {
+    void 모집마감_이후면_calculate호출() {
         Club club = mock(Club.class);
         ClubRecruitmentInformation info = mock(ClubRecruitmentInformation.class);
 
         ZonedDateTime start = NOW.minusDays(10);
         ZonedDateTime end = NOW.minusDays(1);
 
-        when(club.getId()).thenReturn("1");
         when(club.getClubRecruitmentInformation()).thenReturn(info);
         when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.OPEN);
         when(info.getRecruitmentStart()).thenReturn(start);
@@ -105,16 +107,15 @@ public class RecruitmentStateCheckerTest {
 
         recruitmentStateChecker.performTask();
 
-        verify(club).updateRecruitmentStatus(ClubRecruitmentStatus.CLOSED);
+        verify(recruitmentStateCalculator).calculate(eq(club), eq(start), eq(end));
         verify(clubRepository).save(club);
     }
 
     @Test
-    void 시작_또는_종료날짜_null이면_CLOSED() {
+    void 시작_또는_종료날짜_null이면_calculate호출() {
         Club club = mock(Club.class);
         ClubRecruitmentInformation info = mock(ClubRecruitmentInformation.class);
 
-        when(club.getId()).thenReturn("1");
         when(club.getClubRecruitmentInformation()).thenReturn(info);
         when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.OPEN);
         when(info.getRecruitmentStart()).thenReturn(null);
@@ -123,7 +124,8 @@ public class RecruitmentStateCheckerTest {
 
         recruitmentStateChecker.performTask();
 
-        verify(club).updateRecruitmentStatus(ClubRecruitmentStatus.CLOSED);
+        verify(recruitmentStateCalculator).calculate(eq(club), eq(null), eq(null));
         verify(clubRepository).save(club);
     }
 }
+

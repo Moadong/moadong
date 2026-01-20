@@ -16,6 +16,7 @@ import moadong.fixture.ClubRequestFixture;
 import moadong.global.exception.RestApiException;
 import moadong.user.payload.CustomUserDetails;
 import moadong.util.annotations.UnitTest;
+import org.javers.core.Javers;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
@@ -28,6 +29,9 @@ public class ClubProfileServiceTest {
     private ClubRepository clubRepository;
     @InjectMocks
     private ClubProfileService clubProfileService;
+
+    @Mock
+    Javers javers;
 
     @Test
     void 정상적으로_클럽_약력을_업데이트한다() {

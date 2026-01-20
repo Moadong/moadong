@@ -13,6 +13,7 @@ import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
@@ -41,6 +42,7 @@ public class Club implements Persistable<String> {
 
     private String userId;
 
+    @DiffIgnore
     private Map<String, String> socialLinks;
 
     @Field("recruitmentInformation")
@@ -146,9 +148,11 @@ public class Club implements Persistable<String> {
 
     public void sendPushNotification(Message message) {
         try {
-            FirebaseMessaging.getInstance().send(message);
+            log.info("FCM 알림 전송 시작 - clubId: {}, clubName: {}", this.id, this.name);
+            String messageId = FirebaseMessaging.getInstance().send(message);
+            log.info("FCM 알림 전송 성공 - clubId: {}, messageId: {}", this.id, messageId);
         } catch (FirebaseMessagingException e) {
-            log.error("FirebaseSendNotificationError: {}", e.getMessage());
+            log.error("FCM 알림 전송 실패 - clubId: {}, error: {}", this.id, e.getMessage());
         }
     }
 

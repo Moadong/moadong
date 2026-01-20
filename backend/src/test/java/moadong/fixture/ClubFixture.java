@@ -30,7 +30,7 @@ public class ClubFixture {
             List<String> feedImages,
             ClubRecruitmentStatus clubRecruitmentStatus) {
         ClubRecruitmentInformation clubRecruitmentInfo = mock(ClubRecruitmentInformation.class);
-        when(clubRecruitmentInfo.getId()).thenReturn(id);
+//        when(clubRecruitmentInfo.getId()).thenReturn(id);
         when(clubRecruitmentInfo.getLogo()).thenReturn(logo);
         when(clubRecruitmentInfo.getIntroduction()).thenReturn(introduction);
         when(clubRecruitmentInfo.getPresidentName()).thenReturn(presidentName);

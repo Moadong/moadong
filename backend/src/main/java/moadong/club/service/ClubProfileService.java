@@ -14,6 +14,7 @@ import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
+import org.javers.core.Javers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,13 +24,16 @@ public class ClubProfileService {
 
     private final ClubRepository clubRepository;
     private final ClubSearchRepository clubSearchRepository;
+    private final RecruitmentStateCalculator recruitmentStateCalculator;
+    private final Javers javers;
 
     @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
         Club club = clubRepository.findClubByUserId(user.getId())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
-        clubRepository.save(club);
+        Club saved = clubRepository.save(club);
+        javers.commit(user.getUsername(), saved);
     }
 
     public void updateClubRecruitmentInfo(ClubRecruitmentInfoUpdateRequest request,
@@ -37,13 +41,14 @@ public class ClubProfileService {
         Club club = clubRepository.findClubByUserId(user.getId())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
-        RecruitmentStateCalculator.calculate(
+        recruitmentStateCalculator.calculate(
                 club,
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
         );
         club.getClubRecruitmentInformation().updateLastModifiedDate();
-        clubRepository.save(club);
+        Club saved = clubRepository.save(club);
+        javers.commit(user.getUsername(), saved);
     }
 
     public ClubDetailedResponse getClubDetail(String clubId) {
@@ -57,3 +62,4 @@ public class ClubProfileService {
         return new ClubDetailedResponse(clubDetailedResult);
     }
 }
+
