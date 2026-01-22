@@ -61,7 +61,9 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
       }
     } else {
       try {
-        await navigator.clipboard.writeText(shareData.url);
+        await navigator.clipboard.writeText(
+          `${shareData.text}\n${shareData.url}`,
+        );
         alert('링크가 복사되었습니다.');
         trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
           clubName: clubDetail.name,
