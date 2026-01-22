@@ -28,7 +28,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
     if (isRNWebView) {
       const sharePayload = {
         title: clubDetail.name,
-        text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!\n\n${url}`,
+        text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!\n${url}`,
         url,
       };
 
