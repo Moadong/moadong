@@ -20,10 +20,33 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
   if (!clubDetail) return;
 
   const handleShare = async () => {
+    const url = `${MOADONG_BASE_URL}${clubDetail.id}`;
+
+    const isRNWebView =
+      typeof window !== 'undefined' && !!(window as any).ReactNativeWebView;
+
+    if (isRNWebView) {
+      const sharePayload = {
+        title: clubDetail.name,
+        text: `${clubDetail.description.introDescription}\n\n${url}`,
+        url,
+      };
+
+      (window as any).ReactNativeWebView.postMessage(
+        JSON.stringify({ type: 'SHARE', payload: sharePayload }),
+      );
+
+      trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
+        clubName: clubDetail.name,
+        method: 'native_share',
+      });
+      return;
+    }
+
     const shareData = {
       title: clubDetail.name,
-      text: `\n\n${clubDetail.description.introDescription}`,
-      url: `${MOADONG_BASE_URL}${clubDetail.id}`,
+      text: `\n${clubDetail.description.introDescription}`,
+      url: url,
     };
 
     if (navigator.share) {
