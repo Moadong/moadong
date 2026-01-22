@@ -36,14 +36,16 @@ const ClubDetailPage = () => {
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
-  useEffect(() => {
-    if (!clubDetail?.feeds || clubDetail.feeds.length === 0) return;
+  // useEffect(() => {
+  //   if (!clubDetail?.feeds || clubDetail.feeds.length === 0) return;
 
-    clubDetail.feeds.forEach((url) => {
-      const img = new Image();
-      img.src = url;
-    });
-  }, [clubDetail]);
+  //   const priorityFeeds = clubDetail.feeds.slice(0, 8);
+
+  //   priorityFeeds.forEach((url) => {
+  //     const img = new Image();
+  //     img.src = url;
+  //   });
+  // }, [clubDetail?.feeds]);
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
@@ -96,12 +98,12 @@ const ClubDetailPage = () => {
             </Styled.TabList>
 
             <Styled.TabContent>
-              {activeTab === TAB_TYPE.INTRO && (
+              <div style={{ display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none' }}>
                 <ClubIntroContent {...clubDetail.description} />
-              )}
-              {activeTab === TAB_TYPE.PHOTOS && (
+              </div>
+              <div style={{ display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none' }}>
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
-              )}
+              </div>
             </Styled.TabContent>
           </Styled.RightSection>
         </Styled.ContentWrapper>
