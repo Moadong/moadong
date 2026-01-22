@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -35,17 +35,6 @@ const ClubDetailPage = () => {
   const { isLaptop, isDesktop } = useDevice();
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
-
-  // useEffect(() => {
-  //   if (!clubDetail?.feeds || clubDetail.feeds.length === 0) return;
-
-  //   const priorityFeeds = clubDetail.feeds.slice(0, 8);
-
-  //   priorityFeeds.forEach((url) => {
-  //     const img = new Image();
-  //     img.src = url;
-  //   });
-  // }, [clubDetail?.feeds]);
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
