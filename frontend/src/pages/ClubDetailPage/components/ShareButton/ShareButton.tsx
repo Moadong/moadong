@@ -44,7 +44,6 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
     }
 
     const shareData = {
-      title: clubDetail.name,
       text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!\n${url}`,
     };
 
