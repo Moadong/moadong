@@ -4,6 +4,7 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import useDevice from '@/hooks/useDevice';
+import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ShareButton.styles';
 
 interface ShareButtonProps {
@@ -11,6 +12,8 @@ interface ShareButtonProps {
 }
 
 const MOADONG_BASE_URL = 'https://www.moadong.com/club/';
+
+const isRNWebView = isInAppWebView();
 
 const ShareButton = ({ clubId }: ShareButtonProps) => {
   const { isMobile } = useDevice();
@@ -21,9 +24,6 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
 
   const handleShare = async () => {
     const url = `${MOADONG_BASE_URL}${clubDetail.id}`;
-
-    const isRNWebView =
-      typeof window !== 'undefined' && !!(window as any).ReactNativeWebView;
 
     if (isRNWebView) {
       const sharePayload = {
