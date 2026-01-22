@@ -28,8 +28,9 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
     if (isRNWebView) {
       const sharePayload = {
         title: clubDetail.name,
-        text: `${clubDetail.description.introDescription}\n\n${url}`,
+        text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!`,
         url,
+        image: clubDetail.logo,
       };
 
       (window as any).ReactNativeWebView.postMessage(
@@ -45,8 +46,9 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
 
     const shareData = {
       title: clubDetail.name,
-      text: `\n${clubDetail.description.introDescription}`,
+      text: `\n지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!`,
       url: url,
+      image: clubDetail.logo,
     };
 
     if (navigator.share) {
