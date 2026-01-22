@@ -45,8 +45,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
 
     const shareData = {
       title: clubDetail.name,
-      text: `\n지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!`,
-      url: url,
+      text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!\n${url}`,
     };
 
     if (navigator.share) {
@@ -61,9 +60,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
       }
     } else {
       try {
-        await navigator.clipboard.writeText(
-          `${shareData.text}\n${shareData.url}`,
-        );
+        await navigator.clipboard.writeText(shareData.text);
         alert('링크가 복사되었습니다.');
         trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
           clubName: clubDetail.name,
