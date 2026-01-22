@@ -43,7 +43,7 @@ const ClubFeed = ({ feed, clubName = '동아리' }: Props) => {
               <Styled.PhotoImage
                 src={f}
                 alt={`활동사진 ${index + 1}`}
-                loading='lazy'
+                loading={index < 8 ? 'eager' : 'lazy'}
               />
             </Styled.PhotoItem>
           ))}
