@@ -4,7 +4,6 @@ import { CLUB_UNION_MEMBERS } from '@/constants/clubUnionInfo';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
-import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubUnionPage.styles';
 
 const ClubUnionPage = () => {
@@ -12,7 +11,7 @@ const ClubUnionPage = () => {
 
   return (
     <>
-      {!isInAppWebView() && <Header />}
+      <Header hideOn={['webview']} />
       <PageContainer>
         <Styled.Title>총동아리연합회 소개</Styled.Title>
         <Styled.IntroductionText>
