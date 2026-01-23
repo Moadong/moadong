@@ -9,13 +9,12 @@ interface Props {
 }
 
 const ClubFeed = ({ feed, clubName = '동아리' }: Props) => {
-  const { isTablet, isLaptop, isDesktop } = useDevice();
+  const { isLaptop, isDesktop } = useDevice();
 
   const loadingThreshold = useMemo(() => {
     if (isDesktop || isLaptop) return 15;
-    if (isTablet) return 6;
-    return 3;
-  }, [isDesktop, isLaptop, isTablet]);
+    return 6;
+  }, [isDesktop, isLaptop]);
 
   const [isOpen, setIsOpen] = useState(false);
   const [index, setIndex] = useState(0);
