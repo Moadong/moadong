@@ -45,21 +45,21 @@ const ClubDetailPage = () => {
   const HEADER_HEIGHT_OFFSET = 65;
   const { scrollToElement } = useScrollTo();
 
-  const handleTabChange = useCallback(() => {
+  const scrollToContent = useCallback(() => {
     scrollToElement(contentRef.current, HEADER_HEIGHT_OFFSET);
   }, [scrollToElement]);
 
-  const handleIntroTabClick = useCallback(() => {
-    setSearchParams({ tab: TAB_TYPE.INTRO }, { replace: true });
-    trackEvent(USER_EVENT.CLUB_INTRO_TAB_CLICKED);
-    handleTabChange();
-  }, [setSearchParams, trackEvent, handleTabChange]);
-
-  const handlePhotosTabClick = useCallback(() => {
-    setSearchParams({ tab: TAB_TYPE.PHOTOS }, { replace: true });
-    trackEvent(USER_EVENT.CLUB_FEED_TAB_CLICKED);
-    handleTabChange();
-  }, [setSearchParams, trackEvent, handleTabChange]);
+  const handleTabClick = useCallback(
+    (tabKey: TabType) => {
+      setSearchParams({ tab: tabKey }, { replace: true });
+      trackEvent(
+        tabKey === TAB_TYPE.INTRO
+          ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
+          : USER_EVENT.CLUB_FEED_TAB_CLICKED
+      );
+    },
+    [setSearchParams, trackEvent]
+  );
 
   if (error) {
     return <div>에러가 발생했습니다.</div>;
@@ -82,11 +82,8 @@ const ClubDetailPage = () => {
           ]}
           activeTab={activeTab}
           onTabClick={(tabKey) => {
-            if (tabKey === TAB_TYPE.INTRO) {
-              handleIntroTabClick();
-            } else {
-              handlePhotosTabClick();
-            }
+            handleTabClick(tabKey as TabType);
+            scrollToContent();
           }}
         />
       )}
@@ -105,13 +102,13 @@ const ClubDetailPage = () => {
             <Styled.TabList>
               <Styled.TabButton
                 $active={activeTab === TAB_TYPE.INTRO}
-                onClick={handleIntroTabClick}
+                onClick={() => handleTabClick(TAB_TYPE.INTRO)}
               >
                 소개 내용
               </Styled.TabButton>
               <Styled.TabButton
                 $active={activeTab === TAB_TYPE.PHOTOS}
-                onClick={handlePhotosTabClick}
+                onClick={() => handleTabClick(TAB_TYPE.PHOTOS)}
               >
                 활동사진
               </Styled.TabButton>
