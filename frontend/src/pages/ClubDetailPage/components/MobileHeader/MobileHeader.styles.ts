@@ -33,19 +33,14 @@ export const IconButton = styled.button<{ $isVisible: boolean }>`
   height: 36px;
   padding: 0;
   border: none;
-  background-color: ${({ $isVisible }) =>
-    $isVisible ? 'transparent' : 'rgba(255, 255, 255, 0.8)'};
+  background-color: ${({ $isVisible, theme }) =>
+    $isVisible ? 'transparent' : theme.colors.base.white};
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
   transition: background-color 0.2s ease;
-
-  img {
-    width: 28px;
-    height: 28px;
-  }
 `;
 
 export const NotificationButton = styled.button<{
@@ -58,7 +53,7 @@ export const NotificationButton = styled.button<{
   border: none;
   background-color: ${({ $isVisible, $isActive, theme }) => {
     if ($isActive) return theme.colors.primary[900];
-    return $isVisible ? 'transparent' : 'rgba(255, 255, 255, 0.8)';
+    return $isVisible ? 'transparent' : theme.colors.base.white;
   }};
   border-radius: 50%;
   cursor: pointer;
@@ -72,9 +67,9 @@ export const NotificationButton = styled.button<{
   }
 `;
 
-export const Title = styled.h1<{ $isVisible: boolean }>`
-  font-size: 18px;
-  font-weight: 600;
+export const ClubName = styled.h1<{ $isVisible: boolean }>`
+  font-size: 22px;
+  font-weight: 700;
   color: ${({ theme }) => theme.colors.base.black};
   text-align: center;
   flex: 1;
