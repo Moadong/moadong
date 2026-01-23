@@ -22,11 +22,18 @@ interface HeaderProps {
 const Header = ({ showOn, hideOn }: HeaderProps) => {
   const trackEvent = useMixpanelTrack();
   const location = useLocation();
-  const isAdminPage = location.pathname.startsWith('/admin');
-  const isAdminLoginPage = location.pathname.startsWith('/admin/login');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isScrolled = useScrollDetection();
   const { isMobile, isTablet, isLaptop, isDesktop } = useDevice();
+  const {
+    handleHomeClick,
+    handleIntroduceClick,
+    handleClubUnionClick,
+    handleAdminClick,
+  } = useHeaderNavigation();
+
+  const isAdminPage = location.pathname.startsWith('/admin');
+  const isAdminLoginPage = location.pathname.startsWith('/admin/login');
   const isWebView = isInAppWebView();
 
   const getCurrentDeviceTypes = (): DeviceType[] => {
@@ -56,13 +63,6 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
   if (!shouldRender()) {
     return null;
   }
-
-  const {
-    handleHomeClick,
-    handleIntroduceClick,
-    handleClubUnionClick,
-    handleAdminClick,
-  } = useHeaderNavigation();
 
   const navLinks = [
     { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
