@@ -90,7 +90,7 @@ export const Placeholder = styled.div`
 export const TabBar = styled.div`
   display: flex;
   width: 100%;
-  height: 26px;
+  padding: 0 20px;
   background-color: ${({ theme }) => theme.colors.base.white};
   border-bottom: 1px solid ${({ theme }) => theme.colors.gray[200]};
 `;
@@ -99,8 +99,7 @@ export const TabButton = styled.button<{ $active: boolean }>`
   flex: 1;
   font-size: 14px;
   font-weight: 700;
-  padding: 0;
-  height: 100%;
+  padding: 4px 0;
   color: ${({ $active, theme }) => ($active ? theme.colors.gray[800] : theme.colors.gray[400])};
   background: none;
   border: none;

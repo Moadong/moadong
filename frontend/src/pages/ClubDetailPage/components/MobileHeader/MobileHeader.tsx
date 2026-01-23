@@ -11,7 +11,7 @@ import * as Styled from './MobileHeader.styles';
 // 스크롤 임계값 상수
 const SCROLL_THRESHOLD = {
   HEADER_VISIBLE: 0, // 헤더 배경/타이틀 표시
-  TAB_STICKY: 340, // 탭바 고정
+  TAB_STICKY: 350, // 탭바 고정
 } as const;
 
 interface TabItem {
