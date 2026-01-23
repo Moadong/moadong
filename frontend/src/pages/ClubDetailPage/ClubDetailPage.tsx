@@ -1,6 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import MobileHeader from './components/MobileHeader/MobileHeader';
+import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
@@ -22,6 +22,8 @@ export const TAB_TYPE = {
 
 type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
+const TOP_BAR_HEIGHT = 65;
+
 const ClubDetailPage = () => {
   const trackEvent = useMixpanelTrack();
 
@@ -35,18 +37,18 @@ const ClubDetailPage = () => {
 
   const { clubId } = useParams<{ clubId: string }>();
   const { isMobile, isTablet, isLaptop, isDesktop } = useDevice();
-  const showMobileHeader = isMobile || isTablet;
+  const showTopBar = isMobile || isTablet;
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
   const contentRef = useRef<HTMLDivElement>(null);
-  const HEADER_HEIGHT_OFFSET = 65;
   const { scrollToElement } = useScrollTo();
 
+
   const scrollToContent = useCallback(() => {
-    scrollToElement(contentRef.current, HEADER_HEIGHT_OFFSET);
+    scrollToElement(contentRef.current, TOP_BAR_HEIGHT);
   }, [scrollToElement]);
 
   const handleTabClick = useCallback(
@@ -62,7 +64,7 @@ const ClubDetailPage = () => {
   );
 
   if (error) {
-    return <div>에러가 발생했습니다.</div>;
+    return <div>동아리 정보를 불러오는데 실패했습니다.</div>;
   }
 
   if (!clubDetail) {
@@ -72,8 +74,8 @@ const ClubDetailPage = () => {
   return (
     <>
       {(isLaptop || isDesktop) && <Header />}
-      {showMobileHeader && (
-        <MobileHeader
+      {showTopBar && (
+        <ClubDetailTopBar
           clubId={clubId || ''}
           clubName={clubDetail.name}
           tabs={[

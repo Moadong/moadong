@@ -6,7 +6,7 @@ import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
 import { useTheme } from 'styled-components';
 import isInAppWebView from '@/utils/isInAppWebView';
 import { requestNavigateBack, requestNotificationSubscribe } from '@/utils/webviewBridge';
-import * as Styled from './MobileHeader.styles';
+import * as Styled from './ClubDetailTopBar.styles';
 
 // 스크롤 임계값 상수
 const SCROLL_THRESHOLD = {
@@ -19,7 +19,7 @@ interface TabItem {
   label: string;
 }
 
-interface Props {
+interface ClubDetailTopBarProps {
   clubId: string;
   clubName: string;
   tabs?: TabItem[];
@@ -27,7 +27,13 @@ interface Props {
   onTabClick?: (tabKey: string) => void;
 }
 
-const MobileHeader = ({ clubId, clubName, tabs, activeTab, onTabClick }: Props) => {
+const ClubDetailTopBar = ({
+  clubId,
+  clubName,
+  tabs,
+  activeTab,
+  onTabClick,
+}: ClubDetailTopBarProps) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isInApp = isInAppWebView();
@@ -111,4 +117,4 @@ const MobileHeader = ({ clubId, clubName, tabs, activeTab, onTabClick }: Props) 
   );
 };
 
-export default MobileHeader;
+export default ClubDetailTopBar;
