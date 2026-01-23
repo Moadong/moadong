@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import MobileHeader from './components/MobileHeader/MobileHeader';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
@@ -32,7 +33,8 @@ const ClubDetailPage = () => {
       : TAB_TYPE.INTRO;
 
   const { clubId } = useParams<{ clubId: string }>();
-  const { isLaptop, isDesktop } = useDevice();
+  const { isMobile, isTablet, isLaptop, isDesktop } = useDevice();
+  const showMobileHeader = isMobile || isTablet;
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
@@ -59,6 +61,24 @@ const ClubDetailPage = () => {
   return (
     <>
       {(isLaptop || isDesktop) && <Header />}
+      {showMobileHeader && (
+        <MobileHeader
+          clubId={clubId || ''}
+          clubName={clubDetail.name}
+          tabs={[
+            { key: TAB_TYPE.INTRO, label: '소개내용' },
+            { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+          ]}
+          activeTab={activeTab}
+          onTabClick={(tabKey) => {
+            if (tabKey === TAB_TYPE.INTRO) {
+              handleIntroTabClick();
+            } else {
+              handlePhotosTabClick();
+            }
+          }}
+        />
+      )}
       <Styled.Container>
         <Styled.ContentWrapper>
           <ClubProfileCard
