@@ -55,8 +55,20 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
           clubName: clubDetail.name,
           method: 'web_share',
         });
-      } catch {
-        return;
+      } catch (error) {
+        if (error instanceof Error && error.name === 'AbortError') {
+          return;
+        }
+        try {
+          await navigator.clipboard.writeText(shareData.text);
+          alert('링크가 복사되었습니다.');
+          trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
+            clubName: clubDetail.name,
+            method: 'clipboard',
+          });
+        } catch {
+          alert('공유하기에 실패했습니다.');
+        }
       }
     } else {
       try {
