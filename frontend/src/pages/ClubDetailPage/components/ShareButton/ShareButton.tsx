@@ -47,7 +47,8 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
       text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!\n${url}`,
     };
 
-    if (navigator.share) {
+    // 모바일에서는 Web Share API 사용, 데스크톱에서는 클립보드 복사
+    if (isMobile && navigator.share) {
       try {
         await navigator.share(shareData);
         trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
