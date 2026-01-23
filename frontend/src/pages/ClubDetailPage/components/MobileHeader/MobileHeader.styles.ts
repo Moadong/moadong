@@ -99,11 +99,7 @@ export const TabButton = styled.button<{ $active: boolean }>`
   flex: 1;
   font-size: 14px;
   font-weight: 700;
-<<<<<<< HEAD
   padding: 4px 0;
-=======
-  padding: 14px 0;
->>>>>>> 2d65c3b4cde57dd44e8b06dbbc6004993f2e0fb6
   color: ${({ $active, theme }) => ($active ? theme.colors.gray[800] : theme.colors.gray[400])};
   background: none;
   border: none;
