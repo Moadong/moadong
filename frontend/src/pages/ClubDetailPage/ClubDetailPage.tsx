@@ -1,4 +1,4 @@
-import { useCallback } from 'react';
+import { useCallback, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import MobileHeader from './components/MobileHeader/MobileHeader';
 import Footer from '@/components/common/Footer/Footer';
@@ -8,6 +8,7 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import useDevice from '@/hooks/useDevice';
+import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
@@ -40,15 +41,25 @@ const ClubDetailPage = () => {
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
+  const contentRef = useRef<HTMLDivElement>(null);
+  const HEADER_HEIGHT_OFFSET = 65;
+  const { scrollToElement } = useScrollTo();
+
+  const handleTabChange = useCallback(() => {
+    scrollToElement(contentRef.current, HEADER_HEIGHT_OFFSET);
+  }, [scrollToElement]);
+
   const handleIntroTabClick = useCallback(() => {
-    setSearchParams({ tab: TAB_TYPE.INTRO });
+    setSearchParams({ tab: TAB_TYPE.INTRO }, { replace: true });
     trackEvent(USER_EVENT.CLUB_INTRO_TAB_CLICKED);
-  }, [setSearchParams, trackEvent]);
+    handleTabChange();
+  }, [setSearchParams, trackEvent, handleTabChange]);
 
   const handlePhotosTabClick = useCallback(() => {
-    setSearchParams({ tab: TAB_TYPE.PHOTOS });
+    setSearchParams({ tab: TAB_TYPE.PHOTOS }, { replace: true });
     trackEvent(USER_EVENT.CLUB_FEED_TAB_CLICKED);
-  }, [setSearchParams, trackEvent]);
+    handleTabChange();
+  }, [setSearchParams, trackEvent, handleTabChange]);
 
   if (error) {
     return <div>에러가 발생했습니다.</div>;
@@ -90,7 +101,7 @@ const ClubDetailPage = () => {
             introDescription={clubDetail.description.introDescription}
           />
 
-          <Styled.RightSection>
+          <Styled.RightSection ref={contentRef}>
             <Styled.TabList>
               <Styled.TabButton
                 $active={activeTab === TAB_TYPE.INTRO}
