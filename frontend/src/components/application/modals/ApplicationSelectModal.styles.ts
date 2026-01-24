@@ -22,6 +22,7 @@ export const OptionButton = styled.button`
   font-weight: 600;
   font-size: 16px;
   cursor: pointer;
+  color: black;
   transition:
     background-color 0.15s ease,
     color 0.15s ease,
