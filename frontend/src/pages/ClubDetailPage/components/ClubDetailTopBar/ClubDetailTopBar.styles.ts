@@ -11,6 +11,8 @@ export const HeaderWrapper = styled.div<{ $isVisible: boolean }>`
   box-shadow: ${({ $isVisible }) =>
     $isVisible ? '0 4px 6px -1px rgba(0, 0, 0, 0.05)' : 'none'};
   transition: all 0.2s ease;
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top);
 `;
 
 export const Header = styled.header<{ $isVisible: boolean }>`
