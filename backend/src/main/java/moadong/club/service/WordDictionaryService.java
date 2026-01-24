@@ -105,11 +105,22 @@ public class WordDictionaryService {
             
             // 2단계: 각 입력단어를 키로 하여 해당 표준단어 그룹의 모든 입력단어들을 값으로 매핑
             for (Map.Entry<String, Set<String>> entry : standardToInputs.entrySet()) {
+                String standardWord = entry.getKey();
                 Set<String> inputWords = entry.getValue();
                 
-                // 각 입력단어를 키로 하여 해당 그룹의 모든 입력단어들을 값으로 매핑
+                // 표준단어와 모든 입력단어를 포함한 확장 리스트 생성
                 List<String> expandedList = new ArrayList<>(inputWords);
+                // 표준단어가 inputWords에 없으면 추가
+                if (!expandedList.contains(standardWord)) {
+                    expandedList.add(standardWord);
+                }
                 
+                // 표준단어를 키로 하여 해당 그룹의 모든 단어들을 값으로 매핑
+                String normalizedStandard = standardWord.toLowerCase();
+                dictionary.computeIfAbsent(normalizedStandard, k -> new ArrayList<>())
+                        .addAll(expandedList);
+                
+                // 각 입력단어를 키로 하여 해당 그룹의 모든 단어들을 값으로 매핑
                 for (String inputWord : inputWords) {
                     // 입력단어의 정규화 버전을 키로 사용
                     String normalizedInput = inputWord.toLowerCase();
@@ -120,7 +131,7 @@ public class WordDictionaryService {
                 }
             }
             
-            // MongoDB에 저장
+            // MongoDB에 저장 (표준단어는 inputWords에 포함하지 않음 - 기존 구조 유지)
             List<WordDictionary> wordDictionaries = new ArrayList<>();
             for (Map.Entry<String, Set<String>> entry : standardToInputs.entrySet()) {
                 WordDictionary wordDict = WordDictionary.builder()
@@ -147,14 +158,27 @@ public class WordDictionaryService {
             
             // 입력단어 → 확장된 키워드 리스트 매핑 생성
             for (WordDictionary wordDict : allDictionaries) {
+                String standardWord = wordDict.getStandardWord();
                 List<String> inputWords = wordDict.getInputWords();
                 
-                // 각 입력단어를 키로 하여 해당 그룹의 모든 입력단어들을 값으로 매핑
+                // 표준단어와 모든 입력단어를 포함한 확장 리스트 생성
+                List<String> expandedList = new ArrayList<>(inputWords);
+                // 표준단어가 inputWords에 없으면 추가
+                if (!expandedList.contains(standardWord)) {
+                    expandedList.add(standardWord);
+                }
+                
+                // 표준단어를 키로 하여 해당 그룹의 모든 단어들을 값으로 매핑
+                String normalizedStandard = standardWord.toLowerCase();
+                dictionary.computeIfAbsent(normalizedStandard, k -> new ArrayList<>())
+                        .addAll(expandedList);
+                
+                // 각 입력단어를 키로 하여 해당 그룹의 모든 단어들을 값으로 매핑
                 for (String inputWord : inputWords) {
                     String normalizedInput = inputWord.toLowerCase();
                     
                     dictionary.computeIfAbsent(normalizedInput, k -> new ArrayList<>())
-                            .addAll(inputWords);
+                            .addAll(expandedList);
                 }
             }
             
