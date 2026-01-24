@@ -87,6 +87,7 @@ const ClubDetailPage = () => {
             handleTabClick(tabKey as TabType);
             scrollToContent();
           }}
+          initialIsSubscribed={searchParams.get('is_subscribed') === 'true'}
         />
       )}
       <Styled.Container>

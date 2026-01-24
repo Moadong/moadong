@@ -25,6 +25,7 @@ interface ClubDetailTopBarProps {
   tabs?: TabItem[];
   activeTab?: string;
   onTabClick?: (tabKey: string) => void;
+  initialIsSubscribed?: boolean;
 }
 
 const ClubDetailTopBar = ({
@@ -33,11 +34,12 @@ const ClubDetailTopBar = ({
   tabs,
   activeTab,
   onTabClick,
+  initialIsSubscribed = false,
 }: ClubDetailTopBarProps) => {
   const navigate = useNavigate();
   const theme = useTheme();
   const isInApp = isInAppWebView();
-  const [isNotificationActive, setIsNotificationActive] = useState(false);
+  const [isNotificationActive, setIsNotificationActive] = useState(initialIsSubscribed);
 
   // 스크롤 위치에 따른 상태 관리
   const { isTriggered: isHeaderVisible } = useScrollTrigger({
