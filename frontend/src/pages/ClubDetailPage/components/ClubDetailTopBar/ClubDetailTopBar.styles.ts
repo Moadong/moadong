@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 
-export const HeaderWrapper = styled.div<{ $isVisible: boolean }>`
+export const TopBarWrapper = styled.div<{ $isVisible: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -15,7 +15,7 @@ export const HeaderWrapper = styled.div<{ $isVisible: boolean }>`
   padding-top: env(safe-area-inset-top);
 `;
 
-export const Header = styled.header<{ $isVisible: boolean }>`
+export const TopBarContent = styled.header<{ $isVisible: boolean }>`
   position: relative;
   height: 60px;
   display: flex;

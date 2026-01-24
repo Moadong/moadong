@@ -73,8 +73,8 @@ const ClubDetailTopBar = ({
   };
 
   return (
-    <Styled.HeaderWrapper $isVisible={isHeaderVisible || showTabs}>
-      <Styled.Header $isVisible={isHeaderVisible}>
+    <Styled.TopBarWrapper $isVisible={isHeaderVisible || showTabs}>
+      <Styled.TopBarContent $isVisible={isHeaderVisible}>
         <Styled.IconButtonWrapper>
           <Styled.IconButton
             $isVisible={isHeaderVisible}
@@ -103,7 +103,7 @@ const ClubDetailTopBar = ({
         ) : (
           <Styled.Placeholder />
         )}
-      </Styled.Header>
+      </Styled.TopBarContent>
       {tabs && showTabs && (
         <Styled.TabBar>
           {tabs.map((tab) => (
@@ -117,7 +117,7 @@ const ClubDetailTopBar = ({
           ))}
         </Styled.TabBar>
       )}
-    </Styled.HeaderWrapper>
+    </Styled.TopBarWrapper>
   );
 };
 
