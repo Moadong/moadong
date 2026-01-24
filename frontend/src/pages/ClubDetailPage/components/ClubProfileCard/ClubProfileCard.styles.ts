@@ -181,8 +181,4 @@ export const IntroTitle = styled.h3`
 export const IntroDescription = styled.p`
   font-size: 14px;
   color: ${colors.gray[800]};
-
-  ${media.mobile} {
-    font-size: 12px;
-  }
 `;
