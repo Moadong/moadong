@@ -5,13 +5,13 @@ import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
 import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
 import { useTheme } from 'styled-components';
 import isInAppWebView from '@/utils/isInAppWebView';
-import { requestNavigateBack, requestNotificationSubscribe } from '@/utils/webviewBridge';
+import { requestNavigateBack, requestNotificationSubscribe, requestNotificationUnsubscribe } from '@/utils/webviewBridge';
 import * as Styled from './ClubDetailTopBar.styles';
 
 // 스크롤 임계값 상수
 const SCROLL_THRESHOLD = {
   HEADER_VISIBLE: 0, // 헤더 배경/타이틀 표시
-  TAB_STICKY: 350, // 탭바 고정
+  TAB_STICKY: 360, // 탭바 고정
 } as const;
 
 interface TabItem {
@@ -59,12 +59,16 @@ const ClubDetailTopBar = ({
   };
 
   const handleNotificationClick = () => {
-    // 실제 앱 통신 시도
-    const success = requestNotificationSubscribe(clubId, clubName);
-    
-    // 성공 시 상태 변경 (웹뷰 환경이 아니면 false 반환됨)
-    if (success) {
-      setIsNotificationActive(true);
+    if (isNotificationActive) {
+      const success = requestNotificationUnsubscribe(clubId);
+      if (success) {
+        setIsNotificationActive(false);
+      }
+    } else {
+      const success = requestNotificationSubscribe(clubId, clubName);
+      if (success) {
+        setIsNotificationActive(true);
+      }
     }
   };
 

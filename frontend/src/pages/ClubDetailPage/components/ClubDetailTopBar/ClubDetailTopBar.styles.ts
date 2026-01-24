@@ -8,7 +8,9 @@ export const HeaderWrapper = styled.div<{ $isVisible: boolean }>`
   z-index: 100;
   background-color: ${({ $isVisible, theme }) =>
     $isVisible ? theme.colors.base.white : 'transparent'};
-  transition: background-color 0.2s ease;
+  box-shadow: ${({ $isVisible }) =>
+    $isVisible ? '0 4px 6px -1px rgba(0, 0, 0, 0.05)' : 'none'};
+  transition: all 0.2s ease;
 `;
 
 export const Header = styled.header<{ $isVisible: boolean }>`
@@ -51,10 +53,8 @@ export const NotificationButton = styled.button<{
   height: 36px;
   padding: 0;
   border: none;
-  background-color: ${({ $isVisible, $isActive, theme }) => {
-    if ($isActive) return theme.colors.primary[900];
-    return $isVisible ? 'transparent' : theme.colors.base.white;
-  }};
+  background-color: ${({ $isVisible, theme }) =>
+    $isVisible ? 'transparent' : theme.colors.base.white};
   border-radius: 50%;
   cursor: pointer;
   display: flex;
