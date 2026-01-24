@@ -22,7 +22,8 @@ export const TAB_TYPE = {
 
 type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
-const TOP_BAR_HEIGHT = 65;
+// 소개내용/활동사진 탭 클릭 시 스크롤이 탑바 하단에 정확히 위치하도록 하는 높이 값
+const TOP_BAR_HEIGHT = 50;
 
 const ClubDetailPage = () => {
   const trackEvent = useMixpanelTrack();
