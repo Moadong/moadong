@@ -56,7 +56,12 @@ const ClubDetailTopBar = ({
     // 앱 웹뷰면 앱에 뒤로가기 요청, 아니면 웹 네비게이션
     const handled = requestNavigateBack();
     if (!handled) {
-      navigate(-1);
+      // 히스토리 스택이 있으면 뒤로가기, 없으면(직접 진입 등) 메인으로 이동
+      if (window.history.state && window.history.state.idx > 0) {
+        navigate(-1);
+      } else {
+        navigate('/', { replace: true });
+      }
     }
   };
 
