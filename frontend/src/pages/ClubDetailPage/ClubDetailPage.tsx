@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -6,7 +6,6 @@ import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
-import useDevice from '@/hooks/useDevice';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
@@ -32,8 +31,6 @@ const ClubDetailPage = () => {
       : TAB_TYPE.INTRO;
 
   const { clubId } = useParams<{ clubId: string }>();
-  const { isLaptop, isDesktop } = useDevice();
-
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
@@ -58,7 +55,7 @@ const ClubDetailPage = () => {
 
   return (
     <>
-      {(isLaptop || isDesktop) && <Header />}
+      <Header hideOn={['mobile', 'tablet']} />
       <Styled.Container>
         <Styled.ContentWrapper>
           <ClubProfileCard
