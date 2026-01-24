@@ -1,14 +1,14 @@
 package moadong.club.repository;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.dto.ClubSearchResult;
+import moadong.club.service.WordDictionaryService;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
@@ -24,6 +24,7 @@ import org.springframework.stereotype.Repository;
 public class ClubSearchRepository {
 
     private final MongoTemplate mongoTemplate;
+    private final WordDictionaryService wordDictionaryService;
 
     public List<ClubSearchResult> searchClubsByKeyword(String keyword, String recruitmentStatus,
         String division, String category) {
@@ -41,10 +42,18 @@ public class ClubSearchRepository {
         }
 
         if (keyword != null && !keyword.trim().isEmpty()) {
+            // 단어사전으로 키워드 확장
+            List<String> expandedKeywords = wordDictionaryService.expandKeywords(keyword);
+            
+            // 확장된 키워드들을 OR 조건으로 regex 생성
+            String regexPattern = expandedKeywords.stream()
+                    .map(Pattern::quote)  // 특수문자 이스케이프
+                    .collect(Collectors.joining("|"));
+            
             operations.add(Aggregation.match(new Criteria().orOperator(
-                Criteria.where("name").regex(keyword, "i"),
-                Criteria.where("category").regex(keyword, "i"),
-                Criteria.where("recruitmentInformation.tags").regex(keyword, "i")
+                Criteria.where("name").regex(regexPattern, "i"),
+                Criteria.where("category").regex(regexPattern, "i"),
+                Criteria.where("recruitmentInformation.tags").regex(regexPattern, "i")
             )));
         }
         operations.add(Aggregation.unwind("club_tags", true));

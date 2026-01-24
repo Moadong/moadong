@@ -16,8 +16,6 @@ import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
-import org.springframework.ai.document.Document;
-import org.springframework.ai.vectorstore.VectorStore;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -31,7 +29,6 @@ public class ClubProfileService {
 
     private final ClubRepository clubRepository;
     private final ClubSearchRepository clubSearchRepository;
-    private final ClubEmbeddingService clubEmbeddingService;
 
     @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
@@ -39,7 +36,6 @@ public class ClubProfileService {
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
         clubRepository.save(club);
-        clubEmbeddingService.updateVector(club);
     }
 
     public void updateClubRecruitmentInfo(ClubRecruitmentInfoUpdateRequest request,
