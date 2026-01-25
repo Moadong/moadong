@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "vite --config ./config/vite.config.ts",
     "build": "tsc --noEmit && vite build --config ./config/vite.config.ts",
-    "build": "vite build --config ./config/vite.config.ts",
     "preview": "vite preview --config ./config/vite.config.ts",
     "build:dev": "vite build --config ./config/vite.config.ts",
     "build:prod": "vite build --config ./config/vite.config.ts",
