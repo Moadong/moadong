@@ -12,11 +12,17 @@ export const useUploadCover = () => {
 
   return useMutation({
     mutationFn: async ({ clubId, file }: CoverUploadParams) => {
-      const { presignedUrl, finalUrl } = await coverApi.getUploadUrl(
+      const uploadUrlData = await coverApi.getUploadUrl(
         clubId,
         file.name,
         file.type,
       );
+
+      if (!uploadUrlData) {
+        throw new Error('커버 업로드 URL 생성 실패');
+      }
+
+      const { presignedUrl, finalUrl } = uploadUrlData;
 
       await uploadToStorage(presignedUrl, file);
 

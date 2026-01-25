@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { theme, Theme } from '@/styles/theme';
+import { theme } from '@/styles/theme';
 import { Z_INDEX } from '@/styles/zIndex';
 
 export const Overlay = styled.div<{ isOpen: boolean }>`

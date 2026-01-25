@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
 import * as Styled from './ClubFeed.styles';
+import useDevice from '@/hooks/useDevice';
+
+const DESKTOP_EAGER_IMAGE_COUNT = 15;
+const MOBILE_EAGER_IMAGE_COUNT = 6;
 
 interface Props {
   feed: string[];
@@ -8,6 +12,12 @@ interface Props {
 }
 
 const ClubFeed = ({ feed, clubName = '동아리' }: Props) => {
+  const { isLaptop, isDesktop } = useDevice();
+
+  const loadingThreshold = isDesktop || isLaptop 
+    ? DESKTOP_EAGER_IMAGE_COUNT
+    : MOBILE_EAGER_IMAGE_COUNT;
+
   const [isOpen, setIsOpen] = useState(false);
   const [index, setIndex] = useState(0);
 
@@ -43,7 +53,7 @@ const ClubFeed = ({ feed, clubName = '동아리' }: Props) => {
               <Styled.PhotoImage
                 src={f}
                 alt={`활동사진 ${index + 1}`}
-                loading='lazy'
+                loading={index < loadingThreshold ? 'eager' : 'lazy'}
               />
             </Styled.PhotoItem>
           ))}
