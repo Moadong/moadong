@@ -4,6 +4,8 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite --config ./config/vite.config.ts",
+    "build": "vite build --config ./config/vite.config.ts",
+    "preview": "vite preview --config ./config/vite.config.ts",
     "build:dev": "vite build --config ./config/vite.config.ts",
     "build:prod": "vite build --config ./config/vite.config.ts",
     "clean": "rm -rf dist",
@@ -13,7 +15,7 @@
     "build-storybook": "storybook build",
     "chromatic": "dotenv chromatic",
     "test": "jest",
-    "coverage": "jest --coverage --config jest.config.js",
+    "coverage": "jest --coverage --config jest.config.js"
   },
   "keywords": [],
   "author": "",
