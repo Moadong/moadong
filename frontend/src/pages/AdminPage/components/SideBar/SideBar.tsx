@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
 import { logout } from '@/apis/auth';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -42,6 +43,7 @@ const tabs: TabCategory[] = [
 ];
 
 const SideBar = () => {
+  const queryClient = useQueryClient();
   const trackEvent = useMixpanelTrack();
   const location = useLocation();
   const navigate = useNavigate();
@@ -56,6 +58,7 @@ const SideBar = () => {
     trackEvent(ADMIN_EVENT.TAB_CLICKED, {
       tabName: item.label,
     });
+    queryClient.invalidateQueries();
     navigate(item.path);
   };
 
