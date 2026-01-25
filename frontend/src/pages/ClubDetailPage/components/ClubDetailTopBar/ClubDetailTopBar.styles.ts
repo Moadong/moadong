@@ -11,8 +11,7 @@ export const TopBarWrapper = styled.div<{ $isVisible: boolean }>`
   box-shadow: ${({ $isVisible }) =>
     $isVisible ? '0 4px 6px -1px rgba(0, 0, 0, 0.05)' : 'none'};
   transition: all 0.2s ease;
-  padding-top: constant(safe-area-inset-top);
-  padding-top: env(safe-area-inset-top);
+  padding-top: var(--rn-safe-top, 0px);
 `;
 
 export const TopBarContent = styled.header<{ $isVisible: boolean }>`
