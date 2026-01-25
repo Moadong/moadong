@@ -1,6 +1,10 @@
 import API_BASE_URL from '@/constants/api';
 import { UpdateApplicantParams } from '@/types/applicants';
-import { AnswerItem, ApplicationFormData } from '@/types/application';
+import {
+  AnswerItem,
+  ApplicationFormData,
+  SemesterGroup,
+} from '@/types/application';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse, withErrorHandling } from './utils/apiHelpers';
 
@@ -70,10 +74,16 @@ export const getActiveApplications = async (clubId: string) => {
   }, '활성화된 지원서 목록 조회 중 오류 발생:');
 };
 
-export const getAllApplicationForms = async () => {
+interface ApplicationListResponse {
+  forms: SemesterGroup[];
+}
+
+export const getAllApplicationForms = async (): Promise<
+  ApplicationListResponse | undefined
+> => {
   return withErrorHandling(async () => {
     const response = await secureFetch(`${API_BASE_URL}/api/club/application`);
-    return handleResponse(response);
+    return handleResponse<ApplicationListResponse>(response);
   }, '모든 지원서 양식 조회 중 오류 발생:');
 };
 

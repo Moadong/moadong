@@ -1,13 +1,16 @@
 name: Create Jira issue
+
 on:
   issues:
     types:
       - opened
+
 jobs:
   create-issue:
     if: contains(github.event.issue.body, '🎟️ 상위 작업 (Ticket Number)')
     name: Create Jira issue
     runs-on: ubuntu-latest
+
     steps:
       - name: Login
         uses: atlassian/gajira-login@v3
@@ -27,6 +30,20 @@ jobs:
         with:
           template-path: .github/ISSUE_TEMPLATE/jira-issue-form.yml
 
+      - name: Check if base branch exists
+        id: check-branch
+        run: |
+          BASE_BRANCH="${{ steps.issue-parser.outputs.issueparser_baseBranch }}"
+          echo "Checking if branch '$BASE_BRANCH' exists..."
+
+          if git ls-remote --exit-code origin "refs/heads/${BASE_BRANCH}"; then
+            echo "Branch exists: $BASE_BRANCH"
+            echo "BRANCH_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "Branch does NOT exist: $BASE_BRANCH"
+            echo "BRANCH_EXISTS=false" >> $GITHUB_ENV
+          fi
+
       - name: Log Issue Parser
         run: |
           echo 'Parent Key: ${{ steps.issue-parser.outputs.issueparser_parentKey }}'
@@ -34,8 +51,8 @@ jobs:
           echo 'Parsed JSON: ${{ steps.issue-parser.outputs.jsonString }}'
 
       - name: Convert markdown to Jira Syntax
-        uses: peter-evans/jira2md@v1
         id: md2jira
+        uses: peter-evans/jira2md@v1
         with:
           input-text: |
             ### Github Issue Link
@@ -43,7 +60,8 @@ jobs:
 
             ${{ github.event.issue.body }}
 
-      - name: Create Issue
+      - name: Create Jira Issue
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'FE-') && env.BRANCH_EXISTS == 'true'
         id: create
         uses: atlassian/gajira-create@v3
         with:
@@ -53,40 +71,38 @@ jobs:
           description: '${{ steps.md2jira.outputs.output-text }}'
 
       - name: Log created issue
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'FE-') && env.BRANCH_EXISTS == 'true'
         run: echo "Jira Issue ${{ steps.issue-parser.outputs.issueparser_parentKey || 'UNKNOWN' }}/${{ steps.create.outputs.issue || 'UNKNOWN' }} was created"
 
-      - name: Checkout develop-fe branch
+      - name: Checkout selected base branch
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'FE-') && env.BRANCH_EXISTS == 'true'
         uses: actions/checkout@v4
         with:
-          ref: develop-fe
+          ref: ${{ steps.issue-parser.outputs.issueparser_baseBranch }}
 
       - name: Create branch with Ticket number
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'FE-') && env.BRANCH_EXISTS == 'true'
         run: |
           GITHUB_ISSUE_NUMBER="${{ github.event.issue.number }}"
           JIRA_ISSUE_KEY="${{ steps.create.outputs.issue }}"
           CUSTOM_BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branch }}"
 
-          # 사용자 입력 브랜치명에서 공백 제거 및 특수문자 처리
           SAFE_BRANCH_NAME=$(echo "${CUSTOM_BRANCH_NAME}" | tr ' ' '-' | tr -cd '[:alnum:]/-')
 
-          # 최종 브랜치명: "브랜치타입/#깃허브이슈번호-나머지-지라이슈번호"
-          # 브랜치 타입과 상세명을 분리하기 위해 "/"를 기준으로 나누고, 첫 번째 부분은 따로 저장
           BRANCH_TYPE=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f1)
           BRANCH_DETAIL=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f2-)
 
-          # 만약 사용자가 "/" 없이 단일 브랜치명을 입력했다면, BRANCH_DETAIL을 그대로 사용
           if [ -z "$BRANCH_DETAIL" ]; then
             BRANCH_DETAIL="$BRANCH_TYPE"
           fi
 
-          # 최종 브랜치명 조합
           BRANCH_NAME="${BRANCH_TYPE}/#${GITHUB_ISSUE_NUMBER}-${BRANCH_DETAIL}-${JIRA_ISSUE_KEY}"
 
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
 
-
       - name: Define issue number with fallback
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'FE-') && env.BRANCH_EXISTS == 'true'
         run: |
           if [ -z "${{ steps.create.outputs.issue }}" ]; then
             echo "ISSUE_NUMBER=UNKNOWN" >> $GITHUB_ENV
@@ -95,25 +111,24 @@ jobs:
           fi
 
       - name: Update issue title with branch type and Jira issue key
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'FE-') && env.BRANCH_EXISTS == 'true'
         run: |
           CUSTOM_BRANCH_NAME="${{ steps.issue-parser.outputs.issueparser_branch }}"
           JIRA_ISSUE_KEY="${{ steps.create.outputs.issue }}"
-
-          # 브랜치명의 제일 앞부분(예: feature, hotfix, refactor 등) 추출
           BRANCH_TYPE=$(echo "${CUSTOM_BRANCH_NAME}" | cut -d'/' -f1)
 
-          # 최종 이슈 타이틀 조합 (Jira 이슈 키에 [] 없이 삽입)
           echo "NEW_TITLE=[${BRANCH_TYPE}] ${JIRA_ISSUE_KEY} ${{ github.event.issue.title }}" >> $GITHUB_ENV
 
       - name: Apply updated issue title
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'FE-') && env.BRANCH_EXISTS == 'true'
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'update-issue'
           token: ${{ secrets.GITHUB_TOKEN }}
           title: '${{ env.NEW_TITLE }}'
 
-
       - name: Add comment with Jira issue link
+        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'FE-') && env.BRANCH_EXISTS == 'true'
         uses: actions-cool/issues-helper@v3
         with:
           actions: 'create-comment'

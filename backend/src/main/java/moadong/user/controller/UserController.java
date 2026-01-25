@@ -6,15 +6,16 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.AllArgsConstructor;
 import moadong.global.payload.Response;
-import moadong.global.util.JwtProvider;
 import moadong.user.annotation.CurrentUser;
 import moadong.user.payload.CustomUserDetails;
 import moadong.user.payload.request.UserLoginRequest;
 import moadong.user.payload.request.UserRegisterRequest;
+import moadong.user.payload.request.UserResetRequest;
 import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.FindUserClubResponse;
 import moadong.user.payload.response.LoginResponse;
 import moadong.user.payload.response.RefreshResponse;
+import moadong.user.payload.response.TempPasswordResponse;
 import moadong.user.service.UserCommandService;
 import moadong.user.view.UserSwaggerView;
 import org.springframework.http.ResponseCookie;
@@ -22,7 +23,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.CookieValue;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/auth/user")
@@ -31,7 +38,6 @@ import org.springframework.web.bind.annotation.*;
 public class UserController {
 
     private final UserCommandService userCommandService;
-    private final JwtProvider jwtProvider;
 
     @PostMapping("/register")
     @Operation(
@@ -92,6 +98,13 @@ public class UserController {
                                     HttpServletResponse response) {
         userCommandService.update(user.getUserId(), userUpdateRequest, response);
         return Response.ok("success update");
+    }
+
+    @PostMapping("/reset")
+    @Operation(summary = "사용자 비밀번호 초기화", description = "사용자 비밀번호를 초기화합니다.")
+    public ResponseEntity<?> reset(@RequestBody @Validated UserResetRequest userResetRequest) {
+        TempPasswordResponse tempPwdResponse = userCommandService.reset(userResetRequest.userId());
+        return Response.ok(tempPwdResponse);
     }
 
     @PostMapping("/find/club")

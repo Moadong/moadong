@@ -1,6 +1,4 @@
 package moadong.user.payload.response;
 
-public record FindUserClubResponse(
-        String clubId
-) {
+public record FindUserClubResponse(String clubId) {
 }

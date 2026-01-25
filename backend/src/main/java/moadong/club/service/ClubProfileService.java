@@ -3,54 +3,52 @@ package moadong.club.service;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubDetailedResult;
-import moadong.club.payload.request.ClubCreateRequest;
-import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.repository.ClubRepository;
+import moadong.club.repository.ClubSearchRepository;
+import moadong.club.util.RecruitmentStateCalculator;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
+import org.javers.core.Javers;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @AllArgsConstructor
 public class ClubProfileService {
 
     private final ClubRepository clubRepository;
-    private final RecruitmentScheduler recruitmentScheduler;
+    private final ClubSearchRepository clubSearchRepository;
+    private final RecruitmentStateCalculator recruitmentStateCalculator;
+    private final Javers javers;
 
-    public String createClub(ClubCreateRequest request) {
-        Club club = Club.builder()
-                .name(request.name())
-                .category(request.category())
-                .division(request.division())
-                .build();
-        clubRepository.save(club);
-
-        return club.getId();
-    }
-
+    @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
-        Club club = validateClubUpdateRequest(request.id(), user);
-
+        Club club = clubRepository.findClubByUserId(user.getId())
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
-        clubRepository.save(club);
+        Club saved = clubRepository.save(club);
+        javers.commit(user.getUsername(), saved);
     }
 
-    public void updateClubRecruitmentInfo(ClubRecruitmentInfoUpdateRequest request, CustomUserDetails user) {
-        Club club = validateClubUpdateRequest(request.id(), user);
-
+    public void updateClubRecruitmentInfo(ClubRecruitmentInfoUpdateRequest request,
+                                          CustomUserDetails user) {
+        Club club = clubRepository.findClubByUserId(user.getId())
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
-        clubRepository.save(club);
-
-        //모집일정을 동적스케쥴러에 달아둠
-        if (request.recruitmentStart() != null && request.recruitmentEnd() != null) {
-            recruitmentScheduler.scheduleRecruitment(club.getId(), request.recruitmentStart(),
-                    request.recruitmentEnd());
-        }
+        recruitmentStateCalculator.calculate(
+                club,
+                club.getClubRecruitmentInformation().getRecruitmentStart(),
+                club.getClubRecruitmentInformation().getRecruitmentEnd()
+        );
+        club.getClubRecruitmentInformation().updateLastModifiedDate();
+        Club saved = clubRepository.save(club);
+        javers.commit(user.getUsername(), saved);
     }
 
     public ClubDetailedResponse getClubDetail(String clubId) {
@@ -63,13 +61,5 @@ public class ClubProfileService {
         );
         return new ClubDetailedResponse(clubDetailedResult);
     }
-
-    private Club validateClubUpdateRequest(String clubId, CustomUserDetails user){
-        Club club = clubRepository.findById(clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
-        if (!user.getId().equals(club.getUserId())){
-            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
-        }
-        return club;
-    }
 }
+

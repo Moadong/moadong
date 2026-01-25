@@ -32,6 +32,10 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
 	implementation 'org.springframework.boot:spring-boot-starter-validation'
+	implementation 'org.springframework.boot:spring-boot-starter-aop'
+	implementation 'org.springframework.boot:spring-boot-starter-amqp'
+	implementation 'org.springframework.boot:spring-boot-starter-data-redis'
+	implementation 'org.springframework.retry:spring-retry'
 	implementation 'com.google.cloud:spring-cloud-gcp-storage:5.8.0'
 	implementation 'io.jsonwebtoken:jjwt-api:0.11.5'
 	implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
@@ -40,11 +44,51 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-actuator'
 	compileOnly 'org.projectlombok:lombok'
 	annotationProcessor 'org.projectlombok:lombok'
+
+    testImplementation 'io.github.artsok:rerunner-jupiter:2.1.6'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testCompileOnly 'org.projectlombok:lombok'
+	testAnnotationProcessor 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
+
+	// S3
+	implementation 'software.amazon.awssdk:s3:2.26.0'
+	implementation 'software.amazon.awssdk:auth:2.26.0'
+	implementation 'software.amazon.awssdk:url-connection-client:2.26.0'
+
+	// resize tool
+	implementation 'net.coobird:thumbnailator:0.4.14'
+	implementation 'org.springframework:spring-test'
+
+	implementation 'com.google.firebase:firebase-admin:9.7.0'
+
+    implementation 'org.javers:javers-spring-boot-starter-mongo:7.10.0'
 }
 
-tasks.named('test') {
+//전체 테스트
+test {
+	description = 'Runs the total tests.'
 	useJUnitPlatform()
+}
+
+//유닛 테스트
+task unitTest(type: Test) {
+	group = 'verification'
+	description = 'Runs the unit tests.'
+	useJUnitPlatform{
+		includeTags 'UnitTest'
+		excludeTags 'IntegrationTest'
+
+	}
+}
+
+//통합 테스트
+task integrationTest(type: Test) {
+	group = 'verification'
+	description = 'Runs the integration tests.'
+	useJUnitPlatform{
+		includeTags 'IntegrationTest'
+		excludeTags 'UnitTest'
+	}
 }
