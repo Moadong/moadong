@@ -7,7 +7,11 @@ export type WebViewMessage =
       type: 'NOTIFICATION_SUBSCRIBE';
       payload: { clubId: string; clubName?: string };
     }
-  | { type: 'NOTIFICATION_UNSUBSCRIBE'; payload: { clubId: string } };
+  | { type: 'NOTIFICATION_UNSUBSCRIBE'; payload: { clubId: string } }
+  | {
+      type: 'SHARE';
+      payload: { title: string; text: string; url: string };
+    };
 
 export type WebViewMessageType = WebViewMessage['type'];
 
@@ -62,5 +66,16 @@ export const requestNotificationUnsubscribe = (clubId: string): boolean => {
   return postMessageToApp({
     type: 'NOTIFICATION_UNSUBSCRIBE',
     payload: { clubId },
+  });
+};
+
+export const requestShare = (payload: {
+  title: string;
+  text: string;
+  url: string;
+}): boolean => {
+  return postMessageToApp({
+    type: 'SHARE',
+    payload,
   });
 };
