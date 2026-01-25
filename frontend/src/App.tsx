@@ -15,6 +15,7 @@ import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
 import 'swiper/css';
+import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -47,8 +48,27 @@ const App = () => {
                 </Suspense>
               }
             />
+            {/*기존 웹 & 안드로이드 url (android: v1.1.0)*/}
             <Route
               path='/club/:clubId'
+              element={
+                <Suspense fallback={null}>
+                  <LegacyClubDetailPage />
+                </Suspense>
+              }
+            />
+            {/*웹 유저에게 신규 상세페이지 보유주기 위한 임시 url*/}
+            <Route
+              path='/clubDetail/:clubId'
+              element={
+                <Suspense fallback={null}>
+                  <ClubDetailPage />
+                </Suspense>
+              }
+            />
+            {/*새로 빌드해서 배포할 앱 주소 url*/}
+            <Route
+              path='/webview/club/:clubId'
               element={
                 <Suspense fallback={null}>
                   <ClubDetailPage />
