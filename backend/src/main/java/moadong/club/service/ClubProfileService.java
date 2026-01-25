@@ -1,7 +1,9 @@
 package moadong.club.service;
 
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.Club;
+import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.payload.dto.ClubDetailedResult;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
@@ -18,8 +20,12 @@ import org.javers.core.Javers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.List;
+import java.util.Map;
+
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ClubProfileService {
 
     private final ClubRepository clubRepository;
