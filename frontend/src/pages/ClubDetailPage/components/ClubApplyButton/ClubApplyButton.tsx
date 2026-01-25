@@ -7,6 +7,7 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
 import ShareButton from '../ShareButton/ShareButton';
+import useDevice from '@/hooks/useDevice';
 import * as Styled from './ClubApplyButton.styles';
 
 interface ClubApplyButtonProps {
@@ -18,6 +19,8 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
   const { data: clubDetail } = useGetClubDetail(clubId!);
+  const { isMobile, isTablet } = useDevice();
+  const shouldShowShareButton = !isMobile && !isTablet;
 
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [applicationOptions, setApplicationOptions] = useState<
@@ -109,7 +112,7 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
 
   return (
     <Styled.ApplyButtonContainer>
-      <ShareButton clubId={clubId} />
+      {shouldShowShareButton && <ShareButton clubId={clubId} />}
       <Styled.ApplyButton
         disabled={isRecruitmentUpcoming || isRecruitmentClosed}
         onClick={handleApplyButtonClick}
