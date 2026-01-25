@@ -4,6 +4,7 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite --config ./config/vite.config.ts",
+    "build": "tsc --noEmit && vite build --config ./config/vite.config.ts",
     "build": "vite build --config ./config/vite.config.ts",
     "preview": "vite preview --config ./config/vite.config.ts",
     "build:dev": "vite build --config ./config/vite.config.ts",
@@ -15,7 +16,8 @@
     "build-storybook": "storybook build",
     "chromatic": "dotenv chromatic",
     "test": "jest",
-    "coverage": "jest --coverage --config jest.config.js"
+    "coverage": "jest --coverage --config jest.config.js",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
