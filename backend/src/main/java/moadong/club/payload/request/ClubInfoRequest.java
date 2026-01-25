@@ -1,22 +1,26 @@
 package moadong.club.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
+import moadong.club.payload.dto.ClubDescriptionDto;
+import moadong.club.enums.ClubCategory;
+import moadong.club.enums.ClubDivision;
+import moadong.global.annotation.PhoneNumber;
+
 import java.util.List;
+import java.util.Map;
 
 public record ClubInfoRequest(
     @NotBlank
-    String id,
-    @NotBlank
     String name,
-    @NotBlank
-    String category,
-    @NotBlank
-    String division,
+    ClubCategory category,
+    ClubDivision division,
     List<String> tags,
     String introduction,
     String presidentName,
+    ClubDescriptionDto description,
+    @PhoneNumber
     String presidentPhoneNumber,
-    String recruitmentForm
+    Map<String, String> socialLinks
 ) {
 
 }
