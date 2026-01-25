@@ -6,6 +6,10 @@ import { transitions } from '@/styles/theme/transitions';
 export const Container = styled.div`
   width: 100%;
   min-height: 100vh;
+
+  ${media.tablet} {
+    padding-bottom: 60px;
+  }
 `;
 
 export const ContentWrapper = styled.div`
