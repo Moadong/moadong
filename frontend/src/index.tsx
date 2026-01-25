@@ -1,9 +1,14 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { initializeMixpanel, initializeSentry } from './utils/initSDK';
+import {
+  initializeKakaoSDK,
+  initializeMixpanel,
+  initializeSentry,
+} from './utils/initSDK';
 
 initializeMixpanel();
 initializeSentry();
+initializeKakaoSDK();
 
 async function startApp() {
   if (import.meta.env.DEV) {

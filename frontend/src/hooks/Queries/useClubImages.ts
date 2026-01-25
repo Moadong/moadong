@@ -30,10 +30,6 @@ export const useUploadFeed = () => {
       }));
       const feedResArr = await feedApi.getUploadUrls(clubId, uploadRequests);
 
-      if (!feedResArr) {
-        throw new Error('피드 업로드 URL 생성 실패');
-      }
-
       // 2. r2에 병렬 업로드 (개별 성공/실패 추적)
       const uploadResults = await Promise.allSettled(
         files.map((file, i) =>
@@ -104,17 +100,11 @@ export const useUploadLogo = () => {
   return useMutation({
     mutationFn: async ({ clubId, file }: LogoUploadParams) => {
       // 1. presigned URL 받기
-      const uploadUrlData = await logoApi.getUploadUrl(
+      const { presignedUrl, finalUrl } = await logoApi.getUploadUrl(
         clubId,
         file.name,
         file.type,
       );
-
-      if (!uploadUrlData) {
-        throw new Error('로고 업로드 URL 생성 실패');
-      }
-
-      const { presignedUrl, finalUrl } = uploadUrlData;
 
       // 2. r2 업로드
       await uploadToStorage(presignedUrl, file);

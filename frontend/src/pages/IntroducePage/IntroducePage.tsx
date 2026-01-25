@@ -2,6 +2,7 @@ import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import isInAppWebView from '@/utils/isInAppWebView';
 import IntroSection from './components/sections/1.IntroSection/IntroSection';
 import ProblemSection from './components/sections/2.ProblemSection/ProblemSection';
 import QuestionSection from './components/sections/3.QuestionSection/QuestionSection';
@@ -16,7 +17,9 @@ const IntroducePage = () => {
 
   return (
     <>
-      <Header hideOn={['webview']} />
+      <Styled.IntroducePageHeader>
+        {!isInAppWebView() && <Header />}
+      </Styled.IntroducePageHeader>
       <Styled.Main>
         <IntroSection />
         <ProblemSection />

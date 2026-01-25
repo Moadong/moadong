@@ -32,11 +32,8 @@ const LoginTab = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const loginData = await login(userId, password);
-      if (!loginData) {
-        throw new Error('로그인 응답이 없습니다.');
-      }
-      localStorage.setItem('accessToken', loginData.accessToken);
+      const { accessToken } = await login(userId, password);
+      localStorage.setItem('accessToken', accessToken);
       alert('로그인 성공! 관리자 페이지로 이동합니다.');
       navigate('/admin');
     } catch (error: unknown) {
