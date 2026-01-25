@@ -4,11 +4,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite --config ./config/vite.config.ts",
+    "build": "vite build --config ./config/vite.config.ts",
+    "preview": "vite preview --config ./config/vite.config.ts",
     "build:dev": "vite build --config ./config/vite.config.ts",
-    "build:prod": "vite build --config ./config/vite.config.ts",
-    "webpack:dev": "tsx --no-cache ./node_modules/webpack-cli/bin/cli.js serve --config config/webpack.dev.ts",
-    "webpack:build:dev": "tsx ./node_modules/webpack-cli/bin/cli.js --config config/webpack.dev.ts",
-    "webpack:build:prod": "tsx ./node_modules/webpack-cli/bin/cli.js --config config/webpack.prod.ts",
+    "build:prod": "tsc --noEmit && vite build --config ./config/vite.config.ts",
     "clean": "rm -rf dist",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,css,scss}\"",
     "lint": "eslint --fix",
@@ -16,7 +15,8 @@
     "build-storybook": "storybook build",
     "chromatic": "dotenv chromatic",
     "test": "jest",
-    "coverage": "jest --coverage --config jest.config.js"
+    "coverage": "jest --coverage --config jest.config.js",
+    "typecheck": "tsc --noEmit"
   },
   "keywords": [],
   "author": "",
