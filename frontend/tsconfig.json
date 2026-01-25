@@ -16,8 +16,8 @@
     "paths": {
       "@/*": ["src/*"]
     },
-    "types": ["vite/client", "jest"]
+    "types": ["vite/client", "jest", "node"]
   },
-  "include": ["src", "eslint.config.mjs"],
+  "include": ["src", "eslint.config.mjs", "playwright.config.ts"],
   "exclude": ["node_modules", "dist"]
 }

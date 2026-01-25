@@ -18,4 +18,5 @@ module.exports = {
     '!src/**/*.d.ts', // 타입 선언 파일 제외
     '!src/**/index.ts', // index 파일 제외
   ],
+  testPathIgnorePatterns: ['/node_modules/', '/e2e/'], // Playwright 테스트 제외
 };
