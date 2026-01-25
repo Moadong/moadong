@@ -74,7 +74,7 @@ const ClubDetailPage = () => {
 
   return (
     <>
-      {(isLaptop || isDesktop) && <Header />}
+      <Header hideOn={['mobile', 'tablet']} />
       {showTopBar && (
         <ClubDetailTopBar
           clubId={clubId || ''}

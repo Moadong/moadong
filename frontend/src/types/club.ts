@@ -50,7 +50,7 @@ export type SemesterTermType = (typeof SemesterTerm)[keyof typeof SemesterTerm];
 
 export interface Award {
   year: number;
-  semester: SemesterTermType;
+  semesterTerm: SemesterTermType;
   achievements: string[];
 }
 

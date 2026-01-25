@@ -13,13 +13,13 @@ interface AwardEditorProps {
 const START_YEAR = 2020;
 
 const getSemesterSortValue = (award: Award): number => {
-  const semesterValue = award.semester === SemesterTerm.FIRST ? 1 : 2;
+  const semesterValue = award.semesterTerm === SemesterTerm.FIRST ? 1 : 2;
   return award.year * 10 + semesterValue;
 };
 
 const formatSemesterLabel = (award: Award): string => {
   const semesterLabel =
-    award.semester === SemesterTerm.FIRST ? '1학기' : '2학기';
+    award.semesterTerm === SemesterTerm.FIRST ? '1학기' : '2학기';
   return `${award.year} ${semesterLabel}`;
 };
 
@@ -58,13 +58,13 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
   );
 
   const getAwardKey = (award: Award, index: number): string =>
-    `${award.year}-${award.semester}-${index}`;
+    `${award.year}-${award.semesterTerm}-${index}`;
 
   const handleAddSemester = () => {
     const year = parseInt(selectedYear, 10);
 
     const isDuplicate = awards.some(
-      (award) => award.year === year && award.semester === selectedSemester,
+      (award) => award.year === year && award.semesterTerm === selectedSemester,
     );
     if (isDuplicate) {
       alert('이미 추가된 학기입니다.');
@@ -73,7 +73,7 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
 
     const newAward: Award = {
       year,
-      semester: selectedSemester,
+      semesterTerm: selectedSemester,
       achievements: [''],
     };
 
@@ -221,7 +221,7 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
           const originalIndex = awards.findIndex(
             (originalAward, idx) =>
               originalAward.year === award.year &&
-              originalAward.semester === award.semester &&
+              originalAward.semesterTerm === award.semesterTerm &&
               originalAward.achievements === award.achievements,
           );
           const awardKey = getAwardKey(award, originalIndex);

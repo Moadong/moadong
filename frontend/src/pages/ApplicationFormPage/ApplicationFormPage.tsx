@@ -120,7 +120,7 @@ const ApplicationFormPage = () => {
 
   return (
     <>
-      <Header />
+      <Header showOn={['desktop']} />
       <PageContainer style={{ paddingTop: '80px' }}>
         <Styled.FormTitle>{formData.title}</Styled.FormTitle>
         {formData.description && (

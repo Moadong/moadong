@@ -7,23 +7,62 @@ import { USER_EVENT } from '@/constants/eventName';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useScrollDetection } from '@/hooks/Scroll/useScrollDetection';
+import useDevice from '@/hooks/useDevice';
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
+import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './Header.styles';
 
-const Header = () => {
+type DeviceType = 'mobile' | 'tablet' | 'laptop' | 'desktop' | 'webview';
+
+interface HeaderProps {
+  showOn?: DeviceType[];
+  hideOn?: DeviceType[];
+}
+
+const Header = ({ showOn, hideOn }: HeaderProps) => {
   const trackEvent = useMixpanelTrack();
   const location = useLocation();
-  const isAdminPage = location.pathname.startsWith('/admin');
-  const isAdminLoginPage = location.pathname.startsWith('/admin/login');
   const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isScrolled = useScrollDetection();
-
+  const { isMobile, isTablet, isLaptop, isDesktop } = useDevice();
   const {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
     handleAdminClick,
   } = useHeaderNavigation();
+
+  const isAdminPage = location.pathname.startsWith('/admin');
+  const isAdminLoginPage = location.pathname.startsWith('/admin/login');
+  const isWebView = isInAppWebView();
+
+  const getCurrentDeviceTypes = (): DeviceType[] => {
+    const types: DeviceType[] = [];
+    if (isMobile) types.push('mobile');
+    if (isTablet) types.push('tablet');
+    if (isLaptop) types.push('laptop');
+    if (isDesktop) types.push('desktop');
+    if (isWebView) types.push('webview');
+    return types;
+  };
+
+  const shouldRender = (): boolean => {
+    const currentTypes = getCurrentDeviceTypes();
+
+    if (hideOn) {
+      return !hideOn.some((type) => currentTypes.includes(type));
+    }
+
+    if (showOn) {
+      return showOn.some((type) => currentTypes.includes(type));
+    }
+
+    return true;
+  };
+
+  if (!shouldRender()) {
+    return null;
+  }
 
   const navLinks = [
     { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
