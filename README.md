@@ -10,9 +10,9 @@
 </p>
 
 <p align="middle">
-  <img src="https://img.shields.io/badge/Since-2025.01-black" />
-  <img src="https://img.shields.io/badge/누적 사용자-10,000+-4285F4" />
-  <img src="https://img.shields.io/badge/DAU-400+-34A853" />
+  <img src="https://img.shields.io/badge/Since-2025.01-black" alt="Since 2025.01" />
+  <img src="https://img.shields.io/badge/누적 사용자-10,000+-4285F4" alt="누적 사용자 10,000+" />
+  <img src="https://img.shields.io/badge/DAU-400+-34A853" alt="DAU 400+" />
 </p>
 
 <img width="2105" alt="모아동 메인 화면" src="https://github.com/user-attachments/assets/5916e910-5eef-48e3-a44a-1a486d2dd976" />
@@ -38,7 +38,7 @@
 ### Contributors
 
 <a href="https://github.com/Moadong/moadong/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Moadong/moadong" />
+  <img src="https://contrib.rocks/image?repo=Moadong/moadong" alt="Contributors" />
 </a>
 
 
@@ -123,8 +123,12 @@
 
 <table>
   <tr>
-    <td><img width="2514" alt="지원하기 버튼" src="https://github.com/user-attachments/assets/ab02d314-07a9-444c-86d9-d240bd29d610" /></td>
-    <td><img width="2229" alt="모아동 지원서" src="https://github.com/user-attachments/assets/67a8212d-1a04-4740-9291-2f0d7f25f691" /></td>
+    <td>
+    <img width="2229" alt="모아동 지원서1" src="https://github.com/user-attachments/assets/67a8212d-1a04-4740-9291-2f0d7f25f691" />
+    </td>
+    <td>
+    <img width="2218" alt="모아동 지원서2" src="https://github.com/user-attachments/assets/bc7006cc-ed82-4a88-822d-d583e8efecb6" />
+    </td>
   </tr>
 </table>
 
