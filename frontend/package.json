@@ -79,16 +79,8 @@
     "tsx": "^4.19.2",
     "typescript": "^5.7.2",
     "vite": "^7.3.0",
-<<<<<<< HEAD
     "vite-plugin-svgr": "^4.5.0",
-    "vite-tsconfig-paths": "^6.0.0",
-    "webpack": "^5.97.1",
-    "webpack-cli": "^6.0.1",
-    "webpack-dev-server": "^5.2.0",
-    "webpack-merge": "^6.0.1"
-=======
     "vite-tsconfig-paths": "^6.0.0"
->>>>>>> e220fa3b7f01950748c5ce8a29f21aae45021114
   },
   "eslintConfig": {
     "extends": [
