@@ -119,12 +119,12 @@ const ClubDetailPage = () => {
             </Styled.TabList>
 
             <Styled.TabContent>
-              {activeTab === TAB_TYPE.INTRO && (
+              <div style={{ display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none' }}>
                 <ClubIntroContent {...clubDetail.description} />
-              )}
-              {activeTab === TAB_TYPE.PHOTOS && (
+              </div>
+              <div style={{ display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none' }}>
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
-              )}
+              </div>
             </Styled.TabContent>
           </Styled.RightSection>
         </Styled.ContentWrapper>
