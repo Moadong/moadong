@@ -4,10 +4,10 @@
   "main": "index.js",
   "scripts": {
     "dev": "vite --config ./config/vite.config.ts",
-    "build": "vite build --config ./config/vite.config.ts",
+    "build": "tsc --noEmit && vite build --config ./config/vite.config.ts",
     "preview": "vite preview --config ./config/vite.config.ts",
     "build:dev": "vite build --config ./config/vite.config.ts",
-    "build:prod": "tsc --noEmit && vite build --config ./config/vite.config.ts",
+    "build:prod": "vite build --config ./config/vite.config.ts",
     "clean": "rm -rf dist",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,css,scss}\"",
     "lint": "eslint --fix",
