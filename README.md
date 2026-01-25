@@ -1,177 +1,122 @@
 
-<p align="center">
-  <img width="1200" alt="모아동 배너" src="https://github.com/user-attachments/assets/46633707-3b09-4795-8ee4-1d22747321d8"/>
-</p>
-<h2 align="center">모아동 (moadong)</h2>
-<p align="center">동아리 탐색부터 지원까지, 한 곳에서!</p>
+![3대지 4 사본 1](https://github.com/user-attachments/assets/be30aa43-0b91-4513-810a-e2617ffb9fd6)
 
-<p align="center">
-  <a href="https://www.moadong.com"><b>🌐 Web</b></a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="https://play.google.com/store/search?q=%EB%AA%A8%EC%95%84%EB%8F%99&c=apps&hl=ko"><b>📱 Android</b></a>&nbsp;&nbsp;&nbsp;|&nbsp;&nbsp;&nbsp;<a href="https://apps.apple.com/kr/app/%EB%AA%A8%EC%95%84%EB%8F%99-%EB%B6%80%EA%B2%BD%EB%8C%80-%EB%8F%99%EC%95%84%EB%A6%AC-%EB%AA%A8%EB%91%90-%EB%AA%A8%EC%95%84/id6755062085"><b>🍎 iOS</b></a>
-</p>
-
-<p align="middle">
-  <img src="https://img.shields.io/badge/Since-2025.01-black" alt="Since 2025.01" />
-  <img src="https://img.shields.io/badge/누적 사용자-10,000+-4285F4" alt="누적 사용자 10,000+" />
-  <img src="https://img.shields.io/badge/DAU-400+-34A853" alt="DAU 400+" />
-</p>
-
-<img width="2105" alt="모아동 메인 화면" src="https://github.com/user-attachments/assets/5916e910-5eef-48e3-a44a-1a486d2dd976" />
+### 부경대학교 동아리를 한 눈으로 보여주기 위한 웹서비스 "모아동”입니다.
+#### 🎯 왜 "모아동"을 개발했을까요?  
+에브리타임에서 동아리 모집 정보가 기간 한정으로만 업데이트되어, 지원자들이 항상 최신 정보를 찾기 어려웠습니다.  
+또한, 동아리 운영진도 매번 새롭게 홍보 글을 작성해야 하는 번거로움이 있었습니다.  
 
 
+#### 📌 모아동이 해결합니다
+✅ 한눈에 보기 – 부경대의 모든 동아리를 한 곳에서 쉽게 확인<br/>
+✅ 실시간 업데이트 – 모집 기간과 상관없이 항상 최신 정보 제공<br/>
+✅ 운영진의 홍보 부담 감소 - 반복적인 홍보 없이도 손쉬운 노출과 관리
+
+#### 🔗 서비스 주소
+[모아동](https://www.moadong.com/)  
+  
+[모아동 소개 페이지](https://valiant-schooner-12c.notion.site/1a64ac84bab3805287e0cef50b563370)
+  
+  
+![1280~1919](https://github.com/user-attachments/assets/04eb208a-40ff-4a8a-9e4b-cea517e00a76)
 
 
-<br />
+## contributors
 
+### 프론트
+<table>
+  <tr>
+    <td align="center">
+       <img src="https://avatars.githubusercontent.com/u/105052068?v=4" width="120px;"/>   
+        <br />
+        <a href="https://github.com/seongwon030" title="Code"><b>seongwon030</b></a>
+    </td>
+    <td align="center">
+        <img src="https://avatars.githubusercontent.com/u/112786665?v=4" width="120px;"/> 
+        <br />
+        <a href="https://github.com/oesnuj" title="Code"><b>oesnuj</b></a>
+    </td>
+    <td align="center">
+        <img src="https://avatars.githubusercontent.com/u/163711629?v=4" width="120px;"/> 
+        <br />
+        <a href="https://github.com/suhyun113" title="Code"><b>suhyun113</b></a>
+    </td> 
+    <td align="center">
+        <img src="" width="120px;"/> 
+        <br />
+        <a href="https://github.com/newdesigner" title="Code"><b></b></a>
+    </td> 
+  </tr>
+  <tr>
+    <td align="center"><b>서성원</b></td>
+    <td align="center"><b>김준서</b></td>
+    <td align="center"><b>김수현</b></td>
+    <td align="center"><b>김상희</b></td>
+  </tr>
+  <tr>
+    <td align="center"><b>FrontEnd</b></td>
+    <td align="center"><b>FrontEnd</b></td>
+    <td align="center"><b>FrontEnd</b></td>
+    <td align="center"><b>Design</b></td>
+  </tr>
+</table>
 
-## 프로젝트 소개
-
-부경대학교 학생들을 위한 동아리 플랫폼, 모아동입니다.
-
-🎓 **학생** - 동아리를 검색하고, 정보를 확인하고, 바로 지원할 수 있어요
-
-🎪 **동아리 운영진** - 동아리 정보를 수정하고, 지원서를 관리할 수 있어요
-
-<br />
-
-
-
-### Contributors
-
-<a href="https://github.com/Moadong/moadong/graphs/contributors">
-  <img src="https://contrib.rocks/image?repo=Moadong/moadong" alt="Contributors" />
-</a>
-
-
-
-
-
-
-<br /><br />
-
-
-## 이런 문제가 있었어요
-
-### 👨‍🎓 학생들은
-- 중앙 동아리만 70개가 넘는데 에타에 뒤죽박죽 올라와요
-- 동아리 이름을 모르면 검색도 못해요
-- 익명글이랑 홍보글이 섞여서 찾기 너무 힘들어요
-
-### 🎪 동아리는  
-- 에타 말고는 제대로 홍보할 곳이 없어요
-- 한번 올린 모집 정보를 수정할 수 없어요
-
-<br />
-
-
-## 이렇게 해결했어요
-
-### 📂 분과별 카테고리
-체육, 문화, 학술... 원하는 분야를 바로 찾을 수 있어요
-
-### ⚙️ 관리자 페이지
-동아리 담당자가 모집 기간과 모집글을 직접 수정할 수 있어요
-
-### 🖱️ 원클릭 지원
-지원하기 버튼으로 구글폼, 네이버폼, 모아동 자체의 지원 폼에 바로 연결돼요
-
-### 🎉 정보부터 지원까지 한 곳에서
-더 이상 에브리타임을 뒤질 필요 없어요. 여기서 다 해결돼요
-
-<br />
-
-
-## 이렇게 발전하고 있어요
-
-### 🤝 총동아리연합회와 함께
-학교 산하 기관인 총동아리연합회와 협업하며, 전교생이 더 쉽게 동아리를 찾고 참여할 수 있도록 서비스를 개선하고 있어요.
-- 각 동아리의 행사 및 일정 정보 제공
-
-- 동아리 소개 한마당 등 교내 행사와 연계
-
-
-### 💬 지속적인 피드백 수렴
-동아리 운영진과 학생들의 실제 사용 경험을 바탕으로, 의견을 듣고 빠르게 반영하며 서비스 전반을 지속적으로 개선하고 있어요.
-
-- 동아리 운영진들과의 주기적인 미팅
-
-- 학생 피드백을 바탕으로 한 기능 개선
-
-
-<br /><br />
-
-
-## 🎓 학생을 위한 기능
-
-### 메인페이지
-
-6개 분과별 필터링과 키워드 검색으로 동아리를 탐색할 수 있어요.
-
-<img width="2845" alt="메인페이지" src="https://github.com/user-attachments/assets/832b553b-c058-4021-98e9-6b4a1d720fd4" />
-
-### 동아리 상세페이지
-
-동아리 소개, 활동 내용, 수상 내역, 활동사진, FAQ를 확인할 수 있어요.
-
-
-<img width="2514" alt="동아리 상세페이지" src="https://github.com/user-attachments/assets/ab02d314-07a9-444c-86d9-d240bd29d610" />
-
-### 지원하기
-
-구글폼, 네이버폼, 또는 모아동 자체 지원서로 바로 지원할 수 있어요.
+### 백엔드
 
 <table>
   <tr>
-    <td>
-    <img width="2229" alt="모아동 지원서1" src="https://github.com/user-attachments/assets/67a8212d-1a04-4740-9291-2f0d7f25f691" />
+    <td align="center">
+       <img src="https://avatars.githubusercontent.com/u/130421104?v=4" width="120px;"/>   
+        <br />
+        <a href="https://github.com/PororoAndFriends" title="Code"><b>Pororo</b></a>
     </td>
-    <td>
-    <img width="2218" alt="모아동 지원서2" src="https://github.com/user-attachments/assets/bc7006cc-ed82-4a88-822d-d583e8efecb6" />
+    <td align="center">
+        <img src="https://avatars.githubusercontent.com/u/49135677?v=4" width="120px;"/> 
+        <br />
+        <a href="https://github.com/Zepelown" title="Code"><b>Zepelown</b></a>
     </td>
+    <td align="center">
+        <img src="https://avatars.githubusercontent.com/u/48638700?v=4" width="120px;"/> 
+        <br />
+        <a href="https://github.com/FhRh" title="Code"><b>FhRh</b></a>
+    </td>
+    <td align="center">
+       <img src="https://avatars.githubusercontent.com/u/66681282?v=4" width="120px;"/>   
+        <br />
+        <a href="https://github.com/lepitaaar" title="Code"><b>lepitaaar</b></a>
+    </td>
+    <td align="center">
+       <img src="https://avatars.githubusercontent.com/u/143075401?v=4" width="120px;"/>   
+        <br />
+        <a href="https://github.com/alsdddk" title="Code"><b>alsdddk</b></a>
+    </td>
+  </tr>
+  <tr>
+    <td align="center"><b>함규빈</b></td>
+    <td align="center"><b>윤성원</b></td>
+    <td align="center"><b>양두영</b></td>
+    <td align="center"><b>이은호</b></td>
+    <td align="center"><b>김민아</b></td>
+  </tr>
+  <tr>
+    <td align="center"><b>DevOps</b></td>
+    <td align="center"><b>Server</b></td>
+    <td align="center"><b>Server</b></td>
+    <td align="center"><b>Server</b></td>
+    <td align="center"><b>Server</b></td>
   </tr>
 </table>
 
 
+## ✨ 기술 스택 (Tech Stack)
+### 프론트
+<img src="https://img.shields.io/badge/react-61DAFB?style=for-the-badge&logo=react&logoColor=white"> <img src="https://img.shields.io/badge/TypeScript-3178C6?style=for-the-badge&logo=typescript&logoColor=white"> ![React Query](https://img.shields.io/badge/-React%20Query-FF4154?style=for-the-badge&logo=react%20query&logoColor=white)
+ <img src="https://img.shields.io/badge/styled--components-DB7093?style=for-the-badge&logo=styled-components&logoColor=white"> <img src="https://img.shields.io/badge/Prettier-F7B93E?style=for-the-badge&logo=prettier&logoColor=white">
+<img src="https://img.shields.io/badge/ESLint-4B32C3?style=for-the-badge&logo=eslint&logoColor=white"> <br/> ![Esbuild](https://img.shields.io/badge/esbuild-%23FFCF00.svg?style=for-the-badge&logo=esbuild&logoColor=black) ![Webpack](https://img.shields.io/badge/webpack-%238DD6F9.svg?style=for-the-badge&logo=webpack&logoColor=black) ![NPM](https://img.shields.io/badge/NPM-%23CB3837.svg?style=for-the-badge&logo=npm&logoColor=white) <img src="https://img.shields.io/badge/Jest-323330?style=for-the-badge&logo=Jest&logoColor=white"/> <img src="https://img.shields.io/badge/testing%20library-323330?style=for-the-badge&logo=testing-library&logoColor=red"/> 
 
-<br />
+<br/>
 
-## 🎪 동아리 운영진을 위한 기능
+### 백엔드
+![Java](https://img.shields.io/badge/java-%23ED8B00.svg?style=for-the-badge&logo=openjdk&logoColor=white) ![Spring](https://img.shields.io/badge/spring-%236DB33F.svg?style=for-the-badge&logo=spring&logoColor=white) ![MongoDB](https://img.shields.io/badge/MongoDB-%234ea94b.svg?style=for-the-badge&logo=mongodb&logoColor=white) <img src="https://img.shields.io/badge/Google_Cloud-4285F4?style=for-the-badge&logo=google-cloud&logoColor=white"/> <img src="https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white"/> ![Nginx](https://img.shields.io/badge/nginx-%23009639.svg?style=for-the-badge&logo=nginx&logoColor=white) ![GitHub Actions](https://img.shields.io/badge/github%20actions-%232671E5.svg?style=for-the-badge&logo=githubactions&logoColor=white) ![Cloudflare](https://img.shields.io/badge/Cloudflare-F38020?style=for-the-badge&logo=Cloudflare&logoColor=white)
 
-### 동아리 정보 수정
-
-동아리명, 한줄소개, 로고, 커버사진, 태그, SNS 링크를 수정할 수 있어요.
-
-<img width="1200" alt="동아리 정보 수정" src="https://github.com/user-attachments/assets/c0af94ff-248f-4286-8b4b-5a91f3a85ea4" />
-
-### 모집 일정 관리
-
-모집 시작일과 종료일을 설정하여 지원자들에게 D-DAY 모집 일정을 안내할 수 있어요.
-
-<img width="1200" alt="모집 일정 관리" src="https://github.com/user-attachments/assets/f744cefa-2ded-48c1-be8f-e308dee14f21" />
-
-### 지원서 생성 및 관리
-
-상세페이지와 바로 연결되는 자체 지원서를 만들거나, 외부 지원서(구글폼, 네이버폼) 링크를 연결할 수 있어요.
-
-<table>
-  <tr>
-    <td align="center"><b>모아동 지원서</b></td>
-    <td align="center"><b>외부지원서</b></td>
-  </tr>
-  <tr>
-    <td><img width="1200" alt="모아동 지원서" src="https://github.com/user-attachments/assets/28910b4f-f289-4e8c-ba14-9ec2ad5a016d" /></td>
-    <td><img width="1200" alt="외부지원서" src="https://github.com/user-attachments/assets/1a260add-fa22-4ce5-8b2f-4989be0d86ab" /></td>
-  </tr>
-</table>
-
-### 지원자 관리
-
-지원자 목록을 확인하고, 통계대시보드를 확인하며 선발 프로세스를 관리할 수 있어요.
-
-<img width="1200" alt="지원자 관리" src="https://github.com/user-attachments/assets/29c6b6fd-7e7d-4369-a5e5-59f800bb0644" />
-
-### 지원서 폼 응답 확인
-
-지원서 응답을 개별로 확인하며 서류검토/면접대기/합격/불합격 상태로 관리할 수 있어요.
-
-<img width="1200" alt="지원서 폼 응답 확인" src="https://github.com/user-attachments/assets/9ab91736-c639-47d7-b3e6-190aaafbc202" />
-
+<br/>

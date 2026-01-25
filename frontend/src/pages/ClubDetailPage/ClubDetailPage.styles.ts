@@ -6,10 +6,6 @@ import { transitions } from '@/styles/theme/transitions';
 export const Container = styled.div`
   width: 100%;
   min-height: 100vh;
-
-  ${media.tablet} {
-    padding-bottom: 60px;
-  }
 `;
 
 export const ContentWrapper = styled.div`
@@ -55,7 +51,6 @@ export const TabButton = styled.button<{ $active: boolean }>`
   font-size: 14px;
   font-weight: 700;
   width: 167px;
-  height: 26px;
   padding-bottom: 4px;
   color: ${({ $active }) => ($active ? colors.gray[800] : colors.gray[400])};
   background: none;

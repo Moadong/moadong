@@ -38,7 +38,7 @@ export const ApplicantContainer = styled.div`
     border: none;
     background-color: transparent;
 
-    background-image: url(\"${DropdownArrow}\");
+    background-image: url(${DropdownArrow});
     background-repeat: no-repeat;
     background-position: right 8px center;
     background-size: 11px 11px;
@@ -71,7 +71,7 @@ export const StatusSelect = styled.select<{ $backgroundColor: string }>`
 
   background-color: ${(props) => props.$backgroundColor};
 
-  background-image: url(\"${DropdownArrow}\");
+  background-image: url(${DropdownArrow});
   background-repeat: no-repeat;
   background-position: right 15px center;
   padding-right: 30px;
