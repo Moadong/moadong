@@ -2,7 +2,6 @@ package moadong.club.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-import java.util.NoSuchElementException;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -20,11 +19,13 @@ import moadong.user.entity.User;
 import moadong.user.payload.CustomUserDetails;
 import moadong.user.repository.UserRepository;
 import moadong.util.annotations.IntegrationTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataAccessException;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 @IntegrationTest
 public class ClubApplyAdminServiceTest {
@@ -36,22 +37,54 @@ public class ClubApplyAdminServiceTest {
     private ClubRepository clubRepository;
     @Autowired
     private ClubApplicationFormsRepository clubApplicationFormsRepository;
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     private CustomUserDetails userDetails;
-    private String clubApplicationFormId; // --- 변경: 객체 대신 ID만 저장 ---
+    private String clubId;
+    private String clubApplicationFormId;
 
     @BeforeEach
     void setUp() {
+        if (userRepository.findUserByUserId(UserFixture.collectUserId).isEmpty()) {
+            userRepository.save(UserFixture.createUser(passwordEncoder));
+        }
         User user = userRepository.findUserByUserId(UserFixture.collectUserId).get();
         userDetails = new CustomUserDetails(user);
-        Club club = clubRepository.findClubByUserId(user.getId()).get();
 
-        // 테스트 전에 문서를 한 번만 조회하여 ID를 확보
-        if (clubApplicationFormsRepository.findByClubId(club.getId()).isEmpty()){
-            throw new NoSuchElementException("테스트를 위한 ClubApplicationForm 문서가 DB에 존재하지 않습니다. 먼저 문서를 생성해주세요.");
+        // Club이 없으면 생성
+        if (clubRepository.findClubByUserId(user.getId()).isEmpty()) {
+            Club club = new Club(user.getId());
+            clubRepository.save(club);
+            this.clubId = club.getId();
+        } else {
+            Club club = clubRepository.findClubByUserId(user.getId()).get();
+            this.clubId = club.getId();
         }
-        ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubId(club.getId()).get(0);
-        this.clubApplicationFormId = clubApplicationForm.getId();
+
+        // ClubApplicationForm이 없으면 생성
+        if (clubApplicationFormsRepository.findByClubId(clubId).isEmpty()) {
+            ClubApplicationForm clubApplicationForm = ClubApplicationForm.builder()
+                    .clubId(clubId)
+                    .build();
+            clubApplicationFormsRepository.save(clubApplicationForm);
+            this.clubApplicationFormId = clubApplicationForm.getId();
+        } else {
+            ClubApplicationForm clubApplicationForm = clubApplicationFormsRepository.findByClubId(clubId).get(0);
+            this.clubApplicationFormId = clubApplicationForm.getId();
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        // 테스트용 ClubApplicationForm 삭제
+        if (clubApplicationFormId != null) {
+            clubApplicationFormsRepository.deleteById(clubApplicationFormId);
+        }
+        // 테스트용 Club 삭제
+        if (clubId != null) {
+            clubRepository.deleteById(clubId);
+        }
     }
 
 
@@ -100,7 +133,6 @@ public class ClubApplyAdminServiceTest {
 
         // WHEN: 여러 스레드가 각자 데이터를 조회한 후, 동시에 수정을 시도
         for (int i = 0; i < numberOfThreads; i++) {
-            final int threadNum = i;
             executorService.submit(() -> {
                 try {
                     // 1. 각 스레드가 DB에서 데이터를 직접 조회 (모두 같은 버전을 읽음)

@@ -12,6 +12,7 @@ import moadong.user.entity.User;
 import moadong.user.payload.CustomUserDetails;
 import moadong.user.repository.UserRepository;
 import moadong.util.annotations.IntegrationTest;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,7 @@ public class ClubProfileServiceTest {
     private PasswordEncoder passwordEncoder;
 
     private CustomUserDetails userDetails;
+    private String clubId;
 
     @BeforeEach
     void setUp() {
@@ -51,6 +53,18 @@ public class ClubProfileServiceTest {
         if (clubRepository.findClubByUserId(user.getId()).isEmpty()) {
             Club club = new Club(user.getId());
             clubRepository.save(club);
+            this.clubId = club.getId();
+        } else {
+            Club club = clubRepository.findClubByUserId(user.getId()).get();
+            this.clubId = club.getId();
+        }
+    }
+
+    @AfterEach
+    void tearDown() {
+        // 테스트용 Club 삭제
+        if (clubId != null) {
+            clubRepository.deleteById(clubId);
         }
     }
 
