@@ -23,7 +23,7 @@ const ClubCard = ({ club }: { club: Club }) => {
 
     setTimeout(() => {
       setIsClicked(false);
-      navigate(`/club/${club.id}`);
+      navigate(`/clubDetail/${club.id}`);
     }, 150);
   };
 
