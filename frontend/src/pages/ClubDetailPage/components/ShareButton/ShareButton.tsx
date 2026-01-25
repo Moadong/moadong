@@ -30,7 +30,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
     if (isRNWebView && rnWebView?.postMessage) {
       const sharePayload = {
         title: clubDetail.name,
-        text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!`,
+        text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!\n${url}`,
         url,
       };
 
