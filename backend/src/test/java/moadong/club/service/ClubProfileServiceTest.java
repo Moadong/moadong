@@ -1,10 +1,13 @@
 package moadong.club.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import io.github.artsok.RepeatedIfExceptionsTest;
+import moadong.club.entity.Club;
 import moadong.club.payload.request.ClubInfoRequest;
+import moadong.club.repository.ClubRepository;
 import moadong.fixture.ClubRequestFixture;
 import moadong.fixture.UserFixture;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
 import moadong.user.entity.User;
 import moadong.user.payload.CustomUserDetails;
 import moadong.user.repository.UserRepository;
@@ -16,7 +19,6 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.OptimisticLockingFailureException;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.test.web.servlet.MockMvc;
 
 import java.util.concurrent.*;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -31,6 +33,8 @@ public class ClubProfileServiceTest {
     @Autowired
     private UserRepository userRepository;
     @Autowired
+    private ClubRepository clubRepository;
+    @Autowired
     private PasswordEncoder passwordEncoder;
 
     private CustomUserDetails userDetails;
@@ -42,6 +46,12 @@ public class ClubProfileServiceTest {
         }
         User user = userRepository.findUserByUserId(UserFixture.collectUserId).get();
         this.userDetails = new CustomUserDetails(user);
+
+        // Club이 없으면 생성
+        if (clubRepository.findClubByUserId(user.getId()).isEmpty()) {
+            Club club = new Club(user.getId());
+            clubRepository.save(club);
+        }
     }
 
     @DisplayName("여러 스레드에서 동시에 수정 요청 시, 한 번만 성공하고 나머지는 실패해야 한다")
@@ -55,6 +65,7 @@ public class ClubProfileServiceTest {
 
         AtomicInteger successCount = new AtomicInteger(0);
         AtomicInteger conflictCount = new AtomicInteger(0);
+        AtomicInteger notFoundCount = new AtomicInteger(0);
 
         // WHEN: 여러 스레드에서 동시에 업데이트 시도
         for (int i = 0; i < numberOfThreads; i++) {
@@ -71,6 +82,12 @@ public class ClubProfileServiceTest {
                 } catch (DataAccessException e) {
                     if (e.getMessage() != null && e.getMessage().contains("WriteConflict")) {
                         conflictCount.incrementAndGet();
+                    } else {
+                        e.printStackTrace();
+                    }
+                } catch (RestApiException e) {
+                    if (e.getErrorCode() == ErrorCode.CLUB_NOT_FOUND) {
+                        notFoundCount.incrementAndGet();
                     } else {
                         e.printStackTrace();
                     }
@@ -91,5 +108,6 @@ public class ClubProfileServiceTest {
         // THEN: 정확히 하나의 스레드만 성공하고, 나머지는 모두 충돌 예외를 받아야 함
         assertEquals(1, successCount.get(), "성공한 요청은 1개여야 합니다.");
         assertEquals(numberOfThreads - 1, conflictCount.get(), "실패(충돌)한 요청은 " + (numberOfThreads - 1) + "개여야 합니다.");
+        assertEquals(0, notFoundCount.get(), "CLUB_NOT_FOUND 예외는 발생하지 않아야 합니다.");
     }
 }
