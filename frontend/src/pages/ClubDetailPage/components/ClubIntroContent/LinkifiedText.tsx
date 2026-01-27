@@ -4,8 +4,6 @@ interface LinkifiedTextProps {
   text: string;
 }
 
-const LinkifiedText = ({ text }: LinkifiedTextProps) => {
-  return <>{linkifyText(text)}</>;
-};
+const LinkifiedText = ({ text }: LinkifiedTextProps) => linkifyText(text);
 
 export default LinkifiedText;
