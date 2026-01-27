@@ -7,11 +7,13 @@ const renderTextWithLineBreaks = (
   text: string, 
   keyPrefix: string
 ): React.ReactNode[] => {
-  return text.split('\n').flatMap((line, index, arr) => {
-    const nodes: React.ReactNode[] = [line];
+  const lines = text.split('\n');
 
-    if (index < arr.length - 1) {
-      nodes.push(<br key={`${keyPrefix}-br-${index}`} />);
+  return lines.flatMap((lineText, lineIndex) => {
+    const nodes: React.ReactNode[] = [lineText];
+
+    if (lineIndex < lines.length - 1) {
+      nodes.push(<br key={`${keyPrefix}-br-${lineIndex}`} />);
     }
     return nodes;
   });
@@ -52,9 +54,9 @@ export const linkifyText = (text: string) => {
   }
 
   if (cursor < text.length) {
-    const remainingText = text.slice(cursor);
+    const remainingTextChunk = text.slice(cursor);
     nodes.push(
-      ...renderTextWithLineBreaks(remainingText, `text-${cursor}`)
+      ...renderTextWithLineBreaks(remainingTextChunk, `text-${cursor}`)
     );
   }
 
