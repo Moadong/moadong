@@ -20,6 +20,7 @@ const renderTextWithLineBreaks = (
 };
 
 export const linkifyText = (text: string) => {
+  URL_REGEX.lastIndex = 0;
   const nodes: React.ReactNode[] = [];
   let cursor = 0;
   let urlMatch: RegExpExecArray | null;
