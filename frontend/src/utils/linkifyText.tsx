@@ -1,22 +1,42 @@
-import { colors } from '@/styles/theme/colors';
 import React from 'react';
+import { colors } from '@/styles/theme/colors';
 
 const URL_REGEX = /https?:\/\/[^\s]+/g;
 
-export const linkifyText = (text: string) => {
-  const parts: React.ReactNode[] = [];
-  let lastIndex = 0;
-  let match;
+const renderTextWithLineBreaks = (
+  text: string, 
+  keyPrefix: string
+): React.ReactNode[] => {
+  return text.split('\n').flatMap((line, index, arr) => {
+    const nodes: React.ReactNode[] = [line];
 
-  while ((match = URL_REGEX.exec(text)) !== null) {
-    if (match.index > lastIndex) {
-      const s = text.slice(lastIndex, match.index);
-      parts.push(...s.split('\n').flatMap((line, i, arr) => (i < arr.length - 1 ? [line, <br key={`${lastIndex}-${i}`} />] : [line])));
+    if (index < arr.length - 1) {
+      nodes.push(<br key={`${keyPrefix}-br-${index}`} />);
     }
-    parts.push(
+    return nodes;
+  });
+};
+
+export const linkifyText = (text: string) => {
+  const nodes: React.ReactNode[] = [];
+  let cursor = 0;
+  let urlMatch: RegExpExecArray | null;
+
+  while ((urlMatch = URL_REGEX.exec(text)) !== null) {
+    const urlStartIndex = urlMatch.index;
+    const urlText = urlMatch[0];
+
+    if (urlStartIndex > cursor) {
+      const plainTextChunk = text.slice(cursor, urlStartIndex);
+      nodes.push(
+        ...renderTextWithLineBreaks(plainTextChunk, `text-${cursor}`)
+      );
+    }
+    
+    nodes.push(
       <a 
-        key={match.index} 
-        href={match[0]} 
+        key={urlMatch.index} 
+        href={urlMatch[0]} 
         target="_blank" 
         rel="noopener noreferrer" 
         style={{ 
@@ -24,15 +44,19 @@ export const linkifyText = (text: string) => {
           textDecoration: 'underline' 
           }}
         >
-        {match[0]}
+        {urlText}
       </a>
     );
-    lastIndex = URL_REGEX.lastIndex;
-  }
-  if (lastIndex < text.length) {
-    const s = text.slice(lastIndex);
-    parts.push(...s.split('\n').flatMap((line, i, arr) => (i < arr.length - 1 ? [line, <br key={`${lastIndex}-${i}`} />] : [line])));
+
+    cursor = URL_REGEX.lastIndex;
   }
 
-  return <span style={{ display: 'inline' }}>{parts}</span>;
+  if (cursor < text.length) {
+    const remainingText = text.slice(cursor);
+    nodes.push(
+      ...renderTextWithLineBreaks(remainingText, `text-${cursor}`)
+    );
+  }
+
+  return <span style={{ display: 'inline' }}>{nodes}</span>;
 };
