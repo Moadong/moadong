@@ -4,6 +4,7 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import { formatSemesterLabel, getAwardKey } from '@/utils/awardHelpers';
 import * as Styled from './ClubIntroContent.styles';
+import LinkifiedText from './LinkifiedText';
 
 interface ClubIntroContentProps {
   activityDescription?: string;
@@ -56,7 +57,7 @@ const ClubIntroContent = ({
         <Styled.Section>
           <Styled.SectionTitle>이런 활동을 해요</Styled.SectionTitle>
           <Styled.TextContainer>
-            <Styled.Text>{activityDescription}</Styled.Text>
+            <LinkifiedText text={activityDescription} />
           </Styled.TextContainer>
         </Styled.Section>
       )}
@@ -88,7 +89,7 @@ const ClubIntroContent = ({
         <Styled.Section>
           <Styled.SectionTitle>이런 사람이 오면 좋아요</Styled.SectionTitle>
           <Styled.TextContainer>
-            <Styled.Text>{idealCandidate.content}</Styled.Text>
+            <LinkifiedText text={idealCandidate.content} />
           </Styled.TextContainer>
         </Styled.Section>
       )}
@@ -96,7 +97,7 @@ const ClubIntroContent = ({
         <Styled.Section>
           <Styled.SectionTitle>동아리 부원이 가지는 혜택</Styled.SectionTitle>
           <Styled.TextContainer>
-            <Styled.Text>{benefits}</Styled.Text>
+            <LinkifiedText text={benefits} />
           </Styled.TextContainer>
         </Styled.Section>
       )}
@@ -126,7 +127,9 @@ const ClubIntroContent = ({
                     </Styled.ArrowIcon>
                   </Styled.QuestionRow>
                   <Styled.AnswerContainer $isOpen={isOpen}>
-                    <Styled.AnswerBox>{faq.answer}</Styled.AnswerBox>
+                    <Styled.AnswerBox>
+                      <LinkifiedText text={faq.answer} />
+                    </Styled.AnswerBox>
                   </Styled.AnswerContainer>
                 </Styled.FaqItem>
               );
