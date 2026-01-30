@@ -6,6 +6,7 @@ import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
 import INITIAL_FORM_DATA from '@/constants/initialFormData';
+import { queryKeys } from '@/constants/queryKeys';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetApplication } from '@/hooks/Queries/useApplication';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
@@ -70,7 +71,7 @@ const ApplicationEditTab = () => {
   const { mutate: createMutate, isPending: isCreating } = useMutation({
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allApplicationForms'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
       alert('지원서가 성공적으로 생성되었습니다.');
       navigate(`/admin/application-list`);
     },
@@ -87,9 +88,9 @@ const ApplicationEditTab = () => {
       applicationFormId: string;
     }) => updateApplication(data, applicationFormId),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['allApplicationForms'] });
+      queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
       queryClient.invalidateQueries({
-        queryKey: ['applicationForm', clubId, formId],
+        queryKey: queryKeys.application.detail(clubId ?? 'unknown', formId ?? ''),
       });
       alert('지원서가 성공적으로 수정되었습니다.');
       navigate('/admin/application-list');
