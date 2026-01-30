@@ -20,13 +20,11 @@ const renderTextWithLineBreaks = (
 };
 
 export const linkifyText = (text: string) => {
-  URL_REGEX.lastIndex = 0;
   const nodes: ReactNode[] = [];
   let cursor = 0;
-  let urlMatch: RegExpExecArray | null;
 
-  while ((urlMatch = URL_REGEX.exec(text)) !== null) {
-    const urlStartIndex = urlMatch.index;
+  for (const urlMatch of text.matchAll(URL_REGEX)) {
+    const urlStartIndex = urlMatch.index!;
     const urlText = urlMatch[0];
 
     if (urlStartIndex > cursor) {
@@ -38,10 +36,10 @@ export const linkifyText = (text: string) => {
     
     nodes.push(
       <a 
-        key={urlMatch.index} 
-        href={urlMatch[0]} 
+        key={urlStartIndex} 
+        href={urlText} 
         style={{ 
-          color: `${colors.accent[1][900]}`, 
+          color: colors.accent[1][900], 
           textDecoration: 'underline' 
           }}
         >
@@ -49,7 +47,7 @@ export const linkifyText = (text: string) => {
       </a>
     );
 
-    cursor = URL_REGEX.lastIndex;
+    cursor = urlStartIndex + urlText.length;
   }
 
   if (cursor < text.length) {
