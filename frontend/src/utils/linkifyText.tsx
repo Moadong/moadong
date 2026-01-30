@@ -1,4 +1,4 @@
-import React from 'react';
+import { ReactNode } from 'react';
 import { colors } from '@/styles/theme/colors';
 
 const URL_REGEX = /https?:\/\/[^\s]+/g;
@@ -6,11 +6,11 @@ const URL_REGEX = /https?:\/\/[^\s]+/g;
 const renderTextWithLineBreaks = (
   text: string, 
   keyPrefix: string
-): React.ReactNode[] => {
+): ReactNode[] => {
   const lines = text.split('\n');
 
   return lines.flatMap((lineText, lineIndex) => {
-    const nodes: React.ReactNode[] = [lineText];
+    const nodes: ReactNode[] = [lineText];
 
     if (lineIndex < lines.length - 1) {
       nodes.push(<br key={`${keyPrefix}-br-${lineIndex}`} />);
@@ -21,7 +21,7 @@ const renderTextWithLineBreaks = (
 
 export const linkifyText = (text: string) => {
   URL_REGEX.lastIndex = 0;
-  const nodes: React.ReactNode[] = [];
+  const nodes: ReactNode[] = [];
   let cursor = 0;
   let urlMatch: RegExpExecArray | null;
 
