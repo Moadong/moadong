@@ -7,6 +7,7 @@ export interface ButtonProps {
   onClick?: () => void;
   animated?: boolean;
   disabled?: boolean;
+  className?: string;
 }
 
 const pulse = keyframes`
@@ -55,6 +56,7 @@ const Button = ({
   type,
   animated = false,
   disabled = false,
+  className,
 }: ButtonProps) => (
   <StyledButton
     width={width}
@@ -62,6 +64,7 @@ const Button = ({
     animated={animated}
     type={type}
     disabled={disabled}
+    className={className}
   >
     {children}
   </StyledButton>
