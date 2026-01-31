@@ -1,7 +1,11 @@
 import { ReactNode } from 'react';
 import { colors } from '@/styles/theme/colors';
 
-const URL_REGEX = /https?:\/\/[^\s]+/g;
+const URL_MATCH_REGEX = /https?:\/\/[a-zA-Z0-9./?=#_%\-]+/g;
+const URL_TRAILING_CHARS_REGEX = /[.,!?)"'`;: 가-힣]+$/;
+
+const cleanUrl = (url: string)=>
+  url.replace(URL_TRAILING_CHARS_REGEX, '');
 
 const renderTextWithLineBreaks = (
   text: string, 
@@ -23,9 +27,10 @@ export const linkifyText = (text: string) => {
   const nodes: ReactNode[] = [];
   let cursor = 0;
 
-  for (const urlMatch of text.matchAll(URL_REGEX)) {
+  for (const urlMatch of text.matchAll(URL_MATCH_REGEX)) {
     const urlStartIndex = urlMatch.index!;
-    const urlText = urlMatch[0];
+    const matchedUrlText = urlMatch[0];
+    const trimmedUrlText = cleanUrl(matchedUrlText);
 
     if (urlStartIndex > cursor) {
       const plainTextChunk = text.slice(cursor, urlStartIndex);
@@ -37,17 +42,17 @@ export const linkifyText = (text: string) => {
     nodes.push(
       <a 
         key={urlStartIndex} 
-        href={urlText} 
+        href={trimmedUrlText} 
         style={{ 
           color: colors.accent[1][900], 
           textDecoration: 'underline' 
           }}
         >
-        {urlText}
+        {trimmedUrlText}
       </a>
     );
 
-    cursor = urlStartIndex + urlText.length;
+    cursor = urlStartIndex + matchedUrlText.length;
   }
 
   if (cursor < text.length) {
