@@ -8,12 +8,14 @@ interface ClubDetailFooterProps {
   recruitmentStart: string;
   recruitmentEnd: string;
   recruitmentStatus: RecruitmentStatus;
+  hideShareButtonOnMobile?: boolean;
 }
 
 const ClubDetailFooter = ({
   recruitmentStart,
   recruitmentEnd,
   recruitmentStatus,
+  hideShareButtonOnMobile = false,
 }: ClubDetailFooterProps) => {
   const deadlineText = getDeadlineText(
     recruitmentDateParser(recruitmentStart),
@@ -23,7 +25,10 @@ const ClubDetailFooter = ({
 
   return (
     <Styled.ClubDetailFooterContainer>
-      <ClubApplyButton deadlineText={deadlineText} />
+      <ClubApplyButton
+        deadlineText={deadlineText}
+        hideShareButtonOnMobile={hideShareButtonOnMobile}
+      />
     </Styled.ClubDetailFooterContainer>
   );
 };

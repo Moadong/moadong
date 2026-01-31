@@ -14,7 +14,7 @@ interface ShareButtonProps {
 
 const isRNWebView = isInAppWebView();
 
-const MOADONG_BASE_URL = 'https://www.moadong.com/club/';
+const MOADONG_BASE_URL = 'https://www.moadong.com/clubDetail/';
 
 const ShareButton = ({ clubId }: ShareButtonProps) => {
   const { isMobile } = useDevice();

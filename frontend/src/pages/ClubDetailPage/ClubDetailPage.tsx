@@ -1,19 +1,19 @@
 import { useCallback, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
-import useDevice from '@/hooks/useDevice';
 import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
+import useDevice from '@/hooks/useDevice';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import * as Styled from './ClubDetailPage.styles';
 import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
+import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 
 export const TAB_TYPE = {
   INTRO: 'intro',
@@ -47,7 +47,6 @@ const ClubDetailPage = () => {
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollToElement } = useScrollTo();
 
-
   const scrollToContent = useCallback(() => {
     scrollToElement(contentRef.current, TOP_BAR_HEIGHT);
   }, [scrollToElement]);
@@ -58,10 +57,10 @@ const ClubDetailPage = () => {
       trackEvent(
         tabKey === TAB_TYPE.INTRO
           ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
-          : USER_EVENT.CLUB_FEED_TAB_CLICKED
+          : USER_EVENT.CLUB_FEED_TAB_CLICKED,
       );
     },
-    [setSearchParams, trackEvent]
+    [setSearchParams, trackEvent],
   );
 
   if (error) {
@@ -119,10 +118,18 @@ const ClubDetailPage = () => {
             </Styled.TabList>
 
             <Styled.TabContent>
-              <div style={{ display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none' }}>
+              <div
+                style={{
+                  display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none',
+                }}
+              >
                 <ClubIntroContent {...clubDetail.description} />
               </div>
-              <div style={{ display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none' }}>
+              <div
+                style={{
+                  display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none',
+                }}
+              >
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
               </div>
             </Styled.TabContent>
