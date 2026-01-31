@@ -72,8 +72,8 @@ const InputField = ({
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
-          hasError={isError}
-          isSuccess={isSuccess}
+          $hasError={isError}
+          $isSuccess={isSuccess}
           readOnly={readOnly}
         />
         {showClearButton && !disabled && (

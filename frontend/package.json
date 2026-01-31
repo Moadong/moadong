@@ -16,6 +16,10 @@
     "chromatic": "dotenv chromatic",
     "test": "jest",
     "coverage": "jest --coverage --config jest.config.js",
+    "test:e2e": "playwright test",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:report": "playwright show-report"
     "typecheck": "tsc --noEmit"
   },
   "keywords": [],
@@ -47,6 +51,7 @@
     "@chromatic-com/storybook": "^4.1.3",
     "@eslint/js": "^9.17.0",
     "@ianvs/prettier-plugin-sort-imports": "^4.7.0",
+    "@playwright/test": "^1.58.0",
     "@storybook/addon-docs": "^10.1.11",
     "@storybook/addon-onboarding": "^10.1.11",
     "@storybook/react": "^10.1.11",

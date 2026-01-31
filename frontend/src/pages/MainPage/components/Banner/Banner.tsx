@@ -82,7 +82,7 @@ const Banner = () => {
           {BANNERS.map((banner) => (
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
-                isClickable={!!banner.linkTo}
+                $isClickable={!!banner.linkTo}
                 onClick={() =>
                   handleBannerClick(banner.id, banner.alt, banner.linkTo)
                 }
@@ -104,7 +104,7 @@ const Banner = () => {
         {!isMobile && (
           <Styled.DotPagination>
             {BANNERS.map((_, index) => (
-              <Styled.Dot key={index} active={currentIndex === index} />
+              <Styled.Dot key={index} $active={currentIndex === index} />
             ))}
           </Styled.DotPagination>
         )}

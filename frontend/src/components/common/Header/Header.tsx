@@ -81,7 +81,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
   const toggleMenu = () => setIsMenuOpen((prev) => !prev);
 
   return (
-    <Styled.Header isScrolled={isScrolled}>
+    <Styled.Header $isScrolled={isScrolled}>
       <Styled.Container>
         <Styled.LeftSection>
           <Styled.LogoButton onClick={handleHomeClick} aria-label='홈으로 이동'>
@@ -97,11 +97,11 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
             />
           </Styled.LogoButton>
 
-          <Styled.Nav isOpen={isMenuOpen}>
+          <Styled.Nav $isOpen={isMenuOpen}>
             {navLinks.map((link) => (
               <Styled.NavLink
                 key={link.label}
-                isActive={location.pathname === link.path}
+                $isActive={location.pathname === link.path}
                 onClick={() => {
                   link.handler();
                   closeMenu();
@@ -116,7 +116,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
         {!isAdminPage && (
           <Styled.MenuButton
             onClick={toggleMenu}
-            isOpen={isMenuOpen}
+            $isOpen={isMenuOpen}
             aria-label={isMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
           >
             <Styled.MenuBar />
