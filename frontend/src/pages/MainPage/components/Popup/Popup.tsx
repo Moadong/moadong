@@ -126,12 +126,12 @@ const Popup = () => {
 
   return (
     <Styled.Overlay
-      isOpen={isOpen}
+      $isOpen={isOpen}
       onClick={handleBackdropClick}
       aria-modal='true'
     >
       <Styled.ModalContainer
-        isOpen={isOpen}
+        $isOpen={isOpen}
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         <Styled.Container>

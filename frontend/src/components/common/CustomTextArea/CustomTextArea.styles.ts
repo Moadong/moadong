@@ -21,11 +21,11 @@ export const TextAreaWrapper = styled.div`
   align-items: center;
 `;
 
-export const TextArea = styled.textarea<{ hasError?: boolean }>`
+export const TextArea = styled.textarea<{ $hasError?: boolean }>`
   flex: 1;
   height: 45px;
   padding: 12px 18px;
-  border: 1px solid ${({ hasError }) => (hasError ? 'red' : '#f5f5f5')};
+  border: 1px solid ${({ $hasError }) => ($hasError ? 'red' : '#f5f5f5')};
   border-radius: 10px;
   background: var(--f5, #f5f5f5);
   outline: none;
@@ -36,10 +36,10 @@ export const TextArea = styled.textarea<{ hasError?: boolean }>`
   resize: none;
 
   &:focus {
-    border-color: ${({ hasError }) => (hasError ? 'red' : '#007bff')};
+    border-color: ${({ $hasError }) => ($hasError ? 'red' : '#007bff')};
     box-shadow: 0 0 3px
-      ${({ hasError }) =>
-        hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
+      ${({ $hasError }) =>
+        $hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
   }
 
   &:disabled {
