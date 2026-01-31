@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 
 @Configuration
 public class WebConfig implements WebMvcConfigurer {
@@ -36,5 +37,11 @@ public class WebConfig implements WebMvcConfigurer {
             .allowedHeaders("*")
             .allowCredentials(true)
             .maxAge(MAX_AGE_SECS);
+    }
+    
+    @Override
+    public void configureAsyncSupport(AsyncSupportConfigurer configurer) {
+        // SSE를 위한 비동기 지원 설정
+        configurer.setDefaultTimeout(30000L); // 30초 타임아웃
     }
 }

@@ -15,6 +15,7 @@ public class CookieMaker {
                 .path("/")
                 .maxAge((long) refreshTokenExpirationHour * 60 * 60)
                 .secure(true)
+                .domain(".moadong.com")
                 .sameSite("None")
                 .build();
     }

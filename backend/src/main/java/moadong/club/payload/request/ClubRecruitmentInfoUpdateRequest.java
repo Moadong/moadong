@@ -1,13 +1,12 @@
 package moadong.club.payload.request;
 
-import java.time.LocalDateTime;
+import java.time.Instant;
 
 public record ClubRecruitmentInfoUpdateRequest(
-        String id,
-        LocalDateTime recruitmentStart,
-        LocalDateTime recruitmentEnd,
-        String recruitmentTarget,
-        String description
+    Instant recruitmentStart,
+    Instant recruitmentEnd,
+    String recruitmentTarget,
+    String externalApplicationUrl
 ) {
 
 }

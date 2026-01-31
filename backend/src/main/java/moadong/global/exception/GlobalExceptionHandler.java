@@ -1,22 +1,18 @@
 package moadong.global.exception;
 
-import jakarta.validation.ConstraintViolation;
-import jakarta.validation.ConstraintViolationException;
-import jakarta.validation.Valid;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import moadong.global.payload.Response;
+import org.springframework.dao.OptimisticLockingFailureException;
+import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
+@Slf4j
 @RestControllerAdvice
-public class GlobalExceptionHandler  {
+public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Response> handleValidationExceptions(MethodArgumentNotValidException ex) {
@@ -25,8 +21,16 @@ public class GlobalExceptionHandler  {
         String finalErrorMessage = field + " : " + message;
 
         return ResponseEntity
-            .status(HttpStatus.BAD_REQUEST)
-            .body(new Response("BAD_REQUEST",finalErrorMessage, null));
+                .status(HttpStatus.BAD_REQUEST)
+                .body(new Response("BAD_REQUEST", finalErrorMessage, null));
+    }
+
+    @ExceptionHandler({OptimisticLockingFailureException.class, UncategorizedMongoDbException.class})
+    public ResponseEntity<Response> handleConcurrencyConflict(Exception ex) {
+        log.warn("데이터베이스 충돌 발생: {}", ex.getMessage());
+        return ResponseEntity
+                .status(HttpStatus.CONFLICT)
+                .body(new Response(ErrorCode.CONCURRENCY_CONFLICT.getCode(), ErrorCode.CONCURRENCY_CONFLICT.getMessage(), null));
     }
 
     @ExceptionHandler(RestApiException.class)
@@ -37,8 +41,7 @@ public class GlobalExceptionHandler  {
 
     private ResponseEntity<Response> handleExceptionInternal(ErrorCode errorCode) {
         return ResponseEntity
-            .status(errorCode.getHttpStatus())
-            .body(new Response(errorCode.getCode(), errorCode.getMessage(), null));
+                .status(errorCode.getHttpStatus())
+                .body(new Response(errorCode.getCode(), errorCode.getMessage(), null));
     }
 }
-

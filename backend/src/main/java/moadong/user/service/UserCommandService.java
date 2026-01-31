@@ -2,12 +2,16 @@ package moadong.user.service;
 
 import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.Date;
+
+import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.JwtProvider;
+import moadong.global.util.SecurePasswordGenerator;
 import moadong.user.entity.RefreshToken;
 import moadong.user.entity.User;
 import moadong.user.payload.CustomUserDetails;
@@ -16,9 +20,10 @@ import moadong.user.payload.request.UserRegisterRequest;
 import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.LoginResponse;
 import moadong.user.payload.response.RefreshResponse;
-import moadong.user.repository.UserInformationRepository;
+import moadong.user.payload.response.TempPasswordResponse;
 import moadong.user.repository.UserRepository;
 import moadong.user.util.CookieMaker;
+import org.bson.types.ObjectId;
 import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -26,43 +31,44 @@ import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.util.Date;
-
 @Service
 @AllArgsConstructor
 public class UserCommandService {
 
     private final UserRepository userRepository;
-    private final UserInformationRepository userInformationRepository;
     private final AuthenticationManager authenticationManager;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final ClubRepository clubRepository;
     private final CookieMaker cookieMaker;
+    private final SecurePasswordGenerator securePasswordGenerator;
 
-    public void registerUser(UserRegisterRequest userRegisterRequest) {
+    @Transactional
+    public User registerUser(UserRegisterRequest userRegisterRequest) {
+        String userId = new ObjectId().toHexString();
+        String clubId = new ObjectId().toHexString();
+
         try {
-            String encodedPw = passwordEncoder.encode(userRegisterRequest.password());
-            User user = userRepository.save(userRegisterRequest.toUserEntity(encodedPw));
-            userInformationRepository.save(
-                    userRegisterRequest.toUserInformationEntity(user.getId()));
-            createClub(user.getId());
+            User user = userRepository.save(createUser(userRegisterRequest, userId, clubId));
+            createClub(clubId, userId);
+
+            return user;
         } catch (MongoWriteException e) {
             throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);
         }
     }
 
     public LoginResponse loginUser(UserLoginRequest userLoginRequest,
-                                   HttpServletResponse response) {
+        HttpServletResponse response) {
         try {
             Authentication authenticate = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(userLoginRequest.userId(),
-                            userLoginRequest.password()));
+                new UsernamePasswordAuthenticationToken(userLoginRequest.userId(),
+                    userLoginRequest.password()));
             CustomUserDetails userDetails = (CustomUserDetails) authenticate.getPrincipal();
             Club club = clubRepository.findClubByUserId(userDetails.getId())
-                    .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
             User user = userRepository.findUserByUserId(userDetails.getUserId())
-                    .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+                .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
 
             String accessToken = jwtProvider.generateAccessToken(userDetails.getUsername());
             RefreshToken refreshToken = jwtProvider.generateRefreshToken(userDetails.getUsername());
@@ -70,7 +76,7 @@ public class UserCommandService {
             ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(refreshToken.getToken());
             response.addHeader("Set-Cookie", cookie.toString());
 
-            user.updateRefreshToken(refreshToken);
+            user.addRefreshToken(refreshToken);
             userRepository.save(user);
             return new LoginResponse(accessToken, club.getId());
         } catch (MongoWriteException e) {
@@ -79,31 +85,42 @@ public class UserCommandService {
     }
 
     public void logoutUser(String refreshToken) {
-        User user = userRepository.findUserByRefreshToken_Token(refreshToken)
-                .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+        User user = userRepository.findUserByRefreshTokens_Token(refreshToken)
+            .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
 
-        user.updateRefreshToken(null);
+        user.removeRefreshToken(refreshToken);
         userRepository.save(user);
     }
 
     public RefreshResponse refreshAccessToken(String refreshToken,
-                                              HttpServletResponse response) {
+        HttpServletResponse response) {
         if (refreshToken.isBlank() ||
-                !jwtProvider.validateToken(refreshToken, jwtProvider.extractUsername(refreshToken))) {
+            !jwtProvider.validateToken(refreshToken, jwtProvider.extractUsername(refreshToken))) {
             throw new RestApiException(ErrorCode.TOKEN_INVALID);
         }
         String userId = jwtProvider.extractUsername(refreshToken);
         User user = userRepository.findUserByUserId(userId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+            .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
 
-        if (!user.getRefreshToken().getToken().equals(refreshToken)
-                || jwtProvider.isTokenExpired(refreshToken)) {
+        boolean hasToken = false;
+        if (user.getRefreshTokens() != null) {
+            for (RefreshToken t : user.getRefreshTokens()) {
+                if (t.getToken().equals(refreshToken)) {
+                    hasToken = true;
+                    break;
+                }
+            }
+        }
+        if (!hasToken) {
+            throw new RestApiException(ErrorCode.TOKEN_INVALID);
+        }
+        if (jwtProvider.isTokenExpired(refreshToken)) {
             throw new RestApiException(ErrorCode.TOKEN_INVALID);
         }
         String accessToken = jwtProvider.generateAccessToken(userId);
         String newRefreshToken = jwtProvider.generateRefreshToken(userId).getToken();
 
-        user.updateRefreshToken(new RefreshToken(newRefreshToken, new Date()));
+        user.replaceRefreshToken(refreshToken, new RefreshToken(newRefreshToken, new Date()));
         userRepository.save(user);
 
         ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(newRefreshToken);
@@ -112,27 +129,64 @@ public class UserCommandService {
     }
 
     public void update(String userId,
-                       UserUpdateRequest userUpdateRequest,
-                       HttpServletResponse response) {
+        UserUpdateRequest userUpdateRequest,
+        HttpServletResponse response) {
         User user = userRepository.findUserByUserId(userId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+            .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+
+        //아이디와 동일한지
+        if (userId.equals(userUpdateRequest.password())) {
+            throw new RestApiException(ErrorCode.PASSWORD_SAME_AS_USERID);
+        }
+        //기존 비밀번호와 동일한지
+        if (passwordEncoder.matches(userUpdateRequest.password(), user.getPassword())) {
+            throw new RestApiException(ErrorCode.PASSWORD_SAME_AS_OLD);
+        }
+
         user.updateUserProfile(userUpdateRequest.encryptPassword(passwordEncoder));
+
+        user.removeAllRefreshTokens();
+        RefreshToken newRefreshToken = jwtProvider.generateRefreshToken(user.getUsername());
+        user.addRefreshToken(newRefreshToken);
 
         userRepository.save(user);
 
-        String newRefreshToken = jwtProvider.generateRefreshToken(user.getUsername()).getToken();
-        ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(newRefreshToken);
+        ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(newRefreshToken.getToken());
         response.addHeader("Set-Cookie", cookie.toString());
+    }
+
+    public TempPasswordResponse reset(String userId) {
+        User user = userRepository.findUserByUserId(userId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+
+        //랜덤 임시 비밀번호 생성
+        TempPasswordResponse tempPwdResponse = new TempPasswordResponse(
+                securePasswordGenerator.generate(8));
+
+        //암호화
+        user.resetPassword(passwordEncoder.encode(tempPwdResponse.tempPassword()));
+
+        user.removeAllRefreshTokens();
+        userRepository.save(user);
+
+        return tempPwdResponse;
     }
 
     public String findClubIdByUserId(String userID) {
         Club club = clubRepository.findClubByUserId(userID)
-                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         return club.getId();
     }
 
-    private void createClub(String userId) {
-        Club club = new Club(userId);
+    private User createUser(UserRegisterRequest request, String userId, String clubId) {
+        User user = request.toUserEntity(passwordEncoder);
+        user.updateId(userId);
+        user.updateClubId(clubId);
+        return user;
+    }
+    private void createClub(String clubId, String userId) {
+        Club club = new Club(clubId, userId);
         clubRepository.save(club);
     }
+
 }

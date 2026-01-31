@@ -6,10 +6,10 @@ import java.util.Arrays;
 
 @Getter
 public enum ClubRecruitmentStatus {
-    ALWAYS("상시모집", 1),
-    OPEN("모집중", 2),
-    CLOSED("모집마감", 3),
-    UPCOMING("모집예정", 4),
+    ALWAYS("상시모집", 2),
+    OPEN("모집중", 1),
+    CLOSED("모집마감", 4),
+    UPCOMING("모집예정", 3),
 ;
 
     private final String description;

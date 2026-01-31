@@ -1,8 +1,12 @@
 package moadong.club.repository;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import lombok.AllArgsConstructor;
+import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.dto.ClubSearchResult;
 import org.springframework.data.domain.Sort;
@@ -39,8 +43,7 @@ public class ClubSearchRepository {
         if (keyword != null && !keyword.trim().isEmpty()) {
             operations.add(Aggregation.match(new Criteria().orOperator(
                 Criteria.where("name").regex(keyword, "i"),
-                Criteria.where("recruitmentInformation.introduction").regex(keyword, "i"),
-                Criteria.where("recruitmentInformation.description").regex(keyword, "i"),
+                Criteria.where("category").regex(keyword, "i"),
                 Criteria.where("recruitmentInformation.tags").regex(keyword, "i")
             )));
         }
@@ -49,7 +52,7 @@ public class ClubSearchRepository {
         operations.add(
             Aggregation.project("name", "state", "category", "division")
                 .and("recruitmentInformation.introduction").as("introduction")
-                .and("recruitmentInformation.recruitmentStatus").as("recruitmentStatus")
+                .and("recruitmentInformation.clubRecruitmentStatus").as("recruitmentStatus")
                     .and(ConditionalOperators.ifNull("$recruitmentInformation.logo").then(""))
                     .as("logo")
                     .and(ConditionalOperators.ifNull("$recruitmentInformation.tags").then(""))
@@ -69,8 +72,19 @@ public class ClubSearchRepository {
         List<Criteria> criteriaList = new ArrayList<>();
 
         if (recruitmentStatus != null && !"all".equalsIgnoreCase(recruitmentStatus)) {
+            List<String> targetStatuses = new ArrayList<>();
+
+            if (recruitmentStatus.equalsIgnoreCase(ClubRecruitmentStatus.OPEN.toString())) {
+                targetStatuses.add(ClubRecruitmentStatus.ALWAYS.toString());
+                targetStatuses.add(ClubRecruitmentStatus.OPEN.toString());
+                targetStatuses.add(ClubRecruitmentStatus.UPCOMING.toString());
+            } else {
+                targetStatuses.add(recruitmentStatus);
+            }
+
             criteriaList.add(
-                Criteria.where("recruitmentInformation.recruitmentStatus").is(recruitmentStatus));
+                    Criteria.where("recruitmentInformation.clubRecruitmentStatus").in(targetStatuses)
+            );
         }
         if (division != null && !"all".equalsIgnoreCase(division)) {
             criteriaList.add(Criteria.where("division").is(division));

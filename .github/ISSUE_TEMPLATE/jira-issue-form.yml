@@ -4,11 +4,36 @@ labels: [feat]
 title: '이슈이름은 feature를 넣지 않아도 됩니다.'
 body:
   - type: input
+    id: dueDate
+    attributes:
+      label: '🗓️ 마감일'
+      placeholder: '2025-05-07'
+    validations:
+      required: false
+
+  - type: dropdown
+    id: assignee
+    attributes:
+      label: '🙋 담당자(Assignee)'
+      options:
+        - seongwon030
+        - oesnuj
+        - Zepelown
+        - PororoAndFriends
+        - lepitaaar 
+        - suhyun113
+        - alsdddk
+        - yw6938
+        - seongje973
+    validations:
+      required: true
+      
+  - type: input
     id: parentKey
     attributes:
-      label: '🎟️ 상위 작업 (Ticket Number)'
-      description: '상위 작업의 Ticket Number를 기입해주세요'
-      placeholder: 'FE-00'
+      label: '🎟️ 상위 스토리 (Story Key)'
+      description: '이 하위 작업이 속할 상위 스토리의 키를 입력해주세요 (예: MOA-42).'
+      placeholder: 'MOA-42'
     validations:
       required: true
 
@@ -18,6 +43,15 @@ body:
       label: '🌳 브랜치명 (Branch)'
       description: '영어로 브랜치명을 작성해주세요'
       placeholder: 'feature/add-login-page'
+    validations:
+      required: true
+
+  - type: input
+    id: baseBranch
+    attributes:
+      label: '🧭 분기할 브랜치 선택'
+      description: '브랜치를 선택하거나 직접 입력하세요. 예: develop-fe, develop/be'
+      placeholder: 'develop-fe'
     validations:
       required: true
       

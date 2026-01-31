@@ -6,63 +6,75 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
-import java.util.List;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ClubRecruitmentStatus;
-import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.request.ClubInfoRequest;
+import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.global.RegexConstants;
 import org.checkerframework.common.aliasing.qual.Unique;
+import org.javers.core.metamodel.annotation.DiffIgnore;
+
+import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.util.List;
 
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
 public class ClubRecruitmentInformation {
 
-    @Id
-    private String id;
+//    @Id
+//    private String id;
 
     @Column(length = 1024)
     @Unique
+    @DiffIgnore
     private String logo;
+
+    @Column(length = 1024)
+    @Unique
+    @DiffIgnore
+    private String cover;
 
     @Column(length = 30)
     private String introduction;
-
-    @Column(length = 20000)
-    private String description;
 
     @Column(length = 5)
     private String presidentName;
 
     @Pattern(regexp = RegexConstants.PHONE_NUMBER, message = "전화번호 형식이 올바르지 않습니다.")
     @Column(length = 13)
+    @DiffIgnore
     private String presidentTelephoneNumber;
 
-    private LocalDateTime recruitmentStart;
+    private Instant recruitmentStart;
 
-    private LocalDateTime recruitmentEnd;
+    private Instant recruitmentEnd;
 
     private String recruitmentTarget;
 
+    @DiffIgnore
+    String externalApplicationUrl;
+
+    @DiffIgnore
     private List<String> feedImages;
+
     private List<String> tags;
 
     @Enumerated(EnumType.STRING)
     @NotNull
+    @DiffIgnore
     private ClubRecruitmentStatus clubRecruitmentStatus;
 
-    private String recruitmentForm;
+    @DiffIgnore
+    private LocalDateTime lastModifiedDate;
 
-    public ClubRecruitmentInformation updateLogo(String logo) {
+    public void updateLogo(String logo) {
         this.logo = logo;
-        return this;
     }
 
     public void updateRecruitmentStatus(ClubRecruitmentStatus status) {
@@ -70,10 +82,10 @@ public class ClubRecruitmentInformation {
     }
 
     public void updateDescription(ClubRecruitmentInfoUpdateRequest request) {
-        this.description = request.description();
         this.recruitmentStart = request.recruitmentStart();
         this.recruitmentEnd = request.recruitmentEnd();
         this.recruitmentTarget = request.recruitmentTarget();
+        this.externalApplicationUrl = request.externalApplicationUrl();
     }
 
     public boolean hasRecruitmentPeriod() {
@@ -82,19 +94,25 @@ public class ClubRecruitmentInformation {
 
     public ZonedDateTime getRecruitmentStart() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        if (recruitmentStart == null) {
+            return null;
+        }
         return recruitmentStart.atZone(seoulZone);
     }
 
     public ZonedDateTime getRecruitmentEnd() {
         ZoneId seoulZone = ZoneId.of("Asia/Seoul");
+        if (recruitmentEnd == null) {
+            return null;
+        }
         return recruitmentEnd.atZone(seoulZone);
     }
 
-    public int getFeedAmounts(){
+    public int getFeedAmounts() {
         return this.feedImages.size();
     }
 
-    public void updateFeedImages(List<String> feedImages){
+    public void updateFeedImages(List<String> feedImages) {
         this.feedImages = feedImages;
     }
 
@@ -103,6 +121,17 @@ public class ClubRecruitmentInformation {
         this.presidentName = request.presidentName();
         this.presidentTelephoneNumber = request.presidentPhoneNumber();
         this.tags = request.tags();
-        this.recruitmentForm = request.recruitmentForm();
+    }
+
+    public void updateCover(String cover) {
+        this.cover = cover;
+    }
+
+    private void setLastModifiedDate(LocalDateTime lastModifiedDate) {
+        this.lastModifiedDate = lastModifiedDate;
+    }
+
+    public void updateLastModifiedDate() {
+        setLastModifiedDate(LocalDateTime.now());
     }
 }

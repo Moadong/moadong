@@ -7,6 +7,7 @@ import java.util.List;
 
 @Builder
 public record ClubSearchResponse(
-        List<ClubSearchResult> clubs
+        List<ClubSearchResult> clubs,
+        int totalCount
 ) {
 }
