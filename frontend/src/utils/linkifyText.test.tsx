@@ -24,7 +24,6 @@ describe('linkifyText', () => {
       name: 'https://example.com',
     });
 
-    // wrapper(span)의 전체 텍스트 기준으로 검증
     const text = container.textContent || '';
 
     expect(text.includes('여기를 참고하세요')).toBe(true);
@@ -70,19 +69,35 @@ describe('linkifyText', () => {
     expect(link).not.toBeNull();
   });
 
-  it('URL 뒤에 띄어쓰기 없이 붙은 텍스트는 URL의 일부로 처리된다', () => {
+   it('URL 뒤에 한글이 붙은 경우 URL과 분리된다', () => {
     const { container } = render(
       <>{linkifyText('https://example.com입니다')}</>
     );
 
-    const link = screen.getByRole('link');
+    const link = screen.getByRole('link', {
+      name: 'https://example.com',
+    });
 
-    expect(link.textContent).toBe('https://example.com입니다');
-    expect(link.getAttribute('href')).toBe(
-      'https://example.com입니다'
+    const text = container.textContent || '';
+
+    expect(link.getAttribute('href')).toBe('https://example.com');
+    expect(text.includes('https://example.com')).toBe(true);
+    expect(text.includes('입니다')).toBe(true);
+  });
+
+  it('URL 뒤에 영문이 붙은 경우 URL의 일부로 처리된다', () => {
+    const { container } = render(
+      <>{linkifyText('https://example.combb')}</>
     );
 
-    // 전체 텍스트에도 분리된 "입니다"가 없어야 함
-    expect(container.textContent).toBe('https://example.com입니다');
+    const link = screen.getByRole('link');
+
+    expect(link.textContent).toBe('https://example.combb');
+    expect(link.getAttribute('href')).toBe(
+      'https://example.combb'
+    );
+
+    expect(link.getAttribute('href')).toBe('https://example.combb');
+    expect(container.textContent).toBe('https://example.combb');
   });
 });
