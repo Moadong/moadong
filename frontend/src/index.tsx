@@ -6,7 +6,8 @@ initializeMixpanel();
 initializeSentry();
 
 async function startApp() {
-  if (import.meta.env.DEV) {
+  const disableMsw = import.meta.env.VITE_DISABLE_MSW === 'true';
+  if (import.meta.env.DEV && !disableMsw) {
     const { worker } = await import('./mocks/mswDevSetup');
     await worker.start({
       onUnhandledRequest: 'bypass',
