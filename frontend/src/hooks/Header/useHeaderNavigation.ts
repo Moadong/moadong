@@ -27,15 +27,6 @@ const useHeaderNavigation = () => {
     trackEvent(USER_EVENT.CLUB_UNION_BUTTON_CLICKED);
   }, [navigate, trackEvent]);
 
-  const handlePatchNoteClick = useCallback(() => {
-    window.open(
-      'https://honorable-cough-8f9.notion.site/1e8aad232096804f9ea9ee4f5cf0cd10',
-      '_blank',
-      'noopener,noreferrer',
-    );
-    trackEvent(USER_EVENT.PATCH_NOTE_BUTTON_CLICKED);
-  }, [trackEvent]);
-
   const handleAdminClick = useCallback(() => {
     navigate('/admin');
     trackEvent(USER_EVENT.ADMIN_BUTTON_CLICKED);
@@ -45,7 +36,6 @@ const useHeaderNavigation = () => {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
-    handlePatchNoteClick,
     handleAdminClick,
   };
 };
