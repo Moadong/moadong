@@ -8,6 +8,7 @@ import { useGetCardList } from '@/hooks/Queries/useClub';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
+import Filter from '@/pages/MainPage/components/Filter/Filter';
 import Popup from '@/pages/MainPage/components/Popup/Popup';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
@@ -53,6 +54,7 @@ const MainPage = () => {
     <>
       <Popup />
       <Header />
+      <Filter />
       <Banner />
       <Styled.PageContainer>
         <CategoryButtonList />
