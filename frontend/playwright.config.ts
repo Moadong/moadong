@@ -39,7 +39,12 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: 'VITE_DISABLE_MSW=true VITE_DISABLE_MIXPANEL=true npm run dev',
+    command: [
+      'VITE_DISABLE_MSW=true',
+      'VITE_DISABLE_MIXPANEL=true',
+      `VITE_API_BASE_URL=${process.env.VITE_API_BASE_URL}`,
+      'npm run dev',
+    ].join(' '),
     url: 'http://localhost:3000',
     reuseExistingServer: !process.env.CI,
     timeout: 120000,
