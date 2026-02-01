@@ -9,9 +9,13 @@ async function startApp() {
   const disableMsw = import.meta.env.VITE_DISABLE_MSW === 'true';
   if (import.meta.env.DEV && !disableMsw) {
     const { worker } = await import('./mocks/mswDevSetup');
-    await worker.start({
-      onUnhandledRequest: 'bypass',
-    });
+    try {
+      await worker.start({
+        onUnhandledRequest: 'bypass',
+      });
+    } catch (error) {
+      console.warn('[MSW] Service Worker start failed:', error);
+    }
   } else if (
     import.meta.env.DEV &&
     disableMsw &&

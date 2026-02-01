@@ -10,6 +10,7 @@ export default defineConfig({
   timeout: process.env.CI ? 60000 : 30000,
   use: {
     baseURL: 'http://localhost:3000',
+    serviceWorkers: 'block',
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
