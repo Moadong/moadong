@@ -42,7 +42,7 @@ export default defineConfig({
     command: [
       'VITE_DISABLE_MSW=true',
       'VITE_DISABLE_MIXPANEL=true',
-      `VITE_API_BASE_URL=${process.env.VITE_API_BASE_URL}`,
+      'VITE_API_BASE_URL=http://localhost:3001',
       'npm run dev',
     ].join(' '),
     url: 'http://localhost:3000',
