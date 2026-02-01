@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
-export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
-  width: ${(props) => props.width};
+export const InputContainer = styled.div<{ $width: string }>`
+  width: ${(props) => props.$width};
   max-width: 100%;
   display: flex;
   flex-direction: column;

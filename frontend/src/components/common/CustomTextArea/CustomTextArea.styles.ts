@@ -2,8 +2,8 @@ import styled from 'styled-components';
 
 //Todo : InputField 컴포넌트와 중복되는 부분이 많아 추후 리팩토링 검토
 
-export const TextAreaContainer = styled.div<{ width: string }>`
-  width: ${(props) => props.width};
+export const TextAreaContainer = styled.div<{ $width: string }>`
+  width: ${(props) => props.$width};
   max-width: 100%;
   display: flex;
   flex-direction: column;

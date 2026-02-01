@@ -108,11 +108,12 @@ export const Image = styled.img`
   }
 `;
 
-export const NavButton = styled.button<{ position: 'left' | 'right' }>`
+export const NavButton = styled.button<{ $position: 'left' | 'right' }>`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  ${({ position }) => (position === 'left' ? 'left: 16px;' : 'right: 16px;')}
+  ${({ $position }) =>
+    $position === 'left' ? 'left: 16px;' : 'right: 16px;'};
   width: 46px;
   height: 46px;
   border-radius: 50%;
@@ -199,9 +200,9 @@ export const ThumbnailList = styled.div`
   }
 `;
 
-export const Thumbnail = styled.button<{ isActive: boolean }>`
+export const Thumbnail = styled.button<{ $isActive: boolean }>`
   border: 2px solid
-    ${({ isActive }) => (isActive ? colors.primary[900] : 'transparent')};
+    ${({ $isActive }) => ($isActive ? colors.primary[900] : 'transparent')};
   border-radius: 6px;
   padding: 0;
   background: none;
@@ -213,8 +214,8 @@ export const Thumbnail = styled.button<{ isActive: boolean }>`
   transition: all 0.2s;
 
   &:hover {
-    border-color: ${({ isActive }) =>
-      isActive ? colors.primary[900] : '#ddd'};
+    border-color: ${({ $isActive }) =>
+      $isActive ? colors.primary[900] : '#ddd'};
   }
 
   img {

@@ -93,14 +93,14 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
               <>
                 <Styled.NavButton
                   className='swiper-button-prev-custom'
-                  position='left'
+                  $position='left'
                   aria-label='이전 사진'
                 >
                   <img src={PrevButton} alt='이전 사진' />
                 </Styled.NavButton>
                 <Styled.NavButton
                   className='swiper-button-next-custom'
-                  position='right'
+                  $position='right'
                   aria-label='다음 사진'
                 >
                   <img src={NextButton} alt='다음 사진' />
@@ -116,7 +116,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
                   ref={(el) => {
                     thumbnailRefs.current[idx] = el;
                   }}
-                  isActive={idx === currentIndex}
+                  $isActive={idx === currentIndex}
                   onClick={() => {
                     if (swiperRef.current) {
                       swiperRef.current.slideToLoop(idx, 300);

@@ -62,7 +62,7 @@ const InputField = ({
   };
 
   return (
-    <Styled.InputContainer width={width}>
+    <Styled.InputContainer $width={width}>
       {label && <Styled.Label>{label}</Styled.Label>}
       <Styled.InputWrapper>
         <Styled.Input
