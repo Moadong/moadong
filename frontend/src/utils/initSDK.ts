@@ -4,7 +4,26 @@ import mixpanel from 'mixpanel-browser';
 
 const LOCALHOST_HOSTNAME = 'localhost';
 
+function mockMixpanel() {
+  // e2e/CI에서 mixpanel 호출로 인한 에러를 막기 위한 mock
+  const mock = mixpanel as unknown as {
+    track: () => void;
+    get_distinct_id: () => string | undefined;
+    identify: () => void;
+    disable: () => void;
+  };
+  mock.track = () => undefined;
+  mock.get_distinct_id = () => undefined;
+  mock.identify = () => undefined;
+  mock.disable = () => undefined;
+}
+
 export function initializeMixpanel() {
+  if (import.meta.env.VITE_DISABLE_MIXPANEL === 'true') {
+    mockMixpanel();
+    return;
+  }
+
   if (!import.meta.env.VITE_MIXPANEL_TOKEN) {
     console.warn('믹스패널 환경변수 설정이 안 되어 있습니다.');
     return;
