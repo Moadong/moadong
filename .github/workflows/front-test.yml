@@ -86,7 +86,6 @@ jobs:
         run: npm run test:e2e -- --project=chromium
         env:
           CI: true
-          VITE_API_BASE_URL: http://localhost:3001
 
       - name: Upload Playwright report
         uses: actions/upload-artifact@v4
