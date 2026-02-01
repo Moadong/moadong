@@ -10,6 +10,7 @@ module.exports = {
   moduleNameMapper: {
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  testPathIgnorePatterns: ['<rootDir>/e2e/'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'], // text(콘솔 출력), lcov(Codecov용)
