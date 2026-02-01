@@ -8,7 +8,7 @@ import {
   mockClubSearchResponse,
 } from './fixture/mock-data';
 
-// 팝업 닫기 헬퍼 함수 (main-page.spec.ts와 동일)
+// 팝업 닫기 헬퍼 함수
 async function closePopupIfExists(page: import('@playwright/test').Page) {
   const popup = page.locator('[aria-modal="true"]');
   const isPopupVisible = await popup.isVisible().catch(() => false);
