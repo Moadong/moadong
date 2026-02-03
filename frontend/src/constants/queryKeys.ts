@@ -19,4 +19,8 @@ export const queryKeys = {
       division: string,
     ) => ['clubs', keyword, recruitmentStatus, category, division] as const,
   },
+  promotion: {
+    all: ['promotions'] as const,
+    list: () => ['promotions', 'list'] as const,
+  },
 } as const;
