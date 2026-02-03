@@ -27,13 +27,13 @@ const TAG_FONT_SIZE = {
   },
 } as const;
 
-const StyledTag = styled.span<{ color: string }>`
+const StyledTag = styled.span<{ $color: string }>`
   display: flex;
   align-items: center;
   padding: ${TAG_STYLES.desktop.padding};
   height: 28px;
   border-radius: ${TAG_STYLES.desktop.borderRadius};
-  background-color: ${({ color }) => color};
+  background-color: ${({ $color }) => $color};
   font-size: ${TAG_FONT_SIZE.desktop.fontSize};
   font-weight: 600;
   color: #3a3a3a;
@@ -50,7 +50,7 @@ const ClubTag = ({ type, children, className }: TagProps) => {
   const backgroundColor = TAG_COLORS[type] || 'rgba(237, 237, 237, 1)';
   return (
     <StyledTag
-      color={backgroundColor}
+      $color={backgroundColor}
       className={className}
     >{`#${children || type}`}</StyledTag>
   );

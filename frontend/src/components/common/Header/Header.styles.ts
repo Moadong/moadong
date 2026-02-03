@@ -2,7 +2,7 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { Z_INDEX } from '@/styles/zIndex';
 
-export const Header = styled.header<{ isScrolled: boolean }>`
+export const Header = styled.header<{ $isScrolled: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -13,8 +13,8 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   background-color: white;
   z-index: ${Z_INDEX.header};
 
-  box-shadow: ${({ isScrolled }) =>
-    isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
+  box-shadow: ${({ $isScrolled }) =>
+    $isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
   transition: box-shadow 0.2s ease-in-out;
 
   ${media.tablet} {
@@ -77,7 +77,7 @@ export const LogoButton = styled.button`
   }
 `;
 
-export const Nav = styled.nav<{ isOpen: boolean }>`
+export const Nav = styled.nav<{ $isOpen: boolean }>`
   display: flex;
   align-items: center;
   gap: 45px;
@@ -94,19 +94,19 @@ export const Nav = styled.nav<{ isOpen: boolean }>`
     margin-bottom: 16px;
     border-radius: 0 0 20px 20px;
     box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.16);
-    transform: translateY(${({ isOpen }) => (isOpen ? '0' : '-200%')});
+    transform: translateY(${({ $isOpen }) => ($isOpen ? '0' : '-200%')});
     transition: opacity 0.3s ease-in-out;
     z-index: 1;
   }
 `;
 
-export const NavLink = styled.button<{ isActive?: boolean }>`
+export const NavLink = styled.button<{ $isActive?: boolean }>`
   border: none;
   font-weight: 500;
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
-  color: ${({ isActive }) => (isActive ? '#FF5414' : '#3A3A3A')};
+  color: ${({ $isActive }) => ($isActive ? '#FF5414' : '#3A3A3A')};
   background: transparent;
   transition: all 0.2s ease-in-out;
 
@@ -117,8 +117,8 @@ export const NavLink = styled.button<{ isActive?: boolean }>`
   ${media.tablet} {
     display: inline-flex;
     padding: 12px 24px;
-    background: ${({ isActive }) =>
-      isActive ? 'rgba(255, 84, 20, 0.08)' : 'none'};
+    background: ${({ $isActive }) =>
+      $isActive ? 'rgba(255, 84, 20, 0.08)' : 'none'};
 
     &:last-child {
       margin-bottom: 16px;
@@ -136,7 +136,7 @@ export const MenuBar = styled.span`
   transform-origin: center;
 `;
 
-export const MenuButton = styled.button<{ isOpen: boolean }>`
+export const MenuButton = styled.button<{ $isOpen: boolean }>`
   display: none;
   background: none;
   border: none;
@@ -159,17 +159,17 @@ export const MenuButton = styled.button<{ isOpen: boolean }>`
   }
 
   ${MenuBar}:nth-child(1) {
-    transform: ${({ isOpen }) =>
-      isOpen ? 'translateY(8.25px) rotate(45deg)' : 'none'};
+    transform: ${({ $isOpen }) =>
+      $isOpen ? 'translateY(8.25px) rotate(45deg)' : 'none'};
   }
 
   ${MenuBar}:nth-child(2) {
-    opacity: ${({ isOpen }) => (isOpen ? 0 : 1)};
+    opacity: ${({ $isOpen }) => ($isOpen ? 0 : 1)};
   }
 
   ${MenuBar}:nth-child(3) {
-    transform: ${({ isOpen }) =>
-      isOpen ? 'translateY(-8.25px) rotate(-45deg)' : 'none'};
+    transform: ${({ $isOpen }) =>
+      $isOpen ? 'translateY(-8.25px) rotate(-45deg)' : 'none'};
   }
 `;
 

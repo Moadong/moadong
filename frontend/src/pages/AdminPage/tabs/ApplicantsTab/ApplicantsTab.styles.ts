@@ -31,9 +31,9 @@ export const SummaryWrapper = styled.div`
   margin-bottom: 40px;
 `;
 
-export const SummaryCard = styled.div<{ bgColor: string }>`
+export const SummaryCard = styled.div<{ $bgColor: string }>`
   flex: 1;
-  background: ${({ bgColor }) => bgColor};
+  background: ${({ $bgColor }) => $bgColor};
   border-radius: 10px;
   padding: 32px 0;
   text-align: center;
@@ -103,7 +103,7 @@ export const VerticalLine = styled.div`
   margin: 8px 4px;
 `;
 
-export const StatusSelect = styled.p<{ disabled: boolean }>`
+export const StatusSelect = styled.p<{ $disabled: boolean }>`
   height: 30px;
   border: 1px solid #dcdcdc;
   background: #fff;
@@ -111,8 +111,8 @@ export const StatusSelect = styled.p<{ disabled: boolean }>`
   padding: 0 22px 0 8px;
   margin: 5px 0;
 
-  ${({ disabled }) =>
-    disabled
+  ${({ $disabled }) =>
+    $disabled
       ? 'color: #DCDCDC'
       : 'color: #000; &:hover { background: #f5f5f5; }'};
 
@@ -127,8 +127,8 @@ export const StatusSelect = styled.p<{ disabled: boolean }>`
   align-items: center;
 `;
 
-export const StatusSelectMenu = styled.div<{ open: boolean }>`
-  display: ${({ open }) => (open ? 'block' : 'none')};
+export const StatusSelectMenu = styled.div<{ $open: boolean }>`
+  display: ${({ $open }) => ($open ? 'block' : 'none')};
   position: absolute;
   top: 100%;
   height: auto;
@@ -173,9 +173,9 @@ export const ApplicantFilterSelect = styled.div`
   }
 `;
 
-export const DeleteButton = styled.img<{ disabled?: boolean }>`
-  ${({ disabled }) =>
-    disabled
+export const DeleteButton = styled.img<{ $disabled?: boolean }>`
+  ${({ $disabled }) =>
+    $disabled
       ? `content: url("${disabledDeleteIcon}");`
       : `
         &:hover {
@@ -206,9 +206,9 @@ export const ApplicantTableHeaderWrapper = styled.thead`
 `;
 
 export const ApplicantTableHeader = styled.th<{
-  width?: number | string;
-  borderLeft?: boolean;
-  isMemo?: boolean;
+  $width?: number | string;
+  $borderLeft?: boolean;
+  $isMemo?: boolean;
 }>`
   position: relative;
   background: #fafafa;
@@ -217,12 +217,12 @@ export const ApplicantTableHeader = styled.th<{
   font-style: normal;
   font-weight: 600;
   color: var(--78, #787878);
-  width: ${({ width }) => (width ? `${width}px` : 'auto')};
-  text-align: ${({ isMemo }) => (isMemo ? 'left' : 'center')};
-  padding-left: ${({ isMemo }) => (isMemo ? '30px' : '8px')};
+  width: ${({ $width }) => ($width ? `${$width}px` : 'auto')};
+  text-align: ${({ $isMemo }) => ($isMemo ? 'left' : 'center')};
+  padding-left: ${({ $isMemo }) => ($isMemo ? '30px' : '8px')};
 
-  ${({ borderLeft }) =>
-    borderLeft &&
+  ${({ $borderLeft }) =>
+    $borderLeft &&
     `
     &::before {
       content: '';
@@ -245,14 +245,14 @@ export const ApplicantTableRow = styled.tr`
   }
 `;
 
-export const ApplicantTableCol = styled.td<{ isMemo?: boolean }>`
+export const ApplicantTableCol = styled.td<{ $isMemo?: boolean }>`
   padding: 12px 8px;
   font-size: 16px;
-  text-align: ${({ isMemo }) => (isMemo ? 'left' : 'center')};
-  padding-left: ${({ isMemo }) => (isMemo ? '30px' : '8px')};
+  text-align: ${({ $isMemo }) => ($isMemo ? 'left' : 'center')};
+  padding-left: ${({ $isMemo }) => ($isMemo ? '30px' : '8px')};
 
-  ${({ isMemo }) =>
-    isMemo &&
+  ${({ $isMemo }) =>
+    $isMemo &&
     `
     white-space: nowrap;
     overflow: hidden;
@@ -293,8 +293,8 @@ export const ApplicantAllSelectArrow = styled.img`
   cursor: pointer;
 `;
 
-export const ApplicantAllSelectMenu = styled.div<{ open: boolean }>`
-  display: ${({ open }) => (open ? 'block' : 'none')};
+export const ApplicantAllSelectMenu = styled.div<{ $open: boolean }>`
+  display: ${({ $open }) => ($open ? 'block' : 'none')};
   position: absolute;
   top: 80%;
   width: 110px;
@@ -338,21 +338,21 @@ export const ApplicantTableAllSelectCheckbox = styled.input.attrs({
   }
 `;
 
-export const ApplicantStatusBadge = styled.span<{ status: string }>`
+export const ApplicantStatusBadge = styled.span<{ $status: string }>`
   display: inline-block;
   border-radius: 8px;
   padding: 4px 12px;
   font-weight: 500;
   font-size: 15px;
-  background: ${({ status }) =>
-    status === '서류검토'
+  background: ${({ $status }) =>
+    $status === '서류검토'
       ? '#E6F4FB'
-      : status === '면접예정'
+      : $status === '면접예정'
         ? '#E6FBF0'
-        : status === '합격'
+        : $status === '합격'
           ? '#F5F5F5'
-          : status === '불합'
+          : $status === '불합'
             ? '#FFE8E8'
             : '#eee'};
-  color: ${({ status }) => (status === '합격' ? '#888' : '#222')};
+  color: ${({ $status }) => ($status === '합격' ? '#888' : '#222')};
 `;

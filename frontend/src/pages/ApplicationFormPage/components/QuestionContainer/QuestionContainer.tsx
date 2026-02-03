@@ -1,8 +1,9 @@
 import { forwardRef } from 'react';
 import styled from 'styled-components';
 
-const Container = styled.div<{ hasError?: boolean }>`
-  border: ${({ hasError }) => (hasError ? '1px solid #FF5414' : 'transparent')};
+const Container = styled.div<{ $hasError?: boolean }>`
+  border: ${({ $hasError }) =>
+    $hasError ? '1px solid #FF5414' : 'transparent'};
   border-radius: 16px;
   padding: 26px 15px;
   position: relative;
@@ -25,7 +26,7 @@ interface Props {
 const QuestionContainer = forwardRef<HTMLDivElement, Props>(
   ({ hasError, children }, ref) => {
     return (
-      <Container hasError={hasError} ref={ref}>
+      <Container $hasError={hasError} ref={ref}>
         {hasError && <ErrorText>‼️ 필수 입력 문항입니다</ErrorText>}
         {children}
       </Container>

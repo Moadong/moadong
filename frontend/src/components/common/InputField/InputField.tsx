@@ -62,7 +62,7 @@ const InputField = ({
   };
 
   return (
-    <Styled.InputContainer width={width}>
+    <Styled.InputContainer $width={width}>
       {label && <Styled.Label>{label}</Styled.Label>}
       <Styled.InputWrapper>
         <Styled.Input
@@ -72,8 +72,8 @@ const InputField = ({
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
-          hasError={isError}
-          isSuccess={isSuccess}
+          $hasError={isError}
+          $isSuccess={isSuccess}
           readOnly={readOnly}
         />
         {showClearButton && !disabled && (

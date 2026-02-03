@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
-export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
-  width: ${(props) => props.width};
+export const InputContainer = styled.div<{ $width: string }>`
+  width: ${(props) => props.$width};
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -26,16 +26,16 @@ export const InputWrapper = styled.div`
 `;
 
 export const Input = styled.input<{
-  hasError?: boolean;
+  $hasError?: boolean;
   readOnly?: boolean;
-  isSuccess?: boolean;
+  $isSuccess?: boolean;
 }>`
   flex: 1;
   height: 45px;
   padding: 12px 18px;
   border: 1px solid
-    ${({ hasError, isSuccess }) =>
-      hasError ? 'red' : isSuccess ? '#28a745' : '#c5c5c5'};
+    ${({ $hasError, $isSuccess }) =>
+      $hasError ? 'red' : $isSuccess ? '#28a745' : '#c5c5c5'};
   background-color: transparent;
   border-radius: 10px;
   outline: none;
@@ -52,12 +52,12 @@ export const Input = styled.input<{
   :focus {
     outline: none;
     box-shadow: 0 0 3px;
-    border-color: ${({ hasError, isSuccess, readOnly }) =>
+    border-color: ${({ $hasError, $isSuccess, readOnly }) =>
       readOnly
         ? '#c5c5c5'
-        : hasError
+        : $hasError
           ? 'red'
-          : isSuccess
+          : $isSuccess
             ? '#28a745'
             : '#007bff'};
     ${({ readOnly }) => readOnly && 'cursor: pointer;'}
