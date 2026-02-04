@@ -22,6 +22,11 @@ const MEMBER_AVATARS = {
   SPORT: inactiveCategoryIcons.sport,
 };
 
+export const CLUB_UNION_SNS = {
+  instagram: 'https://www.instagram.com/17th_wesh',
+  kakaotalk: 'https://pf.kakao.com/_WBqUxb',
+} as const;
+
 // 개발자 가이드: description 필드는 UI가 깨지지 않도록 글자 수를 제한합니다.
 // (권장) 모바일: 50자 이내, 데스크톱: 100자 이내
 export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
