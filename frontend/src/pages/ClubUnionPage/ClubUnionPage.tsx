@@ -1,3 +1,4 @@
+import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { CLUB_UNION_MEMBERS } from '@/constants/clubUnionInfo';
@@ -15,9 +16,26 @@ const ClubUnionPage = () => {
       <PageContainer>
         <Styled.Title>총동아리연합회 소개</Styled.Title>
         <Styled.IntroductionText>
-          안녕하세요! 부경대학교 제16대 총동아리연합회 '온'입니다.
-          <br />온 동아리를 위하여, 온 힘을 다해.
+          안녕하세요! 부경대학교 제17대 총동아리연합회 'we:sh'입니다.
+          <br />As we wish, 우리가 바라는 대로.
         </Styled.IntroductionText>
+        <Styled.SnsLinkContainer>
+          <Styled.SnsLink
+            href="https://www.instagram.com/17th_wesh"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            <img src={InstagramIcon} alt="인스타그램" />
+            Instagram
+          </Styled.SnsLink>
+          <Styled.SnsLink
+            href="https://pf.kakao.com/_WBqUxb"
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            💬 카카오톡
+          </Styled.SnsLink>
+        </Styled.SnsLinkContainer>
         <Styled.ProfileGrid>
           {CLUB_UNION_MEMBERS.map((member) => (
             <Styled.ProfileCardContainer key={member.id}>
