@@ -2,13 +2,15 @@ import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { CLUB_UNION_MEMBERS, CLUB_UNION_SNS } from '@/constants/clubUnionInfo';
-import { PAGE_VIEW } from '@/constants/eventName';
+import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './ClubUnionPage.styles';
 
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
+  const trackEvent = useMixpanelTrack();
 
   return (
     <>
@@ -24,6 +26,11 @@ const ClubUnionPage = () => {
             href={CLUB_UNION_SNS.instagram}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() =>
+              trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
+                platform: 'instagram',
+              })
+            }
           >
             <img src={InstagramIcon} alt="인스타그램" />
             Instagram
@@ -32,6 +39,11 @@ const ClubUnionPage = () => {
             href={CLUB_UNION_SNS.kakaotalk}
             target="_blank"
             rel="noopener noreferrer"
+            onClick={() =>
+              trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
+                platform: 'kakaotalk',
+              })
+            }
           >
             💬 카카오톡
           </Styled.SnsLink>
