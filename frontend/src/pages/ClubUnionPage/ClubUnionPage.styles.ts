@@ -22,27 +22,65 @@ export const IntroductionText = styled.p`
   text-align: center;
   color: #555;
   max-width: 600px;
-  margin: 0 auto 60px;
+  margin: 0 auto 20px;
 
   ${media.mobile} {
     font-size: 1rem;
+    margin-bottom: 16px;
+  }
+`;
+
+export const SnsLinkContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  margin-bottom: 60px;
+
+  ${media.mobile} {
     margin-bottom: 40px;
   }
 `;
 
+export const SnsLink = styled.a`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 10px 20px;
+  border-radius: 24px;
+  background-color: #f5f5f5;
+  color: #333;
+  text-decoration: none;
+  font-size: 0.95rem;
+  font-weight: 600;
+  transition: background-color 0.2s ease;
+
+  &:hover {
+    background-color: #eaeaea;
+  }
+
+  img {
+    width: 20px;
+    height: 20px;
+  }
+`;
+
 export const ProfileGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
   gap: 40px 30px;
+  max-width: 1050px;
+  margin: 0 auto;
+  padding-bottom: 80px;
 
   ${media.tablet} {
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
     gap: 30px 20px;
+    padding-bottom: 60px;
   }
 
   ${media.mobile} {
-    grid-template-columns: repeat(2, 1fr);
     gap: 20px 15px;
+    padding-bottom: 40px;
   }
 `;
 
@@ -92,11 +130,27 @@ export const NameBadge = styled.div`
 
 export const ProfileCardContainer = styled.div`
   position: relative;
-  aspect-ratio: 1 / 1;
+  width: 180px;
+  height: 180px;
   border-radius: 50%;
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+
+  ${media.laptop} {
+    width: 160px;
+    height: 160px;
+  }
+
+  ${media.tablet} {
+    width: 140px;
+    height: 140px;
+  }
+
+  ${media.mobile} {
+    width: 120px;
+    height: 120px;
+  }
 
   &:hover {
     ${ProfileImage} {
