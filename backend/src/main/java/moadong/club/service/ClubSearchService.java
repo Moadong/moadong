@@ -13,6 +13,7 @@ import moadong.media.resolver.ImageDisplayUrlResolver;
 import org.springframework.stereotype.Service;
 
 import static java.util.Arrays.*;
+import java.util.Objects;
 
 @Service
 @AllArgsConstructor
@@ -21,6 +22,7 @@ public class ClubSearchService {
 
     private final ClubSearchRepository clubSearchRepository;
     private final ImageDisplayUrlResolver imageDisplayUrlResolver;
+    private final ClubImageUrlPersistenceService clubImageUrlPersistenceService;
 
     public ClubSearchResponse searchClubsByKeyword(String keyword,
                                                    String recruitmentStatus,
@@ -55,16 +57,22 @@ public class ClubSearchService {
                                                 Integer.MAX_VALUE))
                                 .thenComparing(ClubSearchResult::name)
                 )
-                .map(r -> new ClubSearchResult(
-                        r.id(),
-                        r.name(),
-                        imageDisplayUrlResolver.resolveDisplayUrl(r.logo()),
-                        r.tags(),
-                        r.state(),
-                        r.category(),
-                        r.division(),
-                        r.introduction(),
-                        r.recruitmentStatus()))
+                .map(r -> {
+                    String resolvedLogo = imageDisplayUrlResolver.resolveDisplayUrl(r.logo());
+                    if (!Objects.equals(resolvedLogo, r.logo())) {
+                        clubImageUrlPersistenceService.schedulePersistResolvedUrls(r.id(), resolvedLogo, null, null);
+                    }
+                    return new ClubSearchResult(
+                            r.id(),
+                            r.name(),
+                            resolvedLogo,
+                            r.tags(),
+                            r.state(),
+                            r.category(),
+                            r.division(),
+                            r.introduction(),
+                            r.recruitmentStatus());
+                })
                 .collect(Collectors.toList());
 
         return ClubSearchResponse.builder()

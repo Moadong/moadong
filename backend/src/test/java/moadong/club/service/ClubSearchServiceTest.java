@@ -25,6 +25,9 @@ class ClubSearchServiceTest {
     @Mock
     private ImageDisplayUrlResolver imageDisplayUrlResolver;
 
+    @Mock
+    private ClubImageUrlPersistenceService clubImageUrlPersistenceService;
+
     @InjectMocks
     private ClubSearchService clubSearchService;
 

@@ -34,6 +34,7 @@ public class ClubProfileService {
     private final RecruitmentStateCalculator recruitmentStateCalculator;
     private final Javers javers;
     private final ImageDisplayUrlResolver imageDisplayUrlResolver;
+    private final ClubImageUrlPersistenceService clubImageUrlPersistenceService;
 
     @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
@@ -65,6 +66,11 @@ public class ClubProfileService {
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, imageDisplayUrlResolver);
+        clubImageUrlPersistenceService.schedulePersistResolvedUrls(
+                club.getId(),
+                clubDetailedResult.logo(),
+                clubDetailedResult.cover(),
+                clubDetailedResult.feeds());
         return new ClubDetailedResponse(clubDetailedResult);
     }
 }
