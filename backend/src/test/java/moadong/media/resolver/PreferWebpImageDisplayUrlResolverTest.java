@@ -1,6 +1,7 @@
 package moadong.media.resolver;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 
@@ -11,6 +12,7 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 
 @ExtendWith(MockitoExtension.class)
 class PreferWebpImageDisplayUrlResolverTest {
@@ -37,7 +39,7 @@ class PreferWebpImageDisplayUrlResolverTest {
         String result = resolver.resolveDisplayUrl(storedUrl);
 
         assertEquals(storedUrl, result);
-        verify(s3Client, never()).headObject(org.mockito.ArgumentMatchers.any());
+        verify(s3Client, never()).headObject(any(HeadObjectRequest.class));
     }
 
     @Test
@@ -47,6 +49,6 @@ class PreferWebpImageDisplayUrlResolverTest {
         String result = resolver.resolveDisplayUrl(storedUrl);
 
         assertEquals(storedUrl, result);
-        verify(s3Client, never()).headObject(org.mockito.ArgumentMatchers.any());
+        verify(s3Client, never()).headObject(any(HeadObjectRequest.class));
     }
 }
