@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const FormTitle = styled.h1`
   font-size: 2.2rem;
@@ -46,19 +47,19 @@ export const ButtonWrapper = styled.div`
 `;
 
 export const submitButton = styled.button`
-  padding: 10px 56px;
-  background-color: #ff5414;
+  padding: 10px 40px;
+  background-color: ${colors.gray[900]};
   border-radius: 10px;
   border: none;
-  color: #fff;
-  font-size: 1.25rem;
+  color: ${colors.base.white};
+  font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.4px;
   transition: background-color 0.2s;
-  margin: 50px 0;
+  margin: 50px 10px;
 
   &:hover {
-    background-color: #ffad8e;
+    background-color: ${colors.gray[800]};
     animation: pulse 0.4s ease-in-out;
   }
 
