@@ -26,7 +26,7 @@ export const TextArea = styled.textarea<{ hasError?: boolean }>`
   height: 45px;
   padding: 12px 18px;
   border: 1px solid ${({ hasError }) => (hasError ? 'red' : '#f5f5f5')};
-  border-radius: 10px;
+  border-radius: 6px;
   background: var(--f5, #f5f5f5);
   outline: none;
   font-size: 1.125rem;

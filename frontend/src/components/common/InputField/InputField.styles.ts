@@ -37,7 +37,7 @@ export const Input = styled.input<{
     ${({ hasError, isSuccess }) =>
       hasError ? 'red' : isSuccess ? '#28a745' : '#c5c5c5'};
   background-color: transparent;
-  border-radius: 10px;
+  border-radius: 6px;
   outline: none;
   font-size: 1.125rem;
   letter-spacing: 0;
