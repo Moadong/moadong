@@ -1,4 +1,4 @@
-import delete_button_icon from '@/assets/images/icons/delete_button_icon.svg';
+import delete_button_icon from '@/assets/images/icons/input_clear_button_icon.svg';
 import * as Styled from './ImagePreview.styles';
 
 interface ImagePreviewProps {

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
+import deleteButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQEditor.styles';
 

@@ -1,4 +1,4 @@
-import deleteButton from '@/assets/images/icons/delete_button_icon.svg';
+import deleteButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './MakeTags.styles';
