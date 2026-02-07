@@ -313,6 +313,7 @@ const InternalApplicationComponent = ({
   return (
     <>
       <CustomTextArea
+        variant="filled"
         label='지원서 설명'
         value={formData.description}
         onChange={(e) => handleFormDescriptionChange(e.target.value)}

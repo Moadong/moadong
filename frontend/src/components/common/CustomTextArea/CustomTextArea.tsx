@@ -11,6 +11,7 @@ interface CustomTextAreaProps {
   label?: string;
   showMaxChar?: boolean;
   showClearButton?: boolean;
+  variant?: 'outlined' | 'filled';
   disabled?: boolean;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
@@ -26,6 +27,7 @@ const CustomTextArea = ({
   label,
   showMaxChar = false,
   showClearButton = false,
+  variant = 'outlined',
   disabled = false,
   value = '',
   onChange,
@@ -72,6 +74,7 @@ const CustomTextArea = ({
           disabled={disabled}
           hasError={isError}
           value={value}
+          $variant={variant}
         />
         {showClearButton && !disabled && (
           <Styled.ClearButton type="button" onClick={handleClear}>

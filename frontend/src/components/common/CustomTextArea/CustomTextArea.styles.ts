@@ -21,18 +21,25 @@ export const TextAreaWrapper = styled.div`
   display: flex;
 `;
 
-export const TextArea = styled.textarea<{ hasError?: boolean }>`
+export const TextArea = styled.textarea<{
+  hasError?: boolean;
+  $variant?: 'outlined' | 'filled';
+}>`
   flex: 1;
   padding: 12px 36px 12px 18px;
-  border: 1px solid
-    ${({ hasError }) => (hasError ? 'red' : colors.gray[500])};
-  border-radius: 6px;
+  border: ${({ hasError, $variant }) =>
+    $variant === 'filled'
+      ? 'none'
+      : `1px solid ${hasError ? 'red' : colors.gray[500]}`};
+  border-radius: ${({ $variant }) => ($variant === 'filled' ? '8px' : '6px')};
   outline: none;
   font-size: 1.125rem;
   letter-spacing: 0;
   color: rgba(0, 0, 0, 0.8);
   overflow: hidden;
   resize: none;
+  background-color: ${({ $variant }) =>
+    $variant === 'filled' ? colors.gray[100] : 'transparent'};
 
   &:disabled {
     background-color: rgba(0, 0, 0, 0.05);
