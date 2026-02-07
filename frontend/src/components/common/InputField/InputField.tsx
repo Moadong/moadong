@@ -76,7 +76,7 @@ const InputField = ({
           isSuccess={isSuccess}
           readOnly={readOnly}
         />
-        {showClearButton && !disabled && (
+        {showClearButton && type !== 'password' && !disabled && value.length > 0 && (
           <Styled.ClearButton type='button' onClick={clearInput}>
             <img src={clearIcon} alt='삭제' />
           </Styled.ClearButton>
