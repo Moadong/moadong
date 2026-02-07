@@ -3,11 +3,16 @@ import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 export const FormTitle = styled.h1`
-  font-size: 2.2rem;
+  font-size: 40px;
   font-weight: 700;
   border: none;
   outline: none;
-  margin-top: 30px;
+  margin-top: 110px;
+
+  ${media.tablet} {
+    font-size: 28px;
+    margin-top: 50px;
+  }
 `;
 
 export const FormDescription = styled.div`
@@ -17,7 +22,7 @@ export const FormDescription = styled.div`
   color: ${colors.gray[800]};
   margin-top: 10px;
   padding: 12px 18px;
-  background-color: #f5f5f5;
+  background-color: ${colors.gray[100]};
   border-radius: 6px;
 
   ${media.tablet} {
