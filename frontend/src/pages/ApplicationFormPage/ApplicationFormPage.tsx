@@ -148,9 +148,9 @@ const ApplicationFormPage = () => {
         </Styled.QuestionsWrapper>
 
         <Styled.ButtonWrapper>
-          <Styled.submitButton onClick={handleSubmit}>
+          <Styled.SubmitButton onClick={handleSubmit}>
             제출하기
-          </Styled.submitButton>
+          </Styled.SubmitButton>
         </Styled.ButtonWrapper>
       </PageContainer>
       <Footer />

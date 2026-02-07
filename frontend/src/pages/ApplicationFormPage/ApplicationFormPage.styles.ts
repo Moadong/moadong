@@ -48,7 +48,7 @@ export const ButtonWrapper = styled.div`
   justify-content: flex-end;
 `;
 
-export const submitButton = styled.button`
+export const SubmitButton = styled.button`
   padding: 10px 40px;
   background-color: ${colors.gray[900]};
   border-radius: 10px;
