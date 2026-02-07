@@ -56,19 +56,7 @@ export const SubmitButton = styled(Button)`
   font-size: 20px;
   font-weight: 700;
   letter-spacing: -0.2px;
-  transition: 
-    background-color 0.15s ease;
-    transform 0.15s ease;
   margin: 50px 4px;
-
-  &:hover {
-    background-color: ${colors.gray[800]};
-    transform: translateY(-0.5px);
-  }
-
-  &:active {
-    transform: scale(0.98);
-  }
 
   ${media.tablet} {
     && {
