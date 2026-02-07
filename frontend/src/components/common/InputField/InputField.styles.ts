@@ -28,10 +28,13 @@ export const Input = styled.input<{
   hasError?: boolean;
   readOnly?: boolean;
   isSuccess?: boolean;
+  $variant?: 'text' | 'password' | 'none';
 }>`
   flex: 1;
   height: 45px;
-  padding: 12px 40px 12px 18px;
+  padding: 12px ${({ $variant }) =>
+    $variant === 'password' ? '50px' : 
+    $variant === 'text' ? '40px' : '18px'} 12px 18px;
   border: 1px solid
     ${({ hasError, isSuccess }) =>
       hasError ? 'red' : isSuccess ? '#28a745' : colors.gray[500]};
@@ -105,7 +108,7 @@ export const ClearButton = styled.button`
 
 export const ToggleButton = styled.button`
   position: absolute;
-  right: 40px;
+  right: 18px;
   top: 50%;
   transform: translateY(-50%);
   background: none;

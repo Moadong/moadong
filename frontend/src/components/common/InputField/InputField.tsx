@@ -38,6 +38,7 @@ const InputField = ({
   isSuccess,
 }: CustomInputProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
+  const activeButton = disabled ? 'none' : type === 'password' ? 'password' : showClearButton ? 'text' : 'none';
 
   const togglePasswordVisibility = () => {
     if (!disabled) {
@@ -75,8 +76,9 @@ const InputField = ({
           hasError={isError}
           isSuccess={isSuccess}
           readOnly={readOnly}
+          $variant={activeButton}
         />
-        {showClearButton && type !== 'password' && !disabled && value.length > 0 && (
+        {showClearButton && type !== 'password' && !disabled && (
           <Styled.ClearButton type='button' onClick={clearInput}>
             <img src={clearIcon} alt='삭제' />
           </Styled.ClearButton>
