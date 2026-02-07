@@ -49,6 +49,7 @@ export const ButtonWrapper = styled.div`
 `;
 
 export const SubmitButton = styled.button`
+  height: 44px;
   padding: 10px 40px;
   background-color: ${colors.gray[900]};
   border-radius: 10px;
@@ -57,21 +58,22 @@ export const SubmitButton = styled.button`
   font-size: 20px;
   font-weight: 600;
   letter-spacing: -0.4px;
-  transition: background-color 0.2s;
-  margin: 50px 10px;
+  transition: 
+    background-color 0.15s ease;
+    transform 0.15s ease;
+  margin: 50px 4px;
 
   &:hover {
-    background-color: ${colors.gray[800]};
-    animation: pulse 0.4s ease-in-out;
+    background-color: ${colors.gray[600]};
+    transform: translateY(-0.5px);
   }
 
   &:active {
-    transform: scale(0.95);
+    transform: scale(0.98);
   }
 
   ${media.tablet} {
     width: 100%;
     max-width: 100%;
-    height: 44px;
   }
 `;
