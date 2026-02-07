@@ -86,12 +86,12 @@ const InputField = ({
             {isPasswordVisible ? '숨기기' : '보기'}
           </Styled.ToggleButton>
         )}
+      </Styled.InputWrapper>
         {showMaxChar && maxLength !== undefined && (
           <Styled.CharCount>
             {value.length}/{maxLength}
           </Styled.CharCount>
         )}
-      </Styled.InputWrapper>
       {isError && helperText && (
         <Styled.HelperText>{helperText}</Styled.HelperText>
       )}

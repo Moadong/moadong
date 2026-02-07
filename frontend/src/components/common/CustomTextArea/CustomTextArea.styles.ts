@@ -68,10 +68,10 @@ export const ClearButton = styled.button`
 `;
 
 export const CharCount = styled.span`
-  position: absolute;
+  display: block;
+  margin-top: 4px;
+  text-align: right;
   color: ${colors.gray[500]};
-  top: 110%;
-  right: 0;
   font-size: 14px;
   letter-spacing: -0.96px;
 `;

@@ -115,10 +115,10 @@ export const ToggleButton = styled.button`
 `;
 
 export const CharCount = styled.span`
-  position: absolute;
-  color: #c5c5c5;
-  top: 110%;
-  right: 0;
+  display: block;
+  margin-top: 4px;
+  text-align: right;
+  color: ${colors.gray[500]};
   font-size: 14px;
   letter-spacing: -0.96px;
 `;

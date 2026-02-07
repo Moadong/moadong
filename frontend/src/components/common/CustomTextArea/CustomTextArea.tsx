@@ -78,12 +78,12 @@ const CustomTextArea = ({
             <img src={clearIcon} alt="삭제" />
           </Styled.ClearButton>
         )}
+      </Styled.TextAreaWrapper>
         {showMaxChar && maxLength !== undefined && (
           <Styled.CharCount>
             {value.length}/{maxLength}
           </Styled.CharCount>
         )}
-      </Styled.TextAreaWrapper>
       {isError && helperText && (
         <Styled.HelperText>{helperText}</Styled.HelperText>
       )}
