@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 //Todo : InputField 컴포넌트와 중복되는 부분이 많아 추후 리팩토링 검토
 
@@ -18,16 +19,14 @@ export const Label = styled.label`
 export const TextAreaWrapper = styled.div`
   position: relative;
   display: flex;
-  align-items: center;
 `;
 
 export const TextArea = styled.textarea<{ hasError?: boolean }>`
   flex: 1;
-  height: 45px;
-  padding: 12px 18px;
-  border: 1px solid ${({ hasError }) => (hasError ? 'red' : '#f5f5f5')};
+  padding: 12px 36px 12px 18px;
+  border: 1px solid
+    ${({ hasError }) => (hasError ? 'red' : colors.gray[500])};
   border-radius: 6px;
-  background: var(--f5, #f5f5f5);
   outline: none;
   font-size: 1.125rem;
   letter-spacing: 0;
@@ -35,27 +34,45 @@ export const TextArea = styled.textarea<{ hasError?: boolean }>`
   overflow: hidden;
   resize: none;
 
-  &:focus {
-    border-color: ${({ hasError }) => (hasError ? 'red' : '#007bff')};
-    box-shadow: 0 0 3px
-      ${({ hasError }) =>
-        hasError ? 'rgba(255, 0, 0, 0.5)' : 'rgba(0, 123, 255, 0.5)'};
-  }
-
   &:disabled {
     background-color: rgba(0, 0, 0, 0.05);
   }
+
   &::placeholder {
-    color: rgba(0, 0, 0, 0.3);
+    color: ${colors.gray[600]};
+    font-size: 16px;
+    transition: color 0.25s ease;
+  }
+`;
+
+export const ClearButton = styled.button`
+  position: absolute;
+  right: 18px;
+  bottom: 12px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  img {
+    width: 18px;
+    height: 18px;
+  }
+
+  &:hover img {
+    opacity: 0.7;
   }
 `;
 
 export const CharCount = styled.span`
   position: absolute;
-  color: #c5c5c5;
+  color: ${colors.gray[500]};
+  top: 110%;
   right: 0;
-  top: 100%;
-  font-size: 16px;
+  font-size: 14px;
   letter-spacing: -0.96px;
 `;
 

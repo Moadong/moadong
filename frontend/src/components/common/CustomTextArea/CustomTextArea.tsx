@@ -1,4 +1,5 @@
 import { useEffect, useRef } from 'react';
+import clearIcon from '@/assets/images/icons/input_clear_button_icon.svg';
 import * as Styled from './CustomTextArea.styles';
 
 //Todo : InputField 컴포넌트와 중복되는 부분이 많아 추후 리팩토링 검토
@@ -9,9 +10,11 @@ interface CustomTextAreaProps {
   maxLength?: number;
   label?: string;
   showMaxChar?: boolean;
+  showClearButton?: boolean;
   disabled?: boolean;
   value?: string;
   onChange?: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  onClear?: () => void;
   isError?: boolean;
   helperText?: string;
 }
@@ -22,9 +25,11 @@ const CustomTextArea = ({
   maxLength,
   label,
   showMaxChar = false,
+  showClearButton = false,
   disabled = false,
   value = '',
   onChange,
+  onClear,
   isError,
   helperText,
 }: CustomTextAreaProps) => {
@@ -49,6 +54,12 @@ const CustomTextArea = ({
     onChange?.(e);
   };
 
+  const handleClear = () => {
+    if (!disabled && onClear) {
+      onClear();
+    }
+  };
+
   return (
     <Styled.TextAreaContainer width={width}>
       {label && <Styled.Label>{label}</Styled.Label>}
@@ -62,6 +73,11 @@ const CustomTextArea = ({
           hasError={isError}
           value={value}
         />
+        {showClearButton && !disabled && (
+          <Styled.ClearButton type="button" onClick={handleClear}>
+            <img src={clearIcon} alt="삭제" />
+          </Styled.ClearButton>
+        )}
         {showMaxChar && maxLength !== undefined && (
           <Styled.CharCount>
             {value.length}/{maxLength}

@@ -22,7 +22,6 @@ export const Label = styled.label`
 export const InputWrapper = styled.div`
   position: relative;
   display: flex;
-  align-items: center;
 `;
 
 export const Input = styled.input<{
@@ -32,10 +31,10 @@ export const Input = styled.input<{
 }>`
   flex: 1;
   height: 45px;
-  padding: 12px 18px;
+  padding: 12px 40px 12px 18px;
   border: 1px solid
     ${({ hasError, isSuccess }) =>
-      hasError ? 'red' : isSuccess ? '#28a745' : '#c5c5c5'};
+      hasError ? 'red' : isSuccess ? '#28a745' : colors.gray[500]};
   background-color: transparent;
   border-radius: 6px;
   outline: none;
@@ -54,7 +53,7 @@ export const Input = styled.input<{
     box-shadow: 0 0 3px;
     border-color: ${({ hasError, isSuccess, readOnly }) =>
       readOnly
-        ? '#c5c5c5'
+        ? colors.gray[500]
         : hasError
           ? 'red'
           : isSuccess
@@ -68,7 +67,7 @@ export const Input = styled.input<{
   }
 
   &::placeholder {
-    color: ${colors.gray[400]};
+    color: ${colors.gray[600]};
     font-size: 16px;
     transition: color 0.25s ease;
   }
@@ -85,12 +84,11 @@ export const Input = styled.input<{
 export const ClearButton = styled.button`
   position: absolute;
   right: 18px;
-  top: 50%;
-  transform: translateY(-50%);
+  top: 13px;
+  bottom: 13px;
   background: none;
   border: none;
   cursor: pointer;
-  padding: 0;
   display: flex;
   align-items: center;
   justify-content: center;

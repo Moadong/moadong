@@ -8,35 +8,32 @@ export const FormTitle = styled.h1`
   border: none;
   outline: none;
   margin-top: 30px;
-  margin-bottom: 30px;
-  padding: 0 15px;
 `;
 
 export const FormDescription = styled.div`
   white-space: pre-line;
   font-size: 1rem;
   line-height: 1.6;
-  color: #444;
-  margin-top: -20px;
-  margin-bottom: 48px;
+  color: ${colors.gray[800]};
+  margin-top: 10px;
   padding: 12px 18px;
   background-color: #f5f5f5;
   border-radius: 6px;
 
-  ${media.mobile} {
+  ${media.tablet} {
     font-size: 0.95rem;
     line-height: 1.5;
-
-    padding: 4px 6px;
+    padding: 10px 14px;
   }
 `;
 
 export const QuestionsWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: 46px;
+  padding: 0 4px;
   gap: 20px;
-
-  ${media.mobile} {
+  ${media.tablet} {
     gap: 10px;
   }
 `;
@@ -65,5 +62,11 @@ export const submitButton = styled.button`
 
   &:active {
     transform: scale(0.95);
+  }
+
+  ${media.tablet} {
+    width: 100%;
+    max-width: 100%;
+    height: 44px;
   }
 `;
