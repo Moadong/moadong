@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Button from '@/components/common/Button/Button';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
@@ -36,7 +37,6 @@ export const QuestionsWrapper = styled.div`
   display: flex;
   flex-direction: column;
   margin-top: 46px;
-  padding: 0 4px;
   gap: 20px;
   ${media.tablet} {
     gap: 10px;
@@ -48,23 +48,21 @@ export const ButtonWrapper = styled.div`
   justify-content: flex-end;
 `;
 
-export const SubmitButton = styled.button`
+export const SubmitButton = styled(Button)`
   height: 44px;
   padding: 10px 40px;
   background-color: ${colors.gray[900]};
   border-radius: 10px;
-  border: none;
-  color: ${colors.base.white};
   font-size: 20px;
-  font-weight: 600;
-  letter-spacing: -0.4px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
   transition: 
     background-color 0.15s ease;
     transform 0.15s ease;
   margin: 50px 4px;
 
   &:hover {
-    background-color: ${colors.gray[600]};
+    background-color: ${colors.gray[800]};
     transform: translateY(-0.5px);
   }
 
@@ -73,7 +71,10 @@ export const SubmitButton = styled.button`
   }
 
   ${media.tablet} {
-    width: 100%;
-    max-width: 100%;
+    && {
+      width: 100%;
+      max-width: 100%;
+
+    }  
   }
 `;

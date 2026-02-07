@@ -148,7 +148,10 @@ const ApplicationFormPage = () => {
         </Styled.QuestionsWrapper>
 
         <Styled.ButtonWrapper>
-          <Styled.SubmitButton onClick={handleSubmit}>
+          <Styled.SubmitButton 
+            onClick={handleSubmit} 
+            animated={true}
+          >
             제출하기
           </Styled.SubmitButton>
         </Styled.ButtonWrapper>
