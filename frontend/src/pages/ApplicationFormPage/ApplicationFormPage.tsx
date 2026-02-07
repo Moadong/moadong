@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { applyToClub } from '@/apis/application';
+import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
@@ -152,6 +153,7 @@ const ApplicationFormPage = () => {
           </Styled.submitButton>
         </Styled.ButtonWrapper>
       </PageContainer>
+      <Footer />
     </>
   );
 };
