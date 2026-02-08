@@ -8,12 +8,16 @@ export const Wrapper = styled.div`
   align-items: center;
   gap: 6px;
   position: relative;
+
+  background: ${colors.gray[100]};
+  border-radius: 10px;
+  padding: 8px 8px;
 `;
 
 export const Pill = styled.button<{ $active?: boolean; $padding?: string }>`
   height: 28px;
-  padding: ${({ $padding }) => $padding || '6px 12px'};
-  border-radius: 999px;
+  padding: ${({ $padding }) => $padding || '6px 10px'};
+  border-radius: 100px;
   border: none;
   cursor: pointer;
 
@@ -21,7 +25,7 @@ export const Pill = styled.button<{ $active?: boolean; $padding?: string }>`
   align-items: center;
   justify-content: center;
   font-size: 16px;
-  font-weight: 500;
+  font-weight: 400;
   white-space: nowrap;
 
   background: ${({ $active }) =>
@@ -38,21 +42,11 @@ export const Colon = styled.span`
   margin: 0 -3px;
 `;
 
-/* ~ */
-export const Tilde = styled.span`
-  margin: 0 8px;
-  font-size: 18px;
-`;
-
 /* 패널 공통 */
 export const Panel = styled.div`
   position: absolute;
   top: 52px;
   z-index: 20;
-  background: ${colors.base.white};
-  border-radius: 12px;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
-  padding: 16px;
 `;
 
 /* ===== Hour Picker ===== */

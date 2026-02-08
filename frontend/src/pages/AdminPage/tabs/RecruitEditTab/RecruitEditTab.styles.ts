@@ -44,10 +44,11 @@ export const Label = styled.p`
 `;
 
 export const Tilde = styled.span`
-  font-size: 20px;
-  font-weight: 600;
-  color: ${colors.gray[600]};
+  font-size: 22px;
+  font-weight: 400;
+  color: ${colors.gray[700]};
   display: flex;
   align-items: center;
+  margin: 0 -10px;
 `;
 
