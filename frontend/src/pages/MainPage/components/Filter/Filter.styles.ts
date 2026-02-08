@@ -12,6 +12,7 @@ export const FilterListContainer = styled.div`
 
 export const FilterButton = styled(Button)<{ $isActive?: boolean }>`
   border-radius: 100px;
+  height: 32px;
   padding: 6px 12px;
   border-radius: 100px;
   font-size: ${theme.typography.button.button1.size};
