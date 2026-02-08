@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import Filter from './Filter';
@@ -51,6 +52,36 @@ export const PromotionTab: Story = {
   ],
 };
 
+const InteractiveNotificationFilter = () => {
+  const [showNotification, setShowNotification] = useState(true);
+  const [activeTab, setActiveTab] = useState<'club' | 'promotion'>('club');
+
+  const handlePromotionClick = () => {
+    setShowNotification(false);
+    setActiveTab('promotion');
+  };
+
+  return (
+    <Styled.FilterListContainer>
+      <Styled.FilterButton
+        $isActive={activeTab === 'club'}
+        onClick={() => setActiveTab('club')}
+      >
+        동아리
+      </Styled.FilterButton>
+      <Styled.FilterButtonWrapper>
+        <Styled.FilterButton
+          $isActive={activeTab === 'promotion'}
+          onClick={handlePromotionClick}
+        >
+          홍보
+        </Styled.FilterButton>
+        <Styled.NotificationDot $isVisible={showNotification} />
+      </Styled.FilterButtonWrapper>
+    </Styled.FilterListContainer>
+  );
+};
+
 export const WithNotificationDot: Story = {
   decorators: [
     (Story) => {
@@ -62,13 +93,5 @@ export const WithNotificationDot: Story = {
       );
     },
   ],
-  render: () => (
-    <Styled.FilterListContainer>
-      <Styled.FilterButton $isActive>동아리</Styled.FilterButton>
-      <Styled.FilterButtonWrapper>
-        <Styled.FilterButton>홍보</Styled.FilterButton>
-        <Styled.NotificationDot $isVisible />
-      </Styled.FilterButtonWrapper>
-    </Styled.FilterListContainer>
-  ),
+  render: () => <InteractiveNotificationFilter />,
 };
