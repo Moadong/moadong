@@ -2,6 +2,12 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
+const INPUT_RIGHT_PADDING = {
+  password: '50px',
+  text: '40px',
+  none: '18px',
+} as const;
+
 export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
   width: ${(props) => props.width};
   max-width: 100%;
@@ -34,7 +40,7 @@ export const Input = styled.input<{
   height: 45px;
   padding: 12px
     ${({ $variant }) =>
-      $variant === 'password' ? '50px' : $variant === 'text' ? '40px' : '18px'}
+      INPUT_RIGHT_PADDING[$variant ?? 'none']}
     12px 18px;
   border: 1px solid
     ${({ hasError, isSuccess }) =>
