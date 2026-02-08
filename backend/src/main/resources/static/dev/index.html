@@ -6,97 +6,213 @@
   <title>모아동 개발자 포털</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 24px; line-height: 1.5; }
-    h1 { margin-bottom: 8px; }
-    h2 { font-size: 1.1rem; margin-top: 24px; margin-bottom: 12px; }
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 0; line-height: 1.5; }
+    .header {
+      position: sticky; top: 0; z-index: 10;
+      background: #fff; border-bottom: 1px solid #e5e7eb; padding: 16px 24px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .header h1 { margin: 0; font-size: 1.25rem; }
+    .header-nav { display: flex; gap: 16px; flex-wrap: wrap; }
+    .header-nav a { color: #2563eb; text-decoration: none; }
+    .header-nav a:hover { text-decoration: underline; }
+    .header-status { font-size: 0.9rem; color: #666; }
+    .header-status .logout-btn { margin-left: 8px; padding: 4px 10px; font-size: 0.85rem; cursor: pointer; }
+    main { padding: 24px; }
+    h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; }
     .sub { color: #666; margin-bottom: 24px; }
     section { margin-bottom: 24px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; }
+    section:target { border-color: #2563eb; }
     a { color: #2563eb; text-decoration: none; }
     a:hover { text-decoration: underline; }
-    input, select, textarea { padding: 6px 10px; margin: 4px 0; width: 100%; max-width: 400px; }
-    button { padding: 8px 16px; margin-right: 8px; margin-top: 8px; cursor: pointer; }
+    input, select, textarea { padding: 8px 10px; margin: 4px 0; width: 100%; max-width: 400px; display: block; }
+    button { padding: 8px 16px; margin-right: 8px; margin-top: 8px; cursor: pointer; border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb; }
+    button:hover:not(:disabled) { background: #f3f4f6; }
+    button:disabled { opacity: 0.7; cursor: not-allowed; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .form-row { margin-bottom: 12px; }
+    .form-row label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 0.9rem; }
     .token-box { background: #f3f4f6; padding: 12px; border-radius: 6px; word-break: break-all; font-size: 0.85rem; margin-top: 8px; }
-    .error { color: #dc2626; font-size: 0.9rem; margin-top: 4px; }
-    .success { color: #16a34a; font-size: 0.9rem; margin-top: 4px; }
+    .token-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .copy-feedback { font-size: 0.85rem; color: #16a34a; margin-left: 4px; }
+    .error { color: #dc2626; font-size: 0.9rem; margin-top: 8px; padding: 8px; background: #fef2f2; border-radius: 6px; border: 1px solid #fecaca; }
+    .success { color: #16a34a; font-size: 0.9rem; margin-top: 8px; padding: 8px; background: #f0fdf4; border-radius: 6px; border: 1px solid #bbf7d0; }
+    .message-box { margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; }
+    .message-box.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .message-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
     table { border-collapse: collapse; width: 100%; }
     th, td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; }
     th { background: #f9fafb; }
     code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
     #clubList tbody tr { cursor: pointer; }
     #clubList tbody tr:hover { background: #f9fafb; }
-    .hidden { display: none; }
+    .hidden { display: none !important; }
+    .loading { opacity: 0.7; pointer-events: none; }
+    .banner { padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; font-size: 0.9rem; }
+    .banner.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .banner.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; display: block; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    .card:hover { border-color: #2563eb; box-shadow: 0 2px 8px rgba(37,99,235,0.1); }
+    .card strong { display: block; margin-bottom: 4px; }
+    .card span { font-size: 0.85rem; color: #666; }
+    .collapsible { border: 1px solid #e5e7eb; border-radius: 6px; margin-top: 8px; }
+    .collapsible-summary { padding: 10px 12px; cursor: pointer; font-weight: 500; background: #f9fafb; user-select: none; }
+    .collapsible-summary:hover { background: #f3f4f6; }
+    .collapsible-body { padding: 12px; max-height: 300px; overflow: auto; }
+    .collapsible-body pre { margin: 0; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; }
+    .editing-badge { display: inline-block; padding: 6px 12px; background: #dbeafe; color: #1e40af; border-radius: 6px; font-size: 0.9rem; margin-bottom: 12px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px 24px; margin-bottom: 16px; }
+    .form-grid .form-row { margin-bottom: 0; }
+    .form-grid .form-row input, .form-grid .form-row select { max-width: none; }
+    .table-wrap { overflow-x: auto; margin-top: 12px; }
+    .id-cell { font-family: monospace; font-size: 0.85rem; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .id-cell[title] { cursor: pointer; }
+    .pagination { margin-top: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.9rem; }
+    .pagination button { margin: 0; padding: 6px 12px; }
+    .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: fadeOut 3s ease-in-out forwards; }
+    .toast.success { background: #166534; color: #fff; }
+    .toast.error { background: #dc2626; color: #fff; }
+    @keyframes fadeOut { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
   </style>
 </head>
 <body>
-  <h1>모아동 개발자 포털</h1>
-  <p class="sub">개발자 전용 계정으로 로그인한 후 사용하세요.</p>
-
-  <section>
-    <h2>로그인 / 토큰</h2>
-    <div id="loginForm">
-      <label>아이디 <input type="text" id="loginUserId" placeholder="userId"></label><br>
-      <label>비밀번호 <input type="password" id="loginPassword" placeholder="password"></label><br>
-      <button type="button" id="btnLogin">로그인</button>
+  <header class="header">
+    <div>
+      <h1>모아동 개발자 포털</h1>
+      <nav class="header-nav">
+        <a href="#login">로그인</a>
+        <a href="#api-docs">API 문서</a>
+        <a href="#club">동아리</a>
+        <a href="#dict">단어사전</a>
+      </nav>
     </div>
-    <div id="tokenArea" class="hidden">
-      <strong>토큰</strong> <button type="button" id="btnCopyToken">복사</button>
-      <div class="token-box" id="tokenDisplay"></div>
-      <button type="button" id="btnLogout">로그아웃</button>
+    <div id="headerStatus" class="header-status hidden">
+      <span id="headerUserId"></span>
+      <button type="button" class="logout-btn" id="headerLogout">로그아웃</button>
     </div>
-    <div id="loginError" class="error"></div>
-  </section>
+  </header>
 
-  <section>
-    <h2>API 문서</h2>
-    <p><a href="/swagger-ui.html" target="_blank" rel="noopener">Swagger UI 열기</a></p>
-    <p>JWT 사용: Swagger에서 <strong>Authorize</strong> 클릭 후, 위에서 복사한 토큰을 <strong>Bearer</strong> 없이 붙여넣기.</p>
-    <p><a href="/v3/api-docs" target="_blank" rel="noopener">OpenAPI JSON</a></p>
-  </section>
+  <main>
+    <section id="login">
+      <h2>로그인 / 토큰</h2>
+      <p class="sub">개발자 전용 계정으로 로그인한 후 사용하세요.</p>
+      <div id="loginForm">
+        <form id="loginFormEl" novalidate>
+          <div id="loginError" class="error hidden"></div>
+          <div class="form-row">
+            <label for="loginUserId">아이디</label>
+            <input type="text" id="loginUserId" placeholder="userId" autocomplete="username">
+          </div>
+          <div class="form-row">
+            <label for="loginPassword">비밀번호</label>
+            <input type="password" id="loginPassword" placeholder="password" autocomplete="current-password">
+          </div>
+          <button type="submit" id="btnLogin">로그인</button>
+        </form>
+      </div>
+      <div id="tokenArea" class="hidden">
+        <strong>토큰</strong>
+        <div class="token-actions">
+          <button type="button" id="btnCopyToken">복사</button>
+          <span id="copyFeedback" class="copy-feedback hidden">복사됨</span>
+        </div>
+        <div class="token-box" id="tokenDisplay"></div>
+        <button type="button" id="btnLogout">로그아웃</button>
+      </div>
+    </section>
 
-  <section id="clubSection" class="hidden">
-    <h2>동아리 관리</h2>
-    <button type="button" id="btnLoadClubs">동아리 목록 새로고침</button>
-    <table id="clubList">
-      <thead><tr><th>ID</th><th>이름</th><th>userId</th></tr></thead>
-      <tbody></tbody>
-    </table>
-    <div id="clubDetail" class="hidden">
-      <h3>선택 동아리 상세</h3>
-      <pre id="clubDetailBody"></pre>
-      <h3>약력 수정</h3>
-      <label>이름 <input type="text" id="editName"></label><br>
-      <label>분류 <select id="editCategory">
-        <option value="봉사">봉사</option><option value="종교">종교</option><option value="취미교양">취미교양</option>
-        <option value="학술">학술</option><option value="운동">운동</option><option value="공연">공연</option><option value="기타">기타</option>
-      </select></label><br>
-      <label>분과 <select id="editDivision"><option value="중동">중동</option></select></label><br>
-      <label>태그 (쉼표 구분) <input type="text" id="editTags" placeholder="태그1,태그2"></label><br>
-      <label>한줄소개 <input type="text" id="editIntroduction"></label><br>
-      <label>회장명 <input type="text" id="editPresidentName"></label><br>
-      <label>회장 연락처 <input type="text" id="editPresidentPhone"></label><br>
-      <button type="button" id="btnUpdateInfo">약력 저장</button>
-      <div id="infoResult" class="error"></div>
+    <section id="api-docs">
+      <h2>API 문서</h2>
+      <div class="card-grid">
+        <a href="/swagger-ui.html" target="_blank" rel="noopener" class="card">
+          <strong>Swagger UI</strong>
+          <span>API 목록 및 Try it out</span>
+        </a>
+        <a href="/v3/api-docs" target="_blank" rel="noopener" class="card">
+          <strong>OpenAPI JSON</strong>
+          <span>스펙 다운로드</span>
+        </a>
+      </div>
+      <details class="collapsible" style="margin-top:12px;">
+        <summary class="collapsible-summary">JWT 사용 방법</summary>
+        <div class="collapsible-body">
+          <p style="margin:0 0 8px;">Swagger에서 <strong>Authorize</strong> 클릭 후, 위에서 복사한 토큰을 <strong>Bearer</strong> 없이 붙여넣기.</p>
+        </div>
+      </details>
+    </section>
 
-      <h3>모집정보 수정</h3>
-      <label>모집 시작 <input type="datetime-local" id="editRecruitmentStart"></label><br>
-      <label>모집 종료 <input type="datetime-local" id="editRecruitmentEnd"></label><br>
-      <label>모집 대상 <input type="text" id="editRecruitmentTarget"></label><br>
-      <label>외부 지원 URL <input type="text" id="editExternalUrl"></label><br>
-      <button type="button" id="btnUpdateDescription">모집정보 저장</button>
-      <div id="descResult" class="error"></div>
-    </div>
-  </section>
+    <section id="club" class="hidden">
+      <h2>동아리 관리</h2>
+      <div id="clubBanner" class="banner hidden"></div>
+      <button type="button" id="btnLoadClubs">동아리 목록 새로고침</button>
+      <div id="clubListLoading" class="hidden">목록 불러오는 중...</div>
+      <div class="table-wrap">
+        <table id="clubList">
+          <thead><tr><th>ID</th><th>이름</th><th>userId</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <div id="clubDetail" class="hidden">
+        <div id="editingBadge" class="editing-badge hidden"></div>
+        <details class="collapsible">
+          <summary class="collapsible-summary">선택 동아리 상세 (JSON)</summary>
+          <div class="collapsible-body">
+            <pre id="clubDetailBody"></pre>
+          </div>
+        </details>
+        <h3>약력 수정</h3>
+        <div class="form-grid">
+          <div class="form-row"><label for="editName">이름</label><input type="text" id="editName"></div>
+          <div class="form-row"><label for="editCategory">분류</label>
+            <select id="editCategory">
+              <option value="봉사">봉사</option><option value="종교">종교</option><option value="취미교양">취미교양</option>
+              <option value="학술">학술</option><option value="운동">운동</option><option value="공연">공연</option><option value="기타">기타</option>
+            </select>
+          </div>
+          <div class="form-row"><label for="editDivision">분과</label><select id="editDivision"><option value="중동">중동</option></select></div>
+          <div class="form-row"><label for="editTags">태그 (쉼표 구분)</label><input type="text" id="editTags" placeholder="태그1,태그2"></div>
+          <div class="form-row"><label for="editIntroduction">한줄소개</label><input type="text" id="editIntroduction"></div>
+          <div class="form-row"><label for="editPresidentName">회장명</label><input type="text" id="editPresidentName"></div>
+          <div class="form-row"><label for="editPresidentPhone">회장 연락처</label><input type="text" id="editPresidentPhone"></div>
+        </div>
+        <button type="button" id="btnUpdateInfo">약력 저장</button>
+        <div id="infoResult" class="message-box hidden"></div>
 
-  <section>
-    <h2>단어사전</h2>
-    <p><a href="/swagger-ui.html#/Word_Dictionary_Admin" target="_blank" rel="noopener">Swagger - 단어사전 Admin API</a></p>
-  </section>
+        <h3>모집정보 수정</h3>
+        <div class="form-grid">
+          <div class="form-row"><label for="editRecruitmentStart">모집 시작</label><input type="datetime-local" id="editRecruitmentStart"></div>
+          <div class="form-row"><label for="editRecruitmentEnd">모집 종료</label><input type="datetime-local" id="editRecruitmentEnd"></div>
+          <div class="form-row"><label for="editRecruitmentTarget">모집 대상</label><input type="text" id="editRecruitmentTarget"></div>
+          <div class="form-row"><label for="editExternalUrl">외부 지원 URL</label><input type="text" id="editExternalUrl"></div>
+        </div>
+        <button type="button" id="btnUpdateDescription">모집정보 저장</button>
+        <div id="descResult" class="message-box hidden"></div>
+      </div>
+      <div id="clubPagination" class="pagination hidden"></div>
+    </section>
+
+    <section id="dict">
+      <h2>단어사전</h2>
+      <div class="card-grid">
+        <a href="/swagger-ui.html#/Word_Dictionary_Admin" target="_blank" rel="noopener" class="card">
+          <strong>단어사전 Admin API</strong>
+          <span>CRUD, bulk, CSV, refresh</span>
+        </a>
+      </div>
+    </section>
+  </main>
 
   <script>
     const API_BASE = '';
+    const PAGE_SIZE = 50;
+
     function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
     function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
     function clearToken() { sessionStorage.removeItem('devPortalToken'); }
+    function getUserId() { return sessionStorage.getItem('devPortalUserId') || ''; }
+    function setUserId(u) { sessionStorage.setItem('devPortalUserId', u); }
+    function clearUserId() { sessionStorage.removeItem('devPortalUserId'); }
 
     function headers() {
       const t = getToken();
@@ -105,17 +221,39 @@
       return h;
     }
 
+    function showToast(message, type) {
+      const el = document.createElement('div');
+      el.className = 'toast ' + (type || 'success');
+      el.textContent = message;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
     function showLogin(show) {
       document.getElementById('loginForm').classList.toggle('hidden', !!show);
       document.getElementById('tokenArea').classList.toggle('hidden', !show);
-      document.getElementById('clubSection').classList.toggle('hidden', !show);
+      document.getElementById('club').classList.toggle('hidden', !show);
+      const headerStatus = document.getElementById('headerStatus');
+      const headerUserId = document.getElementById('headerUserId');
+      if (show) {
+        headerUserId.textContent = '로그인됨 (' + (getUserId() || 'developer') + ')';
+        headerStatus.classList.remove('hidden');
+      } else {
+        headerStatus.classList.add('hidden');
+        clearUserId();
+      }
     }
 
-    document.getElementById('btnLogin').onclick = async () => {
+    document.getElementById('loginFormEl').addEventListener('submit', async (e) => {
+      e.preventDefault();
       const userId = document.getElementById('loginUserId').value.trim();
       const password = document.getElementById('loginPassword').value;
       const errEl = document.getElementById('loginError');
+      const btn = document.getElementById('btnLogin');
       errEl.textContent = '';
+      errEl.classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = '로그인 중...';
       try {
         const res = await fetch(API_BASE + '/auth/user/login', {
           method: 'POST',
@@ -123,19 +261,52 @@
           body: JSON.stringify({ userId, password })
         });
         const data = await res.json();
-        if (!res.ok) { errEl.textContent = data.message || '로그인 실패'; return; }
+        if (!res.ok) {
+          errEl.textContent = data.message || '로그인 실패';
+          errEl.classList.remove('hidden');
+          return;
+        }
         const token = data.data?.accessToken;
-        if (token) { setToken(token); document.getElementById('tokenDisplay').textContent = token; showLogin(true); }
-        else errEl.textContent = '토큰 없음';
-      } catch (e) { errEl.textContent = e.message || '요청 실패'; }
-    };
+        if (token) {
+          setToken(token);
+          setUserId(userId);
+          document.getElementById('tokenDisplay').textContent = token;
+          showLogin(true);
+          loadClubsIfVisible();
+        } else {
+          errEl.textContent = '토큰 없음';
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = e.message || '요청 실패';
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '로그인';
+      }
+    });
 
     document.getElementById('btnCopyToken').onclick = () => {
       const t = getToken();
-      if (t) { navigator.clipboard.writeText(t); alert('토큰 복사됨'); }
+      if (t) {
+        navigator.clipboard.writeText(t);
+        const fb = document.getElementById('copyFeedback');
+        fb.classList.remove('hidden');
+        setTimeout(() => fb.classList.add('hidden'), 2000);
+      }
     };
 
-    document.getElementById('btnLogout').onclick = () => { clearToken(); showLogin(false); document.getElementById('tokenDisplay').textContent = ''; };
+    function doLogout() {
+      clearToken();
+      clearUserId();
+      showLogin(false);
+      document.getElementById('tokenDisplay').textContent = '';
+      document.getElementById('clubList').querySelector('tbody').innerHTML = '';
+      document.getElementById('clubDetail').classList.add('hidden');
+      document.getElementById('clubBanner').classList.add('hidden');
+    }
+    document.getElementById('btnLogout').onclick = doLogout;
+    document.getElementById('headerLogout').onclick = doLogout;
 
     if (getToken()) {
       document.getElementById('tokenDisplay').textContent = getToken();
@@ -143,32 +314,109 @@
     }
 
     let selectedClubId = null;
+    let selectedClubName = '';
+    let allClubs = [];
+    let currentPage = 1;
+
+    function truncateId(id) {
+      if (!id || id.length <= 8) return id;
+      return id.slice(0, 8) + '…';
+    }
+
+    function renderClubTableRows(clubs, page) {
+      const start = (page - 1) * PAGE_SIZE;
+      const slice = clubs.slice(start, start + PAGE_SIZE);
+      const tbody = document.querySelector('#clubList tbody');
+      tbody.innerHTML = '';
+      slice.forEach(c => {
+        const tr = document.createElement('tr');
+        const idCell = document.createElement('td');
+        idCell.className = 'id-cell';
+        idCell.title = c.id || '';
+        idCell.textContent = truncateId(c.id || '');
+        idCell.onclick = (e) => { e.stopPropagation(); navigator.clipboard.writeText(c.id || ''); showToast('ID 복사됨', 'success'); };
+        tr.appendChild(idCell);
+        tr.appendChild(document.createElement('td')).textContent = c.name || '';
+        tr.appendChild(document.createElement('td')).textContent = c.userId || '';
+        tr.onclick = () => selectClub(c.id);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderPagination(total) {
+      const wrap = document.getElementById('clubPagination');
+      if (total <= PAGE_SIZE) {
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+      wrap.classList.remove('hidden');
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+      let html = '<span>총 ' + total + '개</span>';
+      if (currentPage > 1) html += '<button type="button" id="clubPrev">이전</button>';
+      html += '<span> ' + currentPage + ' / ' + totalPages + ' </span>';
+      if (currentPage < totalPages) html += '<button type="button" id="clubNext">다음</button>';
+      wrap.innerHTML = html;
+      const prev = document.getElementById('clubPrev');
+      const next = document.getElementById('clubNext');
+      if (prev) prev.onclick = () => { currentPage--; renderClubTableRows(allClubs, currentPage); renderPagination(allClubs.length); };
+      if (next) next.onclick = () => { currentPage++; renderClubTableRows(allClubs, currentPage); renderPagination(allClubs.length); };
+    }
+
+    function loadClubsIfVisible() {
+      const section = document.getElementById('club');
+      if (section && !section.classList.contains('hidden')) {
+        document.getElementById('btnLoadClubs').click();
+      }
+    }
 
     document.getElementById('btnLoadClubs').onclick = async () => {
       const tbody = document.querySelector('#clubList tbody');
+      const banner = document.getElementById('clubBanner');
+      const loading = document.getElementById('clubListLoading');
+      banner.classList.add('hidden');
+      banner.className = 'banner hidden';
+      loading.classList.remove('hidden');
       tbody.innerHTML = '';
       try {
         const res = await fetch(API_BASE + '/api/admin/clubs', { headers: headers() });
-        if (res.status === 403) { tbody.innerHTML = '<tr><td colspan="3">개발자 계정으로 로그인하세요.</td></tr>'; return; }
+        if (res.status === 403) {
+          banner.textContent = '개발자 계정으로 로그인하세요.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          tbody.innerHTML = '<tr><td colspan="3">목록을 불러올 수 없습니다.</td></tr>';
+          return;
+        }
         const data = await res.json();
         const clubs = data.data?.clubs || [];
-        clubs.forEach(c => {
-          const tr = document.createElement('tr');
-          tr.innerHTML = '<td>' + c.id + '</td><td>' + (c.name || '') + '</td><td>' + (c.userId || '') + '</td>';
-          tr.onclick = () => selectClub(c.id);
-          tbody.appendChild(tr);
-        });
-      } catch (e) { tbody.innerHTML = '<tr><td colspan="3">' + e.message + '</td></tr>'; }
+        allClubs = clubs;
+        currentPage = 1;
+        renderClubTableRows(clubs, 1);
+        renderPagination(clubs.length);
+      } catch (e) {
+        banner.textContent = '요청 실패: ' + (e.message || '');
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        tbody.innerHTML = '<tr><td colspan="3">' + (e.message || '오류') + '</td></tr>';
+      } finally {
+        loading.classList.add('hidden');
+      }
     };
 
     async function selectClub(clubId) {
       selectedClubId = clubId;
       document.getElementById('clubDetail').classList.remove('hidden');
+      document.getElementById('editingBadge').classList.add('hidden');
+      const detailBody = document.getElementById('clubDetailBody');
+      detailBody.textContent = '불러오는 중...';
       try {
         const res = await fetch(API_BASE + '/api/club/' + clubId, { headers: headers() });
         const data = await res.json();
         document.getElementById('clubDetailBody').textContent = JSON.stringify(data.data || data, null, 2);
         const club = data.data?.club || data?.club || {};
+        selectedClubName = club.name || club.club?.name || clubId;
+        document.getElementById('editingBadge').textContent = '수정 중: ' + selectedClubName + ' (ID: ' + clubId + ')';
+        document.getElementById('editingBadge').classList.remove('hidden');
         window._clubDetailDescription = club.description || { introDescription: '', activityDescription: '', awards: [], idealCandidate: null, benefits: '', faqs: [] };
         const ri = club.recruitmentInformation || club.club?.recruitmentInformation || {};
         document.getElementById('editName').value = club.name || club.club?.name || '';
@@ -189,13 +437,27 @@
         }
         document.getElementById('editRecruitmentStart').value = toDatetimeLocal(club.recruitmentStart);
         document.getElementById('editRecruitmentEnd').value = toDatetimeLocal(club.recruitmentEnd);
-      } catch (e) { document.getElementById('clubDetailBody').textContent = e.message; }
+      } catch (e) {
+        detailBody.textContent = e.message || '오류';
+      }
+    }
+
+    function showResult(elId, ok, message) {
+      const el = document.getElementById(elId);
+      el.textContent = message;
+      el.className = 'message-box ' + (ok ? 'success' : 'error');
+      el.classList.remove('hidden');
+      showToast(message, ok ? 'success' : 'error');
+      if (ok) setTimeout(() => { el.classList.add('hidden'); }, 3000);
     }
 
     document.getElementById('btnUpdateInfo').onclick = async () => {
       if (!selectedClubId) return;
       const resultEl = document.getElementById('infoResult');
-      resultEl.textContent = '';
+      resultEl.classList.add('hidden');
+      const btn = document.getElementById('btnUpdateInfo');
+      btn.disabled = true;
+      btn.textContent = '저장 중...';
       const description = (window._clubDetailDescription) || { introDescription: '', activityDescription: '', awards: [], idealCandidate: null, benefits: '', faqs: [] };
       const tagsStr = document.getElementById('editTags').value.trim();
       const tags = tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
@@ -213,15 +475,23 @@
       try {
         const res = await fetch(API_BASE + '/api/admin/club/' + selectedClubId + '/info', { method: 'PUT', headers: headers(), body: JSON.stringify(body) });
         const data = await res.json();
-        if (res.ok) { resultEl.textContent = '저장됨'; resultEl.className = 'success'; }
-        else { resultEl.textContent = data.message || res.status; resultEl.className = 'error'; }
-      } catch (e) { resultEl.textContent = e.message; resultEl.className = 'error'; }
+        const msg = res.ok ? '저장됨' : (data.message || '요청 실패 (HTTP ' + res.status + ')');
+        showResult('infoResult', res.ok, msg);
+      } catch (e) {
+        showResult('infoResult', false, e.message || '요청 실패');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '약력 저장';
+      }
     };
 
     document.getElementById('btnUpdateDescription').onclick = async () => {
       if (!selectedClubId) return;
       const resultEl = document.getElementById('descResult');
-      resultEl.textContent = '';
+      resultEl.classList.add('hidden');
+      const btn = document.getElementById('btnUpdateDescription');
+      btn.disabled = true;
+      btn.textContent = '저장 중...';
       const start = document.getElementById('editRecruitmentStart').value;
       const end = document.getElementById('editRecruitmentEnd').value;
       const body = {
@@ -233,9 +503,14 @@
       try {
         const res = await fetch(API_BASE + '/api/admin/club/' + selectedClubId + '/description', { method: 'PUT', headers: headers(), body: JSON.stringify(body) });
         const data = await res.json();
-        if (res.ok) { resultEl.textContent = '저장됨'; resultEl.className = 'success'; }
-        else { resultEl.textContent = data.message || res.status; resultEl.className = 'error'; }
-      } catch (e) { resultEl.textContent = e.message; resultEl.className = 'error'; }
+        const msg = res.ok ? '저장됨' : (data.message || '요청 실패 (HTTP ' + res.status + ')');
+        showResult('descResult', res.ok, msg);
+      } catch (e) {
+        showResult('descResult', false, e.message || '요청 실패');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '모집정보 저장';
+      }
     };
   </script>
 </body>
