@@ -178,6 +178,14 @@ public class UserCommandService {
         return club.getId();
     }
 
+    @Transactional
+    public void allowPersonalInformation(String userId) {
+        User user = userRepository.findUserByUserId(userId)
+            .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
+        user.allowPersonalInformation();
+        userRepository.save(user);
+    }
+
     private User createUser(UserRegisterRequest request, String userId, String clubId) {
         User user = request.toUserEntity(passwordEncoder);
         user.updateId(userId);
