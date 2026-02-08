@@ -51,7 +51,7 @@ const RecruitmentDatePicker = ({ date, onChange }: Props) => {
         onChange={(d) => d && onChange(d)}
         dateFormat="yyyy년 MM월 dd일 (eee)"
         renderCustomHeader={(props) => <CustomHeader {...props} />}
-        onChangeRaw={(e) => e.preventDefault()}
+        onChangeRaw={(e) => e && e.preventDefault()}
       />
     </Styled.DatePickerScope>
   );
