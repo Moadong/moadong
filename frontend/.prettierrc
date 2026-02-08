@@ -4,6 +4,5 @@
   "useTabs": false,
   "endOfLine": "auto",
   "plugins": ["@ianvs/prettier-plugin-sort-imports"],
-  "importOrder": ["^react", "<THIRD_PARTY_MODULES>", "^@/", "^[./]"],
-  "importOrderSortSpecifiers": true
+  "importOrder": ["^react", "<THIRD_PARTY_MODULES>", "^@/", "^[./]"]
 }
