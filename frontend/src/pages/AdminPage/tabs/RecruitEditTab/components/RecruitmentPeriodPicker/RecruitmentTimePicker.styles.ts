@@ -3,12 +3,16 @@ import { colors } from '@/styles/theme/colors';
 
 const itemBase = css`
   height: 26px;
-  padding: 8px 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin: 5px 7px;
   font-size: 12px;
+  border-radius: 6px;
+  transition:
+    background-color 0.08s ease,
+    color 0.08s ease;
 `;
 
 export const TimeContainer = styled.div`

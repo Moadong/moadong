@@ -113,7 +113,7 @@ export const DatePickerScope = styled.div`
   }
 
   .react-datepicker__day:hover {
-    background: rgba(255, 84, 20, 0.12);
+    background-color: ${colors.primary[500]} !important;
   }
 
   .react-datepicker__day--selected {
