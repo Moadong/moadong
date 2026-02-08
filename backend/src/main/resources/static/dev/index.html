@@ -68,7 +68,10 @@
     .table-wrap { overflow-x: auto; margin-top: 12px; }
     .id-cell { font-family: monospace; font-size: 0.85rem; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .id-cell[title] { cursor: pointer; }
-    .pagination { margin-top: 12px; display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.9rem; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+    .section-head h2 { margin: 0; }
+    .section-head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .pagination { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.9rem; }
     .pagination button { margin: 0; padding: 6px 12px; }
     .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: fadeOut 3s ease-in-out forwards; }
     .toast.success { background: #166534; color: #fff; }
@@ -143,9 +146,14 @@
     </section>
 
     <section id="club" class="hidden">
-      <h2>동아리 관리</h2>
+      <div class="section-head">
+        <h2>동아리 관리</h2>
+        <div class="section-head-actions">
+          <div id="clubPagination" class="pagination hidden"></div>
+          <button type="button" id="btnLoadClubs">동아리 목록 새로고침</button>
+        </div>
+      </div>
       <div id="clubBanner" class="banner hidden"></div>
-      <button type="button" id="btnLoadClubs">동아리 목록 새로고침</button>
       <div id="clubListLoading" class="hidden">목록 불러오는 중...</div>
       <div class="table-wrap">
         <table id="clubList">
@@ -153,43 +161,6 @@
           <tbody></tbody>
         </table>
       </div>
-      <div id="clubDetail" class="hidden">
-        <div id="editingBadge" class="editing-badge hidden"></div>
-        <details class="collapsible">
-          <summary class="collapsible-summary">선택 동아리 상세 (JSON)</summary>
-          <div class="collapsible-body">
-            <pre id="clubDetailBody"></pre>
-          </div>
-        </details>
-        <h3>약력 수정</h3>
-        <div class="form-grid">
-          <div class="form-row"><label for="editName">이름</label><input type="text" id="editName"></div>
-          <div class="form-row"><label for="editCategory">분류</label>
-            <select id="editCategory">
-              <option value="봉사">봉사</option><option value="종교">종교</option><option value="취미교양">취미교양</option>
-              <option value="학술">학술</option><option value="운동">운동</option><option value="공연">공연</option><option value="기타">기타</option>
-            </select>
-          </div>
-          <div class="form-row"><label for="editDivision">분과</label><select id="editDivision"><option value="중동">중동</option></select></div>
-          <div class="form-row"><label for="editTags">태그 (쉼표 구분)</label><input type="text" id="editTags" placeholder="태그1,태그2"></div>
-          <div class="form-row"><label for="editIntroduction">한줄소개</label><input type="text" id="editIntroduction"></div>
-          <div class="form-row"><label for="editPresidentName">회장명</label><input type="text" id="editPresidentName"></div>
-          <div class="form-row"><label for="editPresidentPhone">회장 연락처</label><input type="text" id="editPresidentPhone"></div>
-        </div>
-        <button type="button" id="btnUpdateInfo">약력 저장</button>
-        <div id="infoResult" class="message-box hidden"></div>
-
-        <h3>모집정보 수정</h3>
-        <div class="form-grid">
-          <div class="form-row"><label for="editRecruitmentStart">모집 시작</label><input type="datetime-local" id="editRecruitmentStart"></div>
-          <div class="form-row"><label for="editRecruitmentEnd">모집 종료</label><input type="datetime-local" id="editRecruitmentEnd"></div>
-          <div class="form-row"><label for="editRecruitmentTarget">모집 대상</label><input type="text" id="editRecruitmentTarget"></div>
-          <div class="form-row"><label for="editExternalUrl">외부 지원 URL</label><input type="text" id="editExternalUrl"></div>
-        </div>
-        <button type="button" id="btnUpdateDescription">모집정보 저장</button>
-        <div id="descResult" class="message-box hidden"></div>
-      </div>
-      <div id="clubPagination" class="pagination hidden"></div>
     </section>
 
     <section id="dict">
@@ -302,8 +273,11 @@
       showLogin(false);
       document.getElementById('tokenDisplay').textContent = '';
       document.getElementById('clubList').querySelector('tbody').innerHTML = '';
-      document.getElementById('clubDetail').classList.add('hidden');
       document.getElementById('clubBanner').classList.add('hidden');
+    }
+
+    function openEditWindow(clubId) {
+      window.open('/dev/edit.html?clubId=' + encodeURIComponent(clubId), 'clubEdit', 'width=620,height=700,scrollbars=yes');
     }
     document.getElementById('btnLogout').onclick = doLogout;
     document.getElementById('headerLogout').onclick = doLogout;
@@ -313,8 +287,6 @@
       showLogin(true);
     }
 
-    let selectedClubId = null;
-    let selectedClubName = '';
     let allClubs = [];
     let currentPage = 1;
 
@@ -338,7 +310,7 @@
         tr.appendChild(idCell);
         tr.appendChild(document.createElement('td')).textContent = c.name || '';
         tr.appendChild(document.createElement('td')).textContent = c.userId || '';
-        tr.onclick = () => selectClub(c.id);
+        tr.onclick = () => openEditWindow(c.id);
         tbody.appendChild(tr);
       });
     }
@@ -403,115 +375,6 @@
       }
     };
 
-    async function selectClub(clubId) {
-      selectedClubId = clubId;
-      document.getElementById('clubDetail').classList.remove('hidden');
-      document.getElementById('editingBadge').classList.add('hidden');
-      const detailBody = document.getElementById('clubDetailBody');
-      detailBody.textContent = '불러오는 중...';
-      try {
-        const res = await fetch(API_BASE + '/api/club/' + clubId, { headers: headers() });
-        const data = await res.json();
-        document.getElementById('clubDetailBody').textContent = JSON.stringify(data.data || data, null, 2);
-        const club = data.data?.club || data?.club || {};
-        selectedClubName = club.name || club.club?.name || clubId;
-        document.getElementById('editingBadge').textContent = '수정 중: ' + selectedClubName + ' (ID: ' + clubId + ')';
-        document.getElementById('editingBadge').classList.remove('hidden');
-        window._clubDetailDescription = club.description || { introDescription: '', activityDescription: '', awards: [], idealCandidate: null, benefits: '', faqs: [] };
-        const ri = club.recruitmentInformation || club.club?.recruitmentInformation || {};
-        document.getElementById('editName').value = club.name || club.club?.name || '';
-        document.getElementById('editCategory').value = club.category || club.club?.category || '기타';
-        document.getElementById('editDivision').value = club.division || club.club?.division || '중동';
-        document.getElementById('editTags').value = (club.tags || club.club?.tags || []).join(',');
-        document.getElementById('editIntroduction').value = club.introduction || ri?.introduction || '';
-        document.getElementById('editPresidentName').value = club.presidentName || ri?.presidentName || '';
-        document.getElementById('editPresidentPhone').value = club.presidentPhoneNumber || ri?.presidentPhoneNumber || '';
-        document.getElementById('editRecruitmentTarget').value = club.recruitmentTarget || ri?.recruitmentTarget || '';
-        document.getElementById('editExternalUrl').value = club.externalApplicationUrl || ri?.externalApplicationUrl || '';
-        function toDatetimeLocal(s) {
-          if (!s) return '';
-          const m = s.match(/(\d{4})\.(\d{2})\.(\d{2})\s+(\d{2}):(\d{2})/);
-          if (m) return m[1] + '-' + m[2] + '-' + m[3] + 'T' + m[4] + ':' + m[5];
-          if (s.indexOf('T') >= 0) return s.slice(0, 16);
-          return '';
-        }
-        document.getElementById('editRecruitmentStart').value = toDatetimeLocal(club.recruitmentStart);
-        document.getElementById('editRecruitmentEnd').value = toDatetimeLocal(club.recruitmentEnd);
-      } catch (e) {
-        detailBody.textContent = e.message || '오류';
-      }
-    }
-
-    function showResult(elId, ok, message) {
-      const el = document.getElementById(elId);
-      el.textContent = message;
-      el.className = 'message-box ' + (ok ? 'success' : 'error');
-      el.classList.remove('hidden');
-      showToast(message, ok ? 'success' : 'error');
-      if (ok) setTimeout(() => { el.classList.add('hidden'); }, 3000);
-    }
-
-    document.getElementById('btnUpdateInfo').onclick = async () => {
-      if (!selectedClubId) return;
-      const resultEl = document.getElementById('infoResult');
-      resultEl.classList.add('hidden');
-      const btn = document.getElementById('btnUpdateInfo');
-      btn.disabled = true;
-      btn.textContent = '저장 중...';
-      const description = (window._clubDetailDescription) || { introDescription: '', activityDescription: '', awards: [], idealCandidate: null, benefits: '', faqs: [] };
-      const tagsStr = document.getElementById('editTags').value.trim();
-      const tags = tagsStr ? tagsStr.split(',').map(s => s.trim()).filter(Boolean) : [];
-      const body = {
-        name: document.getElementById('editName').value,
-        category: document.getElementById('editCategory').value,
-        division: document.getElementById('editDivision').value,
-        tags,
-        introduction: document.getElementById('editIntroduction').value || '',
-        presidentName: document.getElementById('editPresidentName').value || '',
-        presidentPhoneNumber: document.getElementById('editPresidentPhone').value || '',
-        description,
-        socialLinks: {}
-      };
-      try {
-        const res = await fetch(API_BASE + '/api/admin/club/' + selectedClubId + '/info', { method: 'PUT', headers: headers(), body: JSON.stringify(body) });
-        const data = await res.json();
-        const msg = res.ok ? '저장됨' : (data.message || '요청 실패 (HTTP ' + res.status + ')');
-        showResult('infoResult', res.ok, msg);
-      } catch (e) {
-        showResult('infoResult', false, e.message || '요청 실패');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '약력 저장';
-      }
-    };
-
-    document.getElementById('btnUpdateDescription').onclick = async () => {
-      if (!selectedClubId) return;
-      const resultEl = document.getElementById('descResult');
-      resultEl.classList.add('hidden');
-      const btn = document.getElementById('btnUpdateDescription');
-      btn.disabled = true;
-      btn.textContent = '저장 중...';
-      const start = document.getElementById('editRecruitmentStart').value;
-      const end = document.getElementById('editRecruitmentEnd').value;
-      const body = {
-        recruitmentStart: start ? new Date(start).toISOString() : null,
-        recruitmentEnd: end ? new Date(end).toISOString() : null,
-        recruitmentTarget: document.getElementById('editRecruitmentTarget').value || null,
-        externalApplicationUrl: document.getElementById('editExternalUrl').value || null
-      };
-      try {
-        const res = await fetch(API_BASE + '/api/admin/club/' + selectedClubId + '/description', { method: 'PUT', headers: headers(), body: JSON.stringify(body) });
-        const data = await res.json();
-        const msg = res.ok ? '저장됨' : (data.message || '요청 실패 (HTTP ' + res.status + ')');
-        showResult('descResult', res.ok, msg);
-      } catch (e) {
-        showResult('descResult', false, e.message || '요청 실패');
-      } finally {
-        btn.disabled = false;
-        btn.textContent = '모집정보 저장';
-      }
-    };
   </script>
 </body>
 </html>
