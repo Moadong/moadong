@@ -116,5 +116,14 @@ public class UserController {
         return Response.ok(new FindUserClubResponse(clubId));
     }
 
+    @PutMapping("/allow/personal-information")
+    @Operation(summary = "개인정보 활용 동의", description = "개인정보 활용 동의를 합니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> allowPersonalInformation(@CurrentUser CustomUserDetails user) {
+        userCommandService.allowPersonalInformation(user.getUserId());
+        return Response.ok("success allow personal information");
+    }
+
 
 }
