@@ -42,3 +42,12 @@ export const Label = styled.p`
   margin-bottom: 8px;
   font-weight: 600;
 `;
+
+export const Tilde = styled.span`
+  font-size: 20px;
+  font-weight: 600;
+  color: ${colors.gray[600]};
+  display: flex;
+  align-items: center;
+`;
+
