@@ -8,8 +8,8 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
-import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import { getABTestGroup } from '@/pages/MainPage/components/Popup/Popup';
+import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import * as Styled from './Banner.styles';
 import BANNERS from './bannerData';
 

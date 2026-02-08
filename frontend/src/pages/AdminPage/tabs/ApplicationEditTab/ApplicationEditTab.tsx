@@ -90,7 +90,10 @@ const ApplicationEditTab = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.application.detail(clubId ?? 'unknown', formId ?? ''),
+        queryKey: queryKeys.application.detail(
+          clubId ?? 'unknown',
+          formId ?? '',
+        ),
       });
       alert('지원서가 성공적으로 수정되었습니다.');
       navigate('/admin/application-list');

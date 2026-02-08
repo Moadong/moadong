@@ -15,9 +15,7 @@ describe('linkifyText', () => {
 
   it('URL이 포함된 텍스트를 링크로 변환한다 (앞뒤 텍스트 포함)', () => {
     const { container } = render(
-      <>
-        {linkifyText('여기를 참고하세요 https://example.com 감사합니다')}
-      </>
+      <>{linkifyText('여기를 참고하세요 https://example.com 감사합니다')}</>,
     );
 
     const link = screen.getByRole('link', {
@@ -34,9 +32,7 @@ describe('linkifyText', () => {
   });
 
   it('URL이 없는 텍스트는 그대로 렌더링된다', () => {
-    const { container } = render(
-      <>{linkifyText('그냥 텍스트입니다')}</>
-    );
+    const { container } = render(<>{linkifyText('그냥 텍스트입니다')}</>);
 
     expect(container.textContent).toBe('그냥 텍스트입니다');
   });
@@ -53,7 +49,7 @@ describe('linkifyText', () => {
 
   it('URL 앞에 붙은 텍스트는 정상적으로 분리된다', () => {
     const { container } = render(
-      <>{linkifyText('사이트는https://example.com 입니다')}</>
+      <>{linkifyText('사이트는https://example.com 입니다')}</>,
     );
 
     const link = screen.getByRole('link', {
@@ -69,9 +65,9 @@ describe('linkifyText', () => {
     expect(link).not.toBeNull();
   });
 
-   it('URL 뒤에 한글이 붙은 경우 URL과 분리된다', () => {
+  it('URL 뒤에 한글이 붙은 경우 URL과 분리된다', () => {
     const { container } = render(
-      <>{linkifyText('https://example.com입니다')}</>
+      <>{linkifyText('https://example.com입니다')}</>,
     );
 
     const link = screen.getByRole('link', {
@@ -86,16 +82,12 @@ describe('linkifyText', () => {
   });
 
   it('URL 뒤에 영문이 붙은 경우 URL의 일부로 처리된다', () => {
-    const { container } = render(
-      <>{linkifyText('https://example.combb')}</>
-    );
+    const { container } = render(<>{linkifyText('https://example.combb')}</>);
 
     const link = screen.getByRole('link');
 
     expect(link.textContent).toBe('https://example.combb');
-    expect(link.getAttribute('href')).toBe(
-      'https://example.combb'
-    );
+    expect(link.getAttribute('href')).toBe('https://example.combb');
 
     expect(link.getAttribute('href')).toBe('https://example.combb');
     expect(container.textContent).toBe('https://example.combb');
