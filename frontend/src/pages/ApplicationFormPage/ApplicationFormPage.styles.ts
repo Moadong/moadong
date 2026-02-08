@@ -62,7 +62,6 @@ export const SubmitButton = styled(Button)`
     && {
       width: 100%;
       max-width: 100%;
-
-    }  
+    }
   }
 `;

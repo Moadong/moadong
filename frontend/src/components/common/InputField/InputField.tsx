@@ -44,7 +44,7 @@ const InputField = ({
     if (type === 'password') return 'password';
     if (showClearButton) return 'text';
     return 'none';
-  }
+  };
 
   const togglePasswordVisibility = () => {
     if (!disabled) {
@@ -95,11 +95,11 @@ const InputField = ({
           </Styled.ToggleButton>
         )}
       </Styled.InputWrapper>
-        {showMaxChar && maxLength !== undefined && (
-          <Styled.CharCount>
-            {value.length}/{maxLength}
-          </Styled.CharCount>
-        )}
+      {showMaxChar && maxLength !== undefined && (
+        <Styled.CharCount>
+          {value.length}/{maxLength}
+        </Styled.CharCount>
+      )}
       {isError && helperText && (
         <Styled.HelperText>{helperText}</Styled.HelperText>
       )}

@@ -77,16 +77,16 @@ const CustomTextArea = ({
           $variant={variant}
         />
         {showClearButton && !disabled && (
-          <Styled.ClearButton type="button" onClick={handleClear}>
-            <img src={clearButton} alt="삭제" />
+          <Styled.ClearButton type='button' onClick={handleClear}>
+            <img src={clearButton} alt='삭제' />
           </Styled.ClearButton>
         )}
       </Styled.TextAreaWrapper>
-        {showMaxChar && maxLength !== undefined && (
-          <Styled.CharCount>
-            {value.length}/{maxLength}
-          </Styled.CharCount>
-        )}
+      {showMaxChar && maxLength !== undefined && (
+        <Styled.CharCount>
+          {value.length}/{maxLength}
+        </Styled.CharCount>
+      )}
       {isError && helperText && (
         <Styled.HelperText>{helperText}</Styled.HelperText>
       )}

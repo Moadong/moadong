@@ -32,9 +32,10 @@ export const Input = styled.input<{
 }>`
   flex: 1;
   height: 45px;
-  padding: 12px ${({ $variant }) =>
-    $variant === 'password' ? '50px' : 
-    $variant === 'text' ? '40px' : '18px'} 12px 18px;
+  padding: 12px
+    ${({ $variant }) =>
+      $variant === 'password' ? '50px' : $variant === 'text' ? '40px' : '18px'}
+    12px 18px;
   border: 1px solid
     ${({ hasError, isSuccess }) =>
       hasError ? 'red' : isSuccess ? '#28a745' : colors.gray[500]};

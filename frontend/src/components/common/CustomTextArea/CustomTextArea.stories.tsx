@@ -81,7 +81,7 @@ const TextAreaRender = (args: any) => {
       }}
     />
   );
-}
+};
 
 export const Default: Story = {
   args: {
