@@ -20,7 +20,7 @@ export const ApplyButton = styled.button`
   cursor: ${({ disabled }) => (disabled ? 'default' : 'pointer')};
   transition: transform 0.2s ease-in-out;
   background-color: ${({ disabled }) =>
-    disabled ? colors.gray[500] : colors.primary[800]};
+    disabled ? colors.gray[500] : colors.gray[900]};
 
   padding: 10px 40px;
   width: 517px;
@@ -41,9 +41,6 @@ export const ApplyButton = styled.button`
     height: 44px;
     font-size: 16px;
     font-weight: 500;
-    background-color: ${({ disabled }) =>
-      disabled ? colors.gray[500] : colors.gray[900]};
-  }
 `;
 
 export const Separator = styled.span`
