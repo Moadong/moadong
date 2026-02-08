@@ -2,22 +2,24 @@ import styled, { css } from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 
 const itemBase = css`
-  height: 40px;
+  height: 26px;
   padding: 8px 12px;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 14px;
+  font-size: 12px;
 `;
 
 export const TimeContainer = styled.div`
-  width: 60px;
-  height: 330px;
+  width: 50px;
+  height: 275px;
   background: ${colors.base.white};
-  border-left: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 0 8px rgba(172, 172, 172, 0.5);
   display: flex;
   flex-direction: column;
+  border-radius: 8px;
+  padding: 0 0 5px;
 `;
 
 export const TimeHeader = styled.div`
@@ -25,9 +27,11 @@ export const TimeHeader = styled.div`
   text-align: center;
   font-weight: 700;
   font-size: 16px;
-  color: #111;
+  color: ${colors.base.white};
+  background: ${colors.primary[800]};
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
+  border-radius: 8px 8px 0 0;
 `;
 
 export const TimeList = styled.div`
@@ -40,7 +44,7 @@ export const TimeList = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.25);
+    background: ${colors.gray[300]};);
     border-radius: 4px;
   }
 

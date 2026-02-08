@@ -27,7 +27,7 @@ export const DatePickerScope = styled.div`
     border: none;
     border-radius: 8px;
     overflow: hidden;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 0 8px rgba(172, 172, 172, 0.5);
     display: inline-flex;
     align-items: flex-start;
     width: auto;

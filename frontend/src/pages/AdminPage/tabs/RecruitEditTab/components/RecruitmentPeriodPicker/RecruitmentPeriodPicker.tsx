@@ -70,7 +70,7 @@ const RecruitmentPeriodPicker = ({ value, onChange }: Props) => {
       </Styled.Pill>
 
       {openPanel === 'date' && (
-        <Styled.Panel>
+        <Styled.Panel $panel="date">
           <RecruitmentDatePicker
             date={date}
             onChange={(d) => {
@@ -82,7 +82,7 @@ const RecruitmentPeriodPicker = ({ value, onChange }: Props) => {
       )}
 
       {(openPanel === 'hour' || openPanel === 'minute') && (
-        <Styled.Panel>
+        <Styled.Panel $panel={openPanel}>
           <RecruitmentTimePicker
             mode={openPanel}
             hour={hour}

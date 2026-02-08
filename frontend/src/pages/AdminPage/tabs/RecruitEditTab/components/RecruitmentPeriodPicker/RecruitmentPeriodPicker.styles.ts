@@ -43,10 +43,28 @@ export const Colon = styled.span`
 `;
 
 /* 패널 공통 */
-export const Panel = styled.div`
+export const Panel = styled.div<{ $panel: 'date' | 'hour' | 'minute' }>`
   position: absolute;
-  top: 52px;
-  z-index: 20;
+  top: calc(100% + 6px);
+  z-index: 10;
+
+  ${({ $panel }) => {
+    switch ($panel) {
+      case 'date':
+        return `
+          left: 0;
+        `;
+      case 'hour':
+        return `
+          left: 75%;
+          transform: translateX(-50%);
+        `;
+      case 'minute':
+        return `
+          right: 0;
+        `;
+    }
+  }}
 `;
 
 /* ===== Hour Picker ===== */
