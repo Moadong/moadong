@@ -1,6 +1,7 @@
 package moadong.club.service;
 
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
@@ -8,6 +9,7 @@ import java.util.List;
 import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.repository.ClubSearchRepository;
+import moadong.media.resolver.ImageDisplayUrlResolver;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,6 +21,12 @@ class ClubSearchServiceTest {
 
     @Mock
     private ClubSearchRepository clubSearchRepository;
+
+    @Mock
+    private ImageDisplayUrlResolver imageDisplayUrlResolver;
+
+    @Mock
+    private ClubImageUrlPersistenceService clubImageUrlPersistenceService;
 
     @InjectMocks
     private ClubSearchService clubSearchService;
@@ -44,6 +52,7 @@ class ClubSearchServiceTest {
 
         when(clubSearchRepository.searchClubsByKeyword(keyword, recruitmentStatus, division, category))
                 .thenReturn(unsorted);
+        when(imageDisplayUrlResolver.resolveDisplayUrl(any())).thenAnswer(inv -> inv.getArgument(0));
 
         // when
         ClubSearchResponse response = clubSearchService.searchClubsByKeyword(keyword, recruitmentStatus, division, category);
