@@ -13,7 +13,7 @@ import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAns
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import { Question } from '@/types/application';
-import { parseDescriptionWithLinks } from '@/utils/parseDescriptionWithLinks';
+import { linkifyText } from '@/utils/linkifyText';
 import { validateAnswers } from '@/utils/useValidateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
 
@@ -125,7 +125,7 @@ const ApplicationFormPage = () => {
         <Styled.FormTitle>{formData.title}</Styled.FormTitle>
         {formData.description && (
           <Styled.FormDescription>
-            {parseDescriptionWithLinks(formData.description)}
+            {linkifyText(formData.description)}
           </Styled.FormDescription>
         )}
         <Styled.QuestionsWrapper>

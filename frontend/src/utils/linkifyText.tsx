@@ -40,6 +40,8 @@ export const linkifyText = (text: string) => {
       <a
         key={urlStartIndex}
         href={trimmedUrlText}
+        target='_blank'
+        rel='noopener noreferrer'
         style={{
           color: colors.accent[1][900],
           textDecoration: 'underline',
