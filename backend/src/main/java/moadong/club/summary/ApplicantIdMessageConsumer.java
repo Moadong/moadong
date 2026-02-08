@@ -80,10 +80,10 @@ public class ApplicantIdMessageConsumer {
         log.info(prompt.toString());
         AIResponse summarizeContent = gemmaService.getSummarizeContent(system, prompt.toString());
 
-        if (clubApplicant.getAiSummary() == null || clubApplicant.getAiSummary().isEmpty()) {
-            log.info(summarizeContent.response());
-            clubApplicant.updateAiSummary(summarizeContent.response());
-        }
+        if (summarizeContent.response() == null) return;
+
+        log.info(summarizeContent.response());
+        clubApplicant.updateAiSummary(summarizeContent.response());
 
         clubApplicantsRepository.save(clubApplicant);
     }
