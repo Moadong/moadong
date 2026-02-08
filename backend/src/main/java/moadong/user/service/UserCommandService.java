@@ -78,7 +78,7 @@ public class UserCommandService {
 
             user.addRefreshToken(refreshToken);
             userRepository.save(user);
-            return new LoginResponse(accessToken, club.getId());
+            return new LoginResponse(accessToken, club.getId(), user.getAllowedPersonalInformation());
         } catch (MongoWriteException e) {
             throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);
         }
