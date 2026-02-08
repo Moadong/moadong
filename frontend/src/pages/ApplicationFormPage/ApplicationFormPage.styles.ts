@@ -1,41 +1,44 @@
 import styled from 'styled-components';
+import Button from '@/components/common/Button/Button';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const FormTitle = styled.h1`
-  font-size: 2.2rem;
+  font-size: 40px;
   font-weight: 700;
   border: none;
   outline: none;
-  margin-top: 30px;
-  margin-bottom: 30px;
-  padding: 0 15px;
+  margin-top: 110px;
+
+  ${media.tablet} {
+    font-size: 28px;
+    margin-top: 50px;
+  }
 `;
 
 export const FormDescription = styled.div`
   white-space: pre-line;
   font-size: 1rem;
   line-height: 1.6;
-  color: #444;
-  margin-top: -20px;
-  margin-bottom: 48px;
+  color: ${colors.gray[800]};
+  margin-top: 10px;
   padding: 12px 18px;
-  background-color: #f5f5f5;
+  background-color: ${colors.gray[100]};
   border-radius: 6px;
 
-  ${media.mobile} {
+  ${media.tablet} {
     font-size: 0.95rem;
     line-height: 1.5;
-
-    padding: 4px 6px;
+    padding: 10px 14px;
   }
 `;
 
 export const QuestionsWrapper = styled.div`
   display: flex;
   flex-direction: column;
+  margin-top: 46px;
   gap: 20px;
-
-  ${media.mobile} {
+  ${media.tablet} {
     gap: 10px;
   }
 `;
@@ -45,24 +48,20 @@ export const ButtonWrapper = styled.div`
   justify-content: flex-end;
 `;
 
-export const submitButton = styled.button`
-  padding: 10px 56px;
-  background-color: #ff5414;
+export const SubmitButton = styled(Button)`
+  height: 44px;
+  padding: 10px 40px;
+  background-color: ${colors.gray[900]};
   border-radius: 10px;
-  border: none;
-  color: #fff;
-  font-size: 1.25rem;
-  font-weight: 600;
-  letter-spacing: -0.4px;
-  transition: background-color 0.2s;
-  margin: 50px 0;
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.2px;
+  margin: 50px 4px;
 
-  &:hover {
-    background-color: #ffad8e;
-    animation: pulse 0.4s ease-in-out;
-  }
-
-  &:active {
-    transform: scale(0.95);
+  ${media.tablet} {
+    && {
+      width: 100%;
+      max-width: 100%;
+    }
   }
 `;

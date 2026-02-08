@@ -42,6 +42,10 @@ const meta = {
       control: 'text',
       description: '하단에 표시되는 도움말 텍스트입니다 (에러 시 표시).',
     },
+    showClearButton: {
+      control: 'boolean',
+      description: '삭제 버튼 표시 여부입니다.',
+    },
     showMaxChar: {
       control: 'boolean',
       description: '최대 글자수 표시 여부입니다.',
@@ -50,32 +54,44 @@ const meta = {
       control: 'number',
       description: '최대 글자수 제한입니다.',
     },
+    variant: {
+      control: 'radio',
+      options: ['outlined', 'filled'],
+      description: '텍스트 영역의 스타일 variant 입니다.',
+    },
   },
 } satisfies Meta<typeof CustomTextArea>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const TextAreaRender = (args: any) => {
+  const [value, setValue] = useState(args.value || '');
+  return (
+    <CustomTextArea
+      {...args}
+      value={value}
+      onChange={(e) => {
+        setValue(e.target.value);
+        args.onChange?.(e);
+      }}
+      onClear={() => {
+        setValue('');
+        args.onClear?.();
+      }}
+    />
+  );
+};
+
 export const Default: Story = {
   args: {
     placeholder: '내용을 입력하세요',
     width: '300px',
     value: '',
+    variant: 'outlined',
     onChange: () => {},
   },
-  render: (args) => {
-    const [value, setValue] = useState(args.value || '');
-    return (
-      <CustomTextArea
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          args.onChange?.(e);
-        }}
-      />
-    );
-  },
+  render: TextAreaRender,
 };
 
 export const WithLabel: Story = {
@@ -84,21 +100,10 @@ export const WithLabel: Story = {
     placeholder: '자기소개를 입력하세요',
     width: '300px',
     value: '',
+    variant: 'outlined',
     onChange: () => {},
   },
-  render: (args) => {
-    const [value, setValue] = useState(args.value || '');
-    return (
-      <CustomTextArea
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          args.onChange?.(e);
-        }}
-      />
-    );
-  },
+  render: TextAreaRender,
 };
 
 export const ErrorState: Story = {
@@ -108,21 +113,10 @@ export const ErrorState: Story = {
     isError: true,
     helperText: '10자 이상 입력해주세요.',
     width: '300px',
+    variant: 'outlined',
     onChange: () => {},
   },
-  render: (args) => {
-    const [value, setValue] = useState(args.value || '');
-    return (
-      <CustomTextArea
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          args.onChange?.(e);
-        }}
-      />
-    );
-  },
+  render: TextAreaRender,
 };
 
 export const WithMaxLength: Story = {
@@ -133,21 +127,10 @@ export const WithMaxLength: Story = {
     showMaxChar: true,
     width: '300px',
     value: '',
+    variant: 'outlined',
     onChange: () => {},
   },
-  render: (args) => {
-    const [value, setValue] = useState(args.value || '');
-    return (
-      <CustomTextArea
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          args.onChange?.(e);
-        }}
-      />
-    );
-  },
+  render: TextAreaRender,
 };
 
 export const Disabled: Story = {
@@ -156,6 +139,31 @@ export const Disabled: Story = {
     value: '이미 제출된 피드백입니다.',
     disabled: true,
     width: '300px',
+    variant: 'outlined',
     onChange: () => {},
   },
+};
+
+export const FilledVariant: Story = {
+  args: {
+    label: 'Filled 스타일 (둥근 모서리)',
+    placeholder: '배경색이 채워진 디자인입니다.',
+    width: '300px',
+    variant: 'filled',
+    onChange: () => {},
+  },
+  render: TextAreaRender,
+};
+
+export const WithClearButton: Story = {
+  args: {
+    label: '삭제 버튼 테스트',
+    placeholder: 'X 버튼을 클릭하면 모든 내용이 삭제됩니다.',
+    showClearButton: true,
+    width: '350px',
+    value: '지워보세요!',
+    variant: 'outlined',
+    onChange: () => {},
+  },
+  render: TextAreaRender,
 };
