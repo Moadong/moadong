@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import RecruitmentDatePicker from './RecruitmentDatePicker';
 import RecruitmentTimePicker from './RecruitmentTimePicker';
@@ -25,13 +25,25 @@ const RecruitmentPeriodPicker = ({ value, onChange }: Props) => {
   const [hour, setHour] = useState(value.getHours());
   const [minute, setMinute] = useState(value.getMinutes());
   const [openPanel, setOpenPanel] = useState<OpenPanel>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     onChange(composeDate(date, hour, minute));
   }, [date, hour, minute]);
 
+  useEffect(() => {
+    if (!openPanel) return;
+    const handleClickOutside = (e: MouseEvent) => {
+      if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
+        setOpenPanel(null);
+      }
+    };
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [openPanel]);
+
   return (
-    <Styled.Wrapper>
+    <Styled.Wrapper ref={wrapperRef}>
       <Styled.Pill
         $active={openPanel === 'date'}
         onClick={() => setOpenPanel('date')}
