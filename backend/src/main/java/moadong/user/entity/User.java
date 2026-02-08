@@ -13,6 +13,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moadong.global.annotation.UserId;
+import moadong.user.entity.enums.UserRole;
 import moadong.user.entity.enums.UserStatus;
 import moadong.user.payload.request.UserUpdateRequest;
 import org.springframework.data.annotation.Id;
@@ -20,6 +21,7 @@ import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 @Builder
@@ -50,6 +52,9 @@ public class User implements UserDetails {
     private String clubId;
 
     @Builder.Default
+    private UserRole role = UserRole.CLUB_ADMIN;
+
+    @Builder.Default
     @NotNull
     private Date createdAt = new Date();
 
@@ -68,7 +73,8 @@ public class User implements UserDetails {
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return null;
+        UserRole effectiveRole = (role != null) ? role : UserRole.CLUB_ADMIN;
+        return List.of(new SimpleGrantedAuthority("ROLE_" + effectiveRole.name()));
     }
 
     @Override
