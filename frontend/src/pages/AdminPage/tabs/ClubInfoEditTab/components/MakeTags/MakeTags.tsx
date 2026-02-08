@@ -1,4 +1,4 @@
-import deleteButton from '@/assets/images/icons/input_clear_button_icon.svg';
+import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './MakeTags.styles';
@@ -58,7 +58,7 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
                 aria-label={`자유 태그 ${index + 1} 삭제`}
                 type='button'
               >
-                <img src={deleteButton} alt='' />
+                <img src={clearButton} alt='' />
               </Styled.RemoveButton>
             )}
           </Styled.TagItem>

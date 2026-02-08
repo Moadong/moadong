@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import clearIcon from '@/assets/images/icons/input_clear_button_icon.svg';
+import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import * as Styled from './InputField.styles';
 
 interface CustomInputProps {
@@ -86,7 +86,7 @@ const InputField = ({
         />
         {showClearButton && type !== 'password' && !disabled && (
           <Styled.ClearButton type='button' onClick={clearInput}>
-            <img src={clearIcon} alt='삭제' />
+            <img src={clearButton} alt='삭제' />
           </Styled.ClearButton>
         )}
         {type === 'password' && !disabled && (

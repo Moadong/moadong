@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import deleteButton from '@/assets/images/icons/input_clear_button_icon.svg';
+import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQEditor.styles';
 
@@ -83,7 +83,7 @@ const FAQEditor = ({ faqs, onChange }: FAQEditorProps) => {
                 <Styled.FAQHeader>
                   <Styled.FAQNumber>Q{index + 1}</Styled.FAQNumber>
                   <Styled.RemoveButton onClick={() => handleRemoveFAQ(faq.id)}>
-                    <img src={deleteButton} alt='삭제' />
+                    <img src={clearButton} alt='삭제' />
                   </Styled.RemoveButton>
                 </Styled.FAQHeader>
 

@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import deleteButton from '@/assets/images/icons/input_clear_button_icon.svg';
+import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
 import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
@@ -234,7 +234,7 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
                 <Styled.RemoveButton
                   onClick={() => handleRemoveSemester(originalIndex)}
                 >
-                  <img src={deleteButton} alt='삭제' />
+                  <img src={clearButton} alt='삭제' />
                 </Styled.RemoveButton>
               </Styled.SemesterHeader>
 
@@ -265,7 +265,7 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
                           )
                         }
                       >
-                        <img src={deleteButton} alt='삭제' />
+                        <img src={clearButton} alt='삭제' />
                       </Styled.AchievementRemoveButton>
                     )}
                   </Styled.AchievementItem>

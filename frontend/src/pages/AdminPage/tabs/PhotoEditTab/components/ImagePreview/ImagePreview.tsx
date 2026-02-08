@@ -1,4 +1,4 @@
-import delete_button_icon from '@/assets/images/icons/input_clear_button_icon.svg';
+import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import * as Styled from './ImagePreview.styles';
 
 interface ImagePreviewProps {
@@ -15,7 +15,7 @@ export const ImagePreview = ({
   return (
     <Styled.ImagePreviewContainer>
       <img src={image} alt='preview' />
-      <Styled.DeleteButton
+      <Styled.ClearButton
         onClick={disabled ? undefined : onDelete}
         disabled={disabled}
         style={{
@@ -23,8 +23,8 @@ export const ImagePreview = ({
           cursor: disabled ? 'not-allowed' : 'pointer',
         }}
       >
-        <img src={delete_button_icon} alt='삭제' />
-      </Styled.DeleteButton>
+        <img src={clearButton} alt='삭제' />
+      </Styled.ClearButton>
     </Styled.ImagePreviewContainer>
   );
 };

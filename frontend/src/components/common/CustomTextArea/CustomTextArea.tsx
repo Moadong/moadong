@@ -1,5 +1,5 @@
 import { useEffect, useRef } from 'react';
-import clearIcon from '@/assets/images/icons/input_clear_button_icon.svg';
+import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import * as Styled from './CustomTextArea.styles';
 
 //Todo : InputField 컴포넌트와 중복되는 부분이 많아 추후 리팩토링 검토
@@ -78,7 +78,7 @@ const CustomTextArea = ({
         />
         {showClearButton && !disabled && (
           <Styled.ClearButton type="button" onClick={handleClear}>
-            <img src={clearIcon} alt="삭제" />
+            <img src={clearButton} alt="삭제" />
           </Styled.ClearButton>
         )}
       </Styled.TextAreaWrapper>

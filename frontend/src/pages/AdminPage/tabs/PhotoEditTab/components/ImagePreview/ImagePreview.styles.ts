@@ -14,7 +14,7 @@ export const ImagePreviewContainer = styled.div`
   }
 `;
 
-export const DeleteButton = styled.button`
+export const ClearButton = styled.button`
   position: absolute;
   top: 20px;
   right: 20px;
