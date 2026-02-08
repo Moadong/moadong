@@ -38,9 +38,7 @@ export const Input = styled.input<{
 }>`
   flex: 1;
   height: 45px;
-  padding: 12px
-    ${({ $variant }) =>
-      INPUT_RIGHT_PADDING[$variant ?? 'none']}
+  padding: 12px ${({ $variant }) => INPUT_RIGHT_PADDING[$variant ?? 'none']}
     12px 18px;
   border: 1px solid
     ${({ hasError, isSuccess }) =>
