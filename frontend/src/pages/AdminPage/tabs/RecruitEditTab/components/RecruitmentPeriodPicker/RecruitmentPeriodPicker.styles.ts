@@ -45,10 +45,6 @@ export const Panel = styled.div`
   position: absolute;
   top: 52px;
   z-index: 20;
-  background: ${colors.base.white};
-  border-radius: 12px;
-  box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
-  padding: 16px;
 `;
 
 /* ===== Hour Picker ===== */
