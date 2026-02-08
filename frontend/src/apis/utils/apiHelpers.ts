@@ -48,15 +48,3 @@ export const handleResponse = async <T = unknown>(
     return undefined;
   }
 };
-
-export const withErrorHandling = async <T>(
-  apiCall: () => Promise<T>,
-  errorMessage: string,
-): Promise<T> => {
-  try {
-    return await apiCall();
-  } catch (error) {
-    console.error(errorMessage, error);
-    throw error;
-  }
-};

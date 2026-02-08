@@ -72,6 +72,7 @@
     "jest-fetch-mock": "^3.0.3",
     "jest-transform-stub": "^2.0.0",
     "msw": "^2.12.2",
+    "msw-storybook-addon": "^2.0.6",
     "path": "^0.12.7",
     "prettier": "^3.4.2",
     "rollup-plugin-visualizer": "^5.14.0",
@@ -87,6 +88,11 @@
   "eslintConfig": {
     "extends": [
       "plugin:storybook/recommended"
+    ]
+  },
+  "msw": {
+    "workerDirectory": [
+      "public"
     ]
   }
 }
