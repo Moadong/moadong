@@ -38,7 +38,13 @@ const InputField = ({
   isSuccess,
 }: CustomInputProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
-  const activeButton = disabled ? 'none' : type === 'password' ? 'password' : showClearButton ? 'text' : 'none';
+
+  const getActiveButtonVariant = () => {
+    if (disabled) return 'none';
+    if (type === 'password') return 'password';
+    if (showClearButton) return 'text';
+    return 'none';
+  }
 
   const togglePasswordVisibility = () => {
     if (!disabled) {
@@ -76,7 +82,7 @@ const InputField = ({
           hasError={isError}
           isSuccess={isSuccess}
           readOnly={readOnly}
-          $variant={activeButton}
+          $variant={getActiveButtonVariant()}
         />
         {showClearButton && type !== 'password' && !disabled && (
           <Styled.ClearButton type='button' onClick={clearInput}>
