@@ -46,7 +46,6 @@ export const postMessageToApp = (message: WebViewMessage): boolean => {
   }
 };
 
-
 // 액션 헬퍼 함수 (Facade 패턴)
 export const requestNavigateBack = (): boolean => {
   return postMessageToApp({ type: 'NAVIGATE_BACK' });

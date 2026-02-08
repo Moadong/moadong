@@ -1,7 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import CategoryButtonList from './CategoryButtonList';
 import { useCategoryStore } from '@/store/useCategoryStore';
 import { useSearchStore } from '@/store/useSearchStore';
+import CategoryButtonList from './CategoryButtonList';
 
 const resetStores = () => {
   useCategoryStore.setState({ selectedCategory: 'all' });

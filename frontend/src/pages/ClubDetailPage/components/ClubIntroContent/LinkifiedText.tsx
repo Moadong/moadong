@@ -1,4 +1,4 @@
-import { linkifyText } from "@/utils/linkifyText";
+import { linkifyText } from '@/utils/linkifyText';
 
 interface LinkifiedTextProps {
   text: string;

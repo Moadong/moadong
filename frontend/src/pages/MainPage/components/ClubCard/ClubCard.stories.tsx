@@ -1,7 +1,7 @@
 import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
-import ClubCard from './ClubCard';
 import { Club } from '@/types/club';
+import ClubCard from './ClubCard';
 
 const sampleClub: Club = {
   id: 'club-1',

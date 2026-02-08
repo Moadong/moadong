@@ -19,26 +19,27 @@ const ClubUnionPage = () => {
         <Styled.Title>총동아리연합회 소개</Styled.Title>
         <Styled.IntroductionText>
           안녕하세요! 부경대학교 제17대 총동아리연합회 'we:sh'입니다.
-          <br />As we wish, 우리가 바라는 대로.
+          <br />
+          As we wish, 우리가 바라는 대로.
         </Styled.IntroductionText>
         <Styled.SnsLinkContainer>
           <Styled.SnsLink
             href={CLUB_UNION_SNS.instagram}
-            target="_blank"
-            rel="noopener noreferrer"
+            target='_blank'
+            rel='noopener noreferrer'
             onClick={() =>
               trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
                 platform: 'instagram',
               })
             }
           >
-            <img src={InstagramIcon} alt="인스타그램" />
+            <img src={InstagramIcon} alt='인스타그램' />
             Instagram
           </Styled.SnsLink>
           <Styled.SnsLink
             href={CLUB_UNION_SNS.kakaotalk}
-            target="_blank"
-            rel="noopener noreferrer"
+            target='_blank'
+            rel='noopener noreferrer'
             onClick={() =>
               trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
                 platform: 'kakaotalk',

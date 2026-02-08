@@ -101,10 +101,13 @@ export const TabButton = styled.button<{ $active: boolean }>`
   font-size: 14px;
   font-weight: 700;
   padding: 4px 0;
-  color: ${({ $active, theme }) => ($active ? theme.colors.gray[800] : theme.colors.gray[400])};
+  color: ${({ $active, theme }) =>
+    $active ? theme.colors.gray[800] : theme.colors.gray[400]};
   background: none;
   border: none;
-  border-bottom: 2px solid ${({ $active, theme }) => ($active ? theme.colors.gray[800] : 'transparent')};
+  border-bottom: 2px solid
+    ${({ $active, theme }) =>
+      $active ? theme.colors.gray[800] : 'transparent'};
   cursor: pointer;
   transition: all 0.2s ease;
 `;
