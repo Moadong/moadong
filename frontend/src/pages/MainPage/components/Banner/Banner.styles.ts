@@ -16,7 +16,7 @@ export const BannerContainer = styled.div`
   }
 
   ${media.mobile} {
-    margin-top: 56px;
+    margin-top: 0px;
     padding: 0;
   }
 `;
