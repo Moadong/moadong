@@ -21,7 +21,14 @@ configurations {
 
 repositories {
 	mavenCentral()
+    maven { url 'https://repo.spring.io/milestone' }
+    maven { url 'https://repo.spring.io/snapshot' }
+    maven {
+        name = 'Central Portal Snapshots'
+        url = 'https://central.sonatype.com/repository/maven-snapshots/'
+    }
 }
+
 
 dependencies {
 	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.3.0'
@@ -64,6 +71,8 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:9.7.0'
 
     implementation 'org.javers:javers-spring-boot-starter-mongo:7.10.0'
+
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
 }
 
 //전체 테스트

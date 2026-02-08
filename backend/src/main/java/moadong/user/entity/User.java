@@ -66,6 +66,10 @@ public class User implements UserDetails {
     @NotNull
     private UserStatus status = UserStatus.ACTIVE;
 
+    @Builder.Default
+    @NotNull
+    private Boolean allowedPersonalInformation = false;
+
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
@@ -130,5 +134,9 @@ public class User implements UserDetails {
             return;
         }
         this.refreshTokens.clear();
+    }
+
+    public void allowPersonalInformation() {
+        this.allowedPersonalInformation = true;
     }
 }
