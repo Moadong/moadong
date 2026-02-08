@@ -96,9 +96,7 @@ const ClubIntroContent = ({
       {benefits?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>동아리 부원이 가지는 혜택</Styled.SectionTitle>
-          <Styled.TextContainer>
-            {linkifyText(benefits)}
-          </Styled.TextContainer>
+          <Styled.TextContainer>{linkifyText(benefits)}</Styled.TextContainer>
         </Styled.Section>
       )}
       {faqs && faqs.length > 0 && (
