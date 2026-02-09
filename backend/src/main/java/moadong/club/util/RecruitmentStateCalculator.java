@@ -88,7 +88,7 @@ public class RecruitmentStateCalculator {
 
     public Map<String, String> buildNotificationData(Club club) {
         return Map.of(
-                "path", "/api/club/" + club.getId(),
+                "path", "/webview/clubDetail/" + club.getId(),
                 "action", FcmAction.NAVIGATE_WEBVIEW.name(),
                 "clubId", club.getId()
         );
