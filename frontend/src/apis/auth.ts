@@ -5,6 +5,7 @@ import { handleResponse } from './utils/apiHelpers';
 interface LoginResponseData {
   accessToken: string;
   clubId: string;
+  allowedPersonalInformation: boolean;
 }
 
 interface ChangePasswordPayload {
@@ -56,6 +57,16 @@ export const getClubIdByToken = async (): Promise<string> => {
     throw new Error('ClubId를 가져올 수 없습니다.');
   }
   return data.clubId;
+};
+
+export const allowPersonalInformation = async (): Promise<void> => {
+  const response = await secureFetch(
+    `${API_BASE_URL}/allow/personal-information`,
+    {
+      method: 'PUT',
+    },
+  );
+  await handleResponse(response, '개인정보 활용 동의에 실패했습니다.');
 };
 
 export const changePassword = async (
