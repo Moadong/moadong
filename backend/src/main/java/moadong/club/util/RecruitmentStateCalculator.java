@@ -5,6 +5,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.Locale;
+import java.util.Map;
 
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -12,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
+import moadong.fcm.enums.FcmAction;
 import moadong.fcm.util.FcmTopicResolver;
 import org.springframework.stereotype.Component;
 
@@ -79,8 +81,16 @@ public class RecruitmentStateCalculator {
                         .setTitle(club.getName())
                         .setBody(bodyMessage)
                         .build())
+                .putAllData(buildNotificationData(club))
                 .setTopic(fcmTopicResolver.resolveTopic(club.getId()))
                 .build();
     }
-}
 
+    public Map<String, String> buildNotificationData(Club club) {
+        return Map.of(
+                "path", "/api/club/" + club.getId(),
+                "action", FcmAction.NAVIGATE_WEBVIEW.name(),
+                "clubId", club.getId()
+        );
+    }
+}
