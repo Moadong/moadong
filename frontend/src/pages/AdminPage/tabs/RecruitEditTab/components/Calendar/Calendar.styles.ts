@@ -34,7 +34,7 @@ export const DatepickerContainer = styled.div`
     overflow: hidden;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.5);
     display: inline-flex;
-    align-items: stretch;
+    align-items: flex-start;
     width: auto;
   }
 

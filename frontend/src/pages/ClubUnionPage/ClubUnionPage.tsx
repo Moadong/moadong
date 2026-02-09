@@ -1,13 +1,16 @@
+import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
-import { CLUB_UNION_MEMBERS } from '@/constants/clubUnionInfo';
-import { PAGE_VIEW } from '@/constants/eventName';
+import { CLUB_UNION_MEMBERS, CLUB_UNION_SNS } from '@/constants/clubUnionInfo';
+import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './ClubUnionPage.styles';
 
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
+  const trackEvent = useMixpanelTrack();
 
   return (
     <>
@@ -15,9 +18,37 @@ const ClubUnionPage = () => {
       <PageContainer>
         <Styled.Title>총동아리연합회 소개</Styled.Title>
         <Styled.IntroductionText>
-          안녕하세요! 부경대학교 제16대 총동아리연합회 '온'입니다.
-          <br />온 동아리를 위하여, 온 힘을 다해.
+          안녕하세요! 부경대학교 제17대 총동아리연합회 'we:sh'입니다.
+          <br />
+          As we wish, 우리가 바라는 대로.
         </Styled.IntroductionText>
+        <Styled.SnsLinkContainer>
+          <Styled.SnsLink
+            href={CLUB_UNION_SNS.instagram}
+            target='_blank'
+            rel='noopener noreferrer'
+            onClick={() =>
+              trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
+                platform: 'instagram',
+              })
+            }
+          >
+            <img src={InstagramIcon} alt='인스타그램' />
+            Instagram
+          </Styled.SnsLink>
+          <Styled.SnsLink
+            href={CLUB_UNION_SNS.kakaotalk}
+            target='_blank'
+            rel='noopener noreferrer'
+            onClick={() =>
+              trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
+                platform: 'kakaotalk',
+              })
+            }
+          >
+            💬 카카오톡
+          </Styled.SnsLink>
+        </Styled.SnsLinkContainer>
         <Styled.ProfileGrid>
           {CLUB_UNION_MEMBERS.map((member) => (
             <Styled.ProfileCardContainer key={member.id}>

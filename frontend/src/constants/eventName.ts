@@ -32,6 +32,9 @@ export const USER_EVENT = {
   RECOMMENDED_CLUB_CLICKED: 'Recommended Club Clicked',
   CLUB_UNION_BUTTON_CLICKED: 'Club Union Button Clicked',
 
+  // 총동연 페이지
+  CLUB_UNION_SNS_CLICKED: 'Club Union SNS Clicked',
+
   // 공유 버튼
   SHARE_BUTTON_CLICKED: 'Share Button Clicked',
   SNS_LINK_CLICKED: 'SNS Link Button Clicked',

@@ -32,12 +32,13 @@ const ShortText = ({
       <InputField
         value={answer}
         onChange={(e) => onAnswerChange?.(e.target.value)}
+        onClear={() => onAnswerChange?.('')}
         placeholder={APPLICATION_FORM.SHORT_TEXT.placeholder}
         disabled={mode === 'builder'}
         readOnly={mode === 'builder'}
         showMaxChar={mode === 'answer'}
         maxLength={APPLICATION_FORM.SHORT_TEXT.maxLength}
-        showClearButton={false}
+        showClearButton={mode === 'answer'}
         width={'60%'}
       />
     </>

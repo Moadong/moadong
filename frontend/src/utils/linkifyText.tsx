@@ -4,12 +4,11 @@ import { colors } from '@/styles/theme/colors';
 const URL_MATCH_REGEX = /https?:\/\/[a-zA-Z0-9./?=#_%\-]+/g;
 const URL_TRAILING_CHARS_REGEX = /[.,!?)"'`;: 가-힣]+$/;
 
-const cleanUrl = (url: string)=>
-  url.replace(URL_TRAILING_CHARS_REGEX, '');
+const cleanUrl = (url: string) => url.replace(URL_TRAILING_CHARS_REGEX, '');
 
 const renderTextWithLineBreaks = (
-  text: string, 
-  keyPrefix: string
+  text: string,
+  keyPrefix: string,
 ): ReactNode[] => {
   const lines = text.split('\n');
 
@@ -34,22 +33,22 @@ export const linkifyText = (text: string) => {
 
     if (urlStartIndex > cursor) {
       const plainTextChunk = text.slice(cursor, urlStartIndex);
-      nodes.push(
-        ...renderTextWithLineBreaks(plainTextChunk, `text-${cursor}`)
-      );
+      nodes.push(...renderTextWithLineBreaks(plainTextChunk, `text-${cursor}`));
     }
-    
+
     nodes.push(
-      <a 
-        key={urlStartIndex} 
-        href={trimmedUrlText} 
-        style={{ 
-          color: colors.accent[1][900], 
-          textDecoration: 'underline' 
-          }}
-        >
+      <a
+        key={urlStartIndex}
+        href={trimmedUrlText}
+        target='_blank'
+        rel='noopener noreferrer'
+        style={{
+          color: colors.accent[1][900],
+          textDecoration: 'underline',
+        }}
+      >
         {trimmedUrlText}
-      </a>
+      </a>,
     );
 
     cursor = urlStartIndex + matchedUrlText.length;
@@ -58,7 +57,7 @@ export const linkifyText = (text: string) => {
   if (cursor < text.length) {
     const remainingTextChunk = text.slice(cursor);
     nodes.push(
-      ...renderTextWithLineBreaks(remainingTextChunk, `text-${cursor}`)
+      ...renderTextWithLineBreaks(remainingTextChunk, `text-${cursor}`),
     );
   }
 

@@ -3,8 +3,8 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import { formatSemesterLabel, getAwardKey } from '@/utils/awardHelpers';
+import { linkifyText } from '@/utils/linkifyText';
 import * as Styled from './ClubIntroContent.styles';
-import LinkifiedText from './LinkifiedText';
 
 interface ClubIntroContentProps {
   activityDescription?: string;
@@ -57,7 +57,7 @@ const ClubIntroContent = ({
         <Styled.Section>
           <Styled.SectionTitle>이런 활동을 해요</Styled.SectionTitle>
           <Styled.TextContainer>
-            <LinkifiedText text={activityDescription} />
+            {linkifyText(activityDescription)}
           </Styled.TextContainer>
         </Styled.Section>
       )}
@@ -89,16 +89,14 @@ const ClubIntroContent = ({
         <Styled.Section>
           <Styled.SectionTitle>이런 사람이 오면 좋아요</Styled.SectionTitle>
           <Styled.TextContainer>
-            <LinkifiedText text={idealCandidate.content} />
+            {linkifyText(idealCandidate.content)}
           </Styled.TextContainer>
         </Styled.Section>
       )}
       {benefits?.trim() && (
         <Styled.Section>
           <Styled.SectionTitle>동아리 부원이 가지는 혜택</Styled.SectionTitle>
-          <Styled.TextContainer>
-            <LinkifiedText text={benefits} />
-          </Styled.TextContainer>
+          <Styled.TextContainer>{linkifyText(benefits)}</Styled.TextContainer>
         </Styled.Section>
       )}
       {faqs && faqs.length > 0 && (
@@ -128,7 +126,7 @@ const ClubIntroContent = ({
                   </Styled.QuestionRow>
                   <Styled.AnswerContainer $isOpen={isOpen}>
                     <Styled.AnswerBox>
-                      <LinkifiedText text={faq.answer} />
+                      {linkifyText(faq.answer)}
                     </Styled.AnswerBox>
                   </Styled.AnswerContainer>
                 </Styled.FaqItem>

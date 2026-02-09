@@ -77,6 +77,24 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
+const InputRender = (args: any) => {
+  const [value, setValue] = useState(args.value || '');
+  return (
+    <InputField
+      {...args}
+      value={value}
+      onChange={(e) => {
+        setValue(e.target.value);
+        args.onChange?.(e);
+      }}
+      onClear={() => {
+        setValue('');
+        args.onClear?.();
+      }}
+    />
+  );
+};
+
 export const Default: Story = {
   args: {
     placeholder: '텍스트를 입력하세요',
@@ -85,23 +103,7 @@ export const Default: Story = {
     onChange: () => {},
     onClear: () => {},
   },
-  render: (args) => {
-    const [value, setValue] = useState(args.value || '');
-    return (
-      <InputField
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          args.onChange?.(e);
-        }}
-        onClear={() => {
-          setValue('');
-          args.onClear?.();
-        }}
-      />
-    );
-  },
+  render: InputRender,
 };
 
 export const WithLabel: Story = {
@@ -113,23 +115,7 @@ export const WithLabel: Story = {
     onChange: () => {},
     onClear: () => {},
   },
-  render: (args) => {
-    const [value, setValue] = useState(args.value || '');
-    return (
-      <InputField
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          args.onChange?.(e);
-        }}
-        onClear={() => {
-          setValue('');
-          args.onClear?.();
-        }}
-      />
-    );
-  },
+  render: InputRender,
 };
 
 export const Password: Story = {
@@ -142,23 +128,7 @@ export const Password: Story = {
     onChange: () => {},
     onClear: () => {},
   },
-  render: (args) => {
-    const [value, setValue] = useState(args.value || '');
-    return (
-      <InputField
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          args.onChange?.(e);
-        }}
-        onClear={() => {
-          setValue('');
-          args.onClear?.();
-        }}
-      />
-    );
-  },
+  render: InputRender,
 };
 
 export const ErrorState: Story = {
@@ -171,23 +141,7 @@ export const ErrorState: Story = {
     onChange: () => {},
     onClear: () => {},
   },
-  render: (args) => {
-    const [value, setValue] = useState(args.value || '');
-    return (
-      <InputField
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          args.onChange?.(e);
-        }}
-        onClear={() => {
-          setValue('');
-          args.onClear?.();
-        }}
-      />
-    );
-  },
+  render: InputRender,
 };
 export const WithMaxLength: Story = {
   args: {
@@ -200,23 +154,7 @@ export const WithMaxLength: Story = {
     onChange: () => {},
     onClear: () => {},
   },
-  render: (args) => {
-    const [value, setValue] = useState(args.value || '');
-    return (
-      <InputField
-        {...args}
-        value={value}
-        onChange={(e) => {
-          setValue(e.target.value);
-          args.onChange?.(e);
-        }}
-        onClear={() => {
-          setValue('');
-          args.onClear?.();
-        }}
-      />
-    );
-  },
+  render: InputRender,
 };
 
 export const Disabled: Story = {

@@ -90,7 +90,10 @@ const ApplicationEditTab = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.application.detail(clubId ?? 'unknown', formId ?? ''),
+        queryKey: queryKeys.application.detail(
+          clubId ?? 'unknown',
+          formId ?? '',
+        ),
       });
       alert('지원서가 성공적으로 수정되었습니다.');
       navigate('/admin/application-list');
@@ -310,6 +313,7 @@ const InternalApplicationComponent = ({
   return (
     <>
       <CustomTextArea
+        variant='filled'
         label='지원서 설명'
         value={formData.description}
         onChange={(e) => handleFormDescriptionChange(e.target.value)}

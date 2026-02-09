@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import clearIcon from '@/assets/images/icons/delete_button_icon.svg';
+import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import * as Styled from './InputField.styles';
 
 interface CustomInputProps {
@@ -39,6 +39,13 @@ const InputField = ({
 }: CustomInputProps) => {
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
+  const getActiveButtonVariant = () => {
+    if (disabled) return 'none';
+    if (type === 'password') return 'password';
+    if (showClearButton) return 'text';
+    return 'none';
+  };
+
   const togglePasswordVisibility = () => {
     if (!disabled) {
       setIsPasswordVisible(!isPasswordVisible);
@@ -75,10 +82,11 @@ const InputField = ({
           hasError={isError}
           isSuccess={isSuccess}
           readOnly={readOnly}
+          $variant={getActiveButtonVariant()}
         />
-        {showClearButton && !disabled && (
+        {showClearButton && type !== 'password' && !disabled && (
           <Styled.ClearButton type='button' onClick={clearInput}>
-            <img src={clearIcon} alt='삭제' />
+            <img src={clearButton} alt='삭제' />
           </Styled.ClearButton>
         )}
         {type === 'password' && !disabled && (
@@ -86,12 +94,12 @@ const InputField = ({
             {isPasswordVisible ? '숨기기' : '보기'}
           </Styled.ToggleButton>
         )}
-        {showMaxChar && maxLength !== undefined && (
-          <Styled.CharCount>
-            {value.length}/{maxLength}
-          </Styled.CharCount>
-        )}
       </Styled.InputWrapper>
+      {showMaxChar && maxLength !== undefined && (
+        <Styled.CharCount>
+          {value.length}/{maxLength}
+        </Styled.CharCount>
+      )}
       {isError && helperText && (
         <Styled.HelperText>{helperText}</Styled.HelperText>
       )}

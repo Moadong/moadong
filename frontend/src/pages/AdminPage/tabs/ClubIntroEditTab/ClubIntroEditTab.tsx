@@ -99,6 +99,7 @@ const ClubIntroEditTab = () => {
 
         <ContentSection.Body>
           <CustomTextArea
+            variant='filled'
             label='동아리를 소개할게요'
             placeholder='동아리 소개 문구를 입력해주세요'
             value={introDescription}
@@ -108,6 +109,7 @@ const ClubIntroEditTab = () => {
           />
 
           <CustomTextArea
+            variant='filled'
             label='이런 활동을 해요'
             placeholder='동아리에서 하는 활동 내용을 입력해주세요'
             value={activityDescription}
@@ -119,6 +121,7 @@ const ClubIntroEditTab = () => {
           <AwardEditor awards={awards} onChange={setAwards} />
 
           <CustomTextArea
+            variant='filled'
             label='이런 사람이 오면 좋아요'
             placeholder='동아리에 어울리는 사람의 특성을 입력해주세요'
             value={idealCandidate.content}
@@ -130,6 +133,7 @@ const ClubIntroEditTab = () => {
           />
 
           <CustomTextArea
+            variant='filled'
             label='부원이 되면 이런 혜택이 있어요'
             placeholder='동아리 부원이 누릴 수 있는 혜택을 입력해주세요'
             value={benefits}

@@ -164,7 +164,7 @@ const ClubInfoEditTab = () => {
               trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED);
               setClubName('');
             }}
-            width='40%'
+            width='50%'
             maxLength={20}
             showMaxChar={true}
           />

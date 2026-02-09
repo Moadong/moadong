@@ -44,10 +44,10 @@ const LegacyClubDetailPage = () => {
       trackEvent(
         tabKey === TAB_TYPE.INTRO
           ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
-          : USER_EVENT.CLUB_FEED_TAB_CLICKED
+          : USER_EVENT.CLUB_FEED_TAB_CLICKED,
       );
     },
-    [setSearchParams, trackEvent]
+    [setSearchParams, trackEvent],
   );
 
   if (error) {
@@ -89,10 +89,18 @@ const LegacyClubDetailPage = () => {
             </Styled.TabList>
 
             <Styled.TabContent>
-              <div style={{ display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none' }}>
+              <div
+                style={{
+                  display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none',
+                }}
+              >
                 <ClubIntroContent {...clubDetail.description} />
               </div>
-              <div style={{ display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none' }}>
+              <div
+                style={{
+                  display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none',
+                }}
+              >
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
               </div>
             </Styled.TabContent>

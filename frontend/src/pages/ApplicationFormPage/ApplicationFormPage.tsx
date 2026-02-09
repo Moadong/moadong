@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { applyToClub } from '@/apis/application';
+import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
@@ -13,7 +14,7 @@ import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAns
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import { Question } from '@/types/application';
-import { parseDescriptionWithLinks } from '@/utils/parseDescriptionWithLinks';
+import { linkifyText } from '@/utils/linkifyText';
 import { validateAnswers } from '@/utils/useValidateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
 
@@ -120,12 +121,12 @@ const ApplicationFormPage = () => {
 
   return (
     <>
-      <Header showOn={['desktop']} />
-      <PageContainer style={{ paddingTop: '80px' }}>
+      <Header showOn={['desktop', 'laptop']} />
+      <PageContainer>
         <Styled.FormTitle>{formData.title}</Styled.FormTitle>
         {formData.description && (
           <Styled.FormDescription>
-            {parseDescriptionWithLinks(formData.description)}
+            {linkifyText(formData.description)}
           </Styled.FormDescription>
         )}
         <Styled.QuestionsWrapper>
@@ -147,11 +148,12 @@ const ApplicationFormPage = () => {
         </Styled.QuestionsWrapper>
 
         <Styled.ButtonWrapper>
-          <Styled.submitButton onClick={handleSubmit}>
+          <Styled.SubmitButton onClick={handleSubmit} animated={true}>
             제출하기
-          </Styled.submitButton>
+          </Styled.SubmitButton>
         </Styled.ButtonWrapper>
       </PageContainer>
+      <Footer />
     </>
   );
 };

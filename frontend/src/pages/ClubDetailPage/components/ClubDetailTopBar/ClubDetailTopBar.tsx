@@ -1,11 +1,15 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useTheme } from 'styled-components';
 import NotificationIcon from '@/assets/images/icons/notification_icon.svg?react';
 import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
 import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
-import { useTheme } from 'styled-components';
 import isInAppWebView from '@/utils/isInAppWebView';
-import { requestNavigateBack, requestNotificationSubscribe, requestNotificationUnsubscribe } from '@/utils/webviewBridge';
+import {
+  requestNavigateBack,
+  requestNotificationSubscribe,
+  requestNotificationUnsubscribe,
+} from '@/utils/webviewBridge';
 import * as Styled from './ClubDetailTopBar.styles';
 
 // 스크롤 임계값 상수
@@ -39,7 +43,8 @@ const ClubDetailTopBar = ({
   const navigate = useNavigate();
   const theme = useTheme();
   const isInApp = isInAppWebView();
-  const [isNotificationActive, setIsNotificationActive] = useState(initialIsSubscribed);
+  const [isNotificationActive, setIsNotificationActive] =
+    useState(initialIsSubscribed);
 
   // 스크롤 위치에 따른 상태 관리
   const { isTriggered: isHeaderVisible } = useScrollTrigger({
@@ -91,7 +96,9 @@ const ClubDetailTopBar = ({
             <PrevButtonIcon width={30} height={30} />
           </Styled.IconButton>
         </Styled.IconButtonWrapper>
-        <Styled.ClubName $isVisible={isHeaderVisible}>{clubName}</Styled.ClubName>
+        <Styled.ClubName $isVisible={isHeaderVisible}>
+          {clubName}
+        </Styled.ClubName>
         {isInApp ? (
           <Styled.IconButtonWrapper>
             <Styled.NotificationButton
@@ -100,10 +107,14 @@ const ClubDetailTopBar = ({
               onClick={handleNotificationClick}
               aria-label='알림 설정'
             >
-              <NotificationIcon 
-                width={24} 
-                height={24} 
-                fill={isNotificationActive ? theme.colors.primary[900] : theme.colors.gray[500]} 
+              <NotificationIcon
+                width={24}
+                height={24}
+                fill={
+                  isNotificationActive
+                    ? theme.colors.primary[900]
+                    : theme.colors.gray[500]
+                }
               />
             </Styled.NotificationButton>
           </Styled.IconButtonWrapper>

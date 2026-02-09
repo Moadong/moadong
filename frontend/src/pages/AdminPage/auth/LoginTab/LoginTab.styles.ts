@@ -10,8 +10,7 @@ export const LoginContainer = styled.div`
 
 export const LoginBox = styled.div`
   width: 610px;
-  height: 640px;
-  padding: 92px;
+  padding: 60px;
   border-radius: 20px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
   background-color: rgba(255, 255, 255, 0.4);
@@ -22,8 +21,8 @@ export const LoginBox = styled.div`
 `;
 
 export const Logo = styled.img`
-  width: 340px;
-  margin-bottom: 85px;
+  width: 260px;
+  margin-bottom: 48px;
 `;
 
 export const Title = styled.h2`

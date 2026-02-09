@@ -32,10 +32,12 @@ const LongText = ({
       <CustomTextArea
         value={answer}
         onChange={(e) => onAnswerChange?.(e.target.value)}
+        onClear={() => onAnswerChange?.('')}
         placeholder={APPLICATION_FORM.LONG_TEXT.placeholder}
         disabled={mode === 'builder'}
         showMaxChar={mode === 'answer'}
         maxLength={APPLICATION_FORM.LONG_TEXT.maxLength}
+        showClearButton={mode === 'answer'}
       />
     </div>
   );

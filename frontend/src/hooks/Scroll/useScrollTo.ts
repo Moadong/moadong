@@ -11,15 +11,20 @@ export const useScrollTo = () => {
   }, []);
 
   const scrollToElement = useCallback(
-    (element: HTMLElement | null, offset: number = 0, behavior: ScrollBehavior = 'smooth') => {
+    (
+      element: HTMLElement | null,
+      offset: number = 0,
+      behavior: ScrollBehavior = 'smooth',
+    ) => {
       if (!element) return;
-      const elementPosition = element.getBoundingClientRect().top + window.scrollY;
+      const elementPosition =
+        element.getBoundingClientRect().top + window.scrollY;
       window.scrollTo({
         top: elementPosition - offset,
         behavior,
       });
     },
-    []
+    [],
   );
 
   const scrollTo = useCallback((options: ScrollToOptions) => {
