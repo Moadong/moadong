@@ -61,7 +61,7 @@ export const getClubIdByToken = async (): Promise<string> => {
 
 export const allowPersonalInformation = async (): Promise<void> => {
   const response = await secureFetch(
-    `${API_BASE_URL}/allow/personal-information`,
+    `${API_BASE_URL}/auth/user/allow/personal-information`,
     {
       method: 'PUT',
     },
