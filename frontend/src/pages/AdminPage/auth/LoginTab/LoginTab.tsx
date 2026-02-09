@@ -6,6 +6,7 @@ import Button from '@/components/common/Button/Button';
 import Header from '@/components/common/Header/Header';
 import InputField from '@/components/common/InputField/InputField';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { STORAGE_KEYS } from '@/constants/storageKeys';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import useAuth from '@/hooks/useAuth';
@@ -36,7 +37,11 @@ const LoginTab = () => {
       if (!loginData) {
         throw new Error('로그인 응답이 없습니다.');
       }
-      localStorage.setItem('accessToken', loginData.accessToken);
+      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, loginData.accessToken);
+      localStorage.setItem(
+        STORAGE_KEYS.HAS_CONSENTED_PERSONAL_INFO,
+        JSON.stringify(loginData.allowedPersonalInformation),
+      );
       alert('로그인 성공! 관리자 페이지로 이동합니다.');
       navigate('/admin');
     } catch (error: unknown) {
