@@ -9,7 +9,7 @@ export const LoginContainer = styled.div`
 `;
 
 export const LoginBox = styled.div`
-  width: 480px;
+  width: 610px;
   padding: 60px;
   border-radius: 20px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
