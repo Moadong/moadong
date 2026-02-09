@@ -20,6 +20,8 @@ interface AdminClubContextType {
   setApplicantsData: (data: ApplicantsInfo | null) => void;
   applicationFormId: string | null;
   setApplicationFormId: (id: string | null) => void;
+  hasConsented: boolean;
+  setHasConsented: (value: boolean) => void;
 }
 
 const AdminClubContext = createContext<AdminClubContextType | undefined>(
@@ -38,6 +40,7 @@ export const AdminClubProvider = ({
   const [applicationFormId, setApplicationFormId] = useState<string | null>(
     null,
   );
+  const [hasConsented, setHasConsented] = useState<boolean>(true);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<number | null>(null);
 
@@ -113,6 +116,8 @@ export const AdminClubProvider = ({
         setApplicantsData,
         applicationFormId,
         setApplicationFormId,
+        hasConsented,
+        setHasConsented,
       }}
     >
       {children}

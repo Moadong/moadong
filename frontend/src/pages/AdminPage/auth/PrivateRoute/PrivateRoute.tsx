@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { Navigate } from 'react-router-dom';
 import Spinner from '@/components/common/Spinner/Spinner';
+import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import useAuth from '@/hooks/useAuth';
 
@@ -8,15 +9,19 @@ import useAuth from '@/hooks/useAuth';
 
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isLoading, isAuthenticated, clubId } = useAuth();
-  const { setClubId } = useAdminClubContext();
+  const { setClubId, setHasConsented } = useAdminClubContext();
   // const { setClubId, setApplicantsData } = useAdminClubContext();
   // const { data: applicantsData } = useGetApplicants(clubId ?? '');
 
   useEffect(() => {
     if (clubId) {
       setClubId(clubId);
+      const consented =
+        localStorage.getItem(STORAGE_KEYS.HAS_CONSENTED_PERSONAL_INFO) ===
+        'true';
+      setHasConsented(consented);
     }
-  }, [clubId, setClubId]);
+  }, [clubId, setClubId, setHasConsented]);
 
   // useEffect(() => {
   //   if (clubId && applicantsData) {
