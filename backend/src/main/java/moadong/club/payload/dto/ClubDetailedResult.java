@@ -3,12 +3,10 @@ package moadong.club.payload.dto;
 import lombok.Builder;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
-import moadong.media.resolver.ImageDisplayUrlResolver;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Builder
 public record ClubDetailedResult(
@@ -35,10 +33,6 @@ public record ClubDetailedResult(
 ) {
 
     public static ClubDetailedResult of(Club club) {
-        return of(club, null);
-    }
-
-    public static ClubDetailedResult of(Club club, ImageDisplayUrlResolver resolver) {
         ClubRecruitmentInformation clubRecruitmentInformation = club.getClubRecruitmentInformation();
 
         String start = "미정";
@@ -54,30 +48,18 @@ public record ClubDetailedResult(
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
             lastModifiedDate = club.getClubRecruitmentInformation().getLastModifiedDate().format(formatter);
         }
-
-        String logo = clubRecruitmentInformation.getLogo() == null ? ""
-                : clubRecruitmentInformation.getLogo();
-        String cover = clubRecruitmentInformation.getCover() == null ? ""
-                : clubRecruitmentInformation.getCover();
-        List<String> feeds = clubRecruitmentInformation.getFeedImages() == null ? List.of()
-                : clubRecruitmentInformation.getFeedImages();
-        if (resolver != null) {
-            logo = resolver.resolveDisplayUrl(logo);
-            cover = resolver.resolveDisplayUrl(cover);
-            feeds = feeds.stream()
-                    .map(resolver::resolveDisplayUrl)
-                    .collect(Collectors.toList());
-        }
-
         return ClubDetailedResult.builder()
                 .id(club.getId() == null ? "" : club.getId())
                 .name(club.getName() == null ? "" : club.getName())
-                .logo(logo)
-                .cover(cover)
+                .logo(clubRecruitmentInformation.getLogo() == null ? ""
+                        : clubRecruitmentInformation.getLogo())
+                .cover(clubRecruitmentInformation.getCover() == null ? ""
+                        : clubRecruitmentInformation.getCover())
                 .tags(clubRecruitmentInformation.getTags() == null ? List.of()
                         : clubRecruitmentInformation.getTags())
                 .state(club.getState() == null ? "" : club.getState().getDesc())
-                .feeds(feeds)
+                .feeds(clubRecruitmentInformation.getFeedImages() == null ? List.of()
+                        : clubRecruitmentInformation.getFeedImages())
                 .category(club.getCategory() == null ? "" : club.getCategory())
                 .division(club.getDivision() == null ? "" : club.getDivision())
                 .introduction(clubRecruitmentInformation.getIntroduction() == null ? ""
