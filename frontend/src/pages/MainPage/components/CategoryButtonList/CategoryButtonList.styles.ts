@@ -5,7 +5,7 @@ export const CategoryButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: nowrap;
-  margin-top: 32px;
+  margin-top: 24px;
 
   ${media.mobile} {
     background-color: white;
@@ -14,7 +14,7 @@ export const CategoryButtonContainer = styled.div`
     z-index: 1;
 
     margin: 0px -20px;
-    padding: 6px 20px 12px;
+    padding: 16px 20px;
   }
 
   ${media.mini_mobile} {
