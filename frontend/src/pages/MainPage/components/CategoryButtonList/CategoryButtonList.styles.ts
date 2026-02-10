@@ -73,6 +73,7 @@ export const CategoryButton = styled.button`
       font-size: 12px;
       margin-top: 4px;
       line-height: normal;
+      font-weight: 600;
     }
 
     ${media.mini_mobile} {
