@@ -1,8 +1,4 @@
-import {
-  DAYS_TO_HIDE,
-  isPopupHidden,
-  POPUP_STORAGE_KEY,
-} from './Popup';
+import { DAYS_TO_HIDE, isPopupHidden, POPUP_STORAGE_KEY } from './Popup';
 
 describe('Popup 유틸 함수 테스트', () => {
   beforeEach(() => {
@@ -97,6 +93,5 @@ describe('Popup 유틸 함수 테스트', () => {
       localStorage.setItem(POPUP_STORAGE_KEY, sevenDaysAgo.toString());
       expect(isPopupHidden()).toBe(false);
     });
-
   });
 });
