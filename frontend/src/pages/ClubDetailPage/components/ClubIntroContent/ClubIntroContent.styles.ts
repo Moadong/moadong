@@ -45,6 +45,7 @@ export const TextContainer = styled.div`
   padding: 20px;
   gap: 8px;
   background-color: ${colors.gray[100]};
+  line-height: 160%;
 
   ${media.mobile} {
     padding: 16px;
