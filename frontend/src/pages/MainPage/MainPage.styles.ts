@@ -43,15 +43,16 @@ export const SectionTabs = styled.nav`
   }
 `;
 
+// 현재는 중앙동아리 상태만 유지
+// 과동아리 또는 가동아리 확장성을 위해 active 속성 유지
 export const Tab = styled.button<{ $active?: boolean }>`
   display: flex;
   position: relative;
-  font-size: 24px;
-  font-weight: bold;
+  font-size: 20px;
+  font-weight: 700;
   color: ${({ $active }) => ($active ? '#787878' : '#DCDCDC')};
   border: none;
   background: none;
-  cursor: pointer;
 
   &::after {
     content: '';
