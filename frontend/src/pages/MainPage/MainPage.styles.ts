@@ -27,10 +27,10 @@ export const SectionBar = styled.div`
   display: flex;
   align-items: flex-end;
   justify-content: space-between;
-  margin: 60px 0px 24px 8px;
+  margin: 24px 0px 16px 8px;
 
   ${media.mobile} {
-    margin: 32px 4px 16px;
+    margin: 12px 4px 12px;
   }
 `;
 
