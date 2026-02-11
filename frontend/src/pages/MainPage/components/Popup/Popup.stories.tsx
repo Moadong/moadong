@@ -1,14 +1,9 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import Popup, {
-  AB_TEST_KEY,
-  POPUP_SESSION_KEY,
-  POPUP_STORAGE_KEY,
-} from './Popup';
+import Popup, { POPUP_SESSION_KEY, POPUP_STORAGE_KEY } from './Popup';
 
 const setMobilePopupState = () => {
   window.innerWidth = 375;
   window.dispatchEvent(new Event('resize'));
-  localStorage.setItem(AB_TEST_KEY, 'show_popup');
   sessionStorage.removeItem(POPUP_SESSION_KEY);
   localStorage.removeItem(POPUP_STORAGE_KEY);
 };

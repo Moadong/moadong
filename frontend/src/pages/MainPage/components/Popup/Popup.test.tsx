@@ -1,10 +1,4 @@
-import {
-  AB_TEST_KEY,
-  DAYS_TO_HIDE,
-  getABTestGroup,
-  isPopupHidden,
-  POPUP_STORAGE_KEY,
-} from './Popup';
+import { DAYS_TO_HIDE, isPopupHidden, POPUP_STORAGE_KEY } from './Popup';
 
 describe('Popup 유틸 함수 테스트', () => {
   beforeEach(() => {
@@ -13,44 +7,6 @@ describe('Popup 유틸 함수 테스트', () => {
 
   afterEach(() => {
     localStorage.clear();
-  });
-
-  describe('getABTestGroup', () => {
-    it('저장된 그룹이 없으면 새로운 그룹을 할당한다', () => {
-      const group = getABTestGroup();
-      expect(['show_popup', 'no_popup']).toContain(group);
-      expect(localStorage.getItem(AB_TEST_KEY)).toBe(group);
-    });
-
-    it('저장된 그룹이 있으면 동일한 그룹을 반환한다', () => {
-      localStorage.setItem(AB_TEST_KEY, 'show_popup');
-      const group = getABTestGroup();
-      expect(group).toBe('show_popup');
-    });
-
-    it('여러 번 호출해도 동일한 그룹을 유지한다', () => {
-      const firstCall = getABTestGroup();
-      const secondCall = getABTestGroup();
-      const thirdCall = getABTestGroup();
-
-      expect(firstCall).toBe(secondCall);
-      expect(secondCall).toBe(thirdCall);
-    });
-
-    it('약 50/50 비율로 그룹을 할당한다', () => {
-      const results = { show_popup: 0, no_popup: 0 };
-      const iterations = 1000;
-
-      for (let i = 0; i < iterations; i++) {
-        localStorage.clear();
-        const group = getABTestGroup();
-        results[group]++;
-      }
-
-      // 40-60% 범위 내에 있으면 통과
-      expect(results.show_popup).toBeGreaterThan(iterations * 0.4);
-      expect(results.show_popup).toBeLessThan(iterations * 0.6);
-    });
   });
 
   describe('isPopupHidden', () => {
@@ -116,10 +72,6 @@ describe('Popup 유틸 함수 테스트', () => {
     it('POPUP_STORAGE_KEY가 올바르게 정의되어 있다', () => {
       expect(POPUP_STORAGE_KEY).toBe('mainpage_popup_hidden_date');
     });
-
-    it('AB_TEST_KEY가 올바르게 정의되어 있다', () => {
-      expect(AB_TEST_KEY).toBe('mainpage_popup_ab_group');
-    });
   });
 
   describe('통합 시나리오', () => {
@@ -140,17 +92,6 @@ describe('Popup 유틸 함수 테스트', () => {
       const sevenDaysAgo = Date.now() - 7 * 24 * 60 * 60 * 1000;
       localStorage.setItem(POPUP_STORAGE_KEY, sevenDaysAgo.toString());
       expect(isPopupHidden()).toBe(false);
-    });
-
-    it('시나리오: A/B 그룹 할당 후 팝업 숨김 상태 확인', () => {
-      const group = getABTestGroup();
-      expect(['show_popup', 'no_popup']).toContain(group);
-
-      expect(isPopupHidden()).toBe(false);
-
-      localStorage.setItem(POPUP_STORAGE_KEY, Date.now().toString());
-      expect(isPopupHidden()).toBe(true);
-      expect(getABTestGroup()).toBe(group);
     });
   });
 });
