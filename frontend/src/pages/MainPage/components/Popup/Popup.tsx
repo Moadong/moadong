@@ -35,6 +35,8 @@ const Popup = () => {
   }, []);
 
   useEffect(() => {
+    if (!imageLoaded) return;
+
     const isHidden = isPopupHidden();
 
     if (isMobile && !isHidden && imageLoaded) {
