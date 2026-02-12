@@ -25,7 +25,7 @@ public class RecruitmentStateChecker {
     private final RecruitmentStateCalculator recruitmentStateCalculator;
 
     @Scheduled(fixedRate = 10 * 60 * 1000) // 10분마다 실행
-    @SchedulerLock(name="RecruitmentStateChecker", lockAtMostFor = "10s", lockAtLeastFor = "1s")
+    @SchedulerLock(name="RecruitmentStateChecker", lockAtMostFor = "1m", lockAtLeastFor = "1s")
     public void performTask() {
         List<Club> clubs = clubRepository.findAll();
         for (Club club : clubs) {
