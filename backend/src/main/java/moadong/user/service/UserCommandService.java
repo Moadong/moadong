@@ -5,7 +5,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
 
 import jakarta.transaction.Transactional;
-import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
@@ -15,6 +15,8 @@ import moadong.global.util.SecurePasswordGenerator;
 import moadong.user.entity.RefreshToken;
 import moadong.user.entity.User;
 import moadong.user.payload.CustomUserDetails;
+import moadong.user.entity.enums.UserRole;
+import moadong.user.payload.request.DevRegisterRequest;
 import moadong.user.payload.request.UserLoginRequest;
 import moadong.user.payload.request.UserRegisterRequest;
 import moadong.user.payload.request.UserUpdateRequest;
@@ -28,11 +30,12 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
-@AllArgsConstructor
+@RequiredArgsConstructor
 public class UserCommandService {
 
     private final UserRepository userRepository;
@@ -43,6 +46,9 @@ public class UserCommandService {
     private final CookieMaker cookieMaker;
     private final SecurePasswordGenerator securePasswordGenerator;
 
+    @Value("${app.dev-registration-secret:}")
+    private String devRegistrationSecret; // set by Spring after construction (field injection)
+
     @Transactional
     public User registerUser(UserRegisterRequest userRegisterRequest) {
         String userId = new ObjectId().toHexString();
@@ -52,6 +58,29 @@ public class UserCommandService {
             User user = userRepository.save(createUser(userRegisterRequest, userId, clubId));
             createClub(clubId, userId);
 
+            return user;
+        } catch (MongoWriteException e) {
+            throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);
+        }
+    }
+
+    @Transactional
+    public User registerDeveloper(DevRegisterRequest request) {
+        if (devRegistrationSecret == null || devRegistrationSecret.isBlank()
+                || !devRegistrationSecret.equals(request.secret())) {
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+        UserRegisterRequest baseRequest = new UserRegisterRequest(
+                request.userId(),
+                request.password(),
+                request.name(),
+                request.phoneNumber()
+        );
+        String userId = new ObjectId().toHexString();
+        String clubId = new ObjectId().toHexString();
+        try {
+            User user = userRepository.save(createUserWithRole(baseRequest, userId, clubId, UserRole.DEVELOPER));
+            createClub(clubId, userId);
             return user;
         } catch (MongoWriteException e) {
             throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);
@@ -187,7 +216,11 @@ public class UserCommandService {
     }
 
     private User createUser(UserRegisterRequest request, String userId, String clubId) {
-        User user = request.toUserEntity(passwordEncoder);
+        return createUserWithRole(request, userId, clubId, UserRole.CLUB_ADMIN);
+    }
+
+    private User createUserWithRole(UserRegisterRequest request, String userId, String clubId, UserRole role) {
+        User user = request.toUserEntity(passwordEncoder, role);
         user.updateId(userId);
         user.updateClubId(clubId);
         return user;

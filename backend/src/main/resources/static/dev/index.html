@@ -1,0 +1,643 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모아동 개발자 포털</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 0; line-height: 1.5; }
+    .header {
+      position: sticky; top: 0; z-index: 10;
+      background: #fff; border-bottom: 1px solid #e5e7eb; padding: 16px 24px;
+      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    }
+    .header h1 { margin: 0; font-size: 1.25rem; }
+    .header-nav { display: flex; gap: 16px; flex-wrap: wrap; }
+    .header-nav a { color: #2563eb; text-decoration: none; }
+    .header-nav a:hover { text-decoration: underline; }
+    .header-status { font-size: 0.9rem; color: #666; }
+    .header-status .logout-btn { margin-left: 8px; padding: 4px 10px; font-size: 0.85rem; cursor: pointer; }
+    main { padding: 24px; }
+    h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; }
+    .sub { color: #666; margin-bottom: 24px; }
+    section { margin-bottom: 24px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; }
+    section:target { border-color: #2563eb; }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    input, select, textarea { padding: 8px 10px; margin: 4px 0; width: 100%; max-width: 400px; display: block; }
+    button { padding: 8px 16px; margin-right: 8px; margin-top: 8px; cursor: pointer; border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb; }
+    button:hover:not(:disabled) { background: #f3f4f6; }
+    button:disabled { opacity: 0.7; cursor: not-allowed; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .form-row { margin-bottom: 12px; }
+    .form-row label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 0.9rem; }
+    .token-box { background: #f3f4f6; padding: 12px; border-radius: 6px; word-break: break-all; font-size: 0.85rem; margin-top: 8px; }
+    .token-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .copy-feedback { font-size: 0.85rem; color: #16a34a; margin-left: 4px; }
+    .error { color: #dc2626; font-size: 0.9rem; margin-top: 8px; padding: 8px; background: #fef2f2; border-radius: 6px; border: 1px solid #fecaca; }
+    .success { color: #16a34a; font-size: 0.9rem; margin-top: 8px; padding: 8px; background: #f0fdf4; border-radius: 6px; border: 1px solid #bbf7d0; }
+    .message-box { margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; }
+    .message-box.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .message-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; }
+    th { background: #f9fafb; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    #clubList tbody tr { cursor: pointer; }
+    #clubList tbody tr:hover { background: #f9fafb; }
+    #dictList tbody tr:hover { background: #f9fafb; }
+    #dictList .btn-cell { white-space: nowrap; }
+    #dictList .btn-cell button { margin: 0 4px; padding: 4px 10px; font-size: 0.85rem; }
+    .hidden { display: none !important; }
+    .loading { opacity: 0.7; pointer-events: none; }
+    .banner { padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; font-size: 0.9rem; }
+    .banner.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .banner.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; display: block; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    .card:hover { border-color: #2563eb; box-shadow: 0 2px 8px rgba(37,99,235,0.1); }
+    .card strong { display: block; margin-bottom: 4px; }
+    .card span { font-size: 0.85rem; color: #666; }
+    .collapsible { border: 1px solid #e5e7eb; border-radius: 6px; margin-top: 8px; }
+    .collapsible-summary { padding: 10px 12px; cursor: pointer; font-weight: 500; background: #f9fafb; user-select: none; }
+    .collapsible-summary:hover { background: #f3f4f6; }
+    .collapsible-body { padding: 12px; max-height: 300px; overflow: auto; }
+    .collapsible-body pre { margin: 0; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; }
+    .editing-badge { display: inline-block; padding: 6px 12px; background: #dbeafe; color: #1e40af; border-radius: 6px; font-size: 0.9rem; margin-bottom: 12px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px 24px; margin-bottom: 16px; }
+    .form-grid .form-row { margin-bottom: 0; }
+    .form-grid .form-row input, .form-grid .form-row select { max-width: none; }
+    .table-wrap { overflow-x: auto; margin-top: 12px; }
+    .id-cell { font-family: monospace; font-size: 0.85rem; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .id-cell[title] { cursor: pointer; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+    .section-head h2 { margin: 0; }
+    .section-head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .pagination { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.9rem; }
+    .pagination button { margin: 0; padding: 6px 12px; }
+    .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: fadeOut 3s ease-in-out forwards; }
+    .toast.success { background: #166534; color: #fff; }
+    .toast.error { background: #dc2626; color: #fff; }
+    @keyframes fadeOut { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+  </style>
+</head>
+<body>
+  <header class="header">
+    <div>
+      <h1>모아동 개발자 포털</h1>
+      <nav class="header-nav">
+        <a href="#login">로그인</a>
+        <a href="#api-docs">API 문서</a>
+        <a href="#club">동아리</a>
+        <a href="#dict">단어사전</a>
+      </nav>
+    </div>
+    <div id="headerStatus" class="header-status hidden">
+      <span id="headerUserId"></span>
+      <button type="button" class="logout-btn" id="headerLogout">로그아웃</button>
+    </div>
+  </header>
+
+  <main>
+    <section id="login">
+      <h2>로그인 / 토큰</h2>
+      <p class="sub">개발자 전용 계정으로 로그인한 후 사용하세요.</p>
+      <div id="loginForm">
+        <form id="loginFormEl" novalidate>
+          <div id="loginError" class="error hidden"></div>
+          <div class="form-row">
+            <label for="loginUserId">아이디</label>
+            <input type="text" id="loginUserId" placeholder="userId" autocomplete="username">
+          </div>
+          <div class="form-row">
+            <label for="loginPassword">비밀번호</label>
+            <input type="password" id="loginPassword" placeholder="password" autocomplete="current-password">
+          </div>
+          <button type="submit" id="btnLogin">로그인</button>
+        </form>
+      </div>
+      <div id="tokenArea" class="hidden">
+        <strong>토큰</strong>
+        <div class="token-actions">
+          <button type="button" id="btnCopyToken">복사</button>
+          <span id="copyFeedback" class="copy-feedback hidden">복사됨</span>
+        </div>
+        <div class="token-box" id="tokenDisplay"></div>
+        <button type="button" id="btnLogout">로그아웃</button>
+      </div>
+    </section>
+
+    <section id="api-docs">
+      <h2>API 문서</h2>
+      <div class="card-grid">
+        <a href="/swagger-ui.html" target="_blank" rel="noopener" class="card">
+          <strong>Swagger UI</strong>
+          <span>API 목록 및 Try it out</span>
+        </a>
+        <a href="/v3/api-docs" target="_blank" rel="noopener" class="card">
+          <strong>OpenAPI JSON</strong>
+          <span>스펙 다운로드</span>
+        </a>
+      </div>
+      <details class="collapsible" style="margin-top:12px;">
+        <summary class="collapsible-summary">JWT 사용 방법</summary>
+        <div class="collapsible-body">
+          <p style="margin:0 0 8px;">Swagger에서 <strong>Authorize</strong> 클릭 후, 위에서 복사한 토큰을 <strong>Bearer</strong> 없이 붙여넣기.</p>
+        </div>
+      </details>
+    </section>
+
+    <section id="club" class="hidden">
+      <div class="section-head">
+        <h2>동아리 관리</h2>
+        <div class="section-head-actions">
+          <div id="clubPagination" class="pagination hidden"></div>
+          <button type="button" id="btnLoadClubs">동아리 목록 새로고침</button>
+        </div>
+      </div>
+      <div id="clubBanner" class="banner hidden"></div>
+      <div id="clubListLoading" class="hidden">목록 불러오는 중...</div>
+      <div class="table-wrap">
+        <table id="clubList">
+          <thead><tr><th>ID</th><th>이름</th><th>userId</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="dict" class="hidden">
+      <div class="section-head">
+        <h2>단어사전 관리</h2>
+        <div class="section-head-actions">
+          <div id="dictPagination" class="pagination hidden"></div>
+          <button type="button" id="btnLoadDict">목록 새로고침</button>
+          <button type="button" id="btnRefreshDictCache">캐시 새로고침</button>
+        </div>
+      </div>
+      <div id="dictBanner" class="banner hidden"></div>
+      <div id="dictListLoading" class="hidden">목록 불러오는 중...</div>
+      <div class="table-wrap">
+        <table id="dictList">
+          <thead><tr><th>ID</th><th>표준단어</th><th>입력단어</th><th>액션</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">단어사전 추가</h3>
+      <div class="form-grid">
+        <div>
+          <div class="form-row">
+            <label for="dictNewStandardWord">표준단어</label>
+            <input type="text" id="dictNewStandardWord" placeholder="표준단어">
+          </div>
+          <div class="form-row">
+            <label for="dictNewInputWords">입력단어 (쉼표로 구분)</label>
+            <textarea id="dictNewInputWords" rows="3" placeholder="단어1, 단어2, 단어3" style="max-width:100%;"></textarea>
+          </div>
+          <button type="button" id="btnDictCreate">단일 추가</button>
+        </div>
+        <div>
+          <div class="form-row">
+            <label for="dictCsvFile">CSV 일괄 추가</label>
+            <input type="file" id="dictCsvFile" accept=".csv">
+          </div>
+          <p class="sub" style="margin-top:4px; margin-bottom:8px;">형식: 표준단어,입력단어,입력단어_정규화,표준단어_정규화</p>
+          <button type="button" id="btnDictCsvUpload">CSV 업로드</button>
+        </div>
+      </div>
+      <div class="card-grid" style="margin-top:16px;">
+        <a href="/swagger-ui.html#/Word_Dictionary_Admin" target="_blank" rel="noopener" class="card">
+          <strong>단어사전 Admin API</strong>
+          <span>CRUD, bulk, CSV, refresh</span>
+        </a>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const API_BASE = '';
+    const PAGE_SIZE = 50;
+
+    function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
+    function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
+    function clearToken() { sessionStorage.removeItem('devPortalToken'); }
+    function getUserId() { return sessionStorage.getItem('devPortalUserId') || ''; }
+    function setUserId(u) { sessionStorage.setItem('devPortalUserId', u); }
+    function clearUserId() { sessionStorage.removeItem('devPortalUserId'); }
+
+    function headers() {
+      const t = getToken();
+      const h = { 'Content-Type': 'application/json' };
+      if (t) h['Authorization'] = 'Bearer ' + t;
+      return h;
+    }
+
+    function showToast(message, type) {
+      const el = document.createElement('div');
+      el.className = 'toast ' + (type || 'success');
+      el.textContent = message;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function showLogin(show) {
+      document.getElementById('loginForm').classList.toggle('hidden', !!show);
+      document.getElementById('tokenArea').classList.toggle('hidden', !show);
+      document.getElementById('club').classList.toggle('hidden', !show);
+      document.getElementById('dict').classList.toggle('hidden', !show);
+      const headerStatus = document.getElementById('headerStatus');
+      const headerUserId = document.getElementById('headerUserId');
+      if (show) {
+        headerUserId.textContent = '로그인됨 (' + (getUserId() || 'developer') + ')';
+        headerStatus.classList.remove('hidden');
+      } else {
+        headerStatus.classList.add('hidden');
+        clearUserId();
+      }
+    }
+
+    document.getElementById('loginFormEl').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = document.getElementById('loginUserId').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      const btn = document.getElementById('btnLogin');
+      errEl.textContent = '';
+      errEl.classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = '로그인 중...';
+      try {
+        const res = await fetch(API_BASE + '/auth/user/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.message || '로그인 실패';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        const token = data.data?.accessToken;
+        if (token) {
+          setToken(token);
+          setUserId(userId);
+          document.getElementById('tokenDisplay').textContent = token;
+          showLogin(true);
+          loadClubsIfVisible();
+          loadDictIfVisible();
+        } else {
+          errEl.textContent = '토큰 없음';
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = e.message || '요청 실패';
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '로그인';
+      }
+    });
+
+    document.getElementById('btnCopyToken').onclick = () => {
+      const t = getToken();
+      if (t) {
+        navigator.clipboard.writeText(t);
+        const fb = document.getElementById('copyFeedback');
+        fb.classList.remove('hidden');
+        setTimeout(() => fb.classList.add('hidden'), 2000);
+      }
+    };
+
+    function doLogout() {
+      clearToken();
+      clearUserId();
+      showLogin(false);
+      document.getElementById('tokenDisplay').textContent = '';
+      document.getElementById('clubList').querySelector('tbody').innerHTML = '';
+      document.getElementById('clubBanner').classList.add('hidden');
+      document.getElementById('dictList').querySelector('tbody').innerHTML = '';
+      document.getElementById('dictBanner').classList.add('hidden');
+    }
+
+    function openEditWindow(clubId) {
+      window.open('/dev/edit.html?clubId=' + encodeURIComponent(clubId), 'clubEdit', 'width=620,height=700,scrollbars=yes');
+    }
+    document.getElementById('btnLogout').onclick = doLogout;
+    document.getElementById('headerLogout').onclick = doLogout;
+
+    if (getToken()) {
+      document.getElementById('tokenDisplay').textContent = getToken();
+      showLogin(true);
+      loadClubsIfVisible();
+      loadDictIfVisible();
+    }
+
+    let allClubs = [];
+    let currentPage = 1;
+
+    function truncateId(id) {
+      if (!id || id.length <= 8) return id;
+      return id.slice(0, 8) + '…';
+    }
+
+    function renderClubTableRows(clubs, page) {
+      const start = (page - 1) * PAGE_SIZE;
+      const slice = clubs.slice(start, start + PAGE_SIZE);
+      const tbody = document.querySelector('#clubList tbody');
+      tbody.innerHTML = '';
+      slice.forEach(c => {
+        const tr = document.createElement('tr');
+        const idCell = document.createElement('td');
+        idCell.className = 'id-cell';
+        idCell.title = c.id || '';
+        idCell.textContent = truncateId(c.id || '');
+        idCell.onclick = (e) => { e.stopPropagation(); navigator.clipboard.writeText(c.id || ''); showToast('ID 복사됨', 'success'); };
+        tr.appendChild(idCell);
+        tr.appendChild(document.createElement('td')).textContent = c.name || '';
+        tr.appendChild(document.createElement('td')).textContent = c.userId || '';
+        tr.onclick = () => openEditWindow(c.id);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderPagination(total) {
+      const wrap = document.getElementById('clubPagination');
+      if (total <= PAGE_SIZE) {
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+      wrap.classList.remove('hidden');
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+      let html = '<span>총 ' + total + '개</span>';
+      if (currentPage > 1) html += '<button type="button" id="clubPrev">이전</button>';
+      html += '<span> ' + currentPage + ' / ' + totalPages + ' </span>';
+      if (currentPage < totalPages) html += '<button type="button" id="clubNext">다음</button>';
+      wrap.innerHTML = html;
+      const prev = document.getElementById('clubPrev');
+      const next = document.getElementById('clubNext');
+      if (prev) prev.onclick = () => { currentPage--; renderClubTableRows(allClubs, currentPage); renderPagination(allClubs.length); };
+      if (next) next.onclick = () => { currentPage++; renderClubTableRows(allClubs, currentPage); renderPagination(allClubs.length); };
+    }
+
+    function loadClubsIfVisible() {
+      const section = document.getElementById('club');
+      if (section && !section.classList.contains('hidden')) {
+        document.getElementById('btnLoadClubs').click();
+      }
+    }
+
+    document.getElementById('btnLoadClubs').onclick = async () => {
+      const tbody = document.querySelector('#clubList tbody');
+      const banner = document.getElementById('clubBanner');
+      const loading = document.getElementById('clubListLoading');
+      banner.classList.add('hidden');
+      banner.className = 'banner hidden';
+      loading.classList.remove('hidden');
+      tbody.innerHTML = '';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/clubs', { headers: headers() });
+        if (res.status === 403) {
+          banner.textContent = '개발자 계정으로 로그인하세요.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          tbody.innerHTML = '<tr><td colspan="3">목록을 불러올 수 없습니다.</td></tr>';
+          return;
+        }
+        const data = await res.json();
+        const clubs = data.data?.clubs || [];
+        allClubs = clubs;
+        currentPage = 1;
+        renderClubTableRows(clubs, 1);
+        renderPagination(clubs.length);
+      } catch (e) {
+        banner.textContent = '요청 실패: ' + (e.message || '');
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        tbody.innerHTML = '<tr><td colspan="3">' + (e.message || '오류') + '</td></tr>';
+      } finally {
+        loading.classList.add('hidden');
+      }
+    };
+
+    let allDicts = [];
+    let dictCurrentPage = 1;
+
+    function openDictEditWindow(d) {
+      window.open('/dev/dict-edit.html?id=' + encodeURIComponent(d.id), 'dictEdit', 'width=520,height=420,scrollbars=yes');
+    }
+
+    function inputWordsSummary(words) {
+      if (!words || !words.length) return '';
+      const s = words.join(', ');
+      return s.length > 60 ? s.slice(0, 60) + '…' : s;
+    }
+
+    function renderDictTableRows(dicts, page) {
+      const start = (page - 1) * PAGE_SIZE;
+      const slice = dicts.slice(start, start + PAGE_SIZE);
+      const tbody = document.querySelector('#dictList tbody');
+      tbody.innerHTML = '';
+      slice.forEach(d => {
+        const tr = document.createElement('tr');
+        const idCell = document.createElement('td');
+        idCell.className = 'id-cell';
+        idCell.title = d.id || '';
+        idCell.textContent = truncateId(d.id || '');
+        idCell.onclick = (e) => { e.stopPropagation(); navigator.clipboard.writeText(d.id || ''); showToast('ID 복사됨', 'success'); };
+        tr.appendChild(idCell);
+        tr.appendChild(document.createElement('td')).textContent = d.standardWord || '';
+        tr.appendChild(document.createElement('td')).textContent = inputWordsSummary(d.inputWords);
+        const btnCell = document.createElement('td');
+        btnCell.className = 'btn-cell';
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.textContent = '수정';
+        editBtn.onclick = (e) => { e.stopPropagation(); openDictEditWindow(d); };
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.textContent = '삭제';
+        delBtn.onclick = (e) => { e.stopPropagation(); deleteDict(d.id); };
+        btnCell.appendChild(editBtn);
+        btnCell.appendChild(delBtn);
+        tr.appendChild(btnCell);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderDictPagination(total) {
+      const wrap = document.getElementById('dictPagination');
+      if (total <= PAGE_SIZE) {
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+      wrap.classList.remove('hidden');
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+      let html = '<span>총 ' + total + '개</span>';
+      if (dictCurrentPage > 1) html += '<button type="button" id="dictPrev">이전</button>';
+      html += '<span> ' + dictCurrentPage + ' / ' + totalPages + ' </span>';
+      if (dictCurrentPage < totalPages) html += '<button type="button" id="dictNext">다음</button>';
+      wrap.innerHTML = html;
+      const prev = document.getElementById('dictPrev');
+      const next = document.getElementById('dictNext');
+      if (prev) prev.onclick = () => { dictCurrentPage--; renderDictTableRows(allDicts, dictCurrentPage); renderDictPagination(allDicts.length); };
+      if (next) next.onclick = () => { dictCurrentPage++; renderDictTableRows(allDicts, dictCurrentPage); renderDictPagination(allDicts.length); };
+    }
+
+    function loadDictIfVisible() {
+      const section = document.getElementById('dict');
+      if (section && !section.classList.contains('hidden')) {
+        document.getElementById('btnLoadDict').click();
+      }
+    }
+
+    document.getElementById('btnLoadDict').onclick = async () => {
+      const tbody = document.querySelector('#dictList tbody');
+      const banner = document.getElementById('dictBanner');
+      const loading = document.getElementById('dictListLoading');
+      banner.classList.add('hidden');
+      banner.className = 'banner hidden';
+      loading.classList.remove('hidden');
+      tbody.innerHTML = '';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary', { headers: headers() });
+        if (res.status === 403) {
+          banner.textContent = '개발자 계정으로 로그인하세요.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          tbody.innerHTML = '<tr><td colspan="4">목록을 불러올 수 없습니다.</td></tr>';
+          return;
+        }
+        const data = await res.json();
+        const list = data.data;
+        const dicts = list?.wordDictionaries || [];
+        const total = list?.total ?? dicts.length;
+        allDicts = dicts;
+        dictCurrentPage = 1;
+        renderDictTableRows(dicts, 1);
+        renderDictPagination(dicts.length);
+      } catch (e) {
+        banner.textContent = '요청 실패: ' + (e.message || '');
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        tbody.innerHTML = '<tr><td colspan="4">' + (e.message || '오류') + '</td></tr>';
+      } finally {
+        loading.classList.add('hidden');
+      }
+    };
+
+    document.getElementById('btnRefreshDictCache').onclick = async () => {
+      const btn = document.getElementById('btnRefreshDictCache');
+      btn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary/refresh', { method: 'POST', headers: headers() });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message || '캐시가 새로고침되었습니다', 'success');
+        } else {
+          showToast(data.message || '캐시 새로고침 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    function parseInputWordsStr(str) {
+      if (!str || !str.trim()) return [];
+      return str.split(/[,，\s]+/).map(s => s.trim()).filter(Boolean);
+    }
+
+    document.getElementById('btnDictCreate').onclick = async () => {
+      const standardWord = document.getElementById('dictNewStandardWord').value.trim();
+      const inputWordsStr = document.getElementById('dictNewInputWords').value.trim();
+      const inputWords = parseInputWordsStr(inputWordsStr);
+      if (!standardWord) {
+        showToast('표준단어를 입력하세요', 'error');
+        return;
+      }
+      if (!inputWords.length) {
+        showToast('입력단어를 하나 이상 입력하세요', 'error');
+        return;
+      }
+      const btn = document.getElementById('btnDictCreate');
+      btn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ standardWord, inputWords })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message || '추가되었습니다', 'success');
+          document.getElementById('dictNewStandardWord').value = '';
+          document.getElementById('dictNewInputWords').value = '';
+          document.getElementById('btnLoadDict').click();
+        } else {
+          showToast(data.message || '추가 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    document.getElementById('btnDictCsvUpload').onclick = async () => {
+      const fileInput = document.getElementById('dictCsvFile');
+      if (!fileInput.files || !fileInput.files.length) {
+        showToast('CSV 파일을 선택하세요', 'error');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      const btn = document.getElementById('btnDictCsvUpload');
+      btn.disabled = true;
+      try {
+        const h = { 'Authorization': 'Bearer ' + getToken() };
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary/csv', {
+          method: 'POST',
+          headers: h,
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message || 'CSV 업로드 완료', 'success');
+          fileInput.value = '';
+          document.getElementById('btnLoadDict').click();
+        } else {
+          showToast(data.message || 'CSV 업로드 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    async function deleteDict(id) {
+      if (!id || !confirm('이 단어사전 항목을 삭제할까요?')) return;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary/' + encodeURIComponent(id), {
+          method: 'DELETE',
+          headers: headers()
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message || '삭제되었습니다', 'success');
+          document.getElementById('btnLoadDict').click();
+        } else {
+          showToast(data.message || '삭제 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      }
+    }
+
+  </script>
+</body>
+</html>
