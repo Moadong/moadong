@@ -13,7 +13,6 @@ import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.fcm.enums.FcmAction;
 import moadong.fcm.model.PushPayload;
-import moadong.fcm.port.PushNotificationPort;
 import moadong.fcm.util.FcmTopicResolver;
 import org.springframework.stereotype.Component;
 
@@ -23,18 +22,13 @@ public class RecruitmentStateCalculator {
     public static final int ALWAYS_RECRUIT_YEAR = 2999;
 
     private final FcmTopicResolver fcmTopicResolver;
-    private final PushNotificationPort pushNotificationPort;
 
-    public void calculate(Club club, ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
+    public boolean calculate(Club club, ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
         ClubRecruitmentStatus oldStatus = club.getClubRecruitmentInformation().getClubRecruitmentStatus();
         ClubRecruitmentStatus newStatus = calculateRecruitmentStatus(recruitmentStartDate, recruitmentEndDate);
         club.updateRecruitmentStatus(newStatus);
 
-        if (oldStatus == newStatus)
-            return;
-
-        PushPayload payload = buildRecruitmentMessage(club, newStatus);
-        pushNotificationPort.send(payload);
+        return oldStatus != newStatus;
     }
 
     public static ClubRecruitmentStatus calculateRecruitmentStatus(ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {

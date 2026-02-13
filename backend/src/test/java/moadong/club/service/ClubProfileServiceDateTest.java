@@ -7,6 +7,7 @@ import moadong.club.repository.ClubSearchRepository;
 import moadong.club.util.RecruitmentStateCalculator;
 import moadong.fixture.ClubRequestFixture;
 import moadong.fixture.UserFixture;
+import moadong.fcm.port.PushNotificationPort;
 import moadong.user.payload.CustomUserDetails;
 import moadong.util.annotations.UnitTest;
 import org.javers.core.Javers;
@@ -25,7 +26,6 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -43,7 +43,10 @@ public class ClubProfileServiceDateTest {
 
     @Mock
     RecruitmentStateCalculator recruitmentStateCalculator;
-  
+
+    @Mock
+    PushNotificationPort pushNotificationPort;
+
     @Mock
     Javers javers;
 
@@ -55,7 +58,7 @@ public class ClubProfileServiceDateTest {
         CustomUserDetails customUserDetails = UserFixture.createUserDetails("test");
         Club club = new Club();
         when(clubRepository.findClubByUserId(any())).thenReturn(Optional.of(club));
-        doNothing().when(recruitmentStateCalculator).calculate(any(), any(), any());
+        when(recruitmentStateCalculator.calculate(any(), any(), any())).thenReturn(false);
 
         //WHEN
         clubProfileService.updateClubRecruitmentInfo(request, customUserDetails);
@@ -70,4 +73,3 @@ public class ClubProfileServiceDateTest {
                 getLastModifiedDate().isBefore(now.plusSeconds(1)));
     }
 }
-
