@@ -2,27 +2,18 @@ package moadong.club.util;
 
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.fcm.enums.FcmAction;
 import moadong.fcm.model.PushPayload;
-import moadong.fcm.util.FcmTopicResolver;
 import org.springframework.stereotype.Component;
-
-import java.util.Map;
 
 @Component
 @RequiredArgsConstructor
 public class RecruitmentDdayNotificationBuilder {
 
-    private final FcmTopicResolver fcmTopicResolver;
+    private final ClubNotificationPayloadFactory payloadFactory;
 
     public PushPayload build(Club club, long daysLeft) {
         String body = resolveBody(daysLeft);
-        return new PushPayload(
-                club.getName(),
-                body,
-                fcmTopicResolver.resolveTopic(club.getId()),
-                buildData(club)
-        );
+        return payloadFactory.create(club, body);
     }
 
     private String resolveBody(long daysLeft) {
@@ -32,13 +23,5 @@ public class RecruitmentDdayNotificationBuilder {
             case 1 -> "내일 모집이 마감돼요! 마지막 기회를 놓치지 마세요 🚨";
             default -> throw new IllegalArgumentException("Unsupported daysLeft: " + daysLeft);
         };
-    }
-
-    private Map<String, String> buildData(Club club) {
-        return Map.of(
-                "path", "/webview/clubDetail/" + club.getId(),
-                "action", FcmAction.NAVIGATE_WEBVIEW.name(),
-                "clubId", club.getId()
-        );
     }
 }
