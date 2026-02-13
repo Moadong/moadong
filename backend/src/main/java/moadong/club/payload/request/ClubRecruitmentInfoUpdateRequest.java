@@ -11,6 +11,6 @@ public record ClubRecruitmentInfoUpdateRequest(
 ) {
 
     public boolean shouldSendNotification() {
-        return sendNotification == null || sendNotification;
+        return Boolean.TRUE.equals(sendNotification);
     }
 }

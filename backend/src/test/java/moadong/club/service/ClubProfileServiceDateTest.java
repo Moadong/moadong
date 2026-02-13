@@ -102,6 +102,26 @@ public class ClubProfileServiceDateTest {
         verify(pushNotificationPort, never()).send(any());
     }
 
+    @DisplayName("모집 상태 변경이 있어도 sendNotification 미지정이면 알림을 보내지 않는다")
+    @Test
+    void 모집글_수정시_sendNotification_null이면_알림을_보내지_않는다() {
+        ClubRecruitmentInfoUpdateRequest request = new ClubRecruitmentInfoUpdateRequest(
+                Instant.now(),
+                Instant.now().plusSeconds(3600),
+                "테스트 대상",
+                "https://fake-url.com",
+                null
+        );
+        CustomUserDetails customUserDetails = UserFixture.createUserDetails("test");
+        Club club = new Club();
+        when(clubRepository.findClubByUserId(any())).thenReturn(Optional.of(club));
+        when(recruitmentStateCalculator.calculate(any(), any(), any())).thenReturn(true);
+
+        clubProfileService.updateClubRecruitmentInfo(request, customUserDetails);
+
+        verify(pushNotificationPort, never()).send(any());
+    }
+
     @DisplayName("모집 상태 변경이 있고 sendNotification=true면 알림을 보낸다")
     @Test
     void 모집글_수정시_sendNotification_true이면_알림을_보낸다() {
