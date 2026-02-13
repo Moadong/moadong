@@ -51,6 +51,7 @@ export function initializeSentry() {
     sendDefaultPii: false,
     release: import.meta.env.VITE_SENTRY_RELEASE,
     tracesSampleRate: 0.1,
+    integrations: [Sentry.browserTracingIntegration()],
   });
 }
 
