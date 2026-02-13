@@ -7,13 +7,13 @@ import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.Map;
 
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.fcm.enums.FcmAction;
+import moadong.fcm.model.PushPayload;
+import moadong.fcm.port.PushNotificationPort;
 import moadong.fcm.util.FcmTopicResolver;
 import org.springframework.stereotype.Component;
 
@@ -23,6 +23,7 @@ public class RecruitmentStateCalculator {
     public static final int ALWAYS_RECRUIT_YEAR = 2999;
 
     private final FcmTopicResolver fcmTopicResolver;
+    private final PushNotificationPort pushNotificationPort;
 
     public void calculate(Club club, ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
         ClubRecruitmentStatus oldStatus = club.getClubRecruitmentInformation().getClubRecruitmentStatus();
@@ -32,8 +33,8 @@ public class RecruitmentStateCalculator {
         if (oldStatus == newStatus)
             return;
 
-        Message message = buildRecruitmentMessage(club, newStatus);
-        club.sendPushNotification(message);
+        PushPayload payload = buildRecruitmentMessage(club, newStatus);
+        pushNotificationPort.send(payload);
     }
 
     public static ClubRecruitmentStatus calculateRecruitmentStatus(ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
@@ -59,7 +60,7 @@ public class RecruitmentStateCalculator {
         return ClubRecruitmentStatus.CLOSED;
     }
 
-    public Message buildRecruitmentMessage(Club club, ClubRecruitmentStatus status) {
+    public PushPayload buildRecruitmentMessage(Club club, ClubRecruitmentStatus status) {
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M월 d일 a h시 m분", Locale.KOREAN);
         ClubRecruitmentInformation info = club.getClubRecruitmentInformation();
 
@@ -76,14 +77,12 @@ public class RecruitmentStateCalculator {
             case CLOSED -> "모집이 마감되었습니다. 다음 모집을 기대해주세요.";
         };
 
-        return Message.builder()
-                .setNotification(Notification.builder()
-                        .setTitle(club.getName())
-                        .setBody(bodyMessage)
-                        .build())
-                .putAllData(buildNotificationData(club))
-                .setTopic(fcmTopicResolver.resolveTopic(club.getId()))
-                .build();
+        return new PushPayload(
+                club.getName(),
+                bodyMessage,
+                fcmTopicResolver.resolveTopic(club.getId()),
+                buildNotificationData(club)
+        );
     }
 
     public Map<String, String> buildNotificationData(Club club) {
