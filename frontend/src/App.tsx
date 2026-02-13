@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'styled-components';
@@ -45,40 +45,15 @@ const App = () => {
             <ScrollToTop />
             <ScrollToTopButton />
             <Routes>
-              <Route
-                path='/'
-                element={
-                  <Suspense fallback={null}>
-                    <MainPage />
-                  </Suspense>
-                }
-              />
+              <Route path='/' element={<MainPage />} />
               {/*기존 웹 & 안드로이드 url (android: v1.1.0)*/}
-              <Route
-                path='/club/:clubId'
-                element={
-                  <Suspense fallback={null}>
-                    <LegacyClubDetailPage />
-                  </Suspense>
-                }
-              />
+              <Route path='/club/:clubId' element={<LegacyClubDetailPage />} />
               {/*웹 유저에게 신규 상세페이지 보유주기 위한 임시 url*/}
-              <Route
-                path='/clubDetail/:clubId'
-                element={
-                  <Suspense fallback={null}>
-                    <ClubDetailPage />
-                  </Suspense>
-                }
-              />
+              <Route path='/clubDetail/:clubId' element={<ClubDetailPage />} />
               {/*새로 빌드해서 배포할 앱 주소 url*/}
               <Route
                 path='/webview/club/:clubId'
-                element={
-                  <Suspense fallback={null}>
-                    <ClubDetailPage />
-                  </Suspense>
-                }
+                element={<ClubDetailPage />}
               />
               <Route path='/introduce' element={<IntroducePage />} />
               <Route path='/admin/login' element={<LoginTab />} />
@@ -106,7 +81,7 @@ const App = () => {
           </BrowserRouter>
         </ThemeProvider>
       </QueryClientProvider>
-    </Sentry.ErrorBoundary>
+    </GlobalBoundary>
   );
 };
 
