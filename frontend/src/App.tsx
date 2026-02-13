@@ -15,7 +15,10 @@ import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
 import 'swiper/css';
+import * as Sentry from '@sentry/react';
+import { GlobalErrorFallback } from './components/common/ErrorBoundary/GlobalErrorFallback';
 import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
+import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -35,70 +38,84 @@ const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <GlobalStyles />
-          <ScrollToTop />
-          <ScrollToTopButton />
-          <Routes>
-            <Route
-              path='/'
-              element={
-                <Suspense fallback={null}>
-                  <MainPage />
-                </Suspense>
-              }
-            />
-            {/*기존 웹 & 안드로이드 url (android: v1.1.0)*/}
-            <Route
-              path='/club/:clubId'
-              element={
-                <Suspense fallback={null}>
-                  <LegacyClubDetailPage />
-                </Suspense>
-              }
-            />
-            {/*웹 유저에게 신규 상세페이지 보유주기 위한 임시 url*/}
-            <Route
-              path='/clubDetail/:clubId'
-              element={
-                <Suspense fallback={null}>
-                  <ClubDetailPage />
-                </Suspense>
-              }
-            />
-            {/*새로 빌드해서 배포할 앱 주소 url*/}
-            <Route
-              path='/webview/club/:clubId'
-              element={
-                <Suspense fallback={null}>
-                  <ClubDetailPage />
-                </Suspense>
-              }
-            />
-            <Route path='/introduce' element={<IntroducePage />} />
-            <Route path='/admin/login' element={<LoginTab />} />
-            <Route
-              path='/admin/*'
-              element={
-                <AdminClubProvider>
-                  <PrivateRoute>
-                    <AdminRoutes />
-                  </PrivateRoute>
-                </AdminClubProvider>
-              }
-            />
-            <Route
-              path='/application/:clubId/:applicationFormId'
-              element={<ApplicationFormPage />}
-            />
-            <Route path='/club-union' element={<ClubUnionPage />} />
-            <Route path='*' element={<Navigate to='/' replace />} />
-          </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <Sentry.ErrorBoundary
+      fallback={(errorData) => (
+        <GlobalErrorFallback
+          error={errorData.error as Error}
+          resetError={errorData.resetError}
+        />
+      )}
+      showDialog={false}
+    >
+      <QueryClientProvider client={queryClient}>
+        <ThemeProvider theme={theme}>
+          <BrowserRouter>
+            <GlobalStyles />
+            <ScrollToTop />
+            <ScrollToTopButton />
+            <Routes>
+              <Route
+                path='/'
+                element={
+                  <Suspense fallback={null}>
+                    <MainPage />
+                  </Suspense>
+                }
+              />
+              {/*기존 웹 & 안드로이드 url (android: v1.1.0)*/}
+              <Route
+                path='/club/:clubId'
+                element={
+                  <Suspense fallback={null}>
+                    <LegacyClubDetailPage />
+                  </Suspense>
+                }
+              />
+              {/*웹 유저에게 신규 상세페이지 보유주기 위한 임시 url*/}
+              <Route
+                path='/clubDetail/:clubId'
+                element={
+                  <Suspense fallback={null}>
+                    <ClubDetailPage />
+                  </Suspense>
+                }
+              />
+              {/*새로 빌드해서 배포할 앱 주소 url*/}
+              <Route
+                path='/webview/club/:clubId'
+                element={
+                  <Suspense fallback={null}>
+                    <ClubDetailPage />
+                  </Suspense>
+                }
+              />
+              <Route path='/introduce' element={<IntroducePage />} />
+              <Route path='/admin/login' element={<LoginTab />} />
+              <Route
+                path='/admin/*'
+                element={
+                  <AdminClubProvider>
+                    <PrivateRoute>
+                      <AdminRoutes />
+                    </PrivateRoute>
+                  </AdminClubProvider>
+                }
+              />
+              <Route
+                path='/application/:clubId/:applicationFormId'
+                element={<ApplicationFormPage />}
+              />
+              <Route path='/club-union' element={<ClubUnionPage />} />
+              {/* 개발 환경에서만 사용 가능한 에러 테스트 페이지 */}
+              {import.meta.env.DEV && (
+                <Route path='/error-test' element={<ErrorTestPage />} />
+              )}
+              <Route path='*' element={<Navigate to='/' replace />} />
+            </Routes>
+          </BrowserRouter>
+        </ThemeProvider>
+      </QueryClientProvider>
+    </Sentry.ErrorBoundary>
   );
 };
 
