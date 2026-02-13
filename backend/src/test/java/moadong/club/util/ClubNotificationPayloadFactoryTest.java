@@ -39,11 +39,17 @@ class ClubNotificationPayloadFactoryTest {
 
         PushPayload payload = payloadFactory.create(club, "본문");
 
-        assertThat(payload.title()).isEqualTo("테스트 동아리");
-        assertThat(payload.body()).isEqualTo("본문");
-        assertThat(payload.topic()).isEqualTo("club_topic");
-        assertThat(payload.data()).containsEntry("clubId", "club-id");
-        assertThat(payload.data()).containsEntry("path", "/webview/clubDetail/club-id");
-        assertThat(payload.data()).containsEntry("action", "NAVIGATE_WEBVIEW");
+        PushPayload expected = new PushPayload(
+                "테스트 동아리",
+                "본문",
+                "club_topic",
+                java.util.Map.of(
+                        "path", "/webview/clubDetail/club-id",
+                        "action", "NAVIGATE_WEBVIEW",
+                        "clubId", "club-id"
+                )
+        );
+
+        assertThat(payload).isEqualTo(expected);
     }
 }

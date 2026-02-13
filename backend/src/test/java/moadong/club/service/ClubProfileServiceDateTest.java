@@ -5,6 +5,7 @@ import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.repository.ClubRepository;
 import moadong.club.repository.ClubSearchRepository;
 import moadong.club.util.RecruitmentStateCalculator;
+import moadong.club.util.RecruitmentStateNotificationBuilder;
 import moadong.fixture.ClubRequestFixture;
 import moadong.fixture.UserFixture;
 import moadong.fcm.port.PushNotificationPort;
@@ -43,6 +44,9 @@ public class ClubProfileServiceDateTest {
 
     @Mock
     RecruitmentStateCalculator recruitmentStateCalculator;
+
+    @Mock
+    RecruitmentStateNotificationBuilder recruitmentStateNotificationBuilder;
 
     @Mock
     PushNotificationPort pushNotificationPort;

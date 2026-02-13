@@ -7,6 +7,7 @@ import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.club.util.RecruitmentStateCalculator;
+import moadong.club.util.RecruitmentStateNotificationBuilder;
 import moadong.fcm.port.PushNotificationPort;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -24,6 +25,7 @@ public class RecruitmentStateChecker {
 
     private final ClubRepository clubRepository;
     private final RecruitmentStateCalculator recruitmentStateCalculator;
+    private final RecruitmentStateNotificationBuilder recruitmentStateNotificationBuilder;
     private final PushNotificationPort pushNotificationPort;
 
     @Scheduled(fixedRate = 10 * 60 * 1000) // 10분마다 실행
@@ -40,7 +42,7 @@ public class RecruitmentStateChecker {
             boolean changed = recruitmentStateCalculator.calculate(club, recruitmentStartDate, recruitmentEndDate);
             if (changed) {
                 pushNotificationPort.send(
-                        recruitmentStateCalculator.buildRecruitmentMessage(
+                        recruitmentStateNotificationBuilder.build(
                                 club,
                                 club.getClubRecruitmentInformation().getClubRecruitmentStatus()
                         )

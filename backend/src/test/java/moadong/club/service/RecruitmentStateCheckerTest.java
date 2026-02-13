@@ -15,6 +15,7 @@ import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.club.util.RecruitmentStateCalculator;
+import moadong.club.util.RecruitmentStateNotificationBuilder;
 import moadong.fcm.model.PushPayload;
 import moadong.fcm.port.PushNotificationPort;
 import org.junit.jupiter.api.Test;
@@ -34,6 +35,9 @@ public class RecruitmentStateCheckerTest {
 
     @Mock
     private RecruitmentStateCalculator recruitmentStateCalculator;
+
+    @Mock
+    private RecruitmentStateNotificationBuilder recruitmentStateNotificationBuilder;
 
     @Mock
     private PushNotificationPort pushNotificationPort;
@@ -147,7 +151,7 @@ public class RecruitmentStateCheckerTest {
         when(info.getRecruitmentEnd()).thenReturn(end);
         when(clubRepository.findAll()).thenReturn(List.of(club));
         when(recruitmentStateCalculator.calculate(eq(club), eq(start), eq(end))).thenReturn(true);
-        when(recruitmentStateCalculator.buildRecruitmentMessage(eq(club), any())).thenReturn(payload);
+        when(recruitmentStateNotificationBuilder.build(eq(club), any())).thenReturn(payload);
 
         recruitmentStateChecker.performTask();
 

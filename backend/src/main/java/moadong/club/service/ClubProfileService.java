@@ -12,6 +12,7 @@ import moadong.club.payload.response.ClubListResponse;
 import moadong.club.repository.ClubRepository;
 import moadong.club.repository.ClubSearchRepository;
 import moadong.club.util.RecruitmentStateCalculator;
+import moadong.club.util.RecruitmentStateNotificationBuilder;
 import moadong.fcm.port.PushNotificationPort;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
@@ -33,6 +34,7 @@ public class ClubProfileService {
     private final ClubRepository clubRepository;
     private final ClubSearchRepository clubSearchRepository;
     private final RecruitmentStateCalculator recruitmentStateCalculator;
+    private final RecruitmentStateNotificationBuilder recruitmentStateNotificationBuilder;
     private final PushNotificationPort pushNotificationPort;
     private final Javers javers;
 
@@ -57,7 +59,7 @@ public class ClubProfileService {
         );
         if (changed) {
             pushNotificationPort.send(
-                    recruitmentStateCalculator.buildRecruitmentMessage(
+                    recruitmentStateNotificationBuilder.build(
                             club,
                             club.getClubRecruitmentInformation().getClubRecruitmentStatus()
                     )
@@ -115,7 +117,7 @@ public class ClubProfileService {
         );
         if (changed) {
             pushNotificationPort.send(
-                    recruitmentStateCalculator.buildRecruitmentMessage(
+                    recruitmentStateNotificationBuilder.build(
                             club,
                             club.getClubRecruitmentInformation().getClubRecruitmentStatus()
                     )
