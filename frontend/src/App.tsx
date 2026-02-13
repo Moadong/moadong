@@ -15,8 +15,7 @@ import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
 import 'swiper/css';
-import * as Sentry from '@sentry/react';
-import { GlobalErrorFallback } from './components/common/ErrorBoundary/GlobalErrorFallback';
+import { GlobalBoundary } from './components/common/ErrorBoundary';
 import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
 import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
 
@@ -38,15 +37,7 @@ const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
 
 const App = () => {
   return (
-    <Sentry.ErrorBoundary
-      fallback={(errorData) => (
-        <GlobalErrorFallback
-          error={errorData.error as Error}
-          resetError={errorData.resetError}
-        />
-      )}
-      showDialog={false}
-    >
+    <GlobalBoundary>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <BrowserRouter>
