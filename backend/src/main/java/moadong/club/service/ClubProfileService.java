@@ -57,7 +57,7 @@ public class ClubProfileService {
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
         );
-        if (changed) {
+        if (changed && request.shouldSendNotification()) {
             pushNotificationPort.send(
                     recruitmentStateNotificationBuilder.build(
                             club,
@@ -115,7 +115,7 @@ public class ClubProfileService {
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
         );
-        if (changed) {
+        if (changed && request.shouldSendNotification()) {
             pushNotificationPort.send(
                     recruitmentStateNotificationBuilder.build(
                             club,

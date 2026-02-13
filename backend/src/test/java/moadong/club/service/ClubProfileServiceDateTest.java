@@ -8,6 +8,7 @@ import moadong.club.util.RecruitmentStateCalculator;
 import moadong.club.util.RecruitmentStateNotificationBuilder;
 import moadong.fixture.ClubRequestFixture;
 import moadong.fixture.UserFixture;
+import moadong.fcm.model.PushPayload;
 import moadong.fcm.port.PushNotificationPort;
 import moadong.user.payload.CustomUserDetails;
 import moadong.util.annotations.UnitTest;
@@ -20,13 +21,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 
+import java.time.Instant;
 import java.time.LocalDateTime;
+import java.util.Map;
 import java.util.Optional;
 
 
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -75,5 +80,47 @@ public class ClubProfileServiceDateTest {
                 getLastModifiedDate().isAfter(now.minusSeconds(1)));
         assertTrue(club.getClubRecruitmentInformation().
                 getLastModifiedDate().isBefore(now.plusSeconds(1)));
+    }
+
+    @DisplayName("모집 상태 변경이 있어도 sendNotification=false면 알림을 보내지 않는다")
+    @Test
+    void 모집글_수정시_sendNotification_false이면_알림을_보내지_않는다() {
+        ClubRecruitmentInfoUpdateRequest request = new ClubRecruitmentInfoUpdateRequest(
+                Instant.now(),
+                Instant.now().plusSeconds(3600),
+                "테스트 대상",
+                "https://fake-url.com",
+                false
+        );
+        CustomUserDetails customUserDetails = UserFixture.createUserDetails("test");
+        Club club = new Club();
+        when(clubRepository.findClubByUserId(any())).thenReturn(Optional.of(club));
+        when(recruitmentStateCalculator.calculate(any(), any(), any())).thenReturn(true);
+
+        clubProfileService.updateClubRecruitmentInfo(request, customUserDetails);
+
+        verify(pushNotificationPort, never()).send(any());
+    }
+
+    @DisplayName("모집 상태 변경이 있고 sendNotification=true면 알림을 보낸다")
+    @Test
+    void 모집글_수정시_sendNotification_true이면_알림을_보낸다() {
+        ClubRecruitmentInfoUpdateRequest request = new ClubRecruitmentInfoUpdateRequest(
+                Instant.now(),
+                Instant.now().plusSeconds(3600),
+                "테스트 대상",
+                "https://fake-url.com",
+                true
+        );
+        CustomUserDetails customUserDetails = UserFixture.createUserDetails("test");
+        Club club = new Club();
+        PushPayload payload = new PushPayload("title", "body", "topic", Map.of("clubId", "1"));
+        when(clubRepository.findClubByUserId(any())).thenReturn(Optional.of(club));
+        when(recruitmentStateCalculator.calculate(any(), any(), any())).thenReturn(true);
+        when(recruitmentStateNotificationBuilder.build(any(), any())).thenReturn(payload);
+
+        clubProfileService.updateClubRecruitmentInfo(request, customUserDetails);
+
+        verify(pushNotificationPort).send(payload);
     }
 }
