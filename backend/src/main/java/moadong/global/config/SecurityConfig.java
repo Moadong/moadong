@@ -41,13 +41,13 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-            .csrf(csrf -> csrf.disable()) // CSRF 비활성화
+            .csrf(csrf -> csrf.disable())
             .authorizeHttpRequests(authorize -> authorize
-                .anyRequest().permitAll() // 모든 요청에 대해 인증 해제
+                .requestMatchers("/api/admin/**").hasRole("DEVELOPER")
+                .anyRequest().permitAll()
             );
 
         http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class);
-
 
         return http.build();
     }

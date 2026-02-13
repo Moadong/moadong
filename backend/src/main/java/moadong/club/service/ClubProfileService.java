@@ -8,6 +8,7 @@ import moadong.club.payload.dto.ClubDetailedResult;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
+import moadong.club.payload.response.ClubListResponse;
 import moadong.club.repository.ClubRepository;
 import moadong.club.repository.ClubSearchRepository;
 import moadong.club.util.RecruitmentStateCalculator;
@@ -57,6 +58,18 @@ public class ClubProfileService {
         javers.commit(user.getUsername(), saved);
     }
 
+    public ClubListResponse getAllClubsForAdmin() {
+        List<Club> all = clubRepository.findAll();
+        List<ClubListResponse.ClubListResponseItem> items = all.stream()
+                .map(c -> new ClubListResponse.ClubListResponseItem(
+                        c.getId() != null ? c.getId() : "",
+                        c.getName() != null ? c.getName() : "",
+                        c.getUserId() != null ? c.getUserId() : ""
+                ))
+                .toList();
+        return new ClubListResponse(items);
+    }
+
     public ClubDetailedResponse getClubDetail(String clubId) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
@@ -66,6 +79,33 @@ public class ClubProfileService {
                 club
         );
         return new ClubDetailedResponse(clubDetailedResult);
+    }
+
+    @Transactional
+    public void updateClubInfoByClubId(String clubId, ClubInfoRequest request, CustomUserDetails user) {
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
+        Club club = clubRepository.findClubById(objectId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        club.update(request);
+        Club saved = clubRepository.save(club);
+        javers.commit(user.getUsername(), saved);
+    }
+
+    @Transactional
+    public void updateClubRecruitmentInfoByClubId(String clubId, ClubRecruitmentInfoUpdateRequest request,
+                                                  CustomUserDetails user) {
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
+        Club club = clubRepository.findClubById(objectId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        club.update(request);
+        recruitmentStateCalculator.calculate(
+                club,
+                club.getClubRecruitmentInformation().getRecruitmentStart(),
+                club.getClubRecruitmentInformation().getRecruitmentEnd()
+        );
+        club.getClubRecruitmentInformation().updateLastModifiedDate();
+        Club saved = clubRepository.save(club);
+        javers.commit(user.getUsername(), saved);
     }
 }
 
