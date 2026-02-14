@@ -2,38 +2,21 @@ package moadong.club.util;
 
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
-import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
-import java.util.Locale;
-import java.util.Map;
-
-import com.google.firebase.messaging.Message;
-import com.google.firebase.messaging.Notification;
-import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
-import moadong.fcm.enums.FcmAction;
-import moadong.fcm.util.FcmTopicResolver;
 import org.springframework.stereotype.Component;
 
 @Component
-@RequiredArgsConstructor
 public class RecruitmentStateCalculator {
     public static final int ALWAYS_RECRUIT_YEAR = 2999;
 
-    private final FcmTopicResolver fcmTopicResolver;
-
-    public void calculate(Club club, ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
+    public boolean calculate(Club club, ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
         ClubRecruitmentStatus oldStatus = club.getClubRecruitmentInformation().getClubRecruitmentStatus();
         ClubRecruitmentStatus newStatus = calculateRecruitmentStatus(recruitmentStartDate, recruitmentEndDate);
         club.updateRecruitmentStatus(newStatus);
 
-        if (oldStatus == newStatus)
-            return;
-
-        Message message = buildRecruitmentMessage(club, newStatus);
-        club.sendPushNotification(message);
+        return oldStatus != newStatus;
     }
 
     public static ClubRecruitmentStatus calculateRecruitmentStatus(ZonedDateTime recruitmentStartDate, ZonedDateTime recruitmentEndDate) {
@@ -57,40 +40,5 @@ public class RecruitmentStateCalculator {
         }
 
         return ClubRecruitmentStatus.CLOSED;
-    }
-
-    public Message buildRecruitmentMessage(Club club, ClubRecruitmentStatus status) {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("M월 d일 a h시 m분", Locale.KOREAN);
-        ClubRecruitmentInformation info = club.getClubRecruitmentInformation();
-
-        String bodyMessage = switch (status) {
-            case ALWAYS -> "상시 모집 중입니다. 언제든지 지원해주세요!";
-            case OPEN -> {
-                String formattedEndTime = info.getRecruitmentEnd().format(formatter);
-                yield formattedEndTime + "까지 모집 중이니 서둘러 지원하세요!";
-            }
-            case UPCOMING -> {
-                String formattedStartTime = info.getRecruitmentStart().format(formatter);
-                yield formattedStartTime + "부터 모집이 시작될 예정이에요. 조금만 기다려주세요!";
-            }
-            case CLOSED -> "모집이 마감되었습니다. 다음 모집을 기대해주세요.";
-        };
-
-        return Message.builder()
-                .setNotification(Notification.builder()
-                        .setTitle(club.getName())
-                        .setBody(bodyMessage)
-                        .build())
-                .putAllData(buildNotificationData(club))
-                .setTopic(fcmTopicResolver.resolveTopic(club.getId()))
-                .build();
-    }
-
-    public Map<String, String> buildNotificationData(Club club) {
-        return Map.of(
-                "path", "/webview/clubDetail/" + club.getId(),
-                "action", FcmAction.NAVIGATE_WEBVIEW.name(),
-                "clubId", club.getId()
-        );
     }
 }

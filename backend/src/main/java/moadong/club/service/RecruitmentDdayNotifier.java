@@ -7,6 +7,7 @@ import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.club.util.RecruitmentDdayNotificationBuilder;
+import moadong.fcm.port.PushNotificationPort;
 import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -30,6 +31,7 @@ public class RecruitmentDdayNotifier {
 
     private final ClubRepository clubRepository;
     private final RecruitmentDdayNotificationBuilder notificationBuilder;
+    private final PushNotificationPort pushNotificationPort;
 
     @Scheduled(cron = "0 0 8 * * *", zone = "Asia/Seoul")
     @SchedulerLock(name = "RecruitmentDdayNotifier", lockAtMostFor = "5m", lockAtLeastFor = "1m")
@@ -54,7 +56,7 @@ public class RecruitmentDdayNotifier {
 
             if (NOTIFICATION_DAYS.contains(daysLeft)) {
                 log.info("D-Day 알림 전송 - clubId: {}, clubName: {}, D-{}", club.getId(), club.getName(), daysLeft);
-                club.sendPushNotification(notificationBuilder.build(club, daysLeft));
+                pushNotificationPort.send(notificationBuilder.build(club, daysLeft));
                 sentCount++;
             }
         }

@@ -6,7 +6,11 @@ public record ClubRecruitmentInfoUpdateRequest(
     Instant recruitmentStart,
     Instant recruitmentEnd,
     String recruitmentTarget,
-    String externalApplicationUrl
+    String externalApplicationUrl,
+    Boolean sendNotification
 ) {
 
+    public boolean shouldSendNotification() {
+        return Boolean.TRUE.equals(sendNotification);
+    }
 }
