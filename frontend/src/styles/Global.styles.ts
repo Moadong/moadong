@@ -6,6 +6,9 @@ const GlobalStyles = createGlobalStyle`
     padding: 0;
     box-sizing: border-box;
   }
+  html {
+    overscroll-behavior-y: none;
+  }
   textarea, button, input, select {
     font-family: 'Pretendard', sans-serif;
   }
