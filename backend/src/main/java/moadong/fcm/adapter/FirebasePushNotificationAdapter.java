@@ -18,6 +18,7 @@ public class FirebasePushNotificationAdapter implements PushNotificationPort {
 
     @Override
     public boolean send(PushPayload payload) {
+        log.info("PushPayload: {}", payload);
         Message message = Message.builder()
                 .setNotification(Notification.builder()
                         .setTitle(payload.title())
