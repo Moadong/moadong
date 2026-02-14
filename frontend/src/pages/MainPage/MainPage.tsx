@@ -28,7 +28,7 @@ const MainPage = () => {
   const [active, setActive] =
     useState<(typeof tabs)[number]>('부경대학교 중앙동아리');
 
-  const { data, error, isLoading } = useGetCardList({
+  const { data, error, isLoading, refetch } = useGetCardList({
     keyword,
     recruitmentStatus,
     category: searchCategory,
@@ -45,10 +45,6 @@ const MainPage = () => {
     if (!hasData) return null;
     return clubs.map((club: Club) => <ClubCard key={club.id} club={club} />);
   }, [clubs, hasData]);
-
-  if (error) {
-    return <div>에러가 발생했습니다.</div>;
-  }
 
   return (
     <>
@@ -75,10 +71,17 @@ const MainPage = () => {
             {`전체 ${isLoading ? 0 : totalCount}개의 동아리`}
           </Styled.TotalCountResult>
         </Styled.SectionBar>
-
         <Styled.ContentWrapper>
           {isLoading ? (
             <Spinner />
+          ) : error ? (
+            <Styled.EmptyResult>
+              동아리 목록을 불러오는 중 문제가 발생했습니다.
+              <br />
+              <Styled.RetryButton onClick={() => refetch()}>
+                다시 시도
+              </Styled.RetryButton>
+            </Styled.EmptyResult>
           ) : isEmpty ? (
             <Styled.EmptyResult>
               앗, 조건에 맞는 동아리가 없어요.

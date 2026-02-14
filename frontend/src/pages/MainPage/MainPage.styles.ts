@@ -119,3 +119,30 @@ export const EmptyResult = styled.div`
     font-size: 0.95rem;
   }
 `;
+
+export const RetryButton = styled.button`
+  margin-top: 24px;
+  padding: 12px 32px;
+  font-size: 16px;
+  font-weight: 600;
+  color: white;
+  background: ${({ theme }) => theme.colors.primary[900]};
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: ${({ theme }) => theme.colors.primary[800]};
+    box-shadow: 0 4px 12px rgba(255, 84, 20, 0.3);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  ${media.mobile} {
+    padding: 10px 24px;
+    font-size: 14px;
+  }
+`;
