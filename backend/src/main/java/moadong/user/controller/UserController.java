@@ -44,6 +44,8 @@ public class UserController {
             summary = UserSwaggerView.ADMIN_REGISTER_SUMMARY,
             description = UserSwaggerView.ADMIN_PWD_ROLE_DESCRIPTION
     )
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> registerUser(@RequestBody @Validated UserRegisterRequest request) {
         userCommandService.registerUser(request);
         return Response.ok("success register");
@@ -102,6 +104,8 @@ public class UserController {
 
     @PostMapping("/reset")
     @Operation(summary = "사용자 비밀번호 초기화", description = "사용자 비밀번호를 초기화합니다.")
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> reset(@RequestBody @Validated UserResetRequest userResetRequest) {
         TempPasswordResponse tempPwdResponse = userCommandService.reset(userResetRequest.userId());
         return Response.ok(tempPwdResponse);

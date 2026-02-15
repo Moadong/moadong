@@ -34,7 +34,7 @@ public class PromotionArticleController {
 
     @PostMapping
     @Operation(summary = "홍보 게시글 생성", description = "새로운 홍보 게시글을 생성합니다.")
-    @PreAuthorize("isAuthenticated()")
+    @PreAuthorize("hasRole('DEVELOPER')")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> createPromotionArticle(
         @RequestBody @Validated PromotionArticleCreateRequest request) {
