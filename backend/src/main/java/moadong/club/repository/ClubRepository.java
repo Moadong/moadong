@@ -3,6 +3,7 @@ package moadong.club.repository;
 import java.util.List;
 import java.util.Optional;
 import moadong.club.entity.Club;
+import moadong.club.enums.ClubRecruitmentStatus;
 import org.bson.types.ObjectId;
 import org.javers.spring.annotation.JaversSpringDataAuditable;
 import org.springframework.data.mongodb.repository.MongoRepository;
@@ -20,4 +21,6 @@ public interface ClubRepository extends MongoRepository<Club, String> {
 
     List<Club> findByClubRecruitmentInformation_LogoOrClubRecruitmentInformation_CoverOrClubRecruitmentInformation_FeedImagesContaining(
             String logo, String cover, String feedImageUrl);
+
+    List<Club> findAllByClubRecruitmentInformation_ClubRecruitmentStatus(ClubRecruitmentStatus status);
 }

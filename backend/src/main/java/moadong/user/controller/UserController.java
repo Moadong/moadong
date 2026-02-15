@@ -44,6 +44,8 @@ public class UserController {
             summary = UserSwaggerView.ADMIN_REGISTER_SUMMARY,
             description = UserSwaggerView.ADMIN_PWD_ROLE_DESCRIPTION
     )
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> registerUser(@RequestBody @Validated UserRegisterRequest request) {
         userCommandService.registerUser(request);
         return Response.ok("success register");
@@ -102,6 +104,8 @@ public class UserController {
 
     @PostMapping("/reset")
     @Operation(summary = "사용자 비밀번호 초기화", description = "사용자 비밀번호를 초기화합니다.")
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> reset(@RequestBody @Validated UserResetRequest userResetRequest) {
         TempPasswordResponse tempPwdResponse = userCommandService.reset(userResetRequest.userId());
         return Response.ok(tempPwdResponse);
@@ -114,6 +118,15 @@ public class UserController {
     public ResponseEntity<?> findUserClub(@AuthenticationPrincipal CustomUserDetails userDetails) {
         String clubId = userCommandService.findClubIdByUserId(userDetails.getId());
         return Response.ok(new FindUserClubResponse(clubId));
+    }
+
+    @PutMapping("/allow/personal-information")
+    @Operation(summary = "개인정보 활용 동의", description = "개인정보 활용 동의를 합니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> allowPersonalInformation(@CurrentUser CustomUserDetails user) {
+        userCommandService.allowPersonalInformation(user.getUserId());
+        return Response.ok("success allow personal information");
     }
 
 

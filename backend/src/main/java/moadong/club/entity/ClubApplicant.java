@@ -33,6 +33,9 @@ public class ClubApplicant {
     private String memo = "";
 
     @Builder.Default
+    private String aiSummary = "";
+
+    @Builder.Default
     private List<ClubQuestionAnswer> answers = new ArrayList<>();
 
     @Builder.Default
@@ -40,6 +43,10 @@ public class ClubApplicant {
 
     public void updateMemo(String memo) {
         this.memo = memo;
+    }
+
+    public void updateAiSummary(String aiSummary) {
+        this.aiSummary = aiSummary;
     }
 
     public void updateStatus(ApplicantStatus status) {

@@ -43,3 +43,5 @@ summary*.html
 application.properties
 moadong.json
 firebase.json
+
+/.cursor

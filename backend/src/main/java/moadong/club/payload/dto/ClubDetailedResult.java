@@ -49,22 +49,18 @@ public record ClubDetailedResult(
             lastModifiedDate = club.getClubRecruitmentInformation().getLastModifiedDate().format(formatter);
         }
 
-        String logo = clubRecruitmentInformation.getLogo() == null ? ""
-                : clubRecruitmentInformation.getLogo();
-        String cover = clubRecruitmentInformation.getCover() == null ? ""
-                : clubRecruitmentInformation.getCover();
-        List<String> feeds = clubRecruitmentInformation.getFeedImages() == null ? List.of()
-                : clubRecruitmentInformation.getFeedImages();
-
         return ClubDetailedResult.builder()
                 .id(club.getId() == null ? "" : club.getId())
                 .name(club.getName() == null ? "" : club.getName())
-                .logo(logo)
-                .cover(cover)
+                .logo(clubRecruitmentInformation.getLogo() == null ? ""
+                        : clubRecruitmentInformation.getLogo())
+                .cover(clubRecruitmentInformation.getCover() == null ? ""
+                        : clubRecruitmentInformation.getCover())
                 .tags(clubRecruitmentInformation.getTags() == null ? List.of()
                         : clubRecruitmentInformation.getTags())
                 .state(club.getState() == null ? "" : club.getState().getDesc())
-                .feeds(feeds)
+                .feeds(clubRecruitmentInformation.getFeedImages() == null ? List.of()
+                        : clubRecruitmentInformation.getFeedImages())
                 .category(club.getCategory() == null ? "" : club.getCategory())
                 .division(club.getDivision() == null ? "" : club.getDivision())
                 .introduction(clubRecruitmentInformation.getIntroduction() == null ? ""

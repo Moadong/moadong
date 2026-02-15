@@ -71,6 +71,11 @@ dependencies {
 	implementation 'com.google.firebase:firebase-admin:9.7.0'
 
     implementation 'org.javers:javers-spring-boot-starter-mongo:7.10.0'
+
+	runtimeOnly 'io.micrometer:micrometer-registry-prometheus'
+
+	implementation 'net.javacrumbs.shedlock:shedlock-spring:7.6.0'
+	implementation 'net.javacrumbs.shedlock:shedlock-provider-mongo:7.6.0'
 }
 
 //전체 테스트
