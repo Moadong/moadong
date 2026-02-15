@@ -177,10 +177,10 @@
 
 ## Tech stack
 
-#### FE
+### FE
 <img width="1280" alt="Image" src="https://github.com/user-attachments/assets/ab38b26c-9f12-4d5d-8e55-8981e97595a8" />
 
 
-#### BE
-<img width="1280" alt="Image" src="https://github.com/user-attachments/assets/1941753d-3446-49da-a951-158915e5f1a6" />/>
+### BE
+<img width="1280" alt="Image" src="https://github.com/user-attachments/assets/1941753d-3446-49da-a951-158915e5f1a6" />
 
