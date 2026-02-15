@@ -3,14 +3,11 @@ package moadong.club.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.payload.dto.ClubDetailedResult;
 import moadong.club.payload.request.ClubInfoRequest;
-import moadong.media.resolver.ImageDisplayUrlResolver;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.repository.ClubRepository;
-import moadong.club.repository.ClubSearchRepository;
 import moadong.club.util.RecruitmentStateCalculator;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
@@ -21,20 +18,14 @@ import org.javers.core.Javers;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-
 @Service
 @AllArgsConstructor
 @Slf4j
 public class ClubProfileService {
 
     private final ClubRepository clubRepository;
-    private final ClubSearchRepository clubSearchRepository;
     private final RecruitmentStateCalculator recruitmentStateCalculator;
     private final Javers javers;
-    private final ImageDisplayUrlResolver imageDisplayUrlResolver;
-    private final ClubImageUrlPersistenceService clubImageUrlPersistenceService;
 
     @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
@@ -65,12 +56,7 @@ public class ClubProfileService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, imageDisplayUrlResolver);
-        clubImageUrlPersistenceService.schedulePersistResolvedUrls(
-                club.getId(),
-                clubDetailedResult.logo(),
-                clubDetailedResult.cover(),
-                clubDetailedResult.feeds());
+        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club);
         return new ClubDetailedResponse(clubDetailedResult);
     }
 }

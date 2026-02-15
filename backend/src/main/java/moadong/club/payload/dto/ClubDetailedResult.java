@@ -3,12 +3,10 @@ package moadong.club.payload.dto;
 import lombok.Builder;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
-import moadong.media.resolver.ImageDisplayUrlResolver;
 
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 @Builder
 public record ClubDetailedResult(
@@ -35,10 +33,6 @@ public record ClubDetailedResult(
 ) {
 
     public static ClubDetailedResult of(Club club) {
-        return of(club, null);
-    }
-
-    public static ClubDetailedResult of(Club club, ImageDisplayUrlResolver resolver) {
         ClubRecruitmentInformation clubRecruitmentInformation = club.getClubRecruitmentInformation();
 
         String start = "미정";
@@ -61,13 +55,6 @@ public record ClubDetailedResult(
                 : clubRecruitmentInformation.getCover();
         List<String> feeds = clubRecruitmentInformation.getFeedImages() == null ? List.of()
                 : clubRecruitmentInformation.getFeedImages();
-        if (resolver != null) {
-            logo = resolver.resolveDisplayUrl(logo);
-            cover = resolver.resolveDisplayUrl(cover);
-            feeds = feeds.stream()
-                    .map(resolver::resolveDisplayUrl)
-                    .collect(Collectors.toList());
-        }
 
         return ClubDetailedResult.builder()
                 .id(club.getId() == null ? "" : club.getId())

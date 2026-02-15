@@ -11,12 +11,9 @@ import java.util.Optional;
 import moadong.club.entity.Club;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.repository.ClubRepository;
-import moadong.club.repository.ClubSearchRepository;
-import moadong.club.service.ClubImageUrlPersistenceService;
 import moadong.club.service.ClubProfileService;
 import moadong.club.util.RecruitmentStateCalculator;
 import moadong.fixture.ClubRequestFixture;
-import moadong.media.resolver.ImageDisplayUrlResolver;
 import moadong.global.exception.RestApiException;
 import moadong.user.payload.CustomUserDetails;
 import moadong.util.annotations.UnitTest;
@@ -32,15 +29,9 @@ public class ClubProfileServiceTest {
     @Mock
     private ClubRepository clubRepository;
     @Mock
-    private ClubSearchRepository clubSearchRepository;
-    @Mock
     private RecruitmentStateCalculator recruitmentStateCalculator;
     @Mock
     private Javers javers;
-    @Mock
-    private ImageDisplayUrlResolver imageDisplayUrlResolver;
-    @Mock
-    private ClubImageUrlPersistenceService clubImageUrlPersistenceService;
 
     @InjectMocks
     private ClubProfileService clubProfileService;

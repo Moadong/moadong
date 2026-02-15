@@ -30,6 +30,7 @@ public enum ErrorCode {
     INVALID_FILE_URL(HttpStatus.BAD_REQUEST, "601-8", "올바르지 않은 파일 URL입니다."),
     FILE_DELETE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "601-9", "파일 삭제에 실패하였습니다."),
     FILE_TOO_LARGE(HttpStatus.PAYLOAD_TOO_LARGE, "601-10", "파일 용량이 제한을 초과했습니다."),
+    WEBHOOK_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "601-11", "웹훅 요청이 올바르지 않습니다."),
 
     // 700xx: 사용자/권한 관련 오류
     USER_ALREADY_EXIST(HttpStatus.BAD_REQUEST, "700-1", "이미 존재하는 계정입니다."),
