@@ -11,8 +11,9 @@
 
 <p align="middle">
   <img src="https://img.shields.io/badge/Since-2025.01-black" alt="Since 2025.01" />
-  <img src="https://img.shields.io/badge/누적 사용자-10,000+-4285F4" alt="누적 사용자 10,000+" />
+  <img src="https://img.shields.io/badge/누적 사용자-12,000+-4285F4" alt="누적 사용자 12,000+" />
   <img src="https://img.shields.io/badge/MAU-3000+-34A853" alt="MAU 3000+" />
+  <img src="https://img.shields.io/badge/앱 다운로드-1,400+-FF6F00" alt="앱 다운로드 1,400+" />
 </p>
 
 <img width="2105" alt="모아동 메인 화면" src="https://github.com/user-attachments/assets/5916e910-5eef-48e3-a44a-1a486d2dd976" />
@@ -40,10 +41,6 @@
 <a href="https://github.com/Moadong/moadong/graphs/contributors">
   <img src="https://contrib.rocks/image?repo=Moadong/moadong" alt="Contributors" />
 </a>
-
-
-
-
 
 
 <br /><br />
@@ -174,4 +171,16 @@
 지원서 응답을 개별로 확인하며 서류검토/면접대기/합격/불합격 상태로 관리할 수 있어요.
 
 <img width="1200" alt="지원서 폼 응답 확인" src="https://github.com/user-attachments/assets/9ab91736-c639-47d7-b3e6-190aaafbc202" />
+
+
+<br /><br />
+
+## Tech stack
+
+#### FE
+<img width="1280" alt="Image" src="https://github.com/user-attachments/assets/ab38b26c-9f12-4d5d-8e55-8981e97595a8" />
+
+
+#### BE
+<img width="1280" alt="Image" src="https://github.com/user-attachments/assets/1941753d-3446-49da-a951-158915e5f1a6" />/>
 
