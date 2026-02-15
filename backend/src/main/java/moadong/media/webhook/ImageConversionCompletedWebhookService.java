@@ -33,6 +33,20 @@ public class ImageConversionCompletedWebhookService {
         normalizedViewEndpoint = viewEndpoint.replaceAll("/+$", "");
     }
 
+    /**
+     * DB에 저장된 동아리 이미지 URL 중 fullUrlOld를 fullUrlNew로 일괄 치환합니다.
+     * (WebP 마이그레이션·웹훅 배치 등에서 공통 사용)
+     */
+    public void updateClubsForImageReplacement(String fullUrlOld, String fullUrlNew) {
+        List<Club> clubs = clubRepository
+                .findByClubRecruitmentInformation_LogoOrClubRecruitmentInformation_CoverOrClubRecruitmentInformation_FeedImagesContaining(
+                        fullUrlOld, fullUrlOld, fullUrlOld);
+        for (Club club : clubs) {
+            updateClubImageUrls(club, fullUrlOld, fullUrlNew);
+            clubRepository.save(club);
+        }
+    }
+
     public void processImageConversionCompleted(ImageConversionCompletedRequest request) {
         if (request.images() == null || request.images().isEmpty()) {
             return;
@@ -47,13 +61,7 @@ public class ImageConversionCompletedWebhookService {
                 }
                 String fullUrlOld = normalizedViewEndpoint + "/" + source;
                 String fullUrlNew = normalizedViewEndpoint + "/" + destination;
-                List<Club> clubs = clubRepository
-                        .findByClubRecruitmentInformation_LogoOrClubRecruitmentInformation_CoverOrClubRecruitmentInformation_FeedImagesContaining(
-                                fullUrlOld, fullUrlOld, fullUrlOld);
-                for (Club club : clubs) {
-                    updateClubImageUrls(club, fullUrlOld, fullUrlNew);
-                    clubRepository.save(club);
-                }
+                updateClubsForImageReplacement(fullUrlOld, fullUrlNew);
             } catch (Exception e) {
                 log.warn("Failed to update club image URLs for source={}, destination={}",
                         image.source(), image.destination(), e);
