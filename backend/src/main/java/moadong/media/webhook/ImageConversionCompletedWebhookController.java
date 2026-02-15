@@ -14,20 +14,22 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Set;
+
 @RestController
 @RequestMapping("/api/webhook")
 @RequiredArgsConstructor
 @Tag(name = "Webhook", description = "외부 서비스 웹훅 수신 API")
 public class ImageConversionCompletedWebhookController {
 
-    private static final String IMAGE_CONVERSION_COMPLETED_EVENT = "batch.completed";
+    private static final Set<String> ACCEPTED_EVENTS = Set.of("batch.completed", "manual.triggered");
 
     private final ImageConversionCompletedWebhookService imageConversionCompletedWebhookService;
 
     @PostMapping("/conversion-batch")
-    @Operation(summary = "이미지 변환 완료 웹훅", description = "이미지 변환 완료 시 호출됩니다. event=batch.completed, images 필수.")
+    @Operation(summary = "이미지 변환 완료 웹훅", description = "이미지 변환 완료 시 호출됩니다. event=batch.completed 또는 manual.triggered, images 필수.")
     public ResponseEntity<?> handleImageConversionCompleted(@RequestBody @Valid ImageConversionCompletedRequest request) {
-        if (!IMAGE_CONVERSION_COMPLETED_EVENT.equals(request.event())) {
+        if (!ACCEPTED_EVENTS.contains(request.event())) {
             throw new RestApiException(ErrorCode.WEBHOOK_INVALID_REQUEST);
         }
         imageConversionCompletedWebhookService.processImageConversionCompleted(request);
