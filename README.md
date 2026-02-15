@@ -12,7 +12,7 @@
 <p align="middle">
   <img src="https://img.shields.io/badge/Since-2025.01-black" alt="Since 2025.01" />
   <img src="https://img.shields.io/badge/누적 사용자-10,000+-4285F4" alt="누적 사용자 10,000+" />
-  <img src="https://img.shields.io/badge/DAU-400+-34A853" alt="DAU 400+" />
+  <img src="https://img.shields.io/badge/MAU-3000+-34A853" alt="MAU 3000+" />
 </p>
 
 <img width="2105" alt="모아동 메인 화면" src="https://github.com/user-attachments/assets/5916e910-5eef-48e3-a44a-1a486d2dd976" />
