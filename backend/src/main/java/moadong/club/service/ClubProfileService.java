@@ -94,6 +94,16 @@ public class ClubProfileService {
         return new ClubDetailedResponse(clubDetailedResult);
     }
 
+    public ClubDetailedResponse getClubDetailByClubName(String clubName) {
+        Club club = clubRepository.findClubByName(clubName)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(
+                club
+        );
+        return new ClubDetailedResponse(clubDetailedResult);
+    }
+
     @Transactional
     public void updateClubInfoByClubId(String clubId, ClubInfoRequest request, CustomUserDetails user) {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
