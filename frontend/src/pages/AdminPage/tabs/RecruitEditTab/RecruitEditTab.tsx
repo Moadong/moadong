@@ -9,7 +9,7 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import RecruitmentPeriodPicker from './components/RecruitmentPeriodPicker/RecruitmentPeriodPicker';
+import Calendar from './components/Calendar/Calendar';
 import { ClubDetail } from '@/types/club';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import * as Styled from './RecruitEditTab.styles';
@@ -145,15 +145,12 @@ const RecruitEditTab = () => {
           <div>
             <Styled.Label>모집 기간</Styled.Label>
             <Styled.RecruitPeriodContainer>
-              <RecruitmentPeriodPicker
-                value={recruitmentStart ?? new Date()}
-                onChange={setRecruitmentStart}
-              />
-              <Styled.Tilde>~</Styled.Tilde>
-              <RecruitmentPeriodPicker
-                value={recruitmentEnd ?? new Date()}
-                onChange={setRecruitmentEnd}
-                disabled={always}
+              <Calendar
+                recruitmentStart={recruitmentStart}
+                recruitmentEnd={recruitmentEnd}
+                onChangeStart={setRecruitmentStart}
+                onChangeEnd={setRecruitmentEnd}
+                disabledEnd={always}
               />
               <Styled.AlwaysRecruitButton
                 type='button'
