@@ -12,11 +12,13 @@ import moadong.fcm.model.PushPayload;
 import moadong.fcm.port.PushNotificationPort;
 import moadong.user.payload.CustomUserDetails;
 import moadong.util.annotations.UnitTest;
+import org.bson.types.ObjectId;
 import org.javers.core.Javers;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -30,6 +32,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -141,6 +144,36 @@ public class ClubProfileServiceDateTest {
 
         clubProfileService.updateClubRecruitmentInfo(request, customUserDetails);
 
-        verify(pushNotificationPort).send(payload);
+        InOrder inOrderVerifier = inOrder(clubRepository, pushNotificationPort);
+        inOrderVerifier.verify(clubRepository).save(club);
+        inOrderVerifier.verify(pushNotificationPort).send(payload);
+    }
+
+    @DisplayName("관리자 경로 모집 상태 변경 시 저장 후 알림을 보낸다")
+    @Test
+    void 관리자_경로_모집글_수정시_저장_후_알림을_보낸다() {
+        ClubRecruitmentInfoUpdateRequest request = new ClubRecruitmentInfoUpdateRequest(
+                Instant.now(),
+                Instant.now().plusSeconds(3600),
+                "테스트 대상",
+                "https://fake-url.com",
+                true
+        );
+        CustomUserDetails customUserDetails = UserFixture.createUserDetails("test");
+        Club club = new Club();
+        PushPayload payload = new PushPayload("title", "body", "topic", Map.of("clubId", "1"));
+        when(clubRepository.findClubById(any())).thenReturn(Optional.of(club));
+        when(recruitmentStateCalculator.calculate(any(), any(), any())).thenReturn(true);
+        when(recruitmentStateNotificationBuilder.build(any(), any())).thenReturn(payload);
+
+        clubProfileService.updateClubRecruitmentInfoByClubId(
+                new ObjectId().toHexString(),
+                request,
+                customUserDetails
+        );
+
+        InOrder inOrderVerifier = inOrder(clubRepository, pushNotificationPort);
+        inOrderVerifier.verify(clubRepository).save(club);
+        inOrderVerifier.verify(pushNotificationPort).send(payload);
     }
 }

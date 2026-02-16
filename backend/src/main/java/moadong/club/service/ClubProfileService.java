@@ -57,6 +57,10 @@ public class ClubProfileService {
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
         );
+        club.getClubRecruitmentInformation().updateLastModifiedDate();
+        Club saved = clubRepository.save(club);
+        javers.commit(user.getUsername(), saved);
+
         if (changed && request.shouldSendNotification()) {
             pushNotificationPort.send(
                     recruitmentStateNotificationBuilder.build(
@@ -65,9 +69,6 @@ public class ClubProfileService {
                     )
             );
         }
-        club.getClubRecruitmentInformation().updateLastModifiedDate();
-        Club saved = clubRepository.save(club);
-        javers.commit(user.getUsername(), saved);
     }
 
     public ClubListResponse getAllClubsForAdmin() {
@@ -115,6 +116,9 @@ public class ClubProfileService {
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
         );
+        club.getClubRecruitmentInformation().updateLastModifiedDate();
+        Club saved = clubRepository.save(club);
+        javers.commit(user.getUsername(), saved);
         if (changed && request.shouldSendNotification()) {
             pushNotificationPort.send(
                     recruitmentStateNotificationBuilder.build(
@@ -123,8 +127,5 @@ public class ClubProfileService {
                     )
             );
         }
-        club.getClubRecruitmentInformation().updateLastModifiedDate();
-        Club saved = clubRepository.save(club);
-        javers.commit(user.getUsername(), saved);
     }
 }
