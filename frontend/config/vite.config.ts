@@ -1,5 +1,5 @@
+import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
-import { visualizer } from 'rollup-plugin-visualizer';
 import { defineConfig } from 'vite';
 import svgr from 'vite-plugin-svgr';
 import tsconfigPaths from 'vite-tsconfig-paths';
@@ -7,8 +7,29 @@ import tsconfigPaths from 'vite-tsconfig-paths';
 const DEFAULT_PORT = 3000;
 
 export default defineConfig({
-  plugins: [react(), tsconfigPaths(), svgr()],
+  plugins: [
+    react(),
+    tsconfigPaths(),
+    svgr(),
+    ...(process.env.NODE_ENV === 'production'
+      ? [
+          sentryVitePlugin({
+            org: 'moadong',
+            project: 'modong',
+            authToken: process.env.SENTRY_AUTH_TOKEN,
+            sourcemaps: {
+              filesToDeleteAfterUpload: [
+                './**/*.map',
+                '.*/**/public/**/*.map',
+                './dist/**/client/**/*.map',
+              ],
+            },
+          }),
+        ]
+      : []),
+  ],
   build: {
+    sourcemap: 'hidden',
     rollupOptions: {
       output: {
         manualChunks(id) {
