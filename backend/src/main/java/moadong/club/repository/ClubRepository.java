@@ -23,4 +23,6 @@ public interface ClubRepository extends MongoRepository<Club, String> {
 
     Optional<Club> findClubByName(String name);
 
+    boolean existsByNameAndIdNot(String name, String id);
+
 }

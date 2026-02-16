@@ -20,6 +20,7 @@ import moadong.global.util.ObjectIdConverter;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.javers.core.Javers;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -42,8 +43,9 @@ public class ClubProfileService {
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
         Club club = clubRepository.findClubByUserId(user.getId())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        validateClubNameUnique(club.getId(), request.name());
         club.update(request);
-        Club saved = clubRepository.save(club);
+        Club saved = saveClub(club);
         javers.commit(user.getUsername(), saved);
     }
 
@@ -109,8 +111,9 @@ public class ClubProfileService {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        validateClubNameUnique(club.getId(), request.name());
         club.update(request);
-        Club saved = clubRepository.save(club);
+        Club saved = saveClub(club);
         javers.commit(user.getUsername(), saved);
     }
 
@@ -136,6 +139,25 @@ public class ClubProfileService {
                             club.getClubRecruitmentInformation().getClubRecruitmentStatus()
                     )
             );
+        }
+    }
+
+    private void validateClubNameUnique(String clubId, String name) {
+        if (name == null || name.isBlank()) {
+            return;
+        }
+
+        if (clubRepository.existsByNameAndIdNot(name, clubId)) {
+            throw new RestApiException(ErrorCode.CLUB_NAME_ALREADY_EXISTS);
+        }
+    }
+
+    // 레이스 컨디션을 위한 시큐어 코딩
+    private Club saveClub(Club club) {
+        try {
+            return clubRepository.save(club);
+        } catch (DuplicateKeyException e) {
+            throw new RestApiException(ErrorCode.CLUB_NAME_ALREADY_EXISTS);
         }
     }
 }
