@@ -35,11 +35,12 @@ const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
 
 const App = () => {
   return (
+    <>
+    <GlobalStyles />
     <GlobalBoundary>
       <QueryClientProvider client={queryClient}>
         <ThemeProvider theme={theme}>
           <BrowserRouter>
-            <GlobalStyles />
             <ScrollToTop />
             <ScrollToTopButton />
             <Routes>
@@ -80,6 +81,7 @@ const App = () => {
         </ThemeProvider>
       </QueryClientProvider>
     </GlobalBoundary>
+    </>
   );
 };
 
