@@ -12,6 +12,8 @@ import moadong.club.payload.response.ClubListResponse;
 import moadong.club.repository.ClubRepository;
 import moadong.club.repository.ClubSearchRepository;
 import moadong.club.util.RecruitmentStateCalculator;
+import moadong.club.util.RecruitmentStateNotificationBuilder;
+import moadong.fcm.port.PushNotificationPort;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
@@ -32,6 +34,8 @@ public class ClubProfileService {
     private final ClubRepository clubRepository;
     private final ClubSearchRepository clubSearchRepository;
     private final RecruitmentStateCalculator recruitmentStateCalculator;
+    private final RecruitmentStateNotificationBuilder recruitmentStateNotificationBuilder;
+    private final PushNotificationPort pushNotificationPort;
     private final Javers javers;
 
     @Transactional
@@ -48,7 +52,7 @@ public class ClubProfileService {
         Club club = clubRepository.findClubByUserId(user.getId())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
-        recruitmentStateCalculator.calculate(
+        boolean changed = recruitmentStateCalculator.calculate(
                 club,
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
@@ -56,6 +60,15 @@ public class ClubProfileService {
         club.getClubRecruitmentInformation().updateLastModifiedDate();
         Club saved = clubRepository.save(club);
         javers.commit(user.getUsername(), saved);
+
+        if (changed && request.shouldSendNotification()) {
+            pushNotificationPort.send(
+                    recruitmentStateNotificationBuilder.build(
+                            club,
+                            club.getClubRecruitmentInformation().getClubRecruitmentStatus()
+                    )
+            );
+        }
     }
 
     public ClubListResponse getAllClubsForAdmin() {
@@ -98,7 +111,7 @@ public class ClubProfileService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
-        recruitmentStateCalculator.calculate(
+        boolean changed = recruitmentStateCalculator.calculate(
                 club,
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
@@ -106,6 +119,13 @@ public class ClubProfileService {
         club.getClubRecruitmentInformation().updateLastModifiedDate();
         Club saved = clubRepository.save(club);
         javers.commit(user.getUsername(), saved);
+        if (changed && request.shouldSendNotification()) {
+            pushNotificationPort.send(
+                    recruitmentStateNotificationBuilder.build(
+                            club,
+                            club.getClubRecruitmentInformation().getClubRecruitmentStatus()
+                    )
+            );
+        }
     }
 }
-
