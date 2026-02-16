@@ -8,7 +8,7 @@ export const BannerContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 90px;
+  margin-top: 88px;
   position: relative;
 
   ${media.laptop} {
