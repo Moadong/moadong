@@ -29,7 +29,7 @@ public class Club implements Persistable<String> {
     private String id;
 
     @Indexed(name = "uk_club_name_not_blank", unique = true,
-            partialFilter = "{ \"name\": { \"$exists\": true, \"$nin\": [null, \"\"] } }")
+            partialFilter = "{ \"name\": { \"$type\": \"string\", \"$gt\": \"\" } }")
     private String name;
 
     private String category;
