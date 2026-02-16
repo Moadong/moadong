@@ -87,7 +87,12 @@ const Calendar = ({
         locale={ko}
         selected={recruitmentStart}
         onChange={handleStartChange}
-        dateFormat='yyyy년 MM월 dd일 (eee)'
+        showTimeSelect
+        timeIntervals={30}
+        timeCaption='시간'
+        dateFormat='yyyy년 MM월 dd일 (eee) HH:mm'
+        shouldCloseOnSelect={false}
+        popperPlacement='bottom-start'
         renderCustomHeader={(props) => <CustomHeader {...props} />}
         onChangeRaw={(e: any) => e.preventDefault()}
       />
@@ -97,7 +102,12 @@ const Calendar = ({
         locale={ko}
         selected={recruitmentEnd}
         onChange={handleEndChange}
-        dateFormat='yyyy년 MM월 dd일 (eee)'
+        showTimeSelect
+        timeIntervals={30}
+        timeCaption='시간'
+        dateFormat='yyyy년 MM월 dd일 (eee) HH:mm'
+        shouldCloseOnSelect={false}
+        popperPlacement='bottom-start'
         renderCustomHeader={(props) => <CustomHeader {...props} />}
         onChangeRaw={(e: any) => e.preventDefault()}
       />

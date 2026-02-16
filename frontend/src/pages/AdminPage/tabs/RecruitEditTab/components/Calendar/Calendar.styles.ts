@@ -42,6 +42,11 @@ export const DatepickerContainer = styled.div`
   .react-datepicker__month-container {
     flex: 1 1 auto;
   }
+  .react-datepicker__time-container {
+    flex: 0 0 120px;
+    border-left: 1px solid rgba(0, 0, 0, 0.08);
+    background: ${colors.base.white};
+  }
 
   /* 헤더 영역 */
   .react-datepicker__header {
@@ -171,5 +176,47 @@ export const DatepickerContainer = styled.div`
   .react-datepicker__day--disabled:hover,
   .react-datepicker__day--outside-month:hover {
     background: transparent;
+  }
+
+  /* 시간 패널 */
+  .react-datepicker__time-container .react-datepicker__header {
+    background: ${colors.base.white};
+    padding: 10px 0;
+  }
+  .react-datepicker-time__header {
+    font-weight: 700;
+    font-size: 16px;
+    color: #111;
+  }
+
+  .react-datepicker__time {
+    background: ${colors.base.white};
+  }
+  .react-datepicker__time-box {
+    width: 100%;
+  }
+  .react-datepicker__time-list {
+    padding: 4px 0;
+  }
+
+  .react-datepicker__time-list-item {
+    ${cellBase};
+    height: 40px;
+    line-height: 24px;
+    margin: 0;
+    padding: 8px 12px;
+    cursor: pointer;
+
+    &:hover {
+      background: rgba(255, 84, 20, 0.12);
+    }
+
+    &--selected {
+      ${selected};
+
+      &:hover {
+        ${selectedHover};
+      }
+    }
   }
 `;
