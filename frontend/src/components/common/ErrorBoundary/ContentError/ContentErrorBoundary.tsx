@@ -11,10 +11,7 @@ const ContentErrorBoundary = ({ children }: ContentErrorBoundaryProps) => {
   const { pathname } = useLocation();
 
   return (
-    <BaseErrorBoundary
-      fallback={ContentErrorFallback}
-      resetKeys={[pathname]}
-    >
+    <BaseErrorBoundary fallback={ContentErrorFallback} resetKeys={[pathname]}>
       {children}
     </BaseErrorBoundary>
   );
