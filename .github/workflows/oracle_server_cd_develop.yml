@@ -85,20 +85,33 @@ jobs:
     needs: build
 
     steps:
-      # oracle ssh 접속 후 배포
-      - name: Update Container on VM
+      - name: Deploy to Oracle VM
         uses: appleboy/ssh-action@master
         with:
           host: ${{ secrets.ORACLE_INSTANCE_DEV_IP }}
           username: ${{ secrets.ORACLE_INSTANCE_USER }}
           key: ${{ secrets.ORACLE_INSTANCE_DEV_PRIVATE_KEY }}
           port: ${{ secrets.ORACLE_INSTANCE_DEV_PORT }}
+          # 타임아웃 설정 (이미지 pull 시간이 길어질 경우 대비)
+          timeout: 120s
           script: |
-            docker pull ${{ secrets.DOCKER_IMAGE_DEV }}:latest
+            # 1. 사용할 이미지 태그를 변수로 지정 (latest가 아닌 github.sha 사용)
+            # github.sha는 빌드 잡에서 생성한 태그와 동일한 값입니다.
+            TARGET_IMAGE="${{ secrets.DOCKER_IMAGE_DEV }}:${{ github.sha }}"
 
+            echo "Deploying target image: $TARGET_IMAGE"
+
+            # 2. 명시된 버전의 이미지를 Pull (latest가 아니므로 캐시 문제 없음)
+            docker pull $TARGET_IMAGE
+
+            # 3. 환경 변수 설정
             export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
-            export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_DEV }}:latest
+            export DOCKER_APP_IMAGE=$TARGET_IMAGE
+
+            # 4. 배포 스크립트 실행
+            # 주의: deploy.sh 내부에서 'docker run ... $DOCKER_APP_IMAGE'를 사용하도록 작성되어 있어야 합니다.
             sudo chmod +x /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
             sudo -E /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
 
-            docker image prune -af
+            # 5. 불필요한 이미지 정리 (공간 확보)
+            docker image prune -f
