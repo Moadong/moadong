@@ -5,12 +5,16 @@ import { useEffect, useRef } from 'react';
 
 interface DatePickerPanelProps {
   selectedDate: Date;
+  viewMonth: Date;
+  onViewMonthChange: (date: Date) => void;
   onChangeDate: (date: Date) => void;
   onHeightChange: (height: number) => void;
 }
 
 const DatePickerPanel = ({
   selectedDate,
+  viewMonth,
+  onViewMonthChange,
   onChangeDate,
   onHeightChange,
 }: DatePickerPanelProps) => {
@@ -41,6 +45,8 @@ const DatePickerPanel = ({
         inline
         locale={ko}
         selected={selectedDate}
+        openToDate={viewMonth}
+        onMonthChange={onViewMonthChange}
         onChange={(date) => date && onChangeDate(date)}
         onChangeRaw={(e) => e && e.preventDefault()}
       />
