@@ -3,11 +3,13 @@ import * as Styled from './TimePickerPanel.styles';
 interface TimePickerPanelProps {
   selectedDate: Date;
   onChangeDate: (date: Date) => void;
+  height: number;
 }
 
 const TimePickerPanel = ({
   selectedDate,
   onChangeDate,
+  height
 }: TimePickerPanelProps) => {
   const setHour = (hour: number) => {
     const next = new Date(selectedDate);
@@ -24,7 +26,7 @@ const TimePickerPanel = ({
   return (
     <Styled.Container>
       <Styled.Column>
-        <Styled.List>
+        <Styled.List $height={height}>
           {Array.from({ length: 24 }).map((_, h) => (
             <Styled.ItemWrapper key={h}>
               <Styled.ItemBox
@@ -39,7 +41,7 @@ const TimePickerPanel = ({
       </Styled.Column>
 
       <Styled.Column>
-        <Styled.List>
+        <Styled.List $height={height}>
           {Array.from({ length: 60 }).map((_, m) => (
             <Styled.ItemWrapper key={m}>
               <Styled.ItemBox

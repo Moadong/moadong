@@ -9,14 +9,14 @@ export const Column = styled.div`
   width: 60px;
 `;
 
-export const List = styled.div`
-  height: 250px;
+export const List = styled.div<{ $height: number }>`
+  height: ${({ $height }) => $height}px;
   overflow-y: auto;
-  margin: 14px 0;
+  margin: 20px 0;
 
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 8px;
 
   &::-webkit-scrollbar {
     display: none;

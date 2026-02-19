@@ -57,6 +57,7 @@ export const Container = styled.div`
 
   /* calendar */
   .react-datepicker__month {
+    margin-top: 10px;
     padding: 0 20px;
   }
 
@@ -75,7 +76,7 @@ export const Container = styled.div`
   .react-datepicker__week {
     display: flex;
     gap: 12px;
-    padding-bottom: 12px;
+    padding-bottom: 10px;
   }
 
   .react-datepicker__day {

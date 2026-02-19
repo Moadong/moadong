@@ -1,6 +1,7 @@
 import DatePickerPanel from './DatePickerPanel';
 import TimePickerPanel from './TimePickerPanel';
 import * as Styled from './DateTimePanel.styles';
+import { useState } from 'react';
 
 interface DateTimePanelProps {
   date: Date | null;
@@ -8,6 +9,8 @@ interface DateTimePanelProps {
 }
 
 const DateTimePanel = ({ date, onChangeDate }: DateTimePanelProps) => {
+  const [calendarHeight, setCalendarHeight] = useState<number>(0);
+
   if (!date) return null;
 
   return (
@@ -37,10 +40,12 @@ const DateTimePanel = ({ date, onChangeDate }: DateTimePanelProps) => {
         <DatePickerPanel
           selectedDate={date}
           onChangeDate={onChangeDate}
+          onHeightChange={setCalendarHeight}
         />
         <TimePickerPanel
           selectedDate={date}
           onChangeDate={onChangeDate}
+          height={calendarHeight}
         />
       </Styled.Body>
     </Styled.Panel>
