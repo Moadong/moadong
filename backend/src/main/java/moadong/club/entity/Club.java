@@ -13,6 +13,7 @@ import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
@@ -27,6 +28,8 @@ public class Club implements Persistable<String> {
     @Id
     private String id;
 
+    @Indexed(name = "uk_club_name_not_blank", unique = true,
+            partialFilter = "{ \"name\": { \"$type\": \"string\", \"$gt\": \"\" } }")
     private String name;
 
     private String category;
