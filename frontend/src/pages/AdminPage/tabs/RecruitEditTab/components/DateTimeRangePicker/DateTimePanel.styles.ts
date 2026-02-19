@@ -8,7 +8,8 @@ export const Panel = styled.div`
 
   display: flex;
   background: ${colors.base.white};
-  border-radius: 14px;
+  border-radius: 12px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   overflow: hidden;
+  z-index: 10;
 `;

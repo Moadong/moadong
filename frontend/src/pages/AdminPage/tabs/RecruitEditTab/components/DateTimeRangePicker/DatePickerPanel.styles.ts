@@ -5,15 +5,18 @@ import 'react-datepicker/dist/react-datepicker.css';
 const selected = css`
   background-color: ${colors.primary[800]} !important;
   color: ${colors.base.white} !important;
+  font-weight: 600;
 `;
 
 const selectedHover = css`
   background-color: ${colors.primary[800]} !important;
   color: ${colors.base.white};
+  font-weight: 600;
 `;
 
 const cellBase = css`
   border-radius: 6px;
+  padding: 0px;
   transition:
     background-color 0.08s ease,
     color 0.08s ease;
@@ -46,7 +49,6 @@ export const Container = styled.div`
     margin: 0;
     border: none;
     background: ${colors.base.white};
-    padding-bottom: 18px; /* header와 달력 사이 간격 */
   }
 
   .react-datepicker__header-custom {
@@ -77,11 +79,11 @@ export const Container = styled.div`
   }
 
   .react-datepicker__navigation--previous--custom {
-    left: 10px;
+    left: 30px;
   }
 
   .react-datepicker__navigation--next--custom {
-    right: 10px;
+    right: 30px;
   }
 
   /* calendar grid */
@@ -99,7 +101,7 @@ export const Container = styled.div`
     display: flex;
     justify-content: center;
     gap: 12px;
-    padding-top: 10px;
+    padding-top: 12px;
   }
 
   .react-datepicker__day-name {
@@ -109,9 +111,10 @@ export const Container = styled.div`
 
   .react-datepicker__day {
     ${cellBase};
+    font-size: 14px;
 
     &:hover {
-      background: ${colors.primary[500]};
+      background-color: ${colors.primary[500]} !important;
     }
   }
 
@@ -137,10 +140,4 @@ export const Container = styled.div`
       background: transparent;
     }
   }
-`;
-
-export const Label = styled.span`
-  font-size: 0.875rem;
-  font-weight: 600;
-  color: ${colors.gray[700]};
 `;
