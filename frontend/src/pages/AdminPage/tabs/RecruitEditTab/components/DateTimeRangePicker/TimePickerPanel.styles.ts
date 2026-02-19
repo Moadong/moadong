@@ -9,33 +9,19 @@ export const Column = styled.div`
   width: 60px;
 `;
 
-export const Header = styled.div`
-  height: 44px;
-  background: ${colors.primary[800]};
-  color: ${colors.base.white};
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-weight: 600;
-  font-size: 16px;
-  padding: 0;
-`;
-
 export const List = styled.div`
-  height: 190px;
+  height: 250px;
   overflow-y: auto;
+  margin: 14px 0;
 
   display: flex;
   flex-direction: column;
   gap: 10px;
 
-  margin: 14px 0;
-
   &::-webkit-scrollbar {
     display: none;
   }
 `;
-
 
 export const ItemWrapper = styled.div`
   display: flex;
@@ -63,7 +49,7 @@ export const ItemBox = styled.div<{ $active: boolean }>`
     css`
       background-color: ${colors.primary[800]};
       color: white;
-      font-weight: 500;
+      font-weight: 600;
 
       &:hover {
         background-color: ${colors.primary[800]};

@@ -23,25 +23,19 @@ const DateTimeRangePicker = ({
   const [openTarget, setOpenTarget] = useState<OpenTarget>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  /** 바깥 클릭 시 닫기 */
   useEffect(() => {
     const handleClickOutside = (e: MouseEvent) => {
-      if (
-        containerRef.current &&
-        !containerRef.current.contains(e.target as Node)
-      ) {
+      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
         setOpenTarget(null);
       }
     };
-
     document.addEventListener('mousedown', handleClickOutside);
-    return () =>
-      document.removeEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
   return (
     <Styled.Container ref={containerRef}>
-      {/* 시작 */}
+      {/* 모집 시작 기간 */}
       <Styled.Input
         $active={openTarget === 'start'}
         onClick={() => setOpenTarget('start')}
@@ -51,7 +45,7 @@ const DateTimeRangePicker = ({
 
       <Styled.Tilde>~</Styled.Tilde>
 
-      {/* 종료 */}
+      {/* 모집 마감 기간 */}
       <Styled.Input
         disabled={disabledEnd}
         $active={openTarget === 'end'}

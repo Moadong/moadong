@@ -12,14 +12,37 @@ const DateTimePanel = ({ date, onChangeDate }: DateTimePanelProps) => {
 
   return (
     <Styled.Panel>
-      <DatePickerPanel
-        selectedDate={date}
-        onChangeDate={onChangeDate}
-      />
-      <TimePickerPanel
-        selectedDate={date}
-        onChangeDate={onChangeDate}
-      />
+      <Styled.Header>
+        <Styled.NavButton onClick={() => {
+          const d = new Date(date);
+          d.setMonth(d.getMonth() - 1);
+          onChangeDate(d);
+        }}>{'<'}</Styled.NavButton>
+
+        <Styled.Title>
+          {date.getFullYear()}.{String(date.getMonth() + 1).padStart(2, '0')}
+        </Styled.Title>
+
+        <Styled.NavButton onClick={() => {
+          const d = new Date(date);
+          d.setMonth(d.getMonth() + 1);
+          onChangeDate(d);
+        }}>{'>'}</Styled.NavButton>
+
+        <Styled.TimeLabel>시</Styled.TimeLabel>
+        <Styled.TimeLabel>분</Styled.TimeLabel>
+      </Styled.Header>
+
+      <Styled.Body>
+        <DatePickerPanel
+          selectedDate={date}
+          onChangeDate={onChangeDate}
+        />
+        <TimePickerPanel
+          selectedDate={date}
+          onChangeDate={onChangeDate}
+        />
+      </Styled.Body>
     </Styled.Panel>
   );
 };
