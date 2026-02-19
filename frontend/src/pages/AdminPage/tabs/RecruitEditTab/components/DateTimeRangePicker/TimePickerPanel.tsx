@@ -24,16 +24,17 @@ const TimePickerPanel = ({
   return (
     <Styled.Container>
       <Styled.Column>
-        <Styled.Header>시간</Styled.Header>
+        <Styled.Header>시</Styled.Header>
         <Styled.List>
           {Array.from({ length: 24 }).map((_, h) => (
-            <Styled.Item
-              key={h}
-              $active={h === selectedDate.getHours()}
-              onClick={() => changeHour(h)}
-            >
-              {h.toString().padStart(2, '0')}
-            </Styled.Item>
+            <Styled.ItemWrapper key={h}>
+              <Styled.ItemBox
+                $active={h === selectedDate.getHours()}
+                onClick={() => changeHour(h)}
+              >
+                {h.toString().padStart(2, '0')}
+              </Styled.ItemBox>
+            </Styled.ItemWrapper>
           ))}
         </Styled.List>
       </Styled.Column>
@@ -42,13 +43,15 @@ const TimePickerPanel = ({
         <Styled.Header>분</Styled.Header>
         <Styled.List>
           {Array.from({ length: 60 }).map((_, m) => (
-            <Styled.Item
-              key={m}
-              $active={m === selectedDate.getMinutes()}
-              onClick={() => changeMinute(m)}
-            >
-              {m.toString().padStart(2, '0')}
-            </Styled.Item>
+            <Styled.ItemWrapper key={m}>
+              <Styled.ItemBox
+                key={m}
+                $active={m === selectedDate.getMinutes()}
+                onClick={() => changeMinute(m)}
+              >
+                {m.toString().padStart(2, '0')}
+              </Styled.ItemBox>
+            </Styled.ItemWrapper>
           ))}
         </Styled.List>
       </Styled.Column>

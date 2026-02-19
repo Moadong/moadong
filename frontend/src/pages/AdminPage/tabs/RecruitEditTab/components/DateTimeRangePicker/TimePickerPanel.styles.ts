@@ -22,34 +22,52 @@ export const Header = styled.div`
 `;
 
 export const List = styled.div`
-  height: 260px;
+  height: 190px;
   overflow-y: auto;
-  scrollbar-width: none;
+
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  margin: 14px 0;
 
   &::-webkit-scrollbar {
     display: none;
   }
 `;
 
-export const Item = styled.div<{ $active: boolean }>`
+
+export const ItemWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+`;
+
+export const ItemBox = styled.div<{ $active: boolean }>`
+  width: 30px;
   height: 30px;
+
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+
   border-radius: 6px;
-  margin: 0 12px;
+  font-size: 14px;
+  cursor: pointer;
 
   &:hover {
     background: ${colors.primary[500]};
-
   }
 
   ${({ $active }) =>
     $active &&
     css`
-      background: ${colors.primary[800]};
+      background-color: ${colors.primary[800]};
       color: white;
-      font-weight: 600;
+      font-weight: 500;
+
+      &:hover {
+        background-color: ${colors.primary[800]};
+      }
     `}
 `;
+
