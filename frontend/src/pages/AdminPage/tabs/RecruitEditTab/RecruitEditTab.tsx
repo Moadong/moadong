@@ -9,10 +9,10 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import Calendar from './components/Calendar/Calendar';
 import { ClubDetail } from '@/types/club';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import * as Styled from './RecruitEditTab.styles';
+import DateTimeRangePicker from './components/DateTimeRangePicker/DateTimeRangePicker';
 
 const FAR_FUTURE_YEAR = 2999;
 
@@ -145,11 +145,11 @@ const RecruitEditTab = () => {
           <div>
             <Styled.Label>모집 기간</Styled.Label>
             <Styled.RecruitPeriodContainer>
-              <Calendar
+              <DateTimeRangePicker
                 recruitmentStart={recruitmentStart}
                 recruitmentEnd={recruitmentEnd}
-                onChangeStart={setRecruitmentStart}
-                onChangeEnd={setRecruitmentEnd}
+                onChangeRecruitmentStart={setRecruitmentStart}
+                onChangeRecruitmentEnd={setRecruitmentEnd}
                 disabledEnd={always}
               />
               <Styled.AlwaysRecruitButton
