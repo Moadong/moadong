@@ -115,7 +115,7 @@ export const TabButton = styled.button<{ $active: boolean }>`
 export const AppOpenButton = styled.button`
   padding: 6px 12px;
   border: none;
-  background-color: ${({ theme }) => theme.colors.primary[900]};
+  background-color: ${({ theme }) => theme.colors.base.black};
   color: ${({ theme }) => theme.colors.base.white};
   font-size: 13px;
   font-weight: 600;
