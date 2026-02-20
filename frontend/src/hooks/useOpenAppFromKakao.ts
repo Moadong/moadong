@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { APP_STORE_LINKS, detectPlatform } from '@/utils/appStoreLink';
 
 const ANDROID_PACKAGE = 'com.moadong.moadong';
@@ -7,6 +7,13 @@ const IOS_SCHEME = 'moadongapp';
 
 const useOpenAppFromKakao = () => {
   const [isLoading, setIsLoading] = useState(false);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current !== null) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const openApp = () => {
     const platform = detectPlatform();
@@ -22,12 +29,15 @@ const useOpenAppFromKakao = () => {
       return;
     }
 
+    if (timerRef.current !== null) clearTimeout(timerRef.current);
+
     setIsLoading(true);
 
     const url = new URL(currentUrl);
     window.location.href = `${IOS_SCHEME}://${url.pathname}${url.search}${url.hash}`;
 
-    const timer = setTimeout(() => {
+    timerRef.current = setTimeout(() => {
+      timerRef.current = null;
       setIsLoading(false);
       if (!document.hidden) {
         window.location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(APP_STORE_LINKS.iphone)}`;
@@ -37,8 +47,9 @@ const useOpenAppFromKakao = () => {
     document.addEventListener(
       'visibilitychange',
       () => {
-        if (document.hidden) {
-          clearTimeout(timer);
+        if (document.hidden && timerRef.current !== null) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
           setIsLoading(false);
         }
       },
