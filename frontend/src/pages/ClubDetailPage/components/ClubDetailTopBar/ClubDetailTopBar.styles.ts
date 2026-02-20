@@ -111,3 +111,21 @@ export const TabButton = styled.button<{ $active: boolean }>`
   cursor: pointer;
   transition: all 0.2s ease;
 `;
+
+export const AppOpenButton = styled.button`
+  padding: 6px 12px;
+  border: none;
+  background-color: ${({ theme }) => theme.colors.primary[900]};
+  color: ${({ theme }) => theme.colors.base.white};
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 18px;
+  cursor: pointer;
+  white-space: nowrap;
+  font-family: 'Pretendard', sans-serif;
+  transition: opacity 0.2s ease;
+
+  &:active {
+    opacity: 0.7;
+  }
+`;
