@@ -44,7 +44,7 @@ export function initializeChannelService() {
 export function initializeSentry() {
   const enableInDev = import.meta.env.VITE_ENABLE_SENTRY_IN_DEV === 'true';
 
-  if (import.meta.env.NODE_ENV === 'development' && !enableInDev) {
+  if (import.meta.env.DEV && !enableInDev) {
     console.log(
       'Sentry는 개발 환경에서 비활성화되어 있습니다. 테스트하려면 VITE_ENABLE_SENTRY_IN_DEV=true로 설정하세요.',
     );
@@ -61,7 +61,7 @@ export function initializeSentry() {
     sendDefaultPii: false,
     release: import.meta.env.VITE_SENTRY_RELEASE,
     tracesSampleRate: 0.1,
-    environment: import.meta.env.NODE_ENV || 'production',
+    environment: import.meta.env.MODE || 'production',
     integrations: [Sentry.browserTracingIntegration()],
   });
 }
