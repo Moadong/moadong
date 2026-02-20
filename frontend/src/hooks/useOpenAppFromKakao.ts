@@ -8,9 +8,9 @@ const IOS_SCHEME = 'moadongapp';
 const useOpenAppFromKakao = () => {
   const [isLoading, setIsLoading] = useState(false);
 
-  const openApp = (path?: string) => {
+  const openApp = () => {
     const platform = detectPlatform();
-    const currentUrl = path ?? window.location.href;
+    const currentUrl = window.location.href;
 
     if (platform === 'Android') {
       const url = new URL(currentUrl);
