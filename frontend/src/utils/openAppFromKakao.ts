@@ -1,6 +1,7 @@
 import { APP_STORE_LINKS, detectPlatform } from './appStoreLink';
 
 const ANDROID_PACKAGE = 'com.moadong.moadong';
+const ANDROID_HOST = 'www.moadong.com';
 
 /**
  * 카카오톡 인앱 브라우저에서 앱을 실행하는 함수.
@@ -15,7 +16,7 @@ const openAppFromKakao = (path?: string) => {
     const url = new URL(currentUrl);
     const fallback = encodeURIComponent(APP_STORE_LINKS.android);
     const intentUrl =
-      `intent://${url.host}${url.pathname}${url.search}${url.hash}` +
+      `intent://${ANDROID_HOST}${url.pathname}${url.search}${url.hash}` +
       `#Intent;scheme=https;package=${ANDROID_PACKAGE};S.browser_fallback_url=${fallback};end`;
     window.location.href = intentUrl;
     return;
