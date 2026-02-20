@@ -133,7 +133,6 @@ export const AppOpenButton = styled.button`
   border-radius: 18px;
   cursor: pointer;
   white-space: nowrap;
-  font-family: 'Pretendard', sans-serif;
   transition: opacity 0.2s ease;
 
   &:active {
