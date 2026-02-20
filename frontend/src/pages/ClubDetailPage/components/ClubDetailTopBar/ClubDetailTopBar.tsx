@@ -5,6 +5,8 @@ import NotificationIcon from '@/assets/images/icons/notification_icon.svg?react'
 import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
 import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
 import isInAppWebView from '@/utils/isInAppWebView';
+import isKakaoTalkBrowser from '@/utils/isKakaoTalkBrowser';
+import openAppFromKakao from '@/utils/openAppFromKakao';
 import {
   requestNavigateBack,
   requestNotificationSubscribe,
@@ -43,6 +45,7 @@ const ClubDetailTopBar = ({
   const navigate = useNavigate();
   const theme = useTheme();
   const isInApp = isInAppWebView();
+  const isKakao = !isInApp && isKakaoTalkBrowser();
   const [isNotificationActive, setIsNotificationActive] =
     useState(initialIsSubscribed);
 
@@ -118,6 +121,10 @@ const ClubDetailTopBar = ({
               />
             </Styled.NotificationButton>
           </Styled.IconButtonWrapper>
+        ) : isKakao ? (
+          <Styled.AppOpenButton onClick={() => openAppFromKakao()}>
+            앱열기
+          </Styled.AppOpenButton>
         ) : (
           <Styled.Placeholder />
         )}
