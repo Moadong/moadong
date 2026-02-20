@@ -124,13 +124,16 @@ const ClubDetailTopBar = ({
             </Styled.NotificationButton>
           </Styled.IconButtonWrapper>
         ) : isKakao ? (
-          isLoading ? (
-            <Spinner height='36px' />
-          ) : (
+          <>
+            {isLoading && (
+              <Styled.LoadingOverlay>
+                <Spinner height='auto' />
+              </Styled.LoadingOverlay>
+            )}
             <Styled.AppOpenButton onClick={() => openApp()}>
               앱열기
             </Styled.AppOpenButton>
-          )
+          </>
         ) : (
           <Styled.Placeholder />
         )}
