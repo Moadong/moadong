@@ -6,7 +6,7 @@ const APP_HOST = 'www.moadong.com';
 /**
  * 카카오톡 인앱 브라우저에서 앱을 실행하는 함수.
  * - Android: intent URL로 앱 직접 실행, 미설치 시 Play Store 이동
- * - iOS: Safari에서 App Store 페이지 열기 (설치됨 → 열기, 미설치 → 받기)
+ * - iOS: Safari로 열어 Universal Link 트리거 (미설치 시 Smart App Banner 표시)
  */
 const openAppFromKakao = (path?: string) => {
   const platform = detectPlatform();
@@ -22,8 +22,9 @@ const openAppFromKakao = (path?: string) => {
     return;
   }
 
-  const appStoreUrl = APP_STORE_LINKS.iphone;
-  window.location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(appStoreUrl)}`;
+  const url = new URL(currentUrl);
+  const productionUrl = `https://${APP_HOST}${url.pathname}${url.search}${url.hash}`;
+  window.location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(productionUrl)}`;
 };
 
 export default openAppFromKakao;
