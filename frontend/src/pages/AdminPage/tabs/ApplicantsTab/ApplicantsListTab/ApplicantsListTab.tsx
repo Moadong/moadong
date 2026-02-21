@@ -1,8 +1,6 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import styled from 'styled-components';
-import { updateApplicationStatus } from '@/apis/application';
 import expandArrow from '@/assets/images/icons/ExpandArrow.svg';
 import Plus from '@/assets/images/icons/Plus.svg';
 import Spinner from '@/components/common/Spinner/Spinner';
