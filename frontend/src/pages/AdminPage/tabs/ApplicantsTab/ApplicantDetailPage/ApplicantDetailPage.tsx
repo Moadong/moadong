@@ -112,9 +112,11 @@ const ApplicantDetailPage = () => {
   };
 
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newMemo = e.target.value;
-    setAppMemo(newMemo);
-    updateApplicantDetail(newMemo, applicantStatus);
+    setAppMemo(e.target.value);
+  };
+
+  const handleMemoBlur = () => {
+    updateApplicantDetail(applicantMemo, applicantStatus);
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -186,7 +188,8 @@ const ApplicantDetailPage = () => {
         <Styled.MemoContainer>
           <Styled.MemoLabel>메모</Styled.MemoLabel>
           <Styled.MemoTextarea
-            onInput={handleMemoChange}
+            onChange={handleMemoChange}
+            onBlur={handleMemoBlur}
             placeholder='메모를 입력해주세요'
             value={applicantMemo}
           ></Styled.MemoTextarea>
