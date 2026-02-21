@@ -43,6 +43,7 @@ const useOpenAppFromKakao = () => {
         window.location.href = `kakaotalk://web/openExternal?url=${encodeURIComponent(APP_STORE_LINKS.iphone)}`;
       }
     }, 2000);
+    // 2초 딜레이를 주는 이유는 앱 다운로드 페이지가 로드되는 시간을 주기 위함
 
     document.addEventListener(
       'visibilitychange',
