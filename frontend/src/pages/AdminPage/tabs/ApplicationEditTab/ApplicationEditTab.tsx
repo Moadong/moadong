@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createApplication, updateApplication } from '@/apis/application';
@@ -10,6 +10,10 @@ import { queryKeys } from '@/constants/queryKeys';
 import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetApplication } from '@/hooks/Queries/useApplication';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
+import {
+  hasErrors,
+  validateApplicationForm,
+} from '@/pages/AdminPage/validation/validateApplicationForm';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import {
   ApplicationFormData,
@@ -19,14 +23,6 @@ import {
 } from '@/types/application';
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
-
-const externalApplicationUrlAllowed = [
-  'https://forms.gle',
-  'https://docs.google.com/forms',
-  'https://form.naver.com',
-  'https://naver.me',
-  'https://everytime.kr',
-];
 
 const ApplicationEditTab = () => {
   const queryClient = useQueryClient();
@@ -120,6 +116,23 @@ const ApplicationEditTab = () => {
 
   const handleSubmit = async () => {
     if (!clubId) return;
+
+    const validationErrors = validateApplicationForm(
+      formData,
+      applicationFormMode,
+      externalApplicationUrl,
+    );
+    if (hasErrors(validationErrors)) {
+      const messages: string[] = [
+        ...(validationErrors.title ? [validationErrors.title] : []),
+        ...(validationErrors.description ? [validationErrors.description] : []),
+        ...Object.values(validationErrors.questions ?? {}),
+        ...(validationErrors.externalUrl ? [validationErrors.externalUrl] : []),
+      ];
+      alert(messages.join('\n'));
+      return;
+    }
+
     const reorderedQuestions = formData.questions?.map((q, idx) => ({
       ...q,
       id: idx + 1,
@@ -137,17 +150,6 @@ const ApplicationEditTab = () => {
     if (applicationFormMode === ApplicationFormMode.INTERNAL) {
       payload.questions = reorderedQuestions;
     } else if (applicationFormMode === ApplicationFormMode.EXTERNAL) {
-      const isValidUrl = externalApplicationUrlAllowed.some((url) =>
-        externalApplicationUrl.startsWith(url),
-      );
-
-      if (!isValidUrl) {
-        alert(
-          '외부 지원서 링크는 Google Forms, Naver Form 또는 Everytime 링크여야 합니다.',
-        );
-        return;
-      }
-
       payload.externalApplicationUrl = externalApplicationUrl;
     }
 
@@ -186,6 +188,7 @@ const ApplicationEditTab = () => {
         </Styled.HeaderContainer>
         <Styled.FormTitle
           type='text'
+          maxLength={50}
           value={formData.title}
           onChange={(e) => handleFormTitleChange(e.target.value)}
           placeholder='지원서 제목을 입력하세요'
