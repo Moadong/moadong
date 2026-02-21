@@ -9,9 +9,11 @@ import org.springframework.util.StringUtils;
 import java.util.List;
 
 public record ClubApplicationFormEditRequest(
+        @NotBlank
         @Size(max = 50)
         String title,
 
+        @NotBlank
         @Size(max = 3000)
         String description,
 
