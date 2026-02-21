@@ -12,7 +12,6 @@ import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAns
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
-import debounce from '@/utils/debounce';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantDetailPage.styles';
 
@@ -29,6 +28,13 @@ const getStatusColor = (status: ApplicationStatus | undefined): string => {
     default:
       return 'var(--f5, #F5F5F5)';
   }
+};
+
+const isApplicationStatus = (value: unknown): value is ApplicationStatus => {
+  return (
+    typeof value === 'string' &&
+    Object.values(ApplicationStatus).includes(value as ApplicationStatus)
+  );
 };
 
 const ApplicantDetailPage = () => {
@@ -64,36 +70,25 @@ const ApplicantDetailPage = () => {
     }
   }, [applicant, applicant?.status, applicant?.memo]);
 
-  const updateApplicantDetail = useMemo(
-    () =>
-      debounce((memo, status) => {
-        function isApplicationStatus(v: unknown): v is ApplicationStatus {
-          return (
-            typeof v === 'string' &&
-            Object.values(ApplicationStatus).includes(v as ApplicationStatus)
-          );
-        }
+  const updateApplicantDetail = (memo: string, status: ApplicationStatus) => {
+    if (typeof memo !== 'string') return;
+    if (!isApplicationStatus(status)) return;
 
-        if (typeof memo !== 'string') return;
-        if (!isApplicationStatus(status)) return;
-
-        updateApplicant(
-          [
-            {
-              memo,
-              status,
-              applicantId: questionId,
-            },
-          ],
-          {
-            onError: () => {
-              alert('지원자 정보 수정에 실패했습니다.');
-            },
-          },
-        );
-      }, 400),
-    [clubId, questionId, updateApplicant],
-  );
+    updateApplicant(
+      [
+        {
+          memo,
+          status,
+          applicantId: questionId,
+        },
+      ],
+      {
+        onError: () => {
+          alert('지원자 정보 수정에 실패했습니다.');
+        },
+      },
+    );
+  };
 
   if (!applicationFormId) {
     return <div>지원서 정보를 불러올 수 없습니다.</div>;
@@ -117,9 +112,11 @@ const ApplicantDetailPage = () => {
   };
 
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newMemo = e.target.value;
-    setAppMemo(newMemo);
-    updateApplicantDetail(newMemo, applicantStatus);
+    setAppMemo(e.target.value);
+  };
+
+  const handleMemoBlur = () => {
+    updateApplicantDetail(applicantMemo, applicantStatus);
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
@@ -191,7 +188,8 @@ const ApplicantDetailPage = () => {
         <Styled.MemoContainer>
           <Styled.MemoLabel>메모</Styled.MemoLabel>
           <Styled.MemoTextarea
-            onInput={handleMemoChange}
+            onChange={handleMemoChange}
+            onBlur={handleMemoBlur}
             placeholder='메모를 입력해주세요'
             value={applicantMemo}
           ></Styled.MemoTextarea>
