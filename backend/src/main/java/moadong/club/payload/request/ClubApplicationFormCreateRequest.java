@@ -13,7 +13,6 @@ public record ClubApplicationFormCreateRequest(
         @Size(max = 50)
         String title,
 
-        @NotBlank
         @Size(max = 3000)
         String description,
 
