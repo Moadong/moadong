@@ -171,3 +171,69 @@ export const BackButton = styled.button`
     transform: scale(0.98);
   }
 `;
+
+interface BoundarySectionProps {
+  $level: 'global' | 'content' | 'api';
+}
+
+export const BoundarySection = styled.div<BoundarySectionProps>`
+  position: relative;
+  border: 2px solid
+    ${({ $level, theme }) => {
+      switch ($level) {
+        case 'global':
+          return theme.colors.primary[900];
+        case 'content':
+          return theme.colors.secondary[4].main;
+        case 'api':
+          return theme.colors.secondary[5].main;
+      }
+    }};
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 32px;
+`;
+
+export const BoundaryLabel = styled.div<BoundarySectionProps>`
+  position: absolute;
+  top: -12px;
+  left: 16px;
+  padding: 4px 12px;
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  border-radius: 6px;
+  background: ${({ $level, theme }) => {
+    switch ($level) {
+      case 'global':
+        return theme.colors.primary[900];
+      case 'content':
+        return theme.colors.secondary[4].main;
+      case 'api':
+        return theme.colors.secondary[5].main;
+    }
+  }};
+  color: white;
+`;
+
+export const DataDisplay = styled.div`
+  background: ${({ theme }) => theme.colors.accent[1][600]};
+  border: 1px solid ${({ theme }) => theme.colors.accent[1][700]};
+  border-radius: 8px;
+  padding: 16px 20px;
+  margin-bottom: 16px;
+  font-size: ${({ theme }) => theme.typography.paragraph.p4.size};
+  color: ${({ theme }) => theme.colors.gray[900]};
+  text-align: center;
+`;
+
+export const ButtonGroup = styled.div`
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+
+  & > button {
+    flex: 1;
+    min-width: 140px;
+  }
+`;
