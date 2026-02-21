@@ -6,7 +6,10 @@ import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { useUpdateApplicant } from '@/hooks/Queries/useApplicants';
+import {
+  useGetApplicants,
+  useUpdateApplicant,
+} from '@/hooks/Queries/useApplicants';
 import { useGetApplication } from '@/hooks/Queries/useApplication';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
@@ -48,7 +51,12 @@ const ApplicantDetailPage = () => {
   const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
     ApplicationStatus.SUBMITTED,
   );
-  const { applicantsData, clubId } = useAdminClubContext();
+  const { clubId } = useAdminClubContext();
+  const {
+    data: applicantsData,
+    isLoading: isApplicantsLoading,
+    isError: isApplicantsError,
+  } = useGetApplicants(applicationFormId ?? undefined);
 
   const applicantIndex =
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
@@ -93,16 +101,13 @@ const ApplicantDetailPage = () => {
   if (!applicationFormId) {
     return <div>지원서 정보를 불러올 수 없습니다.</div>;
   }
-
-  if (!applicantsData) {
-    return <div>지원자 데이터를 불러올 수 없습니다.</div>;
-  }
-  if (isLoading) return <Spinner />;
-  if (isError || !formData) return <div>지원서 정보를 불러올 수 없습니다.</div>;
-
-  if (!applicant) {
-    return <div>해당 지원자를 찾을 수 없습니다.</div>;
-  }
+  if (isLoading || isApplicantsLoading) return <Spinner />;
+  if (isApplicantsError)
+    return <div>지원자 데이터를 불러오는 중 오류가 발생했습니다.</div>;
+  if (!applicantsData) return <div>지원자 데이터를 불러올 수 없습니다.</div>;
+  if (isError) return <div>지원서 정보를 불러오는 중 오류가 발생했습니다.</div>;
+  if (!formData) return <div>지원서 정보가 없습니다.</div>;
+  if (!applicant) return <div>해당 지원자를 찾을 수 없습니다.</div>;
 
   // 답변 매핑 함수
   const getAnswerByQuestionId = (qId: number) => {
