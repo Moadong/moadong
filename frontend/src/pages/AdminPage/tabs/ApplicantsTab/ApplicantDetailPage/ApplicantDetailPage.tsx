@@ -52,9 +52,11 @@ const ApplicantDetailPage = () => {
     ApplicationStatus.SUBMITTED,
   );
   const { clubId } = useAdminClubContext();
-  const { data: applicantsData } = useGetApplicants(
-    applicationFormId ?? undefined,
-  );
+  const {
+    data: applicantsData,
+    isLoading: isApplicantsLoading,
+    isError: isApplicantsError,
+  } = useGetApplicants(applicationFormId ?? undefined);
 
   const applicantIndex =
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
@@ -99,17 +101,13 @@ const ApplicantDetailPage = () => {
   if (!applicationFormId) {
     return <div>지원서 정보를 불러올 수 없습니다.</div>;
   }
-
-  if (!applicantsData) {
-    return <div>지원자 데이터를 불러올 수 없습니다.</div>;
-  }
-  if (isLoading) return <Spinner />;
+  if (isLoading || isApplicantsLoading) return <Spinner />;
+  if (isApplicantsError)
+    return <div>지원자 데이터를 불러오는 중 오류가 발생했습니다.</div>;
+  if (!applicantsData) return <div>지원자 데이터를 불러올 수 없습니다.</div>;
   if (isError) return <div>지원서 정보를 불러오는 중 오류가 발생했습니다.</div>;
   if (!formData) return <div>지원서 정보가 없습니다.</div>;
-
-  if (!applicant) {
-    return <div>해당 지원자를 찾을 수 없습니다.</div>;
-  }
+  if (!applicant) return <div>해당 지원자를 찾을 수 없습니다.</div>;
 
   // 답변 매핑 함수
   const getAnswerByQuestionId = (qId: number) => {
