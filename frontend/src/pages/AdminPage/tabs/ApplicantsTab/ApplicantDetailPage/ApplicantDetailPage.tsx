@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
 import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
@@ -79,8 +79,7 @@ const ApplicantDetailPage = () => {
   }, [applicant, applicant?.status, applicant?.memo]);
 
   const updateApplicantDetail = (memo: string, status: ApplicationStatus) => {
-    if (typeof memo !== 'string') return;
-    if (!isApplicationStatus(status)) return;
+    if (!questionId) return;
 
     updateApplicant(
       [
@@ -125,9 +124,10 @@ const ApplicantDetailPage = () => {
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newStatus = e.target.value as ApplicationStatus;
-    setApplicantStatus(newStatus);
-    updateApplicantDetail(applicantMemo, newStatus);
+    const rawStatus = e.target.value;
+    if (!isApplicationStatus(rawStatus)) return;
+    setApplicantStatus(rawStatus);
+    updateApplicantDetail(applicantMemo, rawStatus);
   };
 
   const previousApplicant = () => {
