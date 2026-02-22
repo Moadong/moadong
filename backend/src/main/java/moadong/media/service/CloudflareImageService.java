@@ -251,7 +251,8 @@ public class CloudflareImageService implements ClubImageService{
             throw new RestApiException(ErrorCode.INVALID_FILE_URL);
         }
         String key = extractKeyOrNull(fileUrl);
-        if (key == null || !key.startsWith(clubId + "/" + fileType.getPath() + "/")) {
+        String keyPrefix = clubId + "/" + fileType.getPath() + "/";
+        if (key == null || !key.regionMatches(true, 0, keyPrefix, 0, keyPrefix.length())) {
             throw new RestApiException(ErrorCode.INVALID_FILE_URL);
         }
         // R2 HEAD로 사이즈 확인
