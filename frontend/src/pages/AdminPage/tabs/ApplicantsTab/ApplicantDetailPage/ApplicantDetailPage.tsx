@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
 import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
