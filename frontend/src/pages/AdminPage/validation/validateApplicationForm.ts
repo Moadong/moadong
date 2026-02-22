@@ -2,7 +2,7 @@ import { ApplicationFormData, ApplicationFormMode } from '@/types/application';
 
 const ALLOWED_EXTERNAL_URLS = [
   'https://forms.gle/',
-  'https://docs.google.com/forms',
+  'https://docs.google.com/forms/',
   'https://form.naver.com/',
   'https://naver.me/',
   'https://everytime.kr/',
