@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
 import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
@@ -6,13 +6,15 @@ import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import { useAdminClubContext } from '@/context/AdminClubContext';
-import { useUpdateApplicant } from '@/hooks/Queries/useApplicants';
+import {
+  useGetApplicants,
+  useUpdateApplicant,
+} from '@/hooks/Queries/useApplicants';
 import { useGetApplication } from '@/hooks/Queries/useApplication';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
-import debounce from '@/utils/debounce';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantDetailPage.styles';
 
@@ -31,6 +33,13 @@ const getStatusColor = (status: ApplicationStatus | undefined): string => {
   }
 };
 
+const isApplicationStatus = (value: unknown): value is ApplicationStatus => {
+  return (
+    typeof value === 'string' &&
+    Object.values(ApplicationStatus).includes(value as ApplicationStatus)
+  );
+};
+
 const ApplicantDetailPage = () => {
   const { questionId, applicationFormId } = useParams<{
     questionId: string;
@@ -42,7 +51,12 @@ const ApplicantDetailPage = () => {
   const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
     ApplicationStatus.SUBMITTED,
   );
-  const { applicantsData, clubId } = useAdminClubContext();
+  const { clubId } = useAdminClubContext();
+  const {
+    data: applicantsData,
+    isLoading: isApplicantsLoading,
+    isError: isApplicantsError,
+  } = useGetApplicants(applicationFormId ?? undefined);
 
   const applicantIndex =
     applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
@@ -64,50 +78,35 @@ const ApplicantDetailPage = () => {
     }
   }, [applicant, applicant?.status, applicant?.memo]);
 
-  const updateApplicantDetail = useMemo(
-    () =>
-      debounce((memo, status) => {
-        function isApplicationStatus(v: unknown): v is ApplicationStatus {
-          return (
-            typeof v === 'string' &&
-            Object.values(ApplicationStatus).includes(v as ApplicationStatus)
-          );
-        }
+  const updateApplicantDetail = (memo: string, status: ApplicationStatus) => {
+    if (!questionId) return;
 
-        if (typeof memo !== 'string') return;
-        if (!isApplicationStatus(status)) return;
-
-        updateApplicant(
-          [
-            {
-              memo,
-              status,
-              applicantId: questionId,
-            },
-          ],
-          {
-            onError: () => {
-              alert('지원자 정보 수정에 실패했습니다.');
-            },
-          },
-        );
-      }, 400),
-    [clubId, questionId, updateApplicant],
-  );
+    updateApplicant(
+      [
+        {
+          memo,
+          status,
+          applicantId: questionId,
+        },
+      ],
+      {
+        onError: () => {
+          alert('지원자 정보 수정에 실패했습니다.');
+        },
+      },
+    );
+  };
 
   if (!applicationFormId) {
     return <div>지원서 정보를 불러올 수 없습니다.</div>;
   }
-
-  if (!applicantsData) {
-    return <div>지원자 데이터를 불러올 수 없습니다.</div>;
-  }
-  if (isLoading) return <Spinner />;
-  if (isError || !formData) return <div>지원서 정보를 불러올 수 없습니다.</div>;
-
-  if (!applicant) {
-    return <div>해당 지원자를 찾을 수 없습니다.</div>;
-  }
+  if (isLoading || isApplicantsLoading) return <Spinner />;
+  if (isApplicantsError)
+    return <div>지원자 데이터를 불러오는 중 오류가 발생했습니다.</div>;
+  if (!applicantsData) return <div>지원자 데이터를 불러올 수 없습니다.</div>;
+  if (isError) return <div>지원서 정보를 불러오는 중 오류가 발생했습니다.</div>;
+  if (!formData) return <div>지원서 정보가 없습니다.</div>;
+  if (!applicant) return <div>해당 지원자를 찾을 수 없습니다.</div>;
 
   // 답변 매핑 함수
   const getAnswerByQuestionId = (qId: number) => {
@@ -117,15 +116,18 @@ const ApplicantDetailPage = () => {
   };
 
   const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    const newMemo = e.target.value;
-    setAppMemo(newMemo);
-    updateApplicantDetail(newMemo, applicantStatus);
+    setAppMemo(e.target.value);
+  };
+
+  const handleMemoBlur = () => {
+    updateApplicantDetail(applicantMemo, applicantStatus);
   };
 
   const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const newStatus = e.target.value as ApplicationStatus;
-    setApplicantStatus(newStatus);
-    updateApplicantDetail(applicantMemo, newStatus);
+    const rawStatus = e.target.value;
+    if (!isApplicationStatus(rawStatus)) return;
+    setApplicantStatus(rawStatus);
+    updateApplicantDetail(applicantMemo, rawStatus);
   };
 
   const previousApplicant = () => {
@@ -191,7 +193,8 @@ const ApplicantDetailPage = () => {
         <Styled.MemoContainer>
           <Styled.MemoLabel>메모</Styled.MemoLabel>
           <Styled.MemoTextarea
-            onInput={handleMemoChange}
+            onChange={handleMemoChange}
+            onBlur={handleMemoBlur}
             placeholder='메모를 입력해주세요'
             value={applicantMemo}
           ></Styled.MemoTextarea>
