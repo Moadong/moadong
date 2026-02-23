@@ -11,7 +11,7 @@ export const queryKeys = {
   },
   club: {
     all: ['clubs'] as const,
-    detail: (clubId: string) => ['clubDetail', clubId] as const,
+    detail: (clubParam: string) => ['clubDetail', clubParam] as const,
     list: (
       keyword: string,
       recruitmentStatus: string,
