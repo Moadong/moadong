@@ -31,7 +31,7 @@ public class ClubProfileController {
         return Response.ok(clubDetailedPageResponse);
     }
 
-    @GetMapping("/{clubName:@[^/]+}")
+    @GetMapping("/@{clubName}")
     @Operation(summary = "클럽 상세 정보 조회", description = "클럽 이름을 이용해 상세 정보를 조회합니다.")
     public ResponseEntity<?> getClubDetailByClubName(@PathVariable String clubName) {
         ClubDetailedResponse clubDetailedResponse = clubProfileService.getClubDetailByClubName(clubName);
