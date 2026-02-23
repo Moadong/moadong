@@ -55,6 +55,11 @@ const App = () => {
                   path='/clubDetail/:clubId'
                   element={<ClubDetailPage />}
                 />
+                {/*한국어핸들 */}
+                <Route
+                  path='/clubDetail/@:clubName'
+                  element={<ClubDetailPage />}
+                />
                 {/*새로 빌드해서 배포할 앱 주소 url*/}
                 <Route
                   path='/webview/club/:clubId'
