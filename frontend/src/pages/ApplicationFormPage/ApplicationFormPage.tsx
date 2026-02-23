@@ -60,7 +60,11 @@ const ApplicationFormPage = () => {
   if (isLoading) return <Spinner />;
   if (isError || clubError) {
     alert(applicationError?.message || '문제가 발생했어요.');
-    navigate(`/clubDetail/@${clubDetail?.name}`);
+    if (clubDetail?.name) {
+      navigate(`/clubDetail/@${clubDetail?.name}`);
+    } else {
+      navigate(`/`);
+    }
     return null;
   }
   if (!formData || !clubDetail || !formData.questions) {
