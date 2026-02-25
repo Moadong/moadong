@@ -92,27 +92,41 @@ class UserRegisterTest {
     /*
     아이디 규칙
     • 5자 ~ 20자
-    • 적어도 하나의 소문자, 하나의 숫자가 포함
+    • 적어도 하나의 소문자 포함
+    • 숫자/특수문자는 선택 사항
     • 소문자, 대문자, 숫자, 특수문자(!@#$~) 만 사용
      */
     @ParameterizedTest
     @ValueSource(strings = {
+            "abcde",                    // 숫자 없이 가능
+            "abC!@#",                   // 특수문자/숫자 선택
+            "abc12345678901234567",     // 20자 허용
+    })
+    void 회원가입시_유저_아이디가_조건에_맞으면_성공한다(String userId) {
+        String password = UserFixture.collectPassword;
+        String name = UserFixture.collectName;
+        String phoneNumber = UserFixture.collectPhoneNumber;
+
+        UserRegisterRequest request = UserRequestFixture.createUserRegisterRequest(userId, password, name, phoneNumber);
+        Set<ConstraintViolation<UserRegisterRequest>> violations = validator.validate(request);
+        assertThat(violations).isEmpty();
+    }
+
+    @ParameterizedTest
+    @ValueSource(strings = {
             "",                         // 빈 문자열
             "    ",                     // 공백만
-            "abcde",                    // 숫자 없음
             "ABCDE",                    // 숫자, 소문자 없음
             "12345",                    // 소문자 없음
-            "ab!@",                     // 5자 미만 + 숫자 없음
             "abc123%^",                // 허용되지 않은 특수문자 (`^`)
-            "abc1234567890123456789",  // 21자 (초과)
-            "ab12",                     // 4자 (부족)
+            "ab!@",                     // 4자 (길이 부족)
+            "a1@",                      // 3자 (길이 부족)
+            "abc1234567890123456789",  // 20자 초과
+            "ab12 ",                    // 공백 포함
             "ABC123",                   // 소문자 없음
-            "abcd@",                    // 숫자 없음
             "1234@",                    // 소문자 없음
             "abc 123",                  // 공백 포함
-            "abC!@#",                   // 숫자 없음
             "abc123*",                  // `*`은 허용되지 않음
-            "a1@",                      // 길이 부족
             UserFixture.collectPassword // 비밀번호와 동일 (검증에 따라 실패할 수도 있음)
     })
     void 회원가입시_유저_아이디가_조건에_맞지_않으면_실패한다(String userId) {
