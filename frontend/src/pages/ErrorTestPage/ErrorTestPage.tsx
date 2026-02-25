@@ -191,7 +191,7 @@ const ErrorTestPage = () => {
             헤더/푸터는 유지됩니다.
           </Styled.Description>
 
-          <ContentErrorBoundary>
+          <ContentErrorBoundary resetKeys={[contentError]}>
             <ContentErrorTest shouldError={contentError} />
           </ContentErrorBoundary>
 
@@ -220,7 +220,7 @@ const ErrorTestPage = () => {
             표시됩니다.
           </Styled.Description>
 
-          <ApiErrorBoundary>
+          <ApiErrorBoundary resetKeys={[apiErrorType]}>
             <ApiErrorTest errorType={apiErrorType} />
           </ApiErrorBoundary>
 

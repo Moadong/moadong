@@ -5,13 +5,20 @@ import ContentErrorFallback from '../ContentError/ContentErrorFallback';
 
 interface ContentErrorBoundaryProps {
   children: ReactNode;
+  resetKeys?: unknown[];
 }
 
-const ContentErrorBoundary = ({ children }: ContentErrorBoundaryProps) => {
+const ContentErrorBoundary = ({
+  children,
+  resetKeys = [],
+}: ContentErrorBoundaryProps) => {
   const { pathname } = useLocation();
 
   return (
-    <BaseErrorBoundary fallback={ContentErrorFallback} resetKeys={[pathname]}>
+    <BaseErrorBoundary
+      fallback={ContentErrorFallback}
+      resetKeys={[pathname, ...resetKeys]}
+    >
       {children}
     </BaseErrorBoundary>
   );
