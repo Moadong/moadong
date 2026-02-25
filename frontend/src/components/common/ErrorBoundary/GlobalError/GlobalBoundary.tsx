@@ -1,6 +1,6 @@
 import { ReactNode, Suspense } from 'react';
 import * as Sentry from '@sentry/react';
-import Spinner from '../Spinner/Spinner';
+import Spinner from '../../Spinner/Spinner';
 import GlobalErrorFallback from './GlobalErrorFallback';
 
 interface GlobalBoundaryProps {
