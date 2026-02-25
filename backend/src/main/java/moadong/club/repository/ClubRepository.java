@@ -23,4 +23,9 @@ public interface ClubRepository extends MongoRepository<Club, String> {
             String logo, String cover, String feedImageUrl);
 
     List<Club> findAllByClubRecruitmentInformation_ClubRecruitmentStatus(ClubRecruitmentStatus status);
+
+    Optional<Club> findClubByName(String name);
+
+    boolean existsByNameAndIdNot(String name, String id);
+
 }
