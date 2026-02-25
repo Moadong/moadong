@@ -36,11 +36,16 @@ const ClubDetailPage = () => {
       ? tabParam
       : TAB_TYPE.INTRO;
 
-  const { clubId } = useParams<{ clubId: string }>();
+  const { clubId, clubName } = useParams<{
+    clubId: string;
+    clubName: string;
+  }>();
   const { isMobile, isTablet, isLaptop, isDesktop } = useDevice();
   const showTopBar = isMobile || isTablet;
 
-  const { data: clubDetail, error } = useGetClubDetail(clubId || '');
+  const { data: clubDetail, error } = useGetClubDetail(
+    (clubName ?? clubId) || '',
+  );
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
