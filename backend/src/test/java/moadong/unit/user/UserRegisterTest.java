@@ -135,27 +135,23 @@ class UserRegisterTest {
 
     /*
     비밀번호 규칙
-    • 8자 ~ 20자
+    • 최소 8자 (상한 없음)
     • 숫자랑 영어 대소문자 반드시 하나이상 포함
-    • 특수문자는 반드시 하나가 필요하고 !@#$%^ 만 허용
+    • 특수문자는 허용되지만 필수 아님
     • 공백 포함 불가
     • 아이디와 동일한 비밀번호 불가
      */
     @ParameterizedTest
     @ValueSource(strings = {
             "short1!",              // 7자 (길이 부족)
-            "longpassword1234567890!", // 21자 (길이 초과)
             "abcdefgh",             // 영문 소문자만 (숫자 없음)
             "ABCDEFGH",             // 영문 대문자만 (숫자 없음)
             "12345678",             // 숫자만 (영문 없음)
             "Abcdefgh",             // 영문만 (숫자 없음)
-            "abcd1234*",            // 허용되지 않은 특수문자 `*`
             "abc def123!",          // 공백 포함
             UserFixture.collectUserId,      // 아이디와 동일하거나 포함
             "passWord!",            // 특수문자 있음, 숫자 없음
             "1234!@#$",             // 숫자 + 특수문자, 문자 없음
-            "Abcdef12()",           // 괄호 포함 (허용되지 않은 특수문자)
-            "ABCD1234~",            // `~` 특수문자 허용 안됨
     })
     void 회원가입시_유저_비밀번호가_조건에_맞지_않으면_실패한다(String password) {
         String userId = UserFixture.collectUserId;
