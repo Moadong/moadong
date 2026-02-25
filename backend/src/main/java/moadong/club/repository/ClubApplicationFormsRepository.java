@@ -22,8 +22,5 @@ public interface ClubApplicationFormsRepository extends MongoRepository<ClubAppl
             fields = "{'_id': 1, 'title':  1}"
     )
     List<ClubActiveFormSlim> findClubActiveFormsByClubId(String clubId);
-
-    //clubApply api v1 종료 후 삭제 예정
-    Optional<ClubApplicationForm> findTopByClubIdAndStatusOrderByEditedAtDesc(String clubId, ApplicationFormStatus status);
 }
 
