@@ -26,8 +26,8 @@ export default defineConfig(({ mode }) => {
               sourcemaps: {
                 filesToDeleteAfterUpload: [
                   './**/*.map',
-                  '.*/**/public/**/*.map',
-                  './dist/**/client/**/*.map',
+                  './**/public/**/*.map',
+                  './dist/**/*.map',
                 ],
               },
             }),
