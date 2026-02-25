@@ -15,8 +15,11 @@ export default defineConfig({
       ? [
           sentryVitePlugin({
             org: 'moadong',
-            project: 'modong',
+            project: 'moadong',
             authToken: process.env.SENTRY_AUTH_TOKEN,
+            release: {
+              name: process.env.VITE_SENTRY_RELEASE,
+            },
             sourcemaps: {
               filesToDeleteAfterUpload: [
                 './**/*.map',
