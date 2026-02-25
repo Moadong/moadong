@@ -9,12 +9,20 @@ const DEFAULT_PORT = 3000;
 export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
+  const isProduction = mode === 'production';
+
+  if (isProduction && (!env.SENTRY_AUTH_TOKEN || !env.VITE_SENTRY_RELEASE)) {
+    throw new Error(
+      'Missing SENTRY_AUTH_TOKEN or VITE_SENTRY_RELEASE for production sourcemap upload.',
+    );
+  }
+
   return {
     plugins: [
       react(),
       tsconfigPaths(),
       svgr(),
-      ...(mode === 'production'
+      ...(isProduction
         ? [
             sentryVitePlugin({
               org: 'moadong',
@@ -35,7 +43,7 @@ export default defineConfig(({ mode }) => {
         : []),
     ],
     build: {
-      sourcemap: mode === 'production' ? 'hidden' : false,
+      sourcemap: isProduction ? 'hidden' : false,
       rollupOptions: {
         output: {
           manualChunks(id) {
