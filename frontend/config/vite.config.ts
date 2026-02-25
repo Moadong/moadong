@@ -10,10 +10,12 @@ export default defineConfig(({ mode }) => {
   const env = loadEnv(mode, process.cwd(), '');
 
   const isProduction = mode === 'production';
+  const canUploadSentrySourcemaps =
+    isProduction && !!env.SENTRY_AUTH_TOKEN && !!env.VITE_SENTRY_RELEASE;
 
-  if (isProduction && (!env.SENTRY_AUTH_TOKEN || !env.VITE_SENTRY_RELEASE)) {
-    throw new Error(
-      'Missing SENTRY_AUTH_TOKEN or VITE_SENTRY_RELEASE for production sourcemap upload.',
+  if (isProduction && !canUploadSentrySourcemaps) {
+    console.warn(
+      '[sentry-vite-plugin] Missing SENTRY_AUTH_TOKEN or VITE_SENTRY_RELEASE. Skipping sourcemap upload.',
     );
   }
 
@@ -22,7 +24,7 @@ export default defineConfig(({ mode }) => {
       react(),
       tsconfigPaths(),
       svgr(),
-      ...(isProduction
+      ...(canUploadSentrySourcemaps
         ? [
             sentryVitePlugin({
               org: 'moadong',
@@ -43,7 +45,7 @@ export default defineConfig(({ mode }) => {
         : []),
     ],
     build: {
-      sourcemap: isProduction ? 'hidden' : false,
+      sourcemap: canUploadSentrySourcemaps ? 'hidden' : false,
       rollupOptions: {
         output: {
           manualChunks(id) {
