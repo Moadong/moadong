@@ -36,8 +36,43 @@ public class FcmAsyncService {
     @Value("${fcm.topic.timeout-seconds:5}")
     private int timeoutSeconds;
 
+    /**
+     * @deprecated
+     * @param token
+     * @param newClubIds
+     * @param clubsToSubscribe
+     * @param clubsToUnsubscribe
+     * @return
+     */
     @Async("fcmAsync")
     public CompletableFuture<Void> updateSubscriptions(String token, Set<String> newClubIds, Set<String> clubsToSubscribe, Set<String> clubsToUnsubscribe) {
+        return updateSubscriptionsInternal(
+                token,
+                clubsToSubscribe,
+                clubsToUnsubscribe,
+                () -> fcmTxService.deleteUnregisteredFcmToken(token),
+                () -> fcmTxService.updateFcmToken(token, newClubIds)
+        );
+    }
+
+    @Async("fcmAsync")
+    public CompletableFuture<Void> updateStudentSubscriptions(String token, Set<String> newClubIds, Set<String> clubsToSubscribe, Set<String> clubsToUnsubscribe) {
+        return updateSubscriptionsInternal(
+                token,
+                clubsToSubscribe,
+                clubsToUnsubscribe,
+                () -> fcmTxService.deleteUnregisteredStudentFcmToken(token),
+                () -> fcmTxService.updateStudentFcmToken(token, newClubIds)
+        );
+    }
+
+    private CompletableFuture<Void> updateSubscriptionsInternal(
+            String token,
+            Set<String> clubsToSubscribe,
+            Set<String> clubsToUnsubscribe,
+            Runnable notRegisteredTokenHandler,
+            Runnable tokenUpdater
+    ) {
         List<ApiFuture<TopicManagementResponse>> futures = new ArrayList<>();
 
         // 새로운 동아리 구독
@@ -67,7 +102,7 @@ public class FcmAsyncService {
                             .anyMatch(e -> "registration-token-not-registered".equals(e.getReason()));
 
                     if (notRegistered) {
-                        fcmTxService.deleteUnregisteredFcmToken(token);
+                        notRegisteredTokenHandler.run();
                         return CompletableFuture.completedFuture(null);
                     }
 
@@ -76,7 +111,7 @@ public class FcmAsyncService {
                 }
             }
 
-            fcmTxService.updateFcmToken(token, newClubIds);
+            tokenUpdater.run();
 
         } catch (ExecutionException | TimeoutException e) {
             log.error("error: {}", e.getMessage());
@@ -89,4 +124,3 @@ public class FcmAsyncService {
         return CompletableFuture.completedFuture(null);
     }
 }
-
