@@ -1,7 +1,6 @@
 package moadong.fcm.service;
 
 import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import moadong.club.repository.ClubRepository;
 import moadong.fcm.entity.FcmToken;
 import moadong.fcm.entity.StudentFcmToken;
@@ -18,17 +17,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
 @Service
-@Slf4j
 @RequiredArgsConstructor
 public class StudentFcmTokenService {
 
     private final StudentFcmTokenRepository studentFcmTokenRepository;
     private final StudentUserRepository studentUserRepository;
     private final FcmTokenRepository fcmTokenRepository;
+    private final StudentFcmSubscriptionService studentFcmSubscriptionService;
     private final FcmAsyncService fcmAsyncService;
     private final ClubRepository clubRepository;
 
@@ -51,7 +51,7 @@ public class StudentFcmTokenService {
             saved = studentFcmTokenRepository.save(byStudent);
         } else {
             replaced = true;
-            saved = replaceStudentToken(byStudent, newFcmToken);
+            saved = replaceStudentToken(studentId, byStudent, newFcmToken);
         }
 
         studentUser.updateCurrentFcmToken(saved.getToken());
@@ -103,10 +103,7 @@ public class StudentFcmTokenService {
                         clubsToSubscribe,
                         clubsToUnsubscribe
                 )
-                .exceptionally(ex -> {
-                    log.error("Student FCM Token subscription error: {}", ex.getMessage());
-                    return null;
-                });
+                .exceptionally(ex -> null);
     }
 
     private StudentUser upsertStudentUser(String studentId) {
@@ -148,19 +145,30 @@ public class StudentFcmTokenService {
                 .build());
     }
 
-    private StudentFcmToken replaceStudentToken(StudentFcmToken byStudent, String newFcmToken) {
+    private StudentFcmToken replaceStudentToken(String studentId, StudentFcmToken byStudent, String newFcmToken) {
         Optional<StudentFcmToken> byToken = studentFcmTokenRepository.findByToken(newFcmToken);
         if (byToken.isPresent() && !byToken.get().getId().equals(byStudent.getId())) {
             studentFcmTokenRepository.delete(byToken.get());
         }
 
-        byStudent.replaceToken(newFcmToken);
-
-        if (byStudent.getClubIds().isEmpty()) {
-            fcmTokenRepository.findFcmTokenByToken(newFcmToken)
-                    .ifPresent(legacy -> byStudent.updateClubIds(new ArrayList<>(legacy.getClubIds())));
+        String oldFcmToken = byStudent.getToken();
+        List<String> finalClubIds = resolveFinalClubIds(byStudent, newFcmToken);
+        if (!finalClubIds.isEmpty()) {
+            studentFcmSubscriptionService.transferSubscriptions(studentId, oldFcmToken, newFcmToken, finalClubIds);
         }
 
+        byStudent.replaceToken(newFcmToken);
+        byStudent.updateClubIds(finalClubIds);
         return studentFcmTokenRepository.save(byStudent);
+    }
+
+    private List<String> resolveFinalClubIds(StudentFcmToken byStudent, String newFcmToken) {
+        if (!byStudent.getClubIds().isEmpty()) {
+            return new ArrayList<>(byStudent.getClubIds());
+        }
+
+        return fcmTokenRepository.findFcmTokenByToken(newFcmToken)
+                .map(legacy -> new ArrayList<>(legacy.getClubIds()))
+                .orElseGet(ArrayList::new);
     }
 }
