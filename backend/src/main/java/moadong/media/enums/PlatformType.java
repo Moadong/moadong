@@ -5,5 +5,7 @@ import lombok.Getter;
 @Getter
 public enum PlatformType {
     WEB,
-    APP_HOME;
+    APP_HOME,
+    WEB_MOBILE,
+    ;
 }
