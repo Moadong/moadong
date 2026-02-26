@@ -1,9 +1,11 @@
 import AllClubsDesktopImage from '@/assets/images/banners/banner_desktop1.png';
 import StartNowDesktopImage from '@/assets/images/banners/banner_desktop2.png';
 import AppReleaseDesktopImage from '@/assets/images/banners/banner_desktop4.png';
+import ClubFairDesktopImage from '@/assets/images/banners/banner_desktop5.png';
 import AllClubsMobileImage from '@/assets/images/banners/banner_mobile1.png';
 import StartNowMobileImage from '@/assets/images/banners/banner_mobile2.png';
 import AppReleaseMobileImage from '@/assets/images/banners/banner_mobile4.png';
+import ClubFairMobileImage from '@/assets/images/banners/banner_mobile5.png';
 
 interface BannerItem {
   id: string;
@@ -14,6 +16,12 @@ interface BannerItem {
 }
 
 const BANNERS: BannerItem[] = [
+  {
+    id: '2026-club-fair',
+    desktopImage: ClubFairDesktopImage,
+    mobileImage: ClubFairMobileImage,
+    alt: '2026 동아리 소개 한마당 홍보',
+  },
   {
     id: 'app-release-december-2025',
     desktopImage: AppReleaseDesktopImage,
