@@ -44,6 +44,9 @@ export const USER_EVENT = {
   APPLICATION_FORM_SUBMITTED: 'Application Form Submitted',
   PATCH_NOTE_BUTTON_CLICKED: 'Patch Note Button Clicked',
   FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
+
+  // 필터칩
+  FILTER_OPTION_CLICKED: 'Filter Option Clicked',
 } as const;
 
 export const ADMIN_EVENT = {
@@ -97,6 +100,7 @@ export const PAGE_VIEW = {
   MAIN_PAGE: 'MainPage',
   INTRODUCE_PAGE: 'IntroducePage',
   CLUB_UNION_PAGE: 'ClubUnionPage',
+  FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
 
   // 관리자
   LOGIN_PAGE: '로그인페이지',
