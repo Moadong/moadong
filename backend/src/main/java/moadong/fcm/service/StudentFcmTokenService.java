@@ -3,6 +3,7 @@ package moadong.fcm.service;
 import lombok.RequiredArgsConstructor;
 import moadong.fcm.entity.FcmToken;
 import moadong.fcm.entity.StudentFcmToken;
+import moadong.fcm.payload.response.ClubSubscribeListResponse;
 import moadong.fcm.payload.response.StudentFcmTokenRotateResponse;
 import moadong.fcm.repository.FcmTokenRepository;
 import moadong.fcm.repository.StudentFcmTokenRepository;
@@ -50,6 +51,17 @@ public class StudentFcmTokenService {
         studentUserRepository.save(studentUser);
 
         return new StudentFcmTokenRotateResponse(saved.getToken(), replaced, saved.getTimestamp());
+    }
+
+    @Transactional(readOnly = true)
+    public ClubSubscribeListResponse getSubscribedClubs(String studentId) {
+        if (studentId == null || studentId.isBlank()) {
+            throw new RestApiException(ErrorCode.TOKEN_INVALID);
+        }
+
+        StudentFcmToken token = studentFcmTokenRepository.findByStudentId(studentId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.FCMTOKEN_NOT_FOUND));
+        return new ClubSubscribeListResponse(token.getClubIds());
     }
 
     private StudentUser upsertStudentUser(String studentId) {

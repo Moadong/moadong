@@ -5,12 +5,14 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import moadong.fcm.payload.request.StudentFcmTokenRotateRequest;
+import moadong.fcm.payload.response.ClubSubscribeListResponse;
 import moadong.fcm.payload.response.StudentFcmTokenRotateResponse;
 import moadong.fcm.service.StudentFcmTokenService;
 import moadong.global.payload.Response;
 import moadong.user.service.StudentJwtService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestHeader;
@@ -35,6 +37,17 @@ public class StudentFcmController {
     ) {
         String studentId = studentJwtService.extractStudentId(authorization);
         StudentFcmTokenRotateResponse response = studentFcmTokenService.rotateFcmToken(studentId, request.fcmToken());
+        return Response.ok(response);
+    }
+
+    @GetMapping("/subscriptions")
+    @Operation(summary = "학생 구독 동아리 목록 조회", description = "Authorization의 학생 토큰 sub(UUID) 기준으로 구독 중인 동아리 목록을 조회합니다.")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> getSubscribedClubs(
+            @RequestHeader("Authorization") String authorization
+    ) {
+        String studentId = studentJwtService.extractStudentId(authorization);
+        ClubSubscribeListResponse response = studentFcmTokenService.getSubscribedClubs(studentId);
         return Response.ok(response);
     }
 }
