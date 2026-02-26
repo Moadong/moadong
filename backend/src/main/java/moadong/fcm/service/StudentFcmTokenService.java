@@ -1,6 +1,8 @@
 package moadong.fcm.service;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import moadong.club.repository.ClubRepository;
 import moadong.fcm.entity.FcmToken;
 import moadong.fcm.entity.StudentFcmToken;
 import moadong.fcm.payload.response.ClubSubscribeListResponse;
@@ -15,15 +17,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 @Service
+@Slf4j
 @RequiredArgsConstructor
 public class StudentFcmTokenService {
 
     private final StudentFcmTokenRepository studentFcmTokenRepository;
     private final StudentUserRepository studentUserRepository;
     private final FcmTokenRepository fcmTokenRepository;
+    private final FcmAsyncService fcmAsyncService;
+    private final ClubRepository clubRepository;
 
     @Transactional
     public StudentFcmTokenRotateResponse rotateFcmToken(String studentId, String newFcmToken) {
@@ -62,6 +69,44 @@ public class StudentFcmTokenService {
         StudentFcmToken token = studentFcmTokenRepository.findByStudentId(studentId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.FCMTOKEN_NOT_FOUND));
         return new ClubSubscribeListResponse(token.getClubIds());
+    }
+
+    @Transactional
+    public void subscribeClubs(String studentId, ArrayList<String> newClubIds) {
+        if (studentId == null || studentId.isBlank()) {
+            throw new RestApiException(ErrorCode.TOKEN_INVALID);
+        }
+
+        StudentFcmToken studentFcmToken = studentFcmTokenRepository.findByStudentId(studentId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.FCMTOKEN_NOT_FOUND));
+
+        Set<String> newClubIdSet = Set.copyOf(newClubIds);
+        Set<String> oldClubIdSet = Set.copyOf(studentFcmToken.getClubIds());
+
+        Set<String> clubsToSubscribe = new HashSet<>(newClubIdSet);
+        clubsToSubscribe.removeAll(oldClubIdSet);
+
+        Set<String> clubsToUnsubscribe = new HashSet<>(oldClubIdSet);
+        clubsToUnsubscribe.removeAll(newClubIdSet);
+
+        if (!clubsToSubscribe.isEmpty()) {
+            Long countClub = clubRepository.countByIdIn(clubsToSubscribe.stream().toList());
+
+            if (countClub != clubsToSubscribe.size()) {
+                throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
+            }
+        }
+
+        fcmAsyncService.updateStudentSubscriptions(
+                        studentFcmToken.getToken(),
+                        newClubIdSet,
+                        clubsToSubscribe,
+                        clubsToUnsubscribe
+                )
+                .exceptionally(ex -> {
+                    log.error("Student FCM Token subscription error: {}", ex.getMessage());
+                    return null;
+                });
     }
 
     private StudentUser upsertStudentUser(String studentId) {
