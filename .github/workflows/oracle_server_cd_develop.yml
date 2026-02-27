@@ -12,6 +12,8 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.variable.outputs.image_tag }}
     permissions:
       contents: read
       packages: write
@@ -65,6 +67,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set Image Tag
+        id: variable
+        run: |
+          echo "image_tag=$(echo ${GITHUB_SHA} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
       - name: Build and Push ARM64 Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -74,31 +81,4 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_IMAGE_DEV }}:latest
-            ${{ secrets.DOCKER_IMAGE_DEV }}:${{ github.sha }}
-
-  deploy:
-    name: Deploy
-    runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
-    needs: build
-
-    steps:
-      # oracle ssh 접속 후 배포
-      - name: Update Container on VM
-        uses: appleboy/ssh-action@master
-        with:
-          host: ${{ secrets.ORACLE_INSTANCE_DEV_IP }}
-          username: ${{ secrets.ORACLE_INSTANCE_USER }}
-          key: ${{ secrets.ORACLE_INSTANCE_DEV_PRIVATE_KEY }}
-          port: ${{ secrets.ORACLE_INSTANCE_DEV_PORT }}
-          script: |
-            docker pull ${{ secrets.DOCKER_IMAGE_DEV }}:latest
-
-            export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
-            export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_DEV }}:latest
-            sudo chmod +x /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
-            sudo -E /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
-
-            docker image prune -af
+            ${{ secrets.DOCKER_IMAGE_DEV }}:${{ steps.variable.outputs.image_tag }}
