@@ -9,9 +9,12 @@ on:
     paths:
       - "backend/**"
   workflow_dispatch:
+
 jobs:
   build:
     runs-on: ubuntu-latest
+    outputs:
+      image_tag: ${{ steps.variable.outputs.image_tag }}
     permissions:
       contents: read
       packages: write
@@ -65,6 +68,11 @@ jobs:
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
 
+      - name: Set Image Tag
+        id: variable
+        run: |
+          echo "image_tag=$(echo ${GITHUB_SHA} | cut -c1-7)" >> "$GITHUB_OUTPUT"
+
       - name: Build and Push ARM64 Docker Image
         uses: docker/build-push-action@v5
         with:
@@ -74,31 +82,32 @@ jobs:
           push: true
           tags: |
             ${{ secrets.DOCKER_IMAGE_DEV }}:latest
-            ${{ secrets.DOCKER_IMAGE_DEV }}:${{ github.sha }}
+            ${{ secrets.DOCKER_IMAGE_DEV }}:${{ steps.variable.outputs.image_tag }}
 
-  deploy:
-    name: Deploy
+  update-deployment-file:
     runs-on: ubuntu-latest
-    permissions:
-      contents: read
-      packages: write
     needs: build
-
     steps:
-      # oracle ssh 접속 후 배포
-      - name: Update Container on VM
-        uses: appleboy/ssh-action@master
+      - name: Checkout deploy-manifests repository
+        uses: actions/checkout@v4
         with:
-          host: ${{ secrets.ORACLE_INSTANCE_DEV_IP }}
-          username: ${{ secrets.ORACLE_INSTANCE_USER }}
-          key: ${{ secrets.ORACLE_INSTANCE_DEV_PRIVATE_KEY }}
-          port: ${{ secrets.ORACLE_INSTANCE_DEV_PORT }}
-          script: |
-            docker pull ${{ secrets.DOCKER_IMAGE_DEV }}:latest
+          repository: Moadong/gitops-moadong
+          token: ${{ secrets.PAT }}
+          ref: main
+          path: gitops-moadong
 
-            export USERNAME=${{ secrets.ORACLE_INSTANCE_USER }}
-            export DOCKER_APP_IMAGE=${{ secrets.DOCKER_IMAGE_DEV }}:latest
-            sudo chmod +x /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
-            sudo -E /home/${{ secrets.ORACLE_INSTANCE_USER }}/deploy.sh
+      - name: Update image tag in kustomize
+        run: |
+          cd gitops-moadong/backend/dev
+          kustomize edit set image ${{ secrets.DOCKER_IMAGE_DEV }}=${{ secrets.DOCKER_IMAGE_DEV }}:${{ needs.build.outputs.image_tag }}
 
-            docker image prune -af
+      - name: Commit and Push changes
+        run: |
+          cd gitops-moadong
+          git config --global user.email "${{ secrets.EMAIL }}"
+          git config --global user.name "${{ secrets.USERNAME }}"
+          git add .
+          git diff --cached --quiet && echo "No changes" && exit 0
+          git commit -m "chore(dev): backend image tag update ${{ needs.build.outputs.image_tag }}"
+          git remote set-url origin https://${{ secrets.PAT }}@github.com/Moadong/gitops-moadong.git
+          git push --set-upstream origin HEAD
