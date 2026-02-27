@@ -25,14 +25,14 @@ public class BannerImagesController {
     @PutMapping
     @PreAuthorize("hasRole('DEVELOPER')")
     @SecurityRequirement(name = "BearerAuth")
-    @Operation(summary = "배너 이미지 목록 저장", description = "배너 이미지 URL 배열 전체를 저장합니다. 배열 인덱스가 노출 순서를 의미합니다.")
+    @Operation(summary = "배너 목록 저장", description = "배너 객체 배열 전체를 저장합니다. 배열 인덱스가 노출 순서를 의미합니다.")
     public ResponseEntity<?> putBannerImages(@RequestBody @Validated BannerImagesRequest request) {
         bannerImagesService.putBannerImages(request.images(), request.type());
         return Response.ok("배너 이미지가 저장되었습니다.");
     }
 
     @GetMapping
-    @Operation(summary = "배너 이미지 목록 조회", description = "저장된 배너 이미지 URL 배열을 반환합니다.")
+    @Operation(summary = "배너 목록 조회", description = "저장된 배너 객체 배열을 반환합니다.")
     public ResponseEntity<?> getBannerImages(@RequestParam(value = "type", required = false, defaultValue = "WEB") PlatformType type) {
         BannerImagesResponse response = bannerImagesService.getBannerImages(type);
         return Response.ok(response);

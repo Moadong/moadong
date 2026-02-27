@@ -20,7 +20,7 @@ public class BannerImages {
     @Id
     private String id;
 
-    private List<String> images;
+    private List<BannerItem> images;
 
     @Builder.Default
     private Instant updatedAt = Instant.now();
