@@ -5,8 +5,8 @@ import useDevice from '@/hooks/useDevice';
 import * as Styled from './Filter.styles';
 
 const FILTER_OPTIONS = [
-  { label: '동아리', path: '/' },
   { label: '동소한', path: '/festival-introduction' },
+  { label: '동아리', path: '/' },
 ] as const;
 
 interface FilterProps {
