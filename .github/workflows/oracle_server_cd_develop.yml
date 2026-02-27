@@ -93,16 +93,16 @@ jobs:
           repository: Moadong/gitops-moadong
           token: ${{ secrets.PAT }}
           ref: main
-          path: gitops
+          path: gitops-moadong
 
       - name: Update image tag in kustomize
         run: |
-          cd gitops/environments/dev/backend
+          cd gitops-moadong/backend/dev
           kustomize edit set image ${{ secrets.DOCKER_IMAGE_DEV }}=${{ secrets.DOCKER_IMAGE_DEV }}:${{ needs.build.outputs.image_tag }}
 
       - name: Commit and Push changes
         run: |
-          cd gitops
+          cd gitops-moadong
           git config --global user.email "${{ secrets.EMAIL }}"
           git config --global user.name "${{ secrets.USERNAME }}"
           git add .
