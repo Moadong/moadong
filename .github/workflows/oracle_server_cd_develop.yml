@@ -89,7 +89,7 @@ jobs:
     if: github.ref == 'refs/heads/develop/be'
     steps:
       - name: Checkout deploy-manifests repository
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
         with:
           repository: Moadong/gitops-moadong
           token: ${{ secrets.PAT }}
