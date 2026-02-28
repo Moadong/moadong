@@ -5,6 +5,10 @@ on:
     tags:
       - "backend/v*"
   workflow_dispatch:
+    inputs:
+      version:
+        description: "배포할 버전 (예: 1.2.3)"
+        required: true
 
 permissions:
   contents: read
@@ -27,7 +31,11 @@ jobs:
         id: version
         run: |
           # backend/v1.2.3 → 1.2.3
-          version="${GITHUB_REF_NAME#backend/v}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="${{ github.event.inputs.version }}"
+          else
+            version="${GITHUB_REF_NAME#backend/v}"
+          fi
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "Building version: $version"
 
