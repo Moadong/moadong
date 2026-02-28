@@ -1,4 +1,4 @@
-import styled, { keyframes, css } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 
 export interface ButtonProps {
   width?: string;
@@ -6,6 +6,8 @@ export interface ButtonProps {
   type?: string;
   onClick?: () => void;
   animated?: boolean;
+  disabled?: boolean;
+  className?: string;
 }
 
 const pulse = keyframes`
@@ -17,11 +19,11 @@ const pulse = keyframes`
 const StyledButton = styled.button<ButtonProps>`
   background-color: #3a3a3a;
   color: #ffffff;
-  height: 45px;
+  height: 42px;
   border-radius: 10px;
   border: none;
   font-weight: 600;
-  font-size: 1.125rem;
+  font-size: 16px;
   cursor: pointer;
   transition: background-color 0.2s;
   width: ${({ width }) => width || 'auto'};
@@ -38,6 +40,13 @@ const StyledButton = styled.button<ButtonProps>`
   &:active {
     transform: ${({ animated }) => (animated ? 'scale(0.95)' : 'none')};
   }
+
+  &:disabled {
+    background-color: #cccccc; /* 비활성화된 느낌의 회색 */
+    color: #666666;
+    cursor: not-allowed; /* 클릭할 수 없음을 나타내는 커서 */
+    opacity: 0.7;
+  }
 `;
 
 const Button = ({
@@ -46,8 +55,17 @@ const Button = ({
   onClick,
   type,
   animated = false,
+  disabled = false,
+  className,
 }: ButtonProps) => (
-  <StyledButton width={width} onClick={onClick} animated={animated} type={type}>
+  <StyledButton
+    width={width}
+    onClick={onClick}
+    animated={animated}
+    type={type}
+    disabled={disabled}
+    className={className}
+  >
     {children}
   </StyledButton>
 );

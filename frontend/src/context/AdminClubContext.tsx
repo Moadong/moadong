@@ -1,8 +1,27 @@
-import { createContext, useContext, useState } from 'react';
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from 'react';
+import { createApplicantSSE } from '@/apis/clubSSE';
+import {
+  ApplicantsInfo,
+  ApplicantStatusEvent,
+  ApplicationStatus,
+} from '@/types/applicants';
 
 interface AdminClubContextType {
   clubId: string | null;
   setClubId: (id: string | null) => void;
+  applicantsData: ApplicantsInfo | null;
+  setApplicantsData: (data: ApplicantsInfo | null) => void;
+  applicationFormId: string | null;
+  setApplicationFormId: (id: string | null) => void;
+  hasConsented: boolean;
+  setHasConsented: (value: boolean) => void;
 }
 
 const AdminClubContext = createContext<AdminClubContextType | undefined>(
@@ -15,9 +34,92 @@ export const AdminClubProvider = ({
   children: React.ReactNode;
 }) => {
   const [clubId, setClubId] = useState<string | null>(null);
+  const [applicantsData, setApplicantsData] = useState<ApplicantsInfo | null>(
+    null,
+  );
+  const [applicationFormId, setApplicationFormId] = useState<string | null>(
+    null,
+  );
+  const [hasConsented, setHasConsented] = useState<boolean>(true);
+  const eventSourceRef = useRef<EventSource | null>(null);
+  const reconnectTimeoutRef = useRef<number | null>(null);
+
+  // SSE 이벤트 핸들러
+  const handleApplicantStatusChange = useCallback(
+    (event: ApplicantStatusEvent) => {
+      setApplicantsData((prevData) => {
+        if (!prevData) return null;
+
+        const updatedApplicants = prevData.applicants.map((applicant) =>
+          applicant.id === event.applicantId
+            ? { ...applicant, status: event.status, memo: event.memo }
+            : applicant,
+        );
+
+        return {
+          ...prevData,
+          applicants: updatedApplicants,
+          reviewRequired: updatedApplicants.filter(
+            (a) => a.status === ApplicationStatus.SUBMITTED,
+          ).length,
+          scheduledInterview: updatedApplicants.filter(
+            (a) => a.status === ApplicationStatus.INTERVIEW_SCHEDULED,
+          ).length,
+          accepted: updatedApplicants.filter(
+            (a) => a.status === ApplicationStatus.ACCEPTED,
+          ).length,
+        };
+      });
+    },
+    [],
+  );
+
+  useEffect(() => {
+    if (!applicationFormId) return;
+
+    const sseConnect = () => {
+      eventSourceRef.current?.close();
+
+      eventSourceRef.current = createApplicantSSE(applicationFormId, {
+        onStatusChange: handleApplicantStatusChange,
+        onError: (error) => {
+          console.error('SSE connection error:', error);
+
+          if (reconnectTimeoutRef.current) return;
+
+          reconnectTimeoutRef.current = window.setTimeout(() => {
+            reconnectTimeoutRef.current = null;
+            sseConnect();
+          }, 2000);
+        },
+      });
+    };
+
+    sseConnect();
+
+    return () => {
+      if (reconnectTimeoutRef.current) {
+        clearTimeout(reconnectTimeoutRef.current);
+        reconnectTimeoutRef.current = null;
+      }
+      eventSourceRef.current?.close();
+      eventSourceRef.current = null;
+    };
+  }, [applicationFormId, handleApplicantStatusChange]);
 
   return (
-    <AdminClubContext.Provider value={{ clubId, setClubId }}>
+    <AdminClubContext.Provider
+      value={{
+        clubId,
+        setClubId,
+        applicantsData,
+        setApplicantsData,
+        applicationFormId,
+        setApplicationFormId,
+        hasConsented,
+        setHasConsented,
+      }}
+    >
       {children}
     </AdminClubContext.Provider>
   );

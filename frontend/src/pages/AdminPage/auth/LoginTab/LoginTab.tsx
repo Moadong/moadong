@@ -1,13 +1,21 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import * as Styled from './LoginTab.styles';
-import InputField from '@/components/common/InputField/InputField';
-import Button from '@/components/common/Button/Button';
-import { login } from '@/apis/auth/login';
+import { login } from '@/apis/auth';
 import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
+import Button from '@/components/common/Button/Button';
+import Header from '@/components/common/Header/Header';
+import InputField from '@/components/common/InputField/InputField';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { STORAGE_KEYS } from '@/constants/storageKeys';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import useAuth from '@/hooks/useAuth';
+import * as Styled from './LoginTab.styles';
 
 const LoginTab = () => {
+  useTrackPageView(PAGE_VIEW.LOGIN_PAGE);
+  const trackEvent = useMixpanelTrack();
+
   const [userId, setUserId] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [loading, setLoading] = useState(false);
@@ -25,8 +33,15 @@ const LoginTab = () => {
     if (loading) return;
     setLoading(true);
     try {
-      const { accessToken } = await login(userId, password);
-      localStorage.setItem('accessToken', accessToken);
+      const loginData = await login(userId, password);
+      if (!loginData) {
+        throw new Error('로그인 응답이 없습니다.');
+      }
+      localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, loginData.accessToken);
+      localStorage.setItem(
+        STORAGE_KEYS.HAS_CONSENTED_PERSONAL_INFO,
+        JSON.stringify(loginData.allowedPersonalInformation),
+      );
       alert('로그인 성공! 관리자 페이지로 이동합니다.');
       navigate('/admin');
     } catch (error: unknown) {
@@ -40,81 +55,88 @@ const LoginTab = () => {
     } finally {
       setLoading(false);
     }
+    trackEvent(ADMIN_EVENT.LOGIN_BUTTON_CLICKED);
   };
 
   if (authLoading) return <div>로딩 중...</div>;
 
   return (
-    <Styled.LoginContainer>
-      <Styled.LoginBox>
-        <Styled.Logo src={moadong_name_logo} alt='Moadong Logo' />
-        <Styled.Title>Log in</Styled.Title>
-        <Styled.LoginForm
-          onSubmit={(e) => {
-            e.preventDefault();
-            handleLogin();
-          }}
-        >
-          <Styled.InputFieldsContainer>
-            <InputField
-              type='text'
-              placeholder='아이디'
-              showClearButton={false}
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-            />
-            <InputField
-              type='password'
-              placeholder='비밀번호'
-              showClearButton={false}
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-            />
-          </Styled.InputFieldsContainer>
+    <>
+      <Header />
+      <Styled.LoginContainer>
+        <Styled.LoginBox>
+          <Styled.Logo src={moadong_name_logo} alt='Moadong Logo' />
+          <Styled.Title>Log in</Styled.Title>
+          <Styled.LoginForm
+            onSubmit={(e) => {
+              e.preventDefault();
+              handleLogin();
+            }}
+          >
+            <Styled.InputFieldsContainer>
+              <InputField
+                type='text'
+                placeholder='아이디'
+                showClearButton={false}
+                value={userId}
+                onChange={(e) => setUserId(e.target.value)}
+              />
+              <InputField
+                type='password'
+                placeholder='비밀번호'
+                showClearButton={false}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+            </Styled.InputFieldsContainer>
 
-          <Styled.ButtonWrapper>
-            <Button width='100%' type='submit'>
-              {loading ? '로그인 중...' : '로그인'}
-            </Button>
-          </Styled.ButtonWrapper>
-        </Styled.LoginForm>
+            <Styled.ButtonWrapper>
+              <Button width='100%' type='submit'>
+                {loading ? '로그인 중...' : '로그인'}
+              </Button>
+            </Styled.ButtonWrapper>
+          </Styled.LoginForm>
 
-        <Styled.ForgotLinks>
-          <Styled.LinkButton
-            type='button'
-            onClick={() =>
-              alert(
-                '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
-              )
-            }
-          >
-            회원가입
-          </Styled.LinkButton>
-          <span>|</span>
-          <Styled.LinkButton
-            type='button'
-            onClick={() =>
-              alert(
-                '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
-              )
-            }
-          >
-            아이디 찾기
-          </Styled.LinkButton>
-          <span>|</span>
-          <Styled.LinkButton
-            type='button'
-            onClick={() =>
-              alert(
-                '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
-              )
-            }
-          >
-            비밀번호 찾기
-          </Styled.LinkButton>
-        </Styled.ForgotLinks>
-      </Styled.LoginBox>
-    </Styled.LoginContainer>
+          <Styled.ForgotLinks>
+            <Styled.LinkButton
+              type='button'
+              onClick={() => {
+                trackEvent(ADMIN_EVENT.SIGNUP_BUTTON_CLICKED);
+                alert(
+                  '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
+                );
+              }}
+            >
+              회원가입
+            </Styled.LinkButton>
+            <span>|</span>
+            <Styled.LinkButton
+              type='button'
+              onClick={() => {
+                trackEvent(ADMIN_EVENT.FORGOT_ID_BUTTON_CLICKED);
+                alert(
+                  '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
+                );
+              }}
+            >
+              아이디 찾기
+            </Styled.LinkButton>
+            <span>|</span>
+            <Styled.LinkButton
+              type='button'
+              onClick={() => {
+                trackEvent(ADMIN_EVENT.FORGOT_PASSWORD_BUTTON_CLICKED);
+                alert(
+                  '해당 기능은 아직 준비 중이에요.\n필요하신 경우 관리자에게 문의해주세요☺',
+                );
+              }}
+            >
+              비밀번호 찾기
+            </Styled.LinkButton>
+          </Styled.ForgotLinks>
+        </Styled.LoginBox>
+      </Styled.LoginContainer>
+    </>
   );
 };
 

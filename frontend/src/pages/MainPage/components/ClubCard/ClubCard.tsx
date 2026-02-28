@@ -1,12 +1,13 @@
 import { useState } from 'react';
-import mixpanel from 'mixpanel-browser';
-import ClubTag from '@/components/ClubTag/ClubTag';
-import ClubLogo from '@/components/ClubLogo/ClubLogo';
-import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
-import * as Styled from './ClubCard.styles';
-import { Club } from '@/types/club';
 import { useNavigate } from 'react-router-dom';
+import mixpanel from 'mixpanel-browser';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
+import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
+import ClubTag from '@/components/ClubTag/ClubTag';
+import { USER_EVENT } from '@/constants/eventName';
+import ClubLogo from '@/pages/MainPage/components/ClubLogo/ClubLogo';
+import { Club } from '@/types/club';
+import * as Styled from './ClubCard.styles';
 
 const ClubCard = ({ club }: { club: Club }) => {
   const navigate = useNavigate();
@@ -14,7 +15,7 @@ const ClubCard = ({ club }: { club: Club }) => {
 
   const handleNavigate = () => {
     setIsClicked(true);
-    mixpanel.track('ClubCard Clicked', {
+    mixpanel.track(USER_EVENT.CLUB_CARD_CLICKED, {
       club_id: club.id,
       club_name: club.name,
       recruitment_status: club.recruitmentStatus,
@@ -22,7 +23,7 @@ const ClubCard = ({ club }: { club: Club }) => {
 
     setTimeout(() => {
       setIsClicked(false);
-      navigate(`/club/${club.id}`);
+      navigate(`/clubDetail/${club.id}`);
     }, 150);
   };
 
@@ -30,26 +31,31 @@ const ClubCard = ({ club }: { club: Club }) => {
     <Styled.CardContainer
       $state={club.recruitmentStatus}
       $isClicked={isClicked}
-      onClick={handleNavigate}>
+      onClick={handleNavigate}
+    >
       <Styled.CardHeader>
         <Styled.ClubProfile>
           <ClubLogo $imageSrc={club.logo || default_profile_image} />
-          <Styled.ClubName>{club.name}</Styled.ClubName>
+          <Styled.ClubInfo>
+            <Styled.ClubName>{club.name}</Styled.ClubName>
+            <Styled.Introduction>{club.introduction}</Styled.Introduction>
+          </Styled.ClubInfo>
         </Styled.ClubProfile>
-        <ClubStateBox state={club.recruitmentStatus} />
       </Styled.CardHeader>
-      <Styled.Introduction>{club.introduction}</Styled.Introduction>
-      <Styled.TagsContainer>
-        <ClubTag key={`division-${club.id}`} type={club.division} />
-        <ClubTag key={`category-${club.id}`} type={club.category} />
-        {club.tags
-          .filter((tag) => tag.trim())
-          .map((tag) => (
-            <ClubTag key={`tag-${club.id}-${tag}`} type={'자유'}>
-              {tag}
-            </ClubTag>
-          ))}
-      </Styled.TagsContainer>
+
+      <Styled.StateBoxTagContainer>
+        <ClubStateBox state={club.recruitmentStatus} />
+        <Styled.TagsContainer>
+          <ClubTag key={`category-${club.id}`} type={club.category} />
+          {club.tags
+            .filter((tag) => tag.trim())
+            .map((tag) => (
+              <ClubTag key={`tag-${club.id}-${tag}`} type={'자유'}>
+                {tag}
+              </ClubTag>
+            ))}
+        </Styled.TagsContainer>
+      </Styled.StateBoxTagContainer>
     </Styled.CardContainer>
   );
 };

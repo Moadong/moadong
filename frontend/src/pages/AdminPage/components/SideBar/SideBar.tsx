@@ -1,41 +1,65 @@
-import React, { useMemo } from 'react';
+import { useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { useQueryClient } from '@tanstack/react-query';
+import { logout } from '@/apis/auth';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './SideBar.styles';
-import { useNavigate, useLocation } from 'react-router-dom';
-import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
 
-import { logout } from '@/apis/auth/logout';
-
-interface SideBarProps {
-  clubName: string;
-  clubLogo: string;
+interface TabItem {
+  label: string;
+  path: string;
 }
 
-const tabs = [
-  { label: '기본 정보 수정', path: '/admin/club-info' },
-  { label: '모집 정보 수정', path: '/admin/recruit-edit' },
-  { label: '활동 사진 수정', path: '/admin/photo-edit' },
-  { label: '지원 관리', path: '/admin/application-edit' },
-  { label: '계정 관리', path: '/admin/account-edit' },
+interface TabCategory {
+  category: string;
+  items: TabItem[];
+}
+
+const tabs: TabCategory[] = [
+  {
+    category: '동아리 정보',
+    items: [
+      { label: '기본 정보 수정', path: '/admin/club-info' },
+      { label: '소개 정보 수정', path: '/admin/club-intro' },
+      { label: '활동 사진 수정', path: '/admin/photo-edit' },
+    ],
+  },
+  {
+    category: '모집 정보',
+    items: [{ label: '모집 정보 수정', path: '/admin/recruit-edit' }],
+  },
+  {
+    category: '지원 관리',
+    items: [
+      { label: '지원서 관리', path: '/admin/application-list' },
+      { label: '지원자 현황', path: '/admin/applicants-list' },
+    ],
+  },
+  {
+    category: '계정 관리',
+    items: [{ label: '비밀번호 수정', path: '/admin/account-edit' }],
+  },
 ];
 
-const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
+const SideBar = () => {
+  const queryClient = useQueryClient();
+  const trackEvent = useMixpanelTrack();
   const location = useLocation();
   const navigate = useNavigate();
 
-  const activeTab = useMemo(
-    () => tabs.findIndex((tab) => location.pathname.startsWith(tab.path)),
-    [location.pathname],
-  );
+  const activeTab = useMemo(() => {
+    return tabs.map((tab) =>
+      tab.items.findIndex((item) => location.pathname.startsWith(item.path)),
+    );
+  }, [location.pathname]);
 
-  const handleTabClick = (tab: (typeof tabs)[number]) => {
-    if (tab.label === '계정 관리') {
-      alert('계정 관리 기능은 아직 준비 중이에요. ☺️');
-      return;
-    } else if (tab.label === '지원 관리') {
-      alert('동아리 지원 관리 기능은 곧 오픈돼요!\n조금만 기다려주세요 🚀');
-      return;
-    }
-    navigate(tab.path);
+  const handleTabClick = (item: TabItem) => {
+    trackEvent(ADMIN_EVENT.TAB_CLICKED, {
+      tabName: item.label,
+    });
+    queryClient.invalidateQueries();
+    navigate(item.path);
   };
 
   const handleLogout = async () => {
@@ -43,7 +67,16 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
     if (!confirmed) return;
 
     try {
-      await logout();
+      if (
+        document.cookie
+          .split(';')
+          .some((cookie) => cookie.trim().startsWith('refreshToken='))
+      ) {
+        await logout();
+      }
+
+      trackEvent(ADMIN_EVENT.LOGOUT_BUTTON_CLICKED);
+
       localStorage.removeItem('accessToken');
       navigate('/admin/login', { replace: true });
     } catch (error) {
@@ -54,24 +87,27 @@ const SideBar = ({ clubLogo, clubName }: SideBarProps) => {
   return (
     <Styled.SidebarWrapper>
       <Styled.SidebarHeader>설정</Styled.SidebarHeader>
-
-      <ClubLogoEditor clubLogo={clubLogo} />
-
-      <Styled.ClubTitle>{clubName}</Styled.ClubTitle>
-      <Styled.divider />
+      <Styled.SidebarDivider />
 
       <Styled.SidebarButtonContainer>
-        {tabs.map((tab, index) => (
-          <Styled.SidebarButton
-            key={tab.label}
-            className={activeTab === index ? 'active' : ''}
-            onClick={() => handleTabClick(tab)}
-          >
-            {tab.label}
-          </Styled.SidebarButton>
+        {tabs.map((tab, tabIndex) => (
+          <li key={tab.category}>
+            <Styled.SidebarCategoryTitle>
+              {tab.category}
+            </Styled.SidebarCategoryTitle>
+            {tab.items.map((item, itemIndex) => (
+              <Styled.SidebarButton
+                key={item.label}
+                className={activeTab[tabIndex] === itemIndex ? 'active' : ''}
+                onClick={() => handleTabClick(item)}
+              >
+                {item.label}
+              </Styled.SidebarButton>
+            ))}
+          </li>
         ))}
       </Styled.SidebarButtonContainer>
-      <Styled.divider />
+      <Styled.SidebarDivider />
       <Styled.SidebarButton onClick={handleLogout}>
         로그아웃
       </Styled.SidebarButton>

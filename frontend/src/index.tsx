@@ -1,19 +1,13 @@
-import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import {
-  initializeMixpanel,
-  initializeChannelService,
-  initializeSentry,
-} from './utils/initSDK';
+import { initializeMixpanel, initializeSentry } from './utils/initSDK';
 
 initializeMixpanel();
-initializeChannelService();
 initializeSentry();
 
 async function startApp() {
-  if (process.env.NODE_ENV === 'development') {
-    const { worker } = await import('./mocks/mswDevSetup');
+  if (import.meta.env.DEV) {
+    const { worker } = await import('./mocks/browser');
     await worker.start({
       onUnhandledRequest: 'bypass',
     });

@@ -34,7 +34,7 @@ const SpinnerCircle = styled.div`
 `;
 
 const Spinner = ({ height }: SpinnerProps) => (
-  <SpinnerWrapper>
+  <SpinnerWrapper height={height}>
     <SpinnerCircle />
   </SpinnerWrapper>
 );

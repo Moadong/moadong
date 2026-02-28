@@ -3,64 +3,58 @@ import styled from 'styled-components';
 export const SidebarWrapper = styled.aside`
   display: flex;
   flex-direction: column;
-  align-items: left;
-  word-wrap: break-word;
-  overflow-wrap: break-word;
-  white-space: normal;
-
-  width: 168px;
+  position: sticky;
+  top: 110px;
+  width: 190px;
+  padding: 12px 10px 10px;
+  border-radius: 20px;
+  background-color: #ffffff;
+  height: fit-content;
 `;
 
 export const SidebarHeader = styled.p`
-  font-size: 1.5rem;
+  padding: 0 8px;
+  font-size: 1.25rem;
   font-weight: bold;
-  letter-spacing: 0;
-  margin-left: 11px;
-  margin-bottom: 24px;
 `;
 
-export const ClubLogo = styled.img`
-  width: 168px;
-  height: 168px;
-  background: #ededed;
-  border-radius: 10px;
-`;
-
-export const ClubTitle = styled.p`
-  text-align: center;
-  margin-top: 14px;
-  font-size: 2rem;
-  font-weight: bold;
-  height: 76px;
-  max-width: 163px;
-`;
-
-export const divider = styled.hr`
+export const SidebarDivider = styled.hr`
   width: 100%;
-  color: black;
-  margin: 14px 0px 29px 0px;
+  margin: 10px 0 12px;
+  border: none;
+  border-top: 1px solid #c5c5c5;
 `;
 
 export const SidebarButtonContainer = styled.ul`
   display: flex;
   flex-direction: column;
-  gap: 8.5px;
+  gap: 12px;
   list-style: none;
 `;
 
-export const SidebarButton = styled.li`
-  cursor: pointer;
-  width: 100%;
-  height: 37px;
-  border-radius: 10px;
+export const SidebarCategoryTitle = styled.p`
+  padding: 6px 10px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #989898;
+`;
+
+export const SidebarButton = styled.button`
+  all: unset;
+  box-sizing: border-box;
   display: flex;
   align-items: center;
-  padding: 9px 11px;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 1rem;
+  font-weight: 500;
+  cursor: pointer;
   transition: background-color 0.1s ease;
 
   &.active {
-    background-color: rgba(255, 84, 20, 0.8);
+    background-color: rgba(255, 117, 67, 1);
     color: white;
-    font-weight: bold;
+    font-weight: 600;
   }
 `;

@@ -1,16 +1,30 @@
 import styled from 'styled-components';
 
+const CARD_STYLES = {
+  desktop: {
+    borderRadius: '20px',
+    padding: '20px',
+    gap: '16px',
+  },
+  mobile: {
+    borderRadius: '16px',
+    padding: '16px',
+    gap: '8px',
+  },
+} as const;
+
 const CardContainer = styled.div<{
   $state: string;
   $isClicked: boolean;
 }>`
+  width: 100%;
   display: flex;
   flex-direction: column;
-  border-radius: 14px;
-  padding: 20px;
+  border-radius: ${CARD_STYLES.desktop.borderRadius};
+  padding: ${CARD_STYLES.desktop.padding};
+  gap: ${CARD_STYLES.desktop.gap};
   background-color: #fff;
-  width: 100%;
-  height: 170px;
+
   box-shadow: ${({ $state }) =>
     $state === 'open'
       ? '0 0 14px rgba(0, 166, 255, 0.15)'
@@ -21,10 +35,20 @@ const CardContainer = styled.div<{
     box-shadow 0.2s ease-in-out;
   transform: ${({ $isClicked }) => ($isClicked ? 'scale(1.05)' : 'scale(1)')};
   cursor: pointer;
+  touch-action: manipulation;
 
-  &:hover {
-    transform: ${({ $isClicked }) =>
-      $isClicked ? 'scale(1.05)' : 'scale(1.03)'};
+  @media (max-width: 500px) {
+    border-radius: ${CARD_STYLES.mobile.borderRadius};
+    padding: ${CARD_STYLES.mobile.padding};
+    gap: ${CARD_STYLES.mobile.gap};
+    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
+  }
+
+  @media (hover: hover) {
+    &:hover {
+      transform: ${({ $isClicked }) =>
+        $isClicked ? 'scale(1.05)' : 'scale(1.03)'};
+    }
   }
 
   &:active {
@@ -44,26 +68,62 @@ const CardHeader = styled.div`
 const ClubProfile = styled.div`
   display: flex;
   align-items: center;
-  gap: 18px;
+  gap: 20px;
 `;
 
-const ClubName = styled.h2`
-  font-size: 1.25rem;
+const ClubInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+`;
+
+const ClubName = styled.p`
+  font-size: 1.375rem;
   font-weight: bold;
+
+  @media (max-width: 500px) {
+    font-size: 1rem;
+  }
+`;
+
+export const StateBoxTagContainer = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 20px;
 `;
 
 const TagsContainer = styled.div`
   display: flex;
-  gap: 8px;
+  gap: 5px;
   flex-wrap: wrap;
+
+  @media (max-width: 500px) {
+    gap: 6px;
+  }
 `;
+
+const INTRODUCTION_MARGIN = {
+  desktop: {
+    margin: '10px 0px 0px 0px',
+  },
+  mobile: {
+    margin: '6px 0px 0px 0px',
+  },
+} as const;
 
 const Introduction = styled.p`
   font-size: 0.875rem;
-  margin: 22px 3px 22px 5px;
+  font-weight: normal;
+  margin: ${INTRODUCTION_MARGIN.desktop.margin};
   color: rgba(129, 129, 129, 1);
   line-height: 16px;
   white-space: nowrap;
+
+  @media (max-width: 500px) {
+    margin: ${INTRODUCTION_MARGIN.mobile.margin};
+    font-size: 0.75rem;
+  }
 `;
 
 export {
@@ -71,6 +131,7 @@ export {
   CardHeader,
   ClubProfile,
   ClubName,
+  ClubInfo,
   TagsContainer,
   Introduction,
 };

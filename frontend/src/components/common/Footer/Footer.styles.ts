@@ -1,9 +1,9 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const FooterContainer = styled.footer`
   text-align: left;
   font-size: 0.75rem;
-  margin-top: 50px;
 `;
 
 export const Divider = styled.hr`
@@ -18,13 +18,22 @@ export const FooterContent = styled.div`
   line-height: 1.25rem;
   color: #818181;
 
-  @media (max-width: 500px) {
+  ${media.mobile} {
     font-size: 0.625rem;
     padding: 20px 20px 30px 20px;
   }
 `;
 
-export const PolicyText = styled.p``;
+export const PolicyLink = styled.a`
+  color: #787878;
+  font-size: 0.75rem;
+  text-decoration: underline;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
+`;
 
 export const CopyRightText = styled.p``;
 

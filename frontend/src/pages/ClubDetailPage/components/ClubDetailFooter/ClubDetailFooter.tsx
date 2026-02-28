@@ -1,37 +1,33 @@
-import * as Styled from './ClubDetailFooter.styles';
-import DeadlineBadge from '@/pages/ClubDetailPage/components/DeadlineBadge/DeadlineBadge';
-import ClubApplyButton from '@/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton';
-import { parseRecruitmentPeriod } from '@/utils/stringToDate';
+import { RecruitmentStatus } from '@/types/club';
 import getDeadlineText from '@/utils/getDeadLineText';
+import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import ClubApplyButton from '../ClubApplyButton/ClubApplyButton';
+import * as Styled from './ClubDetailFooter.styles';
 
 interface ClubDetailFooterProps {
-  recruitmentPeriod: string;
-  recruitmentForm: string;
-  presidentPhoneNumber: string;
+  recruitmentStart: string;
+  recruitmentEnd: string;
+  recruitmentStatus: RecruitmentStatus;
+  hideShareButtonOnMobile?: boolean;
 }
 
 const ClubDetailFooter = ({
-  recruitmentPeriod,
-  recruitmentForm,
-  presidentPhoneNumber,
+  recruitmentStart,
+  recruitmentEnd,
+  recruitmentStatus,
+  hideShareButtonOnMobile = false,
 }: ClubDetailFooterProps) => {
-  const { recruitmentStart, recruitmentEnd } =
-    parseRecruitmentPeriod(recruitmentPeriod);
-
   const deadlineText = getDeadlineText(
-    recruitmentStart,
-    recruitmentEnd,
-    new Date(),
+    recruitmentDateParser(recruitmentStart),
+    recruitmentDateParser(recruitmentEnd),
+    recruitmentStatus,
   );
 
   return (
     <Styled.ClubDetailFooterContainer>
-      <DeadlineBadge deadlineText={deadlineText} />
       <ClubApplyButton
-        {...(deadlineText !== '모집 마감' && {
-          recruitmentForm,
-          presidentPhoneNumber,
-        })}
+        deadlineText={deadlineText}
+        hideShareButtonOnMobile={hideShareButtonOnMobile}
       />
     </Styled.ClubDetailFooterContainer>
   );

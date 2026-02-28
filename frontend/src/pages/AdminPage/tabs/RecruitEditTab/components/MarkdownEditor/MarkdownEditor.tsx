@@ -1,15 +1,19 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import * as Styled from './MarkdownEditor.styles';
 import eye_icon from '@/assets/images/icons/eye_icon.svg';
 import pencil_icon from '@/assets/images/icons/pencil_icon_1.svg';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import * as Styled from './MarkdownEditor.styles';
+
 interface MarkdownEditorProps {
   value: string;
   onChange: (value: string) => void;
 }
 
 const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
+  const trackEvent = useMixpanelTrack();
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const [showPreview, setShowPreview] = useState(false);
 
@@ -53,7 +57,14 @@ const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
         <button onClick={() => insertAtCursor('_기울임_')}>I</button>
         <button onClick={() => insertAtCursor('> 인용문\n')}>“</button>
         <Styled.Spacer />
-        <button onClick={() => setShowPreview((prev) => !prev)}>
+        <button
+          onClick={() => {
+            trackEvent(ADMIN_EVENT.MARKDOWN_EDITOR_PREVIEW_BUTTON_CLICKED, {
+              showToPreview: showPreview ? '편집' : '미리보기',
+            });
+            setShowPreview((prev) => !prev);
+          }}
+        >
           <img
             src={showPreview ? pencil_icon : eye_icon}
             alt={showPreview ? '소개글 편집하기' : '소개글 미리보기'}
@@ -91,7 +102,8 @@ const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
               li: ({ children }) => (
                 <Styled.ListItem>{children}</Styled.ListItem>
               ),
-            }}>
+            }}
+          >
             {value}
           </ReactMarkdown>
         </Styled.PreviewContainer>

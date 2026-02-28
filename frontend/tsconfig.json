@@ -5,7 +5,7 @@
     "module": "ESNext",
     "jsx": "react-jsx",
     "strict": true,
-    "moduleResolution": "node",
+    "moduleResolution": "bundler",
     "esModuleInterop": true,
     "allowSyntheticDefaultImports": true,
     "isolatedModules": true,
@@ -14,9 +14,10 @@
     "incremental": true,
     "baseUrl": "./",
     "paths": {
-      "@/*": ["src/*"],
-    }
+      "@/*": ["src/*"]
+    },
+    "types": ["vite/client", "jest"]
   },
-  "include": ["src","eslint.config.mjs"],
+  "include": ["src", "eslint.config.mjs"],
   "exclude": ["node_modules", "dist"]
 }

@@ -1,96 +1,183 @@
-import React, { useState, useEffect } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import * as Styled from './RecruitEditTab.styles';
-import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
+import { useQueryClient } from '@tanstack/react-query';
+import { setYear } from 'date-fns';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
-import { useUpdateClubDescription } from '@/hooks/queries/club/useUpdateClubDescription';
-import { parseRecruitmentPeriod } from '@/utils/stringToDate';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
+import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
 import { ClubDetail } from '@/types/club';
-import { useQueryClient } from '@tanstack/react-query';
-import MarkdownEditor from '@/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor';
+import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import * as Styled from './RecruitEditTab.styles';
+
+const FAR_FUTURE_YEAR = 2999;
 
 const RecruitEditTab = () => {
-  const clubDetail = useOutletContext<ClubDetail>();
+  const trackEvent = useMixpanelTrack();
+  useTrackPageView(PAGE_VIEW.RECRUITMENT_INFO_EDIT_PAGE);
 
+  const queryClient = useQueryClient();
   const { mutate: updateClubDescription } = useUpdateClubDescription();
+
+  const clubDetail = useOutletContext<ClubDetail>();
 
   const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
-  const [description, setDescription] = useState('');
 
-  const queryClient = useQueryClient();
+  const [always, setAlways] = useState(false);
+
+  const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({
+    start: null,
+    end: null,
+  });
+
+  const isFarFuture = (date: Date | null) =>
+    !!date && date.getFullYear() === FAR_FUTURE_YEAR;
 
   useEffect(() => {
     if (!clubDetail) return;
 
-    const { recruitmentStart: initialStart, recruitmentEnd: initialEnd } =
-      parseRecruitmentPeriod(clubDetail.recruitmentPeriod ?? '');
+    const now = new Date();
+    const start = clubDetail.recruitmentStart
+      ? recruitmentDateParser(clubDetail.recruitmentStart)
+      : null;
+    const end = clubDetail.recruitmentEnd
+      ? recruitmentDateParser(clubDetail.recruitmentEnd)
+      : null;
+    const isAlways = isFarFuture(end);
 
-    setRecruitmentStart((prev) => prev ?? initialStart);
-    setRecruitmentEnd((prev) => prev ?? initialEnd);
+    if (isAlways) {
+      setAlways(true);
+      backupRangeRef.current = { start, end };
+      setRecruitmentStart(start ?? now);
+    } else {
+      setRecruitmentStart(start ?? now);
+      setRecruitmentEnd(end ?? now);
+    }
+
     setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
-    setDescription((prev) => prev || clubDetail.description || '');
   }, [clubDetail]);
 
+  useEffect(() => {
+    if (always && recruitmentStart) {
+      setRecruitmentEnd(setYear(recruitmentStart, FAR_FUTURE_YEAR));
+    }
+  }, [always, recruitmentStart]);
+
+  const toggleAlways = () => {
+    trackEvent(ADMIN_EVENT.ALWAYS_RECRUIT_BUTTON_CLICKED);
+    setAlways((prev) => {
+      const now = new Date();
+
+      if (!prev) {
+        // 상시모집 활성화
+        backupRangeRef.current = {
+          start: recruitmentStart,
+          end: recruitmentEnd,
+        };
+      } else {
+        // 상시모집 비활성화
+        const { start, end } = backupRangeRef.current;
+        const backupWasAlways = isFarFuture(end);
+        if (backupWasAlways) {
+          // 백업이 상시모집인 경우
+          const base = start ?? now;
+          setRecruitmentStart(base);
+          setRecruitmentEnd(base);
+        } else {
+          // 백업이 상시모집이 아닌 경우
+          setRecruitmentStart(start ?? now);
+          setRecruitmentEnd(end ?? now);
+        }
+      }
+      return !prev;
+    });
+  };
+
   const handleUpdateClub = async () => {
+    trackEvent(ADMIN_EVENT.UPDATE_RECRUIT_BUTTON_CLICKED);
     if (!clubDetail) return;
+
+    let startForSave: Date | null = recruitmentStart;
+    let endForSave: Date | null = recruitmentEnd;
+
+    if (always) {
+      const base = recruitmentStart ?? new Date();
+      startForSave = base;
+      endForSave = setYear(base, FAR_FUTURE_YEAR);
+    }
 
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: recruitmentStart?.toISOString(),
-      recruitmentEnd: recruitmentEnd?.toISOString(),
+      recruitmentStart: startForSave?.toISOString() ?? null,
+      recruitmentEnd: endForSave?.toISOString() ?? null,
       recruitmentTarget: recruitmentTarget,
-      description: description,
     };
+
     updateClubDescription(updatedData, {
       onSuccess: () => {
-        alert('동아리 정보가 성공적으로 수정되었습니다.');
-        queryClient.invalidateQueries({
-          queryKey: ['clubDetail', clubDetail.id],
-        });
+        alert('모집 정보가 성공적으로 수정되었습니다.');
       },
       onError: (error) => {
-        alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
+        alert(`모집 정보 수정에 실패했습니다: ${error.message}`);
       },
     });
   };
 
   return (
-    <Styled.RecruitEditorContainer>
-      <Styled.TitleButtonContainer>
-        <Styled.InfoTitle>동아리 모집 정보 수정</Styled.InfoTitle>
-        <Button width={'150px'} animated onClick={handleUpdateClub}>
-          수정하기
-        </Button>
-      </Styled.TitleButtonContainer>
-      <Styled.InfoGroup>
-        <div>
-          <Styled.Label>모집 기간 설정</Styled.Label>
-          <Calendar
-            recruitmentStart={recruitmentStart}
-            recruitmentEnd={recruitmentEnd}
-            onChangeStart={setRecruitmentStart}
-            onChangeEnd={setRecruitmentEnd}
-          />
-        </div>
-        <InputField
-          label='모집 대상 설정'
-          placeholder='모집 대상을 입력해주세요.'
-          type='text'
-          value={recruitmentTarget}
-          onChange={(e) => setRecruitmentTarget(e.target.value)}
-          onClear={() => setRecruitmentTarget('')}
-          maxLength={10}
+    <Styled.Container>
+      <ContentSection>
+        <ContentSection.Header
+          title='모집 정보'
+          action={
+            <Button width={'135px'} animated onClick={handleUpdateClub}>
+              저장하기
+            </Button>
+          }
         />
 
-        <div>
-          <Styled.Label>소개글 수정</Styled.Label>
-          <MarkdownEditor value={description} onChange={setDescription} />
-        </div>
-      </Styled.InfoGroup>
-    </Styled.RecruitEditorContainer>
+        <ContentSection.Body>
+          <div>
+            <Styled.Label>모집 기간</Styled.Label>
+            <Styled.RecruitPeriodContainer>
+              <Calendar
+                recruitmentStart={recruitmentStart}
+                recruitmentEnd={recruitmentEnd}
+                onChangeStart={setRecruitmentStart}
+                onChangeEnd={setRecruitmentEnd}
+                disabledEnd={always}
+              />
+              <Styled.AlwaysRecruitButton
+                type='button'
+                $active={always}
+                onClick={toggleAlways}
+                aria-pressed={always}
+              >
+                상시모집
+              </Styled.AlwaysRecruitButton>
+            </Styled.RecruitPeriodContainer>
+          </div>
+
+          <InputField
+            label='모집 대상'
+            placeholder='모집대상을 입력해주세요'
+            type='text'
+            value={recruitmentTarget}
+            onChange={(e) => setRecruitmentTarget(e.target.value)}
+            onClear={() => {
+              trackEvent(ADMIN_EVENT.RECRUITMENT_TARGET_CLEAR_BUTTON_CLICKED);
+              setRecruitmentTarget('');
+            }}
+            maxLength={10}
+          />
+        </ContentSection.Body>
+      </ContentSection>
+    </Styled.Container>
   );
 };
 export default RecruitEditTab;

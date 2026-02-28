@@ -1,15 +1,39 @@
-import { isAfter, isBefore, differenceInCalendarDays } from 'date-fns';
+import { differenceInCalendarDays, format } from 'date-fns';
+import { ko } from 'date-fns/locale';
+
+const RECRUITMENT_STATUS = {
+  ALWAYS: '상시 모집',
+  UPCOMING: '모집 시작',
+  LAST: '지난 모집',
+  CLOSED: '모집 마감',
+};
 
 const getDeadlineText = (
   recruitmentStart: Date | null,
   recruitmentEnd: Date | null,
+  recruitmentStatus: string,
   today: Date = new Date(),
 ): string => {
-  if (!recruitmentStart || !recruitmentEnd) return '모집 마감';
-  if (isBefore(today, recruitmentStart)) return '모집 전';
-  if (isAfter(today, recruitmentEnd)) return '모집 마감';
+  if (recruitmentStatus === 'CLOSED') {
+    if (!recruitmentEnd) return RECRUITMENT_STATUS.CLOSED;
 
+    const lastDate = format(recruitmentEnd!, 'yyyy M/d', { locale: ko });
+    return `${RECRUITMENT_STATUS.LAST}・${lastDate}`;
+  }
+
+  if (recruitmentStatus === 'UPCOMING') {
+    if (!recruitmentStart) return RECRUITMENT_STATUS.CLOSED;
+    const hour = recruitmentStart.getHours();
+    const minute = recruitmentStart.getMinutes();
+
+    let formatStr = hour === 0 && minute === 0 ? 'M월 d일' : 'M월 d일 HH:mm';
+    return `${format(recruitmentStart, formatStr, { locale: ko })} ${RECRUITMENT_STATUS.UPCOMING}`;
+  }
+
+  if (!recruitmentEnd) return RECRUITMENT_STATUS.CLOSED;
   const days = differenceInCalendarDays(recruitmentEnd, today);
+
+  if (days > 365) return RECRUITMENT_STATUS.ALWAYS; // D-day가 의미 없을 정도로 긴 경우 '상시 모집'으로 표시
   return days > 0 ? `D-${days}` : 'D-Day';
 };
 

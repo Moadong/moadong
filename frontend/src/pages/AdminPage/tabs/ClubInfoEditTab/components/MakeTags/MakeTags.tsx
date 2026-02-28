@@ -1,4 +1,6 @@
-import React from 'react';
+import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './MakeTags.styles';
 
 interface MakeTagsProps {
@@ -7,6 +9,8 @@ interface MakeTagsProps {
 }
 
 const MakeTags = ({ value, onChange }: MakeTagsProps) => {
+  const trackEvent = useMixpanelTrack();
+
   const updateTag = (index: number, newValue: string) => {
     const updatedTags = value.map((tag, i) => {
       if (i === index) {
@@ -27,6 +31,10 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
       return tag;
     });
 
+    trackEvent(ADMIN_EVENT.CLUB_TAG_CLEAR_BUTTON_CLICKED, {
+      tagIndex: index + 1,
+    });
+
     onChange(updatedTags);
   };
 
@@ -41,9 +49,17 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
               value={tag}
               maxLength={5}
               onChange={(e) => updateTag(index, e.target.value)}
+              placeholder={`자유 태그 ${index + 1}`}
+              aria-label={`자유 태그 ${index + 1}`}
             />
             {tag.length > 0 && (
-              <Styled.RemoveButton onClick={() => clearTag(index)} />
+              <Styled.RemoveButton
+                onClick={() => clearTag(index)}
+                aria-label={`자유 태그 ${index + 1} 삭제`}
+                type='button'
+              >
+                <img src={clearButton} alt='' />
+              </Styled.RemoveButton>
             )}
           </Styled.TagItem>
         ))}

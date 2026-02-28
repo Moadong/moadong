@@ -1,4 +1,4 @@
-import { QUESTION_LABEL_MAP } from '@/constants/APPLICATION_FORM';
+import { QUESTION_LABEL_MAP } from '@/constants/applicationForm';
 
 export type QuestionType = keyof typeof QUESTION_LABEL_MAP;
 
@@ -14,6 +14,7 @@ export interface Question {
 }
 
 export interface QuestionBuilderProps extends Question {
+  readOnly: boolean;
   onTitleChange: (value: string) => void;
   onDescriptionChange: (value: string) => void;
   onItemsChange?: (newItems: { value: string }[]) => void;
@@ -47,10 +48,42 @@ export interface ChoiceProps extends QuestionComponentProps {
 
 export interface ApplicationFormData {
   title: string;
-  questions: Question[];
+  description: string;
+  questions?: Question[];
+  semesterYear: number;
+  semesterTerm: string;
+  formMode?: ApplicationFormMode;
+  externalApplicationUrl?: string;
+  active: 'active' | 'published' | 'unpublished';
 }
 
 export interface AnswerItem {
   id: number;
-  answer: string;
+  value: string;
 }
+
+export interface ApplicationForm {
+  id: string;
+  title: string;
+}
+
+export interface ApplicationFormItem {
+  id: string;
+  title: string;
+  editedAt: string;
+  status: 'ACTIVE' | 'PUBLISHED' | 'UNPUBLISHED';
+}
+
+export interface SemesterGroup {
+  semesterYear: number;
+  semesterTerm: string;
+  forms: ApplicationFormItem[];
+}
+
+export const ApplicationFormMode = {
+  INTERNAL: 'INTERNAL',
+  EXTERNAL: 'EXTERNAL',
+} as const;
+
+export type ApplicationFormMode =
+  (typeof ApplicationFormMode)[keyof typeof ApplicationFormMode];

@@ -1,6 +1,6 @@
-import { validateSocialLink } from '@/utils/validateSocialLink';
 import { SNS_CONFIG } from '@/constants/snsConfig';
 import { SNSPlatform } from '@/types/club';
+import { validateSocialLink } from '@/utils/validateSocialLink';
 
 type LinkSet = Record<SNSPlatform, string>;
 

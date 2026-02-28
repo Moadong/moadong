@@ -1,18 +1,25 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const CategoryButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: nowrap;
-  margin-top: 60px;
+  margin-top: 24px;
 
-  @media (max-width: 500px) {
-    margin: 0 -10px;
-    margin-top: 16px;
+  ${media.mobile} {
     background-color: white;
     position: sticky;
     top: 56px;
     z-index: 1;
+
+    margin: 0px -20px;
+    padding: 16px 20px;
+  }
+
+  ${media.mini_mobile} {
+    margin: -10px -10px;
+    padding: 16px 10px 12px;
   }
 `;
 
@@ -23,51 +30,55 @@ export const CategoryButton = styled.button`
   border: none;
   background: none;
   cursor: pointer;
-  padding: 8px;
+  padding: 10px 0px;
   transition: transform 0.1s ease;
+
+  ${media.mobile} {
+    padding: 0px;
+  }
 
   &:active {
     transform: scale(0.95);
   }
 
   img {
-    width: 36px;
-    height: 36px;
+    width: 56px;
+    height: 56px;
     transition: transform 0.2s ease;
 
-    @media (max-width: 500px) {
-      margin-top: 5px;
-      width: 30px;
-      height: 30px;
+    ${media.mobile} {
+      width: 45px;
+      height: 45px;
     }
-    @media (max-width: 360px) {
-      width: 25px;
-      height: 25px;
+    ${media.mini_mobile} {
+      width: 40px;
+      height: 40px;
     }
   }
 
   span {
-    font-size: 1rem;
+    font-size: 14px;
     font-weight: 500;
-    margin-top: 11px;
-    line-height: 30px;
+    color: #787878;
+    margin-top: 8px;
+    line-height: 17px;
     white-space: nowrap;
 
-    @media (max-width: 768px) {
+    ${media.tablet} {
       font-size: 14px;
       margin-top: 10px;
     }
 
-    @media (max-width: 500px) {
+    ${media.mobile} {
       font-size: 12px;
-      margin-top: 11px;
+      margin-top: 4px;
       line-height: normal;
-      margin-bottom: 5px;
+      font-weight: 600;
     }
 
-    @media (max-width: 375px) {
-      font-size: 11px;
-      margin-top: 8px;
+    ${media.mini_mobile} {
+      font-size: 10px;
+      margin-top: 2px;
       line-height: normal;
     }
   }

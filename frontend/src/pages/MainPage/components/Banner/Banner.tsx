@@ -1,133 +1,110 @@
-import { useRef, useState, useEffect, useCallback } from 'react';
+import { useState } from 'react';
+import type { Swiper as SwiperType } from 'swiper';
+import { Autoplay, Navigation } from 'swiper/modules';
+import { Swiper, SwiperSlide } from 'swiper/react';
+import NextButton from '@/assets/images/icons/next_button_icon.svg';
+import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useDevice from '@/hooks/useDevice';
+import useNavigator from '@/hooks/useNavigator';
+import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import * as Styled from './Banner.styles';
-import { SlideButton } from '@/constants/banners';
-import debounce from '@/utils/debounce';
+import BANNERS from './bannerData';
 
-export interface BannerProps {
-  backgroundImage?: string;
-}
+const Banner = () => {
+  const { isMobile } = useDevice();
+  const handleLink = useNavigator();
+  const trackEvent = useMixpanelTrack();
+  const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
-interface BannerComponentProps {
-  desktopBanners: BannerProps[];
-  mobileBanners: BannerProps[];
-}
+  const handlePrev = () => {
+    swiperInstance?.slidePrev();
+  };
 
-const Banner = ({ desktopBanners, mobileBanners }: BannerComponentProps) => {
-  const slideRef = useRef<HTMLDivElement>(null);
-  const [isMobile, setIsMobile] = useState(window.innerWidth <= 500);
-  const [currentSlideIndex, setCurrentSlideIndex] = useState(1);
-  const [slideWidth, setSlideWidth] = useState(0);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const [isTransitioning, setIsTransitioning] = useState(false);
-  const [isReady, setIsReady] = useState(false);
+  const handleNext = () => {
+    swiperInstance?.slideNext();
+  };
 
-  const banners = isMobile ? mobileBanners : desktopBanners;
-  const extendedBanners = [banners[banners.length - 1], ...banners, banners[0]];
+  const handleBannerClick = (
+    bannerId: string,
+    bannerName: string,
+    url?: string,
+  ) => {
+    if (!url) return;
 
-  const updateSlideWidth = useCallback(() => {
-    if (slideRef.current) {
-      const width = slideRef.current.offsetWidth;
-      setSlideWidth(width);
-      if (width > 0) {
-        slideRef.current.style.transform = `translateX(-${currentSlideIndex * width}px)`;
-        if (!isReady) {
-          setIsReady(true);
-          setIsAnimating(true);
-        }
-      }
-    }
-  }, [currentSlideIndex, isReady]);
-
-  useEffect(() => {
-    updateSlideWidth();
-    const handleResize = debounce(() => {
-      setIsMobile(window.innerWidth <= 500);
-      setIsReady(false);
-      setIsAnimating(false);
-      updateSlideWidth();
-    }, 200);
-
-    window.addEventListener('resize', handleResize);
-    return () => {
-      window.removeEventListener('resize', handleResize);
-    };
-  }, [updateSlideWidth]);
-
-  useEffect(() => {
-    if (!slideRef.current || slideWidth === 0) return;
-
-    if (isAnimating) {
-      slideRef.current.style.transform = `translateX(-${currentSlideIndex * slideWidth}px)`;
-    } else {
-      if (currentSlideIndex === 1) {
-        slideRef.current.style.transform = `translateX(-${slideWidth}px)`;
-      } else if (currentSlideIndex === banners.length) {
-        slideRef.current.style.transform = `translateX(-${banners.length * slideWidth}px)`;
-      }
+    if (url === 'APP_STORE_LINK') {
+      const storeLink = getAppStoreLink();
+      trackEvent(USER_EVENT.APP_DOWNLOAD_BANNER_CLICKED, {
+        bannerId,
+        bannerName,
+        platform: detectPlatform(),
+      });
+      handleLink(storeLink);
+      return;
     }
 
-    const transitionEndHandler = () => {
-      if (currentSlideIndex === banners.length + 1) {
-        setIsAnimating(false);
-        setCurrentSlideIndex(1);
-      } else if (currentSlideIndex === 0) {
-        setIsAnimating(false);
-        setCurrentSlideIndex(banners.length);
-      }
-      setIsTransitioning(false);
-    };
-
-    slideRef.current.addEventListener('transitionend', transitionEndHandler);
-    return () => {
-      slideRef.current?.removeEventListener(
-        'transitionend',
-        transitionEndHandler,
-      );
-    };
-  }, [currentSlideIndex, slideWidth, banners.length, isAnimating]);
-
-  const moveToNextSlide = useCallback(() => {
-    if (isTransitioning || !isReady) return;
-    setIsTransitioning(true);
-    setIsAnimating(true);
-    setCurrentSlideIndex((prev) => prev + 1);
-  }, [isTransitioning, isReady]);
-
-  const moveToPrevSlide = useCallback(() => {
-    if (isTransitioning || !isReady) return;
-    setIsTransitioning(true);
-    setIsAnimating(true);
-    setCurrentSlideIndex((prev) => prev - 1);
-  }, [isTransitioning, isReady]);
-
-  useEffect(() => {
-    if (slideWidth === 0 || !isReady) return;
-
-    const interval = setInterval(() => {
-      moveToNextSlide();
-    }, 3000);
-
-    return () => clearInterval(interval);
-  }, [moveToNextSlide, slideWidth, isReady]);
+    trackEvent(USER_EVENT.BANNER_CLICKED, {
+      bannerId,
+      bannerName,
+      linkTo: url,
+    });
+    handleLink(url);
+  };
 
   return (
     <Styled.BannerContainer>
       <Styled.BannerWrapper>
         <Styled.ButtonContainer>
-          <Styled.SlideButton onClick={moveToPrevSlide}>
-            <img src={SlideButton[0]} alt='Previous Slide' />
+          <Styled.SlideButton onClick={handlePrev} aria-label='이전 배너'>
+            <img src={PrevButton} alt='' />
           </Styled.SlideButton>
-          <Styled.SlideButton onClick={moveToNextSlide}>
-            <img src={SlideButton[1]} alt='Next Slide' />
+          <Styled.SlideButton onClick={handleNext} aria-label='다음 배너'>
+            <img src={NextButton} alt='' />
           </Styled.SlideButton>
         </Styled.ButtonContainer>
-        <Styled.SlideWrapper ref={slideRef} $isAnimating={isAnimating}>
-          {extendedBanners.map((banner, index) => (
-            <Styled.BannerItem key={index}>
-              <img src={banner.backgroundImage} alt={`banner-${index}`} />
-            </Styled.BannerItem>
+
+        <Swiper
+          modules={[Navigation, Autoplay]}
+          onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex)}
+          onSwiper={setSwiperInstance}
+          loop={true}
+          autoplay={{
+            delay: 3000,
+            disableOnInteraction: false,
+          }}
+          speed={500}
+        >
+          {BANNERS.map((banner) => (
+            <SwiperSlide key={banner.id}>
+              <Styled.BannerItem
+                isClickable={!!banner.linkTo}
+                onClick={() =>
+                  handleBannerClick(banner.id, banner.alt, banner.linkTo)
+                }
+              >
+                <img
+                  src={isMobile ? banner.mobileImage : banner.desktopImage}
+                  alt={banner.alt}
+                />
+              </Styled.BannerItem>
+            </SwiperSlide>
           ))}
-        </Styled.SlideWrapper>
+        </Swiper>
+        {isMobile && (
+          <Styled.NumericPagination>
+            {currentIndex + 1} / {BANNERS.length}
+          </Styled.NumericPagination>
+        )}
+
+        {!isMobile && (
+          <Styled.DotPagination>
+            {BANNERS.map((_, index) => (
+              <Styled.Dot key={index} active={currentIndex === index} />
+            ))}
+          </Styled.DotPagination>
+        )}
       </Styled.BannerWrapper>
     </Styled.BannerContainer>
   );

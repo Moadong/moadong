@@ -1,65 +1,138 @@
-import useMixpanelTrack from '@/hooks/useMixpanelTrack';
-import styled from 'styled-components';
+import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { useGetClubDetail } from '@/hooks/queries/club/useGetClubDetail';
+import { getApplication, getApplicationOptions } from '@/apis/application';
+import ApplicationSelectModal from '@/components/application/modals/ApplicationSelectModal';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import { useGetClubDetail } from '@/hooks/Queries/useClub';
+import useDevice from '@/hooks/useDevice';
+import { ApplicationForm, ApplicationFormMode } from '@/types/application';
+import ShareButton from '../ShareButton/ShareButton';
+import * as Styled from './ClubApplyButton.styles';
 
-interface ButtonProps {
-  recruitmentForm?: string;
-  presidentPhoneNumber?: string;
+interface ClubApplyButtonProps {
+  deadlineText?: string;
+  hideShareButtonOnMobile?: boolean;
 }
 
-const Button = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 10px;
-  cursor: pointer;
-  transition: transform 0.2s ease-in-out;
-
-  background-color: #3a3a3a;
-  color: white;
-  font-weight: bold;
-
-  width: 148px;
-  height: 44px;
-  font-size: 1.25rem;
-
-  &:hover {
-    background-color: #555;
-    transform: scale(1.03);
-  }
-
-  @media (max-width: 500px) {
-    width: 256px;
-    height: 44px;
-    font-size: 1rem;
-  }
-`;
-
 const ClubApplyButton = ({
-  recruitmentForm,
-  presidentPhoneNumber,
-}: ButtonProps) => {
+  deadlineText,
+  hideShareButtonOnMobile = false,
+}: ClubApplyButtonProps) => {
   const { clubId } = useParams<{ clubId: string }>();
-  const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
+  const trackEvent = useMixpanelTrack();
+  const { data: clubDetail } = useGetClubDetail(clubId!);
+  const { isMobile, isTablet } = useDevice();
+  const shouldShowShareButton = hideShareButtonOnMobile
+    ? !isMobile && !isTablet
+    : true;
 
-  const handleClick = () => {
-    trackEvent('Club Apply Button Clicked');
+  const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
+  const [applicationOptions, setApplicationOptions] = useState<
+    ApplicationForm[]
+  >([]);
 
-    //TODO: 지원서를 작성한 동아리의 경우에만 리다이렉트
-    //navigate(`/application/${clubId}`);
+  if (!clubId || !clubDetail) return null;
 
-    // [x] FIXME: recruitmentForm 있을 때는 리다이렉트
-    if (presidentPhoneNumber) {
-      alert(`${presidentPhoneNumber} 으로 연락하여 지원해 주세요.`);
-    } else {
-      alert('모집이 마감되었습니다. 다음에 지원해 주세요.');
+  const navigateToApplicationForm = async (formId: string) => {
+    try {
+      const formDetail = await getApplication(clubId, formId);
+
+      // 외부 지원서인 경우
+      if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
+        const externalApplicationUrl =
+          formDetail.externalApplicationUrl?.trim();
+        if (externalApplicationUrl) {
+          window.location.href = externalApplicationUrl;
+          return;
+        }
+      }
+
+      // 내부 지원서인 경우
+      navigate(`/application/${clubId}/${formId}`, { state: { formDetail } });
+      setIsApplicationModalOpen(false);
+    } catch (error) {
+      console.error('지원서 조회 중 오류가 발생했습니다', error);
+      alert(
+        '지원서 정보를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.',
+      );
     }
   };
 
-  return <Button onClick={handleClick}>지원하기</Button>;
+  const handleSelectApplicationOption = (option?: ApplicationForm) => {
+    if (!option) return;
+    void navigateToApplicationForm(option.id);
+  };
+
+  const handleApplyButtonClick = async () => {
+    trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED);
+
+    if (isRecruitmentClosed) {
+      alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
+      return;
+    }
+
+    try {
+      const forms = await getApplicationOptions(clubId);
+
+      if (forms.length <= 0) {
+        return;
+      }
+
+      if (forms.length === 1) {
+        await navigateToApplicationForm(forms[0].id);
+        return;
+      }
+      setApplicationOptions(forms);
+      setIsApplicationModalOpen(true);
+    } catch (e) {
+      setApplicationOptions([]);
+      setIsApplicationModalOpen(true);
+      console.error('지원서 옵션 조회 중 오류가 발생했습니다.', e);
+    }
+  };
+
+  const recruitmentStatus = clubDetail.recruitmentStatus;
+  const isRecruitmentClosed = recruitmentStatus === 'CLOSED';
+  const isRecruitmentUpcoming = recruitmentStatus === 'UPCOMING';
+  const isAlwaysRecruiting = recruitmentStatus === 'ALWAYS';
+
+  const renderButtonContent = () => {
+    if (isRecruitmentClosed || isRecruitmentUpcoming) {
+      return deadlineText;
+    }
+
+    return (
+      <>
+        지원하기
+        {!isAlwaysRecruiting && deadlineText && (
+          <>
+            <Styled.Separator />
+            {deadlineText}
+          </>
+        )}
+      </>
+    );
+  };
+
+  return (
+    <Styled.ApplyButtonContainer>
+      {shouldShowShareButton && <ShareButton clubId={clubId} />}
+      <Styled.ApplyButton
+        disabled={isRecruitmentUpcoming || isRecruitmentClosed}
+        onClick={handleApplyButtonClick}
+      >
+        {renderButtonContent()}
+      </Styled.ApplyButton>
+      <ApplicationSelectModal
+        isOpen={isApplicationModalOpen}
+        onClose={() => setIsApplicationModalOpen(false)}
+        applicationOptions={applicationOptions}
+        onOptionSelect={handleSelectApplicationOption}
+      />
+    </Styled.ApplyButtonContainer>
+  );
 };
 
 export default ClubApplyButton;

@@ -1,25 +1,31 @@
-import React, { useState } from 'react';
-import * as Styled from './IntroducePage.styles';
-import Header from '@/components/common/Header/Header';
 import Footer from '@/components/common/Footer/Footer';
-import Spinner from '@/components/common/Spinner/Spinner';
-import IntroduceImage from '@/assets/images/introduce/Introduce.png';
+import Header from '@/components/common/Header/Header';
+import { PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import IntroSection from './components/sections/1.IntroSection/IntroSection';
+import ProblemSection from './components/sections/2.ProblemSection/ProblemSection';
+import QuestionSection from './components/sections/3.QuestionSection/QuestionSection';
+import CatchphraseSection from './components/sections/4.CatchphraseSection/CatchphraseSection';
+import FeatureSection from './components/sections/5.FeatureSection/FeatureSection';
+import ConvenienceSection from './components/sections/6.ConvenienceSection/ConvenienceSection';
+import ContactSection from './components/sections/7.ContactSection/ContactSection';
+import * as Styled from './IntroducePage.styles';
 
 const IntroducePage = () => {
-  const [loading, setLoading] = useState(true);
+  useTrackPageView(PAGE_VIEW.INTRODUCE_PAGE);
 
   return (
     <>
-      <Styled.IntroducePageHeader>
-        <Header />
-      </Styled.IntroducePageHeader>
-      {loading && <Spinner height='800px' />}
-      <Styled.IntroduceImage
-        src={IntroduceImage}
-        alt='소개 이미지'
-        style={{ display: loading ? 'none' : 'block' }}
-        onLoad={() => setLoading(false)}
-      />
+      <Header hideOn={['webview']} />
+      <Styled.Main>
+        <IntroSection />
+        <ProblemSection />
+        <QuestionSection />
+        <CatchphraseSection />
+        <FeatureSection />
+        <ConvenienceSection />
+        <ContactSection />
+      </Styled.Main>
       <Styled.IntroducePageFooter>
         <Footer />
       </Styled.IntroducePageFooter>

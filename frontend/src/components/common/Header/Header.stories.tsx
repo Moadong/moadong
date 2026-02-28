@@ -1,8 +1,6 @@
-import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import Header from './Header';
-import { BrowserRouter } from 'react-router-dom';
-import { SearchProvider } from '@/context/SearchContext';
 
 const meta = {
   title: 'Components/Common/Header',
@@ -13,9 +11,7 @@ const meta = {
   decorators: [
     (Story) => (
       <BrowserRouter>
-        <SearchProvider>
-          <Story />
-        </SearchProvider>
+        <Story />
       </BrowserRouter>
     ),
   ],
@@ -27,12 +23,4 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {},
-};
-
-export const Desktop: Story = {
-  parameters: {
-    viewport: {
-      defaultViewport: 'desktop',
-    },
-  },
 };
