@@ -8,6 +8,7 @@ const FILTER_OPTIONS = [
   { label: '동소한', path: '/festival-introduction' },
   { label: '동아리', path: '/' },
 ] as const;
+const FESTIVAL_PATH = '/festival-introduction';
 
 interface FilterProps {
   alwaysVisible?: boolean;
@@ -32,13 +33,17 @@ const Filter = ({ alwaysVisible = false }: FilterProps) => {
       {shouldShow && (
         <Styled.FilterListContainer>
           {FILTER_OPTIONS.map((filter) => (
-            <Styled.FilterButton
-              key={filter.path}
-              $isActive={pathname === filter.path}
-              onClick={() => handleFilterOptionClick(filter.path)}
-            >
-              {filter.label}
-            </Styled.FilterButton>
+            <Styled.FilterButtonWrapper key={filter.path}>
+              <Styled.NotificationDot
+                $isVisible={filter.path === FESTIVAL_PATH}
+              />
+              <Styled.FilterButton
+                $isActive={pathname === filter.path}
+                onClick={() => handleFilterOptionClick(filter.path)}
+              >
+                {filter.label}
+              </Styled.FilterButton>
+            </Styled.FilterButtonWrapper>
           ))}
         </Styled.FilterListContainer>
       )}
