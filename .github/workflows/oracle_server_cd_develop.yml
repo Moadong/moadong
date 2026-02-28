@@ -109,5 +109,4 @@ jobs:
           git add .
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "chore(dev): backend image tag update ${{ needs.build.outputs.image_tag }}"
-          git remote set-url origin https://${{ secrets.PAT }}@github.com/Moadong/gitops-moadong.git
-          git push --set-upstream origin HEAD
+          git push
