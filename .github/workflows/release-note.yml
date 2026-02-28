@@ -42,7 +42,7 @@ jobs:
             "$tag"
             --title "${prefix} ${version}"
             --generate-notes
-            --latest=false
+            --latest
           )
 
           # 이전 태그가 존재하면 비교 기준으로 지정
