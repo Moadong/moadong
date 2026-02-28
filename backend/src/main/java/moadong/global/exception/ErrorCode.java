@@ -58,6 +58,8 @@ public enum ErrorCode {
     APPLICATION_SEMESTER_INVALID(HttpStatus.BAD_REQUEST, "800-7", "올바르지 않은 학기입니다."),
     NOT_ALLOWED_EXTERNAL_URL(HttpStatus.BAD_REQUEST, "800-8", "형식에 맞지않은 외부지원서 URL 입니다."),
     DUPLICATE_QUESTIONS_ITEMS(HttpStatus.BAD_REQUEST, "800-9", "중복된 질문 선택지가 존재합니다."),
+    APPLICATION_REQUIRED_FIELDS_MISSING(HttpStatus.BAD_REQUEST, "800-10", "지원서 양식에 필요한 필드가 누락되었습니다."),
+    EXTERNAL_APPLICATION_URL_MISSING(HttpStatus.BAD_REQUEST, "800-11", "외부 링크가 누락되었습니다."),
 
     // 900xx: 기타 시스템 오류
     AES_CIPHER_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "900-1", "암호화 중 오류가 발생했습니다."),
