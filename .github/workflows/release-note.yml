@@ -1,0 +1,53 @@
+name: "3. Release Notes"
+
+on:
+  push:
+    tags:
+      - "frontend/v*"
+      - "backend/v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags
+        run: git fetch --tags --force
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          tag="${GITHUB_REF_NAME}"
+
+          # 태그에서 prefix와 버전 추출 (frontend/v1.2.3 → prefix=frontend, version=1.2.3)
+          prefix="${tag%%/*}"
+          version="${tag#*/}"
+
+          # 이전 태그 찾기
+          latest_tag=$(git tag -l "${prefix}/v*" --sort=-v:refname | grep -v "^${tag}$" | head -n 1)
+
+          echo "Creating release for: $tag"
+          echo "   prefix: $prefix, version: $version"
+          echo "   previous tag: ${latest_tag:-none}"
+
+          release_args=(
+            "$tag"
+            --title "${prefix} ${version}"
+            --generate-notes
+            --latest
+          )
+
+          # 이전 태그가 존재하면 비교 기준으로 지정
+          if [ -n "$latest_tag" ] && git rev-parse "$latest_tag" >/dev/null 2>&1; then
+            release_args+=(--notes-start-tag "$latest_tag")
+          fi
+
+          gh release create "${release_args[@]}"
