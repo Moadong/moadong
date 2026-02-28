@@ -1,0 +1,86 @@
+name: "1. Semver Tag on PR Merge"
+
+on:
+  pull_request:
+    types: [closed]
+    branches: [main]
+
+permissions:
+  contents: write
+  pull-requests: read
+
+jobs:
+  tag:
+    if: github.event.pull_request.merged == true
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Fetch tags
+        run: git fetch --tags --force
+
+      - name: Read PR labels & create tag(s)
+        env:
+          GH_TOKEN: ${{ secrets.PAT }}
+        run: |
+          labels='${{ toJson(github.event.pull_request.labels) }}'
+          echo "labels: $labels"
+
+          # 서비스 라벨 확인
+          front="false"
+          back="false"
+          echo "$labels" | grep -q '"name": "💻 FE"' && front="true" || true
+          echo "$labels" | grep -q '"name": "💾 BE"' && back="true" || true
+
+          # bump 타입 (우선순위: major > minor > patch)
+          bump=""
+          echo "$labels" | grep -q '"name": "🚨 MAJOR"' && bump="major" || true
+          if [ -z "$bump" ]; then
+            echo "$labels" | grep -q '"name": "➕ MINOR"' && bump="minor" || true
+          fi
+          if [ -z "$bump" ]; then
+            echo "$labels" | grep -q '"name": "🔧 PATCH"' && bump="patch" || true
+          fi
+
+          # 방어 로직
+          if [ "$front" != "true" ] && [ "$back" != "true" ]; then
+            echo "⚠️ No service label (fe/be) found. Skipping."
+            exit 0
+          fi
+
+          if [ -z "$bump" ]; then
+            echo "⚠️ No bump label (major/minor/patch) found. Skipping."
+            exit 0
+          fi
+
+          # 태그 생성 함수
+          bump_tag () {
+            prefix="$1"
+            latest_tag=$(git tag -l "${prefix}/v*" --sort=-v:refname | head -n 1)
+            [ -z "$latest_tag" ] && latest_tag="${prefix}/v0.0.0"
+
+            current_version=${latest_tag#${prefix}/v}
+            IFS='.' read -r major minor patch <<< "$current_version"
+
+            case "$bump" in
+              major) new_version="$((major + 1)).0.0" ;;
+              minor) new_version="${major}.$((minor + 1)).0" ;;
+              patch) new_version="${major}.${minor}.$((patch + 1))" ;;
+            esac
+
+            new_tag="${prefix}/v${new_version}"
+            echo "Creating tag: $new_tag (from $latest_tag, bump=$bump)"
+            git tag "$new_tag"
+            git push origin "$new_tag"
+          }
+
+          if [ "$front" = "true" ]; then
+            bump_tag "frontend"
+          fi
+
+          if [ "$back" = "true" ]; then
+            bump_tag "backend"
+          fi
