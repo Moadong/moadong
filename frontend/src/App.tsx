@@ -76,7 +76,11 @@ const App = () => {
                 {/*한국어핸들 */}
                 <Route
                   path='/clubDetail/@:clubName'
-                  element={<ClubDetailPage />}
+                  element={
+                    <ContentErrorBoundary>
+                      <ClubDetailPage />
+                    </ContentErrorBoundary>
+                  }
                 />
                 {/*새로 빌드해서 배포할 앱 주소 url*/}
                 <Route
