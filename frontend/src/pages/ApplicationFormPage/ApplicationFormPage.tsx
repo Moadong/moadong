@@ -61,7 +61,7 @@ const ApplicationFormPage = () => {
   if (isError || clubError) {
     alert(applicationError?.message || '문제가 발생했어요.');
     if (clubDetail?.name) {
-      navigate(`/clubDetail/@${clubDetail?.name}`);
+      navigate(`/clubDetail/@${encodeURIComponent(clubDetail?.name)}`);
     } else {
       navigate(`/`);
     }
@@ -115,7 +115,10 @@ const ApplicationFormPage = () => {
       alert(
         `"${clubDetail.name}" 동아리에 성공적으로 지원되었습니다.\n좋은 결과 있으시길 바랍니다`,
       );
-      navigate(`/clubDetail/@${clubDetail.name}`, { replace: true });
+      navigate(
+        `/clubDetail/@${encodeURIComponent(clubDetail.name)}`,
+        { replace: true },
+      );
     } catch (error) {
       alert(
         '답변 제출에 실패했어요.\n네트워크 상태를 확인하거나 잠시 후 다시 시도해 주세요.',
