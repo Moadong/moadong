@@ -9,6 +9,10 @@ permissions:
   contents: read
   packages: write
 
+concurrency:
+  group: backend-deploy
+  cancel-in-progress: false
+
 jobs:
   build:
     runs-on: ubuntu-latest
