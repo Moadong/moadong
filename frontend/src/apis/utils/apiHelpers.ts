@@ -1,22 +1,34 @@
+import { ApiError } from '@/errors';
+
 export const handleResponse = async <T = unknown>(
   response: Response,
   customErrorMessage?: string,
 ): Promise<T | undefined> => {
   if (!response.ok) {
-    if (customErrorMessage) {
-      throw new Error(customErrorMessage);
-    }
+    let message = customErrorMessage ?? response.statusText;
+    let errorCode: string | undefined;
+    let errorData: unknown;
 
-    let message = response.statusText;
     try {
-      const errorData = await response.json();
-      if (errorData?.message) {
-        message = errorData.message;
+      const body = await response.json();
+      errorData = body;
+      if (body?.message) {
+        message = customErrorMessage ?? body.message;
+      }
+      if (body?.errorCode) {
+        errorCode = body.errorCode;
       }
     } catch {
       // JSON 파싱 실패시 statusText 사용
     }
-    throw new Error(message);
+
+    throw new ApiError(
+      response.status,
+      response.statusText,
+      errorCode,
+      errorData,
+      message,
+    );
   }
 
   const contentType = response.headers.get('content-type');

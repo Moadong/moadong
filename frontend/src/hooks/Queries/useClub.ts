@@ -21,12 +21,12 @@ interface UseGetCardListProps {
   division: string;
 }
 
-export const useGetClubDetail = (clubId: string) => {
+export const useGetClubDetail = (clubParam: string) => {
   return useQuery<ClubDetail>({
-    queryKey: queryKeys.club.detail(clubId),
-    queryFn: () => getClubDetail(clubId as string),
+    queryKey: queryKeys.club.detail(clubParam),
+    queryFn: () => getClubDetail(clubParam as string),
     staleTime: 60 * 1000,
-    enabled: !!clubId,
+    enabled: !!clubParam,
     select: (data) =>
       ({
         ...data,
