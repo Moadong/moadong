@@ -4,10 +4,19 @@ on:
   push:
     tags:
       - "backend/v*"
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "배포할 버전 (예: 1.2.3)"
+        required: true
 
 permissions:
   contents: read
   packages: write
+
+concurrency:
+  group: backend-deploy
+  cancel-in-progress: false
 
 jobs:
   build:
@@ -22,7 +31,11 @@ jobs:
         id: version
         run: |
           # backend/v1.2.3 → 1.2.3
-          version="${GITHUB_REF_NAME#backend/v}"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            version="${{ github.event.inputs.version }}"
+          else
+            version="${GITHUB_REF_NAME#backend/v}"
+          fi
           echo "version=$version" >> $GITHUB_OUTPUT
           echo "Building version: $version"
 
@@ -109,5 +122,4 @@ jobs:
           git add .
           git diff --cached --quiet && echo "No changes" && exit 0
           git commit -m "chore(prod): backend image tag update ${{ needs.build.outputs.image_tag }}"
-          git remote set-url origin https://${{ secrets.PAT }}@github.com/Moadong/gitops-moadong.git
-          git push --set-upstream origin HEAD
+          git push
