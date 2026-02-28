@@ -28,10 +28,12 @@ export const validateApplicationForm = (
     errors.title = '지원서 제목은 최대 50자까지 입력할 수 있습니다.';
   }
 
-  if (!formData.description?.trim()) {
-    errors.description = '지원서 설명을 입력해주세요.';
-  } else if (formData.description.length > 3000) {
-    errors.description = '지원서 설명은 최대 3000자까지 입력할 수 있습니다.';
+  if (mode === ApplicationFormMode.INTERNAL) {
+    if (!formData.description?.trim()) {
+      errors.description = '지원서 설명을 입력해주세요.';
+    } else if (formData.description.length > 3000) {
+      errors.description = '지원서 설명은 최대 3000자까지 입력할 수 있습니다.';
+    }
   }
 
   if (mode === ApplicationFormMode.INTERNAL) {
