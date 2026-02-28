@@ -3,26 +3,26 @@ package moadong.club.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.Club;
-import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.payload.dto.ClubDetailedResult;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.payload.response.ClubListResponse;
 import moadong.club.repository.ClubRepository;
-import moadong.club.repository.ClubSearchRepository;
 import moadong.club.util.RecruitmentStateCalculator;
+import moadong.club.util.RecruitmentStateNotificationBuilder;
+import moadong.fcm.port.PushNotificationPort;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.javers.core.Javers;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Map;
 
 @Service
 @AllArgsConstructor
@@ -30,16 +30,18 @@ import java.util.Map;
 public class ClubProfileService {
 
     private final ClubRepository clubRepository;
-    private final ClubSearchRepository clubSearchRepository;
     private final RecruitmentStateCalculator recruitmentStateCalculator;
+    private final RecruitmentStateNotificationBuilder recruitmentStateNotificationBuilder;
+    private final PushNotificationPort pushNotificationPort;
     private final Javers javers;
 
     @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
         Club club = clubRepository.findClubByUserId(user.getId())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        validateClubNameUnique(club.getId(), request.name());
         club.update(request);
-        Club saved = clubRepository.save(club);
+        Club saved = saveClub(club);
         javers.commit(user.getUsername(), saved);
     }
 
@@ -48,7 +50,7 @@ public class ClubProfileService {
         Club club = clubRepository.findClubByUserId(user.getId())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
-        recruitmentStateCalculator.calculate(
+        boolean changed = recruitmentStateCalculator.calculate(
                 club,
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
@@ -56,6 +58,15 @@ public class ClubProfileService {
         club.getClubRecruitmentInformation().updateLastModifiedDate();
         Club saved = clubRepository.save(club);
         javers.commit(user.getUsername(), saved);
+
+        if (changed && request.shouldSendNotification()) {
+            pushNotificationPort.send(
+                    recruitmentStateNotificationBuilder.build(
+                            club,
+                            club.getClubRecruitmentInformation().getClubRecruitmentStatus()
+                    )
+            );
+        }
     }
 
     public ClubListResponse getAllClubsForAdmin() {
@@ -75,6 +86,14 @@ public class ClubProfileService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
+        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club);
+        return new ClubDetailedResponse(clubDetailedResult);
+    }
+
+    public ClubDetailedResponse getClubDetailByClubName(String clubName) {
+        Club club = clubRepository.findClubByName(clubName)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(
                 club
         );
@@ -86,8 +105,9 @@ public class ClubProfileService {
         ObjectId objectId = ObjectIdConverter.convertString(clubId);
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        validateClubNameUnique(club.getId(), request.name());
         club.update(request);
-        Club saved = clubRepository.save(club);
+        Club saved = saveClub(club);
         javers.commit(user.getUsername(), saved);
     }
 
@@ -98,7 +118,7 @@ public class ClubProfileService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
         club.update(request);
-        recruitmentStateCalculator.calculate(
+        boolean changed = recruitmentStateCalculator.calculate(
                 club,
                 club.getClubRecruitmentInformation().getRecruitmentStart(),
                 club.getClubRecruitmentInformation().getRecruitmentEnd()
@@ -106,6 +126,32 @@ public class ClubProfileService {
         club.getClubRecruitmentInformation().updateLastModifiedDate();
         Club saved = clubRepository.save(club);
         javers.commit(user.getUsername(), saved);
+        if (changed && request.shouldSendNotification()) {
+            pushNotificationPort.send(
+                    recruitmentStateNotificationBuilder.build(
+                            club,
+                            club.getClubRecruitmentInformation().getClubRecruitmentStatus()
+                    )
+            );
+        }
+    }
+
+    private void validateClubNameUnique(String clubId, String name) {
+        if (name == null || name.isBlank()) {
+            return;
+        }
+
+        if (clubRepository.existsByNameAndIdNot(name, clubId)) {
+            throw new RestApiException(ErrorCode.CLUB_NAME_ALREADY_EXISTS);
+        }
+    }
+
+    // 레이스 컨디션을 위한 시큐어 코딩
+    private Club saveClub(Club club) {
+        try {
+            return clubRepository.save(club);
+        } catch (DuplicateKeyException e) {
+            throw new RestApiException(ErrorCode.CLUB_NAME_ALREADY_EXISTS);
+        }
     }
 }
-

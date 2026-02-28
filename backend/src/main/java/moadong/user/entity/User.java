@@ -41,7 +41,7 @@ public class User implements UserDetails {
     private String userId;
 
     @NotNull
-    @Size(min = 8, max = 20)
+    @Size(min = 8)
     private String password;
 
     @Builder.Default

@@ -1,12 +1,8 @@
 package moadong.club.entity;
 
-import com.google.firebase.messaging.FirebaseMessaging;
-import com.google.firebase.messaging.FirebaseMessagingException;
-import com.google.firebase.messaging.Message;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.extern.slf4j.Slf4j;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.request.ClubInfoRequest;
@@ -17,13 +13,13 @@ import org.javers.core.metamodel.annotation.DiffIgnore;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.data.mongodb.core.mapping.Field;
 
 import java.util.List;
 import java.util.Map;
 
-@Slf4j
 @Document("clubs")
 @AllArgsConstructor
 @Getter
@@ -32,6 +28,8 @@ public class Club implements Persistable<String> {
     @Id
     private String id;
 
+    @Indexed(name = "uk_club_name_not_blank", unique = true,
+            partialFilter = "{ \"name\": { \"$type\": \"string\", \"$gt\": \"\" } }")
     private String name;
 
     private String category;
@@ -144,16 +142,6 @@ public class Club implements Persistable<String> {
 
     public void updateRecruitmentStatus(ClubRecruitmentStatus clubRecruitmentStatus) {
         this.clubRecruitmentInformation.updateRecruitmentStatus(clubRecruitmentStatus);
-    }
-
-    public void sendPushNotification(Message message) {
-        try {
-            log.info("FCM 알림 전송 시작 - clubId: {}, clubName: {}", this.id, this.name);
-            String messageId = FirebaseMessaging.getInstance().send(message);
-            log.info("FCM 알림 전송 성공 - clubId: {}, messageId: {}", this.id, messageId);
-        } catch (FirebaseMessagingException e) {
-            log.error("FCM 알림 전송 실패 - clubId: {}, error: {}", this.id, e.getMessage());
-        }
     }
 
     @Override

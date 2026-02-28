@@ -53,6 +53,16 @@ public class ClubSearchService {
                                                 Integer.MAX_VALUE))
                                 .thenComparing(ClubSearchResult::name)
                 )
+                .map(r -> new ClubSearchResult(
+                        r.id(),
+                        r.name(),
+                        r.logo(),
+                        r.tags(),
+                        r.state(),
+                        r.category(),
+                        r.division(),
+                        r.introduction(),
+                        r.recruitmentStatus()))
                 .collect(Collectors.toList());
 
         return ClubSearchResponse.builder()

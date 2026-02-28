@@ -91,6 +91,7 @@
         <a href="#api-docs">API 문서</a>
         <a href="#club">동아리</a>
         <a href="#dict">단어사전</a>
+        <a href="#conversion-batch">이미지 변환 배치</a>
       </nav>
     </div>
     <div id="headerStatus" class="header-status hidden">
@@ -212,6 +213,24 @@
         </a>
       </div>
     </section>
+
+    <section id="conversion-batch" class="hidden">
+      <h2>이미지 변환 배치 (전체 동아리)</h2>
+      <p class="sub">source → destination 이미지 URL을 모든 동아리의 로고/커버/피드 이미지에서 일괄 갱신합니다. event=batch.completed, images 배열 필수.</p>
+      <div id="conversionBanner" class="banner hidden"></div>
+      <div class="form-row">
+        <label for="conversionImagesJson">images (JSON 배열)</label>
+        <textarea id="conversionImagesJson" rows="8" placeholder='[{"source":"old-key.png","destination":"new-key.webp"}]' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+      </div>
+      <button type="button" id="btnConversionBatch">배치 실행</button>
+      <button type="button" id="btnWebpMigrate">WebP 마이그레이션 실행</button>
+      <div class="card-grid" style="margin-top:16px;">
+        <a href="/swagger-ui.html#/Conversion_Batch_Admin" target="_blank" rel="noopener" class="card">
+          <strong>Conversion Batch Admin API</strong>
+          <span>POST /api/admin/conversion-batch</span>
+        </a>
+      </div>
+    </section>
   </main>
 
   <script>
@@ -245,6 +264,7 @@
       document.getElementById('tokenArea').classList.toggle('hidden', !show);
       document.getElementById('club').classList.toggle('hidden', !show);
       document.getElementById('dict').classList.toggle('hidden', !show);
+      document.getElementById('conversion-batch').classList.toggle('hidden', !show);
       const headerStatus = document.getElementById('headerStatus');
       const headerUserId = document.getElementById('headerUserId');
       if (show) {
@@ -637,6 +657,85 @@
         showToast(e.message || '요청 실패', 'error');
       }
     }
+
+    document.getElementById('btnConversionBatch').onclick = async () => {
+      const text = document.getElementById('conversionImagesJson').value.trim();
+      const banner = document.getElementById('conversionBanner');
+      banner.classList.add('hidden');
+      banner.className = 'banner hidden';
+      let images;
+      try {
+        images = text ? JSON.parse(text) : [];
+      } catch (e) {
+        banner.textContent = 'JSON 형식이 올바르지 않습니다.';
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        return;
+      }
+      if (!Array.isArray(images) || !images.length) {
+        banner.textContent = 'images 배열을 최소 1개 이상 입력하세요.';
+        banner.className = 'banner warn';
+        banner.classList.remove('hidden');
+        return;
+      }
+      const btn = document.getElementById('btnConversionBatch');
+      btn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/conversion-batch', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ event: 'batch.completed', images })
+        });
+        const data = await res.json();
+        if (res.status === 403) {
+          banner.textContent = '개발자 계정으로 로그인하세요.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          return;
+        }
+        if (res.ok) {
+          showToast(data.message || '배치 처리 완료', 'success');
+          banner.classList.add('hidden');
+        } else {
+          banner.textContent = data.message || '배치 처리 실패';
+          banner.className = 'banner error';
+          banner.classList.remove('hidden');
+        }
+      } catch (e) {
+        banner.textContent = '요청 실패: ' + (e.message || '');
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    document.getElementById('btnWebpMigrate').onclick = async () => {
+      const btn = document.getElementById('btnWebpMigrate');
+      btn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/conversion-batch/webp-migrate', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({})
+        });
+        const data = await res.json();
+        if (res.status === 403) {
+          showToast('개발자 계정으로 로그인하세요.', 'error');
+          return;
+        }
+        if (res.ok) {
+          showToast(data.message || 'WebP 마이그레이션 완료', 'success');
+        } else {
+          showToast(data.message || 'WebP 마이그레이션 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
 
   </script>
 </body>

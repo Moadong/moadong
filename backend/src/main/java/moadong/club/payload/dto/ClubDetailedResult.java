@@ -48,6 +48,7 @@ public record ClubDetailedResult(
             DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy.MM.dd HH:mm");
             lastModifiedDate = club.getClubRecruitmentInformation().getLastModifiedDate().format(formatter);
         }
+
         return ClubDetailedResult.builder()
                 .id(club.getId() == null ? "" : club.getId())
                 .name(club.getName() == null ? "" : club.getName())
