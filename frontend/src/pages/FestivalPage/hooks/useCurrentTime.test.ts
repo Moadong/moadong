@@ -34,7 +34,9 @@ describe('useCurrentTime', () => {
     expect(result.current).toBe('13:05');
 
     // 29초 경과 — 아직 갱신 안 됨
-    act(() => { jest.advanceTimersByTime(29_999); });
+    act(() => {
+      jest.advanceTimersByTime(29_999);
+    });
     expect(result.current).toBe('13:05');
 
     // 분 경계 도달 (30초 timeout 완료)
