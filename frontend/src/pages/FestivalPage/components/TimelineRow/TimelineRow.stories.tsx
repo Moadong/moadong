@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import TimelineRow from './TimelineRow';
 import PerformanceCard from '../PerformanceCard/PerformanceCard';
+import TimelineRow from './TimelineRow';
 
 const pastPerformance = {
   id: 1,
@@ -59,7 +59,11 @@ const meta = {
 } satisfies Meta<typeof TimelineRow>;
 
 export default meta;
-type Story = StoryObj<{ time: string; status: 'past' | 'active' | 'upcoming'; children?: React.ReactNode }>;
+type Story = StoryObj<{
+  time: string;
+  status: 'past' | 'active' | 'upcoming';
+  children?: React.ReactNode;
+}>;
 
 export const Past: Story = {
   args: {
@@ -104,13 +108,13 @@ export const AllTogether: Story = {
   },
   render: () => (
     <div style={{ display: 'flex', flexDirection: 'column' }}>
-      <TimelineRow time="12:30" status="past">
+      <TimelineRow time='12:30' status='past'>
         <PerformanceCard performance={pastPerformance} active={false} />
       </TimelineRow>
-      <TimelineRow time="13:00" status="active">
+      <TimelineRow time='13:00' status='active'>
         <PerformanceCard performance={activePerformance} active={true} />
       </TimelineRow>
-      <TimelineRow time="13:30" status="upcoming">
+      <TimelineRow time='13:30' status='upcoming'>
         <PerformanceCard performance={upcomingPerformance} active={false} />
       </TimelineRow>
     </div>

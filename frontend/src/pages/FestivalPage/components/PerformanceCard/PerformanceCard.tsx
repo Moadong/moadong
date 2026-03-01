@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import * as Styled from './PerformanceCard.styles';
 import { Performance } from '../../data/performances';
+import * as Styled from './PerformanceCard.styles';
 
 interface PerformanceCardProps {
   performance: Performance;
@@ -35,13 +35,13 @@ const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
           <Styled.ChevronIcon
             $expanded={expanded}
             $active={active}
-            viewBox="0 0 10 5"
-            fill="none"
+            viewBox='0 0 10 5'
+            fill='none'
             strokeWidth={2}
-            strokeLinecap="round"
-            strokeLinejoin="round"
+            strokeLinecap='round'
+            strokeLinejoin='round'
           >
-            <path d="M1 1L5 4.5L9 1" />
+            <path d='M1 1L5 4.5L9 1' />
           </Styled.ChevronIcon>
         </Styled.ChevronWrapper>
       </Styled.SongArea>

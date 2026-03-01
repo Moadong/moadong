@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
 import { performances } from '../../data/performances';
 import { useCurrentTime } from '../../hooks/useCurrentTime';
-import TimelineRow from '../TimelineRow/TimelineRow';
 import PerformanceCard from '../PerformanceCard/PerformanceCard';
+import TimelineRow from '../TimelineRow/TimelineRow';
 
 type Status = 'past' | 'active' | 'upcoming';
 
@@ -12,7 +12,11 @@ function toMinutes(time: string): number {
   return h * 60 + m;
 }
 
-function getStatus(startTime: string, endTime: string, currentMinutes: number): Status {
+function getStatus(
+  startTime: string,
+  endTime: string,
+  currentMinutes: number,
+): Status {
   const start = toMinutes(startTime);
   const end = toMinutes(endTime);
   if (currentMinutes >= start && currentMinutes < end) return 'active';

@@ -1,8 +1,8 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import { performances } from '../../data/performances';
-import TimelineRow from '../TimelineRow/TimelineRow';
-import PerformanceCard from '../PerformanceCard/PerformanceCard';
 import styled from 'styled-components';
+import { performances } from '../../data/performances';
+import PerformanceCard from '../PerformanceCard/PerformanceCard';
+import TimelineRow from '../TimelineRow/TimelineRow';
 
 type Status = 'past' | 'active' | 'upcoming';
 
@@ -11,7 +11,11 @@ function toMinutes(time: string): number {
   return h * 60 + m;
 }
 
-function getStatus(startTime: string, endTime: string, currentMinutes: number): Status {
+function getStatus(
+  startTime: string,
+  endTime: string,
+  currentMinutes: number,
+): Status {
   const start = toMinutes(startTime);
   const end = toMinutes(endTime);
   if (currentMinutes >= start && currentMinutes < end) return 'active';
@@ -38,8 +42,15 @@ function PerformanceListPreview({ currentTime }: { currentTime: string }) {
           currentMinutes,
         );
         return (
-          <TimelineRow key={performance.id} time={performance.startTime} status={status}>
-            <PerformanceCard performance={performance} active={status === 'active'} />
+          <TimelineRow
+            key={performance.id}
+            time={performance.startTime}
+            status={status}
+          >
+            <PerformanceCard
+              performance={performance}
+              active={status === 'active'}
+            />
           </TimelineRow>
         );
       })}
@@ -55,7 +66,14 @@ const meta = {
   },
   decorators: [
     (Story) => (
-      <div style={{ maxWidth: 375, margin: '0 auto', paddingTop: 16, background: '#fff' }}>
+      <div
+        style={{
+          maxWidth: 375,
+          margin: '0 auto',
+          paddingTop: 16,
+          background: '#fff',
+        }}
+      >
         <Story />
       </div>
     ),

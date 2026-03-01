@@ -71,6 +71,7 @@ export const ChevronIcon = styled.svg<{ $expanded: boolean; $active: boolean }>`
   width: 10px;
   height: 5px;
   transition: transform 0.2s ease;
-  transform: ${({ $expanded }) => ($expanded ? 'rotate(180deg)' : 'rotate(0deg)')};
+  transform: ${({ $expanded }) =>
+    $expanded ? 'rotate(180deg)' : 'rotate(0deg)'};
   stroke: ${({ $active }) => ($active ? '#ff9f7c' : '#c5c5c5')};
 `;
