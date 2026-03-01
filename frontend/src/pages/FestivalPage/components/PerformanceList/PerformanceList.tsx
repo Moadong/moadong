@@ -40,7 +40,7 @@ const PerformanceList = () => {
     if (activeRef.current) {
       activeRef.current.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-  }, [currentTime]);
+  }, []);
 
   return (
     <List>
