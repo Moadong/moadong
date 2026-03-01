@@ -3,6 +3,7 @@ package moadong.user.service;
 import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
+import java.util.UUID;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +23,7 @@ import moadong.user.payload.request.UserRegisterRequest;
 import moadong.user.payload.request.UserUpdateRequest;
 import moadong.user.payload.response.LoginResponse;
 import moadong.user.payload.response.RefreshResponse;
+import moadong.user.payload.response.StudentIssueResponse;
 import moadong.user.payload.response.TempPasswordResponse;
 import moadong.user.repository.UserRepository;
 import moadong.user.util.CookieMaker;
@@ -111,6 +113,12 @@ public class UserCommandService {
         } catch (MongoWriteException e) {
             throw new RestApiException(ErrorCode.USER_ALREADY_EXIST);
         }
+    }
+
+    public StudentIssueResponse issueStudentAccessToken() {
+        String studentId = UUID.randomUUID().toString();
+        String accessToken = jwtProvider.generateAccessTokenWithoutExpiration(studentId);
+        return new StudentIssueResponse(accessToken);
     }
 
     public void logoutUser(String refreshToken) {

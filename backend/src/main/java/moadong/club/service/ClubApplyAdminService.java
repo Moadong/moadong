@@ -3,6 +3,7 @@ package moadong.club.service;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
+import moadong.club.enums.ApplicationFormMode;
 import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ApplicantStatusEvent;
 import moadong.club.payload.dto.ClubApplicantsResult;
@@ -21,6 +22,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
+import org.springframework.util.StringUtils;
 
 import java.time.LocalDate;
 import java.time.ZoneId;
@@ -72,6 +74,26 @@ public class ClubApplyAdminService {
             throw new RestApiException(ErrorCode.APPLICATION_SEMESTER_INVALID);
         }
 
+    }
+
+    private void validateFinalApplicationFormState(ClubApplicationForm clubApplicationForm, ClubApplicationFormEditRequest request) {
+        ApplicationFormMode finalFormMode = Optional.ofNullable(request.formMode()).orElse(clubApplicationForm.getFormMode());
+        String finalDescription = Optional.ofNullable(request.description()).orElse(clubApplicationForm.getDescription());
+        boolean hasFinalQuestions = request.questions() != null
+                ? !request.questions().isEmpty()
+                : clubApplicationForm.getQuestions() != null && !clubApplicationForm.getQuestions().isEmpty();
+        String finalExternalApplicationUrl = Optional.ofNullable(request.externalApplicationUrl())
+                .orElse(clubApplicationForm.getExternalApplicationUrl());
+
+        if (finalFormMode == ApplicationFormMode.INTERNAL
+                && (!StringUtils.hasText(finalDescription) || !hasFinalQuestions)) {
+            throw new RestApiException(ErrorCode.APPLICATION_REQUIRED_FIELDS_MISSING);
+        }
+
+        if (finalFormMode == ApplicationFormMode.EXTERNAL
+                && !StringUtils.hasText(finalExternalApplicationUrl)) {
+            throw new RestApiException(ErrorCode.EXTERNAL_APPLICATION_URL_MISSING);
+        }
     }
 
     public void createClubApplicationForm(CustomUserDetails user, ClubApplicationFormCreateRequest request) {
@@ -227,6 +249,8 @@ public class ClubApplyAdminService {
     }
 
     private ClubApplicationForm updateApplicationForm(ClubApplicationForm clubApplicationForm, ClubApplicationFormEditRequest request) {
+        validateFinalApplicationFormState(clubApplicationForm, request);
+
         if (request.questions() != null)
             clubApplicationForm.updateQuestions(buildClubFormQuestions(request.questions()));
         if (request.title() != null) clubApplicationForm.updateFormTitle(request.title());
