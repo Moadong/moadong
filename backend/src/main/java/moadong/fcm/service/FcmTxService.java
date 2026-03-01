@@ -4,7 +4,9 @@ import jakarta.transaction.Transactional;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.fcm.entity.FcmToken;
+import moadong.fcm.entity.StudentFcmToken;
 import moadong.fcm.repository.FcmTokenRepository;
+import moadong.fcm.repository.StudentFcmTokenRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.springframework.dao.DataAccessException;
@@ -25,6 +27,7 @@ import java.util.Set;
 public class FcmTxService {
 
     private final FcmTokenRepository fcmTokenRepository;
+    private final StudentFcmTokenRepository studentFcmTokenRepository;
 
     @Transactional
     public void deleteUnregisteredFcmToken(String token) {
@@ -40,5 +43,22 @@ public class FcmTxService {
         fcmToken.updateClubIds(newClubIds.stream().toList());
 
         fcmTokenRepository.save(fcmToken);
+    }
+
+    @Transactional
+    public void deleteUnregisteredStudentFcmToken(String token) {
+        studentFcmTokenRepository.findByToken(token).ifPresent(t -> {
+            studentFcmTokenRepository.delete(t);
+            log.info("Deleted unregistered student FCM token {}", token);
+        });
+    }
+
+    @Transactional
+    public void updateStudentFcmToken(String token, Set<String> newClubIds) {
+        StudentFcmToken studentFcmToken = studentFcmTokenRepository.findByToken(token)
+                .orElseThrow(() -> new RestApiException(ErrorCode.FCMTOKEN_NOT_FOUND));
+        studentFcmToken.updateClubIds(newClubIds.stream().toList());
+
+        studentFcmTokenRepository.save(studentFcmToken);
     }
 }

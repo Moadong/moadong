@@ -32,6 +32,14 @@ public class JwtProvider {
                 .compact();
     }
 
+    public String generateAccessTokenWithoutExpiration(String subject) {
+        return Jwts.builder()
+                .setSubject(subject)
+                .setIssuedAt(new Date())
+                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .compact();
+    }
+
     public RefreshToken generateRefreshToken(String username) {
         Date expiresAt = new Date(System.currentTimeMillis() + (long) REFRESH_EXPIRATION_HOUR * 1000 * 60 * 60);
         String refreshToken = Jwts.builder()
