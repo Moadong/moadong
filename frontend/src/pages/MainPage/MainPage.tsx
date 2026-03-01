@@ -50,7 +50,7 @@ const MainPage = () => {
     <>
       <Popup />
       <Header />
-      {/* <Filter /> */}
+      <Filter />
       <Banner />
       <Styled.PageContainer>
         <CategoryButtonList />

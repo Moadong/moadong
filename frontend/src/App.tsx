@@ -21,6 +21,7 @@ import {
 } from './components/common/ErrorBoundary';
 import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
 import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
+import IntroductionPage from './pages/FestivalPage/IntroductionPage/IntroductionPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -125,6 +126,14 @@ const App = () => {
                   element={
                     <ContentErrorBoundary>
                       <ClubUnionPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/festival-introduction'
+                  element={
+                    <ContentErrorBoundary>
+                      <IntroductionPage />
                     </ContentErrorBoundary>
                   }
                 />
