@@ -31,7 +31,7 @@ export const MapFrame = styled.article<{ $backgroundColor: string }>`
   position: relative;
   width: 100%;
   max-width: 500px;
-  aspect-ratio: 500 / 522;
+  aspect-ratio: 375 / 522;
   margin: 0 auto;
   overflow: hidden;
   border-radius: 0 0 20px 20px;
