@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
@@ -26,6 +26,22 @@ const IntroductionPage = () => {
     FESTIVAL_TAB_TYPE.BOOTH_MAP,
   );
   const tabStartTime = useRef(Date.now());
+  const activeTabRef = useRef(activeTab);
+
+  useEffect(() => {
+    activeTabRef.current = activeTab;
+  }, [activeTab]);
+
+  useEffect(() => {
+    return () => {
+      const duration = Date.now() - tabStartTime.current;
+      trackEvent(USER_EVENT.FESTIVAL_TAB_DURATION, {
+        tab: activeTabRef.current,
+        duration,
+        duration_seconds: Math.round(duration / 1000),
+      });
+    };
+  }, []);
 
   const handleTabClick = (tabKey: string) => {
     const duration = Date.now() - tabStartTime.current;
