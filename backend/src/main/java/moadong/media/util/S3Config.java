@@ -11,6 +11,8 @@ import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
+import javax.annotation.PostConstruct;
+
 @Configuration
 public class S3Config {
 
@@ -22,6 +24,12 @@ public class S3Config {
 
     @Value("${cloud.aws.s3.endpoint}")
     private String endpoint;
+
+    @PostConstruct
+    public void checkEnv() {
+        System.out.println("Access Key: [" + accessKey + "]");
+        System.out.println("Secret Key length: " + (secretKey != null ? secretKey.length() : "null"));
+    }
 
     @Bean
     public S3Client s3Client() {
