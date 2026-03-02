@@ -58,7 +58,7 @@ jobs:
 
             > 변경된 스토리를 Chromatic에서 확인해주세요.
 
-            | | |
+            | 구분 | 링크 |
             |---|---|
             | 🔍 변경사항 리뷰 | ${{ steps.chromatic.outputs.buildUrl }} |
             | 📖 Storybook | ${{ steps.chromatic.outputs.storybookUrl }} |
@@ -73,7 +73,7 @@ jobs:
           message: |
             ## ✅ UI 변경사항 없음
 
-            | | |
+            | 구분 | 링크 |
             |---|---|
             | 📖 Storybook | ${{ steps.chromatic.outputs.storybookUrl }} |
 
