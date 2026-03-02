@@ -44,6 +44,15 @@ export const USER_EVENT = {
   APPLICATION_FORM_SUBMITTED: 'Application Form Submitted',
   PATCH_NOTE_BUTTON_CLICKED: 'Patch Note Button Clicked',
   FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
+
+  // 필터칩
+  FILTER_OPTION_CLICKED: 'Filter Option Clicked',
+
+  // 동소한 (동아리 소개 한마당)
+  FESTIVAL_TAB_CLICKED: 'Festival Tab Clicked',
+  FESTIVAL_BOOTH_MAP_SLIDE_CHANGED: 'Festival BoothMap Slide Changed',
+  FESTIVAL_PERFORMANCE_CARD_CLICKED: 'Festival PerformanceCard Clicked',
+  FESTIVAL_TAB_DURATION: 'Festival Tab Duration',
 } as const;
 
 export const ADMIN_EVENT = {
@@ -97,6 +106,7 @@ export const PAGE_VIEW = {
   MAIN_PAGE: 'MainPage',
   INTRODUCE_PAGE: 'IntroducePage',
   CLUB_UNION_PAGE: 'ClubUnionPage',
+  FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
 
   // 관리자
   LOGIN_PAGE: '로그인페이지',

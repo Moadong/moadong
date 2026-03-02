@@ -1,5 +1,5 @@
 import { MouseEvent, useEffect, useState } from 'react';
-import AppDownloadImage from '@/assets/images/popup/app-download.svg';
+import AppDownloadImage from '@/assets/images/popup/app-download.png';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';

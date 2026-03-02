@@ -20,6 +20,7 @@ const BANNERS: BannerItem[] = [
     id: '2026-club-fair',
     desktopImage: ClubFairDesktopImage,
     mobileImage: ClubFairMobileImage,
+    linkTo: '/festival-introduction',
     alt: '2026 동아리 소개 한마당 홍보',
   },
   {
