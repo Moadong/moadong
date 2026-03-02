@@ -1,3 +1,4 @@
+import { useLayoutEffect, useRef } from 'react';
 import * as Styled from './TimePickerPanel.styles';
 
 interface TimePickerPanelProps {
@@ -11,6 +12,37 @@ const TimePickerPanel = ({
   onChangeDate,
   height
 }: TimePickerPanelProps) => {
+  const hourListRef = useRef<HTMLDivElement>(null);
+  const minuteListRef = useRef<HTMLDivElement>(null);
+
+  const scrollToSelected = (
+    listElement: HTMLDivElement | null,
+    index: number
+  ) => {
+    if (listElement) {
+      const activeItem = listElement.children[index] as HTMLElement;
+
+      if (activeItem) {
+        const scrollTarget = 
+          activeItem.offsetTop - (listElement.clientHeight / 2) + (activeItem.clientHeight / 2);
+        
+        listElement.scrollTo({
+          top: scrollTarget,
+          behavior: 'auto',
+        });
+      }
+    }
+  };
+
+  useLayoutEffect(() => {
+    const timer = setTimeout(() => {
+      scrollToSelected(hourListRef.current, selectedDate.getHours());
+      scrollToSelected(minuteListRef.current, selectedDate.getMinutes());
+    }, 0);
+    
+    return () => clearTimeout(timer);
+  }, []);
+
   const setHour = (hour: number) => {
     const next = new Date(selectedDate);
     next.setHours(hour);
@@ -26,7 +58,11 @@ const TimePickerPanel = ({
   return (
     <Styled.Container>
       <Styled.Column>
-        <Styled.List $height={height}>
+        <Styled.List 
+          $height={height} 
+          ref={hourListRef} 
+          style={{ overflowY: 'auto', position: 'relative' }}
+        >
           {Array.from({ length: 24 }).map((_, h) => (
             <Styled.ItemWrapper key={h}>
               <Styled.ItemBox
@@ -41,7 +77,11 @@ const TimePickerPanel = ({
       </Styled.Column>
 
       <Styled.Column>
-        <Styled.List $height={height}>
+        <Styled.List 
+          $height={height} 
+          ref={minuteListRef} 
+          style={{ overflowY: 'auto', position: 'relative' }}
+        >
           {Array.from({ length: 60 }).map((_, m) => (
             <Styled.ItemWrapper key={m}>
               <Styled.ItemBox
