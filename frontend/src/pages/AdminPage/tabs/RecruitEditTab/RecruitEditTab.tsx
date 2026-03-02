@@ -28,7 +28,6 @@ const RecruitEditTab = () => {
   const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
-
   const [always, setAlways] = useState(false);
 
   const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({
@@ -41,7 +40,6 @@ const RecruitEditTab = () => {
 
   const handleStartChange = (newStart: Date | null) => {
     setRecruitmentStart(newStart);
-
     if (!always && newStart && recruitmentEnd && newStart > recruitmentEnd) {
       setRecruitmentEnd(newStart);
     }
@@ -49,8 +47,7 @@ const RecruitEditTab = () => {
 
   const handleEndChange = (newEnd: Date | null) => {
     setRecruitmentEnd(newEnd);
-
-    if (!always && newEnd && recruitmentStart && newEnd < recruitmentStart) {
+    if (newEnd && recruitmentStart && newEnd < recruitmentStart) {
       setRecruitmentStart(newEnd);
     }
   };
@@ -58,25 +55,16 @@ const RecruitEditTab = () => {
   useEffect(() => {
     if (!clubDetail) return;
 
-    const now = new Date();
-    const start = clubDetail.recruitmentStart
-      ? recruitmentDateParser(clubDetail.recruitmentStart)
-      : null;
-    const end = clubDetail.recruitmentEnd
-      ? recruitmentDateParser(clubDetail.recruitmentEnd)
-      : null;
+    const start = clubDetail.recruitmentStart ? recruitmentDateParser(clubDetail.recruitmentStart) : new Date();
+    const end = clubDetail.recruitmentEnd ? recruitmentDateParser(clubDetail.recruitmentEnd) : new Date();
     const isAlways = isFarFuture(end);
 
-    if (isAlways) {
-      setAlways(true);
-      backupRangeRef.current = { start, end };
-      setRecruitmentStart(start ?? now);
-    } else {
-      setRecruitmentStart(start ?? now);
-      setRecruitmentEnd(end ?? now);
-    }
-
-    setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
+    setAlways(isAlways);
+    setRecruitmentStart(start);
+    setRecruitmentEnd(end);
+    setRecruitmentTarget(clubDetail.recruitmentTarget || '');
+    
+    if (isAlways) backupRangeRef.current = { start, end };
   }, [clubDetail]);
 
   useEffect(() => {
@@ -88,28 +76,15 @@ const RecruitEditTab = () => {
   const toggleAlways = () => {
     trackEvent(ADMIN_EVENT.ALWAYS_RECRUIT_BUTTON_CLICKED);
     setAlways((prev) => {
-      const now = new Date();
-
       if (!prev) {
-        // 상시모집 활성화
-        backupRangeRef.current = {
-          start: recruitmentStart,
-          end: recruitmentEnd,
-        };
+        // 상시모집 활성화 시 백업
+        backupRangeRef.current = { start: recruitmentStart, end: recruitmentEnd };
       } else {
-        // 상시모집 비활성화
+        // 상시모집 비활성화 시 백업 데이터 복구
         const { start, end } = backupRangeRef.current;
-        const backupWasAlways = isFarFuture(end);
-        if (backupWasAlways) {
-          // 백업이 상시모집인 경우
-          const base = start ?? now;
-          setRecruitmentStart(base);
-          setRecruitmentEnd(base);
-        } else {
-          // 백업이 상시모집이 아닌 경우
-          setRecruitmentStart(start ?? now);
-          setRecruitmentEnd(end ?? now);
-        }
+        const now = new Date();
+        setRecruitmentStart(start ?? now);
+        setRecruitmentEnd(isFarFuture(end) ? (start ?? now) : (end ?? now));
       }
       return !prev;
     });
@@ -119,29 +94,16 @@ const RecruitEditTab = () => {
     trackEvent(ADMIN_EVENT.UPDATE_RECRUIT_BUTTON_CLICKED);
     if (!clubDetail) return;
 
-    let startForSave: Date | null = recruitmentStart;
-    let endForSave: Date | null = recruitmentEnd;
-
-    if (always) {
-      const base = recruitmentStart ?? new Date();
-      startForSave = base;
-      endForSave = setYear(base, FAR_FUTURE_YEAR);
-    }
-
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: startForSave?.toISOString() ?? null,
-      recruitmentEnd: endForSave?.toISOString() ?? null,
-      recruitmentTarget: recruitmentTarget,
+      recruitmentStart: recruitmentStart?.toISOString() ?? null,
+      recruitmentEnd: recruitmentEnd?.toISOString() ?? null,
+      recruitmentTarget,
     };
 
     updateClubDescription(updatedData, {
-      onSuccess: () => {
-        alert('모집 정보가 성공적으로 수정되었습니다.');
-      },
-      onError: (error) => {
-        alert(`모집 정보 수정에 실패했습니다: ${error.message}`);
-      },
+      onSuccess: () => alert('모집 정보가 성공적으로 수정되었습니다.'),
+      onError: (error) => alert(`모집 정보 수정에 실패했습니다: ${error.message}`),
     });
   };
 
@@ -149,14 +111,13 @@ const RecruitEditTab = () => {
     <Styled.Container>
       <ContentSection>
         <ContentSection.Header
-          title='모집 정보'
+          title="모집 정보"
           action={
-            <Button width={'135px'} animated onClick={handleUpdateClub}>
+            <Button width="135px" animated onClick={handleUpdateClub}>
               저장하기
             </Button>
           }
         />
-
         <ContentSection.Body>
           <div>
             <Styled.Label>모집 기간</Styled.Label>
@@ -169,7 +130,7 @@ const RecruitEditTab = () => {
                 disabledEnd={always}
               />
               <Styled.AlwaysRecruitButton
-                type='button'
+                type="button"
                 $active={always}
                 onClick={toggleAlways}
                 aria-pressed={always}
@@ -178,17 +139,13 @@ const RecruitEditTab = () => {
               </Styled.AlwaysRecruitButton>
             </Styled.RecruitPeriodContainer>
           </div>
-
           <InputField
-            label='모집 대상'
-            placeholder='모집대상을 입력해주세요'
-            type='text'
+            label="모집 대상"
+            placeholder="모집대상을 입력해주세요"
+            type="text"
             value={recruitmentTarget}
             onChange={(e) => setRecruitmentTarget(e.target.value)}
-            onClear={() => {
-              trackEvent(ADMIN_EVENT.RECRUITMENT_TARGET_CLEAR_BUTTON_CLICKED);
-              setRecruitmentTarget('');
-            }}
+            onClear={() => setRecruitmentTarget('')}
             maxLength={10}
           />
         </ContentSection.Body>
@@ -196,4 +153,5 @@ const RecruitEditTab = () => {
     </Styled.Container>
   );
 };
+
 export default RecruitEditTab;
