@@ -41,7 +41,7 @@ const TimePickerPanel = ({
     }, 0);
     
     return () => clearTimeout(timer);
-  }, []);
+  }, [selectedDate]);
 
   const setHour = (hour: number) => {
     const next = new Date(selectedDate);
