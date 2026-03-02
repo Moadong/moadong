@@ -29,15 +29,17 @@ const IntroductionPage = () => {
       <Header hideOn={['webview']} />
       <Styled.Container>
         {!isInAppWebView() && <Filter alwaysVisible />}
-        <UnderlineTabs
-          tabs={[
-            { key: FESTIVAL_TAB_TYPE.BOOTH_MAP, label: '부스지도' },
-            { key: FESTIVAL_TAB_TYPE.CLUB_TIMETABLE, label: '동아리시간표' },
-          ]}
-          activeKey={activeTab}
-          onTabClick={(tabKey) => setActiveTab(tabKey as FestivalTabType)}
-          centerOnMobile
-        />
+        <Styled.TabWrapper>
+          <UnderlineTabs
+            tabs={[
+              { key: FESTIVAL_TAB_TYPE.BOOTH_MAP, label: '부스지도' },
+              { key: FESTIVAL_TAB_TYPE.CLUB_TIMETABLE, label: '동아리시간표' },
+            ]}
+            activeKey={activeTab}
+            onTabClick={(tabKey) => setActiveTab(tabKey as FestivalTabType)}
+            centerOnMobile
+          />
+        </Styled.TabWrapper>
         {activeTab === FESTIVAL_TAB_TYPE.BOOTH_MAP ? (
           <BoothMapSection />
         ) : (
