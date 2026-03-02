@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './BoothMapSection.styles';
 
 const MAP_FRAME_WIDTH = 375;
@@ -217,6 +219,7 @@ const toCenterPercent = (start: number, size: number, base: number) =>
   `${((start + size / 2) / base) * 100}%`;
 
 const BoothMapSection = () => {
+  const trackEvent = useMixpanelTrack();
   const [currentMapIndex, setCurrentMapIndex] = useState(0);
   const [mapSwiper, setMapSwiper] = useState<SwiperType | null>(null);
 
@@ -225,7 +228,14 @@ const BoothMapSection = () => {
       <Styled.SliderWrapper>
         <Swiper
           onSwiper={setMapSwiper}
-          onSlideChange={(swiper) => setCurrentMapIndex(swiper.realIndex)}
+          onSlideChange={(swiper) => {
+              const index = swiper.realIndex;
+              setCurrentMapIndex(index);
+              trackEvent(USER_EVENT.FESTIVAL_BOOTH_MAP_SLIDE_CHANGED, {
+                slideIndex: index,
+                slideName: CLUB_MAP_SLIDES[index]?.leftLabel.text,
+              });
+            }}
           loop
           slidesPerView={1}
           spaceBetween={12}
