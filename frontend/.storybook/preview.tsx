@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import type { Preview } from '@storybook/react';
+import type { Preview } from '@storybook/react-vite';
 import mixpanel from 'mixpanel-browser';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { ThemeProvider } from 'styled-components';
