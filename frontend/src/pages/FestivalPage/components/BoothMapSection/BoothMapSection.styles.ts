@@ -55,7 +55,7 @@ export const SideLabel = styled.span<{
   white-space: nowrap;
 `;
 
-export const Booth = styled.div`
+export const Booth = styled.div<{ $shadowColor: string }>`
   position: absolute;
   border-radius: 10px;
   background: #ffffff;
@@ -67,7 +67,8 @@ export const Booth = styled.div`
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 0 6px;
+  padding: 10px;
+  filter: drop-shadow(0px 0px 6px ${({ $shadowColor }) => $shadowColor});
 `;
 
 export const DotPagination = styled.div`

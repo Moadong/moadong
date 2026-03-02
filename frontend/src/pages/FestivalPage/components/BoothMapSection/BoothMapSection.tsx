@@ -18,6 +18,7 @@ type MapSlide = {
   nodeId: string;
   backgroundColor: string;
   sideColor: string;
+  shadowColor: string;
   leftBar: { top: number; height: number };
   rightBar: { top: number; height: number };
   leftLabel: {
@@ -44,6 +45,7 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
     nodeId: '8851:6378',
     backgroundColor: '#f2f8ff',
     sideColor: '#b9defd',
+    shadowColor: '#D9E8F3',
     leftBar: { top: 120, height: 277 },
     rightBar: { top: 198, height: 277 },
     leftLabel: {
@@ -85,6 +87,7 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
     nodeId: '8847:8495',
     backgroundColor: '#fff0f4',
     sideColor: '#ffd3d4',
+    shadowColor: '#F9E1E8',
     leftBar: { top: 120, height: 277 },
     rightBar: { top: 198, height: 277 },
     leftLabel: {
@@ -126,6 +129,7 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
     nodeId: '8847:8577',
     backgroundColor: '#ffebe4',
     sideColor: '#ffc9b4',
+    shadowColor: '#F3E6E0',
     leftBar: { top: 90, height: 277 },
     rightBar: { top: 90, height: 277 },
     leftLabel: {
@@ -162,6 +166,7 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
     nodeId: '8852:8659',
     backgroundColor: '#f8efff',
     sideColor: '#e9ccff',
+    shadowColor: '#E8DDF0',
     leftBar: { top: 120, height: 277 },
     rightBar: { top: 225, height: 213 },
     leftLabel: {
@@ -273,6 +278,7 @@ const BoothMapSection = () => {
                 {slide.booths.map((booth, index) => (
                   <Styled.Booth
                     key={`${slide.nodeId}-${booth.name}-${index}`}
+                    $shadowColor={slide.shadowColor}
                     style={{
                       left: toPercent(booth.x, MAP_FRAME_WIDTH),
                       top: toPercent(booth.y, MAP_FRAME_HEIGHT),
