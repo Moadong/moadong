@@ -39,6 +39,22 @@ const RecruitEditTab = () => {
   const isFarFuture = (date: Date | null) =>
     !!date && date.getFullYear() === FAR_FUTURE_YEAR;
 
+  const handleStartChange = (newStart: Date | null) => {
+    setRecruitmentStart(newStart);
+
+    if (!always && newStart && recruitmentEnd && newStart > recruitmentEnd) {
+      setRecruitmentEnd(newStart);
+    }
+  };
+
+  const handleEndChange = (newEnd: Date | null) => {
+    setRecruitmentEnd(newEnd);
+
+    if (!always && newEnd && recruitmentStart && newEnd < recruitmentStart) {
+      setRecruitmentStart(newEnd);
+    }
+  };
+
   useEffect(() => {
     if (!clubDetail) return;
 
@@ -148,8 +164,8 @@ const RecruitEditTab = () => {
               <DateTimeRangePicker
                 recruitmentStart={recruitmentStart}
                 recruitmentEnd={recruitmentEnd}
-                onChangeRecruitmentStart={setRecruitmentStart}
-                onChangeRecruitmentEnd={setRecruitmentEnd}
+                onChangeRecruitmentStart={handleStartChange}
+                onChangeRecruitmentEnd={handleEndChange}
                 disabledEnd={always}
               />
               <Styled.AlwaysRecruitButton
