@@ -1,11 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import UnderlineTabs from './UnderlineTabs';
-
-const setViewportWidth = (width: number) => {
-  window.innerWidth = width;
-  window.dispatchEvent(new Event('resize'));
-};
 
 const SAMPLE_TABS = [
   { key: 'map', label: '부스지도' },
@@ -65,11 +61,11 @@ export const CenterOnMobile: Story = {
     onTabClick: () => {},
     centerOnMobile: true,
   },
-  decorators: [
-    (Story) => {
-      setViewportWidth(375);
-      return <Story />;
+  parameters: {
+    viewport: {
+      options: INITIAL_VIEWPORTS,
+      defaultViewport: 'iphone6',
     },
-  ],
+  },
   render: () => <InteractiveTabs centerOnMobile />,
 };
