@@ -21,6 +21,10 @@ export const Input = styled.button<{ $active?: boolean }>`
     $active ? colors.primary[800] : colors.gray[100]};
   color: ${({ $active }) =>
     $active ? colors.base.white : colors.gray[700]};
+
+  &:disabled {
+    background: ${colors.gray[400]};
+    color: ${colors.gray[500]};
 `;
 
 export const Tilde = styled.span`
