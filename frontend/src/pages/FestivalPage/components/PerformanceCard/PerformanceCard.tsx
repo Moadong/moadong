@@ -1,4 +1,6 @@
 import { useEffect, useState } from 'react';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { Performance } from '../../data/performances';
 import * as Styled from './PerformanceCard.styles';
 
@@ -8,13 +10,22 @@ interface PerformanceCardProps {
 }
 
 const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
+  const trackEvent = useMixpanelTrack();
   const [expanded, setExpanded] = useState(active);
 
   useEffect(() => {
     if (active) setExpanded(true);
   }, [active]);
 
-  const toggleExpanded = () => setExpanded((prev) => !prev);
+  const toggleExpanded = () => {
+    const nextExpanded = !expanded;
+    trackEvent(USER_EVENT.FESTIVAL_PERFORMANCE_CARD_CLICKED, {
+      clubName: performance.clubName,
+      expanded: nextExpanded,
+      active,
+    });
+    setExpanded(nextExpanded);
+  };
 
   return (
     <Styled.Card $active={active} onClick={toggleExpanded}>

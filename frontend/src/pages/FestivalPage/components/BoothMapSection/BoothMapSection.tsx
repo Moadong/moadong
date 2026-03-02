@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './BoothMapSection.styles';
 
 const MAP_FRAME_WIDTH = 375;
@@ -18,6 +20,7 @@ type MapSlide = {
   nodeId: string;
   backgroundColor: string;
   sideColor: string;
+  shadowColor: string;
   leftBar: { top: number; height: number };
   rightBar: { top: number; height: number };
   leftLabel: {
@@ -44,6 +47,7 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
     nodeId: '8851:6378',
     backgroundColor: '#f2f8ff',
     sideColor: '#b9defd',
+    shadowColor: '#D9E8F3',
     leftBar: { top: 120, height: 277 },
     rightBar: { top: 198, height: 277 },
     leftLabel: {
@@ -85,6 +89,7 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
     nodeId: '8847:8495',
     backgroundColor: '#fff0f4',
     sideColor: '#ffd3d4',
+    shadowColor: '#F9E1E8',
     leftBar: { top: 120, height: 277 },
     rightBar: { top: 198, height: 277 },
     leftLabel: {
@@ -126,6 +131,7 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
     nodeId: '8847:8577',
     backgroundColor: '#ffebe4',
     sideColor: '#ffc9b4',
+    shadowColor: '#F3E6E0',
     leftBar: { top: 90, height: 277 },
     rightBar: { top: 90, height: 277 },
     leftLabel: {
@@ -162,6 +168,7 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
     nodeId: '8852:8659',
     backgroundColor: '#f8efff',
     sideColor: '#e9ccff',
+    shadowColor: '#E8DDF0',
     leftBar: { top: 120, height: 277 },
     rightBar: { top: 225, height: 213 },
     leftLabel: {
@@ -212,6 +219,7 @@ const toCenterPercent = (start: number, size: number, base: number) =>
   `${((start + size / 2) / base) * 100}%`;
 
 const BoothMapSection = () => {
+  const trackEvent = useMixpanelTrack();
   const [currentMapIndex, setCurrentMapIndex] = useState(0);
   const [mapSwiper, setMapSwiper] = useState<SwiperType | null>(null);
 
@@ -220,7 +228,14 @@ const BoothMapSection = () => {
       <Styled.SliderWrapper>
         <Swiper
           onSwiper={setMapSwiper}
-          onSlideChange={(swiper) => setCurrentMapIndex(swiper.realIndex)}
+          onSlideChange={(swiper) => {
+            const index = swiper.realIndex;
+            setCurrentMapIndex(index);
+            trackEvent(USER_EVENT.FESTIVAL_BOOTH_MAP_SLIDE_CHANGED, {
+              slideIndex: index,
+              slideName: CLUB_MAP_SLIDES[index]?.leftLabel.text,
+            });
+          }}
           loop
           slidesPerView={1}
           spaceBetween={12}
@@ -273,6 +288,7 @@ const BoothMapSection = () => {
                 {slide.booths.map((booth, index) => (
                   <Styled.Booth
                     key={`${slide.nodeId}-${booth.name}-${index}`}
+                    $shadowColor={slide.shadowColor}
                     style={{
                       left: toPercent(booth.x, MAP_FRAME_WIDTH),
                       top: toPercent(booth.y, MAP_FRAME_HEIGHT),

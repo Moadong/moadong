@@ -12,6 +12,23 @@ export const Container = styled.div`
   }
 `;
 
+export const TabWrapper = styled.div`
+  display: flex;
+  justify-content: center;
+
+  ${media.mobile} {
+    display: block;
+
+    button {
+      width: 167px;
+    }
+  }
+
+  button {
+    width: 250px;
+  }
+`;
+
 export const TimetableSection = styled.section`
   width: 100%;
   max-width: 500px;
