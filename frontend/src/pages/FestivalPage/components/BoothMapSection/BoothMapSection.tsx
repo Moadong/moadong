@@ -229,13 +229,13 @@ const BoothMapSection = () => {
         <Swiper
           onSwiper={setMapSwiper}
           onSlideChange={(swiper) => {
-              const index = swiper.realIndex;
-              setCurrentMapIndex(index);
-              trackEvent(USER_EVENT.FESTIVAL_BOOTH_MAP_SLIDE_CHANGED, {
-                slideIndex: index,
-                slideName: CLUB_MAP_SLIDES[index]?.leftLabel.text,
-              });
-            }}
+            const index = swiper.realIndex;
+            setCurrentMapIndex(index);
+            trackEvent(USER_EVENT.FESTIVAL_BOOTH_MAP_SLIDE_CHANGED, {
+              slideIndex: index,
+              slideName: CLUB_MAP_SLIDES[index]?.leftLabel.text,
+            });
+          }}
           loop
           slidesPerView={1}
           spaceBetween={12}
