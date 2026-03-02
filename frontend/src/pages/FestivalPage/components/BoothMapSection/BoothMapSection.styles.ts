@@ -97,12 +97,11 @@ export const SlideCounter = styled.div`
   width: fit-content;
   min-width: 76px;
   padding: 10px;
-  margin: 20px auto 0;
+  margin: 20px auto 30px;
   border-radius: 999px;
   background: #e5e5e5;
   color: #454545;
   font-size: 14px;
   font-weight: 700;
   text-align: center;
-  margin-bottom: 30px;
 `;
