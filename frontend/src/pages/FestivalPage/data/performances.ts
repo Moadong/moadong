@@ -22,7 +22,7 @@ export const performances: Performance[] = [
     songs: [
       'Blur - Song 2',
       'OASIS - Supersonic',
-      'Green Day - Dillema',
+      'Green Day - Dilemma',
       'Radiohead - My Iron Lung',
     ],
   },
