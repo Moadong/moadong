@@ -16,20 +16,14 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class S3Config {
 
-    @Value("${cloud.aws.credentials.accessKey}")
+    @Value("${CLOUD_AWS_CREDENTIALS_ACCESS_KEY}")
     private String accessKey;
 
-    @Value("${cloud.aws.credentials.secretKey}")
+    @Value("${CLOUD_AWS_CREDENTIALS_SECRET_KEY}")
     private String secretKey;
 
-    @Value("${cloud.aws.s3.endpoint}")
+    @Value("${CLOUD_AWS_S3_ENDPOINT}")
     private String endpoint;
-
-    @PostConstruct
-    public void checkEnv() {
-        System.out.println("Access Key: [" + accessKey + "]");
-        System.out.println("Secret Key length: " + (secretKey != null ? secretKey.length() : "null"));
-    }
 
     @Bean
     public S3Client s3Client() {

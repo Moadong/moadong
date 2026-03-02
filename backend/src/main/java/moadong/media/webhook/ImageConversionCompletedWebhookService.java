@@ -20,7 +20,7 @@ public class ImageConversionCompletedWebhookService {
 
     private final ClubRepository clubRepository;
 
-    @Value("${cloud.aws.s3.view-endpoint}")
+    @Value("${CLOUD_AWS_S3_VIEW_ENDPOINT}")
     private String viewEndpoint;
 
     private String normalizedViewEndpoint;
