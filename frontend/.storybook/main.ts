@@ -13,7 +13,6 @@ const config: StorybookConfig = {
 
     return mergeConfig(config, {
       plugins: [tsconfigPaths()],
-      publicDir: false,
     });
   },
 };
