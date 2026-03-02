@@ -115,7 +115,6 @@ export const Dot = styled.button<{ $active: boolean }>`
 export const SlideCounter = styled.div`
   width: fit-content;
   min-width: 76px;
-  width: 62.7px;
   padding: 10px;
   margin: 20px auto 0;
   border-radius: 999px;
