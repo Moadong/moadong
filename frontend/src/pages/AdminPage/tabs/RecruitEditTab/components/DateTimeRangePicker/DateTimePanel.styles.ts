@@ -1,7 +1,7 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 
-export const Panel = styled.div`
+export const Panel = styled.div<{ $isEnd?: boolean }>`
   position: absolute;
   top: 55px;
   left: 0;
@@ -10,6 +10,17 @@ export const Panel = styled.div`
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   overflow: hidden;
   z-index: 10;
+
+  ${({ $isEnd }) =>
+    $isEnd
+      ? css`
+        right: 0;
+        left: auto;
+      `
+      : css`
+        left: 0;
+        right: auto;
+      `}
 `;
 
 export const Header = styled.div`

@@ -6,16 +6,17 @@ import { useState } from 'react';
 interface DateTimePanelProps {
   date: Date | null;
   onChangeDate: (date: Date) => void;
+  $isEnd?: boolean;
 }
 
-const DateTimePanel = ({ date, onChangeDate }: DateTimePanelProps) => {
+const DateTimePanel = ({ date, onChangeDate, $isEnd }: DateTimePanelProps) => {
   const [calendarHeight, setCalendarHeight] = useState<number>(0);
   const [viewMonth, setViewMonth] = useState<Date>(date!);
 
   if (!date) return null;
 
   return (
-    <Styled.Panel>
+    <Styled.Panel $isEnd={$isEnd}>
       <Styled.Header>
         <Styled.NavButton onClick={() => {
           const d = new Date(viewMonth);
