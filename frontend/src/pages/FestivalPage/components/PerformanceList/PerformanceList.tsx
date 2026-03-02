@@ -35,6 +35,9 @@ const PerformanceList = () => {
   const currentTime = useCurrentTime();
   const currentMinutes = toMinutes(currentTime);
   const activeRef = useRef<HTMLDivElement>(null);
+  const now = new Date();
+  const isFestivalDate =
+    now.getFullYear() === 2026 && now.getMonth() === 2 && now.getDate() === 5;
 
   useEffect(() => {
     if (activeRef.current) {
@@ -45,11 +48,13 @@ const PerformanceList = () => {
   return (
     <List>
       {performances.map((performance) => {
-        const status = getStatus(
-          performance.startTime,
-          performance.endTime,
-          currentMinutes,
-        );
+        const status = isFestivalDate
+          ? getStatus(
+              performance.startTime,
+              performance.endTime,
+              currentMinutes,
+            )
+          : 'upcoming';
         const isActive = status === 'active';
 
         return (
