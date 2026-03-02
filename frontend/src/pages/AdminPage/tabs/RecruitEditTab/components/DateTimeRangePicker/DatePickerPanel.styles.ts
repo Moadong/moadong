@@ -2,23 +2,20 @@ import styled, { css } from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 import 'react-datepicker/dist/react-datepicker.css';
 
-const cell = css`
+const commonCellLayout = css`
   width: 30px;
   height: 30px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   border-radius: 6px;
   font-size: 14px;
-
   transition:
     background-color 0.08s ease,
     color 0.08s ease;
 `;
 
-const selected = css`
+const activeDayStyle = css`
   background-color: ${colors.primary[800]} !important;
   color: ${colors.base.white} !important;
   font-weight: 600;
@@ -29,12 +26,6 @@ export const Container = styled.div`
   flex-direction: column;
   gap: 6px;
 
-  &[data-disabled='true'] {
-    opacity: 0.6;
-    pointer-events: none;
-  }
-
-  /* root */
   .react-datepicker {
     border: none;
     border-radius: 0;
@@ -42,25 +33,19 @@ export const Container = styled.div`
   }
 
   .react-datepicker__triangle,
-  .react-datepicker__navigation {
+  .react-datepicker__navigation,
+  .react-datepicker__header,
+  .react-datepicker__curront-month {
     display: none !important;
   }
 
-  /* header */
-  .react-datepicker__header {
-    display: none !important;
-  }
-
-  .react-datepicker__current-month {
-    display: none !important;
-  }
-
-  /* calendar */
+  /* 달력 본체 영역 */
   .react-datepicker__month {
     margin-top: 10px;
     padding: 0 20px;
   }
 
+  /* 요일명 영역 */
   .react-datepicker__day-names {
     display: flex;
     justify-content: center;
@@ -73,14 +58,16 @@ export const Container = styled.div`
     font-weight: 600;
   }
 
+  /* 주(Week) 행 */
   .react-datepicker__week {
     display: flex;
     gap: 12px;
     padding-bottom: 10px;
   }
 
+  /* 개별 날짜 셀 */
   .react-datepicker__day {
-    ${cell};
+    ${commonCellLayout};
 
     &:hover {
       background-color: ${colors.primary[500]} !important;
@@ -88,10 +75,10 @@ export const Container = styled.div`
   }
 
   .react-datepicker__day--selected {
-    ${selected};
+    ${activeDayStyle};
 
     &:hover {
-      ${selected};
+      ${activeDayStyle};
     }
   }
 

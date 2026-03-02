@@ -13,7 +13,7 @@ export const RecruitPeriodContainer = styled.div`
   max-width: 706px;
 `;
 
-export const AlwaysRecruitButton = styled.button<{ $active: boolean }>`
+export const AlwaysRecruitButton = styled.button<{ $isAlwaysActive: boolean }>`
   border-radius: 10px;
   width: 120px;
   height: 45px;
@@ -23,11 +23,17 @@ export const AlwaysRecruitButton = styled.button<{ $active: boolean }>`
   cursor: pointer;
   flex-shrink: 0;
 
-  color: ${({ $active }) => ($active ? colors.base.white : colors.gray[700])};
-  background: ${({ $active }) =>
-    $active ? colors.primary[800] : colors.gray[300]};
-  border: ${({ $active }) =>
-    $active ? 'none' : `1px solid ${colors.gray[500]}`};
+  color: ${colors.gray[700]};
+  background-color: ${colors.gray[300]};
+  border: 1px solid ${colors.gray[500]};
+
+  ${({ $isAlwaysActive }) =>
+     $isAlwaysActive &&
+  `
+  color: ${colors.base.white};
+  background-color: ${colors.primary[800]};
+  border: none;
+  `}
   transition:
     background-color 0.12s ease,
     transform 0.06s ease;

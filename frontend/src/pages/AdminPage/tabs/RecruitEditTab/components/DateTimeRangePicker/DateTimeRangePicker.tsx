@@ -1,9 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
-import * as Styled from './DateTimeRangePicker.styles';
-import DateTimePanel from './DateTimePanel';
 import { formatRecruitmentDateTime } from '@/utils/recruitmentDateFormatter';
+import DateTimePanel from './DateTimePanel';
+import * as Styled from './DateTimeRangePicker.styles';
 
-type OpenTarget = 'start' | 'end' | null;
+type PickerType = 'start' | 'end';
 
 interface DateTimeRangePickerProps {
   recruitmentStart: Date | null;
@@ -20,17 +20,20 @@ const DateTimeRangePicker = ({
   onChangeRecruitmentEnd,
   disabledEnd = false,
 }: DateTimeRangePickerProps) => {
-  const [openTarget, setOpenTarget] = useState<OpenTarget>(null);
+  const [activePicker, setActivePicker] = useState<PickerType | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
 
-  const handleInputClick = (target: OpenTarget) => {
-    setOpenTarget((prev) => (prev === target ? null : target));
+  const togglePicker = (type: PickerType) => {
+    setActivePicker((current) => (current === type ? null : type));
   };
 
   useEffect(() => {
-    const handleClickOutside = (e: MouseEvent) => {
-      if (containerRef.current && !containerRef.current.contains(e.target as Node)) {
-        setOpenTarget(null);
+    const handleClickOutside = (event: MouseEvent) => {
+      const isOutSideClick =
+        containerRef.current &&
+        !containerRef.current.contains(event.target as Node);
+      if (isOutSideClick) {
+        setActivePicker(null);
       }
     };
     document.addEventListener('mousedown', handleClickOutside);
@@ -41,8 +44,8 @@ const DateTimeRangePicker = ({
     <Styled.Container ref={containerRef}>
       {/* 모집 시작 기간 */}
       <Styled.Input
-        $active={openTarget === 'start'}
-        onClick={() => handleInputClick('start')}
+        $isActive={activePicker === 'start'}
+        onClick={() => togglePicker('start')}
       >
         {formatRecruitmentDateTime(recruitmentStart) || '모집 시작'}
       </Styled.Input>
@@ -52,18 +55,18 @@ const DateTimeRangePicker = ({
       {/* 모집 마감 기간 */}
       <Styled.Input
         disabled={disabledEnd}
-        $active={openTarget === 'end'}
-        onClick={() => !disabledEnd && handleInputClick('end')}
+        $isActive={activePicker === 'end'}
+        onClick={() => !disabledEnd && togglePicker('end')}
       >
         {formatRecruitmentDateTime(recruitmentEnd) || '모집 종료'}
       </Styled.Input>
 
-      {openTarget && (
+      {activePicker && (
         <DateTimePanel
-          $isEnd={openTarget === 'end'}
-          date={openTarget === 'start' ? recruitmentStart : recruitmentEnd}
+          $alignRight={activePicker === 'end'}
+          date={activePicker === 'start' ? recruitmentStart : recruitmentEnd}
           onChangeDate={
-            openTarget === 'start'
+            activePicker === 'start'
               ? onChangeRecruitmentStart
               : onChangeRecruitmentEnd
           }

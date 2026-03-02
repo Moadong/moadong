@@ -11,8 +11,8 @@ import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ClubDetail } from '@/types/club';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
-import * as Styled from './RecruitEditTab.styles';
 import DateTimeRangePicker from './components/DateTimeRangePicker/DateTimeRangePicker';
+import * as Styled from './RecruitEditTab.styles';
 
 const FAR_FUTURE_YEAR = 2999;
 
@@ -20,27 +20,32 @@ const RecruitEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.RECRUITMENT_INFO_EDIT_PAGE);
 
-  const queryClient = useQueryClient();
   const { mutate: updateClubDescription } = useUpdateClubDescription();
-
   const clubDetail = useOutletContext<ClubDetail>();
 
+  // 모집 정보 상태 관리
   const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
-  const [always, setAlways] = useState(false);
+  const [isAlwaysRecruiting, setIsAlwaysRecruiting] = useState(false);
 
   const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({
     start: null,
     end: null,
   });
 
-  const isFarFuture = (date: Date | null) =>
-    !!date && date.getFullYear() === FAR_FUTURE_YEAR;
+  const isFarFuture = (date: Date | null) => {
+    return date?.getFullYear() === FAR_FUTURE_YEAR;
+  };
 
   const handleStartChange = (newStart: Date | null) => {
     setRecruitmentStart(newStart);
-    if (!always && newStart && recruitmentEnd && newStart > recruitmentEnd) {
+    if (
+      !isAlwaysRecruiting &&
+      newStart &&
+      recruitmentEnd &&
+      newStart > recruitmentEnd
+    ) {
       setRecruitmentEnd(newStart);
     }
   };
@@ -55,38 +60,55 @@ const RecruitEditTab = () => {
   useEffect(() => {
     if (!clubDetail) return;
 
-    const start = clubDetail.recruitmentStart ? recruitmentDateParser(clubDetail.recruitmentStart) : new Date();
-    const end = clubDetail.recruitmentEnd ? recruitmentDateParser(clubDetail.recruitmentEnd) : new Date();
-    const isAlways = isFarFuture(end);
+    const parsedStart = clubDetail.recruitmentStart
+      ? recruitmentDateParser(clubDetail.recruitmentStart)
+      : new Date();
+    const parsedEnd = clubDetail.recruitmentEnd
+      ? recruitmentDateParser(clubDetail.recruitmentEnd)
+      : new Date();
+    const isAlways = isFarFuture(parsedEnd);
 
-    setAlways(isAlways);
-    setRecruitmentStart(start);
-    setRecruitmentEnd(end);
+    setIsAlwaysRecruiting(isAlways);
+    setRecruitmentStart(parsedStart);
+    setRecruitmentEnd(parsedEnd);
     setRecruitmentTarget(clubDetail.recruitmentTarget || '');
-    
-    if (isAlways) backupRangeRef.current = { start, end };
+
+    if (isAlways)
+      backupRangeRef.current = { start: parsedStart, end: parsedEnd };
   }, [clubDetail]);
 
   useEffect(() => {
-    if (always && recruitmentStart) {
+    if (isAlwaysRecruiting && recruitmentStart) {
       setRecruitmentEnd(setYear(recruitmentStart, FAR_FUTURE_YEAR));
     }
-  }, [always, recruitmentStart]);
+  }, [isAlwaysRecruiting, recruitmentStart]);
 
-  const toggleAlways = () => {
+  const toggleAlwaysRecruiting = () => {
     trackEvent(ADMIN_EVENT.ALWAYS_RECRUIT_BUTTON_CLICKED);
-    setAlways((prev) => {
-      if (!prev) {
-        // 상시모집 활성화 시 백업
-        backupRangeRef.current = { start: recruitmentStart, end: recruitmentEnd };
+
+    setIsAlwaysRecruiting((prevMode) => {
+      const nextMode = !prevMode;
+      const now = new Date();
+      if (nextMode) {
+        // 상시모집 활성화 시 현재 날짜 백업
+        backupRangeRef.current = {
+          start: recruitmentStart,
+          end: recruitmentEnd,
+        };
       } else {
         // 상시모집 비활성화 시 백업 데이터 복구
-        const { start, end } = backupRangeRef.current;
-        const now = new Date();
-        setRecruitmentStart(start ?? now);
-        setRecruitmentEnd(isFarFuture(end) ? (start ?? now) : (end ?? now));
+        const backup = backupRangeRef.current;
+        const baseDate = backup.start || now;
+
+        setRecruitmentStart(baseDate);
+
+        if (isFarFuture(backup.end)) {
+          setRecruitmentEnd(baseDate);
+        } else {
+          setRecruitmentEnd(backup.end || now);
+        }
       }
-      return !prev;
+      return nextMode;
     });
   };
 
@@ -103,7 +125,8 @@ const RecruitEditTab = () => {
 
     updateClubDescription(updatedData, {
       onSuccess: () => alert('모집 정보가 성공적으로 수정되었습니다.'),
-      onError: (error) => alert(`모집 정보 수정에 실패했습니다: ${error.message}`),
+      onError: (error) =>
+        alert(`모집 정보 수정에 실패했습니다: ${error.message}`),
     });
   };
 
@@ -111,9 +134,9 @@ const RecruitEditTab = () => {
     <Styled.Container>
       <ContentSection>
         <ContentSection.Header
-          title="모집 정보"
+          title='모집 정보'
           action={
-            <Button width="135px" animated onClick={handleUpdateClub}>
+            <Button width='135px' animated onClick={handleUpdateClub}>
               저장하기
             </Button>
           }
@@ -127,22 +150,22 @@ const RecruitEditTab = () => {
                 recruitmentEnd={recruitmentEnd}
                 onChangeRecruitmentStart={handleStartChange}
                 onChangeRecruitmentEnd={handleEndChange}
-                disabledEnd={always}
+                disabledEnd={isAlwaysRecruiting}
               />
               <Styled.AlwaysRecruitButton
-                type="button"
-                $active={always}
-                onClick={toggleAlways}
-                aria-pressed={always}
+                type='button'
+                $isAlwaysActive={isAlwaysRecruiting}
+                onClick={toggleAlwaysRecruiting}
+                aria-pressed={isAlwaysRecruiting}
               >
                 상시모집
               </Styled.AlwaysRecruitButton>
             </Styled.RecruitPeriodContainer>
           </div>
           <InputField
-            label="모집 대상"
-            placeholder="모집대상을 입력해주세요"
-            type="text"
+            label='모집 대상'
+            placeholder='모집대상을 입력해주세요'
+            type='text'
             value={recruitmentTarget}
             onChange={(e) => setRecruitmentTarget(e.target.value)}
             onClear={() => setRecruitmentTarget('')}

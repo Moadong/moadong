@@ -1,38 +1,46 @@
-import DatePickerPanel from './DatePickerPanel';
-import TimePickerPanel from './TimePickerPanel';
-import * as Styled from './DateTimePanel.styles';
 import { useState } from 'react';
+import DatePickerPanel from './DatePickerPanel';
+import * as Styled from './DateTimePanel.styles';
+import TimePickerPanel from './TimePickerPanel';
 
 interface DateTimePanelProps {
   date: Date | null;
   onChangeDate: (date: Date) => void;
-  $isEnd?: boolean;
+  $alignRight?: boolean;
 }
 
-const DateTimePanel = ({ date, onChangeDate, $isEnd }: DateTimePanelProps) => {
+const DateTimePanel = ({
+  date,
+  onChangeDate,
+  $alignRight,
+}: DateTimePanelProps) => {
   const [calendarHeight, setCalendarHeight] = useState<number>(0);
-  const [viewMonth, setViewMonth] = useState<Date>(date!);
+  const [viewMonth, setViewMonth] = useState<Date>(date || new Date());
 
   if (!date) return null;
 
+  const handleMoveMonth = (offset: number) => {
+    const newViewMonth = new Date(viewMonth);
+    newViewMonth.setMonth(newViewMonth.getMonth() + offset);
+    setViewMonth(newViewMonth);
+  };
+
+  const formattedYearMonth = `${viewMonth.getFullYear()}.${String(
+    viewMonth.getMonth() + 1,
+  ).padStart(2, '0')}`;
+
   return (
-    <Styled.Panel $isEnd={$isEnd}>
+    <Styled.Panel $alignRight={$alignRight}>
       <Styled.Header>
-        <Styled.NavButton onClick={() => {
-          const d = new Date(viewMonth);
-          d.setMonth(d.getMonth() - 1);
-          setViewMonth(d);
-        }}>{'<'}</Styled.NavButton>
+        <Styled.NavButton onClick={() => handleMoveMonth(-1)}>
+          {'<'}
+        </Styled.NavButton>
 
-        <Styled.Title>
-          {viewMonth.getFullYear()}.{String(viewMonth.getMonth() + 1).padStart(2, '0')}
-        </Styled.Title>
+        <Styled.Title>{formattedYearMonth}</Styled.Title>
 
-        <Styled.NavButton onClick={() => {
-          const d = new Date(viewMonth);
-          d.setMonth(d.getMonth() + 1);
-          setViewMonth(d);
-        }}>{'>'}</Styled.NavButton>
+        <Styled.NavButton onClick={() => handleMoveMonth(1)}>
+          {'>'}
+        </Styled.NavButton>
 
         <Styled.TimeLabel>시</Styled.TimeLabel>
         <Styled.TimeLabel>분</Styled.TimeLabel>

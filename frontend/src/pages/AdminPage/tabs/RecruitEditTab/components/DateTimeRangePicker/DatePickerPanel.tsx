@@ -1,7 +1,7 @@
-import { ko } from 'date-fns/locale';
-import DatePicker from 'react-datepicker';
-import * as Styled from './DatePickerPanel.styles';
 import { useEffect, useRef } from 'react';
+import DatePicker from 'react-datepicker';
+import { ko } from 'date-fns/locale';
+import * as Styled from './DatePickerPanel.styles';
 
 interface DatePickerPanelProps {
   selectedDate: Date;
@@ -21,23 +21,25 @@ const DatePickerPanel = ({
   const containerRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    if (!containerRef.current) return;
+    const container = containerRef.current;
+    if (!container) return;
 
-    const monthEl = containerRef.current.querySelector(
-      '.react-datepicker__month'
+    const monthElement = container.querySelector(
+      '.react-datepicker__month',
     ) as HTMLElement | null;
-
-    if (!monthEl) return;
+    if (!monthElement) return;
 
     const observer = new ResizeObserver(() => {
-      onHeightChange(monthEl.offsetHeight);
+      onHeightChange(monthElement.offsetHeight);
     });
 
-    observer.observe(monthEl);
-    onHeightChange(monthEl.offsetHeight);
+    observer.observe(monthElement);
+
+    // 초기 달력 높이 설정
+    onHeightChange(monthElement.offsetHeight);
 
     return () => observer.disconnect();
-  }, [selectedDate, onHeightChange]);
+  }, [onHeightChange]);
 
   return (
     <Styled.Container ref={containerRef}>

@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 
-export const Panel = styled.div<{ $isEnd?: boolean }>`
+export const Panel = styled.div<{ $alignRight?: boolean }>`
   position: absolute;
   top: 55px;
   left: 0;
@@ -10,17 +10,15 @@ export const Panel = styled.div<{ $isEnd?: boolean }>`
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.18);
   overflow: hidden;
   z-index: 10;
+  left: 0;
+  right: auto;
 
-  ${({ $isEnd }) =>
-    $isEnd
-      ? css`
-        right: 0;
-        left: auto;
-      `
-      : css`
-        left: 0;
-        right: auto;
-      `}
+  ${({ $alignRight }) =>
+    $alignRight &&
+    css`
+          right: 0;
+          left: auto;
+    `}
 `;
 
 export const Header = styled.div`
@@ -39,6 +37,10 @@ export const NavButton = styled.button`
   color: white;
   font-size: 20px;
   cursor: pointer;
+
+  &:hover {
+    opacity: 0.8;
+  }
 `;
 
 export const Title = styled.div`

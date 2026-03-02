@@ -10,89 +10,90 @@ interface TimePickerPanelProps {
 const TimePickerPanel = ({
   selectedDate,
   onChangeDate,
-  height
+  height,
 }: TimePickerPanelProps) => {
   const hourListRef = useRef<HTMLDivElement>(null);
   const minuteListRef = useRef<HTMLDivElement>(null);
 
-  const scrollToSelected = (
+  const alignScrollToCenter = (
     listElement: HTMLDivElement | null,
-    index: number
+    targetIndex: number,
   ) => {
-    if (listElement) {
-      const activeItem = listElement.children[index] as HTMLElement;
+    if (!listElement) return;
 
-      if (activeItem) {
-        const scrollTarget = 
-          activeItem.offsetTop - (listElement.clientHeight / 2) + (activeItem.clientHeight / 2);
-        
-        listElement.scrollTo({
-          top: scrollTarget,
-          behavior: 'auto',
-        });
-      }
-    }
+    const selectedItem = listElement.children[targetIndex] as HTMLElement;
+    if (!selectedItem) return;
+
+    const scrollOffset =
+      selectedItem.offsetTop -
+      listElement.clientHeight / 2 +
+      selectedItem.clientHeight / 2;
+
+    listElement.scrollTo({
+      top: scrollOffset,
+      behavior: 'auto',
+    });
   };
 
   useLayoutEffect(() => {
-    const timer = setTimeout(() => {
-      scrollToSelected(hourListRef.current, selectedDate.getHours());
-      scrollToSelected(minuteListRef.current, selectedDate.getMinutes());
+    const scrollTimer = setTimeout(() => {
+      alignScrollToCenter(hourListRef.current, selectedDate.getHours());
+      alignScrollToCenter(minuteListRef.current, selectedDate.getMinutes());
     }, 0);
-    
-    return () => clearTimeout(timer);
+
+    return () => clearTimeout(scrollTimer);
   }, [selectedDate]);
 
-  const setHour = (hour: number) => {
-    const next = new Date(selectedDate);
-    next.setHours(hour);
-    onChangeDate(next);
+  const updateHour = (hour: number) => {
+    const nextDate = new Date(selectedDate);
+    nextDate.setHours(hour);
+    onChangeDate(nextDate);
   };
 
-  const setMinute = (minute: number) => {
-    const next = new Date(selectedDate);
-    next.setMinutes(minute);
-    onChangeDate(next);
+  const updateMinute = (minute: number) => {
+    const nextDate = new Date(selectedDate);
+    nextDate.setMinutes(minute);
+    onChangeDate(nextDate);
   };
 
   return (
     <Styled.Container>
       <Styled.Column>
-        <Styled.List 
-          $height={height} 
-          ref={hourListRef} 
+        <Styled.ScrollList
+          $containerHeight={height}
+          ref={hourListRef}
           style={{ overflowY: 'auto', position: 'relative' }}
         >
-          {Array.from({ length: 24 }).map((_, h) => (
-            <Styled.ItemWrapper key={h}>
-              <Styled.ItemBox
-                $active={h === selectedDate.getHours()}
-                onClick={() => setHour(h)}
+          {Array.from({ length: 24 }).map((_, hour) => (
+            <Styled.ItemWrapper key={hour}>
+              <Styled.TimeItem
+                $isSelected={hour === selectedDate.getHours()}
+                onClick={() => updateHour(hour)}
               >
-                {String(h).padStart(2, '0')}
-              </Styled.ItemBox>
+                {String(hour).padStart(2, '0')}
+              </Styled.TimeItem>
             </Styled.ItemWrapper>
           ))}
-        </Styled.List>
+        </Styled.ScrollList>
       </Styled.Column>
 
       <Styled.Column>
-        <Styled.List 
-          $height={height} 
-          ref={minuteListRef} 
+        <Styled.ScrollList
+          $containerHeight={height}
+          ref={minuteListRef}
           style={{ overflowY: 'auto', position: 'relative' }}
         >
-          {Array.from({ length: 60 }).map((_, m) => (
-            <Styled.ItemWrapper key={m}>
-              <Styled.ItemBox
-                $active={m === selectedDate.getMinutes()}
-                onClick={() => setMinute(m)}
+          {Array.from({ length: 60 }).map((_, minute) => (
+            <Styled.ItemWrapper key={minute}>
+              <Styled.TimeItem
+                $isSelected={minute === selectedDate.getMinutes()}
+                onClick={() => updateMinute(minute)}
               >
-                {String(m).padStart(2, '0')}
-              </Styled.ItemBox>
+                {String(minute).padStart(2, '0')}
+              </Styled.TimeItem>
             </Styled.ItemWrapper>
           ))}
-        </Styled.List>
+        </Styled.ScrollList>
       </Styled.Column>
     </Styled.Container>
   );

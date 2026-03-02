@@ -9,8 +9,8 @@ export const Column = styled.div`
   width: 60px;
 `;
 
-export const List = styled.div<{ $height: number }>`
-  height: ${({ $height }) => $height}px;
+export const ScrollList = styled.div<{ $containerHeight: number }>`
+  height: ${({ $containerHeight }) => $containerHeight}px;
   overflow-y: auto;
   margin: 20px 0;
 
@@ -28,7 +28,7 @@ export const ItemWrapper = styled.div`
   justify-content: center;
 `;
 
-export const ItemBox = styled.div<{ $active: boolean }>`
+export const TimeItem = styled.div<{ $isSelected: boolean }>`
   width: 30px;
   height: 30px;
 
@@ -41,11 +41,11 @@ export const ItemBox = styled.div<{ $active: boolean }>`
   cursor: pointer;
 
   &:hover {
-    background: ${colors.primary[500]};
+    background-color: ${colors.primary[500]};
   }
 
-  ${({ $active }) =>
-    $active &&
+  ${({ $isSelected }) =>
+    $isSelected &&
     css`
       background-color: ${colors.primary[800]};
       color: white;
@@ -56,4 +56,3 @@ export const ItemBox = styled.div<{ $active: boolean }>`
       }
     `}
 `;
-
