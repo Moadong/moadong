@@ -1,9 +1,4 @@
-import styled, { keyframes } from 'styled-components';
-
-const fadeIn = keyframes`
-  from { opacity: 0; transform: translateY(-4px); }
-  to { opacity: 1; transform: translateY(0); }
-`;
+import styled from 'styled-components';
 
 export const Card = styled.div<{ $active: boolean }>`
   width: 100%;
@@ -25,16 +20,15 @@ export const ClubName = styled.p<{ $active: boolean }>`
   color: ${({ $active }) => ($active ? '#111111' : '#787878')};
 `;
 
-export const SongArea = styled.div<{ $active: boolean }>`
+export const SongArea = styled.div<{ $active: boolean; $expanded: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: flex-start;
   justify-content: space-between;
   gap: 8px;
   padding: ${({ $active }) => ($active ? '8px 12px' : '6px 12px')};
-  border-radius: ${({ $active }) => ($active ? '8px' : '20px')};
+  border-radius: ${({ $expanded }) => ($expanded ? '8px' : '20px')};
   background-color: ${({ $active }) => ($active ? '#ffece5' : '#ebebeb')};
-  animation: ${fadeIn} 0.15s ease;
 `;
 
 export const SongList = styled.ul`

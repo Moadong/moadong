@@ -12,9 +12,10 @@ export const Container = styled.div`
   }
 `;
 
-export const TabWrapper = styled.div`
+export const TabWrapper = styled.div<{ $webview?: boolean }>`
   display: flex;
   justify-content: center;
+  padding-top: ${({ $webview }) => ($webview ? '12px' : '0')};
 
   ${media.mobile} {
     display: block;
