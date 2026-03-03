@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { Performance } from '../../data/performances';
@@ -32,38 +32,24 @@ const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
     <Styled.Card $active={active} onClick={toggleExpanded}>
       <Styled.ClubName $active={active}>{performance.clubName}</Styled.ClubName>
 
-      <Styled.SongArea $active={active} $expanded={expanded}>
-        <AnimatePresence initial={false} mode='wait'>
-          {expanded ? (
+      <Styled.SongArea $active={active}>
+        <Styled.SongContent style={{ flex: 1, overflow: 'hidden' }}>
+          <Styled.SongItem $collapsed={!expanded}>{performance.songs[0]}</Styled.SongItem>
+          {performance.songs.length > 1 && (
             <motion.div
-              key='expanded'
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
+              initial={false}
+              animate={{ height: expanded ? 'auto' : 0 }}
               transition={{ duration: 0.2, ease: 'easeInOut' }}
-              style={{ overflow: 'hidden', flex: 1 }}
+              style={{ overflow: 'hidden' }}
             >
               <Styled.SongList>
-                {performance.songs.map((song) => (
+                {performance.songs.slice(1).map((song) => (
                   <Styled.SongItem key={song}>{song}</Styled.SongItem>
                 ))}
               </Styled.SongList>
             </motion.div>
-          ) : (
-            <motion.div
-              key='collapsed'
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-              transition={{ duration: 0.15 }}
-              style={{ flex: 1 }}
-            >
-              <Styled.CollapsedSong>
-                {performance.songs[0]}
-              </Styled.CollapsedSong>
-            </motion.div>
           )}
-        </AnimatePresence>
+        </Styled.SongContent>
 
         <Styled.ChevronWrapper>
           <Styled.ChevronIcon
