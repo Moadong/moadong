@@ -22,6 +22,8 @@ import {
 import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
 import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
 import IntroductionPage from './pages/FestivalPage/IntroductionPage/IntroductionPage';
+import PromotionDetailPage from './pages/PromotionPage/PromotionDetailPage';
+import PromotionListPage from './pages/PromotionPage/PromotionListPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -134,6 +136,22 @@ const App = () => {
                   element={
                     <ContentErrorBoundary>
                       <IntroductionPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/promotions'
+                  element={
+                    <ContentErrorBoundary>
+                      <PromotionListPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/promotions/:promotionId'
+                  element={
+                    <ContentErrorBoundary>
+                      <PromotionDetailPage />
                     </ContentErrorBoundary>
                   }
                 />
