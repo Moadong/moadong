@@ -33,7 +33,7 @@ const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
       <Styled.ClubName $active={active}>{performance.clubName}</Styled.ClubName>
 
       <Styled.SongArea $active={active}>
-        <Styled.SongContent style={{ flex: 1, overflow: 'hidden' }}>
+        <div style={{ flex: 1, overflow: 'hidden' }}>
           <Styled.SongItem $collapsed={!expanded}>{performance.songs[0]}</Styled.SongItem>
           {performance.songs.length > 1 && (
             <motion.div
@@ -49,7 +49,7 @@ const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
               </Styled.SongList>
             </motion.div>
           )}
-        </Styled.SongContent>
+        </div>
 
         <Styled.ChevronWrapper>
           <Styled.ChevronIcon

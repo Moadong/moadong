@@ -33,8 +33,6 @@ export const SongArea = styled.div<{ $active: boolean }>`
   background-color: ${({ $active }) => ($active ? '#ffece5' : '#ebebeb')};
 `;
 
-export const SongContent = styled.div``;
-
 export const SongList = styled.ul`
   display: flex;
   flex-direction: column;
