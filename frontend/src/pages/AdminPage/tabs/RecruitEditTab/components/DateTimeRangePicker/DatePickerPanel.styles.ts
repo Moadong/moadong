@@ -35,7 +35,7 @@ export const Container = styled.div`
   .react-datepicker__triangle,
   .react-datepicker__navigation,
   .react-datepicker__header,
-  .react-datepicker__curront-month {
+  .react-datepicker__current-month {
     display: none !important;
   }
 

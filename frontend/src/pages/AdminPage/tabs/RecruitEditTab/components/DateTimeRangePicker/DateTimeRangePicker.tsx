@@ -40,6 +40,15 @@ const DateTimeRangePicker = ({
     return () => document.removeEventListener('mousedown', handleClickOutside);
   }, []);
 
+  useEffect(() => {
+    if (!disabledEnd) return;
+
+    setActivePicker((currentPicker) => {
+      const isEndPickerActive = currentPicker === 'end';
+      return isEndPickerActive ? null : currentPicker;
+    });
+  }, [disabledEnd]);
+
   return (
     <Styled.Container ref={containerRef}>
       {/* 모집 시작 기간 */}
