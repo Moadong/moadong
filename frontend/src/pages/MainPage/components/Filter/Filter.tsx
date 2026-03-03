@@ -7,6 +7,7 @@ import * as Styled from './Filter.styles';
 const FILTER_OPTIONS = [
   { label: '동소한', path: '/festival-introduction' },
   { label: '동아리', path: '/' },
+  { label: '홍보', path: '/promotions' },
 ] as const;
 const FESTIVAL_PATH = '/festival-introduction';
 
