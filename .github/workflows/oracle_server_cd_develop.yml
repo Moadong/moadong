@@ -48,7 +48,9 @@ jobs:
       - name: make application.properties
         run: |
           cd ./backend/src/main/resources
-          echo "${{ secrets.APPLICATION_PROD_DEV }}" > ./application.properties
+          cat > application.properties <<'EOF'
+          ${{ secrets.APPLICATION_PROD_DEV }}
+          EOF
 
       - name: make firebase.json
         run: |
