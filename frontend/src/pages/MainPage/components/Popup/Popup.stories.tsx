@@ -1,9 +1,9 @@
+import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
+import { INITIAL_VIEWPORTS } from 'storybook/viewport';
 import Popup, { POPUP_SESSION_KEY, POPUP_STORAGE_KEY } from './Popup';
 
 const setMobilePopupState = () => {
-  window.innerWidth = 375;
-  window.dispatchEvent(new Event('resize'));
   sessionStorage.removeItem(POPUP_SESSION_KEY);
   localStorage.removeItem(POPUP_STORAGE_KEY);
 };
@@ -13,6 +13,10 @@ const meta = {
   component: Popup,
   parameters: {
     layout: 'fullscreen',
+    viewport: {
+      options: INITIAL_VIEWPORTS,
+      defaultViewport: 'iphone6',
+    },
     docs: {
       description: {
         component: '모바일에서 노출되는 앱 다운로드 팝업입니다.',
@@ -22,7 +26,11 @@ const meta = {
   decorators: [
     (Story) => {
       setMobilePopupState();
-      return <Story />;
+      return (
+        <MemoryRouter>
+          <Story />
+        </MemoryRouter>
+      );
     },
   ],
   tags: ['autodocs'],
