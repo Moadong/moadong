@@ -16,8 +16,8 @@ export const Panel = styled.div<{ $alignRight?: boolean }>`
   ${({ $alignRight }) =>
     $alignRight &&
     css`
-          right: 0;
-          left: auto;
+      right: 0;
+      left: auto;
     `}
 `;
 

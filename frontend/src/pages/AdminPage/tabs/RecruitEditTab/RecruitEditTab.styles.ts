@@ -28,8 +28,8 @@ export const AlwaysRecruitButton = styled.button<{ $isAlwaysActive: boolean }>`
   border: 1px solid ${colors.gray[500]};
 
   ${({ $isAlwaysActive }) =>
-     $isAlwaysActive &&
-  `
+    $isAlwaysActive &&
+    `
   color: ${colors.base.white};
   background-color: ${colors.primary[800]};
   border: none;
@@ -48,4 +48,3 @@ export const Label = styled.p`
   margin-bottom: 8px;
   font-weight: 600;
 `;
-
