@@ -29,7 +29,6 @@ export const SongArea = styled.div<{ $active: boolean; $expanded: boolean }>`
   padding: ${({ $active }) => ($active ? '8px 12px' : '6px 12px')};
   border-radius: ${({ $expanded }) => ($expanded ? '8px' : '20px')};
   background-color: ${({ $active }) => ($active ? '#ffece5' : '#ebebeb')};
-
 `;
 
 export const SongList = styled.ul`

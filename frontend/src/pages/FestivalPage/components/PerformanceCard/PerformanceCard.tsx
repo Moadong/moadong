@@ -58,7 +58,9 @@ const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
               transition={{ duration: 0.15 }}
               style={{ flex: 1 }}
             >
-              <Styled.CollapsedSong>{performance.songs[0]}</Styled.CollapsedSong>
+              <Styled.CollapsedSong>
+                {performance.songs[0]}
+              </Styled.CollapsedSong>
             </motion.div>
           )}
         </AnimatePresence>
