@@ -1,6 +1,9 @@
+import { PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useParams } from 'react-router-dom';
 
 const PromotionDetailPage = () => {
+  useTrackPageView(PAGE_VIEW.PROMOTION_DETAIL_PAGE);
   const { promotionId } = useParams();
 
   return (

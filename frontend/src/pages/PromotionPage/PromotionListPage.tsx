@@ -1,4 +1,8 @@
+import { PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+
 const PromotionListPage = () => {
+  useTrackPageView(PAGE_VIEW.PROMOTION_LIST_PAGE);
   return (
     <div>
       <h1>홍보 목록 페이지</h1>

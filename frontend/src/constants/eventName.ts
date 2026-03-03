@@ -107,6 +107,8 @@ export const PAGE_VIEW = {
   INTRODUCE_PAGE: 'IntroducePage',
   CLUB_UNION_PAGE: 'ClubUnionPage',
   FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
+  PROMOTION_LIST_PAGE: '홍보 목록 페이지',
+  PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
 
   // 관리자
   LOGIN_PAGE: '로그인페이지',
