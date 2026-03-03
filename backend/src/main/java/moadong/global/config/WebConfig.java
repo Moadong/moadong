@@ -1,5 +1,6 @@
 package moadong.global.config;
 
+import java.util.Arrays;
 import java.util.List;
 import moadong.global.util.OctetStreamReadMsgConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +32,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        System.out.println("CORS : " + Arrays.toString(allowedOrigins));
         registry.addMapping("/**")
             .allowedOriginPatterns(allowedOrigins)
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
