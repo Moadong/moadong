@@ -31,7 +31,7 @@ public class WebpMigrationService {
     @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${cloud.aws.s3.view-endpoint")
+    @Value("${cloud.aws.s3.view-endpoint}")
     private String viewEndpoint;
 
     private String normalizedViewEndpoint;
