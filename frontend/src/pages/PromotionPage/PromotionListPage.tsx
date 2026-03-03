@@ -4,6 +4,7 @@ import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import isInAppWebView from '@/utils/isInAppWebView';
 import Filter from '../MainPage/components/Filter/Filter';
+import PromottionGrid from './components/PromotionGrid';
 import * as Styled from './PromotionListPage.styles';
 
 const PromotionListPage = () => {
@@ -15,8 +16,7 @@ const PromotionListPage = () => {
       <Styled.Container>
         {!isInAppWebView() && <Filter alwaysVisible />}
         <Styled.Wrapper>
-          <h1>홍보 목록 페이지</h1>
-          <p>여기에 홍보 카드 2열로 배치 예정</p>
+          <PromottionGrid />
         </Styled.Wrapper>
       </Styled.Container>
       <Footer />
