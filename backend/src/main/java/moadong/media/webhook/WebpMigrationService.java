@@ -28,10 +28,10 @@ public class WebpMigrationService {
     private final S3Client s3Client;
     private final ImageConversionCompletedWebhookService imageConversionCompletedWebhookService;
 
-    @Value("${CLOUD_AWS_S3_BUCKET}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucket;
 
-    @Value("${CLOUD_AWS_S3_VIEW_ENDPOINT}")
+    @Value("${cloud.aws.s3.view-endpoint")
     private String viewEndpoint;
 
     private String normalizedViewEndpoint;

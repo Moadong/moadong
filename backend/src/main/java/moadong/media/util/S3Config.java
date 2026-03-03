@@ -16,13 +16,13 @@ import javax.annotation.PostConstruct;
 @Configuration
 public class S3Config {
 
-    @Value("${CLOUD_AWS_CREDENTIALS_ACCESS_KEY}")
+    @Value("${cloud.aws.credentials.accessKey}")
     private String accessKey;
 
-    @Value("${CLOUD_AWS_CREDENTIALS_SECRET_KEY}")
+    @Value("${cloud.aws.credentials.secretKey}")
     private String secretKey;
 
-    @Value("${CLOUD_AWS_S3_ENDPOINT}")
+    @Value("${cloud.aws.s3.endpoint}")
     private String endpoint;
 
     @Bean

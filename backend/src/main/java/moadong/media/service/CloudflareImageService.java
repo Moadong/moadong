@@ -45,9 +45,9 @@ public class CloudflareImageService implements ClubImageService{
 
     @Value("${server.feed.max-count}")
     private int MAX_FEED_COUNT;
-    @Value("${CLOUD_AWS_S3_BUCKET}")
+    @Value("${cloud.aws.s3.bucket}")
     private String bucketName;
-    @Value("${CLOUD_AWS_S3_VIEW_ENDPOINT}")
+    @Value("${cloud.aws.s3.view-endpoint}")
     private String viewEndpoint;
     @Value("${server.image.max-size}")
     private long maxImageSizeBytes;
