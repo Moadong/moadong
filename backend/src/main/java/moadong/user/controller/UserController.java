@@ -69,7 +69,7 @@ public class UserController {
             @CookieValue(value = "refresh_token", required = false) String refreshToken,
             HttpServletResponse response) {
         userCommandService.logoutUser(refreshToken);
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
+        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
                 .path("/")
                 .maxAge(0)
                 .httpOnly(true)
