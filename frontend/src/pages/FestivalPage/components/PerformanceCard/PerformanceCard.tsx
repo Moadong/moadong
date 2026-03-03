@@ -34,7 +34,9 @@ const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
 
       <Styled.SongArea $active={active}>
         <div style={{ flex: 1, overflow: 'hidden' }}>
-          <Styled.SongItem $collapsed={!expanded}>{performance.songs[0]}</Styled.SongItem>
+          <Styled.SongItem $collapsed={!expanded}>
+            {performance.songs[0]}
+          </Styled.SongItem>
           {performance.songs.length > 1 && (
             <motion.div
               initial={false}
