@@ -4,7 +4,7 @@ import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import isInAppWebView from '@/utils/isInAppWebView';
 import Filter from '../MainPage/components/Filter/Filter';
-import PromottionGrid from './components/PromotionGrid';
+import PromottionGrid from './components/PromotionGrid/PromotionGrid';
 import * as Styled from './PromotionListPage.styles';
 
 const PromotionListPage = () => {

@@ -1,5 +1,5 @@
-import { media } from "@/styles/mediaQuery";
-import styled from "styled-components";
+import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const Container = styled.div`
   width: 100%;
