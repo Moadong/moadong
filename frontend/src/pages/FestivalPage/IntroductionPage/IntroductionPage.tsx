@@ -60,11 +60,11 @@ const IntroductionPage = () => {
       <Header hideOn={['webview']} />
       <Styled.Container>
         {!isInAppWebView() && <Filter alwaysVisible />}
-        <Styled.TabWrapper>
+        <Styled.TabWrapper $webview={isInAppWebView()}>
           <UnderlineTabs
             tabs={[
               { key: FESTIVAL_TAB_TYPE.BOOTH_MAP, label: '부스지도' },
-              { key: FESTIVAL_TAB_TYPE.CLUB_TIMETABLE, label: '동아리시간표' },
+              { key: FESTIVAL_TAB_TYPE.CLUB_TIMETABLE, label: '버스킹 시간표' },
             ]}
             activeKey={activeTab}
             onTabClick={handleTabClick}
@@ -87,7 +87,7 @@ const IntroductionPage = () => {
           </Styled.TimetableSection>
         )}
       </Styled.Container>
-      <Footer />
+      {!isInAppWebView() && <Footer />}
     </>
   );
 };
