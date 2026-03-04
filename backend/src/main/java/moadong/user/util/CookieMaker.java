@@ -10,7 +10,7 @@ public class CookieMaker {
     private int refreshTokenExpirationHour;
 
     public ResponseCookie makeRefreshTokenCookie(String refreshToken) {
-        return ResponseCookie.from("refresh_token", refreshToken)
+        return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .path("/")
                 .maxAge((long) refreshTokenExpirationHour * 60 * 60)
