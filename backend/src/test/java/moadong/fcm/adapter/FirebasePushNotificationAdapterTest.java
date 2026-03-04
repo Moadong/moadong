@@ -3,6 +3,7 @@ package moadong.fcm.adapter;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.Message;
 import moadong.fcm.model.PushPayload;
+import moadong.fcm.model.TokenPushResult;
 import moadong.util.annotations.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.mockito.InjectMocks;
@@ -35,9 +36,9 @@ class FirebasePushNotificationAdapterTest {
 
         when(firebaseMessaging.send(any(Message.class))).thenReturn("message-id");
 
-        boolean result = adapter.send(payload);
+        TokenPushResult result = adapter.send(payload);
 
-        assertThat(result).isTrue();
+        assertThat(result.success()).isTrue();
         verify(firebaseMessaging).send(any(Message.class));
     }
 
@@ -52,8 +53,8 @@ class FirebasePushNotificationAdapterTest {
 
         when(firebaseMessaging.send(any(Message.class))).thenThrow(new RuntimeException("send failed"));
 
-        boolean result = adapter.send(payload);
+        TokenPushResult result = adapter.send(payload);
 
-        assertThat(result).isFalse();
+        assertThat(result.success()).isFalse();
     }
 }
