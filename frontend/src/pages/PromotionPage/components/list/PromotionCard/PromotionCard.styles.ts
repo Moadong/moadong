@@ -8,6 +8,7 @@ export const Container = styled.div`
   overflow: hidden;
   background: ${colors.base.white};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+  cursor: pointer;
 
   ${media.mobile} {
     width: 200px;
