@@ -1,3 +1,4 @@
+import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import 'swiper/css';
 import BoothMapSection from './BoothMapSection';
@@ -14,6 +15,13 @@ const meta = {
       },
     },
   },
+  decorators: [
+    (Story) => (
+      <MemoryRouter>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
   tags: ['autodocs'],
 } satisfies Meta<typeof BoothMapSection>;
 

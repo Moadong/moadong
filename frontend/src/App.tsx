@@ -93,6 +93,14 @@ const App = () => {
                   }
                 />
                 <Route
+                  path='/webview/club/@:clubName'
+                  element={
+                    <ContentErrorBoundary>
+                      <ClubDetailPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
                   path='/introduce'
                   element={
                     <ContentErrorBoundary>
