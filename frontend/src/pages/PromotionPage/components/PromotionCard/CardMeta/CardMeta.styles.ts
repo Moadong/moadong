@@ -8,7 +8,7 @@ export const Container = styled.div`
 
 export const Title = styled.h3`
   font-size: 14px;
-  font-weight: 700;
+  font-weight: 600;
   margin-bottom: 4px;
 `;
 
@@ -30,9 +30,8 @@ export const Icon = styled.div`
 
 export const MetaText = styled.span`
   font-size: 12px;
-  font-weight: 600;
+  font-weight: 400;
   color: ${colors.gray[600]};
-
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;

@@ -11,7 +11,7 @@ export const Container = styled.div`
   margin-top: 4px;
 `;
 
-export const ClubText = styled.h1`
+export const ClubText = styled.span`
   color: ${colors.gray[800]};
   font-size: 12px;
   font-weight: 600;
