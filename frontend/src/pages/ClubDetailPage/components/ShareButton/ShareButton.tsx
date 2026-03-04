@@ -24,7 +24,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
   if (!clubDetail) return;
 
   const handleShare = async () => {
-    const url = `${MOADONG_BASE_URL}${clubDetail.id}`;
+    const url = `${MOADONG_BASE_URL}@${clubDetail.name}`;
 
     if (isRNWebView) {
       const isSent = requestShare({
