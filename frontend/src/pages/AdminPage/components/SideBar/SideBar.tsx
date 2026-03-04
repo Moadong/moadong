@@ -67,14 +67,7 @@ const SideBar = () => {
     if (!confirmed) return;
 
     try {
-      if (
-        document.cookie
-          .split(';')
-          .some((cookie) => cookie.trim().startsWith('refreshToken='))
-      ) {
-        await logout();
-      }
-
+      await logout();
       trackEvent(ADMIN_EVENT.LOGOUT_BUTTON_CLICKED);
 
       localStorage.removeItem('accessToken');
