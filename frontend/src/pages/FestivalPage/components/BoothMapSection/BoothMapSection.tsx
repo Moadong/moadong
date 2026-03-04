@@ -665,15 +665,12 @@ const BoothMapSection = () => {
                       cursor: booth.link ? 'pointer' : 'default',
                     }}
                     onClick={() => {
+                      if (isInAppWebView()) return;
                       if (booth.link) {
                         trackEvent(USER_EVENT.FESTIVAL_BOOTH_CLICKED, {
                           booth: booth.name,
                         });
-                        if (isInAppWebView()) {
-                          navigate(`/webview/club/${booth.link}`);
-                        } else {
-                          navigate(`/clubDetail/${booth.link}`);
-                        }
+                        navigate(`/clubDetail/${booth.link}`);
                       }
                     }}
                   >
