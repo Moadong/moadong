@@ -1,3 +1,6 @@
+import CardMeta from './CardMeta/CardMeta';
+import ClubTag from './ClubTag/ClubTag';
+import DdayBadge from './DdayBadge/DdayBadge';
 import * as Styled from './PromotionCard.styles';
 
 const PromotionCard = () => {
@@ -6,14 +9,13 @@ const PromotionCard = () => {
       <Styled.ImageWrapper>
         <Styled.Image />
         <Styled.DdayWrapper>
-          {/* <Styled.DdayBadge /> */}
+          <DdayBadge />
         </Styled.DdayWrapper>
       </Styled.ImageWrapper>
 
       <Styled.Content>
-        <Styled.Title>💌✨WAP 최종 전시회 초대장 ✨💌</Styled.Title>
-        {/* <CardMeta/> */}
-        {/* <ClubTag /> */}
+        <CardMeta />
+        <ClubTag />
       </Styled.Content>
     </Styled.Container>
   );

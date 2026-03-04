@@ -29,8 +29,3 @@ export const DdayWrapper = styled.div`
 export const Content = styled.div`
   padding: 10px;
 `;
-
-export const Title = styled.h3`
-  font-size: 14px;
-  font-weight: 700;
-`;
