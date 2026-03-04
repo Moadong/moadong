@@ -10,7 +10,7 @@ interface PromotionCardProps {
 
 const PromotionCard = ({ article }: PromotionCardProps) => {
   const imageUrl = article.images?.[0];
-  
+
   return (
     <Styled.Container>
       <Styled.ImageWrapper>

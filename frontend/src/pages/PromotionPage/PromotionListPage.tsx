@@ -5,7 +5,7 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
 import isInAppWebView from '@/utils/isInAppWebView';
 import Filter from '../MainPage/components/Filter/Filter';
-import PromottionGrid from './components/PromotionGrid/PromotionGrid';
+import PromottionGrid from './components/list/PromotionGrid/PromotionGrid';
 import * as Styled from './PromotionListPage.styles';
 
 const PromotionListPage = () => {
