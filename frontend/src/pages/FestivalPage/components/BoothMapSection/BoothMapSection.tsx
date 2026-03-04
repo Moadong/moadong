@@ -4,6 +4,7 @@ import type { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './BoothMapSection.styles';
 
 const MAP_FRAME_WIDTH = 375;
@@ -590,12 +591,6 @@ const BoothMapSection = () => {
   const [currentMapIndex, setCurrentMapIndex] = useState(0);
   const [mapSwiper, setMapSwiper] = useState<SwiperType | null>(null);
 
-  useEffect(() => {
-    if (mapSwiper) {
-      mapSwiper.slideTo(4);
-    }
-  }, [currentMapIndex, mapSwiper]);
-
   return (
     <>
       <Styled.SliderWrapper>
@@ -674,7 +669,11 @@ const BoothMapSection = () => {
                         trackEvent(USER_EVENT.FESTIVAL_BOOTH_CLICKED, {
                           booth: booth.name,
                         });
-                        navigate(`/clubDetail/${booth.link}`);
+                        if (isInAppWebView()) {
+                          navigate(`/webview/club/${booth.link}`);
+                        } else {
+                          navigate(`/clubDetail/${booth.link}`);
+                        }
                       }
                     }}
                   >
