@@ -112,7 +112,7 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
       { name: '한누리', x: 41, y: 70, width: 143, height: 40.75 },
       { name: '절영회', x: 192, y: 70, width: 143, height: 40.75 },
       { name: 'Cert-is', x: 41, y: 116.75, width: 143, height: 40.75 },
-      { name: '플레이 아데스', x: 192, y: 116.75, width: 143, height: 40.75 },
+      { name: '플레이아데스', x: 192, y: 116.75, width: 143, height: 40.75 },
       { name: 'PAS', x: 41, y: 163.5, width: 143, height: 40.75 },
       { name: '프라우드', x: 192, y: 163.5, width: 143, height: 40.75 },
       { name: '조나단', x: 41, y: 210.25, width: 143, height: 40.75 },
