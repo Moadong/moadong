@@ -47,8 +47,11 @@
     #clubList tbody tr { cursor: pointer; }
     #clubList tbody tr:hover { background: #f9fafb; }
     #dictList tbody tr:hover { background: #f9fafb; }
+    #fcmTokenList tbody tr:hover { background: #f9fafb; }
     #dictList .btn-cell { white-space: nowrap; }
     #dictList .btn-cell button { margin: 0 4px; padding: 4px 10px; font-size: 0.85rem; }
+    #fcmTokenList .btn-cell { white-space: nowrap; }
+    #fcmTokenList .btn-cell button { margin: 0 4px; padding: 4px 10px; font-size: 0.85rem; }
     .hidden { display: none !important; }
     .loading { opacity: 0.7; pointer-events: none; }
     .banner { padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; font-size: 0.9rem; }
@@ -76,6 +79,15 @@
     .section-head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .pagination { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.9rem; }
     .pagination button { margin: 0; padding: 6px 12px; }
+    .token-cell {
+      font-family: monospace;
+      font-size: 0.82rem;
+      max-width: 420px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .token-cell[title] { cursor: pointer; }
     .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: fadeOut 3s ease-in-out forwards; }
     .toast.success { background: #166534; color: #fff; }
     .toast.error { background: #dc2626; color: #fff; }
@@ -91,6 +103,7 @@
         <a href="#api-docs">API 문서</a>
         <a href="#club">동아리</a>
         <a href="#dict">단어사전</a>
+        <a href="#fcm">FCM 알림</a>
         <a href="#conversion-batch">이미지 변환 배치</a>
       </nav>
     </div>
@@ -214,6 +227,84 @@
       </div>
     </section>
 
+    <section id="fcm" class="hidden">
+      <div class="section-head">
+        <h2>FCM 알림 관리</h2>
+        <div class="section-head-actions">
+          <button type="button" id="btnLoadFcmTokens">토큰 조회</button>
+          <button type="button" id="btnClearFcmSelection">선택 초기화</button>
+        </div>
+      </div>
+      <div id="fcmBanner" class="banner hidden"></div>
+      <p class="sub" style="margin-bottom:8px;">1) 토큰을 조회해 선택한 뒤 개별 메시지를 보낼 수 있습니다. 2) 전체 토큰 대상으로 일괄 발송할 수 있습니다.</p>
+
+      <h3 style="font-size:1rem; margin-top:0; margin-bottom:8px;">토큰 조회</h3>
+      <div id="fcmTokenLoading" class="hidden">토큰 불러오는 중...</div>
+      <p id="fcmTokenSummary" class="sub" style="margin-top:0; margin-bottom:8px;">토큰 조회를 실행하세요.</p>
+      <div class="form-grid" style="margin-bottom:8px;">
+        <div class="form-row">
+          <label for="fcmTokenSearch">토큰 검색</label>
+          <input type="search" id="fcmTokenSearch" placeholder="토큰 일부를 입력하세요.">
+        </div>
+      </div>
+      <div id="fcmTokenPagination" class="pagination hidden" style="margin-bottom:8px;"></div>
+      <div class="table-wrap">
+        <table id="fcmTokenList">
+          <thead><tr><th>#</th><th>토큰</th><th>액션</th></tr></thead>
+          <tbody>
+            <tr><td colspan="3">토큰 조회를 실행하세요.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">개별 토큰 메시지 전송</h3>
+      <div class="form-row">
+        <label for="fcmSingleToken">대상 토큰</label>
+        <textarea id="fcmSingleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmSingleTitle">제목</label>
+          <input type="text" id="fcmSingleTitle" placeholder="알림 제목">
+        </div>
+        <div class="form-row">
+          <label for="fcmSingleBody">본문</label>
+          <input type="text" id="fcmSingleBody" placeholder="알림 내용">
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="fcmSingleData">data (JSON 객체, 선택)</label>
+        <textarea id="fcmSingleData" rows="4" placeholder='{"screen":"club","clubId":"123"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+      </div>
+      <button type="button" id="btnFcmSendSingle">개별 메시지 전송</button>
+      <div id="fcmSingleResult" class="message-box hidden"></div>
+
+      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">전체 메시지 전송</h3>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmBatchTitle">제목</label>
+          <input type="text" id="fcmBatchTitle" placeholder="알림 제목">
+        </div>
+        <div class="form-row">
+          <label for="fcmBatchBody">본문</label>
+          <input type="text" id="fcmBatchBody" placeholder="알림 내용">
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="fcmBatchData">data (JSON 객체, 선택)</label>
+        <textarea id="fcmBatchData" rows="4" placeholder='{"type":"admin","scope":"all"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+      </div>
+      <button type="button" id="btnFcmSendAll">전체 메시지 전송</button>
+      <div id="fcmBatchResult" class="message-box hidden"></div>
+
+      <div class="card-grid" style="margin-top:16px;">
+        <a href="/swagger-ui.html#/Fcm_Notification_Admin" target="_blank" rel="noopener" class="card">
+          <strong>FCM Notification Admin API</strong>
+          <span>토큰 조회, 단건 전송, 전체 배치 전송</span>
+        </a>
+      </div>
+    </section>
+
     <section id="conversion-batch" class="hidden">
       <h2>이미지 변환 배치 (전체 동아리)</h2>
       <p class="sub">source → destination 이미지 URL을 모든 동아리의 로고/커버/피드 이미지에서 일괄 갱신합니다. event=batch.completed, images 배열 필수.</p>
@@ -236,6 +327,10 @@
   <script>
     const API_BASE = '';
     const PAGE_SIZE = 50;
+    const FCM_PAGE_SIZE = 20;
+    let fcmTokens = [];
+    let fcmFilteredTokens = [];
+    let fcmCurrentPage = 1;
 
     function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
     function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
@@ -264,6 +359,7 @@
       document.getElementById('tokenArea').classList.toggle('hidden', !show);
       document.getElementById('club').classList.toggle('hidden', !show);
       document.getElementById('dict').classList.toggle('hidden', !show);
+      document.getElementById('fcm').classList.toggle('hidden', !show);
       document.getElementById('conversion-batch').classList.toggle('hidden', !show);
       const headerStatus = document.getElementById('headerStatus');
       const headerUserId = document.getElementById('headerUserId');
@@ -306,6 +402,7 @@
           showLogin(true);
           loadClubsIfVisible();
           loadDictIfVisible();
+          loadFcmTokensIfVisible();
         } else {
           errEl.textContent = '토큰 없음';
           errEl.classList.remove('hidden');
@@ -338,6 +435,7 @@
       document.getElementById('clubBanner').classList.add('hidden');
       document.getElementById('dictList').querySelector('tbody').innerHTML = '';
       document.getElementById('dictBanner').classList.add('hidden');
+      clearFcmState();
     }
 
     function openEditWindow(clubId) {
@@ -351,6 +449,7 @@
       showLogin(true);
       loadClubsIfVisible();
       loadDictIfVisible();
+      loadFcmTokensIfVisible();
     }
 
     let allClubs = [];
@@ -657,6 +756,347 @@
         showToast(e.message || '요청 실패', 'error');
       }
     }
+
+    async function readJsonOrEmpty(res) {
+      try {
+        return await res.json();
+      } catch (_) {
+        return {};
+      }
+    }
+
+    function setMessageBox(elId, ok, message) {
+      const el = document.getElementById(elId);
+      el.textContent = message;
+      el.className = 'message-box ' + (ok ? 'success' : 'error');
+      el.classList.remove('hidden');
+    }
+
+    function truncateMiddle(value, left, right) {
+      if (!value) return '';
+      if (value.length <= (left + right + 1)) return value;
+      return value.slice(0, left) + '…' + value.slice(value.length - right);
+    }
+
+    function parseFcmDataMap(raw, fieldName) {
+      const text = (raw || '').trim();
+      if (!text) return {};
+      let parsed;
+      try {
+        parsed = JSON.parse(text);
+      } catch (_) {
+        throw new Error(fieldName + '는 JSON 객체 형식이어야 합니다.');
+      }
+      if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object') {
+        throw new Error(fieldName + '는 JSON 객체 형식이어야 합니다.');
+      }
+      const mapped = {};
+      for (const [key, value] of Object.entries(parsed)) {
+        if (!String(key).trim()) {
+          throw new Error(fieldName + ' key는 비어 있을 수 없습니다.');
+        }
+        if (value !== null && typeof value === 'object') {
+          throw new Error(fieldName + ' 값은 문자열/숫자/불리언만 허용됩니다.');
+        }
+        mapped[String(key)] = value == null ? '' : String(value);
+      }
+      return mapped;
+    }
+
+    function renderFcmTokenRows(tokens, page) {
+      const tbody = document.querySelector('#fcmTokenList tbody');
+      tbody.innerHTML = '';
+      if (!tokens.length) {
+        tbody.innerHTML = '<tr><td colspan="3">조회된 토큰이 없습니다.</td></tr>';
+        return;
+      }
+      const start = (page - 1) * FCM_PAGE_SIZE;
+      const slice = tokens.slice(start, start + FCM_PAGE_SIZE);
+      slice.forEach((token, idx) => {
+        const tr = document.createElement('tr');
+        tr.appendChild(document.createElement('td')).textContent = String(start + idx + 1);
+        const tokenCell = document.createElement('td');
+        tokenCell.className = 'token-cell';
+        tokenCell.title = token;
+        tokenCell.textContent = truncateMiddle(token, 20, 16);
+        tokenCell.onclick = () => {
+          navigator.clipboard.writeText(token);
+          showToast('토큰 복사됨', 'success');
+        };
+        tr.appendChild(tokenCell);
+        const btnCell = document.createElement('td');
+        btnCell.className = 'btn-cell';
+        const pickBtn = document.createElement('button');
+        pickBtn.type = 'button';
+        pickBtn.textContent = '선택';
+        pickBtn.onclick = () => {
+          document.getElementById('fcmSingleToken').value = token;
+          showToast('단건 발송 대상 토큰으로 선택됨', 'success');
+        };
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.textContent = '복사';
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(token);
+          showToast('토큰 복사됨', 'success');
+        };
+        btnCell.appendChild(pickBtn);
+        btnCell.appendChild(copyBtn);
+        tr.appendChild(btnCell);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderFcmTokenPagination(total) {
+      const wrap = document.getElementById('fcmTokenPagination');
+      if (total <= FCM_PAGE_SIZE) {
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+      wrap.classList.remove('hidden');
+      const totalPages = Math.ceil(total / FCM_PAGE_SIZE);
+      let html = '<span>총 ' + total + '개</span>';
+      if (fcmCurrentPage > 1) html += '<button type="button" id="fcmPrev">이전</button>';
+      html += '<span> ' + fcmCurrentPage + ' / ' + totalPages + ' </span>';
+      if (fcmCurrentPage < totalPages) html += '<button type="button" id="fcmNext">다음</button>';
+      wrap.innerHTML = html;
+      const prev = document.getElementById('fcmPrev');
+      const next = document.getElementById('fcmNext');
+      if (prev) prev.onclick = () => {
+        fcmCurrentPage--;
+        renderFcmTokenRows(fcmFilteredTokens, fcmCurrentPage);
+        renderFcmTokenPagination(fcmFilteredTokens.length);
+      };
+      if (next) next.onclick = () => {
+        fcmCurrentPage++;
+        renderFcmTokenRows(fcmFilteredTokens, fcmCurrentPage);
+        renderFcmTokenPagination(fcmFilteredTokens.length);
+      };
+    }
+
+    function updateFcmTokenSummary() {
+      const summary = document.getElementById('fcmTokenSummary');
+      const keyword = document.getElementById('fcmTokenSearch').value.trim();
+      if (!fcmTokens.length) {
+        summary.textContent = '조회된 토큰이 없습니다.';
+        return;
+      }
+      if (!keyword) {
+        summary.textContent = '총 ' + fcmTokens.length + '개 토큰';
+        return;
+      }
+      summary.textContent = '총 ' + fcmTokens.length + '개 중 ' + fcmFilteredTokens.length + '개 검색 결과';
+    }
+
+    function applyFcmTokenFilter(resetPage) {
+      if (resetPage) fcmCurrentPage = 1;
+      const keyword = document.getElementById('fcmTokenSearch').value.trim().toLowerCase();
+      fcmFilteredTokens = !keyword
+              ? fcmTokens.slice()
+              : fcmTokens.filter(token => String(token).toLowerCase().includes(keyword));
+      updateFcmTokenSummary();
+      renderFcmTokenRows(fcmFilteredTokens, fcmCurrentPage);
+      renderFcmTokenPagination(fcmFilteredTokens.length);
+    }
+
+    function clearFcmState() {
+      fcmTokens = [];
+      fcmFilteredTokens = [];
+      fcmCurrentPage = 1;
+      document.getElementById('fcmTokenSearch').value = '';
+      document.getElementById('fcmSingleToken').value = '';
+      document.getElementById('fcmSingleTitle').value = '';
+      document.getElementById('fcmSingleBody').value = '';
+      document.getElementById('fcmSingleData').value = '';
+      document.getElementById('fcmBatchTitle').value = '';
+      document.getElementById('fcmBatchBody').value = '';
+      document.getElementById('fcmBatchData').value = '';
+      document.getElementById('fcmSingleResult').classList.add('hidden');
+      document.getElementById('fcmBatchResult').classList.add('hidden');
+      const banner = document.getElementById('fcmBanner');
+      banner.textContent = '';
+      banner.className = 'banner hidden';
+      document.getElementById('fcmTokenSummary').textContent = '토큰 조회를 실행하세요.';
+      document.getElementById('fcmTokenPagination').classList.add('hidden');
+      document.getElementById('fcmTokenPagination').innerHTML = '';
+      document.querySelector('#fcmTokenList tbody').innerHTML = '<tr><td colspan="3">토큰 조회를 실행하세요.</td></tr>';
+    }
+
+    function loadFcmTokensIfVisible() {
+      const section = document.getElementById('fcm');
+      if (section && !section.classList.contains('hidden') && !fcmTokens.length) {
+        document.getElementById('btnLoadFcmTokens').click();
+      }
+    }
+
+    document.getElementById('btnClearFcmSelection').onclick = () => {
+      document.getElementById('fcmSingleToken').value = '';
+      document.getElementById('fcmSingleResult').classList.add('hidden');
+      showToast('단건 발송 대상 토큰이 초기화되었습니다', 'success');
+    };
+
+    document.getElementById('fcmTokenSearch').addEventListener('input', () => {
+      applyFcmTokenFilter(true);
+    });
+
+    document.getElementById('btnLoadFcmTokens').onclick = async () => {
+      const btn = document.getElementById('btnLoadFcmTokens');
+      const banner = document.getElementById('fcmBanner');
+      const summary = document.getElementById('fcmTokenSummary');
+      const loading = document.getElementById('fcmTokenLoading');
+      banner.className = 'banner hidden';
+      banner.textContent = '';
+      summary.textContent = '토큰 불러오는 중...';
+      loading.classList.remove('hidden');
+      btn.disabled = true;
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/tokens', { headers: headers() });
+        if (res.status === 403) {
+          banner.textContent = '개발자 계정으로 로그인하세요.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          fcmTokens = [];
+          applyFcmTokenFilter(true);
+          summary.textContent = '권한이 없습니다.';
+          return;
+        }
+        const data = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          banner.textContent = data.message || '토큰 조회 실패 (HTTP ' + res.status + ')';
+          banner.className = 'banner error';
+          banner.classList.remove('hidden');
+          fcmTokens = [];
+          applyFcmTokenFilter(true);
+          summary.textContent = '토큰 조회에 실패했습니다.';
+          return;
+        }
+        fcmTokens = data.data?.tokens || [];
+        applyFcmTokenFilter(true);
+        if (!fcmTokens.length) {
+          banner.textContent = '저장된 토큰이 없습니다.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          return;
+        }
+        showToast('토큰 ' + fcmTokens.length + '개를 조회했습니다', 'success');
+      } catch (e) {
+        banner.textContent = '요청 실패: ' + (e.message || '');
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        fcmTokens = [];
+        applyFcmTokenFilter(true);
+        summary.textContent = '토큰 조회에 실패했습니다.';
+      } finally {
+        loading.classList.add('hidden');
+        btn.disabled = false;
+        btn.textContent = '토큰 조회';
+      }
+    };
+
+    document.getElementById('btnFcmSendSingle').onclick = async () => {
+      const token = document.getElementById('fcmSingleToken').value.trim();
+      const title = document.getElementById('fcmSingleTitle').value.trim();
+      const body = document.getElementById('fcmSingleBody').value.trim();
+      let data;
+      try {
+        data = parseFcmDataMap(document.getElementById('fcmSingleData').value, '단건 data');
+      } catch (e) {
+        setMessageBox('fcmSingleResult', false, e.message || 'data 형식이 올바르지 않습니다.');
+        return;
+      }
+      if (!token) {
+        setMessageBox('fcmSingleResult', false, '대상 토큰을 입력하거나 목록에서 선택하세요.');
+        return;
+      }
+      if (!title || !body) {
+        setMessageBox('fcmSingleResult', false, '제목과 본문을 모두 입력하세요.');
+        return;
+      }
+
+      const btn = document.getElementById('btnFcmSendSingle');
+      document.getElementById('fcmSingleResult').classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/send', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ token, title, body, data })
+        });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmSingleResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmSingleResult', false, response.message || 'FCM 단건 발송 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        const messageId = response.data?.messageId || '-';
+        setMessageBox('fcmSingleResult', true, (response.message || 'FCM 단건 발송 완료') + ' (messageId: ' + messageId + ')');
+        showToast('개별 메시지 전송 완료', 'success');
+      } catch (e) {
+        setMessageBox('fcmSingleResult', false, e.message || '요청 실패');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '개별 메시지 전송';
+      }
+    };
+
+    document.getElementById('btnFcmSendAll').onclick = async () => {
+      const title = document.getElementById('fcmBatchTitle').value.trim();
+      const body = document.getElementById('fcmBatchBody').value.trim();
+      let data;
+      try {
+        data = parseFcmDataMap(document.getElementById('fcmBatchData').value, '전체 data');
+      } catch (e) {
+        setMessageBox('fcmBatchResult', false, e.message || 'data 형식이 올바르지 않습니다.');
+        return;
+      }
+      if (!title || !body) {
+        setMessageBox('fcmBatchResult', false, '제목과 본문을 모두 입력하세요.');
+        return;
+      }
+
+      const btn = document.getElementById('btnFcmSendAll');
+      document.getElementById('fcmBatchResult').classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/send-all', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ title, body, data })
+        });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmBatchResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmBatchResult', false, response.message || 'FCM 전체 배치 발송 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        const result = response.data || {};
+        const total = result.totalTokenCount ?? 0;
+        const success = result.successCount ?? 0;
+        const failure = result.failureCount ?? 0;
+        let detail = '총 ' + total + '건, 성공 ' + success + ', 실패 ' + failure;
+        if (Array.isArray(result.failedTokens) && result.failedTokens.length) {
+          const sample = result.failedTokens.slice(0, 2).map(t => truncateMiddle(t, 10, 6)).join(', ');
+          detail += ', 실패 토큰 샘플: ' + sample;
+        }
+        setMessageBox('fcmBatchResult', true, (response.message || 'FCM 전체 배치 발송 완료') + ' - ' + detail);
+        showToast('전체 메시지 전송 완료', 'success');
+      } catch (e) {
+        setMessageBox('fcmBatchResult', false, e.message || '요청 실패');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '전체 메시지 전송';
+      }
+    };
 
     document.getElementById('btnConversionBatch').onclick = async () => {
       const text = document.getElementById('conversionImagesJson').value.trim();
