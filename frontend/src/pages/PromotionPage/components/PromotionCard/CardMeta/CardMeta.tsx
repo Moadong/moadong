@@ -9,7 +9,12 @@ interface CardMetaProps {
 }
 
 const CardMeta = ({ title, location, startDate }: CardMetaProps) => {
-  const formattedStartDate = new Date(startDate).toLocaleDateString();
+  const startDateObj = new Date(startDate);
+  const formattedStartDate = startDateObj.toLocaleDateString('ko-KR', {
+    month: 'long',
+    day: 'numeric',
+    weekday: 'long',
+  });
 
   return (
     <Styled.Container>
