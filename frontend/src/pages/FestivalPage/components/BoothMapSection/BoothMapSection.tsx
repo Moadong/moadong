@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import type { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { USER_EVENT } from '@/constants/eventName';
@@ -14,6 +15,7 @@ type Booth = {
   y: number;
   width: number;
   height: number;
+  link?: string;
 };
 
 type MapSlide = {
@@ -67,22 +69,127 @@ const CLUB_MAP_SLIDES: MapSlide[] = [
       rotation: -90,
     },
     booths: [
-      { name: '리얼겟', x: 41, y: 70, width: 143, height: 40.75 },
-      { name: '포시즌', x: 192, y: 70, width: 143, height: 40.75 },
-      { name: '울림', x: 41, y: 116.75, width: 143, height: 40.75 },
-      { name: '그린드림', x: 192, y: 116.75, width: 143, height: 40.75 },
-      { name: '어택', x: 41, y: 163.5, width: 143, height: 40.75 },
-      { name: '거터', x: 192, y: 163.5, width: 143, height: 40.75 },
-      { name: 'TIME', x: 41, y: 210.25, width: 143, height: 40.75 },
-      { name: '청심회', x: 192, y: 210.25, width: 143, height: 40.75 },
-      { name: '아카데미', x: 41, y: 257, width: 143, height: 40.75 },
-      { name: 'SFC', x: 192, y: 257, width: 143, height: 40.75 },
-      { name: '한판', x: 41, y: 303.75, width: 143, height: 40.75 },
-      { name: '테크니칼', x: 192, y: 303.75, width: 143, height: 40.75 },
-      { name: 'UCDC', x: 41, y: 350.5, width: 143, height: 40.75 },
-      { name: '스타피쉬 (농구)', x: 192, y: 350.5, width: 143, height: 40.75 },
-      { name: '동반', x: 41, y: 397.25, width: 143, height: 40.75 },
-      { name: '백경유스호스텔', x: 192, y: 397.25, width: 143, height: 40.75 },
+      {
+        name: '리얼겟',
+        x: 41,
+        y: 70,
+        width: 143,
+        height: 40.75,
+        link: '@리얼겟',
+      },
+      {
+        name: '포시즌',
+        x: 192,
+        y: 70,
+        width: 143,
+        height: 40.75,
+        link: '@포시즌',
+      },
+      {
+        name: '울림',
+        x: 41,
+        y: 116.75,
+        width: 143,
+        height: 40.75,
+        link: '@울림',
+      },
+      {
+        name: '그린드림',
+        x: 192,
+        y: 116.75,
+        width: 143,
+        height: 40.75,
+        link: '@그린드림',
+      },
+      {
+        name: '어택',
+        x: 41,
+        y: 163.5,
+        width: 143,
+        height: 40.75,
+        link: '@어택',
+      },
+      {
+        name: '거터',
+        x: 192,
+        y: 163.5,
+        width: 143,
+        height: 40.75,
+        link: '@거터',
+      },
+      {
+        name: 'TIME',
+        x: 41,
+        y: 210.25,
+        width: 143,
+        height: 40.75,
+        link: '@TIME',
+      },
+      {
+        name: '청심회',
+        x: 192,
+        y: 210.25,
+        width: 143,
+        height: 40.75,
+        link: '@청심회',
+      },
+      {
+        name: '아카데미',
+        x: 41,
+        y: 257,
+        width: 143,
+        height: 40.75,
+        link: '@아카데미',
+      },
+      { name: 'SFC', x: 192, y: 257, width: 143, height: 40.75, link: '@SFC' },
+      {
+        name: '한판',
+        x: 41,
+        y: 303.75,
+        width: 143,
+        height: 40.75,
+        link: '@한판',
+      },
+      {
+        name: '테크니칼',
+        x: 192,
+        y: 303.75,
+        width: 143,
+        height: 40.75,
+        link: '@테크니칼',
+      },
+      {
+        name: 'UCDC',
+        x: 41,
+        y: 350.5,
+        width: 143,
+        height: 40.75,
+        link: '@UCDC',
+      },
+      {
+        name: '스타피쉬-농구',
+        x: 192,
+        y: 350.5,
+        width: 143,
+        height: 40.75,
+        link: '@스타피쉬-농구',
+      },
+      {
+        name: '동반',
+        x: 41,
+        y: 397.25,
+        width: 143,
+        height: 40.75,
+        link: '@동반',
+      },
+      {
+        name: '백경유스호스텔',
+        x: 192,
+        y: 397.25,
+        width: 143,
+        height: 40.75,
+        link: '@백경 유스호스텔',
+      },
     ],
   },
   {
@@ -220,6 +327,7 @@ const toCenterPercent = (start: number, size: number, base: number) =>
 
 const BoothMapSection = () => {
   const trackEvent = useMixpanelTrack();
+  const navigate = useNavigate();
   const [currentMapIndex, setCurrentMapIndex] = useState(0);
   const [mapSwiper, setMapSwiper] = useState<SwiperType | null>(null);
 
@@ -294,6 +402,15 @@ const BoothMapSection = () => {
                       top: toPercent(booth.y, MAP_FRAME_HEIGHT),
                       width: toPercent(booth.width, MAP_FRAME_WIDTH),
                       height: toPercent(booth.height, MAP_FRAME_HEIGHT),
+                      cursor: booth.link ? 'pointer' : 'default',
+                    }}
+                    onClick={() => {
+                      if (booth.link) {
+                        trackEvent(USER_EVENT.FESTIVAL_BOOTH_CLICKED, {
+                          booth: booth.name,
+                        });
+                        navigate(`/clubDetail/${booth.link}`);
+                      }
                     }}
                   >
                     {booth.name}
