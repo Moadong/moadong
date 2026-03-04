@@ -11,13 +11,18 @@ export const Container = styled.div`
 export const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 180px; // 수정 예정
+  height: 164px; // 수정 예정
 `;
 
-export const Image = styled.div`
+export const Image = styled.div<{ $imageUrl?: string }>`
   width: 100%;
   height: 100%;
-  background: #ddd;
+
+  background-color: #ddd;
+  background-image: ${({ $imageUrl }) => ($imageUrl ? `url(${$imageUrl})` : 'none')};
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
 `;
 
 export const DdayWrapper = styled.div`

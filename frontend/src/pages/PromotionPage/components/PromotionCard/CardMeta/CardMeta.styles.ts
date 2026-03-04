@@ -19,8 +19,12 @@ export const MetaRow = styled.div`
 `;
 
 export const Icon = styled.div`
+  width: 14px;
+  height: 14px;
+  padding: 1.5px 0px;
   display: flex;
   align-items: center;
+  justify-content: center;
   color: ${colors.gray[500]};
 `;
 

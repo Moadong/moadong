@@ -1,9 +1,13 @@
 import * as Styled from './ClubTag.styles';
 
-const ClubTag = () => {
+interface ClubTagProps {
+  clubName: string;
+}
+
+const ClubTag = ({ clubName }: ClubTagProps) => {
   return (
     <Styled.Container>
-      <Styled.ClubText>WAP</Styled.ClubText>
+      <Styled.ClubText>{clubName}</Styled.ClubText>
     </Styled.Container>
   );
 };

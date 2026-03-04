@@ -1,15 +1,19 @@
+import { PromotionArticle } from '@/types/promotion';
 import PromotionCard from '../PromotionCard/PromotionCard';
 import * as Styled from './PromotionGrid.styles';
 
-const dummyPromotions = [1, 2, 3, 4];
+interface PromotionGridProps {
+  articles: PromotionArticle[];
+}
 
-const PromotionGrid = () => {
+const PromotionGrid = ({ articles }: PromotionGridProps) => {
   return (
     <Styled.Grid>
-      {dummyPromotions.map((promotion) => (
-        <div key={promotion}>
-          <PromotionCard />
-        </div>
+      {articles.map((article) => (
+        <PromotionCard 
+          key={article.clubId + article.title} 
+          article={article} 
+        />
       ))}
     </Styled.Grid>
   );
