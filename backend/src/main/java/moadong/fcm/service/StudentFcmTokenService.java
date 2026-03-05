@@ -66,9 +66,9 @@ public class StudentFcmTokenService {
             throw new RestApiException(ErrorCode.TOKEN_INVALID);
         }
 
-        StudentFcmToken token = studentFcmTokenRepository.findByStudentId(studentId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.FCMTOKEN_NOT_FOUND));
-        return new ClubSubscribeListResponse(token.getClubIds());
+        Optional<StudentFcmToken> token = studentFcmTokenRepository.findByStudentId(studentId);
+//                .orElseThrow(() -> new RestApiException(ErrorCode.FCMTOKEN_NOT_FOUND));
+        return token.map(studentFcmToken -> new ClubSubscribeListResponse(studentFcmToken.getClubIds())).orElseGet(() -> new ClubSubscribeListResponse(new ArrayList<>()));
     }
 
     @Transactional

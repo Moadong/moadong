@@ -33,8 +33,9 @@ public class StudentFcmController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> rotateFcmToken(
             @RequestHeader("Authorization") String authorization,
-            @RequestBody @Validated StudentFcmTokenRotateRequest request
+            @RequestBody StudentFcmTokenRotateRequest request
     ) {
+        if (request.fcmToken() == null) return Response.ok("pass");
         String studentId = studentJwtService.extractStudentId(authorization);
         StudentFcmTokenRotateResponse response = studentFcmTokenService.rotateFcmToken(studentId, request.fcmToken());
         return Response.ok(response);
