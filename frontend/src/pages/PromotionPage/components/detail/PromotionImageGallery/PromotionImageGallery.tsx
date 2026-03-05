@@ -19,20 +19,19 @@ const PromotionImageGallery = ({ images }: PromotionImageGalleryProps) => {
   const [expanded, setExpanded] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
-  const checkHeight = () => {
-    if (containerRef.current) {
-      setShowButton(
-        containerRef.current.scrollHeight > MAX_HEIGHT
-      );
-    }
-  };
-
   useEffect(() => {
-    checkHeight();
-  }, [testImages]);
+    if (!containerRef.current) return;
 
-  useEffect(() => {
-    checkHeight();
+    const observer = new ResizeObserver(() => {
+      if (!containerRef.current) return;
+
+      const height = containerRef.current.scrollHeight;
+      setShowButton(height > MAX_HEIGHT);
+    });
+
+    observer.observe(containerRef.current);
+
+    return () => observer.disconnect();
   }, [testImages]);
 
   return (

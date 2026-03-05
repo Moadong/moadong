@@ -5,9 +5,9 @@ export const Button = styled.button`
   width: 100%;
   margin-top: 12px;
   padding: 14px;
-  border-radius: 12px;
-  background: ${colors.gray[200]};
-  border: none;
+  border-radius: 10px;
+  background: ${colors.gray[100]};
+  border: 1px solid ${colors.gray[400]};
   cursor: pointer;
   font-weight: 600;
 

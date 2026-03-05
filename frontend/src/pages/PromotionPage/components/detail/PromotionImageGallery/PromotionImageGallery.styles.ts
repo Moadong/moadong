@@ -23,27 +23,27 @@ export const Gradient = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  height: 140px;
+  height: 180px;
 
-  backdrop-filter: blur(6px);
-  -webkit-backdrop-filter: blur(6px);
+  pointer-events: none;
+
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0,0,0,0) 0%,
+    rgba(0,0,0,0.2) 30%,
+    rgba(0,0,0,0.5) 60%,
+    rgba(0,0,0,0.8) 80%,
+    rgba(0,0,0,1) 100%
+  );
 
   background: linear-gradient(
     to bottom,
-    rgba(255, 255, 255, 0) 0%,
-    rgba(255, 255, 255, 0.7) 60%,
-    rgba(255, 255, 255, 1) 100%
+    rgba(255,255,255,0) 0%,
+    rgba(255,255,255,0.2) 40%,
+    rgba(255,255,255,0.6) 70%,
+    rgba(255,255,255,1) 100%
   );
-
-  pointer-events: none;
-`;
-
-export const MoreButton = styled.button`
-  width: 100%;
-  margin-top: 12px;
-  padding: 12px;
-  border-radius: 10px;
-  background: ${colors.gray[200]};
-  border: none;
-  cursor: pointer;
 `;
