@@ -1,9 +1,16 @@
 import { useRef, useState, useEffect } from 'react';
 import * as Styled from './PromotionImageGallery.styles';
+import ImageMoreButton from './ImageMoreButton/ImageMoreButton';
 
 interface PromotionImageGalleryProps {
   images: string[];
 }
+
+const testImages = [
+  'https://picsum.photos/800/900',
+  'https://picsum.photos/800/1000',
+  'https://picsum.photos/800/1100',
+];
 
 const MAX_HEIGHT = 700;
 
@@ -12,13 +19,21 @@ const PromotionImageGallery = ({ images }: PromotionImageGalleryProps) => {
   const [expanded, setExpanded] = useState(false);
   const [showButton, setShowButton] = useState(false);
 
-  useEffect(() => {
+  const checkHeight = () => {
     if (containerRef.current) {
-      if (containerRef.current.scrollHeight > MAX_HEIGHT) {
-        setShowButton(true);
-      }
+      setShowButton(
+        containerRef.current.scrollHeight > MAX_HEIGHT
+      );
     }
-  }, []);
+  };
+
+  useEffect(() => {
+    checkHeight();
+  }, [testImages]);
+
+  useEffect(() => {
+    checkHeight();
+  }, [testImages]);
 
   return (
     <Styled.Wrapper>
@@ -26,7 +41,7 @@ const PromotionImageGallery = ({ images }: PromotionImageGalleryProps) => {
         ref={containerRef}
         $expanded={expanded}
       >
-        {images.map((src, idx) => (
+        {testImages.map((src, idx) => (
           <Styled.Image key={idx} src={src} alt="promotion" />
         ))}
 
@@ -34,11 +49,10 @@ const PromotionImageGallery = ({ images }: PromotionImageGalleryProps) => {
       </Styled.ImageContainer>
 
       {showButton && (
-        <Styled.MoreButton
-          onClick={() => setExpanded(!expanded)}
-        >
-          {expanded ? '접기 ▲' : '이미지 더보기 ▼'}
-        </Styled.MoreButton>
+        <ImageMoreButton
+          expanded={expanded}
+          onClick={() => setExpanded((prev) => !prev)}
+        />
       )}
     </Styled.Wrapper>
   );

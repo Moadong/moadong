@@ -2,21 +2,20 @@ import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 
 export const Wrapper = styled.section`
-  padding: 0 18px;
+  margin: 0;
 `;
 
 export const ImageContainer = styled.div<{ $expanded: boolean }>`
   position: relative;
   overflow: hidden;
 
-  max-height: ${({ $expanded }) =>
-    $expanded ? 'none' : '700px'};
+  max-height: ${({ $expanded }) => ($expanded ? 'none' : '700px')};
 `;
 
 export const Image = styled.img`
   width: 100%;
-  border-radius: 12px;
-  margin-bottom: 12px;
+  display: block;
+  margin-bottom: 2px;
 `;
 
 export const Gradient = styled.div`
@@ -24,18 +23,24 @@ export const Gradient = styled.div`
   bottom: 0;
   left: 0;
   right: 0;
-  height: 120px;
+  height: 140px;
+
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
 
   background: linear-gradient(
     to bottom,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,1) 100%
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.7) 60%,
+    rgba(255, 255, 255, 1) 100%
   );
+
+  pointer-events: none;
 `;
 
 export const MoreButton = styled.button`
   width: 100%;
-  margin-top: 12px;   /* 이미지와 12px */
+  margin-top: 12px;
   padding: 12px;
   border-radius: 10px;
   background: ${colors.gray[200]};
