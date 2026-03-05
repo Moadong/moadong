@@ -17,20 +17,6 @@ interface BannerItem {
 
 const BANNERS: BannerItem[] = [
   {
-    id: '2026-club-fair',
-    desktopImage: ClubFairDesktopImage,
-    mobileImage: ClubFairMobileImage,
-    linkTo: '/festival-introduction',
-    alt: '2026 동아리 소개 한마당 홍보',
-  },
-  {
-    id: 'app-release-december-2025',
-    desktopImage: AppReleaseDesktopImage,
-    mobileImage: AppReleaseMobileImage,
-    linkTo: 'APP_STORE_LINK',
-    alt: '앱 다운로드 배너',
-  },
-  {
     id: 'all-clubs-in-one-place',
     desktopImage: AllClubsDesktopImage,
     mobileImage: AllClubsMobileImage,
@@ -43,6 +29,13 @@ const BANNERS: BannerItem[] = [
     mobileImage: StartNowMobileImage,
     linkTo: '/introduce',
     alt: '지금 바로 모아동에서 시작하세요',
+  },
+  {
+    id: 'app-release-december-2025',
+    desktopImage: AppReleaseDesktopImage,
+    mobileImage: AppReleaseMobileImage,
+    linkTo: 'APP_STORE_LINK',
+    alt: '앱 다운로드 배너',
   },
 ];
 

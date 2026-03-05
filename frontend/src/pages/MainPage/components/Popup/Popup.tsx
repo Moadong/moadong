@@ -1,7 +1,6 @@
 import { MouseEvent, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import AppDownloadImage from '@/assets/images/popup/app-download.png';
-import FestivalImage from '@/assets/images/popup/festival.png';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
@@ -24,7 +23,6 @@ export const isPopupHidden = (): boolean => {
 };
 
 const Popup = () => {
-  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [imageLoaded, setImageLoaded] = useState(false);
   const { isMobile } = useDevice();
@@ -32,7 +30,7 @@ const Popup = () => {
 
   useEffect(() => {
     const img = new Image();
-    img.src = FestivalImage;
+    img.src = AppDownloadImage;
     img.onload = () => setImageLoaded(true);
     img.onerror = () => setImageLoaded(true);
   }, []);
@@ -92,13 +90,6 @@ const Popup = () => {
     window.open(storeLink, '_blank');
   };
 
-  const handleFestival = () => {
-    trackEvent(USER_EVENT.FESTIVAL_POPUP_CLICKED, {
-      popupType: 'festival',
-    });
-    navigate('/festival-introduction');
-  };
-
   const handleBackdropClick = (e: MouseEvent<HTMLDivElement>) => {
     if (e.target === e.currentTarget) {
       handleClose('backdrop_click');
@@ -118,8 +109,8 @@ const Popup = () => {
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         <Styled.Container>
-          <Styled.ImageWrapper onClick={handleFestival}>
-            <Styled.PopupImage src={FestivalImage} alt='동소한' />
+          <Styled.ImageWrapper onClick={handleDownload}>
+            <Styled.PopupImage src={AppDownloadImage} alt='앱 다운로드' />
           </Styled.ImageWrapper>
 
           <Styled.ButtonGroup>
