@@ -5,13 +5,28 @@ export const Button = styled.button`
   width: 100%;
   margin-top: 12px;
   padding: 14px;
-  border-radius: 10px;
+  border-radius: 12px;
   background: ${colors.gray[100]};
   border: 1px solid ${colors.gray[400]};
   cursor: pointer;
-  font-weight: 600;
+  font-size: 16px;
+  font-weight: 700;
+  color: ${colors.gray[800]};
 
-  &:hover {
-    background: ${colors.gray[300]};
-  }
+  display: flex;
+  justify-content: center;
+`;
+
+export const Content = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const Arrow = styled.span<{ $expanded: boolean }>`
+  display: flex;
+  transition: transform 0.25s ease;
+
+  transform: ${({ $expanded }) =>
+    $expanded ? 'rotate(180deg)' : 'rotate(0deg)'};
 `;

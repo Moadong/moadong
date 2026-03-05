@@ -47,3 +47,7 @@ export const Gradient = styled.div`
     rgba(255,255,255,1) 100%
   );
 `;
+
+export const ImageMoreButtonWrapper = styled.div`
+  padding: 0 20px;
+`;

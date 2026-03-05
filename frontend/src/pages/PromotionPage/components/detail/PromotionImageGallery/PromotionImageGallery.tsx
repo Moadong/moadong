@@ -1,6 +1,6 @@
-import { useRef, useState, useEffect } from 'react';
-import * as Styled from './PromotionImageGallery.styles';
+import { useEffect, useRef, useState } from 'react';
 import ImageMoreButton from './ImageMoreButton/ImageMoreButton';
+import * as Styled from './PromotionImageGallery.styles';
 
 interface PromotionImageGalleryProps {
   images: string[];
@@ -36,22 +36,21 @@ const PromotionImageGallery = ({ images }: PromotionImageGalleryProps) => {
 
   return (
     <Styled.Wrapper>
-      <Styled.ImageContainer
-        ref={containerRef}
-        $expanded={expanded}
-      >
+      <Styled.ImageContainer ref={containerRef} $expanded={expanded}>
         {testImages.map((src, idx) => (
-          <Styled.Image key={idx} src={src} alt="promotion" />
+          <Styled.Image key={idx} src={src} alt='promotion' />
         ))}
 
         {!expanded && showButton && <Styled.Gradient />}
       </Styled.ImageContainer>
 
       {showButton && (
-        <ImageMoreButton
-          expanded={expanded}
-          onClick={() => setExpanded((prev) => !prev)}
-        />
+        <Styled.ImageMoreButtonWrapper>
+          <ImageMoreButton
+            expanded={expanded}
+            onClick={() => setExpanded((prev) => !prev)}
+          />
+        </Styled.ImageMoreButtonWrapper>
       )}
     </Styled.Wrapper>
   );
