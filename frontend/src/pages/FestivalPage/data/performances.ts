@@ -10,15 +10,15 @@ export const performances: Performance[] = [
   {
     id: 1,
     clubName: '터',
-    startTime: '12:30',
-    endTime: '13:00',
+    startTime: '13:00',
+    endTime: '13:30',
     songs: ['차선농악'],
   },
   {
     id: 2,
     clubName: '매니아',
-    startTime: '13:00',
-    endTime: '13:30',
+    startTime: '13:30',
+    endTime: '14:00',
     songs: [
       'Blur - Song 2',
       'OASIS - Supersonic',
@@ -29,8 +29,8 @@ export const performances: Performance[] = [
   {
     id: 3,
     clubName: '씨사운드',
-    startTime: '13:30',
-    endTime: '14:00',
+    startTime: '14:00',
+    endTime: '14:30',
     songs: [
       'Best part (feat. H.E.R) - Daniel Caesar, H.E.R.',
       '좋은 밤 좋은 꿈 - 너드커넥션',
@@ -41,8 +41,8 @@ export const performances: Performance[] = [
   {
     id: 4,
     clubName: '송웨이브',
-    startTime: '14:00',
-    endTime: '14:30',
+    startTime: '14:30',
+    endTime: '15:00',
     songs: [
       'Like my father - Jax',
       '오르트구름 - 윤하',
@@ -53,8 +53,8 @@ export const performances: Performance[] = [
   {
     id: 5,
     clubName: '쇳물결',
-    startTime: '14:30',
-    endTime: '15:00',
+    startTime: '15:00',
+    endTime: '15:30',
     songs: [
       "isn't she lovely",
       '사랑비 (어쿠)',
@@ -66,8 +66,8 @@ export const performances: Performance[] = [
   {
     id: 6,
     clubName: '테크니칼',
-    startTime: '15:00',
-    endTime: '15:30',
+    startTime: '15:30',
+    endTime: '16:00',
     songs: [
       '나는 나비 - yb',
       'Material Girl - the volunteers',
@@ -78,8 +78,8 @@ export const performances: Performance[] = [
   {
     id: 7,
     clubName: '모비딕스',
-    startTime: '15:30',
-    endTime: '16:00',
+    startTime: '16:00',
+    endTime: '16:30',
     songs: [
       '공중정원 - 보아',
       '러브홀릭 - 러브홀릭',
@@ -90,8 +90,8 @@ export const performances: Performance[] = [
   {
     id: 8,
     clubName: '한누리',
-    startTime: '16:00',
-    endTime: '16:30',
+    startTime: '16:30',
+    endTime: '17:00',
     songs: [
       '청춘 - Tokai',
       'Rules - 더 발룬티어스',
@@ -102,8 +102,8 @@ export const performances: Performance[] = [
   {
     id: 9,
     clubName: '네오쇼크',
-    startTime: '16:30',
-    endTime: '17:00',
+    startTime: '17:00',
+    endTime: '17:30',
     songs: [
       '샤랄라 - 세이마이네임',
       '404 (New Era) - 키키',
@@ -119,8 +119,8 @@ export const performances: Performance[] = [
   {
     id: 10,
     clubName: 'UCDC',
-    startTime: '17:00',
-    endTime: '17:30',
+    startTime: '17:30',
+    endTime: '18:00',
     songs: [
       'Locking',
       '르세라핌 - SPAGHETTI',
@@ -139,8 +139,8 @@ export const performances: Performance[] = [
   {
     id: 11,
     clubName: '보블리스',
-    startTime: '17:30',
-    endTime: '18:00',
+    startTime: '18:00',
+    endTime: '18:30',
     songs: [
       '우리는 로렐라이 언덕의 여인들',
       'Seasons of love',
