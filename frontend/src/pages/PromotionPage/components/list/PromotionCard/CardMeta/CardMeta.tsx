@@ -1,14 +1,20 @@
-import * as Styled from './CardMeta.styles';
 import LocationIcon from '@/assets/images/icons/location_icon.svg';
 import TimeIcon from '@/assets/images/icons/time_icon.svg';
+import * as Styled from './CardMeta.styles';
 
 interface CardMetaProps {
   title: string;
+  description: string;
   location: string | null;
   startDate: string;
 }
 
-const CardMeta = ({ title, location, startDate }: CardMetaProps) => {
+const CardMeta = ({
+  title,
+  description,
+  location,
+  startDate,
+}: CardMetaProps) => {
   const startDateObj = new Date(startDate);
   const formattedStartDate = startDateObj.toLocaleDateString('ko-KR', {
     month: 'long',
@@ -18,7 +24,10 @@ const CardMeta = ({ title, location, startDate }: CardMetaProps) => {
 
   return (
     <Styled.Container>
-      <Styled.Title>{title}</Styled.Title>
+      <Styled.TitleSection>
+        <Styled.Title>{title}</Styled.Title>
+        <Styled.Description>{description}</Styled.Description>
+      </Styled.TitleSection>
 
       {location && (
         <Styled.MetaRow>

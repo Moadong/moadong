@@ -4,18 +4,37 @@ import { colors } from '@/styles/theme/colors';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
+  gap: 6px;
+`;
+
+export const TitleSection = styled.div`
+  gap: 6px;
 `;
 
 export const Title = styled.h3`
   font-size: 14px;
   font-weight: 600;
-  margin-bottom: 4px;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  margin-bottom: 6px;
+`;
+
+export const Description = styled.span`
+  display: block;
+  min-width: 0;
+  font-size: 14px;
+  font-weight: 400;
+  color: ${colors.gray[600]};
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const MetaRow = styled.div`
   display: flex;
   align-items: center;
-  margin-top: 3px;
 `;
 
 export const Icon = styled.div`

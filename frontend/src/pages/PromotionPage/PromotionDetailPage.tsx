@@ -1,4 +1,5 @@
 import { useParams } from 'react-router-dom';
+import Footer from '@/components/common/Footer/Footer';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
@@ -9,37 +10,46 @@ import PromotionInfoSection from './components/detail/PromotionInfoSection/Promo
 import PromotionTitleSection from './components/detail/PromotionTitleSection/PromotionTitleSection';
 import RelatedPromotionSection from './components/detail/RelatedPromotionSection/RelatedPromotionSection';
 import * as Styled from './PromotionDetailPage.styles';
+import { dummyPromotionArticles } from './data/dummyActiveEvent';
 
 const PromotionDetailPage = () => {
   useTrackPageView(PAGE_VIEW.PROMOTION_DETAIL_PAGE);
 
   const { promotionId } = useParams<{ promotionId: string }>();
-  const { data, isLoading, isError } = useGetPromotionArticles();
+  // const { data, isLoading, isError } = useGetPromotionArticles();
+  const data = dummyPromotionArticles;
+  const isLoading = false;
+  const isError = false;
 
-  const article = 
-    data?.find((item) => item.clubId === promotionId) ?? null;
+  const article = data?.find((item) => item.clubId === promotionId) ?? null;
 
   return (
-    <Styled.Container>
-      <PromotionDetailTopBar />
+    <>
+      <Styled.Container>
+        <PromotionDetailTopBar />
 
-      {isLoading && <Styled.Message>로딩 중...</Styled.Message>}
-      {isError && <Styled.Message>오류가 발생했습니다.</Styled.Message>}
+        {isLoading && <Styled.Message>로딩 중...</Styled.Message>}
+        {isError && <Styled.Message>오류가 발생했습니다.</Styled.Message>}
 
-      {!isLoading && !isError && !article && (
-        <Styled.Message>존재하지 않는 이벤트입니다.</Styled.Message>
-      )}
+        {!isLoading && !isError && !article && (
+          <Styled.Message>존재하지 않는 이벤트입니다.</Styled.Message>
+        )}
 
-      {!isLoading && !isError && article && (
-        <>
-          <PromotionTitleSection article={article} />
-          <PromotionImageGallery images={article.images} />
-          <PromotionInfoSection article={article} />
-          <PromotionClubCTA clubId={article.clubId} />
-          <RelatedPromotionSection currentClubId={article.clubId} />
-        </>
-      )}
-    </Styled.Container>
+        {!isLoading && !isError && article && (
+          <>
+            <PromotionTitleSection article={article} />
+            <PromotionImageGallery images={article.images} />
+            <PromotionInfoSection article={article} />
+            <PromotionClubCTA clubId={article.clubId} />
+            <RelatedPromotionSection 
+              currentClubId={article.clubId} 
+              articles={article ? data || [] : []}
+            />
+          </>
+        )}
+      </Styled.Container>
+      <Footer />
+    </>
   );
 };
 
