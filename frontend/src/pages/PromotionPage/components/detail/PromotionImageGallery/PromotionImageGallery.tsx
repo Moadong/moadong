@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
-import ImageMoreButton from './ImageMoreButton/ImageMoreButton';
+import ArrowButton from '../PromotionArrowButton/PromotionArrowButton';
 import * as Styled from './PromotionImageGallery.styles';
 
 interface PromotionImageGalleryProps {
@@ -46,8 +46,9 @@ const PromotionImageGallery = ({ images }: PromotionImageGalleryProps) => {
 
       {showButton && (
         <Styled.ImageMoreButtonWrapper>
-          <ImageMoreButton
-            expanded={expanded}
+          <ArrowButton
+            text={expanded ? '이미지 접기' : '이미지 더보기'}
+            direction={expanded ? 'up' : 'down'}
             onClick={() => setExpanded((prev) => !prev)}
           />
         </Styled.ImageMoreButtonWrapper>

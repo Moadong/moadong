@@ -2,12 +2,13 @@ import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.section`
-  padding: 24px 18px;
+  padding: 0px 20px 24px 20px;
 `;
 
 export const Question = styled.div`
-  font-size: 15px;
-  font-weight: 600;
+  font-size: 20px;
+  font-weight: 700;
+  color: ${colors.gray[800]};
   margin-bottom: 12px;
 `;
 

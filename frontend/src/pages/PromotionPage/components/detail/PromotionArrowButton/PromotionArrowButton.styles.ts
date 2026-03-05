@@ -23,10 +23,20 @@ export const Content = styled.div`
   gap: 6px;
 `;
 
-export const Arrow = styled.span<{ $expanded: boolean }>`
+export const Arrow = styled.span<{ $direction: string }>`
   display: flex;
   transition: transform 0.25s ease;
 
-  transform: ${({ $expanded }) =>
-    $expanded ? 'rotate(180deg)' : 'rotate(0deg)'};
+  transform: ${({ $direction }) => {
+    switch ($direction) {
+      case 'up':
+        return 'rotate(180deg)';
+      case 'right':
+        return 'rotate(-90deg)';
+      case 'left':
+        return 'rotate(90deg)';
+      default:
+        return 'rotate(0deg)';
+    }
+  }};
 `;
