@@ -10,6 +10,7 @@ const formatDate = (dateStr: string) => {
   return date.toLocaleString('ko-KR', {
     month: 'long',
     day: 'numeric',
+    weekday: 'short',
     hour: '2-digit',
     minute: '2-digit',
   });
