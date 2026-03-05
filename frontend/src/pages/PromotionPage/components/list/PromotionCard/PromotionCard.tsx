@@ -1,9 +1,9 @@
+import { useNavigate } from 'react-router-dom';
 import { PromotionArticle } from '@/types/promotion';
 import CardMeta from './CardMeta/CardMeta';
 import ClubTag from './ClubTag/ClubTag';
 import DdayBadge from './DdayBadge/DdayBadge';
 import * as Styled from './PromotionCard.styles';
-import { useNavigate } from 'react-router-dom';
 
 interface PromotionCardProps {
   article: PromotionArticle;
@@ -32,8 +32,10 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
           title={article.title}
           location={article.location}
           startDate={article.eventStartDate}
-         />
-        <ClubTag clubName={article.clubName} />
+        />
+        <Styled.TagWrapper>
+          <ClubTag clubName={article.clubName} />
+        </Styled.TagWrapper>
       </Styled.Content>
     </Styled.Container>
   );

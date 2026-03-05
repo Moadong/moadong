@@ -8,7 +8,6 @@ export const Container = styled.div`
   border-radius: 8px;
   background-color: ${colors.gray[100]};
   padding: 4px 8px;
-  margin-top: 4px;
 `;
 
 export const ClubText = styled.span`

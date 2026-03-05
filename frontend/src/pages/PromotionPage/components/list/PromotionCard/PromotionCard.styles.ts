@@ -45,3 +45,7 @@ export const DdayWrapper = styled.div`
 export const Content = styled.div`
   padding: 10px;
 `;
+
+export const TagWrapper = styled.div`
+  margin-top: 4px;
+`;
