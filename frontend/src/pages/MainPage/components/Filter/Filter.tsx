@@ -34,9 +34,6 @@ const Filter = ({ alwaysVisible = false }: FilterProps) => {
         <Styled.FilterListContainer>
           {FILTER_OPTIONS.map((filter) => (
             <Styled.FilterButtonWrapper key={filter.path}>
-              <Styled.NotificationDot
-                $isVisible={filter.path === FESTIVAL_PATH}
-              />
               <Styled.FilterButton
                 $isActive={pathname === filter.path}
                 onClick={() => handleFilterOptionClick(filter.path)}
