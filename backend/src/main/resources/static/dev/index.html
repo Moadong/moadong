@@ -255,7 +255,7 @@
         </div>
       </div>
       <div id="bannerBanner" class="banner hidden"></div>
-      <p class="sub" style="margin-bottom:12px;">타입별 배너 배열을 조회하고 수정할 수 있습니다. 각 항목의 위/아래 버튼으로 순서를 변경하세요.</p>
+      <p class="sub" style="margin-bottom:12px;">타입별 배너 배열을 조회하고 수정할 수 있습니다. 이미지를 업로드하면 현재 배열에 바로 추가되고, 각 항목의 위/아래 버튼으로 순서를 변경할 수 있습니다.</p>
       <div class="form-grid" style="margin-bottom:8px;">
         <div class="form-row">
           <label for="bannerType">배너 타입</label>
@@ -265,13 +265,20 @@
             <option value="WEB_MOBILE">WEB_MOBILE</option>
           </select>
         </div>
+        <div>
+          <div class="form-row">
+            <label for="bannerUploadFile">배너 이미지 업로드</label>
+            <input type="file" id="bannerUploadFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp">
+          </div>
+          <button type="button" id="btnUploadBannerImage">업로드 후 배열에 추가</button>
+        </div>
       </div>
       <div class="banner-toolbar">
         <p id="bannerSummary" class="banner-summary">WEB 타입 목록을 불러오세요.</p>
         <button type="button" id="btnAddBannerItem">배너 추가</button>
       </div>
       <div id="bannerListLoading" class="hidden">목록 불러오는 중...</div>
-      <div id="bannerEmpty" class="banner-empty hidden">저장된 배너가 없습니다. 새 배너를 추가하거나 다른 타입을 선택해 보세요.</div>
+      <div id="bannerEmpty" class="banner-empty hidden">저장된 배너가 없습니다. 새 배너를 추가하거나 이미지를 업로드해 보세요.</div>
       <div id="bannerList" class="banner-editor-list"></div>
       <div id="bannerSaveResult" class="message-box hidden"></div>
       <div class="card-grid" style="margin-top:16px;">
@@ -393,6 +400,7 @@
     let bannerHasLoaded = false;
     let bannerIsLoading = false;
     let bannerIsSaving = false;
+    let bannerIsUploading = false;
 
     function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
     function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
@@ -850,17 +858,20 @@
     }
 
     function updateBannerControls() {
-      document.getElementById('bannerType').disabled = bannerIsLoading || bannerIsSaving;
-      document.getElementById('btnLoadBanner').disabled = bannerIsLoading || bannerIsSaving;
-      document.getElementById('btnAddBannerItem').disabled = bannerIsLoading || bannerIsSaving;
-      document.getElementById('btnSaveBanner').disabled = bannerIsLoading || bannerIsSaving || !bannerHasLoaded;
+      const busy = bannerIsLoading || bannerIsSaving || bannerIsUploading;
+      document.getElementById('bannerType').disabled = busy;
+      document.getElementById('bannerUploadFile').disabled = busy;
+      document.getElementById('btnUploadBannerImage').disabled = busy;
+      document.getElementById('btnLoadBanner').disabled = busy;
+      document.getElementById('btnAddBannerItem').disabled = busy;
+      document.getElementById('btnSaveBanner').disabled = busy || !bannerHasLoaded;
     }
 
     function updateBannerSummary() {
       const summary = document.getElementById('bannerSummary');
       let text = bannerActiveType + ' 타입';
       if (!bannerHasLoaded && !bannerImages.length) {
-        text += ' 목록을 불러오거나 새 배너를 추가하세요.';
+        text += ' 목록을 불러오거나 새 배너를 추가/업로드하세요.';
       } else {
         text += ' 총 ' + bannerImages.length + '개';
       }
@@ -888,6 +899,27 @@
         if (!alt) throw new Error((index + 1) + '번째 배너의 alt를 입력하세요.');
         return { id, imageUrl, linkTo: linkTo || null, alt };
       });
+    }
+
+    function buildBannerUploadHeaders() {
+      const token = getToken();
+      return token ? { 'Authorization': 'Bearer ' + token } : {};
+    }
+
+    function createBannerItemFromUpload(fileName, imageUrl) {
+      const baseName = String(fileName || '')
+        .replace(/\.[^.]+$/, '')
+        .trim();
+      const idCandidate = baseName
+        .toLowerCase()
+        .replace(/[^a-z0-9]+/g, '-')
+        .replace(/^-+|-+$/g, '');
+      return {
+        id: idCandidate || 'banner-' + Date.now(),
+        imageUrl,
+        linkTo: '',
+        alt: baseName || '배너 이미지'
+      };
     }
 
     function moveBannerItem(fromIndex, toIndex) {
@@ -1085,7 +1117,9 @@
       bannerHasLoaded = false;
       bannerIsLoading = false;
       bannerIsSaving = false;
+      bannerIsUploading = false;
       document.getElementById('bannerType').value = DEFAULT_BANNER_TYPE;
+      document.getElementById('bannerUploadFile').value = '';
       document.getElementById('bannerListLoading').classList.add('hidden');
       clearBannerBanner();
       hideBannerSaveResult();
@@ -1110,6 +1144,8 @@
       bannerImages = [];
       bannerDirty = false;
       bannerHasLoaded = false;
+      bannerIsUploading = false;
+      document.getElementById('bannerUploadFile').value = '';
       clearBannerBanner();
       hideBannerSaveResult();
       renderBannerList();
@@ -1120,6 +1156,61 @@
       bannerHasLoaded = true;
       markBannerDirty();
       renderBannerList();
+    };
+
+    document.getElementById('btnUploadBannerImage').onclick = async () => {
+      const fileInput = document.getElementById('bannerUploadFile');
+      if (!fileInput.files || !fileInput.files.length) {
+        showToast('업로드할 이미지를 선택하세요.', 'error');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const btn = document.getElementById('btnUploadBannerImage');
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', bannerActiveType);
+
+      bannerIsUploading = true;
+      updateBannerControls();
+      clearBannerBanner();
+      hideBannerSaveResult();
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/banner/upload', {
+          method: 'POST',
+          headers: buildBannerUploadHeaders(),
+          body: formData
+        });
+        const data = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setBannerBanner('개발자 계정으로 로그인하세요.', 'warn');
+          return;
+        }
+        if (!res.ok) {
+          setBannerBanner(data.message || '배너 이미지 업로드 실패 (HTTP ' + res.status + ')', 'error');
+          return;
+        }
+
+        const imageUrl = data.data?.imageUrl;
+        if (!imageUrl) {
+          setBannerBanner('업로드 결과 URL을 확인할 수 없습니다.', 'error');
+          return;
+        }
+
+        bannerImages.push(createBannerItemFromUpload(file.name, imageUrl));
+        bannerHasLoaded = true;
+        markBannerDirty();
+        renderBannerList();
+        fileInput.value = '';
+        showToast('이미지를 업로드하고 배열에 추가했습니다.', 'success');
+      } catch (e) {
+        setBannerBanner('요청 실패: ' + (e.message || ''), 'error');
+      } finally {
+        bannerIsUploading = false;
+        btn.textContent = '업로드 후 배열에 추가';
+        updateBannerControls();
+      }
     };
 
     document.getElementById('btnLoadBanner').onclick = async () => {
