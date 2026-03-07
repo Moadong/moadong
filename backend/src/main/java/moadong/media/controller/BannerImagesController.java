@@ -5,14 +5,18 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import moadong.global.payload.Response;
+import moadong.media.dto.BannerImageUploadResponse;
 import moadong.media.dto.BannerImagesRequest;
 import moadong.media.dto.BannerImagesResponse;
 import moadong.media.enums.PlatformType;
+import moadong.media.service.BannerImageUploadService;
 import moadong.media.service.BannerImagesService;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api/banner")
@@ -21,6 +25,7 @@ import org.springframework.web.bind.annotation.*;
 public class BannerImagesController {
 
     private final BannerImagesService bannerImagesService;
+    private final BannerImageUploadService bannerImageUploadService;
 
     @PutMapping
     @PreAuthorize("hasRole('DEVELOPER')")
@@ -36,5 +41,15 @@ public class BannerImagesController {
     public ResponseEntity<?> getBannerImages(@RequestParam(value = "type", required = false, defaultValue = "WEB") PlatformType type) {
         BannerImagesResponse response = bannerImagesService.getBannerImages(type);
         return Response.ok(response);
+    }
+
+    @PostMapping(value = "/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @SecurityRequirement(name = "BearerAuth")
+    @Operation(summary = "배너 이미지 업로드", description = "배너 이미지를 Cloudflare R2 배너 버킷에 업로드하고 최종 URL을 반환합니다.")
+    public ResponseEntity<?> uploadBannerImage(@RequestPart("file") MultipartFile file,
+                                               @RequestParam("type") PlatformType type) {
+        BannerImageUploadResponse response = bannerImageUploadService.upload(file, type);
+        return Response.ok("배너 이미지가 업로드되었습니다.", response);
     }
 }
