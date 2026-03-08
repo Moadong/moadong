@@ -1,20 +1,45 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 
+export const DesktopHeader = styled.div`
+  display: block;
+
+  ${media.tablet} {
+    display: none;
+  }
+`;
+
 export const Container = styled.div`
   width: 100%;
   min-height: 100vh;
   background: #fff;
 `;
 
+export const MobileTopBar = styled.div`
+  display: none;
+  
+  ${media.tablet} {
+    display: block;
+  }
+`;
+
+export const TitleWrapper = styled.div`
+  max-width: 1180px;
+  margin: 40px auto 0 auto;
+  padding: 0 20px;
+
+  ${media.tablet} {
+    display: none;
+  }
+`;
+
 export const ContentWrapper = styled.div`
   max-width: 1180px;
   width: 100%;
-  margin: 0 auto;
+  margin: 20px auto;
 
   display: flex;
-  gap: 24px;
-  margin-top: 100px;
+  gap: 40px;
 
   ${media.laptop} {
     padding: 0 20px;
@@ -22,10 +47,8 @@ export const ContentWrapper = styled.div`
 
   ${media.tablet} {
     flex-direction: column;
-    padding: 0;
     gap: 0;
-    max-width: 100%;
-    margin-top: 0;
+    padding: 0;
   }
 `;
 
@@ -34,6 +57,7 @@ export const LeftSection = styled.div`
 
   ${media.tablet} {
     width: 100%;
+    order: 2;
   }
 `;
 

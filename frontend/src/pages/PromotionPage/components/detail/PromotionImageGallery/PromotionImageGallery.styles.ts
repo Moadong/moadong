@@ -1,7 +1,15 @@
+import { media } from '@/styles/mediaQuery';
 import styled from 'styled-components';
 
 export const Wrapper = styled.section`
   margin: 0;
+
+  position: sticky;
+  top: 120px;
+
+  ${media.tablet} {
+    position: static;
+  }
 `;
 
 export const ImageContainer = styled.div<{ $expanded: boolean }>`
