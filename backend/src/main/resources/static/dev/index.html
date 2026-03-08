@@ -906,16 +906,19 @@
       return token ? { 'Authorization': 'Bearer ' + token } : {};
     }
 
+    function generateBannerItemId() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return 'banner-' + window.crypto.randomUUID().replace(/-/g, '').slice(0, 12);
+      }
+      return 'banner-' + Math.random().toString(36).slice(2, 14);
+    }
+
     function createBannerItemFromUpload(fileName, imageUrl) {
       const baseName = String(fileName || '')
         .replace(/\.[^.]+$/, '')
         .trim();
-      const idCandidate = baseName
-        .toLowerCase()
-        .replace(/[^a-z0-9]+/g, '-')
-        .replace(/^-+|-+$/g, '');
       return {
-        id: idCandidate || 'banner-' + Date.now(),
+        id: generateBannerItemId(),
         imageUrl,
         linkTo: '',
         alt: baseName || '배너 이미지'
