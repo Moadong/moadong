@@ -68,7 +68,11 @@ public enum ErrorCode {
     // 901xx: FCM 관련 오류
     FCMTOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "901-1", "존재하지 않는 토큰입니다."),
     FCMTOKEN_SUBSCRIBE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901-2", "동아리 구독중에 오류가 발생 하였습니다."),
-    FCMMESSAGE_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901-3", "FCM 메시지 전송 중 오류가 발생했습니다.");
+    FCMMESSAGE_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901-3", "FCM 메시지 전송 중 오류가 발생했습니다."),
+
+    // 902xx: 홍보게시판 오류
+    PROMOTION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "902-1", "홍보 게시글이 존재하지 않습니다."),
+    ;
 
     private final HttpStatus httpStatus;
     private final String code;
