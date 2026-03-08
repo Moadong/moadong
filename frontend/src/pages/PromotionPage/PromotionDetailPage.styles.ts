@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const DesktopHeader = styled.div`
   display: block;
@@ -17,9 +18,13 @@ export const Container = styled.div`
 
 export const MobileTopBar = styled.div`
   display: none;
-  
+
   ${media.tablet} {
     display: block;
+    position: sticky;
+    top: 0;
+    z-index: 100;
+    background-color: ${colors.base.white};
   }
 `;
 

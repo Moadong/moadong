@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
+import { media } from '@/styles/mediaQuery';
 
 export const Container = styled.header`
   position: relative;
@@ -9,6 +10,12 @@ export const Container = styled.header`
   display: flex;
   align-items: center;
   padding: 0 18px;
+
+  ${media.tablet} {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+  }
 `;
 
 export const BackButton = styled.button`
