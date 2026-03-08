@@ -10,16 +10,12 @@ import PromotionInfoSection from './components/detail/PromotionInfoSection/Promo
 import PromotionTitleSection from './components/detail/PromotionTitleSection/PromotionTitleSection';
 import RelatedPromotionSection from './components/detail/RelatedPromotionSection/RelatedPromotionSection';
 import * as Styled from './PromotionDetailPage.styles';
-import { dummyPromotionArticles } from './data/dummyActiveEvent';
 
 const PromotionDetailPage = () => {
   useTrackPageView(PAGE_VIEW.PROMOTION_DETAIL_PAGE);
 
   const { promotionId } = useParams<{ promotionId: string }>();
-  // const { data, isLoading, isError } = useGetPromotionArticles();
-  const data = dummyPromotionArticles;
-  const isLoading = false;
-  const isError = false;
+  const { data, isLoading, isError } = useGetPromotionArticles();
 
   const article = data?.find((item) => item.clubId === promotionId) ?? null;
 
