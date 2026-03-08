@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import moadong.club.payload.request.PromotionArticleCreateRequest;
+import moadong.club.payload.request.PromotionArticleUpdateRequest;
 import moadong.club.payload.response.PromotionArticleResponse;
 import moadong.club.service.PromotionArticleService;
 import moadong.global.payload.Response;
@@ -12,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -40,5 +43,16 @@ public class PromotionArticleController {
         @RequestBody @Validated PromotionArticleCreateRequest request) {
         promotionArticleService.createPromotionArticle(request);
         return Response.ok("홍보 게시글이 생성되었습니다.");
+    }
+
+    @PutMapping("/{articleId}")
+    @Operation(summary = "홍보 게시글 수정", description = "기존 홍보 게시글을 수정합니다.")
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> updatePromotionArticle(
+        @PathVariable String articleId,
+        @RequestBody @Validated PromotionArticleUpdateRequest request) {
+        promotionArticleService.updatePromotionArticle(articleId, request);
+        return Response.ok("홍보 게시글이 수정되었습니다.");
     }
 }
