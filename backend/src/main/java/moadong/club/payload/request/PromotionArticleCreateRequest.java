@@ -10,7 +10,7 @@ import java.util.List;
 public record PromotionArticleCreateRequest(
     @NotBlank String clubId,
     @NotBlank String title,
-    String location,
+    @NotBlank String location,
     @NotNull Instant eventStartDate,
     @NotNull Instant eventEndDate,
     @NotBlank String description,
