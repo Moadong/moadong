@@ -11,6 +11,7 @@ import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import * as Styled from './Banner.styles';
+import BANNERS from './bannerData';
 
 const Banner = () => {
   const { isMobile } = useDevice();
@@ -19,7 +20,23 @@ const Banner = () => {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const bannerType = isMobile ? 'WEB_MOBILE' : 'WEB';
-  const { data: banners = [] } = useGetBanners(bannerType);
+  const {
+    data: banners,
+    isLoading,
+    isFetched,
+    isError,
+  } = useGetBanners(bannerType);
+
+  const fallbackBanners = BANNERS.map((banner) => ({
+    id: banner.id,
+    imageUrl: isMobile ? banner.mobileImage : banner.desktopImage,
+    linkTo: banner.linkTo ?? null,
+    alt: banner.alt,
+  }));
+
+  const shouldUseFallback =
+    isFetched && (isError || (banners?.length ?? 0) === 0);
+  const displayBanners = shouldUseFallback ? fallbackBanners : (banners ?? []);
 
   const handlePrev = () => {
     swiperInstance?.slidePrev();
@@ -55,7 +72,11 @@ const Banner = () => {
     handleLink(url);
   };
 
-  if (banners.length === 0) {
+  if (isLoading) {
+    return null;
+  }
+
+  if (displayBanners.length === 0) {
     return null;
   }
 
@@ -82,7 +103,7 @@ const Banner = () => {
           }}
           speed={500}
         >
-          {banners.map((banner) => (
+          {displayBanners.map((banner) => (
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
                 isClickable={!!banner.linkTo}
@@ -101,13 +122,13 @@ const Banner = () => {
         </Swiper>
         {isMobile && (
           <Styled.NumericPagination>
-            {currentIndex + 1} / {banners.length}
+            {currentIndex + 1} / {displayBanners.length}
           </Styled.NumericPagination>
         )}
 
         {!isMobile && (
           <Styled.DotPagination>
-            {banners.map((_, index) => (
+            {displayBanners.map((_, index) => (
               <Styled.Dot key={index} active={currentIndex === index} />
             ))}
           </Styled.DotPagination>
