@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moadong.club.payload.request.PromotionArticleUpdateRequest;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
@@ -38,4 +39,15 @@ public class PromotionArticle {
 
     @Builder.Default
     private Instant createdAt = Instant.now();
+
+    public void update(PromotionArticleUpdateRequest request, String clubName) {
+        this.clubId = request.clubId();
+        this.clubName = clubName;
+        this.title = request.title();
+        this.location = request.location();
+        this.eventStartDate = request.eventStartDate();
+        this.eventEndDate = request.eventEndDate();
+        this.description = request.description();
+        this.images = request.images();
+    }
 }

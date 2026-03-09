@@ -7,7 +7,7 @@ import jakarta.validation.constraints.NotNull;
 import java.time.Instant;
 import java.util.List;
 
-public record PromotionArticleCreateRequest(
+public record PromotionArticleUpdateRequest(
     @NotBlank String clubId,
     @NotBlank String title,
     @NotBlank String location,

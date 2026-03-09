@@ -5,6 +5,7 @@ import moadong.club.entity.Club;
 import moadong.club.entity.PromotionArticle;
 import moadong.club.payload.dto.PromotionArticleDto;
 import moadong.club.payload.request.PromotionArticleCreateRequest;
+import moadong.club.payload.request.PromotionArticleUpdateRequest;
 import moadong.club.payload.response.PromotionArticleResponse;
 import moadong.club.repository.ClubRepository;
 import moadong.club.repository.PromotionArticleRepository;
@@ -25,15 +26,16 @@ public class PromotionArticleService {
     private final ClubRepository clubRepository;
 
     public PromotionArticleResponse getPromotionArticles() {
-        List<PromotionArticleDto> articles = promotionArticleRepository.findAllProjectedBy();
+        List<PromotionArticleDto> articles = promotionArticleRepository.findAllByOrderByCreatedAtDesc()
+            .stream()
+            .map(PromotionArticleDto::from)
+            .toList();
         return new PromotionArticleResponse(articles);
     }
 
     @Transactional
     public void createPromotionArticle(PromotionArticleCreateRequest request) {
-        ObjectId clubObjectId = ObjectIdConverter.convertString(request.clubId());
-        Club club = clubRepository.findClubById(clubObjectId)
-            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        Club club = getClub(request.clubId());
 
         PromotionArticle article = PromotionArticle.builder()
             .clubId(request.clubId())
@@ -47,5 +49,21 @@ public class PromotionArticleService {
             .build();
 
         promotionArticleRepository.save(article);
+    }
+
+    @Transactional
+    public void updatePromotionArticle(String articleId, PromotionArticleUpdateRequest request) {
+        PromotionArticle article = promotionArticleRepository.findById(articleId)
+            .orElseThrow(() -> new RestApiException(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND));
+        Club club = getClub(request.clubId());
+
+        article.update(request, club.getName());
+        promotionArticleRepository.save(article);
+    }
+
+    private Club getClub(String clubId) {
+        ObjectId clubObjectId = ObjectIdConverter.convertString(clubId);
+        return clubRepository.findClubById(clubObjectId)
+            .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
     }
 }
