@@ -25,6 +25,7 @@ export const queryKeys = {
   },
   banner: {
     all: ['banner'] as const,
-    list: (type: 'WEB' | 'APP_HOME' | 'WEB_MOBILE') => ['banner', type] as const,
+    list: (type: 'WEB' | 'APP_HOME' | 'WEB_MOBILE') =>
+      ['banner', type] as const,
   },
 } as const;
