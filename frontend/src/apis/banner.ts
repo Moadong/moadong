@@ -8,7 +8,6 @@ export interface Banner {
   imageUrl: string;
   linkTo: string | null;
   alt: string;
-  [key: string]: unknown;
 }
 
 // Banner API
