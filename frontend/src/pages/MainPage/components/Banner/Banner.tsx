@@ -20,12 +20,7 @@ const Banner = () => {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const bannerType = isMobile ? 'WEB_MOBILE' : 'WEB';
-  const {
-    data: banners,
-    isLoading,
-    isFetched,
-    isError,
-  } = useGetBanners(bannerType);
+  const { data: banners, isLoading, isFetched } = useGetBanners(bannerType);
 
   const fallbackBanners = BANNERS.map((banner) => ({
     id: banner.id,
@@ -34,9 +29,13 @@ const Banner = () => {
     alt: banner.alt,
   }));
 
-  const shouldUseFallback =
-    isFetched && (isError || (banners?.length ?? 0) === 0);
-  const displayBanners = shouldUseFallback ? fallbackBanners : (banners ?? []);
+  const hasApiBanners = (banners?.length ?? 0) > 0;
+  const shouldUseFallback = isFetched && !hasApiBanners;
+  const displayBanners = hasApiBanners
+    ? banners
+    : shouldUseFallback
+      ? fallbackBanners
+      : [];
 
   const handlePrev = () => {
     swiperInstance?.slidePrev();
@@ -76,7 +75,7 @@ const Banner = () => {
     return null;
   }
 
-  if (displayBanners.length === 0) {
+  if (displayBanners?.length === 0) {
     return null;
   }
 
@@ -103,7 +102,7 @@ const Banner = () => {
           }}
           speed={500}
         >
-          {displayBanners.map((banner) => (
+          {displayBanners?.map((banner) => (
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
                 isClickable={!!banner.linkTo}
@@ -122,13 +121,13 @@ const Banner = () => {
         </Swiper>
         {isMobile && (
           <Styled.NumericPagination>
-            {currentIndex + 1} / {displayBanners.length}
+            {currentIndex + 1} / {displayBanners?.length ?? 0}
           </Styled.NumericPagination>
         )}
 
         {!isMobile && (
           <Styled.DotPagination>
-            {displayBanners.map((_, index) => (
+            {displayBanners?.map((_, index) => (
               <Styled.Dot key={index} active={currentIndex === index} />
             ))}
           </Styled.DotPagination>
