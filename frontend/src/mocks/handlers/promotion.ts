@@ -22,7 +22,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
     clubName: '디자인 스터디',
     clubId: 'club-2',
     title: 'UI/UX 디자인 워크샵',
-    location: null,
+    location: '온라인 (Zoom)',
     eventStartDate: '2024-04-15',
     eventEndDate: '2024-04-20',
     description: '실무 디자이너와 함께하는 5일간의 집중 워크샵',

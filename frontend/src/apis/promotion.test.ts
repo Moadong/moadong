@@ -49,7 +49,7 @@ describe('promotion API', () => {
           clubName: '테스트 클럽 2',
           clubId: 'club2',
           title: '테스트 홍보글 2',
-          location: null,
+          location: '부산',
           eventStartDate: '2024-02-01',
           eventEndDate: '2024-02-28',
           description: '설명 2',
@@ -138,7 +138,7 @@ describe('promotion API', () => {
       const mockPayload: CreatePromotionArticleRequest = {
         clubId: 'club1',
         title: '새로운 홍보글',
-        location: null,
+        location: '부산',
         eventStartDate: '2024-03-01',
         eventEndDate: '2024-03-31',
         description: '홍보 내용',

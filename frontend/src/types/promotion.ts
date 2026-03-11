@@ -2,7 +2,7 @@ export interface PromotionArticle {
   clubName: string;
   clubId: string;
   title: string;
-  location: string | null;
+  location: string;
   eventStartDate: string;
   eventEndDate: string;
   description: string;
@@ -12,7 +12,7 @@ export interface PromotionArticle {
 export interface CreatePromotionArticleRequest {
   clubId: string;
   title: string;
-  location: string | null;
+  location: string;
   eventStartDate: string;
   eventEndDate: string;
   description: string;
