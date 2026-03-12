@@ -1,5 +1,5 @@
-import { media } from '@/styles/mediaQuery';
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const Wrapper = styled.section`
   margin: 0;
@@ -15,8 +15,13 @@ export const Wrapper = styled.section`
 export const ImageContainer = styled.div<{ $expanded: boolean }>`
   position: relative;
   overflow: hidden;
+  border-radius: 20px;
 
   max-height: ${({ $expanded }) => ($expanded ? 'none' : '700px')};
+
+  ${media.tablet} {
+    border-radius: 0px;
+  }
 `;
 
 export const Image = styled.img`
@@ -27,9 +32,6 @@ export const Image = styled.img`
 
 export const Gradient = styled.div`
   position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
   height: 180px;
 
   pointer-events: none;
@@ -39,19 +41,19 @@ export const Gradient = styled.div`
 
   mask-image: linear-gradient(
     to bottom,
-    rgba(0,0,0,0) 0%,
-    rgba(0,0,0,0.2) 30%,
-    rgba(0,0,0,0.5) 60%,
-    rgba(0,0,0,0.8) 80%,
-    rgba(0,0,0,1) 100%
+    rgba(0, 0, 0, 0) 0%,
+    rgba(0, 0, 0, 0.2) 30%,
+    rgba(0, 0, 0, 0.5) 60%,
+    rgba(0, 0, 0, 0.8) 80%,
+    rgba(0, 0, 0, 1) 100%
   );
 
   background: linear-gradient(
     to bottom,
-    rgba(255,255,255,0) 0%,
-    rgba(255,255,255,0.2) 40%,
-    rgba(255,255,255,0.6) 70%,
-    rgba(255,255,255,1) 100%
+    rgba(255, 255, 255, 0) 0%,
+    rgba(255, 255, 255, 0.2) 40%,
+    rgba(255, 255, 255, 0.6) 70%,
+    rgba(255, 255, 255, 1) 100%
   );
 `;
 

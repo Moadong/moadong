@@ -14,6 +14,7 @@ export const Container = styled.div`
   width: 100%;
   min-height: 100vh;
   background: #fff;
+  padding-top: 24px;
 `;
 
 export const MobileTopBar = styled.div`
@@ -30,12 +31,8 @@ export const MobileTopBar = styled.div`
 
 export const TitleWrapper = styled.div`
   max-width: 1180px;
-  margin: 40px auto 0 auto;
-  padding: 0 20px;
-
-  ${media.tablet} {
-    display: none;
-  }
+  margin: 0 auto;
+  padding: 20px 21.5px 0px;
 `;
 
 export const ContentWrapper = styled.div`

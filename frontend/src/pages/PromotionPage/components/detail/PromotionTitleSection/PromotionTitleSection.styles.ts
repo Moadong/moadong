@@ -9,7 +9,6 @@ export const Container = styled.section`
   text-align: left;
 
   ${media.tablet} {
-    padding: 20px;
     align-items: center;
     text-align: center;
   }
