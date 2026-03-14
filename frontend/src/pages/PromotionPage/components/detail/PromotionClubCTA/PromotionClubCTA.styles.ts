@@ -1,8 +1,15 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.section`
-  padding: 0px 20px 24px 20px;
+  padding: 0px 0px 0px 0px;
+  margin: 16px 0px;
+
+  ${media.tablet} {
+    padding: 0px 20px 24px 20px;
+    margin: 0px 0px;
+  }
 `;
 
 export const Question = styled.div`

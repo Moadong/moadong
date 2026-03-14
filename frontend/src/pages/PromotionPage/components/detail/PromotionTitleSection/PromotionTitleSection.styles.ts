@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { colors } from '@/styles/theme/colors';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.section`
   display: flex;
@@ -26,5 +26,16 @@ export const Title = styled.h2`
 
   ${media.tablet} {
     font-size: 24px;
+  }
+`;
+
+export const Divider = styled.div`
+  width: 100%;
+  height: 1px;
+  background-color: ${colors.gray[500]};
+  margin: 20px 0;
+
+  ${media.tablet} {
+    display: none;
   }
 `;

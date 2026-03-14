@@ -16,6 +16,7 @@ const PromotionTitleSection = ({ article }: Props) => {
       <Styled.Title>
         {article.title}
       </Styled.Title>
+      <Styled.Divider />
     </Styled.Container>
   );
 };

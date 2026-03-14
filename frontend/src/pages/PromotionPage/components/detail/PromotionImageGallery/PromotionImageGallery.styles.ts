@@ -15,19 +15,19 @@ export const Wrapper = styled.section`
 export const ImageContainer = styled.div<{ $expanded: boolean }>`
   position: relative;
   overflow: hidden;
-  border-radius: 20px;
-
   max-height: ${({ $expanded }) => ($expanded ? 'none' : '700px')};
-
-  ${media.tablet} {
-    border-radius: 0px;
-  }
 `;
 
 export const Image = styled.img`
   width: 100%;
   display: block;
-  margin-bottom: 2px;
+  margin-bottom: 3px;
+  border-radius: 20px;
+
+  ${media.tablet} {
+    border-radius: 0px;
+    margin-bottom: 2px;
+  }
 `;
 
 export const Gradient = styled.div`

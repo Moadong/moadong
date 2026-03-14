@@ -4,7 +4,7 @@ import { colors } from '@/styles/theme/colors';
 
 export const DesktopHeader = styled.div`
   display: block;
-
+  padding-top: 98px;
   ${media.tablet} {
     display: none;
   }
@@ -14,7 +14,6 @@ export const Container = styled.div`
   width: 100%;
   min-height: 100vh;
   background: #fff;
-  padding-top: 24px;
 `;
 
 export const MobileTopBar = styled.div`
@@ -31,8 +30,12 @@ export const MobileTopBar = styled.div`
 
 export const TitleWrapper = styled.div`
   max-width: 1180px;
-  margin: 0 auto;
-  padding: 20px 21.5px 0px;
+  margin: 0px auto;
+  padding: 20px auto 0px;
+
+  ${media.tablet} {
+    margin: 20px auto;
+  }
 `;
 
 export const ContentWrapper = styled.div`
@@ -41,15 +44,16 @@ export const ContentWrapper = styled.div`
   margin: 20px auto;
 
   display: flex;
-  gap: 40px;
+  gap: 50px;
 
   ${media.laptop} {
     padding: 0 20px;
+    gap: 30px;
   }
 
   ${media.tablet} {
     flex-direction: column;
-    gap: 0;
+    gap: 0px;
     padding: 0;
   }
 `;

@@ -1,8 +1,13 @@
 import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
+import { media } from '@/styles/mediaQuery';
 
 export const Container = styled.section`
-  padding: 24px 20px;
+  padding: 0px 0px;
+
+  ${media.tablet} {
+    padding: 24px 20px;
+  }
 `;
 
 export const SectionTitle = styled.h3`
