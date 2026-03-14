@@ -19,6 +19,7 @@ const DatePickerPanel = ({
   onHeightChange,
 }: DatePickerPanelProps) => {
   const containerRef = useRef<HTMLDivElement>(null);
+  const prevHeightRef = useRef<number | null>(null);
 
   useEffect(() => {
     const container = containerRef.current;
@@ -30,7 +31,12 @@ const DatePickerPanel = ({
     if (!monthElement) return;
 
     const observer = new ResizeObserver(() => {
-      onHeightChange(monthElement.offsetHeight);
+      const nextHeight = monthElement.offsetHeight;
+
+      if (prevHeightRef.current !== nextHeight) {
+        prevHeightRef.current = nextHeight;
+        onHeightChange(nextHeight);
+      }
     });
 
     observer.observe(monthElement);
