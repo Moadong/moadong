@@ -17,6 +17,7 @@ const ENV_FILES = [
   '.env.production',
   '.env.production.local',
 ];
+const FETCH_TIMEOUT_MS = 10_000;
 const shouldSkipDynamicSitemap = ['1', 'true', 'yes'].includes(
   (process.env.SKIP_DYNAMIC_SITEMAP || '').toLowerCase(),
 );
@@ -104,7 +105,9 @@ const getDynamicPaths = async (apiBaseUrl) => {
       division: 'all',
     }).toString();
 
-    const response = await fetch(searchUrl);
+    const response = await fetch(searchUrl, {
+      signal: AbortSignal.timeout(FETCH_TIMEOUT_MS),
+    });
     if (!response.ok) {
       throw new Error(
         `Failed to fetch clubs for sitemap: ${response.status} ${response.statusText}`,
