@@ -11,8 +11,8 @@
 
 <p align="middle">
   <img src="https://img.shields.io/badge/Since-2025.01-yellow" alt="Since 2025.01" />
-  <img src="https://img.shields.io/badge/누적 사용자-13,000+-4285F4" alt="누적 사용자 12,000+" />
-  <img src="https://img.shields.io/badge/MAU-3500+-34A853" alt="MAU 7000+" />
+  <img src="https://img.shields.io/badge/누적 사용자-13,000+-4285F4" alt="누적 사용자 13,000+" />
+  <img src="https://img.shields.io/badge/MAU-7000+-34A853" alt="MAU 7000+" />
   <img src="https://img.shields.io/badge/앱 다운로드-3,000+-FF6F00" alt="앱 다운로드 2,000+" />
 </p>
 
