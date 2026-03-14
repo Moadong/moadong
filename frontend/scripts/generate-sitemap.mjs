@@ -17,6 +17,9 @@ const ENV_FILES = [
   '.env.production',
   '.env.production.local',
 ];
+const shouldSkipDynamicSitemap = ['1', 'true', 'yes'].includes(
+  (process.env.SKIP_DYNAMIC_SITEMAP || '').toLowerCase(),
+);
 
 const loadEnvFile = async (filePath) => {
   try {
@@ -77,6 +80,57 @@ const buildUrlEntry = (loc, lastmod) => `  <url>
     <priority>${loc === `${SITE_URL}/` ? '1.0' : '0.8'}</priority>
   </url>`;
 
+const getDynamicPaths = async (apiBaseUrl) => {
+  if (shouldSkipDynamicSitemap) {
+    console.warn(
+      '[generate-sitemap] SKIP_DYNAMIC_SITEMAP is enabled. Generating static sitemap only.',
+    );
+    return [];
+  }
+
+  if (!apiBaseUrl) {
+    console.warn(
+      '[generate-sitemap] VITE_API_BASE_URL is not set. Generating static sitemap only.',
+    );
+    return [];
+  }
+
+  try {
+    const searchUrl = new URL('/api/club/search/', apiBaseUrl);
+    searchUrl.search = new URLSearchParams({
+      keyword: '',
+      recruitmentStatus: 'all',
+      category: 'all',
+      division: 'all',
+    }).toString();
+
+    const response = await fetch(searchUrl);
+    if (!response.ok) {
+      throw new Error(
+        `Failed to fetch clubs for sitemap: ${response.status} ${response.statusText}`,
+      );
+    }
+
+    const payload = await response.json();
+    const clubs = Array.isArray(payload?.data?.clubs)
+      ? payload.data.clubs
+      : Array.isArray(payload?.clubs)
+        ? payload.clubs
+        : [];
+
+    return clubs
+      .map((club) => club?.name)
+      .filter((name) => typeof name === 'string' && name.trim().length > 0)
+      .map((name) => `/clubDetail/@${encodeURIComponent(name.trim())}`);
+  } catch (error) {
+    console.warn(
+      '[generate-sitemap] Failed to fetch dynamic club URLs. Falling back to static sitemap only.',
+    );
+    console.warn(`[generate-sitemap] ${error.message}`);
+    return [];
+  }
+};
+
 const main = async () => {
   const rootDir = process.cwd();
   await Promise.all(
@@ -84,37 +138,8 @@ const main = async () => {
   );
 
   const apiBaseUrl = process.env.VITE_API_BASE_URL;
-  if (!apiBaseUrl) {
-    throw new Error('VITE_API_BASE_URL is required to generate sitemap.');
-  }
-
-  const searchUrl = new URL('/api/club/search/', apiBaseUrl);
-  searchUrl.search = new URLSearchParams({
-    keyword: '',
-    recruitmentStatus: 'all',
-    category: 'all',
-    division: 'all',
-  }).toString();
-
-  const response = await fetch(searchUrl);
-  if (!response.ok) {
-    throw new Error(
-      `Failed to fetch clubs for sitemap: ${response.status} ${response.statusText}`,
-    );
-  }
-
-  const payload = await response.json();
-  const clubs = Array.isArray(payload?.data?.clubs)
-    ? payload.data.clubs
-    : Array.isArray(payload?.clubs)
-      ? payload.clubs
-      : [];
+  const dynamicPaths = await getDynamicPaths(apiBaseUrl);
   const timestamp = formatLastModified(new Date());
-
-  const dynamicPaths = clubs
-    .map((club) => club?.name)
-    .filter((name) => typeof name === 'string' && name.trim().length > 0)
-    .map((name) => `/clubDetail/@${encodeURIComponent(name.trim())}`);
 
   const allPaths = [...STATIC_PATHS, ...dynamicPaths];
   const uniquePaths = [...new Set(allPaths)];
