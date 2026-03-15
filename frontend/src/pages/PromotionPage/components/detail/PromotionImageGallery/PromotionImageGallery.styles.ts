@@ -32,6 +32,8 @@ export const Image = styled.img`
 
 export const Gradient = styled.div`
   position: absolute;
+  bottom: 0;
+  width: 100%;
   height: 180px;
 
   pointer-events: none;

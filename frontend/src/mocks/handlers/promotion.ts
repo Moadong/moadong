@@ -13,7 +13,8 @@ export const mockPromotionArticles: PromotionArticle[] = [
     location: '부경대학교 동원 장보고관 1층',
     eventStartDate: '2025-11-28 06:00',
     eventEndDate: '2025-11-28 09:00',
-    description: 'WAP 최종 전시회에 여러분을 초대합니다! \n\n이번 전시회에서는 WAP 팀이 한 학기 동안 열심히 준비한 프로젝트들을 선보입니다. 다양한 작품과 아이디어가 가득한 이번 전시회에서 여러분의 많은 관심과 참여 부탁드립니다! 🙌\n\n#WAP #최종전시회 #부경대학교',
+    description:
+      'WAP 최종 전시회에 여러분을 초대합니다! \n\n이번 전시회에서는 WAP 팀이 한 학기 동안 열심히 준비한 프로젝트들을 선보입니다. 다양한 작품과 아이디어가 가득한 이번 전시회에서 여러분의 많은 관심과 참여 부탁드립니다! 🙌\n\n#WAP #최종전시회 #부경대학교',
     images: [
       'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800',
       'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800',
@@ -40,7 +41,8 @@ export const mockPromotionArticles: PromotionArticle[] = [
     description: '학생 창업팀의 아이디어를 공유하는 자리',
     images: [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
-      'https://images.unsplash.com/photo-2540575467063-178a50c2df87?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
 ];
