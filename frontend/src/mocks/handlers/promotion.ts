@@ -50,11 +50,11 @@ export const mockPromotionArticles: PromotionArticle[] = [
 // MSW 핸들러
 export const promotionHandlers = [
   // GET /api/promotion - 홍보게시판 목록 조회
-  http.get(`${API_BASE_URL}/api/promotion`, () => {
-    return HttpResponse.json({
-      articles: mockPromotionArticles,
-    });
-  }),
+  // http.get(`${API_BASE_URL}/api/promotion`, () => {
+  //   return HttpResponse.json({
+  //     articles: mockPromotionArticles,
+  //   });
+  // }),
 
   // POST /api/promotion - 홍보게시판 글 작성
   http.post(`${API_BASE_URL}/api/promotion`, async ({ request }) => {
