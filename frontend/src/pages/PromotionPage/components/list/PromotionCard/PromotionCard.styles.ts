@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import { colors } from '@/styles/theme/colors';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
   width: 226px;
@@ -13,7 +13,7 @@ export const Container = styled.div`
   ${media.mobile} {
     width: 200px;
   }
-  
+
   ${media.mini_mobile} {
     width: 164px;
   }
@@ -30,7 +30,8 @@ export const Image = styled.div<{ $imageUrl?: string }>`
   height: 100%;
 
   background-color: #ddd;
-  background-image: ${({ $imageUrl }) => ($imageUrl ? `url(${$imageUrl})` : 'none')};
+  background-image: ${({ $imageUrl }) =>
+    $imageUrl ? `url(${$imageUrl})` : 'none'};
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;

@@ -71,7 +71,11 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
       handler: handleClubUnionClick,
       path: '/club-union',
     },
-    { label: '홍보•이벤트', handler: handlePromotionClick, path: '/promotions' },
+    {
+      label: '홍보•이벤트',
+      handler: handlePromotionClick,
+      path: '/promotions',
+    },
   ];
 
   const closeMenu = () => {

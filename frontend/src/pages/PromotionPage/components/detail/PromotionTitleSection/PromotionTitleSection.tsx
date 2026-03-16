@@ -13,9 +13,7 @@ const PromotionTitleSection = ({ article }: Props) => {
         <ClubTag clubName={article.clubName} />
       </Styled.TagWrapper>
 
-      <Styled.Title>
-        {article.title}
-      </Styled.Title>
+      <Styled.Title>{article.title}</Styled.Title>
       <Styled.Divider />
     </Styled.Container>
   );

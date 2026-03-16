@@ -9,19 +9,13 @@ interface Props {
   articles: PromotionArticle[];
 }
 
-const RelatedPromotionSection = ({
-  currentClubId,
-  articles,
-}: Props) => {
+const RelatedPromotionSection = ({ currentClubId, articles }: Props) => {
   const navigate = useNavigate();
 
   const activeEvents = articles
     .filter((a) => {
       const dday = getDDay(a.eventStartDate);
-      return (
-        a.clubId !== currentClubId &&
-        dday >= 0
-      );
+      return a.clubId !== currentClubId && dday >= 0;
     })
     .slice(0, 1);
 
@@ -29,17 +23,13 @@ const RelatedPromotionSection = ({
 
   return (
     <Styled.Container>
-      <Styled.Title>
-        이런 이벤트는 어때요?
-      </Styled.Title>
+      <Styled.Title>이런 이벤트는 어때요?</Styled.Title>
 
       {activeEvents.map((event) => (
         <RelatedPromotionCard
           key={event.clubId}
           article={event}
-          onClick={() =>
-            navigate(`/promotions/${event.clubId}`)
-          }
+          onClick={() => navigate(`/promotions/${event.clubId}`)}
         />
       ))}
     </Styled.Container>

@@ -7,7 +7,7 @@ export const Card = styled.div`
   padding: 20px;
   cursor: pointer;
 
-  box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
 
   transition: transform 0.2s ease;
 
@@ -17,5 +17,5 @@ export const Card = styled.div`
 `;
 
 export const ClubTagWrapper = styled.div`
-    margin-bottom: 6px;
+  margin-bottom: 6px;
 `;

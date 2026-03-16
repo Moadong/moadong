@@ -7,11 +7,7 @@ interface Props {
   onClick: () => void;
 }
 
-const PromotionArrowButton = ({
-  text,
-  direction = 'down',
-  onClick,
-}: Props) => {
+const PromotionArrowButton = ({ text, direction = 'down', onClick }: Props) => {
   return (
     <Styled.Button onClick={onClick}>
       <Styled.Content>

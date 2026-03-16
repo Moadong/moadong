@@ -15,12 +15,11 @@ const PromotionDetailTopBar = () => {
 
   return (
     <Styled.Container>
-        <Styled.BackButton onClick={handleBackClick} aria-label="뒤로가기">
-          <PrevButtonIcon width={36} height={36} />
-        </Styled.BackButton>
+      <Styled.BackButton onClick={handleBackClick} aria-label='뒤로가기'>
+        <PrevButtonIcon width={36} height={36} />
+      </Styled.BackButton>
 
-        <Styled.Title>이벤트 정보</Styled.Title>
-
+      <Styled.Title>이벤트 정보</Styled.Title>
     </Styled.Container>
   );
 };

@@ -6,8 +6,7 @@ export const getDDay = (startDate: string) => {
   start.setHours(0, 0, 0, 0);
 
   const diff = Math.ceil(
-    (start.getTime() - today.getTime()) /
-      (1000 * 60 * 60 * 24)
+    (start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
   );
 
   return diff;

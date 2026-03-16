@@ -10,9 +10,7 @@ interface PromotionCardProps {
   article: PromotionArticle;
 }
 
-const PromotionCard = ({
-  article,
-}: PromotionCardProps) => {
+const PromotionCard = ({ article }: PromotionCardProps) => {
   const navigateToPromotionDetail = useNavigate();
   const dday = getDDay(article.eventStartDate);
 
