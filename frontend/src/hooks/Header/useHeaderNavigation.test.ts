@@ -249,6 +249,7 @@ describe('useHeaderNavigation 테스트', () => {
       expect(result.current).toHaveProperty('handleHomeClick');
       expect(result.current).toHaveProperty('handleIntroduceClick');
       expect(result.current).toHaveProperty('handleClubUnionClick');
+      expect(result.current).toHaveProperty('handlePromotionClick');
       expect(result.current).toHaveProperty('handleAdminClick');
     });
 
@@ -261,6 +262,7 @@ describe('useHeaderNavigation 테스트', () => {
       expect(typeof result.current.handleIntroduceClick).toBe('function');
       expect(typeof result.current.handleClubUnionClick).toBe('function');
       expect(typeof result.current.handlePromotionClick).toBe('function');
+      expect(typeof result.current.handleAdminClick).toBe('function');
     });
   });
 
@@ -273,12 +275,14 @@ describe('useHeaderNavigation 테스트', () => {
       result.current.handleHomeClick();
       result.current.handleIntroduceClick();
       result.current.handlePromotionClick();
+      result.current.handleAdminClick();
 
       // Then
-      expect(mockNavigate).toHaveBeenCalledTimes(3);
+      expect(mockNavigate).toHaveBeenCalledTimes(4);
       expect(mockNavigate).toHaveBeenNthCalledWith(1, '/');
       expect(mockNavigate).toHaveBeenNthCalledWith(2, '/introduce');
-      expect(mockNavigate).toHaveBeenNthCalledWith(3, '/admin');
+      expect(mockNavigate).toHaveBeenNthCalledWith(3, '/promotions');
+      expect(mockNavigate).toHaveBeenNthCalledWith(4, '/admin');
     });
 
     it('모든 네비게이션 액션이 Mixpanel 이벤트를 트리거한다', () => {
@@ -290,9 +294,10 @@ describe('useHeaderNavigation 테스트', () => {
       result.current.handleIntroduceClick();
       result.current.handleClubUnionClick();
       result.current.handlePromotionClick();
+      result.current.handleAdminClick();
 
       // Then
-      expect(mockTrackEvent).toHaveBeenCalledTimes(4);
+      expect(mockTrackEvent).toHaveBeenCalledTimes(5);
     });
   });
 });
