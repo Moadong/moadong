@@ -61,5 +61,9 @@ export const Gradient = styled.div`
 `;
 
 export const ImageMoreButtonWrapper = styled.div`
-  padding: 0 20px;
+  padding: 0px 0px 32px;
+
+  ${media.mobile} {
+    padding: 0 20px;
+  }
 `;

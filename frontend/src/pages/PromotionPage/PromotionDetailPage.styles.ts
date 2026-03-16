@@ -41,7 +41,7 @@ export const TitleWrapper = styled.div`
 export const ContentWrapper = styled.div`
   max-width: 1180px;
   width: 100%;
-  margin: 20px auto;
+  margin: 20px auto 66.49px;
 
   display: flex;
   gap: 50px;
