@@ -3,14 +3,14 @@ import ArrowButton from '../PromotionArrowButton/PromotionArrowButton';
 import * as Styled from './PromotionClubCTA.styles';
 
 interface Props {
-  clubId: string;
+  clubName: string;
 }
 
-const PromotionClubCTA = ({ clubId }: Props) => {
+const PromotionClubCTA = ({ clubName }: Props) => {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate(`/clubs/${clubId}`);
+    navigate(`/clubDetail/@${clubName}`);
   };
 
   return (
