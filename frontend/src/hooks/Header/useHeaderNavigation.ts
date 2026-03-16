@@ -42,6 +42,7 @@ const useHeaderNavigation = () => {
     handleIntroduceClick,
     handleClubUnionClick,
     handlePromotionClick,
+    handleAdminClick,
   };
 };
 

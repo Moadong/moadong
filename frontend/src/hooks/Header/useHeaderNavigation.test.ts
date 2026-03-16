@@ -214,31 +214,31 @@ describe('useHeaderNavigation 테스트', () => {
     });
   });
 
-  // describe('관리자 버튼 클릭 테스트', () => {
-  //   it('관리자 버튼 클릭 시 관리자 페이지로 이동한다', () => {
-  //     // Given
-  //     const { result } = renderHook(() => useHeaderNavigation());
+  describe('관리자 버튼 클릭 테스트', () => {
+    it('관리자 버튼 클릭 시 관리자 페이지로 이동한다', () => {
+      // Given
+      const { result } = renderHook(() => useHeaderNavigation());
 
-  //     // When
-  //     result.current.handleAdminClick();
+      // When
+      result.current.handleAdminClick();
 
-  //     // Then
-  //     expect(mockNavigate).toHaveBeenCalledWith('/admin');
-  //   });
+      // Then
+      expect(mockNavigate).toHaveBeenCalledWith('/admin');
+    });
 
-  //   it('관리자 버튼 클릭 시 Mixpanel 이벤트를 전송한다', () => {
-  //     // Given
-  //     const { result } = renderHook(() => useHeaderNavigation());
+    it('관리자 버튼 클릭 시 Mixpanel 이벤트를 전송한다', () => {
+      // Given
+      const { result } = renderHook(() => useHeaderNavigation());
 
-  //     // When
-  //     result.current.handleAdminClick();
+      // When
+      result.current.handleAdminClick();
 
-  //     // Then
-  //     expect(mockTrackEvent).toHaveBeenCalledWith(
-  //       USER_EVENT.ADMIN_BUTTON_CLICKED,
-  //     );
-  //   });
-  // });
+      // Then
+      expect(mockTrackEvent).toHaveBeenCalledWith(
+        USER_EVENT.ADMIN_BUTTON_CLICKED,
+      );
+    });
+  });
 
   describe('반환값 검증 테스트', () => {
     it('모든 핸들러 함수를 반환한다', () => {
