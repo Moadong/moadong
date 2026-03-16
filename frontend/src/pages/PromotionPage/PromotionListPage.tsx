@@ -17,7 +17,7 @@ const PromotionListPage = () => {
     <>
       <Header hideOn={['webview']} />
       <Styled.Container>
-        {!isInAppWebView() && <Filter alwaysVisible />}
+        {!isInAppWebView() && <Filter />}
         <Styled.Wrapper>
           {isLoading && <p>로딩 중...</p>}
           {isError && <p>오류가 발생했습니다.</p>}

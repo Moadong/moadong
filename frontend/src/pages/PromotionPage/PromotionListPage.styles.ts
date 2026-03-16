@@ -5,7 +5,7 @@ export const Container = styled.div`
   width: 100%;
   max-width: 550px;
   margin: 0 auto;
-  padding-top: 22px;
+  padding-top: 92px;
 
   ${media.mobile} {
     padding-top: 0;
@@ -13,6 +13,6 @@ export const Container = styled.div`
 `;
 
 export const Wrapper = styled.div`
-    margin-top: 4px;
-    padding: 0px 20px 66px;
+  margin-top: 4px;
+  padding: 0px 20px 66px;
 `;

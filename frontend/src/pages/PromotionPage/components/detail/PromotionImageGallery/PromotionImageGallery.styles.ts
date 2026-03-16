@@ -35,6 +35,7 @@ export const Gradient = styled.div`
   bottom: 0;
   width: 100%;
   height: 180px;
+  z-index: 1;
 
   pointer-events: none;
 

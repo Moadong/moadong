@@ -29,7 +29,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
-    handleAdminClick,
+    handlePromotionClick,
   } = useHeaderNavigation();
 
   const isAdminPage = location.pathname.startsWith('/admin');
@@ -71,7 +71,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
       handler: handleClubUnionClick,
       path: '/club-union',
     },
-    { label: '관리자 페이지', handler: handleAdminClick, path: '/admin' },
+    { label: '홍보•이벤트', handler: handlePromotionClick, path: '/promotions' },
   ];
 
   const closeMenu = () => {

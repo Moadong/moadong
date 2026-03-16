@@ -1,4 +1,5 @@
 import * as Styled from './Footer.styles';
+import { useNavigate } from 'react-router-dom';
 
 const Footer = () => {
   return (

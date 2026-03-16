@@ -188,31 +188,57 @@ describe('useHeaderNavigation 테스트', () => {
     });
   });
 
-  describe('관리자 버튼 클릭 테스트', () => {
-    it('관리자 버튼 클릭 시 관리자 페이지로 이동한다', () => {
+  describe('홍보 게시판 버튼 클릭 테스트', () => {
+    it('홍보 게시판 버튼 클릭 시 홍보 페이지로 이동한다', () => {
       // Given
       const { result } = renderHook(() => useHeaderNavigation());
 
       // When
-      result.current.handleAdminClick();
+      result.current.handlePromotionClick();
 
       // Then
-      expect(mockNavigate).toHaveBeenCalledWith('/admin');
+      expect(mockNavigate).toHaveBeenCalledWith('/promotion');
     });
 
-    it('관리자 버튼 클릭 시 Mixpanel 이벤트를 전송한다', () => {
+    it('홍보 게시판 버튼 클릭 시 Mixpanel 이벤트를 전송한다', () => {
       // Given
       const { result } = renderHook(() => useHeaderNavigation());
 
       // When
-      result.current.handleAdminClick();
+      result.current.handlePromotionClick();
 
       // Then
       expect(mockTrackEvent).toHaveBeenCalledWith(
-        USER_EVENT.ADMIN_BUTTON_CLICKED,
+        USER_EVENT.PROMOTION_BUTTON_CLICKED,
       );
     });
   });
+
+  // describe('관리자 버튼 클릭 테스트', () => {
+  //   it('관리자 버튼 클릭 시 관리자 페이지로 이동한다', () => {
+  //     // Given
+  //     const { result } = renderHook(() => useHeaderNavigation());
+
+  //     // When
+  //     result.current.handleAdminClick();
+
+  //     // Then
+  //     expect(mockNavigate).toHaveBeenCalledWith('/admin');
+  //   });
+
+  //   it('관리자 버튼 클릭 시 Mixpanel 이벤트를 전송한다', () => {
+  //     // Given
+  //     const { result } = renderHook(() => useHeaderNavigation());
+
+  //     // When
+  //     result.current.handleAdminClick();
+
+  //     // Then
+  //     expect(mockTrackEvent).toHaveBeenCalledWith(
+  //       USER_EVENT.ADMIN_BUTTON_CLICKED,
+  //     );
+  //   });
+  // });
 
   describe('반환값 검증 테스트', () => {
     it('모든 핸들러 함수를 반환한다', () => {
@@ -234,7 +260,7 @@ describe('useHeaderNavigation 테스트', () => {
       expect(typeof result.current.handleHomeClick).toBe('function');
       expect(typeof result.current.handleIntroduceClick).toBe('function');
       expect(typeof result.current.handleClubUnionClick).toBe('function');
-      expect(typeof result.current.handleAdminClick).toBe('function');
+      expect(typeof result.current.handlePromotionClick).toBe('function');
     });
   });
 
@@ -246,7 +272,7 @@ describe('useHeaderNavigation 테스트', () => {
       // When
       result.current.handleHomeClick();
       result.current.handleIntroduceClick();
-      result.current.handleAdminClick();
+      result.current.handlePromotionClick();
 
       // Then
       expect(mockNavigate).toHaveBeenCalledTimes(3);
@@ -263,7 +289,7 @@ describe('useHeaderNavigation 테스트', () => {
       result.current.handleHomeClick();
       result.current.handleIntroduceClick();
       result.current.handleClubUnionClick();
-      result.current.handleAdminClick();
+      result.current.handlePromotionClick();
 
       // Then
       expect(mockTrackEvent).toHaveBeenCalledTimes(4);
