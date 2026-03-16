@@ -197,7 +197,7 @@ describe('useHeaderNavigation 테스트', () => {
       result.current.handlePromotionClick();
 
       // Then
-      expect(mockNavigate).toHaveBeenCalledWith('/promotion');
+      expect(mockNavigate).toHaveBeenCalledWith('/promotions');
     });
 
     it('홍보 게시판 버튼 클릭 시 Mixpanel 이벤트를 전송한다', () => {

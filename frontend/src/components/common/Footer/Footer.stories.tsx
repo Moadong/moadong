@@ -1,4 +1,4 @@
-import React from 'react';
+import { BrowserRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import Footer from './Footer';
 
@@ -8,7 +8,13 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
-  decorators: [(Story) => <Story />],
+  decorators: [
+    (Story) => (
+      <BrowserRouter>
+        <Story />
+      </BrowserRouter>
+    ),
+  ],
   tags: ['autodocs'],
 } satisfies Meta<typeof Footer>;
 
