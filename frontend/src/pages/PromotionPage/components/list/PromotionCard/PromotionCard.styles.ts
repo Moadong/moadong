@@ -3,26 +3,18 @@ import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
-  width: 226px;
+  width: 100%;
   border-radius: 14px;
   overflow: hidden;
   background: ${colors.base.white};
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
   cursor: pointer;
-
-  ${media.mobile} {
-    width: 200px;
-  }
-
-  ${media.mini_mobile} {
-    width: 164px;
-  }
 `;
 
 export const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 164px;
+  aspect-ratio: 7/6;
 `;
 
 export const Image = styled.div<{ $imageUrl?: string }>`
@@ -48,5 +40,9 @@ export const Content = styled.div`
 `;
 
 export const TagWrapper = styled.div`
-  margin-top: 4px;
+  margin-top: 8px;
+
+  ${media.mini_mobile} {
+    margin-top: 4px;
+  }
 `;

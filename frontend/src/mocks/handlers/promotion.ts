@@ -45,16 +45,171 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+    {
+    clubName: '창업 동아리',
+    clubId: 'club-3',
+    title: '스타트업 데모데이',
+    location: '부산 해운대구',
+    eventStartDate: '2024-05-10',
+    eventEndDate: '2024-05-10',
+    description: '학생 창업팀의 아이디어를 공유하는 자리',
+    images: [
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+      'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
+    ],
+  },
+  
 ];
 
 // MSW 핸들러
 export const promotionHandlers = [
   // GET /api/promotion - 홍보게시판 목록 조회
-  // http.get(`${API_BASE_URL}/api/promotion`, () => {
-  //   return HttpResponse.json({
-  //     articles: mockPromotionArticles,
-  //   });
-  // }),
+  http.get(`${API_BASE_URL}/api/promotion`, () => {
+    return HttpResponse.json({
+      articles: mockPromotionArticles,
+    });
+  }),
 
   // POST /api/promotion - 홍보게시판 글 작성
   http.post(`${API_BASE_URL}/api/promotion`, async ({ request }) => {
