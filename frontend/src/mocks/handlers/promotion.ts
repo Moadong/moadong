@@ -45,7 +45,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -59,7 +59,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -73,7 +73,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -87,7 +87,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -101,7 +101,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -115,7 +115,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -129,7 +129,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -143,7 +143,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -157,7 +157,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -171,7 +171,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -185,7 +185,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-    {
+  {
     clubName: '창업 동아리',
     clubId: 'club-3',
     title: '스타트업 데모데이',
@@ -199,7 +199,6 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1559136555-9303baea8ebd?w=800',
     ],
   },
-  
 ];
 
 // MSW 핸들러
