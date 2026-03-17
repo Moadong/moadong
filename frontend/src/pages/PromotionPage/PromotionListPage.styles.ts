@@ -16,8 +16,12 @@ export const Wrapper = styled.div`
   margin-top: 16px;
   padding: 0px 50px 90px;
 
+  ${media.laptop} {
+    padding: 0px 20px 90px;
+  }
+
   @media (max-width: 955px) {
-    padding: 0px 36px 90px;
+    padding: 0px 20px 90px;
   }
   ${media.mobile} {
     padding: 0px 20px 90px;
