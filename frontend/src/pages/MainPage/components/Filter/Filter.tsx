@@ -30,27 +30,32 @@ const Filter = ({ alwaysVisible = false }: FilterProps) => {
   const { data } = useGetPromotionArticles();
   const [hasNotification, setHasNotification] = useState(false);
 
-  const handleFilterOptionClick = (path: string) => {
-    trackEvent(USER_EVENT.FILTER_OPTION_CLICKED, {
-      path: path,
-    });
-
-    if (path === '/promotions' && data) {
-      const latestTime = getLatestPromotionTime(data);
-      setLastCheckedTime(latestTime);
-      setHasNotification(false);
-    }
-    navigate(path);
-  };
-
   useEffect(() => {
     if (!data || data.length === 0) return;
 
     const latestTime = getLatestPromotionTime(data);
     const lastChecked = getLastCheckedTime();
 
-    setHasNotification(latestTime > lastChecked);
-  }, [data]);
+    if (pathname === '/promotions') {
+      setLastCheckedTime(latestTime);
+      setHasNotification(false);
+      return;
+    }
+
+    if (lastChecked === null || latestTime > lastChecked) {
+      setHasNotification(true);
+    } else {
+      setHasNotification(false);
+    }
+  }, [data, pathname]);
+
+  const handleFilterOptionClick = (path: string) => {
+    trackEvent(USER_EVENT.FILTER_OPTION_CLICKED, {
+      path: path,
+    });
+
+    navigate(path);
+  };
 
   return (
     <>

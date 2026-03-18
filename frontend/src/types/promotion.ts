@@ -1,4 +1,5 @@
 export interface PromotionArticle {
+  id: string;
   clubName: string;
   clubId: string;
   title: string;
