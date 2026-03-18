@@ -6,8 +6,9 @@ import com.google.firebase.FirebaseOptions;
 import com.google.firebase.messaging.FirebaseMessaging;
 import jakarta.annotation.PostConstruct;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
-import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 
 import java.io.IOException;
@@ -17,27 +18,26 @@ import java.io.InputStream;
 @Component
 public class FcmInitializer {
 
+    @Value("${firebase.config.path:classpath:firebase.json}")
+    private Resource firebaseConfigResource;
+
     @PostConstruct
     public void init() throws IOException {
         try {
-            ClassPathResource serviceAccount =
-                    new ClassPathResource("firebase.json");
-
-            if (!serviceAccount.exists()) {
+            if (!firebaseConfigResource.exists()) {
+                log.error("Firebase config file not found at: {}", firebaseConfigResource.getDescription());
                 throw new IOException("Firebase service account file not found");
             }
 
-            InputStream in = serviceAccount.getInputStream();
+            try (InputStream in = firebaseConfigResource.getInputStream()) {
+                FirebaseOptions.Builder options = FirebaseOptions.builder();
+                options.setCredentials(GoogleCredentials.fromStream(in));
 
-            FirebaseOptions.Builder options = FirebaseOptions.builder();
-            options.setCredentials(GoogleCredentials.fromStream(in));
-
-            if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options.build());
-                log.info("Firebase app has been initialized");
+                if (FirebaseApp.getApps().isEmpty()) {
+                    FirebaseApp.initializeApp(options.build());
+                    log.info("Firebase app has been initialized using: {}", firebaseConfigResource.getDescription());
+                }
             }
-
-            in.close();
         } catch (Exception e) {
             log.error("Firebase app initialization failed", e);
             throw e;
