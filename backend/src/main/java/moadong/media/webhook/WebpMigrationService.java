@@ -9,8 +9,8 @@ import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubRepository;
+import moadong.global.config.properties.AwsProperties;
 import moadong.media.webhook.dto.WebpMigrationResult;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
@@ -27,17 +27,13 @@ public class WebpMigrationService {
     private final ClubRepository clubRepository;
     private final S3Client s3Client;
     private final ImageConversionCompletedWebhookService imageConversionCompletedWebhookService;
-
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucket;
-
-    @Value("${cloud.aws.s3.view-endpoint}")
-    private String viewEndpoint;
+    private final AwsProperties awsProperties;
 
     private String normalizedViewEndpoint;
 
     @PostConstruct
     private void init() {
+        String viewEndpoint = awsProperties.s3().viewEndpoint();
         if (viewEndpoint == null || viewEndpoint.isEmpty()) {
             throw new IllegalStateException("cloud.aws.s3.view-endpoint must be configured");
         }
@@ -180,17 +176,17 @@ public class WebpMigrationService {
     private boolean headObjectExists(String destKey) {
         try {
             HeadObjectRequest request = HeadObjectRequest.builder()
-                    .bucket(bucket)
+                    .bucket(awsProperties.s3().bucket())
                     .key(destKey)
                     .build();
-            log.info("R2 HEAD request: bucket={}, key={}", bucket, destKey);
+            log.info("R2 HEAD request: bucket={}, key={}", awsProperties.s3().bucket(), destKey);
             s3Client.headObject(request);
             return true;
         } catch (NoSuchKeyException e) {
-            log.info("R2 HEAD 404 (no such key): bucket={}, key={}", bucket, destKey);
+            log.info("R2 HEAD 404 (no such key): bucket={}, key={}", awsProperties.s3().bucket(), destKey);
             return false;
         } catch (S3Exception e) {
-            log.info("R2 HEAD failed: bucket={}, key={}, error={}", bucket, destKey, e.getMessage());
+            log.info("R2 HEAD failed: bucket={}, key={}, error={}", awsProperties.s3().bucket(), destKey, e.getMessage());
             return false;
         }
     }

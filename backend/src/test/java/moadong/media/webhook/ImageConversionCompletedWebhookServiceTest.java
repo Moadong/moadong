@@ -2,6 +2,7 @@ package moadong.media.webhook;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -10,6 +11,7 @@ import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
+import moadong.global.config.properties.AwsProperties;
 import moadong.media.webhook.dto.ImageConversionCompletedRequest;
 import moadong.media.webhook.dto.ImageEntry;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,12 +30,22 @@ class ImageConversionCompletedWebhookServiceTest {
     @Mock
     private ClubRepository clubRepository;
 
+    @Mock
+    private AwsProperties awsProperties;
+
+    @Mock
+    private AwsProperties.S3 awsS3;
+
     @InjectMocks
     private ImageConversionCompletedWebhookService imageConversionCompletedWebhookService;
 
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(imageConversionCompletedWebhookService, "viewEndpoint", VIEW_ENDPOINT);
+        // AwsProperties Mock 설정
+        lenient().when(awsProperties.s3()).thenReturn(awsS3);
+        lenient().when(awsS3.viewEndpoint()).thenReturn(VIEW_ENDPOINT);
+        
+        // init 메서드 호출을 통해 normalizedViewEndpoint 초기화
         ReflectionTestUtils.invokeMethod(imageConversionCompletedWebhookService, "init");
     }
 

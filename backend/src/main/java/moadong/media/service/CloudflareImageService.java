@@ -11,6 +11,8 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
+import moadong.global.config.properties.AwsProperties;
+import moadong.global.config.properties.ServerProperties;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
@@ -19,7 +21,6 @@ import moadong.media.domain.FileType;
 import moadong.media.dto.PresignedUploadResponse;
 import moadong.media.dto.UploadUrlRequest;
 import org.bson.types.ObjectId;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import software.amazon.awssdk.services.s3.S3Client;
@@ -38,27 +39,16 @@ import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignReques
 public class CloudflareImageService implements ClubImageService{
 
     private final ClubRepository clubRepository;
-
     private final S3Client s3Client;
-
     private final S3Presigner s3Presigner;
+    private final AwsProperties awsProperties;
+    private final ServerProperties serverProperties;
 
-    @Value("${server.feed.max-count}")
-    private int MAX_FEED_COUNT;
-    @Value("${cloud.aws.s3.bucket}")
-    private String bucketName;
-    @Value("${cloud.aws.s3.view-endpoint}")
-    private String viewEndpoint;
-    @Value("${server.image.max-size}")
-    private long maxImageSizeBytes;
-    @Value("${server.file-url.max-length:200}")
-    private int maxFileUrlLength;
-    @Value("${server.file-url.expiration-time:10}")
-    private int expirationTime;
     private String normalizedViewEndpoint;
 
     @PostConstruct
     private void init() {
+        String viewEndpoint = awsProperties.s3().viewEndpoint();
         if (viewEndpoint == null || viewEndpoint.isEmpty()) {
             throw new IllegalStateException("cloud.aws.s3.view-endpoint must be configured");
         }
@@ -89,7 +79,7 @@ public class CloudflareImageService implements ClubImageService{
 			newFeedImageList = java.util.Collections.emptyList();
 		}
 
-		if (newFeedImageList.size() > MAX_FEED_COUNT) {
+		if (newFeedImageList.size() > serverProperties.feed().maxCount()) {
 			throw new RestApiException(ErrorCode.TOO_MANY_FILES);
 		}
 
@@ -142,7 +132,7 @@ public class CloudflareImageService implements ClubImageService{
         }
 
         DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(awsProperties.s3().bucket())
                 .key(key)
                 .build();
 
@@ -183,7 +173,7 @@ public class CloudflareImageService implements ClubImageService{
         int existingCount = (club.getClubRecruitmentInformation().getFeedImages() == null)
             ? 0
             : club.getClubRecruitmentInformation().getFeedImages().size();
-        int remaining = Math.max(0, MAX_FEED_COUNT - existingCount);
+        int remaining = Math.max(0, serverProperties.feed().maxCount() - existingCount);
         if (remaining == 0) {
             return java.util.List.of(errorResponse(ErrorCode.TOO_MANY_FILES));
         }
@@ -247,7 +237,7 @@ public class CloudflareImageService implements ClubImageService{
 
 
     private void validateFileConstraints(String clubId, FileType fileType, String fileUrl) {
-        if (fileUrl == null || fileUrl.length() > maxFileUrlLength) {
+        if (fileUrl == null || fileUrl.length() > serverProperties.fileUrl().maxLength()) {
             throw new RestApiException(ErrorCode.INVALID_FILE_URL);
         }
         String key = extractKeyOrNull(fileUrl);
@@ -258,15 +248,15 @@ public class CloudflareImageService implements ClubImageService{
         // R2 HEAD로 사이즈 확인
         try {
             HeadObjectRequest headReq = HeadObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(awsProperties.s3().bucket())
                 .key(key)
                 .build();
             long contentLength = s3Client.headObject(headReq).contentLength();
-            if (contentLength > maxImageSizeBytes) {
+            if (contentLength > serverProperties.image().maxSize().toBytes()) {
                 // 초과 시 삭제 후 예외
                 try {
                     DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
-                        .bucket(bucketName)
+                        .bucket(awsProperties.s3().bucket())
                         .key(key)
                         .build();
                     s3Client.deleteObject(deleteRequest);
@@ -306,14 +296,14 @@ public class CloudflareImageService implements ClubImageService{
 
         // PutObjectRequest 생성
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
-                .bucket(bucketName)
+                .bucket(awsProperties.s3().bucket())
                 .key(key)
                 .contentType(contentType)
                 .build();
 
         // Presigned URL 생성 (10분 유효)
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
-                .signatureDuration(Duration.ofMinutes(expirationTime))
+                .signatureDuration(Duration.ofMinutes(serverProperties.fileUrl().expirationTime()))
                 .putObjectRequest(putObjectRequest)
                 .build();
 

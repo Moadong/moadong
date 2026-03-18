@@ -1,5 +1,7 @@
 package moadong.global.config;
 
+import lombok.RequiredArgsConstructor;
+import moadong.global.config.properties.RabbitMqProperties;
 import org.springframework.amqp.core.Binding;
 import org.springframework.amqp.core.BindingBuilder;
 import org.springframework.amqp.core.DirectExchange;
@@ -10,7 +12,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 import org.springframework.amqp.support.converter.MessageConverter;
-import org.springframework.beans.factory.annotation.Value;
+import org.springframework.boot.autoconfigure.amqp.RabbitProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,21 +20,11 @@ import java.util.Map;
 
 @Configuration
 @EnableRabbit
+@RequiredArgsConstructor
 public class RabbitMQConfig {
 
-    @Value("${spring.rabbitmq.host}") private String host;
-    @Value("${spring.rabbitmq.port}") private int port;
-    @Value("${spring.rabbitmq.username}") private String username;
-    @Value("${spring.rabbitmq.password}") private String password;
-
-    @Value("${rabbitmq.summary.queue}")
-    private String APPLICANT_ID_QUEUE_NAME;
-
-    @Value("${rabbitmq.summary.exchange}")
-    private String APPLICANT_ID_EXCHANGE_NAME;
-
-    @Value("${rabbitmq.summary.routingKey}")
-    private String APPLICANT_ID_ROUTING_KEY;
+    private final RabbitMqProperties rabbitMqProperties;
+    private final RabbitProperties springRabbitProperties;
 
     private static final String DEAD_LETTER_EXCHANGE_NAME = "dead.letter.exchange";
     private static final String DEAD_LETTER_QUEUE_NAME = "dead.letter.queue";
@@ -40,7 +32,7 @@ public class RabbitMQConfig {
 
     @Bean
     public Queue applicantIdQueue() {
-        return new Queue(APPLICANT_ID_QUEUE_NAME, true, false, false,
+        return new Queue(rabbitMqProperties.summary().queue(), true, false, false,
             Map.of(
                 "x-dead-letter-exchange", DEAD_LETTER_EXCHANGE_NAME,
                 "x-dead-letter-routing-key", DEAD_LETTER_ROUTING_KEY
@@ -50,12 +42,12 @@ public class RabbitMQConfig {
 
     @Bean
     public DirectExchange applicantIdExchange() {
-        return new DirectExchange(APPLICANT_ID_EXCHANGE_NAME);
+        return new DirectExchange(rabbitMqProperties.summary().exchange());
     }
 
     @Bean
     public Binding applicantIdBinding(Queue applicantIdQueue, DirectExchange applicantIdExchange) {
-        return BindingBuilder.bind(applicantIdQueue).to(applicantIdExchange).with(APPLICANT_ID_ROUTING_KEY);
+        return BindingBuilder.bind(applicantIdQueue).to(applicantIdExchange).with(rabbitMqProperties.summary().routingKey());
     }
 
     @Bean
@@ -77,8 +69,8 @@ public class RabbitMQConfig {
     public RabbitTemplate applicantIdTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate template = new RabbitTemplate(connectionFactory);
         template.setMessageConverter(Jackson2JsonMessageConverter());
-        template.setExchange(APPLICANT_ID_EXCHANGE_NAME);
-        template.setRoutingKey(APPLICANT_ID_ROUTING_KEY);
+        template.setExchange(rabbitMqProperties.summary().exchange());
+        template.setRoutingKey(rabbitMqProperties.summary().routingKey());
 
         return template;
     }
@@ -90,9 +82,9 @@ public class RabbitMQConfig {
 
     @Bean
     public ConnectionFactory connectionFactory() {
-        CachingConnectionFactory cf = new CachingConnectionFactory(host, port);
-        cf.setUsername(username);
-        cf.setPassword(password);
+        CachingConnectionFactory cf = new CachingConnectionFactory(springRabbitProperties.getHost(), springRabbitProperties.getPort());
+        cf.setUsername(springRabbitProperties.getUsername());
+        cf.setPassword(springRabbitProperties.getPassword());
         return cf;
     }
 }

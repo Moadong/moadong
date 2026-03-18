@@ -5,30 +5,28 @@ import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
+import moadong.global.config.properties.JwtProperties;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.user.entity.RefreshToken;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 
 import java.security.Key;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtProvider {
-    @Value("${jwt.access.token.expiration.min}")
-    private int ACCESS_EXPIRATION_MIN;
-    @Value("${jwt.refresh.token.expiration.hour}")
-    private int REFRESH_EXPIRATION_HOUR;
-    @Value("${jwt.secret.key}")
-    private String SECRET_KEY;
+
+    private final JwtProperties jwtProperties;
 
     public String generateAccessToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
-                .setExpiration(new Date(System.currentTimeMillis() + (long) ACCESS_EXPIRATION_MIN * 1000 * 60))
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .setExpiration(new Date(System.currentTimeMillis() + (long) jwtProperties.accessToken().expiration().min() * 1000 * 60))
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.secretKey())
                 .compact();
     }
 
@@ -36,17 +34,17 @@ public class JwtProvider {
         return Jwts.builder()
                 .setSubject(subject)
                 .setIssuedAt(new Date())
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.secretKey())
                 .compact();
     }
 
     public RefreshToken generateRefreshToken(String username) {
-        Date expiresAt = new Date(System.currentTimeMillis() + (long) REFRESH_EXPIRATION_HOUR * 1000 * 60 * 60);
+        Date expiresAt = new Date(System.currentTimeMillis() + (long) jwtProperties.refreshToken().expiration().hour() * 1000 * 60 * 60);
         String refreshToken = Jwts.builder()
                 .setSubject(username)
                 .setIssuedAt(new Date())
                 .setExpiration(expiresAt)
-                .signWith(SignatureAlgorithm.HS256, SECRET_KEY)
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.secretKey())
                 .compact();
         return new RefreshToken(refreshToken,expiresAt);
     }
@@ -70,7 +68,7 @@ public class JwtProvider {
     private Claims getClaims(String token) {
         try {
             return Jwts.parser()
-                    .setSigningKey(SECRET_KEY)
+                    .setSigningKey(jwtProperties.secretKey())
                     .parseClaimsJws(token)
                     .getBody();
         } catch (JwtException e){
@@ -79,6 +77,6 @@ public class JwtProvider {
     }
 
     private Key getSigningKey() {
-        return Keys.hmacShaKeyFor(SECRET_KEY.getBytes());
+        return Keys.hmacShaKeyFor(jwtProperties.secretKey().getBytes());
     }
 }

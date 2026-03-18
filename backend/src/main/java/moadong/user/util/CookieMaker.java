@@ -1,19 +1,21 @@
 package moadong.user.util;
 
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import moadong.global.config.properties.JwtProperties;
 import org.springframework.http.ResponseCookie;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class CookieMaker {
-    @Value("${jwt.refresh.token.expiration.hour}")
-    private int refreshTokenExpirationHour;
+
+    private final JwtProperties jwtProperties;
 
     public ResponseCookie makeRefreshTokenCookie(String refreshToken) {
         return ResponseCookie.from("refreshToken", refreshToken)
                 .httpOnly(true)
                 .path("/")
-                .maxAge((long) refreshTokenExpirationHour * 60 * 60)
+                .maxAge(jwtProperties.refreshToken().expiration().hour() * 60 * 60)
                 .secure(true)
                 .domain(".moadong.com")
                 .sameSite("None")
