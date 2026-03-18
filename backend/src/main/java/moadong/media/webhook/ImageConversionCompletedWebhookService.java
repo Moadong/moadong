@@ -8,9 +8,9 @@ import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.repository.ClubRepository;
+import moadong.global.config.properties.AwsProperties;
 import moadong.media.webhook.dto.ImageConversionCompletedRequest;
 import moadong.media.webhook.dto.ImageEntry;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -19,14 +19,13 @@ import org.springframework.stereotype.Service;
 public class ImageConversionCompletedWebhookService {
 
     private final ClubRepository clubRepository;
-
-    @Value("${cloud.aws.s3.view-endpoint}")
-    private String viewEndpoint;
+    private final AwsProperties awsProperties;
 
     private String normalizedViewEndpoint;
 
     @PostConstruct
     private void init() {
+        String viewEndpoint = awsProperties.s3().viewEndpoint();
         if (viewEndpoint == null || viewEndpoint.isEmpty()) {
             throw new IllegalStateException("cloud.aws.s3.view-endpoint must be configured");
         }

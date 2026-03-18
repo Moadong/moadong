@@ -1,29 +1,23 @@
 package moadong.global.config;
 
-import java.util.Arrays;
 import java.util.List;
+import lombok.RequiredArgsConstructor;
+import moadong.global.config.properties.AppProperties;
 import moadong.global.util.OctetStreamReadMsgConverter;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
-import org.springframework.web.servlet.config.annotation.AsyncSupportConfigurer;
 
 @Configuration
+@RequiredArgsConstructor
 public class WebConfig implements WebMvcConfigurer {
-    private OctetStreamReadMsgConverter octetStreamReadMsgConverter;
+
+    private final OctetStreamReadMsgConverter octetStreamReadMsgConverter;
+    private final AppProperties appProperties;
 
     private final long MAX_AGE_SECS = 3600;
-
-    @Value("${app.cors.allowedOrigins}")
-    private String[] allowedOrigins;
-
-    @Autowired
-    public WebConfig(OctetStreamReadMsgConverter octetStreamReadMsgConverter) {
-        this.octetStreamReadMsgConverter = octetStreamReadMsgConverter;
-    }
 
     @Override
     public void configureMessageConverters(List<HttpMessageConverter<?>> converters) {
@@ -32,6 +26,7 @@ public class WebConfig implements WebMvcConfigurer {
 
     @Override
     public void addCorsMappings(CorsRegistry registry) {
+        String[] allowedOrigins = appProperties.cors().allowedOrigins().toArray(new String[0]);
         registry.addMapping("/**")
             .allowedOriginPatterns(allowedOrigins)
             .allowedMethods("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS")
