@@ -5,7 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.gemma.dto.AIRequest;
 import moadong.gemma.dto.AIResponse;
-import org.springframework.beans.factory.annotation.Value;
+import moadong.global.config.properties.GemmaProperties;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -16,15 +16,10 @@ public class GemmaService {
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
-
-    @Value("${gemma.server.host}")
-    private String gemmaServerHost;
-
-    @Value("${gemma.server.port}")
-    private String gemmaServerPort;
+    private final GemmaProperties gemmaProperties;
 
     public AIResponse getSummarizeContent(String system, String prompt) {
-        String gemmaServerUrl = "http://" + gemmaServerHost + ":" + gemmaServerPort + "/api/generate";
+        String gemmaServerUrl = "http://" + gemmaProperties.server().host() + ":" + gemmaProperties.server().port() + "/api/generate";
         
         try {
             log.info("Starting content summarization request to Gemma server at {}", gemmaServerUrl);

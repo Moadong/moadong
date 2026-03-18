@@ -9,6 +9,7 @@ import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
+import moadong.global.config.properties.AppProperties;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.JwtProvider;
@@ -32,7 +33,6 @@ import org.springframework.http.ResponseCookie;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -47,9 +47,7 @@ public class UserCommandService {
     private final ClubRepository clubRepository;
     private final CookieMaker cookieMaker;
     private final SecurePasswordGenerator securePasswordGenerator;
-
-    @Value("${app.dev-registration-secret:}")
-    private String devRegistrationSecret; // set by Spring after construction (field injection)
+    private final AppProperties appProperties;
 
     @Transactional
     public User registerUser(UserRegisterRequest userRegisterRequest) {
@@ -68,8 +66,8 @@ public class UserCommandService {
 
     @Transactional
     public User registerDeveloper(DevRegisterRequest request) {
-        if (devRegistrationSecret == null || devRegistrationSecret.isBlank()
-                || !devRegistrationSecret.equals(request.secret())) {
+        String secret = appProperties.devRegistrationSecret();
+        if (secret == null || secret.isBlank() || !secret.equals(request.secret())) {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
         UserRegisterRequest baseRequest = new UserRegisterRequest(

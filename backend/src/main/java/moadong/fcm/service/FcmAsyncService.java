@@ -7,9 +7,9 @@ import com.google.firebase.messaging.TopicManagementResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.fcm.util.FcmTopicResolver;
+import moadong.global.config.properties.FcmProperties;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -33,8 +33,7 @@ public class FcmAsyncService {
 
     private final FcmTopicResolver fcmTopicResolver;
 
-    @Value("${fcm.topic.timeout-seconds:5}")
-    private int timeoutSeconds;
+    private final FcmProperties fcmProperties;
 
     /**
      * @deprecated
@@ -73,6 +72,11 @@ public class FcmAsyncService {
             Runnable notRegisteredTokenHandler,
             Runnable tokenUpdater
     ) {
+        if (firebaseMessaging == null) {
+            log.warn("FCM feature disabled. Skipping subscription update.");
+            return CompletableFuture.completedFuture(null);
+        }
+
         List<ApiFuture<TopicManagementResponse>> futures = new ArrayList<>();
 
         // 새로운 동아리 구독
@@ -94,7 +98,7 @@ public class FcmAsyncService {
         try {
             if (futures.isEmpty()) return CompletableFuture.completedFuture(null);
 
-            List<TopicManagementResponse> responses = ApiFutures.allAsList(futures).get(timeoutSeconds, TimeUnit.SECONDS);
+            List<TopicManagementResponse> responses = ApiFutures.allAsList(futures).get(fcmProperties.timeoutSeconds(), TimeUnit.SECONDS);
 
             for (TopicManagementResponse response : responses) {
                 if (response.getFailureCount() > 0) {

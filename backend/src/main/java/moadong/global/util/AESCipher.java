@@ -5,17 +5,15 @@ import java.util.Base64;
 import javax.crypto.Cipher;
 import javax.crypto.spec.GCMParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import moadong.global.config.properties.AppProperties;
 import org.springframework.stereotype.Component;
 
 @Component
+@RequiredArgsConstructor
 public class AESCipher {
 
-    @Value("${application.encryption.key}")
-    private String key;
-
-    @Value("${application.encryption.iv}")
-    private String iv;
+    private final AppProperties appProperties;
 
     /**
      * 문자열을 AES-256 알고리즘으로 암호화합니다.
@@ -26,8 +24,8 @@ public class AESCipher {
      */
     public String encrypt(String text) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
-        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, iv.getBytes(StandardCharsets.UTF_8));
+        SecretKeySpec keySpec = new SecretKeySpec(appProperties.encryption().key().getBytes(StandardCharsets.UTF_8), "AES");
+        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, appProperties.encryption().iv().getBytes(StandardCharsets.UTF_8));
         cipher.init(Cipher.ENCRYPT_MODE, keySpec, gcmParameterSpec);
 
         byte[] encrypted = cipher.doFinal(text.getBytes(StandardCharsets.UTF_8));
@@ -43,8 +41,8 @@ public class AESCipher {
      */
     public String decrypt(String cipherText) throws Exception {
         Cipher cipher = Cipher.getInstance("AES/GCM/NoPadding");
-        SecretKeySpec keySpec = new SecretKeySpec(key.getBytes(StandardCharsets.UTF_8), "AES");
-        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, iv.getBytes(StandardCharsets.UTF_8));
+        SecretKeySpec keySpec = new SecretKeySpec(appProperties.encryption().key().getBytes(StandardCharsets.UTF_8), "AES");
+        GCMParameterSpec gcmParameterSpec = new GCMParameterSpec(128, appProperties.encryption().iv().getBytes(StandardCharsets.UTF_8));
         cipher.init(Cipher.DECRYPT_MODE, keySpec, gcmParameterSpec);
 
         byte[] decodedBytes = Base64.getDecoder().decode(cipherText);

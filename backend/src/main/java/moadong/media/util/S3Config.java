@@ -1,7 +1,8 @@
 package moadong.media.util;
 
 import java.net.URI;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
+import moadong.global.config.properties.AwsProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import software.amazon.awssdk.auth.credentials.AwsBasicCredentials;
@@ -12,23 +13,22 @@ import software.amazon.awssdk.services.s3.S3Configuration;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 
 @Configuration
+@RequiredArgsConstructor
 public class S3Config {
 
-    @Value("${cloud.aws.credentials.accessKey}")
-    private String accessKey;
-
-    @Value("${cloud.aws.credentials.secretKey}")
-    private String secretKey;
-
-    @Value("${cloud.aws.s3.endpoint}")
-    private String endpoint;
+    private final AwsProperties awsProperties;
 
     @Bean
     public S3Client s3Client() {
         validateCredentials();
         return S3Client.builder()
-                .credentialsProvider(StaticCredentialsProvider.create(AwsBasicCredentials.create(accessKey, secretKey)))
-                .endpointOverride(URI.create(endpoint))
+                .credentialsProvider(StaticCredentialsProvider.create(
+                    AwsBasicCredentials.create(
+                        awsProperties.credentials().accessKey(), 
+                        awsProperties.credentials().secretKey()
+                    )
+                ))
+                .endpointOverride(URI.create(awsProperties.s3().endpoint()))
                 .region(Region.US_EAST_1)
                 .serviceConfiguration(S3Configuration.builder()
                         .pathStyleAccessEnabled(true) // Cloudflare R2에서 필수
@@ -41,20 +41,24 @@ public class S3Config {
         validateCredentials();
         return S3Presigner.builder()
                 .credentialsProvider(StaticCredentialsProvider.create(
-                        AwsBasicCredentials.create(accessKey, secretKey)))
-                .endpointOverride(URI.create(endpoint))
+                        AwsBasicCredentials.create(
+                            awsProperties.credentials().accessKey(), 
+                            awsProperties.credentials().secretKey()
+                        )
+                ))
+                .endpointOverride(URI.create(awsProperties.s3().endpoint()))
                 .region(Region.US_EAST_1)
                 .build();
     }
     
     private void validateCredentials() {
-        if (accessKey == null || accessKey.isEmpty() || secretKey == null || secretKey.isEmpty()) {
+        if (awsProperties.credentials().accessKey() == null || awsProperties.credentials().accessKey().isEmpty() || 
+            awsProperties.credentials().secretKey() == null || awsProperties.credentials().secretKey().isEmpty()) {
             throw new IllegalStateException("AWS credentials (accessKey, secretKey) must be configured");
         }
-        if (endpoint == null || endpoint.isEmpty()) {
+        if (awsProperties.s3().endpoint() == null || awsProperties.s3().endpoint().isEmpty()) {
             throw new IllegalStateException("AWS S3 endpoint must be configured");
         }
     }
 
 }
-
