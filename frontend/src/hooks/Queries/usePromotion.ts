@@ -10,7 +10,9 @@ export const useGetPromotionArticles = () => {
   return useQuery<PromotionArticle[]>({
     queryKey: queryKeys.promotion.list(),
     queryFn: getPromotionArticles,
-    staleTime: 60 * 1000,
+    staleTime: 0,
+    refetchInterval: 5000,
+    refetchOnWindowFocus: true,
   });
 };
 
