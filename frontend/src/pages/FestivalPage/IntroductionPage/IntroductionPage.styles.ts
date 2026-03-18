@@ -8,7 +8,7 @@ export const Container = styled.div`
   padding-top: 92px;
 
   ${media.mobile} {
-    padding-top: 0;
+    padding-top: 70px;
   }
 `;
 
