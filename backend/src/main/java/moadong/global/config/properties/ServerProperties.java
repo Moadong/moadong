@@ -5,7 +5,8 @@ import org.springframework.boot.context.properties.bind.DefaultValue;
 import org.springframework.util.unit.DataSize;
 
 @ConfigurationProperties(prefix = "server")
-public record MediaProperties(
+public record ServerProperties(
+    String domain,
     Feed feed,
     Image image,
     FileUrl fileUrl

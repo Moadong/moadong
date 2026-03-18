@@ -5,7 +5,7 @@ import io.swagger.v3.oas.models.info.Info;
 import io.swagger.v3.oas.models.servers.Server;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
-import moadong.global.config.properties.ServerDomainProperties;
+import moadong.global.config.properties.ServerProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -13,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 @RequiredArgsConstructor
 public class SwaggerConfig {
 
-    private final ServerDomainProperties serverDomainProperties;
+    private final ServerProperties serverProperties;
 
     @Bean
     public OpenAPI openAPI() {
@@ -23,7 +23,7 @@ public class SwaggerConfig {
             .description("moadong API specification");
 
         Server server = new Server();
-        server.setUrl(serverDomainProperties.domain()); // https://에 접근 가능하게 설정
+        server.setUrl(serverProperties.domain()); // https://에 접근 가능하게 설정
 
         return new OpenAPI()
             .info(info)
