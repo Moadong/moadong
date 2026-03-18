@@ -7,8 +7,6 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import BoothMapSection from '@/pages/FestivalPage/components/BoothMapSection/BoothMapSection';
 import PerformanceList from '@/pages/FestivalPage/components/PerformanceList/PerformanceList';
-import Filter from '@/pages/MainPage/components/Filter/Filter';
-import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './IntroductionPage.styles';
 
 const FESTIVAL_TAB_TYPE = {
@@ -59,7 +57,6 @@ const IntroductionPage = () => {
     <>
       <Header hideOn={['webview']} />
       <Styled.Container>
-        {!isInAppWebView() && <Filter alwaysVisible />}
         <Styled.TabWrapper>
           <UnderlineTabs
             tabs={[

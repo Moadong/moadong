@@ -7,6 +7,7 @@ export interface PromotionArticle {
   eventEndDate: string;
   description: string;
   images: string[];
+  isFestival?: boolean; // 동소한 페이지용
 }
 
 export interface CreatePromotionArticleRequest {
