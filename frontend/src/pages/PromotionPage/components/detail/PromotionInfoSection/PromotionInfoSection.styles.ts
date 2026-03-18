@@ -13,6 +13,7 @@ export const Container = styled.section`
 export const SectionTitle = styled.h3`
   font-size: 20px;
   font-weight: 700;
+  height: 28px;
   margin-bottom: 4px;
   color: ${colors.gray[800]};
 `;

@@ -33,7 +33,7 @@ export const Divider = styled.div`
   width: 100%;
   height: 1px;
   background-color: ${colors.gray[500]};
-  margin: 20px 0;
+  margin: 20px 0px 0px 0px;
 
   ${media.tablet} {
     display: none;

@@ -15,6 +15,7 @@ export const Container = styled.section`
 export const Question = styled.div`
   font-size: 20px;
   font-weight: 700;
+  height: 28px;
   color: ${colors.gray[800]};
   margin-bottom: 12px;
 `;

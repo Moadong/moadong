@@ -5,10 +5,11 @@ export const Wrapper = styled.section`
   margin: 0;
 
   position: sticky;
-  top: 120px;
+  padding: 32px 0;
 
   ${media.tablet} {
     position: static;
+    padding: 0px;
   }
 `;
 
