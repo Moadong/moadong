@@ -57,7 +57,6 @@ export const USER_EVENT = {
   // 홍보
   PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
   PROMOTION_CARD_CLICKED: 'Promotion Card Clicked',
-
 } as const;
 
 export const ADMIN_EVENT = {

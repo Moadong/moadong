@@ -67,9 +67,7 @@ describe('promotion API', () => {
 
       expect(result).toEqual(mockArticles);
 
-      expect(fetchMock).toHaveBeenCalledWith(
-        `${API_BASE_URL}/api/promotion`,
-      );
+      expect(fetchMock).toHaveBeenCalledWith(`${API_BASE_URL}/api/promotion`);
     });
 
     it('articles 필드가 없으면 빈 배열을 반환한다', async () => {

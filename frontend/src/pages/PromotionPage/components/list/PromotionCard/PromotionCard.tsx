@@ -30,7 +30,7 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
 
     trackEvent(USER_EVENT.PROMOTION_CARD_CLICKED, {
       clubId: article.clubId,
-    })
+    });
 
     navigateToPromotionDetail(`/promotions/${article.clubId}`);
   };

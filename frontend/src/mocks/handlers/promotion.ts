@@ -22,7 +22,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
       'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=800',
     ],
   },
-    {
+  {
     id: '2',
     clubName: 'WAP',
     clubId: '67e54ae51cfd27718dd40bec',
