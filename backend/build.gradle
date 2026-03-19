@@ -68,7 +68,7 @@ dependencies {
 	implementation 'net.coobird:thumbnailator:0.4.14'
 	implementation 'org.springframework:spring-test'
 
-	implementation 'com.google.firebase:firebase-admin:9.7.0'
+	implementation 'com.google.firebase:firebase-admin:9.8.0'
 
     implementation 'org.javers:javers-spring-boot-starter-mongo:7.10.0'
 
@@ -78,29 +78,30 @@ dependencies {
 	implementation 'net.javacrumbs.shedlock:shedlock-provider-mongo:7.6.0'
 }
 
+apply from: 'gradle/infisical.gradle'
+
 //전체 테스트
-test {
-	description = 'Runs the total tests.'
-	useJUnitPlatform()
+tasks.named('test') {
+    description = 'Runs the total tests.'
+    useJUnitPlatform()
 }
 
 //유닛 테스트
-task unitTest(type: Test) {
-	group = 'verification'
-	description = 'Runs the unit tests.'
-	useJUnitPlatform{
-		includeTags 'UnitTest'
-		excludeTags 'IntegrationTest'
-
-	}
+tasks.register('unitTest', Test) {
+    group = 'verification'
+    description = 'Runs the unit tests.'
+    useJUnitPlatform {
+        includeTags 'UnitTest'
+        excludeTags 'IntegrationTest'
+    }
 }
 
 //통합 테스트
-task integrationTest(type: Test) {
-	group = 'verification'
-	description = 'Runs the integration tests.'
-	useJUnitPlatform{
-		includeTags 'IntegrationTest'
-		excludeTags 'UnitTest'
-	}
+tasks.register('integrationTest', Test) {
+    group = 'verification'
+    description = 'Runs the integration tests.'
+    useJUnitPlatform {
+        includeTags 'IntegrationTest'
+        excludeTags 'UnitTest'
+    }
 }
