@@ -12,7 +12,6 @@ jest.mock('@/constants/api', () => ({
 
 const API_BASE_URL = 'http://localhost:3000';
 
-// Mock secureFetch
 jest.mock('./auth/secureFetch', () => ({
   secureFetch: jest.fn((url: string, options?: RequestInit) => {
     const token = localStorage.getItem('accessToken');
@@ -36,6 +35,7 @@ describe('promotion API', () => {
     it('API 응답을 올바르게 파싱하여 반환한다', async () => {
       const mockArticles: PromotionArticle[] = [
         {
+          id: '1',
           clubName: '테스트 클럽 1',
           clubId: 'club1',
           title: '테스트 홍보글 1',
@@ -46,6 +46,7 @@ describe('promotion API', () => {
           images: ['image1.jpg'],
         },
         {
+          id: '2',
           clubName: '테스트 클럽 2',
           clubId: 'club2',
           title: '테스트 홍보글 2',
@@ -65,7 +66,10 @@ describe('promotion API', () => {
       const result = await getPromotionArticles();
 
       expect(result).toEqual(mockArticles);
-      expect(fetchMock).toHaveBeenCalledWith(`${API_BASE_URL}/api/promotion`);
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        `${API_BASE_URL}/api/promotion`,
+      );
     });
 
     it('articles 필드가 없으면 빈 배열을 반환한다', async () => {
@@ -124,7 +128,7 @@ describe('promotion API', () => {
       const result = await createPromotionArticle(mockPayload);
 
       expect(result).toEqual(mockResponse);
-      // 올바른 URL과 메서드로 호출되었는지 확인
+
       expect(fetchMock).toHaveBeenCalledWith(
         `${API_BASE_URL}/api/promotion`,
         expect.objectContaining({

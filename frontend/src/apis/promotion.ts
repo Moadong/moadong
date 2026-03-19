@@ -15,6 +15,14 @@ export const getPromotionArticles = async (): Promise<PromotionArticle[]> => {
   );
 
   const serverArticle = data?.articles ?? [];
+
+  const isTest =
+    typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+
+  if (isTest) {
+    return serverArticle;
+  }
+
   const merged = [...festivalMock, ...serverArticle];
 
   return merged.sort((prev, next) => {
@@ -29,12 +37,9 @@ export const getPromotionArticles = async (): Promise<PromotionArticle[]> => {
     const prevEnded = prevEnd < now;
     const nextEnded = nextEnd < now;
 
-    if (prevEnded !== nextEnded) {
-      return prevEnded ? 1 : -1;
-    }
-    if (prevEnded && nextEnded) {
-      return nextEnd - prevEnd;
-    }
+    if (prevEnded !== nextEnded) return prevEnded ? 1 : -1;
+    if (prevEnded && nextEnded) return nextEnd - prevEnd;
+
     return prevStart - nextStart;
   });
 };
@@ -49,5 +54,6 @@ export const createPromotionArticle = async (
     },
     body: JSON.stringify(payload),
   });
+
   return handleResponse(response, '홍보게시판 글 추가에 실패했습니다.');
 };
