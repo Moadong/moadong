@@ -36,12 +36,12 @@ const TimePickerPanel = ({
   };
 
   useLayoutEffect(() => {
-    const scrollTimer = setTimeout(() => {
+    const rafId = requestAnimationFrame(() => {
       alignScrollToCenter(hourListRef.current, selectedDate.getHours());
       alignScrollToCenter(minuteListRef.current, selectedDate.getMinutes());
-    }, 0);
+    });
 
-    return () => clearTimeout(scrollTimer);
+    return () => cancelAnimationFrame(rafId);
   }, [selectedDate]);
 
   const updateHour = (hour: number) => {
