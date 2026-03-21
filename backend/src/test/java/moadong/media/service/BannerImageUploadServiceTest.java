@@ -8,39 +8,31 @@ import moadong.util.annotations.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
-import software.amazon.awssdk.core.sync.RequestBody;
-import software.amazon.awssdk.services.s3.S3Client;
-import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
 class BannerImageUploadServiceTest {
 
-    @Spy
     @InjectMocks
     private BannerImageUploadService bannerImageUploadService;
 
     @Mock
-    private S3Client s3Client;
+    private R2ImageUploadService r2ImageUploadService;
 
     @BeforeEach
     void setUp() {
         ReflectionTestUtils.setField(bannerImageUploadService, "bannerBucketName", "banner-bucket");
         ReflectionTestUtils.setField(bannerImageUploadService, "bannerViewEndpoint", "https://cdn.example.com/");
-        ReflectionTestUtils.setField(bannerImageUploadService, "maxImageSizeBytes", 1024L);
-        ReflectionTestUtils.invokeMethod(bannerImageUploadService, "init");
     }
 
     @Test
@@ -51,15 +43,12 @@ class BannerImageUploadServiceTest {
             "image/png",
             "banner-image".getBytes()
         );
+        when(r2ImageUploadService.upload(file, "banner-bucket", "https://cdn.example.com/", "web/banner.png"))
+            .thenReturn("https://cdn.example.com/web/banner.png");
 
         BannerImageUploadResponse response = bannerImageUploadService.upload(file, PlatformType.WEB);
 
-        ArgumentCaptor<PutObjectRequest> requestCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
-        verify(s3Client).putObject(requestCaptor.capture(), any(RequestBody.class));
-
-        assertEquals("banner-bucket", requestCaptor.getValue().bucket());
-        assertEquals("image/png", requestCaptor.getValue().contentType());
-        assertEquals("web/banner.png", requestCaptor.getValue().key());
+        verify(r2ImageUploadService).upload(file, "banner-bucket", "https://cdn.example.com/", "web/banner.png");
         assertEquals("https://cdn.example.com/web/banner.png", response.imageUrl());
     }
 
@@ -71,6 +60,8 @@ class BannerImageUploadServiceTest {
             "text/plain",
             "not-image".getBytes()
         );
+        when(r2ImageUploadService.upload(file, "banner-bucket", "https://cdn.example.com/", "web/banner.txt"))
+            .thenThrow(new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE));
 
         RestApiException exception = assertThrows(RestApiException.class, () -> bannerImageUploadService.upload(file, PlatformType.WEB));
 
@@ -85,6 +76,8 @@ class BannerImageUploadServiceTest {
             "image/webp",
             new byte[2048]
         );
+        when(r2ImageUploadService.upload(file, "banner-bucket", "https://cdn.example.com/", "web/banner.webp"))
+            .thenThrow(new RestApiException(ErrorCode.FILE_TOO_LARGE));
 
         RestApiException exception = assertThrows(RestApiException.class, () -> bannerImageUploadService.upload(file, PlatformType.WEB));
 

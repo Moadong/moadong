@@ -48,6 +48,9 @@
     #clubList tbody tr:hover { background: #f9fafb; }
     #dictList tbody tr:hover { background: #f9fafb; }
     #fcmTokenList tbody tr:hover { background: #f9fafb; }
+    #promotionList tbody tr { cursor: pointer; }
+    #promotionList tbody tr:hover { background: #f9fafb; }
+    #promotionList tbody tr.is-selected { background: #eff6ff; }
     #dictList .btn-cell { white-space: nowrap; }
     #dictList .btn-cell button { margin: 0 4px; padding: 4px 10px; font-size: 0.85rem; }
     #fcmTokenList .btn-cell { white-space: nowrap; }
@@ -103,12 +106,34 @@
       white-space: nowrap;
     }
     .token-cell[title] { cursor: pointer; }
+    .promotion-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr); gap: 16px; align-items: start; }
+    .promotion-panel { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #fff; }
+    .promotion-panel h3 { margin: 0 0 8px; font-size: 1rem; }
+    .promotion-summary { margin: 0 0 12px; color: #666; font-size: 0.9rem; }
+    .promotion-empty { padding: 16px; border: 1px dashed #d1d5db; border-radius: 8px; background: #f9fafb; color: #666; text-align: center; }
+    .promotion-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .promotion-actions button { margin: 0; }
+    .promotion-help { margin-top: 8px; color: #666; font-size: 0.85rem; }
+    .promotion-id { font-family: monospace; font-size: 0.85rem; color: #666; }
+    .promotion-upload-row { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .promotion-upload-row .form-row { flex: 1 1 240px; margin-bottom: 0; }
+    .promotion-upload-row button { margin: 0; }
+    .promotion-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 12px; }
+    .promotion-preview-card { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #fff; }
+    .promotion-preview-image { display: flex; align-items: center; justify-content: center; height: 120px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+    .promotion-preview-image img { display: block; width: 100%; height: 120px; object-fit: cover; }
+    .promotion-preview-placeholder { padding: 12px; color: #666; font-size: 0.85rem; text-align: center; }
+    .promotion-preview-body { padding: 10px; }
+    .promotion-preview-url { display: block; font-size: 0.8rem; color: #2563eb; word-break: break-all; max-height: 48px; overflow: hidden; }
+    .promotion-preview-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
+    .promotion-preview-actions button { margin: 0; padding: 6px 10px; font-size: 0.8rem; }
     .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: fadeOut 3s ease-in-out forwards; }
     .toast.success { background: #166534; color: #fff; }
     .toast.error { background: #dc2626; color: #fff; }
     @keyframes fadeOut { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
     @media (max-width: 720px) {
       .banner-item-body { grid-template-columns: 1fr; }
+      .promotion-layout { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -121,6 +146,7 @@
         <a href="#api-docs">API 문서</a>
         <a href="#club">동아리</a>
         <a href="#dict">단어사전</a>
+        <a href="#promotion">홍보 게시판</a>
         <a href="#banner">배너 이미지</a>
         <a href="#fcm">FCM 알림</a>
         <a href="#conversion-batch">이미지 변환 배치</a>
@@ -243,6 +269,86 @@
           <strong>단어사전 Admin API</strong>
           <span>CRUD, bulk, CSV, refresh</span>
         </a>
+      </div>
+    </section>
+
+    <section id="promotion" class="hidden">
+      <div class="section-head">
+        <h2>홍보 게시판 관리</h2>
+        <div class="section-head-actions">
+          <button type="button" id="btnLoadPromotion">목록 새로고침</button>
+        </div>
+      </div>
+      <div id="promotionBanner" class="banner hidden"></div>
+      <div class="promotion-layout">
+        <div class="promotion-panel">
+          <h3>게시글 목록</h3>
+          <p id="promotionSummary" class="promotion-summary">홍보 게시글 목록을 불러오세요.</p>
+          <div id="promotionListLoading" class="hidden">목록 불러오는 중...</div>
+          <div class="table-wrap">
+            <table id="promotionList">
+              <thead><tr><th>제목</th><th>동아리</th><th>장소</th><th>행사 기간</th><th>이미지</th></tr></thead>
+              <tbody>
+                <tr><td colspan="5">홍보 게시글 목록을 불러오세요.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="promotion-panel">
+          <h3>선택된 게시글 편집</h3>
+          <p id="promotionSelectionSummary" class="promotion-summary">왼쪽 목록에서 수정할 게시글을 선택하세요.</p>
+          <div id="promotionEditingBadge" class="editing-badge hidden"></div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="promotionClubId">clubId</label>
+              <input type="text" id="promotionClubId" readonly>
+            </div>
+            <div class="form-row">
+              <label for="promotionTitle">제목</label>
+              <input type="text" id="promotionTitle" placeholder="홍보 게시글 제목">
+            </div>
+            <div class="form-row">
+              <label for="promotionLocation">장소</label>
+              <input type="text" id="promotionLocation" placeholder="행사 장소">
+            </div>
+            <div class="form-row">
+              <label for="promotionEventStartDate">행사 시작</label>
+              <input type="datetime-local" id="promotionEventStartDate">
+            </div>
+            <div class="form-row">
+              <label for="promotionEventEndDate">행사 종료</label>
+              <input type="datetime-local" id="promotionEventEndDate">
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="promotionDescription">설명</label>
+            <textarea id="promotionDescription" rows="6" placeholder="홍보 설명" style="max-width:100%;"></textarea>
+          </div>
+          <div class="form-row">
+            <label for="promotionImages">이미지 URL (줄바꿈 구분)</label>
+            <textarea id="promotionImages" rows="5" placeholder="https://example.com/image1.png&#10;https://example.com/image2.png" style="max-width:100%;"></textarea>
+          </div>
+          <div class="promotion-upload-row">
+            <div class="form-row">
+              <label for="promotionImageUploadFile">이미지 직접 업로드</label>
+              <input type="file" id="promotionImageUploadFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp">
+            </div>
+            <button type="button" id="btnUploadPromotionImage">업로드 후 목록에 추가</button>
+          </div>
+          <div>
+            <label style="display:block; font-weight:500; margin-bottom:4px; font-size:0.9rem;">이미지 미리보기</label>
+            <div id="promotionImagePreviewEmpty" class="promotion-empty">이미지 URL을 입력하거나 업로드하면 여기에서 미리볼 수 있습니다.</div>
+            <div id="promotionImagePreviewList" class="promotion-preview-grid"></div>
+          </div>
+          <div class="promotion-actions">
+            <button type="button" id="btnSavePromotion">저장</button>
+            <button type="button" id="btnResetPromotion">원본으로 되돌리기</button>
+            <button type="button" id="btnClearPromotionSelection">선택 해제</button>
+          </div>
+          <p class="promotion-help">`clubId`는 1차 구현에서 읽기 전용입니다. 저장 후 목록을 다시 조회해 서버 기준 최신값으로 동기화합니다.</p>
+          <div id="promotionSaveResult" class="message-box hidden"></div>
+        </div>
       </div>
     </section>
 
@@ -391,6 +497,7 @@
     const PAGE_SIZE = 50;
     const FCM_PAGE_SIZE = 20;
     const DEFAULT_BANNER_TYPE = 'WEB';
+    const PROMOTION_FORM_IDS = ['promotionClubId', 'promotionTitle', 'promotionLocation', 'promotionEventStartDate', 'promotionEventEndDate', 'promotionDescription', 'promotionImages'];
     let fcmTokens = [];
     let fcmFilteredTokens = [];
     let fcmCurrentPage = 1;
@@ -401,6 +508,13 @@
     let bannerIsLoading = false;
     let bannerIsSaving = false;
     let bannerIsUploading = false;
+    let promotionArticles = [];
+    let promotionSelectedArticleId = '';
+    let promotionSelectedOriginal = null;
+    let promotionHasLoaded = false;
+    let promotionIsLoading = false;
+    let promotionIsSaving = false;
+    let promotionIsUploading = false;
 
     function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
     function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
@@ -429,6 +543,7 @@
       document.getElementById('tokenArea').classList.toggle('hidden', !show);
       document.getElementById('club').classList.toggle('hidden', !show);
       document.getElementById('dict').classList.toggle('hidden', !show);
+      document.getElementById('promotion').classList.toggle('hidden', !show);
       document.getElementById('banner').classList.toggle('hidden', !show);
       document.getElementById('fcm').classList.toggle('hidden', !show);
       document.getElementById('conversion-batch').classList.toggle('hidden', !show);
@@ -473,6 +588,7 @@
           showLogin(true);
           loadClubsIfVisible();
           loadDictIfVisible();
+          loadPromotionIfVisible();
           loadBannerIfVisible();
           loadFcmTokensIfVisible();
         } else {
@@ -507,6 +623,7 @@
       document.getElementById('clubBanner').classList.add('hidden');
       document.getElementById('dictList').querySelector('tbody').innerHTML = '';
       document.getElementById('dictBanner').classList.add('hidden');
+      clearPromotionState();
       clearBannerState();
       clearFcmState();
     }
@@ -522,6 +639,7 @@
       showLogin(true);
       loadClubsIfVisible();
       loadDictIfVisible();
+      loadPromotionIfVisible();
       loadBannerIfVisible();
       loadFcmTokensIfVisible();
     }
@@ -830,6 +948,558 @@
         showToast(e.message || '요청 실패', 'error');
       }
     }
+
+    function formatPromotionPeriod(article) {
+      const start = formatPromotionDate(article?.eventStartDate);
+      const end = formatPromotionDate(article?.eventEndDate);
+      if (start && end) return start + ' ~ ' + end;
+      return start || end || '-';
+    }
+
+    function formatPromotionDate(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function toDatetimeLocalValue(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 16);
+    }
+
+    function normalizePromotionImagesText(images) {
+      return (Array.isArray(images) ? images : []).map((item) => String(item || '').trim()).filter(Boolean).join('\n');
+    }
+
+    function promotionArticleToFormState(article) {
+      return {
+        clubId: article?.clubId || '',
+        title: article?.title || '',
+        location: article?.location || '',
+        eventStartDate: toDatetimeLocalValue(article?.eventStartDate),
+        eventEndDate: toDatetimeLocalValue(article?.eventEndDate),
+        description: article?.description || '',
+        imagesText: normalizePromotionImagesText(article?.images)
+      };
+    }
+
+    function getPromotionCurrentFormState() {
+      return {
+        clubId: document.getElementById('promotionClubId').value.trim(),
+        title: document.getElementById('promotionTitle').value,
+        location: document.getElementById('promotionLocation').value,
+        eventStartDate: document.getElementById('promotionEventStartDate').value,
+        eventEndDate: document.getElementById('promotionEventEndDate').value,
+        description: document.getElementById('promotionDescription').value,
+        imagesText: document.getElementById('promotionImages').value
+      };
+    }
+
+    function isPromotionDirty() {
+      if (!promotionSelectedOriginal) return false;
+      return JSON.stringify(getPromotionCurrentFormState()) !== JSON.stringify(promotionSelectedOriginal);
+    }
+
+    function fillPromotionForm(state) {
+      document.getElementById('promotionClubId').value = state?.clubId || '';
+      document.getElementById('promotionTitle').value = state?.title || '';
+      document.getElementById('promotionLocation').value = state?.location || '';
+      document.getElementById('promotionEventStartDate').value = state?.eventStartDate || '';
+      document.getElementById('promotionEventEndDate').value = state?.eventEndDate || '';
+      document.getElementById('promotionDescription').value = state?.description || '';
+      document.getElementById('promotionImages').value = state?.imagesText || '';
+      renderPromotionImagePreviewList();
+      updatePromotionEditorState();
+    }
+
+    function clearPromotionBanner() {
+      const banner = document.getElementById('promotionBanner');
+      banner.textContent = '';
+      banner.className = 'banner hidden';
+    }
+
+    function setPromotionBanner(message, type) {
+      const banner = document.getElementById('promotionBanner');
+      banner.textContent = message;
+      banner.className = 'banner ' + (type || 'warn');
+      banner.classList.remove('hidden');
+    }
+
+    function hidePromotionSaveResult() {
+      document.getElementById('promotionSaveResult').classList.add('hidden');
+    }
+
+    function showPromotionSaveResult(ok, message) {
+      setMessageBox('promotionSaveResult', ok, message);
+    }
+
+    function updatePromotionEditorState() {
+      const hasSelection = !!promotionSelectedArticleId;
+      const busy = promotionIsLoading || promotionIsSaving || promotionIsUploading;
+      const dirty = isPromotionDirty();
+      const badge = document.getElementById('promotionEditingBadge');
+      const summary = document.getElementById('promotionSelectionSummary');
+      const selected = promotionArticles.find((article) => article.id === promotionSelectedArticleId);
+
+      PROMOTION_FORM_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        el.disabled = busy || !hasSelection;
+      });
+      document.getElementById('promotionClubId').disabled = true;
+      document.getElementById('promotionImageUploadFile').disabled = busy || !hasSelection;
+      document.getElementById('btnUploadPromotionImage').disabled = busy || !hasSelection;
+      document.getElementById('btnLoadPromotion').disabled = busy;
+      document.getElementById('btnSavePromotion').disabled = busy || !hasSelection;
+      document.getElementById('btnResetPromotion').disabled = busy || !hasSelection || !dirty;
+      document.getElementById('btnClearPromotionSelection').disabled = busy || !hasSelection;
+
+      if (!hasSelection) {
+        badge.classList.add('hidden');
+        badge.textContent = '';
+        summary.textContent = '왼쪽 목록에서 수정할 게시글을 선택하세요.';
+        return;
+      }
+
+      badge.textContent = (dirty ? '수정 중' : '편집 중') + ' · ' + (selected?.title || '제목 없음');
+      badge.classList.remove('hidden');
+      summary.textContent = (selected?.clubName || '-') + ' / ' + formatPromotionPeriod(selected) + (dirty ? ' / 저장되지 않은 변경 있음' : '');
+    }
+
+    function renderPromotionList() {
+      const tbody = document.querySelector('#promotionList tbody');
+      const summary = document.getElementById('promotionSummary');
+      tbody.innerHTML = '';
+      if (!promotionArticles.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 5;
+        td.textContent = promotionHasLoaded ? '등록된 홍보 게시글이 없습니다.' : '홍보 게시글 목록을 불러오세요.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        summary.textContent = promotionHasLoaded ? '총 0개 게시글' : '홍보 게시글 목록을 불러오세요.';
+        updatePromotionEditorState();
+        return;
+      }
+
+      summary.textContent = '총 ' + promotionArticles.length + '개 게시글';
+      promotionArticles.forEach((article) => {
+        const tr = document.createElement('tr');
+        if (article.id === promotionSelectedArticleId) {
+          tr.classList.add('is-selected');
+        }
+        tr.appendChild(document.createElement('td')).textContent = article.title || '';
+        tr.appendChild(document.createElement('td')).textContent = article.clubName || '-';
+        tr.appendChild(document.createElement('td')).textContent = article.location || '-';
+        tr.appendChild(document.createElement('td')).textContent = formatPromotionPeriod(article);
+        tr.appendChild(document.createElement('td')).textContent = String((article.images || []).length);
+        tr.onclick = () => {
+          selectPromotionArticle(article.id);
+        };
+        tbody.appendChild(tr);
+      });
+      updatePromotionEditorState();
+    }
+
+    function parsePromotionImageUrls() {
+      return document.getElementById('promotionImages').value
+        .split(/\r?\n/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function writePromotionImageUrls(urls) {
+      const normalizedUrls = Array.from(new Set((Array.isArray(urls) ? urls : [])
+        .map((item) => String(item || '').trim())
+        .filter(Boolean)));
+      document.getElementById('promotionImages').value = normalizedUrls.join('\n');
+      renderPromotionImagePreviewList();
+      updatePromotionEditorState();
+    }
+
+    function removePromotionImageAt(index) {
+      const urls = parsePromotionImageUrls();
+      if (index < 0 || index >= urls.length) return;
+      urls.splice(index, 1);
+      writePromotionImageUrls(urls);
+    }
+
+    function createPromotionPreviewCard(url, index) {
+      const card = document.createElement('div');
+      card.className = 'promotion-preview-card';
+
+      const imageWrap = document.createElement('div');
+      imageWrap.className = 'promotion-preview-image';
+
+      const img = document.createElement('img');
+      img.alt = '홍보 이미지 ' + (index + 1);
+      img.src = url;
+
+      const placeholder = document.createElement('div');
+      placeholder.className = 'promotion-preview-placeholder hidden';
+      placeholder.textContent = '이미지를 불러올 수 없습니다.';
+
+      img.addEventListener('error', () => {
+        img.classList.add('hidden');
+        placeholder.classList.remove('hidden');
+      });
+      img.addEventListener('load', () => {
+        img.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+      });
+
+      imageWrap.appendChild(img);
+      imageWrap.appendChild(placeholder);
+
+      const body = document.createElement('div');
+      body.className = 'promotion-preview-body';
+
+      const link = document.createElement('a');
+      link.href = url;
+      link.target = '_blank';
+      link.rel = 'noopener';
+      link.className = 'promotion-preview-url';
+      link.textContent = url;
+
+      const actions = document.createElement('div');
+      actions.className = 'promotion-preview-actions';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.textContent = '복사';
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(url);
+        showToast('이미지 URL 복사됨', 'success');
+      };
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = '제거';
+      removeBtn.disabled = promotionIsLoading || promotionIsSaving || promotionIsUploading || !promotionSelectedArticleId;
+      removeBtn.onclick = () => {
+        removePromotionImageAt(index);
+      };
+
+      actions.appendChild(copyBtn);
+      actions.appendChild(removeBtn);
+      body.appendChild(link);
+      body.appendChild(actions);
+      card.appendChild(imageWrap);
+      card.appendChild(body);
+      return card;
+    }
+
+    function renderPromotionImagePreviewList() {
+      const list = document.getElementById('promotionImagePreviewList');
+      const empty = document.getElementById('promotionImagePreviewEmpty');
+      const urls = parsePromotionImageUrls();
+      list.innerHTML = '';
+      if (!urls.length) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      urls.forEach((url, index) => {
+        list.appendChild(createPromotionPreviewCard(url, index));
+      });
+    }
+
+    function clearPromotionSelection(options) {
+      const keepMessage = !!options?.keepMessage;
+      promotionSelectedArticleId = '';
+      promotionSelectedOriginal = null;
+      fillPromotionForm(null);
+      if (!keepMessage) hidePromotionSaveResult();
+      renderPromotionList();
+    }
+
+    function selectPromotionArticle(articleId, options) {
+      const next = promotionArticles.find((article) => article.id === articleId);
+      if (!next) return;
+      if (promotionSelectedArticleId && promotionSelectedArticleId !== articleId && isPromotionDirty() && !options?.skipConfirm) {
+        if (!confirm('현재 수정 중인 홍보 게시글 변경사항이 사라집니다. 계속할까요?')) {
+          return;
+        }
+      }
+      promotionSelectedArticleId = next.id || '';
+      promotionSelectedOriginal = promotionArticleToFormState(next);
+      fillPromotionForm(promotionSelectedOriginal);
+      hidePromotionSaveResult();
+      renderPromotionList();
+    }
+
+    function normalizePromotionPayload() {
+      const form = getPromotionCurrentFormState();
+      const clubId = form.clubId.trim();
+      const title = form.title.trim();
+      const location = form.location.trim();
+      const eventStartDate = form.eventStartDate.trim();
+      const eventEndDate = form.eventEndDate.trim();
+      const description = form.description.trim();
+      const images = form.imagesText.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
+
+      if (!promotionSelectedArticleId) throw new Error('수정할 홍보 게시글을 먼저 선택하세요.');
+      if (!clubId || !title || !location || !eventStartDate || !eventEndDate || !description) {
+        throw new Error('필수 입력값을 모두 채우세요.');
+      }
+      if (!images.length) throw new Error('이미지 URL을 1개 이상 입력하세요.');
+
+      const startDate = new Date(eventStartDate);
+      const endDate = new Date(eventEndDate);
+      if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        throw new Error('행사 시작/종료 일시를 확인하세요.');
+      }
+      if (startDate.getTime() > endDate.getTime()) {
+        throw new Error('행사 시작일은 종료일보다 늦을 수 없습니다.');
+      }
+
+      return {
+        clubId,
+        title,
+        location,
+        eventStartDate: startDate.toISOString(),
+        eventEndDate: endDate.toISOString(),
+        description,
+        images
+      };
+    }
+
+    function clearPromotionState() {
+      promotionArticles = [];
+      promotionSelectedArticleId = '';
+      promotionSelectedOriginal = null;
+      promotionHasLoaded = false;
+      promotionIsLoading = false;
+      promotionIsSaving = false;
+      promotionIsUploading = false;
+      document.getElementById('promotionListLoading').classList.add('hidden');
+      document.getElementById('promotionImageUploadFile').value = '';
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+      fillPromotionForm(null);
+      renderPromotionImagePreviewList();
+      renderPromotionList();
+    }
+
+    function loadPromotionIfVisible() {
+      const section = document.getElementById('promotion');
+      if (section && !section.classList.contains('hidden') && !promotionHasLoaded) {
+        document.getElementById('btnLoadPromotion').click();
+      }
+    }
+
+    document.getElementById('btnLoadPromotion').onclick = async () => {
+      if (isPromotionDirty() && !confirm('현재 수정 중인 홍보 게시글 내용이 덮어써집니다. 계속할까요?')) return;
+      const btn = document.getElementById('btnLoadPromotion');
+      const loading = document.getElementById('promotionListLoading');
+      promotionIsLoading = true;
+      updatePromotionEditorState();
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+      loading.classList.remove('hidden');
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/promotion', { headers: headers() });
+        const data = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          setPromotionBanner(data.message || '홍보 게시글 목록 조회 실패 (HTTP ' + res.status + ')', res.status === 403 ? 'warn' : 'error');
+          promotionArticles = [];
+          promotionHasLoaded = true;
+          clearPromotionSelection({ keepMessage: true });
+          return;
+        }
+        promotionArticles = data.data?.articles || data.articles || [];
+        promotionHasLoaded = true;
+        if (promotionSelectedArticleId) {
+          const selected = promotionArticles.find((article) => article.id === promotionSelectedArticleId);
+          if (selected) {
+            promotionSelectedOriginal = promotionArticleToFormState(selected);
+            fillPromotionForm(promotionSelectedOriginal);
+          } else {
+            clearPromotionSelection({ keepMessage: true });
+          }
+        } else {
+          renderPromotionList();
+          updatePromotionEditorState();
+        }
+        if (!promotionArticles.length) {
+          setPromotionBanner('등록된 홍보 게시글이 없습니다.', 'warn');
+        }
+      } catch (e) {
+        setPromotionBanner('요청 실패: ' + (e.message || ''), 'error');
+        promotionArticles = [];
+        promotionHasLoaded = false;
+        clearPromotionSelection({ keepMessage: true });
+      } finally {
+        promotionIsLoading = false;
+        loading.classList.add('hidden');
+        btn.textContent = '목록 새로고침';
+        renderPromotionList();
+      }
+    };
+
+    document.getElementById('btnResetPromotion').onclick = () => {
+      if (!promotionSelectedOriginal) return;
+      fillPromotionForm(promotionSelectedOriginal);
+      hidePromotionSaveResult();
+    };
+
+    document.getElementById('btnClearPromotionSelection').onclick = () => {
+      if (isPromotionDirty() && !confirm('현재 수정 중인 홍보 게시글 변경사항이 사라집니다. 계속할까요?')) return;
+      clearPromotionSelection();
+    };
+
+    document.getElementById('btnSavePromotion').onclick = async () => {
+      let payload;
+      try {
+        payload = normalizePromotionPayload();
+      } catch (e) {
+        showPromotionSaveResult(false, e.message || '입력값을 확인하세요.');
+        return;
+      }
+
+      const btn = document.getElementById('btnSavePromotion');
+      promotionIsSaving = true;
+      updatePromotionEditorState();
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+      btn.textContent = '저장 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(promotionSelectedArticleId), {
+          method: 'PUT',
+          headers: headers(),
+          body: JSON.stringify(payload)
+        });
+        const data = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          showPromotionSaveResult(false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (res.status === 404) {
+          promotionArticles = promotionArticles.filter((article) => article.id !== promotionSelectedArticleId);
+          clearPromotionSelection({ keepMessage: true });
+          showPromotionSaveResult(false, data.message || '선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침하세요.');
+          return;
+        }
+        if (!res.ok) {
+          showPromotionSaveResult(false, data.message || '홍보 게시글 저장 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+
+        showPromotionSaveResult(true, data.message || '홍보 게시글이 저장되었습니다.');
+
+        const selectedId = promotionSelectedArticleId;
+        const listRes = await fetch(API_BASE + '/api/promotion', { headers: headers() });
+        const listData = await readJsonOrEmpty(listRes);
+        if (!listRes.ok) {
+          setPromotionBanner(listData.message || '저장 후 목록 동기화 실패 (HTTP ' + listRes.status + ')', listRes.status === 403 ? 'warn' : 'error');
+          return;
+        }
+
+        promotionArticles = listData.data?.articles || listData.articles || [];
+        promotionHasLoaded = true;
+        const selected = promotionArticles.find((article) => article.id === selectedId);
+        if (selected) {
+          promotionSelectedArticleId = selectedId;
+          promotionSelectedOriginal = promotionArticleToFormState(selected);
+          fillPromotionForm(promotionSelectedOriginal);
+        } else {
+          clearPromotionSelection({ keepMessage: true });
+        }
+        renderPromotionList();
+        showToast('홍보 게시글 저장 완료', 'success');
+      } catch (e) {
+        showPromotionSaveResult(false, e.message || '요청 실패');
+      } finally {
+        promotionIsSaving = false;
+        btn.textContent = '저장';
+        updatePromotionEditorState();
+      }
+    };
+
+    PROMOTION_FORM_IDS.forEach((id) => {
+      document.getElementById(id).addEventListener('input', () => {
+        if (id === 'promotionImages') renderPromotionImagePreviewList();
+        updatePromotionEditorState();
+      });
+    });
+
+    document.getElementById('btnUploadPromotionImage').onclick = async () => {
+      const fileInput = document.getElementById('promotionImageUploadFile');
+      if (!promotionSelectedArticleId) {
+        showToast('수정할 홍보 게시글을 먼저 선택하세요.', 'error');
+        return;
+      }
+      if (!fileInput.files || !fileInput.files.length) {
+        showToast('업로드할 이미지를 선택하세요.', 'error');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const btn = document.getElementById('btnUploadPromotionImage');
+      const formData = new FormData();
+      formData.append('file', file);
+
+      promotionIsUploading = true;
+      updatePromotionEditorState();
+      clearPromotionBanner();
+      btn.textContent = '업로드 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(promotionSelectedArticleId) + '/upload', {
+          method: 'POST',
+          headers: buildBannerUploadHeaders(),
+          body: formData
+        });
+        const data = await readJsonOrEmpty(res);
+        if (res.status === 404) {
+          promotionArticles = promotionArticles.filter((article) => article.id !== promotionSelectedArticleId);
+          clearPromotionSelection({ keepMessage: true });
+          setPromotionBanner('선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침한 뒤 다시 시도하세요.', 'error');
+          return;
+        }
+        if (res.status === 403) {
+          setPromotionBanner('개발자 계정으로 로그인하세요.', 'warn');
+          return;
+        }
+        if (!res.ok) {
+          setPromotionBanner(data.message || '홍보 이미지 업로드 실패 (HTTP ' + res.status + ')', 'error');
+          return;
+        }
+
+        const imageUrl = data.data?.imageUrl;
+        if (!imageUrl) {
+          setPromotionBanner('업로드 결과 URL을 확인할 수 없습니다.', 'error');
+          return;
+        }
+
+        const urls = parsePromotionImageUrls();
+        urls.push(imageUrl);
+        writePromotionImageUrls(urls);
+        fileInput.value = '';
+        showToast('홍보 이미지 업로드 후 목록에 추가했습니다.', 'success');
+      } catch (e) {
+        setPromotionBanner('요청 실패: ' + (e.message || ''), 'error');
+      } finally {
+        promotionIsUploading = false;
+        btn.textContent = '업로드 후 목록에 추가';
+        updatePromotionEditorState();
+      }
+    };
+
+    window.addEventListener('beforeunload', (event) => {
+      if (!isPromotionDirty() && !bannerDirty) return;
+      event.preventDefault();
+      event.returnValue = '';
+    });
 
     function createEmptyBannerItem() {
       return { id: '', imageUrl: '', linkTo: '', alt: '' };
