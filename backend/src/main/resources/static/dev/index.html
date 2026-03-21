@@ -143,7 +143,7 @@
       <h1>모아동 개발자 포털</h1>
       <nav class="header-nav">
         <a href="#login">로그인</a>
-        <a href="#api-docs">API 문서</a>
+        <a href="#api-docs" id="navApiDocs" class="hidden">API 문서</a>
         <a href="#club">동아리</a>
         <a href="#dict">단어사전</a>
         <a href="#promotion">홍보 게시판</a>
@@ -187,7 +187,7 @@
       </div>
     </section>
 
-    <section id="api-docs">
+    <section id="api-docs" class="hidden">
       <h2>API 문서</h2>
       <div class="card-grid">
         <a href="/swagger-ui.html" target="_blank" rel="noopener" class="card">
@@ -541,6 +541,8 @@
     function showLogin(show) {
       document.getElementById('loginForm').classList.toggle('hidden', !!show);
       document.getElementById('tokenArea').classList.toggle('hidden', !show);
+      document.getElementById('api-docs').classList.toggle('hidden', !show);
+      document.getElementById('navApiDocs').classList.toggle('hidden', !show);
       document.getElementById('club').classList.toggle('hidden', !show);
       document.getElementById('dict').classList.toggle('hidden', !show);
       document.getElementById('promotion').classList.toggle('hidden', !show);
