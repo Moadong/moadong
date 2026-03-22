@@ -5,6 +5,7 @@ import ApplicantDetailPage from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantD
 import ApplicantsListTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/ApplicantsListTab';
 import ApplicationEditTab from '@/pages/AdminPage/tabs/ApplicationEditTab/ApplicationEditTab';
 import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab';
+import CalendarSyncTab from '@/pages/AdminPage/tabs/CalendarSyncTab/CalendarSyncTab';
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
@@ -18,6 +19,7 @@ export default function AdminRoutes() {
         <Route index element={<Navigate to='club-info' replace />} />
         <Route path='club-info' element={<ClubInfoEditTab />} />
         <Route path='recruit-edit' element={<RecruitEditTab />} />
+        <Route path='calendar-sync' element={<CalendarSyncTab />} />
         <Route path='photo-edit' element={<PhotoEditTab />} />
         <Route path='account-edit' element={<AccountEditTab />} />
         <Route path='application-list' element={<ApplicationListTab />} />
