@@ -1507,9 +1507,13 @@
         });
         const data = await readJsonOrEmpty(res);
         if (res.status === 404) {
-          promotionArticles = promotionArticles.filter((article) => article.id !== promotionSelectedArticleId);
-          clearPromotionSelection({ keepMessage: true });
-          setPromotionBanner('선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침한 뒤 다시 시도하세요.', 'error');
+          if (data.statuscode === '902-1') {
+            promotionArticles = promotionArticles.filter((article) => article.id !== promotionSelectedArticleId);
+            clearPromotionSelection({ keepMessage: true });
+            setPromotionBanner('선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침한 뒤 다시 시도하세요.', 'error');
+          } else {
+            setPromotionBanner(data.message || '홍보 이미지 업로드 실패 (HTTP ' + res.status + ')', 'error');
+          }
           return;
         }
         if (res.status === 403) {
