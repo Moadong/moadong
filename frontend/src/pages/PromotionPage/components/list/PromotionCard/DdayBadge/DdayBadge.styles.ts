@@ -19,8 +19,8 @@ export const Container = styled.div`
     rgba(0, 0, 0, 0.08) 0px 1px 4px;
 `;
 
-export const DdayText = styled.h1`
-  color: ${colors.gray[800]};
+export const DdayText = styled.h1<{ isEnded: boolean }>`
+  color: ${({ isEnded }) => (isEnded ? colors.gray[700] : colors.gray[900])};
   font-size: 14px;
   font-weight: 600;
   letter-spacing: -0.02em;

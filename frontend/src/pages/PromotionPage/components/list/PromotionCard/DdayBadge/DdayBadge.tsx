@@ -17,7 +17,7 @@ const DdayBadge = ({ dday }: DdayBadgeProps) => {
 
   return (
     <Styled.Container>
-      <Styled.DdayText>{label}</Styled.DdayText>
+      <Styled.DdayText isEnded={dday < 0}>{label}</Styled.DdayText>
     </Styled.Container>
   );
 };
