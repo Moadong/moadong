@@ -59,3 +59,20 @@
 
 - 노출된 Notion access token은 반드시 폐기(revoke) 후 재발급한다.
 - CORS는 환경별 Origin 값에 따라 결과가 달라지므로, 로컬/개발/운영 설정을 분리 관리한다.
+
+## Codex 활용 기록
+
+- 설계/구조 정리
+  - `integration/notion` 패키지 구조 제안 및 적용
+  - 프론트 토큰 노출 제거 방향(서버 저장형)으로 API 계약 정리
+- 구현 자동화
+  - Notion OAuth Controller/Service/DTO/Repository/Entity 생성
+  - 토큰 암호화 저장(AESCipher 연계) 및 페이지 조회 로직 구현
+  - Swagger 어노테이션 및 인증 가드(`@PreAuthorize`, `@SecurityRequirement`) 반영
+- 검증 지원
+  - 변경 후 `./gradlew compileJava -q` 반복 검증
+  - CORS preflight 체크 포인트 정리
+- 협업 산출물
+  - 결정사항 문서화
+  - 파일 단위 커밋 분리
+  - PR 초안 작성(제목/요약/변경사항/리스크/후속작업)
