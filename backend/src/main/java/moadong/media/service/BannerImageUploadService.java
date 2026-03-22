@@ -21,12 +21,16 @@ public class BannerImageUploadService {
     private String bannerViewEndpoint;
 
     public BannerImageUploadResponse upload(MultipartFile file, PlatformType type) {
-        String originalFilename = StringUtils.getFilename(StringUtils.cleanPath(file.getOriginalFilename() == null ? "image" : file.getOriginalFilename()));
-        if (!StringUtils.hasText(originalFilename)) {
-            originalFilename = "image";
-        }
+        String originalFilename = sanitizeFilename(StringUtils.getFilename(
+            StringUtils.cleanPath(file.getOriginalFilename() == null ? "image" : file.getOriginalFilename())
+        ));
         String key = type.name().toLowerCase(Locale.ROOT) + "/" + originalFilename;
         String imageUrl = r2ImageUploadService.upload(file, bannerBucketName, bannerViewEndpoint, key);
         return new BannerImageUploadResponse(imageUrl);
+    }
+
+    private String sanitizeFilename(String filename) {
+        String safeName = StringUtils.hasText(filename) ? filename : "image";
+        return safeName.replaceAll("[^A-Za-z0-9._-]", "_");
     }
 }

@@ -83,4 +83,21 @@ class BannerImageUploadServiceTest {
 
         assertEquals(ErrorCode.FILE_TOO_LARGE, exception.getErrorCode());
     }
+
+    @Test
+    void 배너_파일명에_예약문자가_있으면_정규화해서_업로드한다() {
+        MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "banner #1?.png",
+            "image/png",
+            "banner-image".getBytes()
+        );
+        when(r2ImageUploadService.upload(file, "banner-bucket", "https://cdn.example.com/", "web/banner__1_.png"))
+            .thenReturn("https://cdn.example.com/web/banner__1_.png");
+
+        BannerImageUploadResponse response = bannerImageUploadService.upload(file, PlatformType.WEB);
+
+        verify(r2ImageUploadService).upload(file, "banner-bucket", "https://cdn.example.com/", "web/banner__1_.png");
+        assertEquals("https://cdn.example.com/web/banner__1_.png", response.imageUrl());
+    }
 }

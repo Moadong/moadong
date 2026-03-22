@@ -1096,16 +1096,29 @@
       summary.textContent = '총 ' + promotionArticles.length + '개 게시글';
       promotionArticles.forEach((article) => {
         const tr = document.createElement('tr');
+        tr.tabIndex = 0;
+        tr.setAttribute('role', 'button');
+        tr.setAttribute('aria-label', (article.title || '홍보 게시글') + ' 편집 선택');
         if (article.id === promotionSelectedArticleId) {
           tr.classList.add('is-selected');
+          tr.setAttribute('aria-selected', 'true');
+        } else {
+          tr.setAttribute('aria-selected', 'false');
         }
         tr.appendChild(document.createElement('td')).textContent = article.title || '';
         tr.appendChild(document.createElement('td')).textContent = article.clubName || '-';
         tr.appendChild(document.createElement('td')).textContent = article.location || '-';
         tr.appendChild(document.createElement('td')).textContent = formatPromotionPeriod(article);
         tr.appendChild(document.createElement('td')).textContent = String((article.images || []).length);
-        tr.onclick = () => {
+        const selectCurrentArticle = () => {
           selectPromotionArticle(article.id);
+        };
+        tr.onclick = selectCurrentArticle;
+        tr.onkeydown = (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            selectCurrentArticle();
+          }
         };
         tbody.appendChild(tr);
       });
@@ -1398,6 +1411,16 @@
         }
 
         showPromotionSaveResult(true, data.message || '홍보 게시글이 저장되었습니다.');
+        promotionSelectedOriginal = {
+          clubId: payload.clubId,
+          title: payload.title,
+          location: payload.location,
+          eventStartDate: toDatetimeLocalValue(payload.eventStartDate),
+          eventEndDate: toDatetimeLocalValue(payload.eventEndDate),
+          description: payload.description,
+          imagesText: payload.images.join('\n')
+        };
+        fillPromotionForm(promotionSelectedOriginal);
 
         const selectedId = promotionSelectedArticleId;
         const listRes = await fetch(API_BASE + '/api/promotion', { headers: headers() });

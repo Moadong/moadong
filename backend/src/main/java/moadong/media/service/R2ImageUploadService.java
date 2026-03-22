@@ -28,16 +28,16 @@ public class R2ImageUploadService {
 
     public String upload(MultipartFile file, String bucketName, String viewEndpoint, String key) {
         validateConfig(bucketName, viewEndpoint);
-        validateFile(file);
+        String contentType = validateFile(file);
 
         String originalFilename = extractFileName(file);
         String extension = getFileExtension(originalFilename);
-        String contentType = resolveContentType(file.getContentType(), extension);
+        String resolvedContentType = resolveContentType(contentType, extension);
 
         PutObjectRequest request = PutObjectRequest.builder()
             .bucket(bucketName)
             .key(key)
-            .contentType(contentType)
+            .contentType(resolvedContentType)
             .build();
 
         try (InputStream inputStream = file.getInputStream()) {
@@ -61,7 +61,7 @@ public class R2ImageUploadService {
         return viewEndpoint.replaceAll("/+$", "");
     }
 
-    private void validateFile(MultipartFile file) {
+    private String validateFile(MultipartFile file) {
         if (file == null || file.isEmpty()) {
             throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
         }
@@ -75,10 +75,11 @@ public class R2ImageUploadService {
             throw new RestApiException(ErrorCode.FILE_TOO_LARGE);
         }
 
-        String contentType = file.getContentType();
-        if (StringUtils.hasText(contentType) && !contentType.matches("^image/(jpeg|jpg|png|gif|bmp|webp)$")) {
+        String normalizedContentType = normalizeContentType(file.getContentType());
+        if (StringUtils.hasText(normalizedContentType) && !normalizedContentType.matches("^image/(jpeg|jpg|png|gif|bmp|webp)$")) {
             throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
         }
+        return normalizedContentType;
     }
 
     private String extractFileName(MultipartFile file) {
@@ -100,7 +101,7 @@ public class R2ImageUploadService {
 
     private String resolveContentType(String rawContentType, String extension) {
         if (StringUtils.hasText(rawContentType)) {
-            return "image/jpg".equalsIgnoreCase(rawContentType) ? "image/jpeg" : rawContentType;
+            return normalizeContentType(rawContentType);
         }
 
         return switch (extension) {
@@ -111,5 +112,13 @@ public class R2ImageUploadService {
             case ".webp" -> "image/webp";
             default -> throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
         };
+    }
+
+    private String normalizeContentType(String rawContentType) {
+        if (!StringUtils.hasText(rawContentType)) {
+            return rawContentType;
+        }
+        String normalized = rawContentType.trim().toLowerCase();
+        return "image/jpg".equals(normalized) ? "image/jpeg" : normalized;
     }
 }
