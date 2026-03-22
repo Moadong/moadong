@@ -41,6 +41,7 @@ public class NotionOAuthService {
     private static final String NOTION_TOKEN_ENDPOINT = "https://api.notion.com/v1/oauth/token";
     private static final String NOTION_SEARCH_ENDPOINT = "https://api.notion.com/v1/search";
     private static final String NOTION_AUTHORIZE_ENDPOINT = "https://api.notion.com/v1/oauth/authorize";
+    private static final String NOTION_DATABASE_QUERY_ENDPOINT = "https://api.notion.com/v1/databases/{databaseId}/query";
 
     public Map<String, String> getAuthorizeUrl(String state) {
         String notionClientId = notionProperties.clientId();
@@ -126,13 +127,24 @@ public class NotionOAuthService {
 
     public Map<String, Object> getRecentPages(CustomUserDetails user) {
         String userId = requireAuthenticatedUserId(user);
+        NotionConnection connection = getNotionConnection(userId);
+        String databaseId = connection.getDatabaseId();
+        if (!StringUtils.hasText(databaseId)) {
+            throw new IllegalStateException("저장된 Notion databaseId가 없습니다. 먼저 데이터베이스를 선택해주세요.");
+        }
+
+        return getDatabasePages(user, databaseId, null);
+    }
+
+    public Map<String, Object> getDatabases(CustomUserDetails user) {
+        String userId = requireAuthenticatedUserId(user);
         String notionAccessToken = getDecryptedAccessToken(userId);
         String nextCursor = null;
         List<Object> allResults = new ArrayList<>();
         int requestCount = 0;
 
         while (true) {
-            Map<String, Object> responseBody = searchNotionPages(notionAccessToken, nextCursor);
+            Map<String, Object> responseBody = searchNotionDatabases(notionAccessToken, nextCursor);
             requestCount++;
 
             Object resultsObj = responseBody.get("results");
@@ -149,7 +161,7 @@ public class NotionOAuthService {
             }
 
             if (requestCount >= 50) {
-                log.warn("Notion 페이지네이션 요청 상한 도달. userId={}, collected={}", userId, allResults.size());
+                log.warn("Notion DB 목록 페이지네이션 요청 상한 도달. userId={}, collected={}", userId, allResults.size());
                 break;
             }
         }
@@ -160,6 +172,57 @@ public class NotionOAuthService {
         aggregated.put("has_more", false);
         aggregated.put("next_cursor", null);
         aggregated.put("total_results", allResults.size());
+        return aggregated;
+    }
+
+    public Map<String, Object> getDatabasePages(CustomUserDetails user, String databaseId, String dateProperty) {
+        String userId = requireAuthenticatedUserId(user);
+        String notionAccessToken = getDecryptedAccessToken(userId);
+
+        if (!StringUtils.hasText(databaseId)) {
+            throw new IllegalArgumentException("databaseId가 필요합니다.");
+        }
+
+        saveDatabaseId(userId, databaseId);
+
+        String nextCursor = null;
+        List<Object> allResults = new ArrayList<>();
+        int requestCount = 0;
+
+        while (true) {
+            Map<String, Object> responseBody = queryNotionDatabase(notionAccessToken, databaseId, dateProperty, nextCursor);
+            requestCount++;
+
+            Object resultsObj = responseBody.get("results");
+            if (resultsObj instanceof List<?> resultList) {
+                allResults.addAll(resultList);
+            }
+
+            boolean hasMore = Boolean.TRUE.equals(responseBody.get("has_more"));
+            Object cursorObj = responseBody.get("next_cursor");
+            nextCursor = cursorObj instanceof String cursor && StringUtils.hasText(cursor) ? cursor : null;
+
+            if (!hasMore || !StringUtils.hasText(nextCursor)) {
+                break;
+            }
+
+            if (requestCount >= 50) {
+                log.warn("Notion DB 페이지네이션 요청 상한 도달. userId={}, databaseId={}, collected={}",
+                        userId, databaseId, allResults.size());
+                break;
+            }
+        }
+
+        Map<String, Object> aggregated = new LinkedHashMap<>();
+        aggregated.put("object", "list");
+        aggregated.put("results", allResults);
+        aggregated.put("has_more", false);
+        aggregated.put("next_cursor", null);
+        aggregated.put("total_results", allResults.size());
+        aggregated.put("database_id", databaseId);
+        if (StringUtils.hasText(dateProperty)) {
+            aggregated.put("date_property", dateProperty);
+        }
         return aggregated;
     }
 
@@ -198,6 +261,86 @@ public class NotionOAuthService {
         }
     }
 
+    private Map<String, Object> searchNotionDatabases(String notionAccessToken, String startCursor) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(notionAccessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Notion-Version", notionProperties.version());
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("filter", Map.of("property", "object", "value", "database"));
+        body.put("sort", Map.of("direction", "descending", "timestamp", "last_edited_time"));
+        body.put("page_size", 100);
+        if (StringUtils.hasText(startCursor)) {
+            body.put("start_cursor", startCursor);
+        }
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    NOTION_SEARCH_ENDPOINT,
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<>() {}
+            );
+
+            Map<String, Object> responseBody = response.getBody();
+            if (responseBody == null) {
+                throw new IllegalStateException("Notion DB 목록 조회 응답이 비어있습니다.");
+            }
+            return responseBody;
+        } catch (HttpStatusCodeException e) {
+            log.warn("Notion DB 목록 조회 실패 status={}, body={}", e.getStatusCode(), e.getResponseBodyAsString());
+            throw new IllegalArgumentException("Notion DB 목록 조회 실패: " + e.getResponseBodyAsString());
+        }
+    }
+
+    private Map<String, Object> queryNotionDatabase(String notionAccessToken,
+                                                    String databaseId,
+                                                    String dateProperty,
+                                                    String startCursor) {
+        HttpHeaders headers = new HttpHeaders();
+        headers.setBearerAuth(notionAccessToken);
+        headers.setContentType(MediaType.APPLICATION_JSON);
+        headers.set("Notion-Version", notionProperties.version());
+
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("page_size", 100);
+        body.put("sorts", List.of(Map.of("timestamp", "last_edited_time", "direction", "descending")));
+        if (StringUtils.hasText(startCursor)) {
+            body.put("start_cursor", startCursor);
+        }
+        if (StringUtils.hasText(dateProperty)) {
+            body.put("filter", Map.of(
+                    "property", dateProperty,
+                    "date", Map.of("is_not_empty", true)
+            ));
+        }
+
+        HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
+
+        try {
+            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                    NOTION_DATABASE_QUERY_ENDPOINT,
+                    HttpMethod.POST,
+                    entity,
+                    new ParameterizedTypeReference<>() {},
+                    Map.of("databaseId", databaseId)
+            );
+
+            Map<String, Object> responseBody = response.getBody();
+            if (responseBody == null) {
+                throw new IllegalStateException("Notion DB 조회 응답이 비어있습니다.");
+            }
+            return responseBody;
+        } catch (HttpStatusCodeException e) {
+            log.warn("Notion DB 조회 실패 status={}, databaseId={}, body={}",
+                    e.getStatusCode(), databaseId, e.getResponseBodyAsString());
+            throw new IllegalArgumentException("Notion DB 조회 실패: " + e.getResponseBodyAsString());
+        }
+    }
+
     private String requireAuthenticatedUserId(CustomUserDetails user) {
         if (user == null || !StringUtils.hasText(user.getId())) {
             throw new IllegalArgumentException("인증된 사용자 정보가 필요합니다.");
@@ -220,8 +363,7 @@ public class NotionOAuthService {
     }
 
     private String getDecryptedAccessToken(String userId) {
-        NotionConnection connection = notionConnectionRepository.findById(userId)
-                .orElseThrow(() -> new IllegalStateException("Notion 연결 정보가 없습니다. 먼저 OAuth 연동을 진행해주세요."));
+        NotionConnection connection = getNotionConnection(userId);
 
         if (!StringUtils.hasText(connection.getEncryptedAccessToken())) {
             throw new IllegalStateException("저장된 Notion access token이 없습니다.");
@@ -233,5 +375,16 @@ public class NotionOAuthService {
             log.error("Notion access token 복호화 실패. userId={}", userId, e);
             throw new IllegalStateException("Notion 토큰 복호화에 실패했습니다.");
         }
+    }
+
+    private NotionConnection getNotionConnection(String userId) {
+        return notionConnectionRepository.findById(userId)
+                .orElseThrow(() -> new IllegalStateException("Notion 연결 정보가 없습니다. 먼저 OAuth 연동을 진행해주세요."));
+    }
+
+    private void saveDatabaseId(String userId, String databaseId) {
+        NotionConnection connection = getNotionConnection(userId);
+        connection.updateDatabaseId(databaseId);
+        notionConnectionRepository.save(connection);
     }
 }

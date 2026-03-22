@@ -24,6 +24,8 @@ public class NotionConnection {
 
     private String workspaceId;
 
+    private String databaseId;
+
     @Builder.Default
     private LocalDateTime updatedAt = LocalDateTime.now();
 
@@ -31,6 +33,11 @@ public class NotionConnection {
         this.encryptedAccessToken = encryptedAccessToken;
         this.workspaceName = workspaceName;
         this.workspaceId = workspaceId;
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public void updateDatabaseId(String databaseId) {
+        this.databaseId = databaseId;
         this.updatedAt = LocalDateTime.now();
     }
 }
