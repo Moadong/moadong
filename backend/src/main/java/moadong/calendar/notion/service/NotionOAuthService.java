@@ -1,7 +1,10 @@
 package moadong.calendar.notion.service;
 
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.Base64;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -124,18 +127,55 @@ public class NotionOAuthService {
     public Map<String, Object> getRecentPages(CustomUserDetails user) {
         String userId = requireAuthenticatedUserId(user);
         String notionAccessToken = getDecryptedAccessToken(userId);
-        String notionVersion = notionProperties.version();
+        String nextCursor = null;
+        List<Object> allResults = new ArrayList<>();
+        int requestCount = 0;
 
+        while (true) {
+            Map<String, Object> responseBody = searchNotionPages(notionAccessToken, nextCursor);
+            requestCount++;
+
+            Object resultsObj = responseBody.get("results");
+            if (resultsObj instanceof List<?> resultList) {
+                allResults.addAll(resultList);
+            }
+
+            boolean hasMore = Boolean.TRUE.equals(responseBody.get("has_more"));
+            Object cursorObj = responseBody.get("next_cursor");
+            nextCursor = cursorObj instanceof String cursor && StringUtils.hasText(cursor) ? cursor : null;
+
+            if (!hasMore || !StringUtils.hasText(nextCursor)) {
+                break;
+            }
+
+            if (requestCount >= 50) {
+                log.warn("Notion 페이지네이션 요청 상한 도달. userId={}, collected={}", userId, allResults.size());
+                break;
+            }
+        }
+
+        Map<String, Object> aggregated = new LinkedHashMap<>();
+        aggregated.put("object", "list");
+        aggregated.put("results", allResults);
+        aggregated.put("has_more", false);
+        aggregated.put("next_cursor", null);
+        aggregated.put("total_results", allResults.size());
+        return aggregated;
+    }
+
+    private Map<String, Object> searchNotionPages(String notionAccessToken, String startCursor) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(notionAccessToken);
         headers.setContentType(MediaType.APPLICATION_JSON);
-        headers.set("Notion-Version", notionVersion);
+        headers.set("Notion-Version", notionProperties.version());
 
-        Map<String, Object> body = Map.of(
-                "filter", Map.of("property", "object", "value", "page"),
-                "sort", Map.of("direction", "descending", "timestamp", "last_edited_time"),
-                "page_size", 10
-        );
+        Map<String, Object> body = new LinkedHashMap<>();
+        body.put("filter", Map.of("property", "object", "value", "page"));
+        body.put("sort", Map.of("direction", "descending", "timestamp", "last_edited_time"));
+        body.put("page_size", 100);
+        if (StringUtils.hasText(startCursor)) {
+            body.put("start_cursor", startCursor);
+        }
 
         HttpEntity<Map<String, Object>> entity = new HttpEntity<>(body, headers);
 
