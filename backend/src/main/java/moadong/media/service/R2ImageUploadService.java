@@ -7,13 +7,14 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.core.exception.SdkException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.services.s3.model.S3Exception;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Locale;
 
 import static moadong.media.util.ClubImageUtil.isImageExtension;
 
@@ -43,7 +44,7 @@ public class R2ImageUploadService {
         try (InputStream inputStream = file.getInputStream()) {
             s3Client.putObject(request, RequestBody.fromInputStream(inputStream, file.getSize()));
             return normalizeViewEndpoint(viewEndpoint) + "/" + key;
-        } catch (IOException | S3Exception e) {
+        } catch (IOException | SdkException e) {
             throw new RestApiException(ErrorCode.IMAGE_UPLOAD_FAILED);
         }
     }
@@ -96,7 +97,7 @@ public class R2ImageUploadService {
         if (!StringUtils.hasText(extension)) {
             throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
         }
-        return "." + extension.toLowerCase();
+        return "." + extension.toLowerCase(Locale.ROOT);
     }
 
     private String resolveContentType(String rawContentType, String extension) {
@@ -118,7 +119,7 @@ public class R2ImageUploadService {
         if (!StringUtils.hasText(rawContentType)) {
             return rawContentType;
         }
-        String normalized = rawContentType.trim().toLowerCase();
+        String normalized = rawContentType.trim().toLowerCase(Locale.ROOT);
         return "image/jpg".equals(normalized) ? "image/jpeg" : normalized;
     }
 }

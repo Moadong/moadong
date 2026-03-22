@@ -12,13 +12,17 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
+import software.amazon.awssdk.core.exception.SdkClientException;
 import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
+import java.util.Locale;
+
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 
 @UnitTest
@@ -65,5 +69,45 @@ class R2ImageUploadServiceTest {
             () -> r2ImageUploadService.upload(file, "bucket", "https://cdn.example.com/", "web/banner.png"));
 
         assertEquals(ErrorCode.UNSUPPORTED_FILE_TYPE, exception.getErrorCode());
+    }
+
+    @Test
+    void SDK_클라이언트_예외도_IMAGE_UPLOAD_FAILED로_변환한다() {
+        MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "banner.png",
+            "image/png",
+            "image".getBytes()
+        );
+        doThrow(SdkClientException.create("network error"))
+            .when(s3Client)
+            .putObject(any(PutObjectRequest.class), any(RequestBody.class));
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> r2ImageUploadService.upload(file, "bucket", "https://cdn.example.com/", "web/banner.png"));
+
+        assertEquals(ErrorCode.IMAGE_UPLOAD_FAILED, exception.getErrorCode());
+    }
+
+    @Test
+    void 터키어_로케일에서도_확장자와_ContentType을_정상_처리한다() {
+        Locale defaultLocale = Locale.getDefault();
+        Locale.setDefault(Locale.forLanguageTag("tr-TR"));
+        try {
+            MockMultipartFile file = new MockMultipartFile(
+                "file",
+                "banner.GIF",
+                "IMAGE/GIF",
+                "image".getBytes()
+            );
+
+            r2ImageUploadService.upload(file, "bucket", "https://cdn.example.com/", "web/banner.GIF");
+
+            ArgumentCaptor<PutObjectRequest> requestCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
+            verify(s3Client).putObject(requestCaptor.capture(), any(RequestBody.class));
+            assertEquals("image/gif", requestCaptor.getValue().contentType());
+        } finally {
+            Locale.setDefault(defaultLocale);
+        }
     }
 }
