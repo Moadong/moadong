@@ -1,4 +1,4 @@
-package moadong.integration.notion.payload.response;
+package moadong.calendar.notion.payload.response;
 
 public record NotionTokenExchangeResponse(
         String workspaceName,

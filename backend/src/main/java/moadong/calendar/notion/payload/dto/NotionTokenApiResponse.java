@@ -1,4 +1,4 @@
-package moadong.integration.notion.payload.dto;
+package moadong.calendar.notion.payload.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

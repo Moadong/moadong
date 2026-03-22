@@ -1,4 +1,4 @@
-package moadong.integration.notion.service;
+package moadong.calendar.notion.service;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
@@ -6,13 +6,13 @@ import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.global.util.AESCipher;
-import moadong.integration.notion.entity.NotionConnection;
-import moadong.integration.notion.payload.dto.NotionTokenApiResponse;
-import moadong.integration.notion.payload.request.NotionTokenExchangeRequest;
-import moadong.integration.notion.payload.response.NotionTokenExchangeResponse;
-import moadong.integration.notion.repository.NotionConnectionRepository;
+import moadong.calendar.notion.config.NotionProperties;
+import moadong.calendar.notion.entity.NotionConnection;
+import moadong.calendar.notion.payload.dto.NotionTokenApiResponse;
+import moadong.calendar.notion.payload.request.NotionTokenExchangeRequest;
+import moadong.calendar.notion.payload.response.NotionTokenExchangeResponse;
+import moadong.calendar.notion.repository.NotionConnectionRepository;
 import moadong.user.payload.CustomUserDetails;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -33,24 +33,16 @@ public class NotionOAuthService {
     private final RestTemplate restTemplate;
     private final NotionConnectionRepository notionConnectionRepository;
     private final AESCipher cipher;
-
-    @Value("${NOTION_CLIENT_SECRET:}")
-    private String notionClientSecret;
-
-    @Value("${NOTION_CLIENT_ID:}")
-    private String notionClientId;
-
-    @Value("${NOTION_VERSION:2022-06-28}")
-    private String notionVersion;
-
-    @Value("${NOTION_REDIRECT_URI:}")
-    private String notionRedirectUri;
+    private final NotionProperties notionProperties;
 
     private static final String NOTION_TOKEN_ENDPOINT = "https://api.notion.com/v1/oauth/token";
     private static final String NOTION_SEARCH_ENDPOINT = "https://api.notion.com/v1/search";
     private static final String NOTION_AUTHORIZE_ENDPOINT = "https://api.notion.com/v1/oauth/authorize";
 
     public Map<String, String> getAuthorizeUrl(String state) {
+        String notionClientId = notionProperties.clientId();
+        String notionRedirectUri = notionProperties.redirectUri();
+
         if (!StringUtils.hasText(notionClientId)) {
             throw new IllegalStateException("NOTION_CLIENT_ID 서버 환경변수가 설정되지 않았습니다.");
         }
@@ -73,6 +65,9 @@ public class NotionOAuthService {
 
     public NotionTokenExchangeResponse exchangeCode(CustomUserDetails user, NotionTokenExchangeRequest request) {
         String userId = requireAuthenticatedUserId(user);
+        String notionClientId = notionProperties.clientId();
+        String notionClientSecret = notionProperties.clientSecret();
+        String notionRedirectUri = notionProperties.redirectUri();
 
         if (!StringUtils.hasText(notionClientId)) {
             throw new IllegalStateException("NOTION_CLIENT_ID 서버 환경변수가 설정되지 않았습니다.");
@@ -129,6 +124,7 @@ public class NotionOAuthService {
     public Map<String, Object> getRecentPages(CustomUserDetails user) {
         String userId = requireAuthenticatedUserId(user);
         String notionAccessToken = getDecryptedAccessToken(userId);
+        String notionVersion = notionProperties.version();
 
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(notionAccessToken);

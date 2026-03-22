@@ -1,4 +1,4 @@
-package moadong.integration.notion.payload.request;
+package moadong.calendar.notion.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
 

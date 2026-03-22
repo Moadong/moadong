@@ -1,4 +1,4 @@
-package moadong.integration.notion.controller;
+package moadong.calendar.notion.controller;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
@@ -6,9 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import moadong.global.payload.Response;
-import moadong.integration.notion.payload.request.NotionTokenExchangeRequest;
-import moadong.integration.notion.payload.response.NotionTokenExchangeResponse;
-import moadong.integration.notion.service.NotionOAuthService;
+import moadong.calendar.notion.payload.request.NotionTokenExchangeRequest;
+import moadong.calendar.notion.payload.response.NotionTokenExchangeResponse;
+import moadong.calendar.notion.service.NotionOAuthService;
 import moadong.user.annotation.CurrentUser;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.HttpStatus;

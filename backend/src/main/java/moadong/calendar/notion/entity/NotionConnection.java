@@ -1,4 +1,4 @@
-package moadong.integration.notion.entity;
+package moadong.calendar.notion.entity;
 
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
