@@ -8,6 +8,12 @@ export const USER_EVENT = {
   MAIN_POPUP_CLOSED: 'Main Popup Closed',
   APP_DOWNLOAD_POPUP_CLICKED: 'App Download Popup Clicked',
 
+  // 동소한 팝업
+  FESTIVAL_POPUP_CLICKED: 'Festival Popup Clicked',
+
+  // 동소한 부스
+  FESTIVAL_BOOTH_CLICKED: 'Festival Booth Clicked',
+
   // 배너 클릭
   BANNER_CLICKED: 'Banner Clicked',
   APP_DOWNLOAD_BANNER_CLICKED: 'App Download Banner Clicked',

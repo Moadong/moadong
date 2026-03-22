@@ -6,6 +6,7 @@ import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import { useGetBanners } from '@/hooks/Queries/useBanner';
 import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
@@ -18,6 +19,23 @@ const Banner = () => {
   const trackEvent = useMixpanelTrack();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const bannerType = isMobile ? 'WEB_MOBILE' : 'WEB';
+  const { data: banners, isLoading, isFetched } = useGetBanners(bannerType);
+
+  const fallbackBanners = BANNERS.map((banner) => ({
+    id: banner.id,
+    imageUrl: isMobile ? banner.mobileImage : banner.desktopImage,
+    linkTo: banner.linkTo ?? null,
+    alt: banner.alt,
+  }));
+
+  const hasApiBanners = (banners?.length ?? 0) > 0;
+  const shouldUseFallback = isFetched && !hasApiBanners;
+  const displayBanners = hasApiBanners
+    ? banners
+    : shouldUseFallback
+      ? fallbackBanners
+      : [];
 
   const handlePrev = () => {
     swiperInstance?.slidePrev();
@@ -53,6 +71,14 @@ const Banner = () => {
     handleLink(url);
   };
 
+  if (isLoading) {
+    return null;
+  }
+
+  if (displayBanners?.length === 0) {
+    return null;
+  }
+
   return (
     <Styled.BannerContainer>
       <Styled.BannerWrapper>
@@ -76,31 +102,32 @@ const Banner = () => {
           }}
           speed={500}
         >
-          {BANNERS.map((banner) => (
+          {displayBanners?.map((banner) => (
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
                 isClickable={!!banner.linkTo}
                 onClick={() =>
-                  handleBannerClick(banner.id, banner.alt, banner.linkTo)
+                  handleBannerClick(
+                    banner.id,
+                    banner.alt,
+                    banner.linkTo || undefined,
+                  )
                 }
               >
-                <img
-                  src={isMobile ? banner.mobileImage : banner.desktopImage}
-                  alt={banner.alt}
-                />
+                <img src={banner.imageUrl} alt={banner.alt} />
               </Styled.BannerItem>
             </SwiperSlide>
           ))}
         </Swiper>
         {isMobile && (
           <Styled.NumericPagination>
-            {currentIndex + 1} / {BANNERS.length}
+            {currentIndex + 1} / {displayBanners?.length ?? 0}
           </Styled.NumericPagination>
         )}
 
         {!isMobile && (
           <Styled.DotPagination>
-            {BANNERS.map((_, index) => (
+            {displayBanners?.map((_, index) => (
               <Styled.Dot key={index} active={currentIndex === index} />
             ))}
           </Styled.DotPagination>

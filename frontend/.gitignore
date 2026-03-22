@@ -18,5 +18,8 @@ build-storybook.log
 /storybook-static
 *storybook.log
 coverage/ 
+public/sitemap.xml
 # Sentry Config File
 .env.sentry-build-plugin
+
+AGENTS.md

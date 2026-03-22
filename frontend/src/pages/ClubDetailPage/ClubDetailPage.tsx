@@ -12,6 +12,7 @@ import useDevice from '@/hooks/useDevice';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
+import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
 import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
@@ -137,7 +138,7 @@ const ClubDetailPage = () => {
           </Styled.RightSection>
         </Styled.ContentWrapper>
       </Styled.Container>
-      <Footer />
+      {!isInAppWebView() && <Footer />}
       <ClubDetailFooter
         recruitmentStart={clubDetail.recruitmentStart}
         recruitmentEnd={clubDetail.recruitmentEnd}

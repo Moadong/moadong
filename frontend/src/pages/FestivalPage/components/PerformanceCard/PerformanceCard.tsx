@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { motion } from 'framer-motion';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { Performance } from '../../data/performances';
@@ -32,15 +33,25 @@ const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
       <Styled.ClubName $active={active}>{performance.clubName}</Styled.ClubName>
 
       <Styled.SongArea $active={active}>
-        {expanded ? (
-          <Styled.SongList>
-            {performance.songs.map((song) => (
-              <Styled.SongItem key={song}>{song}</Styled.SongItem>
-            ))}
-          </Styled.SongList>
-        ) : (
-          <Styled.CollapsedSong>{performance.songs[0]}</Styled.CollapsedSong>
-        )}
+        <div style={{ flex: 1, overflow: 'hidden' }}>
+          <Styled.SongItem $collapsed={!expanded}>
+            {performance.songs[0]}
+          </Styled.SongItem>
+          {performance.songs.length > 1 && (
+            <motion.div
+              initial={false}
+              animate={{ height: expanded ? 'auto' : 0 }}
+              transition={{ duration: 0.2, ease: 'easeInOut' }}
+              style={{ overflow: 'hidden' }}
+            >
+              <Styled.SongList>
+                {performance.songs.slice(1).map((song) => (
+                  <Styled.SongItem key={song}>{song}</Styled.SongItem>
+                ))}
+              </Styled.SongList>
+            </motion.div>
+          )}
+        </div>
 
         <Styled.ChevronWrapper>
           <Styled.ChevronIcon
