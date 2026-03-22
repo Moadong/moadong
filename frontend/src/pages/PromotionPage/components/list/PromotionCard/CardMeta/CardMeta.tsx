@@ -4,17 +4,11 @@ import * as Styled from './CardMeta.styles';
 
 interface CardMetaProps {
   title: string;
-  description: string;
   location: string | null;
   startDate: string;
 }
 
-const CardMeta = ({
-  title,
-  description,
-  location,
-  startDate,
-}: CardMetaProps) => {
+const CardMeta = ({ title, location, startDate }: CardMetaProps) => {
   const startDateObj = new Date(startDate);
   const formattedStartDate = startDateObj.toLocaleDateString('ko-KR', {
     month: 'long',
@@ -24,26 +18,25 @@ const CardMeta = ({
 
   return (
     <Styled.Container>
-      <Styled.TitleSection>
-        <Styled.Title>{title}</Styled.Title>
-        <Styled.Description>{description}</Styled.Description>
-      </Styled.TitleSection>
+      <Styled.Title>{title}</Styled.Title>
 
-      {location && (
+      <Styled.MetaContainer>
+        {location && (
+          <Styled.MetaRow>
+            <Styled.Icon>
+              <img src={LocationIcon} alt='Location' />
+            </Styled.Icon>
+            <Styled.MetaText>{location}</Styled.MetaText>
+          </Styled.MetaRow>
+        )}
+
         <Styled.MetaRow>
           <Styled.Icon>
-            <img src={LocationIcon} alt='Location' />
+            <img src={TimeIcon} alt='Time' />
           </Styled.Icon>
-          <Styled.MetaText>{location}</Styled.MetaText>
+          <Styled.MetaText>{formattedStartDate}</Styled.MetaText>
         </Styled.MetaRow>
-      )}
-
-      <Styled.MetaRow>
-        <Styled.Icon>
-          <img src={TimeIcon} alt='Time' />
-        </Styled.Icon>
-        <Styled.MetaText>{formattedStartDate}</Styled.MetaText>
-      </Styled.MetaRow>
+      </Styled.MetaContainer>
     </Styled.Container>
   );
 };

@@ -14,7 +14,7 @@ export const Container = styled.div`
 export const ImageWrapper = styled.div`
   position: relative;
   width: 100%;
-  aspect-ratio: 7/6;
+  aspect-ratio: 1 / 1;
 `;
 
 export const Image = styled.div<{ $imageUrl?: string }>`
@@ -36,7 +36,11 @@ export const DdayWrapper = styled.div`
 `;
 
 export const Content = styled.div`
-  padding: 10px;
+  padding: 14px;
+
+  ${media.mini_mobile} {
+    padding: 10px;
+  }
 `;
 
 export const TagWrapper = styled.div`

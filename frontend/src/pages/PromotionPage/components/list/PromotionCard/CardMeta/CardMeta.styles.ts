@@ -5,11 +5,6 @@ import { colors } from '@/styles/theme/colors';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 6px;
-`;
-
-export const TitleSection = styled.div`
-  gap: 6px;
 `;
 
 export const Title = styled.h3`
@@ -19,25 +14,22 @@ export const Title = styled.h3`
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
-  margin-bottom: 6px;
+  margin-bottom: 4px;
 
   ${media.mini_mobile} {
     font-size: 14px;
+    margin-bottom: 2px;
   }
 `;
 
-export const Description = styled.span`
-  display: block;
-  min-width: 0;
-  font-size: 14px;
-  font-weight: 400;
-  color: ${colors.gray[600]};
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+export const MetaContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
 
   ${media.mini_mobile} {
-    font-size: 12px;
+    font-size: 14px;
+    margin-bottom: 1px;
   }
 `;
 
