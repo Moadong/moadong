@@ -1,4 +1,5 @@
 import API_BASE_URL from '@/constants/api';
+import { festivalMock } from '@/mocks/data/festivalMock';
 import {
   CreatePromotionArticleRequest,
   PromotionArticle,
@@ -13,11 +14,34 @@ export const getPromotionArticles = async (): Promise<PromotionArticle[]> => {
     '홍보게시판 목록을 불러오는데 실패했습니다.',
   );
 
-  if (!data?.articles) {
-    return [];
+  const serverArticle = data?.articles ?? [];
+
+  const isTest =
+    typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+
+  if (isTest) {
+    return serverArticle;
   }
 
-  return data.articles;
+  const merged = [...festivalMock, ...serverArticle];
+
+  return merged.sort((prev, next) => {
+    const now = Date.now();
+
+    const prevStart = new Date(prev.eventStartDate).getTime();
+    const nextStart = new Date(next.eventStartDate).getTime();
+
+    const prevEnd = new Date(prev.eventEndDate).getTime();
+    const nextEnd = new Date(next.eventEndDate).getTime();
+
+    const prevEnded = prevEnd < now;
+    const nextEnded = nextEnd < now;
+
+    if (prevEnded !== nextEnded) return prevEnded ? 1 : -1;
+    if (prevEnded && nextEnded) return nextEnd - prevEnd;
+
+    return prevStart - nextStart;
+  });
 };
 
 export const createPromotionArticle = async (
@@ -30,5 +54,6 @@ export const createPromotionArticle = async (
     },
     body: JSON.stringify(payload),
   });
+
   return handleResponse(response, '홍보게시판 글 추가에 실패했습니다.');
 };

@@ -27,6 +27,11 @@ const useHeaderNavigation = () => {
     trackEvent(USER_EVENT.CLUB_UNION_BUTTON_CLICKED);
   }, [navigate, trackEvent]);
 
+  const handlePromotionClick = useCallback(() => {
+    navigate('/promotions');
+    trackEvent(USER_EVENT.PROMOTION_BUTTON_CLICKED);
+  }, [navigate, trackEvent]);
+
   const handleAdminClick = useCallback(() => {
     navigate('/admin');
     trackEvent(USER_EVENT.ADMIN_BUTTON_CLICKED);
@@ -36,6 +41,7 @@ const useHeaderNavigation = () => {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
+    handlePromotionClick,
     handleAdminClick,
   };
 };
