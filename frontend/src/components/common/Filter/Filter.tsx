@@ -4,11 +4,6 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
 import useDevice from '@/hooks/useDevice';
-import {
-  getLastCheckedTime,
-  getLatestPromotionTime,
-  setLastCheckedTime,
-} from '@/utils/promotionNotification';
 import * as Styled from './Filter.styles';
 
 const FILTER_OPTIONS = [
@@ -18,36 +13,15 @@ const FILTER_OPTIONS = [
 
 interface FilterProps {
   alwaysVisible?: boolean;
+  hasNotification: boolean;
 }
 
-const Filter = ({ alwaysVisible = false }: FilterProps) => {
+const Filter = ({ alwaysVisible = false, hasNotification }: FilterProps) => {
   const { isMobile } = useDevice();
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const trackEvent = useMixpanelTrack();
   const shouldShow = alwaysVisible || isMobile;
-
-  const { data } = useGetPromotionArticles();
-  const [hasNotification, setHasNotification] = useState(false);
-
-  useEffect(() => {
-    if (!data || data.length === 0) return;
-
-    const latestTime = getLatestPromotionTime(data);
-    const lastChecked = getLastCheckedTime();
-
-    if (pathname === '/promotions') {
-      setLastCheckedTime(latestTime);
-      setHasNotification(false);
-      return;
-    }
-
-    if (lastChecked === null || latestTime > lastChecked) {
-      setHasNotification(true);
-    } else {
-      setHasNotification(false);
-    }
-  }, [data, pathname]);
 
   const handleFilterOptionClick = (path: string) => {
     trackEvent(USER_EVENT.FILTER_OPTION_CLICKED, {

@@ -14,6 +14,7 @@ import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
 import { Club } from '@/types/club';
 import * as Styled from './MainPage.styles';
+import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
 
 const MainPage = () => {
   useTrackPageView(PAGE_VIEW.MAIN_PAGE);
@@ -34,6 +35,7 @@ const MainPage = () => {
     category: searchCategory,
     division,
   });
+  const hasNotification = usePromotionNotification();
 
   const clubs = data?.clubs || [];
   const totalCount = data?.totalCount ?? clubs.length;
@@ -50,7 +52,7 @@ const MainPage = () => {
     <>
       <Popup />
       <Header />
-      <Filter />
+      <Filter hasNotification={hasNotification} />
       <Banner />
       <Styled.PageContainer>
         <CategoryButtonList />
