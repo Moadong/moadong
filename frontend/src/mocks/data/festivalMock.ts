@@ -2,6 +2,7 @@ import { PromotionArticle } from '@/types/promotion';
 
 export const festivalMock: PromotionArticle[] = [
   {
+    id: '600000000000000000000003',
     clubId: 'festival-1',
     clubName: '총동연',
     title: '🎉 동아리 소개 한마당',

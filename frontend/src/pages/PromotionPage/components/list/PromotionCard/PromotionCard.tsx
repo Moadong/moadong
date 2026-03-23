@@ -49,7 +49,6 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
       <Styled.Content>
         <CardMeta
           title={article.title}
-          description={article.description}
           location={article.location}
           startDate={article.eventStartDate}
         />

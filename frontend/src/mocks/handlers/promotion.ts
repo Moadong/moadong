@@ -7,7 +7,7 @@ const API_BASE_URL =
 // Mock 데이터
 export const mockPromotionArticles: PromotionArticle[] = [
   {
-    id: '1',
+    id: '600000000000000000000001',
     clubName: 'WAP',
     clubId: '67e54ae51cfd27718dd40bec',
     title: '💌✨WAP 최종 전시회 초대장 ✨💌',
@@ -23,7 +23,7 @@ export const mockPromotionArticles: PromotionArticle[] = [
     ],
   },
   {
-    id: '2',
+    id: '600000000000000000000002',
     clubName: 'WAP',
     clubId: '67e54ae51cfd27718dd40bec',
     title: '💌✨WAP 최종 전시회 초대장 ✨💌',

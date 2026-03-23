@@ -8,6 +8,7 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import BoothMapSection from '@/pages/FestivalPage/components/BoothMapSection/BoothMapSection';
 import PerformanceList from '@/pages/FestivalPage/components/PerformanceList/PerformanceList';
 import * as Styled from './IntroductionPage.styles';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const FESTIVAL_TAB_TYPE = {
   BOOTH_MAP: 'booth-map',
