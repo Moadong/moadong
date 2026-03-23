@@ -1,0 +1,118 @@
+name: BE PR Review Bot
+
+on:
+  pull_request:
+    types: [opened, reopened, synchronize, labeled, ready_for_review]
+    branches: ["develop/be"]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: be-pr-review-bot-${{ github.event.pull_request.number }}
+  cancel-in-progress: true
+
+jobs:
+  senior-review:
+    if: ${{ github.event.pull_request.draft == false }}
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Run conditional senior review (label=💾 BE, base=develop/be, open)
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const pr = context.payload.pull_request;
+            const labels = (pr.labels || []).map(l => l.name);
+            const hasBeLabel = labels.includes('💾 BE');
+            const isOpen = pr.state === 'open';
+            const isTargetBase = pr.base?.ref === 'develop/be';
+
+            if (!(hasBeLabel && isOpen && isTargetBase)) {
+              core.info(`Skip review. hasBeLabel=${hasBeLabel}, isOpen=${isOpen}, base=${pr.base?.ref}`);
+              return;
+            }
+
+            const files = await github.paginate(github.rest.pulls.listFiles, {
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              per_page: 100,
+            });
+
+            const findings = [];
+
+            for (const f of files) {
+              const patch = f.patch || '';
+
+              // Critical: AES/GCM + fixed IV usage heuristic
+              if (patch.includes('GCMParameterSpec') && patch.includes('.iv()')) {
+                findings.push({
+                  severity: 'Critical',
+                  file: f.filename,
+                  message: 'AES-GCM에서 고정 IV를 사용하는 패턴이 감지되었습니다. 암호화마다 랜덤 IV를 생성하고 (iv+ciphertext) 형태로 저장/복호화해야 합니다.'
+                });
+              }
+
+              // High: possible persistence before validation heuristic
+              if (patch.includes('saveDatabaseId(') && patch.includes('queryNotionDatabase(')) {
+                findings.push({
+                  severity: 'High',
+                  file: f.filename,
+                  message: 'databaseId 저장 시점이 검증/쿼리 성공 이전인지 확인이 필요합니다. 잘못된 ID를 저장하면 이후 API 동작이 오염될 수 있습니다.'
+                });
+              }
+
+              // Medium: pagination truncation masking heuristic
+              if (patch.includes('requestCount') && patch.includes('has_more') && patch.includes('next_cursor')) {
+                findings.push({
+                  severity: 'Medium',
+                  file: f.filename,
+                  message: '페이지네이션 상한 도달 시 has_more/next_cursor를 고정값으로 덮어쓰는지 확인하세요. partial 응답 여부를 클라이언트가 식별 가능해야 합니다.'
+                });
+              }
+            }
+
+            const header = [
+              '시니어 관점 자동 리뷰입니다 (테스트 제외).',
+              '',
+              `- 대상 조건: base=\`develop/be\`, label=\`💾 BE\`, state=open`,
+              `- 변경 파일 수: ${files.length}`,
+              ''
+            ];
+
+            let body = '';
+
+            if (findings.length === 0) {
+              body = [
+                ...header,
+                '구조/책임 분리 관점에서 치명적인 잠재 리스크 패턴은 감지되지 않았습니다.',
+                '',
+                '확인 체크리스트:',
+                '- API contract와 실제 반환 의미 일치 여부',
+                '- 저장 시점(검증 전/후) 적절성',
+                '- 암호화 IV/키 관리 방식',
+                '- 페이지네이션 종료 상태의 정확한 전달',
+                '- 동시성 업데이트 충돌 가능성',
+              ].join('\n');
+            } else {
+              const rows = findings.map((f, i) => `${i + 1}. [${f.severity}] \`${f.file}\` - ${f.message}`);
+              body = [
+                ...header,
+                '잠재 버그/운영 리스크 후보를 감지했습니다:',
+                ...rows,
+                '',
+                '코멘트는 예방 관점이며, 현재 구현 의도와 다르면 API 문서/명세를 함께 정렬해 주세요.'
+              ].join('\n');
+            }
+
+            await github.rest.pulls.createReview({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: pr.number,
+              event: 'APPROVE',
+              body,
+            });
+
+            core.info(`Approved PR #${pr.number} with ${findings.length} finding(s).`);
