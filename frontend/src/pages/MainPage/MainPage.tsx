@@ -1,20 +1,20 @@
 import { useMemo, useState } from 'react';
+import Filter from '@/components/common/Filter/Filter';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetCardList } from '@/hooks/Queries/useClub';
+import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
-import Filter from '@/components/common/Filter/Filter';
 import Popup from '@/pages/MainPage/components/Popup/Popup';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
 import { Club } from '@/types/club';
 import * as Styled from './MainPage.styles';
-import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
 
 const MainPage = () => {
   useTrackPageView(PAGE_VIEW.MAIN_PAGE);
