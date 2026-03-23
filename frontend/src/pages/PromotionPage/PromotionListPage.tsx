@@ -4,7 +4,7 @@ import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
 import isInAppWebView from '@/utils/isInAppWebView';
-import Filter from '../MainPage/components/Filter/Filter';
+import Filter from '../../components/common/Filter/Filter';
 import PromottionGrid from './components/list/PromotionGrid/PromotionGrid';
 import * as Styled from './PromotionListPage.styles';
 
