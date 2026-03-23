@@ -1,8 +1,6 @@
-import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
 import useDevice from '@/hooks/useDevice';
 import * as Styled from './Filter.styles';
 
