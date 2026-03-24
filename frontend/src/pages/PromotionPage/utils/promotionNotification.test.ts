@@ -3,7 +3,7 @@ import {
   getLastCheckedTime,
   getLatestPromotionTime,
   setLastCheckedTime,
-} from './promotionNotification';
+} from '@/pages/PromotionPage/utils/promotionNotification';
 
 describe('promotionNotification 유틸 함수 테스트', () => {
   beforeEach(() => {

@@ -5,7 +5,7 @@ import {
   getLastCheckedTime,
   getLatestPromotionTime,
   setLastCheckedTime,
-} from '@/utils/promotionNotification';
+} from '@/pages/PromotionPage/utils/promotionNotification';
 
 const usePromotionNotification = () => {
   const { data } = useGetPromotionArticles();
