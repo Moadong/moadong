@@ -18,7 +18,7 @@ const PromotionDetailPage = () => {
   const { promotionId } = useParams<{ promotionId: string }>();
   const { data, isLoading, isError } = useGetPromotionArticles();
 
-  const article = data?.find((item) => item.clubId === promotionId) ?? null;
+  const article = data?.find((item) => item.id === promotionId) ?? null;
   const showRelatedPromotion = false; // 관련 이벤트 추천 기능은 현재 비활성화 상태
 
   return (

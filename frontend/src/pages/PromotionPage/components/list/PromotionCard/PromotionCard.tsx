@@ -32,7 +32,7 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
       clubId: article.clubId,
     });
 
-    navigateToPromotionDetail(`/promotions/${article.clubId}`);
+    navigateToPromotionDetail(`/promotions/${article.id}`);
   };
 
   const imageUrl = article.images?.[0];

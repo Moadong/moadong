@@ -10,7 +10,7 @@ const PromotionGrid = ({ articles }: PromotionGridProps) => {
   return (
     <Styled.Grid>
       {articles.map((article) => (
-        <PromotionCard key={article.clubId + article.title} article={article} />
+        <PromotionCard key={article.id + article.title} article={article} />
       ))}
     </Styled.Grid>
   );
