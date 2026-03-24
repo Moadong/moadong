@@ -1,20 +1,10 @@
 import { PromotionArticle } from '@/types/promotion';
 import * as Styled from './PromotionInfoSection.styles';
+import { formatKSTDateTimeFull } from '@/utils/formatKSTDateTime';
 
 interface Props {
   article: PromotionArticle;
 }
-
-const formatDate = (dateStr: string) => {
-  const date = new Date(dateStr);
-  return date.toLocaleString('ko-KR', {
-    month: 'long',
-    day: 'numeric',
-    weekday: 'short',
-    hour: '2-digit',
-    minute: '2-digit',
-  });
-};
 
 const PromotionInfoSection = ({ article }: Props) => {
   return (
@@ -25,8 +15,8 @@ const PromotionInfoSection = ({ article }: Props) => {
         <Styled.Item>
           <Styled.Label>📅 일시</Styled.Label>
           <Styled.Value>
-            {formatDate(article.eventStartDate)} -{' '}
-            {formatDate(article.eventEndDate)}
+            {formatKSTDateTimeFull(article.eventStartDate)} -{' '}
+            {formatKSTDateTimeFull(article.eventEndDate)}
           </Styled.Value>
         </Styled.Item>
 

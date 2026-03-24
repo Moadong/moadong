@@ -1,6 +1,7 @@
 import LocationIcon from '@/assets/images/icons/location_icon.svg';
 import TimeIcon from '@/assets/images/icons/time_icon.svg';
 import * as Styled from './CardMeta.styles';
+import { formatKSTDate } from '@/utils/formatKSTDateTime';
 
 interface CardMetaProps {
   title: string;
@@ -9,12 +10,7 @@ interface CardMetaProps {
 }
 
 const CardMeta = ({ title, location, startDate }: CardMetaProps) => {
-  const startDateObj = new Date(startDate);
-  const formattedStartDate = startDateObj.toLocaleDateString('ko-KR', {
-    month: 'long',
-    day: 'numeric',
-    weekday: 'long',
-  });
+  const formattedStartDate = formatKSTDate(startDate);
 
   return (
     <Styled.Container>
