@@ -17,7 +17,6 @@ const RelatedPromotionCard = ({ article, onClick }: Props) => {
 
       <CardMeta
         title={article.title}
-        description={article.description}
         location={article.location}
         startDate={article.eventStartDate}
       />
