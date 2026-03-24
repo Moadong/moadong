@@ -50,7 +50,10 @@ describe('calendarSyncUtils', () => {
     });
 
     it('parseDateKey는 ISO datetime을 YYYY-MM-DD로 정규화한다', () => {
-      expect(parseDateKey('2026-03-22T06:25:00.000Z')).toBeTruthy();
+      expect(parseDateKey('2026-03-22T06:25:00.000Z')).toBe('2026-03-22');
+      expect(parseDateKey('Sun, 22 Mar 2026 06:25:00 GMT')).toBe(
+        '2026-03-22',
+      );
       expect(parseDateKey('invalid-date')).toBeNull();
     });
 

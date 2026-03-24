@@ -54,17 +54,19 @@ export const formatDateText = (dateText?: string) => {
  * 유효하지 않은 값이면 null을 반환한다.
  */
 export const parseDateKey = (dateText: string) => {
-  if (/^\d{4}-\d{2}-\d{2}$/.test(dateText)) {
-    return dateText;
+  const datePart = dateText.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (datePart) {
+    return datePart[1];
   }
 
   const parsed = new Date(dateText);
   if (Number.isNaN(parsed.getTime())) return null;
 
-  const localYear = parsed.getFullYear();
-  const localMonth = String(parsed.getMonth() + 1).padStart(2, '0');
-  const localDay = String(parsed.getDate()).padStart(2, '0');
-  return `${localYear}-${localMonth}-${localDay}`;
+  // 문자열에 날짜 파트가 없을 때도 시간대 영향 없이 같은 UTC 날짜 키를 유지한다.
+  const utcYear = parsed.getUTCFullYear();
+  const utcMonth = String(parsed.getUTCMonth() + 1).padStart(2, '0');
+  const utcDay = String(parsed.getUTCDate()).padStart(2, '0');
+  return `${utcYear}-${utcMonth}-${utcDay}`;
 };
 
 /** Date 객체를 `YYYY-MM-DD` 키 문자열로 변환한다. */
@@ -92,10 +94,13 @@ export const buildMonthCalendarDays = (month: Date) => {
   gridEnd.setDate(monthEnd.getDate() + (6 - monthEnd.getDay()));
 
   const days: Date[] = [];
-  const cursor = new Date(gridStart);
-  while (cursor <= gridEnd) {
-    days.push(new Date(cursor));
-    cursor.setDate(cursor.getDate() + 1);
+  const oneDayMs = 24 * 60 * 60 * 1000;
+  for (
+    let timestamp = gridStart.getTime();
+    timestamp <= gridEnd.getTime();
+    timestamp += oneDayMs
+  ) {
+    days.push(new Date(timestamp));
   }
   return days;
 };

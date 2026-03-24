@@ -43,18 +43,28 @@ export const useNotionOAuth = ({
   };
 
   useEffect(() => {
+    const clearOAuthParamsFromUrl = () => {
+      const cleanUrl = window.location.pathname;
+      window.history.replaceState({}, document.title, cleanUrl);
+    };
+
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const state = params.get('state');
     const error = params.get('error');
+    const hasOAuthParams = Boolean(code || state || error);
     const expectedState = sessionStorage.getItem(NOTION_STATE_KEY);
 
     if (error) {
       onError(`Notion OAuth 실패: ${error}`);
+      clearOAuthParamsFromUrl();
       return;
     }
 
     if (!code || !state || !expectedState || state !== expectedState) {
+      if (hasOAuthParams) {
+        clearOAuthParamsFromUrl();
+      }
       return;
     }
 
@@ -74,8 +84,7 @@ export const useNotionOAuth = ({
       })
       .finally(() => {
         setIsNotionOAuthLoading(false);
-        const cleanUrl = window.location.pathname;
-        window.history.replaceState({}, document.title, cleanUrl);
+        clearOAuthParamsFromUrl();
       });
   }, [clearError, loadNotionPages, onError, onStatus, onWorkspaceName]);
 
