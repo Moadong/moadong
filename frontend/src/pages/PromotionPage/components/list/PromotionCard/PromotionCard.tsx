@@ -15,7 +15,7 @@ interface PromotionCardProps {
 const PromotionCard = ({ article }: PromotionCardProps) => {
   const trackEvent = useMixpanelTrack();
   const navigateToPromotionDetail = useNavigate();
-  const dday = getDDay(article.eventStartDate);
+  const dday = getDDay(article.eventStartDate, article.eventEndDate);
 
   const handleCardClick = () => {
     if (article.isFestival) {

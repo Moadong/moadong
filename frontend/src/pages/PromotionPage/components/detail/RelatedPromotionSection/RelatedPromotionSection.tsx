@@ -13,9 +13,9 @@ const RelatedPromotionSection = ({ currentClubId, articles }: Props) => {
   const navigate = useNavigate();
 
   const activeEvents = articles
-    .filter((a) => {
-      const dday = getDDay(a.eventStartDate);
-      return a.clubId !== currentClubId && dday >= 0;
+    .filter((article) => {
+      const dday = getDDay(article.eventStartDate, article.eventEndDate);
+      return article.clubId !== currentClubId && dday >= 0;
     })
     .slice(0, 1);
 
