@@ -1,6 +1,6 @@
 export const formatKSTDateTime = (
   dateStr: string,
-  options: Intl.DateTimeFormatOptions = {}
+  options: Intl.DateTimeFormatOptions = {},
 ) => {
   if (!dateStr) return '';
   const date = new Date(dateStr);

@@ -1,6 +1,6 @@
 import { PromotionArticle } from '@/types/promotion';
-import * as Styled from './PromotionInfoSection.styles';
 import { formatKSTDateTimeFull } from '@/utils/formatKSTDateTime';
+import * as Styled from './PromotionInfoSection.styles';
 
 interface Props {
   article: PromotionArticle;

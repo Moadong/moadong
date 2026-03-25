@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import { PromotionArticle } from '@/types/promotion';
 import { getDDay } from '@/pages/PromotionPage/utils/getDday';
+import { PromotionArticle } from '@/types/promotion';
 import CardMeta from './CardMeta/CardMeta';
 import ClubTag from './ClubTag/ClubTag';
 import DdayBadge from './DdayBadge/DdayBadge';

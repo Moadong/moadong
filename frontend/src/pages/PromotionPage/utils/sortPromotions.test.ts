@@ -1,10 +1,10 @@
-import { sortPromotions } from './sortPromotions';
 import { PromotionArticle } from '@/types/promotion';
+import { sortPromotions } from './sortPromotions';
 
 const createArticle = (
   title: string,
   start: string,
-  end: string
+  end: string,
 ): PromotionArticle => ({
   id: title,
   title,
@@ -24,13 +24,13 @@ describe('sortPromotions', () => {
     const ongoing = createArticle(
       'ongoing',
       '2026-04-09T00:00:00Z',
-      '2026-04-11T00:00:00Z'
+      '2026-04-11T00:00:00Z',
     );
 
     const upcoming = createArticle(
       'upcoming',
       '2026-04-12T00:00:00Z',
-      '2026-04-13T00:00:00Z'
+      '2026-04-13T00:00:00Z',
     );
 
     const result = sortPromotions([upcoming, ongoing], NOW);
@@ -42,13 +42,13 @@ describe('sortPromotions', () => {
     const soon = createArticle(
       'soon',
       '2026-04-11T00:00:00Z',
-      '2026-04-12T00:00:00Z'
+      '2026-04-12T00:00:00Z',
     );
 
     const later = createArticle(
       'later',
       '2026-04-20T00:00:00Z',
-      '2026-04-21T00:00:00Z'
+      '2026-04-21T00:00:00Z',
     );
 
     const result = sortPromotions([later, soon], NOW);
@@ -60,13 +60,13 @@ describe('sortPromotions', () => {
     const ended = createArticle(
       'ended',
       '2026-04-01T00:00:00Z',
-      '2026-04-05T00:00:00Z'
+      '2026-04-05T00:00:00Z',
     );
 
     const upcoming = createArticle(
       'upcoming',
       '2026-04-12T00:00:00Z',
-      '2026-04-13T00:00:00Z'
+      '2026-04-13T00:00:00Z',
     );
 
     const result = sortPromotions([ended, upcoming], NOW);
@@ -78,13 +78,13 @@ describe('sortPromotions', () => {
     const old = createArticle(
       'old',
       '2026-04-01T00:00:00Z',
-      '2026-04-02T00:00:00Z'
+      '2026-04-02T00:00:00Z',
     );
 
     const recent = createArticle(
       'recent',
       '2026-04-05T00:00:00Z',
-      '2026-04-06T00:00:00Z'
+      '2026-04-06T00:00:00Z',
     );
 
     const result = sortPromotions([old, recent], NOW);
@@ -96,24 +96,24 @@ describe('sortPromotions', () => {
     const ongoing = createArticle(
       'ongoing',
       '2026-04-09T00:00:00Z',
-      '2026-04-11T00:00:00Z'
+      '2026-04-11T00:00:00Z',
     );
 
     const upcoming = createArticle(
       'upcoming',
       '2026-04-12T00:00:00Z',
-      '2026-04-13T00:00:00Z'
+      '2026-04-13T00:00:00Z',
     );
 
     const ended = createArticle(
       'ended',
       '2026-04-01T00:00:00Z',
-      '2026-04-02T00:00:00Z'
+      '2026-04-02T00:00:00Z',
     );
 
     const result = sortPromotions([ended, upcoming, ongoing], NOW);
 
-    expect(result.map(a => a.title)).toEqual([
+    expect(result.map((a) => a.title)).toEqual([
       'ongoing',
       'upcoming',
       'ended',

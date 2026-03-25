@@ -5,7 +5,7 @@ export const getDDay = (eventStartDate: string, eventEndDate: string) => {
 
   if (currentTime < eventStartTime) {
     const remainingTimeUntilStart = eventStartTime - currentTime;
-    
+
     const remainingDays = Math.ceil(
       remainingTimeUntilStart / (1000 * 60 * 60 * 24),
     );
@@ -14,7 +14,7 @@ export const getDDay = (eventStartDate: string, eventEndDate: string) => {
   }
 
   if (currentTime >= eventStartTime && currentTime <= eventEndTime) {
-    return 0; 
+    return 0;
   }
 
   return -1;

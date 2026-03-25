@@ -1,7 +1,7 @@
 import LocationIcon from '@/assets/images/icons/location_icon.svg';
 import TimeIcon from '@/assets/images/icons/time_icon.svg';
-import * as Styled from './CardMeta.styles';
 import { formatKSTDate } from '@/utils/formatKSTDateTime';
+import * as Styled from './CardMeta.styles';
 
 interface CardMetaProps {
   title: string;

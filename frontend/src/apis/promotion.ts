@@ -1,12 +1,12 @@
 import API_BASE_URL from '@/constants/api';
 import { festivalMock } from '@/mocks/data/festivalMock';
+import { sortPromotions } from '@/pages/PromotionPage/utils/sortPromotions';
 import {
   CreatePromotionArticleRequest,
   PromotionArticle,
 } from '@/types/promotion';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
-import { sortPromotions } from '@/pages/PromotionPage/utils/sortPromotions';
 
 export const getPromotionArticles = async (): Promise<PromotionArticle[]> => {
   const response = await fetch(`${API_BASE_URL}/api/promotion`);

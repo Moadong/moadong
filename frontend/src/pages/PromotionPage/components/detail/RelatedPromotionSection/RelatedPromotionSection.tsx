@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
-import { PromotionArticle } from '@/types/promotion';
 import { getDDay } from '@/pages/PromotionPage/utils/getDday';
+import { PromotionArticle } from '@/types/promotion';
 import RelatedPromotionCard from './RelatedPromotionCard/RelatedPromotionCard';
 import * as Styled from './RelatedPromotionSection.styles';
 

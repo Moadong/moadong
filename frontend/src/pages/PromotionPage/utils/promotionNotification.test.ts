@@ -1,9 +1,9 @@
-import { PromotionArticle } from '@/types/promotion';
 import {
   getLastCheckedTime,
   getLatestPromotionTime,
   setLastCheckedTime,
 } from '@/pages/PromotionPage/utils/promotionNotification';
+import { PromotionArticle } from '@/types/promotion';
 
 describe('promotionNotification 유틸 함수 테스트', () => {
   beforeEach(() => {
