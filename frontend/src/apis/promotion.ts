@@ -6,6 +6,7 @@ import {
 } from '@/types/promotion';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
+import { sortPromotions } from '@/pages/PromotionPage/utils/sortPromotions';
 
 export const getPromotionArticles = async (): Promise<PromotionArticle[]> => {
   const response = await fetch(`${API_BASE_URL}/api/promotion`);
@@ -25,23 +26,7 @@ export const getPromotionArticles = async (): Promise<PromotionArticle[]> => {
 
   const merged = [...festivalMock, ...serverArticle];
 
-  return merged.sort((prev, next) => {
-    const now = Date.now();
-
-    const prevStart = new Date(prev.eventStartDate).getTime();
-    const nextStart = new Date(next.eventStartDate).getTime();
-
-    const prevEnd = new Date(prev.eventEndDate).getTime();
-    const nextEnd = new Date(next.eventEndDate).getTime();
-
-    const prevEnded = prevEnd < now;
-    const nextEnded = nextEnd < now;
-
-    if (prevEnded !== nextEnded) return prevEnded ? 1 : -1;
-    if (prevEnded && nextEnded) return nextEnd - prevEnd;
-
-    return prevStart - nextStart;
-  });
+  return sortPromotions(merged);
 };
 
 export const createPromotionArticle = async (

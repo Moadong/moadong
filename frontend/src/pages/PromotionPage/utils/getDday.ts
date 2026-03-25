@@ -1,21 +1,20 @@
-export const getDDay = (startDate: string, endDate: string) => {
-  const today = new Date();
-  const start = new Date(startDate);
-  const end = new Date(endDate);
+export const getDDay = (eventStartDate: string, eventEndDate: string) => {
+  const currentTime = new Date().getTime();
+  const eventStartTime = new Date(eventStartDate).getTime();
+  const eventEndTime = new Date(eventEndDate).getTime();
 
-  today.setHours(0, 0, 0, 0);
-  start.setHours(0, 0, 0, 0);
-  end.setHours(0, 0, 0, 0);
+  if (currentTime < eventStartTime) {
+    const remainingTimeUntilStart = eventStartTime - currentTime;
+    
+    const remainingDays = Math.ceil(
+      remainingTimeUntilStart / (1000 * 60 * 60 * 24),
+    );
 
-  if (today >= start && today <= end) {
-    return 0;
+    return remainingDays;
   }
 
-  if (today < start) {
-    const diff = Math.ceil(
-      (start.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
-    );
-    return diff;
+  if (currentTime >= eventStartTime && currentTime <= eventEndTime) {
+    return 0; 
   }
 
   return -1;
