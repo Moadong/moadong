@@ -1,9 +1,11 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { initializeExperiments } from './experiments/initializeExperiments';
 import { initializeMixpanel, initializeSentry } from './utils/initSDK';
 
 initializeMixpanel();
 initializeSentry();
+initializeExperiments();
 
 async function startApp() {
   if (import.meta.env.DEV) {
