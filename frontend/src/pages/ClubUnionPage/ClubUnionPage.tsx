@@ -6,8 +6,8 @@ import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
-import * as Styled from './ClubUnionPage.styles';
 import { colors } from '@/styles/theme/colors';
+import * as Styled from './ClubUnionPage.styles';
 
 const MEMBER_COLORS = {
   PRESIDENT: colors.accent[1][500],

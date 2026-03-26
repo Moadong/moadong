@@ -51,7 +51,8 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     id: 3,
     name: '최지현',
     role: '기획국장',
-    description: '동아리의 바램이 이루어지도록 질 높은 행사를 만들어가겠습니다.',
+    description:
+      '동아리의 바램이 이루어지도록 질 높은 행사를 만들어가겠습니다.',
     imageSrc: MEMBER_AVATARS.PLANNING,
     type: 'PLANNING',
   },
@@ -67,7 +68,8 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     id: 5,
     name: '최동희',
     role: '홍보국장',
-    description: '모두가 바라는 대로, 즐거운 동아리 활동에 앞장서 노력하겠습니다.',
+    description:
+      '모두가 바라는 대로, 즐거운 동아리 활동에 앞장서 노력하겠습니다.',
     imageSrc: MEMBER_AVATARS.PROMOTION,
     type: 'PROMOTION',
   },
@@ -75,7 +77,8 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     id: 6,
     name: '전호진',
     role: '봉사분과장',
-    description: '나눔은 나눌수록 배가 됩니다. 작은 나눔을 통해 삶의 따스함을 느낍시다.',
+    description:
+      '나눔은 나눌수록 배가 됩니다. 작은 나눔을 통해 삶의 따스함을 느낍시다.',
     imageSrc: MEMBER_AVATARS.VOLUNTEER,
     type: 'VOLUNTEER',
   },
@@ -103,7 +106,7 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     imageSrc: MEMBER_AVATARS.STUDY,
     type: 'STUDY',
   },
-    {
+  {
     id: 10,
     name: '김민제',
     role: '운동1분과장',
@@ -123,7 +126,8 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     id: 12,
     name: '권민준',
     role: '공연1분과장',
-    description: '많은 학우분들이 공연과 다양한 볼거리를 즐길 수 있도록 노력하겠습니다.',
+    description:
+      '많은 학우분들이 공연과 다양한 볼거리를 즐길 수 있도록 노력하겠습니다.',
     imageSrc: MEMBER_AVATARS.PERFORMANCE,
     type: 'PERFORMANCE',
   },
