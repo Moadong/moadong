@@ -138,7 +138,7 @@ export const NameBadge = styled.div`
   }
 `;
 
-export const ProfileCardContainer = styled.div<{ bgColor: string }>`
+export const ProfileCardContainer = styled.div<{ $bgColor: string }>`
   position: relative;
   width: 180px;
   height: 180px;
@@ -146,7 +146,7 @@ export const ProfileCardContainer = styled.div<{ bgColor: string }>`
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  background-color: ${({ bgColor }) => bgColor};
+  background-color: ${({ $bgColor }) => $bgColor};
 
   ${media.laptop} {
     width: 160px;

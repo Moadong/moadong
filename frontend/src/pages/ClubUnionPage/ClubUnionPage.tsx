@@ -68,7 +68,7 @@ const ClubUnionPage = () => {
           {CLUB_UNION_MEMBERS.map((member) => (
             <Styled.ProfileCardContainer
               key={member.id}
-              bgColor={MEMBER_COLORS[member.type]}
+              $bgColor={MEMBER_COLORS[member.type]}
             >
               <Styled.ProfileImage
                 src={member.imageSrc}
