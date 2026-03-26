@@ -6,14 +6,15 @@ export interface ClubUnionMember {
   role: string;
   description: string;
   imageSrc: string;
+  type: keyof typeof MEMBER_AVATARS;
 }
 
 const MEMBER_AVATARS = {
-  PRESIDENT: inactiveCategoryIcons.all,
-  VICE_PRESIDENT: inactiveCategoryIcons.all,
-  PLANNING: inactiveCategoryIcons.all,
-  SECRETARY: inactiveCategoryIcons.all,
-  PROMOTION: inactiveCategoryIcons.all,
+  PRESIDENT: inactiveCategoryIcons.representative,
+  VICE_PRESIDENT: inactiveCategoryIcons.representative,
+  PLANNING: inactiveCategoryIcons.representative,
+  SECRETARY: inactiveCategoryIcons.representative,
+  PROMOTION: inactiveCategoryIcons.representative,
   RELIGION: inactiveCategoryIcons.religion,
   HOBBY: inactiveCategoryIcons.hobby,
   STUDY: inactiveCategoryIcons.study,
@@ -36,6 +37,7 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '회장',
     description: '',
     imageSrc: MEMBER_AVATARS.PRESIDENT,
+    type: 'PRESIDENT',
   },
   {
     id: 2,
@@ -43,6 +45,7 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '부회장',
     description: '',
     imageSrc: MEMBER_AVATARS.VICE_PRESIDENT,
+    type: 'VICE_PRESIDENT',
   },
   {
     id: 3,
@@ -50,6 +53,7 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '기획국장',
     description: '',
     imageSrc: MEMBER_AVATARS.PLANNING,
+    type: 'PLANNING',
   },
   {
     id: 4,
@@ -57,6 +61,7 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '사무국장',
     description: '',
     imageSrc: MEMBER_AVATARS.SECRETARY,
+    type: 'SECRETARY',
   },
   {
     id: 5,
@@ -64,6 +69,7 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '홍보국장',
     description: '',
     imageSrc: MEMBER_AVATARS.PROMOTION,
+    type: 'PROMOTION',
   },
   {
     id: 6,
@@ -71,6 +77,7 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '봉사분과장',
     description: '',
     imageSrc: MEMBER_AVATARS.VOLUNTEER,
+    type: 'VOLUNTEER',
   },
   {
     id: 7,
@@ -78,6 +85,7 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '종교분과장',
     description: '',
     imageSrc: MEMBER_AVATARS.RELIGION,
+    type: 'RELIGION',
   },
   {
     id: 8,
@@ -85,6 +93,7 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '취미교양분과장',
     description: '',
     imageSrc: MEMBER_AVATARS.HOBBY,
+    type: 'HOBBY',
   },
   {
     id: 9,
@@ -92,33 +101,38 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     role: '학술분과장',
     description: '',
     imageSrc: MEMBER_AVATARS.STUDY,
+    type: 'STUDY',
   },
-  {
+    {
     id: 10,
-    name: '권민준',
-    role: '공연1분과장',
-    description: '',
-    imageSrc: MEMBER_AVATARS.PERFORMANCE,
-  },
-  {
-    id: 11,
-    name: '곽현우',
-    role: '공연2분과장',
-    description: '',
-    imageSrc: MEMBER_AVATARS.PERFORMANCE,
-  },
-  {
-    id: 12,
     name: '김민제',
     role: '운동1분과장',
     description: '',
     imageSrc: MEMBER_AVATARS.SPORT,
+    type: 'SPORT',
   },
   {
-    id: 13,
+    id: 11,
     name: '이상재',
     role: '운동2분과장',
     description: '',
     imageSrc: MEMBER_AVATARS.SPORT,
+    type: 'SPORT',
+  },
+  {
+    id: 12,
+    name: '권민준',
+    role: '공연1분과장',
+    description: '',
+    imageSrc: MEMBER_AVATARS.PERFORMANCE,
+    type: 'PERFORMANCE',
+  },
+  {
+    id: 13,
+    name: '곽현우',
+    role: '공연2분과장',
+    description: '',
+    imageSrc: MEMBER_AVATARS.PERFORMANCE,
+    type: 'PERFORMANCE',
   },
 ];

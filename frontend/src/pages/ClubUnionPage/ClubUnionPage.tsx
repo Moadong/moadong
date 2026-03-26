@@ -7,6 +7,21 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './ClubUnionPage.styles';
+import { colors } from '@/styles/theme/colors';
+
+const MEMBER_COLORS = {
+  PRESIDENT: colors.accent[1][500],
+  VICE_PRESIDENT: colors.accent[1][500],
+  PLANNING: colors.accent[1][500],
+  SECRETARY: colors.accent[1][500],
+  PROMOTION: colors.accent[1][500],
+  VOLUNTEER: colors.secondary[1].back,
+  RELIGION: colors.secondary[2].back,
+  HOBBY: colors.secondary[3].back,
+  STUDY: colors.secondary[4].back,
+  SPORT: colors.secondary[5].back,
+  PERFORMANCE: colors.secondary[6].back,
+};
 
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
@@ -51,7 +66,10 @@ const ClubUnionPage = () => {
         </Styled.SnsLinkContainer>
         <Styled.ProfileGrid>
           {CLUB_UNION_MEMBERS.map((member) => (
-            <Styled.ProfileCardContainer key={member.id}>
+            <Styled.ProfileCardContainer
+              key={member.id}
+              bgColor={MEMBER_COLORS[member.type]}
+            >
               <Styled.ProfileImage
                 src={member.imageSrc}
                 alt={`${member.name} 프로필`}

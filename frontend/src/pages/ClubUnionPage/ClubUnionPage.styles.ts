@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const Title = styled.h1`
   font-size: 2.5rem;
@@ -86,6 +87,7 @@ export const ProfileGrid = styled.div`
 
 export const InfoOverlay = styled.div`
   position: absolute;
+  inset: 0;
   top: 0;
   left: 0;
   width: 100%;
@@ -105,9 +107,13 @@ export const InfoOverlay = styled.div`
 `;
 
 export const ProfileImage = styled.img`
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
+  width: 80%;
+  height: 80%;
+  object-fit: contain;
+  position: absolute;
+  top: 42%;
+  left: 50%;
+  transform: translate(-50%, -50%);
   transition:
     transform 0.3s ease,
     filter 0.3s ease;
@@ -118,17 +124,21 @@ export const NameBadge = styled.div`
   bottom: 10%;
   left: 50%;
   transform: translateX(-50%);
-  background-color: rgba(255, 255, 255, 0.8);
-  color: #333;
-  padding: 5px 15px;
-  border-radius: 15px;
+  background-color: ${colors.base.white};
+  color: ${colors.base.black};
+  padding: 3px 12px;
+  border-radius: 30px;
   font-weight: 600;
   font-size: 1rem;
   transition: opacity 0.3s ease;
   white-space: nowrap;
+
+  ${media.mobile} {
+    font-size: 0.8rem;
+  }
 `;
 
-export const ProfileCardContainer = styled.div`
+export const ProfileCardContainer = styled.div<{ bgColor: string }>`
   position: relative;
   width: 180px;
   height: 180px;
@@ -136,6 +146,7 @@ export const ProfileCardContainer = styled.div`
   overflow: hidden;
   cursor: pointer;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  background-color: ${({ bgColor }) => bgColor};
 
   ${media.laptop} {
     width: 160px;
@@ -154,8 +165,9 @@ export const ProfileCardContainer = styled.div`
 
   &:hover {
     ${ProfileImage} {
-      transform: scale(1.1);
+      transform: translate(-50%, -50%) scale(1.4);
       filter: brightness(0.5);
+      top: 50%;
     }
     ${InfoOverlay} {
       opacity: 1;
