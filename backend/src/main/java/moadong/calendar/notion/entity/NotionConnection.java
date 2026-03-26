@@ -16,7 +16,7 @@ import org.springframework.data.mongodb.core.mapping.Document;
 public class NotionConnection {
 
     @Id
-    private String userId;
+    private String clubId;
 
     private String encryptedAccessToken;
 

@@ -29,10 +29,15 @@ public record ClubDetailedResult(
         Map<String, String> socialLinks,
         String category,
         String division,
-        String lastModifiedDate
+        String lastModifiedDate,
+        List<ClubCalendarEventResult> calendarEvents
 ) {
 
     public static ClubDetailedResult of(Club club) {
+        return of(club, List.of());
+    }
+
+    public static ClubDetailedResult of(Club club, List<ClubCalendarEventResult> calendarEvents) {
         ClubRecruitmentInformation clubRecruitmentInformation = club.getClubRecruitmentInformation();
 
         String start = "미정";
@@ -82,6 +87,7 @@ public record ClubDetailedResult(
                 .socialLinks(club.getSocialLinks() == null ? Map.of()
                         : club.getSocialLinks())
                 .lastModifiedDate(lastModifiedDate)
+                .calendarEvents(calendarEvents == null ? List.of() : calendarEvents)
                 .build();
     }
 

@@ -2,10 +2,13 @@ package moadong.club.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.calendar.notion.service.NotionOAuthService;
 import moadong.club.entity.Club;
+import moadong.club.payload.dto.ClubCalendarEventResult;
 import moadong.club.payload.dto.ClubDetailedResult;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
+import moadong.club.payload.response.ClubCalendarEventsResponse;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.payload.response.ClubListResponse;
 import moadong.club.repository.ClubRepository;
@@ -34,6 +37,7 @@ public class ClubProfileService {
     private final RecruitmentStateNotificationBuilder recruitmentStateNotificationBuilder;
     private final PushNotificationPort pushNotificationPort;
     private final Javers javers;
+    private final NotionOAuthService notionOAuthService;
 
     @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
@@ -86,7 +90,8 @@ public class ClubProfileService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club);
+        List<ClubCalendarEventResult> calendarEvents = notionOAuthService.getClubCalendarEvents(club.getId());
+        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, calendarEvents);
         return new ClubDetailedResponse(clubDetailedResult);
     }
 
@@ -94,10 +99,26 @@ public class ClubProfileService {
         Club club = clubRepository.findClubByName(clubName)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(
-                club
-        );
+        List<ClubCalendarEventResult> calendarEvents = notionOAuthService.getClubCalendarEvents(club.getId());
+        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, calendarEvents);
         return new ClubDetailedResponse(clubDetailedResult);
+    }
+
+    public ClubCalendarEventsResponse getClubCalendarEvents(String clubId) {
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
+        Club club = clubRepository.findClubById(objectId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        List<ClubCalendarEventResult> calendarEvents = notionOAuthService.getClubCalendarEvents(club.getId());
+        return new ClubCalendarEventsResponse(calendarEvents);
+    }
+
+    public ClubCalendarEventsResponse getClubCalendarEventsByClubName(String clubName) {
+        Club club = clubRepository.findClubByName(clubName)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        List<ClubCalendarEventResult> calendarEvents = notionOAuthService.getClubCalendarEvents(club.getId());
+        return new ClubCalendarEventsResponse(calendarEvents);
     }
 
     @Transactional

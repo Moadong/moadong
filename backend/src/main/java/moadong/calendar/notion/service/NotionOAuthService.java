@@ -6,6 +6,7 @@ import java.util.Base64;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.global.util.AESCipher;
@@ -15,6 +16,9 @@ import moadong.calendar.notion.payload.dto.NotionTokenApiResponse;
 import moadong.calendar.notion.payload.request.NotionTokenExchangeRequest;
 import moadong.calendar.notion.payload.response.NotionTokenExchangeResponse;
 import moadong.calendar.notion.repository.NotionConnectionRepository;
+import moadong.club.entity.Club;
+import moadong.club.payload.dto.ClubCalendarEventResult;
+import moadong.club.repository.ClubRepository;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
@@ -35,6 +39,7 @@ public class NotionOAuthService {
 
     private final RestTemplate restTemplate;
     private final NotionConnectionRepository notionConnectionRepository;
+    private final ClubRepository clubRepository;
     private final AESCipher cipher;
     private final NotionProperties notionProperties;
 
@@ -68,7 +73,7 @@ public class NotionOAuthService {
     }
 
     public NotionTokenExchangeResponse exchangeCode(CustomUserDetails user, NotionTokenExchangeRequest request) {
-        String userId = requireAuthenticatedUserId(user);
+        String clubId = requireAuthenticatedClubId(user);
         String notionClientId = notionProperties.clientId();
         String notionClientSecret = notionProperties.clientSecret();
         String notionRedirectUri = notionProperties.redirectUri();
@@ -114,7 +119,7 @@ public class NotionOAuthService {
                 throw new IllegalStateException("Notion 토큰 응답이 비어있습니다.");
             }
 
-            saveNotionConnection(userId, body);
+            saveNotionConnection(clubId, body);
 
             return new NotionTokenExchangeResponse(
                     body.workspaceName(),
@@ -126,8 +131,8 @@ public class NotionOAuthService {
     }
 
     public Map<String, Object> getRecentPages(CustomUserDetails user) {
-        String userId = requireAuthenticatedUserId(user);
-        NotionConnection connection = getNotionConnection(userId);
+        String clubId = requireAuthenticatedClubId(user);
+        NotionConnection connection = getNotionConnection(clubId);
         String databaseId = connection.getDatabaseId();
         if (!StringUtils.hasText(databaseId)) {
             throw new IllegalStateException("저장된 Notion databaseId가 없습니다. 먼저 데이터베이스를 선택해주세요.");
@@ -137,8 +142,8 @@ public class NotionOAuthService {
     }
 
     public Map<String, Object> getDatabases(CustomUserDetails user) {
-        String userId = requireAuthenticatedUserId(user);
-        String notionAccessToken = getDecryptedAccessToken(userId);
+        String clubId = requireAuthenticatedClubId(user);
+        String notionAccessToken = getDecryptedAccessToken(clubId);
         String nextCursor = null;
         List<Object> allResults = new ArrayList<>();
         int requestCount = 0;
@@ -161,7 +166,7 @@ public class NotionOAuthService {
             }
 
             if (requestCount >= 50) {
-                log.warn("Notion DB 목록 페이지네이션 요청 상한 도달. userId={}, collected={}", userId, allResults.size());
+                log.warn("Notion DB 목록 페이지네이션 요청 상한 도달. clubId={}, collected={}", clubId, allResults.size());
                 break;
             }
         }
@@ -176,14 +181,14 @@ public class NotionOAuthService {
     }
 
     public Map<String, Object> getDatabasePages(CustomUserDetails user, String databaseId, String dateProperty) {
-        String userId = requireAuthenticatedUserId(user);
-        String notionAccessToken = getDecryptedAccessToken(userId);
+        String clubId = requireAuthenticatedClubId(user);
+        String notionAccessToken = getDecryptedAccessToken(clubId);
 
         if (!StringUtils.hasText(databaseId)) {
             throw new IllegalArgumentException("databaseId가 필요합니다.");
         }
 
-        saveDatabaseId(userId, databaseId);
+        saveDatabaseId(clubId, databaseId);
 
         String nextCursor = null;
         List<Object> allResults = new ArrayList<>();
@@ -207,8 +212,8 @@ public class NotionOAuthService {
             }
 
             if (requestCount >= 50) {
-                log.warn("Notion DB 페이지네이션 요청 상한 도달. userId={}, databaseId={}, collected={}",
-                        userId, databaseId, allResults.size());
+                log.warn("Notion DB 페이지네이션 요청 상한 도달. clubId={}, databaseId={}, collected={}",
+                        clubId, databaseId, allResults.size());
                 break;
             }
         }
@@ -224,6 +229,70 @@ public class NotionOAuthService {
             aggregated.put("date_property", dateProperty);
         }
         return aggregated;
+    }
+
+    public List<ClubCalendarEventResult> getClubCalendarEvents(String clubId) {
+        if (!StringUtils.hasText(clubId)) {
+            log.debug("클럽 상세 캘린더 이벤트 조회 스킵: clubId가 비어있습니다.");
+            return List.of();
+        }
+
+        try {
+            NotionConnection connection = getNotionConnection(clubId);
+            if (!StringUtils.hasText(connection.getDatabaseId())) {
+                log.debug("클럽 상세 캘린더 이벤트 조회 스킵. clubId={}, reason=databaseId 미설정", clubId);
+                return List.of();
+            }
+
+            String notionAccessToken = getDecryptedAccessToken(clubId);
+            String nextCursor = null;
+            List<Object> allResults = new ArrayList<>();
+            int requestCount = 0;
+
+            while (true) {
+                Map<String, Object> responseBody = queryNotionDatabase(
+                        notionAccessToken,
+                        connection.getDatabaseId(),
+                        null,
+                        nextCursor
+                );
+                requestCount++;
+
+                Object resultsObj = responseBody.get("results");
+                if (resultsObj instanceof List<?> resultList) {
+                    allResults.addAll(resultList);
+                }
+
+                boolean hasMore = Boolean.TRUE.equals(responseBody.get("has_more"));
+                Object cursorObj = responseBody.get("next_cursor");
+                nextCursor = cursorObj instanceof String cursor && StringUtils.hasText(cursor) ? cursor : null;
+
+                if (!hasMore || !StringUtils.hasText(nextCursor)) {
+                    break;
+                }
+
+                if (requestCount >= 50) {
+                    log.warn("클럽 상세 캘린더 이벤트 페이지네이션 상한 도달. clubId={}, databaseId={}, collected={}",
+                            clubId, connection.getDatabaseId(), allResults.size());
+                    break;
+                }
+            }
+
+            List<ClubCalendarEventResult> mappedEvents = allResults.stream()
+                    .map(this::mapToClubCalendarEvent)
+                    .flatMap(Optional::stream)
+                    .toList();
+
+            log.debug("클럽 상세 캘린더 이벤트 조회 완료. clubId={}, databaseId={}, notionResults={}, mappedEvents={}",
+                    clubId, connection.getDatabaseId(), allResults.size(), mappedEvents.size());
+            return mappedEvents;
+        } catch (IllegalStateException e) {
+            log.debug("클럽 상세 캘린더 이벤트 미연동 상태. clubId={}, message={}", clubId, e.getMessage());
+            return List.of();
+        } catch (Exception e) {
+            log.warn("클럽 상세 캘린더 이벤트 조회 실패. clubId={}, message={}", clubId, e.getMessage());
+            return List.of();
+        }
     }
 
     private Map<String, Object> searchNotionPages(String notionAccessToken, String startCursor) {
@@ -348,22 +417,33 @@ public class NotionOAuthService {
         return user.getId();
     }
 
-    private void saveNotionConnection(String userId, NotionTokenApiResponse body) {
+    private String requireAuthenticatedClubId(CustomUserDetails user) {
+        String userId = requireAuthenticatedUserId(user);
+        Club club = clubRepository.findClubByUserId(userId)
+                .orElseThrow(() -> new IllegalStateException("연동할 동아리 정보를 찾을 수 없습니다."));
+
+        if (!StringUtils.hasText(club.getId())) {
+            throw new IllegalStateException("동아리 ID가 없어 Notion 연동 정보를 저장할 수 없습니다.");
+        }
+        return club.getId();
+    }
+
+    private void saveNotionConnection(String clubId, NotionTokenApiResponse body) {
         try {
             String encryptedAccessToken = cipher.encrypt(body.accessToken());
-            NotionConnection connection = notionConnectionRepository.findById(userId)
-                    .orElse(NotionConnection.builder().userId(userId).build());
+            NotionConnection connection = notionConnectionRepository.findById(clubId)
+                    .orElse(NotionConnection.builder().clubId(clubId).build());
 
             connection.updateConnection(encryptedAccessToken, body.workspaceName(), body.workspaceId());
             notionConnectionRepository.save(connection);
         } catch (Exception e) {
-            log.error("Notion access token 암호화 저장 실패. userId={}", userId, e);
+            log.error("Notion access token 암호화 저장 실패. clubId={}", clubId, e);
             throw new IllegalStateException("Notion 토큰 저장에 실패했습니다.");
         }
     }
 
-    private String getDecryptedAccessToken(String userId) {
-        NotionConnection connection = getNotionConnection(userId);
+    private String getDecryptedAccessToken(String clubId) {
+        NotionConnection connection = getNotionConnection(clubId);
 
         if (!StringUtils.hasText(connection.getEncryptedAccessToken())) {
             throw new IllegalStateException("저장된 Notion access token이 없습니다.");
@@ -372,19 +452,129 @@ public class NotionOAuthService {
         try {
             return cipher.decrypt(connection.getEncryptedAccessToken());
         } catch (Exception e) {
-            log.error("Notion access token 복호화 실패. userId={}", userId, e);
+            log.error("Notion access token 복호화 실패. clubId={}", clubId, e);
             throw new IllegalStateException("Notion 토큰 복호화에 실패했습니다.");
         }
     }
 
-    private NotionConnection getNotionConnection(String userId) {
-        return notionConnectionRepository.findById(userId)
+    private NotionConnection getNotionConnection(String clubId) {
+        return notionConnectionRepository.findById(clubId)
+                .or(() -> findLegacyNotionConnectionAndMigrate(clubId))
                 .orElseThrow(() -> new IllegalStateException("Notion 연결 정보가 없습니다. 먼저 OAuth 연동을 진행해주세요."));
     }
 
-    private void saveDatabaseId(String userId, String databaseId) {
-        NotionConnection connection = getNotionConnection(userId);
+    private Optional<NotionConnection> findLegacyNotionConnectionAndMigrate(String clubId) {
+        return clubRepository.findById(clubId)
+                .map(Club::getUserId)
+                .filter(StringUtils::hasText)
+                .flatMap(notionConnectionRepository::findById)
+                .map(legacy -> {
+                    NotionConnection migrated = NotionConnection.builder()
+                            .clubId(clubId)
+                            .encryptedAccessToken(legacy.getEncryptedAccessToken())
+                            .workspaceName(legacy.getWorkspaceName())
+                            .workspaceId(legacy.getWorkspaceId())
+                            .databaseId(legacy.getDatabaseId())
+                            .updatedAt(legacy.getUpdatedAt())
+                            .build();
+                    return notionConnectionRepository.save(migrated);
+                });
+    }
+
+    private void saveDatabaseId(String clubId, String databaseId) {
+        NotionConnection connection = getNotionConnection(clubId);
         connection.updateDatabaseId(databaseId);
         notionConnectionRepository.save(connection);
+    }
+
+    @SuppressWarnings("unchecked")
+    private Optional<ClubCalendarEventResult> mapToClubCalendarEvent(Object resultObj) {
+        if (!(resultObj instanceof Map<?, ?> raw)) {
+            return Optional.empty();
+        }
+
+        Map<String, Object> page = (Map<String, Object>) raw;
+        String id = asString(page.get("id"));
+        String url = asString(page.get("url"));
+
+        Map<String, Object> properties = page.get("properties") instanceof Map<?, ?> propMap
+                ? (Map<String, Object>) propMap
+                : Map.of();
+
+        String title = null;
+        String description = null;
+        String start = null;
+        String end = null;
+
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            if (!(entry.getValue() instanceof Map<?, ?> valueMap)) {
+                continue;
+            }
+
+            Map<String, Object> property = (Map<String, Object>) valueMap;
+            String type = asString(property.get("type"));
+            String propertyName = entry.getKey();
+
+            if (!StringUtils.hasText(title) && "title".equals(type)) {
+                title = extractPlainTextList(property.get("title"));
+            }
+
+            if (!StringUtils.hasText(description)
+                    && StringUtils.hasText(propertyName)
+                    && ("description".equalsIgnoreCase(propertyName) || propertyName.contains("설명"))
+                    && "rich_text".equals(type)) {
+                description = extractPlainTextList(property.get("rich_text"));
+            }
+
+            if (!StringUtils.hasText(start) && "date".equals(type) && property.get("date") instanceof Map<?, ?> dateMap) {
+                start = asString(((Map<String, Object>) dateMap).get("start"));
+                end = asString(((Map<String, Object>) dateMap).get("end"));
+            }
+        }
+
+        if (!StringUtils.hasText(start)) {
+            return Optional.empty();
+        }
+
+        String resolvedId = StringUtils.hasText(id) ? id : (StringUtils.hasText(url) ? url : "unknown");
+        String resolvedTitle = StringUtils.hasText(title) ? title : "(제목 없음)";
+
+        return Optional.of(new ClubCalendarEventResult(
+                resolvedId,
+                resolvedTitle,
+                start,
+                StringUtils.hasText(end) ? end : null,
+                StringUtils.hasText(url) ? url : null,
+                StringUtils.hasText(description) ? description : null
+        ));
+    }
+
+    @SuppressWarnings("unchecked")
+    private String extractPlainTextList(Object textListObj) {
+        if (!(textListObj instanceof List<?> list) || list.isEmpty()) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        for (Object item : list) {
+            if (!(item instanceof Map<?, ?> map)) {
+                continue;
+            }
+            String plainText = asString(((Map<String, Object>) map).get("plain_text"));
+            if (StringUtils.hasText(plainText)) {
+                if (!sb.isEmpty()) {
+                    sb.append(' ');
+                }
+                sb.append(plainText);
+            }
+        }
+        return sb.isEmpty() ? null : sb.toString();
+    }
+
+    private String asString(Object value) {
+        if (value instanceof String s && StringUtils.hasText(s)) {
+            return s;
+        }
+        return null;
     }
 }
