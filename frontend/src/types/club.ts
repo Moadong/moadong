@@ -34,6 +34,15 @@ export interface ClubDetail extends Club {
   externalApplicationUrl?: string;
 }
 
+export interface ClubCalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  end?: string;
+  url?: string;
+  description?: string;
+}
+
 export interface ClubDescription {
   id: string;
   recruitmentStart: string | null;
