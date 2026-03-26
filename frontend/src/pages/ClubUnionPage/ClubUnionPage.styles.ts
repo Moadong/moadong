@@ -196,6 +196,10 @@ export const Description = styled.p`
   font-size: 0.9rem;
   line-height: 1.5;
   margin: 0;
+
+  ${media.tablet} {
+    display: none;
+  }
 `;
 
 export const Contact = styled.p`
