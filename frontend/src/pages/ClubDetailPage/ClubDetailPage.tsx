@@ -6,12 +6,16 @@ import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import { useGetClubDetail } from '@/hooks/Queries/useClub';
+import {
+  useGetClubCalendarEvents,
+  useGetClubDetail,
+} from '@/hooks/Queries/useClub';
 import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import useDevice from '@/hooks/useDevice';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
+import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
 import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
@@ -20,11 +24,12 @@ import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 export const TAB_TYPE = {
   INTRO: 'intro',
   PHOTOS: 'photos',
+  SCHEDULE: 'schedule',
 } as const;
 
 type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
-// 소개내용/활동사진 탭 클릭 시 스크롤이 탑바 하단에 정확히 위치하도록 하는 높이 값
+// 탭 클릭 시 스크롤이 탑바 하단에 정확히 위치하도록 하는 높이 값
 const TOP_BAR_HEIGHT = 50;
 
 const ClubDetailPage = () => {
@@ -48,6 +53,9 @@ const ClubDetailPage = () => {
   const { data: clubDetail, error } = useGetClubDetail(
     (clubName ?? clubId) || '',
   );
+  const { data: calendarEvents = [] } = useGetClubCalendarEvents(
+    (clubName ?? clubId) || '',
+  );
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
@@ -64,7 +72,9 @@ const ClubDetailPage = () => {
       trackEvent(
         tabKey === TAB_TYPE.INTRO
           ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
-          : USER_EVENT.CLUB_FEED_TAB_CLICKED,
+          : tabKey === TAB_TYPE.PHOTOS
+            ? USER_EVENT.CLUB_FEED_TAB_CLICKED
+            : USER_EVENT.CLUB_SCHEDULE_TAB_CLICKED,
       );
     },
     [setSearchParams, trackEvent],
@@ -88,6 +98,7 @@ const ClubDetailPage = () => {
           tabs={[
             { key: TAB_TYPE.INTRO, label: '소개내용' },
             { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+            { key: TAB_TYPE.SCHEDULE, label: '일정 보기' },
           ]}
           activeTab={activeTab}
           onTabClick={(tabKey) => {
@@ -113,6 +124,7 @@ const ClubDetailPage = () => {
               tabs={[
                 { key: TAB_TYPE.INTRO, label: '소개 내용' },
                 { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+                { key: TAB_TYPE.SCHEDULE, label: '일정 보기' },
               ]}
               activeKey={activeTab}
               onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
@@ -133,6 +145,13 @@ const ClubDetailPage = () => {
                 }}
               >
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
+              </div>
+              <div
+                style={{
+                  display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
+                }}
+              >
+                <ClubScheduleCalendar events={calendarEvents} />
               </div>
             </Styled.TabContent>
           </Styled.RightSection>
