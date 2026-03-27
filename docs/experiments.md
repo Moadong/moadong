@@ -33,20 +33,20 @@ frontend/src/hooks/Experiment/
 // frontend/src/experiments/definitions.ts
 
 export const myNewExperiment = {
-  key: 'my_new_experiment_v1',   // 전역 고유값. 중복 금지
-  variants: ['A', 'B'] as const,
-  defaultVariant: 'A',           // 배정 실패 또는 초기화 시 기본값
+  key: "my_new_experiment_v1", // 전역 고유값. 중복 금지
+  variants: ["A", "B"] as const,
+  defaultVariant: "A", // 배정 실패 또는 초기화 시 기본값
   weights: {
     A: 50,
     B: 50,
   },
-} satisfies ExperimentDefinition<'A' | 'B'>;
+} satisfies ExperimentDefinition<"A" | "B">;
 
 // ALL_EXPERIMENTS 배열에도 추가
 export const ALL_EXPERIMENTS = [
   mainBannerExperiment,
   applyButtonCopyExperiment,
-  myNewExperiment,   // ← 여기
+  myNewExperiment, // ← 여기
 ] as const;
 ```
 
@@ -68,9 +68,9 @@ const MyComponent = () => {
 실험 결과를 분석하려면 이벤트 전송 시 배리언트 값을 속성으로 넘겨야 한다.
 
 ```typescript
-import { trackEvent } from '@/utils/mixpanel'; // 실제 트래킹 유틸 경로 참고
+import { trackEvent } from "@/utils/mixpanel"; // 실제 트래킹 유틸 경로 참고
 
-trackEvent('클릭 이벤트', {
+trackEvent("클릭 이벤트", {
   experiment_key: myNewExperiment.key,
   experiment_variant: variant,
 });
@@ -94,14 +94,14 @@ weights: {
 브라우저 콘솔에서 실행하면 배정이 초기화된다.
 
 ```javascript
-localStorage.removeItem('moadong_experiment_assignments');
+localStorage.removeItem("moadong_experiment_assignments");
 location.reload();
 ```
 
 또는 코드에서 직접 호출:
 
 ```typescript
-import { experimentRepository } from '@/experiments/ExperimentRepository';
+import { experimentRepository } from "@/experiments/ExperimentRepository";
 experimentRepository.resetAssignments();
 ```
 
@@ -119,8 +119,3 @@ experimentRepository.resetAssignments();
 3. 버려진 배리언트 코드를 삭제한다.
 
 ## 현재 운영 중인 실험
-
-| key | 대상 | 배리언트 | 비율 |
-|-----|------|---------|------|
-| `main_banner_v1` | 메인 배너 | A / B | 50 / 50 |
-| `apply_button_copy_v1` | 지원 버튼 문구 | A / B | 50 / 50 |
