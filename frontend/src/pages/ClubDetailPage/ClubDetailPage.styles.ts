@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { transitions } from '@/styles/theme/transitions';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
   width: 100%;
@@ -29,6 +30,31 @@ export const ContentWrapper = styled.div`
     gap: 0;
     max-width: 100%;
     margin-top: 0;
+  }
+`;
+
+export const LeftSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 360px;
+  flex-shrink: 0;
+
+  ${media.tablet} {
+    width: 100%;
+  }
+`;
+
+export const MapWrapper = styled.div`
+  width: 100%;
+  height: 189px;
+  border-radius: 20px;
+  border: 1px solid ${colors.gray[400]};
+  overflow: hidden;
+  background-color: #f2f2f2;
+
+  ${media.tablet} {
+    padding: 0 20px;
   }
 `;
 
