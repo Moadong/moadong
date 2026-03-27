@@ -5,7 +5,10 @@ export const loadNaverMapScript = () => {
       return;
     }
 
-    if (document.querySelector('script[src*="maps.js"]')) {
+    const existingScript = document.querySelector(
+      'script[src*="oapi.map.naver.com"]'
+    );
+    if (existingScript) {
       resolve();
       return;
     }
