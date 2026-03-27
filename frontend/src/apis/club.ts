@@ -49,7 +49,9 @@ export const getClubList = async (
 export const getClubCalendarEvents = async (
   clubId: string,
 ): Promise<ClubCalendarEvent[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/calendar-events`);
+  const response = await fetch(
+    `${API_BASE_URL}/api/club/${clubId}/calendar-events`,
+  );
   const data = await handleResponse<{
     calendarEvents?: ClubCalendarEvent[];
   }>(response, '동아리 일정 정보를 불러오는데 실패했습니다.');
