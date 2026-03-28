@@ -7,7 +7,6 @@ import type { NotionSearchItem } from '@/apis/calendarOAuth';
  * - Notion page -> 캘린더 이벤트 변환 유틸
  */
 
-/** 캘린더 헤더 요일 라벨(일~토). */
 export const WEEKDAY_LABELS = [
   '일',
   '월',
@@ -51,18 +50,20 @@ export const formatDateText = (dateText?: string) => {
 
 /**
  * 다양한 날짜 문자열을 `YYYY-MM-DD` 키로 정규화한다.
+ * - 순수 날짜 문자열(YYYY-MM-DD)은 그대로 반환
+ * - datetime 문자열은 UTC 기준으로 파싱하여 날짜 추출
  * 유효하지 않은 값이면 null을 반환한다.
  */
 export const parseDateKey = (dateText: string) => {
-  const datePart = dateText.match(/^(\d{4}-\d{2}-\d{2})/);
-  if (datePart) {
-    return datePart[1];
+  // 순수 날짜 형식(시간 없음)만 그대로 반환 - 종일 이벤트
+  if (/^\d{4}-\d{2}-\d{2}$/.test(dateText)) {
+    return dateText;
   }
 
+  // datetime 형식은 UTC 기준으로 파싱
   const parsed = new Date(dateText);
   if (Number.isNaN(parsed.getTime())) return null;
 
-  // 문자열에 날짜 파트가 없을 때도 시간대 영향 없이 같은 UTC 날짜 키를 유지한다.
   const utcYear = parsed.getUTCFullYear();
   const utcMonth = String(parsed.getUTCMonth() + 1).padStart(2, '0');
   const utcDay = String(parsed.getUTCDate()).padStart(2, '0');
