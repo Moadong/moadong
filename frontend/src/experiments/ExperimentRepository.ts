@@ -4,7 +4,7 @@ import type {
   ExperimentVariant,
 } from './types';
 
-const ASSIGNMENT_STORAGE_KEY = 'moadong_experiment_assignments';
+const ASSIGNMENT_STORAGE_KEY = 'moadong_experiments';
 
 const safeReadAssignments = (): ExperimentAssignments => {
   try {
