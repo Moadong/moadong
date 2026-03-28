@@ -1,0 +1,11 @@
+import { experimentRepository } from '@/experiments/ExperimentRepository';
+import type {
+  ExperimentDefinition,
+  ExperimentVariant,
+} from '@/experiments/types';
+
+export const useExperimentVariant = <V extends ExperimentVariant>(
+  experiment: ExperimentDefinition<V>,
+): V => {
+  return experimentRepository.getVariant(experiment);
+};
