@@ -153,6 +153,8 @@ public class NotionOAuthService {
         String nextCursor = null;
         List<Object> allResults = new ArrayList<>();
         int requestCount = 0;
+        boolean hasMore = false;
+        boolean partial = false;
 
         while (true) {
             Map<String, Object> responseBody = searchNotionDatabases(notionAccessToken, nextCursor);
@@ -163,7 +165,7 @@ public class NotionOAuthService {
                 allResults.addAll(resultList);
             }
 
-            boolean hasMore = Boolean.TRUE.equals(responseBody.get("has_more"));
+            hasMore = Boolean.TRUE.equals(responseBody.get("has_more"));
             Object cursorObj = responseBody.get("next_cursor");
             nextCursor = cursorObj instanceof String cursor && StringUtils.hasText(cursor) ? cursor : null;
 
@@ -172,6 +174,7 @@ public class NotionOAuthService {
             }
 
             if (requestCount >= 50) {
+                partial = true;
                 log.warn("Notion DB 목록 페이지네이션 요청 상한 도달. clubId={}, collected={}", clubId, allResults.size());
                 break;
             }
@@ -180,9 +183,12 @@ public class NotionOAuthService {
         Map<String, Object> aggregated = new LinkedHashMap<>();
         aggregated.put("object", "list");
         aggregated.put("results", allResults);
-        aggregated.put("has_more", false);
-        aggregated.put("next_cursor", null);
+        aggregated.put("has_more", partial && hasMore);
+        aggregated.put("next_cursor", partial ? nextCursor : null);
         aggregated.put("total_results", allResults.size());
+        if (partial) {
+            aggregated.put("partial", true);
+        }
         return aggregated;
     }
 
@@ -197,6 +203,8 @@ public class NotionOAuthService {
         String nextCursor = null;
         List<Object> allResults = new ArrayList<>();
         int requestCount = 0;
+        boolean hasMore = false;
+        boolean partial = false;
 
         while (true) {
             Map<String, Object> responseBody = queryNotionDatabase(notionAccessToken, databaseId, dateProperty, nextCursor);
@@ -207,7 +215,7 @@ public class NotionOAuthService {
                 allResults.addAll(resultList);
             }
 
-            boolean hasMore = Boolean.TRUE.equals(responseBody.get("has_more"));
+            hasMore = Boolean.TRUE.equals(responseBody.get("has_more"));
             Object cursorObj = responseBody.get("next_cursor");
             nextCursor = cursorObj instanceof String cursor && StringUtils.hasText(cursor) ? cursor : null;
 
@@ -216,6 +224,7 @@ public class NotionOAuthService {
             }
 
             if (requestCount >= 50) {
+                partial = true;
                 log.warn("Notion DB 페이지네이션 요청 상한 도달. clubId={}, databaseId={}, collected={}",
                         clubId, databaseId, allResults.size());
                 break;
@@ -227,10 +236,13 @@ public class NotionOAuthService {
         Map<String, Object> aggregated = new LinkedHashMap<>();
         aggregated.put("object", "list");
         aggregated.put("results", allResults);
-        aggregated.put("has_more", false);
-        aggregated.put("next_cursor", null);
+        aggregated.put("has_more", partial && hasMore);
+        aggregated.put("next_cursor", partial ? nextCursor : null);
         aggregated.put("total_results", allResults.size());
         aggregated.put("database_id", databaseId);
+        if (partial) {
+            aggregated.put("partial", true);
+        }
         if (StringUtils.hasText(dateProperty)) {
             aggregated.put("date_property", dateProperty);
         }
