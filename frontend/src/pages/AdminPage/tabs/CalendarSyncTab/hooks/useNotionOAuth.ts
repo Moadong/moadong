@@ -57,6 +57,7 @@ export const useNotionOAuth = ({
 
     if (error) {
       onError(`Notion OAuth 실패: ${error}`);
+      sessionStorage.removeItem(NOTION_STATE_KEY);
       clearOAuthParamsFromUrl();
       return;
     }
@@ -84,6 +85,7 @@ export const useNotionOAuth = ({
       })
       .finally(() => {
         setIsNotionOAuthLoading(false);
+        sessionStorage.removeItem(NOTION_STATE_KEY);
         clearOAuthParamsFromUrl();
       });
   }, [clearError, loadNotionPages, onError, onStatus, onWorkspaceName]);
