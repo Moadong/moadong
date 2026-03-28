@@ -1,4 +1,4 @@
-import { useCallback, useRef } from 'react';
+import { useCallback, useMemo, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -57,6 +57,32 @@ const ClubDetailPage = () => {
     (clubName ?? clubId) || '',
   );
 
+  const hasCalendarEvents = calendarEvents.length > 0;
+
+  const tabs = useMemo(
+    () =>
+      [
+        { key: TAB_TYPE.INTRO, label: '소개 내용' },
+        { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+        hasCalendarEvents
+          ? { key: TAB_TYPE.SCHEDULE, label: '일정 보기' }
+          : null,
+      ].filter(Boolean) as Array<{ key: TabType; label: string }>,
+    [hasCalendarEvents],
+  );
+
+  const topBarTabs = useMemo(
+    () =>
+      [
+        { key: TAB_TYPE.INTRO, label: '소개내용' },
+        { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+        hasCalendarEvents
+          ? { key: TAB_TYPE.SCHEDULE, label: '일정 보기' }
+          : null,
+      ].filter(Boolean) as Array<{ key: TabType; label: string }>,
+    [hasCalendarEvents],
+  );
+
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
   const contentRef = useRef<HTMLDivElement>(null);
@@ -95,11 +121,7 @@ const ClubDetailPage = () => {
         <ClubDetailTopBar
           clubId={clubId || ''}
           clubName={clubDetail.name}
-          tabs={[
-            { key: TAB_TYPE.INTRO, label: '소개내용' },
-            { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-            { key: TAB_TYPE.SCHEDULE, label: '일정 보기' },
-          ]}
+          tabs={topBarTabs}
           activeTab={activeTab}
           onTabClick={(tabKey) => {
             handleTabClick(tabKey as TabType);
@@ -121,11 +143,7 @@ const ClubDetailPage = () => {
 
           <Styled.RightSection ref={contentRef}>
             <UnderlineTabs
-              tabs={[
-                { key: TAB_TYPE.INTRO, label: '소개 내용' },
-                { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-                { key: TAB_TYPE.SCHEDULE, label: '일정 보기' },
-              ]}
+              tabs={tabs}
               activeKey={activeTab}
               onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
               centerOnMobile
@@ -146,13 +164,15 @@ const ClubDetailPage = () => {
               >
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
               </div>
-              <div
-                style={{
-                  display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
-                }}
-              >
-                <ClubScheduleCalendar events={calendarEvents} />
-              </div>
+              {hasCalendarEvents && (
+                <div
+                  style={{
+                    display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
+                  }}
+                >
+                  <ClubScheduleCalendar events={calendarEvents} />
+                </div>
+              )}
             </Styled.TabContent>
           </Styled.RightSection>
         </Styled.ContentWrapper>
