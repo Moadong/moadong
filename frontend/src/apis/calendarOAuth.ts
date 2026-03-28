@@ -1,39 +1,15 @@
 import API_BASE_URL from '@/constants/api';
+import type { GoogleCalendarItem, GoogleEventItem } from '@/types/google';
+import type {
+  NotionDatabaseOption,
+  NotionPagesResponse,
+  NotionSearchItem,
+} from '@/types/notion';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
 
-export interface GoogleCalendarItem {
-  id: string;
-  summary: string;
-  primary?: boolean;
-}
-
-export interface GoogleEventItem {
-  id: string;
-  summary?: string;
-  htmlLink?: string;
-  start?: {
-    dateTime?: string;
-    date?: string;
-  };
-  end?: {
-    dateTime?: string;
-    date?: string;
-  };
-}
-
-export interface NotionSearchItem {
-  id: string;
-  object: string;
-  url?: string;
-  last_edited_time?: string;
-  properties?: Record<string, unknown>;
-}
-
-export interface NotionDatabaseOption {
-  id: string;
-  title: string;
-}
+export type { GoogleCalendarItem, GoogleEventItem };
+export type { NotionSearchItem, NotionDatabaseOption, NotionPagesResponse };
 
 export const fetchGoogleCalendarList = async (accessToken: string) => {
   const response = await fetch(
@@ -105,12 +81,6 @@ interface NotionDatabasePayload {
   id: string;
   object?: string;
   title?: Array<{ plain_text?: string }>;
-}
-
-export interface NotionPagesResponse {
-  items: NotionSearchItem[];
-  totalResults: number;
-  databaseId?: string;
 }
 
 export const fetchNotionAuthorizeUrl = async (state?: string) => {
