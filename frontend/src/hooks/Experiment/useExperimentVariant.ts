@@ -10,6 +10,7 @@ export const useExperimentVariant = <V extends ExperimentVariant>(
 ): V => {
   return useMemo(
     () => experimentRepository.getVariant(experiment),
-    [experiment],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [experiment.key],
   );
 };
