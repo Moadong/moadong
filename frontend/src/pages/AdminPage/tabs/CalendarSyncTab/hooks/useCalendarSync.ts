@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useGoogleCalendarData } from './useGoogleCalendarData';
 import { useNotionCalendarData } from './useNotionCalendarData';
 import { useNotionCalendarUiState } from './useNotionCalendarUiState';
@@ -9,7 +9,7 @@ export const useCalendarSync = () => {
   const [errorMessage, setErrorMessage] = useState('');
   const [notionWorkspaceName, setNotionWorkspaceName] = useState('');
 
-  const clearError = () => setErrorMessage('');
+  const clearError = useCallback(() => setErrorMessage(''), []);
 
   const google = useGoogleCalendarData({
     onError: setErrorMessage,
