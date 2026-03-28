@@ -6,12 +6,12 @@ moadong에서 Mixpanel MCP로 주간 리포트를 만들 때 사용하는 문서
 
 ## 문서 바로가기
 
-- 사용자(학생) 흐름 리포트: [mixpanel-weekly-report-prompts.md](/Users/seokyoung-won/Desktop/moadong/docs/mixpanel-weekly-report-prompts.md)
-- 관리자(Admin) 흐름 리포트: [mixpanel-admin-weekly-report-prompts.md](/Users/seokyoung-won/Desktop/moadong/docs/mixpanel-admin-weekly-report-prompts.md)
+- 사용자(학생) 흐름 리포트: [mixpanel-weekly-report-prompts.md](./mixpanel-weekly-report-prompts.md)
+- 관리자(Admin) 흐름 리포트: [mixpanel-admin-weekly-report-prompts.md](./mixpanel-admin-weekly-report-prompts.md)
 
 ## 최근 주간 리포트
 
-- 2026-W12 사용자 리포트: [2026-W12-user-mixpanel-report.md](/Users/seokyoung-won/Desktop/moadong/docs/weekly-reports/2026-W12-user-mixpanel-report.md)
+- 2026-W12 사용자 리포트: [2026-W12-user-mixpanel-report.md](./weekly-reports/2026-W12-user-mixpanel-report.md)
 
 ## 주간 실행 순서
 

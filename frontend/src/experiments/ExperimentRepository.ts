@@ -6,17 +6,30 @@ import type {
 
 const ASSIGNMENT_STORAGE_KEY = 'moadong_experiments';
 
+const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
+  typeof value === 'object' && value !== null && !Array.isArray(value);
+
 const safeReadAssignments = (): ExperimentAssignments => {
   try {
     const raw = localStorage.getItem(ASSIGNMENT_STORAGE_KEY);
-    return raw ? (JSON.parse(raw) as ExperimentAssignments) : {};
+    if (!raw) return {};
+    const parsed: unknown = JSON.parse(raw);
+    if (!isObjectRecord(parsed)) return {};
+    return Object.fromEntries(
+      Object.entries(parsed).filter(([, value]) => typeof value === 'string'),
+    ) as ExperimentAssignments;
   } catch {
     return {};
   }
 };
 
 const writeAssignments = (assignments: ExperimentAssignments) => {
-  localStorage.setItem(ASSIGNMENT_STORAGE_KEY, JSON.stringify(assignments));
+  try {
+    localStorage.setItem(ASSIGNMENT_STORAGE_KEY, JSON.stringify(assignments));
+  } catch {
+    // localStorage 쓰기 실패(용량 초과, 권한 거부 등)는 무시하고 진행한다.
+    // 실패해도 배정값은 메모리에서 유효하며, 다음 새로고침 시 재배정된다.
+  }
 };
 
 const pickWeightedVariant = <V extends ExperimentVariant>(
