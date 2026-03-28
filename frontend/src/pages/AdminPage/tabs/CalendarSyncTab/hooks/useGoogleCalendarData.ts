@@ -76,6 +76,7 @@ export const useGoogleCalendarData = ({
     const expectedState = sessionStorage.getItem(GOOGLE_STATE_KEY);
 
     if (token && state && expectedState && state === expectedState) {
+      sessionStorage.removeItem(GOOGLE_STATE_KEY);
       setGoogleToken(token);
       sessionStorage.setItem(GOOGLE_TOKEN_KEY, token);
       onStatus('Google OAuth 인증이 완료되었습니다.');
