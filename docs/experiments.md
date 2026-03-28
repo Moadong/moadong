@@ -22,7 +22,7 @@ frontend/src/hooks/Experiment/
 
 1. **앱 시작 시** `initializeExperiments()`가 `ALL_EXPERIMENTS`를 순회하며 각 실험의 배리언트를 배정한다.
 2. 이미 배정된 실험은 재배정하지 않는다. (같은 유저는 항상 같은 배리언트를 본다)
-3. 배정 결과는 `localStorage`의 `moadong_experiment_assignments` 키에 JSON으로 저장된다.
+3. 배정 결과는 `localStorage`의 `moadong_experiments` 키에 JSON으로 저장된다.
 4. 컴포넌트에서는 `useExperimentVariant` 훅으로 배리언트를 읽어 분기한다.
 
 ## 새 실험 추가 방법 (3단계)
@@ -94,7 +94,7 @@ weights: {
 브라우저 콘솔에서 실행하면 배정이 초기화된다.
 
 ```javascript
-localStorage.removeItem("moadong_experiment_assignments");
+localStorage.removeItem("moadong_experiments");
 location.reload();
 ```
 
