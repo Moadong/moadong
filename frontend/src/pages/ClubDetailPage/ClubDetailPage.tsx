@@ -53,11 +53,13 @@ const ClubDetailPage = () => {
   const { data: clubDetail, error } = useGetClubDetail(
     (clubName ?? clubId) || '',
   );
+
+  const hasCalendarEvents = clubDetail?.hasCalendarEvents ?? false;
+
   const { data: calendarEvents = [] } = useGetClubCalendarEvents(
     (clubName ?? clubId) || '',
+    { enabled: hasCalendarEvents && activeTab === TAB_TYPE.SCHEDULE },
   );
-
-  const hasCalendarEvents = calendarEvents.length > 0;
 
   const tabs = useMemo(
     () =>

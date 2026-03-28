@@ -44,12 +44,15 @@ export const useGetClubDetail = (clubParam: string) => {
   });
 };
 
-export const useGetClubCalendarEvents = (clubParam: string) => {
+export const useGetClubCalendarEvents = (
+  clubParam: string,
+  options?: { enabled?: boolean },
+) => {
   return useQuery<ClubCalendarEvent[]>({
     queryKey: queryKeys.club.calendarEvents(clubParam),
     queryFn: () => getClubCalendarEvents(clubParam),
-    staleTime: 60 * 1000,
-    enabled: !!clubParam,
+    staleTime: 5 * 60 * 1000,
+    enabled: (options?.enabled ?? true) && !!clubParam,
     select: (data) =>
       data.filter(
         (event): event is ClubCalendarEvent =>
