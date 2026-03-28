@@ -194,8 +194,6 @@ public class NotionOAuthService {
             throw new IllegalArgumentException("databaseId가 필요합니다.");
         }
 
-        saveDatabaseId(clubId, databaseId);
-
         String nextCursor = null;
         List<Object> allResults = new ArrayList<>();
         int requestCount = 0;
@@ -223,6 +221,8 @@ public class NotionOAuthService {
                 break;
             }
         }
+
+        saveDatabaseId(clubId, databaseId);
 
         Map<String, Object> aggregated = new LinkedHashMap<>();
         aggregated.put("object", "list");
