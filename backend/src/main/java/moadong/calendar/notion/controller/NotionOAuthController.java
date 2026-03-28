@@ -48,7 +48,7 @@ public class NotionOAuthController {
     }
 
     @GetMapping("/pages")
-    @Operation(summary = "Notion 페이지 조회", description = "Notion 최근 페이지 목록을 조회합니다.")
+    @Operation(summary = "Notion 워크스페이스 페이지 조회", description = "Notion 워크스페이스 전체에서 최근 수정된 페이지 목록을 조회합니다.")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getRecentPages(@CurrentUser CustomUserDetails user) {

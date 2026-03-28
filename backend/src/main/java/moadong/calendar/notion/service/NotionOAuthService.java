@@ -141,13 +141,47 @@ public class NotionOAuthService {
 
     public Map<String, Object> getRecentPages(CustomUserDetails user) {
         String clubId = requireAuthenticatedClubId(user);
-        NotionConnection connection = getNotionConnection(clubId);
-        String databaseId = connection.getDatabaseId();
-        if (!StringUtils.hasText(databaseId)) {
-            throw new RestApiException(ErrorCode.NOTION_DATABASE_NOT_SET);
+        String notionAccessToken = getDecryptedAccessToken(clubId);
+        String nextCursor = null;
+        List<Object> allResults = new ArrayList<>();
+        int requestCount = 0;
+        boolean hasMore = false;
+        boolean partial = false;
+
+        while (true) {
+            Map<String, Object> responseBody = searchNotionPages(notionAccessToken, nextCursor);
+            requestCount++;
+
+            Object resultsObj = responseBody.get("results");
+            if (resultsObj instanceof List<?> resultList) {
+                allResults.addAll(resultList);
+            }
+
+            hasMore = Boolean.TRUE.equals(responseBody.get("has_more"));
+            Object cursorObj = responseBody.get("next_cursor");
+            nextCursor = cursorObj instanceof String cursor && StringUtils.hasText(cursor) ? cursor : null;
+
+            if (!hasMore || !StringUtils.hasText(nextCursor)) {
+                break;
+            }
+
+            if (requestCount >= 50) {
+                partial = true;
+                log.warn("Notion 페이지 목록 페이지네이션 요청 상한 도달. clubId={}, collected={}", clubId, allResults.size());
+                break;
+            }
         }
 
-        return getDatabasePages(user, databaseId, null);
+        Map<String, Object> aggregated = new LinkedHashMap<>();
+        aggregated.put("object", "list");
+        aggregated.put("results", allResults);
+        aggregated.put("has_more", partial && hasMore);
+        aggregated.put("next_cursor", partial ? nextCursor : null);
+        aggregated.put("total_results", allResults.size());
+        if (partial) {
+            aggregated.put("partial", true);
+        }
+        return aggregated;
     }
 
     public Map<String, Object> getDatabases(CustomUserDetails user) {
