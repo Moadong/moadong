@@ -55,24 +55,40 @@
   - `200`
   - `Access-Control-Allow-Origin`/`Access-Control-Allow-Credentials` 확인
 
+## 보안 수정 기록 (2026-03-28)
+
+### AESCipher 고정 IV 취약점 수정
+
+**원인**
+
+`AESCipher`가 환경변수(`APP_ENCRYPTION_IV`)에 저장된 고정 IV를 모든 암호화 호출에 재사용하고 있었다.
+AES-GCM 모드에서 동일한 key+IV 조합이 두 번 이상 사용되면 암호문을 XOR하는 것만으로
+원본 데이터를 추출할 수 있어 기밀성과 무결성이 완전히 손상된다.
+
+**영향 범위**
+
+이 취약점은 Notion 기능 추가 이전부터 존재했으며, `AESCipher`를 사용하는 모든 경로에 해당한다.
+
+| 파일                                                 | 저장 데이터                            |
+| ---------------------------------------------------- | -------------------------------------- |
+| `ClubApplyPublicService`                             | 지원서 답변 (이름, 연락처 등 개인정보) |
+| `ClubApplicantsResult`, `ApplicantIdMessageConsumer` | 지원서 답변 복호화                     |
+| `NotionOAuthService`                                 | Notion OAuth 액세스 토큰               |
+
+**해결 방법**
+
+- `encrypt`: `SecureRandom`으로 12바이트 IV를 매번 신규 생성, `v2:<Base64(iv || ciphertext)>` 포맷으로 저장
+- `decrypt`: `v2:` 접두사가 있으면 내장 IV를 추출해 복호화, 없으면 기존 고정 IV로 폴백(레거시 데이터 하위 호환)
+- API 계약 및 프론트엔드 변경 없음
+
+**마이그레이션**
+
+별도 데이터 마이그레이션 불필요. 기존 저장 데이터는 레거시 경로로 자동 복호화되며,
+다음 저장 시점(재연동, 재지원)에 새 포맷으로 자연 교체된다.
+
+---
+
 ## 운영 메모 / 주의사항
 
 - 노출된 Notion access token은 반드시 폐기(revoke) 후 재발급한다.
 - CORS는 환경별 Origin 값에 따라 결과가 달라지므로, 로컬/개발/운영 설정을 분리 관리한다.
-
-## Codex 활용 기록
-
-- 설계/구조 정리
-  - `integration/notion` 패키지 구조 제안 및 적용
-  - 프론트 토큰 노출 제거 방향(서버 저장형)으로 API 계약 정리
-- 구현 자동화
-  - Notion OAuth Controller/Service/DTO/Repository/Entity 생성
-  - 토큰 암호화 저장(AESCipher 연계) 및 페이지 조회 로직 구현
-  - Swagger 어노테이션 및 인증 가드(`@PreAuthorize`, `@SecurityRequirement`) 반영
-- 검증 지원
-  - 변경 후 `./gradlew compileJava -q` 반복 검증
-  - CORS preflight 체크 포인트 정리
-- 협업 산출물
-  - 결정사항 문서화
-  - 파일 단위 커밋 분리
-  - PR 초안 작성(제목/요약/변경사항/리스크/후속작업)
