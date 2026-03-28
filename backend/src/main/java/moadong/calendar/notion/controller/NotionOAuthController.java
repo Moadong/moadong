@@ -11,7 +11,6 @@ import moadong.calendar.notion.payload.response.NotionTokenExchangeResponse;
 import moadong.calendar.notion.service.NotionOAuthService;
 import moadong.user.annotation.CurrentUser;
 import moadong.user.payload.CustomUserDetails;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -35,13 +34,7 @@ public class NotionOAuthController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getAuthorizeUrl(@RequestParam(required = false) String state) {
-        try {
-            return Response.ok(notionOAuthService.getAuthorizeUrl(state));
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Response<>("BAD_REQUEST", e.getMessage(), null));
-        }
+        return Response.ok(notionOAuthService.getAuthorizeUrl(state));
     }
 
     @PostMapping("/oauth/token")
@@ -50,14 +43,8 @@ public class NotionOAuthController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> exchangeToken(@CurrentUser CustomUserDetails user,
                                            @RequestBody @Valid NotionTokenExchangeRequest request) {
-        try {
-            NotionTokenExchangeResponse response = notionOAuthService.exchangeCode(user, request);
-            return Response.ok(response);
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Response<>("BAD_REQUEST", e.getMessage(), null));
-        }
+        NotionTokenExchangeResponse response = notionOAuthService.exchangeCode(user, request);
+        return Response.ok(response);
     }
 
     @GetMapping("/pages")
@@ -65,13 +52,7 @@ public class NotionOAuthController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getRecentPages(@CurrentUser CustomUserDetails user) {
-        try {
-            return Response.ok(notionOAuthService.getRecentPages(user));
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Response<>("BAD_REQUEST", e.getMessage(), null));
-        }
+        return Response.ok(notionOAuthService.getRecentPages(user));
     }
 
     @GetMapping("/databases")
@@ -79,13 +60,7 @@ public class NotionOAuthController {
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getDatabases(@CurrentUser CustomUserDetails user) {
-        try {
-            return Response.ok(notionOAuthService.getDatabases(user));
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Response<>("BAD_REQUEST", e.getMessage(), null));
-        }
+        return Response.ok(notionOAuthService.getDatabases(user));
     }
 
     @GetMapping("/databases/{databaseId}/pages")
@@ -95,12 +70,6 @@ public class NotionOAuthController {
     public ResponseEntity<?> getDatabasePages(@CurrentUser CustomUserDetails user,
                                               @PathVariable String databaseId,
                                               @RequestParam(required = false) String dateProperty) {
-        try {
-            return Response.ok(notionOAuthService.getDatabasePages(user, databaseId, dateProperty));
-        } catch (IllegalArgumentException | IllegalStateException e) {
-            return ResponseEntity
-                    .status(HttpStatus.BAD_REQUEST)
-                    .body(new Response<>("BAD_REQUEST", e.getMessage(), null));
-        }
+        return Response.ok(notionOAuthService.getDatabasePages(user, databaseId, dateProperty));
     }
 }

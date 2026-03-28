@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
 import moadong.global.util.AESCipher;
 import moadong.calendar.notion.config.NotionProperties;
 import moadong.calendar.notion.entity.NotionConnection;
@@ -59,10 +61,10 @@ public class NotionOAuthService {
         String notionRedirectUri = notionProperties.redirectUri();
 
         if (!StringUtils.hasText(notionClientId)) {
-            throw new IllegalStateException("NOTION_CLIENT_ID 서버 환경변수가 설정되지 않았습니다.");
+            throw new RestApiException(ErrorCode.NOTION_CONFIG_MISSING);
         }
         if (!StringUtils.hasText(notionRedirectUri)) {
-            throw new IllegalStateException("NOTION_REDIRECT_URI 서버 환경변수가 설정되지 않았습니다.");
+            throw new RestApiException(ErrorCode.NOTION_CONFIG_MISSING);
         }
 
         UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(NOTION_AUTHORIZE_ENDPOINT)
@@ -85,14 +87,14 @@ public class NotionOAuthService {
         String notionRedirectUri = notionProperties.redirectUri();
 
         if (!StringUtils.hasText(notionClientId)) {
-            throw new IllegalStateException("NOTION_CLIENT_ID 서버 환경변수가 설정되지 않았습니다.");
+            throw new RestApiException(ErrorCode.NOTION_CONFIG_MISSING);
         }
 
         if (!StringUtils.hasText(notionClientSecret)) {
-            throw new IllegalStateException("NOTION_CLIENT_SECRET 서버 환경변수가 설정되지 않았습니다.");
+            throw new RestApiException(ErrorCode.NOTION_CONFIG_MISSING);
         }
         if (!StringUtils.hasText(notionRedirectUri)) {
-            throw new IllegalStateException("NOTION_REDIRECT_URI 서버 환경변수가 설정되지 않았습니다.");
+            throw new RestApiException(ErrorCode.NOTION_CONFIG_MISSING);
         }
 
         String basicCredentials = Base64.getEncoder()
@@ -122,7 +124,7 @@ public class NotionOAuthService {
 
             NotionTokenApiResponse body = response.getBody();
             if (body == null || !StringUtils.hasText(body.accessToken())) {
-                throw new IllegalStateException("Notion 토큰 응답이 비어있습니다.");
+                throw new RestApiException(ErrorCode.NOTION_TOKEN_EMPTY);
             }
 
             saveNotionConnection(clubId, body);
@@ -132,7 +134,8 @@ public class NotionOAuthService {
                     body.workspaceId()
             );
         } catch (HttpStatusCodeException e) {
-            throw new IllegalArgumentException("Notion 토큰 교환 실패: " + e.getResponseBodyAsString());
+            log.warn("Notion 토큰 교환 실패. status={}, body={}", e.getStatusCode(), e.getResponseBodyAsString());
+            throw new RestApiException(ErrorCode.NOTION_TOKEN_EXCHANGE_FAILED);
         }
     }
 
@@ -141,7 +144,7 @@ public class NotionOAuthService {
         NotionConnection connection = getNotionConnection(clubId);
         String databaseId = connection.getDatabaseId();
         if (!StringUtils.hasText(databaseId)) {
-            throw new IllegalStateException("저장된 Notion databaseId가 없습니다. 먼저 데이터베이스를 선택해주세요.");
+            throw new RestApiException(ErrorCode.NOTION_DATABASE_NOT_SET);
         }
 
         return getDatabasePages(user, databaseId, null);
@@ -197,7 +200,7 @@ public class NotionOAuthService {
         String notionAccessToken = getDecryptedAccessToken(clubId);
 
         if (!StringUtils.hasText(databaseId)) {
-            throw new IllegalArgumentException("databaseId가 필요합니다.");
+            throw new RestApiException(ErrorCode.NOTION_DATABASE_ID_REQUIRED);
         }
 
         String nextCursor = null;
@@ -339,12 +342,12 @@ public class NotionOAuthService {
 
             Map<String, Object> responseBody = response.getBody();
             if (responseBody == null) {
-                throw new IllegalStateException("Notion 페이지 조회 응답이 비어있습니다.");
+                throw new RestApiException(ErrorCode.NOTION_SEARCH_FAILED);
             }
             return responseBody;
         } catch (HttpStatusCodeException e) {
             log.warn("Notion 페이지 조회 실패 status={}, body={}", e.getStatusCode(), e.getResponseBodyAsString());
-            throw new IllegalArgumentException("Notion 페이지 조회 실패: " + e.getResponseBodyAsString());
+            throw new RestApiException(ErrorCode.NOTION_SEARCH_FAILED);
         }
     }
 
@@ -374,12 +377,12 @@ public class NotionOAuthService {
 
             Map<String, Object> responseBody = response.getBody();
             if (responseBody == null) {
-                throw new IllegalStateException("Notion DB 목록 조회 응답이 비어있습니다.");
+                throw new RestApiException(ErrorCode.NOTION_SEARCH_FAILED);
             }
             return responseBody;
         } catch (HttpStatusCodeException e) {
             log.warn("Notion DB 목록 조회 실패 status={}, body={}", e.getStatusCode(), e.getResponseBodyAsString());
-            throw new IllegalArgumentException("Notion DB 목록 조회 실패: " + e.getResponseBodyAsString());
+            throw new RestApiException(ErrorCode.NOTION_SEARCH_FAILED);
         }
     }
 
@@ -418,19 +421,19 @@ public class NotionOAuthService {
 
             Map<String, Object> responseBody = response.getBody();
             if (responseBody == null) {
-                throw new IllegalStateException("Notion DB 조회 응답이 비어있습니다.");
+                throw new RestApiException(ErrorCode.NOTION_DATABASE_QUERY_FAILED);
             }
             return responseBody;
         } catch (HttpStatusCodeException e) {
             log.warn("Notion DB 조회 실패 status={}, databaseId={}, body={}",
                     e.getStatusCode(), databaseId, e.getResponseBodyAsString());
-            throw new IllegalArgumentException("Notion DB 조회 실패: " + e.getResponseBodyAsString());
+            throw new RestApiException(ErrorCode.NOTION_DATABASE_QUERY_FAILED);
         }
     }
 
     private String requireAuthenticatedUserId(CustomUserDetails user) {
         if (user == null || !StringUtils.hasText(user.getId())) {
-            throw new IllegalArgumentException("인증된 사용자 정보가 필요합니다.");
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
         return user.getId();
     }
@@ -438,10 +441,10 @@ public class NotionOAuthService {
     private String requireAuthenticatedClubId(CustomUserDetails user) {
         String userId = requireAuthenticatedUserId(user);
         Club club = clubRepository.findClubByUserId(userId)
-                .orElseThrow(() -> new IllegalStateException("연동할 동아리 정보를 찾을 수 없습니다."));
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOTION_CLUB_NOT_FOUND));
 
         if (!StringUtils.hasText(club.getId())) {
-            throw new IllegalStateException("동아리 ID가 없어 Notion 연동 정보를 저장할 수 없습니다.");
+            throw new RestApiException(ErrorCode.NOTION_CLUB_NOT_FOUND);
         }
         return club.getId();
     }
@@ -458,7 +461,7 @@ public class NotionOAuthService {
             mongoTemplate.upsert(query, update, NotionConnection.class);
         } catch (Exception e) {
             log.error("Notion access token 암호화 저장 실패. clubId={}", clubId, e);
-            throw new IllegalStateException("Notion 토큰 저장에 실패했습니다.");
+            throw new RestApiException(ErrorCode.NOTION_TOKEN_SAVE_FAILED);
         }
     }
 
@@ -466,21 +469,21 @@ public class NotionOAuthService {
         NotionConnection connection = getNotionConnection(clubId);
 
         if (!StringUtils.hasText(connection.getEncryptedAccessToken())) {
-            throw new IllegalStateException("저장된 Notion access token이 없습니다.");
+            throw new RestApiException(ErrorCode.NOTION_NOT_CONNECTED);
         }
 
         try {
             return cipher.decrypt(connection.getEncryptedAccessToken());
         } catch (Exception e) {
             log.error("Notion access token 복호화 실패. clubId={}", clubId, e);
-            throw new IllegalStateException("Notion 토큰 복호화에 실패했습니다.");
+            throw new RestApiException(ErrorCode.NOTION_TOKEN_DECRYPT_FAILED);
         }
     }
 
     private NotionConnection getNotionConnection(String clubId) {
         return notionConnectionRepository.findById(clubId)
                 .or(() -> findLegacyNotionConnectionAndMigrate(clubId))
-                .orElseThrow(() -> new IllegalStateException("Notion 연결 정보가 없습니다. 먼저 OAuth 연동을 진행해주세요."));
+                .orElseThrow(() -> new RestApiException(ErrorCode.NOTION_NOT_CONNECTED));
     }
 
     private Optional<NotionConnection> findLegacyNotionConnectionAndMigrate(String clubId) {
@@ -508,7 +511,7 @@ public class NotionOAuthService {
                 .set("updatedAt", LocalDateTime.now());
         com.mongodb.client.result.UpdateResult result = mongoTemplate.updateFirst(query, update, NotionConnection.class);
         if (result.getMatchedCount() == 0) {
-            throw new IllegalStateException("Notion 연결 정보가 없습니다. 먼저 OAuth 연동을 진행해주세요.");
+            throw new RestApiException(ErrorCode.NOTION_NOT_CONNECTED);
         }
     }
 
