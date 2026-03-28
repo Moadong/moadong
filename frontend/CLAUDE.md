@@ -117,6 +117,7 @@ API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된
 - `useExperiment()` 훅으로 컴포넌트에서 실험 변형 사용
 
 **예시**:
+
 ```typescript
 const { variant } = useExperiment(mainBannerExperiment);
 // variant는 'A' 또는 'B'
