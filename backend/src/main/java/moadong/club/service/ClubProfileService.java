@@ -90,8 +90,8 @@ public class ClubProfileService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        List<ClubCalendarEventResult> calendarEvents = notionOAuthService.getClubCalendarEvents(club.getId());
-        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, calendarEvents);
+        boolean hasCalendarEvents = notionOAuthService.hasCalendarConnection(club.getId());
+        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarEvents);
         return new ClubDetailedResponse(clubDetailedResult);
     }
 
@@ -99,8 +99,8 @@ public class ClubProfileService {
         Club club = clubRepository.findClubByName(clubName)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        List<ClubCalendarEventResult> calendarEvents = notionOAuthService.getClubCalendarEvents(club.getId());
-        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, calendarEvents);
+        boolean hasCalendarEvents = notionOAuthService.hasCalendarConnection(club.getId());
+        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarEvents);
         return new ClubDetailedResponse(clubDetailedResult);
     }
 

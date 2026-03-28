@@ -483,6 +483,15 @@ public class NotionOAuthService {
         return club.getId();
     }
 
+    public boolean hasCalendarConnection(String clubId) {
+        if (!StringUtils.hasText(clubId)) {
+            return false;
+        }
+        return notionConnectionRepository.findById(clubId)
+                .map(connection -> StringUtils.hasText(connection.getDatabaseId()))
+                .orElse(false);
+    }
+
     private void saveNotionConnection(String clubId, NotionTokenApiResponse body) {
         try {
             String encryptedAccessToken = cipher.encrypt(body.accessToken());
