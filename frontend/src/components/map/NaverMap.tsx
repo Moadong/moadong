@@ -10,18 +10,12 @@ interface NaverMapProps {
   detailLocation: string;
 }
 
-const NaverMap = ({
-  lat,
-  lng,
-  clubName,
-  building,
-  detailLocation,
-}: NaverMapProps) => {
+const NaverMap = ({ lat, lng }: NaverMapProps) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
 
-  useNaverMap(mapRef, lat, lng, clubName, building, detailLocation);
+  useNaverMap(mapRef, lat, lng);
 
-  return <Styled.MapContainer ref={mapRef} />
+  return <Styled.MapContainer ref={mapRef} />;
 };
 
 export default NaverMap;

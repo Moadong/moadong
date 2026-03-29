@@ -1,13 +1,11 @@
 import { useEffect } from 'react';
+import markerIcon from '@/assets/images/icons/marker.svg';
 import { loadNaverMapScript } from './loadNaverMapScript';
 
 export const useNaverMap = (
   mapRef: React.RefObject<HTMLDivElement | null>,
   lat: number,
   lng: number,
-  clubName: string,
-  building: string,
-  detailLocation: string,
 ) => {
   useEffect(() => {
     loadNaverMapScript().then(() => {
@@ -19,26 +17,21 @@ export const useNaverMap = (
 
       const map = new naver.maps.Map(mapRef.current, {
         center: position,
-        zoom: 16,
+        zoom: 17,
+        logoControl: false,
+        mapDataControl: false,
+        scaleControl: false,
       });
 
-      const marker = new naver.maps.Marker({
+      new naver.maps.Marker({
         position,
         map,
-      });
-
-      const infoWindow = new naver.maps.InfoWindow({
-        content: `
-          <div style="padding:10px;">
-            <b>${clubName}</b><br/>
-            ${building} ${detailLocation}
-          </div>
-        `,
-      });
-
-      naver.maps.Event.addListener(marker, 'click', () => {
-        infoWindow.open(map, marker);
+        icon: {
+          url: markerIcon,
+          scaledSize: new naver.maps.Size(30, 30),
+          anchor: new naver.maps.Point(16, 25),
+        },
       });
     });
-  }, [mapRef, lat, lng, clubName, building, detailLocation]);
+  }, [mapRef, lat, lng]);
 };

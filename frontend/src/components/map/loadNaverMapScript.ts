@@ -9,7 +9,7 @@ export const loadNaverMapScript = () => {
     }
 
     const existingScript = document.querySelector(
-      'script[src*="oapi.map.naver.com"]'
+      'script[src*="oapi.map.naver.com"]',
     );
     if (existingScript) {
       resolve();
