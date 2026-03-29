@@ -107,7 +107,7 @@ export const OverlaySpinner = styled.span`
 
 export const ImageGrid = styled.div`
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 12px;
   width: 100%;
   align-self: flex-start;
