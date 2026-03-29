@@ -72,6 +72,19 @@ public enum ErrorCode {
 
     // 902xx: 홍보게시판 오류
     PROMOTION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "902-1", "홍보 게시글이 존재하지 않습니다."),
+
+    // 950xx: Notion 연동 오류
+    NOTION_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "950-1", "Notion 서버 환경변수가 설정되지 않았습니다."),
+    NOTION_TOKEN_EXCHANGE_FAILED(HttpStatus.BAD_REQUEST, "950-2", "Notion 토큰 교환에 실패했습니다."),
+    NOTION_TOKEN_EMPTY(HttpStatus.INTERNAL_SERVER_ERROR, "950-3", "Notion 토큰 응답이 비어있습니다."),
+    NOTION_TOKEN_SAVE_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "950-4", "Notion 토큰 저장에 실패했습니다."),
+    NOTION_TOKEN_DECRYPT_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "950-5", "Notion 토큰 복호화에 실패했습니다."),
+    NOTION_NOT_CONNECTED(HttpStatus.BAD_REQUEST, "950-6", "Notion 연결 정보가 없습니다. 먼저 OAuth 연동을 진행해주세요."),
+    NOTION_DATABASE_NOT_SET(HttpStatus.BAD_REQUEST, "950-7", "저장된 Notion databaseId가 없습니다. 먼저 데이터베이스를 선택해주세요."),
+    NOTION_DATABASE_ID_REQUIRED(HttpStatus.BAD_REQUEST, "950-8", "databaseId가 필요합니다."),
+    NOTION_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "950-9", "연동할 동아리 정보를 찾을 수 없습니다."),
+    NOTION_SEARCH_FAILED(HttpStatus.BAD_REQUEST, "950-10", "Notion DB 목록 조회에 실패했습니다."),
+    NOTION_DATABASE_QUERY_FAILED(HttpStatus.BAD_REQUEST, "950-11", "Notion DB 조회에 실패했습니다."),
     ;
 
     private final HttpStatus httpStatus;
