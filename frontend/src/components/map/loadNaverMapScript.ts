@@ -1,7 +1,4 @@
 export const loadNaverMapScript = () => {
-  console.log(import.meta.env);
-  console.log('NAVER CLIENT ID: ', import.meta.env.VITE_NAVER_CLIENT_ID);
-
   return new Promise<void>((resolve) => {
     if (window.naver?.maps) {
       resolve();
