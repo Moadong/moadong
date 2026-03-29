@@ -1105,8 +1105,8 @@
       });
       clubIdInput.disabled = busy || !hasEditorTarget;
       clubIdInput.readOnly = !isCreateMode;
-      imageUploadFile.disabled = busy || !hasSelection || isCreateMode;
-      btnUpload.disabled = busy || !hasSelection || isCreateMode;
+      imageUploadFile.disabled = busy || !hasEditorTarget;
+      btnUpload.disabled = busy || !hasEditorTarget;
       btnLoad.disabled = busy;
       btnCreate.disabled = busy;
       btnSave.disabled = busy || !hasEditorTarget;
@@ -1119,8 +1119,8 @@
       if (isCreateMode) {
         badge.textContent = dirty ? '새 게시글 작성 중 · 저장되지 않은 변경 있음' : '새 게시글 작성 중';
         badge.classList.remove('hidden');
-        summary.textContent = '새 홍보 게시글을 작성 중입니다. `clubId`를 직접 입력하고 먼저 생성하세요.';
-        help.textContent = '새 게시글 생성 시에는 `clubId`를 직접 입력하세요. 이미지 직접 업로드는 생성 후 사용할 수 있습니다.';
+        summary.textContent = '새 홍보 게시글을 작성 중입니다. `clubId`를 직접 입력한 뒤 저장하거나 이미지를 먼저 업로드할 수 있습니다.';
+        help.textContent = 'create 모드에서 이미지 업로드를 누르면 게시글을 먼저 생성한 뒤 기존 홍보 이미지 업로드/수정 로직으로 반영합니다.';
         return;
       }
 
@@ -1394,7 +1394,8 @@
       renderPromotionList();
     }
 
-    function normalizePromotionPayload() {
+    function normalizePromotionPayload(options) {
+      const requireImages = options?.requireImages !== false;
       const form = getPromotionCurrentFormState();
       const clubId = form.clubId.trim();
       const title = form.title.trim();
@@ -1407,7 +1408,7 @@
       if (!clubId || !title || !location || !eventStartDate || !eventEndDate || !description) {
         throw new Error('필수 입력값을 모두 채우세요.');
       }
-      if (!images.length) throw new Error('이미지 URL을 1개 이상 입력하세요.');
+      if (requireImages && !images.length) throw new Error('이미지 URL을 1개 이상 입력하세요.');
 
       const startDate = new Date(eventStartDate);
       const endDate = new Date(eventEndDate);
@@ -1427,6 +1428,38 @@
         description,
         images
       };
+    }
+
+    async function createPromotionArticleRequest(payload) {
+      const res = await fetch(API_BASE + '/api/promotion', {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify(payload)
+      });
+      const data = await readJsonOrEmpty(res);
+      return { res, data };
+    }
+
+    async function updatePromotionArticleRequest(articleId, payload) {
+      const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(articleId), {
+        method: 'PUT',
+        headers: headers(),
+        body: JSON.stringify(payload)
+      });
+      const data = await readJsonOrEmpty(res);
+      return { res, data };
+    }
+
+    async function uploadPromotionImageRequest(articleId, file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(articleId) + '/upload', {
+        method: 'POST',
+        headers: buildBannerUploadHeaders(),
+        body: formData
+      });
+      const data = await readJsonOrEmpty(res);
+      return { res, data };
     }
 
     function clearPromotionState() {
@@ -1536,12 +1569,9 @@
       hidePromotionSaveResult();
       try {
         if (isPromotionCreateMode()) {
-          const createRes = await fetch(API_BASE + '/api/promotion', {
-            method: 'POST',
-            headers: headers(),
-            body: JSON.stringify(payload)
-          });
-          const createData = await readJsonOrEmpty(createRes);
+          const createResult = await createPromotionArticleRequest(payload);
+          const createRes = createResult.res;
+          const createData = createResult.data;
           if (createRes.status === 403) {
             showPromotionSaveResult(false, '개발자 계정으로 로그인하세요.');
             return;
@@ -1631,11 +1661,7 @@
 
     document.getElementById('btnUploadPromotionImage').onclick = async () => {
       const fileInput = document.getElementById('promotionImageUploadFile');
-      if (isPromotionCreateMode()) {
-        showToast('새 게시글은 먼저 생성한 뒤 이미지를 직접 업로드할 수 있습니다.', 'error');
-        return;
-      }
-      if (!promotionSelectedArticleId) {
+      if (!promotionSelectedArticleId && !isPromotionCreateMode()) {
         showToast('수정할 홍보 게시글을 먼저 선택하세요.', 'error');
         return;
       }
@@ -1646,23 +1672,62 @@
 
       const file = fileInput.files[0];
       const btn = document.getElementById('btnUploadPromotionImage');
-      const formData = new FormData();
-      formData.append('file', file);
 
       promotionIsUploading = true;
       updatePromotionEditorState();
       clearPromotionBanner();
-      btn.textContent = '업로드 중...';
+      btn.textContent = isPromotionCreateMode() ? '생성 후 업로드 중...' : '업로드 중...';
       try {
-        const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(promotionSelectedArticleId) + '/upload', {
-          method: 'POST',
-          headers: buildBannerUploadHeaders(),
-          body: formData
-        });
-        const data = await readJsonOrEmpty(res);
+        let targetArticleId = promotionSelectedArticleId;
+
+        if (isPromotionCreateMode()) {
+          let createPayload;
+          try {
+            createPayload = normalizePromotionPayload({ requireImages: false });
+          } catch (e) {
+            setPromotionBanner(e.message || '이미지 업로드 전 게시글 정보를 확인하세요.', 'error');
+            return;
+          }
+
+          const createResult = await createPromotionArticleRequest(createPayload);
+          const createRes = createResult.res;
+          const createData = createResult.data;
+          if (createRes.status === 403) {
+            setPromotionBanner('개발자 계정으로 로그인하세요.', 'warn');
+            return;
+          }
+          if (!createRes.ok) {
+            setPromotionBanner(createData.message || '홍보 게시글 생성 실패 (HTTP ' + createRes.status + ')', 'error');
+            return;
+          }
+
+          targetArticleId = extractCreatedPromotionId(createData);
+          if (!targetArticleId) {
+            const syncAfterCreate = await reloadPromotionList({ keepMessage: true });
+            if (!syncAfterCreate.ok) {
+              setPromotionBanner('게시글 생성 후 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+              return;
+            }
+            targetArticleId = findCreatedPromotionId(createPayload, promotionArticles);
+          }
+          if (!targetArticleId) {
+            setPromotionBanner('게시글은 생성되었지만 articleId를 확인하지 못했습니다. 목록에서 직접 선택한 뒤 다시 업로드하세요.', 'warn');
+            return;
+          }
+
+          const syncCreated = await reloadPromotionList({ selectedArticleId: targetArticleId, keepMessage: true });
+          if (!syncCreated.ok) {
+            setPromotionBanner('게시글은 생성되었지만 편집 상태 동기화에 실패했습니다. 목록에서 직접 선택한 뒤 다시 시도하세요.', 'warn');
+            return;
+          }
+        }
+
+        const uploadResult = await uploadPromotionImageRequest(targetArticleId, file);
+        const res = uploadResult.res;
+        const data = uploadResult.data;
         if (res.status === 404) {
           if (data.statuscode === '902-1') {
-            promotionArticles = promotionArticles.filter((article) => article.id !== promotionSelectedArticleId);
+            promotionArticles = promotionArticles.filter((article) => article.id !== targetArticleId);
             clearPromotionSelection({ keepMessage: true });
             setPromotionBanner('선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침한 뒤 다시 시도하세요.', 'error');
           } else {
@@ -1689,7 +1754,33 @@
         urls.push(imageUrl);
         writePromotionImageUrls(urls);
         fileInput.value = '';
-        showToast('홍보 이미지 업로드 후 목록에 추가했습니다.', 'success');
+
+        if (targetArticleId) {
+          const payload = normalizePromotionPayload();
+          const updateResult = await updatePromotionArticleRequest(targetArticleId, payload);
+          const updateRes = updateResult.res;
+          const updateData = updateResult.data;
+          if (updateRes.status === 403) {
+            setPromotionBanner('이미지는 업로드되었지만 게시글 저장 권한이 없습니다.', 'warn');
+            return;
+          }
+          if (updateRes.status === 404) {
+            setPromotionBanner('이미지는 업로드되었지만 게시글 저장 대상이 없어졌습니다. 목록을 새로고침해 확인하세요.', 'warn');
+            return;
+          }
+          if (!updateRes.ok) {
+            setPromotionBanner(updateData.message || '이미지는 업로드되었지만 게시글 반영 저장에 실패했습니다.', 'warn');
+            return;
+          }
+
+          const syncResult = await reloadPromotionList({ selectedArticleId: targetArticleId, keepMessage: true });
+          if (!syncResult.ok) {
+            setPromotionBanner('이미지 업로드 후 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+            return;
+          }
+        }
+
+        showToast('홍보 이미지 업로드와 게시글 반영이 완료되었습니다.', 'success');
       } catch (e) {
         setPromotionBanner('요청 실패: ' + (e.message || ''), 'error');
       } finally {
