@@ -6,14 +6,17 @@ const useTrackPageView = (
   pageName: string,
   clubName?: string,
   skip: boolean = false,
+  recruitmentStatus?: string,
 ) => {
   const location = useLocation();
   const isTracked = useRef(false);
   const startTime = useRef(Date.now());
   const clubNameRef = useRef(clubName);
+  const recruitmentStatusRef = useRef(recruitmentStatus);
 
   useEffect(() => {
     clubNameRef.current = clubName;
+    recruitmentStatusRef.current = recruitmentStatus;
 
     if (skip) return;
 
@@ -25,6 +28,7 @@ const useTrackPageView = (
       timestamp: startTime.current,
       referrer: document.referrer || 'direct',
       clubName: clubNameRef.current,
+      recruitmentStatus: recruitmentStatusRef.current,
     });
 
     const trackPageDuration = () => {
@@ -37,6 +41,7 @@ const useTrackPageView = (
         duration: duration,
         duration_seconds: Math.round(duration / 1000),
         clubName: clubNameRef.current,
+        recruitmentStatus: recruitmentStatusRef.current,
       });
     };
 
@@ -54,7 +59,7 @@ const useTrackPageView = (
       window.removeEventListener('beforeunload', trackPageDuration);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [location.pathname, clubName, skip, pageName]);
+  }, [location.pathname, clubName, skip, pageName, recruitmentStatus]);
 };
 
 export default useTrackPageView;
