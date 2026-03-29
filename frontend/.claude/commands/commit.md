@@ -1,6 +1,6 @@
 ---
 description: 세션 작업 기록 + 기능 문서화 + 변경 내용 커밋
-allowed-tools: Bash(mkdir:*), Bash(ls:*), Bash(date:*), Bash(git status), Bash(git diff*), Bash(git log*), Bash(git add *), Bash(git commit *), Read, Write, Edit, Glob, Grep
+allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(git status), Bash(git diff *), Bash(git log *), Bash(git add *), Bash(git commit *), Read, Write, Edit, Glob, Grep
 ---
 
 # 작업 지시
@@ -95,7 +95,7 @@ allowed-tools: Bash(mkdir:*), Bash(ls:*), Bash(date:*), Bash(git status), Bash(g
 
 **결과 출력:**
 
-```
+```text
 ## 문서화 완료
 - **경로**: `docs/features/[기능]/[파일명]`
 - **내용**: [1줄 요약]
@@ -108,7 +108,7 @@ allowed-tools: Bash(mkdir:*), Bash(ls:*), Bash(date:*), Bash(git status), Bash(g
 기록이 완료되면 커밋을 수행합니다.
 
 1. `git status`로 변경된 파일 확인
-2. `git diff`로 staged + unstaged 변경사항 확인
+2. `git diff HEAD`로 모든 변경사항 확인 (또는 `git diff`와 `git diff --staged`를 각각 실행)
 3. `git log --oneline -5`로 최근 커밋 스타일 참고
 4. 변경 내용을 분석하여 커밋 메시지 작성
 5. 관련 파일만 `git add`로 스테이징
@@ -119,11 +119,10 @@ allowed-tools: Bash(mkdir:*), Bash(ls:*), Bash(date:*), Bash(git status), Bash(g
 
 **커밋 메시지 형식:**
 
-```
+```text
 <type>(<scope>): <subject>
 
 <body>
-
 ```
 
 **타입:**
