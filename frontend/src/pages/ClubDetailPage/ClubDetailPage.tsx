@@ -85,7 +85,12 @@ const ClubDetailPage = () => {
     [hasCalendarEvents],
   );
 
-  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
+  useTrackPageView(
+    PAGE_VIEW.CLUB_DETAIL_PAGE,
+    clubDetail?.name,
+    !clubDetail,
+    clubDetail?.recruitmentStatus,
+  );
 
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollToElement } = useScrollTo();
