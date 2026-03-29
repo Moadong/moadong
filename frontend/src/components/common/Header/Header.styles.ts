@@ -8,8 +8,7 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   left: 0;
   right: 0;
   width: 100%;
-  height: 62px;
-  padding: 10px 20px;
+  padding: 18px 0;
   background-color: white;
   z-index: ${Z_INDEX.header};
 
@@ -20,6 +19,10 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   ${media.tablet} {
     height: 56px;
     padding: 10px 20px;
+  }
+
+  ${media.mobile} {
+    padding: 8px 20px;
   }
 `;
 

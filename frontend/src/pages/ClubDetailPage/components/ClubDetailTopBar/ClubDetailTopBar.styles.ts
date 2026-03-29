@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { Z_INDEX } from '@/styles/zIndex';
 
 export const TopBarWrapper = styled.div<{ $isVisible: boolean }>`
   position: fixed;
@@ -110,4 +111,31 @@ export const TabButton = styled.button<{ $active: boolean }>`
       $active ? theme.colors.gray[800] : 'transparent'};
   cursor: pointer;
   transition: all 0.2s ease;
+`;
+
+export const LoadingOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: ${Z_INDEX.overlay};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.3);
+`;
+
+export const AppOpenButton = styled.button`
+  padding: 6px 12px;
+  border: none;
+  background-color: ${({ theme }) => theme.colors.base.black};
+  color: ${({ theme }) => theme.colors.base.white};
+  font-size: 13px;
+  font-weight: 600;
+  border-radius: 18px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: opacity 0.2s ease;
+
+  &:active {
+    opacity: 0.7;
+  }
 `;

@@ -24,7 +24,7 @@ describe('getDeadlineText 함수 테스트', () => {
       new Date('2025-04-10'),
       '2025-04-11',
       'CLOSED',
-      '모집 마감',
+      '지난 모집・2025 4/10',
     ],
     [
       '모집 시작일이 아직 남은 경우 (시간 포함)',
@@ -66,6 +66,20 @@ describe('getDeadlineText 함수 테스트', () => {
 
   it('모집 기간이 null인 경우 모집 마감을 반환해야 한다', () => {
     expect(getDeadlineText(null, null, 'CLOSED')).toBe('모집 마감');
+    expect(getDeadlineText(null, null, 'OPEN')).toBe('모집 마감');
+    expect(getDeadlineText(null, null, 'UPCOMING')).toBe('모집 마감');
+  });
+
+  it(`모집 종료일이 null이면 모집 마감을 반환해야 한다`, () => {
+    expect(getDeadlineText(new Date('2025-01-01'), null, 'OPEN')).toBe(
+      '모집 마감',
+    );
+  });
+
+  it('UPCOMING 상태인데 모집 시작일이 null이면 모집 마감을 반환해야 한다', () => {
+    expect(getDeadlineText(null, new Date('2025-04-10'), 'UPCOMING')).toBe(
+      '모집 마감',
+    );
   });
 
   it('모집 중 상태인데 모집 종료일까지 1년 이상 남으면 상시 모집을 반환해야 한다', () => {
@@ -78,4 +92,16 @@ describe('getDeadlineText 함수 테스트', () => {
       ),
     ).toBe('상시 모집');
   });
+});
+
+it('CLOSED 상태이고 종료일이 있으면 지난 모집 날짜를 표시한다', () => {
+  expect(getDeadlineText(null, new Date('2024-12-31'), 'CLOSED')).toBe(
+    '지난 모집・2024 12/31',
+  );
+});
+
+it('UPCOMING 상태이고 시작일이 있으면 모집 시작일을 표시한다', () => {
+  expect(
+    getDeadlineText(new Date('2024-11-15T14:30:00'), null, 'UPCOMING'),
+  ).toBe('11월 15일 14:30 모집 시작');
 });

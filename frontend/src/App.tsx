@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'styled-components';
@@ -15,7 +15,13 @@ import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
 import 'swiper/css';
+import {
+  ContentErrorBoundary,
+  GlobalBoundary,
+} from './components/common/ErrorBoundary';
 import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
+import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
+import IntroductionPage from './pages/FestivalPage/IntroductionPage/IntroductionPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -33,70 +39,115 @@ const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
 
 const App = () => {
   return (
-    <QueryClientProvider client={queryClient}>
-      <ThemeProvider theme={theme}>
-        <BrowserRouter>
-          <GlobalStyles />
-          <ScrollToTop />
-          <ScrollToTopButton />
-          <Routes>
-            <Route
-              path='/'
-              element={
-                <Suspense fallback={null}>
-                  <MainPage />
-                </Suspense>
-              }
-            />
-            {/*기존 웹 & 안드로이드 url (android: v1.1.0)*/}
-            <Route
-              path='/club/:clubId'
-              element={
-                <Suspense fallback={null}>
-                  <LegacyClubDetailPage />
-                </Suspense>
-              }
-            />
-            {/*웹 유저에게 신규 상세페이지 보유주기 위한 임시 url*/}
-            <Route
-              path='/clubDetail/:clubId'
-              element={
-                <Suspense fallback={null}>
-                  <ClubDetailPage />
-                </Suspense>
-              }
-            />
-            {/*새로 빌드해서 배포할 앱 주소 url*/}
-            <Route
-              path='/webview/club/:clubId'
-              element={
-                <Suspense fallback={null}>
-                  <ClubDetailPage />
-                </Suspense>
-              }
-            />
-            <Route path='/introduce' element={<IntroducePage />} />
-            <Route path='/admin/login' element={<LoginTab />} />
-            <Route
-              path='/admin/*'
-              element={
-                <AdminClubProvider>
-                  <PrivateRoute>
-                    <AdminRoutes />
-                  </PrivateRoute>
-                </AdminClubProvider>
-              }
-            />
-            <Route
-              path='/application/:clubId/:applicationFormId'
-              element={<ApplicationFormPage />}
-            />
-            <Route path='/club-union' element={<ClubUnionPage />} />
-            <Route path='*' element={<Navigate to='/' replace />} />
-          </Routes>
-        </BrowserRouter>
-      </ThemeProvider>
-    </QueryClientProvider>
+    <>
+      <GlobalStyles />
+      <GlobalBoundary>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={theme}>
+            <BrowserRouter>
+              <ScrollToTop />
+              <ScrollToTopButton />
+              <Routes>
+                <Route
+                  path='/'
+                  element={
+                    <ContentErrorBoundary>
+                      <MainPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                {/*기존 웹 & 안드로이드 url (android: v1.1.0)*/}
+                <Route
+                  path='/club/:clubId'
+                  element={
+                    <ContentErrorBoundary>
+                      <LegacyClubDetailPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                {/*웹 유저에게 신규 상세페이지 보유주기 위한 임시 url*/}
+                <Route
+                  path='/clubDetail/:clubId'
+                  element={
+                    <ContentErrorBoundary>
+                      <ClubDetailPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                {/*한국어핸들 */}
+                <Route
+                  path='/clubDetail/@:clubName'
+                  element={
+                    <ContentErrorBoundary>
+                      <ClubDetailPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                {/*새로 빌드해서 배포할 앱 주소 url*/}
+                <Route
+                  path='/webview/club/:clubId'
+                  element={
+                    <ContentErrorBoundary>
+                      <ClubDetailPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/introduce'
+                  element={
+                    <ContentErrorBoundary>
+                      <IntroducePage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route path='/admin/login' element={<LoginTab />} />
+                <Route
+                  path='/admin/*'
+                  element={
+                    <ContentErrorBoundary>
+                      <AdminClubProvider>
+                        <PrivateRoute>
+                          <AdminRoutes />
+                        </PrivateRoute>
+                      </AdminClubProvider>
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/application/:clubId/:applicationFormId'
+                  element={
+                    <ContentErrorBoundary>
+                      <ApplicationFormPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/club-union'
+                  element={
+                    <ContentErrorBoundary>
+                      <ClubUnionPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/festival-introduction'
+                  element={
+                    <ContentErrorBoundary>
+                      <IntroductionPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                {/* 개발 환경에서만 사용 가능한 에러 테스트 페이지 */}
+                {import.meta.env.DEV && (
+                  <Route path='/error-test' element={<ErrorTestPage />} />
+                )}
+                <Route path='*' element={<Navigate to='/' replace />} />
+              </Routes>
+            </BrowserRouter>
+          </ThemeProvider>
+        </QueryClientProvider>
+      </GlobalBoundary>
+    </>
   );
 };
 

@@ -6,7 +6,7 @@ export const SearchBoxContainer = styled.form<{ $isFocused: boolean }>`
   align-items: center;
   justify-content: center;
   width: 345px;
-  height: 36px;
+  height: 40px;
   padding: 3px 20px;
   border: 1px solid transparent;
   border-radius: 41px;

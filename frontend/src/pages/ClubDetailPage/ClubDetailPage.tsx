@@ -2,6 +2,7 @@ import { useCallback, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -36,11 +37,16 @@ const ClubDetailPage = () => {
       ? tabParam
       : TAB_TYPE.INTRO;
 
-  const { clubId } = useParams<{ clubId: string }>();
-  const { isMobile, isTablet, isLaptop, isDesktop } = useDevice();
+  const { clubId, clubName } = useParams<{
+    clubId: string;
+    clubName: string;
+  }>();
+  const { isMobile, isTablet } = useDevice();
   const showTopBar = isMobile || isTablet;
 
-  const { data: clubDetail, error } = useGetClubDetail(clubId || '');
+  const { data: clubDetail, error } = useGetClubDetail(
+    (clubName ?? clubId) || '',
+  );
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
 
@@ -102,20 +108,15 @@ const ClubDetailPage = () => {
           />
 
           <Styled.RightSection ref={contentRef}>
-            <Styled.TabList>
-              <Styled.TabButton
-                $active={activeTab === TAB_TYPE.INTRO}
-                onClick={() => handleTabClick(TAB_TYPE.INTRO)}
-              >
-                소개 내용
-              </Styled.TabButton>
-              <Styled.TabButton
-                $active={activeTab === TAB_TYPE.PHOTOS}
-                onClick={() => handleTabClick(TAB_TYPE.PHOTOS)}
-              >
-                활동사진
-              </Styled.TabButton>
-            </Styled.TabList>
+            <UnderlineTabs
+              tabs={[
+                { key: TAB_TYPE.INTRO, label: '소개 내용' },
+                { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+              ]}
+              activeKey={activeTab}
+              onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
+              centerOnMobile
+            />
 
             <Styled.TabContent>
               <div

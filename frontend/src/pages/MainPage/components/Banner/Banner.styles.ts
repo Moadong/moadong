@@ -8,7 +8,7 @@ export const BannerContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 90px;
+  margin-top: 88px;
   position: relative;
 
   ${media.laptop} {
@@ -16,7 +16,7 @@ export const BannerContainer = styled.div`
   }
 
   ${media.mobile} {
-    margin-top: 56px;
+    margin-top: 0px;
     padding: 0;
   }
 `;

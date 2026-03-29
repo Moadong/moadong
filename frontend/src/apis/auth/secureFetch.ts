@@ -17,7 +17,7 @@ export const secureFetch = async (
   });
 
   // accessToken 만료 시 → refresh 시도
-  if (response.status === 403) {
+  if (response.status === 401) {
     try {
       const newAccessToken = await refreshAccessToken();
       localStorage.setItem('accessToken', newAccessToken);
