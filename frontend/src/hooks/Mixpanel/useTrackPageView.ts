@@ -14,9 +14,13 @@ const useTrackPageView = (
   const clubNameRef = useRef(clubName);
   const recruitmentStatusRef = useRef(recruitmentStatus);
 
+  // ref 동기화는 별도 effect에서 처리 (방문 이벤트 중복 방지)
+  useEffect(() => {
+    recruitmentStatusRef.current = recruitmentStatus;
+  }, [recruitmentStatus]);
+
   useEffect(() => {
     clubNameRef.current = clubName;
-    recruitmentStatusRef.current = recruitmentStatus;
 
     if (skip) return;
 
@@ -59,7 +63,7 @@ const useTrackPageView = (
       window.removeEventListener('beforeunload', trackPageDuration);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [location.pathname, clubName, skip, pageName, recruitmentStatus]);
+  }, [location.pathname, clubName, skip, pageName]);
 };
 
 export default useTrackPageView;
