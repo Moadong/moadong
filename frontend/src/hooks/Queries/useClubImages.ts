@@ -25,12 +25,26 @@ export const useUploadFeed = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ clubId, files, existingUrls, onItemStatusChange }: FeedUploadParams) => {
+    mutationFn: async ({
+      clubId,
+      files,
+      existingUrls,
+      onItemStatusChange,
+    }: FeedUploadParams) => {
       // 1. presigned URL 요청
-      const ALLOWED_TYPES = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'];
+      const ALLOWED_TYPES = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/bmp',
+        'image/webp',
+      ];
       const uploadRequests = files.map((file) => ({
         fileName: file.name,
-        contentType: ALLOWED_TYPES.includes(file.type) ? file.type : 'image/jpeg',
+        contentType: ALLOWED_TYPES.includes(file.type)
+          ? file.type
+          : 'image/jpeg',
       }));
       const feedResArr = await feedApi.getUploadUrls(clubId, uploadRequests);
 
@@ -43,7 +57,11 @@ export const useUploadFeed = () => {
       const uploadResults = await Promise.allSettled(
         files.map((file, i) => {
           if (!feedResArr[i].success || !feedResArr[i].presignedUrl) {
-            return Promise.reject(new Error(feedResArr[i].failureReason ?? 'presigned URL 생성 실패'));
+            return Promise.reject(
+              new Error(
+                feedResArr[i].failureReason ?? 'presigned URL 생성 실패',
+              ),
+            );
           }
           return uploadToStorage(feedResArr[i].presignedUrl, file);
         }),

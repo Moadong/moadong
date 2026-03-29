@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { FeedImageGrid } from './FeedImageGrid';
 import type { FeedItem } from '../../PhotoEditTab';
+import { FeedImageGrid } from './FeedImageGrid';
 
 const IMAGES = [
   'https://picsum.photos/seed/a/400/500',
@@ -12,14 +12,21 @@ const IMAGES = [
 ];
 
 const uploaded = (url: string): FeedItem => ({ type: 'uploaded', url });
-const local = (seed: string, status: 'pending' | 'uploading' | 'failed'): FeedItem => ({
+const local = (
+  seed: string,
+  status: 'pending' | 'uploading' | 'failed',
+): FeedItem => ({
   type: 'local',
   file: new File([], `${seed}.jpg`),
   previewUrl: `https://picsum.photos/seed/${seed}/400/500`,
   status,
 });
 
-const Wrapper = ({ feedItems, isLoading = false, dragIndex = null }: {
+const Wrapper = ({
+  feedItems,
+  isLoading = false,
+  dragIndex = null,
+}: {
   feedItems: FeedItem[];
   isLoading?: boolean;
   dragIndex?: number | null;

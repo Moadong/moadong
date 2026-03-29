@@ -1,6 +1,6 @@
+import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { MemoryRouter, Routes, Route, Outlet } from 'react-router-dom';
 import type { ClubDetail } from '@/types/club';
 import PhotoEditTab from './PhotoEditTab';
 
@@ -48,7 +48,10 @@ const Wrapper = ({ feeds = SAMPLE_FEEDS }: { feeds?: string[] }) => (
     <div style={{ maxWidth: 600, padding: 24 }}>
       <MemoryRouter initialEntries={['/admin/photo']}>
         <Routes>
-          <Route path="/admin/photo" element={<Outlet context={mockClubDetail(feeds)} />}>
+          <Route
+            path='/admin/photo'
+            element={<Outlet context={mockClubDetail(feeds)} />}
+          >
             <Route index element={<PhotoEditTab />} />
           </Route>
         </Routes>
@@ -76,7 +79,10 @@ export const Empty: Story = {
 export const ManyPhotos: Story = {
   render: () => (
     <Wrapper
-      feeds={Array.from({ length: 9 }, (_, i) => `https://picsum.photos/seed/${i + 10}/400/500`)}
+      feeds={Array.from(
+        { length: 9 },
+        (_, i) => `https://picsum.photos/seed/${i + 10}/400/500`,
+      )}
     />
   ),
 };

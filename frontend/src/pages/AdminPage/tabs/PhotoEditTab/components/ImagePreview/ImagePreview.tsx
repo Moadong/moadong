@@ -22,7 +22,9 @@ export const ImagePreview = ({
     <Styled.ImagePreviewContainer>
       <img src={image} alt='preview' draggable={false} />
 
-      {status === 'pending' && <Styled.PendingBadge>업로드 예정</Styled.PendingBadge>}
+      {status === 'pending' && (
+        <Styled.PendingBadge>업로드 예정</Styled.PendingBadge>
+      )}
 
       {status === 'failed' && (
         <Styled.Overlay $error>

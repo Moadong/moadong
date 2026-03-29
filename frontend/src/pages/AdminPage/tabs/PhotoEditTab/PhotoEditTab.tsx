@@ -12,7 +12,10 @@ import { useDragSort } from './hooks/useDragSort';
 import { useFeedItems } from './hooks/useFeedItems';
 import * as Styled from './PhotoEditTab.styles';
 
-export interface UploadedItem { type: 'uploaded'; url: string }
+export interface UploadedItem {
+  type: 'uploaded';
+  url: string;
+}
 export interface LocalItem {
   type: 'local';
   file: File;
@@ -96,10 +99,16 @@ const PhotoEditTab = () => {
 
           {feedItems.length > 0 && (
             <Styled.GridHeader>
-              <Styled.AddButton onClick={handleAddClick} disabled={isLoading || isFull}>
+              <Styled.AddButton
+                onClick={handleAddClick}
+                disabled={isLoading || isFull}
+              >
                 + 이미지 추가
               </Styled.AddButton>
-              <Styled.ClearAllButton onClick={handleClearAll} disabled={isLoading}>
+              <Styled.ClearAllButton
+                onClick={handleClearAll}
+                disabled={isLoading}
+              >
                 전체 삭제
               </Styled.ClearAllButton>
             </Styled.GridHeader>

@@ -1,7 +1,11 @@
 import { useEffect, useRef, useState } from 'react';
-import { useUploadFeed, useUpdateFeed } from '@/hooks/Queries/useClubImages';
-import { findOversizedFile, hasPendingChanges, sliceToLimit } from '../photoEditUtils';
+import { useUpdateFeed, useUploadFeed } from '@/hooks/Queries/useClubImages';
 import { FeedItem, LocalItem, UploadedItem } from '../PhotoEditTab';
+import {
+  findOversizedFile,
+  hasPendingChanges,
+  sliceToLimit,
+} from '../photoEditUtils';
 
 export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
   const { mutate: uploadFeed, isPending: isUploading } = useUploadFeed();
@@ -13,10 +17,14 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
   const isLoading = isUploading || isUpdating;
   const pendingChanges = hasPendingChanges(feedItems, originalFeeds);
 
-  useEffect(() => { feedItemsRef.current = feedItems; }, [feedItems]);
+  useEffect(() => {
+    feedItemsRef.current = feedItems;
+  }, [feedItems]);
 
   useEffect(() => {
-    setFeedItems((originalFeeds || []).map((url) => ({ type: 'uploaded', url })));
+    setFeedItems(
+      (originalFeeds || []).map((url) => ({ type: 'uploaded', url })),
+    );
   }, [originalFeeds]);
 
   useEffect(() => {
@@ -67,7 +75,9 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
 
     setFeedItems((prev) =>
       prev.map((it, i) =>
-        i === index && it.type === 'local' ? { ...it, status: 'uploading' } : it,
+        i === index && it.type === 'local'
+          ? { ...it, status: 'uploading' }
+          : it,
       ),
     );
 
@@ -88,7 +98,9 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
         onError: () => {
           setFeedItems((prev) =>
             prev.map((it, i) =>
-              i === index && it.type === 'local' ? { ...it, status: 'failed' } : it,
+              i === index && it.type === 'local'
+                ? { ...it, status: 'failed' }
+                : it,
             ),
           );
         },
@@ -97,7 +109,9 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
   };
 
   const save = () => {
-    const localItems = feedItems.filter((item): item is LocalItem => item.type === 'local');
+    const localItems = feedItems.filter(
+      (item): item is LocalItem => item.type === 'local',
+    );
     const uploadedUrls = feedItems
       .filter((item): item is UploadedItem => item.type === 'uploaded')
       .map((item) => item.url);
@@ -111,7 +125,9 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
     }
 
     setFeedItems((prev) =>
-      prev.map((item) => (item.type === 'local' ? { ...item, status: 'uploading' } : item)),
+      prev.map((item) =>
+        item.type === 'local' ? { ...item, status: 'uploading' } : item,
+      ),
     );
 
     uploadFeed(
@@ -139,7 +155,8 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
           setFeedItems((prev) => {
             let successIdx = 0;
             return prev.map((item) => {
-              if (item.type !== 'local' || item.status === 'failed') return item;
+              if (item.type !== 'local' || item.status === 'failed')
+                return item;
               const finalUrl = data.successfulUrls[successIdx++];
               URL.revokeObjectURL(item.previewUrl);
               return { type: 'uploaded', url: finalUrl } as UploadedItem;

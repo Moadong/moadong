@@ -16,8 +16,9 @@ const makeLocal = (name: string): FeedItem => ({
 });
 
 describe('sliceToLimit', () => {
-  const files = Array.from({ length: 10 }, (_, i) =>
-    new File([''], `file${i}.jpg`, { type: 'image/jpeg' }),
+  const files = Array.from(
+    { length: 10 },
+    (_, i) => new File([''], `file${i}.jpg`, { type: 'image/jpeg' }),
   );
 
   it('현재 개수 + 파일 수가 MAX_FILE_COUNT 이하이면 전부 반환한다', () => {
@@ -70,21 +71,30 @@ describe('reorderItems', () => {
   it('앞에서 뒤로 이동한다 (0 → 2)', () => {
     const result = reorderItems(items, 0, 2);
     expect(result.map((i) => (i as { url: string }).url)).toEqual([
-      'b', 'a', 'c', 'd',
+      'b',
+      'a',
+      'c',
+      'd',
     ]);
   });
 
   it('뒤에서 앞으로 이동한다 (3 → 1)', () => {
     const result = reorderItems(items, 3, 1);
     expect(result.map((i) => (i as { url: string }).url)).toEqual([
-      'a', 'd', 'b', 'c',
+      'a',
+      'd',
+      'b',
+      'c',
     ]);
   });
 
   it('같은 위치로 이동해도 순서가 유지된다', () => {
     const result = reorderItems(items, 1, 1);
     expect(result.map((i) => (i as { url: string }).url)).toEqual([
-      'a', 'b', 'c', 'd',
+      'a',
+      'b',
+      'c',
+      'd',
     ]);
   });
 
