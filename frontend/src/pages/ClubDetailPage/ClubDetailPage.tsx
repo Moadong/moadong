@@ -1,5 +1,6 @@
 import { useCallback, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import LocationIcon from '@/assets/images/icons/location_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
@@ -115,15 +116,22 @@ const ClubDetailPage = () => {
               introDescription={clubDetail.description.introDescription}
             />
             {location && (
-              <Styled.MapWrapper>
-                <NaverMap
-                  clubName={location.clubName}
-                  lat={location.lat}
-                  lng={location.lng}
-                  building={location.building}
-                  detailLocation={location.detailLocation}
-                />
-              </Styled.MapWrapper>
+              <Styled.MapInfo>
+                <Styled.MapCard>
+                  <NaverMap
+                    clubName={location.clubName}
+                    lat={location.lat}
+                    lng={location.lng}
+                    building={location.building}
+                    detailLocation={location.detailLocation}
+                  />
+                </Styled.MapCard>
+
+                <Styled.MapDetailText>
+                  <img src={LocationIcon} alt='위치 아이콘' />
+                  동아리방 위치 {location.building} {location.detailLocation}
+                </Styled.MapDetailText>
+              </Styled.MapInfo>
             )}
           </Styled.LeftSection>
 

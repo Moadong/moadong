@@ -57,12 +57,13 @@ export const Content = styled.div`
   background-color: ${colors.gray[100]};
   border-radius: 20px;
 
-  ${media.tablet} {
-    background-color: ${colors.base.white};
-  }
-
   ${media.laptop} {
     padding: 40px 16px 20px;
+  }
+
+  ${media.tablet} {
+    padding: 40px 16px 12px;
+    background-color: ${colors.base.white};
   }
 `;
 

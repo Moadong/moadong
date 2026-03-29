@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
-import { transitions } from '@/styles/theme/transitions';
 import { colors } from '@/styles/theme/colors';
+import { transitions } from '@/styles/theme/transitions';
 
 export const Container = styled.div`
   width: 100%;
@@ -42,19 +42,44 @@ export const LeftSection = styled.div`
 
   ${media.tablet} {
     width: 100%;
+    gap: 0px;
   }
 `;
 
-export const MapWrapper = styled.div`
+export const MapInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  ${media.tablet} {
+    padding: 0 16px 20px;
+  }
+`;
+
+export const MapCard = styled.div`
   width: 100%;
   height: 189px;
+
   border-radius: 20px;
   border: 1px solid ${colors.gray[400]};
   overflow: hidden;
-  background-color: #f2f2f2;
 
-  ${media.tablet} {
-    padding: 0 20px;
+  background-color: #f2f2f2;
+`;
+
+export const MapDetailText = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  padding: 0 2px;
+
+  font-size: 14px;
+  color: ${colors.gray[700]};
+
+  img {
+    width: 12px;
+    height: 15px;
   }
 `;
 

@@ -1,4 +1,3 @@
-import { media } from '@/styles/mediaQuery';
 import styled from 'styled-components';
 
 export const MapContainer = styled.div`
