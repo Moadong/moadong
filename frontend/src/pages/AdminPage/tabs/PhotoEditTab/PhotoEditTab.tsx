@@ -1,15 +1,25 @@
-import { useEffect, useRef, useState } from 'react';
+import { useRef } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import Button from '@/components/common/Button/Button';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
-import { MAX_FILE_COUNT, MAX_FILE_SIZE } from '@/constants/uploadLimit';
+import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import { useUpdateFeed, useUploadFeed } from '@/hooks/Queries/useClubImages';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
 import { ClubDetail } from '@/types/club';
+import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
+import { useDragSort } from './hooks/useDragSort';
+import { useFeedItems } from './hooks/useFeedItems';
 import * as Styled from './PhotoEditTab.styles';
+
+export interface UploadedItem { type: 'uploaded'; url: string }
+export interface LocalItem {
+  type: 'local';
+  file: File;
+  previewUrl: string;
+  status: 'pending' | 'uploading' | 'failed';
+}
+export type FeedItem = UploadedItem | LocalItem;
 
 const PhotoEditTab = () => {
   const trackEvent = useMixpanelTrack();
@@ -17,136 +27,113 @@ const PhotoEditTab = () => {
 
   const clubDetail = useOutletContext<ClubDetail>();
 
-  const { mutate: uploadFeed, isPending: isUploading } = useUploadFeed();
-  const { mutate: updateFeed, isPending: isUpdating } = useUpdateFeed();
+  const {
+    feedItems,
+    feedItemsRef,
+    setFeedItems,
+    isLoading,
+    pendingChanges,
+    addFiles,
+    deleteImage,
+    clearAll,
+    retryItem,
+    save,
+  } = useFeedItems(clubDetail?.id, clubDetail?.feeds || []);
 
-  const [imageList, setImageList] = useState<string[]>([]);
+  const isFull = feedItems.length >= MAX_FILE_COUNT;
   const inputRef = useRef<HTMLInputElement>(null);
 
-  const isLoading = isUploading || isUpdating;
+  const { gridRef, dragIndex, dropPosition, handleMouseDown } = useDragSort({
+    disabled: isLoading,
+    onReorder: setFeedItems,
+    feedItemsRef,
+  });
 
-  useEffect(() => {
-    if (!clubDetail) return;
-    setImageList(clubDetail.feeds || []);
-  }, [clubDetail]);
-
-  const handleFiles = (files: FileList | null) => {
-    if (!files || files.length === 0) return;
-
-    uploadFeed(
-      {
-        clubId: clubDetail.id,
-        files: Array.from(files),
-        existingUrls: imageList,
-      },
-      {
-        onSuccess: (data) => {
-          if (data.failedFiles.length > 0) {
-            const failedFileNames = data.failedFiles.join(', ');
-            alert(
-              `일부 파일 업로드에 실패했어요.\n실패한 파일: ${failedFileNames}\n\n성공한 파일은 정상적으로 등록되었어요.`,
-            );
-          }
-        },
-        onError: () => {
-          alert('이미지 업로드에 실패했어요. 다시 시도해주세요!');
-        },
-      },
-    );
-  };
-
-  const handleUploadClick = () => {
-    if (isLoading) return;
-
+  const handleAddClick = () => {
+    if (isLoading || isFull) return;
     trackEvent(ADMIN_EVENT.IMAGE_UPLOAD_BUTTON_CLICKED);
-
-    if (imageList.length >= MAX_FILE_COUNT) {
-      alert(`이미지는 최대 ${MAX_FILE_COUNT}장까지만 업로드할 수 있어요.`);
-      return;
-    }
-
     inputRef.current?.click();
   };
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const files = e.target.files;
-    if (!files || files.length === 0) return;
-
-    const oversizedFile = Array.from(files).find(
-      (file) => file.size > MAX_FILE_SIZE,
-    );
-
-    if (oversizedFile) {
-      alert(
-        `선택한 사진 중 ${oversizedFile.name}의 용량이 제한을 초과했습니다.`,
-      );
-      e.target.value = '';
-      return;
-    }
-
-    handleFiles(files);
+    if (!e.target.files?.length) return;
+    addFiles(Array.from(e.target.files));
+    e.target.value = '';
   };
 
-  const deleteImage = (index: number) => {
-    if (isLoading) return;
-
-    const newList = imageList.filter((_, i) => i !== index);
-    setImageList(newList);
-
-    updateFeed(
-      {
-        clubId: clubDetail.id,
-        urls: newList,
-      },
-      {
-        onError: () => {
-          alert('이미지 삭제에 실패했어요. 다시 시도해주세요!');
-        },
-      },
-    );
+  const handleClearAll = () => {
+    if (isLoading || !window.confirm('모든 사진을 삭제하시겠어요?')) return;
+    clearAll();
   };
 
   return (
     <Styled.Container>
       <ContentSection>
-        <ContentSection.Header title='활동 사진' />
-
-        <ContentSection.Body>
-          <Styled.Label>활동사진 추가 (최대 {MAX_FILE_COUNT}장)</Styled.Label>
-
-          <div>
-            <input
-              ref={inputRef}
-              type='file'
-              accept='image/*'
-              multiple
-              hidden
-              onChange={handleFileChange}
-            />
-
+        <ContentSection.Header
+          title='활동 사진'
+          action={
             <Button
               width={'150px'}
-              onClick={handleUploadClick}
-              disabled={isLoading}
+              animated
+              onClick={save}
+              disabled={isLoading || !pendingChanges}
             >
-              {isUploading ? '업로드 중...' : '이미지 업로드'}
+              {isLoading && <Styled.ButtonSpinner />}
+              {isLoading ? '저장 중...' : '저장하기'}
             </Button>
-          </div>
+          }
+        />
 
-          <Styled.Label>활동사진 수정</Styled.Label>
-          <Styled.ImageGrid>
-            {imageList.map((image, index) => (
-              <ImagePreview
-                key={`${image}-${index}`}
-                image={image}
-                disabled={isLoading}
-                onDelete={() => {
+        <ContentSection.Body>
+          <input
+            ref={inputRef}
+            type='file'
+            accept='image/*'
+            multiple
+            hidden
+            onChange={handleFileChange}
+          />
+
+          {feedItems.length > 0 && (
+            <Styled.GridHeader>
+              <Styled.AddButton onClick={handleAddClick} disabled={isLoading || isFull}>
+                + 이미지 추가
+              </Styled.AddButton>
+              <Styled.ClearAllButton onClick={handleClearAll} disabled={isLoading}>
+                전체 삭제
+              </Styled.ClearAllButton>
+            </Styled.GridHeader>
+          )}
+
+          <Styled.GridWrapper $uploading={isLoading}>
+            {isLoading && (
+              <Styled.UploadOverlay>
+                <Styled.OverlaySpinner />
+                <span>사진을 업로드하고 있어요</span>
+              </Styled.UploadOverlay>
+            )}
+            {feedItems.length === 0 ? (
+              <Styled.EmptyState onClick={handleAddClick}>
+                <span>+</span>
+                <span>사진을 추가해보세요</span>
+                <span>최대 {MAX_FILE_COUNT}장</span>
+              </Styled.EmptyState>
+            ) : (
+              <FeedImageGrid
+                feedItems={feedItems}
+                gridRef={gridRef}
+                dragIndex={dragIndex}
+                dropPosition={dropPosition}
+                isLoading={isLoading}
+                onMouseDown={handleMouseDown}
+                onDelete={(index) => {
                   trackEvent(ADMIN_EVENT.IMAGE_DELETE_BUTTON_CLICKED);
                   deleteImage(index);
                 }}
+                onRetry={retryItem}
               />
-            ))}
-          </Styled.ImageGrid>
+            )}
+          </Styled.GridWrapper>
         </ContentSection.Body>
       </ContentSection>
     </Styled.Container>
