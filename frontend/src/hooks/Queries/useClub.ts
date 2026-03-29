@@ -5,13 +5,19 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {
+  getClubCalendarEvents,
   getClubDetail,
   getClubList,
   updateClubDescription,
   updateClubDetail,
 } from '@/apis/club';
 import { queryKeys } from '@/constants/queryKeys';
-import { ClubDescription, ClubDetail, ClubSearchResponse } from '@/types/club';
+import {
+  ClubCalendarEvent,
+  ClubDescription,
+  ClubDetail,
+  ClubSearchResponse,
+} from '@/types/club';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
 
 interface UseGetCardListProps {
@@ -35,6 +41,26 @@ export const useGetClubDetail = (clubParam: string) => {
           ? data.feeds.map(convertGoogleDriveUrl)
           : [],
       }) as ClubDetail,
+  });
+};
+
+export const useGetClubCalendarEvents = (
+  clubParam: string,
+  options?: { enabled?: boolean },
+) => {
+  return useQuery<ClubCalendarEvent[]>({
+    queryKey: queryKeys.club.calendarEvents(clubParam),
+    queryFn: () => getClubCalendarEvents(clubParam),
+    staleTime: 5 * 60 * 1000,
+    enabled: (options?.enabled ?? true) && !!clubParam,
+    select: (data) =>
+      data.filter(
+        (event): event is ClubCalendarEvent =>
+          !!event &&
+          typeof event.id === 'string' &&
+          typeof event.title === 'string' &&
+          typeof event.start === 'string',
+      ),
   });
 };
 

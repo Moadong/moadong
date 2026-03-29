@@ -32,6 +32,7 @@ export const USER_EVENT = {
   CLUB_CARD_CLICKED: 'ClubCard Clicked',
   CLUB_INTRO_TAB_CLICKED: 'Club Intro Tab Clicked',
   CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',
+  CLUB_SCHEDULE_TAB_CLICKED: 'Club Schedule Tab Clicked',
 
   // 동아리 지원
   CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked',
