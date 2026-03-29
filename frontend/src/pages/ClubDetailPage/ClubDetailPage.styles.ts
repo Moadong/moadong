@@ -37,11 +37,9 @@ export const LeftSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 12px;
-  width: 360px;
   flex-shrink: 0;
 
   ${media.tablet} {
-    width: 100%;
     gap: 0px;
   }
 `;
