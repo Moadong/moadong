@@ -1,3 +1,4 @@
+import { useLayoutEffect } from 'react';
 import { useLocation, useParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -11,7 +12,6 @@ import PromotionInfoSection from './components/detail/PromotionInfoSection/Promo
 import PromotionTitleSection from './components/detail/PromotionTitleSection/PromotionTitleSection';
 import RelatedPromotionSection from './components/detail/RelatedPromotionSection/RelatedPromotionSection';
 import * as Styled from './PromotionDetailPage.styles';
-import { useLayoutEffect } from 'react';
 
 const PromotionDetailPage = () => {
   useTrackPageView(PAGE_VIEW.PROMOTION_DETAIL_PAGE);
@@ -26,7 +26,7 @@ const PromotionDetailPage = () => {
   useLayoutEffect(() => {
     window.scrollTo(0, 0);
   }, [pathname]);
-    
+
   return (
     <>
       <Styled.DesktopHeader>
