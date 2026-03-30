@@ -5,17 +5,17 @@ import RelatedPromotionCard from './RelatedPromotionCard/RelatedPromotionCard';
 import * as Styled from './RelatedPromotionSection.styles';
 
 interface Props {
-  currentClubId: string;
+  currentPromotionId: string;
   articles: PromotionArticle[];
 }
 
-const RelatedPromotionSection = ({ currentClubId, articles }: Props) => {
+const RelatedPromotionSection = ({ currentPromotionId, articles }: Props) => {
   const navigate = useNavigate();
 
   const activeEvents = articles
     .filter((article) => {
       const dday = getDDay(article.eventStartDate, article.eventEndDate);
-      return article.clubId !== currentClubId && dday >= 0;
+      return article.id !== currentPromotionId && dday >= 0;
     })
     .slice(0, 1);
 
@@ -27,9 +27,9 @@ const RelatedPromotionSection = ({ currentClubId, articles }: Props) => {
 
       {activeEvents.map((event) => (
         <RelatedPromotionCard
-          key={event.clubId}
+          key={event.id}
           article={event}
-          onClick={() => navigate(`/promotions/${event.clubId}`)}
+          onClick={() => navigate(`/promotions/${event.id}`, { replace: true })}
         />
       ))}
     </Styled.Container>

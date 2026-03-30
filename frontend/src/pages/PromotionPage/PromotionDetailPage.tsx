@@ -1,4 +1,4 @@
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW } from '@/constants/eventName';
@@ -11,6 +11,7 @@ import PromotionInfoSection from './components/detail/PromotionInfoSection/Promo
 import PromotionTitleSection from './components/detail/PromotionTitleSection/PromotionTitleSection';
 import RelatedPromotionSection from './components/detail/RelatedPromotionSection/RelatedPromotionSection';
 import * as Styled from './PromotionDetailPage.styles';
+import { useLayoutEffect } from 'react';
 
 const PromotionDetailPage = () => {
   useTrackPageView(PAGE_VIEW.PROMOTION_DETAIL_PAGE);
@@ -20,7 +21,12 @@ const PromotionDetailPage = () => {
 
   const article = data?.find((item) => item.id === promotionId) ?? null;
   const showRelatedPromotion = false; // 관련 이벤트 추천 기능은 현재 비활성화 상태
+  const { pathname } = useLocation();
 
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+    
   return (
     <>
       <Styled.DesktopHeader>
@@ -55,7 +61,7 @@ const PromotionDetailPage = () => {
                 */}
                 {showRelatedPromotion && (
                   <RelatedPromotionSection
-                    currentClubId={article.clubId}
+                    currentPromotionId={article.id}
                     articles={article ? data || [] : []}
                   />
                 )}
