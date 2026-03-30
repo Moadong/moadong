@@ -2,6 +2,8 @@ package moadong.club.service;
 
 import moadong.club.entity.Club;
 import moadong.club.entity.PromotionArticle;
+import moadong.club.payload.dto.PromotionArticleCreateResultDto;
+import moadong.club.payload.request.PromotionArticleCreateRequest;
 import moadong.club.payload.request.PromotionArticleUpdateRequest;
 import moadong.club.payload.response.PromotionArticleResponse;
 import moadong.club.repository.ClubRepository;
@@ -20,7 +22,9 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -101,6 +105,45 @@ class PromotionArticleServiceTest {
         assertEquals("수정 설명", article.getDescription());
         assertEquals(List.of("new-image-1", "new-image-2"), article.getImages());
         verify(promotionArticleRepository).save(article);
+    }
+
+    @Test
+    void 홍보게시글을_생성하고_articleId를_반환한다() {
+        String clubId = new ObjectId().toHexString();
+        PromotionArticleCreateRequest request = new PromotionArticleCreateRequest(
+            clubId,
+            "신규 제목",
+            "신규 장소",
+            Instant.parse("2026-04-01T00:00:00Z"),
+            Instant.parse("2026-04-10T00:00:00Z"),
+            "신규 설명",
+            List.of()
+        );
+        Club club = Club.builder()
+            .name("생성 동아리")
+            .category("category")
+            .division("division")
+            .userId("user-1")
+            .build();
+        PromotionArticle savedArticle = PromotionArticle.builder()
+            .id("created-article-id")
+            .clubId(clubId)
+            .clubName("생성 동아리")
+            .title("신규 제목")
+            .location("신규 장소")
+            .eventStartDate(Instant.parse("2026-04-01T00:00:00Z"))
+            .eventEndDate(Instant.parse("2026-04-10T00:00:00Z"))
+            .description("신규 설명")
+            .images(List.of())
+            .build();
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club));
+        when(promotionArticleRepository.save(any(PromotionArticle.class))).thenReturn(savedArticle);
+
+        PromotionArticleCreateResultDto result = promotionArticleService.createPromotionArticle(request);
+
+        assertNotNull(result);
+        assertEquals("created-article-id", result.articleId());
+        verify(promotionArticleRepository).save(any(PromotionArticle.class));
     }
 
     @Test
