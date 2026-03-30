@@ -1,17 +1,16 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import {
-  fetchGoogleCalendarList,
-  fetchGooglePrimaryEvents,
+  disconnectGoogleCalendar,
+  fetchGoogleAuthorizeUrl,
+  fetchGoogleCalendars,
   GoogleCalendarItem,
-  GoogleEventItem,
+  selectGoogleCalendar,
 } from '@/apis/calendarOAuth';
-import {
-  buildDefaultRedirectUri,
-  createState,
-} from '@/utils/calendarSyncUtils';
+import { createState } from '@/utils/calendarSyncUtils';
 
 const GOOGLE_STATE_KEY = 'admin_calendar_sync_google_state';
-const GOOGLE_TOKEN_KEY = 'admin_calendar_sync_google_token';
+const GOOGLE_OAUTH_SUCCESS_KEY = 'admin_calendar_sync_google_oauth_success';
+const GOOGLE_OAUTH_ERROR_KEY = 'admin_calendar_sync_google_oauth_error';
 
 interface UseGoogleCalendarDataParams {
   onError: (message: string) => void;
@@ -24,97 +23,132 @@ export const useGoogleCalendarData = ({
   onStatus,
   clearError,
 }: UseGoogleCalendarDataParams) => {
-  const googleClientId = import.meta.env.VITE_GOOGLE_CLIENT_ID?.trim() ?? '';
-  const redirectUri = buildDefaultRedirectUri();
-
-  const [googleToken, setGoogleToken] = useState(
-    () => sessionStorage.getItem(GOOGLE_TOKEN_KEY) ?? '',
-  );
+  const [isGoogleConnected, setIsGoogleConnected] = useState(false);
   const [googleCalendars, setGoogleCalendars] = useState<GoogleCalendarItem[]>(
     [],
   );
-  const [googleEvents, setGoogleEvents] = useState<GoogleEventItem[]>([]);
+  const [selectedCalendarId, setSelectedCalendarId] = useState<string>('');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
 
-  const canStartGoogleOAuth = useMemo(
-    () => googleClientId.length > 0,
-    [googleClientId],
-  );
-
-  const startGoogleOAuth = () => {
-    if (!canStartGoogleOAuth) {
-      onError('VITE_GOOGLE_CLIENT_ID 설정이 필요합니다.');
-      return;
-    }
-
-    const state = createState();
-    sessionStorage.setItem(GOOGLE_STATE_KEY, state);
-
-    const params = new URLSearchParams({
-      client_id: googleClientId,
-      redirect_uri: redirectUri,
-      response_type: 'token',
-      scope: 'https://www.googleapis.com/auth/calendar.readonly',
-      include_granted_scopes: 'true',
-      prompt: 'consent',
-      state,
-    });
-
-    window.location.href = `https://accounts.google.com/o/oauth2/v2/auth?${params.toString()}`;
-  };
-
-  useEffect(() => {
-    const hash = window.location.hash.startsWith('#')
-      ? window.location.hash.slice(1)
-      : '';
-
-    if (!hash) return;
-
-    const params = new URLSearchParams(hash);
-    const token = params.get('access_token');
-    const state = params.get('state');
-    const expectedState = sessionStorage.getItem(GOOGLE_STATE_KEY);
-
-    if (token && state && expectedState && state === expectedState) {
-      sessionStorage.removeItem(GOOGLE_STATE_KEY);
-      setGoogleToken(token);
-      sessionStorage.setItem(GOOGLE_TOKEN_KEY, token);
-      onStatus('Google OAuth 인증이 완료되었습니다.');
-      clearError();
-    }
-
-    const cleanUrl = `${window.location.pathname}${window.location.search}`;
-    window.history.replaceState({}, document.title, cleanUrl);
-  }, [clearError, onStatus]);
-
-  useEffect(() => {
-    if (!googleToken) return;
-
+  const loadGoogleCalendars = useCallback(async () => {
     setIsGoogleLoading(true);
     clearError();
 
-    Promise.all([
-      fetchGoogleCalendarList(googleToken),
-      fetchGooglePrimaryEvents(googleToken),
-    ])
-      .then(([calendars, events]) => {
-        setGoogleCalendars(calendars);
-        setGoogleEvents(events);
-      })
-      .catch((error: Error) => {
+    try {
+      const calendars = await fetchGoogleCalendars();
+      setGoogleCalendars(calendars);
+      setIsGoogleConnected(true);
+
+      const primaryCalendar = calendars.find((cal) => cal.primary);
+      if (primaryCalendar) {
+        setSelectedCalendarId(primaryCalendar.id);
+      } else if (calendars.length > 0) {
+        setSelectedCalendarId(calendars[0].id);
+      }
+    } catch (error) {
+      if (error instanceof Error) {
+        if (
+          error.message.includes('960-4') ||
+          error.message.includes('미연결')
+        ) {
+          setIsGoogleConnected(false);
+          setGoogleCalendars([]);
+        } else {
+          onError(error.message);
+        }
+      }
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  }, [clearError, onError]);
+
+  const startGoogleOAuth = useCallback(async () => {
+    setIsGoogleLoading(true);
+    clearError();
+
+    try {
+      const state = createState();
+      sessionStorage.setItem(GOOGLE_STATE_KEY, state);
+      const authorizeUrl = await fetchGoogleAuthorizeUrl(state);
+      window.location.href = authorizeUrl;
+    } catch (error) {
+      if (error instanceof Error) {
         onError(error.message);
-      })
-      .finally(() => {
+      }
+      setIsGoogleLoading(false);
+    }
+  }, [clearError, onError]);
+
+  const handleSelectCalendar = useCallback(
+    async (calendarId: string) => {
+      const calendar = googleCalendars.find((cal) => cal.id === calendarId);
+      if (!calendar) return;
+
+      setIsGoogleLoading(true);
+      clearError();
+
+      try {
+        await selectGoogleCalendar(calendarId, calendar.summary || '');
+        setSelectedCalendarId(calendarId);
+        onStatus('캘린더가 선택되었습니다.');
+      } catch (error) {
+        if (error instanceof Error) {
+          onError(error.message);
+        }
+      } finally {
         setIsGoogleLoading(false);
-      });
-  }, [clearError, googleToken, onError]);
+      }
+    },
+    [clearError, googleCalendars, onError, onStatus],
+  );
+
+  const handleDisconnect = useCallback(async () => {
+    setIsGoogleLoading(true);
+    clearError();
+
+    try {
+      await disconnectGoogleCalendar();
+      setIsGoogleConnected(false);
+      setGoogleCalendars([]);
+      setSelectedCalendarId('');
+      onStatus('Google Calendar 연결이 해제되었습니다.');
+    } catch (error) {
+      if (error instanceof Error) {
+        onError(error.message);
+      }
+    } finally {
+      setIsGoogleLoading(false);
+    }
+  }, [clearError, onError, onStatus]);
+
+  useEffect(() => {
+    const successFlag = sessionStorage.getItem(GOOGLE_OAUTH_SUCCESS_KEY);
+    const errorMessage = sessionStorage.getItem(GOOGLE_OAUTH_ERROR_KEY);
+
+    if (errorMessage) {
+      onError(errorMessage);
+      sessionStorage.removeItem(GOOGLE_OAUTH_ERROR_KEY);
+      return;
+    }
+
+    if (successFlag) {
+      sessionStorage.removeItem(GOOGLE_OAUTH_SUCCESS_KEY);
+      onStatus('Google OAuth 인증이 완료되었습니다.');
+      loadGoogleCalendars();
+      return;
+    }
+
+    loadGoogleCalendars();
+  }, [loadGoogleCalendars, onError, onStatus]);
 
   return {
-    googleToken,
+    isGoogleConnected,
     googleCalendars,
-    googleEvents,
+    selectedCalendarId,
     isGoogleLoading,
-    canStartGoogleOAuth,
     startGoogleOAuth,
+    selectCalendar: handleSelectCalendar,
+    disconnectGoogle: handleDisconnect,
+    loadGoogleCalendars,
   };
 };
