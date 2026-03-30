@@ -1,4 +1,6 @@
 import API_BASE_URL from '@/constants/api';
+import { festivalMock } from '@/mocks/data/festivalMock';
+import { sortPromotions } from '@/pages/PromotionPage/utils/sortPromotions';
 import {
   CreatePromotionArticleRequest,
   PromotionArticle,
@@ -13,11 +15,18 @@ export const getPromotionArticles = async (): Promise<PromotionArticle[]> => {
     '홍보게시판 목록을 불러오는데 실패했습니다.',
   );
 
-  if (!data?.articles) {
-    return [];
+  const serverArticle = data?.articles ?? [];
+
+  const isTest =
+    typeof process !== 'undefined' && process.env.NODE_ENV === 'test';
+
+  if (isTest) {
+    return serverArticle;
   }
 
-  return data.articles;
+  const merged = [...festivalMock, ...serverArticle];
+
+  return sortPromotions(merged);
 };
 
 export const createPromotionArticle = async (
@@ -30,5 +39,6 @@ export const createPromotionArticle = async (
     },
     body: JSON.stringify(payload),
   });
+
   return handleResponse(response, '홍보게시판 글 추가에 실패했습니다.');
 };

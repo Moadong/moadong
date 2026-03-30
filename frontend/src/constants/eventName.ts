@@ -60,6 +60,10 @@ export const USER_EVENT = {
   FESTIVAL_BOOTH_MAP_SLIDE_CHANGED: 'Festival BoothMap Slide Changed',
   FESTIVAL_PERFORMANCE_CARD_CLICKED: 'Festival PerformanceCard Clicked',
   FESTIVAL_TAB_DURATION: 'Festival Tab Duration',
+
+  // 홍보
+  PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
+  PROMOTION_CARD_CLICKED: 'Promotion Card Clicked',
 } as const;
 
 export const ADMIN_EVENT = {
@@ -114,6 +118,8 @@ export const PAGE_VIEW = {
   INTRODUCE_PAGE: 'IntroducePage',
   CLUB_UNION_PAGE: 'ClubUnionPage',
   FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
+  PROMOTION_LIST_PAGE: '홍보 목록 페이지',
+  PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
 
   // 관리자
   LOGIN_PAGE: '로그인페이지',

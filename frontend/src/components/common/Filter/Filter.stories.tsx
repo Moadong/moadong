@@ -10,8 +10,11 @@ const setViewportWidth = (width: number) => {
 };
 
 const meta = {
-  title: 'Pages/MainPage/Components/Filter',
+  title: 'Components/Common/Filter',
   component: Filter,
+  args: {
+    hasNotification: false,
+  },
   parameters: {
     layout: 'fullscreen',
     docs: {
@@ -44,7 +47,7 @@ export const PromotionTab: Story = {
     (Story) => {
       setViewportWidth(375);
       return (
-        <MemoryRouter initialEntries={['/promotion']}>
+        <MemoryRouter initialEntries={['/promotions']}>
           <Story />
         </MemoryRouter>
       );

@@ -7,7 +7,6 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import BoothMapSection from '@/pages/FestivalPage/components/BoothMapSection/BoothMapSection';
 import PerformanceList from '@/pages/FestivalPage/components/PerformanceList/PerformanceList';
-import Filter from '@/pages/MainPage/components/Filter/Filter';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './IntroductionPage.styles';
 
@@ -59,8 +58,7 @@ const IntroductionPage = () => {
     <>
       <Header hideOn={['webview']} />
       <Styled.Container>
-        {!isInAppWebView() && <Filter alwaysVisible />}
-        <Styled.TabWrapper $webview={isInAppWebView()}>
+        <Styled.TabWrapper>
           <UnderlineTabs
             tabs={[
               { key: FESTIVAL_TAB_TYPE.BOOTH_MAP, label: '부스지도' },

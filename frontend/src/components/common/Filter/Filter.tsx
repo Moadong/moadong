@@ -5,16 +5,16 @@ import useDevice from '@/hooks/useDevice';
 import * as Styled from './Filter.styles';
 
 const FILTER_OPTIONS = [
-  { label: '동소한', path: '/festival-introduction' },
   { label: '동아리', path: '/' },
+  { label: '홍보', path: '/promotions' },
 ] as const;
-const FESTIVAL_PATH = '/festival-introduction';
 
 interface FilterProps {
   alwaysVisible?: boolean;
+  hasNotification: boolean;
 }
 
-const Filter = ({ alwaysVisible = false }: FilterProps) => {
+const Filter = ({ alwaysVisible = false, hasNotification }: FilterProps) => {
   const { isMobile } = useDevice();
   const navigate = useNavigate();
   const { pathname } = useLocation();
@@ -25,6 +25,7 @@ const Filter = ({ alwaysVisible = false }: FilterProps) => {
     trackEvent(USER_EVENT.FILTER_OPTION_CLICKED, {
       path: path,
     });
+
     navigate(path);
   };
 
@@ -34,6 +35,9 @@ const Filter = ({ alwaysVisible = false }: FilterProps) => {
         <Styled.FilterListContainer>
           {FILTER_OPTIONS.map((filter) => (
             <Styled.FilterButtonWrapper key={filter.path}>
+              <Styled.NotificationDot
+                $isVisible={hasNotification && filter.path === '/promotions'}
+              />
               <Styled.FilterButton
                 $isActive={pathname === filter.path}
                 onClick={() => handleFilterOptionClick(filter.path)}
