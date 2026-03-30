@@ -13,6 +13,7 @@ import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
 import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
+import GoogleCallbackPage from './pages/CallbackPage/GoogleCallbackPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
 import 'swiper/css';
 import {
@@ -107,6 +108,10 @@ const App = () => {
                       <IntroducePage />
                     </ContentErrorBoundary>
                   }
+                />
+                <Route
+                  path='/callback/google'
+                  element={<GoogleCallbackPage />}
                 />
                 <Route path='/admin/login' element={<LoginTab />} />
                 <Route
