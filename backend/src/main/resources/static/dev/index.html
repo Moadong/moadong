@@ -1216,6 +1216,7 @@
           promotionSelectedArticleId = selected.id || '';
           promotionSelectedOriginal = promotionArticleToFormState(selected);
           fillPromotionForm(promotionSelectedOriginal);
+          renderPromotionList();
         } else {
           clearPromotionSelection({ keepMessage: true });
         }
@@ -1551,6 +1552,12 @@
           && JSON.stringify(article?.images || []) === JSON.stringify(payload.images || []);
       });
       if (!matched.length) return '';
+      const matchedWithCreatedAt = matched.filter((article) => article?.createdAt);
+      if (matchedWithCreatedAt.length) {
+        matchedWithCreatedAt.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        return matchedWithCreatedAt[0]?.id || '';
+      }
+      // API 목록은 createdAt desc로 내려오므로 createdAt이 없으면 현재 순서의 첫 항목을 최신으로 간주한다.
       return matched[0]?.id || '';
     }
 
