@@ -1,5 +1,9 @@
 import API_BASE_URL from '@/constants/api';
-import type { GoogleCalendarItem, GoogleEventItem } from '@/types/google';
+import type {
+  GoogleCalendarItem,
+  GoogleCalendarListResponse,
+  GoogleEventItem,
+} from '@/types/google';
 import type {
   NotionDatabaseOption,
   NotionPagesResponse,
@@ -17,11 +21,6 @@ interface GoogleAuthorizeResponse {
 
 interface GoogleTokenResponse {
   email: string;
-}
-
-interface GoogleCalendarListResponse {
-  kind: string;
-  items: GoogleCalendarItem[];
 }
 
 export const fetchGoogleCalendarList = async (accessToken: string) => {
@@ -308,7 +307,11 @@ export const fetchGoogleCalendars = async () => {
     response,
     'Google 캘린더 목록 조회에 실패했습니다.',
   );
-  return data?.items ?? [];
+  return {
+    items: data?.items ?? [],
+    selectedCalendarId: data?.selectedCalendarId,
+    selectedCalendarName: data?.selectedCalendarName,
+  };
 };
 
 export const selectGoogleCalendar = async (

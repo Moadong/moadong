@@ -3,9 +3,9 @@ import {
   disconnectGoogleCalendar,
   fetchGoogleAuthorizeUrl,
   fetchGoogleCalendars,
-  GoogleCalendarItem,
   selectGoogleCalendar,
 } from '@/apis/calendarOAuth';
+import type { GoogleCalendarItem } from '@/types/google';
 import { createState } from '@/utils/calendarSyncUtils';
 
 const GOOGLE_STATE_KEY = 'admin_calendar_sync_google_state';
@@ -39,15 +39,20 @@ export const useGoogleCalendarData = ({
       clearError();
 
       try {
-        const calendars = await fetchGoogleCalendars();
-        setGoogleCalendars(calendars);
+        const response = await fetchGoogleCalendars();
+        setGoogleCalendars(response.items);
         setIsGoogleConnected(true);
 
-        const primaryCalendar = calendars.find((cal) => cal.primary);
-        if (primaryCalendar) {
-          setSelectedCalendarId(primaryCalendar.id);
-        } else if (calendars.length > 0) {
-          setSelectedCalendarId(calendars[0].id);
+        // 서버가 제공한 선택값 우선, 없으면 primary, 없으면 첫 번째
+        if (response.selectedCalendarId) {
+          setSelectedCalendarId(response.selectedCalendarId);
+        } else {
+          const primaryCalendar = response.items.find((cal) => cal.primary);
+          if (primaryCalendar) {
+            setSelectedCalendarId(primaryCalendar.id);
+          } else if (response.items.length > 0) {
+            setSelectedCalendarId(response.items[0].id);
+          }
         }
       } catch (error) {
         if (error instanceof Error) {
