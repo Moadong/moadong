@@ -74,7 +74,7 @@ public class GoogleOAuthService {
             builder.queryParam("state", state);
         }
 
-        return Map.of("authorizeUrl", builder.build(true).toUriString());
+        return Map.of("authorizeUrl", builder.build().encode().toUriString());
     }
 
     public GoogleTokenExchangeResponse exchangeCode(CustomUserDetails user, GoogleTokenExchangeRequest request) {
