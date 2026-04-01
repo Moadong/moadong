@@ -30,8 +30,7 @@ public class GoogleConnection {
 
     private LocalDateTime tokenExpiresAt;
 
-    @Builder.Default
-    private LocalDateTime updatedAt = LocalDateTime.now();
+    private LocalDateTime updatedAt;
 
     public void updateTokens(String encryptedAccessToken, String encryptedRefreshToken,
                              String email, LocalDateTime tokenExpiresAt) {

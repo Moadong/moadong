@@ -1,6 +1,8 @@
 package moadong.calendar.google.service;
 
 import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
+import java.time.ZoneOffset;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -245,7 +247,7 @@ public class GoogleOAuthService {
         try {
             List<ClubCalendarEventResult> results = new ArrayList<>();
             String pageToken = null;
-            String timeMin = LocalDateTime.now().minusMonths(1).toString() + "Z";
+            String timeMin = OffsetDateTime.now(ZoneOffset.UTC).minusMonths(1).toString();
 
             for (int page = 0; page < MAX_GOOGLE_PAGE_REQUESTS; page++) {
                 String url = UriComponentsBuilder.fromHttpUrl(GOOGLE_CALENDAR_EVENTS_ENDPOINT)
