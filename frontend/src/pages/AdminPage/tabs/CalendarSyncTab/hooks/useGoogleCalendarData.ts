@@ -148,7 +148,7 @@ export const useGoogleCalendarData = ({
     if (successFlag) {
       sessionStorage.removeItem(GOOGLE_OAUTH_SUCCESS_KEY);
       onStatus('Google OAuth 인증이 완료되었습니다.');
-      loadGoogleCalendars();
+      loadGoogleCalendars(true);
       return;
     }
 
