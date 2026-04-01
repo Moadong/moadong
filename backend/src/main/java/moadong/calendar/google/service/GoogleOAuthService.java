@@ -55,6 +55,7 @@ public class GoogleOAuthService {
     private static final String GOOGLE_USERINFO_ENDPOINT = "https://www.googleapis.com/oauth2/v2/userinfo";
     private static final String GOOGLE_CALENDAR_LIST_ENDPOINT = "https://www.googleapis.com/calendar/v3/users/me/calendarList";
     private static final String GOOGLE_CALENDAR_EVENTS_ENDPOINT = "https://www.googleapis.com/calendar/v3/calendars/{calendarId}/events";
+    private static final int MAX_GOOGLE_PAGE_REQUESTS = 30;
 
     private static final String CALENDAR_SCOPE = "https://www.googleapis.com/auth/calendar.readonly";
     private static final String USERINFO_SCOPE = "https://www.googleapis.com/auth/userinfo.email";
@@ -126,16 +127,49 @@ public class GoogleOAuthService {
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try {
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                    GOOGLE_CALENDAR_LIST_ENDPOINT,
-                    HttpMethod.GET,
-                    entity,
-                    new ParameterizedTypeReference<>() {}
-            );
+            Map<String, Object> result = new java.util.HashMap<>();
+            List<Object> allCalendarItems = new ArrayList<>();
+            String pageToken = null;
 
-            Map<String, Object> result = response.getBody() != null
-                    ? new java.util.HashMap<>(response.getBody())
-                    : new java.util.HashMap<>();
+            for (int page = 0; page < MAX_GOOGLE_PAGE_REQUESTS; page++) {
+                String requestUrl = UriComponentsBuilder.fromHttpUrl(GOOGLE_CALENDAR_LIST_ENDPOINT)
+                        .queryParam("maxResults", 250)
+                        .queryParamIfPresent("pageToken", java.util.Optional.ofNullable(pageToken))
+                        .toUriString();
+
+                ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                        requestUrl,
+                        HttpMethod.GET,
+                        entity,
+                        new ParameterizedTypeReference<>() {}
+                );
+
+                Map<String, Object> body = response.getBody();
+                if (body == null) {
+                    break;
+                }
+                if (result.isEmpty()) {
+                    result.putAll(body);
+                }
+
+                Object itemsObj = body.get("items");
+                if (itemsObj instanceof List<?> items) {
+                    allCalendarItems.addAll(items);
+                }
+
+                String nextPageToken = asString(body.get("nextPageToken"));
+                if (!StringUtils.hasText(nextPageToken)) {
+                    break;
+                }
+
+                if (page == MAX_GOOGLE_PAGE_REQUESTS - 1) {
+                    log.warn("Google 캘린더 목록 페이지 상한 도달. clubId={}, maxPages={}", clubId, MAX_GOOGLE_PAGE_REQUESTS);
+                }
+                pageToken = nextPageToken;
+            }
+
+            result.put("items", allCalendarItems);
+            result.remove("nextPageToken");
 
             // 현재 선택된 캘린더 정보 추가
             GoogleConnection connection = googleConnectionRepository.findById(clubId).orElse(null);
@@ -206,45 +240,59 @@ public class GoogleOAuthService {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
-        String url = UriComponentsBuilder.fromHttpUrl(GOOGLE_CALENDAR_EVENTS_ENDPOINT)
-                .queryParam("maxResults", 100)
-                .queryParam("orderBy", "startTime")
-                .queryParam("singleEvents", true)
-                .queryParam("timeMin", LocalDateTime.now().minusMonths(1).toString() + "Z")
-                .buildAndExpand(calendarId)
-                .toUriString();
-
         HttpEntity<Void> entity = new HttpEntity<>(headers);
 
         try {
-            ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
-                    url,
-                    HttpMethod.GET,
-                    entity,
-                    new ParameterizedTypeReference<>() {}
-            );
-
-            Map<String, Object> body = response.getBody();
-            if (body == null) {
-                return List.of();
-            }
-
-            Object itemsObj = body.get("items");
-            if (!(itemsObj instanceof List<?> items)) {
-                return List.of();
-            }
-
             List<ClubCalendarEventResult> results = new ArrayList<>();
-            for (Object item : items) {
-                if (!(item instanceof Map<?, ?> eventMap)) {
-                    continue;
+            String pageToken = null;
+            String timeMin = LocalDateTime.now().minusMonths(1).toString() + "Z";
+
+            for (int page = 0; page < MAX_GOOGLE_PAGE_REQUESTS; page++) {
+                String url = UriComponentsBuilder.fromHttpUrl(GOOGLE_CALENDAR_EVENTS_ENDPOINT)
+                        .queryParam("maxResults", 100)
+                        .queryParam("orderBy", "startTime")
+                        .queryParam("singleEvents", true)
+                        .queryParam("timeMin", timeMin)
+                        .queryParamIfPresent("pageToken", java.util.Optional.ofNullable(pageToken))
+                        .buildAndExpand(calendarId)
+                        .toUriString();
+
+                ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
+                        url,
+                        HttpMethod.GET,
+                        entity,
+                        new ParameterizedTypeReference<>() {}
+                );
+
+                Map<String, Object> body = response.getBody();
+                if (body == null) {
+                    break;
                 }
-                Map<String, Object> event = (Map<String, Object>) eventMap;
-                ClubCalendarEventResult mapped = mapToClubCalendarEvent(event);
-                if (mapped != null) {
-                    results.add(mapped);
+
+                Object itemsObj = body.get("items");
+                if (itemsObj instanceof List<?> items) {
+                    for (Object item : items) {
+                        if (!(item instanceof Map<?, ?> eventMap)) {
+                            continue;
+                        }
+                        Map<String, Object> event = (Map<String, Object>) eventMap;
+                        ClubCalendarEventResult mapped = mapToClubCalendarEvent(event);
+                        if (mapped != null) {
+                            results.add(mapped);
+                        }
+                    }
                 }
+
+                String nextPageToken = asString(body.get("nextPageToken"));
+                if (!StringUtils.hasText(nextPageToken)) {
+                    break;
+                }
+                if (page == MAX_GOOGLE_PAGE_REQUESTS - 1) {
+                    log.warn("Google 이벤트 페이지 상한 도달. calendarId={}, maxPages={}", calendarId, MAX_GOOGLE_PAGE_REQUESTS);
+                }
+                pageToken = nextPageToken;
             }
+
             return results;
         } catch (HttpStatusCodeException e) {
             log.warn("Google 캘린더 이벤트 조회 실패. calendarId={}, status={}", calendarId, e.getStatusCode());
