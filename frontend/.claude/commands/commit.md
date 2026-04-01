@@ -139,6 +139,10 @@ allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(git status), Bash(g
 
 - `main`, `club-detail`, `admin`, `application`, `auth`, `api`, `hooks`, `store`, `utils`, `components`
 
+**주의사항:**
+
+- Co-Authored-By 라인을 추가하지 않는다
+
 ---
 
 ## 참고사항
