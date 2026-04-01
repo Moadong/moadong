@@ -85,6 +85,15 @@ public enum ErrorCode {
     NOTION_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "950-9", "연동할 동아리 정보를 찾을 수 없습니다."),
     NOTION_SEARCH_FAILED(HttpStatus.BAD_REQUEST, "950-10", "Notion DB 목록 조회에 실패했습니다."),
     NOTION_DATABASE_QUERY_FAILED(HttpStatus.BAD_REQUEST, "950-11", "Notion DB 조회에 실패했습니다."),
+
+    // 960xx: Google Calendar 연동 오류
+    GOOGLE_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "960-1", "Google Calendar 설정이 누락되었습니다."),
+    GOOGLE_TOKEN_EXCHANGE_FAILED(HttpStatus.BAD_REQUEST, "960-2", "Google 토큰 교환에 실패했습니다."),
+    GOOGLE_TOKEN_REFRESH_FAILED(HttpStatus.BAD_REQUEST, "960-3", "Google 토큰 갱신에 실패했습니다."),
+    GOOGLE_NOT_CONNECTED(HttpStatus.NOT_FOUND, "960-4", "Google Calendar가 연결되지 않았습니다."),
+    GOOGLE_CALENDAR_NOT_SELECTED(HttpStatus.BAD_REQUEST, "960-5", "캘린더가 선택되지 않았습니다."),
+    GOOGLE_API_FAILED(HttpStatus.BAD_GATEWAY, "960-6", "Google API 호출에 실패했습니다."),
+    GOOGLE_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "960-7", "연동할 동아리 정보를 찾을 수 없습니다.")
     ;
 
     private final HttpStatus httpStatus;

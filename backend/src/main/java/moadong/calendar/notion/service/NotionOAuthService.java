@@ -610,7 +610,7 @@ public class NotionOAuthService {
         String resolvedId = StringUtils.hasText(id) ? id : (StringUtils.hasText(url) ? url : "unknown");
         String resolvedTitle = StringUtils.hasText(title) ? title : "(제목 없음)";
 
-        return Optional.of(new ClubCalendarEventResult(
+        return Optional.of(ClubCalendarEventResult.ofNotion(
                 resolvedId,
                 resolvedTitle,
                 start,
