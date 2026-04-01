@@ -87,7 +87,7 @@ const response = await api.post('/api/integration/google/oauth/token', {
 // GET /api/integration/google/calendars
 const response = await api.get('/api/integration/google/calendars');
 
-// Response (Google Calendar API 형식)
+// Response (Google Calendar API 형식 + 선택된 캘린더 정보)
 {
   "statuscode": "200",
   "message": "success",
@@ -105,10 +105,14 @@ const response = await api.get('/api/integration/google/calendars');
         "summary": "대한민국의 휴일",
         "accessRole": "reader"
       }
-    ]
+    ],
+    "selectedCalendarId": "primary",  // 현재 선택된 캘린더 ID (선택된 캘린더가 있을 경우)
+    "selectedCalendarName": "user@gmail.com"  // 현재 선택된 캘린더 이름 (선택된 캘린더가 있을 경우)
   }
 }
 ```
+
+**주의**: `selectedCalendarId`와 `selectedCalendarName`은 사용자가 이미 캘린더를 선택한 경우에만 응답에 포함됩니다. 처음 연동한 경우에는 포함되지 않습니다.
 
 ### 2.5 캘린더 선택
 

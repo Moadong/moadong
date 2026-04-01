@@ -133,7 +133,20 @@ public class GoogleOAuthService {
                     new ParameterizedTypeReference<>() {}
             );
 
-            return response.getBody() != null ? response.getBody() : Map.of();
+            Map<String, Object> result = response.getBody() != null
+                    ? new java.util.HashMap<>(response.getBody())
+                    : new java.util.HashMap<>();
+
+            // 현재 선택된 캘린더 정보 추가
+            GoogleConnection connection = googleConnectionRepository.findById(clubId).orElse(null);
+            if (connection != null && StringUtils.hasText(connection.getCalendarId())) {
+                result.put("selectedCalendarId", connection.getCalendarId());
+                if (StringUtils.hasText(connection.getCalendarName())) {
+                    result.put("selectedCalendarName", connection.getCalendarName());
+                }
+            }
+
+            return result;
         } catch (HttpStatusCodeException e) {
             log.warn("Google 캘린더 목록 조회 실패. status={}, body={}", e.getStatusCode(), e.getResponseBodyAsString());
             throw new RestApiException(ErrorCode.GOOGLE_API_FAILED);
