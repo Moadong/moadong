@@ -4,6 +4,12 @@ export interface GoogleCalendarItem {
   primary?: boolean;
 }
 
+export interface GoogleCalendarListResponse {
+  items: GoogleCalendarItem[];
+  selectedCalendarId?: string;
+  selectedCalendarName?: string;
+}
+
 export interface GoogleEventItem {
   id: string;
   summary?: string;

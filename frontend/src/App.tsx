@@ -12,6 +12,7 @@ import MainPage from '@/pages/MainPage/MainPage';
 import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
 import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
+import GoogleCallbackPage from './pages/CallbackPage/GoogleCallbackPage';
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
 import 'swiper/css';
@@ -109,6 +110,10 @@ const App = () => {
                       <IntroducePage />
                     </ContentErrorBoundary>
                   }
+                />
+                <Route
+                  path='/callback/google'
+                  element={<GoogleCallbackPage />}
                 />
                 <Route path='/admin/login' element={<LoginTab />} />
                 <Route

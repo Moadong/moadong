@@ -42,6 +42,7 @@ export interface ClubCalendarEvent {
   end?: string;
   url?: string;
   description?: string;
+  source?: 'NOTION' | 'GOOGLE';
 }
 
 export interface ClubDescription {

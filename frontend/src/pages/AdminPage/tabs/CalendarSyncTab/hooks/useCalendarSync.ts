@@ -36,9 +36,10 @@ export const useCalendarSync = () => {
   });
 
   return {
-    googleToken: google.googleToken,
+    isGoogleConnected: google.isGoogleConnected,
+    isGoogleInitialChecking: google.isInitialChecking,
     googleCalendars: google.googleCalendars,
-    googleEvents: google.googleEvents,
+    selectedGoogleCalendarId: google.selectedCalendarId,
     notionItems: notionData.notionItems,
     notionTotalResults: notionData.notionTotalResults,
     notionDatabaseSourceId: notionData.notionDatabaseSourceId,
@@ -54,7 +55,6 @@ export const useCalendarSync = () => {
       notionOAuth.isNotionOAuthLoading ||
       notionData.isNotionDatabaseApplying,
     notionWorkspaceName,
-    canStartGoogleOAuth: google.canStartGoogleOAuth,
     notionCalendarEvents: notionUi.notionCalendarEvents,
     notionVisibleCalendarEvents: notionUi.notionVisibleCalendarEvents,
     notionEventsByDate: notionUi.notionEventsByDate,
@@ -63,6 +63,8 @@ export const useCalendarSync = () => {
     notionCalendarLabel: notionUi.notionCalendarLabel,
     visibleMonth: notionUi.visibleMonth,
     startGoogleOAuth: google.startGoogleOAuth,
+    selectGoogleCalendar: google.selectCalendar,
+    disconnectGoogle: google.disconnectGoogle,
     startNotionOAuth: notionOAuth.startNotionOAuth,
     goToPreviousMonth: notionUi.goToPreviousMonth,
     goToNextMonth: notionUi.goToNextMonth,

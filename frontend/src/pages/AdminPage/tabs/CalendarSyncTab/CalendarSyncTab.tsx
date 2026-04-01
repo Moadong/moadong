@@ -2,7 +2,6 @@ import Button from '@/components/common/Button/Button';
 import {
   buildDateKeyFromDate,
   formatDateText,
-  maskToken,
   WEEKDAY_LABELS,
 } from '@/utils/calendarSyncUtils';
 import * as Styled from './CalendarSyncTab.styles';
@@ -10,9 +9,10 @@ import { useCalendarSync } from './hooks/useCalendarSync';
 
 const CalendarSyncTab = () => {
   const {
-    googleToken,
+    isGoogleConnected,
+    isGoogleInitialChecking,
     googleCalendars,
-    googleEvents,
+    selectedGoogleCalendarId,
     notionItems,
     notionTotalResults,
     notionDatabaseSourceId,
@@ -25,7 +25,6 @@ const CalendarSyncTab = () => {
     isGoogleLoading,
     isNotionLoading,
     notionWorkspaceName,
-    canStartGoogleOAuth,
     notionCalendarEvents,
     notionVisibleCalendarEvents,
     notionEventsByDate,
@@ -34,6 +33,8 @@ const CalendarSyncTab = () => {
     notionCalendarLabel,
     visibleMonth,
     startGoogleOAuth,
+    selectGoogleCalendar,
+    disconnectGoogle,
     startNotionOAuth,
     goToPreviousMonth,
     goToNextMonth,
@@ -45,22 +46,70 @@ const CalendarSyncTab = () => {
   return (
     <Styled.Container>
       <Styled.ConfigGrid>
+        {/* ── Google 캘린더 블록 ── */}
         <Styled.Block>
           <Styled.BlockTitle>Google 캘린더</Styled.BlockTitle>
-          <Styled.Buttons>
-            <Button
-              width='180px'
-              onClick={startGoogleOAuth}
-              disabled={!canStartGoogleOAuth || isGoogleLoading}
-            >
-              Google 캘린더 가져오기
-            </Button>
-          </Styled.Buttons>
-          {googleToken && (
-            <Styled.TokenText>{maskToken(googleToken)}</Styled.TokenText>
+
+          {isGoogleInitialChecking ? (
+            /* 초기 연결 확인 중 */
+            <Styled.Description>연결 상태 확인 중…</Styled.Description>
+          ) : !isGoogleConnected ? (
+            /* 미연결 상태 */
+            <>
+              <Styled.Description>
+                Google 계정을 연동하여 캘린더를 가져오세요.
+              </Styled.Description>
+              <Styled.Buttons>
+                <Button
+                  width='180px'
+                  onClick={startGoogleOAuth}
+                  disabled={isGoogleLoading}
+                >
+                  {isGoogleLoading ? '연동 중…' : 'Google 캘린더 연동하기'}
+                </Button>
+              </Styled.Buttons>
+            </>
+          ) : (
+            /* 연결된 상태: 캘린더 선택 UI */
+            <>
+              <Styled.StatusText>
+                ✅ Google 계정이 연결되었습니다.
+              </Styled.StatusText>
+              {googleCalendars.length > 0 && (
+                <>
+                  <Styled.Description>
+                    동기화할 캘린더를 선택하고 적용하세요.
+                  </Styled.Description>
+                  <Styled.SelectRow>
+                    <Styled.Select
+                      value={selectedGoogleCalendarId}
+                      onChange={(e) => selectGoogleCalendar(e.target.value)}
+                      disabled={isGoogleLoading}
+                    >
+                      {googleCalendars.map((calendar) => (
+                        <option key={calendar.id} value={calendar.id}>
+                          {calendar.summary || '(제목 없음)'}
+                          {calendar.primary ? ' (기본 캘린더)' : ''}
+                        </option>
+                      ))}
+                    </Styled.Select>
+                  </Styled.SelectRow>
+                </>
+              )}
+              <Styled.Buttons>
+                <Button
+                  width='140px'
+                  onClick={disconnectGoogle}
+                  disabled={isGoogleLoading}
+                >
+                  {isGoogleLoading ? '처리 중…' : '연결 해제'}
+                </Button>
+              </Styled.Buttons>
+            </>
           )}
         </Styled.Block>
 
+        {/* ── Notion 캘린더 블록 ── */}
         <Styled.Block>
           <Styled.BlockTitle>Notion 캘린더</Styled.BlockTitle>
           <Styled.Description>
@@ -110,17 +159,32 @@ const CalendarSyncTab = () => {
       {errorMessage && <Styled.ErrorText>{errorMessage}</Styled.ErrorText>}
 
       <Styled.DataGrid>
+        {/* ── Google 캘린더 목록 카드 ── */}
         <Styled.DataCard>
           <Styled.DataTitle>Google 캘린더 목록</Styled.DataTitle>
-          {googleCalendars.length === 0 ? (
+          {isGoogleInitialChecking ? (
+            <Styled.Empty>연결 상태 확인 중…</Styled.Empty>
+          ) : !isGoogleConnected ? (
             <Styled.Empty>
-              아직 데이터가 없습니다. Google 캘린더 가져오기를 먼저
-              완료해주세요.
+              아직 데이터가 없습니다. Google 캘린더 연동을 먼저 완료해주세요.
             </Styled.Empty>
+          ) : googleCalendars.length === 0 ? (
+            <Styled.Empty>캘린더 목록을 불러오는 중입니다…</Styled.Empty>
           ) : (
             <Styled.List>
               {googleCalendars.map((calendar) => (
-                <Styled.ListItem key={calendar.id}>
+                <Styled.ListItem
+                  key={calendar.id}
+                  style={{
+                    fontWeight:
+                      calendar.id === selectedGoogleCalendarId ? 700 : 400,
+                    color:
+                      calendar.id === selectedGoogleCalendarId
+                        ? '#0f766e'
+                        : undefined,
+                  }}
+                >
+                  {calendar.id === selectedGoogleCalendarId ? '✓ ' : ''}
                   {calendar.summary || '(제목 없음)'}
                   {calendar.primary ? ' (기본 캘린더)' : ''}
                 </Styled.ListItem>
@@ -129,37 +193,7 @@ const CalendarSyncTab = () => {
           )}
         </Styled.DataCard>
 
-        <Styled.DataCard>
-          <Styled.DataTitle>Google 캘린더 이벤트</Styled.DataTitle>
-          {googleEvents.length === 0 ? (
-            <Styled.Empty>
-              이벤트가 없거나 아직 조회되지 않았습니다.
-            </Styled.Empty>
-          ) : (
-            <Styled.List>
-              {googleEvents.map((event) => (
-                <Styled.ListItem key={event.id}>
-                  {event.summary || '(제목 없음)'} | 시작:{' '}
-                  {formatDateText(event.start?.dateTime ?? event.start?.date)}
-                  {event.htmlLink && (
-                    <>
-                      {' '}
-                      |{' '}
-                      <Styled.ExternalLink
-                        href={event.htmlLink}
-                        target='_blank'
-                        rel='noreferrer'
-                      >
-                        열기
-                      </Styled.ExternalLink>
-                    </>
-                  )}
-                </Styled.ListItem>
-              ))}
-            </Styled.List>
-          )}
-        </Styled.DataCard>
-
+        {/* ── Notion 캘린더 일정 카드 ── */}
         <Styled.WideDataCard>
           <Styled.DataTitle>Notion 캘린더 일정</Styled.DataTitle>
           <Styled.Description>
@@ -210,7 +244,7 @@ const CalendarSyncTab = () => {
                         onChange={() => toggleNotionEvent(event.id)}
                       />
                       <Styled.ToggleText>
-                        {event.title} ({event.dateKey})
+                        {event.title} ({formatDateText(event.dateKey)})
                       </Styled.ToggleText>
                     </Styled.ToggleItem>
                   ))}
