@@ -10,6 +10,7 @@ import { useCalendarSync } from './hooks/useCalendarSync';
 const CalendarSyncTab = () => {
   const {
     isGoogleConnected,
+    isGoogleInitialChecking,
     googleCalendars,
     selectedGoogleCalendarId,
     notionItems,
@@ -49,7 +50,10 @@ const CalendarSyncTab = () => {
         <Styled.Block>
           <Styled.BlockTitle>Google 캘린더</Styled.BlockTitle>
 
-          {!isGoogleConnected ? (
+          {isGoogleInitialChecking ? (
+            /* 초기 연결 확인 중 */
+            <Styled.Description>연결 상태 확인 중…</Styled.Description>
+          ) : !isGoogleConnected ? (
             /* 미연결 상태 */
             <>
               <Styled.Description>
@@ -158,7 +162,9 @@ const CalendarSyncTab = () => {
         {/* ── Google 캘린더 목록 카드 ── */}
         <Styled.DataCard>
           <Styled.DataTitle>Google 캘린더 목록</Styled.DataTitle>
-          {!isGoogleConnected ? (
+          {isGoogleInitialChecking ? (
+            <Styled.Empty>연결 상태 확인 중…</Styled.Empty>
+          ) : !isGoogleConnected ? (
             <Styled.Empty>
               아직 데이터가 없습니다. Google 캘린더 연동을 먼저 완료해주세요.
             </Styled.Empty>

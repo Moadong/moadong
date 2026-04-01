@@ -37,6 +37,7 @@ export const useCalendarSync = () => {
 
   return {
     isGoogleConnected: google.isGoogleConnected,
+    isGoogleInitialChecking: google.isInitialChecking,
     googleCalendars: google.googleCalendars,
     selectedGoogleCalendarId: google.selectedCalendarId,
     notionItems: notionData.notionItems,

@@ -29,38 +29,48 @@ export const useGoogleCalendarData = ({
   );
   const [selectedCalendarId, setSelectedCalendarId] = useState<string>('');
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
+  const [isInitialChecking, setIsInitialChecking] = useState(true);
 
-  const loadGoogleCalendars = useCallback(async () => {
-    setIsGoogleLoading(true);
-    clearError();
-
-    try {
-      const calendars = await fetchGoogleCalendars();
-      setGoogleCalendars(calendars);
-      setIsGoogleConnected(true);
-
-      const primaryCalendar = calendars.find((cal) => cal.primary);
-      if (primaryCalendar) {
-        setSelectedCalendarId(primaryCalendar.id);
-      } else if (calendars.length > 0) {
-        setSelectedCalendarId(calendars[0].id);
+  const loadGoogleCalendars = useCallback(
+    async (isInitial = false) => {
+      if (!isInitial) {
+        setIsGoogleLoading(true);
       }
-    } catch (error) {
-      if (error instanceof Error) {
-        if (
-          error.message.includes('960-4') ||
-          error.message.includes('미연결')
-        ) {
-          setIsGoogleConnected(false);
-          setGoogleCalendars([]);
+      clearError();
+
+      try {
+        const calendars = await fetchGoogleCalendars();
+        setGoogleCalendars(calendars);
+        setIsGoogleConnected(true);
+
+        const primaryCalendar = calendars.find((cal) => cal.primary);
+        if (primaryCalendar) {
+          setSelectedCalendarId(primaryCalendar.id);
+        } else if (calendars.length > 0) {
+          setSelectedCalendarId(calendars[0].id);
+        }
+      } catch (error) {
+        if (error instanceof Error) {
+          if (
+            error.message.includes('960-4') ||
+            error.message.includes('미연결')
+          ) {
+            setIsGoogleConnected(false);
+            setGoogleCalendars([]);
+          } else {
+            onError(error.message);
+          }
+        }
+      } finally {
+        if (isInitial) {
+          setIsInitialChecking(false);
         } else {
-          onError(error.message);
+          setIsGoogleLoading(false);
         }
       }
-    } finally {
-      setIsGoogleLoading(false);
-    }
-  }, [clearError, onError]);
+    },
+    [clearError, onError],
+  );
 
   const startGoogleOAuth = useCallback(async () => {
     setIsGoogleLoading(true);
@@ -128,6 +138,7 @@ export const useGoogleCalendarData = ({
     if (errorMessage) {
       onError(errorMessage);
       sessionStorage.removeItem(GOOGLE_OAUTH_ERROR_KEY);
+      setIsInitialChecking(false);
       return;
     }
 
@@ -138,7 +149,7 @@ export const useGoogleCalendarData = ({
       return;
     }
 
-    loadGoogleCalendars();
+    loadGoogleCalendars(true);
   }, [loadGoogleCalendars, onError, onStatus]);
 
   return {
@@ -146,6 +157,7 @@ export const useGoogleCalendarData = ({
     googleCalendars,
     selectedCalendarId,
     isGoogleLoading,
+    isInitialChecking,
     startGoogleOAuth,
     selectCalendar: handleSelectCalendar,
     disconnectGoogle: handleDisconnect,
