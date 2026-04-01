@@ -5,6 +5,7 @@ import {
   fetchGoogleCalendars,
   selectGoogleCalendar,
 } from '@/apis/calendarOAuth';
+import { ApiError } from '@/errors';
 import type { GoogleCalendarItem } from '@/types/google';
 import { createState } from '@/utils/calendarSyncUtils';
 
@@ -55,16 +56,13 @@ export const useGoogleCalendarData = ({
           }
         }
       } catch (error) {
+        if (error instanceof ApiError && error.errorCode === '960-4') {
+          setIsGoogleConnected(false);
+          setGoogleCalendars([]);
+          return;
+        }
         if (error instanceof Error) {
-          if (
-            error.message.includes('960-4') ||
-            error.message.includes('미연결')
-          ) {
-            setIsGoogleConnected(false);
-            setGoogleCalendars([]);
-          } else {
-            onError(error.message);
-          }
+          onError(error.message);
         }
       } finally {
         if (isInitial) {
