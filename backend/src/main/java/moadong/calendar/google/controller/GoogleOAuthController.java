@@ -68,6 +68,17 @@ public class GoogleOAuthController {
         return Response.ok("캘린더가 선택되었습니다.");
     }
 
+    @GetMapping("/calendars/{calendarId}/events")
+    @Operation(summary = "Google 캘린더 이벤트 조회", description = "선택한 Google 캘린더의 이벤트(일정) 목록을 조회합니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> getCalendarEvents(@CurrentUser CustomUserDetails user,
+                                                @PathVariable String calendarId,
+                                                @RequestParam(required = false) String timeMin,
+                                                @RequestParam(required = false) String timeMax) {
+        return Response.ok(googleOAuthService.getCalendarEvents(user, calendarId, timeMin, timeMax));
+    }
+
     @DeleteMapping("/connection")
     @Operation(summary = "Google Calendar 연결 해제", description = "Google Calendar 연결을 해제합니다.")
     @PreAuthorize("isAuthenticated()")

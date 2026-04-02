@@ -209,6 +209,13 @@ public class GoogleOAuthService {
         googleConnectionRepository.deleteById(clubId);
     }
 
+    public List<ClubCalendarEventResult> getCalendarEvents(CustomUserDetails user, String calendarId, String timeMin, String timeMax) {
+        String clubId = requireAuthenticatedClubId(user);
+        String accessToken = getValidAccessToken(clubId);
+
+        return fetchCalendarEvents(accessToken, calendarId, timeMin, timeMax);
+    }
+
     public List<ClubCalendarEventResult> getClubCalendarEvents(String clubId) {
         if (!StringUtils.hasText(clubId)) {
             return List.of();
@@ -221,7 +228,8 @@ public class GoogleOAuthService {
             }
 
             String accessToken = getValidAccessToken(clubId);
-            return fetchCalendarEvents(accessToken, connection.getCalendarId());
+            String timeMin = OffsetDateTime.now(ZoneOffset.UTC).minusMonths(1).toString();
+            return fetchCalendarEvents(accessToken, connection.getCalendarId(), timeMin, null);
         } catch (Exception e) {
             log.warn("Google 캘린더 이벤트 조회 실패. clubId={}, message={}", clubId, e.getMessage());
             return List.of();
@@ -238,7 +246,7 @@ public class GoogleOAuthService {
     }
 
     @SuppressWarnings("unchecked")
-    private List<ClubCalendarEventResult> fetchCalendarEvents(String accessToken, String calendarId) {
+    private List<ClubCalendarEventResult> fetchCalendarEvents(String accessToken, String calendarId, String timeMin, String timeMax) {
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(accessToken);
 
@@ -247,17 +255,24 @@ public class GoogleOAuthService {
         try {
             List<ClubCalendarEventResult> results = new ArrayList<>();
             String pageToken = null;
-            String timeMin = OffsetDateTime.now(ZoneOffset.UTC).minusMonths(1).toString();
 
             for (int page = 0; page < MAX_GOOGLE_PAGE_REQUESTS; page++) {
-                String url = UriComponentsBuilder.fromHttpUrl(GOOGLE_CALENDAR_EVENTS_ENDPOINT)
+                UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GOOGLE_CALENDAR_EVENTS_ENDPOINT)
                         .queryParam("maxResults", 100)
                         .queryParam("orderBy", "startTime")
-                        .queryParam("singleEvents", true)
-                        .queryParam("timeMin", timeMin)
-                        .queryParamIfPresent("pageToken", java.util.Optional.ofNullable(pageToken))
-                        .buildAndExpand(calendarId)
-                        .toUriString();
+                        .queryParam("singleEvents", true);
+
+                if (StringUtils.hasText(timeMin)) {
+                    builder.queryParam("timeMin", timeMin);
+                }
+                if (StringUtils.hasText(timeMax)) {
+                    builder.queryParam("timeMax", timeMax);
+                }
+                if (pageToken != null) {
+                    builder.queryParam("pageToken", pageToken);
+                }
+
+                String url = builder.buildAndExpand(calendarId).toUriString();
 
                 ResponseEntity<Map<String, Object>> response = restTemplate.exchange(
                         url,
