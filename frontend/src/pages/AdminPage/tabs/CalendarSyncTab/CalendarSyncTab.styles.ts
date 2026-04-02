@@ -267,13 +267,17 @@ export const CalendarEventList = styled.div`
   gap: 4px;
 `;
 
-export const CalendarEvent = styled.div`
+export const CalendarEvent = styled.div<{ $source?: 'GOOGLE' | 'NOTION' }>`
   font-size: 0.8rem;
   line-height: 1.35;
   color: #111827;
   padding: 4px 6px;
   border-radius: 6px;
-  background: #eff6ff;
+  background: ${({ $source }) => {
+    if ($source === 'GOOGLE') return '#dbeafe'; // 파란색 (구글)
+    if ($source === 'NOTION') return '#f3e8ff'; // 보라색 (노션)
+    return '#eff6ff'; // 기본색
+  }};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
