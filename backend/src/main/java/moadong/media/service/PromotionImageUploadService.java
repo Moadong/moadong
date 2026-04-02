@@ -35,7 +35,7 @@ public class PromotionImageUploadService {
     }
 
     private void ensurePromotionArticleExists(String articleId) {
-        if (!promotionArticleRepository.existsById(articleId)) {
+        if (!promotionArticleRepository.existsActiveById(articleId)) {
             throw new RestApiException(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND);
         }
     }

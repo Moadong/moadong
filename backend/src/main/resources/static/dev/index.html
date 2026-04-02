@@ -345,6 +345,7 @@
           <div class="promotion-actions">
             <button type="button" id="btnSavePromotion">저장</button>
             <button type="button" id="btnResetPromotion">원본으로 되돌리기</button>
+            <button type="button" id="btnDeletePromotion">삭제</button>
             <button type="button" id="btnClearPromotionSelection">선택 해제</button>
           </div>
           <p id="promotionHelpText" class="promotion-help">기존 게시글의 `clubId`는 읽기 전용입니다. 저장 후 목록을 다시 조회해 서버 기준 최신값으로 동기화합니다.</p>
@@ -517,6 +518,7 @@
     let promotionIsLoading = false;
     let promotionIsSaving = false;
     let promotionIsUploading = false;
+    let promotionIsDeleting = false;
 
     function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
     function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
@@ -1084,7 +1086,7 @@
       const hasSelection = !!promotionSelectedArticleId;
       const isCreateMode = isPromotionCreateMode();
       const hasEditorTarget = hasSelection || isCreateMode;
-      const busy = promotionIsLoading || promotionIsSaving || promotionIsUploading;
+      const busy = promotionIsLoading || promotionIsSaving || promotionIsUploading || promotionIsDeleting;
       const dirty = isPromotionDirty();
       const badge = document.getElementById('promotionEditingBadge');
       const summary = document.getElementById('promotionSelectionSummary');
@@ -1097,6 +1099,7 @@
       const btnCreate = document.getElementById('btnCreatePromotion');
       const btnSave = document.getElementById('btnSavePromotion');
       const btnReset = document.getElementById('btnResetPromotion');
+      const btnDelete = document.getElementById('btnDeletePromotion');
       const btnClear = document.getElementById('btnClearPromotionSelection');
 
       PROMOTION_FORM_IDS.forEach((id) => {
@@ -1111,10 +1114,12 @@
       btnCreate.disabled = busy;
       btnSave.disabled = busy || !hasEditorTarget;
       btnReset.disabled = busy || !hasEditorTarget || !dirty;
+      btnDelete.disabled = busy || !hasSelection || isCreateMode;
       btnClear.disabled = busy || !hasEditorTarget;
       btnSave.textContent = promotionIsSaving
         ? (isCreateMode ? '생성 중...' : '저장 중...')
         : (isCreateMode ? '생성' : '저장');
+      btnDelete.textContent = promotionIsDeleting ? '삭제 중...' : '삭제';
 
       if (isCreateMode) {
         badge.textContent = dirty ? '새 게시글 작성 중 · 저장되지 않은 변경 있음' : '새 게시글 작성 중';
@@ -1326,7 +1331,7 @@
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.textContent = '제거';
-      removeBtn.disabled = promotionIsLoading || promotionIsSaving || promotionIsUploading || (!promotionSelectedArticleId && !isPromotionCreateMode());
+      removeBtn.disabled = promotionIsLoading || promotionIsSaving || promotionIsUploading || promotionIsDeleting || (!promotionSelectedArticleId && !isPromotionCreateMode());
       removeBtn.onclick = () => {
         removePromotionImageAt(index);
       };
@@ -1463,6 +1468,15 @@
       return { res, data };
     }
 
+    async function deletePromotionArticleRequest(articleId) {
+      const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(articleId), {
+        method: 'DELETE',
+        headers: headers()
+      });
+      const data = await readJsonOrEmpty(res);
+      return { res, data };
+    }
+
     function clearPromotionState() {
       promotionArticles = [];
       promotionEditorMode = 'edit';
@@ -1472,6 +1486,7 @@
       promotionIsLoading = false;
       promotionIsSaving = false;
       promotionIsUploading = false;
+      promotionIsDeleting = false;
       document.getElementById('promotionListLoading').classList.add('hidden');
       document.getElementById('promotionImageUploadFile').value = '';
       clearPromotionBanner();
@@ -1535,6 +1550,67 @@
     document.getElementById('btnClearPromotionSelection').onclick = () => {
       if (isPromotionDirty() && !confirm(getPromotionDiscardMessage('clear'))) return;
       clearPromotionSelection();
+    };
+
+    document.getElementById('btnDeletePromotion').onclick = async () => {
+      const selectedId = promotionSelectedArticleId;
+      const selectedArticle = promotionArticles.find((article) => article.id === selectedId);
+      if (!selectedId || !selectedArticle) {
+        showPromotionSaveResult(false, '삭제할 홍보 게시글을 먼저 선택하세요.');
+        return;
+      }
+
+      const articleLabel = selectedArticle.title ? '"' + selectedArticle.title + '"' : '선택한 홍보 게시글';
+      const confirmMessage = isPromotionDirty()
+        ? '저장되지 않은 변경사항이 있습니다. ' + articleLabel + '을(를) 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
+        : articleLabel + '을(를) 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+      if (!confirm(confirmMessage)) return;
+
+      promotionIsDeleting = true;
+      updatePromotionEditorState();
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+
+      try {
+        const { res, data } = await deletePromotionArticleRequest(selectedId);
+        if (res.status === 403) {
+          showPromotionSaveResult(false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (res.status === 404) {
+          if (data.statuscode === '902-1') {
+            promotionArticles = promotionArticles.filter((article) => article.id !== selectedId);
+            clearPromotionSelection({ keepMessage: true });
+            showPromotionSaveResult(false, data.message || '선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침하세요.');
+          } else {
+            showPromotionSaveResult(false, data.message || '홍보 게시글 삭제 실패 (HTTP ' + res.status + ')');
+          }
+          return;
+        }
+        if (!res.ok) {
+          showPromotionSaveResult(false, data.message || '홍보 게시글 삭제 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+
+        const deleteSuccessMessage = getApiSuccessMessage(data, '홍보 게시글이 삭제되었습니다.');
+        const syncResult = await reloadPromotionList({ keepMessage: true });
+        if (!syncResult.ok) {
+          clearPromotionSelection({ keepMessage: true });
+          showPromotionSaveResult(true, deleteSuccessMessage);
+          setPromotionBanner('삭제는 완료되었지만 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+          return;
+        }
+
+        clearPromotionSelection({ keepMessage: true });
+        clearPromotionBanner();
+        showPromotionSaveResult(true, deleteSuccessMessage);
+        showToast('홍보 게시글 삭제 완료', 'success');
+      } catch (e) {
+        showPromotionSaveResult(false, e.message || '요청 실패');
+      } finally {
+        promotionIsDeleting = false;
+        updatePromotionEditorState();
+      }
     };
 
     function extractCreatedPromotionId(data) {

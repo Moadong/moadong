@@ -24,6 +24,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -54,13 +55,22 @@ class PromotionArticleServiceTest {
             .description("설명")
             .images(List.of("image-1"))
             .build();
-        when(promotionArticleRepository.findAllByOrderByCreatedAtDesc()).thenReturn(List.of(article));
+        when(promotionArticleRepository.findAllActiveOrderByCreatedAtDesc()).thenReturn(List.of(article));
 
         PromotionArticleResponse response = promotionArticleService.getPromotionArticles();
 
         assertEquals(1, response.articles().size());
         assertEquals("article-1", response.articles().get(0).id());
         assertEquals("모아동", response.articles().get(0).clubName());
+    }
+
+    @Test
+    void 홍보게시글_목록조회시_활성게시글_기준_조회한다() {
+        when(promotionArticleRepository.findAllActiveOrderByCreatedAtDesc()).thenReturn(List.of());
+
+        promotionArticleService.getPromotionArticles();
+
+        verify(promotionArticleRepository).findAllActiveOrderByCreatedAtDesc();
     }
 
     @Test
@@ -86,7 +96,7 @@ class PromotionArticleServiceTest {
             "수정 설명",
             List.of("new-image-1", "new-image-2")
         );
-        when(promotionArticleRepository.findById("article-1")).thenReturn(Optional.of(article));
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
         when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(Club.builder()
             .name("수정 동아리")
             .category("category")
@@ -157,12 +167,58 @@ class PromotionArticleServiceTest {
             "수정 설명",
             List.of("new-image")
         );
-        when(promotionArticleRepository.findById("missing-article")).thenReturn(Optional.empty());
+        when(promotionArticleRepository.findActiveById("missing-article")).thenReturn(Optional.empty());
 
         RestApiException exception = assertThrows(RestApiException.class,
             () -> promotionArticleService.updatePromotionArticle("missing-article", request));
 
         assertEquals(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND, exception.getErrorCode());
         verify(clubRepository, never()).findClubById(org.mockito.ArgumentMatchers.any());
+    }
+
+    @Test
+    void 삭제된_홍보게시글은_수정할_수_없다() {
+        PromotionArticleUpdateRequest request = new PromotionArticleUpdateRequest(
+            new ObjectId().toHexString(),
+            "수정 제목",
+            "수정 장소",
+            Instant.parse("2026-04-01T00:00:00Z"),
+            Instant.parse("2026-04-10T00:00:00Z"),
+            "수정 설명",
+            List.of("new-image")
+        );
+        when(promotionArticleRepository.findActiveById("deleted-article")).thenReturn(Optional.empty());
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionArticleService.updatePromotionArticle("deleted-article", request));
+
+        assertEquals(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND, exception.getErrorCode());
+        verify(clubRepository, never()).findClubById(org.mockito.ArgumentMatchers.any());
+    }
+
+    @Test
+    void 홍보게시글을_삭제한다() {
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+
+        promotionArticleService.deletePromotionArticle("article-1");
+
+        assertTrue(article.isDeleted());
+        assertNotNull(article.getDeletedAt());
+        verify(promotionArticleRepository).save(article);
+        verify(promotionArticleRepository, never()).deleteById("article-1");
+    }
+
+    @Test
+    void 삭제대상_홍보게시글이_없으면_예외를_던진다() {
+        when(promotionArticleRepository.findActiveById("missing-article")).thenReturn(Optional.empty());
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionArticleService.deletePromotionArticle("missing-article"));
+
+        assertEquals(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND, exception.getErrorCode());
+        verify(promotionArticleRepository, never()).deleteById("missing-article");
     }
 }
