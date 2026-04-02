@@ -3,6 +3,7 @@ import { useGoogleCalendarData } from './useGoogleCalendarData';
 import { useNotionCalendarData } from './useNotionCalendarData';
 import { useNotionCalendarUiState } from './useNotionCalendarUiState';
 import { useNotionOAuth } from './useNotionOAuth';
+import { useUnifiedCalendarUiState } from './useUnifiedCalendarUiState';
 
 export const useCalendarSync = () => {
   const [statusMessage, setStatusMessage] = useState('');
@@ -11,7 +12,7 @@ export const useCalendarSync = () => {
 
   const clearError = useCallback(() => setErrorMessage(''), []);
 
-  const google = useGoogleCalendarData({
+  const googleData = useGoogleCalendarData({
     onError: setErrorMessage,
     onStatus: setStatusMessage,
     clearError,
@@ -27,6 +28,11 @@ export const useCalendarSync = () => {
     notionItems: notionData.notionItems,
   });
 
+  const unifiedCalendar = useUnifiedCalendarUiState({
+    notionCalendarEvents: notionUi.notionCalendarEvents,
+    googleCalendarEvents: googleData.googleCalendarEvents,
+  });
+
   const notionOAuth = useNotionOAuth({
     loadNotionPages: notionData.loadNotionPages,
     onWorkspaceName: setNotionWorkspaceName,
@@ -36,10 +42,11 @@ export const useCalendarSync = () => {
   });
 
   return {
-    isGoogleConnected: google.isGoogleConnected,
-    isGoogleInitialChecking: google.isInitialChecking,
-    googleCalendars: google.googleCalendars,
-    selectedGoogleCalendarId: google.selectedCalendarId,
+    isGoogleConnected: googleData.isGoogleConnected,
+    isGoogleInitialChecking: googleData.isInitialChecking,
+    googleCalendars: googleData.googleCalendars,
+    selectedGoogleCalendarId: googleData.selectedCalendarId,
+    googleCalendarEvents: googleData.googleCalendarEvents,
     notionItems: notionData.notionItems,
     notionTotalResults: notionData.notionTotalResults,
     notionDatabaseSourceId: notionData.notionDatabaseSourceId,
@@ -49,12 +56,13 @@ export const useCalendarSync = () => {
     isNotionDatabaseApplying: notionData.isNotionDatabaseApplying,
     statusMessage,
     errorMessage,
-    isGoogleLoading: google.isGoogleLoading,
+    isGoogleLoading: googleData.isGoogleLoading,
     isNotionLoading:
       notionData.isNotionLoading ||
       notionOAuth.isNotionOAuthLoading ||
       notionData.isNotionDatabaseApplying,
     notionWorkspaceName,
+    // 노션 전용 UI (기존 호환성 유지)
     notionCalendarEvents: notionUi.notionCalendarEvents,
     notionVisibleCalendarEvents: notionUi.notionVisibleCalendarEvents,
     notionEventsByDate: notionUi.notionEventsByDate,
@@ -62,14 +70,25 @@ export const useCalendarSync = () => {
     notionCalendarDays: notionUi.notionCalendarDays,
     notionCalendarLabel: notionUi.notionCalendarLabel,
     visibleMonth: notionUi.visibleMonth,
-    startGoogleOAuth: google.startGoogleOAuth,
-    selectGoogleCalendar: google.selectCalendar,
-    disconnectGoogle: google.disconnectGoogle,
+    // 통합 캘린더 UI (구글 + 노션)
+    allUnifiedEvents: unifiedCalendar.allUnifiedEvents,
+    visibleUnifiedEvents: unifiedCalendar.visibleUnifiedEvents,
+    unifiedEventsByDate: unifiedCalendar.eventsByDate,
+    unifiedCalendarDays: unifiedCalendar.calendarDays,
+    unifiedCalendarLabel: unifiedCalendar.calendarLabel,
+    unifiedVisibleMonth: unifiedCalendar.visibleMonth,
+    googleEventEnabledMap: unifiedCalendar.googleEventEnabledMap,
+    // 액션
+    startGoogleOAuth: googleData.startGoogleOAuth,
+    selectGoogleCalendar: googleData.selectCalendar,
+    disconnectGoogle: googleData.disconnectGoogle,
     startNotionOAuth: notionOAuth.startNotionOAuth,
-    goToPreviousMonth: notionUi.goToPreviousMonth,
-    goToNextMonth: notionUi.goToNextMonth,
-    toggleNotionEvent: notionUi.toggleNotionEvent,
-    setAllNotionEventsEnabled: notionUi.setAllNotionEventsEnabled,
+    goToPreviousMonth: unifiedCalendar.goToPreviousMonth,
+    goToNextMonth: unifiedCalendar.goToNextMonth,
+    toggleNotionEvent: unifiedCalendar.toggleNotionEvent,
+    toggleGoogleEvent: unifiedCalendar.toggleGoogleEvent,
+    setAllNotionEventsEnabled: unifiedCalendar.setAllNotionEventsEnabled,
+    setAllGoogleEventsEnabled: unifiedCalendar.setAllGoogleEventsEnabled,
     applySelectedNotionDatabase: notionData.applySelectedNotionDatabase,
   };
 };
