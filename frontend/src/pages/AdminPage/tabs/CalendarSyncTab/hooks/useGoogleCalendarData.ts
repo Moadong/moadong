@@ -2,11 +2,12 @@ import { useCallback, useEffect, useState } from 'react';
 import {
   disconnectGoogleCalendar,
   fetchGoogleAuthorizeUrl,
+  fetchGoogleCalendarEvents,
   fetchGoogleCalendars,
   selectGoogleCalendar,
 } from '@/apis/calendarOAuth';
 import { ApiError } from '@/errors';
-import type { GoogleCalendarItem } from '@/types/google';
+import type { GoogleCalendarEvent, GoogleCalendarItem } from '@/types/google';
 import { createState } from '@/utils/calendarSyncUtils';
 
 const GOOGLE_STATE_KEY = 'admin_calendar_sync_google_state';
@@ -29,6 +30,9 @@ export const useGoogleCalendarData = ({
     [],
   );
   const [selectedCalendarId, setSelectedCalendarId] = useState<string>('');
+  const [googleCalendarEvents, setGoogleCalendarEvents] = useState<
+    GoogleCalendarEvent[]
+  >([]);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isInitialChecking, setIsInitialChecking] = useState(true);
 
@@ -75,6 +79,45 @@ export const useGoogleCalendarData = ({
     [clearError, onError],
   );
 
+  const loadGoogleCalendarEvents = useCallback(
+    async (calendarId: string) => {
+      if (!calendarId) {
+        setGoogleCalendarEvents([]);
+        return;
+      }
+
+      clearError();
+
+      try {
+        // 현재 월의 첫날부터 다음 달 마지막날까지
+        const now = new Date();
+        const threeMonthsAgo = new Date(
+          now.getFullYear(),
+          now.getMonth() - 3,
+          1,
+        );
+        const threeMonthsLater = new Date(
+          now.getFullYear(),
+          now.getMonth() + 4,
+          0,
+        );
+
+        const events = await fetchGoogleCalendarEvents(
+          calendarId,
+          threeMonthsAgo.toISOString(),
+          threeMonthsLater.toISOString(),
+        );
+        setGoogleCalendarEvents(events);
+      } catch (error) {
+        if (error instanceof Error) {
+          onError(error.message);
+        }
+        setGoogleCalendarEvents([]);
+      }
+    },
+    [clearError, onError],
+  );
+
   const startGoogleOAuth = useCallback(async () => {
     setIsGoogleLoading(true);
     clearError();
@@ -104,6 +147,8 @@ export const useGoogleCalendarData = ({
         await selectGoogleCalendar(calendarId, calendar.summary || '');
         setSelectedCalendarId(calendarId);
         onStatus('캘린더가 선택되었습니다.');
+        // 선택된 캘린더의 이벤트 로드
+        await loadGoogleCalendarEvents(calendarId);
       } catch (error) {
         if (error instanceof Error) {
           onError(error.message);
@@ -112,7 +157,7 @@ export const useGoogleCalendarData = ({
         setIsGoogleLoading(false);
       }
     },
-    [clearError, googleCalendars, onError, onStatus],
+    [clearError, googleCalendars, onError, onStatus, loadGoogleCalendarEvents],
   );
 
   const handleDisconnect = useCallback(async () => {
@@ -124,6 +169,7 @@ export const useGoogleCalendarData = ({
       setIsGoogleConnected(false);
       setGoogleCalendars([]);
       setSelectedCalendarId('');
+      setGoogleCalendarEvents([]);
       onStatus('Google Calendar 연결이 해제되었습니다.');
     } catch (error) {
       if (error instanceof Error) {
@@ -155,15 +201,23 @@ export const useGoogleCalendarData = ({
     loadGoogleCalendars(true);
   }, [loadGoogleCalendars, onError, onStatus]);
 
+  useEffect(() => {
+    if (selectedCalendarId && isGoogleConnected) {
+      loadGoogleCalendarEvents(selectedCalendarId);
+    }
+  }, [selectedCalendarId, isGoogleConnected, loadGoogleCalendarEvents]);
+
   return {
     isGoogleConnected,
     googleCalendars,
     selectedCalendarId,
+    googleCalendarEvents,
     isGoogleLoading,
     isInitialChecking,
     startGoogleOAuth,
     selectCalendar: handleSelectCalendar,
     disconnectGoogle: handleDisconnect,
     loadGoogleCalendars,
+    loadGoogleCalendarEvents,
   };
 };
