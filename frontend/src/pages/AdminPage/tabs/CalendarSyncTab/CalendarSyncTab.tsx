@@ -13,6 +13,7 @@ const CalendarSyncTab = () => {
     isGoogleInitialChecking,
     googleCalendars,
     selectedGoogleCalendarId,
+    googleCalendarEvents,
     notionItems,
     notionTotalResults,
     notionDatabaseSourceId,
@@ -26,12 +27,14 @@ const CalendarSyncTab = () => {
     isNotionLoading,
     notionWorkspaceName,
     notionCalendarEvents,
-    notionVisibleCalendarEvents,
-    notionEventsByDate,
+    allUnifiedEvents,
+    visibleUnifiedEvents,
+    unifiedEventsByDate,
+    unifiedCalendarDays,
+    unifiedCalendarLabel,
+    unifiedVisibleMonth,
     notionEventEnabledMap,
-    notionCalendarDays,
-    notionCalendarLabel,
-    visibleMonth,
+    googleEventEnabledMap,
     startGoogleOAuth,
     selectGoogleCalendar,
     disconnectGoogle,
@@ -39,7 +42,9 @@ const CalendarSyncTab = () => {
     goToPreviousMonth,
     goToNextMonth,
     toggleNotionEvent,
+    toggleGoogleEvent,
     setAllNotionEventsEnabled,
+    setAllGoogleEventsEnabled,
     applySelectedNotionDatabase,
   } = useCalendarSync();
 
@@ -193,69 +198,109 @@ const CalendarSyncTab = () => {
           )}
         </Styled.DataCard>
 
-        {/* ── Notion 캘린더 일정 카드 ── */}
+        {/* ── 통합 캘린더 일정 카드 (Google + Notion) ── */}
         <Styled.WideDataCard>
-          <Styled.DataTitle>Notion 캘린더 일정</Styled.DataTitle>
+          <Styled.DataTitle>
+            통합 캘린더 일정 (Google + Notion)
+          </Styled.DataTitle>
           <Styled.Description>
-            전체 {notionTotalResults}개 / 캘린더 표시{' '}
-            {notionVisibleCalendarEvents.length}개
+            Google 이벤트 {googleCalendarEvents.length}개 / Notion 페이지{' '}
+            {notionTotalResults}개 / 캘린더 표시 {visibleUnifiedEvents.length}개
           </Styled.Description>
           {notionDatabaseSourceId && (
             <Styled.Description>
-              데이터베이스: {notionDatabaseSourceId}
+              Notion 데이터베이스: {notionDatabaseSourceId}
             </Styled.Description>
           )}
-          {notionItems.length === 0 ? (
+          {allUnifiedEvents.length === 0 ? (
             <Styled.Empty>
-              아직 데이터가 없습니다. Notion 캘린더 가져오기를 먼저
-              완료해주세요.
-            </Styled.Empty>
-          ) : notionCalendarEvents.length === 0 ? (
-            <Styled.Empty>
-              날짜 속성이 있는 Notion 페이지가 없습니다. (예: 날짜/Date 타입
-              속성)
+              아직 데이터가 없습니다. Google 캘린더 연동 또는 Notion 캘린더
+              가져오기를 먼저 완료해주세요.
             </Styled.Empty>
           ) : (
             <Styled.CalendarBoard>
-              <Styled.TogglePanel>
-                <Styled.ToggleHeader>
-                  <Styled.ToggleTitle>표시할 페이지 선택</Styled.ToggleTitle>
-                  <Styled.ToggleActions>
-                    <Styled.ToggleActionButton
-                      type='button'
-                      onClick={() => setAllNotionEventsEnabled(true)}
-                    >
-                      전체 ON
-                    </Styled.ToggleActionButton>
-                    <Styled.ToggleActionButton
-                      type='button'
-                      onClick={() => setAllNotionEventsEnabled(false)}
-                    >
-                      전체 OFF
-                    </Styled.ToggleActionButton>
-                  </Styled.ToggleActions>
-                </Styled.ToggleHeader>
-                <Styled.ToggleList>
-                  {notionCalendarEvents.map((event) => (
-                    <Styled.ToggleItem key={event.id}>
-                      <Styled.ToggleCheckbox
-                        type='checkbox'
-                        checked={notionEventEnabledMap[event.id] !== false}
-                        onChange={() => toggleNotionEvent(event.id)}
-                      />
-                      <Styled.ToggleText>
-                        {event.title} ({formatDateText(event.dateKey)})
-                      </Styled.ToggleText>
-                    </Styled.ToggleItem>
-                  ))}
-                </Styled.ToggleList>
-              </Styled.TogglePanel>
+              {/* 구글 이벤트 토글 */}
+              {googleCalendarEvents.length > 0 && (
+                <Styled.TogglePanel>
+                  <Styled.ToggleHeader>
+                    <Styled.ToggleTitle>
+                      🔵 Google 이벤트 선택
+                    </Styled.ToggleTitle>
+                    <Styled.ToggleActions>
+                      <Styled.ToggleActionButton
+                        type='button'
+                        onClick={() => setAllGoogleEventsEnabled(true)}
+                      >
+                        전체 ON
+                      </Styled.ToggleActionButton>
+                      <Styled.ToggleActionButton
+                        type='button'
+                        onClick={() => setAllGoogleEventsEnabled(false)}
+                      >
+                        전체 OFF
+                      </Styled.ToggleActionButton>
+                    </Styled.ToggleActions>
+                  </Styled.ToggleHeader>
+                  <Styled.ToggleList>
+                    {googleCalendarEvents.map((event) => (
+                      <Styled.ToggleItem key={event.id}>
+                        <Styled.ToggleCheckbox
+                          type='checkbox'
+                          checked={googleEventEnabledMap[event.id] !== false}
+                          onChange={() => toggleGoogleEvent(event.id)}
+                        />
+                        <Styled.ToggleText>
+                          {event.title} ({formatDateText(event.start)})
+                        </Styled.ToggleText>
+                      </Styled.ToggleItem>
+                    ))}
+                  </Styled.ToggleList>
+                </Styled.TogglePanel>
+              )}
+              {/* 노션 이벤트 토글 */}
+              {notionCalendarEvents.length > 0 && (
+                <Styled.TogglePanel>
+                  <Styled.ToggleHeader>
+                    <Styled.ToggleTitle>
+                      🟣 Notion 페이지 선택
+                    </Styled.ToggleTitle>
+                    <Styled.ToggleActions>
+                      <Styled.ToggleActionButton
+                        type='button'
+                        onClick={() => setAllNotionEventsEnabled(true)}
+                      >
+                        전체 ON
+                      </Styled.ToggleActionButton>
+                      <Styled.ToggleActionButton
+                        type='button'
+                        onClick={() => setAllNotionEventsEnabled(false)}
+                      >
+                        전체 OFF
+                      </Styled.ToggleActionButton>
+                    </Styled.ToggleActions>
+                  </Styled.ToggleHeader>
+                  <Styled.ToggleList>
+                    {notionCalendarEvents.map((event) => (
+                      <Styled.ToggleItem key={event.id}>
+                        <Styled.ToggleCheckbox
+                          type='checkbox'
+                          checked={notionEventEnabledMap[event.id] !== false}
+                          onChange={() => toggleNotionEvent(event.id)}
+                        />
+                        <Styled.ToggleText>
+                          {event.title} ({formatDateText(event.dateKey)})
+                        </Styled.ToggleText>
+                      </Styled.ToggleItem>
+                    ))}
+                  </Styled.ToggleList>
+                </Styled.TogglePanel>
+              )}
               <Styled.CalendarHeader>
                 <Button width='96px' onClick={goToPreviousMonth}>
                   이전 달
                 </Button>
                 <Styled.CalendarMonth>
-                  {notionCalendarLabel}
+                  {unifiedCalendarLabel}
                 </Styled.CalendarMonth>
                 <Button width='96px' onClick={goToNextMonth}>
                   다음 달
@@ -269,12 +314,12 @@ const CalendarSyncTab = () => {
                 ))}
               </Styled.CalendarWeekRow>
               <Styled.CalendarGrid>
-                {notionCalendarDays.map((day) => {
+                {unifiedCalendarDays.map((day) => {
                   const dateKey = buildDateKeyFromDate(day);
-                  const events = notionEventsByDate[dateKey] ?? [];
+                  const events = unifiedEventsByDate[dateKey] ?? [];
                   const isOutsideMonth =
-                    day.getMonth() !== visibleMonth.getMonth() ||
-                    day.getFullYear() !== visibleMonth.getFullYear();
+                    day.getMonth() !== unifiedVisibleMonth.getMonth() ||
+                    day.getFullYear() !== unifiedVisibleMonth.getFullYear();
 
                   return (
                     <Styled.CalendarCell key={dateKey} $muted={isOutsideMonth}>
@@ -283,7 +328,10 @@ const CalendarSyncTab = () => {
                       </Styled.CalendarDayNumber>
                       <Styled.CalendarEventList>
                         {events.map((event) => (
-                          <Styled.CalendarEvent key={event.id}>
+                          <Styled.CalendarEvent
+                            key={event.id}
+                            $source={event.source}
+                          >
                             {event.url ? (
                               <Styled.ExternalLink
                                 href={event.url}
