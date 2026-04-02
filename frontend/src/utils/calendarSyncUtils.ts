@@ -1,7 +1,10 @@
-import type { NotionSearchItem } from '@/apis/calendarOAuth';
+import type {
+  GoogleCalendarEvent,
+  NotionSearchItem,
+} from '@/apis/calendarOAuth';
 
 /**
- * CalendarSyncTab 전용 유틸 모음.
+ * CalendarSyncTab 전용 유틸
  * - OAuth 보조 유틸(redirect/state/token 표시)
  * - 캘린더 날짜 계산 유틸
  * - Notion page -> 캘린더 이벤트 변환 유틸
@@ -60,7 +63,6 @@ export const parseDateKey = (dateText: string) => {
     return dateText;
   }
 
-  // datetime 형식은 UTC 기준으로 파싱
   const parsed = new Date(dateText);
   if (Number.isNaN(parsed.getTime())) return null;
 
@@ -70,11 +72,9 @@ export const parseDateKey = (dateText: string) => {
   return `${utcYear}-${utcMonth}-${utcDay}`;
 };
 
-/** Date 객체를 `YYYY-MM-DD` 키 문자열로 변환한다. */
 export const buildDateKeyFromDate = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
-/** `YYYY-MM-DD` 키 문자열을 Date 객체(로컬 시간대)로 변환한다. */
 export const dateFromKey = (dateKey: string) => {
   const [year, month, day] = dateKey.split('-').map(Number);
   return new Date(year, month - 1, day);
@@ -82,7 +82,6 @@ export const dateFromKey = (dateKey: string) => {
 
 /**
  * 월 기준 캘린더 그리드(주 시작~주 끝 포함) 날짜 배열을 생성한다.
- * 반환 배열은 7의 배수 길이를 가진다.
  */
 export const buildMonthCalendarDays = (month: Date) => {
   const monthStart = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -118,6 +117,17 @@ export interface NotionCalendarEvent {
   dateKey: string;
   end?: string;
   url?: string;
+}
+
+export interface UnifiedCalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  dateKey: string;
+  end?: string;
+  url?: string;
+  source: 'GOOGLE' | 'NOTION';
+  description?: string;
 }
 
 /**
@@ -163,3 +173,33 @@ export const parseNotionCalendarEvent = (
     url: item.url,
   };
 };
+
+export const convertGoogleEventToUnified = (
+  event: GoogleCalendarEvent,
+): UnifiedCalendarEvent | null => {
+  const dateKey = parseDateKey(event.start);
+  if (!dateKey) return null;
+
+  return {
+    id: `google-${event.id}`,
+    title: event.title,
+    start: event.start,
+    end: event.end,
+    dateKey,
+    url: event.url,
+    description: event.description,
+    source: 'GOOGLE',
+  };
+};
+
+export const convertNotionEventToUnified = (
+  event: NotionCalendarEvent,
+): UnifiedCalendarEvent => ({
+  id: `notion-${event.id}`,
+  title: event.title,
+  start: event.start,
+  end: event.end,
+  dateKey: event.dateKey,
+  url: event.url,
+  source: 'NOTION',
+});
