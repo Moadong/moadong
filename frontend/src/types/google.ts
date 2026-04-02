@@ -23,3 +23,13 @@ export interface GoogleEventItem {
     date?: string;
   };
 }
+
+export interface GoogleCalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  end: string;
+  url?: string;
+  description?: string;
+  source: 'GOOGLE';
+}
