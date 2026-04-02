@@ -1,5 +1,6 @@
 import API_BASE_URL from '@/constants/api';
 import type {
+  GoogleCalendarEvent,
   GoogleCalendarItem,
   GoogleCalendarListResponse,
   GoogleEventItem,
@@ -12,7 +13,7 @@ import type {
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
 
-export type { GoogleCalendarItem, GoogleEventItem };
+export type { GoogleCalendarItem, GoogleEventItem, GoogleCalendarEvent };
 export type { NotionSearchItem, NotionDatabaseOption, NotionPagesResponse };
 
 interface GoogleAuthorizeResponse {
@@ -348,4 +349,36 @@ export const disconnectGoogleCalendar = async () => {
     response,
     'Google Calendar 연결 해제에 실패했습니다.',
   );
+};
+
+export const fetchGoogleCalendarEvents = async (
+  calendarId: string,
+  timeMin?: string,
+  timeMax?: string,
+) => {
+  const params = new URLSearchParams();
+  if (timeMin) {
+    params.set('timeMin', timeMin);
+  }
+  if (timeMax) {
+    params.set('timeMax', timeMax);
+  }
+
+  const encodedId = encodeURIComponent(calendarId);
+  const query = params.toString();
+  const response = await secureFetch(
+    `${API_BASE_URL}/api/integration/google/calendars/${encodedId}/events${query ? `?${query}` : ''}`,
+    {
+      method: 'GET',
+      headers: {
+        Accept: 'application/json',
+      },
+    },
+  );
+
+  const data = await handleResponse<GoogleCalendarEvent[]>(
+    response,
+    'Google 캘린더 이벤트 조회에 실패했습니다.',
+  );
+  return data ?? [];
 };
