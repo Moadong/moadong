@@ -211,6 +211,13 @@ public class GoogleOAuthService {
 
     public List<ClubCalendarEventResult> getCalendarEvents(CustomUserDetails user, String calendarId, String timeMin, String timeMax) {
         String clubId = requireAuthenticatedClubId(user);
+
+        GoogleConnection connection = googleConnectionRepository.findById(clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.GOOGLE_NOT_CONNECTED));
+        if (!StringUtils.hasText(connection.getCalendarId()) || !connection.getCalendarId().equals(calendarId)) {
+            throw new RestApiException(ErrorCode.GOOGLE_NOT_CONNECTED);
+        }
+
         String accessToken = getValidAccessToken(clubId);
 
         return fetchCalendarEvents(accessToken, calendarId, timeMin, timeMax);
