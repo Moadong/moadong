@@ -68,7 +68,8 @@ export const formatDateOnly = (dateKey?: string) => {
 /**
  * 다양한 날짜 문자열을 `YYYY-MM-DD` 키로 정규화한다.
  * - 순수 날짜 문자열(YYYY-MM-DD)은 그대로 반환
- * - datetime 문자열은 UTC 기준으로 파싱하여 날짜 추출
+ * - datetime 문자열은 ISO 8601 형식에서 날짜 부분 추출
+ * - 타임존에 관계없이 의도된 날짜를 정확히 반환
  * 유효하지 않은 값이면 null을 반환한다.
  */
 export const parseDateKey = (dateText: string) => {
@@ -77,13 +78,22 @@ export const parseDateKey = (dateText: string) => {
     return dateText;
   }
 
+  // ISO 8601 datetime 형식에서 날짜 부분만 추출
+  // 예: 2026-04-01T00:30:00+09:00 → 2026-04-01
+  // 예: 2026-04-01T15:30:00Z → 2026-04-01
+  const isoDateMatch = dateText.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (isoDateMatch) {
+    return isoDateMatch[1];
+  }
+
+  // ISO 형식이 아니면 Date 파싱 후 로컬 날짜 추출
   const parsed = new Date(dateText);
   if (Number.isNaN(parsed.getTime())) return null;
 
-  const utcYear = parsed.getUTCFullYear();
-  const utcMonth = String(parsed.getUTCMonth() + 1).padStart(2, '0');
-  const utcDay = String(parsed.getUTCDate()).padStart(2, '0');
-  return `${utcYear}-${utcMonth}-${utcDay}`;
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, '0');
+  const day = String(parsed.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
 export const buildDateKeyFromDate = (date: Date) =>
