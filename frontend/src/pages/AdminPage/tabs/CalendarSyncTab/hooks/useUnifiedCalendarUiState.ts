@@ -19,8 +19,6 @@ export const useUnifiedCalendarUiState = ({
   notionCalendarEvents,
   googleCalendarEvents,
 }: UseUnifiedCalendarUiStateParams) => {
-  console.log('notionCalendarEvents', notionCalendarEvents);
-  console.log('googleCalendarEvents', googleCalendarEvents);
   const [visibleMonth, setVisibleMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
