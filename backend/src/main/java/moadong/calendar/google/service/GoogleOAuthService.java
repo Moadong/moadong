@@ -218,6 +218,8 @@ public class GoogleOAuthService {
             throw new RestApiException(ErrorCode.GOOGLE_NOT_CONNECTED);
         }
 
+        validateTimeParameters(timeMin, timeMax);
+
         String accessToken = getValidAccessToken(clubId);
 
         return fetchCalendarEvents(accessToken, calendarId, timeMin, timeMax);
@@ -511,6 +513,31 @@ public class GoogleOAuthService {
             throw new RestApiException(ErrorCode.GOOGLE_CLUB_NOT_FOUND);
         }
         return club.getId();
+    }
+
+    private void validateTimeParameters(String timeMin, String timeMax) {
+        OffsetDateTime parsedTimeMin = null;
+        OffsetDateTime parsedTimeMax = null;
+
+        if (StringUtils.hasText(timeMin)) {
+            try {
+                parsedTimeMin = OffsetDateTime.parse(timeMin);
+            } catch (Exception e) {
+                throw new RestApiException(ErrorCode.GOOGLE_INVALID_TIME_FORMAT);
+            }
+        }
+
+        if (StringUtils.hasText(timeMax)) {
+            try {
+                parsedTimeMax = OffsetDateTime.parse(timeMax);
+            } catch (Exception e) {
+                throw new RestApiException(ErrorCode.GOOGLE_INVALID_TIME_FORMAT);
+            }
+        }
+
+        if (parsedTimeMin != null && parsedTimeMax != null && parsedTimeMin.isAfter(parsedTimeMax)) {
+            throw new RestApiException(ErrorCode.GOOGLE_INVALID_TIME_RANGE);
+        }
     }
 
     private String asString(Object value) {
