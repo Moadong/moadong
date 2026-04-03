@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   disconnectGoogleCalendar,
   fetchGoogleAuthorizeUrl,
@@ -35,6 +35,7 @@ export const useGoogleCalendarData = ({
   >([]);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isInitialChecking, setIsInitialChecking] = useState(true);
+  const eventLoadRequestIdRef = useRef(0);
 
   const loadGoogleCalendars = useCallback(
     async (isInitial = false) => {
@@ -86,6 +87,8 @@ export const useGoogleCalendarData = ({
         return;
       }
 
+      // 새 요청 ID 생성 및 저장
+      const requestId = ++eventLoadRequestIdRef.current;
       clearError();
 
       try {
@@ -107,12 +110,19 @@ export const useGoogleCalendarData = ({
           threeMonthsAgo.toISOString(),
           threeMonthsLater.toISOString(),
         );
-        setGoogleCalendarEvents(events);
-      } catch (error) {
-        if (error instanceof Error) {
-          onError(error.message);
+
+        // 응답이 최신 요청인지 확인 (stale response 무시)
+        if (requestId === eventLoadRequestIdRef.current) {
+          setGoogleCalendarEvents(events);
         }
-        setGoogleCalendarEvents([]);
+      } catch (error) {
+        // 에러도 최신 요청인 경우에만 처리
+        if (requestId === eventLoadRequestIdRef.current) {
+          if (error instanceof Error) {
+            onError(error.message);
+          }
+          setGoogleCalendarEvents([]);
+        }
       }
     },
     [clearError, onError],
