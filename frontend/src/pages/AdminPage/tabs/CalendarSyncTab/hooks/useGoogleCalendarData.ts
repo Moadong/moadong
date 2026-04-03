@@ -101,11 +101,7 @@ export const useGoogleCalendarData = ({
           now.getMonth() - 3,
           1,
         );
-        const timeMax = new Date(
-          now.getFullYear(),
-          now.getMonth() + 4,
-          1,
-        );
+        const timeMax = new Date(now.getFullYear(), now.getMonth() + 4, 1);
 
         const events = await fetchGoogleCalendarEvents(
           calendarId,
