@@ -93,7 +93,9 @@ public enum ErrorCode {
     GOOGLE_NOT_CONNECTED(HttpStatus.NOT_FOUND, "960-4", "Google Calendar가 연결되지 않았습니다."),
     GOOGLE_CALENDAR_NOT_SELECTED(HttpStatus.BAD_REQUEST, "960-5", "캘린더가 선택되지 않았습니다."),
     GOOGLE_API_FAILED(HttpStatus.BAD_GATEWAY, "960-6", "Google API 호출에 실패했습니다."),
-    GOOGLE_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "960-7", "연동할 동아리 정보를 찾을 수 없습니다.")
+    GOOGLE_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "960-7", "연동할 동아리 정보를 찾을 수 없습니다."),
+    GOOGLE_INVALID_TIME_FORMAT(HttpStatus.BAD_REQUEST, "960-8", "시간 형식이 올바르지 않습니다. RFC3339 형식을 사용해주세요."),
+    GOOGLE_INVALID_TIME_RANGE(HttpStatus.BAD_REQUEST, "960-9", "시작 시간은 종료 시간보다 이전이어야 합니다.")
     ;
 
     private final HttpStatus httpStatus;
