@@ -1,7 +1,7 @@
 import Button from '@/components/common/Button/Button';
 import {
   buildDateKeyFromDate,
-  formatDateText,
+  formatDateOnly,
   WEEKDAY_LABELS,
 } from '@/utils/calendarSyncUtils';
 import * as Styled from './CalendarSyncTab.styles';
@@ -250,7 +250,7 @@ const CalendarSyncTab = () => {
                           onChange={() => toggleGoogleEvent(event.id)}
                         />
                         <Styled.ToggleText>
-                          {event.title} ({formatDateText(event.start)})
+                          {event.title} ({formatDateOnly(event.start)})
                         </Styled.ToggleText>
                       </Styled.ToggleItem>
                     ))}
@@ -288,7 +288,7 @@ const CalendarSyncTab = () => {
                           onChange={() => toggleNotionEvent(event.id)}
                         />
                         <Styled.ToggleText>
-                          {event.title} ({formatDateText(event.dateKey)})
+                          {event.title} ({formatDateOnly(event.dateKey)})
                         </Styled.ToggleText>
                       </Styled.ToggleItem>
                     ))}

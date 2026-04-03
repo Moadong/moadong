@@ -52,6 +52,20 @@ export const formatDateText = (dateText?: string) => {
 };
 
 /**
+ * 날짜 전용 문자열(YYYY-MM-DD)을 표시용 텍스트로 변환한다.
+ * 시간대 영향 없이 날짜만 표시한다.
+ */
+export const formatDateOnly = (dateKey?: string) => {
+  if (!dateKey) return '-';
+  // YYYY-MM-DD 형식 검증
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) {
+    return dateKey;
+  }
+  const [year, month, day] = dateKey.split('-');
+  return `${year}. ${parseInt(month, 10)}. ${parseInt(day, 10)}.`;
+};
+
+/**
  * 다양한 날짜 문자열을 `YYYY-MM-DD` 키로 정규화한다.
  * - 순수 날짜 문자열(YYYY-MM-DD)은 그대로 반환
  * - datetime 문자열은 UTC 기준으로 파싱하여 날짜 추출
