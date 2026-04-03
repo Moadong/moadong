@@ -92,23 +92,23 @@ export const useGoogleCalendarData = ({
       clearError();
 
       try {
-        // 현재 월의 첫날부터 다음 달 마지막날까지
+        // 3개월 전부터 3개월 후까지 이벤트 조회
         const now = new Date();
         const threeMonthsAgo = new Date(
           now.getFullYear(),
           now.getMonth() - 3,
           1,
         );
-        const threeMonthsLater = new Date(
+        const timeMax = new Date(
           now.getFullYear(),
           now.getMonth() + 4,
-          0,
+          1,
         );
 
         const events = await fetchGoogleCalendarEvents(
           calendarId,
           threeMonthsAgo.toISOString(),
-          threeMonthsLater.toISOString(),
+          timeMax.toISOString(),
         );
 
         // 응답이 최신 요청인지 확인 (stale response 무시)
