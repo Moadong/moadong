@@ -89,6 +89,8 @@ export const useGoogleCalendarData = ({
 
       // 새 요청 ID 생성 및 저장
       const requestId = ++eventLoadRequestIdRef.current;
+      // 새 캘린더 로드 시작 - 이전 이벤트 즉시 제거
+      setGoogleCalendarEvents([]);
       clearError();
 
       try {
@@ -175,6 +177,8 @@ export const useGoogleCalendarData = ({
 
     try {
       await disconnectGoogleCalendar();
+      // 진행 중인 모든 이벤트 로드 요청 무효화
+      eventLoadRequestIdRef.current++;
       setIsGoogleConnected(false);
       setGoogleCalendars([]);
       setSelectedCalendarId('');
