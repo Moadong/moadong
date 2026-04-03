@@ -92,7 +92,6 @@ export const useUnifiedCalendarUiState = ({
     [visibleMonth],
   );
 
-  // 첫 이벤트가 있는 달로 이동
   useEffect(() => {
     if (allUnifiedEvents.length === 0) return;
 
