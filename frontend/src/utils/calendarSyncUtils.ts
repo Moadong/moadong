@@ -1,7 +1,10 @@
-import type { NotionSearchItem } from '@/apis/calendarOAuth';
+import type {
+  GoogleCalendarEvent,
+  NotionSearchItem,
+} from '@/apis/calendarOAuth';
 
 /**
- * CalendarSyncTab 전용 유틸 모음.
+ * CalendarSyncTab 전용 유틸
  * - OAuth 보조 유틸(redirect/state/token 표시)
  * - 캘린더 날짜 계산 유틸
  * - Notion page -> 캘린더 이벤트 변환 유틸
@@ -49,9 +52,24 @@ export const formatDateText = (dateText?: string) => {
 };
 
 /**
+ * 날짜 전용 문자열(YYYY-MM-DD)을 표시용 텍스트로 변환한다.
+ * 시간대 영향 없이 날짜만 표시한다.
+ */
+export const formatDateOnly = (dateKey?: string) => {
+  if (!dateKey) return '-';
+  // YYYY-MM-DD 형식 검증
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(dateKey)) {
+    return dateKey;
+  }
+  const [year, month, day] = dateKey.split('-');
+  return `${year}. ${parseInt(month, 10)}. ${parseInt(day, 10)}.`;
+};
+
+/**
  * 다양한 날짜 문자열을 `YYYY-MM-DD` 키로 정규화한다.
  * - 순수 날짜 문자열(YYYY-MM-DD)은 그대로 반환
- * - datetime 문자열은 UTC 기준으로 파싱하여 날짜 추출
+ * - datetime 문자열은 ISO 8601 형식에서 날짜 부분 추출
+ * - 타임존에 관계없이 의도된 날짜를 정확히 반환
  * 유효하지 않은 값이면 null을 반환한다.
  */
 export const parseDateKey = (dateText: string) => {
@@ -60,21 +78,27 @@ export const parseDateKey = (dateText: string) => {
     return dateText;
   }
 
-  // datetime 형식은 UTC 기준으로 파싱
+  // ISO 8601 datetime 형식에서 날짜 부분만 추출
+  // 예: 2026-04-01T00:30:00+09:00 → 2026-04-01
+  // 예: 2026-04-01T15:30:00Z → 2026-04-01
+  const isoDateMatch = dateText.match(/^(\d{4}-\d{2}-\d{2})/);
+  if (isoDateMatch) {
+    return isoDateMatch[1];
+  }
+
+  // ISO 형식이 아니면 Date 파싱 후 로컬 날짜 추출
   const parsed = new Date(dateText);
   if (Number.isNaN(parsed.getTime())) return null;
 
-  const utcYear = parsed.getUTCFullYear();
-  const utcMonth = String(parsed.getUTCMonth() + 1).padStart(2, '0');
-  const utcDay = String(parsed.getUTCDate()).padStart(2, '0');
-  return `${utcYear}-${utcMonth}-${utcDay}`;
+  const year = parsed.getFullYear();
+  const month = String(parsed.getMonth() + 1).padStart(2, '0');
+  const day = String(parsed.getDate()).padStart(2, '0');
+  return `${year}-${month}-${day}`;
 };
 
-/** Date 객체를 `YYYY-MM-DD` 키 문자열로 변환한다. */
 export const buildDateKeyFromDate = (date: Date) =>
   `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}-${String(date.getDate()).padStart(2, '0')}`;
 
-/** `YYYY-MM-DD` 키 문자열을 Date 객체(로컬 시간대)로 변환한다. */
 export const dateFromKey = (dateKey: string) => {
   const [year, month, day] = dateKey.split('-').map(Number);
   return new Date(year, month - 1, day);
@@ -82,7 +106,6 @@ export const dateFromKey = (dateKey: string) => {
 
 /**
  * 월 기준 캘린더 그리드(주 시작~주 끝 포함) 날짜 배열을 생성한다.
- * 반환 배열은 7의 배수 길이를 가진다.
  */
 export const buildMonthCalendarDays = (month: Date) => {
   const monthStart = new Date(month.getFullYear(), month.getMonth(), 1);
@@ -118,6 +141,17 @@ export interface NotionCalendarEvent {
   dateKey: string;
   end?: string;
   url?: string;
+}
+
+export interface UnifiedCalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  dateKey: string;
+  end?: string;
+  url?: string;
+  source: 'GOOGLE' | 'NOTION';
+  description?: string;
 }
 
 /**
@@ -163,3 +197,33 @@ export const parseNotionCalendarEvent = (
     url: item.url,
   };
 };
+
+export const convertGoogleEventToUnified = (
+  event: GoogleCalendarEvent,
+): UnifiedCalendarEvent | null => {
+  const dateKey = parseDateKey(event.start);
+  if (!dateKey) return null;
+
+  return {
+    id: `google-${event.id}`,
+    title: event.title,
+    start: event.start,
+    end: event.end,
+    dateKey,
+    url: event.url,
+    description: event.description,
+    source: 'GOOGLE',
+  };
+};
+
+export const convertNotionEventToUnified = (
+  event: NotionCalendarEvent,
+): UnifiedCalendarEvent => ({
+  id: `notion-${event.id}`,
+  title: event.title,
+  start: event.start,
+  end: event.end,
+  dateKey: event.dateKey,
+  url: event.url,
+  source: 'NOTION',
+});

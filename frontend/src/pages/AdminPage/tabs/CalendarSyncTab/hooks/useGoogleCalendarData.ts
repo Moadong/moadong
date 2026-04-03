@@ -1,12 +1,13 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   disconnectGoogleCalendar,
   fetchGoogleAuthorizeUrl,
+  fetchGoogleCalendarEvents,
   fetchGoogleCalendars,
   selectGoogleCalendar,
 } from '@/apis/calendarOAuth';
 import { ApiError } from '@/errors';
-import type { GoogleCalendarItem } from '@/types/google';
+import type { GoogleCalendarEvent, GoogleCalendarItem } from '@/types/google';
 import { createState } from '@/utils/calendarSyncUtils';
 
 const GOOGLE_STATE_KEY = 'admin_calendar_sync_google_state';
@@ -29,8 +30,12 @@ export const useGoogleCalendarData = ({
     [],
   );
   const [selectedCalendarId, setSelectedCalendarId] = useState<string>('');
+  const [googleCalendarEvents, setGoogleCalendarEvents] = useState<
+    GoogleCalendarEvent[]
+  >([]);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const [isInitialChecking, setIsInitialChecking] = useState(true);
+  const eventLoadRequestIdRef = useRef(0);
 
   const loadGoogleCalendars = useCallback(
     async (isInitial = false) => {
@@ -75,6 +80,52 @@ export const useGoogleCalendarData = ({
     [clearError, onError],
   );
 
+  const loadGoogleCalendarEvents = useCallback(
+    async (calendarId: string) => {
+      if (!calendarId) {
+        setGoogleCalendarEvents([]);
+        return;
+      }
+
+      // 새 요청 ID 생성 및 저장
+      const requestId = ++eventLoadRequestIdRef.current;
+      // 새 캘린더 로드 시작 - 이전 이벤트 즉시 제거
+      setGoogleCalendarEvents([]);
+      clearError();
+
+      try {
+        // 3개월 전부터 3개월 후까지 이벤트 조회
+        const now = new Date();
+        const threeMonthsAgo = new Date(
+          now.getFullYear(),
+          now.getMonth() - 3,
+          1,
+        );
+        const timeMax = new Date(now.getFullYear(), now.getMonth() + 4, 1);
+
+        const events = await fetchGoogleCalendarEvents(
+          calendarId,
+          threeMonthsAgo.toISOString(),
+          timeMax.toISOString(),
+        );
+
+        // 응답이 최신 요청인지 확인 (stale response 무시)
+        if (requestId === eventLoadRequestIdRef.current) {
+          setGoogleCalendarEvents(events);
+        }
+      } catch (error) {
+        // 에러도 최신 요청인 경우에만 처리
+        if (requestId === eventLoadRequestIdRef.current) {
+          if (error instanceof Error) {
+            onError(error.message);
+          }
+          setGoogleCalendarEvents([]);
+        }
+      }
+    },
+    [clearError, onError],
+  );
+
   const startGoogleOAuth = useCallback(async () => {
     setIsGoogleLoading(true);
     clearError();
@@ -104,6 +155,7 @@ export const useGoogleCalendarData = ({
         await selectGoogleCalendar(calendarId, calendar.summary || '');
         setSelectedCalendarId(calendarId);
         onStatus('캘린더가 선택되었습니다.');
+        // selectedCalendarId 변경 시 useEffect에서 자동으로 이벤트 로드
       } catch (error) {
         if (error instanceof Error) {
           onError(error.message);
@@ -121,9 +173,12 @@ export const useGoogleCalendarData = ({
 
     try {
       await disconnectGoogleCalendar();
+      // 진행 중인 모든 이벤트 로드 요청 무효화
+      eventLoadRequestIdRef.current++;
       setIsGoogleConnected(false);
       setGoogleCalendars([]);
       setSelectedCalendarId('');
+      setGoogleCalendarEvents([]);
       onStatus('Google Calendar 연결이 해제되었습니다.');
     } catch (error) {
       if (error instanceof Error) {
@@ -155,15 +210,23 @@ export const useGoogleCalendarData = ({
     loadGoogleCalendars(true);
   }, [loadGoogleCalendars, onError, onStatus]);
 
+  useEffect(() => {
+    if (selectedCalendarId && isGoogleConnected) {
+      loadGoogleCalendarEvents(selectedCalendarId);
+    }
+  }, [selectedCalendarId, isGoogleConnected, loadGoogleCalendarEvents]);
+
   return {
     isGoogleConnected,
     googleCalendars,
     selectedCalendarId,
+    googleCalendarEvents,
     isGoogleLoading,
     isInitialChecking,
     startGoogleOAuth,
     selectCalendar: handleSelectCalendar,
     disconnectGoogle: handleDisconnect,
     loadGoogleCalendars,
+    loadGoogleCalendarEvents,
   };
 };
