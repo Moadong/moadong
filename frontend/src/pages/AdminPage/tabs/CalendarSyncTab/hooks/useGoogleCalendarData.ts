@@ -147,8 +147,7 @@ export const useGoogleCalendarData = ({
         await selectGoogleCalendar(calendarId, calendar.summary || '');
         setSelectedCalendarId(calendarId);
         onStatus('캘린더가 선택되었습니다.');
-        // 선택된 캘린더의 이벤트 로드
-        await loadGoogleCalendarEvents(calendarId);
+        // selectedCalendarId 변경 시 useEffect에서 자동으로 이벤트 로드
       } catch (error) {
         if (error instanceof Error) {
           onError(error.message);
@@ -157,7 +156,7 @@ export const useGoogleCalendarData = ({
         setIsGoogleLoading(false);
       }
     },
-    [clearError, googleCalendars, onError, onStatus, loadGoogleCalendarEvents],
+    [clearError, googleCalendars, onError, onStatus],
   );
 
   const handleDisconnect = useCallback(async () => {
