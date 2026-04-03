@@ -66,7 +66,7 @@ export const useCalendarSync = () => {
     notionCalendarEvents: notionUi.notionCalendarEvents,
     notionVisibleCalendarEvents: notionUi.notionVisibleCalendarEvents,
     notionEventsByDate: notionUi.notionEventsByDate,
-    notionEventEnabledMap: notionUi.notionEventEnabledMap,
+    notionEventEnabledMap: unifiedCalendar.notionEventEnabledMap,
     notionCalendarDays: notionUi.notionCalendarDays,
     notionCalendarLabel: notionUi.notionCalendarLabel,
     visibleMonth: notionUi.visibleMonth,
