@@ -5,16 +5,18 @@ export const getLatestPromotionTime = (
 ): number => {
   if (!articles || articles.length === 0) return 0;
 
-  const timestamps = articles.map((article) => {
-    if (article.id && article.id.length === 24) {
-      const timestamp = parseInt(article.id.substring(0, 8), 16) * 1000;
-      if (!isNaN(timestamp)) return timestamp;
-    }
+  const timestamps = articles
+    .map((article) => {
+      if (article.id && article.id.length === 24) {
+        const timestamp = parseInt(article.id.substring(0, 8), 16) * 1000;
+        if (!isNaN(timestamp)) return timestamp;
+      }
 
-    return new Date(article.eventStartDate).getTime();
-  });
+      return new Date(article.eventStartDate).getTime();
+    })
+    .filter((time) => Number.isFinite(time));
 
-  return Math.max(...timestamps);
+  return timestamps.length > 0 ? Math.max(...timestamps) : 0;
 };
 
 export const getLastCheckedTime = (): number | null => {
