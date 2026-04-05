@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
   display: flex;
@@ -9,7 +10,7 @@ export const Container = styled.div`
 export const Description = styled.p`
   font-size: 0.94rem;
   line-height: 1.5;
-  color: #4b5563;
+  color: ${colors.gray[600]};
 `;
 
 export const ConfigGrid = styled.div`
@@ -23,7 +24,7 @@ export const ConfigGrid = styled.div`
 `;
 
 export const Block = styled.div`
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${colors.gray[300]};
   border-radius: 12px;
   padding: 14px;
 `;
