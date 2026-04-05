@@ -70,11 +70,15 @@ public class R2ImageUploadService {
         String originalFilename = extractFileName(file);
         String normalizedContentType = normalizeContentType(file.getContentType());
 
+        boolean hasExtension = StringUtils.hasText(StringUtils.getFilenameExtension(originalFilename));
         boolean hasValidExtension = isImageExtension(originalFilename);
         boolean hasValidContentType = StringUtils.hasText(normalizedContentType)
             && normalizedContentType.matches("^image/(jpeg|jpg|png|gif|bmp|webp)$");
 
-        if (!hasValidExtension && !hasValidContentType) {
+        if (hasExtension && !hasValidExtension) {
+            throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
+        }
+        if (!hasExtension && !hasValidContentType) {
             throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
         }
         if (StringUtils.hasText(normalizedContentType) && !hasValidContentType) {
