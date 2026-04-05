@@ -25,8 +25,14 @@ export const buildDefaultRedirectUri = () =>
   `${window.location.origin}/admin/calendar-sync`;
 
 /** OAuth state용 난수 문자열을 생성한다. */
-export const createState = () =>
-  globalThis.crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
+export const createState = () => {
+  if (globalThis.crypto?.randomUUID) {
+    return globalThis.crypto.randomUUID();
+  }
+  const bytes = new Uint8Array(16);
+  globalThis.crypto.getRandomValues(bytes);
+  return Array.from(bytes, (b) => b.toString(16).padStart(2, '0')).join('');
+};
 
 /** 토큰 표시용 마스킹 문자열을 만든다. */
 export const maskToken = (token: string) => {
