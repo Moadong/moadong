@@ -188,7 +188,7 @@ const ClubDetailPage = () => {
                     display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
                   }}
                 >
-                  <ClubScheduleCalendar events={calendarEvents} />
+                  <ClubScheduleCalendar key={clubId ?? clubName} events={calendarEvents} />
                 </div>
               )}
             </Styled.TabContent>
