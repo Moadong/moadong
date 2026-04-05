@@ -90,8 +90,8 @@ public class ClubProfileService {
         Club club = clubRepository.findClubById(objectId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        boolean hasCalendarEvents = calendarAggregationService.hasAnyCalendarConnection(club.getId());
-        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarEvents);
+        boolean hasCalendarConnection = calendarAggregationService.hasAnyCalendarConnection(club.getId());
+        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarConnection);
         return new ClubDetailedResponse(clubDetailedResult);
     }
 
@@ -99,8 +99,8 @@ public class ClubProfileService {
         Club club = clubRepository.findClubByName(clubName)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
-        boolean hasCalendarEvents = calendarAggregationService.hasAnyCalendarConnection(club.getId());
-        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarEvents);
+        boolean hasCalendarConnection = calendarAggregationService.hasAnyCalendarConnection(club.getId());
+        ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarConnection);
         return new ClubDetailedResponse(clubDetailedResult);
     }
 

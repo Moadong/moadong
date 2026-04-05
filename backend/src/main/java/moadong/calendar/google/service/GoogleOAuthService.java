@@ -132,6 +132,7 @@ public class GoogleOAuthService {
             Map<String, Object> result = new java.util.HashMap<>();
             List<Object> allCalendarItems = new ArrayList<>();
             String pageToken = null;
+            boolean exhaustedPages = true;
 
             for (int page = 0; page < MAX_GOOGLE_PAGE_REQUESTS; page++) {
                 String requestUrl = UriComponentsBuilder.fromHttpUrl(GOOGLE_CALENDAR_LIST_ENDPOINT)
@@ -148,6 +149,7 @@ public class GoogleOAuthService {
 
                 Map<String, Object> body = response.getBody();
                 if (body == null) {
+                    exhaustedPages = false;
                     break;
                 }
                 if (result.isEmpty()) {
@@ -161,13 +163,14 @@ public class GoogleOAuthService {
 
                 String nextPageToken = asString(body.get("nextPageToken"));
                 if (!StringUtils.hasText(nextPageToken)) {
+                    exhaustedPages = false;
                     break;
                 }
-
-                if (page == MAX_GOOGLE_PAGE_REQUESTS - 1) {
-                    log.warn("Google 캘린더 목록 페이지 상한 도달. clubId={}, maxPages={}", clubId, MAX_GOOGLE_PAGE_REQUESTS);
-                }
                 pageToken = nextPageToken;
+            }
+
+            if (exhaustedPages) {
+                log.warn("Google 캘린더 목록 페이지 상한 도달. clubId={}, maxPages={}", clubId, MAX_GOOGLE_PAGE_REQUESTS);
             }
 
             result.put("items", allCalendarItems);
@@ -264,6 +267,7 @@ public class GoogleOAuthService {
         try {
             List<ClubCalendarEventResult> results = new ArrayList<>();
             String pageToken = null;
+            boolean exhaustedPages = true;
 
             for (int page = 0; page < MAX_GOOGLE_PAGE_REQUESTS; page++) {
                 UriComponentsBuilder builder = UriComponentsBuilder.fromHttpUrl(GOOGLE_CALENDAR_EVENTS_ENDPOINT)
@@ -292,6 +296,7 @@ public class GoogleOAuthService {
 
                 Map<String, Object> body = response.getBody();
                 if (body == null) {
+                    exhaustedPages = false;
                     break;
                 }
 
@@ -311,12 +316,14 @@ public class GoogleOAuthService {
 
                 String nextPageToken = asString(body.get("nextPageToken"));
                 if (!StringUtils.hasText(nextPageToken)) {
+                    exhaustedPages = false;
                     break;
                 }
-                if (page == MAX_GOOGLE_PAGE_REQUESTS - 1) {
-                    log.warn("Google 이벤트 페이지 상한 도달. calendarId={}, maxPages={}", calendarId, MAX_GOOGLE_PAGE_REQUESTS);
-                }
                 pageToken = nextPageToken;
+            }
+
+            if (exhaustedPages) {
+                log.warn("Google 이벤트 페이지 상한 도달. calendarId={}, maxPages={}", calendarId, MAX_GOOGLE_PAGE_REQUESTS);
             }
 
             return results;

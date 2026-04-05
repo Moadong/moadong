@@ -32,7 +32,7 @@ public class R2ImageUploadService {
         String contentType = validateFile(file);
 
         String originalFilename = extractFileName(file);
-        String extension = getFileExtension(originalFilename);
+        String extension = getFileExtension(originalFilename, contentType);
         String resolvedContentType = resolveContentType(contentType, extension);
 
         PutObjectRequest request = PutObjectRequest.builder()
@@ -68,7 +68,20 @@ public class R2ImageUploadService {
         }
 
         String originalFilename = extractFileName(file);
-        if (!isImageExtension(originalFilename)) {
+        String normalizedContentType = normalizeContentType(file.getContentType());
+
+        boolean hasExtension = StringUtils.hasText(StringUtils.getFilenameExtension(originalFilename));
+        boolean hasValidExtension = isImageExtension(originalFilename);
+        boolean hasValidContentType = StringUtils.hasText(normalizedContentType)
+            && normalizedContentType.matches("^image/(jpeg|jpg|png|gif|bmp|webp)$");
+
+        if (hasExtension && !hasValidExtension) {
+            throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
+        }
+        if (!hasExtension && !hasValidContentType) {
+            throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
+        }
+        if (StringUtils.hasText(normalizedContentType) && !hasValidContentType) {
             throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
         }
 
@@ -76,10 +89,6 @@ public class R2ImageUploadService {
             throw new RestApiException(ErrorCode.FILE_TOO_LARGE);
         }
 
-        String normalizedContentType = normalizeContentType(file.getContentType());
-        if (StringUtils.hasText(normalizedContentType) && !normalizedContentType.matches("^image/(jpeg|jpg|png|gif|bmp|webp)$")) {
-            throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
-        }
         return normalizedContentType;
     }
 
@@ -92,12 +101,22 @@ public class R2ImageUploadService {
         return fileName;
     }
 
-    private String getFileExtension(String fileName) {
+    private String getFileExtension(String fileName, String contentType) {
         String extension = StringUtils.getFilenameExtension(fileName);
-        if (!StringUtils.hasText(extension)) {
-            throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
+        if (StringUtils.hasText(extension)) {
+            return "." + extension.toLowerCase(Locale.ROOT);
         }
-        return "." + extension.toLowerCase(Locale.ROOT);
+        if (StringUtils.hasText(contentType)) {
+            return switch (contentType.toLowerCase(Locale.ROOT)) {
+                case "image/jpeg", "image/jpg" -> ".jpg";
+                case "image/png" -> ".png";
+                case "image/gif" -> ".gif";
+                case "image/bmp" -> ".bmp";
+                case "image/webp" -> ".webp";
+                default -> throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
+            };
+        }
+        throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
     }
 
     private String resolveContentType(String rawContentType, String extension) {
