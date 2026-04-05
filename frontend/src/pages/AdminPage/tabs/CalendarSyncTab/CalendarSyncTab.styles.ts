@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
@@ -18,7 +19,7 @@ export const ConfigGrid = styled.div`
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 14px;
 
-  @media (max-width: 1024px) {
+  ${media.laptop} {
     grid-template-columns: 1fr;
   }
 `;
