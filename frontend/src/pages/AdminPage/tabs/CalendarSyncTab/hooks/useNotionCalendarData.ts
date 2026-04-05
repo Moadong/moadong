@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   fetchNotionDatabasePages,
   fetchNotionDatabases,
@@ -30,6 +30,8 @@ export const useNotionCalendarData = ({
   const [isNotionDatabaseApplying, setIsNotionDatabaseApplying] =
     useState(false);
 
+  const pagesRequestIdRef = useRef(0);
+
   const applyPagesResponse = useCallback((response: NotionPagesResponse) => {
     setNotionItems(response.items);
     setNotionTotalResults(response.totalResults);
@@ -41,9 +43,13 @@ export const useNotionCalendarData = ({
   }, []);
 
   const loadNotionPages = useCallback(async () => {
+    const requestId = ++pagesRequestIdRef.current;
     setIsNotionLoading(true);
     try {
       const response = await fetchNotionPages();
+      if (requestId !== pagesRequestIdRef.current) {
+        return null;
+      }
       applyPagesResponse(response);
       return response;
     } catch (error: unknown) {
@@ -77,10 +83,14 @@ export const useNotionCalendarData = ({
     setIsNotionDatabaseApplying(true);
     clearError();
 
+    const requestId = ++pagesRequestIdRef.current;
     fetchNotionDatabasePages({
       databaseId: selectedNotionDatabaseId,
     })
       .then((pagesResponse) => {
+        if (requestId !== pagesRequestIdRef.current) {
+          return;
+        }
         applyPagesResponse(pagesResponse);
         onStatus('선택한 Notion 데이터베이스를 연결했습니다.');
       })
