@@ -83,8 +83,8 @@ public enum ErrorCode {
     NOTION_DATABASE_NOT_SET(HttpStatus.BAD_REQUEST, "950-7", "저장된 Notion databaseId가 없습니다. 먼저 데이터베이스를 선택해주세요."),
     NOTION_DATABASE_ID_REQUIRED(HttpStatus.BAD_REQUEST, "950-8", "databaseId가 필요합니다."),
     NOTION_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "950-9", "연동할 동아리 정보를 찾을 수 없습니다."),
-    NOTION_SEARCH_FAILED(HttpStatus.BAD_REQUEST, "950-10", "Notion DB 목록 조회에 실패했습니다."),
-    NOTION_DATABASE_QUERY_FAILED(HttpStatus.BAD_REQUEST, "950-11", "Notion DB 조회에 실패했습니다."),
+    NOTION_SEARCH_FAILED(HttpStatus.BAD_GATEWAY, "950-10", "Notion DB 목록 조회에 실패했습니다."),
+    NOTION_DATABASE_QUERY_FAILED(HttpStatus.BAD_GATEWAY, "950-11", "Notion DB 조회에 실패했습니다."),
 
     // 960xx: Google Calendar 연동 오류
     GOOGLE_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "960-1", "Google Calendar 설정이 누락되었습니다."),
