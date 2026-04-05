@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { NotionSearchItem } from '@/apis/calendarOAuth';
 import {
   buildMonthCalendarDays,
@@ -22,6 +22,7 @@ export const useNotionCalendarUiState = ({
   const [notionEventEnabledMap, setNotionEventEnabledMap] = useState<
     Record<string, boolean>
   >({});
+  const didInitVisibleMonthRef = useRef(false);
 
   const notionCalendarEvents = useMemo(
     () =>
@@ -62,12 +63,14 @@ export const useNotionCalendarUiState = ({
   );
 
   useEffect(() => {
-    if (notionCalendarEvents.length === 0) return;
+    if (notionCalendarEvents.length === 0 || didInitVisibleMonthRef.current)
+      return;
 
     const firstEventDate = dateFromKey(notionCalendarEvents[0].dateKey);
     setVisibleMonth(
       new Date(firstEventDate.getFullYear(), firstEventDate.getMonth(), 1),
     );
+    didInitVisibleMonthRef.current = true;
   }, [notionCalendarEvents]);
 
   useEffect(() => {
