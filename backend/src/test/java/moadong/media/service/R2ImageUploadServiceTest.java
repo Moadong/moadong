@@ -90,6 +90,37 @@ class R2ImageUploadServiceTest {
     }
 
     @Test
+    void 확장자_없는_파일명이어도_ContentType이_유효하면_업로드에_성공한다() {
+        MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "image",
+            "image/jpeg",
+            "image".getBytes()
+        );
+
+        r2ImageUploadService.upload(file, "bucket", "https://cdn.example.com/", "web/image.jpg");
+
+        ArgumentCaptor<PutObjectRequest> requestCaptor = ArgumentCaptor.forClass(PutObjectRequest.class);
+        verify(s3Client).putObject(requestCaptor.capture(), any(RequestBody.class));
+        assertEquals("image/jpeg", requestCaptor.getValue().contentType());
+    }
+
+    @Test
+    void 확장자_없고_ContentType도_없으면_예외를_던진다() {
+        MockMultipartFile file = new MockMultipartFile(
+            "file",
+            "image",
+            null,
+            "image".getBytes()
+        );
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> r2ImageUploadService.upload(file, "bucket", "https://cdn.example.com/", "web/image"));
+
+        assertEquals(ErrorCode.UNSUPPORTED_FILE_TYPE, exception.getErrorCode());
+    }
+
+    @Test
     void 터키어_로케일에서도_확장자와_ContentType을_정상_처리한다() {
         Locale defaultLocale = Locale.getDefault();
         Locale.setDefault(Locale.forLanguageTag("tr-TR"));
