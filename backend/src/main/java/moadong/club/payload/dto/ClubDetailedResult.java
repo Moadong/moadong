@@ -39,7 +39,7 @@ public record ClubDetailedResult(
     }
 
     public static ClubDetailedResult of(Club club, List<ClubCalendarEventResult> calendarEvents) {
-        return of(club, calendarEvents, !calendarEvents.isEmpty());
+        return of(club, calendarEvents, calendarEvents != null && !calendarEvents.isEmpty());
     }
 
     public static ClubDetailedResult of(Club club, List<ClubCalendarEventResult> calendarEvents, boolean hasCalendarEvents) {
