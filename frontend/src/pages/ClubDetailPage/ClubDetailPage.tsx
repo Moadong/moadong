@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef } from 'react';
+import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -38,11 +38,6 @@ const ClubDetailPage = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab') as TabType | null;
 
-  const activeTab: TabType =
-    tabParam && Object.values(TAB_TYPE).includes(tabParam)
-      ? tabParam
-      : TAB_TYPE.INTRO;
-
   const { clubId, clubName } = useParams<{
     clubId: string;
     clubName: string;
@@ -55,6 +50,22 @@ const ClubDetailPage = () => {
   );
 
   const hasCalendarEvents = clubDetail?.hasCalendarEvents ?? false;
+
+  const activeTab: TabType = useMemo(() => {
+    if (!tabParam || !Object.values(TAB_TYPE).includes(tabParam)) {
+      return TAB_TYPE.INTRO;
+    }
+    if (tabParam === TAB_TYPE.SCHEDULE && !hasCalendarEvents) {
+      return TAB_TYPE.INTRO;
+    }
+    return tabParam;
+  }, [tabParam, hasCalendarEvents]);
+
+  useEffect(() => {
+    if (clubDetail && tabParam === TAB_TYPE.SCHEDULE && !hasCalendarEvents) {
+      setSearchParams({ tab: TAB_TYPE.INTRO }, { replace: true });
+    }
+  }, [clubDetail, tabParam, hasCalendarEvents, setSearchParams]);
 
   const { data: calendarEvents = [] } = useGetClubCalendarEvents(
     (clubName ?? clubId) || '',
