@@ -62,7 +62,11 @@ const ClubDetailPage = () => {
   }, [tabParam, hasCalendarConnection]);
 
   useEffect(() => {
-    if (clubDetail && tabParam === TAB_TYPE.SCHEDULE && !hasCalendarConnection) {
+    if (
+      clubDetail &&
+      tabParam === TAB_TYPE.SCHEDULE &&
+      !hasCalendarConnection
+    ) {
       setSearchParams({ tab: TAB_TYPE.INTRO }, { replace: true });
     }
   }, [clubDetail, tabParam, hasCalendarConnection, setSearchParams]);
@@ -188,7 +192,10 @@ const ClubDetailPage = () => {
                     display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
                   }}
                 >
-                  <ClubScheduleCalendar key={clubId ?? clubName} events={calendarEvents} />
+                  <ClubScheduleCalendar
+                    key={clubId ?? clubName}
+                    events={calendarEvents}
+                  />
                 </div>
               )}
             </Styled.TabContent>
