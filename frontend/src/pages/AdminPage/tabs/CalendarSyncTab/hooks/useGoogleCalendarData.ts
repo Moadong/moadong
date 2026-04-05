@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { fetchGoogleAuthorizeUrl } from '@/apis/calendarOAuth';
 import {
   useDisconnectGoogleCalendar,
@@ -25,6 +25,7 @@ export const useGoogleCalendarData = ({
 }: UseGoogleCalendarDataParams) => {
   const [selectedCalendarId, setSelectedCalendarId] = useState('');
   const [isOAuthLoading, setIsOAuthLoading] = useState(false);
+  const hasLoadedOnce = useRef(false);
 
   const calendarsQuery = useGetGoogleCalendars();
   const selectMutation = useSelectGoogleCalendar();
@@ -62,6 +63,12 @@ export const useGoogleCalendarData = ({
       }
     }
   }, [calendarsQuery.data, selectedCalendarId]);
+
+  useEffect(() => {
+    if (!calendarsQuery.isPending) {
+      hasLoadedOnce.current = true;
+    }
+  }, [calendarsQuery.isPending]);
 
   useEffect(() => {
     if (calendarsQuery.error instanceof Error) {
@@ -149,7 +156,7 @@ export const useGoogleCalendarData = ({
     selectedCalendarId,
     googleCalendarEvents,
     isGoogleLoading,
-    isInitialChecking: calendarsQuery.isPending,
+    isInitialChecking: calendarsQuery.isPending && !hasLoadedOnce.current,
     startGoogleOAuth,
     selectCalendar: handleSelectCalendar,
     disconnectGoogle: handleDisconnect,
