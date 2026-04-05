@@ -49,27 +49,27 @@ const ClubDetailPage = () => {
     (clubName ?? clubId) || '',
   );
 
-  const hasCalendarEvents = clubDetail?.hasCalendarEvents ?? false;
+  const hasCalendarConnection = clubDetail?.hasCalendarConnection ?? false;
 
   const activeTab: TabType = useMemo(() => {
     if (!tabParam || !Object.values(TAB_TYPE).includes(tabParam)) {
       return TAB_TYPE.INTRO;
     }
-    if (tabParam === TAB_TYPE.SCHEDULE && !hasCalendarEvents) {
+    if (tabParam === TAB_TYPE.SCHEDULE && !hasCalendarConnection) {
       return TAB_TYPE.INTRO;
     }
     return tabParam;
-  }, [tabParam, hasCalendarEvents]);
+  }, [tabParam, hasCalendarConnection]);
 
   useEffect(() => {
-    if (clubDetail && tabParam === TAB_TYPE.SCHEDULE && !hasCalendarEvents) {
+    if (clubDetail && tabParam === TAB_TYPE.SCHEDULE && !hasCalendarConnection) {
       setSearchParams({ tab: TAB_TYPE.INTRO }, { replace: true });
     }
-  }, [clubDetail, tabParam, hasCalendarEvents, setSearchParams]);
+  }, [clubDetail, tabParam, hasCalendarConnection, setSearchParams]);
 
   const { data: calendarEvents = [] } = useGetClubCalendarEvents(
     (clubName ?? clubId) || '',
-    { enabled: hasCalendarEvents && activeTab === TAB_TYPE.SCHEDULE },
+    { enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE },
   );
 
   const tabs = useMemo(
@@ -77,11 +77,11 @@ const ClubDetailPage = () => {
       [
         { key: TAB_TYPE.INTRO, label: '소개 내용' },
         { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-        hasCalendarEvents
+        hasCalendarConnection
           ? { key: TAB_TYPE.SCHEDULE, label: '일정 보기' }
           : null,
       ].filter(Boolean) as Array<{ key: TabType; label: string }>,
-    [hasCalendarEvents],
+    [hasCalendarConnection],
   );
 
   const topBarTabs = useMemo(
@@ -89,11 +89,11 @@ const ClubDetailPage = () => {
       [
         { key: TAB_TYPE.INTRO, label: '소개내용' },
         { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-        hasCalendarEvents
+        hasCalendarConnection
           ? { key: TAB_TYPE.SCHEDULE, label: '일정 보기' }
           : null,
       ].filter(Boolean) as Array<{ key: TabType; label: string }>,
-    [hasCalendarEvents],
+    [hasCalendarConnection],
   );
 
   useTrackPageView(
@@ -182,7 +182,7 @@ const ClubDetailPage = () => {
               >
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
               </div>
-              {hasCalendarEvents && (
+              {hasCalendarConnection && (
                 <div
                   style={{
                     display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',

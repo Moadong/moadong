@@ -32,7 +32,7 @@ export interface ClubDetail extends Club {
 
   socialLinks: Record<SNSPlatform, string>;
   externalApplicationUrl?: string;
-  hasCalendarEvents?: boolean;
+  hasCalendarConnection?: boolean;
 }
 
 export interface ClubCalendarEvent {
