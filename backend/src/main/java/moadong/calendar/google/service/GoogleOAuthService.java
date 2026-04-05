@@ -163,11 +163,11 @@ public class GoogleOAuthService {
                 if (!StringUtils.hasText(nextPageToken)) {
                     break;
                 }
-
-                if (page == MAX_GOOGLE_PAGE_REQUESTS - 1) {
-                    log.warn("Google 캘린더 목록 페이지 상한 도달. clubId={}, maxPages={}", clubId, MAX_GOOGLE_PAGE_REQUESTS);
-                }
                 pageToken = nextPageToken;
+            }
+
+            if (pageToken != null) {
+                log.warn("Google 캘린더 목록 페이지 상한 도달. clubId={}, maxPages={}", clubId, MAX_GOOGLE_PAGE_REQUESTS);
             }
 
             result.put("items", allCalendarItems);
@@ -313,10 +313,11 @@ public class GoogleOAuthService {
                 if (!StringUtils.hasText(nextPageToken)) {
                     break;
                 }
-                if (page == MAX_GOOGLE_PAGE_REQUESTS - 1) {
-                    log.warn("Google 이벤트 페이지 상한 도달. calendarId={}, maxPages={}", calendarId, MAX_GOOGLE_PAGE_REQUESTS);
-                }
                 pageToken = nextPageToken;
+            }
+            
+            if (pageToken != null) {
+                log.warn("Google 이벤트 페이지 상한 도달. calendarId={}, maxPages={}", calendarId, MAX_GOOGLE_PAGE_REQUESTS);
             }
 
             return results;
