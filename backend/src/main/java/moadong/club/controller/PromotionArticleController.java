@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import moadong.club.payload.dto.PromotionArticleCreateResultDto;
 import moadong.club.payload.request.PromotionArticleCreateRequest;
 import moadong.club.payload.request.PromotionArticleUpdateRequest;
 import moadong.club.payload.response.PromotionArticleResponse;
@@ -41,8 +42,8 @@ public class PromotionArticleController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> createPromotionArticle(
         @RequestBody @Validated PromotionArticleCreateRequest request) {
-        promotionArticleService.createPromotionArticle(request);
-        return Response.ok("홍보 게시글이 생성되었습니다.");
+        PromotionArticleCreateResultDto response = promotionArticleService.createPromotionArticle(request);
+        return Response.ok("홍보 게시글이 생성되었습니다.", response);
     }
 
     @PutMapping("/{articleId}")

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
+import moadong.club.payload.response.ClubCalendarEventsResponse;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.service.ClubProfileService;
 import moadong.global.payload.Response;
@@ -36,6 +37,20 @@ public class ClubProfileController {
     public ResponseEntity<?> getClubDetailByClubName(@PathVariable String clubName) {
         ClubDetailedResponse clubDetailedResponse = clubProfileService.getClubDetailByClubName(clubName);
         return Response.ok(clubDetailedResponse);
+    }
+
+    @GetMapping("/{clubId}/calendar-events")
+    @Operation(summary = "클럽 행사 일정 조회", description = "클럽 행사 일정을 조회합니다.")
+    public ResponseEntity<?> getClubCalendarEvents(@PathVariable String clubId) {
+        ClubCalendarEventsResponse response = clubProfileService.getClubCalendarEvents(clubId);
+        return Response.ok(response);
+    }
+
+    @GetMapping("/@{clubName}/calendar-events")
+    @Operation(summary = "클럽 행사 일정 조회", description = "클럽 이름으로 행사 일정을 조회합니다.")
+    public ResponseEntity<?> getClubCalendarEventsByClubName(@PathVariable String clubName) {
+        ClubCalendarEventsResponse response = clubProfileService.getClubCalendarEventsByClubName(clubName);
+        return Response.ok(response);
     }
 
 

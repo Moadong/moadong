@@ -4,6 +4,7 @@ import lombok.RequiredArgsConstructor;
 import moadong.club.entity.Club;
 import moadong.club.entity.PromotionArticle;
 import moadong.club.payload.dto.PromotionArticleDto;
+import moadong.club.payload.dto.PromotionArticleCreateResultDto;
 import moadong.club.payload.request.PromotionArticleCreateRequest;
 import moadong.club.payload.request.PromotionArticleUpdateRequest;
 import moadong.club.payload.response.PromotionArticleResponse;
@@ -34,7 +35,7 @@ public class PromotionArticleService {
     }
 
     @Transactional
-    public void createPromotionArticle(PromotionArticleCreateRequest request) {
+    public PromotionArticleCreateResultDto createPromotionArticle(PromotionArticleCreateRequest request) {
         Club club = getClub(request.clubId());
 
         PromotionArticle article = PromotionArticle.builder()
@@ -48,7 +49,8 @@ public class PromotionArticleService {
             .images(request.images())
             .build();
 
-        promotionArticleRepository.save(article);
+        PromotionArticle savedArticle = promotionArticleRepository.save(article);
+        return new PromotionArticleCreateResultDto(savedArticle.getId());
     }
 
     @Transactional

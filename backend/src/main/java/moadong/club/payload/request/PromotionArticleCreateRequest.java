@@ -1,7 +1,6 @@
 package moadong.club.payload.request;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.Instant;
@@ -14,6 +13,6 @@ public record PromotionArticleCreateRequest(
     @NotNull Instant eventStartDate,
     @NotNull Instant eventEndDate,
     @NotBlank String description,
-    @NotEmpty List<String> images
+    @NotNull List<String> images
 ) {
 }
