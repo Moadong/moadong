@@ -40,6 +40,11 @@ public class PromotionArticle {
     @Builder.Default
     private Instant createdAt = Instant.now();
 
+    @Builder.Default
+    private boolean deleted = false;
+
+    private Instant deletedAt;
+
     public void update(PromotionArticleUpdateRequest request, String clubName) {
         this.clubId = request.clubId();
         this.clubName = clubName;
@@ -49,5 +54,10 @@ public class PromotionArticle {
         this.eventEndDate = request.eventEndDate();
         this.description = request.description();
         this.images = request.images();
+    }
+
+    public void softDelete() {
+        this.deleted = true;
+        this.deletedAt = Instant.now();
     }
 }
