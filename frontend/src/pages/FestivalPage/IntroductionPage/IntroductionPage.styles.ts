@@ -5,10 +5,10 @@ export const Container = styled.div`
   width: 100%;
   max-width: 550px;
   margin: 0 auto;
-  padding-top: 24px;
+  padding-top: 92px;
 
   ${media.mobile} {
-    padding-top: 0;
+    padding-top: 70px;
   }
 `;
 

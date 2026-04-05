@@ -6,11 +6,18 @@ const useTrackPageView = (
   pageName: string,
   clubName?: string,
   skip: boolean = false,
+  recruitmentStatus?: string,
 ) => {
   const location = useLocation();
   const isTracked = useRef(false);
   const startTime = useRef(Date.now());
   const clubNameRef = useRef(clubName);
+  const recruitmentStatusRef = useRef(recruitmentStatus);
+
+  // ref 동기화는 별도 effect에서 처리 (방문 이벤트 중복 방지)
+  useEffect(() => {
+    recruitmentStatusRef.current = recruitmentStatus;
+  }, [recruitmentStatus]);
 
   useEffect(() => {
     clubNameRef.current = clubName;
@@ -25,6 +32,7 @@ const useTrackPageView = (
       timestamp: startTime.current,
       referrer: document.referrer || 'direct',
       clubName: clubNameRef.current,
+      recruitmentStatus: recruitmentStatusRef.current,
     });
 
     const trackPageDuration = () => {
@@ -37,6 +45,7 @@ const useTrackPageView = (
         duration: duration,
         duration_seconds: Math.round(duration / 1000),
         clubName: clubNameRef.current,
+        recruitmentStatus: recruitmentStatusRef.current,
       });
     };
 

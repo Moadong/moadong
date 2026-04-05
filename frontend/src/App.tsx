@@ -12,6 +12,7 @@ import MainPage from '@/pages/MainPage/MainPage';
 import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
 import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
+import GoogleCallbackPage from './pages/CallbackPage/GoogleCallbackPage';
 import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
 import IntroducePage from './pages/IntroducePage/IntroducePage';
 import 'swiper/css';
@@ -22,6 +23,8 @@ import {
 import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
 import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
 import IntroductionPage from './pages/FestivalPage/IntroductionPage/IntroductionPage';
+import PromotionDetailPage from './pages/PromotionPage/PromotionDetailPage';
+import PromotionListPage from './pages/PromotionPage/PromotionListPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -108,6 +111,10 @@ const App = () => {
                     </ContentErrorBoundary>
                   }
                 />
+                <Route
+                  path='/callback/google'
+                  element={<GoogleCallbackPage />}
+                />
                 <Route path='/admin/login' element={<LoginTab />} />
                 <Route
                   path='/admin/*'
@@ -142,6 +149,22 @@ const App = () => {
                   element={
                     <ContentErrorBoundary>
                       <IntroductionPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/promotions'
+                  element={
+                    <ContentErrorBoundary>
+                      <PromotionListPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/promotions/:promotionId'
+                  element={
+                    <ContentErrorBoundary>
+                      <PromotionDetailPage />
                     </ContentErrorBoundary>
                   }
                 />

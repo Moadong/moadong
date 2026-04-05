@@ -12,6 +12,7 @@ import iconStudyActive from '@/assets/images/icons/category_button/category_stud
 import iconStudy from '@/assets/images/icons/category_button/category_study_button_icon.svg';
 import iconVolunteerActive from '@/assets/images/icons/category_button/category_volunteer_button_icon_active.svg';
 import iconVolunteer from '@/assets/images/icons/category_button/category_volunteer_button_icon.svg';
+import iconRepresentative from '@/assets/images/icons/club_union_representative_icon.svg';
 
 export const inactiveCategoryIcons: Record<string, string> = {
   all: iconAll,
@@ -21,6 +22,7 @@ export const inactiveCategoryIcons: Record<string, string> = {
   study: iconStudy,
   sport: iconSport,
   performance: iconPerformance,
+  representative: iconRepresentative,
 };
 
 export const activeCategoryIcons: Record<string, string> = {
