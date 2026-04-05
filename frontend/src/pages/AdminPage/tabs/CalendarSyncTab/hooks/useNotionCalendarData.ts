@@ -33,7 +33,11 @@ export const useNotionCalendarData = ({
   const applyPagesResponse = useCallback((response: NotionPagesResponse) => {
     setNotionItems(response.items);
     setNotionTotalResults(response.totalResults);
-    setNotionDatabaseSourceId(response.databaseId ?? '');
+    const databaseId = response.databaseId ?? '';
+    setNotionDatabaseSourceId(databaseId);
+    if (databaseId) {
+      setSelectedNotionDatabaseId(databaseId);
+    }
   }, []);
 
   const loadNotionPages = useCallback(async () => {
