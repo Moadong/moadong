@@ -1,9 +1,11 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
+import { initializeExperiments } from './experiments/initializeExperiments';
 import { initializeMixpanel, initializeSentry } from './utils/initSDK';
 
 initializeMixpanel();
 initializeSentry();
+initializeExperiments();
 
 if (import.meta.env.DEV) {
   window.navermap_authFailure = function () {

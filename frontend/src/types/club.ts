@@ -32,6 +32,17 @@ export interface ClubDetail extends Club {
 
   socialLinks: Record<SNSPlatform, string>;
   externalApplicationUrl?: string;
+  hasCalendarEvents?: boolean;
+}
+
+export interface ClubCalendarEvent {
+  id: string;
+  title: string;
+  start: string;
+  end?: string;
+  url?: string;
+  description?: string;
+  source?: 'NOTION' | 'GOOGLE';
 }
 
 export interface ClubDescription {
