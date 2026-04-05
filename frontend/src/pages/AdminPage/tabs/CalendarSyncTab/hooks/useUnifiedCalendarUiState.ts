@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { GoogleCalendarEvent } from '@/apis/calendarOAuth';
 import {
   buildMonthCalendarDays,
@@ -29,6 +29,7 @@ export const useUnifiedCalendarUiState = ({
   const [googleEventEnabledMap, setGoogleEventEnabledMap] = useState<
     Record<string, boolean>
   >({});
+  const didInitVisibleMonthRef = useRef(false);
 
   const unifiedNotionEvents = useMemo(
     () => notionCalendarEvents.map(convertNotionEventToUnified),
@@ -91,7 +92,7 @@ export const useUnifiedCalendarUiState = ({
   );
 
   useEffect(() => {
-    if (allUnifiedEvents.length === 0) return;
+    if (allUnifiedEvents.length === 0 || didInitVisibleMonthRef.current) return;
 
     const lastEventDate = dateFromKey(
       allUnifiedEvents[allUnifiedEvents.length - 1].dateKey,
@@ -99,6 +100,7 @@ export const useUnifiedCalendarUiState = ({
     setVisibleMonth(
       new Date(lastEventDate.getFullYear(), lastEventDate.getMonth(), 1),
     );
+    didInitVisibleMonthRef.current = true;
   }, [allUnifiedEvents]);
 
   useEffect(() => {
