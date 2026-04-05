@@ -35,7 +35,9 @@ public class GoogleConnection {
     public void updateTokens(String encryptedAccessToken, String encryptedRefreshToken,
                              String email, LocalDateTime tokenExpiresAt) {
         this.encryptedAccessToken = encryptedAccessToken;
-        this.encryptedRefreshToken = encryptedRefreshToken;
+        if (encryptedRefreshToken != null && !encryptedRefreshToken.isBlank()) {
+            this.encryptedRefreshToken = encryptedRefreshToken;
+        }
         this.email = email;
         this.tokenExpiresAt = tokenExpiresAt;
         this.updatedAt = LocalDateTime.now();
