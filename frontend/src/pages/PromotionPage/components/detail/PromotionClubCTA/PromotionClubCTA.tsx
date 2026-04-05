@@ -10,7 +10,7 @@ const PromotionClubCTA = ({ clubName }: Props) => {
   const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate(`/clubDetail/@${clubName}`);
+    navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
   };
 
   return (

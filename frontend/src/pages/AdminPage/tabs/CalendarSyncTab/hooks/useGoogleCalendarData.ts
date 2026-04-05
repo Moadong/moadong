@@ -1,13 +1,11 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { fetchGoogleAuthorizeUrl } from '@/apis/calendarOAuth';
 import {
-  disconnectGoogleCalendar,
-  fetchGoogleAuthorizeUrl,
-  fetchGoogleCalendarEvents,
-  fetchGoogleCalendars,
-  selectGoogleCalendar,
-} from '@/apis/calendarOAuth';
-import { ApiError } from '@/errors';
-import type { GoogleCalendarEvent, GoogleCalendarItem } from '@/types/google';
+  useDisconnectGoogleCalendar,
+  useGetGoogleCalendarEvents,
+  useGetGoogleCalendars,
+  useSelectGoogleCalendar,
+} from '@/hooks/Queries/useGoogleCalendar';
 import { createState } from '@/utils/calendarSyncUtils';
 
 const GOOGLE_STATE_KEY = 'admin_calendar_sync_google_state';
@@ -25,109 +23,83 @@ export const useGoogleCalendarData = ({
   onStatus,
   clearError,
 }: UseGoogleCalendarDataParams) => {
-  const [isGoogleConnected, setIsGoogleConnected] = useState(false);
-  const [googleCalendars, setGoogleCalendars] = useState<GoogleCalendarItem[]>(
-    [],
-  );
-  const [selectedCalendarId, setSelectedCalendarId] = useState<string>('');
-  const [googleCalendarEvents, setGoogleCalendarEvents] = useState<
-    GoogleCalendarEvent[]
-  >([]);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isInitialChecking, setIsInitialChecking] = useState(true);
-  const eventLoadRequestIdRef = useRef(0);
+  const [selectedCalendarId, setSelectedCalendarId] = useState('');
+  const [isOAuthLoading, setIsOAuthLoading] = useState(false);
+  const hasLoadedOnce = useRef(false);
 
-  const loadGoogleCalendars = useCallback(
-    async (isInitial = false) => {
-      if (!isInitial) {
-        setIsGoogleLoading(true);
-      }
-      clearError();
+  const calendarsQuery = useGetGoogleCalendars();
+  const selectMutation = useSelectGoogleCalendar();
+  const disconnectMutation = useDisconnectGoogleCalendar();
 
-      try {
-        const response = await fetchGoogleCalendars();
-        setGoogleCalendars(response.items);
-        setIsGoogleConnected(true);
+  const eventTimeRange = useMemo(() => {
+    const now = new Date();
+    return {
+      timeMin: new Date(now.getFullYear(), now.getMonth() - 3, 1).toISOString(),
+      timeMax: new Date(now.getFullYear(), now.getMonth() + 4, 1).toISOString(),
+    };
+  }, []);
 
-        // 서버가 제공한 선택값 우선, 없으면 primary, 없으면 첫 번째
-        if (response.selectedCalendarId) {
-          setSelectedCalendarId(response.selectedCalendarId);
-        } else {
-          const primaryCalendar = response.items.find((cal) => cal.primary);
-          if (primaryCalendar) {
-            setSelectedCalendarId(primaryCalendar.id);
-          } else if (response.items.length > 0) {
-            setSelectedCalendarId(response.items[0].id);
-          }
-        }
-      } catch (error) {
-        if (error instanceof ApiError && error.errorCode === '960-4') {
-          setIsGoogleConnected(false);
-          setGoogleCalendars([]);
-          return;
-        }
-        if (error instanceof Error) {
-          onError(error.message);
-        }
-      } finally {
-        if (isInitial) {
-          setIsInitialChecking(false);
-        } else {
-          setIsGoogleLoading(false);
-        }
-      }
-    },
-    [clearError, onError],
+  const eventsQuery = useGetGoogleCalendarEvents(
+    selectedCalendarId,
+    eventTimeRange.timeMin,
+    eventTimeRange.timeMax,
   );
 
-  const loadGoogleCalendarEvents = useCallback(
-    async (calendarId: string) => {
-      if (!calendarId) {
-        setGoogleCalendarEvents([]);
-        return;
+  const isGoogleConnected = calendarsQuery.data != null;
+  const googleCalendars = calendarsQuery.data?.items ?? [];
+  const googleCalendarEvents = eventsQuery.data ?? [];
+  const isGoogleLoading =
+    isOAuthLoading || selectMutation.isPending || disconnectMutation.isPending;
+
+  // 서버 데이터 기반 selectedCalendarId 초기화 (서버 선택값 → primary → 첫 번째)
+  useEffect(() => {
+    if (!selectedCalendarId && calendarsQuery.data) {
+      const { items, selectedCalendarId: serverSelected } = calendarsQuery.data;
+      if (serverSelected) {
+        setSelectedCalendarId(serverSelected);
+      } else {
+        const primary = items.find((cal) => cal.primary);
+        setSelectedCalendarId(primary?.id ?? items[0]?.id ?? '');
       }
+    }
+  }, [calendarsQuery.data, selectedCalendarId]);
 
-      // 새 요청 ID 생성 및 저장
-      const requestId = ++eventLoadRequestIdRef.current;
-      // 새 캘린더 로드 시작 - 이전 이벤트 즉시 제거
-      setGoogleCalendarEvents([]);
-      clearError();
+  useEffect(() => {
+    if (!calendarsQuery.isPending) {
+      hasLoadedOnce.current = true;
+    }
+  }, [calendarsQuery.isPending]);
 
-      try {
-        // 3개월 전부터 3개월 후까지 이벤트 조회
-        const now = new Date();
-        const threeMonthsAgo = new Date(
-          now.getFullYear(),
-          now.getMonth() - 3,
-          1,
-        );
-        const timeMax = new Date(now.getFullYear(), now.getMonth() + 4, 1);
+  useEffect(() => {
+    if (calendarsQuery.error instanceof Error) {
+      onError(calendarsQuery.error.message);
+    }
+  }, [calendarsQuery.error, onError]);
 
-        const events = await fetchGoogleCalendarEvents(
-          calendarId,
-          threeMonthsAgo.toISOString(),
-          timeMax.toISOString(),
-        );
+  useEffect(() => {
+    if (eventsQuery.error instanceof Error) {
+      onError(eventsQuery.error.message);
+    }
+  }, [eventsQuery.error, onError]);
 
-        // 응답이 최신 요청인지 확인 (stale response 무시)
-        if (requestId === eventLoadRequestIdRef.current) {
-          setGoogleCalendarEvents(events);
-        }
-      } catch (error) {
-        // 에러도 최신 요청인 경우에만 처리
-        if (requestId === eventLoadRequestIdRef.current) {
-          if (error instanceof Error) {
-            onError(error.message);
-          }
-          setGoogleCalendarEvents([]);
-        }
-      }
-    },
-    [clearError, onError],
-  );
+  // OAuth 콜백 처리
+  useEffect(() => {
+    const errorMessage = sessionStorage.getItem(GOOGLE_OAUTH_ERROR_KEY);
+    if (errorMessage) {
+      onError(errorMessage);
+      sessionStorage.removeItem(GOOGLE_OAUTH_ERROR_KEY);
+      return;
+    }
+
+    const successFlag = sessionStorage.getItem(GOOGLE_OAUTH_SUCCESS_KEY);
+    if (successFlag) {
+      sessionStorage.removeItem(GOOGLE_OAUTH_SUCCESS_KEY);
+      onStatus('Google OAuth 인증이 완료되었습니다.');
+    }
+  }, [onError, onStatus]);
 
   const startGoogleOAuth = useCallback(async () => {
-    setIsGoogleLoading(true);
+    setIsOAuthLoading(true);
     clearError();
 
     try {
@@ -139,82 +111,44 @@ export const useGoogleCalendarData = ({
       if (error instanceof Error) {
         onError(error.message);
       }
-      setIsGoogleLoading(false);
+      setIsOAuthLoading(false);
     }
   }, [clearError, onError]);
 
   const handleSelectCalendar = useCallback(
-    async (calendarId: string) => {
+    (calendarId: string) => {
       const calendar = googleCalendars.find((cal) => cal.id === calendarId);
       if (!calendar) return;
 
-      setIsGoogleLoading(true);
       clearError();
-
-      try {
-        await selectGoogleCalendar(calendarId, calendar.summary || '');
-        setSelectedCalendarId(calendarId);
-        onStatus('캘린더가 선택되었습니다.');
-        // selectedCalendarId 변경 시 useEffect에서 자동으로 이벤트 로드
-      } catch (error) {
-        if (error instanceof Error) {
-          onError(error.message);
-        }
-      } finally {
-        setIsGoogleLoading(false);
-      }
+      selectMutation.mutate(
+        { calendarId, calendarName: calendar.summary || '' },
+        {
+          onSuccess: () => {
+            setSelectedCalendarId(calendarId);
+            onStatus('캘린더가 선택되었습니다.');
+          },
+          onError: (error) => {
+            if (error instanceof Error) onError(error.message);
+          },
+        },
+      );
     },
-    [clearError, googleCalendars, onError, onStatus],
+    [clearError, googleCalendars, onError, onStatus, selectMutation],
   );
 
-  const handleDisconnect = useCallback(async () => {
-    setIsGoogleLoading(true);
+  const handleDisconnect = useCallback(() => {
     clearError();
-
-    try {
-      await disconnectGoogleCalendar();
-      // 진행 중인 모든 이벤트 로드 요청 무효화
-      eventLoadRequestIdRef.current++;
-      setIsGoogleConnected(false);
-      setGoogleCalendars([]);
-      setSelectedCalendarId('');
-      setGoogleCalendarEvents([]);
-      onStatus('Google Calendar 연결이 해제되었습니다.');
-    } catch (error) {
-      if (error instanceof Error) {
-        onError(error.message);
-      }
-    } finally {
-      setIsGoogleLoading(false);
-    }
-  }, [clearError, onError, onStatus]);
-
-  useEffect(() => {
-    const successFlag = sessionStorage.getItem(GOOGLE_OAUTH_SUCCESS_KEY);
-    const errorMessage = sessionStorage.getItem(GOOGLE_OAUTH_ERROR_KEY);
-
-    if (errorMessage) {
-      onError(errorMessage);
-      sessionStorage.removeItem(GOOGLE_OAUTH_ERROR_KEY);
-      setIsInitialChecking(false);
-      return;
-    }
-
-    if (successFlag) {
-      sessionStorage.removeItem(GOOGLE_OAUTH_SUCCESS_KEY);
-      onStatus('Google OAuth 인증이 완료되었습니다.');
-      loadGoogleCalendars(true);
-      return;
-    }
-
-    loadGoogleCalendars(true);
-  }, [loadGoogleCalendars, onError, onStatus]);
-
-  useEffect(() => {
-    if (selectedCalendarId && isGoogleConnected) {
-      loadGoogleCalendarEvents(selectedCalendarId);
-    }
-  }, [selectedCalendarId, isGoogleConnected, loadGoogleCalendarEvents]);
+    disconnectMutation.mutate(undefined, {
+      onSuccess: () => {
+        setSelectedCalendarId('');
+        onStatus('Google Calendar 연결이 해제되었습니다.');
+      },
+      onError: (error) => {
+        if (error instanceof Error) onError(error.message);
+      },
+    });
+  }, [clearError, disconnectMutation, onError, onStatus]);
 
   return {
     isGoogleConnected,
@@ -222,11 +156,9 @@ export const useGoogleCalendarData = ({
     selectedCalendarId,
     googleCalendarEvents,
     isGoogleLoading,
-    isInitialChecking,
+    isInitialChecking: calendarsQuery.isPending && !hasLoadedOnce.current,
     startGoogleOAuth,
     selectCalendar: handleSelectCalendar,
     disconnectGoogle: handleDisconnect,
-    loadGoogleCalendars,
-    loadGoogleCalendarEvents,
   };
 };

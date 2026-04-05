@@ -22,6 +22,6 @@ export const sortPromotions = (
     if (aStatusWeight !== bStatusWeight) return aStatusWeight - bStatusWeight;
     if (aStatusWeight === 2) return aStart - bStart;
     if (aStatusWeight === 3) return bStart - aStart;
-    return 0;
+    return aStart - bStart;
   });
 };

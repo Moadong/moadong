@@ -1,4 +1,10 @@
 export const queryKeys = {
+  googleCalendar: {
+    all: ['googleCalendar'] as const,
+    calendars: () => ['googleCalendar', 'calendars'] as const,
+    events: (calendarId: string, timeMin: string, timeMax: string) =>
+      ['googleCalendar', 'events', calendarId, timeMin, timeMax] as const,
+  },
   applicants: {
     all: ['clubApplicants'] as const,
     detail: (applicationFormId: string) =>

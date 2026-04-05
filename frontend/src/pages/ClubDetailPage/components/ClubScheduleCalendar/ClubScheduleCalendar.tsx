@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ClubCalendarEvent } from '@/types/club';
 import {
   buildDateKeyFromDate,
@@ -73,6 +73,8 @@ const formatSelectedDate = (dateKey: string) => {
 };
 
 const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
+  const didInitFromEventsRef = useRef(false);
+
   const parsedEvents = useMemo<CalendarEventItem[]>(() => {
     const normalizedEvents = events.flatMap((event) => {
       const dateKey = parseDateKey(event.start);
@@ -141,6 +143,14 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
     if (parsedEvents[0]) return parsedEvents[0].dateKey;
     return buildDateKeyFromDate(new Date());
   });
+
+  useEffect(() => {
+    if (didInitFromEventsRef.current || parsedEvents.length === 0) return;
+    const firstDate = dateFromKey(parsedEvents[0].dateKey);
+    setVisibleMonth(new Date(firstDate.getFullYear(), firstDate.getMonth(), 1));
+    setSelectedDateKey(parsedEvents[0].dateKey);
+    didInitFromEventsRef.current = true;
+  }, [parsedEvents]);
 
   const calendarDays = useMemo(
     () => buildMonthCalendarDays(visibleMonth),

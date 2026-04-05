@@ -4,6 +4,7 @@ export const formatKSTDateTime = (
 ) => {
   if (!dateStr) return '';
   const date = new Date(dateStr);
+  if (Number.isNaN(date.getTime())) return '';
 
   const formatter = new Intl.DateTimeFormat('ko-KR', {
     timeZone: 'Asia/Seoul',

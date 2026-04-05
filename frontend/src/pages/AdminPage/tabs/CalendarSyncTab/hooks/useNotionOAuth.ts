@@ -64,8 +64,10 @@ export const useNotionOAuth = ({
 
     if (!code || !state || !expectedState || state !== expectedState) {
       if (hasOAuthParams) {
-        clearOAuthParamsFromUrl();
+        onError('Notion OAuth 인증 정보가 올바르지 않습니다.');
       }
+      sessionStorage.removeItem(NOTION_STATE_KEY);
+      if (hasOAuthParams) clearOAuthParamsFromUrl();
       return;
     }
 
