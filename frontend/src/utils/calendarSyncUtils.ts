@@ -1,3 +1,4 @@
+import { addDays } from 'date-fns';
 import type {
   GoogleCalendarEvent,
   NotionSearchItem,
@@ -124,13 +125,12 @@ export const buildMonthCalendarDays = (month: Date) => {
   gridEnd.setDate(monthEnd.getDate() + (6 - monthEnd.getDay()));
 
   const days: Date[] = [];
-  const oneDayMs = 24 * 60 * 60 * 1000;
   for (
-    let timestamp = gridStart.getTime();
-    timestamp <= gridEnd.getTime();
-    timestamp += oneDayMs
+    let current = gridStart;
+    current <= gridEnd;
+    current = addDays(current, 1)
   ) {
-    days.push(new Date(timestamp));
+    days.push(current);
   }
   return days;
 };
