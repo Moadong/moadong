@@ -42,7 +42,8 @@ public class PromotionImageUploadService {
 
     private String buildPromotionImageKey(String articleId, MultipartFile file) {
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
-        String filename = StringUtils.cleanPath(file.getOriginalFilename() == null ? "" : file.getOriginalFilename());
+        String originalFilename = (file != null) ? file.getOriginalFilename() : null;
+        String filename = StringUtils.cleanPath(originalFilename == null ? "" : originalFilename);
         String sanitizedFilename = sanitizeFilename(StringUtils.getFilename(filename));
         String sanitizedArticleId = sanitizePathSegment(articleId, "article");
         return "promotion/articles/" + sanitizedArticleId
