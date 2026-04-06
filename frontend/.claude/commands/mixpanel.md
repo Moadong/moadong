@@ -7,7 +7,7 @@ allowed-tools: Bash(mcp-cli *), Read, Write, Edit, Glob, Grep
 
 Mixpanel MCP를 사용하여 사용자 행동 데이터를 분석하고 인사이트를 도출합니다.
 
-**⚠️ 중요**: 모든 분석 결과는 자동으로 `/Users/seokyoung-won/Desktop/moadong/docs/weekly-reports/` 디렉토리에 마크다운 파일로 저장됩니다.
+**⚠️ 중요**: 모든 분석 결과는 자동으로 repo 루트 기준 `docs/weekly-reports/` 디렉토리에 마크다운 파일로 저장됩니다.
 
 ---
 
@@ -431,7 +431,7 @@ EOF
 
 **CRITICAL**: 분석 완료 후 반드시 결과를 자동으로 파일에 저장해야 합니다.
 
-분석 결과를 `/Users/seokyoung-won/Desktop/moadong/docs/weekly-reports/` 디렉토리에 **자동으로** 저장합니다.
+분석 결과를 repo 루트 기준 `docs/weekly-reports/` 디렉토리에 **자동으로** 저장합니다.
 
 **파일명 규칙**:
 
@@ -444,7 +444,7 @@ EOF
 1. 분석 쿼리 실행 및 결과 수집
 2. 인사이트 도출 및 해석
 3. 아래 템플릿에 맞춰 마크다운 작성
-4. **Write 툴을 사용하여 `/Users/seokyoung-won/Desktop/moadong/docs/weekly-reports/[파일명].md` 경로에 저장**
+4. **Write 툴을 사용하여 repo 루트 기준 `docs/weekly-reports/[파일명].md` 경로에 저장** (절대 경로는 `git rev-parse --show-toplevel` 결과를 앞에 붙여 계산)
 5. 저장 완료 후 사용자에게 파일 경로 안내
 
 **예시**:
@@ -452,7 +452,7 @@ EOF
 ```bash
 # 분석 완료 후 자동 저장
 # Write 툴 사용하여 파일 생성
-file_path: /Users/seokyoung-won/Desktop/moadong/docs/weekly-reports/2026-04-03-club-detail-visit-analysis.md
+file_path: <repo-root>/docs/weekly-reports/2026-04-03-club-detail-visit-analysis.md  # repo 루트는 git rev-parse --show-toplevel 으로 확인
 content: [템플릿 기반으로 작성한 마크다운 내용]
 ```
 
