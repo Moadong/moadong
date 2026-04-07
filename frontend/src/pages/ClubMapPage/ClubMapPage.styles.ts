@@ -21,7 +21,7 @@ export const MapWrapper = styled.div`
 
 export const BackButton = styled.button`
   position: fixed;
-  top: calc(16px + var(--rn-safe-top, 0px));
+  top: calc(12px + var(--rn-safe-top, 0px));
   left: 16px;
   z-index: 10;
   width: 36px;
