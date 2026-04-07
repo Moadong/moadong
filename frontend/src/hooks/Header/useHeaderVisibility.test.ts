@@ -144,6 +144,38 @@ describe('useHeaderVisibility 테스트', () => {
     });
   });
 
+  describe('빈 배열 경계 조건', () => {
+    it('hideOn=[]일 때 showOn이 무시되지 않고 평가된다', () => {
+      // Given
+      setupDevice({ isDesktop: true });
+
+      // When
+      const { result } = renderHook(() => useHeaderVisibility(['desktop'], []));
+
+      // Then
+      expect(result.current).toBe(true);
+    });
+
+    it('showOn=[]일 때 true를 반환한다 (기본값 fallback)', () => {
+      // Given
+      setupDevice({ isDesktop: true });
+
+      // When
+      const { result } = renderHook(() => useHeaderVisibility([]));
+
+      // Then
+      expect(result.current).toBe(true);
+    });
+
+    it('hideOn=[], showOn=[]일 때 true를 반환한다', () => {
+      // Given & When
+      const { result } = renderHook(() => useHeaderVisibility([], []));
+
+      // Then
+      expect(result.current).toBe(true);
+    });
+  });
+
   describe('hideOn이 showOn보다 우선순위가 높다', () => {
     it('hideOn과 showOn이 동시에 있을 때 hideOn이 우선 적용된다', () => {
       // Given

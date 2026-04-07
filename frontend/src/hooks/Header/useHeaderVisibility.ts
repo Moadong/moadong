@@ -14,8 +14,8 @@ const useHeaderVisibility = (showOn?: DeviceType[], hideOn?: DeviceType[]) => {
     isWebView && 'webview',
   ].filter(Boolean) as DeviceType[];
 
-  if (hideOn) return !hideOn.some((t) => currentTypes.includes(t));
-  if (showOn) return showOn.some((t) => currentTypes.includes(t));
+  if (hideOn?.length) return !hideOn.some((t) => currentTypes.includes(t));
+  if (showOn?.length) return showOn.some((t) => currentTypes.includes(t));
   return true;
 };
 
