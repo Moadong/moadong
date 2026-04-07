@@ -13,7 +13,7 @@ interface NaverMapProps {
 const NaverMap = ({ lat, lng }: NaverMapProps) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
 
-  useNaverMap(mapRef, lat, lng);
+  useNaverMap(mapRef, lat, lng, { interactive: false });
 
   return <Styled.MapContainer ref={mapRef} />;
 };

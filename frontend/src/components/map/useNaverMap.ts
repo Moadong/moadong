@@ -4,6 +4,7 @@ import { loadNaverMapScript } from './loadNaverMapScript';
 
 interface UseNaverMapOptions {
   bubbleText?: string;
+  interactive?: boolean;
 }
 
 export const useNaverMap = (
@@ -20,12 +21,19 @@ export const useNaverMap = (
 
       const position = new naver.maps.LatLng(lat, lng);
 
+      const interactive = options?.interactive ?? true;
+
       const map = new naver.maps.Map(mapRef.current, {
         center: position,
         zoom: 17,
         logoControl: false,
         mapDataControl: false,
         scaleControl: false,
+        draggable: interactive,
+        scrollWheel: interactive,
+        keyboardShortcuts: interactive,
+        disableDoubleClickZoom: !interactive,
+        pinchZoom: interactive,
       });
 
       const markerContent = options?.bubbleText
