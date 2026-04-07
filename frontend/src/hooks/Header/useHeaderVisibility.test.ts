@@ -10,7 +10,11 @@ jest.mock('@/utils/isInAppWebView');
 const mockUseDevice = useDevice as jest.Mock;
 const mockIsInAppWebView = isInAppWebView as jest.Mock;
 
-const setupDevice = (overrides: Partial<Record<'isMobile' | 'isTablet' | 'isLaptop' | 'isDesktop', boolean>> = {}) => {
+const setupDevice = (
+  overrides: Partial<
+    Record<'isMobile' | 'isTablet' | 'isLaptop' | 'isDesktop', boolean>
+  > = {},
+) => {
   mockUseDevice.mockReturnValue({
     isMobile: false,
     isTablet: false,
@@ -43,7 +47,9 @@ describe('useHeaderVisibility 테스트', () => {
       setupDevice({ isDesktop: true });
 
       // When
-      const { result } = renderHook(() => useHeaderVisibility(undefined, ['desktop']));
+      const { result } = renderHook(() =>
+        useHeaderVisibility(undefined, ['desktop']),
+      );
 
       // Then
       expect(result.current).toBe(false);
@@ -54,7 +60,9 @@ describe('useHeaderVisibility 테스트', () => {
       setupDevice({ isMobile: true, isDesktop: false });
 
       // When
-      const { result } = renderHook(() => useHeaderVisibility(undefined, ['desktop']));
+      const { result } = renderHook(() =>
+        useHeaderVisibility(undefined, ['desktop']),
+      );
 
       // Then
       expect(result.current).toBe(true);
@@ -78,7 +86,9 @@ describe('useHeaderVisibility 테스트', () => {
       mockIsInAppWebView.mockReturnValue(true);
 
       // When
-      const { result } = renderHook(() => useHeaderVisibility(undefined, ['webview']));
+      const { result } = renderHook(() =>
+        useHeaderVisibility(undefined, ['webview']),
+      );
 
       // Then
       expect(result.current).toBe(false);
