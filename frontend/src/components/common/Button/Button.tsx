@@ -1,6 +1,7 @@
+import type { ButtonHTMLAttributes } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 
-export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   width?: string;
   animated?: boolean;
 }
@@ -51,10 +52,11 @@ const StyledButton = styled.button<{ $animated: boolean; $width?: string }>`
 const Button = ({
   width,
   animated = false,
+  type = 'button',
   children,
   ...rest
 }: ButtonProps) => (
-  <StyledButton $animated={animated} $width={width} {...rest}>
+  <StyledButton $animated={animated} $width={width} type={type} {...rest}>
     {children}
   </StyledButton>
 );
