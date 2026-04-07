@@ -51,6 +51,7 @@ export const MapInfo = styled.div`
 
   ${media.tablet} {
     padding: 0 16px 20px;
+    display: none;
   }
 `;
 
