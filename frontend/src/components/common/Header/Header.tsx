@@ -51,9 +51,14 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
 
   const closeMenu = () => {
     setIsMenuOpen(false);
-    handleMenuClose();
   };
-  const toggleMenu = () => setIsMenuOpen((prev) => !prev);
+  const toggleMenu = () => {
+    setIsMenuOpen((prev) => {
+      const next = !prev;
+      if (prev && !next) handleMenuClose();
+      return next;
+    });
+  };
 
   return (
     <Styled.Header isScrolled={isScrolled}>
