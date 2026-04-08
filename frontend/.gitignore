@@ -26,3 +26,6 @@ AGENTS.md
 
 # oh-my-claudecode
 .omc/
+
+# Claude Code (personal settings)
+.claude/
