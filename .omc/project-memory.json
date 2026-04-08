@@ -1,0 +1,87 @@
+{
+  "version": "1.0.0",
+  "lastScanned": 1775616536598,
+  "projectRoot": "/Users/seokyoung-won/Desktop/moadong",
+  "techStack": {
+    "languages": [],
+    "frameworks": [],
+    "packageManager": null,
+    "runtime": null
+  },
+  "build": {
+    "buildCommand": null,
+    "testCommand": null,
+    "lintCommand": null,
+    "devCommand": null,
+    "scripts": {}
+  },
+  "conventions": {
+    "namingStyle": null,
+    "importStyle": null,
+    "testPattern": null,
+    "fileOrganization": null
+  },
+  "structure": {
+    "isMonorepo": false,
+    "workspaces": [],
+    "mainDirectories": [
+      "docs"
+    ],
+    "gitBranches": {
+      "defaultBranch": "main",
+      "branchingStrategy": null
+    }
+  },
+  "customNotes": [],
+  "directoryMap": {
+    "backend": {
+      "path": "backend",
+      "purpose": null,
+      "fileCount": 7,
+      "lastAccessed": 1775616536584,
+      "keyFiles": [
+        "Dockerfile",
+        "build.gradle",
+        "gradlew",
+        "gradlew.bat",
+        "settings.gradle"
+      ]
+    },
+    "docs": {
+      "path": "docs",
+      "purpose": "Documentation",
+      "fileCount": 4,
+      "lastAccessed": 1775616536584,
+      "keyFiles": [
+        "experiments.md",
+        "mixpanel-admin-weekly-report-prompts.md",
+        "mixpanel-reporting.md",
+        "mixpanel-weekly-report-prompts.md"
+      ]
+    },
+    "frontend": {
+      "path": "frontend",
+      "purpose": null,
+      "fileCount": 19,
+      "lastAccessed": 1775616536584,
+      "keyFiles": [
+        "CLAUDE.md",
+        "build-storybook.log",
+        "chromatic.config.json",
+        "codecov.yml",
+        "debug-storybook.log"
+      ]
+    },
+    "backend/build": {
+      "path": "backend/build",
+      "purpose": "Build output",
+      "fileCount": 1,
+      "lastAccessed": 1775616536585,
+      "keyFiles": [
+        "resolvedMainClassName"
+      ]
+    }
+  },
+  "hotPaths": [],
+  "userDirectives": []
+}
