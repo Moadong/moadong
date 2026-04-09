@@ -1,10 +1,16 @@
-import type { NotionSearchItem } from '@/apis/calendarOAuth';
+import type {
+  GoogleCalendarEvent,
+  NotionSearchItem,
+} from '@/apis/calendarOAuth';
 import {
   buildDateKeyFromDate,
   buildDefaultRedirectUri,
   buildMonthCalendarDays,
+  convertGoogleEventToUnified,
+  convertNotionEventToUnified,
   createState,
   dateFromKey,
+  formatDateOnly,
   formatDateText,
   formatMonthLabel,
   maskToken,
@@ -75,6 +81,24 @@ describe('calendarSyncUtils', () => {
     it('유효하지 않은 날짜 텍스트는 원문을 반환한다', () => {
       expect(formatDateText(undefined)).toBe('-');
       expect(formatDateText('not-a-date')).toBe('not-a-date');
+    });
+
+    it('유효한 날짜는 한국어 로케일로 포맷한다', () => {
+      const result = formatDateText('2026-03-19T10:30:00Z');
+      expect(result).toContain('2026');
+      expect(result).toContain('3');
+      expect(result).toContain('19');
+    });
+
+    it('formatDateOnly는 YYYY-MM-DD를 표시용 형식으로 변환한다', () => {
+      expect(formatDateOnly('2026-03-19')).toBe('2026. 3. 19.');
+      expect(formatDateOnly('2026-12-25')).toBe('2026. 12. 25.');
+    });
+
+    it('formatDateOnly는 잘못된 형식이면 원문을 반환한다', () => {
+      expect(formatDateOnly(undefined)).toBe('-');
+      expect(formatDateOnly('invalid')).toBe('invalid');
+      expect(formatDateOnly('2026/03/19')).toBe('2026/03/19');
     });
   });
 
@@ -151,6 +175,82 @@ describe('calendarSyncUtils', () => {
 
       expect(parseNotionCalendarEvent(missingDate)).toBeNull();
       expect(parseNotionCalendarEvent(invalidDate)).toBeNull();
+    });
+  });
+
+  describe('통합 이벤트 변환', () => {
+    it('Google 이벤트를 통합 형식으로 변환한다', () => {
+      const googleEvent: GoogleCalendarEvent = {
+        id: 'google-event-1',
+        title: 'Google 미팅',
+        start: '2026-03-20T10:00:00Z',
+        end: '2026-03-20T11:00:00Z',
+        url: 'https://calendar.google.com/event?id=google-event-1',
+        description: '팀 회의',
+        source: 'GOOGLE',
+      };
+
+      const unified = convertGoogleEventToUnified(googleEvent);
+
+      expect(unified).not.toBeNull();
+      expect(unified?.id).toBe('google-google-event-1');
+      expect(unified?.title).toBe('Google 미팅');
+      expect(unified?.dateKey).toBe('2026-03-20');
+      expect(unified?.source).toBe('GOOGLE');
+      expect(unified?.description).toBe('팀 회의');
+      expect(unified?.url).toBe(googleEvent.url);
+    });
+
+    it('Google 이벤트의 날짜가 유효하지 않으면 null을 반환한다', () => {
+      const googleEvent: GoogleCalendarEvent = {
+        id: 'google-event-2',
+        title: 'Invalid Event',
+        start: 'invalid-date',
+        end: '2026-03-20T11:00:00Z',
+        source: 'GOOGLE',
+      };
+
+      const unified = convertGoogleEventToUnified(googleEvent);
+
+      expect(unified).toBeNull();
+    });
+
+    it('Notion 이벤트를 통합 형식으로 변환한다', () => {
+      const notionEvent = {
+        id: 'notion-page-1',
+        title: 'Notion 작업',
+        start: '2026-03-21',
+        dateKey: '2026-03-21',
+        end: '2026-03-22',
+        url: 'https://www.notion.so/page-1',
+      };
+
+      const unified = convertNotionEventToUnified(notionEvent);
+
+      expect(unified.id).toBe('notion-notion-page-1');
+      expect(unified.title).toBe('Notion 작업');
+      expect(unified.dateKey).toBe('2026-03-21');
+      expect(unified.source).toBe('NOTION');
+      expect(unified.start).toBe('2026-03-21');
+      expect(unified.end).toBe('2026-03-22');
+      expect(unified.url).toBe(notionEvent.url);
+    });
+
+    it('Notion 이벤트의 선택적 필드가 없어도 변환한다', () => {
+      const notionEvent = {
+        id: 'notion-page-2',
+        title: '간단한 작업',
+        start: '2026-03-23',
+        dateKey: '2026-03-23',
+      };
+
+      const unified = convertNotionEventToUnified(notionEvent);
+
+      expect(unified.id).toBe('notion-notion-page-2');
+      expect(unified.title).toBe('간단한 작업');
+      expect(unified.source).toBe('NOTION');
+      expect(unified.end).toBeUndefined();
+      expect(unified.url).toBeUndefined();
     });
   });
 });
