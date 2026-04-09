@@ -39,7 +39,7 @@ export const BackButton = styled.button`
 
 export const BottomCard = styled.div`
   position: fixed;
-  bottom: calc(76px + var(--rn-safe-bottom, 0px));
+  bottom: calc(55px + var(--rn-safe-bottom, 0px));
   left: 20px;
   right: 20px;
   z-index: 10;
