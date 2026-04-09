@@ -1,5 +1,9 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
-import { useLocation as useRouterLocation, useParams, useSearchParams } from 'react-router-dom';
+import {
+  useParams,
+  useLocation as useRouterLocation,
+  useSearchParams,
+} from 'react-router-dom';
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -188,7 +192,8 @@ const ClubDetailPage = () => {
 
                 <Styled.MapDetailText>
                   <img src={locationIcon} alt='위치 아이콘' />
-                  동아리방 위치 {clubLocation.building} {clubLocation.detailLocation}
+                  동아리방 위치 {clubLocation.building}{' '}
+                  {clubLocation.detailLocation}
                 </Styled.MapDetailText>
               </Styled.MapInfo>
             )}

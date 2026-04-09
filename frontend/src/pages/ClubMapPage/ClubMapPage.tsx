@@ -2,13 +2,11 @@ import { useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
-import { useNaverMap } from '@/components/map/useNaverMap';
 import { MapContainer } from '@/components/map/NaverMap.styles';
+import { useNaverMap } from '@/components/map/useNaverMap';
 import { clubLocations } from '@/constants/clubLocation';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
-import {
-  requestNavigateBack,
-} from '@/utils/webviewBridge';
+import { requestNavigateBack } from '@/utils/webviewBridge';
 import * as Styled from './ClubMapPage.styles';
 
 const ClubMapPage = () => {
@@ -54,7 +52,10 @@ const ClubMapPage = () => {
       </Styled.BackButton>
 
       <Styled.BottomCard>
-        <Styled.ClubLogo src={clubDetail.logo} alt={`${clubDetail.name} 로고`} />
+        <Styled.ClubLogo
+          src={clubDetail.logo}
+          alt={`${clubDetail.name} 로고`}
+        />
         <Styled.ClubInfo>
           <Styled.ClubName>{clubDetail.name}</Styled.ClubName>
           <Styled.LocationRow>
