@@ -42,7 +42,7 @@ src/types/branded.ts       ← Branded<T, B> 유틸리티 + 모든 ID 타입
 
 ID 타입이 늘어나고 도메인 경계가 명확해지면 도메인 파일로 분리한다. 한 파일에 모으면 도메인 간 결합도가 높아지고 변경 이유가 달라지기 때문이다.
 
-```
+```text
 src/types/branded.ts       ← Branded<T, B> 유틸리티만
 src/types/club.ts          ← ClubId, CalendarId
 src/types/application.ts   ← ApplicationFormId
