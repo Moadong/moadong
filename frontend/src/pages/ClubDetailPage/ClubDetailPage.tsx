@@ -1,8 +1,11 @@
 import { useCallback, useEffect, useMemo, useRef } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import locationIcon from '@/assets/images/icons/location_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
+import NaverMap from '@/components/map/NaverMap';
+import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -128,6 +131,10 @@ const ClubDetailPage = () => {
     [setSearchParams, trackEvent],
   );
 
+  const location = clubLocations.find(
+    (location) => location.clubName === clubDetail?.name,
+  );
+
   if (error) {
     return <div>동아리 정보를 불러오는데 실패했습니다.</div>;
   }
@@ -154,14 +161,34 @@ const ClubDetailPage = () => {
       )}
       <Styled.Container>
         <Styled.ContentWrapper>
-          <ClubProfileCard
-            name={clubDetail.name}
-            logo={clubDetail.logo}
-            cover={clubDetail.cover}
-            recruitmentStatus={clubDetail.recruitmentStatus}
-            socialLinks={clubDetail.socialLinks}
-            introDescription={clubDetail.description.introDescription}
-          />
+          <Styled.LeftSection>
+            <ClubProfileCard
+              name={clubDetail.name}
+              logo={clubDetail.logo}
+              cover={clubDetail.cover}
+              recruitmentStatus={clubDetail.recruitmentStatus}
+              socialLinks={clubDetail.socialLinks}
+              introDescription={clubDetail.description.introDescription}
+            />
+            {location && (
+              <Styled.MapInfo>
+                <Styled.MapCard>
+                  <NaverMap
+                    clubName={location.clubName}
+                    lat={location.lat}
+                    lng={location.lng}
+                    building={location.building}
+                    detailLocation={location.detailLocation}
+                  />
+                </Styled.MapCard>
+
+                <Styled.MapDetailText>
+                  <img src={locationIcon} alt='위치 아이콘' />
+                  동아리방 위치 {location.building} {location.detailLocation}
+                </Styled.MapDetailText>
+              </Styled.MapInfo>
+            )}
+          </Styled.LeftSection>
 
           <Styled.RightSection ref={contentRef}>
             <UnderlineTabs
