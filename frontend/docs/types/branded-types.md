@@ -30,9 +30,17 @@ type Brand<B> = { [__brand]: B };
 export type Branded<T, B> = T & Brand<B>;
 ```
 
-## 도메인별 ID 타입 위치
+## 현재 구조
 
-도메인 ID 타입은 해당 도메인 파일에 정의한다. 타입 수가 늘어날수록 한 파일에 모으면 도메인 간 결합도가 높아지므로 아래 구조를 따른다.
+ID 타입이 5개 이하로 적으므로 `branded.ts`에 모두 정의한다.
+
+```
+src/types/branded.ts       ← Branded<T, B> 유틸리티 + 모든 ID 타입
+```
+
+## 향후 확장 시 권장 구조
+
+ID 타입이 늘어나고 도메인 경계가 명확해지면 도메인 파일로 분리한다. 한 파일에 모으면 도메인 간 결합도가 높아지고 변경 이유가 달라지기 때문이다.
 
 ```
 src/types/branded.ts       ← Branded<T, B> 유틸리티만
@@ -42,13 +50,20 @@ src/types/applicants.ts    ← ApplicantId
 src/types/notion.ts        ← DatabaseId
 ```
 
-### 새 ID 타입 추가 방법
+### 새 ID 타입 추가 방법 (현재: 중앙 집중)
 
-1. 해당 도메인 타입 파일을 연다 (없으면 `src/types/<domain>.ts` 생성)
-2. `Branded`를 import하고 타입을 정의한다
+현재는 `branded.ts`에 직접 추가한다.
 
 ```typescript
-// src/types/club.ts
+// src/types/branded.ts
+export type ClubId = Branded<string, 'ClubId'>;
+export type NewDomainId = Branded<string, 'NewDomainId'>; // 추가
+```
+
+도메인 파일 분리 단계로 전환한 후에는 해당 도메인 파일에 정의한다.
+
+```typescript
+// src/types/club.ts (향후 분리 시)
 import { Branded } from '@/types/branded';
 
 export type ClubId = Branded<string, 'ClubId'>;
