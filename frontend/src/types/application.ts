@@ -1,4 +1,5 @@
 import { QUESTION_LABEL_MAP } from '@/constants/applicationForm';
+import { ApplicationFormId } from './branded';
 
 export type QuestionType = keyof typeof QUESTION_LABEL_MAP;
 
@@ -63,12 +64,12 @@ export interface AnswerItem {
 }
 
 export interface ApplicationForm {
-  id: string;
+  id: ApplicationFormId;
   title: string;
 }
 
 export interface ApplicationFormItem {
-  id: string;
+  id: ApplicationFormId;
   title: string;
   editedAt: string;
   status: 'ACTIVE' | 'PUBLISHED' | 'UNPUBLISHED';

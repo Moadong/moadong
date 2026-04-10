@@ -1,5 +1,7 @@
+import { CalendarId } from './branded';
+
 export interface GoogleCalendarItem {
-  id: string;
+  id: CalendarId;
   summary: string;
   primary?: boolean;
 }

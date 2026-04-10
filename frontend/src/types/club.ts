@@ -1,9 +1,10 @@
 import { SNS_CONFIG } from '@/constants/snsConfig';
+import { ClubId } from './branded';
 
 export type RecruitmentStatus = 'OPEN' | 'CLOSED' | 'UPCOMING' | 'ALWAYS';
 
 export interface Club {
-  id: string;
+  id: ClubId;
   name: string;
   logo: string;
   cover?: string;
@@ -46,7 +47,7 @@ export interface ClubCalendarEvent {
 }
 
 export interface ClubDescription {
-  id: string;
+  id: ClubId;
   recruitmentStart: string | null;
   recruitmentEnd: string | null;
   recruitmentTarget: string;
