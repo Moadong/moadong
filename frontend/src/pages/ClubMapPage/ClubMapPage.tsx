@@ -2,6 +2,7 @@ import { useRef } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
+import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import { MapContainer } from '@/components/map/NaverMap.styles';
 import { useNaverMap } from '@/components/map/useNaverMap';
 import { clubLocations } from '@/constants/clubLocation';
@@ -69,7 +70,7 @@ const ClubMapPage = () => {
 
           <Styled.BottomCard>
             <Styled.ClubLogo
-              src={clubDetail.logo}
+              src={clubDetail.logo || DefaultLogo}
               alt={`${clubDetail.name} 로고`}
             />
             <Styled.ClubInfo>
