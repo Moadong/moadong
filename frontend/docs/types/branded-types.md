@@ -92,6 +92,38 @@ export interface ApplicationForm {
 }
 ```
 
+## 도입 단계
+
+branded types 도입은 3단계 브랜치로 진행한다.
+
+| 단계 | 브랜치                               | 작업 내용                                                 | 상태 |
+| ---- | ------------------------------------ | --------------------------------------------------------- | ---- |
+| 1    | `feature/branded-types/core-types`   | `Branded<T, B>` 유틸리티 및 ID 타입 정의                  | 완료 |
+| 2    | `feature/branded-types/domain-types` | 도메인 인터페이스 `id` 필드에 branded type 적용           | 완료 |
+| 3    | `feature/branded-types/api-layer`    | API 응답 파싱 시점에 캐스팅 유틸 추가 및 임시 캐스팅 정리 | 예정 |
+
+### api-layer 브랜치 작업 계획
+
+**캐스팅 유틸리티 추가**
+
+API 응답을 받는 시점에서 안전하게 branded type으로 변환하는 헬퍼를 `src/types/branded.ts`에 추가한다.
+
+```typescript
+export const asClubId = (id: string): ClubId => id as ClubId;
+export const asApplicantId = (id: string): ApplicantId => id as ApplicantId;
+export const asApplicationFormId = (id: string): ApplicationFormId =>
+  id as ApplicationFormId;
+export const asDatabaseId = (id: string): DatabaseId => id as DatabaseId;
+export const asCalendarId = (id: string): CalendarId => id as CalendarId;
+```
+
+**임시 캐스팅 정리 대상**
+
+| 파일                                                                      | 현재 임시 처리               | 개선 방향                                       |
+| ------------------------------------------------------------------------- | ---------------------------- | ----------------------------------------------- |
+| `src/pages/ClubDetailPage/components/ClubApplyButton/ClubApplyButton.tsx` | `forms as ApplicationForm[]` | API 응답 파싱 시점에 `asApplicationFormId` 적용 |
+| `src/pages/AdminPage/.../ApplicantDetailPage.tsx`                         | `questionId as ApplicantId`  | URL params 파싱 유틸 또는 훅에서 처리           |
+
 ## 확장 기준
 
 | 상황                           | 대응                                                |
