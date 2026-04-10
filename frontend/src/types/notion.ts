@@ -1,3 +1,5 @@
+import { DatabaseId } from './branded';
+
 export interface NotionSearchItem {
   id: string;
   object: string;
@@ -7,12 +9,12 @@ export interface NotionSearchItem {
 }
 
 export interface NotionDatabaseOption {
-  id: string;
+  id: DatabaseId;
   title: string;
 }
 
 export interface NotionPagesResponse {
   items: NotionSearchItem[];
   totalResults: number;
-  databaseId?: string;
+  databaseId?: DatabaseId;
 }
