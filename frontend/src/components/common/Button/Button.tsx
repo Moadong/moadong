@@ -28,7 +28,7 @@ const StyledButton = styled.button<ButtonProps>`
   transition: background-color 0.2s;
   width: ${({ width }) => width || 'auto'};
 
-  &:hover {
+  &:hover:not(:disabled) {
     background-color: #333333;
     ${({ animated }) =>
       animated &&
@@ -42,9 +42,9 @@ const StyledButton = styled.button<ButtonProps>`
   }
 
   &:disabled {
-    background-color: #cccccc; /* 비활성화된 느낌의 회색 */
+    background-color: #cccccc;
     color: #666666;
-    cursor: not-allowed; /* 클릭할 수 없음을 나타내는 커서 */
+    cursor: not-allowed;
     opacity: 0.7;
   }
 `;

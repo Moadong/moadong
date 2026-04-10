@@ -2,10 +2,13 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { feedApi, logoApi, uploadToStorage } from '@/apis/image';
 import { queryKeys } from '@/constants/queryKeys';
 
+type ItemStatus = 'pending' | 'uploading' | 'failed';
+
 interface FeedUploadParams {
   clubId: string;
   files: File[];
   existingUrls: string[];
+  onItemStatusChange?: (index: number, status: ItemStatus) => void;
 }
 
 interface FeedUpdateParams {
@@ -22,11 +25,26 @@ export const useUploadFeed = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ clubId, files, existingUrls }: FeedUploadParams) => {
+    mutationFn: async ({
+      clubId,
+      files,
+      existingUrls,
+      onItemStatusChange,
+    }: FeedUploadParams) => {
       // 1. presigned URL 요청
+      const ALLOWED_TYPES = [
+        'image/jpeg',
+        'image/jpg',
+        'image/png',
+        'image/gif',
+        'image/bmp',
+        'image/webp',
+      ];
       const uploadRequests = files.map((file) => ({
         fileName: file.name,
-        contentType: file.type,
+        contentType: ALLOWED_TYPES.includes(file.type)
+          ? file.type
+          : 'image/jpeg',
       }));
       const feedResArr = await feedApi.getUploadUrls(clubId, uploadRequests);
 
@@ -35,10 +53,18 @@ export const useUploadFeed = () => {
       }
 
       // 2. r2에 병렬 업로드 (개별 성공/실패 추적)
+      // presigned URL 생성 자체가 실패한 항목은 업로드 건너뜀
       const uploadResults = await Promise.allSettled(
-        files.map((file, i) =>
-          uploadToStorage(feedResArr[i].presignedUrl, file),
-        ),
+        files.map((file, i) => {
+          if (!feedResArr[i].success || !feedResArr[i].presignedUrl) {
+            return Promise.reject(
+              new Error(
+                feedResArr[i].failureReason ?? 'presigned URL 생성 실패',
+              ),
+            );
+          }
+          return uploadToStorage(feedResArr[i].presignedUrl, file);
+        }),
       );
 
       // 3. 성공한 파일만 추출
@@ -50,6 +76,7 @@ export const useUploadFeed = () => {
           successfulUrls.push(feedResArr[i].finalUrl);
         } else {
           failedFiles.push(files[i].name);
+          onItemStatusChange?.(i, 'failed');
         }
       });
 
@@ -64,8 +91,8 @@ export const useUploadFeed = () => {
       // 6. 서버에 전체 배열 PUT으로 갱신
       await feedApi.updateFeeds(clubId, allUrls);
 
-      // 7. 실패한 파일 정보 반환
-      return { clubId, failedFiles };
+      // 7. 실패한 파일 정보 및 성공 URL 반환
+      return { clubId, failedFiles, successfulUrls };
     },
 
     onSuccess: (data) => {
