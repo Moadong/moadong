@@ -16,7 +16,11 @@ const ClubMapPage = () => {
     clubName: string;
   }>();
 
-  const { data: clubDetail } = useGetClubDetail((clubName ?? clubId) || '');
+  const {
+    data: clubDetail,
+    isLoading,
+    error,
+  } = useGetClubDetail((clubName ?? clubId) || '');
 
   const clubLocation = clubLocations.find(
     (loc) => loc.clubName === clubDetail?.name,
@@ -39,33 +43,47 @@ const ClubMapPage = () => {
     }
   };
 
-  if (!clubDetail || !clubLocation) return null;
-
   return (
     <Styled.Container>
-      <Styled.MapWrapper>
-        <MapContainer ref={mapRef} />
-      </Styled.MapWrapper>
-
       <Styled.BackButton onClick={handleBackClick} aria-label='뒤로가기'>
         <PrevButtonIcon width={30} height={30} />
       </Styled.BackButton>
 
-      <Styled.BottomCard>
-        <Styled.ClubLogo
-          src={clubDetail.logo}
-          alt={`${clubDetail.name} 로고`}
-        />
-        <Styled.ClubInfo>
-          <Styled.ClubName>{clubDetail.name}</Styled.ClubName>
-          <Styled.LocationRow>
-            <img src={locationIcon} alt='위치 아이콘' />
-            <Styled.LocationText>
-              {clubLocation.building} {clubLocation.detailLocation}
-            </Styled.LocationText>
-          </Styled.LocationRow>
-        </Styled.ClubInfo>
-      </Styled.BottomCard>
+      {isLoading && <Styled.StatusMessage>불러오는 중...</Styled.StatusMessage>}
+      {!isLoading && error && (
+        <Styled.StatusMessage>
+          동아리 정보를 불러오지 못했어요.
+        </Styled.StatusMessage>
+      )}
+      {!isLoading && !error && clubDetail && !clubLocation && (
+        <Styled.StatusMessage>
+          동아리방 위치 정보가 없어요.
+        </Styled.StatusMessage>
+      )}
+
+      {clubDetail && clubLocation && (
+        <>
+          <Styled.MapWrapper>
+            <MapContainer ref={mapRef} />
+          </Styled.MapWrapper>
+
+          <Styled.BottomCard>
+            <Styled.ClubLogo
+              src={clubDetail.logo}
+              alt={`${clubDetail.name} 로고`}
+            />
+            <Styled.ClubInfo>
+              <Styled.ClubName>{clubDetail.name}</Styled.ClubName>
+              <Styled.LocationRow>
+                <img src={locationIcon} alt='위치 아이콘' />
+                <Styled.LocationText>
+                  {clubLocation.building} {clubLocation.detailLocation}
+                </Styled.LocationText>
+              </Styled.LocationRow>
+            </Styled.ClubInfo>
+          </Styled.BottomCard>
+        </>
+      )}
     </Styled.Container>
   );
 };

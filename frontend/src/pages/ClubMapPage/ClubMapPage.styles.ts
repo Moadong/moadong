@@ -96,3 +96,13 @@ export const LocationText = styled.span`
   overflow: hidden;
   text-overflow: ellipsis;
 `;
+
+export const StatusMessage = styled.div`
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  ${setTypography(typography.paragraph.p4)};
+  color: ${colors.gray[700]};
+  text-align: center;
+`;
