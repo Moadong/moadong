@@ -6,13 +6,14 @@ import selectIcon from '@/assets/images/icons/selectArrow.svg';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
 import SearchField from '@/components/common/SearchField/SearchField';
 import { AVAILABLE_STATUSES } from '@/constants/status';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import {
   useDeleteApplicants,
   useGetApplicants,
   useUpdateApplicant,
 } from '@/hooks/Queries/useApplicants';
+import { useApplicantSSE } from '@/hooks/useApplicantSSE';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantsTab.styles';
@@ -23,9 +24,10 @@ const sortOptions = [
 ] as const;
 
 const ApplicantsTab = () => {
-  const { clubId, applicantsData, setApplicantsData, setApplicationFormId } =
-    useAdminClubContext();
+  const { clubId } = useAdminClubId();
   const { applicationFormId } = useParams<{ applicationFormId: string }>();
+  const { applicantsData, setApplicantsData } =
+    useApplicantSSE(applicationFormId);
   const navigate = useNavigate();
 
   const statusOptions = AVAILABLE_STATUSES.map((status) => ({
@@ -62,12 +64,6 @@ const ApplicantsTab = () => {
   const [selectedSort, setSelectedSort] = useState<
     (typeof sortOptions)[number]
   >(sortOptions[0]);
-
-  // SSE 연결 활성화
-  useEffect(() => {
-    setApplicationFormId(applicationFormId ?? null);
-    return () => setApplicationFormId(null);
-  }, [applicationFormId, setApplicationFormId]);
 
   // 초기 데이터 로드
   useEffect(() => {
