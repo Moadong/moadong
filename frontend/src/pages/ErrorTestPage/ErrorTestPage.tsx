@@ -110,7 +110,7 @@ const ErrorTestPage = () => {
   const testSentryCapture = () => {
     try {
       throw new Error('Sentry 수동 전송 테스트: 개발 환경에서 Sentry 확인');
-    } catch (_error) {
+    } catch (error) {
       Sentry.captureException(error);
       alert('Sentry에 에러가 전송되었습니다! Sentry 대시보드를 확인하세요.');
     }

@@ -15,7 +15,7 @@ export const useGetGoogleCalendars = () => {
     queryFn: async () => {
       try {
         return await fetchGoogleCalendars();
-      } catch (_error) {
+      } catch (error) {
         if (error instanceof ApiError && error.errorCode === '960-4') {
           return null;
         }

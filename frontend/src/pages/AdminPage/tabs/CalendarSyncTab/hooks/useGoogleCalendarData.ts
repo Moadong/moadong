@@ -107,7 +107,7 @@ export const useGoogleCalendarData = ({
       sessionStorage.setItem(GOOGLE_STATE_KEY, state);
       const authorizeUrl = await fetchGoogleAuthorizeUrl(state);
       window.location.href = authorizeUrl;
-    } catch (_error) {
+    } catch (error) {
       if (error instanceof Error) {
         onError(error.message);
       }
@@ -128,7 +128,7 @@ export const useGoogleCalendarData = ({
             setSelectedCalendarId(calendarId);
             onStatus('캘린더가 선택되었습니다.');
           },
-          onError: (_error) => {
+          onError: (error) => {
             if (error instanceof Error) onError(error.message);
           },
         },
@@ -144,7 +144,7 @@ export const useGoogleCalendarData = ({
         setSelectedCalendarId('');
         onStatus('Google Calendar 연결이 해제되었습니다.');
       },
-      onError: (_error) => {
+      onError: (error) => {
         if (error instanceof Error) onError(error.message);
       },
     });

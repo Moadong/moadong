@@ -44,7 +44,6 @@ const categories = [
   { value: '공연', label: '공연', color: TAG_COLORS['공연'] },
 ];
 
-// eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ClubInfoEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
@@ -237,5 +236,7 @@ const ClubInfoEditTab = () => {
     </Styled.Container>
   );
 };
+
+export default ClubInfoEditTab;
 
 
