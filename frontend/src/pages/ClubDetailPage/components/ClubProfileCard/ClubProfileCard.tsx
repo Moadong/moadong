@@ -11,7 +11,7 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { SNSPlatform } from '@/types/club';
 import * as Styled from './ClubProfileCard.styles';
 
-interface Props {
+interface ClubProfileCardProps {
   name: string;
   logo?: string;
   cover?: string;
@@ -31,7 +31,7 @@ const ClubProfileCard = ({
   introDescription,
   location,
   mapPath,
-}: Props) => {
+}: ClubProfileCardProps) => {
   const trackEvent = useMixpanelTrack();
 
   const getSocialPlatformName = (platform: string) => {
