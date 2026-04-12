@@ -64,7 +64,7 @@ const ApplicationEditTab = () => {
     setFormData({ ...existingFormData, questions: currentQuestions });
   }, [existingFormData]);
 
-  const { mutate: createMutate, isPending: isCreating } = useMutation({
+  const { mutate: createMutate } = useMutation({
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
