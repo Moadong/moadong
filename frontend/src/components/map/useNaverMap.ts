@@ -14,6 +14,8 @@ export const useNaverMap = (
   options?: UseNaverMapOptions,
 ) => {
   useEffect(() => {
+    let mapInstance: { destroy: () => void } | null = null;
+
     loadNaverMapScript().then(() => {
       if (!mapRef.current || !window.naver) return;
 
@@ -23,7 +25,7 @@ export const useNaverMap = (
 
       const interactive = options?.interactive ?? true;
 
-      const map = new naver.maps.Map(mapRef.current, {
+      mapInstance = new naver.maps.Map(mapRef.current, {
         center: position,
         zoom: 17,
         logoControl: false,
@@ -75,12 +77,16 @@ export const useNaverMap = (
 
       new naver.maps.Marker({
         position,
-        map,
+        map: mapInstance,
         icon: {
           content: markerContent,
           anchor: new naver.maps.Point(20, 40),
         },
       });
     });
+
+    return () => {
+      mapInstance?.destroy();
+    };
   }, [mapRef, lat, lng, options?.interactive, options?.bubbleText]);
 };
