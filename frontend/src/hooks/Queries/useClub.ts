@@ -101,8 +101,7 @@ export const useUpdateClubDescription = () => {
         queryKey: queryKeys.club.detail(variables.id),
       });
     },
-    onError: (error) => {
-      console.error('Error updating club description:', error);
+    onError: (_error) => {
     },
   });
 };
@@ -121,8 +120,8 @@ export const useUpdateClubDetail = () => {
       }
     },
 
-    onError: (error) => {
-      console.error('Error updating club detail:', error);
+    onError: (_error) => {
+      // console.error('Error updating club detail:', error);
     },
   });
 };
