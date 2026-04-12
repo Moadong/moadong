@@ -46,3 +46,14 @@ export const ActionButton = styled.button`
     right: auto;
   }
 `;
+
+export const ZoomControlsWrapper = styled.div`
+  position: absolute;
+  bottom: 50px;
+  right: 40px;
+  z-index: 10;
+
+  ${media.tablet} {
+    display: none;
+  }
+`;
