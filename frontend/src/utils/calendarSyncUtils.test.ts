@@ -3,8 +3,10 @@ import {
   buildDateKeyFromDate,
   buildDefaultRedirectUri,
   buildMonthCalendarDays,
+  convertGoogleEventToUnified,
   createState,
   dateFromKey,
+  formatDateOnly,
   formatDateText,
   formatMonthLabel,
   maskToken,
@@ -23,6 +25,32 @@ describe('calendarSyncUtils', () => {
       const state = createState();
       expect(typeof state).toBe('string');
       expect(state.length).toBeGreaterThan(0);
+    });
+
+    it('fallback 시에도 state 문자열을 생성한다', () => {
+      const originalCrypto = globalThis.crypto;
+      // Mock globalThis.crypto.randomUUID to be undefined
+      Object.defineProperty(globalThis, 'crypto', {
+        value: {
+          ...originalCrypto,
+          randomUUID: undefined,
+          getRandomValues: (arr: Uint8Array) => {
+            for (let i = 0; i < arr.length; i++) arr[i] = 0; // Fill with zeros for deterministic test
+          },
+        },
+        configurable: true,
+      });
+
+      const state = createState();
+      expect(typeof state).toBe('string');
+      expect(state).toHaveLength(32); // 16 bytes * 2 hex chars
+      expect(state).toBe('00000000000000000000000000000000'); // Example for deterministic test
+
+      // Restore original crypto
+      Object.defineProperty(globalThis, 'crypto', {
+        value: originalCrypto,
+        configurable: true,
+      });
     });
 
     it('토큰 마스킹은 앞 8자리/뒤 8자리만 노출한다', () => {
@@ -75,6 +103,13 @@ describe('calendarSyncUtils', () => {
     it('유효하지 않은 날짜 텍스트는 원문을 반환한다', () => {
       expect(formatDateText(undefined)).toBe('-');
       expect(formatDateText('not-a-date')).toBe('not-a-date');
+      expect(formatDateText('2023-02-30')).toBe('2023-02-30'); // Invalid date that Date constructor might parse as valid but is actually not.
+    });
+
+    it('formatDateOnly는 YYYY-MM-DD 형식이 아니면 원문을 반환한다', () => {
+      expect(formatDateOnly(undefined)).toBe('-');
+      expect(formatDateOnly('2023/01/01')).toBe('2023/01/01');
+      expect(formatDateOnly('invalid-date')).toBe('invalid-date');
     });
   });
 
@@ -128,6 +163,32 @@ describe('calendarSyncUtils', () => {
       expect(event?.title).toBe('(제목 없음)');
     });
 
+    it('title 속성이 여러 세그먼트로 구성되어 있어도 올바르게 결합한다', () => {
+      const item = createNotionItem({
+        properties: {
+          날짜: {
+            type: 'date',
+            date: {
+              start: '2026-03-19',
+              end: null,
+            },
+          },
+          이름: {
+            type: 'title',
+            title: [
+              { plain_text: '캘린더' },
+              { plain_text: ' ' },
+              { plain_text: '테스트' },
+              { plain_text: '' }, // Empty segment
+            ],
+          },
+        } as NotionSearchItem['properties'],
+      });
+
+      const event = parseNotionCalendarEvent(item);
+      expect(event?.title).toBe('캘린더 테스트');
+    });
+
     it('date 속성이 없거나 잘못된 경우 null을 반환한다', () => {
       const missingDate = createNotionItem({
         properties: {
@@ -151,6 +212,16 @@ describe('calendarSyncUtils', () => {
 
       expect(parseNotionCalendarEvent(missingDate)).toBeNull();
       expect(parseNotionCalendarEvent(invalidDate)).toBeNull();
+    });
+
+    it('convertGoogleEventToUnified는 유효하지 않은 날짜의 경우 null을 반환한다', () => {
+      const invalidGoogleEvent = {
+        id: 'google-event-1',
+        title: 'Google Event',
+        start: 'invalid-date-string', // This will make parseDateKey return null
+        url: 'http://example.com',
+      };
+      expect(convertGoogleEventToUnified(invalidGoogleEvent as any)).toBeNull();
     });
   });
 });

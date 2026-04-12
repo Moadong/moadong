@@ -15,7 +15,7 @@ import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionCo
 import { PageContainer } from '@/styles/PageContainer.styles';
 import { Question } from '@/types/application';
 import { linkifyText } from '@/utils/linkifyText';
-import { validateAnswers } from '@/utils/useValidateAnswers';
+import { validateAnswers } from '@/utils/validateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
 
 const ApplicationFormPage = () => {
@@ -118,7 +118,7 @@ const ApplicationFormPage = () => {
       navigate(`/clubDetail/@${encodeURIComponent(clubDetail.name)}`, {
         replace: true,
       });
-    } catch (error) {
+    } catch {
       alert(
         '답변 제출에 실패했어요.\n네트워크 상태를 확인하거나 잠시 후 다시 시도해 주세요.',
       );

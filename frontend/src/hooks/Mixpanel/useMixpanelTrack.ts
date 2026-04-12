@@ -11,8 +11,8 @@ const useMixpanelTrack = () => {
           timestamp: Date.now(),
           url: window.location.href,
         });
-      } catch (error) {
-        console.warn('Failed to track event:', eventName, error);
+      } catch (_error) {
+        // console.warn('Failed to track event:', eventName, _error);
       }
     },
     [],

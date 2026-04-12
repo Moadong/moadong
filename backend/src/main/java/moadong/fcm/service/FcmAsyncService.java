@@ -44,6 +44,7 @@ public class FcmAsyncService {
      * @return
      */
     @Async("fcmAsync")
+    @Deprecated
     public CompletableFuture<Void> updateSubscriptions(String token, Set<String> newClubIds, Set<String> clubsToSubscribe, Set<String> clubsToUnsubscribe) {
         return updateSubscriptionsInternal(
                 token,

@@ -50,4 +50,11 @@ describe('모집 마감 날짜 입력 처리', () => {
       '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
     );
   });
+
+  it('유효하지 않은 날짜 (예: 2월 30일)를 입력하면 오류를 안내한다', () => {
+    const input = '2025.02.30 13:45';
+    expect(() => recruitmentDateParser(input)).toThrow(
+      '유효하지 않은 날짜 형식입니다. 형식은 "YYYY.MM.DD HH:mm" 이어야 합니다.',
+    );
+  });
 });

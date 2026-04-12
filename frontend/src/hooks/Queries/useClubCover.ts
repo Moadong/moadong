@@ -38,7 +38,7 @@ export const useUploadCover = () => {
     },
 
     onError: () => {
-      console.error('Error uploading cover');
+      // console.error('Error uploading cover');
     },
   });
 };
@@ -59,7 +59,6 @@ export const useDeleteCover = () => {
     },
 
     onError: () => {
-      console.error('Error deleting cover');
     },
   });
 };

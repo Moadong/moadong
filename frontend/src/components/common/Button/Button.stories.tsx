@@ -24,6 +24,25 @@ const meta = {
     onClick: {
       description: '버튼 클릭 시 실행될 함수입니다.',
     },
+    variant: {
+      control: 'select',
+      options: ['primary', 'secondary', 'ghost', 'danger'],
+      description: '버튼의 시각적 스타일을 지정합니다.',
+    },
+    size: {
+      control: 'select',
+      options: ['small', 'medium', 'large'],
+      description: '버튼의 크기를 지정합니다.',
+    },
+    type: {
+      control: 'select',
+      options: ['button', 'submit', 'reset'],
+      description: '버튼의 타입을 지정합니다.',
+    },
+    disabled: {
+      control: 'boolean',
+      description: '버튼의 활성화/비활성화 상태를 지정합니다.',
+    },
   },
 } satisfies Meta<typeof Button>;
 
@@ -32,52 +51,97 @@ type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
   args: {
-    children: '버튼',
-    onClick: () => {
-      console.log('버튼이 클릭되었습니다.');
-    },
+    children: '기본 버튼',
+    onClick: () => {},
+  },
+};
+
+export const Primary: Story = {
+  args: {
+    ...Default.args,
+    children: 'Primary 버튼',
+    variant: 'primary',
+  },
+};
+
+export const Secondary: Story = {
+  args: {
+    ...Default.args,
+    children: 'Secondary 버튼',
+    variant: 'secondary',
+  },
+};
+
+export const Ghost: Story = {
+  args: {
+    ...Default.args,
+    children: 'Ghost 버튼',
+    variant: 'ghost',
+  },
+};
+
+export const Danger: Story = {
+  args: {
+    ...Default.args,
+    children: 'Danger 버튼',
+    variant: 'danger',
+  },
+};
+
+export const Small: Story = {
+  args: {
+    ...Default.args,
+    children: 'Small 버튼',
+    size: 'small',
+  },
+};
+
+export const Large: Story = {
+  args: {
+    ...Default.args,
+    children: 'Large 버튼',
+    size: 'large',
+  },
+};
+
+export const Disabled: Story = {
+  args: {
+    ...Default.args,
+    children: '비활성화 버튼',
+    disabled: true,
   },
 };
 
 export const Animated: Story = {
   args: {
+    ...Default.args,
     children: '애니메이션 버튼',
     animated: true,
-    onClick: () => {
-      console.log('애니메이션 버튼이 클릭되었습니다.');
-    },
   },
 };
 
-// 너비가 지정된 버튼
+// 조합 예시
+export const PrimaryLarge: Story = {
+  args: {
+    ...Primary.args,
+    ...Large.args,
+    children: 'Primary Large 버튼',
+  },
+};
+
+export const GhostSmallDisabled: Story = {
+  args: {
+    ...Ghost.args,
+    ...Small.args,
+    ...Disabled.args,
+    children: 'Ghost Small 비활성화 버튼',
+  },
+};
+
 export const CustomWidth: Story = {
   args: {
+    ...Default.args,
     children: '너비 지정 버튼',
     width: '200px',
-    onClick: () => {
-      console.log('너비 지정 버튼이 클릭되었습니다.');
-    },
-  },
-};
-
-// 긴 텍스트가 있는 버튼
-export const LongText: Story = {
-  args: {
-    children: '이것은 매우 긴 텍스트가 있는 버튼입니다',
-    onClick: () => {
-      console.log('긴 텍스트 버튼이 클릭되었습니다.');
-    },
-  },
-};
-
-// 애니메이션과 커스텀 너비가 모두 적용된 버튼
-export const AnimatedWithCustomWidth: Story = {
-  args: {
-    children: '애니메이션 + 너비 지정',
-    width: '300px',
-    animated: true,
-    onClick: () => {
-      console.log('애니메이션 + 너비 지정 버튼이 클릭되었습니다.');
-    },
   },
 };
