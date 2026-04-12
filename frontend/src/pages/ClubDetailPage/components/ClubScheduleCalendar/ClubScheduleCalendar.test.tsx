@@ -1,10 +1,5 @@
 import { render, screen, fireEvent } from '@testing-library/react';
 import ClubScheduleCalendar from './ClubScheduleCalendar';
-import {
-  buildDateKeyFromDate,
-  formatMonthLabel,
-  WEEKDAY_LABELS,
-} from '@/utils/calendarSyncUtils';
 import '@testing-library/jest-dom';
 
 // Mock calendarSyncUtils if needed, or provide simple implementations for tests
@@ -15,7 +10,7 @@ jest.mock('@/utils/calendarSyncUtils', () => ({
     return `${date.getFullYear()}년 ${date.getMonth() + 1}월`;
   }),
   formatSelectedDate: jest.fn((dateKey: string) => {
-    const [year, month, day] = dateKey.split('-').map(Number);
+    const [, month, day] = dateKey.split('-').map(Number);
     return `${month}월 ${day}일`;
   }),
   WEEKDAY_LABELS: ['일', '월', '화', '수', '목', '금', '토'],
