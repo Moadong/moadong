@@ -15,7 +15,7 @@ import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionCo
 import { PageContainer } from '@/styles/PageContainer.styles';
 import { Question } from '@/types/application';
 import { linkifyText } from '@/utils/linkifyText';
-import { validateAnswers } from '@/utils/useValidateAnswers';
+import { validateAnswers } from '@/utils/validateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
 
 const ApplicationFormPage = () => {

@@ -4,7 +4,7 @@ import { colors } from '../../../styles/theme/colors';
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost' | 'danger';
 export type ButtonSize = 'small' | 'medium' | 'large';
 
-export interface ButtonProps {
+export interface ButtonProps extends React.ButtonHTMLAttributes<HTMLButtonElement> {
   width?: string;
   children: React.ReactNode;
   type?: 'button' | 'submit' | 'reset';
