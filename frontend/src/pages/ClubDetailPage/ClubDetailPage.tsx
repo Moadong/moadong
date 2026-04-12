@@ -1,9 +1,5 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import {
-  useParams,
-  useLocation as useRouterLocation,
-  useSearchParams,
-} from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -27,6 +23,7 @@ import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
 import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
+import ClubMapModal from './components/ClubMapModal/ClubMapModal';
 
 export const TAB_TYPE = {
   INTRO: 'intro',
@@ -135,11 +132,11 @@ const ClubDetailPage = () => {
     [setSearchParams, trackEvent],
   );
 
-  const routerLocation = useRouterLocation();
   const clubLocation = clubLocations.find(
     (loc) => loc.clubName === clubDetail?.name,
   );
-  const mapPath = clubLocation ? `${routerLocation.pathname}/map` : undefined;
+
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   if (error) {
     return <div>동아리 정보를 불러오는데 실패했습니다.</div>;
@@ -176,11 +173,11 @@ const ClubDetailPage = () => {
               socialLinks={clubDetail.socialLinks}
               introDescription={clubDetail.description.introDescription}
               location={clubLocation}
-              mapPath={mapPath}
+              onMapClick={() => setIsMapModalOpen(true)}
             />
             {clubLocation && (
               <Styled.MapInfo>
-                <Styled.MapCard>
+                <Styled.MapCard onClick={() => setIsMapModalOpen(true)}>
                   <NaverMap
                     clubName={clubLocation.clubName}
                     lat={clubLocation.lat}
@@ -238,6 +235,15 @@ const ClubDetailPage = () => {
           </Styled.RightSection>
         </Styled.ContentWrapper>
       </Styled.Container>
+      {clubLocation && (
+        <ClubMapModal
+          isOpen={isMapModalOpen}
+          onClose={() => setIsMapModalOpen(false)}
+          clubName={clubDetail.name}
+          clubLogo={clubDetail.logo}
+          location={clubLocation}
+        />
+      )}
       {!isInAppWebView() && <Footer />}
       <ClubDetailFooter
         recruitmentStart={clubDetail.recruitmentStart}
