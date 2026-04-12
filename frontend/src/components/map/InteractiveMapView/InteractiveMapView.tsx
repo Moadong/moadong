@@ -1,7 +1,7 @@
-import { useEffect, useRef } from 'react';
+import { MutableRefObject, useEffect, useRef } from 'react';
 import markerIcon from '@/assets/images/icons/marker.svg';
 import { ClubLocation } from '@/constants/clubLocation';
-import { loadNaverMapScript } from '@/components/map/loadNaverMapScript';
+import { loadNaverMapScript } from '@/utils/loadNaverMapScript';
 import MapClubInfoCard from '@/components/map/MapClubInfoCard/MapClubInfoCard';
 import * as Styled from './InteractiveMapView.styles';
 
@@ -12,6 +12,7 @@ interface InteractiveMapViewProps {
   active: boolean;
   markerSize?: number;
   bubbleFontSize?: number;
+  mapInstanceRef?: MutableRefObject<any>;
 }
 
 const InteractiveMapView = ({
@@ -21,9 +22,11 @@ const InteractiveMapView = ({
   active,
   markerSize = 40,
   bubbleFontSize = 13,
+  mapInstanceRef: externalMapRef,
 }: InteractiveMapViewProps) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const mapInstanceRef = useRef<any>(null);
+  const internalMapRef = useRef<any>(null);
+  const mapInstanceRef = externalMapRef || internalMapRef;
 
   useEffect(() => {
     if (!active) return;

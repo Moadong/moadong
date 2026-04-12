@@ -1,5 +1,5 @@
 import { useRef } from 'react';
-import { useNaverMap } from '@/components/map/useNaverMap';
+import { useNaverMap } from '@/hooks/Map/useNaverMap';
 import * as Styled from './NaverMap.styles';
 
 interface NaverMapProps {

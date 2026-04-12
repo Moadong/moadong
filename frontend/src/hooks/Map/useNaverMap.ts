@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import markerIcon from '@/assets/images/icons/marker.svg';
-import { loadNaverMapScript } from './loadNaverMapScript';
+import { loadNaverMapScript } from '@/utils/loadNaverMapScript';
 
 interface UseNaverMapOptions {
   bubbleText?: string;

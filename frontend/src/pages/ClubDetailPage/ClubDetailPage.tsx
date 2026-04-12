@@ -4,7 +4,7 @@ import locationIcon from '@/assets/images/icons/location_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
-import NaverMap from '@/components/map/NaverMap';
+import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -23,7 +23,7 @@ import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
 import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
-import ClubMapModal from './components/ClubMapModal/ClubMapModal';
+import MapModal from '@/components/map/MapModal/MapModal';
 
 export const TAB_TYPE = {
   INTRO: 'intro',
@@ -236,7 +236,7 @@ const ClubDetailPage = () => {
         </Styled.ContentWrapper>
       </Styled.Container>
       {clubLocation && (
-        <ClubMapModal
+        <MapModal
           isOpen={isMapModalOpen}
           onClose={() => setIsMapModalOpen(false)}
           clubName={clubDetail.name}
