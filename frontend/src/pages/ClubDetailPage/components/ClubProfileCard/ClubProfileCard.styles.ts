@@ -1,6 +1,12 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { typography } from '@/styles/theme/typography';
+
+const setTypography = (typo: { size: string; weight: number }) => `
+  font-size: ${typo.size};
+  font-weight: ${typo.weight};
+`;
 
 export const Container = styled.div`
   position: relative;
@@ -170,6 +176,7 @@ export const IntroSection = styled.section`
 
   ${media.tablet} {
     background-color: ${colors.gray[100]};
+  }
 `;
 
 export const IntroTitle = styled.h3`
@@ -182,4 +189,66 @@ export const IntroTitle = styled.h3`
 export const IntroDescription = styled.p`
   font-size: 14px;
   color: ${colors.gray[800]};
+`;
+
+export const MobileLocationSection = styled.div`
+  display: none;
+
+  ${media.tablet} {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+  }
+`;
+
+export const LocationDivider = styled.hr`
+  border: none;
+  border-top: 1px solid ${colors.gray[400]};
+  margin: 0;
+`;
+
+export const LocationRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+`;
+
+export const LocationInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+
+  img {
+    width: 12px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  span {
+    ${setTypography(typography.paragraph.p6)};
+    color: ${colors.gray[600]};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
+export const LocationDot = styled.span`
+  ${setTypography(typography.paragraph.p6)};
+  color: ${colors.gray[400]};
+  flex-shrink: 0;
+`;
+
+export const MapLink = styled.span`
+  ${setTypography(typography.paragraph.p6)};
+  color: #3366bb;
+  flex-shrink: 0;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;

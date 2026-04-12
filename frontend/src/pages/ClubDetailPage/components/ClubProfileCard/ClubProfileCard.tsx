@@ -1,20 +1,25 @@
+import { Link } from 'react-router-dom';
+import locationIcon from '@/assets/images/icons/location_icon.svg';
 import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
 import DefaultCover from '@/assets/images/logos/default_cover_image.png';
 import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
+import { ClubLocation } from '@/constants/clubLocation';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { SNSPlatform } from '@/types/club';
 import * as Styled from './ClubProfileCard.styles';
 
-interface Props {
+interface ClubProfileCardProps {
   name: string;
   logo?: string;
   cover?: string;
   recruitmentStatus: string;
   socialLinks: Record<SNSPlatform, string>;
   introDescription: string;
+  location?: Pick<ClubLocation, 'building' | 'detailLocation'>;
+  mapPath?: string;
 }
 
 const ClubProfileCard = ({
@@ -24,7 +29,9 @@ const ClubProfileCard = ({
   recruitmentStatus,
   socialLinks,
   introDescription,
-}: Props) => {
+  location,
+  mapPath,
+}: ClubProfileCardProps) => {
   const trackEvent = useMixpanelTrack();
 
   const getSocialPlatformName = (platform: string) => {
@@ -104,6 +111,23 @@ const ClubProfileCard = ({
         <Styled.IntroSection>
           <Styled.IntroTitle>{name}를 소개할게요</Styled.IntroTitle>
           <Styled.IntroDescription>{introDescription}</Styled.IntroDescription>
+          {location && mapPath && (
+            <Styled.MobileLocationSection>
+              <Styled.LocationDivider />
+              <Styled.LocationRow>
+                <Styled.LocationInfo>
+                  <img src={locationIcon} alt='위치 아이콘' />
+                  <span>
+                    동아리방 위치 {location.building} {location.detailLocation}
+                  </span>
+                </Styled.LocationInfo>
+                <Styled.LocationDot>·</Styled.LocationDot>
+                <Styled.MapLink as={Link} to={mapPath}>
+                  지도
+                </Styled.MapLink>
+              </Styled.LocationRow>
+            </Styled.MobileLocationSection>
+          )}
         </Styled.IntroSection>
       </Styled.Content>
     </Styled.Container>
