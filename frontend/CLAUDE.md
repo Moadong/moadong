@@ -56,6 +56,7 @@ npm run generate:sitemap # sitemap.xml 생성
 - **Sentry**: 에러 모니터링 및 성능 추적
 - **Channel.io**: 고객 지원 채팅
 - **Kakao SDK**: 카카오 공유 기능
+- **Naver Map**: 동아리방 위치 지도 (네이버 클라우드 플랫폼)
 
 모든 SDK는 `src/utils/initSDK.ts`에서 초기화되며, 각각 환경 변수 필요.
 
@@ -70,6 +71,7 @@ npm run generate:sitemap # sitemap.xml 생성
 - `VITE_ENABLE_SENTRY_IN_DEV` - 개발 환경에서 Sentry 활성화 여부 (true/false)
 - `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
 - `VITE_KAKAO_JAVASCRIPT_KEY` - Kakao JavaScript 키
+- `VITE_NAVER_MAP_CLIENT_ID` - 네이버 지도 API 클라이언트 ID
 
 ### 프로젝트 구조
 
@@ -205,7 +207,7 @@ const { variant } = useExperiment(mainBannerExperiment);
 
 `.claude/agents/` 디렉토리에 전담 agent 정의:
 
-- `api-hooks-agent.md` - React Query 훅 생성 및 관리 전담
+- `API훅부서.md` - React Query 훅 생성 및 관리 전담
 
 Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 
