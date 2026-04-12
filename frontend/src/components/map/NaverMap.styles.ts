@@ -5,4 +5,8 @@ export const MapContainer = styled.div`
   height: 100%;
 
   overflow: hidden;
+
+  * {
+    cursor: default !important;
+  }
 `;
