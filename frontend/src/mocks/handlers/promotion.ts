@@ -50,9 +50,7 @@ export const promotionHandlers = [
   }),
 
   // POST /api/promotion - 홍보게시판 글 작성
-  http.post(`${API_BASE_URL}/api/promotion`, async ({ request }) => {
-    const body = await request.json();
-
+  http.post(`${API_BASE_URL}/api/promotion`, async () => {
     return HttpResponse.json({
       data: {
         id: `article-${Date.now()}`,
