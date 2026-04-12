@@ -3,7 +3,7 @@ import { allowPersonalInformation } from '@/apis/auth';
 import Button from '@/components/common/Button/Button';
 import PortalModal from '@/components/common/Modal/PortalModal';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
-import { useAdminClubContext } from '@/context/AdminClubContext';
+import { useAdminHasConsented } from '@/store/useAdminClubStore';
 import * as Styled from './PersonalInfoConsentModal.styles';
 
 const GUIDE_ITEMS = [
@@ -25,7 +25,7 @@ interface PersonalInfoConsentModalProps {
 const PersonalInfoConsentModal = ({
   clubName,
 }: PersonalInfoConsentModalProps) => {
-  const { setHasConsented } = useAdminClubContext();
+  const { setHasConsented } = useAdminHasConsented();
   const [loading, setLoading] = useState(false);
 
   const handleConsent = async () => {

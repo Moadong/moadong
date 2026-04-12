@@ -1,13 +1,17 @@
 import { Outlet } from 'react-router-dom';
 import Header from '@/components/common/Header/Header';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import PersonalInfoConsentModal from '@/pages/AdminPage/components/PersonalInfoConsentModal/PersonalInfoConsentModal';
 import SideBar from '@/pages/AdminPage/components/SideBar/SideBar';
+import {
+  useAdminClubId,
+  useAdminHasConsented,
+} from '@/store/useAdminClubStore';
 import * as Styled from './AdminPage.styles';
 
 const AdminPage = () => {
-  const { clubId, hasConsented } = useAdminClubContext();
+  const { clubId } = useAdminClubId();
+  const { hasConsented } = useAdminHasConsented();
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   if (!clubDetail) {
