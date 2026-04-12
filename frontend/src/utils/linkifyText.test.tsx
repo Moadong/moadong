@@ -81,15 +81,19 @@ describe('linkifyText', () => {
     expect(text.includes('입니다')).toBe(true);
   });
 
-  it('URL 뒤에 영문이 붙은 경우 URL의 일부로 처리된다', () => {
-    const { container } = render(<>{linkifyText('https://example.combb')}</>);
+  it('여러 줄의 텍스트와 URL이 함께 있는 경우 링크와 줄바꿈이 올바르게 렌더링된다', () => {
+    const { container } = render(
+      <>{linkifyText('첫 번째 줄\nhttps://example.com\n두 번째 줄')}</>,
+    );
 
-    const link = screen.getByRole('link');
+    const link = screen.getByRole('link', {
+      name: 'https://example.com',
+    });
 
-    expect(link.textContent).toBe('https://example.combb');
-    expect(link.getAttribute('href')).toBe('https://example.combb');
-
-    expect(link.getAttribute('href')).toBe('https://example.combb');
-    expect(container.textContent).toBe('https://example.combb');
+    expect(link).not.toBeNull();
+    expect(link.getAttribute('href')).toBe('https://example.com');
+    expect(container.textContent).toContain('첫 번째 줄');
+    expect(container.textContent).toContain('두 번째 줄');
+    expect(container.querySelectorAll('br').length).toBe(2); // 두 개의 <br> 태그가 있는지 확인
   });
 });
