@@ -50,7 +50,6 @@ export const MapInfo = styled.div`
   gap: 8px;
 
   ${media.tablet} {
-    padding: 0 16px 20px;
     display: none;
   }
 `;
