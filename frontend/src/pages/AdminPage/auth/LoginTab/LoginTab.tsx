@@ -45,7 +45,7 @@ const LoginTab = () => {
       alert('로그인 성공! 관리자 페이지로 이동합니다.');
       navigate('/admin');
     } catch (error: unknown) {
-      console.error('로그인 실패:', error);
+      // console.error('로그인 실패:', error);
       let errorMessage =
         '로그인에 실패했습니다. 아이디 또는 비밀번호를 확인해주세요.';
       if (error instanceof Error) {

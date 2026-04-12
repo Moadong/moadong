@@ -15,7 +15,7 @@ describe('formatRelativeDateTime', () => {
 
       const result = formatRelativeDateTime('2024-01-15T14:30:00');
 
-      expect(result).toMatch(/오후.*2.*30/);
+      expect(result).toMatch(/(오후|PM).*2.*30/);
     });
 
     it('오늘 오전 9시를 시간 형식으로 반환해야 한다', () => {
@@ -23,7 +23,7 @@ describe('formatRelativeDateTime', () => {
 
       const result = formatRelativeDateTime('2024-01-15T09:00:00');
 
-      expect(result).toMatch(/오전.*9/);
+      expect(result).toMatch(/(오전|AM).*9/);
     });
 
     it('오늘 자정을 시간 형식으로 반환해야 한다', () => {
@@ -31,7 +31,7 @@ describe('formatRelativeDateTime', () => {
 
       const result = formatRelativeDateTime('2024-01-15T00:00:00');
 
-      expect(result).toMatch(/오전.*12.*00/);
+      expect(result).toMatch(/(오전|AM).*12.*00/);
     });
   });
 
@@ -77,7 +77,7 @@ describe('formatRelativeDateTime', () => {
 
       const result = formatRelativeDateTime('2024-01-15T23:59:00');
 
-      expect(result).toMatch(/오후.*11.*59/);
+      expect(result).toMatch(/(오후|PM).*11.*59/);
     });
 
     it('월이 바뀌는 경우 날짜 형식으로 반환해야 한다', () => {

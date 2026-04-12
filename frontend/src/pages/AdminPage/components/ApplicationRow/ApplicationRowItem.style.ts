@@ -1,13 +1,5 @@
 import styled, { css } from 'styled-components';
 
-interface MenuItemProps {
-  $ActiveMenu?: boolean;
-}
-
-interface ExpandButtonProps {
-  $isExpanded: boolean;
-}
-
 // 개별 지원서 한 줄 (Row)
 export const ApplicationRow = styled.div`
   display: flex;
