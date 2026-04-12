@@ -124,7 +124,7 @@ const RecruitEditTab = () => {
 
     updateClubDescription(updatedData, {
       onSuccess: () => alert('모집 정보가 성공적으로 수정되었습니다.'),
-      onError: (error) =>
+      onError: (_error) =>
         alert(`모집 정보 수정에 실패했습니다: ${error.message}`),
     });
   };

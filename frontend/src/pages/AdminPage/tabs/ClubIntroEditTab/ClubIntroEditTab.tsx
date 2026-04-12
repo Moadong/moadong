@@ -79,7 +79,7 @@ const ClubIntroEditTab = () => {
           queryKey: ['clubDetail', clubDetail.id],
         });
       },
-      onError: (error) => {
+      onError: (_error) => {
         alert(`동아리 상세 정보 수정에 실패했습니다: ${error.message}`);
       },
     });

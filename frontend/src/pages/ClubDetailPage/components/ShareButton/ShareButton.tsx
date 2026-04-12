@@ -54,7 +54,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
           clubName: clubDetail.name,
           method: 'web_share',
         });
-      } catch (error) {
+      } catch (_error) {
         if (error instanceof Error && error.name === 'AbortError') {
           return;
         }
