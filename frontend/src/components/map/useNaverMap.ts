@@ -82,5 +82,5 @@ export const useNaverMap = (
         },
       });
     });
-  }, [mapRef, lat, lng]);
+  }, [mapRef, lat, lng, options?.interactive, options?.bubbleText]);
 };
