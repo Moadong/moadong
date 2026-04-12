@@ -75,7 +75,7 @@ const ApplicationEditTab = () => {
       alert(`지원서 생성에 실패했습니다.: ${err.message}`),
   });
 
-  const { mutate: updateMutate, isPending: isUpdating } = useMutation({
+  const { mutate: updateMutate } = useMutation({
     mutationFn: ({
       data,
       applicationFormId,
