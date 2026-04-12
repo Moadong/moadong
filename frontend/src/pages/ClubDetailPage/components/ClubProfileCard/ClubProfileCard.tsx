@@ -18,7 +18,7 @@ interface ClubProfileCardProps {
   recruitmentStatus: string;
   socialLinks: Record<SNSPlatform, string>;
   introDescription: string;
-  location?: ClubLocation;
+  location?: Pick<ClubLocation, 'building' | 'detailLocation'>;
   mapPath?: string;
 }
 
