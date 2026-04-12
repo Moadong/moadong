@@ -6,7 +6,6 @@ const LOCALHOST_HOSTNAME = 'localhost';
 
 export function initializeMixpanel() {
   if (!import.meta.env.VITE_MIXPANEL_TOKEN) {
-    console.warn('믹스패널 환경변수 설정이 안 되어 있습니다.');
     return;
   }
 
@@ -45,6 +44,7 @@ export function initializeSentry() {
   const enableInDev = import.meta.env.VITE_ENABLE_SENTRY_IN_DEV === 'true';
 
   if (import.meta.env.DEV && !enableInDev) {
+    // eslint-disable-next-line no-console
     console.log(
       'Sentry는 개발 환경에서 비활성화되어 있습니다. 테스트하려면 VITE_ENABLE_SENTRY_IN_DEV=true로 설정하세요.',
     );
@@ -52,7 +52,6 @@ export function initializeSentry() {
   }
 
   if (!import.meta.env.VITE_SENTRY_DSN) {
-    console.warn('Sentry DSN이 설정되지 않았습니다.');
     return;
   }
 
@@ -68,18 +67,15 @@ export function initializeSentry() {
 
 export function initializeKakaoSDK() {
   if (!import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY) {
-    console.warn('환경변수가 설정되어 있지 않습니다.');
     return;
   }
 
   if (!window.Kakao) {
-    console.error('카카오 SDK가 로드되지 않았습니다.');
     return;
   }
 
   try {
     window.Kakao.init(`${import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY}`);
-  } catch (error) {
-    console.error('카카오 SDK 초기화에 실패했습니다:', error);
+  } catch (_error) {
   }
 }

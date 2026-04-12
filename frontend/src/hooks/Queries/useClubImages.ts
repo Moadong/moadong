@@ -74,7 +74,6 @@ export const useUploadFeed = () => {
       });
     },
     onError: () => {
-      console.error('Error uploading feed images');
     },
   });
 };
@@ -93,7 +92,6 @@ export const useUpdateFeed = () => {
       });
     },
     onError: () => {
-      console.error('Error updating feed images');
     },
   });
 };
@@ -130,7 +128,7 @@ export const useUploadLogo = () => {
       });
     },
     onError: () => {
-      console.error('Error uploading logo');
+      // console.error('Error uploading logo');
     },
   });
 };
@@ -149,7 +147,6 @@ export const useDeleteLogo = () => {
       });
     },
     onError: () => {
-      console.error('Error deleting logo');
     },
   });
 };
