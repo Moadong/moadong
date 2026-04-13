@@ -15,7 +15,7 @@ super property key는 실험의 `key` 필드 그대로 사용한다 (예: `main_
 
 데이터가 쌓이면 기존 Insights/Funnel 쿼리에 breakdown만 추가하면 된다.
 
-```
+```text
 예시: ClubDetailPage Visited 이벤트
 → Breakdown: main_banner_v1
 → A그룹 vs B그룹 비교
