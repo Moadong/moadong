@@ -23,9 +23,9 @@ const sortOptions = [
 ] as const;
 
 const ApplicantsTab = () => {
-  const { clubId, applicantsData, setApplicantsData, setApplicationFormId } =
-    useAdminClubContext();
-  const { applicationFormId } = useParams<{ applicationFormId: string }>();
+  const { clubId } = useAdminClubContext();
+  const { applicantsData, setApplicantsData } =
+    useApplicantSSE(applicationFormId);
   const navigate = useNavigate();
 
   const statusOptions = AVAILABLE_STATUSES.map((status) => ({
@@ -45,8 +45,6 @@ const ApplicantsTab = () => {
 
   const {
     data: fetchData,
-    isLoading,
-    isError,
   } = useGetApplicants(applicationFormId ?? '');
   const [keyword, setKeyword] = useState('');
   const [checkedItem, setCheckedItem] = useState<Map<string, boolean>>(
