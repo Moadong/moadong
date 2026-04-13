@@ -58,12 +58,12 @@ export const PlusIcon = styled.span`
 
   &::before {
     width: 18px;
-    height: 2px;
+    height: 2.5px;
     transform: translate(-50%, -50%);
   }
 
   &::after {
-    width: 2px;
+    width: 3px;
     height: 18px;
     transform: translate(-50%, -50%);
   }
