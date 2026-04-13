@@ -1,7 +1,16 @@
 export const getDDay = (eventStartDate: string, eventEndDate: string) => {
-  const currentTime = new Date().getTime();
-  const eventStartTime = new Date(eventStartDate).getTime();
-  const eventEndTime = new Date(eventEndDate).getTime();
+  const now = new Date();
+  now.setHours(0, 0, 0, 0);
+
+  const startDate = new Date(eventStartDate);
+  startDate.setHours(0, 0, 0, 0);
+
+  const endDate = new Date(eventEndDate);
+  endDate.setHours(0, 0, 0, 0);
+
+  const currentTime = now.getTime();
+  const eventStartTime = startDate.getTime();
+  const eventEndTime = endDate.getTime();
 
   if (currentTime < eventStartTime) {
     const remainingTimeUntilStart = eventStartTime - currentTime;

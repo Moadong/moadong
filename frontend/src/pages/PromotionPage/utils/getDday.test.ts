@@ -25,6 +25,30 @@ describe('getDDay', () => {
     expect(result).toBe(0);
   });
 
+  it('행사 시작일 자정 직후에도 D-Day (0) 반환', () => {
+    jest.setSystemTime(new Date('2026-03-25T00:00:01Z'));
+
+    const result = getDDay('2026-03-25T00:00:00Z', '2026-03-27T00:00:00Z');
+
+    expect(result).toBe(0);
+  });
+
+  it('행사 시작일 정오에도 D-Day (0) 반환', () => {
+    jest.setSystemTime(new Date('2026-03-25T12:00:00Z'));
+
+    const result = getDDay('2026-03-25T00:00:00Z', '2026-03-27T00:00:00Z');
+
+    expect(result).toBe(0);
+  });
+
+  it('행사 시작 전날 자정 직전이면 D-1 반환', () => {
+    jest.setSystemTime(new Date('2026-03-24T23:59:59Z'));
+
+    const result = getDDay('2026-03-25T00:00:00Z', '2026-03-27T00:00:00Z');
+
+    expect(result).toBe(1);
+  });
+
   it('행사 중간 날짜도 D-Day (0) 반환', () => {
     jest.setSystemTime(new Date('2026-03-26T12:00:00Z'));
 
