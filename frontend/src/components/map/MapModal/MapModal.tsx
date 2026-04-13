@@ -37,6 +37,9 @@ const MapModal = ({
           clubName={clubName}
           clubLogo={clubLogo}
           active={isOpen}
+          markerSize={isMobileView ? 40 : 50}
+          bubbleFontSize={isMobileView ? 14 : 16}
+          bubbleFontWeight={isMobileView ? 700 : 600}
           mapInstanceRef={mapInstanceRef}
         />
 

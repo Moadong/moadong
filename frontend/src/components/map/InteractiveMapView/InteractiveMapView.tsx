@@ -1,8 +1,9 @@
-import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
+import { RefObject, useCallback, useEffect, useRef } from 'react';
 import markerIcon from '@/assets/images/icons/marker.svg';
 import { ClubLocation } from '@/constants/clubLocation';
 import { loadNaverMapScript } from '@/utils/loadNaverMapScript';
 import MapClubInfoCard from '@/components/map/MapClubInfoCard/MapClubInfoCard';
+import { colors } from '@/styles/theme/colors';
 import * as Styled from './InteractiveMapView.styles';
 
 interface InteractiveMapViewProps {
@@ -12,7 +13,8 @@ interface InteractiveMapViewProps {
   active: boolean;
   markerSize?: number;
   bubbleFontSize?: number;
-  mapInstanceRef?: MutableRefObject<any>;
+  bubbleFontWeight?: number;
+  mapInstanceRef?: RefObject<any>;
 }
 
 const InteractiveMapView = ({
@@ -22,6 +24,7 @@ const InteractiveMapView = ({
   active,
   markerSize = 40,
   bubbleFontSize = 13,
+  bubbleFontWeight = 700,
   mapInstanceRef: externalMapRef,
 }: InteractiveMapViewProps) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
@@ -62,8 +65,8 @@ const InteractiveMapView = ({
                 border-radius: 50px;
                 padding: 10px 16px;
                 font-size: ${bubbleFontSize}px;
-                font-weight: 700;
-                color: #111827;
+                font-weight: ${bubbleFontWeight};
+                color: ${colors.gray[900]};
                 white-space: nowrap;
                 font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
                 box-shadow: 0 2px 8px rgba(0,0,0,0.15);
@@ -97,7 +100,7 @@ const InteractiveMapView = ({
       mapInstanceRef.current?.destroy();
       mapInstanceRef.current = null;
     };
-  }, [active, location.lat, location.lng]);
+  }, [active, location.lat, location.lng, markerSize, bubbleFontSize, bubbleFontWeight]);
 
   const handleRecenter = useCallback(() => {
     const map = mapInstanceRef.current;
