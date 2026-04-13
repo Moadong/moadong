@@ -1,4 +1,4 @@
-import { MutableRefObject, useEffect, useRef } from 'react';
+import { MutableRefObject, useCallback, useEffect, useRef } from 'react';
 import markerIcon from '@/assets/images/icons/marker.svg';
 import { ClubLocation } from '@/constants/clubLocation';
 import { loadNaverMapScript } from '@/utils/loadNaverMapScript';
@@ -99,10 +99,17 @@ const InteractiveMapView = ({
     };
   }, [active, location.lat, location.lng]);
 
+  const handleRecenter = useCallback(() => {
+    const map = mapInstanceRef.current;
+    if (map && window.naver) {
+      map.setCenter(new window.naver.maps.LatLng(location.lat, location.lng));
+    }
+  }, [mapInstanceRef, location.lat, location.lng]);
+
   return (
     <Styled.Container>
       <Styled.MapArea ref={mapRef} />
-      <Styled.InfoCardWrapper>
+      <Styled.InfoCardWrapper onClick={handleRecenter}>
         <MapClubInfoCard
           logo={clubLogo}
           name={clubName}
