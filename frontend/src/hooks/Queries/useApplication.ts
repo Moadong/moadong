@@ -40,8 +40,7 @@ export const useDeleteApplication = () => {
         queryKey: queryKeys.application.all,
       });
     },
-    onError: (error) => {
-      console.error(`Error delete application detail: ${error}`);
+    onError: (_error) => {
     },
   });
 };
@@ -57,8 +56,7 @@ export const useDuplicateApplication = () => {
         queryKey: queryKeys.application.all,
       });
     },
-    onError: (error) => {
-      console.error(`Error duplicating application: ${error}`);
+    onError: (_error) => {
     },
   });
 };
@@ -79,8 +77,7 @@ export const useUpdateApplicationStatus = () => {
         queryKey: queryKeys.application.all,
       });
     },
-    onError: (error) => {
-      console.error('Error updating application status:', error);
+    onError: (_error) => {
     },
   });
 };

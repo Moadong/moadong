@@ -88,35 +88,7 @@ public class ClubApplyAdminServiceTest {
     }
 
 
-//   TODO: OptionItem private 삭제
 
-//    @Test
-//    void 현재학기_SECOND이면_내년_FIRST까지() {
-//        LocalDate base = LocalDate.of(2025,11,12);
-//
-//        List<ClubApplyService.OptionItem> items = clubApplyService.buildOptionItems(base, 3);
-//
-//        List<ClubApplyService.OptionItem> expected = List.of(
-//                new ClubApplyService.OptionItem(2025, SemesterTerm.SECOND),
-//                new ClubApplyService.OptionItem(2025, SemesterTerm.WINTER),
-//                new ClubApplyService.OptionItem(2026, SemesterTerm.FIRST)
-//        );
-//        assertEquals(expected, items);
-//    }
-//
-//    @Test
-//    void 현재학기_SUMMER이면_내년_WINTTER까지() {
-//        LocalDate base = LocalDate.of(2025,7,12);
-//
-//        List<ClubApplyService.OptionItem> items = clubApplyService.buildOptionItems(base, 3);
-//
-//        List<ClubApplyService.OptionItem> expected = List.of(
-//                new ClubApplyService.OptionItem(2025, SemesterTerm.SUMMER),
-//                new ClubApplyService.OptionItem(2025, SemesterTerm.SECOND),
-//                new ClubApplyService.OptionItem(2025, SemesterTerm.WINTER)
-//        );
-//        assertEquals(expected, items);
-//    }
 
     @Test
     @DisplayName("DB에 이미 존재하는 문서에 대해 동시 수정 시, 한 스레드만 성공하고 나머지는 실패해야 한다")

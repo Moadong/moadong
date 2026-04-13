@@ -35,8 +35,7 @@ const PersonalInfoConsentModal = ({
       await allowPersonalInformation();
       localStorage.setItem(STORAGE_KEYS.HAS_CONSENTED_PERSONAL_INFO, 'true');
       setHasConsented(true);
-    } catch (error) {
-      console.error('서비스 동의 실패:', error);
+    } catch {
       alert('동의 처리에 실패했습니다. 다시 시도해주세요.');
     } finally {
       setLoading(false);

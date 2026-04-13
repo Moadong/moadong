@@ -104,10 +104,7 @@ const ClubInfoEditTab = () => {
 
     if (!clubDetail || !clubDetail.id) {
       alert('클럽 정보가 로드되지 않았습니다.');
-      console.error(
-        '[ERROR] clubDetail or clubDetail.id is undefined:',
-        clubDetail,
-      );
+
       return;
     }
 

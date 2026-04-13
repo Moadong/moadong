@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import deleteIcon from '@/assets/images/icons/applicant_delete.svg';
 import selectAllIcon from '@/assets/images/icons/applicant_select_arrow.svg';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
@@ -23,9 +23,7 @@ const sortOptions = [
 ] as const;
 
 const ApplicantsTab = () => {
-  const { clubId } = useAdminClubContext();
-  const { applicantsData, setApplicantsData } =
-    useApplicantSSE(applicationFormId);
+  const { clubId, applicationFormId, setApplicationFormId, applicantsData, setApplicantsData } = useAdminClubContext();
   const navigate = useNavigate();
 
   const statusOptions = AVAILABLE_STATUSES.map((status) => ({

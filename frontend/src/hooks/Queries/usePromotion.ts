@@ -32,8 +32,7 @@ export const useCreatePromotionArticle = () => {
         queryKey: queryKeys.promotion.list(),
       });
     },
-    onError: (error) => {
-      console.error('Error creating promotion article:', error);
+    onError: (_error) => {
     },
   });
 };
