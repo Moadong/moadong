@@ -92,6 +92,26 @@ describe('sortPromotions', () => {
     expect(result[0].title).toBe('recent');
   });
 
+  it('당일 종료된 시간 이후여도 진행중으로 분류된다', () => {
+    const NOW_AFTERNOON = new Date('2026-04-10T18:00:00Z').getTime();
+
+    const endedToday = createArticle(
+      'endedToday',
+      '2026-04-10T00:00:00Z',
+      '2026-04-10T15:00:00Z',
+    );
+
+    const upcoming = createArticle(
+      'upcoming',
+      '2026-04-12T00:00:00Z',
+      '2026-04-13T00:00:00Z',
+    );
+
+    const result = sortPromotions([upcoming, endedToday], NOW_AFTERNOON);
+
+    expect(result[0].title).toBe('endedToday');
+  });
+
   it('전체 정렬 순서: 진행중 → 예정 → 종료', () => {
     const ongoing = createArticle(
       'ongoing',
