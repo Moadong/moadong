@@ -23,6 +23,10 @@ export const Card = styled.div`
     width: 335px;
     padding: 24px 16px;
   }
+
+  ${media.mini_mobile} {
+    width: calc(100vw - 40px);
+  }
 `;
 
 export const ClubLogo = styled.img`
