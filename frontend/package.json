@@ -28,6 +28,7 @@
     "@sentry/react": "^9.18.0",
     "@tanstack/react-query": "^5.66.0",
     "date-fns": "^4.1.0",
+    "date-fns-tz": "^3.2.0",
     "eventsource": "^4.1.0",
     "framer-motion": "^12.23.12",
     "jest-fixed-jsdom": "^0.0.9",

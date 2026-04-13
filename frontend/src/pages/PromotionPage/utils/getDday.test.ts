@@ -25,13 +25,14 @@ describe('getDDay', () => {
     expect(result).toBe(0);
   });
 
-  it('행사 시작일 당일 시작 시각 전이어도 D-Day (0) 반환', () => {
-    jest.setSystemTime(new Date('2026-03-25T00:01:00Z'));
-
-    const result = getDDay('2026-03-25T14:00:00Z', '2026-03-27T00:00:00Z');
-
+  it('KST 기준 행사 시작 당일이면 D-Day (0) 반환 (UTC 기준 날짜가 다를 때)', () => {
+    // Simulate current time being 2026-04-13 16:00:00 UTC, which is 2026-04-14 01:00:00 KST
+    jest.setSystemTime(new Date('2026-04-13T16:00:00Z'));
+    // Event starts on 2026-04-14T00:00:00Z, which is 2026-04-14 09:00:00 KST
+    const result = getDDay('2026-04-14T00:00:00Z', '2026-04-15T00:00:00Z');
     expect(result).toBe(0);
   });
+
 
   it('행사 시작 하루 전이면 D-1 반환', () => {
     jest.setSystemTime(new Date('2026-03-24T00:00:00Z'));
