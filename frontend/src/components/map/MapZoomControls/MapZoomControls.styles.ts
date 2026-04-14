@@ -63,7 +63,7 @@ export const PlusIcon = styled.span`
   }
 
   &::after {
-    width: 3px;
+    width: 2.5px;
     height: 18px;
     transform: translate(-50%, -50%);
   }
@@ -72,7 +72,7 @@ export const PlusIcon = styled.span`
 export const MinusIcon = styled.span`
   position: relative;
   width: 18px;
-  height: 2px;
+  height: 2.5px;
   background-color: ${colors.gray[600]};
   border-radius: 1px;
 `;

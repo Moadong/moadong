@@ -52,8 +52,4 @@ export const ZoomControlsWrapper = styled.div`
   bottom: 50px;
   right: 40px;
   z-index: 10;
-
-  ${media.tablet} {
-    display: none;
-  }
 `;

@@ -13,7 +13,7 @@ interface InteractiveMapViewProps {
   markerSize?: number;
   bubbleFontSize?: number;
   bubbleFontWeight?: number;
-  mapInstanceRef?: RefObject<NaverMapInstance | null>;
+  mapInstanceRef: RefObject<NaverMapInstance | null>;
 }
 
 const InteractiveMapView = ({
@@ -24,11 +24,9 @@ const InteractiveMapView = ({
   markerSize = 40,
   bubbleFontSize = 13,
   bubbleFontWeight = 700,
-  mapInstanceRef: externalMapRef,
+  mapInstanceRef,
 }: InteractiveMapViewProps) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const internalMapRef = useRef<NaverMapInstance | null>(null);
-  const mapInstanceRef = externalMapRef ?? internalMapRef;
 
   useNaverMap(mapRef, location.lat, location.lng, {
     active,

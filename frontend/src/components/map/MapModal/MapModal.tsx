@@ -54,9 +54,11 @@ const MapModal = ({
           )}
         </Styled.ActionButton>
 
-        <Styled.ZoomControlsWrapper>
-          <MapZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} />
-        </Styled.ZoomControlsWrapper>
+        {!isMobileView && (
+          <Styled.ZoomControlsWrapper>
+            <MapZoomControls onZoomIn={zoomIn} onZoomOut={zoomOut} />
+          </Styled.ZoomControlsWrapper>
+        )}
       </Styled.Container>
     </PortalModal>
   );
