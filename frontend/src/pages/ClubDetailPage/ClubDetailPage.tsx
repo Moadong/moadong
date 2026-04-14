@@ -178,13 +178,7 @@ const ClubDetailPage = () => {
             {clubLocation && (
               <Styled.MapInfo>
                 <Styled.MapCard onClick={() => setIsMapModalOpen(true)}>
-                  <NaverMap
-                    clubName={clubLocation.clubName}
-                    lat={clubLocation.lat}
-                    lng={clubLocation.lng}
-                    building={clubLocation.building}
-                    detailLocation={clubLocation.detailLocation}
-                  />
+                  <NaverMap location={clubLocation} />
                 </Styled.MapCard>
 
                 <Styled.MapDetailText>
