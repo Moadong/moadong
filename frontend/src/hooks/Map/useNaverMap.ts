@@ -1,29 +1,91 @@
-import { useEffect } from 'react';
+import { RefObject, useEffect } from 'react';
 import markerIcon from '@/assets/images/icons/marker.svg';
+import { colors } from '@/styles/theme/colors';
 import { loadNaverMapScript } from '@/utils/loadNaverMapScript';
+import { NaverMapInstance } from './useMapZoom';
 
 interface UseNaverMapOptions {
-  bubbleText?: string;
+  active?: boolean;
   interactive?: boolean;
+  markerSize?: number;
+  bubbleText?: string;
+  bubbleFontSize?: number;
+  bubbleFontWeight?: number;
+  mapInstanceRef?: RefObject<NaverMapInstance | null>;
 }
 
+const buildMarkerContent = (
+  markerSize: number,
+  bubbleText?: string,
+  bubbleFontSize = 13,
+  bubbleFontWeight = 700,
+): string => {
+  const image = `<img src="${markerIcon}" style="width: ${markerSize}px; height: ${markerSize}px; display: block;" />`;
+
+  if (!bubbleText) return image;
+
+  return `
+    <div style="position: relative; display: inline-block;">
+      <div style="
+        position: absolute;
+        bottom: calc(${markerSize}px + 5px);
+        left: 50%;
+        transform: translateX(-50%);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      ">
+        <div style="
+          background: #fff;
+          border-radius: 50px;
+          padding: 10px 16px;
+          font-size: ${bubbleFontSize}px;
+          font-weight: ${bubbleFontWeight};
+          color: ${colors.gray[900]};
+          white-space: nowrap;
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+          box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        ">${bubbleText}</div>
+        <div style="
+          width: 0;
+          height: 0;
+          border-left: 9px solid transparent;
+          border-right: 9px solid transparent;
+          border-top: 10px solid #fff;
+          margin-top: -2px;
+        "></div>
+      </div>
+      ${image}
+    </div>
+  `;
+};
+
 export const useNaverMap = (
-  mapRef: React.RefObject<HTMLDivElement | null>,
+  mapRef: RefObject<HTMLDivElement | null>,
   lat: number,
   lng: number,
   options?: UseNaverMapOptions,
 ) => {
+  const {
+    active = true,
+    interactive = true,
+    markerSize = 40,
+    bubbleText,
+    bubbleFontSize,
+    bubbleFontWeight,
+    mapInstanceRef: externalRef,
+  } = options ?? {};
+
   useEffect(() => {
-    let mapInstance: { destroy: () => void } | null = null;
+    if (!active) return;
+
+    let mapInstance: NaverMapInstance | null = null;
 
     loadNaverMapScript().then(() => {
       if (!mapRef.current || !window.naver) return;
 
       const { naver } = window;
-
       const position = new naver.maps.LatLng(lat, lng);
-
-      const interactive = options?.interactive ?? true;
 
       mapInstance = new naver.maps.Map(mapRef.current, {
         center: position,
@@ -38,55 +100,39 @@ export const useNaverMap = (
         pinchZoom: interactive,
       });
 
-      const markerContent = options?.bubbleText
-        ? `
-          <div style="position: relative; display: inline-block;">
-            <div style="
-              position: absolute;
-              bottom: calc(40px + 5px);
-              left: 50%;
-              transform: translateX(-50%);
-              display: flex;
-              flex-direction: column;
-              align-items: center;
-            ">
-              <div style="
-                background: #fff;
-                border-radius: 50px;
-                padding: 10px 16px;
-                font-size: 13px;
-                font-weight: 700;
-                color: #111827;
-                white-space: nowrap;
-                font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-              ">${options.bubbleText}</div>
-              <div style="
-                width: 0;
-                height: 0;
-                border-left: 9px solid transparent;
-                border-right: 9px solid transparent;
-                border-top: 10px solid #fff;
-                margin-top: -2px;
-              "></div>
-            </div>
-            <img src="${markerIcon}" style="width: 40px; height: 40px; display: block;" />
-          </div>
-        `
-        : `<img src="${markerIcon}" style="width: 40px; height: 40px;" />`;
+      if (externalRef) {
+        externalRef.current = mapInstance;
+      }
 
       new naver.maps.Marker({
         position,
         map: mapInstance,
         icon: {
-          content: markerContent,
-          anchor: new naver.maps.Point(20, 40),
+          content: buildMarkerContent(
+            markerSize,
+            bubbleText,
+            bubbleFontSize,
+            bubbleFontWeight,
+          ),
+          anchor: new naver.maps.Point(markerSize / 2, markerSize),
         },
       });
     });
 
     return () => {
       mapInstance?.destroy();
+      if (externalRef) externalRef.current = null;
     };
-  }, [mapRef, lat, lng, options?.interactive, options?.bubbleText]);
+  }, [
+    mapRef,
+    lat,
+    lng,
+    active,
+    interactive,
+    markerSize,
+    bubbleText,
+    bubbleFontSize,
+    bubbleFontWeight,
+    externalRef,
+  ]);
 };
