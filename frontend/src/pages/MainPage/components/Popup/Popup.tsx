@@ -1,5 +1,4 @@
 import { MouseEvent, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import AppDownloadImage from '@/assets/images/popup/app-download.png';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
