@@ -295,9 +295,58 @@ Phase 3: GitHub Actions            ~1일
 
 ---
 
+## Figma 연동 전략
+
+토큰 파이프라인은 입력이 JSON이면 출처에 무관하게 동작하도록 설계되어 있다. Figma 연동은 파이프라인의 전제조건이 아니며, 단계적으로 도입한다.
+
+### 현재 상태 진단 기준
+
+| Figma 상태              | 대응 방법                              |
+| ----------------------- | -------------------------------------- |
+| Variables/Styles 미정의 | 코드에서 역추출 → `tokens/*.json` 작성 |
+| Styles만 있음           | Tokens Studio 플러그인으로 내보내기    |
+| Variables까지 있음      | Figma Variables API 자동 동기화        |
+
+### 단계별 전략
+
+**Phase 0 (지금)**: 코드 역추출
+
+현재 `src/styles/theme/colors.ts`, `typography.ts`에 이미 정의된 값을 `tokens/*.json`으로 이관. Figma 연동 없이 파이프라인 먼저 구축.
+
+```
+코드(theme/*.ts) → tokens/*.json → Style Dictionary → theme/*.ts (자동 생성)
+```
+
+**Phase 1 (파이프라인 안정화 후)**: Tokens Studio 반자동 연동
+
+디자이너가 Figma에 Styles/Variables를 정의하면, [Tokens Studio](https://tokens.studio/) 플러그인으로 `tokens.json` 내보내기. 수동이지만 디자이너 주도로 동기화 가능.
+
+```
+Figma (Tokens Studio) → tokens/*.json export → PR → ds:build
+```
+
+**Phase 2 (선택)**: Figma Variables API 자동화
+
+Figma Professional 플랜 이상에서 Variables API 사용 가능. `scripts/sync-figma-tokens.js` 스크립트로 완전 자동화.
+
+```bash
+# Personal Access Token 필요
+FIGMA_TOKEN=xxx FILE_ID=yyy npm run ds:figma-sync
+```
+
+```
+Figma Variables API → scripts/sync-figma-tokens.js → tokens/*.json → ds:build
+```
+
+### 핵심 원칙
+
+- **파이프라인 입력 포맷(JSON)은 고정** — Figma 연동 방식이 바뀌어도 이후 과정은 변경 없음
+- **디자이너와의 싱크 시점**: 파이프라인이 작동하기 시작하면 디자이너에게 Figma Styles/Variables 정의 요청. 코드 기준 토큰을 Figma에 역으로 반영하는 것도 가능.
+
+---
+
 ## 향후 확장 가능성
 
-- **Figma API 연동**: Figma Variables를 `tokens/*.json`으로 자동 동기화 스크립트 추가
 - **AI 코드 생성**: Claude API로 토큰 스펙 기반 컴포넌트 초안 생성
 - **spacing/shadow 룰**: ESLint 룰을 색상 외 토큰으로 확장
 - **토큰 사용 리포트**: 각 토큰이 몇 곳에서 쓰이는지 통계 생성
