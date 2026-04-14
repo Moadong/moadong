@@ -1,6 +1,15 @@
-import { MutableRefObject, useCallback } from 'react';
+import { RefObject, useCallback } from 'react';
 
-export const useMapZoom = (mapInstanceRef: MutableRefObject<any>) => {
+export interface NaverMapInstance {
+  getZoom: () => number;
+  setZoom: (zoom: number) => void;
+  setCenter: (latlng: unknown) => void;
+  destroy: () => void;
+}
+
+export const useMapZoom = (
+  mapInstanceRef: RefObject<NaverMapInstance | null>,
+) => {
   const zoomIn = useCallback(() => {
     const map = mapInstanceRef.current;
     if (map) map.setZoom(map.getZoom() + 1);

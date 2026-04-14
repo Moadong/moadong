@@ -2,6 +2,7 @@ import { RefObject, useCallback, useEffect, useRef } from 'react';
 import markerIcon from '@/assets/images/icons/marker.svg';
 import MapClubInfoCard from '@/components/map/MapClubInfoCard/MapClubInfoCard';
 import { ClubLocation } from '@/constants/clubLocation';
+import { NaverMapInstance } from '@/hooks/Map/useMapZoom';
 import { colors } from '@/styles/theme/colors';
 import { loadNaverMapScript } from '@/utils/loadNaverMapScript';
 import * as Styled from './InteractiveMapView.styles';
@@ -14,7 +15,7 @@ interface InteractiveMapViewProps {
   markerSize?: number;
   bubbleFontSize?: number;
   bubbleFontWeight?: number;
-  mapInstanceRef?: RefObject<any>;
+  mapInstanceRef?: RefObject<NaverMapInstance | null>;
 }
 
 const InteractiveMapView = ({
@@ -28,7 +29,7 @@ const InteractiveMapView = ({
   mapInstanceRef: externalMapRef,
 }: InteractiveMapViewProps) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
-  const internalMapRef = useRef<any>(null);
+  const internalMapRef = useRef<NaverMapInstance | null>(null);
   const mapInstanceRef = externalMapRef || internalMapRef;
 
   useEffect(() => {

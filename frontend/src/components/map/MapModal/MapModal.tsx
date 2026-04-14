@@ -5,7 +5,7 @@ import PortalModal from '@/components/common/Modal/PortalModal';
 import InteractiveMapView from '@/components/map/InteractiveMapView/InteractiveMapView';
 import MapZoomControls from '@/components/map/MapZoomControls/MapZoomControls';
 import { ClubLocation } from '@/constants/clubLocation';
-import { useMapZoom } from '@/hooks/Map/useMapZoom';
+import { NaverMapInstance, useMapZoom } from '@/hooks/Map/useMapZoom';
 import useDevice from '@/hooks/useDevice';
 import * as Styled from './MapModal.styles';
 
@@ -26,7 +26,7 @@ const MapModal = ({
 }: MapModalProps) => {
   const { isMobile, isTablet } = useDevice();
   const isMobileView = isMobile || isTablet;
-  const mapInstanceRef = useRef<any>(null);
+  const mapInstanceRef = useRef<NaverMapInstance | null>(null);
   const { zoomIn, zoomOut } = useMapZoom(mapInstanceRef);
 
   return (
