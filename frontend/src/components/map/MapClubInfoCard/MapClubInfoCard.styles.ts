@@ -24,7 +24,7 @@ export const Card = styled.div`
     padding: 24px 16px;
   }
 
-  ${media.mini_mobile} {
+  ${media.mobile} {
     width: calc(100vw - 40px);
   }
 `;
