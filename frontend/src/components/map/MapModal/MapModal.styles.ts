@@ -15,7 +15,7 @@ export const Container = styled.div`
 
   ${media.tablet} {
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     max-width: none;
     max-height: none;
     border-radius: 0;
