@@ -4,6 +4,7 @@ import locationIcon from '@/assets/images/icons/location_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
+import MapModal from '@/components/map/MapModal/MapModal';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
@@ -23,7 +24,6 @@ import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
 import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
-import MapModal from '@/components/map/MapModal/MapModal';
 
 export const TAB_TYPE = {
   INTRO: 'intro',

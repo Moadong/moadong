@@ -1,9 +1,9 @@
 import { RefObject, useCallback, useEffect, useRef } from 'react';
 import markerIcon from '@/assets/images/icons/marker.svg';
-import { ClubLocation } from '@/constants/clubLocation';
-import { loadNaverMapScript } from '@/utils/loadNaverMapScript';
 import MapClubInfoCard from '@/components/map/MapClubInfoCard/MapClubInfoCard';
+import { ClubLocation } from '@/constants/clubLocation';
 import { colors } from '@/styles/theme/colors';
+import { loadNaverMapScript } from '@/utils/loadNaverMapScript';
 import * as Styled from './InteractiveMapView.styles';
 
 interface InteractiveMapViewProps {
@@ -100,7 +100,14 @@ const InteractiveMapView = ({
       mapInstanceRef.current?.destroy();
       mapInstanceRef.current = null;
     };
-  }, [active, location.lat, location.lng, markerSize, bubbleFontSize, bubbleFontWeight]);
+  }, [
+    active,
+    location.lat,
+    location.lng,
+    markerSize,
+    bubbleFontSize,
+    bubbleFontWeight,
+  ]);
 
   const handleRecenter = useCallback(() => {
     const map = mapInstanceRef.current;

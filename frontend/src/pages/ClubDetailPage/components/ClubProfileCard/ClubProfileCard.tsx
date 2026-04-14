@@ -121,9 +121,7 @@ const ClubProfileCard = ({
                   </span>
                 </Styled.LocationInfo>
                 <Styled.LocationDot>·</Styled.LocationDot>
-                <Styled.MapLink onClick={onMapClick}>
-                  지도
-                </Styled.MapLink>
+                <Styled.MapLink onClick={onMapClick}>지도</Styled.MapLink>
               </Styled.LocationRow>
             </Styled.MobileLocationSection>
           )}

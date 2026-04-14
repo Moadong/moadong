@@ -4,8 +4,8 @@ import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
 import PortalModal from '@/components/common/Modal/PortalModal';
 import InteractiveMapView from '@/components/map/InteractiveMapView/InteractiveMapView';
 import MapZoomControls from '@/components/map/MapZoomControls/MapZoomControls';
-import { useMapZoom } from '@/hooks/Map/useMapZoom';
 import { ClubLocation } from '@/constants/clubLocation';
+import { useMapZoom } from '@/hooks/Map/useMapZoom';
 import useDevice from '@/hooks/useDevice';
 import * as Styled from './MapModal.styles';
 
@@ -43,7 +43,10 @@ const MapModal = ({
           mapInstanceRef={mapInstanceRef}
         />
 
-        <Styled.ActionButton onClick={onClose} aria-label={isMobileView ? '뒤로가기' : '닫기'}>
+        <Styled.ActionButton
+          onClick={onClose}
+          aria-label={isMobileView ? '뒤로가기' : '닫기'}
+        >
           {isMobileView ? (
             <PrevButtonIcon width={30} height={30} />
           ) : (
