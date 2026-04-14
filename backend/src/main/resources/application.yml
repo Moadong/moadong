@@ -1,0 +1,114 @@
+spring:
+  application:
+    name: moadong
+  profiles:
+    active: local
+  data:
+    mongodb:
+      uri: mongodb+srv://moadong:moadongjoa123@moadong.txz7nfd.mongodb.net/moadong?authSource=admin
+      write-concern:
+        w: majority
+      auto-index-creation: true
+    redis:
+      host: redis-11135.c340.ap-northeast-2-1.ec2.cloud.redislabs.com
+      port: 11135
+      username: default
+      password: Ctu9YV4vRBSirl8HY5U76tCa0SXE5auR
+  servlet:
+    multipart:
+      max-file-size: 10MB
+      max-request-size: 11MB
+  main:
+    allow-bean-definition-overriding: true
+  rabbitmq:
+    host: 158.180.90.97
+    port: 5672
+    username: moadong
+    password: thisismoaworld
+    listener:
+      simple:
+        acknowledge-mode: auto
+        retry:
+          enabled: true
+          max-attempts: 3
+
+server:
+  port: 8080
+  domain: https://www.zepelown.site
+  feed:
+    max-count: 15
+  image:
+    max-size: 10485760
+
+frontend:
+  domain: https://moadong.netlify.app
+
+management:
+  server:
+    port: 8082
+  endpoints:
+    web:
+      exposure:
+        include: health,metrics,prometheus,heapdump,threaddump,info
+  metrics:
+    distribution:
+      percentiles-histogram:
+        http:
+          server:
+            requests: true
+    tags:
+      application: ${spring.application.name}
+  info:
+    env:
+      enabled: true
+
+app:
+  cors:
+    allowedOrigins: http://localhost:3000,https://moadong.netlify.app,https://www.moadong.com
+
+jwt:
+  secret:
+    key: da5da25eb383b1e9fc1badaffe38931efd712f10924d36ea39e5bc936fff2f76f836cc0c6a3d48d14eac9b3d5e87f321141653f8db41fe2e3529f34e2cc4d48d2342aac36e9bcac3c3df7694238335231ed6b2359e568100817f5093a24f4c935eeb19109337a01adf58ea1f591aed1b7ac2e8b5275bf2a18e8adb1eed6ded6f730811660a591655f771d5d2b7fb16c7fa5052b8125687993e8dbabf36e4087a28c2e5a54f2fcf5f8ed36fd9a4d9ee9b775b10da174fa5b036fc6ca93f092e69839a6d0e14c2f226f18ad6906029c3f0799cda4b1b69ad41a746c02a1c28f34de86ab51ed4f217ad5725b8362c4a2368888ab15a42e2ed80103726fe9110be348cba7d2bd8c028025a1d36dcd349d105a3a87ddd36ba21b20a27d9bc47129b977429f27464e4475d0dbfc28e447a9d94c4a431eb3ed714941d9dbb646978ecdbc6424ba1d657e55224643b98b5049d7eedef56bb0be0047b115d2b12a69eb1fa
+  access:
+    token:
+      expiration:
+        min: 60
+  refresh:
+    token:
+      expiration:
+        hour: 168
+
+cloud:
+  aws:
+    credentials:
+      accessKey: 53dcee2c29b7532a0ff43c6f44cb92ac
+      secretKey: 45f207d460218e4ae535373d2e0e1349cf0b80b3402b6232b9c719e919289cfc
+    s3:
+      bucket: moadong-dev
+      endpoint: https://c127386f8994568511a02577d82799ae.r2.cloudflarestorage.com
+      view-endpoint: https://cdn.moadong.com
+      bannerbucket: moadong-banner
+      banner-view-endpoint: https://banner.moadong.com
+
+application:
+  encryption:
+    key: 8pTFIf5y4JLzpWsaGKe7n2O2RlDKhnHO
+    iv: thisismoaworld!@
+
+scheduling:
+  enabled: false
+
+fcm:
+  topic:
+    timeout-seconds: 5
+
+rabbitmq:
+  summary:
+    exchange: x.test.summary
+    routingKey: r.test.summary
+    queue: q.test.summary
+
+gemma:
+  server:
+    host: 122.34.12.224
+    port: 23412

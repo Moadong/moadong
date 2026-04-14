@@ -41,11 +41,15 @@ describe('getDDay', () => {
     expect(result).toBe(0);
   });
 
-  it('행사 종료 후이면 -1 반환', () => {
-    jest.setSystemTime(new Date('2026-03-28T00:00:00Z'));
+  it('행사 시작일, 시스템 로컬 시간과 이벤트 시작일의 UTC 날짜 차이로 D-1이 되는 버그 수정', () => {
+    // Simulate KST timezone where it's 2026-03-25 08:00:00 KST (user's D-day)
+    // which is 2026-03-24 23:00:00Z UTC
+    jest.setSystemTime(new Date('2026-03-25T08:00:00+09:00'));
 
+    // eventStartDate is 2026-03-25T00:00:00Z (UTC date string)
     const result = getDDay('2026-03-25T00:00:00Z', '2026-03-27T00:00:00Z');
 
-    expect(result).toBe(-1);
+    // With the fix, it should now return 0 (D-Day)
+    expect(result).toBe(0);
   });
 });
