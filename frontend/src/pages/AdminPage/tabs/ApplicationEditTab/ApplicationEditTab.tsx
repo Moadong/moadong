@@ -64,7 +64,7 @@ const ApplicationEditTab = () => {
     setFormData({ ...existingFormData, questions: currentQuestions });
   }, [existingFormData]);
 
-  const { mutate: createMutate, isPending: isCreating } = useMutation({
+  const { mutate: createMutate } = useMutation({
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
@@ -75,7 +75,7 @@ const ApplicationEditTab = () => {
       alert(`지원서 생성에 실패했습니다.: ${err.message}`),
   });
 
-  const { mutate: updateMutate, isPending: isUpdating } = useMutation({
+  const { mutate: updateMutate } = useMutation({
     mutationFn: ({
       data,
       applicationFormId,
