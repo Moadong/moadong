@@ -19,6 +19,9 @@ jest.mock('@sentry/react', () => ({
   browserTracingIntegration: jest.fn(),
 }));
 
+const mockImportMeta = {
+  env: {} as any,
+};
 describe('initSDK', () => {
   const consoleWarnSpy = jest.spyOn(console, 'warn').mockImplementation(() => {});
   const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
@@ -60,17 +63,13 @@ describe('initSDK', () => {
     });
 
     // Mock import.meta.env by default
-    const mockImportMeta = {
-      env: {},
-    };
+    mockImportMeta.env = {}; // Reset env for each test
     Object.defineProperty(globalThis, 'import.meta', {
       writable: true,
       configurable: true,
       value: mockImportMeta,
     });
   });
-
-  const globalAny = globalThis as any;
 
   afterAll(() => {
     consoleWarnSpy.mockRestore();
@@ -97,7 +96,7 @@ describe('initSDK', () => {
     });
 
     it('VITE_MIXPANEL_TOKEN이 있으면 Mixpanel을 초기화한다', () => {
-      globalAny['import.meta'].env.VITE_MIXPANEL_TOKEN = 'test_token';
+      mockImportMeta.env.VITE_MIXPANEL_TOKEN = 'test_token';
       initializeMixpanel();
       expect(mixpanel.init).toHaveBeenCalledWith('test_token', {
         ignore_dnt: true,
@@ -106,7 +105,7 @@ describe('initSDK', () => {
     });
 
     it('localhost에서 Mixpanel이 비활성화된다', () => {
-      globalAny['import.meta'].env.VITE_MIXPANEL_TOKEN = 'test_token';
+      mockImportMeta.env.VITE_MIXPANEL_TOKEN = 'test_token';
       Object.defineProperty(window, 'location', {
         writable: true,
         value: { ...window.location, hostname: 'localhost' },
@@ -116,7 +115,7 @@ describe('initSDK', () => {
     });
 
     it('session_id가 있으면 identify를 호출하고 URL에서 제거한다', () => {
-      globalAny['import.meta'].env.VITE_MIXPANEL_TOKEN = 'test_token';
+      mockImportMeta.env.VITE_MIXPANEL_TOKEN = 'test_token';
       Object.defineProperty(window, 'location', {
         writable: true,
         value: { ...window.location, search: '?session_id=user123&param=test' },
@@ -127,7 +126,7 @@ describe('initSDK', () => {
     });
 
     it('session_id만 있고 다른 파라미터가 없으면 URL에서 session_id를 제거한다', () => {
-      globalAny['import.meta'].env.VITE_MIXPANEL_TOKEN = 'test_token';
+      mockImportMeta.env.VITE_MIXPANEL_TOKEN = 'test_token';
       Object.defineProperty(window, 'location', {
         writable: true,
         value: { ...window.location, search: '?session_id=user123' },
@@ -145,7 +144,7 @@ describe('initSDK', () => {
     });
 
     it('VITE_CHANNEL_PLUGIN_KEY가 있으면 ChannelService를 부트한다', () => {
-      globalAny['import.meta'].env.VITE_CHANNEL_PLUGIN_KEY = 'test_channel_key';
+      mockImportMeta.env.VITE_CHANNEL_PLUGIN_KEY = 'test_channel_key';
       initializeChannelService();
       expect(ChannelService.boot).toHaveBeenCalledWith({
         pluginKey: 'test_channel_key',
@@ -160,13 +159,13 @@ describe('initSDK', () => {
 
   describe('initializeSentry', () => {
     beforeEach(() => {
-      globalAny['import.meta'].env.MODE = 'production';
-      globalAny['import.meta'].env.VITE_SENTRY_RELEASE = 'v1.0.0';
+      mockImportMeta.env.MODE = 'production';
+      mockImportMeta.env.VITE_SENTRY_RELEASE = 'v1.0.0';
     });
 
     it('개발 환경에서 VITE_ENABLE_SENTRY_IN_DEV가 false이면 Sentry를 초기화하지 않는다', () => {
-      globalAny['import.meta'].env.DEV = true;
-      globalAny['import.meta'].env.VITE_ENABLE_SENTRY_IN_DEV = 'false';
+      mockImportMeta.env.DEV = true;
+      mockImportMeta.env.VITE_ENABLE_SENTRY_IN_DEV = 'false';
       initializeSentry();
       expect(console.log).toHaveBeenCalledWith(
         'Sentry는 개발 환경에서 비활성화되어 있습니다. 테스트하려면 VITE_ENABLE_SENTRY_IN_DEV=true로 설정하세요.',
@@ -181,7 +180,7 @@ describe('initSDK', () => {
     });
 
     it('VITE_SENTRY_DSN이 있으면 Sentry를 초기화한다', () => {
-      globalAny['import.meta'].env.VITE_SENTRY_DSN = 'test_dsn';
+      mockImportMeta.env.VITE_SENTRY_DSN = 'test_dsn';
       initializeSentry();
       expect(Sentry.init).toHaveBeenCalledWith({
         dsn: 'test_dsn',
@@ -194,9 +193,9 @@ describe('initSDK', () => {
     });
 
     it('개발 환경에서 VITE_ENABLE_SENTRY_IN_DEV가 true이면 Sentry를 초기화한다', () => {
-      globalAny['import.meta'].env.DEV = true;
-      globalAny['import.meta'].env.VITE_ENABLE_SENTRY_IN_DEV = 'true';
-      globalAny['import.meta'].env.VITE_SENTRY_DSN = 'test_dsn';
+      mockImportMeta.env.DEV = true;
+      mockImportMeta.env.VITE_ENABLE_SENTRY_IN_DEV = 'true';
+      mockImportMeta.env.VITE_SENTRY_DSN = 'test_dsn';
       initializeSentry();
       expect(Sentry.init).toHaveBeenCalled();
     });
@@ -210,7 +209,7 @@ describe('initSDK', () => {
     });
 
     it('window.Kakao가 없으면 에러를 출력하고 초기화하지 않는다', () => {
-      globalAny['import.meta'].env.VITE_KAKAO_JAVASCRIPT_KEY = 'test_kakao_key';
+      mockImportMeta.env.VITE_KAKAO_JAVASCRIPT_KEY = 'test_kakao_key';
       Object.defineProperty(window, 'Kakao', {
         writable: true,
         value: undefined,
@@ -221,13 +220,13 @@ describe('initSDK', () => {
     });
 
     it('VITE_KAKAO_JAVASCRIPT_KEY가 있고 window.Kakao가 있으면 Kakao SDK를 초기화한다', () => {
-      globalAny['import.meta'].env.VITE_KAKAO_JAVASCRIPT_KEY = 'test_kakao_key';
+      mockImportMeta.env.VITE_KAKAO_JAVASCRIPT_KEY = 'test_kakao_key';
       initializeKakaoSDK();
       expect(window.Kakao.init).toHaveBeenCalledWith('test_kakao_key');
     });
 
     it('Kakao SDK 초기화 중 에러 발생 시 에러를 출력한다', () => {
-      globalAny['import.meta'].env.VITE_KAKAO_JAVASCRIPT_KEY = 'test_kakao_key';
+      mockImportMeta.env.VITE_KAKAO_JAVASCRIPT_KEY = 'test_kakao_key';
       const mockError = new Error('Kakao init failed');
       (window.Kakao.init as jest.Mock).mockImplementation(() => {
         throw mockError;
