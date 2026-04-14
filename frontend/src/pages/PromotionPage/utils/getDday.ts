@@ -1,21 +1,24 @@
-const stripTime = (date: Date) =>
-  new Date(date.getFullYear(), date.getMonth(), date.getDate());
+import { toZonedTime } from 'date-fns-tz';
+import { startOfDay, differenceInCalendarDays } from 'date-fns';
 
-const ONE_DAY_MS = 1000 * 60 * 60 * 24;
+const KST_TIMEZONE = 'Asia/Seoul';
 
 export const getDDay = (eventStartDate: string, eventEndDate: string) => {
-  const today = stripTime(new Date());
-  const startDate = stripTime(new Date(eventStartDate));
-  const endDate = stripTime(new Date(eventEndDate));
+  const now = new Date();
+  const kstNow = toZonedTime(now, KST_TIMEZONE);
+  const kstStartDate = toZonedTime(new Date(eventStartDate), KST_TIMEZONE);
+  const kstEndDate = toZonedTime(new Date(eventEndDate), KST_TIMEZONE);
 
-  if (today < startDate) {
-    const remainingDays = Math.round(
-      (startDate.getTime() - today.getTime()) / ONE_DAY_MS,
-    );
+  const startOfTodayKst = startOfDay(kstNow);
+  const startOfEventDateKst = startOfDay(kstStartDate);
+  const startOfEndDateKst = startOfDay(kstEndDate);
+
+  if (startOfTodayKst < startOfEventDateKst) {
+    const remainingDays = differenceInCalendarDays(startOfEventDateKst, startOfTodayKst);
     return remainingDays;
   }
 
-  if (today >= startDate && today <= endDate) {
+  if (startOfTodayKst >= startOfEventDateKst && startOfTodayKst <= startOfEndDateKst) {
     return 0;
   }
 
