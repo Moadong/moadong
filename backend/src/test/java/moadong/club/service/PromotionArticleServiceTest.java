@@ -50,6 +50,8 @@ class PromotionArticleServiceTest {
             .clubName("모아동")
             .title("봄 모집")
             .location("서울")
+            .latitude(37.5665)
+            .longitude(126.9780)
             .eventStartDate(Instant.parse("2026-03-01T00:00:00Z"))
             .eventEndDate(Instant.parse("2026-03-31T00:00:00Z"))
             .description("설명")
@@ -62,6 +64,8 @@ class PromotionArticleServiceTest {
         assertEquals(1, response.articles().size());
         assertEquals("article-1", response.articles().get(0).id());
         assertEquals("모아동", response.articles().get(0).clubName());
+        assertEquals(37.5665, response.articles().get(0).latitude());
+        assertEquals(126.9780, response.articles().get(0).longitude());
     }
 
     @Test
@@ -82,6 +86,8 @@ class PromotionArticleServiceTest {
             .clubName("이전 동아리")
             .title("이전 제목")
             .location("이전 장소")
+            .latitude(35.1796)
+            .longitude(129.0756)
             .eventStartDate(Instant.parse("2026-03-01T00:00:00Z"))
             .eventEndDate(Instant.parse("2026-03-02T00:00:00Z"))
             .description("이전 설명")
@@ -91,6 +97,8 @@ class PromotionArticleServiceTest {
             clubId,
             "수정 제목",
             "수정 장소",
+            37.5665,
+            126.9780,
             Instant.parse("2026-04-01T00:00:00Z"),
             Instant.parse("2026-04-10T00:00:00Z"),
             "수정 설명",
@@ -110,6 +118,8 @@ class PromotionArticleServiceTest {
         assertEquals("수정 동아리", article.getClubName());
         assertEquals("수정 제목", article.getTitle());
         assertEquals("수정 장소", article.getLocation());
+        assertEquals(37.5665, article.getLatitude());
+        assertEquals(126.9780, article.getLongitude());
         assertEquals(Instant.parse("2026-04-01T00:00:00Z"), article.getEventStartDate());
         assertEquals(Instant.parse("2026-04-10T00:00:00Z"), article.getEventEndDate());
         assertEquals("수정 설명", article.getDescription());
@@ -124,6 +134,8 @@ class PromotionArticleServiceTest {
             clubId,
             "신규 제목",
             "신규 장소",
+            37.5665,
+            126.9780,
             Instant.parse("2026-04-01T00:00:00Z"),
             Instant.parse("2026-04-10T00:00:00Z"),
             "신규 설명",
@@ -141,6 +153,8 @@ class PromotionArticleServiceTest {
             .clubName("생성 동아리")
             .title("신규 제목")
             .location("신규 장소")
+            .latitude(37.5665)
+            .longitude(126.9780)
             .eventStartDate(Instant.parse("2026-04-01T00:00:00Z"))
             .eventEndDate(Instant.parse("2026-04-10T00:00:00Z"))
             .description("신규 설명")
@@ -162,6 +176,8 @@ class PromotionArticleServiceTest {
             new ObjectId().toHexString(),
             "수정 제목",
             "수정 장소",
+            37.5665,
+            126.9780,
             Instant.parse("2026-04-01T00:00:00Z"),
             Instant.parse("2026-04-10T00:00:00Z"),
             "수정 설명",
@@ -182,6 +198,8 @@ class PromotionArticleServiceTest {
             new ObjectId().toHexString(),
             "수정 제목",
             "수정 장소",
+            37.5665,
+            126.9780,
             Instant.parse("2026-04-01T00:00:00Z"),
             Instant.parse("2026-04-10T00:00:00Z"),
             "수정 설명",

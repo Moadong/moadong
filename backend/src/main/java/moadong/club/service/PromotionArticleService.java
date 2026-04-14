@@ -43,6 +43,8 @@ public class PromotionArticleService {
             .clubName(club.getName())
             .title(request.title())
             .location(request.location())
+            .latitude(request.latitude())
+            .longitude(request.longitude())
             .eventStartDate(request.eventStartDate())
             .eventEndDate(request.eventEndDate())
             .description(request.description())

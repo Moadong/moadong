@@ -29,6 +29,10 @@ public class PromotionArticle {
 
     private String location;
 
+    private Double latitude;
+
+    private Double longitude;
+
     private Instant eventStartDate;
 
     private Instant eventEndDate;
@@ -50,6 +54,8 @@ public class PromotionArticle {
         this.clubName = clubName;
         this.title = request.title();
         this.location = request.location();
+        this.latitude = request.latitude();
+        this.longitude = request.longitude();
         this.eventStartDate = request.eventStartDate();
         this.eventEndDate = request.eventEndDate();
         this.description = request.description();
