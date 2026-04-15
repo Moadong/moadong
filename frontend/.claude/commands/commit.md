@@ -1,6 +1,6 @@
 ---
 description: 세션 작업 기록 + 기능 문서화 + 변경 내용 커밋
-allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(git status), Bash(git diff *), Bash(git log *), Bash(git add *), Bash(git commit *), Read, Write, Edit, Glob, Grep
+allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Bash(git status), Bash(git diff *), Bash(git log *), Bash(git add *), Bash(git commit *), Read, Write, Edit, Glob, Grep
 ---
 
 # 작업 지시
@@ -107,15 +107,18 @@ allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(git status), Bash(g
 
 기록이 완료되면 커밋을 수행합니다.
 
-1. `git status`로 변경된 파일 확인
-2. `git diff HEAD`로 모든 변경사항 확인 (또는 `git diff`와 `git diff --staged`를 각각 실행)
-3. `git log --oneline -5`로 최근 커밋 스타일 참고
-4. 변경 내용을 분석하여 커밋 메시지 작성
-5. 관련 파일만 `git add`로 스테이징
-   - `docs/features/` 문서 파일 포함
+1. `npm run format` 실행하여 코드 포맷팅
+2. `git status`로 변경된 파일 확인
+3. `git diff HEAD`로 모든 변경사항 확인 (또는 `git diff`와 `git diff --staged`를 각각 실행)
+4. `git log --oneline -5`로 최근 커밋 스타일 참고
+5. 변경된 파일을 **기능(scope) 단위로 그룹핑**
+   - 같은 기능/도메인에 속하는 파일끼리 묶음 (예: store 변경, admin UI 변경, hooks 변경 등)
+   - 논리적으로 독립적인 변경은 별도 커밋으로 분리
+   - `docs/features/` 문서 파일은 관련 기능 커밋에 포함
    - `dailyNote/`는 gitignore 대상이므로 제외
-6. **커밋 전에 변경 내용과 커밋 메시지를 사용자에게 확인 요청**
-7. 사용자 승인 후 커밋 실행
+6. **커밋 전에 그룹핑 계획과 각 커밋 메시지를 사용자에게 확인 요청**
+7. 사용자 승인 후 그룹별로 순서대로 커밋 실행
+   - 각 그룹: `git add <관련 파일들>` → `git commit -m "..."` 순으로 반복
 
 **커밋 메시지 형식:**
 
