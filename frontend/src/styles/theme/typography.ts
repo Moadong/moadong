@@ -1,12 +1,13 @@
+import { css } from 'styled-components';
+
 export const typography = {
   title: {
     title1: { size: '40px', weight: 700 },
-    title2: { size: '24px', weight: 700 },
-    title3: { size: '22px', weight: 700 },
+    title2: { size: '32px', weight: 700 },
+    title3: { size: '24px', weight: 700 },
     title4: { size: '22px', weight: 700 },
     title5: { size: '20px', weight: 700 },
-    title6: { size: '18px', weight: 700 },
-    title7: { size: '16px', weight: 700 },
+    title6: { size: '16px', weight: 700 },
   },
   paragraph: {
     p1: { size: '20px', weight: 600 },
@@ -22,3 +23,8 @@ export const typography = {
     button2: { size: '12px', weight: 600 },
   },
 } as const;
+
+export const setTypography = (typo: { size: string; weight: number }) => css`
+  font-size: ${typo.size};
+  font-weight: ${typo.weight};
+`;

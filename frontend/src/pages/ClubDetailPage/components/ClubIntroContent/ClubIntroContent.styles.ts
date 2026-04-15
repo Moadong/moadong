@@ -2,12 +2,7 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
-import { typography } from '@/styles/theme/typography';
-
-const setTypography = (typo: { size: string; weight: number }) => `
-  font-size: ${typo.size};
-  font-weight: ${typo.weight};
-`;
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
   display: flex;
@@ -34,7 +29,7 @@ export const SectionTitle = styled.h2`
   color: ${colors.gray[800]};
 
   ${media.mobile} {
-    ${setTypography(typography.title.title7)};
+    ${setTypography(typography.title.title6)};
   }
 `;
 
@@ -128,7 +123,7 @@ export const FaqHeader = styled.div`
   color: ${colors.gray[800]};
 
   ${media.mobile} {
-    ${setTypography(typography.title.title7)};
+    ${setTypography(typography.title.title6)};
   }
 `;
 

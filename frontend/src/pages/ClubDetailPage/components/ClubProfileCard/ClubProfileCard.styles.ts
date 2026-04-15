@@ -1,12 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
-import { typography } from '@/styles/theme/typography';
-
-const setTypography = (typo: { size: string; weight: number }) => `
-  font-size: ${typo.size};
-  font-weight: ${typo.weight};
-`;
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
   position: relative;
