@@ -86,10 +86,10 @@ const ClubDetailPage = () => {
   const tabs = useMemo(
     () =>
       [
-        { key: TAB_TYPE.INTRO, label: '소개 내용' },
+        { key: TAB_TYPE.INTRO, label: '소개내용' },
         { key: TAB_TYPE.PHOTOS, label: '활동사진' },
         hasCalendarConnection
-          ? { key: TAB_TYPE.SCHEDULE, label: '일정 보기' }
+          ? { key: TAB_TYPE.SCHEDULE, label: '행사일정' }
           : null,
       ].filter(Boolean) as Array<{ key: TabType; label: string }>,
     [hasCalendarConnection],
@@ -101,7 +101,7 @@ const ClubDetailPage = () => {
         { key: TAB_TYPE.INTRO, label: '소개내용' },
         { key: TAB_TYPE.PHOTOS, label: '활동사진' },
         hasCalendarConnection
-          ? { key: TAB_TYPE.SCHEDULE, label: '일정 보기' }
+          ? { key: TAB_TYPE.SCHEDULE, label: '행사일정' }
           : null,
       ].filter(Boolean) as Array<{ key: TabType; label: string }>,
     [hasCalendarConnection],
