@@ -57,7 +57,7 @@ const ClubApplyButton = ({
         state: { formDetail },
       });
       setIsApplicationModalOpen(false);
-    } catch (_error) {
+    } catch (_e) {
       // TODO: Replace with proper error logging (e.g., Sentry)
       alert(
         '지원서 정보를 불러오는 중 오류가 발생했습니다. 다시 시도해주세요.',

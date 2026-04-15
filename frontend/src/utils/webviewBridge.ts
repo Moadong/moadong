@@ -29,7 +29,6 @@ const isDev = process.env.NODE_ENV === 'development';
 export const postMessageToApp = (message: WebViewMessage): boolean => {
   if (!isInAppWebView()) {
     if (isDev) {
-      console.log('[WebViewBridge] 웹 환경, 메시지 무시:', message.type);
     }
     return false;
   }
@@ -37,7 +36,6 @@ export const postMessageToApp = (message: WebViewMessage): boolean => {
   try {
     window.ReactNativeWebView?.postMessage(JSON.stringify(message));
     if (isDev) {
-      console.log('[WebViewBridge] 앱으로 전송:', message.type);
     }
     return true;
   } catch (error) {

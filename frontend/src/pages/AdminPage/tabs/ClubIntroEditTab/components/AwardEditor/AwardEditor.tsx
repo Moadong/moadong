@@ -217,9 +217,9 @@ const AwardEditor = ({ awards, onChange }: AwardEditorProps) => {
       </Styled.AddSemesterSection>
 
       <Styled.AwardsList>
-        {sortedAwards.map((award, sortedIndex) => {
+        {sortedAwards.map((award, _) => {
           const originalIndex = awards.findIndex(
-            (originalAward, idx) =>
+            (originalAward, __) =>
               originalAward.year === award.year &&
               originalAward.semesterTerm === award.semesterTerm &&
               originalAward.achievements === award.achievements,

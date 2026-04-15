@@ -45,7 +45,7 @@ export function initializeSentry() {
   const enableInDev = import.meta.env.VITE_ENABLE_SENTRY_IN_DEV === 'true';
 
   if (import.meta.env.DEV && !enableInDev) {
-    console.log(
+    console.warn(
       'Sentry는 개발 환경에서 비활성화되어 있습니다. 테스트하려면 VITE_ENABLE_SENTRY_IN_DEV=true로 설정하세요.',
     );
     return;
