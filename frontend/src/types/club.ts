@@ -1,9 +1,12 @@
+import { Brand } from './brand';
 import { SNS_CONFIG } from '@/constants/snsConfig';
 
 export type RecruitmentStatus = 'OPEN' | 'CLOSED' | 'UPCOMING' | 'ALWAYS';
 
+export type ClubId = Brand<'ClubId', string>;
+
 export interface Club {
-  id: string;
+  id: ClubId;
   name: string;
   logo: string;
   cover?: string;

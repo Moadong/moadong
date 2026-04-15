@@ -39,15 +39,6 @@ import static org.mockito.Mockito.when;
 @Transactional
 class FcmServiceTest {
 
-    @TestConfiguration
-    static class TestAsyncConfig {
-        @Bean(name = "fcmAsync")
-        @Primary
-        public TaskExecutor taskExecutor() {
-            return new SyncTaskExecutor();
-        }
-    }
-
     @Autowired
     private FcmService fcmService;
 
@@ -61,7 +52,7 @@ class FcmServiceTest {
     @Autowired
     private FcmAsyncService fcmAsyncService;
 
-    @MockBean
+    @Autowired
     private FirebaseMessaging firebaseMessaging;
 
     @BeforeEach
