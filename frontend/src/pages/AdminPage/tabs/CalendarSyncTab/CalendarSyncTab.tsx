@@ -14,7 +14,6 @@ const CalendarSyncTab = () => {
     googleCalendars,
     selectedGoogleCalendarId,
     googleCalendarEvents,
-    notionItems,
     notionTotalResults,
     notionDatabaseSourceId,
     notionDatabaseOptions,
