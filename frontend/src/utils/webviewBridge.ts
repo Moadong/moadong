@@ -41,6 +41,7 @@ export const postMessageToApp = (message: WebViewMessage): boolean => {
     }
     return true;
   } catch (error) {
+    // eslint-disable-next-line no-console
     console.error('[WebViewBridge] 전송 실패:', error);
     return false;
   }

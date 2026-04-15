@@ -12,6 +12,7 @@ const useMixpanelTrack = () => {
           url: window.location.href,
         });
       } catch (error) {
+        // eslint-disable-next-line no-console
         console.warn('Failed to track event:', eventName, error);
       }
     },
