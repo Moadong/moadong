@@ -29,7 +29,7 @@ type Story = StoryObj<typeof meta>;
 export const Default: Story = {
   args: {
     onChange: (selected) => {
-      console.log('selected:', selected);
+
     },
   },
 };
