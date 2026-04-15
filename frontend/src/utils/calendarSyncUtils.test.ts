@@ -3,8 +3,11 @@ import {
   buildDateKeyFromDate,
   buildDefaultRedirectUri,
   buildMonthCalendarDays,
+  convertGoogleEventToUnified,
+  convertNotionEventToUnified,
   createState,
   dateFromKey,
+  formatDateOnly,
   formatDateText,
   formatMonthLabel,
   maskToken,
@@ -151,6 +154,60 @@ describe('calendarSyncUtils', () => {
 
       expect(parseNotionCalendarEvent(missingDate)).toBeNull();
       expect(parseNotionCalendarEvent(invalidDate)).toBeNull();
+    });
+  });
+
+  describe('통합 이벤트 변환', () => {
+    it('Google 이벤트를 통합 이벤트로 변환한다', () => {
+      const googleEvent = {
+        id: 'event-1',
+        title: '구글 캘린더 일정',
+        start: '2026-04-15T10:00:00Z',
+        end: '2026-04-15T11:00:00Z',
+        url: 'https://calendar.google.com/event-1',
+        description: '설명입니다',
+      };
+
+      const unified = convertGoogleEventToUnified(googleEvent);
+
+      expect(unified).not.toBeNull();
+      expect(unified?.id).toBe('google-event-1');
+      expect(unified?.title).toBe('구글 캘린더 일정');
+      expect(unified?.dateKey).toBe('2026-04-15');
+      expect(unified?.source).toBe('GOOGLE');
+    });
+
+    it('Notion 이벤트를 통합 이벤트로 변환한다', () => {
+      const notionEvent = {
+        id: 'page-1',
+        title: '노션 일정',
+        start: '2026-04-16',
+        dateKey: '2026-04-16',
+        url: 'https://www.notion.so/page-1',
+      };
+
+      const unified = convertNotionEventToUnified(notionEvent);
+
+      expect(unified.id).toBe('notion-page-1');
+      expect(unified.title).toBe('노션 일정');
+      expect(unified.source).toBe('NOTION');
+    });
+
+    it('잘못된 날짜의 Google 이벤트는 null을 반환한다', () => {
+      const invalidEvent = {
+        id: 'event-2',
+        title: '잘못된 일정',
+        start: 'invalid-date',
+      };
+      expect(convertGoogleEventToUnified(invalidEvent)).toBeNull();
+    });
+  });
+
+  describe('추가 날짜 포맷팅', () => {
+    it('formatDateOnly는 YYYY-MM-DD를 한국식 날짜로 변환한다', () => {
+      expect(formatDateOnly('2026-04-15')).toBe('2026. 4. 15.');
+      expect(formatDateOnly('not-a-date')).toBe('not-a-date');
+      expect(formatDateOnly(undefined)).toBe('-');
     });
   });
 });
