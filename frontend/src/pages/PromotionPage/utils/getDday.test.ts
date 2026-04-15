@@ -41,6 +41,14 @@ describe('getDDay', () => {
     expect(result).toBe(0);
   });
 
+  it('행사 시작일 당일(시작 시간 전)이면 D-Day (0) 반환', () => {
+    jest.setSystemTime(new Date('2026-03-25T01:00:00Z'));
+
+    const result = getDDay('2026-03-25T09:00:00Z', '2026-03-27T00:00:00Z');
+
+    expect(result).toBe(0);
+  });
+
   it('행사 종료 후이면 -1 반환', () => {
     jest.setSystemTime(new Date('2026-03-28T00:00:00Z'));
 
