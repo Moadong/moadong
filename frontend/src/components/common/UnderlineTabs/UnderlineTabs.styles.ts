@@ -16,11 +16,13 @@ export const TabList = styled.div<{ $centerOnMobile: boolean }>`
   ${media.mobile} {
     justify-content: ${({ $centerOnMobile }) =>
       $centerOnMobile ? 'center' : 'flex-start'};
+    box-shadow: inset 0 -1px 0 ${colors.gray[300]};
   }
 `;
 
 export const TabButton = styled.button<{ $active: boolean }>`
-  width: 260.33px;
+  flex: 1;
+  max-width: 260.33px;
   ${({ $active }) =>
     setTypography($active ? typography.title.title6 : typography.paragraph.p3)};
   padding-bottom: 4px;
@@ -33,4 +35,11 @@ export const TabButton = styled.button<{ $active: boolean }>`
   transition:
     color ${transitions.duration.normal} ${transitions.easing.easeInOut},
     border-color ${transitions.duration.normal} ${transitions.easing.easeInOut};
+
+  ${media.mobile} {
+    ${setTypography(typography.paragraph.p5)};
+    font-weight: ${({ $active }) => ($active ? 700 : 500)};
+    border-bottom-color: ${({ $active }) =>
+      $active ? colors.gray[800] : 'transparent'};
+  }
 `;
