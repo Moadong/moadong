@@ -11,9 +11,6 @@ export const TabList = styled.div<{ $centerOnMobile: boolean }>`
 
   ${media.tablet} {
     padding: 0 20px;
-  }
-
-  ${media.mobile} {
     justify-content: ${({ $centerOnMobile }) =>
       $centerOnMobile ? 'center' : 'flex-start'};
     box-shadow: inset 0 -1px 0 ${colors.gray[300]};
@@ -36,7 +33,8 @@ export const TabButton = styled.button<{ $active: boolean }>`
     color ${transitions.duration.normal} ${transitions.easing.easeInOut},
     border-color ${transitions.duration.normal} ${transitions.easing.easeInOut};
 
-  ${media.mobile} {
+  ${media.tablet} {
+    max-width: none;
     ${setTypography(typography.paragraph.p5)};
     font-weight: ${({ $active }) => ($active ? 700 : 500)};
     border-bottom-color: ${({ $active }) =>
