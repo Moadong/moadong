@@ -45,6 +45,8 @@ export const useApplicantSSE = (applicationFormId: string | undefined) => {
   useEffect(() => {
     if (!applicationFormId) return;
 
+    setApplicantsData(null);
+
     const sseConnect = () => {
       eventSourceRef.current?.close();
 
