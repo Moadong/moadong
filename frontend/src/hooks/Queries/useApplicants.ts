@@ -25,8 +25,8 @@ export const useDeleteApplicants = (applicationFormId: string) => {
         queryKey: queryKeys.applicants.detail(applicationFormId),
       });
     },
-    onError: (error) => {
-      console.error(`Error delete applicants detail: ${error}`);
+    onError: (_error) => {
+      // console.error(`Error delete applicants detail: ${_error}`);
     },
   });
 };
@@ -48,8 +48,8 @@ export const useUpdateApplicant = (applicationFormId: string | undefined) => {
         });
       }
     },
-    onError: (error) => {
-      console.error(`Error updating applicant detail: ${error}`);
+    onError: (_error) => {
+      // console.error(`Error updating applicant detail: ${_error}`);
     },
   });
 };

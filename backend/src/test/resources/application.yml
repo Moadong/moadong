@@ -1,0 +1,87 @@
+spring:
+  data:
+    mongodb:
+      port: 27017
+    redis:
+      host: localhost
+      port: 6379
+  rabbitmq:
+    host: localhost
+    port: 5672
+    username: guest
+    password: guest
+  mail:
+    host: localhost
+    port: 25
+  datasource:
+    url: jdbc:h2:mem:testdb;DB_CLOSE_DELAY=-1
+    driver-class-name: org.h2.Driver
+    username: sa
+    password:
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create-drop
+
+logging:
+  level:
+    org.springframework.data.mongodb: DEBUG
+    org.springframework.boot.autoconfigure.mongo: DEBUG
+
+jwt:
+  secret:
+    key: test-secret-key-for-jwt-authentication-and-authorization
+  access:
+    token:
+      expiration:
+        min: 30
+  refresh:
+    token:
+      expiration:
+        hour: 24
+
+cloud:
+  aws:
+    credentials:
+      accessKey: test-access-key
+      secretKey: test-secret-key
+    s3:
+      bucket: test-bucket
+      endpoint: http://localhost:9000
+      bannerbucket: test-banner-bucket
+      banner-view-endpoint: http://localhost:9001
+      view-endpoint: http://localhost:9002
+
+server:
+  domain: localhost
+  feed:
+    max-count: 5
+  image:
+    max-size: 10485760 # 10MB
+  file-url:
+    max-length: 200
+    expiration-time: 10 # 10 minutes
+
+fcm:
+  topic:
+    timeout-seconds: 5
+
+gemma:
+  server:
+    host: localhost
+    port: 8080
+
+app:
+  cors:
+    allowedOrigins: http://localhost:3000,http://localhost:5173
+
+rabbitmq:
+  summary:
+    queue: test.summary.queue
+    exchange: test.summary.exchange
+    routingKey: test.summary.routingKey
+
+application:
+  encryption:
+    key: 0123456789abcdef0123456789abcdef
+    iv: 0123456789abcdef

@@ -48,6 +48,8 @@ dependencies {
     testImplementation 'io.github.artsok:rerunner-jupiter:2.1.6'
 	testImplementation 'org.springframework.boot:spring-boot-starter-test'
 	testImplementation 'org.springframework.security:spring-security-test'
+	testImplementation 'com.h2database:h2'
+	testImplementation 'de.flapdoodle.embed:de.flapdoodle.embed.mongo:4.11.0'
 	testCompileOnly 'org.projectlombok:lombok'
 	testAnnotationProcessor 'org.projectlombok:lombok'
 	testRuntimeOnly 'org.junit.platform:junit-platform-launcher'

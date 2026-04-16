@@ -34,8 +34,8 @@ export const createApplicantSSE = (
       try {
         const eventData: ApplicantStatusEvent = JSON.parse(e.data);
         eventHandlers.onStatusChange(eventData);
-      } catch (parseError) {
-        console.error('SSE PARSING ERROR:', parseError);
+      } catch {
+        // console.error('SSE PARSING ERROR:');
       }
     });
 

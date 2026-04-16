@@ -41,7 +41,7 @@ class FcmServiceTest {
 
     @TestConfiguration
     static class TestAsyncConfig {
-        @Bean(name = "fcmAsync")
+        @Bean(name = "testFcmAsync")
         @Primary
         public TaskExecutor taskExecutor() {
             return new SyncTaskExecutor();
