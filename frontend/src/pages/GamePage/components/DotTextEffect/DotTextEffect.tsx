@@ -135,9 +135,14 @@ const DotTextEffect = ({
   charColors = DEFAULT_CHAR_COLORS,
 }: DotTextEffectProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
+  const wrapperRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: -999, y: -999 });
   const dotsRef = useRef<Dot[]>([]);
   const rafRef = useRef<number>(0);
+
+  // 모바일에서 더 큰 폰트 사이즈 사용
+  const effectiveFontSize =
+    window.innerWidth < 700 ? Math.round(fontSize * 1.4) : fontSize;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -151,11 +156,26 @@ const DotTextEffect = ({
     document.fonts.ready.then(() => {
       if (!active) return;
 
-      const { dots, W, H } = buildDots(text, fontSize, spacing, charGap);
+      const { dots, W, H } = buildDots(
+        text,
+        effectiveFontSize,
+        spacing,
+        charGap,
+      );
       canvasW = W;
       canvasH = H;
       canvas.width = W;
       canvas.height = H;
+
+      // 컨테이너 너비를 넘으면 CSS transform으로 축소 (항상 한 줄 유지)
+      const wrapper = wrapperRef.current;
+      if (wrapper) {
+        const availW = wrapper.clientWidth;
+        const scale = Math.min(1, availW / W);
+        canvas.style.transform = `scale(${scale})`;
+        canvas.style.transformOrigin = 'center top';
+        wrapper.style.height = `${H * scale}px`;
+      }
       dots.forEach((d) => {
         d.color = charColors[Math.floor(Math.random() * charColors.length)];
       });
@@ -164,24 +184,42 @@ const DotTextEffect = ({
       rafRef.current = requestAnimationFrame(animate);
     });
 
+    const colorRadius = hoverRadius * 1.8;
+    const hoverR2 = hoverRadius * hoverRadius;
+    const colorR2 = colorRadius * colorRadius;
+
     const animate = () => {
       const mouse = mouseRef.current;
       const ds = dotsRef.current;
+      const inactive = mouse.x < -900;
 
       ctx.clearRect(0, 0, canvasW, canvasH);
 
-      const colorRadius = hoverRadius * 1.8;
+      // 인터랙션 없을 때: 전체 dot을 단일 path로 배치 렌더 (성능 최적화)
+      if (inactive && ds.every((d) => !d.swept)) {
+        ctx.beginPath();
+        ctx.fillStyle = DOT_COLOR;
+        for (const d of ds) {
+          ctx.moveTo(d.ox + dotR, d.oy);
+          ctx.arc(d.ox, d.oy, dotR, 0, Math.PI * 2);
+        }
+        ctx.fill();
+        rafRef.current = requestAnimationFrame(animate);
+        return;
+      }
 
       for (const d of ds) {
         const sweptColor = d.color;
         const dx = d.x - mouse.x;
         const dy = d.y - mouse.y;
-        const dist = Math.sqrt(dx * dx + dy * dy);
+        const dist2 = dx * dx + dy * dy;
 
-        if (dist < hoverRadius && !d.swept) {
+        if (dist2 < hoverR2 && !d.swept) {
           d.swept = true;
           d.t = 0;
-          const angle = Math.atan2(dy, dx) + (Math.random() - 0.5) * 1.4;
+          const dist = Math.sqrt(dist2);
+          const angle =
+            Math.atan2(dy / dist, dx / dist) + (Math.random() - 0.5) * 1.4;
           const speed = 2.5 + Math.random() * 4;
           d.vx = Math.cos(angle) * speed;
           d.vy = Math.sin(angle) * speed;
@@ -211,13 +249,12 @@ const DotTextEffect = ({
           ctx.fillStyle = lerpColor(sweptColor, DOT_COLOR, d.t);
           ctx.fill();
         } else {
-          // 커서 주변 colorRadius 안 공들은 거리 비례로 색이 물듦
           const proximityColor =
-            dist < colorRadius
+            dist2 < colorR2
               ? lerpColor(
                   sweptColor,
                   DOT_COLOR,
-                  Math.pow(dist / colorRadius, 2.5),
+                  Math.pow(Math.sqrt(dist2) / colorRadius, 2.5),
                 )
               : DOT_COLOR;
 
@@ -228,8 +265,8 @@ const DotTextEffect = ({
         }
       }
 
-      // 커스텀 커서
-      if (mouse.x > 0) {
+      // 커스텀 커서 (데스크탑만)
+      if (!inactive) {
         ctx.beginPath();
         ctx.arc(mouse.x, mouse.y, 5, 0, Math.PI * 2);
         ctx.fillStyle = '#FF5414';
@@ -269,13 +306,44 @@ const DotTextEffect = ({
     mouseRef.current = { x: -999, y: -999 };
   };
 
+  const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const r = canvasRef.current!.getBoundingClientRect();
+    mouseRef.current = { x: touch.clientX - r.left, y: touch.clientY - r.top };
+  };
+
+  const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
+    e.preventDefault();
+    const touch = e.touches[0];
+    const r = canvasRef.current!.getBoundingClientRect();
+    mouseRef.current = { x: touch.clientX - r.left, y: touch.clientY - r.top };
+  };
+
+  const handleTouchEnd = () => {
+    mouseRef.current = { x: -999, y: -999 };
+  };
+
   return (
-    <canvas
-      ref={canvasRef}
-      onMouseMove={handleMouseMove}
-      onMouseLeave={handleMouseLeave}
-      style={{ cursor: 'none', display: 'block' }}
-    />
+    <div
+      ref={wrapperRef}
+      style={{
+        width: '100%',
+        overflow: 'hidden',
+        display: 'flex',
+        justifyContent: 'center',
+      }}
+    >
+      <canvas
+        ref={canvasRef}
+        onMouseMove={handleMouseMove}
+        onMouseLeave={handleMouseLeave}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{ cursor: 'none', display: 'block', touchAction: 'none' }}
+      />
+    </div>
   );
 };
 

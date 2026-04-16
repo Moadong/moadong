@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -36,6 +37,7 @@ export const Input = styled.input<{ $hasError: boolean }>`
   border-radius: 10px;
   outline: none;
   transition: border-color 0.2s;
+  min-width: 0;
 
   &:focus {
     border-color: ${({ theme }) => theme.colors.primary[900]};
@@ -43,6 +45,11 @@ export const Input = styled.input<{ $hasError: boolean }>`
 
   &::placeholder {
     color: ${({ theme }) => theme.colors.gray[500]};
+  }
+
+  ${media.mobile} {
+    padding: 10px 12px;
+    font-size: 0.875rem;
   }
 `;
 
@@ -65,6 +72,11 @@ export const StartButton = styled.button`
   &:disabled {
     background: ${({ theme }) => theme.colors.gray[400]};
     cursor: not-allowed;
+  }
+
+  ${media.mobile} {
+    padding: 10px 14px;
+    font-size: 0.875rem;
   }
 `;
 
