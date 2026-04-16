@@ -62,6 +62,10 @@ export const PageDescription = styled.p`
 `;
 
 export const DesktopOnly = styled.div`
+  position: absolute;
+  right: 0;
+  top: 0;
+
   ${media.tablet} {
     display: none;
   }
@@ -78,28 +82,17 @@ export const MobileOnly = styled.div`
 `;
 
 export const TopRow = styled.div`
-  display: grid;
-  grid-template-columns: 1fr auto 1fr;
-  align-items: start;
+  position: relative;
+  display: flex;
+  justify-content: center;
   width: 100%;
-  margin-bottom: 48px;
+  margin-bottom: 16px;
 
-  /* 타이틀은 가운데 열, 순위는 오른쪽 열 끝 */
   & > *:first-child {
-    grid-column: 2;
     text-align: center;
   }
 
-  & > *:last-child {
-    grid-column: 3;
-    justify-self: end;
-  }
-
   ${media.tablet} {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 24px;
     margin-bottom: 32px;
   }
 `;
