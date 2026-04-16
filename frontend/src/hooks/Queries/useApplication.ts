@@ -7,6 +7,7 @@ import {
   updateApplicationStatus,
 } from '@/apis/application';
 import { queryKeys } from '@/constants/queryKeys';
+import logger from '@/utils/logger'; // Import the new logger
 
 export const useGetApplication = (
   clubId: string | undefined,
@@ -41,7 +42,7 @@ export const useDeleteApplication = () => {
       });
     },
     onError: (error) => {
-      console.error(`Error delete application detail: ${error}`);
+      logger.error(`Error delete application detail: ${error}`);
     },
   });
 };
@@ -58,7 +59,7 @@ export const useDuplicateApplication = () => {
       });
     },
     onError: (error) => {
-      console.error(`Error duplicating application: ${error}`);
+      logger.error(`Error duplicating application: ${error}`);
     },
   });
 };
@@ -80,7 +81,7 @@ export const useUpdateApplicationStatus = () => {
       });
     },
     onError: (error) => {
-      console.error('Error updating application status:', error);
+      logger.error('Error updating application status:', error);
     },
   });
 };

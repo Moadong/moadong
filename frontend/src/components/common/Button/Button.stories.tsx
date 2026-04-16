@@ -34,6 +34,7 @@ export const Default: Story = {
   args: {
     children: '버튼',
     onClick: () => {
+       
       console.log('버튼이 클릭되었습니다.');
     },
   },
@@ -44,6 +45,7 @@ export const Animated: Story = {
     children: '애니메이션 버튼',
     animated: true,
     onClick: () => {
+       
       console.log('애니메이션 버튼이 클릭되었습니다.');
     },
   },
@@ -55,6 +57,7 @@ export const CustomWidth: Story = {
     children: '너비 지정 버튼',
     width: '200px',
     onClick: () => {
+       
       console.log('너비 지정 버튼이 클릭되었습니다.');
     },
   },
@@ -65,6 +68,7 @@ export const LongText: Story = {
   args: {
     children: '이것은 매우 긴 텍스트가 있는 버튼입니다',
     onClick: () => {
+       
       console.log('긴 텍스트 버튼이 클릭되었습니다.');
     },
   },
@@ -77,6 +81,7 @@ export const AnimatedWithCustomWidth: Story = {
     width: '300px',
     animated: true,
     onClick: () => {
+       
       console.log('애니메이션 + 너비 지정 버튼이 클릭되었습니다.');
     },
   },

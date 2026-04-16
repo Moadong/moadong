@@ -12,6 +12,7 @@ const useMixpanelTrack = () => {
           url: window.location.href,
         });
       } catch (error) {
+         
         console.warn('Failed to track event:', eventName, error);
       }
     },

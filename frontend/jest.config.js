@@ -4,7 +4,7 @@ module.exports = {
   setupFiles: ['<rootDir>/jest.setup.ts'],
   testEnvironment: 'jest-fixed-jsdom',
   transform: {
-    '^.+\\.tsx?$': ['ts-jest', {}],
+    '^.+\\.tsx?$': ['ts-jest', { tsconfig: '<rootDir>/tsconfig.jest.json' }],
     '\\.(svg|png|jpg|jpeg|gif)$': 'jest-transform-stub',
   },
   moduleNameMapper: {

@@ -3,6 +3,7 @@ import { deleteApplicants, getClubApplicants } from '@/apis/applicants';
 import { updateApplicantDetail } from '@/apis/application';
 import { queryKeys } from '@/constants/queryKeys';
 import { UpdateApplicantParams } from '@/types/applicants';
+import * as Sentry from '@sentry/react'; // Sentry import 추가
 
 export const useGetApplicants = (applicationFormId: string | undefined) => {
   return useQuery({
@@ -26,7 +27,8 @@ export const useDeleteApplicants = (applicationFormId: string) => {
       });
     },
     onError: (error) => {
-      console.error(`Error delete applicants detail: ${error}`);
+      // console.error(`Error delete applicants detail: ${error}`); // 기존 console.error 주석 처리 또는 제거
+      Sentry.captureException(error); // Sentry.captureException으로 변경
     },
   });
 };
@@ -49,7 +51,8 @@ export const useUpdateApplicant = (applicationFormId: string | undefined) => {
       }
     },
     onError: (error) => {
-      console.error(`Error updating applicant detail: ${error}`);
+      // console.error(`Error updating applicant detail: ${error}`); // 기존 console.error 주석 처리 또는 제거
+      Sentry.captureException(error); // Sentry.captureException으로 변경
     },
   });
 };

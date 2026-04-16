@@ -19,6 +19,7 @@ import {
   ClubSearchResponse,
 } from '@/types/club';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
+import logger from '@/utils/logger'; // Import the new logger
 
 interface UseGetCardListProps {
   keyword: string;
@@ -102,7 +103,7 @@ export const useUpdateClubDescription = () => {
       });
     },
     onError: (error) => {
-      console.error('Error updating club description:', error);
+      logger.error('Error updating club description:', error);
     },
   });
 };
@@ -122,7 +123,7 @@ export const useUpdateClubDetail = () => {
     },
 
     onError: (error) => {
-      console.error('Error updating club detail:', error);
+      logger.error('Error updating club detail:', error);
     },
   });
 };

@@ -36,7 +36,7 @@ const config = [
     rules: {
       semi: ['error', 'always'],
       quotes: ['error', 'single'],
-      'no-console': 'warn',
+      'no-console': ['warn', { allow: ['warn', 'error', 'log'] }],
       'react/react-in-jsx-scope': 'off',
       '@typescript-eslint/no-unused-vars': [
         'warn',

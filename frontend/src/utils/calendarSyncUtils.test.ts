@@ -166,6 +166,7 @@ describe('calendarSyncUtils', () => {
         end: '2026-04-15T11:00:00Z',
         url: 'https://calendar.google.com/event-1',
         description: '설명입니다',
+        source: 'GOOGLE' as const,
       };
 
       const unified = convertGoogleEventToUnified(googleEvent);
@@ -198,6 +199,8 @@ describe('calendarSyncUtils', () => {
         id: 'event-2',
         title: '잘못된 일정',
         start: 'invalid-date',
+        end: 'invalid-date', // Add a dummy end for type correctness
+        source: 'GOOGLE' as const,
       };
       expect(convertGoogleEventToUnified(invalidEvent)).toBeNull();
     });
