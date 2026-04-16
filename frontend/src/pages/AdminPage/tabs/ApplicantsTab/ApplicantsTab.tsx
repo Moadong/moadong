@@ -43,11 +43,7 @@ const ApplicantsTab = () => {
     }),
   );
 
-  const {
-    data: fetchData,
-    isLoading,
-    isError,
-  } = useGetApplicants(applicationFormId ?? '');
+  const { data: fetchData } = useGetApplicants(applicationFormId ?? '');
   const [keyword, setKeyword] = useState('');
   const [checkedItem, setCheckedItem] = useState<Map<string, boolean>>(
     new Map(),
