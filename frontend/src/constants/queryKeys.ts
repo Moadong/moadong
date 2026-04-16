@@ -36,4 +36,8 @@ export const queryKeys = {
     list: (type: 'WEB' | 'APP_HOME' | 'WEB_MOBILE') =>
       ['banner', type] as const,
   },
+  game: {
+    all: ['game'] as const,
+    ranking: () => ['game', 'ranking'] as const,
+  },
 } as const;
