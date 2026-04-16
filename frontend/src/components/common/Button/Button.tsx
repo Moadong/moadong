@@ -1,4 +1,5 @@
 import type { ButtonHTMLAttributes } from 'react';
+import { forwardRef, type ButtonHTMLAttributes } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 
 export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
@@ -49,16 +50,12 @@ const StyledButton = styled.button<{ $animated: boolean; $width?: string }>`
   }
 `;
 
-const Button = ({
-  width,
-  animated = false,
-  type = 'button',
-  children,
-  ...rest
-}: ButtonProps) => (
-  <StyledButton $animated={animated} $width={width} type={type} {...rest}>
-    {children}
-  </StyledButton>
+const Button = forwardRef<HTMLButtonElement, ButtonProps>(
+  ({ width, animated = false, type = 'button', children, ...rest }, ref) => (
+    <StyledButton $animated={animated} $width={width} type={type} ref={ref} {...rest}>
+      {children}
+    </StyledButton>
+  ),
 );
 
 export default Button;
