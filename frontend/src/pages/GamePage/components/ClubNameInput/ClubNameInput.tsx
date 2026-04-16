@@ -25,7 +25,7 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
           value={value}
           onChange={(e) => setValue(e.target.value)}
           onKeyDown={handleKeyDown}
-          placeholder='예) 모아동 개발팀'
+          placeholder='예) RCY'
           maxLength={30}
           autoFocus
         />
