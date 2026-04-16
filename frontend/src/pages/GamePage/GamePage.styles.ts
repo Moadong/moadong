@@ -61,6 +61,22 @@ export const PageDescription = styled.p`
   margin-top: 4px;
 `;
 
+export const DesktopOnly = styled.div`
+  ${media.tablet} {
+    display: none;
+  }
+`;
+
+export const MobileOnly = styled.div`
+  display: none;
+  width: 100%;
+  margin-top: 32px;
+
+  ${media.tablet} {
+    display: block;
+  }
+`;
+
 export const TopRow = styled.div`
   display: grid;
   grid-template-columns: 1fr auto 1fr;

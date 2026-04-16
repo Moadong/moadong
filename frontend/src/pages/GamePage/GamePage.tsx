@@ -110,17 +110,19 @@ const GamePage = () => {
             </S.PageDescription>
           </motion.div>
 
-          <motion.div
-            initial={{ opacity: 0, x: 24 }}
-            animate={{ opacity: 1, x: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <RankingBoard
-              ranking={rankingData?.clubs ?? []}
-              resetAt={rankingData?.resetAt ?? new Date().toISOString()}
-              myClubName={clubName}
-            />
-          </motion.div>
+          <S.DesktopOnly>
+            <motion.div
+              initial={{ opacity: 0, x: 24 }}
+              animate={{ opacity: 1, x: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <RankingBoard
+                ranking={rankingData?.clubs ?? []}
+                resetAt={rankingData?.resetAt ?? new Date().toISOString()}
+                myClubName={clubName}
+              />
+            </motion.div>
+          </S.DesktopOnly>
         </S.TopRow>
 
         {/* 중앙: 도트 글자 */}
@@ -167,6 +169,21 @@ const GamePage = () => {
             />
           )}
         </motion.div>
+
+        {/* 모바일 전용: 순위표 최하단 */}
+        <S.MobileOnly>
+          <motion.div
+            initial={{ opacity: 0, y: 16 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.3 }}
+          >
+            <RankingBoard
+              ranking={rankingData?.clubs ?? []}
+              resetAt={rankingData?.resetAt ?? new Date().toISOString()}
+              myClubName={clubName}
+            />
+          </motion.div>
+        </S.MobileOnly>
       </S.Content>
     </S.PageContainer>
   );
