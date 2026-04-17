@@ -151,9 +151,9 @@
     .promotion-location-result-title { font-weight: 600; color: #111827; margin-bottom: 4px; }
     .promotion-location-result-address { color: #4b5563; font-size: 0.85rem; line-height: 1.4; }
     .promotion-location-result-meta { margin-top: 6px; color: #6b7280; font-size: 0.78rem; }
-    .promotion-map-canvas-wrap { border: 1px solid #dbe4f0; border-radius: 10px; overflow: hidden; background: #f8fafc; }
+    .promotion-map-canvas-wrap { position: relative; border: 1px solid #dbe4f0; border-radius: 10px; overflow: hidden; background: #f8fafc; }
     .promotion-map-canvas { width: 100%; min-height: 320px; background: linear-gradient(135deg, #dbeafe 0%, #f8fafc 100%); }
-    .promotion-map-fallback { display: flex; align-items: center; justify-content: center; min-height: 320px; padding: 20px; text-align: center; color: #64748b; font-size: 0.9rem; }
+    .promotion-map-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; color: #64748b; font-size: 0.9rem; background: linear-gradient(135deg, #dbeafe 0%, #f8fafc 100%); z-index: 1; pointer-events: none; }
     .promotion-map-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px 16px; margin-top: 12px; }
     .promotion-map-meta-grid .form-row { margin-bottom: 0; }
     .promotion-map-meta-grid input { max-width: none; }
@@ -380,9 +380,8 @@
                 <div id="promotionLocationSearchResults" class="promotion-location-results"></div>
               </div>
               <div class="promotion-map-canvas-wrap">
-                <div id="promotionMapCanvas" class="promotion-map-canvas">
-                  <div id="promotionMapFallback" class="promotion-map-fallback">카카오 지도 JavaScript 키를 저장하면 실제 지도가 이 영역에 표시됩니다.</div>
-                </div>
+                <div id="promotionMapCanvas" class="promotion-map-canvas"></div>
+                <div id="promotionMapFallback" class="promotion-map-fallback">카카오 지도 JavaScript 키를 저장하면 실제 지도가 이 영역에 표시됩니다.</div>
               </div>
             </div>
             <div class="promotion-map-meta-grid">
@@ -1166,12 +1165,18 @@
 
     function setPromotionMapFallback(message) {
       const fallback = document.getElementById('promotionMapFallback');
+      if (promotionMap) {
+        fallback.classList.add('hidden');
+        return;
+      }
       fallback.textContent = message;
       fallback.classList.remove('hidden');
     }
 
     function hidePromotionMapFallback() {
-      document.getElementById('promotionMapFallback').classList.add('hidden');
+      const fallback = document.getElementById('promotionMapFallback');
+      fallback.textContent = '';
+      fallback.classList.add('hidden');
     }
 
     function renderPromotionLocationResults() {
