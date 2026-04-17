@@ -9,6 +9,16 @@ import * as S from './GamePage.styles';
 
 const STORAGE_KEY = 'game_club_name';
 
+const CHAR_COLORS = [
+  '#FF5414',
+  '#FFB300',
+  '#5FD8C0',
+  '#7094FF',
+  '#D4537E',
+  '#EF9F27',
+  '#FF9D7C',
+];
+
 const BLOBS = [
   {
     size: 320,
@@ -139,15 +149,7 @@ const GamePage = () => {
               spacing={4}
               dotR={1.8}
               hoverRadius={18}
-              charColors={[
-                '#FF5414',
-                '#FFB300',
-                '#5FD8C0',
-                '#7094FF',
-                '#D4537E',
-                '#EF9F27',
-                '#FF9D7C',
-              ]}
+              charColors={CHAR_COLORS}
             />
           </motion.div>
         )}

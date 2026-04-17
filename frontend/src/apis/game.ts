@@ -14,7 +14,8 @@ export const postGameClick = async (
     response,
     '클릭 요청에 실패했습니다.',
   );
-  return data!;
+  if (!data) throw new Error('클릭 요청에 실패했습니다.');
+  return data;
 };
 
 export const getGameRanking = async (): Promise<GameRankingResponse> => {
@@ -23,5 +24,6 @@ export const getGameRanking = async (): Promise<GameRankingResponse> => {
     response,
     '랭킹을 불러오는데 실패했습니다.',
   );
-  return data!;
+  if (!data) throw new Error('랭킹을 불러오는데 실패했습니다.');
+  return data;
 };
