@@ -1,3 +1,4 @@
+import { logger } from '@/utils/logger';
 import { EventSource } from 'eventsource';
 import API_BASE_URL from '@/constants/api';
 import {
@@ -35,7 +36,7 @@ export const createApplicantSSE = (
         const eventData: ApplicantStatusEvent = JSON.parse(e.data);
         eventHandlers.onStatusChange(eventData);
       } catch (parseError) {
-        console.error('SSE PARSING ERROR:', parseError);
+        logger.error('SSE PARSING ERROR:', parseError);
       }
     });
 
