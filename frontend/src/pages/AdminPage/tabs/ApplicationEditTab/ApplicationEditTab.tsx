@@ -207,7 +207,7 @@ const ApplicationEditTab = () => {
           />
         )}
         <Styled.ButtonWrapper>
-          <Button width={'150px'} animated onClick={handleSubmit}>
+          <Button width={'150px'} animated onClick={handleSubmit} disabled={isCreating || isUpdating}>
             저장하기
           </Button>
         </Styled.ButtonWrapper>
