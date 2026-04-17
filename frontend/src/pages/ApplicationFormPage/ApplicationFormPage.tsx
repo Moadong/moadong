@@ -118,7 +118,7 @@ const ApplicationFormPage = () => {
       navigate(`/clubDetail/@${encodeURIComponent(clubDetail.name)}`, {
         replace: true,
       });
-    } catch (error) {
+    } catch {
       alert(
         '답변 제출에 실패했어요.\n네트워크 상태를 확인하거나 잠시 후 다시 시도해 주세요.',
       );
