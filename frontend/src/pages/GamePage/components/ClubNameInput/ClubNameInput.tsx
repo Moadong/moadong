@@ -1,6 +1,8 @@
 import { useEffect, useId, useState } from 'react';
-import { getClubList } from '@/apis/club';
-import { useClubSuggestions } from '@/hooks/Queries/useClub';
+import {
+  useClubSuggestions,
+  useValidateClubName,
+} from '@/hooks/Queries/useClub';
 import * as S from './ClubNameInput.styles';
 
 interface ClubNameInputProps {
@@ -8,6 +10,7 @@ interface ClubNameInputProps {
 }
 
 const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
+  const validateClubName = useValidateClubName();
   const [value, setValue] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [error, setError] = useState('');
@@ -48,9 +51,8 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
 
     setIsValidating(true);
     try {
-      const { clubs } = await getClubList(trimmed);
-      const exact = clubs.find((c) => c.name === trimmed);
-      if (!exact) {
+      const isValid = await validateClubName(trimmed);
+      if (!isValid) {
         setError('존재하지 않는 동아리입니다.');
         return;
       }

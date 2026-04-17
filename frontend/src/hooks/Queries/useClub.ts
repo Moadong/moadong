@@ -90,6 +90,18 @@ export const useGetCardList = ({
   });
 };
 
+export const useValidateClubName = () => {
+  const queryClient = useQueryClient();
+  return async (name: string) => {
+    const { clubs } = await queryClient.ensureQueryData({
+      queryKey: queryKeys.club.suggestions(name),
+      queryFn: () => getClubList(name),
+      staleTime: 30 * 1000,
+    });
+    return clubs.some((c) => c.name === name);
+  };
+};
+
 export const useClubSuggestions = (keyword: string) => {
   return useQuery({
     queryKey: queryKeys.club.suggestions(keyword),
