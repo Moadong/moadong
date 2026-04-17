@@ -339,6 +339,8 @@ const DotTextEffect = ({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        role='img'
+        aria-label={text}
         style={{ cursor: 'none', display: 'block', touchAction: 'none' }}
       />
     </div>
