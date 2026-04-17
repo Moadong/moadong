@@ -359,7 +359,7 @@
           </div>
           <div class="promotion-map-card">
             <h4>장소 선택</h4>
-            <p class="promotion-map-sub">실제 지도에서 주소를 검색하거나 지도를 클릭해 위도/경도를 선택하세요. 장소명을 직접 수정하면 좌표를 다시 확인하도록 안내합니다.</p>
+            <p class="promotion-map-sub">장소명 입력과 좌표 선택은 분리되어 있습니다. 아래 검색창이나 지도를 사용해 위도/경도를 선택하세요.</p>
             <div id="promotionMapConfigBanner" class="banner warn hidden">
               <div class="promotion-map-config">
                 <div>
@@ -369,7 +369,7 @@
               </div>
             </div>
             <div class="promotion-location-search-row">
-              <input type="search" id="promotionLocationSearchQuery" placeholder="도로명 주소, 건물명, 행사 장소를 검색하세요.">
+              <input type="search" id="promotionLocationSearchQuery" placeholder="좌표를 찾을 주소나 건물명을 검색하세요.">
               <button type="button" id="btnPromotionLocationSearch">검색</button>
               <button type="button" id="btnPromotionClearCoordinates">좌표 초기화</button>
             </div>
@@ -602,7 +602,6 @@
     let promotionLocationCandidates = [];
     let promotionSelectedCandidateKey = '';
     let promotionLocationResolvedAddress = '';
-    let promotionLocationSelectionDirty = false;
 
     function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
     function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
@@ -1204,7 +1203,7 @@
         button.onclick = () => {
           applyPromotionCoordinateSelection(candidate.latitude, candidate.longitude, {
             address: candidate.displayAddress,
-            locationText: candidate.title || candidate.displayAddress,
+            searchQuery: document.getElementById('promotionLocationSearchQuery').value.trim(),
             zoom: DEFAULT_PROMOTION_MAP_ZOOM
           });
           promotionSelectedCandidateKey = candidateKey;
@@ -1236,11 +1235,6 @@
         return;
       }
       if (latitude !== null && longitude !== null) {
-        if (promotionLocationSelectionDirty) {
-          status.classList.add('is-warning');
-          status.textContent = '장소명이 변경되어 좌표를 다시 확인해야 합니다. 검색 결과를 선택하거나 지도를 다시 클릭하세요.';
-          return;
-        }
         const addressText = promotionLocationResolvedAddress ? ' · ' + promotionLocationResolvedAddress : '';
         status.textContent = '선택된 좌표: ' + normalizePromotionCoordinateValue(latitude) + ', ' + normalizePromotionCoordinateValue(longitude) + addressText;
         return;
@@ -1272,16 +1266,10 @@
       const lngValue = normalizePromotionCoordinateValue(longitude);
       document.getElementById('promotionLatitude').value = latValue;
       document.getElementById('promotionLongitude').value = lngValue;
-      if (options?.locationText) {
-        document.getElementById('promotionLocation').value = options.locationText;
-      }
       if (options?.searchQuery) {
         document.getElementById('promotionLocationSearchQuery').value = options.searchQuery;
-      } else if (options?.locationText) {
-        document.getElementById('promotionLocationSearchQuery').value = options.locationText;
       }
       promotionLocationResolvedAddress = options?.address || '';
-      promotionLocationSelectionDirty = false;
       updatePromotionMapMarker({
         latitude: Number.parseFloat(latValue),
         longitude: Number.parseFloat(lngValue),
@@ -1296,7 +1284,6 @@
       document.getElementById('promotionLatitude').value = '';
       document.getElementById('promotionLongitude').value = '';
       promotionLocationResolvedAddress = '';
-      promotionLocationSelectionDirty = false;
       promotionSelectedCandidateKey = '';
       updatePromotionMapMarker({ latitude: null, longitude: null });
       if (options?.clearQuery) {
@@ -1309,10 +1296,7 @@
 
     function syncPromotionMapFromFormState() {
       const { latitude, longitude } = getPromotionCoordinatePair();
-      const location = document.getElementById('promotionLocation').value.trim();
-      document.getElementById('promotionLocationSearchQuery').value = location;
-      promotionLocationResolvedAddress = location;
-      promotionLocationSelectionDirty = false;
+      promotionLocationResolvedAddress = '';
       promotionSelectedCandidateKey = '';
       if (latitude !== null && longitude !== null) {
         updatePromotionMapMarker({ latitude, longitude, move: true, zoom: DEFAULT_PROMOTION_MAP_ZOOM });
@@ -1414,8 +1398,7 @@
           } catch (_) {}
           applyPromotionCoordinateSelection(latitude, longitude, {
             address,
-            locationText: address || document.getElementById('promotionLocation').value.trim(),
-            searchQuery: address || document.getElementById('promotionLocationSearchQuery').value.trim(),
+            searchQuery: document.getElementById('promotionLocationSearchQuery').value.trim(),
             zoom: DEFAULT_PROMOTION_MAP_ZOOM
           });
         });
@@ -1443,9 +1426,9 @@
     }
 
     async function searchPromotionLocations() {
-      const query = document.getElementById('promotionLocationSearchQuery').value.trim() || document.getElementById('promotionLocation').value.trim();
+      const query = document.getElementById('promotionLocationSearchQuery').value.trim();
       if (!query) {
-        throw new Error('주소나 장소명을 입력하세요.');
+        throw new Error('좌표를 찾을 주소나 건물명을 입력하세요.');
       }
       const maps = await loadPromotionMapSdk();
       await ensurePromotionMapReady();
@@ -1484,7 +1467,6 @@
       const primary = candidates[0];
       applyPromotionCoordinateSelection(primary.latitude, primary.longitude, {
         address: primary.displayAddress,
-        locationText: primary.title || primary.displayAddress,
         searchQuery: query,
         zoom: DEFAULT_PROMOTION_MAP_ZOOM
       });
@@ -1959,10 +1941,6 @@
       if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
         throw new Error('지도에서 위치를 선택해 위도/경도를 확정하세요.');
       }
-      if (promotionLocationSelectionDirty) {
-        throw new Error('장소명이 바뀌어 좌표 재확인이 필요합니다. 지도에서 위치를 다시 선택하세요.');
-      }
-
       return {
         clubId,
         title,
@@ -2030,7 +2008,6 @@
       promotionLocationCandidates = [];
       promotionSelectedCandidateKey = '';
       promotionLocationResolvedAddress = '';
-      promotionLocationSelectionDirty = false;
       document.getElementById('promotionListLoading').classList.add('hidden');
       document.getElementById('promotionImageUploadFile').value = '';
       document.getElementById('promotionLocationSearchQuery').value = '';
@@ -2292,17 +2269,6 @@
     PROMOTION_FORM_IDS.forEach((id) => {
       document.getElementById(id).addEventListener('input', () => {
         if (id === 'promotionImages') renderPromotionImagePreviewList();
-        if (id === 'promotionLocation') {
-          const locationValue = document.getElementById('promotionLocation').value;
-          document.getElementById('promotionLocationSearchQuery').value = locationValue;
-          if (hasPromotionCoordinates()) {
-            promotionLocationSelectionDirty = true;
-            promotionLocationResolvedAddress = '';
-          }
-          promotionSelectedCandidateKey = '';
-          renderPromotionLocationResults();
-          updatePromotionMapStatus();
-        }
         updatePromotionEditorState();
       });
     });
