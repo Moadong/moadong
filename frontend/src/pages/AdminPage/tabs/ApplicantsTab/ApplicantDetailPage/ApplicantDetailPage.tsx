@@ -203,7 +203,7 @@ const ApplicantDetailPage = () => {
 
       <Styled.ApplicantInfoContainer>
         <Styled.QuestionsWrapper style={{ cursor: 'default' }}>
-          {formData.questions?.map((q: Question, i: number) => (
+          {formData.questions?.map((q: Question, _i: number) => (
             <QuestionContainer key={q.id} hasError={false}>
               <QuestionAnswerer
                 question={q}
