@@ -307,14 +307,12 @@ const DotTextEffect = ({
   };
 
   const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    e.preventDefault();
     const touch = e.touches[0];
     const r = canvasRef.current!.getBoundingClientRect();
     mouseRef.current = { x: touch.clientX - r.left, y: touch.clientY - r.top };
   };
 
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
-    e.preventDefault();
     const touch = e.touches[0];
     const r = canvasRef.current!.getBoundingClientRect();
     mouseRef.current = { x: touch.clientX - r.left, y: touch.clientY - r.top };
