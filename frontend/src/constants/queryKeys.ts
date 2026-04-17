@@ -26,6 +26,8 @@ export const queryKeys = {
       category: string,
       division: string,
     ) => ['clubs', keyword, recruitmentStatus, category, division] as const,
+    suggestions: (keyword: string) =>
+      ['clubs', 'suggestions', keyword] as const,
   },
   promotion: {
     all: ['promotions'] as const,

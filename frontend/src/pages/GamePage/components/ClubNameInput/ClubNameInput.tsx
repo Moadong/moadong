@@ -1,5 +1,6 @@
-import { useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getClubList } from '@/apis/club';
+import { useClubSuggestions } from '@/hooks/Queries/useClub';
 import * as S from './ClubNameInput.styles';
 
 interface ClubNameInputProps {
@@ -8,38 +9,26 @@ interface ClubNameInputProps {
 
 const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
   const [value, setValue] = useState('');
-  const [suggestions, setSuggestions] = useState<string[]>([]);
+  const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [error, setError] = useState('');
   const [isValidating, setIsValidating] = useState(false);
-  const debounceRef = useRef<ReturnType<typeof setTimeout> | undefined>(
-    undefined,
-  );
+
+  useEffect(() => {
+    const trimmed = value.trim();
+    const timer = setTimeout(() => setDebouncedKeyword(trimmed), 300);
+    return () => clearTimeout(timer);
+  }, [value]);
+
+  const { data: suggestions = [] } = useClubSuggestions(debouncedKeyword);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const v = e.target.value;
-    setValue(v);
+    setValue(e.target.value);
     setError('');
-
-    clearTimeout(debounceRef.current);
-
-    if (!v.trim()) {
-      setSuggestions([]);
-      return;
-    }
-
-    debounceRef.current = setTimeout(async () => {
-      try {
-        const { clubs } = await getClubList(v.trim());
-        setSuggestions(clubs.map((c) => c.name));
-      } catch {
-        setSuggestions([]);
-      }
-    }, 300);
   };
 
   const handleSelect = (name: string) => {
     setValue(name);
-    setSuggestions([]);
+    setDebouncedKeyword('');
     setError('');
   };
 

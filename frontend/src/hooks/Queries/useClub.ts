@@ -90,6 +90,16 @@ export const useGetCardList = ({
   });
 };
 
+export const useClubSuggestions = (keyword: string) => {
+  return useQuery({
+    queryKey: queryKeys.club.suggestions(keyword),
+    queryFn: () => getClubList(keyword),
+    enabled: !!keyword.trim(),
+    staleTime: 30 * 1000,
+    select: (data) => data.clubs.map((c) => c.name),
+  });
+};
+
 export const useUpdateClubDescription = () => {
   const queryClient = useQueryClient();
 
