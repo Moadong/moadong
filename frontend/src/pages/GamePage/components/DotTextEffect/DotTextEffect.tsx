@@ -179,11 +179,10 @@ const DotTextEffect = ({
       // 컨테이너 너비를 넘으면 CSS transform으로 축소 (항상 한 줄 유지)
       const wrapper = wrapperRef.current;
       if (wrapper) {
-        const availW = wrapper.clientWidth;
+        const availW = wrapper.clientWidth || W;
         const scale = Math.min(1, availW / W);
-        canvas.style.transform = `scale(${scale})`;
-        canvas.style.transformOrigin = 'center top';
-        wrapper.style.height = `${H * scale}px`;
+        canvas.style.width = `${W * scale}px`;
+        canvas.style.height = `${H * scale}px`;
       }
       dots.forEach((d) => {
         d.color = charColors[Math.floor(Math.random() * charColors.length)];
@@ -315,18 +314,25 @@ const DotTextEffect = ({
       const { W, H } = canvasSizeRef.current;
       if (W === 0) return;
       const scale = Math.min(1, wrapper.clientWidth / W);
-      canvas.style.transform = `scale(${scale})`;
-      canvas.style.transformOrigin = 'center top';
-      wrapper.style.height = `${H * scale}px`;
+      canvas.style.width = `${W * scale}px`;
+      canvas.style.height = `${H * scale}px`;
     });
 
     observer.observe(wrapper);
     return () => observer.disconnect();
   }, []);
 
+  const toCanvasCoords = (clientX: number, clientY: number) => {
+    const canvas = canvasRef.current!;
+    const r = canvas.getBoundingClientRect();
+    return {
+      x: (clientX - r.left) * (canvas.width / r.width),
+      y: (clientY - r.top) * (canvas.height / r.height),
+    };
+  };
+
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    const r = canvasRef.current!.getBoundingClientRect();
-    mouseRef.current = { x: e.clientX - r.left, y: e.clientY - r.top };
+    mouseRef.current = toCanvasCoords(e.clientX, e.clientY);
   };
 
   const handleMouseLeave = () => {
@@ -335,14 +341,12 @@ const DotTextEffect = ({
 
   const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
     const touch = e.touches[0];
-    const r = canvasRef.current!.getBoundingClientRect();
-    mouseRef.current = { x: touch.clientX - r.left, y: touch.clientY - r.top };
+    mouseRef.current = toCanvasCoords(touch.clientX, touch.clientY);
   };
 
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     const touch = e.touches[0];
-    const r = canvasRef.current!.getBoundingClientRect();
-    mouseRef.current = { x: touch.clientX - r.left, y: touch.clientY - r.top };
+    mouseRef.current = toCanvasCoords(touch.clientX, touch.clientY);
   };
 
   const handleTouchEnd = () => {
@@ -354,7 +358,6 @@ const DotTextEffect = ({
       ref={wrapperRef}
       style={{
         width: '100%',
-        overflow: 'hidden',
         display: 'flex',
         justifyContent: 'center',
       }}
