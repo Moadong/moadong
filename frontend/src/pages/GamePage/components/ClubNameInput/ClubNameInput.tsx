@@ -1,4 +1,4 @@
-import { useEffect, useId, useState } from 'react';
+import { useEffect, useId, useRef, useState } from 'react';
 import {
   useClubSuggestions,
   useValidateClubName,
@@ -18,8 +18,13 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
   const [highlightedIndex, setHighlightedIndex] = useState(-1);
 
   const listboxId = useId();
+  const justSelectedRef = useRef(false);
 
   useEffect(() => {
+    if (justSelectedRef.current) {
+      justSelectedRef.current = false;
+      return;
+    }
     const trimmed = value.trim();
     const timer = setTimeout(() => setDebouncedKeyword(trimmed), 300);
     return () => clearTimeout(timer);
@@ -39,6 +44,7 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
   };
 
   const handleSelect = (name: string) => {
+    justSelectedRef.current = true;
     setValue(name);
     setDebouncedKeyword('');
     setHighlightedIndex(-1);

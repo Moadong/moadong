@@ -140,6 +140,7 @@ const DotTextEffect = ({
   const mouseRef = useRef({ x: -999, y: -999 });
   const dotsRef = useRef<Dot[]>([]);
   const rafRef = useRef<number>(0);
+  const canvasSizeRef = useRef({ W: 0, H: 0 });
 
   const [isMobile, setIsMobile] = useState(() => mobileQuery.matches);
 
@@ -173,6 +174,7 @@ const DotTextEffect = ({
       canvasH = H;
       canvas.width = W;
       canvas.height = H;
+      canvasSizeRef.current = { W, H };
 
       // 컨테이너 너비를 넘으면 CSS transform으로 축소 (항상 한 줄 유지)
       const wrapper = wrapperRef.current;
@@ -303,6 +305,24 @@ const DotTextEffect = ({
     sweepSpeed,
     charColors,
   ]);
+
+  useEffect(() => {
+    const wrapper = wrapperRef.current;
+    const canvas = canvasRef.current;
+    if (!wrapper || !canvas) return;
+
+    const observer = new ResizeObserver(() => {
+      const { W, H } = canvasSizeRef.current;
+      if (W === 0) return;
+      const scale = Math.min(1, wrapper.clientWidth / W);
+      canvas.style.transform = `scale(${scale})`;
+      canvas.style.transformOrigin = 'center top';
+      wrapper.style.height = `${H * scale}px`;
+    });
+
+    observer.observe(wrapper);
+    return () => observer.disconnect();
+  }, []);
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
     const r = canvasRef.current!.getBoundingClientRect();
