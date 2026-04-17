@@ -5,9 +5,12 @@ import lombok.extern.slf4j.Slf4j;
 import moadong.club.payload.response.ClubClickRankingResponse;
 import moadong.club.payload.response.ClubClickRankingResponse.ClubRankItem;
 import moadong.club.payload.response.ClubClickResponse;
+import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import org.springframework.boot.context.event.ApplicationReadyEvent;
+import org.springframework.context.event.EventListener;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
@@ -28,22 +31,40 @@ public class ClubClickService {
 
     static final String CLICK_KEY_PREFIX = "club:click:";
     static final String CLICK_KEY_PATTERN = CLICK_KEY_PREFIX + "*";
+    static final String WHITELIST_KEY = "club:whitelist";
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
 
     private static final String COOLDOWN_KEY_PREFIX = "game:cooldown:";
-    private static final long COOLDOWN_SECONDS = 1L;
+    private static final long COOLDOWN_MILLIS = 200L;
 
     private final StringRedisTemplate stringRedisTemplate;
     private final ClubRepository clubRepository;
 
+    @EventListener(ApplicationReadyEvent.class)
+    public void initWhitelist() {
+        refreshWhitelist();
+    }
+
+    public void refreshWhitelist() {
+        List<String> names = clubRepository.findAll().stream()
+                .map(Club::getName)
+                .toList();
+        stringRedisTemplate.delete(WHITELIST_KEY);
+        if (!names.isEmpty()) {
+            stringRedisTemplate.opsForSet().add(WHITELIST_KEY, names.toArray(String[]::new));
+        }
+        log.info("동아리 화이트리스트 갱신 완료 ({}개)", names.size());
+    }
+
     public ClubClickResponse recordClick(String clubName, String clientIp) {
-        if (!clubRepository.findClubByName(clubName).isPresent()) {
+        Boolean isMember = stringRedisTemplate.opsForSet().isMember(WHITELIST_KEY, clubName);
+        if (!Boolean.TRUE.equals(isMember)) {
             throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
         }
 
         String cooldownKey = COOLDOWN_KEY_PREFIX + clientIp;
         Boolean isNew = stringRedisTemplate.opsForValue()
-                .setIfAbsent(cooldownKey, "1", Duration.ofSeconds(COOLDOWN_SECONDS));
+                .setIfAbsent(cooldownKey, "1", Duration.ofMillis(COOLDOWN_MILLIS));
         if (Boolean.FALSE.equals(isNew)) {
             throw new RestApiException(ErrorCode.CLICK_COOLDOWN);
         }

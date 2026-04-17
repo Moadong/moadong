@@ -17,6 +17,7 @@ import java.util.Set;
 public class ClubClickScheduler {
 
     private final StringRedisTemplate stringRedisTemplate;
+    private final ClubClickService clubClickService;
 
     @Scheduled(cron = "0 0 0 * * *", zone = "Asia/Seoul")
     @SchedulerLock(name = "ClubClickReset", lockAtMostFor = "1m", lockAtLeastFor = "1s")
@@ -26,5 +27,11 @@ public class ClubClickScheduler {
             stringRedisTemplate.delete(keys);
         }
         log.info("동아리 클릭 수 초기화 완료");
+    }
+
+    @Scheduled(cron = "0 0 * * * *")
+    @SchedulerLock(name = "ClubClickWhitelistRefresh", lockAtMostFor = "5m", lockAtLeastFor = "1s")
+    public void refreshWhitelist() {
+        clubClickService.refreshWhitelist();
     }
 }
