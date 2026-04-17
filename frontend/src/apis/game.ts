@@ -1,21 +1,14 @@
 import API_BASE_URL from '@/constants/api';
-import { GameClickResponse, GameRankingResponse } from '@/types/game';
+import { GameRankingResponse } from '@/types/game';
 import { handleResponse } from './utils/apiHelpers';
 
-export const postGameClick = async (
-  clubName: string,
-): Promise<GameClickResponse> => {
+export const postGameClick = async (clubName: string): Promise<void> => {
   const response = await fetch(`${API_BASE_URL}/api/game/click`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ clubName, ctAt: new Date().toISOString() }),
   });
-  const data = await handleResponse<GameClickResponse>(
-    response,
-    '클릭 요청에 실패했습니다.',
-  );
-  if (!data) throw new Error('클릭 요청에 실패했습니다.');
-  return data;
+  if (!response.ok) throw new Error('클릭 요청에 실패했습니다.');
 };
 
 export const getGameRanking = async (): Promise<GameRankingResponse> => {

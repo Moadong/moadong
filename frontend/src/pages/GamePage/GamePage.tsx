@@ -80,7 +80,7 @@ const GamePage = () => {
 
   const handleClick = () => {
     clickGame(clubName, {
-      onSuccess: (data) => setMyClickCount(data.clickCount),
+      onSuccess: () => setMyClickCount((prev) => prev + 1),
     });
   };
 
