@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useClickGame, useGameRanking } from '@/hooks/Queries/useGame';
 import ClickButton from './components/ClickButton/ClickButton';
@@ -68,10 +68,28 @@ const GamePage = () => {
   );
   const [myClickCount, setMyClickCount] = useState(0);
 
+  const pendingRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
   const { data: rankingData } = useGameRanking();
   const { mutate: clickGame } = useClickGame();
 
   const top1Club = rankingData?.clubs[0];
+
+  const flush = (name: string) => {
+    if (timerRef.current) clearTimeout(timerRef.current);
+    timerRef.current = null;
+    const count = pendingRef.current;
+    if (count === 0) return;
+    pendingRef.current = 0;
+    clickGame({ clubName: name, count });
+  };
+
+  useEffect(() => {
+    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, []);
 
   const handleStart = (name: string) => {
     sessionStorage.setItem(STORAGE_KEY, name);
@@ -79,9 +97,15 @@ const GamePage = () => {
   };
 
   const handleClick = () => {
-    clickGame(clubName, {
-      onSuccess: () => setMyClickCount((prev) => prev + 1),
-    });
+    setMyClickCount((prev) => prev + 1);
+    pendingRef.current += 1;
+
+    if (pendingRef.current >= 5) {
+      flush(clubName);
+    } else {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => flush(clubName), 500);
+    }
   };
 
   return (
