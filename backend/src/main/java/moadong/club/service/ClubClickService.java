@@ -2,26 +2,31 @@ package moadong.club.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.club.entity.Club;
+import moadong.club.entity.ClubClickCount;
 import moadong.club.payload.response.ClubClickRankingResponse;
 import moadong.club.payload.response.ClubClickRankingResponse.ClubRankItem;
 import moadong.club.payload.response.ClubClickResponse;
-import moadong.club.entity.Club;
+import moadong.club.repository.ClubClickCountRepository;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.event.EventListener;
+import org.springframework.data.mongodb.core.FindAndModifyOptions;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.DayOfWeek;
 import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -29,16 +34,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 @RequiredArgsConstructor
 public class ClubClickService {
 
-    static final String CLICK_KEY_PREFIX = "club:click:";
-    static final String CLICK_KEY_PATTERN = CLICK_KEY_PREFIX + "*";
     static final String WHITELIST_KEY = "club:whitelist";
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
-
     private static final String COOLDOWN_KEY_PREFIX = "game:cooldown:";
     private static final long COOLDOWN_MILLIS = 200L;
+    static final long MAX_CLICK_COUNT = 9_999_999_999L;
 
     private final StringRedisTemplate stringRedisTemplate;
     private final ClubRepository clubRepository;
+    private final ClubClickCountRepository clickCountRepository;
+    private final MongoTemplate mongoTemplate;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initWhitelist() {
@@ -56,7 +61,11 @@ public class ClubClickService {
         log.info("동아리 화이트리스트 갱신 완료 ({}개)", names.size());
     }
 
-    public ClubClickResponse recordClick(String clubName, String clientIp) {
+    public ClubClickResponse recordClick(String clubName, int count, String clientIp) {
+        if (count < 1 || count > 5) {
+            throw new RestApiException(ErrorCode.CLICK_COUNT_INVALID);
+        }
+
         Boolean isMember = stringRedisTemplate.opsForSet().isMember(WHITELIST_KEY, clubName);
         if (!Boolean.TRUE.equals(isMember)) {
             throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
@@ -69,40 +78,36 @@ public class ClubClickService {
             throw new RestApiException(ErrorCode.CLICK_COOLDOWN);
         }
 
-        String key = CLICK_KEY_PREFIX + clubName;
-        Long clickCount = stringRedisTemplate.opsForValue().increment(key);
-        return new ClubClickResponse(clubName, clickCount != null ? clickCount : 0L);
+        Query query = new Query(Criteria.where("clubName").is(clubName));
+        Update update = new Update()
+                .inc("clickCount", count)
+                .setOnInsert("clubName", clubName);
+        FindAndModifyOptions options = FindAndModifyOptions.options().upsert(true).returnNew(true);
+        ClubClickCount result = mongoTemplate.findAndModify(query, update, options, ClubClickCount.class);
+
+        long clickCount = result != null ? Math.min(result.getClickCount(), MAX_CLICK_COUNT) : (long) count;
+        return new ClubClickResponse(clubName, clickCount);
     }
 
     public ClubClickRankingResponse getRanking() {
-        Set<String> keys = stringRedisTemplate.keys(CLICK_KEY_PATTERN);
-        List<ClubRankItem> ranked = new ArrayList<>();
-
-        if (keys != null && !keys.isEmpty()) {
-            List<ClubRankItem> unsorted = new ArrayList<>();
-            for (String key : keys) {
-                String clubName = key.substring(CLICK_KEY_PREFIX.length());
-                String raw = stringRedisTemplate.opsForValue().get(key);
-                long count = raw != null ? Long.parseLong(raw) : 0L;
-                unsorted.add(new ClubRankItem(0, clubName, count));
-            }
-
-            unsorted.sort(Comparator.comparingLong(ClubRankItem::clickCount).reversed());
-
-            AtomicInteger rank = new AtomicInteger(1);
-            for (ClubRankItem item : unsorted) {
-                ranked.add(new ClubRankItem(rank.getAndIncrement(), item.clubName(), item.clickCount()));
-            }
-        }
-
-        return new ClubClickRankingResponse(ranked, nextMidnightKst());
+        List<ClubClickCount> all = clickCountRepository.findAllByOrderByClickCountDesc();
+        AtomicInteger rank = new AtomicInteger(1);
+        List<ClubRankItem> ranked = all.stream()
+                .map(c -> new ClubRankItem(rank.getAndIncrement(), c.getClubName(), c.getClickCount()))
+                .toList();
+        return new ClubClickRankingResponse(ranked, nextMondayMidnightKst());
     }
 
-    public String nextMidnightKst() {
-        ZonedDateTime nextMidnight = ZonedDateTime.now(KST)
-                .toLocalDate()
-                .plusDays(1)
-                .atStartOfDay(KST);
-        return nextMidnight.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
+    public void resetWeeklyClicks() {
+        clickCountRepository.deleteAll();
+        log.info("동아리 클릭 수 주간 초기화 완료");
+    }
+
+    public String nextMondayMidnightKst() {
+        ZonedDateTime now = ZonedDateTime.now(KST);
+        int daysUntilMonday = (DayOfWeek.MONDAY.getValue() - now.getDayOfWeek().getValue() + 7) % 7;
+        if (daysUntilMonday == 0) daysUntilMonday = 7;
+        ZonedDateTime nextMonday = now.toLocalDate().plusDays(daysUntilMonday).atStartOfDay(KST);
+        return nextMonday.format(DateTimeFormatter.ISO_OFFSET_DATE_TIME);
     }
 }

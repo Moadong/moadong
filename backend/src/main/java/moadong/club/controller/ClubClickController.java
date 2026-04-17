@@ -29,7 +29,7 @@ public class ClubClickController {
     @Operation(summary = "동아리 클릭 기록", description = "실제 동아리 이름으로만 클릭 수를 누적합니다. IP당 1초 쿨다운이 적용됩니다.")
     public ResponseEntity<?> recordClick(@RequestBody ClubClickRequest request, HttpServletRequest httpRequest) {
         String clientIp = resolveClientIp(httpRequest);
-        ClubClickResponse result = clubClickService.recordClick(request.clubName(), clientIp);
+        ClubClickResponse result = clubClickService.recordClick(request.clubName(), request.count(), clientIp);
         return Response.ok(result);
     }
 
