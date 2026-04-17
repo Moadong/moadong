@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useId, useState } from 'react';
 import { getClubList } from '@/apis/club';
 import { useClubSuggestions } from '@/hooks/Queries/useClub';
 import * as S from './ClubNameInput.styles';
@@ -12,6 +12,9 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [error, setError] = useState('');
   const [isValidating, setIsValidating] = useState(false);
+  const [highlightedIndex, setHighlightedIndex] = useState(-1);
+
+  const listboxId = useId();
 
   useEffect(() => {
     const trimmed = value.trim();
@@ -21,6 +24,12 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
 
   const { data: suggestions = [] } = useClubSuggestions(debouncedKeyword);
 
+  useEffect(() => {
+    setHighlightedIndex(-1);
+  }, [suggestions]);
+
+  const isOpen = suggestions.length > 0;
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue(e.target.value);
     setError('');
@@ -29,6 +38,7 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
   const handleSelect = (name: string) => {
     setValue(name);
     setDebouncedKeyword('');
+    setHighlightedIndex(-1);
     setError('');
   };
 
@@ -53,8 +63,31 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === 'Enter') handleSubmit();
+    if (e.key === 'ArrowDown') {
+      e.preventDefault();
+      setHighlightedIndex((prev) =>
+        isOpen ? Math.min(prev + 1, suggestions.length - 1) : prev,
+      );
+    } else if (e.key === 'ArrowUp') {
+      e.preventDefault();
+      setHighlightedIndex((prev) => Math.max(prev - 1, -1));
+    } else if (e.key === 'Enter') {
+      if (highlightedIndex >= 0 && isOpen) {
+        e.preventDefault();
+        handleSelect(suggestions[highlightedIndex]);
+      } else {
+        handleSubmit();
+      }
+    } else if (e.key === 'Escape') {
+      setDebouncedKeyword('');
+      setHighlightedIndex(-1);
+    }
   };
+
+  const activeDescendant =
+    highlightedIndex >= 0
+      ? `${listboxId}-option-${highlightedIndex}`
+      : undefined;
 
   return (
     <S.Wrapper>
@@ -69,6 +102,11 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
             maxLength={30}
             autoFocus
             $hasError={!!error}
+            role='combobox'
+            aria-autocomplete='list'
+            aria-expanded={isOpen}
+            aria-controls={listboxId}
+            aria-activedescendant={activeDescendant}
           />
           <S.StartButton
             onClick={handleSubmit}
@@ -78,10 +116,17 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
           </S.StartButton>
         </S.InputRow>
 
-        {suggestions.length > 0 && (
-          <S.Dropdown>
-            {suggestions.map((name) => (
-              <S.DropdownItem key={name} onClick={() => handleSelect(name)}>
+        {isOpen && (
+          <S.Dropdown role='listbox' id={listboxId}>
+            {suggestions.map((name, index) => (
+              <S.DropdownItem
+                key={name}
+                id={`${listboxId}-option-${index}`}
+                role='option'
+                aria-selected={index === highlightedIndex}
+                onMouseDown={(e) => e.preventDefault()}
+                onClick={() => handleSelect(name)}
+              >
                 {name}
               </S.DropdownItem>
             ))}
