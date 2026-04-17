@@ -13,7 +13,8 @@ export const useGameRanking = () => {
 
 export const useClickGame = () => {
   return useMutation({
-    mutationFn: (clubName: string) => postGameClick(clubName),
+    mutationFn: ({ clubName, count }: { clubName: string; count: number }) =>
+      postGameClick(clubName, count),
     onError: (error) => {
       console.error('Error clicking game:', error);
     },
