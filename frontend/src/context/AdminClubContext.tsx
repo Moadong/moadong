@@ -83,6 +83,7 @@ export const AdminClubProvider = ({
       eventSourceRef.current = createApplicantSSE(applicationFormId, {
         onStatusChange: handleApplicantStatusChange,
         onError: (error) => {
+          // eslint-disable-next-line no-console
           console.error('SSE connection error:', error);
 
           if (reconnectTimeoutRef.current) return;
