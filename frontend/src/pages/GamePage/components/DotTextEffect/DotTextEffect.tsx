@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 interface Dot {
   x: number;
@@ -25,6 +25,7 @@ interface DotTextEffectProps {
 }
 
 const DOT_COLOR = '#888780';
+const mobileQuery = window.matchMedia('(max-width: 699px)');
 
 const DEFAULT_CHAR_COLORS = [
   '#FF5414',
@@ -140,9 +141,15 @@ const DotTextEffect = ({
   const dotsRef = useRef<Dot[]>([]);
   const rafRef = useRef<number>(0);
 
-  // 모바일에서 더 큰 폰트 사이즈 사용
-  const effectiveFontSize =
-    window.innerWidth < 700 ? Math.round(fontSize * 1.4) : fontSize;
+  const [isMobile, setIsMobile] = useState(() => mobileQuery.matches);
+
+  useEffect(() => {
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mobileQuery.addEventListener('change', handler);
+    return () => mobileQuery.removeEventListener('change', handler);
+  }, []);
+
+  const effectiveFontSize = isMobile ? Math.round(fontSize * 1.4) : fontSize;
 
   useEffect(() => {
     const canvas = canvasRef.current;
@@ -288,7 +295,7 @@ const DotTextEffect = ({
     };
   }, [
     text,
-    fontSize,
+    effectiveFontSize,
     dotR,
     spacing,
     charGap,
