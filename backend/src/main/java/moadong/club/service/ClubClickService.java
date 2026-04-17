@@ -37,7 +37,7 @@ public class ClubClickService {
     static final String WHITELIST_KEY = "club:whitelist";
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
     private static final String COOLDOWN_KEY_PREFIX = "game:cooldown:";
-    private static final long COOLDOWN_MILLIS = 200L;
+    private static final long COOLDOWN_MILLIS = 50L;
     static final long MAX_CLICK_COUNT = 9_999_999_999L;
 
     private final StringRedisTemplate stringRedisTemplate;
