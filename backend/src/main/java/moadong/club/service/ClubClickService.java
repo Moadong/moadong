@@ -5,9 +5,13 @@ import lombok.extern.slf4j.Slf4j;
 import moadong.club.payload.response.ClubClickRankingResponse;
 import moadong.club.payload.response.ClubClickRankingResponse.ClubRankItem;
 import moadong.club.payload.response.ClubClickResponse;
+import moadong.club.repository.ClubRepository;
+import moadong.global.exception.ErrorCode;
+import moadong.global.exception.RestApiException;
 import org.springframework.data.redis.core.StringRedisTemplate;
 import org.springframework.stereotype.Service;
 
+import java.time.Duration;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -26,9 +30,24 @@ public class ClubClickService {
     static final String CLICK_KEY_PATTERN = CLICK_KEY_PREFIX + "*";
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
 
-    private final StringRedisTemplate stringRedisTemplate;
+    private static final String COOLDOWN_KEY_PREFIX = "game:cooldown:";
+    private static final long COOLDOWN_SECONDS = 1L;
 
-    public ClubClickResponse recordClick(String clubName) {
+    private final StringRedisTemplate stringRedisTemplate;
+    private final ClubRepository clubRepository;
+
+    public ClubClickResponse recordClick(String clubName, String clientIp) {
+        if (!clubRepository.findClubByName(clubName).isPresent()) {
+            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
+        }
+
+        String cooldownKey = COOLDOWN_KEY_PREFIX + clientIp;
+        Boolean isNew = stringRedisTemplate.opsForValue()
+                .setIfAbsent(cooldownKey, "1", Duration.ofSeconds(COOLDOWN_SECONDS));
+        if (Boolean.FALSE.equals(isNew)) {
+            throw new RestApiException(ErrorCode.CLICK_COOLDOWN);
+        }
+
         String key = CLICK_KEY_PREFIX + clubName;
         Long clickCount = stringRedisTemplate.opsForValue().increment(key);
         return new ClubClickResponse(clubName, clickCount != null ? clickCount : 0L);
