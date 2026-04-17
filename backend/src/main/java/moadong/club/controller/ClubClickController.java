@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import jakarta.servlet.http.HttpServletRequest;
+
 @RestController
 @RequestMapping("/api/game")
 @RequiredArgsConstructor
@@ -24,10 +26,19 @@ public class ClubClickController {
     private final ClubClickService clubClickService;
 
     @PostMapping("/click")
-    @Operation(summary = "동아리 클릭 기록", description = "자유 입력 clubName별 클릭 수를 누적합니다. 실제 동아리 DB와 무관합니다.")
-    public ResponseEntity<?> recordClick(@RequestBody ClubClickRequest request) {
-        ClubClickResponse result = clubClickService.recordClick(request.clubName());
+    @Operation(summary = "동아리 클릭 기록", description = "실제 동아리 이름으로만 클릭 수를 누적합니다. IP당 1초 쿨다운이 적용됩니다.")
+    public ResponseEntity<?> recordClick(@RequestBody ClubClickRequest request, HttpServletRequest httpRequest) {
+        String clientIp = resolveClientIp(httpRequest);
+        ClubClickResponse result = clubClickService.recordClick(request.clubName(), request.count(), clientIp);
         return Response.ok(result);
+    }
+
+    private String resolveClientIp(HttpServletRequest request) {
+        String forwarded = request.getHeader("X-Forwarded-For");
+        if (forwarded != null && !forwarded.isBlank()) {
+            return forwarded.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 
     @GetMapping("/ranking")
