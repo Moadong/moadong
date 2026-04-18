@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 
 interface Dot {
   x: number;
@@ -25,7 +25,6 @@ interface DotTextEffectProps {
 }
 
 const DOT_COLOR = '#000000';
-const mobileQuery = window.matchMedia('(max-width: 699px)');
 
 const DEFAULT_CHAR_COLORS = [
   '#FF5414',
@@ -143,15 +142,7 @@ const DotTextEffect = ({
   const rafRef = useRef<number>(0);
   const canvasSizeRef = useRef({ W: 0, H: 0 });
 
-  const [isMobile, setIsMobile] = useState(() => mobileQuery.matches);
-
-  useEffect(() => {
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mobileQuery.addEventListener('change', handler);
-    return () => mobileQuery.removeEventListener('change', handler);
-  }, []);
-
-  const effectiveFontSize = isMobile ? Math.round(fontSize * 1.4) : fontSize;
+  const effectiveFontSize = fontSize;
 
   useEffect(() => {
     const canvas = canvasRef.current;
