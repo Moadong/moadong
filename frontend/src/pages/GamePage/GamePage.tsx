@@ -169,9 +169,9 @@ const GamePage = () => {
           >
             <DotTextEffect
               text={top1Club.clubName}
-              fontSize={100}
-              spacing={4}
-              dotR={1.8}
+              fontSize={200}
+              spacing={6}
+              dotR={1.3}
               hoverRadius={18}
               charColors={CHAR_COLORS}
             />

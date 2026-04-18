@@ -24,7 +24,7 @@ interface DotTextEffectProps {
   charColors?: string[];
 }
 
-const DOT_COLOR = '#888780';
+const DOT_COLOR = '#000000';
 const mobileQuery = window.matchMedia('(max-width: 699px)');
 
 const DEFAULT_CHAR_COLORS = [
@@ -132,12 +132,13 @@ const DotTextEffect = ({
   spacing = 4,
   charGap = 14,
   hoverRadius = 28,
-  sweepSpeed = 0.15,
+  sweepSpeed = 0.18,
   charColors = DEFAULT_CHAR_COLORS,
 }: DotTextEffectProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: -999, y: -999 });
+  const prevMouseRef = useRef({ x: -999, y: -999 });
   const dotsRef = useRef<Dot[]>([]);
   const rafRef = useRef<number>(0);
   const canvasSizeRef = useRef({ W: 0, H: 0 });
@@ -198,6 +199,9 @@ const DotTextEffect = ({
 
     const animate = () => {
       const mouse = mouseRef.current;
+      const prev = prevMouseRef.current;
+      const mouseMoved = mouse.x !== prev.x || mouse.y !== prev.y;
+      prevMouseRef.current = { x: mouse.x, y: mouse.y };
       const ds = dotsRef.current;
       const inactive = mouse.x < -900;
 
@@ -222,25 +226,26 @@ const DotTextEffect = ({
         const dy = d.y - mouse.y;
         const dist2 = dx * dx + dy * dy;
 
-        if (dist2 < hoverR2 && !d.swept) {
+        if (dist2 < hoverR2 && !d.swept && mouseMoved) {
           d.swept = true;
           d.t = 0;
           const dist = Math.sqrt(dist2);
           const angle =
-            Math.atan2(dy / dist, dx / dist) + (Math.random() - 0.5) * 1.4;
-          const speed = 2.5 + Math.random() * 4;
+            Math.atan2(dy / dist, dx / dist) + (Math.random() - 0.5) * 2.4;
+          const speed = 5 + Math.random() * 9;
           d.vx = Math.cos(angle) * speed;
           d.vy = Math.sin(angle) * speed;
         }
 
         if (d.swept) {
           d.t = Math.min(d.t + sweepSpeed, 1);
+          if (d.t < 0.6) d.vy += 0.18;
           d.x += d.vx * (1 - d.t);
           d.y += d.vy * (1 - d.t);
 
-          if (d.t > 0.55) {
-            d.x += (d.ox - d.x) * 0.06;
-            d.y += (d.oy - d.y) * 0.06;
+          if (d.t > 0.6) {
+            d.x += (d.ox - d.x) * 0.08;
+            d.y += (d.oy - d.y) * 0.08;
             const backDist = Math.sqrt((d.x - d.ox) ** 2 + (d.y - d.oy) ** 2);
             if (backDist < 0.5) {
               d.x = d.ox;
