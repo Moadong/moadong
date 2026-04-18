@@ -114,10 +114,11 @@ const DotTextEffect = ({
     document.fonts.ready.then(() => {
       if (!active) return;
 
+      const effectiveSpacing = window.innerWidth <= 699 ? 9 : spacing;
       const { dots, W, H } = buildDots(
         text,
         effectiveFontSize,
-        spacing,
+        effectiveSpacing,
         charGap,
       );
       canvasW = W;
