@@ -79,7 +79,7 @@ const SideBar = () => {
 
       localStorage.removeItem('accessToken');
       navigate('/admin/login', { replace: true });
-    } catch (error) {
+    } catch (_error) {
       alert('로그아웃에 실패했습니다.');
     }
   };

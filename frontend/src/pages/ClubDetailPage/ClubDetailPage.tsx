@@ -37,7 +37,7 @@ const ClubDetailPage = () => {
       : TAB_TYPE.INTRO;
 
   const { clubId } = useParams<{ clubId: string }>();
-  const { isMobile, isTablet, isLaptop, isDesktop } = useDevice();
+  const { isMobile, isTablet } = useDevice();
   const showTopBar = isMobile || isTablet;
 
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
