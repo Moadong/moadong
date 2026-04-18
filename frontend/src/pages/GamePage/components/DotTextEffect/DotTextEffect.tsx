@@ -131,7 +131,7 @@ const DotTextEffect = ({
   spacing = 4,
   charGap = 14,
   hoverRadius = 28,
-  sweepSpeed = 0.18,
+  sweepSpeed = 0.12,
   charColors = DEFAULT_CHAR_COLORS,
 }: DotTextEffectProps) => {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -221,9 +221,9 @@ const DotTextEffect = ({
           d.swept = true;
           d.t = 0;
           const dist = Math.sqrt(dist2);
-          const angle =
-            Math.atan2(dy / dist, dx / dist) + (Math.random() - 0.5) * 2.4;
-          const speed = 5 + Math.random() * 9;
+          const moveAngle = Math.atan2(mouse.y - prev.y, mouse.x - prev.x);
+          const angle = moveAngle + (Math.random() - 0.5) * 1.2;
+          const speed = 10 + Math.random() * 16;
           d.vx = Math.cos(angle) * speed;
           d.vy = Math.sin(angle) * speed;
         }

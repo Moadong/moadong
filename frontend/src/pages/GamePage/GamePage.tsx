@@ -172,7 +172,7 @@ const GamePage = () => {
               fontSize={200}
               spacing={6}
               dotR={1.3}
-              hoverRadius={18}
+              hoverRadius={20}
               charColors={CHAR_COLORS}
             />
           </motion.div>
