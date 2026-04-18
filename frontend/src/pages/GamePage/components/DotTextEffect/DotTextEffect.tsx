@@ -176,14 +176,14 @@ const DotTextEffect = ({
           const moveAngle = Math.atan2(mouse.y - prev.y, mouse.x - prev.x);
           const angle = moveAngle + (Math.random() - 0.5) * 1.2;
           const speed = mobile
-            ? 5 + Math.random() * 10
+            ? 8 + Math.random() * 14
             : 10 + Math.random() * 16;
           d.vx = Math.cos(angle) * speed;
           d.vy = Math.sin(angle) * speed;
         }
 
         if (d.swept) {
-          const effectiveSweepSpeed = isMobileRef.current ? 0.22 : sweepSpeed;
+          const effectiveSweepSpeed = isMobileRef.current ? 0.35 : sweepSpeed;
           d.t = Math.min(d.t + effectiveSweepSpeed, 1);
           if (d.t < 0.6) d.vy += 0.18;
           d.x += d.vx * (1 - d.t);
