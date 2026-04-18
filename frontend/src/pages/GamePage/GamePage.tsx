@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useClickGame, useGameRanking } from '@/hooks/Queries/useGame';
 import ClickButton from './components/ClickButton/ClickButton';
@@ -8,7 +8,6 @@ import RankingBoard from './components/RankingBoard/RankingBoard';
 import * as S from './GamePage.styles';
 
 const STORAGE_KEY = 'game_club_name';
-
 
 const BLOBS = [
   {
@@ -57,8 +56,6 @@ const GamePage = () => {
   const [clubName, setClubName] = useState<string>(
     () => sessionStorage.getItem(STORAGE_KEY) ?? '',
   );
-  const [myClickCount, setMyClickCount] = useState(0);
-
   const pendingRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -67,14 +64,17 @@ const GamePage = () => {
 
   const top1Club = rankingData?.clubs[0];
 
-  const flush = (name: string) => {
-    if (timerRef.current) clearTimeout(timerRef.current);
-    timerRef.current = null;
-    const count = pendingRef.current;
-    if (count === 0) return;
-    pendingRef.current = 0;
-    clickGame({ clubName: name, count });
-  };
+  const flush = useCallback(
+    (name: string) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = null;
+      const count = pendingRef.current;
+      if (count === 0) return;
+      pendingRef.current = 0;
+      clickGame({ clubName: name, count });
+    },
+    [clickGame],
+  );
 
   useEffect(() => {
     return () => {
@@ -87,8 +87,7 @@ const GamePage = () => {
     setClubName(name);
   };
 
-  const handleClick = () => {
-    setMyClickCount((prev) => prev + 1);
+  const handleClick = useCallback(() => {
     pendingRef.current += 1;
 
     if (pendingRef.current >= 5) {
@@ -97,7 +96,7 @@ const GamePage = () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = setTimeout(() => flush(clubName), 500);
     }
-  };
+  }, [clubName, flush]);
 
   return (
     <S.PageContainer>
@@ -178,11 +177,7 @@ const GamePage = () => {
           {!clubName ? (
             <ClubNameInput onStart={handleStart} />
           ) : (
-            <ClickButton
-              clubName={clubName}
-              clickCount={myClickCount}
-              onClickGame={handleClick}
-            />
+            <ClickButton clubName={clubName} onClickGame={handleClick} />
           )}
         </motion.div>
 

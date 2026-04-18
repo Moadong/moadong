@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { memo, useEffect, useRef } from 'react';
 
 const mobileQuery = window.matchMedia('(max-width: 699px)');
 
@@ -319,4 +319,4 @@ const DotTextEffect = ({
   );
 };
 
-export default DotTextEffect;
+export default memo(DotTextEffect);
