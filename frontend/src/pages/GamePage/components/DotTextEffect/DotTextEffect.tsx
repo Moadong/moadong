@@ -25,7 +25,6 @@ interface DotTextEffectProps {
 
 const DOT_COLOR = '#000000';
 
-
 function buildDots(
   text: string,
   fontSize: number,
@@ -190,6 +189,7 @@ const DotTextEffect = ({
           d.x += d.vx * (1 - d.t);
           d.y += d.vy * (1 - d.t);
 
+          const renderT = d.t;
           if (d.t > 0.6) {
             d.x += (d.ox - d.x) * 0.08;
             d.y += (d.oy - d.y) * 0.08;
@@ -205,7 +205,7 @@ const DotTextEffect = ({
           }
 
           ctx.beginPath();
-          ctx.arc(d.x, d.y, dotR * (1 + (1 - d.t) * 0.8), 0, Math.PI * 2);
+          ctx.arc(d.x, d.y, dotR * (1 + (1 - renderT) * 0.8), 0, Math.PI * 2);
           ctx.fillStyle = DOT_COLOR;
           ctx.fill();
         } else {
