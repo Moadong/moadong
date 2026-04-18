@@ -1,5 +1,7 @@
 import { useEffect, useRef } from 'react';
 
+const mobileQuery = window.matchMedia('(max-width: 699px)');
+
 interface Dot {
   x: number;
   y: number;
@@ -9,8 +11,6 @@ interface Dot {
   vy: number;
   swept: boolean;
   t: number;
-  charIndex: number;
-  color: string;
 }
 
 interface DotTextEffectProps {
@@ -21,32 +21,10 @@ interface DotTextEffectProps {
   charGap?: number;
   hoverRadius?: number;
   sweepSpeed?: number;
-  charColors?: string[];
 }
 
 const DOT_COLOR = '#000000';
 
-const DEFAULT_CHAR_COLORS = [
-  '#FF5414',
-  '#FFB300',
-  '#5FD8C0',
-  '#7094FF',
-  '#D4537E',
-  '#EF9F27',
-  '#FF9D7C',
-];
-
-function lerpColor(a: string, b: string, t: number): string {
-  const ah = parseInt(a.replace('#', ''), 16);
-  const bh = parseInt(b.replace('#', ''), 16);
-  const ar = (ah >> 16) & 255,
-    ag = (ah >> 8) & 255,
-    ab = ah & 255;
-  const br = (bh >> 16) & 255,
-    bg = (bh >> 8) & 255,
-    bb = bh & 255;
-  return `rgb(${Math.round(ar + (br - ar) * t)},${Math.round(ag + (bg - ag) * t)},${Math.round(ab + (bb - ab) * t)})`;
-}
 
 function buildDots(
   text: string,
@@ -57,17 +35,15 @@ function buildDots(
   const font = `900 ${fontSize}px "Pretendard", Arial, sans-serif`;
   const H = Math.round(fontSize * 1.5);
 
-  // 각 글자 너비 측정
   const measurer = document.createElement('canvas');
   const mCtx = measurer.getContext('2d')!;
   mCtx.font = font;
-  const chars = [...text]; // 유니코드 글자 단위로 분리
+  const chars = [...text];
   const charWidths = chars.map((ch) => mCtx.measureText(ch).width);
   const totalW =
     charWidths.reduce((a, b) => a + b, 0) + charGap * (chars.length - 1);
-  const W = Math.ceil(totalW) + fontSize; // 좌우 여백
+  const W = Math.ceil(totalW) + fontSize;
 
-  // 오프스크린 캔버스에 글자별로 개별 렌더
   const oc = document.createElement('canvas');
   oc.width = W;
   oc.height = H;
@@ -76,20 +52,13 @@ function buildDots(
   ctx.textBaseline = 'middle';
   ctx.fillStyle = '#fff';
 
-  // 글자별 x 시작 위치 계산 (전체 중앙 정렬)
   const startX = (W - totalW) / 2;
-  const charStarts: number[] = [];
   let curX = startX;
   for (let i = 0; i < chars.length; i++) {
-    charStarts.push(curX);
     ctx.fillText(chars[i], curX, H / 2);
     curX += charWidths[i] + charGap;
   }
 
-  // 글자별 x 경계 (end = 다음 글자 start - charGap)
-  const charEnds = charStarts.map((s, i) => s + charWidths[i]);
-
-  // 픽셀 샘플링 → Dot 생성
   const { data } = ctx.getImageData(0, 0, W, H);
   const dots: Dot[] = [];
 
@@ -97,26 +66,7 @@ function buildDots(
     for (let x = 0; x < W; x += spacing) {
       const alpha = data[(y * W + x) * 4 + 3];
       if (alpha > 100) {
-        // 어느 글자에 속하는지 판별
-        let charIndex = chars.length - 1;
-        for (let ci = 0; ci < chars.length; ci++) {
-          if (x >= charStarts[ci] && x <= charEnds[ci]) {
-            charIndex = ci;
-            break;
-          }
-        }
-        dots.push({
-          x,
-          y,
-          ox: x,
-          oy: y,
-          vx: 0,
-          vy: 0,
-          swept: false,
-          t: 0,
-          charIndex,
-          color: '',
-        });
+        dots.push({ x, y, ox: x, oy: y, vx: 0, vy: 0, swept: false, t: 0 });
       }
     }
   }
@@ -132,8 +82,17 @@ const DotTextEffect = ({
   charGap = 14,
   hoverRadius = 28,
   sweepSpeed = 0.12,
-  charColors = DEFAULT_CHAR_COLORS,
 }: DotTextEffectProps) => {
+  const isMobileRef = useRef(mobileQuery.matches);
+
+  useEffect(() => {
+    const handler = (e: MediaQueryListEvent) => {
+      isMobileRef.current = e.matches;
+    };
+    mobileQuery.addEventListener('change', handler);
+    return () => mobileQuery.removeEventListener('change', handler);
+  }, []);
+
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const wrapperRef = useRef<HTMLDivElement>(null);
   const mouseRef = useRef({ x: -999, y: -999 });
@@ -176,17 +135,12 @@ const DotTextEffect = ({
         canvas.style.width = `${W * scale}px`;
         canvas.style.height = `${H * scale}px`;
       }
-      dots.forEach((d) => {
-        d.color = charColors[Math.floor(Math.random() * charColors.length)];
-      });
       dotsRef.current = dots;
 
       rafRef.current = requestAnimationFrame(animate);
     });
 
-    const colorRadius = hoverRadius * 1.8;
     const hoverR2 = hoverRadius * hoverRadius;
-    const colorR2 = colorRadius * colorRadius;
 
     const animate = () => {
       const mouse = mouseRef.current;
@@ -212,7 +166,6 @@ const DotTextEffect = ({
       }
 
       for (const d of ds) {
-        const sweptColor = d.color;
         const dx = d.x - mouse.x;
         const dy = d.y - mouse.y;
         const dist2 = dx * dx + dy * dy;
@@ -220,16 +173,19 @@ const DotTextEffect = ({
         if (dist2 < hoverR2 && !d.swept && mouseMoved) {
           d.swept = true;
           d.t = 0;
-          const dist = Math.sqrt(dist2);
+          const mobile = isMobileRef.current;
           const moveAngle = Math.atan2(mouse.y - prev.y, mouse.x - prev.x);
           const angle = moveAngle + (Math.random() - 0.5) * 1.2;
-          const speed = 10 + Math.random() * 16;
+          const speed = mobile
+            ? 5 + Math.random() * 10
+            : 10 + Math.random() * 16;
           d.vx = Math.cos(angle) * speed;
           d.vy = Math.sin(angle) * speed;
         }
 
         if (d.swept) {
-          d.t = Math.min(d.t + sweepSpeed, 1);
+          const effectiveSweepSpeed = isMobileRef.current ? 0.22 : sweepSpeed;
+          d.t = Math.min(d.t + effectiveSweepSpeed, 1);
           if (d.t < 0.6) d.vy += 0.18;
           d.x += d.vx * (1 - d.t);
           d.y += d.vy * (1 - d.t);
@@ -250,21 +206,12 @@ const DotTextEffect = ({
 
           ctx.beginPath();
           ctx.arc(d.x, d.y, dotR * (1 + (1 - d.t) * 0.8), 0, Math.PI * 2);
-          ctx.fillStyle = lerpColor(sweptColor, DOT_COLOR, d.t);
+          ctx.fillStyle = DOT_COLOR;
           ctx.fill();
         } else {
-          const proximityColor =
-            dist2 < colorR2
-              ? lerpColor(
-                  sweptColor,
-                  DOT_COLOR,
-                  Math.pow(Math.sqrt(dist2) / colorRadius, 2.5),
-                )
-              : DOT_COLOR;
-
           ctx.beginPath();
           ctx.arc(d.x, d.y, dotR, 0, Math.PI * 2);
-          ctx.fillStyle = proximityColor;
+          ctx.fillStyle = DOT_COLOR;
           ctx.fill();
         }
       }
@@ -298,7 +245,6 @@ const DotTextEffect = ({
     charGap,
     hoverRadius,
     sweepSpeed,
-    charColors,
   ]);
 
   useEffect(() => {
