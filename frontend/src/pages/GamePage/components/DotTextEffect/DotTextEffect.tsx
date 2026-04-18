@@ -180,7 +180,7 @@ const DotTextEffect = ({
           const moveAngle = Math.atan2(mouse.y - prev.y, mouse.x - prev.x);
           const angle = moveAngle + (Math.random() - 0.5) * 1.2;
           const speed = mobile
-            ? 8 + Math.random() * 14
+            ? 20 + Math.random() * 30
             : 10 + Math.random() * 16;
           d.vx = Math.cos(angle) * speed;
           d.vy = Math.sin(angle) * speed;
