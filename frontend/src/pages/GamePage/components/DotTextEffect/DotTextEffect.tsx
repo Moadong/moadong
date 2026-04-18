@@ -1,4 +1,4 @@
-import { memo, useEffect, useRef } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 
 const mobileQuery = window.matchMedia('(max-width: 699px)');
 
@@ -82,11 +82,13 @@ const DotTextEffect = ({
   hoverRadius = 28,
   sweepSpeed = 0.12,
 }: DotTextEffectProps) => {
+  const [isMobile, setIsMobile] = useState(mobileQuery.matches);
   const isMobileRef = useRef(mobileQuery.matches);
 
   useEffect(() => {
     const handler = (e: MediaQueryListEvent) => {
       isMobileRef.current = e.matches;
+      setIsMobile(e.matches);
     };
     mobileQuery.addEventListener('change', handler);
     return () => mobileQuery.removeEventListener('change', handler);
@@ -260,6 +262,7 @@ const DotTextEffect = ({
     charGap,
     hoverRadius,
     sweepSpeed,
+    isMobile,
   ]);
 
   useEffect(() => {
