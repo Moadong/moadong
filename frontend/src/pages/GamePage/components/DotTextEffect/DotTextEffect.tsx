@@ -164,6 +164,9 @@ const DotTextEffect = ({
         return;
       }
 
+      // physics 업데이트 + swept 분리
+      const sweptDots: { d: Dot; renderT: number }[] = [];
+
       for (const d of ds) {
         const dx = d.x - mouse.x;
         const dy = d.y - mouse.y;
@@ -204,16 +207,27 @@ const DotTextEffect = ({
             }
           }
 
-          ctx.beginPath();
-          ctx.arc(d.x, d.y, dotR * (1 + (1 - renderT) * 0.8), 0, Math.PI * 2);
-          ctx.fillStyle = DOT_COLOR;
-          ctx.fill();
-        } else {
-          ctx.beginPath();
-          ctx.arc(d.x, d.y, dotR, 0, Math.PI * 2);
-          ctx.fillStyle = DOT_COLOR;
-          ctx.fill();
+          sweptDots.push({ d, renderT });
         }
+      }
+
+      // non-swept dots: 단일 path 배치 렌더
+      ctx.beginPath();
+      ctx.fillStyle = DOT_COLOR;
+      for (const d of ds) {
+        if (!d.swept) {
+          ctx.moveTo(d.x + dotR, d.y);
+          ctx.arc(d.x, d.y, dotR, 0, Math.PI * 2);
+        }
+      }
+      ctx.fill();
+
+      // swept dots: 개별 렌더 (크기 변화 있음)
+      for (const { d, renderT } of sweptDots) {
+        ctx.beginPath();
+        ctx.arc(d.x, d.y, dotR * (1 + (1 - renderT) * 0.8), 0, Math.PI * 2);
+        ctx.fillStyle = DOT_COLOR;
+        ctx.fill();
       }
 
       // 커스텀 커서 (데스크탑만)
