@@ -76,9 +76,18 @@ const GamePage = () => {
     [clickGame],
   );
 
+  const flushRef = useRef(flush);
+  const clubNameRef = useRef(clubName);
+  useEffect(() => {
+    flushRef.current = flush;
+  }, [flush]);
+  useEffect(() => {
+    clubNameRef.current = clubName;
+  }, [clubName]);
+
   useEffect(() => {
     return () => {
-      if (timerRef.current) clearTimeout(timerRef.current);
+      flushRef.current(clubNameRef.current);
     };
   }, []);
 
