@@ -37,7 +37,12 @@ public class ClubClickService {
     static final String WHITELIST_KEY = "club:whitelist";
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
     private static final String COOLDOWN_KEY_PREFIX = "game:cooldown:";
+    private static final String RATE_LIMIT_KEY_PREFIX = "game:ratelimit:";
+    private static final String BAN_KEY_PREFIX = "game:banned:";
     private static final long COOLDOWN_MILLIS = 50L;
+    private static final long RATE_LIMIT_WINDOW_SECONDS = 10L;
+    private static final long RATE_LIMIT_MAX_REQUESTS = 20L;
+    private static final long BAN_DURATION_SECONDS = 30L;
     static final long MAX_CLICK_COUNT = 9_999_999_999L;
 
     private final StringRedisTemplate stringRedisTemplate;
@@ -69,6 +74,21 @@ public class ClubClickService {
         Boolean isMember = stringRedisTemplate.opsForSet().isMember(WHITELIST_KEY, clubName);
         if (!Boolean.TRUE.equals(isMember)) {
             throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
+        }
+
+        String banKey = BAN_KEY_PREFIX + clientIp;
+        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(banKey))) {
+            throw new RestApiException(ErrorCode.CLICK_RATE_LIMITED);
+        }
+
+        String rateLimitKey = RATE_LIMIT_KEY_PREFIX + clientIp;
+        Long requestCount = stringRedisTemplate.opsForValue().increment(rateLimitKey);
+        if (requestCount != null && requestCount == 1) {
+            stringRedisTemplate.expire(rateLimitKey, Duration.ofSeconds(RATE_LIMIT_WINDOW_SECONDS));
+        }
+        if (requestCount != null && requestCount > RATE_LIMIT_MAX_REQUESTS) {
+            stringRedisTemplate.opsForValue().set(banKey, "1", Duration.ofSeconds(BAN_DURATION_SECONDS));
+            throw new RestApiException(ErrorCode.CLICK_RATE_LIMITED);
         }
 
         String cooldownKey = COOLDOWN_KEY_PREFIX + clientIp;
