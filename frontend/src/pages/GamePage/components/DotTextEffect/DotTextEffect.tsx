@@ -285,6 +285,7 @@ const DotTextEffect = ({
   const toCanvasCoords = (clientX: number, clientY: number) => {
     const canvas = canvasRef.current!;
     const r = canvas.getBoundingClientRect();
+    if (r.width === 0 || r.height === 0) return null;
     return {
       x: (clientX - r.left) * (canvas.width / r.width),
       y: (clientY - r.top) * (canvas.height / r.height),
@@ -292,7 +293,7 @@ const DotTextEffect = ({
   };
 
   const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
-    mouseRef.current = toCanvasCoords(e.clientX, e.clientY);
+    mouseRef.current = toCanvasCoords(e.clientX, e.clientY) ?? mouseRef.current;
   };
 
   const handleMouseLeave = () => {
@@ -301,12 +302,14 @@ const DotTextEffect = ({
 
   const handleTouchMove = (e: React.TouchEvent<HTMLCanvasElement>) => {
     const touch = e.touches[0];
-    mouseRef.current = toCanvasCoords(touch.clientX, touch.clientY);
+    mouseRef.current =
+      toCanvasCoords(touch.clientX, touch.clientY) ?? mouseRef.current;
   };
 
   const handleTouchStart = (e: React.TouchEvent<HTMLCanvasElement>) => {
     const touch = e.touches[0];
-    mouseRef.current = toCanvasCoords(touch.clientX, touch.clientY);
+    mouseRef.current =
+      toCanvasCoords(touch.clientX, touch.clientY) ?? mouseRef.current;
   };
 
   const handleTouchEnd = () => {
