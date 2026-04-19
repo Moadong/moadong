@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -44,6 +45,14 @@ public class ClubClickService {
     private static final long RATE_LIMIT_MAX_REQUESTS = 20L;
     private static final long BAN_DURATION_SECONDS = 30L;
     static final long MAX_CLICK_COUNT = 9_999_999_999L;
+
+    // INCR + 조건부 EXPIRE를 원자적으로 수행 (TTL 누락 방지)
+    private static final RedisScript<Long> RATE_LIMIT_SCRIPT = RedisScript.of(
+            "local c = redis.call('INCR', KEYS[1])\n" +
+            "if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end\n" +
+            "return c",
+            Long.class
+    );
 
     private final StringRedisTemplate stringRedisTemplate;
     private final ClubRepository clubRepository;
@@ -77,10 +86,11 @@ public class ClubClickService {
         }
 
         String rateLimitKey = RATE_LIMIT_KEY_PREFIX + clientIp;
-        Long requestCount = stringRedisTemplate.opsForValue().increment(rateLimitKey);
-        if (requestCount != null && requestCount == 1) {
-            stringRedisTemplate.expire(rateLimitKey, Duration.ofSeconds(RATE_LIMIT_WINDOW_SECONDS));
-        }
+        Long requestCount = stringRedisTemplate.execute(
+                RATE_LIMIT_SCRIPT,
+                List.of(rateLimitKey),
+                String.valueOf(RATE_LIMIT_WINDOW_SECONDS)
+        );
         if (requestCount != null && requestCount > RATE_LIMIT_MAX_REQUESTS) {
             stringRedisTemplate.opsForValue().set(banKey, "1", Duration.ofSeconds(BAN_DURATION_SECONDS));
             throw new RestApiException(ErrorCode.CLICK_RATE_LIMITED);
