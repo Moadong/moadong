@@ -68,9 +68,13 @@ public class ClubClickService {
         List<String> names = clubRepository.findAll().stream()
                 .map(Club::getName)
                 .toList();
-        stringRedisTemplate.delete(WHITELIST_KEY);
-        if (!names.isEmpty()) {
-            stringRedisTemplate.opsForSet().add(WHITELIST_KEY, names.toArray(String[]::new));
+        if (names.isEmpty()) {
+            stringRedisTemplate.delete(WHITELIST_KEY);
+        } else {
+            String tempKey = WHITELIST_KEY + ":tmp";
+            stringRedisTemplate.delete(tempKey);
+            stringRedisTemplate.opsForSet().add(tempKey, names.toArray(String[]::new));
+            stringRedisTemplate.rename(tempKey, WHITELIST_KEY);
         }
         log.info("동아리 화이트리스트 갱신 완료 ({}개)", names.size());
     }
