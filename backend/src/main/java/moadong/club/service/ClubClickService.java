@@ -71,11 +71,6 @@ public class ClubClickService {
             throw new RestApiException(ErrorCode.CLICK_COUNT_INVALID);
         }
 
-        Boolean isMember = stringRedisTemplate.opsForSet().isMember(WHITELIST_KEY, clubName);
-        if (!Boolean.TRUE.equals(isMember)) {
-            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
-        }
-
         String banKey = BAN_KEY_PREFIX + clientIp;
         if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(banKey))) {
             throw new RestApiException(ErrorCode.CLICK_RATE_LIMITED);
@@ -96,6 +91,11 @@ public class ClubClickService {
                 .setIfAbsent(cooldownKey, "1", Duration.ofMillis(COOLDOWN_MILLIS));
         if (Boolean.FALSE.equals(isNew)) {
             throw new RestApiException(ErrorCode.CLICK_COOLDOWN);
+        }
+
+        Boolean isMember = stringRedisTemplate.opsForSet().isMember(WHITELIST_KEY, clubName);
+        if (!Boolean.TRUE.equals(isMember)) {
+            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
         }
 
         Query query = new Query(Criteria.where("clubName").is(clubName));
