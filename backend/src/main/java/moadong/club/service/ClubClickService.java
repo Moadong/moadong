@@ -28,7 +28,6 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
-import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -46,6 +45,13 @@ public class ClubClickService {
     private static final long RATE_LIMIT_MAX_REQUESTS = 20L;
     private static final long BAN_DURATION_SECONDS = 30L;
     static final long MAX_CLICK_COUNT = 9_999_999_999L;
+
+    private static final RedisScript<Long> WHITELIST_SWAP_SCRIPT = RedisScript.of(
+            "redis.call('DEL', KEYS[1])\n" +
+            "if #ARGV > 0 then redis.call('SADD', KEYS[1], unpack(ARGV)) end\n" +
+            "return #ARGV",
+            Long.class
+    );
 
     // INCR + 조건부 EXPIRE를 원자적으로 수행 (TTL 누락 방지)
     private static final RedisScript<Long> RATE_LIMIT_SCRIPT = RedisScript.of(
@@ -69,17 +75,9 @@ public class ClubClickService {
         List<String> names = clubRepository.findAll().stream()
                 .map(Club::getName)
                 .toList();
-        if (names.isEmpty()) {
-            stringRedisTemplate.delete(WHITELIST_KEY);
-        } else {
-            String tempKey = WHITELIST_KEY + ":tmp:" + UUID.randomUUID();
-            try {
-                stringRedisTemplate.opsForSet().add(tempKey, names.toArray(String[]::new));
-                stringRedisTemplate.rename(tempKey, WHITELIST_KEY);
-            } finally {
-                stringRedisTemplate.delete(tempKey);
-            }
-        }
+        stringRedisTemplate.execute(WHITELIST_SWAP_SCRIPT,
+                List.of(WHITELIST_KEY),
+                names.toArray(String[]::new));
         log.info("동아리 화이트리스트 갱신 완료 ({}개)", names.size());
     }
 
