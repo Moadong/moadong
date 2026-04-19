@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import { useClickGame, useGameRanking } from '@/hooks/Queries/useGame';
 import ClickButton from './components/ClickButton/ClickButton';
@@ -8,16 +8,6 @@ import RankingBoard from './components/RankingBoard/RankingBoard';
 import * as S from './GamePage.styles';
 
 const STORAGE_KEY = 'game_club_name';
-
-const CHAR_COLORS = [
-  '#FF5414',
-  '#FFB300',
-  '#5FD8C0',
-  '#7094FF',
-  '#D4537E',
-  '#EF9F27',
-  '#FF9D7C',
-];
 
 const BLOBS = [
   {
@@ -66,23 +56,56 @@ const GamePage = () => {
   const [clubName, setClubName] = useState<string>(
     () => sessionStorage.getItem(STORAGE_KEY) ?? '',
   );
-  const [myClickCount, setMyClickCount] = useState(0);
+  const pendingRef = useRef(0);
+  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: rankingData } = useGameRanking();
   const { mutate: clickGame } = useClickGame();
 
   const top1Club = rankingData?.clubs[0];
 
+  const flush = useCallback(
+    (name: string) => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = null;
+      const count = pendingRef.current;
+      if (count === 0) return;
+      pendingRef.current = 0;
+      clickGame({ clubName: name, count });
+    },
+    [clickGame],
+  );
+
+  const flushRef = useRef(flush);
+  const clubNameRef = useRef(clubName);
+  useEffect(() => {
+    flushRef.current = flush;
+  }, [flush]);
+  useEffect(() => {
+    clubNameRef.current = clubName;
+  }, [clubName]);
+
+  useEffect(() => {
+    return () => {
+      flushRef.current(clubNameRef.current);
+    };
+  }, []);
+
   const handleStart = (name: string) => {
     sessionStorage.setItem(STORAGE_KEY, name);
     setClubName(name);
   };
 
-  const handleClick = () => {
-    clickGame(clubName, {
-      onSuccess: () => setMyClickCount((prev) => prev + 1),
-    });
-  };
+  const handleClick = useCallback(() => {
+    pendingRef.current += 1;
+
+    if (pendingRef.current >= 5) {
+      flush(clubName);
+    } else {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = setTimeout(() => flush(clubName), 500);
+    }
+  }, [clubName, flush]);
 
   return (
     <S.PageContainer>
@@ -145,11 +168,10 @@ const GamePage = () => {
           >
             <DotTextEffect
               text={top1Club.clubName}
-              fontSize={100}
-              spacing={4}
-              dotR={1.8}
-              hoverRadius={18}
-              charColors={CHAR_COLORS}
+              fontSize={200}
+              spacing={6}
+              dotR={1.3}
+              hoverRadius={20}
             />
           </motion.div>
         )}
@@ -164,11 +186,7 @@ const GamePage = () => {
           {!clubName ? (
             <ClubNameInput onStart={handleStart} />
           ) : (
-            <ClickButton
-              clubName={clubName}
-              clickCount={myClickCount}
-              onClickGame={handleClick}
-            />
+            <ClickButton clubName={clubName} onClickGame={handleClick} />
           )}
         </motion.div>
 

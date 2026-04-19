@@ -30,7 +30,7 @@ export const List = styled.ol`
   gap: 8px;
 `;
 
-export const Item = styled.li<{ $isMe: boolean; $rank: number }>`
+export const Item = styled.div<{ $isMe: boolean; $rank: number }>`
   display: flex;
   align-items: center;
   gap: 12px;

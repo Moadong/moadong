@@ -1,22 +1,25 @@
+import { memo, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as S from './ClickButton.styles';
 
 interface ClickButtonProps {
   clubName: string;
-  clickCount: number;
   onClickGame: () => void;
 }
 
-const ClickButton = ({
-  clubName,
-  clickCount,
-  onClickGame,
-}: ClickButtonProps) => {
+const ClickButton = ({ clubName, onClickGame }: ClickButtonProps) => {
+  const [clickCount, setClickCount] = useState(0);
+
+  const handleClick = () => {
+    setClickCount((prev) => prev + 1);
+    onClickGame();
+  };
+
   return (
     <S.Wrapper>
       <S.ClubLabel>{clubName}</S.ClubLabel>
       <motion.button
-        onClick={onClickGame}
+        onClick={handleClick}
         whileTap={{ scale: 0.88 }}
         whileHover={{ scale: 1.06 }}
         transition={{ type: 'spring', stiffness: 400, damping: 15 }}
@@ -56,4 +59,4 @@ const ClickButton = ({
   );
 };
 
-export default ClickButton;
+export default memo(ClickButton);
