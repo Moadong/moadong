@@ -21,6 +21,7 @@ public enum ErrorCode {
     CLUB_NAME_ALREADY_EXISTS(HttpStatus.CONFLICT, "600-11", "이미 사용 중인 동아리 이름입니다."),
     CLICK_COOLDOWN(HttpStatus.TOO_MANY_REQUESTS, "600-12", "클릭 요청이 너무 빠릅니다. 잠시 후 다시 시도해주세요."),
     CLICK_COUNT_INVALID(HttpStatus.BAD_REQUEST, "600-13", "클릭 수는 1 이상 5 이하이어야 합니다."),
+    CLICK_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "600-14", "비정상적인 요청이 감지되었습니다. 30초 후 다시 시도해주세요."),
 
     // 601xx: 파일/미디어 관련 오류
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "601-1", "이미지 업로드에 실패하였습니다."),

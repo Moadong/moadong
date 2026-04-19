@@ -19,6 +19,7 @@ import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.data.mongodb.core.query.Query;
 import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
@@ -37,8 +38,21 @@ public class ClubClickService {
     static final String WHITELIST_KEY = "club:whitelist";
     private static final ZoneId KST = ZoneId.of("Asia/Seoul");
     private static final String COOLDOWN_KEY_PREFIX = "game:cooldown:";
+    private static final String RATE_LIMIT_KEY_PREFIX = "game:ratelimit:";
+    private static final String BAN_KEY_PREFIX = "game:banned:";
     private static final long COOLDOWN_MILLIS = 50L;
+    private static final long RATE_LIMIT_WINDOW_SECONDS = 10L;
+    private static final long RATE_LIMIT_MAX_REQUESTS = 20L;
+    private static final long BAN_DURATION_SECONDS = 30L;
     static final long MAX_CLICK_COUNT = 9_999_999_999L;
+
+    // INCR + 조건부 EXPIRE를 원자적으로 수행 (TTL 누락 방지)
+    private static final RedisScript<Long> RATE_LIMIT_SCRIPT = RedisScript.of(
+            "local c = redis.call('INCR', KEYS[1])\n" +
+            "if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end\n" +
+            "return c",
+            Long.class
+    );
 
     private final StringRedisTemplate stringRedisTemplate;
     private final ClubRepository clubRepository;
@@ -66,9 +80,20 @@ public class ClubClickService {
             throw new RestApiException(ErrorCode.CLICK_COUNT_INVALID);
         }
 
-        Boolean isMember = stringRedisTemplate.opsForSet().isMember(WHITELIST_KEY, clubName);
-        if (!Boolean.TRUE.equals(isMember)) {
-            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
+        String banKey = BAN_KEY_PREFIX + clientIp;
+        if (Boolean.TRUE.equals(stringRedisTemplate.hasKey(banKey))) {
+            throw new RestApiException(ErrorCode.CLICK_RATE_LIMITED);
+        }
+
+        String rateLimitKey = RATE_LIMIT_KEY_PREFIX + clientIp;
+        Long requestCount = stringRedisTemplate.execute(
+                RATE_LIMIT_SCRIPT,
+                List.of(rateLimitKey),
+                String.valueOf(RATE_LIMIT_WINDOW_SECONDS)
+        );
+        if (requestCount != null && requestCount > RATE_LIMIT_MAX_REQUESTS) {
+            stringRedisTemplate.opsForValue().set(banKey, "1", Duration.ofSeconds(BAN_DURATION_SECONDS));
+            throw new RestApiException(ErrorCode.CLICK_RATE_LIMITED);
         }
 
         String cooldownKey = COOLDOWN_KEY_PREFIX + clientIp;
@@ -76,6 +101,11 @@ public class ClubClickService {
                 .setIfAbsent(cooldownKey, "1", Duration.ofMillis(COOLDOWN_MILLIS));
         if (Boolean.FALSE.equals(isNew)) {
             throw new RestApiException(ErrorCode.CLICK_COOLDOWN);
+        }
+
+        Boolean isMember = stringRedisTemplate.opsForSet().isMember(WHITELIST_KEY, clubName);
+        if (!Boolean.TRUE.equals(isMember)) {
+            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
         }
 
         Query query = new Query(Criteria.where("clubName").is(clubName));
