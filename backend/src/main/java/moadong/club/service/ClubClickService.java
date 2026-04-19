@@ -28,6 +28,7 @@ import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
 @Slf4j
@@ -71,10 +72,13 @@ public class ClubClickService {
         if (names.isEmpty()) {
             stringRedisTemplate.delete(WHITELIST_KEY);
         } else {
-            String tempKey = WHITELIST_KEY + ":tmp";
-            stringRedisTemplate.delete(tempKey);
-            stringRedisTemplate.opsForSet().add(tempKey, names.toArray(String[]::new));
-            stringRedisTemplate.rename(tempKey, WHITELIST_KEY);
+            String tempKey = WHITELIST_KEY + ":tmp:" + UUID.randomUUID();
+            try {
+                stringRedisTemplate.opsForSet().add(tempKey, names.toArray(String[]::new));
+                stringRedisTemplate.rename(tempKey, WHITELIST_KEY);
+            } finally {
+                stringRedisTemplate.delete(tempKey);
+            }
         }
         log.info("동아리 화이트리스트 갱신 완료 ({}개)", names.size());
     }
