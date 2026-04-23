@@ -74,9 +74,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
         requestNavigateWebview('festival-introduction');
         return;
       }
-      if (/^https?:\/\//.test(url)) {
-        requestOpenExternalUrl(url);
-      }
+      requestOpenExternalUrl(url);
       return;
     }
 

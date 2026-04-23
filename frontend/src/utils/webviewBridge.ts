@@ -125,9 +125,15 @@ export const requestNavigateWebview = (slug: string): boolean => {
   return postMessageToApp({ type: 'NAVIGATE_WEBVIEW', payload: { slug } });
 };
 
-// 외부 URL을 앱 브라우저로 열기 요청
+// 외부 URL을 앱 브라우저로 열기 요청 — http/https만 허용, 그 외 프로토콜은 차단
 // 언제: 앱 웹뷰에서 외부 링크(http/https) 클릭 시. 웹뷰 내에서 직접 열면 뒤로가기가 깨지므로 앱에 위임.
 //       웹 환경에서는 window.open() 또는 <a target="_blank"> 사용
 export const requestOpenExternalUrl = (url: string): boolean => {
+  try {
+    const { protocol } = new URL(url);
+    if (protocol !== 'http:' && protocol !== 'https:') return false;
+  } catch {
+    return false;
+  }
   return postMessageToApp({ type: 'OPEN_EXTERNAL_URL', payload: { url } });
 };
