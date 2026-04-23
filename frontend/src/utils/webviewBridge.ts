@@ -14,13 +14,23 @@ export type WebViewMessage =
     }
   | { type: 'SUBSCRIBE_TOGGLE'; payload: { clubId: string } }
   | { type: 'REQUEST_SUBSCRIBE_STATE' }
-  | { type: 'NAVIGATE_CLUB_DETAIL'; payload: { clubId: string; clubName: string } }
+  | {
+      type: 'NAVIGATE_CLUB_DETAIL';
+      payload: { clubId: string; clubName: string };
+    }
   | { type: 'NAVIGATE_WEBVIEW'; payload: { slug: string } }
   | { type: 'OPEN_EXTERNAL_URL'; payload: { url: string } };
 
 export type AppToWebMessage =
   | { type: 'SUBSCRIBE_STATE'; payload: { subscribedClubIds: string[] } }
-  | { type: 'SUBSCRIBE_RESULT'; payload: { clubId: string; subscribed: boolean; needsPermission: boolean } };
+  | {
+      type: 'SUBSCRIBE_RESULT';
+      payload: {
+        clubId: string;
+        subscribed: boolean;
+        needsPermission: boolean;
+      };
+    };
 
 export type WebViewMessageType = WebViewMessage['type'];
 
@@ -96,8 +106,14 @@ export const requestSubscribeState = (): boolean => {
   return postMessageToApp({ type: 'REQUEST_SUBSCRIBE_STATE' });
 };
 
-export const requestNavigateClubDetail = (clubId: string, clubName: string): boolean => {
-  return postMessageToApp({ type: 'NAVIGATE_CLUB_DETAIL', payload: { clubId, clubName } });
+export const requestNavigateClubDetail = (
+  clubId: string,
+  clubName: string,
+): boolean => {
+  return postMessageToApp({
+    type: 'NAVIGATE_CLUB_DETAIL',
+    payload: { clubId, clubName },
+  });
 };
 
 export const requestNavigateWebview = (slug: string): boolean => {
@@ -107,4 +123,3 @@ export const requestNavigateWebview = (slug: string): boolean => {
 export const requestOpenExternalUrl = (url: string): boolean => {
   return postMessageToApp({ type: 'OPEN_EXTERNAL_URL', payload: { url } });
 };
-

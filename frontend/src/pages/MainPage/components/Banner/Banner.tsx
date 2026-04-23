@@ -9,9 +9,12 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetBanners } from '@/hooks/Queries/useBanner';
 import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
-import isInAppWebView from '@/utils/isInAppWebView';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
-import { requestNavigateWebview, requestOpenExternalUrl } from '@/utils/webviewBridge';
+import isInAppWebView from '@/utils/isInAppWebView';
+import {
+  requestNavigateWebview,
+  requestOpenExternalUrl,
+} from '@/utils/webviewBridge';
 import * as Styled from './Banner.styles';
 import BANNERS from './bannerData';
 
@@ -60,7 +63,11 @@ const Banner = ({ isWebview = false }: BannerProps) => {
   ) => {
     if (!url) return;
 
-    trackEvent(USER_EVENT.BANNER_CLICKED, { bannerId, bannerName, linkTo: url });
+    trackEvent(USER_EVENT.BANNER_CLICKED, {
+      bannerId,
+      bannerName,
+      linkTo: url,
+    });
 
     if (inAppWebView) {
       if (url === WEBVIEW_LINK_TARGET.CLUB_FESTIVAL) {

@@ -107,5 +107,4 @@ export const RetryButton = styled.button`
   &:active {
     transform: scale(0.98);
   }
-
 `;

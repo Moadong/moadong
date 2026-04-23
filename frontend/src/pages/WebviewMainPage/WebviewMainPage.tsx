@@ -8,8 +8,8 @@ import { useGetCardList } from '@/hooks/Queries/useClub';
 import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
 import useWebviewSubscribe from '@/hooks/useWebviewSubscribe';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
-import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
+import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
@@ -82,7 +82,9 @@ const WebviewMainPage = () => {
             <Styled.EmptyResult>
               동아리 목록을 불러오는 중 문제가 발생했습니다.
               <br />
-              <Styled.RetryButton onClick={() => refetch()}>다시 시도</Styled.RetryButton>
+              <Styled.RetryButton onClick={() => refetch()}>
+                다시 시도
+              </Styled.RetryButton>
             </Styled.EmptyResult>
           ) : isEmpty ? (
             <Styled.EmptyResult>

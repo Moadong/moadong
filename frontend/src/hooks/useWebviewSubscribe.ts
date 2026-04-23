@@ -6,13 +6,16 @@ import {
 } from '@/utils/webviewBridge';
 
 const useWebviewSubscribe = () => {
-  const [subscribedClubIds, setSubscribedClubIds] = useState<Set<string>>(new Set());
+  const [subscribedClubIds, setSubscribedClubIds] = useState<Set<string>>(
+    new Set(),
+  );
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
       let data: AppToWebMessage;
       try {
-        data = typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        data =
+          typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
       } catch {
         return;
       }
@@ -20,13 +23,19 @@ const useWebviewSubscribe = () => {
       if (data.type === 'SUBSCRIBE_STATE') {
         const incoming = data.payload.subscribedClubIds;
         setSubscribedClubIds((prev) => {
-          if (prev.size === incoming.length && incoming.every((id) => prev.has(id))) return prev;
+          if (
+            prev.size === incoming.length &&
+            incoming.every((id) => prev.has(id))
+          )
+            return prev;
           return new Set(incoming);
         });
       } else if (data.type === 'SUBSCRIBE_RESULT') {
         const { clubId, subscribed } = data.payload;
         setSubscribedClubIds((prev) => {
-          const alreadyCorrect = subscribed ? prev.has(clubId) : !prev.has(clubId);
+          const alreadyCorrect = subscribed
+            ? prev.has(clubId)
+            : !prev.has(clubId);
           if (alreadyCorrect) return prev;
           const next = new Set(prev);
           if (subscribed) next.add(clubId);
