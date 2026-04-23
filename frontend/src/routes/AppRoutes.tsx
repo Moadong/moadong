@@ -16,7 +16,8 @@ import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import MainPage from '@/pages/MainPage/MainPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
-import WebviewRoutes from './WebviewRoutes';
+import WebviewLayout from '@/pages/WebviewLayout/WebviewLayout';
+import WebviewMainPage from '@/pages/WebviewMainPage/WebviewMainPage';
 
 const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
 
@@ -139,7 +140,56 @@ const AppRoutes = () => (
     />
 
     {/* 웹뷰 */}
-    <WebviewRoutes />
+    <Route path='/webview' element={<WebviewLayout />}>
+      <Route
+        path='main'
+        element={
+          <ContentErrorBoundary>
+            <WebviewMainPage />
+          </ContentErrorBoundary>
+        }
+      />
+      <Route
+        path='promotions'
+        element={
+          <ContentErrorBoundary>
+            <PromotionListPage />
+          </ContentErrorBoundary>
+        }
+      />
+      <Route
+        path='club/:clubId'
+        element={
+          <ContentErrorBoundary>
+            <ClubDetailPage />
+          </ContentErrorBoundary>
+        }
+      />
+      <Route
+        path='club/:clubId/map'
+        element={
+          <ContentErrorBoundary>
+            <ClubMapPage />
+          </ContentErrorBoundary>
+        }
+      />
+      <Route
+        path='club/@:clubName'
+        element={
+          <ContentErrorBoundary>
+            <ClubDetailPage />
+          </ContentErrorBoundary>
+        }
+      />
+      <Route
+        path='club/@:clubName/map'
+        element={
+          <ContentErrorBoundary>
+            <ClubMapPage />
+          </ContentErrorBoundary>
+        }
+      />
+    </Route>
 
     {/* 개발 환경 전용 */}
     {import.meta.env.DEV && (
