@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
   width: 100%;
@@ -163,11 +164,15 @@ export const EventDescription = styled.p`
 
 export const EmptyState = styled.p`
   padding-top: 120px;
-  font-size: 16px;
-  font-weight: 500;
+  ${setTypography(typography.paragraph.p3)};
   line-height: 140%;
   color: ${colors.gray[700]};
   text-align: center;
+
+  ${media.tablet} {
+    padding-top: 60px;
+    ${setTypography(typography.paragraph.p5)};
+  }
 `;
 
 export const EmptyText = styled.p`
