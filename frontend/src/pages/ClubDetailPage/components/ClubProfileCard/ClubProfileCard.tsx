@@ -1,4 +1,5 @@
 import { Link } from 'react-router-dom';
+import useNavigator from '@/hooks/useNavigator';
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
@@ -33,6 +34,7 @@ const ClubProfileCard = ({
   mapPath,
 }: ClubProfileCardProps) => {
   const trackEvent = useMixpanelTrack();
+  const handleLink = useNavigator();
 
   const getSocialPlatformName = (platform: string) => {
     const names: Record<string, string> = {
@@ -90,12 +92,14 @@ const ClubProfileCard = ({
                 href={url}
                 target='_blank'
                 rel='noopener noreferrer'
-                onClick={() =>
+                onClick={(e) => {
+                  e.preventDefault();
                   trackEvent(USER_EVENT.SNS_LINK_CLICKED, {
                     platform,
                     clubName: name,
-                  })
-                }
+                  });
+                  handleLink(url);
+                }}
               >
                 <Styled.SocialIcon src={icon} alt={platform} />
                 <Styled.SocialText>
