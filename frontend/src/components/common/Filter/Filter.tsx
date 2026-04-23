@@ -4,9 +4,14 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
 import * as Styled from './Filter.styles';
 
-const FILTER_OPTIONS = [
+const WEB_FILTER_OPTIONS = [
   { label: '동아리', path: '/' },
   { label: '홍보', path: '/promotions' },
+] as const;
+
+const WEBVIEW_FILTER_OPTIONS = [
+  { label: '동아리', path: '/webview/main' },
+  { label: '홍보', path: '/webview/promotions' },
 ] as const;
 
 interface FilterProps {
@@ -19,24 +24,24 @@ const Filter = ({ alwaysVisible = false, hasNotification }: FilterProps) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const trackEvent = useMixpanelTrack();
-  const shouldShow = alwaysVisible || isMobile;
+
+  const isWebview = pathname.startsWith('/webview');
+  const filterOptions = isWebview ? WEBVIEW_FILTER_OPTIONS : WEB_FILTER_OPTIONS;
+  const shouldShow = alwaysVisible || isMobile || isWebview;
 
   const handleFilterOptionClick = (path: string) => {
-    trackEvent(USER_EVENT.FILTER_OPTION_CLICKED, {
-      path: path,
-    });
-
+    trackEvent(USER_EVENT.FILTER_OPTION_CLICKED, { path });
     navigate(path);
   };
 
   return (
     <>
       {shouldShow && (
-        <Styled.FilterListContainer>
-          {FILTER_OPTIONS.map((filter) => (
+        <Styled.FilterListContainer $isWebview={isWebview}>
+          {filterOptions.map((filter) => (
             <Styled.FilterButtonWrapper key={filter.path}>
               <Styled.NotificationDot
-                $isVisible={hasNotification && filter.path === '/promotions'}
+                $isVisible={hasNotification && filter.label === '홍보'}
               />
               <Styled.FilterButton
                 $isActive={pathname === filter.path}
