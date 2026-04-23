@@ -15,10 +15,6 @@ export type WebViewMessage =
     }
   | { type: 'SUBSCRIBE_TOGGLE'; payload: { clubId: string } }
   | { type: 'REQUEST_SUBSCRIBE_STATE' }
-  | {
-      type: 'NAVIGATE_CLUB_DETAIL';
-      payload: { clubId: string; clubName: string };
-    }
   | { type: 'NAVIGATE_WEBVIEW'; payload: { slug: string } }
   | { type: 'OPEN_EXTERNAL_URL'; payload: { url: string } };
 
@@ -120,19 +116,6 @@ export const requestSubscribeToggle = (clubId: string): boolean => {
 // 언제: 웹뷰 마운트 시 1회 호출해 초기 구독 상태를 동기화. useWebviewSubscribe 내부에서 자동 처리됨
 export const requestSubscribeState = (): boolean => {
   return postMessageToApp({ type: 'REQUEST_SUBSCRIBE_STATE' });
-};
-
-// 동아리 상세 페이지로 이동 요청
-// 언제: 앱 웹뷰에서 동아리 카드·CTA 클릭 시. 웹뷰는 네이티브 화면 전환 불가하므로 앱에 위임.
-//       isInAppWebView()가 true일 때만 호출하고, false면 navigate('/clubDetail/...') 사용
-export const requestNavigateClubDetail = (
-  clubId: string,
-  clubName: string,
-): boolean => {
-  return postMessageToApp({
-    type: 'NAVIGATE_CLUB_DETAIL',
-    payload: { clubId, clubName },
-  });
 };
 
 // 앱 내 다른 웹뷰 화면으로 이동 요청 (slug로 앱이 라우팅 결정)

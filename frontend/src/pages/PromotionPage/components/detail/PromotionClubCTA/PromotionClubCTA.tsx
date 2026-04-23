@@ -2,7 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import isInAppWebView from '@/utils/isInAppWebView';
-import { requestNavigateClubDetail } from '@/utils/webviewBridge';
+import { requestNavigateWebview } from '@/utils/webviewBridge';
 import ArrowButton from '../PromotionArrowButton/PromotionArrowButton';
 import * as Styled from './PromotionClubCTA.styles';
 
@@ -22,7 +22,7 @@ const PromotionClubCTA = ({ clubId, clubName }: Props) => {
     });
 
     if (isInAppWebView()) {
-      requestNavigateClubDetail(clubId, clubName);
+      requestNavigateWebview(`club/${clubId}`);
     } else {
       navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
     }

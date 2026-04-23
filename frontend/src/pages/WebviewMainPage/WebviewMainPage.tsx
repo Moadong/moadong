@@ -14,7 +14,7 @@ import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
 import { Club } from '@/types/club';
-import { requestNavigateClubDetail } from '@/utils/webviewBridge';
+import { requestNavigateWebview } from '@/utils/webviewBridge';
 import SubscribeButton from './components/SubscribeButton/SubscribeButton';
 import * as Styled from './WebviewMainPage.styles';
 
@@ -39,7 +39,7 @@ const WebviewMainPage = () => {
   const hasNotification = usePromotionNotification();
 
   const handleCardClick = useCallback((club: Club) => {
-    requestNavigateClubDetail(club.id, club.name);
+    requestNavigateWebview(`club/${club.id}`);
   }, []);
 
   const clubs = data?.clubs || [];
