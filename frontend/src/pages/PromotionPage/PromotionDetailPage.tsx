@@ -53,7 +53,10 @@ const PromotionDetailPage = () => {
             <Styled.ContentWrapper>
               <Styled.LeftSection>
                 <PromotionInfoSection article={article} />
-                <PromotionClubCTA clubName={article.clubName} />
+                <PromotionClubCTA
+                  clubId={article.clubId}
+                  clubName={article.clubName}
+                />
                 {/* 
                   TODO: 관련 이벤트 추천 기능
                   현재는 기획 미정으로 비활성화 상태.
