@@ -1,5 +1,5 @@
+import Modal from '@/components/common/Modal/Modal';
 import ModalLayout from '@/components/common/Modal/ModalLayout';
-import PortalModal from '@/components/common/Modal/PortalModal';
 import { ApplicationForm } from '@/types/application';
 import * as Styled from './ApplicationSelectModal.styles';
 
@@ -48,14 +48,14 @@ const ApplicationSelectModal = ({
   onOptionSelect,
 }: ApplicationSelectModalProps) => {
   return (
-    <PortalModal isOpen={isOpen} onClose={onClose} closeOnBackdrop={true}>
+    <Modal isOpen={isOpen} onClose={onClose} closeOnBackdrop={true}>
       <ModalLayout title='지원서 선택' onClose={onClose} width='500px'>
         <ApplicationOptions
           applicationOptions={applicationOptions}
           onOptionSelect={onOptionSelect}
         />
       </ModalLayout>
-    </PortalModal>
+    </Modal>
   );
 };
 

@@ -2,19 +2,19 @@ import { MouseEvent, ReactNode, useEffect } from 'react';
 import Portal from '../Portal/Portal';
 import * as Styled from './Modal.styles';
 
-interface PortalModalProps {
+interface ModalProps {
   isOpen: boolean;
   onClose: () => void;
   children: ReactNode;
   closeOnBackdrop?: boolean;
 }
 
-const PortalModal = ({
+const Modal = ({
   isOpen,
   onClose,
   children,
   closeOnBackdrop = true,
-}: PortalModalProps) => {
+}: ModalProps) => {
   useEffect(() => {
     if (!isOpen) return;
     document.body.style.overflow = 'hidden';
@@ -38,4 +38,4 @@ const PortalModal = ({
   );
 };
 
-export default PortalModal;
+export default Modal;
