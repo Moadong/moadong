@@ -5,7 +5,8 @@ export const SearchBoxContainer = styled.form<{ $isFocused: boolean }>`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 345px;
+  width: 100%;
+  max-width: 345px;
   height: 40px;
   padding: 3px 20px;
   border: 1px solid transparent;
@@ -16,7 +17,7 @@ export const SearchBoxContainer = styled.form<{ $isFocused: boolean }>`
   border-color: ${({ $isFocused }) =>
     $isFocused ? 'rgba(255, 84, 20, 0.8)' : 'transparent'};
   ${media.mobile} {
-    width: 255px;
+    max-width: 255px;
     height: 36px;
     padding: 6px 16px;
   }
