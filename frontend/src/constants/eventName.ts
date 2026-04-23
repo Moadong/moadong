@@ -64,6 +64,12 @@ export const USER_EVENT = {
   // 홍보
   PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
   PROMOTION_CARD_CLICKED: 'Promotion Card Clicked',
+
+  WEBVIEW_SUBSCRIBE_TOGGLED: 'Webview Subscribe Toggled',
+} as const;
+
+export const WEBVIEW_LINK_TARGET = {
+  CLUB_FESTIVAL: 'CLUB_FESTIVAL',
 } as const;
 
 export const ADMIN_EVENT = {
@@ -120,6 +126,8 @@ export const PAGE_VIEW = {
   FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
   PROMOTION_LIST_PAGE: '홍보 목록 페이지',
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
+
+  WEBVIEW_MAIN_PAGE: 'WebviewMainPage',
 
   // 관리자
   LOGIN_PAGE: '로그인페이지',

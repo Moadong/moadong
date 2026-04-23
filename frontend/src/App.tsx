@@ -22,6 +22,7 @@ import {
   GlobalBoundary,
 } from './components/common/ErrorBoundary';
 import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
+import WebviewMainPage from './pages/WebviewMainPage/WebviewMainPage';
 import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
 import IntroductionPage from './pages/FestivalPage/IntroductionPage/IntroductionPage';
 import PromotionDetailPage from './pages/PromotionPage/PromotionDetailPage';
@@ -100,6 +101,23 @@ const App = () => {
                   element={
                     <ContentErrorBoundary>
                       <ClubMapPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                {/*웹뷰 페이지*/}
+                <Route
+                  path='/webview/main'
+                  element={
+                    <ContentErrorBoundary>
+                      <WebviewMainPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/webview/promotions'
+                  element={
+                    <ContentErrorBoundary>
+                      <PromotionListPage />
                     </ContentErrorBoundary>
                   }
                 />
