@@ -80,7 +80,7 @@ export const SubscribeButton = styled.button<{ $subscribed: boolean }>`
   border: none;
   background: none;
   cursor: pointer;
-  color: ${({ $subscribed }) => ($subscribed ? '#FF4D6D' : '#C5C5C5')};
+  color: ${({ $subscribed }) => ($subscribed ? '#FF5414' : '#C5C5C5')};
   padding: 4px;
   margin-left: 8px;
   border-radius: 50%;
