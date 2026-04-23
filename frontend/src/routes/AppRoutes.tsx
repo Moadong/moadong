@@ -1,5 +1,5 @@
 import { lazy } from 'react';
-import { Navigate, Route, Routes } from 'react-router-dom';
+import { Navigate, useRoutes } from 'react-router-dom';
 import { ContentErrorBoundary } from '@/components/common/ErrorBoundary';
 import { AdminClubProvider } from '@/context/AdminClubContext';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
@@ -16,119 +16,124 @@ import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import MainPage from '@/pages/MainPage/MainPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
-import WebviewLayout from '@/pages/WebviewLayout/WebviewLayout';
-import WebviewMainPage from '@/pages/WebviewMainPage/WebviewMainPage';
+import webviewRoutes from './webviewRoutes';
 
 const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
 
-const AppRoutes = () => (
-  <Routes>
-    {/* 일반 웹 */}
-    <Route
-      path='/'
-      element={
+const AppRoutes = () =>
+  useRoutes([
+    /* 일반 웹 */
+    {
+      path: '/',
+      element: (
         <ContentErrorBoundary>
           <MainPage />
         </ContentErrorBoundary>
-      }
-    />
-    {/* 기존 웹 & 안드로이드 url (android: v1.1.0) */}
-    <Route
-      path='/club/:clubId'
-      element={
+      ),
+    },
+    /* 기존 웹 & 안드로이드 url (android: v1.1.0) */
+    {
+      path: '/club/:clubId',
+      element: (
         <ContentErrorBoundary>
           <LegacyClubDetailPage />
         </ContentErrorBoundary>
-      }
-    />
-    {/* 웹 유저에게 신규 상세페이지 보여주기 위한 임시 url */}
-    <Route
-      path='/clubDetail/:clubId'
-      element={
+      ),
+    },
+    /* 웹 유저에게 신규 상세페이지 보여주기 위한 임시 url */
+    {
+      path: '/clubDetail/:clubId',
+      element: (
         <ContentErrorBoundary>
           <ClubDetailPage />
         </ContentErrorBoundary>
-      }
-    />
-    <Route
-      path='/clubDetail/:clubId/map'
-      element={
+      ),
+    },
+    {
+      path: '/clubDetail/:clubId/map',
+      element: (
         <ContentErrorBoundary>
           <ClubMapPage />
         </ContentErrorBoundary>
-      }
-    />
-    <Route
-      path='/clubDetail/@:clubName'
-      element={
+      ),
+    },
+    {
+      path: '/clubDetail/@:clubName',
+      element: (
         <ContentErrorBoundary>
           <ClubDetailPage />
         </ContentErrorBoundary>
-      }
-    />
-    <Route
-      path='/clubDetail/@:clubName/map'
-      element={
+      ),
+    },
+    {
+      path: '/clubDetail/@:clubName/map',
+      element: (
         <ContentErrorBoundary>
           <ClubMapPage />
         </ContentErrorBoundary>
-      }
-    />
-    <Route
-      path='/introduce'
-      element={
+      ),
+    },
+    {
+      path: '/introduce',
+      element: (
         <ContentErrorBoundary>
           <IntroducePage />
         </ContentErrorBoundary>
-      }
-    />
-    <Route
-      path='/club-union'
-      element={
+      ),
+    },
+    {
+      path: '/club-union',
+      element: (
         <ContentErrorBoundary>
           <ClubUnionPage />
         </ContentErrorBoundary>
-      }
-    />
-    <Route
-      path='/festival-introduction'
-      element={
+      ),
+    },
+    {
+      path: '/festival-introduction',
+      element: (
         <ContentErrorBoundary>
           <IntroductionPage />
         </ContentErrorBoundary>
-      }
-    />
-    <Route
-      path='/promotions'
-      element={
+      ),
+    },
+    {
+      path: '/promotions',
+      element: (
         <ContentErrorBoundary>
           <PromotionListPage />
         </ContentErrorBoundary>
-      }
-    />
-    <Route
-      path='/promotions/:promotionId'
-      element={
+      ),
+    },
+    {
+      path: '/promotions/:promotionId',
+      element: (
         <ContentErrorBoundary>
           <PromotionDetailPage />
         </ContentErrorBoundary>
-      }
-    />
-    <Route
-      path='/application/:clubId/:applicationFormId'
-      element={
+      ),
+    },
+    {
+      path: '/application/:clubId/:applicationFormId',
+      element: (
         <ContentErrorBoundary>
           <ApplicationFormPage />
         </ContentErrorBoundary>
-      }
-    />
+      ),
+    },
 
-    {/* 인증 */}
-    <Route path='/callback/google' element={<GoogleCallbackPage />} />
-    <Route path='/admin/login' element={<LoginTab />} />
-    <Route
-      path='/admin/*'
-      element={
+    /* 인증 */
+    {
+      path: '/callback/google',
+      element: <GoogleCallbackPage />,
+    },
+    {
+      path: '/admin/login',
+      element: <LoginTab />,
+    },
+    {
+      path: '/admin/*',
+      element: (
         <ContentErrorBoundary>
           <AdminClubProvider>
             <PrivateRoute>
@@ -136,68 +141,18 @@ const AppRoutes = () => (
             </PrivateRoute>
           </AdminClubProvider>
         </ContentErrorBoundary>
-      }
-    />
+      ),
+    },
 
-    {/* 웹뷰 */}
-    <Route path='/webview' element={<WebviewLayout />}>
-      <Route
-        path='main'
-        element={
-          <ContentErrorBoundary>
-            <WebviewMainPage />
-          </ContentErrorBoundary>
-        }
-      />
-      <Route
-        path='promotions'
-        element={
-          <ContentErrorBoundary>
-            <PromotionListPage />
-          </ContentErrorBoundary>
-        }
-      />
-      <Route
-        path='club/:clubId'
-        element={
-          <ContentErrorBoundary>
-            <ClubDetailPage />
-          </ContentErrorBoundary>
-        }
-      />
-      <Route
-        path='club/:clubId/map'
-        element={
-          <ContentErrorBoundary>
-            <ClubMapPage />
-          </ContentErrorBoundary>
-        }
-      />
-      <Route
-        path='club/@:clubName'
-        element={
-          <ContentErrorBoundary>
-            <ClubDetailPage />
-          </ContentErrorBoundary>
-        }
-      />
-      <Route
-        path='club/@:clubName/map'
-        element={
-          <ContentErrorBoundary>
-            <ClubMapPage />
-          </ContentErrorBoundary>
-        }
-      />
-    </Route>
+    /* 웹뷰 */
+    ...webviewRoutes,
 
-    {/* 개발 환경 전용 */}
-    {import.meta.env.DEV && (
-      <Route path='/error-test' element={<ErrorTestPage />} />
-    )}
+    /* 개발 환경 전용 */
+    ...(import.meta.env.DEV
+      ? [{ path: '/error-test', element: <ErrorTestPage /> }]
+      : []),
 
-    <Route path='*' element={<Navigate to='/' replace />} />
-  </Routes>
-);
+    { path: '*', element: <Navigate to='/' replace /> },
+  ]);
 
 export default AppRoutes;
