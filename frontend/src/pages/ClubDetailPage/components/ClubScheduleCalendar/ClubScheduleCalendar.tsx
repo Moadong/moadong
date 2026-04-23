@@ -1,5 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { ClubCalendarEvent } from '@/types/club';
+import isInAppWebView from '@/utils/isInAppWebView';
+import { requestOpenExternalUrl } from '@/utils/webviewBridge';
 import {
   buildDateKeyFromDate,
   buildMonthCalendarDays,
@@ -287,9 +289,15 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
                   )}
                   {event.url && (
                     <Styled.EventLink
-                      href={event.url}
-                      target='_blank'
+                      href={isInAppWebView() ? undefined : event.url}
+                      target={isInAppWebView() ? undefined : '_blank'}
                       rel='noreferrer'
+                      onClick={(e) => {
+                        if (isInAppWebView()) {
+                          e.preventDefault();
+                          requestOpenExternalUrl(event.url!);
+                        }
+                      }}
                     >
                       일정 상세 보기
                     </Styled.EventLink>
