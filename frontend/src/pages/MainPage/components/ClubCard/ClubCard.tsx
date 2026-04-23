@@ -12,9 +12,10 @@ import * as Styled from './ClubCard.styles';
 interface ClubCardProps {
   club: Club;
   renderAction?: () => React.ReactNode;
+  onCardClick?: (club: Club) => void;
 }
 
-const ClubCard = ({ club, renderAction }: ClubCardProps) => {
+const ClubCard = ({ club, renderAction, onCardClick }: ClubCardProps) => {
   const navigate = useNavigate();
   const [isClicked, setIsClicked] = useState(false);
 
@@ -28,7 +29,11 @@ const ClubCard = ({ club, renderAction }: ClubCardProps) => {
 
     setTimeout(() => {
       setIsClicked(false);
-      navigate(`/clubDetail/@${encodeURIComponent(club.name)}`);
+      if (onCardClick) {
+        onCardClick(club);
+      } else {
+        navigate(`/clubDetail/@${encodeURIComponent(club.name)}`);
+      }
     }, 150);
   };
 
