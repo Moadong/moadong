@@ -1,32 +1,13 @@
-import { lazy } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { ThemeProvider } from 'styled-components';
 import { ScrollToTopButton } from '@/components/common/ScrollToTopButton/ScrollToTopButton';
-import { AdminClubProvider } from '@/context/AdminClubContext';
+import { GlobalBoundary } from './components/common/ErrorBoundary';
 import { ScrollToTop } from '@/hooks/Scroll/ScrollToTop';
-import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
-import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
-import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
-import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
-import MainPage from '@/pages/MainPage/MainPage';
+import AppRoutes from '@/routes/AppRoutes';
 import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
-import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
-import GoogleCallbackPage from './pages/CallbackPage/GoogleCallbackPage';
-import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
-import IntroducePage from './pages/IntroducePage/IntroducePage';
 import 'swiper/css';
-import {
-  ContentErrorBoundary,
-  GlobalBoundary,
-} from './components/common/ErrorBoundary';
-import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
-import WebviewMainPage from './pages/WebviewMainPage/WebviewMainPage';
-import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
-import IntroductionPage from './pages/FestivalPage/IntroductionPage/IntroductionPage';
-import PromotionDetailPage from './pages/PromotionPage/PromotionDetailPage';
-import PromotionListPage from './pages/PromotionPage/PromotionListPage';
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -40,8 +21,6 @@ const queryClient = new QueryClient({
   },
 });
 
-const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
-
 const App = () => {
   return (
     <>
@@ -52,179 +31,7 @@ const App = () => {
             <BrowserRouter>
               <ScrollToTop />
               <ScrollToTopButton />
-              <Routes>
-                <Route
-                  path='/'
-                  element={
-                    <ContentErrorBoundary>
-                      <MainPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                {/*기존 웹 & 안드로이드 url (android: v1.1.0)*/}
-                <Route
-                  path='/club/:clubId'
-                  element={
-                    <ContentErrorBoundary>
-                      <LegacyClubDetailPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                {/*웹 유저에게 신규 상세페이지 보유주기 위한 임시 url*/}
-                <Route
-                  path='/clubDetail/:clubId'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubDetailPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/clubDetail/:clubId/map'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubMapPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                {/*한국어핸들 */}
-                <Route
-                  path='/clubDetail/@:clubName'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubDetailPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/clubDetail/@:clubName/map'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubMapPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                {/*웹뷰 페이지*/}
-                <Route
-                  path='/webview/main'
-                  element={
-                    <ContentErrorBoundary>
-                      <WebviewMainPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/webview/promotions'
-                  element={
-                    <ContentErrorBoundary>
-                      <PromotionListPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                {/*새로 빌드해서 배포할 앱 주소 url*/}
-                <Route
-                  path='/webview/club/:clubId'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubDetailPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/webview/club/:clubId/map'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubMapPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/webview/club/@:clubName'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubDetailPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/webview/club/@:clubName/map'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubMapPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/introduce'
-                  element={
-                    <ContentErrorBoundary>
-                      <IntroducePage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/callback/google'
-                  element={<GoogleCallbackPage />}
-                />
-                <Route path='/admin/login' element={<LoginTab />} />
-                <Route
-                  path='/admin/*'
-                  element={
-                    <ContentErrorBoundary>
-                      <AdminClubProvider>
-                        <PrivateRoute>
-                          <AdminRoutes />
-                        </PrivateRoute>
-                      </AdminClubProvider>
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/application/:clubId/:applicationFormId'
-                  element={
-                    <ContentErrorBoundary>
-                      <ApplicationFormPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/club-union'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubUnionPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/festival-introduction'
-                  element={
-                    <ContentErrorBoundary>
-                      <IntroductionPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/promotions'
-                  element={
-                    <ContentErrorBoundary>
-                      <PromotionListPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/promotions/:promotionId'
-                  element={
-                    <ContentErrorBoundary>
-                      <PromotionDetailPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                {/* 개발 환경에서만 사용 가능한 에러 테스트 페이지 */}
-                {import.meta.env.DEV && (
-                  <Route path='/error-test' element={<ErrorTestPage />} />
-                )}
-                <Route path='*' element={<Navigate to='/' replace />} />
-              </Routes>
+              <AppRoutes />
             </BrowserRouter>
           </ThemeProvider>
         </QueryClientProvider>
