@@ -5,6 +5,7 @@ import { transitions } from '@/styles/theme/transitions';
 import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
+  padding-top: 1px;
   width: 100%;
 `;
 

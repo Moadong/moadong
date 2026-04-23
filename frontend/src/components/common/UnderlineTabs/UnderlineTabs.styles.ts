@@ -7,7 +7,6 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const TabList = styled.div<{ $centerOnMobile: boolean }>`
   display: flex;
   align-items: center;
-  margin-bottom: 16px;
 
   ${media.tablet} {
     padding: 0 20px;
@@ -19,7 +18,6 @@ export const TabList = styled.div<{ $centerOnMobile: boolean }>`
 
 export const TabButton = styled.button<{ $active: boolean }>`
   flex: 1;
-  max-width: 260.33px;
   ${({ $active }) =>
     setTypography($active ? typography.title.title6 : typography.paragraph.p3)};
   padding-bottom: 4px;

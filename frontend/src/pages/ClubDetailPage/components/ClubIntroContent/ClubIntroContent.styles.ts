@@ -22,10 +22,10 @@ export const Container = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  padding: 0 0 16px 0;
+  padding: 16px 0;
 
   ${media.tablet} {
-    padding: 0 20px;
+    padding: 20px 20px 0;
     gap: 20px;
   }
 `;

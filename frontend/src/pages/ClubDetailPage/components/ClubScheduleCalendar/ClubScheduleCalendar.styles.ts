@@ -4,10 +4,15 @@ import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
+  padding-top: 16px;
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  ${media.tablet} {
+    padding-top: 20px;
+  }
 `;
 
 export const CalendarCard = styled.section`
