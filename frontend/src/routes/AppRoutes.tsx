@@ -14,6 +14,7 @@ import ErrorTestPage from '@/pages/ErrorTestPage/ErrorTestPage';
 import IntroductionPage from '@/pages/FestivalPage/IntroductionPage/IntroductionPage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import MainPage from '@/pages/MainPage/MainPage';
+import GamePage from '@/pages/GamePage/GamePage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
 import webviewRoutes from './webviewRoutes';
@@ -118,6 +119,14 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <ApplicationFormPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/game',
+      element: (
+        <ContentErrorBoundary>
+          <GamePage />
         </ContentErrorBoundary>
       ),
     },
