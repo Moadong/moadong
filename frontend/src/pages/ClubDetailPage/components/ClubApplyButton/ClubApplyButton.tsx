@@ -7,8 +7,6 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import useDevice from '@/hooks/useDevice';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
-import isInAppWebView from '@/utils/isInAppWebView';
-import { requestOpenExternalUrl } from '@/utils/webviewBridge';
 import ShareButton from '../ShareButton/ShareButton';
 import * as Styled from './ClubApplyButton.styles';
 
@@ -49,11 +47,7 @@ const ClubApplyButton = ({
         const externalApplicationUrl =
           formDetail.externalApplicationUrl?.trim();
         if (externalApplicationUrl) {
-          if (isInAppWebView()) {
-            requestOpenExternalUrl(externalApplicationUrl);
-          } else {
-            window.location.href = externalApplicationUrl;
-          }
+          window.location.href = externalApplicationUrl;
           return;
         }
       }

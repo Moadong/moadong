@@ -9,8 +9,6 @@ import { ClubLocation } from '@/constants/clubLocation';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { SNSPlatform } from '@/types/club';
-import isInAppWebView from '@/utils/isInAppWebView';
-import { requestOpenExternalUrl } from '@/utils/webviewBridge';
 import * as Styled from './ClubProfileCard.styles';
 
 interface ClubProfileCardProps {
@@ -89,19 +87,15 @@ const ClubProfileCard = ({
             return (
               <Styled.SocialLinkItem
                 key={platform}
-                href={isInAppWebView() ? undefined : url}
-                target={isInAppWebView() ? undefined : '_blank'}
+                href={url}
+                target='_blank'
                 rel='noopener noreferrer'
-                onClick={(e) => {
+                onClick={() =>
                   trackEvent(USER_EVENT.SNS_LINK_CLICKED, {
                     platform,
                     clubName: name,
-                  });
-                  if (isInAppWebView()) {
-                    e.preventDefault();
-                    requestOpenExternalUrl(url);
-                  }
-                }}
+                  })
+                }
               >
                 <Styled.SocialIcon src={icon} alt={platform} />
                 <Styled.SocialText>
