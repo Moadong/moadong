@@ -37,15 +37,11 @@ export const PhotoImage = styled.img`
   object-fit: cover;
 `;
 
-export const EmptyState = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 20px;
-  text-align: center;
-`;
-
-export const EmptyText = styled.p`
+export const EmptyState = styled.p`
+  padding-top: 120px;
   font-size: 16px;
-  color: ${colors.gray[500]};
+  font-weight: 500;
+  line-height: 140%;
+  color: ${colors.gray[700]};
+  text-align: center;
 `;

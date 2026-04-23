@@ -4,6 +4,15 @@ import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
 import { setTypography, typography } from '@/styles/theme/typography';
 
+export const EmptyState = styled.p`
+  padding-top: 120px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 140%;
+  color: ${colors.gray[700]};
+  text-align: center;
+`;
+
 export const Container = styled.div`
   display: flex;
   flex-direction: column;

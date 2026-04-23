@@ -62,21 +62,8 @@ const ClubDetailPage = () => {
     if (!tabParam || !Object.values(TAB_TYPE).includes(tabParam)) {
       return TAB_TYPE.INTRO;
     }
-    if (tabParam === TAB_TYPE.SCHEDULE && !hasCalendarConnection) {
-      return TAB_TYPE.INTRO;
-    }
     return tabParam;
-  }, [tabParam, hasCalendarConnection]);
-
-  useEffect(() => {
-    if (
-      clubDetail &&
-      tabParam === TAB_TYPE.SCHEDULE &&
-      !hasCalendarConnection
-    ) {
-      setSearchParams({ tab: TAB_TYPE.INTRO }, { replace: true });
-    }
-  }, [clubDetail, tabParam, hasCalendarConnection, setSearchParams]);
+  }, [tabParam]);
 
   const { data: calendarEvents = [] } = useGetClubCalendarEvents(
     (clubName ?? clubId) || '',
@@ -84,27 +71,21 @@ const ClubDetailPage = () => {
   );
 
   const tabs = useMemo(
-    () =>
-      [
-        { key: TAB_TYPE.INTRO, label: '소개내용' },
-        { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-        hasCalendarConnection
-          ? { key: TAB_TYPE.SCHEDULE, label: '행사일정' }
-          : null,
-      ].filter(Boolean) as Array<{ key: TabType; label: string }>,
-    [hasCalendarConnection],
+    () => [
+      { key: TAB_TYPE.INTRO, label: '소개내용' },
+      { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+      { key: TAB_TYPE.SCHEDULE, label: '행사일정' },
+    ],
+    [],
   );
 
   const topBarTabs = useMemo(
-    () =>
-      [
-        { key: TAB_TYPE.INTRO, label: '소개내용' },
-        { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-        hasCalendarConnection
-          ? { key: TAB_TYPE.SCHEDULE, label: '행사일정' }
-          : null,
-      ].filter(Boolean) as Array<{ key: TabType; label: string }>,
-    [hasCalendarConnection],
+    () => [
+      { key: TAB_TYPE.INTRO, label: '소개내용' },
+      { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+      { key: TAB_TYPE.SCHEDULE, label: '행사일정' },
+    ],
+    [],
   );
 
   useTrackPageView(
@@ -222,18 +203,16 @@ const ClubDetailPage = () => {
               >
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
               </div>
-              {hasCalendarConnection && (
-                <div
-                  style={{
-                    display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
-                  }}
-                >
-                  <ClubScheduleCalendar
-                    key={clubId ?? clubName}
-                    events={calendarEvents}
-                  />
-                </div>
-              )}
+              <div
+                style={{
+                  display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
+                }}
+              >
+                <ClubScheduleCalendar
+                  key={clubId ?? clubName}
+                  events={calendarEvents}
+                />
+              </div>
             </Styled.TabContent>
           </Styled.RightSection>
         </Styled.ContentWrapper>

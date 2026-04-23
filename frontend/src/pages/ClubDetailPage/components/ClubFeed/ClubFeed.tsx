@@ -39,9 +39,7 @@ const ClubFeed = ({ feed, clubName = '동아리' }: Props) => {
 
   if (!feed || feed.length === 0) {
     return (
-      <Styled.EmptyState>
-        <Styled.EmptyText>등록된 활동사진이 없습니다</Styled.EmptyText>
-      </Styled.EmptyState>
+      <Styled.EmptyState>곧 새로운 활동사진이 업데이트될 예정이에요</Styled.EmptyState>
     );
   }
 

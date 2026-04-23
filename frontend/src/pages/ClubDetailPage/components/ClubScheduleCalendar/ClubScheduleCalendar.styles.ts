@@ -161,6 +161,15 @@ export const EventDescription = styled.p`
   color: ${colors.gray[700]};
 `;
 
+export const EmptyState = styled.p`
+  padding-top: 120px;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 140%;
+  color: ${colors.gray[700]};
+  text-align: center;
+`;
+
 export const EmptyText = styled.p`
   font-size: 15px;
   color: ${colors.gray[600]};
