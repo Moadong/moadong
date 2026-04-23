@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useCallback, useMemo } from 'react';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 import Filter from '@/components/common/Filter/Filter';
 import Spinner from '@/components/common/Spinner/Spinner';
@@ -14,6 +14,7 @@ import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
 import { Club } from '@/types/club';
+import { requestNavigateClubDetail } from '@/utils/webviewBridge';
 import SubscribeButton from './components/SubscribeButton/SubscribeButton';
 import * as Styled from './WebviewMainPage.styles';
 
@@ -37,6 +38,10 @@ const WebviewMainPage = () => {
   const { toggleSubscribe, subscribedClubIds } = useWebviewSubscribe();
   const hasNotification = usePromotionNotification();
 
+  const handleCardClick = useCallback((club: Club) => {
+    requestNavigateClubDetail(club.id, club.name);
+  }, []);
+
   const clubs = data?.clubs || [];
   const totalCount = data?.totalCount ?? clubs.length;
   const isEmpty = !isLoading && clubs.length === 0;
@@ -47,10 +52,13 @@ const WebviewMainPage = () => {
       <MemoClubCard
         key={club.id}
         club={club}
+        onCardClick={handleCardClick}
         renderAction={() => (
           <SubscribeButton
             subscribed={subscribedClubIds.has(club.id)}
-            onToggle={() => toggleSubscribe(club.id)}
+            onToggle={() =>
+              toggleSubscribe(club.id, subscribedClubIds.has(club.id))
+            }
           />
         )}
       />

@@ -64,6 +64,7 @@ export const USER_EVENT = {
   // 홍보
   PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
   PROMOTION_CARD_CLICKED: 'Promotion Card Clicked',
+  PROMOTION_CLUB_CTA_CLICKED: 'Promotion Club CTA Clicked',
 
   WEBVIEW_SUBSCRIBE_TOGGLED: 'Webview Subscribe Toggled',
 } as const;
