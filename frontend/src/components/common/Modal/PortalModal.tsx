@@ -1,5 +1,5 @@
 import { MouseEvent, ReactNode, useEffect } from 'react';
-import { createPortal } from 'react-dom';
+import Portal from '../Portal/Portal';
 import * as Styled from './Modal.styles';
 
 interface PortalModalProps {
@@ -16,7 +16,8 @@ const PortalModal = ({
   closeOnBackdrop = true,
 }: PortalModalProps) => {
   useEffect(() => {
-    if (isOpen) document.body.style.overflow = 'hidden';
+    if (!isOpen) return;
+    document.body.style.overflow = 'hidden';
     return () => {
       document.body.style.overflow = '';
     };
@@ -24,22 +25,16 @@ const PortalModal = ({
 
   if (!isOpen) return null;
 
-  const modalRoot = document.getElementById('modal-root');
-  if (!modalRoot) return null;
-
-  return createPortal(
-    <Styled.Overlay
-      onClick={() => {
-        if (closeOnBackdrop) onClose();
-      }}
-    >
-      <Styled.ContentWrapper
-        onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
-      >
-        {children}
-      </Styled.ContentWrapper>
-    </Styled.Overlay>,
-    modalRoot,
+  return (
+    <Portal>
+      <Styled.Overlay onClick={closeOnBackdrop ? onClose : undefined}>
+        <Styled.ContentWrapper
+          onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
+        >
+          {children}
+        </Styled.ContentWrapper>
+      </Styled.Overlay>
+    </Portal>
   );
 };
 

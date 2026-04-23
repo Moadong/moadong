@@ -30,6 +30,11 @@ npm run storybook        # 포트 6006에서 Storybook 시작
 npm run build-storybook  # Storybook 빌드
 npm run chromatic        # Chromatic으로 시각적 테스트 배포
 
+# Storybook 사용 가이드 (공통 컴포넌트 수정 시)
+# - 개발 중: npm run storybook (dev 서버로 실시간 확인)
+# - 기존 스토리가 있는 컴포넌트 수정 후 PR 전: npm run build-storybook
+# - 스토리가 없는 신규 컴포넌트: npm run typecheck 로 충분
+
 # 유틸리티
 npm run generate:sitemap # sitemap.xml 생성
 ```
