@@ -1,5 +1,4 @@
 import { Link } from 'react-router-dom';
-import useNavigator from '@/hooks/useNavigator';
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
@@ -9,6 +8,7 @@ import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import { ClubLocation } from '@/constants/clubLocation';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useNavigator from '@/hooks/useNavigator';
 import { SNSPlatform } from '@/types/club';
 import * as Styled from './ClubProfileCard.styles';
 

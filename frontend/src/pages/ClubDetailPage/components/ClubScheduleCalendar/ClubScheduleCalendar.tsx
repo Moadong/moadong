@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import type { ClubCalendarEvent } from '@/types/club';
 import useNavigator from '@/hooks/useNavigator';
+import type { ClubCalendarEvent } from '@/types/club';
 import {
   buildDateKeyFromDate,
   buildMonthCalendarDays,
