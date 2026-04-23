@@ -83,6 +83,11 @@ export const MapDetailText = styled.div`
 
 export const RightSection = styled.div`
   width: 100%;
+
+  ${media.tablet} {
+    border-top: 6px solid ${colors.gray[200]};
+    padding-top: 12px;
+  }
 `;
 
 export const TabContent = styled.div`

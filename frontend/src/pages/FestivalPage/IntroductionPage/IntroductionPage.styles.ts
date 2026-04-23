@@ -16,6 +16,7 @@ export const TabWrapper = styled.div<{ $webview?: boolean }>`
   display: flex;
   justify-content: center;
   padding-top: ${({ $webview }) => ($webview ? '12px' : '0')};
+  margin-bottom: 16px;
 
   ${media.mobile} {
     display: block;
