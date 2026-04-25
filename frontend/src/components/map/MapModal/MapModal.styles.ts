@@ -2,6 +2,8 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
+const CONTROL_Z_INDEX = 10;
+
 export const Container = styled.div`
   position: relative;
   width: 86vw;
@@ -27,7 +29,7 @@ export const ActionButton = styled.button`
   position: absolute;
   top: 16px;
   right: 16px;
-  z-index: 10;
+  z-index: ${CONTROL_Z_INDEX};
   width: 36px;
   height: 36px;
   padding: 0;
@@ -51,5 +53,5 @@ export const ZoomControlsWrapper = styled.div`
   position: absolute;
   bottom: 50px;
   right: 40px;
-  z-index: 10;
+  z-index: ${CONTROL_Z_INDEX};
 `;
