@@ -86,7 +86,7 @@ const ApplicantDetailPage = () => {
         {
           memo,
           status,
-          applicantId: questionId,
+          applicantId: questionId as import('@/types/branded').ApplicantId,
         },
       ],
       {

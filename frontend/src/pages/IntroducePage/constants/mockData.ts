@@ -1,9 +1,10 @@
 import type { Club } from '@/types/club';
+import type { ClubId } from '@/types/branded';
 
 // 동아리 목업 데이터
 export const floatingClubs: Club[] = [
   {
-    id: 'moadong',
+    id: 'moadong' as ClubId,
     name: '모아동',
     logo: '',
     tags: ['학술', '스터디'],
@@ -13,7 +14,7 @@ export const floatingClubs: Club[] = [
     introduction: '다양한 전공 학생들이 모여 학문을 함께 나누는 동아리',
   },
   {
-    id: 'moaboza',
+    id: 'moaboza' as ClubId,
     name: '모아보자',
     logo: '',
     tags: ['봉사', '지역사회'],
@@ -23,7 +24,7 @@ export const floatingClubs: Club[] = [
     introduction: '지역 사회와 함께 봉사하며 따뜻함을 전하는 동아리',
   },
   {
-    id: 'moamoa',
+    id: 'moamoa' as ClubId,
     name: '모아모아',
     logo: '',
     tags: ['취미', '교양'],
@@ -33,7 +34,7 @@ export const floatingClubs: Club[] = [
     introduction: '다양한 취미를 가진 사람들이 모여 교류하는 동아리',
   },
   {
-    id: 'moajup',
+    id: 'moajup' as ClubId,
     name: '모아운동',
     logo: '',
     tags: ['스포츠', '팀워크'],

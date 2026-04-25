@@ -89,7 +89,7 @@ const ClubApplyButton = ({
         await navigateToApplicationForm(forms[0].id);
         return;
       }
-      setApplicationOptions(forms);
+      setApplicationOptions(forms as ApplicationForm[]);
       setIsApplicationModalOpen(true);
     } catch (e) {
       setApplicationOptions([]);

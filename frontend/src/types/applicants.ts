@@ -1,4 +1,5 @@
 import { AnswerItem } from './application';
+import { ApplicantId, ApplicationFormId, ClubId } from './branded';
 
 export enum ApplicationStatus {
   SUBMITTED = 'SUBMITTED', // 제출 완료
@@ -16,27 +17,27 @@ export interface ApplicantsInfo {
 }
 
 export interface Applicant {
-  id: string;
+  id: ApplicantId;
   status: ApplicationStatus;
   answers: AnswerItem[];
   memo: string;
   createdAt: string;
-  applicationFormId: string;
+  applicationFormId: ApplicationFormId;
 }
 
 export interface UpdateApplicantParams {
   memo: string;
   status: ApplicationStatus;
-  applicantId: string | undefined;
+  applicantId: ApplicantId | undefined;
 }
 
 export interface ApplicantStatusEvent {
-  applicantId: string;
+  applicantId: ApplicantId;
   status: ApplicationStatus;
   memo: string;
   timestamp: string;
-  clubId: string;
-  applicationFormId: string;
+  clubId: ClubId;
+  applicationFormId: ApplicationFormId;
 }
 
 export interface ApplicantSSECallbacks {
