@@ -23,6 +23,7 @@ import {
 import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
 import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
 import IntroductionPage from './pages/FestivalPage/IntroductionPage/IntroductionPage';
+import GamePage from './pages/GamePage/GamePage';
 import PromotionDetailPage from './pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from './pages/PromotionPage/PromotionListPage';
 
@@ -165,6 +166,14 @@ const App = () => {
                   element={
                     <ContentErrorBoundary>
                       <PromotionDetailPage />
+                    </ContentErrorBoundary>
+                  }
+                />
+                <Route
+                  path='/game'
+                  element={
+                    <ContentErrorBoundary>
+                      <GamePage />
                     </ContentErrorBoundary>
                   }
                 />

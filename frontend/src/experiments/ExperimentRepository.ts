@@ -1,3 +1,4 @@
+import mixpanel from 'mixpanel-browser';
 import type {
   ExperimentAssignments,
   ExperimentDefinition,
@@ -71,9 +72,14 @@ class ExperimentRepository {
       const isValidExisting =
         !!existing && experiment.variants.includes(existing);
 
-      if (isValidExisting) return;
+      if (isValidExisting) {
+        mixpanel.register({ [experiment.key]: existing });
+        return;
+      }
 
-      assignments[experiment.key] = pickWeightedVariant(experiment);
+      const variant = pickWeightedVariant(experiment);
+      assignments[experiment.key] = variant;
+      mixpanel.register({ [experiment.key]: variant });
     });
 
     writeAssignments(assignments);

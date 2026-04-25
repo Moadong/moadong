@@ -211,11 +211,13 @@ const { variant } = useExperiment(mainBannerExperiment);
 
 Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 
-## 코딩 컨벤션
+---
 
-- **네이밍**: camelCase (변수, 함수), PascalCase (컴포넌트, 타입)
-- **파일명**: 컴포넌트는 PascalCase.tsx, 유틸은 camelCase.ts
-- **Import 순서**: 외부 라이브러리 → 내부 모듈 → 타입 → 스타일
-- **스타일**: styled-components 사용, 테마 시스템 활용
-- **타입**: any 금지, 명시적 타입 정의
-- **상수**: UPPER_SNAKE_CASE, `src/constants/`에서 관리
+## 도메인별 상세 문서
+
+@docs/claude/architecture.md
+@docs/claude/api.md
+@docs/claude/ui.md
+@docs/claude/testing.md
+@docs/claude/features.md
+@docs/claude/conventions.md
