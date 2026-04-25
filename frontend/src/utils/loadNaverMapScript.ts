@@ -9,7 +9,11 @@ export const loadNaverMapScript = () => {
       'script[src*="oapi.map.naver.com"]',
     );
     if (existingScript) {
-      resolve();
+      if (window.naver?.maps) {
+        resolve();
+      } else {
+        existingScript.addEventListener('load', () => resolve());
+      }
       return;
     }
 

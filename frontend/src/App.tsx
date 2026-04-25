@@ -8,7 +8,6 @@ import { ScrollToTop } from '@/hooks/Scroll/ScrollToTop';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
-import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
 import MainPage from '@/pages/MainPage/MainPage';
 import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
@@ -79,28 +78,12 @@ const App = () => {
                     </ContentErrorBoundary>
                   }
                 />
-                <Route
-                  path='/clubDetail/:clubId/map'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubMapPage />
-                    </ContentErrorBoundary>
-                  }
-                />
                 {/*한국어핸들 */}
                 <Route
                   path='/clubDetail/@:clubName'
                   element={
                     <ContentErrorBoundary>
                       <ClubDetailPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/clubDetail/@:clubName/map'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubMapPage />
                     </ContentErrorBoundary>
                   }
                 />
@@ -114,26 +97,10 @@ const App = () => {
                   }
                 />
                 <Route
-                  path='/webview/club/:clubId/map'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubMapPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
                   path='/webview/club/@:clubName'
                   element={
                     <ContentErrorBoundary>
                       <ClubDetailPage />
-                    </ContentErrorBoundary>
-                  }
-                />
-                <Route
-                  path='/webview/club/@:clubName/map'
-                  element={
-                    <ContentErrorBoundary>
-                      <ClubMapPage />
                     </ContentErrorBoundary>
                   }
                 />
