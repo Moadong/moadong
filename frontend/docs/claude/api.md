@@ -5,7 +5,7 @@
 API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된 패턴을 따름:
 
 - `handleResponse<T>()` - 응답 파싱, `{ data: {...} }` 형식 자동 언래핑
-- `secureFetch()` - 인증된 요청, 403 시 토큰 자동 갱신
+- `secureFetch()` - 인증된 요청, 401 시 토큰 자동 갱신
 
 쿼리 키는 `src/constants/queryKeys.ts`에 중앙 관리.
 
