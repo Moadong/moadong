@@ -10,24 +10,19 @@ const SearchBox = () => {
   const { setSelectedCategory } = useSelectedCategory();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
-  const location = useLocation();
+  const { pathname } = useLocation();
 
-  const redirectToHome = () => {
-    if (location.pathname !== '/') {
-      navigate('/');
-    }
-  };
+  const homeRoute = pathname.startsWith('/webview') ? '/webview/main' : '/';
 
   const handleSearch = () => {
-    const currentPage = location.pathname;
-    redirectToHome();
+    if (pathname !== homeRoute) navigate(homeRoute);
     setKeyword(inputValue);
     setSelectedCategory('all');
     setIsSearching(true);
 
     trackEvent('Search Executed', {
       inputValue: inputValue,
-      page: currentPage,
+      page: pathname,
     });
   };
 

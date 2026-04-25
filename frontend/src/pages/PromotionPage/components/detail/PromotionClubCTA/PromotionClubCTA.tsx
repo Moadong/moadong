@@ -1,16 +1,31 @@
 import { useNavigate } from 'react-router-dom';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import isInAppWebView from '@/utils/isInAppWebView';
+import { requestNavigateWebview } from '@/utils/webviewBridge';
 import ArrowButton from '../PromotionArrowButton/PromotionArrowButton';
 import * as Styled from './PromotionClubCTA.styles';
 
 interface Props {
+  clubId: string;
   clubName: string;
 }
 
-const PromotionClubCTA = ({ clubName }: Props) => {
+const PromotionClubCTA = ({ clubId, clubName }: Props) => {
   const navigate = useNavigate();
+  const trackEvent = useMixpanelTrack();
 
   const handleNavigate = () => {
-    navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
+    trackEvent(USER_EVENT.PROMOTION_CLUB_CTA_CLICKED, {
+      club_id: clubId,
+      club_name: clubName,
+    });
+
+    if (isInAppWebView()) {
+      requestNavigateWebview(`club/${clubId}`);
+    } else {
+      navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
+    }
   };
 
   return (

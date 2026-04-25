@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import useNavigator from '@/hooks/useNavigator';
 import type { ClubCalendarEvent } from '@/types/club';
 import {
   buildDateKeyFromDate,
@@ -73,6 +74,7 @@ const formatSelectedDate = (dateKey: string) => {
 };
 
 const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
+  const handleLink = useNavigator();
   const didInitFromEventsRef = useRef(false);
 
   const parsedEvents = useMemo<CalendarEventItem[]>(() => {
@@ -290,6 +292,10 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
                       href={event.url}
                       target='_blank'
                       rel='noreferrer'
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleLink(event.url!);
+                      }}
                     >
                       일정 상세 보기
                     </Styled.EventLink>

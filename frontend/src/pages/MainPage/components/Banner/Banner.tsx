@@ -4,22 +4,33 @@ import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
-import { USER_EVENT } from '@/constants/eventName';
+import { USER_EVENT, WEBVIEW_LINK_TARGET } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetBanners } from '@/hooks/Queries/useBanner';
 import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
+import isInAppWebView from '@/utils/isInAppWebView';
+import {
+  requestNavigateWebview,
+  requestOpenExternalUrl,
+} from '@/utils/webviewBridge';
 import * as Styled from './Banner.styles';
 import BANNERS from './bannerData';
 
-const Banner = () => {
+interface BannerProps {
+  isWebview?: boolean;
+}
+
+const inAppWebView = isInAppWebView();
+
+const Banner = ({ isWebview = false }: BannerProps) => {
   const { isMobile } = useDevice();
   const handleLink = useNavigator();
   const trackEvent = useMixpanelTrack();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const bannerType = isMobile ? 'WEB_MOBILE' : 'WEB';
+  const bannerType = isWebview ? 'APP_HOME' : isMobile ? 'WEB_MOBILE' : 'WEB';
   const { data: banners, isLoading, isFetched } = useGetBanners(bannerType);
 
   const fallbackBanners = BANNERS.map((banner) => ({
@@ -52,6 +63,21 @@ const Banner = () => {
   ) => {
     if (!url) return;
 
+    trackEvent(USER_EVENT.BANNER_CLICKED, {
+      bannerId,
+      bannerName,
+      linkTo: url,
+    });
+
+    if (inAppWebView) {
+      if (url === WEBVIEW_LINK_TARGET.CLUB_FESTIVAL) {
+        requestNavigateWebview('festival-introduction');
+        return;
+      }
+      requestOpenExternalUrl(url);
+      return;
+    }
+
     if (url === 'APP_STORE_LINK') {
       const storeLink = getAppStoreLink();
       trackEvent(USER_EVENT.APP_DOWNLOAD_BANNER_CLICKED, {
@@ -63,11 +89,6 @@ const Banner = () => {
       return;
     }
 
-    trackEvent(USER_EVENT.BANNER_CLICKED, {
-      bannerId,
-      bannerName,
-      linkTo: url,
-    });
     handleLink(url);
   };
 
@@ -119,13 +140,13 @@ const Banner = () => {
             </SwiperSlide>
           ))}
         </Swiper>
-        {isMobile && (
+        {(isMobile || inAppWebView) && (
           <Styled.NumericPagination>
             {currentIndex + 1} / {displayBanners?.length ?? 0}
           </Styled.NumericPagination>
         )}
 
-        {!isMobile && (
+        {!isMobile && !inAppWebView && (
           <Styled.DotPagination>
             {displayBanners?.map((_, index) => (
               <Styled.Dot key={index} active={currentIndex === index} />

@@ -2,8 +2,8 @@ import styled from 'styled-components';
 import Button from '@/components/common/Button/Button';
 import { theme } from '@/styles/theme';
 
-export const FilterListContainer = styled.div`
-  margin-top: 56px;
+export const FilterListContainer = styled.div<{ $isWebview?: boolean }>`
+  margin-top: ${({ $isWebview }) => ($isWebview ? '0' : '56px')};
   display: flex;
   flex-direction: row;
   padding: 10px 20px;

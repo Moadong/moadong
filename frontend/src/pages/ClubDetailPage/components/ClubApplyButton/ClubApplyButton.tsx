@@ -6,6 +6,7 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import useDevice from '@/hooks/useDevice';
+import useNavigator from '@/hooks/useNavigator';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
 import ShareButton from '../ShareButton/ShareButton';
 import * as Styled from './ClubApplyButton.styles';
@@ -24,6 +25,7 @@ const ClubApplyButton = ({
     clubName: string;
   }>();
   const navigate = useNavigate();
+  const handleLink = useNavigator();
   const trackEvent = useMixpanelTrack();
   const { data: clubDetail } = useGetClubDetail((clubName ?? clubId) || '');
   const { isMobile, isTablet } = useDevice();
@@ -47,7 +49,7 @@ const ClubApplyButton = ({
         const externalApplicationUrl =
           formDetail.externalApplicationUrl?.trim();
         if (externalApplicationUrl) {
-          window.location.href = externalApplicationUrl;
+          handleLink(externalApplicationUrl);
           return;
         }
       }
