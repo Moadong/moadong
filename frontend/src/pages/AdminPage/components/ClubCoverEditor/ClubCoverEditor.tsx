@@ -2,9 +2,9 @@ import { useRef } from 'react';
 import defaultCover from '@/assets/images/logos/default_profile_image.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useDeleteCover, useUploadCover } from '@/hooks/Queries/useClubCover';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import * as Styled from './ClubCoverEditor.styles';
 
 interface ClubCoverEditorProps {
@@ -13,7 +13,7 @@ interface ClubCoverEditorProps {
 
 const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
   const trackEvent = useMixpanelTrack();
-  const { clubId } = useAdminClubContext();
+  const { clubId } = useAdminClubId();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   if (!clubId) return null;
