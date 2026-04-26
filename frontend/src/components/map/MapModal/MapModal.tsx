@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import CloseButtonIcon from '@/assets/images/icons/close_button_icon.svg?react';
 import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
-import PortalModal from '@/components/common/Modal/PortalModal';
+import Modal from '@/components/common/Modal/Modal';
 import InteractiveMapView from '@/components/map/InteractiveMapView/InteractiveMapView';
 import MapZoomControls from '@/components/map/MapZoomControls/MapZoomControls';
 import { ClubLocation } from '@/constants/clubLocation';
@@ -30,7 +30,7 @@ const MapModal = ({
   const { zoomIn, zoomOut } = useMapZoom(mapInstanceRef);
 
   return (
-    <PortalModal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose}>
       <Styled.Container>
         <InteractiveMapView
           location={location}
@@ -60,7 +60,7 @@ const MapModal = ({
           </Styled.ZoomControlsWrapper>
         )}
       </Styled.Container>
-    </PortalModal>
+    </Modal>
   );
 };
 
