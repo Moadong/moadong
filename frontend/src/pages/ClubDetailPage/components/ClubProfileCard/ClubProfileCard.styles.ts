@@ -6,13 +6,11 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const Container = styled.div`
   position: relative;
   width: 100%;
-  max-width: 375px;
   background-color: ${colors.base.white};
   border-radius: 20px;
   overflow: hidden;
 
   ${media.tablet} {
-    max-width: none;
     border-radius: 0;
   }
 `;
@@ -214,6 +212,8 @@ export const LocationInfo = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
+  cursor: default;
+  user-select: none;
 
   img {
     width: 12px;

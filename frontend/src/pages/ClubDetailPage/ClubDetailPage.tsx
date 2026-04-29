@@ -1,14 +1,11 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
-import {
-  useParams,
-  useLocation as useRouterLocation,
-  useSearchParams,
-} from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useParams, useSearchParams } from 'react-router-dom';
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
-import NaverMap from '@/components/map/NaverMap';
+import MapModal from '@/components/map/MapModal/MapModal';
+import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -116,11 +113,11 @@ const ClubDetailPage = () => {
     [setSearchParams, trackEvent],
   );
 
-  const routerLocation = useRouterLocation();
   const clubLocation = clubLocations.find(
     (loc) => loc.clubName === clubDetail?.name,
   );
-  const mapPath = clubLocation ? `${routerLocation.pathname}/map` : undefined;
+
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   if (error) {
     return <div>동아리 정보를 불러오는데 실패했습니다.</div>;
@@ -157,18 +154,12 @@ const ClubDetailPage = () => {
               socialLinks={clubDetail.socialLinks}
               introDescription={clubDetail.description.introDescription}
               location={clubLocation}
-              mapPath={mapPath}
+              onMapClick={() => setIsMapModalOpen(true)}
             />
             {clubLocation && (
               <Styled.MapInfo>
-                <Styled.MapCard>
-                  <NaverMap
-                    clubName={clubLocation.clubName}
-                    lat={clubLocation.lat}
-                    lng={clubLocation.lng}
-                    building={clubLocation.building}
-                    detailLocation={clubLocation.detailLocation}
-                  />
+                <Styled.MapCard onClick={() => setIsMapModalOpen(true)}>
+                  <NaverMap location={clubLocation} />
                 </Styled.MapCard>
 
                 <Styled.MapDetailText>
@@ -217,6 +208,15 @@ const ClubDetailPage = () => {
           </Styled.RightSection>
         </Styled.ContentWrapper>
       </Styled.Container>
+      {clubLocation && (
+        <MapModal
+          isOpen={isMapModalOpen}
+          onClose={() => setIsMapModalOpen(false)}
+          clubName={clubDetail.name}
+          clubLogo={clubDetail.logo}
+          location={clubLocation}
+        />
+      )}
       {!isInAppWebView() && <Footer />}
       <ClubDetailFooter
         recruitmentStart={clubDetail.recruitmentStart}
