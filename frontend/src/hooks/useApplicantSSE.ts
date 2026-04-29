@@ -1,11 +1,4 @@
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { createApplicantSSE } from '@/apis/clubSSE';
 import {
   ApplicantsInfo,
@@ -13,38 +6,13 @@ import {
   ApplicationStatus,
 } from '@/types/applicants';
 
-interface AdminClubContextType {
-  clubId: string | null;
-  setClubId: (id: string | null) => void;
-  applicantsData: ApplicantsInfo | null;
-  setApplicantsData: (data: ApplicantsInfo | null) => void;
-  applicationFormId: string | null;
-  setApplicationFormId: (id: string | null) => void;
-  hasConsented: boolean;
-  setHasConsented: (value: boolean) => void;
-}
-
-const AdminClubContext = createContext<AdminClubContextType | undefined>(
-  undefined,
-);
-
-export const AdminClubProvider = ({
-  children,
-}: {
-  children: React.ReactNode;
-}) => {
-  const [clubId, setClubId] = useState<string | null>(null);
+export const useApplicantSSE = (applicationFormId: string | undefined) => {
   const [applicantsData, setApplicantsData] = useState<ApplicantsInfo | null>(
     null,
   );
-  const [applicationFormId, setApplicationFormId] = useState<string | null>(
-    null,
-  );
-  const [hasConsented, setHasConsented] = useState<boolean>(true);
   const eventSourceRef = useRef<EventSource | null>(null);
   const reconnectTimeoutRef = useRef<number | null>(null);
 
-  // SSE 이벤트 핸들러
   const handleApplicantStatusChange = useCallback(
     (event: ApplicantStatusEvent) => {
       setApplicantsData((prevData) => {
@@ -77,6 +45,8 @@ export const AdminClubProvider = ({
   useEffect(() => {
     if (!applicationFormId) return;
 
+    setApplicantsData(null);
+
     const sseConnect = () => {
       eventSourceRef.current?.close();
 
@@ -107,29 +77,5 @@ export const AdminClubProvider = ({
     };
   }, [applicationFormId, handleApplicantStatusChange]);
 
-  return (
-    <AdminClubContext.Provider
-      value={{
-        clubId,
-        setClubId,
-        applicantsData,
-        setApplicantsData,
-        applicationFormId,
-        setApplicationFormId,
-        hasConsented,
-        setHasConsented,
-      }}
-    >
-      {children}
-    </AdminClubContext.Provider>
-  );
-};
-
-export const useAdminClubContext = () => {
-  const context = useContext(AdminClubContext);
-  if (!context)
-    throw new Error(
-      'useAdminClubContext는 AdminClubProvider 내부에서만 사용할 수 있습니다',
-    );
-  return context;
+  return { applicantsData, setApplicantsData };
 };

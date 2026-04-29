@@ -3,7 +3,6 @@ import { allowPersonalInformation } from '@/apis/auth';
 import Button from '@/components/common/Button/Button';
 import Modal from '@/components/common/Modal/Modal';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import * as Styled from './PersonalInfoConsentModal.styles';
 
 const GUIDE_ITEMS = [
@@ -20,12 +19,13 @@ const GUIDE_ITEMS = [
 
 interface PersonalInfoConsentModalProps {
   clubName: string;
+  onConsent: () => void;
 }
 
 const PersonalInfoConsentModal = ({
   clubName,
+  onConsent,
 }: PersonalInfoConsentModalProps) => {
-  const { setHasConsented } = useAdminClubContext();
   const [loading, setLoading] = useState(false);
 
   const handleConsent = async () => {
@@ -34,7 +34,7 @@ const PersonalInfoConsentModal = ({
     try {
       await allowPersonalInformation();
       localStorage.setItem(STORAGE_KEYS.HAS_CONSENTED_PERSONAL_INFO, 'true');
-      setHasConsented(true);
+      onConsent();
     } catch (error) {
       console.error('서비스 동의 실패:', error);
       alert('동의 처리에 실패했습니다. 다시 시도해주세요.');

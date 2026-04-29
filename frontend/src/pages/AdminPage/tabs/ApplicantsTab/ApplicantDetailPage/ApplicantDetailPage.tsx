@@ -5,7 +5,6 @@ import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { AVAILABLE_STATUSES } from '@/constants/status';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import {
   useGetApplicants,
   useUpdateApplicant,
@@ -13,6 +12,7 @@ import {
 import { useGetApplication } from '@/hooks/Queries/useApplication';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import { ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
@@ -51,7 +51,7 @@ const ApplicantDetailPage = () => {
   const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
     ApplicationStatus.SUBMITTED,
   );
-  const { clubId } = useAdminClubContext();
+  const { clubId } = useAdminClubId();
   const {
     data: applicantsData,
     isLoading: isApplicantsLoading,
