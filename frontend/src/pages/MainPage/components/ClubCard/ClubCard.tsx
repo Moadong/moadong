@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
@@ -11,11 +11,11 @@ import * as Styled from './ClubCard.styles';
 
 interface ClubCardProps {
   club: Club;
-  renderAction?: () => React.ReactNode;
+  children?: React.ReactNode;
   onCardClick?: (club: Club) => void;
 }
 
-const ClubCard = ({ club, renderAction, onCardClick }: ClubCardProps) => {
+const ClubCard = ({ club, children, onCardClick }: ClubCardProps) => {
   const navigate = useNavigate();
   const [isClicked, setIsClicked] = useState(false);
 
@@ -51,7 +51,7 @@ const ClubCard = ({ club, renderAction, onCardClick }: ClubCardProps) => {
             <Styled.Introduction>{club.introduction}</Styled.Introduction>
           </Styled.ClubInfo>
         </Styled.ClubProfile>
-        {renderAction?.()}
+        {children}
       </Styled.CardHeader>
 
       <Styled.StateBoxTagContainer>

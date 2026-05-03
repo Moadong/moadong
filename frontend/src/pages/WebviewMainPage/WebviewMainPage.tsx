@@ -49,19 +49,14 @@ const WebviewMainPage = () => {
   const clubList = useMemo(() => {
     if (!clubs.length) return null;
     return clubs.map((club: Club) => (
-      <MemoClubCard
-        key={club.id}
-        club={club}
-        onCardClick={handleCardClick}
-        renderAction={() => (
-          <SubscribeButton
-            subscribed={subscribedClubIds.has(club.id)}
-            onToggle={() =>
-              toggleSubscribe(club.id, subscribedClubIds.has(club.id))
-            }
-          />
-        )}
-      />
+      <MemoClubCard key={club.id} club={club} onCardClick={handleCardClick}>
+        <SubscribeButton
+          subscribed={subscribedClubIds.has(club.id)}
+          onToggle={() =>
+            toggleSubscribe(club.id, subscribedClubIds.has(club.id))
+          }
+        />
+      </MemoClubCard>
     ));
   }, [clubs, subscribedClubIds, toggleSubscribe]);
 
