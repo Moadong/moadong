@@ -119,7 +119,9 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
 
         handleLink.result.current('https://example.com');
 
-        expect(mockRequestOpenExternalUrl).toHaveBeenCalledWith('https://example.com');
+        expect(mockRequestOpenExternalUrl).toHaveBeenCalledWith(
+          'https://example.com',
+        );
         expect(window.location.href).toBe('');
       });
 
@@ -129,7 +131,9 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
         handleLink.result.current('itms-apps://itunes.apple.com/app/123456');
 
         expect(mockRequestOpenExternalUrl).toHaveBeenCalled();
-        expect(window.open).toHaveBeenCalledWith('itms-apps://itunes.apple.com/app/123456');
+        expect(window.open).toHaveBeenCalledWith(
+          'itms-apps://itunes.apple.com/app/123456',
+        );
       });
     });
 
@@ -137,14 +141,18 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
       it('requestNavigateWebview로 앱에 위임한다', () => {
         handleLink.result.current('/promotions/123');
 
-        expect(mockRequestNavigateWebview).toHaveBeenCalledWith('promotions/123');
+        expect(mockRequestNavigateWebview).toHaveBeenCalledWith(
+          'promotions/123',
+        );
         expect(mockNavigate).not.toHaveBeenCalled();
       });
 
       it('leading slash를 제거한 slug로 전달한다', () => {
         handleLink.result.current('/festival-introduction');
 
-        expect(mockRequestNavigateWebview).toHaveBeenCalledWith('festival-introduction');
+        expect(mockRequestNavigateWebview).toHaveBeenCalledWith(
+          'festival-introduction',
+        );
       });
     });
   });

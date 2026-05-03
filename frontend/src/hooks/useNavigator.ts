@@ -21,7 +21,8 @@ const useNavigator = () => {
       const isExternal = /^(https?|itms-apps):\/\//.test(trimmedUrl);
 
       if (isExternal) {
-        if (inWebview && !requestOpenExternalUrl(trimmedUrl)) window.open(trimmedUrl);
+        if (inWebview && !requestOpenExternalUrl(trimmedUrl))
+          window.open(trimmedUrl);
         else if (!inWebview) window.location.href = trimmedUrl;
         return;
       }
