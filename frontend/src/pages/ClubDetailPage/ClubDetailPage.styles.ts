@@ -38,8 +38,10 @@ export const LeftSection = styled.div`
   flex-direction: column;
   gap: 12px;
   flex-shrink: 0;
+  width: 400px;
 
   ${media.tablet} {
+    width: 100%;
     gap: 0px;
   }
 `;
@@ -61,8 +63,13 @@ export const MapCard = styled.div`
   border-radius: 20px;
   border: 1px solid ${colors.gray[400]};
   overflow: hidden;
+  cursor: pointer;
 
   background-color: #f2f2f2;
+
+  * {
+    cursor: pointer !important;
+  }
 `;
 
 export const MapDetailText = styled.div`
@@ -74,6 +81,8 @@ export const MapDetailText = styled.div`
 
   font-size: 14px;
   color: ${colors.gray[700]};
+  cursor: default;
+  user-select: none;
 
   img {
     width: 12px;
@@ -83,6 +92,11 @@ export const MapDetailText = styled.div`
 
 export const RightSection = styled.div`
   width: 100%;
+
+  ${media.tablet} {
+    border-top: 6px solid ${colors.gray[200]};
+    padding-top: 12px;
+  }
 `;
 
 export const TabContent = styled.div`

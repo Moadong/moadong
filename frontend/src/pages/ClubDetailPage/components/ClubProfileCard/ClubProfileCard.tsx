@@ -1,4 +1,3 @@
-import { Link } from 'react-router-dom';
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
@@ -20,7 +19,7 @@ interface ClubProfileCardProps {
   socialLinks: Record<SNSPlatform, string>;
   introDescription: string;
   location?: Pick<ClubLocation, 'building' | 'detailLocation'>;
-  mapPath?: string;
+  onMapClick?: () => void;
 }
 
 const ClubProfileCard = ({
@@ -31,7 +30,7 @@ const ClubProfileCard = ({
   socialLinks,
   introDescription,
   location,
-  mapPath,
+  onMapClick,
 }: ClubProfileCardProps) => {
   const trackEvent = useMixpanelTrack();
   const handleLink = useNavigator();
@@ -115,7 +114,7 @@ const ClubProfileCard = ({
         <Styled.IntroSection>
           <Styled.IntroTitle>{name}를 소개할게요</Styled.IntroTitle>
           <Styled.IntroDescription>{introDescription}</Styled.IntroDescription>
-          {location && mapPath && (
+          {location && onMapClick && (
             <Styled.MobileLocationSection>
               <Styled.LocationDivider />
               <Styled.LocationRow>
@@ -126,9 +125,7 @@ const ClubProfileCard = ({
                   </span>
                 </Styled.LocationInfo>
                 <Styled.LocationDot>·</Styled.LocationDot>
-                <Styled.MapLink as={Link} to={mapPath}>
-                  지도
-                </Styled.MapLink>
+                <Styled.MapLink onClick={onMapClick}>지도</Styled.MapLink>
               </Styled.LocationRow>
             </Styled.MobileLocationSection>
           )}

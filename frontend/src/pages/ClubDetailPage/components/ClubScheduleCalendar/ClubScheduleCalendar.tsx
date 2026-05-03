@@ -182,10 +182,9 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
 
   if (parsedEvents.length === 0) {
     return (
-      <Styled.ScheduleCard>
-        <Styled.SectionTitle>일정</Styled.SectionTitle>
-        <Styled.EmptyText>등록된 행사 일정이 없습니다.</Styled.EmptyText>
-      </Styled.ScheduleCard>
+      <Styled.EmptyState>
+        곧 새로운 일정이 업데이트될 예정이에요
+      </Styled.EmptyState>
     );
   }
 
