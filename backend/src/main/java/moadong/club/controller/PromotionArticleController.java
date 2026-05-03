@@ -13,6 +13,7 @@ import moadong.global.payload.Response;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -55,5 +56,14 @@ public class PromotionArticleController {
         @RequestBody @Validated PromotionArticleUpdateRequest request) {
         promotionArticleService.updatePromotionArticle(articleId, request);
         return Response.ok("홍보 게시글이 수정되었습니다.");
+    }
+
+    @DeleteMapping("/{articleId}")
+    @Operation(summary = "홍보 게시글 삭제", description = "기존 홍보 게시글을 삭제합니다.")
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> deletePromotionArticle(@PathVariable String articleId) {
+        promotionArticleService.deletePromotionArticle(articleId);
+        return Response.ok("홍보 게시글이 삭제되었습니다.", null);
     }
 }

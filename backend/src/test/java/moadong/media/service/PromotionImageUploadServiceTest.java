@@ -43,25 +43,37 @@ class PromotionImageUploadServiceTest {
         MockMultipartFile file = new MockMultipartFile("file", "poster main.png", "image/png", "img".getBytes());
         AwsProperties.S3 s3 = new AwsProperties.S3("moadong-dev", "https://r2.example.com", "https://cdn.example.com");
         when(awsProperties.s3()).thenReturn(s3);
-        when(promotionArticleRepository.existsById(articleId)).thenReturn(true);
+        when(promotionArticleRepository.existsActiveById(articleId)).thenReturn(true);
         when(r2ImageUploadService.upload(eq(file), eq("moadong-dev"), eq("https://cdn.example.com"), startsWith("promotion/articles/" + articleId + "/")))
             .thenReturn("https://cdn.example.com/promotion/articles/" + articleId + "/2026/03/uuid-poster_main.png");
 
         PromotionImageUploadResponse response = promotionImageUploadService.upload(articleId, file);
 
-        verify(promotionArticleRepository).existsById(articleId);
+        verify(promotionArticleRepository).existsActiveById(articleId);
         verify(r2ImageUploadService).upload(eq(file), eq("moadong-dev"), eq("https://cdn.example.com"), startsWith("promotion/articles/" + articleId + "/"));
         assertTrue(response.imageUrl().contains("/promotion/articles/" + articleId + "/"));
     }
 
     @Test
     void 존재하지_않는_홍보게시글이면_예외를_던진다() {
-        when(promotionArticleRepository.existsById("missing")).thenReturn(false);
+        when(promotionArticleRepository.existsActiveById("missing")).thenReturn(false);
         MockMultipartFile file = new MockMultipartFile("file", "poster.png", "image/png", "img".getBytes());
 
         RestApiException exception = assertThrows(RestApiException.class,
             () -> promotionImageUploadService.upload("missing", file));
 
         assertEquals(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void 삭제된_홍보게시글이면_이미지_업로드를_막는다() {
+        when(promotionArticleRepository.existsActiveById("deleted-article")).thenReturn(false);
+        MockMultipartFile file = new MockMultipartFile("file", "poster.png", "image/png", "img".getBytes());
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionImageUploadService.upload("deleted-article", file));
+
+        assertEquals(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND, exception.getErrorCode());
+        verify(promotionArticleRepository).existsActiveById("deleted-article");
     }
 }

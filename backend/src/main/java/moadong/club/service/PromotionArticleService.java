@@ -27,7 +27,7 @@ public class PromotionArticleService {
     private final ClubRepository clubRepository;
 
     public PromotionArticleResponse getPromotionArticles() {
-        List<PromotionArticleDto> articles = promotionArticleRepository.findAllByOrderByCreatedAtDesc()
+        List<PromotionArticleDto> articles = promotionArticleRepository.findAllActiveOrderByCreatedAtDesc()
             .stream()
             .map(PromotionArticleDto::from)
             .toList();
@@ -43,6 +43,8 @@ public class PromotionArticleService {
             .clubName(club.getName())
             .title(request.title())
             .location(request.location())
+            .latitude(request.latitude())
+            .longitude(request.longitude())
             .eventStartDate(request.eventStartDate())
             .eventEndDate(request.eventEndDate())
             .description(request.description())
@@ -55,11 +57,20 @@ public class PromotionArticleService {
 
     @Transactional
     public void updatePromotionArticle(String articleId, PromotionArticleUpdateRequest request) {
-        PromotionArticle article = promotionArticleRepository.findById(articleId)
+        PromotionArticle article = promotionArticleRepository.findActiveById(articleId)
             .orElseThrow(() -> new RestApiException(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND));
         Club club = getClub(request.clubId());
 
         article.update(request, club.getName());
+        promotionArticleRepository.save(article);
+    }
+
+    @Transactional
+    public void deletePromotionArticle(String articleId) {
+        PromotionArticle article = promotionArticleRepository.findActiveById(articleId)
+            .orElseThrow(() -> new RestApiException(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND));
+
+        article.softDelete();
         promotionArticleRepository.save(article);
     }
 

@@ -127,6 +127,36 @@
     .promotion-preview-url { display: block; font-size: 0.8rem; color: #2563eb; word-break: break-all; max-height: 48px; overflow: hidden; }
     .promotion-preview-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
     .promotion-preview-actions button { margin: 0; padding: 6px 10px; font-size: 0.8rem; }
+    .promotion-location-input { display: flex; gap: 8px; align-items: center; }
+    .promotion-location-input input { flex: 1 1 auto; min-width: 0; }
+    .promotion-location-input button { margin: 0; white-space: nowrap; }
+    .promotion-map-card { margin-bottom: 16px; padding: 14px; border: 1px solid #e5e7eb; border-radius: 10px; background: linear-gradient(180deg, #f8fbff 0%, #fff 100%); }
+    .promotion-map-card h4 { margin: 0 0 6px; font-size: 0.98rem; }
+    .promotion-map-card p { margin: 0; }
+    .promotion-map-sub { color: #666; font-size: 0.88rem; margin-bottom: 12px; }
+    .promotion-map-config { display: grid; gap: 10px; }
+    .promotion-map-config strong { display: block; margin-bottom: 4px; }
+    .promotion-location-search-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+    .promotion-location-search-row input { flex: 1 1 260px; min-width: 0; max-width: none; margin: 0; }
+    .promotion-location-search-row button { margin: 0; }
+    .promotion-map-status { margin-bottom: 12px; padding: 10px 12px; border-radius: 8px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 0.88rem; }
+    .promotion-map-status.is-warning { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
+    .promotion-map-status.is-muted { background: #f9fafb; border-color: #e5e7eb; color: #6b7280; }
+    .promotion-map-layout { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(280px, 1.05fr); gap: 12px; align-items: start; }
+    .promotion-location-results { display: grid; gap: 8px; max-height: 320px; overflow: auto; }
+    .promotion-location-result-empty { padding: 16px; border: 1px dashed #d1d5db; border-radius: 8px; background: rgba(255,255,255,0.7); color: #666; text-align: center; font-size: 0.88rem; }
+    .promotion-location-result { width: 100%; margin: 0; padding: 12px; text-align: left; border-radius: 8px; border: 1px solid #dbe4f0; background: #fff; }
+    .promotion-location-result:hover:not(:disabled) { background: #eff6ff; border-color: #93c5fd; }
+    .promotion-location-result.is-selected { border-color: #2563eb; box-shadow: inset 0 0 0 1px #2563eb; background: #eff6ff; }
+    .promotion-location-result-title { font-weight: 600; color: #111827; margin-bottom: 4px; }
+    .promotion-location-result-address { color: #4b5563; font-size: 0.85rem; line-height: 1.4; }
+    .promotion-location-result-meta { margin-top: 6px; color: #6b7280; font-size: 0.78rem; }
+    .promotion-map-canvas-wrap { position: relative; border: 1px solid #dbe4f0; border-radius: 10px; overflow: hidden; background: #f8fafc; }
+    .promotion-map-canvas { width: 100%; min-height: 320px; background: linear-gradient(135deg, #dbeafe 0%, #f8fafc 100%); }
+    .promotion-map-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; color: #64748b; font-size: 0.9rem; background: linear-gradient(135deg, #dbeafe 0%, #f8fafc 100%); z-index: 1; pointer-events: none; }
+    .promotion-map-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px 16px; margin-top: 12px; }
+    .promotion-map-meta-grid .form-row { margin-bottom: 0; }
+    .promotion-map-meta-grid input { max-width: none; }
     .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: fadeOut 3s ease-in-out forwards; }
     .toast.success { background: #166534; color: #fff; }
     .toast.error { background: #dc2626; color: #fff; }
@@ -134,6 +164,8 @@
     @media (max-width: 720px) {
       .banner-item-body { grid-template-columns: 1fr; }
       .promotion-layout { grid-template-columns: 1fr; }
+      .promotion-location-input { flex-direction: column; align-items: stretch; }
+      .promotion-map-layout { grid-template-columns: 1fr; }
     }
   </style>
 </head>
@@ -311,7 +343,10 @@
             </div>
             <div class="form-row">
               <label for="promotionLocation">장소</label>
-              <input type="text" id="promotionLocation" placeholder="행사 장소">
+              <div class="promotion-location-input">
+                <input type="text" id="promotionLocation" placeholder="행사 장소">
+                <button type="button" id="btnPromotionSearchLocation">지도에서 찾기</button>
+              </div>
             </div>
             <div class="form-row">
               <label for="promotionEventStartDate">행사 시작</label>
@@ -320,6 +355,44 @@
             <div class="form-row">
               <label for="promotionEventEndDate">행사 종료</label>
               <input type="datetime-local" id="promotionEventEndDate">
+            </div>
+          </div>
+          <div class="promotion-map-card">
+            <h4>장소 선택</h4>
+            <p class="promotion-map-sub">장소명 입력과 좌표 선택은 분리되어 있습니다. 아래 검색창이나 지도를 사용해 위도/경도를 선택하세요.</p>
+            <div id="promotionMapConfigBanner" class="banner warn hidden">
+              <div class="promotion-map-config">
+                <div>
+                  <strong>카카오 지도 JavaScript 키가 서버에 설정되어야 합니다</strong>
+                  <p>`application.properties`의 `dev.portal.kakao-javascript-key` 또는 환경변수로 키를 설정한 뒤 페이지를 새로고침하세요.</p>
+                </div>
+              </div>
+            </div>
+            <div class="promotion-location-search-row">
+              <input type="search" id="promotionLocationSearchQuery" placeholder="좌표를 찾을 주소나 건물명을 검색하세요.">
+              <button type="button" id="btnPromotionLocationSearch">검색</button>
+              <button type="button" id="btnPromotionClearCoordinates">좌표 초기화</button>
+            </div>
+            <div id="promotionMapStatus" class="promotion-map-status is-muted">게시글을 선택하거나 새 게시글 작성 모드로 전환하면 위치를 선택할 수 있습니다.</div>
+            <div class="promotion-map-layout">
+              <div>
+                <div id="promotionLocationResultEmpty" class="promotion-location-result-empty">주소를 검색하면 후보가 여기에 표시됩니다.</div>
+                <div id="promotionLocationSearchResults" class="promotion-location-results"></div>
+              </div>
+              <div class="promotion-map-canvas-wrap">
+                <div id="promotionMapCanvas" class="promotion-map-canvas"></div>
+                <div id="promotionMapFallback" class="promotion-map-fallback">카카오 지도 JavaScript 키를 저장하면 실제 지도가 이 영역에 표시됩니다.</div>
+              </div>
+            </div>
+            <div class="promotion-map-meta-grid">
+              <div class="form-row">
+                <label for="promotionLatitude">위도</label>
+                <input type="text" id="promotionLatitude" readonly placeholder="지도를 선택하면 자동 입력">
+              </div>
+              <div class="form-row">
+                <label for="promotionLongitude">경도</label>
+                <input type="text" id="promotionLongitude" readonly placeholder="지도를 선택하면 자동 입력">
+              </div>
             </div>
           </div>
           <div class="form-row">
@@ -345,6 +418,7 @@
           <div class="promotion-actions">
             <button type="button" id="btnSavePromotion">저장</button>
             <button type="button" id="btnResetPromotion">원본으로 되돌리기</button>
+            <button type="button" id="btnDeletePromotion">삭제</button>
             <button type="button" id="btnClearPromotionSelection">선택 해제</button>
           </div>
           <p id="promotionHelpText" class="promotion-help">기존 게시글의 `clubId`는 읽기 전용입니다. 저장 후 목록을 다시 조회해 서버 기준 최신값으로 동기화합니다.</p>
@@ -498,6 +572,9 @@
     const PAGE_SIZE = 50;
     const FCM_PAGE_SIZE = 20;
     const DEFAULT_BANNER_TYPE = 'WEB';
+    const KAKAO_MAPS_SCRIPT_ID = 'devPortalKakaoMapsSdk';
+    const DEFAULT_PROMOTION_MAP_CENTER = Object.freeze({ latitude: 35.2338, longitude: 129.0826 });
+    const DEFAULT_PROMOTION_MAP_ZOOM = 4;
     const PROMOTION_FORM_IDS = ['promotionClubId', 'promotionTitle', 'promotionLocation', 'promotionEventStartDate', 'promotionEventEndDate', 'promotionDescription', 'promotionImages'];
     let fcmTokens = [];
     let fcmFilteredTokens = [];
@@ -517,6 +594,14 @@
     let promotionIsLoading = false;
     let promotionIsSaving = false;
     let promotionIsUploading = false;
+    let promotionIsDeleting = false;
+    let promotionMapSdkPromise = null;
+    let promotionMap = null;
+    let promotionMapMarker = null;
+    let promotionMapKey = '';
+    let promotionLocationCandidates = [];
+    let promotionSelectedCandidateKey = '';
+    let promotionLocationResolvedAddress = '';
 
     function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
     function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
@@ -590,6 +675,7 @@
           setUserId(userId);
           document.getElementById('tokenDisplay').textContent = token;
           showLogin(true);
+          await loadDevPortalConfig();
           loadClubsIfVisible();
           loadDictIfVisible();
           loadPromotionIfVisible();
@@ -621,6 +707,7 @@
     function doLogout() {
       clearToken();
       clearUserId();
+      promotionMapKey = '';
       showLogin(false);
       document.getElementById('tokenDisplay').textContent = '';
       document.getElementById('clubList').querySelector('tbody').innerHTML = '';
@@ -641,11 +728,13 @@
     if (getToken()) {
       document.getElementById('tokenDisplay').textContent = getToken();
       showLogin(true);
-      loadClubsIfVisible();
-      loadDictIfVisible();
-      loadPromotionIfVisible();
-      loadBannerIfVisible();
-      loadFcmTokensIfVisible();
+      loadDevPortalConfig().finally(() => {
+        loadClubsIfVisible();
+        loadDictIfVisible();
+        loadPromotionIfVisible();
+        loadBannerIfVisible();
+        loadFcmTokensIfVisible();
+      });
     }
 
     let allClubs = [];
@@ -981,6 +1070,410 @@
       return local.toISOString().slice(0, 16);
     }
 
+    function getStoredKakaoMapsKey() {
+      return promotionMapKey || '';
+    }
+
+    function logPromotionMapDebug(message, extra) {
+      if (extra === undefined) {
+        console.log('[promotion-map]', message);
+        return;
+      }
+      console.log('[promotion-map]', message, extra);
+    }
+
+    function normalizePromotionCoordinateValue(value) {
+      if (value === null || value === undefined || value === '') return '';
+      const parsed = typeof value === 'number' ? value : Number.parseFloat(String(value).trim());
+      if (!Number.isFinite(parsed)) return '';
+      return parsed.toFixed(7).replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    function getPromotionCoordinatePair() {
+      const latitude = Number.parseFloat(document.getElementById('promotionLatitude').value.trim());
+      const longitude = Number.parseFloat(document.getElementById('promotionLongitude').value.trim());
+      return {
+        latitude: Number.isFinite(latitude) ? latitude : null,
+        longitude: Number.isFinite(longitude) ? longitude : null
+      };
+    }
+
+    function hasPromotionCoordinates() {
+      const pair = getPromotionCoordinatePair();
+      return pair.latitude !== null && pair.longitude !== null;
+    }
+
+    function getPromotionLocationCandidateKey(candidate) {
+      return (candidate?.title || '') + '|' + (candidate?.displayAddress || '') + '|' + String(candidate?.latitude || '') + '|' + String(candidate?.longitude || '');
+    }
+
+    function normalizePromotionSearchCandidates(raw) {
+      if (!Array.isArray(raw)) return [];
+      return raw
+        .map((item) => {
+          const latitude = Number.parseFloat(item?.y ?? item?.point?.y ?? item?.latitude ?? item?.lat ?? '');
+          const longitude = Number.parseFloat(item?.x ?? item?.point?.x ?? item?.longitude ?? item?.lng ?? '');
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+          const roadAddress = String(item?.roadAddress || item?.roadAddr || item?.road_address?.address_name || item?.road_address_name || '').trim();
+          const jibunAddress = String(item?.jibunAddress || item?.address || item?.jibunAddr || item?.address_name || '').trim();
+          const displayAddress = roadAddress || jibunAddress;
+          const title = String(item?.title || item?.place_name || item?.query || displayAddress || '').trim();
+          return {
+            title: title || displayAddress || '선택 가능한 위치',
+            displayAddress: displayAddress || title || '주소 정보 없음',
+            roadAddress,
+            jibunAddress,
+            latitude,
+            longitude
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function extractPromotionGeocodeCandidates(response) {
+      const candidateSources = [];
+      if (Array.isArray(response?.documents)) candidateSources.push(...response.documents);
+      if (Array.isArray(response?.v2?.addresses)) candidateSources.push(...response.v2.addresses);
+      if (Array.isArray(response?.addresses)) candidateSources.push(...response.addresses);
+      if (Array.isArray(response?.result?.items)) candidateSources.push(...response.result.items);
+      return normalizePromotionSearchCandidates(candidateSources);
+    }
+
+    function extractPromotionReverseGeocodeAddress(response) {
+      const kakaoDoc = Array.isArray(response) ? response[0] : response?.documents?.[0];
+      if (kakaoDoc) {
+        return String(kakaoDoc?.road_address?.address_name || kakaoDoc?.address?.address_name || '').trim();
+      }
+      const direct = response?.v2?.address;
+      if (direct) {
+        return String(direct.roadAddress || direct.jibunAddress || '').trim();
+      }
+      const results = Array.isArray(response?.v2?.results) ? response.v2.results : [];
+      for (const item of results) {
+        const regionNames = Array.isArray(item?.region)
+          ? item.region.map((region) => String(region?.name || '').trim()).filter(Boolean)
+          : Object.values(item?.region || {}).map((region) => String(region?.name || '').trim()).filter(Boolean);
+        const land = item?.land || {};
+        const extra = [land?.name, land?.number1, land?.number2].map((value) => String(value || '').trim()).filter(Boolean).join(' ');
+        const joined = [...regionNames, extra].filter(Boolean).join(' ');
+        if (joined) return joined;
+      }
+      const legacy = Array.isArray(response?.result?.items) ? response.result.items[0] : null;
+      return String(legacy?.address || '').trim();
+    }
+
+    function setPromotionMapFallback(message) {
+      const fallback = document.getElementById('promotionMapFallback');
+      if (promotionMap) {
+        fallback.classList.add('hidden');
+        return;
+      }
+      fallback.textContent = message;
+      fallback.classList.remove('hidden');
+    }
+
+    function hidePromotionMapFallback() {
+      const fallback = document.getElementById('promotionMapFallback');
+      fallback.textContent = '';
+      fallback.classList.add('hidden');
+    }
+
+    function renderPromotionLocationResults() {
+      const list = document.getElementById('promotionLocationSearchResults');
+      const empty = document.getElementById('promotionLocationResultEmpty');
+      list.innerHTML = '';
+      if (!promotionLocationCandidates.length) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      promotionLocationCandidates.forEach((candidate) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'promotion-location-result';
+        const candidateKey = getPromotionLocationCandidateKey(candidate);
+        if (candidateKey === promotionSelectedCandidateKey) {
+          button.classList.add('is-selected');
+        }
+        button.innerHTML = ''
+          + '<div class="promotion-location-result-title">' + escapeHtml(candidate.title) + '</div>'
+          + '<div class="promotion-location-result-address">' + escapeHtml(candidate.displayAddress) + '</div>'
+          + '<div class="promotion-location-result-meta">위도 ' + escapeHtml(normalizePromotionCoordinateValue(candidate.latitude))
+          + ' / 경도 ' + escapeHtml(normalizePromotionCoordinateValue(candidate.longitude)) + '</div>';
+        button.onclick = () => {
+          applyPromotionCoordinateSelection(candidate.latitude, candidate.longitude, {
+            address: candidate.displayAddress,
+            searchQuery: document.getElementById('promotionLocationSearchQuery').value.trim(),
+            zoom: DEFAULT_PROMOTION_MAP_ZOOM
+          });
+          promotionSelectedCandidateKey = candidateKey;
+          renderPromotionLocationResults();
+        };
+        list.appendChild(button);
+      });
+    }
+
+    function renderPromotionMapConfigBanner() {
+      const banner = document.getElementById('promotionMapConfigBanner');
+      const hasKey = !!getStoredKakaoMapsKey();
+      banner.classList.toggle('hidden', hasKey);
+    }
+
+    function updatePromotionMapStatus() {
+      const status = document.getElementById('promotionMapStatus');
+      const hasEditorTarget = !!promotionSelectedArticleId || isPromotionCreateMode();
+      const { latitude, longitude } = getPromotionCoordinatePair();
+      status.className = 'promotion-map-status';
+      if (!hasEditorTarget) {
+        status.classList.add('is-muted');
+        status.textContent = '게시글을 선택하거나 새 게시글 작성 모드로 전환하면 위치를 선택할 수 있습니다.';
+        return;
+      }
+      if (!getStoredKakaoMapsKey()) {
+        status.classList.add('is-warning');
+        status.textContent = '카카오 지도 JavaScript 키를 저장하면 주소 검색과 실제 지도를 사용할 수 있습니다.';
+        return;
+      }
+      if (latitude !== null && longitude !== null) {
+        const addressText = promotionLocationResolvedAddress ? ' · ' + promotionLocationResolvedAddress : '';
+        status.textContent = '선택된 좌표: ' + normalizePromotionCoordinateValue(latitude) + ', ' + normalizePromotionCoordinateValue(longitude) + addressText;
+        return;
+      }
+      status.classList.add('is-muted');
+      status.textContent = '주소를 검색하거나 지도에서 위치를 클릭해 좌표를 선택하세요.';
+    }
+
+    function updatePromotionMapMarker(options) {
+      if (!promotionMap || !window.kakao?.maps || !promotionMapMarker) return;
+      const latitude = options?.latitude;
+      const longitude = options?.longitude;
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        promotionMapMarker.setMap(null);
+        return;
+      }
+      const position = new kakao.maps.LatLng(latitude, longitude);
+      promotionMapMarker.setPosition(position);
+      promotionMapMarker.setMap(promotionMap);
+      const shouldMove = options?.move !== false;
+      if (shouldMove) {
+        promotionMap.setLevel(options?.zoom || DEFAULT_PROMOTION_MAP_ZOOM);
+        promotionMap.panTo(position);
+      }
+    }
+
+    function applyPromotionCoordinateSelection(latitude, longitude, options) {
+      const latValue = normalizePromotionCoordinateValue(latitude);
+      const lngValue = normalizePromotionCoordinateValue(longitude);
+      document.getElementById('promotionLatitude').value = latValue;
+      document.getElementById('promotionLongitude').value = lngValue;
+      if (options?.searchQuery) {
+        document.getElementById('promotionLocationSearchQuery').value = options.searchQuery;
+      }
+      promotionLocationResolvedAddress = options?.address || '';
+      updatePromotionMapMarker({
+        latitude: Number.parseFloat(latValue),
+        longitude: Number.parseFloat(lngValue),
+        zoom: options?.zoom,
+        move: options?.move
+      });
+      updatePromotionMapStatus();
+      updatePromotionEditorState();
+    }
+
+    function clearPromotionCoordinates(options) {
+      document.getElementById('promotionLatitude').value = '';
+      document.getElementById('promotionLongitude').value = '';
+      promotionLocationResolvedAddress = '';
+      promotionSelectedCandidateKey = '';
+      updatePromotionMapMarker({ latitude: null, longitude: null });
+      if (options?.clearQuery) {
+        document.getElementById('promotionLocationSearchQuery').value = '';
+      }
+      renderPromotionLocationResults();
+      updatePromotionMapStatus();
+      updatePromotionEditorState();
+    }
+
+    function syncPromotionMapFromFormState() {
+      const { latitude, longitude } = getPromotionCoordinatePair();
+      promotionLocationResolvedAddress = '';
+      promotionSelectedCandidateKey = '';
+      if (latitude !== null && longitude !== null) {
+        updatePromotionMapMarker({ latitude, longitude, move: true, zoom: DEFAULT_PROMOTION_MAP_ZOOM });
+      } else {
+        updatePromotionMapMarker({ latitude: null, longitude: null });
+      }
+      updatePromotionMapStatus();
+    }
+
+    async function loadPromotionMapSdk() {
+      if (window.kakao?.maps?.services) return window.kakao.maps;
+      const key = getStoredKakaoMapsKey();
+      logPromotionMapDebug('loadPromotionMapSdk:start', {
+        hasKey: !!key,
+        keyPreview: key ? key.slice(0, 6) + '...' : '',
+        currentHost: window.location.origin
+      });
+      if (!key) {
+        renderPromotionMapConfigBanner();
+        throw new Error('카카오 지도 JavaScript 키가 필요합니다.');
+      }
+      if (promotionMapSdkPromise) return promotionMapSdkPromise;
+      promotionMapSdkPromise = new Promise((resolve, reject) => {
+        const sdkUrl = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + encodeURIComponent(key) + '&autoload=false&libraries=services';
+        const existingScript = document.getElementById(KAKAO_MAPS_SCRIPT_ID);
+        if (existingScript) {
+          if (existingScript.getAttribute('src') !== sdkUrl) {
+            existingScript.remove();
+          } else {
+            existingScript.addEventListener('load', () => {
+              logPromotionMapDebug('loadPromotionMapSdk:existingScriptLoaded');
+              window.kakao.maps.load(() => resolve(window.kakao.maps));
+            }, { once: true });
+            existingScript.addEventListener('error', () => reject(new Error('카카오 지도 SDK를 불러오지 못했습니다.')), { once: true });
+            return;
+          }
+        }
+        const script = document.createElement('script');
+        script.id = KAKAO_MAPS_SCRIPT_ID;
+        script.src = sdkUrl;
+        script.async = true;
+        script.onload = () => {
+          logPromotionMapDebug('loadPromotionMapSdk:scriptLoaded', { sdkUrl });
+          window.kakao.maps.load(() => resolve(window.kakao.maps));
+        };
+        script.onerror = () => {
+          logPromotionMapDebug('loadPromotionMapSdk:scriptError', { sdkUrl });
+          reject(new Error('카카오 지도 SDK를 불러오지 못했습니다.'));
+        };
+        document.head.appendChild(script);
+      }).catch((error) => {
+        promotionMapSdkPromise = null;
+        logPromotionMapDebug('loadPromotionMapSdk:failed', { message: error?.message || String(error) });
+        throw error;
+      });
+      return promotionMapSdkPromise;
+    }
+
+    async function ensurePromotionMapReady() {
+      renderPromotionMapConfigBanner();
+      if (promotionMap) {
+        if (typeof promotionMap.relayout === 'function') {
+          promotionMap.relayout();
+        }
+        updatePromotionMapStatus();
+        return promotionMap;
+      }
+      try {
+        const maps = await loadPromotionMapSdk();
+        logPromotionMapDebug('ensurePromotionMapReady:mapsLoaded', {
+          hasServices: !!maps?.services,
+          center: DEFAULT_PROMOTION_MAP_CENTER
+        });
+        const mapCenter = new maps.LatLng(DEFAULT_PROMOTION_MAP_CENTER.latitude, DEFAULT_PROMOTION_MAP_CENTER.longitude);
+        promotionMap = new maps.Map(document.getElementById('promotionMapCanvas'), {
+          center: mapCenter,
+          level: DEFAULT_PROMOTION_MAP_ZOOM
+        });
+        promotionMapMarker = new maps.Marker({ map: null, position: mapCenter });
+        const geocoder = new maps.services.Geocoder();
+        maps.event.addListener(promotionMap, 'click', async (mouseEvent) => {
+          const coord = mouseEvent?.latLng;
+          if (!coord) return;
+          const latitude = typeof coord.getLat === 'function' ? coord.getLat() : null;
+          const longitude = typeof coord.getLng === 'function' ? coord.getLng() : null;
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
+          let address = '';
+          try {
+            const reverse = await new Promise((resolve, reject) => {
+              geocoder.coord2Address(longitude, latitude, (result, status) => {
+                if (status !== maps.services.Status.OK) {
+                  reject(new Error('주소 변환 실패'));
+                  return;
+                }
+                resolve(result);
+              });
+            });
+            address = extractPromotionReverseGeocodeAddress(reverse);
+          } catch (_) {}
+          applyPromotionCoordinateSelection(latitude, longitude, {
+            address,
+            searchQuery: document.getElementById('promotionLocationSearchQuery').value.trim(),
+            zoom: DEFAULT_PROMOTION_MAP_ZOOM
+          });
+        });
+        hidePromotionMapFallback();
+        syncPromotionMapFromFormState();
+        logPromotionMapDebug('ensurePromotionMapReady:mapCreated');
+        return promotionMap;
+      } catch (error) {
+        setPromotionMapFallback(error.message || '카카오 지도를 준비하지 못했습니다.');
+        updatePromotionMapStatus();
+        logPromotionMapDebug('ensurePromotionMapReady:failed', { message: error?.message || String(error) });
+        throw error;
+      }
+    }
+
+    function initializePromotionMapIfVisible() {
+      const section = document.getElementById('promotion');
+      if (!section || section.classList.contains('hidden')) return;
+      if (!getStoredKakaoMapsKey()) return;
+      window.requestAnimationFrame(() => {
+        ensurePromotionMapReady().catch((error) => {
+          logPromotionMapDebug('initializePromotionMapIfVisible:failed', { message: error?.message || String(error) });
+        });
+      });
+    }
+
+    async function searchPromotionLocations() {
+      const query = document.getElementById('promotionLocationSearchQuery').value.trim();
+      if (!query) {
+        throw new Error('좌표를 찾을 주소나 건물명을 입력하세요.');
+      }
+      const maps = await loadPromotionMapSdk();
+      await ensurePromotionMapReady();
+      const geocoder = new maps.services.Geocoder();
+      const places = new maps.services.Places();
+      const [addressCandidates, placeCandidates] = await Promise.all([
+        new Promise((resolve) => {
+          geocoder.addressSearch(query, (result, status) => {
+            if (status === maps.services.Status.OK) {
+              resolve(normalizePromotionSearchCandidates(result));
+              return;
+            }
+            resolve([]);
+          });
+        }),
+        new Promise((resolve) => {
+          places.keywordSearch(query, (result, status) => {
+            if (status === maps.services.Status.OK) {
+              resolve(normalizePromotionSearchCandidates(result));
+              return;
+            }
+            resolve([]);
+          });
+        })
+      ]);
+      const candidates = [...addressCandidates, ...placeCandidates].filter((candidate, index, arr) => {
+        const candidateKey = getPromotionLocationCandidateKey(candidate);
+        return arr.findIndex((item) => getPromotionLocationCandidateKey(item) === candidateKey) === index;
+      });
+      if (!candidates.length) {
+        throw new Error('검색 결과가 없습니다. 장소명을 더 구체적으로 입력해보세요.');
+      }
+      promotionLocationCandidates = candidates;
+      promotionSelectedCandidateKey = '';
+      renderPromotionLocationResults();
+      const primary = candidates[0];
+      applyPromotionCoordinateSelection(primary.latitude, primary.longitude, {
+        address: primary.displayAddress,
+        searchQuery: query,
+        zoom: DEFAULT_PROMOTION_MAP_ZOOM
+      });
+      promotionSelectedCandidateKey = getPromotionLocationCandidateKey(primary);
+      renderPromotionLocationResults();
+    }
+
     function normalizePromotionImagesText(images) {
       return (Array.isArray(images) ? images : []).map((item) => String(item || '').trim()).filter(Boolean).join('\n');
     }
@@ -990,6 +1483,8 @@
         clubId: article?.clubId || '',
         title: article?.title || '',
         location: article?.location || '',
+        latitude: normalizePromotionCoordinateValue(article?.latitude),
+        longitude: normalizePromotionCoordinateValue(article?.longitude),
         eventStartDate: toDatetimeLocalValue(article?.eventStartDate),
         eventEndDate: toDatetimeLocalValue(article?.eventEndDate),
         description: article?.description || '',
@@ -1002,6 +1497,8 @@
         clubId: '',
         title: '',
         location: '',
+        latitude: '',
+        longitude: '',
         eventStartDate: '',
         eventEndDate: '',
         description: '',
@@ -1029,6 +1526,8 @@
         clubId: document.getElementById('promotionClubId').value.trim(),
         title: document.getElementById('promotionTitle').value,
         location: document.getElementById('promotionLocation').value,
+        latitude: document.getElementById('promotionLatitude').value.trim(),
+        longitude: document.getElementById('promotionLongitude').value.trim(),
         eventStartDate: document.getElementById('promotionEventStartDate').value,
         eventEndDate: document.getElementById('promotionEventEndDate').value,
         description: document.getElementById('promotionDescription').value,
@@ -1045,10 +1544,13 @@
       document.getElementById('promotionClubId').value = state?.clubId || '';
       document.getElementById('promotionTitle').value = state?.title || '';
       document.getElementById('promotionLocation').value = state?.location || '';
+      document.getElementById('promotionLatitude').value = state?.latitude || '';
+      document.getElementById('promotionLongitude').value = state?.longitude || '';
       document.getElementById('promotionEventStartDate').value = state?.eventStartDate || '';
       document.getElementById('promotionEventEndDate').value = state?.eventEndDate || '';
       document.getElementById('promotionDescription').value = state?.description || '';
       document.getElementById('promotionImages').value = state?.imagesText || '';
+      syncPromotionMapFromFormState();
       renderPromotionImagePreviewList();
       updatePromotionEditorState();
     }
@@ -1084,20 +1586,27 @@
       const hasSelection = !!promotionSelectedArticleId;
       const isCreateMode = isPromotionCreateMode();
       const hasEditorTarget = hasSelection || isCreateMode;
-      const busy = promotionIsLoading || promotionIsSaving || promotionIsUploading;
+      const busy = promotionIsLoading || promotionIsSaving || promotionIsUploading || promotionIsDeleting;
       const dirty = isPromotionDirty();
+      renderPromotionMapConfigBanner();
+      updatePromotionMapStatus();
       const badge = document.getElementById('promotionEditingBadge');
       const summary = document.getElementById('promotionSelectionSummary');
       const help = document.getElementById('promotionHelpText');
       const selected = promotionArticles.find((article) => article.id === promotionSelectedArticleId);
       const clubIdInput = document.getElementById('promotionClubId');
       const imageUploadFile = document.getElementById('promotionImageUploadFile');
+      const locationSearchQuery = document.getElementById('promotionLocationSearchQuery');
       const btnUpload = document.getElementById('btnUploadPromotionImage');
       const btnLoad = document.getElementById('btnLoadPromotion');
       const btnCreate = document.getElementById('btnCreatePromotion');
       const btnSave = document.getElementById('btnSavePromotion');
       const btnReset = document.getElementById('btnResetPromotion');
+      const btnDelete = document.getElementById('btnDeletePromotion');
       const btnClear = document.getElementById('btnClearPromotionSelection');
+      const btnSearchLocation = document.getElementById('btnPromotionSearchLocation');
+      const btnLocationSearch = document.getElementById('btnPromotionLocationSearch');
+      const btnClearCoordinates = document.getElementById('btnPromotionClearCoordinates');
 
       PROMOTION_FORM_IDS.forEach((id) => {
         const el = document.getElementById(id);
@@ -1105,16 +1614,24 @@
       });
       clubIdInput.disabled = busy || !hasEditorTarget;
       clubIdInput.readOnly = !isCreateMode;
+      document.getElementById('promotionLatitude').disabled = true;
+      document.getElementById('promotionLongitude').disabled = true;
+      locationSearchQuery.disabled = busy || !hasEditorTarget || !getStoredKakaoMapsKey();
       imageUploadFile.disabled = busy || !hasEditorTarget;
       btnUpload.disabled = busy || !hasEditorTarget;
       btnLoad.disabled = busy;
       btnCreate.disabled = busy;
       btnSave.disabled = busy || !hasEditorTarget;
       btnReset.disabled = busy || !hasEditorTarget || !dirty;
+      btnDelete.disabled = busy || !hasSelection || isCreateMode;
       btnClear.disabled = busy || !hasEditorTarget;
+      btnSearchLocation.disabled = busy || !hasEditorTarget;
+      btnLocationSearch.disabled = busy || !hasEditorTarget || !getStoredKakaoMapsKey();
+      btnClearCoordinates.disabled = busy || !hasEditorTarget || !hasPromotionCoordinates();
       btnSave.textContent = promotionIsSaving
         ? (isCreateMode ? '생성 중...' : '저장 중...')
         : (isCreateMode ? '생성' : '저장');
+      btnDelete.textContent = promotionIsDeleting ? '삭제 중...' : '삭제';
 
       if (isCreateMode) {
         badge.textContent = dirty ? '새 게시글 작성 중 · 저장되지 않은 변경 있음' : '새 게시글 작성 중';
@@ -1326,7 +1843,7 @@
       const removeBtn = document.createElement('button');
       removeBtn.type = 'button';
       removeBtn.textContent = '제거';
-      removeBtn.disabled = promotionIsLoading || promotionIsSaving || promotionIsUploading || (!promotionSelectedArticleId && !isPromotionCreateMode());
+      removeBtn.disabled = promotionIsLoading || promotionIsSaving || promotionIsUploading || promotionIsDeleting || (!promotionSelectedArticleId && !isPromotionCreateMode());
       removeBtn.onclick = () => {
         removePromotionImageAt(index);
       };
@@ -1401,6 +1918,8 @@
       const clubId = form.clubId.trim();
       const title = form.title.trim();
       const location = form.location.trim();
+      const latitude = Number.parseFloat(form.latitude);
+      const longitude = Number.parseFloat(form.longitude);
       const eventStartDate = form.eventStartDate.trim();
       const eventEndDate = form.eventEndDate.trim();
       const description = form.description.trim();
@@ -1419,11 +1938,15 @@
       if (startDate.getTime() > endDate.getTime()) {
         throw new Error('행사 시작일은 종료일보다 늦을 수 없습니다.');
       }
-
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        throw new Error('지도에서 위치를 선택해 위도/경도를 확정하세요.');
+      }
       return {
         clubId,
         title,
         location,
+        latitude,
+        longitude,
         eventStartDate: startDate.toISOString(),
         eventEndDate: endDate.toISOString(),
         description,
@@ -1463,6 +1986,15 @@
       return { res, data };
     }
 
+    async function deletePromotionArticleRequest(articleId) {
+      const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(articleId), {
+        method: 'DELETE',
+        headers: headers()
+      });
+      const data = await readJsonOrEmpty(res);
+      return { res, data };
+    }
+
     function clearPromotionState() {
       promotionArticles = [];
       promotionEditorMode = 'edit';
@@ -1472,13 +2004,24 @@
       promotionIsLoading = false;
       promotionIsSaving = false;
       promotionIsUploading = false;
+      promotionIsDeleting = false;
+      promotionLocationCandidates = [];
+      promotionSelectedCandidateKey = '';
+      promotionLocationResolvedAddress = '';
       document.getElementById('promotionListLoading').classList.add('hidden');
       document.getElementById('promotionImageUploadFile').value = '';
+      document.getElementById('promotionLocationSearchQuery').value = '';
       clearPromotionBanner();
       hidePromotionSaveResult();
+      renderPromotionMapConfigBanner();
+      renderPromotionLocationResults();
+      setPromotionMapFallback(getStoredKakaoMapsKey()
+        ? '지도 준비 중입니다. 위치 검색을 실행하면 실제 지도가 표시됩니다.'
+        : '카카오 지도 JavaScript 키를 저장하면 실제 지도가 이 영역에 표시됩니다.');
       fillPromotionForm(null);
       renderPromotionImagePreviewList();
       renderPromotionList();
+      initializePromotionMapIfVisible();
     }
 
     function loadPromotionIfVisible() {
@@ -1486,6 +2029,7 @@
       if (section && !section.classList.contains('hidden') && !promotionHasLoaded) {
         document.getElementById('btnLoadPromotion').click();
       }
+      initializePromotionMapIfVisible();
     }
 
     document.getElementById('btnLoadPromotion').onclick = async () => {
@@ -1537,6 +2081,67 @@
       clearPromotionSelection();
     };
 
+    document.getElementById('btnDeletePromotion').onclick = async () => {
+      const selectedId = promotionSelectedArticleId;
+      const selectedArticle = promotionArticles.find((article) => article.id === selectedId);
+      if (!selectedId || !selectedArticle) {
+        showPromotionSaveResult(false, '삭제할 홍보 게시글을 먼저 선택하세요.');
+        return;
+      }
+
+      const articleLabel = selectedArticle.title ? '"' + selectedArticle.title + '"' : '선택한 홍보 게시글';
+      const confirmMessage = isPromotionDirty()
+        ? '저장되지 않은 변경사항이 있습니다. ' + articleLabel + '을(를) 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
+        : articleLabel + '을(를) 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+      if (!confirm(confirmMessage)) return;
+
+      promotionIsDeleting = true;
+      updatePromotionEditorState();
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+
+      try {
+        const { res, data } = await deletePromotionArticleRequest(selectedId);
+        if (res.status === 403) {
+          showPromotionSaveResult(false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (res.status === 404) {
+          if (data.statuscode === '902-1') {
+            promotionArticles = promotionArticles.filter((article) => article.id !== selectedId);
+            clearPromotionSelection({ keepMessage: true });
+            showPromotionSaveResult(false, data.message || '선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침하세요.');
+          } else {
+            showPromotionSaveResult(false, data.message || '홍보 게시글 삭제 실패 (HTTP ' + res.status + ')');
+          }
+          return;
+        }
+        if (!res.ok) {
+          showPromotionSaveResult(false, data.message || '홍보 게시글 삭제 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+
+        const deleteSuccessMessage = getApiSuccessMessage(data, '홍보 게시글이 삭제되었습니다.');
+        const syncResult = await reloadPromotionList({ keepMessage: true });
+        if (!syncResult.ok) {
+          clearPromotionSelection({ keepMessage: true });
+          showPromotionSaveResult(true, deleteSuccessMessage);
+          setPromotionBanner('삭제는 완료되었지만 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+          return;
+        }
+
+        clearPromotionSelection({ keepMessage: true });
+        clearPromotionBanner();
+        showPromotionSaveResult(true, deleteSuccessMessage);
+        showToast('홍보 게시글 삭제 완료', 'success');
+      } catch (e) {
+        showPromotionSaveResult(false, e.message || '요청 실패');
+      } finally {
+        promotionIsDeleting = false;
+        updatePromotionEditorState();
+      }
+    };
+
     function extractCreatedPromotionId(data) {
       return data?.data?.articleId || data?.data?.id || data?.articleId || data?.id || '';
     }
@@ -1546,6 +2151,8 @@
         return article?.clubId === payload.clubId
           && article?.title === payload.title
           && article?.location === payload.location
+          && Number(article?.latitude) === Number(payload.latitude)
+          && Number(article?.longitude) === Number(payload.longitude)
           && article?.eventStartDate === payload.eventStartDate
           && article?.eventEndDate === payload.eventEndDate
           && article?.description === payload.description
@@ -1665,6 +2272,46 @@
         updatePromotionEditorState();
       });
     });
+
+    document.getElementById('btnPromotionSearchLocation').onclick = async () => {
+      if (!getStoredKakaoMapsKey()) {
+        renderPromotionMapConfigBanner();
+        setPromotionBanner('서버에 카카오 지도 JavaScript 키를 먼저 설정하세요.', 'warn');
+        return;
+      }
+      try {
+        await ensurePromotionMapReady();
+        document.getElementById('promotionLocationSearchQuery').focus();
+      } catch (e) {
+        setPromotionBanner(e.message || '카카오 지도 초기화 실패', 'error');
+      }
+    };
+
+    document.getElementById('btnPromotionLocationSearch').onclick = async () => {
+      try {
+        await searchPromotionLocations();
+      } catch (e) {
+        setPromotionBanner(e.message || '장소 검색 실패', 'error');
+      }
+    };
+
+    document.getElementById('promotionLocationSearchQuery').addEventListener('keydown', async (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      try {
+        await searchPromotionLocations();
+      } catch (e) {
+        setPromotionBanner(e.message || '장소 검색 실패', 'error');
+      }
+    });
+
+    document.getElementById('btnPromotionClearCoordinates').onclick = () => {
+      clearPromotionCoordinates();
+    };
+
+    renderPromotionMapConfigBanner();
+    renderPromotionLocationResults();
+    updatePromotionMapStatus();
 
     document.getElementById('btnUploadPromotionImage').onclick = async () => {
       const fileInput = document.getElementById('promotionImageUploadFile');
@@ -2287,6 +2934,52 @@
       } catch (_) {
         return {};
       }
+    }
+
+    async function loadDevPortalConfig() {
+      if (!getToken()) {
+        promotionMapKey = '';
+        renderPromotionMapConfigBanner();
+        updatePromotionMapStatus();
+        return;
+      }
+      const res = await fetch(API_BASE + '/api/dev/config', { headers: headers() });
+      const data = await readJsonOrEmpty(res);
+      if (!res.ok) {
+        promotionMapKey = '';
+        renderPromotionMapConfigBanner();
+        updatePromotionMapStatus();
+        logPromotionMapDebug('loadDevPortalConfig:notOk', { status: res.status });
+        return;
+      }
+      const nextKey = String(data.data?.kakaoJavascriptKey || '').trim();
+      logPromotionMapDebug('loadDevPortalConfig:received', {
+        hasKey: !!nextKey,
+        keyPreview: nextKey ? nextKey.slice(0, 6) + '...' : ''
+      });
+      if (promotionMapKey && promotionMapKey !== nextKey) {
+        promotionMapSdkPromise = null;
+        const existingScript = document.getElementById(KAKAO_MAPS_SCRIPT_ID);
+        if (existingScript) existingScript.remove();
+        promotionMap = null;
+        promotionMapMarker = null;
+        setPromotionMapFallback(nextKey
+          ? '지도 준비 중입니다. 위치 검색을 실행하면 실제 지도가 표시됩니다.'
+          : '서버에 카카오 지도 JavaScript 키가 설정되면 실제 지도가 이 영역에 표시됩니다.');
+      }
+      promotionMapKey = nextKey;
+      renderPromotionMapConfigBanner();
+      updatePromotionMapStatus();
+      initializePromotionMapIfVisible();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
     }
 
     function setMessageBox(elId, ok, message) {
