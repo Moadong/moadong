@@ -18,7 +18,7 @@ const usePromotionNotification = () => {
     const latestTime = getLatestPromotionTime(data);
     const lastChecked = getLastCheckedTime();
 
-    if (pathname === '/promotions') {
+    if (pathname === '/promotions' || pathname === '/webview/promotions') {
       setLastCheckedTime(latestTime);
       setHasNotification(false);
       return;

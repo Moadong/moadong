@@ -7,6 +7,7 @@ import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import { ClubLocation } from '@/constants/clubLocation';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useNavigator from '@/hooks/useNavigator';
 import { SNSPlatform } from '@/types/club';
 import * as Styled from './ClubProfileCard.styles';
 
@@ -32,6 +33,7 @@ const ClubProfileCard = ({
   onMapClick,
 }: ClubProfileCardProps) => {
   const trackEvent = useMixpanelTrack();
+  const handleLink = useNavigator();
 
   const getSocialPlatformName = (platform: string) => {
     const names: Record<string, string> = {
@@ -89,12 +91,14 @@ const ClubProfileCard = ({
                 href={url}
                 target='_blank'
                 rel='noopener noreferrer'
-                onClick={() =>
+                onClick={(e) => {
+                  e.preventDefault();
                   trackEvent(USER_EVENT.SNS_LINK_CLICKED, {
                     platform,
                     clubName: name,
-                  })
-                }
+                  });
+                  handleLink(url);
+                }}
               >
                 <Styled.SocialIcon src={icon} alt={platform} />
                 <Styled.SocialText>
