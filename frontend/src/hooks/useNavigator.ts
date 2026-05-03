@@ -19,9 +19,13 @@ const useNavigator = () => {
       const isExternalUrl = /^(https?|itms-apps):\/\//.test(trimmedUrl);
 
       if (isExternalUrl) {
-        // 웹뷰에서 window.location.href로 외부 URL을 열면 WebView 자체가 이동해버리므로 앱에 위임
+        // 웹뷰에서 window.location.href로 외부 URL을 열면 WebView 자체가 이동해버리므로 앱에 위임.
+        // requestOpenExternalUrl은 http/https만 허용하므로, itms-apps:// 등 비표준 스킴은 false를
+        // 반환 → window.open으로 폴백해 OS가 처리하도록 위임
         if (isInAppWebView()) {
-          requestOpenExternalUrl(trimmedUrl);
+          if (!requestOpenExternalUrl(trimmedUrl)) {
+            window.open(trimmedUrl);
+          }
         } else {
           window.location.href = trimmedUrl;
         }
