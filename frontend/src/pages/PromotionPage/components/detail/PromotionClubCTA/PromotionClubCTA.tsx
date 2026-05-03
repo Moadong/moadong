@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useNavigator from '@/hooks/useNavigator';
 import isInAppWebView from '@/utils/isInAppWebView';
 import { requestNavigateWebview } from '@/utils/webviewBridge';
 import ArrowButton from '../PromotionArrowButton/PromotionArrowButton';
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const PromotionClubCTA = ({ clubId, clubName }: Props) => {
-  const navigate = useNavigate();
+  const handleLink = useNavigator();
   const trackEvent = useMixpanelTrack();
 
   const handleNavigate = () => {
@@ -21,10 +21,11 @@ const PromotionClubCTA = ({ clubId, clubName }: Props) => {
       club_name: clubName,
     });
 
+    // 웹뷰는 club/id 기반 slug, 일반 웹은 clubName 기반 경로 사용
     if (isInAppWebView()) {
       requestNavigateWebview(`club/${clubId}`);
     } else {
-      navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
+      handleLink(`/clubDetail/@${encodeURIComponent(clubName)}`);
     }
   };
 

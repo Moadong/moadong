@@ -1,10 +1,8 @@
-import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useNavigator from '@/hooks/useNavigator';
 import { getDDay } from '@/pages/PromotionPage/utils/getDday';
 import { PromotionArticle } from '@/types/promotion';
-import isInAppWebView from '@/utils/isInAppWebView';
-import { requestNavigateWebview } from '@/utils/webviewBridge';
 import CardMeta from './CardMeta/CardMeta';
 import ClubTag from './ClubTag/ClubTag';
 import DdayBadge from './DdayBadge/DdayBadge';
@@ -16,7 +14,7 @@ interface PromotionCardProps {
 
 const PromotionCard = ({ article }: PromotionCardProps) => {
   const trackEvent = useMixpanelTrack();
-  const navigate = useNavigate();
+  const handleLink = useNavigator();
   const dday = getDDay(article.eventStartDate, article.eventEndDate);
 
   const handleCardClick = () => {
@@ -26,11 +24,7 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
         source: 'promotion-card',
       });
 
-      if (isInAppWebView()) {
-        requestNavigateWebview('festival-introduction');
-      } else {
-        navigate('/festival-introduction');
-      }
+      handleLink('/festival-introduction');
       return;
     }
 
@@ -38,11 +32,7 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
       clubId: article.clubId,
     });
 
-    if (isInAppWebView()) {
-      requestNavigateWebview(`promotions/${article.id}`);
-    } else {
-      navigate(`/promotions/${article.id}`);
-    }
+    handleLink(`/promotions/${article.id}`);
   };
 
   const imageUrl = article.images?.[0];

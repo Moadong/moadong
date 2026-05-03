@@ -1,7 +1,13 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isInAppWebView from '@/utils/isInAppWebView';
-import { requestOpenExternalUrl } from '@/utils/webviewBridge';
+import {
+  requestNavigateWebview,
+  requestOpenExternalUrl,
+} from '@/utils/webviewBridge';
+
+// 내부 경로(/로 시작)를 앱 slug로 변환: /promotions/123 → promotions/123
+const toWebviewSlug = (path: string) => path.replace(/^\//, '');
 
 const useNavigator = () => {
   const navigate = useNavigate();
@@ -29,6 +35,8 @@ const useNavigator = () => {
         } else {
           window.location.href = trimmedUrl;
         }
+      } else if (isInAppWebView()) {
+        requestNavigateWebview(toWebviewSlug(trimmedUrl));
       } else {
         navigate(trimmedUrl);
       }
