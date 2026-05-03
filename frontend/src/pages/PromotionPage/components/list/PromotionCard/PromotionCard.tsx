@@ -1,6 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useNavigator from '@/hooks/useNavigator';
 import { getDDay } from '@/pages/PromotionPage/utils/getDday';
 import { PromotionArticle } from '@/types/promotion';
 import CardMeta from './CardMeta/CardMeta';
@@ -14,7 +14,7 @@ interface PromotionCardProps {
 
 const PromotionCard = ({ article }: PromotionCardProps) => {
   const trackEvent = useMixpanelTrack();
-  const navigateToPromotionDetail = useNavigate();
+  const handleLink = useNavigator();
   const dday = getDDay(article.eventStartDate, article.eventEndDate);
 
   const handleCardClick = () => {
@@ -24,7 +24,7 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
         source: 'promotion-card',
       });
 
-      navigateToPromotionDetail('/festival-introduction');
+      handleLink('/festival-introduction');
       return;
     }
 
@@ -32,7 +32,7 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
       clubId: article.clubId,
     });
 
-    navigateToPromotionDetail(`/promotions/${article.id}`);
+    handleLink(`/promotions/${article.id}`);
   };
 
   const imageUrl = article.images?.[0];

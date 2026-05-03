@@ -10,19 +10,12 @@ import { useGetBanners } from '@/hooks/Queries/useBanner';
 import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
-import isInAppWebView from '@/utils/isInAppWebView';
-import {
-  requestNavigateWebview,
-  requestOpenExternalUrl,
-} from '@/utils/webviewBridge';
 import * as Styled from './Banner.styles';
 import BANNERS from './bannerData';
 
 interface BannerProps {
   isWebview?: boolean;
 }
-
-const inAppWebView = isInAppWebView();
 
 const Banner = ({ isWebview = false }: BannerProps) => {
   const { isMobile } = useDevice();
@@ -69,12 +62,8 @@ const Banner = ({ isWebview = false }: BannerProps) => {
       linkTo: url,
     });
 
-    if (inAppWebView) {
-      if (url === WEBVIEW_LINK_TARGET.CLUB_FESTIVAL) {
-        requestNavigateWebview('festival-introduction');
-        return;
-      }
-      requestOpenExternalUrl(url);
+    if (url === WEBVIEW_LINK_TARGET.CLUB_FESTIVAL) {
+      handleLink('/festival-introduction');
       return;
     }
 
@@ -140,13 +129,13 @@ const Banner = ({ isWebview = false }: BannerProps) => {
             </SwiperSlide>
           ))}
         </Swiper>
-        {(isMobile || inAppWebView) && (
+        {(isMobile || isWebview) && (
           <Styled.NumericPagination>
             {currentIndex + 1} / {displayBanners?.length ?? 0}
           </Styled.NumericPagination>
         )}
 
-        {!isMobile && !inAppWebView && (
+        {!isMobile && !isWebview && (
           <Styled.DotPagination>
             {displayBanners?.map((_, index) => (
               <Styled.Dot key={index} active={currentIndex === index} />
