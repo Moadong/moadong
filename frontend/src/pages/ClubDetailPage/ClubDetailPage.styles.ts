@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
 
 export const Container = styled.div`
@@ -32,8 +33,70 @@ export const ContentWrapper = styled.div`
   }
 `;
 
+export const LeftSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+  width: 400px;
+
+  ${media.tablet} {
+    width: 100%;
+    gap: 0px;
+  }
+`;
+
+export const MapInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  ${media.tablet} {
+    display: none;
+  }
+`;
+
+export const MapCard = styled.div`
+  width: 100%;
+  height: 189px;
+
+  border-radius: 20px;
+  border: 1px solid ${colors.gray[400]};
+  overflow: hidden;
+  cursor: pointer;
+
+  background-color: #f2f2f2;
+
+  * {
+    cursor: pointer !important;
+  }
+`;
+
+export const MapDetailText = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  padding: 0 2px;
+
+  font-size: 14px;
+  color: ${colors.gray[700]};
+  cursor: default;
+  user-select: none;
+
+  img {
+    width: 12px;
+    height: 15px;
+  }
+`;
+
 export const RightSection = styled.div`
   width: 100%;
+
+  ${media.tablet} {
+    border-top: 6px solid ${colors.gray[200]};
+    padding-top: 12px;
+  }
 `;
 
 export const TabContent = styled.div`

@@ -23,3 +23,9 @@ public/sitemap.xml
 .env.sentry-build-plugin
 
 AGENTS.md
+
+# oh-my-claudecode
+.omc/
+
+# Claude Code (personal settings)
+.claude/

@@ -1,16 +1,32 @@
-import { useNavigate } from 'react-router-dom';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useNavigator from '@/hooks/useNavigator';
+import isInAppWebView from '@/utils/isInAppWebView';
+import { requestNavigateWebview } from '@/utils/webviewBridge';
 import ArrowButton from '../PromotionArrowButton/PromotionArrowButton';
 import * as Styled from './PromotionClubCTA.styles';
 
 interface Props {
+  clubId: string;
   clubName: string;
 }
 
-const PromotionClubCTA = ({ clubName }: Props) => {
-  const navigate = useNavigate();
+const PromotionClubCTA = ({ clubId, clubName }: Props) => {
+  const handleLink = useNavigator();
+  const trackEvent = useMixpanelTrack();
 
   const handleNavigate = () => {
-    navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
+    trackEvent(USER_EVENT.PROMOTION_CLUB_CTA_CLICKED, {
+      club_id: clubId,
+      club_name: clubName,
+    });
+
+    // 웹뷰는 club/id 기반 slug, 일반 웹은 clubName 기반 경로 사용
+    if (isInAppWebView()) {
+      requestNavigateWebview(`club/${clubId}`);
+    } else {
+      handleLink(`/clubDetail/@${encodeURIComponent(clubName)}`);
+    }
   };
 
   return (

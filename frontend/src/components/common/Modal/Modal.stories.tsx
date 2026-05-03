@@ -1,11 +1,11 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import Button from '../Button/Button';
-import PortalModal from './PortalModal';
+import Modal from './Modal';
 
 const meta = {
-  title: 'Components/Common/PortalModal',
-  component: PortalModal,
+  title: 'Components/Common/Modal',
+  component: Modal,
   parameters: {
     layout: 'centered',
   },
@@ -27,7 +27,7 @@ const meta = {
       description: '모달 내부에 렌더링될 컨텐츠입니다.',
     },
   },
-} satisfies Meta<typeof PortalModal>;
+} satisfies Meta<typeof Modal>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
@@ -69,12 +69,12 @@ export const Default: Story = {
     return (
       <>
         <Button onClick={() => setIsOpen(true)}>모달 열기</Button>
-        <PortalModal {...args} isOpen={isOpen} onClose={handleClose}>
+        <Modal {...args} isOpen={isOpen} onClose={handleClose}>
           <ModalContent
             text='배경 클릭 시 모달이 닫힙니다.'
             onClose={handleClose}
           />
-        </PortalModal>
+        </Modal>
       </>
     );
   },
@@ -100,12 +100,12 @@ export const NoBackdropClose: Story = {
       <>
         <Button onClick={() => setOpen(true)}>모달 열기</Button>
 
-        <PortalModal {...args} isOpen={open} onClose={handleClose}>
+        <Modal {...args} isOpen={open} onClose={handleClose}>
           <ModalContent
             text='배경을 클릭해도 모달이 닫히지 않습니다.'
             onClose={handleClose}
           />
-        </PortalModal>
+        </Modal>
       </>
     );
   },

@@ -51,6 +51,21 @@ const ClubIntroContent = ({
     [faqs, trackEvent, openFaqIndexes],
   );
 
+  const isEmpty =
+    !activityDescription?.trim() &&
+    validAwards.length === 0 &&
+    !idealCandidate?.content?.trim() &&
+    !benefits?.trim() &&
+    (!faqs || faqs.length === 0);
+
+  if (isEmpty) {
+    return (
+      <Styled.EmptyState>
+        곧 새로운 소개가 업데이트될 예정이에요
+      </Styled.EmptyState>
+    );
+  }
+
   return (
     <Styled.Container>
       {activityDescription?.trim() && (

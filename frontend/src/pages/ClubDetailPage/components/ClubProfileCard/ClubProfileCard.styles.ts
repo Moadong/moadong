@@ -1,17 +1,16 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
   position: relative;
   width: 100%;
-  max-width: 375px;
   background-color: ${colors.base.white};
   border-radius: 20px;
   overflow: hidden;
 
   ${media.tablet} {
-    max-width: none;
     border-radius: 0;
   }
 `;
@@ -57,12 +56,13 @@ export const Content = styled.div`
   background-color: ${colors.gray[100]};
   border-radius: 20px;
 
-  ${media.tablet} {
-    background-color: ${colors.base.white};
-  }
-
   ${media.laptop} {
     padding: 40px 16px 20px;
+  }
+
+  ${media.tablet} {
+    padding: 40px 16px 12px;
+    background-color: ${colors.base.white};
   }
 `;
 
@@ -169,6 +169,7 @@ export const IntroSection = styled.section`
 
   ${media.tablet} {
     background-color: ${colors.gray[100]};
+  }
 `;
 
 export const IntroTitle = styled.h3`
@@ -181,4 +182,68 @@ export const IntroTitle = styled.h3`
 export const IntroDescription = styled.p`
   font-size: 14px;
   color: ${colors.gray[800]};
+`;
+
+export const MobileLocationSection = styled.div`
+  display: none;
+
+  ${media.tablet} {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+  }
+`;
+
+export const LocationDivider = styled.hr`
+  border: none;
+  border-top: 1px solid ${colors.gray[400]};
+  margin: 0;
+`;
+
+export const LocationRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+`;
+
+export const LocationInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: default;
+  user-select: none;
+
+  img {
+    width: 12px;
+    height: 15px;
+    flex-shrink: 0;
+  }
+
+  span {
+    ${setTypography(typography.paragraph.p6)};
+    color: ${colors.gray[600]};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
+export const LocationDot = styled.span`
+  ${setTypography(typography.paragraph.p6)};
+  color: ${colors.gray[400]};
+  flex-shrink: 0;
+`;
+
+export const MapLink = styled.span`
+  ${setTypography(typography.paragraph.p6)};
+  color: #3366bb;
+  flex-shrink: 0;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;

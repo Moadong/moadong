@@ -9,11 +9,17 @@ import ClubLogo from '@/pages/MainPage/components/ClubLogo/ClubLogo';
 import { Club } from '@/types/club';
 import * as Styled from './ClubCard.styles';
 
-const ClubCard = ({ club }: { club: Club }) => {
+interface ClubCardProps {
+  club: Club;
+  children?: React.ReactNode;
+  onCardClick?: (club: Club) => void;
+}
+
+const ClubCard = ({ club, children, onCardClick }: ClubCardProps) => {
   const navigate = useNavigate();
   const [isClicked, setIsClicked] = useState(false);
 
-  const handleNavigate = () => {
+  const handleClick = () => {
     setIsClicked(true);
     mixpanel.track(USER_EVENT.CLUB_CARD_CLICKED, {
       club_id: club.id,
@@ -23,7 +29,11 @@ const ClubCard = ({ club }: { club: Club }) => {
 
     setTimeout(() => {
       setIsClicked(false);
-      navigate(`/clubDetail/@${encodeURIComponent(club.name)}`);
+      if (onCardClick) {
+        onCardClick(club);
+      } else {
+        navigate(`/clubDetail/@${encodeURIComponent(club.name)}`);
+      }
     }, 150);
   };
 
@@ -31,7 +41,7 @@ const ClubCard = ({ club }: { club: Club }) => {
     <Styled.CardContainer
       $state={club.recruitmentStatus}
       $isClicked={isClicked}
-      onClick={handleNavigate}
+      onClick={handleClick}
     >
       <Styled.CardHeader>
         <Styled.ClubProfile>
@@ -41,6 +51,7 @@ const ClubCard = ({ club }: { club: Club }) => {
             <Styled.Introduction>{club.introduction}</Styled.Introduction>
           </Styled.ClubInfo>
         </Styled.ClubProfile>
+        {children}
       </Styled.CardHeader>
 
       <Styled.StateBoxTagContainer>

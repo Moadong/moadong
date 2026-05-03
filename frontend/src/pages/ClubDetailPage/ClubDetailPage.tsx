@@ -1,8 +1,12 @@
-import { useCallback, useEffect, useMemo, useRef } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
+import locationIcon from '@/assets/images/icons/location_icon.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
+import MapModal from '@/components/map/MapModal/MapModal';
+import NaverMap from '@/components/map/NaverMap/NaverMap';
+import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -55,21 +59,8 @@ const ClubDetailPage = () => {
     if (!tabParam || !Object.values(TAB_TYPE).includes(tabParam)) {
       return TAB_TYPE.INTRO;
     }
-    if (tabParam === TAB_TYPE.SCHEDULE && !hasCalendarConnection) {
-      return TAB_TYPE.INTRO;
-    }
     return tabParam;
-  }, [tabParam, hasCalendarConnection]);
-
-  useEffect(() => {
-    if (
-      clubDetail &&
-      tabParam === TAB_TYPE.SCHEDULE &&
-      !hasCalendarConnection
-    ) {
-      setSearchParams({ tab: TAB_TYPE.INTRO }, { replace: true });
-    }
-  }, [clubDetail, tabParam, hasCalendarConnection, setSearchParams]);
+  }, [tabParam]);
 
   const { data: calendarEvents = [] } = useGetClubCalendarEvents(
     (clubName ?? clubId) || '',
@@ -77,27 +68,21 @@ const ClubDetailPage = () => {
   );
 
   const tabs = useMemo(
-    () =>
-      [
-        { key: TAB_TYPE.INTRO, label: '소개 내용' },
-        { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-        hasCalendarConnection
-          ? { key: TAB_TYPE.SCHEDULE, label: '일정 보기' }
-          : null,
-      ].filter(Boolean) as Array<{ key: TabType; label: string }>,
-    [hasCalendarConnection],
+    () => [
+      { key: TAB_TYPE.INTRO, label: '소개내용' },
+      { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+      { key: TAB_TYPE.SCHEDULE, label: '행사일정' },
+    ],
+    [],
   );
 
   const topBarTabs = useMemo(
-    () =>
-      [
-        { key: TAB_TYPE.INTRO, label: '소개내용' },
-        { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-        hasCalendarConnection
-          ? { key: TAB_TYPE.SCHEDULE, label: '일정 보기' }
-          : null,
-      ].filter(Boolean) as Array<{ key: TabType; label: string }>,
-    [hasCalendarConnection],
+    () => [
+      { key: TAB_TYPE.INTRO, label: '소개내용' },
+      { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+      { key: TAB_TYPE.SCHEDULE, label: '행사일정' },
+    ],
+    [],
   );
 
   useTrackPageView(
@@ -128,6 +113,12 @@ const ClubDetailPage = () => {
     [setSearchParams, trackEvent],
   );
 
+  const clubLocation = clubLocations.find(
+    (loc) => loc.clubName === clubDetail?.name,
+  );
+
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+
   if (error) {
     return <div>동아리 정보를 불러오는데 실패했습니다.</div>;
   }
@@ -154,14 +145,31 @@ const ClubDetailPage = () => {
       )}
       <Styled.Container>
         <Styled.ContentWrapper>
-          <ClubProfileCard
-            name={clubDetail.name}
-            logo={clubDetail.logo}
-            cover={clubDetail.cover}
-            recruitmentStatus={clubDetail.recruitmentStatus}
-            socialLinks={clubDetail.socialLinks}
-            introDescription={clubDetail.description.introDescription}
-          />
+          <Styled.LeftSection>
+            <ClubProfileCard
+              name={clubDetail.name}
+              logo={clubDetail.logo}
+              cover={clubDetail.cover}
+              recruitmentStatus={clubDetail.recruitmentStatus}
+              socialLinks={clubDetail.socialLinks}
+              introDescription={clubDetail.description.introDescription}
+              location={clubLocation}
+              onMapClick={() => setIsMapModalOpen(true)}
+            />
+            {clubLocation && (
+              <Styled.MapInfo>
+                <Styled.MapCard onClick={() => setIsMapModalOpen(true)}>
+                  <NaverMap location={clubLocation} />
+                </Styled.MapCard>
+
+                <Styled.MapDetailText>
+                  <img src={locationIcon} alt='위치 아이콘' />
+                  동아리방 위치 {clubLocation.building}{' '}
+                  {clubLocation.detailLocation}
+                </Styled.MapDetailText>
+              </Styled.MapInfo>
+            )}
+          </Styled.LeftSection>
 
           <Styled.RightSection ref={contentRef}>
             <UnderlineTabs
@@ -186,22 +194,29 @@ const ClubDetailPage = () => {
               >
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
               </div>
-              {hasCalendarConnection && (
-                <div
-                  style={{
-                    display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
-                  }}
-                >
-                  <ClubScheduleCalendar
-                    key={clubId ?? clubName}
-                    events={calendarEvents}
-                  />
-                </div>
-              )}
+              <div
+                style={{
+                  display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
+                }}
+              >
+                <ClubScheduleCalendar
+                  key={clubId ?? clubName}
+                  events={calendarEvents}
+                />
+              </div>
             </Styled.TabContent>
           </Styled.RightSection>
         </Styled.ContentWrapper>
       </Styled.Container>
+      {clubLocation && (
+        <MapModal
+          isOpen={isMapModalOpen}
+          onClose={() => setIsMapModalOpen(false)}
+          clubName={clubDetail.name}
+          clubLogo={clubDetail.logo}
+          location={clubLocation}
+        />
+      )}
       {!isInAppWebView() && <Footer />}
       <ClubDetailFooter
         recruitmentStart={clubDetail.recruitmentStart}
