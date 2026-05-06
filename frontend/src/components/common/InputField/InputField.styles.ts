@@ -8,13 +8,18 @@ const INPUT_RIGHT_PADDING = {
   none: '18px',
 } as const;
 
-export const InputContainer = styled.div<{ width: string; readOnly?: boolean }>`
+const BORDER_ERROR = 'red';
+const BORDER_SUCCESS = '#28a745';
+const BORDER_FOCUS = '#007bff';
+
+export const InputContainer = styled.div<{ width: string }>`
+  position: relative;
   width: ${(props) => props.width};
   max-width: 100%;
   display: flex;
   flex-direction: column;
 
-  @media (max-width: 768px) {
+  ${media.tablet} {
     width: 100%;
   }
 `;
@@ -42,7 +47,7 @@ export const Input = styled.input<{
     12px 18px;
   border: 1px solid
     ${({ hasError, isSuccess }) =>
-      hasError ? 'red' : isSuccess ? '#28a745' : colors.gray[500]};
+      hasError ? BORDER_ERROR : isSuccess ? BORDER_SUCCESS : colors.gray[500]};
   background-color: transparent;
   border-radius: 6px;
   outline: none;
@@ -63,10 +68,10 @@ export const Input = styled.input<{
       readOnly
         ? colors.gray[500]
         : hasError
-          ? 'red'
+          ? BORDER_ERROR
           : isSuccess
-            ? '#28a745'
-            : '#007bff'};
+            ? BORDER_SUCCESS
+            : BORDER_FOCUS};
     ${({ readOnly }) => readOnly && 'cursor: pointer;'}
   }
 
@@ -119,7 +124,7 @@ export const ToggleButton = styled.button`
   background: none;
   border: none;
   cursor: pointer;
-  color: gray;
+  color: ${colors.gray[600]};
 `;
 
 export const CharCount = styled.span`
@@ -131,12 +136,12 @@ export const CharCount = styled.span`
   letter-spacing: -0.96px;
 `;
 
-export const HelperText = styled.div`
+export const HelperText = styled.div<{ isError?: boolean }>`
   position: absolute;
   left: 0;
   top: 100%;
   font-size: 0.75rem;
-  color: red;
+  color: ${({ isError }) => (isError ? BORDER_ERROR : BORDER_SUCCESS)};
   margin-top: 4px;
   pointer-events: none;
   white-space: nowrap;
