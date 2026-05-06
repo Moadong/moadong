@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import * as Styled from './InputField.styles';
 
@@ -37,6 +37,7 @@ const InputField = ({
   readOnly = false,
   isSuccess,
 }: CustomInputProps) => {
+  const id = useId();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const getActiveButtonVariant = () => {
@@ -59,10 +60,6 @@ const InputField = ({
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    if (maxLength !== undefined && inputValue.length > maxLength) {
-      return;
-    }
     if (onChange) {
       onChange(e);
     }
@@ -70,9 +67,10 @@ const InputField = ({
 
   return (
     <Styled.InputContainer width={width}>
-      {label && <Styled.Label>{label}</Styled.Label>}
+      {label && <Styled.Label htmlFor={id}>{label}</Styled.Label>}
       <Styled.InputWrapper>
         <Styled.Input
+          id={id}
           type={type === 'password' && !isPasswordVisible ? 'password' : 'text'}
           value={value}
           onChange={handleChange}
@@ -100,8 +98,8 @@ const InputField = ({
           {value.length}/{maxLength}
         </Styled.CharCount>
       )}
-      {isError && helperText && (
-        <Styled.HelperText>{helperText}</Styled.HelperText>
+      {(isError || isSuccess) && helperText && (
+        <Styled.HelperText isError={isError}>{helperText}</Styled.HelperText>
       )}
     </Styled.InputContainer>
   );
