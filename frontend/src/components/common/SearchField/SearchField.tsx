@@ -5,10 +5,11 @@ import * as Styled from '@/components/common/SearchField/SearchField.styles';
 interface SearchFieldProps {
   value: string;
   onChange: (value: string) => void;
-  onSubmit: () => void;
+  onSubmit?: () => void;
   placeholder?: string;
   ariaLabel?: string;
   autoBlur?: boolean;
+  style?: React.CSSProperties;
 }
 
 const SearchField = ({
@@ -18,18 +19,23 @@ const SearchField = ({
   placeholder = '검색어를 입력하세요',
   ariaLabel = '검색 입력창',
   autoBlur = true,
+  style,
 }: SearchFieldProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit();
+    onSubmit?.();
     if (autoBlur) inputRef.current?.blur();
   };
 
   return (
-    <Styled.SearchBoxContainer $isFocused={isFocused} onSubmit={handleSubmit}>
+    <Styled.SearchBoxContainer
+      $isFocused={isFocused}
+      onSubmit={handleSubmit}
+      style={style}
+    >
       <Styled.SearchInputStyles
         ref={inputRef}
         type='text'
