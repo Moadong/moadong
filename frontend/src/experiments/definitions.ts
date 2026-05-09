@@ -1,26 +1,13 @@
 import type { ExperimentDefinition } from './types';
 
-export const mainBannerExperiment = {
-  key: 'main_banner_v1',
-  variants: ['A', 'B'] as const,
-  defaultVariant: 'A',
+export const festivalTimetableNavExperiment = {
+  key: 'festival_timetable_nav_v1',
+  variants: ['tabs', 'arrows'] as const,
+  defaultVariant: 'tabs',
   weights: {
-    A: 50,
-    B: 50,
+    tabs: 50,
+    arrows: 50,
   },
-} satisfies ExperimentDefinition<'A' | 'B'>;
+} satisfies ExperimentDefinition<'tabs' | 'arrows'>;
 
-export const applyButtonCopyExperiment = {
-  key: 'apply_button_copy_v1',
-  variants: ['A', 'B'] as const,
-  defaultVariant: 'A',
-  weights: {
-    A: 50,
-    B: 50,
-  },
-} satisfies ExperimentDefinition<'A' | 'B'>;
-
-export const ALL_EXPERIMENTS = [
-  mainBannerExperiment,
-  applyButtonCopyExperiment,
-] as const;
+export const ALL_EXPERIMENTS = [festivalTimetableNavExperiment] as const;
