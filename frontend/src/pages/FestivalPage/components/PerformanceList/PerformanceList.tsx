@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import styled from 'styled-components';
-import { performances } from '../../data/performances';
+import type { Performance } from '../../data/performances';
+import { performances as defaultPerformances } from '../../data/performances';
 import { useCurrentTime } from '../../hooks/useCurrentTime';
 import PerformanceCard from '../PerformanceCard/PerformanceCard';
 import TimelineRow from '../TimelineRow/TimelineRow';
@@ -31,13 +32,25 @@ const List = styled.div`
   gap: 8px;
 `;
 
-const PerformanceList = () => {
+interface PerformanceListProps {
+  performances?: Performance[];
+  festivalDate?: string; // 'YYYY-MM-DD', 생략 시 2026-03-05 기본값
+}
+
+const PerformanceList = ({
+  performances = defaultPerformances,
+  festivalDate = '2026-03-05',
+}: PerformanceListProps) => {
   const currentTime = useCurrentTime();
   const currentMinutes = toMinutes(currentTime);
   const activeRef = useRef<HTMLDivElement>(null);
+
   const now = new Date();
+  const [year, month, day] = festivalDate.split('-').map(Number);
   const isFestivalDate =
-    now.getFullYear() === 2026 && now.getMonth() === 2 && now.getDate() === 5;
+    now.getFullYear() === year &&
+    now.getMonth() === month - 1 &&
+    now.getDate() === day;
 
   useEffect(() => {
     if (activeRef.current) {
