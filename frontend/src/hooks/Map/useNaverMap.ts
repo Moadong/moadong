@@ -122,7 +122,11 @@ export const useNaverMap = (
 
     return () => {
       isCleaned = true;
-      mapInstance?.destroy();
+      try {
+        mapInstance?.destroy();
+      } catch {
+        // noop
+      }
       if (externalRef) externalRef.current = null;
     };
   }, [
