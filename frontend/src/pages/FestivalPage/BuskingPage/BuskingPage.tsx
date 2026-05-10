@@ -1,4 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
+import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import Filter from '@/components/common/Filter/Filter';
 import Footer from '@/components/common/Footer/Footer';
@@ -23,7 +24,7 @@ const availableDays = BUSKING_DAYS.filter(
 
 const getInitialDayId = (): string => {
   const now = new Date();
-  const todayStr = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+  const todayStr = format(now, 'yyyy-MM-dd');
   return (
     availableDays.find((d) => d.date === todayStr)?.id ??
     availableDays[0]?.id ??
