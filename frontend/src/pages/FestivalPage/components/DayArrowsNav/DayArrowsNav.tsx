@@ -9,14 +9,18 @@ interface DayArrowsNavProps {
 
 const DayArrowsNav = ({ days, activeDayId, onChange }: DayArrowsNavProps) => {
   const currentIndex = days.findIndex((d) => d.id === activeDayId);
-  const activeDay = days[currentIndex];
+  const activeDay = currentIndex !== -1 ? days[currentIndex] : days[0];
+
+  if (!activeDay) return null;
+
+  const safeIndex = currentIndex !== -1 ? currentIndex : 0;
 
   return (
     <Styled.Container>
       <Styled.ArrowButton
         type='button'
-        onClick={() => onChange(days[currentIndex - 1].id)}
-        disabled={currentIndex === 0}
+        onClick={() => onChange(days[safeIndex - 1].id)}
+        disabled={safeIndex === 0}
         aria-label='이전 날'
       >
         ‹
@@ -24,8 +28,8 @@ const DayArrowsNav = ({ days, activeDayId, onChange }: DayArrowsNavProps) => {
       <Styled.DayLabel>{activeDay.fullDateLabel}</Styled.DayLabel>
       <Styled.ArrowButton
         type='button'
-        onClick={() => onChange(days[currentIndex + 1].id)}
-        disabled={currentIndex === days.length - 1}
+        onClick={() => onChange(days[safeIndex + 1].id)}
+        disabled={safeIndex === days.length - 1}
         aria-label='다음 날'
       >
         ›
