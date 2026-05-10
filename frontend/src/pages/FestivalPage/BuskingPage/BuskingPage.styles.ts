@@ -51,7 +51,7 @@ export const SectionLabel = styled.div`
   display: flex;
   align-items: center;
   gap: 10px;
-  margin: 8px 20px 12px;
+  margin: 20px 20px 12px;
   color: #7a7a7a;
   font-size: 12px;
   font-weight: 600;
