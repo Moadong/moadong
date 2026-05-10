@@ -24,7 +24,7 @@ export const BUSKING_DAYS: FestivalDay[] = [
       {
         id: 101,
         name: 'YB',
-        startTime: '',
+        startTime: '19:30',
         endTime: '',
         songs: [],
       },
