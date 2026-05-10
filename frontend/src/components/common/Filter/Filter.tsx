@@ -7,11 +7,13 @@ import * as Styled from './Filter.styles';
 const WEB_FILTER_OPTIONS = [
   { label: '동아리', path: '/' },
   { label: '홍보', path: '/promotions' },
+  { label: '대동제', path: '/festival-busking' },
 ] as const;
 
 const WEBVIEW_FILTER_OPTIONS = [
   { label: '동아리', path: '/webview/main' },
   { label: '홍보', path: '/webview/promotions' },
+  { label: '대동제', path: '/webview/festival-busking' },
 ] as const;
 
 interface FilterProps {

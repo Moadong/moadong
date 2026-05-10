@@ -1,15 +1,9 @@
 import styled from 'styled-components';
-import { media } from '@/styles/mediaQuery';
 
 export const Container = styled.div`
   width: 100%;
   max-width: 550px;
   margin: 0 auto;
-  padding-top: 92px;
-
-  ${media.mobile} {
-    padding-top: 70px;
-  }
 `;
 
 export const NavWrapper = styled.div`

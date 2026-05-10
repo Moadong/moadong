@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import Filter from '@/components/common/Filter/Filter';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
@@ -7,6 +8,7 @@ import { festivalTimetableNavExperiment } from '@/experiments/definitions';
 import { useExperimentVariant } from '@/hooks/Experiment/useExperimentVariant';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
 import isInAppWebView from '@/utils/isInAppWebView';
 import DayArrowsNav from '../components/DayArrowsNav/DayArrowsNav';
 import DayTabsNav from '../components/DayTabsNav/DayTabsNav';
@@ -34,6 +36,7 @@ const BuskingPage = () => {
   const trackEvent = useMixpanelTrack();
   const navVariant = useExperimentVariant(festivalTimetableNavExperiment);
 
+  const hasNotification = usePromotionNotification();
   const [activeDayId, setActiveDayId] = useState(getInitialDayId);
   const dayStartTime = useRef(Date.now());
   const activeDayIdRef = useRef(activeDayId);
@@ -89,6 +92,7 @@ const BuskingPage = () => {
   return (
     <>
       <Header hideOn={['webview']} />
+      <Filter hasNotification={hasNotification} />
       <Styled.Container>
         <Styled.NavWrapper>
           {navVariant === 'tabs' ? (
