@@ -11,6 +11,7 @@ export interface PopupConfig {
   image: string;
   imageAlt: string;
   mobileOnly?: boolean;
+  to?: string;
   onImageClick?: (trackEvent: TrackEventFn) => void;
 }
 

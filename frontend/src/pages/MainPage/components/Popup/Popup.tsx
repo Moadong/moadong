@@ -1,4 +1,5 @@
 import { MouseEvent, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
@@ -10,6 +11,7 @@ interface PopupProps {
 }
 
 const Popup = ({ configs }: PopupProps) => {
+  const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
   const { isMobile } = useDevice();
   const [activeConfig, setActiveConfig] = useState<PopupConfig | null>(null);
@@ -88,7 +90,10 @@ const Popup = ({ configs }: PopupProps) => {
       >
         <Styled.Container>
           <Styled.ImageWrapper
-            onClick={() => activeConfig.onImageClick?.(trackEvent)}
+            onClick={() => {
+              activeConfig.onImageClick?.(trackEvent);
+              if (activeConfig.to) navigate(activeConfig.to);
+            }}
           >
             <Styled.PopupImage
               src={activeConfig.image}
