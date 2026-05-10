@@ -129,7 +129,7 @@ export const PAGE_VIEW = {
   INTRODUCE_PAGE: 'IntroducePage',
   CLUB_UNION_PAGE: 'ClubUnionPage',
   FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
-  DAEDONG2026_BUSKING_PAGE: '2026-daedong 버스킹 시간표 페이지',
+  DAEDONG2026_BUSKING_PAGE: '2026 대동제 버스킹 시간표 페이지',
   PROMOTION_LIST_PAGE: '홍보 목록 페이지',
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
 
