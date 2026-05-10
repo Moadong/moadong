@@ -3,7 +3,7 @@ import PerformanceCard from './PerformanceCard';
 
 const samplePerformance = {
   id: 2,
-  clubName: '매니아',
+  name: '매니아',
   startTime: '13:00',
   endTime: '13:30',
   songs: [
@@ -16,7 +16,7 @@ const samplePerformance = {
 
 const singleSongPerformance = {
   id: 1,
-  clubName: '터',
+  name: '터',
   startTime: '12:30',
   endTime: '13:00',
   songs: ['차선농악 - 9명'],

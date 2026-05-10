@@ -35,11 +35,13 @@ const List = styled.div`
 interface PerformanceListProps {
   performances?: Performance[];
   festivalDate?: string; // 'YYYY-MM-DD', 생략 시 2026-03-05 기본값
+  hideSongs?: boolean;
 }
 
 const PerformanceList = ({
   performances = defaultPerformances,
   festivalDate = '2026-03-05',
+  hideSongs = false,
 }: PerformanceListProps) => {
   const currentTime = useCurrentTime();
   const currentMinutes = toMinutes(currentTime);
@@ -73,7 +75,11 @@ const PerformanceList = ({
         return (
           <div key={performance.id} ref={isActive ? activeRef : null}>
             <TimelineRow time={performance.startTime} status={status}>
-              <PerformanceCard performance={performance} active={isActive} />
+              <PerformanceCard
+                performance={performance}
+                active={isActive}
+                hideSongs={hideSongs}
+              />
             </TimelineRow>
           </div>
         );

@@ -46,3 +46,21 @@ export const TimetableLocation = styled.p`
   font-size: 12px;
   font-weight: 600;
 `;
+
+export const SectionLabel = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 8px 20px 12px;
+  color: #7a7a7a;
+  font-size: 12px;
+  font-weight: 600;
+
+  &::before,
+  &::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: #e8e8e8;
+  }
+`;

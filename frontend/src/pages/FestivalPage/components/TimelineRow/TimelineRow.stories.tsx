@@ -4,7 +4,7 @@ import TimelineRow from './TimelineRow';
 
 const pastPerformance = {
   id: 1,
-  clubName: '터',
+  name: '터',
   startTime: '12:30',
   endTime: '13:00',
   songs: ['차선농악 - 9명'],
@@ -12,7 +12,7 @@ const pastPerformance = {
 
 const activePerformance = {
   id: 2,
-  clubName: '매니아',
+  name: '매니아',
   startTime: '13:00',
   endTime: '13:30',
   songs: [
@@ -25,7 +25,7 @@ const activePerformance = {
 
 const upcomingPerformance = {
   id: 3,
-  clubName: '씨사운드',
+  name: '씨사운드',
   startTime: '13:30',
   endTime: '14:00',
   songs: [

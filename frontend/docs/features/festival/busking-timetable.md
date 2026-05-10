@@ -10,9 +10,12 @@
 
 ```
 BuskingPage
-├── DayTabsNav (variant: 'tabs')     — UnderlineTabs로 날짜 4개 탭
+├── DayTabsNav (variant: 'tabs')     — UnderlineTabs로 날짜 탭
 ├── DayArrowsNav (variant: 'arrows') — ‹ 날짜 › 화살표 네비게이션
-└── PerformanceList                  — 날짜별 공연 목록 (공통 컴포넌트)
+├── SectionLabel "동아리 공연"        — 두 섹션 모두 있을 때만 표시
+├── PerformanceList (performances)   — 동아리 공연 목록
+├── SectionLabel "🎤 아티스트 공연"
+└── PerformanceList (mainStagePerformances, hideSongs) — 아티스트 공연 목록
     └── TimelineRow + PerformanceCard
 ```
 
@@ -41,14 +44,24 @@ BuskingPage
 
 `src/pages/FestivalPage/data/buskingDays.ts` — `BUSKING_DAYS: FestivalDay[]`
 
-- `performances: []`인 날짜는 자동으로 탭/화살표에서 제외
+- `performances: []`이고 `mainStagePerformances`도 없는 날짜는 탭/화살표에서 제외
 - 오늘 날짜가 축제 기간이면 해당 날짜로 자동 진입
+- `mainStagePerformances`: 동아리 공연 종료 후 진행되는 아티스트 공연 (Day1~4 모두 포함)
+
+### 아티스트 공연 라인업
+
+| 날짜 | 아티스트            |
+| ---- | ------------------- |
+| Day1 | YB                  |
+| Day2 | 최예나, 이창섭      |
+| Day3 | FIFTY FIFTY, 비와이 |
+| Day4 | V.O.S, 청하         |
 
 ## 관련 코드
 
 - `src/pages/FestivalPage/BuskingPage/BuskingPage.tsx` — 메인 페이지, 실험 분기 및 이벤트 트래킹
 - `src/pages/FestivalPage/components/DayTabsNav/DayTabsNav.tsx` — tabs variant
 - `src/pages/FestivalPage/components/DayArrowsNav/DayArrowsNav.tsx` — arrows variant
-- `src/pages/FestivalPage/data/buskingDays.ts` — 4일치 공연 데이터
-- `src/pages/FestivalPage/components/PerformanceList/PerformanceList.tsx` — `performances`, `festivalDate` props 지원 (기존 IntroductionPage와 공유)
-- `src/pages/FestivalPage/components/PerformanceCard/PerformanceCard.tsx` — `songs: []`이면 "🎵 추후 공개 예정" 표시
+- `src/pages/FestivalPage/data/buskingDays.ts` — 4일치 공연 데이터 (`performances` + `mainStagePerformances`)
+- `src/pages/FestivalPage/components/PerformanceList/PerformanceList.tsx` — `performances`, `festivalDate`, `hideSongs` props 지원
+- `src/pages/FestivalPage/components/PerformanceCard/PerformanceCard.tsx` — `hideSongs`이면 곡목 영역 숨김, `songs: []`이면 "🎵 추후 공개 예정" 표시

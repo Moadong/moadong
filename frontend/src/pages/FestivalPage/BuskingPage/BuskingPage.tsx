@@ -14,7 +14,10 @@ import PerformanceList from '../components/PerformanceList/PerformanceList';
 import { BUSKING_DAYS } from '../data/buskingDays';
 import * as Styled from './BuskingPage.styles';
 
-const availableDays = BUSKING_DAYS.filter((d) => d.performances.length > 0);
+const availableDays = BUSKING_DAYS.filter(
+  (d) =>
+    d.performances.length > 0 || (d.mainStagePerformances?.length ?? 0) > 0,
+);
 
 const getInitialDayId = (): string => {
   const now = new Date();
@@ -118,11 +121,29 @@ const BuskingPage = () => {
                 공연 장소: {activeDay.location}
               </Styled.TimetableLocation>
             </Styled.TimetableHeader>
-            <PerformanceList
-              key={activeDayId}
-              performances={activeDay.performances}
-              festivalDate={activeDay.date}
-            />
+            {activeDay.performances.length > 0 && (
+              <>
+                {(activeDay.mainStagePerformances?.length ?? 0) > 0 && (
+                  <Styled.SectionLabel>동아리 공연</Styled.SectionLabel>
+                )}
+                <PerformanceList
+                  key={`${activeDayId}-club`}
+                  performances={activeDay.performances}
+                  festivalDate={activeDay.date}
+                />
+              </>
+            )}
+            {(activeDay.mainStagePerformances?.length ?? 0) > 0 && (
+              <>
+                <Styled.SectionLabel>🎤 아티스트 공연</Styled.SectionLabel>
+                <PerformanceList
+                  key={`${activeDayId}-main`}
+                  performances={activeDay.mainStagePerformances!}
+                  festivalDate={activeDay.date}
+                  hideSongs
+                />
+              </>
+            )}
           </Styled.TimetableSection>
         </motion.div>
       </Styled.Container>

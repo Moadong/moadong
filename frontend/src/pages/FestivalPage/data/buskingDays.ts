@@ -8,6 +8,7 @@ export interface FestivalDay {
   timeRange: string; // e.g. '12:30 - 18:00'
   location: string;
   performances: Performance[];
+  mainStagePerformances?: Performance[];
 }
 
 export const BUSKING_DAYS: FestivalDay[] = [
@@ -16,9 +17,18 @@ export const BUSKING_DAYS: FestivalDay[] = [
     date: '2026-05-11',
     label: 'Day1',
     fullDateLabel: '2026.05.11 (월)',
-    timeRange: '12:30 - 18:00',
-    location: '',
+    timeRange: '19:30 ~ 20:30',
+    location: '잔디광장 무대',
     performances: [],
+    mainStagePerformances: [
+      {
+        id: 101,
+        name: 'YB',
+        startTime: '',
+        endTime: '',
+        songs: [],
+      },
+    ],
   },
   {
     id: 'day2',
@@ -30,21 +40,21 @@ export const BUSKING_DAYS: FestivalDay[] = [
     performances: [
       {
         id: 1,
-        clubName: '국제교류부 공연',
+        name: '국제교류부 공연',
         startTime: '14:30',
         endTime: '16:00',
         songs: [],
       },
       {
         id: 2,
-        clubName: '전통예술연구회 터',
+        name: '전통예술연구회 터',
         startTime: '16:00',
         endTime: '16:25',
         songs: ['청도 차산농악', '웃다리 사물놀이'],
       },
       {
         id: 3,
-        clubName: '송웨이브',
+        name: '송웨이브',
         startTime: '16:25',
         endTime: '16:55',
         songs: [
@@ -57,14 +67,14 @@ export const BUSKING_DAYS: FestivalDay[] = [
       },
       {
         id: 4,
-        clubName: '테크니칼',
+        name: '테크니칼',
         startTime: '16:55',
         endTime: '17:20',
         songs: ['군청일화', '작은 사랑의 노래', 'Holiday', '비냄새'],
       },
       {
         id: 5,
-        clubName: '씨사운드',
+        name: '씨사운드',
         startTime: '17:20',
         endTime: '17:50',
         songs: [
@@ -77,13 +87,29 @@ export const BUSKING_DAYS: FestivalDay[] = [
       },
       {
         id: 6,
-        clubName: '백경이의 스케치북 with 한누리',
+        name: '백경이의 스케치북 with 한누리',
         startTime: '18:00',
         endTime: '19:30',
         songs: [
           '군 입대 앞에서 갈린 이별과 약속',
           '짝사랑, 실패와 현재의 두 감정',
         ],
+      },
+    ],
+    mainStagePerformances: [
+      {
+        id: 101,
+        name: '최예나',
+        startTime: '19:40',
+        endTime: '',
+        songs: [],
+      },
+      {
+        id: 102,
+        name: '이창섭',
+        startTime: '',
+        endTime: '',
+        songs: [],
       },
     ],
   },
@@ -97,14 +123,14 @@ export const BUSKING_DAYS: FestivalDay[] = [
     performances: [
       {
         id: 1,
-        clubName: '올림',
+        name: '올림',
         startTime: '15:30',
         endTime: '15:55',
         songs: ["Can't Stop", '해초', 'Loveholic', 'Love Song'],
       },
       {
         id: 2,
-        clubName: 'PKNUO',
+        name: 'PKNUO',
         startTime: '15:55',
         endTime: '16:25',
         songs: [
@@ -118,7 +144,7 @@ export const BUSKING_DAYS: FestivalDay[] = [
       },
       {
         id: 3,
-        clubName: '한누리',
+        name: '한누리',
         startTime: '16:25',
         endTime: '16:55',
         songs: [
@@ -131,7 +157,7 @@ export const BUSKING_DAYS: FestivalDay[] = [
       },
       {
         id: 4,
-        clubName: '모비딕스',
+        name: '모비딕스',
         startTime: '16:55',
         endTime: '17:20',
         songs: [
@@ -145,7 +171,7 @@ export const BUSKING_DAYS: FestivalDay[] = [
       },
       {
         id: 5,
-        clubName: 'UCDC',
+        name: 'UCDC',
         startTime: '17:30',
         endTime: '18:00',
         songs: [
@@ -163,7 +189,7 @@ export const BUSKING_DAYS: FestivalDay[] = [
       },
       {
         id: 6,
-        clubName: '부경가왕',
+        name: '부경가왕',
         startTime: '18:00',
         endTime: '19:30',
         songs: [
@@ -172,6 +198,22 @@ export const BUSKING_DAYS: FestivalDay[] = [
           '짱구는 5학년 "끝사랑" vs 트롯 가왕 "안동역에서"',
           '지금부터가 반전 "Beautiful things" vs 햇님이 "요즘 바쁜가봐"',
         ],
+      },
+    ],
+    mainStagePerformances: [
+      {
+        id: 101,
+        name: 'FIFTY FIFTY',
+        startTime: '20:00',
+        endTime: '',
+        songs: [],
+      },
+      {
+        id: 102,
+        name: '비와이',
+        startTime: '',
+        endTime: '',
+        songs: [],
       },
     ],
   },
@@ -185,14 +227,14 @@ export const BUSKING_DAYS: FestivalDay[] = [
     performances: [
       {
         id: 1,
-        clubName: '매니아',
+        name: '매니아',
         startTime: '16:05',
         endTime: '16:30',
         songs: ['질주', '사포닌 같은 너', 'Time is Running Out', '멋진 헛간'],
       },
       {
         id: 2,
-        clubName: '보블리스',
+        name: '보블리스',
         startTime: '16:30',
         endTime: '16:50',
         songs: [
@@ -204,14 +246,14 @@ export const BUSKING_DAYS: FestivalDay[] = [
       },
       {
         id: 3,
-        clubName: '쇳물결',
+        name: '쇳물결',
         startTime: '16:50',
         endTime: '17:20',
         songs: ['GET LUCKY!', '좋은날', '맨정신', '삐딱하게', 'What’s up'],
       },
       {
         id: 4,
-        clubName: '네오쇼크',
+        name: '네오쇼크',
         startTime: '17:20',
         endTime: '18:00',
         songs: [
@@ -229,7 +271,7 @@ export const BUSKING_DAYS: FestivalDay[] = [
       },
       {
         id: 5,
-        clubName: '부경듀엣',
+        name: '부경듀엣',
         startTime: '18:00',
         endTime: '19:30',
         songs: [
@@ -240,6 +282,22 @@ export const BUSKING_DAYS: FestivalDay[] = [
           '홍루비비디바비디부 - Die With A Smile',
           '강태동그는감히전설이라고할수있다 - 집에가지마',
         ],
+      },
+    ],
+    mainStagePerformances: [
+      {
+        id: 101,
+        name: 'V.O.S',
+        startTime: '19:40',
+        endTime: '',
+        songs: [],
+      },
+      {
+        id: 102,
+        name: '청하',
+        startTime: '',
+        endTime: '',
+        songs: [],
       },
     ],
   },
