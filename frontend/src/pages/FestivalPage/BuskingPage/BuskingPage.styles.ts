@@ -1,7 +1,14 @@
 import { media } from '@/styles/mediaQuery';
 import styled from 'styled-components';
 
+export const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
+
 export const Container = styled.div`
+  flex: 1;
   width: 100%;
   max-width: 550px;
   margin: 0 auto;
