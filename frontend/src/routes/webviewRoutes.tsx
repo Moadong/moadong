@@ -2,6 +2,7 @@ import { RouteObject } from 'react-router-dom';
 import { ContentErrorBoundary } from '@/components/common/ErrorBoundary';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
+import BuskingPage from '@/pages/FestivalPage/BuskingPage/BuskingPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
 import WebviewLayout from '@/pages/WebviewLayout/WebviewLayout';
 import WebviewMainPage from '@/pages/WebviewMainPage/WebviewMainPage';
@@ -24,6 +25,14 @@ const webviewRoutes: RouteObject[] = [
         element: (
           <ContentErrorBoundary>
             <PromotionListPage />
+          </ContentErrorBoundary>
+        ),
+      },
+      {
+        path: 'festival-busking',
+        element: (
+          <ContentErrorBoundary>
+            <BuskingPage />
           </ContentErrorBoundary>
         ),
       },
