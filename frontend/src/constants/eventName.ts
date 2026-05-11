@@ -61,6 +61,10 @@ export const USER_EVENT = {
   FESTIVAL_PERFORMANCE_CARD_CLICKED: 'Festival PerformanceCard Clicked',
   FESTIVAL_TAB_DURATION: 'Festival Tab Duration',
 
+  // 버스킹 시간표
+  DAEDONG2026_DAY_CHANGED: '2026-daedong Day Changed',
+  DAEDONG2026_DAY_DURATION: '2026-daedong Day Duration',
+
   // 홍보
   PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
   PROMOTION_CARD_CLICKED: 'Promotion Card Clicked',
@@ -125,6 +129,7 @@ export const PAGE_VIEW = {
   INTRODUCE_PAGE: 'IntroducePage',
   CLUB_UNION_PAGE: 'ClubUnionPage',
   FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
+  DAEDONG2026_BUSKING_PAGE: '2026 대동제 버스킹 시간표 페이지',
   PROMOTION_LIST_PAGE: '홍보 목록 페이지',
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
 

@@ -10,6 +10,8 @@ import useWebviewSubscribe from '@/hooks/useWebviewSubscribe';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
+import Popup from '@/pages/MainPage/components/Popup/Popup';
+import { DAEDONG_POPUP } from '@/pages/MainPage/components/Popup/popupConfigs';
 import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
@@ -62,6 +64,8 @@ const WebviewMainPage = () => {
 
   return (
     <Styled.PageContainer>
+      {/* TODO: 대동제 종료 후 제거 */}
+      <Popup configs={[DAEDONG_POPUP]} />
       <Styled.SearchBarArea>
         <Styled.LogoImage src={MobileMainIcon} alt='모아동' />
         <SearchBox />
