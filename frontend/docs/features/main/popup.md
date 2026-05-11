@@ -18,6 +18,7 @@
 | `daysToHide`   | `number?`              | 숨김 유지 일수 (기본 7, 0이면 항상 표시) |
 | `image`        | `string`               | 팝업 이미지 경로                         |
 | `mobileOnly`   | `boolean?`             | 모바일 전용 여부                         |
+| `to`           | `string?`              | 이미지 클릭 시 내부 라우팅 경로          |
 | `onImageClick` | `(trackEvent) => void` | 이미지 클릭 핸들러 (트래킹 포함)         |
 
 ## 새 팝업 추가 방법

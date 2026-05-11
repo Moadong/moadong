@@ -24,7 +24,10 @@ const Popup = ({ configs }: PopupProps) => {
       return !isPopupHidden(config);
     });
     setActiveConfig(eligible ?? null);
-  }, [configs, isMobile]);
+    if (!eligible) {
+      trackEvent(USER_EVENT.MAIN_POPUP_NOT_SHOWN);
+    }
+  }, [configs, isMobile, trackEvent]);
 
   useEffect(() => {
     if (!activeConfig) return;

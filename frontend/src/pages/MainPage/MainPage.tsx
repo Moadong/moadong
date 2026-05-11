@@ -52,6 +52,7 @@ const MainPage = () => {
   return (
     <>
       <Popup configs={[DAEDONG_POPUP]} />
+      {/* <Popup configs={[APP_DOWNLOAD_POPUP]} /> */}
       <Header />
       <Filter hasNotification={hasNotification} />
       <Banner />
