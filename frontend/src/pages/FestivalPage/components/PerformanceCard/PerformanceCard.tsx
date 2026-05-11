@@ -26,7 +26,7 @@ const PerformanceCard = ({
   const toggleExpanded = () => {
     const nextExpanded = !expanded;
     trackEvent(USER_EVENT.FESTIVAL_PERFORMANCE_CARD_CLICKED, {
-      clubName: performance.name,
+      clubName: performance.clubName,
       expanded: nextExpanded,
       active,
     });
@@ -40,7 +40,7 @@ const PerformanceCard = ({
       $active={active}
       onClick={!hideSongs && hasSongs ? toggleExpanded : undefined}
     >
-      <Styled.ClubName $active={active}>{performance.name}</Styled.ClubName>
+      <Styled.ClubName $active={active}>{performance.clubName}</Styled.ClubName>
 
       {!hideSongs && (
         <Styled.SongArea $active={active}>
