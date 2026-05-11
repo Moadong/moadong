@@ -8,9 +8,14 @@ import * as Styled from './PerformanceCard.styles';
 interface PerformanceCardProps {
   performance: Performance;
   active: boolean;
+  hideSongs?: boolean;
 }
 
-const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
+const PerformanceCard = ({
+  performance,
+  active,
+  hideSongs = false,
+}: PerformanceCardProps) => {
   const trackEvent = useMixpanelTrack();
   const [expanded, setExpanded] = useState(active);
 
@@ -28,45 +33,54 @@ const PerformanceCard = ({ performance, active }: PerformanceCardProps) => {
     setExpanded(nextExpanded);
   };
 
+  const hasSongs = performance.songs.length > 0;
+
   return (
-    <Styled.Card $active={active} onClick={toggleExpanded}>
+    <Styled.Card
+      $active={active}
+      onClick={!hideSongs && hasSongs ? toggleExpanded : undefined}
+    >
       <Styled.ClubName $active={active}>{performance.clubName}</Styled.ClubName>
 
-      <Styled.SongArea $active={active}>
-        <div style={{ flex: 1, overflow: 'hidden' }}>
-          <Styled.SongItem $collapsed={!expanded}>
-            {performance.songs[0]}
-          </Styled.SongItem>
-          {performance.songs.length > 1 && (
-            <motion.div
-              initial={false}
-              animate={{ height: expanded ? 'auto' : 0 }}
-              transition={{ duration: 0.2, ease: 'easeInOut' }}
-              style={{ overflow: 'hidden' }}
-            >
-              <Styled.SongList>
-                {performance.songs.slice(1).map((song) => (
-                  <Styled.SongItem key={song}>{song}</Styled.SongItem>
-                ))}
-              </Styled.SongList>
-            </motion.div>
-          )}
-        </div>
+      {!hideSongs && (
+        <Styled.SongArea $active={active}>
+          <div style={{ flex: 1, overflow: 'hidden' }}>
+            <Styled.SongItem $collapsed={!expanded}>
+              {hasSongs ? performance.songs[0] : '🎵 추후 공개 예정'}
+            </Styled.SongItem>
+            {hasSongs && performance.songs.length > 1 && (
+              <motion.div
+                initial={false}
+                animate={{ height: expanded ? 'auto' : 0 }}
+                transition={{ duration: 0.2, ease: 'easeInOut' }}
+                style={{ overflow: 'hidden' }}
+              >
+                <Styled.SongList>
+                  {performance.songs.slice(1).map((song) => (
+                    <Styled.SongItem key={song}>{song}</Styled.SongItem>
+                  ))}
+                </Styled.SongList>
+              </motion.div>
+            )}
+          </div>
 
-        <Styled.ChevronWrapper>
-          <Styled.ChevronIcon
-            $expanded={expanded}
-            $active={active}
-            viewBox='0 0 10 5'
-            fill='none'
-            strokeWidth={2}
-            strokeLinecap='round'
-            strokeLinejoin='round'
-          >
-            <path d='M1 1L5 4.5L9 1' />
-          </Styled.ChevronIcon>
-        </Styled.ChevronWrapper>
-      </Styled.SongArea>
+          {hasSongs && (
+            <Styled.ChevronWrapper>
+              <Styled.ChevronIcon
+                $expanded={expanded}
+                $active={active}
+                viewBox='0 0 10 5'
+                fill='none'
+                strokeWidth={2}
+                strokeLinecap='round'
+                strokeLinejoin='round'
+              >
+                <path d='M1 1L5 4.5L9 1' />
+              </Styled.ChevronIcon>
+            </Styled.ChevronWrapper>
+          )}
+        </Styled.SongArea>
+      )}
     </Styled.Card>
   );
 };
