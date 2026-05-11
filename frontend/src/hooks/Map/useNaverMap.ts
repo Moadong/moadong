@@ -80,9 +80,10 @@ export const useNaverMap = (
     if (!active) return;
 
     let mapInstance: NaverMapInstance | null = null;
+    let isCleaned = false;
 
     loadNaverMapScript().then(() => {
-      if (!mapRef.current || !window.naver) return;
+      if (isCleaned || !mapRef.current || !window.naver) return;
 
       const { naver } = window;
       const position = new naver.maps.LatLng(lat, lng);
@@ -120,7 +121,12 @@ export const useNaverMap = (
     });
 
     return () => {
-      mapInstance?.destroy();
+      isCleaned = true;
+      try {
+        mapInstance?.destroy();
+      } catch {
+        // noop
+      }
       if (externalRef) externalRef.current = null;
     };
   }, [
