@@ -9,7 +9,6 @@ interface SearchFieldProps {
   placeholder?: string;
   ariaLabel?: string;
   autoBlur?: boolean;
-  style?: React.CSSProperties;
 }
 
 const SearchField = ({
@@ -19,7 +18,6 @@ const SearchField = ({
   placeholder = '검색어를 입력하세요',
   ariaLabel = '검색 입력창',
   autoBlur = true,
-  style,
 }: SearchFieldProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -31,11 +29,7 @@ const SearchField = ({
   };
 
   return (
-    <Styled.SearchBoxContainer
-      $isFocused={isFocused}
-      onSubmit={handleSubmit}
-      style={style}
-    >
+    <Styled.SearchBoxContainer $isFocused={isFocused} onSubmit={handleSubmit}>
       <Styled.SearchInputStyles
         ref={inputRef}
         type='text'
