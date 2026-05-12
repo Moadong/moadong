@@ -5,7 +5,7 @@ import * as Styled from '@/components/common/SearchField/SearchField.styles';
 interface SearchFieldProps {
   value: string;
   onChange: (value: string) => void;
-  onSubmit: () => void;
+  onSubmit?: () => void;
   placeholder?: string;
   ariaLabel?: string;
   autoBlur?: boolean;
@@ -24,7 +24,7 @@ const SearchField = ({
 
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    onSubmit();
+    onSubmit?.();
     if (autoBlur) inputRef.current?.blur();
   };
 
