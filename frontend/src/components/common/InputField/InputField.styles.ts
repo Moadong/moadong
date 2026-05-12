@@ -8,7 +8,7 @@ const INPUT_RIGHT_PADDING = {
   none: '18px',
 } as const;
 
-const BORDER_ERROR = 'red';
+const BORDER_ERROR = '#dc3545';
 const BORDER_SUCCESS = '#28a745';
 const BORDER_FOCUS = '#007bff';
 
