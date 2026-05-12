@@ -23,6 +23,8 @@
 
 ## 관련 코드
 
-- `src/routes/webviewFilterConfig.tsx` — label·path·component를 정의하는 단일 소스
-- `src/routes/webviewRoutes.tsx` — config map으로 filter 라우트 자동 생성
+- `src/routes/webviewFilterConfig.ts` — label·path만 정의하는 단일 소스 (component 미포함으로 순환 참조 방지)
+- `src/routes/webviewRoutes.tsx` — `PAGE_MAP: Record<WebviewFilterPath, ComponentType>`으로 component 매핑, config map으로 라우트 자동 생성
 - `src/components/common/Filter/Filter.tsx` — `WEBVIEW_FILTER_OPTIONS` 제거, config 참조
+
+> **주의**: config에 page component를 직접 포함하면 `Filter → config → PageComponent → Filter` 순환 참조가 발생한다. component 매핑은 반드시 `webviewRoutes.tsx`에서만 처리한다.
