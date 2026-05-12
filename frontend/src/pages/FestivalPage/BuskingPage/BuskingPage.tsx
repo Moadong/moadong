@@ -111,6 +111,7 @@ const BuskingPage = () => {
           )}
         </Styled.NavWrapper>
         <motion.div
+          style={{ touchAction: 'pan-y' }}
           onPanEnd={(_, info) => {
             const SWIPE_THRESHOLD = 50;
             if (info.offset.x < -SWIPE_THRESHOLD) handleSwipe('left');
