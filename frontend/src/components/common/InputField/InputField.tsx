@@ -59,12 +59,6 @@ const InputField = ({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (onChange) {
-      onChange(e);
-    }
-  };
-
   return (
     <Styled.InputContainer width={width}>
       {label && <Styled.Label htmlFor={id}>{label}</Styled.Label>}
@@ -73,7 +67,7 @@ const InputField = ({
           id={id}
           type={type === 'password' && !isPasswordVisible ? 'password' : 'text'}
           value={value}
-          onChange={handleChange}
+          onChange={onChange}
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
