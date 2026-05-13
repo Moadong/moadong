@@ -413,7 +413,6 @@ const ApplicantsTab = () => {
           <SearchField
             value={keyword}
             onChange={setKeyword}
-            onSubmit={() => {}}
             autoBlur={false}
             placeholder='지원자 이름을 입력해주세요'
             ariaLabel='지원자 검색창'

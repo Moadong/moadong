@@ -3,6 +3,7 @@ import SearchField from '@/components/common/SearchField/SearchField';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchInput } from '@/store/useSearchStore';
+import * as Styled from './SearchBox.styles';
 
 const SearchBox = () => {
   const { setKeyword, inputValue, setInputValue, setIsSearching } =
@@ -27,13 +28,15 @@ const SearchBox = () => {
   };
 
   return (
-    <SearchField
-      value={inputValue}
-      onChange={(v) => setInputValue(v)}
-      onSubmit={handleSearch}
-      placeholder='어떤 동아리를 찾으세요?'
-      ariaLabel='동아리 검색창'
-    />
+    <Styled.SearchBoxWrapper>
+      <SearchField
+        value={inputValue}
+        onChange={(v) => setInputValue(v)}
+        onSubmit={handleSearch}
+        placeholder='어떤 동아리를 찾으세요?'
+        ariaLabel='동아리 검색창'
+      />
+    </Styled.SearchBoxWrapper>
   );
 };
 

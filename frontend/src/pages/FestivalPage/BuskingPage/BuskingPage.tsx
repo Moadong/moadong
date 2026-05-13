@@ -91,7 +91,7 @@ const BuskingPage = () => {
   };
 
   return (
-    <>
+    <Styled.PageWrapper>
       <Header hideOn={['webview']} />
       <Filter hasNotification={hasNotification} />
       <motion.div
@@ -154,7 +154,7 @@ const BuskingPage = () => {
         </Styled.Container>
       </motion.div>
       {!isInAppWebView() && <Footer />}
-    </>
+    </Styled.PageWrapper>
   );
 };
 

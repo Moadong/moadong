@@ -1,10 +1,23 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
+
+export const PageWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+`;
 
 export const Container = styled.div`
+  flex: 1;
   width: 100%;
   max-width: 550px;
   margin: 0 auto;
   min-height: 100vh;
+  padding-top: 92px;
+
+  ${media.mobile} {
+    padding-top: 0;
+  }
 `;
 
 export const NavWrapper = styled.div`
