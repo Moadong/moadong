@@ -30,6 +30,8 @@ export const USER_EVENT = {
   TAB_CLICKED: 'Tab Clicked',
   PHOTO_NAVIGATION_CLICKED: 'Photo Navigation',
   CLUB_CARD_CLICKED: 'ClubCard Clicked',
+  CLUB_CARD_VIEWED: 'ClubCard Viewed',
+  SCROLL_DEPTH_REACHED: 'Scroll Depth Reached',
   CLUB_INTRO_TAB_CLICKED: 'Club Intro Tab Clicked',
   CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',
   CLUB_SCHEDULE_TAB_CLICKED: 'Club Schedule Tab Clicked',
@@ -142,4 +144,10 @@ export const PAGE_VIEW = {
   RECRUITMENT_INFO_EDIT_PAGE: '동아리 모집 정보 수정 페이지',
   PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
+} as const;
+
+export const PAGE_NAME = {
+  MAIN: 'main',
+  WEBVIEW_MAIN: 'webview-main',
+  INTRODUCE: 'introduce',
 } as const;
