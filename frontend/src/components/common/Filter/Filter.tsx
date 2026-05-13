@@ -3,18 +3,13 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
+import { WEBVIEW_FILTER_CONFIG } from '@/routes/webviewFilterConfig';
 import * as Styled from './Filter.styles';
 
 const WEB_FILTER_OPTIONS = [
   { label: '동아리', path: '/' },
   { label: '홍보', path: '/promotions' },
   { label: '대동제', path: '/festival-busking' },
-] as const;
-
-const WEBVIEW_FILTER_OPTIONS = [
-  { label: '동아리', path: '/webview/main' },
-  { label: '홍보', path: '/webview/promotions' },
-  { label: '대동제', path: '/webview/festival-busking' },
 ] as const;
 
 interface FilterProps {
@@ -33,7 +28,7 @@ const Filter = ({ alwaysVisible = false, hasNotification }: FilterProps) => {
   );
 
   const isWebview = pathname.startsWith('/webview');
-  const filterOptions = isWebview ? WEBVIEW_FILTER_OPTIONS : WEB_FILTER_OPTIONS;
+  const filterOptions = isWebview ? WEBVIEW_FILTER_CONFIG : WEB_FILTER_OPTIONS;
   const shouldShow = alwaysVisible || isMobile || isWebview;
 
   const handleFilterOptionClick = (path: string) => {
