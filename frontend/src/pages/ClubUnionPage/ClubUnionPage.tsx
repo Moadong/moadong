@@ -6,26 +6,19 @@ import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
-import { colors } from '@/styles/theme/colors';
 import * as Styled from './ClubUnionPage.styles';
 
-const MEMBER_COLORS = {
-  PRESIDENT: colors.accent[1][500],
-  VICE_PRESIDENT: colors.accent[1][500],
-  PLANNING: colors.accent[1][500],
-  SECRETARY: colors.accent[1][500],
-  PROMOTION: colors.accent[1][500],
-  VOLUNTEER: colors.secondary[1].back,
-  RELIGION: colors.secondary[2].back,
-  HOBBY: colors.secondary[3].back,
-  STUDY: colors.secondary[4].back,
-  SPORT: colors.secondary[5].back,
-  PERFORMANCE: colors.secondary[6].back,
-};
+const COLUMN_COUNT = 4;
 
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
   const trackEvent = useMixpanelTrack();
+
+  const columns = Array.from({ length: COLUMN_COUNT }, (_, colIdx) =>
+    CLUB_UNION_MEMBERS.filter(
+      (_, memberIdx) => memberIdx % COLUMN_COUNT === colIdx,
+    ),
+  );
 
   return (
     <>
@@ -49,7 +42,7 @@ const ClubUnionPage = () => {
             }
           >
             <img src={InstagramIcon} alt='인스타그램' />
-            Instagram
+            instagram
           </Styled.SnsLink>
           <Styled.SnsLink
             href={CLUB_UNION_SNS.kakaotalk}
@@ -61,30 +54,32 @@ const ClubUnionPage = () => {
               })
             }
           >
-            💬 카카오톡
+            💬 kakaotalk
           </Styled.SnsLink>
         </Styled.SnsLinkContainer>
         <Styled.ProfileGrid>
-          {CLUB_UNION_MEMBERS.map((member) => (
-            <Styled.ProfileCardContainer
-              key={member.id}
-              $bgColor={MEMBER_COLORS[member.type]}
-            >
-              <Styled.ProfileImage
-                src={member.imageSrc}
-                alt={`${member.name} 프로필`}
-              />
-
-              {/* 평소에 보이는 이름 배지 */}
-              <Styled.NameBadge>{member.name}</Styled.NameBadge>
-
-              {/* 호버 시 나타나는 정보 */}
-              <Styled.InfoOverlay>
-                <Styled.Role>{member.role}</Styled.Role>
-                <Styled.Name>{member.name}</Styled.Name>
-                <Styled.Description>{member.description}</Styled.Description>
-              </Styled.InfoOverlay>
-            </Styled.ProfileCardContainer>
+          {columns.map((columnMembers, colIdx) => (
+            <Styled.ProfileColumn key={colIdx} $staggered={colIdx % 2 === 1}>
+              {columnMembers.map((member) => (
+                <Styled.ProfileCard key={member.id} $bgColor={member.bgColor}>
+                  <Styled.CardContent>
+                    <Styled.CardTitleRow>
+                      <Styled.CardName>{member.name}</Styled.CardName>
+                      <Styled.CardRoleBadge>{member.role}</Styled.CardRoleBadge>
+                    </Styled.CardTitleRow>
+                    <Styled.CardDescription>
+                      {member.description}
+                    </Styled.CardDescription>
+                  </Styled.CardContent>
+                  <Styled.CardIllustrationWrap>
+                    <Styled.CardIllustration
+                      src={member.imageSrc}
+                      alt={`${member.name} 아이콘`}
+                    />
+                  </Styled.CardIllustrationWrap>
+                </Styled.ProfileCard>
+              ))}
+            </Styled.ProfileColumn>
           ))}
         </Styled.ProfileGrid>
       </PageContainer>

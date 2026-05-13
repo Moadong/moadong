@@ -1,0 +1,42 @@
+# ClubUnionPage — 총동아리연합회 소개
+
+총동아리연합회(총동연) 임원진 및 분과장을 소개하는 페이지.
+
+## 레이아웃
+
+4열 staggered flex grid 구조. 홀수 컬럼(1, 3번째)은 `padding-top: 125px`로 엇갈린 배치.
+tablet 이하에서는 2열 CSS grid, mobile에서는 1열로 전환.
+
+## 카드 구성
+
+각 멤버 카드(`ProfileCard`)는 다음 요소로 구성:
+
+- `CardContent`: 이름 + 직책 배지(가로 정렬, gap 8px) + 설명 문구
+- `CardIllustrationWrap`: 카드 우하단에 절대 위치로 분과 아이콘 배치
+- `::before`: `linear-gradient(129deg, rgba(255,255,255,0.70) 50.77%, rgba(255,255,255,0.30) 87.48%)` 반투명 오버레이
+
+## 배경색
+
+`ClubUnionMember.bgColor` 필드에 테마 상수를 직접 지정.
+
+| 타입                                                               | 색상 상수                 |
+| ------------------------------------------------------------------ | ------------------------- |
+| 임원진 (PRESIDENT, VICE_PRESIDENT, PLANNING, SECRETARY, PROMOTION) | `colors.accent[1][700]`   |
+| VOLUNTEER                                                          | `colors.secondary[1].tag` |
+| RELIGION                                                           | `colors.secondary[2].tag` |
+| HOBBY                                                              | `colors.secondary[3].tag` |
+| STUDY                                                              | `colors.secondary[4].tag` |
+| SPORT                                                              | `colors.secondary[5].tag` |
+| PERFORMANCE                                                        | `colors.secondary[6].tag` |
+
+## 아이콘
+
+임원진은 `inactiveCategoryIcons.representative` 공용 아이콘 사용.
+분과 아이콘은 배경 `<rect>` 제거한 별도 SVG 사용 → 기존 카테고리 버튼 아이콘 영향 없음.
+
+## 관련 코드
+
+- `src/constants/clubUnionInfo.ts` — 멤버 데이터, 배경색, 아이콘 매핑
+- `src/pages/ClubUnionPage/ClubUnionPage.tsx` — 4열 컬럼 분배 로직
+- `src/pages/ClubUnionPage/ClubUnionPage.styles.ts` — 카드 스타일 및 반응형
+- `src/assets/images/icons/category_button/club_union/` — 배경 없는 분과 아이콘 SVG
