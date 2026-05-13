@@ -44,9 +44,13 @@ export const LogoWrapper = styled.div`
   width: 64px;
   height: 64px;
   border-radius: 16px;
-  background-color: ${colors.base.white};
-  padding: 2px;
+  background-color: ${colors.gray[100]};
+  padding: 3.5px;
   z-index: 3;
+
+  ${media.tablet} {
+    background-color: ${colors.base.white};
+  }
 `;
 
 export const Logo = styled.img`
