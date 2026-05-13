@@ -27,5 +27,7 @@ AGENTS.md
 # oh-my-claudecode
 .omc/
 
-# Claude Code (personal settings)
-.claude/
+# Claude Code (personal settings — commands/ is team-shared)
+.claude/*
+!.claude/commands/
+!.claude/commands/**
