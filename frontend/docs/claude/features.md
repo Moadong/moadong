@@ -14,6 +14,17 @@ const { variant } = useExperiment(mainBannerExperiment);
 // variant는 'A' 또는 'B'
 ```
 
+## WebView 필터탭 라우팅
+
+`src/routes/webviewFilterConfig.ts`의 `WEBVIEW_FILTER_CONFIG`이 필터탭 UI와 라우트 등록의 단일 진실 공급원.
+
+**새 필터탭 추가 시 수정할 파일 2곳:**
+
+1. `src/routes/webviewFilterConfig.ts` — `{ label, path }` 항목 추가
+2. `src/routes/webviewRoutes.tsx` — `PAGE_MAP`에 해당 path의 컴포넌트 연결
+
+`WEBVIEW_FILTER_CONFIG`을 수정하면 `Filter.tsx`의 탭 UI와 `webviewRoutes.tsx`의 라우트가 자동으로 반영됨.
+
 ## 실시간 업데이트
 
 지원자 상태 업데이트를 위해 SSE(Server-Sent Events) 사용, `AdminClubContext`에서 관리.
