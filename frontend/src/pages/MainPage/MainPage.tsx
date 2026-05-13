@@ -3,7 +3,8 @@ import Filter from '@/components/common/Filter/Filter';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
-import { PAGE_VIEW } from '@/constants/eventName';
+import { PAGE_NAME, PAGE_VIEW } from '@/constants/eventName';
+import useScrollTracking from '@/hooks/Mixpanel/useScrollTracking';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetCardList } from '@/hooks/Queries/useClub';
 import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
@@ -19,6 +20,7 @@ import * as Styled from './MainPage.styles';
 
 const MainPage = () => {
   useTrackPageView(PAGE_VIEW.MAIN_PAGE);
+  useScrollTracking(PAGE_NAME.MAIN);
 
   const { selectedCategory } = useSelectedCategory();
   const { keyword } = useSearchKeyword();
@@ -46,7 +48,9 @@ const MainPage = () => {
 
   const clubList = useMemo(() => {
     if (!hasData) return null;
-    return clubs.map((club: Club) => <ClubCard key={club.id} club={club} />);
+    return clubs.map((club: Club, i: number) => (
+      <ClubCard key={club.id} club={club} index={i} page={PAGE_NAME.MAIN} />
+    ));
   }, [clubs, hasData]);
 
   return (
