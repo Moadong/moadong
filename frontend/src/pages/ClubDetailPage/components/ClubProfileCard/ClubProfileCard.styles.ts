@@ -214,6 +214,8 @@ export const LocationInfo = styled.div`
   gap: 5px;
   cursor: default;
   user-select: none;
+  min-width: 0;
+  overflow: hidden;
 
   img {
     width: 12px;
