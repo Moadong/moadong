@@ -21,11 +21,20 @@ export const CoverImageWrapper = styled.div`
 `;
 
 export const CoverImage = styled.img`
+  display: block;
   width: 100%;
-  height: 213px;
+  height: 220px;
   position: relative;
   z-index: 1;
   object-fit: cover;
+`;
+
+export const CoverFallback = styled.div<{ $color?: string }>`
+  width: 100%;
+  height: 220px;
+  position: relative;
+  z-index: 1;
+  background-color: ${({ $color }) => $color || colors.gray[400]};
 `;
 
 export const LogoWrapper = styled.div`
