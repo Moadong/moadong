@@ -2,7 +2,7 @@ import { memo, useCallback, useMemo } from 'react';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 import Filter from '@/components/common/Filter/Filter';
 import Spinner from '@/components/common/Spinner/Spinner';
-import { PAGE_VIEW } from '@/constants/eventName';
+import { PAGE_NAME, PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetCardList } from '@/hooks/Queries/useClub';
 import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
@@ -50,8 +50,14 @@ const WebviewMainPage = () => {
 
   const clubList = useMemo(() => {
     if (!clubs.length) return null;
-    return clubs.map((club: Club) => (
-      <MemoClubCard key={club.id} club={club} onCardClick={handleCardClick}>
+    return clubs.map((club: Club, i: number) => (
+      <MemoClubCard
+        key={club.id}
+        club={club}
+        index={i}
+        page={PAGE_NAME.WEBVIEW_MAIN}
+        onCardClick={handleCardClick}
+      >
         <SubscribeButton
           subscribed={subscribedClubIds.has(club.id)}
           onToggle={() =>
