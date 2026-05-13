@@ -24,8 +24,8 @@
 | 속성                    | 설명                                                 |
 | ----------------------- | ---------------------------------------------------- |
 | `club_id` / `club_name` | 어떤 클럽이 노출됐는지                               |
-| `scroll_y`              | 카드 진입 시점 스크롤 Y값 (px)                       |
-| `card_top_in_viewport`  | 진입 시점 뷰포트 기준 카드 상단 위치 (px)            |
+| `scroll_y`              | 이벤트 발생 시점(3초 체류 충족 시) 스크롤 Y값 (px)   |
+| `card_top_in_viewport`  | 이벤트 발생 시점 뷰포트 기준 카드 상단 위치 (px)     |
 | `dwell_ms`              | 체류 기준 시간 (고정값 3000)                         |
 | `device_type`           | mini_mobile / mobile / tablet / laptop / desktop     |
 | `page`                  | 이벤트 발생 페이지 (main / webview-main / introduce) |
