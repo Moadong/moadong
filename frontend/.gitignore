@@ -28,4 +28,6 @@ AGENTS.md
 .omc/
 
 # Claude Code (personal settings)
-.claude/
+.claude/*
+!.claude/commands/
+!.claude/agents/
