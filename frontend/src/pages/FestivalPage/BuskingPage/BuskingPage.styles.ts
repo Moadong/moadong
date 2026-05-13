@@ -4,6 +4,7 @@ export const Container = styled.div`
   width: 100%;
   max-width: 550px;
   margin: 0 auto;
+  min-height: 100vh;
 `;
 
 export const NavWrapper = styled.div`

@@ -94,30 +94,30 @@ const BuskingPage = () => {
     <>
       <Header hideOn={['webview']} />
       <Filter hasNotification={hasNotification} />
-      <Styled.Container>
-        <Styled.NavWrapper>
-          {navVariant === 'tabs' ? (
-            <DayTabsNav
-              days={availableDays}
-              activeDayId={activeDayId}
-              onChange={handleDayChange}
-            />
-          ) : (
-            <DayArrowsNav
-              days={availableDays}
-              activeDayId={activeDayId}
-              onChange={handleDayChange}
-            />
-          )}
-        </Styled.NavWrapper>
-        <motion.div
-          style={{ touchAction: 'pan-y' }}
-          onPanEnd={(_, info) => {
-            const SWIPE_THRESHOLD = 50;
-            if (info.offset.x < -SWIPE_THRESHOLD) handleSwipe('left');
-            else if (info.offset.x > SWIPE_THRESHOLD) handleSwipe('right');
-          }}
-        >
+      <motion.div
+        style={{ touchAction: 'pan-y' }}
+        onPanEnd={(_, info) => {
+          const SWIPE_THRESHOLD = 50;
+          if (info.offset.x < -SWIPE_THRESHOLD) handleSwipe('left');
+          else if (info.offset.x > SWIPE_THRESHOLD) handleSwipe('right');
+        }}
+      >
+        <Styled.Container>
+          <Styled.NavWrapper>
+            {navVariant === 'tabs' ? (
+              <DayTabsNav
+                days={availableDays}
+                activeDayId={activeDayId}
+                onChange={handleDayChange}
+              />
+            ) : (
+              <DayArrowsNav
+                days={availableDays}
+                activeDayId={activeDayId}
+                onChange={handleDayChange}
+              />
+            )}
+          </Styled.NavWrapper>
           <Styled.TimetableSection>
             <Styled.TimetableHeader>
               <Styled.TimetableDate>
@@ -151,8 +151,8 @@ const BuskingPage = () => {
               </>
             )}
           </Styled.TimetableSection>
-        </motion.div>
-      </Styled.Container>
+        </Styled.Container>
+      </motion.div>
       {!isInAppWebView() && <Footer />}
     </>
   );
