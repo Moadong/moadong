@@ -5,13 +5,10 @@ import Filter from '@/components/common/Filter/Filter';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
-import { festivalTimetableNavExperiment } from '@/experiments/definitions';
-import { useExperimentVariant } from '@/hooks/Experiment/useExperimentVariant';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
 import isInAppWebView from '@/utils/isInAppWebView';
-import DayArrowsNav from '../components/DayArrowsNav/DayArrowsNav';
 import DayTabsNav from '../components/DayTabsNav/DayTabsNav';
 import PerformanceList from '../components/PerformanceList/PerformanceList';
 import { BUSKING_DAYS } from '../data/buskingDays';
@@ -35,8 +32,6 @@ const getInitialDayId = (): string => {
 const BuskingPage = () => {
   useTrackPageView(PAGE_VIEW.DAEDONG2026_BUSKING_PAGE);
   const trackEvent = useMixpanelTrack();
-  const navVariant = useExperimentVariant(festivalTimetableNavExperiment);
-
   const hasNotification = usePromotionNotification();
   const [activeDayId, setActiveDayId] = useState(getInitialDayId);
   const dayStartTime = useRef(Date.now());
@@ -53,7 +48,6 @@ const BuskingPage = () => {
       const duration = Date.now() - dayStartTime.current;
       trackEvent(USER_EVENT.DAEDONG2026_DAY_DURATION, {
         day: activeDayIdRef.current,
-        nav_variant: navVariant,
         duration,
         duration_seconds: Math.round(duration / 1000),
       });
@@ -67,14 +61,12 @@ const BuskingPage = () => {
     const duration = Date.now() - dayStartTime.current;
     trackEvent(USER_EVENT.DAEDONG2026_DAY_DURATION, {
       day: activeDayId,
-      nav_variant: navVariant,
       duration,
       duration_seconds: Math.round(duration / 1000),
     });
     trackEvent(USER_EVENT.DAEDONG2026_DAY_CHANGED, {
       from_day: activeDayId,
       to_day: dayId,
-      nav_variant: navVariant,
       interaction,
     });
     dayStartTime.current = Date.now();
@@ -104,19 +96,11 @@ const BuskingPage = () => {
       >
         <Styled.Container>
           <Styled.NavWrapper>
-            {navVariant === 'tabs' ? (
-              <DayTabsNav
-                days={availableDays}
-                activeDayId={activeDayId}
-                onChange={handleDayChange}
-              />
-            ) : (
-              <DayArrowsNav
-                days={availableDays}
-                activeDayId={activeDayId}
-                onChange={handleDayChange}
-              />
-            )}
+            <DayTabsNav
+              days={availableDays}
+              activeDayId={activeDayId}
+              onChange={handleDayChange}
+            />
           </Styled.NavWrapper>
           <Styled.TimetableSection>
             <Styled.TimetableHeader>
