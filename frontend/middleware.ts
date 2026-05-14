@@ -56,7 +56,9 @@ export default async function middleware(request: Request) {
   const clubId = match[1];
 
   try {
-    const res = await fetch(`${API_BASE}/api/club/${clubId}`);
+    const res = await fetch(`${API_BASE}/api/club/${clubId}`, {
+      signal: AbortSignal.timeout(3000), // 5초 Edge 제한 내 여유있게 3초
+    });
     if (!res.ok) return;
 
     const json = await res.json();
