@@ -21,6 +21,15 @@ export const SkeletonBannerWrapper = styled.div`
   }
 `;
 
+export const SkeletonOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: ${shimmer} 1.5s infinite linear;
+`;
+
 export const BannerContainer = styled.div`
   max-width: 1180px;
   margin: 0 auto;

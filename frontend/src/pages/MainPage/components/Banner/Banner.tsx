@@ -23,6 +23,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
   const trackEvent = useMixpanelTrack();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
   const bannerType = isWebview ? 'APP_HOME' : isMobile ? 'WEB_MOBILE' : 'WEB';
   const { data: banners, isPending, isFetched } = useGetBanners(bannerType);
 
@@ -96,6 +97,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
   return (
     <Styled.BannerContainer>
       <Styled.BannerWrapper>
+        {!isImageLoaded && <Styled.SkeletonOverlay />}
         <Styled.ButtonContainer>
           <Styled.SlideButton onClick={handlePrev} aria-label='이전 배너'>
             <img src={PrevButton} alt='' />
@@ -116,7 +118,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
           }}
           speed={500}
         >
-          {displayBanners?.map((banner) => (
+          {displayBanners?.map((banner, index) => (
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
                 isClickable={!!banner.linkTo}
@@ -128,7 +130,13 @@ const Banner = ({ isWebview = false }: BannerProps) => {
                   )
                 }
               >
-                <img src={banner.imageUrl} alt={banner.alt} />
+                <img
+                  src={banner.imageUrl}
+                  alt={banner.alt}
+                  onLoad={
+                    index === 0 ? () => setIsImageLoaded(true) : undefined
+                  }
+                />
               </Styled.BannerItem>
             </SwiperSlide>
           ))}

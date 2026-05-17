@@ -5,9 +5,17 @@
 
 ## 동작 방식
 
-- `useGetBanners`의 `isPending`이 `true`인 동안 `SkeletonBannerWrapper`를 렌더링
-- 데이터 로드 완료(`isPending === false`) 후 실제 Swiper 배너로 교체
-- TanStack Query 캐시 hit 시에는 `isPending`이 false이므로 스켈레톤이 노출되지 않음
+스켈레톤은 두 단계로 나뉘어 노출된다.
+
+| 단계 | 조건                                | 렌더링                               |
+| ---- | ----------------------------------- | ------------------------------------ |
+| 1    | `isPending`                         | `SkeletonBannerWrapper` (단독)       |
+| 2    | 데이터 로드 완료 + `!isImageLoaded` | `SkeletonOverlay` (BannerWrapper 위) |
+| 3    | 첫 이미지 `onLoad` 발화             | 스켈레톤 제거, 배너 노출             |
+
+- TanStack Query 캐시 hit 시 `isPending`이 false이므로 1단계 스켈레톤은 노출되지 않음
+- `SkeletonOverlay`는 `BannerWrapper` 내부에 `position: absolute; inset: 0`으로 위치 — Swiper가 뒤에서 정상 초기화되고 이미지를 로드할 수 있음
+- `onLoad`는 `index === 0`인 첫 슬라이드에만 부착 — Swiper `loop` 모드의 슬라이드 복제로 인한 중복 발화 방지
 
 ## 반응형
 
@@ -18,5 +26,5 @@
 
 ## 관련 코드
 
-- `src/pages/MainPage/components/Banner/Banner.tsx` — `isPending` 분기 처리
-- `src/pages/MainPage/components/Banner/Banner.styles.ts` — `SkeletonBannerWrapper`, `shimmer` keyframes
+- `src/pages/MainPage/components/Banner/Banner.tsx` — `isPending`, `isImageLoaded` 분기 처리
+- `src/pages/MainPage/components/Banner/Banner.styles.ts` — `SkeletonBannerWrapper`, `SkeletonOverlay`, `shimmer` keyframes
