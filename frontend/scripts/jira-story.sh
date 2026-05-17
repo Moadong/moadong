@@ -1,14 +1,20 @@
 #!/usr/bin/env bash
 # Jira 스토리 생성 스크립트
 # 사용법: ./scripts/jira-story.sh "제목" "설명" "인수조건"
+#
+# 필수 환경 변수 (.env 또는 shell에서 설정):
+#   JIRA_HOST       - Atlassian 인스턴스 호스트명 (예: yourcompany.atlassian.net)
+#   PROJECT_KEY     - Jira 프로젝트 키 (예: MOA)
+#   JIRA_EMAIL      - Atlassian 계정 이메일
+#   JIRA_API_TOKEN  - Atlassian API 토큰 (https://id.atlassian.com/manage-profile/security/api-tokens)
 set -euo pipefail
 
 # 프로젝트 루트의 .env 자동 로드
 PROJECT_ROOT="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 [ -f "$PROJECT_ROOT/.env" ] && source "$PROJECT_ROOT/.env"
 
-JIRA_HOST="seongwon0903-1741515192605.atlassian.net"
-PROJECT_KEY="MOA"
+JIRA_HOST="${JIRA_HOST:-}"
+PROJECT_KEY="${PROJECT_KEY:-}"
 ISSUE_TYPE="Story"
 
 SUMMARY="${1:-}"
@@ -18,6 +24,13 @@ SPRINT_ID="${4:-}"
 
 if [ -z "$SUMMARY" ]; then
   echo "오류: 스토리 제목이 필요합니다." >&2
+  exit 1
+fi
+
+if [ -z "${JIRA_HOST:-}" ] || [ -z "${PROJECT_KEY:-}" ]; then
+  echo "오류: JIRA_HOST와 PROJECT_KEY 환경 변수를 설정하세요." >&2
+  echo "  export JIRA_HOST=yourcompany.atlassian.net" >&2
+  echo "  export PROJECT_KEY=YOUR_PROJECT_KEY" >&2
   exit 1
 fi
 
