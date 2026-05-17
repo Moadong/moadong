@@ -24,7 +24,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const bannerType = isWebview ? 'APP_HOME' : isMobile ? 'WEB_MOBILE' : 'WEB';
-  const { data: banners, isLoading, isFetched } = useGetBanners(bannerType);
+  const { data: banners, isPending, isFetched } = useGetBanners(bannerType);
 
   const fallbackBanners = BANNERS.map((banner) => ({
     id: banner.id,
@@ -81,8 +81,12 @@ const Banner = ({ isWebview = false }: BannerProps) => {
     handleLink(url);
   };
 
-  if (isLoading) {
-    return null;
+  if (isPending) {
+    return (
+      <Styled.BannerContainer>
+        <Styled.SkeletonBannerWrapper />
+      </Styled.BannerContainer>
+    );
   }
 
   if (displayBanners?.length === 0) {
