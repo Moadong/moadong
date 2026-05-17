@@ -93,8 +93,10 @@ PAYLOAD=$(jq -n \
 
 TMPFILE=$(mktemp)
 HTTP_CODE=$(curl -s -o "$TMPFILE" -w "%{http_code}" \
+  --connect-timeout 5 \
+  --max-time 30 \
   -X POST \
-  -H "Authorization: Basic $(echo -n "${JIRA_EMAIL}:${JIRA_API_TOKEN}" | base64)" \
+  -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
   -H "Content-Type: application/json" \
   -d "$PAYLOAD" \
   "https://${JIRA_HOST}/rest/api/3/issue")
