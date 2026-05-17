@@ -11,6 +11,15 @@ tablet 이하에서는 2열 CSS grid, mobile에서는 1열로 전환.
 멤버 배치 순서는 `CLUB_UNION_MEMBERS` 배열 순서 그대로 각 컬럼에 순차 할당.
 좌우 여백은 `PageContainer`에 위임 (ProfileGrid에 별도 좌우 padding 없음).
 
+## 모바일 순서
+
+mobile(≤500px)에서는 `CLUB_UNION_MEMBERS_MOBILE`을 단일 컬럼으로 flat 렌더링.
+`window.matchMedia('(max-width: 500px)')` + `useState`/`useEffect`로 모바일 감지.
+
+노출 순서: 회장 → 부회장 → 임원진(기획·사무·홍보) → 봉사 → 종교 → 취미 → 학술 → 운동1·2 → 공연1·2
+
+순서 변경 시 `clubUnionInfo.ts`의 `MOBILE_ORDER` 배열(id 기준)을 수정.
+
 ## 카드 구성
 
 각 멤버 카드(`ProfileCard`)는 다음 요소로 구성:

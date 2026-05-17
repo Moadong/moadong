@@ -38,6 +38,7 @@ export const CLUB_UNION_SNS = {
 
 // 개발자 가이드: description 필드는 UI가 깨지지 않도록 글자 수를 제한합니다.
 // (권장) 데스크톱: 30자 이내
+// 모바일 순서: 회장/부회장 → 임원진 → 봉사 → 종교 → 취미 → 학술 → 운동 → 공연
 export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
   {
     id: 1,
@@ -162,3 +163,9 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
     bgColor: colors.secondary[5].tag,
   },
 ];
+
+const MOBILE_ORDER = [1, 4, 7, 8, 11, 2, 5, 9, 12, 10, 13, 3, 6];
+
+export const CLUB_UNION_MEMBERS_MOBILE: ClubUnionMember[] = MOBILE_ORDER.map(
+  (id) => CLUB_UNION_MEMBERS.find((m) => m.id === id)!,
+);
