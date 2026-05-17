@@ -212,18 +212,22 @@ export const CardDescription = styled.p`
 
 export const CardIllustrationWrap = styled.div`
   position: absolute;
-  right: 0;
+  right: -60px;
   bottom: 0;
-  width: 60%;
+  width: 65%;
   display: flex;
   align-items: flex-end;
   justify-content: flex-end;
   overflow: hidden;
+
+  ${media.laptop} {
+    right: -20px;
+  }
 `;
 
 export const CardIllustration = styled.img`
-  width: 160px;
-  height: 160px;
+  width: 210px;
+  height: 210px;
   object-fit: contain;
 
   ${media.laptop} {
@@ -232,12 +236,12 @@ export const CardIllustration = styled.img`
   }
 
   ${media.tablet} {
-    width: 120px;
-    height: 120px;
+    width: 150px;
+    height: 150px;
   }
 
   ${media.mobile} {
-    width: 80px;
-    height: 80px;
+    width: 130px;
+    height: 130px;
   }
 `;
