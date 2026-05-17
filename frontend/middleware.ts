@@ -53,7 +53,7 @@ export default async function middleware(request: Request) {
   const match = pathname.match(/^\/club(?:Detail)?\/([a-f0-9]{24}|@[^/]+)$/i);
   if (!match) return;
 
-  const clubId = match[1];
+  const clubId = decodeURIComponent(match[1]);
 
   try {
     const res = await fetch(`${API_BASE}/api/club/${clubId}`, {
@@ -73,7 +73,7 @@ export default async function middleware(request: Request) {
           club.description?.introDescription ||
           '부경대학교 동아리 정보를 확인해보세요.',
         image: club.cover || club.logo || DEFAULT_OG_IMAGE,
-        url: `${SITE_URL}${pathname}`,
+        url: `${SITE_URL}${decodeURIComponent(pathname)}`,
       }),
       { headers: { 'content-type': 'text/html; charset=utf-8' } },
     );
