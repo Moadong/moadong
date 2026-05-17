@@ -5,6 +5,14 @@ const API_BASE = 'https://yourun.shop';
 const SITE_URL = 'https://www.moadong.com';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og_image.png`;
 
+function safeDecode(s: string): string {
+  try {
+    return decodeURIComponent(s);
+  } catch {
+    return s;
+  }
+}
+
 function escapeHtml(str: string): string {
   return str
     .replace(/&/g, '&amp;')
@@ -53,7 +61,7 @@ export default async function middleware(request: Request) {
   const match = pathname.match(/^\/club(?:Detail)?\/([a-f0-9]{24}|@[^/]+)$/i);
   if (!match) return;
 
-  const clubId = decodeURIComponent(match[1]);
+  const clubId = safeDecode(match[1]);
 
   try {
     const res = await fetch(`${API_BASE}/api/club/${clubId}`, {
@@ -73,7 +81,7 @@ export default async function middleware(request: Request) {
           club.description?.introDescription ||
           '부경대학교 동아리 정보를 확인해보세요.',
         image: club.cover || club.logo || DEFAULT_OG_IMAGE,
-        url: `${SITE_URL}${decodeURIComponent(pathname)}`,
+        url: `${SITE_URL}${safeDecode(pathname)}`,
       }),
       { headers: { 'content-type': 'text/html; charset=utf-8' } },
     );
