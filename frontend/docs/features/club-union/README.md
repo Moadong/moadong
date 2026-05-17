@@ -7,6 +7,10 @@
 4열 staggered flex grid 구조. 홀수 컬럼(1, 3번째)은 `padding-top: 125px`로 엇갈린 배치.
 tablet 이하에서는 2열 CSS grid, mobile에서는 1열로 전환.
 
+컬럼별 멤버 수는 `COLUMN_SIZES = [3, 3, 4, 3]`로 명시적 지정.
+멤버 배치 순서는 `CLUB_UNION_MEMBERS` 배열 순서 그대로 각 컬럼에 순차 할당.
+좌우 여백은 `PageContainer`에 위임 (ProfileGrid에 별도 좌우 padding 없음).
+
 ## 카드 구성
 
 각 멤버 카드(`ProfileCard`)는 다음 요소로 구성:

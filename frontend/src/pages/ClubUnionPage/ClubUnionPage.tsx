@@ -8,17 +8,22 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import * as Styled from './ClubUnionPage.styles';
 
-const COLUMN_COUNT = 4;
+const COLUMN_SIZES = [3, 3, 4, 3];
 
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
   const trackEvent = useMixpanelTrack();
 
-  const columns = Array.from({ length: COLUMN_COUNT }, (_, colIdx) =>
-    CLUB_UNION_MEMBERS.filter(
-      (_, memberIdx) => memberIdx % COLUMN_COUNT === colIdx,
-    ),
-  );
+  const columns = COLUMN_SIZES.reduce<{
+    cols: (typeof CLUB_UNION_MEMBERS)[];
+    offset: number;
+  }>(
+    ({ cols, offset }, size) => ({
+      cols: [...cols, CLUB_UNION_MEMBERS.slice(offset, offset + size)],
+      offset: offset + size,
+    }),
+    { cols: [], offset: 0 },
+  ).cols;
 
   return (
     <>

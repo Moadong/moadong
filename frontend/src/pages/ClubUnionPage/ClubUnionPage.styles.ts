@@ -66,11 +66,11 @@ export const SnsLink = styled.a`
 export const ProfileGrid = styled.div`
   display: flex;
   gap: 22px;
-  padding: 0 110px 80px;
+  padding-bottom: 80px;
   align-items: flex-start;
 
   ${media.laptop} {
-    padding: 0 40px 60px;
+    padding-bottom: 60px;
     gap: 16px;
   }
 
@@ -78,12 +78,12 @@ export const ProfileGrid = styled.div`
     display: grid;
     grid-template-columns: repeat(2, 1fr);
     gap: 16px;
-    padding: 0 24px 40px;
+    padding-bottom: 40px;
   }
 
   ${media.mobile} {
     grid-template-columns: 1fr;
-    padding: 0 16px 32px;
+    padding-bottom: 32px;
   }
 `;
 
