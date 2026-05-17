@@ -31,3 +31,5 @@ AGENTS.md
 .claude/*
 !.claude/commands/
 !.claude/commands/**
+
+.vercel
