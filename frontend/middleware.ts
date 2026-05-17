@@ -50,7 +50,7 @@ export default async function middleware(request: Request) {
   const { pathname } = new URL(request.url);
 
   // /club/:clubId, /clubDetail/:clubId, /club/@:clubName, /clubDetail/@:clubName 매칭
-  const match = pathname.match(/^\/club(?:Detail)?\/([a-f0-9]{24}|@[^/]+)/i);
+  const match = pathname.match(/^\/club(?:Detail)?\/([a-f0-9]{24}|@[^/]+)$/i);
   if (!match) return;
 
   const clubId = match[1];
