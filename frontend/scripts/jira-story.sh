@@ -3,10 +3,12 @@
 # 사용법: ./scripts/jira-story.sh "제목" "설명" "인수조건"
 #
 # 필수 환경 변수 (.env 또는 shell에서 설정):
-#   JIRA_HOST       - Atlassian 인스턴스 호스트명 (예: yourcompany.atlassian.net)
-#   PROJECT_KEY     - Jira 프로젝트 키 (예: MOA)
-#   JIRA_EMAIL      - Atlassian 계정 이메일
-#   JIRA_API_TOKEN  - Atlassian API 토큰 (https://id.atlassian.com/manage-profile/security/api-tokens)
+#   JIRA_HOST         - Atlassian 인스턴스 호스트명 (예: yourcompany.atlassian.net)
+#   PROJECT_KEY       - Jira 프로젝트 키 (예: MOA)
+#   JIRA_EMAIL        - Atlassian 계정 이메일
+#   JIRA_API_TOKEN    - Atlassian API 토큰 (https://id.atlassian.com/manage-profile/security/api-tokens)
+#   JIRA_BOARD_ID     - Jira 보드 ID (활성 스프린트 자동 조회용)
+#   JIRA_ASSIGNEE_ID  - 담당자 Jira account ID
 set -euo pipefail
 
 # 프로젝트 루트의 .env 자동 로드
@@ -20,7 +22,6 @@ ISSUE_TYPE="Story"
 SUMMARY="${1:-}"
 DESCRIPTION="${2:-}"
 AC="${3:-}"
-SPRINT_ID="${4:-}"
 
 if [ -z "$SUMMARY" ]; then
   echo "오류: 스토리 제목이 필요합니다." >&2
@@ -51,6 +52,27 @@ if ! command -v jq &>/dev/null; then
     *) echo "  https://jqlang.github.io/jq/download/" >&2 ;;
   esac
   exit 1
+fi
+
+# 활성 스프린트 자동 조회
+SPRINT_ID=""
+if [ -n "${JIRA_BOARD_ID:-}" ]; then
+  SPRINT_RESPONSE=$(curl -s \
+    --connect-timeout 5 \
+    --max-time 10 \
+    -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
+    "https://${JIRA_HOST}/rest/agile/1.0/board/${JIRA_BOARD_ID}/sprint?state=active" 2>/dev/null || true)
+
+  if [ -n "$SPRINT_RESPONSE" ]; then
+    SPRINT_ID=$(echo "$SPRINT_RESPONSE" | jq -r '.values[0].id // empty' 2>/dev/null || true)
+    SPRINT_NAME=$(echo "$SPRINT_RESPONSE" | jq -r '.values[0].name // empty' 2>/dev/null || true)
+  fi
+
+  if [ -n "$SPRINT_ID" ]; then
+    echo "📋 활성 스프린트: ${SPRINT_NAME} (ID: ${SPRINT_ID})"
+  else
+    echo "⚠️  활성 스프린트가 없어 백로그에 추가됩니다."
+  fi
 fi
 
 # ADF(Atlassian Document Format) 본문 구성
@@ -86,6 +108,7 @@ jq -n \
   --arg issuetype "$ISSUE_TYPE" \
   --argjson content "$ADF_CONTENT" \
   --argjson sprintId "${SPRINT_ID:-null}" \
+  --arg assigneeId "${JIRA_ASSIGNEE_ID:-}" \
   '{
     fields: {
       project: { key: $project },
@@ -97,7 +120,9 @@ jq -n \
         content: $content
       }
     }
-  } | if $sprintId != null then .fields.customfield_10020 = $sprintId else . end' \
+  }
+  | if $sprintId != null then .fields.customfield_10020 = $sprintId else . end
+  | if $assigneeId != "" then .fields.assignee = { accountId: $assigneeId } else . end' \
   > "$PAYLOAD_FILE"
 
 TMPFILE=$(mktemp)
