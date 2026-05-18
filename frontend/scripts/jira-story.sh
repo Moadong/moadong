@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # Jira 스토리 생성 스크립트
-# 사용법: ./scripts/jira-story.sh "제목" "설명" "인수조건"
+# 사용법: ./scripts/jira-story.sh "제목" "설명" "인수조건" "에픽키(선택)"
 #
 # 필수 환경 변수 (.env 또는 shell에서 설정):
 #   JIRA_HOST         - Atlassian 인스턴스 호스트명 (예: yourcompany.atlassian.net)
@@ -22,6 +22,7 @@ ISSUE_TYPE="Story"
 SUMMARY="${1:-}"
 DESCRIPTION="${2:-}"
 AC="${3:-}"
+EPIC_KEY="${4:-}"
 
 if [ -z "$SUMMARY" ]; then
   echo "오류: 스토리 제목이 필요합니다." >&2
@@ -109,6 +110,7 @@ jq -n \
   --argjson content "$ADF_CONTENT" \
   --argjson sprintId "${SPRINT_ID:-null}" \
   --arg assigneeId "${JIRA_ASSIGNEE_ID:-}" \
+  --arg epicKey "${EPIC_KEY:-}" \
   '{
     fields: {
       project: { key: $project },
@@ -122,7 +124,8 @@ jq -n \
     }
   }
   | if $sprintId != null then .fields.customfield_10020 = $sprintId else . end
-  | if $assigneeId != "" then .fields.assignee = { accountId: $assigneeId } else . end' \
+  | if $assigneeId != "" then .fields.assignee = { accountId: $assigneeId } else . end
+  | if $epicKey != "" then .fields.parent = { key: $epicKey } else . end' \
   > "$PAYLOAD_FILE"
 
 TMPFILE=$(mktemp)
