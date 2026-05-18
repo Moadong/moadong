@@ -54,12 +54,12 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
     setIsMenuOpen(false);
   };
   const toggleMenu = () => {
-    setIsMenuOpen((prev) => {
-      const next = !prev;
-      if (!prev && next) handleMenuOpen();
-      if (prev && !next) handleMenuClose();
-      return next;
-    });
+    if (isMenuOpen) {
+      handleMenuClose();
+    } else {
+      handleMenuOpen();
+    }
+    setIsMenuOpen((prev) => !prev);
   };
 
   return (

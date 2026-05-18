@@ -22,7 +22,7 @@ const SearchBox = () => {
     setSelectedCategory('all');
     setIsSearching(true);
 
-    trackEvent(USER_EVENT.SEARCH_BOX_CLICKED, {
+    trackEvent(USER_EVENT.SEARCH_EXCUTED, {
       inputValue: inputValue,
       page: pathname,
     });
