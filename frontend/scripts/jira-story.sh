@@ -42,6 +42,17 @@ if [ -z "${JIRA_EMAIL:-}" ] || [ -z "${JIRA_API_TOKEN:-}" ]; then
   exit 1
 fi
 
+if ! command -v jq &>/dev/null; then
+  echo "오류: jq가 필요합니다." >&2
+  case "$(uname -s)" in
+    Darwin*) echo "  brew install jq" >&2 ;;
+    MINGW*|MSYS*|CYGWIN*) echo "  winget install jqlang.jq" >&2 ;;
+    Linux*) echo "  sudo apt install jq  또는  sudo yum install jq" >&2 ;;
+    *) echo "  https://jqlang.github.io/jq/download/" >&2 ;;
+  esac
+  exit 1
+fi
+
 # ADF(Atlassian Document Format) 본문 구성
 build_adf_content() {
   local desc="$1"
@@ -65,14 +76,11 @@ build_adf_content() {
   echo "$content"
 }
 
-if ! command -v jq &>/dev/null; then
-  echo "오류: jq가 필요합니다. brew install jq" >&2
-  exit 1
-fi
-
 ADF_CONTENT=$(build_adf_content "$DESCRIPTION" "$AC")
 
-PAYLOAD=$(jq -n \
+# payload를 파일로 저장 (Windows 셸 호환)
+PAYLOAD_FILE=$(mktemp)
+jq -n \
   --arg summary "$SUMMARY" \
   --arg project "$PROJECT_KEY" \
   --arg issuetype "$ISSUE_TYPE" \
@@ -89,7 +97,8 @@ PAYLOAD=$(jq -n \
         content: $content
       }
     }
-  } | if $sprintId != null then .fields.customfield_10020 = $sprintId else . end')
+  } | if $sprintId != null then .fields.customfield_10020 = $sprintId else . end' \
+  > "$PAYLOAD_FILE"
 
 TMPFILE=$(mktemp)
 HTTP_CODE=$(curl -s -o "$TMPFILE" -w "%{http_code}" \
@@ -98,10 +107,10 @@ HTTP_CODE=$(curl -s -o "$TMPFILE" -w "%{http_code}" \
   -X POST \
   -u "${JIRA_EMAIL}:${JIRA_API_TOKEN}" \
   -H "Content-Type: application/json" \
-  -d "$PAYLOAD" \
+  -d @"$PAYLOAD_FILE" \
   "https://${JIRA_HOST}/rest/api/3/issue")
 BODY=$(cat "$TMPFILE")
-rm -f "$TMPFILE"
+rm -f "$TMPFILE" "$PAYLOAD_FILE"
 
 if [ "$HTTP_CODE" = "201" ]; then
   ISSUE_KEY=$(echo "$BODY" | jq -r '.key')
