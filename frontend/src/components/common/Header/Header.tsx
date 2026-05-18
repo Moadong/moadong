@@ -25,6 +25,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
     handleIntroduceClick,
     handleClubUnionClick,
     handlePromotionClick,
+    handleMenuOpen,
     handleMenuClose,
   } = useHeaderNavigation();
 
@@ -55,6 +56,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
   const toggleMenu = () => {
     setIsMenuOpen((prev) => {
       const next = !prev;
+      if (!prev && next) handleMenuOpen();
       if (prev && !next) handleMenuClose();
       return next;
     });
