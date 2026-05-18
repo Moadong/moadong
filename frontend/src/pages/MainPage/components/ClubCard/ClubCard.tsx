@@ -44,7 +44,7 @@ const ClubCard = ({
             if (hasTrackedImpression.current) return;
             hasTrackedImpression.current = true;
             const rect = containerRef.current?.getBoundingClientRect();
-            mixpanel.track(USER_EVENT.CLUB_CARD_VIEWED, {
+            trackEvent(USER_EVENT.CLUB_CARD_VIEWED, {
               club_id: club.id,
               club_name: club.name,
               recruitment_status: club.recruitmentStatus,
@@ -79,7 +79,10 @@ const ClubCard = ({
       page,
       card_index: index,
       scroll_y: Math.round(window.scrollY),
-      card_top_in_viewport: rect ? Math.round(rect.top) : undefined,
+      card_top_in_viewport: (() => {
+        const rect = containerRef.current?.getBoundingClientRect();
+        return rect ? Math.round(rect.top) : undefined;
+      })(),
       device_type: getDeviceType(),
     });
 
