@@ -1,5 +1,6 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import SearchField from '@/components/common/SearchField/SearchField';
+import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchInput } from '@/store/useSearchStore';
@@ -21,7 +22,7 @@ const SearchBox = () => {
     setSelectedCategory('all');
     setIsSearching(true);
 
-    trackEvent('Search Executed', {
+    trackEvent(USER_EVENT.SEARCH_EXCUTED, {
       inputValue: inputValue,
       page: pathname,
     });

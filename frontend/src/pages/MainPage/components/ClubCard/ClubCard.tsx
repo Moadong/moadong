@@ -1,10 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import mixpanel from 'mixpanel-browser';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import ClubLogo from '@/pages/MainPage/components/ClubLogo/ClubLogo';
 import { Club } from '@/types/club';
 import getDeviceType from '@/utils/getDeviceType';
@@ -26,6 +26,7 @@ const ClubCard = ({
   onCardClick,
 }: ClubCardProps) => {
   const navigate = useNavigate();
+  const trackEvent = useMixpanelTrack();
   const [isClicked, setIsClicked] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const hasTrackedImpression = useRef(false);
@@ -71,8 +72,7 @@ const ClubCard = ({
 
   const handleClick = () => {
     setIsClicked(true);
-    const rect = containerRef.current?.getBoundingClientRect();
-    mixpanel.track(USER_EVENT.CLUB_CARD_CLICKED, {
+    trackEvent(USER_EVENT.CLUB_CARD_CLICKED, {
       club_id: club.id,
       club_name: club.name,
       recruitment_status: club.recruitmentStatus,

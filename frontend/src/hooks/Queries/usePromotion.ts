@@ -14,7 +14,7 @@ export const useGetPromotionArticles = () => {
   return useQuery<PromotionArticle[]>({
     queryKey: queryKeys.promotion.list(),
     queryFn: getPromotionArticles,
-    staleTime: 1000 * 60 * 5,
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
     refetchInterval: isPromotionPage ? 180000 : 300000,
     refetchIntervalInBackground: false,
