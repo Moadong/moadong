@@ -21,11 +21,20 @@ export const CoverImageWrapper = styled.div`
 `;
 
 export const CoverImage = styled.img`
+  display: block;
   width: 100%;
-  height: 213px;
+  height: 220px;
   position: relative;
   z-index: 1;
   object-fit: cover;
+`;
+
+export const CoverFallback = styled.div<{ $color?: string }>`
+  width: 100%;
+  height: 220px;
+  position: relative;
+  z-index: 1;
+  background-color: ${({ $color }) => $color || colors.gray[400]};
 `;
 
 export const LogoWrapper = styled.div`
@@ -35,9 +44,13 @@ export const LogoWrapper = styled.div`
   width: 64px;
   height: 64px;
   border-radius: 16px;
-  background-color: ${colors.base.white};
-  padding: 2px;
+  background-color: ${colors.gray[100]};
+  padding: 3.5px;
   z-index: 3;
+
+  ${media.tablet} {
+    background-color: ${colors.base.white};
+  }
 `;
 
 export const Logo = styled.img`
