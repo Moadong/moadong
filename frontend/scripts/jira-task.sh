@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # GitHub 이슈 생성으로 Jira 하위 작업 + 브랜치 자동 생성
-# 사용법: ./scripts/jira-task.sh "제목" "담당자" "MOA-xxx" "브랜치명" ["분기브랜치"] ["설명"] ["태스크"]
+# 사용법: ./scripts/jira-task.sh "제목" "담당자" "MOA-xxx" "브랜치명" ["분기브랜치"] ["설명"] ["태스크"] ["라벨(쉼표구분)"]
 #
 # GitHub Actions(common-jira-create.yml)이 이슈를 감지해 자동으로:
 #   - Jira 하위 작업 생성 (상위 스토리의 하위)
@@ -14,6 +14,7 @@ BRANCH="${4:-}"
 BASE_BRANCH="${5:-develop-fe}"
 DESCRIPTION="${6:-}"
 TASKS="${7:-- [ ] Task1}"
+LABEL="${8:-✨ Feature}"
 REPO="Moadong/moadong"
 
 if [ -z "$TITLE" ] || [ -z "$ASSIGNEE" ] || [ -z "$PARENT_KEY" ] || [ -z "$BRANCH" ]; then
@@ -62,10 +63,19 @@ ${TASKS}
 BODY_EOF
 )
 
+# 라벨을 쉼표로 분리하여 --label 플래그 생성
+LABEL_FLAGS=()
+IFS=',' read -ra LABELS <<< "$LABEL"
+for l in "${LABELS[@]}"; do
+  trimmed=$(echo "$l" | xargs)
+  [ -n "$trimmed" ] && LABEL_FLAGS+=(--label "$trimmed")
+done
+
 ISSUE_URL=$(gh issue create \
   --repo "$REPO" \
   --title "$TITLE" \
-  --label "✨ Feature" \
+  "${LABEL_FLAGS[@]}" \
+  --assignee "$ASSIGNEE" \
   --body "$BODY")
 
 echo "✅ 이슈 생성 완료: $ISSUE_URL"
