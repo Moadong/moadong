@@ -2410,26 +2410,9 @@
         fileInput.value = '';
 
         if (targetArticleId) {
-          const payload = normalizePromotionPayload();
-          const updateResult = await updatePromotionArticleRequest(targetArticleId, payload);
-          const updateRes = updateResult.res;
-          const updateData = updateResult.data;
-          if (updateRes.status === 403) {
-            setPromotionBanner('이미지는 업로드되었지만 게시글 저장 권한이 없습니다.', 'warn');
-            return;
-          }
-          if (updateRes.status === 404) {
-            setPromotionBanner('이미지는 업로드되었지만 게시글 저장 대상이 없어졌습니다. 목록을 새로고침해 확인하세요.', 'warn');
-            return;
-          }
-          if (!updateRes.ok) {
-            setPromotionBanner(updateData.message || '이미지는 업로드되었지만 게시글 반영 저장에 실패했습니다.', 'warn');
-            return;
-          }
-
           const syncResult = await reloadPromotionList({ selectedArticleId: targetArticleId, keepMessage: true });
           if (!syncResult.ok) {
-            setPromotionBanner('이미지 업로드 후 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+            setPromotionBanner('이미지 업로드와 게시글 반영은 완료되었지만 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
             return;
           }
         }

@@ -9,6 +9,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 
 @Document("promotion_articles")
@@ -60,6 +61,17 @@ public class PromotionArticle {
         this.eventEndDate = request.eventEndDate();
         this.description = request.description();
         this.images = request.images();
+    }
+
+    public void addImage(String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return;
+        }
+        List<String> nextImages = new ArrayList<>(this.images == null ? List.of() : this.images);
+        if (!nextImages.contains(imageUrl)) {
+            nextImages.add(imageUrl);
+        }
+        this.images = nextImages;
     }
 
     public void softDelete() {
