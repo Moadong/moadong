@@ -154,11 +154,19 @@ const ClubDetailPage = () => {
               socialLinks={clubDetail.socialLinks}
               introDescription={clubDetail.description.introDescription}
               location={clubLocation}
-              onMapClick={() => setIsMapModalOpen(true)}
+              onMapClick={() => {
+                setIsMapModalOpen(true);
+                trackEvent(USER_EVENT.CLUB_MAP_CLICKED);
+              }}
             />
             {clubLocation && (
               <Styled.MapInfo>
-                <Styled.MapCard onClick={() => setIsMapModalOpen(true)}>
+                <Styled.MapCard
+                  onClick={() => {
+                    setIsMapModalOpen(true);
+                    trackEvent(USER_EVENT.CLUB_MAP_CLICKED);
+                  }}
+                >
                   <NaverMap location={clubLocation} />
                 </Styled.MapCard>
 

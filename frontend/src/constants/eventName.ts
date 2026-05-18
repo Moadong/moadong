@@ -34,6 +34,9 @@ export const USER_EVENT = {
   CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',
   CLUB_SCHEDULE_TAB_CLICKED: 'Club Schedule Tab Clicked',
 
+  // 동아리방 지도
+  CLUB_MAP_CLICKED: 'Club Map Clicked',
+
   // 동아리 지원
   CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked',
   RECOMMENDED_CLUB_CLICKED: 'Recommended Club Clicked',
