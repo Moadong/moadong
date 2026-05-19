@@ -2519,11 +2519,16 @@
         const handlePartialUploadFailure = async (message, tone) => {
           if (!uploadedUrls.length) {
             setPromotionBanner(message, tone || 'error');
-            return;
+            return false;
           }
+          const urls = parsePromotionImageUrls();
+          urls.push(...uploadedUrls);
+          writePromotionImageUrls(urls);
+          fileInput.value = '';
           const syncResult = await reloadPromotionList({ selectedArticleId: targetArticleId, keepMessage: true });
           const syncMessage = syncResult.ok ? '' : ' 목록 동기화에도 실패했으니 새로고침해 확인하세요.';
           setPromotionBanner('이미지 ' + uploadedUrls.length + '개는 업로드되었습니다. ' + message + syncMessage, tone || 'warn');
+          return true;
         };
         for (const [index, file] of files.entries()) {
           btn.textContent = '업로드 중... (' + (index + 1) + '/' + files.length + ')';
@@ -2532,9 +2537,11 @@
           const data = uploadResult.data;
           if (res.status === 404) {
             if (data.statuscode === '902-1') {
-              promotionArticles = promotionArticles.filter((article) => article.id !== targetArticleId);
-              clearPromotionSelection({ keepMessage: true });
-              await handlePartialUploadFailure('선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침한 뒤 다시 시도하세요.', 'error');
+              const hasPartialUpload = await handlePartialUploadFailure('선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침한 뒤 다시 시도하세요.', 'error');
+              if (!hasPartialUpload) {
+                promotionArticles = promotionArticles.filter((article) => article.id !== targetArticleId);
+                clearPromotionSelection({ keepMessage: true });
+              }
             } else {
               await handlePartialUploadFailure(data.message || '홍보 이미지 업로드 실패 (HTTP ' + res.status + ')', 'error');
             }
