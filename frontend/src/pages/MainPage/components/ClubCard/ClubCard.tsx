@@ -40,18 +40,19 @@ const ClubCard = ({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting && !hasTrackedImpression.current) {
+          const intersectTime = Date.now();
+          const capturedTop = Math.round(entry.boundingClientRect.top);
           dwellTimer = setTimeout(() => {
             if (hasTrackedImpression.current) return;
             hasTrackedImpression.current = true;
-            const rect = containerRef.current?.getBoundingClientRect();
             trackEvent(USER_EVENT.CLUB_CARD_VIEWED, {
               club_id: club.id,
               club_name: club.name,
               recruitment_status: club.recruitmentStatus,
               page,
               scroll_y: Math.round(window.scrollY),
-              card_top_in_viewport: rect ? Math.round(rect.top) : undefined,
-              dwell_ms: 3000,
+              card_top_in_viewport: capturedTop,
+              dwell_ms: Date.now() - intersectTime,
               device_type: getDeviceType(),
             });
           }, 3000);
