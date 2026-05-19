@@ -12,11 +12,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout main code
-        uses: actions/checkout@v4
-        with:
-          ref: main
-
       - name: Parse Issue Form
         id: issue-parser
         env:
@@ -50,9 +45,11 @@ jobs:
       - name: Check if base branch exists
         env:
           BASE_BRANCH: ${{ steps.issue-parser.outputs.issueparser_baseBranch }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          REPO_URL="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
           echo "Checking branch: $BASE_BRANCH"
-          if git ls-remote --exit-code origin "refs/heads/${BASE_BRANCH}"; then
+          if git ls-remote --exit-code "$REPO_URL" "refs/heads/${BASE_BRANCH}"; then
             echo "BRANCH_EXISTS=true" >> $GITHUB_ENV
           else
             echo "BRANCH_EXISTS=false" >> $GITHUB_ENV
@@ -120,19 +117,17 @@ jobs:
         if: steps.create.outputs.issue != ''
         run: echo "Jira Issue ${{ steps.create.outputs.issue }} was created"
 
-      - name: Checkout base branch
-        if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
-        uses: actions/checkout@v4
-        with:
-          ref: ${{ steps.issue-parser.outputs.issueparser_baseBranch }}
-
       - name: Create branch with Jira Ticket number
         if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
         env:
           GITHUB_ISSUE_NUMBER: ${{ github.event.issue.number }}
           JIRA_ISSUE_KEY: ${{ steps.create.outputs.issue }}
           CUSTOM_BRANCH_NAME: ${{ steps.issue-parser.outputs.issueparser_branch }}
+          BASE_BRANCH: ${{ steps.issue-parser.outputs.issueparser_baseBranch }}
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          REPO_URL="https://x-access-token:${GH_TOKEN}@github.com/${GITHUB_REPOSITORY}.git"
+
           SAFE_BRANCH_NAME=$(echo "${CUSTOM_BRANCH_NAME}" | tr ' ' '-' | tr -cd '[:alnum:]/-')
           BRANCH_TYPE=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f1)
           BRANCH_DETAIL=$(echo "${SAFE_BRANCH_NAME}" | cut -d'/' -f2-)
@@ -143,6 +138,11 @@ jobs:
 
           BRANCH_NAME="${BRANCH_TYPE}/#${GITHUB_ISSUE_NUMBER}-${BRANCH_DETAIL}-${JIRA_ISSUE_KEY}"
 
+          git config --global user.email "github-actions[bot]@users.noreply.github.com"
+          git config --global user.name "github-actions[bot]"
+
+          git clone --branch "${BASE_BRANCH}" --depth 1 "$REPO_URL" repo
+          cd repo
           git checkout -b "${BRANCH_NAME}"
           git push origin "${BRANCH_NAME}"
 
