@@ -1,12 +1,16 @@
 import { useNavigate } from 'react-router-dom';
 import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { requestNavigateBack } from '@/utils/webviewBridge';
 import * as Styled from './PromotionDetailTopBar.styles';
 
 const PromotionDetailTopBar = () => {
   const navigate = useNavigate();
+  const trackEvent = useMixpanelTrack();
 
   const handleBackClick = () => {
+    trackEvent(USER_EVENT.BACK_BUTTON_CLICKED);
     const handled = requestNavigateBack();
     if (!handled) {
       if (window.history.state && window.history.state.idx > 0) {

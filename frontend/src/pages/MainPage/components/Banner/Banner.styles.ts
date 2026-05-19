@@ -1,5 +1,34 @@
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+
+const shimmer = keyframes`
+  0% { background-position: -800px 0; }
+  100% { background-position: 800px 0; }
+`;
+
+export const SkeletonBannerWrapper = styled.div`
+  width: 100%;
+  max-width: 1180px;
+  aspect-ratio: 1180 / 316;
+  border-radius: 26px;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: ${shimmer} 1.5s infinite linear;
+
+  ${media.mobile} {
+    aspect-ratio: 1.8;
+    border-radius: 0;
+  }
+`;
+
+export const SkeletonOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+  background-size: 800px 100%;
+  animation: ${shimmer} 1.5s infinite linear;
+`;
 
 export const BannerContainer = styled.div`
   max-width: 1180px;
