@@ -33,3 +33,6 @@ AGENTS.md
 !.claude/commands/**
 
 .vercel
+
+# AI 작업 문서
+docs/superpowers/
