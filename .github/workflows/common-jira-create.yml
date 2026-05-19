@@ -17,11 +17,23 @@ jobs:
         with:
           ref: main
 
-      - name: Issue Parser
-        uses: stefanbuck/github-issue-parser@v3
+      - name: Parse Issue Form
         id: issue-parser
-        with:
-          template-path: .github/ISSUE_TEMPLATE/jira-issue-form.yml
+        env:
+          BODY: ${{ github.event.issue.body }}
+        run: |
+          parse_field() {
+            printf '%s\n' "$BODY" | awk -v lbl="$1" '
+              /^### / { found=(index($0,lbl)>0); next }
+              found && /[^[:space:]]/ { gsub(/\r/,""); print; found=0 }
+            '
+          }
+
+          echo "issueparser_dueDate=$(parse_field '마감일')" >> $GITHUB_OUTPUT
+          echo "issueparser_assignee=$(parse_field '담당자')" >> $GITHUB_OUTPUT
+          echo "issueparser_parentKey=$(parse_field '상위 스토리')" >> $GITHUB_OUTPUT
+          echo "issueparser_branch=$(parse_field '브랜치명')" >> $GITHUB_OUTPUT
+          echo "issueparser_baseBranch=$(parse_field '분기할 브랜치')" >> $GITHUB_OUTPUT
 
       - name: Map GitHub username to Jira accountId
         id: assignee
