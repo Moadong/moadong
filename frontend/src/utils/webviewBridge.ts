@@ -44,7 +44,7 @@ declare global {
 
 const isDev = process.env.NODE_ENV === 'development';
 
-// 웹뷰 브릿지 코어 함수 — 앱 환경이 아니면 무시하고 false 반환
+// 웹뷰 브릿지 코어 함수 — 앱 환경이 아니거나 bridge가 없으면 false 반환
 export const postMessageToApp = (message: WebViewMessage): boolean => {
   if (!isInAppWebView()) {
     if (isDev) {
@@ -53,8 +53,15 @@ export const postMessageToApp = (message: WebViewMessage): boolean => {
     return false;
   }
 
+  if (!window.ReactNativeWebView) {
+    if (isDev) {
+      console.warn('[WebViewBridge] ReactNativeWebView 없음 (bridge 미주입):', message.type);
+    }
+    return false;
+  }
+
   try {
-    window.ReactNativeWebView?.postMessage(JSON.stringify(message));
+    window.ReactNativeWebView.postMessage(JSON.stringify(message));
     if (isDev) {
       console.log('[WebViewBridge] 앱으로 전송:', message.type);
     }
