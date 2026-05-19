@@ -46,12 +46,10 @@ export const Icon = styled.div`
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
-  color: ${colors.gray[500]};
 
-  img {
+  svg {
     width: 100%;
     height: 100%;
-    object-fit: contain;
   }
 
   ${media.mobile} {
