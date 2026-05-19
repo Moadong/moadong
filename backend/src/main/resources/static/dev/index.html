@@ -6,23 +6,56 @@
   <title>모아동 개발자 포털</title>
   <style>
     * { box-sizing: border-box; }
-    body { font-family: system-ui, sans-serif; max-width: 900px; margin: 0 auto; padding: 0; line-height: 1.5; }
-    .header {
-      position: sticky; top: 0; z-index: 10;
-      background: #fff; border-bottom: 1px solid #e5e7eb; padding: 16px 24px;
-      display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px;
+    :root {
+      --bg: #f5f7fb;
+      --surface: #fff;
+      --surface-subtle: #f8fafc;
+      --line: #e2e8f0;
+      --text: #111827;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --sidebar: #111827;
+      --sidebar-muted: #9ca3af;
     }
-    .header h1 { margin: 0; font-size: 1.25rem; }
-    .header-nav { display: flex; gap: 16px; flex-wrap: wrap; }
-    .header-nav a { color: #2563eb; text-decoration: none; }
-    .header-nav a:hover { text-decoration: underline; }
-    .header-status { font-size: 0.9rem; color: #666; }
-    .header-status .logout-btn { margin-left: 8px; padding: 4px 10px; font-size: 0.85rem; cursor: pointer; }
-    main { padding: 24px; }
+    html { scroll-behavior: smooth; }
+    body { font-family: system-ui, sans-serif; min-height: 100vh; margin: 0; padding: 0; line-height: 1.5; color: var(--text); background: var(--bg); }
+    body.is-authenticated { overflow-x: hidden; }
+    .login-page { min-height: 100vh; margin: 0; padding: 48px 20px; border: 0; border-radius: 0; display: grid; place-items: center; background: linear-gradient(135deg, #eef4ff 0%, #f8fafc 48%, #ecfdf5 100%); }
+    .login-card { width: min(100%, 420px); padding: 32px; border: 1px solid rgba(148,163,184,0.28); border-radius: 16px; background: rgba(255,255,255,0.94); box-shadow: 0 24px 70px rgba(15,23,42,0.14); }
+    .login-brand { margin-bottom: 28px; }
+    .login-eyebrow { margin: 0 0 8px; color: var(--primary); font-size: 0.82rem; font-weight: 700; letter-spacing: 0; }
+    .login-card h1 { margin: 0; font-size: 1.7rem; line-height: 1.2; }
+    .login-card .sub { margin: 10px 0 0; }
+    .login-card input { max-width: none; }
+    .login-card button[type="submit"] { width: 100%; margin: 12px 0 0; padding: 11px 16px; border-color: var(--primary); background: var(--primary); color: #fff; font-weight: 700; }
+    .login-card button[type="submit"]:hover:not(:disabled) { background: #1d4ed8; }
+    .app-shell { min-height: 100vh; display: grid; grid-template-columns: 264px minmax(0, 1fr); }
+    .sidebar { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: var(--sidebar); color: #fff; }
+    .sidebar-brand { padding: 24px 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .sidebar-brand h1 { margin: 0; font-size: 1.12rem; }
+    .sidebar-brand p { margin: 6px 0 0; color: var(--sidebar-muted); font-size: 0.84rem; }
+    .sidebar-nav { display: grid; gap: 4px; padding: 16px 12px; }
+    .sidebar-nav a { display: flex; align-items: center; min-height: 38px; padding: 8px 12px; border-radius: 8px; color: #d1d5db; text-decoration: none; font-size: 0.94rem; }
+    .sidebar-nav a:hover, .sidebar-nav a.is-active { background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; }
+    .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .header-status { display: grid; gap: 10px; font-size: 0.88rem; color: #e5e7eb; }
+    .header-status .logout-btn { width: 100%; margin: 0; border-color: rgba(255,255,255,0.16); background: rgba(255,255,255,0.08); color: #fff; }
+    .header-status .logout-btn:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
+    .token-area { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .token-area strong { color: #f9fafb; font-size: 0.86rem; }
+    .token-area .token-box { max-height: 96px; overflow: auto; background: rgba(255,255,255,0.08); color: #d1d5db; border: 1px solid rgba(255,255,255,0.1); }
+    .token-area button { color: #fff; border-color: rgba(255,255,255,0.16); background: rgba(255,255,255,0.08); }
+    .workspace { min-width: 0; }
+    .topbar { position: sticky; top: 0; z-index: 9; min-height: 72px; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(245,247,251,0.9); border-bottom: 1px solid var(--line); backdrop-filter: blur(10px); }
+    .topbar h2 { margin: 0; font-size: 1.25rem; }
+    .topbar p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+    .topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .content { max-width: 1180px; margin: 0 auto; padding: 28px; }
     h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; }
     .sub { color: #666; margin-bottom: 24px; }
-    section { margin-bottom: 24px; padding: 16px; border: 1px solid #e5e7eb; border-radius: 8px; }
-    section:target { border-color: #2563eb; }
+    section { margin-bottom: 24px; padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+    section:target { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
     a { color: #2563eb; text-decoration: none; }
     a:hover { text-decoration: underline; }
     input, select, textarea { padding: 8px 10px; margin: 4px 0; width: 100%; max-width: 400px; display: block; }
@@ -106,7 +139,7 @@
       white-space: nowrap;
     }
     .token-cell[title] { cursor: pointer; }
-    .promotion-layout { display: grid; grid-template-columns: minmax(0, 1.15fr) minmax(320px, 0.85fr); gap: 16px; align-items: start; }
+    .promotion-layout { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; }
     .promotion-panel { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #fff; }
     .promotion-panel h3 { margin: 0 0 8px; font-size: 1rem; }
     .promotion-summary { margin: 0 0 12px; color: #666; font-size: 0.9rem; }
@@ -142,14 +175,14 @@
     .promotion-map-status { margin-bottom: 12px; padding: 10px 12px; border-radius: 8px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 0.88rem; }
     .promotion-map-status.is-warning { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
     .promotion-map-status.is-muted { background: #f9fafb; border-color: #e5e7eb; color: #6b7280; }
-    .promotion-map-layout { display: grid; grid-template-columns: minmax(0, 0.95fr) minmax(280px, 1.05fr); gap: 12px; align-items: start; }
-    .promotion-location-results { display: grid; gap: 8px; max-height: 320px; overflow: auto; }
+    .promotion-map-layout { display: grid; grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr); gap: 16px; align-items: start; }
+    .promotion-location-results { display: grid; gap: 10px; max-height: 420px; overflow: auto; padding-right: 4px; }
     .promotion-location-result-empty { padding: 16px; border: 1px dashed #d1d5db; border-radius: 8px; background: rgba(255,255,255,0.7); color: #666; text-align: center; font-size: 0.88rem; }
-    .promotion-location-result { width: 100%; margin: 0; padding: 12px; text-align: left; border-radius: 8px; border: 1px solid #dbe4f0; background: #fff; }
+    .promotion-location-result { width: 100%; min-width: 0; margin: 0; padding: 14px; text-align: left; border-radius: 8px; border: 1px solid #dbe4f0; background: #fff; overflow-wrap: anywhere; }
     .promotion-location-result:hover:not(:disabled) { background: #eff6ff; border-color: #93c5fd; }
     .promotion-location-result.is-selected { border-color: #2563eb; box-shadow: inset 0 0 0 1px #2563eb; background: #eff6ff; }
-    .promotion-location-result-title { font-weight: 600; color: #111827; margin-bottom: 4px; }
-    .promotion-location-result-address { color: #4b5563; font-size: 0.85rem; line-height: 1.4; }
+    .promotion-location-result-title { font-weight: 700; color: #111827; margin-bottom: 6px; line-height: 1.35; }
+    .promotion-location-result-address { color: #4b5563; font-size: 0.9rem; line-height: 1.45; }
     .promotion-location-result-meta { margin-top: 6px; color: #6b7280; font-size: 0.78rem; }
     .promotion-map-canvas-wrap { position: relative; border: 1px solid #dbe4f0; border-radius: 10px; overflow: hidden; background: #f8fafc; }
     .promotion-map-canvas { width: 100%; min-height: 320px; background: linear-gradient(135deg, #dbeafe 0%, #f8fafc 100%); }
@@ -161,39 +194,32 @@
     .toast.success { background: #166534; color: #fff; }
     .toast.error { background: #dc2626; color: #fff; }
     @keyframes fadeOut { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+    @media (max-width: 1024px) {
+      .promotion-map-layout { grid-template-columns: 1fr; }
+    }
     @media (max-width: 720px) {
+      .login-page { padding: 20px; }
+      .login-card { padding: 24px; border-radius: 12px; }
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; }
+      .sidebar-nav { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+      .sidebar-footer { display: grid; gap: 12px; }
+      .topbar { position: static; padding: 18px 20px; align-items: flex-start; flex-direction: column; }
+      .content { padding: 20px; }
       .banner-item-body { grid-template-columns: 1fr; }
       .promotion-layout { grid-template-columns: 1fr; }
       .promotion-location-input { flex-direction: column; align-items: stretch; }
-      .promotion-map-layout { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <header class="header">
-    <div>
-      <h1>모아동 개발자 포털</h1>
-      <nav class="header-nav">
-        <a href="#login">로그인</a>
-        <a href="#api-docs" id="navApiDocs" class="hidden">API 문서</a>
-        <a href="#club">동아리</a>
-        <a href="#dict">단어사전</a>
-        <a href="#promotion">홍보 게시판</a>
-        <a href="#banner">배너 이미지</a>
-        <a href="#fcm">FCM 알림</a>
-        <a href="#conversion-batch">이미지 변환 배치</a>
-      </nav>
-    </div>
-    <div id="headerStatus" class="header-status hidden">
-      <span id="headerUserId"></span>
-      <button type="button" class="logout-btn" id="headerLogout">로그아웃</button>
-    </div>
-  </header>
-
-  <main>
-    <section id="login">
-      <h2>로그인 / 토큰</h2>
-      <p class="sub">개발자 전용 계정으로 로그인한 후 사용하세요.</p>
+  <section id="login" class="login-page">
+    <div class="login-card">
+      <div class="login-brand">
+        <p class="login-eyebrow">MOADONG BACK OFFICE</p>
+        <h1>모아동 개발자 포털</h1>
+        <p class="sub">개발자 전용 계정으로 로그인한 후 운영 도구를 사용할 수 있습니다.</p>
+      </div>
       <div id="loginForm">
         <form id="loginFormEl" novalidate>
           <div id="loginError" class="error hidden"></div>
@@ -208,16 +234,53 @@
           <button type="submit" id="btnLogin">로그인</button>
         </form>
       </div>
-      <div id="tokenArea" class="hidden">
-        <strong>토큰</strong>
-        <div class="token-actions">
-          <button type="button" id="btnCopyToken">복사</button>
-          <span id="copyFeedback" class="copy-feedback hidden">복사됨</span>
-        </div>
-        <div class="token-box" id="tokenDisplay"></div>
-        <button type="button" id="btnLogout">로그아웃</button>
+    </div>
+  </section>
+
+  <div id="appShell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <h1>모아동 개발자 포털</h1>
+        <p>운영 데이터 관리 콘솔</p>
       </div>
-    </section>
+      <nav class="sidebar-nav" id="sideNav">
+        <a href="#api-docs" id="navApiDocs" class="hidden">API 문서</a>
+        <a href="#club">동아리 관리</a>
+        <a href="#dict">단어사전</a>
+        <a href="#promotion">홍보 게시판</a>
+        <a href="#banner">배너 이미지</a>
+        <a href="#fcm">FCM 알림</a>
+        <a href="#conversion-batch">이미지 변환 배치</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div id="headerStatus" class="header-status hidden">
+          <span id="headerUserId"></span>
+          <button type="button" class="logout-btn" id="headerLogout">로그아웃</button>
+        </div>
+        <div id="tokenArea" class="token-area hidden">
+          <strong>토큰</strong>
+          <div class="token-actions">
+            <button type="button" id="btnCopyToken">복사</button>
+            <span id="copyFeedback" class="copy-feedback hidden">복사됨</span>
+          </div>
+          <div class="token-box" id="tokenDisplay"></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div>
+          <h2>운영 관리</h2>
+          <p>데이터 변경 전 대상과 영향 범위를 확인하세요.</p>
+        </div>
+        <div class="topbar-actions">
+          <a href="/swagger-ui.html" target="_blank" rel="noopener" class="card" style="padding:10px 12px;">Swagger</a>
+          <a href="/v3/api-docs" target="_blank" rel="noopener" class="card" style="padding:10px 12px;">OpenAPI</a>
+        </div>
+      </header>
+
+      <main class="content">
 
     <section id="api-docs" class="hidden">
       <h2>API 문서</h2>
@@ -406,9 +469,9 @@
           <div class="promotion-upload-row">
             <div class="form-row">
               <label for="promotionImageUploadFile">이미지 직접 업로드</label>
-              <input type="file" id="promotionImageUploadFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp">
+              <input type="file" id="promotionImageUploadFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp" multiple>
             </div>
-            <button type="button" id="btnUploadPromotionImage">업로드 후 목록에 추가</button>
+            <button type="button" id="btnUploadPromotionImage">선택 이미지 업로드</button>
           </div>
           <div>
             <label style="display:block; font-weight:500; margin-bottom:4px; font-size:0.9rem;">이미지 미리보기</label>
@@ -565,7 +628,9 @@
         </a>
       </div>
     </section>
-  </main>
+      </main>
+    </div>
+  </div>
 
   <script>
     const API_BASE = '';
@@ -576,6 +641,7 @@
     const DEFAULT_PROMOTION_MAP_CENTER = Object.freeze({ latitude: 35.2338, longitude: 129.0826 });
     const DEFAULT_PROMOTION_MAP_ZOOM = 4;
     const PROMOTION_FORM_IDS = ['promotionClubId', 'promotionTitle', 'promotionLocation', 'promotionEventStartDate', 'promotionEventEndDate', 'promotionDescription', 'promotionImages'];
+    const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'banner', 'fcm', 'conversion-batch'];
     let fcmTokens = [];
     let fcmFilteredTokens = [];
     let fcmCurrentPage = 1;
@@ -625,25 +691,71 @@
       setTimeout(() => el.remove(), 3000);
     }
 
+    function getActivePortalSectionId() {
+      const sectionId = (window.location.hash || '#api-docs').replace('#', '');
+      return PORTAL_SECTION_IDS.includes(sectionId) ? sectionId : 'api-docs';
+    }
+
+    function loadActivePortalSectionData(sectionId) {
+      if (!getToken()) return;
+      if (sectionId === 'club') loadClubsIfVisible();
+      if (sectionId === 'dict') loadDictIfVisible();
+      if (sectionId === 'promotion') loadPromotionIfVisible();
+      if (sectionId === 'banner') loadBannerIfVisible();
+      if (sectionId === 'fcm') loadFcmTokensIfVisible();
+    }
+
+    function showActivePortalSection() {
+      const activeId = getActivePortalSectionId();
+      PORTAL_SECTION_IDS.forEach((sectionId) => {
+        document.getElementById(sectionId).classList.toggle('hidden', sectionId !== activeId);
+      });
+      updateActiveNav();
+      loadActivePortalSectionData(activeId);
+      if (activeId === 'promotion') {
+        window.requestAnimationFrame(() => initializePromotionMapIfVisible());
+      }
+    }
+
+    function updateActiveNav() {
+      const hash = '#' + getActivePortalSectionId();
+      document.querySelectorAll('#sideNav a').forEach(link => {
+        link.classList.toggle('is-active', link.getAttribute('href') === hash);
+      });
+    }
+
+    window.addEventListener('hashchange', () => {
+      if (!getToken()) return;
+      showActivePortalSection();
+    });
+
     function showLogin(show) {
+      document.body.classList.toggle('is-authenticated', !!show);
+      document.getElementById('login').classList.toggle('hidden', !!show);
       document.getElementById('loginForm').classList.toggle('hidden', !!show);
+      document.getElementById('appShell').classList.toggle('hidden', !show);
       document.getElementById('tokenArea').classList.toggle('hidden', !show);
-      document.getElementById('api-docs').classList.toggle('hidden', !show);
+      document.getElementById('api-docs').classList.toggle('hidden', true);
       document.getElementById('navApiDocs').classList.toggle('hidden', !show);
-      document.getElementById('club').classList.toggle('hidden', !show);
-      document.getElementById('dict').classList.toggle('hidden', !show);
-      document.getElementById('promotion').classList.toggle('hidden', !show);
-      document.getElementById('banner').classList.toggle('hidden', !show);
-      document.getElementById('fcm').classList.toggle('hidden', !show);
-      document.getElementById('conversion-batch').classList.toggle('hidden', !show);
+      document.getElementById('club').classList.toggle('hidden', true);
+      document.getElementById('dict').classList.toggle('hidden', true);
+      document.getElementById('promotion').classList.toggle('hidden', true);
+      document.getElementById('banner').classList.toggle('hidden', true);
+      document.getElementById('fcm').classList.toggle('hidden', true);
+      document.getElementById('conversion-batch').classList.toggle('hidden', true);
       const headerStatus = document.getElementById('headerStatus');
       const headerUserId = document.getElementById('headerUserId');
       if (show) {
         headerUserId.textContent = '로그인됨 (' + (getUserId() || 'developer') + ')';
         headerStatus.classList.remove('hidden');
+        if (!window.location.hash || window.location.hash === '#login') {
+          history.replaceState(null, '', '#api-docs');
+        }
+        showActivePortalSection();
       } else {
         headerStatus.classList.add('hidden');
         clearUserId();
+        history.replaceState(null, '', '#login');
       }
     }
 
@@ -676,11 +788,7 @@
           document.getElementById('tokenDisplay').textContent = token;
           showLogin(true);
           await loadDevPortalConfig();
-          loadClubsIfVisible();
-          loadDictIfVisible();
-          loadPromotionIfVisible();
-          loadBannerIfVisible();
-          loadFcmTokensIfVisible();
+          showActivePortalSection();
         } else {
           errEl.textContent = '토큰 없음';
           errEl.classList.remove('hidden');
@@ -722,18 +830,13 @@
     function openEditWindow(clubId) {
       window.open('/dev/edit.html?clubId=' + encodeURIComponent(clubId), 'clubEdit', 'width=620,height=700,scrollbars=yes');
     }
-    document.getElementById('btnLogout').onclick = doLogout;
     document.getElementById('headerLogout').onclick = doLogout;
 
     if (getToken()) {
       document.getElementById('tokenDisplay').textContent = getToken();
       showLogin(true);
       loadDevPortalConfig().finally(() => {
-        loadClubsIfVisible();
-        loadDictIfVisible();
-        loadPromotionIfVisible();
-        loadBannerIfVisible();
-        loadFcmTokensIfVisible();
+        showActivePortalSection();
       });
     }
 
@@ -2324,13 +2427,13 @@
         return;
       }
 
-      const file = fileInput.files[0];
+      const files = Array.from(fileInput.files);
       const btn = document.getElementById('btnUploadPromotionImage');
 
       promotionIsUploading = true;
       updatePromotionEditorState();
       clearPromotionBanner();
-      btn.textContent = isPromotionCreateMode() ? '생성 후 업로드 중...' : '업로드 중...';
+      btn.textContent = isPromotionCreateMode() ? '생성 후 업로드 중... (0/' + files.length + ')' : '업로드 중... (0/' + files.length + ')';
       try {
         let targetArticleId = promotionSelectedArticleId;
 
@@ -2376,36 +2479,50 @@
           }
         }
 
-        const uploadResult = await uploadPromotionImageRequest(targetArticleId, file);
-        const res = uploadResult.res;
-        const data = uploadResult.data;
-        if (res.status === 404) {
-          if (data.statuscode === '902-1') {
-            promotionArticles = promotionArticles.filter((article) => article.id !== targetArticleId);
-            clearPromotionSelection({ keepMessage: true });
-            setPromotionBanner('선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침한 뒤 다시 시도하세요.', 'error');
-          } else {
-            setPromotionBanner(data.message || '홍보 이미지 업로드 실패 (HTTP ' + res.status + ')', 'error');
+        const uploadedUrls = [];
+        const handlePartialUploadFailure = async (message, tone) => {
+          if (!uploadedUrls.length) {
+            setPromotionBanner(message, tone || 'error');
+            return;
           }
-          return;
-        }
-        if (res.status === 403) {
-          setPromotionBanner('개발자 계정으로 로그인하세요.', 'warn');
-          return;
-        }
-        if (!res.ok) {
-          setPromotionBanner(data.message || '홍보 이미지 업로드 실패 (HTTP ' + res.status + ')', 'error');
-          return;
-        }
+          const syncResult = await reloadPromotionList({ selectedArticleId: targetArticleId, keepMessage: true });
+          const syncMessage = syncResult.ok ? '' : ' 목록 동기화에도 실패했으니 새로고침해 확인하세요.';
+          setPromotionBanner('이미지 ' + uploadedUrls.length + '개는 업로드되었습니다. ' + message + syncMessage, tone || 'warn');
+        };
+        for (const [index, file] of files.entries()) {
+          btn.textContent = '업로드 중... (' + (index + 1) + '/' + files.length + ')';
+          const uploadResult = await uploadPromotionImageRequest(targetArticleId, file);
+          const res = uploadResult.res;
+          const data = uploadResult.data;
+          if (res.status === 404) {
+            if (data.statuscode === '902-1') {
+              promotionArticles = promotionArticles.filter((article) => article.id !== targetArticleId);
+              clearPromotionSelection({ keepMessage: true });
+              await handlePartialUploadFailure('선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침한 뒤 다시 시도하세요.', 'error');
+            } else {
+              await handlePartialUploadFailure(data.message || '홍보 이미지 업로드 실패 (HTTP ' + res.status + ')', 'error');
+            }
+            return;
+          }
+          if (res.status === 403) {
+            await handlePartialUploadFailure('개발자 계정으로 로그인하세요.', 'warn');
+            return;
+          }
+          if (!res.ok) {
+            await handlePartialUploadFailure(data.message || file.name + ' 업로드 실패 (HTTP ' + res.status + ')', 'error');
+            return;
+          }
 
-        const imageUrl = data.data?.imageUrl;
-        if (!imageUrl) {
-          setPromotionBanner('업로드 결과 URL을 확인할 수 없습니다.', 'error');
-          return;
+          const imageUrl = data.data?.imageUrl;
+          if (!imageUrl) {
+            await handlePartialUploadFailure(file.name + ' 업로드 결과 URL을 확인할 수 없습니다.', 'error');
+            return;
+          }
+          uploadedUrls.push(imageUrl);
         }
 
         const urls = parsePromotionImageUrls();
-        urls.push(imageUrl);
+        urls.push(...uploadedUrls);
         writePromotionImageUrls(urls);
         fileInput.value = '';
 
@@ -2417,12 +2534,12 @@
           }
         }
 
-        showToast('홍보 이미지 업로드와 게시글 반영이 완료되었습니다.', 'success');
+        showToast('홍보 이미지 ' + uploadedUrls.length + '개 업로드와 게시글 반영이 완료되었습니다.', 'success');
       } catch (e) {
         setPromotionBanner('요청 실패: ' + (e.message || ''), 'error');
       } finally {
         promotionIsUploading = false;
-        btn.textContent = '업로드 후 목록에 추가';
+        btn.textContent = '선택 이미지 업로드';
         updatePromotionEditorState();
       }
     };
