@@ -151,17 +151,18 @@ jobs:
 
       - name: Apply new title
         if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
-        uses: actions-cool/issues-helper@v3
-        with:
-          actions: 'update-issue'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          title: '${{ env.NEW_TITLE }}'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+        run: |
+          gh issue edit "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --title "$NEW_TITLE"
 
       - name: Add comment with Jira issue link
         if: startsWith(steps.issue-parser.outputs.issueparser_parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true'
-        uses: actions-cool/issues-helper@v3
-        with:
-          actions: 'create-comment'
-          token: ${{ secrets.GITHUB_TOKEN }}
-          issue-number: ${{ github.event.issue.number }}
-          body: 'Jira Issue Created: [${{ env.ISSUE_NUMBER }}](${{ secrets.JIRA_BASE_URL }}/browse/${{ env.ISSUE_NUMBER }})'
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          ISSUE_NUMBER_VAR: ${{ github.event.issue.number }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+        run: |
+          gh issue comment "$ISSUE_NUMBER_VAR" --repo "$GITHUB_REPOSITORY" \
+            --body "Jira Issue Created: [${ISSUE_NUMBER}](${JIRA_BASE_URL}/browse/${ISSUE_NUMBER})"
