@@ -110,6 +110,11 @@
     .table-wrap { overflow-x: auto; margin-top: 12px; }
     .id-cell { font-family: monospace; font-size: 0.85rem; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     .id-cell[title] { cursor: pointer; }
+    .copy-id-cell { max-width: 160px; }
+    .copy-id-wrap { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; }
+    .copy-id-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .copy-icon-btn { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 28px; height: 28px; margin: 0; padding: 0; border-radius: 6px; color: #2563eb; background: #eff6ff; border-color: #bfdbfe; font-size: 0.9rem; }
+    .copy-icon-btn:hover:not(:disabled) { background: #dbeafe; }
     .section-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
     .section-head h2 { margin: 0; }
     .section-head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
@@ -848,6 +853,11 @@
       return id.slice(0, 8) + '…';
     }
 
+    function copyTextToClipboard(text, message) {
+      navigator.clipboard.writeText(text || '');
+      showToast(message || '복사됨', 'success');
+    }
+
     function renderClubTableRows(clubs, page) {
       const start = (page - 1) * PAGE_SIZE;
       const slice = clubs.slice(start, start + PAGE_SIZE);
@@ -856,10 +866,23 @@
       slice.forEach(c => {
         const tr = document.createElement('tr');
         const idCell = document.createElement('td');
-        idCell.className = 'id-cell';
+        idCell.className = 'id-cell copy-id-cell';
         idCell.title = c.id || '';
-        idCell.textContent = truncateId(c.id || '');
-        idCell.onclick = (e) => { e.stopPropagation(); navigator.clipboard.writeText(c.id || ''); showToast('ID 복사됨', 'success'); };
+        const idWrap = document.createElement('span');
+        idWrap.className = 'copy-id-wrap';
+        const idText = document.createElement('span');
+        idText.className = 'copy-id-text';
+        idText.textContent = truncateId(c.id || '');
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'copy-icon-btn';
+        copyBtn.textContent = '⧉';
+        copyBtn.title = 'ID 복사';
+        copyBtn.setAttribute('aria-label', '동아리 ID 복사');
+        copyBtn.onclick = (e) => { e.stopPropagation(); copyTextToClipboard(c.id || '', 'ID 복사됨'); };
+        idWrap.appendChild(idText);
+        idWrap.appendChild(copyBtn);
+        idCell.appendChild(idWrap);
         tr.appendChild(idCell);
         tr.appendChild(document.createElement('td')).textContent = c.name || '';
         tr.appendChild(document.createElement('td')).textContent = c.userId || '';
@@ -949,10 +972,23 @@
       slice.forEach(d => {
         const tr = document.createElement('tr');
         const idCell = document.createElement('td');
-        idCell.className = 'id-cell';
+        idCell.className = 'id-cell copy-id-cell';
         idCell.title = d.id || '';
-        idCell.textContent = truncateId(d.id || '');
-        idCell.onclick = (e) => { e.stopPropagation(); navigator.clipboard.writeText(d.id || ''); showToast('ID 복사됨', 'success'); };
+        const idWrap = document.createElement('span');
+        idWrap.className = 'copy-id-wrap';
+        const idText = document.createElement('span');
+        idText.className = 'copy-id-text';
+        idText.textContent = truncateId(d.id || '');
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'copy-icon-btn';
+        copyBtn.textContent = '⧉';
+        copyBtn.title = 'ID 복사';
+        copyBtn.setAttribute('aria-label', '단어사전 ID 복사');
+        copyBtn.onclick = (e) => { e.stopPropagation(); copyTextToClipboard(d.id || '', 'ID 복사됨'); };
+        idWrap.appendChild(idText);
+        idWrap.appendChild(copyBtn);
+        idCell.appendChild(idWrap);
         tr.appendChild(idCell);
         tr.appendChild(document.createElement('td')).textContent = d.standardWord || '';
         tr.appendChild(document.createElement('td')).textContent = inputWordsSummary(d.inputWords);
