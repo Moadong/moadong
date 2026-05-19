@@ -55,7 +55,10 @@ export const postMessageToApp = (message: WebViewMessage): boolean => {
 
   if (!window.ReactNativeWebView) {
     if (isDev) {
-      console.warn('[WebViewBridge] ReactNativeWebView 없음 (bridge 미주입):', message.type);
+      console.warn(
+        '[WebViewBridge] ReactNativeWebView 없음 (bridge 미주입):',
+        message.type,
+      );
     }
     return false;
   }
