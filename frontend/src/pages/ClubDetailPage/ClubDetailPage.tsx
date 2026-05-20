@@ -150,6 +150,7 @@ const ClubDetailPage = () => {
               name={clubDetail.name}
               logo={clubDetail.logo}
               cover={clubDetail.cover}
+              category={clubDetail.category}
               recruitmentStatus={clubDetail.recruitmentStatus}
               socialLinks={clubDetail.socialLinks}
               introDescription={clubDetail.description.introDescription}
