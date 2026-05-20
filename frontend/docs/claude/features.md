@@ -56,7 +56,7 @@ React SPA는 클라이언트 사이드 렌더링이라 카카오톡/페이스북
 
 ```ts
 // 라우트 추가
-const match = pathname.match(/^\/club(?:Detail)?\/([a-f0-9]{24}|@[^/]+)/i);
+const match = pathname.match(/^\/club(?:Detail)?\/([a-f0-9]{24}|@[^/]+)$/i);
 
 // config matcher에도 추가
 export const config = {
