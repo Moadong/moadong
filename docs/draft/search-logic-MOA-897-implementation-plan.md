@@ -67,7 +67,7 @@
 패키지:
 
 ```text
-backend/src/main/java/moadong/club/search
+backend/src/main/java/moadong/club/util/search
 ```
 
 클래스:

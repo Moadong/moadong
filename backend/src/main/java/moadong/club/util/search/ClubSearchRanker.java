@@ -1,4 +1,4 @@
-package moadong.club.search;
+package moadong.club.util.search;
 
 import java.util.Comparator;
 import java.util.List;

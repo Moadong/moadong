@@ -9,9 +9,9 @@ import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.repository.ClubSearchRepository;
-import moadong.club.search.ClubSearchCandidate;
-import moadong.club.search.ClubSearchMatcher;
-import moadong.club.search.ClubSearchRanker;
+import moadong.club.util.search.ClubSearchCandidate;
+import moadong.club.util.search.ClubSearchMatcher;
+import moadong.club.util.search.ClubSearchRanker;
 import org.springframework.stereotype.Service;
 
 import static java.util.Arrays.*;
