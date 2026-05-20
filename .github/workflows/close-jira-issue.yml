@@ -1,9 +1,9 @@
-  name: Close Jira Issue
-  on:
-    issues:
-      types:
-        - closed
-
+name: Close Jira Issue
+on:
+  issues:
+    types:
+      - closed
+        
   jobs:
     close-issue:
       name: Close Jira Issue
@@ -29,14 +29,12 @@
               -H "Content-Type: application/json" \
               "${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_ISSUE_KEY}/transitions")
 
-            TRANSITION_ID=$(echo "$TRANSITIONS" | jq -r '.transitions[] | select(.name == "완료") | .id')
+            DONE_NAME="완료"
+            TRANSITION_ID=$(echo "$TRANSITIONS" | jq -r --arg name "$DONE_NAME" '.transitions[] | select(.name == $name) | .id')
 
             if [ -z "$TRANSITION_ID" ]; then
-              echo "Transition '완료' not found" >&2
-              echo "$TRANSITIONS" | jq '.transitions[].name' >&2
-            if [ -z "$TRANSITION_ID" ]; then
-              echo "Transition '완료' not found" >&2
-              echo "$TRANSITIONS" | jq '.transitions[].name' >&2
+              echo "Transition not found. Available transitions:" >&2
+              echo "$TRANSITIONS" | jq -r '.transitions[].name' >&2
               exit 1
             fi
 
@@ -48,7 +46,7 @@
               "${JIRA_BASE_URL}/rest/api/3/issue/${JIRA_ISSUE_KEY}/transitions")
 
             if [ "$HTTP_CODE" = "204" ]; then
-              echo "Successfully transitioned ${JIRA_ISSUE_KEY} to 완료"
+              echo "Successfully transitioned ${JIRA_ISSUE_KEY} to ${DONE_NAME}"
             else
               echo "Jira API error (HTTP $HTTP_CODE)" >&2
               exit 1
@@ -62,4 +60,5 @@
             ISSUE_NUMBER: ${{ github.event.issue.number }}
           run: |
             gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" \
-              --body "Jira Issue Closed: [${JIRA_ISSUE_KEY}](${JIRA_BASE_URL}/browse/${JIRA_ISSUE_KEY}) ✅"
+              --body "Jira Issue Closed:
+  [${JIRA_ISSUE_KEY}](${JIRA_BASE_URL}/browse/${JIRA_ISSUE_KEY}) ✅"
