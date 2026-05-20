@@ -66,7 +66,7 @@ const ClubProfileCard = ({
       <Styled.CoverImageWrapper>
         {cover ? (
           <Styled.CoverImage src={cover} alt='클럽 커버' />
-        ) : category ? (
+        ) : category && TAG_COLORS[category] ? (
           <Styled.CoverFallback $color={TAG_COLORS[category]} />
         ) : (
           <Styled.CoverImage src={defaultCover} alt='기본 커버' />
