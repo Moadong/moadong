@@ -71,6 +71,12 @@ else
     DIFF=$(git diff --staged 2>/dev/null)
     SCOPE="스테이징된 변경사항"
   fi
+  if [ -z "$DIFF" ]; then
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    DIFF=$(git diff origin/develop-fe..."$BRANCH" 2>/dev/null \
+      || git diff origin/main..."$BRANCH" 2>/dev/null)
+    [ -n "$DIFF" ] && SCOPE="현재 브랜치 커밋 변경사항 ($BRANCH)"
+  fi
 fi
 
 
