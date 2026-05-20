@@ -27,9 +27,14 @@ AGENTS.md
 # oh-my-claudecode
 .omc/
 
-# Claude Code (personal settings — commands/ is team-shared)
+# Claude Code (personal settings — commands/ and agents/ are team-shared)
 .claude/*
 !.claude/commands/
 !.claude/commands/**
+!.claude/agents/
+!.claude/agents/**
 
 .vercel
+
+# AI 작업 문서
+docs/superpowers/
