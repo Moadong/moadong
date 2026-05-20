@@ -8,11 +8,33 @@ WRITER=""
 STAGED=false
 while [ $# -gt 0 ]; do
   case "$1" in
-    --writer) WRITER="$2"; shift 2 ;;
+    --writer)
+      if [ $# -lt 2 ] || [[ "$2" == --* ]]; then
+        echo "오류: --writer 옵션에 값이 필요합니다. (허용값: claude | codex)" >&2
+        echo "사용법: $0 --writer <claude|codex> [--staged]" >&2
+        exit 1
+      fi
+      WRITER="$2"; shift 2 ;;
     --staged) STAGED=true; shift ;;
-    *) shift ;;
+    *)
+      echo "오류: 알 수 없는 옵션 '$1'" >&2
+      echo "사용법: $0 --writer <claude|codex> [--staged]" >&2
+      exit 1 ;;
   esac
 done
+
+if [ -z "$WRITER" ]; then
+  echo "오류: --writer 옵션이 필요합니다." >&2
+  echo "사용법: $0 --writer <claude|codex> [--staged]" >&2
+  exit 1
+fi
+
+case "$WRITER" in
+  claude|codex) ;;
+  *)
+    echo "오류: --writer 허용값은 'claude' 또는 'codex'입니다. 입력값: '$WRITER'" >&2
+    exit 1 ;;
+esac
 
 pick_reviewer() {
   local prefer="$1"
@@ -48,6 +70,12 @@ else
   if [ -z "$DIFF" ]; then
     DIFF=$(git diff --staged 2>/dev/null)
     SCOPE="스테이징된 변경사항"
+  fi
+  if [ -z "$DIFF" ]; then
+    BRANCH=$(git rev-parse --abbrev-ref HEAD)
+    DIFF=$(git diff origin/develop-fe..."$BRANCH" 2>/dev/null \
+      || git diff origin/main..."$BRANCH" 2>/dev/null)
+    [ -n "$DIFF" ] && SCOPE="현재 브랜치 커밋 변경사항 ($BRANCH)"
   fi
 fi
 

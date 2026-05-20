@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, type SyntheticEvent } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -48,6 +48,14 @@ const Banner = ({ isWebview = false }: BannerProps) => {
 
   const handleNext = () => {
     swiperInstance?.slideNext();
+  };
+
+  const handleImageError = (
+    e: SyntheticEvent<HTMLImageElement>,
+    index: number,
+  ) => {
+    if (index === 0) setIsImageLoaded(true);
+    e.currentTarget.style.display = 'none';
   };
 
   const handleBannerClick = (
@@ -136,6 +144,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
                   onLoad={
                     index === 0 ? () => setIsImageLoaded(true) : undefined
                   }
+                  onError={(e) => handleImageError(e, index)}
                 />
               </Styled.BannerItem>
             </SwiperSlide>
