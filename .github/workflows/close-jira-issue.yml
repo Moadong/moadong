@@ -3,8 +3,8 @@ on:
   issues:
     types:
       - closed
-        
-  jobs:
+
+jobs:
     close-issue:
       name: Close Jira Issue
       runs-on: ubuntu-latest
@@ -59,6 +59,4 @@ on:
             JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
             ISSUE_NUMBER: ${{ github.event.issue.number }}
           run: |
-            gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" \
-              --body "Jira Issue Closed:
-  [${JIRA_ISSUE_KEY}](${JIRA_BASE_URL}/browse/${JIRA_ISSUE_KEY}) ✅"
+            gh issue comment "$ISSUE_NUMBER" --repo "$GITHUB_REPOSITORY" --body "Jira Issue Closed: [${JIRA_ISSUE_KEY}](${JIRA_BASE_URL}/browse/${JIRA_ISSUE_KEY}) ✅"
