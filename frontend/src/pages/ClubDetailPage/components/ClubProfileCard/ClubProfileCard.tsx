@@ -1,6 +1,7 @@
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
+import defaultCover from '@/assets/images/logos/default_cover_image.png';
 import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import { ClubLocation } from '@/constants/clubLocation';
@@ -65,10 +66,10 @@ const ClubProfileCard = ({
       <Styled.CoverImageWrapper>
         {cover ? (
           <Styled.CoverImage src={cover} alt='클럽 커버' />
+        ) : category ? (
+          <Styled.CoverFallback $color={TAG_COLORS[category]} />
         ) : (
-          <Styled.CoverFallback
-            $color={category ? TAG_COLORS[category] : undefined}
-          />
+          <Styled.CoverImage src={defaultCover} alt='기본 커버' />
         )}
       </Styled.CoverImageWrapper>
 
