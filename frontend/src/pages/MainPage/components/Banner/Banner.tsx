@@ -136,6 +136,9 @@ const Banner = ({ isWebview = false }: BannerProps) => {
                   onLoad={
                     index === 0 ? () => setIsImageLoaded(true) : undefined
                   }
+                  onError={
+                    index === 0 ? () => setIsImageLoaded(true) : undefined
+                  }
                 />
               </Styled.BannerItem>
             </SwiperSlide>
