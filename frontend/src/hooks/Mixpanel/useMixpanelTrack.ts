@@ -7,7 +7,6 @@ const useMixpanelTrack = () => {
       try {
         mixpanel.track(eventName, {
           ...properties,
-          distinct_id: mixpanel.get_distinct_id(),
           timestamp: Date.now(),
           url: window.location.href,
         });
