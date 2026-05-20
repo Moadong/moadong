@@ -9,6 +9,9 @@ import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.repository.ClubSearchRepository;
+import moadong.club.search.ClubSearchCandidate;
+import moadong.club.search.ClubSearchMatcher;
+import moadong.club.search.ClubSearchRanker;
 import org.springframework.stereotype.Service;
 
 import static java.util.Arrays.*;
@@ -19,22 +22,41 @@ import static java.util.Arrays.*;
 public class ClubSearchService {
 
     private final ClubSearchRepository clubSearchRepository;
+    private final WordDictionaryService wordDictionaryService;
+    private final ClubSearchMatcher clubSearchMatcher;
+    private final ClubSearchRanker clubSearchRanker;
 
     public ClubSearchResponse searchClubsByKeyword(String keyword,
                                                    String recruitmentStatus,
                                                    String division,
                                                    String category
     ) {
-        // 단어사전 확장 검색은 ClubSearchRepository에서 처리
-        // keyword는 그대로 전달 (Repository에서 단어사전 확장 처리)
-        List<ClubSearchResult> results = clubSearchRepository.searchClubsByKeyword(keyword, recruitmentStatus, division, category);
-        
-        // 정렬 및 반환
-        return sortAndBuildResponse(results);
+        List<ClubSearchResult> candidates = clubSearchRepository.findSearchCandidates(
+                recruitmentStatus,
+                division,
+                category
+        );
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return sortAndBuildBrowseResponse(candidates);
+        }
+
+        List<String> expandedKeywords = wordDictionaryService.expandKeywords(keyword);
+        List<ClubSearchCandidate> matchedCandidates = candidates.stream()
+                .map(candidate -> clubSearchMatcher.match(candidate, keyword, expandedKeywords))
+                .flatMap(Optional::stream)
+                .toList();
+
+        List<ClubSearchResult> sortedResult = clubSearchRanker.sort(matchedCandidates);
+
+        return ClubSearchResponse.builder()
+                .clubs(sortedResult)
+                .totalCount(sortedResult.size())
+                .build();
     }
 
     // 정렬 및 응답 생성
-    private ClubSearchResponse sortAndBuildResponse(List<ClubSearchResult> result) {
+    private ClubSearchResponse sortAndBuildBrowseResponse(List<ClubSearchResult> result) {
         List<ClubCategory> categories = new ArrayList<>(asList(ClubCategory.values()));
         Collections.shuffle(categories);
 
@@ -51,7 +73,7 @@ public class ClubSearchService {
                                         randomCategoryPriorities.getOrDefault(
                                                 club.category() != null ? club.category().toUpperCase() : null,
                                                 Integer.MAX_VALUE))
-                                .thenComparing(ClubSearchResult::name)
+                                .thenComparing(ClubSearchResult::name, Comparator.nullsLast(String::compareTo))
                 )
                 .map(r -> new ClubSearchResult(
                         r.id(),
