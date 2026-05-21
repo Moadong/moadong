@@ -24,11 +24,10 @@ const PromotionClubCTA = ({ clubId, clubName }: Props) => {
     });
 
     if (isInAppWebView()) {
-      // 웹뷰: club/:id slug로 bridge 전송. bridge 미주입 시 SPA 직접 이동
-      const sent = requestNavigateWebview(`club/${clubId}`);
-      if (!sent) navigate(`/clubDetail/${clubId}`);
+      const sent = requestNavigateWebview(`club/@${encodeURIComponent(clubName)}`);
+      if (!sent) navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
     } else {
-      handleLink(`/clubDetail/${clubId}`);
+      handleLink(`/clubDetail/@${encodeURIComponent(clubName)}`);
     }
   };
 
