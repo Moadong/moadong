@@ -44,10 +44,18 @@ const Banner = ({ isWebview = false }: BannerProps) => {
 
   const handlePrev = () => {
     swiperInstance?.slidePrev();
+    trackEvent(USER_EVENT.BANNER_NAVIGATION_CLICKED, {
+      direction: 'prev',
+      from_index: currentIndex,
+    });
   };
 
   const handleNext = () => {
     swiperInstance?.slideNext();
+    trackEvent(USER_EVENT.BANNER_NAVIGATION_CLICKED, {
+      direction: 'next',
+      from_index: currentIndex,
+    });
   };
 
   const handleImageError = (

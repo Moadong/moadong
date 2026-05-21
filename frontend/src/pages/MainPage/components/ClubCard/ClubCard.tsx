@@ -18,6 +18,10 @@ interface ClubCardProps {
   onCardClick?: (club: Club) => void;
 }
 
+const COOLDOWN_MS = 2_000; // IntersectionObserver jitter 방지
+const IMPRESSION_THRESHOLD = 0.5; // IAB 뷰어빌리티 기준 (50% in-view)
+const MIN_DWELL_MS = 300; // 안구 고정 최소 시간 기반, fly-by 스크롤 제외
+
 const ClubCard = ({
   club,
   index,
@@ -29,45 +33,70 @@ const ClubCard = ({
   const trackEvent = useMixpanelTrack();
   const [isClicked, setIsClicked] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
-  const hasTrackedImpression = useRef(false);
+
+  const SS_LAST_KEY = `clubcard_last_${page ?? 'default'}_${club.id}`;
+  const SS_COUNT_KEY = `clubcard_count_${page ?? 'default'}_${club.id}`;
 
   useEffect(() => {
     const el = containerRef.current;
     if (!el) return;
 
-    let dwellTimer: ReturnType<typeof setTimeout> | null = null;
+    let intersectStart: number | null = null;
+    let capturedTop: number | null = null;
+    let capturedScrollY: number | null = null;
+
+    const fireImpressionEvent = () => {
+      if (intersectStart === null) return;
+      const dwell_ms = Date.now() - intersectStart;
+      intersectStart = null;
+      if (dwell_ms < MIN_DWELL_MS) return;
+      const count =
+        parseInt(sessionStorage.getItem(SS_COUNT_KEY) ?? '0', 10) + 1;
+      sessionStorage.setItem(SS_LAST_KEY, String(Date.now()));
+      sessionStorage.setItem(SS_COUNT_KEY, String(count));
+      trackEvent(USER_EVENT.CLUB_CARD_VIEWED, {
+        club_id: club.id,
+        club_name: club.name,
+        recruitment_status: club.recruitmentStatus,
+        page,
+        scroll_y: capturedScrollY,
+        card_top_in_viewport: capturedTop,
+        dwell_ms,
+        view_count: count,
+        reentry_count: Math.max(0, count - 1),
+        device_type: getDeviceType(),
+      });
+    };
+
+    const handleVisibilityChange = () => {
+      if (document.visibilityState === 'hidden') fireImpressionEvent();
+    };
 
     const observer = new IntersectionObserver(
       ([entry]) => {
-        if (entry.isIntersecting && !hasTrackedImpression.current) {
-          const intersectTime = Date.now();
-          const capturedTop = Math.round(entry.boundingClientRect.top);
-          dwellTimer = setTimeout(() => {
-            if (hasTrackedImpression.current) return;
-            hasTrackedImpression.current = true;
-            trackEvent(USER_EVENT.CLUB_CARD_VIEWED, {
-              club_id: club.id,
-              club_name: club.name,
-              recruitment_status: club.recruitmentStatus,
-              page,
-              scroll_y: Math.round(window.scrollY),
-              card_top_in_viewport: capturedTop,
-              dwell_ms: Date.now() - intersectTime,
-              device_type: getDeviceType(),
-            });
-          }, 3000);
-        } else if (dwellTimer) {
-          clearTimeout(dwellTimer);
-          dwellTimer = null;
+        if (entry.isIntersecting) {
+          if (intersectStart !== null) return;
+          const lastTime = parseInt(
+            sessionStorage.getItem(SS_LAST_KEY) ?? '0',
+            10,
+          );
+          if (Date.now() - lastTime < COOLDOWN_MS) return;
+          intersectStart = Date.now();
+          capturedTop = Math.round(entry.boundingClientRect.top);
+          capturedScrollY = Math.round(window.scrollY);
+        } else {
+          fireImpressionEvent();
         }
       },
-      { threshold: 0.5 },
+      { threshold: IMPRESSION_THRESHOLD },
     );
 
     observer.observe(el);
+    document.addEventListener('visibilitychange', handleVisibilityChange);
     return () => {
       observer.disconnect();
-      if (dwellTimer) clearTimeout(dwellTimer);
+      document.removeEventListener('visibilitychange', handleVisibilityChange);
+      fireImpressionEvent();
     };
   }, [club.id, club.name, club.recruitmentStatus, page]);
 
