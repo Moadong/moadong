@@ -20,6 +20,7 @@ interface ClubCardProps {
 
 const COOLDOWN_MS = 2_000; // IntersectionObserver jitter 방지
 const IMPRESSION_THRESHOLD = 0.5; // IAB 뷰어빌리티 기준 (50% in-view)
+const MIN_DWELL_MS = 300; // 안구 고정 최소 시간 기반, fly-by 스크롤 제외
 
 const ClubCard = ({
   club,
@@ -47,6 +48,8 @@ const ClubCard = ({
     const fireImpressionEvent = () => {
       if (intersectStart === null) return;
       const dwell_ms = Date.now() - intersectStart;
+      intersectStart = null;
+      if (dwell_ms < MIN_DWELL_MS) return;
       const count =
         parseInt(sessionStorage.getItem(SS_COUNT_KEY) ?? '0', 10) + 1;
       sessionStorage.setItem(SS_LAST_KEY, String(Date.now()));
@@ -63,7 +66,6 @@ const ClubCard = ({
         reentry_count: Math.max(0, count - 1),
         device_type: getDeviceType(),
       });
-      intersectStart = null;
     };
 
     const handleVisibilityChange = () => {
