@@ -39,11 +39,11 @@ esac
 pick_reviewer() {
   local prefer="$1"
   if [ "$prefer" = "codex" ] && command -v codex &>/dev/null; then
-    RUN_REVIEW() { codex -q "$1"; }; CLI_NAME="codex"
+    RUN_REVIEW() { codex review "$1"; }; CLI_NAME="codex"
   elif [ "$prefer" = "claude" ] && command -v claude &>/dev/null; then
     RUN_REVIEW() { claude -p "$1"; }; CLI_NAME="claude"
   elif command -v codex &>/dev/null; then
-    RUN_REVIEW() { codex -q "$1"; }; CLI_NAME="codex"
+    RUN_REVIEW() { codex review "$1"; }; CLI_NAME="codex"
   elif command -v claude &>/dev/null; then
     RUN_REVIEW() { claude -p "$1"; }; CLI_NAME="claude"
   else
