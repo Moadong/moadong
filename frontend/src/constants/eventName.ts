@@ -17,6 +17,7 @@ export const USER_EVENT = {
   // 배너 클릭
   BANNER_CLICKED: 'Banner Clicked',
   APP_DOWNLOAD_BANNER_CLICKED: 'App Download Banner Clicked',
+  BANNER_NAVIGATION_CLICKED: 'Banner Navigation Clicked',
 
   // 네비게이션
   BACK_BUTTON_CLICKED: 'Back Button Clicked',
