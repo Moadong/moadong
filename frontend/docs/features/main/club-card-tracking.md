@@ -37,4 +37,4 @@ clubcard_count_{page}_{clubId}  → 탭 세션 내 누적 view_count
 ## 관련 코드
 
 - `src/pages/MainPage/components/ClubCard/ClubCard.tsx` — 트래킹 구현
-- `src/constants/eventName.ts` — `CLUB_CARD_VIEWED`, `CLUB_CARD_CLICKED`
+- `src/constants/eventName.ts` — `CLUB_CARD_VIEWED`, `CLUB_CARD_CLICKED`, `BANNER_NAVIGATION_CLICKED`
