@@ -46,7 +46,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
     swiperInstance?.slidePrev();
     trackEvent(USER_EVENT.BANNER_NAVIGATION_CLICKED, {
       direction: 'prev',
-      current_index: currentIndex,
+      from_index: currentIndex,
     });
   };
 
@@ -54,7 +54,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
     swiperInstance?.slideNext();
     trackEvent(USER_EVENT.BANNER_NAVIGATION_CLICKED, {
       direction: 'next',
-      current_index: currentIndex,
+      from_index: currentIndex,
     });
   };
 
