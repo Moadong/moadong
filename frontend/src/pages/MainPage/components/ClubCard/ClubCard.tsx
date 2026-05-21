@@ -73,6 +73,7 @@ const ClubCard = ({
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
+          if (intersectStart !== null) return;
           const lastTime = parseInt(
             sessionStorage.getItem(SS_LAST_KEY) ?? '0',
             10,

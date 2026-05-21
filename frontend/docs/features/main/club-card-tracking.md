@@ -13,7 +13,7 @@ IntersectionObserver(threshold 50%)로 카드 진입/이탈을 감지한다.
 
 ## sessionStorage 구조
 
-```
+```text
 clubcard_last_{page}_{clubId}   → 마지막 이벤트 발화 시각 (cooldown 판단용)
 clubcard_count_{page}_{clubId}  → 탭 세션 내 누적 view_count
 ```
