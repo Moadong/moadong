@@ -10,8 +10,7 @@ public class ClubSearchTextNormalizer {
         if (value == null) {
             return "";
         }
-        return value.trim()
-                .replaceAll("\\s+", "")
+        return value.replaceAll("\\s+", "")
                 .toLowerCase(Locale.ROOT);
     }
 }
