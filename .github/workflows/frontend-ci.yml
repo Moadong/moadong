@@ -35,4 +35,6 @@ jobs:
         run: npm run lint
 
       - name: Build
+        env:
+          SKIP_DYNAMIC_SITEMAP: 'true'
         run: npm run build

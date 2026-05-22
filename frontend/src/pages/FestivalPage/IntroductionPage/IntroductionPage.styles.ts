@@ -5,16 +5,18 @@ export const Container = styled.div`
   width: 100%;
   max-width: 550px;
   margin: 0 auto;
-  padding-top: 24px;
+  padding-top: 92px;
 
   ${media.mobile} {
-    padding-top: 0;
+    padding-top: 70px;
   }
 `;
 
-export const TabWrapper = styled.div`
+export const TabWrapper = styled.div<{ $webview?: boolean }>`
   display: flex;
   justify-content: center;
+  padding-top: ${({ $webview }) => ($webview ? '12px' : '0')};
+  margin-bottom: 16px;
 
   ${media.mobile} {
     display: block;

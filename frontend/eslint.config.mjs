@@ -6,16 +6,19 @@ import storybook from 'eslint-plugin-storybook';
 
 const config = [
   {
-    files: ['src/**/*.{js,ts,jsx,tsx}'],
     ignores: [
       'dist/**',
       'node_modules/**',
       'coverage/**',
       'public/**',
+      'storybook-static/**',
       'jest.config.js',
       'jest.setup.ts',
       'netlify.toml',
     ],
+  },
+  {
+    files: ['src/**/*.{js,ts,jsx,tsx}'],
     languageOptions: {
       parser,
       parserOptions: {

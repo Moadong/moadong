@@ -1,6 +1,6 @@
 export const USER_EVENT = {
   CATEGORY_BUTTON_CLICKED: 'CategoryButton Clicked',
-  SEARCH_BOX_CLICKED: 'SearchBox Clicked',
+  SEARCH_EXCUTED: 'Search Executed',
 
   // 메인 페이지 팝업
   MAIN_POPUP_VIEWED: 'Main Popup Viewed',
@@ -8,9 +8,16 @@ export const USER_EVENT = {
   MAIN_POPUP_CLOSED: 'Main Popup Closed',
   APP_DOWNLOAD_POPUP_CLICKED: 'App Download Popup Clicked',
 
+  // 동소한 팝업
+  FESTIVAL_POPUP_CLICKED: 'Festival Popup Clicked',
+
+  // 동소한 부스
+  FESTIVAL_BOOTH_CLICKED: 'Festival Booth Clicked',
+
   // 배너 클릭
   BANNER_CLICKED: 'Banner Clicked',
   APP_DOWNLOAD_BANNER_CLICKED: 'App Download Banner Clicked',
+  BANNER_NAVIGATION_CLICKED: 'Banner Navigation Clicked',
 
   // 네비게이션
   BACK_BUTTON_CLICKED: 'Back Button Clicked',
@@ -24,8 +31,14 @@ export const USER_EVENT = {
   TAB_CLICKED: 'Tab Clicked',
   PHOTO_NAVIGATION_CLICKED: 'Photo Navigation',
   CLUB_CARD_CLICKED: 'ClubCard Clicked',
+  CLUB_CARD_VIEWED: 'ClubCard Viewed',
+  SCROLL_DEPTH_REACHED: 'Scroll Depth Reached',
   CLUB_INTRO_TAB_CLICKED: 'Club Intro Tab Clicked',
   CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',
+  CLUB_SCHEDULE_TAB_CLICKED: 'Club Schedule Tab Clicked',
+
+  // 동아리방 지도
+  CLUB_MAP_CLICKED: 'Club Map Clicked',
 
   // 동아리 지원
   CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked',
@@ -53,6 +66,21 @@ export const USER_EVENT = {
   FESTIVAL_BOOTH_MAP_SLIDE_CHANGED: 'Festival BoothMap Slide Changed',
   FESTIVAL_PERFORMANCE_CARD_CLICKED: 'Festival PerformanceCard Clicked',
   FESTIVAL_TAB_DURATION: 'Festival Tab Duration',
+
+  // 버스킹 시간표
+  DAEDONG2026_DAY_CHANGED: '2026-daedong Day Changed',
+  DAEDONG2026_DAY_DURATION: '2026-daedong Day Duration',
+
+  // 홍보
+  PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
+  PROMOTION_CARD_CLICKED: 'Promotion Card Clicked',
+  PROMOTION_CLUB_CTA_CLICKED: 'Promotion Club CTA Clicked',
+
+  WEBVIEW_SUBSCRIBE_TOGGLED: 'Webview Subscribe Toggled',
+} as const;
+
+export const WEBVIEW_LINK_TARGET = {
+  CLUB_FESTIVAL: 'CLUB_FESTIVAL',
 } as const;
 
 export const ADMIN_EVENT = {
@@ -107,6 +135,11 @@ export const PAGE_VIEW = {
   INTRODUCE_PAGE: 'IntroducePage',
   CLUB_UNION_PAGE: 'ClubUnionPage',
   FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
+  DAEDONG2026_BUSKING_PAGE: '2026 대동제 버스킹 시간표 페이지',
+  PROMOTION_LIST_PAGE: '홍보 목록 페이지',
+  PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
+
+  WEBVIEW_MAIN_PAGE: 'WebviewMainPage',
 
   // 관리자
   LOGIN_PAGE: '로그인페이지',
@@ -115,4 +148,10 @@ export const PAGE_VIEW = {
   RECRUITMENT_INFO_EDIT_PAGE: '동아리 모집 정보 수정 페이지',
   PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
+} as const;
+
+export const PAGE_NAME = {
+  MAIN: 'main',
+  WEBVIEW_MAIN: 'webview-main',
+  INTRODUCE: 'introduce',
 } as const;

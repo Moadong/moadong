@@ -1,49 +1,49 @@
+import type { ButtonHTMLAttributes } from 'react';
 import styled, { css, keyframes } from 'styled-components';
 
-export interface ButtonProps {
+export interface ButtonProps extends ButtonHTMLAttributes<HTMLButtonElement> {
   width?: string;
-  children: React.ReactNode;
-  type?: string;
-  onClick?: () => void;
   animated?: boolean;
-  disabled?: boolean;
-  className?: string;
 }
 
 const pulse = keyframes`
-  0% { transform: scale(1); background-color: #3a3a3a; }
-  50% { transform: scale(1.05); background-color: #505050; }
-  100% { transform: scale(1); background-color: #3a3a3a; }
+  0% { transform: scale(1); }
+  50% { transform: scale(1.05); }
+  100% { transform: scale(1); }
 `;
 
-const StyledButton = styled.button<ButtonProps>`
-  background-color: #3a3a3a;
-  color: #ffffff;
+const StyledButton = styled.button<{ $animated: boolean; $width?: string }>`
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ theme }) => theme.colors.gray[900]};
+  color: ${({ theme }) => theme.colors.base.white};
   height: 42px;
-  border-radius: 10px;
+  padding: 0 16px;
   border: none;
-  font-weight: 600;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: ${({ theme }) => theme.typography.paragraph.p2.size};
+  font-weight: ${({ theme }) => theme.typography.paragraph.p2.weight};
   cursor: pointer;
   transition: background-color 0.2s;
-  width: ${({ width }) => width || 'auto'};
+  width: ${({ $width }) => $width ?? 'auto'};
 
   &:hover:not(:disabled) {
-    background-color: #333333;
-    ${({ animated }) =>
-      animated &&
+    background-color: ${({ theme }) => theme.colors.gray[800]};
+    ${({ $animated }) =>
+      $animated &&
       css`
         animation: ${pulse} 0.4s ease-in-out;
       `}
   }
 
-  &:active {
-    transform: ${({ animated }) => (animated ? 'scale(0.95)' : 'none')};
+  &:active:not(:disabled) {
+    transform: ${({ $animated }) => ($animated ? 'scale(0.95)' : 'none')};
   }
 
   &:disabled {
-    background-color: #cccccc;
-    color: #666666;
+    background-color: ${({ theme }) => theme.colors.gray[500]};
+    color: ${({ theme }) => theme.colors.gray[600]};
     cursor: not-allowed;
     opacity: 0.7;
   }
@@ -51,21 +51,12 @@ const StyledButton = styled.button<ButtonProps>`
 
 const Button = ({
   width,
-  children,
-  onClick,
-  type,
   animated = false,
-  disabled = false,
-  className,
+  type = 'button',
+  children,
+  ...rest
 }: ButtonProps) => (
-  <StyledButton
-    width={width}
-    onClick={onClick}
-    animated={animated}
-    type={type}
-    disabled={disabled}
-    className={className}
-  >
+  <StyledButton $animated={animated} $width={width} type={type} {...rest}>
     {children}
   </StyledButton>
 );

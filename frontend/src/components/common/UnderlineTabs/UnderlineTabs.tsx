@@ -10,6 +10,7 @@ interface UnderlineTabsProps {
   activeKey: string;
   onTabClick: (tabKey: string) => void;
   centerOnMobile?: boolean;
+  className?: string;
 }
 
 const UnderlineTabs = ({
@@ -17,9 +18,10 @@ const UnderlineTabs = ({
   activeKey,
   onTabClick,
   centerOnMobile = false,
+  className,
 }: UnderlineTabsProps) => {
   return (
-    <Styled.TabList $centerOnMobile={centerOnMobile}>
+    <Styled.TabList $centerOnMobile={centerOnMobile} className={className}>
       {tabs.map((tab) => (
         <Styled.TabButton
           key={tab.key}

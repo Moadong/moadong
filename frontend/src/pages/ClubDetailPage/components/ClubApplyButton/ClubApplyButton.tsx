@@ -6,6 +6,7 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import useDevice from '@/hooks/useDevice';
+import useNavigator from '@/hooks/useNavigator';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
 import ShareButton from '../ShareButton/ShareButton';
 import * as Styled from './ClubApplyButton.styles';
@@ -19,10 +20,14 @@ const ClubApplyButton = ({
   deadlineText,
   hideShareButtonOnMobile = false,
 }: ClubApplyButtonProps) => {
-  const { clubId } = useParams<{ clubId: string }>();
+  const { clubId, clubName } = useParams<{
+    clubId: string;
+    clubName: string;
+  }>();
   const navigate = useNavigate();
+  const handleLink = useNavigator();
   const trackEvent = useMixpanelTrack();
-  const { data: clubDetail } = useGetClubDetail(clubId!);
+  const { data: clubDetail } = useGetClubDetail((clubName ?? clubId) || '');
   const { isMobile, isTablet } = useDevice();
   const shouldShowShareButton = hideShareButtonOnMobile
     ? !isMobile && !isTablet
@@ -37,20 +42,22 @@ const ClubApplyButton = ({
 
   const navigateToApplicationForm = async (formId: string) => {
     try {
-      const formDetail = await getApplication(clubId, formId);
+      const formDetail = await getApplication(clubDetail.id, formId);
 
       // 외부 지원서인 경우
       if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
         const externalApplicationUrl =
           formDetail.externalApplicationUrl?.trim();
         if (externalApplicationUrl) {
-          window.location.href = externalApplicationUrl;
+          handleLink(externalApplicationUrl);
           return;
         }
       }
 
       // 내부 지원서인 경우
-      navigate(`/application/${clubId}/${formId}`, { state: { formDetail } });
+      navigate(`/application/${clubDetail.id}/${formId}`, {
+        state: { formDetail },
+      });
       setIsApplicationModalOpen(false);
     } catch (error) {
       console.error('지원서 조회 중 오류가 발생했습니다', error);
@@ -74,7 +81,7 @@ const ClubApplyButton = ({
     }
 
     try {
-      const forms = await getApplicationOptions(clubId);
+      const forms = await getApplicationOptions(clubDetail.id);
 
       if (forms.length <= 0) {
         return;
@@ -118,7 +125,7 @@ const ClubApplyButton = ({
 
   return (
     <Styled.ApplyButtonContainer>
-      {shouldShowShareButton && <ShareButton clubId={clubId} />}
+      {shouldShowShareButton && <ShareButton clubId={clubDetail.id} />}
       <Styled.ApplyButton
         disabled={isRecruitmentUpcoming || isRecruitmentClosed}
         onClick={handleApplyButtonClick}

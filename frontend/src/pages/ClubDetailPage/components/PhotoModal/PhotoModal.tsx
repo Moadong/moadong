@@ -5,7 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css/navigation';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
-import PortalModal from '@/components/common/Modal/PortalModal';
+import Modal from '@/components/common/Modal/Modal';
 import * as Styled from './PhotoModal.styles';
 
 interface PhotoModalProps {
@@ -39,7 +39,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
   if (!isOpen) return null;
 
   return (
-    <PortalModal isOpen={isOpen} onClose={onClose} closeOnBackdrop={true}>
+    <Modal isOpen={isOpen} onClose={onClose} closeOnBackdrop={true}>
       <Styled.ModalContent onClick={(e) => e.stopPropagation()}>
         <Styled.ModalHeader>
           <Styled.ClubName>{clubName}</Styled.ClubName>
@@ -130,7 +130,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
           </Styled.ThumbnailContainer>
         </Styled.ModalBody>
       </Styled.ModalContent>
-    </PortalModal>
+    </Modal>
   );
 };
 

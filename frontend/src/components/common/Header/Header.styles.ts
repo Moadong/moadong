@@ -7,6 +7,8 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   top: 0;
   left: 0;
   right: 0;
+  display: flex;
+  justify-content: center;
   width: 100%;
   padding: 18px 0;
   background-color: white;
@@ -16,12 +18,16 @@ export const Header = styled.header<{ isScrolled: boolean }>`
     isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
   transition: box-shadow 0.2s ease-in-out;
 
+  ${media.laptop} {
+    padding: 18px 20px;
+  }
   ${media.tablet} {
-    height: 56px;
+    height: 76px;
     padding: 10px 20px;
   }
 
   ${media.mobile} {
+    height: 56px;
     padding: 8px 20px;
   }
 `;
@@ -32,7 +38,6 @@ export const Container = styled.div`
   justify-content: space-between;
   width: 100%;
   max-width: 1180px;
-  margin: 0 auto;
   gap: 50px;
 
   ${media.tablet} {

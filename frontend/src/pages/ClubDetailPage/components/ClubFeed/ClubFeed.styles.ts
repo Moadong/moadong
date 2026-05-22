@@ -2,8 +2,10 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
+  padding-top: 1px;
   width: 100%;
 `;
 
@@ -37,15 +39,15 @@ export const PhotoImage = styled.img`
   object-fit: cover;
 `;
 
-export const EmptyState = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 80px 20px;
+export const EmptyState = styled.p`
+  padding-top: 120px;
+  ${setTypography(typography.paragraph.p3)};
+  line-height: 140%;
+  color: ${colors.gray[700]};
   text-align: center;
-`;
 
-export const EmptyText = styled.p`
-  font-size: 16px;
-  color: ${colors.gray[500]};
+  ${media.tablet} {
+    padding-top: 60px;
+    ${setTypography(typography.paragraph.p5)};
+  }
 `;
