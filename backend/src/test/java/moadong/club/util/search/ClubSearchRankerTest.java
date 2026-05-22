@@ -33,6 +33,19 @@ class ClubSearchRankerTest {
     }
 
     @Test
+    void 매칭_타입이_같으면_detailScore가_낮은_후보를_먼저_정렬한다() {
+        ClubSearchResult lowerScoreClosed = club("야구부", "CLOSED");
+        ClubSearchResult higherScoreOpen = club("야구동아리", "OPEN");
+
+        List<ClubSearchResult> sorted = ranker.sort(List.of(
+                new ClubSearchCandidate(higherScoreOpen, ClubSearchMatchType.PREFIX, 3),
+                new ClubSearchCandidate(lowerScoreClosed, ClubSearchMatchType.PREFIX, 1)
+        ));
+
+        assertIterableEquals(List.of(lowerScoreClosed, higherScoreOpen), sorted);
+    }
+
+    @Test
     void 매칭_타입과_점수가_같으면_모집상태와_이름순으로_정렬한다() {
         ClubSearchResult closedA = club("A", "CLOSED");
         ClubSearchResult openB = club("B", "OPEN");
