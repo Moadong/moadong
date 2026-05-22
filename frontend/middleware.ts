@@ -83,7 +83,12 @@ export default async function middleware(request: Request) {
         image: club.cover || club.logo || DEFAULT_OG_IMAGE,
         url: `${SITE_URL}${safeDecode(pathname)}`,
       }),
-      { headers: { 'content-type': 'text/html; charset=utf-8' } },
+      {
+        headers: {
+          'content-type': 'text/html; charset=utf-8',
+          'cache-control': 'public, s-maxage=300, stale-while-revalidate=60',
+        },
+      },
     );
   } catch {
     // API 실패 시 SPA로 fallback
