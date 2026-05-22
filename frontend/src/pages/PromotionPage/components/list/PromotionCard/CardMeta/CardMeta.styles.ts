@@ -41,21 +41,21 @@ export const MetaRow = styled.div`
 export const Icon = styled.div`
   width: 16px;
   height: 16px;
-  padding: 1.5px 0px;
+  margin: 2px 0px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: ${colors.gray[500]};
+  flex-shrink: 0;
 
-  img {
+  svg {
     width: 100%;
     height: 100%;
-    object-fit: contain;
   }
 
-  ${media.mini_mobile} {
+  ${media.mobile} {
     width: 14px;
     height: 14px;
+    margin: 1.5px 0px;
   }
 `;
 

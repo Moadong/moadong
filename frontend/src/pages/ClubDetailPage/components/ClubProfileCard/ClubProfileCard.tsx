@@ -1,13 +1,14 @@
 import locationIcon from '@/assets/images/icons/location_icon.svg';
 import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
-import DefaultCover from '@/assets/images/logos/default_cover_image.png';
+import defaultCover from '@/assets/images/logos/default_cover_image.png';
 import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import { ClubLocation } from '@/constants/clubLocation';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useNavigator from '@/hooks/useNavigator';
+import { TAG_COLORS } from '@/styles/clubTags';
 import { SNSPlatform } from '@/types/club';
 import * as Styled from './ClubProfileCard.styles';
 
@@ -15,6 +16,7 @@ interface ClubProfileCardProps {
   name: string;
   logo?: string;
   cover?: string;
+  category?: string;
   recruitmentStatus: string;
   socialLinks: Record<SNSPlatform, string>;
   introDescription: string;
@@ -26,6 +28,7 @@ const ClubProfileCard = ({
   name,
   logo,
   cover,
+  category,
   recruitmentStatus,
   socialLinks,
   introDescription,
@@ -61,7 +64,13 @@ const ClubProfileCard = ({
   return (
     <Styled.Container>
       <Styled.CoverImageWrapper>
-        <Styled.CoverImage src={cover || DefaultCover} alt='클럽 커버' />
+        {cover ? (
+          <Styled.CoverImage src={cover} alt='클럽 커버' />
+        ) : category && TAG_COLORS[category] ? (
+          <Styled.CoverFallback $color={TAG_COLORS[category]} />
+        ) : (
+          <Styled.CoverImage src={defaultCover} alt='기본 커버' />
+        )}
       </Styled.CoverImageWrapper>
 
       <Styled.LogoWrapper>

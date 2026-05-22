@@ -1,6 +1,6 @@
 export const USER_EVENT = {
   CATEGORY_BUTTON_CLICKED: 'CategoryButton Clicked',
-  SEARCH_BOX_CLICKED: 'SearchBox Clicked',
+  SEARCH_EXCUTED: 'Search Executed',
 
   // 메인 페이지 팝업
   MAIN_POPUP_VIEWED: 'Main Popup Viewed',
@@ -17,6 +17,7 @@ export const USER_EVENT = {
   // 배너 클릭
   BANNER_CLICKED: 'Banner Clicked',
   APP_DOWNLOAD_BANNER_CLICKED: 'App Download Banner Clicked',
+  BANNER_NAVIGATION_CLICKED: 'Banner Navigation Clicked',
 
   // 네비게이션
   BACK_BUTTON_CLICKED: 'Back Button Clicked',
@@ -30,9 +31,14 @@ export const USER_EVENT = {
   TAB_CLICKED: 'Tab Clicked',
   PHOTO_NAVIGATION_CLICKED: 'Photo Navigation',
   CLUB_CARD_CLICKED: 'ClubCard Clicked',
+  CLUB_CARD_VIEWED: 'ClubCard Viewed',
+  SCROLL_DEPTH_REACHED: 'Scroll Depth Reached',
   CLUB_INTRO_TAB_CLICKED: 'Club Intro Tab Clicked',
   CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',
   CLUB_SCHEDULE_TAB_CLICKED: 'Club Schedule Tab Clicked',
+
+  // 동아리방 지도
+  CLUB_MAP_CLICKED: 'Club Map Clicked',
 
   // 동아리 지원
   CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked',
@@ -142,4 +148,10 @@ export const PAGE_VIEW = {
   RECRUITMENT_INFO_EDIT_PAGE: '동아리 모집 정보 수정 페이지',
   PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
+} as const;
+
+export const PAGE_NAME = {
+  MAIN: 'main',
+  WEBVIEW_MAIN: 'webview-main',
+  INTRODUCE: 'introduce',
 } as const;
