@@ -38,9 +38,10 @@ const ProfileCard = ({ member }: { member: ClubUnionMember }) => (
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
   const trackEvent = useMixpanelTrack();
-  const [isMobile, setIsMobile] = useState(
-    () => window.matchMedia(MOBILE_BREAKPOINT).matches,
-  );
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia(MOBILE_BREAKPOINT).matches;
+  });
 
   useEffect(() => {
     const mq = window.matchMedia(MOBILE_BREAKPOINT);
@@ -49,7 +50,7 @@ const ClubUnionPage = () => {
     return () => mq.removeEventListener('change', handler);
   }, []);
 
-  const columns = COLUMN_SIZES.reduce<{
+  const { cols, offset } = COLUMN_SIZES.reduce<{
     cols: (typeof CLUB_UNION_MEMBERS)[];
     offset: number;
   }>(
@@ -58,7 +59,12 @@ const ClubUnionPage = () => {
       offset: offset + size,
     }),
     { cols: [], offset: 0 },
-  ).cols;
+  );
+
+  const columns =
+    offset < CLUB_UNION_MEMBERS.length
+      ? [...cols, CLUB_UNION_MEMBERS.slice(offset)]
+      : cols;
 
   return (
     <>
