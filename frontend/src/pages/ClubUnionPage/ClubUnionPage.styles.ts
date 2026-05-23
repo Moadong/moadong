@@ -4,15 +4,16 @@ import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Title = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 600;
+  ${setTypography(typography.title.title1)}
+  line-height: 140%;
+  letter-spacing: -0.8px;
   margin-top: 100px;
   margin-bottom: 40px;
   text-align: center;
   color: ${colors.base.black};
 
   ${media.mobile} {
-    font-size: 2rem;
+    ${setTypography(typography.title.title2)}
   }
 `;
 
@@ -44,13 +45,15 @@ export const SnsLinkContainer = styled.div`
 export const SnsLink = styled.a`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 10px 20px;
   border-radius: 100px;
   background-color: ${colors.gray[100]};
   color: ${colors.base.black};
   text-decoration: none;
-  ${setTypography(typography.paragraph.p2)}
+  ${setTypography(typography.paragraph.p3)}
+  line-height: 140%;
+  letter-spacing: -0.32px;
   transition: background-color 0.2s ease;
 
   &:hover {
@@ -106,11 +109,13 @@ export const ProfileCard = styled.div<{ $bgColor: string }>`
   position: relative;
   height: 250px;
   border-radius: 20px;
-  padding: 40px 0 40px 25px;
+  padding: 40px 0 0 25px;
   background-color: ${({ $bgColor }) => $bgColor};
   overflow: hidden;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
   gap: 15px;
 
   &::before {
@@ -118,7 +123,7 @@ export const ProfileCard = styled.div<{ $bgColor: string }>`
     position: absolute;
     inset: 0;
     background: linear-gradient(
-      129deg,
+      136.44deg,
       rgba(255, 255, 255, 0.7) 50.77%,
       rgba(255, 255, 255, 0.3) 87.48%
     );
@@ -138,8 +143,9 @@ export const ProfileCard = styled.div<{ $bgColor: string }>`
   }
 
   ${media.mobile} {
-    height: 160px;
-    padding: 20px 0 20px 16px;
+    height: 201px;
+    padding: 40px 0 0 25px;
+    gap: 15px;
   }
 `;
 
@@ -170,11 +176,17 @@ export const CardName = styled.p`
   ${media.tablet} {
     font-size: 1rem;
   }
+
+  ${media.mobile} {
+    font-size: 1.25rem;
+  }
 `;
 
 export const CardRoleBadge = styled.span`
-  display: inline-flex;
+  display: flex;
+  justify-content: center;
   align-items: center;
+  gap: 10px;
   flex-shrink: 0;
   white-space: nowrap;
   padding: 2px 10px;
@@ -189,6 +201,10 @@ export const CardRoleBadge = styled.span`
 
   ${media.tablet} {
     font-size: 0.8rem;
+  }
+
+  ${media.mobile} {
+    font-size: 1rem;
   }
 `;
 
@@ -208,15 +224,21 @@ export const CardDescription = styled.p`
   ${media.tablet} {
     font-size: 0.75rem;
   }
+
+  ${media.mobile} {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: -0.28px;
+  }
 `;
 
 export const CardIllustrationWrap = styled.div`
   position: absolute;
   right: -60px;
-  bottom: 0;
+  top: 20px;
   width: 65%;
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: flex-end;
   overflow: hidden;
 

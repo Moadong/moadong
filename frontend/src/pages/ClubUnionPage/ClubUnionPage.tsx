@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
-import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
+import InstagramIcon from '@/assets/images/icons/insta.svg';
+import KakaoIcon from '@/assets/images/icons/kakao.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import {
@@ -100,7 +101,8 @@ const ClubUnionPage = () => {
               })
             }
           >
-            💬 kakaotalk
+            <img src={KakaoIcon} alt='카카오톡' />
+            kakaotalk
           </Styled.SnsLink>
         </Styled.SnsLinkContainer>
         <Styled.ProfileGrid>

@@ -1,4 +1,4 @@
-import { inactiveCategoryIcons } from '@/assets/images/icons/category_button';
+import iconAllNoBg from '@/assets/images/icons/category_button/club_union/category_all_no_bg.svg';
 import iconHobbyNoBg from '@/assets/images/icons/category_button/club_union/category_hobby_no_bg.svg';
 import iconPerformanceNoBg from '@/assets/images/icons/category_button/club_union/category_performance_no_bg.svg';
 import iconReligionNoBg from '@/assets/images/icons/category_button/club_union/category_religion_no_bg.svg';
@@ -18,11 +18,11 @@ export interface ClubUnionMember {
 }
 
 const MEMBER_AVATARS = {
-  PRESIDENT: inactiveCategoryIcons.representative,
-  VICE_PRESIDENT: inactiveCategoryIcons.representative,
-  PLANNING: inactiveCategoryIcons.representative,
-  SECRETARY: inactiveCategoryIcons.representative,
-  PROMOTION: inactiveCategoryIcons.representative,
+  PRESIDENT: iconAllNoBg,
+  VICE_PRESIDENT: iconAllNoBg,
+  PLANNING: iconAllNoBg,
+  SECRETARY: iconAllNoBg,
+  PROMOTION: iconAllNoBg,
   RELIGION: iconReligionNoBg,
   HOBBY: iconHobbyNoBg,
   STUDY: iconStudyNoBg,
