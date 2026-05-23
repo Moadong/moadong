@@ -25,8 +25,10 @@ mobile(≤500px)에서는 `CLUB_UNION_MEMBERS_MOBILE`을 단일 컬럼으로 fla
 각 멤버 카드(`ProfileCard`)는 다음 요소로 구성:
 
 - `CardContent`: 이름 + 직책 배지(가로 정렬, gap 8px) + 설명 문구
-- `CardIllustrationWrap`: 카드 우하단에 절대 위치로 분과 아이콘 배치
-- `::before`: `linear-gradient(129deg, rgba(255,255,255,0.70) 50.77%, rgba(255,255,255,0.30) 87.48%)` 반투명 오버레이
+- `CardIllustrationWrap`: 카드 우상단 기준(`top: 20px`) 절대 위치로 분과 아이콘 배치
+- `::before`: `linear-gradient(136.44deg, rgba(255,255,255,0.70) 50.77%, rgba(255,255,255,0.30) 87.48%)` 반투명 오버레이
+
+피그마 Mask group의 `9733:3612`(흰색 Frame)는 `isMask: true`인 마스크 레이어로 렌더링되지 않음 — 추가 그라디언트 레이어 아님.
 
 ## 배경색
 

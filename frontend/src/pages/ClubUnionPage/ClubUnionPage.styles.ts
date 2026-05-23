@@ -243,7 +243,16 @@ export const CardIllustrationWrap = styled.div`
   overflow: hidden;
 
   ${media.laptop} {
+    top: 100px;
     right: -20px;
+  }
+
+  ${media.tablet} {
+    top: 20px;
+  }
+
+  ${media.mobile} {
+    right: -60px;
   }
 `;
 
@@ -263,7 +272,7 @@ export const CardIllustration = styled.img`
   }
 
   ${media.mobile} {
-    width: 130px;
-    height: 130px;
+    width: 210px;
+    height: 210px;
   }
 `;
