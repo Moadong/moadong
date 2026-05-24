@@ -1,31 +1,71 @@
-import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
+import { useEffect, useState } from 'react';
+import InstagramIcon from '@/assets/images/icons/insta.svg';
+import KakaoIcon from '@/assets/images/icons/kakao.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
-import { CLUB_UNION_MEMBERS, CLUB_UNION_SNS } from '@/constants/clubUnionInfo';
+import {
+  CLUB_UNION_MEMBERS,
+  CLUB_UNION_MEMBERS_MOBILE,
+  CLUB_UNION_SNS,
+  type ClubUnionMember,
+} from '@/constants/clubUnionInfo';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
-import { colors } from '@/styles/theme/colors';
 import * as Styled from './ClubUnionPage.styles';
 
-const MEMBER_COLORS = {
-  PRESIDENT: colors.accent[1][500],
-  VICE_PRESIDENT: colors.accent[1][500],
-  PLANNING: colors.accent[1][500],
-  SECRETARY: colors.accent[1][500],
-  PROMOTION: colors.accent[1][500],
-  VOLUNTEER: colors.secondary[1].back,
-  RELIGION: colors.secondary[2].back,
-  HOBBY: colors.secondary[3].back,
-  STUDY: colors.secondary[4].back,
-  SPORT: colors.secondary[5].back,
-  PERFORMANCE: colors.secondary[6].back,
-};
+const COLUMN_SIZES = [3, 3, 4, 3];
+const MOBILE_BREAKPOINT = '(max-width: 500px)';
+
+const ProfileCard = ({ member }: { member: ClubUnionMember }) => (
+  <Styled.ProfileCard $bgColor={member.bgColor}>
+    <Styled.CardContent>
+      <Styled.CardTitleRow>
+        <Styled.CardName>{member.name}</Styled.CardName>
+        <Styled.CardRoleBadge>{member.role}</Styled.CardRoleBadge>
+      </Styled.CardTitleRow>
+      <Styled.CardDescription>{member.description}</Styled.CardDescription>
+    </Styled.CardContent>
+    <Styled.CardIllustrationWrap>
+      <Styled.CardIllustration
+        src={member.imageSrc}
+        alt={`${member.name} 아이콘`}
+      />
+    </Styled.CardIllustrationWrap>
+  </Styled.ProfileCard>
+);
 
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
   const trackEvent = useMixpanelTrack();
+  const [isMobile, setIsMobile] = useState(() => {
+    if (typeof window === 'undefined') return false;
+    return window.matchMedia(MOBILE_BREAKPOINT).matches;
+  });
+
+  useEffect(() => {
+    const mq = window.matchMedia(MOBILE_BREAKPOINT);
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mq.addEventListener('change', handler);
+    return () => mq.removeEventListener('change', handler);
+  }, []);
+
+  const { cols, offset } = COLUMN_SIZES.reduce<{
+    cols: (typeof CLUB_UNION_MEMBERS)[];
+    offset: number;
+  }>(
+    ({ cols, offset }, size) => ({
+      cols: [...cols, CLUB_UNION_MEMBERS.slice(offset, offset + size)],
+      offset: offset + size,
+    }),
+    { cols: [], offset: 0 },
+  );
+
+  const columns =
+    offset < CLUB_UNION_MEMBERS.length
+      ? [...cols, CLUB_UNION_MEMBERS.slice(offset)]
+      : cols;
 
   return (
     <>
@@ -49,7 +89,7 @@ const ClubUnionPage = () => {
             }
           >
             <img src={InstagramIcon} alt='인스타그램' />
-            Instagram
+            instagram
           </Styled.SnsLink>
           <Styled.SnsLink
             href={CLUB_UNION_SNS.kakaotalk}
@@ -61,31 +101,26 @@ const ClubUnionPage = () => {
               })
             }
           >
-            💬 카카오톡
+            <img src={KakaoIcon} alt='카카오톡' />
+            kakaotalk
           </Styled.SnsLink>
         </Styled.SnsLinkContainer>
         <Styled.ProfileGrid>
-          {CLUB_UNION_MEMBERS.map((member) => (
-            <Styled.ProfileCardContainer
-              key={member.id}
-              $bgColor={MEMBER_COLORS[member.type]}
-            >
-              <Styled.ProfileImage
-                src={member.imageSrc}
-                alt={`${member.name} 프로필`}
-              />
-
-              {/* 평소에 보이는 이름 배지 */}
-              <Styled.NameBadge>{member.name}</Styled.NameBadge>
-
-              {/* 호버 시 나타나는 정보 */}
-              <Styled.InfoOverlay>
-                <Styled.Role>{member.role}</Styled.Role>
-                <Styled.Name>{member.name}</Styled.Name>
-                <Styled.Description>{member.description}</Styled.Description>
-              </Styled.InfoOverlay>
-            </Styled.ProfileCardContainer>
-          ))}
+          {isMobile ? (
+            <Styled.ProfileColumn $staggered={false}>
+              {CLUB_UNION_MEMBERS_MOBILE.map((member) => (
+                <ProfileCard key={member.id} member={member} />
+              ))}
+            </Styled.ProfileColumn>
+          ) : (
+            columns.map((columnMembers, colIdx) => (
+              <Styled.ProfileColumn key={colIdx} $staggered={colIdx % 2 === 1}>
+                {columnMembers.map((member) => (
+                  <ProfileCard key={member.id} member={member} />
+                ))}
+              </Styled.ProfileColumn>
+            ))
+          )}
         </Styled.ProfileGrid>
       </PageContainer>
       <Footer />
