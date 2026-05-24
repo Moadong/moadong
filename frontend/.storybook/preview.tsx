@@ -1,6 +1,6 @@
-import { useEffect } from 'react';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import React, { useEffect } from 'react';
 import type { Preview } from '@storybook/react-vite';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import mixpanel from 'mixpanel-browser';
 import { initialize, mswLoader } from 'msw-storybook-addon';
 import { ThemeProvider } from 'styled-components';
