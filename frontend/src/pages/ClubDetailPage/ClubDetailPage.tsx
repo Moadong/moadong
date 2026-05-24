@@ -49,9 +49,9 @@ const ClubDetailPage = () => {
   const { isMobile, isTablet } = useDevice();
   const showTopBar = isMobile || isTablet;
 
-  const { data: clubDetail, error } = useGetClubDetail(
-    (clubName ?? clubId) || '',
-  );
+  const clubParam = clubName ? `@${clubName}` : clubId || '';
+
+  const { data: clubDetail, error } = useGetClubDetail(clubParam);
 
   const hasCalendarConnection = clubDetail?.hasCalendarConnection ?? false;
 
@@ -62,10 +62,9 @@ const ClubDetailPage = () => {
     return tabParam;
   }, [tabParam]);
 
-  const { data: calendarEvents = [] } = useGetClubCalendarEvents(
-    (clubName ?? clubId) || '',
-    { enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE },
-  );
+  const { data: calendarEvents = [] } = useGetClubCalendarEvents(clubParam, {
+    enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE,
+  });
 
   const tabs = useMemo(
     () => [

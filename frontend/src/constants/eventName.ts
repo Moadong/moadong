@@ -32,6 +32,13 @@ export const USER_EVENT = {
   PHOTO_NAVIGATION_CLICKED: 'Photo Navigation',
   CLUB_CARD_CLICKED: 'ClubCard Clicked',
   CLUB_CARD_VIEWED: 'ClubCard Viewed',
+
+  // 동아리 상세 Prefetch (캐시 히트율/낭비율 측정용)
+  CLUB_PREFETCH_TRIGGERED: 'Club Prefetch Triggered',
+  CLUB_PREFETCH_HIT: 'Club Prefetch Hit',
+  CLUB_PREFETCH_MISS: 'Club Prefetch Miss',
+  CLUB_PREFETCH_WASTED: 'Club Prefetch Wasted',
+
   SCROLL_DEPTH_REACHED: 'Scroll Depth Reached',
   CLUB_INTRO_TAB_CLICKED: 'Club Intro Tab Clicked',
   CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',

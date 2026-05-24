@@ -5,6 +5,7 @@ import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import usePrefetchClubDetail from '@/hooks/Queries/usePrefetchClubDetail';
 import ClubLogo from '@/pages/MainPage/components/ClubLogo/ClubLogo';
 import { Club } from '@/types/club';
 import getDeviceType from '@/utils/getDeviceType';
@@ -22,6 +23,14 @@ const COOLDOWN_MS = 2_000; // IntersectionObserver jitter 방지
 const IMPRESSION_THRESHOLD = 0.5; // IAB 뷰어빌리티 기준 (50% in-view)
 const MIN_DWELL_MS = 300; // 안구 고정 최소 시간 기반, fly-by 스크롤 제외
 
+const PREFETCH_TRIGGER = {
+  MOUSE: 'mouse',
+  TOUCH: 'touch',
+  FOCUS: 'focus',
+} as const;
+type PrefetchTriggerType =
+  (typeof PREFETCH_TRIGGER)[keyof typeof PREFETCH_TRIGGER];
+
 const ClubCard = ({
   club,
   index,
@@ -31,8 +40,27 @@ const ClubCard = ({
 }: ClubCardProps) => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
+  const { prefetch, hasCachedData } = usePrefetchClubDetail();
   const [isClicked, setIsClicked] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
+  const prefetchTriggeredAtRef = useRef<number | null>(null);
+  const wasClickedRef = useRef(false);
+
+  const clubParam = `@${club.name}`;
+
+  const handlePrefetch = (triggerType: PrefetchTriggerType) => {
+    if (prefetchTriggeredAtRef.current !== null) return;
+    const fired = prefetch(clubParam);
+    if (!fired) return;
+    prefetchTriggeredAtRef.current = Date.now();
+    trackEvent(USER_EVENT.CLUB_PREFETCH_TRIGGERED, {
+      club_id: club.id,
+      club_name: club.name,
+      trigger_type: triggerType,
+      page,
+      device_type: getDeviceType(),
+    });
+  };
 
   const SS_LAST_KEY = `clubcard_last_${page ?? 'default'}_${club.id}`;
   const SS_COUNT_KEY = `clubcard_count_${page ?? 'default'}_${club.id}`;
@@ -97,10 +125,20 @@ const ClubCard = ({
       observer.disconnect();
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       fireImpressionEvent();
+
+      if (prefetchTriggeredAtRef.current !== null && !wasClickedRef.current) {
+        trackEvent(USER_EVENT.CLUB_PREFETCH_WASTED, {
+          club_id: club.id,
+          club_name: club.name,
+          page,
+          device_type: getDeviceType(),
+        });
+      }
     };
   }, [club.id, club.name, club.recruitmentStatus, page]);
 
   const handleClick = () => {
+    wasClickedRef.current = true;
     setIsClicked(true);
     trackEvent(USER_EVENT.CLUB_CARD_CLICKED, {
       club_id: club.id,
@@ -115,6 +153,21 @@ const ClubCard = ({
       })(),
       device_type: getDeviceType(),
     });
+
+    if (prefetchTriggeredAtRef.current !== null) {
+      const hoverToClickMs = Date.now() - prefetchTriggeredAtRef.current;
+      const cacheHit = hasCachedData(clubParam);
+      trackEvent(
+        cacheHit ? USER_EVENT.CLUB_PREFETCH_HIT : USER_EVENT.CLUB_PREFETCH_MISS,
+        {
+          club_id: club.id,
+          club_name: club.name,
+          hover_to_click_ms: hoverToClickMs,
+          page,
+          device_type: getDeviceType(),
+        },
+      );
+    }
 
     setTimeout(() => {
       setIsClicked(false);
@@ -132,6 +185,9 @@ const ClubCard = ({
       $state={club.recruitmentStatus}
       $isClicked={isClicked}
       onClick={handleClick}
+      onMouseEnter={() => handlePrefetch(PREFETCH_TRIGGER.MOUSE)}
+      onTouchStart={() => handlePrefetch(PREFETCH_TRIGGER.TOUCH)}
+      onFocus={() => handlePrefetch(PREFETCH_TRIGGER.FOCUS)}
     >
       <Styled.CardHeader>
         <Styled.ClubProfile>
