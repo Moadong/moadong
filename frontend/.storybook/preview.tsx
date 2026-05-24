@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { Preview } from '@storybook/react-vite';
 import mixpanel from 'mixpanel-browser';
 import { initialize, mswLoader } from 'msw-storybook-addon';
@@ -9,6 +10,12 @@ import { theme } from '../src/styles/theme';
 
 initialize({
   onUnhandledRequest: 'bypass',
+});
+
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { retry: false },
+  },
 });
 
 const preview: Preview = {
@@ -30,10 +37,12 @@ const preview: Preview = {
       }, []);
 
       return (
-        <ThemeProvider theme={theme}>
-          <GlobalStyles />
-          <Story />
-        </ThemeProvider>
+        <QueryClientProvider client={queryClient}>
+          <ThemeProvider theme={theme}>
+            <GlobalStyles />
+            <Story />
+          </ThemeProvider>
+        </QueryClientProvider>
       );
     },
   ],
