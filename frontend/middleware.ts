@@ -68,10 +68,7 @@ export default async function middleware(request: Request) {
 
   const clubId = safeDecode(match[1]);
   // /club/:id 는 레거시 경로 — canonical은 /clubDetail/:id 로 통일
-  const canonicalPath = safeDecode(pathname).replace(
-    /^\/club\//,
-    '/clubDetail/',
-  );
+  const canonicalPath = pathname.replace(/^\/club\//, '/clubDetail/');
 
   try {
     const res = await fetch(`${API_BASE}/api/club/${clubId}`, {
