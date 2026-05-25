@@ -25,13 +25,11 @@ function buildOgHtml(og: {
   title: string;
   description: string;
   image: string;
-  url: string;
   canonical: string;
 }): string {
   const t = escapeHtml(og.title);
   const d = escapeHtml(og.description);
   const i = escapeHtml(og.image);
-  const u = escapeHtml(og.url);
   const c = escapeHtml(og.canonical);
   return `<!DOCTYPE html>
 <html lang="ko">
@@ -93,7 +91,6 @@ export default async function middleware(request: Request) {
           club.description?.introDescription ||
           '부경대학교 동아리 정보를 확인해보세요.',
         image: club.cover || club.logo || DEFAULT_OG_IMAGE,
-        url: `${SITE_URL}${safeDecode(pathname)}`,
         canonical: `${SITE_URL}${canonicalPath}`,
       }),
       {
