@@ -11,6 +11,8 @@ import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
 import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
 import ClubUnionPage from '@/pages/ClubUnionPage/ClubUnionPage';
 import ErrorTestPage from '@/pages/ErrorTestPage/ErrorTestPage';
+import BuskingPage from '@/pages/FestivalPage/BuskingPage/BuskingPage';
+import IntroductionPage from '@/pages/FestivalPage/IntroductionPage/IntroductionPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import MainPage from '@/pages/MainPage/MainPage';
@@ -86,6 +88,22 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <ClubUnionPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/festival-introduction',
+      element: (
+        <ContentErrorBoundary>
+          <IntroductionPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/festival-busking',
+      element: (
+        <ContentErrorBoundary>
+          <BuskingPage />
         </ContentErrorBoundary>
       ),
     },
