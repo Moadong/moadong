@@ -25,29 +25,34 @@ function buildOgHtml(og: {
   title: string;
   description: string;
   image: string;
-  url: string;
+  canonical: string;
 }): string {
   const t = escapeHtml(og.title);
   const d = escapeHtml(og.description);
   const i = escapeHtml(og.image);
-  const u = escapeHtml(og.url);
+  const c = escapeHtml(og.canonical);
   return `<!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="utf-8" />
   <title>${t}</title>
+  <meta name="description" content="${d}" />
+  <link rel="canonical" href="${c}" />
   <meta property="og:type" content="website" />
   <meta property="og:title" content="${t}" />
   <meta property="og:description" content="${d}" />
   <meta property="og:image" content="${i}" />
-  <meta property="og:url" content="${u}" />
+  <meta property="og:url" content="${c}" />
   <meta property="og:site_name" content="모아동" />
   <meta name="twitter:card" content="summary_large_image" />
   <meta name="twitter:title" content="${t}" />
   <meta name="twitter:description" content="${d}" />
   <meta name="twitter:image" content="${i}" />
 </head>
-<body></body>
+<body>
+  <h1>${t}</h1>
+  <p>${d}</p>
+</body>
 </html>`;
 }
 
@@ -62,6 +67,8 @@ export default async function middleware(request: Request) {
   if (!match) return;
 
   const clubId = safeDecode(match[1]);
+  // /club/:id 는 레거시 경로 — canonical은 /clubDetail/:id 로 통일
+  const canonicalPath = pathname.replace(/^\/club\//, '/clubDetail/');
 
   try {
     const res = await fetch(`${API_BASE}/api/club/${clubId}`, {
@@ -81,7 +88,7 @@ export default async function middleware(request: Request) {
           club.description?.introDescription ||
           '부경대학교 동아리 정보를 확인해보세요.',
         image: club.cover || club.logo || DEFAULT_OG_IMAGE,
-        url: `${SITE_URL}${safeDecode(pathname)}`,
+        canonical: `${SITE_URL}${canonicalPath}`,
       }),
       {
         headers: {
