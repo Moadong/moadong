@@ -57,7 +57,7 @@ export const SnsLink = styled.a`
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: #e8e8e8;
+    background-color: ${colors.gray[300]};
   }
 
   img {

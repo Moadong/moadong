@@ -4,7 +4,7 @@
 
 ## 레이아웃
 
-4열 staggered flex grid 구조. 홀수 컬럼(1, 3번째)은 `padding-top: 125px`로 엇갈린 배치.
+4열 staggered flex grid 구조. 짝수 컬럼(2, 4번째)은 `padding-top: 125px`로 엇갈린 배치.
 tablet 이하에서는 2열 CSS grid, mobile에서는 1열로 전환.
 
 컬럼별 멤버 수는 `COLUMN_SIZES = [3, 3, 4, 3]`로 명시적 지정.
@@ -46,7 +46,7 @@ mobile(≤500px)에서는 `CLUB_UNION_MEMBERS_MOBILE`을 단일 컬럼으로 fla
 
 ## 아이콘
 
-임원진은 `inactiveCategoryIcons.representative` 공용 아이콘 사용.
+임원진은 `iconAllNoBg` (club_union 전용 SVG) 아이콘 사용.
 분과 아이콘은 배경 `<rect>` 제거한 별도 SVG 사용 → 기존 카테고리 버튼 아이콘 영향 없음.
 
 ## 관련 코드
