@@ -166,6 +166,13 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
 
 const MOBILE_ORDER = [1, 4, 7, 8, 11, 2, 5, 9, 12, 10, 13, 3, 6];
 
-export const CLUB_UNION_MEMBERS_MOBILE: ClubUnionMember[] = MOBILE_ORDER.map(
-  (id) => CLUB_UNION_MEMBERS.find((m) => m.id === id),
-).filter((m): m is ClubUnionMember => !!m);
+const getMemberById = (id: number): ClubUnionMember => {
+  const member = CLUB_UNION_MEMBERS.find((m) => m.id === id);
+  if (!member) {
+    throw new Error(`Invalid MOBILE_ORDER id: ${id}`);
+  }
+  return member;
+};
+
+export const CLUB_UNION_MEMBERS_MOBILE: ClubUnionMember[] =
+  MOBILE_ORDER.map(getMemberById);
