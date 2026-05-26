@@ -15,7 +15,8 @@ export const SearchBarArea = styled.div`
   gap: 10px;
   padding: 12px 16px 8px;
 
-  form {
+  & > div:last-child {
+    flex: 1;
     max-width: none;
   }
 `;
