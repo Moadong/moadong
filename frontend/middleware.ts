@@ -70,6 +70,12 @@ export default async function middleware(request: Request) {
   // /club/:id 는 레거시 경로 — canonical은 /clubDetail/:id 로 통일
   const canonicalPath = pathname.replace(/^\/club\//, '/clubDetail/');
 
+  if (pathname.startsWith('/club/')) {
+    const redirectUrl = new URL(request.url);
+    redirectUrl.pathname = canonicalPath;
+    return Response.redirect(redirectUrl.toString(), 301);
+  }
+
   try {
     const res = await fetch(`${API_BASE}/api/club/${clubId}`, {
       signal: AbortSignal.timeout(3000), // 5초 Edge 제한 내 여유있게 3초

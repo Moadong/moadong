@@ -167,5 +167,5 @@ export const CLUB_UNION_MEMBERS: ClubUnionMember[] = [
 const MOBILE_ORDER = [1, 4, 7, 8, 11, 2, 5, 9, 12, 10, 13, 3, 6];
 
 export const CLUB_UNION_MEMBERS_MOBILE: ClubUnionMember[] = MOBILE_ORDER.map(
-  (id) => CLUB_UNION_MEMBERS.find((m) => m.id === id)!,
-);
+  (id) => CLUB_UNION_MEMBERS.find((m) => m.id === id),
+).filter((m): m is ClubUnionMember => !!m);

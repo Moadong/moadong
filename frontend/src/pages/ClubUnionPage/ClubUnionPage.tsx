@@ -18,6 +18,22 @@ import * as Styled from './ClubUnionPage.styles';
 const COLUMN_SIZES = [3, 3, 4, 3];
 const MOBILE_BREAKPOINT = '(max-width: 500px)';
 
+const { cols, offset } = COLUMN_SIZES.reduce<{
+  cols: (typeof CLUB_UNION_MEMBERS)[];
+  offset: number;
+}>(
+  ({ cols, offset }, size) => ({
+    cols: [...cols, CLUB_UNION_MEMBERS.slice(offset, offset + size)],
+    offset: offset + size,
+  }),
+  { cols: [], offset: 0 },
+);
+
+const COLUMNS =
+  offset < CLUB_UNION_MEMBERS.length
+    ? [...cols, CLUB_UNION_MEMBERS.slice(offset)]
+    : cols;
+
 const ProfileCard = ({ member }: { member: ClubUnionMember }) => (
   <Styled.ProfileCard $bgColor={member.bgColor}>
     <Styled.CardContent>
@@ -50,22 +66,6 @@ const ClubUnionPage = () => {
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
   }, []);
-
-  const { cols, offset } = COLUMN_SIZES.reduce<{
-    cols: (typeof CLUB_UNION_MEMBERS)[];
-    offset: number;
-  }>(
-    ({ cols, offset }, size) => ({
-      cols: [...cols, CLUB_UNION_MEMBERS.slice(offset, offset + size)],
-      offset: offset + size,
-    }),
-    { cols: [], offset: 0 },
-  );
-
-  const columns =
-    offset < CLUB_UNION_MEMBERS.length
-      ? [...cols, CLUB_UNION_MEMBERS.slice(offset)]
-      : cols;
 
   return (
     <>
@@ -113,7 +113,7 @@ const ClubUnionPage = () => {
               ))}
             </Styled.ProfileColumn>
           ) : (
-            columns.map((columnMembers, colIdx) => (
+            COLUMNS.map((columnMembers, colIdx) => (
               <Styled.ProfileColumn key={colIdx} $staggered={colIdx % 2 === 1}>
                 {columnMembers.map((member) => (
                   <ProfileCard key={member.id} member={member} />
