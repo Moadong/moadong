@@ -1,5 +1,5 @@
-import type { Club } from '@/types/club';
 import type { ClubId } from '@/types/branded';
+import type { Club } from '@/types/club';
 
 // 동아리 목업 데이터
 export const floatingClubs: Club[] = [
