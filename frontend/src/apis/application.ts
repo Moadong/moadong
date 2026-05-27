@@ -2,9 +2,11 @@ import API_BASE_URL from '@/constants/api';
 import { UpdateApplicantParams } from '@/types/applicants';
 import {
   AnswerItem,
+  ApplicationForm,
   ApplicationFormData,
   SemesterGroup,
 } from '@/types/application';
+import { asApplicationFormId } from '@/types/branded';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
 
@@ -85,17 +87,16 @@ export const getApplication = async (
   return handleResponse<ApplicationFormData>(response);
 };
 
-export const getApplicationOptions = async (clubId: string) => {
+export const getApplicationOptions = async (
+  clubId: string,
+): Promise<ApplicationForm[]> => {
   const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
   const data = await handleResponse<{
     forms: Array<{ id: string; title: string }>;
   }>(response);
 
-  let forms: Array<{ id: string; title: string }> = [];
-  if (data && Array.isArray(data.forms)) {
-    forms = data.forms;
-  }
-  return forms;
+  if (!data || !Array.isArray(data.forms)) return [];
+  return data.forms.map((f) => ({ ...f, id: asApplicationFormId(f.id) }));
 };
 
 export const updateApplicantDetail = async (
