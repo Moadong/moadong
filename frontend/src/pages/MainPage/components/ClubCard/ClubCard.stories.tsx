@@ -1,11 +1,11 @@
 import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { ClubId } from '@/types/branded';
+import { asClubId } from '@/types/branded';
 import { Club } from '@/types/club';
 import ClubCard from './ClubCard';
 
 const sampleClub: Club = {
-  id: 'club-1' as ClubId,
+  id: asClubId('club-1'),
   name: '모아동 밴드',
   logo: '',
   tags: ['락밴드', '공연'],
@@ -55,7 +55,7 @@ export const Closed: Story = {
   args: {
     club: {
       ...sampleClub,
-      id: 'club-2' as ClubId,
+      id: asClubId('club-2'),
       recruitmentStatus: 'CLOSED',
       name: '모아동 사진회',
       introduction: '정기 출사와 전시를 준비합니다.',

@@ -1,5 +1,5 @@
 import API_BASE_URL from '@/constants/api';
-import type { DatabaseId } from '@/types/branded';
+import { asDatabaseId } from '@/types/branded';
 import type {
   GoogleCalendarEvent,
   GoogleCalendarItem,
@@ -168,9 +168,8 @@ export const fetchNotionPages = async () => {
   const items = (data?.items ?? data?.results ?? []) as NotionSearchItem[];
   const totalResults =
     data?.total_results ?? data?.totalResults ?? items.length;
-  const databaseId = (data?.database_id ?? data?.databaseId) as
-    | DatabaseId
-    | undefined;
+  const rawId = data?.database_id ?? data?.databaseId;
+  const databaseId = rawId ? asDatabaseId(rawId) : undefined;
   return {
     items,
     totalResults,
@@ -210,7 +209,7 @@ export const fetchNotionDatabasePages = async ({
     return {
       items: data,
       totalResults: data.length,
-      databaseId: databaseId as DatabaseId,
+      databaseId: asDatabaseId(databaseId),
     } satisfies NotionPagesResponse;
   }
 
@@ -222,7 +221,7 @@ export const fetchNotionDatabasePages = async ({
   return {
     items,
     totalResults,
-    databaseId: resolvedDatabaseId as DatabaseId,
+    databaseId: asDatabaseId(resolvedDatabaseId),
   } satisfies NotionPagesResponse;
 };
 
