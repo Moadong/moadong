@@ -1,4 +1,4 @@
-import { DatabaseId } from './branded';
+import { DatabaseId } from '@/types/branded';
 
 export interface NotionSearchItem {
   id: string;

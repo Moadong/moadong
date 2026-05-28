@@ -1,5 +1,5 @@
 import { SNS_CONFIG } from '@/constants/snsConfig';
-import { ClubId } from './branded';
+import { ClubId } from '@/types/branded';
 
 export type RecruitmentStatus = 'OPEN' | 'CLOSED' | 'UPCOMING' | 'ALWAYS';
 

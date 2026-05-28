@@ -34,7 +34,7 @@ export type Branded<T, B> = T & Brand<B>;
 
 ID 타입이 5개 이하로 적으므로 `branded.ts`에 모두 정의한다.
 
-```
+```text
 src/types/branded.ts       ← Branded<T, B> 유틸리티 + 모든 ID 타입
 ```
 
@@ -100,9 +100,9 @@ branded types 도입은 3단계 브랜치로 진행한다.
 | ---- | ------------------------------------ | --------------------------------------------------------- | ---- |
 | 1    | `feature/branded-types/core-types`   | `Branded<T, B>` 유틸리티 및 ID 타입 정의                  | 완료 |
 | 2    | `feature/branded-types/domain-types` | 도메인 인터페이스 `id` 필드에 branded type 적용           | 완료 |
-| 3    | `feature/branded-types/api-layer`    | API 응답 파싱 시점에 캐스팅 유틸 추가 및 임시 캐스팅 정리 | 예정 |
+| 3    | `feature/branded-types/api-layer`    | API 응답 파싱 시점에 캐스팅 유틸 추가 및 임시 캐스팅 정리 | 완료 |
 
-### api-layer 브랜치 작업 계획
+### api-layer 브랜치 작업 내용
 
 **캐스팅 유틸리티 추가**
 

@@ -1,5 +1,5 @@
 import { QUESTION_LABEL_MAP } from '@/constants/applicationForm';
-import { ApplicationFormId } from './branded';
+import { ApplicationFormId } from '@/types/branded';
 
 export type QuestionType = keyof typeof QUESTION_LABEL_MAP;
 

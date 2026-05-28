@@ -1,5 +1,5 @@
 import { AnswerItem } from './application';
-import { ApplicantId, ApplicationFormId, ClubId } from './branded';
+import { ApplicantId, ApplicationFormId, ClubId } from '@/types/branded';
 
 export enum ApplicationStatus {
   SUBMITTED = 'SUBMITTED', // 제출 완료

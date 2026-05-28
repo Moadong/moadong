@@ -1,4 +1,4 @@
-import { CalendarId } from './branded';
+import { CalendarId } from '@/types/branded';
 
 export interface GoogleCalendarItem {
   id: CalendarId;
