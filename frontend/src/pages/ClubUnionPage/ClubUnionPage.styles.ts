@@ -1,43 +1,43 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Title = styled.h1`
-  font-size: 2.5rem;
-  font-weight: 800;
+  ${setTypography(typography.title.title1)}
+  line-height: 140%;
+  letter-spacing: -0.8px;
   margin-top: 100px;
   margin-bottom: 40px;
   text-align: center;
-  color: #222;
+  color: ${colors.base.black};
 
   ${media.mobile} {
-    font-size: 2rem;
-    margin-top: 80px;
-    margin-bottom: 30px;
+    ${setTypography(typography.title.title2)}
   }
 `;
 
 export const IntroductionText = styled.p`
-  font-size: 1.1rem;
-  line-height: 1.7;
+  ${setTypography(typography.paragraph.p1)}
+  line-height: 1.4;
+  letter-spacing: -0.4px;
   text-align: center;
-  color: #555;
-  max-width: 600px;
-  margin: 0 auto 20px;
+  color: ${colors.gray[800]};
+  margin: 0 auto 28px;
 
   ${media.mobile} {
-    font-size: 1rem;
-    margin-bottom: 16px;
+    margin-bottom: 20px;
   }
 `;
 
 export const SnsLinkContainer = styled.div`
   display: flex;
   justify-content: center;
-  gap: 12px;
+  gap: 25px;
   margin-bottom: 60px;
 
   ${media.mobile} {
+    gap: 12px;
     margin-bottom: 40px;
   }
 `;
@@ -45,165 +45,234 @@ export const SnsLinkContainer = styled.div`
 export const SnsLink = styled.a`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
   padding: 10px 20px;
-  border-radius: 24px;
-  background-color: #f5f5f5;
-  color: #333;
+  border-radius: 100px;
+  background-color: ${colors.gray[100]};
+  color: ${colors.base.black};
   text-decoration: none;
-  font-size: 0.95rem;
-  font-weight: 600;
+  ${setTypography(typography.paragraph.p3)}
+  line-height: 140%;
+  letter-spacing: -0.32px;
   transition: background-color 0.2s ease;
 
   &:hover {
-    background-color: #eaeaea;
+    background-color: ${colors.gray[300]};
   }
 
   img {
-    width: 20px;
-    height: 20px;
+    width: 24px;
+    height: 24px;
   }
 `;
 
 export const ProfileGrid = styled.div`
   display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 40px 30px;
-  max-width: 1050px;
-  margin: 0 auto;
+  gap: 22px;
   padding-bottom: 80px;
-
-  ${media.tablet} {
-    gap: 30px 20px;
-    padding-bottom: 60px;
-  }
-
-  ${media.mobile} {
-    gap: 20px 15px;
-    padding-bottom: 40px;
-  }
-`;
-
-export const InfoOverlay = styled.div`
-  position: absolute;
-  inset: 0;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-color: rgba(0, 0, 0, 0.65);
-  color: white;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  padding: 15px;
-  opacity: 0;
-  transition: opacity 0.3s ease;
-  border-radius: 50%;
-  box-sizing: border-box;
-`;
-
-export const ProfileImage = styled.img`
-  width: 80%;
-  height: 80%;
-  object-fit: contain;
-  position: absolute;
-  top: 42%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  transition:
-    transform 0.3s ease,
-    filter 0.3s ease;
-`;
-
-export const NameBadge = styled.div`
-  position: absolute;
-  bottom: 10%;
-  left: 50%;
-  transform: translateX(-50%);
-  background-color: ${colors.base.white};
-  color: ${colors.base.black};
-  padding: 3px 12px;
-  border-radius: 30px;
-  font-weight: 600;
-  font-size: 1rem;
-  transition: opacity 0.3s ease;
-  white-space: nowrap;
-
-  ${media.mobile} {
-    font-size: 0.8rem;
-  }
-`;
-
-export const ProfileCardContainer = styled.div<{ $bgColor: string }>`
-  position: relative;
-  width: 180px;
-  height: 180px;
-  border-radius: 50%;
-  overflow: hidden;
-  cursor: pointer;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-  background-color: ${({ $bgColor }) => $bgColor};
+  align-items: flex-start;
 
   ${media.laptop} {
-    width: 160px;
-    height: 160px;
+    padding-bottom: 60px;
+    gap: 16px;
   }
 
   ${media.tablet} {
-    width: 140px;
-    height: 140px;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px;
+    padding-bottom: 40px;
   }
 
   ${media.mobile} {
+    grid-template-columns: 1fr;
+    padding-bottom: 32px;
+  }
+`;
+
+export const ProfileColumn = styled.div<{ $staggered: boolean }>`
+  display: flex;
+  flex: 1 0 0;
+  flex-direction: column;
+  gap: 22px;
+  padding-top: ${({ $staggered }) => ($staggered ? '125px' : '0')};
+
+  ${media.tablet} {
+    padding-top: 0;
+    flex: none;
+    width: 100%;
+    gap: 16px;
+  }
+`;
+
+export const ProfileCard = styled.div<{ $bgColor: string }>`
+  position: relative;
+  height: 250px;
+  border-radius: 20px;
+  padding: 40px 0 0 25px;
+  background-color: ${({ $bgColor }) => $bgColor};
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  align-self: stretch;
+  gap: 15px;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(
+      136.44deg,
+      rgba(255, 255, 255, 0.7) 50.77%,
+      rgba(255, 255, 255, 0.3) 87.48%
+    );
+    pointer-events: none;
+    z-index: 1;
+  }
+
+  ${media.laptop} {
+    height: 220px;
+    padding: 30px 0 30px 20px;
+  }
+
+  ${media.tablet} {
+    height: 180px;
+    padding: 24px 0 24px 18px;
+    gap: 10px;
+  }
+
+  ${media.mobile} {
+    height: 201px;
+    padding: 40px 0 0 25px;
+    gap: 15px;
+  }
+`;
+
+export const CardContent = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+  z-index: 2;
+`;
+
+export const CardTitleRow = styled.div`
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const CardName = styled.p`
+  font-size: 1.25rem;
+  font-weight: 600;
+  color: ${colors.base.black};
+  letter-spacing: -0.4px;
+  line-height: 1.4;
+  margin: 0;
+  white-space: nowrap;
+
+  ${media.tablet} {
+    font-size: 1rem;
+  }
+
+  ${media.mobile} {
+    font-size: 1.25rem;
+  }
+`;
+
+export const CardRoleBadge = styled.span`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  flex-shrink: 0;
+  white-space: nowrap;
+  padding: 2px 10px;
+  border-radius: 15px;
+  background-color: ${colors.gray[800]};
+  color: ${colors.gray[100]};
+  font-size: 1rem;
+  font-weight: 700;
+  align-self: flex-start;
+  line-height: 1.4;
+  white-space: nowrap;
+
+  ${media.tablet} {
+    font-size: 0.8rem;
+  }
+
+  ${media.mobile} {
+    font-size: 1rem;
+  }
+`;
+
+export const CardDescription = styled.p`
+  font-size: 1rem;
+  font-weight: 600;
+  color: ${colors.gray[700]};
+  letter-spacing: -0.32px;
+  line-height: 1.4;
+  margin: 0;
+  white-space: pre-line;
+
+  ${media.laptop} {
+    font-size: 0.875rem;
+  }
+
+  ${media.tablet} {
+    font-size: 0.75rem;
+  }
+
+  ${media.mobile} {
+    font-size: 0.875rem;
+    font-weight: 500;
+    letter-spacing: -0.28px;
+  }
+`;
+
+export const CardIllustrationWrap = styled.div`
+  position: absolute;
+  right: -60px;
+  top: 20px;
+  width: 65%;
+  display: flex;
+  align-items: flex-start;
+  justify-content: flex-end;
+  overflow: hidden;
+
+  ${media.laptop} {
+    top: 100px;
+    right: -20px;
+  }
+
+  ${media.tablet} {
+    top: 20px;
+  }
+
+  ${media.mobile} {
+    right: -60px;
+  }
+`;
+
+export const CardIllustration = styled.img`
+  width: 210px;
+  height: 210px;
+  object-fit: contain;
+
+  ${media.laptop} {
     width: 120px;
     height: 120px;
   }
 
-  &:hover {
-    ${ProfileImage} {
-      transform: translate(-50%, -50%) scale(1.4);
-      filter: brightness(0.5);
-      top: 50%;
-    }
-    ${InfoOverlay} {
-      opacity: 1;
-    }
-    ${NameBadge} {
-      opacity: 0;
-    }
-  }
-`;
-
-// 오버레이 내부 텍스트 스타일
-export const Role = styled.p`
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #ff5414;
-  margin: 0 0 8px;
-`;
-
-export const Name = styled.p`
-  font-size: 1.3rem;
-  font-weight: 800;
-  margin: 0 0 12px;
-`;
-
-export const Description = styled.p`
-  font-size: 0.9rem;
-  line-height: 1.5;
-  margin: 0;
-
   ${media.tablet} {
-    display: none;
+    width: 150px;
+    height: 150px;
   }
-`;
 
-export const Contact = styled.p`
-  font-size: 0.9rem;
-  margin-top: 12px;
-  opacity: 0.8;
+  ${media.mobile} {
+    width: 210px;
+    height: 210px;
+  }
 `;

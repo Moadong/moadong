@@ -63,9 +63,16 @@ const pickWeightedVariant = <V extends ExperimentVariant>(
 
 class ExperimentRepository {
   fetchAndAssignExperiments(experiments: readonly ExperimentDefinition<any>[]) {
-    if (experiments.length === 0) return;
-
     const assignments = safeReadAssignments();
+    const definedKeys = new Set(experiments.map((e) => e.key));
+
+    // 정의에서 사라진 실험은 Mixpanel super property 및 로컬 배정 정리.
+    // 누락 시 종료된 실험 key가 모든 이벤트에 계속 따라붙어 데이터가 오염됨.
+    Object.keys(assignments).forEach((key) => {
+      if (definedKeys.has(key)) return;
+      mixpanel.unregister(key);
+      delete assignments[key];
+    });
 
     experiments.forEach((experiment) => {
       const existing = assignments[experiment.key];

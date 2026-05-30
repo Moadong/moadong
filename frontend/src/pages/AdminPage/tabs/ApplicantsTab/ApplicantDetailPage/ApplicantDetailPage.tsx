@@ -15,6 +15,7 @@ import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAns
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
+import { asApplicantId } from '@/types/branded';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantDetailPage.styles';
 
@@ -86,7 +87,7 @@ const ApplicantDetailPage = () => {
         {
           memo,
           status,
-          applicantId: questionId,
+          applicantId: asApplicantId(questionId),
         },
       ],
       {
