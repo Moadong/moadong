@@ -24,7 +24,7 @@ const IntroductionPage = () => {
   const [activeTab, setActiveTab] = useState<FestivalTabType>(
     FESTIVAL_TAB_TYPE.BOOTH_MAP,
   );
-  const tabStartTime = useRef(Date.now());
+  const tabStartTime = useRef(0);
   const activeTabRef = useRef(activeTab);
 
   useEffect(() => {
@@ -32,6 +32,7 @@ const IntroductionPage = () => {
   }, [activeTab]);
 
   useEffect(() => {
+    tabStartTime.current = Date.now();
     return () => {
       const duration = Date.now() - tabStartTime.current;
       trackEvent(USER_EVENT.FESTIVAL_TAB_DURATION, {

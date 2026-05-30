@@ -34,7 +34,7 @@ const BuskingPage = () => {
   const trackEvent = useMixpanelTrack();
   const hasNotification = usePromotionNotification();
   const [activeDayId, setActiveDayId] = useState(getInitialDayId);
-  const dayStartTime = useRef(Date.now());
+  const dayStartTime = useRef(0);
   const activeDayIdRef = useRef(activeDayId);
 
   const activeDay = BUSKING_DAYS.find((d) => d.id === activeDayId)!;
@@ -44,6 +44,7 @@ const BuskingPage = () => {
   }, [activeDayId]);
 
   useEffect(() => {
+    dayStartTime.current = Date.now();
     return () => {
       const duration = Date.now() - dayStartTime.current;
       trackEvent(USER_EVENT.DAEDONG2026_DAY_DURATION, {

@@ -28,9 +28,7 @@ const ApplicationFormPage = () => {
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
   const trackEvent = useMixpanelTrack();
 
-  if (!clubId || !applicationFormId) return null;
-
-  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId);
+  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId ?? '');
   const {
     data: formData,
     isLoading,
@@ -56,6 +54,8 @@ const ApplicationFormPage = () => {
   useEffect(() => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
   }, [answers, clubId, applicationFormId]);
+
+  if (!clubId || !applicationFormId) return null;
 
   if (isLoading) return <Spinner />;
   if (isError || clubError) {
