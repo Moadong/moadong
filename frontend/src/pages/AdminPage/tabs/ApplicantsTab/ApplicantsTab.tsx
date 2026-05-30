@@ -52,10 +52,8 @@ const ApplicantsTab = () => {
   const [checkedItem, setCheckedItem] = useState<Map<string, boolean>>(
     new Map(),
   );
-  const [selectAll, setSelectAll] = useState(false);
   const [open, setOpen] = useState(false);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
-  const [isChecked, setIsChecked] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
   const [selectedFilter, setSelectedFilter] = useState('ALL');
   const [isSortOpen, setIsSortOpen] = useState(false);
@@ -146,12 +144,9 @@ const ApplicantsTab = () => {
     setCheckedItem(newMap);
   }, [filteredApplicants]);
 
-  useEffect(() => {
-    const all =
-      checkedItem.size > 0 && Array.from(checkedItem.values()).every(Boolean);
-    setSelectAll(all);
-    setIsChecked(Array.from(checkedItem.values()).some(Boolean));
-  }, [checkedItem]);
+  const selectAll =
+    checkedItem.size > 0 && Array.from(checkedItem.values()).every(Boolean);
+  const isChecked = Array.from(checkedItem.values()).some(Boolean);
 
   if (!clubId) return null;
 

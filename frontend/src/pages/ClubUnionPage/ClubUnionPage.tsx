@@ -55,11 +55,12 @@ const ProfileCard = ({ member }: { member: ClubUnionMember }) => (
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
   const trackEvent = useMixpanelTrack();
-  const [isMobile, setIsMobile] = useState(false);
+  const [isMobile, setIsMobile] = useState(
+    () => window.matchMedia(MOBILE_BREAKPOINT).matches,
+  );
 
   useEffect(() => {
     const mq = window.matchMedia(MOBILE_BREAKPOINT);
-    setIsMobile(mq.matches);
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     mq.addEventListener('change', handler);
     return () => mq.removeEventListener('change', handler);
