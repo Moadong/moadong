@@ -4,6 +4,8 @@ export interface PromotionArticle {
   clubId: string;
   title: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   eventStartDate: string;
   eventEndDate: string;
   description: string;
