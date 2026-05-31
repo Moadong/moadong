@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
 import MapModal from '@/components/map/MapModal/MapModal';
-import locationIcon from '@/assets/images/icons/location_icon.svg';
+import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import { ClubLocation } from '@/constants/clubLocation';
 import { PromotionArticle } from '@/types/promotion';
 import * as Styled from './PromotionMapSection.styles';
@@ -32,7 +32,7 @@ const PromotionMapSection = ({ article }: Props) => {
           <NaverMap location={location} />
         </Styled.MapCard>
         <Styled.LocationText>
-          <img src={locationIcon} alt="위치 아이콘" />
+          <LocationIcon width={12} height={15} />
           {article.location}
         </Styled.LocationText>
       </Styled.Container>

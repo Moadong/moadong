@@ -1,6 +1,6 @@
 import { useCallback, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
-import locationIcon from '@/assets/images/icons/location_icon.svg';
+import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
@@ -172,7 +172,7 @@ const ClubDetailPage = () => {
                 </Styled.MapCard>
 
                 <Styled.MapDetailText>
-                  <img src={locationIcon} alt='위치 아이콘' />
+                  <LocationIcon width={12} height={15} />
                   동아리방 위치 {clubLocation.building}{' '}
                   {clubLocation.detailLocation}
                 </Styled.MapDetailText>

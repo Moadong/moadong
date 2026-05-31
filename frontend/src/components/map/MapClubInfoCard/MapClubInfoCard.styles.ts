@@ -60,10 +60,11 @@ export const LocationRow = styled.div`
   align-items: center;
   gap: 4px;
 
-  img {
+  svg {
     width: 11px;
     height: 14px;
     flex-shrink: 0;
+    color: ${colors.gray[500]};
   }
 `;
 

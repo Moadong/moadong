@@ -1,4 +1,4 @@
-import locationIcon from '@/assets/images/icons/location_icon.svg';
+import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import * as Styled from './MapClubInfoCard.styles';
 
@@ -21,7 +21,7 @@ const MapClubInfoCard = ({
       <Styled.ClubInfo>
         <Styled.ClubName>{name}</Styled.ClubName>
         <Styled.LocationRow>
-          <img src={locationIcon} alt='위치 아이콘' />
+          <LocationIcon width={12} height={15} />
           <Styled.LocationText>
             {building} {detailLocation}
           </Styled.LocationText>

@@ -32,9 +32,10 @@ export const LocationText = styled.div`
   font-size: 14px;
   color: ${colors.gray[700]};
 
-  img {
+  svg {
     width: 12px;
     height: 15px;
+    color: ${colors.gray[500]};
   }
 
   ${media.tablet} {

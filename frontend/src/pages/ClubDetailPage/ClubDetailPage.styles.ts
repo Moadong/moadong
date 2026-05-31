@@ -84,9 +84,10 @@ export const MapDetailText = styled.div`
   cursor: default;
   user-select: none;
 
-  img {
+  svg {
     width: 12px;
     height: 15px;
+    color: ${colors.gray[500]};
   }
 `;
 
