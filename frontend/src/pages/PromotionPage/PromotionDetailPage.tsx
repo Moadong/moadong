@@ -9,6 +9,7 @@ import PromotionClubCTA from './components/detail/PromotionClubCTA/PromotionClub
 import PromotionDetailTopBar from './components/detail/PromotionDetailTopBar/PromotionDetailTopBar';
 import PromotionImageGallery from './components/detail/PromotionImageGallery/PromotionImageGallery';
 import PromotionInfoSection from './components/detail/PromotionInfoSection/PromotionInfoSection';
+import PromotionMapSection from './components/detail/PromotionMapSection/PromotionMapSection';
 import PromotionTitleSection from './components/detail/PromotionTitleSection/PromotionTitleSection';
 import RelatedPromotionSection from './components/detail/RelatedPromotionSection/RelatedPromotionSection';
 import * as Styled from './PromotionDetailPage.styles';
@@ -53,6 +54,7 @@ const PromotionDetailPage = () => {
             <Styled.ContentWrapper>
               <Styled.LeftSection>
                 <PromotionInfoSection article={article} />
+                <PromotionMapSection article={article} />
                 <PromotionClubCTA
                   clubId={article.clubId}
                   clubName={article.clubName}
