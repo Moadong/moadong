@@ -19,12 +19,19 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
 
   const handleCardClick = () => {
     if (article.isFestival) {
-      trackEvent(USER_EVENT.FESTIVAL_TAB_CLICKED, {
-        tab: 'booth-map',
-        source: 'promotion-card',
-      });
-
-      handleLink('/festival-introduction');
+      if (article.clubId === 'festival-2') {
+        trackEvent(USER_EVENT.FESTIVAL_TAB_CLICKED, {
+          tab: 'busking',
+          source: 'promotion-card',
+        });
+        handleLink('/festival-busking');
+      } else {
+        trackEvent(USER_EVENT.FESTIVAL_TAB_CLICKED, {
+          tab: 'booth-map',
+          source: 'promotion-card',
+        });
+        handleLink('/festival-introduction');
+      }
       return;
     }
 
