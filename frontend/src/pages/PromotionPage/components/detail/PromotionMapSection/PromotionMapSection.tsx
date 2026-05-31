@@ -32,7 +32,7 @@ const PromotionMapSection = ({ article }: Props) => {
           <NaverMap location={location} />
         </Styled.MapCard>
         <Styled.LocationText>
-          <LocationIcon width={12} height={15} />
+          <LocationIcon />
           {article.location}
         </Styled.LocationText>
       </Styled.Container>

@@ -128,7 +128,7 @@ const ClubProfileCard = ({
               <Styled.LocationDivider />
               <Styled.LocationRow>
                 <Styled.LocationInfo>
-                  <LocationIcon width={12} height={15} />
+                  <LocationIcon />
                   <span>
                     동아리방 위치 {location.building} {location.detailLocation}
                   </span>

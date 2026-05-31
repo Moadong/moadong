@@ -33,8 +33,9 @@ export const LocationText = styled.div`
   color: ${colors.gray[700]};
 
   svg {
-    width: 12px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
+    margin: 1px 2px 1px 0px;
     color: ${colors.gray[500]};
   }
 

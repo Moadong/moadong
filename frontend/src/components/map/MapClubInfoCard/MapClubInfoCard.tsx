@@ -21,7 +21,7 @@ const MapClubInfoCard = ({
       <Styled.ClubInfo>
         <Styled.ClubName>{name}</Styled.ClubName>
         <Styled.LocationRow>
-          <LocationIcon width={12} height={15} />
+          <LocationIcon />
           <Styled.LocationText>
             {building} {detailLocation}
           </Styled.LocationText>

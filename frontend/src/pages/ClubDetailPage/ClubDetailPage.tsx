@@ -172,7 +172,7 @@ const ClubDetailPage = () => {
                 </Styled.MapCard>
 
                 <Styled.MapDetailText>
-                  <LocationIcon width={12} height={15} />
+                  <LocationIcon />
                   동아리방 위치 {clubLocation.building}{' '}
                   {clubLocation.detailLocation}
                 </Styled.MapDetailText>

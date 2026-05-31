@@ -231,8 +231,9 @@ export const LocationInfo = styled.div`
   overflow: hidden;
 
   svg {
-    width: 12px;
-    height: 15px;
+    width: 18px;
+    height: 18px;
+    margin: 1px 2px 1px 0px;
     flex-shrink: 0;
     color: ${colors.gray[500]};
   }
