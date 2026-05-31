@@ -92,7 +92,15 @@ const AppRoutes = () =>
       ),
     },
     {
-      path: '/festival-introduction',
+      path: '/promotions',
+      element: (
+        <ContentErrorBoundary>
+          <PromotionListPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/promotions/club-fest-2026',
       element: (
         <ContentErrorBoundary>
           <IntroductionPage />
@@ -100,18 +108,10 @@ const AppRoutes = () =>
       ),
     },
     {
-      path: '/festival-busking',
+      path: '/promotions/main-fest-2026',
       element: (
         <ContentErrorBoundary>
           <BuskingPage />
-        </ContentErrorBoundary>
-      ),
-    },
-    {
-      path: '/promotions',
-      element: (
-        <ContentErrorBoundary>
-          <PromotionListPage />
         </ContentErrorBoundary>
       ),
     },
