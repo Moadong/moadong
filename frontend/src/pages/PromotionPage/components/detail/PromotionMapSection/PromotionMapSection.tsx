@@ -15,6 +15,7 @@ const PromotionMapSection = ({ article }: Props) => {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
   const { data: clubDetail } = useGetClubDetail(`@${article.clubName}`, {
     enabled: isMapModalOpen,
+    staleTime: 60 * 60 * 1000,
   });
 
   if (article.latitude == null || article.longitude == null) {
