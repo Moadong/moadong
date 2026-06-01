@@ -13,7 +13,9 @@ interface Props {
 
 const PromotionMapSection = ({ article }: Props) => {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
-  const { data: clubDetail } = useGetClubDetail(`@${article.clubName}`);
+  const { data: clubDetail } = useGetClubDetail(`@${article.clubName}`, {
+    enabled: isMapModalOpen,
+  });
 
   if (article.latitude == null || article.longitude == null) {
     return null;
