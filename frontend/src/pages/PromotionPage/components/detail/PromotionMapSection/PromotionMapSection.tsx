@@ -3,6 +3,7 @@ import NaverMap from '@/components/map/NaverMap/NaverMap';
 import MapModal from '@/components/map/MapModal/MapModal';
 import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import { ClubLocation } from '@/constants/clubLocation';
+import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import { PromotionArticle } from '@/types/promotion';
 import * as Styled from './PromotionMapSection.styles';
 
@@ -12,6 +13,7 @@ interface Props {
 
 const PromotionMapSection = ({ article }: Props) => {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const { data: clubDetail } = useGetClubDetail(`@${article.clubName}`);
 
   if (article.latitude == null || article.longitude == null) {
     return null;
@@ -41,6 +43,7 @@ const PromotionMapSection = ({ article }: Props) => {
         isOpen={isMapModalOpen}
         onClose={() => setIsMapModalOpen(false)}
         clubName={article.clubName}
+        clubLogo={clubDetail?.logo}
         location={location}
         bubbleText="행사 위치"
       />
