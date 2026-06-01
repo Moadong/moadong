@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { theme } from '@/styles/theme';
 
 export const WEBVIEW_BOTTOM_NAV_HEIGHT = 56;
 
@@ -11,8 +10,8 @@ export const BottomNavContainer = styled.nav`
   height: calc(${WEBVIEW_BOTTOM_NAV_HEIGHT}px + env(safe-area-inset-bottom));
   padding-bottom: env(safe-area-inset-bottom);
   display: flex;
-  background-color: ${theme.colors.base.white};
-  border-top: 1px solid ${theme.colors.gray[300]};
+  background-color: ${({ theme }) => theme.colors.base.white};
+  border-top: 1px solid ${({ theme }) => theme.colors.gray[300]};
   z-index: 100;
 `;
 
@@ -26,6 +25,6 @@ export const NavButton = styled.button<{ $isActive: boolean }>`
   cursor: pointer;
   font-size: 12px;
   font-weight: ${({ $isActive }) => ($isActive ? 600 : 400)};
-  color: ${({ $isActive }) =>
+  color: ${({ theme, $isActive }) =>
     $isActive ? theme.colors.primary[900] : theme.colors.gray[600]};
 `;
