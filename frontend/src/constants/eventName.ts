@@ -140,6 +140,7 @@ export const PAGE_VIEW = {
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
 
   WEBVIEW_MAIN_PAGE: 'WebviewMainPage',
+  WEBVIEW_SUBSCRIBED_PAGE: 'WebviewSubscribedPage',
 
   // 관리자
   LOGIN_PAGE: '로그인페이지',
@@ -153,5 +154,6 @@ export const PAGE_VIEW = {
 export const PAGE_NAME = {
   MAIN: 'main',
   WEBVIEW_MAIN: 'webview-main',
+  WEBVIEW_SUBSCRIBED: 'webview-subscribed',
   INTRODUCE: 'introduce',
 } as const;
