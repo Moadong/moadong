@@ -16,7 +16,8 @@ export type WebViewMessage =
   | { type: 'SUBSCRIBE_TOGGLE'; payload: { clubId: string } }
   | { type: 'REQUEST_SUBSCRIBE_STATE' }
   | { type: 'NAVIGATE_WEBVIEW'; payload: { slug: string } }
-  | { type: 'OPEN_EXTERNAL_URL'; payload: { url: string } };
+  | { type: 'OPEN_EXTERNAL_URL'; payload: { url: string } }
+  | { type: 'REQUEST_APP_VERSION' };
 
 // 앱 → 웹 방향 메시지 타입
 // 앱이 window.postMessage()로 전송하며, 웹이 message 이벤트로 수신
@@ -29,7 +30,8 @@ export type AppToWebMessage =
         subscribed: boolean;
         needsPermission: boolean;
       };
-    };
+    }
+  | { type: 'APP_VERSION'; payload: { version: string } };
 
 // WebViewMessage의 type 문자열 유니온 (앱 측 타입 공유용)
 export type WebViewMessageType = WebViewMessage['type'];
@@ -146,4 +148,10 @@ export const requestOpenExternalUrl = (url: string): boolean => {
     return false;
   }
   return postMessageToApp({ type: 'OPEN_EXTERNAL_URL', payload: { url } });
+};
+
+// 앱 버전 요청 — 결과는 APP_VERSION 메시지로 수신
+// 언제: 메뉴 페이지에서 앱 버전 표시. 웹 환경에서는 응답이 없어 표시를 생략한다.
+export const requestAppVersion = (): boolean => {
+  return postMessageToApp({ type: 'REQUEST_APP_VERSION' });
 };

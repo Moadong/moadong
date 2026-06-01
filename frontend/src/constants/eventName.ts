@@ -77,6 +77,7 @@ export const USER_EVENT = {
   PROMOTION_CLUB_CTA_CLICKED: 'Promotion Club CTA Clicked',
 
   WEBVIEW_SUBSCRIBE_TOGGLED: 'Webview Subscribe Toggled',
+  WEBVIEW_MENU_CLICKED: 'Webview Menu Clicked',
 } as const;
 
 export const WEBVIEW_LINK_TARGET = {
@@ -140,6 +141,7 @@ export const PAGE_VIEW = {
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
 
   WEBVIEW_MAIN_PAGE: 'WebviewMainPage',
+  WEBVIEW_MENU_PAGE: 'WebviewMenuPage',
 
   // 관리자
   LOGIN_PAGE: '로그인페이지',
