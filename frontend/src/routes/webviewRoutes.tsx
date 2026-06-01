@@ -6,6 +6,8 @@ import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
 import WebviewLayout from '@/pages/WebviewLayout/WebviewLayout';
 import WebviewMainPage from '@/pages/WebviewMainPage/WebviewMainPage';
+import WebviewMenuPage from '@/pages/WebviewMenuPage/WebviewMenuPage';
+import WebviewSubscribedPage from '@/pages/WebviewSubscribedPage/WebviewSubscribedPage';
 import {
   WEBVIEW_FILTER_CONFIG,
   WebviewFilterPath,
@@ -32,6 +34,22 @@ const webviewRoutes: RouteObject[] = [
           ),
         };
       }),
+      {
+        path: 'subscribed',
+        element: (
+          <ContentErrorBoundary>
+            <WebviewSubscribedPage />
+          </ContentErrorBoundary>
+        ),
+      },
+      {
+        path: 'menu',
+        element: (
+          <ContentErrorBoundary>
+            <WebviewMenuPage />
+          </ContentErrorBoundary>
+        ),
+      },
       {
         path: 'club/:clubId',
         element: (
