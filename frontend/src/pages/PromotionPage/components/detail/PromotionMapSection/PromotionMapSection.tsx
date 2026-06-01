@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import NaverMap from '@/components/map/NaverMap/NaverMap';
-import MapModal from '@/components/map/MapModal/MapModal';
 import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
+import MapModal from '@/components/map/MapModal/MapModal';
+import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { ClubLocation } from '@/constants/clubLocation';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import { PromotionArticle } from '@/types/promotion';
@@ -45,7 +45,7 @@ const PromotionMapSection = ({ article }: Props) => {
         clubName={article.clubName}
         clubLogo={clubDetail?.logo}
         location={location}
-        bubbleText="행사 위치"
+        bubbleText='행사 위치'
       />
     </>
   );
