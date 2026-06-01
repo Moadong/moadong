@@ -1,6 +1,8 @@
 import { useCallback, useEffect, useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useOpenApp from '@/hooks/useOpenApp';
+import isInAppWebView from '@/utils/isInAppWebView';
 import {
   AppToWebMessage,
   requestSubscribeState,
@@ -9,6 +11,7 @@ import {
 
 const useWebviewSubscribe = () => {
   const trackEvent = useMixpanelTrack();
+  const { openApp } = useOpenApp();
   const [subscribedClubIds, setSubscribedClubIds] = useState<Set<string>>(
     new Set(),
   );
@@ -58,13 +61,18 @@ const useWebviewSubscribe = () => {
 
   const toggleSubscribe = useCallback(
     (clubId: string, subscribed: boolean) => {
+      // 일반 브라우저: 구독(푸시)은 앱 전용이라 앱 실행→미설치 시 스토어로 유도
+      if (!isInAppWebView()) {
+        openApp();
+        return;
+      }
       requestSubscribeToggle(clubId);
       trackEvent(USER_EVENT.WEBVIEW_SUBSCRIBE_TOGGLED, {
         club_id: clubId,
         subscribed: !subscribed,
       });
     },
-    [trackEvent],
+    [trackEvent, openApp],
   );
 
   return { subscribedClubIds, toggleSubscribe };
