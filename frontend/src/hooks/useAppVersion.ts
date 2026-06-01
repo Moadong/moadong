@@ -7,15 +7,15 @@ const useAppVersion = () => {
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
-      let data: AppToWebMessage;
       try {
-        data =
-          typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+        const data = (
+          typeof event.data === 'string' ? JSON.parse(event.data) : event.data
+        ) as AppToWebMessage | null;
+        if (data && typeof data === 'object' && data.type === 'APP_VERSION') {
+          setVersion(data.payload.version);
+        }
       } catch {
         return;
-      }
-      if (data.type === 'APP_VERSION') {
-        setVersion(data.payload.version);
       }
     };
 
