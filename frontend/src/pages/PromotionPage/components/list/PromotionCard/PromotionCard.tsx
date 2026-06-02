@@ -18,18 +18,8 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
   const dday = getDDay(article.eventStartDate, article.eventEndDate);
 
   const handleCardClick = () => {
-    if (article.isFestival) {
-      trackEvent(USER_EVENT.FESTIVAL_TAB_CLICKED, {
-        tab: 'booth-map',
-        source: 'promotion-card',
-      });
-
-      handleLink('/festival-introduction');
-      return;
-    }
-
     trackEvent(USER_EVENT.PROMOTION_CARD_CLICKED, {
-      clubId: article.clubId,
+      promotionId: article.id,
     });
 
     handleLink(`/promotions/${article.id}`);

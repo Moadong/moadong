@@ -80,7 +80,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
     });
 
     if (url === WEBVIEW_LINK_TARGET.CLUB_FESTIVAL) {
-      handleLink('/festival-introduction');
+      handleLink('/promotions/club-fest-2026');
       return;
     }
 
