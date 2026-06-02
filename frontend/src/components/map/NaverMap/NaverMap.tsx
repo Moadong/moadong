@@ -1,10 +1,9 @@
 import { useRef } from 'react';
-import { ClubLocation } from '@/constants/clubLocation';
 import { useNaverMap } from '@/hooks/Map/useNaverMap';
 import * as Styled from './NaverMap.styles';
 
 interface NaverMapProps {
-  location: Pick<ClubLocation, 'lat' | 'lng'>;
+  location: { lat: number; lng: number };
 }
 
 const NaverMap = ({ location }: NaverMapProps) => {

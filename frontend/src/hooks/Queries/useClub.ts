@@ -27,12 +27,16 @@ interface UseGetCardListProps {
   division: string;
 }
 
-export const useGetClubDetail = (clubParam: string) => {
+export const useGetClubDetail = (
+  clubParam: string,
+  options?: { enabled?: boolean; staleTime?: number; gcTime?: number },
+) => {
   return useQuery<ClubDetail>({
     queryKey: queryKeys.club.detail(clubParam),
     queryFn: () => getClubDetail(clubParam as string),
-    staleTime: 60 * 1000,
-    enabled: !!clubParam,
+    staleTime: options?.staleTime ?? 60 * 1000,
+    gcTime: options?.gcTime,
+    enabled: !!clubParam && (options?.enabled ?? true),
     select: (data) =>
       ({
         ...data,

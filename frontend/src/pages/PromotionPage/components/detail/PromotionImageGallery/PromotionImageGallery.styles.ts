@@ -33,7 +33,7 @@ export const Image = styled.img`
 
 export const Gradient = styled.div`
   position: absolute;
-  bottom: 0;
+  bottom: -20px;
   width: 100%;
   height: 180px;
   z-index: 1;
@@ -64,7 +64,7 @@ export const Gradient = styled.div`
 export const ImageMoreButtonWrapper = styled.div`
   padding: 0px 0px 32px;
 
-  ${media.mobile} {
+  ${media.tablet} {
     padding: 0 20px;
   }
 `;

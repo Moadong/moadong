@@ -5,15 +5,27 @@ import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
+import BuskingPage from '@/pages/FestivalPage/BuskingPage/BuskingPage';
+import IntroductionPage from '@/pages/FestivalPage/IntroductionPage/IntroductionPage';
 import PromotionClubCTA from './components/detail/PromotionClubCTA/PromotionClubCTA';
 import PromotionDetailTopBar from './components/detail/PromotionDetailTopBar/PromotionDetailTopBar';
 import PromotionImageGallery from './components/detail/PromotionImageGallery/PromotionImageGallery';
 import PromotionInfoSection from './components/detail/PromotionInfoSection/PromotionInfoSection';
+import PromotionMapSection from './components/detail/PromotionMapSection/PromotionMapSection';
 import PromotionTitleSection from './components/detail/PromotionTitleSection/PromotionTitleSection';
 import RelatedPromotionSection from './components/detail/RelatedPromotionSection/RelatedPromotionSection';
 import * as Styled from './PromotionDetailPage.styles';
 
 const PromotionDetailPage = () => {
+  const { promotionId } = useParams<{ promotionId: string }>();
+
+  if (promotionId?.startsWith('club-fest-')) return <IntroductionPage />;
+  if (promotionId?.startsWith('main-fest-')) return <BuskingPage />;
+
+  return <PromotionDetail />;
+};
+
+const PromotionDetail = () => {
   useTrackPageView(PAGE_VIEW.PROMOTION_DETAIL_PAGE);
 
   const { promotionId } = useParams<{ promotionId: string }>();
@@ -53,6 +65,7 @@ const PromotionDetailPage = () => {
             <Styled.ContentWrapper>
               <Styled.LeftSection>
                 <PromotionInfoSection article={article} />
+                <PromotionMapSection article={article} />
                 <PromotionClubCTA
                   clubId={article.clubId}
                   clubName={article.clubName}

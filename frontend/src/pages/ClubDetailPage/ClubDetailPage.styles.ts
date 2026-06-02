@@ -56,7 +56,9 @@ export const MapInfo = styled.div`
   }
 `;
 
-export const MapCard = styled.div`
+export const MapCard = styled.button`
+  padding: 0;
+  font: inherit;
   width: 100%;
   height: 189px;
 
@@ -84,9 +86,11 @@ export const MapDetailText = styled.div`
   cursor: default;
   user-select: none;
 
-  img {
-    width: 12px;
-    height: 15px;
+  svg {
+    width: 18px;
+    height: 18px;
+    margin: 1px 2px 1px 0px;
+    color: ${colors.gray[500]};
   }
 `;
 
