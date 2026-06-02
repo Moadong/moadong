@@ -4,7 +4,10 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchInput } from '@/store/useSearchStore';
+import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './SearchBox.styles';
+
+const HOME_ROUTE = isInAppWebView() ? '/webview/main' : '/';
 
 const SearchBox = () => {
   const { setKeyword, inputValue, setInputValue, setIsSearching } =
@@ -14,18 +17,13 @@ const SearchBox = () => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
 
-  const homeRoute = pathname.startsWith('/webview') ? '/webview/main' : '/';
-
   const handleSearch = () => {
-    if (pathname !== homeRoute) navigate(homeRoute);
+    if (pathname !== HOME_ROUTE) navigate(HOME_ROUTE);
     setKeyword(inputValue);
     setSelectedCategory('all');
     setIsSearching(true);
 
-    trackEvent(USER_EVENT.SEARCH_EXCUTED, {
-      inputValue: inputValue,
-      page: pathname,
-    });
+    trackEvent(USER_EVENT.SEARCH_EXCUTED, { inputValue, page: pathname });
   };
 
   return (
