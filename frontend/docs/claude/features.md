@@ -48,7 +48,9 @@ React SPA는 클라이언트 사이드 렌더링이라 카카오톡/페이스북
 - `/club/@:clubName` — 클럽 상세 (이름)
 - `/clubDetail/@:clubName`
 
-**감지 크롤러:** KakaoTalk, facebookexternalhit, Twitterbot, LINE, WhatsApp, Telegram, Discord, Slack 등
+**감지 크롤러:** 카카오톡 스크랩 봇(`kakaotalk-scrap`), facebookexternalhit, Twitterbot, LINE, WhatsApp, Telegram, Discord, Slack 등
+
+> 카카오는 인앱 브라우저(`KAKAOTALK <버전>`)와 스크랩 봇(`kakaotalk-scrap`)이 UA가 다르다. 봇만 감지해야 실제 사용자가 SPA를 받는다. ([인앱 브라우저 오탐 위험](#현재-구조의-실질적-위험) 참고)
 
 ### 새 라우트에 OG 추가 방법
 
@@ -81,6 +83,7 @@ export const config = {
 1. **API 3초 초과 시 OG 미노출** — 백엔드가 느리면 크롤러에게 빈 HTML 반환
 2. **새 크롤러 미감지** — `CRAWLER_PATTERN` regex에 없는 봇은 SPA를 받아 OG 미노출
 3. **라우트 수동 관리** — 새 페이지에 OG가 필요하면 middleware를 직접 수정해야 함
+4. **인앱 브라우저 오탐 위험** — `CRAWLER_PATTERN` 토큰이 메신저 인앱 브라우저 UA까지 잡으면 실제 사용자가 SPA 대신 OG용 텍스트 HTML(제목+설명만)을 받아 빈 화면처럼 보인다. 과거 `kakao` 토큰이 카카오톡 인앱 브라우저(`KAKAOTALK <버전>`)를 오탐해 공유 링크가 빈 화면+텍스트로 떴고, 봇 전용 식별자 `kakaotalk-scrap`로 좁혀 해결했다. `line` 토큰도 LINE 인앱 브라우저(`Line/<버전>`)를 잡는 동일 위험이 남아 있으나 사용량이 적어 보류 — 손볼 경우 봇 전용 UA로 좁힐 것.
 
 ## 실시간 업데이트
 
