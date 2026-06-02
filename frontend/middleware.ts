@@ -1,7 +1,9 @@
-const CRAWLER_PATTERN =
-  /bot|crawl|facebookexternalhit|twitterbot|kakao|line|whatsapp|telegram|discord|slack/i;
+/// <reference types="node" />
 
-const API_BASE = 'https://yourun.shop';
+const CRAWLER_PATTERN =
+  /bot|crawl|facebookexternalhit|twitterbot|kakaotalk-scrap|line|whatsapp|telegram|discord|slack/i;
+
+const API_BASE = process.env.VITE_API_BASE_URL;
 const SITE_URL = 'https://www.moadong.com';
 const DEFAULT_OG_IMAGE = `${SITE_URL}/og_image.png`;
 
@@ -75,6 +77,8 @@ export default async function middleware(request: Request) {
     redirectUrl.pathname = canonicalPath;
     return Response.redirect(redirectUrl.toString(), 301);
   }
+
+  if (!API_BASE) return;
 
   try {
     const res = await fetch(`${API_BASE}/api/club/${clubId}`, {
