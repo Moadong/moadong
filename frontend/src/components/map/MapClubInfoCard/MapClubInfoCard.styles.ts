@@ -60,10 +60,18 @@ export const LocationRow = styled.div`
   align-items: center;
   gap: 4px;
 
-  img {
-    width: 11px;
-    height: 14px;
+  svg {
+    width: 22px;
+    height: 22px;
+    margin: 0px 2px 0px 0px;
     flex-shrink: 0;
+    color: ${colors.gray[500]};
+
+    ${media.tablet} {
+      width: 18px;
+      height: 18px;
+      margin: 1px 2px 1px 0px;
+    }
   }
 `;
 

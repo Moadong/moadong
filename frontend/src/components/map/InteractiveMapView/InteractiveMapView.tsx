@@ -11,6 +11,7 @@ interface InteractiveMapViewProps {
   clubLogo?: string;
   active: boolean;
   markerSize?: number;
+  bubbleText?: string;
   bubbleFontSize?: number;
   bubbleFontWeight?: number;
   mapInstanceRef: RefObject<NaverMapInstance | null>;
@@ -22,6 +23,7 @@ const InteractiveMapView = ({
   clubLogo,
   active,
   markerSize = 40,
+  bubbleText = '동아리방',
   bubbleFontSize = 13,
   bubbleFontWeight = 700,
   mapInstanceRef,
@@ -32,7 +34,7 @@ const InteractiveMapView = ({
     active,
     interactive: true,
     markerSize,
-    bubbleText: '동아리방',
+    bubbleText,
     bubbleFontSize,
     bubbleFontWeight,
     mapInstanceRef,
