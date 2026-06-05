@@ -47,11 +47,18 @@ export const LeftSection = styled.div`
 `;
 
 export const SearchArea = styled.div`
-  flex: 1;
-  max-width: 480px;
+  width: 345px;
+  max-width: 100%;
+  margin-left: auto;
 
   & > div {
     max-width: none;
+  }
+
+  ${media.tablet} {
+    flex: 1;
+    width: auto;
+    margin-left: 0;
   }
 `;
 
