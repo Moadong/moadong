@@ -32,7 +32,7 @@ const Filter = ({ alwaysVisible = false, hasNotification }: FilterProps) => {
   return (
     <>
       {shouldShow && (
-        <Styled.FilterListContainer $isWebview={isWebview}>
+        <Styled.FilterListContainer>
           {WEB_FILTER_OPTIONS.map((filter) => (
             <Styled.FilterButtonWrapper key={filter.path}>
               <Styled.NotificationDot

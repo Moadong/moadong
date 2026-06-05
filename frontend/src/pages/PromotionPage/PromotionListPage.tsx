@@ -1,11 +1,9 @@
-import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
 import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
-import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import isInAppWebView from '@/utils/isInAppWebView';
 import Filter from '../../components/common/Filter/Filter';
 import PromottionGrid from './components/list/PromotionGrid/PromotionGrid';
@@ -31,27 +29,14 @@ const PromotionListPage = () => {
     </Styled.Wrapper>
   );
 
-  if (inAppWebView) {
-    return (
-      <Styled.Container $isWebview>
-        <Styled.SearchBarArea>
-          <Styled.LogoImage src={MobileMainIcon} alt='모아동' />
-          <SearchBox />
-        </Styled.SearchBarArea>
-        <Filter hasNotification={hasNotification} />
-        {content}
-      </Styled.Container>
-    );
-  }
-
   return (
     <>
-      <Header hideOn={['webview']} />
+      <Header />
       <Styled.Container>
         <Filter hasNotification={hasNotification} />
         {content}
       </Styled.Container>
-      <Footer />
+      {!inAppWebView && <Footer />}
     </>
   );
 };
