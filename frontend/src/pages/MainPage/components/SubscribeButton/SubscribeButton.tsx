@@ -1,5 +1,5 @@
 import SubscribeIcon from '@/assets/images/icons/subscribe_button_icon.svg?react';
-import * as Styled from '../../WebviewMainPage.styles';
+import * as Styled from './SubscribeButton.styles';
 
 interface SubscribeButtonProps {
   subscribed: boolean;

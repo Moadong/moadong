@@ -4,10 +4,9 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchInput } from '@/store/useSearchStore';
-import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './SearchBox.styles';
 
-const HOME_ROUTE = isInAppWebView() ? '/webview/main' : '/';
+const HOME_ROUTE = '/';
 
 const SearchBox = () => {
   const { setKeyword, inputValue, setInputValue, setIsSearching } =

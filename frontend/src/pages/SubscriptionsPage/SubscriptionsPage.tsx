@@ -6,7 +6,7 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetCardList } from '@/hooks/Queries/useClub';
 import useWebviewSubscribe from '@/hooks/useWebviewSubscribe';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
-import SubscribeButton from '@/pages/WebviewMainPage/components/SubscribeButton/SubscribeButton';
+import SubscribeButton from '@/pages/MainPage/components/SubscribeButton/SubscribeButton';
 import { Club } from '@/types/club';
 import { getAppStoreLink } from '@/utils/appStoreLink';
 import isInAppWebView from '@/utils/isInAppWebView';

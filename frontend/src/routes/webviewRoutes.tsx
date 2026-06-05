@@ -1,71 +1,28 @@
-import { ComponentType } from 'react';
-import { RouteObject } from 'react-router-dom';
-import { ContentErrorBoundary } from '@/components/common/ErrorBoundary';
-import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
-import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
-import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
-import WebviewLayout from '@/pages/WebviewLayout/WebviewLayout';
-import WebviewMainPage from '@/pages/WebviewMainPage/WebviewMainPage';
-import {
-  WEBVIEW_FILTER_CONFIG,
-  WebviewFilterPath,
-} from './webviewFilterConfig';
+import { Navigate, RouteObject, useParams } from 'react-router-dom';
 
-const PAGE_MAP: Record<WebviewFilterPath, ComponentType> = {
-  '/webview/main': WebviewMainPage,
-  '/webview/promotions': PromotionListPage,
+/**
+ * 구버전 네이티브 앱 호환용 리다이렉트.
+ *
+ * 앱은 `/webview/*` 를 진입 URL로 로드하고 `requestNavigateWebview('club/:id')`로
+ * 이동하므로, 통합된 웹 경로로 영구 리다이렉트한다. 사용자 폰의 구버전 바이너리가
+ * 깨지지 않도록 유지해야 한다(제거 금지).
+ */
+const ClubDetailRedirect = ({ map = false }: { map?: boolean }) => {
+  const { clubId, clubName } = useParams<{
+    clubId?: string;
+    clubName?: string;
+  }>();
+  const slug = clubName ? `@${clubName}` : clubId;
+  return <Navigate to={`/clubDetail/${slug}${map ? '/map' : ''}`} replace />;
 };
 
 const webviewRoutes: RouteObject[] = [
-  {
-    path: '/webview',
-    element: <WebviewLayout />,
-    children: [
-      ...WEBVIEW_FILTER_CONFIG.map(({ path }) => {
-        const Page = PAGE_MAP[path];
-        return {
-          path: path.replace('/webview/', ''),
-          element: (
-            <ContentErrorBoundary>
-              <Page />
-            </ContentErrorBoundary>
-          ),
-        };
-      }),
-      {
-        path: 'club/:clubId',
-        element: (
-          <ContentErrorBoundary>
-            <ClubDetailPage />
-          </ContentErrorBoundary>
-        ),
-      },
-      {
-        path: 'club/:clubId/map',
-        element: (
-          <ContentErrorBoundary>
-            <ClubMapPage />
-          </ContentErrorBoundary>
-        ),
-      },
-      {
-        path: 'club/@:clubName',
-        element: (
-          <ContentErrorBoundary>
-            <ClubDetailPage />
-          </ContentErrorBoundary>
-        ),
-      },
-      {
-        path: 'club/@:clubName/map',
-        element: (
-          <ContentErrorBoundary>
-            <ClubMapPage />
-          </ContentErrorBoundary>
-        ),
-      },
-    ],
-  },
+  { path: '/webview/main', element: <Navigate to='/' replace /> },
+  { path: '/webview/promotions', element: <Navigate to='/promotions' replace /> },
+  { path: '/webview/club/:clubId', element: <ClubDetailRedirect /> },
+  { path: '/webview/club/:clubId/map', element: <ClubDetailRedirect map /> },
+  { path: '/webview/club/@:clubName', element: <ClubDetailRedirect /> },
+  { path: '/webview/club/@:clubName/map', element: <ClubDetailRedirect map /> },
 ];
 
 export default webviewRoutes;

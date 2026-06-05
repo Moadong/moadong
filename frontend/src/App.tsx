@@ -6,6 +6,8 @@ import { ScrollToTop } from '@/hooks/Scroll/ScrollToTop';
 import AppRoutes from '@/routes/AppRoutes';
 import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
+import WebviewGlobalStyles from '@/styles/WebviewGlobal.styles';
+import isInAppWebView from '@/utils/isInAppWebView';
 import { GlobalBoundary } from './components/common/ErrorBoundary';
 import 'swiper/css';
 
@@ -25,6 +27,7 @@ const App = () => {
   return (
     <>
       <GlobalStyles />
+      {isInAppWebView() && <WebviewGlobalStyles />}
       <GlobalBoundary>
         <QueryClientProvider client={queryClient}>
           <ThemeProvider theme={theme}>
