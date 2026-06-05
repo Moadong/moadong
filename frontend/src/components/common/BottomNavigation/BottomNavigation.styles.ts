@@ -15,7 +15,7 @@ export const Nav = styled.nav`
   z-index: ${Z_INDEX.bottomNav};
 `;
 
-export const Tab = styled.button`
+export const Tab = styled.button<{ $active: boolean }>`
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -26,15 +26,8 @@ export const Tab = styled.button`
   background: none;
   padding: 0;
   cursor: pointer;
-`;
-
-export const MaskIcon = styled.span<{ $icon: string; $active: boolean }>`
-  width: 28px;
-  height: 28px;
-  background-color: ${({ $active }) =>
+  color: ${({ $active }) =>
     $active ? theme.colors.primary[900] : theme.colors.gray[500]};
-  -webkit-mask: url(${({ $icon }) => $icon}) center / contain no-repeat;
-  mask: url(${({ $icon }) => $icon}) center / contain no-repeat;
 `;
 
 export const ImageIcon = styled.img`
@@ -43,10 +36,9 @@ export const ImageIcon = styled.img`
   object-fit: contain;
 `;
 
-export const Label = styled.span<{ $active: boolean }>`
+export const Label = styled.span`
   font-size: 10px;
   font-weight: 500;
   line-height: 1;
-  color: ${({ $active }) =>
-    $active ? theme.colors.primary[900] : theme.colors.gray[500]};
+  color: inherit;
 `;

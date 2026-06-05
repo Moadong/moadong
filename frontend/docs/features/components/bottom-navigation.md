@@ -22,7 +22,7 @@ active 판정: `/`는 정확히 일치, 나머지는 `startsWith`.
 
 ## 아이콘 틴팅
 
-프로젝트가 svgr를 쓰지 않아 SVG를 `<img>` URL로만 사용 → CSS `color` 틴팅이 불가하다. 단색 아이콘(홈/메뉴)은 CSS `mask` + `background-color`로 active/inactive 색을 적용한다. 이를 위해 RN에서 가져온 SVG의 배경 `<rect fill="white"/>`를 제거했다(아이콘 패스는 원본 유지). 구독 아이콘은 PNG 2-state라 선택/비선택 이미지를 교체한다.
+단색 아이콘(홈/메뉴)은 `svg?react`(vite-plugin-svgr)로 컴포넌트 import하고, RN 원본이 `currentColor`를 쓰므로 부모 `Tab`의 `color`(active `#FF5414` / inactive `#C5C5C5`)를 상속받아 틴팅된다. 라벨도 `color: inherit`로 같은 색을 따른다. RN에서 가져온 SVG의 배경 `<rect fill="white"/>`는 제거했다(아이콘 패스는 원본 유지). 구독 아이콘은 PNG 2-state라 선택/비선택 이미지를 교체한다.
 
 ## 트래킹
 

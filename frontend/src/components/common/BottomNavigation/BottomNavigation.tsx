@@ -1,14 +1,16 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import homeIcon from '@/assets/images/icons/bottomNav/home.svg';
-import menuIcon from '@/assets/images/icons/bottomNav/menu.svg';
+import HomeIcon from '@/assets/images/icons/bottomNav/home.svg?react';
+import MenuIcon from '@/assets/images/icons/bottomNav/menu.svg?react';
 import subscribeSelected from '@/assets/images/icons/bottomNav/subscribe_selected.png';
 import subscribeUnselected from '@/assets/images/icons/bottomNav/subscribe_unselected.png';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './BottomNavigation.styles';
 
+type SvgComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
+
 type TabIcon =
-  | { type: 'mask'; src: string }
+  | { type: 'vector'; Component: SvgComponent }
   | { type: 'image'; active: string; inactive: string };
 
 interface BottomNavTab {
@@ -23,7 +25,7 @@ const TABS: BottomNavTab[] = [
     key: 'home',
     label: '홈',
     path: '/',
-    icon: { type: 'mask', src: homeIcon },
+    icon: { type: 'vector', Component: HomeIcon },
   },
   {
     key: 'explore',
@@ -39,12 +41,26 @@ const TABS: BottomNavTab[] = [
     key: 'more',
     label: '메뉴',
     path: '/menu',
-    icon: { type: 'mask', src: menuIcon },
+    icon: { type: 'vector', Component: MenuIcon },
   },
 ];
 
 const isTabActive = (pathname: string, path: string) =>
   path === '/' ? pathname === '/' : pathname.startsWith(path);
+
+const renderIcon = (icon: TabIcon, active: boolean) => {
+  if (icon.type === 'vector') {
+    const Icon = icon.Component;
+    return <Icon width={28} height={28} aria-hidden />;
+  }
+  return (
+    <Styled.ImageIcon
+      src={active ? icon.active : icon.inactive}
+      alt=''
+      aria-hidden
+    />
+  );
+};
 
 const BottomNavigation = () => {
   const { pathname } = useLocation();
@@ -64,23 +80,12 @@ const BottomNavigation = () => {
           <Styled.Tab
             key={tab.key}
             type='button'
+            $active={active}
             aria-current={active ? 'page' : undefined}
             onClick={() => handleTabClick(tab)}
           >
-            {tab.icon.type === 'mask' ? (
-              <Styled.MaskIcon
-                $icon={tab.icon.src}
-                $active={active}
-                aria-hidden
-              />
-            ) : (
-              <Styled.ImageIcon
-                src={active ? tab.icon.active : tab.icon.inactive}
-                alt=''
-                aria-hidden
-              />
-            )}
-            <Styled.Label $active={active}>{tab.label}</Styled.Label>
+            {renderIcon(tab.icon, active)}
+            <Styled.Label>{tab.label}</Styled.Label>
           </Styled.Tab>
         );
       })}
