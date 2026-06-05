@@ -7,12 +7,17 @@ export const Nav = styled.nav`
   bottom: 0;
   left: 0;
   right: 0;
-  display: flex;
   background-color: #ffffff;
   border-top: 1px solid #f0f0f0;
-  padding-top: 6px;
-  padding-bottom: calc(6px + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
   z-index: ${Z_INDEX.bottomNav};
+`;
+
+export const Inner = styled.div`
+  display: flex;
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 6px 0;
 `;
 
 export const Tab = styled.button<{ $active: boolean }>`

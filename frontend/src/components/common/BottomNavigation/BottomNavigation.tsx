@@ -45,8 +45,21 @@ const TABS: BottomNavTab[] = [
   },
 ];
 
-const isTabActive = (pathname: string, path: string) =>
-  path === '/' ? pathname === '/' : pathname.startsWith(path);
+const isTabActive = (pathname: string, path: string) => {
+  // 홈 탭: 메인 + 상단 Filter로 묶이는 홍보까지 활성
+  if (path === '/') {
+    return pathname === '/' || pathname === '/promotions';
+  }
+  // 메뉴 탭: 메뉴 페이지에서 진입하는 소개/연합회 하위 페이지까지 활성
+  if (path === '/menu') {
+    return (
+      pathname.startsWith('/menu') ||
+      pathname === '/introduce' ||
+      pathname === '/club-union'
+    );
+  }
+  return pathname.startsWith(path);
+};
 
 const renderIcon = (icon: TabIcon, active: boolean) => {
   if (icon.type === 'vector') {
@@ -74,21 +87,23 @@ const BottomNavigation = () => {
 
   return (
     <Styled.Nav aria-label='하단 네비게이션'>
-      {TABS.map((tab) => {
-        const active = isTabActive(pathname, tab.path);
-        return (
-          <Styled.Tab
-            key={tab.key}
-            type='button'
-            $active={active}
-            aria-current={active ? 'page' : undefined}
-            onClick={() => handleTabClick(tab)}
-          >
-            {renderIcon(tab.icon, active)}
-            <Styled.Label>{tab.label}</Styled.Label>
-          </Styled.Tab>
-        );
-      })}
+      <Styled.Inner>
+        {TABS.map((tab) => {
+          const active = isTabActive(pathname, tab.path);
+          return (
+            <Styled.Tab
+              key={tab.key}
+              type='button'
+              $active={active}
+              aria-current={active ? 'page' : undefined}
+              onClick={() => handleTabClick(tab)}
+            >
+              {renderIcon(tab.icon, active)}
+              <Styled.Label>{tab.label}</Styled.Label>
+            </Styled.Tab>
+          );
+        })}
+      </Styled.Inner>
     </Styled.Nav>
   );
 };
