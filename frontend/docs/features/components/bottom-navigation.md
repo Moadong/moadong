@@ -37,6 +37,6 @@ active 판정: `/`는 정확히 일치, 나머지는 `startsWith`.
 - `src/styles/zIndex.ts` — `bottomNav` z-index 토큰
 - `src/constants/eventName.ts` — `BOTTOM_TAB_CLICKED`
 
-## 참고
+## 마운트
 
-아직 레이아웃에 마운트되지 않은 독립 컴포넌트다. 실제 화면 부착은 공용 레이아웃(AppLayout) 도입 단계에서 진행한다.
+`src/layouts/AppLayout.tsx`(중첩 라우트 레이아웃)에서 렌더되며, `/`·`/introduce`·`/club-union`·`/promotions`·`/subscriptions`·`/menu` 6개 라우트에 노출된다. 상세·지원폼·관리자·게임·웹뷰 등은 그룹 밖이라 미노출. AppLayout이 `Outlet` 래퍼에 하단 여백(`calc(56px + env(safe-area-inset-bottom))`)을 주어 fixed 바에 콘텐츠가 가리지 않게 한다.
