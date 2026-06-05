@@ -18,7 +18,10 @@ const ClubDetailRedirect = ({ map = false }: { map?: boolean }) => {
 
 const webviewRoutes: RouteObject[] = [
   { path: '/webview/main', element: <Navigate to='/' replace /> },
-  { path: '/webview/promotions', element: <Navigate to='/promotions' replace /> },
+  {
+    path: '/webview/promotions',
+    element: <Navigate to='/promotions' replace />,
+  },
   { path: '/webview/club/:clubId', element: <ClubDetailRedirect /> },
   { path: '/webview/club/:clubId/map', element: <ClubDetailRedirect map /> },
   { path: '/webview/club/@:clubName', element: <ClubDetailRedirect /> },
