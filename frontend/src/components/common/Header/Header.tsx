@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { useLocation } from 'react-router-dom';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
@@ -17,17 +16,9 @@ interface HeaderProps {
 
 const Header = ({ showOn, hideOn }: HeaderProps) => {
   const location = useLocation();
-  const [isMenuOpen, setIsMenuOpen] = useState(false);
   const isScrolled = useScrollDetection();
   const isVisible = useHeaderVisibility(showOn, hideOn);
-  const {
-    handleHomeClick,
-    handleIntroduceClick,
-    handleClubUnionClick,
-    handlePromotionClick,
-    handleMenuOpen,
-    handleMenuClose,
-  } = useHeaderNavigation();
+  const { handleHomeClick } = useHeaderNavigation();
 
   const isAdminPage = location.pathname.startsWith('/admin');
   const isAdminLoginPage = location.pathname.startsWith('/admin/login');
@@ -35,32 +26,6 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
   if (!isVisible) {
     return null;
   }
-
-  const navLinks = [
-    { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
-    {
-      label: '총동아리연합회 소개',
-      handler: handleClubUnionClick,
-      path: '/club-union',
-    },
-    {
-      label: '홍보•이벤트',
-      handler: handlePromotionClick,
-      path: '/promotions',
-    },
-  ];
-
-  const closeMenu = () => {
-    setIsMenuOpen(false);
-  };
-  const toggleMenu = () => {
-    if (isMenuOpen) {
-      handleMenuClose();
-    } else {
-      handleMenuOpen();
-    }
-    setIsMenuOpen((prev) => !prev);
-  };
 
   return (
     <Styled.Header isScrolled={isScrolled}>
@@ -78,36 +43,13 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
               alt='모아동 로고'
             />
           </Styled.LogoButton>
-
-          <Styled.Nav isOpen={isMenuOpen}>
-            {navLinks.map((link) => (
-              <Styled.NavLink
-                key={link.label}
-                isActive={location.pathname === link.path}
-                onClick={() => {
-                  link.handler();
-                  closeMenu();
-                }}
-              >
-                {link.label}
-              </Styled.NavLink>
-            ))}
-          </Styled.Nav>
         </Styled.LeftSection>
 
         {!isAdminPage && (
-          <Styled.MenuButton
-            onClick={toggleMenu}
-            isOpen={isMenuOpen}
-            aria-label={isMenuOpen ? '메뉴 닫기' : '메뉴 열기'}
-          >
-            <Styled.MenuBar />
-            <Styled.MenuBar />
-            <Styled.MenuBar />
-          </Styled.MenuButton>
+          <Styled.SearchArea>
+            <SearchBox />
+          </Styled.SearchArea>
         )}
-
-        {!isAdminPage && <SearchBox />}
         {isAdminPage && !isAdminLoginPage && <AdminProfile />}
       </Styled.Container>
     </Styled.Header>

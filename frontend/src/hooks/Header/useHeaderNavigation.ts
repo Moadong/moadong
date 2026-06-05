@@ -37,22 +37,12 @@ const useHeaderNavigation = () => {
     trackEvent(USER_EVENT.ADMIN_BUTTON_CLICKED);
   }, [navigate, trackEvent]);
 
-  const handleMenuOpen = useCallback(() => {
-    trackEvent(USER_EVENT.MOBILE_MENU_BUTTON_CLICKED);
-  }, [trackEvent]);
-
-  const handleMenuClose = useCallback(() => {
-    trackEvent(USER_EVENT.MOBILE_MENU_DELETE_BUTTON_CLICKED);
-  }, [trackEvent]);
-
   return {
     handleHomeClick,
     handleIntroduceClick,
     handleClubUnionClick,
     handlePromotionClick,
     handleAdminClick,
-    handleMenuOpen,
-    handleMenuClose,
   };
 };
 
