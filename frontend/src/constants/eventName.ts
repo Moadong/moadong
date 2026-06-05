@@ -61,6 +61,9 @@ export const USER_EVENT = {
   // 필터칩
   FILTER_OPTION_CLICKED: 'Filter Option Clicked',
 
+  // 하단 네비게이션
+  BOTTOM_TAB_CLICKED: 'BottomTab Clicked',
+
   // 동소한 (동아리 소개 한마당)
   FESTIVAL_TAB_CLICKED: 'Festival Tab Clicked',
   FESTIVAL_BOOTH_MAP_SLIDE_CHANGED: 'Festival BoothMap Slide Changed',
