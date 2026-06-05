@@ -135,6 +135,8 @@ export const PAGE_VIEW = {
   APPLICATION_FORM_PAGE: 'ApplicationFormPage',
   CLUB_DETAIL_PAGE: 'ClubDetailPage',
   MAIN_PAGE: 'MainPage',
+  SUBSCRIPTIONS_PAGE: 'SubscriptionsPage',
+  MENU_PAGE: 'MenuPage',
   INTRODUCE_PAGE: 'IntroducePage',
   CLUB_UNION_PAGE: 'ClubUnionPage',
   FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
@@ -157,4 +159,5 @@ export const PAGE_NAME = {
   MAIN: 'main',
   WEBVIEW_MAIN: 'webview-main',
   INTRODUCE: 'introduce',
+  SUBSCRIPTIONS: 'subscriptions',
 } as const;

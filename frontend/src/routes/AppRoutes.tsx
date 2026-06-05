@@ -14,8 +14,10 @@ import ErrorTestPage from '@/pages/ErrorTestPage/ErrorTestPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import MainPage from '@/pages/MainPage/MainPage';
+import MenuPage from '@/pages/MenuPage/MenuPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
+import SubscriptionsPage from '@/pages/SubscriptionsPage/SubscriptionsPage';
 import webviewRoutes from './webviewRoutes';
 
 const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
@@ -118,6 +120,22 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <GamePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/subscriptions',
+      element: (
+        <ContentErrorBoundary>
+          <SubscriptionsPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/menu',
+      element: (
+        <ContentErrorBoundary>
+          <MenuPage />
         </ContentErrorBoundary>
       ),
     },
