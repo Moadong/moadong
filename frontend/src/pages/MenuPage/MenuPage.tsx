@@ -2,6 +2,7 @@ import ChevronIcon from '@/assets/images/icons/menu/chevron.svg?react';
 import DocumentIcon from '@/assets/images/icons/menu/document.svg?react';
 import InfoIcon from '@/assets/images/icons/menu/info.svg?react';
 import PeopleIcon from '@/assets/images/icons/menu/people.svg?react';
+import MoadongIcon from '@/assets/images/logos/moadong_mobile_logo.svg?react';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -59,10 +60,19 @@ const MenuPage = () => {
             <ChevronIcon width={20} height={20} aria-hidden />
           </Styled.Chevron>
         </Styled.MenuLink>
+
+        {appVersion && (
+          <Styled.MenuInfoRow>
+            <Styled.ItemLeft>
+              <Styled.IconCircle>
+                <MoadongIcon width={24} height={24} aria-hidden />
+              </Styled.IconCircle>
+              <Styled.ItemText>앱 버전</Styled.ItemText>
+            </Styled.ItemLeft>
+            <Styled.VersionText>{appVersion}</Styled.VersionText>
+          </Styled.MenuInfoRow>
+        )}
       </Styled.MenuList>
-      {appVersion && (
-        <Styled.AppVersion>버전 {appVersion}</Styled.AppVersion>
-      )}
     </Styled.Container>
   );
 };

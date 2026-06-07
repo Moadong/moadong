@@ -65,9 +65,16 @@ export const Chevron = styled.span`
   color: ${theme.colors.gray[500]};
 `;
 
-export const AppVersion = styled.p`
-  text-align: center;
-  font-size: 12px;
+export const MenuInfoRow = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 16px;
+  border-bottom: 1px solid ${theme.colors.gray[100]};
+`;
+
+export const VersionText = styled.span`
+  font-size: 14px;
   color: ${theme.colors.gray[400]};
-  padding: 24px 0;
 `;
