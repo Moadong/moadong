@@ -64,3 +64,10 @@ export const Chevron = styled.span`
   display: flex;
   color: ${theme.colors.gray[500]};
 `;
+
+export const AppVersion = styled.p`
+  text-align: center;
+  font-size: 12px;
+  color: ${theme.colors.gray[400]};
+  padding: 24px 0;
+`;

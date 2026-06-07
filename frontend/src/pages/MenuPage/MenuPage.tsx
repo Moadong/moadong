@@ -5,6 +5,7 @@ import PeopleIcon from '@/assets/images/icons/menu/people.svg?react';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import getAppVersion from '@/utils/getAppVersion';
 import * as Styled from './MenuPage.styles';
 
 const PRIVACY_POLICY_URL =
@@ -13,6 +14,7 @@ const PRIVACY_POLICY_URL =
 const MenuPage = () => {
   useTrackPageView(PAGE_VIEW.MENU_PAGE);
   const { handleIntroduceClick, handleClubUnionClick } = useHeaderNavigation();
+  const appVersion = getAppVersion();
 
   return (
     <Styled.Container>
@@ -58,6 +60,9 @@ const MenuPage = () => {
           </Styled.Chevron>
         </Styled.MenuLink>
       </Styled.MenuList>
+      {appVersion && (
+        <Styled.AppVersion>버전 {appVersion}</Styled.AppVersion>
+      )}
     </Styled.Container>
   );
 };
