@@ -1,16 +1,22 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { theme } from '@/styles/theme';
 import { Z_INDEX } from '@/styles/zIndex';
 
 export const Nav = styled.nav`
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: #ffffff;
-  border-top: 1px solid #f0f0f0;
-  padding-bottom: env(safe-area-inset-bottom);
-  z-index: ${Z_INDEX.bottomNav};
+  display: none;
+
+  ${media.tablet} {
+    display: block;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background-color: #ffffff;
+    border-top: 1px solid #f0f0f0;
+    padding-bottom: env(safe-area-inset-bottom);
+    z-index: ${Z_INDEX.bottomNav};
+  }
 `;
 
 export const Inner = styled.div`

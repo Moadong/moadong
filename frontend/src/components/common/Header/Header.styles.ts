@@ -44,6 +44,32 @@ export const LeftSection = styled.div`
   display: flex;
   align-items: center;
   flex-shrink: 0;
+  gap: 45px;
+`;
+
+export const Nav = styled.nav`
+  display: flex;
+  align-items: center;
+  gap: 45px;
+
+  ${media.tablet} {
+    display: none;
+  }
+`;
+
+export const NavLink = styled.button<{ $isActive?: boolean }>`
+  border: none;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: ${({ $isActive }) => ($isActive ? '#FF5414' : '#3A3A3A')};
+  background: transparent;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.7;
+  }
 `;
 
 export const SearchArea = styled.div`
