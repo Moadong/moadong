@@ -72,18 +72,17 @@ export const EmptyResult = styled.div`
 `;
 
 export const SubscribeButton = styled.button<{ $subscribed: boolean }>`
-  flex-shrink: 0;
+  position: absolute;
+  top: 14px;
+  right: 12px;
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 36px;
-  height: 36px;
   border: none;
   background: none;
   cursor: pointer;
   color: ${({ $subscribed }) => ($subscribed ? '#FF5414' : '#C5C5C5')};
   padding: 4px;
-  margin-left: 8px;
   border-radius: 50%;
   transition: color 0.2s ease;
 
