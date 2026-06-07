@@ -69,12 +69,13 @@ const ClubProfile = styled.div`
   display: flex;
   align-items: center;
   gap: 20px;
+  min-width: 0;
 `;
 
 const ClubInfo = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  min-width: 0;
 `;
 
 const ClubName = styled.p`
@@ -89,7 +90,7 @@ const ClubName = styled.p`
 export const StateBoxTagContainer = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: center;
+  align-items: flex-start;
   gap: 20px;
 `;
 
@@ -119,6 +120,8 @@ const Introduction = styled.p`
   color: rgba(129, 129, 129, 1);
   line-height: 16px;
   white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   @media (max-width: 500px) {
     margin: ${INTRODUCTION_MARGIN.mobile.margin};
