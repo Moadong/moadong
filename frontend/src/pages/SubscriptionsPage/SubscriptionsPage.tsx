@@ -81,7 +81,9 @@ const SubscriptionsPage = () => {
         <Styled.Empty>
           구독 기능은 모아동 앱에서 이용할 수 있어요.
           <Styled.CtaButton
-            onClick={() => window.open(getAppStoreLink(), '_blank', 'noopener,noreferrer')}
+            onClick={() =>
+              window.open(getAppStoreLink(), '_blank', 'noopener,noreferrer')
+            }
           >
             앱 다운로드
           </Styled.CtaButton>
