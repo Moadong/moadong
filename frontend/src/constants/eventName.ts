@@ -8,9 +8,6 @@ export const USER_EVENT = {
   MAIN_POPUP_CLOSED: 'Main Popup Closed',
   APP_DOWNLOAD_POPUP_CLICKED: 'App Download Popup Clicked',
 
-  // 동소한 팝업
-  FESTIVAL_POPUP_CLICKED: 'Festival Popup Clicked',
-
   // 동소한 부스
   FESTIVAL_BOOTH_CLICKED: 'Festival Booth Clicked',
 
@@ -22,14 +19,11 @@ export const USER_EVENT = {
   // 네비게이션
   BACK_BUTTON_CLICKED: 'Back Button Clicked',
   HOME_BUTTON_CLICKED: 'Home Button Clicked',
-  MOBILE_HOME_BUTTON_CLICKED: 'Mobile Home Button Clicked',
   MOBILE_MENU_BUTTON_CLICKED: 'Mobile Menu Button Clicked',
   MOBILE_MENU_DELETE_BUTTON_CLICKED: 'Mobile Menubar delete Button Clicked',
   ADMIN_BUTTON_CLICKED: 'Admin Button Clicked',
 
   // 탭 & 섹션
-  TAB_CLICKED: 'Tab Clicked',
-  PHOTO_NAVIGATION_CLICKED: 'Photo Navigation',
   CLUB_CARD_CLICKED: 'ClubCard Clicked',
   CLUB_CARD_VIEWED: 'ClubCard Viewed',
   SCROLL_DEPTH_REACHED: 'Scroll Depth Reached',
@@ -42,7 +36,6 @@ export const USER_EVENT = {
 
   // 동아리 지원
   CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked',
-  RECOMMENDED_CLUB_CLICKED: 'Recommended Club Clicked',
   CLUB_UNION_BUTTON_CLICKED: 'Club Union Button Clicked',
 
   // 총동연 페이지
@@ -55,7 +48,6 @@ export const USER_EVENT = {
   STATUS_RADIO_BUTTON_CLICKED: 'StatusRadioButton Clicked',
   INTRODUCE_BUTTON_CLICKED: 'Introduce Button Clicked',
   APPLICATION_FORM_SUBMITTED: 'Application Form Submitted',
-  PATCH_NOTE_BUTTON_CLICKED: 'Patch Note Button Clicked',
   FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
 
   // 필터칩
