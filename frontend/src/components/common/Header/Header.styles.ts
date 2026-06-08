@@ -2,6 +2,12 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { Z_INDEX } from '@/styles/zIndex';
 
+export const HEADER_HEIGHT = {
+  desktop: 92,
+  tablet: 76,
+  mobile: 56,
+} as const;
+
 export const Header = styled.header<{ isScrolled: boolean }>`
   position: fixed;
   top: 0;
@@ -10,6 +16,7 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   display: flex;
   justify-content: center;
   width: 100%;
+  height: ${HEADER_HEIGHT.desktop}px;
   padding: 18px 0;
   background-color: white;
   z-index: ${Z_INDEX.header};
@@ -22,12 +29,12 @@ export const Header = styled.header<{ isScrolled: boolean }>`
     padding: 18px 20px;
   }
   ${media.tablet} {
-    height: 76px;
+    height: ${HEADER_HEIGHT.tablet}px;
     padding: 10px 20px;
   }
 
   ${media.mobile} {
-    height: 56px;
+    height: ${HEADER_HEIGHT.mobile}px;
     padding: 8px 20px;
   }
 `;

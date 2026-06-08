@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
 
 export const PageWrapper = styled.div`
@@ -12,18 +13,22 @@ export const Container = styled.div`
   width: 100%;
   max-width: 550px;
   margin: 0 auto;
-  padding-top: 92px;
+  padding-top: ${HEADER_HEIGHT.desktop}px;
 `;
 
 export const NavWrapper = styled.div`
   position: sticky;
-  top: 76px;
+  top: ${HEADER_HEIGHT.desktop}px;
   z-index: 10;
   background: white;
   margin-bottom: 16px;
 
+  ${media.tablet} {
+    top: ${HEADER_HEIGHT.tablet}px;
+  }
+
   ${media.mobile} {
-    top: 56px;
+    top: ${HEADER_HEIGHT.mobile}px;
   }
 `;
 
