@@ -13,14 +13,18 @@ export const Container = styled.div`
   max-width: 550px;
   margin: 0 auto;
   padding-top: 92px;
-
-  ${media.mobile} {
-    padding-top: 0;
-  }
 `;
 
 export const NavWrapper = styled.div`
+  position: sticky;
+  top: 76px;
+  z-index: 10;
+  background: white;
   margin-bottom: 16px;
+
+  ${media.mobile} {
+    top: 56px;
+  }
 `;
 
 export const TimetableSection = styled.section`
