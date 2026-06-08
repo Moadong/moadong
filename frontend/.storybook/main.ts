@@ -10,9 +10,10 @@ const config: StorybookConfig = {
   viteFinal: async (config) => {
     const { mergeConfig } = await import('vite');
     const { default: tsconfigPaths } = await import('vite-tsconfig-paths');
+    const { default: svgr } = await import('vite-plugin-svgr');
 
     return mergeConfig(config, {
-      plugins: [tsconfigPaths()],
+      plugins: [tsconfigPaths(), svgr()],
     });
   },
 };

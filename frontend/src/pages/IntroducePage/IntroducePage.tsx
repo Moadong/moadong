@@ -16,7 +16,7 @@ const IntroducePage = () => {
 
   return (
     <>
-      <Header hideOn={['webview']} />
+      <Header />
       <Styled.Main>
         <IntroSection />
         <ProblemSection />

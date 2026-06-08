@@ -61,6 +61,9 @@ export const USER_EVENT = {
   // 필터칩
   FILTER_OPTION_CLICKED: 'Filter Option Clicked',
 
+  // 하단 네비게이션
+  BOTTOM_TAB_CLICKED: 'BottomTab Clicked',
+
   // 동소한 (동아리 소개 한마당)
   FESTIVAL_TAB_CLICKED: 'Festival Tab Clicked',
   FESTIVAL_BOOTH_MAP_SLIDE_CHANGED: 'Festival BoothMap Slide Changed',
@@ -132,6 +135,8 @@ export const PAGE_VIEW = {
   APPLICATION_FORM_PAGE: 'ApplicationFormPage',
   CLUB_DETAIL_PAGE: 'ClubDetailPage',
   MAIN_PAGE: 'MainPage',
+  SUBSCRIPTIONS_PAGE: 'SubscriptionsPage',
+  MENU_PAGE: 'MenuPage',
   INTRODUCE_PAGE: 'IntroducePage',
   CLUB_UNION_PAGE: 'ClubUnionPage',
   FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
@@ -154,4 +159,5 @@ export const PAGE_NAME = {
   MAIN: 'main',
   WEBVIEW_MAIN: 'webview-main',
   INTRODUCE: 'introduce',
+  SUBSCRIPTIONS: 'subscriptions',
 } as const;

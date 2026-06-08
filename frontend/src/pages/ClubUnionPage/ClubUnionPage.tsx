@@ -67,7 +67,7 @@ const ClubUnionPage = () => {
 
   return (
     <>
-      <Header hideOn={['webview']} />
+      <Header />
       <PageContainer>
         <Styled.Title>총동아리연합회 소개</Styled.Title>
         <Styled.IntroductionText>
