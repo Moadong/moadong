@@ -13,7 +13,6 @@ import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './SubscriptionsPage.styles';
 
 const SubscribedClubs = () => {
-  useTrackPageView(PAGE_VIEW.SUBSCRIPTIONS_PAGE);
   const navigate = useNavigate();
   const { subscribedClubIds, toggleSubscribe } = useWebviewSubscribe();
   const { data, isLoading, error, refetch } = useGetCardList({
@@ -73,6 +72,8 @@ const SubscribedClubs = () => {
 };
 
 const SubscriptionsPage = () => {
+  useTrackPageView(PAGE_VIEW.SUBSCRIPTIONS_PAGE);
+
   if (!isInAppWebView()) {
     return (
       <Styled.Container>
@@ -80,7 +81,7 @@ const SubscriptionsPage = () => {
         <Styled.Empty>
           구독 기능은 모아동 앱에서 이용할 수 있어요.
           <Styled.CtaButton
-            onClick={() => window.open(getAppStoreLink(), '_blank')}
+            onClick={() => window.open(getAppStoreLink(), '_blank', 'noopener,noreferrer')}
           >
             앱 다운로드
           </Styled.CtaButton>

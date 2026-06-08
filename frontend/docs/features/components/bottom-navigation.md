@@ -7,7 +7,7 @@
 | 탭   | 경로             | 아이콘                                        |
 | ---- | ---------------- | --------------------------------------------- |
 | 홈   | `/`              | home.svg (mask 틴팅)                          |
-| 구독 | `/subscriptions` | subscribe_selected / _unselected.png (2-state) |
+| 구독 | `/subscriptions` | `subscribe_selected`/`subscribe_unselected.png` (2-state) |
 | 메뉴 | `/menu`          | menu.svg (mask 틴팅)                          |
 
 active 판정: `/`는 정확히 일치, 나머지는 `startsWith`.

@@ -15,10 +15,10 @@
 - `src/pages/SubscriptionsPage/SubscriptionsPage.styles.ts`
 - `src/hooks/useWebviewSubscribe.ts` — 구독 상태 브릿지 훅 (재사용)
 - `src/hooks/Queries/useClub.ts` (`useGetCardList`) — 동아리 목록 (재사용)
-- `src/pages/MainPage/components/ClubCard/ClubCard.tsx`, `src/pages/WebviewMainPage/components/SubscribeButton/SubscribeButton.tsx` — 카드/구독 버튼 (재사용)
+- `src/pages/MainPage/components/ClubCard/ClubCard.tsx`, `src/pages/MainPage/components/SubscribeButton/SubscribeButton.tsx` — 카드/구독 버튼 (재사용)
 - `src/utils/appStoreLink.ts` (`getAppStoreLink`) — 웹 CTA 링크
 - `src/routes/AppRoutes.tsx` — `/subscriptions` 라우트
 
 ## 참고
 
-아직 공용 레이아웃(헤더/바텀네비)에 부착되지 않은 독립 페이지다. 부착은 레이아웃 셸(AppLayout) 단계에서 진행한다.
+`/subscriptions`는 `AppLayout`의 하위 라우트로 공용 헤더/바텀네비를 사용한다.

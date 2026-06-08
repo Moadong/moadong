@@ -28,7 +28,7 @@ const TABS: BottomNavTab[] = [
     icon: { type: 'vector', Component: HomeIcon },
   },
   {
-    key: 'explore',
+    key: 'subscriptions',
     label: '구독',
     path: '/subscriptions',
     icon: {
@@ -82,7 +82,7 @@ const BottomNavigation = () => {
 
   const handleTabClick = (tab: BottomNavTab) => {
     trackEvent(USER_EVENT.BOTTOM_TAB_CLICKED, { tab: tab.key, path: tab.path });
-    navigate(tab.path);
+    navigate(tab.path, { replace: true });
   };
 
   return (
