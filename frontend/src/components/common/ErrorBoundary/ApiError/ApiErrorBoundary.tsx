@@ -1,4 +1,6 @@
 import { ReactNode } from 'react';
+import * as Sentry from '@sentry/react';
+import { HttpError } from '@/errors';
 import BaseErrorBoundary from '../BaseErrorBoundary';
 import ApiErrorFallback from './ApiErrorFallback';
 
@@ -18,6 +20,12 @@ const ApiErrorBoundary = ({
       fallback={ApiErrorFallback}
       onReset={onReset}
       resetKeys={resetKeys}
+      onError={(error) => {
+        // 예상된 4xx(404 등 사용자에게 메시지로 안내되는 에러)는 노이즈라 제외하고,
+        // 5xx 및 HttpError가 아닌 예상 외 에러만 Sentry로 보낸다.
+        if (error instanceof HttpError && error.isClientError()) return;
+        Sentry.captureException(error, { extra: { boundary: 'api' } });
+      }}
     >
       {children}
     </BaseErrorBoundary>
