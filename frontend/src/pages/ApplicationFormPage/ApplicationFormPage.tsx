@@ -41,8 +41,11 @@ const ApplicationFormPage = () => {
     clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
   );
 
-  const STORAGE_KEY = `applicationAnswers_${clubId}_${applicationFormId}`;
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const STORAGE_KEY =
+    clubId && applicationFormId
+      ? `applicationAnswers_${clubId}_${applicationFormId}`
+      : null;
+  const saved = STORAGE_KEY ? localStorage.getItem(STORAGE_KEY) : null;
   const initialAnswers = saved ? JSON.parse(saved) : [];
 
   const {
@@ -52,8 +55,9 @@ const ApplicationFormPage = () => {
   } = useAnswers(initialAnswers);
 
   useEffect(() => {
+    if (!STORAGE_KEY) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
-  }, [answers, clubId, applicationFormId]);
+  }, [answers, STORAGE_KEY]);
 
   if (!clubId || !applicationFormId) return null;
 
@@ -111,7 +115,7 @@ const ApplicationFormPage = () => {
 
     try {
       await applyToClub(clubId, applicationFormId, answers);
-      localStorage.removeItem(STORAGE_KEY);
+      if (STORAGE_KEY) localStorage.removeItem(STORAGE_KEY);
       alert(
         `"${clubDetail.name}" 동아리에 성공적으로 지원되었습니다.\n좋은 결과 있으시길 바랍니다`,
       );
