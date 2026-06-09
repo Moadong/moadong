@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { FeedItem } from '../PhotoEditTab';
 import { reorderItems } from '../photoEditUtils';
+import { FeedItem } from '../types';
 
 export type DropPosition = { index: number; side: 'before' | 'after' } | null;
 

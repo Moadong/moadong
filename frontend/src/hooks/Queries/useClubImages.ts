@@ -1,6 +1,7 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { feedApi, logoApi, uploadToStorage } from '@/apis/image';
 import { queryKeys } from '@/constants/queryKeys';
+import { ALLOWED_IMAGE_TYPES } from '@/constants/uploadLimit';
 
 type ItemStatus = 'pending' | 'uploading' | 'failed';
 
@@ -8,7 +9,7 @@ interface FeedUploadParams {
   clubId: string;
   files: File[];
   existingUrls: string[];
-  onItemStatusChange?: (index: number, status: ItemStatus) => void;
+  onItemStatusChange?: (file: File, status: ItemStatus) => void;
 }
 
 interface FeedUpdateParams {
@@ -32,17 +33,11 @@ export const useUploadFeed = () => {
       onItemStatusChange,
     }: FeedUploadParams) => {
       // 1. presigned URL 요청
-      const ALLOWED_TYPES = [
-        'image/jpeg',
-        'image/jpg',
-        'image/png',
-        'image/gif',
-        'image/bmp',
-        'image/webp',
-      ];
       const uploadRequests = files.map((file) => ({
         fileName: file.name,
-        contentType: ALLOWED_TYPES.includes(file.type)
+        contentType: (ALLOWED_IMAGE_TYPES as readonly string[]).includes(
+          file.type,
+        )
           ? file.type
           : 'image/jpeg',
       }));
@@ -72,11 +67,12 @@ export const useUploadFeed = () => {
       const failedFiles: string[] = [];
 
       uploadResults.forEach((result, i) => {
-        if (result.status === 'fulfilled') {
-          successfulUrls.push(feedResArr[i].finalUrl);
+        const finalUrl = feedResArr[i].finalUrl;
+        if (result.status === 'fulfilled' && finalUrl) {
+          successfulUrls.push(finalUrl);
         } else {
           failedFiles.push(files[i].name);
-          onItemStatusChange?.(i, 'failed');
+          onItemStatusChange?.(files[i], 'failed');
         }
       });
 

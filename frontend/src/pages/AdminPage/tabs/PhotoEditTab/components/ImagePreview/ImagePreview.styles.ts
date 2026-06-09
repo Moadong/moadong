@@ -1,9 +1,4 @@
-import styled, { keyframes } from 'styled-components';
-
-const shimmer = keyframes`
-  0% { transform: translateX(-100%); }
-  100% { transform: translateX(250%); }
-`;
+import styled from 'styled-components';
 
 export const ImagePreviewContainer = styled.div`
   width: 100%;
@@ -54,27 +49,6 @@ export const Overlay = styled.div<{ $error?: boolean }>`
   color: white;
   font-size: 0.875rem;
   font-weight: 600;
-`;
-
-export const ProgressBar = styled.div`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  height: 3px;
-  background-color: rgba(255, 255, 255, 0.3);
-  overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 40%;
-    height: 100%;
-    background-color: white;
-    animation: ${shimmer} 1.2s ease-in-out infinite;
-  }
 `;
 
 export const PendingBadge = styled.div`

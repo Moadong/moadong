@@ -12,18 +12,6 @@ import { useDragSort } from './hooks/useDragSort';
 import { useFeedItems } from './hooks/useFeedItems';
 import * as Styled from './PhotoEditTab.styles';
 
-export interface UploadedItem {
-  type: 'uploaded';
-  url: string;
-}
-export interface LocalItem {
-  type: 'local';
-  file: File;
-  previewUrl: string;
-  status: 'pending' | 'uploading' | 'failed';
-}
-export type FeedItem = UploadedItem | LocalItem;
-
 const PhotoEditTab = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.PHOTO_EDIT_PAGE);

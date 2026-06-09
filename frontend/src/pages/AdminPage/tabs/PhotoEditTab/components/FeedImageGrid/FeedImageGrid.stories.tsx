@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { FeedItem } from '../../PhotoEditTab';
+import type { FeedItem } from '../../types';
 import { FeedImageGrid } from './FeedImageGrid';
 
 const IMAGES = [

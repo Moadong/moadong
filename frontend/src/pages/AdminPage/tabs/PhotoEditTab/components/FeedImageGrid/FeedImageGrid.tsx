@@ -1,8 +1,8 @@
 import { useLayoutEffect, useState } from 'react';
 import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/ImagePreview/ImagePreview';
 import { DropPosition } from '../../hooks/useDragSort';
-import { FeedItem } from '../../PhotoEditTab';
-import * as Styled from '../../PhotoEditTab.styles';
+import { FeedItem } from '../../types';
+import * as Styled from './FeedImageGrid.styles';
 
 interface FeedImageGridProps {
   feedItems: FeedItem[];

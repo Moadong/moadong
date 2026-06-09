@@ -1,11 +1,11 @@
 import { MAX_FILE_COUNT, MAX_FILE_SIZE } from '@/constants/uploadLimit';
-import { FeedItem } from './PhotoEditTab';
 import {
   findOversizedFile,
   hasPendingChanges,
   reorderItems,
   sliceToLimit,
 } from './photoEditUtils';
+import { FeedItem } from './types';
 
 const makeUploaded = (url: string): FeedItem => ({ type: 'uploaded', url });
 const makeLocal = (name: string): FeedItem => ({
