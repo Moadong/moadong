@@ -15,6 +15,7 @@ interface MapModalProps {
   clubName: string;
   clubLogo?: string;
   location: ClubLocation;
+  bubbleText?: string;
 }
 
 const MapModal = ({
@@ -23,6 +24,7 @@ const MapModal = ({
   clubName,
   clubLogo,
   location,
+  bubbleText,
 }: MapModalProps) => {
   const { isMobile, isTablet } = useDevice();
   const isMobileView = isMobile || isTablet;
@@ -38,6 +40,7 @@ const MapModal = ({
           clubLogo={clubLogo}
           active={isOpen}
           markerSize={isMobileView ? 40 : 50}
+          bubbleText={bubbleText}
           bubbleFontSize={isMobileView ? 14 : 16}
           bubbleFontWeight={isMobileView ? 700 : 600}
           mapInstanceRef={mapInstanceRef}

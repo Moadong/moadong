@@ -2,6 +2,7 @@ import { lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 import { ContentErrorBoundary } from '@/components/common/ErrorBoundary';
 import { AdminClubProvider } from '@/context/AdminClubContext';
+import AppLayout from '@/layouts/AppLayout';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ApplicationFormPage from '@/pages/ApplicationFormPage/ApplicationFormPage';
@@ -14,23 +15,71 @@ import ErrorTestPage from '@/pages/ErrorTestPage/ErrorTestPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import MainPage from '@/pages/MainPage/MainPage';
+import MenuPage from '@/pages/MenuPage/MenuPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
+import SubscriptionsPage from '@/pages/SubscriptionsPage/SubscriptionsPage';
 import webviewRoutes from './webviewRoutes';
 
 const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
 
 const AppRoutes = () =>
   useRoutes([
-    /* 일반 웹 */
+    /* 바텀 네비게이션이 있는 일반 웹 페이지 */
     {
-      path: '/',
-      element: (
-        <ContentErrorBoundary>
-          <MainPage />
-        </ContentErrorBoundary>
-      ),
+      element: <AppLayout />,
+      children: [
+        {
+          path: '/',
+          element: (
+            <ContentErrorBoundary>
+              <MainPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/introduce',
+          element: (
+            <ContentErrorBoundary>
+              <IntroducePage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/club-union',
+          element: (
+            <ContentErrorBoundary>
+              <ClubUnionPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/promotions',
+          element: (
+            <ContentErrorBoundary>
+              <PromotionListPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/subscriptions',
+          element: (
+            <ContentErrorBoundary>
+              <SubscriptionsPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/menu',
+          element: (
+            <ContentErrorBoundary>
+              <MenuPage />
+            </ContentErrorBoundary>
+          ),
+        },
+      ],
     },
+
     /* 기존 웹 & 안드로이드 url (android: v1.1.0) */
     {
       path: '/club/:clubId',
@@ -70,30 +119,6 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <ClubMapPage />
-        </ContentErrorBoundary>
-      ),
-    },
-    {
-      path: '/introduce',
-      element: (
-        <ContentErrorBoundary>
-          <IntroducePage />
-        </ContentErrorBoundary>
-      ),
-    },
-    {
-      path: '/club-union',
-      element: (
-        <ContentErrorBoundary>
-          <ClubUnionPage />
-        </ContentErrorBoundary>
-      ),
-    },
-    {
-      path: '/promotions',
-      element: (
-        <ContentErrorBoundary>
-          <PromotionListPage />
         </ContentErrorBoundary>
       ),
     },

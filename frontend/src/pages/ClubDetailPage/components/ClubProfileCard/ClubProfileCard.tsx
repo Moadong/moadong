@@ -1,4 +1,4 @@
-import locationIcon from '@/assets/images/icons/location_icon.svg';
+import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
 import YoutubeIcon from '@/assets/images/icons/sns/youtube_icon.svg';
 import defaultCover from '@/assets/images/logos/default_cover_image.png';
@@ -128,7 +128,7 @@ const ClubProfileCard = ({
               <Styled.LocationDivider />
               <Styled.LocationRow>
                 <Styled.LocationInfo>
-                  <img src={locationIcon} alt='위치 아이콘' />
+                  <LocationIcon />
                   <span>
                     동아리방 위치 {location.building} {location.detailLocation}
                   </span>
