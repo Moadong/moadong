@@ -16,7 +16,7 @@ export const ModalContent = styled.div`
 
   ${media.mobile} {
     width: 100vw;
-    height: 100vh;
+    height: 100dvh;
     border-radius: 0;
   }
 `;
@@ -51,6 +51,11 @@ export const ModalHeader = styled.div`
   z-index: 10;
   background: ${colors.base.white};
   backdrop-filter: blur(10px);
+
+  ${media.mobile} {
+    padding-top: env(safe-area-inset-top);
+    height: calc(60px + env(safe-area-inset-top));
+  }
 `;
 
 export const ClubName = styled.div`
