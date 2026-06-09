@@ -608,6 +608,72 @@
       <button type="button" id="btnFcmSendAll">전체 메시지 전송</button>
       <div id="fcmBatchResult" class="message-box hidden"></div>
 
+      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">예약 알림 만들기</h3>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmScheduleTargetType">대상 유형</label>
+          <select id="fcmScheduleTargetType">
+            <option value="SINGLE_TOKEN">단건 토큰</option>
+            <option value="ALL_TOKENS">전체 토큰</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="fcmScheduleToken">대상 토큰</label>
+          <textarea id="fcmScheduleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmScheduleTitle">제목</label>
+          <input type="text" id="fcmScheduleTitle" placeholder="알림 제목">
+        </div>
+        <div class="form-row">
+          <label for="fcmScheduleBody">본문</label>
+          <input type="text" id="fcmScheduleBody" placeholder="알림 내용">
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="fcmScheduleData">data (JSON 객체, 선택)</label>
+        <textarea id="fcmScheduleData" rows="4" placeholder='{"path":"/webview/clubDetail/123","action":"NAVIGATE_WEBVIEW"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmScheduleDate">예약 날짜</label>
+          <input type="date" id="fcmScheduleDate">
+        </div>
+        <div class="form-row">
+          <label for="fcmScheduleTime">예약 시간</label>
+          <input type="time" id="fcmScheduleTime">
+        </div>
+      </div>
+      <button type="button" id="btnFcmScheduleCreate">예약</button>
+      <button type="button" id="btnFcmScheduleReset">초기화</button>
+      <div id="fcmScheduleResult" class="message-box hidden"></div>
+
+      <div class="section-head" style="margin-top:24px;">
+        <h3 style="font-size:1rem; margin:0;">예약 알림 목록</h3>
+        <div class="section-head-actions">
+          <select id="fcmScheduleStatusFilter">
+            <option value="">전체</option>
+            <option value="SCHEDULED">대기</option>
+            <option value="SENDING">발송 중</option>
+            <option value="SENT">발송 완료</option>
+            <option value="CANCELED">취소됨</option>
+            <option value="FAILED">실패</option>
+          </select>
+          <button type="button" id="btnLoadFcmSchedules">예약 목록 조회</button>
+        </div>
+      </div>
+      <div id="fcmScheduleLoading" class="hidden">예약 알림을 불러오는 중...</div>
+      <div class="table-wrap">
+        <table id="fcmScheduleList">
+          <thead><tr><th>예약 시각</th><th>대상</th><th>제목</th><th>상태</th><th>결과</th><th>생성 시각</th><th>액션</th></tr></thead>
+          <tbody>
+            <tr><td colspan="7">예약 목록을 조회하세요.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
       <div class="card-grid" style="margin-top:16px;">
         <a href="/swagger-ui.html#/Fcm_Notification_Admin" target="_blank" rel="noopener" class="card">
           <strong>FCM Notification Admin API</strong>
@@ -650,6 +716,10 @@
     let fcmTokens = [];
     let fcmFilteredTokens = [];
     let fcmCurrentPage = 1;
+    let fcmSchedules = [];
+    let fcmScheduleIsLoading = false;
+    let fcmScheduleIsCreating = false;
+    let fcmScheduleCancelingIds = new Set();
     let bannerImages = [];
     let bannerActiveType = DEFAULT_BANNER_TYPE;
     let bannerDirty = false;
@@ -3191,6 +3261,7 @@
         pickBtn.textContent = '선택';
         pickBtn.onclick = () => {
           document.getElementById('fcmSingleToken').value = token;
+          document.getElementById('fcmScheduleToken').value = token;
           showToast('단건 발송 대상 토큰으로 선택됨', 'success');
         };
         const copyBtn = document.createElement('button');
@@ -3272,6 +3343,9 @@
       document.getElementById('fcmBatchTitle').value = '';
       document.getElementById('fcmBatchBody').value = '';
       document.getElementById('fcmBatchData').value = '';
+      fcmSchedules = [];
+      fcmScheduleCancelingIds = new Set();
+      resetFcmScheduleForm();
       document.getElementById('fcmSingleResult').classList.add('hidden');
       document.getElementById('fcmBatchResult').classList.add('hidden');
       const banner = document.getElementById('fcmBanner');
@@ -3281,12 +3355,16 @@
       document.getElementById('fcmTokenPagination').classList.add('hidden');
       document.getElementById('fcmTokenPagination').innerHTML = '';
       document.querySelector('#fcmTokenList tbody').innerHTML = '<tr><td colspan="3">토큰 조회를 실행하세요.</td></tr>';
+      document.querySelector('#fcmScheduleList tbody').innerHTML = '<tr><td colspan="7">예약 목록을 조회하세요.</td></tr>';
     }
 
     function loadFcmTokensIfVisible() {
       const section = document.getElementById('fcm');
       if (section && !section.classList.contains('hidden') && !fcmTokens.length) {
         document.getElementById('btnLoadFcmTokens').click();
+      }
+      if (section && !section.classList.contains('hidden') && !fcmSchedules.length && !fcmScheduleIsLoading) {
+        loadFcmSchedules();
       }
     }
 
@@ -3457,6 +3535,250 @@
         btn.textContent = '전체 메시지 전송';
       }
     };
+
+    function fcmScheduleStatusLabel(status) {
+      const labels = {
+        SCHEDULED: '대기',
+        SENDING: '발송 중',
+        SENT: '발송 완료',
+        CANCELED: '취소됨',
+        FAILED: '실패'
+      };
+      return labels[status] || status || '-';
+    }
+
+    function fcmScheduleTargetLabel(targetType) {
+      return targetType === 'ALL_TOKENS' ? '전체 토큰' : '단건 토큰';
+    }
+
+    function formatFcmScheduleDateTime(value) {
+      if (!value) return '-';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false });
+    }
+
+    function updateFcmScheduleTargetState() {
+      const targetType = document.getElementById('fcmScheduleTargetType').value;
+      const token = document.getElementById('fcmScheduleToken');
+      token.disabled = targetType === 'ALL_TOKENS';
+      if (targetType === 'ALL_TOKENS') token.value = '';
+    }
+
+    function buildFcmSchedulePayload() {
+      const targetType = document.getElementById('fcmScheduleTargetType').value;
+      const token = document.getElementById('fcmScheduleToken').value.trim();
+      const title = document.getElementById('fcmScheduleTitle').value.trim();
+      const body = document.getElementById('fcmScheduleBody').value.trim();
+      const date = document.getElementById('fcmScheduleDate').value;
+      const time = document.getElementById('fcmScheduleTime').value;
+      const data = parseFcmDataMap(document.getElementById('fcmScheduleData').value, '예약 data');
+
+      if (!title || !body) throw new Error('제목과 본문을 모두 입력하세요.');
+      if (targetType === 'SINGLE_TOKEN' && !token) throw new Error('단건 예약 대상 토큰을 입력하세요.');
+      if (!date || !time) throw new Error('예약 날짜와 시간을 모두 입력하세요.');
+
+      const scheduledDate = new Date(date + 'T' + time + ':00+09:00');
+      if (Number.isNaN(scheduledDate.getTime())) throw new Error('예약 시각 형식이 올바르지 않습니다.');
+      if (scheduledDate.getTime() <= Date.now()) throw new Error('예약 시각은 현재보다 이후여야 합니다.');
+
+      const payload = {
+        targetType,
+        title,
+        body,
+        data,
+        scheduledAt: date + 'T' + time + ':00+09:00'
+      };
+      if (targetType === 'SINGLE_TOKEN') payload.token = token;
+      return payload;
+    }
+
+    function resetFcmScheduleForm(clearMessage = true) {
+      document.getElementById('fcmScheduleTargetType').value = 'SINGLE_TOKEN';
+      document.getElementById('fcmScheduleToken').value = '';
+      document.getElementById('fcmScheduleTitle').value = '';
+      document.getElementById('fcmScheduleBody').value = '';
+      document.getElementById('fcmScheduleData').value = '';
+      document.getElementById('fcmScheduleDate').value = '';
+      document.getElementById('fcmScheduleTime').value = '';
+      if (clearMessage) document.getElementById('fcmScheduleResult').classList.add('hidden');
+      updateFcmScheduleTargetState();
+    }
+
+    function renderFcmScheduleRows() {
+      const tbody = document.querySelector('#fcmScheduleList tbody');
+      tbody.innerHTML = '';
+      if (!fcmSchedules.length) {
+        tbody.innerHTML = '<tr><td colspan="7">조회된 예약 알림이 없습니다.</td></tr>';
+        return;
+      }
+
+      fcmSchedules.forEach(schedule => {
+        const tr = document.createElement('tr');
+        const result = '총 ' + (schedule.totalCount ?? 0)
+                + ' / 성공 ' + (schedule.successCount ?? 0)
+                + ' / 실패 ' + (schedule.failureCount ?? 0);
+        const canCancel = schedule.status === 'SCHEDULED';
+        const isCanceling = fcmScheduleCancelingIds.has(schedule.id);
+        tr.innerHTML =
+                '<td>' + escapeHtml(formatFcmScheduleDateTime(schedule.scheduledAt)) + '</td>' +
+                '<td>' + escapeHtml(fcmScheduleTargetLabel(schedule.targetType)) + '</td>' +
+                '<td title="' + escapeHtml(schedule.title || '') + '">' + escapeHtml(truncateMiddle(schedule.title || '-', 18, 8)) + '</td>' +
+                '<td>' + escapeHtml(fcmScheduleStatusLabel(schedule.status)) + '</td>' +
+                '<td>' + escapeHtml(result) + '</td>' +
+                '<td>' + escapeHtml(formatFcmScheduleDateTime(schedule.createdAt)) + '</td>' +
+                '<td class="btn-cell"></td>';
+        const btnCell = tr.querySelector('.btn-cell');
+        const detailBtn = document.createElement('button');
+        detailBtn.type = 'button';
+        detailBtn.textContent = '상세';
+        detailBtn.onclick = () => loadFcmScheduleDetail(schedule.id);
+        btnCell.appendChild(detailBtn);
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.textContent = isCanceling ? '취소 중...' : '취소';
+        cancelBtn.disabled = !canCancel || isCanceling;
+        cancelBtn.onclick = () => cancelFcmSchedule(schedule.id);
+        btnCell.appendChild(cancelBtn);
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadFcmSchedules() {
+      const btn = document.getElementById('btnLoadFcmSchedules');
+      const loading = document.getElementById('fcmScheduleLoading');
+      const status = document.getElementById('fcmScheduleStatusFilter').value;
+      fcmScheduleIsLoading = true;
+      btn.disabled = true;
+      btn.textContent = '처리 중...';
+      loading.classList.remove('hidden');
+      try {
+        const query = status ? '?status=' + encodeURIComponent(status) : '';
+        const res = await fetch(API_BASE + '/api/admin/fcm/schedules' + query, { headers: headers() });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmScheduleResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmScheduleResult', false, response.message || '예약 목록 조회 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        fcmSchedules = Array.isArray(response.data) ? response.data : [];
+        renderFcmScheduleRows();
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 목록 조회 실패');
+      } finally {
+        fcmScheduleIsLoading = false;
+        loading.classList.add('hidden');
+        btn.disabled = false;
+        btn.textContent = '예약 목록 조회';
+      }
+    }
+
+    async function loadFcmScheduleDetail(scheduleId) {
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/schedules/' + encodeURIComponent(scheduleId), { headers: headers() });
+        const response = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          setMessageBox('fcmScheduleResult', false, response.message || '예약 상세 조회 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        const schedule = response.data || {};
+        const failed = Array.isArray(schedule.failedTokens) && schedule.failedTokens.length
+                ? '\n실패 토큰: ' + schedule.failedTokens.map(t => truncateMiddle(t, 12, 8)).join(', ')
+                : '';
+        setMessageBox(
+                'fcmScheduleResult',
+                true,
+                '상태: ' + fcmScheduleStatusLabel(schedule.status)
+                + ' / 예약: ' + formatFcmScheduleDateTime(schedule.scheduledAt)
+                + ' / 결과: 총 ' + (schedule.totalCount ?? 0)
+                + ', 성공 ' + (schedule.successCount ?? 0)
+                + ', 실패 ' + (schedule.failureCount ?? 0)
+                + failed
+        );
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 상세 조회 실패');
+      }
+    }
+
+    async function createFcmSchedule() {
+      let payload;
+      try {
+        payload = buildFcmSchedulePayload();
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 입력값이 올바르지 않습니다.');
+        return;
+      }
+
+      const btn = document.getElementById('btnFcmScheduleCreate');
+      fcmScheduleIsCreating = true;
+      btn.disabled = true;
+      btn.textContent = '예약 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/schedules', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify(payload)
+        });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmScheduleResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmScheduleResult', false, response.message || '예약 생성 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        setMessageBox('fcmScheduleResult', true, response.message || 'FCM 예약 알림이 생성되었습니다.');
+        showToast('예약 알림 생성 완료', 'success');
+        resetFcmScheduleForm(false);
+        await loadFcmSchedules();
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 생성 실패');
+      } finally {
+        fcmScheduleIsCreating = false;
+        btn.disabled = false;
+        btn.textContent = '예약';
+      }
+    }
+
+    async function cancelFcmSchedule(scheduleId) {
+      if (!confirm('이 예약 알림을 취소하시겠습니까?')) return;
+      fcmScheduleCancelingIds.add(scheduleId);
+      renderFcmScheduleRows();
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/schedules/' + encodeURIComponent(scheduleId), {
+          method: 'DELETE',
+          headers: headers()
+        });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmScheduleResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmScheduleResult', false, response.message || '예약 취소 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        setMessageBox('fcmScheduleResult', true, response.message || 'FCM 예약 알림이 취소되었습니다.');
+        showToast('예약 알림 취소 완료', 'success');
+        await loadFcmSchedules();
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 취소 실패');
+      } finally {
+        fcmScheduleCancelingIds.delete(scheduleId);
+        renderFcmScheduleRows();
+      }
+    }
+
+    document.getElementById('fcmScheduleTargetType').addEventListener('change', updateFcmScheduleTargetState);
+    document.getElementById('btnFcmScheduleReset').onclick = resetFcmScheduleForm;
+    document.getElementById('btnFcmScheduleCreate').onclick = createFcmSchedule;
+    document.getElementById('btnLoadFcmSchedules').onclick = loadFcmSchedules;
+    document.getElementById('fcmScheduleStatusFilter').addEventListener('change', loadFcmSchedules);
+    updateFcmScheduleTargetState();
 
     document.getElementById('btnConversionBatch').onclick = async () => {
       const text = document.getElementById('conversionImagesJson').value.trim();

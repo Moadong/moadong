@@ -72,6 +72,10 @@ public enum ErrorCode {
     FCMTOKEN_NOT_FOUND(HttpStatus.NOT_FOUND, "901-1", "존재하지 않는 토큰입니다."),
     FCMTOKEN_SUBSCRIBE_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901-2", "동아리 구독중에 오류가 발생 하였습니다."),
     FCMMESSAGE_SEND_ERROR(HttpStatus.INTERNAL_SERVER_ERROR, "901-3", "FCM 메시지 전송 중 오류가 발생했습니다."),
+    FCM_SCHEDULE_NOT_FOUND(HttpStatus.NOT_FOUND, "901-4", "FCM 예약 알림이 존재하지 않습니다."),
+    FCM_SCHEDULE_INVALID_TIME(HttpStatus.BAD_REQUEST, "901-5", "예약 시각은 현재 시각보다 이후여야 합니다."),
+    FCM_SCHEDULE_NOT_CANCELABLE(HttpStatus.CONFLICT, "901-6", "이미 발송 중이거나 처리 완료된 예약 알림은 취소할 수 없습니다."),
+    FCM_SCHEDULE_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "901-7", "FCM 예약 알림 요청이 올바르지 않습니다."),
 
     // 902xx: 홍보게시판 오류
     PROMOTION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "902-1", "홍보 게시글이 존재하지 않습니다."),
