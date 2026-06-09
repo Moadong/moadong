@@ -2,6 +2,7 @@ import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import type { ClubDetail } from '@/types/club';
+import { asClubId } from '@/types/branded';
 import PhotoEditTab from './PhotoEditTab';
 
 const SAMPLE_FEEDS = [
@@ -13,7 +14,7 @@ const SAMPLE_FEEDS = [
 ];
 
 const mockClubDetail = (feeds: string[]): ClubDetail => ({
-  id: 'club-1',
+  id: asClubId('club-1'),
   name: '테스트 동아리',
   logo: '',
   tags: [],
