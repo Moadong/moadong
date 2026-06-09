@@ -11,6 +11,7 @@ export const Overlay = styled.div`
   justify-content: center;
   align-items: center;
   transition: background-color 0.2s ease;
+  overflow: hidden;
 `;
 
 export const ContentWrapper = styled.div`
