@@ -1,8 +1,8 @@
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import type { ClubDetail } from '@/types/club';
 import { asClubId } from '@/types/branded';
+import type { ClubDetail } from '@/types/club';
 import PhotoEditTab from './PhotoEditTab';
 
 const SAMPLE_FEEDS = [
