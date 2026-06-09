@@ -129,4 +129,3 @@ export const EmptyState = styled.button`
     font-size: 2rem;
   }
 `;
-
