@@ -48,8 +48,6 @@ const config = [
       '@typescript-eslint/explicit-function-return-type': 'off',
       // React Compiler 도입 가드레일 (Rules of React 위반 상시 감지)
       ...reactHooks.configs['recommended-latest'].rules,
-      // set-state-in-effect: 정당한 효과(로딩/구독/OAuth 콜백)와 어드민 폼
-      // 시드 케이스가 섞여 있어 일괄 error 승격은 하지 않고 warn 가드레일로 유지.
       'react-hooks/set-state-in-effect': 'warn',
     },
     settings: {
@@ -59,7 +57,6 @@ const config = [
     },
   },
   {
-    // Storybook 스토리의 render 함수 안 훅 호출은 의도된 패턴이므로 해제
     files: ['**/*.stories.{js,ts,jsx,tsx}'],
     rules: {
       'react-hooks/rules-of-hooks': 'off',
