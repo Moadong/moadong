@@ -1,11 +1,13 @@
 import { useEffect, useRef, useState } from 'react';
 import { useUpdateFeed, useUploadFeed } from '@/hooks/Queries/useClubImages';
-import { FeedItem, LocalItem, UploadedItem } from '../PhotoEditTab';
 import {
+  extractLocalItems,
+  extractUploadedUrls,
   findOversizedFile,
   hasPendingChanges,
   sliceToLimit,
 } from '../photoEditUtils';
+import { FeedItem, LocalItem, UploadedItem } from '../types';
 
 export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
   const { mutate: uploadFeed, isPending: isUploading } = useUploadFeed();
@@ -21,7 +23,10 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
     feedItemsRef.current = feedItems;
   }, [feedItems]);
 
+  // 업로드 진행 중에는 서버 재조회 결과로 UI를 덮어쓰지 않는다.
+  // local 아이템이 남아있는 동안은 사용자가 보고 있는 상태를 유지한다.
   useEffect(() => {
+    if (feedItemsRef.current.some((item) => item.type === 'local')) return;
     setFeedItems(
       (originalFeeds || []).map((url) => ({ type: 'uploaded', url })),
     );
@@ -69,9 +74,8 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
     const item = feedItems[index];
     if (item.type !== 'local' || item.status !== 'failed') return;
 
-    const uploadedUrls = feedItems
-      .filter((it): it is UploadedItem => it.type === 'uploaded')
-      .map((it) => it.url);
+    const targetFile = item.file;
+    const uploadedUrls = extractUploadedUrls(feedItems);
 
     setFeedItems((prev) =>
       prev.map((it, i) =>
@@ -82,14 +86,14 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
     );
 
     uploadFeed(
-      { clubId, files: [item.file], existingUrls: uploadedUrls },
+      { clubId, files: [targetFile], existingUrls: uploadedUrls },
       {
         onSuccess: (data) => {
           const finalUrl = data.successfulUrls[0];
           if (!finalUrl) return;
           setFeedItems((prev) =>
-            prev.map((it, i) => {
-              if (i !== index || it.type !== 'local') return it;
+            prev.map((it) => {
+              if (it.type !== 'local' || it.file !== targetFile) return it;
               URL.revokeObjectURL(it.previewUrl);
               return { type: 'uploaded', url: finalUrl } as UploadedItem;
             }),
@@ -97,8 +101,8 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
         },
         onError: () => {
           setFeedItems((prev) =>
-            prev.map((it, i) =>
-              i === index && it.type === 'local'
+            prev.map((it) =>
+              it.type === 'local' && it.file === targetFile
                 ? { ...it, status: 'failed' }
                 : it,
             ),
@@ -109,12 +113,8 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
   };
 
   const save = () => {
-    const localItems = feedItems.filter(
-      (item): item is LocalItem => item.type === 'local',
-    );
-    const uploadedUrls = feedItems
-      .filter((item): item is UploadedItem => item.type === 'uploaded')
-      .map((item) => item.url);
+    const localItems = extractLocalItems(feedItems);
+    const uploadedUrls = extractUploadedUrls(feedItems);
 
     if (localItems.length === 0) {
       updateFeed(
@@ -123,6 +123,8 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
       );
       return;
     }
+
+    const filesToUpload = localItems.map((item) => item.file);
 
     setFeedItems((prev) =>
       prev.map((item) =>
@@ -133,16 +135,17 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
     uploadFeed(
       {
         clubId,
-        files: localItems.map((item) => item.file),
+        files: filesToUpload,
         existingUrls: uploadedUrls,
-        onItemStatusChange: (localIdx, status) => {
-          setFeedItems((prev) => {
-            let count = 0;
-            return prev.map((item) => {
-              if (item.type !== 'local') return item;
-              return count++ === localIdx ? { ...item, status } : item;
-            });
-          });
+        // File 객체 참조로 매핑 — 인덱스 불일치 버그 방지
+        onItemStatusChange: (file, status) => {
+          setFeedItems((prev) =>
+            prev.map((item) =>
+              item.type === 'local' && item.file === file
+                ? { ...item, status }
+                : item,
+            ),
+          );
         },
       },
       {
@@ -165,9 +168,11 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
         },
         onError: () => {
           alert('이미지 업로드에 실패했어요. 다시 시도해주세요!');
+          // pending 포함 모든 local 아이템을 failed로 복구
           setFeedItems((prev) =>
             prev.map((item) =>
-              item.type === 'local' && item.status === 'uploading'
+              item.type === 'local' &&
+              (item.status === 'uploading' || item.status === 'pending')
                 ? { ...item, status: 'failed' }
                 : item,
             ),
