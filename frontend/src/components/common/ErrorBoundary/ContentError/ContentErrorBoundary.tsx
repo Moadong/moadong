@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
 import BaseErrorBoundary from '../BaseErrorBoundary';
 import ContentErrorFallback from '../ContentError/ContentErrorFallback';
 
@@ -18,6 +19,15 @@ const ContentErrorBoundary = ({
     <BaseErrorBoundary
       fallback={ContentErrorFallback}
       resetKeys={[pathname, ...resetKeys]}
+      onError={(error, errorInfo) =>
+        Sentry.captureException(error, {
+          extra: {
+            boundary: 'content',
+            pathname,
+            componentStack: errorInfo.componentStack,
+          },
+        })
+      }
     >
       {children}
     </BaseErrorBoundary>
