@@ -18,6 +18,7 @@ export const ModalContent = styled.div`
     width: 100vw;
     height: 100dvh;
     border-radius: 0;
+    padding-top: var(--rn-safe-top, env(safe-area-inset-top));
   }
 `;
 
@@ -51,8 +52,7 @@ export const ModalHeader = styled.div`
   backdrop-filter: blur(10px);
 
   ${media.mobile} {
-    padding-top: env(safe-area-inset-top);
-    height: calc(60px + env(safe-area-inset-top));
+    height: 60px;
   }
 `;
 
