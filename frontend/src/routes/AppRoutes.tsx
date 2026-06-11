@@ -1,7 +1,6 @@
 import { lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
 import { ContentErrorBoundary } from '@/components/common/ErrorBoundary';
-import { AdminClubProvider } from '@/context/AdminClubContext';
 import AppLayout from '@/layouts/AppLayout';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
@@ -160,11 +159,9 @@ const AppRoutes = () =>
       path: '/admin/*',
       element: (
         <ContentErrorBoundary>
-          <AdminClubProvider>
-            <PrivateRoute>
-              <AdminRoutes />
-            </PrivateRoute>
-          </AdminClubProvider>
+          <PrivateRoute>
+            <AdminRoutes />
+          </PrivateRoute>
         </ContentErrorBoundary>
       ),
     },
