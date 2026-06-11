@@ -4,12 +4,9 @@ import Spinner from '@/components/common/Spinner/Spinner';
 import useAuth from '@/hooks/useAuth';
 import { useAdminClubId } from '@/store/useAdminClubStore';
 
-// import { useGetApplicants } from '@/hooks/queries/applicants/useGetApplicants';
-
 const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
   const { isLoading, isAuthenticated, clubId } = useAuth();
-  const { setClubId } = useAdminClubId();
-  // const { data: applicantsData } = useGetApplicants(clubId ?? '');
+  const { clubId: storeClubId, setClubId } = useAdminClubId();
 
   useEffect(() => {
     if (clubId) {
@@ -17,14 +14,9 @@ const PrivateRoute = ({ children }: { children: React.ReactNode }) => {
     }
   }, [clubId, setClubId]);
 
-  // useEffect(() => {
-  //   if (clubId && applicantsData) {
-  //     setApplicantsData(applicantsData);
-  //   }
-  // }, [clubId, applicantsData]);
-
   if (isLoading) return <Spinner />;
   if (!isAuthenticated) return <Navigate to='/admin/login' replace />;
+  if (clubId && storeClubId !== clubId) return <Spinner />;
 
   return <>{children}</>;
 };
