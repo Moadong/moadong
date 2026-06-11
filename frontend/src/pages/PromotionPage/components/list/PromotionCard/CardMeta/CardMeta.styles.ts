@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
   display: flex;
@@ -8,8 +9,9 @@ export const Container = styled.div`
 `;
 
 export const Title = styled.h3`
-  font-size: 16px;
-  font-weight: 600;
+  ${setTypography(typography.paragraph.p2)}
+  line-height: 1.4;
+  height: calc(1.4em * 2);
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -19,7 +21,7 @@ export const Title = styled.h3`
   margin-bottom: 4px;
 
   ${media.mini_mobile} {
-    font-size: 14px;
+    ${setTypography(typography.button.button1)}
     margin-bottom: 2px;
   }
 `;
