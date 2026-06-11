@@ -1,10 +1,10 @@
-import { useState } from 'react';
+import { useState, type SyntheticEvent } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Autoplay, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
-import { USER_EVENT } from '@/constants/eventName';
+import { USER_EVENT, WEBVIEW_LINK_TARGET } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetBanners } from '@/hooks/Queries/useBanner';
 import useDevice from '@/hooks/useDevice';
@@ -13,14 +13,19 @@ import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import * as Styled from './Banner.styles';
 import BANNERS from './bannerData';
 
-const Banner = () => {
+interface BannerProps {
+  isWebview?: boolean;
+}
+
+const Banner = ({ isWebview = false }: BannerProps) => {
   const { isMobile } = useDevice();
   const handleLink = useNavigator();
   const trackEvent = useMixpanelTrack();
   const [swiperInstance, setSwiperInstance] = useState<SwiperType | null>(null);
   const [currentIndex, setCurrentIndex] = useState(0);
-  const bannerType = isMobile ? 'WEB_MOBILE' : 'WEB';
-  const { data: banners, isLoading, isFetched } = useGetBanners(bannerType);
+  const [isImageLoaded, setIsImageLoaded] = useState(false);
+  const bannerType = isWebview ? 'APP_HOME' : isMobile ? 'WEB_MOBILE' : 'WEB';
+  const { data: banners, isPending, isFetched } = useGetBanners(bannerType);
 
   const fallbackBanners = BANNERS.map((banner) => ({
     id: banner.id,
@@ -39,10 +44,26 @@ const Banner = () => {
 
   const handlePrev = () => {
     swiperInstance?.slidePrev();
+    trackEvent(USER_EVENT.BANNER_NAVIGATION_CLICKED, {
+      direction: 'prev',
+      from_index: currentIndex,
+    });
   };
 
   const handleNext = () => {
     swiperInstance?.slideNext();
+    trackEvent(USER_EVENT.BANNER_NAVIGATION_CLICKED, {
+      direction: 'next',
+      from_index: currentIndex,
+    });
+  };
+
+  const handleImageError = (
+    e: SyntheticEvent<HTMLImageElement>,
+    index: number,
+  ) => {
+    if (index === 0) setIsImageLoaded(true);
+    e.currentTarget.style.display = 'none';
   };
 
   const handleBannerClick = (
@@ -51,6 +72,17 @@ const Banner = () => {
     url?: string,
   ) => {
     if (!url) return;
+
+    trackEvent(USER_EVENT.BANNER_CLICKED, {
+      bannerId,
+      bannerName,
+      linkTo: url,
+    });
+
+    if (url === WEBVIEW_LINK_TARGET.CLUB_FESTIVAL) {
+      handleLink('/promotions/club-fest-2026');
+      return;
+    }
 
     if (url === 'APP_STORE_LINK') {
       const storeLink = getAppStoreLink();
@@ -63,16 +95,15 @@ const Banner = () => {
       return;
     }
 
-    trackEvent(USER_EVENT.BANNER_CLICKED, {
-      bannerId,
-      bannerName,
-      linkTo: url,
-    });
     handleLink(url);
   };
 
-  if (isLoading) {
-    return null;
+  if (isPending) {
+    return (
+      <Styled.BannerContainer>
+        <Styled.SkeletonBannerWrapper />
+      </Styled.BannerContainer>
+    );
   }
 
   if (displayBanners?.length === 0) {
@@ -82,6 +113,7 @@ const Banner = () => {
   return (
     <Styled.BannerContainer>
       <Styled.BannerWrapper>
+        {!isImageLoaded && <Styled.SkeletonOverlay />}
         <Styled.ButtonContainer>
           <Styled.SlideButton onClick={handlePrev} aria-label='이전 배너'>
             <img src={PrevButton} alt='' />
@@ -102,7 +134,7 @@ const Banner = () => {
           }}
           speed={500}
         >
-          {displayBanners?.map((banner) => (
+          {displayBanners?.map((banner, index) => (
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
                 isClickable={!!banner.linkTo}
@@ -114,18 +146,25 @@ const Banner = () => {
                   )
                 }
               >
-                <img src={banner.imageUrl} alt={banner.alt} />
+                <img
+                  src={banner.imageUrl}
+                  alt={banner.alt}
+                  onLoad={
+                    index === 0 ? () => setIsImageLoaded(true) : undefined
+                  }
+                  onError={(e) => handleImageError(e, index)}
+                />
               </Styled.BannerItem>
             </SwiperSlide>
           ))}
         </Swiper>
-        {isMobile && (
+        {(isMobile || isWebview) && (
           <Styled.NumericPagination>
             {currentIndex + 1} / {displayBanners?.length ?? 0}
           </Styled.NumericPagination>
         )}
 
-        {!isMobile && (
+        {!isMobile && !isWebview && (
           <Styled.DotPagination>
             {displayBanners?.map((_, index) => (
               <Styled.Dot key={index} active={currentIndex === index} />

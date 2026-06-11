@@ -1,5 +1,5 @@
-import LocationIcon from '@/assets/images/icons/location_icon.svg';
-import TimeIcon from '@/assets/images/icons/time_icon.svg';
+import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
+import TimeIcon from '@/assets/images/icons/time_icon.svg?react';
 import { formatKSTDate } from '@/utils/formatKSTDateTime';
 import * as Styled from './CardMeta.styles';
 
@@ -20,7 +20,7 @@ const CardMeta = ({ title, location, startDate }: CardMetaProps) => {
         {location && (
           <Styled.MetaRow>
             <Styled.Icon>
-              <img src={LocationIcon} alt='Location' />
+              <LocationIcon />
             </Styled.Icon>
             <Styled.MetaText>{location}</Styled.MetaText>
           </Styled.MetaRow>
@@ -28,7 +28,7 @@ const CardMeta = ({ title, location, startDate }: CardMetaProps) => {
 
         <Styled.MetaRow>
           <Styled.Icon>
-            <img src={TimeIcon} alt='Time' />
+            <TimeIcon />
           </Styled.Icon>
           <Styled.MetaText>{formattedStartDate}</Styled.MetaText>
         </Styled.MetaRow>

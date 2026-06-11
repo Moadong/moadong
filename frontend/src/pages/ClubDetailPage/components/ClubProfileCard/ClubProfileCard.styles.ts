@@ -1,17 +1,16 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
   position: relative;
   width: 100%;
-  max-width: 375px;
   background-color: ${colors.base.white};
   border-radius: 20px;
   overflow: hidden;
 
   ${media.tablet} {
-    max-width: none;
     border-radius: 0;
   }
 `;
@@ -22,11 +21,20 @@ export const CoverImageWrapper = styled.div`
 `;
 
 export const CoverImage = styled.img`
+  display: block;
   width: 100%;
-  height: 213px;
+  height: 220px;
   position: relative;
   z-index: 1;
   object-fit: cover;
+`;
+
+export const CoverFallback = styled.div<{ $color?: string }>`
+  width: 100%;
+  height: 220px;
+  position: relative;
+  z-index: 1;
+  background-color: ${({ $color }) => $color || colors.gray[400]};
 `;
 
 export const LogoWrapper = styled.div`
@@ -36,9 +44,13 @@ export const LogoWrapper = styled.div`
   width: 64px;
   height: 64px;
   border-radius: 16px;
-  background-color: ${colors.base.white};
-  padding: 2px;
+  background-color: ${colors.gray[100]};
+  padding: 3.5px;
   z-index: 3;
+
+  ${media.tablet} {
+    background-color: ${colors.base.white};
+  }
 `;
 
 export const Logo = styled.img`
@@ -170,6 +182,7 @@ export const IntroSection = styled.section`
 
   ${media.tablet} {
     background-color: ${colors.gray[100]};
+  }
 `;
 
 export const IntroTitle = styled.h3`
@@ -182,4 +195,72 @@ export const IntroTitle = styled.h3`
 export const IntroDescription = styled.p`
   font-size: 14px;
   color: ${colors.gray[800]};
+`;
+
+export const MobileLocationSection = styled.div`
+  display: none;
+
+  ${media.tablet} {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    margin-top: 8px;
+  }
+`;
+
+export const LocationDivider = styled.hr`
+  border: none;
+  border-top: 1px solid ${colors.gray[400]};
+  margin: 0;
+`;
+
+export const LocationRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-wrap: nowrap;
+`;
+
+export const LocationInfo = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 5px;
+  cursor: default;
+  user-select: none;
+  min-width: 0;
+  overflow: hidden;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    margin: 1px 2px 1px 0px;
+    flex-shrink: 0;
+    color: ${colors.gray[500]};
+  }
+
+  span {
+    ${setTypography(typography.paragraph.p6)};
+    color: ${colors.gray[600]};
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+`;
+
+export const LocationDot = styled.span`
+  ${setTypography(typography.paragraph.p6)};
+  color: ${colors.gray[400]};
+  flex-shrink: 0;
+`;
+
+export const MapLink = styled.span`
+  ${setTypography(typography.paragraph.p6)};
+  color: #3366bb;
+  flex-shrink: 0;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:hover {
+    text-decoration: underline;
+  }
 `;

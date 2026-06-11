@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import useNavigator from '@/hooks/useNavigator';
 import type { ClubCalendarEvent } from '@/types/club';
 import {
   buildDateKeyFromDate,
@@ -73,6 +74,7 @@ const formatSelectedDate = (dateKey: string) => {
 };
 
 const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
+  const handleLink = useNavigator();
   const didInitFromEventsRef = useRef(false);
 
   const parsedEvents = useMemo<CalendarEventItem[]>(() => {
@@ -180,10 +182,9 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
 
   if (parsedEvents.length === 0) {
     return (
-      <Styled.ScheduleCard>
-        <Styled.SectionTitle>일정</Styled.SectionTitle>
-        <Styled.EmptyText>등록된 행사 일정이 없습니다.</Styled.EmptyText>
-      </Styled.ScheduleCard>
+      <Styled.EmptyState>
+        곧 새로운 일정이 업데이트될 예정이에요
+      </Styled.EmptyState>
     );
   }
 
@@ -290,6 +291,10 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
                       href={event.url}
                       target='_blank'
                       rel='noreferrer'
+                      onClick={(e) => {
+                        e.preventDefault();
+                        handleLink(event.url!);
+                      }}
                     >
                       일정 상세 보기
                     </Styled.EventLink>

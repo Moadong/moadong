@@ -27,12 +27,16 @@ interface UseGetCardListProps {
   division: string;
 }
 
-export const useGetClubDetail = (clubParam: string) => {
+export const useGetClubDetail = (
+  clubParam: string,
+  options?: { enabled?: boolean; staleTime?: number; gcTime?: number },
+) => {
   return useQuery<ClubDetail>({
     queryKey: queryKeys.club.detail(clubParam),
     queryFn: () => getClubDetail(clubParam as string),
-    staleTime: 60 * 1000,
-    enabled: !!clubParam,
+    staleTime: options?.staleTime ?? 60 * 1000,
+    gcTime: options?.gcTime,
+    enabled: !!clubParam && (options?.enabled ?? true),
     select: (data) =>
       ({
         ...data,
@@ -87,6 +91,28 @@ export const useGetCardList = ({
         logo: convertGoogleDriveUrl(club.logo),
       })),
     }),
+  });
+};
+
+export const useValidateClubName = () => {
+  const queryClient = useQueryClient();
+  return async (name: string) => {
+    const { clubs } = await queryClient.ensureQueryData({
+      queryKey: queryKeys.club.suggestions(name),
+      queryFn: () => getClubList(name),
+      staleTime: 30 * 1000,
+    });
+    return clubs.some((c) => c.name === name);
+  };
+};
+
+export const useClubSuggestions = (keyword: string) => {
+  return useQuery({
+    queryKey: queryKeys.club.suggestions(keyword),
+    queryFn: () => getClubList(keyword),
+    enabled: !!keyword.trim(),
+    staleTime: 30 * 1000,
+    select: (data) => data.clubs.map((c) => c.name),
   });
 };
 

@@ -9,6 +9,7 @@ const GlobalStyles = createGlobalStyle`
   }
   html {
     overscroll-behavior-y: none;
+    scrollbar-gutter: stable;
   }
   textarea, button, input, select {
     font-family: 'Pretendard', sans-serif;

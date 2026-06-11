@@ -26,6 +26,8 @@ export const queryKeys = {
       category: string,
       division: string,
     ) => ['clubs', keyword, recruitmentStatus, category, division] as const,
+    suggestions: (keyword: string) =>
+      ['clubs', 'suggestions', keyword] as const,
   },
   promotion: {
     all: ['promotions'] as const,
@@ -35,5 +37,9 @@ export const queryKeys = {
     all: ['banner'] as const,
     list: (type: 'WEB' | 'APP_HOME' | 'WEB_MOBILE') =>
       ['banner', type] as const,
+  },
+  game: {
+    all: ['game'] as const,
+    ranking: () => ['game', 'ranking'] as const,
   },
 } as const;

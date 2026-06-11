@@ -4,11 +4,12 @@ export interface PromotionArticle {
   clubId: string;
   title: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   eventStartDate: string;
   eventEndDate: string;
   description: string;
   images: string[];
-  isFestival?: boolean; // 동소한 페이지용
 }
 
 export interface CreatePromotionArticleRequest {

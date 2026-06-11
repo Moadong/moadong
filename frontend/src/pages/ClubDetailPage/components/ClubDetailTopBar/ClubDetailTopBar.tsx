@@ -4,6 +4,8 @@ import { useTheme } from 'styled-components';
 import NotificationIcon from '@/assets/images/icons/notification_icon.svg?react';
 import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
 import Spinner from '@/components/common/Spinner/Spinner';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
 import useOpenAppFromKakao from '@/hooks/useOpenAppFromKakao';
 import isInAppWebView from '@/utils/isInAppWebView';
@@ -48,6 +50,7 @@ const ClubDetailTopBar = ({
   const isInApp = isInAppWebView();
   const isKakao = !isInApp && isKakaoTalkBrowser();
   const { openApp, isLoading } = useOpenAppFromKakao();
+  const trackEvent = useMixpanelTrack();
   const [isNotificationActive, setIsNotificationActive] =
     useState(initialIsSubscribed);
 
@@ -63,7 +66,7 @@ const ClubDetailTopBar = ({
   });
 
   const handleBackClick = () => {
-    // 앱 웹뷰면 앱에 뒤로가기 요청, 아니면 웹 네비게이션
+    trackEvent(USER_EVENT.BACK_BUTTON_CLICKED);
     const handled = requestNavigateBack();
     if (!handled) {
       // 히스토리 스택이 있으면 뒤로가기, 없으면(직접 진입 등) 메인으로 이동

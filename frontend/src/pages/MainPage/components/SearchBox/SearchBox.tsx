@@ -1,8 +1,12 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import SearchField from '@/components/common/SearchField/SearchField';
+import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useSelectedCategory } from '@/store/useCategoryStore';
 import { useSearchInput } from '@/store/useSearchStore';
+import * as Styled from './SearchBox.styles';
+
+const HOME_ROUTE = '/';
 
 const SearchBox = () => {
   const { setKeyword, inputValue, setInputValue, setIsSearching } =
@@ -10,35 +14,27 @@ const SearchBox = () => {
   const { setSelectedCategory } = useSelectedCategory();
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
-  const location = useLocation();
-
-  const redirectToHome = () => {
-    if (location.pathname !== '/') {
-      navigate('/');
-    }
-  };
+  const { pathname } = useLocation();
 
   const handleSearch = () => {
-    const currentPage = location.pathname;
-    redirectToHome();
+    if (pathname !== HOME_ROUTE) navigate(HOME_ROUTE);
     setKeyword(inputValue);
     setSelectedCategory('all');
     setIsSearching(true);
 
-    trackEvent('Search Executed', {
-      inputValue: inputValue,
-      page: currentPage,
-    });
+    trackEvent(USER_EVENT.SEARCH_EXCUTED, { inputValue, page: pathname });
   };
 
   return (
-    <SearchField
-      value={inputValue}
-      onChange={(v) => setInputValue(v)}
-      onSubmit={handleSearch}
-      placeholder='어떤 동아리를 찾으세요?'
-      ariaLabel='동아리 검색창'
-    />
+    <Styled.SearchBoxWrapper>
+      <SearchField
+        value={inputValue}
+        onChange={(v) => setInputValue(v)}
+        onSubmit={handleSearch}
+        placeholder='어떤 동아리를 찾으세요?'
+        ariaLabel='동아리 검색창'
+      />
+    </Styled.SearchBoxWrapper>
   );
 };
 

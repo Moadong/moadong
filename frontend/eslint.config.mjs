@@ -11,6 +11,7 @@ const config = [
       'node_modules/**',
       'coverage/**',
       'public/**',
+      'storybook-static/**',
       'jest.config.js',
       'jest.setup.ts',
       'netlify.toml',

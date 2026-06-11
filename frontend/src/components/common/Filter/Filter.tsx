@@ -2,9 +2,10 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
+import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './Filter.styles';
 
-const FILTER_OPTIONS = [
+const WEB_FILTER_OPTIONS = [
   { label: '동아리', path: '/' },
   { label: '홍보', path: '/promotions' },
 ] as const;
@@ -19,13 +20,12 @@ const Filter = ({ alwaysVisible = false, hasNotification }: FilterProps) => {
   const navigate = useNavigate();
   const { pathname } = useLocation();
   const trackEvent = useMixpanelTrack();
-  const shouldShow = alwaysVisible || isMobile;
+
+  const isWebview = isInAppWebView();
+  const shouldShow = alwaysVisible || isMobile || isWebview;
 
   const handleFilterOptionClick = (path: string) => {
-    trackEvent(USER_EVENT.FILTER_OPTION_CLICKED, {
-      path: path,
-    });
-
+    trackEvent(USER_EVENT.FILTER_OPTION_CLICKED, { path });
     navigate(path);
   };
 
@@ -33,10 +33,10 @@ const Filter = ({ alwaysVisible = false, hasNotification }: FilterProps) => {
     <>
       {shouldShow && (
         <Styled.FilterListContainer>
-          {FILTER_OPTIONS.map((filter) => (
+          {WEB_FILTER_OPTIONS.map((filter) => (
             <Styled.FilterButtonWrapper key={filter.path}>
               <Styled.NotificationDot
-                $isVisible={hasNotification && filter.path === '/promotions'}
+                $isVisible={hasNotification && filter.label === '홍보'}
               />
               <Styled.FilterButton
                 $isActive={pathname === filter.path}

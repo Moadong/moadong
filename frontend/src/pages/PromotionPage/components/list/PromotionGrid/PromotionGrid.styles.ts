@@ -17,7 +17,7 @@ export const Grid = styled.div`
   ${media.tablet} {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
-  ${media.mini_mobile} {
+  ${media.mobile} {
     gap: 7px;
   }
 `;

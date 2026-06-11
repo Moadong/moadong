@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 빌드 및 개발 명령어
 
+> Node 22.12.0 사용 (`.nvmrc` 기준). `nvm use`로 맞출 것.
+
 ```bash
 # 개발 서버 (Vite - 주로 사용)
 npm run dev              # 포트 3000에서 개발 서버 시작
@@ -29,6 +31,11 @@ npm run typecheck        # TypeScript 타입 체크만 실행
 npm run storybook        # 포트 6006에서 Storybook 시작
 npm run build-storybook  # Storybook 빌드
 npm run chromatic        # Chromatic으로 시각적 테스트 배포
+
+# Storybook 사용 가이드 (공통 컴포넌트 수정 시)
+# - 개발 중: npm run storybook (dev 서버로 실시간 확인)
+# - 기존 스토리가 있는 컴포넌트 수정 후 PR 전: npm run build-storybook
+# - 스토리가 없는 신규 컴포넌트: npm run typecheck 로 충분
 
 # 유틸리티
 npm run generate:sitemap # sitemap.xml 생성
@@ -56,8 +63,9 @@ npm run generate:sitemap # sitemap.xml 생성
 - **Sentry**: 에러 모니터링 및 성능 추적
 - **Channel.io**: 고객 지원 채팅
 - **Kakao SDK**: 카카오 공유 기능
+- **Naver Map**: 동아리방 위치 지도 (네이버 클라우드 플랫폼)
 
-모든 SDK는 `src/utils/initSDK.ts`에서 초기화되며, 각각 환경 변수 필요.
+Mixpanel·Sentry·Channel.io는 `src/utils/initSDK.ts`에서 초기화. Naver Map은 `src/utils/loadNaverMapScript.ts`로 동적 로드(SDK init 아님). 각각 환경 변수 필요.
 
 ### 환경 변수
 
@@ -70,6 +78,7 @@ npm run generate:sitemap # sitemap.xml 생성
 - `VITE_ENABLE_SENTRY_IN_DEV` - 개발 환경에서 Sentry 활성화 여부 (true/false)
 - `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
 - `VITE_KAKAO_JAVASCRIPT_KEY` - Kakao JavaScript 키
+- `VITE_NAVER_MAP_CLIENT_ID` - 네이버 지도 API 클라이언트 ID
 
 ### 프로젝트 구조
 
@@ -205,15 +214,36 @@ const { variant } = useExperiment(mainBannerExperiment);
 
 `.claude/agents/` 디렉토리에 전담 agent 정의:
 
-- `api-hooks-agent.md` - React Query 훅 생성 및 관리 전담
+- `API훅부서.md` - React Query 훅 생성 및 관리 전담
 
 Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 
-## 코딩 컨벤션
+---
 
-- **네이밍**: camelCase (변수, 함수), PascalCase (컴포넌트, 타입)
-- **파일명**: 컴포넌트는 PascalCase.tsx, 유틸은 camelCase.ts
-- **Import 순서**: 외부 라이브러리 → 내부 모듈 → 타입 → 스타일
-- **스타일**: styled-components 사용, 테마 시스템 활용
-- **타입**: any 금지, 명시적 타입 정의
-- **상수**: UPPER_SNAKE_CASE, `src/constants/`에서 관리
+## 도메인별 상세 문서
+
+@docs/claude/architecture.md
+@docs/claude/api.md
+@docs/claude/ui.md
+@docs/claude/testing.md
+@docs/claude/features.md
+@docs/claude/conventions.md
+
+## Skill routing
+
+When the user's request matches an available skill, invoke it via the Skill tool. When in doubt, invoke the skill.
+
+Key routing rules:
+
+- Product ideas/brainstorming → invoke /office-hours
+- Strategy/scope → invoke /plan-ceo-review
+- Architecture → invoke /plan-eng-review
+- Design system/plan review → invoke /design-consultation or /plan-design-review
+- Full review pipeline → invoke /autoplan
+- Bugs/errors → invoke /investigate
+- QA/testing site behavior → invoke /qa or /qa-only
+- Code review/diff check → invoke /review
+- Visual polish → invoke /design-review
+- Ship/deploy/PR → invoke /ship or /land-and-deploy
+- Save progress → invoke /context-save
+- Resume context → invoke /context-restore

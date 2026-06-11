@@ -14,27 +14,29 @@ const PromotionListPage = () => {
 
   const { data, isLoading, isError } = useGetPromotionArticles();
   const hasNotification = usePromotionNotification();
+  const inAppWebView = isInAppWebView();
+
+  const content = (
+    <Styled.Wrapper>
+      {isLoading && <p>로딩 중...</p>}
+      {isError && <p>오류가 발생했습니다.</p>}
+      {!isLoading && !isError && data?.length === 0 && (
+        <Styled.EmptyText>등록된 이벤트가 없어요.</Styled.EmptyText>
+      )}
+      {!isLoading && !isError && data && data.length > 0 && (
+        <PromottionGrid articles={data} />
+      )}
+    </Styled.Wrapper>
+  );
 
   return (
     <>
-      <Header hideOn={['webview']} />
+      <Header />
       <Styled.Container>
-        {!isInAppWebView() && <Filter hasNotification={hasNotification} />}
-
-        <Styled.Wrapper>
-          {isLoading && <p>로딩 중...</p>}
-          {isError && <p>오류가 발생했습니다.</p>}
-
-          {!isLoading && !isError && data?.length === 0 && (
-            <Styled.EmptyText>등록된 이벤트가 없어요.</Styled.EmptyText>
-          )}
-
-          {!isLoading && !isError && data && data.length > 0 && (
-            <PromottionGrid articles={data} />
-          )}
-        </Styled.Wrapper>
+        <Filter hasNotification={hasNotification} />
+        {content}
       </Styled.Container>
-      <Footer />
+      {!inAppWebView && <Footer />}
     </>
   );
 };

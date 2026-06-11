@@ -1,11 +1,12 @@
 import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
 import { INITIAL_VIEWPORTS } from 'storybook/viewport';
-import Popup, { POPUP_SESSION_KEY, POPUP_STORAGE_KEY } from './Popup';
+import Popup from './Popup';
+import { APP_DOWNLOAD_POPUP } from './popupConfigs';
 
-const setMobilePopupState = () => {
-  sessionStorage.removeItem(POPUP_SESSION_KEY);
-  localStorage.removeItem(POPUP_STORAGE_KEY);
+const clearPopupState = () => {
+  sessionStorage.removeItem(APP_DOWNLOAD_POPUP.sessionKey);
+  localStorage.removeItem(APP_DOWNLOAD_POPUP.storageKey);
 };
 
 const meta = {
@@ -25,7 +26,7 @@ const meta = {
   },
   decorators: [
     (Story) => {
-      setMobilePopupState();
+      clearPopupState();
       return (
         <MemoryRouter>
           <Story />
@@ -39,4 +40,8 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-export const Default: Story = {};
+export const Default: Story = {
+  args: {
+    configs: [APP_DOWNLOAD_POPUP],
+  },
+};

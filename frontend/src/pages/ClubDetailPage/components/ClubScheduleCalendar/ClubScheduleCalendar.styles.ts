@@ -1,12 +1,18 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
+  padding-top: 16px;
   width: 100%;
   display: flex;
   flex-direction: column;
   gap: 16px;
+
+  ${media.tablet} {
+    padding-top: 20px;
+  }
 `;
 
 export const CalendarCard = styled.section`
@@ -159,6 +165,19 @@ export const EventDescription = styled.p`
   font-size: 14px;
   line-height: 1.45;
   color: ${colors.gray[700]};
+`;
+
+export const EmptyState = styled.p`
+  padding-top: 120px;
+  ${setTypography(typography.paragraph.p3)};
+  line-height: 140%;
+  color: ${colors.gray[700]};
+  text-align: center;
+
+  ${media.tablet} {
+    padding-top: 60px;
+    ${setTypography(typography.paragraph.p5)};
+  }
 `;
 
 export const EmptyText = styled.p`
