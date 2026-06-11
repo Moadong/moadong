@@ -43,10 +43,3 @@ export const Content = styled.div`
   }
 `;
 
-export const TagWrapper = styled.div`
-  margin-top: 8px;
-
-  ${media.mini_mobile} {
-    margin-top: 4px;
-  }
-`;
