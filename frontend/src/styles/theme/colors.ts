@@ -68,6 +68,7 @@ export const colors = {
 
   // Neutral Color : 텍스트/라인/배경용 무채색
   gray: {
+    50: '#FAFAFA',
     100: '#F5F5F5',
     200: '#F2F2F2',
     300: '#EBEBEB',
