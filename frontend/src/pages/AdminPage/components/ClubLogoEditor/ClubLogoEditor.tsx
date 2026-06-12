@@ -15,10 +15,7 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
   const trackEvent = useMixpanelTrack();
 
   const { clubId } = useAdminClubId();
-  if (!clubId) return null;
-
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const uploadMutation = useUploadLogo();
   const deleteMutation = useDeleteLogo();
 
