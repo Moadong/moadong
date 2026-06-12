@@ -24,7 +24,7 @@ const AdminPage = () => {
 
   return (
     <>
-      <Header />
+      <Header hideOn={['mobile']} />
       {!hasConsented && (
         <PersonalInfoConsentModal
           clubName={clubDetail.name}

@@ -9,14 +9,22 @@ import CalendarSyncTab from '@/pages/AdminPage/tabs/CalendarSyncTab/CalendarSync
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
+import useDevice from '@/hooks/useDevice';
 import ApplicantsTab from './tabs/ApplicantsTab/ApplicantsTab';
 import ClubIntroEditTab from './tabs/ClubIntroEditTab/ClubIntroEditTab';
+import SettingsTab from './tabs/SettingsTab/SettingsTab';
+
+const AdminIndexRoute = () => {
+  const { isMobile } = useDevice();
+  if (isMobile) return <SettingsTab />;
+  return <Navigate to='club-info' replace />;
+};
 
 export default function AdminRoutes() {
   return (
     <Routes>
       <Route path='' element={<AdminPage />}>
-        <Route index element={<Navigate to='club-info' replace />} />
+        <Route index element={<AdminIndexRoute />} />
         <Route path='club-info' element={<ClubInfoEditTab />} />
         <Route path='recruit-edit' element={<RecruitEditTab />} />
         <Route path='calendar-sync' element={<CalendarSyncTab />} />
