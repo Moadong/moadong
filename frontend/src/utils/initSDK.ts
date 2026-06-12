@@ -39,7 +39,7 @@ export function initializeClarity() {
     return;
   }
 
-  if (window.location.hostname === LOCALHOST_HOSTNAME) {
+  if (import.meta.env.DEV) {
     return;
   }
 

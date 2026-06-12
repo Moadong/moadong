@@ -13,14 +13,17 @@ Mixpanel(정량 이벤트) 외에 세션 리플레이·히트맵 등 정성 분�
 import Clarity from '@microsoft/clarity';
 
 export function initializeClarity() {
-  if (!import.meta.env.VITE_CLARITY_PROJECT_ID) return; // env 가드
-  if (window.location.hostname === LOCALHOST_HOSTNAME) return; // localhost 제외
+  if (!import.meta.env.VITE_CLARITY_PROJECT_ID) {
+    console.warn('Clarity 환경변수 설정이 안 되어 있습니다.');
+    return; // env 가드
+  }
+  if (import.meta.env.DEV) return; // 개발 환경(localhost·127.0.0.1 등) 제외
   Clarity.init(import.meta.env.VITE_CLARITY_PROJECT_ID);
 }
 ```
 
 - 환경변수: `VITE_CLARITY_PROJECT_ID` (Clarity 프로젝트 Settings > Overview의 ID). 배포 환경에도 등록 필요.
-- Mixpanel과 동일하게 localhost에서는 init하지 않는다.
+- `import.meta.env.DEV` 가드로 개발 환경에서는 init하지 않는다 (localhost뿐 아니라 `127.0.0.1` 등 모든 dev 주소 포함).
 
 ## PII 마스킹
 
@@ -37,6 +40,6 @@ export function initializeClarity() {
 
 ## 관련 코드
 
-- `src/utils/initSDK.ts` — `initializeClarity()` (init, env·localhost 가드)
+- `src/utils/initSDK.ts` — `initializeClarity()` (init, env·dev 가드)
 - `src/index.tsx` — 앱 부팅 시 호출
 - `src/pages/ApplicationFormPage/ApplicationFormPage.tsx` — 답변 영역 `data-clarity-mask` 마스킹
