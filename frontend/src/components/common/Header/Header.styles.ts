@@ -2,6 +2,12 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { Z_INDEX } from '@/styles/zIndex';
 
+export const HEADER_HEIGHT = {
+  desktop: 92,
+  tablet: 76,
+  mobile: 56,
+} as const;
+
 export const Header = styled.header<{ isScrolled: boolean }>`
   position: fixed;
   top: 0;
@@ -10,6 +16,7 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   display: flex;
   justify-content: center;
   width: 100%;
+  height: ${HEADER_HEIGHT.desktop}px;
   padding: 18px 0;
   background-color: white;
   z-index: ${Z_INDEX.header};
@@ -22,12 +29,12 @@ export const Header = styled.header<{ isScrolled: boolean }>`
     padding: 18px 20px;
   }
   ${media.tablet} {
-    height: 76px;
+    height: ${HEADER_HEIGHT.tablet}px;
     padding: 10px 20px;
   }
 
   ${media.mobile} {
-    height: 56px;
+    height: ${HEADER_HEIGHT.mobile}px;
     padding: 8px 20px;
   }
 `;
@@ -35,26 +42,57 @@ export const Header = styled.header<{ isScrolled: boolean }>`
 export const Container = styled.div`
   display: flex;
   align-items: center;
-  justify-content: space-between;
   width: 100%;
   max-width: 1180px;
-  gap: 50px;
-
-  ${media.tablet} {
-    gap: 35px;
-  }
-  ${media.mobile} {
-    gap: 30px;
-  }
-  ${media.mini_mobile} {
-    gap: 15px;
-  }
+  gap: 16px;
 `;
 
 export const LeftSection = styled.div`
   display: flex;
   align-items: center;
+  flex-shrink: 0;
   gap: 45px;
+`;
+
+export const Nav = styled.nav`
+  display: flex;
+  align-items: center;
+  gap: 45px;
+
+  ${media.tablet} {
+    display: none;
+  }
+`;
+
+export const NavLink = styled.button<{ $isActive?: boolean }>`
+  border: none;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: ${({ $isActive }) => ($isActive ? '#FF5414' : '#3A3A3A')};
+  background: transparent;
+  transition: color 0.2s ease-in-out;
+
+  &:hover {
+    opacity: 0.7;
+  }
+`;
+
+export const SearchArea = styled.div`
+  width: 345px;
+  max-width: 100%;
+  margin-left: auto;
+
+  & > div {
+    max-width: none;
+  }
+
+  ${media.tablet} {
+    flex: 1;
+    width: auto;
+    margin-left: 0;
+  }
 `;
 
 export const LogoButton = styled.button`
@@ -82,102 +120,6 @@ export const LogoButton = styled.button`
       width: 32px;
       height: auto;
     }
-  }
-`;
-
-export const Nav = styled.nav<{ isOpen: boolean }>`
-  display: flex;
-  align-items: center;
-  gap: 45px;
-
-  ${media.tablet} {
-    position: fixed;
-    top: 56px;
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    align-items: stretch;
-    gap: 0;
-    background: #fff;
-    margin-bottom: 16px;
-    border-radius: 0 0 20px 20px;
-    box-shadow: 0px 20px 30px rgba(0, 0, 0, 0.16);
-    transform: translateY(${({ isOpen }) => (isOpen ? '0' : '-200%')});
-    transition: opacity 0.3s ease-in-out;
-    z-index: 1;
-  }
-`;
-
-export const NavLink = styled.button<{ isActive?: boolean }>`
-  border: none;
-  font-weight: 500;
-  font-size: 14px;
-  cursor: pointer;
-  white-space: nowrap;
-  color: ${({ isActive }) => (isActive ? '#FF5414' : '#3A3A3A')};
-  background: transparent;
-  transition: all 0.2s ease-in-out;
-
-  &:hover {
-    opacity: 0.7;
-  }
-
-  ${media.tablet} {
-    display: inline-flex;
-    padding: 12px 24px;
-    background: ${({ isActive }) =>
-      isActive ? 'rgba(255, 84, 20, 0.08)' : 'none'};
-
-    &:last-child {
-      margin-bottom: 16px;
-    }
-  }
-`;
-
-export const MenuBar = styled.span`
-  display: block;
-  width: 100%;
-  height: 2px;
-  background-color: #4b4b4b;
-  border-radius: 2px;
-  transition: all 0.3s ease-in-out;
-  transform-origin: center;
-`;
-
-export const MenuButton = styled.button<{ isOpen: boolean }>`
-  display: none;
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  width: 24px;
-  height: 18px;
-  position: relative;
-  z-index: 3;
-
-  ${media.tablet} {
-    display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    order: 2;
-  }
-
-  ${media.mobile} {
-    width: 20px;
-  }
-
-  ${MenuBar}:nth-child(1) {
-    transform: ${({ isOpen }) =>
-      isOpen ? 'translateY(8.25px) rotate(45deg)' : 'none'};
-  }
-
-  ${MenuBar}:nth-child(2) {
-    opacity: ${({ isOpen }) => (isOpen ? 0 : 1)};
-  }
-
-  ${MenuBar}:nth-child(3) {
-    transform: ${({ isOpen }) =>
-      isOpen ? 'translateY(-8.25px) rotate(-45deg)' : 'none'};
   }
 `;
 

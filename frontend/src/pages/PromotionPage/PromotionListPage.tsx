@@ -29,23 +29,14 @@ const PromotionListPage = () => {
     </Styled.Wrapper>
   );
 
-  if (inAppWebView) {
-    return (
-      <Styled.Container>
-        <Filter hasNotification={hasNotification} />
-        {content}
-      </Styled.Container>
-    );
-  }
-
   return (
     <>
-      <Header hideOn={['webview']} />
+      <Header />
       <Styled.Container>
         <Filter hasNotification={hasNotification} />
         {content}
       </Styled.Container>
-      <Footer />
+      {!inAppWebView && <Footer />}
     </>
   );
 };

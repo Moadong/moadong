@@ -230,10 +230,12 @@ export const LocationInfo = styled.div`
   min-width: 0;
   overflow: hidden;
 
-  img {
-    width: 12px;
-    height: 15px;
+  svg {
+    width: 18px;
+    height: 18px;
+    margin: 1px 2px 1px 0px;
     flex-shrink: 0;
+    color: ${colors.gray[500]};
   }
 
   span {

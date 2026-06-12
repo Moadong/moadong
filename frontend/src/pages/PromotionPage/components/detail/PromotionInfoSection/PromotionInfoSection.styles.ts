@@ -6,7 +6,7 @@ export const Container = styled.section`
   padding: 0px 0px;
 
   ${media.tablet} {
-    padding: 24px 20px;
+    padding: 24px 20px 0px 20px;
   }
 `;
 

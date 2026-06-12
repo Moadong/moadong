@@ -148,10 +148,10 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
       });
 
       it('leading slash를 제거한 slug로 전달한다', () => {
-        handleLink.result.current('/festival-introduction');
+        handleLink.result.current('/promotions/club-fest-2026');
 
         expect(mockRequestNavigateWebview).toHaveBeenCalledWith(
-          'festival-introduction',
+          'promotions/club-fest-2026',
         );
       });
     });
