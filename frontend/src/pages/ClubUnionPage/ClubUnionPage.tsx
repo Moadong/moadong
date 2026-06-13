@@ -3,6 +3,8 @@ import InstagramIcon from '@/assets/images/icons/insta.svg';
 import KakaoIcon from '@/assets/images/icons/kakao.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import isInAppWebView from '@/utils/isInAppWebView';
 import {
   CLUB_UNION_MEMBERS,
   CLUB_UNION_MEMBERS_MOBILE,
@@ -67,7 +69,7 @@ const ClubUnionPage = () => {
 
   return (
     <>
-      <Header />
+      {isInAppWebView() ? <WebviewTopBar title='총동아리연합회' /> : <Header />}
       <PageContainer>
         <Styled.Title>총동아리연합회 소개</Styled.Title>
         <Styled.IntroductionText>
