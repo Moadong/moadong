@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import isInAppWebView from '@/utils/isInAppWebView';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -56,7 +58,7 @@ const IntroductionPage = () => {
 
   return (
     <>
-      <Header hideOn={['webview']} />
+      {isInAppWebView() ? <WebviewTopBar title='동아리 대동제' /> : <Header />}
       <Styled.Container>
         <Styled.TabWrapper>
           <UnderlineTabs
