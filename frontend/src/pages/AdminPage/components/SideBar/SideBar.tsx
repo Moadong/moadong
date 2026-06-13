@@ -1,10 +1,10 @@
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import { ADMIN_TABS, type TabItem } from '@/constants/adminTabs';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useLogout from '@/hooks/useLogout';
-import { ADMIN_TABS, type TabItem } from '@/constants/adminTabs';
 import * as Styled from './SideBar.styles';
 
 const SideBar = () => {

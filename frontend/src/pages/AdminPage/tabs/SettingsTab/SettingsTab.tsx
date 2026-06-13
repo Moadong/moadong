@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
+import { ADMIN_TABS } from '@/constants/adminTabs';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useLogout from '@/hooks/useLogout';
-import { ADMIN_TABS } from '@/constants/adminTabs';
 import SettingsCard from './components/SettingsCard';
 import * as Styled from './SettingsTab.styles';
 
@@ -45,9 +45,13 @@ const SettingsTab = () => {
       </Styled.CardList>
 
       <Styled.ButtonSection>
-        <Styled.LogoutButton onClick={handleLogout}>로그아웃</Styled.LogoutButton>
+        <Styled.LogoutButton onClick={handleLogout}>
+          로그아웃
+        </Styled.LogoutButton>
         <Styled.NavigateButton onClick={handleNavigateToMain}>
-          <Styled.NavigateButtonLabel>모아동으로 이동</Styled.NavigateButtonLabel>
+          <Styled.NavigateButtonLabel>
+            모아동으로 이동
+          </Styled.NavigateButtonLabel>
           <Styled.RightArrowIcon />
         </Styled.NavigateButton>
       </Styled.ButtonSection>

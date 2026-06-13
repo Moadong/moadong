@@ -1,7 +1,7 @@
 import styled from 'styled-components';
+import ChevronRightIconSvg from '@/assets/images/icons/right_arraw_icon.svg?react';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
-import ChevronRightIconSvg from '@/assets/images/icons/right_arraw_icon.svg?react';
 
 export const Card = styled.div`
   display: flex;

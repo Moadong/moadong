@@ -1,4 +1,5 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
+import useDevice from '@/hooks/useDevice';
 import AdminPage from '@/pages/AdminPage/AdminPage';
 import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
 import ApplicantDetailPage from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPage';
@@ -9,7 +10,6 @@ import CalendarSyncTab from '@/pages/AdminPage/tabs/CalendarSyncTab/CalendarSync
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
-import useDevice from '@/hooks/useDevice';
 import ApplicantsTab from './tabs/ApplicantsTab/ApplicantsTab';
 import ClubIntroEditTab from './tabs/ClubIntroEditTab/ClubIntroEditTab';
 import SettingsTab from './tabs/SettingsTab/SettingsTab';

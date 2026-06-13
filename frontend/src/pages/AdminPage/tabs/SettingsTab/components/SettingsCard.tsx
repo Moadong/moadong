@@ -13,9 +13,7 @@ interface SettingsCardProps {
 const SettingsCard = ({ category, items }: SettingsCardProps) => {
   return (
     <Styled.Card>
-      {category && (
-        <Styled.CategoryLabel>{category}</Styled.CategoryLabel>
-      )}
+      {category && <Styled.CategoryLabel>{category}</Styled.CategoryLabel>}
       <Styled.ItemList>
         {items.map((item) => (
           <Styled.Item key={item.label} onClick={item.onClick}>
