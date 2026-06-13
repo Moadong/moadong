@@ -1,9 +1,6 @@
-import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useNavigator from '@/hooks/useNavigator';
-import isInAppWebView from '@/utils/isInAppWebView';
-import { requestNavigateWebview } from '@/utils/webviewBridge';
 import ArrowButton from '../PromotionArrowButton/PromotionArrowButton';
 import * as Styled from './PromotionClubCTA.styles';
 
@@ -14,7 +11,6 @@ interface Props {
 
 const PromotionClubCTA = ({ clubId, clubName }: Props) => {
   const handleLink = useNavigator();
-  const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
   const handleNavigate = () => {
@@ -23,15 +19,7 @@ const PromotionClubCTA = ({ clubId, clubName }: Props) => {
       club_name: clubName,
     });
 
-    if (isInAppWebView()) {
-      const sent = requestNavigateWebview(
-        `club/@${encodeURIComponent(clubName)}`,
-        clubId,
-      );
-      if (!sent) navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
-    } else {
-      handleLink(`/clubDetail/@${encodeURIComponent(clubName)}`);
-    }
+    handleLink(`/clubDetail/@${encodeURIComponent(clubName)}`);
   };
 
   return (
