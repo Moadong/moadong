@@ -56,6 +56,11 @@ const SubscribedClubs = () => {
               club={club}
               index={index}
               page={PAGE_NAME.SUBSCRIPTIONS}
+              onCardClick={(c) =>
+                navigate(
+                  `/clubDetail/@${encodeURIComponent(c.name)}?is_subscribed=true`,
+                )
+              }
             >
               <SubscribeButton
                 subscribed={subscribedClubIds.has(club.id)}
