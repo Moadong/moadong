@@ -132,7 +132,7 @@ const ClubDetailPage = () => {
       <Header hideOn={['mobile', 'tablet']} />
       {showTopBar && (
         <ClubDetailTopBar
-          clubId={clubId || ''}
+          clubId={clubDetail.id}
           clubName={clubDetail.name}
           tabs={topBarTabs}
           activeTab={activeTab}
