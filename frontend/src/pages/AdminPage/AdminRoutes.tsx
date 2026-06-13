@@ -15,8 +15,8 @@ import ClubIntroEditTab from './tabs/ClubIntroEditTab/ClubIntroEditTab';
 import SettingsTab from './tabs/SettingsTab/SettingsTab';
 
 const AdminIndexRoute = () => {
-  const { isMobile } = useDevice();
-  if (isMobile) return <SettingsTab />;
+  const { isMobile, isTablet } = useDevice();
+  if (isMobile || isTablet) return <SettingsTab />;
   return <Navigate to='club-info' replace />;
 };
 

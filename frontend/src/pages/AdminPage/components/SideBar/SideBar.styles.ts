@@ -13,7 +13,7 @@ export const SidebarWrapper = styled.aside`
   background-color: ${colors.base.white};
   height: fit-content;
 
-  ${media.mobile} {
+  ${media.tablet} {
     display: none;
   }
 `;

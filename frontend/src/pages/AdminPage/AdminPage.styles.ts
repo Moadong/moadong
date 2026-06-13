@@ -6,7 +6,7 @@ export const Background = styled.div`
   background-color: ${colors.gray[200]};
   min-height: 100vh;
 
-  ${media.mobile} {
+  ${media.tablet} {
     background-color: ${colors.base.white};
   }
 `;
@@ -19,7 +19,7 @@ export const Layout = styled.div`
   width: 100%;
   padding-top: 110px;
 
-  ${media.mobile} {
+  ${media.tablet} {
     padding-top: 0;
     gap: 0;
   }
@@ -33,7 +33,7 @@ export const MainContent = styled.main`
   border-radius: 20px;
   margin-bottom: 50px;
 
-  ${media.mobile} {
+  ${media.tablet} {
     padding: 0;
     border-radius: 0;
     margin-bottom: 0;
