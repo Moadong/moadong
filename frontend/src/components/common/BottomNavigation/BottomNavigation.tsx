@@ -1,8 +1,7 @@
 import { useLocation, useNavigate } from 'react-router-dom';
 import HomeIcon from '@/assets/images/icons/bottomNav/home.svg?react';
 import MenuIcon from '@/assets/images/icons/bottomNav/menu.svg?react';
-import subscribeSelected from '@/assets/images/icons/bottomNav/subscribe_selected.png';
-import subscribeUnselected from '@/assets/images/icons/bottomNav/subscribe_unselected.png';
+import SubscribeIcon from '@/assets/images/icons/bottomNav/subscribe.svg?react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './BottomNavigation.styles';
@@ -31,11 +30,7 @@ const TABS: BottomNavTab[] = [
     key: 'subscriptions',
     label: '구독',
     path: '/subscriptions',
-    icon: {
-      type: 'image',
-      active: subscribeSelected,
-      inactive: subscribeUnselected,
-    },
+    icon: { type: 'vector', Component: SubscribeIcon },
   },
   {
     key: 'more',
