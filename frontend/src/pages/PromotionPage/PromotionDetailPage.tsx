@@ -7,8 +7,8 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
 import BuskingPage from '@/pages/FestivalPage/BuskingPage/BuskingPage';
 import IntroductionPage from '@/pages/FestivalPage/IntroductionPage/IntroductionPage';
-import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import PromotionClubCTA from './components/detail/PromotionClubCTA/PromotionClubCTA';
+import PromotionDetailTopBar from './components/detail/PromotionDetailTopBar/PromotionDetailTopBar';
 import PromotionImageGallery from './components/detail/PromotionImageGallery/PromotionImageGallery';
 import PromotionInfoSection from './components/detail/PromotionInfoSection/PromotionInfoSection';
 import PromotionMapSection from './components/detail/PromotionMapSection/PromotionMapSection';
@@ -46,7 +46,7 @@ const PromotionDetail = () => {
       </Styled.DesktopHeader>
       <Styled.Container>
         <Styled.MobileTopBar>
-          <WebviewTopBar title='이벤트 정보' />
+          <PromotionDetailTopBar />
         </Styled.MobileTopBar>
 
         {isLoading && <Styled.Message>로딩 중...</Styled.Message>}
