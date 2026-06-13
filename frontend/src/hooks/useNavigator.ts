@@ -1,12 +1,7 @@
 import { useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import isInAppWebView from '@/utils/isInAppWebView';
-import {
-  requestNavigateWebview,
-  requestOpenExternalUrl,
-} from '@/utils/webviewBridge';
-
-const toSlug = (path: string) => path.replace(/^\//, '');
+import { requestOpenExternalUrl } from '@/utils/webviewBridge';
 
 const useNavigator = () => {
   const navigate = useNavigate();
@@ -27,8 +22,7 @@ const useNavigator = () => {
         return;
       }
 
-      if (inWebview) requestNavigateWebview(toSlug(trimmedUrl));
-      else navigate(trimmedUrl);
+      navigate(trimmedUrl);
     },
     [navigate],
   );

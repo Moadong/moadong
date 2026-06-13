@@ -1,9 +1,8 @@
-import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useNavigator from '@/hooks/useNavigator';
+import useWebviewSubscribe from '@/hooks/useWebviewSubscribe';
 import isInAppWebView from '@/utils/isInAppWebView';
-import { requestNavigateWebview } from '@/utils/webviewBridge';
 import ArrowButton from '../PromotionArrowButton/PromotionArrowButton';
 import * as Styled from './PromotionClubCTA.styles';
 
@@ -14,8 +13,8 @@ interface Props {
 
 const PromotionClubCTA = ({ clubId, clubName }: Props) => {
   const handleLink = useNavigator();
-  const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
+  const { subscribedClubIds } = useWebviewSubscribe();
 
   const handleNavigate = () => {
     trackEvent(USER_EVENT.PROMOTION_CLUB_CTA_CLICKED, {
@@ -23,14 +22,11 @@ const PromotionClubCTA = ({ clubId, clubName }: Props) => {
       club_name: clubName,
     });
 
-    if (isInAppWebView()) {
-      const sent = requestNavigateWebview(
-        `club/@${encodeURIComponent(clubName)}`,
-      );
-      if (!sent) navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
-    } else {
-      handleLink(`/clubDetail/@${encodeURIComponent(clubName)}`);
-    }
+    const isSubscribed = isInAppWebView() && subscribedClubIds.has(clubId);
+    const url = isSubscribed
+      ? `/clubDetail/@${encodeURIComponent(clubName)}?is_subscribed=true`
+      : `/clubDetail/@${encodeURIComponent(clubName)}`;
+    handleLink(url);
   };
 
   return (
