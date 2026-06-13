@@ -53,12 +53,13 @@ const isTabActive = (pathname: string, path: string) => {
   // 메뉴 탭: 메뉴 페이지에서 진입하는 소개/연합회 하위 페이지까지 활성
   if (path === '/menu') {
     return (
-      pathname.startsWith('/menu') ||
+      pathname === '/menu' ||
+      pathname.startsWith('/menu/') ||
       pathname === '/introduce' ||
       pathname === '/club-union'
     );
   }
-  return pathname.startsWith(path);
+  return pathname === path || pathname.startsWith(path + '/');
 };
 
 const renderIcon = (icon: TabIcon, active: boolean) => {
