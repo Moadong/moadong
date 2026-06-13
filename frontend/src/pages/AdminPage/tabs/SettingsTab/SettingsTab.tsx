@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { logout } from '@/apis/auth';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useLogout from '@/hooks/useLogout';
 import { ADMIN_TABS } from '@/constants/adminTabs';
 import SettingsCard from './components/SettingsCard';
 import * as Styled from './SettingsTab.styles';
@@ -18,19 +18,7 @@ const SettingsTab = () => {
     navigate(path);
   };
 
-  const handleLogout = async () => {
-    const confirmed = window.confirm('정말 로그아웃하시겠습니까?');
-    if (!confirmed) return;
-
-    try {
-      await logout();
-      trackEvent(ADMIN_EVENT.LOGOUT_BUTTON_CLICKED);
-      localStorage.removeItem('accessToken');
-      navigate('/admin/login', { replace: true });
-    } catch {
-      alert('로그아웃에 실패했습니다.');
-    }
-  };
+  const { handleLogout } = useLogout();
 
   const handleNavigateToMain = () => {
     navigate('/');

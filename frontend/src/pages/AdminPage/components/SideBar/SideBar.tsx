@@ -1,9 +1,9 @@
 import { useMemo } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useQueryClient } from '@tanstack/react-query';
-import { logout } from '@/apis/auth';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useLogout from '@/hooks/useLogout';
 import { ADMIN_TABS, type TabItem } from '@/constants/adminTabs';
 import * as Styled from './SideBar.styles';
 
@@ -12,6 +12,7 @@ const SideBar = () => {
   const trackEvent = useMixpanelTrack();
   const location = useLocation();
   const navigate = useNavigate();
+  const { handleLogout } = useLogout();
 
   const activeTab = useMemo(() => {
     return ADMIN_TABS.map((tab) =>
@@ -25,21 +26,6 @@ const SideBar = () => {
     });
     queryClient.invalidateQueries();
     navigate(item.path);
-  };
-
-  const handleLogout = async () => {
-    const confirmed = window.confirm('정말 로그아웃하시겠습니까?');
-    if (!confirmed) return;
-
-    try {
-      await logout();
-      trackEvent(ADMIN_EVENT.LOGOUT_BUTTON_CLICKED);
-
-      localStorage.removeItem('accessToken');
-      navigate('/admin/login', { replace: true });
-    } catch (error) {
-      alert('로그아웃에 실패했습니다.');
-    }
   };
 
   return (
