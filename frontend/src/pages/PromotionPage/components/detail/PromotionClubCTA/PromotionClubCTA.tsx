@@ -26,6 +26,7 @@ const PromotionClubCTA = ({ clubId, clubName }: Props) => {
     if (isInAppWebView()) {
       const sent = requestNavigateWebview(
         `club/@${encodeURIComponent(clubName)}`,
+        clubId,
       );
       if (!sent) navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
     } else {
