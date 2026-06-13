@@ -135,7 +135,7 @@ const ApplicationFormPage = () => {
             {linkifyText(formData.description)}
           </Styled.FormDescription>
         )}
-        <Styled.QuestionsWrapper>
+        <Styled.QuestionsWrapper data-clarity-mask='true'>
           {formData.questions.map((q: Question, i: number) => (
             <QuestionContainer
               key={q.id}
