@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTheme } from 'styled-components';
 import NotificationIcon from '@/assets/images/icons/notification_icon.svg?react';
@@ -11,6 +11,7 @@ import useOpenAppFromKakao from '@/hooks/useOpenAppFromKakao';
 import isInAppWebView from '@/utils/isInAppWebView';
 import isKakaoTalkBrowser from '@/utils/isKakaoTalkBrowser';
 import {
+  type AppToWebMessage,
   requestNavigateBack,
   requestSubscribeToggle,
 } from '@/utils/webviewBridge';
@@ -53,6 +54,30 @@ const ClubDetailTopBar = ({
   const [isNotificationActive, setIsNotificationActive] =
     useState(initialIsSubscribed);
 
+  useEffect(() => {
+    const handleMessage = (event: MessageEvent) => {
+      let data: AppToWebMessage;
+      try {
+        data =
+          typeof event.data === 'string' ? JSON.parse(event.data) : event.data;
+      } catch {
+        return;
+      }
+      if (data.type === 'SUBSCRIBE_STATE') {
+        setIsNotificationActive(
+          data.payload.subscribedClubIds.includes(clubId),
+        );
+      } else if (
+        data.type === 'SUBSCRIBE_RESULT' &&
+        data.payload.clubId === clubId
+      ) {
+        setIsNotificationActive(data.payload.subscribed);
+      }
+    };
+    window.addEventListener('message', handleMessage);
+    return () => window.removeEventListener('message', handleMessage);
+  }, [clubId]);
+
   // 스크롤 위치에 따른 상태 관리
   const { isTriggered: isHeaderVisible } = useScrollTrigger({
     threshold: SCROLL_THRESHOLD.HEADER_VISIBLE,
@@ -78,8 +103,7 @@ const ClubDetailTopBar = ({
   };
 
   const handleNotificationClick = () => {
-    const success = requestSubscribeToggle(clubId);
-    if (success) setIsNotificationActive(!isNotificationActive);
+    requestSubscribeToggle(clubId);
   };
 
   return (
