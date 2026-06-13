@@ -11,9 +11,9 @@ import useOpenAppFromKakao from '@/hooks/useOpenAppFromKakao';
 import isInAppWebView from '@/utils/isInAppWebView';
 import isKakaoTalkBrowser from '@/utils/isKakaoTalkBrowser';
 import {
-  type AppToWebMessage,
   requestNavigateBack,
   requestSubscribeToggle,
+  type AppToWebMessage,
 } from '@/utils/webviewBridge';
 import * as Styled from './ClubDetailTopBar.styles';
 
