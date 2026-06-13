@@ -4,7 +4,6 @@ import useNavigator from '@/hooks/useNavigator';
 import { getDDay } from '@/pages/PromotionPage/utils/getDday';
 import { PromotionArticle } from '@/types/promotion';
 import CardMeta from './CardMeta/CardMeta';
-import ClubTag from './ClubTag/ClubTag';
 import DdayBadge from './DdayBadge/DdayBadge';
 import * as Styled from './PromotionCard.styles';
 
@@ -42,9 +41,6 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
           location={article.location}
           startDate={article.eventStartDate}
         />
-        <Styled.TagWrapper>
-          <ClubTag clubName={article.clubName} />
-        </Styled.TagWrapper>
       </Styled.Content>
     </Styled.Container>
   );
