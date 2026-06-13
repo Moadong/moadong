@@ -131,8 +131,14 @@ export const requestSubscribeState = (): boolean => {
 // 앱 내 다른 웹뷰 화면으로 이동 요청 (slug로 앱이 라우팅 결정)
 // 언제: 배너 등에서 앱 내부 특정 화면(예: 'promotions/club-fest-2026')으로 이동할 때.
 //       외부 URL이면 requestOpenExternalUrl 사용
-export const requestNavigateWebview = (slug: string, clubId?: string): boolean => {
-  return postMessageToApp({ type: 'NAVIGATE_WEBVIEW', payload: { slug, clubId } });
+export const requestNavigateWebview = (
+  slug: string,
+  clubId?: string,
+): boolean => {
+  return postMessageToApp({
+    type: 'NAVIGATE_WEBVIEW',
+    payload: { slug, clubId },
+  });
 };
 
 // 외부 URL을 앱 브라우저로 열기 요청 — http/https만 허용, 그 외 프로토콜은 차단
