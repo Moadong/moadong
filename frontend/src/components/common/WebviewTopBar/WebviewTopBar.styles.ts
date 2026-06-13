@@ -29,8 +29,9 @@ export const BackButton = styled.button`
 
 export const Title = styled.h1`
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 54px;
+  right: 54px;
+  text-align: center;
   font-size: 20px;
   font-weight: 700;
   color: ${colors.gray[900]};
