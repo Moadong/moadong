@@ -12,8 +12,7 @@ import isInAppWebView from '@/utils/isInAppWebView';
 import isKakaoTalkBrowser from '@/utils/isKakaoTalkBrowser';
 import {
   requestNavigateBack,
-  requestNotificationSubscribe,
-  requestNotificationUnsubscribe,
+  requestSubscribeToggle,
 } from '@/utils/webviewBridge';
 import * as Styled from './ClubDetailTopBar.styles';
 
@@ -79,17 +78,8 @@ const ClubDetailTopBar = ({
   };
 
   const handleNotificationClick = () => {
-    if (isNotificationActive) {
-      const success = requestNotificationUnsubscribe(clubId);
-      if (success) {
-        setIsNotificationActive(false);
-      }
-    } else {
-      const success = requestNotificationSubscribe(clubId, clubName);
-      if (success) {
-        setIsNotificationActive(true);
-      }
-    }
+    const success = requestSubscribeToggle(clubId);
+    if (success) setIsNotificationActive(!isNotificationActive);
   };
 
   return (
