@@ -1,4 +1,5 @@
 import { useMemo, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import Filter from '@/components/common/Filter/Filter';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -45,6 +46,7 @@ const MainPage = () => {
     division,
   });
   const hasNotification = usePromotionNotification();
+  const navigate = useNavigate();
   const { subscribedClubIds, toggleSubscribe } = useWebviewSubscribe();
 
   const clubs = data?.clubs || [];
@@ -61,6 +63,14 @@ const MainPage = () => {
         club={club}
         index={i}
         page={inWebview ? PAGE_NAME.WEBVIEW_MAIN : PAGE_NAME.MAIN}
+        onCardClick={
+          inWebview
+            ? (c) =>
+                navigate(
+                  `/clubDetail/@${encodeURIComponent(c.name)}?is_subscribed=${subscribedClubIds.has(c.id)}`,
+                )
+            : undefined
+        }
       >
         {inWebview && (
           <SubscribeButton
