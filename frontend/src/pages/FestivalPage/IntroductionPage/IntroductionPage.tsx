@@ -57,7 +57,7 @@ const IntroductionPage = () => {
 
   return (
     <>
-      {isInAppWebView() ? <WebviewTopBar title='동소한' /> : <Header />}
+      {isInAppWebView() ? <WebviewTopBar title='이벤트 정보' /> : <Header />}
       <Styled.Container>
         <Styled.TabWrapper>
           <UnderlineTabs

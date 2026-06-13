@@ -82,7 +82,7 @@ const BuskingPage = () => {
 
   return (
     <Styled.PageWrapper>
-      {isInAppWebView() ? <WebviewTopBar title='대동제' /> : <Header />}
+      {isInAppWebView() ? <WebviewTopBar title='이벤트 정보' /> : <Header />}
       <motion.div
         style={{ touchAction: 'pan-y' }}
         onPanEnd={(_, info) => {
