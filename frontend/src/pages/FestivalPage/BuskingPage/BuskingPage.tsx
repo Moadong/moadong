@@ -3,6 +3,7 @@ import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -81,7 +82,7 @@ const BuskingPage = () => {
 
   return (
     <Styled.PageWrapper>
-      <Header hideOn={['webview']} />
+      {isInAppWebView() ? <WebviewTopBar title='이벤트 정보' /> : <Header />}
       <motion.div
         style={{ touchAction: 'pan-y' }}
         onPanEnd={(_, info) => {
