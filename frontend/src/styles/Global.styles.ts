@@ -20,7 +20,6 @@ const GlobalStyles = createGlobalStyle`
     sans-serif;
     color: #121212;
     letter-spacing: -0.02em;
-    background-color: ${({ theme }) => theme.colors.base.white};
   }
 `;
 
