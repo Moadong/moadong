@@ -15,12 +15,8 @@ export const ModalContent = styled.div`
   overflow: hidden;
 
   ${media.mobile} {
-    position: fixed;
-    top: 0;
-    left: 0;
     width: 100vw;
-    max-width: none;
-    height: 100dvh;
+    height: 100vh;
     border-radius: 0;
   }
 `;
@@ -45,19 +41,16 @@ export const CloseButton = styled.button`
 export const ModalHeader = styled.div`
   width: 100%;
   height: 60px;
-  flex-shrink: 0;
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 32px;
+  position: absolute;
+  top: 0;
+  left: 0;
   z-index: 10;
   background: ${colors.base.white};
   backdrop-filter: blur(10px);
-
-  ${media.mobile} {
-    height: calc(60px + var(--rn-safe-top, env(safe-area-inset-top)));
-    padding-top: var(--rn-safe-top, env(safe-area-inset-top));
-  }
 `;
 
 export const ClubName = styled.div`
@@ -77,22 +70,21 @@ export const ImageCounter = styled.div`
 
 export const ModalBody = styled.div`
   width: 100%;
-  flex: 1;
+  height: 100%;
   display: flex;
   flex-direction: column;
   position: relative;
-  overflow: hidden;
-  min-height: 0;
 `;
 
 export const ImageContainer = styled.div`
   width: 100%;
-  flex: 1;
-  min-height: 0;
+  height: 100%;
+  min-height: 400px;
   position: relative;
   display: flex;
   justify-content: center;
   align-items: center;
+  margin-top: 60px;
   padding: 0 60px;
 
   ${media.mobile} {
