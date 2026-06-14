@@ -15,10 +15,13 @@ export const ModalContent = styled.div`
   overflow: hidden;
 
   ${media.mobile} {
+    position: fixed;
+    top: 0;
+    left: 0;
     width: 100vw;
+    max-width: none;
     height: 100dvh;
     border-radius: 0;
-    padding-top: var(--rn-safe-top, env(safe-area-inset-top));
   }
 `;
 
@@ -52,7 +55,8 @@ export const ModalHeader = styled.div`
   backdrop-filter: blur(10px);
 
   ${media.mobile} {
-    height: 60px;
+    height: calc(60px + var(--rn-safe-top, env(safe-area-inset-top)));
+    padding-top: var(--rn-safe-top, env(safe-area-inset-top));
   }
 `;
 
