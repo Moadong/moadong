@@ -1,7 +1,12 @@
 import { RuleTester } from 'eslint';
 import rule from './no-hardcoded-event-name';
 
-const ruleTester = new RuleTester();
+const ruleTester = new RuleTester({
+  languageOptions: {
+    ecmaVersion: 2020,
+    sourceType: 'module',
+  },
+});
 
 ruleTester.run('no-hardcoded-event-name', rule, {
   valid: [
@@ -26,6 +31,11 @@ ruleTester.run('no-hardcoded-event-name', rule, {
     {
       // 표현식 없는 정적 템플릿도 하드코딩으로 간주
       code: 'trackEvent(`Banner Clicked`);',
+      errors: [{ messageId: 'hardcoded' }],
+    },
+    {
+      // 옵셔널 체이닝(mixpanel?.track)으로 우회해도 검출
+      code: "mixpanel?.track('Search Executed');",
       errors: [{ messageId: 'hardcoded' }],
     },
   ],

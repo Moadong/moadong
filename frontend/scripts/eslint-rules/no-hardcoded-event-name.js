@@ -24,8 +24,12 @@ module.exports = {
       if (callee.type === 'Identifier') {
         return callee.name === 'trackEvent';
       }
+      // mixpanel?.track(...) 옵셔널 체이닝도 함께 검사
+      const isMember =
+        callee.type === 'MemberExpression' ||
+        callee.type === 'OptionalMemberExpression';
       return (
-        callee.type === 'MemberExpression' &&
+        isMember &&
         callee.object.type === 'Identifier' &&
         callee.object.name === 'mixpanel' &&
         callee.property.type === 'Identifier' &&
