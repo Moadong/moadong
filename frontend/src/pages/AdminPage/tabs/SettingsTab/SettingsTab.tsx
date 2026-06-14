@@ -4,7 +4,7 @@ import { ADMIN_TABS } from '@/constants/adminTabs';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useLogout from '@/hooks/useLogout';
-import SettingsCard from './components/SettingsCard';
+import SettingsCard from '@/pages/AdminPage/tabs/SettingsTab/components/SettingsCard';
 import * as Styled from './SettingsTab.styles';
 
 const SettingsTab = () => {

@@ -10,9 +10,9 @@ import CalendarSyncTab from '@/pages/AdminPage/tabs/CalendarSyncTab/CalendarSync
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
-import ApplicantsTab from './tabs/ApplicantsTab/ApplicantsTab';
-import ClubIntroEditTab from './tabs/ClubIntroEditTab/ClubIntroEditTab';
-import SettingsTab from './tabs/SettingsTab/SettingsTab';
+import ApplicantsTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsTab';
+import ClubIntroEditTab from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroEditTab';
+import SettingsTab from '@/pages/AdminPage/tabs/SettingsTab/SettingsTab';
 
 const AdminIndexRoute = () => {
   const { isMobile, isTablet } = useDevice();
