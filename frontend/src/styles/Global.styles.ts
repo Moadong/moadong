@@ -10,7 +10,6 @@ const GlobalStyles = createGlobalStyle`
   html {
     overscroll-behavior-y: none;
     scrollbar-gutter: stable;
-    background-color: ${({ theme }) => theme.colors.base.white};
   }
   textarea, button, input, select {
     font-family: 'Pretendard', sans-serif;
