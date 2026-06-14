@@ -26,7 +26,12 @@ export const ItemList = styled.div`
 `;
 
 export const Item = styled.button`
-  all: unset;
+  appearance: none;
+  background: none;
+  border: none;
+  padding: 0;
+  font: inherit;
+  text-align: left;
   box-sizing: border-box;
   display: flex;
   flex-direction: row;
