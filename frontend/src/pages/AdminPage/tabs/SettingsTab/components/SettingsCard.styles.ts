@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import ChevronRightIconSvg from '@/assets/images/icons/right_arraw_icon.svg?react';
+import RightArrowSvg from '@/assets/images/icons/right_arrow_icon.svg?react';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
@@ -42,7 +42,7 @@ export const ItemLabel = styled.span`
   color: ${colors.base.black};
 `;
 
-export const ChevronIcon = styled(ChevronRightIconSvg)`
+export const ChevronIcon = styled(RightArrowSvg)`
   width: 24px;
   height: 24px;
   flex-shrink: 0;

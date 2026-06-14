@@ -1,6 +1,6 @@
 import styled from 'styled-components';
 import AdminIconSvg from '@/assets/images/icons/admin_icon.svg?react';
-import RightArrowSvg from '@/assets/images/icons/right_arraw_icon.svg?react';
+import RightArrowSvg from '@/assets/images/icons/right_arrow_icon.svg?react';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
