@@ -1,5 +1,4 @@
 import { useNavigate } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import { ADMIN_TABS } from '@/constants/adminTabs';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -9,12 +8,10 @@ import * as Styled from './SettingsTab.styles';
 
 const SettingsTab = () => {
   const navigate = useNavigate();
-  const queryClient = useQueryClient();
   const trackEvent = useMixpanelTrack();
 
   const handleItemClick = (label: string, path: string) => {
     trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: label });
-    queryClient.invalidateQueries();
     navigate(path);
   };
 
