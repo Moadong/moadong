@@ -1,10 +1,15 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { initializeExperiments } from './experiments/initializeExperiments';
-import { initializeMixpanel, initializeSentry } from './utils/initSDK';
+import {
+  initializeClarity,
+  initializeMixpanel,
+  initializeSentry,
+} from './utils/initSDK';
 
 initializeMixpanel();
 initializeSentry();
+initializeClarity();
 initializeExperiments();
 
 if (import.meta.env.DEV) {

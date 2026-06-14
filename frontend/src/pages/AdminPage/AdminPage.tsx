@@ -1,13 +1,19 @@
+import { useState } from 'react';
 import { Outlet } from 'react-router-dom';
 import Header from '@/components/common/Header/Header';
-import { useAdminClubContext } from '@/context/AdminClubContext';
+import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import PersonalInfoConsentModal from '@/pages/AdminPage/components/PersonalInfoConsentModal/PersonalInfoConsentModal';
 import SideBar from '@/pages/AdminPage/components/SideBar/SideBar';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import * as Styled from './AdminPage.styles';
 
 const AdminPage = () => {
-  const { clubId, hasConsented } = useAdminClubContext();
+  const { clubId } = useAdminClubId();
+  const [hasConsented, setHasConsented] = useState(
+    () =>
+      localStorage.getItem(STORAGE_KEYS.HAS_CONSENTED_PERSONAL_INFO) === 'true',
+  );
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   if (!clubDetail) {
@@ -19,7 +25,12 @@ const AdminPage = () => {
   return (
     <>
       <Header />
-      {!hasConsented && <PersonalInfoConsentModal clubName={clubDetail.name} />}
+      {!hasConsented && (
+        <PersonalInfoConsentModal
+          clubName={clubDetail.name}
+          onConsent={() => setHasConsented(true)}
+        />
+      )}
       <Styled.Background>
         <Styled.Layout>
           <SideBar />

@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.header`
@@ -10,22 +9,14 @@ export const Container = styled.header`
   display: flex;
   align-items: center;
   padding: 0 18px;
-
-  ${media.tablet} {
-    position: sticky;
-    top: 0;
-    z-index: 10;
-  }
 `;
 
 export const BackButton = styled.button`
   width: 36px;
   height: 36px;
-
   display: flex;
   align-items: center;
   justify-content: center;
-
   background: none;
   border: none;
   cursor: pointer;
@@ -38,9 +29,9 @@ export const BackButton = styled.button`
 
 export const Title = styled.h1`
   position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
-
+  left: 54px;
+  right: 54px;
+  text-align: center;
   font-size: 20px;
   font-weight: 700;
   color: ${colors.gray[900]};

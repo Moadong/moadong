@@ -1,4 +1,5 @@
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
+import Clarity from '@microsoft/clarity';
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
 
@@ -30,6 +31,19 @@ export function initializeMixpanel() {
       window.history.replaceState({}, document.title, newUrl);
     }
   }
+}
+
+export function initializeClarity() {
+  if (!import.meta.env.VITE_CLARITY_PROJECT_ID) {
+    console.warn('Clarity 환경변수 설정이 안 되어 있습니다.');
+    return;
+  }
+
+  if (import.meta.env.DEV) {
+    return;
+  }
+
+  Clarity.init(import.meta.env.VITE_CLARITY_PROJECT_ID);
 }
 
 export function initializeChannelService() {

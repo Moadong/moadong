@@ -1,13 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
-import Filter from '@/components/common/Filter/Filter';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
 import isInAppWebView from '@/utils/isInAppWebView';
 import DayTabsNav from '../components/DayTabsNav/DayTabsNav';
 import PerformanceList from '../components/PerformanceList/PerformanceList';
@@ -32,7 +31,6 @@ const getInitialDayId = (): string => {
 const BuskingPage = () => {
   useTrackPageView(PAGE_VIEW.DAEDONG2026_BUSKING_PAGE);
   const trackEvent = useMixpanelTrack();
-  const hasNotification = usePromotionNotification();
   const [activeDayId, setActiveDayId] = useState(getInitialDayId);
   const dayStartTime = useRef(Date.now());
   const activeDayIdRef = useRef(activeDayId);
@@ -84,8 +82,7 @@ const BuskingPage = () => {
 
   return (
     <Styled.PageWrapper>
-      <Header hideOn={['webview']} />
-      <Filter hasNotification={hasNotification} />
+      {isInAppWebView() ? <WebviewTopBar title='이벤트 정보' /> : <Header />}
       <motion.div
         style={{ touchAction: 'pan-y' }}
         onPanEnd={(_, info) => {

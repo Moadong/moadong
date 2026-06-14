@@ -4,6 +4,8 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## 빌드 및 개발 명령어
 
+> Node 22.12.0 사용 (`.nvmrc` 기준). `nvm use`로 맞출 것.
+
 ```bash
 # 개발 서버 (Vite - 주로 사용)
 npm run dev              # 포트 3000에서 개발 서버 시작
@@ -63,7 +65,7 @@ npm run generate:sitemap # sitemap.xml 생성
 - **Kakao SDK**: 카카오 공유 기능
 - **Naver Map**: 동아리방 위치 지도 (네이버 클라우드 플랫폼)
 
-모든 SDK는 `src/utils/initSDK.ts`에서 초기화되며, 각각 환경 변수 필요.
+Mixpanel·Sentry·Channel.io는 `src/utils/initSDK.ts`에서 초기화. Naver Map은 `src/utils/loadNaverMapScript.ts`로 동적 로드(SDK init 아님). 각각 환경 변수 필요.
 
 ### 환경 변수
 

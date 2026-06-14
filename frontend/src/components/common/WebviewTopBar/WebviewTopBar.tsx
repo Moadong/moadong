@@ -3,9 +3,13 @@ import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { requestNavigateBack } from '@/utils/webviewBridge';
-import * as Styled from './PromotionDetailTopBar.styles';
+import * as Styled from './WebviewTopBar.styles';
 
-const PromotionDetailTopBar = () => {
+interface Props {
+  title: string;
+}
+
+const WebviewTopBar = ({ title }: Props) => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
@@ -26,10 +30,9 @@ const PromotionDetailTopBar = () => {
       <Styled.BackButton onClick={handleBackClick} aria-label='뒤로가기'>
         <PrevButtonIcon width={36} height={36} />
       </Styled.BackButton>
-
-      <Styled.Title>이벤트 정보</Styled.Title>
+      <Styled.Title>{title}</Styled.Title>
     </Styled.Container>
   );
 };
 
-export default PromotionDetailTopBar;
+export default WebviewTopBar;

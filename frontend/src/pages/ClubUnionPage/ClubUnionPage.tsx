@@ -3,6 +3,7 @@ import InstagramIcon from '@/assets/images/icons/insta.svg';
 import KakaoIcon from '@/assets/images/icons/kakao.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
   CLUB_UNION_MEMBERS,
   CLUB_UNION_MEMBERS_MOBILE,
@@ -13,6 +14,7 @@ import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
+import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubUnionPage.styles';
 
 const COLUMN_SIZES = [3, 3, 4, 3];
@@ -67,7 +69,7 @@ const ClubUnionPage = () => {
 
   return (
     <>
-      <Header hideOn={['webview']} />
+      {isInAppWebView() ? <WebviewTopBar title='총동아리연합회' /> : <Header />}
       <PageContainer>
         <Styled.Title>총동아리연합회 소개</Styled.Title>
         <Styled.IntroductionText>

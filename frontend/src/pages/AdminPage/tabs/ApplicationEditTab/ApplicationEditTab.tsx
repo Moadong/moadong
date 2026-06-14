@@ -7,13 +7,13 @@ import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
 import INITIAL_FORM_DATA from '@/constants/initialFormData';
 import { queryKeys } from '@/constants/queryKeys';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import { useGetApplication } from '@/hooks/Queries/useApplication';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import {
   hasErrors,
   validateApplicationForm,
 } from '@/pages/AdminPage/validation/validateApplicationForm';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import {
   ApplicationFormData,
@@ -30,7 +30,7 @@ const ApplicationEditTab = () => {
   const { applicationFormId: formId } = useParams<{
     applicationFormId?: string;
   }>();
-  const { clubId } = useAdminClubContext();
+  const { clubId } = useAdminClubId();
 
   const {
     data: existingFormData,
