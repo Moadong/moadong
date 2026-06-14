@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import { colors } from './theme/colors';
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -20,6 +21,7 @@ const GlobalStyles = createGlobalStyle`
     sans-serif;
     color: #121212;
     letter-spacing: -0.02em;
+    background-color: ${colors.base.white};
   }
 `;
 
