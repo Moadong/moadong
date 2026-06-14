@@ -22,29 +22,29 @@ export const ModalContent = styled.div`
 `;
 
 export const CloseButton = styled.button`
-  position: absolute;
-  right: 10px;
-  background: none;
+  justify-self: end;
+  background: transparent;
   border: none;
-  font-size: 2.5rem;
   cursor: pointer;
-  padding: 10px;
-  opacity: 0.7;
-  transition: opacity 0.2s;
-  z-index: 3;
+  padding: 10px 0 10px 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 
-  &:hover {
-    opacity: 1;
+  svg {
+    width: 20px;
+    height: 20px;
   }
 `;
 
 export const ModalHeader = styled.div`
   width: 100%;
   height: 60px;
-  display: flex;
-  justify-content: space-between;
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  column-gap: 20px;
   align-items: center;
-  padding: 0 32px;
+  padding: 0 20px;
   position: absolute;
   top: 0;
   left: 0;
@@ -57,15 +57,17 @@ export const ClubName = styled.div`
   font-size: 1.3rem;
   font-weight: 600;
   color: ${colors.base.black};
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
 export const ImageCounter = styled.div`
-  position: absolute;
-  left: 50%;
-  transform: translateX(-50%);
   font-size: 0.95rem;
   font-weight: 500;
   color: ${colors.gray[700]};
+  text-align: center;
 `;
 
 export const ModalBody = styled.div`

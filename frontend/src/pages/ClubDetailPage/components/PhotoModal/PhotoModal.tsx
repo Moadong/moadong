@@ -5,6 +5,7 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css/navigation';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
+import CloseButtonIcon from '@/assets/images/icons/close_button_icon.svg?react';
 import Modal from '@/components/common/Modal/Modal';
 import * as Styled from './PhotoModal.styles';
 
@@ -47,7 +48,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
             {currentIndex + 1} / {urls.length}
           </Styled.ImageCounter>
           <Styled.CloseButton onClick={onClose} aria-label='닫기'>
-            ×
+            <CloseButtonIcon />
           </Styled.CloseButton>
         </Styled.ModalHeader>
         <Styled.ModalBody>
