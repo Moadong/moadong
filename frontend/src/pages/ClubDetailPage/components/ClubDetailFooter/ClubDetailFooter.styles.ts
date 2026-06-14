@@ -15,7 +15,11 @@ export const ClubDetailFooterContainer = styled.div`
   background-color: white;
   border-top: 1px solid #cdcdcd;
 
+  ${media.tablet} {
+    padding-bottom: calc(24px + env(safe-area-inset-bottom));
+  }
+
   ${media.mobile} {
-    padding: 10px 0px 16px 0px;
+    padding: 10px 0px calc(16px + env(safe-area-inset-bottom)) 0px;
   }
 `;
