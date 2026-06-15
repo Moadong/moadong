@@ -5,6 +5,10 @@ import { colors } from '@/styles/theme/colors';
 export const FooterContainer = styled.footer`
   text-align: left;
   font-size: 0.75rem;
+
+  ${media.tablet} {
+    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  }
 `;
 
 export const Divider = styled.hr`

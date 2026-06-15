@@ -8,11 +8,7 @@ export const Container = styled.div`
   min-height: 100vh;
 
   ${media.tablet} {
-    padding-bottom: calc(100px + env(safe-area-inset-bottom));
-  }
-
-  ${media.mobile} {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    padding-bottom: calc(60px + env(safe-area-inset-bottom));
   }
 `;
 
