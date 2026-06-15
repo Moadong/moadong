@@ -163,8 +163,8 @@ export const ThumbnailContainer = styled.div`
   background: linear-gradient(to top, rgba(0, 0, 0, 0.03), transparent);
 
   ${media.mobile} {
-    height: calc(80px + env(safe-area-inset-bottom));
-    padding: 0 15px env(safe-area-inset-bottom);
+    height: 80px;
+    padding: 0 15px;
   }
 `;
 
