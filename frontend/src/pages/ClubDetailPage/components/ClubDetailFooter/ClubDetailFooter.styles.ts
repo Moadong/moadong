@@ -16,10 +16,16 @@ export const ClubDetailFooterContainer = styled.div`
   border-top: 1px solid #cdcdcd;
 
   ${media.tablet} {
+    position: fixed;
+    left: 0;
+    right: 0;
     padding-bottom: calc(24px + env(safe-area-inset-bottom));
   }
 
   ${media.mobile} {
+    position: fixed;
+    left: 0;
+    right: 0;
     padding: 10px 0px calc(16px + env(safe-area-inset-bottom)) 0px;
   }
 `;
