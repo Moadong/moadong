@@ -41,6 +41,7 @@ export const ApplyButton = styled.button`
     height: 44px;
     font-size: 16px;
     font-weight: 500;
+  }
 `;
 
 export const Separator = styled.span`

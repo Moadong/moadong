@@ -8,7 +8,15 @@ export const Container = styled.div`
   min-height: 100vh;
 
   ${media.tablet} {
-    padding-bottom: calc(60px + env(safe-area-inset-bottom));
+    padding-bottom: 60px;
+  }
+`;
+
+export const AppSpacer = styled.div`
+  height: calc(71px + env(safe-area-inset-bottom));
+
+  ${media.tablet} {
+    height: calc(87px + env(safe-area-inset-bottom));
   }
 `;
 

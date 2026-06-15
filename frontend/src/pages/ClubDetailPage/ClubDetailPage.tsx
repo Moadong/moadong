@@ -226,7 +226,7 @@ const ClubDetailPage = () => {
           location={clubLocation}
         />
       )}
-      {!isInAppWebView() && <Footer />}
+      {isInAppWebView() ? <Styled.AppSpacer /> : <Footer />}
       <ClubDetailFooter
         recruitmentStart={clubDetail.recruitmentStart}
         recruitmentEnd={clubDetail.recruitmentEnd}

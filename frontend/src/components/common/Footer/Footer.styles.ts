@@ -7,7 +7,11 @@ export const FooterContainer = styled.footer`
   font-size: 0.75rem;
 
   ${media.tablet} {
-    padding-bottom: calc(80px + env(safe-area-inset-bottom));
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+
+  ${media.mobile} {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
   }
 `;
 
