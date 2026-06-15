@@ -28,7 +28,7 @@ export const StandardLayout = styled.div<{ $width?: string }>`
   border-radius: 10px;
   overflow: hidden;
   margin: 24px;
-  padding-bottom: env(safe-area-inset-bottom);
+  max-height: calc(100dvh - 48px - env(safe-area-inset-bottom));
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
   display: flex;
   flex-direction: column;
