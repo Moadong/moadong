@@ -10,6 +10,7 @@ export const Overlay = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
+  overflow: hidden;
   transition: background-color 0.2s ease;
 `;
 
@@ -27,6 +28,7 @@ export const StandardLayout = styled.div<{ $width?: string }>`
   border-radius: 10px;
   overflow: hidden;
   margin: 24px;
+  padding-bottom: env(safe-area-inset-bottom);
   box-shadow: 0 18px 44px rgba(0, 0, 0, 0.22);
   display: flex;
   flex-direction: column;
