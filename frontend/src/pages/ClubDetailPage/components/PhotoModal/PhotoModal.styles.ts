@@ -51,6 +51,11 @@ export const ModalHeader = styled.div`
   z-index: 10;
   background: ${colors.base.white};
   backdrop-filter: blur(10px);
+
+  ${media.mobile} {
+    height: calc(60px + var(--rn-safe-top, 0px));
+    padding-top: var(--rn-safe-top, 0px);
+  }
 `;
 
 export const ClubName = styled.div`
@@ -91,6 +96,7 @@ export const ImageContainer = styled.div`
 
   ${media.mobile} {
     padding: 0 16px;
+    margin-top: calc(60px + var(--rn-safe-top, 0px));
   }
 `;
 
