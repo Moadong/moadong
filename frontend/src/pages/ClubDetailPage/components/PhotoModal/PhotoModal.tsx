@@ -3,9 +3,9 @@ import type { Swiper as SwiperType } from 'swiper';
 import { Keyboard, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css/navigation';
+import CloseButtonIcon from '@/assets/images/icons/close_button_icon.svg?react';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
-import CloseButtonIcon from '@/assets/images/icons/close_button_icon.svg?react';
 import Modal from '@/components/common/Modal/Modal';
 import * as Styled from './PhotoModal.styles';
 
