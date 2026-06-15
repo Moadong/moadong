@@ -21,6 +21,6 @@ export const InfoCardWrapper = styled.div`
   z-index: 10;
 
   ${media.tablet} {
-    bottom: 30px;
+    bottom: calc(30px + env(safe-area-inset-bottom));
   }
 `;
