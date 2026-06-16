@@ -3,6 +3,7 @@ package moadong.club.repository;
 import moadong.club.entity.PromotionArticle;
 import org.springframework.data.mongodb.repository.MongoRepository;
 import org.springframework.data.mongodb.repository.Query;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -22,4 +23,8 @@ public interface PromotionArticleRepository extends MongoRepository<PromotionArt
 
     @Query(value = "{ '_id': ?0, 'deleted': { $ne: true } }", exists = true)
     boolean existsActiveById(String id);
+
+    @Query("{ '_id': ?0, 'deleted': { $ne: true } }")
+    @Update("{ '$addToSet': { 'images': ?1 } }")
+    long addImageToActiveArticle(String id, String imageUrl);
 }
