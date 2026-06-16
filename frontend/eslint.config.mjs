@@ -3,6 +3,7 @@ import parser from '@typescript-eslint/parser';
 import configPrettier from 'eslint-config-prettier';
 import react from 'eslint-plugin-react';
 import storybook from 'eslint-plugin-storybook';
+import localRules from './scripts/eslint-rules/index.js';
 
 const config = [
   {
@@ -33,8 +34,10 @@ const config = [
       '@typescript-eslint': typescript,
       react,
       storybook,
+      local: localRules,
     },
     rules: {
+      'local/no-hardcoded-event-name': 'error',
       semi: ['error', 'always'],
       quotes: ['error', 'single'],
       'no-console': 'warn',
