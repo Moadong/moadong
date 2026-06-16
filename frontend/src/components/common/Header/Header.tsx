@@ -2,10 +2,10 @@ import { useLocation } from 'react-router-dom';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import AdminProfile from '@/components/common/Header/admin/AdminProfile';
+import SearchBox from '@/components/common/SearchBox/SearchBox';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import useHeaderVisibility from '@/hooks/Header/useHeaderVisibility';
 import { useScrollDetection } from '@/hooks/Scroll/useScrollDetection';
-import SearchBox from '@/pages/MainPage/components/SearchBox/SearchBox';
 import { DeviceType } from '@/types/device';
 import * as Styled from './Header.styles';
 
