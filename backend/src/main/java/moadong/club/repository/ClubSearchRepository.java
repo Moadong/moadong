@@ -2,14 +2,11 @@ package moadong.club.repository;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import lombok.AllArgsConstructor;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.enums.ClubState;
 import moadong.club.payload.dto.ClubSearchResult;
-import moadong.club.service.WordDictionaryService;
 
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
@@ -25,9 +22,13 @@ import org.springframework.stereotype.Repository;
 public class ClubSearchRepository {
 
 	private final MongoTemplate mongoTemplate;
-	private final WordDictionaryService wordDictionaryService;
 
 	public List<ClubSearchResult> searchClubsByKeyword(String keyword, String recruitmentStatus,
+		String division, String category) {
+		return findSearchCandidates(recruitmentStatus, division, category);
+	}
+
+	public List<ClubSearchResult> findSearchCandidates(String recruitmentStatus,
 		String division, String category) {
 		List<AggregationOperation> operations = new ArrayList<>();
 
@@ -42,25 +43,6 @@ public class ClubSearchRepository {
 			operations.add(Aggregation.match(criteria));
 		}
 
-		if (keyword != null && !keyword.trim().isEmpty()) {
-			// 단어사전으로 키워드 확장
-			String trimmedKeyword = keyword.trim();
-			List<String> expandedKeywords = wordDictionaryService.expandKeywords(trimmedKeyword);
-			if (expandedKeywords == null || expandedKeywords.isEmpty()) {
-				expandedKeywords = List.of(trimmedKeyword);
-			}
-
-			// 확장된 키워드들을 OR 조건으로 regex 생성
-			String regexPattern = expandedKeywords.stream()
-				.map(Pattern::quote)  // 특수문자 이스케이프
-				.collect(Collectors.joining("|"));
-
-			operations.add(Aggregation.match(new Criteria().orOperator(
-				Criteria.where("name").regex(regexPattern, "i"),
-				Criteria.where("category").regex(regexPattern, "i"),
-				Criteria.where("recruitmentInformation.tags").regex(regexPattern, "i")
-			)));
-		}
 		operations.add(Aggregation.unwind("club_tags", true));
 
 		operations.add(

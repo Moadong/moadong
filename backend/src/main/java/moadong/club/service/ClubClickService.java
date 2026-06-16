@@ -134,9 +134,9 @@ public class ClubClickService {
         return new ClubClickRankingResponse(ranked, nextMondayMidnightKst());
     }
 
-    public void resetWeeklyClicks() {
+    public void resetRanking() {
         clickCountRepository.deleteAll();
-        log.info("동아리 클릭 수 주간 초기화 완료");
+        log.info("동아리 클릭 수 초기화 완료");
     }
 
     public String nextMondayMidnightKst() {
