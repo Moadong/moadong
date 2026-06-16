@@ -181,7 +181,7 @@ const GamePage = () => {
           style={{ marginTop: '40px' }}
         >
           {!clubName ? (
-            <ClubNameInput onStart={handleStart} />
+            <ClubNameInput onStart={handleStart} isDark={isDark} />
           ) : (
             <ClickButton
               clubName={clubName}

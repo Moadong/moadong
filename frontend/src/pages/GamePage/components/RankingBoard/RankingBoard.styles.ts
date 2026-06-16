@@ -26,16 +26,28 @@ export const List = styled.ol`
   gap: 8px;
 `;
 
-export const Item = styled.div<{ $isMe: boolean; $rank: number }>`
+export const Item = styled.div<{
+  $isMe: boolean;
+  $rank: number;
+  $dark: boolean;
+}>`
   display: flex;
   align-items: center;
   gap: 12px;
   padding: 10px 14px;
   border-radius: 10px;
-  background: ${({ $isMe, theme }) =>
-    $isMe ? theme.colors.primary[500] : theme.colors.gray[100]};
-  border: ${({ $isMe, theme }) =>
-    $isMe ? `2px solid ${theme.colors.primary[900]}` : '2px solid transparent'};
+  background: ${({ $isMe, $dark, theme }) => {
+    if ($dark) return $isMe ? 'rgba(255, 84, 20, 0.18)' : '#22222E';
+    return $isMe ? theme.colors.primary[500] : '#FFFFFF';
+  }};
+  border: ${({ $isMe, $dark, theme }) => {
+    if ($isMe) return `2px solid ${theme.colors.primary[900]}`;
+    return $dark
+      ? '2px solid transparent'
+      : `2px solid ${theme.colors.gray[300]}`;
+  }};
+  box-shadow: ${({ $isMe, $dark }) =>
+    !$isMe && !$dark ? '0 1px 3px rgba(0, 0, 0, 0.06)' : 'none'};
   transition: background 0.3s;
 `;
 
@@ -52,11 +64,12 @@ export const Rank = styled.span<{ $rank: number }>`
   }};
 `;
 
-export const ClubName = styled.span`
+export const ClubName = styled.span<{ $dark: boolean }>`
   flex: 1;
   font-size: 0.95rem;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.gray[900]};
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[100] : theme.colors.gray[900]};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

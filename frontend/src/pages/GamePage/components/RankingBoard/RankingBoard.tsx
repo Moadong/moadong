@@ -40,11 +40,12 @@ const RankingBoard = ({
                 <S.Item
                   $isMe={entry.clubName === myClubName}
                   $rank={entry.rank}
+                  $dark={isDark}
                 >
                   <S.Rank $rank={entry.rank}>
                     {MEDAL[entry.rank - 1] ?? entry.rank}
                   </S.Rank>
-                  <S.ClubName>{entry.clubName}</S.ClubName>
+                  <S.ClubName $dark={isDark}>{entry.clubName}</S.ClubName>
                   <S.ClickCount>
                     {entry.clickCount.toLocaleString()}회
                   </S.ClickCount>
