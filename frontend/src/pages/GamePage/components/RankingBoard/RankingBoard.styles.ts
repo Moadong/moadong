@@ -3,6 +3,7 @@ import styled from 'styled-components';
 export const Wrapper = styled.div`
   width: 100%;
   max-width: 480px;
+  margin: 0 auto;
 `;
 
 export const Header = styled.div`
@@ -12,10 +13,10 @@ export const Header = styled.div`
   margin-bottom: 12px;
 `;
 
-export const Title = styled.h3`
+export const Title = styled.h3<{ $dark: boolean }>`
   font-size: 1.125rem;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.gray[900]};
+  color: ${({ $dark, theme }) => ($dark ? '#FFFFFF' : theme.colors.gray[900])};
 `;
 
 export const List = styled.ol`
@@ -67,9 +68,10 @@ export const ClickCount = styled.span`
   color: ${({ theme }) => theme.colors.primary[900]};
 `;
 
-export const EmptyMessage = styled.p`
+export const EmptyMessage = styled.p<{ $dark: boolean }>`
   text-align: center;
   padding: 40px 0;
-  color: ${({ theme }) => theme.colors.gray[500]};
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[400] : theme.colors.gray[500]};
   font-size: 0.95rem;
 `;

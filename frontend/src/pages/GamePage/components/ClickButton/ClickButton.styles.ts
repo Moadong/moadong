@@ -13,10 +13,18 @@ export const Wrapper = styled.div`
   gap: 16px;
 `;
 
-export const ClubLabel = styled.p`
+export const ButtonArea = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
+export const ClubLabel = styled.p<{ $dark: boolean }>`
   font-size: 1rem;
   font-weight: 600;
-  color: ${({ theme }) => theme.colors.gray[700]};
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[400] : theme.colors.gray[700]};
   max-width: 180px;
   overflow: hidden;
   text-overflow: ellipsis;
@@ -71,9 +79,10 @@ export const Count = styled.p`
   color: ${({ theme }) => theme.colors.primary[900]};
 `;
 
-export const CountLabel = styled.span`
+export const CountLabel = styled.span<{ $dark: boolean }>`
   font-size: 1rem;
   font-weight: 500;
-  color: ${({ theme }) => theme.colors.gray[600]};
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[400] : theme.colors.gray[600]};
   margin-left: 4px;
 `;

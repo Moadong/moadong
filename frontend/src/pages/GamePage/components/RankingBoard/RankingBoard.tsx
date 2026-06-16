@@ -5,18 +5,23 @@ import * as S from './RankingBoard.styles';
 interface RankingBoardProps {
   ranking: GameRankingEntry[];
   myClubName?: string;
+  isDark?: boolean;
 }
 
 const MEDAL = ['🥇', '🥈', '🥉'];
 
-const RankingBoard = ({ ranking, myClubName }: RankingBoardProps) => {
+const RankingBoard = ({
+  ranking,
+  myClubName,
+  isDark = false,
+}: RankingBoardProps) => {
   return (
     <S.Wrapper>
       <S.Header>
-        <S.Title>🏆 Top 20 실시간 순위</S.Title>
+        <S.Title $dark={isDark}>🏆 Top 20 실시간 순위</S.Title>
       </S.Header>
       {ranking.length === 0 ? (
-        <S.EmptyMessage>
+        <S.EmptyMessage $dark={isDark}>
           아직 참여한 동아리가 없어요. 첫 번째로 클릭해보세요!
         </S.EmptyMessage>
       ) : (

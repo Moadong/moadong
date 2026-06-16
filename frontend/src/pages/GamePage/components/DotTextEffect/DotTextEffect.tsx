@@ -21,9 +21,8 @@ interface DotTextEffectProps {
   charGap?: number;
   hoverRadius?: number;
   sweepSpeed?: number;
+  dotColor?: string;
 }
-
-const DOT_COLOR = '#000000';
 
 function buildDots(
   text: string,
@@ -81,6 +80,7 @@ const DotTextEffect = ({
   charGap = 14,
   hoverRadius = 28,
   sweepSpeed = 0.12,
+  dotColor = '#000000',
 }: DotTextEffectProps) => {
   const [isMobile, setIsMobile] = useState(mobileQuery.matches);
   const isMobileRef = useRef(mobileQuery.matches);
@@ -157,7 +157,7 @@ const DotTextEffect = ({
       // 인터랙션 없을 때: 전체 dot을 단일 path로 배치 렌더 (성능 최적화)
       if (inactive && ds.every((d) => !d.swept)) {
         ctx.beginPath();
-        ctx.fillStyle = DOT_COLOR;
+        ctx.fillStyle = dotColor;
         for (const d of ds) {
           ctx.moveTo(d.ox + dotR, d.oy);
           ctx.arc(d.ox, d.oy, dotR, 0, Math.PI * 2);
@@ -216,7 +216,7 @@ const DotTextEffect = ({
 
       // non-swept dots: 단일 path 배치 렌더
       ctx.beginPath();
-      ctx.fillStyle = DOT_COLOR;
+      ctx.fillStyle = dotColor;
       for (const d of ds) {
         if (!d.swept) {
           ctx.moveTo(d.x + dotR, d.y);
@@ -229,7 +229,7 @@ const DotTextEffect = ({
       for (const { d, renderT } of sweptDots) {
         ctx.beginPath();
         ctx.arc(d.x, d.y, dotR * (1 + (1 - renderT) * 0.8), 0, Math.PI * 2);
-        ctx.fillStyle = DOT_COLOR;
+        ctx.fillStyle = dotColor;
         ctx.fill();
       }
 
@@ -262,6 +262,7 @@ const DotTextEffect = ({
     charGap,
     hoverRadius,
     sweepSpeed,
+    dotColor,
     isMobile,
   ]);
 
