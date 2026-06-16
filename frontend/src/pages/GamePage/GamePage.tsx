@@ -201,6 +201,7 @@ const GamePage = () => {
             <RankingBoard
               ranking={rankingData?.clubs ?? []}
               myClubName={clubName}
+              isDark={isDark}
             />
           </motion.div>
         </S.MobileOnly>

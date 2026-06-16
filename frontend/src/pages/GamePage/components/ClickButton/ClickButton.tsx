@@ -1,4 +1,4 @@
-import { memo, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as S from './ClickButton.styles';
 
@@ -83,6 +83,14 @@ const ClickButton = ({
   const [clickCount, setClickCount] = useState(0);
   const [bursts, setBursts] = useState<number[]>([]);
   const burstIdRef = useRef(0);
+  const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+
+  useEffect(() => {
+    return () => {
+      timersRef.current.forEach(clearTimeout);
+      timersRef.current = [];
+    };
+  }, []);
 
   const handleClick = () => {
     setClickCount((prev) => prev + 1);
@@ -90,9 +98,10 @@ const ClickButton = ({
 
     const id = burstIdRef.current++;
     setBursts((prev) => [...prev, id]);
-    setTimeout(() => {
+    const timer = setTimeout(() => {
       setBursts((prev) => prev.filter((b) => b !== id));
     }, 1200);
+    timersRef.current.push(timer);
   };
 
   return (
@@ -102,29 +111,17 @@ const ClickButton = ({
         {bursts.map((id) => (
           <Firework key={id} />
         ))}
-        <motion.button
+        <S.Button
+          as={motion.button}
+          $clicking={false}
           onClick={handleClick}
           whileTap={{ scale: 0.88 }}
           whileHover={{ scale: 1.06 }}
           transition={{ type: 'spring', stiffness: 400, damping: 15 }}
-          style={{
-            width: 180,
-            height: 180,
-            borderRadius: '50%',
-            border: 'none',
-            background: '#FF5414',
-            color: '#fff',
-            fontSize: '1.5rem',
-            fontWeight: 700,
-            cursor: 'pointer',
-            boxShadow: '0 8px 24px rgba(255, 84, 20, 0.35)',
-            userSelect: 'none',
-            position: 'relative',
-            zIndex: 1,
-          }}
+          style={{ position: 'relative', zIndex: 1 }}
         >
           클릭!
-        </motion.button>
+        </S.Button>
       </S.ButtonArea>
 
       <S.CountWrapper>

@@ -20,7 +20,17 @@ export const useBatchedClick = (clubName: string) => {
       const count = pendingRef.current;
       if (count === 0) return;
       pendingRef.current = 0;
-      clickGame({ clubName: name, count });
+      clickGame(
+        { clubName: name, count },
+        {
+          onError: () => {
+            pendingRef.current += count;
+            if (!timerRef.current) {
+              timerRef.current = setTimeout(() => flush(name), FLUSH_DELAY);
+            }
+          },
+        },
+      );
     },
     [clickGame],
   );
