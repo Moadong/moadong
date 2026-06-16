@@ -72,6 +72,9 @@ export const USER_EVENT = {
   PROMOTION_CLUB_CTA_CLICKED: 'Promotion Club CTA Clicked',
 
   WEBVIEW_SUBSCRIBE_TOGGLED: 'Webview Subscribe Toggled',
+
+  // 클릭배틀 게임
+  GAME_START_BUTTON_CLICKED: 'Game Start Button Clicked',
 } as const;
 
 export const WEBVIEW_LINK_TARGET = {
@@ -135,6 +138,7 @@ export const PAGE_VIEW = {
   DAEDONG2026_BUSKING_PAGE: '2026 대동제 버스킹 시간표 페이지',
   PROMOTION_LIST_PAGE: '홍보 목록 페이지',
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
+  GAME_PAGE: 'GamePage',
 
   WEBVIEW_MAIN_PAGE: 'WebviewMainPage',
 

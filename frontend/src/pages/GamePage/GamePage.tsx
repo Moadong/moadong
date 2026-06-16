@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import { PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGameRanking } from '@/hooks/Queries/useGame';
 import BackgroundFirework from './components/BackgroundFirework/BackgroundFirework';
 import ClickButton from './components/ClickButton/ClickButton';
@@ -52,6 +54,8 @@ const GamePage = () => {
 
   const { data: rankingData } = useGameRanking();
   const handleClick = useBatchedClick(clubName);
+
+  useTrackPageView(PAGE_VIEW.GAME_PAGE);
 
   const top1Club = rankingData?.clubs[0];
 

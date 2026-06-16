@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import {
   useClubSuggestions,
   useValidateClubName,
@@ -11,6 +13,7 @@ interface ClubNameInputProps {
 
 const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
   const validateClubName = useValidateClubName();
+  const trackEvent = useMixpanelTrack();
   const [value, setValue] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [error, setError] = useState('');
@@ -62,6 +65,7 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
         setError('존재하지 않는 동아리입니다.');
         return;
       }
+      trackEvent(USER_EVENT.GAME_START_BUTTON_CLICKED, { clubName: trimmed });
       onStart(trimmed);
     } catch {
       setError('동아리 확인 중 오류가 발생했습니다.');
