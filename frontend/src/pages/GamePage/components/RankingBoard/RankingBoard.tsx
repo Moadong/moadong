@@ -4,25 +4,16 @@ import * as S from './RankingBoard.styles';
 
 interface RankingBoardProps {
   ranking: GameRankingEntry[];
-  resetAt?: string;
   myClubName?: string;
 }
 
 const MEDAL = ['🥇', '🥈', '🥉'];
 
-const RankingBoard = ({ ranking, resetAt, myClubName }: RankingBoardProps) => {
-  const resetTime = resetAt
-    ? new Date(resetAt).toLocaleTimeString('ko-KR', {
-        hour: '2-digit',
-        minute: '2-digit',
-      })
-    : null;
-
+const RankingBoard = ({ ranking, myClubName }: RankingBoardProps) => {
   return (
     <S.Wrapper>
       <S.Header>
         <S.Title>🏆 Top 20 실시간 순위</S.Title>
-        {resetTime && <S.ResetInfo>매일 {resetTime} 초기화</S.ResetInfo>}
       </S.Header>
       {ranking.length === 0 ? (
         <S.EmptyMessage>

@@ -151,7 +151,6 @@ const GamePage = () => {
             >
               <RankingBoard
                 ranking={rankingData?.clubs ?? []}
-                resetAt={rankingData?.resetAt}
                 myClubName={clubName}
               />
             </motion.div>
@@ -199,7 +198,6 @@ const GamePage = () => {
           >
             <RankingBoard
               ranking={rankingData?.clubs ?? []}
-              resetAt={rankingData?.resetAt}
               myClubName={clubName}
             />
           </motion.div>

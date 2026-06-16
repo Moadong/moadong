@@ -18,11 +18,6 @@ export const Title = styled.h3`
   color: ${({ theme }) => theme.colors.gray[900]};
 `;
 
-export const ResetInfo = styled.p`
-  font-size: 0.75rem;
-  color: ${({ theme }) => theme.colors.gray[600]};
-`;
-
 export const List = styled.ol`
   list-style: none;
   display: flex;
