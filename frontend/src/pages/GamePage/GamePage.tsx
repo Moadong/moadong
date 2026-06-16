@@ -1,11 +1,12 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { useClickGame, useGameRanking } from '@/hooks/Queries/useGame';
+import { useGameRanking } from '@/hooks/Queries/useGame';
 import ClickButton from './components/ClickButton/ClickButton';
 import ClubNameInput from './components/ClubNameInput/ClubNameInput';
 import DotTextEffect from './components/DotTextEffect/DotTextEffect';
 import RankingBoard from './components/RankingBoard/RankingBoard';
 import * as S from './GamePage.styles';
+import { useBatchedClick } from './hooks/useBatchedClick';
 
 const STORAGE_KEY = 'game_club_name';
 
@@ -56,56 +57,16 @@ const GamePage = () => {
   const [clubName, setClubName] = useState<string>(
     () => sessionStorage.getItem(STORAGE_KEY) ?? '',
   );
-  const pendingRef = useRef(0);
-  const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const { data: rankingData } = useGameRanking();
-  const { mutate: clickGame } = useClickGame();
+  const handleClick = useBatchedClick(clubName);
 
   const top1Club = rankingData?.clubs[0];
-
-  const flush = useCallback(
-    (name: string) => {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = null;
-      const count = pendingRef.current;
-      if (count === 0) return;
-      pendingRef.current = 0;
-      clickGame({ clubName: name, count });
-    },
-    [clickGame],
-  );
-
-  const flushRef = useRef(flush);
-  const clubNameRef = useRef(clubName);
-  useEffect(() => {
-    flushRef.current = flush;
-  }, [flush]);
-  useEffect(() => {
-    clubNameRef.current = clubName;
-  }, [clubName]);
-
-  useEffect(() => {
-    return () => {
-      flushRef.current(clubNameRef.current);
-    };
-  }, []);
 
   const handleStart = (name: string) => {
     sessionStorage.setItem(STORAGE_KEY, name);
     setClubName(name);
   };
-
-  const handleClick = useCallback(() => {
-    pendingRef.current += 1;
-
-    if (pendingRef.current >= 5) {
-      flush(clubName);
-    } else {
-      if (timerRef.current) clearTimeout(timerRef.current);
-      timerRef.current = setTimeout(() => flush(clubName), 500);
-    }
-  }, [clubName, flush]);
 
   return (
     <S.PageContainer>
