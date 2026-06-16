@@ -2,6 +2,7 @@ import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import Clarity from '@microsoft/clarity';
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
+import getIOSVersion from '@/utils/getIOSVersion';
 
 const LOCALHOST_HOSTNAME = 'localhost';
 
@@ -15,6 +16,11 @@ export function initializeMixpanel() {
     ignore_dnt: true,
     debug: false,
   });
+
+  const iosVersion = getIOSVersion();
+  if (iosVersion) {
+    mixpanel.register({ $os_version: iosVersion });
+  }
 
   if (window.location.hostname === LOCALHOST_HOSTNAME) {
     mixpanel.disable();
