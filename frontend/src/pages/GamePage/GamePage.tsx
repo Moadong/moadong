@@ -1,9 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
-import Header from '@/components/common/Header/Header';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGameRanking } from '@/hooks/Queries/useGame';
+import isInAppWebView from '@/utils/isInAppWebView';
 import BackgroundFirework from './components/BackgroundFirework/BackgroundFirework';
 import ClickButton from './components/ClickButton/ClickButton';
 import ClubNameInput from './components/ClubNameInput/ClubNameInput';
@@ -109,7 +110,7 @@ const GamePage = () => {
 
   return (
     <>
-      <Header showOn={['webview']} />
+      {isInAppWebView() && <WebviewTopBar title='클릭 배틀' />}
       <S.PageContainer $dark={isDark}>
         {bgBursts.map((id) => (
           <BackgroundFirework key={id} />
