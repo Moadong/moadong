@@ -10,10 +10,10 @@ export const Wrapper = styled.div`
   max-width: 360px;
 `;
 
-export const Title = styled.h2`
+export const Title = styled.h2<{ $dark: boolean }>`
   font-size: 1.25rem;
   font-weight: 700;
-  color: ${({ theme }) => theme.colors.gray[900]};
+  color: ${({ $dark, theme }) => ($dark ? '#FFFFFF' : theme.colors.gray[900])};
 `;
 
 export const InputContainer = styled.div`
@@ -27,16 +27,26 @@ export const InputRow = styled.div`
   width: 100%;
 `;
 
-export const Input = styled.input<{ $hasError: boolean }>`
+export const Input = styled.input<{ $hasError: boolean; $dark: boolean }>`
   flex: 1;
   padding: 12px 16px;
   font-size: 1rem;
+  background: ${({ $dark }) => ($dark ? '#1E1E2A' : '#FFFFFF')};
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[100] : theme.colors.gray[900]};
   border: 2px solid
-    ${({ theme, $hasError }) =>
-      $hasError ? theme.colors.primary[900] : theme.colors.gray[300]};
+    ${({ theme, $hasError, $dark }) =>
+      $hasError
+        ? theme.colors.primary[900]
+        : $dark
+          ? '#3A3A4A'
+          : theme.colors.gray[300]};
   border-radius: 10px;
   outline: none;
-  transition: border-color 0.2s;
+  transition:
+    border-color 0.2s,
+    background 0.2s,
+    color 0.2s;
   min-width: 0;
 
   &:focus {
@@ -44,7 +54,8 @@ export const Input = styled.input<{ $hasError: boolean }>`
   }
 
   &::placeholder {
-    color: ${({ theme }) => theme.colors.gray[500]};
+    color: ${({ $dark, theme }) =>
+      $dark ? theme.colors.gray[600] : theme.colors.gray[500]};
   }
 
   ${media.mobile} {
@@ -80,13 +91,14 @@ export const StartButton = styled.button`
   }
 `;
 
-export const Dropdown = styled.ul`
+export const Dropdown = styled.ul<{ $dark: boolean }>`
   position: absolute;
   top: calc(100% + 4px);
   left: 0;
   right: 0;
-  background: #fff;
-  border: 1.5px solid ${({ theme }) => theme.colors.gray[200]};
+  background: ${({ $dark }) => ($dark ? '#1E1E2A' : '#fff')};
+  border: 1.5px solid
+    ${({ $dark, theme }) => ($dark ? '#3A3A4A' : theme.colors.gray[200])};
   border-radius: 10px;
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
   list-style: none;
@@ -95,19 +107,22 @@ export const Dropdown = styled.ul`
   z-index: 10;
 `;
 
-export const DropdownItem = styled.li`
+export const DropdownItem = styled.li<{ $dark: boolean }>`
   padding: 10px 16px;
   font-size: 0.95rem;
-  color: ${({ theme }) => theme.colors.gray[800]};
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[200] : theme.colors.gray[800]};
   cursor: pointer;
   transition: background 0.15s;
 
   &:hover {
-    background: ${({ theme }) => theme.colors.gray[100]};
+    background: ${({ $dark, theme }) =>
+      $dark ? '#2A2A38' : theme.colors.gray[100]};
   }
 
   & + & {
-    border-top: 1px solid ${({ theme }) => theme.colors.gray[100]};
+    border-top: 1px solid
+      ${({ $dark, theme }) => ($dark ? '#3A3A4A' : theme.colors.gray[100])};
   }
 `;
 
