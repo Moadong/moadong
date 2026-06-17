@@ -1,0 +1,27 @@
+version: 2
+updates:
+  - package-ecosystem: npm
+    directory: /frontend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: gradle
+    directory: /backend
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 0
+
+  # develop-fe → 프론트엔드 정기 버전 업데이트 PR (보안 포함)
+  - package-ecosystem: npm
+    directory: /frontend
+    target-branch: develop-fe
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
