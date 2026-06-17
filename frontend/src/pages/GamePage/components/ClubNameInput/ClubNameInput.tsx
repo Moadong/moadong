@@ -111,7 +111,7 @@ const ClubNameInput = ({ onStart, isDark = false }: ClubNameInputProps) => {
             value={value}
             onChange={handleChange}
             onKeyDown={handleKeyDown}
-            placeholder='예) RCY'
+            placeholder=''
             maxLength={30}
             autoFocus
             $hasError={!!error}
