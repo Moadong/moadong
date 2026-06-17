@@ -1,4 +1,6 @@
 import { useEffect, useId, useRef, useState } from 'react';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import {
   useClubSuggestions,
   useValidateClubName,
@@ -7,10 +9,12 @@ import * as S from './ClubNameInput.styles';
 
 interface ClubNameInputProps {
   onStart: (clubName: string) => void;
+  isDark?: boolean;
 }
 
-const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
+const ClubNameInput = ({ onStart, isDark = false }: ClubNameInputProps) => {
   const validateClubName = useValidateClubName();
+  const trackEvent = useMixpanelTrack();
   const [value, setValue] = useState('');
   const [debouncedKeyword, setDebouncedKeyword] = useState('');
   const [error, setError] = useState('');
@@ -62,6 +66,7 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
         setError('존재하지 않는 동아리입니다.');
         return;
       }
+      trackEvent(USER_EVENT.GAME_START_BUTTON_CLICKED, { clubName: trimmed });
       onStart(trimmed);
     } catch {
       setError('동아리 확인 중 오류가 발생했습니다.');
@@ -99,7 +104,7 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
 
   return (
     <S.Wrapper>
-      <S.Title>동아리명을 입력해주세요</S.Title>
+      <S.Title $dark={isDark}>동아리명을 입력해주세요</S.Title>
       <S.InputContainer>
         <S.InputRow>
           <S.Input
@@ -110,6 +115,7 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
             maxLength={30}
             autoFocus
             $hasError={!!error}
+            $dark={isDark}
             role='combobox'
             aria-autocomplete='list'
             aria-expanded={isOpen}
@@ -125,7 +131,7 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
         </S.InputRow>
 
         {isOpen && (
-          <S.Dropdown role='listbox' id={listboxId}>
+          <S.Dropdown role='listbox' id={listboxId} $dark={isDark}>
             {suggestions.map((name, index) => (
               <S.DropdownItem
                 key={name}
@@ -134,6 +140,7 @@ const ClubNameInput = ({ onStart }: ClubNameInputProps) => {
                 aria-selected={index === highlightedIndex}
                 onMouseDown={(e) => e.preventDefault()}
                 onClick={() => handleSelect(name)}
+                $dark={isDark}
               >
                 {name}
               </S.DropdownItem>
