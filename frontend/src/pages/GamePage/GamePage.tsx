@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
+import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGameRanking } from '@/hooks/Queries/useGame';
@@ -107,42 +108,101 @@ const GamePage = () => {
   };
 
   return (
-    <S.PageContainer $dark={isDark}>
-      {bgBursts.map((id) => (
-        <BackgroundFirework key={id} />
-      ))}
+    <>
+      <Header showOn={['webview']} />
+      <S.PageContainer $dark={isDark}>
+        {bgBursts.map((id) => (
+          <BackgroundFirework key={id} />
+        ))}
 
-      <S.Content>
-        <S.ToggleBar>
-          <S.ToggleSwitch
-            $dark={isDark}
-            onClick={toggleDark}
-            aria-label='다크모드 토글'
-            aria-pressed={isDark}
-          >
-            <S.ToggleKnob $dark={isDark}>
-              {isDark ? <MoonIcon /> : <SunIcon />}
-            </S.ToggleKnob>
-          </S.ToggleSwitch>
-        </S.ToggleBar>
+        <S.Content>
+          <S.ToggleBar>
+            <S.ToggleSwitch
+              $dark={isDark}
+              onClick={toggleDark}
+              aria-label='다크모드 토글'
+              aria-pressed={isDark}
+            >
+              <S.ToggleKnob $dark={isDark}>
+                {isDark ? <MoonIcon /> : <SunIcon />}
+              </S.ToggleKnob>
+            </S.ToggleSwitch>
+          </S.ToggleBar>
 
-        {/* 상단: 타이틀(좌) + 실시간 순위(우) */}
-        <S.TopRow>
+          {/* 상단: 타이틀(좌) + 실시간 순위(우) */}
+          <S.TopRow>
+            <motion.div
+              initial={{ opacity: 0, y: -16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+            >
+              <S.PageTitle $dark={isDark}>동아리 클릭 배틀</S.PageTitle>
+              <S.PageDescription $dark={isDark}>
+                우리 동아리를 응원해주세요! 클릭할수록 순위가 올라가요.
+              </S.PageDescription>
+            </motion.div>
+
+            <S.DesktopOnly>
+              <motion.div
+                initial={{ opacity: 0, x: 24 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ duration: 0.5, delay: 0.3 }}
+              >
+                <RankingBoard
+                  ranking={rankingData?.clubs ?? []}
+                  myClubName={clubName}
+                  isDark={isDark}
+                />
+              </motion.div>
+            </S.DesktopOnly>
+          </S.TopRow>
+
+          {/* 중앙: 도트 글자 */}
+          {top1Club && (
+            <motion.div
+              initial={{ opacity: 0, scale: 0.92 }}
+              animate={{ opacity: 1, scale: 1 }}
+              transition={{ duration: 0.4, delay: 0.15 }}
+              style={{
+                display: 'flex',
+                justifyContent: 'center',
+                width: '100%',
+              }}
+            >
+              <DotTextEffect
+                text={top1Club.clubName}
+                fontSize={200}
+                spacing={6}
+                dotR={1.3}
+                hoverRadius={20}
+                dotColor={isDark ? '#FFFFFF' : '#000000'}
+              />
+            </motion.div>
+          )}
+
+          {/* 하단: 클릭 버튼 */}
           <motion.div
-            initial={{ opacity: 0, y: -16 }}
+            initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5 }}
+            transition={{ duration: 0.4, delay: 0.25 }}
+            style={{ marginTop: '40px' }}
           >
-            <S.PageTitle $dark={isDark}>동아리 클릭 배틀</S.PageTitle>
-            <S.PageDescription $dark={isDark}>
-              우리 동아리를 응원해주세요! 클릭할수록 순위가 올라가요.
-            </S.PageDescription>
+            {!clubName ? (
+              <ClubNameInput onStart={handleStart} isDark={isDark} />
+            ) : (
+              <ClickButton
+                clubName={clubName}
+                onClickGame={handleClick}
+                isDark={isDark}
+              />
+            )}
           </motion.div>
 
-          <S.DesktopOnly>
+          {/* 모바일 전용: 순위표 최하단 */}
+          <S.MobileOnly>
             <motion.div
-              initial={{ opacity: 0, x: 24 }}
-              animate={{ opacity: 1, x: 0 }}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
               <RankingBoard
@@ -151,62 +211,10 @@ const GamePage = () => {
                 isDark={isDark}
               />
             </motion.div>
-          </S.DesktopOnly>
-        </S.TopRow>
-
-        {/* 중앙: 도트 글자 */}
-        {top1Club && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.92 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, delay: 0.15 }}
-            style={{ display: 'flex', justifyContent: 'center', width: '100%' }}
-          >
-            <DotTextEffect
-              text={top1Club.clubName}
-              fontSize={200}
-              spacing={6}
-              dotR={1.3}
-              hoverRadius={20}
-              dotColor={isDark ? '#FFFFFF' : '#000000'}
-            />
-          </motion.div>
-        )}
-
-        {/* 하단: 클릭 버튼 */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.4, delay: 0.25 }}
-          style={{ marginTop: '40px' }}
-        >
-          {!clubName ? (
-            <ClubNameInput onStart={handleStart} isDark={isDark} />
-          ) : (
-            <ClickButton
-              clubName={clubName}
-              onClickGame={handleClick}
-              isDark={isDark}
-            />
-          )}
-        </motion.div>
-
-        {/* 모바일 전용: 순위표 최하단 */}
-        <S.MobileOnly>
-          <motion.div
-            initial={{ opacity: 0, y: 16 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.3 }}
-          >
-            <RankingBoard
-              ranking={rankingData?.clubs ?? []}
-              myClubName={clubName}
-              isDark={isDark}
-            />
-          </motion.div>
-        </S.MobileOnly>
-      </S.Content>
-    </S.PageContainer>
+          </S.MobileOnly>
+        </S.Content>
+      </S.PageContainer>
+    </>
   );
 };
 
