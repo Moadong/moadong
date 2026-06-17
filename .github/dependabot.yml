@@ -1,5 +1,6 @@
 version: 2
 updates:
+  # main → 보안 업데이트만 (limit: 0 = 보안 PR만 통과)
   - package-ecosystem: npm
     directory: /frontend
     schedule:
@@ -16,12 +17,20 @@ updates:
     directory: /
     schedule:
       interval: weekly
-    open-pull-requests-limit: 0
+    open-pull-requests-limit: 5
 
-  # develop-fe → 프론트엔드 정기 버전 업데이트 PR (보안 포함)
+  # develop-fe → 프론트엔드 정기 버전 업데이트 PR
   - package-ecosystem: npm
     directory: /frontend
     target-branch: develop-fe
+    schedule:
+      interval: weekly
+    open-pull-requests-limit: 5
+
+  # develop/be → 백엔드 정기 버전 업데이트 PR
+  - package-ecosystem: gradle
+    directory: /backend
+    target-branch: develop/be
     schedule:
       interval: weekly
     open-pull-requests-limit: 5
