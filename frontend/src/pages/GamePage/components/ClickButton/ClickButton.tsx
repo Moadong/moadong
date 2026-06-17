@@ -84,6 +84,7 @@ const ClickButton = ({
   const [bursts, setBursts] = useState<number[]>([]);
   const burstIdRef = useRef(0);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
+  const lastClickRef = useRef(0);
 
   useEffect(() => {
     return () => {
@@ -93,6 +94,10 @@ const ClickButton = ({
   }, []);
 
   const handleClick = () => {
+    const now = Date.now();
+    if (now - lastClickRef.current < 100) return;
+    lastClickRef.current = now;
+
     setClickCount((prev) => prev + 1);
     onClickGame();
 
