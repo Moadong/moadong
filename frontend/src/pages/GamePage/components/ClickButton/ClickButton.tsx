@@ -103,8 +103,10 @@ const ClickButton = ({
 
     const id = burstIdRef.current++;
     setBursts((prev) => [...prev, id]);
-    const timer = setTimeout(() => {
+    let timer: ReturnType<typeof setTimeout>;
+    timer = setTimeout(() => {
       setBursts((prev) => prev.filter((b) => b !== id));
+      timersRef.current = timersRef.current.filter((t) => t !== timer);
     }, 1200);
     timersRef.current.push(timer);
   };
