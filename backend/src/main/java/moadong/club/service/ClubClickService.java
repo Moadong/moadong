@@ -136,18 +136,25 @@ public class ClubClickService {
             return cache.response();
         }
 
-        List<ClubClickCount> all = clickCountRepository.findAllByOrderByClickCountDesc();
-        AtomicInteger rank = new AtomicInteger(1);
-        List<ClubRankItem> ranked = all.stream()
-                .map(c -> new ClubRankItem(rank.getAndIncrement(), c.getClubName(), c.getClickCount()))
-                .toList();
-        ClubClickRankingResponse response = new ClubClickRankingResponse(ranked, nextMondayMidnightKst());
+        synchronized (this) {
+            cache = rankingCache;
+            if (cache != null && System.nanoTime() - cache.nanos() < RANKING_CACHE_NANOS) {
+                return cache.response();
+            }
 
-        rankingCache = new RankingCache(response, System.nanoTime());
-        return response;
+            List<ClubClickCount> all = clickCountRepository.findAllByOrderByClickCountDesc();
+            AtomicInteger rank = new AtomicInteger(1);
+            List<ClubRankItem> ranked = all.stream()
+                    .map(c -> new ClubRankItem(rank.getAndIncrement(), c.getClubName(), c.getClickCount()))
+                    .toList();
+            ClubClickRankingResponse response = new ClubClickRankingResponse(ranked, nextMondayMidnightKst());
+
+            rankingCache = new RankingCache(response, System.nanoTime());
+            return response;
+        }
     }
 
-    public void resetRanking() {
+    public synchronized void resetRanking() {
         clickCountRepository.deleteAll();
         rankingCache = null;
         log.info("동아리 클릭 수 초기화 완료");
