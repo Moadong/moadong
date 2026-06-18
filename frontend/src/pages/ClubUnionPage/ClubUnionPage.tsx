@@ -123,7 +123,7 @@ const ClubUnionPage = () => {
           )}
         </Styled.ProfileGrid>
       </PageContainer>
-      <Footer />
+      {!isInAppWebView() && <Footer />}
     </>
   );
 };

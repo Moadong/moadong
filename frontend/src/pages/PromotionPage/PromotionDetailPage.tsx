@@ -6,6 +6,7 @@ import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
+import isInAppWebView from '@/utils/isInAppWebView';
 import BuskingPage from '@/pages/FestivalPage/BuskingPage/BuskingPage';
 import IntroductionPage from '@/pages/FestivalPage/IntroductionPage/IntroductionPage';
 import PromotionClubCTA from './components/detail/PromotionClubCTA/PromotionClubCTA';
@@ -90,7 +91,7 @@ const PromotionDetail = () => {
           </>
         )}
       </Styled.Container>
-      <Footer />
+      {!isInAppWebView() && <Footer />}
     </>
   );
 };
