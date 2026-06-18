@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -86,9 +87,22 @@ public class ClubClickService {
         log.info("동아리 화이트리스트 갱신 완료 ({}개)", names.size());
     }
 
-    public ClubClickResponse recordClick(String clubName, int count, String clientIp) {
+    public ClubClickResponse recordClick(String clubName, int count, String clientIp, String ctAt) {
         if (count < 1 || count > 5) {
             throw new RestApiException(ErrorCode.CLICK_COUNT_INVALID);
+        }
+
+        try {
+            Instant clickedAt = Instant.parse(ctAt);
+            long elapsedMs = Duration.between(clickedAt, Instant.now()).toMillis();
+            // 30초 초과(재전송 방지) 또는 count×80ms보다 짧으면(물리적 불가 속도) 거부
+            if (Math.abs(elapsedMs) > 30_000L || elapsedMs < (long) count * 80) {
+                throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
+            }
+        } catch (RestApiException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
         }
 
         String banKey = BAN_KEY_PREFIX + clientIp;
