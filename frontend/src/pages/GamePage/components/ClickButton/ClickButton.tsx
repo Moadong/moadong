@@ -122,7 +122,11 @@ const ClickButton = ({
           as={motion.button}
           $clicking={false}
           onClick={handleClick}
-          onKeyDown={(e) => e.repeat && e.preventDefault()}
+          onKeyDown={(e) =>
+            e.repeat &&
+            (e.key === 'Enter' || e.key === ' ') &&
+            e.preventDefault()
+          }
           whileTap={{ scale: 0.88 }}
           whileHover={{ scale: 1.06 }}
           transition={{ type: 'spring', stiffness: 400, damping: 15 }}
