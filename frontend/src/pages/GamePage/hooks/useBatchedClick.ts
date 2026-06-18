@@ -3,6 +3,7 @@ import { useClickGame } from '@/hooks/Queries/useGame';
 
 const FLUSH_THRESHOLD = 5;
 const FLUSH_DELAY = 500;
+// UI 버튼(200ms)보다 짧게 잡아 버튼 핸들러를 우회하는 DOM 레벨 매크로를 차단
 const MIN_CLICK_INTERVAL = 80;
 
 /**
@@ -14,6 +15,7 @@ export const useBatchedClick = (clubName: string) => {
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastClickTimeRef = useRef(0);
   const firstClickTimeRef = useRef<string | null>(null);
+  const isMountedRef = useRef(true);
   const { mutate: clickGame } = useClickGame();
 
   const flush = useCallback(
@@ -29,8 +31,12 @@ export const useBatchedClick = (clubName: string) => {
         { clubName: name, count, ctAt },
         {
           onError: () => {
+            if (!isMountedRef.current) return;
             pendingRef.current += count;
-            if (firstClickTimeRef.current === null)
+            if (
+              firstClickTimeRef.current === null ||
+              ctAt < firstClickTimeRef.current
+            )
               firstClickTimeRef.current = ctAt;
             if (!timerRef.current) {
               timerRef.current = setTimeout(() => flush(name), FLUSH_DELAY);
@@ -51,6 +57,12 @@ export const useBatchedClick = (clubName: string) => {
   useEffect(() => {
     clubNameRef.current = clubName;
   }, [clubName]);
+
+  useEffect(() => {
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
 
   useEffect(() => {
     return () => {
