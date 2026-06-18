@@ -101,13 +101,10 @@ public class ClubClickService {
         try {
             Instant clickedAt = Instant.parse(ctAt);
             long elapsedMs = Duration.between(clickedAt, Instant.now()).toMillis();
-            // 30초 이상 과거(replay attack) 또는 2초 이상 미래(비정상) 거부
+            // 30초 이상 과거(재전송 방지) 또는 2초 이상 미래(비정상 타임스탬프) 거부
+            // 속도 검사는 클라이언트 제공 타임스탬프로 수행 시 우회 가능하므로 제거
+            // 실제 속도 제한은 IP 기반 쿨다운(50ms)/레이트리밋(10초/20회)으로 처리
             if (elapsedMs > 30_000L || elapsedMs < -2_000L) {
-                throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
-            }
-            // 속도 검사: ctAt는 첫 클릭 시각이므로 (count-1)번의 간격만 경과하면 됨
-            // 클럭 드리프트로 음수인 경우 스킵
-            if (elapsedMs >= 0 && elapsedMs < (long) (count - 1) * 80) {
                 throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
             }
         } catch (RestApiException e) {
