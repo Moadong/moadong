@@ -16,6 +16,8 @@ export const Nav = styled.nav`
     border-top: 1px solid #f0f0f0;
     padding-bottom: env(safe-area-inset-bottom);
     z-index: ${Z_INDEX.bottomNav};
+    /* iOS/안드로이드 fixed-bottom 글리치 방지: 레이어 승격으로 visual viewport 추적 */
+    transform: translateZ(0);
   }
 `;
 
