@@ -88,6 +88,9 @@ public class ClubClickService {
     }
 
     public ClubClickResponse recordClick(String clubName, int count, String clientIp, String ctAt) {
+        if (clubName == null || clubName.isBlank()) {
+            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
+        }
         if (count < 1 || count > 5) {
             throw new RestApiException(ErrorCode.CLICK_COUNT_INVALID);
         }
@@ -102,8 +105,9 @@ public class ClubClickService {
             if (elapsedMs > 30_000L || elapsedMs < -2_000L) {
                 throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
             }
-            // 속도 검사: 클럭 드리프트로 음수인 경우 스킵, 그 외 count×80ms보다 짧으면 거부
-            if (elapsedMs >= 0 && elapsedMs < (long) count * 80) {
+            // 속도 검사: ctAt는 첫 클릭 시각이므로 (count-1)번의 간격만 경과하면 됨
+            // 클럭 드리프트로 음수인 경우 스킵
+            if (elapsedMs >= 0 && elapsedMs < (long) (count - 1) * 80) {
                 throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
             }
         } catch (RestApiException e) {
