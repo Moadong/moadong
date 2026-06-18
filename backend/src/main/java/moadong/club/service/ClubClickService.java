@@ -24,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.DayOfWeek;
 import java.time.Duration;
+import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
@@ -86,9 +87,29 @@ public class ClubClickService {
         log.info("동아리 화이트리스트 갱신 완료 ({}개)", names.size());
     }
 
-    public ClubClickResponse recordClick(String clubName, int count, String clientIp) {
+    public ClubClickResponse recordClick(String clubName, int count, String clientIp, String ctAt) {
         if (count < 1 || count > 5) {
             throw new RestApiException(ErrorCode.CLICK_COUNT_INVALID);
+        }
+
+        if (ctAt == null || ctAt.isBlank()) {
+            throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
+        }
+        try {
+            Instant clickedAt = Instant.parse(ctAt);
+            long elapsedMs = Duration.between(clickedAt, Instant.now()).toMillis();
+            // 30초 이상 과거(replay attack) 또는 2초 이상 미래(비정상) 거부
+            if (elapsedMs > 30_000L || elapsedMs < -2_000L) {
+                throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
+            }
+            // 속도 검사: 클럭 드리프트로 음수인 경우 스킵, 그 외 count×80ms보다 짧으면 거부
+            if (elapsedMs >= 0 && elapsedMs < (long) count * 80) {
+                throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
+            }
+        } catch (RestApiException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new RestApiException(ErrorCode.CLICK_TIMESTAMP_INVALID);
         }
 
         String banKey = BAN_KEY_PREFIX + clientIp;
