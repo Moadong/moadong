@@ -18,7 +18,6 @@ export const Nav = styled.nav`
     z-index: ${Z_INDEX.bottomNav};
     /* iOS/안드로이드 fixed-bottom 글리치 방지: 레이어 승격으로 visual viewport 추적 */
     transform: translateZ(0);
-    will-change: transform;
   }
 `;
 
