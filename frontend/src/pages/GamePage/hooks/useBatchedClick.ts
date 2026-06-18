@@ -3,6 +3,8 @@ import { useClickGame } from '@/hooks/Queries/useGame';
 
 const FLUSH_THRESHOLD = 5;
 const FLUSH_DELAY = 500;
+// UI 버튼(200ms)보다 짧게 잡아 버튼 핸들러를 우회하는 DOM 레벨 매크로를 차단
+const MIN_CLICK_INTERVAL = 80;
 
 /**
  * 클릭을 모아 일정 개수(5)나 디바운스(500ms) 시점에 한 번에 전송한다.
@@ -11,6 +13,9 @@ const FLUSH_DELAY = 500;
 export const useBatchedClick = (clubName: string) => {
   const pendingRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastClickTimeRef = useRef(0);
+  const firstClickTimeRef = useRef<string | null>(null);
+  const isMountedRef = useRef(true);
   const { mutate: clickGame } = useClickGame();
 
   const flush = useCallback(
@@ -19,12 +24,20 @@ export const useBatchedClick = (clubName: string) => {
       timerRef.current = null;
       const count = pendingRef.current;
       if (count === 0) return;
+      const ctAt = firstClickTimeRef.current ?? new Date().toISOString();
       pendingRef.current = 0;
+      firstClickTimeRef.current = null;
       clickGame(
-        { clubName: name, count },
+        { clubName: name, count, ctAt },
         {
           onError: () => {
+            if (!isMountedRef.current) return;
             pendingRef.current += count;
+            if (
+              firstClickTimeRef.current === null ||
+              ctAt < firstClickTimeRef.current
+            )
+              firstClickTimeRef.current = ctAt;
             if (!timerRef.current) {
               timerRef.current = setTimeout(() => flush(name), FLUSH_DELAY);
             }
@@ -47,11 +60,25 @@ export const useBatchedClick = (clubName: string) => {
 
   useEffect(() => {
     return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    return () => {
       flushRef.current(clubNameRef.current);
     };
   }, []);
 
   const handleClick = useCallback(() => {
+    const now = Date.now();
+    if (now - lastClickTimeRef.current < MIN_CLICK_INTERVAL) return;
+    lastClickTimeRef.current = now;
+
+    if (firstClickTimeRef.current === null) {
+      firstClickTimeRef.current = new Date().toISOString();
+    }
+
     pendingRef.current += 1;
 
     if (pendingRef.current >= FLUSH_THRESHOLD) {
