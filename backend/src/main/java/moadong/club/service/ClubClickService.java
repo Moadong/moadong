@@ -45,6 +45,7 @@ public class ClubClickService {
     private static final long RATE_LIMIT_MAX_REQUESTS = 20L;
     private static final long BAN_DURATION_SECONDS = 30L;
     static final long MAX_CLICK_COUNT = 9_999_999_999L;
+    private static final long RANKING_CACHE_MILLIS = 1_000L;
 
     private static final RedisScript<Long> WHITELIST_SWAP_SCRIPT = RedisScript.of(
             "redis.call('DEL', KEYS[1])\n" +
@@ -65,6 +66,9 @@ public class ClubClickService {
     private final ClubRepository clubRepository;
     private final ClubClickCountRepository clickCountRepository;
     private final MongoTemplate mongoTemplate;
+
+    private volatile ClubClickRankingResponse cachedRanking;
+    private volatile long cachedRankingAt;
 
     @EventListener(ApplicationReadyEvent.class)
     public void initWhitelist() {
@@ -126,16 +130,26 @@ public class ClubClickService {
     }
 
     public ClubClickRankingResponse getRanking() {
+        ClubClickRankingResponse cached = cachedRanking;
+        if (cached != null && System.currentTimeMillis() - cachedRankingAt < RANKING_CACHE_MILLIS) {
+            return cached;
+        }
+
         List<ClubClickCount> all = clickCountRepository.findAllByOrderByClickCountDesc();
         AtomicInteger rank = new AtomicInteger(1);
         List<ClubRankItem> ranked = all.stream()
                 .map(c -> new ClubRankItem(rank.getAndIncrement(), c.getClubName(), c.getClickCount()))
                 .toList();
-        return new ClubClickRankingResponse(ranked, nextMondayMidnightKst());
+        ClubClickRankingResponse response = new ClubClickRankingResponse(ranked, nextMondayMidnightKst());
+
+        cachedRanking = response;
+        cachedRankingAt = System.currentTimeMillis();
+        return response;
     }
 
     public void resetRanking() {
         clickCountRepository.deleteAll();
+        cachedRanking = null;
         log.info("동아리 클릭 수 초기화 완료");
     }
 
