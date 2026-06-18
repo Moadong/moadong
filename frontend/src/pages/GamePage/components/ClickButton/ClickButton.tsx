@@ -98,7 +98,9 @@ const ClickButton = ({
     if (now - lastClickRef.current < 200) return;
     lastClickRef.current = now;
 
-    try { navigator.vibrate?.(30); } catch {}
+    try {
+      navigator.vibrate?.(30);
+    } catch {}
     setClickCount((prev) => prev + 1);
     onClickGame();
 
