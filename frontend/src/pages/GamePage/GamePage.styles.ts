@@ -3,7 +3,7 @@ import { media } from '@/styles/mediaQuery';
 
 export const PageContainer = styled.div<{ $dark: boolean }>`
   position: relative;
-  overflow: hidden;
+  overflow-x: hidden;
   min-height: 100vh;
   background: ${({ $dark, theme }) =>
     $dark ? '#111111' : theme.colors.gray[100]};
