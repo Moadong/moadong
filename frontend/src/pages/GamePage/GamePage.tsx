@@ -95,6 +95,14 @@ const GamePage = () => {
     }
   }, [rankingData]);
 
+  useEffect(() => {
+    const bg = isDark ? '#111111' : '#F5F5F5';
+    document.body.style.background = bg;
+    return () => {
+      document.body.style.background = '';
+    };
+  }, [isDark]);
+
   const handleStart = (name: string) => {
     sessionStorage.setItem(STORAGE_KEY, name);
     setClubName(name);
