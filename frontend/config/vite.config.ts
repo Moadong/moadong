@@ -98,12 +98,12 @@ export default defineConfig(({ mode }) => {
       port: DEFAULT_PORT,
       proxy: {
         '/api': {
-          target: env.VITE_API_BASE_URL || 'https://yourun.shop',
+          target: env.VITE_API_BASE_URL,
           changeOrigin: true,
           cookieDomainRewrite: 'localhost',
         },
         '/auth': {
-          target: env.VITE_API_BASE_URL || 'https://yourun.shop',
+          target: env.VITE_API_BASE_URL,
           changeOrigin: true,
           cookieDomainRewrite: 'localhost',
         },
