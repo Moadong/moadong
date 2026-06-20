@@ -96,6 +96,10 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: DEFAULT_PORT,
+      proxy: {
+        '/api': { target: 'https://yourun.shop', changeOrigin: true, cookieDomainRewrite: 'localhost' },
+        '/auth': { target: 'https://yourun.shop', changeOrigin: true, cookieDomainRewrite: 'localhost' },
+      },
     },
   };
 });
