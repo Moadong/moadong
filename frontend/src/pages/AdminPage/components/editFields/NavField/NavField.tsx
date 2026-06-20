@@ -11,7 +11,7 @@ interface NavFieldProps {
 const NavField = ({ label, children, onNavigate }: NavFieldProps) => {
   return (
     <EditField label={label}>
-      <Styled.ContentRow onClick={onNavigate}>
+      <Styled.ContentRow type='button' onClick={onNavigate}>
         <Styled.Content>{children}</Styled.Content>
         <RightArrowIcon />
       </Styled.ContentRow>

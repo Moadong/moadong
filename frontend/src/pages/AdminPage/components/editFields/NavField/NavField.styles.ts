@@ -14,7 +14,7 @@ export const EmptyText = styled.span`
   color: ${colors.gray[500]};
 `;
 
-export const ContentRow = styled.div`
+export const ContentRow = styled.button`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
@@ -22,6 +22,10 @@ export const ContentRow = styled.div`
   width: 100%;
   min-height: 24px;
   cursor: pointer;
+  background: none;
+  border: none;
+  padding: 0;
+  text-align: left;
 `;
 
 export const Content = styled.div`
