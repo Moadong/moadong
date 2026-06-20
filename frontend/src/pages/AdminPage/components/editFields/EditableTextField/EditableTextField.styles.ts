@@ -21,7 +21,7 @@ export const Input = styled.textarea`
   resize: none;
   overflow: hidden;
 
-  font: ${setTypography(typography.paragraph.p3)}
+  ${setTypography(typography.paragraph.p3)}
   line-height: 140%;
   color: ${colors.base.black};
 

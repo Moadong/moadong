@@ -46,7 +46,11 @@ const EditableTextField = ({
           onBlur={() => setIsActive(false)}
         />
         {isActive && (
-          <Styled.ClearButton type='button' onMouseDown={handleClear} aria-label='지우기'>
+          <Styled.ClearButton
+            type='button'
+            onMouseDown={handleClear}
+            aria-label='지우기'
+          >
             <FieldClearButtonIcon />
           </Styled.ClearButton>
         )}
