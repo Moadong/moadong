@@ -25,7 +25,7 @@ type Story = StoryObj<typeof meta>;
 export const WithTags: Story = {
   args: {
     label: '자유태그 (5자이내)',
-    onNavigate: () => {},
+    onNavigate: () => console.log('자유태그 페이지로 이동하겠습니다.'),
     children: (
       <>
         <ClubTag type='자유'>태그임</ClubTag>
@@ -35,10 +35,10 @@ export const WithTags: Story = {
   },
 };
 
-export const WithCount: Story = {
+export const WithLinkCount: Story = {
   args: {
     label: '링크 추가',
-    onNavigate: () => {},
+    onNavigate: () => console.log('링크 추가 페이지로 이동하겠습니다.'),
     children: <Styled.ContentText>3</Styled.ContentText>,
   },
 };
@@ -46,7 +46,7 @@ export const WithCount: Story = {
 export const Empty: Story = {
   args: {
     label: '자유태그 (5자이내)',
-    onNavigate: () => {},
+    onNavigate: () => console.log('자유태그 페이지로 이동하겠습니다.'),
     children: <Styled.EmptyText>없음</Styled.EmptyText>,
   },
 };

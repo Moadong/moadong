@@ -64,7 +64,8 @@ export const Empty: Story = {
 export const LongValue: Story = {
   args: {
     label: '동아리소개',
-    value: '한줄소개 한줄소개 한줄. 소개한줄소개한줄소개한줄소개한줄소개한줄소개',
+    value:
+      '한줄소개 한줄소개 한줄. 소개한줄소개한줄소개한줄소개한줄소개한줄소개',
     onChange: () => {},
     onClear: () => {},
   },
