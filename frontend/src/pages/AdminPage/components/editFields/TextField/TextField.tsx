@@ -1,21 +1,16 @@
 import { useLayoutEffect, useRef, useState } from 'react';
 import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
-import EditCard from '../EditCard/EditCard';
-import * as Styled from './EditableTextField.styles';
+import EditField from '../EditField/EditField';
+import * as Styled from './TextField.styles';
 
-interface EditableTextFieldProps {
+interface TextFieldProps {
   label: string;
   value: string;
   onChange: (value: string) => void;
   onClear: () => void;
 }
 
-const EditableTextField = ({
-  label,
-  value,
-  onChange,
-  onClear,
-}: EditableTextFieldProps) => {
+const TextField = ({ label, value, onChange, onClear }: TextFieldProps) => {
   const [isActive, setIsActive] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -34,7 +29,7 @@ const EditableTextField = ({
   };
 
   return (
-    <EditCard label={label} isActive={isActive}>
+    <EditField label={label} isActive={isActive}>
       <Styled.ContentRow>
         <Styled.Input
           ref={textareaRef}
@@ -55,8 +50,8 @@ const EditableTextField = ({
           </Styled.ClearButton>
         )}
       </Styled.ContentRow>
-    </EditCard>
+    </EditField>
   );
 };
 
-export default EditableTextField;
+export default TextField;

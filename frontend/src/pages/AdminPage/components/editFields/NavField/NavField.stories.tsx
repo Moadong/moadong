@@ -1,11 +1,11 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import ClubTag from '@/components/ClubTag/ClubTag';
-import NavInfoField from './NavInfoField';
-import * as Styled from './NavInfoField.styles';
+import NavField from './NavField';
+import * as Styled from './NavField.styles';
 
 const meta = {
-  title: 'Pages/AdminPage/Components/editFields/NavInfoField',
-  component: NavInfoField,
+  title: 'Pages/AdminPage/Components/editFields/NavField',
+  component: NavField,
   parameters: {
     layout: 'centered',
   },
@@ -17,7 +17,7 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof NavInfoField>;
+} satisfies Meta<typeof NavField>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

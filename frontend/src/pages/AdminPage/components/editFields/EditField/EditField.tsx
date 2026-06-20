@@ -1,12 +1,12 @@
-import * as Styled from './EditCard.styles';
+import * as Styled from './EditField.styles';
 
-interface EditCardProps {
+interface EditFieldProps {
   label: string;
   children: React.ReactNode;
   isActive?: boolean;
 }
 
-const EditCard = ({ label, children, isActive = false }: EditCardProps) => {
+const EditField = ({ label, children, isActive = false }: EditFieldProps) => {
   return (
     <Styled.Card $isActive={isActive}>
       <Styled.Label>{label}</Styled.Label>
@@ -15,4 +15,4 @@ const EditCard = ({ label, children, isActive = false }: EditCardProps) => {
   );
 };
 
-export default EditCard;
+export default EditField;
