@@ -17,6 +17,7 @@ export const useBatchedClick = (clubName: string) => {
   const firstClickTimeRef = useRef<string | null>(null);
   const isMountedRef = useRef(true);
   const { mutate: clickGame } = useClickGame();
+  const flushRef = useRef<(name: string) => void>(() => {});
 
   const flush = useCallback(
     (name: string) => {
@@ -39,7 +40,10 @@ export const useBatchedClick = (clubName: string) => {
             )
               firstClickTimeRef.current = ctAt;
             if (!timerRef.current) {
-              timerRef.current = setTimeout(() => flush(name), FLUSH_DELAY);
+              timerRef.current = setTimeout(
+                () => flushRef.current(name),
+                FLUSH_DELAY,
+              );
             }
           },
         },
@@ -49,7 +53,6 @@ export const useBatchedClick = (clubName: string) => {
   );
 
   // 언마운트 시 최신 flush/clubName으로 미전송분을 보내기 위한 ref 미러
-  const flushRef = useRef(flush);
   const clubNameRef = useRef(clubName);
   useEffect(() => {
     flushRef.current = flush;

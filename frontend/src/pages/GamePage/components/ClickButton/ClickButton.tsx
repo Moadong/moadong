@@ -1,4 +1,4 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as S from './ClickButton.styles';
 
@@ -20,26 +20,24 @@ const PARTICLE_COLORS = [
 ];
 
 const Firework = () => {
-  const particles = useMemo(
-    () =>
-      Array.from({ length: PARTICLE_COUNT }, (_, i) => {
-        const angle =
-          (i / PARTICLE_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
-        const distance = 160 + Math.random() * 130;
-        const size = 6 + Math.random() * 11;
-        const isConfetti = Math.random() > 0.5;
-        return {
-          x: Math.cos(angle) * distance,
-          y: Math.sin(angle) * distance,
-          color:
-            PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
-          size,
-          isConfetti,
-          spin: (Math.random() - 0.5) * 720,
-          duration: 0.7 + Math.random() * 0.4,
-        };
-      }),
-    [],
+  const [particles] = useState(() =>
+    Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+      const angle =
+        (i / PARTICLE_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      const distance = 160 + Math.random() * 130;
+      const size = 6 + Math.random() * 11;
+      const isConfetti = Math.random() > 0.5;
+      return {
+        x: Math.cos(angle) * distance,
+        y: Math.sin(angle) * distance,
+        color:
+          PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+        size,
+        isConfetti,
+        spin: (Math.random() - 0.5) * 720,
+        duration: 0.7 + Math.random() * 0.4,
+      };
+    }),
   );
 
   return (

@@ -1,4 +1,4 @@
-import { memo, useMemo } from 'react';
+import { memo, useState } from 'react';
 import { motion } from 'framer-motion';
 
 const PARTICLE_COUNT = 70;
@@ -13,26 +13,24 @@ const PARTICLE_COLORS = [
 ];
 
 const BackgroundFirework = () => {
-  const particles = useMemo(
-    () =>
-      Array.from({ length: PARTICLE_COUNT }, (_, i) => {
-        const angle =
-          (i / PARTICLE_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
-        const distance = 280 + Math.random() * 380;
-        const size = 8 + Math.random() * 16;
-        const isConfetti = Math.random() > 0.45;
-        return {
-          x: Math.cos(angle) * distance,
-          y: Math.sin(angle) * distance,
-          color:
-            PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
-          size,
-          isConfetti,
-          spin: (Math.random() - 0.5) * 1080,
-          duration: 1.3 + Math.random() * 0.6,
-        };
-      }),
-    [],
+  const [particles] = useState(() =>
+    Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+      const angle =
+        (i / PARTICLE_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.3;
+      const distance = 280 + Math.random() * 380;
+      const size = 8 + Math.random() * 16;
+      const isConfetti = Math.random() > 0.45;
+      return {
+        x: Math.cos(angle) * distance,
+        y: Math.sin(angle) * distance,
+        color:
+          PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+        size,
+        isConfetti,
+        spin: (Math.random() - 0.5) * 1080,
+        duration: 1.3 + Math.random() * 0.6,
+      };
+    }),
   );
 
   return (
