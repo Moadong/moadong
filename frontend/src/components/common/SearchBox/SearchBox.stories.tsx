@@ -3,7 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import SearchBox from './SearchBox';
 
 const meta = {
-  title: 'Pages/MainPage/Components/SearchBox',
+  title: 'Common/SearchBox',
   component: SearchBox,
   parameters: {
     layout: 'centered',
