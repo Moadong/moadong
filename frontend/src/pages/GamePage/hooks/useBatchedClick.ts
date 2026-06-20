@@ -40,7 +40,10 @@ export const useBatchedClick = (clubName: string) => {
             )
               firstClickTimeRef.current = ctAt;
             if (!timerRef.current) {
-              timerRef.current = setTimeout(() => flushRef.current(name), FLUSH_DELAY);
+              timerRef.current = setTimeout(
+                () => flushRef.current(name),
+                FLUSH_DELAY,
+              );
             }
           },
         },

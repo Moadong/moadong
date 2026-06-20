@@ -37,7 +37,7 @@ const Firework = () => {
         spin: (Math.random() - 0.5) * 720,
         duration: 0.7 + Math.random() * 0.4,
       };
-    })
+    }),
   );
 
   return (

@@ -30,7 +30,7 @@ const BackgroundFirework = () => {
         spin: (Math.random() - 0.5) * 1080,
         duration: 1.3 + Math.random() * 0.6,
       };
-    })
+    }),
   );
 
   return (
