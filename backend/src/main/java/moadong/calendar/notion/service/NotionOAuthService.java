@@ -491,6 +491,7 @@ public class NotionOAuthService {
         try {
             String encryptedAccessToken = cipher.encrypt(body.accessToken());
             NotionConnection connection = notionConnectionRepository.findById(clubId)
+                    .or(() -> findLegacyNotionConnectionAndMigrate(clubId))
                     .orElse(NotionConnection.builder().clubId(clubId).build());
             connection.updateConnection(encryptedAccessToken, body.workspaceName(), body.workspaceId());
             notionConnectionRepository.save(connection);
@@ -540,8 +541,7 @@ public class NotionOAuthService {
     }
 
     private void saveDatabaseId(String clubId, String databaseId) {
-        NotionConnection connection = notionConnectionRepository.findById(clubId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.NOTION_NOT_CONNECTED));
+        NotionConnection connection = getNotionConnection(clubId);
         connection.updateDatabaseId(databaseId);
         notionConnectionRepository.save(connection);
     }
