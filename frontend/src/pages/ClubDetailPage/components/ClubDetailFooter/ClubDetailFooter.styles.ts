@@ -4,6 +4,7 @@ import { media } from '@/styles/mediaQuery';
 export const ClubDetailFooterContainer = styled.div`
   position: sticky;
   bottom: 0;
+  z-index: 10;
   width: 100%;
   padding: 10px 0px 24px 0px;
 
