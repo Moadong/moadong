@@ -96,6 +96,18 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: DEFAULT_PORT,
+      proxy: {
+        '/api': {
+          target: env.VITE_API_BASE_URL,
+          changeOrigin: true,
+          cookieDomainRewrite: 'localhost',
+        },
+        '/auth': {
+          target: env.VITE_API_BASE_URL,
+          changeOrigin: true,
+          cookieDomainRewrite: 'localhost',
+        },
+      },
     },
   };
 });
