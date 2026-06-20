@@ -20,6 +20,9 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    define: {
+      __VERCEL_PREVIEW__: process.env.VERCEL_ENV === 'preview',
+    },
     plugins: [
       react({
         babel: {
