@@ -17,12 +17,6 @@ import {
 } from '@/utils/webviewBridge';
 import * as Styled from './ClubDetailTopBar.styles';
 
-// 스크롤 임계값 상수
-const SCROLL_THRESHOLD = {
-  HEADER_VISIBLE: 0, // 헤더 배경/타이틀 표시
-  TAB_STICKY: 360, // 탭바 고정
-} as const;
-
 interface TabItem {
   key: string;
   label: string;
@@ -35,6 +29,7 @@ interface ClubDetailTopBarProps {
   activeTab?: string;
   onTabClick?: (tabKey: string) => void;
   initialIsSubscribed?: boolean;
+  showTabs?: boolean;
 }
 
 const ClubDetailTopBar = ({
@@ -44,6 +39,7 @@ const ClubDetailTopBar = ({
   activeTab,
   onTabClick,
   initialIsSubscribed = false,
+  showTabs = false,
 }: ClubDetailTopBarProps) => {
   const navigate = useNavigate();
   const theme = useTheme();
@@ -78,14 +74,8 @@ const ClubDetailTopBar = ({
     return () => window.removeEventListener('message', handleMessage);
   }, [clubId]);
 
-  // 스크롤 위치에 따른 상태 관리
   const { isTriggered: isHeaderVisible } = useScrollTrigger({
-    threshold: SCROLL_THRESHOLD.HEADER_VISIBLE,
-    direction: 'down',
-  });
-
-  const { isTriggered: showTabs } = useScrollTrigger({
-    threshold: SCROLL_THRESHOLD.TAB_STICKY,
+    threshold: 0,
     direction: 'down',
   });
 

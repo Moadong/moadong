@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import Footer from '@/components/common/Footer/Footer';
@@ -76,21 +76,27 @@ const ClubDetailPage = () => {
     [],
   );
 
-  const topBarTabs = useMemo(
-    () => [
-      { key: TAB_TYPE.INTRO, label: '소개내용' },
-      { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-      { key: TAB_TYPE.SCHEDULE, label: '행사일정' },
-    ],
-    [],
-  );
-
   useTrackPageView(
     PAGE_VIEW.CLUB_DETAIL_PAGE,
     clubDetail?.name,
     !clubDetail,
     clubDetail?.recruitmentStatus,
   );
+
+  const [showStickyTabs, setShowStickyTabs] = useState(false);
+  const [inlineTabsEl, setInlineTabsEl] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!showTopBar || !inlineTabsEl) return;
+
+    // 인라인 탭이 TopBar 아래로 잘리기 시작하는 순간 헤더 탭으로 교체
+    const observer = new IntersectionObserver(
+      ([entry]) => setShowStickyTabs(!entry.isIntersecting),
+      { rootMargin: '-73px 0px 0px 0px', threshold: 1 },
+    );
+    observer.observe(inlineTabsEl);
+    return () => observer.disconnect();
+  }, [showTopBar, inlineTabsEl]);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollToElement } = useScrollTo();
@@ -134,13 +140,14 @@ const ClubDetailPage = () => {
         <ClubDetailTopBar
           clubId={clubDetail.id}
           clubName={clubDetail.name}
-          tabs={topBarTabs}
+          tabs={tabs}
           activeTab={activeTab}
           onTabClick={(tabKey) => {
             handleTabClick(tabKey as TabType);
             scrollToContent();
           }}
           initialIsSubscribed={searchParams.get('is_subscribed') === 'true'}
+          showTabs={showStickyTabs}
         />
       )}
       <Styled.Container>
@@ -181,12 +188,17 @@ const ClubDetailPage = () => {
           </Styled.LeftSection>
 
           <Styled.RightSection ref={contentRef}>
-            <UnderlineTabs
-              tabs={tabs}
-              activeKey={activeTab}
-              onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
-              centerOnMobile
-            />
+            <Styled.InlineTabsWrapper
+              ref={setInlineTabsEl}
+              $hidden={showTopBar && showStickyTabs}
+            >
+              <UnderlineTabs
+                tabs={tabs}
+                activeKey={activeTab}
+                onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
+                centerOnMobile
+              />
+            </Styled.InlineTabsWrapper>
 
             <Styled.TabContent>
               <div

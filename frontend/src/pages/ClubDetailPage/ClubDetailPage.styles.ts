@@ -111,6 +111,10 @@ export const RightSection = styled.div`
   }
 `;
 
+export const InlineTabsWrapper = styled.div<{ $hidden: boolean }>`
+  visibility: ${({ $hidden }) => ($hidden ? 'hidden' : 'visible')};
+`;
+
 export const TabContent = styled.div`
   animation: fadeIn ${transitions.duration.normal}
     ${transitions.easing.easeInOut};
