@@ -17,6 +17,7 @@ import moadong.user.payload.response.LoginResponse;
 import moadong.user.payload.response.RefreshResponse;
 import moadong.user.payload.response.TempPasswordResponse;
 import moadong.user.service.UserCommandService;
+import moadong.user.util.CookieMaker;
 import moadong.user.view.UserSwaggerView;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -38,6 +39,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserCommandService userCommandService;
+    private final CookieMaker cookieMaker;
 
     @PostMapping("/register")
     @Operation(
@@ -66,16 +68,10 @@ public class UserController {
     @GetMapping("/logout")
     @Operation(summary = "로그아웃", description = "클라이언트의 refresh token을 제거합니다.")
     public ResponseEntity<?> logout(
-            @CookieValue(value = "refresh_token", required = false) String refreshToken,
+            @CookieValue(value = CookieMaker.REFRESH_TOKEN_COOKIE_NAME, required = false) String refreshToken,
             HttpServletResponse response) {
         userCommandService.logoutUser(refreshToken);
-        ResponseCookie cookie = ResponseCookie.from("refreshToken", "")
-                .path("/")
-                .maxAge(0)
-                .httpOnly(true)
-                .sameSite("None")
-                .secure(true)
-                .build();
+        ResponseCookie cookie = cookieMaker.makeExpiredRefreshTokenCookie();
         response.addHeader("Set-Cookie", cookie.toString());
         return Response.ok("success logout");
     }
@@ -83,7 +79,7 @@ public class UserController {
     @PostMapping("/refresh")
     @Operation(summary = "토큰 재발급", description = "refresh token을 이용하여 access token을 재발급합니다.")
     public ResponseEntity<?> refresh(
-            @CookieValue(value = "refresh_token", required = false) String refreshToken,
+            @CookieValue(value = CookieMaker.REFRESH_TOKEN_COOKIE_NAME, required = false) String refreshToken,
             HttpServletResponse response) {
         RefreshResponse refreshResponse = userCommandService.refreshAccessToken(
                 refreshToken, response);
