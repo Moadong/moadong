@@ -28,9 +28,11 @@ const IntroducePage = () => {
         <ConvenienceSection />
         <ContactSection />
       </Styled.Main>
-      <Styled.IntroducePageFooter>
-        <Footer />
-      </Styled.IntroducePageFooter>
+      {!isInAppWebView() && (
+        <Styled.IntroducePageFooter>
+          <Footer />
+        </Styled.IntroducePageFooter>
+      )}
     </>
   );
 };

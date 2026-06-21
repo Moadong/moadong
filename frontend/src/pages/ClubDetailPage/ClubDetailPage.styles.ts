@@ -12,6 +12,14 @@ export const Container = styled.div`
   }
 `;
 
+export const AppSpacer = styled.div`
+  height: calc(71px + env(safe-area-inset-bottom));
+
+  ${media.tablet} {
+    height: calc(87px + env(safe-area-inset-bottom));
+  }
+`;
+
 export const ContentWrapper = styled.div`
   max-width: 1180px;
   width: 100%;
@@ -101,6 +109,10 @@ export const RightSection = styled.div`
     border-top: 6px solid ${colors.gray[200]};
     padding-top: 12px;
   }
+`;
+
+export const InlineTabsWrapper = styled.div<{ $hidden: boolean }>`
+  visibility: ${({ $hidden }) => ($hidden ? 'hidden' : 'visible')};
 `;
 
 export const TabContent = styled.div`
