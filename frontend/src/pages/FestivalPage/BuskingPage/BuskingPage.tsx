@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { format } from 'date-fns';
 import { motion } from 'framer-motion';
 import Footer from '@/components/common/Footer/Footer';
@@ -32,43 +32,30 @@ const BuskingPage = () => {
   useTrackPageView(PAGE_VIEW.DAEDONG2026_BUSKING_PAGE);
   const trackEvent = useMixpanelTrack();
   const [activeDayId, setActiveDayId] = useState(getInitialDayId);
-  const dayStartTime = useRef(0);
-  const activeDayIdRef = useRef(activeDayId);
 
   const activeDay = BUSKING_DAYS.find((d) => d.id === activeDayId)!;
 
   useEffect(() => {
-    activeDayIdRef.current = activeDayId;
-  }, [activeDayId]);
-
-  useEffect(() => {
-    dayStartTime.current = Date.now();
+    const startTime = Date.now();
     return () => {
-      const duration = Date.now() - dayStartTime.current;
+      const duration = Date.now() - startTime;
       trackEvent(USER_EVENT.DAEDONG2026_DAY_DURATION, {
-        day: activeDayIdRef.current,
+        day: activeDayId,
         duration,
         duration_seconds: Math.round(duration / 1000),
       });
     };
-  }, []);
+  }, [activeDayId, trackEvent]);
 
   const handleDayChange = (
     dayId: string,
     interaction: 'click' | 'swipe' = 'click',
   ) => {
-    const duration = Date.now() - dayStartTime.current;
-    trackEvent(USER_EVENT.DAEDONG2026_DAY_DURATION, {
-      day: activeDayId,
-      duration,
-      duration_seconds: Math.round(duration / 1000),
-    });
     trackEvent(USER_EVENT.DAEDONG2026_DAY_CHANGED, {
       from_day: activeDayId,
       to_day: dayId,
       interaction,
     });
-    dayStartTime.current = Date.now();
     setActiveDayId(dayId);
   };
 
