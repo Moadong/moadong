@@ -24,6 +24,10 @@ import moadong.club.payload.dto.ClubCalendarEventResult;
 import moadong.club.repository.ClubRepository;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.data.mongodb.core.MongoTemplate;
+import org.springframework.data.mongodb.core.query.Criteria;
+import org.springframework.data.mongodb.core.query.Query;
+import org.springframework.data.mongodb.core.query.Update;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -42,6 +46,7 @@ public class NotionOAuthService {
 
     private final RestTemplate restTemplate;
     private final NotionConnectionRepository notionConnectionRepository;
+    private final MongoTemplate mongoTemplate;
     private final ClubRepository clubRepository;
     private final AESCipher cipher;
     private final NotionProperties notionProperties;
@@ -490,11 +495,13 @@ public class NotionOAuthService {
     private void saveNotionConnection(String clubId, NotionTokenApiResponse body) {
         try {
             String encryptedAccessToken = cipher.encrypt(body.accessToken());
-            NotionConnection connection = notionConnectionRepository.findById(clubId)
-                    .or(() -> findLegacyNotionConnectionAndMigrate(clubId))
-                    .orElse(NotionConnection.builder().clubId(clubId).build());
-            connection.updateConnection(encryptedAccessToken, body.workspaceName(), body.workspaceId());
-            notionConnectionRepository.save(connection);
+            Query query = Query.query(Criteria.where("_id").is(clubId));
+            Update update = new Update()
+                    .set("encryptedAccessToken", encryptedAccessToken)
+                    .set("workspaceName", body.workspaceName())
+                    .set("workspaceId", body.workspaceId())
+                    .set("updatedAt", LocalDateTime.now());
+            mongoTemplate.upsert(query, update, NotionConnection.class);
         } catch (Exception e) {
             log.error("Notion access token 암호화 저장 실패. clubId={}", clubId, e);
             throw new RestApiException(ErrorCode.NOTION_TOKEN_SAVE_FAILED);
@@ -541,9 +548,14 @@ public class NotionOAuthService {
     }
 
     private void saveDatabaseId(String clubId, String databaseId) {
-        NotionConnection connection = getNotionConnection(clubId);
-        connection.updateDatabaseId(databaseId);
-        notionConnectionRepository.save(connection);
+        Query query = Query.query(Criteria.where("_id").is(clubId));
+        Update update = new Update()
+                .set("databaseId", databaseId)
+                .set("updatedAt", LocalDateTime.now());
+        com.mongodb.client.result.UpdateResult result = mongoTemplate.updateFirst(query, update, NotionConnection.class);
+        if (result.getMatchedCount() == 0) {
+            throw new RestApiException(ErrorCode.NOTION_NOT_CONNECTED);
+        }
     }
 
     @SuppressWarnings("unchecked")
