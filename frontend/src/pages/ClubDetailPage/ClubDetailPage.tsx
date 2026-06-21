@@ -91,9 +91,18 @@ const ClubDetailPage = () => {
   useEffect(() => {
     if (!showTopBar || !inlineTabsEl) return;
 
-    // 인라인 탭이 TopBar 아래로 잘리기 시작하는 순간 헤더 탭으로 교체
+    // top < TOP_BAR_RENDERED_HEIGHT: viewport가 좁아 탭이 아래에 있는 경우를 제외하고 sticky 활성화
     const observer = new IntersectionObserver(
-      ([entry]) => setShowStickyTabs(!entry.isIntersecting),
+      ([entry]) => {
+        if (
+          !entry.isIntersecting &&
+          entry.boundingClientRect.top < TOP_BAR_RENDERED_HEIGHT
+        ) {
+          setShowStickyTabs(true);
+        } else {
+          setShowStickyTabs(false);
+        }
+      },
       { rootMargin: `-${TOP_BAR_RENDERED_HEIGHT}px 0px 0px 0px`, threshold: 1 },
     );
     observer.observe(inlineTabsEl);
