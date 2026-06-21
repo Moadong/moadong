@@ -92,11 +92,24 @@ export const ImageContainer = styled.div`
   justify-content: center;
   align-items: center;
   margin-top: 60px;
+  overflow: hidden;
+
+  ${media.mobile} {
+    margin-top: calc(60px + var(--rn-safe-top, 0px));
+  }
+`;
+
+export const SlideInner = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   padding: 0 60px;
+  box-sizing: border-box;
 
   ${media.mobile} {
     padding: 0 16px;
-    margin-top: calc(60px + var(--rn-safe-top, 0px));
   }
 `;
 

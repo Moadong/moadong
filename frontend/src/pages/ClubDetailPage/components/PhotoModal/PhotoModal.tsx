@@ -68,25 +68,13 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
               loop={urls.length > 1}
               spaceBetween={0}
               slidesPerView={1}
-              style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              style={{ width: '100%', height: '100%' }}
             >
               {urls.map((url, idx) => (
-                <SwiperSlide
-                  key={url}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                  }}
-                >
-                  <Styled.Image src={url} alt={`활동 사진 ${idx + 1}`} />
+                <SwiperSlide key={url}>
+                  <Styled.SlideInner>
+                    <Styled.Image src={url} alt={`활동 사진 ${idx + 1}`} />
+                  </Styled.SlideInner>
                 </SwiperSlide>
               ))}
             </Swiper>
