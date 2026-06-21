@@ -120,10 +120,6 @@ public class UserCommandService {
     }
 
     public void logoutUser(String refreshToken) {
-        if (refreshToken == null || refreshToken.isBlank()) {
-            throw new RestApiException(ErrorCode.TOKEN_INVALID);
-        }
-
         User user = userRepository.findUserByRefreshTokens_Token(refreshToken)
             .orElseThrow(() -> new RestApiException(ErrorCode.USER_NOT_EXIST));
 
@@ -133,7 +129,7 @@ public class UserCommandService {
 
     public RefreshResponse refreshAccessToken(String refreshToken,
         HttpServletResponse response) {
-        if (refreshToken == null || refreshToken.isBlank() ||
+        if (refreshToken.isBlank() ||
             !jwtProvider.validateToken(refreshToken, jwtProvider.extractUsername(refreshToken))) {
             throw new RestApiException(ErrorCode.TOKEN_INVALID);
         }

@@ -887,7 +887,7 @@
       }
     };
 
-    function clearLogoutState() {
+    function doLogout() {
       clearToken();
       clearUserId();
       promotionMapKey = '';
@@ -900,22 +900,6 @@
       clearPromotionState();
       clearBannerState();
       clearFcmState();
-    }
-
-    async function doLogout() {
-      const btn = document.getElementById('headerLogout');
-      btn.disabled = true;
-      try {
-        await fetch(API_BASE + '/auth/user/logout', {
-          method: 'GET',
-          credentials: 'include'
-        });
-      } catch (e) {
-        console.warn('Logout request failed', e);
-      } finally {
-        btn.disabled = false;
-        clearLogoutState();
-      }
     }
 
     function openEditWindow(clubId) {
