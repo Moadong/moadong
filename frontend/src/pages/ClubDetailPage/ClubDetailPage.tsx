@@ -35,6 +35,8 @@ type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
 // 탭 클릭 시 스크롤이 탑바 하단에 정확히 위치하도록 하는 높이 값
 const TOP_BAR_HEIGHT = 50;
+// 인라인 탭이 TopBar 뒤로 가려지는 시점을 감지하는 IntersectionObserver rootMargin 값 (TopBarContent 60px + 하단 여백)
+const TOP_BAR_RENDERED_HEIGHT = 73;
 
 const ClubDetailPage = () => {
   const trackEvent = useMixpanelTrack();
@@ -92,7 +94,7 @@ const ClubDetailPage = () => {
     // 인라인 탭이 TopBar 아래로 잘리기 시작하는 순간 헤더 탭으로 교체
     const observer = new IntersectionObserver(
       ([entry]) => setShowStickyTabs(!entry.isIntersecting),
-      { rootMargin: '-73px 0px 0px 0px', threshold: 1 },
+      { rootMargin: `-${TOP_BAR_RENDERED_HEIGHT}px 0px 0px 0px`, threshold: 1 },
     );
     observer.observe(inlineTabsEl);
     return () => observer.disconnect();

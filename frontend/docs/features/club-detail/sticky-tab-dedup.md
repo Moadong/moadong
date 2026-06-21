@@ -42,7 +42,7 @@ useEffect(() => {
   if (!showTopBar || !inlineTabsEl) return;
   const observer = new IntersectionObserver(
     ([entry]) => setShowStickyTabs(!entry.isIntersecting),
-    { rootMargin: '-73px 0px 0px 0px', threshold: 1 },
+    { rootMargin: `-${TOP_BAR_RENDERED_HEIGHT}px 0px 0px 0px`, threshold: 1 },
   );
   observer.observe(inlineTabsEl);
   return () => observer.disconnect();
