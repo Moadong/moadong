@@ -104,11 +104,21 @@ export default defineConfig(({ mode }) => {
           target: env.VITE_API_BASE_URL,
           changeOrigin: true,
           cookieDomainRewrite: 'localhost',
+          configure: (proxy) => {
+            proxy.on('proxyReq', (proxyReq) => {
+              proxyReq.removeHeader('origin');
+            });
+          },
         },
         '/auth': {
           target: env.VITE_API_BASE_URL,
           changeOrigin: true,
           cookieDomainRewrite: 'localhost',
+          configure: (proxy) => {
+            proxy.on('proxyReq', (proxyReq) => {
+              proxyReq.removeHeader('origin');
+            });
+          },
         },
       },
     },
