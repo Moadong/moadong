@@ -8,6 +8,7 @@ interface RankingBoardProps {
   ranking: GameRankingEntry[];
   myClubName?: string;
   isDark?: boolean;
+  onSelectClub?: (clubName: string) => void;
 }
 
 const MEDAL = ['🥇', '🥈', '🥉'];
@@ -17,6 +18,7 @@ const RankingBoard = ({
   ranking,
   myClubName,
   isDark = false,
+  onSelectClub,
 }: RankingBoardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
 
@@ -51,8 +53,14 @@ const RankingBoard = ({
                   style={{ listStyle: 'none' }}
                 >
                   <S.Item
-                    as={Link}
-                    to={`/clubDetail/@${encodeURIComponent(entry.clubName)}`}
+                    {...(onSelectClub
+                      ? {
+                          onClick: () => onSelectClub(entry.clubName),
+                        }
+                      : {
+                          as: Link,
+                          to: `/clubDetail/@${encodeURIComponent(entry.clubName)}`,
+                        })}
                     $isMe={entry.clubName === myClubName}
                     $rank={entry.rank}
                     $dark={isDark}
@@ -64,6 +72,17 @@ const RankingBoard = ({
                     <S.ClickCount>
                       {entry.clickCount.toLocaleString()}회
                     </S.ClickCount>
+                    {onSelectClub && (
+                      <S.DetailLink
+                        as={Link}
+                        to={`/clubDetail/@${encodeURIComponent(entry.clubName)}`}
+                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        $dark={isDark}
+                        aria-label={`${entry.clubName} 상세페이지`}
+                      >
+                        →
+                      </S.DetailLink>
+                    )}
                   </S.Item>
                 </motion.li>
               ))}

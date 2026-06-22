@@ -6,6 +6,7 @@ import * as S from './ClickButton.styles';
 interface ClickButtonProps {
   clubName: string;
   onClickGame: () => void;
+  onChangeClub: () => void;
   isDark?: boolean;
 }
 
@@ -77,6 +78,7 @@ const Firework = () => {
 const ClickButton = ({
   clubName,
   onClickGame,
+  onChangeClub,
   isDark = false,
 }: ClickButtonProps) => {
   const [clickCount, setClickCount] = useState(0);
@@ -112,7 +114,12 @@ const ClickButton = ({
 
   return (
     <S.Wrapper>
-      <S.ClubLabel $dark={isDark}>{clubName}</S.ClubLabel>
+      <S.ClubRow>
+        <S.ClubLabel $dark={isDark}>{clubName}</S.ClubLabel>
+        <S.ChangeButton $dark={isDark} onClick={onChangeClub}>
+          변경
+        </S.ChangeButton>
+      </S.ClubRow>
       <S.ButtonArea>
         {bursts.map((id) => (
           <Firework key={id} />

@@ -84,6 +84,23 @@ export const ClickCount = styled.span`
   color: ${({ theme }) => theme.colors.primary[900]};
 `;
 
+export const DetailLink = styled.span<{ $dark: boolean }>`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  font-size: 0.875rem;
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[500] : theme.colors.gray[400]};
+  text-decoration: none;
+  flex-shrink: 0;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary[900]};
+  }
+`;
+
 export const MoreButton = styled.button<{ $dark: boolean }>`
   display: block;
   width: 100%;
