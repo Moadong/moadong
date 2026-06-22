@@ -13,7 +13,11 @@ interface ClubNameInputProps {
   isDark?: boolean;
 }
 
-const ClubNameInput = ({ onStart, onCancel, isDark = false }: ClubNameInputProps) => {
+const ClubNameInput = ({
+  onStart,
+  onCancel,
+  isDark = false,
+}: ClubNameInputProps) => {
   const validateClubName = useValidateClubName();
   const trackEvent = useMixpanelTrack();
   const [value, setValue] = useState('');
