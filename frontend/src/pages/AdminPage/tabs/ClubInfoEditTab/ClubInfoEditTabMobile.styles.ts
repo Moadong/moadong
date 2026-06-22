@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
+import { Z_INDEX } from '@/styles/zIndex';
 
 export const MobileContainer = styled.div`
   display: flex;
@@ -165,12 +166,18 @@ export const SaveButtonArea = styled.div`
   padding: 10px 24px 20px;
   background: ${colors.base.white};
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
-  z-index: 100;
+  z-index: ${Z_INDEX.clubDetailFooter};
 
   button {
     width: 100%;
     height: 50px;
     border-radius: 10px;
+  }
+
+  button:disabled {
+    background-color: ${colors.gray[500]};
+    color: ${colors.base.white};
+    opacity: 1;
   }
 `;
 
