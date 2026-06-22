@@ -3,7 +3,8 @@ import { useClickGame } from '@/hooks/Queries/useGame';
 
 const FLUSH_THRESHOLD = 5;
 const FLUSH_DELAY = 500;
-// UI 버튼(100ms)보다 짧게 잡아 버튼 핸들러를 우회하는 DOM 레벨 매크로를 차단
+export const CLICK_THROTTLE_MS = 100;
+// UI 버튼 쓰로틀(CLICK_THROTTLE_MS)보다 짧게 잡아 버튼 핸들러를 우회하는 DOM 레벨 매크로를 차단
 const MIN_CLICK_INTERVAL = 80;
 
 /**
