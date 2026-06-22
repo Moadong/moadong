@@ -26,8 +26,8 @@ export const TouchTarget = styled.div`
   @media (max-width: 500px) {
     display: block;
     position: absolute;
-    width: 260px;
-    height: 260px;
+    width: 360px;
+    height: 360px;
     border-radius: 50%;
     z-index: 0;
     cursor: pointer;
@@ -35,6 +35,8 @@ export const TouchTarget = styled.div`
 `;
 
 export const ClubRow = styled.div`
+  position: relative;
+  z-index: 2;
   display: flex;
   align-items: center;
   gap: 6px;
