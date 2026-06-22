@@ -1,14 +1,12 @@
 package moadong.media.service;
 
 import lombok.RequiredArgsConstructor;
-import moadong.club.entity.PromotionArticle;
 import moadong.club.repository.PromotionArticleRepository;
 import moadong.global.config.properties.AwsProperties;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.media.dto.PromotionImageUploadResponse;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -24,9 +22,8 @@ public class PromotionImageUploadService {
     private final R2ImageUploadService r2ImageUploadService;
     private final AwsProperties awsProperties;
 
-    @Transactional
     public PromotionImageUploadResponse upload(String articleId, MultipartFile file) {
-        PromotionArticle article = getActivePromotionArticle(articleId);
+        validateActivePromotionArticle(articleId);
         String key = buildPromotionImageKey(articleId, file);
         String imageUrl = r2ImageUploadService.upload(
             file,
@@ -34,14 +31,14 @@ public class PromotionImageUploadService {
             awsProperties.s3().viewEndpoint(),
             key
         );
-        article.addImage(imageUrl);
-        promotionArticleRepository.save(article);
+        promotionArticleRepository.addImageToActiveArticle(articleId, imageUrl);
         return new PromotionImageUploadResponse(imageUrl);
     }
 
-    private PromotionArticle getActivePromotionArticle(String articleId) {
-        return promotionArticleRepository.findActiveById(articleId)
-            .orElseThrow(() -> new RestApiException(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND));
+    private void validateActivePromotionArticle(String articleId) {
+        if (!promotionArticleRepository.existsActiveById(articleId)) {
+            throw new RestApiException(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND);
+        }
     }
 
     private String buildPromotionImageKey(String articleId, MultipartFile file) {
