@@ -93,7 +93,7 @@ const ClickButton = ({
 
   const handleClick = () => {
     const now = Date.now();
-    if (now - lastClickRef.current < 200) return;
+    if (now - lastClickRef.current < 100) return;
     lastClickRef.current = now;
 
     setClickCount((prev) => prev + 1);
