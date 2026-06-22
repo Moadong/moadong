@@ -18,14 +18,11 @@ export const ButtonArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-
-  @media (max-width: 500px) {
-    width: 360px;
-    height: 360px;
-    margin: -100px 0;
-    cursor: pointer;
-    z-index: 2;
-  }
+  width: 360px;
+  height: 360px;
+  margin: -100px 0;
+  cursor: pointer;
+  z-index: 2;
 `;
 
 export const ClubRow = styled.div`
