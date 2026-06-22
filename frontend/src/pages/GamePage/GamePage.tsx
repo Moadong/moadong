@@ -123,10 +123,11 @@ const GamePage = () => {
   }, [rankingData]);
 
   useEffect(() => {
+    const prevBackground = document.body.style.background;
     const bg = isDark ? '#111111' : '#F5F5F5';
     document.body.style.background = bg;
     return () => {
-      document.body.style.background = '';
+      document.body.style.background = prevBackground;
     };
   }, [isDark]);
 

@@ -15,7 +15,7 @@
 
 `IntersectionObserver`로 인라인 탭 요소가 TopBar 뒤로 잘리는 시점을 감지해 두 탭을 정확히 교체한다.
 
-```
+```text
 인라인 탭 요소 상단이 TopBar(73px) 아래로 잘리기 시작
   → showStickyTabs = true
   → ClubDetailTopBar: showTabs prop으로 헤더 탭 표시

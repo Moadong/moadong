@@ -1,4 +1,4 @@
-import { MouseEvent, ReactNode, useEffect } from 'react';
+import { MouseEvent, ReactNode, useEffect, useRef } from 'react';
 import Portal from '../Portal/Portal';
 import * as Styled from './Modal.styles';
 
@@ -15,6 +15,11 @@ const Modal = ({
   children,
   closeOnBackdrop = true,
 }: ModalProps) => {
+  const onCloseRef = useRef(onClose);
+  useEffect(() => {
+    onCloseRef.current = onClose;
+  }, [onClose]);
+
   useEffect(() => {
     if (!isOpen) return;
 
@@ -24,7 +29,7 @@ const Modal = ({
     document.body.style.width = '100%';
 
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onClose();
+      if (e.key === 'Escape') onCloseRef.current();
     };
 
     document.addEventListener('keydown', handleKeyDown);
@@ -36,7 +41,7 @@ const Modal = ({
       window.scrollTo(0, scrollY);
       document.removeEventListener('keydown', handleKeyDown);
     };
-  }, [isOpen, onClose]);
+  }, [isOpen]);
 
   if (!isOpen) return null;
 
