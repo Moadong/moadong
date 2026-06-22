@@ -10,6 +10,7 @@ import EditField from '@/pages/AdminPage/components/editFields/EditField/EditFie
 import NavField from '@/pages/AdminPage/components/editFields/NavField/NavField';
 import TextField from '@/pages/AdminPage/components/editFields/TextField/TextField';
 import { useAdminClubId } from '@/store/useAdminClubStore';
+import { colors } from '@/styles/theme/colors';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { ClubDetail, SNSPlatform } from '@/types/club';
 import { categories } from './hooks/useClubInfoEdit';
@@ -66,7 +67,7 @@ const ClubInfoEditTabMobile = ({
 
   const coverUrl = clubDetail?.cover;
   const logoUrl = clubDetail?.logo;
-  const bannerColor = TAG_COLORS[selectedCategory] || '#FFEBF1';
+  const bannerColor = TAG_COLORS[selectedCategory] || colors.gray[400];
 
   const snsLinkCount = Object.values(socialLinks).filter(
     (link) => link.trim() !== '',
@@ -85,14 +86,14 @@ const ClubInfoEditTabMobile = ({
             배너 수정
           </Styled.BannerEditButton>
           {coverUrl && (
-            <Styled.BannerResetButton
+            <Styled.BannerEditButton
               onClick={() => {
                 if (!clubId) return;
                 deleteCover(clubId);
               }}
             >
               초기화
-            </Styled.BannerResetButton>
+            </Styled.BannerEditButton>
           )}
         </Styled.BannerButtonGroup>
 

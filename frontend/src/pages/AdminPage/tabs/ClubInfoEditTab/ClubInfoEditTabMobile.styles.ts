@@ -16,7 +16,7 @@ export const BannerArea = styled.div<{ $bgColor?: string }>`
   position: relative;
   width: 100%;
   height: 210px;
-  background: ${({ $bgColor }) => $bgColor || '#FFEBF1'};
+  background: ${({ $bgColor }) => $bgColor || colors.gray[400]};
   overflow: visible;
   flex-shrink: 0;
 `;
@@ -43,26 +43,6 @@ export const BannerEditButton = styled.button`
 
   &:hover {
     background: ${colors.gray[700]};
-    color: ${colors.base.white};
-  }
-`;
-
-export const BannerResetButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  min-width: 95px;
-  background: ${colors.base.white};
-  border: 1px solid ${colors.gray[600]};
-  border-radius: 80px;
-  cursor: pointer;
-  ${setTypography(typography.button.button2)}
-  color: ${colors.gray[600]};
-  transition: all 0.2s;
-
-  &:hover {
-    background: ${colors.gray[600]};
     color: ${colors.base.white};
   }
 `;
