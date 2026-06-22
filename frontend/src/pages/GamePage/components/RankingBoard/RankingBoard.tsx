@@ -52,7 +52,7 @@ const RankingBoard = ({
                     $rank={entry.rank}
                     $dark={isDark}
                     onClick={() =>
-                      navigate(`/clubDetail/@${entry.clubName}`)
+                      navigate(`/clubDetail/@${encodeURIComponent(entry.clubName)}`)
                     }
                   >
                     <S.Rank $rank={entry.rank}>
