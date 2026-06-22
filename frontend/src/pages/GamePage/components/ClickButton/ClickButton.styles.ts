@@ -20,6 +20,34 @@ export const ButtonArea = styled.div`
   justify-content: center;
 `;
 
+export const ClubRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const ChangeButton = styled.button<{ $dark: boolean }>`
+  background: none;
+  border: none;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[500] : theme.colors.gray[500]};
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  flex-shrink: 0;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary[900]};
+  }
+
+  @media (max-width: 500px) {
+    font-size: 0.7rem;
+  }
+`;
+
 export const ClubLabel = styled.p<{ $dark: boolean }>`
   font-size: 1rem;
   font-weight: 600;

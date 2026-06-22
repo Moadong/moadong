@@ -131,3 +131,21 @@ export const ErrorMessage = styled.p`
   color: ${({ theme }) => theme.colors.primary[900]};
   font-weight: 500;
 `;
+
+export const CancelButton = styled.button<{ $dark: boolean }>`
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[500] : theme.colors.gray[500]};
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: ${({ $dark, theme }) =>
+      $dark ? theme.colors.gray[300] : theme.colors.gray[700]};
+  }
+`;

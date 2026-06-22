@@ -47,8 +47,9 @@ const MoonIcon = () => (
 
 const GamePage = () => {
   const [clubName, setClubName] = useState<string>(
-    () => sessionStorage.getItem(STORAGE_KEY) ?? '',
+    () => localStorage.getItem(STORAGE_KEY) ?? '',
   );
+  const [isEditing, setIsEditing] = useState(false);
   const [bgBursts, setBgBursts] = useState<number[]>([]);
   const [isDark, setIsDark] = useState<boolean>(
     () => sessionStorage.getItem(DARK_KEY) === 'true',
@@ -130,8 +131,17 @@ const GamePage = () => {
   }, [isDark]);
 
   const handleStart = (name: string) => {
-    sessionStorage.setItem(STORAGE_KEY, name);
+    localStorage.setItem(STORAGE_KEY, name);
     setClubName(name);
+    setIsEditing(false);
+  };
+
+  const handleChangeClub = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelChange = () => {
+    setIsEditing(false);
   };
 
   const toggleDark = () => {
@@ -188,6 +198,7 @@ const GamePage = () => {
                   myClubName={clubName}
                   isDark={isDark}
                   rankDelta={rankDelta}
+                  onSelectClub={handleStart}
                 />
               </motion.div>
             </S.DesktopOnly>
@@ -223,12 +234,17 @@ const GamePage = () => {
             transition={{ duration: 0.4, delay: 0.25 }}
             style={{ marginTop: '40px' }}
           >
-            {!clubName ? (
-              <ClubNameInput onStart={handleStart} isDark={isDark} />
+            {!clubName || isEditing ? (
+              <ClubNameInput
+                onStart={handleStart}
+                onCancel={isEditing ? handleCancelChange : undefined}
+                isDark={isDark}
+              />
             ) : (
               <ClickButton
                 clubName={clubName}
                 onClickGame={handleClick}
+                onChangeClub={handleChangeClub}
                 isDark={isDark}
               />
             )}
@@ -246,6 +262,7 @@ const GamePage = () => {
                 myClubName={clubName}
                 isDark={isDark}
                 rankDelta={rankDelta}
+                onSelectClub={handleStart}
               />
             </motion.div>
           </S.MobileOnly>
