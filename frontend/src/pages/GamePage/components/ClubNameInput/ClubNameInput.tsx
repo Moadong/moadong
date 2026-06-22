@@ -9,10 +9,15 @@ import * as S from './ClubNameInput.styles';
 
 interface ClubNameInputProps {
   onStart: (clubName: string) => void;
+  onCancel?: () => void;
   isDark?: boolean;
 }
 
-const ClubNameInput = ({ onStart, isDark = false }: ClubNameInputProps) => {
+const ClubNameInput = ({
+  onStart,
+  onCancel,
+  isDark = false,
+}: ClubNameInputProps) => {
   const validateClubName = useValidateClubName();
   const trackEvent = useMixpanelTrack();
   const [value, setValue] = useState('');
@@ -150,6 +155,11 @@ const ClubNameInput = ({ onStart, isDark = false }: ClubNameInputProps) => {
       </S.InputContainer>
 
       {error && <S.ErrorMessage>{error}</S.ErrorMessage>}
+      {onCancel && (
+        <S.CancelButton $dark={isDark} onClick={onCancel}>
+          취소
+        </S.CancelButton>
+      )}
     </S.Wrapper>
   );
 };

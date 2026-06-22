@@ -18,6 +18,41 @@ export const ButtonArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  width: 360px;
+  height: 360px;
+  margin: -100px 0;
+  cursor: pointer;
+  z-index: 2;
+`;
+
+export const ClubRow = styled.div`
+  position: relative;
+  z-index: 2;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+`;
+
+export const ChangeButton = styled.button<{ $dark: boolean }>`
+  background: none;
+  border: none;
+  padding: 2px 6px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[500] : theme.colors.gray[500]};
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+  flex-shrink: 0;
+
+  &:hover {
+    color: ${({ theme }) => theme.colors.primary[900]};
+  }
+
+  @media (max-width: 500px) {
+    font-size: 0.7rem;
+  }
 `;
 
 export const ClubLabel = styled.p<{ $dark: boolean }>`
@@ -46,6 +81,7 @@ export const Button = styled.button<{ $clicking: boolean }>`
   color: #fff;
   font-size: 1.5rem;
   font-weight: 700;
+  position: relative;
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(255, 84, 20, 0.35);
   animation: ${({ $clicking }) => ($clicking ? pop : 'none')} 0.15s ease;
@@ -61,9 +97,10 @@ export const Button = styled.button<{ $clicking: boolean }>`
   }
 
   @media (max-width: 500px) {
-    width: 140px;
-    height: 140px;
+    width: 160px;
+    height: 160px;
     font-size: 1.2rem;
+    box-shadow: none;
   }
 `;
 

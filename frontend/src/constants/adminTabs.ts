@@ -15,8 +15,10 @@ export const ADMIN_TABS: TabCategory[] = [
       { label: '기본 정보 수정', path: '/admin/club-info' },
       { label: '소개 정보 수정', path: '/admin/club-intro' },
       { label: '활동 사진 수정', path: '/admin/photo-edit' },
-      // TODO: 캘린더 기능 재오픈 시 복구
-      // { label: '동아리 일정 관리', path: '/admin/calendar-sync' },
+      ...(import.meta.env.DEV ||
+      (typeof __VERCEL_PREVIEW__ !== 'undefined' && __VERCEL_PREVIEW__)
+        ? [{ label: '동아리 일정 관리', path: '/admin/calendar-sync' }]
+        : []),
     ],
   },
   {

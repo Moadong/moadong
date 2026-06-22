@@ -16,10 +16,10 @@ const ClubCoverEditor = ({ coverImage }: ClubCoverEditorProps) => {
   const { clubId } = useAdminClubId();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  if (!clubId) return null;
-
   const uploadMutation = useUploadCover();
   const deleteMutation = useDeleteCover();
+
+  if (!clubId) return null;
 
   const isCoverImageEmpty = !coverImage?.trim();
   const displayedCover: string = isCoverImageEmpty

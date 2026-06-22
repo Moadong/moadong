@@ -3,8 +3,9 @@ import { useClickGame } from '@/hooks/Queries/useGame';
 
 const FLUSH_THRESHOLD = 5;
 const FLUSH_DELAY = 500;
-// UI 버튼(200ms)보다 짧게 잡아 버튼 핸들러를 우회하는 DOM 레벨 매크로를 차단
-const MIN_CLICK_INTERVAL = 80;
+export const CLICK_THROTTLE_MS = 100;
+// UI 버튼 쓰로틀(CLICK_THROTTLE_MS)보다 짧게 잡아 버튼 핸들러를 우회하는 DOM 레벨 매크로를 차단
+const MIN_CLICK_INTERVAL = Math.floor(CLICK_THROTTLE_MS * 0.8);
 
 /**
  * 클릭을 모아 일정 개수(5)나 디바운스(500ms) 시점에 한 번에 전송한다.
@@ -17,6 +18,7 @@ export const useBatchedClick = (clubName: string) => {
   const firstClickTimeRef = useRef<string | null>(null);
   const isMountedRef = useRef(true);
   const { mutate: clickGame } = useClickGame();
+  const flushRef = useRef<(name: string) => void>(() => {});
 
   const flush = useCallback(
     (name: string) => {
@@ -39,7 +41,10 @@ export const useBatchedClick = (clubName: string) => {
             )
               firstClickTimeRef.current = ctAt;
             if (!timerRef.current) {
-              timerRef.current = setTimeout(() => flush(name), FLUSH_DELAY);
+              timerRef.current = setTimeout(
+                () => flushRef.current(name),
+                FLUSH_DELAY,
+              );
             }
           },
         },
@@ -49,7 +54,6 @@ export const useBatchedClick = (clubName: string) => {
   );
 
   // 언마운트 시 최신 flush/clubName으로 미전송분을 보내기 위한 ref 미러
-  const flushRef = useRef(flush);
   const clubNameRef = useRef(clubName);
   useEffect(() => {
     flushRef.current = flush;

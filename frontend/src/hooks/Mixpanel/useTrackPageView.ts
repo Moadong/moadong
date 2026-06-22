@@ -10,7 +10,7 @@ const useTrackPageView = (
 ) => {
   const location = useLocation();
   const isTracked = useRef(false);
-  const startTime = useRef(Date.now());
+  const startTime = useRef(0);
   const clubNameRef = useRef(clubName);
   const recruitmentStatusRef = useRef(recruitmentStatus);
 

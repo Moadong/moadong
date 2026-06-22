@@ -16,6 +16,8 @@ export const useScrollTrigger = ({
   const [isTriggered, setIsTriggered] = useState(false);
 
   const handleScroll = useCallback(() => {
+    if (document.body.style.position === 'fixed') return;
+
     const scrollY = window.scrollY;
     const shouldShowButton =
       direction === 'down' ? scrollY > threshold : scrollY < threshold;

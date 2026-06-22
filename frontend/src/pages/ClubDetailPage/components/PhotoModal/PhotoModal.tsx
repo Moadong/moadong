@@ -3,6 +3,7 @@ import type { Swiper as SwiperType } from 'swiper';
 import { Keyboard, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/css/navigation';
+import CloseButtonIcon from '@/assets/images/icons/close_button_icon.svg?react';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import Modal from '@/components/common/Modal/Modal';
@@ -47,7 +48,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
             {currentIndex + 1} / {urls.length}
           </Styled.ImageCounter>
           <Styled.CloseButton onClick={onClose} aria-label='닫기'>
-            ×
+            <CloseButtonIcon />
           </Styled.CloseButton>
         </Styled.ModalHeader>
         <Styled.ModalBody>
@@ -67,25 +68,13 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
               loop={urls.length > 1}
               spaceBetween={0}
               slidesPerView={1}
-              style={{
-                width: '100%',
-                height: '100%',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-              }}
+              style={{ width: '100%', height: '100%' }}
             >
               {urls.map((url, idx) => (
-                <SwiperSlide
-                  key={url}
-                  style={{
-                    display: 'flex',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                    height: '100%',
-                  }}
-                >
-                  <Styled.Image src={url} alt={`활동 사진 ${idx + 1}`} />
+                <SwiperSlide key={url}>
+                  <Styled.SlideInner>
+                    <Styled.Image src={url} alt={`활동 사진 ${idx + 1}`} />
+                  </Styled.SlideInner>
                 </SwiperSlide>
               ))}
             </Swiper>
