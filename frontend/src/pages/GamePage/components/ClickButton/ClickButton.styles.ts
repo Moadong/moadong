@@ -18,6 +18,12 @@ export const ButtonArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+
+  @media (max-width: 500px) {
+    padding: 30px;
+    margin: -30px;
+  }
 `;
 
 export const ClubRow = styled.div`
@@ -93,12 +99,6 @@ export const Button = styled.button<{ $clicking: boolean }>`
     width: 160px;
     height: 160px;
     font-size: 1.2rem;
-
-    &::after {
-      content: '';
-      position: absolute;
-      inset: -50px;
-    }
   }
 `;
 

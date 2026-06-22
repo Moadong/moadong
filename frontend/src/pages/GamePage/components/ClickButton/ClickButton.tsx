@@ -114,14 +114,13 @@ const ClickButton = ({
 
   return (
     <S.Wrapper>
-      <S.ButtonArea>
+      <S.ButtonArea onClick={handleClick}>
         {bursts.map((id) => (
           <Firework key={id} />
         ))}
         <S.Button
           as={motion.button}
           $clicking={false}
-          onClick={handleClick}
           onKeyDown={(e) =>
             e.repeat &&
             (e.key === 'Enter' || e.key === ' ') &&
