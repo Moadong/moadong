@@ -1,5 +1,6 @@
 import { memo, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { CLICK_THROTTLE_MS } from '../../hooks/useBatchedClick';
 import * as S from './ClickButton.styles';
 
 interface ClickButtonProps {
@@ -93,7 +94,7 @@ const ClickButton = ({
 
   const handleClick = () => {
     const now = Date.now();
-    if (now - lastClickRef.current < 100) return;
+    if (now - lastClickRef.current < CLICK_THROTTLE_MS) return;
     lastClickRef.current = now;
 
     setClickCount((prev) => prev + 1);
