@@ -163,7 +163,7 @@ export const SaveButtonArea = styled.div`
   transform: translateX(-50%);
   width: 100%;
   max-width: 400px;
-  padding: 10px 24px 20px;
+  padding: 10px 24px calc(20px + env(safe-area-inset-bottom));
   background: ${colors.base.white};
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
   z-index: ${Z_INDEX.clubDetailFooter};
