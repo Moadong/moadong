@@ -51,6 +51,7 @@ export const Item = styled.div<{
     !$isMe && !$dark ? '0 1px 3px rgba(0, 0, 0, 0.06)' : 'none'};
   transition: background 0.3s;
   cursor: pointer;
+  text-decoration: none;
 `;
 
 export const Rank = styled.span<{ $rank: number }>`
