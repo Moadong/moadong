@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 import { Z_INDEX } from '@/styles/zIndex';
@@ -8,10 +9,16 @@ export const MobileContainer = styled.div`
   flex-direction: column;
   padding-bottom: 100px;
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   min-height: 100vh;
   margin: 0 auto;
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
 `;
 
 export const BannerArea = styled.div<{ $bgColor?: string }>`
@@ -162,11 +169,17 @@ export const SaveButtonArea = styled.div`
   left: 50%;
   transform: translateX(-50%);
   width: 100%;
-  max-width: 400px;
+  max-width: 500px;
   padding: 10px 24px calc(20px + env(safe-area-inset-bottom));
   background: ${colors.base.white};
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
   z-index: ${Z_INDEX.clubDetailFooter};
+
+  ${media.mobile} {
+    left: 0;
+    transform: none;
+    max-width: 100%;
+  }
 
   button {
     width: 100%;
