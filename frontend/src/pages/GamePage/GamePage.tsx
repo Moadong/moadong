@@ -171,6 +171,7 @@ const GamePage = () => {
                   ranking={rankingData?.clubs ?? []}
                   myClubName={clubName}
                   isDark={isDark}
+                  onSelectClub={handleStart}
                 />
               </motion.div>
             </S.DesktopOnly>
@@ -233,6 +234,7 @@ const GamePage = () => {
                 ranking={rankingData?.clubs ?? []}
                 myClubName={clubName}
                 isDark={isDark}
+                onSelectClub={handleStart}
               />
             </motion.div>
           </S.MobileOnly>
