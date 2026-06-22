@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import { SNS_CONFIG } from '@/constants/snsConfig';
@@ -52,7 +52,7 @@ const useClubInfoEdit = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
 
-  const initialRef = useRef<InitialValues | null>(null);
+  const [initialValues, setInitialValues] = useState<InitialValues | null>(null);
 
   const [clubName, setClubName] = useState('');
   const [clubPresidentName, setClubPresidentName] = useState('');
@@ -94,27 +94,27 @@ const useClubInfoEdit = () => {
       setClubTags(tags);
       setSocialLinks(links);
 
-      initialRef.current = {
+      setInitialValues({
         clubName: clubDetail.name,
         introduction: clubDetail.introduction,
         selectedDivision: clubDetail.division,
         selectedCategory: clubDetail.category,
         clubTags: tags,
         socialLinks: links,
-      };
+      });
     }
   }, [clubDetail]);
 
   const isDirty =
-    initialRef.current !== null &&
-    (clubName !== initialRef.current.clubName ||
-      introduction !== initialRef.current.introduction ||
-      selectedDivision !== initialRef.current.selectedDivision ||
-      selectedCategory !== initialRef.current.selectedCategory ||
-      clubTags.join(',') !== initialRef.current.clubTags.join(',') ||
-      socialLinks.instagram !== initialRef.current.socialLinks.instagram ||
-      socialLinks.youtube !== initialRef.current.socialLinks.youtube ||
-      socialLinks.x !== initialRef.current.socialLinks.x);
+    initialValues !== null &&
+    (clubName !== initialValues.clubName ||
+      introduction !== initialValues.introduction ||
+      selectedDivision !== initialValues.selectedDivision ||
+      selectedCategory !== initialValues.selectedCategory ||
+      clubTags.join(',') !== initialValues.clubTags.join(',') ||
+      socialLinks.instagram !== initialValues.socialLinks.instagram ||
+      socialLinks.youtube !== initialValues.socialLinks.youtube ||
+      socialLinks.x !== initialValues.socialLinks.x);
 
   const handleSocialLinkChange = (key: SNSPlatform, value: string) => {
     const errorMsg = validateSocialLink(key, value);
