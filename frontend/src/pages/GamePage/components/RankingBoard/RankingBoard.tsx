@@ -65,15 +65,12 @@ const RankingBoard = ({
                     <S.ClubName $dark={isDark}>{entry.clubName}</S.ClubName>
                     {(() => {
                       const delta = rankDelta?.get(entry.clubName) ?? 0;
-                      if (delta > 0)
-                        return <S.RankDelta $direction="up">▲{delta}</S.RankDelta>;
-                      if (delta < 0)
-                        return (
-                          <S.RankDelta $direction="down">
-                            ▼{Math.abs(delta)}
-                          </S.RankDelta>
-                        );
-                      return null;
+                      if (delta === 0) return null;
+                      return (
+                        <S.RankDelta $direction={delta > 0 ? 'up' : 'down'}>
+                          {delta > 0 ? '▲' + delta : '▼' + Math.abs(delta)}
+                        </S.RankDelta>
+                      );
                     })()}
                     <S.ClickCount>
                       {entry.clickCount.toLocaleString()}회

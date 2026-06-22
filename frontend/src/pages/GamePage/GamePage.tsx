@@ -99,8 +99,8 @@ const GamePage = () => {
         }
       });
       setRankDelta(newDelta);
-      clubs.forEach((c) => prevRanksRef.current.set(c.clubName, c.rank));
     }
+    clubs.forEach((c) => prevRanksRef.current.set(c.clubName, c.rank));
 
     const crossed = clubs.some((c) => {
       const prev = prevCountsRef.current.get(c.clubName) ?? 0;
