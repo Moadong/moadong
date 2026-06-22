@@ -114,12 +114,6 @@ const ClickButton = ({
 
   return (
     <S.Wrapper>
-      <S.ClubRow>
-        <S.ClubLabel $dark={isDark}>{clubName}</S.ClubLabel>
-        <S.ChangeButton $dark={isDark} onClick={onChangeClub}>
-          변경
-        </S.ChangeButton>
-      </S.ClubRow>
       <S.ButtonArea>
         {bursts.map((id) => (
           <Firework key={id} />
@@ -157,6 +151,13 @@ const ClickButton = ({
         </AnimatePresence>
         <S.CountLabel $dark={isDark}>회</S.CountLabel>
       </S.CountWrapper>
+
+      <S.ClubRow>
+        <S.ClubLabel $dark={isDark}>{clubName}</S.ClubLabel>
+        <S.ChangeButton $dark={isDark} onClick={onChangeClub}>
+          변경
+        </S.ChangeButton>
+      </S.ClubRow>
     </S.Wrapper>
   );
 };
