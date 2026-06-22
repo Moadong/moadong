@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import { SNS_CONFIG } from '@/constants/snsConfig';
@@ -36,6 +36,15 @@ export const categories = [
   { value: '공연', label: '공연', color: TAG_COLORS['공연'] },
 ];
 
+interface InitialValues {
+  clubName: string;
+  introduction: string;
+  selectedDivision: string;
+  selectedCategory: string;
+  clubTags: string[];
+  socialLinks: Record<SNSPlatform, string>;
+}
+
 const useClubInfoEdit = () => {
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
@@ -43,7 +52,7 @@ const useClubInfoEdit = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
 
-  const [isDirty, setIsDirty] = useState(false);
+  const initialRef = useRef<InitialValues | null>(null);
 
   const [clubName, setClubName] = useState('');
   const [clubPresidentName, setClubPresidentName] = useState('');
@@ -64,71 +73,52 @@ const useClubInfoEdit = () => {
     x: '',
   });
 
-  // 서버 데이터 로드 시 raw setter 사용 — isDirty를 건드리지 않음
   useEffect(() => {
     if (clubDetail) {
+      const tags =
+        clubDetail.tags.length >= 2
+          ? clubDetail.tags
+          : [...clubDetail.tags, ''];
+      const links = {
+        instagram: clubDetail.socialLinks?.instagram || '',
+        youtube: clubDetail.socialLinks?.youtube || '',
+        x: clubDetail.socialLinks?.x || '',
+      };
+
       setClubName(clubDetail.name);
       setClubPresidentName(clubDetail.presidentName);
       setTelephoneNumber(clubDetail.presidentPhoneNumber);
       setIntroduction(clubDetail.introduction);
       setSelectedDivision(clubDetail.division);
       setSelectedCategory(clubDetail.category);
-      setClubTags(
-        clubDetail.tags.length >= 2
-          ? clubDetail.tags
-          : [...clubDetail.tags, ''],
-      );
-      setIsDirty(false);
-    }
-    if (clubDetail?.socialLinks) {
-      setSocialLinks({
-        instagram: clubDetail.socialLinks.instagram || '',
-        youtube: clubDetail.socialLinks.youtube || '',
-        x: clubDetail.socialLinks.x || '',
-      });
+      setClubTags(tags);
+      setSocialLinks(links);
+
+      initialRef.current = {
+        clubName: clubDetail.name,
+        introduction: clubDetail.introduction,
+        selectedDivision: clubDetail.division,
+        selectedCategory: clubDetail.category,
+        clubTags: tags,
+        socialLinks: links,
+      };
     }
   }, [clubDetail]);
 
-  // 사용자 입력용 setter — 호출 시 isDirty = true
-  const handleSetClubName = (v: string) => {
-    setIsDirty(true);
-    setClubName(v);
-  };
-  const handleSetClubPresidentName = (v: string) => {
-    setIsDirty(true);
-    setClubPresidentName(v);
-  };
-  const handleSetTelephoneNumber = (v: string) => {
-    setIsDirty(true);
-    setTelephoneNumber(v);
-  };
-  const handleSetIntroduction = (v: string) => {
-    setIsDirty(true);
-    setIntroduction(v);
-  };
-  const handleSetSelectedDivision = (v: string) => {
-    setIsDirty(true);
-    setSelectedDivision(v);
-  };
-  const handleSetSelectedCategory = (v: string) => {
-    setIsDirty(true);
-    setSelectedCategory(v);
-  };
-  const handleSetClubTags = (v: string[]) => {
-    setIsDirty(true);
-    setClubTags(v);
-  };
-  const handleSetSocialLinks = (
-    v: React.SetStateAction<Record<SNSPlatform, string>>,
-  ) => {
-    setIsDirty(true);
-    setSocialLinks(v);
-  };
+  const isDirty =
+    initialRef.current !== null &&
+    (clubName !== initialRef.current.clubName ||
+      introduction !== initialRef.current.introduction ||
+      selectedDivision !== initialRef.current.selectedDivision ||
+      selectedCategory !== initialRef.current.selectedCategory ||
+      clubTags.join(',') !== initialRef.current.clubTags.join(',') ||
+      socialLinks.instagram !== initialRef.current.socialLinks.instagram ||
+      socialLinks.youtube !== initialRef.current.socialLinks.youtube ||
+      socialLinks.x !== initialRef.current.socialLinks.x);
 
   const handleSocialLinkChange = (key: SNSPlatform, value: string) => {
     const errorMsg = validateSocialLink(key, value);
     setSnsErrors((prev) => ({ ...prev, [key]: errorMsg }));
-    setIsDirty(true);
     setSocialLinks((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -176,21 +166,21 @@ const useClubInfoEdit = () => {
   return {
     clubDetail,
     clubName,
-    setClubName: handleSetClubName,
+    setClubName,
     clubPresidentName,
-    setClubPresidentName: handleSetClubPresidentName,
+    setClubPresidentName,
     telephoneNumber,
-    setTelephoneNumber: handleSetTelephoneNumber,
+    setTelephoneNumber,
     introduction,
-    setIntroduction: handleSetIntroduction,
+    setIntroduction,
     selectedDivision,
-    setSelectedDivision: handleSetSelectedDivision,
+    setSelectedDivision,
     selectedCategory,
-    setSelectedCategory: handleSetSelectedCategory,
+    setSelectedCategory,
     clubTags,
-    setClubTags: handleSetClubTags,
+    setClubTags,
     socialLinks,
-    setSocialLinks: handleSetSocialLinks,
+    setSocialLinks,
     snsErrors,
     setSnsErrors,
     handleSocialLinkChange,
