@@ -73,20 +73,21 @@ export const LogoImage = styled.img`
   object-fit: cover;
 `;
 
-export const LogoEditIconWrapper = styled.button`
+export const LogoEditButton = styled.button`
   position: absolute;
-  right: -4px;
-  bottom: -4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  background: ${colors.gray[900]};
-  border: 2px solid ${colors.base.white};
-  border-radius: 50%;
+  right: -12px;
+  bottom: -9px;
+  width: 32px;
+  height: 32px;
   cursor: pointer;
   padding: 0;
+  background: none;
+  border: none;
+
+  svg {
+    width: 32px;
+    height: 32px;
+  }
 `;
 
 export const FormSection = styled.div`

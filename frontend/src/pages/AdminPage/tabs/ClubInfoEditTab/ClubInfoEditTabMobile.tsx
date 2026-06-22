@@ -1,6 +1,7 @@
 import { useRef } from 'react';
 import Button from '@/components/common/Button/Button';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import LogoEditIcon from '@/assets/images/icons/logo_edit_icon.svg?react';
 import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -103,25 +104,12 @@ const ClubInfoEditTabMobile = ({
             alt='동아리 로고'
             onClick={() => logoInputRef.current?.click()}
           />
-          <Styled.LogoEditIconWrapper
+          <Styled.LogoEditButton
             onClick={() => logoInputRef.current?.click()}
             aria-label='로고 수정'
           >
-            <svg
-              width='12'
-              height='12'
-              viewBox='0 0 12 12'
-              fill='none'
-            >
-              <path
-                d='M8.5 1.5L10.5 3.5L3.5 10.5H1.5V8.5L8.5 1.5Z'
-                stroke='white'
-                strokeWidth='1.5'
-                strokeLinecap='round'
-                strokeLinejoin='round'
-              />
-            </svg>
-          </Styled.LogoEditIconWrapper>
+            <LogoEditIcon />
+          </Styled.LogoEditButton>
         </Styled.LogoWrapper>
 
         <Styled.HiddenInput
