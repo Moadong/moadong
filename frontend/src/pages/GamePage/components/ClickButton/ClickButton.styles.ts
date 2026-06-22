@@ -20,20 +20,6 @@ export const ButtonArea = styled.div`
   justify-content: center;
 `;
 
-export const TouchTarget = styled.div`
-  display: none;
-
-  @media (max-width: 500px) {
-    display: block;
-    position: absolute;
-    width: 360px;
-    height: 360px;
-    border-radius: 50%;
-    z-index: 0;
-    cursor: pointer;
-    background: rgba(255, 0, 0, 0.1);
-  }
-`;
 
 export const ClubRow = styled.div`
   position: relative;
@@ -110,6 +96,10 @@ export const Button = styled.button<{ $clicking: boolean }>`
     width: 160px;
     height: 160px;
     font-size: 1.2rem;
+    padding: 50px;
+    margin: -50px;
+    box-sizing: content-box;
+    background-clip: content-box;
   }
 `;
 

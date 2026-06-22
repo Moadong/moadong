@@ -115,7 +115,6 @@ const ClickButton = ({
   return (
     <S.Wrapper>
       <S.ButtonArea>
-        <S.TouchTarget onClick={handleClick} />
         {bursts.map((id) => (
           <Firework key={id} />
         ))}
