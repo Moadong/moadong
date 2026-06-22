@@ -18,11 +18,19 @@ export const ButtonArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
+`;
+
+export const TouchTarget = styled.div`
+  display: none;
 
   @media (max-width: 500px) {
-    padding: 30px;
-    margin: -30px;
+    display: block;
+    position: absolute;
+    width: 260px;
+    height: 260px;
+    border-radius: 50%;
+    z-index: 0;
+    cursor: pointer;
   }
 `;
 
