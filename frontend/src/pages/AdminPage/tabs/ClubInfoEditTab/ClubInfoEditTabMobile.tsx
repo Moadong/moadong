@@ -1,7 +1,6 @@
-import { useRef } from 'react';
+import { useRef, useState } from 'react';
 import LogoEditIcon from '@/assets/images/icons/logo_edit_icon.svg?react';
 import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
-import Button from '@/components/common/Button/Button';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -10,10 +9,12 @@ import { useUploadLogo } from '@/hooks/Queries/useClubImages';
 import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
 import NavField from '@/pages/AdminPage/components/editFields/NavField/NavField';
 import TextField from '@/pages/AdminPage/components/editFields/TextField/TextField';
+import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { useAdminClubId } from '@/store/useAdminClubStore';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
 import { ClubDetail, SNSPlatform } from '@/types/club';
+import FreeTagEditPage from './components/mobile/FreeTagEditPage/FreeTagEditPage';
 import * as Styled from './ClubInfoEditTabMobile.styles';
 import { categories } from './hooks/useClubInfoEdit';
 
@@ -26,10 +27,13 @@ interface ClubInfoEditTabMobileProps {
   selectedCategory: string;
   setSelectedCategory: (v: string) => void;
   clubTags: string[];
+  setClubTags: (tags: string[]) => void;
   socialLinks: Record<SNSPlatform, string>;
   handleUpdateClub: () => void;
   isDirty: boolean;
 }
+
+type ActivePage = 'main' | 'freeTags';
 
 const ClubInfoEditTabMobile = ({
   clubDetail,
@@ -40,12 +44,14 @@ const ClubInfoEditTabMobile = ({
   selectedCategory,
   setSelectedCategory,
   clubTags,
+  setClubTags,
   socialLinks,
   handleUpdateClub,
   isDirty,
 }: ClubInfoEditTabMobileProps) => {
   const trackEvent = useMixpanelTrack();
   const { clubId } = useAdminClubId();
+  const [activePage, setActivePage] = useState<ActivePage>('main');
 
   const coverInputRef = useRef<HTMLInputElement>(null);
   const logoInputRef = useRef<HTMLInputElement>(null);
@@ -71,12 +77,18 @@ const ClubInfoEditTabMobile = ({
   const coverUrl = clubDetail?.cover;
   const logoUrl = clubDetail?.logo;
   const bannerColor = TAG_COLORS[selectedCategory] || colors.gray[400];
-
-  const snsLinkCount = Object.values(socialLinks).filter(
-    (link) => link.trim() !== '',
-  ).length;
-
+  const snsLinkCount = Object.values(socialLinks).filter((link) => link.trim() !== '').length;
   const filledTags = clubTags.filter((t) => t.trim() !== '');
+
+  if (activePage === 'freeTags') {
+    return (
+      <FreeTagEditPage
+        initialTags={clubTags}
+        onSave={setClubTags}
+        onBack={() => setActivePage('main')}
+      />
+    );
+  }
 
   return (
     <>
@@ -85,9 +97,7 @@ const ClubInfoEditTabMobile = ({
         <Styled.BannerArea $bgColor={bannerColor}>
           {coverUrl && <Styled.CoverImage src={coverUrl} alt='커버 이미지' />}
           <Styled.BannerButtonGroup>
-            <Styled.BannerEditButton
-              onClick={() => coverInputRef.current?.click()}
-            >
+            <Styled.BannerEditButton onClick={() => coverInputRef.current?.click()}>
               배너 수정
             </Styled.BannerEditButton>
             {coverUrl && (
@@ -173,9 +183,8 @@ const ClubInfoEditTabMobile = ({
           <NavField
             label='자유태그 (5자이내)'
             onNavigate={() => {
-              trackEvent(ADMIN_EVENT.TAB_CLICKED, {
-                tabName: '자유태그 수정',
-              });
+              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: '자유태그' });
+              setActivePage('freeTags');
             }}
           >
             {filledTags.length > 0 ? (
@@ -192,9 +201,7 @@ const ClubInfoEditTabMobile = ({
           <NavField
             label='링크 추가'
             onNavigate={() => {
-              trackEvent(ADMIN_EVENT.TAB_CLICKED, {
-                tabName: '링크 추가',
-              });
+              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: '링크 추가' });
             }}
           >
             {snsLinkCount > 0 ? (
@@ -206,11 +213,7 @@ const ClubInfoEditTabMobile = ({
         </Styled.FormSection>
       </Styled.MobileContainer>
 
-      <Styled.SaveButtonArea>
-        <Button onClick={handleUpdateClub} disabled={!isDirty}>
-          저장하기
-        </Button>
-      </Styled.SaveButtonArea>
+      <MobileSaveButtonArea onClick={handleUpdateClub} disabled={!isDirty} />
     </>
   );
 };

@@ -52,6 +52,7 @@ const ClubInfoEditTab = () => {
         selectedCategory={selectedCategory}
         setSelectedCategory={setSelectedCategory}
         clubTags={clubTags}
+        setClubTags={setClubTags}
         socialLinks={socialLinks}
         handleUpdateClub={handleUpdateClub}
         isDirty={isDirty}
