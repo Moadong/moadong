@@ -28,6 +28,7 @@ interface ClubInfoEditTabMobileProps {
   clubTags: string[];
   socialLinks: Record<SNSPlatform, string>;
   handleUpdateClub: () => void;
+  isDirty: boolean;
 }
 
 const ClubInfoEditTabMobile = ({
@@ -41,6 +42,7 @@ const ClubInfoEditTabMobile = ({
   clubTags,
   socialLinks,
   handleUpdateClub,
+  isDirty,
 }: ClubInfoEditTabMobileProps) => {
   const trackEvent = useMixpanelTrack();
   const { clubId } = useAdminClubId();
@@ -205,7 +207,7 @@ const ClubInfoEditTabMobile = ({
       </Styled.MobileContainer>
 
       <Styled.SaveButtonArea>
-        <Button animated onClick={handleUpdateClub}>
+        <Button onClick={handleUpdateClub} disabled={!isDirty}>
           저장하기
         </Button>
       </Styled.SaveButtonArea>

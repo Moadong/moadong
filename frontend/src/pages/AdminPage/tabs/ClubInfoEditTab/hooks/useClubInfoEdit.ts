@@ -43,6 +43,8 @@ const useClubInfoEdit = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
 
+  const [isDirty, setIsDirty] = useState(false);
+
   const [clubName, setClubName] = useState('');
   const [clubPresidentName, setClubPresidentName] = useState('');
   const [telephoneNumber, setTelephoneNumber] = useState('');
@@ -62,6 +64,7 @@ const useClubInfoEdit = () => {
     x: '',
   });
 
+  // 서버 데이터 로드 시 raw setter 사용 — isDirty를 건드리지 않음
   useEffect(() => {
     if (clubDetail) {
       setClubName(clubDetail.name);
@@ -75,6 +78,7 @@ const useClubInfoEdit = () => {
           ? clubDetail.tags
           : [...clubDetail.tags, ''],
       );
+      setIsDirty(false);
     }
     if (clubDetail?.socialLinks) {
       setSocialLinks({
@@ -85,9 +89,46 @@ const useClubInfoEdit = () => {
     }
   }, [clubDetail]);
 
+  // 사용자 입력용 setter — 호출 시 isDirty = true
+  const handleSetClubName = (v: string) => {
+    setIsDirty(true);
+    setClubName(v);
+  };
+  const handleSetClubPresidentName = (v: string) => {
+    setIsDirty(true);
+    setClubPresidentName(v);
+  };
+  const handleSetTelephoneNumber = (v: string) => {
+    setIsDirty(true);
+    setTelephoneNumber(v);
+  };
+  const handleSetIntroduction = (v: string) => {
+    setIsDirty(true);
+    setIntroduction(v);
+  };
+  const handleSetSelectedDivision = (v: string) => {
+    setIsDirty(true);
+    setSelectedDivision(v);
+  };
+  const handleSetSelectedCategory = (v: string) => {
+    setIsDirty(true);
+    setSelectedCategory(v);
+  };
+  const handleSetClubTags = (v: string[]) => {
+    setIsDirty(true);
+    setClubTags(v);
+  };
+  const handleSetSocialLinks = (
+    v: React.SetStateAction<Record<SNSPlatform, string>>,
+  ) => {
+    setIsDirty(true);
+    setSocialLinks(v);
+  };
+
   const handleSocialLinkChange = (key: SNSPlatform, value: string) => {
     const errorMsg = validateSocialLink(key, value);
     setSnsErrors((prev) => ({ ...prev, [key]: errorMsg }));
+    setIsDirty(true);
     setSocialLinks((prev) => ({ ...prev, [key]: value }));
   };
 
@@ -135,25 +176,26 @@ const useClubInfoEdit = () => {
   return {
     clubDetail,
     clubName,
-    setClubName,
+    setClubName: handleSetClubName,
     clubPresidentName,
-    setClubPresidentName,
+    setClubPresidentName: handleSetClubPresidentName,
     telephoneNumber,
-    setTelephoneNumber,
+    setTelephoneNumber: handleSetTelephoneNumber,
     introduction,
-    setIntroduction,
+    setIntroduction: handleSetIntroduction,
     selectedDivision,
-    setSelectedDivision,
+    setSelectedDivision: handleSetSelectedDivision,
     selectedCategory,
-    setSelectedCategory,
+    setSelectedCategory: handleSetSelectedCategory,
     clubTags,
-    setClubTags,
+    setClubTags: handleSetClubTags,
     socialLinks,
-    setSocialLinks,
+    setSocialLinks: handleSetSocialLinks,
     snsErrors,
     setSnsErrors,
     handleSocialLinkChange,
     handleUpdateClub,
+    isDirty,
   };
 };
 

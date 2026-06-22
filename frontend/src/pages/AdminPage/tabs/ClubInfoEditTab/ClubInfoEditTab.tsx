@@ -38,6 +38,7 @@ const ClubInfoEditTab = () => {
     setSnsErrors,
     handleSocialLinkChange,
     handleUpdateClub,
+    isDirty,
   } = useClubInfoEdit();
 
   if (isMobile || isTablet) {
@@ -53,6 +54,7 @@ const ClubInfoEditTab = () => {
         clubTags={clubTags}
         socialLinks={socialLinks}
         handleUpdateClub={handleUpdateClub}
+        isDirty={isDirty}
       />
     );
   }
