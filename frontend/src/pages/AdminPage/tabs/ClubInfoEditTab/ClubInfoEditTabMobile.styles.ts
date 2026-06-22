@@ -69,18 +69,10 @@ export const LogoFrame = styled.div`
   width: 60px;
   height: 60px;
   border-radius: 12px;
-  border: 4px solid ${colors.base.white};
+  border: 0.5px solid ${colors.gray[500]};
+  box-shadow: 0 0 0 4px ${colors.base.white};
   background: ${colors.gray[200]};
   overflow: hidden;
-
-  &::after {
-    content: '';
-    position: absolute;
-    inset: 0;
-    border-radius: 8px;
-    border: 0.5px solid ${colors.gray[500]};
-    pointer-events: none;
-  }
 `;
 
 export const LogoImage = styled.img`
@@ -121,7 +113,10 @@ export const TagList = styled.div`
   gap: 5px;
 `;
 
-export const TagPill = styled.button<{ $isSelected?: boolean; $color?: string }>`
+export const TagPill = styled.button<{
+  $isSelected?: boolean;
+  $color?: string;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
