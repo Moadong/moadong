@@ -8,6 +8,7 @@ interface RankingBoardProps {
   ranking: GameRankingEntry[];
   myClubName?: string;
   isDark?: boolean;
+  rankDelta?: Map<string, number>;
   onSelectClub?: (clubName: string) => void;
 }
 
@@ -18,6 +19,7 @@ const RankingBoard = ({
   ranking,
   myClubName,
   isDark = false,
+  rankDelta,
   onSelectClub,
 }: RankingBoardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
@@ -69,6 +71,15 @@ const RankingBoard = ({
                       {MEDAL[entry.rank - 1] ?? entry.rank}
                     </S.Rank>
                     <S.ClubName $dark={isDark}>{entry.clubName}</S.ClubName>
+                    {(() => {
+                      const delta = rankDelta?.get(entry.clubName) ?? 0;
+                      if (delta === 0) return null;
+                      return (
+                        <S.RankDelta $direction={delta > 0 ? 'up' : 'down'}>
+                          {delta > 0 ? '▲' + delta : '▼' + Math.abs(delta)}
+                        </S.RankDelta>
+                      );
+                    })()}
                     <S.ClickCount>
                       {entry.clickCount.toLocaleString()}회
                     </S.ClickCount>

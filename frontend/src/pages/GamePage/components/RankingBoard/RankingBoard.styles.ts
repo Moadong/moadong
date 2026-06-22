@@ -78,6 +78,13 @@ export const ClubName = styled.span<{ $dark: boolean }>`
   white-space: nowrap;
 `;
 
+export const RankDelta = styled.span<{ $direction: 'up' | 'down' }>`
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: ${({ $direction }) => ($direction === 'up' ? '#E53935' : '#1E88E5')};
+  white-space: nowrap;
+`;
+
 export const ClickCount = styled.span`
   font-size: 0.875rem;
   font-weight: 700;
