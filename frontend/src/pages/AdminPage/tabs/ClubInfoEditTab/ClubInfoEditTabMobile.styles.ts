@@ -8,6 +8,7 @@ export const MobileContainer = styled.div`
   padding-bottom: 100px;
   width: 100%;
   max-width: 400px;
+  min-height: 100vh;
   margin: 0 auto;
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
 `;
