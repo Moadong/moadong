@@ -2,18 +2,20 @@ import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { SNS_CONFIG } from '@/constants/snsConfig';
-import useDevice from '@/hooks/useDevice';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useDevice from '@/hooks/useDevice';
 import ClubCoverEditor from '@/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor';
 import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import ClubInfoEditTabMobile from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTabMobile';
 import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/desktop/MakeTags/MakeTags';
 import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/desktop/SelectTags/SelectTags';
-import ClubInfoEditTabMobile from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTabMobile';
 import { SNSPlatform } from '@/types/club';
-import { divisions, categories } from './hooks/useClubInfoEdit';
-import useClubInfoEdit from './hooks/useClubInfoEdit';
 import * as Styled from './ClubInfoEditTab.styles';
+import useClubInfoEdit, {
+  categories,
+  divisions,
+} from './hooks/useClubInfoEdit';
 
 const ClubInfoEditTab = () => {
   const { isMobile, isTablet } = useDevice();

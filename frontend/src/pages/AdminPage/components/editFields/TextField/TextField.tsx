@@ -11,7 +11,13 @@ interface TextFieldProps {
   onClear: () => void;
 }
 
-const TextField = ({ label, placeholder, value, onChange, onClear }: TextFieldProps) => {
+const TextField = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  onClear,
+}: TextFieldProps) => {
   const [isActive, setIsActive] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
