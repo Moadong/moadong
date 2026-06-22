@@ -66,14 +66,40 @@ const GamePage = () => {
   const initializedRef = useRef(false);
   const burstIdRef = useRef(0);
 
+  // 순위 변동 추적
+  const prevRanksRef = useRef<Map<string, number>>(new Map());
+  const [rankDelta, setRankDelta] = useState<Map<string, number>>(new Map());
+
   useEffect(() => {
     const clubs = rankingData?.clubs;
     if (!clubs) return;
 
     if (!initializedRef.current) {
       clubs.forEach((c) => prevCountsRef.current.set(c.clubName, c.clickCount));
+      clubs.forEach((c) => prevRanksRef.current.set(c.clubName, c.rank));
       initializedRef.current = true;
       return;
+    }
+
+    // 순위 변동 계산 (양수 = 상승, 음수 = 하락), 변동이 있을 때만 갱신
+    let hasRankChange = false;
+    clubs.forEach((c) => {
+      const prevRank = prevRanksRef.current.get(c.clubName);
+      if (prevRank !== undefined && prevRank !== c.rank) {
+        hasRankChange = true;
+      }
+    });
+
+    if (hasRankChange) {
+      const newDelta = new Map<string, number>();
+      clubs.forEach((c) => {
+        const prevRank = prevRanksRef.current.get(c.clubName);
+        if (prevRank !== undefined) {
+          newDelta.set(c.clubName, prevRank - c.rank);
+        }
+      });
+      setRankDelta(newDelta);
+      clubs.forEach((c) => prevRanksRef.current.set(c.clubName, c.rank));
     }
 
     const crossed = clubs.some((c) => {
@@ -161,6 +187,7 @@ const GamePage = () => {
                   ranking={rankingData?.clubs ?? []}
                   myClubName={clubName}
                   isDark={isDark}
+                  rankDelta={rankDelta}
                 />
               </motion.div>
             </S.DesktopOnly>
@@ -218,6 +245,7 @@ const GamePage = () => {
                 ranking={rankingData?.clubs ?? []}
                 myClubName={clubName}
                 isDark={isDark}
+                rankDelta={rankDelta}
               />
             </motion.div>
           </S.MobileOnly>
