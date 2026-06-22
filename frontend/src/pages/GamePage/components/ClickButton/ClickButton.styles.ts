@@ -74,6 +74,7 @@ export const Button = styled.button<{ $clicking: boolean }>`
   color: #fff;
   font-size: 1.5rem;
   font-weight: 700;
+  position: relative;
   cursor: pointer;
   box-shadow: 0 8px 24px rgba(255, 84, 20, 0.35);
   animation: ${({ $clicking }) => ($clicking ? pop : 'none')} 0.15s ease;
@@ -89,9 +90,15 @@ export const Button = styled.button<{ $clicking: boolean }>`
   }
 
   @media (max-width: 500px) {
-    width: 160px;
-    height: 160px;
+    width: 140px;
+    height: 140px;
     font-size: 1.2rem;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: -20px;
+    }
   }
 `;
 
