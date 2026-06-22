@@ -50,6 +50,7 @@ export const Item = styled.div<{
   box-shadow: ${({ $isMe, $dark }) =>
     !$isMe && !$dark ? '0 1px 3px rgba(0, 0, 0, 0.06)' : 'none'};
   transition: background 0.3s;
+  cursor: pointer;
 `;
 
 export const Rank = styled.span<{ $rank: number }>`
@@ -80,6 +81,26 @@ export const ClickCount = styled.span`
   font-size: 0.875rem;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.primary[900]};
+`;
+
+export const MoreButton = styled.button<{ $dark: boolean }>`
+  display: block;
+  width: 100%;
+  margin-top: 12px;
+  padding: 12px 0;
+  border: none;
+  border-radius: 10px;
+  background: ${({ $dark }) => ($dark ? '#2A2A36' : '#F0F0F0')};
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[300] : theme.colors.gray[600]};
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.2s;
+
+  &:hover {
+    background: ${({ $dark }) => ($dark ? '#33333F' : '#E5E5E5')};
+  }
 `;
 
 export const EmptyMessage = styled.p<{ $dark: boolean }>`
