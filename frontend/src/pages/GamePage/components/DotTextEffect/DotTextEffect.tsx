@@ -1,6 +1,9 @@
 import { memo, useEffect, useRef, useState } from 'react';
 
-const mobileQuery = window.matchMedia('(max-width: 699px)');
+const mobileQuery =
+  typeof window !== 'undefined'
+    ? window.matchMedia('(max-width: 699px)')
+    : null;
 
 interface Dot {
   x: number;
@@ -82,10 +85,11 @@ const DotTextEffect = ({
   sweepSpeed = 0.12,
   dotColor = '#000000',
 }: DotTextEffectProps) => {
-  const [isMobile, setIsMobile] = useState(mobileQuery.matches);
-  const isMobileRef = useRef(mobileQuery.matches);
+  const [isMobile, setIsMobile] = useState(mobileQuery?.matches ?? false);
+  const isMobileRef = useRef(mobileQuery?.matches ?? false);
 
   useEffect(() => {
+    if (!mobileQuery) return;
     const handler = (e: MediaQueryListEvent) => {
       isMobileRef.current = e.matches;
       setIsMobile(e.matches);

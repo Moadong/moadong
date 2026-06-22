@@ -59,12 +59,17 @@ const ClubUnionPage = () => {
   const trackEvent = useMixpanelTrack();
   const [isMobile, setIsMobile] = useState(
     () =>
+      typeof window !== 'undefined' &&
       typeof window.matchMedia === 'function' &&
       window.matchMedia(MOBILE_BREAKPOINT).matches,
   );
 
   useEffect(() => {
-    if (typeof window.matchMedia !== 'function') return;
+    if (
+      typeof window === 'undefined' ||
+      typeof window.matchMedia !== 'function'
+    )
+      return;
     const mq = window.matchMedia(MOBILE_BREAKPOINT);
     const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
     mq.addEventListener('change', handler);

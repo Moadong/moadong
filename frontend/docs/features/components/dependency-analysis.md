@@ -34,7 +34,7 @@ npm run analyze:graph     # SVG 그래프 생성 (graphviz 필요)
 
 첫 실행에서 `common-no-pages` 규칙이 다음 위반을 잡았다.
 
-```
+```text
 Header.tsx → pages/MainPage/components/SearchBox/SearchBox.tsx
 ```
 
