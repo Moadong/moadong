@@ -47,8 +47,9 @@ const MoonIcon = () => (
 
 const GamePage = () => {
   const [clubName, setClubName] = useState<string>(
-    () => sessionStorage.getItem(STORAGE_KEY) ?? '',
+    () => localStorage.getItem(STORAGE_KEY) ?? '',
   );
+  const [isEditing, setIsEditing] = useState(false);
   const [bgBursts, setBgBursts] = useState<number[]>([]);
   const [isDark, setIsDark] = useState<boolean>(
     () => sessionStorage.getItem(DARK_KEY) === 'true',
@@ -66,15 +67,41 @@ const GamePage = () => {
   const initializedRef = useRef(false);
   const burstIdRef = useRef(0);
 
+  // 순위 변동 추적
+  const prevRanksRef = useRef<Map<string, number>>(new Map());
+  const [rankDelta, setRankDelta] = useState<Map<string, number>>(new Map());
+
   useEffect(() => {
     const clubs = rankingData?.clubs;
     if (!clubs) return;
 
     if (!initializedRef.current) {
       clubs.forEach((c) => prevCountsRef.current.set(c.clubName, c.clickCount));
+      clubs.forEach((c) => prevRanksRef.current.set(c.clubName, c.rank));
       initializedRef.current = true;
       return;
     }
+
+    // 순위 변동 계산 (양수 = 상승, 음수 = 하락), 변동이 있을 때만 갱신
+    let hasRankChange = false;
+    clubs.forEach((c) => {
+      const prevRank = prevRanksRef.current.get(c.clubName);
+      if (prevRank !== undefined && prevRank !== c.rank) {
+        hasRankChange = true;
+      }
+    });
+
+    if (hasRankChange) {
+      const newDelta = new Map<string, number>();
+      clubs.forEach((c) => {
+        const prevRank = prevRanksRef.current.get(c.clubName);
+        if (prevRank !== undefined) {
+          newDelta.set(c.clubName, prevRank - c.rank);
+        }
+      });
+      setRankDelta(newDelta);
+    }
+    clubs.forEach((c) => prevRanksRef.current.set(c.clubName, c.rank));
 
     const crossed = clubs.some((c) => {
       const prev = prevCountsRef.current.get(c.clubName) ?? 0;
@@ -95,9 +122,27 @@ const GamePage = () => {
     }
   }, [rankingData]);
 
+  useEffect(() => {
+    const prevBackground = document.body.style.background;
+    const bg = isDark ? '#111111' : '#F5F5F5';
+    document.body.style.background = bg;
+    return () => {
+      document.body.style.background = prevBackground;
+    };
+  }, [isDark]);
+
   const handleStart = (name: string) => {
-    sessionStorage.setItem(STORAGE_KEY, name);
+    localStorage.setItem(STORAGE_KEY, name);
     setClubName(name);
+    setIsEditing(false);
+  };
+
+  const handleChangeClub = () => {
+    setIsEditing(true);
+  };
+
+  const handleCancelChange = () => {
+    setIsEditing(false);
   };
 
   const toggleDark = () => {
@@ -153,6 +198,8 @@ const GamePage = () => {
                   ranking={rankingData?.clubs ?? []}
                   myClubName={clubName}
                   isDark={isDark}
+                  rankDelta={rankDelta}
+                  onSelectClub={handleStart}
                 />
               </motion.div>
             </S.DesktopOnly>
@@ -188,12 +235,17 @@ const GamePage = () => {
             transition={{ duration: 0.4, delay: 0.25 }}
             style={{ marginTop: '40px' }}
           >
-            {!clubName ? (
-              <ClubNameInput onStart={handleStart} isDark={isDark} />
+            {!clubName || isEditing ? (
+              <ClubNameInput
+                onStart={handleStart}
+                onCancel={isEditing ? handleCancelChange : undefined}
+                isDark={isDark}
+              />
             ) : (
               <ClickButton
                 clubName={clubName}
                 onClickGame={handleClick}
+                onChangeClub={handleChangeClub}
                 isDark={isDark}
               />
             )}
@@ -210,6 +262,8 @@ const GamePage = () => {
                 ranking={rankingData?.clubs ?? []}
                 myClubName={clubName}
                 isDark={isDark}
+                rankDelta={rankDelta}
+                onSelectClub={handleStart}
               />
             </motion.div>
           </S.MobileOnly>

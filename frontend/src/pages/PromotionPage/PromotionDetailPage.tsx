@@ -8,6 +8,7 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
 import BuskingPage from '@/pages/FestivalPage/BuskingPage/BuskingPage';
 import IntroductionPage from '@/pages/FestivalPage/IntroductionPage/IntroductionPage';
+import isInAppWebView from '@/utils/isInAppWebView';
 import PromotionClubCTA from './components/detail/PromotionClubCTA/PromotionClubCTA';
 import PromotionImageGallery from './components/detail/PromotionImageGallery/PromotionImageGallery';
 import PromotionInfoSection from './components/detail/PromotionInfoSection/PromotionInfoSection';
@@ -90,7 +91,7 @@ const PromotionDetail = () => {
           </>
         )}
       </Styled.Container>
-      <Footer />
+      {!isInAppWebView() && <Footer />}
     </>
   );
 };

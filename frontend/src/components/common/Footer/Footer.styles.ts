@@ -5,6 +5,14 @@ import { colors } from '@/styles/theme/colors';
 export const FooterContainer = styled.footer`
   text-align: left;
   font-size: 0.75rem;
+
+  ${media.tablet} {
+    padding-bottom: calc(90px + env(safe-area-inset-bottom));
+  }
+
+  ${media.mobile} {
+    padding-bottom: calc(70px + env(safe-area-inset-bottom));
+  }
 `;
 
 export const Divider = styled.hr`

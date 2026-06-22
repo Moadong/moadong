@@ -38,3 +38,9 @@ AGENTS.md
 
 # AI 작업 문서
 docs/superpowers/
+
+# dependency graph artifact
+deps-components.svg
+
+# session notes
+dailyNote/

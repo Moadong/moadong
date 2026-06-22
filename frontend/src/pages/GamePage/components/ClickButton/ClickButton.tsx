@@ -1,10 +1,12 @@
-import { memo, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
+import { CLICK_THROTTLE_MS } from '../../hooks/useBatchedClick';
 import * as S from './ClickButton.styles';
 
 interface ClickButtonProps {
   clubName: string;
   onClickGame: () => void;
+  onChangeClub: () => void;
   isDark?: boolean;
 }
 
@@ -20,26 +22,24 @@ const PARTICLE_COLORS = [
 ];
 
 const Firework = () => {
-  const particles = useMemo(
-    () =>
-      Array.from({ length: PARTICLE_COUNT }, (_, i) => {
-        const angle =
-          (i / PARTICLE_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
-        const distance = 160 + Math.random() * 130;
-        const size = 6 + Math.random() * 11;
-        const isConfetti = Math.random() > 0.5;
-        return {
-          x: Math.cos(angle) * distance,
-          y: Math.sin(angle) * distance,
-          color:
-            PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
-          size,
-          isConfetti,
-          spin: (Math.random() - 0.5) * 720,
-          duration: 0.7 + Math.random() * 0.4,
-        };
-      }),
-    [],
+  const [particles] = useState(() =>
+    Array.from({ length: PARTICLE_COUNT }, (_, i) => {
+      const angle =
+        (i / PARTICLE_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      const distance = 160 + Math.random() * 130;
+      const size = 6 + Math.random() * 11;
+      const isConfetti = Math.random() > 0.5;
+      return {
+        x: Math.cos(angle) * distance,
+        y: Math.sin(angle) * distance,
+        color:
+          PARTICLE_COLORS[Math.floor(Math.random() * PARTICLE_COLORS.length)],
+        size,
+        isConfetti,
+        spin: (Math.random() - 0.5) * 720,
+        duration: 0.7 + Math.random() * 0.4,
+      };
+    }),
   );
 
   return (
@@ -78,6 +78,7 @@ const Firework = () => {
 const ClickButton = ({
   clubName,
   onClickGame,
+  onChangeClub,
   isDark = false,
 }: ClickButtonProps) => {
   const [clickCount, setClickCount] = useState(0);
@@ -95,7 +96,7 @@ const ClickButton = ({
 
   const handleClick = () => {
     const now = Date.now();
-    if (now - lastClickRef.current < 200) return;
+    if (now - lastClickRef.current < CLICK_THROTTLE_MS) return;
     lastClickRef.current = now;
 
     setClickCount((prev) => prev + 1);
@@ -113,8 +114,7 @@ const ClickButton = ({
 
   return (
     <S.Wrapper>
-      <S.ClubLabel $dark={isDark}>{clubName}</S.ClubLabel>
-      <S.ButtonArea>
+      <S.ButtonArea onClick={handleClick}>
         {bursts.map((id) => (
           <Firework key={id} />
         ))}
@@ -151,6 +151,13 @@ const ClickButton = ({
         </AnimatePresence>
         <S.CountLabel $dark={isDark}>회</S.CountLabel>
       </S.CountWrapper>
+
+      <S.ClubRow>
+        <S.ClubLabel $dark={isDark}>{clubName}</S.ClubLabel>
+        <S.ChangeButton $dark={isDark} onClick={onChangeClub}>
+          변경
+        </S.ChangeButton>
+      </S.ClubRow>
     </S.Wrapper>
   );
 };

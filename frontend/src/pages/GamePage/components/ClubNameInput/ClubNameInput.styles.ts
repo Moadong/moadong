@@ -86,7 +86,7 @@ export const StartButton = styled.button`
   }
 
   ${media.mobile} {
-    padding: 10px 14px;
+    padding: 12px 18px;
     font-size: 0.875rem;
   }
 `;
@@ -108,7 +108,7 @@ export const Dropdown = styled.ul<{ $dark: boolean }>`
 `;
 
 export const DropdownItem = styled.li<{ $dark: boolean }>`
-  padding: 10px 16px;
+  padding: 12px 16px;
   font-size: 0.95rem;
   color: ${({ $dark, theme }) =>
     $dark ? theme.colors.gray[200] : theme.colors.gray[800]};
@@ -130,4 +130,22 @@ export const ErrorMessage = styled.p`
   font-size: 0.875rem;
   color: ${({ theme }) => theme.colors.primary[900]};
   font-weight: 500;
+`;
+
+export const CancelButton = styled.button<{ $dark: boolean }>`
+  background: none;
+  border: none;
+  padding: 4px 8px;
+  font-size: 0.875rem;
+  font-weight: 500;
+  color: ${({ $dark, theme }) =>
+    $dark ? theme.colors.gray[500] : theme.colors.gray[500]};
+  cursor: pointer;
+  text-decoration: underline;
+  text-underline-offset: 2px;
+
+  &:hover {
+    color: ${({ $dark, theme }) =>
+      $dark ? theme.colors.gray[300] : theme.colors.gray[700]};
+  }
 `;

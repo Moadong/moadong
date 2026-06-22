@@ -20,8 +20,15 @@ export default defineConfig(({ mode }) => {
   }
 
   return {
+    define: {
+      __VERCEL_PREVIEW__: process.env.VERCEL_ENV === 'preview',
+    },
     plugins: [
-      react(),
+      react({
+        babel: {
+          plugins: [['babel-plugin-react-compiler', {}]],
+        },
+      }),
       tsconfigPaths(),
       svgr(),
       ...(canUploadSentrySourcemaps
@@ -92,6 +99,28 @@ export default defineConfig(({ mode }) => {
     },
     server: {
       port: DEFAULT_PORT,
+      proxy: {
+        '/api': {
+          target: env.VITE_API_BASE_URL,
+          changeOrigin: true,
+          cookieDomainRewrite: 'localhost',
+          configure: (proxy) => {
+            proxy.on('proxyReq', (proxyReq) => {
+              proxyReq.removeHeader('origin');
+            });
+          },
+        },
+        '/auth': {
+          target: env.VITE_API_BASE_URL,
+          changeOrigin: true,
+          cookieDomainRewrite: 'localhost',
+          configure: (proxy) => {
+            proxy.on('proxyReq', (proxyReq) => {
+              proxyReq.removeHeader('origin');
+            });
+          },
+        },
+      },
     },
   };
 });

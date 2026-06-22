@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useParams, useSearchParams } from 'react-router-dom';
 import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import Footer from '@/components/common/Footer/Footer';
@@ -35,6 +35,8 @@ type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
 // 탭 클릭 시 스크롤이 탑바 하단에 정확히 위치하도록 하는 높이 값
 const TOP_BAR_HEIGHT = 50;
+// 인라인 탭이 TopBar 뒤로 가려지는 시점을 감지하는 IntersectionObserver rootMargin 값 (TopBarContent 60px + 하단 여백)
+const TOP_BAR_RENDERED_HEIGHT = 73;
 
 const ClubDetailPage = () => {
   const trackEvent = useMixpanelTrack();
@@ -76,21 +78,36 @@ const ClubDetailPage = () => {
     [],
   );
 
-  const topBarTabs = useMemo(
-    () => [
-      { key: TAB_TYPE.INTRO, label: '소개내용' },
-      { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-      { key: TAB_TYPE.SCHEDULE, label: '행사일정' },
-    ],
-    [],
-  );
-
   useTrackPageView(
     PAGE_VIEW.CLUB_DETAIL_PAGE,
     clubDetail?.name,
     !clubDetail,
     clubDetail?.recruitmentStatus,
   );
+
+  const [showStickyTabs, setShowStickyTabs] = useState(false);
+  const [inlineTabsEl, setInlineTabsEl] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!showTopBar || !inlineTabsEl) return;
+
+    // top < TOP_BAR_RENDERED_HEIGHT: viewport가 좁아 탭이 아래에 있는 경우를 제외하고 sticky 활성화
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (
+          !entry.isIntersecting &&
+          entry.boundingClientRect.top < TOP_BAR_RENDERED_HEIGHT
+        ) {
+          setShowStickyTabs(true);
+        } else {
+          setShowStickyTabs(false);
+        }
+      },
+      { rootMargin: `-${TOP_BAR_RENDERED_HEIGHT}px 0px 0px 0px`, threshold: 1 },
+    );
+    observer.observe(inlineTabsEl);
+    return () => observer.disconnect();
+  }, [showTopBar, inlineTabsEl]);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollToElement } = useScrollTo();
@@ -134,13 +151,14 @@ const ClubDetailPage = () => {
         <ClubDetailTopBar
           clubId={clubDetail.id}
           clubName={clubDetail.name}
-          tabs={topBarTabs}
+          tabs={tabs}
           activeTab={activeTab}
           onTabClick={(tabKey) => {
             handleTabClick(tabKey as TabType);
             scrollToContent();
           }}
           initialIsSubscribed={searchParams.get('is_subscribed') === 'true'}
+          showTabs={showStickyTabs}
         />
       )}
       <Styled.Container>
@@ -181,12 +199,17 @@ const ClubDetailPage = () => {
           </Styled.LeftSection>
 
           <Styled.RightSection ref={contentRef}>
-            <UnderlineTabs
-              tabs={tabs}
-              activeKey={activeTab}
-              onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
-              centerOnMobile
-            />
+            <Styled.InlineTabsWrapper
+              ref={setInlineTabsEl}
+              $hidden={showTopBar && showStickyTabs}
+            >
+              <UnderlineTabs
+                tabs={tabs}
+                activeKey={activeTab}
+                onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
+                centerOnMobile
+              />
+            </Styled.InlineTabsWrapper>
 
             <Styled.TabContent>
               <div
@@ -226,7 +249,7 @@ const ClubDetailPage = () => {
           location={clubLocation}
         />
       )}
-      {!isInAppWebView() && <Footer />}
+      {isInAppWebView() ? <Styled.AppSpacer /> : <Footer />}
       <ClubDetailFooter
         recruitmentStart={clubDetail.recruitmentStart}
         recruitmentEnd={clubDetail.recruitmentEnd}
