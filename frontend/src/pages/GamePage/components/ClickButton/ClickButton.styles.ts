@@ -89,8 +89,8 @@ export const Button = styled.button<{ $clicking: boolean }>`
   }
 
   @media (max-width: 500px) {
-    width: 140px;
-    height: 140px;
+    width: 160px;
+    height: 160px;
     font-size: 1.2rem;
   }
 `;
