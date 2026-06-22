@@ -99,11 +99,13 @@ const ClubInfoEditTabMobile = ({
         </Styled.BannerButtonGroup>
 
         <Styled.LogoWrapper>
-          <Styled.LogoImage
-            src={logoUrl || defaultLogo}
-            alt='동아리 로고'
-            onClick={() => logoInputRef.current?.click()}
-          />
+          <Styled.LogoFrame>
+            <Styled.LogoImage
+              src={logoUrl || defaultLogo}
+              alt='동아리 로고'
+              onClick={() => logoInputRef.current?.click()}
+            />
+          </Styled.LogoFrame>
           <Styled.LogoEditButton
             onClick={() => logoInputRef.current?.click()}
             aria-label='로고 수정'

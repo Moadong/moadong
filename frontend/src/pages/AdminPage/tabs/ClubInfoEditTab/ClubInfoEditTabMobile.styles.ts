@@ -64,12 +64,28 @@ export const LogoWrapper = styled.div`
   height: 60px;
 `;
 
-export const LogoImage = styled.img`
+export const LogoFrame = styled.div`
+  position: relative;
   width: 60px;
   height: 60px;
   border-radius: 12px;
   border: 4px solid ${colors.base.white};
   background: ${colors.gray[200]};
+  overflow: hidden;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: 8px;
+    border: 0.5px solid ${colors.gray[500]};
+    pointer-events: none;
+  }
+`;
+
+export const LogoImage = styled.img`
+  width: 100%;
+  height: 100%;
   object-fit: cover;
 `;
 
