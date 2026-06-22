@@ -31,6 +31,7 @@ export const TouchTarget = styled.div`
     border-radius: 50%;
     z-index: 0;
     cursor: pointer;
+    background: rgba(255, 0, 0, 0.1);
   }
 `;
 
