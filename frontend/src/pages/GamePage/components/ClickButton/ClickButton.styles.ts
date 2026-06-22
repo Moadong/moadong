@@ -97,7 +97,7 @@ export const Button = styled.button<{ $clicking: boolean }>`
     &::after {
       content: '';
       position: absolute;
-      inset: -15px;
+      inset: -24px;
     }
   }
 `;
