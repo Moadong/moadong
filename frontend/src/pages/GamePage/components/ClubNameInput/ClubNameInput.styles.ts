@@ -86,7 +86,7 @@ export const StartButton = styled.button`
   }
 
   ${media.mobile} {
-    padding: 10px 14px;
+    padding: 12px 18px;
     font-size: 0.875rem;
   }
 `;
@@ -108,7 +108,7 @@ export const Dropdown = styled.ul<{ $dark: boolean }>`
 `;
 
 export const DropdownItem = styled.li<{ $dark: boolean }>`
-  padding: 10px 16px;
+  padding: 12px 16px;
   font-size: 0.95rem;
   color: ${({ $dark, theme }) =>
     $dark ? theme.colors.gray[200] : theme.colors.gray[800]};

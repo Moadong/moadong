@@ -35,7 +35,7 @@ export const Item = styled.div<{
   display: flex;
   align-items: center;
   gap: 12px;
-  padding: 10px 14px;
+  padding: 12px 16px;
   border-radius: 10px;
   background: ${({ $isMe, $dark, theme }) => {
     if ($dark) return $isMe ? 'rgba(255, 84, 20, 0.18)' : '#22222E';
