@@ -18,8 +18,15 @@ export const ButtonArea = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-`;
 
+  @media (max-width: 500px) {
+    width: 360px;
+    height: 360px;
+    margin: -100px 0;
+    cursor: pointer;
+    z-index: 2;
+  }
+`;
 
 export const ClubRow = styled.div`
   position: relative;
@@ -96,10 +103,7 @@ export const Button = styled.button<{ $clicking: boolean }>`
     width: 160px;
     height: 160px;
     font-size: 1.2rem;
-    padding: 50px;
-    margin: -50px;
-    box-sizing: content-box;
-    background-clip: content-box;
+    box-shadow: none;
   }
 `;
 
