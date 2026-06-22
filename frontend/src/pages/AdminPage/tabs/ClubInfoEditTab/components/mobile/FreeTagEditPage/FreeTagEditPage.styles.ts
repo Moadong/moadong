@@ -31,6 +31,7 @@ export const TagInputRow = styled.div<{ $hasValue: boolean }>`
   display: flex;
   flex-direction: row;
   align-items: center;
+  align-self: stretch;
   padding: 4px 8px;
   gap: 2px;
   height: 25px;
