@@ -70,18 +70,28 @@ export const useBatchedClick = (clubName: string) => {
   useEffect(() => {
     flushRef.current = flush;
   }, [flush]);
+  // 동아리가 바뀌면 이전 동아리에 쌓인 미전송 클릭을 먼저 보낸다. 그렇지 않으면
+  // 다음 flush에서 이전 동아리 클릭이 새 동아리 이름으로 합산돼 오적립된다.
   useEffect(() => {
+    const prevClubName = clubNameRef.current;
+    if (prevClubName && prevClubName !== clubName && pendingRef.current > 0) {
+      flushRef.current(prevClubName);
+    }
     clubNameRef.current = clubName;
   }, [clubName]);
 
   // 언마운트 cleanup 일원화: 가드를 먼저 내려 이후 scheduleFlush가 새 타이머를
-  // 못 걸게 한 뒤, 남은 타이머를 정리하고 미전송분을 마지막으로 한 번 보낸다.
+  // 못 걸게 한 뒤, 남은 타이머를 정리하고 미전송분을 모두 보낸다. flush는 요청당
+  // 최대 5개만 보내므로, 언마운트 후 재예약이 막힌 상태에서 5개 초과분이 유실되지
+  // 않도록 pending이 빌 때까지 동기적으로 반복 flush한다.
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = null;
-      flushRef.current(clubNameRef.current);
+      while (pendingRef.current > 0) {
+        flushRef.current(clubNameRef.current);
+      }
     };
   }, []);
 
