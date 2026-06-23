@@ -10,7 +10,16 @@ interface ClickButtonProps {
   isDark?: boolean;
 }
 
-const PARTICLE_COUNT = 36;
+const PARTICLE_COUNT_DESKTOP = 36;
+const PARTICLE_COUNT_MOBILE = 16;
+// 연속 클릭 시 버스트가 무한히 겹쳐 쌓이는 것을 방지 (모바일 렉 방지)
+const MAX_CONCURRENT_BURSTS = 4;
+
+const mobileQuery =
+  typeof window !== 'undefined'
+    ? window.matchMedia('(max-width: 699px)')
+    : null;
+
 const PARTICLE_COLORS = [
   '#FF5414',
   '#FFD432',
@@ -21,11 +30,11 @@ const PARTICLE_COLORS = [
   '#FF5FA2',
 ];
 
-const Firework = () => {
-  const [particles] = useState(() =>
-    Array.from({ length: PARTICLE_COUNT }, (_, i) => {
-      const angle =
-        (i / PARTICLE_COUNT) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+const Firework = ({ isMobile }: { isMobile: boolean }) => {
+  const [particles] = useState(() => {
+    const count = isMobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP;
+    return Array.from({ length: count }, (_, i) => {
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
       const distance = 160 + Math.random() * 130;
       const size = 6 + Math.random() * 11;
       const isConfetti = Math.random() > 0.5;
@@ -39,8 +48,8 @@ const Firework = () => {
         spin: (Math.random() - 0.5) * 720,
         duration: 0.7 + Math.random() * 0.4,
       };
-    }),
-  );
+    });
+  });
 
   return (
     <>
@@ -66,7 +75,7 @@ const Firework = () => {
             marginLeft: -p.size / 2,
             borderRadius: p.isConfetti ? '2px' : '50%',
             background: p.color,
-            boxShadow: `0 0 8px ${p.color}`,
+            boxShadow: isMobile ? 'none' : `0 0 8px ${p.color}`,
             pointerEvents: 'none',
           }}
         />
@@ -83,9 +92,17 @@ const ClickButton = ({
 }: ClickButtonProps) => {
   const [clickCount, setClickCount] = useState(0);
   const [bursts, setBursts] = useState<number[]>([]);
+  const [isMobile, setIsMobile] = useState(mobileQuery?.matches ?? false);
   const burstIdRef = useRef(0);
   const timersRef = useRef<ReturnType<typeof setTimeout>[]>([]);
   const lastClickRef = useRef(0);
+
+  useEffect(() => {
+    if (!mobileQuery) return;
+    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
+    mobileQuery.addEventListener('change', handler);
+    return () => mobileQuery.removeEventListener('change', handler);
+  }, []);
 
   useEffect(() => {
     return () => {
@@ -103,7 +120,13 @@ const ClickButton = ({
     onClickGame();
 
     const id = burstIdRef.current++;
-    setBursts((prev) => [...prev, id]);
+    // 연속 클릭 시 겹쳐 쌓이는 버스트를 최신 N개로 제한
+    setBursts((prev) => {
+      const next = [...prev, id];
+      return next.length > MAX_CONCURRENT_BURSTS
+        ? next.slice(next.length - MAX_CONCURRENT_BURSTS)
+        : next;
+    });
     let timer: ReturnType<typeof setTimeout>;
     timer = setTimeout(() => {
       setBursts((prev) => prev.filter((b) => b !== id));
@@ -116,7 +139,7 @@ const ClickButton = ({
     <S.Wrapper>
       <S.ButtonArea onClick={handleClick}>
         {bursts.map((id) => (
-          <Firework key={id} />
+          <Firework key={id} isMobile={isMobile} />
         ))}
         <S.Button
           as={motion.button}
