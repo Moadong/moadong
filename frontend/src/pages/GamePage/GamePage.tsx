@@ -61,16 +61,25 @@ const GamePage = () => {
   const { data: rankingData } = useGameRanking();
   const sendClick = useBatchedClick(clubName);
 
-  // 버튼 클릭(1)과 비눗방울 터치(방울 값)를 합산해 개인 카운터와 서버에 반영
+  // 버튼 클릭(1)과 비눗방울 터치(방울 값)를 합산해 개인 카운터와 서버에 반영.
+  // source를 전달해 비눗방울 적립이 버튼 쓰로틀에 걸려 누락되지 않도록 한다.
   const gainCount = useCallback(
-    (amount: number) => {
+    (amount: number, source: 'button' | 'bubble' = 'button') => {
       setMyCount((prev) => prev + amount);
-      sendClick(amount);
+      sendClick(amount, source);
     },
     [sendClick],
   );
 
-  const handleButtonClick = useCallback(() => gainCount(1), [gainCount]);
+  const handleButtonClick = useCallback(
+    () => gainCount(1, 'button'),
+    [gainCount],
+  );
+
+  const handleBubbleCatch = useCallback(
+    (amount: number) => gainCount(amount, 'bubble'),
+    [gainCount],
+  );
 
   useTrackPageView(PAGE_VIEW.GAME_PAGE);
 
@@ -148,6 +157,8 @@ const GamePage = () => {
   const handleStart = (name: string) => {
     localStorage.setItem(STORAGE_KEY, name);
     setClubName(name);
+    // 새 동아리를 고르면 개인 카운터를 초기화해 이전 동아리 클릭이 남지 않게 한다
+    setMyCount(0);
     setIsEditing(false);
   };
 
@@ -175,7 +186,9 @@ const GamePage = () => {
           <BackgroundFirework key={id} />
         ))}
 
-        {clubName && !isEditing && <FallingBubbles onCatch={gainCount} />}
+        {clubName && !isEditing && (
+          <FallingBubbles onCatch={handleBubbleCatch} />
+        )}
 
         <S.Content>
           <S.ToggleBar>

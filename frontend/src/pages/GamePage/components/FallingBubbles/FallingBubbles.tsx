@@ -1,5 +1,5 @@
 import { memo, useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
+import * as S from './FallingBubbles.styles';
 
 interface FallingBubblesProps {
   /** 방울을 터치해 적립한 값을 부모에 전달 */
@@ -130,18 +130,13 @@ const FallingBubbles = ({ onCatch }: FallingBubblesProps) => {
   };
 
   return (
-    <div
-      style={{
-        position: 'fixed',
-        inset: 0,
-        zIndex: 40,
-        pointerEvents: 'none',
-        overflow: 'hidden',
-      }}
-    >
+    <S.Layer>
       {bubbles.map((bubble) => (
-        <motion.div
+        <S.Bubble
           key={bubble.id}
+          $size={bubble.size}
+          $hue={bubble.hue}
+          $xPct={bubble.xPct}
           initial={{ y: '-14vh', opacity: 0 }}
           animate={{
             y: '114vh',
@@ -156,85 +151,32 @@ const FallingBubbles = ({ onCatch }: FallingBubblesProps) => {
           }}
           onAnimationComplete={() => removeBubble(bubble.id)}
           onClick={(e) => handlePop(bubble, e)}
-          style={{
-            position: 'absolute',
-            top: 0,
-            left: `${bubble.xPct}%`,
-            marginLeft: -bubble.size / 2,
-            width: bubble.size,
-            height: bubble.size,
-            borderRadius: '50%',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            cursor: 'pointer',
-            pointerEvents: 'auto',
-            background: `radial-gradient(circle at 32% 26%, rgba(255,255,255,0.95), hsla(${bubble.hue},85%,78%,0.4) 46%, hsla(${bubble.hue},80%,66%,0.16) 72%, transparent 100%)`,
-            border: `1.5px solid hsla(${bubble.hue},70%,82%,0.65)`,
-            boxShadow: `inset 6px 6px 12px rgba(255,255,255,0.55), 0 0 16px hsla(${bubble.hue},80%,70%,0.4)`,
-            WebkitTapHighlightColor: 'transparent',
-          }}
         >
-          <span
-            style={{
-              fontSize: Math.round(bubble.size * 0.34),
-              fontWeight: 800,
-              color: '#3A3A3A',
-              textShadow: '0 1px 2px rgba(255,255,255,0.8)',
-              userSelect: 'none',
-            }}
-          >
-            +{bubble.value}
-          </span>
-        </motion.div>
+          <S.BubbleValue $size={bubble.size}>+{bubble.value}</S.BubbleValue>
+        </S.Bubble>
       ))}
 
       {pops.map((pop) => (
-        <div
-          key={pop.id}
-          style={{
-            position: 'fixed',
-            left: pop.x,
-            top: pop.y,
-            pointerEvents: 'none',
-          }}
-        >
+        <S.Pop key={pop.id} $x={pop.x} $y={pop.y}>
           {/* 터치 지점에서 퍼지는 링 */}
-          <motion.span
+          <S.PopRing
+            $hue={pop.hue}
             initial={{ scale: 0, opacity: 0.7 }}
             animate={{ scale: 2.4, opacity: 0 }}
             transition={{ duration: 0.5, ease: 'easeOut' }}
-            style={{
-              position: 'absolute',
-              left: -24,
-              top: -24,
-              width: 48,
-              height: 48,
-              borderRadius: '50%',
-              border: `3px solid hsla(${pop.hue},80%,70%,0.8)`,
-            }}
           />
           {/* 위로 떠오르는 +N */}
-          <motion.span
+          <S.PopValue
+            $hue={pop.hue}
             initial={{ y: 0, opacity: 0, scale: 0.6 }}
             animate={{ y: -52, opacity: [0, 1, 1, 0], scale: 1.2 }}
             transition={{ duration: POP_DURATION_MS / 1000, ease: 'easeOut' }}
-            style={{
-              position: 'absolute',
-              left: -20,
-              top: -14,
-              fontSize: '1.4rem',
-              fontWeight: 800,
-              color: `hsl(${pop.hue},70%,45%)`,
-              textShadow: '0 1px 3px rgba(255,255,255,0.9)',
-              whiteSpace: 'nowrap',
-            }}
           >
             +{pop.value}
-          </motion.span>
-        </div>
+          </S.PopValue>
+        </S.Pop>
       ))}
-    </div>
+    </S.Layer>
   );
 };
 
