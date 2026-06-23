@@ -4,6 +4,7 @@ import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import Button from '@/components/common/Button/Button';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { ADMIN_EVENT } from '@/constants/eventName';
+import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useDeleteCover, useUploadCover } from '@/hooks/Queries/useClubCover';
 import { useUploadLogo } from '@/hooks/Queries/useClubImages';
@@ -56,16 +57,24 @@ const ClubInfoEditTabMobile = ({
 
   const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !clubId) return;
-    uploadCover({ clubId, file });
     e.target.value = '';
+    if (!file || !clubId) return;
+    if (file.size > MAX_FILE_SIZE) {
+      alert('파일 크기가 너무 커요! 10MB 이하 이미지만 업로드할 수 있어요.');
+      return;
+    }
+    uploadCover({ clubId, file });
   };
 
   const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !clubId) return;
-    uploadLogo({ clubId, file });
     e.target.value = '';
+    if (!file || !clubId) return;
+    if (file.size > MAX_FILE_SIZE) {
+      alert('파일 크기가 너무 커요! 10MB 이하 이미지만 업로드할 수 있어요.');
+      return;
+    }
+    uploadLogo({ clubId, file });
   };
 
   const coverUrl = clubDetail?.cover;
