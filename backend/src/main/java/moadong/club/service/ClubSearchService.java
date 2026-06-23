@@ -1,70 +1,96 @@
 package moadong.club.service;
 
 import java.util.*;
-import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.repository.ClubSearchRepository;
+import moadong.club.util.search.ClubSearchCandidate;
+import moadong.club.util.search.ClubSearchMatcher;
+import moadong.club.util.search.ClubSearchRanker;
 import org.springframework.stereotype.Service;
 
 import static java.util.Arrays.*;
 
 @Service
 @AllArgsConstructor
+@Slf4j
 public class ClubSearchService {
 
     private final ClubSearchRepository clubSearchRepository;
+    private final WordDictionaryService wordDictionaryService;
+    private final ClubSearchMatcher clubSearchMatcher;
+    private final ClubSearchRanker clubSearchRanker;
 
     public ClubSearchResponse searchClubsByKeyword(String keyword,
                                                    String recruitmentStatus,
                                                    String division,
                                                    String category
     ) {
-        String quotedKeyword = quotedKeyword(keyword);
-
-        List<ClubSearchResult> result = clubSearchRepository.searchClubsByKeyword(
-                quotedKeyword,
+        List<ClubSearchResult> candidates = clubSearchRepository.findSearchCandidates(
                 recruitmentStatus,
                 division,
                 category
         );
-        // 정렬
-        // 1. ClubCategory Enum의 모든 값을 가져와 리스트로 만들고 순서를 랜덤하게 섞습니다.
+
+        if (keyword == null || keyword.trim().isEmpty()) {
+            return sortAndBuildBrowseResponse(candidates);
+        }
+
+        List<String> expandedKeywords = wordDictionaryService.expandKeywords(keyword);
+        List<ClubSearchCandidate> matchedCandidates = candidates.stream()
+                .map(candidate -> clubSearchMatcher.match(candidate, keyword, expandedKeywords))
+                .flatMap(Optional::stream)
+                .toList();
+
+        List<ClubSearchResult> sortedResult = clubSearchRanker.sort(matchedCandidates);
+
+        return ClubSearchResponse.builder()
+                .clubs(sortedResult)
+                .totalCount(sortedResult.size())
+                .build();
+    }
+
+    // 정렬 및 응답 생성
+    private ClubSearchResponse sortAndBuildBrowseResponse(List<ClubSearchResult> result) {
         List<ClubCategory> categories = new ArrayList<>(asList(ClubCategory.values()));
         Collections.shuffle(categories);
 
-        // 2. 섞인 순서를 기반으로 Category에 대한 랜덤 우선순위 Map을 생성합니다.
         Map<String, Integer> randomCategoryPriorities = new HashMap<>();
         for (int i = 0; i < categories.size(); i++) {
             randomCategoryPriorities.put(categories.get(i).name(), i);
         }
 
-        result = result.stream()
+        List<ClubSearchResult> sortedResult = result.stream()
                 .sorted(
                         Comparator
-                                // 1차: recruitmentStatus는 기존 enum의 우선순위로 정렬
                                 .comparingInt((ClubSearchResult club) -> ClubRecruitmentStatus.getPriorityFromString(club.recruitmentStatus()))
-                                // 2차: category는 랜덤하게 생성된 우선순위로 정렬
                                 .thenComparingInt((ClubSearchResult club) ->
                                         randomCategoryPriorities.getOrDefault(
                                                 club.category() != null ? club.category().toUpperCase() : null,
                                                 Integer.MAX_VALUE))
-                                // 3차: 이름순으로 정렬
-                                .thenComparing(ClubSearchResult::name)
+                                .thenComparing(ClubSearchResult::name, Comparator.nullsLast(String::compareTo))
                 )
+                .map(r -> new ClubSearchResult(
+                        r.id(),
+                        r.name(),
+                        r.logo(),
+                        r.tags(),
+                        r.state(),
+                        r.category(),
+                        r.division(),
+                        r.introduction(),
+                        r.recruitmentStatus()))
                 .collect(Collectors.toList());
 
         return ClubSearchResponse.builder()
-                .clubs(result)
-                .totalCount(result.size())
+                .clubs(sortedResult)
+                .totalCount(sortedResult.size())
                 .build();
     }
 
-    private String quotedKeyword(String keyword) {
-        return (keyword == null || keyword.trim().isEmpty()) ? keyword : Pattern.quote(keyword.trim());
-    }
 }

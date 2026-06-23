@@ -1,0 +1,129 @@
+import groovy.json.JsonSlurper
+
+['dev', 'staging', 'prod'].each { env ->
+    tasks.register("setup${env.capitalize()}") {
+        group = 'initialization'
+        description = "Extracts application.yml and firebase.json from Infisical (${env} environment)"
+        doLast {
+            def execOperations = services.get(ExecOperations)
+            def isWindows = System.getProperty('os.name').toLowerCase().contains('windows')
+            def currentPath = System.getenv('PATH') ?: ""
+            def commonPath = isWindows ? currentPath : "${currentPath}:/opt/homebrew/bin:/usr/local/bin"
+            println "Fetching secrets from Infisical (env: ${env})..."
+            // ──────────────────────────────────────────────
+            // 1. Infisical에서 시크릿 JSON 추출
+            // ──────────────────────────────────────────────
+            def propsOut = new ByteArrayOutputStream()
+            def propsErr = new ByteArrayOutputStream()
+            def propsResult = execOperations.exec {
+                environment 'PATH', commonPath
+                if (isWindows) {
+                    commandLine 'cmd', '/c', "infisical export --env ${env} --format json --silent"
+                } else {
+                    commandLine 'sh', '-c', "infisical export --env ${env} --format json --silent"
+                }
+                standardOutput = propsOut
+                errorOutput = propsErr
+                ignoreExitValue = true
+            }
+            if (propsResult.exitValue != 0) {
+                throw new GradleException("""
+                    |Infisical CLI 실행 실패 (exit code: ${propsResult.exitValue})
+                    |
+                    |stderr: ${propsErr.toString().trim()}
+                    |
+                    |다음 사항을 확인해주세요:
+                    |  1. infisical CLI 설치 여부: brew install infisical/get-cli/infisical
+                    |  2. 로그인 여부: infisical login
+                    |  3. 프로젝트 초기화 여부: infisical init
+                """.stripMargin())
+            }
+            // ──────────────────────────────────────────────
+            // 2. JSON → Nested Map 변환 (file 태그 제외)
+            // ──────────────────────────────────────────────
+            def jsonResponse = new JsonSlurper().parseText(propsOut.toString())
+            def nestedMap = [:]
+            def secrets = jsonResponse instanceof List
+                    ? jsonResponse
+                    : jsonResponse.collect { k, v -> [key: k, value: v] }
+            secrets.each { entry ->
+                def tags = entry.tags ?: []
+                if (tags.any { it.slug == 'file' }) return
+                def k = entry.key
+                def v = entry.value
+                def keys = k.split('\\.')
+                def current = nestedMap
+                for (int i = 0; i < keys.length - 1; i++) {
+                    def existing = current[keys[i]]
+                    if (existing != null && !(existing instanceof Map)) {
+                        println "Key 충돌 감지: '${keys[0..i].join('.')}'가 이미 값으로 존재합니다. Map으로 덮어씁니다."
+                        current[keys[i]] = [:]
+                    }
+                    current = current.computeIfAbsent(keys[i], { [:] })
+                }
+                current[keys[keys.length - 1]] = v
+            }
+            // ──────────────────────────────────────────────
+            // 3. Nested Map → YAML 문자열 변환
+            // ──────────────────────────────────────────────
+            def toYaml
+            toYaml = { Map map, int indent ->
+                def yaml = new StringBuilder()
+                def prefix = "  " * indent
+                map.each { key, value ->
+                    if (value instanceof Map) {
+                        yaml.append("${prefix}${key}:\n")
+                        yaml.append(toYaml(value, indent + 1))
+                    } else {
+                        def strValue = value.toString()
+                        if (strValue.contains('\n')) {
+                            // 멀티라인은 block scalar 사용
+                            yaml.append("${prefix}${key}: |-\n")
+                            strValue.eachLine { line ->
+                                yaml.append("${prefix}  ${line}\n")
+                            }
+                        } else {
+                            // 모든 단일 값은 쌍따옴표로 감싸기
+                            def escaped = strValue.replace('\\', '\\\\').replace('"', '\\"')
+                            yaml.append("${prefix}${key}: \"${escaped}\"\n")
+                        }
+                    }
+                }
+                return yaml.toString()
+            }
+            def resourcesDir = file("src/main/resources")
+            if (!resourcesDir.exists()) {
+                resourcesDir.mkdirs()
+            }
+            file("src/main/resources/application.yml").text = toYaml(nestedMap, 0)
+            println "Successfully created application.yml (${env})"
+
+            // 기존 application.properties가 있으면 삭제
+            def oldProps = file("src/main/resources/application.properties")
+            if (oldProps.exists()) {
+                oldProps.delete()
+            }
+
+            // ──────────────────────────────────────────────
+            // 4. firebase.json 추출
+            // ──────────────────────────────────────────────
+            def fbErr = new ByteArrayOutputStream()
+            def fbResult = execOperations.exec {
+                environment 'PATH', commonPath
+                if (isWindows) {
+                    commandLine 'cmd', '/c', "infisical secrets get FIREBASE_JSON --env ${env} --plain"
+                } else {
+                    commandLine 'sh', '-c', "infisical secrets get FIREBASE_JSON --env ${env} --plain"
+                }
+                standardOutput = new FileOutputStream(file("src/main/resources/firebase.json"))
+                errorOutput = fbErr
+                ignoreExitValue = true
+            }
+            if (fbResult.exitValue != 0) {
+                println "firebase.json 추출 실패 (exit code: ${fbResult.exitValue}): ${fbErr.toString().trim()}"
+            } else {
+                println "Successfully created firebase.json (${env})"
+            }
+        }
+    }
+}

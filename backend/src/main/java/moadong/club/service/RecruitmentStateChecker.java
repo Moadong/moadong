@@ -7,6 +7,9 @@ import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.club.util.RecruitmentStateCalculator;
+import moadong.club.util.RecruitmentStateNotificationBuilder;
+import moadong.fcm.port.PushNotificationPort;
+import net.javacrumbs.shedlock.spring.annotation.SchedulerLock;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
@@ -22,8 +25,11 @@ public class RecruitmentStateChecker {
 
     private final ClubRepository clubRepository;
     private final RecruitmentStateCalculator recruitmentStateCalculator;
+    private final RecruitmentStateNotificationBuilder recruitmentStateNotificationBuilder;
+    private final PushNotificationPort pushNotificationPort;
 
-    @Scheduled(fixedRate = 60 * 60 * 1000) // 1시간마다 실행
+    @Scheduled(fixedRate = 10 * 60 * 1000) // 10분마다 실행
+    @SchedulerLock(name="RecruitmentStateChecker", lockAtMostFor = "1m", lockAtLeastFor = "1s")
     public void performTask() {
         List<Club> clubs = clubRepository.findAll();
         for (Club club : clubs) {
@@ -33,10 +39,17 @@ public class RecruitmentStateChecker {
             if (recruitInfo.getClubRecruitmentStatus() == ClubRecruitmentStatus.ALWAYS) {
                 continue;
             }
-            recruitmentStateCalculator.calculate(club, recruitmentStartDate, recruitmentEndDate);
+            boolean changed = recruitmentStateCalculator.calculate(club, recruitmentStartDate, recruitmentEndDate);
+            if (changed) {
+                pushNotificationPort.send(
+                        recruitmentStateNotificationBuilder.build(
+                                club,
+                                club.getClubRecruitmentInformation().getClubRecruitmentStatus()
+                        )
+                );
+            }
 
             clubRepository.save(club);
         }
     }
 }
-

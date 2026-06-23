@@ -2,6 +2,8 @@ package moadong.media.service;
 
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
+import moadong.global.config.properties.AwsProperties;
+import moadong.global.config.properties.ServerProperties;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.util.annotations.UnitTest;
@@ -21,8 +23,7 @@ import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.*;
 
 @UnitTest
 @ExtendWith(MockitoExtension.class)
@@ -41,10 +42,23 @@ public class CloudFlareImageServiceTest {
     @Mock
     private S3Presigner s3Presigner;
 
+    @Mock
+    private AwsProperties awsProperties;
+
+    @Mock
+    private ServerProperties serverProperties;
+
+    @Mock
+    private AwsProperties.S3 awsS3;
+
     @BeforeEach
     void setUp() {
-        ReflectionTestUtils.setField(cloudflareImageService, "viewEndpoint", "https://cdn.example.com/");
-        ReflectionTestUtils.setField(cloudflareImageService, "bucketName", "test-bucket");
+        // AwsProperties Mock 설정
+        lenient().when(awsProperties.s3()).thenReturn(awsS3);
+        lenient().when(awsS3.viewEndpoint()).thenReturn("https://cdn.example.com/");
+        lenient().when(awsS3.bucket()).thenReturn("test-bucket");
+        
+        // init 메서드 호출을 통해 normalizedViewEndpoint 초기화
         ReflectionTestUtils.invokeMethod(cloudflareImageService, "init");
     }
 

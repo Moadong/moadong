@@ -16,6 +16,7 @@ import java.util.Date;
 import java.util.Optional;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
+import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.JwtProvider;
 import moadong.user.entity.RefreshToken;
@@ -110,5 +111,27 @@ public class UserLoginTest {
         assertThrows(RestApiException.class, ()->{
             LoginResponse result = userCommandService.loginUser(request, realHttpServletResponse);
         });
+    }
+
+    @Test
+    void 로그아웃_시에_저장된_리프레시_토큰을_제거한다() {
+        String refreshToken = "refreshToken123";
+        User user = new User();
+        user.addRefreshToken(new RefreshToken(refreshToken, Date.from(Instant.now().plusSeconds(3600))));
+        when(userRepository.findUserByRefreshTokens_Token(refreshToken)).thenReturn(Optional.of(user));
+
+        userCommandService.logoutUser(refreshToken);
+
+        assertTrue(user.getRefreshTokens().isEmpty());
+        verify(userRepository).save(user);
+    }
+
+    @Test
+    void 로그아웃_시에_리프레시_토큰이_없으면_토큰_오류로_실패한다() {
+        RestApiException exception = assertThrows(RestApiException.class, () -> {
+            userCommandService.logoutUser(null);
+        });
+
+        assertEquals(ErrorCode.TOKEN_INVALID, exception.getErrorCode());
     }
 }

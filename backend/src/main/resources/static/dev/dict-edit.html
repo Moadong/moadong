@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>단어사전 수정</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { font-family: system-ui, sans-serif; max-width: 480px; margin: 0 auto; padding: 20px; line-height: 1.5; }
+    h1 { font-size: 1.2rem; margin: 0 0 16px; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; }
+    input, textarea { padding: 8px 10px; margin: 4px 0; width: 100%; display: block; }
+    textarea { min-height: 80px; resize: vertical; }
+    button { padding: 8px 16px; margin-right: 8px; margin-top: 8px; cursor: pointer; border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb; }
+    button:hover:not(:disabled) { background: #f3f4f6; }
+    button:disabled { opacity: 0.7; cursor: not-allowed; }
+    button:focus-visible, input:focus-visible, textarea:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .form-row { margin-bottom: 12px; }
+    .form-row label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 0.9rem; }
+    .message-box { margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; }
+    .message-box.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .message-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    .hidden { display: none !important; }
+    .loading { color: #666; padding: 24px; text-align: center; }
+    .error-banner { padding: 12px; background: #fef2f2; border: 1px solid #fecaca; border-radius: 6px; color: #dc2626; margin-bottom: 16px; }
+    input[readonly] { background: #f3f4f6; }
+  </style>
+</head>
+<body>
+  <h1>
+    <span id="pageTitle">단어사전 수정</span>
+    <button type="button" id="btnClose">닫기</button>
+  </h1>
+  <div id="loadError" class="error-banner hidden"></div>
+  <div id="loadState" class="loading">불러오는 중...</div>
+  <div id="editForm" class="hidden">
+    <div class="form-row">
+      <label for="editStandardWord">표준단어</label>
+      <input type="text" id="editStandardWord" readonly>
+    </div>
+    <div class="form-row">
+      <label for="editInputWords">입력단어 (쉼표로 구분)</label>
+      <textarea id="editInputWords" placeholder="단어1, 단어2, 단어3"></textarea>
+    </div>
+    <button type="button" id="btnSave">저장</button>
+    <div id="saveResult" class="message-box hidden"></div>
+  </div>
+
+  <script>
+    const API_BASE = '';
+    const params = new URLSearchParams(window.location.search);
+    const dictId = params.get('id');
+
+    function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
+    function headers() {
+      const t = getToken();
+      const h = { 'Content-Type': 'application/json' };
+      if (t) h['Authorization'] = 'Bearer ' + t;
+      return h;
+    }
+
+    function parseInputWordsStr(str) {
+      if (!str || !str.trim()) return [];
+      return str.split(/[,，\s]+/).map(s => s.trim()).filter(Boolean);
+    }
+
+    function showResult(ok, message) {
+      const el = document.getElementById('saveResult');
+      el.textContent = message;
+      el.className = 'message-box ' + (ok ? 'success' : 'error');
+      el.classList.remove('hidden');
+      if (ok) setTimeout(() => el.classList.add('hidden'), 3000);
+    }
+
+    document.getElementById('btnClose').onclick = function() { window.close(); };
+
+    if (!dictId) {
+      document.getElementById('loadState').textContent = 'id가 없습니다.';
+      document.getElementById('loadError').textContent = 'URL에 id가 필요합니다.';
+      document.getElementById('loadError').classList.remove('hidden');
+    } else if (!getToken()) {
+      document.getElementById('loadState').textContent = '로그인이 필요합니다.';
+      document.getElementById('loadError').textContent = '개발자 포털에서 로그인한 뒤 목록에서 수정을 클릭해 주세요.';
+      document.getElementById('loadError').classList.remove('hidden');
+    } else {
+      document.getElementById('pageTitle').textContent = '단어사전 수정';
+      (async function() {
+        try {
+          const res = await fetch(API_BASE + '/api/admin/word-dictionary/' + encodeURIComponent(dictId), { headers: headers() });
+          const data = await res.json();
+          if (!res.ok) {
+            document.getElementById('loadState').classList.add('hidden');
+            document.getElementById('loadError').textContent = data.message || 'HTTP ' + res.status;
+            document.getElementById('loadError').classList.remove('hidden');
+            return;
+          }
+          const item = data.data || {};
+          document.getElementById('editStandardWord').value = item.standardWord || '';
+          document.getElementById('editInputWords').value = (item.inputWords || []).join(', ');
+          document.getElementById('loadState').classList.add('hidden');
+          document.getElementById('editForm').classList.remove('hidden');
+        } catch (e) {
+          document.getElementById('loadState').classList.add('hidden');
+          document.getElementById('loadError').textContent = e.message || '요청 실패';
+          document.getElementById('loadError').classList.remove('hidden');
+        }
+      })();
+    }
+
+    document.getElementById('btnSave').onclick = async function() {
+      if (!dictId) return;
+      const inputWordsStr = document.getElementById('editInputWords').value.trim();
+      const inputWords = parseInputWordsStr(inputWordsStr);
+      if (!inputWords.length) {
+        showResult(false, '입력단어를 하나 이상 입력하세요.');
+        return;
+      }
+      const btn = this;
+      document.getElementById('saveResult').classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = '저장 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary/' + encodeURIComponent(dictId), {
+          method: 'PUT',
+          headers: headers(),
+          body: JSON.stringify({ inputWords })
+        });
+        const data = await res.json();
+        const msg = res.ok ? (data.message || '저장됨') : (data.message || '요청 실패 (HTTP ' + res.status + ')');
+        showResult(res.ok, msg);
+        if (res.ok && window.opener) {
+          try { window.opener.document.getElementById('btnLoadDict').click(); } catch (_) {}
+        }
+      } catch (e) {
+        showResult(false, e.message || '요청 실패');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '저장';
+      }
+    };
+  </script>
+</body>
+</html>
