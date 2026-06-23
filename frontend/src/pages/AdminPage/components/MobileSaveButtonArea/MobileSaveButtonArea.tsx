@@ -6,7 +6,10 @@ interface MobileSaveButtonAreaProps {
   disabled?: boolean;
 }
 
-const MobileSaveButtonArea = ({ onClick, disabled }: MobileSaveButtonAreaProps) => (
+const MobileSaveButtonArea = ({
+  onClick,
+  disabled,
+}: MobileSaveButtonAreaProps) => (
   <Styled.SaveButtonArea>
     <Button onClick={onClick} disabled={disabled}>
       저장하기
