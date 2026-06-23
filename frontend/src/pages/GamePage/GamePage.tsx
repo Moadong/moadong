@@ -163,14 +163,13 @@ const GamePage = () => {
     };
   }, [isDark]);
 
-  // memo된 RankingBoard가 게이지/버닝 틱마다 리렌더되지 않도록 참조를 고정한다
-  const handleStart = useCallback((name: string) => {
+  const handleStart = (name: string) => {
     localStorage.setItem(STORAGE_KEY, name);
     setClubName(name);
     // 새 동아리를 고르면 개인 카운터를 초기화해 이전 동아리 클릭이 남지 않게 한다
     setMyCount(0);
     setIsEditing(false);
-  }, []);
+  };
 
   const handleChangeClub = () => {
     setIsEditing(true);
