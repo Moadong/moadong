@@ -52,7 +52,9 @@ const useClubInfoEdit = () => {
   const clubDetail = useOutletContext<ClubDetail | null>();
   const { mutate: updateClub } = useUpdateClubDetail();
 
-  const [initialValues, setInitialValues] = useState<InitialValues | null>(null);
+  const [initialValues, setInitialValues] = useState<InitialValues | null>(
+    null,
+  );
 
   const [clubName, setClubName] = useState('');
   const [clubPresidentName, setClubPresidentName] = useState('');

@@ -1,21 +1,15 @@
-import { useRef } from 'react';
-import LogoEditIcon from '@/assets/images/icons/logo_edit_icon.svg?react';
-import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import Button from '@/components/common/Button/Button';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { ADMIN_EVENT } from '@/constants/eventName';
-import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import { useDeleteCover, useUploadCover } from '@/hooks/Queries/useClubCover';
-import { useUploadLogo } from '@/hooks/Queries/useClubImages';
 import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
 import NavField from '@/pages/AdminPage/components/editFields/NavField/NavField';
 import TextField from '@/pages/AdminPage/components/editFields/TextField/TextField';
-import { useAdminClubId } from '@/store/useAdminClubStore';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
 import { ClubDetail, SNSPlatform } from '@/types/club';
 import * as Styled from './ClubInfoEditTabMobile.styles';
+import MobileBannerSection from './components/mobile/MobileBannerSection/MobileBannerSection';
 import { categories } from './hooks/useClubInfoEdit';
 
 interface ClubInfoEditTabMobileProps {
@@ -46,100 +40,22 @@ const ClubInfoEditTabMobile = ({
   isDirty,
 }: ClubInfoEditTabMobileProps) => {
   const trackEvent = useMixpanelTrack();
-  const { clubId } = useAdminClubId();
 
-  const coverInputRef = useRef<HTMLInputElement>(null);
-  const logoInputRef = useRef<HTMLInputElement>(null);
-
-  const { mutate: uploadCover } = useUploadCover();
-  const { mutate: deleteCover } = useDeleteCover();
-  const { mutate: uploadLogo } = useUploadLogo();
-
-  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file || !clubId) return;
-    if (file.size > MAX_FILE_SIZE) {
-      alert('파일 크기가 너무 커요! 10MB 이하 이미지만 업로드할 수 있어요.');
-      return;
-    }
-    uploadCover({ clubId, file });
-  };
-
-  const handleLogoFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    e.target.value = '';
-    if (!file || !clubId) return;
-    if (file.size > MAX_FILE_SIZE) {
-      alert('파일 크기가 너무 커요! 10MB 이하 이미지만 업로드할 수 있어요.');
-      return;
-    }
-    uploadLogo({ clubId, file });
-  };
-
-  const coverUrl = clubDetail?.cover;
-  const logoUrl = clubDetail?.logo;
   const bannerColor = TAG_COLORS[selectedCategory] || colors.gray[400];
-
   const snsLinkCount = Object.values(socialLinks).filter(
     (link) => link.trim() !== '',
   ).length;
-
   const filledTags = clubTags.filter((t) => t.trim() !== '');
 
   return (
     <>
       <Styled.MobileContainer>
         <WebviewTopBar title='기본 정보 수정' />
-        <Styled.BannerArea $bgColor={bannerColor}>
-          {coverUrl && <Styled.CoverImage src={coverUrl} alt='커버 이미지' />}
-          <Styled.BannerButtonGroup>
-            <Styled.BannerEditButton
-              onClick={() => coverInputRef.current?.click()}
-            >
-              배너 수정
-            </Styled.BannerEditButton>
-            {coverUrl && (
-              <Styled.BannerEditButton
-                onClick={() => {
-                  if (!clubId) return;
-                  deleteCover(clubId);
-                }}
-              >
-                초기화
-              </Styled.BannerEditButton>
-            )}
-          </Styled.BannerButtonGroup>
-
-          <Styled.LogoWrapper>
-            <Styled.LogoFrame>
-              <Styled.LogoImage
-                src={logoUrl || defaultLogo}
-                alt='동아리 로고'
-                onClick={() => logoInputRef.current?.click()}
-              />
-            </Styled.LogoFrame>
-            <Styled.LogoEditButton
-              onClick={() => logoInputRef.current?.click()}
-              aria-label='로고 수정'
-            >
-              <LogoEditIcon />
-            </Styled.LogoEditButton>
-          </Styled.LogoWrapper>
-
-          <Styled.HiddenInput
-            ref={coverInputRef}
-            type='file'
-            accept='image/*'
-            onChange={handleCoverFileChange}
-          />
-          <Styled.HiddenInput
-            ref={logoInputRef}
-            type='file'
-            accept='image/*'
-            onChange={handleLogoFileChange}
-          />
-        </Styled.BannerArea>
+        <MobileBannerSection
+          coverUrl={clubDetail?.cover}
+          logoUrl={clubDetail?.logo}
+          bannerColor={bannerColor}
+        />
 
         <Styled.FormSection>
           <TextField
