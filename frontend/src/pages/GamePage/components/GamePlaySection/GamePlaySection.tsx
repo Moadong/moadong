@@ -1,9 +1,9 @@
-import BurningGauge from '../BurningGauge/BurningGauge';
-import ClickButton from '../ClickButton/ClickButton';
 import {
   BURNING_MULTIPLIER,
   useBurningGauge,
 } from '../../hooks/useBurningGauge';
+import BurningGauge from '../BurningGauge/BurningGauge';
+import ClickButton from '../ClickButton/ClickButton';
 import * as S from './GamePlaySection.styles';
 
 interface GamePlaySectionProps {
