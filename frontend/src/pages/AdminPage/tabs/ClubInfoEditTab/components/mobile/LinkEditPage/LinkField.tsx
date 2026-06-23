@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
-import { colors } from '@/styles/theme/colors';
 import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
+import { colors } from '@/styles/theme/colors';
 import * as Styled from './LinkField.styles';
 
 interface LinkFieldProps {
