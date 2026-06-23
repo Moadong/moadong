@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW } from '@/constants/eventName';
@@ -9,6 +9,7 @@ import BackgroundFirework from './components/BackgroundFirework/BackgroundFirewo
 import ClickButton from './components/ClickButton/ClickButton';
 import ClubNameInput from './components/ClubNameInput/ClubNameInput';
 import DotTextEffect from './components/DotTextEffect/DotTextEffect';
+import FallingBubbles from './components/FallingBubbles/FallingBubbles';
 import RankingBoard from './components/RankingBoard/RankingBoard';
 import * as S from './GamePage.styles';
 import { useBatchedClick } from './hooks/useBatchedClick';
@@ -55,8 +56,21 @@ const GamePage = () => {
     () => sessionStorage.getItem(DARK_KEY) === 'true',
   );
 
+  const [myCount, setMyCount] = useState(0);
+
   const { data: rankingData } = useGameRanking();
-  const handleClick = useBatchedClick(clubName);
+  const sendClick = useBatchedClick(clubName);
+
+  // 버튼 클릭(1)과 비눗방울 터치(방울 값)를 합산해 개인 카운터와 서버에 반영
+  const gainCount = useCallback(
+    (amount: number) => {
+      setMyCount((prev) => prev + amount);
+      sendClick(amount);
+    },
+    [sendClick],
+  );
+
+  const handleButtonClick = useCallback(() => gainCount(1), [gainCount]);
 
   useTrackPageView(PAGE_VIEW.GAME_PAGE);
 
@@ -161,6 +175,8 @@ const GamePage = () => {
           <BackgroundFirework key={id} />
         ))}
 
+        {clubName && !isEditing && <FallingBubbles onCatch={gainCount} />}
+
         <S.Content>
           <S.ToggleBar>
             <S.ToggleSwitch
@@ -244,7 +260,8 @@ const GamePage = () => {
             ) : (
               <ClickButton
                 clubName={clubName}
-                onClickGame={handleClick}
+                count={myCount}
+                onClickGame={handleButtonClick}
                 onChangeClub={handleChangeClub}
                 isDark={isDark}
               />

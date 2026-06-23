@@ -5,6 +5,7 @@ import * as S from './ClickButton.styles';
 
 interface ClickButtonProps {
   clubName: string;
+  count: number;
   onClickGame: () => void;
   onChangeClub: () => void;
   isDark?: boolean;
@@ -86,11 +87,11 @@ const Firework = ({ isMobile }: { isMobile: boolean }) => {
 
 const ClickButton = ({
   clubName,
+  count,
   onClickGame,
   onChangeClub,
   isDark = false,
 }: ClickButtonProps) => {
-  const [clickCount, setClickCount] = useState(0);
   const [bursts, setBursts] = useState<number[]>([]);
   const [isMobile, setIsMobile] = useState(mobileQuery?.matches ?? false);
   const burstIdRef = useRef(0);
@@ -116,7 +117,6 @@ const ClickButton = ({
     if (now - lastClickRef.current < CLICK_THROTTLE_MS) return;
     lastClickRef.current = now;
 
-    setClickCount((prev) => prev + 1);
     onClickGame();
 
     const id = burstIdRef.current++;
@@ -162,14 +162,14 @@ const ClickButton = ({
       <S.CountWrapper>
         <AnimatePresence mode='popLayout'>
           <motion.span
-            key={clickCount}
+            key={count}
             initial={{ opacity: 0, y: -12, scale: 0.8 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{ opacity: 0, y: 12, scale: 0.8 }}
             transition={{ type: 'spring', stiffness: 300, damping: 20 }}
             style={{ fontSize: '2rem', fontWeight: 800, color: '#FF5414' }}
           >
-            {clickCount.toLocaleString()}
+            {count.toLocaleString()}
           </motion.span>
         </AnimatePresence>
         <S.CountLabel $dark={isDark}>회</S.CountLabel>
