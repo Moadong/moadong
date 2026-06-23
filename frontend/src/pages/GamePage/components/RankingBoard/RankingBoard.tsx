@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { GameRankingEntry } from '@/types/game';
 import * as S from './RankingBoard.styles';
 
@@ -23,6 +25,7 @@ const RankingBoard = ({
   onSelectClub,
 }: RankingBoardProps) => {
   const [isExpanded, setIsExpanded] = useState(false);
+  const trackEvent = useMixpanelTrack();
 
   const visibleRanking = isExpanded ? ranking : ranking.slice(0, TOP_COUNT);
   const hasMore = ranking.length > TOP_COUNT;
@@ -57,7 +60,14 @@ const RankingBoard = ({
                   <S.Item
                     {...(onSelectClub
                       ? {
-                          onClick: () => onSelectClub(entry.clubName),
+                          onClick: () => {
+                            // 카드 클릭 = 게임 대상 동아리 변경 (상세 이동과 별개 이벤트)
+                            trackEvent(USER_EVENT.GAME_RANKING_CLUB_SELECTED, {
+                              clubName: entry.clubName,
+                              rank: entry.rank,
+                            });
+                            onSelectClub(entry.clubName);
+                          },
                         }
                       : {
                           as: Link,
@@ -87,7 +97,14 @@ const RankingBoard = ({
                       <S.DetailLink
                         as={Link}
                         to={`/clubDetail/@${encodeURIComponent(entry.clubName)}`}
-                        onClick={(e: React.MouseEvent) => e.stopPropagation()}
+                        onClick={(e: React.MouseEvent) => {
+                          // 네비게이션 버튼 클릭 = 상세페이지 이동 (카드 선택과 별개 이벤트)
+                          e.stopPropagation();
+                          trackEvent(USER_EVENT.GAME_RANKING_DETAIL_CLICKED, {
+                            clubName: entry.clubName,
+                            rank: entry.rank,
+                          });
+                        }}
                         $dark={isDark}
                         aria-label={`${entry.clubName} 상세페이지`}
                       >
