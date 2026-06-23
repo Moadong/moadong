@@ -16,6 +16,7 @@ import { colors } from '@/styles/theme/colors';
 import { ClubDetail, SNSPlatform } from '@/types/club';
 import * as Styled from './ClubInfoEditTabMobile.styles';
 import FreeTagEditPage from './components/mobile/FreeTagEditPage/FreeTagEditPage';
+import LinkEditPage from './components/mobile/LinkEditPage/LinkEditPage';
 import { categories } from './hooks/useClubInfoEdit';
 
 interface ClubInfoEditTabMobileProps {
@@ -29,11 +30,12 @@ interface ClubInfoEditTabMobileProps {
   clubTags: string[];
   setClubTags: (tags: string[]) => void;
   socialLinks: Record<SNSPlatform, string>;
+  onSocialLinksChange: (links: { instagram: string; youtube: string }) => void;
   handleUpdateClub: () => void;
   isDirty: boolean;
 }
 
-type ActivePage = 'main' | 'freeTags';
+type ActivePage = 'main' | 'freeTags' | 'links';
 
 const ClubInfoEditTabMobile = ({
   clubDetail,
@@ -46,6 +48,7 @@ const ClubInfoEditTabMobile = ({
   clubTags,
   setClubTags,
   socialLinks,
+  onSocialLinksChange,
   handleUpdateClub,
   isDirty,
 }: ClubInfoEditTabMobileProps) => {
@@ -77,8 +80,8 @@ const ClubInfoEditTabMobile = ({
   const coverUrl = clubDetail?.cover;
   const logoUrl = clubDetail?.logo;
   const bannerColor = TAG_COLORS[selectedCategory] || colors.gray[400];
-  const snsLinkCount = Object.values(socialLinks).filter(
-    (link) => link.trim() !== '',
+  const snsLinkCount = (['instagram', 'youtube'] as const).filter(
+    (key) => socialLinks[key].trim() !== '',
   ).length;
   const filledTags = clubTags.filter((t) => t.trim() !== '');
 
@@ -87,6 +90,19 @@ const ClubInfoEditTabMobile = ({
       <FreeTagEditPage
         initialTags={clubTags}
         onSave={setClubTags}
+        onBack={() => setActivePage('main')}
+      />
+    );
+  }
+
+  if (activePage === 'links') {
+    return (
+      <LinkEditPage
+        initialLinks={{
+          instagram: socialLinks.instagram,
+          youtube: socialLinks.youtube,
+        }}
+        onSave={onSocialLinksChange}
         onBack={() => setActivePage('main')}
       />
     );
@@ -206,6 +222,7 @@ const ClubInfoEditTabMobile = ({
             label='링크 추가'
             onNavigate={() => {
               trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: '링크 추가' });
+              setActivePage('links');
             }}
           >
             {snsLinkCount > 0 ? (

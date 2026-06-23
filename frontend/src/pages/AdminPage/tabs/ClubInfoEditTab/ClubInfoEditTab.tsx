@@ -54,6 +54,9 @@ const ClubInfoEditTab = () => {
         clubTags={clubTags}
         setClubTags={setClubTags}
         socialLinks={socialLinks}
+        onSocialLinksChange={(links) =>
+          setSocialLinks((prev) => ({ ...prev, ...links }))
+        }
         handleUpdateClub={handleUpdateClub}
         isDirty={isDirty}
       />
