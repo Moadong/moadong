@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { SNS_CONFIG } from '@/constants/snsConfig';
-import LinkField from '@/pages/AdminPage/components/editFields/LinkField/LinkField';
+import LinkField from './LinkField';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { validateSocialLink } from '@/utils/validateSocialLink';
 import * as Styled from './LinkEditPage.styles';
