@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { memo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { GameRankingEntry } from '@/types/game';
@@ -115,4 +115,4 @@ const RankingBoard = ({
   );
 };
 
-export default RankingBoard;
+export default memo(RankingBoard);
