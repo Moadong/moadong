@@ -14,8 +14,8 @@ import { useAdminClubId } from '@/store/useAdminClubStore';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
 import { ClubDetail, SNSPlatform } from '@/types/club';
-import FreeTagEditPage from './components/mobile/FreeTagEditPage/FreeTagEditPage';
 import * as Styled from './ClubInfoEditTabMobile.styles';
+import FreeTagEditPage from './components/mobile/FreeTagEditPage/FreeTagEditPage';
 import { categories } from './hooks/useClubInfoEdit';
 
 interface ClubInfoEditTabMobileProps {
@@ -77,7 +77,9 @@ const ClubInfoEditTabMobile = ({
   const coverUrl = clubDetail?.cover;
   const logoUrl = clubDetail?.logo;
   const bannerColor = TAG_COLORS[selectedCategory] || colors.gray[400];
-  const snsLinkCount = Object.values(socialLinks).filter((link) => link.trim() !== '').length;
+  const snsLinkCount = Object.values(socialLinks).filter(
+    (link) => link.trim() !== '',
+  ).length;
   const filledTags = clubTags.filter((t) => t.trim() !== '');
 
   if (activePage === 'freeTags') {
@@ -97,7 +99,9 @@ const ClubInfoEditTabMobile = ({
         <Styled.BannerArea $bgColor={bannerColor}>
           {coverUrl && <Styled.CoverImage src={coverUrl} alt='커버 이미지' />}
           <Styled.BannerButtonGroup>
-            <Styled.BannerEditButton onClick={() => coverInputRef.current?.click()}>
+            <Styled.BannerEditButton
+              onClick={() => coverInputRef.current?.click()}
+            >
               배너 수정
             </Styled.BannerEditButton>
             {coverUrl && (
