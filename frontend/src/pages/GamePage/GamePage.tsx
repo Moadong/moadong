@@ -6,15 +6,13 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGameRanking } from '@/hooks/Queries/useGame';
 import isInAppWebView from '@/utils/isInAppWebView';
 import BackgroundFirework from './components/BackgroundFirework/BackgroundFirework';
-import BurningGauge from './components/BurningGauge/BurningGauge';
-import ClickButton from './components/ClickButton/ClickButton';
 import ClubNameInput from './components/ClubNameInput/ClubNameInput';
 import DotTextEffect from './components/DotTextEffect/DotTextEffect';
 import FallingBubbles from './components/FallingBubbles/FallingBubbles';
+import GamePlaySection from './components/GamePlaySection/GamePlaySection';
 import RankingBoard from './components/RankingBoard/RankingBoard';
 import * as S from './GamePage.styles';
 import { useBatchedClick } from './hooks/useBatchedClick';
-import { BURNING_MULTIPLIER, useBurningGauge } from './hooks/useBurningGauge';
 
 const STORAGE_KEY = 'game_club_name';
 const DARK_KEY = 'game_dark_mode';
@@ -62,12 +60,6 @@ const GamePage = () => {
 
   const { data: rankingData } = useGameRanking();
   const sendClick = useBatchedClick(clubName);
-  const {
-    gaugeRatio,
-    isBurning,
-    burningRemainingSec,
-    registerClick: registerBurningClick,
-  } = useBurningGauge();
 
   // 버튼 클릭(1)과 비눗방울 터치(방울 값)를 합산해 개인 카운터와 서버에 반영.
   // source를 전달해 비눗방울 적립이 버튼 쓰로틀에 걸려 누락되지 않도록 한다.
@@ -78,12 +70,6 @@ const GamePage = () => {
     },
     [sendClick],
   );
-
-  // 버튼 클릭은 버닝 게이지를 채우고, 버닝 중에는 클릭당 +2씩 적립된다.
-  const handleButtonClick = useCallback(() => {
-    registerBurningClick();
-    gainCount(isBurning ? BURNING_MULTIPLIER : 1, 'button');
-  }, [registerBurningClick, isBurning, gainCount]);
 
   const handleBubbleCatch = useCallback(
     (amount: number) => gainCount(amount, 'bubble'),
@@ -280,21 +266,13 @@ const GamePage = () => {
                 isDark={isDark}
               />
             ) : (
-              <S.PlayArea>
-                <BurningGauge
-                  ratio={gaugeRatio}
-                  isBurning={isBurning}
-                  remainingSec={burningRemainingSec}
-                  isDark={isDark}
-                />
-                <ClickButton
-                  clubName={clubName}
-                  count={myCount}
-                  onClickGame={handleButtonClick}
-                  onChangeClub={handleChangeClub}
-                  isDark={isDark}
-                />
-              </S.PlayArea>
+              <GamePlaySection
+                clubName={clubName}
+                myCount={myCount}
+                gainCount={gainCount}
+                onChangeClub={handleChangeClub}
+                isDark={isDark}
+              />
             )}
           </motion.div>
 

@@ -30,7 +30,7 @@ export const useBatchedClick = (clubName: string) => {
   const firstClickTimeRef = useRef<string | null>(null);
   const isMountedRef = useRef(true);
   const { mutate: clickGame } = useClickGame();
-  const flushRef = useRef<(name: string) => void>(() => {});
+  const flushRef = useRef<(name: string, force?: boolean) => void>(() => {});
 
   const scheduleFlush = (name: string) => {
     // 언마운트 후에는 새 타이머를 걸지 않아 백그라운드 재전송/누수를 막는다
@@ -41,7 +41,7 @@ export const useBatchedClick = (clubName: string) => {
   };
 
   const flush = useCallback(
-    (name: string) => {
+    (name: string, force = false) => {
       if (pendingRef.current === 0) {
         if (timerRef.current) clearTimeout(timerRef.current);
         timerRef.current = null;
@@ -50,9 +50,11 @@ export const useBatchedClick = (clubName: string) => {
 
       // 직전 전송 이후 최소 간격이 지나지 않았으면, 남은 시간만큼 미뤄 레이트리밋을
       // 회피한다. 버닝으로 임계치에 빨리 도달해도 전송 빈도는 이 간격으로 고정된다.
+      // 단, 동아리 변경/언마운트처럼 즉시 보내야 하는 경우(force)는 가드를 우회한다.
+      // 그렇지 않으면 지연된 flush가 새 동아리 클릭과 섞여(pendingRef 공유) 오적립된다.
       const now = Date.now();
       const sinceLast = now - lastSendTimeRef.current;
-      if (sinceLast < MIN_SEND_INTERVAL) {
+      if (!force && sinceLast < MIN_SEND_INTERVAL) {
         if (!isMountedRef.current) return;
         if (timerRef.current) clearTimeout(timerRef.current);
         timerRef.current = setTimeout(
@@ -107,23 +109,22 @@ export const useBatchedClick = (clubName: string) => {
   useEffect(() => {
     const prevClubName = clubNameRef.current;
     if (prevClubName && prevClubName !== clubName && pendingRef.current > 0) {
-      flushRef.current(prevClubName);
+      flushRef.current(prevClubName, true);
     }
     clubNameRef.current = clubName;
   }, [clubName]);
 
   // 언마운트 cleanup 일원화: 가드를 먼저 내려 이후 scheduleFlush가 새 타이머를
-  // 못 걸게 한 뒤, 남은 타이머를 정리하고 미전송분을 마지막으로 한 번 보낸다.
-  // lastSendTime을 0으로 되돌려 전송 간격 가드를 우회한다(마지막 1회 추가 요청은
-  // 레이트리밋에 영향 없음). 버닝 백로그가 5를 넘긴 채 이탈하면 이 한 번의 flush로
-  // 최대 5개만 전송되고 나머지는 유실되지만, 게임 도중 이탈하는 드문 경우라 허용한다.
+  // 못 걸게 한 뒤, 남은 타이머를 정리하고 미전송분을 force로 마지막 한 번 보낸다
+  // (마지막 1회 추가 요청은 레이트리밋에 영향 없음). 버닝 백로그가 5를 넘긴 채
+  // 이탈하면 이 한 번의 flush로 최대 5개만 전송되고 나머지는 유실되지만, 게임 도중
+  // 이탈하는 드문 경우라 허용한다.
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = null;
-      lastSendTimeRef.current = 0;
-      flushRef.current(clubNameRef.current);
+      flushRef.current(clubNameRef.current, true);
     };
   }, []);
 
