@@ -24,6 +24,8 @@ export const useBatchedClick = (clubName: string) => {
   const flushRef = useRef<(name: string) => void>(() => {});
 
   const scheduleFlush = (name: string) => {
+    // 언마운트 후에는 새 타이머를 걸지 않아 백그라운드 재전송/누수를 막는다
+    if (!isMountedRef.current) return;
     if (!timerRef.current) {
       timerRef.current = setTimeout(() => flushRef.current(name), FLUSH_DELAY);
     }

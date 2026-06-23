@@ -66,6 +66,8 @@ const FallingBubbles = ({ onCatch }: FallingBubblesProps) => {
   const [pops, setPops] = useState<Pop[]>([]);
   const bubbleIdRef = useRef(0);
   const popIdRef = useRef(0);
+  const poppedRef = useRef<Set<number>>(new Set());
+  const timeoutsRef = useRef<Set<ReturnType<typeof setTimeout>>>(new Set());
 
   // 랜덤 간격으로 방울을 생성 (화면에 MAX_BUBBLES 초과 시 생성 건너뜀)
   useEffect(() => {
@@ -73,7 +75,8 @@ const FallingBubbles = ({ onCatch }: FallingBubblesProps) => {
     let timeoutId: ReturnType<typeof setTimeout>;
 
     const scheduleNext = () => {
-      const delay = SPAWN_MIN_MS + Math.random() * (SPAWN_MAX_MS - SPAWN_MIN_MS);
+      const delay =
+        SPAWN_MIN_MS + Math.random() * (SPAWN_MAX_MS - SPAWN_MIN_MS);
       timeoutId = setTimeout(() => {
         if (!active) return;
         setBubbles((prev) =>
@@ -86,9 +89,11 @@ const FallingBubbles = ({ onCatch }: FallingBubblesProps) => {
     };
 
     scheduleNext();
+    const timeouts = timeoutsRef.current;
     return () => {
       active = false;
       clearTimeout(timeoutId);
+      timeouts.forEach(clearTimeout);
     };
   }, []);
 
@@ -97,6 +102,10 @@ const FallingBubbles = ({ onCatch }: FallingBubblesProps) => {
   };
 
   const handlePop = (bubble: Bubble, e: React.MouseEvent) => {
+    // 같은 방울의 중복 터치(더블탭/오토클릭) 시 이중 적립 방지
+    if (poppedRef.current.has(bubble.id)) return;
+    poppedRef.current.add(bubble.id);
+
     onCatch(bubble.value);
     removeBubble(bubble.id);
 
@@ -111,9 +120,13 @@ const FallingBubbles = ({ onCatch }: FallingBubblesProps) => {
         hue: bubble.hue,
       },
     ]);
-    setTimeout(() => {
+    const timerId = setTimeout(() => {
       setPops((prev) => prev.filter((p) => p.id !== popId));
+      // 방울이 이미 언마운트된 뒤이므로 가드를 깨지 않고 메모리 정리
+      poppedRef.current.delete(bubble.id);
+      timeoutsRef.current.delete(timerId);
     }, POP_DURATION_MS);
+    timeoutsRef.current.add(timerId);
   };
 
   return (
