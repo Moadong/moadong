@@ -28,11 +28,16 @@ export const Track = styled.div<{ $dark: boolean; $burning: boolean }>`
   transition: box-shadow 0.2s;
 `;
 
+interface FillProps {
+  $ratio: number;
+  $burning: boolean;
+}
+
 // width는 매 decay 틱(20fps)마다 바뀌므로 CSS 템플릿이 아닌 inline style로 넘긴다.
 // 템플릿에 넣으면 값마다 새 클래스가 stylesheet에 주입돼 CSSOM 재파싱으로 렉이 생긴다.
-export const Fill = styled.div.attrs<{ $ratio: number }>(({ $ratio }) => ({
+export const Fill = styled.div.attrs<FillProps>(({ $ratio }) => ({
   style: { width: `${Math.min(100, Math.max(0, $ratio * 100))}%` },
-}))<{ $ratio: number; $burning: boolean }>`
+}))`
   height: 100%;
   border-radius: 999px;
   background: ${({ $burning }) =>
