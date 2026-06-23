@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { SNS_CONFIG } from '@/constants/snsConfig';
-import LinkField from './LinkField';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { validateSocialLink } from '@/utils/validateSocialLink';
 import * as Styled from './LinkEditPage.styles';
+import LinkField from './LinkField';
 
 interface LinkEditPageLinks {
   instagram: string;
@@ -46,7 +46,7 @@ const LinkEditPage = ({ initialLinks, onSave, onBack }: LinkEditPageProps) => {
   return (
     <>
       <Styled.Container>
-        <WebviewTopBar title='링크 추가' onBack={onBack} />
+        <WebviewTopBar title='링크추가' onBack={onBack} />
         <Styled.Content>
           <LinkField
             label={SNS_CONFIG.instagram.label}
