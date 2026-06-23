@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import Button from '@/components/common/Button/Button';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { ADMIN_EVENT } from '@/constants/eventName';
@@ -39,6 +40,7 @@ const ClubInfoEditTabMobile = ({
   handleUpdateClub,
   isDirty,
 }: ClubInfoEditTabMobileProps) => {
+  const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
   const bannerColor = TAG_COLORS[selectedCategory] || colors.gray[400];
@@ -50,7 +52,7 @@ const ClubInfoEditTabMobile = ({
   return (
     <>
       <Styled.MobileContainer>
-        <WebviewTopBar title='기본 정보 수정' />
+        <WebviewTopBar title='기본 정보 수정' onBack={() => navigate('/admin')} />
         <MobileBannerSection
           coverUrl={clubDetail?.cover}
           logoUrl={clubDetail?.logo}
