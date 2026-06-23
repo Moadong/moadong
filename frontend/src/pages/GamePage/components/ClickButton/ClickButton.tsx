@@ -34,8 +34,7 @@ const Firework = ({ isMobile }: { isMobile: boolean }) => {
   const [particles] = useState(() => {
     const count = isMobile ? PARTICLE_COUNT_MOBILE : PARTICLE_COUNT_DESKTOP;
     return Array.from({ length: count }, (_, i) => {
-      const angle =
-        (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      const angle = (i / count) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
       const distance = 160 + Math.random() * 130;
       const size = 6 + Math.random() * 11;
       const isConfetti = Math.random() > 0.5;
