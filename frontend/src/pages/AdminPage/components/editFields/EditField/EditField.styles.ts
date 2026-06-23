@@ -13,11 +13,11 @@ export const Card = styled.div<{ $isActive?: boolean }>`
   border-radius: 14px;
 `;
 
-export const Label = styled.span`
+export const Label = styled.span<{ $color?: string }>`
   font-family: 'Pretendard';
   font-weight: 500;
   font-size: 12px;
   line-height: 140%;
   letter-spacing: -0.02em;
-  color: ${colors.gray[600]};
+  color: ${({ $color }) => $color ?? colors.gray[600]};
 `;
