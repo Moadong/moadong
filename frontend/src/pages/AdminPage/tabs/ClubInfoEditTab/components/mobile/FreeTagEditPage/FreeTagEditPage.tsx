@@ -36,6 +36,9 @@ const FreeTagEditPage = ({
           {tags.map((tag, index) => (
             <EditField key={index} label={`태그${index + 1}`}>
               <Styled.TagInputRow $hasValue={tag.length > 0}>
+                {tag.length === 0 && (
+                  <Styled.DashedBgSvg preserveAspectRatio='none' />
+                )}
                 <Styled.HashSymbol $hasValue={tag.length > 0}>
                   #
                 </Styled.HashSymbol>

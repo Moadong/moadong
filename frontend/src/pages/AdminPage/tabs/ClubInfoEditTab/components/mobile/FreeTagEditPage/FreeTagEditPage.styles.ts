@@ -1,4 +1,5 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
+import DashedBoxBg from '@/assets/images/backgrounds/bg_dashed_box.svg?react';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
@@ -28,20 +29,33 @@ export const Content = styled.div`
 `;
 
 export const TagInputRow = styled.div<{ $hasValue: boolean }>`
+  position: relative;
   display: flex;
   flex-direction: row;
   align-items: center;
-  align-self: stretch;
+  width: 100%;
   padding: 4px 8px;
   gap: 2px;
-  height: 25px;
+  height: 26px;
   border-radius: 8px;
-  background: ${({ $hasValue }) =>
-    $hasValue ? colors.gray[200] : 'transparent'};
-  border: ${({ $hasValue }) =>
+  ${({ $hasValue }) =>
     $hasValue
-      ? `1px solid ${colors.gray[300]}`
-      : `1px dashed ${colors.gray[400]}`};
+      ? css`
+          background-color: ${colors.gray[200]};
+          border: 1px solid ${colors.gray[300]};
+        `
+      : css`
+          border: none;
+        `}
+`;
+
+export const DashedBgSvg = styled(DashedBoxBg)`
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 `;
 
 export const HashSymbol = styled.span<{ $hasValue: boolean }>`
