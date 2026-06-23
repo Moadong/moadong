@@ -74,24 +74,27 @@ export const useBatchedClick = (clubName: string) => {
     clubNameRef.current = clubName;
   }, [clubName]);
 
+  // 언마운트 cleanup 일원화: 가드를 먼저 내려 이후 scheduleFlush가 새 타이머를
+  // 못 걸게 한 뒤, 남은 타이머를 정리하고 미전송분을 마지막으로 한 번 보낸다.
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
-    };
-  }, []);
-
-  useEffect(() => {
-    return () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      timerRef.current = null;
       flushRef.current(clubNameRef.current);
     };
   }, []);
 
-  // amount: 버튼 클릭은 1, 비눗방울 터치는 방울에 적힌 값만큼 한 번에 적립
+  // amount: 버튼 클릭은 1, 비눗방울 터치는 방울에 적힌 값만큼 한 번에 적립.
+  // source: 버튼 클릭만 매크로 방지 쓰로틀을 적용한다. 비눗방울은 방울당 1회만
+  // 터치 가능하므로(중복 가드 존재) 쓰로틀로 누락돼 서버 카운트와 어긋나지 않도록 우회한다.
   const handleClick = useCallback(
-    (amount = 1) => {
-      const now = Date.now();
-      if (now - lastClickTimeRef.current < MIN_CLICK_INTERVAL) return;
-      lastClickTimeRef.current = now;
+    (amount = 1, source: 'button' | 'bubble' = 'button') => {
+      if (source === 'button') {
+        const now = Date.now();
+        if (now - lastClickTimeRef.current < MIN_CLICK_INTERVAL) return;
+        lastClickTimeRef.current = now;
+      }
 
       if (firstClickTimeRef.current === null) {
         firstClickTimeRef.current = new Date().toISOString();
