@@ -20,18 +20,26 @@ const ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const SRC = join(ROOT, 'src');
 const DEF_FILE = join(SRC, 'constants', 'eventName.ts');
 
-/** USER_EVENT 블록에서 키 목록을 추출한다. */
+/**
+ * USER_EVENT 블록에서 키 목록을 추출한다.
+ * 따옴표 종류·공백·세미콜론 유무에 유연하게 대응하고, 파싱이 깨져 키를
+ * 0개로 읽으면(= 게이트가 조용히 통과해버리는 상황) 명시적으로 실패한다.
+ */
 function extractUserEventKeys(source) {
-  const start = source.indexOf('USER_EVENT = {');
-  if (start === -1) throw new Error('eventName.ts 에서 USER_EVENT 정의를 찾지 못했습니다.');
-  const end = source.indexOf('} as const;', start);
-  if (end === -1) throw new Error('USER_EVENT 블록의 끝(`} as const;`)을 찾지 못했습니다.');
-  const block = source.slice(start, end);
+  const startMatch = source.match(/USER_EVENT\s*=\s*\{/);
+  if (!startMatch) throw new Error('eventName.ts 에서 USER_EVENT 정의를 찾지 못했습니다.');
+  const start = startMatch.index;
+  const endMatch = source.slice(start).match(/\}\s*as\s+const\s*;?/);
+  if (!endMatch) throw new Error('USER_EVENT 블록의 끝(`} as const;`)을 찾지 못했습니다.');
+  const block = source.slice(start, start + endMatch.index);
 
   const keys = new Map(); // key -> event name(value)
-  const re = /^\s*([A-Z][A-Z0-9_]*)\s*:\s*'([^']*)'/gm;
+  const re = /^\s*([A-Z][A-Z0-9_]*)\s*:\s*(['"])(.*?)\2/gm;
   let m;
-  while ((m = re.exec(block)) !== null) keys.set(m[1], m[2]);
+  while ((m = re.exec(block)) !== null) keys.set(m[1], m[3]);
+  if (keys.size === 0) {
+    throw new Error('USER_EVENT 키를 하나도 파싱하지 못했습니다. 파서/포맷을 확인하세요.');
+  }
   return keys;
 }
 
