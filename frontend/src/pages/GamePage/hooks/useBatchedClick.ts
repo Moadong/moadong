@@ -9,6 +9,13 @@ const MAX_CLICK_PER_REQUEST = 5;
 export const CLICK_THROTTLE_MS = 100;
 // UI 버튼 쓰로틀(CLICK_THROTTLE_MS)보다 짧게 잡아 버튼 핸들러를 우회하는 DOM 레벨 매크로를 차단
 const MIN_CLICK_INTERVAL = Math.floor(CLICK_THROTTLE_MS * 0.8);
+// 서버 레이트리밋(IP당 10초에 20회 초과 시 30초 밴)을 넘지 않도록 한 요청과
+// 다음 요청 사이 최소 간격. 550ms면 약 18회/10초로 여유를 둔다.
+// 버닝(클릭당 +2)이면 임계치에 2배 빨리 도달하는데, 이 간격이 없으면 요청
+// 빈도가 2배가 되어 429로 차단된다.
+const MIN_SEND_INTERVAL = 550;
+// 백로그가 쌓여도 ctAt이 서버의 30초 과거 윈도우에 걸리지 않도록 하는 하한(여유 5초)
+const CTAT_MAX_AGE_MS = 25_000;
 
 /**
  * 클릭을 모아 일정 개수(5)나 디바운스(500ms) 시점에 한 번에 전송한다.
@@ -18,6 +25,8 @@ export const useBatchedClick = (clubName: string) => {
   const pendingRef = useRef(0);
   const timerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const lastClickTimeRef = useRef(0);
+  // 마지막으로 서버에 실제 전송한 시각(레이트리밋 회피용, 버튼 쓰로틀과 별개)
+  const lastSendTimeRef = useRef(0);
   const firstClickTimeRef = useRef<string | null>(null);
   const isMountedRef = useRef(true);
   const { mutate: clickGame } = useClickGame();
@@ -33,13 +42,36 @@ export const useBatchedClick = (clubName: string) => {
 
   const flush = useCallback(
     (name: string) => {
+      if (pendingRef.current === 0) {
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = null;
+        return;
+      }
+
+      // 직전 전송 이후 최소 간격이 지나지 않았으면, 남은 시간만큼 미뤄 레이트리밋을
+      // 회피한다. 버닝으로 임계치에 빨리 도달해도 전송 빈도는 이 간격으로 고정된다.
+      const now = Date.now();
+      const sinceLast = now - lastSendTimeRef.current;
+      if (sinceLast < MIN_SEND_INTERVAL) {
+        if (!isMountedRef.current) return;
+        if (timerRef.current) clearTimeout(timerRef.current);
+        timerRef.current = setTimeout(
+          () => flushRef.current(name),
+          MIN_SEND_INTERVAL - sinceLast,
+        );
+        return;
+      }
+
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = null;
-      if (pendingRef.current === 0) return;
+      lastSendTimeRef.current = now;
 
       // 이번 요청에 보낼 양(최대 5)만 떼어내고 나머지는 다음 flush로 미룬다
       const count = Math.min(MAX_CLICK_PER_REQUEST, pendingRef.current);
-      const ctAt = firstClickTimeRef.current ?? new Date().toISOString();
+      let ctAt = firstClickTimeRef.current ?? new Date(now).toISOString();
+      // 백로그가 오래 쌓여 ctAt이 서버 30초 윈도우를 넘기면 거부되므로 하한 보정
+      const minCtAt = new Date(now - CTAT_MAX_AGE_MS).toISOString();
+      if (ctAt < minCtAt) ctAt = minCtAt;
       pendingRef.current -= count;
       firstClickTimeRef.current = null;
 
@@ -82,13 +114,15 @@ export const useBatchedClick = (clubName: string) => {
 
   // 언마운트 cleanup 일원화: 가드를 먼저 내려 이후 scheduleFlush가 새 타이머를
   // 못 걸게 한 뒤, 남은 타이머를 정리하고 미전송분을 마지막으로 한 번 보낸다.
-  // pending은 handleClick 사이에 항상 FLUSH_THRESHOLD(5) 미만으로 유지되고
-  // flush가 요청당 최대 5개를 보내므로, 한 번의 flush로 잔여분이 모두 전송된다.
+  // lastSendTime을 0으로 되돌려 전송 간격 가드를 우회한다(마지막 1회 추가 요청은
+  // 레이트리밋에 영향 없음). 버닝 백로그가 5를 넘긴 채 이탈하면 이 한 번의 flush로
+  // 최대 5개만 전송되고 나머지는 유실되지만, 게임 도중 이탈하는 드문 경우라 허용한다.
   useEffect(() => {
     return () => {
       isMountedRef.current = false;
       if (timerRef.current) clearTimeout(timerRef.current);
       timerRef.current = null;
+      lastSendTimeRef.current = 0;
       flushRef.current(clubNameRef.current);
     };
   }, []);
