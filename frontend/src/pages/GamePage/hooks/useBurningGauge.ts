@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 
 const GAUGE_MAX = 100;
 // 클릭당 게이지 증가량. 멈추면 감소하므로 연속 클릭해야 가득 찬다.
@@ -34,15 +34,15 @@ export const useBurningGauge = () => {
   const burningTimerRef = useRef<ReturnType<typeof setInterval> | null>(null);
   const burningEndRef = useRef(0);
 
-  const stopDecay = useCallback(() => {
+  const stopDecay = () => {
     if (decayTimerRef.current) {
       clearInterval(decayTimerRef.current);
       decayTimerRef.current = null;
     }
-  }, []);
+  };
 
   // 게이지가 0보다 클 때만 도는 감소 루프. 0에 닿으면 스스로 멈춘다.
-  const startDecay = useCallback(() => {
+  const startDecay = () => {
     if (decayTimerRef.current) return;
     lastDecayTickRef.current = Date.now();
     decayTimerRef.current = setInterval(() => {
@@ -54,9 +54,9 @@ export const useBurningGauge = () => {
       setGauge(next);
       if (next <= 0) stopDecay();
     }, DECAY_TICK_MS);
-  }, [stopDecay]);
+  };
 
-  const endBurning = useCallback(() => {
+  const endBurning = () => {
     if (burningTimerRef.current) {
       clearInterval(burningTimerRef.current);
       burningTimerRef.current = null;
@@ -66,9 +66,9 @@ export const useBurningGauge = () => {
     setBurningRemainingMs(0);
     gaugeRef.current = 0;
     setGauge(0);
-  }, []);
+  };
 
-  const startBurning = useCallback(() => {
+  const startBurning = () => {
     stopDecay();
     gaugeRef.current = GAUGE_MAX;
     setGauge(GAUGE_MAX);
@@ -84,10 +84,10 @@ export const useBurningGauge = () => {
         setBurningRemainingMs(remain);
       }
     }, BURNING_TICK_MS);
-  }, [stopDecay, endBurning]);
+  };
 
   // 매 버튼 클릭마다 호출. 버닝 중이면 게이지는 고정이라 무시한다.
-  const registerClick = useCallback(() => {
+  const registerClick = () => {
     if (isBurningRef.current) return;
     const next = Math.min(GAUGE_MAX, gaugeRef.current + CLICK_GAIN);
     gaugeRef.current = next;
@@ -97,14 +97,14 @@ export const useBurningGauge = () => {
     } else {
       startDecay();
     }
-  }, [startBurning, startDecay]);
+  };
 
   useEffect(() => {
     return () => {
-      stopDecay();
+      if (decayTimerRef.current) clearInterval(decayTimerRef.current);
       if (burningTimerRef.current) clearInterval(burningTimerRef.current);
     };
-  }, [stopDecay]);
+  }, []);
 
   return {
     /** 0~1 비율 (게이지 바 표시용) */

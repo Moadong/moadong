@@ -1,4 +1,3 @@
-import { memo } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import * as S from './BurningGauge.styles';
 
@@ -48,4 +47,4 @@ const BurningGauge = ({
   );
 };
 
-export default memo(BurningGauge);
+export default BurningGauge;
