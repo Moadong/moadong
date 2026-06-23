@@ -17,6 +17,7 @@ import moadong.user.payload.response.LoginResponse;
 import moadong.user.payload.response.RefreshResponse;
 import moadong.user.payload.response.TempPasswordResponse;
 import moadong.user.service.UserCommandService;
+import moadong.user.util.CookieMaker;
 import moadong.user.view.UserSwaggerView;
 import org.springframework.http.ResponseCookie;
 import org.springframework.http.ResponseEntity;
@@ -38,12 +39,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class UserController {
 
     private final UserCommandService userCommandService;
+    private final CookieMaker cookieMaker;
 
     @PostMapping("/register")
     @Operation(
             summary = UserSwaggerView.ADMIN_REGISTER_SUMMARY,
             description = UserSwaggerView.ADMIN_PWD_ROLE_DESCRIPTION
     )
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> registerUser(@RequestBody @Validated UserRegisterRequest request) {
         userCommandService.registerUser(request);
         return Response.ok("success register");
@@ -64,16 +68,10 @@ public class UserController {
     @GetMapping("/logout")
     @Operation(summary = "로그아웃", description = "클라이언트의 refresh token을 제거합니다.")
     public ResponseEntity<?> logout(
-            @CookieValue(value = "refresh_token", required = false) String refreshToken,
+            @CookieValue(value = CookieMaker.REFRESH_TOKEN_COOKIE_NAME, required = false) String refreshToken,
             HttpServletResponse response) {
         userCommandService.logoutUser(refreshToken);
-        ResponseCookie cookie = ResponseCookie.from("refresh_token", "")
-                .path("/")
-                .maxAge(0)
-                .httpOnly(true)
-                .sameSite("None")
-                .secure(true)
-                .build();
+        ResponseCookie cookie = cookieMaker.makeExpiredRefreshTokenCookie();
         response.addHeader("Set-Cookie", cookie.toString());
         return Response.ok("success logout");
     }
@@ -81,7 +79,7 @@ public class UserController {
     @PostMapping("/refresh")
     @Operation(summary = "토큰 재발급", description = "refresh token을 이용하여 access token을 재발급합니다.")
     public ResponseEntity<?> refresh(
-            @CookieValue(value = "refresh_token", required = false) String refreshToken,
+            @CookieValue(value = CookieMaker.REFRESH_TOKEN_COOKIE_NAME, required = false) String refreshToken,
             HttpServletResponse response) {
         RefreshResponse refreshResponse = userCommandService.refreshAccessToken(
                 refreshToken, response);
@@ -102,6 +100,8 @@ public class UserController {
 
     @PostMapping("/reset")
     @Operation(summary = "사용자 비밀번호 초기화", description = "사용자 비밀번호를 초기화합니다.")
+    @PreAuthorize("hasRole('DEVELOPER')")
+    @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> reset(@RequestBody @Validated UserResetRequest userResetRequest) {
         TempPasswordResponse tempPwdResponse = userCommandService.reset(userResetRequest.userId());
         return Response.ok(tempPwdResponse);
@@ -114,6 +114,15 @@ public class UserController {
     public ResponseEntity<?> findUserClub(@AuthenticationPrincipal CustomUserDetails userDetails) {
         String clubId = userCommandService.findClubIdByUserId(userDetails.getId());
         return Response.ok(new FindUserClubResponse(clubId));
+    }
+
+    @PutMapping("/allow/personal-information")
+    @Operation(summary = "개인정보 활용 동의", description = "개인정보 활용 동의를 합니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> allowPersonalInformation(@CurrentUser CustomUserDetails user) {
+        userCommandService.allowPersonalInformation(user.getUserId());
+        return Response.ok("success allow personal information");
     }
 
 

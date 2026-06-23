@@ -12,6 +12,7 @@ import moadong.club.entity.Club;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.repository.ClubRepository;
 import moadong.club.service.ClubProfileService;
+import moadong.club.util.RecruitmentStateCalculator;
 import moadong.fixture.ClubRequestFixture;
 import moadong.global.exception.RestApiException;
 import moadong.user.payload.CustomUserDetails;
@@ -27,11 +28,13 @@ public class ClubProfileServiceTest {
     private final String userId = "user_456";
     @Mock
     private ClubRepository clubRepository;
+    @Mock
+    private RecruitmentStateCalculator recruitmentStateCalculator;
+    @Mock
+    private Javers javers;
+
     @InjectMocks
     private ClubProfileService clubProfileService;
-
-    @Mock
-    Javers javers;
 
     @Test
     void 정상적으로_클럽_약력을_업데이트한다() {

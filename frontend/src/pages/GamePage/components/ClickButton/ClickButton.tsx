@@ -117,6 +117,9 @@ const ClickButton = ({
     if (now - lastClickRef.current < CLICK_THROTTLE_MS) return;
     lastClickRef.current = now;
 
+    try {
+      navigator.vibrate?.(50);
+    } catch {}
     onClickGame();
 
     const id = burstIdRef.current++;

@@ -15,6 +15,9 @@ import moadong.club.entity.ClubRecruitmentInformation;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.repository.ClubRepository;
 import moadong.club.util.RecruitmentStateCalculator;
+import moadong.club.util.RecruitmentStateNotificationBuilder;
+import moadong.fcm.model.PushPayload;
+import moadong.fcm.port.PushNotificationPort;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -32,6 +35,12 @@ public class RecruitmentStateCheckerTest {
 
     @Mock
     private RecruitmentStateCalculator recruitmentStateCalculator;
+
+    @Mock
+    private RecruitmentStateNotificationBuilder recruitmentStateNotificationBuilder;
+
+    @Mock
+    private PushNotificationPort pushNotificationPort;
 
     static final ZonedDateTime NOW = ZonedDateTime.now(ZoneId.of("Asia/Seoul"));
 
@@ -127,5 +136,26 @@ public class RecruitmentStateCheckerTest {
         verify(recruitmentStateCalculator).calculate(eq(club), eq(null), eq(null));
         verify(clubRepository).save(club);
     }
-}
 
+    @Test
+    void 모집상태가_변경되면_알림을_전송한다() {
+        Club club = mock(Club.class);
+        ClubRecruitmentInformation info = mock(ClubRecruitmentInformation.class);
+        ZonedDateTime start = NOW.minusDays(1);
+        ZonedDateTime end = NOW.plusDays(5);
+        PushPayload payload = new PushPayload("title", "body", "topic", java.util.Map.of("clubId", "1"));
+
+        when(club.getClubRecruitmentInformation()).thenReturn(info);
+        when(info.getClubRecruitmentStatus()).thenReturn(ClubRecruitmentStatus.CLOSED);
+        when(info.getRecruitmentStart()).thenReturn(start);
+        when(info.getRecruitmentEnd()).thenReturn(end);
+        when(clubRepository.findAll()).thenReturn(List.of(club));
+        when(recruitmentStateCalculator.calculate(eq(club), eq(start), eq(end))).thenReturn(true);
+        when(recruitmentStateNotificationBuilder.build(eq(club), any())).thenReturn(payload);
+
+        recruitmentStateChecker.performTask();
+
+        verify(pushNotificationPort).send(payload);
+        verify(clubRepository).save(club);
+    }
+}

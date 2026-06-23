@@ -1,19 +1,21 @@
+const stripTime = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate());
+
+const ONE_DAY_MS = 1000 * 60 * 60 * 24;
+
 export const getDDay = (eventStartDate: string, eventEndDate: string) => {
-  const currentTime = new Date().getTime();
-  const eventStartTime = new Date(eventStartDate).getTime();
-  const eventEndTime = new Date(eventEndDate).getTime();
+  const today = stripTime(new Date());
+  const startDate = stripTime(new Date(eventStartDate));
+  const endDate = stripTime(new Date(eventEndDate));
 
-  if (currentTime < eventStartTime) {
-    const remainingTimeUntilStart = eventStartTime - currentTime;
-
-    const remainingDays = Math.ceil(
-      remainingTimeUntilStart / (1000 * 60 * 60 * 24),
+  if (today < startDate) {
+    const remainingDays = Math.round(
+      (startDate.getTime() - today.getTime()) / ONE_DAY_MS,
     );
-
     return remainingDays;
   }
 
-  if (currentTime >= eventStartTime && currentTime <= eventEndTime) {
+  if (today >= startDate && today <= endDate) {
     return 0;
   }
 
