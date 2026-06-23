@@ -24,7 +24,9 @@ const BURNING_TICK_MS = 100;
 export const useBurningGauge = () => {
   const [gauge, setGauge] = useState(0); // 0~GAUGE_MAX
   const [isBurning, setIsBurning] = useState(false);
-  const [burningRemainingMs, setBurningRemainingMs] = useState(0);
+  // 초 단위로 저장해 같은 초 동안 값이 동일하면 React가 리렌더를 생략(bailout)한다.
+  // 100ms 타이머는 종료 시점 정밀도를 위해 유지하되 화면 갱신은 초당 1회로 줄인다.
+  const [burningRemainingSec, setBurningRemainingSec] = useState(0);
 
   // 게이지 실제 값/타이머는 ref로 관리해 잦은 재생성 없이 루프를 돌린다
   const gaugeRef = useRef(0);
@@ -63,7 +65,7 @@ export const useBurningGauge = () => {
     }
     isBurningRef.current = false;
     setIsBurning(false);
-    setBurningRemainingMs(0);
+    setBurningRemainingSec(0);
     gaugeRef.current = 0;
     setGauge(0);
   };
@@ -75,13 +77,13 @@ export const useBurningGauge = () => {
     isBurningRef.current = true;
     setIsBurning(true);
     burningEndRef.current = Date.now() + BURNING_DURATION_MS;
-    setBurningRemainingMs(BURNING_DURATION_MS);
+    setBurningRemainingSec(Math.ceil(BURNING_DURATION_MS / 1000));
     burningTimerRef.current = setInterval(() => {
       const remain = burningEndRef.current - Date.now();
       if (remain <= 0) {
         endBurning();
       } else {
-        setBurningRemainingMs(remain);
+        setBurningRemainingSec(Math.ceil(remain / 1000));
       }
     }, BURNING_TICK_MS);
   };
@@ -111,7 +113,7 @@ export const useBurningGauge = () => {
     gaugeRatio: gauge / GAUGE_MAX,
     isBurning,
     /** 버닝 남은 시간(초) */
-    burningRemainingSec: Math.ceil(burningRemainingMs / 1000),
+    burningRemainingSec,
     registerClick,
   };
 };
