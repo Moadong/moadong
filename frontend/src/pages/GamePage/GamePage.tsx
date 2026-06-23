@@ -6,10 +6,10 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGameRanking } from '@/hooks/Queries/useGame';
 import isInAppWebView from '@/utils/isInAppWebView';
 import BackgroundFirework from './components/BackgroundFirework/BackgroundFirework';
-import ClickButton from './components/ClickButton/ClickButton';
 import ClubNameInput from './components/ClubNameInput/ClubNameInput';
 import DotTextEffect from './components/DotTextEffect/DotTextEffect';
 import FallingBubbles from './components/FallingBubbles/FallingBubbles';
+import GamePlaySection from './components/GamePlaySection/GamePlaySection';
 import RankingBoard from './components/RankingBoard/RankingBoard';
 import * as S from './GamePage.styles';
 import { useBatchedClick } from './hooks/useBatchedClick';
@@ -69,11 +69,6 @@ const GamePage = () => {
       sendClick(amount, source);
     },
     [sendClick],
-  );
-
-  const handleButtonClick = useCallback(
-    () => gainCount(1, 'button'),
-    [gainCount],
   );
 
   const handleBubbleCatch = useCallback(
@@ -271,10 +266,10 @@ const GamePage = () => {
                 isDark={isDark}
               />
             ) : (
-              <ClickButton
+              <GamePlaySection
                 clubName={clubName}
-                count={myCount}
-                onClickGame={handleButtonClick}
+                myCount={myCount}
+                gainCount={gainCount}
                 onChangeClub={handleChangeClub}
                 isDark={isDark}
               />
