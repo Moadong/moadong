@@ -19,8 +19,6 @@ export const USER_EVENT = {
   // 네비게이션
   BACK_BUTTON_CLICKED: 'Back Button Clicked',
   HOME_BUTTON_CLICKED: 'Home Button Clicked',
-  MOBILE_MENU_BUTTON_CLICKED: 'Mobile Menu Button Clicked',
-  MOBILE_MENU_DELETE_BUTTON_CLICKED: 'Mobile Menubar delete Button Clicked',
   ADMIN_BUTTON_CLICKED: 'Admin Button Clicked',
 
   // 탭 & 섹션
