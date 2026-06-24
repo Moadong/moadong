@@ -2,19 +2,48 @@ import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
-export const Content = styled.div`
+export const Wrapper = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 5px;
+  gap: 8px;
   width: 100%;
 `;
 
-export const Row = styled.div`
+export const Header = styled.div`
+  display: flex;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 2px;
+`;
+
+export const Label = styled.span`
+  ${setTypography(typography.button.button1)}
+  color: ${colors.gray[900]};
+  line-height: 140%;
+`;
+
+export const Card = styled.div`
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 14px 18px;
+  gap: 5px;
+  width: 100%;
+  min-height: 52px;
+  background: ${colors.gray[50]};
+  border: 1px solid ${colors.gray[300]};
+  border-radius: 14px;
+`;
+
+export const AwardRow = styled.div`
   display: flex;
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
   gap: 5px;
+  width: 100%;
   cursor: pointer;
 `;
 
@@ -48,16 +77,12 @@ export const EmptyText = styled.span`
   color: ${colors.gray[500]};
 `;
 
-export const CountText = styled.span`
+export const AchievementCount = styled.span`
   ${setTypography(typography.paragraph.p2)}
   color: ${colors.gray[900]};
 `;
 
-export const NavButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
+export const NavButton = styled.span`
   width: 24px;
   height: 24px;
   display: flex;
