@@ -8,6 +8,7 @@ import InfoSection from './InfoSection';
 
 const StyledTextarea = styled.textarea`
   width: 100%;
+  padding: 0;
   border: none;
   outline: none;
   background: transparent;

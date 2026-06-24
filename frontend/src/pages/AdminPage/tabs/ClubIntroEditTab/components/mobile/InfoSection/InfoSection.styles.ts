@@ -34,8 +34,9 @@ export const Card = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 14px 18px;
+  padding: 16px 18px;
   width: 100%;
+  min-height: 54px;
   background: ${colors.gray[50]};
   border: 1px solid ${colors.gray[300]};
   border-radius: 14px;
