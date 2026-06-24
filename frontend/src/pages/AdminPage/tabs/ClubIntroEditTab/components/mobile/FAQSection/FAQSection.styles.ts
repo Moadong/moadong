@@ -53,6 +53,7 @@ export const FAQCard = styled.div`
   padding: 16px 18px;
   gap: 10px;
   width: 100%;
+  min-height: 110px;
   background: ${colors.gray[50]};
   border: 1px solid ${colors.gray[300]};
   border-radius: 14px;
