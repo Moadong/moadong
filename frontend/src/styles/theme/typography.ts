@@ -3,7 +3,7 @@ import { css } from 'styled-components';
 export const typography = {
   title: {
     title1: { size: '40px', weight: 700, lineHeight: '140%' },
-    title2: { size: '32px', weight: 700, lineHeight: '138%' },
+    title2: { size: '32px', weight: 700, lineHeight: '119%' },
     title3: { size: '24px', weight: 700, lineHeight: '140%' },
     title4: { size: '22px', weight: 700, lineHeight: '140%' },
     title5: { size: '20px', weight: 700, lineHeight: '140%' },
