@@ -139,10 +139,10 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
         expect(mockNavigate).toHaveBeenCalledWith('/promotions/123');
       });
 
-      it('leading slash가 있는 경로도 그대로 React Router로 이동한다', () => {
-        handleLink.result.current('/promotions/club-fest-2026');
+      it('상대 경로도 React Router로 이동한다', () => {
+        handleLink.result.current('promotions/club-fest-2026');
 
-        expect(mockNavigate).toHaveBeenCalledWith('/promotions/club-fest-2026');
+        expect(mockNavigate).toHaveBeenCalledWith('promotions/club-fest-2026');
       });
     });
   });
