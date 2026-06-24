@@ -111,9 +111,3 @@ export const Filled: Story = {
   },
 };
 
-export const NoCounter: Story = {
-  args: {
-    label: '이런 상을 받았어요',
-    children: <span style={{ color: colors.gray[500] }}>없음</span>,
-  },
-};
