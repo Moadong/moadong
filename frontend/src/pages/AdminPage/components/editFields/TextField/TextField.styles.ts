@@ -22,7 +22,6 @@ export const Input = styled.textarea`
   overflow: hidden;
 
   ${setTypography(typography.paragraph.p3)}
-  line-height: 140%;
   color: ${colors.base.black};
 
   &::placeholder {
