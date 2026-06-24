@@ -18,6 +18,7 @@
     "test": "jest",
     "coverage": "jest --coverage --config jest.config.js",
     "typecheck": "tsc --noEmit",
+    "audit:tracking": "node ./scripts/audit-tracking.mjs",
     "analyze:deps": "depcruise src --include-only \"^src\" --output-type err-long",
     "analyze:metrics": "depcruise src --focus \"^src/components\" --output-type metrics",
     "analyze:graph": "depcruise src/components --include-only \"^src\" --output-type dot | dot -T svg > deps-components.svg",
