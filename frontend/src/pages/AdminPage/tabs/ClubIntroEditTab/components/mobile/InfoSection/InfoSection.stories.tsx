@@ -73,6 +73,8 @@ export const Empty: Story = {
   args: {
     label: '동아리를 소개할게요',
     maxLength: 200,
+    currentLength: 0,
+    children: null,
   },
   render: (args) => {
     const [value, setValue] = useState('');
@@ -93,6 +95,8 @@ export const Filled: Story = {
   args: {
     label: '동아리를 소개할게요',
     maxLength: 200,
+    currentLength: 0,
+    children: null,
   },
   render: (args) => {
     const [value, setValue] = useState(
@@ -110,4 +114,3 @@ export const Filled: Story = {
     );
   },
 };
-
