@@ -34,7 +34,7 @@ export const Card = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 16px 18px;
+  padding: 14px 18px;
   width: 100%;
   background: ${colors.gray[50]};
   border: 1px solid ${colors.gray[300]};
