@@ -10,8 +10,8 @@ import { useUpdateClubDetail } from '@/hooks/Queries/useClub';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { Award, ClubDetail, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTab.styles';
-import AwardEditor from './components/AwardEditor/AwardEditor';
-import FAQEditor from './components/FAQEditor/FAQEditor';
+import AwardEditor from './components/desktop/AwardEditor/AwardEditor';
+import FAQEditor from './components/desktop/FAQEditor/FAQEditor';
 
 const ClubIntroEditTab = () => {
   const trackEvent = useMixpanelTrack();

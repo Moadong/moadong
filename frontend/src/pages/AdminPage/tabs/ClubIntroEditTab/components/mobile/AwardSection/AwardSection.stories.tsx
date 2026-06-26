@@ -16,7 +16,7 @@ const handleNavigate = (award?: Award) => {
 };
 
 const meta = {
-  title: 'Pages/AdminPage/components/AwardSection',
+  title: 'Pages/AdminPage/tabs/ClubIntroEditTab/mobile/AwardSection',
   component: AwardSection,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
