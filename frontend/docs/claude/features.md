@@ -98,4 +98,4 @@ export const config = {
 - `validateSocialLink.ts` - SNS 링크 유효성 검사
 - `isInAppWebView.ts` - 인앱 WebView 감지
 - `webviewBridge.ts` - 네이티브 앱과 통신
-- `initSDK.ts` - 외부 SDK 초기화 (Mixpanel, Sentry, Channel.io, Kakao)
+- `initSDK.ts` - 외부 SDK 초기화 (Mixpanel, Sentry, Channel.io)

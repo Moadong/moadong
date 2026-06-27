@@ -40,7 +40,6 @@ API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된
 - **Mixpanel**: 사용자 분석 및 이벤트 트래킹
 - **Sentry**: 에러 모니터링 및 성능 추적
 - **Channel.io**: 고객 지원 채팅
-- **Kakao SDK**: 카카오 공유 기능
 
 모든 SDK는 `src/utils/initSDK.ts`에서 초기화되며, 각각 환경 변수 필요.
 
