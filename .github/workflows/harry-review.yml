@@ -59,6 +59,9 @@ jobs:
       ${{ github.event.action == 'opened'
       && github.event.pull_request.draft == false
       && github.event.pull_request.head.repo.full_name == github.repository }}
+    # 같은 PR을 re-run 하거나 직전 룰 PR이 아직 안 머지된 경우 같은 브랜치명이 겹쳐
+    # push가 실패할 수 있어, PR 단위로 동시 실행을 직렬화한다.
+    concurrency: harry-rule-${{ github.event.pull_request.number }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -90,7 +93,10 @@ jobs:
 
             절차:
             1. `.github/harry-review-rules.md`를 읽어 이미 있는 룰을 모두 파악한다.
-            2. 이 PR diff에서 "앞으로도 반복될 만한, 일반화 가능한 실수 패턴"을 찾는다.
+            2. `gh pr diff "$PR_NUMBER"`로 이 PR의 diff를 가져온다(checkout 기본 ref에
+               의존하지 말고 항상 이 명령으로 받아라). 이 diff 분석은 반드시 아래 5번의
+               git checkout 전에 끝내라(checkout 후엔 working tree가 base로 바뀐다).
+               그 diff에서 "앞으로도 반복될 만한, 일반화 가능한 실수 패턴"을 찾는다.
                - 기존 룰로 이미 잡히는 패턴이면 새 룰이 아니다. 무시한다.
                - 일회성이거나 사소한 문제는 룰로 만들지 않는다.
                - 레포 오너 취향(surgical change, React Compiler 전제, 불필요한
@@ -105,14 +111,15 @@ jobs:
                  git config user.email "harry@users.noreply.github.com"
                  git fetch origin "$PR_BASE"
                  git checkout -b "harry/rule-$PR_NUMBER" "origin/$PR_BASE"
-               그 위에서 `.github/harry-review-rules.md`만 수정·커밋하고 푸시한다.
+               그 위에서 `.github/harry-review-rules.md`만 셸 명령(heredoc 추가나 sed
+               등)으로 수정한 뒤 커밋·푸시한다. 파일 편집 전용 도구는 없으니 Bash로 한다.
             6. `gh pr create --base "$PR_BASE"`로 PR을 연다. 제목은
                `[chore] harry 리뷰 룰 추가 제안 (#${PR_NUMBER})`,
                본문에는 "어떤 PR의 어떤 패턴에서 이 룰을 도출했는지"를 1~2줄로 적는다.
                이 룰 PR은 절대 자동 머지하지 마라. 사람이 검토 후 머지한다.
           claude_args: |
             --model claude-opus-4-8
-            --allowedTools Read,Edit,Write,Bash
+            --allowedTools Read,Bash
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
