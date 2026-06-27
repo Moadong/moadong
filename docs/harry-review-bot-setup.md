@@ -45,4 +45,8 @@ GitHub → Settings → Developer settings → GitHub Apps → New GitHub App
 ## 6. 동작 확인
 
 테스트 PR을 하나 열어 Actions 탭에서 `harry PR Review` 워크플로우 실행 확인.
-PR에 `harry[bot]` 작성자로 코멘트가 달리면 성공.
+PR에 `reviewer-harry[bot]` 작성자로 코멘트가 달리면 성공.
+
+참고:
+- **draft PR**과 **포크에서 올라온 PR**은 리뷰 대상에서 제외된다(워크플로우가 트리거되지 않음).
+- 같은 레포 브랜치에서 올린, draft가 아닌 PR만 harry가 리뷰한다.
