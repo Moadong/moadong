@@ -32,6 +32,9 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           github_token: ${{ steps.app-token.outputs.token }}
+          # PR에 추적 코멘트를 만들고 harry가 그 코멘트를 리뷰 내용으로 업데이트하게 한다
+          # (없으면 코멘트 게시 도구가 허용되지 않아 리뷰를 못 남김)
+          track_progress: true
           prompt: |
             너는 'harry'라는 이름의 PR 리뷰봇이다.
             저장소 루트의 `.github/harry-review-rules.md` 파일을 읽고,
