@@ -1,0 +1,47 @@
+name: harry PR Review
+
+on:
+  pull_request:
+    types: [opened, synchronize]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+jobs:
+  harry-review:
+    # 같은 레포 브랜치 PR만 리뷰한다. 포크 PR(외부 공격자)은 프롬프트 인젝션 위험이 있어 제외.
+    if: >-
+      ${{ github.event.pull_request.draft == false
+      && github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate harry App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.HARRY_APP_ID }}
+          private-key: ${{ secrets.HARRY_APP_PRIVATE_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: harry review
+        uses: anthropics/claude-code-action@v1
+        with:
+          github_token: ${{ steps.app-token.outputs.token }}
+          prompt: |
+            너는 'harry'라는 이름의 PR 리뷰봇이다.
+            저장소 루트의 `.github/harry-review-rules.md` 파일을 읽고,
+            그 기준에 따라 이 PR의 변경사항(diff)을 리뷰해라.
+            리뷰 결과는 PR에 **요약 코멘트 1개**로 작성해라. 인라인 줄별 코멘트는 달지 마라.
+            코멘트는 한국어로 작성해라.
+            룰 위반이 없으면 통과시키고 짧게 칭찬 한 줄만 남겨라.
+          claude_args: |
+            {
+              "model": "claude-sonnet-4-6"
+            }
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
