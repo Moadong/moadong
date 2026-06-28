@@ -1,6 +1,6 @@
 import { useNavigate } from 'react-router-dom';
 import search_button_icon from '@/assets/images/icons/search_button_icon.svg';
-import introduce_phone_mockup from '@/assets/images/introduce/introduce_phone_mockup.png';
+import introduce_phone_mockup from '@/assets/images/introduce/introduce_phone_mockup.webp';
 import { PAGE_NAME } from '@/constants/eventName';
 import {
   BackgroundCircleLarge,

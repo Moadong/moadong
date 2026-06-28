@@ -62,7 +62,6 @@ npm run generate:sitemap # sitemap.xml 생성
 - **Mixpanel**: 사용자 분석 및 이벤트 트래킹
 - **Sentry**: 에러 모니터링 및 성능 추적
 - **Channel.io**: 고객 지원 채팅
-- **Kakao SDK**: 카카오 공유 기능
 - **Naver Map**: 동아리방 위치 지도 (네이버 클라우드 플랫폼)
 
 Mixpanel·Sentry·Channel.io는 `src/utils/initSDK.ts`에서 초기화. Naver Map은 `src/utils/loadNaverMapScript.ts`로 동적 로드(SDK init 아님). 각각 환경 변수 필요.
@@ -77,7 +76,6 @@ Mixpanel·Sentry·Channel.io는 `src/utils/initSDK.ts`에서 초기화. Naver Ma
 - `VITE_SENTRY_RELEASE` - Sentry 릴리즈 버전
 - `VITE_ENABLE_SENTRY_IN_DEV` - 개발 환경에서 Sentry 활성화 여부 (true/false)
 - `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
-- `VITE_KAKAO_JAVASCRIPT_KEY` - Kakao JavaScript 키
 - `VITE_NAVER_MAP_CLIENT_ID` - 네이버 지도 API 클라이언트 ID
 
 ### 프로젝트 구조
@@ -149,7 +147,7 @@ const { variant } = useExperiment(mainBannerExperiment);
 - `validateSocialLink.ts` - SNS 링크 유효성 검사
 - `isInAppWebView.ts` - 인앱 WebView 감지
 - `webviewBridge.ts` - 네이티브 앱과 통신
-- `initSDK.ts` - 외부 SDK 초기화 (Mixpanel, Sentry, Channel.io, Kakao)
+- `initSDK.ts` - 외부 SDK 초기화 (Mixpanel, Sentry, Channel.io)
 
 ### 반응형 브레이크포인트
 

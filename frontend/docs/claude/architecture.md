@@ -24,7 +24,6 @@
 - `VITE_SENTRY_RELEASE` - Sentry 릴리즈 버전
 - `VITE_ENABLE_SENTRY_IN_DEV` - 개발 환경에서 Sentry 활성화 여부 (true/false)
 - `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
-- `VITE_KAKAO_JAVASCRIPT_KEY` - Kakao JavaScript 키
 
 ## 프로젝트 구조
 
