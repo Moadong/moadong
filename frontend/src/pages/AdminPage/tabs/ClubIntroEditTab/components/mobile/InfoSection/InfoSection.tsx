@@ -1,13 +1,18 @@
 import * as Styled from './InfoSection.styles';
 
-interface Props {
+interface InfoSectionProps {
   label: string;
   maxLength: number;
   currentLength: number;
   children: React.ReactNode;
 }
 
-const InfoSection = ({ label, maxLength, currentLength, children }: Props) => (
+const InfoSection = ({
+  label,
+  maxLength,
+  currentLength,
+  children,
+}: InfoSectionProps) => (
   <Styled.Wrapper>
     <Styled.Header>
       <Styled.Label>{label}</Styled.Label>

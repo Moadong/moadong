@@ -60,12 +60,12 @@ const FAQItemEditor = ({
   );
 };
 
-interface Props {
+interface FAQSectionProps {
   faqs: FAQ[];
   onChange: (faqs: FAQ[]) => void;
 }
 
-const FAQSection = ({ faqs, onChange }: Props) => {
+const FAQSection = ({ faqs, onChange }: FAQSectionProps) => {
   const handleFieldChange = (
     index: number,
     field: keyof FAQ,

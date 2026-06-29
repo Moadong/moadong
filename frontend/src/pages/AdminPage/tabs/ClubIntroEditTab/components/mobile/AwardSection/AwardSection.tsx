@@ -2,7 +2,7 @@ import rightArrowIcon from '@/assets/images/icons/right_arrow_icon.svg';
 import { Award, SemesterTerm } from '@/types/club';
 import * as Styled from './AwardSection.styles';
 
-interface Props {
+interface AwardSectionProps {
   awards: Award[];
   onNavigate?: (award?: Award) => void;
 }
@@ -18,7 +18,7 @@ const formatSemesterLabel = (award: Award): string => {
   return `${award.year} ${semesterLabel}`;
 };
 
-const AwardSection = ({ awards, onNavigate }: Props) => {
+const AwardSection = ({ awards, onNavigate }: AwardSectionProps) => {
   const isEmpty = awards.length === 0;
   const sortedAwards = [...awards].sort(
     (a, b) => getSortValue(b) - getSortValue(a),
