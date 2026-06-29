@@ -38,6 +38,7 @@ const ClubInfoEditTab = () => {
     setSnsErrors,
     handleSocialLinkChange,
     handleUpdateClub,
+    handleUpdateClubWithTags,
     isDirty,
   } = useClubInfoEdit();
 
@@ -55,6 +56,7 @@ const ClubInfoEditTab = () => {
         setClubTags={setClubTags}
         socialLinks={socialLinks}
         handleUpdateClub={handleUpdateClub}
+        handleUpdateClubWithTags={handleUpdateClubWithTags}
         isDirty={isDirty}
       />
     );

@@ -7,12 +7,14 @@ import * as Styled from './FreeTagEditPage.styles';
 interface FreeTagEditPageProps {
   initialTags: string[];
   onSave: (tags: string[]) => void;
+  onSaveToServer: (tags: string[]) => void;
   onBack: () => void;
 }
 
 const FreeTagEditPage = ({
   initialTags,
   onSave,
+  onSaveToServer,
   onBack,
 }: FreeTagEditPageProps) => {
   const [tags, setTags] = useState(initialTags);
@@ -25,6 +27,7 @@ const FreeTagEditPage = ({
 
   const handleSave = () => {
     onSave(tags);
+    onSaveToServer(tags);
     onBack();
   };
 
