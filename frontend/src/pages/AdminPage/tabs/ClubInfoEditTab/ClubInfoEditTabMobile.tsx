@@ -10,9 +10,9 @@ import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonA
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
 import { ClubDetail, SNSPlatform } from '@/types/club';
+import * as Styled from './ClubInfoEditTabMobile.styles';
 import FreeTagEditPage from './components/mobile/FreeTagEditPage/FreeTagEditPage';
 import LinkEditPage from './components/mobile/LinkEditPage/LinkEditPage';
-import * as Styled from './ClubInfoEditTabMobile.styles';
 import MobileBannerSection from './components/mobile/MobileBannerSection/MobileBannerSection';
 import { categories } from './hooks/useClubInfoEdit';
 
@@ -29,6 +29,10 @@ interface ClubInfoEditTabMobileProps {
   socialLinks: Record<SNSPlatform, string>;
   onSocialLinksChange: (links: { instagram: string; youtube: string }) => void;
   handleUpdateClub: () => void;
+  handleUpdateClubWithLinks: (links: {
+    instagram: string;
+    youtube: string;
+  }) => void;
   isDirty: boolean;
 }
 
@@ -47,6 +51,7 @@ const ClubInfoEditTabMobile = ({
   socialLinks,
   onSocialLinksChange,
   handleUpdateClub,
+  handleUpdateClubWithLinks,
   isDirty,
 }: ClubInfoEditTabMobileProps) => {
   const navigate = useNavigate();
@@ -77,6 +82,7 @@ const ClubInfoEditTabMobile = ({
           youtube: socialLinks.youtube,
         }}
         onSave={onSocialLinksChange}
+        onSaveToServer={handleUpdateClubWithLinks}
         onBack={() => setActivePage('main')}
       />
     );
@@ -85,7 +91,10 @@ const ClubInfoEditTabMobile = ({
   return (
     <>
       <Styled.MobileContainer>
-        <WebviewTopBar title='기본 정보 수정' onBack={() => navigate('/admin')} />
+        <WebviewTopBar
+          title='기본 정보 수정'
+          onBack={() => navigate('/admin')}
+        />
         <MobileBannerSection
           coverUrl={clubDetail?.cover}
           logoUrl={clubDetail?.logo}

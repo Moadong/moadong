@@ -14,10 +14,16 @@ interface LinkEditPageLinks {
 interface LinkEditPageProps {
   initialLinks: LinkEditPageLinks;
   onSave: (links: LinkEditPageLinks) => void;
+  onSaveToServer: (links: LinkEditPageLinks) => void;
   onBack: () => void;
 }
 
-const LinkEditPage = ({ initialLinks, onSave, onBack }: LinkEditPageProps) => {
+const LinkEditPage = ({
+  initialLinks,
+  onSave,
+  onSaveToServer,
+  onBack,
+}: LinkEditPageProps) => {
   const [links, setLinks] = useState(initialLinks);
   const [errors, setErrors] = useState({ instagram: '', youtube: '' });
 
@@ -40,6 +46,7 @@ const LinkEditPage = ({ initialLinks, onSave, onBack }: LinkEditPageProps) => {
       return;
     }
     onSave(links);
+    onSaveToServer(links);
     onBack();
   };
 

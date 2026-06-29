@@ -165,6 +165,38 @@ const useClubInfoEdit = () => {
     });
   };
 
+  const handleUpdateClubWithLinks = (newLinks: {
+    instagram: string;
+    youtube: string;
+  }) => {
+    if (!clubDetail || !clubDetail.id) return;
+
+    const mergedLinks = { ...socialLinks, ...newLinks };
+    setInitialValues((prev) =>
+      prev ? { ...prev, socialLinks: mergedLinks } : null,
+    );
+
+    updateClub(
+      {
+        id: clubDetail.id,
+        name: clubName,
+        category: selectedCategory,
+        division: selectedDivision,
+        tags: clubTags,
+        introduction: introduction,
+        presidentName: clubPresidentName,
+        presidentPhoneNumber: telephoneNumber,
+        socialLinks: mergedLinks,
+        description: clubDetail.description,
+      },
+      {
+        onError: (error) => {
+          alert(`링크 저장에 실패했습니다: ${error.message}`);
+        },
+      },
+    );
+  };
+
   return {
     clubDetail,
     clubName,
@@ -187,6 +219,7 @@ const useClubInfoEdit = () => {
     setSnsErrors,
     handleSocialLinkChange,
     handleUpdateClub,
+    handleUpdateClubWithLinks,
     isDirty,
   };
 };
