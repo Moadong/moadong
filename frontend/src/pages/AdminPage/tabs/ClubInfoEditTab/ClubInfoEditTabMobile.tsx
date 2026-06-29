@@ -52,7 +52,10 @@ const ClubInfoEditTabMobile = ({
   return (
     <>
       <Styled.MobileContainer>
-        <WebviewTopBar title='기본 정보 수정' onBack={() => navigate('/admin')} />
+        <WebviewTopBar
+          title='기본 정보 수정'
+          onBack={() => navigate('/admin')}
+        />
         <MobileBannerSection
           coverUrl={clubDetail?.cover}
           logoUrl={clubDetail?.logo}
