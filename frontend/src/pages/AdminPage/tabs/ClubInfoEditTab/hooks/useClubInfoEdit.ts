@@ -168,6 +168,8 @@ const useClubInfoEdit = () => {
   const handleUpdateClubWithTags = (newTags: string[]) => {
     if (!clubDetail || !clubDetail.id) return;
 
+    setInitialValues((prev) => (prev ? { ...prev, clubTags: newTags } : null));
+
     updateClub(
       {
         id: clubDetail.id,
