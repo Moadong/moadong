@@ -22,6 +22,12 @@ const FAQItemEditor = ({
 }: FAQItemEditorProps) => {
   const answerRef = useAutoGrow(faq.answer);
 
+  const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= ANSWER_MAX_LENGTH) {
+      onChange(index, 'answer', e.target.value);
+    }
+  };
+
   return (
     <Styled.FAQCard>
       <Styled.QuestionRow>
@@ -42,11 +48,7 @@ const FAQItemEditor = ({
         <Styled.AnswerTextarea
           ref={answerRef}
           value={faq.answer}
-          onChange={(e) => {
-            if (e.target.value.length <= ANSWER_MAX_LENGTH) {
-              onChange(index, 'answer', e.target.value);
-            }
-          }}
+          onChange={handleAnswerChange}
           placeholder='답변을 입력해주세요'
           rows={1}
         />
