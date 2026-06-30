@@ -18,4 +18,4 @@
 - **Kakao SDK**: 카카오 공유 기능
 - **Naver Map**: 동아리방 위치 지도 (네이버 클라우드 플랫폼)
 
-Mixpanel·Sentry·Channel.io는 `initSDK.ts`에서 초기화. Naver Map은 `loadNaverMapScript.ts`로 동적 로드(SDK init 아님). 각각 환경 변수 필요 (→ frontend/CLAUDE.md 환경 변수 참고).
+Mixpanel·Sentry·Channel.io는 `initSDK.ts`에서 초기화. Naver Map은 `loadNaverMapScript.ts`로 동적 로드(SDK init 아님). 각각 환경 변수 필요 (→ [frontend/CLAUDE.md](../../CLAUDE.md) 환경 변수 참고).

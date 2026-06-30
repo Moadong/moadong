@@ -1,6 +1,6 @@
 # OG 태그 (소셜 미디어 공유 미리보기)
 
-> `middleware.ts`(프로젝트 루트)를 수정할 때 참고. 이 문서는 frontend/CLAUDE.md 인덱스에서 연결된다.
+> `middleware.ts`(프로젝트 루트)를 수정할 때 참고. 이 문서는 [frontend/CLAUDE.md](../../CLAUDE.md) 인덱스에서 연결된다.
 
 ## 구조
 
