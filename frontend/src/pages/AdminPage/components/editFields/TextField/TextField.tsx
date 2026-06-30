@@ -5,12 +5,19 @@ import * as Styled from './TextField.styles';
 
 interface TextFieldProps {
   label: string;
+  placeholder?: string;
   value: string;
   onChange: (value: string) => void;
   onClear: () => void;
 }
 
-const TextField = ({ label, value, onChange, onClear }: TextFieldProps) => {
+const TextField = ({
+  label,
+  placeholder,
+  value,
+  onChange,
+  onClear,
+}: TextFieldProps) => {
   const [isActive, setIsActive] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
@@ -34,7 +41,7 @@ const TextField = ({ label, value, onChange, onClear }: TextFieldProps) => {
         <Styled.Input
           ref={textareaRef}
           value={value}
-          placeholder={label}
+          placeholder={placeholder || label}
           rows={1}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setIsActive(true)}
