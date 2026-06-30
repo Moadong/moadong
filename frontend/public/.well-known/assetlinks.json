@@ -1,12 +1,16 @@
 [
   {
-    "relation": ["delegate_permission/common.handle_all_urls"],
+    "relation": [
+      "delegate_permission/common.handle_all_urls",
+      "delegate_permission/common.get_login_creds"
+    ],
     "target": {
       "namespace": "android_app",
       "package_name": "com.moadong.moadong",
       "sha256_cert_fingerprints": [
         "FA:C6:17:45:DC:09:03:78:6F:B9:ED:E6:2A:96:2B:39:9F:73:48:F0:BB:6F:89:9B:83:32:66:75:91:03:3B:9C",
-        "61:61:AF:13:38:BB:91:8E:B7:8F:0F:38:DA:33:AA:9B:23:09:A8:1E:EB:1F:6D:47:47:9B:D7:19:A0:1D:93:0C"
+        "61:61:AF:13:38:BB:91:8E:B7:8F:0F:38:DA:33:AA:9B:23:09:A8:1E:EB:1F:6D:47:47:9B:D7:19:A0:1D:93:0C",
+        "29:4F:E7:89:DE:5F:DF:9C:42:BB:E1:D7:8F:DE:D9:9A:A5:E9:4B:48:40:F0:9A:0F:1B:88:F7:35:CE:5E:6F:0B"
       ]
     }
   }

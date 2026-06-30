@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.text.Normalizer;
+import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
 import net.coobird.thumbnailator.Thumbnails;
@@ -23,7 +24,7 @@ public class ClubImageUtil {
         if (originalFilename == null || !originalFilename.contains(".")) {
             return false;
         }
-        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase();
+        String extension = originalFilename.substring(originalFilename.lastIndexOf(".") + 1).toLowerCase(Locale.ROOT);
         return ALLOWED_IMAGE_EXTENSIONS.contains(extension);
     }
 

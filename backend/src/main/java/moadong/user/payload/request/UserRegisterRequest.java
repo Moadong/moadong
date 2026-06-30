@@ -9,6 +9,7 @@ import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.user.entity.User;
 import moadong.user.entity.UserInformation;
+import moadong.user.entity.enums.UserRole;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 public record UserRegisterRequest(
@@ -31,10 +32,15 @@ public record UserRegisterRequest(
     }
 
     public User toUserEntity(PasswordEncoder passwordEncoder) {
+        return toUserEntity(passwordEncoder, UserRole.CLUB_ADMIN);
+    }
+
+    public User toUserEntity(PasswordEncoder passwordEncoder, UserRole role) {
         return User.builder()
                 .userId(userId)
                 .password(passwordEncoder.encode(password))
-                .userInformation(new UserInformation(name,phoneNumber))
+                .userInformation(new UserInformation(name, phoneNumber))
+                .role(role != null ? role : UserRole.CLUB_ADMIN)
                 .build();
     }
 

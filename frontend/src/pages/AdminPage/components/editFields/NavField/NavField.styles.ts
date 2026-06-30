@@ -4,13 +4,11 @@ import { setTypography, typography } from '@/styles/theme/typography';
 
 export const ContentText = styled.span`
   ${setTypography(typography.paragraph.p2)}
-  line-height: 140%;
   color: ${colors.base.black};
 `;
 
 export const EmptyText = styled.span`
   ${setTypography(typography.paragraph.p2)}
-  line-height: 140%;
   color: ${colors.gray[500]};
 `;
 

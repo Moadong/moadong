@@ -33,7 +33,8 @@ public class ClubRequestFixture {
                 Instant.now(),
                 Instant.now().plus(7, ChronoUnit.DAYS),
                 "테스트 대상",
-                "https://fake-url.com"
+                "https://fake-url.com",
+                true
         );
     }
     //ToDo: 시간 계산법을 LocalDateTime에서 Instant로 변경 후에 활성화할 것

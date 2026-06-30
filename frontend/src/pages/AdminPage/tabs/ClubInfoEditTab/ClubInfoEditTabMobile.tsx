@@ -33,6 +33,7 @@ interface ClubInfoEditTabMobileProps {
     instagram: string;
     youtube: string;
   }) => void;
+  handleUpdateClubWithTags: (newTags: string[]) => void;
   isDirty: boolean;
 }
 
@@ -52,6 +53,7 @@ const ClubInfoEditTabMobile = ({
   onSocialLinksChange,
   handleUpdateClub,
   handleUpdateClubWithLinks,
+  handleUpdateClubWithTags,
   isDirty,
 }: ClubInfoEditTabMobileProps) => {
   const navigate = useNavigate();
@@ -69,6 +71,7 @@ const ClubInfoEditTabMobile = ({
       <FreeTagEditPage
         initialTags={clubTags}
         onSave={setClubTags}
+        onSaveToServer={handleUpdateClubWithTags}
         onBack={() => setActivePage('main')}
       />
     );

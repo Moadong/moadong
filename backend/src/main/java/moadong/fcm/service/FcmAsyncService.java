@@ -7,9 +7,9 @@ import com.google.firebase.messaging.TopicManagementResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.fcm.util.FcmTopicResolver;
+import moadong.global.config.properties.FcmProperties;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
@@ -33,11 +33,50 @@ public class FcmAsyncService {
 
     private final FcmTopicResolver fcmTopicResolver;
 
-    @Value("${fcm.topic.timeout-seconds:5}")
-    private int timeoutSeconds;
+    private final FcmProperties fcmProperties;
 
+    /**
+     * @deprecated
+     * @param token
+     * @param newClubIds
+     * @param clubsToSubscribe
+     * @param clubsToUnsubscribe
+     * @return
+     */
     @Async("fcmAsync")
     public CompletableFuture<Void> updateSubscriptions(String token, Set<String> newClubIds, Set<String> clubsToSubscribe, Set<String> clubsToUnsubscribe) {
+        return updateSubscriptionsInternal(
+                token,
+                clubsToSubscribe,
+                clubsToUnsubscribe,
+                () -> fcmTxService.deleteUnregisteredFcmToken(token),
+                () -> fcmTxService.updateFcmToken(token, newClubIds)
+        );
+    }
+
+    @Async("fcmAsync")
+    public CompletableFuture<Void> updateStudentSubscriptions(String token, Set<String> newClubIds, Set<String> clubsToSubscribe, Set<String> clubsToUnsubscribe) {
+        return updateSubscriptionsInternal(
+                token,
+                clubsToSubscribe,
+                clubsToUnsubscribe,
+                () -> fcmTxService.deleteUnregisteredStudentFcmToken(token),
+                () -> fcmTxService.updateStudentFcmToken(token, newClubIds)
+        );
+    }
+
+    private CompletableFuture<Void> updateSubscriptionsInternal(
+            String token,
+            Set<String> clubsToSubscribe,
+            Set<String> clubsToUnsubscribe,
+            Runnable notRegisteredTokenHandler,
+            Runnable tokenUpdater
+    ) {
+        if (firebaseMessaging == null) {
+            log.warn("FCM feature disabled. Skipping subscription update.");
+            return CompletableFuture.completedFuture(null);
+        }
+
         List<ApiFuture<TopicManagementResponse>> futures = new ArrayList<>();
 
         // 새로운 동아리 구독
@@ -59,7 +98,7 @@ public class FcmAsyncService {
         try {
             if (futures.isEmpty()) return CompletableFuture.completedFuture(null);
 
-            List<TopicManagementResponse> responses = ApiFutures.allAsList(futures).get(timeoutSeconds, TimeUnit.SECONDS);
+            List<TopicManagementResponse> responses = ApiFutures.allAsList(futures).get(fcmProperties.timeoutSeconds(), TimeUnit.SECONDS);
 
             for (TopicManagementResponse response : responses) {
                 if (response.getFailureCount() > 0) {
@@ -67,7 +106,7 @@ public class FcmAsyncService {
                             .anyMatch(e -> "registration-token-not-registered".equals(e.getReason()));
 
                     if (notRegistered) {
-                        fcmTxService.deleteUnregisteredFcmToken(token);
+                        notRegisteredTokenHandler.run();
                         return CompletableFuture.completedFuture(null);
                     }
 
@@ -76,7 +115,7 @@ public class FcmAsyncService {
                 }
             }
 
-            fcmTxService.updateFcmToken(token, newClubIds);
+            tokenUpdater.run();
 
         } catch (ExecutionException | TimeoutException e) {
             log.error("error: {}", e.getMessage());
@@ -89,4 +128,3 @@ public class FcmAsyncService {
         return CompletableFuture.completedFuture(null);
     }
 }
-

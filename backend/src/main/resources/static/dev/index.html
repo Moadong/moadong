@@ -1,0 +1,3880 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>모아동 개발자 포털</title>
+  <style>
+    * { box-sizing: border-box; }
+    :root {
+      --bg: #f5f7fb;
+      --surface: #fff;
+      --surface-subtle: #f8fafc;
+      --line: #e2e8f0;
+      --text: #111827;
+      --muted: #64748b;
+      --primary: #2563eb;
+      --primary-soft: #eff6ff;
+      --sidebar: #111827;
+      --sidebar-muted: #9ca3af;
+    }
+    html { scroll-behavior: smooth; }
+    body { font-family: system-ui, sans-serif; min-height: 100vh; margin: 0; padding: 0; line-height: 1.5; color: var(--text); background: var(--bg); }
+    body.is-authenticated { overflow-x: hidden; }
+    .login-page { min-height: 100vh; margin: 0; padding: 48px 20px; border: 0; border-radius: 0; display: grid; place-items: center; background: linear-gradient(135deg, #eef4ff 0%, #f8fafc 48%, #ecfdf5 100%); }
+    .login-card { width: min(100%, 420px); padding: 32px; border: 1px solid rgba(148,163,184,0.28); border-radius: 16px; background: rgba(255,255,255,0.94); box-shadow: 0 24px 70px rgba(15,23,42,0.14); }
+    .login-brand { margin-bottom: 28px; }
+    .login-eyebrow { margin: 0 0 8px; color: var(--primary); font-size: 0.82rem; font-weight: 700; letter-spacing: 0; }
+    .login-card h1 { margin: 0; font-size: 1.7rem; line-height: 1.2; }
+    .login-card .sub { margin: 10px 0 0; }
+    .login-card input { max-width: none; }
+    .login-card button[type="submit"] { width: 100%; margin: 12px 0 0; padding: 11px 16px; border-color: var(--primary); background: var(--primary); color: #fff; font-weight: 700; }
+    .login-card button[type="submit"]:hover:not(:disabled) { background: #1d4ed8; }
+    .app-shell { min-height: 100vh; display: grid; grid-template-columns: 264px minmax(0, 1fr); }
+    .sidebar { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: var(--sidebar); color: #fff; }
+    .sidebar-brand { padding: 24px 20px 18px; border-bottom: 1px solid rgba(255,255,255,0.08); }
+    .sidebar-brand h1 { margin: 0; font-size: 1.12rem; }
+    .sidebar-brand p { margin: 6px 0 0; color: var(--sidebar-muted); font-size: 0.84rem; }
+    .sidebar-nav { display: grid; gap: 4px; padding: 16px 12px; }
+    .sidebar-nav a { display: flex; align-items: center; min-height: 38px; padding: 8px 12px; border-radius: 8px; color: #d1d5db; text-decoration: none; font-size: 0.94rem; }
+    .sidebar-nav a:hover, .sidebar-nav a.is-active { background: rgba(255,255,255,0.1); color: #fff; text-decoration: none; }
+    .sidebar-footer { margin-top: auto; padding: 16px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .header-status { display: grid; gap: 10px; font-size: 0.88rem; color: #e5e7eb; }
+    .header-status .logout-btn { width: 100%; margin: 0; border-color: rgba(255,255,255,0.16); background: rgba(255,255,255,0.08); color: #fff; }
+    .header-status .logout-btn:hover:not(:disabled) { background: rgba(255,255,255,0.14); }
+    .token-area { margin-top: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.08); }
+    .token-area strong { color: #f9fafb; font-size: 0.86rem; }
+    .token-area .token-box { max-height: 96px; overflow: auto; background: rgba(255,255,255,0.08); color: #d1d5db; border: 1px solid rgba(255,255,255,0.1); }
+    .token-area button { color: #fff; border-color: rgba(255,255,255,0.16); background: rgba(255,255,255,0.08); }
+    .workspace { min-width: 0; }
+    .topbar { position: sticky; top: 0; z-index: 9; min-height: 72px; padding: 16px 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; background: rgba(245,247,251,0.9); border-bottom: 1px solid var(--line); backdrop-filter: blur(10px); }
+    .topbar h2 { margin: 0; font-size: 1.25rem; }
+    .topbar p { margin: 4px 0 0; color: var(--muted); font-size: 0.9rem; }
+    .topbar-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .content { max-width: 1180px; margin: 0 auto; padding: 28px; }
+    h2 { font-size: 1.1rem; margin-top: 0; margin-bottom: 12px; }
+    .sub { color: #666; margin-bottom: 24px; }
+    section { margin-bottom: 24px; padding: 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); box-shadow: 0 1px 2px rgba(15,23,42,0.04); }
+    section:target { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(37,99,235,0.08); }
+    a { color: #2563eb; text-decoration: none; }
+    a:hover { text-decoration: underline; }
+    input, select, textarea { padding: 8px 10px; margin: 4px 0; width: 100%; max-width: 400px; display: block; }
+    button { padding: 8px 16px; margin-right: 8px; margin-top: 8px; cursor: pointer; border: 1px solid #d1d5db; border-radius: 6px; background: #f9fafb; }
+    button:hover:not(:disabled) { background: #f3f4f6; }
+    button:disabled { opacity: 0.7; cursor: not-allowed; }
+    button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #2563eb; outline-offset: 2px; }
+    .form-row { margin-bottom: 12px; }
+    .form-row label { display: block; font-weight: 500; margin-bottom: 4px; font-size: 0.9rem; }
+    .token-box { background: #f3f4f6; padding: 12px; border-radius: 6px; word-break: break-all; font-size: 0.85rem; margin-top: 8px; }
+    .token-actions { display: flex; align-items: center; gap: 8px; margin-top: 8px; flex-wrap: wrap; }
+    .copy-feedback { font-size: 0.85rem; color: #16a34a; margin-left: 4px; }
+    .error { color: #dc2626; font-size: 0.9rem; margin-top: 8px; padding: 8px; background: #fef2f2; border-radius: 6px; border: 1px solid #fecaca; }
+    .success { color: #16a34a; font-size: 0.9rem; margin-top: 8px; padding: 8px; background: #f0fdf4; border-radius: 6px; border: 1px solid #bbf7d0; }
+    .message-box { margin-top: 8px; padding: 10px 12px; border-radius: 6px; font-size: 0.9rem; }
+    .message-box.success { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+    .message-box.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    table { border-collapse: collapse; width: 100%; }
+    th, td { border: 1px solid #e5e7eb; padding: 8px; text-align: left; }
+    th { background: #f9fafb; }
+    code { background: #f3f4f6; padding: 2px 6px; border-radius: 4px; font-size: 0.9em; }
+    #clubList tbody tr { cursor: pointer; }
+    #clubList tbody tr:hover { background: #f9fafb; }
+    #dictList tbody tr:hover { background: #f9fafb; }
+    #fcmTokenList tbody tr:hover { background: #f9fafb; }
+    #promotionList tbody tr { cursor: pointer; }
+    #promotionList tbody tr:hover { background: #f9fafb; }
+    #promotionList tbody tr.is-selected { background: #eff6ff; }
+    #dictList .btn-cell { white-space: nowrap; }
+    #dictList .btn-cell button { margin: 0 4px; padding: 4px 10px; font-size: 0.85rem; }
+    #fcmTokenList .btn-cell { white-space: nowrap; }
+    #fcmTokenList .btn-cell button { margin: 0 4px; padding: 4px 10px; font-size: 0.85rem; }
+    .hidden { display: none !important; }
+    .loading { opacity: 0.7; pointer-events: none; }
+    .banner { padding: 12px 16px; border-radius: 6px; margin-bottom: 12px; font-size: 0.9rem; }
+    .banner.warn { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+    .banner.error { background: #fef2f2; border: 1px solid #fecaca; color: #dc2626; }
+    .card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 12px; margin-top: 12px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; display: block; color: inherit; transition: border-color 0.2s, box-shadow 0.2s; }
+    .card:hover { border-color: #2563eb; box-shadow: 0 2px 8px rgba(37,99,235,0.1); }
+    .card strong { display: block; margin-bottom: 4px; }
+    .card span { font-size: 0.85rem; color: #666; }
+    .collapsible { border: 1px solid #e5e7eb; border-radius: 6px; margin-top: 8px; }
+    .collapsible-summary { padding: 10px 12px; cursor: pointer; font-weight: 500; background: #f9fafb; user-select: none; }
+    .collapsible-summary:hover { background: #f3f4f6; }
+    .collapsible-body { padding: 12px; max-height: 300px; overflow: auto; }
+    .collapsible-body pre { margin: 0; font-size: 0.8rem; white-space: pre-wrap; word-break: break-all; }
+    .editing-badge { display: inline-block; padding: 6px 12px; background: #dbeafe; color: #1e40af; border-radius: 6px; font-size: 0.9rem; margin-bottom: 12px; }
+    .form-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 12px 24px; margin-bottom: 16px; }
+    .form-grid .form-row { margin-bottom: 0; }
+    .form-grid .form-row input, .form-grid .form-row select { max-width: none; }
+    .table-wrap { overflow-x: auto; margin-top: 12px; }
+    .id-cell { font-family: monospace; font-size: 0.85rem; max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .id-cell[title] { cursor: pointer; }
+    .copy-id-cell { max-width: 160px; }
+    .copy-id-wrap { display: inline-flex; align-items: center; gap: 6px; max-width: 100%; }
+    .copy-id-text { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .copy-icon-btn { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 28px; height: 28px; margin: 0; padding: 0; border-radius: 6px; color: #2563eb; background: #eff6ff; border-color: #bfdbfe; font-size: 0.9rem; }
+    .copy-icon-btn:hover:not(:disabled) { background: #dbeafe; }
+    .section-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+    .section-head h2 { margin: 0; }
+    .section-head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+    .banner-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .banner-summary { margin: 0; color: #666; font-size: 0.9rem; }
+    .banner-editor-list { display: grid; gap: 12px; }
+    .banner-item { border: 1px solid #e5e7eb; border-radius: 8px; padding: 12px; background: #fff; }
+    .banner-item-head { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .banner-item-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+    .banner-order { display: inline-flex; align-items: center; justify-content: center; min-width: 48px; padding: 4px 10px; border-radius: 999px; background: #dbeafe; color: #1d4ed8; font-size: 0.85rem; font-weight: 600; }
+    .banner-item-body { display: grid; grid-template-columns: minmax(160px, 200px) minmax(0, 1fr); gap: 12px 16px; align-items: start; }
+    .banner-preview { border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; min-height: 120px; overflow: hidden; display: flex; align-items: center; justify-content: center; color: #666; font-size: 0.9rem; text-align: center; }
+    .banner-preview img { display: block; width: 100%; height: 120px; object-fit: cover; background: #f3f4f6; }
+    .banner-preview.is-empty { padding: 16px; }
+    .banner-item-grid { margin-bottom: 0; }
+    .banner-item-grid .form-row input { max-width: none; }
+    .banner-item-actions { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+    .banner-empty { padding: 16px; border: 1px dashed #d1d5db; border-radius: 8px; background: #f9fafb; color: #666; text-align: center; }
+    .pagination { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: 0.9rem; }
+    .pagination button { margin: 0; padding: 6px 12px; }
+    .token-cell {
+      font-family: monospace;
+      font-size: 0.82rem;
+      max-width: 420px;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+    .token-cell[title] { cursor: pointer; }
+    .promotion-layout { display: grid; grid-template-columns: 1fr; gap: 16px; align-items: start; }
+    .promotion-panel { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #fff; }
+    .promotion-panel h3 { margin: 0 0 8px; font-size: 1rem; }
+    .promotion-summary { margin: 0 0 12px; color: #666; font-size: 0.9rem; }
+    .promotion-empty { padding: 16px; border: 1px dashed #d1d5db; border-radius: 8px; background: #f9fafb; color: #666; text-align: center; }
+    .promotion-actions { display: flex; flex-wrap: wrap; gap: 8px; }
+    .promotion-actions button { margin: 0; }
+    .promotion-help { margin-top: 8px; color: #666; font-size: 0.85rem; }
+    .promotion-id { font-family: monospace; font-size: 0.85rem; color: #666; }
+    .promotion-upload-row { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
+    .promotion-upload-row .form-row { flex: 1 1 240px; margin-bottom: 0; }
+    .promotion-upload-row button { margin: 0; }
+    .promotion-preview-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: 12px; margin-top: 12px; }
+    .promotion-preview-card { border: 1px solid #e5e7eb; border-radius: 8px; overflow: hidden; background: #fff; }
+    .promotion-preview-image { display: flex; align-items: center; justify-content: center; height: 120px; background: #f9fafb; border-bottom: 1px solid #e5e7eb; }
+    .promotion-preview-image img { display: block; width: 100%; height: 120px; object-fit: cover; }
+    .promotion-preview-placeholder { padding: 12px; color: #666; font-size: 0.85rem; text-align: center; }
+    .promotion-preview-body { padding: 10px; }
+    .promotion-preview-url { display: block; font-size: 0.8rem; color: #2563eb; word-break: break-all; max-height: 48px; overflow: hidden; }
+    .promotion-preview-actions { display: flex; justify-content: space-between; gap: 8px; margin-top: 8px; }
+    .promotion-preview-actions button { margin: 0; padding: 6px 10px; font-size: 0.8rem; }
+    .promotion-location-input { display: flex; gap: 8px; align-items: center; }
+    .promotion-location-input input { flex: 1 1 auto; min-width: 0; }
+    .promotion-location-input button { margin: 0; white-space: nowrap; }
+    .promotion-map-card { margin-bottom: 16px; padding: 14px; border: 1px solid #e5e7eb; border-radius: 10px; background: linear-gradient(180deg, #f8fbff 0%, #fff 100%); }
+    .promotion-map-card h4 { margin: 0 0 6px; font-size: 0.98rem; }
+    .promotion-map-card p { margin: 0; }
+    .promotion-map-sub { color: #666; font-size: 0.88rem; margin-bottom: 12px; }
+    .promotion-map-config { display: grid; gap: 10px; }
+    .promotion-map-config strong { display: block; margin-bottom: 4px; }
+    .promotion-location-search-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+    .promotion-location-search-row input { flex: 1 1 260px; min-width: 0; max-width: none; margin: 0; }
+    .promotion-location-search-row button { margin: 0; }
+    .promotion-map-status { margin-bottom: 12px; padding: 10px 12px; border-radius: 8px; background: #eff6ff; border: 1px solid #bfdbfe; color: #1d4ed8; font-size: 0.88rem; }
+    .promotion-map-status.is-warning { background: #fff7ed; border-color: #fdba74; color: #9a3412; }
+    .promotion-map-status.is-muted { background: #f9fafb; border-color: #e5e7eb; color: #6b7280; }
+    .promotion-map-layout { display: grid; grid-template-columns: minmax(280px, 0.9fr) minmax(360px, 1.1fr); gap: 16px; align-items: start; }
+    .promotion-location-results { display: grid; gap: 10px; max-height: 420px; overflow: auto; padding-right: 4px; }
+    .promotion-location-result-empty { padding: 16px; border: 1px dashed #d1d5db; border-radius: 8px; background: rgba(255,255,255,0.7); color: #666; text-align: center; font-size: 0.88rem; }
+    .promotion-location-result { width: 100%; min-width: 0; margin: 0; padding: 14px; text-align: left; border-radius: 8px; border: 1px solid #dbe4f0; background: #fff; overflow-wrap: anywhere; }
+    .promotion-location-result:hover:not(:disabled) { background: #eff6ff; border-color: #93c5fd; }
+    .promotion-location-result.is-selected { border-color: #2563eb; box-shadow: inset 0 0 0 1px #2563eb; background: #eff6ff; }
+    .promotion-location-result-title { font-weight: 700; color: #111827; margin-bottom: 6px; line-height: 1.35; }
+    .promotion-location-result-address { color: #4b5563; font-size: 0.9rem; line-height: 1.45; }
+    .promotion-location-result-meta { margin-top: 6px; color: #6b7280; font-size: 0.78rem; }
+    .promotion-map-canvas-wrap { position: relative; border: 1px solid #dbe4f0; border-radius: 10px; overflow: hidden; background: #f8fafc; }
+    .promotion-map-canvas { width: 100%; min-height: 320px; background: linear-gradient(135deg, #dbeafe 0%, #f8fafc 100%); }
+    .promotion-map-fallback { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; padding: 20px; text-align: center; color: #64748b; font-size: 0.9rem; background: linear-gradient(135deg, #dbeafe 0%, #f8fafc 100%); z-index: 1; pointer-events: none; }
+    .promotion-map-meta-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 12px 16px; margin-top: 12px; }
+    .promotion-map-meta-grid .form-row { margin-bottom: 0; }
+    .promotion-map-meta-grid input { max-width: none; }
+    .toast { position: fixed; bottom: 24px; right: 24px; padding: 12px 20px; border-radius: 8px; font-size: 0.9rem; z-index: 20; box-shadow: 0 4px 12px rgba(0,0,0,0.15); animation: fadeOut 3s ease-in-out forwards; }
+    .toast.success { background: #166534; color: #fff; }
+    .toast.error { background: #dc2626; color: #fff; }
+    @keyframes fadeOut { 0%, 70% { opacity: 1; } 100% { opacity: 0; visibility: hidden; } }
+    @media (max-width: 1024px) {
+      .promotion-map-layout { grid-template-columns: 1fr; }
+    }
+    @media (max-width: 720px) {
+      .login-page { padding: 20px; }
+      .login-card { padding: 24px; border-radius: 12px; }
+      .app-shell { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; }
+      .sidebar-nav { grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); }
+      .sidebar-footer { display: grid; gap: 12px; }
+      .topbar { position: static; padding: 18px 20px; align-items: flex-start; flex-direction: column; }
+      .content { padding: 20px; }
+      .banner-item-body { grid-template-columns: 1fr; }
+      .promotion-layout { grid-template-columns: 1fr; }
+      .promotion-location-input { flex-direction: column; align-items: stretch; }
+    }
+  </style>
+</head>
+<body>
+  <section id="login" class="login-page">
+    <div class="login-card">
+      <div class="login-brand">
+        <p class="login-eyebrow">MOADONG BACK OFFICE</p>
+        <h1>모아동 개발자 포털</h1>
+        <p class="sub">개발자 전용 계정으로 로그인한 후 운영 도구를 사용할 수 있습니다.</p>
+      </div>
+      <div id="loginForm">
+        <form id="loginFormEl" novalidate>
+          <div id="loginError" class="error hidden"></div>
+          <div class="form-row">
+            <label for="loginUserId">아이디</label>
+            <input type="text" id="loginUserId" placeholder="userId" autocomplete="username">
+          </div>
+          <div class="form-row">
+            <label for="loginPassword">비밀번호</label>
+            <input type="password" id="loginPassword" placeholder="password" autocomplete="current-password">
+          </div>
+          <button type="submit" id="btnLogin">로그인</button>
+        </form>
+      </div>
+    </div>
+  </section>
+
+  <div id="appShell" class="app-shell hidden">
+    <aside class="sidebar">
+      <div class="sidebar-brand">
+        <h1>모아동 개발자 포털</h1>
+        <p>운영 데이터 관리 콘솔</p>
+      </div>
+      <nav class="sidebar-nav" id="sideNav">
+        <a href="#api-docs" id="navApiDocs" class="hidden">API 문서</a>
+        <a href="#club">동아리 관리</a>
+        <a href="#dict">단어사전</a>
+        <a href="#promotion">홍보 게시판</a>
+        <a href="#banner">배너 이미지</a>
+        <a href="#fcm">FCM 알림</a>
+        <a href="#conversion-batch">이미지 변환 배치</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div id="headerStatus" class="header-status hidden">
+          <span id="headerUserId"></span>
+          <button type="button" class="logout-btn" id="headerLogout">로그아웃</button>
+        </div>
+        <div id="tokenArea" class="token-area hidden">
+          <strong>토큰</strong>
+          <div class="token-actions">
+            <button type="button" id="btnCopyToken">복사</button>
+            <span id="copyFeedback" class="copy-feedback hidden">복사됨</span>
+          </div>
+          <div class="token-box" id="tokenDisplay"></div>
+        </div>
+      </div>
+    </aside>
+
+    <div class="workspace">
+      <header class="topbar">
+        <div>
+          <h2>운영 관리</h2>
+          <p>데이터 변경 전 대상과 영향 범위를 확인하세요.</p>
+        </div>
+        <div class="topbar-actions">
+          <a href="/swagger-ui.html" target="_blank" rel="noopener" class="card" style="padding:10px 12px;">Swagger</a>
+          <a href="/v3/api-docs" target="_blank" rel="noopener" class="card" style="padding:10px 12px;">OpenAPI</a>
+        </div>
+      </header>
+
+      <main class="content">
+
+    <section id="api-docs" class="hidden">
+      <h2>API 문서</h2>
+      <div class="card-grid">
+        <a href="/swagger-ui.html" target="_blank" rel="noopener" class="card">
+          <strong>Swagger UI</strong>
+          <span>API 목록 및 Try it out</span>
+        </a>
+        <a href="/v3/api-docs" target="_blank" rel="noopener" class="card">
+          <strong>OpenAPI JSON</strong>
+          <span>스펙 다운로드</span>
+        </a>
+      </div>
+      <details class="collapsible" style="margin-top:12px;">
+        <summary class="collapsible-summary">JWT 사용 방법</summary>
+        <div class="collapsible-body">
+          <p style="margin:0 0 8px;">Swagger에서 <strong>Authorize</strong> 클릭 후, 위에서 복사한 토큰을 <strong>Bearer</strong> 없이 붙여넣기.</p>
+        </div>
+      </details>
+    </section>
+
+    <section id="club" class="hidden">
+      <div class="section-head">
+        <h2>동아리 관리</h2>
+        <div class="section-head-actions">
+          <div id="clubPagination" class="pagination hidden"></div>
+          <button type="button" id="btnLoadClubs">동아리 목록 새로고침</button>
+        </div>
+      </div>
+      <div id="clubBanner" class="banner hidden"></div>
+      <div id="clubListLoading" class="hidden">목록 불러오는 중...</div>
+      <div class="table-wrap">
+        <table id="clubList">
+          <thead><tr><th>ID</th><th>이름</th><th>userId</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="dict" class="hidden">
+      <div class="section-head">
+        <h2>단어사전 관리</h2>
+        <div class="section-head-actions">
+          <div id="dictPagination" class="pagination hidden"></div>
+          <button type="button" id="btnLoadDict">목록 새로고침</button>
+          <button type="button" id="btnRefreshDictCache">캐시 새로고침</button>
+        </div>
+      </div>
+      <div id="dictBanner" class="banner hidden"></div>
+      <div id="dictListLoading" class="hidden">목록 불러오는 중...</div>
+      <div class="table-wrap">
+        <table id="dictList">
+          <thead><tr><th>ID</th><th>표준단어</th><th>입력단어</th><th>액션</th></tr></thead>
+          <tbody></tbody>
+        </table>
+      </div>
+      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">단어사전 추가</h3>
+      <div class="form-grid">
+        <div>
+          <div class="form-row">
+            <label for="dictNewStandardWord">표준단어</label>
+            <input type="text" id="dictNewStandardWord" placeholder="표준단어">
+          </div>
+          <div class="form-row">
+            <label for="dictNewInputWords">입력단어 (쉼표로 구분)</label>
+            <textarea id="dictNewInputWords" rows="3" placeholder="단어1, 단어2, 단어3" style="max-width:100%;"></textarea>
+          </div>
+          <button type="button" id="btnDictCreate">단일 추가</button>
+        </div>
+        <div>
+          <div class="form-row">
+            <label for="dictCsvFile">CSV 일괄 추가</label>
+            <input type="file" id="dictCsvFile" accept=".csv">
+          </div>
+          <p class="sub" style="margin-top:4px; margin-bottom:8px;">형식: 표준단어,입력단어,입력단어_정규화,표준단어_정규화</p>
+          <button type="button" id="btnDictCsvUpload">CSV 업로드</button>
+        </div>
+      </div>
+      <div class="card-grid" style="margin-top:16px;">
+        <a href="/swagger-ui.html#/Word_Dictionary_Admin" target="_blank" rel="noopener" class="card">
+          <strong>단어사전 Admin API</strong>
+          <span>CRUD, bulk, CSV, refresh</span>
+        </a>
+      </div>
+    </section>
+
+    <section id="promotion" class="hidden">
+      <div class="section-head">
+        <h2>홍보 게시판 관리</h2>
+        <div class="section-head-actions">
+          <button type="button" id="btnLoadPromotion">목록 새로고침</button>
+          <button type="button" id="btnCreatePromotion">새 게시글 작성</button>
+        </div>
+      </div>
+      <div id="promotionBanner" class="banner hidden"></div>
+      <div class="promotion-layout">
+        <div class="promotion-panel">
+          <h3>게시글 목록</h3>
+          <p id="promotionSummary" class="promotion-summary">홍보 게시글 목록을 불러오세요.</p>
+          <div id="promotionListLoading" class="hidden">목록 불러오는 중...</div>
+          <div class="table-wrap">
+            <table id="promotionList">
+              <thead><tr><th>제목</th><th>동아리</th><th>장소</th><th>행사 기간</th><th>이미지</th></tr></thead>
+              <tbody>
+                <tr><td colspan="5">홍보 게시글 목록을 불러오세요.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="promotion-panel">
+          <h3>선택된 게시글 편집</h3>
+          <p id="promotionSelectionSummary" class="promotion-summary">왼쪽 목록에서 수정할 게시글을 선택하세요.</p>
+          <div id="promotionEditingBadge" class="editing-badge hidden"></div>
+          <div class="form-grid">
+            <div class="form-row">
+              <label for="promotionClubId">clubId</label>
+              <input type="text" id="promotionClubId" readonly>
+            </div>
+            <div class="form-row">
+              <label for="promotionTitle">제목</label>
+              <input type="text" id="promotionTitle" placeholder="홍보 게시글 제목">
+            </div>
+            <div class="form-row">
+              <label for="promotionLocation">장소</label>
+              <div class="promotion-location-input">
+                <input type="text" id="promotionLocation" placeholder="행사 장소">
+                <button type="button" id="btnPromotionSearchLocation">지도에서 찾기</button>
+              </div>
+            </div>
+            <div class="form-row">
+              <label for="promotionEventStartDate">행사 시작</label>
+              <input type="datetime-local" id="promotionEventStartDate">
+            </div>
+            <div class="form-row">
+              <label for="promotionEventEndDate">행사 종료</label>
+              <input type="datetime-local" id="promotionEventEndDate">
+            </div>
+          </div>
+          <div class="promotion-map-card">
+            <h4>장소 선택</h4>
+            <p class="promotion-map-sub">장소명 입력과 좌표 선택은 분리되어 있습니다. 아래 검색창이나 지도를 사용해 위도/경도를 선택하세요.</p>
+            <div id="promotionMapConfigBanner" class="banner warn hidden">
+              <div class="promotion-map-config">
+                <div>
+                  <strong>카카오 지도 JavaScript 키가 서버에 설정되어야 합니다</strong>
+                  <p>`application.properties`의 `dev.portal.kakao-javascript-key` 또는 환경변수로 키를 설정한 뒤 페이지를 새로고침하세요.</p>
+                </div>
+              </div>
+            </div>
+            <div class="promotion-location-search-row">
+              <input type="search" id="promotionLocationSearchQuery" placeholder="좌표를 찾을 주소나 건물명을 검색하세요.">
+              <button type="button" id="btnPromotionLocationSearch">검색</button>
+              <button type="button" id="btnPromotionClearCoordinates">좌표 초기화</button>
+            </div>
+            <div id="promotionMapStatus" class="promotion-map-status is-muted">게시글을 선택하거나 새 게시글 작성 모드로 전환하면 위치를 선택할 수 있습니다.</div>
+            <div class="promotion-map-layout">
+              <div>
+                <div id="promotionLocationResultEmpty" class="promotion-location-result-empty">주소를 검색하면 후보가 여기에 표시됩니다.</div>
+                <div id="promotionLocationSearchResults" class="promotion-location-results"></div>
+              </div>
+              <div class="promotion-map-canvas-wrap">
+                <div id="promotionMapCanvas" class="promotion-map-canvas"></div>
+                <div id="promotionMapFallback" class="promotion-map-fallback">카카오 지도 JavaScript 키를 저장하면 실제 지도가 이 영역에 표시됩니다.</div>
+              </div>
+            </div>
+            <div class="promotion-map-meta-grid">
+              <div class="form-row">
+                <label for="promotionLatitude">위도</label>
+                <input type="text" id="promotionLatitude" readonly placeholder="지도를 선택하면 자동 입력">
+              </div>
+              <div class="form-row">
+                <label for="promotionLongitude">경도</label>
+                <input type="text" id="promotionLongitude" readonly placeholder="지도를 선택하면 자동 입력">
+              </div>
+            </div>
+          </div>
+          <div class="form-row">
+            <label for="promotionDescription">설명</label>
+            <textarea id="promotionDescription" rows="6" placeholder="홍보 설명" style="max-width:100%;"></textarea>
+          </div>
+          <div class="form-row">
+            <label for="promotionImages">이미지 URL (줄바꿈 구분)</label>
+            <textarea id="promotionImages" rows="5" placeholder="https://example.com/image1.png&#10;https://example.com/image2.png" style="max-width:100%;"></textarea>
+          </div>
+          <div class="promotion-upload-row">
+            <div class="form-row">
+              <label for="promotionImageUploadFile">이미지 직접 업로드</label>
+              <input type="file" id="promotionImageUploadFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp" multiple>
+            </div>
+            <button type="button" id="btnUploadPromotionImage">선택 이미지 업로드</button>
+          </div>
+          <div>
+            <label style="display:block; font-weight:500; margin-bottom:4px; font-size:0.9rem;">이미지 미리보기</label>
+            <div id="promotionImagePreviewEmpty" class="promotion-empty">이미지 URL을 입력하거나 업로드하면 여기에서 미리볼 수 있습니다.</div>
+            <div id="promotionImagePreviewList" class="promotion-preview-grid"></div>
+          </div>
+          <div class="promotion-actions">
+            <button type="button" id="btnSavePromotion">저장</button>
+            <button type="button" id="btnResetPromotion">원본으로 되돌리기</button>
+            <button type="button" id="btnDeletePromotion">삭제</button>
+            <button type="button" id="btnClearPromotionSelection">선택 해제</button>
+          </div>
+          <p id="promotionHelpText" class="promotion-help">기존 게시글의 `clubId`는 읽기 전용입니다. 저장 후 목록을 다시 조회해 서버 기준 최신값으로 동기화합니다.</p>
+          <div id="promotionSaveResult" class="message-box hidden"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="banner" class="hidden">
+      <div class="section-head">
+        <h2>배너 이미지 관리</h2>
+        <div class="section-head-actions">
+          <button type="button" id="btnLoadBanner">목록 불러오기</button>
+          <button type="button" id="btnSaveBanner">현재 배열 저장</button>
+        </div>
+      </div>
+      <div id="bannerBanner" class="banner hidden"></div>
+      <p class="sub" style="margin-bottom:12px;">타입별 배너 배열을 조회하고 수정할 수 있습니다. 이미지를 업로드하면 현재 배열에 바로 추가되고, 각 항목의 위/아래 버튼으로 순서를 변경할 수 있습니다.</p>
+      <div class="form-grid" style="margin-bottom:8px;">
+        <div class="form-row">
+          <label for="bannerType">배너 타입</label>
+          <select id="bannerType">
+            <option value="WEB">WEB</option>
+            <option value="APP_HOME">APP_HOME</option>
+            <option value="WEB_MOBILE">WEB_MOBILE</option>
+          </select>
+        </div>
+        <div>
+          <div class="form-row">
+            <label for="bannerUploadFile">배너 이미지 업로드</label>
+            <input type="file" id="bannerUploadFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp">
+          </div>
+          <button type="button" id="btnUploadBannerImage">업로드 후 배열에 추가</button>
+        </div>
+      </div>
+      <div class="banner-toolbar">
+        <p id="bannerSummary" class="banner-summary">WEB 타입 목록을 불러오세요.</p>
+        <button type="button" id="btnAddBannerItem">배너 추가</button>
+      </div>
+      <div id="bannerListLoading" class="hidden">목록 불러오는 중...</div>
+      <div id="bannerEmpty" class="banner-empty hidden">저장된 배너가 없습니다. 새 배너를 추가하거나 이미지를 업로드해 보세요.</div>
+      <div id="bannerList" class="banner-editor-list"></div>
+      <div id="bannerSaveResult" class="message-box hidden"></div>
+      <div class="card-grid" style="margin-top:16px;">
+        <a href="/swagger-ui.html#/Banner" target="_blank" rel="noopener" class="card">
+          <strong>Banner API</strong>
+          <span>조회 및 전체 배열 저장</span>
+        </a>
+      </div>
+    </section>
+
+    <section id="fcm" class="hidden">
+      <div class="section-head">
+        <h2>FCM 알림 관리</h2>
+        <div class="section-head-actions">
+          <button type="button" id="btnLoadFcmTokens">토큰 조회</button>
+          <button type="button" id="btnClearFcmSelection">선택 초기화</button>
+        </div>
+      </div>
+      <div id="fcmBanner" class="banner hidden"></div>
+      <p class="sub" style="margin-bottom:8px;">1) 토큰을 조회해 선택한 뒤 개별 메시지를 보낼 수 있습니다. 2) 전체 토큰 대상으로 일괄 발송할 수 있습니다.</p>
+
+      <h3 style="font-size:1rem; margin-top:0; margin-bottom:8px;">토큰 조회</h3>
+      <div id="fcmTokenLoading" class="hidden">토큰 불러오는 중...</div>
+      <p id="fcmTokenSummary" class="sub" style="margin-top:0; margin-bottom:8px;">토큰 조회를 실행하세요.</p>
+      <div class="form-grid" style="margin-bottom:8px;">
+        <div class="form-row">
+          <label for="fcmTokenSearch">토큰 검색</label>
+          <input type="search" id="fcmTokenSearch" placeholder="토큰 일부를 입력하세요.">
+        </div>
+      </div>
+      <div id="fcmTokenPagination" class="pagination hidden" style="margin-bottom:8px;"></div>
+      <div class="table-wrap">
+        <table id="fcmTokenList">
+          <thead><tr><th>#</th><th>토큰</th><th>액션</th></tr></thead>
+          <tbody>
+            <tr><td colspan="3">토큰 조회를 실행하세요.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">개별 토큰 메시지 전송</h3>
+      <div class="form-row">
+        <label for="fcmSingleToken">대상 토큰</label>
+        <textarea id="fcmSingleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmSingleTitle">제목</label>
+          <input type="text" id="fcmSingleTitle" placeholder="알림 제목">
+        </div>
+        <div class="form-row">
+          <label for="fcmSingleBody">본문</label>
+          <input type="text" id="fcmSingleBody" placeholder="알림 내용">
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="fcmSingleData">data (JSON 객체, 선택)</label>
+        <textarea id="fcmSingleData" rows="4" placeholder='{"screen":"club","clubId":"123"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+      </div>
+      <button type="button" id="btnFcmSendSingle">개별 메시지 전송</button>
+      <div id="fcmSingleResult" class="message-box hidden"></div>
+
+      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">전체 메시지 전송</h3>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmBatchTitle">제목</label>
+          <input type="text" id="fcmBatchTitle" placeholder="알림 제목">
+        </div>
+        <div class="form-row">
+          <label for="fcmBatchBody">본문</label>
+          <input type="text" id="fcmBatchBody" placeholder="알림 내용">
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="fcmBatchData">data (JSON 객체, 선택)</label>
+        <textarea id="fcmBatchData" rows="4" placeholder='{"type":"admin","scope":"all"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+      </div>
+      <button type="button" id="btnFcmSendAll">전체 메시지 전송</button>
+      <div id="fcmBatchResult" class="message-box hidden"></div>
+
+      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">예약 알림 만들기</h3>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmScheduleTargetType">대상 유형</label>
+          <select id="fcmScheduleTargetType">
+            <option value="SINGLE_TOKEN">단건 토큰</option>
+            <option value="ALL_TOKENS">전체 토큰</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="fcmScheduleToken">대상 토큰</label>
+          <textarea id="fcmScheduleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
+        </div>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmScheduleTitle">제목</label>
+          <input type="text" id="fcmScheduleTitle" placeholder="알림 제목">
+        </div>
+        <div class="form-row">
+          <label for="fcmScheduleBody">본문</label>
+          <input type="text" id="fcmScheduleBody" placeholder="알림 내용">
+        </div>
+      </div>
+      <div class="form-row">
+        <label for="fcmScheduleData">data (JSON 객체, 선택)</label>
+        <textarea id="fcmScheduleData" rows="4" placeholder='{"path":"/webview/clubDetail/123","action":"NAVIGATE_WEBVIEW"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="fcmScheduleDate">예약 날짜</label>
+          <input type="date" id="fcmScheduleDate">
+        </div>
+        <div class="form-row">
+          <label for="fcmScheduleTime">예약 시간</label>
+          <input type="time" id="fcmScheduleTime">
+        </div>
+      </div>
+      <button type="button" id="btnFcmScheduleCreate">예약</button>
+      <button type="button" id="btnFcmScheduleReset">초기화</button>
+      <div id="fcmScheduleResult" class="message-box hidden"></div>
+
+      <div class="section-head" style="margin-top:24px;">
+        <h3 style="font-size:1rem; margin:0;">예약 알림 목록</h3>
+        <div class="section-head-actions">
+          <select id="fcmScheduleStatusFilter">
+            <option value="">전체</option>
+            <option value="SCHEDULED">대기</option>
+            <option value="SENDING">발송 중</option>
+            <option value="SENT">발송 완료</option>
+            <option value="CANCELED">취소됨</option>
+            <option value="FAILED">실패</option>
+          </select>
+          <button type="button" id="btnLoadFcmSchedules">예약 목록 조회</button>
+        </div>
+      </div>
+      <div id="fcmScheduleLoading" class="hidden">예약 알림을 불러오는 중...</div>
+      <div class="table-wrap">
+        <table id="fcmScheduleList">
+          <thead><tr><th>예약 시각</th><th>대상</th><th>제목</th><th>상태</th><th>결과</th><th>생성 시각</th><th>액션</th></tr></thead>
+          <tbody>
+            <tr><td colspan="7">예약 목록을 조회하세요.</td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="card-grid" style="margin-top:16px;">
+        <a href="/swagger-ui.html#/Fcm_Notification_Admin" target="_blank" rel="noopener" class="card">
+          <strong>FCM Notification Admin API</strong>
+          <span>토큰 조회, 단건 전송, 전체 배치 전송</span>
+        </a>
+      </div>
+    </section>
+
+    <section id="conversion-batch" class="hidden">
+      <h2>이미지 변환 배치 (전체 동아리)</h2>
+      <p class="sub">source → destination 이미지 URL을 모든 동아리의 로고/커버/피드 이미지에서 일괄 갱신합니다. event=batch.completed, images 배열 필수.</p>
+      <div id="conversionBanner" class="banner hidden"></div>
+      <div class="form-row">
+        <label for="conversionImagesJson">images (JSON 배열)</label>
+        <textarea id="conversionImagesJson" rows="8" placeholder='[{"source":"old-key.png","destination":"new-key.webp"}]' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+      </div>
+      <button type="button" id="btnConversionBatch">배치 실행</button>
+      <button type="button" id="btnWebpMigrate">WebP 마이그레이션 실행</button>
+      <div class="card-grid" style="margin-top:16px;">
+        <a href="/swagger-ui.html#/Conversion_Batch_Admin" target="_blank" rel="noopener" class="card">
+          <strong>Conversion Batch Admin API</strong>
+          <span>POST /api/admin/conversion-batch</span>
+        </a>
+      </div>
+    </section>
+      </main>
+    </div>
+  </div>
+
+  <script>
+    const API_BASE = '';
+    const PAGE_SIZE = 50;
+    const FCM_PAGE_SIZE = 20;
+    const DEFAULT_BANNER_TYPE = 'WEB';
+    const KAKAO_MAPS_SCRIPT_ID = 'devPortalKakaoMapsSdk';
+    const DEFAULT_PROMOTION_MAP_CENTER = Object.freeze({ latitude: 35.2338, longitude: 129.0826 });
+    const DEFAULT_PROMOTION_MAP_ZOOM = 4;
+    const PROMOTION_FORM_IDS = ['promotionClubId', 'promotionTitle', 'promotionLocation', 'promotionEventStartDate', 'promotionEventEndDate', 'promotionDescription', 'promotionImages'];
+    const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'banner', 'fcm', 'conversion-batch'];
+    let fcmTokens = [];
+    let fcmFilteredTokens = [];
+    let fcmCurrentPage = 1;
+    let fcmSchedules = [];
+    let fcmScheduleIsLoading = false;
+    let fcmScheduleIsCreating = false;
+    let fcmScheduleCancelingIds = new Set();
+    let bannerImages = [];
+    let bannerActiveType = DEFAULT_BANNER_TYPE;
+    let bannerDirty = false;
+    let bannerHasLoaded = false;
+    let bannerIsLoading = false;
+    let bannerIsSaving = false;
+    let bannerIsUploading = false;
+    let promotionArticles = [];
+    let promotionEditorMode = 'edit';
+    let promotionSelectedArticleId = '';
+    let promotionSelectedOriginal = null;
+    let promotionHasLoaded = false;
+    let promotionIsLoading = false;
+    let promotionIsSaving = false;
+    let promotionIsUploading = false;
+    let promotionIsDeleting = false;
+    let promotionMapSdkPromise = null;
+    let promotionMap = null;
+    let promotionMapMarker = null;
+    let promotionMapKey = '';
+    let promotionLocationCandidates = [];
+    let promotionSelectedCandidateKey = '';
+    let promotionLocationResolvedAddress = '';
+
+    function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
+    function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
+    function clearToken() { sessionStorage.removeItem('devPortalToken'); }
+    function getUserId() { return sessionStorage.getItem('devPortalUserId') || ''; }
+    function setUserId(u) { sessionStorage.setItem('devPortalUserId', u); }
+    function clearUserId() { sessionStorage.removeItem('devPortalUserId'); }
+
+    function headers() {
+      const t = getToken();
+      const h = { 'Content-Type': 'application/json' };
+      if (t) h['Authorization'] = 'Bearer ' + t;
+      return h;
+    }
+
+    function showToast(message, type) {
+      const el = document.createElement('div');
+      el.className = 'toast ' + (type || 'success');
+      el.textContent = message;
+      document.body.appendChild(el);
+      setTimeout(() => el.remove(), 3000);
+    }
+
+    function getActivePortalSectionId() {
+      const sectionId = (window.location.hash || '#api-docs').replace('#', '');
+      return PORTAL_SECTION_IDS.includes(sectionId) ? sectionId : 'api-docs';
+    }
+
+    function loadActivePortalSectionData(sectionId) {
+      if (!getToken()) return;
+      if (sectionId === 'club') loadClubsIfVisible();
+      if (sectionId === 'dict') loadDictIfVisible();
+      if (sectionId === 'promotion') loadPromotionIfVisible();
+      if (sectionId === 'banner') loadBannerIfVisible();
+      if (sectionId === 'fcm') loadFcmTokensIfVisible();
+    }
+
+    function showActivePortalSection() {
+      const activeId = getActivePortalSectionId();
+      PORTAL_SECTION_IDS.forEach((sectionId) => {
+        document.getElementById(sectionId).classList.toggle('hidden', sectionId !== activeId);
+      });
+      updateActiveNav();
+      loadActivePortalSectionData(activeId);
+      if (activeId === 'promotion') {
+        window.requestAnimationFrame(() => initializePromotionMapIfVisible());
+      }
+    }
+
+    function updateActiveNav() {
+      const hash = '#' + getActivePortalSectionId();
+      document.querySelectorAll('#sideNav a').forEach(link => {
+        link.classList.toggle('is-active', link.getAttribute('href') === hash);
+      });
+    }
+
+    window.addEventListener('hashchange', () => {
+      if (!getToken()) return;
+      showActivePortalSection();
+    });
+
+    function showLogin(show) {
+      document.body.classList.toggle('is-authenticated', !!show);
+      document.getElementById('login').classList.toggle('hidden', !!show);
+      document.getElementById('loginForm').classList.toggle('hidden', !!show);
+      document.getElementById('appShell').classList.toggle('hidden', !show);
+      document.getElementById('tokenArea').classList.toggle('hidden', !show);
+      document.getElementById('api-docs').classList.toggle('hidden', true);
+      document.getElementById('navApiDocs').classList.toggle('hidden', !show);
+      document.getElementById('club').classList.toggle('hidden', true);
+      document.getElementById('dict').classList.toggle('hidden', true);
+      document.getElementById('promotion').classList.toggle('hidden', true);
+      document.getElementById('banner').classList.toggle('hidden', true);
+      document.getElementById('fcm').classList.toggle('hidden', true);
+      document.getElementById('conversion-batch').classList.toggle('hidden', true);
+      const headerStatus = document.getElementById('headerStatus');
+      const headerUserId = document.getElementById('headerUserId');
+      if (show) {
+        headerUserId.textContent = '로그인됨 (' + (getUserId() || 'developer') + ')';
+        headerStatus.classList.remove('hidden');
+        if (!window.location.hash || window.location.hash === '#login') {
+          history.replaceState(null, '', '#api-docs');
+        }
+        showActivePortalSection();
+      } else {
+        headerStatus.classList.add('hidden');
+        clearUserId();
+        history.replaceState(null, '', '#login');
+      }
+    }
+
+    document.getElementById('loginFormEl').addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const userId = document.getElementById('loginUserId').value.trim();
+      const password = document.getElementById('loginPassword').value;
+      const errEl = document.getElementById('loginError');
+      const btn = document.getElementById('btnLogin');
+      errEl.textContent = '';
+      errEl.classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = '로그인 중...';
+      try {
+        const res = await fetch(API_BASE + '/auth/user/login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ userId, password })
+        });
+        const data = await res.json();
+        if (!res.ok) {
+          errEl.textContent = data.message || '로그인 실패';
+          errEl.classList.remove('hidden');
+          return;
+        }
+        const token = data.data?.accessToken;
+        if (token) {
+          setToken(token);
+          setUserId(userId);
+          document.getElementById('tokenDisplay').textContent = token;
+          showLogin(true);
+          await loadDevPortalConfig();
+          showActivePortalSection();
+        } else {
+          errEl.textContent = '토큰 없음';
+          errEl.classList.remove('hidden');
+        }
+      } catch (e) {
+        errEl.textContent = e.message || '요청 실패';
+        errEl.classList.remove('hidden');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '로그인';
+      }
+    });
+
+    document.getElementById('btnCopyToken').onclick = () => {
+      const t = getToken();
+      if (t) {
+        navigator.clipboard.writeText(t);
+        const fb = document.getElementById('copyFeedback');
+        fb.classList.remove('hidden');
+        setTimeout(() => fb.classList.add('hidden'), 2000);
+      }
+    };
+
+    function clearLogoutState() {
+      clearToken();
+      clearUserId();
+      promotionMapKey = '';
+      showLogin(false);
+      document.getElementById('tokenDisplay').textContent = '';
+      document.getElementById('clubList').querySelector('tbody').innerHTML = '';
+      document.getElementById('clubBanner').classList.add('hidden');
+      document.getElementById('dictList').querySelector('tbody').innerHTML = '';
+      document.getElementById('dictBanner').classList.add('hidden');
+      clearPromotionState();
+      clearBannerState();
+      clearFcmState();
+    }
+
+    async function doLogout() {
+      const btn = document.getElementById('headerLogout');
+      btn.disabled = true;
+      try {
+        await fetch(API_BASE + '/auth/user/logout', {
+          method: 'GET',
+          credentials: 'include'
+        });
+      } catch (e) {
+        console.warn('Logout request failed', e);
+      } finally {
+        btn.disabled = false;
+        clearLogoutState();
+      }
+    }
+
+    function openEditWindow(clubId) {
+      window.open('/dev/edit.html?clubId=' + encodeURIComponent(clubId), 'clubEdit', 'width=620,height=700,scrollbars=yes');
+    }
+    document.getElementById('headerLogout').onclick = doLogout;
+
+    if (getToken()) {
+      document.getElementById('tokenDisplay').textContent = getToken();
+      showLogin(true);
+      loadDevPortalConfig().finally(() => {
+        showActivePortalSection();
+      });
+    }
+
+    let allClubs = [];
+    let currentPage = 1;
+
+    function truncateId(id) {
+      if (!id || id.length <= 8) return id;
+      return id.slice(0, 8) + '…';
+    }
+
+    function copyTextToClipboard(text, message) {
+      navigator.clipboard.writeText(text || '');
+      showToast(message || '복사됨', 'success');
+    }
+
+    function renderClubTableRows(clubs, page) {
+      const start = (page - 1) * PAGE_SIZE;
+      const slice = clubs.slice(start, start + PAGE_SIZE);
+      const tbody = document.querySelector('#clubList tbody');
+      tbody.innerHTML = '';
+      slice.forEach(c => {
+        const tr = document.createElement('tr');
+        const idCell = document.createElement('td');
+        idCell.className = 'id-cell copy-id-cell';
+        idCell.title = c.id || '';
+        const idWrap = document.createElement('span');
+        idWrap.className = 'copy-id-wrap';
+        const idText = document.createElement('span');
+        idText.className = 'copy-id-text';
+        idText.textContent = truncateId(c.id || '');
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'copy-icon-btn';
+        copyBtn.textContent = '⧉';
+        copyBtn.title = 'ID 복사';
+        copyBtn.setAttribute('aria-label', '동아리 ID 복사');
+        copyBtn.onclick = (e) => { e.stopPropagation(); copyTextToClipboard(c.id || '', 'ID 복사됨'); };
+        idWrap.appendChild(idText);
+        idWrap.appendChild(copyBtn);
+        idCell.appendChild(idWrap);
+        tr.appendChild(idCell);
+        tr.appendChild(document.createElement('td')).textContent = c.name || '';
+        tr.appendChild(document.createElement('td')).textContent = c.userId || '';
+        tr.onclick = () => openEditWindow(c.id);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderPagination(total) {
+      const wrap = document.getElementById('clubPagination');
+      if (total <= PAGE_SIZE) {
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+      wrap.classList.remove('hidden');
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+      let html = '<span>총 ' + total + '개</span>';
+      if (currentPage > 1) html += '<button type="button" id="clubPrev">이전</button>';
+      html += '<span> ' + currentPage + ' / ' + totalPages + ' </span>';
+      if (currentPage < totalPages) html += '<button type="button" id="clubNext">다음</button>';
+      wrap.innerHTML = html;
+      const prev = document.getElementById('clubPrev');
+      const next = document.getElementById('clubNext');
+      if (prev) prev.onclick = () => { currentPage--; renderClubTableRows(allClubs, currentPage); renderPagination(allClubs.length); };
+      if (next) next.onclick = () => { currentPage++; renderClubTableRows(allClubs, currentPage); renderPagination(allClubs.length); };
+    }
+
+    function loadClubsIfVisible() {
+      const section = document.getElementById('club');
+      if (section && !section.classList.contains('hidden')) {
+        document.getElementById('btnLoadClubs').click();
+      }
+    }
+
+    document.getElementById('btnLoadClubs').onclick = async () => {
+      const tbody = document.querySelector('#clubList tbody');
+      const banner = document.getElementById('clubBanner');
+      const loading = document.getElementById('clubListLoading');
+      banner.classList.add('hidden');
+      banner.className = 'banner hidden';
+      loading.classList.remove('hidden');
+      tbody.innerHTML = '';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/clubs', { headers: headers() });
+        if (res.status === 403) {
+          banner.textContent = '개발자 계정으로 로그인하세요.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          tbody.innerHTML = '<tr><td colspan="3">목록을 불러올 수 없습니다.</td></tr>';
+          return;
+        }
+        const data = await res.json();
+        const clubs = data.data?.clubs || [];
+        allClubs = clubs;
+        currentPage = 1;
+        renderClubTableRows(clubs, 1);
+        renderPagination(clubs.length);
+      } catch (e) {
+        banner.textContent = '요청 실패: ' + (e.message || '');
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        tbody.innerHTML = '<tr><td colspan="3">' + (e.message || '오류') + '</td></tr>';
+      } finally {
+        loading.classList.add('hidden');
+      }
+    };
+
+    let allDicts = [];
+    let dictCurrentPage = 1;
+
+    function openDictEditWindow(d) {
+      window.open('/dev/dict-edit.html?id=' + encodeURIComponent(d.id), 'dictEdit', 'width=520,height=420,scrollbars=yes');
+    }
+
+    function inputWordsSummary(words) {
+      if (!words || !words.length) return '';
+      const s = words.join(', ');
+      return s.length > 60 ? s.slice(0, 60) + '…' : s;
+    }
+
+    function renderDictTableRows(dicts, page) {
+      const start = (page - 1) * PAGE_SIZE;
+      const slice = dicts.slice(start, start + PAGE_SIZE);
+      const tbody = document.querySelector('#dictList tbody');
+      tbody.innerHTML = '';
+      slice.forEach(d => {
+        const tr = document.createElement('tr');
+        const idCell = document.createElement('td');
+        idCell.className = 'id-cell copy-id-cell';
+        idCell.title = d.id || '';
+        const idWrap = document.createElement('span');
+        idWrap.className = 'copy-id-wrap';
+        const idText = document.createElement('span');
+        idText.className = 'copy-id-text';
+        idText.textContent = truncateId(d.id || '');
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.className = 'copy-icon-btn';
+        copyBtn.textContent = '⧉';
+        copyBtn.title = 'ID 복사';
+        copyBtn.setAttribute('aria-label', '단어사전 ID 복사');
+        copyBtn.onclick = (e) => { e.stopPropagation(); copyTextToClipboard(d.id || '', 'ID 복사됨'); };
+        idWrap.appendChild(idText);
+        idWrap.appendChild(copyBtn);
+        idCell.appendChild(idWrap);
+        tr.appendChild(idCell);
+        tr.appendChild(document.createElement('td')).textContent = d.standardWord || '';
+        tr.appendChild(document.createElement('td')).textContent = inputWordsSummary(d.inputWords);
+        const btnCell = document.createElement('td');
+        btnCell.className = 'btn-cell';
+        const editBtn = document.createElement('button');
+        editBtn.type = 'button';
+        editBtn.textContent = '수정';
+        editBtn.onclick = (e) => { e.stopPropagation(); openDictEditWindow(d); };
+        const delBtn = document.createElement('button');
+        delBtn.type = 'button';
+        delBtn.textContent = '삭제';
+        delBtn.onclick = (e) => { e.stopPropagation(); deleteDict(d.id); };
+        btnCell.appendChild(editBtn);
+        btnCell.appendChild(delBtn);
+        tr.appendChild(btnCell);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderDictPagination(total) {
+      const wrap = document.getElementById('dictPagination');
+      if (total <= PAGE_SIZE) {
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+      wrap.classList.remove('hidden');
+      const totalPages = Math.ceil(total / PAGE_SIZE);
+      let html = '<span>총 ' + total + '개</span>';
+      if (dictCurrentPage > 1) html += '<button type="button" id="dictPrev">이전</button>';
+      html += '<span> ' + dictCurrentPage + ' / ' + totalPages + ' </span>';
+      if (dictCurrentPage < totalPages) html += '<button type="button" id="dictNext">다음</button>';
+      wrap.innerHTML = html;
+      const prev = document.getElementById('dictPrev');
+      const next = document.getElementById('dictNext');
+      if (prev) prev.onclick = () => { dictCurrentPage--; renderDictTableRows(allDicts, dictCurrentPage); renderDictPagination(allDicts.length); };
+      if (next) next.onclick = () => { dictCurrentPage++; renderDictTableRows(allDicts, dictCurrentPage); renderDictPagination(allDicts.length); };
+    }
+
+    function loadDictIfVisible() {
+      const section = document.getElementById('dict');
+      if (section && !section.classList.contains('hidden')) {
+        document.getElementById('btnLoadDict').click();
+      }
+    }
+
+    document.getElementById('btnLoadDict').onclick = async () => {
+      const tbody = document.querySelector('#dictList tbody');
+      const banner = document.getElementById('dictBanner');
+      const loading = document.getElementById('dictListLoading');
+      banner.classList.add('hidden');
+      banner.className = 'banner hidden';
+      loading.classList.remove('hidden');
+      tbody.innerHTML = '';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary', { headers: headers() });
+        if (res.status === 403) {
+          banner.textContent = '개발자 계정으로 로그인하세요.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          tbody.innerHTML = '<tr><td colspan="4">목록을 불러올 수 없습니다.</td></tr>';
+          return;
+        }
+        const data = await res.json();
+        const list = data.data;
+        const dicts = list?.wordDictionaries || [];
+        const total = list?.total ?? dicts.length;
+        allDicts = dicts;
+        dictCurrentPage = 1;
+        renderDictTableRows(dicts, 1);
+        renderDictPagination(dicts.length);
+      } catch (e) {
+        banner.textContent = '요청 실패: ' + (e.message || '');
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        tbody.innerHTML = '<tr><td colspan="4">' + (e.message || '오류') + '</td></tr>';
+      } finally {
+        loading.classList.add('hidden');
+      }
+    };
+
+    document.getElementById('btnRefreshDictCache').onclick = async () => {
+      const btn = document.getElementById('btnRefreshDictCache');
+      btn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary/refresh', { method: 'POST', headers: headers() });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message || '캐시가 새로고침되었습니다', 'success');
+        } else {
+          showToast(data.message || '캐시 새로고침 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    function parseInputWordsStr(str) {
+      if (!str || !str.trim()) return [];
+      return str.split(/[,，\s]+/).map(s => s.trim()).filter(Boolean);
+    }
+
+    document.getElementById('btnDictCreate').onclick = async () => {
+      const standardWord = document.getElementById('dictNewStandardWord').value.trim();
+      const inputWordsStr = document.getElementById('dictNewInputWords').value.trim();
+      const inputWords = parseInputWordsStr(inputWordsStr);
+      if (!standardWord) {
+        showToast('표준단어를 입력하세요', 'error');
+        return;
+      }
+      if (!inputWords.length) {
+        showToast('입력단어를 하나 이상 입력하세요', 'error');
+        return;
+      }
+      const btn = document.getElementById('btnDictCreate');
+      btn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ standardWord, inputWords })
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message || '추가되었습니다', 'success');
+          document.getElementById('dictNewStandardWord').value = '';
+          document.getElementById('dictNewInputWords').value = '';
+          document.getElementById('btnLoadDict').click();
+        } else {
+          showToast(data.message || '추가 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    document.getElementById('btnDictCsvUpload').onclick = async () => {
+      const fileInput = document.getElementById('dictCsvFile');
+      if (!fileInput.files || !fileInput.files.length) {
+        showToast('CSV 파일을 선택하세요', 'error');
+        return;
+      }
+      const formData = new FormData();
+      formData.append('file', fileInput.files[0]);
+      const btn = document.getElementById('btnDictCsvUpload');
+      btn.disabled = true;
+      try {
+        const h = { 'Authorization': 'Bearer ' + getToken() };
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary/csv', {
+          method: 'POST',
+          headers: h,
+          body: formData
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message || 'CSV 업로드 완료', 'success');
+          fileInput.value = '';
+          document.getElementById('btnLoadDict').click();
+        } else {
+          showToast(data.message || 'CSV 업로드 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    async function deleteDict(id) {
+      if (!id || !confirm('이 단어사전 항목을 삭제할까요?')) return;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/word-dictionary/' + encodeURIComponent(id), {
+          method: 'DELETE',
+          headers: headers()
+        });
+        const data = await res.json();
+        if (res.ok) {
+          showToast(data.message || '삭제되었습니다', 'success');
+          document.getElementById('btnLoadDict').click();
+        } else {
+          showToast(data.message || '삭제 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      }
+    }
+
+    function formatPromotionPeriod(article) {
+      const start = formatPromotionDate(article?.eventStartDate);
+      const end = formatPromotionDate(article?.eventEndDate);
+      if (start && end) return start + ' ~ ' + end;
+      return start || end || '-';
+    }
+
+    function formatPromotionDate(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleString('ko-KR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit',
+        hour: '2-digit',
+        minute: '2-digit'
+      });
+    }
+
+    function toDatetimeLocalValue(value) {
+      if (!value) return '';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '';
+      const local = new Date(date.getTime() - date.getTimezoneOffset() * 60000);
+      return local.toISOString().slice(0, 16);
+    }
+
+    function getStoredKakaoMapsKey() {
+      return promotionMapKey || '';
+    }
+
+    function logPromotionMapDebug(message, extra) {
+      if (extra === undefined) {
+        console.log('[promotion-map]', message);
+        return;
+      }
+      console.log('[promotion-map]', message, extra);
+    }
+
+    function normalizePromotionCoordinateValue(value) {
+      if (value === null || value === undefined || value === '') return '';
+      const parsed = typeof value === 'number' ? value : Number.parseFloat(String(value).trim());
+      if (!Number.isFinite(parsed)) return '';
+      return parsed.toFixed(7).replace(/0+$/, '').replace(/\.$/, '');
+    }
+
+    function getPromotionCoordinatePair() {
+      const latitude = Number.parseFloat(document.getElementById('promotionLatitude').value.trim());
+      const longitude = Number.parseFloat(document.getElementById('promotionLongitude').value.trim());
+      return {
+        latitude: Number.isFinite(latitude) ? latitude : null,
+        longitude: Number.isFinite(longitude) ? longitude : null
+      };
+    }
+
+    function hasPromotionCoordinates() {
+      const pair = getPromotionCoordinatePair();
+      return pair.latitude !== null && pair.longitude !== null;
+    }
+
+    function getPromotionLocationCandidateKey(candidate) {
+      return (candidate?.title || '') + '|' + (candidate?.displayAddress || '') + '|' + String(candidate?.latitude || '') + '|' + String(candidate?.longitude || '');
+    }
+
+    function normalizePromotionSearchCandidates(raw) {
+      if (!Array.isArray(raw)) return [];
+      return raw
+        .map((item) => {
+          const latitude = Number.parseFloat(item?.y ?? item?.point?.y ?? item?.latitude ?? item?.lat ?? '');
+          const longitude = Number.parseFloat(item?.x ?? item?.point?.x ?? item?.longitude ?? item?.lng ?? '');
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return null;
+          const roadAddress = String(item?.roadAddress || item?.roadAddr || item?.road_address?.address_name || item?.road_address_name || '').trim();
+          const jibunAddress = String(item?.jibunAddress || item?.address || item?.jibunAddr || item?.address_name || '').trim();
+          const displayAddress = roadAddress || jibunAddress;
+          const title = String(item?.title || item?.place_name || item?.query || displayAddress || '').trim();
+          return {
+            title: title || displayAddress || '선택 가능한 위치',
+            displayAddress: displayAddress || title || '주소 정보 없음',
+            roadAddress,
+            jibunAddress,
+            latitude,
+            longitude
+          };
+        })
+        .filter(Boolean);
+    }
+
+    function extractPromotionGeocodeCandidates(response) {
+      const candidateSources = [];
+      if (Array.isArray(response?.documents)) candidateSources.push(...response.documents);
+      if (Array.isArray(response?.v2?.addresses)) candidateSources.push(...response.v2.addresses);
+      if (Array.isArray(response?.addresses)) candidateSources.push(...response.addresses);
+      if (Array.isArray(response?.result?.items)) candidateSources.push(...response.result.items);
+      return normalizePromotionSearchCandidates(candidateSources);
+    }
+
+    function extractPromotionReverseGeocodeAddress(response) {
+      const kakaoDoc = Array.isArray(response) ? response[0] : response?.documents?.[0];
+      if (kakaoDoc) {
+        return String(kakaoDoc?.road_address?.address_name || kakaoDoc?.address?.address_name || '').trim();
+      }
+      const direct = response?.v2?.address;
+      if (direct) {
+        return String(direct.roadAddress || direct.jibunAddress || '').trim();
+      }
+      const results = Array.isArray(response?.v2?.results) ? response.v2.results : [];
+      for (const item of results) {
+        const regionNames = Array.isArray(item?.region)
+          ? item.region.map((region) => String(region?.name || '').trim()).filter(Boolean)
+          : Object.values(item?.region || {}).map((region) => String(region?.name || '').trim()).filter(Boolean);
+        const land = item?.land || {};
+        const extra = [land?.name, land?.number1, land?.number2].map((value) => String(value || '').trim()).filter(Boolean).join(' ');
+        const joined = [...regionNames, extra].filter(Boolean).join(' ');
+        if (joined) return joined;
+      }
+      const legacy = Array.isArray(response?.result?.items) ? response.result.items[0] : null;
+      return String(legacy?.address || '').trim();
+    }
+
+    function setPromotionMapFallback(message) {
+      const fallback = document.getElementById('promotionMapFallback');
+      if (promotionMap) {
+        fallback.classList.add('hidden');
+        return;
+      }
+      fallback.textContent = message;
+      fallback.classList.remove('hidden');
+    }
+
+    function hidePromotionMapFallback() {
+      const fallback = document.getElementById('promotionMapFallback');
+      fallback.textContent = '';
+      fallback.classList.add('hidden');
+    }
+
+    function renderPromotionLocationResults() {
+      const list = document.getElementById('promotionLocationSearchResults');
+      const empty = document.getElementById('promotionLocationResultEmpty');
+      list.innerHTML = '';
+      if (!promotionLocationCandidates.length) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      promotionLocationCandidates.forEach((candidate) => {
+        const button = document.createElement('button');
+        button.type = 'button';
+        button.className = 'promotion-location-result';
+        const candidateKey = getPromotionLocationCandidateKey(candidate);
+        if (candidateKey === promotionSelectedCandidateKey) {
+          button.classList.add('is-selected');
+        }
+        button.innerHTML = ''
+          + '<div class="promotion-location-result-title">' + escapeHtml(candidate.title) + '</div>'
+          + '<div class="promotion-location-result-address">' + escapeHtml(candidate.displayAddress) + '</div>'
+          + '<div class="promotion-location-result-meta">위도 ' + escapeHtml(normalizePromotionCoordinateValue(candidate.latitude))
+          + ' / 경도 ' + escapeHtml(normalizePromotionCoordinateValue(candidate.longitude)) + '</div>';
+        button.onclick = () => {
+          applyPromotionCoordinateSelection(candidate.latitude, candidate.longitude, {
+            address: candidate.displayAddress,
+            searchQuery: document.getElementById('promotionLocationSearchQuery').value.trim(),
+            zoom: DEFAULT_PROMOTION_MAP_ZOOM
+          });
+          promotionSelectedCandidateKey = candidateKey;
+          renderPromotionLocationResults();
+        };
+        list.appendChild(button);
+      });
+    }
+
+    function renderPromotionMapConfigBanner() {
+      const banner = document.getElementById('promotionMapConfigBanner');
+      const hasKey = !!getStoredKakaoMapsKey();
+      banner.classList.toggle('hidden', hasKey);
+    }
+
+    function updatePromotionMapStatus() {
+      const status = document.getElementById('promotionMapStatus');
+      const hasEditorTarget = !!promotionSelectedArticleId || isPromotionCreateMode();
+      const { latitude, longitude } = getPromotionCoordinatePair();
+      status.className = 'promotion-map-status';
+      if (!hasEditorTarget) {
+        status.classList.add('is-muted');
+        status.textContent = '게시글을 선택하거나 새 게시글 작성 모드로 전환하면 위치를 선택할 수 있습니다.';
+        return;
+      }
+      if (!getStoredKakaoMapsKey()) {
+        status.classList.add('is-warning');
+        status.textContent = '카카오 지도 JavaScript 키를 저장하면 주소 검색과 실제 지도를 사용할 수 있습니다.';
+        return;
+      }
+      if (latitude !== null && longitude !== null) {
+        const addressText = promotionLocationResolvedAddress ? ' · ' + promotionLocationResolvedAddress : '';
+        status.textContent = '선택된 좌표: ' + normalizePromotionCoordinateValue(latitude) + ', ' + normalizePromotionCoordinateValue(longitude) + addressText;
+        return;
+      }
+      status.classList.add('is-muted');
+      status.textContent = '주소를 검색하거나 지도에서 위치를 클릭해 좌표를 선택하세요.';
+    }
+
+    function updatePromotionMapMarker(options) {
+      if (!promotionMap || !window.kakao?.maps || !promotionMapMarker) return;
+      const latitude = options?.latitude;
+      const longitude = options?.longitude;
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        promotionMapMarker.setMap(null);
+        return;
+      }
+      const position = new kakao.maps.LatLng(latitude, longitude);
+      promotionMapMarker.setPosition(position);
+      promotionMapMarker.setMap(promotionMap);
+      const shouldMove = options?.move !== false;
+      if (shouldMove) {
+        promotionMap.setLevel(options?.zoom || DEFAULT_PROMOTION_MAP_ZOOM);
+        promotionMap.panTo(position);
+      }
+    }
+
+    function applyPromotionCoordinateSelection(latitude, longitude, options) {
+      const latValue = normalizePromotionCoordinateValue(latitude);
+      const lngValue = normalizePromotionCoordinateValue(longitude);
+      document.getElementById('promotionLatitude').value = latValue;
+      document.getElementById('promotionLongitude').value = lngValue;
+      if (options?.searchQuery) {
+        document.getElementById('promotionLocationSearchQuery').value = options.searchQuery;
+      }
+      promotionLocationResolvedAddress = options?.address || '';
+      updatePromotionMapMarker({
+        latitude: Number.parseFloat(latValue),
+        longitude: Number.parseFloat(lngValue),
+        zoom: options?.zoom,
+        move: options?.move
+      });
+      updatePromotionMapStatus();
+      updatePromotionEditorState();
+    }
+
+    function clearPromotionCoordinates(options) {
+      document.getElementById('promotionLatitude').value = '';
+      document.getElementById('promotionLongitude').value = '';
+      promotionLocationResolvedAddress = '';
+      promotionSelectedCandidateKey = '';
+      updatePromotionMapMarker({ latitude: null, longitude: null });
+      if (options?.clearQuery) {
+        document.getElementById('promotionLocationSearchQuery').value = '';
+      }
+      renderPromotionLocationResults();
+      updatePromotionMapStatus();
+      updatePromotionEditorState();
+    }
+
+    function syncPromotionMapFromFormState() {
+      const { latitude, longitude } = getPromotionCoordinatePair();
+      promotionLocationResolvedAddress = '';
+      promotionSelectedCandidateKey = '';
+      if (latitude !== null && longitude !== null) {
+        updatePromotionMapMarker({ latitude, longitude, move: true, zoom: DEFAULT_PROMOTION_MAP_ZOOM });
+      } else {
+        updatePromotionMapMarker({ latitude: null, longitude: null });
+      }
+      updatePromotionMapStatus();
+    }
+
+    async function loadPromotionMapSdk() {
+      if (window.kakao?.maps?.services) return window.kakao.maps;
+      const key = getStoredKakaoMapsKey();
+      logPromotionMapDebug('loadPromotionMapSdk:start', {
+        hasKey: !!key,
+        keyPreview: key ? key.slice(0, 6) + '...' : '',
+        currentHost: window.location.origin
+      });
+      if (!key) {
+        renderPromotionMapConfigBanner();
+        throw new Error('카카오 지도 JavaScript 키가 필요합니다.');
+      }
+      if (promotionMapSdkPromise) return promotionMapSdkPromise;
+      promotionMapSdkPromise = new Promise((resolve, reject) => {
+        const sdkUrl = 'https://dapi.kakao.com/v2/maps/sdk.js?appkey=' + encodeURIComponent(key) + '&autoload=false&libraries=services';
+        const existingScript = document.getElementById(KAKAO_MAPS_SCRIPT_ID);
+        if (existingScript) {
+          if (existingScript.getAttribute('src') !== sdkUrl) {
+            existingScript.remove();
+          } else {
+            existingScript.addEventListener('load', () => {
+              logPromotionMapDebug('loadPromotionMapSdk:existingScriptLoaded');
+              window.kakao.maps.load(() => resolve(window.kakao.maps));
+            }, { once: true });
+            existingScript.addEventListener('error', () => reject(new Error('카카오 지도 SDK를 불러오지 못했습니다.')), { once: true });
+            return;
+          }
+        }
+        const script = document.createElement('script');
+        script.id = KAKAO_MAPS_SCRIPT_ID;
+        script.src = sdkUrl;
+        script.async = true;
+        script.onload = () => {
+          logPromotionMapDebug('loadPromotionMapSdk:scriptLoaded', { sdkUrl });
+          window.kakao.maps.load(() => resolve(window.kakao.maps));
+        };
+        script.onerror = () => {
+          logPromotionMapDebug('loadPromotionMapSdk:scriptError', { sdkUrl });
+          reject(new Error('카카오 지도 SDK를 불러오지 못했습니다.'));
+        };
+        document.head.appendChild(script);
+      }).catch((error) => {
+        promotionMapSdkPromise = null;
+        logPromotionMapDebug('loadPromotionMapSdk:failed', { message: error?.message || String(error) });
+        throw error;
+      });
+      return promotionMapSdkPromise;
+    }
+
+    async function ensurePromotionMapReady() {
+      renderPromotionMapConfigBanner();
+      if (promotionMap) {
+        if (typeof promotionMap.relayout === 'function') {
+          promotionMap.relayout();
+        }
+        updatePromotionMapStatus();
+        return promotionMap;
+      }
+      try {
+        const maps = await loadPromotionMapSdk();
+        logPromotionMapDebug('ensurePromotionMapReady:mapsLoaded', {
+          hasServices: !!maps?.services,
+          center: DEFAULT_PROMOTION_MAP_CENTER
+        });
+        const mapCenter = new maps.LatLng(DEFAULT_PROMOTION_MAP_CENTER.latitude, DEFAULT_PROMOTION_MAP_CENTER.longitude);
+        promotionMap = new maps.Map(document.getElementById('promotionMapCanvas'), {
+          center: mapCenter,
+          level: DEFAULT_PROMOTION_MAP_ZOOM
+        });
+        promotionMapMarker = new maps.Marker({ map: null, position: mapCenter });
+        const geocoder = new maps.services.Geocoder();
+        maps.event.addListener(promotionMap, 'click', async (mouseEvent) => {
+          const coord = mouseEvent?.latLng;
+          if (!coord) return;
+          const latitude = typeof coord.getLat === 'function' ? coord.getLat() : null;
+          const longitude = typeof coord.getLng === 'function' ? coord.getLng() : null;
+          if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) return;
+          let address = '';
+          try {
+            const reverse = await new Promise((resolve, reject) => {
+              geocoder.coord2Address(longitude, latitude, (result, status) => {
+                if (status !== maps.services.Status.OK) {
+                  reject(new Error('주소 변환 실패'));
+                  return;
+                }
+                resolve(result);
+              });
+            });
+            address = extractPromotionReverseGeocodeAddress(reverse);
+          } catch (_) {}
+          applyPromotionCoordinateSelection(latitude, longitude, {
+            address,
+            searchQuery: document.getElementById('promotionLocationSearchQuery').value.trim(),
+            zoom: DEFAULT_PROMOTION_MAP_ZOOM
+          });
+        });
+        hidePromotionMapFallback();
+        syncPromotionMapFromFormState();
+        logPromotionMapDebug('ensurePromotionMapReady:mapCreated');
+        return promotionMap;
+      } catch (error) {
+        setPromotionMapFallback(error.message || '카카오 지도를 준비하지 못했습니다.');
+        updatePromotionMapStatus();
+        logPromotionMapDebug('ensurePromotionMapReady:failed', { message: error?.message || String(error) });
+        throw error;
+      }
+    }
+
+    function initializePromotionMapIfVisible() {
+      const section = document.getElementById('promotion');
+      if (!section || section.classList.contains('hidden')) return;
+      if (!getStoredKakaoMapsKey()) return;
+      window.requestAnimationFrame(() => {
+        ensurePromotionMapReady().catch((error) => {
+          logPromotionMapDebug('initializePromotionMapIfVisible:failed', { message: error?.message || String(error) });
+        });
+      });
+    }
+
+    async function searchPromotionLocations() {
+      const query = document.getElementById('promotionLocationSearchQuery').value.trim();
+      if (!query) {
+        throw new Error('좌표를 찾을 주소나 건물명을 입력하세요.');
+      }
+      const maps = await loadPromotionMapSdk();
+      await ensurePromotionMapReady();
+      const geocoder = new maps.services.Geocoder();
+      const places = new maps.services.Places();
+      const [addressCandidates, placeCandidates] = await Promise.all([
+        new Promise((resolve) => {
+          geocoder.addressSearch(query, (result, status) => {
+            if (status === maps.services.Status.OK) {
+              resolve(normalizePromotionSearchCandidates(result));
+              return;
+            }
+            resolve([]);
+          });
+        }),
+        new Promise((resolve) => {
+          places.keywordSearch(query, (result, status) => {
+            if (status === maps.services.Status.OK) {
+              resolve(normalizePromotionSearchCandidates(result));
+              return;
+            }
+            resolve([]);
+          });
+        })
+      ]);
+      const candidates = [...addressCandidates, ...placeCandidates].filter((candidate, index, arr) => {
+        const candidateKey = getPromotionLocationCandidateKey(candidate);
+        return arr.findIndex((item) => getPromotionLocationCandidateKey(item) === candidateKey) === index;
+      });
+      if (!candidates.length) {
+        throw new Error('검색 결과가 없습니다. 장소명을 더 구체적으로 입력해보세요.');
+      }
+      promotionLocationCandidates = candidates;
+      promotionSelectedCandidateKey = '';
+      renderPromotionLocationResults();
+      const primary = candidates[0];
+      applyPromotionCoordinateSelection(primary.latitude, primary.longitude, {
+        address: primary.displayAddress,
+        searchQuery: query,
+        zoom: DEFAULT_PROMOTION_MAP_ZOOM
+      });
+      promotionSelectedCandidateKey = getPromotionLocationCandidateKey(primary);
+      renderPromotionLocationResults();
+    }
+
+    function normalizePromotionImagesText(images) {
+      return (Array.isArray(images) ? images : []).map((item) => String(item || '').trim()).filter(Boolean).join('\n');
+    }
+
+    function promotionArticleToFormState(article) {
+      return {
+        clubId: article?.clubId || '',
+        title: article?.title || '',
+        location: article?.location || '',
+        latitude: normalizePromotionCoordinateValue(article?.latitude),
+        longitude: normalizePromotionCoordinateValue(article?.longitude),
+        eventStartDate: toDatetimeLocalValue(article?.eventStartDate),
+        eventEndDate: toDatetimeLocalValue(article?.eventEndDate),
+        description: article?.description || '',
+        imagesText: normalizePromotionImagesText(article?.images)
+      };
+    }
+
+    function getEmptyPromotionFormState() {
+      return {
+        clubId: '',
+        title: '',
+        location: '',
+        latitude: '',
+        longitude: '',
+        eventStartDate: '',
+        eventEndDate: '',
+        description: '',
+        imagesText: ''
+      };
+    }
+
+    function isPromotionCreateMode() {
+      return promotionEditorMode === 'create';
+    }
+
+    function getPromotionDiscardMessage(kind) {
+      if (kind === 'reload') {
+        return isPromotionCreateMode()
+          ? '현재 작성 중인 새 홍보 게시글 내용은 유지되고 목록만 새로고침됩니다. 계속할까요?'
+          : '현재 수정 중인 홍보 게시글 내용이 덮어써집니다. 계속할까요?';
+      }
+      return isPromotionCreateMode()
+        ? '현재 작성 중인 새 홍보 게시글 내용이 사라집니다. 계속할까요?'
+        : '현재 수정 중인 홍보 게시글 변경사항이 사라집니다. 계속할까요?';
+    }
+
+    function getPromotionCurrentFormState() {
+      return {
+        clubId: document.getElementById('promotionClubId').value.trim(),
+        title: document.getElementById('promotionTitle').value,
+        location: document.getElementById('promotionLocation').value,
+        latitude: document.getElementById('promotionLatitude').value.trim(),
+        longitude: document.getElementById('promotionLongitude').value.trim(),
+        eventStartDate: document.getElementById('promotionEventStartDate').value,
+        eventEndDate: document.getElementById('promotionEventEndDate').value,
+        description: document.getElementById('promotionDescription').value,
+        imagesText: document.getElementById('promotionImages').value
+      };
+    }
+
+    function isPromotionDirty() {
+      if (!promotionSelectedOriginal) return false;
+      return JSON.stringify(getPromotionCurrentFormState()) !== JSON.stringify(promotionSelectedOriginal);
+    }
+
+    function fillPromotionForm(state) {
+      document.getElementById('promotionClubId').value = state?.clubId || '';
+      document.getElementById('promotionTitle').value = state?.title || '';
+      document.getElementById('promotionLocation').value = state?.location || '';
+      document.getElementById('promotionLatitude').value = state?.latitude || '';
+      document.getElementById('promotionLongitude').value = state?.longitude || '';
+      document.getElementById('promotionEventStartDate').value = state?.eventStartDate || '';
+      document.getElementById('promotionEventEndDate').value = state?.eventEndDate || '';
+      document.getElementById('promotionDescription').value = state?.description || '';
+      document.getElementById('promotionImages').value = state?.imagesText || '';
+      syncPromotionMapFromFormState();
+      renderPromotionImagePreviewList();
+      updatePromotionEditorState();
+    }
+
+    function clearPromotionBanner() {
+      const banner = document.getElementById('promotionBanner');
+      banner.textContent = '';
+      banner.className = 'banner hidden';
+    }
+
+    function setPromotionBanner(message, type) {
+      const banner = document.getElementById('promotionBanner');
+      banner.textContent = message;
+      banner.className = 'banner ' + (type || 'warn');
+      banner.classList.remove('hidden');
+    }
+
+    function hidePromotionSaveResult() {
+      document.getElementById('promotionSaveResult').classList.add('hidden');
+    }
+
+    function showPromotionSaveResult(ok, message) {
+      setMessageBox('promotionSaveResult', ok, message);
+    }
+
+    function getApiSuccessMessage(data, fallback) {
+      if (typeof data?.data === 'string' && data.data.trim()) return data.data;
+      if (typeof data?.message === 'string' && data.message.trim() && data.message !== 'ok') return data.message;
+      return fallback;
+    }
+
+    function updatePromotionEditorState() {
+      const hasSelection = !!promotionSelectedArticleId;
+      const isCreateMode = isPromotionCreateMode();
+      const hasEditorTarget = hasSelection || isCreateMode;
+      const busy = promotionIsLoading || promotionIsSaving || promotionIsUploading || promotionIsDeleting;
+      const dirty = isPromotionDirty();
+      renderPromotionMapConfigBanner();
+      updatePromotionMapStatus();
+      const badge = document.getElementById('promotionEditingBadge');
+      const summary = document.getElementById('promotionSelectionSummary');
+      const help = document.getElementById('promotionHelpText');
+      const selected = promotionArticles.find((article) => article.id === promotionSelectedArticleId);
+      const clubIdInput = document.getElementById('promotionClubId');
+      const imageUploadFile = document.getElementById('promotionImageUploadFile');
+      const locationSearchQuery = document.getElementById('promotionLocationSearchQuery');
+      const btnUpload = document.getElementById('btnUploadPromotionImage');
+      const btnLoad = document.getElementById('btnLoadPromotion');
+      const btnCreate = document.getElementById('btnCreatePromotion');
+      const btnSave = document.getElementById('btnSavePromotion');
+      const btnReset = document.getElementById('btnResetPromotion');
+      const btnDelete = document.getElementById('btnDeletePromotion');
+      const btnClear = document.getElementById('btnClearPromotionSelection');
+      const btnSearchLocation = document.getElementById('btnPromotionSearchLocation');
+      const btnLocationSearch = document.getElementById('btnPromotionLocationSearch');
+      const btnClearCoordinates = document.getElementById('btnPromotionClearCoordinates');
+
+      PROMOTION_FORM_IDS.forEach((id) => {
+        const el = document.getElementById(id);
+        el.disabled = busy || !hasEditorTarget;
+      });
+      clubIdInput.disabled = busy || !hasEditorTarget;
+      clubIdInput.readOnly = !isCreateMode;
+      document.getElementById('promotionLatitude').disabled = true;
+      document.getElementById('promotionLongitude').disabled = true;
+      locationSearchQuery.disabled = busy || !hasEditorTarget || !getStoredKakaoMapsKey();
+      imageUploadFile.disabled = busy || !hasEditorTarget;
+      btnUpload.disabled = busy || !hasEditorTarget;
+      btnLoad.disabled = busy;
+      btnCreate.disabled = busy;
+      btnSave.disabled = busy || !hasEditorTarget;
+      btnReset.disabled = busy || !hasEditorTarget || !dirty;
+      btnDelete.disabled = busy || !hasSelection || isCreateMode;
+      btnClear.disabled = busy || !hasEditorTarget;
+      btnSearchLocation.disabled = busy || !hasEditorTarget;
+      btnLocationSearch.disabled = busy || !hasEditorTarget || !getStoredKakaoMapsKey();
+      btnClearCoordinates.disabled = busy || !hasEditorTarget || !hasPromotionCoordinates();
+      btnSave.textContent = promotionIsSaving
+        ? (isCreateMode ? '생성 중...' : '저장 중...')
+        : (isCreateMode ? '생성' : '저장');
+      btnDelete.textContent = promotionIsDeleting ? '삭제 중...' : '삭제';
+
+      if (isCreateMode) {
+        badge.textContent = dirty ? '새 게시글 작성 중 · 저장되지 않은 변경 있음' : '새 게시글 작성 중';
+        badge.classList.remove('hidden');
+        summary.textContent = '새 홍보 게시글을 작성 중입니다. `clubId`를 직접 입력한 뒤 저장하거나 이미지를 먼저 업로드할 수 있습니다.';
+        help.textContent = 'create 모드에서 이미지 업로드를 누르면 게시글을 먼저 생성한 뒤 기존 홍보 이미지 업로드/수정 로직으로 반영합니다.';
+        return;
+      }
+
+      help.textContent = '기존 게시글의 `clubId`는 읽기 전용입니다. 저장 후 목록을 다시 조회해 서버 기준 최신값으로 동기화합니다.';
+
+      if (!hasSelection) {
+        badge.classList.add('hidden');
+        badge.textContent = '';
+        summary.textContent = '왼쪽 목록에서 수정할 게시글을 선택하세요.';
+        return;
+      }
+
+      badge.textContent = (dirty ? '수정 중' : '편집 중') + ' · ' + (selected?.title || '제목 없음');
+      badge.classList.remove('hidden');
+      summary.textContent = (selected?.clubName || '-') + ' / ' + formatPromotionPeriod(selected) + (dirty ? ' / 저장되지 않은 변경 있음' : '');
+    }
+
+    function renderPromotionList() {
+      const tbody = document.querySelector('#promotionList tbody');
+      const summary = document.getElementById('promotionSummary');
+      tbody.innerHTML = '';
+      if (!promotionArticles.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 5;
+        td.textContent = promotionHasLoaded ? '등록된 홍보 게시글이 없습니다.' : '홍보 게시글 목록을 불러오세요.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        summary.textContent = promotionHasLoaded ? '총 0개 게시글' : '홍보 게시글 목록을 불러오세요.';
+        updatePromotionEditorState();
+        return;
+      }
+
+      summary.textContent = '총 ' + promotionArticles.length + '개 게시글';
+      promotionArticles.forEach((article) => {
+        const tr = document.createElement('tr');
+        tr.tabIndex = 0;
+        tr.setAttribute('role', 'button');
+        tr.setAttribute('aria-label', (article.title || '홍보 게시글') + ' 편집 선택');
+        if (article.id === promotionSelectedArticleId) {
+          tr.classList.add('is-selected');
+          tr.setAttribute('aria-selected', 'true');
+        } else {
+          tr.setAttribute('aria-selected', 'false');
+        }
+        tr.appendChild(document.createElement('td')).textContent = article.title || '';
+        tr.appendChild(document.createElement('td')).textContent = article.clubName || '-';
+        tr.appendChild(document.createElement('td')).textContent = article.location || '-';
+        tr.appendChild(document.createElement('td')).textContent = formatPromotionPeriod(article);
+        tr.appendChild(document.createElement('td')).textContent = String((article.images || []).length);
+        const selectCurrentArticle = () => {
+          selectPromotionArticle(article.id);
+        };
+        tr.onclick = selectCurrentArticle;
+        tr.onkeydown = (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            selectCurrentArticle();
+          }
+        };
+        tbody.appendChild(tr);
+      });
+      updatePromotionEditorState();
+    }
+
+    async function reloadPromotionList(options) {
+      const selectedArticleId = options?.selectedArticleId ?? promotionSelectedArticleId;
+      const keepMessage = !!options?.keepMessage;
+      const preserveEditorOnError = !!options?.preserveEditorOnError;
+      const res = await fetch(API_BASE + '/api/promotion', { headers: headers() });
+      const data = await readJsonOrEmpty(res);
+
+      if (!res.ok) {
+        setPromotionBanner(data.message || '홍보 게시글 목록 조회 실패 (HTTP ' + res.status + ')', res.status === 403 ? 'warn' : 'error');
+        promotionArticles = [];
+        promotionHasLoaded = true;
+        if (preserveEditorOnError) {
+          renderPromotionList();
+          updatePromotionEditorState();
+        } else {
+          clearPromotionSelection({ keepMessage: true });
+        }
+        return { ok: false, data, status: res.status };
+      }
+
+      promotionArticles = data.data?.articles || data.articles || [];
+      promotionHasLoaded = true;
+
+      if (selectedArticleId) {
+        const selected = promotionArticles.find((article) => article.id === selectedArticleId);
+        if (selected) {
+          promotionEditorMode = 'edit';
+          promotionSelectedArticleId = selected.id || '';
+          promotionSelectedOriginal = promotionArticleToFormState(selected);
+          fillPromotionForm(promotionSelectedOriginal);
+          renderPromotionList();
+        } else {
+          clearPromotionSelection({ keepMessage: true });
+        }
+      } else if (!isPromotionCreateMode()) {
+        renderPromotionList();
+        updatePromotionEditorState();
+      } else {
+        renderPromotionList();
+        updatePromotionEditorState();
+      }
+
+      if (!keepMessage) hidePromotionSaveResult();
+      if (!promotionArticles.length) {
+        setPromotionBanner('등록된 홍보 게시글이 없습니다.', 'warn');
+      }
+      return { ok: true, data, status: res.status };
+    }
+
+    function parsePromotionImageUrls() {
+      return document.getElementById('promotionImages').value
+        .split(/\r?\n/)
+        .map((item) => item.trim())
+        .filter(Boolean);
+    }
+
+    function writePromotionImageUrls(urls) {
+      const normalizedUrls = Array.from(new Set((Array.isArray(urls) ? urls : [])
+        .map((item) => String(item || '').trim())
+        .filter(Boolean)));
+      document.getElementById('promotionImages').value = normalizedUrls.join('\n');
+      renderPromotionImagePreviewList();
+      updatePromotionEditorState();
+    }
+
+    function removePromotionImageAt(index) {
+      const urls = parsePromotionImageUrls();
+      if (index < 0 || index >= urls.length) return;
+      urls.splice(index, 1);
+      writePromotionImageUrls(urls);
+    }
+
+    function toSafeHttpUrl(rawUrl) {
+      const value = String(rawUrl || '').trim();
+      if (!value) return '';
+      try {
+        const parsed = new URL(value);
+        if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+        return parsed.href;
+      } catch (_) {
+        return '';
+      }
+    }
+
+    function createPromotionPreviewCard(url, index) {
+      const card = document.createElement('div');
+      card.className = 'promotion-preview-card';
+
+      const imageWrap = document.createElement('div');
+      imageWrap.className = 'promotion-preview-image';
+      const safeUrl = toSafeHttpUrl(url);
+
+      const placeholder = document.createElement('div');
+      placeholder.className = 'promotion-preview-placeholder';
+      placeholder.textContent = safeUrl ? '이미지를 불러올 수 없습니다.' : 'http/https 이미지 URL만 미리보기할 수 있습니다.';
+
+      if (safeUrl) {
+        const img = document.createElement('img');
+        img.alt = '홍보 이미지 ' + (index + 1);
+        img.src = safeUrl;
+
+        img.addEventListener('error', () => {
+          img.classList.add('hidden');
+          placeholder.classList.remove('hidden');
+        });
+        img.addEventListener('load', () => {
+          img.classList.remove('hidden');
+          placeholder.classList.add('hidden');
+        });
+
+        imageWrap.appendChild(img);
+      }
+      imageWrap.appendChild(placeholder);
+
+      const body = document.createElement('div');
+      body.className = 'promotion-preview-body';
+
+      const link = safeUrl ? document.createElement('a') : document.createElement('span');
+      if (safeUrl) {
+        link.href = safeUrl;
+        link.target = '_blank';
+        link.rel = 'noopener';
+      }
+      link.className = 'promotion-preview-url';
+      link.textContent = url;
+
+      const actions = document.createElement('div');
+      actions.className = 'promotion-preview-actions';
+
+      const copyBtn = document.createElement('button');
+      copyBtn.type = 'button';
+      copyBtn.textContent = '복사';
+      copyBtn.onclick = () => {
+        navigator.clipboard.writeText(url);
+        showToast('이미지 URL 복사됨', 'success');
+      };
+
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = '제거';
+      removeBtn.disabled = promotionIsLoading || promotionIsSaving || promotionIsUploading || promotionIsDeleting || (!promotionSelectedArticleId && !isPromotionCreateMode());
+      removeBtn.onclick = () => {
+        removePromotionImageAt(index);
+      };
+
+      actions.appendChild(copyBtn);
+      actions.appendChild(removeBtn);
+      body.appendChild(link);
+      body.appendChild(actions);
+      card.appendChild(imageWrap);
+      card.appendChild(body);
+      return card;
+    }
+
+    function renderPromotionImagePreviewList() {
+      const list = document.getElementById('promotionImagePreviewList');
+      const empty = document.getElementById('promotionImagePreviewEmpty');
+      const urls = parsePromotionImageUrls();
+      list.innerHTML = '';
+      if (!urls.length) {
+        empty.classList.remove('hidden');
+        return;
+      }
+      empty.classList.add('hidden');
+      urls.forEach((url, index) => {
+        list.appendChild(createPromotionPreviewCard(url, index));
+      });
+    }
+
+    function clearPromotionSelection(options) {
+      const keepMessage = !!options?.keepMessage;
+      promotionEditorMode = 'edit';
+      promotionSelectedArticleId = '';
+      promotionSelectedOriginal = null;
+      fillPromotionForm(null);
+      if (!keepMessage) hidePromotionSaveResult();
+      renderPromotionList();
+    }
+
+    function enterPromotionCreateMode() {
+      if (isPromotionDirty() && !confirm(getPromotionDiscardMessage('clear'))) return;
+      promotionEditorMode = 'create';
+      promotionSelectedArticleId = '';
+      promotionSelectedOriginal = getEmptyPromotionFormState();
+      fillPromotionForm(promotionSelectedOriginal);
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+      renderPromotionList();
+    }
+
+    function selectPromotionArticle(articleId, options) {
+      const next = promotionArticles.find((article) => article.id === articleId);
+      if (!next) return;
+      const shouldConfirm = isPromotionDirty()
+        && !options?.skipConfirm
+        && (isPromotionCreateMode() || promotionSelectedArticleId !== articleId);
+      if (shouldConfirm) {
+        if (!confirm(getPromotionDiscardMessage('clear'))) {
+          return;
+        }
+      }
+      promotionEditorMode = 'edit';
+      promotionSelectedArticleId = next.id || '';
+      promotionSelectedOriginal = promotionArticleToFormState(next);
+      fillPromotionForm(promotionSelectedOriginal);
+      hidePromotionSaveResult();
+      renderPromotionList();
+    }
+
+    function normalizePromotionPayload(options) {
+      const requireImages = options?.requireImages !== false;
+      const form = getPromotionCurrentFormState();
+      const clubId = form.clubId.trim();
+      const title = form.title.trim();
+      const location = form.location.trim();
+      const latitude = Number.parseFloat(form.latitude);
+      const longitude = Number.parseFloat(form.longitude);
+      const eventStartDate = form.eventStartDate.trim();
+      const eventEndDate = form.eventEndDate.trim();
+      const description = form.description.trim();
+      const images = form.imagesText.split(/\r?\n/).map((item) => item.trim()).filter(Boolean);
+
+      if (!clubId || !title || !location || !eventStartDate || !eventEndDate || !description) {
+        throw new Error('필수 입력값을 모두 채우세요.');
+      }
+      if (requireImages && !images.length) throw new Error('이미지 URL을 1개 이상 입력하세요.');
+
+      const startDate = new Date(eventStartDate);
+      const endDate = new Date(eventEndDate);
+      if (Number.isNaN(startDate.getTime()) || Number.isNaN(endDate.getTime())) {
+        throw new Error('행사 시작/종료 일시를 확인하세요.');
+      }
+      if (startDate.getTime() > endDate.getTime()) {
+        throw new Error('행사 시작일은 종료일보다 늦을 수 없습니다.');
+      }
+      if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
+        throw new Error('지도에서 위치를 선택해 위도/경도를 확정하세요.');
+      }
+      return {
+        clubId,
+        title,
+        location,
+        latitude,
+        longitude,
+        eventStartDate: startDate.toISOString(),
+        eventEndDate: endDate.toISOString(),
+        description,
+        images
+      };
+    }
+
+    async function createPromotionArticleRequest(payload) {
+      const res = await fetch(API_BASE + '/api/promotion', {
+        method: 'POST',
+        headers: headers(),
+        body: JSON.stringify(payload)
+      });
+      const data = await readJsonOrEmpty(res);
+      return { res, data };
+    }
+
+    async function updatePromotionArticleRequest(articleId, payload) {
+      const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(articleId), {
+        method: 'PUT',
+        headers: headers(),
+        body: JSON.stringify(payload)
+      });
+      const data = await readJsonOrEmpty(res);
+      return { res, data };
+    }
+
+    async function uploadPromotionImageRequest(articleId, file) {
+      const formData = new FormData();
+      formData.append('file', file);
+      const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(articleId) + '/upload', {
+        method: 'POST',
+        headers: buildBannerUploadHeaders(),
+        body: formData
+      });
+      const data = await readJsonOrEmpty(res);
+      return { res, data };
+    }
+
+    async function deletePromotionArticleRequest(articleId) {
+      const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(articleId), {
+        method: 'DELETE',
+        headers: headers()
+      });
+      const data = await readJsonOrEmpty(res);
+      return { res, data };
+    }
+
+    function clearPromotionState() {
+      promotionArticles = [];
+      promotionEditorMode = 'edit';
+      promotionSelectedArticleId = '';
+      promotionSelectedOriginal = null;
+      promotionHasLoaded = false;
+      promotionIsLoading = false;
+      promotionIsSaving = false;
+      promotionIsUploading = false;
+      promotionIsDeleting = false;
+      promotionLocationCandidates = [];
+      promotionSelectedCandidateKey = '';
+      promotionLocationResolvedAddress = '';
+      document.getElementById('promotionListLoading').classList.add('hidden');
+      document.getElementById('promotionImageUploadFile').value = '';
+      document.getElementById('promotionLocationSearchQuery').value = '';
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+      renderPromotionMapConfigBanner();
+      renderPromotionLocationResults();
+      setPromotionMapFallback(getStoredKakaoMapsKey()
+        ? '지도 준비 중입니다. 위치 검색을 실행하면 실제 지도가 표시됩니다.'
+        : '카카오 지도 JavaScript 키를 저장하면 실제 지도가 이 영역에 표시됩니다.');
+      fillPromotionForm(null);
+      renderPromotionImagePreviewList();
+      renderPromotionList();
+      initializePromotionMapIfVisible();
+    }
+
+    function loadPromotionIfVisible() {
+      const section = document.getElementById('promotion');
+      if (section && !section.classList.contains('hidden') && !promotionHasLoaded) {
+        document.getElementById('btnLoadPromotion').click();
+      }
+      initializePromotionMapIfVisible();
+    }
+
+    document.getElementById('btnLoadPromotion').onclick = async () => {
+      if (isPromotionDirty() && !confirm(getPromotionDiscardMessage('reload'))) return;
+      const btn = document.getElementById('btnLoadPromotion');
+      const loading = document.getElementById('promotionListLoading');
+      promotionIsLoading = true;
+      updatePromotionEditorState();
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+      loading.classList.remove('hidden');
+      btn.textContent = '처리 중...';
+      try {
+        await reloadPromotionList({
+          selectedArticleId: promotionSelectedArticleId,
+          keepMessage: true,
+          preserveEditorOnError: isPromotionCreateMode()
+        });
+      } catch (e) {
+        setPromotionBanner('요청 실패: ' + (e.message || ''), 'error');
+        promotionArticles = [];
+        promotionHasLoaded = false;
+        if (isPromotionCreateMode()) {
+          renderPromotionList();
+          updatePromotionEditorState();
+        } else {
+          clearPromotionSelection({ keepMessage: true });
+        }
+      } finally {
+        promotionIsLoading = false;
+        loading.classList.add('hidden');
+        btn.textContent = '목록 새로고침';
+        renderPromotionList();
+      }
+    };
+
+    document.getElementById('btnCreatePromotion').onclick = () => {
+      enterPromotionCreateMode();
+    };
+
+    document.getElementById('btnResetPromotion').onclick = () => {
+      if (!promotionSelectedOriginal) return;
+      fillPromotionForm(promotionSelectedOriginal);
+      hidePromotionSaveResult();
+    };
+
+    document.getElementById('btnClearPromotionSelection').onclick = () => {
+      if (isPromotionDirty() && !confirm(getPromotionDiscardMessage('clear'))) return;
+      clearPromotionSelection();
+    };
+
+    document.getElementById('btnDeletePromotion').onclick = async () => {
+      const selectedId = promotionSelectedArticleId;
+      const selectedArticle = promotionArticles.find((article) => article.id === selectedId);
+      if (!selectedId || !selectedArticle) {
+        showPromotionSaveResult(false, '삭제할 홍보 게시글을 먼저 선택하세요.');
+        return;
+      }
+
+      const articleLabel = selectedArticle.title ? '"' + selectedArticle.title + '"' : '선택한 홍보 게시글';
+      const confirmMessage = isPromotionDirty()
+        ? '저장되지 않은 변경사항이 있습니다. ' + articleLabel + '을(를) 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
+        : articleLabel + '을(를) 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
+      if (!confirm(confirmMessage)) return;
+
+      promotionIsDeleting = true;
+      updatePromotionEditorState();
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+
+      try {
+        const { res, data } = await deletePromotionArticleRequest(selectedId);
+        if (res.status === 403) {
+          showPromotionSaveResult(false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (res.status === 404) {
+          if (data.statuscode === '902-1') {
+            promotionArticles = promotionArticles.filter((article) => article.id !== selectedId);
+            clearPromotionSelection({ keepMessage: true });
+            showPromotionSaveResult(false, data.message || '선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침하세요.');
+          } else {
+            showPromotionSaveResult(false, data.message || '홍보 게시글 삭제 실패 (HTTP ' + res.status + ')');
+          }
+          return;
+        }
+        if (!res.ok) {
+          showPromotionSaveResult(false, data.message || '홍보 게시글 삭제 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+
+        const deleteSuccessMessage = getApiSuccessMessage(data, '홍보 게시글이 삭제되었습니다.');
+        const syncResult = await reloadPromotionList({ keepMessage: true });
+        if (!syncResult.ok) {
+          clearPromotionSelection({ keepMessage: true });
+          showPromotionSaveResult(true, deleteSuccessMessage);
+          setPromotionBanner('삭제는 완료되었지만 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+          return;
+        }
+
+        clearPromotionSelection({ keepMessage: true });
+        clearPromotionBanner();
+        showPromotionSaveResult(true, deleteSuccessMessage);
+        showToast('홍보 게시글 삭제 완료', 'success');
+      } catch (e) {
+        showPromotionSaveResult(false, e.message || '요청 실패');
+      } finally {
+        promotionIsDeleting = false;
+        updatePromotionEditorState();
+      }
+    };
+
+    function extractCreatedPromotionId(data) {
+      return data?.data?.articleId || data?.data?.id || data?.articleId || data?.id || '';
+    }
+
+    function findCreatedPromotionId(payload, articles) {
+      const matched = (Array.isArray(articles) ? articles : []).filter((article) => {
+        return article?.clubId === payload.clubId
+          && article?.title === payload.title
+          && article?.location === payload.location
+          && Number(article?.latitude) === Number(payload.latitude)
+          && Number(article?.longitude) === Number(payload.longitude)
+          && article?.eventStartDate === payload.eventStartDate
+          && article?.eventEndDate === payload.eventEndDate
+          && article?.description === payload.description
+          && JSON.stringify(article?.images || []) === JSON.stringify(payload.images || []);
+      });
+      if (!matched.length) return '';
+      const matchedWithCreatedAt = matched.filter((article) => article?.createdAt);
+      if (matchedWithCreatedAt.length) {
+        matchedWithCreatedAt.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+        return matchedWithCreatedAt[0]?.id || '';
+      }
+      // API 목록은 createdAt desc로 내려오므로 createdAt이 없으면 현재 순서의 첫 항목을 최신으로 간주한다.
+      return matched[0]?.id || '';
+    }
+
+    document.getElementById('btnSavePromotion').onclick = async () => {
+      let payload;
+      try {
+        payload = normalizePromotionPayload();
+      } catch (e) {
+        showPromotionSaveResult(false, e.message || '입력값을 확인하세요.');
+        return;
+      }
+
+      promotionIsSaving = true;
+      updatePromotionEditorState();
+      clearPromotionBanner();
+      hidePromotionSaveResult();
+      try {
+        if (isPromotionCreateMode()) {
+          const createResult = await createPromotionArticleRequest(payload);
+          const createRes = createResult.res;
+          const createData = createResult.data;
+          if (createRes.status === 403) {
+            showPromotionSaveResult(false, '개발자 계정으로 로그인하세요.');
+            return;
+          }
+          if (!createRes.ok) {
+            showPromotionSaveResult(false, createData.message || '홍보 게시글 생성 실패 (HTTP ' + createRes.status + ')');
+            return;
+          }
+          const createSuccessMessage = getApiSuccessMessage(createData, '홍보 게시글이 생성되었습니다.');
+
+          const syncResult = await reloadPromotionList({ keepMessage: true });
+          if (!syncResult.ok) {
+            showPromotionSaveResult(true, createSuccessMessage);
+            setPromotionBanner('생성은 완료되었지만 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+            return;
+          }
+
+          const createdId = extractCreatedPromotionId(createData) || findCreatedPromotionId(payload, promotionArticles);
+          if (createdId) {
+            selectPromotionArticle(createdId, { skipConfirm: true });
+          } else {
+            promotionEditorMode = 'edit';
+            clearPromotionSelection({ keepMessage: true });
+            setPromotionBanner('홍보 게시글은 생성되었지만 자동 선택에 실패했습니다. 목록에서 직접 선택하세요.', 'warn');
+          }
+
+          showPromotionSaveResult(true, createSuccessMessage);
+          showToast('홍보 게시글 생성 완료', 'success');
+          return;
+        }
+
+        if (!promotionSelectedArticleId) {
+          showPromotionSaveResult(false, '수정할 홍보 게시글을 먼저 선택하세요.');
+          return;
+        }
+
+        const res = await fetch(API_BASE + '/api/promotion/' + encodeURIComponent(promotionSelectedArticleId), {
+          method: 'PUT',
+          headers: headers(),
+          body: JSON.stringify(payload)
+        });
+        const data = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          showPromotionSaveResult(false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (res.status === 404) {
+          if (data.statuscode === '902-1') {
+            promotionArticles = promotionArticles.filter((article) => article.id !== promotionSelectedArticleId);
+            clearPromotionSelection({ keepMessage: true });
+            showPromotionSaveResult(false, data.message || '선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침하세요.');
+          } else {
+            showPromotionSaveResult(false, data.message || '홍보 게시글 저장 실패 (HTTP ' + res.status + ')');
+          }
+          return;
+        }
+        if (!res.ok) {
+          showPromotionSaveResult(false, data.message || '홍보 게시글 저장 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        const updateSuccessMessage = getApiSuccessMessage(data, '홍보 게시글이 저장되었습니다.');
+
+        const selectedId = promotionSelectedArticleId;
+        const syncResult = await reloadPromotionList({ selectedArticleId: selectedId, keepMessage: true });
+        if (!syncResult.ok) {
+          showPromotionSaveResult(true, updateSuccessMessage);
+          setPromotionBanner('저장은 완료되었지만 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+          return;
+        }
+
+        showPromotionSaveResult(true, updateSuccessMessage);
+        showToast('홍보 게시글 저장 완료', 'success');
+      } catch (e) {
+        showPromotionSaveResult(false, e.message || '요청 실패');
+      } finally {
+        promotionIsSaving = false;
+        updatePromotionEditorState();
+      }
+    };
+
+    PROMOTION_FORM_IDS.forEach((id) => {
+      document.getElementById(id).addEventListener('input', () => {
+        if (id === 'promotionImages') renderPromotionImagePreviewList();
+        updatePromotionEditorState();
+      });
+    });
+
+    document.getElementById('btnPromotionSearchLocation').onclick = async () => {
+      if (!getStoredKakaoMapsKey()) {
+        renderPromotionMapConfigBanner();
+        setPromotionBanner('서버에 카카오 지도 JavaScript 키를 먼저 설정하세요.', 'warn');
+        return;
+      }
+      try {
+        await ensurePromotionMapReady();
+        document.getElementById('promotionLocationSearchQuery').focus();
+      } catch (e) {
+        setPromotionBanner(e.message || '카카오 지도 초기화 실패', 'error');
+      }
+    };
+
+    document.getElementById('btnPromotionLocationSearch').onclick = async () => {
+      try {
+        await searchPromotionLocations();
+      } catch (e) {
+        setPromotionBanner(e.message || '장소 검색 실패', 'error');
+      }
+    };
+
+    document.getElementById('promotionLocationSearchQuery').addEventListener('keydown', async (event) => {
+      if (event.key !== 'Enter') return;
+      event.preventDefault();
+      try {
+        await searchPromotionLocations();
+      } catch (e) {
+        setPromotionBanner(e.message || '장소 검색 실패', 'error');
+      }
+    });
+
+    document.getElementById('btnPromotionClearCoordinates').onclick = () => {
+      clearPromotionCoordinates();
+    };
+
+    renderPromotionMapConfigBanner();
+    renderPromotionLocationResults();
+    updatePromotionMapStatus();
+
+    document.getElementById('btnUploadPromotionImage').onclick = async () => {
+      const fileInput = document.getElementById('promotionImageUploadFile');
+      if (!promotionSelectedArticleId && !isPromotionCreateMode()) {
+        showToast('수정할 홍보 게시글을 먼저 선택하세요.', 'error');
+        return;
+      }
+      if (!fileInput.files || !fileInput.files.length) {
+        showToast('업로드할 이미지를 선택하세요.', 'error');
+        return;
+      }
+
+      const files = Array.from(fileInput.files);
+      const btn = document.getElementById('btnUploadPromotionImage');
+
+      promotionIsUploading = true;
+      updatePromotionEditorState();
+      clearPromotionBanner();
+      btn.textContent = isPromotionCreateMode() ? '생성 후 업로드 중... (0/' + files.length + ')' : '업로드 중... (0/' + files.length + ')';
+      try {
+        let targetArticleId = promotionSelectedArticleId;
+
+        if (isPromotionCreateMode()) {
+          let createPayload;
+          try {
+            createPayload = normalizePromotionPayload({ requireImages: false });
+          } catch (e) {
+            setPromotionBanner(e.message || '이미지 업로드 전 게시글 정보를 확인하세요.', 'error');
+            return;
+          }
+
+          const createResult = await createPromotionArticleRequest(createPayload);
+          const createRes = createResult.res;
+          const createData = createResult.data;
+          if (createRes.status === 403) {
+            setPromotionBanner('개발자 계정으로 로그인하세요.', 'warn');
+            return;
+          }
+          if (!createRes.ok) {
+            setPromotionBanner(createData.message || '홍보 게시글 생성 실패 (HTTP ' + createRes.status + ')', 'error');
+            return;
+          }
+
+          targetArticleId = extractCreatedPromotionId(createData);
+          if (!targetArticleId) {
+            const syncAfterCreate = await reloadPromotionList({ keepMessage: true });
+            if (!syncAfterCreate.ok) {
+              setPromotionBanner('게시글 생성 후 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+              return;
+            }
+            targetArticleId = findCreatedPromotionId(createPayload, promotionArticles);
+          }
+          if (!targetArticleId) {
+            setPromotionBanner('게시글은 생성되었지만 articleId를 확인하지 못했습니다. 목록에서 직접 선택한 뒤 다시 업로드하세요.', 'warn');
+            return;
+          }
+
+          const syncCreated = await reloadPromotionList({ selectedArticleId: targetArticleId, keepMessage: true });
+          if (!syncCreated.ok) {
+            setPromotionBanner('게시글은 생성되었지만 편집 상태 동기화에 실패했습니다. 목록에서 직접 선택한 뒤 다시 시도하세요.', 'warn');
+            return;
+          }
+        }
+
+        const uploadedUrls = [];
+        const handlePartialUploadFailure = async (message, tone) => {
+          if (!uploadedUrls.length) {
+            setPromotionBanner(message, tone || 'error');
+            return false;
+          }
+          const urls = parsePromotionImageUrls();
+          urls.push(...uploadedUrls);
+          writePromotionImageUrls(urls);
+          fileInput.value = '';
+          const syncResult = await reloadPromotionList({ selectedArticleId: targetArticleId, keepMessage: true });
+          const syncMessage = syncResult.ok ? '' : ' 목록 동기화에도 실패했으니 새로고침해 확인하세요.';
+          setPromotionBanner('이미지 ' + uploadedUrls.length + '개는 업로드되었습니다. ' + message + syncMessage, tone || 'warn');
+          return true;
+        };
+        for (const [index, file] of files.entries()) {
+          btn.textContent = '업로드 중... (' + (index + 1) + '/' + files.length + ')';
+          const uploadResult = await uploadPromotionImageRequest(targetArticleId, file);
+          const res = uploadResult.res;
+          const data = uploadResult.data;
+          if (res.status === 404) {
+            if (data.statuscode === '902-1') {
+              const hasPartialUpload = await handlePartialUploadFailure('선택한 홍보 게시글을 찾을 수 없습니다. 목록을 새로고침한 뒤 다시 시도하세요.', 'error');
+              if (!hasPartialUpload) {
+                promotionArticles = promotionArticles.filter((article) => article.id !== targetArticleId);
+                clearPromotionSelection({ keepMessage: true });
+              }
+            } else {
+              await handlePartialUploadFailure(data.message || '홍보 이미지 업로드 실패 (HTTP ' + res.status + ')', 'error');
+            }
+            return;
+          }
+          if (res.status === 403) {
+            await handlePartialUploadFailure('개발자 계정으로 로그인하세요.', 'warn');
+            return;
+          }
+          if (!res.ok) {
+            await handlePartialUploadFailure(data.message || file.name + ' 업로드 실패 (HTTP ' + res.status + ')', 'error');
+            return;
+          }
+
+          const imageUrl = data.data?.imageUrl;
+          if (!imageUrl) {
+            await handlePartialUploadFailure(file.name + ' 업로드 결과 URL을 확인할 수 없습니다.', 'error');
+            return;
+          }
+          uploadedUrls.push(imageUrl);
+        }
+
+        const urls = parsePromotionImageUrls();
+        urls.push(...uploadedUrls);
+        writePromotionImageUrls(urls);
+        fileInput.value = '';
+
+        if (targetArticleId) {
+          const syncResult = await reloadPromotionList({ selectedArticleId: targetArticleId, keepMessage: true });
+          if (!syncResult.ok) {
+            setPromotionBanner('이미지 업로드와 게시글 반영은 완료되었지만 목록 동기화에 실패했습니다. 목록을 새로고침해 확인하세요.', 'warn');
+            return;
+          }
+        }
+
+        showToast('홍보 이미지 ' + uploadedUrls.length + '개 업로드와 게시글 반영이 완료되었습니다.', 'success');
+      } catch (e) {
+        setPromotionBanner('요청 실패: ' + (e.message || ''), 'error');
+      } finally {
+        promotionIsUploading = false;
+        btn.textContent = '선택 이미지 업로드';
+        updatePromotionEditorState();
+      }
+    };
+
+    window.addEventListener('beforeunload', (event) => {
+      if (!isPromotionDirty() && !bannerDirty) return;
+      event.preventDefault();
+      event.returnValue = '';
+    });
+
+    function createEmptyBannerItem() {
+      return { id: '', imageUrl: '', linkTo: '', alt: '' };
+    }
+
+    function clearBannerBanner() {
+      const banner = document.getElementById('bannerBanner');
+      banner.textContent = '';
+      banner.className = 'banner hidden';
+    }
+
+    function setBannerBanner(message, tone) {
+      const banner = document.getElementById('bannerBanner');
+      banner.textContent = message;
+      banner.className = 'banner ' + tone;
+      banner.classList.remove('hidden');
+    }
+
+    function hideBannerSaveResult() {
+      document.getElementById('bannerSaveResult').classList.add('hidden');
+    }
+
+    function showBannerSaveResult(ok, message) {
+      setMessageBox('bannerSaveResult', ok, message);
+      if (ok) setTimeout(() => document.getElementById('bannerSaveResult').classList.add('hidden'), 3000);
+    }
+
+    function updateBannerControls() {
+      const busy = bannerIsLoading || bannerIsSaving || bannerIsUploading;
+      document.getElementById('bannerType').disabled = busy;
+      document.getElementById('bannerUploadFile').disabled = busy;
+      document.getElementById('btnUploadBannerImage').disabled = busy;
+      document.getElementById('btnLoadBanner').disabled = busy;
+      document.getElementById('btnAddBannerItem').disabled = busy;
+      document.getElementById('btnSaveBanner').disabled = busy || !bannerHasLoaded;
+    }
+
+    function updateBannerSummary() {
+      const summary = document.getElementById('bannerSummary');
+      let text = bannerActiveType + ' 타입';
+      if (!bannerHasLoaded && !bannerImages.length) {
+        text += ' 목록을 불러오거나 새 배너를 추가/업로드하세요.';
+      } else {
+        text += ' 총 ' + bannerImages.length + '개';
+      }
+      if (bannerDirty) {
+        text += ' (저장되지 않은 변경사항 있음)';
+      }
+      summary.textContent = text;
+    }
+
+    function markBannerDirty() {
+      bannerDirty = true;
+      hideBannerSaveResult();
+      updateBannerSummary();
+      updateBannerControls();
+    }
+
+    function normalizeBannerImagesForSave() {
+      return bannerImages.map((item, index) => {
+        const id = String(item.id || '').trim();
+        const imageUrl = String(item.imageUrl || '').trim();
+        const linkTo = String(item.linkTo || '').trim();
+        const alt = String(item.alt || '').trim();
+        if (!id) throw new Error((index + 1) + '번째 배너의 id를 입력하세요.');
+        if (!imageUrl) throw new Error((index + 1) + '번째 배너의 imageUrl을 입력하세요.');
+        if (!alt) throw new Error((index + 1) + '번째 배너의 alt를 입력하세요.');
+        return { id, imageUrl, linkTo: linkTo || null, alt };
+      });
+    }
+
+    function buildBannerUploadHeaders() {
+      const token = getToken();
+      return token ? { 'Authorization': 'Bearer ' + token } : {};
+    }
+
+    function generateBannerItemId() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return 'banner-' + window.crypto.randomUUID().replace(/-/g, '').slice(0, 12);
+      }
+      return 'banner-' + Math.random().toString(36).slice(2, 14);
+    }
+
+    function createBannerItemFromUpload(fileName, imageUrl) {
+      const baseName = String(fileName || '')
+        .replace(/\.[^.]+$/, '')
+        .trim();
+      return {
+        id: generateBannerItemId(),
+        imageUrl,
+        linkTo: '',
+        alt: baseName || '배너 이미지'
+      };
+    }
+
+    function moveBannerItem(fromIndex, toIndex) {
+      if (fromIndex == null || fromIndex < 0 || fromIndex >= bannerImages.length) return;
+      if (toIndex == null || toIndex < 0 || toIndex >= bannerImages.length) return;
+      if (toIndex === fromIndex) return;
+      const next = bannerImages.slice();
+      const moved = next.splice(fromIndex, 1)[0];
+      next.splice(toIndex, 0, moved);
+      bannerImages = next;
+      markBannerDirty();
+      renderBannerList();
+    }
+
+    function createBannerPreview(item) {
+      const preview = document.createElement('div');
+      preview.className = 'banner-preview is-empty';
+      const img = document.createElement('img');
+      img.alt = item.alt || '배너 미리보기';
+      img.classList.add('hidden');
+      const placeholder = document.createElement('span');
+      placeholder.textContent = '이미지 URL을 입력하면 미리보기가 표시됩니다.';
+
+      function updatePreview() {
+        const imageUrl = String(item.imageUrl || '').trim();
+        img.alt = item.alt || '배너 미리보기';
+        if (!imageUrl) {
+          img.removeAttribute('src');
+          img.classList.add('hidden');
+          placeholder.textContent = '이미지 URL을 입력하면 미리보기가 표시됩니다.';
+          placeholder.classList.remove('hidden');
+          preview.classList.add('is-empty');
+          return;
+        }
+        img.classList.add('hidden');
+        placeholder.textContent = '이미지를 불러오는 중...';
+        placeholder.classList.remove('hidden');
+        preview.classList.add('is-empty');
+        img.src = imageUrl;
+      }
+
+      img.addEventListener('load', () => {
+        img.classList.remove('hidden');
+        placeholder.classList.add('hidden');
+        preview.classList.remove('is-empty');
+      });
+      img.addEventListener('error', () => {
+        img.classList.add('hidden');
+        placeholder.textContent = '이미지를 불러올 수 없습니다.';
+        placeholder.classList.remove('hidden');
+        preview.classList.add('is-empty');
+      });
+
+      preview.appendChild(img);
+      preview.appendChild(placeholder);
+      updatePreview();
+
+      return { preview, updatePreview };
+    }
+
+    function createBannerField(config) {
+      const row = document.createElement('div');
+      row.className = 'form-row';
+      const label = document.createElement('label');
+      label.htmlFor = config.id;
+      label.textContent = config.label;
+      const input = document.createElement('input');
+      input.type = 'text';
+      input.id = config.id;
+      input.value = config.value;
+      input.placeholder = config.placeholder;
+      input.addEventListener('input', config.onInput);
+      row.appendChild(label);
+      row.appendChild(input);
+      return row;
+    }
+
+    function createBannerItemElement(item, index) {
+      const article = document.createElement('article');
+      article.className = 'banner-item';
+
+      const head = document.createElement('div');
+      head.className = 'banner-item-head';
+
+      const meta = document.createElement('div');
+      meta.className = 'banner-item-meta';
+      const order = document.createElement('span');
+      order.className = 'banner-order';
+      order.textContent = '#' + (index + 1);
+      meta.appendChild(order);
+
+      const actions = document.createElement('div');
+      actions.className = 'banner-item-actions';
+      const upBtn = document.createElement('button');
+      upBtn.type = 'button';
+      upBtn.textContent = '위로';
+      upBtn.disabled = index === 0;
+      upBtn.addEventListener('click', () => moveBannerItem(index, index - 1));
+      const downBtn = document.createElement('button');
+      downBtn.type = 'button';
+      downBtn.textContent = '아래로';
+      downBtn.disabled = index === bannerImages.length - 1;
+      downBtn.addEventListener('click', () => moveBannerItem(index, index + 1));
+      const removeBtn = document.createElement('button');
+      removeBtn.type = 'button';
+      removeBtn.textContent = '제거';
+      removeBtn.addEventListener('click', () => {
+        bannerImages.splice(index, 1);
+        markBannerDirty();
+        renderBannerList();
+      });
+      actions.appendChild(upBtn);
+      actions.appendChild(downBtn);
+      actions.appendChild(removeBtn);
+
+      head.appendChild(meta);
+      head.appendChild(actions);
+
+      const body = document.createElement('div');
+      body.className = 'banner-item-body';
+      const previewState = createBannerPreview(item);
+      const grid = document.createElement('div');
+      grid.className = 'form-grid banner-item-grid';
+
+      grid.appendChild(createBannerField({
+        label: '배너 ID',
+        id: 'bannerItemId' + index,
+        value: item.id || '',
+        placeholder: 'main-banner-1',
+        onInput: (e) => {
+          item.id = e.target.value;
+          markBannerDirty();
+        }
+      }));
+      grid.appendChild(createBannerField({
+        label: '이미지 URL',
+        id: 'bannerItemImageUrl' + index,
+        value: item.imageUrl || '',
+        placeholder: 'https://...',
+        onInput: (e) => {
+          item.imageUrl = e.target.value;
+          previewState.updatePreview();
+          markBannerDirty();
+        }
+      }));
+      grid.appendChild(createBannerField({
+        label: '클릭 링크 (선택)',
+        id: 'bannerItemLinkTo' + index,
+        value: item.linkTo || '',
+        placeholder: 'https://...',
+        onInput: (e) => {
+          item.linkTo = e.target.value;
+          markBannerDirty();
+        }
+      }));
+      grid.appendChild(createBannerField({
+        label: '대체 텍스트',
+        id: 'bannerItemAlt' + index,
+        value: item.alt || '',
+        placeholder: '배너 설명',
+        onInput: (e) => {
+          item.alt = e.target.value;
+          previewState.updatePreview();
+          markBannerDirty();
+        }
+      }));
+
+      body.appendChild(previewState.preview);
+      body.appendChild(grid);
+      article.appendChild(head);
+      article.appendChild(body);
+      return article;
+    }
+
+    function renderBannerList() {
+      const list = document.getElementById('bannerList');
+      const empty = document.getElementById('bannerEmpty');
+      list.innerHTML = '';
+      if (!bannerImages.length) {
+        empty.classList.toggle('hidden', !bannerHasLoaded);
+      } else {
+        empty.classList.add('hidden');
+        bannerImages.forEach((item, index) => {
+          list.appendChild(createBannerItemElement(item, index));
+        });
+      }
+      updateBannerSummary();
+      updateBannerControls();
+    }
+
+    function clearBannerState() {
+      bannerActiveType = DEFAULT_BANNER_TYPE;
+      bannerImages = [];
+      bannerDirty = false;
+      bannerHasLoaded = false;
+      bannerIsLoading = false;
+      bannerIsSaving = false;
+      bannerIsUploading = false;
+      document.getElementById('bannerType').value = DEFAULT_BANNER_TYPE;
+      document.getElementById('bannerUploadFile').value = '';
+      document.getElementById('bannerListLoading').classList.add('hidden');
+      clearBannerBanner();
+      hideBannerSaveResult();
+      renderBannerList();
+    }
+
+    function loadBannerIfVisible() {
+      const section = document.getElementById('banner');
+      if (section && !section.classList.contains('hidden') && !bannerHasLoaded) {
+        document.getElementById('btnLoadBanner').click();
+      }
+    }
+
+    document.getElementById('bannerType').addEventListener('change', (e) => {
+      const nextType = e.target.value;
+      if (nextType === bannerActiveType) return;
+      if (bannerDirty && !confirm('저장하지 않은 배너 변경사항이 사라집니다. 계속할까요?')) {
+        e.target.value = bannerActiveType;
+        return;
+      }
+      bannerActiveType = nextType;
+      bannerImages = [];
+      bannerDirty = false;
+      bannerHasLoaded = false;
+      bannerIsUploading = false;
+      document.getElementById('bannerUploadFile').value = '';
+      clearBannerBanner();
+      hideBannerSaveResult();
+      renderBannerList();
+    });
+
+    document.getElementById('btnAddBannerItem').onclick = () => {
+      bannerImages.push(createEmptyBannerItem());
+      bannerHasLoaded = true;
+      markBannerDirty();
+      renderBannerList();
+    };
+
+    document.getElementById('btnUploadBannerImage').onclick = async () => {
+      const fileInput = document.getElementById('bannerUploadFile');
+      if (!fileInput.files || !fileInput.files.length) {
+        showToast('업로드할 이미지를 선택하세요.', 'error');
+        return;
+      }
+
+      const file = fileInput.files[0];
+      const btn = document.getElementById('btnUploadBannerImage');
+      const formData = new FormData();
+      formData.append('file', file);
+      formData.append('type', bannerActiveType);
+
+      bannerIsUploading = true;
+      updateBannerControls();
+      clearBannerBanner();
+      hideBannerSaveResult();
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/banner/upload', {
+          method: 'POST',
+          headers: buildBannerUploadHeaders(),
+          body: formData
+        });
+        const data = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setBannerBanner('개발자 계정으로 로그인하세요.', 'warn');
+          return;
+        }
+        if (!res.ok) {
+          setBannerBanner(data.message || '배너 이미지 업로드 실패 (HTTP ' + res.status + ')', 'error');
+          return;
+        }
+
+        const imageUrl = data.data?.imageUrl;
+        if (!imageUrl) {
+          setBannerBanner('업로드 결과 URL을 확인할 수 없습니다.', 'error');
+          return;
+        }
+
+        bannerImages.push(createBannerItemFromUpload(file.name, imageUrl));
+        bannerHasLoaded = true;
+        markBannerDirty();
+        renderBannerList();
+        fileInput.value = '';
+        showToast('이미지를 업로드하고 배열에 추가했습니다.', 'success');
+      } catch (e) {
+        setBannerBanner('요청 실패: ' + (e.message || ''), 'error');
+      } finally {
+        bannerIsUploading = false;
+        btn.textContent = '업로드 후 배열에 추가';
+        updateBannerControls();
+      }
+    };
+
+    document.getElementById('btnLoadBanner').onclick = async () => {
+      if (bannerDirty && !confirm('현재 수정 중인 배너 내용이 덮어써집니다. 계속할까요?')) return;
+      const btn = document.getElementById('btnLoadBanner');
+      const loading = document.getElementById('bannerListLoading');
+      bannerIsLoading = true;
+      updateBannerControls();
+      clearBannerBanner();
+      hideBannerSaveResult();
+      loading.classList.remove('hidden');
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/banner?type=' + encodeURIComponent(bannerActiveType), { headers: headers() });
+        const data = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setBannerBanner('개발자 계정으로 로그인하세요.', 'warn');
+          return;
+        }
+        if (!res.ok) {
+          setBannerBanner(data.message || '배너 목록 조회 실패 (HTTP ' + res.status + ')', 'error');
+          return;
+        }
+        bannerImages = (data.data?.images || data.images || []).map((item) => ({
+          id: item.id || '',
+          imageUrl: item.imageUrl || '',
+          linkTo: item.linkTo || '',
+          alt: item.alt || ''
+        }));
+        bannerDirty = false;
+        bannerHasLoaded = true;
+        renderBannerList();
+        showToast('배너 ' + bannerImages.length + '개를 불러왔습니다', 'success');
+      } catch (e) {
+        setBannerBanner('요청 실패: ' + (e.message || ''), 'error');
+      } finally {
+        bannerIsLoading = false;
+        loading.classList.add('hidden');
+        btn.textContent = '목록 불러오기';
+        updateBannerControls();
+      }
+    };
+
+    document.getElementById('btnSaveBanner').onclick = async () => {
+      let images;
+      try {
+        images = normalizeBannerImagesForSave();
+      } catch (e) {
+        showBannerSaveResult(false, e.message || '배너 입력값을 확인하세요.');
+        return;
+      }
+      const btn = document.getElementById('btnSaveBanner');
+      bannerIsSaving = true;
+      updateBannerControls();
+      clearBannerBanner();
+      hideBannerSaveResult();
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/banner', {
+          method: 'PUT',
+          headers: headers(),
+          body: JSON.stringify({ type: bannerActiveType, images })
+        });
+        const data = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          showBannerSaveResult(false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          showBannerSaveResult(false, data.message || '배너 저장 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        bannerImages = images.map((item) => ({
+          id: item.id,
+          imageUrl: item.imageUrl,
+          linkTo: item.linkTo || '',
+          alt: item.alt
+        }));
+        bannerDirty = false;
+        bannerHasLoaded = true;
+        renderBannerList();
+        showBannerSaveResult(true, data.message || '배너 이미지가 저장되었습니다.');
+        showToast('배너 이미지 저장 완료', 'success');
+      } catch (e) {
+        showBannerSaveResult(false, e.message || '요청 실패');
+      } finally {
+        bannerIsSaving = false;
+        btn.textContent = '현재 배열 저장';
+        updateBannerControls();
+      }
+    };
+
+    clearBannerState();
+    if (getToken()) loadBannerIfVisible();
+
+    async function readJsonOrEmpty(res) {
+      try {
+        return await res.json();
+      } catch (_) {
+        return {};
+      }
+    }
+
+    async function loadDevPortalConfig() {
+      if (!getToken()) {
+        promotionMapKey = '';
+        renderPromotionMapConfigBanner();
+        updatePromotionMapStatus();
+        return;
+      }
+      const res = await fetch(API_BASE + '/api/dev/config', { headers: headers() });
+      const data = await readJsonOrEmpty(res);
+      if (!res.ok) {
+        promotionMapKey = '';
+        renderPromotionMapConfigBanner();
+        updatePromotionMapStatus();
+        logPromotionMapDebug('loadDevPortalConfig:notOk', { status: res.status });
+        return;
+      }
+      const nextKey = String(data.data?.kakaoJavascriptKey || '').trim();
+      logPromotionMapDebug('loadDevPortalConfig:received', {
+        hasKey: !!nextKey,
+        keyPreview: nextKey ? nextKey.slice(0, 6) + '...' : ''
+      });
+      if (promotionMapKey && promotionMapKey !== nextKey) {
+        promotionMapSdkPromise = null;
+        const existingScript = document.getElementById(KAKAO_MAPS_SCRIPT_ID);
+        if (existingScript) existingScript.remove();
+        promotionMap = null;
+        promotionMapMarker = null;
+        setPromotionMapFallback(nextKey
+          ? '지도 준비 중입니다. 위치 검색을 실행하면 실제 지도가 표시됩니다.'
+          : '서버에 카카오 지도 JavaScript 키가 설정되면 실제 지도가 이 영역에 표시됩니다.');
+      }
+      promotionMapKey = nextKey;
+      renderPromotionMapConfigBanner();
+      updatePromotionMapStatus();
+      initializePromotionMapIfVisible();
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? '')
+        .replace(/&/g, '&amp;')
+        .replace(/</g, '&lt;')
+        .replace(/>/g, '&gt;')
+        .replace(/"/g, '&quot;')
+        .replace(/'/g, '&#39;');
+    }
+
+    function setMessageBox(elId, ok, message) {
+      const el = document.getElementById(elId);
+      el.textContent = message;
+      el.className = 'message-box ' + (ok ? 'success' : 'error');
+      el.classList.remove('hidden');
+    }
+
+    function truncateMiddle(value, left, right) {
+      if (!value) return '';
+      if (value.length <= (left + right + 1)) return value;
+      return value.slice(0, left) + '…' + value.slice(value.length - right);
+    }
+
+    function parseFcmDataMap(raw, fieldName) {
+      const text = (raw || '').trim();
+      if (!text) return {};
+      let parsed;
+      try {
+        parsed = JSON.parse(text);
+      } catch (_) {
+        throw new Error(fieldName + '는 JSON 객체 형식이어야 합니다.');
+      }
+      if (!parsed || Array.isArray(parsed) || typeof parsed !== 'object') {
+        throw new Error(fieldName + '는 JSON 객체 형식이어야 합니다.');
+      }
+      const mapped = {};
+      for (const [key, value] of Object.entries(parsed)) {
+        if (!String(key).trim()) {
+          throw new Error(fieldName + ' key는 비어 있을 수 없습니다.');
+        }
+        if (value !== null && typeof value === 'object') {
+          throw new Error(fieldName + ' 값은 문자열/숫자/불리언만 허용됩니다.');
+        }
+        mapped[String(key)] = value == null ? '' : String(value);
+      }
+      return mapped;
+    }
+
+    function renderFcmTokenRows(tokens, page) {
+      const tbody = document.querySelector('#fcmTokenList tbody');
+      tbody.innerHTML = '';
+      if (!tokens.length) {
+        tbody.innerHTML = '<tr><td colspan="3">조회된 토큰이 없습니다.</td></tr>';
+        return;
+      }
+      const start = (page - 1) * FCM_PAGE_SIZE;
+      const slice = tokens.slice(start, start + FCM_PAGE_SIZE);
+      slice.forEach((token, idx) => {
+        const tr = document.createElement('tr');
+        tr.appendChild(document.createElement('td')).textContent = String(start + idx + 1);
+        const tokenCell = document.createElement('td');
+        tokenCell.className = 'token-cell';
+        tokenCell.title = token;
+        tokenCell.textContent = truncateMiddle(token, 20, 16);
+        tokenCell.onclick = () => {
+          navigator.clipboard.writeText(token);
+          showToast('토큰 복사됨', 'success');
+        };
+        tr.appendChild(tokenCell);
+        const btnCell = document.createElement('td');
+        btnCell.className = 'btn-cell';
+        const pickBtn = document.createElement('button');
+        pickBtn.type = 'button';
+        pickBtn.textContent = '선택';
+        pickBtn.onclick = () => {
+          document.getElementById('fcmSingleToken').value = token;
+          document.getElementById('fcmScheduleToken').value = token;
+          showToast('단건 발송 대상 토큰으로 선택됨', 'success');
+        };
+        const copyBtn = document.createElement('button');
+        copyBtn.type = 'button';
+        copyBtn.textContent = '복사';
+        copyBtn.onclick = () => {
+          navigator.clipboard.writeText(token);
+          showToast('토큰 복사됨', 'success');
+        };
+        btnCell.appendChild(pickBtn);
+        btnCell.appendChild(copyBtn);
+        tr.appendChild(btnCell);
+        tbody.appendChild(tr);
+      });
+    }
+
+    function renderFcmTokenPagination(total) {
+      const wrap = document.getElementById('fcmTokenPagination');
+      if (total <= FCM_PAGE_SIZE) {
+        wrap.classList.add('hidden');
+        wrap.innerHTML = '';
+        return;
+      }
+      wrap.classList.remove('hidden');
+      const totalPages = Math.ceil(total / FCM_PAGE_SIZE);
+      let html = '<span>총 ' + total + '개</span>';
+      if (fcmCurrentPage > 1) html += '<button type="button" id="fcmPrev">이전</button>';
+      html += '<span> ' + fcmCurrentPage + ' / ' + totalPages + ' </span>';
+      if (fcmCurrentPage < totalPages) html += '<button type="button" id="fcmNext">다음</button>';
+      wrap.innerHTML = html;
+      const prev = document.getElementById('fcmPrev');
+      const next = document.getElementById('fcmNext');
+      if (prev) prev.onclick = () => {
+        fcmCurrentPage--;
+        renderFcmTokenRows(fcmFilteredTokens, fcmCurrentPage);
+        renderFcmTokenPagination(fcmFilteredTokens.length);
+      };
+      if (next) next.onclick = () => {
+        fcmCurrentPage++;
+        renderFcmTokenRows(fcmFilteredTokens, fcmCurrentPage);
+        renderFcmTokenPagination(fcmFilteredTokens.length);
+      };
+    }
+
+    function updateFcmTokenSummary() {
+      const summary = document.getElementById('fcmTokenSummary');
+      const keyword = document.getElementById('fcmTokenSearch').value.trim();
+      if (!fcmTokens.length) {
+        summary.textContent = '조회된 토큰이 없습니다.';
+        return;
+      }
+      if (!keyword) {
+        summary.textContent = '총 ' + fcmTokens.length + '개 토큰';
+        return;
+      }
+      summary.textContent = '총 ' + fcmTokens.length + '개 중 ' + fcmFilteredTokens.length + '개 검색 결과';
+    }
+
+    function applyFcmTokenFilter(resetPage) {
+      if (resetPage) fcmCurrentPage = 1;
+      const keyword = document.getElementById('fcmTokenSearch').value.trim().toLowerCase();
+      fcmFilteredTokens = !keyword
+              ? fcmTokens.slice()
+              : fcmTokens.filter(token => String(token).toLowerCase().includes(keyword));
+      updateFcmTokenSummary();
+      renderFcmTokenRows(fcmFilteredTokens, fcmCurrentPage);
+      renderFcmTokenPagination(fcmFilteredTokens.length);
+    }
+
+    function clearFcmState() {
+      fcmTokens = [];
+      fcmFilteredTokens = [];
+      fcmCurrentPage = 1;
+      document.getElementById('fcmTokenSearch').value = '';
+      document.getElementById('fcmSingleToken').value = '';
+      document.getElementById('fcmSingleTitle').value = '';
+      document.getElementById('fcmSingleBody').value = '';
+      document.getElementById('fcmSingleData').value = '';
+      document.getElementById('fcmBatchTitle').value = '';
+      document.getElementById('fcmBatchBody').value = '';
+      document.getElementById('fcmBatchData').value = '';
+      fcmSchedules = [];
+      fcmScheduleCancelingIds = new Set();
+      resetFcmScheduleForm();
+      document.getElementById('fcmSingleResult').classList.add('hidden');
+      document.getElementById('fcmBatchResult').classList.add('hidden');
+      const banner = document.getElementById('fcmBanner');
+      banner.textContent = '';
+      banner.className = 'banner hidden';
+      document.getElementById('fcmTokenSummary').textContent = '토큰 조회를 실행하세요.';
+      document.getElementById('fcmTokenPagination').classList.add('hidden');
+      document.getElementById('fcmTokenPagination').innerHTML = '';
+      document.querySelector('#fcmTokenList tbody').innerHTML = '<tr><td colspan="3">토큰 조회를 실행하세요.</td></tr>';
+      document.querySelector('#fcmScheduleList tbody').innerHTML = '<tr><td colspan="7">예약 목록을 조회하세요.</td></tr>';
+    }
+
+    function loadFcmTokensIfVisible() {
+      const section = document.getElementById('fcm');
+      if (section && !section.classList.contains('hidden') && !fcmTokens.length) {
+        document.getElementById('btnLoadFcmTokens').click();
+      }
+      if (section && !section.classList.contains('hidden') && !fcmSchedules.length && !fcmScheduleIsLoading) {
+        loadFcmSchedules();
+      }
+    }
+
+    document.getElementById('btnClearFcmSelection').onclick = () => {
+      document.getElementById('fcmSingleToken').value = '';
+      document.getElementById('fcmSingleResult').classList.add('hidden');
+      showToast('단건 발송 대상 토큰이 초기화되었습니다', 'success');
+    };
+
+    document.getElementById('fcmTokenSearch').addEventListener('input', () => {
+      applyFcmTokenFilter(true);
+    });
+
+    document.getElementById('btnLoadFcmTokens').onclick = async () => {
+      const btn = document.getElementById('btnLoadFcmTokens');
+      const banner = document.getElementById('fcmBanner');
+      const summary = document.getElementById('fcmTokenSummary');
+      const loading = document.getElementById('fcmTokenLoading');
+      banner.className = 'banner hidden';
+      banner.textContent = '';
+      summary.textContent = '토큰 불러오는 중...';
+      loading.classList.remove('hidden');
+      btn.disabled = true;
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/tokens', { headers: headers() });
+        if (res.status === 403) {
+          banner.textContent = '개발자 계정으로 로그인하세요.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          fcmTokens = [];
+          applyFcmTokenFilter(true);
+          summary.textContent = '권한이 없습니다.';
+          return;
+        }
+        const data = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          banner.textContent = data.message || '토큰 조회 실패 (HTTP ' + res.status + ')';
+          banner.className = 'banner error';
+          banner.classList.remove('hidden');
+          fcmTokens = [];
+          applyFcmTokenFilter(true);
+          summary.textContent = '토큰 조회에 실패했습니다.';
+          return;
+        }
+        fcmTokens = data.data?.tokens || [];
+        applyFcmTokenFilter(true);
+        if (!fcmTokens.length) {
+          banner.textContent = '저장된 토큰이 없습니다.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          return;
+        }
+        showToast('토큰 ' + fcmTokens.length + '개를 조회했습니다', 'success');
+      } catch (e) {
+        banner.textContent = '요청 실패: ' + (e.message || '');
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        fcmTokens = [];
+        applyFcmTokenFilter(true);
+        summary.textContent = '토큰 조회에 실패했습니다.';
+      } finally {
+        loading.classList.add('hidden');
+        btn.disabled = false;
+        btn.textContent = '토큰 조회';
+      }
+    };
+
+    document.getElementById('btnFcmSendSingle').onclick = async () => {
+      const token = document.getElementById('fcmSingleToken').value.trim();
+      const title = document.getElementById('fcmSingleTitle').value.trim();
+      const body = document.getElementById('fcmSingleBody').value.trim();
+      let data;
+      try {
+        data = parseFcmDataMap(document.getElementById('fcmSingleData').value, '단건 data');
+      } catch (e) {
+        setMessageBox('fcmSingleResult', false, e.message || 'data 형식이 올바르지 않습니다.');
+        return;
+      }
+      if (!token) {
+        setMessageBox('fcmSingleResult', false, '대상 토큰을 입력하거나 목록에서 선택하세요.');
+        return;
+      }
+      if (!title || !body) {
+        setMessageBox('fcmSingleResult', false, '제목과 본문을 모두 입력하세요.');
+        return;
+      }
+
+      const btn = document.getElementById('btnFcmSendSingle');
+      document.getElementById('fcmSingleResult').classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/send', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ token, title, body, data })
+        });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmSingleResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmSingleResult', false, response.message || 'FCM 단건 발송 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        const messageId = response.data?.messageId || '-';
+        setMessageBox('fcmSingleResult', true, (response.message || 'FCM 단건 발송 완료') + ' (messageId: ' + messageId + ')');
+        showToast('개별 메시지 전송 완료', 'success');
+      } catch (e) {
+        setMessageBox('fcmSingleResult', false, e.message || '요청 실패');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '개별 메시지 전송';
+      }
+    };
+
+    document.getElementById('btnFcmSendAll').onclick = async () => {
+      const title = document.getElementById('fcmBatchTitle').value.trim();
+      const body = document.getElementById('fcmBatchBody').value.trim();
+      let data;
+      try {
+        data = parseFcmDataMap(document.getElementById('fcmBatchData').value, '전체 data');
+      } catch (e) {
+        setMessageBox('fcmBatchResult', false, e.message || 'data 형식이 올바르지 않습니다.');
+        return;
+      }
+      if (!title || !body) {
+        setMessageBox('fcmBatchResult', false, '제목과 본문을 모두 입력하세요.');
+        return;
+      }
+
+      const btn = document.getElementById('btnFcmSendAll');
+      document.getElementById('fcmBatchResult').classList.add('hidden');
+      btn.disabled = true;
+      btn.textContent = '처리 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/send-all', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ title, body, data })
+        });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmBatchResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmBatchResult', false, response.message || 'FCM 전체 배치 발송 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        const result = response.data || {};
+        const total = result.totalTokenCount ?? 0;
+        const success = result.successCount ?? 0;
+        const failure = result.failureCount ?? 0;
+        let detail = '총 ' + total + '건, 성공 ' + success + ', 실패 ' + failure;
+        if (Array.isArray(result.failedTokens) && result.failedTokens.length) {
+          const sample = result.failedTokens.slice(0, 2).map(t => truncateMiddle(t, 10, 6)).join(', ');
+          detail += ', 실패 토큰 샘플: ' + sample;
+        }
+        setMessageBox('fcmBatchResult', true, (response.message || 'FCM 전체 배치 발송 완료') + ' - ' + detail);
+        showToast('전체 메시지 전송 완료', 'success');
+      } catch (e) {
+        setMessageBox('fcmBatchResult', false, e.message || '요청 실패');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '전체 메시지 전송';
+      }
+    };
+
+    function fcmScheduleStatusLabel(status) {
+      const labels = {
+        SCHEDULED: '대기',
+        SENDING: '발송 중',
+        SENT: '발송 완료',
+        CANCELED: '취소됨',
+        FAILED: '실패'
+      };
+      return labels[status] || status || '-';
+    }
+
+    function fcmScheduleTargetLabel(targetType) {
+      return targetType === 'ALL_TOKENS' ? '전체 토큰' : '단건 토큰';
+    }
+
+    function formatFcmScheduleDateTime(value) {
+      if (!value) return '-';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return String(value);
+      return date.toLocaleString('ko-KR', { timeZone: 'Asia/Seoul', hour12: false });
+    }
+
+    function updateFcmScheduleTargetState() {
+      const targetType = document.getElementById('fcmScheduleTargetType').value;
+      const token = document.getElementById('fcmScheduleToken');
+      token.disabled = targetType === 'ALL_TOKENS';
+      if (targetType === 'ALL_TOKENS') token.value = '';
+    }
+
+    function buildFcmSchedulePayload() {
+      const targetType = document.getElementById('fcmScheduleTargetType').value;
+      const token = document.getElementById('fcmScheduleToken').value.trim();
+      const title = document.getElementById('fcmScheduleTitle').value.trim();
+      const body = document.getElementById('fcmScheduleBody').value.trim();
+      const date = document.getElementById('fcmScheduleDate').value;
+      const time = document.getElementById('fcmScheduleTime').value;
+      const data = parseFcmDataMap(document.getElementById('fcmScheduleData').value, '예약 data');
+
+      if (!title || !body) throw new Error('제목과 본문을 모두 입력하세요.');
+      if (targetType === 'SINGLE_TOKEN' && !token) throw new Error('단건 예약 대상 토큰을 입력하세요.');
+      if (!date || !time) throw new Error('예약 날짜와 시간을 모두 입력하세요.');
+
+      const scheduledDate = new Date(date + 'T' + time + ':00+09:00');
+      if (Number.isNaN(scheduledDate.getTime())) throw new Error('예약 시각 형식이 올바르지 않습니다.');
+      if (scheduledDate.getTime() <= Date.now()) throw new Error('예약 시각은 현재보다 이후여야 합니다.');
+
+      const payload = {
+        targetType,
+        title,
+        body,
+        data,
+        scheduledAt: date + 'T' + time + ':00+09:00'
+      };
+      if (targetType === 'SINGLE_TOKEN') payload.token = token;
+      return payload;
+    }
+
+    function resetFcmScheduleForm(clearMessage = true) {
+      document.getElementById('fcmScheduleTargetType').value = 'SINGLE_TOKEN';
+      document.getElementById('fcmScheduleToken').value = '';
+      document.getElementById('fcmScheduleTitle').value = '';
+      document.getElementById('fcmScheduleBody').value = '';
+      document.getElementById('fcmScheduleData').value = '';
+      document.getElementById('fcmScheduleDate').value = '';
+      document.getElementById('fcmScheduleTime').value = '';
+      if (clearMessage) document.getElementById('fcmScheduleResult').classList.add('hidden');
+      updateFcmScheduleTargetState();
+    }
+
+    function renderFcmScheduleRows() {
+      const tbody = document.querySelector('#fcmScheduleList tbody');
+      tbody.innerHTML = '';
+      if (!fcmSchedules.length) {
+        tbody.innerHTML = '<tr><td colspan="7">조회된 예약 알림이 없습니다.</td></tr>';
+        return;
+      }
+
+      fcmSchedules.forEach(schedule => {
+        const tr = document.createElement('tr');
+        const result = '총 ' + (schedule.totalCount ?? 0)
+                + ' / 성공 ' + (schedule.successCount ?? 0)
+                + ' / 실패 ' + (schedule.failureCount ?? 0);
+        const canCancel = schedule.status === 'SCHEDULED';
+        const isCanceling = fcmScheduleCancelingIds.has(schedule.id);
+        tr.innerHTML =
+                '<td>' + escapeHtml(formatFcmScheduleDateTime(schedule.scheduledAt)) + '</td>' +
+                '<td>' + escapeHtml(fcmScheduleTargetLabel(schedule.targetType)) + '</td>' +
+                '<td title="' + escapeHtml(schedule.title || '') + '">' + escapeHtml(truncateMiddle(schedule.title || '-', 18, 8)) + '</td>' +
+                '<td>' + escapeHtml(fcmScheduleStatusLabel(schedule.status)) + '</td>' +
+                '<td>' + escapeHtml(result) + '</td>' +
+                '<td>' + escapeHtml(formatFcmScheduleDateTime(schedule.createdAt)) + '</td>' +
+                '<td class="btn-cell"></td>';
+        const btnCell = tr.querySelector('.btn-cell');
+        const detailBtn = document.createElement('button');
+        detailBtn.type = 'button';
+        detailBtn.textContent = '상세';
+        detailBtn.onclick = () => loadFcmScheduleDetail(schedule.id);
+        btnCell.appendChild(detailBtn);
+        const cancelBtn = document.createElement('button');
+        cancelBtn.type = 'button';
+        cancelBtn.textContent = isCanceling ? '취소 중...' : '취소';
+        cancelBtn.disabled = !canCancel || isCanceling;
+        cancelBtn.onclick = () => cancelFcmSchedule(schedule.id);
+        btnCell.appendChild(cancelBtn);
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function loadFcmSchedules() {
+      const btn = document.getElementById('btnLoadFcmSchedules');
+      const loading = document.getElementById('fcmScheduleLoading');
+      const status = document.getElementById('fcmScheduleStatusFilter').value;
+      fcmScheduleIsLoading = true;
+      btn.disabled = true;
+      btn.textContent = '처리 중...';
+      loading.classList.remove('hidden');
+      try {
+        const query = status ? '?status=' + encodeURIComponent(status) : '';
+        const res = await fetch(API_BASE + '/api/admin/fcm/schedules' + query, { headers: headers() });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmScheduleResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmScheduleResult', false, response.message || '예약 목록 조회 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        fcmSchedules = Array.isArray(response.data) ? response.data : [];
+        renderFcmScheduleRows();
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 목록 조회 실패');
+      } finally {
+        fcmScheduleIsLoading = false;
+        loading.classList.add('hidden');
+        btn.disabled = false;
+        btn.textContent = '예약 목록 조회';
+      }
+    }
+
+    async function loadFcmScheduleDetail(scheduleId) {
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/schedules/' + encodeURIComponent(scheduleId), { headers: headers() });
+        const response = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          setMessageBox('fcmScheduleResult', false, response.message || '예약 상세 조회 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        const schedule = response.data || {};
+        const failed = Array.isArray(schedule.failedTokens) && schedule.failedTokens.length
+                ? '\n실패 토큰: ' + schedule.failedTokens.map(t => truncateMiddle(t, 12, 8)).join(', ')
+                : '';
+        setMessageBox(
+                'fcmScheduleResult',
+                true,
+                '상태: ' + fcmScheduleStatusLabel(schedule.status)
+                + ' / 예약: ' + formatFcmScheduleDateTime(schedule.scheduledAt)
+                + ' / 결과: 총 ' + (schedule.totalCount ?? 0)
+                + ', 성공 ' + (schedule.successCount ?? 0)
+                + ', 실패 ' + (schedule.failureCount ?? 0)
+                + failed
+        );
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 상세 조회 실패');
+      }
+    }
+
+    async function createFcmSchedule() {
+      let payload;
+      try {
+        payload = buildFcmSchedulePayload();
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 입력값이 올바르지 않습니다.');
+        return;
+      }
+
+      const btn = document.getElementById('btnFcmScheduleCreate');
+      fcmScheduleIsCreating = true;
+      btn.disabled = true;
+      btn.textContent = '예약 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/schedules', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify(payload)
+        });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmScheduleResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmScheduleResult', false, response.message || '예약 생성 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        setMessageBox('fcmScheduleResult', true, response.message || 'FCM 예약 알림이 생성되었습니다.');
+        showToast('예약 알림 생성 완료', 'success');
+        resetFcmScheduleForm(false);
+        await loadFcmSchedules();
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 생성 실패');
+      } finally {
+        fcmScheduleIsCreating = false;
+        btn.disabled = false;
+        btn.textContent = '예약';
+      }
+    }
+
+    async function cancelFcmSchedule(scheduleId) {
+      if (!confirm('이 예약 알림을 취소하시겠습니까?')) return;
+      fcmScheduleCancelingIds.add(scheduleId);
+      renderFcmScheduleRows();
+      try {
+        const res = await fetch(API_BASE + '/api/admin/fcm/schedules/' + encodeURIComponent(scheduleId), {
+          method: 'DELETE',
+          headers: headers()
+        });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('fcmScheduleResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('fcmScheduleResult', false, response.message || '예약 취소 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        setMessageBox('fcmScheduleResult', true, response.message || 'FCM 예약 알림이 취소되었습니다.');
+        showToast('예약 알림 취소 완료', 'success');
+        await loadFcmSchedules();
+      } catch (e) {
+        setMessageBox('fcmScheduleResult', false, e.message || '예약 취소 실패');
+      } finally {
+        fcmScheduleCancelingIds.delete(scheduleId);
+        renderFcmScheduleRows();
+      }
+    }
+
+    document.getElementById('fcmScheduleTargetType').addEventListener('change', updateFcmScheduleTargetState);
+    document.getElementById('btnFcmScheduleReset').onclick = resetFcmScheduleForm;
+    document.getElementById('btnFcmScheduleCreate').onclick = createFcmSchedule;
+    document.getElementById('btnLoadFcmSchedules').onclick = loadFcmSchedules;
+    document.getElementById('fcmScheduleStatusFilter').addEventListener('change', loadFcmSchedules);
+    updateFcmScheduleTargetState();
+
+    document.getElementById('btnConversionBatch').onclick = async () => {
+      const text = document.getElementById('conversionImagesJson').value.trim();
+      const banner = document.getElementById('conversionBanner');
+      banner.classList.add('hidden');
+      banner.className = 'banner hidden';
+      let images;
+      try {
+        images = text ? JSON.parse(text) : [];
+      } catch (e) {
+        banner.textContent = 'JSON 형식이 올바르지 않습니다.';
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        return;
+      }
+      if (!Array.isArray(images) || !images.length) {
+        banner.textContent = 'images 배열을 최소 1개 이상 입력하세요.';
+        banner.className = 'banner warn';
+        banner.classList.remove('hidden');
+        return;
+      }
+      const btn = document.getElementById('btnConversionBatch');
+      btn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/conversion-batch', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({ event: 'batch.completed', images })
+        });
+        const data = await res.json();
+        if (res.status === 403) {
+          banner.textContent = '개발자 계정으로 로그인하세요.';
+          banner.className = 'banner warn';
+          banner.classList.remove('hidden');
+          return;
+        }
+        if (res.ok) {
+          showToast(data.message || '배치 처리 완료', 'success');
+          banner.classList.add('hidden');
+        } else {
+          banner.textContent = data.message || '배치 처리 실패';
+          banner.className = 'banner error';
+          banner.classList.remove('hidden');
+        }
+      } catch (e) {
+        banner.textContent = '요청 실패: ' + (e.message || '');
+        banner.className = 'banner error';
+        banner.classList.remove('hidden');
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+    document.getElementById('btnWebpMigrate').onclick = async () => {
+      const btn = document.getElementById('btnWebpMigrate');
+      btn.disabled = true;
+      try {
+        const res = await fetch(API_BASE + '/api/admin/conversion-batch/webp-migrate', {
+          method: 'POST',
+          headers: headers(),
+          body: JSON.stringify({})
+        });
+        const data = await res.json();
+        if (res.status === 403) {
+          showToast('개발자 계정으로 로그인하세요.', 'error');
+          return;
+        }
+        if (res.ok) {
+          showToast(data.message || 'WebP 마이그레이션 완료', 'success');
+        } else {
+          showToast(data.message || 'WebP 마이그레이션 실패', 'error');
+        }
+      } catch (e) {
+        showToast(e.message || '요청 실패', 'error');
+      } finally {
+        btn.disabled = false;
+      }
+    };
+
+  </script>
+</body>
+</html>

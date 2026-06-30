@@ -1,18 +1,23 @@
 import { PromotionArticle } from '@/types/promotion';
 
+const stripTime = (date: Date) =>
+  new Date(date.getFullYear(), date.getMonth(), date.getDate()).getTime();
+
 export const sortPromotions = (
   articles: PromotionArticle[],
   now: number = Date.now(),
 ) => {
+  const today = stripTime(new Date(now));
+
   return [...articles].sort((a, b) => {
-    const aStart = new Date(a.eventStartDate).getTime();
-    const aEnd = new Date(a.eventEndDate).getTime();
-    const bStart = new Date(b.eventStartDate).getTime();
-    const bEnd = new Date(b.eventEndDate).getTime();
+    const aStart = stripTime(new Date(a.eventStartDate));
+    const aEnd = stripTime(new Date(a.eventEndDate));
+    const bStart = stripTime(new Date(b.eventStartDate));
+    const bEnd = stripTime(new Date(b.eventEndDate));
 
     const getStatusWeight = (start: number, end: number) => {
-      if (start <= now && end >= now) return 1; // 진행 중
-      if (start > now) return 2; // 예정
+      if (start <= today && end >= today) return 1; // 진행 중
+      if (start > today) return 2; // 예정
       return 3; // 종료
     };
 

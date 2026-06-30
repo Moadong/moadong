@@ -48,6 +48,11 @@ const MobileBannerSection = ({
     uploadLogo({ clubId, file });
   };
 
+  const handleDeleteCover = () => {
+    if (!clubId) return;
+    deleteCover(clubId);
+  };
+
   return (
     <Styled.BannerArea $bgColor={bannerColor}>
       {coverUrl && <Styled.CoverImage src={coverUrl} alt='커버 이미지' />}
@@ -56,12 +61,7 @@ const MobileBannerSection = ({
           배너 수정
         </Styled.BannerEditButton>
         {coverUrl && (
-          <Styled.BannerEditButton
-            onClick={() => {
-              if (!clubId) return;
-              deleteCover(clubId);
-            }}
-          >
+          <Styled.BannerEditButton onClick={handleDeleteCover}>
             초기화
           </Styled.BannerEditButton>
         )}
