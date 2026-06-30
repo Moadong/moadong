@@ -1,32 +1,8 @@
-# 주요 기능
+# OG 태그 (소셜 미디어 공유 미리보기)
 
-## 실험(A/B 테스트) 프레임워크
+> `middleware.ts`(프로젝트 루트)를 수정할 때 참고. 이 문서는 frontend/CLAUDE.md 인덱스에서 연결된다.
 
-`src/experiments/`에서 Mixpanel 기반 실험 관리:
-
-- `definitions.ts` - 실험 정의 (key, variants, weights)
-- `ExperimentRepository.ts` - 실험 할당 및 변형 조회 로직
-- `initializeExperiments.ts` - 앱 시작 시 실험 초기화
-- `useExperiment()` 훅으로 컴포넌트에서 실험 변형 사용
-
-```typescript
-const { variant } = useExperiment(mainBannerExperiment);
-// variant는 'A' 또는 'B'
-```
-
-## 웹/웹뷰 통합 라우팅
-
-웹과 인앱 웹뷰는 **동일한 웹 라우트**를 사용한다. 웹뷰 여부는 경로가 아니라 `isInAppWebView()`(UA의 `MoadongApp`)로 판단하며 헤더(로고+검색)·바텀네비·필터를 공유한다.
-
-- **레이아웃**: `src/layouts/AppLayout.tsx`(중첩 라우트 레이아웃)가 헤더+바텀네비를 묶어 핵심 네비 페이지(`/`, `/promotions`, `/subscriptions`, `/menu`, `/introduce`, `/club-union`)에 적용.
-- **필터탭(동아리/홍보)**: `src/components/common/Filter/Filter.tsx`의 `WEB_FILTER_OPTIONS`. 모바일·웹뷰에서 노출되며, fixed 헤더(56px)를 비우기 위해 `margin-top: 56px`.
-- **바텀네비**: `src/components/common/BottomNavigation/` (홈/구독/메뉴). 상세·폼·관리자 등 AppLayout 밖 페이지에는 미노출.
-- **웹뷰 전용 동작**: `isInAppWebView()`로 분기 (예: 메인 카드 구독 버튼, `WebviewGlobalStyles`). 상세/홍보상세는 자체 TopBar가 있어 `Header`를 `hideOn={['webview']}`로 숨긴다.
-- **구버전 앱 호환**: `src/routes/webviewRoutes.tsx`는 `/webview/* → 웹 경로` 리다이렉트만 담당(`/webview/main`→`/`, `/webview/club/:id`→`/clubDetail/:id` 등). 구버전 앱 진입 URL 보호용이라 제거 금지.
-
-## OG 태그 (소셜 미디어 공유 미리보기)
-
-### 구조
+## 구조
 
 React SPA는 클라이언트 사이드 렌더링이라 카카오톡/페이스북 크롤러가 JavaScript를 실행하지 않아 OG 태그를 읽지 못한다. 이를 해결하기 위해 `middleware.ts`(프로젝트 루트)에 Vercel Edge Middleware를 적용했다.
 
@@ -51,7 +27,7 @@ React SPA는 클라이언트 사이드 렌더링이라 카카오톡/페이스북
 
 > 카카오는 인앱 브라우저(`KAKAOTALK <버전>`)와 스크랩 봇(`kakaotalk-scrap`)이 UA가 다르다. 봇만 감지해야 실제 사용자가 SPA를 받는다. ([인앱 브라우저 오탐 위험](#현재-구조의-실질적-위험) 참고)
 
-### 새 라우트에 OG 추가 방법
+## 새 라우트에 OG 추가 방법
 
 `middleware.ts`의 regex와 matcher를 수정한다.
 
@@ -65,7 +41,7 @@ export const config = {
 };
 ```
 
-### Next.js 대비 한계점
+## Next.js 대비 한계점
 
 | 항목                | Vercel Edge Middleware (현재)        | Next.js                            |
 | ------------------- | ------------------------------------ | ---------------------------------- |
@@ -83,19 +59,3 @@ export const config = {
 2. **새 크롤러 미감지** — `CRAWLER_PATTERN` regex에 없는 봇은 SPA를 받아 OG 미노출
 3. **라우트 수동 관리** — 새 페이지에 OG가 필요하면 middleware를 직접 수정해야 함
 4. **인앱 브라우저 오탐 위험** — `CRAWLER_PATTERN` 토큰이 메신저 인앱 브라우저 UA까지 잡으면 실제 사용자가 SPA 대신 OG용 텍스트 HTML(제목+설명만)을 받아 빈 화면처럼 보인다. 과거 `kakao` 토큰이 카카오톡 인앱 브라우저(`KAKAOTALK <버전>`)를 오탐해 공유 링크가 빈 화면+텍스트로 떴고, 봇 전용 식별자 `kakaotalk-scrap`로 좁혀 해결했다. `line` 토큰도 LINE 인앱 브라우저(`Line/<버전>`)를 잡는 동일 위험이 남아 있으나 사용량이 적어 보류 — 손볼 경우 봇 전용 UA로 좁힐 것.
-
-## 실시간 업데이트
-
-지원자 상태 업데이트를 위해 SSE(Server-Sent Events) 사용, `AdminClubContext`에서 관리.
-
-## 주요 유틸리티 함수
-
-`src/utils/`에 공용 유틸리티 함수 모음:
-
-- `formatRelativeDateTime.ts` - 상대적 시간 표시 ("2시간 전")
-- `recruitmentDateParser.ts` - 모집 기간 파싱
-- `debounce.ts` - 디바운스 함수
-- `validateSocialLink.ts` - SNS 링크 유효성 검사
-- `isInAppWebView.ts` - 인앱 WebView 감지
-- `webviewBridge.ts` - 네이티브 앱과 통신
-- `initSDK.ts` - 외부 SDK 초기화 (Mixpanel, Sentry, Channel.io, Kakao)
