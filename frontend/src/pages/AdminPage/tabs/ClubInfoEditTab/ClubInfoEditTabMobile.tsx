@@ -1,15 +1,17 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import Button from '@/components/common/Button/Button';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
 import NavField from '@/pages/AdminPage/components/editFields/NavField/NavField';
 import TextField from '@/pages/AdminPage/components/editFields/TextField/TextField';
+import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
 import { ClubDetail, SNSPlatform } from '@/types/club';
 import * as Styled from './ClubInfoEditTabMobile.styles';
+import FreeTagEditPage from './components/mobile/FreeTagEditPage/FreeTagEditPage';
 import MobileBannerSection from './components/mobile/MobileBannerSection/MobileBannerSection';
 import { categories } from './hooks/useClubInfoEdit';
 
@@ -22,10 +24,14 @@ interface ClubInfoEditTabMobileProps {
   selectedCategory: string;
   setSelectedCategory: (v: string) => void;
   clubTags: string[];
+  setClubTags: (tags: string[]) => void;
   socialLinks: Record<SNSPlatform, string>;
   handleUpdateClub: () => void;
+  handleUpdateClubWithTags: (newTags: string[]) => void;
   isDirty: boolean;
 }
+
+type ActivePage = 'main' | 'freeTags';
 
 const ClubInfoEditTabMobile = ({
   clubDetail,
@@ -36,18 +42,32 @@ const ClubInfoEditTabMobile = ({
   selectedCategory,
   setSelectedCategory,
   clubTags,
+  setClubTags,
   socialLinks,
   handleUpdateClub,
+  handleUpdateClubWithTags,
   isDirty,
 }: ClubInfoEditTabMobileProps) => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
+  const [activePage, setActivePage] = useState<ActivePage>('main');
 
   const bannerColor = TAG_COLORS[selectedCategory] || colors.gray[400];
   const snsLinkCount = Object.values(socialLinks).filter(
     (link) => link.trim() !== '',
   ).length;
   const filledTags = clubTags.filter((t) => t.trim() !== '');
+
+  if (activePage === 'freeTags') {
+    return (
+      <FreeTagEditPage
+        initialTags={clubTags}
+        onSave={setClubTags}
+        onSaveToServer={handleUpdateClubWithTags}
+        onBack={() => setActivePage('main')}
+      />
+    );
+  }
 
   return (
     <>
@@ -103,9 +123,8 @@ const ClubInfoEditTabMobile = ({
           <NavField
             label='자유태그 (5자이내)'
             onNavigate={() => {
-              trackEvent(ADMIN_EVENT.TAB_CLICKED, {
-                tabName: '자유태그 수정',
-              });
+              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: '자유태그' });
+              setActivePage('freeTags');
             }}
           >
             {filledTags.length > 0 ? (
@@ -122,9 +141,7 @@ const ClubInfoEditTabMobile = ({
           <NavField
             label='링크 추가'
             onNavigate={() => {
-              trackEvent(ADMIN_EVENT.TAB_CLICKED, {
-                tabName: '링크 추가',
-              });
+              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: '링크 추가' });
             }}
           >
             {snsLinkCount > 0 ? (
@@ -136,11 +153,7 @@ const ClubInfoEditTabMobile = ({
         </Styled.FormSection>
       </Styled.MobileContainer>
 
-      <Styled.SaveButtonArea>
-        <Button onClick={handleUpdateClub} disabled={!isDirty}>
-          저장하기
-        </Button>
-      </Styled.SaveButtonArea>
+      <MobileSaveButtonArea onClick={handleUpdateClub} disabled={!isDirty} />
     </>
   );
 };
