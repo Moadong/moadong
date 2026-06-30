@@ -11,7 +11,7 @@
 - `kakao` → `kakaotalk-scrap`로 토큰을 좁혔다. 카카오 스크랩 봇 UA는 `facebookexternalhit/1.1; kakaotalk-scrap/1.0`이라 OG 미리보기는 기존 `facebookexternalhit` + 새 `kakaotalk-scrap` 양쪽으로 유지되고, 인앱 브라우저(`KAKAOTALK`)는 둘 다 안 걸려 SPA로 통과한다.
 - OG fetch의 `API_BASE`가 dev 서버(`yourun.shop`)로 하드코딩돼 있어 `process.env.VITE_API_BASE_URL`로 교체했다. 클라이언트와 동일 소스를 사용해 환경별(prod/preview)로 올바른 백엔드를 조회한다. 미설정 시 가드로 SPA fallback.
 
-`line` 등 다른 메신저 인앱 브라우저도 동일한 잠재 위험이 있으나 사용량이 적어 보류했다 (`docs/claude/features.md`에 캐비엇 기록).
+`line` 등 다른 메신저 인앱 브라우저도 동일한 잠재 위험이 있으나 사용량이 적어 보류했다 ([docs/claude/og.md](../../claude/og.md)에 캐비엇 기록).
 
 ## 관련 코드
 

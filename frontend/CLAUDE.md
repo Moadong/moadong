@@ -2,6 +2,10 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
+> **문서 구조**: 이 파일은 항상 로드되는 전역 가이드(빌드/컨벤션/테스트/하드룰)다.
+> 도메인 상세는 **각 폴더의 `CLAUDE.md`로 분산**되어 있고, 그 폴더의 파일을 작업할 때만 로드된다.
+> 코드를 바꾸면 **같은 폴더의 `CLAUDE.md`도 함께 갱신**한다 (아래 [폴더별 문서 인덱스](#폴더별-문서-인덱스) 참고).
+
 ## 빌드 및 개발 명령어
 
 > Node 22.12.0 사용 (`.nvmrc` 기준). `nvm use`로 맞출 것.
@@ -51,21 +55,10 @@ npm run generate:sitemap # sitemap.xml 생성
 - TanStack React Query v5 서버 상태 관리
 - Zustand 클라이언트 상태 관리
 - React Router v7
-- date-fns 날짜 처리
-- Framer Motion 애니메이션
-- Swiper 캐러셀
-- react-datepicker 날짜 선택
-- react-markdown 마크다운 렌더링
+- date-fns 날짜 처리 · Framer Motion 애니메이션 · Swiper 캐러셀
+- react-datepicker 날짜 선택 · react-markdown 마크다운 렌더링
 
-### 외부 서비스 통합
-
-- **Mixpanel**: 사용자 분석 및 이벤트 트래킹
-- **Sentry**: 에러 모니터링 및 성능 추적
-- **Channel.io**: 고객 지원 채팅
-- **Kakao SDK**: 카카오 공유 기능
-- **Naver Map**: 동아리방 위치 지도 (네이버 클라우드 플랫폼)
-
-Mixpanel·Sentry·Channel.io는 `src/utils/initSDK.ts`에서 초기화. Naver Map은 `src/utils/loadNaverMapScript.ts`로 동적 로드(SDK init 아님). 각각 환경 변수 필요.
+외부 서비스: Mixpanel, Sentry, Channel.io, Kakao SDK, Naver Map → 초기화·상세는 [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md)
 
 ### 환경 변수
 
@@ -84,131 +77,55 @@ Mixpanel·Sentry·Channel.io는 `src/utils/initSDK.ts`에서 초기화. Naver Ma
 
 **경로 별칭**: `@/*`는 `src/*`로 매핑
 
-**주요 디렉토리**:
+**주요 디렉토리** (★ = 폴더 전용 `CLAUDE.md` 있음):
 
-- `src/apis/` - 도메인별 API 함수 (club, auth, application, applicants)
-- `src/hooks/Queries/` - API를 래핑하는 React Query 훅 (useClub, useApplication, useApplicants)
-- `src/store/` - Zustand 스토어 (useCategoryStore, useSearchStore)
+- `src/apis/` ★ - 도메인별 API 함수 + 인증 + SSE
+- `src/hooks/Queries/` ★ - API를 래핑하는 React Query 훅 + 캐싱 전략
+- `src/store/` - Zustand 스토어 (useCategoryStore, useSearchStore, useAdminClubStore)
 - `src/pages/` - 라우트 기반 페이지 컴포넌트
 - `src/components/` - 공용 UI 컴포넌트
-- `src/context/` - React Context 프로바이더 (AdminClubContext - SSE 상태 관리)
-- `src/experiments/` - A/B 테스트 실험 정의 및 관리
+- `src/layouts/` ★ - 웹/웹뷰 통합 라우팅 레이아웃
+- `src/experiments/` ★ - A/B 테스트 실험 정의 및 관리
+- `src/styles/` ★ - 전역 스타일·테마·브레이크포인트
+- `src/constants/` ★ - 상수 관리 (queryKeys, storageKeys, status 등)
+- `src/utils/` ★ - 유틸리티 함수 + 외부 SDK 초기화
 - `src/mocks/` - MSW(Mock Service Worker) 핸들러
-- `src/utils/` - 유틸리티 함수 (날짜 파싱, 유효성 검사, 디바운스, WebView 브릿지 등)
 - `src/errors/` - 커스텀 에러 클래스
 - `src/types/` - 공용 타입 정의
-- `src/constants/` - 상수 관리 (queryKeys, storageKeys, status, eventName, api, snsConfig 등)
 
-### API 레이어 패턴
+## 코딩 컨벤션
 
-API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된 패턴을 따름:
+### 네이밍
 
-- `handleResponse<T>()` - 응답 파싱, `{ data: {...} }` 형식 자동 언래핑
-- `secureFetch()` - 인증된 요청, 403 시 토큰 자동 갱신
+- 변수, 함수: camelCase
+- 컴포넌트, 타입: PascalCase
+- 파일명: 컴포넌트는 PascalCase.tsx, 유틸은 camelCase.ts
+- 상수: UPPER_SNAKE_CASE
 
-쿼리 키는 `src/constants/queryKeys.ts`에 중앙 관리.
+### Import 순서
 
-### 인증 플로우
+외부 라이브러리 → 내부 모듈 → 타입 → 스타일
 
-- JWT는 localStorage에 저장 (`accessToken` 키, `src/constants/storageKeys.ts`에서 관리)
-- 리프레시 토큰은 쿠키로 처리
-- `src/apis/auth/secureFetch.ts`의 `secureFetch()`가 자동 토큰 갱신 담당
-- 어드민 라우트는 `PrivateRoute` 컴포넌트로 보호
+### 스타일·타입
 
-### 실험(A/B 테스트) 프레임워크
+- styled-components 사용, 테마 시스템 활용
+- `any` 금지, 명시적 타입 정의
+- 상수는 `src/constants/`에서 관리
+- 데이터 패칭은 `src/hooks/Queries/`의 기존 패턴을 우선 재사용
+- API 호출은 `src/apis/`에 두고 페이지/컴포넌트에 분산시키지 않음
 
-`src/experiments/`에서 Mixpanel 기반 실험 관리:
+### Mixpanel 이벤트 트래킹
 
-- `definitions.ts` - 실험 정의 (key, variants, weights)
-- `ExperimentRepository.ts` - 실험 할당 및 변형 조회 로직
-- `initializeExperiments.ts` - 앱 시작 시 실험 초기화
-- `useExperiment()` 훅으로 컴포넌트에서 실험 변형 사용
+- 이벤트명은 `src/constants/eventName.ts`의 `USER_EVENT`에서 관리, 문자열 하드코딩 금지
+- sessionStorage 키는 `page + id` 스코프로 작성
 
-**예시**:
+## 테스트 & Storybook
 
-```typescript
-const { variant } = useExperiment(mainBannerExperiment);
-// variant는 'A' 또는 'B'
-```
-
-### MSW (Mock Service Worker)
-
-`src/mocks/`에서 API 모킹 관리:
-
-- `handlers/` - 도메인별 모킹 핸들러
-- `browser.ts` - MSW 브라우저 워커 설정
-- Storybook 및 개발 환경에서 사용
-
-### 주요 유틸리티 함수
-
-`src/utils/`에 공용 유틸리티 함수 모음:
-
-- `formatRelativeDateTime.ts` - 상대적 시간 표시 ("2시간 전")
-- `recruitmentDateParser.ts` - 모집 기간 파싱
-- `debounce.ts` - 디바운스 함수
-- `validateSocialLink.ts` - SNS 링크 유효성 검사
-- `isInAppWebView.ts` - 인앱 WebView 감지
-- `webviewBridge.ts` - 네이티브 앱과 통신
-- `initSDK.ts` - 외부 SDK 초기화 (Mixpanel, Sentry, Channel.io, Kakao)
-
-### 반응형 브레이크포인트
-
-`src/styles/mediaQuery.ts`에 정의:
-
-- mini_mobile: 375px
-- mobile: 500px
-- tablet: 700px
-- laptop: 1280px
-- Desktop: 1280px 초과 (기본값)
-
-### 테마 시스템
-
-테마는 `src/styles/theme/`에 colors, typography, transitions로 정의. styled-components `ThemeProvider`를 통해 접근.
-
-### 상수 관리
-
-`src/constants/`에 모든 상수 중앙 관리:
-
-- `queryKeys.ts` - React Query 쿼리 키 (도메인.액션 형식)
-- `storageKeys.ts` - localStorage 키 (`accessToken`, `hasConsentedPersonalInfo`)
-- `status.ts` - 지원 상태 정의 (PENDING, APPROVED, REJECTED 등)
-- `eventName.ts` - Mixpanel 이벤트명
-- `api.ts` - API 엔드포인트 URL
-- `snsConfig.ts` - SNS 플랫폼 설정
-- `applicationForm.ts` - 지원서 폼 설정
-- `uploadLimit.ts` - 파일 업로드 제한
-
-### 실시간 업데이트
-
-지원자 상태 업데이트를 위해 SSE(Server-Sent Events) 사용, `AdminClubContext`에서 관리.
-
-### 날짜 처리
-
-- `date-fns` 라이브러리 사용 (Moment.js 대신)
-- `formatRelativeDateTime` 유틸로 상대 시간 표시
-- `react-datepicker` 컴포넌트로 날짜 입력
-
-### 애니메이션
-
-- `framer-motion` 라이브러리로 페이지 전환, 모달, 제스처 등 애니메이션 구현
-- `src/styles/theme/transitions.ts`에 공통 트랜지션 정의
-
-### 캐러셀
-
-- `swiper` 라이브러리로 이미지 슬라이더, 카드 캐러셀 구현
-
-## 테스트
-
-- Jest + React Testing Library
-- MSW로 API 모킹
+- Jest + React Testing Library, MSW로 API 모킹
 - 테스트 파일은 `*.test.ts` 또는 `*.test.tsx` 형식
-- 커버리지 리포트: `npm run coverage`
-
-## Storybook
-
-- 컴포넌트 독립 개발 환경
-- MSW addon으로 API 모킹 지원
-- Chromatic으로 시각적 회귀 테스트
+- 커버리지 리포트: `npm run coverage` · 단일 파일: `npx jest path/to/file.test.ts`
+- MSW: `src/mocks/`에서 API 모킹 관리 (`handlers/` 도메인별 핸들러, `browser.ts` 워커). Storybook·개발 환경에서 사용
+- Storybook: 컴포넌트 독립 개발 환경(포트 6006), MSW addon으로 API 모킹, Chromatic으로 시각적 회귀 테스트
 
 ## Claude Code Agent
 
@@ -218,16 +135,20 @@ const { variant } = useExperiment(mainBannerExperiment);
 
 Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 
----
+## 폴더별 문서 인덱스
 
-## 도메인별 상세 문서
+도메인 상세는 코드 옆 `CLAUDE.md`에 있다. 해당 폴더 작업 시 자동 로드되며, 코드 변경 시 같은 파일을 갱신한다.
 
-@docs/claude/architecture.md
-@docs/claude/api.md
-@docs/claude/ui.md
-@docs/claude/testing.md
-@docs/claude/features.md
-@docs/claude/conventions.md
+| 영역 | 문서 |
+| --- | --- |
+| API 레이어·인증·SSE | [`src/apis/CLAUDE.md`](src/apis/CLAUDE.md) |
+| React Query 훅·캐싱 전략 | [`src/hooks/Queries/CLAUDE.md`](src/hooks/Queries/CLAUDE.md) |
+| 상수 관리 | [`src/constants/CLAUDE.md`](src/constants/CLAUDE.md) |
+| UI·테마·브레이크포인트·날짜 | [`src/styles/CLAUDE.md`](src/styles/CLAUDE.md) |
+| A/B 테스트 실험 | [`src/experiments/CLAUDE.md`](src/experiments/CLAUDE.md) |
+| 웹/웹뷰 통합 라우팅 | [`src/layouts/CLAUDE.md`](src/layouts/CLAUDE.md) |
+| 유틸리티·외부 SDK 초기화 | [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md) |
+| OG 태그 (`middleware.ts`) | [`docs/claude/og.md`](docs/claude/og.md) |
 
 ## Skill routing
 
