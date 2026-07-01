@@ -11,9 +11,11 @@ permissions:
 jobs:
   harry-review:
     # 같은 레포 브랜치 PR만 리뷰한다. 포크 PR(외부 공격자)은 프롬프트 인젝션 위험이 있어 제외.
+    # main으로 올라오는 PR은 리뷰하지 않는다(develop 등 상위 브랜치에서 이미 리뷰됨).
     if: >-
       ${{ github.event.pull_request.draft == false
-      && github.event.pull_request.head.repo.full_name == github.repository }}
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.event.pull_request.base.ref != 'main' }}
     runs-on: ubuntu-latest
     steps:
       - name: Generate harry App token
@@ -68,7 +70,8 @@ jobs:
     if: >-
       ${{ github.event.action == 'opened'
       && github.event.pull_request.draft == false
-      && github.event.pull_request.head.repo.full_name == github.repository }}
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.event.pull_request.base.ref != 'main' }}
     # 같은 PR을 re-run 하거나 직전 룰 PR이 아직 안 머지된 경우 같은 브랜치명이 겹쳐
     # push가 실패할 수 있어, PR 단위로 동시 실행을 직렬화한다.
     concurrency: harry-rule-${{ github.event.pull_request.number }}
