@@ -6,6 +6,7 @@
 - `recruitmentDateParser.ts` - 모집 기간 파싱
 - `debounce.ts` - 디바운스 함수
 - `validateSocialLink.ts` - SNS 링크 유효성 검사
+- `semester.ts` - 학기(FIRST/SECOND) 판정. 백엔드 경계(1-indexed `month < 7`)와 일치하도록 0-indexed `getMonth()` 기준 `< 6`으로 계산
 - `isInAppWebView.ts` - 인앱 WebView 감지 (UA의 `MoadongApp`)
 - `webviewBridge.ts` - 네이티브 앱과 통신
 - `initSDK.ts` - 외부 SDK 초기화
