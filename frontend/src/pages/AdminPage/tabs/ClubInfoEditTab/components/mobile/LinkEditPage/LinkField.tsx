@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
 import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
 import { colors } from '@/styles/theme/colors';
@@ -22,10 +22,12 @@ const LinkField = ({
   error,
 }: LinkFieldProps) => {
   const [isActive, setIsActive] = useState(false);
+  const inputRef = useRef<HTMLInputElement>(null);
 
   const handleClear = (e: React.MouseEvent) => {
     e.preventDefault();
     onClear();
+    inputRef.current?.focus();
   };
 
   return (
@@ -37,6 +39,7 @@ const LinkField = ({
       >
         <Styled.ContentRow>
           <Styled.Input
+            ref={inputRef}
             type='url'
             value={value}
             placeholder={placeholder}
