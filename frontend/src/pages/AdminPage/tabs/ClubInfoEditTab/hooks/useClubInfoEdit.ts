@@ -172,9 +172,6 @@ const useClubInfoEdit = () => {
     if (!clubDetail || !clubDetail.id) return;
 
     const mergedLinks = { ...socialLinks, ...newLinks };
-    setInitialValues((prev) =>
-      prev ? { ...prev, socialLinks: mergedLinks } : null,
-    );
 
     updateClub(
       {
@@ -190,6 +187,11 @@ const useClubInfoEdit = () => {
         description: clubDetail.description,
       },
       {
+        onSuccess: () => {
+          setInitialValues((prev) =>
+            prev ? { ...prev, socialLinks: mergedLinks } : null,
+          );
+        },
         onError: (error) => {
           alert(`링크 저장에 실패했습니다: ${error.message}`);
         },
@@ -199,8 +201,6 @@ const useClubInfoEdit = () => {
 
   const handleUpdateClubWithTags = (newTags: string[]) => {
     if (!clubDetail || !clubDetail.id) return;
-
-    setInitialValues((prev) => (prev ? { ...prev, clubTags: newTags } : null));
 
     updateClub(
       {
@@ -216,6 +216,11 @@ const useClubInfoEdit = () => {
         description: clubDetail.description,
       },
       {
+        onSuccess: () => {
+          setInitialValues((prev) =>
+            prev ? { ...prev, clubTags: newTags } : null,
+          );
+        },
         onError: (error) => {
           alert(`자유태그 저장에 실패했습니다: ${error.message}`);
         },
