@@ -1,12 +1,5 @@
 import { ApplicationFormData, ApplicationFormMode } from '@/types/application';
-
-const now = new Date();
-const currentYear = now.getFullYear();
-const currentMonth = now.getMonth();
-
-// getMonth()는 0-indexed(1월=0 … 7월=6)이므로, 백엔드 학기 경계(1-indexed month < 7)와
-// 동일하게 맞추려면 currentMonth < 6 (1~6월=FIRST, 7~12월=SECOND)이어야 한다.
-const currentSemesterTerm = currentMonth < 6 ? 'FIRST' : 'SECOND';
+import { getSemesterTerm } from '@/utils/semester';
 
 const INITIAL_FORM_DATA: ApplicationFormData = {
   title: '',
@@ -38,8 +31,14 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
       items: [{ value: '' }, { value: '' }],
     },
   ],
-  semesterYear: currentYear,
-  semesterTerm: currentSemesterTerm,
+  // now를 모듈 로드 시점에 한 번만 계산하면, 탭을 학기/연도 경계를 넘겨 오래 열어둘 때
+  // stale 값이 전송될 수 있다. getter로 폼 초기화·제출 시점에 현재 날짜를 동적 계산한다.
+  get semesterYear() {
+    return new Date().getFullYear();
+  },
+  get semesterTerm() {
+    return getSemesterTerm(new Date().getMonth());
+  },
   formMode: ApplicationFormMode.INTERNAL,
   externalApplicationUrl: '',
   active: 'unpublished',
