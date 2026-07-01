@@ -75,8 +75,21 @@ const useClubInfoEdit = () => {
     x: '',
   });
 
+  const isDirty =
+    initialValues !== null &&
+    (clubName !== initialValues.clubName ||
+      introduction !== initialValues.introduction ||
+      selectedDivision !== initialValues.selectedDivision ||
+      selectedCategory !== initialValues.selectedCategory ||
+      clubTags.join(',') !== initialValues.clubTags.join(',') ||
+      socialLinks.instagram !== initialValues.socialLinks.instagram ||
+      socialLinks.youtube !== initialValues.socialLinks.youtube ||
+      socialLinks.x !== initialValues.socialLinks.x);
+
   useEffect(() => {
-    if (clubDetail) {
+    // 배너/로고 업로드 등으로 clubDetail이 refetch돼도, 편집 중(isDirty)이면
+    // 서버 값으로 덮어쓰지 않는다. (미저장 입력 유실 방지)
+    if (clubDetail && !isDirty) {
       const tags =
         clubDetail.tags.length >= 2
           ? clubDetail.tags
@@ -105,18 +118,10 @@ const useClubInfoEdit = () => {
         socialLinks: links,
       });
     }
+    // isDirty는 의도적으로 deps에서 제외한다 — clubDetail이 refetch되는 시점의
+    // 현재 편집 상태만 확인하면 되고, deps에 넣으면 재동기화 루프가 생긴다.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clubDetail]);
-
-  const isDirty =
-    initialValues !== null &&
-    (clubName !== initialValues.clubName ||
-      introduction !== initialValues.introduction ||
-      selectedDivision !== initialValues.selectedDivision ||
-      selectedCategory !== initialValues.selectedCategory ||
-      clubTags.join(',') !== initialValues.clubTags.join(',') ||
-      socialLinks.instagram !== initialValues.socialLinks.instagram ||
-      socialLinks.youtube !== initialValues.socialLinks.youtube ||
-      socialLinks.x !== initialValues.socialLinks.x);
 
   const handleSocialLinkChange = (key: SNSPlatform, value: string) => {
     const errorMsg = validateSocialLink(key, value);
@@ -158,6 +163,14 @@ const useClubInfoEdit = () => {
     updateClub(updatedData, {
       onSuccess: () => {
         alert('동아리 정보가 성공적으로 수정되었습니다.');
+        setInitialValues({
+          clubName,
+          introduction,
+          selectedDivision,
+          selectedCategory,
+          clubTags,
+          socialLinks,
+        });
       },
       onError: (error) => {
         alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
@@ -172,9 +185,6 @@ const useClubInfoEdit = () => {
     if (!clubDetail || !clubDetail.id) return;
 
     const mergedLinks = { ...socialLinks, ...newLinks };
-    setInitialValues((prev) =>
-      prev ? { ...prev, socialLinks: mergedLinks } : null,
-    );
 
     updateClub(
       {
@@ -190,6 +200,11 @@ const useClubInfoEdit = () => {
         description: clubDetail.description,
       },
       {
+        onSuccess: () => {
+          setInitialValues((prev) =>
+            prev ? { ...prev, socialLinks: mergedLinks } : null,
+          );
+        },
         onError: (error) => {
           alert(`링크 저장에 실패했습니다: ${error.message}`);
         },
@@ -199,8 +214,6 @@ const useClubInfoEdit = () => {
 
   const handleUpdateClubWithTags = (newTags: string[]) => {
     if (!clubDetail || !clubDetail.id) return;
-
-    setInitialValues((prev) => (prev ? { ...prev, clubTags: newTags } : null));
 
     updateClub(
       {
@@ -216,6 +229,11 @@ const useClubInfoEdit = () => {
         description: clubDetail.description,
       },
       {
+        onSuccess: () => {
+          setInitialValues((prev) =>
+            prev ? { ...prev, clubTags: newTags } : null,
+          );
+        },
         onError: (error) => {
           alert(`자유태그 저장에 실패했습니다: ${error.message}`);
         },

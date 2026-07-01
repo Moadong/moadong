@@ -109,6 +109,7 @@ const ClubInfoEditTabMobile = ({
             label='동아리명'
             placeholder='동아리명을 입력해주세요.'
             value={clubName}
+            maxLength={20}
             onChange={setClubName}
             onClear={() => {
               trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED);
@@ -120,6 +121,7 @@ const ClubInfoEditTabMobile = ({
             label='동아리소개'
             placeholder='한줄소개를 입력해주세요.'
             value={introduction}
+            maxLength={20}
             onChange={setIntroduction}
             onClear={() => {
               trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED);

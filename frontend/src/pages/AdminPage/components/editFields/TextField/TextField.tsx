@@ -9,6 +9,7 @@ interface TextFieldProps {
   value: string;
   onChange: (value: string) => void;
   onClear: () => void;
+  maxLength?: number;
 }
 
 const TextField = ({
@@ -17,6 +18,7 @@ const TextField = ({
   value,
   onChange,
   onClear,
+  maxLength,
 }: TextFieldProps) => {
   const [isActive, setIsActive] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -43,6 +45,7 @@ const TextField = ({
           value={value}
           placeholder={placeholder || label}
           rows={1}
+          maxLength={maxLength}
           onChange={(e) => onChange(e.target.value)}
           onFocus={() => setIsActive(true)}
           onBlur={() => setIsActive(false)}
