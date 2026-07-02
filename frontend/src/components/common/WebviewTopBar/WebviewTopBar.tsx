@@ -5,16 +5,21 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { requestNavigateBack } from '@/utils/webviewBridge';
 import * as Styled from './WebviewTopBar.styles';
 
-interface Props {
+interface WebviewTopBarProps {
   title: string;
+  onBack?: () => void;
 }
 
-const WebviewTopBar = ({ title }: Props) => {
+const WebviewTopBar = ({ title, onBack }: WebviewTopBarProps) => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
   const handleBackClick = () => {
     trackEvent(USER_EVENT.BACK_BUTTON_CLICKED);
+    if (onBack) {
+      onBack();
+      return;
+    }
     const handled = requestNavigateBack();
     if (!handled) {
       if (window.history.state && window.history.state.idx > 0) {

@@ -34,6 +34,9 @@ jobs:
       - name: Lint
         run: npm run lint
 
+      - name: Tracking audit (미사용 USER_EVENT 검사)
+        run: npm run audit:tracking
+
       - name: Build
         env:
           SKIP_DYNAMIC_SITEMAP: 'true'

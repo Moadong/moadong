@@ -2,22 +2,17 @@ import { useNavigate } from 'react-router-dom';
 import { renderHook, RenderHookResult } from '@testing-library/react';
 import useNavigator from '@/hooks/useNavigator';
 import isInAppWebView from '@/utils/isInAppWebView';
-import {
-  requestNavigateWebview,
-  requestOpenExternalUrl,
-} from '@/utils/webviewBridge';
+import { requestOpenExternalUrl } from '@/utils/webviewBridge';
 
 jest.mock('react-router-dom', () => ({
   useNavigate: jest.fn(),
 }));
 jest.mock('@/utils/isInAppWebView');
 jest.mock('@/utils/webviewBridge', () => ({
-  requestNavigateWebview: jest.fn(),
   requestOpenExternalUrl: jest.fn(),
 }));
 
 const mockIsInAppWebView = isInAppWebView as jest.Mock;
-const mockRequestNavigateWebview = requestNavigateWebview as jest.Mock;
 const mockRequestOpenExternalUrl = requestOpenExternalUrl as jest.Mock;
 
 describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
@@ -138,21 +133,16 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
     });
 
     describe('내부 경로를 클릭하면', () => {
-      it('requestNavigateWebview로 앱에 위임한다', () => {
+      it('React Router로 이동한다', () => {
         handleLink.result.current('/promotions/123');
 
-        expect(mockRequestNavigateWebview).toHaveBeenCalledWith(
-          'promotions/123',
-        );
-        expect(mockNavigate).not.toHaveBeenCalled();
+        expect(mockNavigate).toHaveBeenCalledWith('/promotions/123');
       });
 
-      it('leading slash를 제거한 slug로 전달한다', () => {
-        handleLink.result.current('/promotions/club-fest-2026');
+      it('상대 경로도 React Router로 이동한다', () => {
+        handleLink.result.current('promotions/club-fest-2026');
 
-        expect(mockRequestNavigateWebview).toHaveBeenCalledWith(
-          'promotions/club-fest-2026',
-        );
+        expect(mockNavigate).toHaveBeenCalledWith('promotions/club-fest-2026');
       });
     });
   });
