@@ -73,8 +73,6 @@ export const USER_EVENT = {
 
   // 클릭배틀 게임
   GAME_START_BUTTON_CLICKED: 'Game Start Button Clicked',
-  GAME_RANKING_CLUB_SELECTED: 'Game Ranking Club Selected',
-  GAME_RANKING_DETAIL_CLICKED: 'Game Ranking Detail Clicked',
 } as const;
 
 export const WEBVIEW_LINK_TARGET = {
