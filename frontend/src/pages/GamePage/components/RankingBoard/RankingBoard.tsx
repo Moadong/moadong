@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { USER_EVENT } from '@/constants/eventName';
@@ -15,7 +14,7 @@ interface RankingBoardProps {
 }
 
 const MEDAL = ['🥇', '🥈', '🥉'];
-const TOP_COUNT = 20;
+const TOP_COUNT = 3;
 
 const RankingBoard = ({
   ranking,
@@ -24,16 +23,14 @@ const RankingBoard = ({
   rankDelta,
   onSelectClub,
 }: RankingBoardProps) => {
-  const [isExpanded, setIsExpanded] = useState(false);
   const trackEvent = useMixpanelTrack();
 
-  const visibleRanking = isExpanded ? ranking : ranking.slice(0, TOP_COUNT);
-  const hasMore = ranking.length > TOP_COUNT;
+  const visibleRanking = ranking.slice(0, TOP_COUNT);
 
   return (
     <S.Wrapper>
       <S.Header>
-        <S.Title $dark={isDark}>🏆 Top 20 실시간 순위</S.Title>
+        <S.Title $dark={isDark}>🏆 Top 3 최종 순위</S.Title>
       </S.Header>
       {ranking.length === 0 ? (
         <S.EmptyMessage $dark={isDark}>
@@ -52,8 +49,7 @@ const RankingBoard = ({
                   exit={{ opacity: 0, x: 20 }}
                   transition={{
                     duration: 0.2,
-                    delay:
-                      (isExpanded && i >= TOP_COUNT ? i - TOP_COUNT : i) * 0.02,
+                    delay: Math.min(i * 0.02, 0.4),
                   }}
                   style={{ listStyle: 'none' }}
                 >
@@ -116,16 +112,6 @@ const RankingBoard = ({
               ))}
             </AnimatePresence>
           </S.List>
-          {hasMore && (
-            <S.MoreButton
-              $dark={isDark}
-              onClick={() => setIsExpanded((prev) => !prev)}
-            >
-              {isExpanded
-                ? '접기'
-                : `더보기 (${ranking.length - TOP_COUNT}개 동아리)`}
-            </S.MoreButton>
-          )}
         </>
       )}
     </S.Wrapper>
