@@ -54,17 +54,27 @@ const GamePage = () => {
 
   const top1Club = rankingData?.clubs[0];
 
-  // 게임 종료: 10초마다 축하 폭죽을 자동으로 발사
+  // 게임 종료: 진입 시 한 번 + 이후 10초마다 축하 폭죽 자동 발사
   const burstIdRef = useRef(0);
   useEffect(() => {
-    const interval = setInterval(() => {
+    const timeouts: ReturnType<typeof setTimeout>[] = [];
+
+    const fireBurst = () => {
       const id = burstIdRef.current++;
       setBgBursts((prev) => [...prev, id]);
-      setTimeout(() => {
+      const timeout = setTimeout(() => {
         setBgBursts((prev) => prev.filter((b) => b !== id));
       }, FIREWORK_DURATION);
-    }, FIREWORK_INTERVAL);
-    return () => clearInterval(interval);
+      timeouts.push(timeout);
+    };
+
+    fireBurst();
+    const interval = setInterval(fireBurst, FIREWORK_INTERVAL);
+
+    return () => {
+      clearInterval(interval);
+      timeouts.forEach(clearTimeout);
+    };
   }, []);
 
   useEffect(() => {

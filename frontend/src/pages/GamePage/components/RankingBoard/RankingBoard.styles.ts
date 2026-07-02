@@ -28,7 +28,6 @@ export const List = styled.ol`
 `;
 
 export const Item = styled.div<{
-  $isMe: boolean;
   $rank: number;
   $dark: boolean;
 }>`
@@ -37,18 +36,11 @@ export const Item = styled.div<{
   gap: 12px;
   padding: 12px 16px;
   border-radius: 10px;
-  background: ${({ $isMe, $dark, theme }) => {
-    if ($dark) return $isMe ? 'rgba(255, 84, 20, 0.18)' : '#22222E';
-    return $isMe ? theme.colors.primary[500] : '#FFFFFF';
-  }};
-  border: ${({ $isMe, $dark, theme }) => {
-    if ($isMe) return `2px solid ${theme.colors.primary[900]}`;
-    return $dark
-      ? '2px solid transparent'
-      : `2px solid ${theme.colors.gray[300]}`;
-  }};
-  box-shadow: ${({ $isMe, $dark }) =>
-    !$isMe && !$dark ? '0 1px 3px rgba(0, 0, 0, 0.06)' : 'none'};
+  background: ${({ $dark }) => ($dark ? '#22222E' : '#FFFFFF')};
+  border: ${({ $dark, theme }) =>
+    $dark ? '2px solid transparent' : `2px solid ${theme.colors.gray[300]}`};
+  box-shadow: ${({ $dark }) =>
+    $dark ? 'none' : '0 1px 3px rgba(0, 0, 0, 0.06)'};
   transition: background 0.3s;
   cursor: pointer;
   text-decoration: none;
@@ -78,54 +70,10 @@ export const ClubName = styled.span<{ $dark: boolean }>`
   white-space: nowrap;
 `;
 
-export const RankDelta = styled.span<{ $direction: 'up' | 'down' }>`
-  font-size: 0.75rem;
-  font-weight: 700;
-  color: ${({ $direction }) => ($direction === 'up' ? '#E53935' : '#1E88E5')};
-  white-space: nowrap;
-`;
-
 export const ClickCount = styled.span`
   font-size: 0.875rem;
   font-weight: 700;
   color: ${({ theme }) => theme.colors.primary[900]};
-`;
-
-export const DetailLink = styled.span<{ $dark: boolean }>`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  font-size: 0.875rem;
-  color: ${({ $dark, theme }) =>
-    $dark ? theme.colors.gray[500] : theme.colors.gray[400]};
-  text-decoration: none;
-  flex-shrink: 0;
-
-  &:hover {
-    color: ${({ theme }) => theme.colors.primary[900]};
-  }
-`;
-
-export const MoreButton = styled.button<{ $dark: boolean }>`
-  display: block;
-  width: 100%;
-  margin-top: 12px;
-  padding: 12px 0;
-  border: none;
-  border-radius: 10px;
-  background: ${({ $dark }) => ($dark ? '#2A2A36' : '#F0F0F0')};
-  color: ${({ $dark, theme }) =>
-    $dark ? theme.colors.gray[300] : theme.colors.gray[600]};
-  font-size: 0.9rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: ${({ $dark }) => ($dark ? '#33333F' : '#E5E5E5')};
-  }
 `;
 
 export const EmptyMessage = styled.p<{ $dark: boolean }>`
