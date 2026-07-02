@@ -135,7 +135,10 @@ const GamePage = () => {
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ duration: 0.5, delay: 0.3 }}
               >
-                <RankingBoard ranking={rankingData?.clubs ?? []} isDark={isDark} />
+                <RankingBoard
+                  ranking={rankingData?.clubs ?? []}
+                  isDark={isDark}
+                />
               </motion.div>
             </S.DesktopOnly>
           </S.TopRow>
@@ -170,7 +173,10 @@ const GamePage = () => {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
             >
-              <RankingBoard ranking={rankingData?.clubs ?? []} isDark={isDark} />
+              <RankingBoard
+                ranking={rankingData?.clubs ?? []}
+                isDark={isDark}
+              />
             </motion.div>
           </S.MobileOnly>
         </S.Content>
