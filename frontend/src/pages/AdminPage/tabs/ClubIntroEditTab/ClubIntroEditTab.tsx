@@ -1,8 +1,8 @@
+import Button from '@/components/common/Button/Button';
+import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import useDevice from '@/hooks/useDevice';
-import Button from '@/components/common/Button/Button';
-import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import * as Styled from './ClubIntroEditTab.styles';
 import ClubIntroEditTabMobile from './ClubIntroEditTabMobile';
