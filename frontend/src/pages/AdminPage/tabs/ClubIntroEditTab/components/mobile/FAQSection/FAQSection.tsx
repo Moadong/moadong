@@ -44,20 +44,21 @@ const FAQItemEditor = ({
           <img src={closeCircleIcon} alt='삭제' />
         </Styled.DeleteButton>
       </Styled.QuestionRow>
-      <Styled.AnswerCard>
-        <Styled.AnswerTextarea
-          ref={answerRef}
-          value={faq.answer}
-          onChange={handleAnswerChange}
-          placeholder='답변을 입력해주세요'
-          rows={1}
-        />
-        {faq.answer.length > 0 && (
-          <Styled.CharCount>
-            {faq.answer.length}/{ANSWER_MAX_LENGTH}
-          </Styled.CharCount>
-        )}
-      </Styled.AnswerCard>
+      <Styled.AnswerWrapper>
+        <Styled.AnswerCard>
+          <Styled.AnswerTextarea
+            ref={answerRef}
+            value={faq.answer}
+            onChange={handleAnswerChange}
+            placeholder='답변을 입력해주세요'
+            rows={1}
+          />
+        </Styled.AnswerCard>
+        <Styled.CharCount>
+          질문: {faq.question.length}/{QUESTION_MAX_LENGTH} | 답변:{' '}
+          {faq.answer.length}/{ANSWER_MAX_LENGTH}
+        </Styled.CharCount>
+      </Styled.AnswerWrapper>
     </Styled.FAQCard>
   );
 };

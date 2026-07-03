@@ -50,7 +50,7 @@ export const FAQCard = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 16px 18px;
+  padding: 16px 18px 10px;
   gap: 10px;
   width: 100%;
   min-height: 110px;
@@ -105,6 +105,13 @@ export const DeleteButton = styled.button`
   align-items: center;
   justify-content: center;
   flex-shrink: 0;
+`;
+
+export const AnswerWrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  width: 100%;
 `;
 
 export const AnswerCard = styled.div`
