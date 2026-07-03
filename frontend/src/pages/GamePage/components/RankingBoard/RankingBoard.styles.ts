@@ -28,7 +28,6 @@ export const List = styled.ol`
 `;
 
 export const Item = styled.div<{
-  $rank: number;
   $dark: boolean;
 }>`
   display: flex;
@@ -44,6 +43,10 @@ export const Item = styled.div<{
   transition: background 0.3s;
   cursor: pointer;
   text-decoration: none;
+
+  &:hover {
+    background: ${({ $dark }) => ($dark ? '#2C2C3A' : '#F5F5F5')};
+  }
 `;
 
 export const Rank = styled.span<{ $rank: number }>`

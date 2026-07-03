@@ -57,15 +57,14 @@ const GamePage = () => {
   // 게임 종료: 진입 시 한 번 + 이후 10초마다 축하 폭죽 자동 발사
   const burstIdRef = useRef(0);
   useEffect(() => {
-    const timeouts: ReturnType<typeof setTimeout>[] = [];
+    let timeoutId: ReturnType<typeof setTimeout>;
 
     const fireBurst = () => {
       const id = burstIdRef.current++;
       setBgBursts((prev) => [...prev, id]);
-      const timeout = setTimeout(() => {
+      timeoutId = setTimeout(() => {
         setBgBursts((prev) => prev.filter((b) => b !== id));
       }, FIREWORK_DURATION);
-      timeouts.push(timeout);
     };
 
     fireBurst();
@@ -73,7 +72,7 @@ const GamePage = () => {
 
     return () => {
       clearInterval(interval);
-      timeouts.forEach(clearTimeout);
+      clearTimeout(timeoutId);
     };
   }, []);
 

@@ -39,7 +39,6 @@ const RankingBoard = ({ ranking, isDark = false }: RankingBoardProps) => {
                 <S.Item
                   as={Link}
                   to={`/clubDetail/@${encodeURIComponent(entry.clubName)}`}
-                  $rank={entry.rank}
                   $dark={isDark}
                 >
                   <S.Rank $rank={entry.rank}>

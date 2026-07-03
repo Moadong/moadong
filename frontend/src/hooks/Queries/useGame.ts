@@ -6,8 +6,8 @@ export const useGameRanking = () => {
   return useQuery({
     queryKey: queryKeys.game.ranking(),
     queryFn: getGameRanking,
-    refetchInterval: 2000,
-    staleTime: 0,
+    staleTime: 60 * 60 * 1000,
+    gcTime: 60 * 60 * 1000,
   });
 };
 
