@@ -1,5 +1,5 @@
-import { useMutation, useQuery } from '@tanstack/react-query';
-import { getGameRanking, postGameClick } from '@/apis/game';
+import { useQuery } from '@tanstack/react-query';
+import { getGameRanking } from '@/apis/game';
 import { queryKeys } from '@/constants/queryKeys';
 
 export const useGameRanking = () => {
@@ -8,22 +8,5 @@ export const useGameRanking = () => {
     queryFn: getGameRanking,
     staleTime: 60 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
-  });
-};
-
-export const useClickGame = () => {
-  return useMutation({
-    mutationFn: ({
-      clubName,
-      count,
-      ctAt,
-    }: {
-      clubName: string;
-      count: number;
-      ctAt: string;
-    }) => postGameClick(clubName, count, ctAt),
-    onError: (error) => {
-      console.error('Error clicking game:', error);
-    },
   });
 };
