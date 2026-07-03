@@ -28,7 +28,7 @@ const AwardSection = ({ awards, onNavigate }: AwardSectionProps) => {
     <Styled.Wrapper>
       <Styled.Header>
         <Styled.Label>
-          {isEmpty ? '이런 상을 받았어요' : '동아리 성과'}
+          이런 상을 받았어요
         </Styled.Label>
       </Styled.Header>
       <Styled.Card>
