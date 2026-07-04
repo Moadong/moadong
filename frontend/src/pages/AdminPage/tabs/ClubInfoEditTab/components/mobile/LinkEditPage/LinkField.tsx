@@ -1,6 +1,6 @@
 import { useRef, useState } from 'react';
 import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
-import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
+import EditField from '../EditField/EditField';
 import { colors } from '@/styles/theme/colors';
 import * as Styled from './LinkField.styles';
 

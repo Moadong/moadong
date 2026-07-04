@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
-import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
+import EditField from '../EditField/EditField';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import * as Styled from './FreeTagEditPage.styles';
 
