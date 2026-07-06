@@ -13,6 +13,7 @@ import {
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ApplicationFormGroup, ApplicationFormItem } from '@/types/application';
+import { getFormGroupLabel } from '@/utils/applicationFormGroup';
 import * as Styled from './ApplicationListTab.styles';
 
 const MAX_INITIAL_ITEMS = 3;
@@ -199,11 +200,10 @@ const ApplicationListTab = () => {
         </Styled.AddButton>
       </Styled.Header>
       {formGroups.map((group: ApplicationFormGroup) => {
-        const groupStatusLabel = group.active ? '활성' : '비활성';
-        const groupTitle = `${group.semesterYear}년 ${groupStatusLabel}`;
-        const groupUniqueKeyPrefix = `group_${group.semesterYear}_${group.active}`;
+        const { title: groupTitle, uniqueKeyPrefix: groupUniqueKeyPrefix } =
+          getFormGroupLabel(group);
         return (
-          <Styled.ApplicationList key={groupTitle}>
+          <Styled.ApplicationList key={groupUniqueKeyPrefix}>
             <Styled.ListHeader>
               <Styled.SemesterTitle>{groupTitle}</Styled.SemesterTitle>
               <Styled.DateHeader>

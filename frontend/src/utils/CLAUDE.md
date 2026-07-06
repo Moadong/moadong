@@ -6,6 +6,7 @@
 - `recruitmentDateParser.ts` - 모집 기간 파싱
 - `debounce.ts` - 디바운스 함수
 - `validateSocialLink.ts` - SNS 링크 유효성 검사
+- `applicationFormGroup.ts` - 지원서 그룹(연도+활성) 표시 라벨·리스트 key prefix 계산 (`getFormGroupLabel`)
 - `isInAppWebView.ts` - 인앱 WebView 감지 (UA의 `MoadongApp`)
 - `webviewBridge.ts` - 네이티브 앱과 통신
 - `initSDK.ts` - 외부 SDK 초기화
