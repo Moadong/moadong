@@ -1,7 +1,6 @@
 import { useMemo, useState } from 'react';
-import addIcon from '@/assets/images/icons/add_icon.svg';
+import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
-import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
 import * as Styled from './AwardEditPage.styles';
@@ -85,13 +84,6 @@ const AwardEditPage = ({
           {awards.length === 0 ? (
             <Styled.EmptyCard>
               <Styled.EmptyText>등록된 수상내역이 없습니다</Styled.EmptyText>
-              <AddItemButton
-                type='button'
-                onClick={() => setIsPickerOpen(true)}
-              >
-                <img src={addIcon} alt='' width={16} height={16} />
-                학기 추가
-              </AddItemButton>
             </Styled.EmptyCard>
           ) : (
             <Styled.AwardList>
@@ -107,17 +99,18 @@ const AwardEditPage = ({
                   }
                 />
               ))}
-              <AddItemButton
-                type='button'
-                onClick={() => setIsPickerOpen(true)}
-              >
-                <img src={addIcon} alt='' width={16} height={16} />
-                학기 추가
-              </AddItemButton>
             </Styled.AwardList>
           )}
         </Styled.Content>
       </Styled.Container>
+
+      <Styled.SemesterAddButton
+        type='button'
+        onClick={() => setIsPickerOpen(true)}
+        aria-label='학기 추가'
+      >
+        <img src={addLargeIcon} alt='' width={20} height={20} />
+      </Styled.SemesterAddButton>
 
       <MobileSaveButtonArea onClick={handleSave} disabled={!isDirty} />
 
