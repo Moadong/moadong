@@ -35,13 +35,6 @@ const AwardSemesterCard = ({
     });
   };
 
-  const handleAchievementDelete = (index: number) => {
-    onChange({
-      ...award,
-      achievements: award.achievements.filter((_, i) => i !== index),
-    });
-  };
-
   const handleAddAchievement = () => {
     onChange({ ...award, achievements: [...award.achievements, ''] });
   };
@@ -50,13 +43,13 @@ const AwardSemesterCard = ({
     <Styled.Card>
       <Styled.Header>
         <Styled.SemesterLabel>{semesterLabel}</Styled.SemesterLabel>
-        <Styled.DeleteButton
+        <Styled.IconButton
           type='button'
           onClick={onDelete}
           aria-label='학기 삭제'
         >
           <img src={closeCircleIcon} alt='삭제' width={22} height={22} />
-        </Styled.DeleteButton>
+        </Styled.IconButton>
       </Styled.Header>
 
       {award.achievements.map((achievement, index) => (
@@ -67,7 +60,7 @@ const AwardSemesterCard = ({
             onChange={(e) => handleAchievementChange(index, e.target.value)}
           />
           {achievement.length > 0 && (
-            <Styled.ClearButton
+            <Styled.IconButton
               type='button'
               onMouseDown={(e) => {
                 e.preventDefault();
@@ -76,7 +69,7 @@ const AwardSemesterCard = ({
               aria-label='내용 지우기'
             >
               <FieldClearButtonIcon />
-            </Styled.ClearButton>
+            </Styled.IconButton>
           )}
         </Styled.AchievementRow>
       ))}
