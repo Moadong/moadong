@@ -1,5 +1,6 @@
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
+import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
 import * as Styled from './AwardSemesterCard.styles';
 
@@ -74,10 +75,10 @@ const AwardSemesterCard = ({
         </Styled.AchievementRow>
       ))}
 
-      <Styled.AddAchievementButton type='button' onClick={handleAddAchievement}>
+      <AddItemButton type='button' onClick={handleAddAchievement}>
         <img src={addIcon} alt='' width={16} height={16} />
         수상내역 추가
-      </Styled.AddAchievementButton>
+      </AddItemButton>
     </Styled.Card>
   );
 };

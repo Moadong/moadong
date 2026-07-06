@@ -73,17 +73,3 @@ export const AchievementInput = styled.input`
   }
 `;
 
-export const AddAchievementButton = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 12px;
-  gap: 6px;
-  background: ${colors.primary[800]};
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  ${setTypography(typography.button.button2)}
-  color: ${colors.base.white};
-`;

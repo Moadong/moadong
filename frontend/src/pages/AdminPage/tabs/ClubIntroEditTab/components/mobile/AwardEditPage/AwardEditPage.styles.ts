@@ -71,18 +71,3 @@ export const EmptyText = styled.span`
   color: ${colors.gray[700]};
 `;
 
-export const AddSemesterButton = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 12px;
-  gap: 6px;
-  background: ${colors.primary[800]};
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  ${setTypography(typography.button.button2)}
-  color: ${colors.base.white};
-  align-self: center;
-`;

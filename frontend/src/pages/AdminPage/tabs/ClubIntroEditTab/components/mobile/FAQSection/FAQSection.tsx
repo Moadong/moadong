@@ -1,6 +1,7 @@
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
 import useAutoGrow from '@/hooks/useAutoGrow';
+import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQSection.styles';
 
@@ -97,10 +98,10 @@ const FAQSection = ({ faqs, onChange }: FAQSectionProps) => {
           <Styled.EmptyDescription>
             지원자들의 자주 묻는 질문에 답변해보세요
           </Styled.EmptyDescription>
-          <Styled.AddButton onClick={handleAdd} type='button'>
+          <AddItemButton onClick={handleAdd} type='button'>
             <img src={addIcon} alt='' />
             FAQ 추가
-          </Styled.AddButton>
+          </AddItemButton>
         </Styled.EmptyCard>
       ) : (
         <>
@@ -113,10 +114,10 @@ const FAQSection = ({ faqs, onChange }: FAQSectionProps) => {
               onDelete={handleDelete}
             />
           ))}
-          <Styled.AddButton onClick={handleAdd} type='button'>
+          <AddItemButton onClick={handleAdd} type='button'>
             <img src={addIcon} alt='' />
             FAQ 추가
-          </Styled.AddButton>
+          </AddItemButton>
         </>
       )}
     </Styled.Wrapper>
