@@ -48,7 +48,7 @@ export const AchievementRow = styled.div`
   padding: 14px 18px;
   gap: 8px;
   width: 100%;
-  background: ${colors.gray[50]};
+  background: ${colors.base.white};
   border: 1px solid ${colors.gray[200]};
   border-radius: 14px;
 
@@ -63,7 +63,8 @@ export const AchievementInput = styled.input`
   border: none;
   outline: none;
   background: transparent;
-  ${setTypography(typography.paragraph.p3)}
+  ${setTypography(typography.paragraph.p6)}
+  line-height: 160%;
   color: ${colors.base.black};
 
   &::placeholder {
