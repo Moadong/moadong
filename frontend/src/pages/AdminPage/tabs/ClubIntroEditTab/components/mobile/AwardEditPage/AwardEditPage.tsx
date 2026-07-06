@@ -93,7 +93,7 @@ const AwardEditPage = ({
               </Styled.AddSemesterButton>
             </Styled.EmptyCard>
           ) : (
-            <>
+            <Styled.AwardList>
               {sortedAwards.map((award) => (
                 <AwardSemesterCard
                   key={`${award.year}-${award.semesterTerm}`}
@@ -113,7 +113,7 @@ const AwardEditPage = ({
                 <img src={addIcon} alt='' width={16} height={16} />
                 학기 추가
               </Styled.AddSemesterButton>
-            </>
+            </Styled.AwardList>
           )}
         </Styled.Content>
       </Styled.Container>

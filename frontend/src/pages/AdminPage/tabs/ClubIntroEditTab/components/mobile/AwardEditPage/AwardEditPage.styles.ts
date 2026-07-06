@@ -23,7 +23,7 @@ export const Container = styled.div`
 export const Content = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 20px;
   padding: 20px;
 `;
 
@@ -31,7 +31,12 @@ export const PageHeader = styled.div`
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-bottom: 6px;
+`;
+
+export const AwardList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
 `;
 
 export const PageTitle = styled.h2`
@@ -79,5 +84,5 @@ export const AddSemesterButton = styled.button`
   cursor: pointer;
   ${setTypography(typography.button.button2)}
   color: ${colors.base.white};
-  align-self: flex-start;
+  align-self: center;
 `;
