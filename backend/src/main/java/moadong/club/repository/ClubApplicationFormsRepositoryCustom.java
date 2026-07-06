@@ -6,6 +6,7 @@ import org.bson.Document;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
+import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
@@ -31,7 +32,8 @@ public class ClubApplicationFormsRepositoryCustom {
                 .and("editedAt").as("editedAt")
                 .and("status").as("status")
                 .and("semesterYear").as("semesterYear")
-                .and("semesterTerm").as("semesterTerm"));
+                .and((AggregationExpression) context ->
+                        new Document("$eq", Arrays.asList("$status", "ACTIVE"))).as("active"));
 
         //1차 정렬 -> 그룹 내에서 최종수정날짜 순으로 정렬됨
         operations.add(Aggregation.sort(Sort.by(
@@ -39,8 +41,8 @@ public class ClubApplicationFormsRepositoryCustom {
                 Sort.Order.desc("id")
         )));
 
-        //그룹화
-        GroupOperation groupOperation = Aggregation.group("semesterYear","semesterTerm")
+        //연도 + 활성화 여부로 그룹화
+        GroupOperation groupOperation = Aggregation.group("semesterYear","active")
                 .push(new Document("_id", "$_id")
                         .append("title", "$title")
                         .append("editedAt", "$editedAt")
@@ -48,18 +50,14 @@ public class ClubApplicationFormsRepositoryCustom {
                 .as("forms");
         operations.add(groupOperation);
 
-        //그룹들 학기순 정렬
-        operations.add(Aggregation.addFields()
-                .addFieldWithValue("termOrder", new Document("$indexOfArray",
-                        Arrays.asList(Arrays.asList("FIRST", "SECOND"), "$_id.semesterTerm")))
-                .build());
+        //그룹들 정렬 (연도 최신순 -> 활성 그룹 우선)
         operations.add(Aggregation.sort(Sort.by(
                 Sort.Order.desc("_id.semesterYear"),
-                Sort.Order.desc("termOrder"))));
+                Sort.Order.desc("_id.active"))));
 
         operations.add(Aggregation.project("forms")
                 .and("_id.semesterYear").as("semesterYear")
-                .and("_id.semesterTerm").as("semesterTerm"));
+                .and("_id.active").as("active"));
 
         Aggregation aggregation = Aggregation.newAggregation(operations);
         return mongoTemplate
