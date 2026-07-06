@@ -1,6 +1,7 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import { SCROLL_TO_TOP_HIDDEN_FLAG } from '@/hooks/Scroll/useScrollTrigger';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
 import * as Styled from './AwardEditPage.styles';
@@ -27,6 +28,13 @@ const AwardEditPage = ({
 }: AwardEditPageProps) => {
   const [awards, setAwards] = useState<Award[]>(initialAwards);
   const [isPickerOpen, setIsPickerOpen] = useState(false);
+
+  useEffect(() => {
+    document.body.dataset[SCROLL_TO_TOP_HIDDEN_FLAG] = 'true';
+    return () => {
+      delete document.body.dataset[SCROLL_TO_TOP_HIDDEN_FLAG];
+    };
+  }, []);
 
   const isDirty =
     JSON.stringify(awards) !== JSON.stringify(initialAwards);

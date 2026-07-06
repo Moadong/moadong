@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useState } from 'react';
 
+export const SCROLL_TO_TOP_HIDDEN_FLAG = 'hideScrollToTop';
+
 interface ScrollTriggerOptions {
   threshold?: number;
   direction?: 'up' | 'down';
@@ -17,6 +19,10 @@ export const useScrollTrigger = ({
 
   const handleScroll = useCallback(() => {
     if (document.body.style.position === 'fixed') return;
+    if (document.body.dataset[SCROLL_TO_TOP_HIDDEN_FLAG]) {
+      setIsTriggered(false);
+      return;
+    }
 
     const scrollY = window.scrollY;
     const shouldShowButton =
