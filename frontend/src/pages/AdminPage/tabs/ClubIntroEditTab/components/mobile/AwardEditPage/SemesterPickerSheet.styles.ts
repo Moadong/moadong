@@ -1,0 +1,105 @@
+import styled, { keyframes } from 'styled-components';
+import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
+
+const slideUp = keyframes`
+  from { transform: translateY(100%); }
+  to { transform: translateY(0); }
+`;
+
+export const Overlay = styled.div`
+  position: fixed;
+  inset: 0;
+  background: rgba(17, 17, 17, 0.2);
+  z-index: 100;
+  display: flex;
+  align-items: flex-end;
+`;
+
+export const Sheet = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  padding: 20px 20px 30px;
+  gap: 6px;
+  width: 100%;
+  background: ${colors.base.white};
+  border-radius: 20px 20px 0 0;
+  animation: ${slideUp} 0.25s ease-out;
+`;
+
+export const SheetTitle = styled.span`
+  display: block;
+  width: 100%;
+  ${setTypography(typography.paragraph.p5)}
+  color: ${colors.gray[700]};
+  text-align: center;
+`;
+
+export const PickerWrapper = styled.div`
+  position: relative;
+  width: 100%;
+  height: 120px;
+  overflow: hidden;
+`;
+
+export const SelectedHighlight = styled.div`
+  position: absolute;
+  top: 40px;
+  left: 0;
+  right: 0;
+  height: 40px;
+  border-top: 2px solid ${colors.primary[700]};
+  border-bottom: 2px solid ${colors.primary[700]};
+  pointer-events: none;
+  z-index: 1;
+`;
+
+export const ScrollContainer = styled.div`
+  height: 120px;
+  overflow-y: scroll;
+  scroll-snap-type: y mandatory;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+`;
+
+export const ScrollSpacer = styled.div`
+  height: 40px;
+  flex-shrink: 0;
+`;
+
+export const PickerItem = styled.div<{ $isSelected: boolean }>`
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  scroll-snap-align: center;
+  ${setTypography(typography.paragraph.p2)}
+  color: ${({ $isSelected }) =>
+    $isSelected ? colors.gray[800] : colors.gray[500]};
+  transition: color 0.15s ease;
+  cursor: pointer;
+`;
+
+export const ConfirmButton = styled.button`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 14px 40px;
+  gap: 8px;
+  width: 100%;
+  height: 50px;
+  background: ${colors.gray[900]};
+  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  margin-top: 10px;
+  ${setTypography(typography.paragraph.p2)}
+  color: ${colors.base.white};
+`;
