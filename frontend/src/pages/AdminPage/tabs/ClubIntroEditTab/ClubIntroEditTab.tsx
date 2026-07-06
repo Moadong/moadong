@@ -29,6 +29,7 @@ const ClubIntroEditTab = () => {
     setFaqs,
     isDirty,
     handleUpdateClub,
+    handleUpdateClubWithAwards,
   } = useClubIntroEdit();
 
   if (isMobile || isTablet) {
@@ -39,6 +40,7 @@ const ClubIntroEditTab = () => {
         activityDescription={activityDescription}
         setActivityDescription={setActivityDescription}
         awards={awards}
+        setAwards={setAwards}
         idealCandidate={idealCandidate}
         setIdealCandidate={setIdealCandidate}
         benefits={benefits}
@@ -47,6 +49,7 @@ const ClubIntroEditTab = () => {
         setFaqs={setFaqs}
         isDirty={isDirty}
         handleUpdateClub={handleUpdateClub}
+        handleUpdateClubWithAwards={handleUpdateClubWithAwards}
       />
     );
   }

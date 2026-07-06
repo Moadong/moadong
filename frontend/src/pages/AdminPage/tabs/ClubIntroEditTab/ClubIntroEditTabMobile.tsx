@@ -1,8 +1,10 @@
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTabMobile.styles';
+import AwardEditPage from './components/mobile/AwardEditPage/AwardEditPage';
 import AwardSection from './components/mobile/AwardSection/AwardSection';
 import FAQSection from './components/mobile/FAQSection/FAQSection';
 import InfoSection from './components/mobile/InfoSection/InfoSection';
@@ -13,6 +15,7 @@ interface ClubIntroEditTabMobileProps {
   activityDescription: string;
   setActivityDescription: (v: string) => void;
   awards: Award[];
+  setAwards: (awards: Award[]) => void;
   idealCandidate: IdealCandidate;
   setIdealCandidate: (v: IdealCandidate) => void;
   benefits: string;
@@ -21,7 +24,10 @@ interface ClubIntroEditTabMobileProps {
   setFaqs: (v: FAQ[]) => void;
   isDirty: boolean;
   handleUpdateClub: () => void;
+  handleUpdateClubWithAwards: (awards: Award[]) => void;
 }
+
+type ActivePage = 'main' | 'award';
 
 const INTRO_MAX = 300;
 const ACTIVITY_MAX = 300;
@@ -34,6 +40,7 @@ const ClubIntroEditTabMobile = ({
   activityDescription,
   setActivityDescription,
   awards,
+  setAwards,
   idealCandidate,
   setIdealCandidate,
   benefits,
@@ -42,8 +49,21 @@ const ClubIntroEditTabMobile = ({
   setFaqs,
   isDirty,
   handleUpdateClub,
+  handleUpdateClubWithAwards,
 }: ClubIntroEditTabMobileProps) => {
   const navigate = useNavigate();
+  const [activePage, setActivePage] = useState<ActivePage>('main');
+
+  if (activePage === 'award') {
+    return (
+      <AwardEditPage
+        initialAwards={awards}
+        onSave={setAwards}
+        onSaveToServer={handleUpdateClubWithAwards}
+        onBack={() => setActivePage('main')}
+      />
+    );
+  }
 
   return (
     <>
@@ -92,7 +112,10 @@ const ClubIntroEditTabMobile = ({
               />
             </InfoSection>
 
-            <AwardSection awards={awards} />
+            <AwardSection
+              awards={awards}
+              onNavigate={() => setActivePage('award')}
+            />
 
             <InfoSection
               label='이런 사람이 오면 좋아요'

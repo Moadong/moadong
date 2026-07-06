@@ -60,6 +60,41 @@ const useClubIntroEdit = () => {
     JSON.stringify(awards) !== JSON.stringify(initialState.awards) ||
     JSON.stringify(faqs) !== JSON.stringify(initialState.faqs);
 
+  const handleUpdateClubWithAwards = (newAwards: Award[]) => {
+    if (!clubDetail?.id) {
+      alert('클럽 정보가 로드되지 않았습니다.');
+      return;
+    }
+
+    updateClub(
+      {
+        name: clubDetail.name,
+        category: clubDetail.category,
+        division: clubDetail.division,
+        tags: clubDetail.tags,
+        introduction: clubDetail.introduction,
+        presidentName: clubDetail.presidentName,
+        presidentPhoneNumber: clubDetail.presidentPhoneNumber,
+        socialLinks: clubDetail.socialLinks,
+        description: {
+          introDescription,
+          activityDescription,
+          awards: newAwards,
+          idealCandidate,
+          benefits,
+          faqs,
+        },
+      },
+      {
+        onSuccess: () => {
+          queryClient.invalidateQueries({
+            queryKey: ['clubDetail', clubDetail.id],
+          });
+        },
+      },
+    );
+  };
+
   const handleUpdateClub = () => {
     if (!clubDetail?.id) {
       alert('클럽 정보가 로드되지 않았습니다.');
@@ -117,6 +152,7 @@ const useClubIntroEdit = () => {
     setFaqs,
     isDirty,
     handleUpdateClub,
+    handleUpdateClubWithAwards,
   };
 };
 
