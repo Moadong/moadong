@@ -1,5 +1,6 @@
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
+import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
 import * as Styled from './AwardSemesterCard.styles';
@@ -65,13 +66,18 @@ const AwardSemesterCard = ({
             placeholder='수상내역을 입력하세요'
             onChange={(e) => handleAchievementChange(index, e.target.value)}
           />
-          <Styled.DeleteButton
-            type='button'
-            onClick={() => handleAchievementDelete(index)}
-            aria-label='수상내역 삭제'
-          >
-            <img src={closeCircleIcon} alt='삭제' width={22} height={22} />
-          </Styled.DeleteButton>
+          {achievement.length > 0 && (
+            <Styled.ClearButton
+              type='button'
+              onMouseDown={(e) => {
+                e.preventDefault();
+                handleAchievementChange(index, '');
+              }}
+              aria-label='내용 지우기'
+            >
+              <FieldClearButtonIcon />
+            </Styled.ClearButton>
+          )}
         </Styled.AchievementRow>
       ))}
 

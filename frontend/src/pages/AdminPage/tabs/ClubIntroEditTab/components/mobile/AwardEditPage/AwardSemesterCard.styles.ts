@@ -45,13 +45,12 @@ export const AchievementRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  padding: 12px 14px;
-  gap: 10px;
+  padding: 14px 18px;
+  gap: 8px;
   width: 100%;
-  min-height: 46px;
-  background: ${colors.base.white};
+  background: ${colors.gray[50]};
   border: 1px solid ${colors.gray[200]};
-  border-radius: 10px;
+  border-radius: 14px;
 
   &:focus-within {
     border-color: ${colors.gray[800]};
@@ -64,12 +63,24 @@ export const AchievementInput = styled.input`
   border: none;
   outline: none;
   background: transparent;
-  ${setTypography(typography.paragraph.p5)}
-  color: ${colors.gray[900]};
+  ${setTypography(typography.paragraph.p3)}
+  color: ${colors.base.black};
 
   &::placeholder {
     color: ${colors.gray[500]};
-    font-weight: 400;
   }
+`;
+
+export const ClearButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
+  flex-shrink: 0;
 `;
 
