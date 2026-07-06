@@ -6,14 +6,13 @@ import org.bson.Document;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.mongodb.core.MongoTemplate;
 import org.springframework.data.mongodb.core.aggregation.Aggregation;
-import org.springframework.data.mongodb.core.aggregation.AggregationExpression;
 import org.springframework.data.mongodb.core.aggregation.AggregationOperation;
+import org.springframework.data.mongodb.core.aggregation.ComparisonOperators;
 import org.springframework.data.mongodb.core.aggregation.GroupOperation;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Repository;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 @Repository
@@ -32,8 +31,7 @@ public class ClubApplicationFormsRepositoryCustom {
                 .and("editedAt").as("editedAt")
                 .and("status").as("status")
                 .and("semesterYear").as("semesterYear")
-                .and((AggregationExpression) context ->
-                        new Document("$eq", Arrays.asList("$status", "ACTIVE"))).as("active"));
+                .and(ComparisonOperators.valueOf("status").equalToValue("ACTIVE")).as("active"));
 
         //1차 정렬 -> 그룹 내에서 최종수정날짜 순으로 정렬됨
         operations.add(Aggregation.sort(Sort.by(
