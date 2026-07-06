@@ -39,16 +39,16 @@ export const SheetTitle = styled.span`
 export const PickerWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 120px;
+  height: 150px;
   overflow: hidden;
 `;
 
 export const SelectedHighlight = styled.div`
   position: absolute;
-  top: 40px;
+  top: 49px;
   left: 0;
   right: 0;
-  height: 40px;
+  height: 52px;
   border-top: 2px solid ${colors.primary[700]};
   border-bottom: 2px solid ${colors.primary[700]};
   pointer-events: none;
@@ -56,7 +56,7 @@ export const SelectedHighlight = styled.div`
 `;
 
 export const ScrollContainer = styled.div`
-  height: 120px;
+  height: 150px;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
 
@@ -68,12 +68,12 @@ export const ScrollContainer = styled.div`
 `;
 
 export const ScrollSpacer = styled.div`
-  height: 40px;
+  height: 50px;
   flex-shrink: 0;
 `;
 
 export const PickerItem = styled.div<{ $isSelected: boolean }>`
-  height: 40px;
+  padding: 14px 0;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -91,7 +91,6 @@ export const ConfirmButton = styled.button`
   justify-content: center;
   align-items: center;
   padding: 14px 40px;
-  gap: 8px;
   width: 100%;
   height: 50px;
   background: ${colors.gray[900]};
@@ -99,7 +98,6 @@ export const ConfirmButton = styled.button`
   border: none;
   border-radius: 10px;
   cursor: pointer;
-  margin-top: 10px;
   ${setTypography(typography.paragraph.p2)}
   color: ${colors.base.white};
 `;

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useRef, useState } from 'react';
 import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
 import * as Styled from './SemesterPickerSheet.styles';
 
-const ITEM_HEIGHT = 40;
+const ITEM_HEIGHT = 50;
 
 interface SemesterOption {
   year: number;
