@@ -4,7 +4,6 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
 import moadong.club.enums.ApplicationFormMode;
-import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ApplicantStatusEvent;
 import moadong.club.payload.dto.ClubApplicantsResult;
 import moadong.club.payload.request.*;
@@ -24,7 +23,6 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -40,41 +38,6 @@ public class ClubApplyAdminService {
     private final AESCipher cipher;
     private final ClubApplicationFormsRepositoryCustom clubApplicationFormsRepositoryCustom;
     private final ApplicantsStatusShareSse applicantsStatusShareSse;
-
-    private record OptionItem(int year, SemesterTerm term) {
-    }
-
-    private List<OptionItem> buildOptionItems(LocalDate baseDate, int count) {
-        List<OptionItem> items = new ArrayList<>();
-
-        int year = baseDate.getYear();
-        int month = baseDate.getMonthValue();
-
-        SemesterTerm startTerm = (month < 7) ? SemesterTerm.FIRST : SemesterTerm.SECOND;
-
-        int semesterYear = year;
-        SemesterTerm semesterTerm = startTerm;
-        for (int i = 0; i < count; i++) {
-            items.add(new OptionItem(semesterYear, semesterTerm));
-            if (semesterTerm == SemesterTerm.FIRST) {
-                semesterTerm = SemesterTerm.SECOND;
-            } else {
-                semesterTerm = SemesterTerm.FIRST;
-                semesterYear += 1;
-            }
-        }
-        return items;
-    }
-
-    private void validateSemester(Integer semesterYear, SemesterTerm semesterTerm) {
-        LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
-        List<OptionItem> items = buildOptionItems(baseDate, 3);
-        boolean allowed = items.stream().anyMatch(it -> it.year() == semesterYear && it.term() == semesterTerm);
-        if (!allowed) {
-            throw new RestApiException(ErrorCode.APPLICATION_SEMESTER_INVALID);
-        }
-
-    }
 
     private void validateFinalApplicationFormState(ClubApplicationForm clubApplicationForm, ClubApplicationFormEditRequest request) {
         ApplicationFormMode finalFormMode = Optional.ofNullable(request.formMode()).orElse(clubApplicationForm.getFormMode());
@@ -97,8 +60,6 @@ public class ClubApplyAdminService {
     }
 
     public void createClubApplicationForm(CustomUserDetails user, ClubApplicationFormCreateRequest request) {
-        validateSemester(request.semesterYear(), request.semesterTerm());
-
         ClubApplicationForm clubApplicationForm = createApplicationForm(ClubApplicationForm.builder().clubId(user.getClubId()).build(), request);
         clubApplicationFormsRepository.save(clubApplicationForm);
     }
@@ -242,7 +203,6 @@ public class ClubApplyAdminService {
         clubApplicationForm.updateFormTitle(request.title());
         clubApplicationForm.updateFormDescription(request.description());
         clubApplicationForm.updateSemesterYear(request.semesterYear());
-        clubApplicationForm.updateSemesterTerm(request.semesterTerm());
         clubApplicationForm.updateFormMode(request.formMode());
 
         return clubApplicationForm;
@@ -260,13 +220,8 @@ public class ClubApplyAdminService {
         if (request.externalApplicationUrl() != null)
             clubApplicationForm.updateExternalApplicationUrl(request.externalApplicationUrl());
 
-        if (request.semesterYear() != null || request.semesterTerm() != null) {
-            Integer semesterYear = Optional.ofNullable(request.semesterYear()).orElse(clubApplicationForm.getSemesterYear());
-            SemesterTerm semesterTerm = Optional.ofNullable(request.semesterTerm()).orElse(clubApplicationForm.getSemesterTerm());
-            validateSemester(semesterYear, semesterTerm);
-
-            clubApplicationForm.updateSemesterYear(semesterYear);
-            clubApplicationForm.updateSemesterTerm(semesterTerm);
+        if (request.semesterYear() != null) {
+            clubApplicationForm.updateSemesterYear(request.semesterYear());
         }
 
         return clubApplicationForm;
