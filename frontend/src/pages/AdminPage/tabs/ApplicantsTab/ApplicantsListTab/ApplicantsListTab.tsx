@@ -13,7 +13,7 @@ import {
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import * as Styled from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab.styles';
-import { ApplicationFormItem, SemesterGroup } from '@/types/application';
+import { ApplicationFormGroup, ApplicationFormItem } from '@/types/application';
 
 const MAX_INITIAL_ITEMS = 3;
 
@@ -121,9 +121,9 @@ const ApplicationListTab = () => {
     return <div>오류가 발생했습니다: {error.message}</div>;
   }
 
-  const semesterGroups: SemesterGroup[] = allforms?.forms || [];
+  const formGroups: ApplicationFormGroup[] = allforms?.forms || [];
 
-  const activeForms = semesterGroups
+  const activeForms = formGroups
     .flatMap((group) => group.forms)
     .filter((form) => form.status === 'ACTIVE');
 
@@ -199,15 +199,14 @@ const ApplicationListTab = () => {
           새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
         </Styled.AddButton>
       </Styled.Header>
-      {semesterGroups.map((group: SemesterGroup) => {
-        const semesterTermLabel =
-          group.semesterTerm === 'FIRST' ? '1학기' : '2학기';
-        const semesterTitle = `${group.semesterYear}년 ${semesterTermLabel}`;
-        const groupUniqueKeyPrefix = `group_${group.semesterYear}_${group.semesterTerm}`;
+      {formGroups.map((group: ApplicationFormGroup) => {
+        const groupStatusLabel = group.active ? '활성' : '비활성';
+        const groupTitle = `${group.semesterYear}년 ${groupStatusLabel}`;
+        const groupUniqueKeyPrefix = `group_${group.semesterYear}_${group.active}`;
         return (
-          <Styled.ApplicationList key={semesterTitle}>
+          <Styled.ApplicationList key={groupTitle}>
             <Styled.ListHeader>
-              <Styled.SemesterTitle>{semesterTitle}</Styled.SemesterTitle>
+              <Styled.SemesterTitle>{groupTitle}</Styled.SemesterTitle>
               <Styled.DateHeader>
                 <Styled.Separation_Bar />
                 최종 수정 날짜

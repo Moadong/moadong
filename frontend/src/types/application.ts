@@ -52,7 +52,6 @@ export interface ApplicationFormData {
   description: string;
   questions?: Question[];
   semesterYear: number;
-  semesterTerm: string;
   formMode?: ApplicationFormMode;
   externalApplicationUrl?: string;
   active: 'active' | 'published' | 'unpublished';
@@ -75,9 +74,9 @@ export interface ApplicationFormItem {
   status: 'ACTIVE' | 'PUBLISHED' | 'UNPUBLISHED';
 }
 
-export interface SemesterGroup {
+export interface ApplicationFormGroup {
   semesterYear: number;
-  semesterTerm: string;
+  active: boolean;
   forms: ApplicationFormItem[];
 }
 
