@@ -104,6 +104,7 @@ const SemesterPickerSheet = ({
               <Styled.PickerItem
                 key={`${opt.year}-${opt.semesterTerm}`}
                 $isSelected={i === selectedIndex}
+                $distance={Math.abs(i - selectedIndex)}
               >
                 {opt.label}
               </Styled.PickerItem>
