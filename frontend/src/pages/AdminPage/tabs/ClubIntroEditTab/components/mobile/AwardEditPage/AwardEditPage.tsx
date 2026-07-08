@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
+import addIcon from '@/assets/images/icons/add_icon.svg';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { SCROLL_TO_TOP_HIDDEN_FLAG } from '@/hooks/Scroll/useScrollTrigger';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
@@ -7,6 +8,7 @@ import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
 import * as Styled from './AwardEditPage.styles';
 import AwardSemesterCard from './AwardSemesterCard';
 import SemesterPickerSheet from './SemesterPickerSheet';
+import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 
 interface AwardEditPageProps {
   initialAwards: Award[];
@@ -92,6 +94,10 @@ const AwardEditPage = ({
           {awards.length === 0 ? (
             <Styled.EmptyCard>
               <Styled.EmptyText>등록된 수상내역이 없습니다</Styled.EmptyText>
+              <AddItemButton onClick={() => setIsPickerOpen(true)}>
+                <img src={addIcon} alt='' width={16} height={16} />
+                <span>학기 추가</span>
+              </AddItemButton>
             </Styled.EmptyCard>
           ) : (
             <Styled.AwardList>
