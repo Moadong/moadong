@@ -66,6 +66,8 @@ const useClubIntroEdit = () => {
       return;
     }
 
+    setInitialState((prev) => ({ ...prev, awards: newAwards }));
+
     updateClub(
       {
         name: clubDetail.name,
