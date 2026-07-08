@@ -11,3 +11,8 @@ export const formatSemesterLabel = (award: Award): string | null => {
 
 export const getAwardKey = (award: Award, index: number): string =>
   `${award.year}-${award.semesterTerm}-${index}`;
+
+export const getAwardSortValue = (award: Award): number => {
+  const semesterValue = award.semesterTerm === SemesterTerm.FIRST ? 1 : 2;
+  return award.year * 10 + semesterValue;
+};

@@ -5,7 +5,8 @@ import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { SCROLL_TO_TOP_HIDDEN_FLAG } from '@/hooks/Scroll/useScrollTrigger';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
-import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
+import { Award, SemesterTermType } from '@/types/club';
+import { getAwardSortValue } from '@/utils/awardHelpers';
 import * as Styled from './AwardEditPage.styles';
 import AwardSemesterCard from './AwardSemesterCard';
 import SemesterPickerSheet from './SemesterPickerSheet';
@@ -16,11 +17,6 @@ interface AwardEditPageProps {
   onSaveToServer: (awards: Award[]) => void;
   onBack: () => void;
 }
-
-const getSortValue = (award: Award): number => {
-  const termValue = award.semesterTerm === SemesterTerm.FIRST ? 1 : 2;
-  return award.year * 10 + termValue;
-};
 
 const AwardEditPage = ({
   initialAwards,
@@ -41,7 +37,7 @@ const AwardEditPage = ({
   const isDirty = JSON.stringify(awards) !== JSON.stringify(initialAwards);
 
   const sortedAwards = useMemo(
-    () => [...awards].sort((a, b) => getSortValue(a) - getSortValue(b)),
+    () => [...awards].sort((a, b) => getAwardSortValue(a) - getAwardSortValue(b)),
     [awards],
   );
 

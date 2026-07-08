@@ -2,16 +2,9 @@ import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
 import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
-import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
+import { Award, SemesterTermType } from '@/types/club';
+import { formatSemesterLabel } from '@/utils/awardHelpers';
 import * as Styled from './AwardSemesterCard.styles';
-
-const formatSemesterLabel = (
-  year: number,
-  semesterTerm: SemesterTermType,
-): string => {
-  const termLabel = semesterTerm === SemesterTerm.FIRST ? '1학기' : '2학기';
-  return `${year} ${termLabel}`;
-};
 
 interface AwardSemesterCardProps {
   award: Award;
@@ -24,7 +17,7 @@ const AwardSemesterCard = ({
   onChange,
   onDelete,
 }: AwardSemesterCardProps) => {
-  const semesterLabel = formatSemesterLabel(award.year, award.semesterTerm);
+  const semesterLabel = formatSemesterLabel(award) ?? '';
 
   const handleAchievementChange = (index: number, value: string) => {
     onChange({
