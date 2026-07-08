@@ -41,7 +41,7 @@ const AwardEditPage = ({
   const isDirty = JSON.stringify(awards) !== JSON.stringify(initialAwards);
 
   const sortedAwards = useMemo(
-    () => [...awards].sort((a, b) => getSortValue(b) - getSortValue(a)),
+    () => [...awards].sort((a, b) => getSortValue(a) - getSortValue(b)),
     [awards],
   );
 
