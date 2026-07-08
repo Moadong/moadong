@@ -147,4 +147,3 @@ export const CharCount = styled.span`
   color: ${colors.gray[500]};
   text-align: right;
 `;
-

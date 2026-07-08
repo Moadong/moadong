@@ -90,7 +90,10 @@ export const ScrollSpacer = styled.div`
   height: 50px;
 `;
 
-export const PickerItem = styled.div<{ $isSelected: boolean; $distance: number }>`
+export const PickerItem = styled.div<{
+  $isSelected: boolean;
+  $distance: number;
+}>`
   padding: 14px 0;
   display: flex;
   align-items: center;

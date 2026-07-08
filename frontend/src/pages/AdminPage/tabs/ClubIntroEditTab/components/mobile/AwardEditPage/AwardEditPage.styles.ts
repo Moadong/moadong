@@ -87,4 +87,3 @@ export const SemesterAddButton = styled.button`
   justify-content: center;
   flex-shrink: 0;
 `;
-

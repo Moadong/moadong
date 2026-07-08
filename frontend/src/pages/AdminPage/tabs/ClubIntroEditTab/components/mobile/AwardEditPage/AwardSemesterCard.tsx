@@ -29,9 +29,7 @@ const AwardSemesterCard = ({
   const handleAchievementChange = (index: number, value: string) => {
     onChange({
       ...award,
-      achievements: award.achievements.map((a, i) =>
-        i === index ? value : a,
-      ),
+      achievements: award.achievements.map((a, i) => (i === index ? value : a)),
     });
   };
 

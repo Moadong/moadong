@@ -73,5 +73,3 @@ export const AchievementInput = styled.input`
     color: ${colors.gray[500]};
   }
 `;
-
-

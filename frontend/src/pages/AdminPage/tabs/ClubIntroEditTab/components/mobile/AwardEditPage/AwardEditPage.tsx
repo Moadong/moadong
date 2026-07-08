@@ -1,14 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
-import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
 import addIcon from '@/assets/images/icons/add_icon.svg';
+import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { SCROLL_TO_TOP_HIDDEN_FLAG } from '@/hooks/Scroll/useScrollTrigger';
+import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
 import * as Styled from './AwardEditPage.styles';
 import AwardSemesterCard from './AwardSemesterCard';
 import SemesterPickerSheet from './SemesterPickerSheet';
-import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 
 interface AwardEditPageProps {
   initialAwards: Award[];
@@ -38,8 +38,7 @@ const AwardEditPage = ({
     };
   }, []);
 
-  const isDirty =
-    JSON.stringify(awards) !== JSON.stringify(initialAwards);
+  const isDirty = JSON.stringify(awards) !== JSON.stringify(initialAwards);
 
   const sortedAwards = useMemo(
     () => [...awards].sort((a, b) => getSortValue(b) - getSortValue(a)),
@@ -65,9 +64,7 @@ const AwardEditPage = ({
 
   const handleDeleteAward = (year: number, semesterTerm: SemesterTermType) => {
     setAwards((prev) =>
-      prev.filter(
-        (a) => !(a.year === year && a.semesterTerm === semesterTerm),
-      ),
+      prev.filter((a) => !(a.year === year && a.semesterTerm === semesterTerm)),
     );
   };
 

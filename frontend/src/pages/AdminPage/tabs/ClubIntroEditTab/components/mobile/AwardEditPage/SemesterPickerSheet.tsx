@@ -113,7 +113,9 @@ const SemesterPickerSheet = ({
           </Styled.ScrollContainer>
         </Styled.PickerWrapper>
 
-        <Styled.ConfirmButton onClick={handleAdd}>추가하기</Styled.ConfirmButton>
+        <Styled.ConfirmButton onClick={handleAdd}>
+          추가하기
+        </Styled.ConfirmButton>
       </Styled.Sheet>
     </Styled.Overlay>
   );
