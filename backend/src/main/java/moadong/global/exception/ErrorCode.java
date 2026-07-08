@@ -81,6 +81,11 @@ public enum ErrorCode {
     // 902xx: 홍보게시판 오류
     PROMOTION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "902-1", "홍보 게시글이 존재하지 않습니다."),
 
+    // 903xx: 통계/분석 오류
+    MIXPANEL_EXPORT_FAILED(HttpStatus.BAD_GATEWAY, "903-1", "Mixpanel 데이터 조회에 실패했습니다."),
+    STATISTICS_DATE_RANGE_INVALID(HttpStatus.BAD_REQUEST, "903-2", "통계 조회 기간이 올바르지 않습니다."),
+    STATISTICS_BACKFILL_RANGE_TOO_LONG(HttpStatus.BAD_REQUEST, "903-3", "통계 백필 기간이 너무 깁니다."),
+
     // 950xx: Notion 연동 오류
     NOTION_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "950-1", "Notion 서버 환경변수가 설정되지 않았습니다."),
     NOTION_TOKEN_EXCHANGE_FAILED(HttpStatus.BAD_REQUEST, "950-2", "Notion 토큰 교환에 실패했습니다."),

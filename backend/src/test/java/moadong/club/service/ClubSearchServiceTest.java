@@ -3,10 +3,13 @@ package moadong.club.service;
 import static org.junit.jupiter.api.Assertions.assertIterableEquals;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.never;
 
 import java.util.List;
 import java.util.Optional;
 
+import moadong.analytics.service.ClubAnalyticsRecordService;
 import moadong.club.payload.dto.ClubSearchResult;
 import moadong.club.payload.response.ClubSearchResponse;
 import moadong.club.repository.ClubSearchRepository;
@@ -34,6 +37,9 @@ class ClubSearchServiceTest {
 
     @Mock
     private ClubSearchRanker clubSearchRanker;
+
+    @Mock
+    private ClubAnalyticsRecordService clubAnalyticsRecordService;
 
     @InjectMocks
     private ClubSearchService clubSearchService;
@@ -66,6 +72,7 @@ class ClubSearchServiceTest {
         // then
         List<ClubSearchResult> sorted = response.clubs();
         assertIterableEquals(sorted, List.of(club1, club4, club2, club3));
+        verify(clubAnalyticsRecordService, never()).recordSearchKeyword(keyword);
     }
 
     @Test
@@ -107,6 +114,7 @@ class ClubSearchServiceTest {
         // then
         assertIterableEquals(List.of(matchedClub), response.clubs());
         assertEquals(1, response.totalCount());
+        verify(clubAnalyticsRecordService).recordSearchKeyword(keyword);
     }
 
 //    @Test
