@@ -144,7 +144,7 @@ export const updateApplicationStatus = async (
   applicationFormId: string,
   currentStatus: ApplicationFormStatus,
 ) => {
-  const newStatus = currentStatus === 'ACTIVE' ? false : true;
+  const newStatus = currentStatus === 'INACTIVE';
 
   const response = await secureFetch(
     `${API_BASE_URL}/api/club/application/${applicationFormId}`,

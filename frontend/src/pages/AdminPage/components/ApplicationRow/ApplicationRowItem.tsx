@@ -1,6 +1,9 @@
 import Morebutton from '@/assets/images/icons/Morebutton.svg';
 import ApplicationMenu from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationMenu';
-import { ApplicationFormItem, ApplicationFormStatus } from '@/types/application';
+import {
+  ApplicationFormItem,
+  ApplicationFormStatus,
+} from '@/types/application';
 import { formatRelativeDateTime } from '@/utils/formatRelativeDateTime';
 import * as Styled from './ApplicationRowItem.style';
 

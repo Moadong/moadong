@@ -13,7 +13,11 @@ import {
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import * as Styled from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab.styles';
-import { ApplicationFormGroup, ApplicationFormItem } from '@/types/application';
+import {
+  ApplicationFormGroup,
+  ApplicationFormItem,
+  ApplicationFormStatus,
+} from '@/types/application';
 import { getFormGroupLabel } from '@/utils/applicationFormGroup';
 
 const MAX_INITIAL_ITEMS = 3;
@@ -67,7 +71,7 @@ const ApplicationListTab = () => {
 
   const handleToggleClick = async (
     applicationFormId: string,
-    currentStatus: string,
+    currentStatus: ApplicationFormStatus,
   ) => {
     updateStatus(
       { applicationFormId, currentStatus },
