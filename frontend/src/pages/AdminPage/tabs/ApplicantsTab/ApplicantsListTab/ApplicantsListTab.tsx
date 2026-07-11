@@ -18,7 +18,7 @@ import {
   ApplicationFormItem,
   ApplicationFormStatus,
 } from '@/types/application';
-import { getFormGroupLabel } from '@/utils/applicationFormGroup';
+import { groupFormsByActiveStatus } from '@/utils/applicationFormGroup';
 
 const MAX_INITIAL_ITEMS = 3;
 
@@ -204,36 +204,32 @@ const ApplicationListTab = () => {
           새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
         </Styled.AddButton>
       </Styled.Header>
-      {formGroups.map((group: ApplicationFormGroup) => {
-        const { title: groupTitle, uniqueKeyPrefix: groupUniqueKeyPrefix } =
-          getFormGroupLabel(group);
-        return (
-          <Styled.ApplicationList key={groupUniqueKeyPrefix}>
-            <Styled.ListHeader>
-              <Styled.SemesterTitle>{groupTitle}</Styled.SemesterTitle>
-              <Styled.DateHeader>
-                <Styled.Separation_Bar />
-                최종 수정 날짜
-              </Styled.DateHeader>
-            </Styled.ListHeader>
-            {group.forms.map((application: ApplicationFormItem) => (
-              <ApplicationRowItem
-                key={application.id}
-                application={application}
-                isActive={application.status === 'ACTIVE'}
-                uniqueKeyPrefix={groupUniqueKeyPrefix}
-                openMenuId={openMenuId}
-                menuRef={menuRef}
-                onEdit={handleGoToDetailForm}
-                onMenuToggle={handleMenuToggle}
-                onToggleStatus={handleToggleClick}
-                onDelete={handleDeleteApplication}
-                onDuplicate={handleDuplicateApplication}
-              />
-            ))}
-          </Styled.ApplicationList>
-        );
-      })}
+      {groupFormsByActiveStatus(formGroups).map((group) => (
+        <Styled.ApplicationList key={group.uniqueKeyPrefix}>
+          <Styled.ListHeader>
+            <Styled.SemesterTitle>{group.title}</Styled.SemesterTitle>
+            <Styled.DateHeader>
+              <Styled.Separation_Bar />
+              최종 수정 날짜
+            </Styled.DateHeader>
+          </Styled.ListHeader>
+          {group.forms.map((application: ApplicationFormItem) => (
+            <ApplicationRowItem
+              key={application.id}
+              application={application}
+              isActive={application.status === 'ACTIVE'}
+              uniqueKeyPrefix={group.uniqueKeyPrefix}
+              openMenuId={openMenuId}
+              menuRef={menuRef}
+              onEdit={handleGoToDetailForm}
+              onMenuToggle={handleMenuToggle}
+              onToggleStatus={handleToggleClick}
+              onDelete={handleDeleteApplication}
+              onDuplicate={handleDuplicateApplication}
+            />
+          ))}
+        </Styled.ApplicationList>
+      ))}
     </Styled.Container>
   );
 };
