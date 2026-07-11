@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { Award, SemesterTermType } from '@/types/club';
+import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
 import { generateSemesterOptions, SemesterOption } from '@/utils/awardHelpers';
-import { getSemesterTerm } from '@/utils/semester';
 import * as Styled from './SemesterPickerSheet.styles';
 
 const ITEM_HEIGHT = 50;
@@ -9,7 +8,8 @@ const ITEM_HEIGHT = 50;
 const getDefaultIndex = (options: SemesterOption[]): number => {
   const now = new Date();
   const currentYear = now.getFullYear();
-  const currentTerm = getSemesterTerm(now.getMonth());
+  const currentTerm =
+    now.getMonth() < 6 ? SemesterTerm.FIRST : SemesterTerm.SECOND;
 
   const idx = options.findIndex(
     (opt) => opt.year === currentYear && opt.semesterTerm === currentTerm,
