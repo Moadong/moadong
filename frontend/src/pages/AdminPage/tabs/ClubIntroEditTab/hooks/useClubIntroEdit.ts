@@ -66,6 +66,7 @@ const useClubIntroEdit = () => {
       return;
     }
 
+    const prevAwards = awards;
     setInitialState((prev) => ({ ...prev, awards: newAwards }));
 
     updateClub(
@@ -92,6 +93,10 @@ const useClubIntroEdit = () => {
           queryClient.invalidateQueries({
             queryKey: ['clubDetail', clubDetail.id],
           });
+        },
+        onError: (error) => {
+          setInitialState((prev) => ({ ...prev, awards: prevAwards }));
+          alert(`수상 내역 수정에 실패했습니다: ${error.message}`);
         },
       },
     );
