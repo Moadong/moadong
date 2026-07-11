@@ -55,7 +55,7 @@ public class ClubApplicationForm implements Persistable<String> {
     private Integer semesterYear = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate().getYear();
 
     @Builder.Default
-    private ApplicationFormStatus status = ApplicationFormStatus.UNPUBLISHED;
+    private ApplicationFormStatus status = ApplicationFormStatus.INACTIVE;
 
     @NotNull
     @Builder.Default
@@ -93,7 +93,7 @@ public class ClubApplicationForm implements Persistable<String> {
     }
 
     public void updateFormStatus(boolean activeFlag) {
-        this.status = ApplicationFormStatus.fromFlag(this.status, activeFlag);
+        this.status = ApplicationFormStatus.fromFlag(activeFlag);
     }
 
     public void updateFormMode(ApplicationFormMode formMode) {
