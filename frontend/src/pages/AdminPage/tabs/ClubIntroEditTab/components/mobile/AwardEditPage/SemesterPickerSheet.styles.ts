@@ -20,7 +20,7 @@ export const Sheet = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 20px 20px 30px;
+  padding: 20px 20px 20px;
   gap: 6px;
   width: 100%;
   background: ${colors.base.white};
@@ -39,7 +39,7 @@ export const SheetTitle = styled.span`
 export const PickerWrapper = styled.div`
   position: relative;
   width: 100%;
-  height: 150px;
+  height: 140px;
   overflow: hidden;
 
   &::before,
@@ -64,7 +64,7 @@ export const PickerWrapper = styled.div`
 
 export const SelectedHighlight = styled.div`
   position: absolute;
-  top: 49px;
+  top: 44px;
   left: 0;
   right: 0;
   height: 52px;
@@ -75,7 +75,7 @@ export const SelectedHighlight = styled.div`
 `;
 
 export const ScrollContainer = styled.div`
-  height: 150px;
+  height: 140px;
   overflow-y: scroll;
   scroll-snap-type: y mandatory;
 
@@ -87,7 +87,7 @@ export const ScrollContainer = styled.div`
 `;
 
 export const ScrollSpacer = styled.div`
-  height: 50px;
+  height: 45px;
 `;
 
 export const PickerItem = styled.div<{
