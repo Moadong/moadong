@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
 import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
@@ -19,6 +20,7 @@ const AwardSemesterCard = ({
   onDelete,
 }: AwardSemesterCardProps) => {
   const semesterLabel = formatSemesterLabel(award) ?? '';
+  const [focusedIndex, setFocusedIndex] = useState<number | null>(null);
 
   const handleAchievementChange = (index: number, value: string) => {
     onChange({
@@ -46,8 +48,10 @@ const AwardSemesterCard = ({
             value={achievement}
             placeholder='수상내역을 입력하세요'
             onChange={(e) => handleAchievementChange(index, e.target.value)}
+            onFocus={() => setFocusedIndex(index)}
+            onBlur={() => setFocusedIndex(null)}
           />
-          {achievement.length > 0 && (
+          {focusedIndex === index && achievement.length > 0 && (
             <ClearButton
               type='button'
               onMouseDown={(e) => {
