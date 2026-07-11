@@ -13,6 +13,9 @@ public class ApplicationFormStatusReadingConverter implements Converter<String, 
 
     @Override
     public ApplicationFormStatus convert(String source) {
+        if (source == null) {
+            return null;
+        }
         return "ACTIVE".equals(source) ? ApplicationFormStatus.ACTIVE : ApplicationFormStatus.INACTIVE;
     }
 }
