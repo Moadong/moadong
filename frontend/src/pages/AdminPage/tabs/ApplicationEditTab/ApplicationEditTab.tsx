@@ -142,7 +142,6 @@ const ApplicationEditTab = () => {
       title: formData.title,
       description: formData.description,
       semesterYear: formData.semesterYear,
-      semesterTerm: formData.semesterTerm,
       formMode: applicationFormMode,
       active: formData.active ?? '',
     };
