@@ -2,7 +2,8 @@ import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
 import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
-import { Award, SemesterTermType } from '@/types/club';
+import ClearButton from '@/pages/AdminPage/components/ClearButton';
+import { Award } from '@/types/club';
 import { formatSemesterLabel } from '@/utils/awardHelpers';
 import * as Styled from './AwardSemesterCard.styles';
 
@@ -34,13 +35,9 @@ const AwardSemesterCard = ({
     <Styled.Card>
       <Styled.Header>
         <Styled.SemesterLabel>{semesterLabel}</Styled.SemesterLabel>
-        <Styled.IconButton
-          type='button'
-          onClick={onDelete}
-          aria-label='학기 삭제'
-        >
+        <ClearButton type='button' onClick={onDelete} aria-label='학기 삭제'>
           <img src={closeCircleIcon} alt='삭제' width={22} height={22} />
-        </Styled.IconButton>
+        </ClearButton>
       </Styled.Header>
 
       {award.achievements.map((achievement, index) => (
@@ -51,7 +48,7 @@ const AwardSemesterCard = ({
             onChange={(e) => handleAchievementChange(index, e.target.value)}
           />
           {achievement.length > 0 && (
-            <Styled.IconButton
+            <ClearButton
               type='button'
               onMouseDown={(e) => {
                 e.preventDefault();
@@ -60,7 +57,7 @@ const AwardSemesterCard = ({
               aria-label='내용 지우기'
             >
               <FieldClearButtonIcon />
-            </Styled.IconButton>
+            </ClearButton>
           )}
         </Styled.AchievementRow>
       ))}

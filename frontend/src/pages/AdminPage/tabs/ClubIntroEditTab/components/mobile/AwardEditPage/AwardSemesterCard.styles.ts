@@ -29,19 +29,6 @@ export const SemesterLabel = styled.span`
   flex: 1;
 `;
 
-export const IconButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  padding: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
-  flex-shrink: 0;
-`;
-
 export const AchievementRow = styled.div`
   box-sizing: border-box;
   display: flex;
