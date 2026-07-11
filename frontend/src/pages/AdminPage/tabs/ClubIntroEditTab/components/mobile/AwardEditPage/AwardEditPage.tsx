@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
@@ -36,9 +36,8 @@ const AwardEditPage = ({
 
   const isDirty = JSON.stringify(awards) !== JSON.stringify(initialAwards);
 
-  const sortedAwards = useMemo(
-    () => [...awards].sort((a, b) => getAwardSortValue(a) - getAwardSortValue(b)),
-    [awards],
+  const sortedAwards = [...awards].sort(
+    (a, b) => getAwardSortValue(a) - getAwardSortValue(b),
   );
 
   const handleAddSemester = (year: number, semesterTerm: SemesterTermType) => {

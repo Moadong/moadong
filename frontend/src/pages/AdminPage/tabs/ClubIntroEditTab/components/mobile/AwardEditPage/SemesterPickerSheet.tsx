@@ -1,45 +1,15 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
-import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
+import { useEffect, useRef, useState } from 'react';
+import { Award, SemesterTermType } from '@/types/club';
+import { generateSemesterOptions, SemesterOption } from '@/utils/awardHelpers';
+import { getSemesterTerm } from '@/utils/semester';
 import * as Styled from './SemesterPickerSheet.styles';
 
 const ITEM_HEIGHT = 50;
 
-interface SemesterOption {
-  year: number;
-  semesterTerm: SemesterTermType;
-  label: string;
-}
-
-const generateSemesterOptions = (existingAwards: Award[]): SemesterOption[] => {
-  const currentYear = new Date().getFullYear();
-  const options: SemesterOption[] = [];
-
-  for (let year = currentYear - 3; year <= currentYear + 1; year++) {
-    options.push({
-      year,
-      semesterTerm: SemesterTerm.FIRST,
-      label: `${year} 1학기`,
-    });
-    options.push({
-      year,
-      semesterTerm: SemesterTerm.SECOND,
-      label: `${year} 2학기`,
-    });
-  }
-
-  return options.filter(
-    (opt) =>
-      !existingAwards.some(
-        (a) => a.year === opt.year && a.semesterTerm === opt.semesterTerm,
-      ),
-  );
-};
-
 const getDefaultIndex = (options: SemesterOption[]): number => {
-  const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
-  const currentTerm =
-    currentMonth < 6 ? SemesterTerm.FIRST : SemesterTerm.SECOND;
+  const now = new Date();
+  const currentYear = now.getFullYear();
+  const currentTerm = getSemesterTerm(now.getMonth());
 
   const idx = options.findIndex(
     (opt) => opt.year === currentYear && opt.semesterTerm === currentTerm,
@@ -58,10 +28,7 @@ const SemesterPickerSheet = ({
   onAdd,
   onClose,
 }: SemesterPickerSheetProps) => {
-  const options = useMemo(
-    () => generateSemesterOptions(existingAwards),
-    [existingAwards],
-  );
+  const options = generateSemesterOptions(existingAwards);
 
   const [selectedIndex, setSelectedIndex] = useState(() =>
     getDefaultIndex(options),
