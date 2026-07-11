@@ -12,7 +12,11 @@ import {
 } from '@/hooks/Queries/useApplication';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import { ApplicationFormGroup, ApplicationFormItem } from '@/types/application';
+import {
+  ApplicationFormGroup,
+  ApplicationFormItem,
+  ApplicationFormStatus,
+} from '@/types/application';
 import { getFormGroupLabel } from '@/utils/applicationFormGroup';
 import * as Styled from './ApplicationListTab.styles';
 
@@ -66,7 +70,7 @@ const ApplicationListTab = () => {
 
   const handleToggleClick = (
     applicationFormId: string,
-    currentStatus: string,
+    currentStatus: ApplicationFormStatus,
   ) => {
     updateStatus(
       { applicationFormId, currentStatus },
