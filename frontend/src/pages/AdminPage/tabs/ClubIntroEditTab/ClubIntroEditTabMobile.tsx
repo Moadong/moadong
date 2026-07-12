@@ -45,6 +45,30 @@ const ClubIntroEditTabMobile = ({
 }: ClubIntroEditTabMobileProps) => {
   const navigate = useNavigate();
 
+  const handleIntroChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= INTRO_MAX) {
+      setIntroDescription(e.target.value);
+    }
+  };
+
+  const handleActivityChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= ACTIVITY_MAX) {
+      setActivityDescription(e.target.value);
+    }
+  };
+
+  const handleIdealChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= IDEAL_MAX) {
+      setIdealCandidate({ ...idealCandidate, content: e.target.value });
+    }
+  };
+
+  const handleBenefitsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= BENEFITS_MAX) {
+      setBenefits(e.target.value);
+    }
+  };
+
   return (
     <>
       <Styled.MobileContainer>
@@ -67,11 +91,7 @@ const ClubIntroEditTabMobile = ({
             >
               <Styled.TextArea
                 value={introDescription}
-                onChange={(e) => {
-                  if (e.target.value.length <= INTRO_MAX) {
-                    setIntroDescription(e.target.value);
-                  }
-                }}
+                onChange={handleIntroChange}
                 placeholder='동아리 소개 문구를 입력해주세요'
               />
             </InfoSection>
@@ -83,11 +103,7 @@ const ClubIntroEditTabMobile = ({
             >
               <Styled.TextArea
                 value={activityDescription}
-                onChange={(e) => {
-                  if (e.target.value.length <= ACTIVITY_MAX) {
-                    setActivityDescription(e.target.value);
-                  }
-                }}
+                onChange={handleActivityChange}
                 placeholder='동아리에서 하는 활동 내용을 입력해주세요'
               />
             </InfoSection>
@@ -101,14 +117,7 @@ const ClubIntroEditTabMobile = ({
             >
               <Styled.TextArea
                 value={idealCandidate.content}
-                onChange={(e) => {
-                  if (e.target.value.length <= IDEAL_MAX) {
-                    setIdealCandidate({
-                      ...idealCandidate,
-                      content: e.target.value,
-                    });
-                  }
-                }}
+                onChange={handleIdealChange}
                 placeholder='동아리에 어울리는 사람의 특성을 입력해주세요'
               />
             </InfoSection>
@@ -120,11 +129,7 @@ const ClubIntroEditTabMobile = ({
             >
               <Styled.TextArea
                 value={benefits}
-                onChange={(e) => {
-                  if (e.target.value.length <= BENEFITS_MAX) {
-                    setBenefits(e.target.value);
-                  }
-                }}
+                onChange={handleBenefitsChange}
                 placeholder='동아리 부원이 누릴 수 있는 혜택을 입력해주세요'
               />
             </InfoSection>
