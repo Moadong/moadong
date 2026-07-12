@@ -189,10 +189,10 @@ const ApplicationListTab = () => {
           <ActiveListBody>
             <Styled.MessageContainer>
               <Styled.NoActiveFormsMessage>
-                활성화된 지원서 없음
+                게시된 지원서 없음
               </Styled.NoActiveFormsMessage>
               <Styled.SuggestionText>
-                지원서 카드 우측 메뉴에서 지원서 활성화를 선택해 보세요.
+                지원서 카드 우측 메뉴에서 지원서 게시를 선택해 보세요.
               </Styled.SuggestionText>
             </Styled.MessageContainer>
           </ActiveListBody>
