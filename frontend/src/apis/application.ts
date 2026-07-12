@@ -4,7 +4,7 @@ import {
   AnswerItem,
   ApplicationForm,
   ApplicationFormData,
-  SemesterGroup,
+  ApplicationFormGroup,
 } from '@/types/application';
 import { asApplicationFormId } from '@/types/branded';
 import { secureFetch } from './auth/secureFetch';
@@ -67,7 +67,7 @@ export const getActiveApplications = async (clubId: string) => {
 };
 
 interface ApplicationListResponse {
-  forms: SemesterGroup[];
+  forms: ApplicationFormGroup[];
 }
 
 export const getAllApplicationForms = async (): Promise<

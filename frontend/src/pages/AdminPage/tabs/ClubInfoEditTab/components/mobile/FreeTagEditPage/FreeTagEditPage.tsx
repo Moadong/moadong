@@ -4,6 +4,7 @@ import { CLUB_TAG_MAX } from '@/constants/adminFieldLimits';
 import { CLUB_TAG_PLACEHOLDER } from '@/constants/adminFieldPlaceholders';
 import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
+import EditField from '../EditField/EditField';
 import * as Styled from './FreeTagEditPage.styles';
 
 interface FreeTagEditPageProps {
