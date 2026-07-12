@@ -4,6 +4,10 @@ import {
   CLUB_INTRODUCTION_MAX,
   CLUB_NAME_MAX,
 } from '@/constants/adminFieldLimits';
+import {
+  CLUB_INTRODUCTION_PLACEHOLDER,
+  CLUB_NAME_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { SNS_CONFIG } from '@/constants/snsConfig';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -88,7 +92,7 @@ const ClubInfoEditTab = () => {
           <ClubCoverEditor coverImage={clubDetail?.cover} />
           <InputField
             label='동아리명'
-            placeholder='동아리명'
+            placeholder={CLUB_NAME_PLACEHOLDER}
             value={clubName}
             onChange={(e) => setClubName(e.target.value)}
             onClear={() => {
@@ -102,7 +106,7 @@ const ClubInfoEditTab = () => {
 
           <InputField
             label='한줄소개'
-            placeholder='한줄소개를 입력해주세요'
+            placeholder={CLUB_INTRODUCTION_PLACEHOLDER}
             type='text'
             maxLength={CLUB_INTRODUCTION_MAX}
             showMaxChar={true}
