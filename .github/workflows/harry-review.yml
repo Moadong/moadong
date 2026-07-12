@@ -3,6 +3,8 @@ name: harry PR Review
 on:
   pull_request:
     types: [opened, synchronize]
+  pull_request_review_comment:
+    types: [created]
 
 permissions:
   contents: read
@@ -13,7 +15,8 @@ jobs:
     # 같은 레포 브랜치 PR만 리뷰한다. 포크 PR(외부 공격자)은 프롬프트 인젝션 위험이 있어 제외.
     # main으로 올라오는 PR은 리뷰하지 않는다(develop 등 상위 브랜치에서 이미 리뷰됨).
     if: >-
-      ${{ github.event.pull_request.draft == false
+      ${{ github.event_name == 'pull_request'
+      && github.event.pull_request.draft == false
       && github.event.pull_request.head.repo.full_name == github.repository
       && github.event.pull_request.base.ref != 'main' }}
     runs-on: ubuntu-latest
@@ -142,3 +145,74 @@ jobs:
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_BASE: ${{ github.event.pull_request.base.ref }}
+
+  harry-reply:
+    # harry의 인라인 리뷰 코멘트에 사람이 답글을 달면, 그 스레드에만 답변한다.
+    # - 사람(비봇) 답글만 반응: 봇 답글(harry 자신 포함)에 반응하면 무한 루프.
+    # - in_reply_to_id 있는 답글만: 최초 인라인 코멘트나 새 top-level 코멘트엔 반응 안 함.
+    # - 포크 PR 제외(프롬프트 인젝션) + main 대상 제외 — 리뷰 job과 동일 정책.
+    # - '스레드 루트가 harry인지'는 harry가 프롬프트에서 확인 후, 아니면 아무것도 안 한다.
+    if: >-
+      ${{ github.event_name == 'pull_request_review_comment'
+      && github.event.action == 'created'
+      && github.event.comment.user.type != 'Bot'
+      && github.event.comment.in_reply_to_id != null
+      && github.event.pull_request.head.repo.full_name == github.repository
+      && github.event.pull_request.base.ref != 'main' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Generate harry App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.HARRY_APP_ID }}
+          private-key: ${{ secrets.HARRY_APP_PRIVATE_KEY }}
+
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: harry reply
+        uses: anthropics/claude-code-action@v1
+        with:
+          github_token: ${{ steps.app-token.outputs.token }}
+          prompt: |
+            너는 'harry'라는 PR 리뷰봇이다. 저장소 루트의 `.github/harry-review-rules.md`를
+            읽어 페르소나·말투(한국어 '해요체')를 따른다.
+
+            누군가 harry의 인라인 리뷰 코멘트(스레드)에 답글을 달았다. 이 답글에만 반응한다.
+            대상 정보는 환경변수로 주어진다(값을 직접 타이핑하지 말고 항상 환경변수를 써라):
+            - PR 번호: $PR_NUMBER
+            - 스레드 루트 코멘트 id(답글이 달린 원본 인라인 코멘트): $ROOT_COMMENT_ID
+            - 방금 달린 답글 코멘트 id: $REPLY_COMMENT_ID
+
+            절차:
+            1. `gh api "repos/$REPO/pulls/comments/$ROOT_COMMENT_ID"`로 스레드 루트 코멘트를 가져온다.
+               작성자(`.user.login`)가 'reviewer-harry[bot]'가 아니면 harry가 시작한 스레드가
+               아니다 → 아무것도 하지 말고 즉시 끝낸다.
+            2. harry의 스레드가 맞으면 맥락을 파악한다:
+               - 루트 코멘트(harry의 원래 지적)의 코드 위치(`.path`, `.line`, `.diff_hunk`)와 본문.
+               - 스레드의 이후 답글들: `gh api "repos/$REPO/pulls/$PR_NUMBER/comments" --paginate`로
+                 받아 `in_reply_to_id == $ROOT_COMMENT_ID` 인 것들을 시간순으로 읽는다.
+                 방금 달린 $REPLY_COMMENT_ID 답글이 사람이 harry에게 한 말이다.
+            3. 그 답글에 harry로서 답한다:
+               - 상대 말이 맞으면 인정하고, 지적이 타당했으면 근거를 짧게 보강한다.
+               - 반박·질문이면 룰(`.github/harry-review-rules.md`) 기준으로 논리적으로 답한다.
+               - 확정 못 할 내용은 단정하지 말고 확인이 필요하다고 말한다.
+               - 단순 확인/감사처럼 답할 내용이 없으면 아무것도 하지 마라.
+            4. 답변은 반드시 **그 인라인 스레드에만** 단다:
+               `gh api --method POST "repos/$REPO/pulls/$PR_NUMBER/comments/$ROOT_COMMENT_ID/replies" -f body="답변내용"`
+               PR 본문에 새 top-level 코멘트나 다른 새 인라인 코멘트를 만들지 마라. 오직 이 스레드 답글 하나만.
+
+            모든 답변은 한국어 '해요체'로 작성한다.
+          claude_args: |
+            --model claude-opus-4-8
+            --allowedTools Read,Bash(gh api:*),Bash(gh pr diff:*)
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          REPO: ${{ github.repository }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          ROOT_COMMENT_ID: ${{ github.event.comment.in_reply_to_id }}
+          REPLY_COMMENT_ID: ${{ github.event.comment.id }}
