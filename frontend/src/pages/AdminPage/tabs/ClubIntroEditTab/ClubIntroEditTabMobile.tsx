@@ -81,6 +81,30 @@ const ClubIntroEditTabMobile = ({
     }
   };
 
+  const handleIntroChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= INTRO_MAX) {
+      setIntroDescription(e.target.value);
+    }
+  };
+
+  const handleActivityChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= ACTIVITY_MAX) {
+      setActivityDescription(e.target.value);
+    }
+  };
+
+  const handleIdealChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= IDEAL_MAX) {
+      setIdealCandidate({ ...idealCandidate, content: e.target.value });
+    }
+  };
+
+  const handleBenefitsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= BENEFITS_MAX) {
+      setBenefits(e.target.value);
+    }
+  };
+
   return (
     <>
       <Styled.MobileContainer>
