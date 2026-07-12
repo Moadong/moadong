@@ -2,7 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import EditField from './EditField';
 
 const meta = {
-  title: 'Pages/AdminPage/Components/editFields/EditField',
+  title: 'Pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/EditField',
   component: EditField,
   parameters: {
     layout: 'centered',

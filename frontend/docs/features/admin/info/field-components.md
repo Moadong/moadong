@@ -73,24 +73,23 @@ SOLID 원칙:
 ## 디렉토리
 
 ```
-src/pages/AdminPage/components/
-  editFields/
-    EditField/
-      EditField.tsx
-      EditField.styles.ts
-      EditField.stories.tsx
-    TextField/
-      TextField.tsx
-      TextField.styles.ts
-      TextField.stories.tsx
-    NavField/
-      NavField.tsx
-      NavField.styles.ts
-      NavField.stories.tsx
+src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/
+  EditField/
+    EditField.tsx
+    EditField.styles.ts
+    EditField.stories.tsx
+  TextField/
+    TextField.tsx
+    TextField.styles.ts
+    TextField.stories.tsx
+  NavField/
+    NavField.tsx
+    NavField.styles.ts
+    NavField.stories.tsx
 ```
 
 ## 관련 코드
 
-- `src/pages/AdminPage/components/editFields/EditField/EditField.tsx` — 편집 필드 공통 카드 컴포넌트
-- `src/pages/AdminPage/components/editFields/TextField/TextField.tsx` — 텍스트 입력 필드
-- `src/pages/AdminPage/components/editFields/NavField/NavField.tsx` — 네비게이션 필드
+- `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/EditField/EditField.tsx` — 편집 필드 공통 카드 컴포넌트
+- `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/TextField/TextField.tsx` — 텍스트 입력 필드
+- `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/NavField/NavField.tsx` — 네비게이션 필드

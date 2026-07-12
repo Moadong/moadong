@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
-import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
+import EditField from '../EditField/EditField';
 import * as Styled from './FreeTagEditPage.styles';
 
 interface FreeTagEditPageProps {

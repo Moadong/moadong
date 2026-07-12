@@ -3,17 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
-import NavField from '@/pages/AdminPage/components/editFields/NavField/NavField';
-import TextField from '@/pages/AdminPage/components/editFields/TextField/TextField';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
 import { ClubDetail, SNSPlatform } from '@/types/club';
 import * as Styled from './ClubInfoEditTabMobile.styles';
+import EditField from './components/mobile/EditField/EditField';
 import FreeTagEditPage from './components/mobile/FreeTagEditPage/FreeTagEditPage';
 import LinkEditPage from './components/mobile/LinkEditPage/LinkEditPage';
 import MobileBannerSection from './components/mobile/MobileBannerSection/MobileBannerSection';
+import NavField from './components/mobile/NavField/NavField';
+import TextField from './components/mobile/TextField/TextField';
 import { categories } from './hooks/useClubInfoEdit';
 
 interface ClubInfoEditTabMobileProps {

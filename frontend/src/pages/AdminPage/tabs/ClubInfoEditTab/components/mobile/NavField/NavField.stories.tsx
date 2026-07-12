@@ -4,7 +4,7 @@ import NavField from './NavField';
 import * as Styled from './NavField.styles';
 
 const meta = {
-  title: 'Pages/AdminPage/Components/editFields/NavField',
+  title: 'Pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/NavField',
   component: NavField,
   parameters: {
     layout: 'centered',

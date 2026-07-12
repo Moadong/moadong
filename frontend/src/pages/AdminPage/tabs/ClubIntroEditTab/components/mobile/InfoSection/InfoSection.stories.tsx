@@ -53,7 +53,7 @@ const MobileTextarea = ({
 };
 
 const meta = {
-  title: 'Pages/AdminPage/tabs/ClubIntroEditTab/mobile/InfoSection',
+  title: 'Pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/InfoSection',
   component: InfoSection,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
