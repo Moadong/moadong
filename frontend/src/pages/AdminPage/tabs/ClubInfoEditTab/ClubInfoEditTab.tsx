@@ -1,5 +1,9 @@
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
+import {
+  CLUB_INTRODUCTION_MAX,
+  CLUB_NAME_MAX,
+} from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { SNS_CONFIG } from '@/constants/snsConfig';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -92,7 +96,7 @@ const ClubInfoEditTab = () => {
               setClubName('');
             }}
             width='50%'
-            maxLength={20}
+            maxLength={CLUB_NAME_MAX}
             showMaxChar={true}
           />
 
@@ -100,7 +104,7 @@ const ClubInfoEditTab = () => {
             label='한줄소개'
             placeholder='한줄소개를 입력해주세요'
             type='text'
-            maxLength={20}
+            maxLength={CLUB_INTRODUCTION_MAX}
             showMaxChar={true}
             value={introduction}
             onChange={(e) => setIntroduction(e.target.value)}

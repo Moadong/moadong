@@ -1,6 +1,10 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import {
+  CLUB_INTRODUCTION_MAX,
+  CLUB_NAME_MAX,
+} from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
@@ -109,7 +113,7 @@ const ClubInfoEditTabMobile = ({
             label='동아리명'
             placeholder='동아리명을 입력해주세요.'
             value={clubName}
-            maxLength={20}
+            maxLength={CLUB_NAME_MAX}
             onChange={setClubName}
             onClear={() => {
               trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED);
@@ -121,7 +125,7 @@ const ClubInfoEditTabMobile = ({
             label='동아리소개'
             placeholder='한줄소개를 입력해주세요.'
             value={introduction}
-            maxLength={20}
+            maxLength={CLUB_INTRODUCTION_MAX}
             onChange={setIntroduction}
             onClear={() => {
               trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED);

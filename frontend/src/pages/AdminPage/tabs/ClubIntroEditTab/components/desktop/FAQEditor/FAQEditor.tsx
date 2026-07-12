@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
+import { FAQ_ANSWER_MAX, FAQ_QUESTION_MAX } from '@/constants/adminFieldLimits';
+import useAutoGrow from '@/hooks/useAutoGrow';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQEditor.styles';
 
@@ -7,6 +9,58 @@ interface FAQEditorProps {
   faqs: FAQ[];
   onChange: (faqs: FAQ[]) => void;
 }
+
+interface FAQItemEditorProps {
+  faq: FAQ & { id: string };
+  index: number;
+  onRemove: (id: string) => void;
+  onUpdateQuestion: (id: string, value: string) => void;
+  onUpdateAnswer: (id: string, value: string) => void;
+  inputRef: (el: HTMLInputElement | null) => void;
+}
+
+const FAQItemEditor = ({
+  faq,
+  index,
+  onRemove,
+  onUpdateQuestion,
+  onUpdateAnswer,
+  inputRef,
+}: FAQItemEditorProps) => {
+  const answerRef = useAutoGrow(faq.answer);
+
+  return (
+    <Styled.FAQItem>
+      <Styled.FAQHeader>
+        <Styled.FAQNumber>Q{index + 1}</Styled.FAQNumber>
+        <Styled.RemoveButton onClick={() => onRemove(faq.id)}>
+          <img src={clearButton} alt='삭제' />
+        </Styled.RemoveButton>
+      </Styled.FAQHeader>
+
+      <Styled.QuestionInput
+        ref={inputRef}
+        placeholder='질문을 입력하세요'
+        value={faq.question}
+        onChange={(e) => onUpdateQuestion(faq.id, e.target.value)}
+        maxLength={FAQ_QUESTION_MAX}
+      />
+
+      <Styled.AnswerTextArea
+        ref={answerRef}
+        placeholder='답변을 입력하세요'
+        value={faq.answer}
+        onChange={(e) => onUpdateAnswer(faq.id, e.target.value)}
+        maxLength={FAQ_ANSWER_MAX}
+      />
+
+      <Styled.CharCount>
+        질문: {faq.question.length}/{FAQ_QUESTION_MAX} | 답변:{' '}
+        {faq.answer.length}/{FAQ_ANSWER_MAX}
+      </Styled.CharCount>
+    </Styled.FAQItem>
+  );
+};
 
 const FAQEditor = ({ faqs, onChange }: FAQEditorProps) => {
   const [shouldFocusLast, setShouldFocusLast] = useState(false);
@@ -38,27 +92,22 @@ const FAQEditor = ({ faqs, onChange }: FAQEditorProps) => {
   };
 
   const handleUpdateQuestion = (id: string, value: string) => {
-    const updatedFAQs = faqs.map((faq) =>
-      faq.id === id ? { ...faq, question: value } : faq,
+    onChange(
+      faqs.map((faq) => (faq.id === id ? { ...faq, question: value } : faq)),
     );
-    onChange(updatedFAQs);
   };
 
   const handleUpdateAnswer = (id: string, value: string) => {
-    const updatedFAQs = faqs.map((faq) =>
-      faq.id === id ? { ...faq, answer: value } : faq,
+    onChange(
+      faqs.map((faq) => (faq.id === id ? { ...faq, answer: value } : faq)),
     );
-    onChange(updatedFAQs);
   };
 
   useEffect(() => {
     if (shouldFocusLast && faqs.length > 0) {
       const lastFAQ = faqs[faqs.length - 1];
       if (lastFAQ.id) {
-        const inputRef = questionInputRefs.current[lastFAQ.id];
-        if (inputRef) {
-          inputRef.focus();
-        }
+        questionInputRefs.current[lastFAQ.id]?.focus();
       }
       setShouldFocusLast(false);
     }
@@ -79,40 +128,17 @@ const FAQEditor = ({ faqs, onChange }: FAQEditorProps) => {
           {faqs
             .filter((faq): faq is FAQ & { id: string } => !!faq.id)
             .map((faq, index) => (
-              <Styled.FAQItem key={faq.id}>
-                <Styled.FAQHeader>
-                  <Styled.FAQNumber>Q{index + 1}</Styled.FAQNumber>
-                  <Styled.RemoveButton onClick={() => handleRemoveFAQ(faq.id)}>
-                    <img src={clearButton} alt='삭제' />
-                  </Styled.RemoveButton>
-                </Styled.FAQHeader>
-
-                <Styled.QuestionInput
-                  ref={(element) => {
-                    questionInputRefs.current[faq.id] = element;
-                  }}
-                  placeholder='질문을 입력하세요'
-                  value={faq.question}
-                  onChange={(event) =>
-                    handleUpdateQuestion(faq.id, event.target.value)
-                  }
-                  maxLength={100}
-                />
-
-                <Styled.AnswerTextArea
-                  placeholder='답변을 입력하세요'
-                  value={faq.answer}
-                  onChange={(event) =>
-                    handleUpdateAnswer(faq.id, event.target.value)
-                  }
-                  maxLength={300}
-                />
-
-                <Styled.CharCount>
-                  질문: {faq.question.length}/100 | 답변: {faq.answer.length}
-                  /300
-                </Styled.CharCount>
-              </Styled.FAQItem>
+              <FAQItemEditor
+                key={faq.id}
+                faq={faq}
+                index={index}
+                onRemove={handleRemoveFAQ}
+                onUpdateQuestion={handleUpdateQuestion}
+                onUpdateAnswer={handleUpdateAnswer}
+                inputRef={(el) => {
+                  questionInputRefs.current[faq.id] = el;
+                }}
+              />
             ))}
         </Styled.FAQList>
       )}

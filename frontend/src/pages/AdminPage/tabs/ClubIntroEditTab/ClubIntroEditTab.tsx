@@ -1,5 +1,11 @@
 import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
+import {
+  ACTIVITY_DESCRIPTION_MAX,
+  BENEFITS_MAX,
+  IDEAL_CANDIDATE_MAX,
+  INTRO_DESCRIPTION_MAX,
+} from '@/constants/adminFieldLimits';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import useDevice from '@/hooks/useDevice';
@@ -70,7 +76,7 @@ const ClubIntroEditTab = () => {
             placeholder='동아리 소개 문구를 입력해주세요'
             value={introDescription}
             onChange={(e) => setIntroDescription(e.target.value)}
-            maxLength={200}
+            maxLength={INTRO_DESCRIPTION_MAX}
             showMaxChar={true}
           />
 
@@ -80,7 +86,7 @@ const ClubIntroEditTab = () => {
             placeholder='동아리에서 하는 활동 내용을 입력해주세요'
             value={activityDescription}
             onChange={(e) => setActivityDescription(e.target.value)}
-            maxLength={500}
+            maxLength={ACTIVITY_DESCRIPTION_MAX}
             showMaxChar={true}
           />
 
@@ -94,7 +100,7 @@ const ClubIntroEditTab = () => {
             onChange={(e) =>
               setIdealCandidate({ ...idealCandidate, content: e.target.value })
             }
-            maxLength={500}
+            maxLength={IDEAL_CANDIDATE_MAX}
             showMaxChar={true}
           />
 
@@ -104,7 +110,7 @@ const ClubIntroEditTab = () => {
             placeholder='동아리 부원이 누릴 수 있는 혜택을 입력해주세요'
             value={benefits}
             onChange={(e) => setBenefits(e.target.value)}
-            maxLength={500}
+            maxLength={BENEFITS_MAX}
             showMaxChar={true}
           />
 

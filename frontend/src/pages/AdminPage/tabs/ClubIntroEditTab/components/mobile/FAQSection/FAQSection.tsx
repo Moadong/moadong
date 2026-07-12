@@ -1,11 +1,9 @@
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
+import { FAQ_ANSWER_MAX, FAQ_QUESTION_MAX } from '@/constants/adminFieldLimits';
 import useAutoGrow from '@/hooks/useAutoGrow';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQSection.styles';
-
-const QUESTION_MAX_LENGTH = 100;
-const ANSWER_MAX_LENGTH = 300;
 
 interface FAQItemEditorProps {
   faq: FAQ;
@@ -23,7 +21,7 @@ const FAQItemEditor = ({
   const answerRef = useAutoGrow(faq.answer);
 
   const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= ANSWER_MAX_LENGTH) {
+    if (e.target.value.length <= FAQ_ANSWER_MAX) {
       onChange(index, 'answer', e.target.value);
     }
   };
@@ -37,7 +35,7 @@ const FAQItemEditor = ({
             value={faq.question}
             onChange={(e) => onChange(index, 'question', e.target.value)}
             placeholder='질문을 입력해주세요'
-            maxLength={QUESTION_MAX_LENGTH}
+            maxLength={FAQ_QUESTION_MAX}
           />
         </Styled.QuestionContent>
         <Styled.DeleteButton onClick={() => onDelete(index)} type='button'>
@@ -55,8 +53,8 @@ const FAQItemEditor = ({
           />
         </Styled.AnswerCard>
         <Styled.CharCount>
-          질문: {faq.question.length}/{QUESTION_MAX_LENGTH} | 답변:{' '}
-          {faq.answer.length}/{ANSWER_MAX_LENGTH}
+          질문: {faq.question.length}/{FAQ_QUESTION_MAX} | 답변:{' '}
+          {faq.answer.length}/{FAQ_ANSWER_MAX}
         </Styled.CharCount>
       </Styled.AnswerWrapper>
     </Styled.FAQCard>
