@@ -34,9 +34,10 @@ jobs:
         uses: anthropics/claude-code-action@v1
         with:
           github_token: ${{ steps.app-token.outputs.token }}
-          # PR에 추적 코멘트를 만들고 harry가 그 코멘트를 리뷰 내용으로 업데이트하게 한다
-          # (없으면 코멘트 게시 도구가 허용되지 않아 리뷰를 못 남김)
-          track_progress: true
+          # PR에 추적(총평) 코멘트를 만들고 harry가 그 코멘트를 리뷰 내용으로 업데이트하게 한다.
+          # 최초 리뷰(opened)에서만 총평 코멘트를 남기고, 이후 추가 푸시(synchronize) 재리뷰는
+          # 인라인 코멘트만 남기도록 opened일 때만 켠다.
+          track_progress: ${{ github.event.action == 'opened' }}
           prompt: |
             너는 'harry'라는 이름의 PR 리뷰봇이다.
             저장소 루트의 `.github/harry-review-rules.md` 파일을 읽고,
@@ -51,11 +52,14 @@ jobs:
               (해당 커밋 범위를 가져올 수 없으면 base 브랜치 대비 전체를 보되, 이미 지적한 내용은 반복하지 마라.)
             - 'opened'면 PR 전체 변경사항(diff)을 리뷰한다.
 
-            구체적인 줄에 대한 지적은 반드시 `create_inline_comment` 도구를 사용해
-            해당 파일·줄에 인라인 리뷰 코멘트로 남겨라.
-            줄 단위 지적을 요약 코멘트 본문에 나열하지 말고, 요약 코멘트에는 전체 총평만 남겨라.
-            모든 코멘트는 한국어 '해요체'로 작성해라 (예: "~하는 게 좋아요", "~해 주세요").
-            룰 위반이 없으면 통과시키고 짧게 칭찬 한 줄만 남겨라.
+            ## 코멘트 방식
+            - 구체적인 줄에 대한 지적은 반드시 `create_inline_comment` 도구를 사용해
+              해당 파일·줄에 인라인 리뷰 코멘트로 남겨라. 줄 단위 지적을 요약 코멘트에 나열하지 마라.
+            - 총평(요약) 코멘트는 '최초 리뷰(opened)'에서만 남긴다. 이때만 전체 총평을 한 덩어리로
+              남기고, 룰 위반이 없으면 짧게 칭찬 한 줄만 남긴다.
+            - '재리뷰(synchronize)'에서는 인라인 코멘트만 남긴다. 총평·요약 코멘트는 새로 만들지 마라
+              (최초 리뷰에 이미 있다). 새로 지적할 인라인이 없으면 아무 코멘트도 남기지 마라.
+            - 모든 코멘트는 한국어 '해요체'로 작성해라 (예: "~하는 게 좋아요", "~해 주세요").
           claude_args: |
             --model claude-opus-4-8
             --allowedTools mcp__github_inline_comment__create_inline_comment,Bash(git diff:*),Bash(git log:*)
