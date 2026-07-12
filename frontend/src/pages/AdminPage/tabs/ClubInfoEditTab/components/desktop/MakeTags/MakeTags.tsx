@@ -1,5 +1,6 @@
 import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import { CLUB_TAG_MAX } from '@/constants/adminFieldLimits';
+import { CLUB_TAG_PLACEHOLDER } from '@/constants/adminFieldPlaceholders';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './MakeTags.styles';
@@ -50,7 +51,7 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
               value={tag}
               maxLength={CLUB_TAG_MAX}
               onChange={(e) => updateTag(index, e.target.value)}
-              placeholder={`자유 태그 ${index + 1}`}
+              placeholder={CLUB_TAG_PLACEHOLDER}
               aria-label={`자유 태그 ${index + 1}`}
             />
             {tag.length > 0 && (

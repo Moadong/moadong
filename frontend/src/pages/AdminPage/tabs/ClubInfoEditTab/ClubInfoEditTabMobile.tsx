@@ -5,6 +5,10 @@ import {
   CLUB_INTRODUCTION_MAX,
   CLUB_NAME_MAX,
 } from '@/constants/adminFieldLimits';
+import {
+  CLUB_INTRODUCTION_PLACEHOLDER,
+  CLUB_NAME_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
@@ -111,7 +115,7 @@ const ClubInfoEditTabMobile = ({
         <Styled.FormSection>
           <TextField
             label='동아리명'
-            placeholder='동아리명을 입력해주세요.'
+            placeholder={CLUB_NAME_PLACEHOLDER}
             value={clubName}
             maxLength={CLUB_NAME_MAX}
             onChange={setClubName}
@@ -123,7 +127,7 @@ const ClubInfoEditTabMobile = ({
 
           <TextField
             label='동아리소개'
-            placeholder='한줄소개를 입력해주세요.'
+            placeholder={CLUB_INTRODUCTION_PLACEHOLDER}
             value={introduction}
             maxLength={CLUB_INTRODUCTION_MAX}
             onChange={setIntroduction}
