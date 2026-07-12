@@ -10,3 +10,4 @@
 - `snsConfig.ts` - SNS 플랫폼 설정
 - `applicationForm.ts` - 지원서 폼 설정
 - `uploadLimit.ts` - 파일 업로드 제한
+- `adminFieldLimits.ts` - 어드민 탭 텍스트 필드 최대 글자수 (ClubInfo, ClubIntro, Recruit, Account)
