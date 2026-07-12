@@ -1,6 +1,10 @@
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
 import { FAQ_ANSWER_MAX, FAQ_QUESTION_MAX } from '@/constants/adminFieldLimits';
+import {
+  FAQ_ANSWER_PLACEHOLDER,
+  FAQ_QUESTION_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
 import useAutoGrow from '@/hooks/useAutoGrow';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQSection.styles';
@@ -34,7 +38,7 @@ const FAQItemEditor = ({
           <Styled.QuestionInput
             value={faq.question}
             onChange={(e) => onChange(index, 'question', e.target.value)}
-            placeholder='질문을 입력해주세요'
+            placeholder={FAQ_QUESTION_PLACEHOLDER}
             maxLength={FAQ_QUESTION_MAX}
           />
         </Styled.QuestionContent>
@@ -48,7 +52,7 @@ const FAQItemEditor = ({
             ref={answerRef}
             value={faq.answer}
             onChange={handleAnswerChange}
-            placeholder='답변을 입력해주세요'
+            placeholder={FAQ_ANSWER_PLACEHOLDER}
             rows={1}
           />
         </Styled.AnswerCard>

@@ -1,6 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
 import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import { FAQ_ANSWER_MAX, FAQ_QUESTION_MAX } from '@/constants/adminFieldLimits';
+import {
+  FAQ_ANSWER_PLACEHOLDER,
+  FAQ_QUESTION_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
 import useAutoGrow from '@/hooks/useAutoGrow';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQEditor.styles';
@@ -40,7 +44,7 @@ const FAQItemEditor = ({
 
       <Styled.QuestionInput
         ref={inputRef}
-        placeholder='질문을 입력하세요'
+        placeholder={FAQ_QUESTION_PLACEHOLDER}
         value={faq.question}
         onChange={(e) => onUpdateQuestion(faq.id, e.target.value)}
         maxLength={FAQ_QUESTION_MAX}
@@ -48,7 +52,7 @@ const FAQItemEditor = ({
 
       <Styled.AnswerTextArea
         ref={answerRef}
-        placeholder='답변을 입력하세요'
+        placeholder={FAQ_ANSWER_PLACEHOLDER}
         value={faq.answer}
         onChange={(e) => onUpdateAnswer(faq.id, e.target.value)}
         maxLength={FAQ_ANSWER_MAX}

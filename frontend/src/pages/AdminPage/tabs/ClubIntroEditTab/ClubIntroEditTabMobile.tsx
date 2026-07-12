@@ -6,6 +6,12 @@ import {
   IDEAL_CANDIDATE_MAX,
   INTRO_DESCRIPTION_MAX,
 } from '@/constants/adminFieldLimits';
+import {
+  ACTIVITY_DESCRIPTION_PLACEHOLDER,
+  BENEFITS_PLACEHOLDER,
+  IDEAL_CANDIDATE_PLACEHOLDER,
+  INTRO_DESCRIPTION_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
 import useAutoGrow from '@/hooks/useAutoGrow';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
@@ -99,7 +105,7 @@ const ClubIntroEditTabMobile = ({
                 ref={introRef}
                 value={introDescription}
                 onChange={handleIntroChange}
-                placeholder='동아리 소개 문구를 입력해주세요'
+                placeholder={INTRO_DESCRIPTION_PLACEHOLDER}
               />
             </InfoSection>
 
@@ -112,7 +118,7 @@ const ClubIntroEditTabMobile = ({
                 ref={activityRef}
                 value={activityDescription}
                 onChange={handleActivityChange}
-                placeholder='동아리에서 하는 활동 내용을 입력해주세요'
+                placeholder={ACTIVITY_DESCRIPTION_PLACEHOLDER}
               />
             </InfoSection>
 
@@ -127,7 +133,7 @@ const ClubIntroEditTabMobile = ({
                 ref={idealRef}
                 value={idealCandidate.content}
                 onChange={handleIdealChange}
-                placeholder='동아리에 어울리는 사람의 특성을 입력해주세요'
+                placeholder={IDEAL_CANDIDATE_PLACEHOLDER}
               />
             </InfoSection>
 
@@ -140,7 +146,7 @@ const ClubIntroEditTabMobile = ({
                 ref={benefitsRef}
                 value={benefits}
                 onChange={handleBenefitsChange}
-                placeholder='동아리 부원이 누릴 수 있는 혜택을 입력해주세요'
+                placeholder={BENEFITS_PLACEHOLDER}
               />
             </InfoSection>
 
