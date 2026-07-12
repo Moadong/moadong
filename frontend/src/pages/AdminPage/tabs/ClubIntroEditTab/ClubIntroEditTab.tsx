@@ -1,5 +1,17 @@
 import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
+import {
+  ACTIVITY_DESCRIPTION_MAX,
+  BENEFITS_MAX,
+  IDEAL_CANDIDATE_MAX,
+  INTRO_DESCRIPTION_MAX,
+} from '@/constants/adminFieldLimits';
+import {
+  ACTIVITY_DESCRIPTION_PLACEHOLDER,
+  BENEFITS_PLACEHOLDER,
+  IDEAL_CANDIDATE_PLACEHOLDER,
+  INTRO_DESCRIPTION_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import useDevice from '@/hooks/useDevice';
@@ -67,20 +79,20 @@ const ClubIntroEditTab = () => {
           <CustomTextArea
             variant='filled'
             label='동아리를 소개할게요'
-            placeholder='동아리 소개 문구를 입력해주세요'
+            placeholder={INTRO_DESCRIPTION_PLACEHOLDER}
             value={introDescription}
             onChange={(e) => setIntroDescription(e.target.value)}
-            maxLength={200}
+            maxLength={INTRO_DESCRIPTION_MAX}
             showMaxChar={true}
           />
 
           <CustomTextArea
             variant='filled'
             label='이런 활동을 해요'
-            placeholder='동아리에서 하는 활동 내용을 입력해주세요'
+            placeholder={ACTIVITY_DESCRIPTION_PLACEHOLDER}
             value={activityDescription}
             onChange={(e) => setActivityDescription(e.target.value)}
-            maxLength={500}
+            maxLength={ACTIVITY_DESCRIPTION_MAX}
             showMaxChar={true}
           />
 
@@ -89,22 +101,22 @@ const ClubIntroEditTab = () => {
           <CustomTextArea
             variant='filled'
             label='이런 사람이 오면 좋아요'
-            placeholder='동아리에 어울리는 사람의 특성을 입력해주세요'
+            placeholder={IDEAL_CANDIDATE_PLACEHOLDER}
             value={idealCandidate.content}
             onChange={(e) =>
               setIdealCandidate({ ...idealCandidate, content: e.target.value })
             }
-            maxLength={500}
+            maxLength={IDEAL_CANDIDATE_MAX}
             showMaxChar={true}
           />
 
           <CustomTextArea
             variant='filled'
             label='부원이 되면 이런 혜택이 있어요'
-            placeholder='동아리 부원이 누릴 수 있는 혜택을 입력해주세요'
+            placeholder={BENEFITS_PLACEHOLDER}
             value={benefits}
             onChange={(e) => setBenefits(e.target.value)}
-            maxLength={500}
+            maxLength={BENEFITS_MAX}
             showMaxChar={true}
           />
 

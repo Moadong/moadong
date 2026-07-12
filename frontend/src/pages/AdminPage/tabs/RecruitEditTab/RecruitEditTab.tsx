@@ -4,6 +4,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { setYear } from 'date-fns';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
+import { RECRUIT_TARGET_MAX } from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -169,7 +170,7 @@ const RecruitEditTab = () => {
             value={recruitmentTarget}
             onChange={(e) => setRecruitmentTarget(e.target.value)}
             onClear={() => setRecruitmentTarget('')}
-            maxLength={10}
+            maxLength={RECRUIT_TARGET_MAX}
           />
         </ContentSection.Body>
       </ContentSection>
