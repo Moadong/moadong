@@ -17,7 +17,6 @@ import {
   ApplicationFormItem,
   ApplicationFormStatus,
 } from '@/types/application';
-import { groupFormsByActiveStatus } from '@/utils/applicationFormGroup';
 import * as Styled from './ApplicationListTab.styles';
 
 const MAX_INITIAL_ITEMS = 3;
@@ -131,6 +130,10 @@ const ApplicationListTab = () => {
     .flatMap((group) => group.forms)
     .filter((form) => form.status === 'ACTIVE');
 
+  const inactiveForms = formGroups
+    .flatMap((group) => group.forms)
+    .filter((form) => form.status !== 'ACTIVE');
+
   const formsToDisplay = isExpanded
     ? activeForms
     : activeForms.slice(0, MAX_INITIAL_ITEMS);
@@ -203,21 +206,21 @@ const ApplicationListTab = () => {
           새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
         </Styled.AddButton>
       </Styled.Header>
-      {groupFormsByActiveStatus(formGroups).map((group) => (
-        <Styled.ApplicationList key={group.uniqueKeyPrefix}>
+      {inactiveForms.length > 0 && (
+        <Styled.ApplicationList>
           <Styled.ListHeader>
-            <Styled.SemesterTitle>{group.title}</Styled.SemesterTitle>
+            <Styled.SemesterTitle>미게시</Styled.SemesterTitle>
             <Styled.DateHeader>
               <Styled.Separation_Bar />
               최종 수정 날짜
             </Styled.DateHeader>
           </Styled.ListHeader>
-          {group.forms.map((application: ApplicationFormItem) => (
+          {inactiveForms.map((application: ApplicationFormItem) => (
             <ApplicationRowItem
               key={application.id}
               application={application}
-              isActive={application.status === 'ACTIVE'}
-              uniqueKeyPrefix={group.uniqueKeyPrefix}
+              isActive={false}
+              uniqueKeyPrefix='inactivelist'
               openMenuId={openMenuId}
               menuRef={menuRef}
               onEdit={handleGoToEditForm}
@@ -228,7 +231,7 @@ const ApplicationListTab = () => {
             />
           ))}
         </Styled.ApplicationList>
-      ))}
+      )}
     </Styled.Container>
   );
 };
