@@ -1,5 +1,6 @@
 import scrollToTopIcon from '@/assets/images/icons/scroll_to_top_icon.svg';
 import shareFloatingIcon from '@/assets/images/icons/share_floating_icon.svg';
+import useShare from '@/hooks/useShare';
 import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
 import * as Styled from './FloatingButtonGroup.styles';
@@ -7,6 +8,16 @@ import * as Styled from './FloatingButtonGroup.styles';
 export const FloatingButtonGroup = () => {
   const { isTriggered: isScrolledDown, isScrollingUp } = useScrollTrigger();
   const { scrollToTop } = useScrollTo();
+  const { handleShare } = useShare();
+
+  const handlePageShare = async () => {
+    const url = window.location.href;
+    await handleShare({
+      title: document.title,
+      text: url,
+      url,
+    });
+  };
 
   return (
     <Styled.GroupContainer>
@@ -21,6 +32,7 @@ export const FloatingButtonGroup = () => {
       <Styled.FloatingButton
         type='button'
         $isVisible={isScrollingUp}
+        onClick={handlePageShare}
         aria-label='현재 페이지 공유하기'
       >
         <img src={shareFloatingIcon} alt='공유하기' />
