@@ -1,11 +1,13 @@
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
+import { FAQ_ANSWER_MAX, FAQ_QUESTION_MAX } from '@/constants/adminFieldLimits';
+import {
+  FAQ_ANSWER_PLACEHOLDER,
+  FAQ_QUESTION_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
 import useAutoGrow from '@/hooks/useAutoGrow';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQSection.styles';
-
-const QUESTION_MAX_LENGTH = 100;
-const ANSWER_MAX_LENGTH = 300;
 
 interface FAQItemEditorProps {
   faq: FAQ;
@@ -23,7 +25,7 @@ const FAQItemEditor = ({
   const answerRef = useAutoGrow(faq.answer);
 
   const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= ANSWER_MAX_LENGTH) {
+    if (e.target.value.length <= FAQ_ANSWER_MAX) {
       onChange(index, 'answer', e.target.value);
     }
   };
@@ -36,28 +38,29 @@ const FAQItemEditor = ({
           <Styled.QuestionInput
             value={faq.question}
             onChange={(e) => onChange(index, 'question', e.target.value)}
-            placeholder='질문을 입력해주세요'
-            maxLength={QUESTION_MAX_LENGTH}
+            placeholder={FAQ_QUESTION_PLACEHOLDER}
+            maxLength={FAQ_QUESTION_MAX}
           />
         </Styled.QuestionContent>
         <Styled.DeleteButton onClick={() => onDelete(index)} type='button'>
           <img src={closeCircleIcon} alt='삭제' />
         </Styled.DeleteButton>
       </Styled.QuestionRow>
-      <Styled.AnswerCard>
-        <Styled.AnswerTextarea
-          ref={answerRef}
-          value={faq.answer}
-          onChange={handleAnswerChange}
-          placeholder='답변을 입력해주세요'
-          rows={1}
-        />
-        {faq.answer.length > 0 && (
-          <Styled.CharCount>
-            {faq.answer.length}/{ANSWER_MAX_LENGTH}
-          </Styled.CharCount>
-        )}
-      </Styled.AnswerCard>
+      <Styled.AnswerWrapper>
+        <Styled.AnswerCard>
+          <Styled.AnswerTextarea
+            ref={answerRef}
+            value={faq.answer}
+            onChange={handleAnswerChange}
+            placeholder={FAQ_ANSWER_PLACEHOLDER}
+            rows={1}
+          />
+        </Styled.AnswerCard>
+        <Styled.CharCount>
+          질문: {faq.question.length}/{FAQ_QUESTION_MAX} | 답변:{' '}
+          {faq.answer.length}/{FAQ_ANSWER_MAX}
+        </Styled.CharCount>
+      </Styled.AnswerWrapper>
     </Styled.FAQCard>
   );
 };

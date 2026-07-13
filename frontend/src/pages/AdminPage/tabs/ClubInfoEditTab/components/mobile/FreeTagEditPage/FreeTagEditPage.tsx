@@ -1,5 +1,7 @@
 import { useState } from 'react';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import { CLUB_TAG_MAX } from '@/constants/adminFieldLimits';
+import { CLUB_TAG_PLACEHOLDER } from '@/constants/adminFieldPlaceholders';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import EditField from '../EditField/EditField';
 import * as Styled from './FreeTagEditPage.styles';
@@ -47,8 +49,8 @@ const FreeTagEditPage = ({
                 </Styled.HashSymbol>
                 <Styled.TagInput
                   value={tag}
-                  maxLength={5}
-                  placeholder='태그추가'
+                  maxLength={CLUB_TAG_MAX}
+                  placeholder={CLUB_TAG_PLACEHOLDER}
                   onChange={(e) => updateTag(index, e.target.value)}
                 />
               </Styled.TagInputRow>

@@ -10,9 +10,7 @@ export const SaveButtonArea = styled.div`
   transform: translateX(-50%);
   width: 100%;
   max-width: 500px;
-  padding: 10px 24px calc(20px + env(safe-area-inset-bottom));
-  background: ${colors.base.white};
-  box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+  padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
   z-index: ${Z_INDEX.clubDetailFooter};
 
   ${media.mobile} {
@@ -25,6 +23,7 @@ export const SaveButtonArea = styled.div`
     width: 100%;
     height: 50px;
     border-radius: 10px;
+    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
   }
 
   button:disabled {
