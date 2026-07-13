@@ -27,26 +27,34 @@ const useTrackPageView = (
     isTracked.current = false;
     startTime.current = Date.now();
 
-    mixpanel.track(`${pageName} Visited`, {
-      url: window.location.href,
-      timestamp: startTime.current,
-      referrer: document.referrer || 'direct',
-      clubName: clubNameRef.current,
-      recruitmentStatus: recruitmentStatusRef.current,
-    });
+    try {
+      mixpanel.track(`${pageName} Visited`, {
+        url: window.location.href,
+        timestamp: startTime.current,
+        referrer: document.referrer || 'direct',
+        clubName: clubNameRef.current,
+        recruitmentStatus: recruitmentStatusRef.current,
+      });
+    } catch (error) {
+      console.warn('Failed to track page view:', pageName, error);
+    }
 
     const trackPageDuration = () => {
       if (isTracked.current) return;
       isTracked.current = true;
 
       const duration = Date.now() - startTime.current;
-      mixpanel.track(`${pageName} Duration`, {
-        url: window.location.href,
-        duration: duration,
-        duration_seconds: Math.round(duration / 1000),
-        clubName: clubNameRef.current,
-        recruitmentStatus: recruitmentStatusRef.current,
-      });
+      try {
+        mixpanel.track(`${pageName} Duration`, {
+          url: window.location.href,
+          duration: duration,
+          duration_seconds: Math.round(duration / 1000),
+          clubName: clubNameRef.current,
+          recruitmentStatus: recruitmentStatusRef.current,
+        });
+      } catch (error) {
+        console.warn('Failed to track page duration:', pageName, error);
+      }
     };
 
     window.addEventListener('beforeunload', trackPageDuration);
