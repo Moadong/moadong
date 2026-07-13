@@ -5,14 +5,14 @@ import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
 import * as Styled from './FloatingButtonGroup.styles';
 
 export const FloatingButtonGroup = () => {
-  const { isTriggered, isScrollingUp } = useScrollTrigger();
+  const { isTriggered: isScrolledDown, isScrollingUp } = useScrollTrigger();
   const { scrollToTop } = useScrollTo();
 
   return (
     <Styled.GroupContainer>
       <Styled.FloatingButton
         type='button'
-        $isVisible={isTriggered}
+        $isVisible={isScrolledDown}
         onClick={() => scrollToTop()}
         aria-label='위로 이동하기'
       >
