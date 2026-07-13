@@ -21,6 +21,20 @@ import {
 
 const MAX_INITIAL_ITEMS = 3;
 
+const ActiveListBody = styled(Styled.ApplicationList)`
+  border-top-left-radius: 0;
+`;
+const ActiveApplicationRow = styled(ApplicationRowItem)<{
+  $hoverColor: string;
+}>`
+  &:hover {
+    background-color: ${({ $hoverColor }) => $hoverColor};
+    &:first-child {
+      border-top-right-radius: 20px;
+    }
+  }
+`;
+
 interface ApplicationFormListProps {
   /** 지원서 행 클릭/편집 시 이동 (탭마다 대상 라우트가 다름) */
   onEdit: (applicationFormId: string) => void;
@@ -160,18 +174,6 @@ const ApplicationFormList = ({
   const showExpandButton = activeForms.length > MAX_INITIAL_ITEMS;
   const overCount = activeForms.length - MAX_INITIAL_ITEMS;
 
-  const ActiveListBody = styled(Styled.ApplicationList)`
-    border-top-left-radius: 0;
-  `;
-  const ActiveApplicationRow = styled(ApplicationRowItem)`
-    &:hover {
-      background-color: ${rowHoverColor};
-      &:first-child {
-        border-top-right-radius: 20px;
-      }
-    }
-  `;
-
   return (
     <Styled.Container>
       <div style={{ marginBottom: '24px' }}>
@@ -186,6 +188,7 @@ const ApplicationFormList = ({
             {formsToDisplay.map((application: ApplicationFormItem) => (
               <ActiveApplicationRow
                 key={application.id}
+                $hoverColor={rowHoverColor}
                 isActive={true}
                 application={application}
                 uniqueKeyPrefix='activelist'
