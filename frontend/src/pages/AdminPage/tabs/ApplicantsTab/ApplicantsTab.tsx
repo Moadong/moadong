@@ -209,7 +209,7 @@ const ApplicantsTab = () => {
 
   const updateAllApplicants = (status: ApplicationStatus) => {
     updateDetailApplicants(
-      applicantsData!.applicants
+      (applicantsData?.applicants ?? [])
         .filter((applicant) => checkedItem.get(applicant.id))
         .map((applicant) => ({
           applicantId: applicant.id,
