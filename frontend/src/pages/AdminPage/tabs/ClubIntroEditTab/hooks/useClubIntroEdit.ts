@@ -12,6 +12,7 @@ const useClubIntroEdit = () => {
   const { mutate: updateClub } = useUpdateClubDetail();
   const queryClient = useQueryClient();
 
+  const [loadedClubId, setLoadedClubId] = useState<string | null>(null);
   const [introDescription, setIntroDescription] = useState('');
   const [activityDescription, setActivityDescription] = useState('');
   const [awards, setAwards] = useState<Award[]>([]);
@@ -32,7 +33,7 @@ const useClubIntroEdit = () => {
   });
 
   useEffect(() => {
-    if (clubDetail?.description) {
+    if (clubDetail?.description && clubDetail.id !== loadedClubId) {
       const desc = clubDetail.description;
       const initial = {
         introDescription: desc.introDescription || '',
@@ -49,8 +50,9 @@ const useClubIntroEdit = () => {
       setBenefits(initial.benefits);
       setFaqs(initial.faqs);
       setInitialState(initial);
+      setLoadedClubId(clubDetail.id);
     }
-  }, [clubDetail]);
+  }, [clubDetail, loadedClubId]);
 
   const isDirty =
     introDescription !== initialState.introDescription ||
@@ -132,6 +134,14 @@ const useClubIntroEdit = () => {
       {
         onSuccess: () => {
           alert('동아리 상세 정보가 성공적으로 수정되었습니다.');
+          setInitialState({
+            introDescription,
+            activityDescription,
+            awards,
+            idealCandidate,
+            benefits,
+            faqs,
+          });
           queryClient.invalidateQueries({
             queryKey: ['clubDetail', clubDetail.id],
           });

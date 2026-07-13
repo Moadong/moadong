@@ -1,8 +1,11 @@
 import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
+import { Z_INDEX } from '@/styles/zIndex';
 
 export const Container = styled.header`
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: ${Z_INDEX.header};
   height: 48px;
   background: ${colors.base.white};
   border-bottom: 1px solid ${colors.gray[300]};

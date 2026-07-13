@@ -1,6 +1,19 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import {
+  ACTIVITY_DESCRIPTION_MAX,
+  BENEFITS_MAX,
+  IDEAL_CANDIDATE_MAX,
+  INTRO_DESCRIPTION_MAX,
+} from '@/constants/adminFieldLimits';
+import {
+  ACTIVITY_DESCRIPTION_PLACEHOLDER,
+  BENEFITS_PLACEHOLDER,
+  IDEAL_CANDIDATE_PLACEHOLDER,
+  INTRO_DESCRIPTION_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
+import useAutoGrow from '@/hooks/useAutoGrow';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTabMobile.styles';
@@ -29,11 +42,6 @@ interface ClubIntroEditTabMobileProps {
 
 type ActivePage = 'main' | 'award';
 
-const INTRO_MAX = 300;
-const ACTIVITY_MAX = 300;
-const IDEAL_MAX = 300;
-const BENEFITS_MAX = 300;
-
 const ClubIntroEditTabMobile = ({
   introDescription,
   setIntroDescription,
@@ -53,17 +61,34 @@ const ClubIntroEditTabMobile = ({
 }: ClubIntroEditTabMobileProps) => {
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState<ActivePage>('main');
+  const introRef = useAutoGrow(introDescription);
+  const activityRef = useAutoGrow(activityDescription);
+  const idealRef = useAutoGrow(idealCandidate.content);
+  const benefitsRef = useAutoGrow(benefits);
 
-  if (activePage === 'award') {
-    return (
-      <AwardEditPage
-        initialAwards={awards}
-        onSave={setAwards}
-        onSaveToServer={handleUpdateClubWithAwards}
-        onBack={() => setActivePage('main')}
-      />
-    );
-  }
+  const handleIntroChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= INTRO_DESCRIPTION_MAX) {
+      setIntroDescription(e.target.value);
+    }
+  };
+
+  const handleActivityChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= ACTIVITY_DESCRIPTION_MAX) {
+      setActivityDescription(e.target.value);
+    }
+  };
+
+  const handleIdealChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= IDEAL_CANDIDATE_MAX) {
+      setIdealCandidate({ ...idealCandidate, content: e.target.value });
+    }
+  };
+
+  const handleBenefitsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    if (e.target.value.length <= BENEFITS_MAX) {
+      setBenefits(e.target.value);
+    }
+  };
 
   return (
     <>
@@ -82,33 +107,27 @@ const ClubIntroEditTabMobile = ({
           <Styled.FieldList>
             <InfoSection
               label='동아리를 소개할게요'
-              maxLength={INTRO_MAX}
+              maxLength={INTRO_DESCRIPTION_MAX}
               currentLength={introDescription.length}
             >
               <Styled.TextArea
+                ref={introRef}
                 value={introDescription}
-                onChange={(e) => {
-                  if (e.target.value.length <= INTRO_MAX) {
-                    setIntroDescription(e.target.value);
-                  }
-                }}
-                placeholder='동아리 소개 문구를 입력해주세요'
+                onChange={handleIntroChange}
+                placeholder={INTRO_DESCRIPTION_PLACEHOLDER}
               />
             </InfoSection>
 
             <InfoSection
               label='이런 활동을 해요'
-              maxLength={ACTIVITY_MAX}
+              maxLength={ACTIVITY_DESCRIPTION_MAX}
               currentLength={activityDescription.length}
             >
               <Styled.TextArea
+                ref={activityRef}
                 value={activityDescription}
-                onChange={(e) => {
-                  if (e.target.value.length <= ACTIVITY_MAX) {
-                    setActivityDescription(e.target.value);
-                  }
-                }}
-                placeholder='동아리에서 하는 활동 내용을 입력해주세요'
+                onChange={handleActivityChange}
+                placeholder={ACTIVITY_DESCRIPTION_PLACEHOLDER}
               />
             </InfoSection>
 
@@ -119,20 +138,14 @@ const ClubIntroEditTabMobile = ({
 
             <InfoSection
               label='이런 사람이 오면 좋아요'
-              maxLength={IDEAL_MAX}
+              maxLength={IDEAL_CANDIDATE_MAX}
               currentLength={idealCandidate.content.length}
             >
               <Styled.TextArea
+                ref={idealRef}
                 value={idealCandidate.content}
-                onChange={(e) => {
-                  if (e.target.value.length <= IDEAL_MAX) {
-                    setIdealCandidate({
-                      ...idealCandidate,
-                      content: e.target.value,
-                    });
-                  }
-                }}
-                placeholder='동아리에 어울리는 사람의 특성을 입력해주세요'
+                onChange={handleIdealChange}
+                placeholder={IDEAL_CANDIDATE_PLACEHOLDER}
               />
             </InfoSection>
 
@@ -142,13 +155,10 @@ const ClubIntroEditTabMobile = ({
               currentLength={benefits.length}
             >
               <Styled.TextArea
+                ref={benefitsRef}
                 value={benefits}
-                onChange={(e) => {
-                  if (e.target.value.length <= BENEFITS_MAX) {
-                    setBenefits(e.target.value);
-                  }
-                }}
-                placeholder='동아리 부원이 누릴 수 있는 혜택을 입력해주세요'
+                onChange={handleBenefitsChange}
+                placeholder={BENEFITS_PLACEHOLDER}
               />
             </InfoSection>
 

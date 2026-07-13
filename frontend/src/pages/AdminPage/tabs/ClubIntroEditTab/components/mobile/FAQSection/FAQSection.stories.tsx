@@ -4,7 +4,7 @@ import { FAQ } from '@/types/club';
 import FAQSection from './FAQSection';
 
 const meta = {
-  title: 'Pages/AdminPage/tabs/ClubIntroEditTab/mobile/FAQSection',
+  title: 'Pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection',
   component: FAQSection,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

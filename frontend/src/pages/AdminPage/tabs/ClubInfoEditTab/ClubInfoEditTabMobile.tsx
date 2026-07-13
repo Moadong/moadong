@@ -1,19 +1,27 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import {
+  CLUB_INTRODUCTION_MAX,
+  CLUB_NAME_MAX,
+} from '@/constants/adminFieldLimits';
+import {
+  CLUB_INTRODUCTION_PLACEHOLDER,
+  CLUB_NAME_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
-import NavField from '@/pages/AdminPage/components/editFields/NavField/NavField';
-import TextField from '@/pages/AdminPage/components/editFields/TextField/TextField';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
 import { ClubDetail, SNSPlatform } from '@/types/club';
 import * as Styled from './ClubInfoEditTabMobile.styles';
+import EditField from './components/mobile/EditField/EditField';
 import FreeTagEditPage from './components/mobile/FreeTagEditPage/FreeTagEditPage';
 import LinkEditPage from './components/mobile/LinkEditPage/LinkEditPage';
 import MobileBannerSection from './components/mobile/MobileBannerSection/MobileBannerSection';
+import NavField from './components/mobile/NavField/NavField';
+import TextField from './components/mobile/TextField/TextField';
 import { categories } from './hooks/useClubInfoEdit';
 
 interface ClubInfoEditTabMobileProps {
@@ -107,9 +115,9 @@ const ClubInfoEditTabMobile = ({
         <Styled.FormSection>
           <TextField
             label='동아리명'
-            placeholder='동아리명을 입력해주세요.'
+            placeholder={CLUB_NAME_PLACEHOLDER}
             value={clubName}
-            maxLength={20}
+            maxLength={CLUB_NAME_MAX}
             onChange={setClubName}
             onClear={() => {
               trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED);
@@ -119,9 +127,9 @@ const ClubInfoEditTabMobile = ({
 
           <TextField
             label='동아리소개'
-            placeholder='한줄소개를 입력해주세요.'
+            placeholder={CLUB_INTRODUCTION_PLACEHOLDER}
             value={introduction}
-            maxLength={20}
+            maxLength={CLUB_INTRODUCTION_MAX}
             onChange={setIntroduction}
             onClear={() => {
               trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED);
