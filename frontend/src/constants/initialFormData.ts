@@ -37,7 +37,6 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
   },
   formMode: ApplicationFormMode.INTERNAL,
   externalApplicationUrl: '',
-  active: 'unpublished',
 };
 
 export default INITIAL_FORM_DATA;

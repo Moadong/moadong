@@ -143,7 +143,6 @@ const ApplicationEditTab = () => {
       description: formData.description,
       semesterYear: formData.semesterYear,
       formMode: applicationFormMode,
-      active: formData.active ?? '',
     };
 
     if (applicationFormMode === ApplicationFormMode.INTERNAL) {

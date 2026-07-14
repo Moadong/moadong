@@ -54,8 +54,9 @@ export interface ApplicationFormData {
   semesterYear: number;
   formMode?: ApplicationFormMode;
   externalApplicationUrl?: string;
-  active: 'active' | 'published' | 'unpublished';
 }
+
+export type ApplicationFormStatus = 'ACTIVE' | 'INACTIVE';
 
 export interface AnswerItem {
   id: number;
@@ -71,7 +72,7 @@ export interface ApplicationFormItem {
   id: ApplicationFormId;
   title: string;
   editedAt: string;
-  status: 'ACTIVE' | 'PUBLISHED' | 'UNPUBLISHED';
+  status: ApplicationFormStatus;
 }
 
 export interface ApplicationFormGroup {

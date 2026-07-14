@@ -5,6 +5,7 @@ import {
   ApplicationForm,
   ApplicationFormData,
   ApplicationFormGroup,
+  ApplicationFormStatus,
 } from '@/types/application';
 import { asApplicationFormId } from '@/types/branded';
 import { secureFetch } from './auth/secureFetch';
@@ -141,9 +142,9 @@ export const updateApplication = async (
 
 export const updateApplicationStatus = async (
   applicationFormId: string,
-  currentStatus: string,
+  currentStatus: ApplicationFormStatus,
 ) => {
-  const newStatus = currentStatus === 'ACTIVE' ? false : true;
+  const newStatus = currentStatus === 'INACTIVE';
 
   const response = await secureFetch(
     `${API_BASE_URL}/api/club/application/${applicationFormId}`,
