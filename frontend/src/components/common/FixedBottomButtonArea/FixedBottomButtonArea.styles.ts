@@ -5,9 +5,12 @@ import { setTypography, typography } from '@/styles/theme/typography';
 import { Z_INDEX } from '@/styles/zIndex';
 
 export const ButtonArea = styled.div`
+  position: sticky;
+  bottom: 0;
   display: flex;
   justify-content: center;
   padding: 10px 20px 20px;
+  z-index: ${Z_INDEX.clubDetailFooter};
 
   button {
     width: 517px;
