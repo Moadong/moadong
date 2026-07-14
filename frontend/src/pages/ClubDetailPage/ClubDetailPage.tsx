@@ -22,7 +22,7 @@ import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/C
 import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
-import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
+import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 
 export const TAB_TYPE = {
@@ -250,11 +250,7 @@ const ClubDetailPage = () => {
         />
       )}
       {isInAppWebView() ? <Styled.AppSpacer /> : <Footer />}
-      <ClubDetailFooter
-        recruitmentStart={clubDetail.recruitmentStart}
-        recruitmentEnd={clubDetail.recruitmentEnd}
-        recruitmentStatus={clubDetail.recruitmentStatus}
-      />
+      <ClubApplyButton />
     </>
   );
 };
