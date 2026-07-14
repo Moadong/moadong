@@ -2,11 +2,10 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getApplication, getApplicationOptions } from '@/apis/application';
 import ApplicationSelectModal from '@/components/application/modals/ApplicationSelectModal';
-import MobileButtonArea from '@/components/common/MobileButtonArea/MobileButtonArea';
+import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
-import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
 import * as Styled from './ClubApplyButton.styles';
@@ -24,7 +23,6 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const handleLink = useNavigator();
   const trackEvent = useMixpanelTrack();
   const { data: clubDetail } = useGetClubDetail((clubName ?? clubId) || '');
-  const { isMobile, isTablet } = useDevice();
 
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [applicationOptions, setApplicationOptions] = useState<
@@ -114,40 +112,21 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
     );
   };
 
-  if (isMobile || isTablet) {
-    return (
-      <>
-        <MobileButtonArea
-          onClick={handleApplyButtonClick}
-          disabled={isRecruitmentUpcoming || isRecruitmentClosed}
-        >
-          {renderButtonContent()}
-        </MobileButtonArea>
-        <ApplicationSelectModal
-          isOpen={isApplicationModalOpen}
-          onClose={() => setIsApplicationModalOpen(false)}
-          applicationOptions={applicationOptions}
-          onOptionSelect={handleSelectApplicationOption}
-        />
-      </>
-    );
-  }
-
   return (
-    <Styled.ApplyButtonContainer>
-      <Styled.ApplyButton
-        disabled={isRecruitmentUpcoming || isRecruitmentClosed}
+    <>
+      <FixedBottomButtonArea
         onClick={handleApplyButtonClick}
+        disabled={isRecruitmentUpcoming || isRecruitmentClosed}
       >
         {renderButtonContent()}
-      </Styled.ApplyButton>
+      </FixedBottomButtonArea>
       <ApplicationSelectModal
         isOpen={isApplicationModalOpen}
         onClose={() => setIsApplicationModalOpen(false)}
         applicationOptions={applicationOptions}
         onOptionSelect={handleSelectApplicationOption}
       />
-    </Styled.ApplyButtonContainer>
+    </>
   );
 };
 

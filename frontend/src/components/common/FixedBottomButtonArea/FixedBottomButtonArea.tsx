@@ -1,18 +1,18 @@
 import type { ReactNode } from 'react';
 import Button from '@/components/common/Button/Button';
-import * as Styled from './MobileButtonArea.styles';
+import * as Styled from './FixedBottomButtonArea.styles';
 
-interface MobileButtonAreaProps {
+interface FixedBottomButtonAreaProps {
   onClick: () => void;
   disabled?: boolean;
   children: ReactNode;
 }
 
-const MobileButtonArea = ({
+const FixedBottomButtonArea = ({
   onClick,
   disabled,
   children,
-}: MobileButtonAreaProps) => (
+}: FixedBottomButtonAreaProps) => (
   <Styled.ButtonArea>
     <Button onClick={onClick} disabled={disabled}>
       {children}
@@ -20,4 +20,4 @@ const MobileButtonArea = ({
   </Styled.ButtonArea>
 );
 
-export default MobileButtonArea;
+export default FixedBottomButtonArea;
