@@ -105,7 +105,6 @@ const LegacyClubDetailPage = () => {
         recruitmentStart={clubDetail.recruitmentStart}
         recruitmentEnd={clubDetail.recruitmentEnd}
         recruitmentStatus={clubDetail.recruitmentStatus}
-        hideShareButtonOnMobile
       />
     </>
   );
