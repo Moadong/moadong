@@ -3,7 +3,7 @@ import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { Z_INDEX } from '@/styles/zIndex';
 
-export const SaveButtonArea = styled.div`
+export const ButtonArea = styled.div`
   position: fixed;
   bottom: 0;
   left: 50%;

@@ -1,7 +1,7 @@
 import { useState } from 'react';
+import MobileButtonArea from '@/components/common/MobileButtonArea/MobileButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { SNS_CONFIG } from '@/constants/snsConfig';
-import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { validateSocialLink } from '@/utils/validateSocialLink';
 import * as Styled from './LinkEditPage.styles';
 import LinkField from './LinkField';
@@ -73,7 +73,9 @@ const LinkEditPage = ({
           />
         </Styled.Content>
       </Styled.Container>
-      <MobileSaveButtonArea onClick={handleSave} disabled={!isDirty} />
+      <MobileButtonArea onClick={handleSave} disabled={!isDirty}>
+        저장하기
+      </MobileButtonArea>
     </>
   );
 };

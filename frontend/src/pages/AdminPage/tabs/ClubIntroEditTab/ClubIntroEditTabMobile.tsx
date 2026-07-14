@@ -1,4 +1,5 @@
 import { useNavigate } from 'react-router-dom';
+import MobileButtonArea from '@/components/common/MobileButtonArea/MobileButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
   ACTIVITY_DESCRIPTION_MAX,
@@ -13,7 +14,6 @@ import {
   INTRO_DESCRIPTION_PLACEHOLDER,
 } from '@/constants/adminFieldPlaceholders';
 import useAutoGrow from '@/hooks/useAutoGrow';
-import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTabMobile.styles';
 import AwardSection from './components/mobile/AwardSection/AwardSection';
@@ -155,7 +155,9 @@ const ClubIntroEditTabMobile = ({
         </Styled.FormSection>
       </Styled.MobileContainer>
 
-      <MobileSaveButtonArea onClick={handleUpdateClub} disabled={!isDirty} />
+      <MobileButtonArea onClick={handleUpdateClub} disabled={!isDirty}>
+        저장하기
+      </MobileButtonArea>
     </>
   );
 };
