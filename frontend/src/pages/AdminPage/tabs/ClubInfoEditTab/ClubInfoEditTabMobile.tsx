@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import MobileButtonArea from '@/components/common/MobileButtonArea/MobileButtonArea';
+import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
   CLUB_INTRODUCTION_MAX,
@@ -186,9 +186,9 @@ const ClubInfoEditTabMobile = ({
         </Styled.FormSection>
       </Styled.MobileContainer>
 
-      <MobileButtonArea onClick={handleUpdateClub} disabled={!isDirty}>
+      <FixedBottomButtonArea onClick={handleUpdateClub} disabled={!isDirty}>
         저장하기
-      </MobileButtonArea>
+      </FixedBottomButtonArea>
     </>
   );
 };

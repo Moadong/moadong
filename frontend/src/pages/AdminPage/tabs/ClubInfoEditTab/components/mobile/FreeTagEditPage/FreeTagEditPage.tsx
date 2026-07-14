@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import MobileButtonArea from '@/components/common/MobileButtonArea/MobileButtonArea';
+import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { CLUB_TAG_MAX } from '@/constants/adminFieldLimits';
 import { CLUB_TAG_PLACEHOLDER } from '@/constants/adminFieldPlaceholders';
@@ -58,9 +58,9 @@ const FreeTagEditPage = ({
           ))}
         </Styled.Content>
       </Styled.Container>
-      <MobileButtonArea onClick={handleSave} disabled={!isDirty}>
+      <FixedBottomButtonArea onClick={handleSave} disabled={!isDirty}>
         저장하기
-      </MobileButtonArea>
+      </FixedBottomButtonArea>
     </>
   );
 };
