@@ -1,8 +1,8 @@
 import scrollToTopIcon from '@/assets/images/icons/scroll_to_top_icon.svg';
 import shareFloatingIcon from '@/assets/images/icons/share_floating_icon.svg';
-import useShare from '@/hooks/useShare';
 import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
+import useShare from '@/hooks/useShare';
 import * as Styled from './FloatingButtonGroup.styles';
 
 export const FloatingButtonGroup = () => {

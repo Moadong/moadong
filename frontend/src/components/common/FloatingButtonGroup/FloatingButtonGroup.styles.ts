@@ -4,7 +4,7 @@ import { Z_INDEX } from '@/styles/zIndex';
 export const GroupContainer = styled.div`
   position: fixed;
   right: 0;
-  bottom: 80px;
+  bottom: 100px;
   z-index: ${Z_INDEX.floatingButton};
   display: flex;
   flex-direction: column;
