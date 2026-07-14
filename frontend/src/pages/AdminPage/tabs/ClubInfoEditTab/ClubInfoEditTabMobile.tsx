@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import MobileButtonArea from '@/components/common/MobileButtonArea/MobileButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
   CLUB_INTRODUCTION_MAX,
@@ -11,7 +12,6 @@ import {
 } from '@/constants/adminFieldPlaceholders';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
 import { ClubDetail, SNSPlatform } from '@/types/club';
@@ -186,7 +186,9 @@ const ClubInfoEditTabMobile = ({
         </Styled.FormSection>
       </Styled.MobileContainer>
 
-      <MobileSaveButtonArea onClick={handleUpdateClub} disabled={!isDirty} />
+      <MobileButtonArea onClick={handleUpdateClub} disabled={!isDirty}>
+        저장하기
+      </MobileButtonArea>
     </>
   );
 };
