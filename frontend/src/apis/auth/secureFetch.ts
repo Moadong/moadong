@@ -1,4 +1,5 @@
 import { refreshAccessToken } from '@/apis/auth/refreshAccessToken';
+import { fetchWithTimeout } from '@/apis/utils/fetchWithTimeout';
 
 export const secureFetch = async (
   input: RequestInfo,
@@ -7,7 +8,7 @@ export const secureFetch = async (
   const accessToken = localStorage.getItem('accessToken');
 
   // 1차 요청 시도
-  let response = await fetch(input, {
+  let response = await fetchWithTimeout(input, {
     ...init,
     headers: {
       ...(init?.headers || {}),
@@ -22,7 +23,7 @@ export const secureFetch = async (
       const newAccessToken = await refreshAccessToken();
       localStorage.setItem('accessToken', newAccessToken);
 
-      response = await fetch(input, {
+      response = await fetchWithTimeout(input, {
         ...init,
         headers: {
           ...(init?.headers || {}),

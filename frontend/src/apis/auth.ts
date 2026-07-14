@@ -1,6 +1,7 @@
 import API_BASE_URL from '@/constants/api';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
+import { fetchWithTimeout } from './utils/fetchWithTimeout';
 
 interface LoginResponseData {
   accessToken: string;
@@ -16,7 +17,7 @@ export const login = async (
   userId: string,
   password: string,
 ): Promise<LoginResponseData | undefined> => {
-  const response = await fetch(`${API_BASE_URL}/auth/user/login`, {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/auth/user/login`, {
     method: 'POST',
     credentials: 'include',
     headers: {
@@ -37,7 +38,7 @@ export const logout = async (): Promise<void> => {
     return;
   }
 
-  const response = await fetch(`${API_BASE_URL}/auth/user/logout`, {
+  const response = await fetchWithTimeout(`${API_BASE_URL}/auth/user/logout`, {
     method: 'GET',
     credentials: 'include',
   });

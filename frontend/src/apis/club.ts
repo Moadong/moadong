@@ -2,9 +2,10 @@ import API_BASE_URL from '@/constants/api';
 import { ClubCalendarEvent, ClubDescription, ClubDetail } from '@/types/club';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
+import { fetchWithTimeout } from './utils/fetchWithTimeout';
 
 export const getClubDetail = async (clubId: string): Promise<ClubDetail> => {
-  const response = await fetch(`${API_BASE_URL}/api/club/${clubId}`);
+  const response = await fetchWithTimeout(`${API_BASE_URL}/api/club/${clubId}`);
   const data = await handleResponse<{ club: ClubDetail }>(
     response,
     '클럽 정보를 불러오는데 실패했습니다.',
@@ -30,7 +31,7 @@ export const getClubList = async (
   });
 
   url.search = params.toString();
-  const response = await fetch(url);
+  const response = await fetchWithTimeout(url);
   const data = await handleResponse<{
     clubs: ClubDetail[];
     totalCount: number;
@@ -49,7 +50,7 @@ export const getClubList = async (
 export const getClubCalendarEvents = async (
   clubId: string,
 ): Promise<ClubCalendarEvent[]> => {
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `${API_BASE_URL}/api/club/${clubId}/calendar-events`,
   );
   const data = await handleResponse<{
