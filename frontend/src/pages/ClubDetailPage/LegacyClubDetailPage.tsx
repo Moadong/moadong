@@ -11,7 +11,7 @@ import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import * as Styled from './ClubDetailPage.styles';
-import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
+import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
 
 export const TAB_TYPE = {
   INTRO: 'intro',
@@ -101,11 +101,7 @@ const LegacyClubDetailPage = () => {
         </Styled.ContentWrapper>
       </Styled.Container>
       <Footer />
-      <ClubDetailFooter
-        recruitmentStart={clubDetail.recruitmentStart}
-        recruitmentEnd={clubDetail.recruitmentEnd}
-        recruitmentStatus={clubDetail.recruitmentStatus}
-      />
+      <ClubApplyButton />
     </>
   );
 };

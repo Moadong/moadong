@@ -8,13 +8,11 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import useNavigator from '@/hooks/useNavigator';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
+import getDeadlineText from '@/utils/getDeadLineText';
+import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import * as Styled from './ClubApplyButton.styles';
 
-interface ClubApplyButtonProps {
-  deadlineText?: string;
-}
-
-const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
+const ClubApplyButton = () => {
   const { clubId, clubName } = useParams<{
     clubId: string;
     clubName: string;
@@ -93,6 +91,12 @@ const ClubApplyButton = ({ deadlineText }: ClubApplyButtonProps) => {
   const isRecruitmentClosed = recruitmentStatus === 'CLOSED';
   const isRecruitmentUpcoming = recruitmentStatus === 'UPCOMING';
   const isAlwaysRecruiting = recruitmentStatus === 'ALWAYS';
+
+  const deadlineText = getDeadlineText(
+    recruitmentDateParser(clubDetail.recruitmentStart),
+    recruitmentDateParser(clubDetail.recruitmentEnd),
+    recruitmentStatus,
+  );
 
   const renderButtonContent = () => {
     if (isRecruitmentClosed || isRecruitmentUpcoming) {
