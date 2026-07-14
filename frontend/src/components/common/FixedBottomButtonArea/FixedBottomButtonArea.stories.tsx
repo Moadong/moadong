@@ -1,3 +1,4 @@
+import React from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import FixedBottomButtonArea from './FixedBottomButtonArea';
 
@@ -7,6 +8,14 @@ const meta = {
   parameters: {
     layout: 'fullscreen',
   },
+  decorators: [
+    (Story: React.ComponentType) => (
+      <div style={{ minHeight: '100vh' }}>
+        <div style={{ height: 'calc(100vh - 80px)' }} />
+        <Story />
+      </div>
+    ),
+  ],
   tags: ['autodocs'],
   argTypes: {
     children: {
