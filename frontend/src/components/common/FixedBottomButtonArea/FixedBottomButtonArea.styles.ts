@@ -5,15 +5,9 @@ import { setTypography, typography } from '@/styles/theme/typography';
 import { Z_INDEX } from '@/styles/zIndex';
 
 export const ButtonArea = styled.div`
-  position: fixed;
-  bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
-  width: 100%;
-  padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
-  z-index: ${Z_INDEX.clubDetailFooter};
   display: flex;
   justify-content: center;
+  padding: 10px 20px 20px;
 
   button {
     width: 517px;
@@ -25,8 +19,12 @@ export const ButtonArea = styled.div`
   }
 
   ${media.tablet} {
+    position: fixed;
+    bottom: 0;
     left: 0;
-    transform: none;
+    right: 0;
+    padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
+    z-index: ${Z_INDEX.clubDetailFooter};
 
     button {
       width: 100%;
