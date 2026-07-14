@@ -25,9 +25,9 @@
 - **`FreeTagEditPage`**: 자유태그 추가/삭제 전용 페이지
 - **`LinkEditPage`**: Instagram·YouTube 링크 입력 전용 페이지
 
-## MobileSaveButtonArea (공통)
+## FixedBottomButtonArea (공통)
 
-- 버튼 영역(`SaveButtonArea`) 자체는 배경 투명, `box-shadow` 없음
+- 버튼 영역 자체는 배경 투명, `box-shadow` 없음
 - `box-shadow`는 button 요소에만 적용 (`0px 0px 8px rgba(0,0,0,0.1)`)
 - 변경사항 없을 때 버튼 비활성화, 변경 시 활성화 (`isDirty` 제어)
 
@@ -39,4 +39,4 @@
 - `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/` — 배너 섹션
 - `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/FreeTagEditPage/` — 자유태그 편집
 - `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/LinkEditPage/` — SNS 링크 편집
-- `src/pages/AdminPage/components/MobileSaveButtonArea/` — 하단 저장 버튼 (공통)
+- `src/components/common/FixedBottomButtonArea/` — 하단 고정 버튼 영역 (공통)
