@@ -93,8 +93,8 @@ const ApplicationFormPage = () => {
   };
 
   const handleScrollToInvalid = (invalidIds: number[]) => {
-    const firstInvalidIndex = formData.questions!.findIndex((q: Question) =>
-      invalidIds.includes(q.id),
+    const firstInvalidIndex = (formData?.questions ?? []).findIndex(
+      (q: Question) => invalidIds.includes(q.id),
     );
     const targetEl = questionRefs.current[firstInvalidIndex];
     targetEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -106,7 +106,10 @@ const ApplicationFormPage = () => {
       club_name: clubDetail?.name,
     });
 
-    const invalidIds = validateAnswers(formData.questions!, getAnswersById);
+    const invalidIds = validateAnswers(
+      formData?.questions ?? [],
+      getAnswersById,
+    );
     if (invalidIds.length > 0) {
       setInvalidQuestionIds(invalidIds);
       handleScrollToInvalid(invalidIds);

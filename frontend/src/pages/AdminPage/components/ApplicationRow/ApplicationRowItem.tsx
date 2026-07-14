@@ -1,6 +1,9 @@
 import Morebutton from '@/assets/images/icons/Morebutton.svg';
 import ApplicationMenu from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationMenu';
-import { ApplicationFormItem } from '@/types/application';
+import {
+  ApplicationFormItem,
+  ApplicationFormStatus,
+} from '@/types/application';
 import { formatRelativeDateTime } from '@/utils/formatRelativeDateTime';
 import * as Styled from './ApplicationRowItem.style';
 
@@ -10,7 +13,7 @@ interface ApplicationRowItemProps {
   uniqueKeyPrefix: string;
   openMenuId: string | null;
   menuRef: React.RefObject<HTMLDivElement | null>;
-  onToggleStatus: (id: string, status: string) => void;
+  onToggleStatus: (id: string, status: ApplicationFormStatus) => void;
   onEdit: (id: string) => void;
   onMenuToggle: (e: React.MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;

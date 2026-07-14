@@ -132,14 +132,14 @@ const ApplicantDetailPage = () => {
   };
 
   const previousApplicant = () => {
-    const previousData = applicantsData.applicants[applicantIndex - 1];
+    const previousData = applicantsData?.applicants[applicantIndex - 1];
     if (applicantIndex < 0 || !previousData) return;
 
     navigate(`/admin/applicants-list/${applicationFormId}/${previousData.id}`);
   };
 
   const nextApplicant = () => {
-    const nextData = applicantsData.applicants[applicantIndex + 1];
+    const nextData = applicantsData?.applicants[applicantIndex + 1];
     if (applicantIndex < 0 || !nextData) return;
 
     navigate(`/admin/applicants-list/${applicationFormId}/${nextData.id}`);
@@ -165,7 +165,7 @@ const ApplicantDetailPage = () => {
                 )
               }
             >
-              {applicantsData.applicants.map((a) => (
+              {applicantsData?.applicants.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.answers[0].value}
                 </option>
