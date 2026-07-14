@@ -90,6 +90,17 @@ const ClubIntroEditTabMobile = ({
     }
   };
 
+  if (activePage === 'award') {
+    return (
+      <AwardEditPage
+        initialAwards={awards}
+        onSave={setAwards}
+        onSaveToServer={handleUpdateClubWithAwards}
+        onBack={() => setActivePage('main')}
+      />
+    );
+  }
+
   return (
     <>
       <Styled.MobileContainer>
