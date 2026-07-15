@@ -21,6 +21,8 @@ SOLID 원칙:
 
 모든 필드가 공유하는 카드 껍데기. `label`과 `children`을 받아 렌더링. 재사용이 없는 일회성 필드(분과 토글, 자유태그 입력, 링크 입력 등)는 별도 컴포넌트 없이 페이지에서 EditField를 직접 사용한다.
 
+포커스 테두리는 `isActive` prop 없이 CSS `focus-within`으로 처리한다.
+
 ```tsx
 <EditField label="분과">
   {/* 페이지에서 직접 정의한 content */}
@@ -29,16 +31,25 @@ SOLID 원칙:
 
 ### TextField (공통 컴포넌트)
 
-텍스트 입력 필드. 포커스 시 활성 테두리 + X 버튼 노출, 최대 2줄 자동 리사이즈.
+`EditField` + `ClearableTextArea`의 조합. 포커스 테두리·X 버튼·`useAutoGrow`(입력 내용에 따라 높이 무제한 확장)를 `ClearableTextArea`에 위임한다.
 
-**사용처**: 동아리명, 동아리 한줄소개, 링크 URL 입력 등 텍스트를 직접 입력하는 모든 필드
+| prop | 타입 | 필수 | 설명 |
+|---|---|---|---|
+| `label` | `string` | ✓ | 필드 레이블 (placeholder 미지정 시 대체 텍스트로도 사용) |
+| `value` | `string` | ✓ | 입력값 |
+| `onChange` | `(value: string) => void` | ✓ | 값 변경 핸들러 |
+| `onClear` | `() => void` | — | 클리어 버튼 클릭 시 사이드이펙트 전용 (Mixpanel 등). 값 초기화는 내부 처리 |
+| `placeholder` | `string` | — | 미지정 시 `label` 값 사용 |
+| `maxLength` | `number` | — | 최대 글자수 |
+
+**사용처**: 동아리명, 동아리 한줄소개
 
 ```tsx
 <TextField
   label="동아리명"
   value={value}
   onChange={setValue}
-  onClear={() => setValue('')}
+  onClear={() => trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED)}
 />
 ```
 
@@ -73,23 +84,28 @@ SOLID 원칙:
 ## 디렉토리
 
 ```
-src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/
-  EditField/
-    EditField.tsx
-    EditField.styles.ts
-    EditField.stories.tsx
-  TextField/
-    TextField.tsx
-    TextField.styles.ts
-    TextField.stories.tsx
-  NavField/
-    NavField.tsx
-    NavField.styles.ts
-    NavField.stories.tsx
+src/pages/AdminPage/
+  components/
+    ClearableTextArea/          ← textarea + 클리어 버튼 공통 컴포넌트
+      ClearableTextArea.tsx
+      ClearableTextArea.styles.ts
+  tabs/ClubInfoEditTab/components/mobile/
+    EditField/
+      EditField.tsx
+      EditField.styles.ts
+      EditField.stories.tsx
+    TextField/
+      TextField.tsx             ← ClearableTextArea 래퍼 (styles 파일 없음)
+      TextField.stories.tsx
+    NavField/
+      NavField.tsx
+      NavField.styles.ts
+      NavField.stories.tsx
 ```
 
 ## 관련 코드
 
-- `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/EditField/EditField.tsx` — 편집 필드 공통 카드 컴포넌트
-- `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/TextField/TextField.tsx` — 텍스트 입력 필드
+- `src/pages/AdminPage/components/ClearableTextArea/ClearableTextArea.tsx` — textarea + 클리어 버튼 공통 컴포넌트
+- `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/EditField/EditField.tsx` — 편집 필드 공통 카드 컴포넌트 (`focus-within`으로 포커스 테두리 처리)
+- `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/TextField/TextField.tsx` — EditField + ClearableTextArea 조합 컴포넌트
 - `src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/NavField/NavField.tsx` — 네비게이션 필드
