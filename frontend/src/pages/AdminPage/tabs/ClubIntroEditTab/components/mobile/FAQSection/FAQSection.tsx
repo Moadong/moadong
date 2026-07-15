@@ -5,8 +5,8 @@ import {
   FAQ_ANSWER_PLACEHOLDER,
   FAQ_QUESTION_PLACEHOLDER,
 } from '@/constants/adminFieldPlaceholders';
-import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
+import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQSection.styles';
 

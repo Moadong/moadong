@@ -32,10 +32,7 @@ const LinkField = ({
 
   return (
     <div>
-      <EditField
-        label={label}
-        labelColor={colors.gray[800]}
-      >
+      <EditField label={label} labelColor={colors.gray[800]}>
         <Styled.ContentRow>
           <Styled.Input
             ref={inputRef}
