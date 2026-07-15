@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
-import { ImagePreview } from '@/pages/AdminPage/tabs/PhotoEditTab/components/desktop/ImagePreview/ImagePreview';
-import { DropPosition } from '../../../hooks/useDragSort';
-import { FeedItem } from '../../../types';
+import ClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
+import { DropPosition } from '../../hooks/useDragSort';
+import { FeedItem } from '../../types';
 import * as Styled from './FeedImageGrid.styles';
 
 interface FeedImageGridProps {
@@ -10,6 +10,7 @@ interface FeedImageGridProps {
   dragIndex: number | null;
   dropPosition: DropPosition;
   isLoading: boolean;
+  columns?: number;
   onMouseDown: (e: React.MouseEvent, index: number) => void;
   onDelete: (index: number) => void;
   onRetry: (index: number) => void;
@@ -46,6 +47,7 @@ export const FeedImageGrid = ({
   dragIndex,
   dropPosition,
   isLoading,
+  columns = 3,
   onMouseDown,
   onDelete,
   onRetry,
@@ -75,28 +77,51 @@ export const FeedImageGrid = ({
   }, [dividerIndex]);
 
   return (
-    <Styled.ImageGrid ref={gridRef}>
-      {feedItems.map((item, index) => (
-        <Styled.DragItem
-          key={item.type === 'uploaded' ? item.url : item.previewUrl}
-          data-card-index={index}
-          onMouseDown={(e) => onMouseDown(e, index)}
-          $isDragging={dragIndex === index}
-          $isDimmed={dragIndex !== null && dragIndex !== index}
-        >
-          <ImagePreview
-            image={item.type === 'uploaded' ? item.url : item.previewUrl}
-            status={item.type === 'local' ? item.status : undefined}
-            disabled={isLoading}
-            onDelete={() => onDelete(index)}
-            onRetry={
-              item.type === 'local' && item.status === 'failed'
-                ? () => onRetry(index)
-                : undefined
-            }
-          />
-        </Styled.DragItem>
-      ))}
+    <Styled.Grid ref={gridRef} $columns={columns}>
+      {feedItems.map((item, index) => {
+        const src = item.type === 'uploaded' ? item.url : item.previewUrl;
+        const status = item.type === 'local' ? item.status : undefined;
+
+        return (
+          <Styled.DragItem
+            key={src}
+            data-card-index={index}
+            onMouseDown={(e) => onMouseDown(e, index)}
+            $isDragging={dragIndex === index}
+            $isDimmed={dragIndex !== null && dragIndex !== index}
+          >
+            <Styled.PhotoItem>
+              <Styled.Photo src={src} alt='' draggable={false} />
+
+              {status === 'uploading' && (
+                <Styled.Overlay>
+                  <Styled.StatusText>업로드 중</Styled.StatusText>
+                </Styled.Overlay>
+              )}
+              {status === 'failed' && (
+                <Styled.Overlay $error>
+                  <Styled.StatusText>실패</Styled.StatusText>
+                  <Styled.RetryButton onClick={() => onRetry(index)}>
+                    재전송
+                  </Styled.RetryButton>
+                </Styled.Overlay>
+              )}
+              {status === 'pending' && (
+                <Styled.PendingBadge>업로드 예정</Styled.PendingBadge>
+              )}
+
+              <Styled.DeleteButton
+                type='button'
+                onClick={() => onDelete(index)}
+                disabled={isLoading || status === 'uploading'}
+                aria-label='사진 삭제'
+              >
+                <ClearButtonIcon />
+              </Styled.DeleteButton>
+            </Styled.PhotoItem>
+          </Styled.DragItem>
+        );
+      })}
 
       {divider && (
         <Styled.DropDivider
@@ -106,6 +131,6 @@ export const FeedImageGrid = ({
           $height={divider.height}
         />
       )}
-    </Styled.ImageGrid>
+    </Styled.Grid>
   );
 };
