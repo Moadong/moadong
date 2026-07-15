@@ -119,10 +119,7 @@ const ClubInfoEditTabMobile = ({
             value={clubName}
             maxLength={CLUB_NAME_MAX}
             onChange={setClubName}
-            onClear={() => {
-              trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED);
-              setClubName('');
-            }}
+            onClear={() => trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED)}
           />
 
           <TextField
@@ -131,10 +128,7 @@ const ClubInfoEditTabMobile = ({
             value={introduction}
             maxLength={CLUB_INTRODUCTION_MAX}
             onChange={setIntroduction}
-            onClear={() => {
-              trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED);
-              setIntroduction('');
-            }}
+            onClear={() => trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED)}
           />
 
           <EditField label='분과'>

@@ -34,7 +34,6 @@ const LinkField = ({
     <div>
       <EditField
         label={label}
-        isActive={isActive}
         labelColor={colors.gray[800]}
       >
         <Styled.ContentRow>

@@ -30,7 +30,6 @@ export const Default: Story = {
 export const Active: Story = {
   args: {
     label: '동아리명',
-    isActive: true,
     children: null,
   },
 };
