@@ -7,7 +7,7 @@ export const Card = styled.button`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 8px;
+  gap: 4px;
   width: 100%;
   padding: 20px 0;
   background: ${colors.gray[50]};
@@ -21,12 +21,8 @@ export const Card = styled.button`
   }
 `;
 
-export const UploadIcon = styled.img`
-  width: 56px;
-  height: 56px;
-`;
 
 export const Label = styled.span`
-  ${setTypography(typography.button.button1)}
+  ${setTypography(typography.paragraph.p6)}
   color: ${colors.primary[700]};
 `;

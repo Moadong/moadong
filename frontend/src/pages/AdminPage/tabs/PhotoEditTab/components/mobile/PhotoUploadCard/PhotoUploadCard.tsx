@@ -1,4 +1,4 @@
-import uploadAddIcon from '@/assets/images/icons/upload-add.png';
+import AddPhotoIcon from '@/assets/images/icons/add_photo_icon.svg?react';
 import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import * as Styled from './PhotoUploadCard.styles';
 
@@ -20,7 +20,7 @@ const PhotoUploadCard = ({
 
   return (
     <Styled.Card onClick={onClick} disabled={disabled}>
-      <Styled.UploadIcon src={uploadAddIcon} alt='' />
+      <AddPhotoIcon width={56} height={56} />
       <Styled.Label>{label}</Styled.Label>
     </Styled.Card>
   );
