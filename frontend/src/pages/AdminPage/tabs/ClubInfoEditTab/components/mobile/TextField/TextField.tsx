@@ -1,14 +1,12 @@
-import { useLayoutEffect, useRef, useState } from 'react';
-import FieldClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
+import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
 import EditField from '../EditField/EditField';
-import * as Styled from './TextField.styles';
 
 interface TextFieldProps {
   label: string;
   placeholder?: string;
   value: string;
   onChange: (value: string) => void;
-  onClear: () => void;
+  onClear?: () => void;
   maxLength?: number;
 }
 
@@ -19,49 +17,17 @@ const TextField = ({
   onChange,
   onClear,
   maxLength,
-}: TextFieldProps) => {
-  const [isActive, setIsActive] = useState(false);
-  const textareaRef = useRef<HTMLTextAreaElement>(null);
-
-  useLayoutEffect(() => {
-    const textarea = textareaRef.current;
-    if (!textarea) return;
-    const lineHeight = parseFloat(getComputedStyle(textarea).lineHeight);
-    textarea.style.height = 'auto';
-    textarea.style.height = `${Math.min(textarea.scrollHeight, lineHeight * 2)}px`;
-  }, [value]);
-
-  const handleClear = (e: React.MouseEvent) => {
-    e.preventDefault(); // blur 방지
-    onClear();
-    textareaRef.current?.focus();
-  };
-
-  return (
-    <EditField label={label} isActive={isActive}>
-      <Styled.ContentRow>
-        <Styled.Input
-          ref={textareaRef}
-          value={value}
-          placeholder={placeholder || label}
-          rows={1}
-          maxLength={maxLength}
-          onChange={(e) => onChange(e.target.value)}
-          onFocus={() => setIsActive(true)}
-          onBlur={() => setIsActive(false)}
-        />
-        {isActive && value.length > 0 && (
-          <Styled.ClearButton
-            type='button'
-            onMouseDown={handleClear}
-            aria-label='지우기'
-          >
-            <FieldClearButtonIcon />
-          </Styled.ClearButton>
-        )}
-      </Styled.ContentRow>
-    </EditField>
-  );
-};
+}: TextFieldProps) => (
+  <EditField label={label}>
+    <ClearableTextArea
+      value={value}
+      onChange={onChange}
+      onClear={onClear}
+      placeholder={placeholder ?? label}
+      maxLength={maxLength}
+      size='large'
+    />
+  </EditField>
+);
 
 export default TextField;
