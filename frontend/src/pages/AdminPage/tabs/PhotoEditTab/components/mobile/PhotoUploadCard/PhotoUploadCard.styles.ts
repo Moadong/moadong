@@ -9,7 +9,7 @@ export const Card = styled.button`
   justify-content: center;
   gap: 4px;
   width: 100%;
-  padding: 20px 0;
+  padding: 20px 18px;
   background: ${colors.gray[50]};
   border: 1px solid ${colors.gray[300]};
   border-radius: 14px;
@@ -24,5 +24,6 @@ export const Card = styled.button`
 
 export const Label = styled.span`
   ${setTypography(typography.paragraph.p6)}
+  text-align: center;
   color: ${colors.primary[700]};
 `;
