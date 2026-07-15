@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
   ACTIVITY_DESCRIPTION_MAX,
   BENEFITS_MAX,
@@ -13,8 +12,9 @@ import {
   IDEAL_CANDIDATE_PLACEHOLDER,
   INTRO_DESCRIPTION_PLACEHOLDER,
 } from '@/constants/adminFieldPlaceholders';
-import useAutoGrow from '@/hooks/useAutoGrow';
+import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTabMobile.styles';
 import AwardEditPage from './components/mobile/AwardEditPage/AwardEditPage';
@@ -75,35 +75,6 @@ const ClubIntroEditTabMobile = ({
     setActivePage('award');
   };
 
-  const introRef = useAutoGrow(introDescription);
-  const activityRef = useAutoGrow(activityDescription);
-  const idealRef = useAutoGrow(idealCandidate.content);
-  const benefitsRef = useAutoGrow(benefits);
-
-  const handleIntroChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= INTRO_DESCRIPTION_MAX) {
-      setIntroDescription(e.target.value);
-    }
-  };
-
-  const handleActivityChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= ACTIVITY_DESCRIPTION_MAX) {
-      setActivityDescription(e.target.value);
-    }
-  };
-
-  const handleIdealChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= IDEAL_CANDIDATE_MAX) {
-      setIdealCandidate({ ...idealCandidate, content: e.target.value });
-    }
-  };
-
-  const handleBenefitsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= BENEFITS_MAX) {
-      setBenefits(e.target.value);
-    }
-  };
-
   if (activePage === 'award') {
     return (
       <AwardEditPage
@@ -135,11 +106,11 @@ const ClubIntroEditTabMobile = ({
               maxLength={INTRO_DESCRIPTION_MAX}
               currentLength={introDescription.length}
             >
-              <Styled.TextArea
-                ref={introRef}
+              <ClearableTextArea
                 value={introDescription}
-                onChange={handleIntroChange}
+                onChange={setIntroDescription}
                 placeholder={INTRO_DESCRIPTION_PLACEHOLDER}
+                maxLength={INTRO_DESCRIPTION_MAX}
               />
             </InfoSection>
 
@@ -148,11 +119,11 @@ const ClubIntroEditTabMobile = ({
               maxLength={ACTIVITY_DESCRIPTION_MAX}
               currentLength={activityDescription.length}
             >
-              <Styled.TextArea
-                ref={activityRef}
+              <ClearableTextArea
                 value={activityDescription}
-                onChange={handleActivityChange}
+                onChange={setActivityDescription}
                 placeholder={ACTIVITY_DESCRIPTION_PLACEHOLDER}
+                maxLength={ACTIVITY_DESCRIPTION_MAX}
               />
             </InfoSection>
 
@@ -163,11 +134,13 @@ const ClubIntroEditTabMobile = ({
               maxLength={IDEAL_CANDIDATE_MAX}
               currentLength={idealCandidate.content.length}
             >
-              <Styled.TextArea
-                ref={idealRef}
+              <ClearableTextArea
                 value={idealCandidate.content}
-                onChange={handleIdealChange}
+                onChange={(v) =>
+                  setIdealCandidate({ ...idealCandidate, content: v })
+                }
                 placeholder={IDEAL_CANDIDATE_PLACEHOLDER}
+                maxLength={IDEAL_CANDIDATE_MAX}
               />
             </InfoSection>
 
@@ -176,11 +149,11 @@ const ClubIntroEditTabMobile = ({
               maxLength={BENEFITS_MAX}
               currentLength={benefits.length}
             >
-              <Styled.TextArea
-                ref={benefitsRef}
+              <ClearableTextArea
                 value={benefits}
-                onChange={handleBenefitsChange}
+                onChange={setBenefits}
                 placeholder={BENEFITS_PLACEHOLDER}
+                maxLength={BENEFITS_MAX}
               />
             </InfoSection>
 
