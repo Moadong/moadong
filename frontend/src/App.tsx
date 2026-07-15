@@ -63,7 +63,10 @@ const persistOptions = {
   // 장애로 refetch를 못 할 때 옛 데이터를 보여줄 상한(모집상태 등 stale 노출 방지).
   maxAge: 60 * 60 * 1000,
   // 배포 버전이 바뀌면(쿼리 구조·데이터 shape 변경 가능) 옛 캐시를 폐기한다.
-  buster: (import.meta.env.VITE_SENTRY_RELEASE as string | undefined) ?? '',
+  // Vercel 빌드는 커밋 SHA(__BUILD_ID__)가 배포마다 자동 주입되고, 그 외엔 SENTRY_RELEASE 폴백.
+  buster:
+    __BUILD_ID__ ||
+    ((import.meta.env.VITE_SENTRY_RELEASE as string | undefined) ?? ''),
   dehydrateOptions: {
     // 성공한 메인 공개 데이터만 저장. 개인/인증/어드민 데이터·검색 자동완성·실패 응답은 제외.
     shouldDehydrateQuery: (query: Query) => {
