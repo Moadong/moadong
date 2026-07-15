@@ -70,10 +70,7 @@ const persistOptions = {
       if (query.state.status !== 'success') return false;
       const [root, second] = query.queryKey as [string, string?];
       if (!PERSISTED_QUERY_ROOTS.includes(root)) return false;
-      if (
-        root === queryKeys.club.all[0] &&
-        second === SUGGESTIONS_KEY_SEGMENT
-      )
+      if (root === queryKeys.club.all[0] && second === SUGGESTIONS_KEY_SEGMENT)
         return false;
       return true;
     },
