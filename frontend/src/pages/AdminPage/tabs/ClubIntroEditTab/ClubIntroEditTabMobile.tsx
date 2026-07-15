@@ -62,6 +62,9 @@ const ClubIntroEditTabMobile = ({
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState<ActivePage>('main');
 
+  const handleIdealCandidateChange = (value: string) =>
+    setIdealCandidate({ ...idealCandidate, content: value });
+
   if (activePage === 'award') {
     return (
       <AwardEditPage
@@ -126,9 +129,7 @@ const ClubIntroEditTabMobile = ({
             >
               <ClearableTextArea
                 value={idealCandidate.content}
-                onChange={(v) =>
-                  setIdealCandidate({ ...idealCandidate, content: v })
-                }
+                onChange={handleIdealCandidateChange}
                 placeholder={IDEAL_CANDIDATE_PLACEHOLDER}
                 maxLength={IDEAL_CANDIDATE_MAX}
               />

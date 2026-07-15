@@ -42,7 +42,7 @@ const FAQItemEditor = ({
       <Styled.AnswerCard>
         <ClearableTextArea
           value={faq.answer}
-          onChange={(v) => onChange(index, 'answer', v)}
+          onChange={(value) => onChange(index, 'answer', value)}
           placeholder={FAQ_ANSWER_PLACEHOLDER}
           maxLength={FAQ_ANSWER_MAX}
         />

@@ -1,5 +1,5 @@
 import { useRef, useState } from 'react';
-import FieldClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
+import ClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
 import { colors } from '@/styles/theme/colors';
 import EditField from '../EditField/EditField';
 import * as Styled from './LinkField.styles';
@@ -53,7 +53,7 @@ const LinkField = ({
               onMouseDown={handleClear}
               aria-label='지우기'
             >
-              <FieldClearButtonIcon />
+              <ClearButtonIcon />
             </Styled.ClearButton>
           )}
         </Styled.ContentRow>
