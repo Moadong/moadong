@@ -5,7 +5,7 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const Grid = styled.div`
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 8px;
+  gap: 2px;
   width: 100%;
 `;
 
@@ -13,7 +13,6 @@ export const PhotoItem = styled.div`
   position: relative;
   width: 100%;
   aspect-ratio: 123 / 160;
-  border-radius: 8px;
   overflow: hidden;
 `;
 
@@ -53,8 +52,8 @@ export const PendingBadge = styled.div`
 
 export const DeleteButton = styled.button`
   position: absolute;
-  top: 4px;
-  right: 4px;
+  top: 10px;
+  right: 10px;
   width: 22px;
   height: 22px;
   padding: 0;
