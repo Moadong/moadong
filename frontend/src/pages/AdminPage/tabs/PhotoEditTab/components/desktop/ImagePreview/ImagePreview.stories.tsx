@@ -4,7 +4,7 @@ import { ImagePreview } from './ImagePreview';
 const SAMPLE_IMAGE = 'https://picsum.photos/seed/moadong/400/500';
 
 const meta = {
-  title: 'Admin/PhotoEditTab/ImagePreview',
+  title: 'Pages/AdminPage/tabs/PhotoEditTab/components/desktop/ImagePreview',
   component: ImagePreview,
   parameters: { layout: 'centered' },
   decorators: [

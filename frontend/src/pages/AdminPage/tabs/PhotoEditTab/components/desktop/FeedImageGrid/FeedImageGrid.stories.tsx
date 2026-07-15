@@ -1,6 +1,6 @@
 import { useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { FeedItem } from '../../types';
+import type { FeedItem } from '../../../types';
 import { FeedImageGrid } from './FeedImageGrid';
 
 const IMAGES = [
@@ -49,7 +49,7 @@ const Wrapper = ({
 };
 
 const meta = {
-  title: 'Admin/PhotoEditTab/FeedImageGrid',
+  title: 'Pages/AdminPage/tabs/PhotoEditTab/components/desktop/FeedImageGrid',
   parameters: { layout: 'centered' },
 } satisfies Meta;
 
