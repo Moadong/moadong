@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
-import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
+import FieldClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import ClearButton from '@/pages/AdminPage/components/ClearButton';
 import { Award } from '@/types/club';

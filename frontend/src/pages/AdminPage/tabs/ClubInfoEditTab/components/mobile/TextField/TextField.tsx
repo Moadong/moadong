@@ -1,5 +1,5 @@
 import { useLayoutEffect, useRef, useState } from 'react';
-import FieldClearButtonIcon from '@/assets/images/icons/field_clear_button_icon.svg?react';
+import FieldClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
 import EditField from '../EditField/EditField';
 import * as Styled from './TextField.styles';
 
@@ -50,7 +50,7 @@ const TextField = ({
           onFocus={() => setIsActive(true)}
           onBlur={() => setIsActive(false)}
         />
-        {isActive && (
+        {isActive && value.length > 0 && (
           <Styled.ClearButton
             type='button'
             onMouseDown={handleClear}
