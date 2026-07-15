@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
   ACTIVITY_DESCRIPTION_MAX,
   BENEFITS_MAX,
@@ -14,7 +15,6 @@ import {
 } from '@/constants/adminFieldPlaceholders';
 import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
-import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTabMobile.styles';
 import AwardEditPage from './components/mobile/AwardEditPage/AwardEditPage';

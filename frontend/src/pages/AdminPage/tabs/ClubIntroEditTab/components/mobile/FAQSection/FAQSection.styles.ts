@@ -127,7 +127,6 @@ export const AnswerCard = styled.div`
   }
 `;
 
-
 export const CharCount = styled.span`
   ${setTypography(typography.paragraph.p7)}
   color: ${colors.gray[500]};
