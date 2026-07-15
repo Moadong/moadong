@@ -5,7 +5,7 @@ import {
   FAQ_ANSWER_PLACEHOLDER,
   FAQ_QUESTION_PLACEHOLDER,
 } from '@/constants/adminFieldPlaceholders';
-import useAutoGrow from '@/hooks/useAutoGrow';
+import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQSection.styles';
@@ -22,49 +22,38 @@ const FAQItemEditor = ({
   index,
   onChange,
   onDelete,
-}: FAQItemEditorProps) => {
-  const answerRef = useAutoGrow(faq.answer);
-
-  const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= FAQ_ANSWER_MAX) {
-      onChange(index, 'answer', e.target.value);
-    }
-  };
-
-  return (
-    <Styled.FAQCard>
-      <Styled.QuestionRow>
-        <Styled.QuestionContent>
-          <Styled.FAQNumber>Q{index + 1}</Styled.FAQNumber>
-          <Styled.QuestionInput
-            value={faq.question}
-            onChange={(e) => onChange(index, 'question', e.target.value)}
-            placeholder={FAQ_QUESTION_PLACEHOLDER}
-            maxLength={FAQ_QUESTION_MAX}
-          />
-        </Styled.QuestionContent>
-        <Styled.DeleteButton onClick={() => onDelete(index)} type='button'>
-          <img src={closeCircleIcon} alt='삭제' />
-        </Styled.DeleteButton>
-      </Styled.QuestionRow>
-      <Styled.AnswerWrapper>
-        <Styled.AnswerCard>
-          <Styled.AnswerTextarea
-            ref={answerRef}
-            value={faq.answer}
-            onChange={handleAnswerChange}
-            placeholder={FAQ_ANSWER_PLACEHOLDER}
-            rows={1}
-          />
-        </Styled.AnswerCard>
-        <Styled.CharCount>
-          질문: {faq.question.length}/{FAQ_QUESTION_MAX} | 답변:{' '}
-          {faq.answer.length}/{FAQ_ANSWER_MAX}
-        </Styled.CharCount>
-      </Styled.AnswerWrapper>
-    </Styled.FAQCard>
-  );
-};
+}: FAQItemEditorProps) => (
+  <Styled.FAQCard>
+    <Styled.QuestionRow>
+      <Styled.QuestionContent>
+        <Styled.FAQNumber>Q{index + 1}</Styled.FAQNumber>
+        <Styled.QuestionInput
+          value={faq.question}
+          onChange={(e) => onChange(index, 'question', e.target.value)}
+          placeholder={FAQ_QUESTION_PLACEHOLDER}
+          maxLength={FAQ_QUESTION_MAX}
+        />
+      </Styled.QuestionContent>
+      <Styled.DeleteButton onClick={() => onDelete(index)} type='button'>
+        <img src={closeCircleIcon} alt='삭제' />
+      </Styled.DeleteButton>
+    </Styled.QuestionRow>
+    <Styled.AnswerWrapper>
+      <Styled.AnswerCard>
+        <ClearableTextArea
+          value={faq.answer}
+          onChange={(v) => onChange(index, 'answer', v)}
+          placeholder={FAQ_ANSWER_PLACEHOLDER}
+          maxLength={FAQ_ANSWER_MAX}
+        />
+      </Styled.AnswerCard>
+      <Styled.CharCount>
+        질문: {faq.question.length}/{FAQ_QUESTION_MAX} | 답변:{' '}
+        {faq.answer.length}/{FAQ_ANSWER_MAX}
+      </Styled.CharCount>
+    </Styled.AnswerWrapper>
+  </Styled.FAQCard>
+);
 
 interface FAQSectionProps {
   faqs: FAQ[];

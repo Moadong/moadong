@@ -40,4 +40,8 @@ export const Card = styled.div`
   background: ${colors.gray[50]};
   border: 1px solid ${colors.gray[300]};
   border-radius: 14px;
+
+  &:focus-within {
+    border-color: ${colors.gray[800]};
+  }
 `;
