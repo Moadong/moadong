@@ -5,6 +5,8 @@ import { QueryCache, QueryClient, type Query } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { ThemeProvider } from 'styled-components';
 import { ScrollToTopButton } from '@/components/common/ScrollToTopButton/ScrollToTopButton';
+import { queryKeys } from '@/constants/queryKeys';
+import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { HttpError } from '@/errors';
 import { ScrollToTop } from '@/hooks/Scroll/ScrollToTop';
 import AppRoutes from '@/routes/AppRoutes';
@@ -43,11 +45,17 @@ const queryClient = new QueryClient({
 
 // 백엔드 장애로 refetch가 불가능한 상황에서도 메인페이지가 마지막 데이터를 보여주도록
 // 성공한 공개 쿼리만 localStorage에 영속화한다.
-const PERSISTED_QUERY_ROOTS = ['clubs', 'promotions', 'banner', 'game'];
+const PERSISTED_QUERY_ROOTS: string[] = [
+  queryKeys.club.all[0],
+  queryKeys.promotion.all[0],
+  queryKeys.banner.all[0],
+  queryKeys.game.all[0],
+];
+const SUGGESTIONS_KEY_SEGMENT = queryKeys.club.suggestions('')[1];
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
-  key: 'MOADONG_QUERY_CACHE',
+  key: STORAGE_KEYS.QUERY_CACHE,
 });
 
 const persistOptions = {
@@ -62,7 +70,11 @@ const persistOptions = {
       if (query.state.status !== 'success') return false;
       const [root, second] = query.queryKey as [string, string?];
       if (!PERSISTED_QUERY_ROOTS.includes(root)) return false;
-      if (root === 'clubs' && second === 'suggestions') return false;
+      if (
+        root === queryKeys.club.all[0] &&
+        second === SUGGESTIONS_KEY_SEGMENT
+      )
+        return false;
       return true;
     },
   },

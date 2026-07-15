@@ -1,5 +1,5 @@
 import API_BASE_URL from '@/constants/api';
-import { fetchWithTimeout } from '../utils/fetchWithTimeout';
+import { fetchWithTimeout } from '@/apis/utils/fetchWithTimeout';
 
 export const refreshAccessToken = async (): Promise<string> => {
   const res = await fetchWithTimeout(`${API_BASE_URL}/auth/user/refresh`, {
