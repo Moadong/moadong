@@ -24,6 +24,7 @@ export const FloatingButtonGroup = () => {
       <Styled.FloatingButton
         type='button'
         $isVisible={isScrollingUp}
+        $variant='scroll'
         onClick={() => scrollToTop()}
         aria-label='위로 이동하기'
       >
@@ -32,6 +33,7 @@ export const FloatingButtonGroup = () => {
       <Styled.FloatingButton
         type='button'
         $isVisible={isScrolledDown}
+        $variant='share'
         onClick={handlePageShare}
         aria-label='현재 페이지 공유하기'
       >
