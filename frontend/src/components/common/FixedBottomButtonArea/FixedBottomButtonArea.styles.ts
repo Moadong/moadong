@@ -9,14 +9,15 @@ export const ButtonArea = styled.div`
   bottom: 0;
   display: flex;
   justify-content: center;
-  padding: 10px 20px 20px;
+  padding: 10px 0 24px;
   z-index: ${Z_INDEX.clubDetailFooter};
+  background: ${colors.base.white};
+  box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.16);
 
   button {
     width: 517px;
     height: 60px;
-    border-radius: 10px;
-    box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 14px;
     font-size: 20px;
     font-weight: 700;
   }
@@ -29,6 +30,8 @@ export const ButtonArea = styled.div`
     width: 100%;
     max-width: 500px;
     padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
+    background: transparent;
+    box-shadow: none;
 
     button {
       width: 100%;
