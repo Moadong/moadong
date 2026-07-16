@@ -1,16 +1,21 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { Z_INDEX } from '@/styles/zIndex';
 
 export const GroupContainer = styled.div`
   position: fixed;
   right: 0;
-  bottom: 100px;
+  bottom: 110px;
   z-index: ${Z_INDEX.floatingButton};
   display: flex;
   flex-direction: column;
   align-items: flex-start;
   padding: 0 12px;
   gap: 8px;
+
+  ${media.tablet} {
+    bottom: 90px;
+  }
 `;
 
 export const FloatingButton = styled.button<{ $isVisible: boolean }>`
