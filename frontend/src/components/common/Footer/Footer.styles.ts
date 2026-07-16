@@ -5,6 +5,7 @@ import { colors } from '@/styles/theme/colors';
 export const FooterContainer = styled.footer`
   text-align: left;
   font-size: 0.75rem;
+  background: ${colors.gray[100]};
 
   ${media.tablet} {
     padding-bottom: calc(90px + env(safe-area-inset-bottom));
@@ -44,7 +45,7 @@ export const FooterContent = styled.div`
 `;
 
 export const PolicyLink = styled.a`
-  color: #787878;
+  color: #818181;
   font-size: 0.75rem;
   text-decoration: underline;
   cursor: pointer;
@@ -58,7 +59,7 @@ export const CopyRightText = styled.p``;
 
 export const EmailText = styled.p`
   a {
-    color: #aaa;
+    color: #818181;
     text-decoration: none;
 
     &:hover {
