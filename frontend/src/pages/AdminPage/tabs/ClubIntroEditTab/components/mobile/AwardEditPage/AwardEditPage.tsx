@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
-import { SCROLL_TO_TOP_HIDDEN_FLAG } from '@/hooks/Scroll/useScrollTrigger';
+import { SCROLL_TRIGGER_DISABLED } from '@/hooks/Scroll/useScrollTrigger';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, SemesterTermType } from '@/types/club';
@@ -28,9 +28,9 @@ const AwardEditPage = ({
   const [isPickerOpen, setIsPickerOpen] = useState(false);
 
   useEffect(() => {
-    document.body.dataset[SCROLL_TO_TOP_HIDDEN_FLAG] = 'true';
+    document.body.dataset[SCROLL_TRIGGER_DISABLED] = 'true';
     return () => {
-      delete document.body.dataset[SCROLL_TO_TOP_HIDDEN_FLAG];
+      delete document.body.dataset[SCROLL_TRIGGER_DISABLED];
     };
   }, []);
 
@@ -51,15 +51,19 @@ const AwardEditPage = ({
     updated: Award,
   ) => {
     setAwards((prev) =>
-      prev.map((a) =>
-        a.year === year && a.semesterTerm === semesterTerm ? updated : a,
+      prev.map((award) =>
+        award.year === year && award.semesterTerm === semesterTerm
+          ? updated
+          : award,
       ),
     );
   };
 
   const handleDeleteAward = (year: number, semesterTerm: SemesterTermType) => {
     setAwards((prev) =>
-      prev.filter((a) => !(a.year === year && a.semesterTerm === semesterTerm)),
+      prev.filter(
+        (award) => !(award.year === year && award.semesterTerm === semesterTerm),
+      ),
     );
   };
 

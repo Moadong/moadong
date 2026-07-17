@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useState } from 'react';
 
-export const SCROLL_TO_TOP_HIDDEN_FLAG = 'hideScrollToTop';
+export const SCROLL_TRIGGER_DISABLED = 'scrollTriggerDisabled';
 
 interface ScrollTriggerOptions {
   threshold?: number;
@@ -19,7 +19,7 @@ export const useScrollTrigger = ({
 
   const handleScroll = useCallback(() => {
     if (document.body.style.position === 'fixed') return;
-    if (document.body.dataset[SCROLL_TO_TOP_HIDDEN_FLAG]) {
+    if (document.body.dataset[SCROLL_TRIGGER_DISABLED]) {
       setIsTriggered(false);
       return;
     }
