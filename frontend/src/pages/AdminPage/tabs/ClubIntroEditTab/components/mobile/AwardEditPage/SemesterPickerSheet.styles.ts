@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
+import { Z_INDEX } from '@/styles/zIndex';
 
 const slideUp = keyframes`
   from { transform: translateY(100%); }
@@ -11,7 +12,7 @@ export const Overlay = styled.div`
   position: fixed;
   inset: 0;
   background: rgba(17, 17, 17, 0.2);
-  z-index: 100;
+  z-index: ${Z_INDEX.overlay};
   display: flex;
   align-items: flex-end;
 `;

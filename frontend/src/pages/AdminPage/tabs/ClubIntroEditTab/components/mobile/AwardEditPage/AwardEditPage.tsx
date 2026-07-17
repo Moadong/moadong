@@ -62,7 +62,8 @@ const AwardEditPage = ({
   const handleDeleteAward = (year: number, semesterTerm: SemesterTermType) => {
     setAwards((prev) =>
       prev.filter(
-        (award) => !(award.year === year && award.semesterTerm === semesterTerm),
+        (award) =>
+          !(award.year === year && award.semesterTerm === semesterTerm),
       ),
     );
   };
