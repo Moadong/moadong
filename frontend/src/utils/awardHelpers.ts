@@ -23,13 +23,20 @@ export interface SemesterOption {
   label: string;
 }
 
+const SEMESTER_PAST_YEARS = 3;
+const SEMESTER_FUTURE_YEARS = 1;
+
 export const generateSemesterOptions = (
   existingAwards: Award[],
 ): SemesterOption[] => {
   const currentYear = new Date().getFullYear();
   const options: SemesterOption[] = [];
 
-  for (let year = currentYear - 3; year <= currentYear + 1; year++) {
+  for (
+    let year = currentYear - SEMESTER_PAST_YEARS;
+    year <= currentYear + SEMESTER_FUTURE_YEARS;
+    year++
+  ) {
     options.push({
       year,
       semesterTerm: SemesterTerm.FIRST,

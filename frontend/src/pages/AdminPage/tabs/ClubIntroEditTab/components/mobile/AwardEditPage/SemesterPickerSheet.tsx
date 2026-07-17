@@ -14,7 +14,8 @@ const getDefaultIndex = (options: SemesterOption[]): number => {
   const idx = options.findIndex(
     (opt) => opt.year === currentYear && opt.semesterTerm === currentTerm,
   );
-  return idx >= 0 ? idx : Math.floor(options.length / 2);
+  const defaultIndex = idx >= 0 ? idx : Math.floor(options.length / 2);
+  return defaultIndex;
 };
 
 interface SemesterPickerSheetProps {
