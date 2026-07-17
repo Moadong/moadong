@@ -32,7 +32,7 @@ export const FloatingButtonGroup = () => {
       </Styled.FloatingButton>
       <Styled.FloatingButton
         type='button'
-        $isVisible={isScrolledDown}
+        $isVisible={true}
         $variant='share'
         onClick={handlePageShare}
         aria-label='현재 페이지 공유하기'
