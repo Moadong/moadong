@@ -102,7 +102,7 @@ const ApplicationEditTab = () => {
     mutationFn: generateApplicationDraft,
     onSuccess: (draft) => {
       if (!draft) return;
-      const nameQuestion = INITIAL_FORM_DATA.questions![0];
+      const nameQuestion = { ...INITIAL_FORM_DATA.questions![0] };
       const draftQuestions = draft.questions.map((q, index) => ({
         ...q,
         id: index + 2, // index 0은 이름 고정 질문(id 1)
@@ -127,7 +127,9 @@ const ApplicationEditTab = () => {
       formData.title.trim() !== '' ||
       formData.description.trim() !== '' ||
       (formData.questions ?? []).some(
-        (q, index) => index > 0 && q.title.trim() !== '',
+        (q, index) =>
+          index > 0 &&
+          (q.title.trim() !== '' || q.description.trim() !== ''),
       );
     if (
       hasUserInput &&
