@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
@@ -61,6 +61,19 @@ const ClubIntroEditTabMobile = ({
 }: ClubIntroEditTabMobileProps) => {
   const navigate = useNavigate();
   const [activePage, setActivePage] = useState<ActivePage>('main');
+  const savedScrollY = useRef(0);
+
+  useEffect(() => {
+    if (activePage === 'main') {
+      window.scrollTo({ top: savedScrollY.current, behavior: 'instant' });
+    }
+  }, [activePage]);
+
+  const handleNavigateToAward = () => {
+    savedScrollY.current = window.scrollY;
+    setActivePage('award');
+  };
+
   const introRef = useAutoGrow(introDescription);
   const activityRef = useAutoGrow(activityDescription);
   const idealRef = useAutoGrow(idealCandidate.content);
@@ -142,10 +155,7 @@ const ClubIntroEditTabMobile = ({
               />
             </InfoSection>
 
-            <AwardSection
-              awards={awards}
-              onNavigate={() => setActivePage('award')}
-            />
+            <AwardSection awards={awards} onNavigate={handleNavigateToAward} />
 
             <InfoSection
               label='이런 사람이 오면 좋아요'
