@@ -29,6 +29,7 @@ const AwardEditPage = ({
 
   useEffect(() => {
     document.body.dataset[SCROLL_TRIGGER_DISABLED] = 'true';
+    window.dispatchEvent(new Event('scroll'));
     return () => {
       delete document.body.dataset[SCROLL_TRIGGER_DISABLED];
     };
