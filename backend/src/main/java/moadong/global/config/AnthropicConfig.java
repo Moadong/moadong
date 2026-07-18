@@ -14,7 +14,7 @@ public class AnthropicConfig {
     public AnthropicClient anthropicClient(AnthropicProperties anthropicProperties) {
         return AnthropicOkHttpClient.builder()
                 .apiKey(anthropicProperties.apiKey())
-                .timeout(Duration.ofSeconds(30))
+                .timeout(Duration.ofSeconds(60))
                 .build();
     }
 }
