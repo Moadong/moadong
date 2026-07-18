@@ -1,7 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createApplication, generateApplicationDraft, updateApplication } from '@/apis/application';
+import {
+  createApplication,
+  generateApplicationDraft,
+  updateApplication,
+} from '@/apis/application';
 import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
@@ -115,7 +119,9 @@ const ApplicationEditTab = () => {
       }));
       setNextId(draftQuestions.length + 2);
       if (!draft.aiGenerated) {
-        alert('AI 생성에 실패해 기본 템플릿을 제공했어요. 질문을 직접 다듬어주세요.');
+        alert(
+          'AI 생성에 실패해 기본 템플릿을 제공했어요. 질문을 직접 다듬어주세요.',
+        );
       }
     },
     onError: (err: Error) =>
@@ -128,8 +134,7 @@ const ApplicationEditTab = () => {
       formData.description.trim() !== '' ||
       (formData.questions ?? []).some(
         (q, index) =>
-          index > 0 &&
-          (q.title.trim() !== '' || q.description.trim() !== ''),
+          index > 0 && (q.title.trim() !== '' || q.description.trim() !== ''),
       );
     if (
       hasUserInput &&

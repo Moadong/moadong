@@ -2,7 +2,7 @@ import API_BASE_URL from '@/constants/api';
 import { UpdateApplicantParams } from '@/types/applicants';
 import {
   AnswerItem,
-  ApplicationDraftResponse,
+  ApplicationDraft,
   ApplicationForm,
   ApplicationFormData,
   ApplicationFormGroup,
@@ -167,7 +167,7 @@ export const generateApplicationDraft = async () => {
       method: 'POST',
     },
   );
-  return handleResponse<ApplicationDraftResponse>(
+  return handleResponse<ApplicationDraft>(
     response,
     '지원서 초안 생성에 실패했습니다.',
   );

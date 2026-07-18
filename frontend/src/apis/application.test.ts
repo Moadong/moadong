@@ -1,5 +1,5 @@
 import fetchMock from 'jest-fetch-mock';
-import { ApplicationDraftResponse } from '@/types/application';
+import { ApplicationDraft } from '@/types/application';
 import { generateApplicationDraft } from './application';
 
 jest.mock('@/constants/api', () => ({
@@ -27,7 +27,7 @@ describe('generateApplicationDraft', () => {
   });
 
   it('응답의 data 필드를 unwrap하여 초안을 반환한다', async () => {
-    const draft: ApplicationDraftResponse = {
+    const draft: ApplicationDraft = {
       title: '매니아 신입 부원 모집 지원서',
       description: '안녕하세요',
       aiGenerated: true,
