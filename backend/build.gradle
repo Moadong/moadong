@@ -76,6 +76,9 @@ dependencies {
 
 	implementation 'net.javacrumbs.shedlock:shedlock-spring:7.6.0'
 	implementation 'net.javacrumbs.shedlock:shedlock-provider-mongo:7.6.0'
+
+	// Anthropic (AI 지원서 초안 생성)
+	implementation 'com.anthropic:anthropic-java:2.34.0'
 }
 
 apply from: 'gradle/infisical.gradle'
