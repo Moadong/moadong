@@ -77,6 +77,8 @@ export const submitButton = styled.button`
 
 export const HeaderContainer = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const ChangeButtonWrapper = styled.div`
@@ -160,4 +162,24 @@ export const ExternalApplicationFormHint = styled.div`
   font-weight: 400;
   margin-top: 8px;
   margin-left: 4px;
+`;
+
+export const AiDraftButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  height: 33px;
+  padding: 0 12px;
+  border: 1px solid ${({ theme }) => theme.colors.primary[900]};
+  border-radius: 6px;
+  background-color: ${({ theme }) => theme.colors.base.white};
+  color: ${({ theme }) => theme.colors.primary[900]};
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;

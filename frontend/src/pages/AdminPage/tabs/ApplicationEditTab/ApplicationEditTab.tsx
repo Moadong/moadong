@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createApplication, updateApplication } from '@/apis/application';
+import { createApplication, generateApplicationDraft, updateApplication } from '@/apis/application';
 import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
@@ -98,6 +98,46 @@ const ApplicationEditTab = () => {
       alert(`지원서 수정에 실패했습니다: ${err.message}`),
   });
 
+  const { mutate: generateDraft, isPending: isGenerating } = useMutation({
+    mutationFn: generateApplicationDraft,
+    onSuccess: (draft) => {
+      if (!draft) return;
+      const nameQuestion = INITIAL_FORM_DATA.questions![0];
+      const draftQuestions = draft.questions.map((q, index) => ({
+        ...q,
+        id: index + 2, // index 0은 이름 고정 질문(id 1)
+      }));
+      setFormData((prev) => ({
+        ...prev,
+        title: draft.title,
+        description: draft.description,
+        questions: [nameQuestion, ...draftQuestions],
+      }));
+      setNextId(draftQuestions.length + 2);
+      if (!draft.aiGenerated) {
+        alert('AI 생성에 실패해 기본 템플릿을 제공했어요. 질문을 직접 다듬어주세요.');
+      }
+    },
+    onError: (err: Error) =>
+      alert(`지원서 초안 생성에 실패했습니다: ${err.message}`),
+  });
+
+  const handleGenerateDraft = () => {
+    const hasUserInput =
+      formData.title.trim() !== '' ||
+      formData.description.trim() !== '' ||
+      (formData.questions ?? []).some(
+        (q, index) => index > 0 && q.title.trim() !== '',
+      );
+    if (
+      hasUserInput &&
+      !confirm('작성 중인 내용을 AI 초안으로 덮어씁니다. 계속할까요?')
+    ) {
+      return;
+    }
+    generateDraft();
+  };
+
   const handleFormTitleChange = (value: string) => {
     setFormData((prev) => ({
       ...prev,
@@ -183,6 +223,14 @@ const ApplicationEditTab = () => {
               외부지원서
             </Styled.ApplicationFormChangeButton>
           </Styled.ChangeButtonWrapper>
+          {!formId && applicationFormMode === ApplicationFormMode.INTERNAL && (
+            <Styled.AiDraftButton
+              onClick={handleGenerateDraft}
+              disabled={isGenerating}
+            >
+              {isGenerating ? '생성 중...' : '✨ AI로 초안 생성'}
+            </Styled.AiDraftButton>
+          )}
         </Styled.HeaderContainer>
         <Styled.FormTitle
           type='text'

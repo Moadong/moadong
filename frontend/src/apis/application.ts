@@ -2,6 +2,7 @@ import API_BASE_URL from '@/constants/api';
 import { UpdateApplicantParams } from '@/types/applicants';
 import {
   AnswerItem,
+  ApplicationDraftResponse,
   ApplicationForm,
   ApplicationFormData,
   ApplicationFormGroup,
@@ -157,4 +158,17 @@ export const updateApplicationStatus = async (
     },
   );
   return handleResponse(response, '지원서 상태 수정에 실패했습니다.');
+};
+
+export const generateApplicationDraft = async () => {
+  const response = await secureFetch(
+    `${API_BASE_URL}/api/club/application/ai-draft`,
+    {
+      method: 'POST',
+    },
+  );
+  return handleResponse<ApplicationDraftResponse>(
+    response,
+    '지원서 초안 생성에 실패했습니다.',
+  );
 };
