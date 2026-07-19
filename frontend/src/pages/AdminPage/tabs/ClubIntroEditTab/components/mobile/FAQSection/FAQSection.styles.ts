@@ -116,29 +116,14 @@ export const AnswerWrapper = styled.div`
 
 export const AnswerCard = styled.div`
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
   padding: 12px 14px;
-  gap: 4px;
   width: 100%;
   background: ${colors.base.white};
   border: 1px solid ${colors.gray[200]};
   border-radius: 10px;
-`;
 
-export const AnswerTextarea = styled.textarea`
-  border: none;
-  outline: none;
-  background: transparent;
-  resize: none;
-  overflow: hidden;
-  ${setTypography(typography.paragraph.p6)}
-  line-height: 160%;
-  color: ${colors.base.black};
-  width: 100%;
-
-  &::placeholder {
-    color: ${colors.gray[500]};
+  &:focus-within {
+    border-color: ${colors.gray[800]};
   }
 `;
 

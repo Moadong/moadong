@@ -44,20 +44,3 @@ export const FieldList = styled.div`
   flex-direction: column;
   gap: 16px;
 `;
-
-export const TextArea = styled.textarea`
-  border: none;
-  outline: none;
-  background: transparent;
-  resize: none;
-  overflow: hidden;
-  width: 100%;
-  min-height: 22px;
-  ${setTypography(typography.paragraph.p6)}
-  line-height: 160%;
-  color: ${colors.base.black};
-
-  &::placeholder {
-    color: ${colors.gray[500]};
-  }
-`;
