@@ -31,7 +31,7 @@ SOLID 원칙:
 
 ### TextField (공통 컴포넌트)
 
-`EditField` + `ClearableTextArea`의 조합. 포커스 테두리·X 버튼·`useAutoGrow`(입력 내용에 따라 높이 무제한 확장)를 `ClearableTextArea`에 위임한다.
+`EditField` + `ClearableTextArea`의 조합. 포커스 테두리는 부모 Card의 `focus-within`(EditField)이 담당하고, X 버튼·`useAutoGrow`(입력 내용에 따라 높이 무제한 확장)는 `ClearableTextArea`에 위임한다.
 
 | prop | 타입 | 필수 | 설명 |
 |---|---|---|---|
