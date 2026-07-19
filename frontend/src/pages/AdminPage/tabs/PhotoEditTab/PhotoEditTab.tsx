@@ -34,6 +34,16 @@ const PhotoEditTab = () => {
     save,
   } = useFeedItems(clubDetail?.id, clubDetail?.feeds || []);
 
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  const { gridRef, dragIndex, dropPosition, handleMouseDown } = useDragSort({
+    disabled: isLoading,
+    onReorder: setFeedItems,
+    feedItemsRef,
+  });
+
+  const isFull = feedItems.length >= MAX_FILE_COUNT;
+
   if (isMobile || isTablet) {
     return (
       <PhotoEditTabMobile
@@ -42,15 +52,6 @@ const PhotoEditTab = () => {
       />
     );
   }
-
-  const isFull = feedItems.length >= MAX_FILE_COUNT;
-  const inputRef = useRef<HTMLInputElement>(null);
-
-  const { gridRef, dragIndex, dropPosition, handleMouseDown } = useDragSort({
-    disabled: isLoading,
-    onReorder: setFeedItems,
-    feedItemsRef,
-  });
 
   const handleAddClick = () => {
     if (isLoading || isFull) return;
