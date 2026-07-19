@@ -66,6 +66,7 @@ const ClubIntroEditTabMobile = ({
   useEffect(() => {
     if (activePage === 'main') {
       window.scrollTo({ top: savedScrollY.current, behavior: 'instant' });
+      window.dispatchEvent(new Event('scroll'));
     }
   }, [activePage]);
 
