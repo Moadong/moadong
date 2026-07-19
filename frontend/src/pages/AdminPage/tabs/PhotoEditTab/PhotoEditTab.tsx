@@ -135,6 +135,7 @@ const PhotoEditTab = () => {
                 dragIndex={dragIndex}
                 dropPosition={dropPosition}
                 isLoading={isLoading}
+                columns={4}
                 onMouseDown={handleMouseDown}
                 onDelete={(index) => {
                   trackEvent(ADMIN_EVENT.IMAGE_DELETE_BUTTON_CLICKED);
