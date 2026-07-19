@@ -1,13 +1,24 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
 export const MobileContainer = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 500px;
   min-height: 100dvh;
+  margin: 0 auto;
   background: ${colors.base.white};
   padding-bottom: 112px;
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
 `;
 
 export const ContentArea = styled.div`
