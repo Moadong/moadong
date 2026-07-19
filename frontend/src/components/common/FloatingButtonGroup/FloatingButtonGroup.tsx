@@ -6,7 +6,7 @@ import useShare from '@/hooks/useShare';
 import * as Styled from './FloatingButtonGroup.styles';
 
 export const FloatingButtonGroup = () => {
-  const { isTriggered: isScrolledDown, isScrollingUp } = useScrollTrigger();
+  const { isTriggered: isScrollingUp } = useScrollTrigger();
   const { scrollToTop } = useScrollTo();
   const { handleShare } = useShare();
 
@@ -24,7 +24,6 @@ export const FloatingButtonGroup = () => {
       <Styled.FloatingButton
         type='button'
         $isVisible={isScrollingUp}
-        $variant='scroll'
         onClick={() => scrollToTop()}
         aria-label='위로 이동하기'
       >
@@ -33,7 +32,6 @@ export const FloatingButtonGroup = () => {
       <Styled.FloatingButton
         type='button'
         $isVisible={true}
-        $variant='share'
         onClick={handlePageShare}
         aria-label='현재 페이지 공유하기'
       >
