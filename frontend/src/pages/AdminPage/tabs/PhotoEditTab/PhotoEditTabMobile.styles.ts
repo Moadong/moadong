@@ -1,20 +1,21 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
 export const MobileContainer = styled.div`
   display: flex;
   flex-direction: column;
   min-height: 100dvh;
-  background: #ffffff;
-  padding-bottom: 101px;
+  background: ${colors.base.white};
+  padding-bottom: 112px;
 `;
 
 export const ContentArea = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 32px;
-  padding: 0px;
+  gap: 24px;
+  padding-top: 32px;
 `;
 
 export const UploadSection = styled.div`
@@ -36,14 +37,12 @@ export const SectionHeader = styled.div`
 
 export const SectionTitle = styled.h2`
   ${setTypography(typography.title.title5)};
-  color: #111111;
-  margin: 0;
+  color: ${colors.base.black};
 `;
 
 export const SectionSubtitle = styled.p`
   ${setTypography(typography.button.button1)};
-  color: #787878;
-  margin: 0;
+  color: ${colors.gray[700]};
 `;
 
 export const GridSection = styled.div`
@@ -56,7 +55,7 @@ export const GridSection = styled.div`
 
 export const GridSectionTitle = styled.h2`
   ${setTypography(typography.title.title5)};
-  color: #111111;
+  color: ${colors.base.black};
   margin: 0;
   padding: 0 20px;
 `;

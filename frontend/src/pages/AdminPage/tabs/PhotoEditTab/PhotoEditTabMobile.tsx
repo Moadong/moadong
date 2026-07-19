@@ -65,7 +65,10 @@ const PhotoEditTabMobile = ({
   return (
     <>
       <Styled.MobileContainer>
-        <WebviewTopBar title='활동사진' onBack={() => navigate('/admin')} />
+        <WebviewTopBar
+          title='활동 사진 수정'
+          onBack={() => navigate('/admin')}
+        />
 
         <input
           ref={inputRef}
