@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
@@ -16,6 +17,7 @@ import useAutoGrow from '@/hooks/useAutoGrow';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTabMobile.styles';
+import AwardEditPage from './components/mobile/AwardEditPage/AwardEditPage';
 import AwardSection from './components/mobile/AwardSection/AwardSection';
 import FAQSection from './components/mobile/FAQSection/FAQSection';
 import InfoSection from './components/mobile/InfoSection/InfoSection';
@@ -26,6 +28,7 @@ interface ClubIntroEditTabMobileProps {
   activityDescription: string;
   setActivityDescription: (v: string) => void;
   awards: Award[];
+  setAwards: (awards: Award[]) => void;
   idealCandidate: IdealCandidate;
   setIdealCandidate: (v: IdealCandidate) => void;
   benefits: string;
@@ -34,7 +37,10 @@ interface ClubIntroEditTabMobileProps {
   setFaqs: (v: FAQ[]) => void;
   isDirty: boolean;
   handleUpdateClub: () => void;
+  handleUpdateClubWithAwards: (awards: Award[]) => void;
 }
+
+type ActivePage = 'main' | 'award';
 
 const ClubIntroEditTabMobile = ({
   introDescription,
@@ -42,6 +48,7 @@ const ClubIntroEditTabMobile = ({
   activityDescription,
   setActivityDescription,
   awards,
+  setAwards,
   idealCandidate,
   setIdealCandidate,
   benefits,
@@ -50,8 +57,24 @@ const ClubIntroEditTabMobile = ({
   setFaqs,
   isDirty,
   handleUpdateClub,
+  handleUpdateClubWithAwards,
 }: ClubIntroEditTabMobileProps) => {
   const navigate = useNavigate();
+  const [activePage, setActivePage] = useState<ActivePage>('main');
+  const savedScrollY = useRef(0);
+
+  useEffect(() => {
+    if (activePage === 'main') {
+      window.scrollTo({ top: savedScrollY.current, behavior: 'instant' });
+      window.dispatchEvent(new Event('scroll'));
+    }
+  }, [activePage]);
+
+  const handleNavigateToAward = () => {
+    savedScrollY.current = window.scrollY;
+    setActivePage('award');
+  };
+
   const introRef = useAutoGrow(introDescription);
   const activityRef = useAutoGrow(activityDescription);
   const idealRef = useAutoGrow(idealCandidate.content);
@@ -80,6 +103,17 @@ const ClubIntroEditTabMobile = ({
       setBenefits(e.target.value);
     }
   };
+
+  if (activePage === 'award') {
+    return (
+      <AwardEditPage
+        initialAwards={awards}
+        onSave={setAwards}
+        onSaveToServer={handleUpdateClubWithAwards}
+        onBack={() => setActivePage('main')}
+      />
+    );
+  }
 
   return (
     <>
@@ -122,7 +156,7 @@ const ClubIntroEditTabMobile = ({
               />
             </InfoSection>
 
-            <AwardSection awards={awards} />
+            <AwardSection awards={awards} onNavigate={handleNavigateToAward} />
 
             <InfoSection
               label='이런 사람이 오면 좋아요'

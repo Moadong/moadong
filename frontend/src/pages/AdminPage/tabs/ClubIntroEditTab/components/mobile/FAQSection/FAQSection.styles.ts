@@ -147,23 +147,3 @@ export const CharCount = styled.span`
   color: ${colors.gray[500]};
   text-align: right;
 `;
-
-export const AddButton = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 12px;
-  gap: 6px;
-  background: ${colors.primary[800]};
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  ${setTypography(typography.button.button2)}
-  color: ${colors.base.white};
-
-  img {
-    width: 16px;
-    height: 16px;
-  }
-`;
