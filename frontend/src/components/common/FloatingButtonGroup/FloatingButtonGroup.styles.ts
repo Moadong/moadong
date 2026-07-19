@@ -1,43 +1,28 @@
-import styled, { css, keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { Z_INDEX } from '@/styles/zIndex';
 
-const bounceUp = keyframes`
-  0%, 100% { transform: scale(1.18) translateY(0); }
-  50% { transform: scale(1.18) translateY(-4px); }
-`;
-
-const wiggle = keyframes`
-  0%   { transform: scale(1.18) rotate(0deg); }
-  20%  { transform: scale(1.18) rotate(-18deg); }
-  40%  { transform: scale(1.18) rotate(14deg); }
-  60%  { transform: scale(1.18) rotate(-10deg); }
-  80%  { transform: scale(1.18) rotate(6deg); }
-  100% { transform: scale(1.18) rotate(0deg); }
-`;
-
 export const GroupContainer = styled.div`
   position: fixed;
-  right: 0;
-  bottom: 110px;
+  right: 28px;
+  bottom: 28px;
   z-index: ${Z_INDEX.floatingButton};
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
-  padding: 0 12px;
+  align-items: flex-end;
   gap: 8px;
 
   ${media.tablet} {
-    bottom: 90px;
+    right: 14px;
+    bottom: calc(54px + env(safe-area-inset-bottom) + 14px);
   }
 `;
 
 export const FloatingButton = styled.button<{
   $isVisible: boolean;
-  $variant: 'scroll' | 'share';
 }>`
-  width: 33px;
-  height: 33px;
+  width: 38px;
+  height: 38px;
   padding: 0;
   background: none;
   border: none;
@@ -49,26 +34,17 @@ export const FloatingButton = styled.button<{
     visibility 0.3s;
 
   img {
-    width: 33px;
-    height: 33px;
+    width: 38px;
+    height: 38px;
     display: block;
     transition: transform 0.15s ease;
   }
 
-  ${({ $variant }) =>
-    $variant === 'scroll'
-      ? css`
-          &:hover img {
-            animation: ${bounceUp} 0.55s ease infinite;
-          }
-        `
-      : css`
-          &:hover img {
-            animation: ${wiggle} 0.55s ease forwards;
-          }
-        `}
+  &:hover img {
+    transform: scale(1.12);
+  }
 
   &:active img {
-    transform: scale(1.08);
+    transform: scale(1.04);
   }
 `;
