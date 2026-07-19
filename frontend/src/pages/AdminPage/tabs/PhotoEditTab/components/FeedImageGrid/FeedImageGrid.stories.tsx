@@ -58,9 +58,7 @@ export default meta;
 type Story = StoryObj;
 
 export const AllUploaded: Story = {
-  render: () => (
-    <Wrapper feedItems={['a', 'b', 'c', 'd', 'e', 'f'].map(img)} />
-  ),
+  render: () => <Wrapper feedItems={['a', 'b', 'c', 'd', 'e', 'f'].map(img)} />,
 };
 
 export const WithPending: Story = {

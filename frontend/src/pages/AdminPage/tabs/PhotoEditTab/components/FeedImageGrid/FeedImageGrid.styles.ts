@@ -33,12 +33,14 @@ export const PhotoItem = styled.div`
   width: 100%;
   aspect-ratio: 123 / 160;
   overflow: hidden;
+  background-color: #d9d9d9;
 `;
 
 export const Photo = styled.img`
   width: 100%;
   height: 100%;
   object-fit: cover;
+  border: none;
 `;
 
 export const Overlay = styled.div<{ $error?: boolean }>`

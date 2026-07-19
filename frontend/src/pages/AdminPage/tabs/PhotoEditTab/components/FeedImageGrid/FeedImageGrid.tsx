@@ -91,7 +91,14 @@ export const FeedImageGrid = ({
             $isDimmed={dragIndex !== null && dragIndex !== index}
           >
             <Styled.PhotoItem>
-              <Styled.Photo src={src} alt='' draggable={false} />
+              <Styled.Photo
+                src={src}
+                alt=''
+                draggable={false}
+                onError={(e) => {
+                  e.currentTarget.style.display = 'none';
+                }}
+              />
 
               {status === 'uploading' && (
                 <Styled.Overlay>

@@ -2,8 +2,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import PhotoUploadCard from './PhotoUploadCard';
 
 const meta = {
-  title:
-    'Pages/AdminPage/tabs/PhotoEditTab/components/mobile/PhotoUploadCard',
+  title: 'Pages/AdminPage/tabs/PhotoEditTab/components/mobile/PhotoUploadCard',
   component: PhotoUploadCard,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],

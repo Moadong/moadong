@@ -21,7 +21,6 @@ export const Card = styled.button`
   }
 `;
 
-
 export const Label = styled.span`
   ${setTypography(typography.paragraph.p6)}
   text-align: center;
