@@ -1,6 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
 import useDevice from '@/hooks/useDevice';
 import AdminPage from '@/pages/AdminPage/AdminPage';
+import AdminTabAdapter from '@/pages/AdminPage/AdminTabAdapter';
 import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab';
 import ApplicantDetailPage from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPage';
 import ApplicantsListTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/ApplicantsListTab';
@@ -9,7 +10,9 @@ import ApplicationEditTab from '@/pages/AdminPage/tabs/ApplicationEditTab/Applic
 import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab';
 import CalendarSyncTab from '@/pages/AdminPage/tabs/CalendarSyncTab/CalendarSyncTab';
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
+import ClubInfoEditTabMobile from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTabMobile';
 import ClubIntroEditTab from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroEditTab';
+import ClubIntroEditTabMobile from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroEditTabMobile';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import SettingsTab from '@/pages/AdminPage/tabs/SettingsTab/SettingsTab';
@@ -25,11 +28,33 @@ export default function AdminRoutes() {
     <Routes>
       <Route path='' element={<AdminPage />}>
         <Route index element={<AdminIndexRoute />} />
-        <Route path='club-info' element={<ClubInfoEditTab />} />
-        <Route path='recruit-edit' element={<RecruitEditTab />} />
-        <Route path='calendar-sync' element={<CalendarSyncTab />} />
+
+        {/* 동아리 프로필 */}
+        <Route
+          path='club-info'
+          element={
+            <AdminTabAdapter
+              desktop={<ClubInfoEditTab />}
+              mobile={<ClubInfoEditTabMobile />}
+            />
+          }
+        />
+        <Route
+          path='club-intro'
+          element={
+            <AdminTabAdapter
+              desktop={<ClubIntroEditTab />}
+              mobile={<ClubIntroEditTabMobile />}
+            />
+          }
+        />
         <Route path='photo-edit' element={<PhotoEditTab />} />
-        <Route path='account-edit' element={<AccountEditTab />} />
+
+        {/* 동아리 활동 */}
+        <Route path='calendar-sync' element={<CalendarSyncTab />} />
+        <Route path='recruit-edit' element={<RecruitEditTab />} />
+
+        {/* 지원 관리 */}
         <Route path='application-list' element={<ApplicationListTab />} />
         <Route
           path='application-list/:applicationFormId/edit'
@@ -45,7 +70,9 @@ export default function AdminRoutes() {
           path='applicants-list/:applicationFormId/:questionId'
           element={<ApplicantDetailPage />}
         />
-        <Route path='club-intro' element={<ClubIntroEditTab />} />
+
+        {/* 계정 관리 */}
+        <Route path='account-edit' element={<AccountEditTab />} />
       </Route>
     </Routes>
   );
