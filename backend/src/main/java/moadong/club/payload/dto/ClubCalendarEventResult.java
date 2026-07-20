@@ -18,4 +18,9 @@ public record ClubCalendarEventResult(
             String id, String title, String start, String end, String url, String description) {
         return new ClubCalendarEventResult(id, title, start, end, url, description, "GOOGLE");
     }
+
+    public static ClubCalendarEventResult ofCustom(
+            String id, String title, String start, String end, String url, String description) {
+        return new ClubCalendarEventResult(id, title, start, end, url, description, "CUSTOM");
+    }
 }
