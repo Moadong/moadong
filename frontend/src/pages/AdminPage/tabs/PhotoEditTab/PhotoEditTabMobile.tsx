@@ -1,27 +1,21 @@
 import { useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useOutletContext } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
+import { ClubDetail } from '@/types/club';
 import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
 import PhotoUploadCard from './components/mobile/PhotoUploadCard/PhotoUploadCard';
 import { useDragSort } from './hooks/useDragSort';
 import { useFeedItems } from './hooks/useFeedItems';
 import * as Styled from './PhotoEditTabMobile.styles';
 
-interface PhotoEditTabMobileProps {
-  clubId: string;
-  originalFeeds: string[];
-}
-
-const PhotoEditTabMobile = ({
-  clubId,
-  originalFeeds,
-}: PhotoEditTabMobileProps) => {
+const PhotoEditTabMobile = () => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
+  const clubDetail = useOutletContext<ClubDetail>();
 
   const {
     feedItems,
@@ -33,7 +27,7 @@ const PhotoEditTabMobile = ({
     deleteImage,
     retryItem,
     save,
-  } = useFeedItems(clubId, originalFeeds);
+  } = useFeedItems(clubDetail?.id, clubDetail?.feeds || []);
 
   const { gridRef, dragIndex, dropPosition, handleMouseDown } = useDragSort({
     disabled: isLoading,
@@ -79,7 +73,7 @@ const PhotoEditTabMobile = ({
           onChange={handleFileChange}
         />
 
-        <Styled.ContentArea>
+        <Styled.PhotoSection>
           {!isFull && (
             <Styled.UploadSection>
               <Styled.SectionHeader>
@@ -118,10 +112,13 @@ const PhotoEditTabMobile = ({
               />
             </Styled.GridSection>
           )}
-        </Styled.ContentArea>
+        </Styled.PhotoSection>
       </Styled.MobileContainer>
 
-      <MobileSaveButtonArea onClick={save} disabled={!pendingChanges} />
+      <MobileSaveButtonArea
+        onClick={save}
+        disabled={isLoading || !pendingChanges}
+      />
     </>
   );
 };

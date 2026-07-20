@@ -14,6 +14,7 @@ import ClubInfoEditTabMobile from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubIn
 import ClubIntroEditTab from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroEditTab';
 import ClubIntroEditTabMobile from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroEditTabMobile';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
+import PhotoEditTabMobile from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTabMobile';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import SettingsTab from '@/pages/AdminPage/tabs/SettingsTab/SettingsTab';
 
@@ -48,7 +49,15 @@ export default function AdminRoutes() {
             />
           }
         />
-        <Route path='photo-edit' element={<PhotoEditTab />} />
+        <Route
+          path='photo-edit'
+          element={
+            <AdminTabAdapter
+              desktop={<PhotoEditTab />}
+              mobile={<PhotoEditTabMobile />}
+            />
+          }
+        />
 
         {/* 동아리 활동 */}
         <Route path='calendar-sync' element={<CalendarSyncTab />} />
