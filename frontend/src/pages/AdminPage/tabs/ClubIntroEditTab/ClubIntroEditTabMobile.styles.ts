@@ -6,7 +6,7 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const MobileContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding-bottom: calc(80px + env(safe-area-inset-bottom));
+  padding-bottom: calc(80px + env(safe-area-inset-bottom) + 32px);
   width: 100%;
   max-width: 500px;
   min-height: 100vh;
@@ -24,7 +24,7 @@ export const FormSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 30px;
-  padding: 20px 20px 32px;
+  padding: 32px 20px 0;
 `;
 
 export const PageTitle = styled.h2`

@@ -6,7 +6,7 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const MobileContainer = styled.div`
   display: flex;
   flex-direction: column;
-  padding-bottom: 100px;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom) + 40px);
   width: 100%;
   max-width: 500px;
   min-height: 100vh;

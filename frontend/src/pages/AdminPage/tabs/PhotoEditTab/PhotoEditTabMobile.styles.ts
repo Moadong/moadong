@@ -11,7 +11,7 @@ export const MobileContainer = styled.div`
   min-height: 100dvh;
   margin: 0 auto;
   background: ${colors.base.white};
-  padding-bottom: 112px;
+  padding-bottom: calc(80px + env(safe-area-inset-bottom) + 32px);
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
 
   ${media.mobile} {
@@ -21,7 +21,7 @@ export const MobileContainer = styled.div`
   }
 `;
 
-export const ContentArea = styled.div`
+export const PhotoSection = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
