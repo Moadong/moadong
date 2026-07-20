@@ -14,44 +14,31 @@ import {
 } from '@/constants/adminFieldPlaceholders';
 import useAutoGrow from '@/hooks/useAutoGrow';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
-import { Award, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTabMobile.styles';
 import AwardSection from './components/mobile/AwardSection/AwardSection';
 import FAQSection from './components/mobile/FAQSection/FAQSection';
 import InfoSection from './components/mobile/InfoSection/InfoSection';
+import useClubIntroEdit from './hooks/useClubIntroEdit';
 
-interface ClubIntroEditTabMobileProps {
-  introDescription: string;
-  setIntroDescription: (v: string) => void;
-  activityDescription: string;
-  setActivityDescription: (v: string) => void;
-  awards: Award[];
-  idealCandidate: IdealCandidate;
-  setIdealCandidate: (v: IdealCandidate) => void;
-  benefits: string;
-  setBenefits: (v: string) => void;
-  faqs: FAQ[];
-  setFaqs: (v: FAQ[]) => void;
-  isDirty: boolean;
-  handleUpdateClub: () => void;
-}
-
-const ClubIntroEditTabMobile = ({
-  introDescription,
-  setIntroDescription,
-  activityDescription,
-  setActivityDescription,
-  awards,
-  idealCandidate,
-  setIdealCandidate,
-  benefits,
-  setBenefits,
-  faqs,
-  setFaqs,
-  isDirty,
-  handleUpdateClub,
-}: ClubIntroEditTabMobileProps) => {
+const ClubIntroEditTabMobile = () => {
   const navigate = useNavigate();
+
+  const {
+    introDescription,
+    setIntroDescription,
+    activityDescription,
+    setActivityDescription,
+    awards,
+    idealCandidate,
+    setIdealCandidate,
+    benefits,
+    setBenefits,
+    faqs,
+    setFaqs,
+    isDirty,
+    handleUpdateClub,
+  } = useClubIntroEdit();
+
   const introRef = useAutoGrow(introDescription);
   const activityRef = useAutoGrow(activityDescription);
   const idealRef = useAutoGrow(idealCandidate.content);
