@@ -1,5 +1,4 @@
 import { useMemo, useState } from 'react';
-import Spinner from '@/components/common/Spinner/Spinner';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import {
@@ -61,12 +60,6 @@ const StatisticsTab = () => {
     setActivePreset(null);
   };
 
-  const isInitialLoading =
-    canFetch &&
-    overviewQuery.isLoading &&
-    trendQuery.isLoading &&
-    searchKeywordQuery.isLoading;
-
   return (
     <Styled.Container>
       <ContentSection>
@@ -80,9 +73,7 @@ const StatisticsTab = () => {
             onPresetSelect={handlePresetSelect}
             onRangeChange={handleRangeChange}
           />
-          {isInitialLoading ? (
-            <Spinner />
-          ) : (
+          {canFetch && (
             <MetricSummary
               data={overviewQuery.data}
               isLoading={overviewQuery.isLoading}
@@ -93,7 +84,7 @@ const StatisticsTab = () => {
         </ContentSection.Body>
       </ContentSection>
 
-      {!isInitialLoading && (
+      {canFetch && (
         <>
           <Styled.Section>
             <Styled.SectionHeader>

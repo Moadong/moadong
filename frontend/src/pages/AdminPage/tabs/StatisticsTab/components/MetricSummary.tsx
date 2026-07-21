@@ -1,18 +1,13 @@
-import type { RefetchOptions, QueryObserverResult } from '@tanstack/react-query';
 import type { ClubStatisticsOverview } from '@/types/statistics';
-import {
-  formatDuration,
-  formatNumber,
-} from '../utils/statisticsFormat';
 import * as Styled from '../StatisticsTab.styles';
+import { formatDuration, formatNumber } from '../utils/statisticsFormat';
+import type { StatisticsRetryHandler } from './types';
 
 interface MetricSummaryProps {
   data?: ClubStatisticsOverview;
   isLoading: boolean;
   isError: boolean;
-  onRetry: (
-    options?: RefetchOptions,
-  ) => Promise<QueryObserverResult<ClubStatisticsOverview | undefined, Error>>;
+  onRetry: StatisticsRetryHandler<ClubStatisticsOverview>;
 }
 
 const MetricSummary = ({
@@ -23,9 +18,7 @@ const MetricSummary = ({
 }: MetricSummaryProps) => {
   if (isLoading) {
     return (
-      <Styled.FeedbackBox>
-        통계 요약을 불러오는 중입니다.
-      </Styled.FeedbackBox>
+      <Styled.FeedbackBox>통계 요약을 불러오는 중입니다.</Styled.FeedbackBox>
     );
   }
 

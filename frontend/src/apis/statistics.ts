@@ -8,17 +8,18 @@ import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
 
 const buildStatisticsUrl = (path: string, params: Record<string, string>) => {
-  const url = new URL(`${API_BASE_URL}${path}`);
+  if (!API_BASE_URL || !/^https?:\/\//.test(API_BASE_URL)) {
+    throw new Error('API_BASE_URL must be configured as an absolute URL.');
+  }
+
+  const url = new URL(path, API_BASE_URL);
   Object.entries(params).forEach(([key, value]) => {
     url.searchParams.set(key, value);
   });
   return url.toString();
 };
 
-export const getClubStatisticsOverview = async (
-  from: string,
-  to: string,
-) => {
+export const getClubStatisticsOverview = async (from: string, to: string) => {
   const response = await secureFetch(
     buildStatisticsUrl('/api/club/statistics/overview', { from, to }),
   );

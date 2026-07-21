@@ -1,4 +1,3 @@
-import type { RefetchOptions, QueryObserverResult } from '@tanstack/react-query';
 import {
   CartesianGrid,
   Legend,
@@ -14,20 +13,19 @@ import type {
   ClubStatisticsDailyPoint,
   ClubStatisticsTrend,
 } from '@/types/statistics';
+import * as Styled from '../StatisticsTab.styles';
 import {
   formatChartDate,
   formatDuration,
   formatNumber,
 } from '../utils/statisticsFormat';
-import * as Styled from '../StatisticsTab.styles';
+import type { StatisticsRetryHandler } from './types';
 
 interface TrendChartProps {
   data?: ClubStatisticsTrend;
   isLoading: boolean;
   isError: boolean;
-  onRetry: (
-    options?: RefetchOptions,
-  ) => Promise<QueryObserverResult<ClubStatisticsTrend | undefined, Error>>;
+  onRetry: StatisticsRetryHandler<ClubStatisticsTrend>;
 }
 
 interface StatisticsTooltipProps {
@@ -71,9 +69,7 @@ const StatisticsTooltip = ({
 const TrendChart = ({ data, isLoading, isError, onRetry }: TrendChartProps) => {
   if (isLoading) {
     return (
-      <Styled.FeedbackBox>
-        일자별 추이를 불러오는 중입니다.
-      </Styled.FeedbackBox>
+      <Styled.FeedbackBox>일자별 추이를 불러오는 중입니다.</Styled.FeedbackBox>
     );
   }
 

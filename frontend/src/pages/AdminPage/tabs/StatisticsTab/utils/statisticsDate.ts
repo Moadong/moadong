@@ -12,12 +12,6 @@ export interface StatisticsDateRange {
   to: string;
 }
 
-const buildDateKey = (year: number, month: number, day: number) => {
-  const paddedMonth = String(month).padStart(2, '0');
-  const paddedDay = String(day).padStart(2, '0');
-  return `${year}-${paddedMonth}-${paddedDay}`;
-};
-
 export const toUtcDateKey = (date: Date) => {
   const year = date.getUTCFullYear();
   const month = String(date.getUTCMonth() + 1).padStart(2, '0');
@@ -32,10 +26,10 @@ const dateKeyToUtcDate = (dateKey: string) => {
 
 export const getTodayKstDateKey = () => {
   const parts = DATE_KEY_FORMATTER.formatToParts(new Date());
-  const year = Number(parts.find((part) => part.type === 'year')?.value);
-  const month = Number(parts.find((part) => part.type === 'month')?.value);
-  const day = Number(parts.find((part) => part.type === 'day')?.value);
-  return buildDateKey(year, month, day);
+  const year = parts.find((part) => part.type === 'year')?.value ?? '';
+  const month = parts.find((part) => part.type === 'month')?.value ?? '';
+  const day = parts.find((part) => part.type === 'day')?.value ?? '';
+  return `${year}-${month}-${day}`;
 };
 
 export const getRecentDateRange = (days: number): StatisticsDateRange => {

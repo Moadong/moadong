@@ -172,9 +172,7 @@ export const MetricLabel = styled.span`
 
 export const MetricValue = styled.strong`
   color: ${colors.gray[900]};
-  font-size: 1.75rem;
-  font-weight: 700;
-  line-height: 1.2;
+  ${setTypography(typography.title.title3)}
 `;
 
 export const MetricUnit = styled.span`

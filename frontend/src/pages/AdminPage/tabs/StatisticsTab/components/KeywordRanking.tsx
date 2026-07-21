@@ -1,15 +1,13 @@
-import type { RefetchOptions, QueryObserverResult } from '@tanstack/react-query';
 import type { SearchKeywordStatistics } from '@/types/statistics';
-import { formatNumber } from '../utils/statisticsFormat';
 import * as Styled from '../StatisticsTab.styles';
+import { formatNumber } from '../utils/statisticsFormat';
+import type { StatisticsRetryHandler } from './types';
 
 interface KeywordRankingProps {
   data?: SearchKeywordStatistics;
   isLoading: boolean;
   isError: boolean;
-  onRetry: (
-    options?: RefetchOptions,
-  ) => Promise<QueryObserverResult<SearchKeywordStatistics | undefined, Error>>;
+  onRetry: StatisticsRetryHandler<SearchKeywordStatistics>;
 }
 
 const KeywordRanking = ({
@@ -20,9 +18,7 @@ const KeywordRanking = ({
 }: KeywordRankingProps) => {
   if (isLoading) {
     return (
-      <Styled.FeedbackBox>
-        검색어 통계를 불러오는 중입니다.
-      </Styled.FeedbackBox>
+      <Styled.FeedbackBox>검색어 통계를 불러오는 중입니다.</Styled.FeedbackBox>
     );
   }
 

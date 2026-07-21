@@ -9,50 +9,36 @@ const ok = <T>(data: T) =>
     data,
   });
 
-const buildTrendPoints = () => [
-  {
-    date: '2026-07-03',
-    detailViews: 12,
-    averageDetailDurationSeconds: 31,
-    applicants: 1,
-  },
-  {
-    date: '2026-07-04',
-    detailViews: 18,
-    averageDetailDurationSeconds: 44,
-    applicants: 3,
-  },
-  {
-    date: '2026-07-05',
-    detailViews: 21,
-    averageDetailDurationSeconds: 39,
-    applicants: 2,
-  },
-  {
-    date: '2026-07-06',
-    detailViews: 17,
-    averageDetailDurationSeconds: 52,
-    applicants: 4,
-  },
-  {
-    date: '2026-07-07',
-    detailViews: 25,
-    averageDetailDurationSeconds: 48,
-    applicants: 3,
-  },
-  {
-    date: '2026-07-08',
-    detailViews: 16,
-    averageDetailDurationSeconds: 36,
-    applicants: 1,
-  },
-  {
-    date: '2026-07-09',
-    detailViews: 19,
-    averageDetailDurationSeconds: 50,
-    applicants: 3,
-  },
-];
+const toDateKey = (date: Date) => date.toISOString().slice(0, 10);
+
+const dateKeyToUtcDate = (dateKey: string) => {
+  const [year, month, day] = dateKey.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day));
+};
+
+const buildTrendPoints = (from: string, to: string) => {
+  const start = dateKeyToUtcDate(from);
+  const end = dateKeyToUtcDate(to);
+
+  if (Number.isNaN(start.getTime()) || Number.isNaN(end.getTime())) return [];
+
+  const points = [];
+  for (
+    const date = new Date(start);
+    date.getTime() <= end.getTime();
+    date.setUTCDate(date.getUTCDate() + 1)
+  ) {
+    const day = date.getUTCDate();
+    points.push({
+      date: toDateKey(date),
+      detailViews: 10 + ((day * 7) % 18),
+      averageDetailDurationSeconds: 30 + ((day * 5) % 25),
+      applicants: (day % 5) + 1,
+    });
+  }
+
+  return points;
+};
 
 // 모든 MSW 핸들러를 여기에 통합
 export const handlers = [
@@ -124,15 +110,19 @@ export const handlers = [
     const url = new URL(request.url);
     const from = url.searchParams.get('from') ?? '2026-07-03';
     const to = url.searchParams.get('to') ?? '2026-07-09';
+    const points = buildTrendPoints(from, to);
 
     return ok({
       clubId: MOCK_CLUB_ID,
       clubName: '모아동 밴드',
       from,
       to,
-      totalDetailViews: 128,
+      totalDetailViews: points.reduce(
+        (sum, point) => sum + point.detailViews,
+        0,
+      ),
       averageDetailDurationSeconds: 43,
-      totalApplicants: 17,
+      totalApplicants: points.reduce((sum, point) => sum + point.applicants, 0),
     });
   }),
 
@@ -145,7 +135,7 @@ export const handlers = [
       clubId: MOCK_CLUB_ID,
       from,
       to,
-      points: buildTrendPoints(),
+      points: buildTrendPoints(from, to),
     });
   }),
 
