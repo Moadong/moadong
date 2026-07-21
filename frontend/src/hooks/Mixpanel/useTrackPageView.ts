@@ -2,6 +2,14 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
 
+const trackSafely = (eventName: string, properties: Record<string, unknown>) => {
+  try {
+    mixpanel.track(eventName, properties);
+  } catch (error) {
+    console.warn('Failed to track page view:', eventName, error);
+  }
+};
+
 const useTrackPageView = (
   pageName: string,
   clubName?: string,
@@ -27,7 +35,7 @@ const useTrackPageView = (
     isTracked.current = false;
     startTime.current = Date.now();
 
-    mixpanel.track(`${pageName} Visited`, {
+    trackSafely(`${pageName} Visited`, {
       url: window.location.href,
       timestamp: startTime.current,
       referrer: document.referrer || 'direct',
@@ -40,7 +48,7 @@ const useTrackPageView = (
       isTracked.current = true;
 
       const duration = Date.now() - startTime.current;
-      mixpanel.track(`${pageName} Duration`, {
+      trackSafely(`${pageName} Duration`, {
         url: window.location.href,
         duration: duration,
         duration_seconds: Math.round(duration / 1000),
