@@ -73,18 +73,28 @@ const CalendarSyncTab = () => {
     if (window.confirm('Google 연동을 해제할까요?')) disconnectGoogle();
   };
 
-  const removeCustomEvent = (unifiedId: string) =>
-    deleteCustomMutation.mutate(unifiedId.replace('custom-', ''));
+  const removeCustomEvent = (unifiedId: string) => {
+    if (deleteCustomMutation.isPending) return;
+    if (!window.confirm('이 일정을 삭제할까요?')) return;
+    deleteCustomMutation.mutate(unifiedId.replace('custom-', ''), {
+      onError: () => window.alert('일정 삭제에 실패했습니다.'),
+    });
+  };
 
   const hideOAuthEvent = (
     source: 'GOOGLE' | 'NOTION' | 'CUSTOM',
     unifiedId: string,
   ) => {
-    if (source === 'CUSTOM') return;
-    hideMutation.mutate({
-      source,
-      eventId: unifiedId.replace(/^(google|notion)-/, ''),
-    });
+    if (source === 'CUSTOM' || hideMutation.isPending) return;
+    hideMutation.mutate(
+      {
+        source,
+        eventId: unifiedId.replace(/^(google|notion)-/, ''),
+      },
+      {
+        onError: () => window.alert('일정 숨기기에 실패했습니다.'),
+      },
+    );
   };
 
   const openCreateCustomEvent = (dateKey: string) =>

@@ -246,7 +246,8 @@ export const CalendarCell = styled.div<{ $muted: boolean }>`
   flex-direction: column;
   gap: 8px;
 
-  &:hover button[data-add] {
+  &:hover button[data-add],
+  &:focus-within button[data-add] {
     display: block;
   }
 
@@ -286,7 +287,8 @@ export const CustomEvent = styled.div`
     background: ${colors.primary[600]};
   }
 
-  &:hover button[data-remove] {
+  &:hover button[data-remove],
+  &:focus-within button[data-remove] {
     display: flex;
   }
 `;
@@ -356,7 +358,8 @@ export const CalendarEvent = styled.div<{ $source?: 'GOOGLE' | 'NOTION' }>`
   text-overflow: ellipsis;
   white-space: nowrap;
 
-  &:hover button[data-remove] {
+  &:hover button[data-remove],
+  &:focus-within button[data-remove] {
     display: flex;
   }
 `;

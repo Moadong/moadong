@@ -57,10 +57,16 @@ const CustomEventModal = ({
       return;
     }
 
+    const trimmedEnd = form.end?.trim();
+    if (trimmedEnd && trimmedEnd < form.start) {
+      setErrorMessage('종료일은 시작일보다 빠를 수 없습니다.');
+      return;
+    }
+
     const payload: CustomCalendarEventInput = {
       title: form.title.trim(),
       start: form.start,
-      end: form.end?.trim() ? form.end : undefined,
+      end: trimmedEnd || undefined,
       url: form.url?.trim() ? form.url.trim() : undefined,
       description: form.description?.trim() ? form.description.trim() : undefined,
     };
