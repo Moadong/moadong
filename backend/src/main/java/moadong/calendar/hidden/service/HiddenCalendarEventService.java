@@ -65,7 +65,7 @@ public class HiddenCalendarEventService {
     }
 
     private void validateSource(String source) {
-        if (!HIDEABLE_SOURCES.contains(source)) {
+        if (source == null || !HIDEABLE_SOURCES.contains(source)) {
             throw new RestApiException(ErrorCode.HIDDEN_EVENT_INVALID_SOURCE);
         }
     }

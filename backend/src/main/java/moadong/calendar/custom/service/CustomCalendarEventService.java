@@ -1,5 +1,6 @@
 package moadong.calendar.custom.service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +25,7 @@ public class CustomCalendarEventService {
 
     public ClubCalendarEventResult create(CustomUserDetails user, CustomCalendarEventRequest request) {
         String clubId = requireAuthenticatedClubId(user);
+        validateDates(request.start(), request.end());
 
         CustomCalendarEvent event = CustomCalendarEvent.builder()
                 .clubId(clubId)
@@ -45,6 +47,7 @@ public class CustomCalendarEventService {
 
     public ClubCalendarEventResult update(CustomUserDetails user, String eventId, CustomCalendarEventRequest request) {
         String clubId = requireAuthenticatedClubId(user);
+        validateDates(request.start(), request.end());
 
         CustomCalendarEvent event = customCalendarEventRepository.findByIdAndClubId(eventId, clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CUSTOM_EVENT_NOT_FOUND));
@@ -78,6 +81,30 @@ public class CustomCalendarEventService {
             return false;
         }
         return customCalendarEventRepository.existsByClubId(clubId);
+    }
+
+    private void validateDates(String start, String end) {
+        LocalDate parsedStart;
+        try {
+            parsedStart = LocalDate.parse(start);
+        } catch (Exception e) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DATE_FORMAT);
+        }
+
+        if (!StringUtils.hasText(end)) {
+            return;
+        }
+
+        LocalDate parsedEnd;
+        try {
+            parsedEnd = LocalDate.parse(end);
+        } catch (Exception e) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DATE_FORMAT);
+        }
+
+        if (parsedStart.isAfter(parsedEnd)) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DATE_RANGE);
+        }
     }
 
     private ClubCalendarEventResult toResult(CustomCalendarEvent event) {

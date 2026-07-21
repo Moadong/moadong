@@ -147,6 +147,60 @@ class CustomCalendarEventServiceTest {
     }
 
     @Test
+    @DisplayName("start가 YYYY-MM-DD 형식이 아니면 예외가 발생한다")
+    void create_invalidStartFormat_throws() {
+        givenAuthenticatedClub();
+        CustomCalendarEventRequest request = new CustomCalendarEventRequest(
+                "정기 모임", "2026/08/01", null, null, null);
+
+        assertThatThrownBy(() -> customCalendarEventService.create(user, request))
+                .isInstanceOf(RestApiException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.CUSTOM_EVENT_INVALID_DATE_FORMAT);
+    }
+
+    @Test
+    @DisplayName("end가 YYYY-MM-DD 형식이 아니면 예외가 발생한다")
+    void create_invalidEndFormat_throws() {
+        givenAuthenticatedClub();
+        CustomCalendarEventRequest request = new CustomCalendarEventRequest(
+                "정기 모임", "2026-08-01", "08-02", null, null);
+
+        assertThatThrownBy(() -> customCalendarEventService.create(user, request))
+                .isInstanceOf(RestApiException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.CUSTOM_EVENT_INVALID_DATE_FORMAT);
+    }
+
+    @Test
+    @DisplayName("start가 end보다 이후면 예외가 발생한다")
+    void create_startAfterEnd_throws() {
+        givenAuthenticatedClub();
+        CustomCalendarEventRequest request = new CustomCalendarEventRequest(
+                "정기 모임", "2026-08-02", "2026-08-01", null, null);
+
+        assertThatThrownBy(() -> customCalendarEventService.create(user, request))
+                .isInstanceOf(RestApiException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.CUSTOM_EVENT_INVALID_DATE_RANGE);
+    }
+
+    @Test
+    @DisplayName("start와 end가 같은 날짜면 정상 생성된다")
+    void create_sameStartAndEnd_succeeds() {
+        givenAuthenticatedClub();
+        CustomCalendarEventRequest request = new CustomCalendarEventRequest(
+                "정기 모임", "2026-08-01", "2026-08-01", null, null);
+        when(customCalendarEventRepository.save(any(CustomCalendarEvent.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        ClubCalendarEventResult result = customCalendarEventService.create(user, request);
+
+        assertThat(result.start()).isEqualTo("2026-08-01");
+        assertThat(result.end()).isEqualTo("2026-08-01");
+    }
+
+    @Test
     @DisplayName("인증된 사용자에게 동아리가 없으면 예외가 발생한다")
     void create_noClub_throws() {
         when(user.getId()).thenReturn(USER_ID);
