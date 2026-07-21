@@ -63,7 +63,6 @@ jobs:
             - '재리뷰(synchronize)'에서는 인라인 코멘트만 남긴다. 총평·요약 코멘트는 새로 만들지 마라
               (최초 리뷰에 이미 있다). 새로 지적할 인라인이 없으면 아무 코멘트도 남기지 마라.
             - 모든 코멘트는 한국어 '해요체'로 작성해라 (예: "~하는 게 좋아요", "~해 주세요").
-          show_full_output: true
           claude_args: |
             --model claude-opus-4-8
             --allowedTools Read,mcp__github_inline_comment__create_inline_comment,Bash(git*)
