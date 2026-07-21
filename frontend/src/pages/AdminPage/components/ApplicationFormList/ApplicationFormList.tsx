@@ -47,7 +47,7 @@ interface ApplicationFormListProps {
 }
 
 /**
- * 지원서 목록 화면(게시된 지원서 핀 섹션 + 미게시 섹션).
+ * 지원서 목록 화면(게시된 지원서 핀 섹션 + 년도별 전체 그룹 섹션).
  * ApplicationListTab·ApplicantsListTab이 동일한 로직/렌더를 쓰므로 공유한다.
  * 탭별 차이(이동 대상·메시지·복제 동작·hover색)만 props로 받는다.
  */
@@ -164,9 +164,15 @@ const ApplicationFormList = ({
     .flatMap((group) => group.forms)
     .filter((form) => form.status === 'ACTIVE');
 
-  const inactiveForms = formGroups
-    .flatMap((group) => group.forms)
-    .filter((form) => form.status !== 'ACTIVE');
+  const yearMap = new Map<number, ApplicationFormItem[]>();
+  formGroups.forEach((group) => {
+    const year = Number(group.semesterYear);
+    const existing = yearMap.get(year) ?? [];
+    yearMap.set(year, [...existing, ...group.forms]);
+  });
+  const groupedByYear = Array.from(yearMap.entries()).map(
+    ([semesterYear, forms]) => ({ semesterYear, forms }),
+  );
 
   const formsToDisplay = isExpanded
     ? activeForms
@@ -229,21 +235,23 @@ const ApplicationFormList = ({
           새 양식 만들기 <Styled.PlusIcon src={Plus} />{' '}
         </Styled.AddButton>
       </Styled.Header>
-      {inactiveForms.length > 0 && (
-        <Styled.ApplicationList>
+      {groupedByYear.map((group) => (
+        <Styled.ApplicationList key={group.semesterYear}>
           <Styled.ListHeader>
-            <Styled.SemesterTitle>미게시</Styled.SemesterTitle>
+            <Styled.SemesterTitle>
+              {group.semesterYear}년도
+            </Styled.SemesterTitle>
             <Styled.DateHeader>
               <Styled.Separation_Bar />
               최종 수정 날짜
             </Styled.DateHeader>
           </Styled.ListHeader>
-          {inactiveForms.map((application: ApplicationFormItem) => (
+          {group.forms.map((application: ApplicationFormItem) => (
             <ApplicationRowItem
               key={application.id}
               application={application}
-              isActive={false}
-              uniqueKeyPrefix='inactivelist'
+              isActive={application.status === 'ACTIVE'}
+              uniqueKeyPrefix={`yeargroup-${group.semesterYear}`}
               openMenuId={openMenuId}
               menuRef={menuRef}
               onEdit={onEdit}
@@ -254,7 +262,7 @@ const ApplicationFormList = ({
             />
           ))}
         </Styled.ApplicationList>
-      )}
+      ))}
     </Styled.Container>
   );
 };
