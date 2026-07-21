@@ -4,7 +4,7 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import { QueryCache, QueryClient, type Query } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { ThemeProvider } from 'styled-components';
-import { ScrollToTopButton } from '@/components/common/ScrollToTopButton/ScrollToTopButton';
+import { FloatingButtonGroup } from '@/components/common/FloatingButtonGroup/FloatingButtonGroup';
 import { queryKeys } from '@/constants/queryKeys';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { HttpError } from '@/errors';
@@ -93,7 +93,7 @@ const App = () => {
           <ThemeProvider theme={theme}>
             <BrowserRouter>
               <ScrollToTop />
-              <ScrollToTopButton />
+              <FloatingButtonGroup />
               <AppRoutes />
             </BrowserRouter>
           </ThemeProvider>
