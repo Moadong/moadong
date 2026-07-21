@@ -1,4 +1,6 @@
 import { useCallback, useState } from 'react';
+import { useGetCustomCalendarEvents } from '@/hooks/Queries/useCustomCalendarEvents';
+import { useGetHiddenCalendarEvents } from '@/hooks/Queries/useHiddenCalendarEvents';
 import { useGoogleCalendarData } from './useGoogleCalendarData';
 import { useNotionCalendarData } from './useNotionCalendarData';
 import { useNotionCalendarUiState } from './useNotionCalendarUiState';
@@ -28,10 +30,21 @@ export const useCalendarSync = () => {
     notionItems: notionData.notionItems,
   });
 
+  const { data: customCalendarEvents = [] } = useGetCustomCalendarEvents();
+  const { data: hiddenCalendarEvents = [] } = useGetHiddenCalendarEvents();
+
   const unifiedCalendar = useUnifiedCalendarUiState({
     notionCalendarEvents: notionUi.notionCalendarEvents,
     googleCalendarEvents: googleData.googleCalendarEvents,
+    customCalendarEvents,
+    hiddenCalendarEvents,
   });
+
+  const isCalendarDataLoading =
+    googleData.isInitialChecking ||
+    googleData.isEventsLoading ||
+    notionData.isNotionLoading ||
+    notionData.isNotionDatabaseApplying;
 
   const notionOAuth = useNotionOAuth({
     loadNotionPages: notionData.loadNotionPages,
@@ -56,6 +69,7 @@ export const useCalendarSync = () => {
     isNotionDatabaseApplying: notionData.isNotionDatabaseApplying,
     statusMessage,
     errorMessage,
+    isCalendarDataLoading,
     isGoogleLoading: googleData.isGoogleLoading,
     isNotionLoading:
       notionData.isNotionLoading ||

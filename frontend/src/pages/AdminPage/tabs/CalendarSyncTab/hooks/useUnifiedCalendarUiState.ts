@@ -1,7 +1,9 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import type { GoogleCalendarEvent } from '@/apis/calendarOAuth';
+import type { ClubCalendarEvent, HiddenCalendarEvent } from '@/types/club';
 import {
   buildMonthCalendarDays,
+  convertCustomEventToUnified,
   convertGoogleEventToUnified,
   convertNotionEventToUnified,
   dateFromKey,
@@ -13,11 +15,15 @@ import {
 interface UseUnifiedCalendarUiStateParams {
   notionCalendarEvents: NotionCalendarEvent[];
   googleCalendarEvents: GoogleCalendarEvent[];
+  customCalendarEvents: ClubCalendarEvent[];
+  hiddenCalendarEvents: HiddenCalendarEvent[];
 }
 
 export const useUnifiedCalendarUiState = ({
   notionCalendarEvents,
   googleCalendarEvents,
+  customCalendarEvents,
+  hiddenCalendarEvents,
 }: UseUnifiedCalendarUiStateParams) => {
   const [visibleMonth, setVisibleMonth] = useState(() => {
     const now = new Date();
@@ -44,27 +50,47 @@ export const useUnifiedCalendarUiState = ({
     [googleCalendarEvents],
   );
 
+  const unifiedCustomEvents = useMemo(
+    () =>
+      customCalendarEvents
+        .map(convertCustomEventToUnified)
+        .filter((event): event is UnifiedCalendarEvent => event !== null),
+    [customCalendarEvents],
+  );
+
   const allUnifiedEvents = useMemo(
     () =>
-      [...unifiedNotionEvents, ...unifiedGoogleEvents].sort((a, b) =>
-        a.dateKey.localeCompare(b.dateKey),
+      [
+        ...unifiedNotionEvents,
+        ...unifiedGoogleEvents,
+        ...unifiedCustomEvents,
+      ].sort((a, b) => a.dateKey.localeCompare(b.dateKey)),
+    [unifiedNotionEvents, unifiedGoogleEvents, unifiedCustomEvents],
+  );
+
+  const hiddenKeySet = useMemo(
+    () =>
+      new Set(
+        hiddenCalendarEvents.map((event) => `${event.source}:${event.eventId}`),
       ),
-    [unifiedNotionEvents, unifiedGoogleEvents],
+    [hiddenCalendarEvents],
   );
 
   const visibleUnifiedEvents = useMemo(() => {
     return allUnifiedEvents.filter((event) => {
       if (event.source === 'NOTION') {
         const notionId = event.id.replace('notion-', '');
+        if (hiddenKeySet.has(`NOTION:${notionId}`)) return false;
         return notionEventEnabledMap[notionId] !== false;
       }
       if (event.source === 'GOOGLE') {
         const googleId = event.id.replace('google-', '');
+        if (hiddenKeySet.has(`GOOGLE:${googleId}`)) return false;
         return googleEventEnabledMap[googleId] !== false;
       }
       return true;
     });
-  }, [allUnifiedEvents, notionEventEnabledMap, googleEventEnabledMap]);
+  }, [allUnifiedEvents, notionEventEnabledMap, googleEventEnabledMap, hiddenKeySet]);
 
   const eventsByDate = useMemo(
     () =>

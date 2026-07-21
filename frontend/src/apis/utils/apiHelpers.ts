@@ -15,8 +15,8 @@ export const handleResponse = async <T = unknown>(
       if (body?.message) {
         message = customErrorMessage ?? body.message;
       }
-      if (body?.errorCode) {
-        errorCode = body.errorCode;
+      if (body?.errorCode || body?.statuscode) {
+        errorCode = body.errorCode ?? body.statuscode;
       }
     } catch {
       // JSON 파싱 실패시 statusText 사용

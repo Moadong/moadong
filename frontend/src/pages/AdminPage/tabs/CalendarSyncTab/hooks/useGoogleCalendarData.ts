@@ -150,6 +150,7 @@ export const useGoogleCalendarData = ({
     googleCalendarEvents,
     isGoogleLoading,
     isInitialChecking: calendarsQuery.isLoading,
+    isEventsLoading: eventsQuery.isLoading,
     startGoogleOAuth,
     selectCalendar: handleSelectCalendar,
     disconnectGoogle: handleDisconnect,

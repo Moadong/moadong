@@ -43,7 +43,20 @@ export interface ClubCalendarEvent {
   end?: string;
   url?: string;
   description?: string;
-  source?: 'NOTION' | 'GOOGLE';
+  source?: 'NOTION' | 'GOOGLE' | 'CUSTOM';
+}
+
+export interface CustomCalendarEventInput {
+  title: string;
+  start: string;
+  end?: string;
+  url?: string;
+  description?: string;
+}
+
+export interface HiddenCalendarEvent {
+  source: 'GOOGLE' | 'NOTION';
+  eventId: string;
 }
 
 export interface ClubDescription {

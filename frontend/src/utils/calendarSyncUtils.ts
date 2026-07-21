@@ -3,6 +3,7 @@ import type {
   GoogleCalendarEvent,
   NotionSearchItem,
 } from '@/apis/calendarOAuth';
+import type { ClubCalendarEvent } from '@/types/club';
 
 /**
  * CalendarSyncTab 전용 유틸
@@ -156,7 +157,7 @@ export interface UnifiedCalendarEvent {
   dateKey: string;
   end?: string;
   url?: string;
-  source: 'GOOGLE' | 'NOTION';
+  source: 'GOOGLE' | 'NOTION' | 'CUSTOM';
   description?: string;
 }
 
@@ -233,3 +234,21 @@ export const convertNotionEventToUnified = (
   url: event.url,
   source: 'NOTION',
 });
+
+export const convertCustomEventToUnified = (
+  event: ClubCalendarEvent,
+): UnifiedCalendarEvent | null => {
+  const dateKey = parseDateKey(event.start);
+  if (!dateKey) return null;
+
+  return {
+    id: `custom-${event.id}`,
+    title: event.title,
+    start: event.start,
+    end: event.end,
+    dateKey,
+    url: event.url,
+    description: event.description,
+    source: 'CUSTOM',
+  };
+};

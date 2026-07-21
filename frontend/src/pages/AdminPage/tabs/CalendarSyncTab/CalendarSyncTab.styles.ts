@@ -3,37 +3,36 @@ import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 24px;
+`;
+
+export const LoadingOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  background: rgba(255, 255, 255, 0.6);
+  backdrop-filter: blur(1px);
+`;
+
+export const LoadingText = styled.p`
+  margin: 0;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: ${colors.gray[700]};
 `;
 
 export const Description = styled.p`
   font-size: 0.94rem;
   line-height: 1.5;
   color: ${colors.gray[600]};
-`;
-
-export const ConfigGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-
-  ${media.laptop} {
-    grid-template-columns: 1fr;
-  }
-`;
-
-export const Block = styled.div`
-  border: 1px solid ${colors.gray[300]};
-  border-radius: 12px;
-  padding: 14px;
-`;
-
-export const BlockTitle = styled.h4`
-  margin: 0 0 10px;
-  font-size: 1rem;
-  font-weight: 700;
 `;
 
 export const Buttons = styled.div`
@@ -54,12 +53,12 @@ export const SelectRow = styled.div`
 export const Select = styled.select`
   min-width: 240px;
   height: 42px;
-  border: 1px solid #d1d5db;
+  border: 1px solid ${colors.gray[300]};
   border-radius: 10px;
   padding: 0 12px;
   font-size: 0.9rem;
-  color: #111827;
-  background: #ffffff;
+  color: ${colors.gray[900]};
+  background: ${colors.base.white};
 `;
 
 export const TokenText = styled.code`
@@ -67,9 +66,9 @@ export const TokenText = styled.code`
   margin-top: 10px;
   padding: 10px;
   border-radius: 8px;
-  background: #f8fafc;
+  background: ${colors.gray[50]};
   font-size: 0.82rem;
-  color: #1f2937;
+  color: ${colors.gray[800]};
   word-break: break-all;
 `;
 
@@ -77,31 +76,21 @@ export const StatusText = styled.p`
   margin-top: 10px;
   font-size: 0.9rem;
   font-weight: 600;
-  color: #0f766e;
+  color: ${colors.accent[2][900]};
 `;
 
 export const ErrorText = styled.p`
   margin-top: 8px;
   font-size: 0.9rem;
-  color: #b91c1c;
+  color: #dc2626;
   font-weight: 600;
 `;
 
-export const DataGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 14px;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-  }
-`;
-
 export const DataCard = styled.div`
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${colors.gray[300]};
   border-radius: 12px;
   padding: 14px;
-  background: #ffffff;
+  background: ${colors.base.white};
 `;
 
 export const WideDataCard = styled(DataCard)`
@@ -112,29 +101,33 @@ export const DataTitle = styled.h4`
   margin: 0 0 10px;
   font-size: 1rem;
   font-weight: 700;
+  color: ${colors.gray[900]};
+`;
+
+export const CardHeader = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 10px;
+
+  & > h4 {
+    margin: 0;
+  }
+`;
+
+export const ProviderControls = styled.div`
+  display: flex;
+  gap: 8px;
 `;
 
 export const Empty = styled.p`
   font-size: 0.9rem;
-  color: #6b7280;
-`;
-
-export const List = styled.ul`
-  margin: 0;
-  padding-left: 18px;
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-`;
-
-export const ListItem = styled.li`
-  font-size: 0.92rem;
-  color: #111827;
-  line-height: 1.45;
+  color: ${colors.gray[600]};
 `;
 
 export const ExternalLink = styled.a`
-  color: #1d4ed8;
+  color: ${colors.primary[900]};
 `;
 
 export const CalendarBoard = styled.div`
@@ -144,10 +137,10 @@ export const CalendarBoard = styled.div`
 `;
 
 export const TogglePanel = styled.div`
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${colors.gray[300]};
   border-radius: 10px;
   padding: 10px;
-  background: #f9fafb;
+  background: ${colors.gray[50]};
 `;
 
 export const ToggleHeader = styled.div`
@@ -162,7 +155,7 @@ export const ToggleTitle = styled.h6`
   margin: 0;
   font-size: 0.9rem;
   font-weight: 700;
-  color: #111827;
+  color: ${colors.gray[900]};
 `;
 
 export const ToggleActions = styled.div`
@@ -173,7 +166,7 @@ export const ToggleActions = styled.div`
 export const ToggleActionButton = styled.button`
   border: none;
   background: transparent;
-  color: #1d4ed8;
+  color: ${colors.primary[900]};
   font-size: 0.82rem;
   font-weight: 700;
   cursor: pointer;
@@ -193,12 +186,13 @@ export const ToggleItem = styled.label`
   align-items: center;
   gap: 8px;
   font-size: 0.84rem;
-  color: #374151;
+  color: ${colors.gray[800]};
 `;
 
 export const ToggleCheckbox = styled.input`
   width: 14px;
   height: 14px;
+  accent-color: ${colors.primary[900]};
 `;
 
 export const ToggleText = styled.span`
@@ -218,7 +212,7 @@ export const CalendarMonth = styled.h5`
   margin: 0;
   font-size: 1rem;
   font-weight: 700;
-  color: #111827;
+  color: ${colors.gray[900]};
 `;
 
 export const CalendarWeekRow = styled.div`
@@ -231,7 +225,7 @@ export const CalendarWeekCell = styled.div`
   text-align: center;
   font-size: 0.82rem;
   font-weight: 700;
-  color: #4b5563;
+  color: ${colors.gray[700]};
 `;
 
 export const CalendarGrid = styled.div`
@@ -242,25 +236,102 @@ export const CalendarGrid = styled.div`
 
 export const CalendarCell = styled.div<{ $muted: boolean }>`
   min-height: 120px;
-  border: 1px solid #e5e7eb;
+  border: 1px solid ${colors.gray[300]};
   border-radius: 10px;
   padding: 8px;
-  background: ${({ $muted }) => ($muted ? '#f9fafb' : '#ffffff')};
+  background: ${({ $muted }) =>
+    $muted ? colors.gray[50] : colors.base.white};
   opacity: ${({ $muted }) => ($muted ? 0.55 : 1)};
   display: flex;
   flex-direction: column;
   gap: 8px;
 
-  @media (max-width: 768px) {
+  &:hover button[data-add] {
+    display: block;
+  }
+
+  ${media.tablet} {
     min-height: 96px;
     padding: 6px;
+  }
+`;
+
+export const AddEventButton = styled.button`
+  display: none;
+  width: 100%;
+  height: 18px;
+  border: none;
+  border-radius: 6px;
+  background: ${colors.primary[500]};
+  color: ${colors.primary[900]};
+  font-size: 0.85rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: ${colors.primary[600]};
+  }
+`;
+
+export const CustomEvent = styled.div`
+  position: relative;
+  display: flex;
+  align-items: center;
+  border-radius: 6px;
+  background: ${colors.primary[500]};
+  overflow: hidden;
+
+  &:hover {
+    background: ${colors.primary[600]};
+  }
+
+  &:hover button[data-remove] {
+    display: flex;
+  }
+`;
+
+export const CustomEventTitle = styled.button`
+  flex: 1;
+  min-width: 0;
+  border: none;
+  background: transparent;
+  font-size: 0.8rem;
+  line-height: 1.35;
+  color: ${colors.primary[900]};
+  padding: 4px 6px;
+  text-align: left;
+  cursor: pointer;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+`;
+
+export const CustomEventDelete = styled.button`
+  display: none;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 18px;
+  height: 18px;
+  margin-right: 4px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.6);
+  color: ${colors.primary[900]};
+  font-size: 0.95rem;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.9);
   }
 `;
 
 export const CalendarDayNumber = styled.span`
   font-size: 0.82rem;
   font-weight: 600;
-  color: #374151;
+  color: ${colors.gray[800]};
 `;
 
 export const CalendarEventList = styled.div`
@@ -270,22 +341,50 @@ export const CalendarEventList = styled.div`
 `;
 
 export const CalendarEvent = styled.div<{ $source?: 'GOOGLE' | 'NOTION' }>`
+  position: relative;
   font-size: 0.8rem;
   line-height: 1.35;
-  color: #111827;
+  color: ${colors.gray[900]};
   padding: 4px 6px;
   border-radius: 6px;
   background: ${({ $source }) => {
-    if ($source === 'GOOGLE') return '#dbeafe'; // 파란색 (구글)
-    if ($source === 'NOTION') return '#f3e8ff'; // 보라색 (노션)
-    return '#eff6ff'; // 기본색
+    if ($source === 'GOOGLE') return colors.secondary[4].tag; // 구글 (파랑)
+    if ($source === 'NOTION') return colors.secondary[6].tag; // 노션 (보라)
+    return colors.gray[100];
   }};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  &:hover button[data-remove] {
+    display: flex;
+  }
+`;
+
+export const OAuthEventRemove = styled.button`
+  display: none;
+  position: absolute;
+  right: 3px;
+  top: 50%;
+  transform: translateY(-50%);
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: 4px;
+  background: rgba(255, 255, 255, 0.85);
+  color: ${colors.gray[800]};
+  font-size: 0.85rem;
+  line-height: 1;
+  cursor: pointer;
+
+  &:hover {
+    background: ${colors.base.white};
+  }
 `;
 
 export const CalendarTitle = styled.span`
   font-size: 0.82rem;
-  color: #111827;
+  color: ${colors.gray[900]};
 `;
