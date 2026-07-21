@@ -22,8 +22,10 @@
 
 ### 핵심 도메인 사실
 
-- `ApplicationFormStatus`: `ACTIVE`(게시 중) / `PUBLISHED`(게시된 적 있음) / `UNPUBLISHED`(게시된 적 없음).
-- **생성(`createApplicationForm`)은 status를 세팅하지 않아 기본 `UNPUBLISHED`** → 지원 버튼에 안 뜬다. 실제 연결하려면 생성 시 `ACTIVE`로 만들어야 한다.
+> **정정(develop/be 리베이스 반영):** develop/be는 `ApplicationFormStatus`를 `ACTIVE`/`INACTIVE` **2-state**로 축소하고, `ClubApplicationForm`에서 `semesterTerm`·`validateSemester`를 제거했다. 따라서 아래 본문의 `PUBLISHED`/`UNPUBLISHED`, `semesterTerm` 언급은 실제 구현에서는 각각 `INACTIVE`(미게시) 및 "없음"으로 대체되었다.
+
+- `ApplicationFormStatus`: `ACTIVE`(게시 중) / `INACTIVE`(미게시).
+- **생성 시 status 기본값은 `INACTIVE`** → 지원 버튼에 안 뜬다. 실제 연결하려면 생성 시 `updateFormStatus(true)`로 `ACTIVE`로 만들어야 한다.
 - 공개 지원 목록 쿼리: `{'clubId': ?0, 'status': 'ACTIVE'}` (`ClubApplicationFormsRepository.findClubActiveFormsByClubId`).
 - 외부 URL 허용 도메인은 엔티티(`ClubApplicationForm.updateExternalApplicationUrl`)에서 검증: `forms.gle`, `docs.google.com/forms`, `form.naver.com`, `naver.me`, `everytime.kr` → 구글폼·네이버폼 커버됨. 위반 시 `NOT_ALLOWED_EXTERNAL_URL`.
 - 학기 유효성(`validateSemester`): 현재 학기 + 향후 2개 학기만 허용.
@@ -47,11 +49,11 @@
 | PATCH | `/api/admin/club/{clubId}/application/{formId}/status` | 기존 지원폼 활성화/미게시 토글 |
 | DELETE | `/api/admin/club/{clubId}/application/{formId}` | 지원폼 삭제 |
 
-- POST 요청 바디: `{ title, externalApplicationUrl, semesterYear, semesterTerm }`
+- POST 요청 바디: `{ title, externalApplicationUrl, semesterYear }`
   - `formMode`는 서버에서 `EXTERNAL` 고정. `externalApplicationUrl` 필수(허용 도메인 검증은 엔티티 재사용).
   - `title` 기본값 허용(예: "외부 지원폼")으로 개발자 편의. semester 기본은 현재 학기(프론트에서 채워 보냄).
 - PATCH `.../status` 요청 바디: `{ active: true|false }`
-  - `active=true` → `ACTIVE`(게시, 지원 목록에 노출). `active=false` → `updateFormStatus(false)`로 ACTIVE였던 폼은 `PUBLISHED`로 내려가 지원 목록에서 빠짐(= 미게시/비활성).
+  - `active=true` → `ACTIVE`(게시, 지원 목록에 노출). `active=false` → `updateFormStatus(false)`로 `INACTIVE`가 되어 지원 목록에서 빠짐(= 미게시/비활성).
   - **외부폼뿐 아니라 기존 자체폼 등 모든 지원폼**에 적용 가능(상태만 변경).
 - 지원기간은 **기존** `PUT /api/admin/club/{clubId}/description` 재사용(신규 없음).
 
@@ -71,7 +73,7 @@
 
 ### 3) 요청 DTO
 
-- 신규 `AdminExternalFormConnectRequest(String title, String externalApplicationUrl, Integer semesterYear, SemesterTerm semesterTerm)` 또는 기존 `ClubApplicationFormCreateRequest` 재사용(formMode 서버 고정). 재사용이 더 단순하면 재사용.
+- 신규 `AdminExternalFormConnectRequest(String title, String externalApplicationUrl, Integer semesterYear)` 또는 기존 `ClubApplicationFormCreateRequest` 재사용(formMode 서버 고정). 재사용이 더 단순하면 재사용.
 
 ## 프론트엔드 (개발자 포털 정적 페이지)
 
@@ -93,7 +95,7 @@
 
 ## 테스트
 
-- 백엔드: `ClubApplyAdminService`의 새 clubId 메서드에 대한 유닛 테스트(생성 시 ACTIVE 확인, 허용도메인 위반 예외, 상태 토글 시 ACTIVE↔PUBLISHED 전이, 삭제). 컨트롤러는 DEVELOPER 권한 통합 테스트가 있으면 패턴 따라 추가.
+- 백엔드: `ClubApplyAdminService`의 새 clubId 메서드에 대한 유닛 테스트(생성 시 ACTIVE 확인, 허용도메인 위반 예외, 상태 토글 시 ACTIVE↔INACTIVE 전이, 삭제). 컨트롤러는 DEVELOPER 권한 통합 테스트가 있으면 패턴 따라 추가.
 - 수동 검증: 개발자 포털에서 임의 동아리에 구글폼 URL 연결 → 해당 동아리 상세 페이지 "지원하기" → 외부 URL로 이동하는지 확인. 지원기간 저장 후 재조회로 반영 확인.
 
 ## 범위 밖 (YAGNI)

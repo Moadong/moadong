@@ -2,6 +2,8 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
+> **정정(develop/be 리베이스 반영):** 이 계획은 main 기준으로 작성됐다. 실제 구현은 develop/be로 리베이스되었고, develop/be는 `ApplicationFormStatus`를 `ACTIVE`/`INACTIVE` **2-state**로 축소하고 `ClubApplicationForm`에서 `semesterTerm`·`validateSemester`를 제거했다. 따라서 아래 코드/설명의 `semesterTerm`, `validateSemester`, `updateSemesterTerm`, `getSemesterTerm`, `PUBLISHED` 참조는 **실제 구현에서 제거/대체**되었다: 요청/응답 DTO에서 `semesterTerm` 필드 없음, connect는 `validateSemester`/`updateSemesterTerm` 호출 없이 `semesterYear`만 설정, 미게시(`active=false`)는 `PUBLISHED`가 아니라 `INACTIVE`로 처리. 최종 코드는 브랜치의 실제 파일을 기준으로 한다.
+
 **Goal:** 개발자 포털에서 임의 동아리의 외부 지원폼(구글/네이버) 연결·활성화/미게시 토글·삭제와 지원기간 설정을 할 수 있게 한다.
 
 **Architecture:** `/api/admin/**`(이미 `hasRole("DEVELOPER")` 보호) 아래에 clubId를 파라미터로 받는 지원폼 관리 엔드포인트를 새 컨트롤러로 추가하고, `ClubApplyAdminService`에 clubId를 명시적으로 받는 메서드를 추가한다(기존 본인-동아리 메서드는 건드리지 않음). 개발자 포털 정적 페이지 `dev/edit.html`에 UI 섹션을 추가한다. 지원기간은 기존 `PUT /api/admin/club/{clubId}/description`를 그대로 사용한다(신규 백엔드 없음).

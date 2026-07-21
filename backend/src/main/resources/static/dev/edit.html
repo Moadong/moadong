@@ -239,12 +239,17 @@
           const tr = document.createElement('tr');
           tr.style.borderBottom = '1px solid #f3f4f6';
           const active = f.status === 'ACTIVE';
-          tr.innerHTML =
-            '<td style="padding:6px 4px;">' + (f.title || '') + '</td>' +
-            '<td>' + (f.formMode || '') + '</td>' +
-            '<td>' + (f.status || '') + '</td>' +
-            '<td style="white-space:nowrap;"></td>';
-          const actionCell = tr.querySelector('td:last-child');
+
+          const tdTitle = document.createElement('td');
+          tdTitle.style.padding = '6px 4px';
+          tdTitle.textContent = f.title || '';
+          const tdMode = document.createElement('td');
+          tdMode.textContent = f.formMode || '';
+          const tdStatus = document.createElement('td');
+          tdStatus.textContent = f.status || '';
+          const actionCell = document.createElement('td');
+          actionCell.style.whiteSpace = 'nowrap';
+
           const toggleBtn = document.createElement('button');
           toggleBtn.type = 'button';
           toggleBtn.textContent = active ? '미게시로 변경' : '활성화';
@@ -255,6 +260,11 @@
           delBtn.onclick = function() { deleteForm(f.id); };
           actionCell.appendChild(toggleBtn);
           actionCell.appendChild(delBtn);
+
+          tr.appendChild(tdTitle);
+          tr.appendChild(tdMode);
+          tr.appendChild(tdStatus);
+          tr.appendChild(actionCell);
           tbody.appendChild(tr);
         });
         stateEl.textContent = forms.length ? '' : '연결된 지원폼이 없습니다.';
