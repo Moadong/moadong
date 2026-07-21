@@ -259,14 +259,11 @@ public class ClubApplyAdminService {
     }
 
     public void connectExternalApplicationFormForClub(String clubId, AdminExternalFormConnectRequest request) {
-        validateSemester(request.semesterYear(), request.semesterTerm());
-
         ClubApplicationForm form = ClubApplicationForm.builder().clubId(clubId).build();
         form.updateFormTitle(request.titleOrDefault());
         form.updateFormMode(ApplicationFormMode.EXTERNAL);
         form.updateExternalApplicationUrl(request.externalApplicationUrl());
         form.updateSemesterYear(request.semesterYear());
-        form.updateSemesterTerm(request.semesterTerm());
         form.updateFormStatus(true); // ACTIVE (게시)
         clubApplicationFormsRepository.save(form);
     }

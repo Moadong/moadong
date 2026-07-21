@@ -4,7 +4,6 @@ import lombok.Builder;
 import moadong.club.entity.ClubApplicationForm;
 import moadong.club.enums.ApplicationFormMode;
 import moadong.club.enums.ApplicationFormStatus;
-import moadong.club.enums.SemesterTerm;
 
 @Builder
 public record AdminClubApplicationFormResponse(
@@ -13,8 +12,7 @@ public record AdminClubApplicationFormResponse(
         ApplicationFormMode formMode,
         ApplicationFormStatus status,
         String externalApplicationUrl,
-        Integer semesterYear,
-        SemesterTerm semesterTerm
+        Integer semesterYear
 ) {
     public static AdminClubApplicationFormResponse from(ClubApplicationForm form) {
         return AdminClubApplicationFormResponse.builder()
@@ -24,7 +22,6 @@ public record AdminClubApplicationFormResponse(
                 .status(form.getStatus())
                 .externalApplicationUrl(form.getExternalApplicationUrl())
                 .semesterYear(form.getSemesterYear())
-                .semesterTerm(form.getSemesterTerm())
                 .build();
     }
 }

@@ -220,8 +220,7 @@
     function currentSemester() {
       const now = new Date();
       return {
-        semesterYear: now.getFullYear(),
-        semesterTerm: (now.getMonth() + 1) < 7 ? 'FIRST' : 'SECOND'
+        semesterYear: now.getFullYear()
       };
     }
 
@@ -293,8 +292,7 @@
       const body = {
         title: document.getElementById('newFormTitle').value.trim() || null,
         externalApplicationUrl: url,
-        semesterYear: sem.semesterYear,
-        semesterTerm: sem.semesterTerm
+        semesterYear: sem.semesterYear
       };
       btn.disabled = true; btn.textContent = '연결 중...';
       try {
