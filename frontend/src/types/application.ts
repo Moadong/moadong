@@ -52,11 +52,11 @@ export interface ApplicationFormData {
   description: string;
   questions?: Question[];
   semesterYear: number;
-  semesterTerm: string;
   formMode?: ApplicationFormMode;
   externalApplicationUrl?: string;
-  active: 'active' | 'published' | 'unpublished';
 }
+
+export type ApplicationFormStatus = 'ACTIVE' | 'INACTIVE';
 
 export interface AnswerItem {
   id: number;
@@ -72,12 +72,12 @@ export interface ApplicationFormItem {
   id: ApplicationFormId;
   title: string;
   editedAt: string;
-  status: 'ACTIVE' | 'PUBLISHED' | 'UNPUBLISHED';
+  status: ApplicationFormStatus;
 }
 
-export interface SemesterGroup {
+export interface ApplicationFormGroup {
   semesterYear: number;
-  semesterTerm: string;
+  active: boolean;
   forms: ApplicationFormItem[];
 }
 

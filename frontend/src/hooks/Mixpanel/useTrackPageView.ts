@@ -2,7 +2,10 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
 
-const trackSafely = (eventName: string, properties: Record<string, unknown>) => {
+const trackSafely = (
+  eventName: string,
+  properties: Record<string, unknown>,
+) => {
   try {
     mixpanel.track(eventName, properties);
   } catch (error) {

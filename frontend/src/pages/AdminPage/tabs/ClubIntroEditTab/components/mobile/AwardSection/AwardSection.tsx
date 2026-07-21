@@ -1,5 +1,6 @@
 import rightArrowIcon from '@/assets/images/icons/right_arrow_icon.svg';
-import { Award, SemesterTerm } from '@/types/club';
+import { Award } from '@/types/club';
+import { formatSemesterLabel, getAwardSortValue } from '@/utils/awardHelpers';
 import * as Styled from './AwardSection.styles';
 
 interface AwardSectionProps {
@@ -7,29 +8,16 @@ interface AwardSectionProps {
   onNavigate?: (award?: Award) => void;
 }
 
-const getSortValue = (award: Award): number => {
-  const semesterValue = award.semesterTerm === SemesterTerm.FIRST ? 1 : 2;
-  return award.year * 10 + semesterValue;
-};
-
-const formatSemesterLabel = (award: Award): string => {
-  const semesterLabel =
-    award.semesterTerm === SemesterTerm.FIRST ? '1학기' : '2학기';
-  return `${award.year} ${semesterLabel}`;
-};
-
 const AwardSection = ({ awards, onNavigate }: AwardSectionProps) => {
   const isEmpty = awards.length === 0;
   const sortedAwards = [...awards].sort(
-    (a, b) => getSortValue(b) - getSortValue(a),
+    (a, b) => getAwardSortValue(b) - getAwardSortValue(a),
   );
 
   return (
     <Styled.Wrapper>
       <Styled.Header>
-        <Styled.Label>
-          {isEmpty ? '이런 상을 받았어요' : '동아리 성과'}
-        </Styled.Label>
+        <Styled.Label>이런 상을 받았어요</Styled.Label>
       </Styled.Header>
       <Styled.Card>
         {isEmpty ? (

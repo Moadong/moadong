@@ -7,6 +7,7 @@ import {
   updateApplicationStatus,
 } from '@/apis/application';
 import { queryKeys } from '@/constants/queryKeys';
+import { ApplicationFormStatus } from '@/types/application';
 
 export const useGetApplication = (
   clubId: string | undefined,
@@ -72,7 +73,7 @@ export const useUpdateApplicationStatus = () => {
       currentStatus,
     }: {
       applicationFormId: string;
-      currentStatus: string;
+      currentStatus: ApplicationFormStatus;
     }) => updateApplicationStatus(applicationFormId, currentStatus),
     onSuccess: () => {
       queryClient.invalidateQueries({

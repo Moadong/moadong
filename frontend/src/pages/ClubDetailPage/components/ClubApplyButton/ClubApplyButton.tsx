@@ -42,7 +42,7 @@ const ClubApplyButton = ({
 
   const navigateToApplicationForm = async (formId: string) => {
     try {
-      const formDetail = await getApplication(clubDetail.id, formId);
+      const formDetail = await getApplication(clubDetail?.id ?? '', formId);
 
       // 외부 지원서인 경우
       if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
@@ -55,7 +55,7 @@ const ClubApplyButton = ({
       }
 
       // 내부 지원서인 경우
-      navigate(`/application/${clubDetail.id}/${formId}`, {
+      navigate(`/application/${clubDetail?.id ?? ''}/${formId}`, {
         state: { formDetail },
       });
       setIsApplicationModalOpen(false);
@@ -76,12 +76,12 @@ const ClubApplyButton = ({
     trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED);
 
     if (isRecruitmentClosed) {
-      alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
+      alert(`현재 ${clubDetail?.name} 동아리는 모집 기간이 아닙니다.`);
       return;
     }
 
     try {
-      const forms = await getApplicationOptions(clubDetail.id);
+      const forms = await getApplicationOptions(clubDetail?.id ?? '');
 
       if (forms.length <= 0) {
         return;
@@ -100,7 +100,7 @@ const ClubApplyButton = ({
     }
   };
 
-  const recruitmentStatus = clubDetail.recruitmentStatus;
+  const recruitmentStatus = clubDetail?.recruitmentStatus;
   const isRecruitmentClosed = recruitmentStatus === 'CLOSED';
   const isRecruitmentUpcoming = recruitmentStatus === 'UPCOMING';
   const isAlwaysRecruiting = recruitmentStatus === 'ALWAYS';
@@ -125,7 +125,7 @@ const ClubApplyButton = ({
 
   return (
     <Styled.ApplyButtonContainer>
-      {shouldShowShareButton && <ShareButton clubId={clubDetail.id} />}
+      {shouldShowShareButton && <ShareButton clubId={clubDetail?.id ?? ''} />}
       <Styled.ApplyButton
         disabled={isRecruitmentUpcoming || isRecruitmentClosed}
         onClick={handleApplyButtonClick}

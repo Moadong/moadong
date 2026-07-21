@@ -4,18 +4,20 @@ import {
   AnswerItem,
   ApplicationForm,
   ApplicationFormData,
-  SemesterGroup,
+  ApplicationFormGroup,
+  ApplicationFormStatus,
 } from '@/types/application';
 import { asApplicationFormId } from '@/types/branded';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
+import { fetchWithTimeout } from './utils/fetchWithTimeout';
 
 export const applyToClub = async (
   clubId: string,
   applicationFormId: string,
   answers: AnswerItem[],
 ) => {
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`,
     {
       method: 'POST',
@@ -62,12 +64,14 @@ export const duplicateApplication = async (applicationFormId: string) => {
 };
 
 export const getActiveApplications = async (clubId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/api/club/${clubId}/apply`,
+  );
   return handleResponse(response);
 };
 
 interface ApplicationListResponse {
-  forms: SemesterGroup[];
+  forms: ApplicationFormGroup[];
 }
 
 export const getAllApplicationForms = async (): Promise<
@@ -81,7 +85,7 @@ export const getApplication = async (
   clubId: string,
   applicationFormId: string,
 ): Promise<ApplicationFormData | undefined> => {
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`,
   );
   return handleResponse<ApplicationFormData>(response);
@@ -90,7 +94,9 @@ export const getApplication = async (
 export const getApplicationOptions = async (
   clubId: string,
 ): Promise<ApplicationForm[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/api/club/${clubId}/apply`,
+  );
   const data = await handleResponse<{
     forms: Array<{ id: string; title: string }>;
   }>(response);
@@ -141,9 +147,9 @@ export const updateApplication = async (
 
 export const updateApplicationStatus = async (
   applicationFormId: string,
-  currentStatus: string,
+  currentStatus: ApplicationFormStatus,
 ) => {
-  const newStatus = currentStatus === 'ACTIVE' ? false : true;
+  const newStatus = currentStatus === 'INACTIVE';
 
   const response = await secureFetch(
     `${API_BASE_URL}/api/club/application/${applicationFormId}`,

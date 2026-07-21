@@ -1,11 +1,14 @@
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import closeCircleIcon from '@/assets/images/icons/close_circle_icon.svg';
-import useAutoGrow from '@/hooks/useAutoGrow';
+import { FAQ_ANSWER_MAX, FAQ_QUESTION_MAX } from '@/constants/adminFieldLimits';
+import {
+  FAQ_ANSWER_PLACEHOLDER,
+  FAQ_QUESTION_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
+import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
+import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQSection.styles';
-
-const QUESTION_MAX_LENGTH = 100;
-const ANSWER_MAX_LENGTH = 300;
 
 interface FAQItemEditorProps {
   faq: FAQ;
@@ -19,48 +22,38 @@ const FAQItemEditor = ({
   index,
   onChange,
   onDelete,
-}: FAQItemEditorProps) => {
-  const answerRef = useAutoGrow(faq.answer);
-
-  const handleAnswerChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= ANSWER_MAX_LENGTH) {
-      onChange(index, 'answer', e.target.value);
-    }
-  };
-
-  return (
-    <Styled.FAQCard>
-      <Styled.QuestionRow>
-        <Styled.QuestionContent>
-          <Styled.FAQNumber>Q{index + 1}</Styled.FAQNumber>
-          <Styled.QuestionInput
-            value={faq.question}
-            onChange={(e) => onChange(index, 'question', e.target.value)}
-            placeholder='질문을 입력해주세요'
-            maxLength={QUESTION_MAX_LENGTH}
-          />
-        </Styled.QuestionContent>
-        <Styled.DeleteButton onClick={() => onDelete(index)} type='button'>
-          <img src={closeCircleIcon} alt='삭제' />
-        </Styled.DeleteButton>
-      </Styled.QuestionRow>
-      <Styled.AnswerCard>
-        <Styled.AnswerTextarea
-          ref={answerRef}
-          value={faq.answer}
-          onChange={handleAnswerChange}
-          placeholder='답변을 입력해주세요'
-          rows={1}
+}: FAQItemEditorProps) => (
+  <Styled.FAQCard>
+    <Styled.QuestionRow>
+      <Styled.QuestionContent>
+        <Styled.FAQNumber>Q{index + 1}</Styled.FAQNumber>
+        <Styled.QuestionInput
+          value={faq.question}
+          onChange={(e) => onChange(index, 'question', e.target.value)}
+          placeholder={FAQ_QUESTION_PLACEHOLDER}
+          maxLength={FAQ_QUESTION_MAX}
         />
-        {faq.answer.length > 0 && (
-          <Styled.CharCount>
-            {faq.answer.length}/{ANSWER_MAX_LENGTH}
-          </Styled.CharCount>
-        )}
+      </Styled.QuestionContent>
+      <Styled.DeleteButton onClick={() => onDelete(index)} type='button'>
+        <img src={closeCircleIcon} alt='삭제' />
+      </Styled.DeleteButton>
+    </Styled.QuestionRow>
+    <Styled.AnswerWrapper>
+      <Styled.AnswerCard>
+        <ClearableTextArea
+          value={faq.answer}
+          onChange={(value) => onChange(index, 'answer', value)}
+          placeholder={FAQ_ANSWER_PLACEHOLDER}
+          maxLength={FAQ_ANSWER_MAX}
+        />
       </Styled.AnswerCard>
-    </Styled.FAQCard>
-  );
-};
+      <Styled.CharCount>
+        질문: {faq.question.length}/{FAQ_QUESTION_MAX} | 답변:{' '}
+        {faq.answer.length}/{FAQ_ANSWER_MAX}
+      </Styled.CharCount>
+    </Styled.AnswerWrapper>
+  </Styled.FAQCard>
+);
 
 interface FAQSectionProps {
   faqs: FAQ[];
@@ -96,10 +89,10 @@ const FAQSection = ({ faqs, onChange }: FAQSectionProps) => {
           <Styled.EmptyDescription>
             지원자들의 자주 묻는 질문에 답변해보세요
           </Styled.EmptyDescription>
-          <Styled.AddButton onClick={handleAdd} type='button'>
+          <AddItemButton onClick={handleAdd} type='button'>
             <img src={addIcon} alt='' />
             FAQ 추가
-          </Styled.AddButton>
+          </AddItemButton>
         </Styled.EmptyCard>
       ) : (
         <>
@@ -112,10 +105,10 @@ const FAQSection = ({ faqs, onChange }: FAQSectionProps) => {
               onDelete={handleDelete}
             />
           ))}
-          <Styled.AddButton onClick={handleAdd} type='button'>
+          <AddItemButton onClick={handleAdd} type='button'>
             <img src={addIcon} alt='' />
             FAQ 추가
-          </Styled.AddButton>
+          </AddItemButton>
         </>
       )}
     </Styled.Wrapper>

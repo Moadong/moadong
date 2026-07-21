@@ -24,18 +24,18 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
   if (!clubDetail) return;
 
   const handleShare = async () => {
-    const url = `${MOADONG_BASE_URL}@${clubDetail.name}`;
+    const url = `${MOADONG_BASE_URL}@${clubDetail?.name}`;
 
     if (isRNWebView) {
       const isSent = requestShare({
-        title: clubDetail.name,
-        text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!\n${url}`,
+        title: clubDetail?.name,
+        text: `지금 모아동에서 ${clubDetail?.name} 동아리를 확인해보세요!\n${url}`,
         url,
       });
 
       if (isSent) {
         trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
-          clubName: clubDetail.name,
+          clubName: clubDetail?.name,
           method: 'rn_webview_share',
         });
         return;
@@ -43,7 +43,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
     }
 
     const shareData = {
-      text: `지금 모아동에서 ${clubDetail.name} 동아리를 확인해보세요!\n${url}`,
+      text: `지금 모아동에서 ${clubDetail?.name} 동아리를 확인해보세요!\n${url}`,
     };
 
     // 모바일에서는 Web Share API 사용, 데스크톱에서는 클립보드 복사
@@ -51,7 +51,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
       try {
         await navigator.share(shareData);
         trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
-          clubName: clubDetail.name,
+          clubName: clubDetail?.name,
           method: 'web_share',
         });
       } catch (error) {
@@ -62,7 +62,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
           await navigator.clipboard.writeText(shareData.text);
           alert('링크가 복사되었습니다.');
           trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
-            clubName: clubDetail.name,
+            clubName: clubDetail?.name,
             method: 'clipboard',
           });
         } catch {
@@ -74,7 +74,7 @@ const ShareButton = ({ clubId }: ShareButtonProps) => {
         await navigator.clipboard.writeText(shareData.text);
         alert('링크가 복사되었습니다.');
         trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
-          clubName: clubDetail.name,
+          clubName: clubDetail?.name,
           method: 'clipboard',
         });
       } catch {

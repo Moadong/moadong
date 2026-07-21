@@ -28,9 +28,22 @@ if (!isVisible) return null;
 
 네비게이션 이동과 Mixpanel 트래킹을 함께 처리한다. `handleMenuClose`를 통해 모바일 메뉴 닫기 트래킹도 담당.
 
+## WebviewTopBar
+
+웹뷰(인앱 브라우저) 환경에서 `Header` 대신 사용하는 상단바. 뒤로가기 버튼 + 타이틀로 구성.
+
+- `position: sticky; top: 0` — 스크롤 시 상단 고정. `fixed`가 아닌 `sticky`이므로 하위 페이지에서 별도 top offset 조정 불필요
+- `z-index: Z_INDEX.header` 적용
+
+```tsx
+<WebviewTopBar title="페이지 제목" onBack={handleBack} />
+```
+
 ## 관련 코드
 
 - `src/components/common/Header/Header.tsx` — UI 렌더링
+- `src/components/common/WebviewTopBar/WebviewTopBar.tsx` — 웹뷰 전용 상단바
+- `src/components/common/WebviewTopBar/WebviewTopBar.styles.ts` — sticky 포지셔닝
 - `src/hooks/Header/useHeaderVisibility.ts` — 렌더 조건 훅
 - `src/hooks/Header/useHeaderNavigation.ts` — 네비게이션 + 트래킹 훅
 - `src/types/device.ts` — DeviceType 공통 타입

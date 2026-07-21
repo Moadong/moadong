@@ -1,4 +1,4 @@
-import AppDownloadImage from '@/assets/images/popup/app-download.png';
+import AppDownloadImage from '@/assets/images/popup/app-download.webp';
 import { USER_EVENT } from '@/constants/eventName';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
 import { PopupConfig } from '@/utils/popupUtils';
