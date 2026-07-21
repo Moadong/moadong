@@ -14,7 +14,8 @@ export const GroupContainer = styled.div`
 
   ${media.tablet} {
     right: 14px;
-    bottom: calc(54px + env(safe-area-inset-bottom) + 14px);
+    bottom: calc(68px + env(safe-area-inset-bottom) + 14px);
+    gap: 2px;
   }
 `;
 
@@ -34,8 +35,8 @@ export const FloatingButton = styled.button<{
     visibility 0.3s;
 
   img {
-    width: 38px;
-    height: 38px;
+    width: 32px;
+    height: 32px;
     display: block;
     transition: transform 0.15s ease;
   }
