@@ -7,6 +7,7 @@ import moadong.club.enums.ApplicationFormMode;
 import moadong.club.payload.dto.ApplicantStatusEvent;
 import moadong.club.payload.dto.ClubApplicantsResult;
 import moadong.club.payload.request.*;
+import moadong.club.payload.response.AdminClubApplicationFormResponse;
 import moadong.club.payload.response.ClubApplicationFormsResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.repository.ClubApplicantsRepository;
@@ -249,5 +250,38 @@ public class ClubApplyAdminService {
         }
 
         return formQuestions;
+    }
+
+    public List<AdminClubApplicationFormResponse> getApplicationFormsForClub(String clubId) {
+        return clubApplicationFormsRepository.findByClubId(clubId).stream()
+                .map(AdminClubApplicationFormResponse::from)
+                .toList();
+    }
+
+    public void connectExternalApplicationFormForClub(String clubId, AdminExternalFormConnectRequest request) {
+        ClubApplicationForm form = ClubApplicationForm.builder().clubId(clubId).build();
+        form.updateFormTitle(request.titleOrDefault());
+        form.updateFormMode(ApplicationFormMode.EXTERNAL);
+        form.updateExternalApplicationUrl(request.externalApplicationUrl());
+        form.updateSemesterYear(request.semesterYear());
+        form.updateFormStatus(true); // ACTIVE (게시)
+        clubApplicationFormsRepository.save(form);
+    }
+
+    @Transactional
+    public void setApplicationFormStatusForClub(String clubId, String formId, boolean active) {
+        ClubApplicationForm form = clubApplicationFormsRepository.findByClubIdAndId(clubId, formId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
+        form.updateFormStatus(active);
+        form.updateEditedAt();
+        clubApplicationFormsRepository.save(form);
+    }
+
+    @Transactional
+    public void deleteApplicationFormForClub(String clubId, String formId) {
+        ClubApplicationForm form = clubApplicationFormsRepository.findByClubIdAndId(clubId, formId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
+        clubApplicantsRepository.deleteAllByFormId(form.getId());
+        clubApplicationFormsRepository.delete(form);
     }
 }
