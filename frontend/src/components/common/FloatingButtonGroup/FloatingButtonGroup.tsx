@@ -12,7 +12,7 @@ import * as Styled from './FloatingButtonGroup.styles';
 const MOADONG_BASE_URL = 'https://www.moadong.com/clubDetail/';
 
 export const FloatingButtonGroup = () => {
-  const { isTriggered: isScrollingUp } = useScrollTrigger();
+  const { isScrollingUp } = useScrollTrigger();
   const { scrollToTop } = useScrollTo();
   const { handleShare } = useShare();
   const trackEvent = useMixpanelTrack();
