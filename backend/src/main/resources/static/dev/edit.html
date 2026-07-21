@@ -60,6 +60,23 @@
     </div>
     <button type="button" id="btnUpdateDescription">모집정보 저장</button>
     <div id="descResult" class="message-box hidden"></div>
+
+    <h2 style="font-size:1rem; margin-top:24px;">지원폼 연결 (외부)</h2>
+    <div id="formListState" class="loading">지원폼 불러오는 중...</div>
+    <table id="formList" style="width:100%; border-collapse:collapse; margin-bottom:12px; font-size:0.9rem;">
+      <thead>
+        <tr style="text-align:left; border-bottom:1px solid #e5e7eb;">
+          <th style="padding:6px 4px;">제목</th><th>모드</th><th>상태</th><th></th>
+        </tr>
+      </thead>
+      <tbody></tbody>
+    </table>
+    <div class="form-row"><label for="newExternalUrl">외부 지원 URL (구글폼/네이버폼)</label>
+      <input type="text" id="newExternalUrl" placeholder="https://forms.gle/..."></div>
+    <div class="form-row"><label for="newFormTitle">제목 (선택)</label>
+      <input type="text" id="newFormTitle" placeholder="외부 지원폼"></div>
+    <button type="button" id="btnConnectExternal">외부폼 연결</button>
+    <div id="connectResult" class="message-box hidden"></div>
   </div>
 
   <script>
@@ -129,6 +146,7 @@
           document.getElementById('editRecruitmentEnd').value = toDatetimeLocal(club.recruitmentEnd);
           document.getElementById('loadState').classList.add('hidden');
           document.getElementById('editForm').classList.remove('hidden');
+          loadFormList();
         } catch (e) {
           document.getElementById('loadState').classList.add('hidden');
           document.getElementById('loadError').textContent = e.message || '요청 실패';
@@ -196,6 +214,103 @@
       } finally {
         btn.disabled = false;
         btn.textContent = '모집정보 저장';
+      }
+    };
+
+    function currentSemester() {
+      const now = new Date();
+      return {
+        semesterYear: now.getFullYear(),
+        semesterTerm: (now.getMonth() + 1) < 7 ? 'FIRST' : 'SECOND'
+      };
+    }
+
+    async function loadFormList() {
+      if (!clubId || !getToken()) return;
+      const stateEl = document.getElementById('formListState');
+      const tbody = document.getElementById('formList').querySelector('tbody');
+      stateEl.classList.remove('hidden');
+      try {
+        const res = await fetch(API_BASE + '/api/admin/club/' + clubId + '/application', { headers: headers() });
+        const data = await res.json();
+        if (!res.ok) { stateEl.textContent = data.message || ('HTTP ' + res.status); return; }
+        const forms = data.data || [];
+        tbody.innerHTML = '';
+        forms.forEach(function(f) {
+          const tr = document.createElement('tr');
+          tr.style.borderBottom = '1px solid #f3f4f6';
+          const active = f.status === 'ACTIVE';
+          tr.innerHTML =
+            '<td style="padding:6px 4px;">' + (f.title || '') + '</td>' +
+            '<td>' + (f.formMode || '') + '</td>' +
+            '<td>' + (f.status || '') + '</td>' +
+            '<td style="white-space:nowrap;"></td>';
+          const actionCell = tr.querySelector('td:last-child');
+          const toggleBtn = document.createElement('button');
+          toggleBtn.type = 'button';
+          toggleBtn.textContent = active ? '미게시로 변경' : '활성화';
+          toggleBtn.onclick = function() { toggleStatus(f.id, !active); };
+          const delBtn = document.createElement('button');
+          delBtn.type = 'button';
+          delBtn.textContent = '삭제';
+          delBtn.onclick = function() { deleteForm(f.id); };
+          actionCell.appendChild(toggleBtn);
+          actionCell.appendChild(delBtn);
+          tbody.appendChild(tr);
+        });
+        stateEl.textContent = forms.length ? '' : '연결된 지원폼이 없습니다.';
+        if (forms.length) stateEl.classList.add('hidden');
+      } catch (e) {
+        stateEl.textContent = e.message || '요청 실패';
+      }
+    }
+
+    async function toggleStatus(formId, active) {
+      try {
+        const res = await fetch(API_BASE + '/api/admin/club/' + clubId + '/application/' + formId + '/status',
+          { method: 'PATCH', headers: headers(), body: JSON.stringify({ active: active }) });
+        const data = await res.json();
+        showResult('connectResult', res.ok, res.ok ? '상태 변경됨' : (data.message || '요청 실패'));
+        if (res.ok) loadFormList();
+      } catch (e) { showResult('connectResult', false, e.message || '요청 실패'); }
+    }
+
+    async function deleteForm(formId) {
+      try {
+        const res = await fetch(API_BASE + '/api/admin/club/' + clubId + '/application/' + formId,
+          { method: 'DELETE', headers: headers() });
+        const data = await res.json();
+        showResult('connectResult', res.ok, res.ok ? '삭제됨' : (data.message || '요청 실패'));
+        if (res.ok) loadFormList();
+      } catch (e) { showResult('connectResult', false, e.message || '요청 실패'); }
+    }
+
+    document.getElementById('btnConnectExternal').onclick = async function() {
+      const btn = this;
+      const url = document.getElementById('newExternalUrl').value.trim();
+      if (!url) { showResult('connectResult', false, '외부 URL을 입력하세요.'); return; }
+      const sem = currentSemester();
+      const body = {
+        title: document.getElementById('newFormTitle').value.trim() || null,
+        externalApplicationUrl: url,
+        semesterYear: sem.semesterYear,
+        semesterTerm: sem.semesterTerm
+      };
+      btn.disabled = true; btn.textContent = '연결 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/club/' + clubId + '/application',
+          { method: 'POST', headers: headers(), body: JSON.stringify(body) });
+        const data = await res.json();
+        showResult('connectResult', res.ok, res.ok ? '연결됨' : (data.message || '요청 실패'));
+        if (res.ok) {
+          document.getElementById('newExternalUrl').value = '';
+          document.getElementById('newFormTitle').value = '';
+          loadFormList();
+        }
+      } catch (e) {
+        showResult('connectResult', false, e.message || '요청 실패');
+      } finally {
+        btn.disabled = false; btn.textContent = '외부폼 연결';
       }
     };
   </script>
