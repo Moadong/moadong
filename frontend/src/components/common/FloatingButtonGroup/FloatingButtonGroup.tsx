@@ -1,6 +1,6 @@
 import { useMatch } from 'react-router-dom';
-import scrollToTopIcon from '@/assets/images/icons/scroll_to_top_icon.svg';
-import shareFloatingIcon from '@/assets/images/icons/share_floating_icon.svg';
+import ScrollToTopIcon from '@/assets/images/icons/scroll_to_top_icon.svg?react';
+import ShareFloatingIcon from '@/assets/images/icons/share_floating_icon.svg?react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
@@ -50,7 +50,7 @@ export const FloatingButtonGroup = () => {
         onClick={() => scrollToTop()}
         aria-label='위로 이동하기'
       >
-        <img src={scrollToTopIcon} alt='위로 이동' />
+        <ScrollToTopIcon aria-hidden />
       </Styled.FloatingButton>
       <Styled.FloatingButton
         type='button'
@@ -58,7 +58,7 @@ export const FloatingButtonGroup = () => {
         onClick={handlePageShare}
         aria-label='현재 페이지 공유하기'
       >
-        <img src={shareFloatingIcon} alt='공유하기' />
+        <ShareFloatingIcon aria-hidden />
       </Styled.FloatingButton>
     </Styled.GroupContainer>
   );
