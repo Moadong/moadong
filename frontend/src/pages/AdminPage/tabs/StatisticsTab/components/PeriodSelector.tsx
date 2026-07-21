@@ -1,5 +1,5 @@
-import type { StatisticsDateRange } from '../utils/statisticsDate';
 import * as Styled from '../StatisticsTab.styles';
+import type { StatisticsDateRange } from '../utils/statisticsDate';
 
 interface PeriodSelectorProps {
   range: StatisticsDateRange;
