@@ -6,7 +6,7 @@ import useShare from '@/hooks/useShare';
 import * as Styled from './FloatingButtonGroup.styles';
 
 export const FloatingButtonGroup = () => {
-  const { isTriggered: isScrollingUp } = useScrollTrigger();
+  const { isScrollingUp } = useScrollTrigger();
   const { scrollToTop } = useScrollTo();
   const { handleShare } = useShare();
 
