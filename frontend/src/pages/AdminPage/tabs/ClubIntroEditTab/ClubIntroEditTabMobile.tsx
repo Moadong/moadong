@@ -1,3 +1,4 @@
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
@@ -12,10 +13,11 @@ import {
   IDEAL_CANDIDATE_PLACEHOLDER,
   INTRO_DESCRIPTION_PLACEHOLDER,
 } from '@/constants/adminFieldPlaceholders';
-import useAutoGrow from '@/hooks/useAutoGrow';
+import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTabMobile.styles';
+import AwardEditPage from './components/mobile/AwardEditPage/AwardEditPage';
 import AwardSection from './components/mobile/AwardSection/AwardSection';
 import FAQSection from './components/mobile/FAQSection/FAQSection';
 import InfoSection from './components/mobile/InfoSection/InfoSection';
@@ -26,6 +28,7 @@ interface ClubIntroEditTabMobileProps {
   activityDescription: string;
   setActivityDescription: (v: string) => void;
   awards: Award[];
+  setAwards: (awards: Award[]) => void;
   idealCandidate: IdealCandidate;
   setIdealCandidate: (v: IdealCandidate) => void;
   benefits: string;
@@ -34,7 +37,10 @@ interface ClubIntroEditTabMobileProps {
   setFaqs: (v: FAQ[]) => void;
   isDirty: boolean;
   handleUpdateClub: () => void;
+  handleUpdateClubWithAwards: (awards: Award[]) => void;
 }
+
+type ActivePage = 'main' | 'award';
 
 const ClubIntroEditTabMobile = ({
   introDescription,
@@ -42,6 +48,7 @@ const ClubIntroEditTabMobile = ({
   activityDescription,
   setActivityDescription,
   awards,
+  setAwards,
   idealCandidate,
   setIdealCandidate,
   benefits,
@@ -50,36 +57,37 @@ const ClubIntroEditTabMobile = ({
   setFaqs,
   isDirty,
   handleUpdateClub,
+  handleUpdateClubWithAwards,
 }: ClubIntroEditTabMobileProps) => {
   const navigate = useNavigate();
-  const introRef = useAutoGrow(introDescription);
-  const activityRef = useAutoGrow(activityDescription);
-  const idealRef = useAutoGrow(idealCandidate.content);
-  const benefitsRef = useAutoGrow(benefits);
+  const [activePage, setActivePage] = useState<ActivePage>('main');
+  const savedScrollY = useRef(0);
 
-  const handleIntroChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= INTRO_DESCRIPTION_MAX) {
-      setIntroDescription(e.target.value);
+  useEffect(() => {
+    if (activePage === 'main') {
+      window.scrollTo({ top: savedScrollY.current, behavior: 'instant' });
+      window.dispatchEvent(new Event('scroll'));
     }
+  }, [activePage]);
+
+  const handleNavigateToAward = () => {
+    savedScrollY.current = window.scrollY;
+    setActivePage('award');
   };
 
-  const handleActivityChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= ACTIVITY_DESCRIPTION_MAX) {
-      setActivityDescription(e.target.value);
-    }
-  };
+  const handleIdealCandidateChange = (value: string) =>
+    setIdealCandidate({ ...idealCandidate, content: value });
 
-  const handleIdealChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= IDEAL_CANDIDATE_MAX) {
-      setIdealCandidate({ ...idealCandidate, content: e.target.value });
-    }
-  };
-
-  const handleBenefitsChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    if (e.target.value.length <= BENEFITS_MAX) {
-      setBenefits(e.target.value);
-    }
-  };
+  if (activePage === 'award') {
+    return (
+      <AwardEditPage
+        initialAwards={awards}
+        onSave={setAwards}
+        onSaveToServer={handleUpdateClubWithAwards}
+        onBack={() => setActivePage('main')}
+      />
+    );
+  }
 
   return (
     <>
@@ -101,11 +109,11 @@ const ClubIntroEditTabMobile = ({
               maxLength={INTRO_DESCRIPTION_MAX}
               currentLength={introDescription.length}
             >
-              <Styled.TextArea
-                ref={introRef}
+              <ClearableTextArea
                 value={introDescription}
-                onChange={handleIntroChange}
+                onChange={setIntroDescription}
                 placeholder={INTRO_DESCRIPTION_PLACEHOLDER}
+                maxLength={INTRO_DESCRIPTION_MAX}
               />
             </InfoSection>
 
@@ -114,26 +122,26 @@ const ClubIntroEditTabMobile = ({
               maxLength={ACTIVITY_DESCRIPTION_MAX}
               currentLength={activityDescription.length}
             >
-              <Styled.TextArea
-                ref={activityRef}
+              <ClearableTextArea
                 value={activityDescription}
-                onChange={handleActivityChange}
+                onChange={setActivityDescription}
                 placeholder={ACTIVITY_DESCRIPTION_PLACEHOLDER}
+                maxLength={ACTIVITY_DESCRIPTION_MAX}
               />
             </InfoSection>
 
-            <AwardSection awards={awards} />
+            <AwardSection awards={awards} onNavigate={handleNavigateToAward} />
 
             <InfoSection
               label='이런 사람이 오면 좋아요'
               maxLength={IDEAL_CANDIDATE_MAX}
               currentLength={idealCandidate.content.length}
             >
-              <Styled.TextArea
-                ref={idealRef}
+              <ClearableTextArea
                 value={idealCandidate.content}
-                onChange={handleIdealChange}
+                onChange={handleIdealCandidateChange}
                 placeholder={IDEAL_CANDIDATE_PLACEHOLDER}
+                maxLength={IDEAL_CANDIDATE_MAX}
               />
             </InfoSection>
 
@@ -142,11 +150,11 @@ const ClubIntroEditTabMobile = ({
               maxLength={BENEFITS_MAX}
               currentLength={benefits.length}
             >
-              <Styled.TextArea
-                ref={benefitsRef}
+              <ClearableTextArea
                 value={benefits}
-                onChange={handleBenefitsChange}
+                onChange={setBenefits}
                 placeholder={BENEFITS_PLACEHOLDER}
+                maxLength={BENEFITS_MAX}
               />
             </InfoSection>
 

@@ -22,6 +22,8 @@ export default defineConfig(({ mode }) => {
   return {
     define: {
       __VERCEL_PREVIEW__: process.env.VERCEL_ENV === 'preview',
+      // Vercel이 빌드마다 자동 주입하는 커밋 SHA. 쿼리 캐시 buster로 사용.
+      __BUILD_ID__: JSON.stringify(process.env.VERCEL_GIT_COMMIT_SHA ?? ''),
     },
     plugins: [
       react({
