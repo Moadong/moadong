@@ -32,7 +32,7 @@
 
 ## 접근 방식: A (초경량)
 
-"이 동아리에 외부폼 URL을 연결한다" 중심. 새 폼 생성 시 즉시 `ACTIVE`. 최소 엔드포인트 3개(목록/연결/삭제)만 추가.
+"이 동아리에 외부폼 URL을 연결한다" 중심. 새 폼 생성 시 즉시 `ACTIVE`. 엔드포인트 4개(목록/연결/상태토글/삭제)만 추가.
 
 - 이미 활성 폼이 여러 개면 지원 버튼에 선택 모달이 뜨는 것은 기존 동작 그대로 유지 (자동 비활성화하지 않음). 개발자가 목록에서 불필요한 폼을 삭제해 정리.
 
@@ -40,7 +40,7 @@
 
 ### 1) 새 관리자 엔드포인트 (DEVELOPER 전용, clubId 파라미터)
 
-`ClubAdminController` (`/api/admin`)에 추가. `/api/admin/**`는 `SecurityConfig`에서 이미 `hasRole("DEVELOPER")`로 보호됨.
+신규 컨트롤러 `ClubApplicationAdminController` (`/api/admin`)에 추가. `/api/admin/**`는 `SecurityConfig`에서 이미 `hasRole("DEVELOPER")`로 보호됨.
 
 | 메서드 | 경로 | 설명 |
 |---|---|---|
@@ -61,11 +61,11 @@
 
 `ClubApplyAdminService`에 **clubId를 명시적으로 받는** 메서드 추가(기존 `user.getClubId()` 메서드는 그대로 두고 오버로드/신규 추가):
 
-- `createExternalApplicationFormForClub(String clubId, request)`:
+- `connectExternalApplicationFormForClub(String clubId, request)`:
   - `validateSemester(...)`
   - `ClubApplicationForm.builder().clubId(clubId).build()` → title/semester/externalApplicationUrl(허용검증)/formMode=EXTERNAL 세팅
   - **`updateFormStatus(true)`로 ACTIVE 설정** 후 save
-- `getApplicationFormsForClub(String clubId)`: `findClubApplicationFormsByClubId(clubId)` 재사용
+- `getApplicationFormsForClub(String clubId)`: `clubApplicationFormsRepository.findByClubId(clubId)` → `AdminClubApplicationFormResponse`로 매핑
 - `setApplicationFormStatusForClub(String clubId, String formId, boolean active)`: `findByClubIdAndId(clubId, formId)` → `updateFormStatus(active)` → save. 기존 자체폼 포함 모든 폼에 적용.
 - `deleteApplicationFormForClub(String clubId, String formId)`: `findByClubIdAndId(clubId, formId)` → 지원자 삭제 + 폼 삭제 (기존 delete 로직과 동일 패턴)
 

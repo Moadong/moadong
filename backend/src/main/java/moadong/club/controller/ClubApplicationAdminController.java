@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.AdminExternalFormConnectRequest;
+import moadong.club.payload.request.ApplicationFormStatusUpdateRequest;
 import moadong.club.service.ClubApplyAdminService;
 import moadong.global.payload.Response;
 import org.springframework.http.ResponseEntity;
@@ -49,7 +50,7 @@ public class ClubApplicationAdminController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updateStatus(@PathVariable String clubId,
                                           @PathVariable String formId,
-                                          @RequestBody StatusRequest request) {
+                                          @RequestBody ApplicationFormStatusUpdateRequest request) {
         clubApplyAdminService.setApplicationFormStatusForClub(clubId, formId, request.active());
         return Response.ok("success update application status");
     }
@@ -61,8 +62,5 @@ public class ClubApplicationAdminController {
                                                @PathVariable String formId) {
         clubApplyAdminService.deleteApplicationFormForClub(clubId, formId);
         return Response.ok("success delete application");
-    }
-
-    public record StatusRequest(boolean active) {
     }
 }
