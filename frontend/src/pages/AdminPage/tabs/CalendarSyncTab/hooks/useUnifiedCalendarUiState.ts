@@ -90,7 +90,12 @@ export const useUnifiedCalendarUiState = ({
       }
       return true;
     });
-  }, [allUnifiedEvents, notionEventEnabledMap, googleEventEnabledMap, hiddenKeySet]);
+  }, [
+    allUnifiedEvents,
+    notionEventEnabledMap,
+    googleEventEnabledMap,
+    hiddenKeySet,
+  ]);
 
   const eventsByDate = useMemo(
     () =>

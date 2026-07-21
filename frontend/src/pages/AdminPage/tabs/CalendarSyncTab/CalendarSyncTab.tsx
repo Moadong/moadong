@@ -360,7 +360,9 @@ const CalendarSyncTab = () => {
               <Button width='96px' onClick={goToPreviousMonth}>
                 이전 달
               </Button>
-              <Styled.CalendarMonth>{unifiedCalendarLabel}</Styled.CalendarMonth>
+              <Styled.CalendarMonth>
+                {unifiedCalendarLabel}
+              </Styled.CalendarMonth>
               <Button width='96px' onClick={goToNextMonth}>
                 다음 달
               </Button>

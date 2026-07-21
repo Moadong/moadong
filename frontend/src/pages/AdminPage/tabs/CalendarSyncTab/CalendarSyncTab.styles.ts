@@ -239,8 +239,7 @@ export const CalendarCell = styled.div<{ $muted: boolean }>`
   border: 1px solid ${colors.gray[300]};
   border-radius: 10px;
   padding: 8px;
-  background: ${({ $muted }) =>
-    $muted ? colors.gray[50] : colors.base.white};
+  background: ${({ $muted }) => ($muted ? colors.gray[50] : colors.base.white)};
   opacity: ${({ $muted }) => ($muted ? 0.55 : 1)};
   display: flex;
   flex-direction: column;

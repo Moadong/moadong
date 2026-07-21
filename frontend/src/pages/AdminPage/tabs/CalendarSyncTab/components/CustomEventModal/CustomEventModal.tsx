@@ -2,12 +2,12 @@ import { useState } from 'react';
 import Button from '@/components/common/Button/Button';
 import Modal from '@/components/common/Modal/Modal';
 import ModalLayout from '@/components/common/Modal/ModalLayout';
+import { ApiError } from '@/errors';
 import {
   useCreateCustomCalendarEvent,
   useDeleteCustomCalendarEvent,
   useUpdateCustomCalendarEvent,
 } from '@/hooks/Queries/useCustomCalendarEvents';
-import { ApiError } from '@/errors';
 import type { CustomCalendarEventInput } from '@/types/club';
 import * as Styled from './CustomEventModal.styles';
 
@@ -68,7 +68,9 @@ const CustomEventModal = ({
       start: form.start,
       end: trimmedEnd || undefined,
       url: form.url?.trim() ? form.url.trim() : undefined,
-      description: form.description?.trim() ? form.description.trim() : undefined,
+      description: form.description?.trim()
+        ? form.description.trim()
+        : undefined,
     };
 
     const onError = (error: unknown) =>
@@ -91,7 +93,9 @@ const CustomEventModal = ({
     deleteMutation.mutate(eventId, {
       onSuccess: onClose,
       onError: (error) =>
-        setErrorMessage(resolveErrorMessage(error, '일정 삭제에 실패했습니다.')),
+        setErrorMessage(
+          resolveErrorMessage(error, '일정 삭제에 실패했습니다.'),
+        ),
     });
   };
 
