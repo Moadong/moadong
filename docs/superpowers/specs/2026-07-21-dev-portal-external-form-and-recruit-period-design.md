@@ -44,11 +44,15 @@
 |---|---|---|
 | GET | `/api/admin/club/{clubId}/application` | 해당 동아리의 지원폼 목록 조회 |
 | POST | `/api/admin/club/{clubId}/application` | 외부폼 연결 (생성 + 즉시 ACTIVE) |
+| PATCH | `/api/admin/club/{clubId}/application/{formId}/status` | 기존 지원폼 활성화/미게시 토글 |
 | DELETE | `/api/admin/club/{clubId}/application/{formId}` | 지원폼 삭제 |
 
 - POST 요청 바디: `{ title, externalApplicationUrl, semesterYear, semesterTerm }`
   - `formMode`는 서버에서 `EXTERNAL` 고정. `externalApplicationUrl` 필수(허용 도메인 검증은 엔티티 재사용).
   - `title` 기본값 허용(예: "외부 지원폼")으로 개발자 편의. semester 기본은 현재 학기(프론트에서 채워 보냄).
+- PATCH `.../status` 요청 바디: `{ active: true|false }`
+  - `active=true` → `ACTIVE`(게시, 지원 목록에 노출). `active=false` → `updateFormStatus(false)`로 ACTIVE였던 폼은 `PUBLISHED`로 내려가 지원 목록에서 빠짐(= 미게시/비활성).
+  - **외부폼뿐 아니라 기존 자체폼 등 모든 지원폼**에 적용 가능(상태만 변경).
 - 지원기간은 **기존** `PUT /api/admin/club/{clubId}/description` 재사용(신규 없음).
 
 ### 2) 서비스 계층
@@ -60,6 +64,7 @@
   - `ClubApplicationForm.builder().clubId(clubId).build()` → title/semester/externalApplicationUrl(허용검증)/formMode=EXTERNAL 세팅
   - **`updateFormStatus(true)`로 ACTIVE 설정** 후 save
 - `getApplicationFormsForClub(String clubId)`: `findClubApplicationFormsByClubId(clubId)` 재사용
+- `setApplicationFormStatusForClub(String clubId, String formId, boolean active)`: `findByClubIdAndId(clubId, formId)` → `updateFormStatus(active)` → save. 기존 자체폼 포함 모든 폼에 적용.
 - `deleteApplicationFormForClub(String clubId, String formId)`: `findByClubIdAndId(clubId, formId)` → 지원자 삭제 + 폼 삭제 (기존 delete 로직과 동일 패턴)
 
 리팩터링은 최소로: 기존 본인-동아리 메서드가 새 clubId 메서드를 호출하도록 위임할 수 있으면 위임, 아니면 신규 메서드만 추가.
@@ -74,7 +79,8 @@
 
 - 기존 "모집정보 수정" 섹션(모집 시작/종료 = 지원기간) **유지**. 로드/저장 실동작 검증.
 - 새 섹션 **"지원폼 연결 (외부)"** 추가:
-  - 현재 연결된 지원폼 목록 표시 (`GET /api/admin/club/{clubId}/application`): 제목/모드/상태/URL + 삭제 버튼
+  - 현재 연결된 지원폼 목록 표시 (`GET /api/admin/club/{clubId}/application`): 제목/모드/상태/URL + 각 행에 **활성화/미게시 토글 버튼**(→ `PATCH .../status`) + 삭제 버튼
+    - 상태에 따라 버튼 라벨 전환: `ACTIVE`이면 "미게시로 변경"(`active=false`), 아니면 "활성화"(`active=true`).
   - 입력: 외부 URL(구글폼/네이버폼), (선택) 제목 → "연결" 버튼 → `POST /api/admin/club/{clubId}/application`
   - 성공/실패 메시지는 기존 `showResult` 패턴 재사용. 허용 도메인 위반 시 서버 에러 메시지 표시.
 - 학기는 현재 학기를 기본으로 자동 세팅(프론트에서 계산해 전송).
@@ -87,7 +93,7 @@
 
 ## 테스트
 
-- 백엔드: `ClubApplyAdminService`의 새 clubId 메서드에 대한 유닛 테스트(생성 시 ACTIVE 확인, 허용도메인 위반 예외, 삭제). 컨트롤러는 DEVELOPER 권한 통합 테스트가 있으면 패턴 따라 추가.
+- 백엔드: `ClubApplyAdminService`의 새 clubId 메서드에 대한 유닛 테스트(생성 시 ACTIVE 확인, 허용도메인 위반 예외, 상태 토글 시 ACTIVE↔PUBLISHED 전이, 삭제). 컨트롤러는 DEVELOPER 권한 통합 테스트가 있으면 패턴 따라 추가.
 - 수동 검증: 개발자 포털에서 임의 동아리에 구글폼 URL 연결 → 해당 동아리 상세 페이지 "지원하기" → 외부 URL로 이동하는지 확인. 지원기간 저장 후 재조회로 반영 확인.
 
 ## 범위 밖 (YAGNI)
