@@ -2,6 +2,7 @@ package moadong.club.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.analytics.service.ClubAnalyticsRecordService;
 import moadong.calendar.service.CalendarAggregationService;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubCalendarEventResult;
@@ -38,6 +39,7 @@ public class ClubProfileService {
     private final PushNotificationPort pushNotificationPort;
     private final Javers javers;
     private final CalendarAggregationService calendarAggregationService;
+    private final ClubAnalyticsRecordService clubAnalyticsRecordService;
 
     @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
@@ -92,6 +94,7 @@ public class ClubProfileService {
 
         boolean hasCalendarConnection = calendarAggregationService.hasAnyCalendarConnection(club.getId());
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarConnection);
+        clubAnalyticsRecordService.recordDetailView(club.getId(), club.getName());
         return new ClubDetailedResponse(clubDetailedResult);
     }
 
@@ -101,6 +104,7 @@ public class ClubProfileService {
 
         boolean hasCalendarConnection = calendarAggregationService.hasAnyCalendarConnection(club.getId());
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarConnection);
+        clubAnalyticsRecordService.recordDetailView(club.getId(), club.getName());
         return new ClubDetailedResponse(clubDetailedResult);
     }
 
