@@ -42,8 +42,10 @@ export const FloatingButtonGroup = () => {
     await handleShare({ title: document.title, text: url, url });
   };
 
+  const isClubDetail = !!(matchByName || matchById);
+
   return (
-    <Styled.GroupContainer>
+    <Styled.GroupContainer $isClubDetail={isClubDetail}>
       <Styled.FloatingButton
         type='button'
         $isVisible={isScrollingUp}

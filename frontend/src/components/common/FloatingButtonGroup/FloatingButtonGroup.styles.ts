@@ -2,10 +2,13 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { Z_INDEX } from '@/styles/zIndex';
 
-export const GroupContainer = styled.div`
+const CLUB_DETAIL_FOOTER_HEIGHT = 94;
+
+export const GroupContainer = styled.div<{ $isClubDetail?: boolean }>`
   position: fixed;
   right: 28px;
-  bottom: 28px;
+  bottom: ${({ $isClubDetail }) =>
+    $isClubDetail ? `${CLUB_DETAIL_FOOTER_HEIGHT + 28}px` : '28px'};
   z-index: ${Z_INDEX.floatingButton};
   display: flex;
   flex-direction: column;
