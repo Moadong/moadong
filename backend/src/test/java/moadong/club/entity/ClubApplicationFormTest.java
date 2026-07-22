@@ -18,7 +18,8 @@ class ClubApplicationFormTest {
             "https://docs.google.com/forms/d/e/1FAIpQL/viewform",
             "https://form.naver.com/response/abcd",
             "https://naver.me/xyz",
-            "https://everytime.kr/board/1"
+            "https://everytime.kr/board/1",
+            "https://cafe.daum.net/pknusic/OMPr/43"
     })
     void 허용된_외부폼_호스트는_저장된다(String url) {
         ClubApplicationForm form = ClubApplicationForm.builder().build();
@@ -33,6 +34,7 @@ class ClubApplicationFormTest {
             "https://forms.gle@evil.example/abcd",           // userinfo로 host 위장
             "https://forms.gle.evil.example/abcd",           // suffix 로 host 위장
             "https://everytime.kr.evil.example/board/1",
+            "https://cafe.daum.net.evil.example/pknusic/OMPr/43",
             "https://evil.example/abcd",
             "http://forms.gle/abcd",                         // https 아님
             "https://docs.google.com/document/d/1/edit",     // 구글 문서(폼 아님)
