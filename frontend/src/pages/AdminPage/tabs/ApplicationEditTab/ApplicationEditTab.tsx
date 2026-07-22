@@ -8,6 +8,7 @@ import {
 } from '@/apis/application';
 import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
+import Spinner from '@/components/common/Spinner/Spinner';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
 import INITIAL_FORM_DATA from '@/constants/initialFormData';
 import { queryKeys } from '@/constants/queryKeys';
@@ -210,6 +211,12 @@ const ApplicationEditTab = () => {
 
   return (
     <>
+      {isGenerating && (
+        <Styled.AiLoadingOverlay>
+          <Spinner height='auto' />
+          <Styled.AiLoadingText>지원서 자동 생성 중...</Styled.AiLoadingText>
+        </Styled.AiLoadingOverlay>
+      )}
       <PageContainer>
         <Styled.HeaderContainer>
           <Styled.ChangeButtonWrapper>
@@ -235,7 +242,7 @@ const ApplicationEditTab = () => {
               onClick={handleGenerateDraft}
               disabled={isGenerating}
             >
-              {isGenerating ? '생성 중...' : '✨ AI로 초안 생성'}
+              ✨ AI로 초안 생성
             </Styled.AiDraftButton>
           )}
         </Styled.HeaderContainer>

@@ -164,6 +164,24 @@ export const ExternalApplicationFormHint = styled.div`
   margin-left: 4px;
 `;
 
+export const AiLoadingOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.5);
+`;
+
+export const AiLoadingText = styled.p`
+  color: #fff;
+  font-size: 1.6rem;
+  font-weight: 600;
+`;
+
 export const AiDraftButton = styled.button`
   display: inline-flex;
   align-items: center;
