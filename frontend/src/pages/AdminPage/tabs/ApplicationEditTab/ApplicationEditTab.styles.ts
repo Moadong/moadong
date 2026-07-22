@@ -1,4 +1,7 @@
 import styled, { css } from 'styled-components';
+import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
+import { Z_INDEX } from '@/styles/zIndex';
 
 export const FormTitle = styled.input`
   width: 100%;
@@ -167,7 +170,7 @@ export const ExternalApplicationFormHint = styled.div`
 export const AiLoadingOverlay = styled.div`
   position: fixed;
   inset: 0;
-  z-index: 9999;
+  z-index: ${Z_INDEX.overlay};
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -177,9 +180,8 @@ export const AiLoadingOverlay = styled.div`
 `;
 
 export const AiLoadingText = styled.p`
-  color: #fff;
-  font-size: 1.6rem;
-  font-weight: 600;
+  ${setTypography(typography.paragraph.p2)};
+  color: ${colors.base.white};
 `;
 
 export const AiDraftButton = styled.button`
