@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.Locale;
 
 @Slf4j
 @Service
@@ -111,7 +112,7 @@ public class ClubAnalyticsRecordService {
         if (keyword == null) {
             return null;
         }
-        String normalized = keyword.trim().toLowerCase();
+        String normalized = keyword.trim().toLowerCase(Locale.ROOT);
         return normalized.isBlank() ? null : normalized;
     }
 }

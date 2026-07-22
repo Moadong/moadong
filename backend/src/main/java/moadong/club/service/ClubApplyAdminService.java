@@ -13,6 +13,7 @@ import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.repository.ClubApplicantsRepository;
 import moadong.club.repository.ClubApplicationFormsRepository;
 import moadong.club.repository.ClubApplicationFormsRepositoryCustom;
+import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.AESCipher;
@@ -39,6 +40,7 @@ public class ClubApplyAdminService {
     private final AESCipher cipher;
     private final ClubApplicationFormsRepositoryCustom clubApplicationFormsRepositoryCustom;
     private final ApplicantsStatusShareSse applicantsStatusShareSse;
+    private final ClubRepository clubRepository;
 
     private void validateFinalApplicationFormState(ClubApplicationForm clubApplicationForm, ClubApplicationFormEditRequest request) {
         ApplicationFormMode finalFormMode = Optional.ofNullable(request.formMode()).orElse(clubApplicationForm.getFormMode());
@@ -259,6 +261,10 @@ public class ClubApplyAdminService {
     }
 
     public void connectExternalApplicationFormForClub(String clubId, AdminExternalFormConnectRequest request) {
+        if (!clubRepository.existsById(clubId)) {
+            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
+        }
+
         ClubApplicationForm form = ClubApplicationForm.builder().clubId(clubId).build();
         form.updateFormTitle(request.titleOrDefault());
         form.updateFormMode(ApplicationFormMode.EXTERNAL);

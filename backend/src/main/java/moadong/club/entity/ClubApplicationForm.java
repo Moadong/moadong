@@ -13,20 +13,25 @@ import org.springframework.data.annotation.Version;
 import org.springframework.data.domain.Persistable;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 
 @Document("club_application_forms")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)
 public class ClubApplicationForm implements Persistable<String> {
-    private static final String[] externalApplicationUrlAllowed = {"https://forms.gle", "https://docs.google.com/forms", "https://form.naver.com", "https://naver.me", "https://everytime.kr"};
+    private static final Set<String> externalApplicationUrlAllowedHosts = Set.of("forms.gle", "docs.google.com", "form.naver.com", "naver.me", "everytime.kr");
+    private static final String GOOGLE_DOCS_HOST = "docs.google.com";
+    private static final String GOOGLE_FORMS_PATH_PREFIX = "/forms";
 
     @Id
     private String id;
@@ -101,14 +106,46 @@ public class ClubApplicationForm implements Persistable<String> {
     }
 
     public void updateExternalApplicationUrl(String externalApplicationUrl) {
-        boolean allowed = Arrays.stream(externalApplicationUrlAllowed)
-                .anyMatch(externalApplicationUrl::startsWith);
+        String trimmed = externalApplicationUrl.trim();
 
-        if (!allowed) {
+        if (!isAllowedExternalUrl(trimmed)) {
             throw new RestApiException(ErrorCode.NOT_ALLOWED_EXTERNAL_URL);
         }
 
-        this.externalApplicationUrl = externalApplicationUrl.trim();
+        this.externalApplicationUrl = trimmed;
+    }
+
+    /**
+     * prefix 비교는 {@code https://forms.gle@evil.example}(userinfo)나
+     * {@code https://forms.gle.evil.example}(suffix) 형태로 우회되므로 URI를 파싱해 host를 정확히 대조한다.
+     */
+    private static boolean isAllowedExternalUrl(String url) {
+        URI uri;
+        try {
+            uri = new URI(url);
+        } catch (URISyntaxException e) {
+            return false;
+        }
+
+        if (!"https".equalsIgnoreCase(uri.getScheme()) || uri.getUserInfo() != null) {
+            return false;
+        }
+
+        String host = uri.getHost();
+        if (host == null) {
+            return false;
+        }
+        host = host.toLowerCase(Locale.ROOT);
+        if (!externalApplicationUrlAllowedHosts.contains(host)) {
+            return false;
+        }
+
+        if (GOOGLE_DOCS_HOST.equals(host)) {
+            String path = uri.getPath();
+            return path != null && path.startsWith(GOOGLE_FORMS_PATH_PREFIX);
+        }
+
+        return true;
     }
 
     @Override
