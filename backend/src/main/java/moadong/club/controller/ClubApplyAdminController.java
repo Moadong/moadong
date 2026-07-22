@@ -11,6 +11,7 @@ import moadong.club.payload.request.ClubApplicantDeleteRequest;
 import moadong.club.payload.request.ClubApplicantEditRequest;
 import moadong.club.payload.request.ClubApplicationFormCreateRequest;
 import moadong.club.payload.request.ClubApplicationFormEditRequest;
+import moadong.club.service.AiApplicationDraftService;
 import moadong.club.service.ClubApplyAdminService;
 import moadong.global.payload.Response;
 import moadong.sse.service.ApplicantsStatusShareSse;
@@ -33,6 +34,7 @@ public class ClubApplyAdminController {
 
     private final ClubApplyAdminService clubApplyAdminService;
     private final ApplicantsStatusShareSse sse;
+    private final AiApplicationDraftService aiApplicationDraftService;
 
     @PostMapping("/application")
     @Operation(summary = "클럽 지원서 양식 생성", description = "클럽 지원서 양식을 생성합니다")
@@ -52,8 +54,7 @@ public class ClubApplyAdminController {
                     "- 지원서 설명 (description)<br>" +
                     "- 활성화 여부 (active)<br>" +
                     "- 질문 목록 (questions)<br>" +
-                    "- 모집 학년도 (semesterYear)<br>" +
-                    "- 모집 학기 (semesterTerm)"
+                    "- 모집 학년도 (semesterYear)"
     )
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
@@ -65,7 +66,7 @@ public class ClubApplyAdminController {
     }
 
     @GetMapping("/application")
-    @Operation(summary = "클럽의 모든 지원서 양식 목록 불러오기", description = "클럽의 모든 지원서 양식들을 학기별로 분류하여 불러옵니다")
+    @Operation(summary = "클럽의 모든 지원서 양식 목록 불러오기", description = "클럽의 모든 지원서 양식들을 연도·활성화 여부별로 분류하여 불러옵니다")
     @PreAuthorize("isAuthenticated()")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> getClubApplications(@CurrentUser CustomUserDetails user) {
@@ -90,6 +91,16 @@ public class ClubApplyAdminController {
                                                           @CurrentUser CustomUserDetails user) {
         clubApplyAdminService.duplicateClubApplicationForm(applicationFormId, user);
         return Response.ok("success duplicate application");
+    }
+
+    @PostMapping("/application/ai-draft")
+    @Operation(summary = "AI 지원서 초안 생성",
+            description = "동아리 상세 정보를 바탕으로 지원서 초안(제목·설명·질문 목록)을 생성합니다.<br>"
+                    + "AI 생성 실패 시에도 200으로 기본 템플릿 문항을 반환하며, aiGenerated=false로 표시됩니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> generateApplicationDraft(@CurrentUser CustomUserDetails user) {
+        return Response.ok(aiApplicationDraftService.generateDraft(user));
     }
 
     @GetMapping("/apply/info/{applicationFormId}")

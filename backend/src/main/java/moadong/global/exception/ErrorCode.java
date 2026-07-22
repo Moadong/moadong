@@ -23,6 +23,7 @@ public enum ErrorCode {
     CLICK_COUNT_INVALID(HttpStatus.BAD_REQUEST, "600-13", "클릭 수는 1 이상 5 이하이어야 합니다."),
     CLICK_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "600-14", "비정상적인 요청이 감지되었습니다. 30초 후 다시 시도해주세요."),
     CLICK_TIMESTAMP_INVALID(HttpStatus.BAD_REQUEST, "600-15", "클릭 시각이 유효하지 않습니다."),
+    CLICK_GAME_ENDED(HttpStatus.GONE, "600-16", "클릭 이벤트가 종료되었습니다."),
 
     // 601xx: 파일/미디어 관련 오류
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "601-1", "이미지 업로드에 실패하였습니다."),
@@ -59,7 +60,6 @@ public enum ErrorCode {
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-4", "존재하지 않은 질문입니다."),
     REQUIRED_QUESTION_MISSING(HttpStatus.BAD_REQUEST, "800-5", "필수 응답 질문이 누락되었습니다."),
     ACTIVE_APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-6", "활성화된 지원서 양식이 존재하지 않습니다."),
-    APPLICATION_SEMESTER_INVALID(HttpStatus.BAD_REQUEST, "800-7", "올바르지 않은 학기입니다."),
     NOT_ALLOWED_EXTERNAL_URL(HttpStatus.BAD_REQUEST, "800-8", "형식에 맞지않은 외부지원서 URL 입니다."),
     DUPLICATE_QUESTIONS_ITEMS(HttpStatus.BAD_REQUEST, "800-9", "중복된 질문 선택지가 존재합니다."),
     APPLICATION_REQUIRED_FIELDS_MISSING(HttpStatus.BAD_REQUEST, "800-10", "지원서 양식에 필요한 필드가 누락되었습니다."),
@@ -80,6 +80,11 @@ public enum ErrorCode {
 
     // 902xx: 홍보게시판 오류
     PROMOTION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "902-1", "홍보 게시글이 존재하지 않습니다."),
+
+    // 903xx: 통계/분석 오류
+    MIXPANEL_EXPORT_FAILED(HttpStatus.BAD_GATEWAY, "903-1", "Mixpanel 데이터 조회에 실패했습니다."),
+    STATISTICS_DATE_RANGE_INVALID(HttpStatus.BAD_REQUEST, "903-2", "통계 조회 기간이 올바르지 않습니다."),
+    STATISTICS_BACKFILL_RANGE_TOO_LONG(HttpStatus.BAD_REQUEST, "903-3", "통계 백필 기간이 너무 깁니다."),
 
     // 950xx: Notion 연동 오류
     NOTION_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "950-1", "Notion 서버 환경변수가 설정되지 않았습니다."),
