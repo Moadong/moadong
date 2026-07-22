@@ -116,29 +116,14 @@ export const AnswerWrapper = styled.div`
 
 export const AnswerCard = styled.div`
   box-sizing: border-box;
-  display: flex;
-  flex-direction: column;
   padding: 12px 14px;
-  gap: 4px;
   width: 100%;
   background: ${colors.base.white};
   border: 1px solid ${colors.gray[200]};
   border-radius: 10px;
-`;
 
-export const AnswerTextarea = styled.textarea`
-  border: none;
-  outline: none;
-  background: transparent;
-  resize: none;
-  overflow: hidden;
-  ${setTypography(typography.paragraph.p6)}
-  line-height: 160%;
-  color: ${colors.base.black};
-  width: 100%;
-
-  &::placeholder {
-    color: ${colors.gray[500]};
+  &:focus-within {
+    border-color: ${colors.gray[800]};
   }
 `;
 
@@ -146,24 +131,4 @@ export const CharCount = styled.span`
   ${setTypography(typography.paragraph.p7)}
   color: ${colors.gray[500]};
   text-align: right;
-`;
-
-export const AddButton = styled.button`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 12px;
-  gap: 6px;
-  background: ${colors.primary[800]};
-  border: none;
-  border-radius: 14px;
-  cursor: pointer;
-  ${setTypography(typography.button.button2)}
-  color: ${colors.base.white};
-
-  img {
-    width: 16px;
-    height: 16px;
-  }
 `;

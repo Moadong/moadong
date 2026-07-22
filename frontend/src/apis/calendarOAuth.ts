@@ -13,6 +13,7 @@ import type {
 } from '@/types/notion';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
+import { fetchWithTimeout } from './utils/fetchWithTimeout';
 
 export type { GoogleCalendarItem, GoogleEventItem, GoogleCalendarEvent };
 export type { NotionSearchItem, NotionDatabaseOption, NotionPagesResponse };
@@ -26,7 +27,7 @@ interface GoogleTokenResponse {
 }
 
 export const fetchGoogleCalendarList = async (accessToken: string) => {
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     'https://www.googleapis.com/calendar/v3/users/me/calendarList',
     {
       headers: {
@@ -51,7 +52,7 @@ export const fetchGooglePrimaryEvents = async (accessToken: string) => {
     timeMin: new Date().toISOString(),
   });
 
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `https://www.googleapis.com/calendar/v3/calendars/primary/events?${query.toString()}`,
     {
       headers: {

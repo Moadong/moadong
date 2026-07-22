@@ -33,11 +33,18 @@
 - 레이블은 수상 이력 유무에 관계없이 항상 `이런 상을 받았어요`로 고정
 - 수상 이력이 없으면 빈 카드, 있으면 학기별 목록 + NavButton 표시
 
+### InfoSection 텍스트 필드
+
+- 각 `InfoSection` 내부에 `ClearableTextArea` 사용
+- 클릭 시 `InfoSection.Card`의 `focus-within` CSS로 검정 테두리 활성화
+- 포커스 + 내용 있을 때 X 버튼 표시 → 클릭 시 전체 내용 초기화
+
 ### FAQSection
 
 - 글자수 카운터는 `AnswerWrapper` 하단에 항상 표시 (입력 여부 무관)
 - 표시 형식: `질문: {n}/100 | 답변: {n}/300`
-- 질문·답변 textarea 모두 `useAutoGrow` 훅으로 자동 높이 조절
+- 질문 입력란: 일반 `input` (클리어 버튼 없음)
+- 답변 입력란: `ClearableTextArea` 적용 → 포커스 시 `AnswerCard` 검정 테두리 + 내용 있을 때 X 버튼
 
 ### FixedBottomButtonArea (공통)
 

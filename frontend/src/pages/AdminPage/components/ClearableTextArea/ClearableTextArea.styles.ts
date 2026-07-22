@@ -2,16 +2,16 @@ import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
-export const ContentRow = styled.div`
+export const Row = styled.div`
   display: flex;
   flex-direction: row;
-  align-items: flex-end;
+  align-items: flex-start;
   gap: 8px;
   width: 100%;
   min-height: 22px;
 `;
 
-export const Input = styled.textarea`
+export const Textarea = styled.textarea<{ $size?: 'default' | 'large' }>`
   flex: 1;
   min-width: 0;
   border: none;
@@ -20,8 +20,11 @@ export const Input = styled.textarea`
   padding: 0;
   resize: none;
   overflow: hidden;
-
-  ${setTypography(typography.paragraph.p3)}
+  ${({ $size }) =>
+    $size === 'large'
+      ? setTypography(typography.paragraph.p3)
+      : setTypography(typography.paragraph.p6)}
+  line-height: 160%;
   color: ${colors.base.black};
 
   &::placeholder {

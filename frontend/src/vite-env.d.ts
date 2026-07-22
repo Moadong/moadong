@@ -2,3 +2,4 @@
 /// <reference types="vite-plugin-svgr/client" />
 
 declare const __VERCEL_PREVIEW__: boolean;
+declare const __BUILD_ID__: string;

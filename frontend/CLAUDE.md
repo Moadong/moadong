@@ -58,7 +58,7 @@ npm run generate:sitemap # sitemap.xml 생성
 - date-fns 날짜 처리 · Framer Motion 애니메이션 · Swiper 캐러셀
 - react-datepicker 날짜 선택 · react-markdown 마크다운 렌더링
 
-외부 서비스: Mixpanel, Sentry, Channel.io, Kakao SDK, Naver Map → 초기화·상세는 [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md)
+외부 서비스: Mixpanel, Sentry, Channel.io, Naver Map → 초기화·상세는 [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md)
 
 ### 환경 변수
 
