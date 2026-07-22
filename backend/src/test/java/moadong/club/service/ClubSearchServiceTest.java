@@ -17,13 +17,12 @@ import moadong.club.util.search.ClubSearchCandidate;
 import moadong.club.util.search.ClubSearchMatcher;
 import moadong.club.util.search.ClubSearchMatchType;
 import moadong.club.util.search.ClubSearchRanker;
+import moadong.util.annotations.UnitTest;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.junit.jupiter.MockitoExtension;
 
-@ExtendWith(MockitoExtension.class)
+@UnitTest
 class ClubSearchServiceTest {
 
     @Mock
