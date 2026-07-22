@@ -50,7 +50,7 @@ public class ClubApplicationAdminController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updateStatus(@PathVariable String clubId,
                                           @PathVariable String formId,
-                                          @RequestBody ApplicationFormStatusUpdateRequest request) {
+                                          @RequestBody @Valid ApplicationFormStatusUpdateRequest request) {
         clubApplyAdminService.setApplicationFormStatusForClub(clubId, formId, request.active());
         return Response.ok("success update application status");
     }
