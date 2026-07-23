@@ -1,6 +1,7 @@
 import fetchMock from 'jest-fetch-mock';
-import { ApplicationDraft } from '@/types/application';
-import { generateApplicationDraft } from './application';
+import { ApiError } from '@/errors';
+import { AiDraftQuota, ApplicationDraft } from '@/types/application';
+import { generateApplicationDraft, getAiDraftQuota } from './application';
 
 jest.mock('@/constants/api', () => ({
   __esModule: true,
@@ -55,6 +56,39 @@ describe('generateApplicationDraft', () => {
     );
   });
 
+  it('응답에 remaining이 포함되면 그대로 반환한다', async () => {
+    const draft: ApplicationDraft = {
+      title: '매니아 신입 부원 모집 지원서',
+      description: '안녕하세요',
+      aiGenerated: true,
+      questions: [],
+      remaining: 2,
+    };
+    fetchMock.mockResponseOnce(JSON.stringify({ data: draft }), {
+      headers: { 'content-type': 'application/json' },
+    });
+
+    const result = await generateApplicationDraft();
+
+    expect(result?.remaining).toBe(2);
+  });
+
+  it('한도 초과(429) 시 status 429를 담은 ApiError를 던진다', async () => {
+    fetchMock.mockResponseOnce(
+      JSON.stringify({
+        statuscode: '600-17',
+        message: '이번 달 AI 초안 생성 횟수(3회)를 모두 사용했습니다.',
+        data: null,
+      }),
+      { status: 429, headers: { 'content-type': 'application/json' } },
+    );
+
+    const error = await generateApplicationDraft().catch((e) => e);
+
+    expect(error).toBeInstanceOf(ApiError);
+    expect(error.status).toBe(429);
+  });
+
   it('서버 오류 시 에러를 던진다', async () => {
     fetchMock.mockResponseOnce(JSON.stringify({ message: 'fail' }), {
       status: 500,
@@ -62,5 +96,27 @@ describe('generateApplicationDraft', () => {
     });
 
     await expect(generateApplicationDraft()).rejects.toThrow();
+  });
+});
+
+describe('getAiDraftQuota', () => {
+  beforeEach(() => {
+    fetchMock.resetMocks();
+    localStorage.setItem('accessToken', 'mock-token');
+  });
+
+  it('응답의 data를 unwrap하여 남은 횟수 정보를 반환한다', async () => {
+    const quota: AiDraftQuota = { limit: 3, used: 2, remaining: 1 };
+    fetchMock.mockResponseOnce(JSON.stringify({ data: quota }), {
+      headers: { 'content-type': 'application/json' },
+    });
+
+    const result = await getAiDraftQuota();
+
+    expect(result).toEqual(quota);
+    expect(fetchMock).toHaveBeenCalledWith(
+      'http://localhost:3000/api/club/application/ai-draft/quota',
+      expect.anything(),
+    );
   });
 });

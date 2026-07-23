@@ -2,6 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
   deleteApplication,
   duplicateApplication,
+  getAiDraftQuota,
   getAllApplicationForms,
   getApplication,
   updateApplicationStatus,
@@ -27,6 +28,18 @@ export const useGetApplicationList = () => {
   return useQuery({
     queryKey: queryKeys.application.all,
     queryFn: () => getAllApplicationForms(),
+  });
+};
+
+export const useAiDraftQuota = (
+  clubId: string | undefined,
+  enabled: boolean = true,
+) => {
+  return useQuery({
+    queryKey: queryKeys.application.aiDraftQuota(clubId || 'unknown'),
+    queryFn: () => getAiDraftQuota(),
+    enabled: !!clubId && enabled,
+    staleTime: 60 * 1000,
   });
 };
 

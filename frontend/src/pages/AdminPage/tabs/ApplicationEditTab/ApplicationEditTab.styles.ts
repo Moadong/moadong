@@ -184,6 +184,18 @@ export const AiLoadingText = styled.p`
   color: ${colors.base.white};
 `;
 
+export const AiDraftActions = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+export const AiDraftRemaining = styled.span`
+  font-size: 12px;
+  color: #787878;
+  white-space: nowrap;
+`;
+
 export const AiDraftButton = styled.button`
   display: inline-flex;
   align-items: center;
