@@ -1,5 +1,8 @@
 package moadong.club.service;
 
+import java.time.Duration;
+import java.time.YearMonth;
+import java.time.ZoneId;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
@@ -8,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import moadong.anthropic.dto.DraftQuestion;
 import moadong.anthropic.service.AnthropicQuestionGenerator;
 import moadong.club.entity.Club;
+import moadong.club.payload.response.ClubAiDraftQuotaResponse;
 import moadong.club.payload.response.ClubApplicationDraftResponse;
 import moadong.club.payload.response.ClubApplicationDraftResponse.ItemDto;
 import moadong.club.payload.response.ClubApplicationDraftResponse.OptionsDto;
@@ -16,6 +20,8 @@ import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.user.payload.CustomUserDetails;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -30,12 +36,35 @@ public class AiApplicationDraftService {
     private static final int MAX_DESCRIPTION = 300;
     private static final int MAX_ITEM = 20;
 
+    // 동아리당 월 AI 초안 생성 한도 (Anthropic API 비용 방어)
+    private static final int MONTHLY_LIMIT = 3;
+    // 오래된 월별 카운터 키 자동 청소용 TTL (정확한 월말 계산 불필요)
+    private static final Duration KEY_TTL = Duration.ofDays(62);
+    private static final String COUNT_KEY_PREFIX = "ai-draft:count:";
+    private static final ZoneId KST = ZoneId.of("Asia/Seoul");
+
+    // INCR + 첫 증가 시 조건부 EXPIRE를 원자적으로 수행 (TTL 누락 방지)
+    private static final RedisScript<Long> COUNT_SCRIPT = RedisScript.of(
+            "local c = redis.call('INCR', KEYS[1])\n" +
+            "if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end\n" +
+            "return c",
+            Long.class
+    );
+
     private final ClubRepository clubRepository;
     private final AnthropicQuestionGenerator generator;
+    private final StringRedisTemplate stringRedisTemplate;
 
     public ClubApplicationDraftResponse generateDraft(CustomUserDetails user) {
         Club club = clubRepository.findClubByUserId(user.getId())
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        long used = incrementMonthlyUsage(club.getId());
+        if (used > MONTHLY_LIMIT) {
+            log.warn("AI 초안 생성 월 한도({}회) 초과로 차단. clubId={}, used={}",
+                    MONTHLY_LIMIT, club.getId(), used);
+            throw new RestApiException(ErrorCode.AI_DRAFT_LIMIT_EXCEEDED);
+        }
 
         List<DraftQuestion> aiQuestions = List.of();
         try {
@@ -49,8 +78,49 @@ public class AiApplicationDraftService {
 
         boolean aiGenerated = !aiQuestions.isEmpty();
         List<QuestionDto> questions = assemble(aiQuestions);
+        int remaining = (int) Math.max(0, MONTHLY_LIMIT - used);
         return new ClubApplicationDraftResponse(
-                buildTitle(club), buildDescription(club), questions, aiGenerated);
+                buildTitle(club), buildDescription(club), questions, aiGenerated, remaining);
+    }
+
+    public ClubAiDraftQuotaResponse getQuota(CustomUserDetails user) {
+        Club club = clubRepository.findClubByUserId(user.getId())
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+
+        long used = readMonthlyUsage(club.getId());
+        int remaining = (int) Math.max(0, MONTHLY_LIMIT - used);
+        return new ClubAiDraftQuotaResponse(MONTHLY_LIMIT, (int) used, remaining);
+    }
+
+    private String monthlyKey(String clubId) {
+        return COUNT_KEY_PREFIX + clubId + ":" + YearMonth.now(KST);
+    }
+
+    // 월별 카운터를 원자적으로 1 증가시키고 증가 후 값을 반환한다.
+    // Redis 장애 시에는 가용성을 우선해 로그만 남기고 0을 반환하여 제한 없이 통과시킨다.
+    private long incrementMonthlyUsage(String clubId) {
+        try {
+            Long count = stringRedisTemplate.execute(
+                    COUNT_SCRIPT,
+                    List.of(monthlyKey(clubId)),
+                    String.valueOf(KEY_TTL.getSeconds()));
+            return count == null ? 0L : count;
+        } catch (Exception e) {
+            log.warn("AI 초안 생성 카운트 실패, 제한 없이 통과. clubId={}", clubId, e);
+            return 0L;
+        }
+    }
+
+    // 카운터를 증가시키지 않고 현재 사용 횟수만 읽는다 (quota 조회용).
+    // Redis 장애 시에는 0으로 처리하여 조회가 실패하지 않도록 한다.
+    private long readMonthlyUsage(String clubId) {
+        try {
+            String value = stringRedisTemplate.opsForValue().get(monthlyKey(clubId));
+            return value == null ? 0L : Long.parseLong(value);
+        } catch (Exception e) {
+            log.warn("AI 초안 quota 조회 실패, 0으로 처리. clubId={}", clubId, e);
+            return 0L;
+        }
     }
 
     private boolean isValid(DraftQuestion q) {
