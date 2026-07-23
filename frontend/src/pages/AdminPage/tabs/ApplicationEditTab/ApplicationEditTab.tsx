@@ -25,7 +25,6 @@ import {
 import { useAdminClubId } from '@/store/useAdminClubStore';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import {
-  AiDraftQuota,
   ApplicationFormData,
   ApplicationFormMode,
   Question,
@@ -62,14 +61,10 @@ const ApplicationEditTab = () => {
     clubId ?? undefined,
     isDraftButtonVisible,
   );
-  const remaining = draftQuota?.remaining;
+  // 생성 성공/429로 갱신된 값을 즉시 반영 (quota 조회 전·실패 시에도 동작)
+  const [remainingOverride, setRemainingOverride] = useState<number>();
+  const remaining = remainingOverride ?? draftQuota?.remaining;
   const isDraftLimitReached = remaining === 0;
-
-  const setRemaining = (nextRemaining: number) =>
-    queryClient.setQueryData<AiDraftQuota>(
-      queryKeys.application.aiDraftQuota(clubId ?? 'unknown'),
-      (old) => (old ? { ...old, remaining: nextRemaining } : old),
-    );
 
   useEffect(() => {
     if (!existingFormData) return;
@@ -140,7 +135,7 @@ const ApplicationEditTab = () => {
       }));
       setNextId(draftQuestions.length + 2);
       if (typeof draft.remaining === 'number') {
-        setRemaining(draft.remaining);
+        setRemainingOverride(draft.remaining);
       }
       if (!draft.aiGenerated) {
         alert(
@@ -150,7 +145,7 @@ const ApplicationEditTab = () => {
     },
     onError: (err: Error) => {
       if (err instanceof ApiError && err.status === 429) {
-        setRemaining(0);
+        setRemainingOverride(0);
         alert('이번 달 AI 초안 생성 횟수(3회)를 모두 사용했어요.');
         return;
       }
