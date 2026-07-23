@@ -70,7 +70,11 @@ const ApplicationEditTab = () => {
       queryKeys.application.aiDraftQuota(clubId ?? 'unknown'),
       (old) =>
         old
-          ? { ...old, used: old.limit - nextRemaining, remaining: nextRemaining }
+          ? {
+              ...old,
+              used: old.limit - nextRemaining,
+              remaining: nextRemaining,
+            }
           : old,
     );
 
