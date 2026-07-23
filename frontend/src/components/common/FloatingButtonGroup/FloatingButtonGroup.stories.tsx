@@ -1,6 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
-import scrollToTopIcon from '@/assets/images/icons/scroll_to_top_icon.svg';
-import shareFloatingIcon from '@/assets/images/icons/share_floating_icon.svg';
+import ScrollToTopIcon from '@/assets/images/icons/scroll_to_top_icon.svg?react';
+import ShareFloatingIcon from '@/assets/images/icons/share_floating_icon.svg?react';
 import * as Styled from './FloatingButtonGroup.styles';
 
 // FloatingButtonGroup은 내부 스크롤 훅으로 가시성이 제어되므로
@@ -19,7 +19,7 @@ const FloatingButtonGroupDemo = ({
       onClick={() => {}}
       aria-label='위로 이동하기'
     >
-      <img src={scrollToTopIcon} alt='위로 이동' />
+      <ScrollToTopIcon aria-hidden />
     </Styled.FloatingButton>
     <Styled.FloatingButton
       type='button'
@@ -27,7 +27,7 @@ const FloatingButtonGroupDemo = ({
       onClick={() => {}}
       aria-label='현재 페이지 공유하기'
     >
-      <img src={shareFloatingIcon} alt='공유하기' />
+      <ShareFloatingIcon aria-hidden />
     </Styled.FloatingButton>
   </Styled.GroupContainer>
 );

@@ -2,10 +2,13 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { Z_INDEX } from '@/styles/zIndex';
 
-export const GroupContainer = styled.div`
+const CLUB_DETAIL_FOOTER_HEIGHT = 94;
+
+export const GroupContainer = styled.div<{ $isClubDetail?: boolean }>`
   position: fixed;
   right: 28px;
-  bottom: 28px;
+  bottom: ${({ $isClubDetail }) =>
+    $isClubDetail ? `${CLUB_DETAIL_FOOTER_HEIGHT + 28}px` : '28px'};
   z-index: ${Z_INDEX.floatingButton};
   display: flex;
   flex-direction: column;
@@ -14,7 +17,8 @@ export const GroupContainer = styled.div`
 
   ${media.tablet} {
     right: 14px;
-    bottom: calc(54px + env(safe-area-inset-bottom) + 14px);
+    bottom: calc(68px + env(safe-area-inset-bottom) + 14px);
+    gap: 6px;
   }
 `;
 
@@ -33,18 +37,22 @@ export const FloatingButton = styled.button<{
     opacity 0.3s,
     visibility 0.3s;
 
-  img {
-    width: 38px;
-    height: 38px;
+  svg {
+    width: 100%;
+    height: 100%;
     display: block;
-    transition: transform 0.15s ease;
   }
 
-  &:hover img {
+  &:hover svg {
     transform: scale(1.12);
   }
 
-  &:active img {
+  &:active svg {
     transform: scale(1.04);
+  }
+
+  ${media.tablet} {
+    width: 32px;
+    height: 32px;
   }
 `;

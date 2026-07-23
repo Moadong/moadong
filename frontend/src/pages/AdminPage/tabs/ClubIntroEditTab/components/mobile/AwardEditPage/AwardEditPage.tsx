@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import addIcon from '@/assets/images/icons/add_icon.svg';
 import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
+import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { SCROLL_TRIGGER_DISABLED } from '@/hooks/Scroll/useScrollTrigger';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
-import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, SemesterTermType } from '@/types/club';
 import { getAwardSortValue } from '@/utils/awardHelpers';
 import * as Styled from './AwardEditPage.styles';
@@ -124,7 +124,9 @@ const AwardEditPage = ({
         <img src={addLargeIcon} alt='' width={20} height={20} />
       </Styled.SemesterAddButton>
 
-      <MobileSaveButtonArea onClick={handleSave} disabled={!isDirty} />
+      <FixedBottomButtonArea onClick={handleSave} disabled={!isDirty}>
+        저장하기
+      </FixedBottomButtonArea>
 
       {isPickerOpen && (
         <SemesterPickerSheet

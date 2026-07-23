@@ -46,9 +46,9 @@
 - 질문 입력란: 일반 `input` (클리어 버튼 없음)
 - 답변 입력란: `ClearableTextArea` 적용 → 포커스 시 `AnswerCard` 검정 테두리 + 내용 있을 때 X 버튼
 
-### MobileSaveButtonArea (공통)
+### FixedBottomButtonArea (공통)
 
-- 버튼 영역(`SaveButtonArea`) 자체는 배경 투명, `box-shadow` 없음
+- 버튼 영역 자체는 배경 투명, `box-shadow` 없음
 - `box-shadow`는 button 요소에만 적용 (`0px 0px 8px rgba(0,0,0,0.1)`)
 - 변경사항 없을 때 버튼 비활성화, 변경 시 활성화 (`isDirty` 제어)
 
@@ -60,4 +60,4 @@
 - `src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/InfoSection/` — 텍스트 입력 섹션
 - `src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/AwardSection/` — 수상 내역 섹션
 - `src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection/` — FAQ 편집 섹션
-- `src/pages/AdminPage/components/MobileSaveButtonArea/` — 하단 저장 버튼 (공통)
+- `src/components/common/FixedBottomButtonArea/` — 하단 고정 버튼 영역 (공통)
