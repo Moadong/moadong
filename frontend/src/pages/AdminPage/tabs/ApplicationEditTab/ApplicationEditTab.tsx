@@ -68,14 +68,7 @@ const ApplicationEditTab = () => {
   const setRemaining = (nextRemaining: number) =>
     queryClient.setQueryData<AiDraftQuota>(
       queryKeys.application.aiDraftQuota(clubId ?? 'unknown'),
-      (old) =>
-        old
-          ? {
-              ...old,
-              used: old.limit - nextRemaining,
-              remaining: nextRemaining,
-            }
-          : old,
+      (old) => (old ? { ...old, remaining: nextRemaining } : old),
     );
 
   useEffect(() => {
