@@ -1,4 +1,7 @@
 import styled, { css } from 'styled-components';
+import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
+import { Z_INDEX } from '@/styles/zIndex';
 
 export const FormTitle = styled.input`
   width: 100%;
@@ -77,6 +80,8 @@ export const submitButton = styled.button`
 
 export const HeaderContainer = styled.div`
   display: flex;
+  justify-content: space-between;
+  align-items: center;
 `;
 
 export const ChangeButtonWrapper = styled.div`
@@ -160,4 +165,41 @@ export const ExternalApplicationFormHint = styled.div`
   font-weight: 400;
   margin-top: 8px;
   margin-left: 4px;
+`;
+
+export const AiLoadingOverlay = styled.div`
+  position: fixed;
+  inset: 0;
+  z-index: ${Z_INDEX.overlay};
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 20px;
+  background: rgba(0, 0, 0, 0.5);
+`;
+
+export const AiLoadingText = styled.p`
+  ${setTypography(typography.paragraph.p2)};
+  color: ${colors.base.white};
+`;
+
+export const AiDraftButton = styled.button`
+  display: inline-flex;
+  align-items: center;
+  height: 33px;
+  padding: 0 12px;
+  border: 1px solid var(--Main-Primary-900, #ff5414);
+  border-radius: 6px;
+  background-color: #fff;
+  color: var(--Main-Primary-900, #ff5414);
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
