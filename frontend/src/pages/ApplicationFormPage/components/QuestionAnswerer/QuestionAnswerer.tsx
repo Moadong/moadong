@@ -23,10 +23,19 @@ const QuestionAnswerer = ({
   };
 
   switch (question.type) {
+    case 'SHORT_TEXT':
+      return (
+        <ShortText
+          {...baseProps}
+          multiline
+          answer={selectedAnswers[0] ?? ''}
+          onAnswerChange={(value) => onChange(question.id, value)}
+        />
+      );
+
     case 'NAME':
     case 'EMAIL':
     case 'PHONE_NUMBER':
-    case 'SHORT_TEXT':
       return (
         <ShortText
           {...baseProps}
