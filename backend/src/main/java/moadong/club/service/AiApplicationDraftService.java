@@ -77,6 +77,10 @@ public class AiApplicationDraftService {
         }
 
         boolean aiGenerated = !aiQuestions.isEmpty();
+        if (!aiGenerated && used > 0) {
+            // AI 결과를 주지 못한 경우(실패·타임아웃·전량 필터) 소모한 횟수를 환불한다.
+            used = refundMonthlyUsage(club.getId(), used);
+        }
         List<QuestionDto> questions = assemble(aiQuestions);
         int remaining = (int) Math.max(0, MONTHLY_LIMIT - used);
         return new ClubApplicationDraftResponse(
@@ -108,6 +112,18 @@ public class AiApplicationDraftService {
         } catch (Exception e) {
             log.warn("AI 초안 생성 카운트 실패, 제한 없이 통과. clubId={}", clubId, e);
             return 0L;
+        }
+    }
+
+    // aiGenerated=false로 결과를 주지 못한 경우 증가분을 되돌리고(DECR) 남은 사용 횟수를 반환한다.
+    // Redis 장애 시에는 차감을 유지하고 로그만 남긴다.
+    private long refundMonthlyUsage(String clubId, long currentUsed) {
+        try {
+            Long count = stringRedisTemplate.opsForValue().decrement(monthlyKey(clubId));
+            return count == null ? currentUsed : count;
+        } catch (Exception e) {
+            log.warn("AI 초안 생성 카운트 환불 실패, 차감 유지. clubId={}", clubId, e);
+            return currentUsed;
         }
     }
 
