@@ -4,6 +4,7 @@ import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { SCROLL_TRIGGER_DISABLED } from '@/hooks/Scroll/useScrollTrigger';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
+import MobileFloatingButton from '@/pages/AdminPage/components/MobileFloatingButton/MobileFloatingButton';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { Award, SemesterTermType } from '@/types/club';
 import { getAwardSortValue } from '@/utils/awardHelpers';
@@ -116,13 +117,12 @@ const AwardEditPage = ({
         </Styled.Content>
       </Styled.Container>
 
-      <Styled.SemesterAddButton
-        type='button'
+      <MobileFloatingButton
         onClick={() => setIsPickerOpen(true)}
-        aria-label='학기 추가'
-      >
-        <img src={addLargeIcon} alt='' width={20} height={20} />
-      </Styled.SemesterAddButton>
+        icon={addLargeIcon}
+        ariaLabel='학기 추가'
+        bottom='calc(101px + env(safe-area-inset-bottom))'
+      />
 
       <MobileSaveButtonArea onClick={handleSave} disabled={!isDirty} />
 

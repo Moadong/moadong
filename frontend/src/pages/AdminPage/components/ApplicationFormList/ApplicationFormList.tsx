@@ -12,7 +12,7 @@ import {
 } from '@/hooks/Queries/useApplication';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import * as Styled from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab.styles';
+import * as Styled from '@/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/ApplicationListTab.styles';
 import {
   ApplicationFormGroup,
   ApplicationFormItem,

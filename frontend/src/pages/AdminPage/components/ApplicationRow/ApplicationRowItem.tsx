@@ -1,5 +1,5 @@
-import Morebutton from '@/assets/images/icons/Morebutton.svg';
-import ApplicationMenu from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationMenu';
+import Morebutton from '@/assets/images/icons/ellipsis_icon.svg';
+import ApplicationFormContextMenu from '@/pages/AdminPage/components/ApplicationFormContextMenu/ApplicationFormContextMenu';
 import {
   ApplicationFormItem,
   ApplicationFormStatus,
@@ -59,7 +59,7 @@ const ApplicationRowItem = ({
           </Styled.MoreButton>
 
           {isMenuOpen && (
-            <ApplicationMenu
+            <ApplicationFormContextMenu
               isActive={isActive}
               onDelete={() => onDelete(application.id)}
               onToggleStatus={() =>
