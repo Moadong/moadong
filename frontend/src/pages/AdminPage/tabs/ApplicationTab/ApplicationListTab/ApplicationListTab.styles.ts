@@ -13,10 +13,6 @@ export const Container = styled.div`
   line-height: 1.4;
 `;
 
-export const Title = styled.div`
-  ${setTypography(typography.title.title3)}
-  margin-bottom: 24px;
-`;
 // 활성화된 지원서 목록을 감싸는 컨테이너
 export const ActiveListContainer = styled.div`
   flex-direction: column;

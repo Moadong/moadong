@@ -2,7 +2,7 @@
 
 모바일 지원서 관리 화면에서 재사용되는 공통 UI 컴포넌트 모음.
 
-## ApplicationFormContextMenu
+## ApplicationMenu
 
 `...` 버튼 클릭 시 나타나는 컨텍스트 메뉴. 데스크탑·모바일 공용.
 
@@ -12,7 +12,7 @@
 - `onEdit`·`onDuplicate`는 optional — 전달하지 않으면 해당 항목 미노출
 
 ```tsx
-<ApplicationFormContextMenu
+<ApplicationMenu
   isActive={isActive}
   onToggleStatus={handleToggle}
   onEdit={handleEdit}          // optional: 수정하기
@@ -57,7 +57,7 @@
 
 ## 관련 코드
 
-- `src/pages/AdminPage/components/ApplicationFormContextMenu/` — 데스크탑·모바일 공용 컨텍스트 메뉴
+- `src/pages/AdminPage/components/ApplicationMenu/` — 데스크탑·모바일 공용 컨텍스트 메뉴
 - `src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationCardMobile/` — 활성화 탭 카드
 - `src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationListCardMobile/` — 년도별 목록 카드
 - `src/pages/AdminPage/tabs/ApplicationTab/ApplicationEditTab/components/mobile/ApplicationTypeTab/` — 유형 탭
