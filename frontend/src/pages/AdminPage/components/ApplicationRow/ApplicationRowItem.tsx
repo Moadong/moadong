@@ -1,6 +1,6 @@
 import type { MouseEvent, RefObject } from 'react';
 import Morebutton from '@/assets/images/icons/ellipsis_icon.svg';
-import ApplicationFormContextMenu from '@/pages/AdminPage/components/ApplicationFormContextMenu/ApplicationFormContextMenu';
+import ApplicationMenu from '@/pages/AdminPage/components/ApplicationMenu/ApplicationMenu';
 import {
   ApplicationFormItem,
   ApplicationFormStatus,
@@ -62,7 +62,7 @@ const ApplicationRowItem = ({
           </Styled.MoreButton>
 
           {isMenuOpen && (
-            <ApplicationFormContextMenu
+            <ApplicationMenu
               isActive={isActive}
               onEdit={() => onEdit(application.id)}
               onDelete={() => onDelete(application.id)}

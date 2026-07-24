@@ -1,14 +1,14 @@
 import CheckSquareIcon from '@/assets/images/icons/check_square_icon.svg?react';
 import Delete_applicant from '@/assets/images/icons/Delete_applicant.svg';
 import Pencil from '@/assets/images/icons/pencil_icon_3.svg';
-import * as Styled from './ApplicationFormContextMenu.styles';
+import * as Styled from './ApplicationMenu.styles';
 
 const TOGGLE_TEXT = {
   ACTIVE: '지원서 비활성화',
   INACTIVE: '지원서 활성화',
 } as const;
 
-interface ApplicationFormContextMenuProps {
+interface ApplicationMenuProps {
   isActive: boolean;
   onDelete: () => void;
   onToggleStatus?: () => void;
@@ -16,12 +16,12 @@ interface ApplicationFormContextMenuProps {
   // onDuplicate?: () => void; // 추후 복제하기 기능 추가 예정
 }
 
-const ApplicationFormContextMenu = ({
+const ApplicationMenu = ({
   isActive,
   onToggleStatus,
   onEdit,
   onDelete,
-}: ApplicationFormContextMenuProps) => {
+}: ApplicationMenuProps) => {
   const toggleText = isActive ? TOGGLE_TEXT.ACTIVE : TOGGLE_TEXT.INACTIVE;
 
   return (
@@ -52,4 +52,4 @@ const ApplicationFormContextMenu = ({
   );
 };
 
-export default ApplicationFormContextMenu;
+export default ApplicationMenu;

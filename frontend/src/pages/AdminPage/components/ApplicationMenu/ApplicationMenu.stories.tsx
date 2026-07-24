@@ -1,10 +1,10 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import ApplicationFormContextMenu from './ApplicationFormContextMenu';
+import ApplicationMenu from './ApplicationMenu';
 
 const meta = {
-  title: 'Pages/AdminPage/components/ApplicationFormContextMenu',
-  component: ApplicationFormContextMenu,
+  title: 'Pages/AdminPage/components/ApplicationMenu',
+  component: ApplicationMenu,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
   decorators: [
@@ -14,17 +14,17 @@ const meta = {
       </div>
     ),
   ],
-} satisfies Meta<typeof ApplicationFormContextMenu>;
+} satisfies Meta<typeof ApplicationMenu>;
 
 export default meta;
-type Story = StoryObj<typeof ApplicationFormContextMenu>;
+type Story = StoryObj<typeof ApplicationMenu>;
 
 const InteractiveTemplate = ({ initialActive }: { initialActive: boolean }) => {
   const [isActive, setIsActive] = useState(initialActive);
 
   return (
     <div style={{ position: 'relative', width: 200, height: 130 }}>
-      <ApplicationFormContextMenu
+      <ApplicationMenu
         isActive={isActive}
         onToggleStatus={() => setIsActive((prev) => !prev)}
         onEdit={() => console.log('edit')}
