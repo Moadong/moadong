@@ -2,6 +2,7 @@ import fetchMock from 'jest-fetch-mock';
 import { ApiError } from '@/errors';
 import { AiDraftQuota, ApplicationDraft } from '@/types/application';
 import { generateApplicationDraft, getAiDraftQuota } from './application';
+import { secureFetch } from './auth/secureFetch';
 
 jest.mock('@/constants/api', () => ({
   __esModule: true,
@@ -96,6 +97,20 @@ describe('generateApplicationDraft', () => {
     });
 
     await expect(generateApplicationDraft()).rejects.toThrow();
+  });
+
+  it('LLM 생성이 느려도 조기 abort되지 않도록 60초 타임아웃을 전달한다', async () => {
+    fetchMock.mockResponseOnce(JSON.stringify({ data: null }), {
+      headers: { 'content-type': 'application/json' },
+    });
+
+    await generateApplicationDraft();
+
+    expect(secureFetch).toHaveBeenCalledWith(
+      'http://localhost:3000/api/club/application/ai-draft',
+      expect.objectContaining({ method: 'POST' }),
+      60_000,
+    );
   });
 });
 
