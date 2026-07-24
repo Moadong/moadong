@@ -166,12 +166,17 @@ export const updateApplicationStatus = async (
   return handleResponse(response, '지원서 상태 수정에 실패했습니다.');
 };
 
+// LLM 초안 생성은 기본 10초 타임아웃을 넘기기 쉬워, 조기 abort로 인한
+// "실패했는데 횟수만 차감" 문제를 막기 위해 별도의 넉넉한 타임아웃을 준다.
+const AI_DRAFT_TIMEOUT_MS = 60_000;
+
 export const generateApplicationDraft = async () => {
   const response = await secureFetch(
     `${API_BASE_URL}/api/club/application/ai-draft`,
     {
       method: 'POST',
     },
+    AI_DRAFT_TIMEOUT_MS,
   );
   return handleResponse<ApplicationDraft>(
     response,
