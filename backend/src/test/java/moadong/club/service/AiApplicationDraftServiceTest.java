@@ -56,7 +56,7 @@ class AiApplicationDraftServiceTest {
         club = mock(Club.class);
         lenient().when(club.getName()).thenReturn("매니아");
         lenient().when(club.getId()).thenReturn("club-1");
-        when(user.getId()).thenReturn("user-1");
+        lenient().when(user.getId()).thenReturn("user-1");
         lenient().when(clubRepository.findClubByUserId("user-1")).thenReturn(Optional.of(club));
 
         // 기본: 한도 이내(첫 호출) 로 통과
@@ -284,5 +284,31 @@ class AiApplicationDraftServiceTest {
 
         assertThatThrownBy(() -> service.getQuota(user))
                 .isInstanceOf(RestApiException.class);
+    }
+
+    @Test
+    @DisplayName("개발자 부여 시 감소된 사용 횟수 기준으로 갱신된 quota를 반환한다")
+    void grantQuota_returnsUpdatedQuota() {
+        when(clubRepository.existsById("club-1")).thenReturn(true);
+        // GRANT_SCRIPT가 감소 후 used=1 을 반환
+        when(stringRedisTemplate.execute(any(RedisScript.class), anyList(), anyString()))
+                .thenReturn(1L);
+
+        ClubAiDraftQuotaResponse quota = service.grantQuota("club-1", 2);
+
+        assertThat(quota.limit()).isEqualTo(3);
+        assertThat(quota.used()).isEqualTo(1);
+        assertThat(quota.remaining()).isEqualTo(2);
+    }
+
+    @Test
+    @DisplayName("개발자 부여 시 존재하지 않는 동아리면 카운트 조작 전에 RestApiException")
+    void grantQuota_clubNotFound() {
+        when(clubRepository.existsById("club-x")).thenReturn(false);
+
+        assertThatThrownBy(() -> service.grantQuota("club-x", 2))
+                .isInstanceOf(RestApiException.class);
+
+        verify(stringRedisTemplate, times(0)).execute(any(RedisScript.class), anyList(), anyString());
     }
 }

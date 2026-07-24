@@ -51,6 +51,19 @@ public class AiApplicationDraftService {
             Long.class
     );
 
+    // 사용 횟수(used)를 ARGV[1]만큼 감소시켜 그만큼 추가 부여. 0 미만은 0으로 클램프, 기존 TTL 보존.
+    private static final RedisScript<Long> GRANT_SCRIPT = RedisScript.of(
+            "local cur = tonumber(redis.call('GET', KEYS[1]) or '0')\n" +
+            "if cur == 0 then return 0 end\n" +
+            "local v = cur - tonumber(ARGV[1])\n" +
+            "if v < 0 then v = 0 end\n" +
+            "local ttl = redis.call('TTL', KEYS[1])\n" +
+            "if ttl and ttl > 0 then redis.call('SET', KEYS[1], v, 'EX', ttl)\n" +
+            "else redis.call('SET', KEYS[1], v) end\n" +
+            "return v",
+            Long.class
+    );
+
     private final ClubRepository clubRepository;
     private final AnthropicQuestionGenerator generator;
     private final StringRedisTemplate stringRedisTemplate;
@@ -92,6 +105,21 @@ public class AiApplicationDraftService {
                 .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
 
         long used = readMonthlyUsage(club.getId());
+        int remaining = (int) Math.max(0, MONTHLY_LIMIT - used);
+        return new ClubAiDraftQuotaResponse(MONTHLY_LIMIT, (int) used, remaining);
+    }
+
+    // 개발자 전용: 지정 동아리의 이번 달 사용 횟수를 amount만큼 차감해 추가 부여한다.
+    public ClubAiDraftQuotaResponse grantQuota(String clubId, int amount) {
+        if (!clubRepository.existsById(clubId)) {
+            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
+        }
+        Long newUsed = stringRedisTemplate.execute(
+                GRANT_SCRIPT,
+                List.of(monthlyKey(clubId)),
+                String.valueOf(amount));
+        long used = newUsed == null ? 0L : newUsed;
+        log.info("AI 초안 quota 수동 부여. clubId={}, amount={}, used={}", clubId, amount, used);
         int remaining = (int) Math.max(0, MONTHLY_LIMIT - used);
         return new ClubAiDraftQuotaResponse(MONTHLY_LIMIT, (int) used, remaining);
     }
