@@ -7,20 +7,6 @@ const meta = {
   component: MobileFloatingButton,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
-  decorators: [
-    (Story) => (
-      <div style={{ position: 'relative', width: 320, height: 200 }}>
-        <Story />
-      </div>
-    ),
-  ],
-  argTypes: {
-    bottom: {
-      control: 'text',
-      description:
-        'CSS bottom 값 (기본: calc(24px + env(safe-area-inset-bottom)))',
-    },
-  },
 } satisfies Meta<typeof MobileFloatingButton>;
 
 export default meta;

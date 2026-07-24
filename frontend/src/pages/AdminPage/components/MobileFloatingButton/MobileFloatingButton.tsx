@@ -4,7 +4,6 @@ interface MobileFloatingButtonProps {
   onClick: () => void;
   icon: string;
   ariaLabel?: string;
-  /** CSS 값. 기본값: calc(24px + env(safe-area-inset-bottom)) */
   bottom?: string;
 }
 

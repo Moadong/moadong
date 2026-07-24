@@ -19,15 +19,7 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof ApplicationFormContextMenu>;
 
-const InteractiveTemplate = ({
-  initialActive,
-  showEdit,
-  showDuplicate,
-}: {
-  initialActive: boolean;
-  showEdit?: boolean;
-  showDuplicate?: boolean;
-}) => {
+const InteractiveTemplate = ({ initialActive }: { initialActive: boolean }) => {
   const [isActive, setIsActive] = useState(initialActive);
 
   return (
@@ -35,18 +27,17 @@ const InteractiveTemplate = ({
       <ApplicationFormContextMenu
         isActive={isActive}
         onToggleStatus={() => setIsActive((prev) => !prev)}
-        onEdit={showEdit ? () => console.log('edit') : undefined}
-        onDuplicate={showDuplicate ? () => console.log('duplicate') : undefined}
+        onEdit={() => console.log('edit')}
         onDelete={() => console.log('delete')}
       />
     </div>
   );
 };
 
-export const ActiveWithEdit: Story = {
-  render: () => <InteractiveTemplate initialActive={true} showEdit />,
+export const Active: Story = {
+  render: () => <InteractiveTemplate initialActive={true} />,
 };
 
-export const InactiveWithEdit: Story = {
-  render: () => <InteractiveTemplate initialActive={false} showEdit />,
+export const Inactive: Story = {
+  render: () => <InteractiveTemplate initialActive={false} />,
 };

@@ -12,17 +12,14 @@ interface ApplicationFormContextMenuProps {
   isActive: boolean;
   onDelete: () => void;
   onToggleStatus?: () => void;
-  /** 수정하기 — 모바일에서 편집 페이지로 이동 */
   onEdit?: () => void;
-  /** 복제하기 — 데스크탑에서 사용 */
-  onDuplicate?: () => void;
+  // onDuplicate?: () => void; // 추후 복제하기 기능 추가 예정
 }
 
 const ApplicationFormContextMenu = ({
   isActive,
   onToggleStatus,
   onEdit,
-  onDuplicate,
   onDelete,
 }: ApplicationFormContextMenuProps) => {
   const toggleText = isActive ? TOGGLE_TEXT.ACTIVE : TOGGLE_TEXT.INACTIVE;
@@ -37,18 +34,15 @@ const ApplicationFormContextMenu = ({
       </Styled.ToggleMenuItem>
       <Styled.Separator />
       <Styled.EditDeleteGroup>
-        {onEdit && (
-          <Styled.MenuItem onClick={onEdit}>
-            <Styled.MenuIcon src={Pencil} />
-            수정하기
-          </Styled.MenuItem>
-        )}
-        {onDuplicate && (
-          <Styled.MenuItem onClick={onDuplicate}>
-            <Styled.MenuIcon src={Pencil} />
-            지원서 복제하기
-          </Styled.MenuItem>
-        )}
+        <Styled.MenuItem onClick={onEdit}>
+          <Styled.MenuIcon src={Pencil} />
+          수정하기
+        </Styled.MenuItem>
+        {/* 추후 복제하기 기능 추가 예정 */}
+        {/* <Styled.MenuItem onClick={onDuplicate}>
+          <Styled.MenuIcon src={Pencil} />
+          지원서 복제하기
+        </Styled.MenuItem> */}
         <Styled.MenuItem onClick={onDelete} $danger>
           <Styled.MenuIcon src={Delete_applicant} />
           삭제

@@ -1,3 +1,4 @@
+import type { MouseEvent, RefObject } from 'react';
 import Morebutton from '@/assets/images/icons/ellipsis_icon.svg';
 import ApplicationFormContextMenu from '@/pages/AdminPage/components/ApplicationFormContextMenu/ApplicationFormContextMenu';
 import {
@@ -12,12 +13,13 @@ interface ApplicationRowItemProps {
   isActive: boolean;
   uniqueKeyPrefix: string;
   openMenuId: string | null;
-  menuRef: React.RefObject<HTMLDivElement | null>;
+  menuRef: RefObject<HTMLDivElement | null>;
   onToggleStatus: (id: string, status: ApplicationFormStatus) => void;
+  onNavigate: (id: string) => void;
   onEdit: (id: string) => void;
-  onMenuToggle: (e: React.MouseEvent, id: string, prefix: string) => void;
+  onMenuToggle: (e: MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
-  onDuplicate: (id: string) => void;
+  // onDuplicate: (id: string) => void; // 추후 복제하기 기능 추가 예정
   className?: string;
 }
 
@@ -28,10 +30,11 @@ const ApplicationRowItem = ({
   openMenuId,
   menuRef,
   onToggleStatus,
+  onNavigate,
   onEdit,
   onMenuToggle,
   onDelete,
-  onDuplicate,
+  // onDuplicate,
   className,
 }: ApplicationRowItemProps) => {
   const currentMenuKey = `${uniqueKeyPrefix}-${application.id}`;
@@ -41,7 +44,7 @@ const ApplicationRowItem = ({
     <Styled.ApplicationRow className={className} key={application.id}>
       <Styled.ApplicationTitle
         $active={isActive}
-        onClick={() => onEdit(application.id)}
+        onClick={() => onNavigate(application.id)}
       >
         {application.title}
       </Styled.ApplicationTitle>
@@ -61,11 +64,12 @@ const ApplicationRowItem = ({
           {isMenuOpen && (
             <ApplicationFormContextMenu
               isActive={isActive}
+              onEdit={() => onEdit(application.id)}
               onDelete={() => onDelete(application.id)}
               onToggleStatus={() =>
                 onToggleStatus(application.id, application.status)
               }
-              onDuplicate={() => onDuplicate(application.id)}
+              // onDuplicate={() => onDuplicate(application.id)}
             />
           )}
         </Styled.MoreButtonContainer>
