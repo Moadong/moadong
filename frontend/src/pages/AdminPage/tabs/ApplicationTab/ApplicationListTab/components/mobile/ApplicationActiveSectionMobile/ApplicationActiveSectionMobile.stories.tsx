@@ -21,6 +21,9 @@ const meta = {
       </div>
     ),
   ],
+  argTypes: {
+    menuRef: { table: { disable: true } },
+  },
 } satisfies Meta<typeof ApplicationActiveSectionMobile>;
 
 export default meta;
@@ -48,39 +51,53 @@ const InteractiveTemplate = ({
     setOpenMenuId((prev) => (prev === key ? null : key));
   };
 
-  const handleToggleStatus = (id: string) => {
-    setForms((prev) => prev.filter((f) => f.id !== id));
-    setOpenMenuId(null);
-  };
-
-  const handleDelete = (id: string) => {
-    setForms((prev) => prev.filter((f) => f.id !== id));
-    setOpenMenuId(null);
-  };
-
   return (
     <ApplicationActiveSectionMobile
       activeForms={forms}
       openMenuId={openMenuId}
       menuRef={menuRef}
-      onToggleStatus={handleToggleStatus}
+      onToggleStatus={(id) => {
+        setForms((prev) => prev.filter((f) => f.id !== id));
+        setOpenMenuId(null);
+      }}
       onEdit={(id) => {
         console.log('edit', id);
         setOpenMenuId(null);
       }}
       onMenuToggle={handleMenuToggle}
-      onDelete={handleDelete}
+      onDelete={(id) => {
+        setForms((prev) => prev.filter((f) => f.id !== id));
+        setOpenMenuId(null);
+      }}
     />
   );
 };
 
 /** 활성화된 지원서 없음 */
 export const Empty: Story = {
+  args: {
+    activeForms: [],
+    openMenuId: null,
+    menuRef: { current: null },
+    onToggleStatus: () => {},
+    onEdit: () => {},
+    onMenuToggle: () => {},
+    onDelete: () => {},
+  },
   render: () => <InteractiveTemplate initialForms={[]} />,
 };
 
 /** 활성화 1개 */
 export const SingleActive: Story = {
+  args: {
+    activeForms: [makeForm('form-1', 'OO동아리 8기 신입 지원서')],
+    openMenuId: null,
+    menuRef: { current: null },
+    onToggleStatus: () => {},
+    onEdit: () => {},
+    onMenuToggle: () => {},
+    onDelete: () => {},
+  },
   render: () => (
     <InteractiveTemplate
       initialForms={[makeForm('form-1', 'OO동아리 8기 신입 지원서')]}
@@ -90,6 +107,19 @@ export const SingleActive: Story = {
 
 /** 활성화 여러 개 — 비활성화/삭제 클릭 시 목록에서 제거됨 */
 export const MultipleActive: Story = {
+  args: {
+    activeForms: [
+      makeForm('form-1', 'OO동아리 8기 신입 지원서'),
+      makeForm('form-2', 'OO동아리 9기 신입 지원서'),
+      makeForm('form-3', 'OO동아리 10기 편입 지원서'),
+    ],
+    openMenuId: null,
+    menuRef: { current: null },
+    onToggleStatus: () => {},
+    onEdit: () => {},
+    onMenuToggle: () => {},
+    onDelete: () => {},
+  },
   render: () => (
     <InteractiveTemplate
       initialForms={[

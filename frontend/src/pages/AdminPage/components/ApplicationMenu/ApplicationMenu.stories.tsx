@@ -17,7 +17,7 @@ const meta = {
 } satisfies Meta<typeof ApplicationMenu>;
 
 export default meta;
-type Story = StoryObj<typeof ApplicationMenu>;
+type Story = StoryObj<typeof meta>;
 
 const InteractiveTemplate = ({ initialActive }: { initialActive: boolean }) => {
   const [isActive, setIsActive] = useState(initialActive);
@@ -35,9 +35,17 @@ const InteractiveTemplate = ({ initialActive }: { initialActive: boolean }) => {
 };
 
 export const Active: Story = {
+  args: {
+    isActive: true,
+    onDelete: () => {},
+  },
   render: () => <InteractiveTemplate initialActive={true} />,
 };
 
 export const Inactive: Story = {
+  args: {
+    isActive: false,
+    onDelete: () => {},
+  },
   render: () => <InteractiveTemplate initialActive={false} />,
 };

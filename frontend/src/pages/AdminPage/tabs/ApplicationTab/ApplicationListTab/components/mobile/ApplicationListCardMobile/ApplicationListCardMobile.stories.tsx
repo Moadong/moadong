@@ -18,10 +18,20 @@ const meta = {
       </div>
     ),
   ],
+  argTypes: {
+    menuRef: { table: { disable: true } },
+  },
 } satisfies Meta<typeof ApplicationListCardMobile>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;
+
+const mockApplication = {
+  id: asApplicationFormId('form-1'),
+  title: '26-2 OO동아리 8기 신입 지원서',
+  editedAt: '2025-07-01T12:46:00.000Z',
+  status: 'ACTIVE' as ApplicationFormStatus,
+};
 
 const InteractiveTemplate = ({
   initialActive,
@@ -34,13 +44,6 @@ const InteractiveTemplate = ({
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
 
-  const application = {
-    id: asApplicationFormId('form-1'),
-    title,
-    editedAt: '2025-07-01T12:46:00.000Z',
-    status: (isActive ? 'ACTIVE' : 'INACTIVE') as ApplicationFormStatus,
-  };
-
   const handleMenuToggle = (e: MouseEvent, id: string, prefix: string) => {
     e.stopPropagation();
     const key = `${prefix}-${id}`;
@@ -49,7 +52,11 @@ const InteractiveTemplate = ({
 
   return (
     <ApplicationListCardMobile
-      application={application}
+      application={{
+        ...mockApplication,
+        title,
+        status: isActive ? 'ACTIVE' : 'INACTIVE',
+      }}
       isActive={isActive}
       uniqueKeyPrefix='list'
       openMenuId={openMenuId}
@@ -73,14 +80,50 @@ const InteractiveTemplate = ({
 };
 
 export const Active: Story = {
+  args: {
+    application: mockApplication,
+    isActive: true,
+    uniqueKeyPrefix: 'list',
+    openMenuId: null,
+    menuRef: { current: null },
+    onToggleStatus: () => {},
+    onEdit: () => {},
+    onMenuToggle: () => {},
+    onDelete: () => {},
+  },
   render: () => <InteractiveTemplate initialActive={true} />,
 };
 
 export const Inactive: Story = {
+  args: {
+    application: { ...mockApplication, status: 'INACTIVE' },
+    isActive: false,
+    uniqueKeyPrefix: 'list',
+    openMenuId: null,
+    menuRef: { current: null },
+    onToggleStatus: () => {},
+    onEdit: () => {},
+    onMenuToggle: () => {},
+    onDelete: () => {},
+  },
   render: () => <InteractiveTemplate initialActive={false} />,
 };
 
 export const LongTitle: Story = {
+  args: {
+    application: {
+      ...mockApplication,
+      title: '제목이 50자에 가까운 긴 지원서 제목의 예시입니다아아아아아아아',
+    },
+    isActive: true,
+    uniqueKeyPrefix: 'list',
+    openMenuId: null,
+    menuRef: { current: null },
+    onToggleStatus: () => {},
+    onEdit: () => {},
+    onMenuToggle: () => {},
+    onDelete: () => {},
+  },
   render: () => (
     <InteractiveTemplate
       initialActive={true}
