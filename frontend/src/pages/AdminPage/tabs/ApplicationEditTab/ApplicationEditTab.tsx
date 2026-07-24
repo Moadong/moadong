@@ -12,7 +12,11 @@ import Spinner from '@/components/common/Spinner/Spinner';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
 import INITIAL_FORM_DATA from '@/constants/initialFormData';
 import { queryKeys } from '@/constants/queryKeys';
-import { useGetApplication } from '@/hooks/Queries/useApplication';
+import { ApiError } from '@/errors';
+import {
+  useAiDraftQuota,
+  useGetApplication,
+} from '@/hooks/Queries/useApplication';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import {
   hasErrors,
@@ -50,6 +54,17 @@ const ApplicationEditTab = () => {
   const [applicationFormMode, setApplicationFormMode] =
     useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
   const [externalApplicationUrl, setExternalApplicationUrl] = useState('');
+
+  const isDraftButtonVisible =
+    !formId && applicationFormMode === ApplicationFormMode.INTERNAL;
+  const { data: draftQuota } = useAiDraftQuota(
+    clubId ?? undefined,
+    isDraftButtonVisible,
+  );
+  // 생성 성공/429로 갱신된 값을 즉시 반영 (quota 조회 전·실패 시에도 동작)
+  const [remainingOverride, setRemainingOverride] = useState<number>();
+  const remaining = remainingOverride ?? draftQuota?.remaining;
+  const isDraftLimitReached = remaining === 0;
 
   useEffect(() => {
     if (!existingFormData) return;
@@ -119,14 +134,23 @@ const ApplicationEditTab = () => {
         questions: [nameQuestion, ...draftQuestions],
       }));
       setNextId(draftQuestions.length + 2);
+      if (typeof draft.remaining === 'number') {
+        setRemainingOverride(draft.remaining);
+      }
       if (!draft.aiGenerated) {
         alert(
           'AI 생성에 실패해 기본 템플릿을 제공했어요. 질문을 직접 다듬어주세요.',
         );
       }
     },
-    onError: (err: Error) =>
-      alert(`지원서 초안 생성에 실패했습니다: ${err.message}`),
+    onError: (err: Error) => {
+      if (err instanceof ApiError && err.status === 429) {
+        setRemainingOverride(0);
+        alert('이번 달 AI 초안 생성 횟수(3회)를 모두 사용했어요.');
+        return;
+      }
+      alert(`지원서 초안 생성에 실패했습니다: ${err.message}`);
+    },
   });
 
   const handleGenerateDraft = () => {
@@ -237,13 +261,25 @@ const ApplicationEditTab = () => {
               외부지원서
             </Styled.ApplicationFormChangeButton>
           </Styled.ChangeButtonWrapper>
-          {!formId && applicationFormMode === ApplicationFormMode.INTERNAL && (
-            <Styled.AiDraftButton
-              onClick={handleGenerateDraft}
-              disabled={isGenerating}
-            >
-              ✨ AI로 초안 생성
-            </Styled.AiDraftButton>
+          {isDraftButtonVisible && (
+            <Styled.AiDraftActions>
+              {typeof remaining === 'number' && (
+                <Styled.AiDraftRemaining>
+                  이번 달 {remaining}회 남음
+                </Styled.AiDraftRemaining>
+              )}
+              <Styled.AiDraftButton
+                onClick={handleGenerateDraft}
+                disabled={isGenerating || isDraftLimitReached}
+                title={
+                  isDraftLimitReached
+                    ? '이번 달 AI 초안 생성 횟수(3회)를 모두 사용했어요.'
+                    : undefined
+                }
+              >
+                ✨ AI로 초안 생성
+              </Styled.AiDraftButton>
+            </Styled.AiDraftActions>
           )}
         </Styled.HeaderContainer>
         <Styled.FormTitle

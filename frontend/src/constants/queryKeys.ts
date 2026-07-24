@@ -14,6 +14,8 @@ export const queryKeys = {
     all: ['applicationForm'] as const,
     detail: (clubId: string, applicationFormId: string) =>
       ['applicationForm', clubId, applicationFormId] as const,
+    aiDraftQuota: (clubId: string) =>
+      ['applicationForm', 'aiDraftQuota', clubId] as const,
   },
   club: {
     all: ['clubs'] as const,

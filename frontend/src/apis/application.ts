@@ -1,6 +1,7 @@
 import API_BASE_URL from '@/constants/api';
 import { UpdateApplicantParams } from '@/types/applicants';
 import {
+  AiDraftQuota,
   AnswerItem,
   ApplicationDraft,
   ApplicationForm,
@@ -175,5 +176,15 @@ export const generateApplicationDraft = async () => {
   return handleResponse<ApplicationDraft>(
     response,
     '지원서 초안 생성에 실패했습니다.',
+  );
+};
+
+export const getAiDraftQuota = async () => {
+  const response = await secureFetch(
+    `${API_BASE_URL}/api/club/application/ai-draft/quota`,
+  );
+  return handleResponse<AiDraftQuota>(
+    response,
+    'AI 초안 생성 가능 횟수를 불러오지 못했습니다.',
   );
 };

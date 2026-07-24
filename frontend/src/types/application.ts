@@ -94,4 +94,11 @@ export interface ApplicationDraft {
   description: string;
   questions: Question[];
   aiGenerated: boolean;
+  remaining?: number;
+}
+
+export interface AiDraftQuota {
+  limit: number;
+  used: number;
+  remaining: number;
 }
