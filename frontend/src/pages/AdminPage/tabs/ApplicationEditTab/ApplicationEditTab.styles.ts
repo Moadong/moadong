@@ -192,7 +192,7 @@ export const AiDraftActions = styled.div`
 
 export const AiDraftRemaining = styled.span`
   font-size: 12px;
-  color: #787878;
+  color: ${colors.gray[700]};
   white-space: nowrap;
 `;
 
