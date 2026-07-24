@@ -40,6 +40,7 @@ class AiApplicationDraftServiceTest {
     private ClubRepository clubRepository;
     private AnthropicQuestionGenerator generator;
     private StringRedisTemplate stringRedisTemplate;
+    private ValueOperations<String, String> valueOps;
     private AiApplicationDraftService service;
     private CustomUserDetails user;
     private Club club;
@@ -61,6 +62,11 @@ class AiApplicationDraftServiceTest {
         // 기본: 한도 이내(첫 호출) 로 통과
         lenient().when(stringRedisTemplate.execute(any(RedisScript.class), anyList(), anyString()))
                 .thenReturn(1L);
+
+        // 폴백 환불(DECR)용 기본 스텁
+        valueOps = mock(ValueOperations.class);
+        lenient().when(stringRedisTemplate.opsForValue()).thenReturn(valueOps);
+        lenient().when(valueOps.decrement(anyString())).thenReturn(0L);
     }
 
     private DraftQuestion validQuestion(String title) {
@@ -83,6 +89,7 @@ class AiApplicationDraftServiceTest {
         assertThat(response.questions()).extracting("id").containsExactly(1L, 2L, 3L, 4L, 5L);
         assertThat(response.title()).contains("매니아");
         assertThat(response.remaining()).isEqualTo(2); // 3 - 1회 사용
+        verify(valueOps, times(0)).decrement(anyString()); // 성공 시 환불 없음
     }
 
     @Test
@@ -196,15 +203,35 @@ class AiApplicationDraftServiceTest {
     }
 
     @Test
-    @DisplayName("Anthropic 실패로 폴백이 나가도 카운트는 1회 증가한다")
-    void generateDraft_countsEvenOnFallback() {
+    @DisplayName("Anthropic 실패로 폴백이 나가면 소모한 횟수를 환불한다(DECR)")
+    void generateDraft_refundsOnFallback() {
+        when(generator.generate(anyString(), anyString()))
+                .thenThrow(new IllegalStateException("api down"));
+        String key = "ai-draft:count:club-1:" + YearMonth.now(ZoneId.of("Asia/Seoul"));
+        when(valueOps.decrement(key)).thenReturn(0L);
+
+        ClubApplicationDraftResponse response = service.generateDraft(user);
+
+        assertThat(response.aiGenerated()).isFalse();
+        // 증가는 1회(원자적 한도 방어), 이후 환불로 소모 0
+        verify(stringRedisTemplate, times(1)).execute(any(RedisScript.class), anyList(), anyString());
+        verify(valueOps, times(1)).decrement(key);
+        assertThat(response.remaining()).isEqualTo(3);
+    }
+
+    @Test
+    @DisplayName("Redis 장애로 카운트가 통과된 상태에서 폴백이 나가도 환불 DECR을 호출하지 않는다")
+    void generateDraft_noRefundWhenCountBypassed() {
+        when(stringRedisTemplate.execute(any(RedisScript.class), anyList(), anyString()))
+                .thenThrow(new RuntimeException("redis down"));
         when(generator.generate(anyString(), anyString()))
                 .thenThrow(new IllegalStateException("api down"));
 
         ClubApplicationDraftResponse response = service.generateDraft(user);
 
         assertThat(response.aiGenerated()).isFalse();
-        verify(stringRedisTemplate, times(1)).execute(any(RedisScript.class), anyList(), anyString());
+        verify(valueOps, times(0)).decrement(anyString());
+        assertThat(response.remaining()).isEqualTo(3);
     }
 
     @Test
