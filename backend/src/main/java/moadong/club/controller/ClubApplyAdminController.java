@@ -103,6 +103,16 @@ public class ClubApplyAdminController {
         return Response.ok(aiApplicationDraftService.generateDraft(user));
     }
 
+    @GetMapping("/application/ai-draft/quota")
+    @Operation(summary = "AI 지원서 초안 생성 잔여 횟수 조회",
+            description = "이번 달 AI 초안 생성 한도(limit)와 사용(used)·잔여(remaining) 횟수를 조회합니다.<br>"
+                    + "카운트를 증가시키지 않는 읽기 전용 조회입니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> getApplicationDraftQuota(@CurrentUser CustomUserDetails user) {
+        return Response.ok(aiApplicationDraftService.getQuota(user));
+    }
+
     @GetMapping("/apply/info/{applicationFormId}")
     @Operation(summary = "클럽 지원자 현황", description = "클럽 지원자 현황을 불러옵니다")
     @PreAuthorize("isAuthenticated()")

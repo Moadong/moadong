@@ -6,7 +6,8 @@ public record ClubApplicationDraftResponse(
         String title,
         String description,
         List<QuestionDto> questions,
-        boolean aiGenerated
+        boolean aiGenerated,
+        int remaining
 ) {
     public record QuestionDto(
             long id,
