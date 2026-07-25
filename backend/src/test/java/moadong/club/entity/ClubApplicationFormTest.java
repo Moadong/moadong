@@ -19,7 +19,8 @@ class ClubApplicationFormTest {
             "https://form.naver.com/response/abcd",
             "https://naver.me/xyz",
             "https://everytime.kr/board/1",
-            "https://cafe.daum.net/pknusic/OMPr/43"
+            "https://cafe.daum.net/pknusic/OMPr/43",
+            "https://open.kakao.com/o/gFWZdlFi"
     })
     void 허용된_외부폼_호스트는_저장된다(String url) {
         ClubApplicationForm form = ClubApplicationForm.builder().build();
