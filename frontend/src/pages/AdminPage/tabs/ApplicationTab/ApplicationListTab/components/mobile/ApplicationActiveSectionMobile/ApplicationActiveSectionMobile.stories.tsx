@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { MouseEvent } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import {
@@ -7,6 +7,13 @@ import {
 } from '@/types/application';
 import { asApplicationFormId } from '@/types/branded';
 import ApplicationActiveSectionMobile from './ApplicationActiveSectionMobile';
+
+const makeForm = (id: string, title: string): ApplicationFormItem => ({
+  id: asApplicationFormId(id),
+  title,
+  editedAt: '2025-07-01T12:46:00.000Z',
+  status: 'ACTIVE' as ApplicationFormStatus,
+});
 
 const meta = {
   title:
@@ -23,58 +30,8 @@ const meta = {
   ],
   argTypes: {
     menuRef: { table: { disable: true } },
+    openMenuId: { table: { disable: true } },
   },
-} satisfies Meta<typeof ApplicationActiveSectionMobile>;
-
-export default meta;
-type Story = StoryObj<typeof meta>;
-
-const makeForm = (id: string, title: string): ApplicationFormItem => ({
-  id: asApplicationFormId(id),
-  title,
-  editedAt: '2025-07-01T12:46:00.000Z',
-  status: 'ACTIVE' as ApplicationFormStatus,
-});
-
-const InteractiveTemplate = ({
-  initialForms,
-}: {
-  initialForms: ApplicationFormItem[];
-}) => {
-  const [forms, setForms] = useState(initialForms);
-  const [openMenuId, setOpenMenuId] = useState<string | null>(null);
-  const menuRef = useRef<HTMLDivElement | null>(null);
-
-  const handleMenuToggle = (e: MouseEvent, id: string, prefix: string) => {
-    e.stopPropagation();
-    const key = `${prefix}-${id}`;
-    setOpenMenuId((prev) => (prev === key ? null : key));
-  };
-
-  return (
-    <ApplicationActiveSectionMobile
-      activeForms={forms}
-      openMenuId={openMenuId}
-      menuRef={menuRef}
-      onToggleStatus={(id) => {
-        setForms((prev) => prev.filter((f) => f.id !== id));
-        setOpenMenuId(null);
-      }}
-      onEdit={(id) => {
-        console.log('edit', id);
-        setOpenMenuId(null);
-      }}
-      onMenuToggle={handleMenuToggle}
-      onDelete={(id) => {
-        setForms((prev) => prev.filter((f) => f.id !== id));
-        setOpenMenuId(null);
-      }}
-    />
-  );
-};
-
-/** 활성화된 지원서 없음 */
-export const Empty: Story = {
   args: {
     activeForms: [],
     openMenuId: null,
@@ -84,25 +41,55 @@ export const Empty: Story = {
     onMenuToggle: () => {},
     onDelete: () => {},
   },
-  render: () => <InteractiveTemplate initialForms={[]} />,
+  render: (args) => {
+    const [forms, setForms] = useState(args.activeForms);
+    const [openMenuId, setOpenMenuId] = useState<string | null>(null);
+    const menuRef = useRef<HTMLDivElement | null>(null);
+
+    useEffect(() => {
+      setForms(args.activeForms);
+    }, [args.activeForms]);
+
+    const handleMenuToggle = (e: MouseEvent, id: string, prefix: string) => {
+      e.stopPropagation();
+      const key = `${prefix}-${id}`;
+      setOpenMenuId((prev) => (prev === key ? null : key));
+    };
+
+    return (
+      <ApplicationActiveSectionMobile
+        activeForms={forms}
+        openMenuId={openMenuId}
+        menuRef={menuRef}
+        onToggleStatus={(id) => {
+          setForms((prev) => prev.filter((f) => f.id !== id));
+          setOpenMenuId(null);
+        }}
+        onEdit={(id) => {
+          console.log('edit', id);
+          setOpenMenuId(null);
+        }}
+        onMenuToggle={handleMenuToggle}
+        onDelete={(id) => {
+          setForms((prev) => prev.filter((f) => f.id !== id));
+          setOpenMenuId(null);
+        }}
+      />
+    );
+  },
+} satisfies Meta<typeof ApplicationActiveSectionMobile>;
+
+export default meta;
+type Story = StoryObj<typeof meta>;
+
+/** 활성화된 지원서 없음 */
+export const Empty: Story = {
+  args: { activeForms: [] },
 };
 
 /** 활성화 1개 */
 export const SingleActive: Story = {
-  args: {
-    activeForms: [makeForm('form-1', 'OO동아리 8기 신입 지원서')],
-    openMenuId: null,
-    menuRef: { current: null },
-    onToggleStatus: () => {},
-    onEdit: () => {},
-    onMenuToggle: () => {},
-    onDelete: () => {},
-  },
-  render: () => (
-    <InteractiveTemplate
-      initialForms={[makeForm('form-1', 'OO동아리 8기 신입 지원서')]}
-    />
-  ),
+  args: { activeForms: [makeForm('form-1', 'OO동아리 8기 신입 지원서')] },
 };
 
 /** 활성화 여러 개 — 비활성화/삭제 클릭 시 목록에서 제거됨 */
@@ -113,20 +100,5 @@ export const MultipleActive: Story = {
       makeForm('form-2', 'OO동아리 9기 신입 지원서'),
       makeForm('form-3', 'OO동아리 10기 편입 지원서'),
     ],
-    openMenuId: null,
-    menuRef: { current: null },
-    onToggleStatus: () => {},
-    onEdit: () => {},
-    onMenuToggle: () => {},
-    onDelete: () => {},
   },
-  render: () => (
-    <InteractiveTemplate
-      initialForms={[
-        makeForm('form-1', 'OO동아리 8기 신입 지원서'),
-        makeForm('form-2', 'OO동아리 9기 신입 지원서'),
-        makeForm('form-3', 'OO동아리 10기 편입 지원서'),
-      ]}
-    />
-  ),
 };
