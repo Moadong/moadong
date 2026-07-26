@@ -6,17 +6,17 @@
 
 `...` 버튼 클릭 시 나타나는 컨텍스트 메뉴. 데스크탑·모바일 공용.
 
-- 너비: 170px, 높이: 110px, border-radius 10px, box-shadow `0px 1px 8px rgba(0,0,0,0.12)`
+- 너비: 170px, 높이: 138px, border-radius 10px, box-shadow `0px 1px 8px rgba(0,0,0,0.12)`
 - 위치: `top: 60%; right: 8px` (버튼을 절반 정도 가리도록 겹침)
-- 항목: 지원서 활성화/비활성화 토글, 수정하기 (optional), 복제하기 (optional), 삭제
-- `onEdit`·`onDuplicate`는 optional — 전달하지 않으면 해당 항목 미노출
+- 항목: 지원서 활성화/비활성화 토글, 수정하기, 복제하기, 삭제 (항상 노출)
+- `onToggleStatus`·`onEdit`·`onDuplicate`는 optional — 전달하지 않으면 클릭 시 아무 동작 없음
 
 ```tsx
 <ApplicationMenu
   isActive={isActive}
   onToggleStatus={handleToggle}
-  onEdit={handleEdit}          // optional: 수정하기
-  onDuplicate={handleDuplicate} // optional: 복제하기
+  onEdit={handleEdit}
+  onDuplicate={handleDuplicate}
   onDelete={handleDelete}
 />
 ```
