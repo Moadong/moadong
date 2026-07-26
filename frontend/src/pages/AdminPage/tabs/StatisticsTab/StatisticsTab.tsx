@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import {
@@ -31,23 +31,22 @@ const StatisticsTab = () => {
     DEFAULT_PRESET_DAYS,
   );
 
-  const validationMessage = useMemo(
-    () => validateStatisticsDateRange(range),
-    [range],
-  );
+  const validationMessage = validateStatisticsDateRange(range);
   const canFetch = validationMessage === null;
 
   const overviewQuery = useClubStatisticsOverview(
-    range.from,
-    range.to,
-    canFetch,
+    range.startDate,
+    range.endDate,
+    { enabled: canFetch },
   );
-  const trendQuery = useClubStatisticsTrend(range.from, range.to, canFetch);
+  const trendQuery = useClubStatisticsTrend(range.startDate, range.endDate, {
+    enabled: canFetch,
+  });
   const searchKeywordQuery = useSearchKeywordStatistics(
-    range.from,
-    range.to,
+    range.startDate,
+    range.endDate,
     SEARCH_KEYWORD_LIMIT,
-    canFetch,
+    { enabled: canFetch },
   );
 
   const handlePresetSelect = (days: number) => {

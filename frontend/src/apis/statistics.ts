@@ -19,9 +19,15 @@ const buildStatisticsUrl = (path: string, params: Record<string, string>) => {
   return url.toString();
 };
 
-export const getClubStatisticsOverview = async (from: string, to: string) => {
+export const getClubStatisticsOverview = async (
+  startDate: string,
+  endDate: string,
+) => {
   const response = await secureFetch(
-    buildStatisticsUrl('/api/club/statistics/overview', { from, to }),
+    buildStatisticsUrl('/api/club/statistics/overview', {
+      from: startDate,
+      to: endDate,
+    }),
   );
   return handleResponse<ClubStatisticsOverview>(
     response,
@@ -29,9 +35,15 @@ export const getClubStatisticsOverview = async (from: string, to: string) => {
   );
 };
 
-export const getClubStatisticsTrend = async (from: string, to: string) => {
+export const getClubStatisticsTrend = async (
+  startDate: string,
+  endDate: string,
+) => {
   const response = await secureFetch(
-    buildStatisticsUrl('/api/club/statistics/trend', { from, to }),
+    buildStatisticsUrl('/api/club/statistics/trend', {
+      from: startDate,
+      to: endDate,
+    }),
   );
   return handleResponse<ClubStatisticsTrend>(
     response,
@@ -40,14 +52,14 @@ export const getClubStatisticsTrend = async (from: string, to: string) => {
 };
 
 export const getSearchKeywordStatistics = async (
-  from: string,
-  to: string,
+  startDate: string,
+  endDate: string,
   limit: number,
 ) => {
   const response = await secureFetch(
     buildStatisticsUrl('/api/club/statistics/search-keywords', {
-      from,
-      to,
+      from: startDate,
+      to: endDate,
       limit: String(limit),
     }),
   );

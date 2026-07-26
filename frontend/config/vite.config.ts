@@ -1,4 +1,3 @@
-import { fileURLToPath, URL } from 'node:url';
 import { sentryVitePlugin } from '@sentry/vite-plugin';
 import react from '@vitejs/plugin-react';
 import { defineConfig, loadEnv } from 'vite';
@@ -54,11 +53,6 @@ export default defineConfig(({ mode }) => {
           ]
         : []),
     ],
-    resolve: {
-      alias: {
-        '@': fileURLToPath(new URL('../src', import.meta.url)),
-      },
-    },
     build: {
       sourcemap: canUploadSentrySourcemaps ? 'hidden' : false,
       rollupOptions: {

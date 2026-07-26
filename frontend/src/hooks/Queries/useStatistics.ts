@@ -13,42 +13,46 @@ import type {
 
 const STATISTICS_STALE_TIME = 60 * 1000;
 
+interface StatisticsQueryOptions {
+  enabled?: boolean;
+}
+
 export const useClubStatisticsOverview = (
-  from: string,
-  to: string,
-  enabled: boolean,
+  startDate: string,
+  endDate: string,
+  options?: StatisticsQueryOptions,
 ) => {
   return useQuery<ClubStatisticsOverview | undefined>({
-    queryKey: queryKeys.statistics.overview(from, to),
-    queryFn: () => getClubStatisticsOverview(from, to),
+    queryKey: queryKeys.statistics.overview(startDate, endDate),
+    queryFn: () => getClubStatisticsOverview(startDate, endDate),
     staleTime: STATISTICS_STALE_TIME,
-    enabled,
+    enabled: options?.enabled,
   });
 };
 
 export const useClubStatisticsTrend = (
-  from: string,
-  to: string,
-  enabled: boolean,
+  startDate: string,
+  endDate: string,
+  options?: StatisticsQueryOptions,
 ) => {
   return useQuery<ClubStatisticsTrend | undefined>({
-    queryKey: queryKeys.statistics.trend(from, to),
-    queryFn: () => getClubStatisticsTrend(from, to),
+    queryKey: queryKeys.statistics.trend(startDate, endDate),
+    queryFn: () => getClubStatisticsTrend(startDate, endDate),
     staleTime: STATISTICS_STALE_TIME,
-    enabled,
+    enabled: options?.enabled,
   });
 };
 
 export const useSearchKeywordStatistics = (
-  from: string,
-  to: string,
+  startDate: string,
+  endDate: string,
   limit: number,
-  enabled: boolean,
+  options?: StatisticsQueryOptions,
 ) => {
   return useQuery<SearchKeywordStatistics | undefined>({
-    queryKey: queryKeys.statistics.searchKeywords(from, to, limit),
-    queryFn: () => getSearchKeywordStatistics(from, to, limit),
+    queryKey: queryKeys.statistics.searchKeywords(startDate, endDate, limit),
+    queryFn: () => getSearchKeywordStatistics(startDate, endDate, limit),
     staleTime: STATISTICS_STALE_TIME,
-    enabled,
+    enabled: options?.enabled,
   });
 };

@@ -8,8 +8,8 @@ const DATE_KEY_FORMATTER = new Intl.DateTimeFormat('en-US', {
 });
 
 export interface StatisticsDateRange {
-  from: string;
-  to: string;
+  startDate: string;
+  endDate: string;
 }
 
 export const toUtcDateKey = (date: Date) => {
@@ -37,31 +37,31 @@ export const getRecentDateRange = (days: number): StatisticsDateRange => {
   const start = dateKeyToUtcDate(today);
   start.setUTCDate(start.getUTCDate() - (days - 1));
   return {
-    from: toUtcDateKey(start),
-    to: today,
+    startDate: toUtcDateKey(start),
+    endDate: today,
   };
 };
 
-const getInclusiveDays = (from: string, to: string) => {
-  const fromTime = dateKeyToUtcDate(from).getTime();
-  const toTime = dateKeyToUtcDate(to).getTime();
-  return Math.floor((toTime - fromTime) / (1000 * 60 * 60 * 24)) + 1;
+const getInclusiveDays = (startDate: string, endDate: string) => {
+  const startTime = dateKeyToUtcDate(startDate).getTime();
+  const endTime = dateKeyToUtcDate(endDate).getTime();
+  return Math.floor((endTime - startTime) / (1000 * 60 * 60 * 24)) + 1;
 };
 
 export const validateStatisticsDateRange = ({
-  from,
-  to,
+  startDate,
+  endDate,
 }: StatisticsDateRange) => {
-  if (!from || !to) {
+  if (!startDate || !endDate) {
     return '시작일과 종료일을 선택해주세요.';
   }
-  if (from > to) {
+  if (startDate > endDate) {
     return '시작일은 종료일보다 늦을 수 없습니다.';
   }
-  if (to > getTodayKstDateKey()) {
+  if (endDate > getTodayKstDateKey()) {
     return '오늘 이후 날짜는 조회할 수 없습니다.';
   }
-  if (getInclusiveDays(from, to) > MAX_STATISTICS_RANGE_DAYS) {
+  if (getInclusiveDays(startDate, endDate) > MAX_STATISTICS_RANGE_DAYS) {
     return '최대 370일까지 조회할 수 있습니다.';
   }
   return null;

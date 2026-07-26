@@ -36,18 +36,18 @@ const PeriodSelector = ({
       <Styled.DateInputGroup>
         <Styled.DateInput
           type='date'
-          value={range.from}
+          value={range.startDate}
           onChange={(event) =>
-            onRangeChange({ ...range, from: event.target.value })
+            onRangeChange({ ...range, startDate: event.target.value })
           }
           aria-label='통계 시작일'
         />
         <Styled.DateSeparator>~</Styled.DateSeparator>
         <Styled.DateInput
           type='date'
-          value={range.to}
+          value={range.endDate}
           onChange={(event) =>
-            onRangeChange({ ...range, to: event.target.value })
+            onRangeChange({ ...range, endDate: event.target.value })
           }
           aria-label='통계 종료일'
         />

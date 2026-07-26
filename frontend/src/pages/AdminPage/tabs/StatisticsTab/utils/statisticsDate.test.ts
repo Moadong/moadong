@@ -23,8 +23,8 @@ describe('statisticsDate', () => {
     jest.setSystemTime(new Date('2026-07-08T15:30:00Z'));
 
     expect(getRecentDateRange(7)).toEqual({
-      from: '2026-07-03',
-      to: '2026-07-09',
+      startDate: '2026-07-03',
+      endDate: '2026-07-09',
     });
   });
 
@@ -33,8 +33,8 @@ describe('statisticsDate', () => {
 
     expect(
       validateStatisticsDateRange({
-        from: '2026-07-09',
-        to: '2026-07-10',
+        startDate: '2026-07-09',
+        endDate: '2026-07-10',
       }),
     ).toBe('오늘 이후 날짜는 조회할 수 없습니다.');
   });
@@ -44,8 +44,8 @@ describe('statisticsDate', () => {
 
     expect(
       validateStatisticsDateRange({
-        from: '2025-07-04',
-        to: '2026-07-09',
+        startDate: '2025-07-04',
+        endDate: '2026-07-09',
       }),
     ).toBe('최대 370일까지 조회할 수 있습니다.');
   });
