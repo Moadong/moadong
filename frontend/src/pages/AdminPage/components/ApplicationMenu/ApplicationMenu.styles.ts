@@ -7,7 +7,7 @@ export const MenuContainer = styled.div`
   top: 60%;
   right: 8px;
   width: 170px;
-  height: 110px;
+  height: 138px;
   background-color: ${colors.base.white};
   border-radius: 10px;
   box-shadow: 0px 1px 8px rgba(0, 0, 0, 0.12);

@@ -19,7 +19,7 @@ interface ApplicationRowItemProps {
   onEdit: (id: string) => void;
   onMenuToggle: (e: MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
-  // onDuplicate: (id: string) => void; // 추후 복제하기 기능 추가 예정
+  onDuplicate: (id: string) => void;
   className?: string;
 }
 
@@ -34,7 +34,7 @@ const ApplicationRowItem = ({
   onEdit,
   onMenuToggle,
   onDelete,
-  // onDuplicate,
+  onDuplicate,
   className,
 }: ApplicationRowItemProps) => {
   const currentMenuKey = `${uniqueKeyPrefix}-${application.id}`;
@@ -66,10 +66,10 @@ const ApplicationRowItem = ({
               isActive={isActive}
               onEdit={() => onEdit(application.id)}
               onDelete={() => onDelete(application.id)}
+              onDuplicate={() => onDuplicate(application.id)}
               onToggleStatus={() =>
                 onToggleStatus(application.id, application.status)
               }
-              // onDuplicate={() => onDuplicate(application.id)}
             />
           )}
         </Styled.MoreButtonContainer>

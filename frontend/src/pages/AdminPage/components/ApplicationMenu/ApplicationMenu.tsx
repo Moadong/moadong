@@ -1,4 +1,5 @@
 import CheckSquareIcon from '@/assets/images/icons/check_square_icon.svg?react';
+import CopyIcon from '@/assets/images/icons/copy_icon.svg';
 import Delete_applicant from '@/assets/images/icons/Delete_applicant.svg';
 import Pencil from '@/assets/images/icons/pencil_icon_3.svg';
 import * as Styled from './ApplicationMenu.styles';
@@ -13,13 +14,14 @@ interface ApplicationMenuProps {
   onDelete: () => void;
   onToggleStatus?: () => void;
   onEdit?: () => void;
-  // onDuplicate?: () => void; // 추후 복제하기 기능 추가 예정
+  onDuplicate?: () => void;
 }
 
 const ApplicationMenu = ({
   isActive,
   onToggleStatus,
   onEdit,
+  onDuplicate,
   onDelete,
 }: ApplicationMenuProps) => {
   const toggleText = isActive ? TOGGLE_TEXT.ACTIVE : TOGGLE_TEXT.INACTIVE;
@@ -38,11 +40,10 @@ const ApplicationMenu = ({
           <Styled.MenuIcon src={Pencil} />
           수정하기
         </Styled.MenuItem>
-        {/* 추후 복제하기 기능 추가 예정 */}
-        {/* <Styled.MenuItem onClick={onDuplicate}>
-          <Styled.MenuIcon src={Pencil} />
-          지원서 복제하기
-        </Styled.MenuItem> */}
+        <Styled.MenuItem onClick={onDuplicate}>
+          <Styled.MenuIcon src={CopyIcon} />
+          복제하기
+        </Styled.MenuItem>
         <Styled.MenuItem onClick={onDelete} $danger>
           <Styled.MenuIcon src={Delete_applicant} />
           삭제

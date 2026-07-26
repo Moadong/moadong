@@ -208,7 +208,7 @@ const ApplicationFormList = ({
                 onEdit={onEdit}
                 onMenuToggle={handleMenuToggle}
                 onDelete={handleDeleteApplication}
-                // onDuplicate={handleDuplicateApplication}
+                onDuplicate={handleDuplicateApplication}
               />
             ))}
             {showExpandButton && (
@@ -263,7 +263,7 @@ const ApplicationFormList = ({
               onMenuToggle={handleMenuToggle}
               onToggleStatus={handleToggleClick}
               onDelete={handleDeleteApplication}
-              // onDuplicate={handleDuplicateApplication}
+              onDuplicate={handleDuplicateApplication}
             />
           ))}
         </Styled.ApplicationList>
