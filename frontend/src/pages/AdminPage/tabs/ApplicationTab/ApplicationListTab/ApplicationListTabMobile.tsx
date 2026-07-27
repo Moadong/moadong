@@ -18,10 +18,10 @@ import {
   ApplicationFormItem,
   ApplicationFormStatus,
 } from '@/types/application';
+import * as Styled from './ApplicationListTabMobile.styles';
 import ApplicationActiveSectionMobile from './components/mobile/ApplicationActiveSectionMobile/ApplicationActiveSectionMobile';
 import ApplicationListCardMobile from './components/mobile/ApplicationListCardMobile/ApplicationListCardMobile';
 import ApplicationYearDetailPage from './components/mobile/ApplicationYearDetailPage/ApplicationYearDetailPage';
-import * as Styled from './ApplicationListTabMobile.styles';
 
 type SortOrder = 'newest' | 'oldest';
 type ActivePage = 'main' | 'year-detail';
@@ -221,7 +221,9 @@ const ApplicationListTabMobile = () => {
                       onMenuToggle={handleMenuToggle}
                       onDelete={handleDelete}
                       onDuplicate={handleDuplicate}
-                      onNavigate={() => handleNavigateToYear(group.semesterYear)}
+                      onNavigate={() =>
+                        handleNavigateToYear(group.semesterYear)
+                      }
                     />
                   );
                 })}
