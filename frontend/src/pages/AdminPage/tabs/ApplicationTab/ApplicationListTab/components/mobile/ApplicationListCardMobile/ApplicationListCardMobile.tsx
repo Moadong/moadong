@@ -18,6 +18,7 @@ interface ApplicationListCardMobileProps {
   onEdit: (id: string) => void;
   onMenuToggle: (e: MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
+  onDuplicate?: (id: string) => void;
   onNavigate?: () => void;
 }
 
@@ -31,6 +32,7 @@ const ApplicationListCardMobile = ({
   onEdit,
   onMenuToggle,
   onDelete,
+  onDuplicate,
   onNavigate,
 }: ApplicationListCardMobileProps) => {
   const currentMenuKey = `${uniqueKeyPrefix}-${application.id}`;
@@ -68,6 +70,9 @@ const ApplicationListCardMobile = ({
                   onToggleStatus(application.id, application.status)
                 }
                 onEdit={() => onEdit(application.id)}
+                onDuplicate={
+                  onDuplicate ? () => onDuplicate(application.id) : undefined
+                }
                 onDelete={() => onDelete(application.id)}
               />
             )}

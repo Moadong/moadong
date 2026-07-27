@@ -14,6 +14,7 @@ interface ApplicationActiveSectionMobileProps {
   onEdit: (id: string) => void;
   onMenuToggle: (e: MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
+  onDuplicate?: (id: string) => void;
 }
 
 const ApplicationActiveSectionMobile = ({
@@ -24,6 +25,7 @@ const ApplicationActiveSectionMobile = ({
   onEdit,
   onMenuToggle,
   onDelete,
+  onDuplicate,
 }: ApplicationActiveSectionMobileProps) => {
   if (activeForms.length === 0) {
     return (
@@ -50,6 +52,7 @@ const ApplicationActiveSectionMobile = ({
           onEdit={onEdit}
           onMenuToggle={onMenuToggle}
           onDelete={onDelete}
+          onDuplicate={onDuplicate}
         />
       ))}
     </Styled.CardList>
