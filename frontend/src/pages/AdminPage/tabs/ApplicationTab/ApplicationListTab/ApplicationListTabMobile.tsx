@@ -20,9 +20,11 @@ import {
 } from '@/types/application';
 import ApplicationActiveSectionMobile from './components/mobile/ApplicationActiveSectionMobile/ApplicationActiveSectionMobile';
 import ApplicationListCardMobile from './components/mobile/ApplicationListCardMobile/ApplicationListCardMobile';
+import ApplicationYearDetailPage from './components/mobile/ApplicationYearDetailPage/ApplicationYearDetailPage';
 import * as Styled from './ApplicationListTabMobile.styles';
 
 type SortOrder = 'newest' | 'oldest';
+type ActivePage = 'main' | 'year-detail';
 
 const ApplicationListTabMobile = () => {
   const navigate = useNavigate();
@@ -31,9 +33,19 @@ const ApplicationListTabMobile = () => {
   const { mutate: duplicateApplication } = useDuplicateApplication();
   const { mutate: updateStatus } = useUpdateApplicationStatus();
 
+  const [activePage, setActivePage] = useState<ActivePage>('main');
+  const [selectedYear, setSelectedYear] = useState<number | null>(null);
   const [sortOrder, setSortOrder] = useState<SortOrder>('newest');
   const [openMenuId, setOpenMenuId] = useState<string | null>(null);
   const menuRef = useRef<HTMLDivElement | null>(null);
+  const savedScrollY = useRef(0);
+
+  useEffect(() => {
+    if (activePage === 'main') {
+      window.scrollTo({ top: savedScrollY.current, behavior: 'instant' });
+      window.dispatchEvent(new Event('scroll'));
+    }
+  }, [activePage]);
 
   const handleMenuToggle = (
     e: React.MouseEvent,
@@ -82,6 +94,12 @@ const ApplicationListTabMobile = () => {
     });
   };
 
+  const handleNavigateToYear = (year: number) => {
+    savedScrollY.current = window.scrollY;
+    setSelectedYear(year);
+    setActivePage('year-detail');
+  };
+
   useEffect(() => {
     document.body.dataset[SCROLL_TRIGGER_DISABLED] = 'true';
     window.dispatchEvent(new Event('scroll'));
@@ -128,6 +146,22 @@ const ApplicationListTabMobile = () => {
     );
 
   const isNewest = sortOrder === 'newest';
+
+  if (activePage === 'year-detail' && selectedYear !== null) {
+    const yearForms = yearMap.get(selectedYear) ?? [];
+    return (
+      <ApplicationYearDetailPage
+        year={selectedYear}
+        forms={yearForms}
+        onBack={() => setActivePage('main')}
+        onEdit={handleEdit}
+        onDelete={handleDelete}
+        onDuplicate={handleDuplicate}
+        onToggleStatus={handleToggleStatus}
+        onCreateNew={() => navigate('/admin/application-list/edit')}
+      />
+    );
+  }
 
   return (
     <>
@@ -187,11 +221,7 @@ const ApplicationListTabMobile = () => {
                       onMenuToggle={handleMenuToggle}
                       onDelete={handleDelete}
                       onDuplicate={handleDuplicate}
-                      onNavigate={() =>
-                        navigate(
-                          `/admin/application-list/year/${group.semesterYear}`,
-                        )
-                      }
+                      onNavigate={() => handleNavigateToYear(group.semesterYear)}
                     />
                   );
                 })}
