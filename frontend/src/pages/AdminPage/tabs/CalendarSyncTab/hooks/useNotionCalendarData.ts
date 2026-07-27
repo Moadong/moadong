@@ -35,11 +35,14 @@ export const useNotionCalendarData = ({
     notionDatabaseOptions[0]?.id ||
     '';
 
-  // 401·403 외의 실제 오류는 '미연동' 빈 상태와 구분되지 않아 따로 알린다
-  const notionQueryError = databasesQuery.error ?? pagesQuery.error;
+  // 401·403 외의 실제 오류는 '미연동' 빈 상태와 구분되지 않아 따로 알린다.
+  // 백엔드 원문은 그대로 노출하지 않고 다른 캘린더 쿼리 실패와 같은 형식으로 안내한다.
+  const hasNotionQueryError = Boolean(databasesQuery.error ?? pagesQuery.error);
   useEffect(() => {
-    if (notionQueryError) onError(notionQueryError.message);
-  }, [notionQueryError, onError]);
+    if (hasNotionQueryError) {
+      onError('Notion 정보를 불러오지 못했습니다. 잠시 후 다시 시도해주세요.');
+    }
+  }, [hasNotionQueryError, onError]);
 
   const applySelectedNotionDatabase = () => {
     if (!selectedNotionDatabaseId) {
