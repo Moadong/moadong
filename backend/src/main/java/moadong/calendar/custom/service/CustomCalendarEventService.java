@@ -3,9 +3,12 @@ package moadong.calendar.custom.service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import moadong.calendar.custom.entity.CustomCalendarEvent;
+import moadong.calendar.custom.entity.CustomEventRecurrence;
 import moadong.calendar.custom.payload.request.CustomCalendarEventRequest;
+import moadong.calendar.custom.payload.response.CustomCalendarEventResponse;
 import moadong.calendar.custom.repository.CustomCalendarEventRepository;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubCalendarEventResult;
@@ -20,12 +23,18 @@ import org.springframework.util.StringUtils;
 @RequiredArgsConstructor
 public class CustomCalendarEventService {
 
+    private static final Set<String> EVENT_TYPES = Set.of("SINGLE", "PERIOD", "RECURRING", "MULTI");
+    private static final Set<String> COLORS = Set.of("PINK", "YELLOW", "MINT", "BLUE", "PURPLE", "ORANGE");
+    private static final Set<String> FREQUENCIES = Set.of("WEEKLY", "MONTHLY", "YEARLY");
+    private static final Set<String> DELETE_SCOPES = Set.of("ALL", "THIS", "THIS_AND_FOLLOWING");
+
     private final CustomCalendarEventRepository customCalendarEventRepository;
     private final ClubRepository clubRepository;
+    private final CustomEventOccurrenceExpander occurrenceExpander;
 
-    public ClubCalendarEventResult create(CustomUserDetails user, CustomCalendarEventRequest request) {
+    public CustomCalendarEventResponse create(CustomUserDetails user, CustomCalendarEventRequest request) {
         String clubId = requireAuthenticatedClubId(user);
-        validateDates(request.start(), request.end());
+        String eventType = validateRequest(request);
 
         CustomCalendarEvent event = CustomCalendarEvent.builder()
                 .clubId(clubId)
@@ -34,36 +43,66 @@ public class CustomCalendarEventService {
                 .end(request.end())
                 .url(request.url())
                 .description(request.description())
+                .eventType(eventType)
+                .color(request.color())
+                .dates(request.dates())
+                .recurrence(request.recurrence())
                 .updatedAt(LocalDateTime.now())
                 .build();
 
-        return toResult(customCalendarEventRepository.save(event));
+        return CustomCalendarEventResponse.from(customCalendarEventRepository.save(event));
     }
 
-    public List<ClubCalendarEventResult> list(CustomUserDetails user) {
+    public List<CustomCalendarEventResponse> list(CustomUserDetails user) {
         String clubId = requireAuthenticatedClubId(user);
-        return getClubCalendarEvents(clubId);
+
+        return customCalendarEventRepository.findByClubId(clubId).stream()
+                .map(CustomCalendarEventResponse::from)
+                .toList();
     }
 
-    public ClubCalendarEventResult update(CustomUserDetails user, String eventId, CustomCalendarEventRequest request) {
+    public CustomCalendarEventResponse update(CustomUserDetails user, String eventId,
+                                              CustomCalendarEventRequest request) {
         String clubId = requireAuthenticatedClubId(user);
-        validateDates(request.start(), request.end());
+        String eventType = validateRequest(request);
 
         CustomCalendarEvent event = customCalendarEventRepository.findByIdAndClubId(eventId, clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CUSTOM_EVENT_NOT_FOUND));
 
-        event.update(request.title(), request.start(), request.end(), request.url(), request.description());
+        event.update(request.title(), request.start(), request.end(), request.url(), request.description(),
+                eventType, request.color(), request.dates(), request.recurrence());
 
-        return toResult(customCalendarEventRepository.save(event));
+        return CustomCalendarEventResponse.from(customCalendarEventRepository.save(event));
     }
 
-    public void delete(CustomUserDetails user, String eventId) {
+    public void delete(CustomUserDetails user, String eventId, String scope, String date) {
         String clubId = requireAuthenticatedClubId(user);
+        String resolvedScope = resolveDeleteScope(scope);
 
-        long deletedCount = customCalendarEventRepository.deleteByIdAndClubId(eventId, clubId);
-        if (deletedCount == 0) {
-            throw new RestApiException(ErrorCode.CUSTOM_EVENT_NOT_FOUND);
+        CustomCalendarEvent event = customCalendarEventRepository.findByIdAndClubId(eventId, clubId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CUSTOM_EVENT_NOT_FOUND));
+
+        if ("ALL".equals(resolvedScope) || !isRecurring(event)) {
+            customCalendarEventRepository.delete(event);
+            return;
         }
+
+        LocalDate targetDate = parseRequiredDate(date);
+
+        if ("THIS".equals(resolvedScope)) {
+            event.excludeDate(targetDate.toString());
+            customCalendarEventRepository.save(event);
+            return;
+        }
+
+        LocalDate newRecurrenceEnd = targetDate.minusDays(1);
+        if (newRecurrenceEnd.isBefore(parseRequiredDate(event.getStart()))) {
+            customCalendarEventRepository.delete(event);
+            return;
+        }
+
+        event.updateRecurrenceEnd(newRecurrenceEnd.toString());
+        customCalendarEventRepository.save(event);
     }
 
     public List<ClubCalendarEventResult> getClubCalendarEvents(String clubId) {
@@ -72,7 +111,7 @@ public class CustomCalendarEventService {
         }
 
         return customCalendarEventRepository.findByClubId(clubId).stream()
-                .map(this::toResult)
+                .flatMap(event -> toPublicResults(event).stream())
                 .toList();
     }
 
@@ -83,39 +122,142 @@ public class CustomCalendarEventService {
         return customCalendarEventRepository.existsByClubId(clubId);
     }
 
-    private void validateDates(String start, String end) {
-        LocalDate parsedStart;
-        try {
-            parsedStart = LocalDate.parse(start);
-        } catch (Exception e) {
-            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DATE_FORMAT);
+    /**
+     * 공개 캘린더는 발생일마다 하나씩 펼쳐 내려준다.
+     * 발생일이 여러 개면 프론트에서 구분할 수 있도록 id에 날짜를 덧붙인다.
+     */
+    private List<ClubCalendarEventResult> toPublicResults(CustomCalendarEvent event) {
+        List<String> occurrences = occurrenceExpander.expand(event);
+
+        if (occurrences.isEmpty()) {
+            return List.of();
         }
 
-        if (!StringUtils.hasText(end)) {
-            return;
+        if (occurrences.size() == 1) {
+            return List.of(ClubCalendarEventResult.ofCustom(
+                    event.getId(),
+                    event.getTitle(),
+                    occurrences.get(0),
+                    event.getEnd(),
+                    event.getUrl(),
+                    event.getDescription()
+            ));
         }
 
-        LocalDate parsedEnd;
-        try {
-            parsedEnd = LocalDate.parse(end);
-        } catch (Exception e) {
-            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DATE_FORMAT);
+        return occurrences.stream()
+                .map(date -> ClubCalendarEventResult.ofCustom(
+                        event.getId() + ":" + date,
+                        event.getTitle(),
+                        date,
+                        null,
+                        event.getUrl(),
+                        event.getDescription()
+                ))
+                .toList();
+    }
+
+    private boolean isRecurring(CustomCalendarEvent event) {
+        return "RECURRING".equals(event.getEventType()) && event.getRecurrence() != null;
+    }
+
+    private String resolveDeleteScope(String scope) {
+        if (!StringUtils.hasText(scope)) {
+            return "ALL";
+        }
+        if (!DELETE_SCOPES.contains(scope)) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DELETE_SCOPE);
+        }
+        return scope;
+    }
+
+    private String validateRequest(CustomCalendarEventRequest request) {
+        LocalDate start = validateDates(request.start(), request.end());
+        String eventType = resolveEventType(request.eventType());
+        validateAllowedValue(request.color(), COLORS);
+
+        if (request.dates() != null) {
+            request.dates().forEach(this::parseRequiredDate);
+            if (!request.dates().isEmpty() && !request.start().equals(request.dates().get(0))) {
+                throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+            }
         }
 
-        if (parsedStart.isAfter(parsedEnd)) {
-            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DATE_RANGE);
+        CustomEventRecurrence recurrence = request.recurrence();
+        if (recurrence == null) {
+            if ("RECURRING".equals(eventType)) {
+                throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+            }
+            return eventType;
+        }
+
+        if (!"RECURRING".equals(eventType)) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+        }
+
+        validateRequiredAllowedValue(recurrence.frequency(), FREQUENCIES);
+        validateWeekdays(recurrence.weekdays());
+
+        if (StringUtils.hasText(recurrence.end())) {
+            LocalDate recurrenceEnd = parseRequiredDate(recurrence.end());
+            if (start.isAfter(recurrenceEnd)) {
+                throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DATE_RANGE);
+            }
+        }
+        if (recurrence.excludedDates() != null) {
+            recurrence.excludedDates().forEach(this::parseRequiredDate);
+        }
+        return eventType;
+    }
+
+    private String resolveEventType(String eventType) {
+        if (!StringUtils.hasText(eventType)) {
+            return "SINGLE";
+        }
+        validateAllowedValue(eventType, EVENT_TYPES);
+        return eventType;
+    }
+
+    private void validateAllowedValue(String value, Set<String> allowedValues) {
+        if (StringUtils.hasText(value) && !allowedValues.contains(value)) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
         }
     }
 
-    private ClubCalendarEventResult toResult(CustomCalendarEvent event) {
-        return ClubCalendarEventResult.ofCustom(
-                event.getId(),
-                event.getTitle(),
-                event.getStart(),
-                event.getEnd(),
-                event.getUrl(),
-                event.getDescription()
-        );
+    private void validateRequiredAllowedValue(String value, Set<String> allowedValues) {
+        if (!StringUtils.hasText(value) || !allowedValues.contains(value)) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+        }
+    }
+
+    private void validateWeekdays(List<Integer> weekdays) {
+        if (weekdays == null) {
+            return;
+        }
+        boolean hasInvalidWeekday = weekdays.stream().anyMatch(weekday -> weekday == null || weekday < 0 || weekday > 6);
+        if (hasInvalidWeekday) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+        }
+    }
+
+    private LocalDate validateDates(String start, String end) {
+        LocalDate parsedStart = parseRequiredDate(start);
+
+        if (!StringUtils.hasText(end)) {
+            return parsedStart;
+        }
+
+        if (parsedStart.isAfter(parseRequiredDate(end))) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DATE_RANGE);
+        }
+        return parsedStart;
+    }
+
+    private LocalDate parseRequiredDate(String value) {
+        try {
+            return LocalDate.parse(value);
+        } catch (Exception e) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_DATE_FORMAT);
+        }
     }
 
     private String requireAuthenticatedClubId(CustomUserDetails user) {

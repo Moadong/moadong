@@ -11,7 +11,5 @@ public interface CustomCalendarEventRepository extends MongoRepository<CustomCal
 
     Optional<CustomCalendarEvent> findByIdAndClubId(String id, String clubId);
 
-    long deleteByIdAndClubId(String id, String clubId);
-
     boolean existsByClubId(String clubId);
 }
