@@ -159,12 +159,17 @@ const ApplicationListTabMobile = () => {
               </Styled.SortRow>
 
               <Styled.CardList>
-                {groupedByYear.flatMap((group) =>
-                  group.forms.map((form) => (
+                {groupedByYear.map((group) => {
+                  const latestForm = group.forms.reduce((latest, form) =>
+                    new Date(form.editedAt) > new Date(latest.editedAt)
+                      ? form
+                      : latest,
+                  );
+                  return (
                     <ApplicationListCardMobile
-                      key={form.id}
-                      application={form}
-                      isActive={form.status === 'ACTIVE'}
+                      key={group.semesterYear}
+                      application={latestForm}
+                      isActive={latestForm.status === 'ACTIVE'}
                       uniqueKeyPrefix={`yeargroup-${group.semesterYear}`}
                       openMenuId={openMenuId}
                       menuRef={menuRef}
@@ -174,11 +179,13 @@ const ApplicationListTabMobile = () => {
                       onDelete={handleDelete}
                       onDuplicate={handleDuplicate}
                       onNavigate={() =>
-                        navigate(`/admin/applicants-list/${form.id}`)
+                        navigate(
+                          `/admin/application-list/year/${group.semesterYear}`,
+                        )
                       }
                     />
-                  )),
-                )}
+                  );
+                })}
               </Styled.CardList>
             </Styled.ListSection>
           </Styled.MainContent>
