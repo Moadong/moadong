@@ -22,6 +22,8 @@ const CalendarSyncTab = () => {
     setSelectedNotionDatabaseId,
     isNotionDatabaseApplying,
     errorMessage,
+    hasCalendarDataError,
+    retryCalendarData,
     isCalendarDataLoading,
     isGoogleLoading,
     isNotionLoading,
@@ -58,6 +60,17 @@ const CalendarSyncTab = () => {
       {(isMobile || isTablet) && <WebviewTopBar title='동아리 일정 관리' />}
 
       {errorMessage && <Styled.ErrorText>{errorMessage}</Styled.ErrorText>}
+
+      {hasCalendarDataError && (
+        <Styled.DataErrorRow>
+          <Styled.ErrorText>
+            일정을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.
+          </Styled.ErrorText>
+          <Button width='auto' onClick={retryCalendarData}>
+            다시 시도
+          </Button>
+        </Styled.DataErrorRow>
+      )}
 
       <Styled.WideDataCard>
         <Styled.CardHeader>

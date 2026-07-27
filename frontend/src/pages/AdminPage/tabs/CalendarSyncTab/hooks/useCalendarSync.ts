@@ -34,11 +34,13 @@ export const useCalendarSync = () => {
     data: customCalendarEvents = [],
     isLoading: isCustomEventsLoading,
     isError: isCustomEventsError,
+    refetch: refetchCustomEvents,
   } = useGetCustomCalendarEvents();
   const {
     data: hiddenCalendarEvents = [],
     isLoading: isHiddenEventsLoading,
     isError: isHiddenEventsError,
+    refetch: refetchHiddenEvents,
   } = useGetHiddenCalendarEvents();
 
   const unifiedCalendar = useUnifiedCalendarUiState({
@@ -56,11 +58,20 @@ export const useCalendarSync = () => {
     isCustomEventsLoading ||
     isHiddenEventsLoading;
 
-  // 쿼리가 실패하면 일정이 하나도 없는 캘린더와 구분되지 않아 따로 안내한다
-  const calendarEventsErrorMessage =
-    isCustomEventsError || isHiddenEventsError
-      ? '일정을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'
-      : '';
+  // 쿼리 실패는 일정이 하나도 없는 캘린더와 구분되지 않는다. 사용자 액션 실패와
+  // 같은 슬롯을 쓰면 서로 덮어쓰므로 따로 모아 재시도 경로와 함께 안내한다.
+  const hasCalendarDataError =
+    googleData.hasDataError ||
+    notionData.hasDataError ||
+    isCustomEventsError ||
+    isHiddenEventsError;
+
+  const retryCalendarData = () => {
+    googleData.retryData();
+    notionData.retryData();
+    if (isCustomEventsError) refetchCustomEvents();
+    if (isHiddenEventsError) refetchHiddenEvents();
+  };
 
   const notionOAuth = useNotionOAuth({
     loadNotionPages: notionData.loadNotionPages,
@@ -84,7 +95,9 @@ export const useCalendarSync = () => {
     setSelectedNotionDatabaseId: notionData.setSelectedNotionDatabaseId,
     isNotionDatabaseApplying: notionData.isNotionDatabaseApplying,
     statusMessage,
-    errorMessage: errorMessage || calendarEventsErrorMessage,
+    errorMessage,
+    hasCalendarDataError,
+    retryCalendarData,
     isCalendarDataLoading,
     isGoogleLoading: googleData.isGoogleLoading,
     isNotionLoading:

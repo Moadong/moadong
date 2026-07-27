@@ -63,18 +63,6 @@ export const useGoogleCalendarData = ({
     }
   }, [calendarsQuery.data, selectedCalendarId]);
 
-  useEffect(() => {
-    if (calendarsQuery.error instanceof Error) {
-      onError(calendarsQuery.error.message);
-    }
-  }, [calendarsQuery.error, onError]);
-
-  useEffect(() => {
-    if (eventsQuery.error instanceof Error) {
-      onError(eventsQuery.error.message);
-    }
-  }, [eventsQuery.error, onError]);
-
   // OAuth 콜백 처리
   useEffect(() => {
     const errorMessage = sessionStorage.getItem(GOOGLE_OAUTH_ERROR_KEY);
@@ -151,6 +139,11 @@ export const useGoogleCalendarData = ({
     isGoogleLoading,
     isInitialChecking: calendarsQuery.isLoading,
     isEventsLoading: eventsQuery.isLoading,
+    hasDataError: calendarsQuery.isError || eventsQuery.isError,
+    retryData: () => {
+      if (calendarsQuery.isError) calendarsQuery.refetch();
+      if (eventsQuery.isError) eventsQuery.refetch();
+    },
     startGoogleOAuth,
     selectCalendar: handleSelectCalendar,
     disconnectGoogle: handleDisconnect,

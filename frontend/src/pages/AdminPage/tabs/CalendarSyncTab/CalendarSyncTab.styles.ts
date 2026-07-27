@@ -67,6 +67,13 @@ export const StatusText = styled.p`
   color: ${colors.accent[2][900]};
 `;
 
+export const DataErrorRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+`;
+
 export const ErrorText = styled.p`
   margin-top: 8px;
   font-size: 0.9rem;
