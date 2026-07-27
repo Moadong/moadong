@@ -35,34 +35,34 @@ const DeleteScopeSheet = ({
         )}
         {showScopeOptions &&
           SCOPE_OPTIONS.map((option) => (
-          <Styled.OptionRow key={option.value}>
-            <Styled.HiddenRadio
-              type='radio'
-              name='delete-scope'
-              value={option.value}
-              checked={scope === option.value}
-              onChange={() => setScope(option.value)}
-            />
-            <Styled.Checkbox
-              $checked={scope === option.value}
-              aria-hidden='true'
-            >
-              {scope === option.value && (
-                <svg width='14' height='14' viewBox='0 0 14 14'>
-                  <path
-                    d='M2.5 7.5L5.5 10.5L11.5 4'
-                    stroke='currentColor'
-                    strokeWidth='2'
-                    strokeLinecap='round'
-                    strokeLinejoin='round'
-                    fill='none'
-                  />
-                </svg>
-              )}
-            </Styled.Checkbox>
-            <Styled.OptionLabel>{option.label}</Styled.OptionLabel>
-          </Styled.OptionRow>
-        ))}
+            <Styled.OptionRow key={option.value}>
+              <Styled.HiddenRadio
+                type='radio'
+                name='delete-scope'
+                value={option.value}
+                checked={scope === option.value}
+                onChange={() => setScope(option.value)}
+              />
+              <Styled.Checkbox
+                $checked={scope === option.value}
+                aria-hidden='true'
+              >
+                {scope === option.value && (
+                  <svg width='14' height='14' viewBox='0 0 14 14'>
+                    <path
+                      d='M2.5 7.5L5.5 10.5L11.5 4'
+                      stroke='currentColor'
+                      strokeWidth='2'
+                      strokeLinecap='round'
+                      strokeLinejoin='round'
+                      fill='none'
+                    />
+                  </svg>
+                )}
+              </Styled.Checkbox>
+              <Styled.OptionLabel>{option.label}</Styled.OptionLabel>
+            </Styled.OptionRow>
+          ))}
 
         <Styled.Actions>
           <Styled.CancelButton type='button' onClick={onClose}>
