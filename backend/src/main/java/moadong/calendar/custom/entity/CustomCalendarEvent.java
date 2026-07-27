@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import moadong.calendar.custom.payload.request.CustomCalendarEventRequest;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
@@ -43,17 +44,16 @@ public class CustomCalendarEvent {
 
     private LocalDateTime updatedAt;
 
-    public void update(String title, String start, String end, String url, String description,
-                       String eventType, String color, List<String> dates, CustomEventRecurrence recurrence) {
-        this.title = title;
-        this.start = start;
-        this.end = end;
-        this.url = url;
-        this.description = description;
+    public void update(CustomCalendarEventRequest request, String eventType) {
+        this.title = request.title();
+        this.start = request.start();
+        this.end = request.end();
+        this.url = request.url();
+        this.description = request.description();
         this.eventType = eventType;
-        this.color = color;
-        this.dates = dates;
-        this.recurrence = recurrence;
+        this.color = request.color();
+        this.dates = request.dates();
+        this.recurrence = request.recurrence();
         this.updatedAt = LocalDateTime.now();
     }
 

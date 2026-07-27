@@ -78,8 +78,11 @@ public class CustomEventOccurrenceExpander {
         LocalDate windowEnd = (recurrenceEnd != null && recurrenceEnd.isBefore(windowLimit))
                 ? recurrenceEnd
                 : windowLimit;
+        LocalDate visibleStart = recurrenceEnd == null && start.isBefore(LocalDate.now())
+                ? LocalDate.now()
+                : start;
 
-        if (windowEnd.isBefore(start)) {
+        if (windowEnd.isBefore(visibleStart)) {
             return List.of();
         }
 
@@ -88,21 +91,22 @@ public class CustomEventOccurrenceExpander {
                 : Set.copyOf(recurrence.excludedDates());
 
         return switch (recurrence.frequency()) {
-            case "WEEKLY" -> expandWeekly(recurrence.weekdays(), start, windowEnd, excludedDates);
-            case "MONTHLY" -> expandMonthly(start, windowEnd, excludedDates);
-            case "YEARLY" -> expandYearly(start, windowEnd, excludedDates);
+            case "WEEKLY" -> expandWeekly(recurrence.weekdays(), start, visibleStart, windowEnd, excludedDates);
+            case "MONTHLY" -> expandMonthly(start, visibleStart, windowEnd, excludedDates);
+            case "YEARLY" -> expandYearly(start, visibleStart, windowEnd, excludedDates);
             default -> List.of(start.toString());
         };
     }
 
-    private List<String> expandWeekly(List<Integer> weekdays, LocalDate start, LocalDate windowEnd,
+    private List<String> expandWeekly(List<Integer> weekdays, LocalDate start, LocalDate visibleStart,
+                                      LocalDate windowEnd,
                                       Set<String> excludedDates) {
         Set<Integer> targetWeekdays = (weekdays == null || weekdays.isEmpty())
                 ? Set.of(toWeekdayIndex(start))
                 : Set.copyOf(weekdays);
 
         List<String> occurrences = new ArrayList<>();
-        for (LocalDate date = start; !date.isAfter(windowEnd); date = date.plusDays(1)) {
+        for (LocalDate date = visibleStart; !date.isAfter(windowEnd); date = date.plusDays(1)) {
             if (isFull(occurrences, start)) {
                 break;
             }
@@ -113,11 +117,12 @@ public class CustomEventOccurrenceExpander {
         return occurrences;
     }
 
-    private List<String> expandMonthly(LocalDate start, LocalDate windowEnd, Set<String> excludedDates) {
+    private List<String> expandMonthly(LocalDate start, LocalDate visibleStart, LocalDate windowEnd,
+                                       Set<String> excludedDates) {
         int dayOfMonth = start.getDayOfMonth();
 
         List<String> occurrences = new ArrayList<>();
-        for (YearMonth month = YearMonth.from(start); !month.atDay(1).isAfter(windowEnd); month = month.plusMonths(1)) {
+        for (YearMonth month = YearMonth.from(visibleStart); !month.atDay(1).isAfter(windowEnd); month = month.plusMonths(1)) {
             if (isFull(occurrences, start)) {
                 break;
             }
@@ -125,16 +130,17 @@ public class CustomEventOccurrenceExpander {
                 continue;
             }
             LocalDate date = month.atDay(dayOfMonth);
-            if (!date.isBefore(start) && !date.isAfter(windowEnd)) {
+            if (!date.isBefore(visibleStart) && !date.isAfter(windowEnd)) {
                 addUnlessExcluded(occurrences, date, excludedDates);
             }
         }
         return occurrences;
     }
 
-    private List<String> expandYearly(LocalDate start, LocalDate windowEnd, Set<String> excludedDates) {
+    private List<String> expandYearly(LocalDate start, LocalDate visibleStart, LocalDate windowEnd,
+                                      Set<String> excludedDates) {
         List<String> occurrences = new ArrayList<>();
-        for (int year = start.getYear(); year <= windowEnd.getYear(); year++) {
+        for (int year = visibleStart.getYear(); year <= windowEnd.getYear(); year++) {
             if (isFull(occurrences, start)) {
                 break;
             }
@@ -143,7 +149,7 @@ public class CustomEventOccurrenceExpander {
                 continue;
             }
             LocalDate date = month.atDay(start.getDayOfMonth());
-            if (!date.isBefore(start) && !date.isAfter(windowEnd)) {
+            if (!date.isBefore(visibleStart) && !date.isAfter(windowEnd)) {
                 addUnlessExcluded(occurrences, date, excludedDates);
             }
         }

@@ -8,6 +8,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.util.List;
+import java.util.Collections;
 import java.util.Optional;
 import moadong.calendar.custom.entity.CustomCalendarEvent;
 import moadong.calendar.custom.entity.CustomEventRecurrence;
@@ -239,6 +240,45 @@ class CustomCalendarEventServiceTest {
 
         assertThatThrownBy(() -> customCalendarEventService.create(
                 user, request("2026-08-01", null, "MULTI", null, List.of("2026-08-02"), null)))
+                .isInstanceOf(RestApiException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+    }
+
+    @Test
+    @DisplayName("MULTI 일정에 dates가 없으면 예외가 발생한다")
+    void create_multiWithoutDates_throws() {
+        givenAuthenticatedClub();
+
+        assertThatThrownBy(() -> customCalendarEventService.create(
+                user, request("2026-08-01", null, "MULTI", null, null, null)))
+                .isInstanceOf(RestApiException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+    }
+
+    @Test
+    @DisplayName("위험한 URL 스킴은 예외가 발생한다")
+    void create_unsafeUrl_throws() {
+        givenAuthenticatedClub();
+        CustomCalendarEventRequest request = new CustomCalendarEventRequest(
+                "정기 모임", "2026-08-01", null, "javascript:alert(1)", null,
+                "SINGLE", null, null, null);
+
+        assertThatThrownBy(() -> customCalendarEventService.create(user, request))
+                .isInstanceOf(RestApiException.class)
+                .extracting("errorCode")
+                .isEqualTo(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+    }
+
+    @Test
+    @DisplayName("날짜 배열이 365개를 초과하면 예외가 발생한다")
+    void create_tooManyDates_throws() {
+        givenAuthenticatedClub();
+
+        assertThatThrownBy(() -> customCalendarEventService.create(
+                user, request("2026-08-01", null, "MULTI", null,
+                        Collections.nCopies(366, "2026-08-01"), null)))
                 .isInstanceOf(RestApiException.class)
                 .extracting("errorCode")
                 .isEqualTo(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);

@@ -1,5 +1,7 @@
 package moadong.calendar.custom.service;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -27,6 +29,7 @@ public class CustomCalendarEventService {
     private static final Set<String> COLORS = Set.of("PINK", "YELLOW", "MINT", "BLUE", "PURPLE", "ORANGE");
     private static final Set<String> FREQUENCIES = Set.of("WEEKLY", "MONTHLY", "YEARLY");
     private static final Set<String> DELETE_SCOPES = Set.of("ALL", "THIS", "THIS_AND_FOLLOWING");
+    private static final int MAX_EVENT_DATES = 365;
 
     private final CustomCalendarEventRepository customCalendarEventRepository;
     private final ClubRepository clubRepository;
@@ -69,8 +72,7 @@ public class CustomCalendarEventService {
         CustomCalendarEvent event = customCalendarEventRepository.findByIdAndClubId(eventId, clubId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.CUSTOM_EVENT_NOT_FOUND));
 
-        event.update(request.title(), request.start(), request.end(), request.url(), request.description(),
-                eventType, request.color(), request.dates(), request.recurrence());
+        event.update(request, eventType);
 
         return CustomCalendarEventResponse.from(customCalendarEventRepository.save(event));
     }
@@ -174,7 +176,12 @@ public class CustomCalendarEventService {
         LocalDate start = validateDates(request.start(), request.end());
         String eventType = resolveEventType(request.eventType());
         validateAllowedValue(request.color(), COLORS);
+        validateUrl(request.url());
 
+        validateCollectionSize(request.dates());
+        if ("MULTI".equals(eventType) && (request.dates() == null || request.dates().isEmpty())) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+        }
         if (request.dates() != null) {
             request.dates().forEach(this::parseRequiredDate);
             if (!request.dates().isEmpty() && !request.start().equals(request.dates().get(0))) {
@@ -195,6 +202,7 @@ public class CustomCalendarEventService {
         }
 
         validateRequiredAllowedValue(recurrence.frequency(), FREQUENCIES);
+        validateCollectionSize(recurrence.weekdays());
         validateWeekdays(recurrence.weekdays());
 
         if (StringUtils.hasText(recurrence.end())) {
@@ -204,6 +212,7 @@ public class CustomCalendarEventService {
             }
         }
         if (recurrence.excludedDates() != null) {
+            validateCollectionSize(recurrence.excludedDates());
             recurrence.excludedDates().forEach(this::parseRequiredDate);
         }
         return eventType;
@@ -235,6 +244,26 @@ public class CustomCalendarEventService {
         }
         boolean hasInvalidWeekday = weekdays.stream().anyMatch(weekday -> weekday == null || weekday < 0 || weekday > 6);
         if (hasInvalidWeekday) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+        }
+    }
+
+    private void validateCollectionSize(List<?> values) {
+        if (values != null && values.size() > MAX_EVENT_DATES) {
+            throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+        }
+    }
+
+    private void validateUrl(String url) {
+        if (!StringUtils.hasText(url)) {
+            return;
+        }
+        try {
+            String scheme = new URI(url).getScheme();
+            if (!"http".equalsIgnoreCase(scheme) && !"https".equalsIgnoreCase(scheme)) {
+                throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
+            }
+        } catch (URISyntaxException e) {
             throw new RestApiException(ErrorCode.CUSTOM_EVENT_INVALID_FIELD_VALUE);
         }
     }

@@ -165,6 +165,21 @@ class CustomEventOccurrenceExpanderTest {
     }
 
     @Test
+    @DisplayName("오래된 무기한 WEEKLY 반복도 미래 발생일을 포함한다")
+    void expand_unboundedPastWeeklyIncludesFutureOccurrences() {
+        LocalDate today = LocalDate.now();
+        CustomEventRecurrence recurrence = new CustomEventRecurrence("WEEKLY", null, null, null);
+
+        List<String> occurrences = expander.expand(event(
+                "RECURRING", today.minusYears(20).toString(), null, null, recurrence));
+
+        assertThat(occurrences).isNotEmpty();
+        assertThat(occurrences)
+                .anySatisfy(date -> assertThat(LocalDate.parse(date)).isAfter(today))
+                .allSatisfy(date -> assertThat(LocalDate.parse(date)).isBeforeOrEqualTo(today.plusYears(1)));
+    }
+
+    @Test
     @DisplayName("RECURRING인데 recurrence가 없으면 start 하루만 전개한다")
     void expand_recurringWithoutRecurrence() {
         assertThat(expander.expand(event("RECURRING", "2026-03-01", null, null, null)))

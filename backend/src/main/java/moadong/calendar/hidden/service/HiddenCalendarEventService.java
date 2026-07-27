@@ -12,6 +12,7 @@ import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.user.payload.CustomUserDetails;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 
@@ -32,11 +33,15 @@ public class HiddenCalendarEventService {
             return;
         }
 
-        hiddenCalendarEventRepository.save(HiddenCalendarEvent.builder()
-                .clubId(clubId)
-                .source(source)
-                .eventId(eventId)
-                .build());
+        try {
+            hiddenCalendarEventRepository.save(HiddenCalendarEvent.builder()
+                    .clubId(clubId)
+                    .source(source)
+                    .eventId(eventId)
+                    .build());
+        } catch (DuplicateKeyException ignored) {
+            // 동시에 동일 이벤트를 숨긴 요청도 멱등적으로 처리한다.
+        }
     }
 
     public void unhide(CustomUserDetails user, String source, String eventId) {

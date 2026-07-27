@@ -23,6 +23,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mock;
+import org.springframework.dao.DuplicateKeyException;
 
 @UnitTest
 class HiddenCalendarEventServiceTest {
@@ -78,6 +79,20 @@ class HiddenCalendarEventServiceTest {
         hiddenCalendarEventService.hide(user, "GOOGLE", EVENT_ID);
 
         verify(hiddenCalendarEventRepository, never()).save(any(HiddenCalendarEvent.class));
+    }
+
+    @Test
+    @DisplayName("동시 요청으로 인한 중복 저장은 멱등적으로 처리한다")
+    void hide_duplicateKey_isIdempotent() {
+        givenAuthenticatedClub();
+        when(hiddenCalendarEventRepository.existsByClubIdAndSourceAndEventId(CLUB_ID, "GOOGLE", EVENT_ID))
+                .thenReturn(false);
+        when(hiddenCalendarEventRepository.save(any(HiddenCalendarEvent.class)))
+                .thenThrow(new DuplicateKeyException("duplicate"));
+
+        hiddenCalendarEventService.hide(user, "GOOGLE", EVENT_ID);
+
+        verify(hiddenCalendarEventRepository).save(any(HiddenCalendarEvent.class));
     }
 
     @Test
