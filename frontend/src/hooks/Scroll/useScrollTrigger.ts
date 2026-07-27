@@ -1,4 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
+
+export const SCROLL_TRIGGER_DISABLED = 'scrollTriggerDisabled';
 
 interface ScrollTriggerOptions {
   threshold?: number;
@@ -14,11 +16,20 @@ export const useScrollTrigger = ({
   onChange,
 }: ScrollTriggerOptions = {}) => {
   const [isTriggered, setIsTriggered] = useState(false);
+  const [isScrollingUp, setIsScrollingUp] = useState(false);
+  const prevScrollY = useRef(window.scrollY);
 
   const handleScroll = useCallback(() => {
     if (document.body.style.position === 'fixed') return;
+    if (document.body.dataset[SCROLL_TRIGGER_DISABLED]) {
+      setIsTriggered(false);
+      return;
+    }
 
     const scrollY = window.scrollY;
+    const scrollingUp = scrollY < prevScrollY.current;
+    prevScrollY.current = scrollY;
+
     const shouldShowButton =
       direction === 'down' ? scrollY > threshold : scrollY < threshold;
 
@@ -27,6 +38,8 @@ export const useScrollTrigger = ({
       onChange?.(shouldShowButton);
       return shouldShowButton;
     });
+
+    setIsScrollingUp(scrollingUp && scrollY > threshold);
   }, [direction, threshold, onChange]);
 
   useEffect(() => {
@@ -34,5 +47,5 @@ export const useScrollTrigger = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll, passive]);
 
-  return { isTriggered };
+  return { isTriggered, isScrollingUp };
 };

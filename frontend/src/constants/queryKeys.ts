@@ -14,6 +14,8 @@ export const queryKeys = {
     all: ['applicationForm'] as const,
     detail: (clubId: string, applicationFormId: string) =>
       ['applicationForm', clubId, applicationFormId] as const,
+    aiDraftQuota: (clubId: string) =>
+      ['applicationForm', 'aiDraftQuota', clubId] as const,
   },
   club: {
     all: ['clubs'] as const,
@@ -41,5 +43,13 @@ export const queryKeys = {
   game: {
     all: ['game'] as const,
     ranking: () => ['game', 'ranking'] as const,
+  },
+  statistics: {
+    overview: (startDate: string, endDate: string) =>
+      ['statistics', 'overview', startDate, endDate] as const,
+    trend: (startDate: string, endDate: string) =>
+      ['statistics', 'trend', startDate, endDate] as const,
+    searchKeywords: (startDate: string, endDate: string, limit: number) =>
+      ['statistics', 'searchKeywords', startDate, endDate, limit] as const,
   },
 } as const;

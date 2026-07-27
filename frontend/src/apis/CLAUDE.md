@@ -6,6 +6,7 @@ API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된
 
 - `handleResponse<T>()` - 응답 파싱, `{ data: {...} }` 형식 자동 언래핑
 - `secureFetch()` - 인증된 요청, **401 시 토큰 자동 갱신** (`src/apis/auth/secureFetch.ts`)
+- `fetchWithTimeout()` - 타임아웃(기본 10s) 붙은 fetch 래퍼 (`src/apis/utils/fetchWithTimeout.ts`). 타임아웃/네트워크 실패를 `NetworkError`로 변환, 호출부 signal 병합 지원. API 호출은 raw `fetch` 대신 이걸 사용 (예외: SSE 스트림, S3 presigned 업로드)
 
 - 도메인별 API 함수는 이 디렉토리에 둔다 (club, auth, application, applicants). 페이지나 컴포넌트 안에 직접 분산시키지 않는다.
 - 쿼리 키는 `src/constants/queryKeys.ts`에 중앙 관리.

@@ -1,21 +1,25 @@
 import API_BASE_URL from '@/constants/api';
 import { UpdateApplicantParams } from '@/types/applicants';
 import {
+  AiDraftQuota,
   AnswerItem,
+  ApplicationDraft,
   ApplicationForm,
   ApplicationFormData,
-  SemesterGroup,
+  ApplicationFormGroup,
+  ApplicationFormStatus,
 } from '@/types/application';
 import { asApplicationFormId } from '@/types/branded';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
+import { fetchWithTimeout } from './utils/fetchWithTimeout';
 
 export const applyToClub = async (
   clubId: string,
   applicationFormId: string,
   answers: AnswerItem[],
 ) => {
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`,
     {
       method: 'POST',
@@ -62,12 +66,14 @@ export const duplicateApplication = async (applicationFormId: string) => {
 };
 
 export const getActiveApplications = async (clubId: string) => {
-  const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/api/club/${clubId}/apply`,
+  );
   return handleResponse(response);
 };
 
 interface ApplicationListResponse {
-  forms: SemesterGroup[];
+  forms: ApplicationFormGroup[];
 }
 
 export const getAllApplicationForms = async (): Promise<
@@ -81,7 +87,7 @@ export const getApplication = async (
   clubId: string,
   applicationFormId: string,
 ): Promise<ApplicationFormData | undefined> => {
-  const response = await fetch(
+  const response = await fetchWithTimeout(
     `${API_BASE_URL}/api/club/${clubId}/apply/${applicationFormId}`,
   );
   return handleResponse<ApplicationFormData>(response);
@@ -90,7 +96,9 @@ export const getApplication = async (
 export const getApplicationOptions = async (
   clubId: string,
 ): Promise<ApplicationForm[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/club/${clubId}/apply`);
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/api/club/${clubId}/apply`,
+  );
   const data = await handleResponse<{
     forms: Array<{ id: string; title: string }>;
   }>(response);
@@ -141,9 +149,9 @@ export const updateApplication = async (
 
 export const updateApplicationStatus = async (
   applicationFormId: string,
-  currentStatus: string,
+  currentStatus: ApplicationFormStatus,
 ) => {
-  const newStatus = currentStatus === 'ACTIVE' ? false : true;
+  const newStatus = currentStatus === 'INACTIVE';
 
   const response = await secureFetch(
     `${API_BASE_URL}/api/club/application/${applicationFormId}`,
@@ -156,4 +164,32 @@ export const updateApplicationStatus = async (
     },
   );
   return handleResponse(response, '지원서 상태 수정에 실패했습니다.');
+};
+
+// LLM 초안 생성은 기본 10초 타임아웃을 넘기기 쉬워, 조기 abort로 인한
+// "실패했는데 횟수만 차감" 문제를 막기 위해 별도의 넉넉한 타임아웃을 준다.
+const AI_DRAFT_TIMEOUT_MS = 60_000;
+
+export const generateApplicationDraft = async () => {
+  const response = await secureFetch(
+    `${API_BASE_URL}/api/club/application/ai-draft`,
+    {
+      method: 'POST',
+    },
+    AI_DRAFT_TIMEOUT_MS,
+  );
+  return handleResponse<ApplicationDraft>(
+    response,
+    '지원서 초안 생성에 실패했습니다.',
+  );
+};
+
+export const getAiDraftQuota = async () => {
+  const response = await secureFetch(
+    `${API_BASE_URL}/api/club/application/ai-draft/quota`,
+  );
+  return handleResponse<AiDraftQuota>(
+    response,
+    'AI 초안 생성 가능 횟수를 불러오지 못했습니다.',
+  );
 };

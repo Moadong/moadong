@@ -7,9 +7,10 @@ import {
 } from '@/types/promotion';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
+import { fetchWithTimeout } from './utils/fetchWithTimeout';
 
 export const getPromotionArticles = async (): Promise<PromotionArticle[]> => {
-  const response = await fetch(`${API_BASE_URL}/api/promotion`);
+  const response = await fetchWithTimeout(`${API_BASE_URL}/api/promotion`);
   const data = await handleResponse<{ articles: PromotionArticle[] }>(
     response,
     '홍보게시판 목록을 불러오는데 실패했습니다.',

@@ -1,7 +1,9 @@
 import { useState } from 'react';
+import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
-import EditField from '@/pages/AdminPage/components/editFields/EditField/EditField';
-import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
+import { CLUB_TAG_MAX } from '@/constants/adminFieldLimits';
+import { CLUB_TAG_PLACEHOLDER } from '@/constants/adminFieldPlaceholders';
+import EditField from '../EditField/EditField';
 import * as Styled from './FreeTagEditPage.styles';
 
 interface FreeTagEditPageProps {
@@ -47,8 +49,8 @@ const FreeTagEditPage = ({
                 </Styled.HashSymbol>
                 <Styled.TagInput
                   value={tag}
-                  maxLength={5}
-                  placeholder='태그추가'
+                  maxLength={CLUB_TAG_MAX}
+                  placeholder={CLUB_TAG_PLACEHOLDER}
                   onChange={(e) => updateTag(index, e.target.value)}
                 />
               </Styled.TagInputRow>
@@ -56,7 +58,9 @@ const FreeTagEditPage = ({
           ))}
         </Styled.Content>
       </Styled.Container>
-      <MobileSaveButtonArea onClick={handleSave} disabled={!isDirty} />
+      <FixedBottomButtonArea onClick={handleSave} disabled={!isDirty}>
+        저장하기
+      </FixedBottomButtonArea>
     </>
   );
 };

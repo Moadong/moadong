@@ -1,5 +1,6 @@
 import API_BASE_URL from '@/constants/api';
 import { handleResponse } from './utils/apiHelpers';
+import { fetchWithTimeout } from './utils/fetchWithTimeout';
 
 export type BannerType = 'WEB' | 'APP_HOME' | 'WEB_MOBILE';
 
@@ -16,7 +17,7 @@ export const bannerApi = {
     const url = new URL(`${API_BASE_URL}/api/banner`);
     url.searchParams.set('type', type);
 
-    const response = await fetch(url);
+    const response = await fetchWithTimeout(url);
     const data = await handleResponse<{
       statuscode: string;
       message: string;

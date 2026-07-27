@@ -85,21 +85,3 @@ export function initializeSentry() {
     integrations: [Sentry.browserTracingIntegration()],
   });
 }
-
-export function initializeKakaoSDK() {
-  if (!import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY) {
-    console.warn('환경변수가 설정되어 있지 않습니다.');
-    return;
-  }
-
-  if (!window.Kakao) {
-    console.error('카카오 SDK가 로드되지 않았습니다.');
-    return;
-  }
-
-  try {
-    window.Kakao.init(`${import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY}`);
-  } catch (error) {
-    console.error('카카오 SDK 초기화에 실패했습니다:', error);
-  }
-}

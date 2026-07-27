@@ -143,6 +143,7 @@ export const PAGE_VIEW = {
   CLUB_INFO_EDIT_PAGE: '동아리 기본 정보 수정 페이지',
   RECRUITMENT_INFO_EDIT_PAGE: '동아리 모집 정보 수정 페이지',
   PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',
+  ADMIN_STATISTICS_PAGE: '동아리 통계 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
 } as const;
 

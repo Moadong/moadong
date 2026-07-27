@@ -2,24 +2,17 @@ import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getApplication, getApplicationOptions } from '@/apis/application';
 import ApplicationSelectModal from '@/components/application/modals/ApplicationSelectModal';
+import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
-import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
-import ShareButton from '../ShareButton/ShareButton';
+import getDeadlineText from '@/utils/getDeadLineText';
+import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import * as Styled from './ClubApplyButton.styles';
 
-interface ClubApplyButtonProps {
-  deadlineText?: string;
-  hideShareButtonOnMobile?: boolean;
-}
-
-const ClubApplyButton = ({
-  deadlineText,
-  hideShareButtonOnMobile = false,
-}: ClubApplyButtonProps) => {
+const ClubApplyButton = () => {
   const { clubId, clubName } = useParams<{
     clubId: string;
     clubName: string;
@@ -28,10 +21,6 @@ const ClubApplyButton = ({
   const handleLink = useNavigator();
   const trackEvent = useMixpanelTrack();
   const { data: clubDetail } = useGetClubDetail((clubName ?? clubId) || '');
-  const { isMobile, isTablet } = useDevice();
-  const shouldShowShareButton = hideShareButtonOnMobile
-    ? !isMobile && !isTablet
-    : true;
 
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [applicationOptions, setApplicationOptions] = useState<
@@ -44,7 +33,6 @@ const ClubApplyButton = ({
     try {
       const formDetail = await getApplication(clubDetail.id, formId);
 
-      // 외부 지원서인 경우
       if (formDetail?.formMode === ApplicationFormMode.EXTERNAL) {
         const externalApplicationUrl =
           formDetail.externalApplicationUrl?.trim();
@@ -54,7 +42,6 @@ const ClubApplyButton = ({
         }
       }
 
-      // 내부 지원서인 경우
       navigate(`/application/${clubDetail.id}/${formId}`, {
         state: { formDetail },
       });
@@ -105,6 +92,12 @@ const ClubApplyButton = ({
   const isRecruitmentUpcoming = recruitmentStatus === 'UPCOMING';
   const isAlwaysRecruiting = recruitmentStatus === 'ALWAYS';
 
+  const deadlineText = getDeadlineText(
+    recruitmentDateParser(clubDetail.recruitmentStart),
+    recruitmentDateParser(clubDetail.recruitmentEnd),
+    recruitmentStatus,
+  );
+
   const renderButtonContent = () => {
     if (isRecruitmentClosed || isRecruitmentUpcoming) {
       return deadlineText;
@@ -124,21 +117,20 @@ const ClubApplyButton = ({
   };
 
   return (
-    <Styled.ApplyButtonContainer>
-      {shouldShowShareButton && <ShareButton clubId={clubDetail.id} />}
-      <Styled.ApplyButton
-        disabled={isRecruitmentUpcoming || isRecruitmentClosed}
+    <>
+      <FixedBottomButtonArea
         onClick={handleApplyButtonClick}
+        disabled={isRecruitmentUpcoming || isRecruitmentClosed}
       >
         {renderButtonContent()}
-      </Styled.ApplyButton>
+      </FixedBottomButtonArea>
       <ApplicationSelectModal
         isOpen={isApplicationModalOpen}
         onClose={() => setIsApplicationModalOpen(false)}
         applicationOptions={applicationOptions}
         onOptionSelect={handleSelectApplicationOption}
       />
-    </Styled.ApplyButtonContainer>
+    </>
   );
 };
 

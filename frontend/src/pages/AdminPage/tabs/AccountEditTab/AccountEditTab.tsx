@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { changePassword } from '@/apis/auth';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
+import { PASSWORD_MAX } from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -95,7 +96,7 @@ const AccountEditTab = () => {
               setNewPassword('');
               trackEvent(ADMIN_EVENT.NEW_PASSWORD_CLEAR_BUTTON_CLICKED);
             }}
-            maxLength={20}
+            maxLength={PASSWORD_MAX}
             isError={isPasswordValid}
             isSuccess={newPassword.length > 0 && !isPasswordValid}
             helperText={
@@ -112,7 +113,7 @@ const AccountEditTab = () => {
               setConfirmPassword('');
               trackEvent(ADMIN_EVENT.CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED);
             }}
-            maxLength={20}
+            maxLength={PASSWORD_MAX}
             isError={isPasswordMatching}
             isSuccess={confirmPassword.length > 0 && !isPasswordMatching}
             helperText={

@@ -13,6 +13,7 @@ import ClubIntroEditTab from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroE
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import SettingsTab from '@/pages/AdminPage/tabs/SettingsTab/SettingsTab';
+import StatisticsTab from '@/pages/AdminPage/tabs/StatisticsTab/StatisticsTab';
 
 const AdminIndexRoute = () => {
   const { isMobile, isTablet } = useDevice();
@@ -37,6 +38,7 @@ export default function AdminRoutes() {
         />
         <Route path='application-list/edit' element={<ApplicationEditTab />} />
         <Route path='applicants-list' element={<ApplicantsListTab />} />
+        <Route path='statistics' element={<StatisticsTab />} />
         <Route
           path='applicants-list/:applicationFormId'
           element={<ApplicantsTab />}
