@@ -196,6 +196,7 @@ const ApplicationListTabMobile = () => {
         onClick={() => navigate('/admin/application-list/edit')}
         icon={addLargeIcon}
         ariaLabel='새 지원서 만들기'
+        bottom='calc(101px + env(safe-area-inset-bottom))'
       />
     </>
   );

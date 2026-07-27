@@ -24,7 +24,7 @@ export const FormSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 30px;
-  padding: 20px 20px 32px;
+  padding: 32px 20px;
 `;
 
 export const PageTitle = styled.h2`
