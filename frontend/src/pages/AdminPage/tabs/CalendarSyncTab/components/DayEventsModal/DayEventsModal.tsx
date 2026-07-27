@@ -1,10 +1,11 @@
 import { useState } from 'react';
-import Modal from '@/components/common/Modal/Modal';
+import ResponsiveSheet from '@/components/common/ResponsiveSheet/ResponsiveSheet';
 import {
   CALENDAR_EVENT_COLORS,
   DEFAULT_CALENDAR_EVENT_COLOR,
 } from '@/constants/calendarEventColors';
 import { useDeleteCustomCalendarEvent } from '@/hooks/Queries/useCustomCalendarEvents';
+import { useHideCalendarEvent } from '@/hooks/Queries/useHiddenCalendarEvents';
 import type { DeleteScope } from '@/types/club';
 import {
   buildDateKeyFromDate,
@@ -41,23 +42,45 @@ const DayEventsModal = ({
   onAddEvent,
 }: DayEventsModalProps) => {
   const deleteMutation = useDeleteCustomCalendarEvent();
+  const hideMutation = useHideCalendarEvent();
   const [pendingDelete, setPendingDelete] =
     useState<CalendarEventOccurrence | null>(null);
+  /** 스와이프로 열린 행은 항상 하나만 유지한다 */
+  const [openRowId, setOpenRowId] = useState<string | null>(null);
 
   const isToday = dateKey === buildDateKeyFromDate(new Date());
+  const isPending = deleteMutation.isPending || hideMutation.isPending;
 
   const runDelete = (
     occurrence: CalendarEventOccurrence,
     scope?: DeleteScope,
   ) => {
-    if (deleteMutation.isPending) return;
+    if (isPending) return;
+    const closeOnSuccess = { onSuccess: () => setPendingDelete(null) };
+    const source = occurrence.event.source;
+
+    // 연동 이벤트는 원본이 Google·Notion에 있어 삭제 대신 숨김 처리한다
+    if (source === 'GOOGLE' || source === 'NOTION') {
+      hideMutation.mutate(
+        {
+          source,
+          eventId: occurrence.eventId.replace(/^(google|notion)-/, ''),
+        },
+        {
+          ...closeOnSuccess,
+          onError: () => window.alert('일정 숨기기에 실패했습니다.'),
+        },
+      );
+      return;
+    }
+
     deleteMutation.mutate(
       {
         eventId: occurrence.eventId,
         options: scope ? { scope, date: occurrence.dateKey } : undefined,
       },
       {
-        onSuccess: () => setPendingDelete(null),
+        ...closeOnSuccess,
         onError: () => window.alert('일정 삭제에 실패했습니다.'),
       },
     );
@@ -69,7 +92,7 @@ const DayEventsModal = ({
 
   return (
     <>
-      <Modal isOpen={isOpen} onClose={onClose}>
+      <ResponsiveSheet isOpen={isOpen} onClose={onClose}>
         <Styled.Body>
           <Styled.DateLabel>{formatMonthDayWeekday(dateKey)}</Styled.DateLabel>
           {isToday && <Styled.TodayLabel>오늘</Styled.TodayLabel>}
@@ -87,6 +110,12 @@ const DayEventsModal = ({
                   <Styled.EventItem key={occurrence.occurrenceId}>
                     <SwipeableEventRow
                       onDelete={() => handleDelete(occurrence)}
+                      isOpen={openRowId === occurrence.occurrenceId}
+                      onOpenChange={(isRowOpen) =>
+                        setOpenRowId(
+                          isRowOpen ? occurrence.occurrenceId : null,
+                        )
+                      }
                     >
                       <Styled.EventCard $back={palette.back}>
                         <Styled.ColorDot $color={palette.main} />
@@ -116,13 +145,13 @@ const DayEventsModal = ({
             일정을 추가하세요
           </Styled.AddButton>
         </Styled.Body>
-      </Modal>
+      </ResponsiveSheet>
 
       {pendingDelete && (
         <DeleteScopeSheet
           isOpen
           onClose={() => setPendingDelete(null)}
-          isDeleting={deleteMutation.isPending}
+          isDeleting={isPending}
           showScopeOptions={pendingDelete.event.eventType === 'RECURRING'}
           onConfirm={(scope) =>
             runDelete(

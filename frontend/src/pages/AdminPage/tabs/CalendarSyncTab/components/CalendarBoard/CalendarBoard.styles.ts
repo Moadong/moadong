@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { CALENDAR_EVENT_COLORS } from '@/constants/calendarEventColors';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 const PINK = CALENDAR_EVENT_COLORS.PINK.main;
@@ -14,13 +15,7 @@ const CELL_GAP = '8px';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-`;
-
-export const Content = styled.div`
-  display: flex;
-  flex-direction: column;
   gap: 12px;
-  padding: 12px 16px 24px;
 `;
 
 export const Header = styled.div`
@@ -89,8 +84,13 @@ export const Week = styled.div`
   display: flex;
   flex-direction: column;
   gap: 3px;
-  min-height: 84px;
-  padding: 6px 0;
+  min-height: 120px;
+  padding: 8px 0;
+
+  ${media.tablet} {
+    min-height: 84px;
+    padding: 6px 0;
+  }
 `;
 
 export const DayNumberRow = styled.div`
@@ -113,10 +113,10 @@ export const DayNumber = styled.span<{ $dayIndex: number; $isToday: boolean }>`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 26px;
-  height: 26px;
+  width: 30px;
+  height: 30px;
   border-radius: 50%;
-  font-size: 0.9rem;
+  font-size: 0.95rem;
   background: ${({ $isToday }) =>
     $isToday ? colors.gray[200] : 'transparent'};
   color: ${({ $dayIndex }) =>
@@ -125,6 +125,12 @@ export const DayNumber = styled.span<{ $dayIndex: number; $isToday: boolean }>`
       : $dayIndex === 6
         ? SATURDAY_BLUE
         : colors.gray[900]};
+
+  ${media.tablet} {
+    width: 26px;
+    height: 26px;
+    font-size: 0.9rem;
+  }
 `;
 
 export const EventLayer = styled.div`
@@ -153,12 +159,18 @@ export const EventBar = styled.button<{
   border-radius: 4px;
   background: ${({ $back }) => $back};
   color: ${({ $color }) => $color};
-  font-size: 0.62rem;
-  line-height: 1.5;
-  padding: 1px 3px;
+  font-size: 0.78rem;
+  line-height: 1.6;
+  padding: 2px 6px;
   cursor: pointer;
   text-align: center;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+
+  ${media.tablet} {
+    font-size: 0.62rem;
+    line-height: 1.5;
+    padding: 1px 3px;
+  }
 `;

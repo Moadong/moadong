@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import BottomSheet from '@/components/common/BottomSheet/BottomSheet';
+import ResponsiveSheet from '@/components/common/ResponsiveSheet/ResponsiveSheet';
 import type { DeleteScope } from '@/types/club';
 import * as Styled from './DeleteScopeSheet.styles';
 
@@ -28,7 +28,7 @@ const DeleteScopeSheet = ({
   const [scope, setScope] = useState<DeleteScope>('ALL');
 
   return (
-    <BottomSheet isOpen={isOpen} onClose={onClose}>
+    <ResponsiveSheet isOpen={isOpen} onClose={onClose}>
       <Styled.Body>
         {!showScopeOptions && (
           <Styled.ConfirmMessage>이 일정을 삭제할까요?</Styled.ConfirmMessage>
@@ -77,7 +77,7 @@ const DeleteScopeSheet = ({
           </Styled.DeleteButton>
         </Styled.Actions>
       </Styled.Body>
-    </BottomSheet>
+    </ResponsiveSheet>
   );
 };
 

@@ -9,6 +9,11 @@ export const queryKeys = {
     all: ['customCalendarEvents'] as const,
     list: () => ['customCalendarEvents', 'list'] as const,
   },
+  notionCalendar: {
+    all: ['notionCalendar'] as const,
+    databases: () => ['notionCalendar', 'databases'] as const,
+    pages: () => ['notionCalendar', 'pages'] as const,
+  },
   hiddenCalendarEvents: {
     all: ['hiddenCalendarEvents'] as const,
     list: () => ['hiddenCalendarEvents', 'list'] as const,

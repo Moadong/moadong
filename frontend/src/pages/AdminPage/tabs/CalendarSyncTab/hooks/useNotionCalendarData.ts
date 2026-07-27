@@ -1,12 +1,9 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import {
-  fetchNotionDatabasePages,
-  fetchNotionDatabases,
-  fetchNotionPages,
-  NotionDatabaseOption,
-  NotionPagesResponse,
-  NotionSearchItem,
-} from '@/apis/calendarOAuth';
+  useApplyNotionDatabase,
+  useGetNotionDatabases,
+  useGetNotionPages,
+} from '@/hooks/Queries/useNotionCalendar';
 
 interface UseNotionCalendarDataParams {
   onError: (message: string) => void;
@@ -19,111 +16,37 @@ export const useNotionCalendarData = ({
   onStatus,
   clearError,
 }: UseNotionCalendarDataParams) => {
-  const [notionItems, setNotionItems] = useState<NotionSearchItem[]>([]);
-  const [notionTotalResults, setNotionTotalResults] = useState(0);
-  const [notionDatabaseSourceId, setNotionDatabaseSourceId] = useState('');
-  const [notionDatabaseOptions, setNotionDatabaseOptions] = useState<
-    NotionDatabaseOption[]
-  >([]);
-  const [selectedNotionDatabaseId, setSelectedNotionDatabaseId] = useState('');
-  const [isNotionLoading, setIsNotionLoading] = useState(false);
-  const [isNotionDatabaseApplying, setIsNotionDatabaseApplying] =
-    useState(false);
+  /** 사용자가 드롭다운에서 직접 고른 값. 비어 있으면 서버 기준값을 따른다. */
+  const [pickedDatabaseId, setPickedDatabaseId] = useState('');
 
-  const pagesRequestIdRef = useRef(0);
+  const databasesQuery = useGetNotionDatabases();
+  const pagesQuery = useGetNotionPages();
+  const applyMutation = useApplyNotionDatabase();
 
-  const applyPagesResponse = useCallback((response: NotionPagesResponse) => {
-    setNotionItems(response.items);
-    setNotionTotalResults(response.totalResults);
-    const databaseId = response.databaseId ?? '';
-    setNotionDatabaseSourceId(databaseId);
-    if (databaseId) {
-      setSelectedNotionDatabaseId(databaseId);
-    }
-  }, []);
+  const notionDatabaseOptions = databasesQuery.data ?? [];
+  const notionItems = pagesQuery.data?.items ?? [];
+  const notionTotalResults = pagesQuery.data?.totalResults ?? 0;
+  const notionDatabaseSourceId = pagesQuery.data?.databaseId ?? '';
 
-  const loadNotionPages = useCallback(async () => {
-    const requestId = ++pagesRequestIdRef.current;
-    setIsNotionLoading(true);
-    try {
-      const response = await fetchNotionPages();
-      if (requestId !== pagesRequestIdRef.current) {
-        return null;
-      }
-      applyPagesResponse(response);
-      return response;
-    } catch (error: unknown) {
-      const status =
-        typeof error === 'object' &&
-        error !== null &&
-        'status' in error &&
-        typeof (error as { status?: unknown }).status === 'number'
-          ? (error as { status: number }).status
-          : undefined;
+  // 선택값 우선순위: 사용자가 고른 값 → 서버가 연결한 DB → 첫 번째 DB
+  const selectedNotionDatabaseId =
+    pickedDatabaseId ||
+    notionDatabaseSourceId ||
+    notionDatabaseOptions[0]?.id ||
+    '';
 
-      if (status === 401 || status === 403) {
-        return null;
-      }
-
-      if (error instanceof Error) {
-        onError(error.message);
-      }
-      return null;
-    } finally {
-      setIsNotionLoading(false);
-    }
-  }, [applyPagesResponse, onError]);
-
-  const applySelectedNotionDatabase = useCallback(() => {
+  const applySelectedNotionDatabase = () => {
     if (!selectedNotionDatabaseId) {
       onError('먼저 Notion 데이터베이스를 선택해주세요.');
       return;
     }
 
-    setIsNotionDatabaseApplying(true);
     clearError();
-
-    const requestId = ++pagesRequestIdRef.current;
-    fetchNotionDatabasePages({
-      databaseId: selectedNotionDatabaseId,
-    })
-      .then((pagesResponse) => {
-        if (requestId !== pagesRequestIdRef.current) {
-          return;
-        }
-        applyPagesResponse(pagesResponse);
-        onStatus('선택한 Notion 데이터베이스를 연결했습니다.');
-      })
-      .catch((error: Error) => {
-        onError(error.message);
-      })
-      .finally(() => {
-        setIsNotionDatabaseApplying(false);
-      });
-  }, [
-    applyPagesResponse,
-    clearError,
-    onError,
-    onStatus,
-    selectedNotionDatabaseId,
-  ]);
-
-  useEffect(() => {
-    fetchNotionDatabases()
-      .then((options) => {
-        setNotionDatabaseOptions(options);
-        setSelectedNotionDatabaseId(
-          (previous) => previous || options[0]?.id || '',
-        );
-      })
-      .catch(() => {
-        // OAuth 전 단계에서는 목록 실패가 자연스러울 수 있다.
-      });
-  }, []);
-
-  useEffect(() => {
-    loadNotionPages();
-  }, [loadNotionPages]);
+    applyMutation.mutate(selectedNotionDatabaseId, {
+      onSuccess: () => onStatus('선택한 Notion 데이터베이스를 연결했습니다.'),
+      onError: (error: Error) => onError(error.message),
+    });
+  };
 
   return {
     notionItems,
@@ -131,11 +54,12 @@ export const useNotionCalendarData = ({
     notionDatabaseSourceId,
     notionDatabaseOptions,
     selectedNotionDatabaseId,
-    setSelectedNotionDatabaseId,
-    isNotionLoading,
-    isNotionDatabaseApplying,
-    applyPagesResponse,
-    loadNotionPages,
+    setSelectedNotionDatabaseId: setPickedDatabaseId,
+    // 캐시가 있으면 로딩으로 보지 않는다 (탭 재진입 시 깜빡임 방지)
+    isNotionLoading: pagesQuery.isLoading,
+    isNotionDatabaseApplying: applyMutation.isPending,
+    /** OAuth 완료 후 페이지 목록을 다시 불러온다 */
+    loadNotionPages: pagesQuery.refetch,
     applySelectedNotionDatabase,
   };
 };

@@ -10,6 +10,9 @@ interface SwipeableEventRowProps {
   children: ReactNode;
   onDelete: () => void;
   deleteLabel?: string;
+  /** 열림 여부는 부모가 관리해 한 번에 하나만 열리게 한다 */
+  isOpen: boolean;
+  onOpenChange: (isOpen: boolean) => void;
 }
 
 /**
@@ -20,16 +23,21 @@ const SwipeableEventRow = ({
   children,
   onDelete,
   deleteLabel = '일정 삭제',
+  isOpen,
+  onOpenChange,
 }: SwipeableEventRowProps) => {
-  const [offset, setOffset] = useState(0);
-  const [isDragging, setDragging] = useState(false);
+  /** 드래그 중에만 값을 갖는다. 놓으면 null이 되어 부모의 isOpen을 따른다. */
+  const [dragOffset, setDragOffset] = useState<number | null>(null);
   const startXRef = useRef(0);
   const baseOffsetRef = useRef(0);
+
+  const isDragging = dragOffset !== null;
+  const offset = dragOffset ?? (isOpen ? DELETE_WIDTH : 0);
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
     startXRef.current = event.clientX;
     baseOffsetRef.current = offset;
-    setDragging(true);
+    setDragOffset(offset);
   };
 
   const handlePointerMove = (event: PointerEvent<HTMLDivElement>) => {
@@ -39,13 +47,14 @@ const SwipeableEventRow = ({
       DELETE_WIDTH,
       Math.max(0, baseOffsetRef.current + delta),
     );
-    setOffset(next);
+    setDragOffset(next);
   };
 
   const handlePointerUp = () => {
-    if (!isDragging) return;
-    setDragging(false);
-    setOffset((prev) => (prev >= OPEN_THRESHOLD ? DELETE_WIDTH : 0));
+    if (dragOffset === null) return;
+    const shouldOpen = dragOffset >= OPEN_THRESHOLD;
+    setDragOffset(null);
+    onOpenChange(shouldOpen);
   };
 
   return (

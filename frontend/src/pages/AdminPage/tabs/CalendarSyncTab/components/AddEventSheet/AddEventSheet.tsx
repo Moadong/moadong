@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import BottomSheet from '@/components/common/BottomSheet/BottomSheet';
+import ResponsiveSheet from '@/components/common/ResponsiveSheet/ResponsiveSheet';
 import { DEFAULT_CALENDAR_EVENT_COLOR } from '@/constants/calendarEventColors';
 import { useCreateCustomCalendarEvent } from '@/hooks/Queries/useCustomCalendarEvents';
 import { colors } from '@/styles/theme/colors';
@@ -145,10 +145,10 @@ const AddEventSheet = ({
   };
 
   return (
-    <BottomSheet
+    <ResponsiveSheet
       isOpen={isOpen}
       onClose={onClose}
-      background={colors.gray[100]}
+      sheetBackground={colors.gray[100]}
     >
       <Styled.Body>
         <TitleInput value={title} onChange={setTitle} />
@@ -226,7 +226,7 @@ const AddEventSheet = ({
           {createMutation.isPending ? '저장 중…' : '저장하기'}
         </Styled.SaveButton>
       </Styled.Body>
-    </BottomSheet>
+    </ResponsiveSheet>
   );
 };
 

@@ -4,13 +4,6 @@ import { colors } from '@/styles/theme/colors';
 export const Body = styled.div`
   display: flex;
   flex-direction: column;
-  width: 320px;
-  max-width: calc(100vw - 48px);
-  max-height: calc(100dvh - 120px);
-  overflow-y: auto;
-  padding: 20px;
-  border-radius: 16px;
-  background: ${colors.base.white};
 `;
 
 export const DateLabel = styled.h4`

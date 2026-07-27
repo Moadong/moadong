@@ -1,27 +1,14 @@
-import { useState } from 'react';
 import Button from '@/components/common/Button/Button';
-import Spinner from '@/components/common/Spinner/Spinner';
-import { useDeleteCustomCalendarEvent } from '@/hooks/Queries/useCustomCalendarEvents';
-import { useHideCalendarEvent } from '@/hooks/Queries/useHiddenCalendarEvents';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import { useGetCustomCalendarEvents } from '@/hooks/Queries/useCustomCalendarEvents';
+import { useGetHiddenCalendarEvents } from '@/hooks/Queries/useHiddenCalendarEvents';
 import useDevice from '@/hooks/useDevice';
-import type { CustomCalendarEventInput } from '@/types/club';
-import {
-  buildDateKeyFromDate,
-  formatDateOnly,
-  WEEKDAY_LABELS,
-} from '@/utils/calendarSyncUtils';
+import { mergeCalendarEvents } from '@/utils/mergeCalendarEvents';
 import * as Styled from './CalendarSyncTab.styles';
-import CustomEventModal from './components/CustomEventModal/CustomEventModal';
-import MobileCalendarView from './components/mobile/MobileCalendarView/MobileCalendarView';
+import CalendarBoard from './components/CalendarBoard/CalendarBoard';
 import { GoogleIcon, NotionIcon } from './components/ProviderIcons';
 import ProviderPopover from './components/ProviderPopover/ProviderPopover';
 import { useCalendarSync } from './hooks/useCalendarSync';
-
-interface CustomModalState {
-  mode: 'create' | 'edit';
-  eventId?: string;
-  initialValues: CustomCalendarEventInput;
-}
 
 const CalendarSyncTab = () => {
   const {
@@ -30,9 +17,6 @@ const CalendarSyncTab = () => {
     googleCalendars,
     selectedGoogleCalendarId,
     googleCalendarEvents,
-    notionItems,
-    notionTotalResults,
-    notionDatabaseSourceId,
     notionDatabaseOptions,
     selectedNotionDatabaseId,
     setSelectedNotionDatabaseId,
@@ -43,30 +27,15 @@ const CalendarSyncTab = () => {
     isNotionLoading,
     notionWorkspaceName,
     notionCalendarEvents,
-    allUnifiedEvents,
-    visibleUnifiedEvents,
-    unifiedEventsByDate,
-    unifiedCalendarDays,
-    unifiedCalendarLabel,
-    unifiedVisibleMonth,
-    notionEventEnabledMap,
-    googleEventEnabledMap,
     startGoogleOAuth,
     selectGoogleCalendar,
     disconnectGoogle,
     startNotionOAuth,
-    goToPreviousMonth,
-    goToNextMonth,
-    toggleNotionEvent,
-    toggleGoogleEvent,
-    setAllNotionEventsEnabled,
-    setAllGoogleEventsEnabled,
     applySelectedNotionDatabase,
   } = useCalendarSync();
 
-  const [customModal, setCustomModal] = useState<CustomModalState | null>(null);
-  const deleteCustomMutation = useDeleteCustomCalendarEvent();
-  const hideMutation = useHideCalendarEvent();
+  const { data: customCalendarEvents = [] } = useGetCustomCalendarEvents();
+  const { data: hiddenCalendarEvents = [] } = useGetHiddenCalendarEvents();
   const { isMobile, isTablet } = useDevice();
 
   const isNotionConnected =
@@ -76,83 +45,27 @@ const CalendarSyncTab = () => {
     if (window.confirm('Google 연동을 해제할까요?')) disconnectGoogle();
   };
 
-  const removeCustomEvent = (unifiedId: string) => {
-    if (deleteCustomMutation.isPending) return;
-    if (!window.confirm('이 일정을 삭제할까요?')) return;
-    deleteCustomMutation.mutate(
-      { eventId: unifiedId.replace('custom-', '') },
-      {
-        onError: () => window.alert('일정 삭제에 실패했습니다.'),
-      },
-    );
-  };
-
-  const hideOAuthEvent = (
-    source: 'GOOGLE' | 'NOTION' | 'CUSTOM',
-    unifiedId: string,
-  ) => {
-    if (source === 'CUSTOM' || hideMutation.isPending) return;
-    hideMutation.mutate(
-      {
-        source,
-        eventId: unifiedId.replace(/^(google|notion)-/, ''),
-      },
-      {
-        onError: () => window.alert('일정 숨기기에 실패했습니다.'),
-      },
-    );
-  };
-
-  const openCreateCustomEvent = (dateKey: string) =>
-    setCustomModal({
-      mode: 'create',
-      initialValues: {
-        title: '',
-        start: dateKey,
-        end: '',
-        url: '',
-        description: '',
-      },
-    });
-
-  const openEditCustomEvent = (event: {
-    id: string;
-    title: string;
-    start: string;
-    end?: string;
-    url?: string;
-    description?: string;
-  }) =>
-    setCustomModal({
-      mode: 'edit',
-      eventId: event.id.replace('custom-', ''),
-      initialValues: {
-        title: event.title,
-        start: event.start,
-        end: event.end ?? '',
-        url: event.url ?? '',
-        description: event.description ?? '',
-      },
-    });
-
-  if (isMobile || isTablet) {
-    return <MobileCalendarView />;
-  }
+  // Google·Notion·커스텀을 한 목록으로 합쳐 캘린더에 넘긴다
+  const calendarEvents = mergeCalendarEvents({
+    googleCalendarEvents,
+    notionCalendarEvents,
+    customCalendarEvents,
+    hiddenCalendarEvents,
+  });
 
   return (
     <Styled.Container>
-      {isCalendarDataLoading && (
-        <Styled.LoadingOverlay>
-          <Spinner height='auto' />
-          <Styled.LoadingText>캘린더 정보를 불러오는 중...</Styled.LoadingText>
-        </Styled.LoadingOverlay>
-      )}
+      {(isMobile || isTablet) && <WebviewTopBar title='동아리 일정 관리' />}
 
       {errorMessage && <Styled.ErrorText>{errorMessage}</Styled.ErrorText>}
 
       <Styled.WideDataCard>
         <Styled.CardHeader>
-          <Styled.DataTitle>통합 캘린더</Styled.DataTitle>
+          {isCalendarDataLoading && (
+            <Styled.SyncIndicator>
+              연동 일정을 불러오는 중…
+            </Styled.SyncIndicator>
+          )}
           <Styled.ProviderControls>
             <ProviderPopover
               label='Google 캘린더 설정'
@@ -278,200 +191,8 @@ const CalendarSyncTab = () => {
           </Styled.ProviderControls>
         </Styled.CardHeader>
 
-        <Styled.Description>
-          Google 이벤트 {googleCalendarEvents.length}개 / Notion 페이지{' '}
-          {notionTotalResults}개 / 캘린더 표시 {visibleUnifiedEvents.length}개
-        </Styled.Description>
-        {notionDatabaseSourceId && (
-          <Styled.Description>
-            Notion 데이터베이스: {notionDatabaseSourceId}
-          </Styled.Description>
-        )}
-        {allUnifiedEvents.length === 0 ? (
-          <Styled.Empty>
-            아직 데이터가 없습니다. 우측 상단 아이콘에서 Google 또는 Notion을
-            연동해주세요.
-          </Styled.Empty>
-        ) : (
-          <Styled.CalendarBoard>
-            {/* 구글 이벤트 토글 */}
-            {googleCalendarEvents.length > 0 && (
-              <Styled.TogglePanel>
-                <Styled.ToggleHeader>
-                  <Styled.ToggleTitle>Google 이벤트 선택</Styled.ToggleTitle>
-                  <Styled.ToggleActions>
-                    <Styled.ToggleActionButton
-                      type='button'
-                      onClick={() => setAllGoogleEventsEnabled(true)}
-                    >
-                      전체 ON
-                    </Styled.ToggleActionButton>
-                    <Styled.ToggleActionButton
-                      type='button'
-                      onClick={() => setAllGoogleEventsEnabled(false)}
-                    >
-                      전체 OFF
-                    </Styled.ToggleActionButton>
-                  </Styled.ToggleActions>
-                </Styled.ToggleHeader>
-                <Styled.ToggleList>
-                  {googleCalendarEvents.map((event) => (
-                    <Styled.ToggleItem key={event.id}>
-                      <Styled.ToggleCheckbox
-                        type='checkbox'
-                        checked={googleEventEnabledMap[event.id] !== false}
-                        onChange={() => toggleGoogleEvent(event.id)}
-                      />
-                      <Styled.ToggleText>
-                        {event.title} ({formatDateOnly(event.start)})
-                      </Styled.ToggleText>
-                    </Styled.ToggleItem>
-                  ))}
-                </Styled.ToggleList>
-              </Styled.TogglePanel>
-            )}
-            {/* 노션 이벤트 토글 */}
-            {notionCalendarEvents.length > 0 && (
-              <Styled.TogglePanel>
-                <Styled.ToggleHeader>
-                  <Styled.ToggleTitle>Notion 페이지 선택</Styled.ToggleTitle>
-                  <Styled.ToggleActions>
-                    <Styled.ToggleActionButton
-                      type='button'
-                      onClick={() => setAllNotionEventsEnabled(true)}
-                    >
-                      전체 ON
-                    </Styled.ToggleActionButton>
-                    <Styled.ToggleActionButton
-                      type='button'
-                      onClick={() => setAllNotionEventsEnabled(false)}
-                    >
-                      전체 OFF
-                    </Styled.ToggleActionButton>
-                  </Styled.ToggleActions>
-                </Styled.ToggleHeader>
-                <Styled.ToggleList>
-                  {notionCalendarEvents.map((event) => (
-                    <Styled.ToggleItem key={event.id}>
-                      <Styled.ToggleCheckbox
-                        type='checkbox'
-                        checked={notionEventEnabledMap[event.id] !== false}
-                        onChange={() => toggleNotionEvent(event.id)}
-                      />
-                      <Styled.ToggleText>
-                        {event.title} ({formatDateOnly(event.dateKey)})
-                      </Styled.ToggleText>
-                    </Styled.ToggleItem>
-                  ))}
-                </Styled.ToggleList>
-              </Styled.TogglePanel>
-            )}
-            <Styled.CalendarHeader>
-              <Button width='96px' onClick={goToPreviousMonth}>
-                이전 달
-              </Button>
-              <Styled.CalendarMonth>
-                {unifiedCalendarLabel}
-              </Styled.CalendarMonth>
-              <Button width='96px' onClick={goToNextMonth}>
-                다음 달
-              </Button>
-            </Styled.CalendarHeader>
-            <Styled.CalendarWeekRow>
-              {WEEKDAY_LABELS.map((label) => (
-                <Styled.CalendarWeekCell key={label}>
-                  {label}
-                </Styled.CalendarWeekCell>
-              ))}
-            </Styled.CalendarWeekRow>
-            <Styled.CalendarGrid>
-              {unifiedCalendarDays.map((day) => {
-                const dateKey = buildDateKeyFromDate(day);
-                const events = unifiedEventsByDate[dateKey] ?? [];
-                const isOutsideMonth =
-                  day.getMonth() !== unifiedVisibleMonth.getMonth() ||
-                  day.getFullYear() !== unifiedVisibleMonth.getFullYear();
-
-                return (
-                  <Styled.CalendarCell key={dateKey} $muted={isOutsideMonth}>
-                    <Styled.CalendarDayNumber>
-                      {day.getDate()}
-                    </Styled.CalendarDayNumber>
-                    <Styled.CalendarEventList>
-                      {events.map((event) =>
-                        event.source === 'CUSTOM' ? (
-                          <Styled.CustomEvent key={event.id}>
-                            <Styled.CustomEventTitle
-                              type='button'
-                              onClick={() => openEditCustomEvent(event)}
-                            >
-                              {event.title}
-                            </Styled.CustomEventTitle>
-                            <Styled.CustomEventDelete
-                              type='button'
-                              data-remove
-                              aria-label={`${event.title} 삭제`}
-                              onClick={() => removeCustomEvent(event.id)}
-                            >
-                              ×
-                            </Styled.CustomEventDelete>
-                          </Styled.CustomEvent>
-                        ) : (
-                          <Styled.CalendarEvent
-                            key={event.id}
-                            $source={event.source}
-                          >
-                            {event.url ? (
-                              <Styled.ExternalLink
-                                href={event.url}
-                                target='_blank'
-                                rel='noreferrer'
-                              >
-                                {event.title}
-                              </Styled.ExternalLink>
-                            ) : (
-                              <Styled.CalendarTitle>
-                                {event.title}
-                              </Styled.CalendarTitle>
-                            )}
-                            <Styled.OAuthEventRemove
-                              type='button'
-                              data-remove
-                              aria-label={`${event.title} 숨기기`}
-                              onClick={() =>
-                                hideOAuthEvent(event.source, event.id)
-                              }
-                            >
-                              ×
-                            </Styled.OAuthEventRemove>
-                          </Styled.CalendarEvent>
-                        ),
-                      )}
-                    </Styled.CalendarEventList>
-                    <Styled.AddEventButton
-                      type='button'
-                      data-add
-                      aria-label={`${dateKey} 일정 추가`}
-                      onClick={() => openCreateCustomEvent(dateKey)}
-                    >
-                      +
-                    </Styled.AddEventButton>
-                  </Styled.CalendarCell>
-                );
-              })}
-            </Styled.CalendarGrid>
-          </Styled.CalendarBoard>
-        )}
+        <CalendarBoard events={calendarEvents} />
       </Styled.WideDataCard>
-
-      {customModal && (
-        <CustomEventModal
-          mode={customModal.mode}
-          eventId={customModal.eventId}
-          initialValues={customModal.initialValues}
-          onClose={() => setCustomModal(null)}
-        />
-      )}
     </Styled.Container>
   );
 };
