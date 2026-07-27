@@ -44,4 +44,12 @@ export const queryKeys = {
     all: ['game'] as const,
     ranking: () => ['game', 'ranking'] as const,
   },
+  statistics: {
+    overview: (startDate: string, endDate: string) =>
+      ['statistics', 'overview', startDate, endDate] as const,
+    trend: (startDate: string, endDate: string) =>
+      ['statistics', 'trend', startDate, endDate] as const,
+    searchKeywords: (startDate: string, endDate: string, limit: number) =>
+      ['statistics', 'searchKeywords', startDate, endDate, limit] as const,
+  },
 } as const;

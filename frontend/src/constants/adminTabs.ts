@@ -30,6 +30,7 @@ export const ADMIN_TABS: TabCategory[] = [
     items: [
       { label: '지원서 관리', path: '/admin/application-list' },
       { label: '지원자 현황', path: '/admin/applicants-list' },
+      { label: '통계', path: '/admin/statistics' },
     ],
   },
   {
