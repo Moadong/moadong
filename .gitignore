@@ -5,6 +5,7 @@
 
 .env
 
-CLAUDE.md
-.claude
-.omc/
+dailyNote/
+
+/.omc
+.gstack/
