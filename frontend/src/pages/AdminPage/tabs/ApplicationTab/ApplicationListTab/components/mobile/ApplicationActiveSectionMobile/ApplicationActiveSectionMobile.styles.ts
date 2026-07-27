@@ -16,7 +16,8 @@ export const EmptyBox = styled.div`
   gap: 4px;
   padding: 16px 18px;
   height: 75px;
-  width: 335px;
+  width: 100%;
+  min-width: 335px;
   background-color: ${colors.gray[50]};
   border: 1px solid ${colors.gray[300]};
   border-radius: 14px;
