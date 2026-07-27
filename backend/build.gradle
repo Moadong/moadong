@@ -83,6 +83,12 @@ dependencies {
 
 apply from: 'gradle/infisical.gradle'
 
+// 테스트 환경에는 RabbitMQ 브로커가 없다.
+// 리스너 컨테이너가 기동되면 SpringBootTest 컨텍스트마다 연결 타임아웃으로 약 2분씩 대기하므로 꺼둔다.
+tasks.withType(Test).configureEach {
+    systemProperty 'spring.rabbitmq.listener.simple.auto-startup', 'false'
+}
+
 //전체 테스트
 tasks.named('test') {
     description = 'Runs the total tests.'

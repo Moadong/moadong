@@ -6,7 +6,9 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.AdminExternalFormConnectRequest;
+import moadong.club.payload.request.AiDraftQuotaGrantRequest;
 import moadong.club.payload.request.ApplicationFormStatusUpdateRequest;
+import moadong.club.service.AiApplicationDraftService;
 import moadong.club.service.ClubApplyAdminService;
 import moadong.global.payload.Response;
 import org.springframework.http.ResponseEntity;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ClubApplicationAdminController {
 
     private final ClubApplyAdminService clubApplyAdminService;
+    private final AiApplicationDraftService aiApplicationDraftService;
 
     @GetMapping("/club/{clubId}/application")
     @Operation(summary = "동아리 지원폼 목록 조회 (관리자)", description = "DEVELOPER 역할 필요.")
@@ -62,5 +65,15 @@ public class ClubApplicationAdminController {
                                                @PathVariable String formId) {
         clubApplyAdminService.deleteApplicationFormForClub(clubId, formId);
         return Response.ok("success delete application");
+    }
+
+    @PostMapping("/club/{clubId}/ai-draft/quota/grant")
+    @Operation(summary = "동아리 AI 초안 생성 횟수 추가 부여 (관리자)",
+            description = "지정 동아리의 이번 달 AI 초안 생성 사용 횟수를 amount만큼 차감하여 그만큼 더 생성할 수 있게 합니다.<br>"
+                    + "월 한도(3회) 자체는 변경하지 않으며 갱신된 quota를 반환합니다. DEVELOPER 역할 필요.")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> grantAiDraftQuota(@PathVariable String clubId,
+                                               @RequestBody @Valid AiDraftQuotaGrantRequest request) {
+        return Response.ok(aiApplicationDraftService.grantQuota(clubId, request.amount()));
     }
 }
