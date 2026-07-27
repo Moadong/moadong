@@ -7,8 +7,10 @@ export const Body = styled.div`
   flex-direction: column;
   width: 340px;
   max-width: calc(100vw - 48px);
+  /* 일정 수와 무관하게 높이를 고정하고, 넘치는 목록만 내부에서 스크롤한다 */
+  height: 360px;
   max-height: calc(100dvh - 120px);
-  overflow-y: auto;
+  overflow: hidden;
   padding: 20px;
   border-radius: 16px;
   background: ${colors.base.white};
@@ -34,6 +36,9 @@ export const EventList = styled.ul`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
 `;
 
 export const EventItem = styled.li`
@@ -74,7 +79,11 @@ export const EventDate = styled.span`
 `;
 
 export const Empty = styled.p`
-  margin: 16px 0 0;
+  flex: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0;
   font-size: 0.92rem;
   color: ${colors.gray[600]};
   text-align: center;
@@ -86,6 +95,7 @@ export const AddButton = styled.button`
   display: flex;
   align-items: center;
   gap: 8px;
+  flex-shrink: 0;
   height: 52px;
   padding: 0 16px;
   border: none;
