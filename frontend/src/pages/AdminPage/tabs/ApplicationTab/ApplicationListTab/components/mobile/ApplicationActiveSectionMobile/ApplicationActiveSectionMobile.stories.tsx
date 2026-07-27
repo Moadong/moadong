@@ -11,6 +11,7 @@ import ApplicationActiveSectionMobile from './ApplicationActiveSectionMobile';
 const makeForm = (id: string, title: string): ApplicationFormItem => ({
   id: asApplicationFormId(id),
   title,
+  createdAt: '2025-06-01T09:00:00.000Z',
   editedAt: '2025-07-01T12:46:00.000Z',
   status: 'ACTIVE' as ApplicationFormStatus,
 });
