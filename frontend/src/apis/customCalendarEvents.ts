@@ -1,5 +1,9 @@
 import API_BASE_URL from '@/constants/api';
-import type { ClubCalendarEvent, CustomCalendarEventInput } from '@/types/club';
+import type {
+  ClubCalendarEvent,
+  CustomCalendarEventInput,
+  DeleteCustomCalendarEventOptions,
+} from '@/types/club';
 import { secureFetch } from './auth/secureFetch';
 import { handleResponse } from './utils/apiHelpers';
 
@@ -57,13 +61,24 @@ export const updateCustomCalendarEvent = async (
   return data;
 };
 
-export const deleteCustomCalendarEvent = async (eventId: string) => {
-  const response = await secureFetch(`${BASE_URL}/${eventId}`, {
-    method: 'DELETE',
-    headers: {
-      Accept: 'application/json',
+export const deleteCustomCalendarEvent = async (
+  eventId: string,
+  options?: DeleteCustomCalendarEventOptions,
+) => {
+  const params = new URLSearchParams();
+  if (options?.scope) params.set('scope', options.scope);
+  if (options?.date) params.set('date', options.date);
+  const query = params.toString();
+
+  const response = await secureFetch(
+    `${BASE_URL}/${eventId}${query ? `?${query}` : ''}`,
+    {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+      },
     },
-  });
+  );
 
   await handleResponse<string>(response, '직접 입력 일정 삭제에 실패했습니다.');
 };

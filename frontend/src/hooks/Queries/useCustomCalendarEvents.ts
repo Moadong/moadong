@@ -6,7 +6,10 @@ import {
   updateCustomCalendarEvent,
 } from '@/apis/customCalendarEvents';
 import { queryKeys } from '@/constants/queryKeys';
-import type { CustomCalendarEventInput } from '@/types/club';
+import type {
+  CustomCalendarEventInput,
+  DeleteCustomCalendarEventOptions,
+} from '@/types/club';
 
 export const useGetCustomCalendarEvents = () => {
   return useQuery({
@@ -50,7 +53,13 @@ export const useUpdateCustomCalendarEvent = () => {
 export const useDeleteCustomCalendarEvent = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (eventId: string) => deleteCustomCalendarEvent(eventId),
+    mutationFn: ({
+      eventId,
+      options,
+    }: {
+      eventId: string;
+      options?: DeleteCustomCalendarEventOptions;
+    }) => deleteCustomCalendarEvent(eventId, options),
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.customCalendarEvents.all,

@@ -3,6 +3,7 @@ import Button from '@/components/common/Button/Button';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { useDeleteCustomCalendarEvent } from '@/hooks/Queries/useCustomCalendarEvents';
 import { useHideCalendarEvent } from '@/hooks/Queries/useHiddenCalendarEvents';
+import useDevice from '@/hooks/useDevice';
 import type { CustomCalendarEventInput } from '@/types/club';
 import {
   buildDateKeyFromDate,
@@ -11,6 +12,7 @@ import {
 } from '@/utils/calendarSyncUtils';
 import * as Styled from './CalendarSyncTab.styles';
 import CustomEventModal from './components/CustomEventModal/CustomEventModal';
+import MobileCalendarView from './components/mobile/MobileCalendarView/MobileCalendarView';
 import { GoogleIcon, NotionIcon } from './components/ProviderIcons';
 import ProviderPopover from './components/ProviderPopover/ProviderPopover';
 import { useCalendarSync } from './hooks/useCalendarSync';
@@ -65,6 +67,7 @@ const CalendarSyncTab = () => {
   const [customModal, setCustomModal] = useState<CustomModalState | null>(null);
   const deleteCustomMutation = useDeleteCustomCalendarEvent();
   const hideMutation = useHideCalendarEvent();
+  const { isMobile, isTablet } = useDevice();
 
   const isNotionConnected =
     notionDatabaseOptions.length > 0 || Boolean(notionWorkspaceName);
@@ -76,9 +79,12 @@ const CalendarSyncTab = () => {
   const removeCustomEvent = (unifiedId: string) => {
     if (deleteCustomMutation.isPending) return;
     if (!window.confirm('이 일정을 삭제할까요?')) return;
-    deleteCustomMutation.mutate(unifiedId.replace('custom-', ''), {
-      onError: () => window.alert('일정 삭제에 실패했습니다.'),
-    });
+    deleteCustomMutation.mutate(
+      { eventId: unifiedId.replace('custom-', '') },
+      {
+        onError: () => window.alert('일정 삭제에 실패했습니다.'),
+      },
+    );
   };
 
   const hideOAuthEvent = (
@@ -128,6 +134,10 @@ const CalendarSyncTab = () => {
         description: event.description ?? '',
       },
     });
+
+  if (isMobile || isTablet) {
+    return <MobileCalendarView />;
+  }
 
   return (
     <Styled.Container>

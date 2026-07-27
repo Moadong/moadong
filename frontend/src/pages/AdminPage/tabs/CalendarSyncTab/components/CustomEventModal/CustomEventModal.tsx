@@ -90,13 +90,16 @@ const CustomEventModal = ({
   const handleDelete = () => {
     if (!eventId) return;
     if (!window.confirm('이 일정을 삭제할까요?')) return;
-    deleteMutation.mutate(eventId, {
-      onSuccess: onClose,
-      onError: (error) =>
-        setErrorMessage(
-          resolveErrorMessage(error, '일정 삭제에 실패했습니다.'),
-        ),
-    });
+    deleteMutation.mutate(
+      { eventId },
+      {
+        onSuccess: onClose,
+        onError: (error) =>
+          setErrorMessage(
+            resolveErrorMessage(error, '일정 삭제에 실패했습니다.'),
+          ),
+      },
+    );
   };
 
   return (
