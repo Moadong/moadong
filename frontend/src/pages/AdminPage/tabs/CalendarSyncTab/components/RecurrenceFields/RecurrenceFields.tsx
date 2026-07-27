@@ -51,6 +51,11 @@ const RecurrenceFields = ({
     return () => document.removeEventListener('mousedown', handleOutside);
   }, [isDropdownOpen]);
 
+  const selectFrequency = (next: RecurrenceFrequency) => {
+    onFrequencyChange(next);
+    setDropdownOpen(false);
+  };
+
   return (
     <Styled.Container>
       <Styled.Row>
@@ -70,11 +75,15 @@ const RecurrenceFields = ({
                 <Styled.DropdownItem
                   key={option.value}
                   role='option'
+                  tabIndex={0}
                   aria-selected={option.value === frequency}
                   $active={option.value === frequency}
-                  onClick={() => {
-                    onFrequencyChange(option.value);
-                    setDropdownOpen(false);
+                  onClick={() => selectFrequency(option.value)}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' || event.key === ' ') {
+                      event.preventDefault();
+                      selectFrequency(option.value);
+                    }
                   }}
                 >
                   {option.label}

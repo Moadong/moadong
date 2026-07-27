@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   useApplyNotionDatabase,
   useGetNotionDatabases,
@@ -35,6 +35,12 @@ export const useNotionCalendarData = ({
     notionDatabaseOptions[0]?.id ||
     '';
 
+  // 401·403 외의 실제 오류는 '미연동' 빈 상태와 구분되지 않아 따로 알린다
+  const notionQueryError = databasesQuery.error ?? pagesQuery.error;
+  useEffect(() => {
+    if (notionQueryError) onError(notionQueryError.message);
+  }, [notionQueryError, onError]);
+
   const applySelectedNotionDatabase = () => {
     if (!selectedNotionDatabaseId) {
       onError('먼저 Notion 데이터베이스를 선택해주세요.');
@@ -58,8 +64,11 @@ export const useNotionCalendarData = ({
     // 캐시가 있으면 로딩으로 보지 않는다 (탭 재진입 시 깜빡임 방지)
     isNotionLoading: pagesQuery.isLoading,
     isNotionDatabaseApplying: applyMutation.isPending,
-    /** OAuth 완료 후 페이지 목록을 다시 불러온다 */
-    loadNotionPages: pagesQuery.refetch,
+    /** OAuth 완료 후 데이터베이스·페이지 목록을 다시 불러온다 */
+    loadNotionPages: () => {
+      databasesQuery.refetch();
+      return pagesQuery.refetch();
+    },
     applySelectedNotionDatabase,
   };
 };

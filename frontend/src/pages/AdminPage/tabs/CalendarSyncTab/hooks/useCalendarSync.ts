@@ -30,8 +30,16 @@ export const useCalendarSync = () => {
     notionItems: notionData.notionItems,
   });
 
-  const { data: customCalendarEvents = [] } = useGetCustomCalendarEvents();
-  const { data: hiddenCalendarEvents = [] } = useGetHiddenCalendarEvents();
+  const {
+    data: customCalendarEvents = [],
+    isLoading: isCustomEventsLoading,
+    isError: isCustomEventsError,
+  } = useGetCustomCalendarEvents();
+  const {
+    data: hiddenCalendarEvents = [],
+    isLoading: isHiddenEventsLoading,
+    isError: isHiddenEventsError,
+  } = useGetHiddenCalendarEvents();
 
   const unifiedCalendar = useUnifiedCalendarUiState({
     notionCalendarEvents: notionUi.notionCalendarEvents,
@@ -44,7 +52,15 @@ export const useCalendarSync = () => {
     googleData.isInitialChecking ||
     googleData.isEventsLoading ||
     notionData.isNotionLoading ||
-    notionData.isNotionDatabaseApplying;
+    notionData.isNotionDatabaseApplying ||
+    isCustomEventsLoading ||
+    isHiddenEventsLoading;
+
+  // 쿼리가 실패하면 일정이 하나도 없는 캘린더와 구분되지 않아 따로 안내한다
+  const calendarEventsErrorMessage =
+    isCustomEventsError || isHiddenEventsError
+      ? '일정을 불러오지 못했습니다. 잠시 후 다시 시도해주세요.'
+      : '';
 
   const notionOAuth = useNotionOAuth({
     loadNotionPages: notionData.loadNotionPages,
@@ -68,7 +84,7 @@ export const useCalendarSync = () => {
     setSelectedNotionDatabaseId: notionData.setSelectedNotionDatabaseId,
     isNotionDatabaseApplying: notionData.isNotionDatabaseApplying,
     statusMessage,
-    errorMessage,
+    errorMessage: errorMessage || calendarEventsErrorMessage,
     isCalendarDataLoading,
     isGoogleLoading: googleData.isGoogleLoading,
     isNotionLoading:

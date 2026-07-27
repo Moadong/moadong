@@ -112,9 +112,7 @@ const DayEventsModal = ({
                       onDelete={() => handleDelete(occurrence)}
                       isOpen={openRowId === occurrence.occurrenceId}
                       onOpenChange={(isRowOpen) =>
-                        setOpenRowId(
-                          isRowOpen ? occurrence.occurrenceId : null,
-                        )
+                        setOpenRowId(isRowOpen ? occurrence.occurrenceId : null)
                       }
                     >
                       <Styled.EventCard $back={palette.back}>
@@ -153,6 +151,10 @@ const DayEventsModal = ({
           onClose={() => setPendingDelete(null)}
           isDeleting={isPending}
           showScopeOptions={pendingDelete.event.eventType === 'RECURRING'}
+          isHiding={
+            pendingDelete.event.source === 'GOOGLE' ||
+            pendingDelete.event.source === 'NOTION'
+          }
           onConfirm={(scope) =>
             runDelete(
               pendingDelete,

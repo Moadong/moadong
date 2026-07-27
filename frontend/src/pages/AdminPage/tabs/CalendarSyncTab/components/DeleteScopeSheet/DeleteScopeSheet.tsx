@@ -16,6 +16,8 @@ interface DeleteScopeSheetProps {
   isDeleting?: boolean;
   /** 반복 일정만 삭제 범위를 고른다. 그 외에는 확인만 받는다. */
   showScopeOptions?: boolean;
+  /** 연동 일정은 원본을 남기고 캘린더에서 숨기기만 한다 */
+  isHiding?: boolean;
 }
 
 const DeleteScopeSheet = ({
@@ -24,14 +26,22 @@ const DeleteScopeSheet = ({
   onConfirm,
   isDeleting,
   showScopeOptions = true,
+  isHiding = false,
 }: DeleteScopeSheetProps) => {
-  const [scope, setScope] = useState<DeleteScope>('ALL');
+  /** 실수로 시리즈 전체를 지우지 않도록 가장 좁은 범위를 기본으로 둔다 */
+  const [scope, setScope] = useState<DeleteScope>('THIS');
+
+  const confirmMessage = isHiding
+    ? '이 일정을 캘린더에서 숨길까요?'
+    : '이 일정을 삭제할까요?';
+  const submitLabel = isHiding ? '캘린더에서 숨기기' : '일정 삭제하기';
+  const pendingLabel = isHiding ? '숨기는 중…' : '삭제 중…';
 
   return (
     <ResponsiveSheet isOpen={isOpen} onClose={onClose}>
       <Styled.Body>
         {!showScopeOptions && (
-          <Styled.ConfirmMessage>이 일정을 삭제할까요?</Styled.ConfirmMessage>
+          <Styled.ConfirmMessage>{confirmMessage}</Styled.ConfirmMessage>
         )}
         {showScopeOptions &&
           SCOPE_OPTIONS.map((option) => (
@@ -73,7 +83,7 @@ const DeleteScopeSheet = ({
             disabled={isDeleting}
             onClick={() => onConfirm(scope)}
           >
-            {isDeleting ? '삭제 중…' : '일정 삭제하기'}
+            {isDeleting ? pendingLabel : submitLabel}
           </Styled.DeleteButton>
         </Styled.Actions>
       </Styled.Body>

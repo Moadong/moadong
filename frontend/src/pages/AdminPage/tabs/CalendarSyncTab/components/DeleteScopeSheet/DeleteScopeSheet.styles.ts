@@ -49,6 +49,12 @@ export const HiddenRadio = styled.input`
   opacity: 0;
   width: 0;
   height: 0;
+
+  /* 시각적으로 숨긴 라디오라 포커스 위치를 인접한 체크박스에 표시한다 */
+  &:focus-visible + ${Checkbox} {
+    outline: 2px solid ${colors.primary[800]};
+    outline-offset: 2px;
+  }
 `;
 
 export const Actions = styled.div`

@@ -59,10 +59,12 @@ const SwipeableEventRow = ({
 
   return (
     <Styled.Container>
+      {/* 키보드 포커스가 닿으면 행을 열어 가려진 삭제 버튼을 드러낸다 */}
       <Styled.DeleteAction
         type='button'
         aria-label={deleteLabel}
         onClick={onDelete}
+        onFocus={() => onOpenChange(true)}
       >
         <TrashIcon />
       </Styled.DeleteAction>
