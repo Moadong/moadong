@@ -8,7 +8,6 @@ export const Card = styled.div`
   align-items: center;
   padding: 12px 14px;
   width: 100%;
-  min-width: 335px;
   background-color: ${colors.gray[50]};
   border: 1px solid ${colors.gray[300]};
   border-radius: 14px;
