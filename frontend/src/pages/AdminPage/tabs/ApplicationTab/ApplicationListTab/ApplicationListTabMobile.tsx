@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import plusIcon from '@/assets/images/icons/Plus.svg';
+import addLargeIcon from '@/assets/images/icons/add_large_icon.svg';
 import SortAscIcon from '@/assets/images/icons/sort_asc_icon.svg?react';
 import SortDescIcon from '@/assets/images/icons/sort_desc_icon.svg?react';
 import Spinner from '@/components/common/Spinner/Spinner';
@@ -194,7 +194,7 @@ const ApplicationListTabMobile = () => {
 
       <MobileFloatingButton
         onClick={() => navigate('/admin/application-list/edit')}
-        icon={plusIcon}
+        icon={addLargeIcon}
         ariaLabel='새 지원서 만들기'
       />
     </>
