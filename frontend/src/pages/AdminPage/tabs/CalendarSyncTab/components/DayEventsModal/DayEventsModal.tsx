@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import ResponsiveSheet from '@/components/common/ResponsiveSheet/ResponsiveSheet';
+import Modal from '@/components/common/Modal/Modal';
 import {
   CALENDAR_EVENT_COLORS,
   DEFAULT_CALENDAR_EVENT_COLOR,
@@ -92,7 +92,7 @@ const DayEventsModal = ({
 
   return (
     <>
-      <ResponsiveSheet isOpen={isOpen} onClose={onClose}>
+      <Modal isOpen={isOpen} onClose={onClose}>
         <Styled.Body>
           <Styled.DateLabel>{formatMonthDayWeekday(dateKey)}</Styled.DateLabel>
           {isToday && <Styled.TodayLabel>오늘</Styled.TodayLabel>}
@@ -145,7 +145,7 @@ const DayEventsModal = ({
             일정을 추가하세요
           </Styled.AddButton>
         </Styled.Body>
-      </ResponsiveSheet>
+      </Modal>
 
       {pendingDelete && (
         <DeleteScopeSheet

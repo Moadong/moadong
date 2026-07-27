@@ -1,9 +1,17 @@
 import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 
+/** 기기와 상관없이 가운데 모달로 열리므로 카드 형태를 직접 갖는다 */
 export const Body = styled.div`
   display: flex;
   flex-direction: column;
+  width: 340px;
+  max-width: calc(100vw - 48px);
+  max-height: calc(100dvh - 120px);
+  overflow-y: auto;
+  padding: 20px;
+  border-radius: 16px;
+  background: ${colors.base.white};
 `;
 
 export const DateLabel = styled.h4`
