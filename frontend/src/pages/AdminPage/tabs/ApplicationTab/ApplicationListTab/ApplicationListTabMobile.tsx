@@ -11,6 +11,7 @@ import {
   useGetApplicationList,
   useUpdateApplicationStatus,
 } from '@/hooks/Queries/useApplication';
+import { SCROLL_TRIGGER_DISABLED } from '@/hooks/Scroll/useScrollTrigger';
 import MobileFloatingButton from '@/pages/AdminPage/components/MobileFloatingButton/MobileFloatingButton';
 import {
   ApplicationFormGroup,
@@ -80,6 +81,14 @@ const ApplicationListTabMobile = () => {
       onError: () => alert('지원서 복제에 실패했습니다.'),
     });
   };
+
+  useEffect(() => {
+    document.body.dataset[SCROLL_TRIGGER_DISABLED] = 'true';
+    window.dispatchEvent(new Event('scroll'));
+    return () => {
+      delete document.body.dataset[SCROLL_TRIGGER_DISABLED];
+    };
+  }, []);
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
