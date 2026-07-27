@@ -53,7 +53,8 @@ export const useGetNotionPages = () => {
 export const useApplyNotionDatabase = () => {
   const queryClient = useQueryClient();
   return useMutation({
-    mutationFn: (databaseId: string) => fetchNotionDatabasePages({ databaseId }),
+    mutationFn: (databaseId: string) =>
+      fetchNotionDatabasePages({ databaseId }),
     onSuccess: (response) => {
       queryClient.setQueryData(queryKeys.notionCalendar.pages(), response);
     },
