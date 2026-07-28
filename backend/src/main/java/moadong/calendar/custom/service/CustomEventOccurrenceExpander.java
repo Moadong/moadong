@@ -14,6 +14,7 @@ import org.springframework.util.StringUtils;
 
 /**
  * 커스텀 이벤트 원형을 공개 캘린더에 표시할 발생일 목록으로 전개한다.
+ * PERIOD는 여러 날에 걸친 하나의 일정이므로 전개하지 않고 start 한 건만 반환한다(end는 호출부가 그대로 유지한다).
  * 무기한 반복은 오늘 기준 1년까지만 전개하고, 전체 발생일은 최대 500건으로 제한한다.
  */
 @Component
@@ -32,26 +33,10 @@ public class CustomEventOccurrenceExpander {
         String eventType = StringUtils.hasText(event.getEventType()) ? event.getEventType() : "SINGLE";
 
         return switch (eventType) {
-            case "PERIOD" -> expandPeriod(start, parseOrNull(event.getEnd()));
             case "MULTI" -> expandMulti(event.getDates(), start);
             case "RECURRING" -> expandRecurring(event.getRecurrence(), start);
             default -> List.of(start.toString());
         };
-    }
-
-    private List<String> expandPeriod(LocalDate start, LocalDate end) {
-        if (end == null || end.isBefore(start)) {
-            return List.of(start.toString());
-        }
-
-        List<String> occurrences = new ArrayList<>();
-        for (LocalDate date = start; !date.isAfter(end); date = date.plusDays(1)) {
-            if (isFull(occurrences, start)) {
-                break;
-            }
-            occurrences.add(date.toString());
-        }
-        return occurrences;
     }
 
     private List<String> expandMulti(List<String> dates, LocalDate start) {

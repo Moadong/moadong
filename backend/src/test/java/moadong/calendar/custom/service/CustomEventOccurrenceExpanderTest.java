@@ -50,14 +50,14 @@ class CustomEventOccurrenceExpanderTest {
     }
 
     @Test
-    @DisplayName("PERIOD는 start부터 end까지 매일 전개한다")
+    @DisplayName("PERIOD는 여러 날에 걸친 하나의 일정이므로 전개하지 않고 start 한 건만 반환한다")
     void expand_period() {
         assertThat(expander.expand(event("PERIOD", "2026-03-01", "2026-03-05", null, null)))
-                .containsExactly("2026-03-01", "2026-03-02", "2026-03-03", "2026-03-04", "2026-03-05");
+                .containsExactly("2026-03-01");
     }
 
     @Test
-    @DisplayName("PERIOD에 end가 없으면 start 하루만 전개한다")
+    @DisplayName("PERIOD에 end가 없어도 start 한 건만 반환한다")
     void expand_periodWithoutEnd() {
         assertThat(expander.expand(event("PERIOD", "2026-03-01", null, null, null)))
                 .containsExactly("2026-03-01");

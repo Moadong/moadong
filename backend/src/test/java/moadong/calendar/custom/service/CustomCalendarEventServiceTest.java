@@ -80,6 +80,7 @@ class CustomCalendarEventServiceTest {
                 .start(start)
                 .end(end)
                 .eventType(eventType)
+                .color("MINT")
                 .dates(dates)
                 .recurrence(recurrence)
                 .build();
@@ -463,17 +464,50 @@ class CustomCalendarEventServiceTest {
     @Test
     @DisplayName("공개 캘린더 조회는 발생일마다 하나씩 펼쳐서 반환한다")
     void getClubCalendarEvents_expandsOccurrences() {
+        List<String> dates = List.of("2026-08-01", "2026-08-02", "2026-08-03");
         when(customCalendarEventRepository.findByClubId(CLUB_ID))
-                .thenReturn(List.of(storedEvent("PERIOD", "2026-08-01", "2026-08-03", null, null)));
+                .thenReturn(List.of(storedEvent("MULTI", "2026-08-01", null, dates, null)));
 
         List<ClubCalendarEventResult> results = customCalendarEventService.getClubCalendarEvents(CLUB_ID);
 
         assertThat(results).hasSize(3);
         assertThat(results).extracting(ClubCalendarEventResult::start)
-                .containsExactly("2026-08-01", "2026-08-02", "2026-08-03");
+                .containsExactlyElementsOf(dates);
         assertThat(results).extracting(ClubCalendarEventResult::id)
                 .containsExactly(EVENT_ID + ":2026-08-01", EVENT_ID + ":2026-08-02", EVENT_ID + ":2026-08-03");
-        assertThat(results).allSatisfy(result -> assertThat(result.source()).isEqualTo("CUSTOM"));
+        assertThat(results).allSatisfy(result -> {
+            assertThat(result.source()).isEqualTo("CUSTOM");
+            assertThat(result.eventType()).isEqualTo("MULTI");
+            assertThat(result.color()).isEqualTo("MINT");
+        });
+    }
+
+    @Test
+    @DisplayName("PERIOD는 전개하지 않고 start/end를 가진 한 건으로 반환한다")
+    void getClubCalendarEvents_periodIsNotExpanded() {
+        when(customCalendarEventRepository.findByClubId(CLUB_ID))
+                .thenReturn(List.of(storedEvent("PERIOD", "2026-03-16", "2026-03-20", null, null)));
+
+        List<ClubCalendarEventResult> results = customCalendarEventService.getClubCalendarEvents(CLUB_ID);
+
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).id()).isEqualTo(EVENT_ID);
+        assertThat(results.get(0).start()).isEqualTo("2026-03-16");
+        assertThat(results.get(0).end()).isEqualTo("2026-03-20");
+        assertThat(results.get(0).eventType()).isEqualTo("PERIOD");
+        assertThat(results.get(0).color()).isEqualTo("MINT");
+    }
+
+    @Test
+    @DisplayName("eventType이 없는 이벤트는 SINGLE로 내려준다")
+    void getClubCalendarEvents_nullEventTypeDefaultsToSingle() {
+        when(customCalendarEventRepository.findByClubId(CLUB_ID))
+                .thenReturn(List.of(storedEvent(null, "2026-08-01", null, null, null)));
+
+        List<ClubCalendarEventResult> results = customCalendarEventService.getClubCalendarEvents(CLUB_ID);
+
+        assertThat(results).hasSize(1);
+        assertThat(results.get(0).eventType()).isEqualTo("SINGLE");
     }
 
     @Test

@@ -97,7 +97,7 @@ class CalendarAggregationServiceTest {
         ClubCalendarEventResult googleEvent = ClubCalendarEventResult.ofGoogle(
                 "google-1", "Google 이벤트", "2026-04-01", null, null, null);
         ClubCalendarEventResult customEvent = ClubCalendarEventResult.ofCustom(
-                "custom-1", "커스텀 이벤트", "2026-04-02", null, null, null);
+                "custom-1", "커스텀 이벤트", "2026-04-02", null, null, null, "SINGLE", "MINT");
 
         when(notionOAuthService.getClubCalendarEvents(CLUB_ID)).thenReturn(List.of(notionEvent));
         when(googleOAuthService.getClubCalendarEvents(CLUB_ID)).thenReturn(List.of(googleEvent));
@@ -119,7 +119,7 @@ class CalendarAggregationServiceTest {
         ClubCalendarEventResult googleEvent = ClubCalendarEventResult.ofGoogle(
                 "google-1", "Google 이벤트", "2026-04-02", null, null, null);
         ClubCalendarEventResult customEvent = ClubCalendarEventResult.ofCustom(
-                "custom-1", "커스텀 이벤트", "2026-04-03", null, null, null);
+                "custom-1", "커스텀 이벤트", "2026-04-03", null, null, null, "SINGLE", "MINT");
 
         when(notionOAuthService.getClubCalendarEvents(CLUB_ID)).thenReturn(List.of(notionEvent));
         when(googleOAuthService.getClubCalendarEvents(CLUB_ID)).thenReturn(List.of(googleEvent));

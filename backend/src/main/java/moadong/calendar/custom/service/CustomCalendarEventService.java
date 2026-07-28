@@ -126,6 +126,7 @@ public class CustomCalendarEventService {
 
     /**
      * 공개 캘린더는 발생일마다 하나씩 펼쳐 내려준다.
+     * 단, PERIOD는 start/end를 가진 한 건으로 유지해 프론트가 연속 막대로 그릴 수 있게 한다.
      * 발생일이 여러 개면 프론트에서 구분할 수 있도록 id에 날짜를 덧붙인다.
      */
     private List<ClubCalendarEventResult> toPublicResults(CustomCalendarEvent event) {
@@ -135,6 +136,8 @@ public class CustomCalendarEventService {
             return List.of();
         }
 
+        String eventType = StringUtils.hasText(event.getEventType()) ? event.getEventType() : "SINGLE";
+
         if (occurrences.size() == 1) {
             return List.of(ClubCalendarEventResult.ofCustom(
                     event.getId(),
@@ -142,7 +145,9 @@ public class CustomCalendarEventService {
                     occurrences.get(0),
                     event.getEnd(),
                     event.getUrl(),
-                    event.getDescription()
+                    event.getDescription(),
+                    eventType,
+                    event.getColor()
             ));
         }
 
@@ -153,7 +158,9 @@ public class CustomCalendarEventService {
                         date,
                         null,
                         event.getUrl(),
-                        event.getDescription()
+                        event.getDescription(),
+                        eventType,
+                        event.getColor()
                 ))
                 .toList();
     }
