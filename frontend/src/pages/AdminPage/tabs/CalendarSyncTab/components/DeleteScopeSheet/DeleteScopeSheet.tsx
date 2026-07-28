@@ -16,7 +16,10 @@ interface DeleteScopeSheetProps {
   isDeleting?: boolean;
   /** 반복 일정만 삭제 범위를 고른다. 그 외에는 확인만 받는다. */
   showScopeOptions?: boolean;
-  /** 연동 일정은 원본을 남기고 캘린더에서 숨기기만 한다 */
+  /**
+   * 연동 일정은 원본을 남기고 캘린더에서 숨기기만 한다.
+   * 숨김 요청에는 범위 개념이 없어 showScopeOptions보다 우선한다.
+   */
   isHiding?: boolean;
 }
 
@@ -40,10 +43,11 @@ const DeleteScopeSheet = ({
   return (
     <ResponsiveSheet isOpen={isOpen} onClose={onClose}>
       <Styled.Body>
-        {!showScopeOptions && (
+        {(!showScopeOptions || isHiding) && (
           <Styled.ConfirmMessage>{confirmMessage}</Styled.ConfirmMessage>
         )}
         {showScopeOptions &&
+          !isHiding &&
           SCOPE_OPTIONS.map((option) => (
             <Styled.OptionRow key={option.value}>
               <Styled.HiddenRadio
