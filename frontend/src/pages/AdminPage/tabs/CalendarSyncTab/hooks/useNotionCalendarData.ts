@@ -7,13 +7,11 @@ import {
 
 interface UseNotionCalendarDataParams {
   onError: (message: string) => void;
-  onStatus: (message: string) => void;
   clearError: () => void;
 }
 
 export const useNotionCalendarData = ({
   onError,
-  onStatus,
   clearError,
 }: UseNotionCalendarDataParams) => {
   /** 사용자가 드롭다운에서 직접 고른 값. 비어 있으면 서버 기준값을 따른다. */
@@ -52,7 +50,6 @@ export const useNotionCalendarData = ({
 
     clearError();
     applyMutation.mutate(selectedNotionDatabaseId, {
-      onSuccess: () => onStatus('선택한 Notion 데이터베이스를 연결했습니다.'),
       onError: (error: Error) => onError(error.message),
     });
   };
