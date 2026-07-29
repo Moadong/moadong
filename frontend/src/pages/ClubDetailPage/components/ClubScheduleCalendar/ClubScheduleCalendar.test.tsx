@@ -1,5 +1,5 @@
 import '@testing-library/jest-dom';
-import { render, screen } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import type { ClubCalendarEvent } from '@/types/club';
 import ClubScheduleCalendar from './ClubScheduleCalendar';
 
@@ -89,6 +89,57 @@ describe('ClubScheduleCalendar', () => {
 
     expect(screen.getByText('2026년 03월')).toBeInTheDocument();
     expect(screen.queryByText('2024년 12월')).not.toBeInTheDocument();
+  });
+
+  it('연동 일정을 불러오는 동안 캘린더 자리에 스피너를 보여준다', () => {
+    render(<ClubScheduleCalendar events={[]} isLoading />);
+
+    expect(screen.getByRole('status', { name: '로딩 중' })).toBeInTheDocument();
+    // 로딩 중에 '일정 없음'이 먼저 스치면 안 된다
+    expect(
+      screen.queryByText('곧 새로운 일정이 업데이트될 예정이에요'),
+    ).not.toBeInTheDocument();
+  });
+
+  it('이번 달에 일정이 없으면 이번 달 기준으로 안내한다', () => {
+    render(
+      <ClubScheduleCalendar
+        events={[
+          {
+            id: 'old',
+            title: '작년 행사',
+            start: '2024-12-26',
+            source: 'CUSTOM',
+            eventType: 'SINGLE',
+          },
+        ]}
+      />,
+    );
+
+    expect(screen.getByText('이번 달 일정이 없어요')).toBeInTheDocument();
+  });
+
+  it('다른 달로 이동하면 이번 달 문구를 쓰지 않는다', () => {
+    render(
+      <ClubScheduleCalendar
+        events={[
+          {
+            id: 'old',
+            title: '작년 행사',
+            start: '2024-12-26',
+            source: 'CUSTOM',
+            eventType: 'SINGLE',
+          },
+        ]}
+      />,
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '다음 달' }));
+
+    expect(
+      screen.getByText('이 달에 등록된 일정이 없어요'),
+    ).toBeInTheDocument();
+    expect(screen.queryByText('이번 달 일정이 없어요')).not.toBeInTheDocument();
   });
 
   it('일정이 없으면 안내 문구를 보여준다', () => {

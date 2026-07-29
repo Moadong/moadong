@@ -23,6 +23,11 @@ export const Container = styled.div`
   background-color: ${colors.gray[100]};
 `;
 
+/** Container가 align-items: flex-start라 감싸지 않으면 스피너가 왼쪽에 붙는다 */
+export const LoadingArea = styled.div`
+  width: 100%;
+`;
+
 export const MonthHeader = styled.div`
   width: 100%;
   display: flex;

@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import Spinner from '@/components/common/Spinner/Spinner';
 import { DEFAULT_CUSTOM_EVENT_TYPE } from '@/constants/calendarEvent';
 import {
   CALENDAR_EVENT_COLOR_ORDER,
@@ -80,9 +81,14 @@ interface ClubScheduleCalendarProps {
    * 기간 일정만 start~end 범위를 그대로 들고 온다.
    */
   events: ClubCalendarEvent[];
+  /** 연동 캘린더는 서버에서 모아오느라 느려서 캘린더 자리에 스피너를 띄운다 */
+  isLoading?: boolean;
 }
 
-const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
+const ClubScheduleCalendar = ({
+  events,
+  isLoading = false,
+}: ClubScheduleCalendarProps) => {
   const sortedEvents = [...events]
     .filter((event) => parseDateKey(event.start))
     .sort((a, b) => a.start.localeCompare(b.start));
@@ -183,7 +189,10 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
     })
     .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
 
-  const todayKey = buildDateKeyFromDate(new Date());
+  const today = new Date();
+  const todayKey = buildDateKeyFromDate(today);
+  const isCurrentMonth =
+    monthKey === `${today.getFullYear()}-${today.getMonth() + 1}`;
 
   const changeMonth = (diff: number) => {
     setVisibleMonth(
@@ -195,6 +204,17 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
     const today = new Date();
     setVisibleMonth(new Date(today.getFullYear(), today.getMonth(), 1));
   };
+
+  // 빈 목록보다 먼저 판단해야 로딩 중에 '일정 없음'이 잠깐 스치지 않는다
+  if (isLoading) {
+    return (
+      <Styled.Container>
+        <Styled.LoadingArea>
+          <Spinner height='320px' />
+        </Styled.LoadingArea>
+      </Styled.Container>
+    );
+  }
 
   if (sortedEvents.length === 0) {
     return (
@@ -294,7 +314,11 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
         <Styled.SectionTitle>일정</Styled.SectionTitle>
 
         {scheduleItems.length === 0 ? (
-          <Styled.EmptyText>이 달에 등록된 일정이 없습니다.</Styled.EmptyText>
+          <Styled.EmptyText>
+            {isCurrentMonth
+              ? '이번 달 일정이 없어요'
+              : '이 달에 등록된 일정이 없어요'}
+          </Styled.EmptyText>
         ) : (
           <Styled.EventList>
             {scheduleItems.map((item) => {
