@@ -29,6 +29,8 @@ interface MiniCalendarProps {
   showHeader?: boolean;
   /** 선택 표시 색상 (ColorBar 연동) */
   accentColor?: CalendarEventColor;
+  /** 이 날짜까지(포함) 고를 수 없게 막는다 */
+  disabledUntil?: string;
 }
 
 const MiniCalendar = ({
@@ -42,6 +44,7 @@ const MiniCalendar = ({
   onSelectDate,
   showHeader = true,
   accentColor = DEFAULT_CALENDAR_EVENT_COLOR,
+  disabledUntil,
 }: MiniCalendarProps) => {
   const accent = CALENDAR_EVENT_COLORS[accentColor];
   const calendarDays = useMemo(() => buildMonthCalendarDays(month), [month]);
@@ -106,6 +109,7 @@ const MiniCalendar = ({
           const selected = isSelected(dateKey);
           const inRange =
             hasRange && dateKey >= rangeStart! && dateKey <= rangeEnd!;
+          const blocked = !!disabledUntil && dateKey <= disabledUntil;
 
           return (
             <Styled.DayCell
@@ -119,11 +123,12 @@ const MiniCalendar = ({
               $isRangeStart={hasRange && dateKey === rangeStart}
               $isRangeEnd={hasRange && dateKey === rangeEnd}
               $accentBack={accent.back}
-              disabled={!isCurrentMonth}
+              $isBlocked={blocked}
+              disabled={!isCurrentMonth || blocked}
               onClick={() => onSelectDate(dateKey)}
             >
               <Styled.DayNumber
-                $isSelected={selected}
+                $isSelected={selected && !blocked}
                 $isToday={dateKey === todayKey && !selected}
                 $accentMain={accent.main}
               >

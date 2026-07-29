@@ -37,6 +37,8 @@ const Template = ({ initialWeekdays }: { initialWeekdays: number[] }) => {
         onToggleWeekday={toggleWeekday}
         startDate='2026-03-10'
         endDate={null}
+        onOpenStartPicker={() => {}}
+        onOpenEndPicker={() => {}}
       />
     </div>
   );
@@ -49,6 +51,8 @@ const baseArgs = {
   onToggleWeekday: () => {},
   startDate: '2026-03-10',
   endDate: null,
+  onOpenStartPicker: () => {},
+  onOpenEndPicker: () => {},
 };
 
 export const Weekly: Story = {

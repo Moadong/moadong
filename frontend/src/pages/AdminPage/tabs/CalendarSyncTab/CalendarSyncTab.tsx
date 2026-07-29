@@ -1,3 +1,4 @@
+import { useNavigate } from 'react-router-dom';
 import Button from '@/components/common/Button/Button';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { useGetCustomCalendarEvents } from '@/hooks/Queries/useCustomCalendarEvents';
@@ -37,6 +38,7 @@ const CalendarSyncTab = () => {
   const { data: customCalendarEvents = [] } = useGetCustomCalendarEvents();
   const { data: hiddenCalendarEvents = [] } = useGetHiddenCalendarEvents();
   const { isMobile, isTablet } = useDevice();
+  const navigate = useNavigate();
 
   const isNotionConnected =
     notionDatabaseOptions.length > 0 || Boolean(notionWorkspaceName);
@@ -55,7 +57,12 @@ const CalendarSyncTab = () => {
 
   return (
     <Styled.Container>
-      {(isMobile || isTablet) && <WebviewTopBar title='동아리 일정 관리' />}
+      {(isMobile || isTablet) && (
+        <WebviewTopBar
+          title='동아리 일정 관리'
+          onBack={() => navigate('/admin')}
+        />
+      )}
 
       {errorMessage && <Styled.ErrorText>{errorMessage}</Styled.ErrorText>}
 

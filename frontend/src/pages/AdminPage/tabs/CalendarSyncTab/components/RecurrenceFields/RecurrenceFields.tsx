@@ -21,9 +21,11 @@ interface RecurrenceFieldsProps {
   /** 매주 반복 시 선택 요일 (0=일 ~ 6=토) */
   weekdays: number[];
   onToggleWeekday: (weekday: number) => void;
-  /** 아래 캘린더에서 두 번 눌러 정한 반복 기간 (표시 전용) */
+  /** 각 행을 눌러 시트에서 정하는 반복 기간 */
   startDate: string;
   endDate: string | null;
+  onOpenStartPicker: () => void;
+  onOpenEndPicker: () => void;
 }
 
 const RecurrenceFields = ({
@@ -33,6 +35,8 @@ const RecurrenceFields = ({
   onToggleWeekday,
   startDate,
   endDate,
+  onOpenStartPicker,
+  onOpenEndPicker,
 }: RecurrenceFieldsProps) => {
   const [isDropdownOpen, setDropdownOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
@@ -116,16 +120,18 @@ const RecurrenceFields = ({
 
       <Styled.Row>
         <Styled.RowLabel>시작 날짜</Styled.RowLabel>
-        <Styled.RowValue>
+        <Styled.RowValueButton type='button' onClick={onOpenStartPicker}>
           {formatKoreanDateWithWeekday(startDate)}
-        </Styled.RowValue>
+          <Styled.Chevron>▼</Styled.Chevron>
+        </Styled.RowValueButton>
       </Styled.Row>
 
       <Styled.Row>
         <Styled.RowLabel>종료 날짜</Styled.RowLabel>
-        <Styled.RowValue>
+        <Styled.RowValueButton type='button' onClick={onOpenEndPicker}>
           {formatKoreanDateWithWeekday(endDate)}
-        </Styled.RowValue>
+          <Styled.Chevron>▼</Styled.Chevron>
+        </Styled.RowValueButton>
       </Styled.Row>
     </Styled.Container>
   );
