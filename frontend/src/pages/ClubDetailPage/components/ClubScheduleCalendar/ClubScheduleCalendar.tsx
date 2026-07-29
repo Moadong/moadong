@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import { DEFAULT_CUSTOM_EVENT_TYPE } from '@/constants/calendarEvent';
 import {
   CALENDAR_EVENT_COLOR_ORDER,
@@ -8,14 +8,12 @@ import type { CalendarEventColor, ClubCalendarEvent } from '@/types/club';
 import {
   buildDateKeyFromDate,
   buildMonthCalendarDays,
-  dateFromKey,
   formatMonthLabel,
   formatShortMonthDay,
   parseDateKey,
   WEEKDAY_LABELS,
 } from '@/utils/calendarSyncUtils';
 import { buildWeekEventSegments } from '@/utils/calendarWeekSegments';
-import { expandEventOccurrences } from '@/utils/eventOccurrences';
 import * as Styled from './ClubScheduleCalendar.styles';
 
 interface ScheduleListItem {
@@ -75,30 +73,25 @@ const splitIntoWeeks = (days: Date[]) => {
 };
 
 interface ClubScheduleCalendarProps {
+  /**
+   * 공개 피드(`/api/club/{clubId}/calendar-events`)가 내려준 목록.
+   * 반복·다중 일정은 백엔드가 이미 발생일별로 펼쳐서 보내므로
+   * 여기서 다시 전개하지 않는다(응답에 recurrence·dates가 없다).
+   * 기간 일정만 start~end 범위를 그대로 들고 온다.
+   */
   events: ClubCalendarEvent[];
 }
 
 const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
-  const didInitFromEventsRef = useRef(false);
-
   const sortedEvents = [...events]
     .filter((event) => parseDateKey(event.start))
     .sort((a, b) => a.start.localeCompare(b.start));
 
-  const firstEventKey = parseDateKey(sortedEvents[0]?.start ?? '');
-  const firstEventMonth = firstEventKey
-    ? dateFromKey(firstEventKey)
-    : new Date();
-  const [visibleMonth, setVisibleMonth] = useState<Date>(
-    new Date(firstEventMonth.getFullYear(), firstEventMonth.getMonth(), 1),
-  );
-
-  useEffect(() => {
-    if (didInitFromEventsRef.current || !firstEventKey) return;
-    const firstDate = dateFromKey(firstEventKey);
-    setVisibleMonth(new Date(firstDate.getFullYear(), firstDate.getMonth(), 1));
-    didInitFromEventsRef.current = true;
-  }, [firstEventKey]);
+  /** 지난 일정이 있어도 항상 이번 달부터 보여준다 */
+  const [visibleMonth, setVisibleMonth] = useState(() => {
+    const now = new Date();
+    return new Date(now.getFullYear(), now.getMonth(), 1);
+  });
 
   const calendarDays = buildMonthCalendarDays(visibleMonth);
   const weeks = splitIntoWeeks(calendarDays);
@@ -124,13 +117,13 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
    * 기간 일정은 시작일/종료일에만 원을 찍고 사이는 띠로 잇는다.
    */
   const circleColorByDate = new Map<string, CalendarEventColor>();
-  expandEventOccurrences(
-    sortedEvents.filter((event) => !isPeriodEvent(event)),
-    calendarDays[0],
-    calendarDays[calendarDays.length - 1],
-  ).forEach((occurrence) => {
-    circleColorByDate.set(occurrence.dateKey, colorOf(occurrence.event));
-  });
+  sortedEvents
+    .filter((event) => !isPeriodEvent(event))
+    .forEach((event) => {
+      const dateKey = parseDateKey(event.start);
+      if (!dateKey) return;
+      circleColorByDate.set(dateKey, colorOf(event));
+    });
   periodEvents.forEach((event) => {
     const startKey = parseDateKey(event.start);
     const endKey = event.end ? parseDateKey(event.end) : startKey;
@@ -175,15 +168,18 @@ const ClubScheduleCalendar = ({ events }: ClubScheduleCalendarProps) => {
         };
       }
 
-      return expandEventOccurrences([event], monthStart, monthEnd).map(
-        (occurrence) => ({
-          key: occurrence.occurrenceId,
-          title: occurrence.title,
-          dateText: formatShortMonthDay(occurrence.dateKey),
-          color,
-          sortKey: occurrence.dateKey,
-        }),
-      );
+      const dateKey = parseDateKey(event.start);
+      if (!dateKey) return [];
+      if (dateKey < buildDateKeyFromDate(monthStart)) return [];
+      if (dateKey > buildDateKeyFromDate(monthEnd)) return [];
+
+      return {
+        key: event.id,
+        title: event.title,
+        dateText: formatShortMonthDay(dateKey),
+        color,
+        sortKey: dateKey,
+      };
     })
     .sort((a, b) => a.sortKey.localeCompare(b.sortKey));
 
