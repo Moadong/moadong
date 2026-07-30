@@ -1,9 +1,10 @@
 import { useRef } from 'react';
 import { useNavigate, useOutletContext } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
-import { ADMIN_EVENT } from '@/constants/eventName';
+import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { ClubDetail } from '@/types/club';
 import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
@@ -15,6 +16,7 @@ import * as Styled from './PhotoEditTabMobile.styles';
 const PhotoEditTabMobile = () => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
+  useTrackPageView(PAGE_VIEW.PHOTO_EDIT_PAGE);
   const clubDetail = useOutletContext<ClubDetail>();
 
   const {
