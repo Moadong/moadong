@@ -109,7 +109,17 @@ public enum ErrorCode {
     GOOGLE_API_FAILED(HttpStatus.BAD_GATEWAY, "960-6", "Google API 호출에 실패했습니다."),
     GOOGLE_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "960-7", "연동할 동아리 정보를 찾을 수 없습니다."),
     GOOGLE_INVALID_TIME_FORMAT(HttpStatus.BAD_REQUEST, "960-8", "시간 형식이 올바르지 않습니다. RFC3339 형식을 사용해주세요."),
-    GOOGLE_INVALID_TIME_RANGE(HttpStatus.BAD_REQUEST, "960-9", "시작 시간은 종료 시간보다 이전이어야 합니다.")
+    GOOGLE_INVALID_TIME_RANGE(HttpStatus.BAD_REQUEST, "960-9", "시작 시간은 종료 시간보다 이전이어야 합니다."),
+
+    CUSTOM_EVENT_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "970-1", "동아리 정보를 찾을 수 없습니다."),
+    CUSTOM_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "970-2", "커스텀 캘린더 이벤트를 찾을 수 없습니다."),
+    CUSTOM_EVENT_INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "970-3", "날짜 형식이 올바르지 않습니다. YYYY-MM-DD 형식을 사용해주세요."),
+    CUSTOM_EVENT_INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "970-4", "시작일은 종료일보다 이전이거나 같아야 합니다."),
+    CUSTOM_EVENT_INVALID_FIELD_VALUE(HttpStatus.BAD_REQUEST, "970-5", "이벤트 유형, 색상 또는 반복 주기 값이 올바르지 않습니다."),
+    CUSTOM_EVENT_INVALID_DELETE_SCOPE(HttpStatus.BAD_REQUEST, "970-6", "삭제 범위 값이 올바르지 않습니다."),
+
+    HIDDEN_EVENT_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "971-1", "동아리 정보를 찾을 수 없습니다."),
+    HIDDEN_EVENT_INVALID_SOURCE(HttpStatus.BAD_REQUEST, "971-2", "숨김 처리할 수 없는 이벤트 소스입니다.")
     ;
 
     private final HttpStatus httpStatus;
