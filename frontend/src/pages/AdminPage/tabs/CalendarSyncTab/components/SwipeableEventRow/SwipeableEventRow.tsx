@@ -35,6 +35,8 @@ const SwipeableEventRow = ({
   const offset = dragOffset ?? (isOpen ? DELETE_WIDTH : 0);
 
   const handlePointerDown = (event: PointerEvent<HTMLDivElement>) => {
+    // 캡처하지 않으면 빠르게 스와이프할 때 포인터가 행을 벗어나 드래그가 끊긴다
+    event.currentTarget.setPointerCapture(event.pointerId);
     startXRef.current = event.clientX;
     baseOffsetRef.current = offset;
     setDragOffset(offset);
@@ -75,7 +77,6 @@ const SwipeableEventRow = ({
         onPointerMove={handlePointerMove}
         onPointerUp={handlePointerUp}
         onPointerCancel={handlePointerUp}
-        onPointerLeave={handlePointerUp}
       >
         {children}
       </Styled.Content>
