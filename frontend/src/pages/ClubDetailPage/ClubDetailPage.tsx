@@ -64,10 +64,10 @@ const ClubDetailPage = () => {
     return tabParam;
   }, [tabParam]);
 
-  const { data: calendarEvents = [] } = useGetClubCalendarEvents(
-    (clubName ?? clubId) || '',
-    { enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE },
-  );
+  const { data: calendarEvents = [], isLoading: isCalendarLoading } =
+    useGetClubCalendarEvents((clubName ?? clubId) || '', {
+      enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE,
+    });
 
   const tabs = useMemo(
     () => [
@@ -234,6 +234,7 @@ const ClubDetailPage = () => {
                 <ClubScheduleCalendar
                   key={clubId ?? clubName}
                   events={calendarEvents}
+                  isLoading={isCalendarLoading}
                 />
               </div>
             </Styled.TabContent>

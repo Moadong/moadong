@@ -15,8 +15,10 @@ export const handleResponse = async <T = unknown>(
       if (body?.message) {
         message = customErrorMessage ?? body.message;
       }
-      if (body?.errorCode) {
-        errorCode = body.errorCode;
+      // 백엔드 응답의 에러 코드 필드. camelCase(statusCode)로 리네이밍이
+      // 예정되어 있어, 전환 중 어느 쪽이 와도 읽히도록 신 필드를 먼저 본다.
+      if (body?.statusCode || body?.statuscode) {
+        errorCode = body.statusCode ?? body.statuscode;
       }
     } catch {
       // JSON 파싱 실패시 statusText 사용

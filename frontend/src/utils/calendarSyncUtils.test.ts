@@ -2,10 +2,12 @@ import type {
   GoogleCalendarEvent,
   NotionSearchItem,
 } from '@/apis/calendarOAuth';
+import type { ClubCalendarEvent } from '@/types/club';
 import {
   buildDateKeyFromDate,
   buildDefaultRedirectUri,
   buildMonthCalendarDays,
+  convertCustomEventToUnified,
   convertGoogleEventToUnified,
   convertNotionEventToUnified,
   createState,
@@ -251,6 +253,42 @@ describe('calendarSyncUtils', () => {
       expect(unified.source).toBe('NOTION');
       expect(unified.end).toBeUndefined();
       expect(unified.url).toBeUndefined();
+    });
+
+    it('커스텀 이벤트를 통합 형식으로 변환한다', () => {
+      const customEvent: ClubCalendarEvent = {
+        id: '1',
+        title: '직접 입력 일정',
+        start: '2026-04-01',
+        end: '2026-04-02',
+        url: 'https://example.com',
+        description: '설명',
+        source: 'CUSTOM',
+      };
+
+      const unified = convertCustomEventToUnified(customEvent);
+
+      expect(unified).not.toBeNull();
+      expect(unified?.id).toBe('custom-1');
+      expect(unified?.title).toBe('직접 입력 일정');
+      expect(unified?.dateKey).toBe('2026-04-01');
+      expect(unified?.source).toBe('CUSTOM');
+      expect(unified?.end).toBe('2026-04-02');
+      expect(unified?.url).toBe('https://example.com');
+      expect(unified?.description).toBe('설명');
+    });
+
+    it('커스텀 이벤트의 날짜가 유효하지 않으면 null을 반환한다', () => {
+      const customEvent: ClubCalendarEvent = {
+        id: '2',
+        title: 'Invalid',
+        start: 'invalid-date',
+        source: 'CUSTOM',
+      };
+
+      const unified = convertCustomEventToUnified(customEvent);
+
+      expect(unified).toBeNull();
     });
   });
 });
