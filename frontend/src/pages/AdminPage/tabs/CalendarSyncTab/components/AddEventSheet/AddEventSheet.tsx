@@ -11,6 +11,7 @@ import type {
 } from '@/types/club';
 import { dateFromKey, formatMonthLabel } from '@/utils/calendarSyncUtils';
 import ColorBar from '../ColorBar/ColorBar';
+import DatePickerSheet from '../DatePickerSheet/DatePickerSheet';
 import MiniCalendar from '../MiniCalendar/MiniCalendar';
 import RecurrenceFields from '../RecurrenceFields/RecurrenceFields';
 import SegmentTabs from '../SegmentTabs/SegmentTabs';
@@ -54,6 +55,9 @@ const AddEventSheet = ({
   const [weekdays, setWeekdays] = useState<number[]>([]);
   const [recurStart, setRecurStart] = useState(initialDate);
   const [recurEnd, setRecurEnd] = useState<string | null>(null);
+  const [datePickerTarget, setDatePickerTarget] = useState<
+    'start' | 'end' | null
+  >(null);
 
   const handleRangeSelect = (dateKey: string) => {
     if (!rangeStart || (rangeStart && rangeEnd)) {
@@ -76,17 +80,15 @@ const AddEventSheet = ({
         : [...prev, dateKey].sort(),
     );
 
-  /**
-   * 반복 기간도 기간 탭과 동일하게 캘린더에서 두 번 눌러 정한다.
-   * 첫 클릭 = 시작 날짜(종료 초기화), 두 번째 클릭 = 종료 날짜.
-   */
-  const handleRecurrenceRangeSelect = (dateKey: string) => {
-    if (recurEnd || dateKey < recurStart) {
+  /** 반복 기간은 시작/종료를 각각 시트에서 정한다 */
+  const handlePickDate = (dateKey: string) => {
+    if (datePickerTarget === 'start') {
       setRecurStart(dateKey);
-      setRecurEnd(null);
-      return;
+      // 종료가 새 시작보다 앞서면 뒤집힌 기간이 남으므로 '없음'으로 되돌린다
+      if (recurEnd && recurEnd <= dateKey) setRecurEnd(null);
     }
-    setRecurEnd(dateKey);
+    if (datePickerTarget === 'end') setRecurEnd(dateKey);
+    setDatePickerTarget(null);
   };
 
   const toggleWeekday = (weekday: number) =>
@@ -193,25 +195,16 @@ const AddEventSheet = ({
         )}
 
         {eventType === 'RECURRING' && (
-          <>
-            <RecurrenceFields
-              frequency={frequency}
-              onFrequencyChange={setFrequency}
-              weekdays={weekdays}
-              onToggleWeekday={toggleWeekday}
-              startDate={recurStart}
-              endDate={recurEnd}
-            />
-            <MiniCalendar
-              month={month}
-              onMonthChange={setMonth}
-              mode='range'
-              rangeStart={recurStart}
-              rangeEnd={recurEnd ?? undefined}
-              onSelectDate={handleRecurrenceRangeSelect}
-              accentColor={color}
-            />
-          </>
+          <RecurrenceFields
+            frequency={frequency}
+            onFrequencyChange={setFrequency}
+            weekdays={weekdays}
+            onToggleWeekday={toggleWeekday}
+            startDate={recurStart}
+            endDate={recurEnd}
+            onOpenStartPicker={() => setDatePickerTarget('start')}
+            onOpenEndPicker={() => setDatePickerTarget('end')}
+          />
         )}
 
         <ColorBar value={color} onChange={setColor} />
@@ -226,6 +219,27 @@ const AddEventSheet = ({
           {createMutation.isPending ? '저장 중…' : '저장하기'}
         </Styled.SaveButton>
       </Styled.Body>
+
+      <DatePickerSheet
+        isOpen={datePickerTarget !== null}
+        onClose={() => setDatePickerTarget(null)}
+        month={month}
+        onMonthChange={setMonth}
+        selectedDate={
+          datePickerTarget === 'end' ? (recurEnd ?? undefined) : recurStart
+        }
+        onSelectDate={handlePickDate}
+        accentColor={color}
+        disabledUntil={datePickerTarget === 'end' ? recurStart : undefined}
+        onClear={
+          datePickerTarget === 'end'
+            ? () => {
+                setRecurEnd(null);
+                setDatePickerTarget(null);
+              }
+            : undefined
+        }
+      />
     </ResponsiveSheet>
   );
 };

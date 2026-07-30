@@ -81,6 +81,7 @@ export const WeekList = styled.div`
 `;
 
 export const Week = styled.div`
+  position: relative;
   display: flex;
   flex-direction: column;
   gap: 3px;
@@ -93,19 +94,34 @@ export const Week = styled.div`
   }
 `;
 
-export const DayNumberRow = styled.div`
+/** 날짜 칸 전체를 덮는 클릭 영역. 숫자·이벤트 막대 뒤에 깔린다. */
+export const DayHitRow = styled.div`
+  position: absolute;
+  inset: 0;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   gap: ${CELL_GAP};
 `;
 
-export const DayNumberCell = styled.button<{ $isCurrentMonth: boolean }>`
-  display: flex;
-  justify-content: center;
+export const DayHitCell = styled.button`
   border: none;
   background: transparent;
   padding: 0;
   cursor: pointer;
+`;
+
+export const DayNumberRow = styled.div`
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: ${CELL_GAP};
+  /* 클릭은 뒤의 DayHitCell이 받는다 */
+  pointer-events: none;
+`;
+
+export const DayNumberCell = styled.div<{ $isCurrentMonth: boolean }>`
+  display: flex;
+  justify-content: center;
   opacity: ${({ $isCurrentMonth }) => ($isCurrentMonth ? 1 : 0.35)};
 `;
 
@@ -134,11 +150,14 @@ export const DayNumber = styled.span<{ $dayIndex: number; $isToday: boolean }>`
 `;
 
 export const EventLayer = styled.div`
+  position: relative;
   display: grid;
   grid-template-columns: repeat(7, 1fr);
   /* 세로는 촘촘하게, 가로는 날짜 칸 간격과 동일하게 */
   gap: 2px ${CELL_GAP};
   align-content: start;
+  /* 막대 사이 빈 공간의 클릭은 뒤의 DayHitCell로 넘긴다 */
+  pointer-events: none;
 `;
 
 /**
@@ -155,6 +174,7 @@ export const EventBar = styled.button<{
     `${$startIndex + 1} / span ${$span}`};
   grid-row: ${({ $lane }) => $lane + 1};
   min-width: 0;
+  pointer-events: auto;
   border: none;
   border-radius: 4px;
   background: ${({ $back }) => $back};

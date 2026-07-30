@@ -37,12 +37,6 @@ export const RowValueButton = styled.button`
   padding: 4px 0;
 `;
 
-/** 캘린더에서 정해진 반복 기간을 보여주는 표시 전용 값 */
-export const RowValue = styled.span`
-  font-size: 0.92rem;
-  color: ${colors.gray[800]};
-`;
-
 export const Chevron = styled.span<{ $open?: boolean }>`
   font-size: 0.7rem;
   color: ${colors.gray[500]};

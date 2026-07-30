@@ -7,6 +7,7 @@ import type { ClubCalendarEvent } from '@/types/club';
 import {
   buildDateKeyFromDate,
   buildMonthCalendarDays,
+  formatMonthDayWeekday,
   formatMonthLabel,
   WEEKDAY_LABELS,
 } from '@/utils/calendarSyncUtils';
@@ -112,15 +113,27 @@ const CalendarBoard = ({ events }: CalendarBoardProps) => {
 
           return (
             <Styled.Week key={buildDateKeyFromDate(weekDays[0])}>
+              <Styled.DayHitRow>
+                {weekDays.map((day) => {
+                  const dateKey = buildDateKeyFromDate(day);
+                  return (
+                    <Styled.DayHitCell
+                      key={dateKey}
+                      type='button'
+                      aria-label={`${formatMonthDayWeekday(dateKey)} 일정`}
+                      onClick={() => setSelectedDateKey(dateKey)}
+                    />
+                  );
+                })}
+              </Styled.DayHitRow>
+
               <Styled.DayNumberRow>
                 {weekDays.map((day) => {
                   const dateKey = buildDateKeyFromDate(day);
                   return (
                     <Styled.DayNumberCell
                       key={dateKey}
-                      type='button'
                       $isCurrentMonth={day.getMonth() === month.getMonth()}
-                      onClick={() => setSelectedDateKey(dateKey)}
                     >
                       <Styled.DayNumber
                         $dayIndex={day.getDay()}

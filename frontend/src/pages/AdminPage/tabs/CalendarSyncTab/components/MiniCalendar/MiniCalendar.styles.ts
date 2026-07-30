@@ -85,6 +85,8 @@ interface DayCellProps {
   $isRangeEnd: boolean;
   /** 선택 색상 (ColorBar 연동) */
   $accentBack: string;
+  /** 고를 수 없는 날짜. 달 밖 날짜와 달리 숨기지 않고 흐리게만 둔다 */
+  $isBlocked: boolean;
 }
 
 export const DayCell = styled.button<DayCellProps>`
@@ -93,11 +95,12 @@ export const DayCell = styled.button<DayCellProps>`
   border: none;
   background: transparent;
   font-size: 0.9rem;
-  cursor: pointer;
+  cursor: ${({ $isBlocked }) => ($isBlocked ? 'not-allowed' : 'pointer')};
   padding: 0;
   visibility: ${({ $isCurrentMonth }) =>
     $isCurrentMonth ? 'visible' : 'hidden'};
-  color: ${({ $dayIndex, $isSelected }) => {
+  color: ${({ $dayIndex, $isSelected, $isBlocked }) => {
+    if ($isBlocked) return colors.gray[400];
     if ($isSelected) return colors.base.white;
     if ($dayIndex === 0) return SUNDAY_PINK;
     if ($dayIndex === 6) return SATURDAY_BLUE;
