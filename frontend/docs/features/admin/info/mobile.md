@@ -1,13 +1,13 @@
 # ClubInfoEditTab 모바일 UI
 
 모바일/태블릿 환경에서 동아리 기본 정보를 편집하는 페이지.
-`ClubInfoEditTab`에서 `useDevice`로 분기해 렌더링된다.
+`AdminTabAdapter`가 디바이스를 감지해 `ClubInfoEditTabMobile`을 렌더링한다.
 
 ## 구조
 
-`ClubInfoEditTab` → `useDevice` 분기 → `ClubInfoEditTabMobile`
+`AdminRoutes` → `AdminTabAdapter` → (mobile) `ClubInfoEditTabMobile`
 
-상태 관리는 `useClubInfoEdit` 훅에서 담당하며, 데스크톱과 모바일이 동일한 훅을 공유한다.
+상태 관리는 `useClubInfoEdit` 훅에서 담당하며, 데스크탑과 모바일이 동일한 훅을 공유한다.
 
 ### 페이지 전환 구조
 

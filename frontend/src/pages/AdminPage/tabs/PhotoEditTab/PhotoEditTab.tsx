@@ -31,7 +31,6 @@ const PhotoEditTab = () => {
     save,
   } = useFeedItems(clubDetail?.id, clubDetail?.feeds || []);
 
-  const isFull = feedItems.length >= MAX_FILE_COUNT;
   const inputRef = useRef<HTMLInputElement>(null);
 
   const { gridRef, dragIndex, dropPosition, handleMouseDown } = useDragSort({
@@ -39,6 +38,8 @@ const PhotoEditTab = () => {
     onReorder: setFeedItems,
     feedItemsRef,
   });
+
+  const isFull = feedItems.length >= MAX_FILE_COUNT;
 
   const handleAddClick = () => {
     if (isLoading || isFull) return;
@@ -122,6 +123,7 @@ const PhotoEditTab = () => {
                 dragIndex={dragIndex}
                 dropPosition={dropPosition}
                 isLoading={isLoading}
+                columns={4}
                 onMouseDown={handleMouseDown}
                 onDelete={(index) => {
                   trackEvent(ADMIN_EVENT.IMAGE_DELETE_BUTTON_CLICKED);
