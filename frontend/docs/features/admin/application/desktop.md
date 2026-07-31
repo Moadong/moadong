@@ -39,6 +39,6 @@ formGroups.forEach((group) => {
 ## 관련 코드
 
 - `src/pages/AdminPage/components/ApplicationFormList/ApplicationFormList.tsx` — 목록 렌더링, 년도별 머지 로직
-- `src/pages/AdminPage/tabs/ApplicationListTab/ApplicationMenu.tsx` — ... 메뉴 텍스트
-- `src/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab.styles.ts` — 스타일
+- `src/pages/AdminPage/components/ApplicationMenu/ApplicationMenu.tsx` — ... 메뉴 (데스크탑·모바일 공용)
+- `src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/ApplicationListTab.styles.ts` — 스타일
 - `src/hooks/Queries/useApplication.ts` — `useGetApplicationList`, 상태 변경 뮤테이션

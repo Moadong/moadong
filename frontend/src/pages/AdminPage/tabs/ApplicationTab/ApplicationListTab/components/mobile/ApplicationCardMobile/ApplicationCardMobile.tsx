@@ -1,81 +1,72 @@
 import type { MouseEvent, RefObject } from 'react';
-import Morebutton from '@/assets/images/icons/ellipsis_icon.svg';
+import MorebuttonIcon from '@/assets/images/icons/ellipsis_icon.svg?react';
 import ApplicationMenu from '@/pages/AdminPage/components/ApplicationMenu/ApplicationMenu';
 import {
   ApplicationFormItem,
   ApplicationFormStatus,
 } from '@/types/application';
-import { formatRelativeDateTime } from '@/utils/formatRelativeDateTime';
-import * as Styled from './ApplicationRowItem.style';
+import { formatApplicationEditedAt } from '@/utils/formatKSTDateTime';
+import * as Styled from './ApplicationCardMobile.styles';
 
-interface ApplicationRowItemProps {
+interface ApplicationCardMobileProps {
   application: ApplicationFormItem;
   isActive: boolean;
   uniqueKeyPrefix: string;
   openMenuId: string | null;
   menuRef: RefObject<HTMLDivElement | null>;
   onToggleStatus: (id: string, status: ApplicationFormStatus) => void;
-  onNavigate: (id: string) => void;
   onEdit: (id: string) => void;
   onMenuToggle: (e: MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
-  onDuplicate: (id: string) => void;
-  className?: string;
 }
 
-const ApplicationRowItem = ({
+const ApplicationCardMobile = ({
   application,
   isActive,
   uniqueKeyPrefix,
   openMenuId,
   menuRef,
   onToggleStatus,
-  onNavigate,
   onEdit,
   onMenuToggle,
   onDelete,
-  onDuplicate,
-  className,
-}: ApplicationRowItemProps) => {
+}: ApplicationCardMobileProps) => {
   const currentMenuKey = `${uniqueKeyPrefix}-${application.id}`;
   const isMenuOpen = openMenuId === currentMenuKey;
 
   return (
-    <Styled.ApplicationRow className={className} key={application.id}>
-      <Styled.ApplicationTitle
-        $active={isActive}
-        onClick={() => onNavigate(application.id)}
-      >
-        {application.title}
-      </Styled.ApplicationTitle>
-
-      <Styled.ApplicationDatetable>
-        <Styled.ApplicationDate>
-          {formatRelativeDateTime(application.editedAt)}
-        </Styled.ApplicationDate>
+    <Styled.Card>
+      <Styled.TopRow>
+        <Styled.TitleArea>
+          {isActive && <Styled.ActiveDot />}
+          <Styled.Title $active={isActive}>{application.title}</Styled.Title>
+        </Styled.TitleArea>
 
         <Styled.MoreButtonContainer ref={isMenuOpen ? menuRef : null}>
           <Styled.MoreButton
             onClick={(e) => onMenuToggle(e, application.id, uniqueKeyPrefix)}
           >
-            <Styled.MoreButtonIcon src={Morebutton} />
+            <MorebuttonIcon />
           </Styled.MoreButton>
 
           {isMenuOpen && (
             <ApplicationMenu
               isActive={isActive}
-              onEdit={() => onEdit(application.id)}
-              onDelete={() => onDelete(application.id)}
-              onDuplicate={() => onDuplicate(application.id)}
               onToggleStatus={() =>
                 onToggleStatus(application.id, application.status)
               }
+              onEdit={() => onEdit(application.id)}
+              onDelete={() => onDelete(application.id)}
             />
           )}
         </Styled.MoreButtonContainer>
-      </Styled.ApplicationDatetable>
-    </Styled.ApplicationRow>
+      </Styled.TopRow>
+
+      <Styled.DateText>
+        {formatApplicationEditedAt(application.editedAt)}
+      </Styled.DateText>
+    </Styled.Card>
   );
 };
 
-export default ApplicationRowItem;
+export default ApplicationCardMobile;
