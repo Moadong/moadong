@@ -14,7 +14,7 @@ const mapStatusToGroup = (
     case ApplicationStatus.ACCEPTED:
       return { status: ApplicationStatus.ACCEPTED, label: '합격' };
     case ApplicationStatus.DECLINED:
-      return { status: ApplicationStatus.DECLINED, label: '불합' };
+      return { status: ApplicationStatus.DECLINED, label: '불합격' };
     default:
       return { status: ApplicationStatus.SUBMITTED, label: '전체' };
   }
