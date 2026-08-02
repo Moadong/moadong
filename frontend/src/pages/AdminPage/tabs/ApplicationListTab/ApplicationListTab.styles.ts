@@ -1,4 +1,5 @@
 import styled, { css } from 'styled-components';
+import MoreArrowIcon from '@/assets/images/icons/more_arraw_icon.svg?react';
 
 interface MenuItemProps {
   $ActiveMenu?: boolean;
@@ -66,13 +67,13 @@ export const ExpandButton = styled.div`
   }
 `;
 
-export const ExpandArrow = styled.img<ExpandButtonProps>`
-  width: 19px;
-  height: 19px;
+export const ExpandArrow = styled(MoreArrowIcon)<ExpandButtonProps>`
+  width: 14px;
+  height: 14px;
   ${(props) =>
     props.$isExpanded &&
     css`
-      transform: rotate(180deg); /* 접어두기일때 180도 회전*/
+      transform: rotate(180deg);
     `}
 `;
 
