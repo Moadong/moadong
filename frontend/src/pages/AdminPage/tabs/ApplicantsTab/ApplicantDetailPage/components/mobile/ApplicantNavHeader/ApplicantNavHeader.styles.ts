@@ -5,12 +5,20 @@ import TriangleDown from '@/assets/images/icons/triangle_down.svg?react';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
-export const Wrapper = styled.div`
+export const Container = styled.div`
+  position: relative;
   display: flex;
   flex-direction: row;
+  justify-content: space-between;
   align-items: center;
-  gap: 8px;
+  padding: 14px 18px;
+  gap: 5px;
   width: 100%;
+  height: 52px;
+  background: ${colors.gray[50]};
+  border: 1px solid ${colors.gray[200]};
+  border-radius: 14px;
+  box-sizing: border-box;
 `;
 
 export const NavButton = styled.button`
@@ -18,8 +26,8 @@ export const NavButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   padding: 0;
   border: none;
   background: transparent;
@@ -32,48 +40,32 @@ export const NavButton = styled.button`
 `;
 
 export const PrevIcon = styled(PrevApplicant)`
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
 `;
 
 export const NextIcon = styled(NextApplicant)`
-  width: 30px;
-  height: 30px;
+  width: 24px;
+  height: 24px;
   flex-shrink: 0;
 `;
 
-export const SelectorWrapper = styled.div`
-  position: relative;
-  flex: 1;
-  min-width: 0;
-`;
-
-export const Trigger = styled.button<{ $isOpen: boolean }>`
+export const Center = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  justify-content: space-between;
-  padding: 10px 16px;
-  width: 100%;
-  height: 44px;
-  border-radius: 12px;
-  border: 1px solid
-    ${({ $isOpen }) => ($isOpen ? colors.primary[800] : colors.gray[300])};
-  background: ${({ $isOpen }) =>
-    $isOpen ? colors.base.white : colors.gray[50]};
+  gap: 5px;
   cursor: pointer;
-  gap: 8px;
 `;
 
 export const ApplicantName = styled.span`
   ${setTypography(typography.paragraph.p2)}
-  color: ${colors.base.black};
+  color: ${colors.gray[900]};
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  flex: 1;
-  text-align: left;
+  max-width: 160px;
 `;
 
 export const ChevronIcon = styled(TriangleDown)<{ $isOpen: boolean }>`
@@ -88,8 +80,8 @@ export const ChevronIcon = styled(TriangleDown)<{ $isOpen: boolean }>`
 export const Dropdown = styled.div<{ $hasScroll: boolean }>`
   position: absolute;
   top: calc(100% + 4px);
-  left: 0;
-  right: 0;
+  left: 50%;
+  transform: translateX(-50%);
   display: flex;
   flex-direction: row;
   align-items: flex-start;
@@ -100,15 +92,20 @@ export const Dropdown = styled.div<{ $hasScroll: boolean }>`
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   z-index: 10;
+  min-width: 102px;
 `;
 
-export const DropdownList = styled.div<{ $hasScroll: boolean }>`
+export const DropdownList = styled.div<{
+  $hasScroll: boolean;
+  $maxHeight: number;
+}>`
   flex: 1;
   min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-height: ${({ $hasScroll }) => `${3 * 44}px`};
+  max-height: ${({ $hasScroll, $maxHeight }) =>
+    $hasScroll ? `${$maxHeight}px` : 'none'};
   overflow-y: ${({ $hasScroll }) => ($hasScroll ? 'auto' : 'visible')};
 
   &::-webkit-scrollbar {
@@ -119,29 +116,30 @@ export const DropdownList = styled.div<{ $hasScroll: boolean }>`
 export const DropdownItem = styled.div<{ $isSelected: boolean }>`
   display: flex;
   flex-direction: row;
-  align-items: center;
   justify-content: center;
-  height: 44px;
+  align-items: center;
+  padding: 10px 0;
+  height: 40px;
   flex-shrink: 0;
   border-radius: ${({ $isSelected }) => ($isSelected ? '6px' : '8px')};
   background: ${({ $isSelected }) =>
     $isSelected ? colors.gray[100] : 'transparent'};
-  ${setTypography(typography.paragraph.p2)}
+  ${setTypography(typography.button.button1)}
   color: ${({ $isSelected }) =>
     $isSelected ? colors.base.black : colors.gray[600]};
   cursor: pointer;
   white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  padding-left: 8px;
+  padding-right: 8px;
 
   &:active {
     background: ${colors.gray[100]};
   }
 `;
 
-export const ScrollbarTrack = styled.div`
+export const ScrollbarTrack = styled.div<{ $height: number }>`
   width: 6px;
-  height: ${3 * 44}px;
+  height: ${({ $height }) => $height}px;
   flex-shrink: 0;
   position: relative;
 `;
@@ -150,7 +148,7 @@ export const ScrollbarThumb = styled.div<{ $offset: number }>`
   position: absolute;
   top: ${({ $offset }) => $offset}px;
   width: 6px;
-  height: 48px;
+  height: 60px;
   background: ${colors.gray[300]};
   border-radius: 1000px;
 `;

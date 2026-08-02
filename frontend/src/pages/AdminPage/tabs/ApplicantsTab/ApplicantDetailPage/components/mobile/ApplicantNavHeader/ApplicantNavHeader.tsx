@@ -14,10 +14,9 @@ interface ApplicantNavHeaderProps {
   onSelect: (id: string) => void;
 }
 
-const ITEM_HEIGHT = 44;
-const VISIBLE_COUNT = 3;
-const TRACK_HEIGHT = ITEM_HEIGHT * VISIBLE_COUNT;
-const THUMB_HEIGHT = 48;
+const LIST_MAX_HEIGHT = 146;
+const ITEM_HEIGHT = 40;
+const THUMB_HEIGHT = 60;
 
 const ApplicantNavHeader = ({
   applicants,
@@ -33,7 +32,7 @@ const ApplicantNavHeader = ({
   const current = applicants[currentIndex];
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < applicants.length - 1;
-  const hasScroll = applicants.length > VISIBLE_COUNT;
+  const hasScroll = applicants.length * ITEM_HEIGHT > LIST_MAX_HEIGHT;
 
   const handleSelect = (id: string) => {
     onSelect(id);
@@ -44,63 +43,65 @@ const ApplicantNavHeader = ({
     if (!listRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = listRef.current;
     const maxScroll = scrollHeight - clientHeight;
-    const maxOffset = TRACK_HEIGHT - THUMB_HEIGHT;
+    const maxOffset = LIST_MAX_HEIGHT - THUMB_HEIGHT;
     setThumbOffset(maxScroll > 0 ? (scrollTop / maxScroll) * maxOffset : 0);
   };
 
   return (
-    <Styled.Wrapper>
+    <Styled.Container>
       <Styled.NavButton
-        onClick={onPrev}
+        onClick={(e) => {
+          e.stopPropagation();
+          onPrev();
+        }}
         disabled={!hasPrev}
         aria-label='이전 지원자'
       >
         <Styled.PrevIcon />
       </Styled.NavButton>
 
-      <Styled.SelectorWrapper>
-        <Styled.Trigger
-          $isOpen={isOpen}
-          onClick={() => setIsOpen((prev) => !prev)}
-        >
-          <Styled.ApplicantName>{current?.name ?? '-'}</Styled.ApplicantName>
-          <Styled.ChevronIcon $isOpen={isOpen} />
-        </Styled.Trigger>
-
-        {isOpen && (
-          <Styled.Dropdown $hasScroll={hasScroll}>
-            <Styled.DropdownList
-              ref={listRef}
-              $hasScroll={hasScroll}
-              onScroll={handleScroll}
-            >
-              {applicants.map((applicant, index) => (
-                <Styled.DropdownItem
-                  key={applicant.id}
-                  $isSelected={index === currentIndex}
-                  onClick={() => handleSelect(applicant.id)}
-                >
-                  {applicant.name}
-                </Styled.DropdownItem>
-              ))}
-            </Styled.DropdownList>
-            {hasScroll && (
-              <Styled.ScrollbarTrack>
-                <Styled.ScrollbarThumb $offset={thumbOffset} />
-              </Styled.ScrollbarTrack>
-            )}
-          </Styled.Dropdown>
-        )}
-      </Styled.SelectorWrapper>
+      <Styled.Center onClick={() => setIsOpen((prev) => !prev)}>
+        <Styled.ApplicantName>{current?.name ?? '-'}</Styled.ApplicantName>
+        <Styled.ChevronIcon $isOpen={isOpen} />
+      </Styled.Center>
 
       <Styled.NavButton
-        onClick={onNext}
+        onClick={(e) => {
+          e.stopPropagation();
+          onNext();
+        }}
         disabled={!hasNext}
         aria-label='다음 지원자'
       >
         <Styled.NextIcon />
       </Styled.NavButton>
-    </Styled.Wrapper>
+
+      {isOpen && (
+        <Styled.Dropdown $hasScroll={hasScroll}>
+          <Styled.DropdownList
+            ref={listRef}
+            $hasScroll={hasScroll}
+            $maxHeight={LIST_MAX_HEIGHT}
+            onScroll={handleScroll}
+          >
+            {applicants.map((applicant, index) => (
+              <Styled.DropdownItem
+                key={applicant.id}
+                $isSelected={index === currentIndex}
+                onClick={() => handleSelect(applicant.id)}
+              >
+                {applicant.name}
+              </Styled.DropdownItem>
+            ))}
+          </Styled.DropdownList>
+          {hasScroll && (
+            <Styled.ScrollbarTrack $height={LIST_MAX_HEIGHT}>
+              <Styled.ScrollbarThumb $offset={thumbOffset} />
+            </Styled.ScrollbarTrack>
+          )}
+        </Styled.Dropdown>
+      )}
+    </Styled.Container>
   );
 };
 
