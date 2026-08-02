@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import TriangleDown from '@/assets/images/icons/triangle_down.svg?react';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
@@ -44,7 +45,7 @@ export const DeleteButton = styled.button<{ $enabled: boolean }>`
   cursor: ${({ $enabled }) => ($enabled ? 'pointer' : 'default')};
 `;
 
-export const TriangleIcon = styled.svg<{ $enabled: boolean }>`
+export const TriangleIcon = styled(TriangleDown)<{ $enabled: boolean }>`
   width: 8px;
   height: 6px;
   flex-shrink: 0;

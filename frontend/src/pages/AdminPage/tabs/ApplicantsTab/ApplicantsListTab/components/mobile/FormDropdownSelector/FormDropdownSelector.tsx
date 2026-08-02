@@ -21,6 +21,8 @@ const FormDropdownSelector = ({
   const listRef = useRef<HTMLDivElement>(null);
 
   const selectedForm = forms.find((f) => f.id === selectedFormId);
+  const isFixed = forms.length >= 3;
+  const hasScroll = forms.length > 3;
 
   const handleSelect = (formId: string) => {
     onSelect(formId);
@@ -43,8 +45,8 @@ const FormDropdownSelector = ({
       </Styled.Trigger>
 
       {isOpen && (
-        <Styled.MenuCard $isFixed={forms.length >= 3} $hasScroll={forms.length > 3}>
-          <Styled.MenuList $hasScroll={forms.length > 3} ref={listRef} onScroll={handleScroll}>
+        <Styled.MenuCard $isFixed={isFixed} $hasScroll={hasScroll}>
+          <Styled.MenuList $hasScroll={hasScroll} ref={listRef} onScroll={handleScroll}>
             {forms.map((form) => (
               <Styled.MenuItem
                 key={form.id}
@@ -55,7 +57,7 @@ const FormDropdownSelector = ({
               </Styled.MenuItem>
             ))}
           </Styled.MenuList>
-          {forms.length > 3 && (
+          {hasScroll && (
             <Styled.ScrollbarTrack>
               <Styled.ScrollbarThumb $offset={thumbOffset} />
             </Styled.ScrollbarTrack>

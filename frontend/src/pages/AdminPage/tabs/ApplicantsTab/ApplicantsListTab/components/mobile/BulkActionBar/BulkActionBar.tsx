@@ -1,5 +1,4 @@
 import { useState } from 'react';
-import TriangleDown from '@/assets/images/icons/triangle_down.svg?react';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import { ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
@@ -29,7 +28,7 @@ const BulkActionBar = ({ enabled, onStatusChange, onDelete }: BulkActionBarProps
       <Styled.StatusButtonWrapper>
         <Styled.StatusButton $enabled={enabled} onClick={handleStatusButtonClick}>
           <span>상태변경</span>
-          <Styled.TriangleIcon $enabled={enabled} as={TriangleDown} />
+          <Styled.TriangleIcon $enabled={enabled} />
         </Styled.StatusButton>
         {isStatusMenuOpen && (
           <Styled.StatusMenu>

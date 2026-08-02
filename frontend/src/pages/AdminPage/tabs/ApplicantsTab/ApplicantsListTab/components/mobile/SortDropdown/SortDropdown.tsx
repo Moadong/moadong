@@ -5,8 +5,8 @@ import * as Styled from './SortDropdown.styles';
 export type SortValue = 'date' | 'name';
 
 const SORT_OPTIONS = [
-  { value: 'date' as const, label: '제출순' },
-  { value: 'name' as const, label: '이름순' },
+  { value: 'date', label: '제출순' },
+  { value: 'name', label: '이름순' },
 ] as const;
 
 interface SortDropdownProps {
