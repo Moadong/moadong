@@ -21,13 +21,15 @@ export const CreateButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 12px 24px;
-  border-radius: 12px;
+  padding: 10px 12px;
+  height: 37px;
+  border-radius: 14px;
   border: none;
   background: ${colors.primary[800]};
-  ${setTypography(typography.button.button1)}
+  ${setTypography(typography.button.button2)}
   color: ${colors.base.white};
   cursor: pointer;
+  letter-spacing: -0.02em;
 
   &:active {
     background: ${colors.primary[900]};
