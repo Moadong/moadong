@@ -38,10 +38,12 @@ export const DeleteButton = styled.button<{ $enabled: boolean }>`
   gap: 4px;
   height: 29px;
   border-radius: 8px;
-  border: 1px solid ${({ $enabled }) => ($enabled ? colors.primary[800] : colors.gray[300])};
+  border: 1px solid
+    ${({ $enabled }) => ($enabled ? colors.primary[800] : colors.gray[300])};
   background: ${colors.gray[50]};
   ${setTypography(typography.button.button2)}
-  color: ${({ $enabled }) => ($enabled ? colors.primary[800] : colors.gray[400])};
+  color: ${({ $enabled }) =>
+    $enabled ? colors.primary[800] : colors.gray[400]};
   cursor: ${({ $enabled }) => ($enabled ? 'pointer' : 'default')};
 `;
 

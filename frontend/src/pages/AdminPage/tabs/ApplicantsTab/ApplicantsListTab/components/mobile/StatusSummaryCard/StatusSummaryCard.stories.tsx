@@ -2,7 +2,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import StatusSummaryCard from './StatusSummaryCard';
 
 const meta = {
-  title: 'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusSummaryCard',
+  title:
+    'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusSummaryCard',
   component: StatusSummaryCard,
   parameters: { layout: 'centered' },
   decorators: [

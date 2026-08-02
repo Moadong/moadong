@@ -20,7 +20,8 @@ export const Wrapper = styled.div`
     border-color: ${colors.primary[800]};
     background: ${colors.base.white};
 
-    path, circle {
+    path,
+    circle {
       stroke: ${colors.primary[800]};
     }
   }
@@ -44,7 +45,8 @@ export const SearchIcon = styled(SearchButtonIcon)`
   height: 17px;
   flex-shrink: 0;
 
-  path, circle {
+  path,
+  circle {
     stroke: ${colors.gray[700]};
     stroke-width: 2;
   }

@@ -40,5 +40,6 @@ export const Label = styled.span`
 
 export const Count = styled.span<{ $isTotal: boolean }>`
   ${setTypography(typography.title.title6)}
-  color: ${({ $isTotal }) => ($isTotal ? colors.primary[800] : colors.base.black)};
+  color: ${({ $isTotal }) =>
+    $isTotal ? colors.primary[800] : colors.base.black};
 `;

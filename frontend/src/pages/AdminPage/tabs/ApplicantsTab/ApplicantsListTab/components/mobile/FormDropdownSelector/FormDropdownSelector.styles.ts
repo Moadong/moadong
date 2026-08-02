@@ -17,8 +17,10 @@ export const Trigger = styled.button<{ $isOpen: boolean }>`
   width: 100%;
   height: 52px;
   border-radius: 14px;
-  border: 1px solid ${({ $isOpen }) => ($isOpen ? colors.primary[800] : colors.gray[200])};
-  background: ${({ $isOpen }) => ($isOpen ? colors.base.white : colors.gray[50])};
+  border: 1px solid
+    ${({ $isOpen }) => ($isOpen ? colors.primary[800] : colors.gray[200])};
+  background: ${({ $isOpen }) =>
+    $isOpen ? colors.base.white : colors.gray[50]};
   cursor: pointer;
   box-sizing: border-box;
 `;
@@ -82,9 +84,11 @@ export const MenuItem = styled.div<{ $isSelected: boolean }>`
   height: 42px;
   flex-shrink: 0;
   border-radius: ${({ $isSelected }) => ($isSelected ? '6px' : '8px')};
-  background: ${({ $isSelected }) => ($isSelected ? colors.gray[100] : 'transparent')};
+  background: ${({ $isSelected }) =>
+    $isSelected ? colors.gray[100] : 'transparent'};
   ${setTypography(typography.paragraph.p2)}
-  color: ${({ $isSelected }) => ($isSelected ? colors.base.black : colors.gray[600])};
+  color: ${({ $isSelected }) =>
+    $isSelected ? colors.base.black : colors.gray[600]};
   cursor: pointer;
   white-space: nowrap;
   overflow: hidden;

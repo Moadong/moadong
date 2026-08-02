@@ -39,14 +39,23 @@ const FormDropdownSelector = ({
 
   return (
     <Styled.Wrapper>
-      <Styled.Trigger $isOpen={isOpen} onClick={() => setIsOpen((prev) => !prev)}>
-        <Styled.TriggerLabel>{selectedForm?.title ?? '지원서 선택'}</Styled.TriggerLabel>
+      <Styled.Trigger
+        $isOpen={isOpen}
+        onClick={() => setIsOpen((prev) => !prev)}
+      >
+        <Styled.TriggerLabel>
+          {selectedForm?.title ?? '지원서 선택'}
+        </Styled.TriggerLabel>
         <Styled.ChevronIcon />
       </Styled.Trigger>
 
       {isOpen && (
         <Styled.MenuCard $isFixed={isFixed} $hasScroll={hasScroll}>
-          <Styled.MenuList $hasScroll={hasScroll} ref={listRef} onScroll={handleScroll}>
+          <Styled.MenuList
+            $hasScroll={hasScroll}
+            ref={listRef}
+            onScroll={handleScroll}
+          >
             {forms.map((form) => (
               <Styled.MenuItem
                 key={form.id}

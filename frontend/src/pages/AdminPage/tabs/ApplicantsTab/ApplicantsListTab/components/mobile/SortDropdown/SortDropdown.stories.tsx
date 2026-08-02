@@ -3,12 +3,20 @@ import type { Meta, StoryObj } from '@storybook/react';
 import SortDropdown, { SortValue } from './SortDropdown';
 
 const meta = {
-  title: 'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/SortDropdown',
+  title:
+    'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/SortDropdown',
   component: SortDropdown,
   parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
-      <div style={{ width: 375, display: 'flex', justifyContent: 'flex-end', position: 'relative' }}>
+      <div
+        style={{
+          width: 375,
+          display: 'flex',
+          justifyContent: 'flex-end',
+          position: 'relative',
+        }}
+      >
         <Story />
       </div>
     ),

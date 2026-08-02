@@ -3,7 +3,10 @@ import { ApplicantsInfo } from '@/types/applicants';
 import * as Styled from './StatusSummaryCard.styles';
 
 interface StatusSummaryCardProps {
-  data: Pick<ApplicantsInfo, 'total' | 'reviewRequired' | 'scheduledInterview' | 'accepted' | 'declined'>;
+  data: Pick<
+    ApplicantsInfo,
+    'total' | 'reviewRequired' | 'scheduledInterview' | 'accepted' | 'declined'
+  >;
 }
 
 const StatusSummaryCard = ({ data }: StatusSummaryCardProps) => {

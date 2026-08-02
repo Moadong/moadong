@@ -4,7 +4,8 @@ import { ApplicationStatus } from '@/types/applicants';
 import StatusFilterPills, { FilterValue } from './StatusFilterPills';
 
 const meta = {
-  title: 'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusFilterPills',
+  title:
+    'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusFilterPills',
   component: StatusFilterPills,
   parameters: { layout: 'centered' },
   decorators: [
@@ -21,7 +22,9 @@ type Story = StoryObj<typeof meta>;
 
 const Interactive = (args: React.ComponentProps<typeof StatusFilterPills>) => {
   const [selected, setSelected] = useState<FilterValue[]>(args.selected);
-  return <StatusFilterPills {...args} selected={selected} onChange={setSelected} />;
+  return (
+    <StatusFilterPills {...args} selected={selected} onChange={setSelected} />
+  );
 };
 
 export const Default: Story = {

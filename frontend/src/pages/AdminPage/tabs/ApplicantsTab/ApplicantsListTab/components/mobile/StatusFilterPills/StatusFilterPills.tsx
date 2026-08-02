@@ -7,10 +7,22 @@ export type FilterValue = typeof ALL | ApplicationStatus;
 
 const FILTER_OPTIONS: { value: FilterValue; label: string }[] = [
   { value: ALL, label: '전체' },
-  { value: ApplicationStatus.SUBMITTED, label: mapStatusToGroup(ApplicationStatus.SUBMITTED).label },
-  { value: ApplicationStatus.INTERVIEW_SCHEDULED, label: mapStatusToGroup(ApplicationStatus.INTERVIEW_SCHEDULED).label },
-  { value: ApplicationStatus.ACCEPTED, label: mapStatusToGroup(ApplicationStatus.ACCEPTED).label },
-  { value: ApplicationStatus.DECLINED, label: mapStatusToGroup(ApplicationStatus.DECLINED).label },
+  {
+    value: ApplicationStatus.SUBMITTED,
+    label: mapStatusToGroup(ApplicationStatus.SUBMITTED).label,
+  },
+  {
+    value: ApplicationStatus.INTERVIEW_SCHEDULED,
+    label: mapStatusToGroup(ApplicationStatus.INTERVIEW_SCHEDULED).label,
+  },
+  {
+    value: ApplicationStatus.ACCEPTED,
+    label: mapStatusToGroup(ApplicationStatus.ACCEPTED).label,
+  },
+  {
+    value: ApplicationStatus.DECLINED,
+    label: mapStatusToGroup(ApplicationStatus.DECLINED).label,
+  },
 ];
 
 interface StatusFilterPillsProps {
@@ -45,7 +57,11 @@ const StatusFilterPills = ({ selected, onChange }: StatusFilterPillsProps) => {
             : selected.includes(value);
 
         return (
-          <Styled.Pill key={value} $active={isActive} onClick={() => handleClick(value)}>
+          <Styled.Pill
+            key={value}
+            $active={isActive}
+            onClick={() => handleClick(value)}
+          >
             {label}
           </Styled.Pill>
         );

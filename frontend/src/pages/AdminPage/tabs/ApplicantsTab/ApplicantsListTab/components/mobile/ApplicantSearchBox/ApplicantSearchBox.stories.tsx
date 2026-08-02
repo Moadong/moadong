@@ -3,7 +3,8 @@ import type { Meta, StoryObj } from '@storybook/react';
 import ApplicantSearchBox from './ApplicantSearchBox';
 
 const meta = {
-  title: 'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantSearchBox',
+  title:
+    'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantSearchBox',
   component: ApplicantSearchBox,
   parameters: { layout: 'centered' },
   decorators: [
@@ -33,7 +34,9 @@ export const WithValue: Story = {
   render: (args) => <Interactive {...args} />,
 };
 
-const FocusedInteractive = (args: React.ComponentProps<typeof ApplicantSearchBox>) => {
+const FocusedInteractive = (
+  args: React.ComponentProps<typeof ApplicantSearchBox>,
+) => {
   const [value, setValue] = useState(args.value);
   const ref = useRef<HTMLDivElement>(null);
 

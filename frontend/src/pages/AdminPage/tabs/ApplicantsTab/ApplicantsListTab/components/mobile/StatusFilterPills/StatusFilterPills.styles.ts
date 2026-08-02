@@ -19,7 +19,9 @@ export const Pill = styled.button<{ $active: boolean }>`
   border-radius: 100px;
   border: none;
   cursor: pointer;
-  transition: background 0.15s, color 0.15s;
+  transition:
+    background 0.15s,
+    color 0.15s;
 
   ${({ $active }) =>
     $active

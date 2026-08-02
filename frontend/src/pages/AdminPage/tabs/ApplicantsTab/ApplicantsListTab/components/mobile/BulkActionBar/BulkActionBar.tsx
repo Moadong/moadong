@@ -10,7 +10,11 @@ interface BulkActionBarProps {
   onDelete: () => void;
 }
 
-const BulkActionBar = ({ enabled, onStatusChange, onDelete }: BulkActionBarProps) => {
+const BulkActionBar = ({
+  enabled,
+  onStatusChange,
+  onDelete,
+}: BulkActionBarProps) => {
   const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
 
   const handleStatusButtonClick = () => {
@@ -26,7 +30,10 @@ const BulkActionBar = ({ enabled, onStatusChange, onDelete }: BulkActionBarProps
   return (
     <Styled.Container>
       <Styled.StatusButtonWrapper>
-        <Styled.StatusButton $enabled={enabled} onClick={handleStatusButtonClick}>
+        <Styled.StatusButton
+          $enabled={enabled}
+          onClick={handleStatusButtonClick}
+        >
           <span>상태변경</span>
           <Styled.TriangleIcon $enabled={enabled} />
         </Styled.StatusButton>
@@ -44,7 +51,10 @@ const BulkActionBar = ({ enabled, onStatusChange, onDelete }: BulkActionBarProps
         )}
       </Styled.StatusButtonWrapper>
 
-      <Styled.DeleteButton $enabled={enabled} onClick={enabled ? onDelete : undefined}>
+      <Styled.DeleteButton
+        $enabled={enabled}
+        onClick={enabled ? onDelete : undefined}
+      >
         삭제
       </Styled.DeleteButton>
     </Styled.Container>

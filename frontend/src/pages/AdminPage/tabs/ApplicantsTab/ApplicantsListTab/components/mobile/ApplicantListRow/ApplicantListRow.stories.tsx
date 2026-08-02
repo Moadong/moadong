@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import { asApplicantId, asApplicationFormId } from '@/types/branded';
 import { ApplicationStatus } from '@/types/applicants';
+import { asApplicantId, asApplicationFormId } from '@/types/branded';
 import ApplicantListRow from './ApplicantListRow';
 
 const mockApplicant = {
@@ -14,7 +14,8 @@ const mockApplicant = {
 };
 
 const meta = {
-  title: 'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantListRow',
+  title:
+    'Pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantListRow',
   component: ApplicantListRow,
   parameters: { layout: 'centered' },
   decorators: [
@@ -29,7 +30,9 @@ const meta = {
 export default meta;
 type Story = StoryObj<typeof meta>;
 
-const InteractiveRow = (args: React.ComponentProps<typeof ApplicantListRow>) => {
+const InteractiveRow = (
+  args: React.ComponentProps<typeof ApplicantListRow>,
+) => {
   const [checked, setChecked] = useState(args.isChecked);
   return (
     <ApplicantListRow
