@@ -5,54 +5,65 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const Card = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
-  padding: 16px;
+  align-items: flex-start;
+  padding: 16px 18px;
+  gap: 10px;
   border-radius: 14px;
-  border: 1px solid ${colors.gray[300]};
-  background: ${colors.base.white};
+  border: 1px solid ${colors.gray[200]};
+  background: ${colors.gray[50]};
+  box-sizing: border-box;
+  width: 100%;
 `;
 
-export const Header = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-`;
-
-export const QuestionMeta = styled.div`
+export const QuestionRow = styled.div`
   display: flex;
   flex-direction: row;
   align-items: center;
-  gap: 2px;
+  gap: 6px;
+  width: 100%;
+  height: 24px;
 `;
 
 export const QuestionIndex = styled.span`
-  ${setTypography(typography.button.button2)}
+  ${setTypography(typography.title.title6)}
   color: ${colors.primary[800]};
+  flex-shrink: 0;
+`;
+
+export const QuestionTitle = styled.span`
+  ${setTypography(typography.title.title6)}
+  color: ${colors.gray[900]};
 `;
 
 export const Required = styled.span`
-  ${setTypography(typography.button.button2)}
-  color: ${colors.primary[800]};
+  font-size: ${typography.title.title5.size};
+  font-weight: ${typography.title.title5.weight};
+  line-height: ${typography.title.title5.lineHeight};
+  color: ${colors.primary[900]};
+  flex-shrink: 0;
 `;
 
-export const QuestionTitle = styled.p`
-  ${setTypography(typography.paragraph.p2)}
-  color: ${colors.base.black};
-`;
-
-export const QuestionDescription = styled.p`
-  ${setTypography(typography.paragraph.p6)}
-  color: ${colors.gray[600]};
-`;
-
-export const AnswerSection = styled.div`
+export const TextAnswerBox = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 12px 14px;
+  gap: 10px;
+  width: 100%;
+  background: ${colors.base.white};
+  border: 1px solid ${colors.gray[100]};
+  border-radius: 10px;
+  box-sizing: border-box;
 `;
 
 export const TextAnswer = styled.p<{ $isEmpty: boolean }>`
-  ${setTypography(typography.paragraph.p5)}
-  color: ${({ $isEmpty }) => ($isEmpty ? colors.gray[400] : colors.gray[800])};
+  flex: 1;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 160%;
+  letter-spacing: -0.02em;
+  color: ${({ $isEmpty }) => ($isEmpty ? colors.gray[400] : colors.base.black)};
   white-space: pre-wrap;
   word-break: break-word;
 `;
@@ -61,32 +72,36 @@ export const ChoiceList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
+  width: 100%;
 `;
 
 export const ChoiceItem = styled.div<{ $isSelected: boolean }>`
   display: flex;
   flex-direction: row;
+  justify-content: center;
   align-items: center;
+  padding: 12px 14px;
   gap: 8px;
-  padding: 10px 12px;
+  width: 100%;
+  height: 46px;
   border-radius: 10px;
+  border: 1px solid
+    ${({ $isSelected }) =>
+      $isSelected ? colors.primary[700] : colors.gray[100]};
   background: ${({ $isSelected }) =>
-    $isSelected ? colors.primary[500] : colors.gray[100]};
+    $isSelected ? colors.primary[500] : colors.base.white};
+  box-sizing: border-box;
 `;
 
-export const ChoiceIndicator = styled.div<{
-  $isSelected: boolean;
-  $isMulti: boolean;
-}>`
+export const ChoiceIndicator = styled.div<{ $isSelected: boolean }>`
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
-  border-radius: ${({ $isMulti }) => ($isMulti ? '4px' : '50%')};
-  border: 2px solid
-    ${({ $isSelected }) =>
-      $isSelected ? colors.primary[800] : colors.gray[400]};
+  width: 18px;
+  height: 18px;
+  border-radius: 100px;
   background: ${({ $isSelected }) =>
-    $isSelected ? colors.primary[800] : 'transparent'};
+    $isSelected ? colors.primary[700] : 'transparent'};
+  border: ${({ $isSelected }) =>
+    $isSelected ? 'none' : `1.5px solid ${colors.gray[400]}`};
   position: relative;
 
   ${({ $isSelected }) =>
@@ -95,19 +110,22 @@ export const ChoiceIndicator = styled.div<{
     &::after {
       content: '';
       position: absolute;
+      width: 6.5px;
+      height: 4.5px;
+      border-left: 1.5px solid #ffffff;
+      border-bottom: 1.5px solid #ffffff;
       top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
-      width: 6px;
-      height: 6px;
-      border-radius: 50%;
-      background: white;
+      transform: translate(-50%, -65%) rotate(-45deg);
     }
   `}
 `;
 
-export const ChoiceLabel = styled.span<{ $isSelected: boolean }>`
-  ${setTypography(typography.paragraph.p5)}
-  color: ${({ $isSelected }) =>
-    $isSelected ? colors.primary[900] : colors.gray[700]};
+export const ChoiceLabel = styled.span`
+  flex: 1;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 160%;
+  letter-spacing: -0.02em;
+  color: ${colors.base.black};
 `;

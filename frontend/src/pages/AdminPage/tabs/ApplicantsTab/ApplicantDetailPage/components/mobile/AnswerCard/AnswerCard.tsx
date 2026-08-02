@@ -19,43 +19,31 @@ const AnswerCard = ({ index, question, answers }: AnswerCardProps) => {
 
   return (
     <Styled.Card>
-      <Styled.Header>
-        <Styled.QuestionMeta>
-          <Styled.QuestionIndex>Q{index}</Styled.QuestionIndex>
-          {question.options.required && <Styled.Required>*</Styled.Required>}
-        </Styled.QuestionMeta>
+      <Styled.QuestionRow>
+        <Styled.QuestionIndex>{index}.</Styled.QuestionIndex>
         <Styled.QuestionTitle>{question.title}</Styled.QuestionTitle>
-        {question.description && (
-          <Styled.QuestionDescription>
-            {question.description}
-          </Styled.QuestionDescription>
-        )}
-      </Styled.Header>
+        {question.options.required && <Styled.Required>*</Styled.Required>}
+      </Styled.QuestionRow>
 
-      <Styled.AnswerSection>
-        {isChoiceType(question.type) ? (
-          <Styled.ChoiceList>
-            {question.items.map(({ value }) => {
-              const isSelected = answers.includes(value);
-              return (
-                <Styled.ChoiceItem key={value} $isSelected={isSelected}>
-                  <Styled.ChoiceIndicator
-                    $isSelected={isSelected}
-                    $isMulti={question.type === 'MULTI_CHOICE'}
-                  />
-                  <Styled.ChoiceLabel $isSelected={isSelected}>
-                    {value}
-                  </Styled.ChoiceLabel>
-                </Styled.ChoiceItem>
-              );
-            })}
-          </Styled.ChoiceList>
-        ) : (
+      {isChoiceType(question.type) ? (
+        <Styled.ChoiceList>
+          {question.items.map(({ value }) => {
+            const isSelected = answers.includes(value);
+            return (
+              <Styled.ChoiceItem key={value} $isSelected={isSelected}>
+                <Styled.ChoiceIndicator $isSelected={isSelected} />
+                <Styled.ChoiceLabel>{value}</Styled.ChoiceLabel>
+              </Styled.ChoiceItem>
+            );
+          })}
+        </Styled.ChoiceList>
+      ) : (
+        <Styled.TextAnswerBox>
           <Styled.TextAnswer $isEmpty={!hasAnswer}>
             {hasAnswer ? answerText : '답변 없음'}
           </Styled.TextAnswer>
-        )}
-      </Styled.AnswerSection>
+        </Styled.TextAnswerBox>
+      )}
     </Styled.Card>
   );
 };
