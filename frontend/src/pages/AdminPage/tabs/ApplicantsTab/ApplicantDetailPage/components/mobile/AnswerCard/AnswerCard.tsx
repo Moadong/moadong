@@ -31,7 +31,7 @@ const AnswerCard = ({ index, question, answers }: AnswerCardProps) => {
             const isSelected = answers.includes(value);
             return (
               <Styled.ChoiceItem key={value} $isSelected={isSelected}>
-                <Styled.ChoiceIndicator $isSelected={isSelected} />
+                {isSelected && <Styled.CheckIcon />}
                 <Styled.ChoiceLabel>{value}</Styled.ChoiceLabel>
               </Styled.ChoiceItem>
             );

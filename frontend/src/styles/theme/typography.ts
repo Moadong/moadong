@@ -16,6 +16,7 @@ export const typography = {
     p4: { size: '16px', weight: 400, lineHeight: '140%' },
     p5: { size: '14px', weight: 500, lineHeight: '140%' },
     p6: { size: '14px', weight: 400, lineHeight: '140%' },
+    p6r: { size: '14px', weight: 400, lineHeight: '160%'},
     p7: { size: '12px', weight: 400, lineHeight: '140%' },
   },
   button: {

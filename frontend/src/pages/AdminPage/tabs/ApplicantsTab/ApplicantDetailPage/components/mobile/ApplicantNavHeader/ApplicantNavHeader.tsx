@@ -57,7 +57,7 @@ const ApplicantNavHeader = ({
         disabled={!hasPrev}
         aria-label='이전 지원자'
       >
-        <Styled.PrevIcon />
+        <Styled.PrevIcon $disabled={!hasPrev} />
       </Styled.NavButton>
 
       <Styled.Center onClick={() => setIsOpen((prev) => !prev)}>
@@ -73,7 +73,7 @@ const ApplicantNavHeader = ({
         disabled={!hasNext}
         aria-label='다음 지원자'
       >
-        <Styled.NextIcon />
+        <Styled.NextIcon $disabled={!hasNext} />
       </Styled.NavButton>
 
       {isOpen && (

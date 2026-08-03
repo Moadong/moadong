@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import CheckCircleIcon from '@/assets/images/icons/check_circle_icon.svg?react';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
@@ -59,9 +60,7 @@ export const TextAnswerBox = styled.div`
 
 export const TextAnswer = styled.p<{ $isEmpty: boolean }>`
   flex: 1;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 160%;
+  ${setTypography(typography.paragraph.p6r)}
   letter-spacing: -0.02em;
   color: ${({ $isEmpty }) => ($isEmpty ? colors.gray[400] : colors.base.black)};
   white-space: pre-wrap;
@@ -93,39 +92,16 @@ export const ChoiceItem = styled.div<{ $isSelected: boolean }>`
   box-sizing: border-box;
 `;
 
-export const ChoiceIndicator = styled.div<{ $isSelected: boolean }>`
+export const CheckIcon = styled(CheckCircleIcon)`
   flex-shrink: 0;
   width: 18px;
   height: 18px;
-  border-radius: 100px;
-  background: ${({ $isSelected }) =>
-    $isSelected ? colors.primary[700] : 'transparent'};
-  border: ${({ $isSelected }) =>
-    $isSelected ? 'none' : `1.5px solid ${colors.gray[400]}`};
-  position: relative;
-
-  ${({ $isSelected }) =>
-    $isSelected &&
-    `
-    &::after {
-      content: '';
-      position: absolute;
-      width: 6.5px;
-      height: 4.5px;
-      border-left: 1.5px solid #ffffff;
-      border-bottom: 1.5px solid #ffffff;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -65%) rotate(-45deg);
-    }
-  `}
+  color: ${colors.primary[700]};
 `;
 
 export const ChoiceLabel = styled.span`
   flex: 1;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 160%;
+  ${setTypography(typography.paragraph.p6r)}
   letter-spacing: -0.02em;
   color: ${colors.base.black};
 `;

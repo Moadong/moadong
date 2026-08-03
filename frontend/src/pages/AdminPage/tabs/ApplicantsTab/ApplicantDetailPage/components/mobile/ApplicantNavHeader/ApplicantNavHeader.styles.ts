@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import NextApplicant from '@/assets/images/icons/next_applicant.svg?react';
+import MoreArrowIcon from '@/assets/images/icons/more_arraw_icon.svg?react';
 import PrevApplicant from '@/assets/images/icons/prev_applicant.svg?react';
-import TriangleDown from '@/assets/images/icons/triangle_down.svg?react';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
@@ -34,21 +34,31 @@ export const NavButton = styled.button`
   cursor: pointer;
 
   &:disabled {
-    opacity: 0.3;
     cursor: default;
   }
 `;
 
-export const PrevIcon = styled(PrevApplicant)`
+const navIconBase = `
   width: 24px;
   height: 24px;
   flex-shrink: 0;
+
+  & circle {
+    display: none;
+  }
+  & path {
+    stroke: currentColor;
+  }
 `;
 
-export const NextIcon = styled(NextApplicant)`
-  width: 24px;
-  height: 24px;
-  flex-shrink: 0;
+export const PrevIcon = styled(PrevApplicant)<{ $disabled: boolean }>`
+  ${navIconBase}
+  color: ${({ $disabled }) => ($disabled ? colors.gray[500] : colors.gray[800])};
+`;
+
+export const NextIcon = styled(NextApplicant)<{ $disabled: boolean }>`
+  ${navIconBase}
+  color: ${({ $disabled }) => ($disabled ? colors.gray[500] : colors.gray[800])};
 `;
 
 export const Center = styled.div`
@@ -68,11 +78,11 @@ export const ApplicantName = styled.span`
   max-width: 160px;
 `;
 
-export const ChevronIcon = styled(TriangleDown)<{ $isOpen: boolean }>`
+export const ChevronIcon = styled(MoreArrowIcon)<{ $isOpen: boolean }>`
   flex-shrink: 0;
-  width: 8px;
+  width: 11px;
   height: 6px;
-  color: ${colors.gray[600]};
+  color: ${colors.primary[800]};
   transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition: transform 0.15s ease;
 `;
