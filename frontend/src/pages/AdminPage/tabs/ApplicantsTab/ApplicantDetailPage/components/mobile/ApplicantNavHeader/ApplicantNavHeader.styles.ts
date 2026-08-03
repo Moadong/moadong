@@ -83,6 +83,7 @@ export const ChevronIcon = styled(MoreArrowIcon)<{ $isOpen: boolean }>`
   width: 11px;
   height: 6px;
   color: ${({ $isOpen }) => ($isOpen ? colors.primary[800] : colors.gray[600])};
+  transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition: color 0.15s ease;
 `;
 
