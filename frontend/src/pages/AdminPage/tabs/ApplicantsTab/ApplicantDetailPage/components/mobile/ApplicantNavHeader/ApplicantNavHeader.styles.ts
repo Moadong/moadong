@@ -82,9 +82,9 @@ export const ChevronIcon = styled(MoreArrowIcon)<{ $isOpen: boolean }>`
   flex-shrink: 0;
   width: 11px;
   height: 6px;
-  color: ${colors.primary[800]};
+  color: ${({ $isOpen }) => ($isOpen ? colors.primary[800] : colors.gray[600])};
   transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
-  transition: transform 0.15s ease;
+  transition: transform 0.15s ease, color 0.15s ease;
 `;
 
 export const Dropdown = styled.div<{ $hasScroll: boolean }>`
