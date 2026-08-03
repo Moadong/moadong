@@ -13,8 +13,8 @@ import moadong.club.entity.Club;
 import moadong.club.entity.ClubApplicationForm;
 import moadong.club.payload.dto.ClubApplicationFormsResultItem;
 import moadong.club.payload.request.ClubApplicationFormEditRequest;
-import moadong.club.payload.response.ClubApplicationFormsResponse;
 import moadong.club.repository.ClubApplicationFormsRepository;
+import moadong.club.repository.ClubApplicationFormsRepositoryCustom;
 import moadong.club.repository.ClubRepository;
 import moadong.fixture.ClubApplicationEditFixture;
 import moadong.fixture.UserFixture;
@@ -40,6 +40,8 @@ public class ClubApplyAdminServiceTest {
     private ClubRepository clubRepository;
     @Autowired
     private ClubApplicationFormsRepository clubApplicationFormsRepository;
+    @Autowired
+    private ClubApplicationFormsRepositoryCustom clubApplicationFormsRepositoryCustom;
     @Autowired
     private PasswordEncoder passwordEncoder;
 
@@ -140,16 +142,16 @@ public class ClubApplyAdminServiceTest {
 
         try {
             // WHEN
-            ClubApplicationFormsResponse response = clubApplyAdminService.getClubApplicationForms(userDetails);
-
-            // THEN
-            ClubApplicationFormsResultItem item = response.forms().stream()
+            // 서비스는 userDetails.clubId로 조회하는데 픽스처가 User.clubId를 채우지 않으므로 레포지토리를 직접 호출한다
+            ClubApplicationFormsResultItem item = clubApplicationFormsRepositoryCustom
+                    .findClubApplicationFormsByClubId(clubId).stream()
                     .filter(group -> semesterYear.equals(group.semesterYear()))
                     .flatMap(group -> group.forms().stream())
                     .filter(form -> savedForm.getId().equals(form.id()))
                     .findFirst()
                     .orElseThrow(() -> new AssertionError("저장한 지원서가 조회 결과에 포함되어야 합니다."));
 
+            // THEN
             assertEquals(createdAt, item.createdAt(), "createdAt이 저장한 값 그대로 내려와야 합니다.");
             assertEquals(editedAt, item.editedAt(), "editedAt이 저장한 값 그대로 내려와야 합니다.");
         } finally {
