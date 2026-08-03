@@ -2,6 +2,7 @@ package moadong.club.service;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+import java.time.LocalDateTime;
 import java.util.concurrent.BrokenBarrierException;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.CyclicBarrier;
@@ -10,7 +11,9 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 import moadong.club.entity.Club;
 import moadong.club.entity.ClubApplicationForm;
+import moadong.club.payload.dto.ClubApplicationFormsResultItem;
 import moadong.club.payload.request.ClubApplicationFormEditRequest;
+import moadong.club.payload.response.ClubApplicationFormsResponse;
 import moadong.club.repository.ClubApplicationFormsRepository;
 import moadong.club.repository.ClubRepository;
 import moadong.fixture.ClubApplicationEditFixture;
@@ -117,6 +120,42 @@ public class ClubApplyAdminServiceTest {
 //        );
 //        assertEquals(expected, items);
 //    }
+
+    @Test
+    @DisplayName("지원서 목록 조회 시 각 지원서 항목에 createdAt이 함께 내려와야 한다")
+    void getClubApplicationFormsIncludesCreatedAt() {
+        // GIVEN: createdAt과 editedAt을 서로 다른 값으로 지정해 두 필드가 뒤바뀌지 않았는지 구분할 수 있게 한다
+        LocalDateTime createdAt = LocalDateTime.of(2024, 3, 1, 10, 0, 0);
+        LocalDateTime editedAt = LocalDateTime.of(2025, 5, 5, 12, 0, 0);
+        Integer semesterYear = 2024;
+
+        ClubApplicationForm savedForm = clubApplicationFormsRepository.save(
+                ClubApplicationForm.builder()
+                        .clubId(clubId)
+                        .title("createdAt 검증용 지원서")
+                        .createdAt(createdAt)
+                        .editedAt(editedAt)
+                        .semesterYear(semesterYear)
+                        .build());
+
+        try {
+            // WHEN
+            ClubApplicationFormsResponse response = clubApplyAdminService.getClubApplicationForms(userDetails);
+
+            // THEN
+            ClubApplicationFormsResultItem item = response.forms().stream()
+                    .filter(group -> semesterYear.equals(group.semesterYear()))
+                    .flatMap(group -> group.forms().stream())
+                    .filter(form -> savedForm.getId().equals(form.id()))
+                    .findFirst()
+                    .orElseThrow(() -> new AssertionError("저장한 지원서가 조회 결과에 포함되어야 합니다."));
+
+            assertEquals(createdAt, item.createdAt(), "createdAt이 저장한 값 그대로 내려와야 합니다.");
+            assertEquals(editedAt, item.editedAt(), "editedAt이 저장한 값 그대로 내려와야 합니다.");
+        } finally {
+            clubApplicationFormsRepository.deleteById(savedForm.getId());
+        }
+    }
 
     @Test
     @DisplayName("DB에 이미 존재하는 문서에 대해 동시 수정 시, 한 스레드만 성공하고 나머지는 실패해야 한다")
