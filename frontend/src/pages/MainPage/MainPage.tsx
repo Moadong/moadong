@@ -76,7 +76,11 @@ const MainPage = () => {
           <SubscribeButton
             subscribed={subscribedClubIds.has(club.id)}
             onToggle={() =>
-              toggleSubscribe(club.id, subscribedClubIds.has(club.id))
+              toggleSubscribe(
+                club.id,
+                subscribedClubIds.has(club.id),
+                PAGE_NAME.WEBVIEW_MAIN,
+              )
             }
           />
         )}
