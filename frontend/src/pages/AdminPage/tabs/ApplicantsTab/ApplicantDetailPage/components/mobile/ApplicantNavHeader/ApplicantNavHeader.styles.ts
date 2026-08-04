@@ -88,12 +88,16 @@ export const ChevronWrapper = styled.div`
 `;
 
 export const ChevronIcon = styled(MoreArrowIcon)<{ $isOpen: boolean }>`
-  flex-shrink: 0;
-  width: 11px;
+  width: 10px;
   height: 6px;
+  overflow: visible;
   color: ${({ $isOpen }) => ($isOpen ? colors.primary[800] : colors.gray[600])};
   transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
   transition: color 0.15s ease;
+
+  & path {
+    stroke-width: 1.5;
+  }
 `;
 
 export const Dropdown = styled.div<{ $hasScroll: boolean }>`
