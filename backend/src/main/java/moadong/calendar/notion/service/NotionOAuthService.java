@@ -463,9 +463,10 @@ public class NotionOAuthService {
     public void deleteConnection(CustomUserDetails user) {
         String userId = requireAuthenticatedUserId(user);
         String clubId = requireAuthenticatedClubId(user);
-        notionConnectionRepository.deleteById(clubId);
         // userId를 _id로 저장하던 레거시 문서가 남아 있으면 재연동된 것으로 복구되므로 함께 삭제한다.
+        // clubId 문서를 먼저 지우면 그 사이 조회가 레거시 문서를 clubId 문서로 다시 마이그레이션하므로 레거시부터 삭제한다.
         notionConnectionRepository.deleteById(userId);
+        notionConnectionRepository.deleteById(clubId);
     }
 
     private String requireAuthenticatedUserId(CustomUserDetails user) {

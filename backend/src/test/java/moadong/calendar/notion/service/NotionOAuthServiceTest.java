@@ -1,6 +1,6 @@
 package moadong.calendar.notion.service;
 
-import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.inOrder;
 import static org.mockito.Mockito.when;
 
 import java.util.Optional;
@@ -15,6 +15,7 @@ import moadong.util.annotations.UnitTest;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InOrder;
 import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.web.client.RestTemplate;
@@ -49,8 +50,8 @@ class NotionOAuthServiceTest {
     }
 
     @Test
-    @DisplayName("연결 해제 시 clubId 문서와 userId 기반 레거시 문서를 모두 삭제한다")
-    void deleteConnection_deletesClubAndLegacyDocuments() {
+    @DisplayName("연결 해제 시 레거시 문서를 먼저 삭제한 뒤 clubId 문서를 삭제한다")
+    void deleteConnection_deletesLegacyDocumentBeforeClubDocument() {
         CustomUserDetails user = UserFixture.createUserDetails(USER_ID);
         Club club = Club.builder().userId(USER_ID).build();
         ReflectionTestUtils.setField(club, "id", CLUB_ID);
@@ -58,7 +59,9 @@ class NotionOAuthServiceTest {
 
         notionOAuthService.deleteConnection(user);
 
-        verify(notionConnectionRepository).deleteById(CLUB_ID);
-        verify(notionConnectionRepository).deleteById(USER_ID);
+        // clubId 문서를 먼저 지우면 그 사이 조회가 레거시 문서를 다시 마이그레이션하므로 순서를 고정한다.
+        InOrder inOrder = inOrder(notionConnectionRepository);
+        inOrder.verify(notionConnectionRepository).deleteById(USER_ID);
+        inOrder.verify(notionConnectionRepository).deleteById(CLUB_ID);
     }
 }
