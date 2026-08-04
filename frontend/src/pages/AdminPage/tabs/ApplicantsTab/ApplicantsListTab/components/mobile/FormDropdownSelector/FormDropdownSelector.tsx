@@ -20,6 +20,7 @@ const FormDropdownSelector = ({
   const [thumbOffset, setThumbOffset] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
 
+  const isEmpty = forms.length === 0;
   const selectedForm = forms.find((f) => f.id === selectedFormId);
   const isFixed = forms.length >= 3;
   const hasScroll = forms.length > 3;
@@ -42,9 +43,10 @@ const FormDropdownSelector = ({
       <Styled.Trigger
         $isOpen={isOpen}
         onClick={() => setIsOpen((prev) => !prev)}
+        disabled={isEmpty}
       >
         <Styled.TriggerLabel>
-          {selectedForm?.title ?? '지원서 선택'}
+          {isEmpty ? '등록된 지원서 없음' : (selectedForm?.title ?? '지원서 선택')}
         </Styled.TriggerLabel>
         <Styled.ChevronIcon />
       </Styled.Trigger>
