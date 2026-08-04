@@ -10,6 +10,7 @@ import type {
   RecurrenceFrequency,
 } from '@/types/club';
 import { dateFromKey, formatMonthLabel } from '@/utils/calendarSyncUtils';
+import CalendarLinkPanel from '../CalendarLinkPanel/CalendarLinkPanel';
 import ColorBar from '../ColorBar/ColorBar';
 import DatePickerSheet from '../DatePickerSheet/DatePickerSheet';
 import MiniCalendar from '../MiniCalendar/MiniCalendar';
@@ -209,15 +210,19 @@ const AddEventSheet = ({
 
         <ColorBar value={color} onChange={setColor} />
 
+        {eventType === 'SINGLE' && <CalendarLinkPanel />}
+
         {errorMessage && <Styled.ErrorText>{errorMessage}</Styled.ErrorText>}
 
-        <Styled.SaveButton
-          type='button'
-          disabled={!canSave || createMutation.isPending}
-          onClick={handleSave}
-        >
-          {createMutation.isPending ? '저장 중…' : '저장하기'}
-        </Styled.SaveButton>
+        <Styled.SaveArea>
+          <Styled.SaveButton
+            type='button'
+            disabled={!canSave || createMutation.isPending}
+            onClick={handleSave}
+          >
+            {createMutation.isPending ? '저장 중…' : '저장하기'}
+          </Styled.SaveButton>
+        </Styled.SaveArea>
       </Styled.Body>
 
       <DatePickerSheet

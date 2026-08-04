@@ -10,6 +10,12 @@ jest.mock('@/hooks/Queries/useCustomCalendarEvents', () => ({
   }),
 }));
 
+// 연동 패널도 같은 apis 체인을 타므로 통째로 대체한다 (반복 탭 검증과 무관)
+jest.mock('../CalendarLinkPanel/CalendarLinkPanel', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 /** 시트가 Portal로 그려지고, 닫힐 때 부르는 scrollTo는 jsdom에 없다 */
 window.scrollTo = jest.fn();
 

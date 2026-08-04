@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   useApplyNotionDatabase,
+  useDisconnectNotionCalendar,
   useGetNotionDatabases,
   useGetNotionPages,
 } from '@/hooks/Queries/useNotionCalendar';
@@ -20,6 +21,7 @@ export const useNotionCalendarData = ({
   const databasesQuery = useGetNotionDatabases();
   const pagesQuery = useGetNotionPages();
   const applyMutation = useApplyNotionDatabase();
+  const disconnectMutation = useDisconnectNotionCalendar();
 
   const notionDatabaseOptions = databasesQuery.data ?? [];
   const notionItems = pagesQuery.data?.items ?? [];
@@ -45,6 +47,14 @@ export const useNotionCalendarData = ({
     });
   };
 
+  const disconnectNotion = () => {
+    clearError();
+    disconnectMutation.mutate(undefined, {
+      onSuccess: () => setPickedDatabaseId(''),
+      onError: (error: Error) => onError(error.message),
+    });
+  };
+
   return {
     notionItems,
     notionTotalResults,
@@ -52,6 +62,8 @@ export const useNotionCalendarData = ({
     notionDatabaseOptions,
     selectedNotionDatabaseId,
     setSelectedNotionDatabaseId: setPickedDatabaseId,
+    isNotionDisconnecting: disconnectMutation.isPending,
+    disconnectNotion,
     // 캐시가 있으면 로딩으로 보지 않는다 (탭 재진입 시 깜빡임 방지)
     isNotionLoading: pagesQuery.isLoading,
     isNotionDatabaseApplying: applyMutation.isPending,

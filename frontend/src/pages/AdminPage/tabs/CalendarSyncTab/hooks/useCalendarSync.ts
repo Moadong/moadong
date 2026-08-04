@@ -90,13 +90,15 @@ export const useCalendarSync = () => {
     isNotionLoading:
       notionData.isNotionLoading ||
       notionOAuth.isNotionOAuthLoading ||
-      notionData.isNotionDatabaseApplying,
+      notionData.isNotionDatabaseApplying ||
+      notionData.isNotionDisconnecting,
     notionWorkspaceName,
     notionCalendarEvents,
     startGoogleOAuth: googleData.startGoogleOAuth,
     selectGoogleCalendar: googleData.selectCalendar,
     disconnectGoogle: googleData.disconnectGoogle,
     startNotionOAuth: notionOAuth.startNotionOAuth,
+    disconnectNotion: notionData.disconnectNotion,
     applySelectedNotionDatabase: notionData.applySelectedNotionDatabase,
   };
 };
