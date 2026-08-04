@@ -78,6 +78,15 @@ export const ApplicantName = styled.span`
   max-width: 160px;
 `;
 
+export const ChevronWrapper = styled.div`
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+`;
+
 export const ChevronIcon = styled(MoreArrowIcon)<{ $isOpen: boolean }>`
   flex-shrink: 0;
   width: 11px;
@@ -97,25 +106,23 @@ export const Dropdown = styled.div<{ $hasScroll: boolean }>`
   align-items: flex-start;
   gap: ${({ $hasScroll }) => ($hasScroll ? '4px' : '0')};
   padding: 6px;
+  height: ${({ $hasScroll }) => ($hasScroll ? '158px' : 'auto')};
   background: ${colors.base.white};
   border: 1px solid ${colors.gray[300]};
   box-shadow: 0px 0px 8px rgba(0, 0, 0, 0.1);
   border-radius: 10px;
   z-index: 10;
-  min-width: 102px;
+  min-width: ${({ $hasScroll }) => ($hasScroll ? '102px' : 'auto')};
+  box-sizing: border-box;
 `;
 
-export const DropdownList = styled.div<{
-  $hasScroll: boolean;
-  $maxHeight: number;
-}>`
-  flex: 1;
-  min-width: 0;
+export const DropdownList = styled.div<{ $hasScroll: boolean }>`
+  width: 80px;
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  max-height: ${({ $hasScroll, $maxHeight }) =>
-    $hasScroll ? `${$maxHeight}px` : 'none'};
+  height: ${({ $hasScroll }) => ($hasScroll ? '146px' : 'auto')};
   overflow-y: ${({ $hasScroll }) => ($hasScroll ? 'auto' : 'visible')};
 
   &::-webkit-scrollbar {
@@ -124,13 +131,12 @@ export const DropdownList = styled.div<{
 `;
 
 export const DropdownItem = styled.div<{ $isSelected: boolean }>`
-  display: flex;
-  flex-direction: row;
-  justify-content: center;
-  align-items: center;
-  padding: 10px 0;
+  display: block;
+  text-align: center;
+  padding: 10px 8px;
   height: 40px;
   flex-shrink: 0;
+  box-sizing: border-box;
   border-radius: ${({ $isSelected }) => ($isSelected ? '6px' : '8px')};
   background: ${({ $isSelected }) =>
     $isSelected ? colors.gray[100] : 'transparent'};
@@ -139,17 +145,17 @@ export const DropdownItem = styled.div<{ $isSelected: boolean }>`
     $isSelected ? colors.base.black : colors.gray[600]};
   cursor: pointer;
   white-space: nowrap;
-  padding-left: 8px;
-  padding-right: 8px;
+  overflow: hidden;
+  text-overflow: ellipsis;
 
   &:active {
     background: ${colors.gray[100]};
   }
 `;
 
-export const ScrollbarTrack = styled.div<{ $height: number }>`
+export const ScrollbarTrack = styled.div`
   width: 6px;
-  height: ${({ $height }) => $height}px;
+  height: 146px;
   flex-shrink: 0;
   position: relative;
 `;

@@ -14,8 +14,8 @@ interface ApplicantNavHeaderProps {
   onSelect: (id: string) => void;
 }
 
-const LIST_MAX_HEIGHT = 146;
 const ITEM_HEIGHT = 40;
+const LIST_HEIGHT = 146;
 const THUMB_HEIGHT = 60;
 
 const ApplicantNavHeader = ({
@@ -32,7 +32,7 @@ const ApplicantNavHeader = ({
   const current = applicants[currentIndex];
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex < applicants.length - 1;
-  const hasScroll = applicants.length * ITEM_HEIGHT > LIST_MAX_HEIGHT;
+  const hasScroll = applicants.length * ITEM_HEIGHT > LIST_HEIGHT;
 
   const handleSelect = (id: string) => {
     onSelect(id);
@@ -43,7 +43,7 @@ const ApplicantNavHeader = ({
     if (!listRef.current) return;
     const { scrollTop, scrollHeight, clientHeight } = listRef.current;
     const maxScroll = scrollHeight - clientHeight;
-    const maxOffset = LIST_MAX_HEIGHT - THUMB_HEIGHT;
+    const maxOffset = LIST_HEIGHT - THUMB_HEIGHT;
     setThumbOffset(maxScroll > 0 ? (scrollTop / maxScroll) * maxOffset : 0);
   };
 
@@ -62,7 +62,9 @@ const ApplicantNavHeader = ({
 
       <Styled.Center onClick={() => setIsOpen((prev) => !prev)}>
         <Styled.ApplicantName>{current?.name ?? '-'}</Styled.ApplicantName>
-        <Styled.ChevronIcon $isOpen={isOpen} />
+        <Styled.ChevronWrapper>
+          <Styled.ChevronIcon $isOpen={isOpen} />
+        </Styled.ChevronWrapper>
       </Styled.Center>
 
       <Styled.NavButton
@@ -79,9 +81,8 @@ const ApplicantNavHeader = ({
       {isOpen && (
         <Styled.Dropdown $hasScroll={hasScroll}>
           <Styled.DropdownList
-            ref={listRef}
             $hasScroll={hasScroll}
-            $maxHeight={LIST_MAX_HEIGHT}
+            ref={listRef}
             onScroll={handleScroll}
           >
             {applicants.map((applicant, index) => (
@@ -95,7 +96,7 @@ const ApplicantNavHeader = ({
             ))}
           </Styled.DropdownList>
           {hasScroll && (
-            <Styled.ScrollbarTrack $height={LIST_MAX_HEIGHT}>
+            <Styled.ScrollbarTrack>
               <Styled.ScrollbarThumb $offset={thumbOffset} />
             </Styled.ScrollbarTrack>
           )}
