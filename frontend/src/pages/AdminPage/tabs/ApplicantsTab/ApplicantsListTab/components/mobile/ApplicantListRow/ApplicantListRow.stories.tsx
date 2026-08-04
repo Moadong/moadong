@@ -1,8 +1,8 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import { ApplicationStatus } from '@/types/applicants';
 import { asApplicantId, asApplicationFormId } from '@/types/branded';
-import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import ApplicantListRow from './ApplicantListRow';
 
 const mockApplicant = {

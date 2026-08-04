@@ -1,6 +1,6 @@
 import styled from 'styled-components';
-import NextApplicant from '@/assets/images/icons/next_applicant.svg?react';
 import MoreArrowIcon from '@/assets/images/icons/more_arraw_icon.svg?react';
+import NextApplicant from '@/assets/images/icons/next_applicant.svg?react';
 import PrevApplicant from '@/assets/images/icons/prev_applicant.svg?react';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
@@ -53,12 +53,14 @@ const navIconBase = `
 
 export const PrevIcon = styled(PrevApplicant)<{ $disabled: boolean }>`
   ${navIconBase}
-  color: ${({ $disabled }) => ($disabled ? colors.gray[500] : colors.gray[800])};
+  color: ${({ $disabled }) =>
+    $disabled ? colors.gray[500] : colors.gray[800]};
 `;
 
 export const NextIcon = styled(NextApplicant)<{ $disabled: boolean }>`
   ${navIconBase}
-  color: ${({ $disabled }) => ($disabled ? colors.gray[500] : colors.gray[800])};
+  color: ${({ $disabled }) =>
+    $disabled ? colors.gray[500] : colors.gray[800]};
 `;
 
 export const Center = styled.div`

@@ -8,7 +8,15 @@ const meta = {
   parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
-      <div style={{ width: 375, padding: '0 20px', display: 'flex', flexDirection: 'column', gap: 12 }}>
+      <div
+        style={{
+          width: 375,
+          padding: '0 20px',
+          display: 'flex',
+          flexDirection: 'column',
+          gap: 12,
+        }}
+      >
         <Story />
       </div>
     ),
