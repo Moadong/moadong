@@ -129,7 +129,7 @@ const RecurrenceFields = ({
       <Styled.Row>
         <Styled.RowLabel>종료 날짜</Styled.RowLabel>
         <Styled.RowValueButton type='button' onClick={onOpenEndPicker}>
-          {formatKoreanDateWithWeekday(endDate)}
+          {endDate ? formatKoreanDateWithWeekday(endDate) : '종료 기간 없음'}
           <Styled.Chevron>▼</Styled.Chevron>
         </Styled.RowValueButton>
       </Styled.Row>
