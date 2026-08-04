@@ -37,11 +37,13 @@ export const QuestionTitle = styled.span`
 `;
 
 export const Required = styled.span`
-  font-size: ${typography.title.title5.size};
-  font-weight: ${typography.title.title5.weight};
-  line-height: ${typography.title.title5.lineHeight};
+  ${setTypography(typography.title.title5)}
   color: ${colors.primary[900]};
   flex-shrink: 0;
+  width: 11px;
+  height: 24px;
+  overflow: hidden;
+  margin-bottom: 1px;
 `;
 
 export const TextAnswerBox = styled.div`
