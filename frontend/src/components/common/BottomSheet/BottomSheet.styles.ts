@@ -18,7 +18,11 @@ export const Overlay = styled.div`
   touch-action: none;
 `;
 
-export const Sheet = styled.div<{ $background?: string }>`
+export const Sheet = styled.div<{
+  $background?: string;
+  $dragOffset: number;
+  $animateBack: boolean;
+}>`
   width: 100%;
   max-width: 500px;
   max-height: calc(100dvh - 80px);
@@ -30,6 +34,22 @@ export const Sheet = styled.div<{ $background?: string }>`
   overflow-y: auto;
   animation: ${slideUp} 0.25s ease-out;
   touch-action: pan-y;
+  transform: ${({ $dragOffset }) =>
+    $dragOffset ? `translateY(${$dragOffset}px)` : 'none'};
+  transition: ${({ $animateBack }) =>
+    $animateBack ? 'transform 0.2s ease-out' : 'none'};
+`;
+
+/** 손잡이를 잡고 아래로 끌어 시트를 닫는 영역. 바보다 넓게 잡아야 집기 쉽다. */
+export const DragHandle = styled.div`
+  flex-shrink: 0;
+  padding: 4px 0 16px;
+  cursor: grab;
+  touch-action: none;
+
+  &:active {
+    cursor: grabbing;
+  }
 `;
 
 export const HandleBar = styled.div`
@@ -37,6 +57,5 @@ export const HandleBar = styled.div`
   height: 5px;
   border-radius: 3px;
   background: ${colors.gray[400]};
-  margin: 4px auto 16px;
-  flex-shrink: 0;
+  margin: 0 auto;
 `;
