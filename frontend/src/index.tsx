@@ -19,7 +19,8 @@ if (import.meta.env.DEV) {
 }
 
 async function startApp() {
-  if (import.meta.env.DEV) {
+  // 개발 모드 기본값은 MSW 목이며, .env에 VITE_ENABLE_MSW=false를 두면 실서버로 붙는다
+  if (import.meta.env.DEV && import.meta.env.VITE_ENABLE_MSW !== 'false') {
     const { worker } = await import('./mocks/browser');
     await worker.start({
       onUnhandledRequest: 'bypass',
