@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ApplicationStatus } from '@/types/applicants';
 import { asApplicantId, asApplicationFormId } from '@/types/branded';
+import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import ApplicantListRow from './ApplicantListRow';
 
 const mockApplicant = {
@@ -172,4 +173,39 @@ export const MultipleApplicants: Story = {
     onClick: () => {},
   },
   render: () => <MultipleRowsComponent />,
+};
+
+export const EmptyApplicants: Story = {
+  args: {
+    applicant: mockApplicant,
+    isChecked: false,
+    onCheck: () => {},
+    onClick: () => {},
+  },
+  render: () => (
+    <div
+      style={{
+        width: 375,
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        gap: 10,
+        padding: '32px 0',
+      }}
+    >
+      <span
+        style={{
+          fontFamily: 'Pretendard',
+          fontWeight: 600,
+          fontSize: 16,
+          lineHeight: '140%',
+          letterSpacing: '-0.02em',
+          color: '#3A3A3A',
+        }}
+      >
+        모아동 지원서를 등록해주세요
+      </span>
+      <AddItemButton onClick={() => {}}>모아동 지원서 만들기</AddItemButton>
+    </div>
+  ),
 };
