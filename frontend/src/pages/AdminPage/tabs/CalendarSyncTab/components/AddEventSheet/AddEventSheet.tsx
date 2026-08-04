@@ -212,17 +212,22 @@ const AddEventSheet = ({
 
         {eventType === 'SINGLE' && <CalendarLinkPanel />}
 
-        {errorMessage && <Styled.ErrorText>{errorMessage}</Styled.ErrorText>}
-
-        <Styled.SaveArea>
-          <Styled.SaveButton
-            type='button'
-            disabled={!canSave || createMutation.isPending}
-            onClick={handleSave}
-          >
-            {createMutation.isPending ? '저장 중…' : '저장하기'}
-          </Styled.SaveButton>
-        </Styled.SaveArea>
+        {/* 날짜 시트가 위에 열려 있는 동안에는 저장할 일이 없다 */}
+        {datePickerTarget === null && (
+          <Styled.SaveArea>
+            {/* 실패 안내는 버튼과 같이 고정돼야 스크롤 밖으로 밀리지 않는다 */}
+            {errorMessage && (
+              <Styled.ErrorText>{errorMessage}</Styled.ErrorText>
+            )}
+            <Styled.SaveButton
+              type='button'
+              disabled={!canSave || createMutation.isPending}
+              onClick={handleSave}
+            >
+              {createMutation.isPending ? '저장 중…' : '저장하기'}
+            </Styled.SaveButton>
+          </Styled.SaveArea>
+        )}
       </Styled.Body>
 
       <DatePickerSheet
