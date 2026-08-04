@@ -460,6 +460,14 @@ public class NotionOAuthService {
         }
     }
 
+    public void deleteConnection(CustomUserDetails user) {
+        String userId = requireAuthenticatedUserId(user);
+        String clubId = requireAuthenticatedClubId(user);
+        notionConnectionRepository.deleteById(clubId);
+        // userId를 _id로 저장하던 레거시 문서가 남아 있으면 재연동된 것으로 복구되므로 함께 삭제한다.
+        notionConnectionRepository.deleteById(userId);
+    }
+
     private String requireAuthenticatedUserId(CustomUserDetails user) {
         if (user == null || !StringUtils.hasText(user.getId())) {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
