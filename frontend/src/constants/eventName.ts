@@ -152,4 +152,7 @@ export const PAGE_NAME = {
   WEBVIEW_MAIN: 'webview-main',
   INTRODUCE: 'introduce',
   SUBSCRIPTIONS: 'subscriptions',
+  CLUB_DETAIL: 'club-detail',
 } as const;
+
+export type PageName = (typeof PAGE_NAME)[keyof typeof PAGE_NAME];
