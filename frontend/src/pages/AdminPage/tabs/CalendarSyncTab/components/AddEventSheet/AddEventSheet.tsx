@@ -63,6 +63,18 @@ const AddEventSheet = ({
     'start' | 'end' | null
   >(null);
 
+  /** 어느 유형에서 어떤 날짜를 골랐는지 남긴다 */
+  const trackDateSelected = (dateKey: string) =>
+    trackEvent(ADMIN_EVENT.CALENDAR_EVENT_DATE_SELECTED, {
+      eventType,
+      dateKey,
+    });
+
+  const openDatePicker = (target: 'start' | 'end') => {
+    trackEvent(ADMIN_EVENT.CALENDAR_DATE_PICKER_OPENED, { target });
+    setDatePickerTarget(target);
+  };
+
   const handleRangeSelect = (dateKey: string) => {
     trackDateSelected(dateKey);
     if (!rangeStart || (rangeStart && rangeEnd)) {
@@ -85,18 +97,6 @@ const AddEventSheet = ({
         ? prev.filter((d) => d !== dateKey)
         : [...prev, dateKey].sort(),
     );
-  };
-
-  /** 어느 유형에서 어떤 날짜를 골랐는지 남긴다 */
-  const trackDateSelected = (dateKey: string) =>
-    trackEvent(ADMIN_EVENT.CALENDAR_EVENT_DATE_SELECTED, {
-      eventType,
-      dateKey,
-    });
-
-  const openDatePicker = (target: 'start' | 'end') => {
-    trackEvent(ADMIN_EVENT.CALENDAR_DATE_PICKER_OPENED, { target });
-    setDatePickerTarget(target);
   };
 
   /** 반복 기간은 시작/종료를 각각 시트에서 정한다 */
@@ -299,7 +299,7 @@ const AddEventSheet = ({
         month={month}
         onMonthChange={(nextMonth) => {
           trackEvent(ADMIN_EVENT.CALENDAR_MONTH_CHANGED, {
-            location: 'picker',
+            calendarType: 'picker',
           });
           setMonth(nextMonth);
         }}

@@ -71,7 +71,7 @@ const CalendarBoard = ({ events }: CalendarBoardProps) => {
 
   const changeMonth = (diff: number) => {
     trackEvent(ADMIN_EVENT.CALENDAR_MONTH_CHANGED, {
-      location: 'board',
+      calendarType: 'board',
       direction: diff > 0 ? 'next' : 'prev',
     });
     setMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + diff, 1));
