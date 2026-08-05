@@ -1,4 +1,4 @@
-import styled, { keyframes } from 'styled-components';
+import styled, { css, keyframes } from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 import { Z_INDEX } from '@/styles/zIndex';
 
@@ -22,10 +22,17 @@ export const Sheet = styled.div<{
   $background?: string;
   $dragOffset: number;
   $animateBack: boolean;
+  $expanded?: boolean;
 }>`
   width: 100%;
   max-width: 500px;
   max-height: calc(100dvh - 80px);
+  /* 위에 시트가 겹칠 때 내용만큼만 차지하면 뒤 시트가 통째로 가려진다 */
+  ${({ $expanded }) =>
+    $expanded &&
+    css`
+      height: calc(100dvh - 80px);
+    `}
   background: ${({ $background }) => $background ?? colors.base.white};
   border-radius: 24px 24px 0 0;
   padding: 8px 20px calc(20px + env(safe-area-inset-bottom));

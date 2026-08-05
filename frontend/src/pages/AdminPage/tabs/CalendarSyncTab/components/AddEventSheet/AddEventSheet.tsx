@@ -152,6 +152,7 @@ const AddEventSheet = ({
       isOpen={isOpen}
       onClose={onClose}
       sheetBackground={colors.gray[100]}
+      expanded={datePickerTarget !== null}
     >
       <Styled.Body>
         <TitleInput value={title} onChange={setTitle} />

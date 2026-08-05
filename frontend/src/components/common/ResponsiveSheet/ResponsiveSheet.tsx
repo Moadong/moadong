@@ -10,6 +10,8 @@ interface ResponsiveSheetProps {
   children: ReactNode;
   /** 바텀시트로 열릴 때만 적용되는 배경색 */
   sheetBackground?: string;
+  /** 위에 다른 시트를 겹쳐 띄울 때 뒤에서 보이도록 높이를 편다 (바텀시트 전용) */
+  expanded?: boolean;
 }
 
 /**
@@ -21,6 +23,7 @@ const ResponsiveSheet = ({
   onClose,
   children,
   sheetBackground,
+  expanded,
 }: ResponsiveSheetProps) => {
   const { isMobile, isTablet } = useDevice();
 
@@ -30,6 +33,7 @@ const ResponsiveSheet = ({
         isOpen={isOpen}
         onClose={onClose}
         background={sheetBackground}
+        expanded={expanded}
       >
         {children}
       </BottomSheet>
