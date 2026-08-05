@@ -169,7 +169,12 @@ const CalendarLinkPanel = () => {
 
       <DisconnectConfirmModal
         isOpen={disconnectTarget !== null}
-        onClose={() => setDisconnectTarget(null)}
+        onClose={() => {
+          trackEvent(ADMIN_EVENT.CALENDAR_UNLINK_CANCELED, {
+            provider: disconnectTarget,
+          });
+          setDisconnectTarget(null);
+        }}
         onConfirm={confirmDisconnect}
       />
     </CalendarLinkSection>

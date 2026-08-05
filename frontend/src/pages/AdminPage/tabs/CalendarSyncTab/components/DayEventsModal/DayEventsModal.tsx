@@ -122,9 +122,17 @@ const DayEventsModal = ({
                     <SwipeableEventRow
                       onDelete={() => handleDelete(occurrence)}
                       isOpen={openRowId === occurrence.occurrenceId}
-                      onOpenChange={(isRowOpen) =>
-                        setOpenRowId(isRowOpen ? occurrence.occurrenceId : null)
-                      }
+                      onOpenChange={(isRowOpen) => {
+                        if (isRowOpen) {
+                          trackEvent(ADMIN_EVENT.CALENDAR_EVENT_ROW_SWIPED, {
+                            eventType: occurrence.event.eventType,
+                            source: occurrence.event.source,
+                          });
+                        }
+                        setOpenRowId(
+                          isRowOpen ? occurrence.occurrenceId : null,
+                        );
+                      }}
                     >
                       <Styled.EventCard $back={palette.back}>
                         <Styled.ColorDot $color={palette.main} />

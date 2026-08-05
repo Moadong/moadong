@@ -4,12 +4,15 @@ interface TitleInputProps {
   value: string;
   onChange: (value: string) => void;
   placeholder?: string;
+  /** 지우기 버튼을 눌렀을 때. 직접 지운 경우와 구분해야 할 때만 넘긴다 */
+  onClear?: () => void;
 }
 
 const TitleInput = ({
   value,
   onChange,
   placeholder = '제목',
+  onClear,
 }: TitleInputProps) => (
   <Styled.Container>
     <Styled.Input
@@ -23,7 +26,10 @@ const TitleInput = ({
       <Styled.ClearButton
         type='button'
         aria-label='제목 지우기'
-        onClick={() => onChange('')}
+        onClick={() => {
+          onClear?.();
+          onChange('');
+        }}
       >
         <svg width='8' height='8' viewBox='0 0 8 8' aria-hidden='true'>
           <path

@@ -64,6 +64,7 @@ const AddEventSheet = ({
   >(null);
 
   const handleRangeSelect = (dateKey: string) => {
+    trackDateSelected(dateKey);
     if (!rangeStart || (rangeStart && rangeEnd)) {
       setRangeStart(dateKey);
       setRangeEnd(undefined);
@@ -77,12 +78,26 @@ const AddEventSheet = ({
     setRangeEnd(dateKey);
   };
 
-  const handleMultiSelect = (dateKey: string) =>
+  const handleMultiSelect = (dateKey: string) => {
+    trackDateSelected(dateKey);
     setMultiDates((prev) =>
       prev.includes(dateKey)
         ? prev.filter((d) => d !== dateKey)
         : [...prev, dateKey].sort(),
     );
+  };
+
+  /** 어느 유형에서 어떤 날짜를 골랐는지 남긴다 */
+  const trackDateSelected = (dateKey: string) =>
+    trackEvent(ADMIN_EVENT.CALENDAR_EVENT_DATE_SELECTED, {
+      eventType,
+      dateKey,
+    });
+
+  const openDatePicker = (target: 'start' | 'end') => {
+    trackEvent(ADMIN_EVENT.CALENDAR_DATE_PICKER_OPENED, { target });
+    setDatePickerTarget(target);
+  };
 
   /** 반복 기간은 시작/종료를 각각 시트에서 정한다 */
   const handlePickDate = (dateKey: string) => {
@@ -92,15 +107,21 @@ const AddEventSheet = ({
       if (recurEnd && recurEnd <= dateKey) setRecurEnd(null);
     }
     if (datePickerTarget === 'end') setRecurEnd(dateKey);
+    trackDateSelected(dateKey);
     setDatePickerTarget(null);
   };
 
-  const toggleWeekday = (weekday: number) =>
+  const toggleWeekday = (weekday: number) => {
+    trackEvent(ADMIN_EVENT.CALENDAR_RECURRENCE_WEEKDAY_TOGGLED, {
+      weekday,
+      selected: !weekdays.includes(weekday),
+    });
     setWeekdays((prev) =>
       prev.includes(weekday)
         ? prev.filter((d) => d !== weekday)
         : [...prev, weekday],
     );
+  };
 
   const canSave = useMemo(() => {
     if (!title.trim()) return false;
@@ -166,7 +187,13 @@ const AddEventSheet = ({
       stacked={datePickerTarget !== null}
     >
       <Styled.Body>
-        <TitleInput value={title} onChange={setTitle} />
+        <TitleInput
+          value={title}
+          onChange={setTitle}
+          onClear={() =>
+            trackEvent(ADMIN_EVENT.CALENDAR_TITLE_CLEAR_BUTTON_CLICKED)
+          }
+        />
         <SegmentTabs
           value={eventType}
           onChange={(nextType) => {
@@ -184,7 +211,10 @@ const AddEventSheet = ({
             onMonthChange={setMonth}
             mode='single'
             selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
+            onSelectDate={(dateKey) => {
+              trackDateSelected(dateKey);
+              setSelectedDate(dateKey);
+            }}
             showHeader={false}
             accentColor={color}
           />
@@ -218,17 +248,30 @@ const AddEventSheet = ({
         {eventType === 'RECURRING' && (
           <RecurrenceFields
             frequency={frequency}
-            onFrequencyChange={setFrequency}
+            onFrequencyChange={(nextFrequency) => {
+              trackEvent(ADMIN_EVENT.CALENDAR_RECURRENCE_FREQUENCY_CHANGED, {
+                frequency: nextFrequency,
+              });
+              setFrequency(nextFrequency);
+            }}
             weekdays={weekdays}
             onToggleWeekday={toggleWeekday}
             startDate={recurStart}
             endDate={recurEnd}
-            onOpenStartPicker={() => setDatePickerTarget('start')}
-            onOpenEndPicker={() => setDatePickerTarget('end')}
+            onOpenStartPicker={() => openDatePicker('start')}
+            onOpenEndPicker={() => openDatePicker('end')}
           />
         )}
 
-        <ColorBar value={color} onChange={setColor} />
+        <ColorBar
+          value={color}
+          onChange={(nextColor) => {
+            trackEvent(ADMIN_EVENT.CALENDAR_COLOR_SELECTED, {
+              color: nextColor,
+            });
+            setColor(nextColor);
+          }}
+        />
 
         {eventType === 'SINGLE' && <CalendarLinkPanel />}
 
@@ -254,7 +297,12 @@ const AddEventSheet = ({
         isOpen={datePickerTarget !== null}
         onClose={() => setDatePickerTarget(null)}
         month={month}
-        onMonthChange={setMonth}
+        onMonthChange={(nextMonth) => {
+          trackEvent(ADMIN_EVENT.CALENDAR_MONTH_CHANGED, {
+            location: 'picker',
+          });
+          setMonth(nextMonth);
+        }}
         selectedDate={
           datePickerTarget === 'end' ? (recurEnd ?? undefined) : recurStart
         }
@@ -264,6 +312,7 @@ const AddEventSheet = ({
         onClear={
           datePickerTarget === 'end'
             ? () => {
+                trackEvent(ADMIN_EVENT.CALENDAR_END_DATE_CLEARED);
                 setRecurEnd(null);
                 setDatePickerTarget(null);
               }
