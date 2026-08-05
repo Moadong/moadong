@@ -18,20 +18,27 @@ export const Overlay = styled.div`
   touch-action: none;
 `;
 
+/**
+ * 위에 시트를 겹칠 때 뒤 시트를 이만큼 더 드러나게 들어올린다.
+ * 높이를 늘리면 내용이 짧은 시트에 빈 공간만 생기므로 위치를 옮긴다.
+ * 겹치는 시트보다 작아야 들어올린 만큼의 아래 틈이 가려진다.
+ */
+const STACKED_LIFT = 180;
+
 export const Sheet = styled.div<{
   $background?: string;
   $dragOffset: number;
   $animateBack: boolean;
-  $expanded?: boolean;
+  $stacked?: boolean;
 }>`
   width: 100%;
   max-width: 500px;
   max-height: calc(100dvh - 80px);
-  /* 위에 시트가 겹칠 때 내용만큼만 차지하면 뒤 시트가 통째로 가려진다 */
-  ${({ $expanded }) =>
-    $expanded &&
+  ${({ $stacked }) =>
+    $stacked &&
     css`
-      height: calc(100dvh - 80px);
+      margin-bottom: ${STACKED_LIFT}px;
+      max-height: calc(100dvh - 80px - ${STACKED_LIFT}px);
     `}
   background: ${({ $background }) => $background ?? colors.base.white};
   border-radius: 24px 24px 0 0;

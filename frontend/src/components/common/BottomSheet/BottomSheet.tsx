@@ -14,8 +14,8 @@ interface BottomSheetProps {
   closeOnBackdrop?: boolean;
   /** 시트 배경색 (기본 흰색) */
   background?: string;
-  /** 위에 다른 시트를 겹쳐 띄울 때, 뒤에서 보이도록 높이를 최대로 편다 */
-  expanded?: boolean;
+  /** 위에 다른 시트를 겹쳐 띄울 때, 뒤에서 보이도록 시트를 들어올린다 */
+  stacked?: boolean;
 }
 
 const BottomSheet = ({
@@ -24,7 +24,7 @@ const BottomSheet = ({
   children,
   closeOnBackdrop = true,
   background,
-  expanded,
+  stacked,
 }: BottomSheetProps) => {
   useBodyScrollLock(isOpen);
   useTopmostEscape(isOpen, onClose);
@@ -64,7 +64,7 @@ const BottomSheet = ({
           $background={background}
           $dragOffset={dragOffset ?? 0}
           $animateBack={dragOffset === null}
-          $expanded={expanded}
+          $stacked={stacked}
           onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         >
           <Styled.DragHandle
