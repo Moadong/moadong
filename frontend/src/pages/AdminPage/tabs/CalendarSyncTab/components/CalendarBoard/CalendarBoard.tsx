@@ -3,6 +3,8 @@ import {
   CALENDAR_EVENT_COLORS,
   DEFAULT_CALENDAR_EVENT_COLOR,
 } from '@/constants/calendarEventColors';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import type { ClubCalendarEvent } from '@/types/club';
 import {
   buildDateKeyFromDate,
@@ -30,6 +32,7 @@ interface CalendarBoardProps {
  * 모바일·태블릿·데스크탑이 같은 화면을 쓰고 셀 크기만 화면 폭에 따라 달라진다.
  */
 const CalendarBoard = ({ events }: CalendarBoardProps) => {
+  const trackEvent = useMixpanelTrack();
   const [month, setMonth] = useState(() => {
     const now = new Date();
     return new Date(now.getFullYear(), now.getMonth(), 1);
@@ -66,12 +69,26 @@ const CalendarBoard = ({ events }: CalendarBoardProps) => {
 
   const todayKey = buildDateKeyFromDate(new Date());
 
-  const changeMonth = (diff: number) =>
+  const changeMonth = (diff: number) => {
+    trackEvent(ADMIN_EVENT.CALENDAR_MONTH_CHANGED, {
+      direction: diff > 0 ? 'next' : 'prev',
+    });
     setMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + diff, 1));
+  };
 
   const goToday = () => {
+    trackEvent(ADMIN_EVENT.CALENDAR_TODAY_BUTTON_CLICKED);
     const now = new Date();
     setMonth(new Date(now.getFullYear(), now.getMonth(), 1));
+  };
+
+  /** 날짜를 눌러 그 날 일정 모달을 연다 */
+  const openDay = (targetDateKey: string) => {
+    trackEvent(ADMIN_EVENT.CALENDAR_DATE_CLICKED, {
+      dateKey: targetDateKey,
+      eventCount: occurrencesByDate[targetDateKey]?.length ?? 0,
+    });
+    setSelectedDateKey(targetDateKey);
   };
 
   return (
@@ -121,7 +138,7 @@ const CalendarBoard = ({ events }: CalendarBoardProps) => {
                       key={dateKey}
                       type='button'
                       aria-label={`${formatMonthDayWeekday(dateKey)} 일정`}
-                      onClick={() => setSelectedDateKey(dateKey)}
+                      onClick={() => openDay(dateKey)}
                     />
                   );
                 })}
@@ -161,7 +178,7 @@ const CalendarBoard = ({ events }: CalendarBoardProps) => {
                       $startIndex={segment.startIndex}
                       $span={segment.span}
                       $lane={segment.lane}
-                      onClick={() => setSelectedDateKey(segment.dateKey)}
+                      onClick={() => openDay(segment.dateKey)}
                     >
                       {segment.title}
                     </Styled.EventBar>

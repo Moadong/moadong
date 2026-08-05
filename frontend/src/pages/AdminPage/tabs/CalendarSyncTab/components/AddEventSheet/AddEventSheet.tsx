@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import ResponsiveSheet from '@/components/common/ResponsiveSheet/ResponsiveSheet';
 import { DEFAULT_CALENDAR_EVENT_COLOR } from '@/constants/calendarEventColors';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useCreateCustomCalendarEvent } from '@/hooks/Queries/useCustomCalendarEvents';
 import { colors } from '@/styles/theme/colors';
 import type {
@@ -31,6 +33,7 @@ const AddEventSheet = ({
   onClose,
   initialDate,
 }: AddEventSheetProps) => {
+  const trackEvent = useMixpanelTrack();
   const createMutation = useCreateCustomCalendarEvent();
 
   const [title, setTitle] = useState('');
@@ -142,7 +145,15 @@ const AddEventSheet = ({
     }
     setErrorMessage('');
     createMutation.mutate(buildPayload(), {
-      onSuccess: onClose,
+      onSuccess: () => {
+        trackEvent(ADMIN_EVENT.CALENDAR_EVENT_CREATED, {
+          eventType,
+          color,
+          frequency: eventType === 'RECURRING' ? frequency : undefined,
+          hasEndDate: eventType === 'RECURRING' ? recurEnd !== null : undefined,
+        });
+        onClose();
+      },
       onError: () => setErrorMessage('일정 저장에 실패했습니다.'),
     });
   };
@@ -156,7 +167,15 @@ const AddEventSheet = ({
     >
       <Styled.Body>
         <TitleInput value={title} onChange={setTitle} />
-        <SegmentTabs value={eventType} onChange={setEventType} />
+        <SegmentTabs
+          value={eventType}
+          onChange={(nextType) => {
+            trackEvent(ADMIN_EVENT.CALENDAR_EVENT_TYPE_TAB_CLICKED, {
+              eventType: nextType,
+            });
+            setEventType(nextType);
+          }}
+        />
         <Styled.MonthLabel>{formatMonthLabel(month)}</Styled.MonthLabel>
 
         {eventType === 'SINGLE' && (

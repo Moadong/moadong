@@ -4,6 +4,8 @@ import {
   CALENDAR_EVENT_COLORS,
   DEFAULT_CALENDAR_EVENT_COLOR,
 } from '@/constants/calendarEventColors';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useDeleteCustomCalendarEvent } from '@/hooks/Queries/useCustomCalendarEvents';
 import { useHideCalendarEvent } from '@/hooks/Queries/useHiddenCalendarEvents';
 import type { DeleteScope } from '@/types/club';
@@ -41,6 +43,7 @@ const DayEventsModal = ({
   occurrences,
   onAddEvent,
 }: DayEventsModalProps) => {
+  const trackEvent = useMixpanelTrack();
   const deleteMutation = useDeleteCustomCalendarEvent();
   const hideMutation = useHideCalendarEvent();
   const [pendingDelete, setPendingDelete] =
@@ -56,7 +59,6 @@ const DayEventsModal = ({
     scope?: DeleteScope,
   ) => {
     if (isPending) return;
-    const closeOnSuccess = { onSuccess: () => setPendingDelete(null) };
     const source = occurrence.event.source;
 
     // 연동 이벤트는 원본이 Google·Notion에 있어 삭제 대신 숨김 처리한다
@@ -67,7 +69,10 @@ const DayEventsModal = ({
           eventId: occurrence.eventId.replace(/^(google|notion)-/, ''),
         },
         {
-          ...closeOnSuccess,
+          onSuccess: () => {
+            trackEvent(ADMIN_EVENT.CALENDAR_EVENT_HIDDEN, { source });
+            setPendingDelete(null);
+          },
           onError: () => window.alert('일정 숨기기에 실패했습니다.'),
         },
       );
@@ -80,7 +85,13 @@ const DayEventsModal = ({
         options: scope ? { scope, date: occurrence.dateKey } : undefined,
       },
       {
-        ...closeOnSuccess,
+        onSuccess: () => {
+          trackEvent(ADMIN_EVENT.CALENDAR_EVENT_DELETED, {
+            eventType: occurrence.event.eventType,
+            scope: scope ?? 'THIS',
+          });
+          setPendingDelete(null);
+        },
         onError: () => window.alert('일정 삭제에 실패했습니다.'),
       },
     );
@@ -131,7 +142,15 @@ const DayEventsModal = ({
             </Styled.EventList>
           )}
 
-          <Styled.AddButton type='button' onClick={onAddEvent}>
+          <Styled.AddButton
+            type='button'
+            onClick={() => {
+              trackEvent(ADMIN_EVENT.CALENDAR_ADD_EVENT_BUTTON_CLICKED, {
+                dateKey,
+              });
+              onAddEvent();
+            }}
+          >
             <svg width='14' height='14' viewBox='0 0 14 14' aria-hidden='true'>
               <path
                 d='M7 1.5V12.5M1.5 7H12.5'

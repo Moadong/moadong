@@ -1,5 +1,7 @@
 import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import { PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetCustomCalendarEvents } from '@/hooks/Queries/useCustomCalendarEvents';
 import { useGetHiddenCalendarEvents } from '@/hooks/Queries/useHiddenCalendarEvents';
 import useDevice from '@/hooks/useDevice';
@@ -20,6 +22,8 @@ const CalendarSyncTab = () => {
   const { data: hiddenCalendarEvents = [] } = useGetHiddenCalendarEvents();
   const { isMobile, isTablet } = useDevice();
   const navigate = useNavigate();
+
+  useTrackPageView(PAGE_VIEW.ADMIN_CALENDAR_PAGE);
 
   // Google·Notion·커스텀을 한 목록으로 합쳐 캘린더에 넘긴다
   const calendarEvents = mergeCalendarEvents({

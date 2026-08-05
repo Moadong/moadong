@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import {
   useGetHiddenCalendarEvents,
   useHideCalendarEvent,
@@ -48,6 +50,7 @@ const CalendarLinkPanel = () => {
     disconnectNotion,
   } = useCalendarSync();
 
+  const trackEvent = useMixpanelTrack();
   const { data: hiddenCalendarEvents = [] } = useGetHiddenCalendarEvents();
   const hideMutation = useHideCalendarEvent();
   const unhideMutation = useUnhideCalendarEvent();
@@ -58,6 +61,9 @@ const CalendarLinkPanel = () => {
   >(null);
 
   const confirmDisconnect = () => {
+    trackEvent(ADMIN_EVENT.CALENDAR_UNLINK_BUTTON_CLICKED, {
+      provider: disconnectTarget,
+    });
     if (disconnectTarget === 'GOOGLE') disconnectGoogle();
     if (disconnectTarget === 'NOTION') disconnectNotion();
     setDisconnectTarget(null);
@@ -79,7 +85,12 @@ const CalendarLinkPanel = () => {
     eventId: string,
   ) => {
     const input = { source, eventId };
-    if (hiddenKeys.has(`${source}:${eventId}`)) {
+    const isHidden = hiddenKeys.has(`${source}:${eventId}`);
+    trackEvent(ADMIN_EVENT.CALENDAR_EVENT_VISIBILITY_TOGGLED, {
+      provider: source,
+      visible: isHidden,
+    });
+    if (isHidden) {
       unhideMutation.mutate(input);
       return;
     }
@@ -119,7 +130,12 @@ const CalendarLinkPanel = () => {
         onButtonClick={
           isGoogleConnected
             ? () => setDisconnectTarget('GOOGLE')
-            : () => startGoogleOAuth()
+            : () => {
+                trackEvent(ADMIN_EVENT.CALENDAR_LINK_BUTTON_CLICKED, {
+                  provider: 'GOOGLE',
+                });
+                startGoogleOAuth();
+              }
         }
         events={googleEvents}
         checkedEventIds={toVisibleIds(
@@ -136,7 +152,12 @@ const CalendarLinkPanel = () => {
         onButtonClick={
           isNotionConnected
             ? () => setDisconnectTarget('NOTION')
-            : () => startNotionOAuth()
+            : () => {
+                trackEvent(ADMIN_EVENT.CALENDAR_LINK_BUTTON_CLICKED, {
+                  provider: 'NOTION',
+                });
+                startNotionOAuth();
+              }
         }
         events={notionEvents}
         checkedEventIds={toVisibleIds(
