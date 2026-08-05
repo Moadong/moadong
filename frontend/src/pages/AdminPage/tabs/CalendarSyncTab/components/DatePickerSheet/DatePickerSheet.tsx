@@ -41,7 +41,11 @@ const DatePickerSheet = ({
         disabledUntil={disabledUntil}
       />
       {onClear && (
-        <Styled.ClearButton type='button' onClick={onClear}>
+        <Styled.ClearButton
+          type='button'
+          onClick={onClear}
+          disabled={!selectedDate}
+        >
           종료 날짜 지우기
         </Styled.ClearButton>
       )}

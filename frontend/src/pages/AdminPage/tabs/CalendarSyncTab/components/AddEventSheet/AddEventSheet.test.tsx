@@ -122,6 +122,23 @@ describe('AddEventSheet 반복 탭', () => {
     expect(screen.getByRole('button', { name: /없음/ })).toBeInTheDocument();
   });
 
+  it('지울 종료 날짜가 없으면 지우기 버튼이 비활성이다', () => {
+    renderSheet();
+    fireEvent.click(screen.getByRole('tab', { name: '반복' }));
+    fireEvent.click(screen.getByRole('button', { name: /없음/ }));
+
+    expect(
+      screen.getByRole('button', { name: '종료 날짜 지우기' }),
+    ).toBeDisabled();
+
+    fireEvent.click(screen.getByText('20'));
+    fireEvent.click(screen.getByRole('button', { name: /2026년 3월 20일/ }));
+
+    expect(
+      screen.getByRole('button', { name: '종료 날짜 지우기' }),
+    ).toBeEnabled();
+  });
+
   it('시작 날짜 시트에는 종료 날짜 지우기 버튼이 없다', () => {
     renderSheet();
     fireEvent.click(screen.getByRole('tab', { name: '반복' }));

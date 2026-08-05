@@ -14,10 +14,16 @@ export const ClearButton = styled.button`
   height: 46px;
   border: none;
   border-radius: 12px;
-  /* 회색이면 비활성으로 읽혀, 저장 버튼과 같은 활성 버튼 색을 쓴다 */
+  /* 지울 종료 날짜가 있을 때만 누를 수 있어, 저장 버튼과 같은 활성/비활성 색을 쓴다 */
   background: ${colors.primary[900]};
   color: ${colors.base.white};
   font-size: 0.92rem;
   font-weight: 600;
   cursor: pointer;
+
+  &:disabled {
+    background: ${colors.gray[300]};
+    color: ${colors.gray[600]};
+    cursor: not-allowed;
+  }
 `;
