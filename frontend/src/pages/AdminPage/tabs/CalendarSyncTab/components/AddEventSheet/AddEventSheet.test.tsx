@@ -63,7 +63,7 @@ describe('AddEventSheet 반복 탭', () => {
     ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /2026년 3월 20일/ }));
-    fireEvent.click(screen.getByRole('button', { name: '종료 없음' }));
+    fireEvent.click(screen.getByRole('button', { name: '종료 기간 없음' }));
     expect(screen.getByRole('button', { name: /없음/ })).toBeInTheDocument();
   });
 
@@ -122,13 +122,13 @@ describe('AddEventSheet 반복 탭', () => {
     expect(screen.getByRole('button', { name: /없음/ })).toBeInTheDocument();
   });
 
-  it('시작 날짜 시트에는 종료 없음 버튼이 없다', () => {
+  it('시작 날짜 시트에는 종료 기간 없음 버튼이 없다', () => {
     renderSheet();
     fireEvent.click(screen.getByRole('tab', { name: '반복' }));
 
     fireEvent.click(screen.getByRole('button', { name: /2026년 3월 10일/ }));
     expect(
-      screen.queryByRole('button', { name: '종료 없음' }),
+      screen.queryByRole('button', { name: '종료 기간 없음' }),
     ).not.toBeInTheDocument();
   });
 });
