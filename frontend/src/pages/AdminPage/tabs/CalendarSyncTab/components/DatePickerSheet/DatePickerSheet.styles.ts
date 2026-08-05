@@ -14,8 +14,10 @@ export const ClearButton = styled.button`
   height: 46px;
   border: none;
   border-radius: 12px;
-  background: ${colors.gray[100]};
-  color: ${colors.gray[700]};
+  /* 회색이면 비활성으로 읽혀, 저장 버튼과 같은 활성 버튼 색을 쓴다 */
+  background: ${colors.primary[900]};
+  color: ${colors.base.white};
   font-size: 0.92rem;
+  font-weight: 600;
   cursor: pointer;
 `;
