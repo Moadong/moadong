@@ -8,6 +8,7 @@ import MapModal from '@/components/map/MapModal/MapModal';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import {
@@ -84,6 +85,11 @@ const ClubDetailPage = () => {
     !clubDetail,
     clubDetail?.recruitmentStatus,
   );
+  useTrackClubDetailDuration({
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
 
   const [showStickyTabs, setShowStickyTabs] = useState(false);
   const [inlineTabsEl, setInlineTabsEl] = useState<HTMLDivElement | null>(null);
