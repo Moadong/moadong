@@ -12,6 +12,7 @@ interface ClubIntroContentProps {
   idealCandidate?: IdealCandidate;
   benefits?: string;
   faqs?: FAQ[];
+  clubId?: string;
 }
 
 const ClubIntroContent = ({
@@ -20,6 +21,7 @@ const ClubIntroContent = ({
   idealCandidate,
   benefits,
   faqs,
+  clubId,
 }: ClubIntroContentProps) => {
   const trackEvent = useMixpanelTrack();
 
@@ -44,11 +46,13 @@ const ClubIntroContent = ({
       if (faqs?.[index]) {
         trackEvent(USER_EVENT.FAQ_TOGGLE_CLICKED, {
           question: faqs[index].question,
+          faq_index: index,
+          club_id: clubId,
           action: isOpening ? 'open' : 'close',
         });
       }
     },
-    [faqs, trackEvent, openFaqIndexes],
+    [faqs, trackEvent, openFaqIndexes, clubId],
   );
 
   const isEmpty =

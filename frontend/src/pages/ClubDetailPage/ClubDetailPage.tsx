@@ -217,7 +217,10 @@ const ClubDetailPage = () => {
                   display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none',
                 }}
               >
-                <ClubIntroContent {...clubDetail.description} />
+                <ClubIntroContent
+                  {...clubDetail.description}
+                  clubId={clubDetail.id}
+                />
               </div>
               <div
                 style={{
