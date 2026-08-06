@@ -45,6 +45,10 @@ public class ClubAnalyticsRecordService {
         }
     }
 
+    public void recordDetailDuration(String clubId, String clubName, LocalDate date, long durationSeconds) {
+        incrementClubDailyWithoutExistenceCheck(clubId, clubName, date, 0, durationSeconds, 1);
+    }
+
     public void incrementClubDaily(
             String clubId,
             String clubName,

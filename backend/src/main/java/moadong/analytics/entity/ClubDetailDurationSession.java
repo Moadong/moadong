@@ -9,33 +9,39 @@ import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
+import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Document("club_analytics_daily")
-@CompoundIndex(name = "date_club_unique", def = "{'date': 1, 'clubId': 1}", unique = true)
+@Document("club_detail_duration_sessions")
+@CompoundIndex(name = "session_club_unique", def = "{'sessionId': 1, 'clubId': 1}", unique = true)
 @CompoundIndex(name = "club_date_idx", def = "{'clubId': 1, 'date': 1}")
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClubAnalyticsDaily {
+public class ClubDetailDurationSession {
 
     @Id
     private String id;
 
     @Indexed
-    private LocalDate date;
+    private String sessionId;
+
+    @Indexed
+    private String visitorId;
 
     @Indexed
     private String clubId;
 
     private String clubName;
 
-    private long detailViewCount;
-    private long detailDurationSumSeconds;
-    private long detailDurationCount;
+    @Indexed
+    private LocalDate date;
+
+    private Instant enteredAt;
+    private Instant leftAt;
+    private long durationSeconds;
 
     private LocalDateTime createdAt;
-    private LocalDateTime updatedAt;
 }
