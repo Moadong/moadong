@@ -12,14 +12,13 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 
-@Document("club_analytics_daily")
-@CompoundIndex(name = "date_club_unique", def = "{'date': 1, 'clubId': 1}", unique = true)
-@CompoundIndex(name = "club_date_idx", def = "{'clubId': 1, 'date': 1}")
+@Document("club_detail_visitor_daily")
+@CompoundIndex(name = "club_date_visitor_unique", def = "{'clubId': 1, 'date': 1, 'visitorId': 1}", unique = true)
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ClubAnalyticsDaily {
+public class ClubDetailVisitorDaily {
 
     @Id
     private String id;
@@ -30,11 +29,11 @@ public class ClubAnalyticsDaily {
     @Indexed
     private String clubId;
 
-    private String clubName;
+    @Indexed
+    private String visitorId;
 
-    private long detailViewCount;
-    private long detailDurationSumSeconds;
-    private long detailDurationCount;
+    private long durationSumSeconds;
+    private long sessionCount;
 
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;

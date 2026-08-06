@@ -86,6 +86,8 @@ public enum ErrorCode {
     MIXPANEL_EXPORT_FAILED(HttpStatus.BAD_GATEWAY, "903-1", "Mixpanel 데이터 조회에 실패했습니다."),
     STATISTICS_DATE_RANGE_INVALID(HttpStatus.BAD_REQUEST, "903-2", "통계 조회 기간이 올바르지 않습니다."),
     STATISTICS_BACKFILL_RANGE_TOO_LONG(HttpStatus.BAD_REQUEST, "903-3", "통계 백필 기간이 너무 깁니다."),
+    STATISTICS_EVENT_INVALID(HttpStatus.BAD_REQUEST, "903-4", "통계 이벤트 요청이 올바르지 않습니다."),
+    STATISTICS_EVENT_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "903-5", "통계 이벤트 요청이 너무 많습니다."),
 
     // 950xx: Notion 연동 오류
     NOTION_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "950-1", "Notion 서버 환경변수가 설정되지 않았습니다."),
