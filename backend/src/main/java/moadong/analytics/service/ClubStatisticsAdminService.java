@@ -17,6 +17,7 @@ import org.springframework.data.mongodb.core.aggregation.Aggregation;
 import org.springframework.data.mongodb.core.aggregation.AggregationResults;
 import org.springframework.data.mongodb.core.query.Criteria;
 import org.springframework.stereotype.Service;
+import org.bson.Document;
 
 import java.time.LocalDate;
 import java.util.*;
@@ -42,6 +43,7 @@ public class ClubStatisticsAdminService {
         long totalDetailViews = dailyStats.stream().mapToLong(ClubAnalyticsDaily::getDetailViewCount).sum();
         long durationSum = dailyStats.stream().mapToLong(ClubAnalyticsDaily::getDetailDurationSumSeconds).sum();
         long durationCount = dailyStats.stream().mapToLong(ClubAnalyticsDaily::getDetailDurationCount).sum();
+        VisitorDurationSummary visitorDurationSummary = getVisitorDurationSummary(clubId, from, to);
         long totalApplicants = applicantCounts.values().stream().mapToLong(Long::longValue).sum();
 
         return new ClubStatisticsOverviewResponse(
@@ -51,6 +53,8 @@ public class ClubStatisticsAdminService {
                 to,
                 totalDetailViews,
                 average(durationSum, durationCount),
+                visitorDurationSummary.uniqueVisitors(),
+                average(visitorDurationSummary.durationSumSeconds(), visitorDurationSummary.uniqueVisitors()),
                 totalApplicants
         );
     }
@@ -118,5 +122,36 @@ public class ClubStatisticsAdminService {
 
     private long average(long sum, long count) {
         return count == 0 ? 0 : Math.round((double) sum / count);
+    }
+
+    private VisitorDurationSummary getVisitorDurationSummary(String clubId, LocalDate from, LocalDate to) {
+        Aggregation aggregation = Aggregation.newAggregation(
+                Aggregation.match(Criteria.where("clubId").is(clubId).and("date").gte(from).lte(to)),
+                Aggregation.group("visitorId").sum("durationSumSeconds").as("visitorDurationSeconds"),
+                Aggregation.group()
+                        .count().as("uniqueVisitors")
+                        .sum("visitorDurationSeconds").as("durationSumSeconds")
+        );
+
+        AggregationResults<Document> results = mongoTemplate.aggregate(
+                aggregation,
+                "club_detail_visitor_daily",
+                Document.class
+        );
+        Document summary = results.getUniqueMappedResult();
+        if (summary == null) {
+            return new VisitorDurationSummary(0, 0);
+        }
+        return new VisitorDurationSummary(
+                longValue(summary.get("uniqueVisitors")),
+                longValue(summary.get("durationSumSeconds"))
+        );
+    }
+
+    private long longValue(Object value) {
+        return value instanceof Number number ? number.longValue() : 0;
+    }
+
+    private record VisitorDurationSummary(long uniqueVisitors, long durationSumSeconds) {
     }
 }

@@ -18,6 +18,7 @@ class ClubApplicationFormTest {
             "https://docs.google.com/forms/d/e/1FAIpQL/viewform",
             "https://form.naver.com/response/abcd",
             "https://naver.me/xyz",
+            "https://m.site.naver.com/2djWG",
             "https://everytime.kr/board/1",
             "https://cafe.daum.net/pknusic/OMPr/43",
             "https://open.kakao.com/o/gFWZdlFi"
@@ -35,6 +36,7 @@ class ClubApplicationFormTest {
             "https://forms.gle@evil.example/abcd",           // userinfo로 host 위장
             "https://forms.gle.evil.example/abcd",           // suffix 로 host 위장
             "https://everytime.kr.evil.example/board/1",
+            "https://m.site.naver.com.evil.example/2djWG",
             "https://cafe.daum.net.evil.example/pknusic/OMPr/43",
             "https://evil.example/abcd",
             "http://forms.gle/abcd",                         // https 아님

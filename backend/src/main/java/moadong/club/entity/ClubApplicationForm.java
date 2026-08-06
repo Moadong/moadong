@@ -29,7 +29,7 @@ import java.util.Set;
 @Getter
 @Builder(toBuilder = true)
 public class ClubApplicationForm implements Persistable<String> {
-    private static final Set<String> externalApplicationUrlAllowedHosts = Set.of("forms.gle", "docs.google.com", "form.naver.com", "naver.me", "everytime.kr", "cafe.daum.net", "open.kakao.com");
+    private static final Set<String> externalApplicationUrlAllowedHosts = Set.of("forms.gle", "docs.google.com", "form.naver.com", "naver.me", "m.site.naver.com", "everytime.kr", "cafe.daum.net", "open.kakao.com");
     private static final String GOOGLE_DOCS_HOST = "docs.google.com";
     private static final String GOOGLE_FORMS_PATH_PREFIX = "/forms";
 

@@ -9,6 +9,8 @@ public record ClubStatisticsOverviewResponse(
         LocalDate to,
         long totalDetailViews,
         long averageDetailDurationSeconds,
+        long uniqueDetailVisitors,
+        long averageDetailDurationSecondsPerVisitor,
         long totalApplicants
 ) {
 }
