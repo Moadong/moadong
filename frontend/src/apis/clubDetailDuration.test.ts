@@ -19,10 +19,6 @@ describe('recordClubDetailDuration', () => {
 
   beforeEach(() => {
     fetchMock.resetMocks();
-    Object.defineProperty(navigator, 'sendBeacon', {
-      configurable: true,
-      value: jest.fn(() => true),
-    });
   });
 
   it('fetch keepalive로 체류 시간을 기록한다', async () => {
@@ -43,14 +39,9 @@ describe('recordClubDetailDuration', () => {
     );
   });
 
-  it('fetch 시작이 실패하면 sendBeacon fallback을 사용한다', async () => {
+  it('fetch 시작이 실패하면 false를 반환한다', async () => {
     fetchMock.mockRejectOnce(new Error('network'));
 
-    await expect(recordClubDetailDuration(payload)).resolves.toBe(true);
-
-    expect(navigator.sendBeacon).toHaveBeenCalledWith(
-      'https://api.example.com/api/analytics/club-detail/duration',
-      expect.any(Blob),
-    );
+    await expect(recordClubDetailDuration(payload)).resolves.toBe(false);
   });
 });

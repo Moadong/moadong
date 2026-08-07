@@ -22,15 +22,6 @@ const buildDurationUrl = () => {
   }
 };
 
-const sendBeaconFallback = (url: string, body: string) => {
-  if (typeof navigator === 'undefined' || !navigator.sendBeacon) {
-    return false;
-  }
-
-  const blob = new Blob([body], { type: 'application/json' });
-  return navigator.sendBeacon(url, blob);
-};
-
 export const recordClubDetailDuration = async (
   payload: ClubDetailDurationRecordRequest,
 ) => {
@@ -51,7 +42,6 @@ export const recordClubDetailDuration = async (
 
     return response.ok;
   } catch {
-    const beaconQueued = sendBeaconFallback(url, body);
-    return beaconQueued;
+    return false;
   }
 };

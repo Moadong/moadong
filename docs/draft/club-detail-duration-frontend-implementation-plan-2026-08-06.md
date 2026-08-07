@@ -18,7 +18,7 @@
 
 The original direction is valid, but the implementation needs these refinements before coding:
 
-- Do not rely only on `sendBeacon`. JSON beacon requests can be unreliable when the API is cross-origin and CORS/preflight is involved. Use `fetch` with `keepalive: true` as the primary transport and use `sendBeacon` only as an optional fallback after local CORS verification.
+- Do not use JSON `sendBeacon` for this contract. Production API can be cross-origin, and `application/json` is not CORS-safelisted. Use `fetch` with `keepalive: true` as the single transport unless the backend later supports a CORS-safelisted payload format.
 - Treat hidden-tab behavior explicitly. If the first `visibilitychange` sends the session, the same mounted page should either remain closed for tracking or open a new session when visible again. The first implementation should keep one session per route mount to avoid duplicate counting.
 - Keep the duration hook separate from `useTrackPageView`. Mixpanel page tracking and backend product statistics have different failure handling, payloads, and privacy implications.
 - Update mocks and API spec in the same PR. Otherwise the admin statistics UI can compile against fields that are not represented in local/mock development.
@@ -91,15 +91,15 @@ Implementation notes:
 
 - Build the URL from `API_BASE_URL`.
 - Do not use `secureFetch`; this backend endpoint is public.
-- Use `fetch(..., { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true })` as the default transport.
-- Optionally use `navigator.sendBeacon` only when the local/prod API origin is verified to accept JSON beacon delivery.
+- Use `fetch(..., { method: 'POST', headers: { 'Content-Type': 'application/json' }, body, keepalive: true })` as the only transport.
+- Do not add `navigator.sendBeacon` fallback while the backend request contract is JSON.
 - Swallow errors after logging in development only. Analytics failure should not surface to the user.
 - Return a boolean or resolved status from the API helper only for tests. Calling UI code should not branch on analytics success.
 
-Recommended send order:
+Recommended send path:
 
 1. `fetch(url, { method: 'POST', headers, body, keepalive: true })`
-2. fallback `sendBeacon(url, new Blob([body], { type: 'application/json' }))` only when `fetch` cannot be started or the event is an unload-only path.
+2. return `false` when the request cannot be started.
 
 Avoid adding credentials or auth headers. This keeps the endpoint public and prevents the analytics call from coupling to admin/user auth state.
 
@@ -230,7 +230,7 @@ Add tests for the new utility, hook, and API client:
 - starts a new session when `clubId` changes to another club detail route,
 - skips when `clubId` is missing or `skip` is true,
 - uses `fetch` with `keepalive` and JSON content type,
-- uses beacon fallback only when implemented and covered,
+- returns `false` when fetch cannot be started,
 - clamps `durationSeconds` to `1..3600`.
 
 Update statistics UI tests if a local pattern exists:
@@ -263,7 +263,7 @@ npm run build
 
 ## Risks And Decisions
 
-- `sendBeacon` does not expose response status and can be constrained by cross-origin JSON delivery. Keep it secondary unless verified.
+- `sendBeacon` is intentionally not used for JSON payloads because cross-origin delivery can require preflight and fail on unload paths.
 - `fetch keepalive` has browser payload-size limits, but this payload is tiny and suitable for keepalive.
 - Sending on `visibilitychange` marks the session as complete when the tab is hidden. If the user returns to the same mounted page, the first implementation will not start a second session until remount/navigation. This matches the existing page-duration tracking style and avoids duplicate records.
 - Backend PR must be deployed before this frontend change reaches production. Until then, the fire-and-forget request can fail silently, but real statistics will not accumulate.
