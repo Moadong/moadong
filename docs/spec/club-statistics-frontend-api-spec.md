@@ -54,9 +54,9 @@ GET /api/club/statistics/overview?from=2026-07-01&to=2026-07-09
 필드:
 
 - `totalDetailViews`: 기간 내 상세 페이지 조회 수 합계
-- `averageDetailDurationSeconds`: 기간 내 상세 페이지 방문 세션당 평균 체류 시간. 데이터가 없으면 `0`
+- `averageDetailDurationSeconds`: 기간 내 상세 페이지 방문 세션당 평균 체류 시간. 초 단위 정수이며 데이터가 없으면 `0`
 - `uniqueDetailVisitors`: 기간 내 상세 페이지 고유 익명 방문자 수. 프론트에서 저장한 `visitorId` 기준
-- `averageDetailDurationSecondsPerVisitor`: 기간 내 고유 익명 방문자 1명당 평균 누적 체류 시간. 데이터가 없으면 `0`
+- `averageDetailDurationSecondsPerVisitor`: 기간 내 고유 익명 방문자 1명당 평균 누적 체류 시간. 초 단위 정수이며 데이터가 없으면 `0`
 - `totalApplicants`: 기간 내 지원서 제출 수 합계
 
 ## 내 동아리 일자별 통계 추이
@@ -187,8 +187,8 @@ POST /api/admin/statistics/mixpanel/backfill?from=2026-07-01&to=2026-07-09
 
 - 대시보드 초기 기간은 최근 7일 또는 이번 모집 기간 등 UI 정책에 맞게 선택한다.
 - 차트는 `trend.points`만으로 결측 날짜 보정 없이 바로 그릴 수 있다.
-- 평균 체류 시간은 초 단위 정수다. UI에서는 `mm:ss` 또는 `초` 표시로 변환한다.
-- `averageDetailDurationSeconds`는 방문 세션 평균이고, `averageDetailDurationSecondsPerVisitor`는 익명 방문자별 누적 체류 시간 평균이다.
+- 평균 체류 시간 필드인 `averageDetailDurationSeconds`, `averageDetailDurationSecondsPerVisitor`는 모두 초 단위 정수다. UI에서는 `mm:ss` 또는 `초` 표시로 변환한다.
+- `averageDetailDurationSeconds`는 방문 세션 평균이고, `averageDetailDurationSecondsPerVisitor`는 익명 방문자별 누적 체류 시간 평균이다. 소수 초는 API 계약에 포함하지 않는다.
 - 검색 키워드는 전역 지표이므로 "내 동아리 유입 키워드"로 표기하지 않는다.
 - 빈 상태:
   - 요약 값이 모두 `0`이면 통계 데이터 없음 상태로 처리 가능

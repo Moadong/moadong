@@ -75,9 +75,9 @@ interface ClubStatisticsOverview {
 
 Meanings:
 
-- `averageDetailDurationSeconds`: average duration per recorded page stay session.
+- `averageDetailDurationSeconds`: average duration per recorded page stay session, returned as integer seconds.
 - `uniqueDetailVisitors`: unique anonymous detail-page visitors in the selected period.
-- `averageDetailDurationSecondsPerVisitor`: average total duration per unique visitor in the selected period.
+- `averageDetailDurationSecondsPerVisitor`: average total duration per unique visitor in the selected period, returned as integer seconds.
 
 ## Implementation Steps
 
@@ -187,6 +187,7 @@ UI changes:
 - Keep existing `평균 체류 시간` as session average using `averageDetailDurationSeconds`.
 - Add `고유 방문자` using `uniqueDetailVisitors`.
 - Add `인당 평균 체류 시간` using `averageDetailDurationSecondsPerVisitor`.
+- Treat both duration average fields as integer seconds. Do not add decimal rounding in the formatter unless the backend contract changes.
 - Adjust `MetricGrid` to support 5 cards responsively, for example desktop `repeat(auto-fit, minmax(180px, 1fr))` and mobile `1fr`.
 - Keep labels concise so cards do not overflow on mobile.
 - Use the existing `formatNumber` and `formatDuration` helpers. Do not introduce a second duration formatter.
