@@ -31,12 +31,6 @@ const sendBeaconFallback = (url: string, body: string) => {
   return navigator.sendBeacon(url, blob);
 };
 
-const logAnalyticsError = (error: unknown) => {
-  if (typeof process !== 'undefined' && process.env.NODE_ENV !== 'production') {
-    console.warn('Failed to record club detail duration:', error);
-  }
-};
-
 export const recordClubDetailDuration = async (
   payload: ClubDetailDurationRecordRequest,
 ) => {
@@ -56,11 +50,8 @@ export const recordClubDetailDuration = async (
     });
 
     return response.ok;
-  } catch (error) {
+  } catch {
     const beaconQueued = sendBeaconFallback(url, body);
-    if (!beaconQueued) {
-      logAnalyticsError(error);
-    }
     return beaconQueued;
   }
 };
