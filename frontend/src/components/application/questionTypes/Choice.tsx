@@ -114,7 +114,7 @@ const Choice = ({
                   handleDeleteItem(index);
                 }}
               >
-                <img src={DeleteIcon} />
+                <img src={DeleteIcon} alt="선택지 삭제" />
               </Styled.DeleteButton>
             )}
           </Styled.ItemWrapper>

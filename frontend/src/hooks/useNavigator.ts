@@ -17,7 +17,7 @@ const useNavigator = () => {
 
       if (isExternal) {
         if (inWebview && !requestOpenExternalUrl(trimmedUrl))
-          window.open(trimmedUrl);
+          window.open(trimmedUrl, '_blank', 'noopener');
         else if (!inWebview) window.location.href = trimmedUrl;
         return;
       }
