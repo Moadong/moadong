@@ -1,0 +1,22 @@
+# 모아동 (Moadong)
+
+> 국립부경대학교 학생을 위한 동아리 플랫폼. 동아리 탐색, 모집 정보 확인, 지원까지 한 곳에서 할 수 있습니다.
+
+- 학생은 동아리를 검색하고 정보를 확인한 뒤 바로 지원할 수 있습니다.
+- 동아리 운영진은 동아리 정보를 수정하고 지원서를 관리할 수 있습니다.
+- 동아리 상세 페이지 URL 형식: `https://www.moadong.com/clubDetail/@{동아리명}`
+- 웹 외에 Android·iOS 앱으로도 제공됩니다.
+
+## 주요 페이지
+
+- [동아리 목록](https://www.moadong.com/): 카테고리(봉사·종교·취미교양·학술·운동·공연)와 모집 상태로 전체 동아리를 탐색합니다.
+- [모아동 소개](https://www.moadong.com/introduce): 서비스가 해결하는 문제와 주요 기능 소개.
+- [동아리연합회](https://www.moadong.com/club-union): 부경대학교 동아리연합회 집행부 소개.
+- [홍보글](https://www.moadong.com/promotions): 동아리가 올린 홍보·행사 게시글.
+
+## 데이터
+
+- [sitemap.xml](https://www.moadong.com/sitemap.xml): 전체 동아리 상세 페이지 URL 목록.
+- [robots.txt](https://www.moadong.com/robots.txt): 크롤링 정책 (전체 허용).
+
+각 동아리 상세 페이지에는 소속·분과·카테고리·모집 상태·모집 기간·모집 대상과 활동 소개, 자주 묻는 질문이 schema.org `Organization` / `FAQPage` 구조화 데이터로 함께 제공됩니다.
