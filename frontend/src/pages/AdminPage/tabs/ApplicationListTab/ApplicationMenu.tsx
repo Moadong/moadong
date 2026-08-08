@@ -5,8 +5,8 @@ import Pencil from '@/assets/images/icons/pencil_icon_3.svg';
 import * as Styled from './ApplicationListTab.styles';
 
 const TOGGLE_BUTTON_TEXT = {
-  ACTIVE: '지원서 게시 취소',
-  INACTIVE: '지원서 게시',
+  ACTIVE: '지원서 비활성화',
+  INACTIVE: '지원서 활성화',
 } as const;
 
 interface ApplicationMenuProps {
