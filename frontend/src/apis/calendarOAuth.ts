@@ -337,6 +337,20 @@ export const selectGoogleCalendar = async (
   await handleResponse<string>(response, 'Google 캘린더 선택에 실패했습니다.');
 };
 
+export const disconnectNotionCalendar = async () => {
+  const response = await secureFetch(
+    `${API_BASE_URL}/api/integration/notion/connection`,
+    {
+      method: 'DELETE',
+      headers: {
+        Accept: 'application/json',
+      },
+    },
+  );
+
+  await handleResponse<string>(response, 'Notion 연결 해제에 실패했습니다.');
+};
+
 export const disconnectGoogleCalendar = async () => {
   const response = await secureFetch(
     `${API_BASE_URL}/api/integration/google/connection`,

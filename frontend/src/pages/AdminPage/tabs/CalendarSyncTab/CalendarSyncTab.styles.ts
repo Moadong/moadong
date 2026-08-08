@@ -17,38 +17,6 @@ export const SyncIndicator = styled.span`
   color: ${colors.gray[600]};
 `;
 
-export const Description = styled.p`
-  font-size: 0.94rem;
-  line-height: 1.5;
-  color: ${colors.gray[600]};
-`;
-
-export const Buttons = styled.div`
-  margin-top: 12px;
-  display: flex;
-  gap: 10px;
-  flex-wrap: wrap;
-`;
-
-export const SelectRow = styled.div`
-  display: flex;
-  gap: 10px;
-  align-items: center;
-  margin-top: 10px;
-  flex-wrap: wrap;
-`;
-
-export const Select = styled.select`
-  min-width: 240px;
-  height: 42px;
-  border: 1px solid ${colors.gray[300]};
-  border-radius: 10px;
-  padding: 0 12px;
-  font-size: 0.9rem;
-  color: ${colors.gray[900]};
-  background: ${colors.base.white};
-`;
-
 export const TokenText = styled.code`
   display: block;
   margin-top: 10px;
@@ -58,20 +26,6 @@ export const TokenText = styled.code`
   font-size: 0.82rem;
   color: ${colors.gray[800]};
   word-break: break-all;
-`;
-
-export const StatusText = styled.p`
-  margin-top: 10px;
-  font-size: 0.9rem;
-  font-weight: 600;
-  color: ${colors.accent[2][900]};
-`;
-
-export const DataErrorRow = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
 `;
 
 export const ErrorText = styled.p`
@@ -97,9 +51,4 @@ export const CardHeader = styled.div`
   justify-content: flex-end;
   gap: 12px;
   margin-bottom: 10px;
-`;
-
-export const ProviderControls = styled.div`
-  display: flex;
-  gap: 8px;
 `;

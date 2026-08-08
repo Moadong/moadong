@@ -10,6 +10,12 @@ jest.mock('@/hooks/Queries/useCustomCalendarEvents', () => ({
   }),
 }));
 
+// 연동 패널도 같은 apis 체인을 타므로 통째로 대체한다 (반복 탭 검증과 무관)
+jest.mock('../CalendarLinkPanel/CalendarLinkPanel', () => ({
+  __esModule: true,
+  default: () => null,
+}));
+
 /** 시트가 Portal로 그려지고, 닫힐 때 부르는 scrollTo는 jsdom에 없다 */
 window.scrollTo = jest.fn();
 
@@ -57,7 +63,7 @@ describe('AddEventSheet 반복 탭', () => {
     ).toBeInTheDocument();
 
     fireEvent.click(screen.getByRole('button', { name: /2026년 3월 20일/ }));
-    fireEvent.click(screen.getByRole('button', { name: '종료 없음' }));
+    fireEvent.click(screen.getByRole('button', { name: '종료 날짜 지우기' }));
     expect(screen.getByRole('button', { name: /없음/ })).toBeInTheDocument();
   });
 
@@ -116,13 +122,30 @@ describe('AddEventSheet 반복 탭', () => {
     expect(screen.getByRole('button', { name: /없음/ })).toBeInTheDocument();
   });
 
-  it('시작 날짜 시트에는 종료 없음 버튼이 없다', () => {
+  it('지울 종료 날짜가 없으면 지우기 버튼이 비활성이다', () => {
+    renderSheet();
+    fireEvent.click(screen.getByRole('tab', { name: '반복' }));
+    fireEvent.click(screen.getByRole('button', { name: /없음/ }));
+
+    expect(
+      screen.getByRole('button', { name: '종료 날짜 지우기' }),
+    ).toBeDisabled();
+
+    fireEvent.click(screen.getByText('20'));
+    fireEvent.click(screen.getByRole('button', { name: /2026년 3월 20일/ }));
+
+    expect(
+      screen.getByRole('button', { name: '종료 날짜 지우기' }),
+    ).toBeEnabled();
+  });
+
+  it('시작 날짜 시트에는 종료 날짜 지우기 버튼이 없다', () => {
     renderSheet();
     fireEvent.click(screen.getByRole('tab', { name: '반복' }));
 
     fireEvent.click(screen.getByRole('button', { name: /2026년 3월 10일/ }));
     expect(
-      screen.queryByRole('button', { name: '종료 없음' }),
+      screen.queryByRole('button', { name: '종료 날짜 지우기' }),
     ).not.toBeInTheDocument();
   });
 });
