@@ -4,7 +4,7 @@ import { useTheme } from 'styled-components';
 import NotificationIcon from '@/assets/images/icons/notification_icon.svg?react';
 import PrevButtonIcon from '@/assets/images/icons/prev_button_icon.svg?react';
 import Spinner from '@/components/common/Spinner/Spinner';
-import { USER_EVENT } from '@/constants/eventName';
+import { PAGE_NAME, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
 import useOpenAppFromKakao from '@/hooks/useOpenAppFromKakao';
@@ -94,6 +94,11 @@ const ClubDetailTopBar = ({
 
   const handleNotificationClick = () => {
     requestSubscribeToggle(clubId);
+    trackEvent(USER_EVENT.WEBVIEW_SUBSCRIBE_TOGGLED, {
+      club_id: clubId,
+      subscribed: !isNotificationActive,
+      source: PAGE_NAME.CLUB_DETAIL,
+    });
   };
 
   return (
