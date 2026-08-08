@@ -32,7 +32,7 @@ React SPA는 클라이언트 사이드 렌더링이라 카카오톡/페이스북
 
 정적 텍스트 페이지(`/introduce`, `/club-union`)는 커버하지 않는다. 문구가 React 컴포넌트·상수에 있어 middleware로 옮기면 복제본이 생기고 드리프트하는데, 답변엔진 관점의 이득은 작다.
 
-값이 비어 있으면 해당 항목·섹션은 통째로 생략된다(`nonEmpty` / `buildSection`). JSON-LD는 `</script>` 조기 종료를 막기 위해 모든 `<`를 `<`로 이스케이프한다(`toJsonLdScript`).
+값이 비어 있으면 해당 항목·섹션은 통째로 생략된다(`nonEmpty` / `buildSection`). JSON-LD는 `</script>` 조기 종료를 막기 위해 모든 `<`를 유니코드 이스케이프 시퀀스 `\u003c`로 치환한다(`toJsonLdScript`).
 
 `중동`/`과동`, `OPEN`/`CLOSED`/`UPCOMING`/`ALWAYS` 같은 API 코드값은 `DIVISION_LABELS`·`RECRUITMENT_STATUS_LABELS`로 사람이 읽는 한글로 변환해 노출한다. 백엔드에 값이 추가되면 이 맵도 함께 갱신할 것 (미등록 값은 원본 코드가 그대로 노출된다).
 

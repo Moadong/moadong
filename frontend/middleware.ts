@@ -298,6 +298,10 @@ function htmlResponse(html: string): Response {
     headers: {
       'content-type': 'text/html; charset=utf-8',
       'cache-control': 'public, s-maxage=300, stale-while-revalidate=60',
+      // UA로 크롤러/일반 사용자 응답이 갈리므로 공유 캐시가 둘을 섞지 않도록 한다.
+      // Vercel Edge는 미들웨어 응답을 CDN 캐시에 담지 않지만, s-maxage는 사내
+      // 프록시 같은 중간 공유 캐시에도 적용된다.
+      vary: 'User-Agent',
     },
   });
 }
