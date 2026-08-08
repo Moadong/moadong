@@ -59,18 +59,21 @@ const ApplicationFormPage = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
   }, [answers, STORAGE_KEY]);
 
+  const hasLoadError = isError || !!clubError;
+  const clubName = clubDetail?.name;
+
+  useEffect(() => {
+    if (!hasLoadError) return;
+    alert(applicationError?.message || '문제가 발생했어요.');
+    navigate(clubName ? `/clubDetail/@${encodeURIComponent(clubName)}` : `/`, {
+      replace: true,
+    });
+  }, [hasLoadError, applicationError, clubName, navigate]);
+
   if (!clubId || !applicationFormId) return null;
 
   if (isLoading) return <Spinner />;
-  if (isError || clubError) {
-    alert(applicationError?.message || '문제가 발생했어요.');
-    if (clubDetail?.name) {
-      navigate(`/clubDetail/@${encodeURIComponent(clubDetail?.name)}`);
-    } else {
-      navigate(`/`);
-    }
-    return null;
-  }
+  if (hasLoadError) return null;
   if (!formData || !clubDetail || !formData.questions) {
     return (
       <div>
