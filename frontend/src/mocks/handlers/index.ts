@@ -122,9 +122,16 @@ export const handlers = [
         0,
       ),
       averageDetailDurationSeconds: 43,
+      uniqueDetailVisitors: 38,
+      averageDetailDurationSecondsPerVisitor: 74,
       totalApplicants: points.reduce((sum, point) => sum + point.applicants, 0),
     });
   }),
+
+  http.post(
+    '/api/analytics/club-detail/duration',
+    () => new HttpResponse(null, { status: 204 }),
+  ),
 
   http.get('/api/club/statistics/trend', ({ request }) => {
     const url = new URL(request.url);
