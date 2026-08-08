@@ -9,6 +9,10 @@ import { queryKeys } from '@/constants/queryKeys';
 import { ApiError } from '@/errors';
 import type { GoogleCalendarListResponse } from '@/types/google';
 
+// 연동이 없거나(960-4) 저장된 토큰이 만료·무효라 갱신 실패한 경우(960-3)는
+// 에러가 아니라 "연결 안 됨(재연동 필요)" 상태로 처리한다.
+const NOT_CONNECTED_ERROR_CODES = ['960-3', '960-4'];
+
 export const useGetGoogleCalendars = () => {
   return useQuery<GoogleCalendarListResponse | null>({
     queryKey: queryKeys.googleCalendar.calendars(),
@@ -16,7 +20,11 @@ export const useGetGoogleCalendars = () => {
       try {
         return await fetchGoogleCalendars();
       } catch (error) {
-        if (error instanceof ApiError && error.errorCode === '960-4') {
+        if (
+          error instanceof ApiError &&
+          error.errorCode &&
+          NOT_CONNECTED_ERROR_CODES.includes(error.errorCode)
+        ) {
           return null;
         }
         throw error;

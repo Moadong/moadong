@@ -62,7 +62,7 @@ const Wrapper = ({ feeds = SAMPLE_FEEDS }: { feeds?: string[] }) => (
 );
 
 const meta = {
-  title: 'Admin/PhotoEditTab',
+  title: 'Pages/AdminPage/tabs/PhotoEditTab',
   parameters: { layout: 'centered' },
 } satisfies Meta;
 

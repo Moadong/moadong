@@ -14,13 +14,11 @@ const GOOGLE_OAUTH_ERROR_KEY = 'admin_calendar_sync_google_oauth_error';
 
 interface UseGoogleCalendarDataParams {
   onError: (message: string) => void;
-  onStatus: (message: string) => void;
   clearError: () => void;
 }
 
 export const useGoogleCalendarData = ({
   onError,
-  onStatus,
   clearError,
 }: UseGoogleCalendarDataParams) => {
   const [selectedCalendarId, setSelectedCalendarId] = useState('');
@@ -63,18 +61,6 @@ export const useGoogleCalendarData = ({
     }
   }, [calendarsQuery.data, selectedCalendarId]);
 
-  useEffect(() => {
-    if (calendarsQuery.error instanceof Error) {
-      onError(calendarsQuery.error.message);
-    }
-  }, [calendarsQuery.error, onError]);
-
-  useEffect(() => {
-    if (eventsQuery.error instanceof Error) {
-      onError(eventsQuery.error.message);
-    }
-  }, [eventsQuery.error, onError]);
-
   // OAuth 콜백 처리
   useEffect(() => {
     const errorMessage = sessionStorage.getItem(GOOGLE_OAUTH_ERROR_KEY);
@@ -87,9 +73,8 @@ export const useGoogleCalendarData = ({
     const successFlag = sessionStorage.getItem(GOOGLE_OAUTH_SUCCESS_KEY);
     if (successFlag) {
       sessionStorage.removeItem(GOOGLE_OAUTH_SUCCESS_KEY);
-      onStatus('Google OAuth 인증이 완료되었습니다.');
     }
-  }, [onError, onStatus]);
+  }, [onError]);
 
   const startGoogleOAuth = useCallback(async () => {
     setIsOAuthLoading(true);
@@ -119,7 +104,6 @@ export const useGoogleCalendarData = ({
         {
           onSuccess: () => {
             setSelectedCalendarId(calendarId);
-            onStatus('캘린더가 선택되었습니다.');
           },
           onError: (error) => {
             if (error instanceof Error) onError(error.message);
@@ -127,7 +111,7 @@ export const useGoogleCalendarData = ({
         },
       );
     },
-    [clearError, googleCalendars, onError, onStatus, selectMutation],
+    [clearError, googleCalendars, onError, selectMutation],
   );
 
   const handleDisconnect = useCallback(() => {
@@ -135,13 +119,12 @@ export const useGoogleCalendarData = ({
     disconnectMutation.mutate(undefined, {
       onSuccess: () => {
         setSelectedCalendarId('');
-        onStatus('Google Calendar 연결이 해제되었습니다.');
       },
       onError: (error) => {
         if (error instanceof Error) onError(error.message);
       },
     });
-  }, [clearError, disconnectMutation, onError, onStatus]);
+  }, [clearError, disconnectMutation, onError]);
 
   return {
     isGoogleConnected,
@@ -150,6 +133,12 @@ export const useGoogleCalendarData = ({
     googleCalendarEvents,
     isGoogleLoading,
     isInitialChecking: calendarsQuery.isLoading,
+    isEventsLoading: eventsQuery.isLoading,
+    hasDataError: calendarsQuery.isError || eventsQuery.isError,
+    retryData: () => {
+      if (calendarsQuery.isError) calendarsQuery.refetch();
+      if (eventsQuery.isError) eventsQuery.refetch();
+    },
     startGoogleOAuth,
     selectCalendar: handleSelectCalendar,
     disconnectGoogle: handleDisconnect,

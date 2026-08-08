@@ -8,6 +8,7 @@ import MapModal from '@/components/map/MapModal/MapModal';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import {
@@ -64,10 +65,10 @@ const ClubDetailPage = () => {
     return tabParam;
   }, [tabParam]);
 
-  const { data: calendarEvents = [] } = useGetClubCalendarEvents(
-    (clubName ?? clubId) || '',
-    { enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE },
-  );
+  const { data: calendarEvents = [], isLoading: isCalendarLoading } =
+    useGetClubCalendarEvents((clubName ?? clubId) || '', {
+      enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE,
+    });
 
   const tabs = useMemo(
     () => [
@@ -84,6 +85,11 @@ const ClubDetailPage = () => {
     !clubDetail,
     clubDetail?.recruitmentStatus,
   );
+  useTrackClubDetailDuration({
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
 
   const [showStickyTabs, setShowStickyTabs] = useState(false);
   const [inlineTabsEl, setInlineTabsEl] = useState<HTMLDivElement | null>(null);
@@ -217,7 +223,10 @@ const ClubDetailPage = () => {
                   display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none',
                 }}
               >
-                <ClubIntroContent {...clubDetail.description} />
+                <ClubIntroContent
+                  {...clubDetail.description}
+                  clubId={clubDetail.id}
+                />
               </div>
               <div
                 style={{
@@ -234,6 +243,7 @@ const ClubDetailPage = () => {
                 <ClubScheduleCalendar
                   key={clubId ?? clubName}
                   events={calendarEvents}
+                  isLoading={isCalendarLoading}
                 />
               </div>
             </Styled.TabContent>

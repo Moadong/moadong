@@ -12,3 +12,5 @@
 - `uploadLimit.ts` - 파일 업로드 제한
 - `adminFieldLimits.ts` - 어드민 탭 텍스트 필드 최대 글자수 (ClubInfo, ClubIntro, Recruit, Account)
 - `adminFieldPlaceholders.ts` - 어드민 탭 텍스트 필드 placeholder 문자열 (ClubInfoEditTab, ClubIntroEditTab 데스크탑/모바일 공유)
+- `calendarEventColors.ts` - 커스텀 캘린더 이벤트 색상 팔레트 / 순서 / 기본값
+- `calendarEvent.ts` - 커스텀 캘린더 이벤트 기본값 (`DEFAULT_CUSTOM_EVENT_TYPE`)
