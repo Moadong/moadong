@@ -1,6 +1,13 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse, passthrough } from 'msw';
+import type { CreateFeedbackRequest } from '@/types/feedback';
+import {
+  receivedLetterDetailsMock,
+  receivedLettersMock,
+  sentFeedbacksMock,
+} from '../data/feedbackMock';
 
 const MOCK_CLUB_ID = 'mock-club-id';
+const MOCK_R2_ORIGIN = 'https://mock-r2.moadong.local';
 
 const ok = <T>(data: T) =>
   HttpResponse.json({
@@ -63,6 +70,12 @@ export const handlers = [
   http.get('/auth/user/logout', () => ok(null)),
 
   http.put('/auth/user/', () => ok(null)),
+
+  // 우체통용 익명 학생 토큰. 실제로도 만료가 없는 JWT를 준다
+  http.post('/auth/student', () => ok({ accessToken: 'mock-student-token' })),
+
+  // '/api/club/:clubId'가 목록 엔드포인트(/api/club/search/)까지 매칭해 버리므로 먼저 실제 API로 흘려보낸다
+  http.get('/api/club/search/', () => passthrough()),
 
   http.get('/api/club/:clubId', ({ params }) =>
     ok({
@@ -144,6 +157,96 @@ export const handlers = [
       to,
       points: buildTrendPoints(from, to),
     });
+  }),
+
+  http.post('/api/student/feedback', async ({ request }) => {
+    const payload = (await request.json()) as CreateFeedbackRequest;
+    const feedbackId = `feedback-${sentFeedbacksMock.length + 1}`;
+
+    // 보낸 편지 탭에서 방금 보낸 편지가 보이도록 목 데이터에 쌓아둔다
+    sentFeedbacksMock.unshift({
+      id: feedbackId,
+      type: payload.type,
+      content: payload.content,
+      status: 'PENDING',
+      createdAt: new Date().toISOString(),
+    });
+
+    return ok({ feedbackId });
+  }),
+
+  http.post('/api/student/feedback/images/upload-url', async ({ request }) => {
+    const uploadRequests = (await request.json()) as {
+      fileName: string;
+      contentType: string;
+    }[];
+
+    return ok(
+      uploadRequests.map((item, index) => ({
+        presignedUrl: `${MOCK_R2_ORIGIN}/upload/${index}-${item.fileName}`,
+        finalUrl: `${MOCK_R2_ORIGIN}/feedback/mock-student/${index}-${item.fileName}`,
+        requiredHeaders: { 'Content-Type': item.contentType },
+        success: true,
+        failureReason: null,
+      })),
+    );
+  }),
+
+  // presigned URL로 직접 올리는 단계. 실제로는 R2가 받는다
+  http.put(
+    `${MOCK_R2_ORIGIN}/upload/*`,
+    () => new HttpResponse(null, { status: 200 }),
+  ),
+
+  http.get('/api/student/feedback/received', ({ request }) => {
+    const category = new URL(request.url).searchParams.get('category');
+    const letters = category
+      ? receivedLettersMock.filter((letter) => letter.category === category)
+      : receivedLettersMock;
+
+    return ok({ letters });
+  }),
+
+  http.get('/api/student/feedback/received/:letterId', ({ params }) => {
+    const letter = receivedLetterDetailsMock[String(params.letterId)];
+
+    if (!letter) {
+      return HttpResponse.json(
+        { statuscode: '404', message: 'not found', data: null },
+        { status: 404 },
+      );
+    }
+
+    return ok(letter);
+  }),
+
+  http.patch('/api/student/feedback/received/:letterId/read', ({ params }) => {
+    const letter = receivedLettersMock.find(
+      (item) => item.id === String(params.letterId),
+    );
+
+    if (letter) letter.isRead = true;
+
+    return ok(null);
+  }),
+
+  http.get('/api/student/feedback/sent', () =>
+    ok({ feedbacks: sentFeedbacksMock }),
+  ),
+
+  http.get('/api/student/feedback/sent/:feedbackId', ({ params }) => {
+    const feedback = sentFeedbacksMock.find(
+      (item) => item.id === String(params.feedbackId),
+    );
+
+    if (!feedback) {
+      return HttpResponse.json(
+        { statuscode: '404', message: 'not found', data: null },
+        { status: 404 },
+      );
+    }
+
+    return ok(feedback);
   }),
 
   http.get('/api/club/statistics/search-keywords', ({ request }) => {

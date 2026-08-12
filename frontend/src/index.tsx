@@ -19,7 +19,9 @@ if (import.meta.env.DEV) {
 }
 
 async function startApp() {
-  if (import.meta.env.DEV) {
+  // 개발 환경에서는 기본으로 MSW를 켠다.
+  // 로컬 백엔드에 직접 붙일 때만 .env.local에 VITE_ENABLE_MSW=false 로 끈다.
+  if (import.meta.env.DEV && import.meta.env.VITE_ENABLE_MSW !== 'false') {
     const { worker } = await import('./mocks/browser');
     await worker.start({
       onUnhandledRequest: 'bypass',
