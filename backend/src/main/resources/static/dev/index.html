@@ -157,9 +157,13 @@
     .feedback-layout { display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 16px; align-items: start; }
     @media (max-width: 1100px) { .feedback-layout { grid-template-columns: 1fr; } }
     .feedback-quote { margin: 0 0 12px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; font-size: 0.9rem; white-space: pre-wrap; }
-    .feedback-checkbox { display: flex; align-items: center; gap: 8px; margin: 12px 0; font-size: 0.9rem; }
-    .feedback-checkbox input { margin: 0; }
+    .feedback-checkbox { display: flex; justify-content: flex-start; align-items: center; gap: 8px; margin: 12px 0; font-size: 0.9rem; text-align: left; }
+    .feedback-checkbox input { margin: 0; flex: none; }
     .feedback-content-cell { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* 유형 · 받은 날짜 · 상태는 짧은 한국어라 폭이 좁아지면 글자 단위로 쪼개진다. */
+    #feedbackList th:nth-child(1), #feedbackList td:nth-child(1),
+    #feedbackList th:nth-child(4), #feedbackList td:nth-child(4),
+    #feedbackList th:nth-child(5), #feedbackList td:nth-child(5) { white-space: nowrap; }
     .feedback-quote-images { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
     .feedback-quote-images a { line-height: 0; }
     .feedback-quote-images img { width: 72px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid #e5e7eb; }
