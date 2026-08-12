@@ -157,9 +157,11 @@
     .feedback-layout { display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 16px; align-items: start; }
     @media (max-width: 1100px) { .feedback-layout { grid-template-columns: 1fr; } }
     .feedback-quote { margin: 0 0 12px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; font-size: 0.9rem; white-space: pre-wrap; }
-    .feedback-checkbox { display: flex; justify-content: flex-start; align-items: center; gap: 8px; margin: 12px 0; font-size: 0.9rem; text-align: left; }
-    .feedback-checkbox input { margin: 0; flex: none; }
-    .feedback-content-cell { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* flex 대신 일반 인라인 흐름을 쓴다. 폭이 좁아져도 글자 단위로 세로로 쪼개지지 않는다. */
+    .feedback-checkbox { display: block; margin: 12px 0; font-size: 0.9rem; }
+    .feedback-checkbox input { margin: 0 8px 0 0; vertical-align: middle; }
+    .feedback-checkbox span { vertical-align: middle; }
+    .feedback-content-cell { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
     /* 유형 · 받은 날짜 · 상태는 짧은 한국어라 폭이 좁아지면 글자 단위로 쪼개진다. */
     #feedbackList th:nth-child(1), #feedbackList td:nth-child(1),
     #feedbackList th:nth-child(4), #feedbackList td:nth-child(4),
