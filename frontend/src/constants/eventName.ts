@@ -8,6 +8,12 @@ export const USER_EVENT = {
   MAIN_POPUP_CLOSED: 'Main Popup Closed',
   APP_DOWNLOAD_POPUP_CLICKED: 'App Download Popup Clicked',
 
+  // 모아동 우체통
+  FEEDBACK_ENTRY_CLICKED: '우체통 진입 클릭',
+  FEEDBACK_TYPE_SELECTED: '우체통 피드백 유형 선택',
+  FEEDBACK_SUBMITTED: '우체통 피드백 전송',
+  RECEIVED_LETTER_OPENED: '우체통 받은 편지 열람',
+
   // 동소한 부스
   FESTIVAL_BOOTH_CLICKED: 'Festival Booth Clicked',
 
@@ -134,6 +140,14 @@ export const PAGE_VIEW = {
   PROMOTION_LIST_PAGE: '홍보 목록 페이지',
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
   GAME_PAGE: 'GamePage',
+
+  // 모아동 우체통
+  FEEDBACK_LIST_PAGE: '우체통 목록 페이지',
+  FEEDBACK_TYPE_SELECT_PAGE: '우체통 유형 선택 페이지',
+  FEEDBACK_WRITE_PAGE: '우체통 편지 작성 페이지',
+  FEEDBACK_COMPLETE_PAGE: '우체통 전송 완료 페이지',
+  RECEIVED_LETTER_DETAIL_PAGE: '우체통 받은 편지 상세 페이지',
+  SENT_FEEDBACK_DETAIL_PAGE: '우체통 보낸 편지 상세 페이지',
 
   WEBVIEW_MAIN_PAGE: 'WebviewMainPage',
 

@@ -2,7 +2,8 @@
 
 `src/utils/`에 공용 유틸리티 함수 모음:
 
-- `formatRelativeDateTime.ts` - 상대적 시간 표시 ("2시간 전")
+- `formatRelativeDateTime.ts` - 오늘은 시각("오후 2:30"), 과거는 날짜("2024.01.15")
+- `formatTimeAgo.ts` - 항상 경과 시간으로 표시 ("5일 전"). 우체통 목록/상세에서 사용
 - `recruitmentDateParser.ts` - 모집 기간 파싱
 - `debounce.ts` - 디바운스 함수
 - `validateSocialLink.ts` - SNS 링크 유효성 검사
