@@ -575,7 +575,9 @@
             <span class="feedback-upload-help">업로드하면 본문 끝에 <code>![]( )</code> 로 삽입됩니다. 최대 10MB</span>
           </div>
           <label class="feedback-checkbox" id="feedbackSendPushRow">
-            <input type="checkbox" id="feedbackSendPush" checked>
+            <!-- 웹뷰 토큰 주입 전에는 답장 푸시 대상을 찾을 수 없어 기본 해제한다.
+                 전체 편지 발행은 studentId 매칭이 없어 지금도 발송되므로 그때 켜서 쓴다. -->
+            <input type="checkbox" id="feedbackSendPush">
             <span id="feedbackSendPushLabel">발행하면 이 유저에게 푸시 알림 보내기</span>
           </label>
           <div class="promotion-actions">
