@@ -31,7 +31,7 @@
 | 보낸 사람 식별자 `user_ + UUID 앞 8자리`로 확정 | 영향 없음 (운영 화면 전용) |
 
 관련 브랜치
-- 프론트 구현: `msw-mocking-setup` (`develop-fe` 계열)
+- 프론트 구현: `feature/letterbox` (`develop-fe` 계열)
 - 포털 작업선: `develop/be`
 
 ---
@@ -57,7 +57,7 @@
 | 11 | 상태 전이 API (운영) | 3단계 유지용. 프론트 영향 없음 |
 | ~~12~~ | ~~임시저장(초안) API~~ | ✅ 4개 완료. 시그니처 §3 |
 | ~~13~~ | ~~이미지 업로드~~ | ✅ 엔드포인트 2개 완료 §3. **남은 건 프론트 연결** (§5-1) |
-| 14 | 답장 도착 FCM 푸시 (⑫) | `fcm` 패키지 재사용 |
+| ~~14~~ | ~~답장 도착 FCM 푸시 (⑫)~~ | **이번 범위 제외.** 앱 웹뷰 토큰 브리지가 선행되어야 한다 (§7) |
 
 **의존 순서**: 1 → 2~7 (사용자 흐름이 먼저 돌아감) → 8~12 (운영이 답장·발행 가능) → 13·14
 
@@ -153,7 +153,9 @@ issueStudentToken()  →  StudentIssueResponse(String accessToken)
 
 `secureFetch`(동아리 관리자용)와는 별개다. 토큰에 만료가 없어 refresh 흐름은 없다.
 
-`StudentUser.currentFcmToken`이 있으므로 **⑫ 답장 도착 푸시 대상도 이 신원으로 연결된다.**
+⚠️ 이전 판에서 "`StudentUser.currentFcmToken`이 있으므로 ⑫ 답장 푸시도 이 신원으로 연결된다"고 적었는데 **틀렸다.**
+`StudentUser`는 FCM 토큰을 등록할 때만 생기고, 웹뷰는 앱과 다른 studentId를 자체 발급한다.
+→ §7 참조. ⑫는 이번 범위에서 제외했다.
 
 ---
 
@@ -414,7 +416,7 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 - 레이아웃: 좌 사이드바 · 중앙 피드백 테이블 · 우 답장 작성 패널(370px)
 - 답장 패널 구성: 원문 인용 → 제목 입력 → 본문 textarea → `발행하면 이 유저에게 푸시 알림 보내기` 체크박스 → `답장 발행` 버튼
 
-주의: 이 워크스페이스(`msw-mocking-setup`)와 `develop/be`의 `index.html`이 이미 다르다(174,825 vs 177,585 바이트). **포털은 `develop/be`에서 작업할 것.** 프론트 브랜치에서 건드리면 충돌한다.
+주의: 이 워크스페이스(`feature/letterbox`)와 `develop/be`의 `index.html`이 이미 다르다(174,825 vs 177,585 바이트). **포털은 `develop/be`에서 작업할 것.** 프론트 브랜치에서 건드리면 충돌한다.
 
 ---
 
@@ -463,7 +465,7 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 
 ## 6. 프론트 현황 (참고)
 
-`develop-fe` 계열 `msw-mocking-setup` 브랜치에 구현 완료. 전부 MSW 목으로 동작한다.
+`develop-fe` 계열 `feature/letterbox` 브랜치에 구현 완료. 전부 MSW 목으로 동작한다.
 
 | 화면 | 라우트 |
 |---|---|
@@ -489,5 +491,79 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 우체통 흐름과 **독립적**이라 미뤄둔 것들이다. 없어도 편지를 읽고 쓰는 흐름은 끊기지 않는다.
 
 - **⑩ 만족도 모달 (`11170:1014`)** · **⑪ App Store 리뷰 이동 (`11177:1014`)** — 메인 화면에 뜨는 리뷰 유도 퍼널이다. 만족한 유저만 스토어로, 불만인 유저는 우체통으로 보내는 평점 방어 장치. 노출 조건(앱 3회 접속 또는 동아리 3회 조회)의 카운팅 저장소와 스토어 딥링크가 필요해 별도 작업으로 뺐다.
-- **⑫ 답장 도착 푸시** — FCM. 백엔드 체크리스트 12번과 같은 건이다.
+- **⑫ 답장 도착 푸시** — 이번 범위에서 제외하기로 결정. 아래 절에 이유와 나중에 붙일 때 필요한 것을 적었다.
 - **사진 그리드 (보낸 편지 상세)** — 이미지 업로드가 생기면 함께.
+
+## 7. ⑫ 답장 도착 푸시 — 이번 범위 제외 (결정)
+
+**먼저 출시하고 나중에 붙인다.** 앱 릴리즈에 우체통 출시를 묶지 않기로 했다.
+
+### 지금도 되는 푸시 / 안 되는 푸시
+
+푸시가 세 종류인데 대상 선정 방식이 다르다. **둘은 지금도 정상 동작한다.**
+
+| 푸시 | 대상 선정 | 상태 |
+|---|---|---|
+| 동아리 구독 알림 | FCM 토큰(기기) | 정상 |
+| 전체 발행 편지 (`sendBroadcastPush` → `fcmAdminService.sendToAll`) | 등록된 전 토큰 배치 | 정상 |
+| 내 피드백의 답장 (`sendReplyPush`) | `StudentUser.findByStudentId(studentId).currentFcmToken` | **안 감** |
+
+앞의 둘은 studentId를 쓰지 않으므로 이 결정과 무관하다.
+
+### 답장 푸시만 안 되는 이유
+
+`StudentUser` 문서는 `StudentFcmTokenService.upsertStudentUser()`에서만 생기고, 그건
+`rotateFcmToken()`(= `PUT /api/student/fcm-token`)에서만 불린다. 우체통은 `StudentUser`를
+만들지 않는다.
+
+앱은 웹뷰 껍데기다(`app/index.tsx` → `HomeWebViewScreen` → `/webview/main` → 웹 SPA 루트).
+웹뷰의 localStorage는 앱의 AsyncStorage와 별개라, 웹뷰는 앱과 **다른 studentId**를 자체 발급한다.
+그 studentId에는 `StudentUser`가 없으므로 `currentFcmToken`을 못 찾고 아래 로그만 남는다.
+
+```
+Reply push skipped. no fcm token for feedback letter={}
+```
+
+운영 포털에서 답장 발행 시 `pushSent: false`가 항상 뜨는 게 정상이다. 버그가 아니다.
+
+**편지 수신 자체는 정상이다.** 받은 편지함은 `letterRepository.findInboxByStudentId(studentId)`로
+조회하는데, 웹뷰 안에서는 신원이 일관되므로 답장이 목록에 그대로 뜬다. 알림만 없다.
+
+### 나중에 붙일 때 필요한 것
+
+1. **앱 — 웹뷰에 학생 토큰 주입** (`ui/home/home-webview-screen.tsx` 한 곳)
+   `ensureAccessToken()`(`services/auth-token.service.ts`)을 기다렸다가
+   `injectedJavaScriptBeforeContentLoaded`로 `window.__MOADONG_STUDENT_TOKEN__`에 넣는다.
+   `sessionLoading`을 기다렸다가 URL을 만드는 기존 패턴과 같다.
+   메뉴 → `/feedback`은 React Router 클라이언트 라우팅이라 같은 웹뷰 문서 안에서 일어난다.
+   그래서 이 한 곳이면 우체통 전체가 커버된다.
+   **주입 스크립트에 origin 가드가 필요하다.** 웹뷰가 로드하는 모든 문서에서 실행되므로
+   외부 사이트로 이동하면 베어러 토큰이 노출된다.
+
+2. **웹 — 주입 토큰 우선** (`frontend/src/apis/auth/studentFetch.ts`)
+   `window.__MOADONG_STUDENT_TOKEN__` → localStorage → 신규 발급 순.
+   localStorage가 앞서면 브리지 이전에 자체 발급해둔 토큰이 계속 이긴다.
+
+3. **백엔드 — 신원 이관 엔드포인트**
+   출시 후에 붙이면 그 사이 웹뷰 자체 신원으로 주고받은 편지가 앱 신원으로 안 넘어온다.
+   웹뷰에 남아 있는 옛 토큰이 옛 신원의 소유권 증명이 되므로, 옛 토큰과 새 토큰을 함께 받아
+   `Feedback.studentId`와 편지 수신자를 옮기는 일회성 API가 필요하다.
+   (출시 전에 1·2를 넣었다면 이 항목은 통째로 불필요했다)
+
+### 별개로 남은 버그 — `/auth/student`가 `sub`를 버린다
+
+`StudentAuthController.issueStudentToken()`에 `@RequestBody`가 없어서
+`UserCommandService.issueStudentAccessToken()`이 매번 `UUID.randomUUID()`로 새로 만든다.
+앱은 `{ sub, iat }`를 보내고 있는데(`services/api.ts`, `auth-token.service.ts`) 서버가 무시한다.
+의도된 동작이 아니다.
+
+지금은 구독 푸시에 영향이 없다. `createOrClaimToken()`이 같은 FCM 토큰 레코드를 찾아
+`updateStudentId()`로 새 신원에 갈아끼워 주기 때문에, studentId가 바뀌어도 구독이 따라온다.
+반면 `Feedback.studentId`에는 그런 복구가 없어서(코드베이스에서 `updateStudentId`는
+`StudentFcmToken`에만 있다) **재발급이 일어나면 편지함이 유실된다.**
+
+토큰에 만료가 없어 재발급은 서명 키 교체나 저장소 손상 정도에서만 나므로 급하지는 않다.
+고칠 때는 `sub`가 곧 인증 수단이 되므로 두 가지가 따라붙는다.
+
+- 앱의 UUID 생성이 `Math.random()` 기반이다(`services/auth-token-storage.ts`). CSPRNG로 교체해야 한다.
+- 서버에서 UUIDv4 형식을 검증해야 임의 문자열로 의도적 충돌을 막을 수 있다.
