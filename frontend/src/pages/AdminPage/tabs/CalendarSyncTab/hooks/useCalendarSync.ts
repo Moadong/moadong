@@ -23,6 +23,8 @@ export const useCalendarSync = () => {
   const notionData = useNotionCalendarData({
     onError: setErrorMessage,
     clearError,
+    // 워크스페이스 이름이 남으면 해제 후에도 연결됨으로 보인다
+    onDisconnected: () => setNotionWorkspaceName(''),
   });
 
   /** Notion page 응답을 날짜순 캘린더 이벤트로 변환한다 */

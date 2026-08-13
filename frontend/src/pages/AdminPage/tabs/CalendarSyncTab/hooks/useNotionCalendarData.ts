@@ -9,11 +9,14 @@ import {
 interface UseNotionCalendarDataParams {
   onError: (message: string) => void;
   clearError: () => void;
+  /** 해제 성공 시 상위가 들고 있는 연결 정보도 함께 비우게 한다 */
+  onDisconnected: () => void;
 }
 
 export const useNotionCalendarData = ({
   onError,
   clearError,
+  onDisconnected,
 }: UseNotionCalendarDataParams) => {
   /** 사용자가 드롭다운에서 직접 고른 값. 비어 있으면 서버 기준값을 따른다. */
   const [pickedDatabaseId, setPickedDatabaseId] = useState('');
@@ -50,7 +53,10 @@ export const useNotionCalendarData = ({
   const disconnectNotion = () => {
     clearError();
     disconnectMutation.mutate(undefined, {
-      onSuccess: () => setPickedDatabaseId(''),
+      onSuccess: () => {
+        setPickedDatabaseId('');
+        onDisconnected();
+      },
       onError: (error: Error) => onError(error.message),
     });
   };
