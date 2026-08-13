@@ -13,6 +13,8 @@ export const USER_EVENT = {
   FEEDBACK_TYPE_SELECTED: '우체통 피드백 유형 선택',
   FEEDBACK_SUBMITTED: '우체통 피드백 전송',
   RECEIVED_LETTER_OPENED: '우체통 받은 편지 열람',
+  SATISFACTION_ANSWERED: '만족도 응답',
+  SATISFACTION_SNOOZED: '만족도 응답 미룸',
 
   // 동소한 부스
   FESTIVAL_BOOTH_CLICKED: 'Festival Booth Clicked',
