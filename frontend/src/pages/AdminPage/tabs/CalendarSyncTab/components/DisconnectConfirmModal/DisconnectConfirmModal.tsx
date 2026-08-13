@@ -2,6 +2,8 @@ import WarningIcon from '@/assets/images/icons/calendar_sync_warning.svg?react';
 import Modal from '@/components/common/Modal/Modal';
 import * as Styled from './DisconnectConfirmModal.styles';
 
+const TITLE_ID = 'calendar-disconnect-confirm-title';
+
 interface DisconnectConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
@@ -14,12 +16,12 @@ const DisconnectConfirmModal = ({
   onConfirm,
 }: DisconnectConfirmModalProps) => (
   <Modal isOpen={isOpen} onClose={onClose}>
-    <Styled.Card role='dialog' aria-modal='true'>
+    <Styled.Card role='dialog' aria-modal='true' aria-labelledby={TITLE_ID}>
       <Styled.Message>
         <Styled.Icon aria-hidden>
           <WarningIcon />
         </Styled.Icon>
-        <Styled.Title>연동을 해제할까요?</Styled.Title>
+        <Styled.Title id={TITLE_ID}>연동을 해제할까요?</Styled.Title>
         <Styled.Description>
           가져온 일정은 캘린더에서 사라집니다.
         </Styled.Description>

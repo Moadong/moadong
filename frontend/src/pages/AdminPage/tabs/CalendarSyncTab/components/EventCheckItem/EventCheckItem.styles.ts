@@ -2,11 +2,12 @@ import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
-export const Item = styled.label`
+export const Item = styled.label<{ $disabled?: boolean }>`
   display: flex;
   align-items: center;
   gap: 12px;
-  cursor: pointer;
+  cursor: ${({ $disabled }) => ($disabled ? 'not-allowed' : 'pointer')};
+  opacity: ${({ $disabled }) => ($disabled ? 0.5 : 1)};
 `;
 
 /** 시각적 체크박스를 쓰되 키보드·스크린리더는 실제 input을 쓰게 한다 */
@@ -16,6 +17,12 @@ export const Input = styled.input`
   height: 1px;
   opacity: 0;
   pointer-events: none;
+
+  /* input이 투명해 Tab으로 옮겨온 위치를 시각용 상자에 대신 표시한다 */
+  &:focus-visible + span {
+    outline: 2px solid ${colors.primary[800]};
+    outline-offset: 2px;
+  }
 `;
 
 export const Box = styled.span`

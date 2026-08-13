@@ -20,6 +20,8 @@ interface CalendarLinkCardProps {
   events?: CalendarLinkEvent[];
   checkedEventIds?: string[];
   onToggleEvent?: (eventId: string) => void;
+  /** 표시 상태를 못 읽어온 동안에는 체크를 막는다 */
+  isToggleDisabled?: boolean;
 }
 
 const CalendarLinkCard = ({
@@ -30,6 +32,7 @@ const CalendarLinkCard = ({
   events = [],
   checkedEventIds = [],
   onToggleEvent,
+  isToggleDisabled,
 }: CalendarLinkCardProps) => (
   <Styled.Card>
     <Styled.Header>
@@ -47,6 +50,7 @@ const CalendarLinkCard = ({
             key={event.id}
             checked={checkedEventIds.includes(event.id)}
             onChange={() => onToggleEvent?.(event.id)}
+            disabled={isToggleDisabled}
             date={event.date}
             title={event.title}
           />

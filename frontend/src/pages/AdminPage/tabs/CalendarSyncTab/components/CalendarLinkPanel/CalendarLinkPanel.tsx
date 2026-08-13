@@ -51,7 +51,13 @@ const CalendarLinkPanel = () => {
   } = useCalendarSync();
 
   const trackEvent = useMixpanelTrack();
-  const { data: hiddenCalendarEvents = [] } = useGetHiddenCalendarEvents();
+  const {
+    data: hiddenCalendarEvents = [],
+    isPending: isHiddenEventsPending,
+    isError: isHiddenEventsError,
+  } = useGetHiddenCalendarEvents();
+  /** 숨김 목록을 못 읽으면 표시 상태를 알 수 없어 체크를 막는다 */
+  const isVisibilityUnknown = isHiddenEventsPending || isHiddenEventsError;
   const hideMutation = useHideCalendarEvent();
   const unhideMutation = useUnhideCalendarEvent();
 
@@ -122,6 +128,11 @@ const CalendarLinkPanel = () => {
   return (
     <CalendarLinkSection>
       {errorMessage && <Styled.ErrorText>{errorMessage}</Styled.ErrorText>}
+      {isHiddenEventsError && (
+        <Styled.ErrorText>
+          일정 표시 상태를 불러오지 못했습니다.
+        </Styled.ErrorText>
+      )}
 
       <CalendarLinkCard
         title='Google 캘린더'
@@ -143,6 +154,7 @@ const CalendarLinkPanel = () => {
           googleEvents.map((event) => event.id),
         )}
         onToggleEvent={(eventId) => toggleVisibility('GOOGLE', eventId)}
+        isToggleDisabled={isVisibilityUnknown}
       />
 
       <CalendarLinkCard
@@ -165,6 +177,7 @@ const CalendarLinkPanel = () => {
           notionEvents.map((event) => event.id),
         )}
         onToggleEvent={(eventId) => toggleVisibility('NOTION', eventId)}
+        isToggleDisabled={isVisibilityUnknown}
       />
 
       <DisconnectConfirmModal
