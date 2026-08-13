@@ -53,6 +53,9 @@ const BottomSheet = ({
     if (shouldClose) onClose();
   };
 
+  /** 취소된 제스처는 놓은 것이 아니므로 닫지 않고 제자리로 돌린다 */
+  const handlePointerCancel = () => setDragOffset(null);
+
   if (!isOpen) return null;
 
   return (
@@ -71,7 +74,7 @@ const BottomSheet = ({
             onPointerDown={handlePointerDown}
             onPointerMove={handlePointerMove}
             onPointerUp={handlePointerUp}
-            onPointerCancel={handlePointerUp}
+            onPointerCancel={handlePointerCancel}
           >
             <Styled.HandleBar />
           </Styled.DragHandle>
