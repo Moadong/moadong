@@ -17,9 +17,17 @@ export const Item = styled.button<{ $unread?: boolean }>`
   cursor: pointer;
 `;
 
+/** 시안은 제목과 미리보기만 2px로 붙이고, 메타와는 8px을 둔다 */
+export const TextGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  width: 100%;
+`;
+
 export const Title = styled.p`
   ${setTypography(typography.paragraph.p2)};
-  color: ${colors.gray[800]};
+  color: ${colors.gray[900]};
   letter-spacing: -0.32px;
   overflow: hidden;
   text-overflow: ellipsis;

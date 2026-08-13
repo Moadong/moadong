@@ -18,10 +18,10 @@ const ReceivedLetterItem = ({ letter, onClick }: ReceivedLetterItemProps) => {
       $unread={!letter.isRead}
       onClick={() => onClick(letter.id)}
     >
-      <div>
+      <Styled.TextGroup>
         <Styled.Title>{letter.title}</Styled.Title>
         <Styled.Preview>{letter.preview}</Styled.Preview>
-      </div>
+      </Styled.TextGroup>
       <Styled.Meta>
         <FeedbackTag
           label={category.label}

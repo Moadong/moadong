@@ -8,10 +8,12 @@ export const Container = styled.div`
   background: ${colors.base.white};
 `;
 
+/* 시안 세로 리듬: 탑바 ↓18 탭 ↓20 필터 ↓8 목록 */
 export const Tabs = styled.div`
   display: flex;
   align-items: center;
   height: 42px;
+  margin-top: 18px;
   border-bottom: 1px solid ${colors.gray[300]};
 `;
 
@@ -34,6 +36,7 @@ export const Filters = styled.div`
   align-items: center;
   gap: 7px;
   height: 52px;
+  margin: 20px 0 8px;
   padding: 10px 20px;
 `;
 
@@ -45,7 +48,7 @@ export const FilterChip = styled.button<{ $active: boolean }>`
   background: ${({ $active }) =>
     $active ? colors.gray[900] : colors.gray[200]};
   ${setTypography(typography.button.button1)};
-  color: ${({ $active }) => ($active ? colors.gray[200] : colors.gray[800])};
+  color: ${({ $active }) => ($active ? colors.gray[200] : colors.gray[900])};
   letter-spacing: -0.28px;
   white-space: nowrap;
   cursor: pointer;
