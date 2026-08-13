@@ -165,8 +165,26 @@ const FeedbackWritePage = () => {
           });
           navigate('/feedback/complete', { replace: true });
         },
+        // 이미지가 R2에 없거나(601-2) 길이 검증에 걸리면 조용히 막힌다. 남겨야 보인다.
+        onError: (error) => {
+          trackEvent(USER_EVENT.FEEDBACK_SUBMIT_FAILED, {
+            type: feedbackType,
+            imageCount: images.length,
+            message: error instanceof Error ? error.message : 'unknown',
+          });
+        },
       },
     );
+  };
+
+  /** 작성 화면까지 와서 보내지 않고 나간 경우. 퍼널에서 제일 큰 누수 지점이다 */
+  const handleExitConfirm = () => {
+    trackEvent(USER_EVENT.FEEDBACK_WRITE_ABANDONED, {
+      type: feedbackType,
+      contentLength: content.trim().length,
+      imageCount: images.length,
+    });
+    navigate(-1);
   };
 
   return (
@@ -234,7 +252,7 @@ const FeedbackWritePage = () => {
       <FeedbackConfirmModal
         isOpen={openedModal === 'exit'}
         {...EXIT_MODAL}
-        onConfirm={() => navigate(-1)}
+        onConfirm={handleExitConfirm}
         onClose={() => setOpenedModal(null)}
       />
       <FeedbackConfirmModal

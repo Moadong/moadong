@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from '@/components/common/Modal/Modal';
 import {
@@ -21,6 +22,15 @@ const SatisfactionModal = () => {
   const trackEvent = useMixpanelTrack();
   const navigate = useNavigate();
   const handleLink = useNavigator();
+
+  // 응답률을 구하려면 노출 자체를 남겨야 한다. 리렌더로 중복되지 않게 ref로 막는다.
+  const trackedShownRef = useRef(false);
+  useEffect(() => {
+    if (!isOpen || trackedShownRef.current) return;
+
+    trackedShownRef.current = true;
+    trackEvent(USER_EVENT.SATISFACTION_SHOWN);
+  }, [isOpen, trackEvent]);
 
   const handleSatisfied = () => {
     trackEvent(USER_EVENT.SATISFACTION_ANSWERED, { satisfied: true });

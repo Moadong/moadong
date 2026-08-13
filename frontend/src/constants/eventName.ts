@@ -12,7 +12,11 @@ export const USER_EVENT = {
   FEEDBACK_ENTRY_CLICKED: '우체통 진입 클릭',
   FEEDBACK_TYPE_SELECTED: '우체통 피드백 유형 선택',
   FEEDBACK_SUBMITTED: '우체통 피드백 전송',
+  FEEDBACK_SUBMIT_FAILED: '우체통 피드백 전송 실패',
+  FEEDBACK_WRITE_ABANDONED: '우체통 작성 이탈',
   RECEIVED_LETTER_OPENED: '우체통 받은 편지 열람',
+  /** 응답률·긍정률의 분모가 된다 */
+  SATISFACTION_SHOWN: '만족도 모달 노출',
   SATISFACTION_ANSWERED: '만족도 응답',
   SATISFACTION_SNOOZED: '만족도 응답 미룸',
 
