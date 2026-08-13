@@ -33,7 +33,7 @@ export const Title = styled.h1`
 
 export const Description = styled.p`
   ${setTypography(typography.paragraph.p6)};
-  color: ${colors.gray[800]};
+  color: ${colors.gray[900]};
   letter-spacing: -0.28px;
 `;
 

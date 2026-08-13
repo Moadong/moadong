@@ -28,6 +28,14 @@ export const IconBox = styled.span`
 
 export const Label = styled.span`
   ${setTypography(typography.paragraph.p3)};
-  color: ${colors.gray[800]};
+  color: ${colors.gray[900]};
   letter-spacing: -0.32px;
+`;
+
+/** 시안: 카드 오른쪽 끝에 붙는 16px 화살표 */
+export const Chevron = styled.span`
+  display: flex;
+  flex-shrink: 0;
+  margin-left: auto;
+  color: ${colors.base.black};
 `;
