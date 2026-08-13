@@ -24,12 +24,11 @@ import FeedbackImageGrid from './components/FeedbackImageGrid';
 import FeedbackTag from './components/FeedbackTag';
 import * as Styled from './FeedbackWritePage.styles';
 
-// Todo: 뒤로가기 모달만 시안 카피가 지원서 질문 삭제 문구('질문을 삭제할까요?')라 그대로 쓸 수 없어
-// 임시로 작성함. 디자이너 확정 후 교체할 것.
+/** 시안 11366:20088 */
 const EXIT_MODAL = {
-  title: '작성을 그만둘까요?',
-  description: '작성 중인 내용은 저장되지 않습니다.',
-  confirmLabel: '나가기',
+  title: '질문을 삭제할까요?',
+  description: '삭제된 질문은 복구할 수 없습니다.',
+  confirmLabel: '삭제',
 };
 
 const SAVE_MODAL = {
