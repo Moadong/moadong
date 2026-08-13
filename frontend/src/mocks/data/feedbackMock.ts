@@ -107,6 +107,7 @@ export const sentFeedbacksMock: SentFeedback[] = [
     type: 'BUG',
     content:
       '지원서 작성 중에 새로고침하면 쓰던 내용이 다 날아가요. 그리고 어쩌고 저쩌고',
+    images: ['/og_image.png', '/og_image.png', '/og_image.png', '/og_image.png'],
     status: 'PENDING',
     createdAt: daysAgo(5),
   },
@@ -115,6 +116,7 @@ export const sentFeedbacksMock: SentFeedback[] = [
     type: 'FEATURE',
     content:
       '즐겨찾기한 동아리 모집이 열리면 알림을 받고 싶어요. 매번 들어와서 확인하기 번거로워요.',
+    images: [],
     status: 'REPLIED',
     createdAt: daysAgo(5),
   },
@@ -122,6 +124,7 @@ export const sentFeedbacksMock: SentFeedback[] = [
     id: 'feedback-3',
     type: 'CHEER',
     content: '덕분에 동아리 찾는 게 훨씬 편해졌어요. 앞으로도 응원할게요!',
+    images: [],
     status: 'PENDING',
     createdAt: daysAgo(5),
   },

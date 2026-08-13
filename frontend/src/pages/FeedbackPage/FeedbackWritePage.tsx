@@ -20,11 +20,12 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useCreateFeedback } from '@/hooks/Queries/useFeedback';
 import type { FeedbackType } from '@/types/feedback';
 import FeedbackConfirmModal from './components/FeedbackConfirmModal';
+import FeedbackImageGrid from './components/FeedbackImageGrid';
 import FeedbackTag from './components/FeedbackTag';
 import * as Styled from './FeedbackWritePage.styles';
 
-// Todo: 시안(11366:19966)의 모달 카피가 지원서 질문 삭제 모달 텍스트라 그대로 쓸 수 없어 임시로 작성함.
-// 디자이너 확정 후 교체할 것.
+// Todo: 뒤로가기 모달만 시안 카피가 지원서 질문 삭제 문구('질문을 삭제할까요?')라 그대로 쓸 수 없어
+// 임시로 작성함. 디자이너 확정 후 교체할 것.
 const EXIT_MODAL = {
   title: '작성을 그만둘까요?',
   description: '작성 중인 내용은 저장되지 않습니다.',
@@ -32,15 +33,25 @@ const EXIT_MODAL = {
 };
 
 const SAVE_MODAL = {
-  title: '이대로 보낼까요?',
-  description: '보낸 편지함에서 다시 확인할 수 있어요.',
-  confirmLabel: '보내기',
+  title: '편지를 전송하시겠습니까?',
+  description: '전송된 편지는 수정하거나 삭제할 수 없습니다.',
+  confirmLabel: '확인',
 };
 
 const parseFeedbackType = (value?: string): FeedbackType | undefined =>
   FEEDBACK_TYPE_ORDER.find((type) => type.toLowerCase() === value);
 
 type AttachError = 'count' | 'size' | null;
+
+/**
+ * 미리보기 URL을 파일과 함께 들고 있는다.
+ * 렌더 중에 만들면 매 렌더마다 새 URL이 생기고, 이펙트에서 만들면 setState가 연쇄 렌더를 부른다.
+ * 선택하는 순간 한 번만 만들고 목록에서 빠질 때 해제한다.
+ */
+interface PickedImage {
+  file: File;
+  preview: string;
+}
 
 /**
  * 시안 Component 13(11435:18202)의 4가지 상태.
@@ -86,7 +97,7 @@ const FeedbackWritePage = () => {
   const { mutate: createFeedback, isPending } = useCreateFeedback();
 
   const [content, setContent] = useState('');
-  const [images, setImages] = useState<File[]>([]);
+  const [images, setImages] = useState<PickedImage[]>([]);
   const [attachError, setAttachError] = useState<AttachError>(null);
   const [openedModal, setOpenedModal] = useState<'exit' | 'save' | null>(null);
 
@@ -97,6 +108,7 @@ const FeedbackWritePage = () => {
 
   const canSubmit = content.trim().length >= FEEDBACK_CONTENT_MIN_LENGTH;
   const attachState = getAttachState(images.length, attachError);
+  const isAttachFull = images.length >= FEEDBACK_IMAGE_MAX_COUNT;
 
   const handleBack = () => {
     if (content.length === 0) {
@@ -108,6 +120,8 @@ const FeedbackWritePage = () => {
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const files = Array.from(event.target.files ?? []);
+    // 같은 파일을 다시 고를 수 있도록 비운다. 안 그러면 change 이벤트가 안 난다.
+    event.target.value = '';
 
     // 용량 초과가 하나라도 있으면 선택을 반영하지 않는다
     if (files.some((file) => file.size > MAX_FILE_SIZE)) {
@@ -115,13 +129,34 @@ const FeedbackWritePage = () => {
       return;
     }
 
-    setAttachError(files.length > FEEDBACK_IMAGE_MAX_COUNT ? 'count' : null);
-    setImages(files.slice(0, FEEDBACK_IMAGE_MAX_COUNT));
+    // 시안의 (2/4) → (4/4) 흐름대로 여러 번 나눠 골라도 쌓인다
+    const merged = [
+      ...images,
+      ...files.map((file) => ({ file, preview: URL.createObjectURL(file) })),
+    ];
+    const kept = merged.slice(0, FEEDBACK_IMAGE_MAX_COUNT);
+
+    merged
+      .slice(FEEDBACK_IMAGE_MAX_COUNT)
+      .forEach((image) => URL.revokeObjectURL(image.preview));
+
+    setAttachError(merged.length > FEEDBACK_IMAGE_MAX_COUNT ? 'count' : null);
+    setImages(kept);
+  };
+
+  const handleImageRemove = (index: number) => {
+    URL.revokeObjectURL(images[index].preview);
+    setAttachError(null);
+    setImages(images.filter((_, i) => i !== index));
   };
 
   const handleSubmit = () => {
     createFeedback(
-      { type: feedbackType, content: content.trim(), files: images },
+      {
+        type: feedbackType,
+        content: content.trim(),
+        files: images.map((image) => image.file),
+      },
       {
         onSuccess: () => {
           trackEvent(USER_EVENT.FEEDBACK_SUBMITTED, {
@@ -161,11 +196,14 @@ const FeedbackWritePage = () => {
             aria-label='피드백 내용'
           />
           <Styled.CharCount>
-            {content.length}/{FEEDBACK_CONTENT_MAX_LENGTH}
+            <Styled.CharCountValue $active={content.length > 0}>
+              {content.length}
+            </Styled.CharCountValue>
+            /{FEEDBACK_CONTENT_MAX_LENGTH}
           </Styled.CharCount>
         </Styled.ContentField>
 
-        <Styled.AttachButton>
+        <Styled.AttachButton $disabled={isAttachFull}>
           <attachState.Icon width={40} height={40} aria-hidden />
           <Styled.AttachLabel $variant={attachState.variant}>
             {attachState.label}
@@ -174,9 +212,15 @@ const FeedbackWritePage = () => {
             type='file'
             accept={ALLOWED_IMAGE_TYPES.join(',')}
             multiple
+            disabled={isAttachFull}
             onChange={handleImageChange}
           />
         </Styled.AttachButton>
+
+        <FeedbackImageGrid
+          srcs={images.map((image) => image.preview)}
+          onRemove={handleImageRemove}
+        />
       </Styled.Content>
 
       <Styled.BottomArea>

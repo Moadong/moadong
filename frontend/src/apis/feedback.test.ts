@@ -226,6 +226,7 @@ describe('feedback API', () => {
           id: 'feedback-1',
           type: 'BUG',
           content: '버그가 있어요',
+          images: [],
           status: 'PENDING',
           createdAt: '2026-08-01T00:00:00.000Z',
         },

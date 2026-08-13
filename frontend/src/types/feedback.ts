@@ -46,6 +46,8 @@ export interface SentFeedback {
   id: string;
   type: FeedbackType;
   content: string;
+  /** 첨부한 사진의 최종 URL. 첨부가 없으면 빈 배열이다 */
+  images: string[];
   status: SentFeedbackStatus;
   createdAt: string;
 }

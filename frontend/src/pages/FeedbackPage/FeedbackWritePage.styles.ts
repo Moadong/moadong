@@ -83,7 +83,12 @@ export const CharCount = styled.p`
   letter-spacing: -0.28px;
 `;
 
-export const AttachButton = styled.label`
+/** 시안 주석: 입력 전에는 글자 수도 비활성 색으로 두고, 입력이 시작되면 현재 수만 진해진다 */
+export const CharCountValue = styled.span<{ $active: boolean }>`
+  color: ${({ $active }) => ($active ? colors.gray[900] : 'inherit')};
+`;
+
+export const AttachButton = styled.label<{ $disabled?: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -94,6 +99,9 @@ export const AttachButton = styled.label`
   border-radius: 14px;
   background: ${colors.gray[50]};
   cursor: pointer;
+
+  /* 시안: 최대 등록 수를 채우면 비활성화한다 */
+  ${({ $disabled }) => $disabled && 'pointer-events: none; cursor: default;'}
 `;
 
 export const AttachLabel = styled.span<{

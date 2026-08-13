@@ -8,6 +8,7 @@ import {
 } from '@/constants/feedback';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useSentFeedback } from '@/hooks/Queries/useFeedback';
+import FeedbackImageGrid from './components/FeedbackImageGrid';
 import FeedbackTag from './components/FeedbackTag';
 import * as Styled from './FeedbackWritePage.styles';
 
@@ -59,9 +60,14 @@ const SentFeedbackDetailPage = () => {
               aria-label='보낸 피드백 내용'
             />
             <Styled.CharCount>
-              {feedback.content.length}/{FEEDBACK_CONTENT_MAX_LENGTH}
+              <Styled.CharCountValue $active>
+                {feedback.content.length}
+              </Styled.CharCountValue>
+              /{FEEDBACK_CONTENT_MAX_LENGTH}
             </Styled.CharCount>
           </Styled.ContentField>
+
+          <FeedbackImageGrid srcs={feedback.images ?? []} />
         </Styled.Content>
       )}
     </Styled.Container>

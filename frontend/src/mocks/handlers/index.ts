@@ -168,6 +168,7 @@ export const handlers = [
       id: feedbackId,
       type: payload.type,
       content: payload.content,
+      images: payload.images ?? [],
       status: 'PENDING',
       createdAt: new Date().toISOString(),
     });
