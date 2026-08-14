@@ -1,5 +1,5 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import deleteIcon from '@/assets/images/icons/applicant_delete.svg';
 import selectAllIcon from '@/assets/images/icons/applicant_select_arrow.svg';
 import selectIcon from '@/assets/images/icons/selectArrow.svg';
@@ -8,14 +8,15 @@ import SearchField from '@/components/common/SearchField/SearchField';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import {
   useDeleteApplicants,
-  useGetApplicants,
   useUpdateApplicant,
 } from '@/hooks/Queries/useApplicants';
-import { useApplicantSSE } from '@/hooks/useApplicantSSE';
+import { useApplicantList, ApplicantFilter, ApplicantSort } from '@/hooks/useApplicantList';
+import { useApplicantSelection } from '@/hooks/useApplicantSelection';
+import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import { useAdminClubId } from '@/store/useAdminClubStore';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
+import ApplicantsTabMobile from './ApplicantsTabMobile';
 import * as Styled from './ApplicantsTab.styles';
 
 const sortOptions = [
@@ -24,11 +25,19 @@ const sortOptions = [
 ] as const;
 
 const ApplicantsTab = () => {
-  const { clubId } = useAdminClubId();
+  const { isMobile, isTablet } = useDevice();
+
+  if (isMobile || isTablet) {
+    return <ApplicantsTabMobile />;
+  }
+
+  return <ApplicantsTabDesktop />;
+};
+
+const ApplicantsTabDesktop = () => {
   const { applicationFormId } = useParams<{ applicationFormId: string }>();
-  const { applicantsData, setApplicantsData } =
-    useApplicantSSE(applicationFormId);
   const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
 
   const statusOptions = AVAILABLE_STATUSES.map((status) => ({
     value: status,
@@ -45,30 +54,74 @@ const ApplicantsTab = () => {
     }),
   );
 
-  const {
-    data: fetchData,
-    isLoading,
-    isError,
-  } = useGetApplicants(applicationFormId ?? '');
-  const [keyword, setKeyword] = useState('');
-  const [checkedItem, setCheckedItem] = useState<Map<string, boolean>>(
-    new Map(),
-  );
+  const sortParam = (searchParams.get('sort') as ApplicantSort) ?? 'date';
+  const keywordParam = searchParams.get('q') ?? '';
+  const filterParam = searchParams.get('filter');
+  // 모바일에서 복수 선택(콤마 구분) 넘어오면 단일 표현 불가 → ALL로 리셋
+  const initialFilter =
+    filterParam && !filterParam.includes(',') ? filterParam : 'ALL';
+
   const [open, setOpen] = useState(false);
   const [isStatusDropdownOpen, setIsStatusDropdownOpen] = useState(false);
   const [isFilterOpen, setIsFilterOpen] = useState(false);
-  const [selectedFilter, setSelectedFilter] = useState('ALL');
   const [isSortOpen, setIsSortOpen] = useState(false);
-  const [selectedSort, setSelectedSort] = useState<
-    (typeof sortOptions)[number]
-  >(sortOptions[0]);
 
-  // 초기 데이터 로드
-  useEffect(() => {
-    if (fetchData) {
-      setApplicantsData(fetchData);
-    }
-  }, [fetchData, setApplicantsData]);
+  const {
+    applicantsData,
+    filteredApplicants,
+    selectedSort,
+    setSelectedSort,
+    keyword,
+    setKeyword,
+    selectedFilter,
+    setSelectedFilter,
+  } = useApplicantList(applicationFormId, {
+    initialSort: sortParam,
+    initialKeyword: keywordParam,
+    initialFilter: [initialFilter as ApplicantFilter],
+  });
+
+  const currentFilter = selectedFilter[0] ?? 'ALL';
+  const selectedSortOption =
+    sortOptions.find((o) => o.value === selectedSort) ?? sortOptions[0];
+
+  const handleFilterChange = (value: string) => {
+    setSelectedFilter([value as ApplicantFilter]);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (value === 'ALL') next.delete('filter');
+        else next.set('filter', value);
+        return next;
+      },
+      { replace: true },
+    );
+  };
+
+  const handleKeywordChange = (value: string) => {
+    setKeyword(value);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        if (value) next.set('q', value);
+        else next.delete('q');
+        return next;
+      },
+      { replace: true },
+    );
+  };
+
+  const handleSortChange = (value: string) => {
+    setSelectedSort(value as ApplicantSort);
+    setSearchParams(
+      (prev) => {
+        const next = new URLSearchParams(prev);
+        next.set('sort', value);
+        return next;
+      },
+      { replace: true },
+    );
+  };
 
   const closeAllDropdowns = () => {
     if (open) setOpen(false);
@@ -76,44 +129,13 @@ const ApplicantsTab = () => {
     if (isFilterOpen) setIsFilterOpen(false);
     if (isSortOpen) setIsSortOpen(false);
   };
-  const { mutate: deleteApplicants } = useDeleteApplicants(clubId!);
-  const { mutate: updateDetailApplicants } = useUpdateApplicant(
-    applicationFormId ?? '',
-  );
+
+  const { mutate: deleteApplicants } = useDeleteApplicants(applicationFormId ?? '');
+  const { mutate: updateDetailApplicants } = useUpdateApplicant(applicationFormId);
   const dropdownRef = useRef<Array<HTMLDivElement | null>>([]);
 
-  const filteredApplicants = useMemo(() => {
-    if (!applicantsData?.applicants) return [];
-
-    let applicants = [...applicantsData.applicants];
-
-    if (selectedFilter !== 'ALL') {
-      applicants = applicants.filter(
-        (applicant) => applicant.status === selectedFilter,
-      );
-    }
-
-    if (keyword.trim()) {
-      applicants = applicants.filter((user: Applicant) =>
-        user.answers?.[0]?.value
-          ?.toLowerCase()
-          .includes(keyword.trim().toLowerCase()),
-      );
-    }
-
-    if (selectedSort.value === 'name') {
-      applicants.sort((a, b) =>
-        a.answers?.[0]?.value.localeCompare(b.answers?.[0]?.value),
-      );
-    } else {
-      applicants.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-    }
-
-    return applicants;
-  }, [applicantsData, keyword, selectedFilter, selectedSort.value]);
+  const { checkedIds, toggleId: onToggleId, setCheckedIds: onSetCheckedIds, clearSelection: onClearSelection } =
+    useApplicantSelection(applicationFormId ?? '');
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
@@ -132,19 +154,10 @@ const ApplicantsTab = () => {
     };
   }, [open, isStatusDropdownOpen, isFilterOpen, isSortOpen]);
 
-  useEffect(() => {
-    const newMap = new Map<string, boolean>();
-    filteredApplicants.forEach((user: Applicant) => {
-      newMap.set(user.id, false);
-    });
-    setCheckedItem(newMap);
-  }, [filteredApplicants]);
-
   const selectAll =
-    checkedItem.size > 0 && Array.from(checkedItem.values()).every(Boolean);
-  const isChecked = Array.from(checkedItem.values()).some(Boolean);
-
-  if (!clubId) return null;
+    filteredApplicants.length > 0 &&
+    filteredApplicants.every((a) => checkedIds.has(a.id));
+  const isChecked = filteredApplicants.some((a) => checkedIds.has(a.id));
 
   const deleteSelectApplicants = (ids: string[]) => {
     if (ids.length === 0) return;
@@ -158,7 +171,7 @@ const ApplicantsTab = () => {
       { applicantIds: ids },
       {
         onSuccess: () => {
-          setCheckedItem(new Map());
+          onClearSelection();
           alert('삭제되었습니다.');
         },
         onError: () => {
@@ -172,45 +185,29 @@ const ApplicantsTab = () => {
     mode: 'all' | 'filter',
     ...args: ApplicationStatus[]
   ) => {
-    if (checkedItem.size === 0 || filteredApplicants.length === 0) return;
+    if (filteredApplicants.length === 0) return;
 
-    setCheckedItem((prev) => {
-      const newMap = new Map(prev);
-
-      const isAllChecked = Array.from(prev.values()).every(Boolean);
-
-      if (mode === 'all') {
-        newMap.forEach((_, key) => newMap.set(key, !isAllChecked));
-        return newMap;
+    if (mode === 'all') {
+      if (selectAll) {
+        onClearSelection();
+      } else {
+        onSetCheckedIds(new Set(filteredApplicants.map((a) => a.id)));
       }
+      return;
+    }
 
-      newMap.forEach((_, key) => {
-        newMap.set(key, false);
-      });
-
+    const byStatus = new Set(
       filteredApplicants
-        .filter((applicant) => args.includes(applicant.status))
-        .forEach((applicant) => {
-          newMap.set(applicant.id, true);
-        });
-      return newMap;
-    });
-  };
-
-  const checkoutAllApplicants = () => {
-    setCheckedItem((prev) => {
-      const newMap = new Map(prev);
-      newMap.forEach((_, key) => {
-        newMap.set(key, false);
-      });
-      return newMap;
-    });
+        .filter((a) => args.includes(a.status))
+        .map((a) => a.id),
+    );
+    onSetCheckedIds(byStatus);
   };
 
   const updateAllApplicants = (status: ApplicationStatus) => {
     updateDetailApplicants(
       (applicantsData?.applicants ?? [])
-        .filter((applicant) => checkedItem.get(applicant.id))
+        .filter((applicant) => checkedIds.has(applicant.id))
         .map((applicant) => ({
           applicantId: applicant.id,
           memo: applicant.memo,
@@ -218,7 +215,7 @@ const ApplicantsTab = () => {
         })),
       {
         onSuccess: () => {
-          checkoutAllApplicants();
+          onClearSelection();
         },
         onError: () => {
           alert('지원자 상태 변경에 실패했습니다. 다시 시도해주세요.');
@@ -276,21 +273,21 @@ const ApplicantsTab = () => {
               <CustomDropDown
                 options={filterOptions}
                 onSelect={(value) => {
-                  setSelectedFilter(value);
+                  handleFilterChange(value);
                 }}
                 open={isFilterOpen}
                 onToggle={(isOpen) => {
                   closeAllDropdowns();
                   setIsFilterOpen(!isOpen);
                 }}
-                selected={selectedFilter}
+                selected={currentFilter}
                 style={{ width: '101px' }}
               >
                 <CustomDropDown.Trigger>
                   <Styled.ApplicantFilterSelect>
                     {
                       filterOptions.find(
-                        (option) => option.value === selectedFilter,
+                        (option) => option.value === currentFilter,
                       )?.label
                     }
                   </Styled.ApplicantFilterSelect>
@@ -317,15 +314,10 @@ const ApplicantsTab = () => {
               <CustomDropDown
                 options={sortOptions}
                 onSelect={(value) => {
-                  const selected = sortOptions.find(
-                    (option) => option.value === value,
-                  );
-                  if (selected) {
-                    setSelectedSort(selected);
-                  }
+                  handleSortChange(value);
                 }}
                 open={isSortOpen}
-                selected={selectedSort.value}
+                selected={selectedSortOption.value}
                 onToggle={(isOpen) => {
                   closeAllDropdowns();
                   setIsSortOpen(!isOpen);
@@ -334,7 +326,7 @@ const ApplicantsTab = () => {
               >
                 <CustomDropDown.Trigger>
                   <Styled.ApplicantFilterSelect>
-                    {selectedSort.label}
+                    {selectedSortOption.label}
                   </Styled.ApplicantFilterSelect>
                   <Styled.Arrow src={selectIcon} />
                 </CustomDropDown.Trigger>
@@ -393,17 +385,16 @@ const ApplicantsTab = () => {
               alt='삭제'
               disabled={!isChecked}
               onClick={() => {
-                const toBeDeleted = Array.from(checkedItem.entries())
-                  .filter(([_, isChecked]) => isChecked)
-                  .map(([id, _]) => id);
-
+                const toBeDeleted = filteredApplicants
+                  .filter((a) => checkedIds.has(a.id))
+                  .map((a) => a.id);
                 deleteSelectApplicants(toBeDeleted);
               }}
             />
           </Styled.FilterContainer>
           <SearchField
             value={keyword}
-            onChange={setKeyword}
+            onChange={handleKeywordChange}
             autoBlur={false}
             placeholder='지원자 이름을 입력해주세요'
             ariaLabel='지원자 검색창'
@@ -491,14 +482,10 @@ const ApplicantsTab = () => {
               >
                 <Styled.ApplicantTableCol>
                   <Styled.ApplicantTableCheckbox
-                    checked={checkedItem.get(item.id)}
+                    checked={checkedIds.has(item.id)}
                     onClick={(e: React.MouseEvent<HTMLInputElement>) => {
                       e.stopPropagation();
-                      setCheckedItem((prev) => {
-                        const newMap = new Map(prev);
-                        newMap.set(item.id, !newMap.get(item.id));
-                        return newMap;
-                      });
+                      onToggleId(item.id);
                     }}
                   />
                 </Styled.ApplicantTableCol>
