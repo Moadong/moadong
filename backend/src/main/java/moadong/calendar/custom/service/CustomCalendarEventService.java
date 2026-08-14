@@ -97,7 +97,7 @@ public class CustomCalendarEventService {
             return;
         }
 
-        LocalDate newRecurrenceEnd = targetDate.minusDays(1);
+        LocalDate newRecurrenceEnd = earlierOfExistingEnd(event, targetDate.minusDays(1));
         if (newRecurrenceEnd.isBefore(parseRequiredDate(event.getStart()))) {
             customCalendarEventRepository.delete(event);
             return;
@@ -163,6 +163,19 @@ public class CustomCalendarEventService {
                         event.getColor()
                 ))
                 .toList();
+    }
+
+    /**
+     * THIS_AND_FOLLOWING 삭제는 종료일을 앞당기기만 해야 한다.
+     * 기준일이 기존 종료일보다 뒤면 종료일을 그대로 두어 발생일이 늘어나지 않게 한다.
+     */
+    private LocalDate earlierOfExistingEnd(CustomCalendarEvent event, LocalDate newRecurrenceEnd) {
+        String existingEnd = event.getRecurrence().end();
+        if (!StringUtils.hasText(existingEnd)) {
+            return newRecurrenceEnd;
+        }
+        LocalDate parsedExistingEnd = parseRequiredDate(existingEnd);
+        return parsedExistingEnd.isBefore(newRecurrenceEnd) ? parsedExistingEnd : newRecurrenceEnd;
     }
 
     private boolean isRecurring(CustomCalendarEvent event) {

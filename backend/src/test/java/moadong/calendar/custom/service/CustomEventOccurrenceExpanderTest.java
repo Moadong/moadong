@@ -155,9 +155,9 @@ class CustomEventOccurrenceExpanderTest {
     @DisplayName("반복 종료일이 없으면 오늘 기준 1년까지만 전개한다")
     void expand_unboundedRecurrenceStopsAtWindowLimit() {
         CustomEventRecurrence recurrence = new CustomEventRecurrence("MONTHLY", null, null, null);
-        LocalDate windowLimit = LocalDate.now().plusYears(1);
 
         List<String> occurrences = expander.expand(event("RECURRING", "2026-03-01", null, null, recurrence));
+        LocalDate windowLimit = LocalDate.now().plusYears(1);
 
         assertThat(occurrences).isNotEmpty();
         assertThat(occurrences).allSatisfy(date ->
