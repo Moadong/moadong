@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { theme } from '@/styles/theme';
 
@@ -34,7 +35,7 @@ export const MenuItem = styled.button`
   ${itemStyles}
 `;
 
-export const MenuLink = styled.a`
+export const MenuLink = styled(Link)`
   ${itemStyles}
 `;
 
