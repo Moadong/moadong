@@ -48,14 +48,26 @@ const issueStudentTokenOnce = () => {
 };
 
 /**
+ * 서버가 거부한 주입 토큰. 앱이 새 토큰을 넣어주면 값이 달라져 다시 후보가 된다.
+ * 기록해 두지 않으면 요청마다 같은 토큰으로 401을 받고 매번 새로 발급하게 되는데,
+ * 발급마다 신원이 갈려서 방금 보낸 편지가 다음 조회에서 안 보인다.
+ */
+let rejectedInjectedToken: string | undefined;
+
+/**
  * 앱 웹뷰가 주입해 주는 토큰을 가장 먼저 쓴다.
  * 웹이 따로 발급하면 앱과 신원이 갈려 답장 푸시가 대상을 못 찾는다.
  * 앱이 안 넣어주는 환경(브라우저, 구버전 앱)에서는 undefined라 기존 흐름 그대로다.
  */
-const getStudentToken = async () =>
-  window.__MOADONG_STUDENT_TOKEN__ ??
-  localStorage.getItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN) ??
-  (await issueStudentTokenOnce());
+const getStudentToken = async () => {
+  const injectedToken = window.__MOADONG_STUDENT_TOKEN__;
+
+  return (
+    (injectedToken === rejectedInjectedToken ? undefined : injectedToken) ??
+    localStorage.getItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN) ??
+    (await issueStudentTokenOnce())
+  );
+};
 
 const withAuthorization = (init: RequestInit | undefined, token: string) => ({
   ...init,
@@ -88,6 +100,8 @@ export const studentFetch = async (
   // 단 주입 토큰이 거부된 경우는 제외한다. 저장분은 앱과 무관한 옛 토큰이라 재시도해도
   // 같이 실패한다. 이때는 앱과 신원을 맞출 방법이 없어 자체 발급으로 폴백한다.
   const wasInjected = token === window.__MOADONG_STUDENT_TOKEN__;
+  if (wasInjected) rejectedInjectedToken = token;
+
   const storedToken = localStorage.getItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN);
   const reissuedToken =
     !wasInjected && storedToken && storedToken !== token

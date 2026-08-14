@@ -1,5 +1,4 @@
 import { STORAGE_KEYS } from '@/constants/storageKeys';
-import { studentFetch } from './studentFetch';
 
 // constants/api가 import.meta를 쓰는데 jest에서 파싱되지 않는다
 jest.mock('@/constants/api', () => ({
@@ -20,10 +19,15 @@ const authHeaderOf = (call: [RequestInfo, RequestInit?]) =>
   (call[1]?.headers as Record<string, string>)?.Authorization;
 
 let fetchMock: jest.Mock;
+let studentFetch: (typeof import('./studentFetch'))['studentFetch'];
 
-beforeEach(() => {
+beforeEach(async () => {
   localStorage.clear();
   delete window.__MOADONG_STUDENT_TOKEN__;
+
+  // 거부된 주입 토큰을 모듈 변수로 들고 있어 테스트마다 새로 불러와야 한다
+  jest.resetModules();
+  ({ studentFetch } = await import('./studentFetch'));
 
   fetchMock = jest.fn().mockResolvedValue(jsonResponse({ ok: true }));
   global.fetch = fetchMock as unknown as typeof fetch;
@@ -91,6 +95,39 @@ describe('studentFetch', () => {
 
       expect(fetchMock.mock.calls[1][0]).toContain('/auth/student');
       expect(authHeaderOf(fetchMock.mock.calls[2])).toBe('Bearer fresh');
+    });
+
+    // 매번 재발급하면 발급마다 신원이 갈려 방금 보낸 편지가 다음 조회에서 안 보인다
+    it('거부된 주입 토큰은 다음 요청에서 다시 쓰지 않는다', async () => {
+      window.__MOADONG_STUDENT_TOKEN__ = 'app-token';
+      fetchMock
+        .mockResolvedValueOnce(jsonResponse({}, 401))
+        .mockResolvedValueOnce(issued('fresh'))
+        .mockResolvedValueOnce(jsonResponse({ ok: true }));
+
+      await studentFetch('/api/student/feedback/sent');
+      fetchMock.mockClear();
+
+      await studentFetch('/api/student/feedback/received');
+
+      // 주입 토큰을 건너뛰고 방금 발급받은 토큰으로 한 번에 나간다
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+      expect(authHeaderOf(fetchMock.mock.calls[0])).toBe('Bearer fresh');
+    });
+
+    it('앱이 새 토큰을 주입하면 다시 그것을 우선 쓴다', async () => {
+      window.__MOADONG_STUDENT_TOKEN__ = 'app-token';
+      fetchMock
+        .mockResolvedValueOnce(jsonResponse({}, 401))
+        .mockResolvedValueOnce(issued('fresh'))
+        .mockResolvedValueOnce(jsonResponse({ ok: true }));
+      await studentFetch('/api/student/feedback/sent');
+
+      window.__MOADONG_STUDENT_TOKEN__ = 'app-token-2';
+      fetchMock.mockClear();
+      await studentFetch('/api/student/feedback/received');
+
+      expect(authHeaderOf(fetchMock.mock.calls[0])).toBe('Bearer app-token-2');
     });
   });
 });
