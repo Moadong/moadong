@@ -13,6 +13,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.util.unit.DataSize;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
@@ -40,12 +42,16 @@ class FeedbackImageServiceTest {
     private static final String OTHER_STUDENT_ID = "22222222-2222-2222-2222-222222222222";
     private static final String VIEW_ENDPOINT = "https://cdn.moadong.com";
     private static final long MAX_IMAGE_BYTES = 5L * 1024 * 1024;
+    private static final String CLIENT_IP = "203.0.113.10";
 
     @Mock
     private S3Client s3Client;
 
     @Mock
     private S3Presigner s3Presigner;
+
+    @Mock
+    private StringRedisTemplate stringRedisTemplate;
 
     private FeedbackImageService feedbackImageService;
 
@@ -61,8 +67,13 @@ class FeedbackImageServiceTest {
                 new ServerProperties.Image(DataSize.ofBytes(MAX_IMAGE_BYTES)),
                 new ServerProperties.FileUrl(200, 10));
 
-        feedbackImageService = new FeedbackImageService(s3Client, s3Presigner, awsProperties, serverProperties);
+        feedbackImageService = new FeedbackImageService(
+                s3Client, s3Presigner, awsProperties, serverProperties, stringRedisTemplate);
         ReflectionTestUtils.invokeMethod(feedbackImageService, "init");
+    }
+
+    private List<PresignedUploadResponse> createUploadUrls(List<UploadUrlRequest> requests) {
+        return feedbackImageService.createUploadUrls(STUDENT_ID, requests, CLIENT_IP);
     }
 
     private String myImageUrl(String fileName) {
@@ -82,7 +93,7 @@ class FeedbackImageServiceTest {
             return presigned;
         });
 
-        List<PresignedUploadResponse> responses = feedbackImageService.createUploadUrls(STUDENT_ID, List.of(
+        List<PresignedUploadResponse> responses = createUploadUrls(List.of(
                 new UploadUrlRequest("a.jpg", "image/jpeg"),
                 new UploadUrlRequest("b.png", "image/png")));
 
@@ -101,7 +112,7 @@ class FeedbackImageServiceTest {
             return presigned;
         });
 
-        List<PresignedUploadResponse> responses = feedbackImageService.createUploadUrls(STUDENT_ID, List.of(
+        List<PresignedUploadResponse> responses = createUploadUrls(List.of(
                 new UploadUrlRequest("a.jpg", "image/jpeg"),
                 new UploadUrlRequest("bad.txt", "image/jpeg")));
 
@@ -118,7 +129,7 @@ class FeedbackImageServiceTest {
             return presigned;
         });
 
-        List<PresignedUploadResponse> responses = feedbackImageService.createUploadUrls(STUDENT_ID, List.of(
+        List<PresignedUploadResponse> responses = createUploadUrls(List.of(
                 new UploadUrlRequest("a.jpg", "image/jpeg"),
                 new UploadUrlRequest("b.jpg", "image/jpeg"),
                 new UploadUrlRequest("c.jpg", "image/jpeg"),
@@ -128,6 +139,37 @@ class FeedbackImageServiceTest {
         assertEquals(5, responses.size());
         assertEquals(4, responses.stream().filter(PresignedUploadResponse::success).count());
         assertEquals(ErrorCode.TOO_MANY_FILES.getMessage(), responses.get(4).failureReason());
+    }
+
+    @Test
+    void 발급_요청이_창_한도를_넘으면_거부한다() {
+        when(stringRedisTemplate.execute(any(RedisScript.class), any(), any())).thenReturn(41L);
+
+        RestApiException exception = assertThrows(RestApiException.class,
+                () -> createUploadUrls(List.of(new UploadUrlRequest("a.jpg", "image/jpeg"))));
+
+        assertEquals(ErrorCode.FEEDBACK_IMAGE_UPLOAD_RATE_LIMITED, exception.getErrorCode());
+        verify(s3Presigner, never()).presignPutObject(any(PutObjectPresignRequest.class));
+    }
+
+    @Test
+    void 발급_요청은_studentId와_IP_양쪽_창을_모두_센다() {
+        when(s3Presigner.presignPutObject(any(PutObjectPresignRequest.class))).thenAnswer(invocation -> {
+            PresignedPutObjectRequest presigned = org.mockito.Mockito.mock(PresignedPutObjectRequest.class);
+            when(presigned.url()).thenReturn(new java.net.URL("https://r2.example.com/upload?sig=abc"));
+            return presigned;
+        });
+
+        createUploadUrls(List.of(new UploadUrlRequest("a.jpg", "image/jpeg")));
+
+        ArgumentCaptor<List> keysCaptor = ArgumentCaptor.forClass(List.class);
+        verify(stringRedisTemplate, org.mockito.Mockito.times(2))
+                .execute(any(RedisScript.class), keysCaptor.capture(), any());
+        List<String> countedKeys = keysCaptor.getAllValues().stream()
+                .map(keys -> (String) keys.get(0))
+                .toList();
+        assertTrue(countedKeys.get(0).endsWith("student:" + STUDENT_ID), countedKeys.toString());
+        assertTrue(countedKeys.get(1).endsWith("ip:" + CLIENT_IP), countedKeys.toString());
     }
 
     @Test

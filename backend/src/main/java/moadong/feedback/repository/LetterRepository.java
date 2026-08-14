@@ -8,6 +8,7 @@ import org.springframework.data.mongodb.repository.Update;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 @Repository
 public interface LetterRepository extends MongoRepository<Letter, String> {
@@ -26,4 +27,6 @@ public interface LetterRepository extends MongoRepository<Letter, String> {
     @Query("{ '_id': ?0 }")
     @Update("{ '$addToSet': { 'readStudentIds': ?1 } }")
     long markRead(String letterId, String studentId);
+
+    Optional<Letter> findByIdempotencyKey(String idempotencyKey);
 }

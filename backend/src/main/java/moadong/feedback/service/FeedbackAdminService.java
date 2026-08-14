@@ -25,11 +25,12 @@ import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.user.repository.StudentUserRepository;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -45,6 +46,7 @@ public class FeedbackAdminService {
     private final StudentUserRepository studentUserRepository;
     private final PushNotificationPort pushNotificationPort;
     private final FcmAdminService fcmAdminService;
+    private final TransactionTemplate transactionTemplate;
 
     public AdminFeedbackListResponse getFeedbacks() {
         List<AdminFeedbackResponse> feedbacks = feedbackRepository.findAllByOrderByCreatedAtDesc().stream()
@@ -56,40 +58,64 @@ public class FeedbackAdminService {
                 feedbackRepository.countByStatusNot(FeedbackStatus.REPLIED));
     }
 
-    @Transactional
+    /**
+     * 편지 저장과 상태 변경만 트랜잭션으로 묶고, 푸시는 커밋된 뒤에 보낸다.
+     * 트랜잭션 안에서 보내면 커밋이 실패했을 때 존재하지 않는 답장의 알림이 나간다.
+     */
     public FeedbackReplyResponse reply(String feedbackId, FeedbackReplyRequest request) {
-        Feedback feedback = feedbackRepository.findById(feedbackId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.FEEDBACK_NOT_FOUND));
+        Letter letter = transactionTemplate.execute(status -> {
+            Feedback feedback = feedbackRepository.findById(feedbackId)
+                    .orElseThrow(() -> new RestApiException(ErrorCode.FEEDBACK_NOT_FOUND));
 
-        if (feedback.getStatus() == FeedbackStatus.REPLIED) {
-            throw new RestApiException(ErrorCode.FEEDBACK_ALREADY_REPLIED);
-        }
+            if (feedback.getStatus() == FeedbackStatus.REPLIED) {
+                throw new RestApiException(ErrorCode.FEEDBACK_ALREADY_REPLIED);
+            }
 
-        Letter letter = letterRepository.save(Letter.reply(
-                feedback.getStudentId(), feedback.getId(), request.title(), request.body()));
+            Letter saved = letterRepository.save(Letter.reply(
+                    feedback.getStudentId(), feedback.getId(), request.title(), request.body()));
 
-        feedback.markReplied(letter.getId());
-        feedbackRepository.save(feedback);
+            feedback.markReplied(saved.getId());
+            feedbackRepository.save(feedback);
+            return saved;
+        });
 
         boolean pushSent = request.sendPush()
-                && sendReplyPush(feedback.getStudentId(), letter);
+                && sendReplyPush(letter.getRecipientStudentId(), letter);
 
         return new FeedbackReplyResponse(letter.getId(), pushSent);
     }
 
+    /**
+     * requestId가 같은 재시도는 편지를 다시 만들지 않고 처음 결과를 그대로 돌려준다.
+     * 재시도로 전체 사용자에게 푸시가 두 번 나가는 것을 막는다.
+     */
     public LetterCreateResponse createBroadcastLetter(LetterCreateRequest request) {
         if (request.category() == LetterCategory.REPLY) {
             throw new RestApiException(ErrorCode.LETTER_CATEGORY_NOT_BROADCASTABLE);
         }
 
-        Letter letter = letterRepository.save(
-                Letter.broadcast(request.category(), request.title(), request.body()));
+        if (StringUtils.hasText(request.requestId())) {
+            Optional<Letter> published = letterRepository.findByIdempotencyKey(request.requestId());
+            if (published.isPresent()) {
+                Letter letter = published.get();
+                log.info("Broadcast letter republish ignored. letter={}, requestId={}",
+                        letter.getId(), request.requestId());
+                return new LetterCreateResponse(letter.getId(), letter.getPushSuccessCount() > 0,
+                        letter.getPushSuccessCount());
+            }
+        }
+
+        Letter letter = letterRepository.save(Letter.broadcast(
+                request.category(), request.title(), request.body(), request.requestId()));
 
         if (!request.sendPush()) {
             return new LetterCreateResponse(letter.getId(), false, 0);
         }
 
         int successCount = sendBroadcastPush(letter);
+        letter.recordPushResult(successCount);
+        letterRepository.save(letter);
+
         return new LetterCreateResponse(letter.getId(), successCount > 0, successCount);
     }
 

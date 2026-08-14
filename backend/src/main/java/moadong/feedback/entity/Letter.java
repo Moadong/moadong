@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import moadong.feedback.enums.LetterCategory;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.mongodb.core.index.CompoundIndex;
+import org.springframework.data.mongodb.core.index.Indexed;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
@@ -42,6 +43,19 @@ public class Letter {
     private String title;
 
     private String body;
+
+    /**
+     * 전체 발행 요청의 재시도를 걸러내기 위한 키. 클라이언트가 편지 한 건에 대해 같은 값을 재사용한다.
+     * 답장은 {@code FEEDBACK_ALREADY_REPLIED}로 막히므로 전체 발행 편지에만 쓴다.
+     * 조회로만 거르면 동시 요청이 둘 다 통과하므로 유니크 인덱스로 최종 방어한다.
+     */
+    @Indexed(unique = true, sparse = true)
+    private String idempotencyKey;
+
+    /**
+     * 전체 발행 시 푸시가 도달한 기기 수. 재시도로 같은 요청이 다시 와도 원래 결과를 그대로 돌려주기 위해 보관한다.
+     */
+    private int pushSuccessCount;
 
     @Builder.Default
     private Instant createdAt = Instant.now();
@@ -94,11 +108,16 @@ public class Letter {
                 .build();
     }
 
-    public static Letter broadcast(LetterCategory category, String title, String body) {
+    public static Letter broadcast(LetterCategory category, String title, String body, String idempotencyKey) {
         return Letter.builder()
                 .category(category)
                 .title(title)
                 .body(body)
+                .idempotencyKey(idempotencyKey)
                 .build();
+    }
+
+    public void recordPushResult(int successCount) {
+        this.pushSuccessCount = successCount;
     }
 }

@@ -836,6 +836,8 @@
     let feedbackDrafts = [];
     let feedbackCurrentDraftId = '';
     let feedbackIsUploading = false;
+    // 발행이 실패해 다시 시도할 때 같은 값을 보내야 편지가 두 번 만들어지지 않는다.
+    let feedbackLetterRequestId = '';
     let fcmTokens = [];
     let fcmFilteredTokens = [];
     let fcmCurrentPage = 1;
@@ -3392,6 +3394,13 @@
       return feedbacks.find((feedback) => feedback.id === feedbackSelectedId) || null;
     }
 
+    function generateFeedbackRequestId() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return window.crypto.randomUUID();
+      }
+      return 'letter-' + Math.random().toString(36).slice(2) + '-' + performance.now().toString(36);
+    }
+
     function renderFeedbackQuoteImages(images) {
       const wrap = document.getElementById('feedbackQuoteImages');
       wrap.innerHTML = '';
@@ -3420,6 +3429,7 @@
       feedbackMode = 'letter';
       feedbackSelectedId = '';
       feedbackCurrentDraftId = '';
+      feedbackLetterRequestId = '';
       // 초안을 불러온 뒤 새 편지로 넘어오면 이전 분류·푸시 설정이 남는다.
       document.getElementById('feedbackLetterCategory').value = 'UPDATE';
       document.getElementById('feedbackSendPush').checked = false;
@@ -3639,8 +3649,17 @@
         ? API_BASE + '/api/admin/feedback/letters'
         : API_BASE + '/api/admin/feedback/' + encodeURIComponent(feedbackSelectedId) + '/reply';
       const sendPush = document.getElementById('feedbackSendPush').checked;
+      if (isLetterMode && !feedbackLetterRequestId) {
+        feedbackLetterRequestId = generateFeedbackRequestId();
+      }
       const payload = isLetterMode
-        ? { category: document.getElementById('feedbackLetterCategory').value, title, body, sendPush }
+        ? {
+            category: document.getElementById('feedbackLetterCategory').value,
+            title,
+            body,
+            sendPush,
+            requestId: feedbackLetterRequestId
+          }
         : { title, body, sendPush };
 
       feedbackIsPublishing = true;
@@ -3665,6 +3684,7 @@
         document.getElementById('feedbackReplyBody').value = '';
         feedbackSelectedId = '';
         feedbackCurrentDraftId = '';
+        feedbackLetterRequestId = '';
         feedbackMode = 'reply';
         await reloadFeedbackList();
       } catch (e) {

@@ -28,6 +28,8 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Optional;
@@ -63,11 +65,23 @@ class FeedbackAdminServiceTest {
     @Mock
     private FcmAdminService fcmAdminService;
 
+    @Mock
+    private TransactionTemplate transactionTemplate;
+
     @InjectMocks
     private FeedbackAdminService feedbackAdminService;
 
+    /** 답장 저장 구간을 트랜잭션 없이 그대로 실행시킨다. */
+    private void givenTransactionRunsInline() {
+        when(transactionTemplate.execute(any())).thenAnswer(invocation -> {
+            TransactionCallback<?> callback = invocation.getArgument(0);
+            return callback.doInTransaction(null);
+        });
+    }
+
     @Test
     void 답장을_발행하면_REPLY_편지가_생기고_상태가_답장완료가_된다() {
+        givenTransactionRunsInline();
         givenWaitingFeedback();
         givenSavedLetterId("letter-1");
 
@@ -112,6 +126,7 @@ class FeedbackAdminServiceTest {
                 .content("버그가 있어요")
                 .status(FeedbackStatus.REPLIED)
                 .build();
+        givenTransactionRunsInline();
         when(feedbackRepository.findById("feedback-1")).thenReturn(Optional.of(replied));
 
         RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.reply(
@@ -123,6 +138,7 @@ class FeedbackAdminServiceTest {
 
     @Test
     void FCM_토큰이_있으면_답장_푸시를_보낸다() {
+        givenTransactionRunsInline();
         givenWaitingFeedback();
         givenSavedLetterId("letter-1");
         when(studentUserRepository.findByStudentId(STUDENT_ID)).thenReturn(Optional.of(StudentUser.builder()
@@ -144,6 +160,7 @@ class FeedbackAdminServiceTest {
 
     @Test
     void FCM_토큰이_없으면_푸시를_건너뛰고_답장은_발행된다() {
+        givenTransactionRunsInline();
         givenWaitingFeedback();
         givenSavedLetterId("letter-1");
         when(studentUserRepository.findByStudentId(STUDENT_ID)).thenReturn(Optional.empty());
@@ -158,6 +175,7 @@ class FeedbackAdminServiceTest {
 
     @Test
     void 푸시_발송이_실패해도_답장_발행은_유지된다() {
+        givenTransactionRunsInline();
         givenWaitingFeedback();
         givenSavedLetterId("letter-1");
         when(studentUserRepository.findByStudentId(STUDENT_ID)).thenReturn(Optional.of(StudentUser.builder()
@@ -178,7 +196,7 @@ class FeedbackAdminServiceTest {
     void REPLY는_전체_발행할_수_없다() {
         RestApiException exception = assertThrows(RestApiException.class,
                 () -> feedbackAdminService.createBroadcastLetter(
-                        new LetterCreateRequest(LetterCategory.REPLY, "제목", "본문", false)));
+                        new LetterCreateRequest(LetterCategory.REPLY, "제목", "본문", false, null)));
 
         assertEquals(ErrorCode.LETTER_CATEGORY_NOT_BROADCASTABLE, exception.getErrorCode());
         verify(letterRepository, never()).save(any());
@@ -189,7 +207,7 @@ class FeedbackAdminServiceTest {
         givenSavedLetterId("letter-1");
 
         feedbackAdminService.createBroadcastLetter(
-                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", false));
+                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", false, null));
 
         ArgumentCaptor<Letter> letterCaptor = ArgumentCaptor.forClass(Letter.class);
         verify(letterRepository).save(letterCaptor.capture());
@@ -204,7 +222,7 @@ class FeedbackAdminServiceTest {
                 .thenReturn(new FcmAdminBatchSendResponse(120, 1, 118, 2, List.of("bad-token")));
 
         LetterCreateResponse response = feedbackAdminService.createBroadcastLetter(
-                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", true));
+                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", true, null));
 
         ArgumentCaptor<FcmAdminBatchSendRequest> pushCaptor =
                 ArgumentCaptor.forClass(FcmAdminBatchSendRequest.class);
@@ -221,12 +239,46 @@ class FeedbackAdminServiceTest {
         when(fcmAdminService.sendToAll(any())).thenThrow(new IllegalStateException("firebase down"));
 
         LetterCreateResponse response = feedbackAdminService.createBroadcastLetter(
-                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", true));
+                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", true, null));
 
-        verify(letterRepository).save(any());
+        verify(letterRepository, org.mockito.Mockito.atLeastOnce()).save(any());
         assertEquals("letter-1", response.letterId());
         assertFalse(response.pushSent());
         assertEquals(0, response.pushSuccessCount());
+    }
+
+    @Test
+    void 같은_requestId로_다시_발행하면_편지도_푸시도_반복되지_않는다() {
+        Letter published = Letter.builder()
+                .id("letter-1")
+                .category(LetterCategory.UPDATE)
+                .title("제목")
+                .body("본문")
+                .idempotencyKey("req-1")
+                .pushSuccessCount(118)
+                .build();
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.of(published));
+
+        LetterCreateResponse response = feedbackAdminService.createBroadcastLetter(
+                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", true, "req-1"));
+
+        assertEquals("letter-1", response.letterId());
+        assertEquals(118, response.pushSuccessCount());
+        verify(letterRepository, never()).save(any());
+        verify(fcmAdminService, never()).sendToAll(any());
+    }
+
+    @Test
+    void 처음_발행할_때는_requestId를_편지에_남긴다() {
+        givenSavedLetterId("letter-1");
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.empty());
+
+        feedbackAdminService.createBroadcastLetter(
+                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", false, "req-1"));
+
+        ArgumentCaptor<Letter> captor = ArgumentCaptor.forClass(Letter.class);
+        verify(letterRepository).save(captor.capture());
+        assertEquals("req-1", captor.getValue().getIdempotencyKey());
     }
 
     @Test

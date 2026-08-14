@@ -3,6 +3,7 @@ package moadong.feedback.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import moadong.feedback.enums.LetterCategory;
@@ -67,11 +68,21 @@ public class StudentFeedbackController {
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> createImageUploadUrls(
             @RequestHeader("Authorization") String authorization,
-            @RequestBody @Valid List<UploadUrlRequest> requests
+            @RequestBody @Valid List<UploadUrlRequest> requests,
+            HttpServletRequest httpServletRequest
     ) {
         String studentId = studentJwtService.extractStudentId(authorization);
-        List<PresignedUploadResponse> responses = feedbackImageService.createUploadUrls(studentId, requests);
+        List<PresignedUploadResponse> responses =
+                feedbackImageService.createUploadUrls(studentId, requests, clientIp(httpServletRequest));
         return Response.ok(responses);
+    }
+
+    private String clientIp(HttpServletRequest request) {
+        String forwardedFor = request.getHeader("X-Forwarded-For");
+        if (forwardedFor != null && !forwardedFor.isBlank()) {
+            return forwardedFor.split(",")[0].trim();
+        }
+        return request.getRemoteAddr();
     }
 
     @GetMapping("/received")

@@ -10,7 +10,10 @@ import moadong.global.exception.RestApiException;
 import moadong.global.util.RandomStringUtil;
 import moadong.media.dto.PresignedUploadResponse;
 import moadong.media.dto.UploadUrlRequest;
+import org.springframework.data.redis.core.StringRedisTemplate;
+import org.springframework.data.redis.core.script.RedisScript;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
@@ -40,10 +43,25 @@ public class FeedbackImageService {
     private static final int MAX_IMAGE_COUNT = 4;
     private static final String KEY_ROOT = "feedback/";
 
+    /**
+     * 학생 토큰은 {@code /auth/student}로 누구나 무제한 발급받을 수 있다. 제한이 없으면 피드백을 만들지 않고도
+     * presigned URL만 받아 공개 버킷에 임의 파일을 올릴 수 있어, studentId와 IP 양쪽에 창을 건다.
+     */
+    private static final String RATE_LIMIT_KEY_PREFIX = "feedback:image-upload-url:ratelimit:";
+    private static final long RATE_LIMIT_WINDOW_SECONDS = 600L;
+    private static final long RATE_LIMIT_MAX_REQUESTS = 40L;
+    private static final RedisScript<Long> RATE_LIMIT_SCRIPT = RedisScript.of(
+            "local c = redis.call('INCR', KEYS[1])\n"
+                    + "if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end\n"
+                    + "return c",
+            Long.class
+    );
+
     private final S3Client s3Client;
     private final S3Presigner s3Presigner;
     private final AwsProperties awsProperties;
     private final ServerProperties serverProperties;
+    private final StringRedisTemplate stringRedisTemplate;
 
     private String normalizedViewEndpoint;
 
@@ -60,12 +78,14 @@ public class FeedbackImageService {
      * 동아리 활동사진({@code generateFeedUploadUrls})과 같은 부분 성공 응답을 돌려준다.
      * 한 건이 실패해도 나머지는 발급되고, 실패 항목은 success=false로 표시된다.
      */
-    public List<PresignedUploadResponse> createUploadUrls(String studentId, List<UploadUrlRequest> requests) {
+    public List<PresignedUploadResponse> createUploadUrls(String studentId, List<UploadUrlRequest> requests,
+                                                         String clientIp) {
         if (requests == null || requests.isEmpty()) {
             return List.of();
         }
 
         int limit = Math.min(MAX_IMAGE_COUNT, requests.size());
+        validateRateLimit(studentId, clientIp, limit);
         List<PresignedUploadResponse> results = new ArrayList<>(limit + 1);
         for (int i = 0; i < limit; i++) {
             try {
@@ -78,6 +98,27 @@ public class FeedbackImageService {
             results.add(errorResponse(ErrorCode.TOO_MANY_FILES));
         }
         return results;
+    }
+
+    /**
+     * 발급하려는 장수만큼 카운트를 올린다. studentId는 새로 발급받아 우회할 수 있으므로 IP 창을 함께 건다.
+     */
+    private void validateRateLimit(String studentId, String clientIp, int issuedCount) {
+        for (String key : List.of(rateLimitKey("student", studentId), rateLimitKey("ip", clientIp))) {
+            Long count = null;
+            for (int i = 0; i < issuedCount; i++) {
+                count = stringRedisTemplate.execute(RATE_LIMIT_SCRIPT, List.of(key),
+                        String.valueOf(RATE_LIMIT_WINDOW_SECONDS));
+            }
+            if (count != null && count > RATE_LIMIT_MAX_REQUESTS) {
+                log.warn("Feedback image upload-url rate limited. key={}, count={}", key, count);
+                throw new RestApiException(ErrorCode.FEEDBACK_IMAGE_UPLOAD_RATE_LIMITED);
+            }
+        }
+    }
+
+    private String rateLimitKey(String scope, String value) {
+        return RATE_LIMIT_KEY_PREFIX + scope + ":" + (StringUtils.hasText(value) ? value : "unknown");
     }
 
     private PresignedUploadResponse errorResponse(ErrorCode errorCode) {
