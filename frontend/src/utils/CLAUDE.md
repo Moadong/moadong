@@ -8,6 +8,7 @@
 - `debounce.ts` - 디바운스 함수
 - `validateSocialLink.ts` - SNS 링크 유효성 검사
 - `isInAppWebView.ts` - 인앱 WebView 감지 (UA의 `MoadongApp`)
+- `isIOS.ts` - UA로 iOS 기기 판별. 스토어 링크 분기 등에 사용
 - `webviewBridge.ts` - 네이티브 앱과 통신
 - `initSDK.ts` - 외부 SDK 초기화
 

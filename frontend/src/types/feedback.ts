@@ -27,21 +27,6 @@ export interface ReceivedLetter {
   isRead: boolean;
 }
 
-/** 받은 편지 상세. 답장(REPLY)일 때만 내가 보낸 편지가 함께 온다 */
-export interface ReceivedLetterDetail {
-  id: string;
-  category: LetterCategory;
-  title: string;
-  createdAt: string;
-  body: string;
-  myFeedback?: {
-    id: string;
-    type: FeedbackType;
-    content: string;
-    createdAt: string;
-  };
-}
-
 export interface SentFeedback {
   id: string;
   type: FeedbackType;
@@ -50,4 +35,15 @@ export interface SentFeedback {
   images: string[];
   status: SentFeedbackStatus;
   createdAt: string;
+}
+
+/** 받은 편지 상세. 답장(REPLY)일 때만 내가 보낸 편지가 함께 온다 */
+export interface ReceivedLetterDetail {
+  id: string;
+  category: LetterCategory;
+  title: string;
+  createdAt: string;
+  body: string;
+  /** 보낸 편지 목록과 같은 형태로 내려온다 */
+  myFeedback?: SentFeedback;
 }

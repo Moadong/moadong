@@ -9,18 +9,8 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useNavigator from '@/hooks/useNavigator';
 import useSatisfactionSurvey from '@/hooks/useSatisfactionSurvey';
+import isIOS from '@/utils/isIOS';
 import * as Styled from './SatisfactionModal.styles';
-
-/**
- * iPadOS 13+는 기본으로 데스크톱 Mac UA를 보낸다.
- * 그것만 보면 iPad 사용자가 Play 스토어로 가므로 터치 지원 여부를 함께 본다.
- */
-const isIOS = () => {
-  const ua = navigator.userAgent;
-  if (/(iPhone|iPad|iPod)/.test(ua)) return true;
-
-  return /Macintosh/.test(ua) && navigator.maxTouchPoints > 1;
-};
 
 /**
  * 충분히 써본 사용자에게 만족도를 묻는다 (시안 11170:1014).

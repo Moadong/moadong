@@ -30,8 +30,25 @@
 | 초안 API 4개 시그니처 확정 | 영향 없음 (포털 전용) |
 | 보낸 사람 식별자 `user_ + UUID 앞 8자리`로 확정 | 영향 없음 (운영 화면 전용) |
 
+### 백엔드 회신 4차 — 최종 계약 (PR #1908, `develop/be` 대상)
+
+**백엔드 구현 완료.** 계약을 대조한 결과 프론트가 이미 맞춘 것과 고친 것은 아래와 같다.
+
+| 항목 | 결과 |
+|---|---|
+| 경로 `/api/student/feedback` | 이미 일치 |
+| 모든 요청에 학생 토큰 (보내기 포함) | 이미 일치 — `uploadFeedbackImages`까지 `studentFetch` |
+| 목록 응답 봉투 `{ letters }` · `{ feedbacks }` | 이미 일치 |
+| 상세 조회는 읽음 처리를 하지 않음 → `PATCH .../read` 별도 | 이미 일치 |
+| 확장자 6종 · 10MB · 4장 상한 | 이미 일치 (`ALLOWED_IMAGE_TYPES` · `MAX_FILE_SIZE`) |
+| `myFeedback`이 `{ id, type, content, images, status, createdAt }` | **수정** — `SentFeedback`과 같은 형태로 맞춤 |
+| `904-7` (429, 업로드 URL 발급 과다) 신규 | 실패로 처리되어 전송이 중단되고 트래킹에 남는다. 사용자 문구는 토스트 머지 후 (§9) |
+
+`904-7`은 studentId·IP 각각 10분 40건 창이다(4장씩이면 10회). 정상 사용자는 닿지 않는다.
+
 관련 브랜치
 - 프론트 구현: `feature/letterbox` (`develop-fe` 계열)
+- 백엔드 구현: PR #1908 (`develop/be` 대상)
 - 포털 작업선: `develop/be`
 
 ---

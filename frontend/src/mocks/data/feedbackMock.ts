@@ -52,6 +52,8 @@ export const receivedLetterDetailsMock: Record<string, ReceivedLetterDetail> = {
       type: 'FEATURE',
       content:
         '지원서 작성 중에 새로고침하면 쓰던 내용이 다 날아가요. 그리고 어쩌고 저쩌고',
+      images: [],
+      status: 'REPLIED',
       createdAt: daysAgo(5),
     },
   },

@@ -27,7 +27,6 @@ export const countClubView = () => bumpCount(STORAGE_KEYS.CLUB_VIEW_COUNT);
  * 그래서 이펙트 없이 useState 초기화에서 호출할 수 있다.
  */
 const evaluateOnMount = () => {
-  // 스토어 리뷰는 앱에서만 의미가 있다. 브라우저에서는 묻지 않는다.
   if (!isInAppWebView()) return false;
   if (localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED) === 'true') {
     return false;
@@ -53,7 +52,6 @@ const evaluateOnMount = () => {
 const useSatisfactionSurvey = () => {
   const [isOpen, setIsOpen] = useState(evaluateOnMount);
 
-  /** 답을 받았으면 다시 묻지 않는다 */
   const closeForever = () => {
     localStorage.setItem(STORAGE_KEYS.SATISFACTION_ANSWERED, 'true');
     setIsOpen(false);
