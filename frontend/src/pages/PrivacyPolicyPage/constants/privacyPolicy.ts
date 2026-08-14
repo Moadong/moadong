@@ -224,7 +224,7 @@ export const PRIVACY_POLICY_SECTIONS: PolicySection[] = [
       },
       {
         type: 'list',
-        items: ['성명: 윤성원', '직책: 팀장', '연락처: ekfrenfrl12@naver.com'],
+        items: ['성명: 서성원', '직책: 팀장', '연락처: seongwon0903@gmail.com'],
       },
       {
         type: 'paragraph',
