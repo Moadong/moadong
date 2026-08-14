@@ -37,7 +37,7 @@ beforeEach(() => {
   modalRoot.id = 'modal-root';
   document.body.appendChild(modalRoot);
   Object.defineProperty(navigator, 'userAgent', {
-    value: 'Mozilla/5.0 (iPhone) MoadongApp/1.6.0',
+    value: 'MoadongApp/1.6.0 (iOS)',
     configurable: true,
   });
   // 노출 조건을 미리 채운다

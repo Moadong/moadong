@@ -3,7 +3,8 @@ import { SATISFACTION_ASK_THRESHOLD } from '@/constants/appReview';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import useSatisfactionSurvey, { countClubView } from './useSatisfactionSurvey';
 
-const WEBVIEW_UA = 'Mozilla/5.0 (iPhone) MoadongApp/1.6.0';
+// 앱은 userAgent prop으로 UA를 통째로 교체한다. 실제로 오는 값이 이것뿐이다.
+const WEBVIEW_UA = 'MoadongApp/1.6.0 (iOS)';
 const BROWSER_UA = 'Mozilla/5.0 (iPhone) Safari/605.1.15';
 
 const setUserAgent = (value: string) =>
