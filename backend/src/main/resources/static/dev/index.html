@@ -3420,6 +3420,9 @@
       feedbackMode = 'letter';
       feedbackSelectedId = '';
       feedbackCurrentDraftId = '';
+      // 초안을 불러온 뒤 새 편지로 넘어오면 이전 분류·푸시 설정이 남는다.
+      document.getElementById('feedbackLetterCategory').value = 'UPDATE';
+      document.getElementById('feedbackSendPush').checked = false;
       document.getElementById('feedbackReplyTitle').value = '';
       document.getElementById('feedbackReplyBody').value = '';
       document.getElementById('feedbackSaveResult').classList.add('hidden');
@@ -3431,6 +3434,7 @@
       feedbackMode = 'reply';
       feedbackSelectedId = '';
       feedbackCurrentDraftId = '';
+      document.getElementById('feedbackSendPush').checked = false;
       document.getElementById('feedbackReplyTitle').value = '';
       document.getElementById('feedbackReplyBody').value = '';
       document.getElementById('feedbackSaveResult').classList.add('hidden');

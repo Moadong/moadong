@@ -8,13 +8,15 @@ import moadong.feedback.enums.FeedbackStatus;
 import moadong.feedback.enums.FeedbackType;
 import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Version;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.List;
 
 @Document("feedbacks")
+@CompoundIndex(name = "student_created_at_idx", def = "{'studentId': 1, 'createdAt': -1}")
+@CompoundIndex(name = "created_at_idx", def = "{'createdAt': -1}")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -33,8 +35,8 @@ public class Feedback {
 
     /**
      * 학생 임시 토큰의 sub(UUID). StudentUser 문서가 없을 수도 있으므로 참조 대신 값으로 보관한다.
+     * 조회는 항상 최신순 정렬과 함께라 student_created_at_idx가 담당한다.
      */
-    @Indexed
     private String studentId;
 
     private FeedbackType type;
@@ -60,6 +62,10 @@ public class Feedback {
         this.repliedAt = Instant.now();
     }
 
+    /**
+     * 운영자가 답장 대기 · 확인 중 사이를 오갈 때만 쓴다.
+     * REPLIED는 replyLetterId · repliedAt과 함께 설정돼야 하므로 {@link #markReplied}로만 전이한다.
+     */
     public void changeStatus(FeedbackStatus status) {
         this.status = status;
     }

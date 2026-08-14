@@ -1,5 +1,6 @@
 package moadong.feedback.payload.request;
 
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import moadong.feedback.enums.FeedbackType;
@@ -10,7 +11,7 @@ public record FeedbackCreateRequest(
         @NotNull(message = "피드백 유형은 필수입니다.")
         FeedbackType type,
 
-        @NotNull(message = "내용은 필수입니다.")
+        @NotBlank(message = "내용은 필수입니다.")
         @Size(min = 10, max = 300, message = "내용은 10자 이상 300자 이하로 입력해주세요.")
         String content,
 

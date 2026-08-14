@@ -93,9 +93,17 @@ public class FeedbackAdminService {
         return new LetterCreateResponse(letter.getId(), successCount > 0, successCount);
     }
 
+    /**
+     * 답장 대기 · 확인 중 사이 전환만 허용한다. REPLIED는 답장 편지와 함께 설정돼야 하므로
+     * 직접 지정할 수도, 이미 답장한 피드백을 되돌릴 수도 없다.
+     */
     public void updateStatus(String feedbackId, FeedbackStatusUpdateRequest request) {
         Feedback feedback = feedbackRepository.findById(feedbackId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.FEEDBACK_NOT_FOUND));
+
+        if (request.status() == FeedbackStatus.REPLIED || feedback.getStatus() == FeedbackStatus.REPLIED) {
+            throw new RestApiException(ErrorCode.FEEDBACK_STATUS_NOT_CHANGEABLE);
+        }
 
         feedback.changeStatus(request.status());
         feedbackRepository.save(feedback);

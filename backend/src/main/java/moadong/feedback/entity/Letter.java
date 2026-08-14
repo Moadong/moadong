@@ -6,13 +6,15 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import moadong.feedback.enums.LetterCategory;
 import org.springframework.data.annotation.Id;
-import org.springframework.data.mongodb.core.index.Indexed;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 import org.springframework.data.mongodb.core.mapping.Document;
 
 import java.time.Instant;
 import java.util.Set;
 
 @Document("feedback_letters")
+@CompoundIndex(name = "recipient_created_at_idx", def = "{'recipientStudentId': 1, 'createdAt': -1}")
+@CompoundIndex(name = "category_recipient_created_at_idx", def = "{'category': 1, 'recipientStudentId': 1, 'createdAt': -1}")
 @Getter
 @Builder
 @AllArgsConstructor
@@ -28,8 +30,8 @@ public class Letter {
 
     /**
      * REPLY 편지의 수신자. UPDATE / STORY 처럼 전체에게 발행하는 편지는 null이다.
+     * 받은 편지함 조회는 항상 최신순 정렬과 함께라 recipient_created_at_idx가 담당한다.
      */
-    @Indexed
     private String recipientStudentId;
 
     /**

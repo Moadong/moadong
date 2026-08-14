@@ -12,6 +12,7 @@ import moadong.feedback.enums.FeedbackStatus;
 import moadong.feedback.enums.FeedbackType;
 import moadong.feedback.enums.LetterCategory;
 import moadong.feedback.payload.request.FeedbackReplyRequest;
+import moadong.feedback.payload.request.FeedbackStatusUpdateRequest;
 import moadong.feedback.payload.request.LetterCreateRequest;
 import moadong.feedback.payload.response.AdminFeedbackListResponse;
 import moadong.feedback.payload.response.FeedbackReplyResponse;
@@ -226,6 +227,58 @@ class FeedbackAdminServiceTest {
         assertEquals("letter-1", response.letterId());
         assertFalse(response.pushSent());
         assertEquals(0, response.pushSuccessCount());
+    }
+
+    @Test
+    void 상태를_확인_중으로_바꿀_수_있다() {
+        givenWaitingFeedback();
+        when(feedbackRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        feedbackAdminService.updateStatus("feedback-1",
+                new FeedbackStatusUpdateRequest(FeedbackStatus.IN_PROGRESS));
+
+        ArgumentCaptor<Feedback> captor = ArgumentCaptor.forClass(Feedback.class);
+        verify(feedbackRepository).save(captor.capture());
+        assertEquals(FeedbackStatus.IN_PROGRESS, captor.getValue().getStatus());
+    }
+
+    @Test
+    void 답장_완료_상태는_직접_지정할_수_없다() {
+        givenWaitingFeedback();
+
+        RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.updateStatus(
+                "feedback-1", new FeedbackStatusUpdateRequest(FeedbackStatus.REPLIED)));
+
+        assertEquals(ErrorCode.FEEDBACK_STATUS_NOT_CHANGEABLE, exception.getErrorCode());
+        verify(feedbackRepository, never()).save(any());
+    }
+
+    @Test
+    void 이미_답장한_피드백의_상태는_되돌릴_수_없다() {
+        when(feedbackRepository.findById("feedback-1")).thenReturn(Optional.of(Feedback.builder()
+                .id("feedback-1")
+                .studentId(STUDENT_ID)
+                .type(FeedbackType.BUG)
+                .content("버그가 있어요")
+                .status(FeedbackStatus.REPLIED)
+                .replyLetterId("letter-1")
+                .build()));
+
+        RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.updateStatus(
+                "feedback-1", new FeedbackStatusUpdateRequest(FeedbackStatus.WAITING)));
+
+        assertEquals(ErrorCode.FEEDBACK_STATUS_NOT_CHANGEABLE, exception.getErrorCode());
+        verify(feedbackRepository, never()).save(any());
+    }
+
+    @Test
+    void 없는_피드백의_상태는_변경할_수_없다() {
+        when(feedbackRepository.findById("feedback-1")).thenReturn(Optional.empty());
+
+        RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.updateStatus(
+                "feedback-1", new FeedbackStatusUpdateRequest(FeedbackStatus.IN_PROGRESS)));
+
+        assertEquals(ErrorCode.FEEDBACK_NOT_FOUND, exception.getErrorCode());
     }
 
     private Feedback feedbackOf(String feedbackId, String studentId) {
