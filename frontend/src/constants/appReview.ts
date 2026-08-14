@@ -13,7 +13,10 @@ export const APP_STORE_REVIEW_URL = `https://apps.apple.com/kr/app/id${IOS_APP_I
 export const PLAY_STORE_REVIEW_URL = `https://play.google.com/store/apps/details?id=${ANDROID_PACKAGE}`;
 
 /**
- * 만족도를 묻기 전에 필요한 사용 횟수.
+ * 만족도를 묻기 전에 필요한 방문일 수 또는 동아리 조회 수.
  * 충분히 써보지 않은 사용자에게 물으면 답도 부정확하고 이탈만 늘어난다.
+ *
+ * 실행 횟수가 아니라 방문한 '날'을 세는 이유는, 하루에 몇 번 켠 사람은
+ * 아직 써본 것이 아니기 때문이다. 하루 만에 임계값을 채울 수 없다.
  */
 export const SATISFACTION_ASK_THRESHOLD = 3;
