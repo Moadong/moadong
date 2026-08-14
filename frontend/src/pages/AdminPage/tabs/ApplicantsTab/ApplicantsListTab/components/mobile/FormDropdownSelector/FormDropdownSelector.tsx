@@ -40,14 +40,20 @@ const FormDropdownSelector = ({
     <Styled.Wrapper>
       <Styled.Trigger $isOpen={isOpen} onClick={onToggle} disabled={isEmpty}>
         <Styled.TriggerLabel>
-          {isEmpty ? '등록된 지원서 없음' : (selectedForm?.title ?? '지원서 선택')}
+          {isEmpty
+            ? '등록된 지원서 없음'
+            : (selectedForm?.title ?? '지원서 선택')}
         </Styled.TriggerLabel>
         <Styled.ChevronIcon $isOpen={isOpen} />
       </Styled.Trigger>
 
       {isOpen && (
         <Styled.MenuCard $isFixed={isFixed} $hasScroll={hasScroll}>
-          <Styled.MenuList $hasScroll={hasScroll} ref={listRef} onScroll={handleScroll}>
+          <Styled.MenuList
+            $hasScroll={hasScroll}
+            ref={listRef}
+            onScroll={handleScroll}
+          >
             {forms.map((form) => (
               <Styled.MenuItem
                 key={form.id}

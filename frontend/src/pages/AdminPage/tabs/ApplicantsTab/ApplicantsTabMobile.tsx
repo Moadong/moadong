@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Spinner from '@/components/common/Spinner/Spinner';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
@@ -7,8 +7,12 @@ import {
   useUpdateApplicant,
 } from '@/hooks/Queries/useApplicants';
 import { useGetApplicationList } from '@/hooks/Queries/useApplication';
+import {
+  ApplicantFilter,
+  ApplicantSort,
+  useApplicantList,
+} from '@/hooks/useApplicantList';
 import { useApplicantSelection } from '@/hooks/useApplicantSelection';
-import { ApplicantFilter, ApplicantSort, useApplicantList } from '@/hooks/useApplicantList';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import ApplicantListRow from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantListRow/ApplicantListRow';
 import ApplicantSearchBox from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantSearchBox/ApplicantSearchBox';
@@ -34,7 +38,8 @@ const ApplicantsTabMobile = () => {
   const toggleDropdown = (name: Exclude<OpenDropdown, null>) =>
     setOpenDropdown((prev) => (prev === name ? null : name));
 
-  const { data: formsData, isLoading: isFormsLoading } = useGetApplicationList();
+  const { data: formsData, isLoading: isFormsLoading } =
+    useGetApplicationList();
 
   const allForms = useMemo(
     () => formsData?.forms?.flatMap((group) => group.forms) ?? [],
@@ -45,6 +50,12 @@ const ApplicantsTabMobile = () => {
     () => paramFormId || allForms[0]?.id || '',
     [paramFormId, allForms],
   );
+
+  useEffect(() => {
+    if (!paramFormId && effectiveFormId) {
+      navigate(`/admin/applicants-list/${effectiveFormId}`, { replace: true });
+    }
+  }, [paramFormId, effectiveFormId]);
 
   const sortFromUrl = (searchParams.get('sort') as ApplicantSort) ?? 'date';
   const keywordFromUrl = searchParams.get('q') ?? '';
@@ -156,7 +167,8 @@ const ApplicantsTabMobile = () => {
     });
   };
 
-  const isInitialLoading = isFormsLoading || (!!effectiveFormId && isApplicantsLoading);
+  const isInitialLoading =
+    isFormsLoading || (!!effectiveFormId && isApplicantsLoading);
 
   return (
     <Styled.Container>
@@ -185,7 +197,10 @@ const ApplicantsTabMobile = () => {
 
             <Styled.SearchSection>
               <Styled.ListTitle>지원자 목록</Styled.ListTitle>
-              <ApplicantSearchBox value={keyword} onChange={handleKeywordChange} />
+              <ApplicantSearchBox
+                value={keyword}
+                onChange={handleKeywordChange}
+              />
             </Styled.SearchSection>
 
             <Styled.FilterSection>
@@ -222,7 +237,9 @@ const ApplicantsTabMobile = () => {
                 <Spinner />
               ) : filteredApplicants.length === 0 ? (
                 <Styled.EmptyState>
-                  <Styled.EmptyLabel>모아동 지원서를 등록해주세요</Styled.EmptyLabel>
+                  <Styled.EmptyLabel>
+                    모아동 지원서를 등록해주세요
+                  </Styled.EmptyLabel>
                   <AddItemButton
                     onClick={() => navigate('/admin/application-list/edit')}
                   >

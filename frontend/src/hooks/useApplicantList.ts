@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
+import { ApplicationStatus } from '@/types/applicants';
 import { useGetApplicants } from './Queries/useApplicants';
 import { useApplicantSSE } from './useApplicantSSE';
-import { ApplicationStatus } from '@/types/applicants';
 
 export type ApplicantFilter = 'ALL' | ApplicationStatus;
 export type ApplicantSort = 'date' | 'name';

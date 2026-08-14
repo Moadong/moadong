@@ -10,14 +10,18 @@ import {
   useDeleteApplicants,
   useUpdateApplicant,
 } from '@/hooks/Queries/useApplicants';
-import { useApplicantList, ApplicantFilter, ApplicantSort } from '@/hooks/useApplicantList';
+import {
+  ApplicantFilter,
+  ApplicantSort,
+  useApplicantList,
+} from '@/hooks/useApplicantList';
 import { useApplicantSelection } from '@/hooks/useApplicantSelection';
 import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
-import ApplicantsTabMobile from './ApplicantsTabMobile';
 import * as Styled from './ApplicantsTab.styles';
+import ApplicantsTabMobile from './ApplicantsTabMobile';
 
 const sortOptions = [
   { value: 'date', label: '제출순' },
@@ -130,12 +134,19 @@ const ApplicantsTabDesktop = () => {
     if (isSortOpen) setIsSortOpen(false);
   };
 
-  const { mutate: deleteApplicants } = useDeleteApplicants(applicationFormId ?? '');
-  const { mutate: updateDetailApplicants } = useUpdateApplicant(applicationFormId);
+  const { mutate: deleteApplicants } = useDeleteApplicants(
+    applicationFormId ?? '',
+  );
+  const { mutate: updateDetailApplicants } =
+    useUpdateApplicant(applicationFormId);
   const dropdownRef = useRef<Array<HTMLDivElement | null>>([]);
 
-  const { checkedIds, toggleId: onToggleId, setCheckedIds: onSetCheckedIds, clearSelection: onClearSelection } =
-    useApplicantSelection(applicationFormId ?? '');
+  const {
+    checkedIds,
+    toggleId: onToggleId,
+    setCheckedIds: onSetCheckedIds,
+    clearSelection: onClearSelection,
+  } = useApplicantSelection(applicationFormId ?? '');
 
   useEffect(() => {
     const handleOutsideClick = (e: MouseEvent) => {
