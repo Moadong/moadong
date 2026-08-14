@@ -111,11 +111,12 @@ B 방문자: 30초
 
 성공 응답:
 
-- HTTP `204 No Content`
+- HTTP `200`
+- 공통 `Response<T>` 래퍼(`statuscode`, `message`, `data`)를 사용한다.
 
 중복 세션 응답:
 
-- HTTP `204 No Content`
+- HTTP `200`
 - 이미 처리한 `sessionId + clubId`는 다시 집계하지 않는다.
 
 실패 응답:
@@ -132,7 +133,7 @@ B 방문자: 30초
 
 검증:
 
-- `clubId`, `sessionId`, `visitorId`는 blank일 수 없다.
+- `clubId`, `sessionId`, `visitorId`는 blank일 수 없고 64자를 넘을 수 없다.
 - `durationSeconds`는 `1` 이상 `3600` 이하이다.
 - `enteredAt`과 `leftAt`이 모두 있으면 `leftAt`은 `enteredAt`보다 이전일 수 없다.
 - `clubId`는 존재하는 동아리여야 한다.
@@ -141,7 +142,8 @@ B 방문자: 30초
 
 - Redis window counter로 `clubId + clientIp` 단위 요청 수를 제한한다.
 - 기준값은 60초당 120회다.
-- `X-Forwarded-For`가 있으면 첫 번째 IP를 사용하고, 없으면 `remoteAddr`를 사용한다.
+- `X-Forwarded-For`가 있으면 첫 번째 IP를 사용하고, 없거나 IP 길이(45자)를 넘으면 `remoteAddr`를 사용한다.
+- `X-Forwarded-For`는 호출자가 조작할 수 있으므로, 인그레스에서 이 헤더를 덮어쓰도록 설정되어 있어야 요청 제한이 실제로 동작한다.
 
 날짜 기준:
 

@@ -58,13 +58,14 @@ public class CustomEventOccurrenceExpander {
             return List.of(start.toString());
         }
 
-        LocalDate windowLimit = LocalDate.now().plusYears(FUTURE_WINDOW_YEARS);
+        LocalDate today = LocalDate.now();
+        LocalDate windowLimit = today.plusYears(FUTURE_WINDOW_YEARS);
         LocalDate recurrenceEnd = parseOrNull(recurrence.end());
         LocalDate windowEnd = (recurrenceEnd != null && recurrenceEnd.isBefore(windowLimit))
                 ? recurrenceEnd
                 : windowLimit;
-        LocalDate visibleStart = recurrenceEnd == null && start.isBefore(LocalDate.now())
-                ? LocalDate.now()
+        LocalDate visibleStart = recurrenceEnd == null && start.isBefore(today)
+                ? today
                 : start;
 
         if (windowEnd.isBefore(visibleStart)) {

@@ -413,6 +413,22 @@ class CustomCalendarEventServiceTest {
     }
 
     @Test
+    @DisplayName("THIS_AND_FOLLOWING 기준일이 기존 종료일보다 뒤면 종료일을 연장하지 않는다")
+    void delete_thisAndFollowingAfterRecurrenceEnd_keepsRecurrenceEnd() {
+        givenAuthenticatedClub();
+        givenSaveReturnsArgument();
+        CustomEventRecurrence recurrence = new CustomEventRecurrence("WEEKLY", null, "2026-03-31", null);
+        CustomCalendarEvent event = storedEvent("RECURRING", "2026-03-06", null, null, recurrence);
+        when(customCalendarEventRepository.findByIdAndClubId(EVENT_ID, CLUB_ID)).thenReturn(Optional.of(event));
+
+        customCalendarEventService.delete(user, EVENT_ID, "THIS_AND_FOLLOWING", "2027-01-01");
+
+        ArgumentCaptor<CustomCalendarEvent> captor = ArgumentCaptor.forClass(CustomCalendarEvent.class);
+        verify(customCalendarEventRepository).save(captor.capture());
+        assertThat(captor.getValue().getRecurrence().end()).isEqualTo("2026-03-31");
+    }
+
+    @Test
     @DisplayName("THIS_AND_FOLLOWING 기준일이 시작일이면 이벤트를 삭제한다")
     void delete_thisAndFollowingFromStart_deletesEvent() {
         givenAuthenticatedClub();
