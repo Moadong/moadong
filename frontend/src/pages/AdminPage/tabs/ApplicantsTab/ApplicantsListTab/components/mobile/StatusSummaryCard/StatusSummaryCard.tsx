@@ -1,4 +1,3 @@
-import { Fragment } from 'react';
 import { ApplicantsInfo } from '@/types/applicants';
 import * as Styled from './StatusSummaryCard.styles';
 
@@ -20,14 +19,11 @@ const StatusSummaryCard = ({ data }: StatusSummaryCardProps) => {
 
   return (
     <Styled.Card>
-      {items.map(({ label, count, isTotal }, index) => (
-        <Fragment key={label}>
-          {index > 0 && <Styled.Divider />}
-          <Styled.Item>
-            <Styled.Label>{label}</Styled.Label>
-            <Styled.Count $isTotal={isTotal}>{count ?? 0}</Styled.Count>
-          </Styled.Item>
-        </Fragment>
+      {items.map(({ label, count, isTotal }) => (
+        <Styled.Item key={label}>
+          <Styled.Label>{label}</Styled.Label>
+          <Styled.Count $isTotal={isTotal}>{count ?? 0}</Styled.Count>
+        </Styled.Item>
       ))}
     </Styled.Card>
   );

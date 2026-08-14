@@ -5,9 +5,9 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const Card = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-between;
+  justify-content: space-evenly;
   align-items: center;
-  padding: 12px 10px;
+  padding: 12px 0;
   height: 65px;
   width: 100%;
   background: ${colors.gray[50]};
@@ -17,20 +17,24 @@ export const Card = styled.div`
 `;
 
 export const Item = styled.div`
-  width: 50px;
-  flex-shrink: 0;
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-`;
+  position: relative;
 
-export const Divider = styled.div`
-  width: 1px;
-  height: 30px;
-  background: ${colors.gray[300]};
-  border-radius: 100px;
-  flex-shrink: 0;
+  &:not(:last-child)::after {
+    content: '';
+    position: absolute;
+    right: 0;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 1px;
+    height: 30px;
+    background: ${colors.gray[300]};
+    border-radius: 100px;
+  }
 `;
 
 export const Label = styled.span`

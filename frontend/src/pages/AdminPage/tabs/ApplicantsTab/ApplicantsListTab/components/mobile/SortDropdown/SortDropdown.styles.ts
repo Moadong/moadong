@@ -6,6 +6,7 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const Wrapper = styled.div`
   position: relative;
   flex-shrink: 0;
+  z-index: 7;
 
   li {
     ${setTypography(typography.paragraph.p5)}
@@ -38,5 +39,4 @@ export const Chevron = styled(MoreArrowIcon)<{ $isOpen: boolean }>`
   flex-shrink: 0;
   color: ${colors.gray[500]};
   transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
-  transition: transform 0.2s;
 `;

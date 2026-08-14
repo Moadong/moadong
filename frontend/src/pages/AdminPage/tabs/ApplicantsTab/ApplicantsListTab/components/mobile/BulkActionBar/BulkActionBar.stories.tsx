@@ -16,6 +16,8 @@ export const Disabled: Story = {
     enabled: false,
     onStatusChange: () => {},
     onDelete: () => {},
+    isStatusMenuOpen: false,
+    onToggleStatusMenu: () => {},
   },
 };
 
@@ -24,5 +26,7 @@ export const Enabled: Story = {
     enabled: true,
     onStatusChange: () => {},
     onDelete: () => {},
+    isStatusMenuOpen: false,
+    onToggleStatusMenu: () => {},
   },
 };

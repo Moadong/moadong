@@ -7,6 +7,8 @@ export const Container = styled.div`
   display: flex;
   align-items: center;
   gap: 5px;
+  position: relative;
+  z-index: 6;
 `;
 
 export const StatusButtonWrapper = styled.div`
@@ -47,13 +49,18 @@ export const DeleteButton = styled.button<{ $enabled: boolean }>`
   cursor: ${({ $enabled }) => ($enabled ? 'pointer' : 'default')};
 `;
 
-export const TriangleIcon = styled(TriangleDown)<{ $enabled: boolean }>`
+export const TriangleIcon = styled(TriangleDown)<{
+  $enabled: boolean;
+  $isOpen: boolean;
+}>`
   width: 8px;
   height: 6px;
   flex-shrink: 0;
   display: block;
   margin-top: 1px;
   color: ${({ $enabled }) => ($enabled ? colors.gray[800] : colors.gray[400])};
+  transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
+  margin-top: ${({ $isOpen }) => ($isOpen ? '-1px' : '1px')};
 `;
 
 export const StatusMenu = styled.div`

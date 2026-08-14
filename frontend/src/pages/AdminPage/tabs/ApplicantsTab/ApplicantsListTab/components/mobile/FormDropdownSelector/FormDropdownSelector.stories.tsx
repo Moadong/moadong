@@ -84,11 +84,14 @@ const Interactive = (
   args: React.ComponentProps<typeof FormDropdownSelector>,
 ) => {
   const [selectedId, setSelectedId] = useState(args.selectedFormId);
+  const [isOpen, setIsOpen] = useState(false);
   return (
     <FormDropdownSelector
       {...args}
       selectedFormId={selectedId}
       onSelect={setSelectedId}
+      isOpen={isOpen}
+      onToggle={() => setIsOpen((prev) => !prev)}
     />
   );
 };
@@ -98,6 +101,8 @@ export const Default: Story = {
     forms: mockForms,
     selectedFormId: asApplicationFormId('form-1'),
     onSelect: () => {},
+    isOpen: false,
+    onToggle: () => {},
   },
   render: (args) => <Interactive {...args} />,
 };
@@ -107,6 +112,8 @@ export const SingleItem: Story = {
     forms: [mockForms[0]],
     selectedFormId: asApplicationFormId('form-1'),
     onSelect: () => {},
+    isOpen: false,
+    onToggle: () => {},
   },
   render: (args) => <Interactive {...args} />,
 };
@@ -116,6 +123,8 @@ export const TwoItems: Story = {
     forms: mockForms.slice(0, 2),
     selectedFormId: asApplicationFormId('form-1'),
     onSelect: () => {},
+    isOpen: false,
+    onToggle: () => {},
   },
   render: (args) => <Interactive {...args} />,
 };
@@ -125,6 +134,8 @@ export const WithScroll: Story = {
     forms: mockFormsWithScroll,
     selectedFormId: asApplicationFormId('form-1'),
     onSelect: () => {},
+    isOpen: false,
+    onToggle: () => {},
   },
   render: (args) => <Interactive {...args} />,
 };
@@ -134,6 +145,8 @@ export const Empty: Story = {
     forms: [],
     selectedFormId: asApplicationFormId(''),
     onSelect: () => {},
+    isOpen: false,
+    onToggle: () => {},
   },
   render: (args) => <Interactive {...args} />,
 };

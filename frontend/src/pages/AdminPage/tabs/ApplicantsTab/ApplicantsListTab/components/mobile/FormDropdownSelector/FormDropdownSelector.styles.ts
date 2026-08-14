@@ -6,6 +6,7 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const Wrapper = styled.div`
   position: relative;
   width: 100%;
+  z-index: 6;
 `;
 
 export const Trigger = styled.button<{ $isOpen: boolean }>`
@@ -40,11 +41,12 @@ export const TriggerLabel = styled.span`
   text-align: left;
 `;
 
-export const ChevronIcon = styled(MoreArrowIcon)`
+export const ChevronIcon = styled(MoreArrowIcon)<{ $isOpen: boolean }>`
   flex-shrink: 0;
   width: 16px;
   height: 16px;
   color: ${colors.gray[500]};
+  transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
 `;
 
 export const MenuCard = styled.div<{ $isFixed: boolean; $hasScroll: boolean }>`
