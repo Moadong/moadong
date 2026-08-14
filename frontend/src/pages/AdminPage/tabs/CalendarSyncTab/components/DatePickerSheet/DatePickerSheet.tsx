@@ -13,7 +13,7 @@ interface DatePickerSheetProps {
   accentColor?: CalendarEventColor;
   /** 이 날짜까지(포함) 고를 수 없게 막는다 */
   disabledUntil?: string;
-  /** 넘기면 '없음'으로 되돌리는 버튼을 띄운다 (종료 날짜 전용) */
+  /** 넘기면 고른 종료 날짜를 지우는 버튼을 띄운다 (종료 날짜 전용) */
   onClear?: () => void;
 }
 
@@ -41,8 +41,12 @@ const DatePickerSheet = ({
         disabledUntil={disabledUntil}
       />
       {onClear && (
-        <Styled.ClearButton type='button' onClick={onClear}>
-          종료 없음
+        <Styled.ClearButton
+          type='button'
+          onClick={onClear}
+          disabled={!selectedDate}
+        >
+          종료 날짜 지우기
         </Styled.ClearButton>
       )}
     </Styled.Body>

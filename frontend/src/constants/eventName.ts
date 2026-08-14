@@ -126,6 +126,28 @@ export const ADMIN_EVENT = {
   IMAGE_UPLOAD_BUTTON_CLICKED: '활동 사진 업로드 버튼클릭',
   IMAGE_DELETE_BUTTON_CLICKED: '활동 사진 삭제 버튼클릭',
 
+  // 동아리 일정 관리
+  CALENDAR_MONTH_CHANGED: '캘린더 월 이동',
+  CALENDAR_TODAY_BUTTON_CLICKED: '캘린더 오늘 버튼클릭',
+  CALENDAR_DATE_CLICKED: '캘린더 날짜 클릭',
+  CALENDAR_ADD_EVENT_BUTTON_CLICKED: '일정 추가 버튼클릭',
+  CALENDAR_EVENT_TYPE_TAB_CLICKED: '일정 유형 탭 클릭',
+  CALENDAR_TITLE_CLEAR_BUTTON_CLICKED: '일정 제목 입력 초기화 버튼클릭',
+  CALENDAR_EVENT_DATE_SELECTED: '일정 날짜 선택',
+  CALENDAR_COLOR_SELECTED: '일정 색상 선택',
+  CALENDAR_RECURRENCE_FREQUENCY_CHANGED: '반복 주기 변경',
+  CALENDAR_RECURRENCE_WEEKDAY_TOGGLED: '반복 요일 선택',
+  CALENDAR_DATE_PICKER_OPENED: '반복 날짜 시트 열기',
+  CALENDAR_END_DATE_CLEARED: '반복 종료 날짜 지우기',
+  CALENDAR_EVENT_CREATED: '일정 저장',
+  CALENDAR_EVENT_ROW_SWIPED: '일정 스와이프',
+  CALENDAR_EVENT_DELETED: '일정 삭제',
+  CALENDAR_EVENT_HIDDEN: '연동 일정 숨김',
+  CALENDAR_LINK_BUTTON_CLICKED: '캘린더 연동 버튼클릭',
+  CALENDAR_UNLINK_BUTTON_CLICKED: '캘린더 연동 해제 버튼클릭',
+  CALENDAR_UNLINK_CANCELED: '캘린더 연동 해제 취소',
+  CALENDAR_EVENT_VISIBILITY_TOGGLED: '연동 일정 표시 토글',
+
   // 비밀번호 수정
   PASSWORD_CHANGE_BUTTON_CLICKED: '비밀번호 변경 버튼클릭',
   NEW_PASSWORD_CLEAR_BUTTON_CLICKED: '새 비밀번호 입력 초기화 버튼클릭',
@@ -165,6 +187,7 @@ export const PAGE_VIEW = {
   PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',
   ADMIN_STATISTICS_PAGE: '동아리 통계 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
+  ADMIN_CALENDAR_PAGE: '동아리 일정 관리 페이지',
 } as const;
 
 export const PAGE_NAME = {
