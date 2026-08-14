@@ -31,3 +31,15 @@ export const hideCalendarEvent = async (input: HiddenCalendarEvent) => {
 
   await handleResponse<string>(response, '일정 숨김에 실패했습니다.');
 };
+
+export const unhideCalendarEvent = async (input: HiddenCalendarEvent) => {
+  const response = await secureFetch(BASE_URL, {
+    method: 'DELETE',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(input),
+  });
+
+  await handleResponse<string>(response, '일정 표시에 실패했습니다.');
+};

@@ -1,5 +1,6 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import {
+  disconnectNotionCalendar,
   fetchNotionDatabasePages,
   fetchNotionDatabases,
   fetchNotionPages,
@@ -46,6 +47,16 @@ export const useGetNotionPages = () => {
       }
     },
     staleTime: 5 * 60 * 1000,
+  });
+};
+
+export const useDisconnectNotionCalendar = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: disconnectNotionCalendar,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.notionCalendar.all });
+    },
   });
 };
 
