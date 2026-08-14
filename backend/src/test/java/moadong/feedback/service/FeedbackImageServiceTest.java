@@ -142,6 +142,19 @@ class FeedbackImageServiceTest {
     }
 
     @Test
+    void 이미지가_아닌_contentType은_서명하지_않는다() {
+        // 서명된 contentType이 R2 응답 헤더가 되므로, text/html이 통과하면 CDN에서 그대로 실행된다.
+        List<PresignedUploadResponse> responses = createUploadUrls(List.of(
+                new UploadUrlRequest("evil.png", "text/html"),
+                new UploadUrlRequest("evil2.png", "application/javascript")));
+
+        assertFalse(responses.get(0).success());
+        assertFalse(responses.get(1).success());
+        assertEquals(ErrorCode.UNSUPPORTED_FILE_TYPE.getMessage(), responses.get(0).failureReason());
+        verify(s3Presigner, never()).presignPutObject(any(PutObjectPresignRequest.class));
+    }
+
+    @Test
     void 발급_요청이_창_한도를_넘으면_거부한다() {
         when(stringRedisTemplate.execute(any(RedisScript.class), any(), any())).thenReturn(41L);
 

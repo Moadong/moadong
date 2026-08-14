@@ -27,6 +27,7 @@ import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import static moadong.media.util.ClubImageUtil.isImageExtension;
 
@@ -42,6 +43,12 @@ public class FeedbackImageService {
     /** 편지 1건당 첨부 가능한 사진 수. */
     private static final int MAX_IMAGE_COUNT = 4;
     private static final String KEY_ROOT = "feedback/";
+
+    /**
+     * {@code UploadUrlRequest}의 @Pattern은 {@code @Valid List<T>}에서 요소까지 내려가지 않아 동작하지 않는다.
+     * 서명에 들어가는 값이라 서버에서 직접 막는다.
+     */
+    private static final Pattern ALLOWED_CONTENT_TYPE = Pattern.compile("^image/(jpeg|jpg|png|gif|bmp|webp)$");
 
     /**
      * 학생 토큰은 {@code /auth/student}로 누구나 무제한 발급받을 수 있다. 제한이 없으면 피드백을 만들지 않고도
@@ -127,6 +134,11 @@ public class FeedbackImageService {
 
     private PresignedUploadResponse createUploadUrl(String studentId, UploadUrlRequest request) {
         if (!isImageExtension(request.fileName())) {
+            throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
+        }
+        // contentType은 그대로 서명돼 R2가 응답 헤더로 되돌려준다. text/html이 통과하면
+        // 업로드한 파일이 우리 CDN 도메인에서 그대로 실행된다.
+        if (request.contentType() == null || !ALLOWED_CONTENT_TYPE.matcher(request.contentType()).matches()) {
             throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
         }
 
