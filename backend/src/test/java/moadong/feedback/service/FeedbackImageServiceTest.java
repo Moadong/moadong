@@ -156,7 +156,7 @@ class FeedbackImageServiceTest {
 
     @Test
     void 발급_요청이_창_한도를_넘으면_거부한다() {
-        when(stringRedisTemplate.execute(any(RedisScript.class), any(), any())).thenReturn(41L);
+        when(stringRedisTemplate.execute(any(RedisScript.class), any(), any())).thenReturn(21L);
 
         RestApiException exception = assertThrows(RestApiException.class,
                 () -> createUploadUrls(List.of(new UploadUrlRequest("a.jpg", "image/jpeg"))));

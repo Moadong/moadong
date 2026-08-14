@@ -56,7 +56,8 @@ public class FeedbackImageService {
      */
     private static final String RATE_LIMIT_KEY_PREFIX = "feedback:image-upload-url:ratelimit:";
     private static final long RATE_LIMIT_WINDOW_SECONDS = 600L;
-    private static final long RATE_LIMIT_MAX_REQUESTS = 40L;
+    /** 편지 한 건에 4장이므로 10분에 5번 작성할 수 있는 여유. 정상 사용은 닿지 않는다. */
+    private static final long RATE_LIMIT_MAX_REQUESTS = 20L;
     private static final RedisScript<Long> RATE_LIMIT_SCRIPT = RedisScript.of(
             "local c = redis.call('INCR', KEYS[1])\n"
                     + "if c == 1 then redis.call('EXPIRE', KEYS[1], ARGV[1]) end\n"
