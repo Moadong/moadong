@@ -548,7 +548,7 @@ Reply push skipped. no fcm token for feedback letter={}
 
 ### 나중에 붙일 때 필요한 것
 
-1. **앱 — 웹뷰에 학생 토큰 주입** (`ui/home/home-webview-screen.tsx` 한 곳)
+1. ✅ **앱 — 웹뷰에 학생 토큰 주입** (`ui/home/home-webview-screen.tsx` 한 곳) — **완료**
    `ensureAccessToken()`(`services/auth-token.service.ts`)을 기다렸다가
    `injectedJavaScriptBeforeContentLoaded`로 `window.__MOADONG_STUDENT_TOKEN__`에 넣는다.
    `sessionLoading`을 기다렸다가 URL을 만드는 기존 패턴과 같다.
@@ -557,7 +557,16 @@ Reply push skipped. no fcm token for feedback letter={}
    **주입 스크립트에 origin 가드가 필요하다.** 웹뷰가 로드하는 모든 문서에서 실행되므로
    외부 사이트로 이동하면 베어러 토큰이 노출된다.
 
-2. **웹 — 주입 토큰 우선** (`frontend/src/apis/auth/studentFetch.ts`)
+   앱 구현 시 두 가지가 추가로 반영됐다.
+   `ensureAccessToken()`에 single-flight 가드를 넣었다. 스플래시 아래에서 부트스트랩과
+   홈 화면이 동시에 마운트되는데, 신규 설치처럼 저장된 토큰이 없으면 `getOrCreateAuthSubject()`가
+   병렬 진입해 서로 다른 UUID 두 개를 만들고 `/auth/student`가 두 번 호출된다.
+   FCM은 한쪽으로 등록되고 웹뷰엔 다른 쪽이 주입돼 고치려던 버그가 그대로 남는다.
+   (웹의 `issueStudentTokenOnce`와 같은 결함이다)
+   그리고 토큰 조회 실패 시에도 웹뷰가 뜨도록 별도 플래그로 게이트했다. 실패하면 주입만
+   건너뛰고 웹이 자체 토큰으로 폴백한다.
+
+2. ✅ **웹 — 주입 토큰 우선** (`frontend/src/apis/auth/studentFetch.ts`) — **완료**
    `window.__MOADONG_STUDENT_TOKEN__` → localStorage → 신규 발급 순.
    localStorage가 앞서면 브리지 이전에 자체 발급해둔 토큰이 계속 이긴다.
 
