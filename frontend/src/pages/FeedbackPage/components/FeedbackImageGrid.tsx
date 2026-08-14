@@ -12,8 +12,9 @@ const FeedbackImageGrid = ({ srcs, onRemove }: FeedbackImageGridProps) => {
 
   return (
     <Styled.Grid>
+      {/* 같은 이미지를 두 번 첨부할 수 있어 URL만으로는 key가 고유하지 않다 */}
       {srcs.map((src, index) => (
-        <Styled.Item key={src}>
+        <Styled.Item key={`${index}-${src}`}>
           <Styled.Thumbnail src={src} alt={`첨부한 사진 ${index + 1}`} />
           {onRemove && (
             <Styled.RemoveButton

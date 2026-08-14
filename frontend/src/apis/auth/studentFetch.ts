@@ -69,7 +69,13 @@ export const studentFetch = async (
   // 한 번만 재발급해 재시도한다. 안 그러면 localStorage를 비우기 전까지 계속 실패한다.
   if (response.status !== 401) return response;
 
-  const reissuedToken = await issueStudentTokenOnce();
+  // 다른 요청이 이미 재발급을 끝냈으면 그 토큰을 쓴다.
+  // 401이 순차로 오면 issueStudentTokenOnce가 각각 새로 발급해 신원이 갈린다.
+  const storedToken = localStorage.getItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN);
+  const reissuedToken =
+    storedToken && storedToken !== token
+      ? storedToken
+      : await issueStudentTokenOnce();
 
   return fetchWithTimeout(
     input,

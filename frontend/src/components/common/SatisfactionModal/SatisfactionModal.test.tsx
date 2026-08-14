@@ -1,7 +1,7 @@
+import { MemoryRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import mixpanel from 'mixpanel-browser';
-import { MemoryRouter } from 'react-router-dom';
 import {
   APP_STORE_REVIEW_URL,
   SATISFACTION_ASK_THRESHOLD,
@@ -100,11 +100,11 @@ describe('SatisfactionModal', () => {
   it('「다음에 볼게요」는 미룸으로 남기고 답한 것으로 치지 않는다', async () => {
     renderModal();
 
-    await userEvent.click(screen.getByRole('button', { name: '다음에 볼게요' }));
+    await userEvent.click(
+      screen.getByRole('button', { name: '다음에 볼게요' }),
+    );
 
     expect(trackedNames()).toContain(USER_EVENT.SATISFACTION_SNOOZED);
-    expect(
-      localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED),
-    ).toBeNull();
+    expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBeNull();
   });
 });

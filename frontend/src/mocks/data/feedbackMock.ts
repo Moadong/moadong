@@ -107,7 +107,12 @@ export const sentFeedbacksMock: SentFeedback[] = [
     type: 'BUG',
     content:
       '지원서 작성 중에 새로고침하면 쓰던 내용이 다 날아가요. 그리고 어쩌고 저쩌고',
-    images: ['/og_image.png', '/og_image.png', '/og_image.png', '/og_image.png'],
+    images: [
+      '/og_image.png',
+      '/og_image.png',
+      '/og_image.png',
+      '/og_image.png',
+    ],
     status: 'PENDING',
     createdAt: daysAgo(5),
   },

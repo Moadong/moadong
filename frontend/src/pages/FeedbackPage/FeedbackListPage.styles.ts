@@ -75,7 +75,8 @@ export const EmptyText = styled.p`
 export const WriteButton = styled.button`
   position: fixed;
   right: 20px;
-  bottom: 24px;
+  /* 시안은 24지만 홈 인디케이터에 가리지 않도록 안전 영역을 더한다 */
+  bottom: calc(24px + env(safe-area-inset-bottom));
   display: flex;
   align-items: center;
   justify-content: center;

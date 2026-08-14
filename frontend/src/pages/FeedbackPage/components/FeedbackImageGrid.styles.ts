@@ -9,6 +9,7 @@ export const Grid = styled.ul`
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 7px;
+  list-style: none;
 `;
 
 export const Item = styled.li`
@@ -41,4 +42,11 @@ export const RemoveButton = styled.button`
   border-radius: 50%;
   background: ${colors.gray[900]};
   cursor: pointer;
+
+  /* 22px은 손가락으로 누르기에 작다. 시안 크기는 두고 히트 영역만 넓힌다 */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: -11px;
+  }
 `;

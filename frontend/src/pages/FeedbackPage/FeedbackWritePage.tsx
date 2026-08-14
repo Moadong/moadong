@@ -40,7 +40,16 @@ const SAVE_MODAL = {
 const parseFeedbackType = (value?: string): FeedbackType | undefined =>
   FEEDBACK_TYPE_ORDER.find((type) => type.toLowerCase() === value);
 
-type AttachError = 'count' | 'size' | null;
+type AttachError = 'count' | 'size' | 'type' | null;
+
+/** File.type은 string이라 리터럴 튜플 그대로는 비교할 수 없다 */
+const ALLOWED_TYPES: readonly string[] = ALLOWED_IMAGE_TYPES;
+
+const ATTACH_ERROR_LABEL: Record<NonNullable<AttachError>, string> = {
+  count: `최대 ${FEEDBACK_IMAGE_MAX_COUNT}장까지 첨부할 수 있어요.`,
+  size: '10MB 이하 이미지만 첨부할 수 있어요.',
+  type: '이미지 파일만 첨부할 수 있어요.',
+};
 
 /**
  * 미리보기 URL을 파일과 함께 들고 있는다.
@@ -60,10 +69,7 @@ const getAttachState = (imageCount: number, attachError: AttachError) => {
   if (attachError) {
     return {
       Icon: AttachErrorIcon,
-      label:
-        attachError === 'size'
-          ? '10MB 이하 이미지만 첨부할 수 있어요.'
-          : `최대 ${FEEDBACK_IMAGE_MAX_COUNT}장까지 첨부할 수 있어요.`,
+      label: ATTACH_ERROR_LABEL[attachError],
       variant: 'error' as const,
     };
   }
@@ -122,6 +128,13 @@ const FeedbackWritePage = () => {
     // 같은 파일을 다시 고를 수 있도록 비운다. 안 그러면 change 이벤트가 안 난다.
     event.target.value = '';
 
+    // accept는 파일 선택 UI의 힌트일 뿐이라 허용하지 않은 형식도 넘어온다.
+    // 서버가 저장 시점에 막지만, 그전에 걸러야 사용자가 이유를 안다.
+    if (files.some((file) => !ALLOWED_TYPES.includes(file.type))) {
+      setAttachError('type');
+      return;
+    }
+
     // 용량 초과가 하나라도 있으면 선택을 반영하지 않는다
     if (files.some((file) => file.size > MAX_FILE_SIZE)) {
       setAttachError('size');
@@ -150,6 +163,9 @@ const FeedbackWritePage = () => {
   };
 
   const handleSubmit = () => {
+    // 확인 모달은 전송 중에도 떠 있어서 다시 누를 수 있다. 중복 전송을 막는다.
+    if (isPending) return;
+
     createFeedback(
       {
         type: feedbackType,
