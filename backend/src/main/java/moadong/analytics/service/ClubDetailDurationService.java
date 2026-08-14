@@ -28,6 +28,8 @@ public class ClubDetailDurationService {
 
     private static final long MIN_DURATION_SECONDS = 1L;
     private static final long MAX_DURATION_SECONDS = 3600L;
+    /** clubId는 24자 Mongo id, sessionId/visitorId는 36자 UUID이므로 64자면 충분하다. */
+    private static final int MAX_ID_LENGTH = 64;
     private static final String RATE_LIMIT_KEY_PREFIX = "analytics:club-detail-duration:ratelimit:";
     private static final long RATE_LIMIT_WINDOW_SECONDS = 60L;
     private static final long RATE_LIMIT_MAX_REQUESTS = 120L;
@@ -63,9 +65,9 @@ public class ClubDetailDurationService {
 
     private void validate(ClubDetailDurationRecordRequest request) {
         if (request == null
-                || isBlank(request.clubId())
-                || isBlank(request.sessionId())
-                || isBlank(request.visitorId())
+                || isInvalidId(request.clubId())
+                || isInvalidId(request.sessionId())
+                || isInvalidId(request.visitorId())
                 || request.durationSeconds() == null
                 || request.durationSeconds() < MIN_DURATION_SECONDS
                 || request.durationSeconds() > MAX_DURATION_SECONDS) {
@@ -147,7 +149,10 @@ public class ClubDetailDurationService {
         return leftAt.atZone(AnalyticsTime.KST).toLocalDate();
     }
 
-    private boolean isBlank(String value) {
-        return value == null || value.isBlank();
+    /**
+     * 인증 없는 공개 API이므로 식별자 길이를 제한해 Redis 키와 Mongo 질의에 임의 길이 값이 들어가지 않게 한다.
+     */
+    private boolean isInvalidId(String value) {
+        return value == null || value.isBlank() || value.length() > MAX_ID_LENGTH;
     }
 }
