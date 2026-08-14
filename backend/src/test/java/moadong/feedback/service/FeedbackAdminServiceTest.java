@@ -28,6 +28,7 @@ import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -37,6 +38,7 @@ import java.util.Optional;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertNotEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
@@ -279,6 +281,45 @@ class FeedbackAdminServiceTest {
         ArgumentCaptor<Letter> captor = ArgumentCaptor.forClass(Letter.class);
         verify(letterRepository).save(captor.capture());
         assertEquals("req-1", captor.getValue().getIdempotencyKey());
+    }
+
+    @Test
+    void 빈_requestId는_저장하지_않는다() {
+        // 빈 문자열을 저장하면 sparse 유니크 인덱스가 걸러주지 못해 다음 발행이 중복 키로 실패한다.
+        givenSavedLetterId("letter-1");
+
+        feedbackAdminService.createBroadcastLetter(
+                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", false, ""));
+        feedbackAdminService.createBroadcastLetter(
+                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", false, "   "));
+
+        ArgumentCaptor<Letter> captor = ArgumentCaptor.forClass(Letter.class);
+        verify(letterRepository, org.mockito.Mockito.times(2)).save(captor.capture());
+        captor.getAllValues().forEach(letter -> assertNull(letter.getIdempotencyKey()));
+        verify(letterRepository, never()).findByIdempotencyKey(any());
+    }
+
+    @Test
+    void 동시_발행이_충돌하면_먼저_저장된_편지를_돌려준다() {
+        Letter winner = Letter.builder()
+                .id("letter-1")
+                .category(LetterCategory.UPDATE)
+                .title("제목")
+                .body("본문")
+                .idempotencyKey("req-1")
+                .pushSuccessCount(118)
+                .build();
+        when(letterRepository.findByIdempotencyKey("req-1"))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(winner));
+        when(letterRepository.save(any())).thenThrow(new DuplicateKeyException("duplicate idempotencyKey"));
+
+        LetterCreateResponse response = feedbackAdminService.createBroadcastLetter(
+                new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", true, "req-1"));
+
+        assertEquals("letter-1", response.letterId());
+        assertEquals(118, response.pushSuccessCount());
+        verify(fcmAdminService, never()).sendToAll(any());
     }
 
     @Test

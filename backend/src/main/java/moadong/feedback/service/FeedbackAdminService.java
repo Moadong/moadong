@@ -24,6 +24,7 @@ import moadong.feedback.repository.LetterRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.user.repository.StudentUserRepository;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
@@ -94,19 +95,28 @@ public class FeedbackAdminService {
             throw new RestApiException(ErrorCode.LETTER_CATEGORY_NOT_BROADCASTABLE);
         }
 
-        if (StringUtils.hasText(request.requestId())) {
-            Optional<Letter> published = letterRepository.findByIdempotencyKey(request.requestId());
+        // 빈 문자열을 그대로 저장하면 sparse 인덱스가 걸러주지 못해, 다음 발행이 중복 키로 실패한다.
+        String requestId = StringUtils.hasText(request.requestId()) ? request.requestId().trim() : null;
+
+        if (requestId != null) {
+            Optional<LetterCreateResponse> published = findPublished(requestId);
             if (published.isPresent()) {
-                Letter letter = published.get();
-                log.info("Broadcast letter republish ignored. letter={}, requestId={}",
-                        letter.getId(), request.requestId());
-                return new LetterCreateResponse(letter.getId(), letter.getPushSuccessCount() > 0,
-                        letter.getPushSuccessCount());
+                return published.get();
             }
         }
 
-        Letter letter = letterRepository.save(Letter.broadcast(
-                request.category(), request.title(), request.body(), request.requestId()));
+        Letter letter;
+        try {
+            letter = letterRepository.save(Letter.broadcast(
+                    request.category(), request.title(), request.body(), requestId));
+        } catch (DuplicateKeyException e) {
+            if (requestId == null) {
+                throw e;
+            }
+            // 동시 요청이 둘 다 조회를 통과한 경우. 유니크 인덱스가 중복 저장을 막았으니
+            // 먼저 저장한 쪽 결과를 그대로 돌려준다. 이쪽은 푸시를 보내지 않는다.
+            return findPublished(requestId).orElseThrow(() -> e);
+        }
 
         if (!request.sendPush()) {
             return new LetterCreateResponse(letter.getId(), false, 0);
@@ -133,6 +143,20 @@ public class FeedbackAdminService {
 
         feedback.changeStatus(request.status());
         feedbackRepository.save(feedback);
+    }
+
+    /**
+     * 이미 발행된 편지의 결과. 동시 요청에서 진 쪽은 이긴 쪽이 푸시를 마치기 전에 읽을 수 있어
+     * pushSuccessCount가 0으로 보일 수 있다. 편지가 중복 발행되지 않는 것이 목적이라 그대로 둔다.
+     */
+    private Optional<LetterCreateResponse> findPublished(String requestId) {
+        return letterRepository.findByIdempotencyKey(requestId)
+                .map(letter -> {
+                    log.info("Broadcast letter republish ignored. letter={}, requestId={}",
+                            letter.getId(), requestId);
+                    return new LetterCreateResponse(letter.getId(),
+                            letter.getPushSuccessCount() > 0, letter.getPushSuccessCount());
+                });
     }
 
     /**
