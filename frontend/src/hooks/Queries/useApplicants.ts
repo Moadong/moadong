@@ -2,7 +2,7 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { deleteApplicants, getClubApplicants } from '@/apis/applicants';
 import { updateApplicantDetail } from '@/apis/application';
 import { queryKeys } from '@/constants/queryKeys';
-import { UpdateApplicantParams } from '@/types/applicants';
+import { ApplicantsInfo, UpdateApplicantParams } from '@/types/applicants';
 
 export const useGetApplicants = (applicationFormId: string | undefined) => {
   return useQuery({
@@ -33,6 +33,9 @@ export const useDeleteApplicants = (applicationFormId: string) => {
 
 export const useUpdateApplicant = (applicationFormId: string | undefined) => {
   const queryClient = useQueryClient();
+  const queryKey = applicationFormId
+    ? queryKeys.applicants.detail(applicationFormId)
+    : null;
 
   return useMutation({
     mutationFn: (applicant: UpdateApplicantParams[]) => {
@@ -41,15 +44,33 @@ export const useUpdateApplicant = (applicationFormId: string | undefined) => {
       }
       return updateApplicantDetail(applicant, applicationFormId);
     },
-    onSuccess: () => {
-      if (applicationFormId) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.applicants.detail(applicationFormId),
-        });
-      }
+    onMutate: async (updates) => {
+      if (!queryKey) return;
+      await queryClient.cancelQueries({ queryKey });
+      const previous = queryClient.getQueryData<ApplicantsInfo>(queryKey);
+      queryClient.setQueryData<ApplicantsInfo>(queryKey, (old) => {
+        if (!old) return old;
+        const updateMap = new Map(updates.map((u) => [u.applicantId, u]));
+        return {
+          ...old,
+          applicants: old.applicants.map((a) => {
+            const u = updateMap.get(a.id);
+            return u ? { ...a, status: u.status, memo: u.memo } : a;
+          }),
+        };
+      });
+      return { previous };
     },
-    onError: (error) => {
+    onError: (error, _updates, context) => {
+      if (queryKey && context?.previous) {
+        queryClient.setQueryData(queryKey, context.previous);
+      }
       console.error(`Error updating applicant detail: ${error}`);
+    },
+    onSettled: () => {
+      if (queryKey) {
+        queryClient.invalidateQueries({ queryKey });
+      }
     },
   });
 };

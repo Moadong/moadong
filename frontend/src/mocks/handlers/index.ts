@@ -92,8 +92,8 @@ export const handlers = [
         presidentName: '홍길동',
         presidentPhoneNumber: '010-0000-0000',
         recruitmentForm: '',
-        recruitmentStart: '2026-07-01T00:00:00',
-        recruitmentEnd: '2026-07-31T23:59:59',
+        recruitmentStart: '2026.07.01 00:00',
+        recruitmentEnd: '2026.07.31 23:59',
         recruitmentTarget: '전학년',
         externalApplicationUrl: '',
         socialLinks: {
