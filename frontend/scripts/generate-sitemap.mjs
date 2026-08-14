@@ -7,7 +7,13 @@ const SITE_URL =
   'https://www.moadong.com';
 // 실제 라우트가 있는 경로만 넣는다. 라우트 없는 경로는 SPA fallback으로 200을 주고
 // `/`로 리다이렉트돼 검색엔진에 soft 404로 잡힌다.
-const STATIC_PATHS = ['/', '/introduce', '/club-union', '/promotions'];
+const STATIC_PATHS = [
+  '/',
+  '/introduce',
+  '/club-union',
+  '/promotions',
+  '/privacy-policy',
+];
 const ENV_FILES = [
   '.env',
   '.env.local',
