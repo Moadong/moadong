@@ -2,6 +2,7 @@ import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import Clarity from '@microsoft/clarity';
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
+import getDeviceLocale from '@/utils/getDeviceLocale';
 import getIOSVersion from '@/utils/getIOSVersion';
 
 const LOCALHOST_HOSTNAME = 'localhost';
@@ -20,6 +21,12 @@ export function initializeMixpanel() {
   const iosVersion = getIOSVersion();
   if (iosVersion) {
     mixpanel.register({ $os_version: iosVersion });
+  }
+
+  // 외국인 유학생 등 비한국어 사용자 식별용 — 이후 모든 이벤트에 자동 포함
+  const deviceLocale = getDeviceLocale();
+  if (deviceLocale) {
+    mixpanel.register({ device_locale: deviceLocale });
   }
 
   if (window.location.hostname === LOCALHOST_HOSTNAME) {

@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled, { css } from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { theme } from '@/styles/theme';
@@ -123,7 +124,7 @@ const rowStyles = css`
   cursor: pointer;
 `;
 
-export const InfoLink = styled.a`
+export const InfoLink = styled(Link)`
   ${rowStyles}
 `;
 

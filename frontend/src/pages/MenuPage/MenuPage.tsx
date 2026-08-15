@@ -8,9 +8,6 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import getAppVersion from '@/utils/getAppVersion';
 import * as Styled from './MenuPage.styles';
 
-const PRIVACY_POLICY_URL =
-  'https://honorable-cough-8f9.notion.site/232aad23209680f2a2cadb146eff81cd?pvs=74';
-
 const MenuPage = () => {
   useTrackPageView(PAGE_VIEW.MENU_PAGE);
   const { handleIntroduceClick, handleClubUnionClick } = useHeaderNavigation();
@@ -67,12 +64,9 @@ const MenuPage = () => {
       </Styled.CardGrid>
 
       <Styled.InfoSection>
-        <Styled.InfoLink
-          href={PRIVACY_POLICY_URL}
-          target='_blank'
-          rel='noopener noreferrer'
-        >
-          개인 정보 처리방침
+        {/* 자체 도메인 페이지다. 외부 Notion 링크는 스토어·OAuth 심사에서 문제가 됐다 */}
+        <Styled.InfoLink to='/privacy-policy'>
+          개인정보 처리방침
           <Styled.CardChevron>
             <ChevronIcon width={22} height={22} aria-hidden />
           </Styled.CardChevron>

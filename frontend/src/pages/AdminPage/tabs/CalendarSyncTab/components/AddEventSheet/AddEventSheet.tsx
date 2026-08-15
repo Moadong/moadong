@@ -11,7 +11,7 @@ import type {
   CustomEventType,
   RecurrenceFrequency,
 } from '@/types/club';
-import { dateFromKey, formatMonthLabel } from '@/utils/calendarSyncUtils';
+import { dateFromKey } from '@/utils/calendarSyncUtils';
 import CalendarLinkPanel from '../CalendarLinkPanel/CalendarLinkPanel';
 import ColorBar from '../ColorBar/ColorBar';
 import DatePickerSheet from '../DatePickerSheet/DatePickerSheet';
@@ -203,8 +203,7 @@ const AddEventSheet = ({
             setEventType(nextType);
           }}
         />
-        <Styled.MonthLabel>{formatMonthLabel(month)}</Styled.MonthLabel>
-
+        {/* 달을 넘길 수단이 헤더뿐이라, 헤더를 숨기면 initialDate가 속한 달에만 갇힌다 */}
         {eventType === 'SINGLE' && (
           <MiniCalendar
             month={month}
@@ -215,7 +214,6 @@ const AddEventSheet = ({
               trackDateSelected(dateKey);
               setSelectedDate(dateKey);
             }}
-            showHeader={false}
             accentColor={color}
           />
         )}
@@ -228,7 +226,6 @@ const AddEventSheet = ({
             rangeStart={rangeStart}
             rangeEnd={rangeEnd}
             onSelectDate={handleRangeSelect}
-            showHeader={false}
             accentColor={color}
           />
         )}
@@ -240,7 +237,6 @@ const AddEventSheet = ({
             mode='multi'
             selectedDates={multiDates}
             onSelectDate={handleMultiSelect}
-            showHeader={false}
             accentColor={color}
           />
         )}

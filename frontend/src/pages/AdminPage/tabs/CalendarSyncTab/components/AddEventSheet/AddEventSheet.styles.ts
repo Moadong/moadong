@@ -26,13 +26,6 @@ export const SaveArea = styled.div`
   padding: 10px 24px calc(20px + env(safe-area-inset-bottom));
 `;
 
-export const MonthLabel = styled.h4`
-  margin: 0;
-  font-size: 1.05rem;
-  font-weight: 700;
-  color: ${colors.gray[900]};
-`;
-
 /** 버튼 영역이 투명이라 배경을 깔지 않으면 뒤 내용과 겹쳐 읽히지 않는다 */
 export const ErrorText = styled.p`
   margin: 0;
