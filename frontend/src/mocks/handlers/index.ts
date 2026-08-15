@@ -1,4 +1,4 @@
-import { http, HttpResponse } from 'msw';
+import { http, HttpResponse, passthrough } from 'msw';
 
 const MOCK_CLUB_ID = 'mock-club-id';
 
@@ -63,6 +63,9 @@ export const handlers = [
   http.get('/auth/user/logout', () => ok(null)),
 
   http.put('/auth/user/', () => ok(null)),
+
+  // '/api/club/:clubId'가 목록 엔드포인트(/api/club/search/)까지 매칭해 버리므로 먼저 실제 API로 흘려보낸다
+  http.get('/api/club/search/', () => passthrough()),
 
   http.get('/api/club/:clubId', ({ params }) =>
     ok({

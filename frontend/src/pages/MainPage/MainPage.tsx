@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import Filter from '@/components/common/Filter/Filter';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import SatisfactionModal from '@/components/common/SatisfactionModal/SatisfactionModal';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { PAGE_NAME, PAGE_VIEW } from '@/constants/eventName';
 import useScrollTracking from '@/hooks/Mixpanel/useScrollTracking';
@@ -91,6 +92,7 @@ const MainPage = () => {
   return (
     <>
       {!inWebview && <Popup configs={[APP_DOWNLOAD_POPUP]} />}
+      <SatisfactionModal />
       <Header />
       <Filter hasNotification={hasNotification} />
       <Banner isWebview={inWebview} />
