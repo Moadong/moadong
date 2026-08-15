@@ -11,7 +11,6 @@ interface UseNotionOAuthParams {
   loadNotionPages: () => Promise<unknown>;
   onWorkspaceName: (name: string) => void;
   onError: (message: string) => void;
-  onStatus: (message: string) => void;
   clearError: () => void;
 }
 
@@ -19,7 +18,6 @@ export const useNotionOAuth = ({
   loadNotionPages,
   onWorkspaceName,
   onError,
-  onStatus,
   clearError,
 }: UseNotionOAuthParams) => {
   const [isNotionOAuthLoading, setIsNotionOAuthLoading] = useState(false);
@@ -79,9 +77,7 @@ export const useNotionOAuth = ({
         onWorkspaceName(tokenResponse?.workspaceName ?? '');
         return loadNotionPages();
       })
-      .then(() => {
-        onStatus('Notion OAuth 인증이 완료되었습니다.');
-      })
+      .then(() => {})
       .catch((oauthError: Error) => {
         onError(oauthError.message);
       })
@@ -90,7 +86,7 @@ export const useNotionOAuth = ({
         sessionStorage.removeItem(NOTION_STATE_KEY);
         clearOAuthParamsFromUrl();
       });
-  }, [clearError, loadNotionPages, onError, onStatus, onWorkspaceName]);
+  }, [clearError, loadNotionPages, onError, onWorkspaceName]);
 
   return {
     isNotionOAuthLoading,

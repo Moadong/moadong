@@ -5,6 +5,19 @@ export const queryKeys = {
     events: (calendarId: string, timeMin: string, timeMax: string) =>
       ['googleCalendar', 'events', calendarId, timeMin, timeMax] as const,
   },
+  customCalendarEvents: {
+    all: ['customCalendarEvents'] as const,
+    list: () => ['customCalendarEvents', 'list'] as const,
+  },
+  notionCalendar: {
+    all: ['notionCalendar'] as const,
+    databases: () => ['notionCalendar', 'databases'] as const,
+    pages: () => ['notionCalendar', 'pages'] as const,
+  },
+  hiddenCalendarEvents: {
+    all: ['hiddenCalendarEvents'] as const,
+    list: () => ['hiddenCalendarEvents', 'list'] as const,
+  },
   applicants: {
     all: ['clubApplicants'] as const,
     detail: (applicationFormId: string) =>

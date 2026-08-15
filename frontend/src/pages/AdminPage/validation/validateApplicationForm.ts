@@ -5,7 +5,10 @@ const ALLOWED_EXTERNAL_URLS = [
   'https://docs.google.com/forms/',
   'https://form.naver.com/',
   'https://naver.me/',
+  'https://m.site.naver.com/',
   'https://everytime.kr/',
+  'https://cafe.daum.net/',
+  'https://open.kakao.com/',
 ];
 
 export interface ApplicationFormErrors {
@@ -62,7 +65,7 @@ export const validateApplicationForm = (
       !ALLOWED_EXTERNAL_URLS.some((url) => externalUrl.startsWith(url))
     ) {
       errors.externalUrl =
-        'Google Forms, Naver Form 또는 Everytime 링크여야 합니다.';
+        'Google Forms, 네이버 폼, 에브리타임, 다음 카페, 카카오 오픈채팅 링크만 등록할 수 있습니다.';
     }
   }
 

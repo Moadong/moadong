@@ -9,9 +9,6 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import getAppVersion from '@/utils/getAppVersion';
 import * as Styled from './MenuPage.styles';
 
-const PRIVACY_POLICY_URL =
-  'https://honorable-cough-8f9.notion.site/232aad23209680f2a2cadb146eff81cd?pvs=74';
-
 const MenuPage = () => {
   useTrackPageView(PAGE_VIEW.MENU_PAGE);
   const { handleIntroduceClick, handleClubUnionClick } = useHeaderNavigation();
@@ -45,11 +42,7 @@ const MenuPage = () => {
           </Styled.Chevron>
         </Styled.MenuItem>
 
-        <Styled.MenuLink
-          href={PRIVACY_POLICY_URL}
-          target='_blank'
-          rel='noopener noreferrer'
-        >
+        <Styled.MenuLink to='/privacy-policy'>
           <Styled.ItemLeft>
             <Styled.IconCircle>
               <DocumentIcon width={24} height={24} aria-hidden />

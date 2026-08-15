@@ -4,6 +4,7 @@ import { applyToClub } from '@/apis/application';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
+import Toast from '@/components/common/Toast/Toast';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import { useAnswers } from '@/hooks/Application/useAnswers';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -13,6 +14,7 @@ import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { PageContainer } from '@/styles/PageContainer.styles';
+import { colors } from '@/styles/theme/colors';
 import { Question } from '@/types/application';
 import { linkifyText } from '@/utils/linkifyText';
 import { validateAnswers } from '@/utils/useValidateAnswers';
@@ -26,6 +28,7 @@ const ApplicationFormPage = () => {
   const navigate = useNavigate();
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
+  const [isSaveNoticeOpen, setIsSaveNoticeOpen] = useState(true);
   const trackEvent = useMixpanelTrack();
 
   const { data: clubDetail, error: clubError } = useGetClubDetail(clubId ?? '');
@@ -59,18 +62,21 @@ const ApplicationFormPage = () => {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
   }, [answers, STORAGE_KEY]);
 
+  const hasLoadError = isError || !!clubError;
+  const clubName = clubDetail?.name;
+
+  useEffect(() => {
+    if (!hasLoadError) return;
+    alert(applicationError?.message || '문제가 발생했어요.');
+    navigate(clubName ? `/clubDetail/@${encodeURIComponent(clubName)}` : `/`, {
+      replace: true,
+    });
+  }, [hasLoadError, applicationError, clubName, navigate]);
+
   if (!clubId || !applicationFormId) return null;
 
   if (isLoading) return <Spinner />;
-  if (isError || clubError) {
-    alert(applicationError?.message || '문제가 발생했어요.');
-    if (clubDetail?.name) {
-      navigate(`/clubDetail/@${encodeURIComponent(clubDetail?.name)}`);
-    } else {
-      navigate(`/`);
-    }
-    return null;
-  }
+  if (hasLoadError) return null;
   if (!formData || !clubDetail || !formData.questions) {
     return (
       <div>
@@ -166,6 +172,12 @@ const ApplicationFormPage = () => {
           </Styled.SubmitButton>
         </Styled.ButtonWrapper>
       </PageContainer>
+      <Toast
+        isOpen={isSaveNoticeOpen}
+        onClose={() => setIsSaveNoticeOpen(false)}
+        message='같은 기기에서 작성 상태는 저장돼요.'
+        backgroundColor={colors.primary[900]}
+      />
       <Footer />
     </>
   );

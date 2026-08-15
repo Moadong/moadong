@@ -3,6 +3,7 @@ import type {
   GoogleCalendarEvent,
   NotionSearchItem,
 } from '@/apis/calendarOAuth';
+import type { ClubCalendarEvent } from '@/types/club';
 
 /**
  * CalendarSyncTab 전용 유틸
@@ -139,6 +140,33 @@ export const buildMonthCalendarDays = (month: Date) => {
 export const formatMonthLabel = (month: Date) =>
   `${month.getFullYear()}년 ${String(month.getMonth() + 1).padStart(2, '0')}월`;
 
+/** 날짜 키(YYYY-MM-DD)를 `YYYY년 M월 D일 (요일)` 형식으로 포맷한다. */
+export const formatKoreanDateWithWeekday = (dateKey?: string | null) => {
+  if (!dateKey) return '없음';
+  const normalized = parseDateKey(dateKey);
+  if (!normalized) return dateKey;
+  const date = dateFromKey(normalized);
+  return `${date.getFullYear()}년 ${date.getMonth() + 1}월 ${date.getDate()}일 (${WEEKDAY_LABELS[date.getDay()]})`;
+};
+
+/** 날짜 키를 `M월 D일 (요일)` 형식으로 포맷한다. (연도 없음) */
+export const formatMonthDayWeekday = (dateKey?: string | null) => {
+  if (!dateKey) return '없음';
+  const normalized = parseDateKey(dateKey);
+  if (!normalized) return dateKey;
+  const date = dateFromKey(normalized);
+  return `${date.getMonth() + 1}월 ${date.getDate()}일 (${WEEKDAY_LABELS[date.getDay()]})`;
+};
+
+/** 날짜 키를 `M.D` 형식으로 짧게 포맷한다. */
+export const formatShortMonthDay = (dateKey?: string | null) => {
+  if (!dateKey) return '';
+  const normalized = parseDateKey(dateKey);
+  if (!normalized) return dateKey;
+  const date = dateFromKey(normalized);
+  return `${date.getMonth() + 1}.${date.getDate()}`;
+};
+
 /** Notion page에서 추출한 캘린더 이벤트 모델. */
 export interface NotionCalendarEvent {
   id: string;
@@ -156,7 +184,7 @@ export interface UnifiedCalendarEvent {
   dateKey: string;
   end?: string;
   url?: string;
-  source: 'GOOGLE' | 'NOTION';
+  source: 'GOOGLE' | 'NOTION' | 'CUSTOM';
   description?: string;
 }
 
@@ -233,3 +261,21 @@ export const convertNotionEventToUnified = (
   url: event.url,
   source: 'NOTION',
 });
+
+export const convertCustomEventToUnified = (
+  event: ClubCalendarEvent,
+): UnifiedCalendarEvent | null => {
+  const dateKey = parseDateKey(event.start);
+  if (!dateKey) return null;
+
+  return {
+    id: `custom-${event.id}`,
+    title: event.title,
+    start: event.start,
+    end: event.end,
+    dateKey,
+    url: event.url,
+    description: event.description,
+    source: 'CUSTOM',
+  };
+};
