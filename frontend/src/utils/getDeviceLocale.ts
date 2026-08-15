@@ -12,15 +12,12 @@ declare global {
  * 앱이 주입한 window.deviceLocale을 우선 사용하고, 없으면 navigator.language로 폴백
  * iOS의 "ko_KR@calendar=gregorian" 같은 형식을 "ko-KR"로 정규화해 Mixpanel 값이 갈라지지 않게 한다
  */
+const normalizeLocale = (locale: string | undefined): string | null =>
+  locale?.split('@')[0].replace(/_/g, '-').trim() || null;
+
 const getDeviceLocale = (
   rawLocale: string | undefined = window.deviceLocale,
-): string | null => {
-  const locale = rawLocale || navigator.language;
-  if (!locale) {
-    return null;
-  }
-
-  return locale.split('@')[0].replace(/_/g, '-').trim() || null;
-};
+): string | null =>
+  normalizeLocale(rawLocale) || normalizeLocale(navigator.language);
 
 export default getDeviceLocale;

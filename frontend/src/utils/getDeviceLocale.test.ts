@@ -35,6 +35,14 @@ describe('getDeviceLocale', () => {
     expect(getDeviceLocale('')).toBe('ko-KR');
   });
 
+  it('주입값이 공백뿐이면 navigator.language로 폴백한다', () => {
+    expect(getDeviceLocale('   ')).toBe('ko-KR');
+  });
+
+  it('주입값에 언어 정보가 없으면 navigator.language로 폴백한다', () => {
+    expect(getDeviceLocale('@calendar=gregorian')).toBe('ko-KR');
+  });
+
   it('locale을 알 수 없으면 null을 반환한다', () => {
     mockNavigatorLanguage('');
     expect(getDeviceLocale()).toBeNull();
