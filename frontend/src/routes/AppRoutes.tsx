@@ -21,6 +21,7 @@ import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import MainPage from '@/pages/MainPage/MainPage';
 import MenuPage from '@/pages/MenuPage/MenuPage';
+import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage/PrivacyPolicyPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
 import SubscriptionsPage from '@/pages/SubscriptionsPage/SubscriptionsPage';
@@ -47,6 +48,14 @@ const AppRoutes = () =>
           element: (
             <ContentErrorBoundary>
               <IntroducePage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/privacy-policy',
+          element: (
+            <ContentErrorBoundary>
+              <PrivacyPolicyPage />
             </ContentErrorBoundary>
           ),
         },
