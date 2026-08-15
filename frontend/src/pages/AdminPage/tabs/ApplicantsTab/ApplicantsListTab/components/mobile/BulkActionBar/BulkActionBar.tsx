@@ -31,7 +31,10 @@ const BulkActionBar = ({
   return (
     <Styled.Container>
       <Styled.StatusButtonWrapper>
-        <Styled.StatusButton $enabled={enabled} onClick={handleStatusButtonClick}>
+        <Styled.StatusButton
+          $enabled={enabled}
+          onClick={handleStatusButtonClick}
+        >
           <span>상태변경</span>
           <Styled.TriangleIcon $enabled={enabled} $isOpen={isStatusMenuOpen} />
         </Styled.StatusButton>
@@ -49,7 +52,10 @@ const BulkActionBar = ({
         )}
       </Styled.StatusButtonWrapper>
 
-      <Styled.DeleteButton $enabled={enabled} onClick={enabled ? onDelete : undefined}>
+      <Styled.DeleteButton
+        $enabled={enabled}
+        onClick={enabled ? onDelete : undefined}
+      >
         삭제
       </Styled.DeleteButton>
     </Styled.Container>

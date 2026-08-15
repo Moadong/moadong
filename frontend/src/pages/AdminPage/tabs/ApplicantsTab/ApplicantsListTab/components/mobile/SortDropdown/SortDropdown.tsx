@@ -15,8 +15,14 @@ interface SortDropdownProps {
   onToggle: () => void;
 }
 
-const SortDropdown = ({ value, onChange, isOpen, onToggle }: SortDropdownProps) => {
-  const selectedLabel = SORT_OPTIONS.find((o) => o.value === value)?.label ?? '제출순';
+const SortDropdown = ({
+  value,
+  onChange,
+  isOpen,
+  onToggle,
+}: SortDropdownProps) => {
+  const selectedLabel =
+    SORT_OPTIONS.find((o) => o.value === value)?.label ?? '제출순';
 
   return (
     <Styled.Wrapper>
