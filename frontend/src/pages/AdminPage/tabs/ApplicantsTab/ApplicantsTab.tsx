@@ -407,7 +407,7 @@ const ApplicantsTabDesktop = () => {
             value={keyword}
             onChange={handleKeywordChange}
             autoBlur={false}
-            placeholder='지원자 이름을 입력해주세요'
+            placeholder='지원자 이름을 검색해주세요'
             ariaLabel='지원자 검색창'
           />
         </Styled.ApplicantListHeader>
@@ -520,20 +520,13 @@ const ApplicantsTabDesktop = () => {
                   )}
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
-                  {
-                    // createdAt을 yyyy-mm-dd 형식으로 변환
-                    // 임시로.. 나중에 변경해야함
-                    (() => {
-                      const date = new Date(item.createdAt);
-                      const year = date.getFullYear();
-                      const month = String(date.getMonth() + 1).padStart(
-                        2,
-                        '0',
-                      );
-                      const day = String(date.getDate()).padStart(2, '0');
-                      return `${year}-${month}-${day}`;
-                    })()
-                  }
+                  {(() => {
+                    const date = new Date(item.createdAt);
+                    const year = date.getFullYear();
+                    const month = String(date.getMonth() + 1).padStart(2, '0');
+                    const day = String(date.getDate()).padStart(2, '0');
+                    return `${year}.${month}.${day}`;
+                  })()}
                 </Styled.ApplicantTableCol>
               </Styled.ApplicantTableRow>
             ))}
