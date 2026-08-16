@@ -1,66 +1,26 @@
 import styled from 'styled-components';
-import PrevApplicant from '@/assets/images/icons/prev_applicant.svg?react';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
-export const PageWrapper = styled.div`
+export const Container = styled.div`
+  width: 100%;
+  max-width: 500px;
+  min-height: 100vh;
+  margin: 0 auto;
+  background: ${colors.base.white};
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+`;
+
+export const Content = styled.div`
   display: flex;
   flex-direction: column;
-  min-height: 100vh;
-  background: ${colors.base.white};
-`;
-
-export const Header = styled.header`
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  display: flex;
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding: 10px 20px;
-  width: 100%;
-  height: 48px;
-  background: ${colors.base.white};
-  border-bottom: 1px solid ${colors.gray[300]};
-  box-sizing: border-box;
-`;
-
-export const BackButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: none;
-  background: transparent;
-  cursor: pointer;
-`;
-
-export const BackIcon = styled(PrevApplicant)`
-  width: 24px;
-  height: 24px;
-  color: ${colors.base.black};
-
-  & circle {
-    display: none;
-  }
-  & path {
-    stroke: currentColor;
-    stroke-width: 2;
-  }
-`;
-
-export const HeaderTitle = styled.h1`
-  ${setTypography(typography.title.title5)}
-  color: ${colors.base.black};
-  letter-spacing: -0.02em;
-`;
-
-export const HeaderSpacer = styled.div`
-  width: 24px;
-  height: 24px;
 `;
 
 export const TopSection = styled.div`
@@ -125,7 +85,6 @@ export const MemoLabel = styled.span`
 `;
 
 export const MemoInput = styled.input`
-  flex: 1;
   width: 100%;
   border: none;
   background: transparent;

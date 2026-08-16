@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import Spinner from '@/components/common/Spinner/Spinner';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import {
   useGetApplicants,
@@ -91,8 +92,9 @@ const ApplicantDetailPageMobile = () => {
   };
 
   const getAnswerByQuestionId = (qId: number) =>
-    applicant?.answers.filter((ans) => ans.id === qId).map((ans) => ans.value) ??
-    [];
+    applicant?.answers
+      .filter((ans) => ans.id === qId)
+      .map((ans) => ans.value) ?? [];
 
   if (!applicationFormId) return <div>지원서 정보를 불러올 수 없습니다.</div>;
   if (isLoading || isApplicantsLoading) return <Spinner />;
@@ -109,66 +111,58 @@ const ApplicantDetailPageMobile = () => {
   }));
 
   return (
-    <Styled.PageWrapper>
-      <Styled.Header>
-        <Styled.BackButton
-          onClick={() => navigate(-1)}
-          aria-label='뒤로가기'
-        >
-          <Styled.BackIcon />
-        </Styled.BackButton>
-        <Styled.HeaderTitle>지원서 상세</Styled.HeaderTitle>
-        <Styled.HeaderSpacer />
-      </Styled.Header>
-
-      <Styled.TopSection>
-        <ApplicantNavHeader
-          applicants={applicantNavItems}
-          currentIndex={applicantIndex}
-          onPrev={handlePrev}
-          onNext={handleNext}
-          onSelect={handleSelectApplicant}
-        />
-
-        <Styled.StatusTabRow>
-          {AVAILABLE_STATUSES.map((status) => {
-            const { label } = mapStatusToGroup(status);
-            return (
-              <Styled.StatusTab
-                key={status}
-                $isSelected={applicantStatus === status}
-                onClick={() => handleStatusChange(status)}
-              >
-                {label}
-              </Styled.StatusTab>
-            );
-          })}
-        </Styled.StatusTabRow>
-
-        <Styled.MemoContainer>
-          <Styled.MemoLabel>메모</Styled.MemoLabel>
-          <Styled.MemoInput
-            value={applicantMemo}
-            onChange={(e) => setApplicantMemo(e.target.value)}
-            onBlur={handleMemoBlur}
-            placeholder='메모를 입력해주세요'
+    <Styled.Container>
+      <WebviewTopBar title='지원서 상세' />
+      <Styled.Content>
+        <Styled.TopSection>
+          <ApplicantNavHeader
+            applicants={applicantNavItems}
+            currentIndex={applicantIndex}
+            onPrev={handlePrev}
+            onNext={handleNext}
+            onSelect={handleSelectApplicant}
           />
-        </Styled.MemoContainer>
-      </Styled.TopSection>
 
-      <Styled.Divider />
+          <Styled.StatusTabRow>
+            {AVAILABLE_STATUSES.map((status) => {
+              const { label } = mapStatusToGroup(status);
+              return (
+                <Styled.StatusTab
+                  key={status}
+                  $isSelected={applicantStatus === status}
+                  onClick={() => handleStatusChange(status)}
+                >
+                  {label}
+                </Styled.StatusTab>
+              );
+            })}
+          </Styled.StatusTabRow>
 
-      <Styled.AnswerList>
-        {formData.questions?.map((q: Question, i: number) => (
-          <AnswerCard
-            key={q.id}
-            index={i + 1}
-            question={q}
-            answers={getAnswerByQuestionId(q.id)}
-          />
-        ))}
-      </Styled.AnswerList>
-    </Styled.PageWrapper>
+          <Styled.MemoContainer>
+            <Styled.MemoLabel>메모</Styled.MemoLabel>
+            <Styled.MemoInput
+              value={applicantMemo}
+              onChange={(e) => setApplicantMemo(e.target.value)}
+              onBlur={handleMemoBlur}
+              placeholder='메모를 입력해주세요'
+            />
+          </Styled.MemoContainer>
+        </Styled.TopSection>
+
+        <Styled.Divider />
+
+        <Styled.AnswerList>
+          {formData.questions?.map((q: Question, i: number) => (
+            <AnswerCard
+              key={q.id}
+              index={i + 1}
+              question={q}
+              answers={getAnswerByQuestionId(q.id)}
+            />
+          ))}
+        </Styled.AnswerList>
+      </Styled.Content>
+    </Styled.Container>
   );
 };
 
