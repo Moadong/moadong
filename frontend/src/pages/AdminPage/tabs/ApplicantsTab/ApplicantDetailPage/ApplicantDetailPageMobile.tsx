@@ -149,7 +149,7 @@ const ApplicantDetailPageMobile = () => {
               value={applicantMemo}
               onChange={(e) => setApplicantMemo(e.target.value)}
               onBlur={handleMemoBlur}
-              placeholder='메모를 입력해주세요'
+              placeholder='메모할 내용을 입력해주세요'
             />
           </Styled.MemoContainer>
         </Styled.TopSection>
