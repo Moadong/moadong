@@ -13,9 +13,9 @@ import { ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
 import { asApplicantId } from '@/types/branded';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
+import * as Styled from './ApplicantDetailPageMobile.styles';
 import AnswerCard from './components/mobile/AnswerCard/AnswerCard';
 import ApplicantNavHeader from './components/mobile/ApplicantNavHeader/ApplicantNavHeader';
-import * as Styled from './ApplicantDetailPageMobile.styles';
 
 const ApplicantDetailPageMobile = () => {
   const { questionId, applicationFormId } = useParams<{
@@ -114,9 +114,7 @@ const ApplicantDetailPageMobile = () => {
     <Styled.Container>
       <WebviewTopBar
         title='지원서 상세'
-        onBack={() =>
-          navigate(`/admin/applicants-list/${applicationFormId}`)
-        }
+        onBack={() => navigate(`/admin/applicants-list/${applicationFormId}`)}
       />
       <Styled.Content>
         <Styled.TopSection>

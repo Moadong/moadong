@@ -27,7 +27,7 @@ export const TopSection = styled.div`
   display: flex;
   flex-direction: column;
   gap: 6px;
-  padding: 10px 20px;
+  padding: 16px 20px;
   box-sizing: border-box;
 `;
 
@@ -109,6 +109,6 @@ export const AnswerList = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  padding: 10px 20px;
+  padding: 16px 20px 19px;
   box-sizing: border-box;
 `;

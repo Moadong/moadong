@@ -5,12 +5,12 @@ import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { AVAILABLE_STATUSES } from '@/constants/status';
-import useDevice from '@/hooks/useDevice';
 import {
   useGetApplicants,
   useUpdateApplicant,
 } from '@/hooks/Queries/useApplicants';
 import { useGetApplication } from '@/hooks/Queries/useApplication';
+import useDevice from '@/hooks/useDevice';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { useAdminClubId } from '@/store/useAdminClubStore';
@@ -18,8 +18,8 @@ import { ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
 import { asApplicantId } from '@/types/branded';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
-import ApplicantDetailPageMobile from './ApplicantDetailPageMobile';
 import * as Styled from './ApplicantDetailPage.styles';
+import ApplicantDetailPageMobile from './ApplicantDetailPageMobile';
 
 const getStatusColor = (status: ApplicationStatus | undefined): string => {
   switch (status) {
