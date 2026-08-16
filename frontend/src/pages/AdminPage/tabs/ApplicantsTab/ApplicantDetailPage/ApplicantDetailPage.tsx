@@ -5,6 +5,7 @@ import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { AVAILABLE_STATUSES } from '@/constants/status';
+import useDevice from '@/hooks/useDevice';
 import {
   useGetApplicants,
   useUpdateApplicant,
@@ -17,6 +18,7 @@ import { ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
 import { asApplicantId } from '@/types/branded';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
+import ApplicantDetailPageMobile from './ApplicantDetailPageMobile';
 import * as Styled from './ApplicantDetailPage.styles';
 
 const getStatusColor = (status: ApplicationStatus | undefined): string => {
@@ -41,7 +43,7 @@ const isApplicationStatus = (value: unknown): value is ApplicationStatus => {
   );
 };
 
-const ApplicantDetailPage = () => {
+const ApplicantDetailPageDesktop = () => {
   const { questionId, applicationFormId } = useParams<{
     questionId: string;
     applicationFormId: string;
@@ -217,6 +219,16 @@ const ApplicantDetailPage = () => {
       </Styled.ApplicantInfoContainer>
     </>
   );
+};
+
+const ApplicantDetailPage = () => {
+  const { isMobile, isTablet } = useDevice();
+
+  if (isMobile || isTablet) {
+    return <ApplicantDetailPageMobile />;
+  }
+
+  return <ApplicantDetailPageDesktop />;
 };
 
 export default ApplicantDetailPage;
