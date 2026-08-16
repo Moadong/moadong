@@ -112,7 +112,12 @@ const ApplicantDetailPageMobile = () => {
 
   return (
     <Styled.Container>
-      <WebviewTopBar title='지원서 상세' />
+      <WebviewTopBar
+        title='지원서 상세'
+        onBack={() =>
+          navigate(`/admin/applicants-list/${applicationFormId}`)
+        }
+      />
       <Styled.Content>
         <Styled.TopSection>
           <ApplicantNavHeader
