@@ -34,6 +34,8 @@ export const Sheet = styled.div<{
   width: 100%;
   max-width: 500px;
   max-height: calc(100dvh - 80px);
+  /* 열릴 때 포커스를 받으므로 시트 전체를 두르는 기본 포커스 링을 지운다 */
+  outline: none;
   ${({ $stacked }) =>
     $stacked &&
     css`

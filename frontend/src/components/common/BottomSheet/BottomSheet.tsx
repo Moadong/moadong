@@ -1,5 +1,6 @@
 import { MouseEvent, PointerEvent, ReactNode, useRef, useState } from 'react';
 import useBodyScrollLock from '@/hooks/useBodyScrollLock';
+import useFocusTrap from '@/hooks/useFocusTrap';
 import useTopmostEscape from '@/hooks/useTopmostEscape';
 import Portal from '../Portal/Portal';
 import * as Styled from './BottomSheet.styles';
@@ -26,8 +27,12 @@ const BottomSheet = ({
   background,
   stacked,
 }: BottomSheetProps) => {
+  const sheetRef = useRef<HTMLDivElement>(null);
+
   useBodyScrollLock(isOpen);
   useTopmostEscape(isOpen, onClose);
+  // 모달 위에 시트를 겹쳐 열 때 아래 모달이 포커스를 도로 뺏지 않도록 함께 쌓는다
+  useFocusTrap(isOpen, sheetRef);
 
   /** 드래그 중에만 값을 갖는다. 놓으면 null이 되어 제자리로 돌아간다. */
   const [dragOffset, setDragOffset] = useState<number | null>(null);
@@ -62,6 +67,8 @@ const BottomSheet = ({
     <Portal>
       <Styled.Overlay onClick={closeOnBackdrop ? onClose : undefined}>
         <Styled.Sheet
+          ref={sheetRef}
+          tabIndex={-1}
           role='dialog'
           aria-modal='true'
           $background={background}

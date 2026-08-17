@@ -1,5 +1,6 @@
-import { MouseEvent, ReactNode } from 'react';
+import { MouseEvent, ReactNode, useRef } from 'react';
 import useBodyScrollLock from '@/hooks/useBodyScrollLock';
+import useFocusTrap from '@/hooks/useFocusTrap';
 import useTopmostEscape from '@/hooks/useTopmostEscape';
 import Portal from '../Portal/Portal';
 import * as Styled from './Modal.styles';
@@ -17,8 +18,11 @@ const Modal = ({
   children,
   closeOnBackdrop = true,
 }: ModalProps) => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
   useBodyScrollLock(isOpen);
   useTopmostEscape(isOpen, onClose);
+  useFocusTrap(isOpen, contentRef);
 
   if (!isOpen) return null;
 
@@ -26,6 +30,8 @@ const Modal = ({
     <Portal>
       <Styled.Overlay onClick={closeOnBackdrop ? onClose : undefined}>
         <Styled.ContentWrapper
+          ref={contentRef}
+          tabIndex={-1}
           onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         >
           {children}
