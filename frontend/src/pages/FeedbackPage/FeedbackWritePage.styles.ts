@@ -139,8 +139,8 @@ export const BottomArea = styled.div`
   bottom: 0;
   width: 100%;
   padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
-  background: ${colors.base.white};
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+  /* FixedBottomButtonArea와 같게 버튼 바깥은 비운다. filter는 자식까지 먹어서 같이 지운다 */
+  background: transparent;
 
   button {
     width: 100%;
