@@ -237,7 +237,9 @@ const FeedbackWritePage = () => {
         </Styled.ContentField>
 
         <Styled.AttachButton $disabled={isAttachFull}>
-          <attachState.Icon width={40} height={40} aria-hidden />
+          <Styled.AttachIconBox>
+            <attachState.Icon width={36} height={28} aria-hidden />
+          </Styled.AttachIconBox>
           <Styled.AttachLabel $variant={attachState.variant}>
             {attachState.label}
           </Styled.AttachLabel>

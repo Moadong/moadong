@@ -15,7 +15,11 @@ const FeedbackTag = ({
   Icon,
 }: FeedbackTagProps) => (
   <Styled.Tag $backgroundColor={backgroundColor} $color={color}>
-    {Icon && <Icon width={18} height={18} aria-hidden />}
+    {Icon && (
+      <Styled.IconBox>
+        <Icon width={15} height={15} aria-hidden />
+      </Styled.IconBox>
+    )}
     {label}
   </Styled.Tag>
 );
