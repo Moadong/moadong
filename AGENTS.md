@@ -80,7 +80,7 @@ npm run typecheck
 
 여러 워크스페이스와 에이전트가 동시에 작업한다. 작업 트리가 깨끗하다고 해서 아무도 손대지 않았다는 뜻이 아니다.
 
-- 구현을 시작하기 전에 열린 PR과 최근 머지를 먼저 확인한다. `gh pr list --state open`, `git log origin/<base>`.
+- 구현을 시작하기 전에 열린 PR과 최근 머지를 먼저 확인한다. `gh pr list --state open`, `gh pr list --state merged --limit 20`, `git fetch origin && git log origin/develop-fe -20` (백엔드는 `origin/develop/be`). fetch를 건너뛰면 오래된 로컬 ref를 보게 되어 확인한 의미가 없다.
 - 관련 레포가 여러 개면 각각 확인한다. 이 저장소 외에 앱은 `Moadong/moadong-react-native`에 있다.
 - `git worktree list`로 다른 워크스페이스가 같은 작업을 진행 중인지 본다.
 - 이미 올라온 작업과 겹치면 구현하지 말고 그 사실을 먼저 알린다. 접근이 다르면 어떻게 다른지 비교해서 전달한다.
