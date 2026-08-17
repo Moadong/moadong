@@ -26,6 +26,7 @@ API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된
 - `POST /auth/student`로 발급, localStorage `studentAccessToken`에 저장
 - 만료가 없어 refresh 흐름이 없다. 저장된 토큰이 무효할 때(서명 키 교체 등)만 401에서 한 번 재발급 후 재시도
 - 발급은 `issueStudentTokenOnce()`로 합친다. 발급마다 새 UUID라 동시 요청이 각자 발급받으면 학생 신원이 갈린다
+- **재발급에는 거부된 토큰의 `sub`를 실어 보낸다** (`{ sub }`). 신원이 토큰 안에만 있어서, 안 보내면 서명 키를 한 번 교체할 때 전 사용자가 같은 날 편지함을 잃는다. 서버는 UUIDv4 형식만 받으므로 `getTokenSubject()`가 형식을 확인하고, 아니면 sub 없이 새 신원으로 발급받는다
 
 ## 실시간 업데이트 (SSE)
 
