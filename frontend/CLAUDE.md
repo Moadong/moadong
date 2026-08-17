@@ -89,7 +89,7 @@ npm run generate:sitemap # sitemap.xml 생성
 - `src/styles/` ★ - 전역 스타일·테마·브레이크포인트
 - `src/constants/` ★ - 상수 관리 (queryKeys, storageKeys, status 등)
 - `src/utils/` ★ - 유틸리티 함수 + 외부 SDK 초기화
-- `src/mocks/` - MSW(Mock Service Worker) 핸들러
+- `src/mocks/` - 정적 목 데이터 (`data/festivalMock.ts`)
 - `src/errors/` - 커스텀 에러 클래스
 - `src/types/` - 공용 타입 정의
 
@@ -121,11 +121,11 @@ npm run generate:sitemap # sitemap.xml 생성
 
 ## 테스트 & Storybook
 
-- Jest + React Testing Library, MSW로 API 모킹
+- Jest + React Testing Library, API 모킹은 `jest-fetch-mock` (`jest.setup.ts`에서 전역 활성화)
 - 테스트 파일은 `*.test.ts` 또는 `*.test.tsx` 형식
 - 커버리지 리포트: `npm run coverage` · 단일 파일: `npx jest path/to/file.test.ts`
-- MSW: `src/mocks/`에서 API 모킹 관리 (`handlers/` 도메인별 핸들러, `browser.ts` 워커). Storybook·개발 환경에서 사용
-- Storybook: 컴포넌트 독립 개발 환경(포트 6006), MSW addon으로 API 모킹, Chromatic으로 시각적 회귀 테스트
+- MSW 목 핸들러는 실제 API 연동 완료로 제거됨. 개발 서버·Storybook 모두 실서버로 붙는다. `msw` 의존성과 `public/mockServiceWorker.js`는 재도입 대비로 남겨 뒀고, 다시 쓸 땐 워커 파일 버전이 설치된 `msw` 버전과 맞는지 확인할 것(`npx msw init public/`)
+- Storybook: 컴포넌트 독립 개발 환경(포트 6006), Chromatic으로 시각적 회귀 테스트
 
 ## Claude Code Agent
 
