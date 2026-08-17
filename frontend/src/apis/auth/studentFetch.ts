@@ -10,13 +10,44 @@ declare global {
   }
 }
 
+/** 서버가 sub로 받아주는 형식. 다른 값은 400이라 보내봐야 새 신원이 된다 */
+const UUID_V4 =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+/**
+ * 토큰이 담고 있는 신원(sub)을 서명 검증 없이 읽는다.
+ * 우체통 신원은 토큰 안에만 있어서, 서버가 토큰을 거부해도(서명 키 교체) 여기서 꺼낸 sub로
+ * 같은 신원을 다시 발급받을 수 있다. 값의 진위는 어차피 서버가 판단한다.
+ */
+const getTokenSubject = (token: string) => {
+  try {
+    const payload = token.split('.')[1];
+    if (!payload) return undefined;
+
+    const base64 = payload.replace(/-/g, '+').replace(/_/g, '/');
+    const { sub } = JSON.parse(
+      atob(base64.padEnd(Math.ceil(base64.length / 4) * 4, '=')),
+    );
+
+    return typeof sub === 'string' && UUID_V4.test(sub) ? sub : undefined;
+  } catch {
+    return undefined;
+  }
+};
+
 /**
  * 우체통은 로그인 없이 쓰지만 '내가 보낸 편지'를 구분해야 해서 익명 학생 토큰을 쓴다.
  * 토큰에 만료가 없으므로 관리자용 secureFetch와 달리 refresh 흐름이 없다.
+ *
+ * sub를 함께 보내면 서버가 그 신원으로 다시 발급한다. 안 보내면 새 신원이라 편지함이 비어 보인다.
  */
-const issueStudentToken = async () => {
+const issueStudentToken = async (sub?: string) => {
   const response = await fetchWithTimeout(`${API_BASE_URL}/auth/student`, {
     method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify({ sub }),
   });
   const data = await handleResponse<{ accessToken: string }>(
     response,
@@ -39,8 +70,10 @@ let issuing: Promise<string> | null = null;
  * 목록 화면처럼 요청이 동시에 나가면 각자 발급받게 되는데, 발급마다 새 UUID라
  * 학생 신원이 갈리고 마지막에 저장된 것만 남는다. 그러면 먼저 보낸 편지가 조회되지 않는다.
  */
-const issueStudentTokenOnce = () => {
-  issuing ??= issueStudentToken().finally(() => {
+const issueStudentTokenOnce = (sub?: string) => {
+  // 합쳐진 발급은 먼저 시작한 쪽의 sub를 따른다. 동시에 401을 받는 요청들은
+  // 같은 토큰을 쓰고 있었으므로 sub도 같다.
+  issuing ??= issueStudentToken(sub).finally(() => {
     issuing = null;
   });
 
@@ -103,10 +136,12 @@ export const studentFetch = async (
   if (wasInjected) rejectedInjectedToken = token;
 
   const storedToken = localStorage.getItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN);
+  // 거부된 토큰의 sub로 재발급해 신원을 잇는다. 이게 없으면 서명 키를 한 번 교체할 때
+  // 전 사용자가 같은 날 편지함을 잃는다.
   const reissuedToken =
     !wasInjected && storedToken && storedToken !== token
       ? storedToken
-      : await issueStudentTokenOnce();
+      : await issueStudentTokenOnce(getTokenSubject(token));
 
   return fetchWithTimeout(
     input,

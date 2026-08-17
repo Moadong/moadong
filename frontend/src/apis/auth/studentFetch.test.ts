@@ -18,6 +18,15 @@ const issued = (accessToken: string) =>
 const authHeaderOf = (call: [RequestInfo, RequestInit?]) =>
   (call[1]?.headers as Record<string, string>)?.Authorization;
 
+const bodyOf = (call: [RequestInfo, RequestInit?]) =>
+  JSON.parse((call[1]?.body as string) ?? '{}');
+
+/** 서명은 검증하지 않으므로 payload만 맞으면 된다 */
+const tokenWithSubject = (sub: string) =>
+  `header.${btoa(JSON.stringify({ sub }))}.signature`;
+
+const STUDENT_SUB = '3f2504e0-4f89-41d3-9a0c-0305e82c3301';
+
 let fetchMock: jest.Mock;
 let studentFetch: (typeof import('./studentFetch'))['studentFetch'];
 
@@ -62,6 +71,8 @@ describe('studentFetch', () => {
       await studentFetch('/api/student/feedback/sent');
 
       expect(fetchMock.mock.calls[0][0]).toContain('/auth/student');
+      // 이어 붙일 신원이 없으므로 sub 없이 요청한다
+      expect(bodyOf(fetchMock.mock.calls[0])).toEqual({});
       expect(authHeaderOf(fetchMock.mock.calls[1])).toBe('Bearer new-token');
       expect(localStorage.getItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN)).toBe(
         'new-token',
@@ -113,6 +124,50 @@ describe('studentFetch', () => {
       // 주입 토큰을 건너뛰고 방금 발급받은 토큰으로 한 번에 나간다
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(authHeaderOf(fetchMock.mock.calls[0])).toBe('Bearer fresh');
+    });
+
+    // 서명 키를 교체하면 전 사용자의 토큰이 한 번에 무효가 된다.
+    // sub를 다시 보내지 않으면 그 자리에서 새 신원이 되고 편지함이 비어 보인다.
+    it('거부된 토큰의 sub로 재발급해 신원을 잇는다', async () => {
+      localStorage.setItem(
+        STORAGE_KEYS.STUDENT_ACCESS_TOKEN,
+        tokenWithSubject(STUDENT_SUB),
+      );
+      fetchMock
+        .mockResolvedValueOnce(jsonResponse({}, 401))
+        .mockResolvedValueOnce(issued('fresh'))
+        .mockResolvedValueOnce(jsonResponse({ ok: true }));
+
+      await studentFetch('/api/student/feedback/sent');
+
+      expect(fetchMock.mock.calls[1][0]).toContain('/auth/student');
+      expect(bodyOf(fetchMock.mock.calls[1])).toEqual({ sub: STUDENT_SUB });
+    });
+
+    it('주입 토큰이 거부돼도 그 sub로 발급해 앱과 신원을 맞춘다', async () => {
+      window.__MOADONG_STUDENT_TOKEN__ = tokenWithSubject(STUDENT_SUB);
+      localStorage.setItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN, 'old-web-token');
+      fetchMock
+        .mockResolvedValueOnce(jsonResponse({}, 401))
+        .mockResolvedValueOnce(issued('fresh'))
+        .mockResolvedValueOnce(jsonResponse({ ok: true }));
+
+      await studentFetch('/api/student/feedback/sent');
+
+      expect(bodyOf(fetchMock.mock.calls[1])).toEqual({ sub: STUDENT_SUB });
+    });
+
+    // UUIDv4가 아니면 서버가 400을 준다. 새 신원으로 가는 편이 낫다
+    it('sub를 읽을 수 없는 토큰이면 sub 없이 발급한다', async () => {
+      localStorage.setItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN, 'not-a-jwt');
+      fetchMock
+        .mockResolvedValueOnce(jsonResponse({}, 401))
+        .mockResolvedValueOnce(issued('fresh'))
+        .mockResolvedValueOnce(jsonResponse({ ok: true }));
+
+      await studentFetch('/api/student/feedback/sent');
+
+      expect(bodyOf(fetchMock.mock.calls[1])).toEqual({});
     });
 
     it('앱이 새 토큰을 주입하면 다시 그것을 우선 쓴다', async () => {
