@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import { getServerErrorMessage } from '@/apis/utils/getServerErrorMessage';
 import AttachErrorIcon from '@/assets/images/icons/feedback/feedback_image_attach_error.svg?react';
 import AttachMaxIcon from '@/assets/images/icons/feedback/feedback_image_attach_max.svg?react';
 import AttachIcon from '@/assets/images/icons/feedback/feedback_image_attach.svg?react';
@@ -16,7 +17,6 @@ import {
   FEEDBACK_TYPE_ORDER,
 } from '@/constants/feedback';
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/constants/uploadLimit';
-import { ApiError } from '@/errors';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useCreateFeedback } from '@/hooks/Queries/useFeedback';
@@ -48,20 +48,6 @@ type AttachError = 'count' | 'size' | 'type' | null;
 const ALLOWED_TYPES: readonly string[] = ALLOWED_IMAGE_TYPES;
 
 const SUBMIT_ERROR_FALLBACK = '전송에 실패했어요. 잠시 후 다시 시도해주세요.';
-
-/**
- * 서버가 내려준 문구를 그대로 보여준다.
- * `handleResponse`가 error.message를 호출부 기본 문구로 덮어쓰기 때문에 원본은 data에 있다.
- * 사진이 R2에 없다(601-2), 10자 미만이다 같은 실패는 사용자가 고칠 수 있는 것이라
- * "실패했어요"보다 이유를 보여주는 편이 낫다.
- */
-const toSubmitErrorMessage = (error: unknown) => {
-  if (!(error instanceof ApiError)) return SUBMIT_ERROR_FALLBACK;
-
-  const body = error.data as { message?: string } | undefined;
-
-  return body?.message ?? SUBMIT_ERROR_FALLBACK;
-};
 
 const ATTACH_ERROR_LABEL: Record<NonNullable<AttachError>, string> = {
   count: `최대 ${FEEDBACK_IMAGE_MAX_COUNT}장까지 첨부할 수 있어요.`,
@@ -210,7 +196,7 @@ const FeedbackWritePage = () => {
 
           // 모달을 닫아 토스트가 보이게 한다. 작성한 내용과 사진은 그대로 남아 다시 시도할 수 있다.
           setOpenedModal(null);
-          setSubmitError(toSubmitErrorMessage(error));
+          setSubmitError(getServerErrorMessage(error, SUBMIT_ERROR_FALLBACK));
         },
       },
     );
