@@ -14,6 +14,7 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
+import { ClubDetail, SNSPlatform } from '@/types/club';
 import * as Styled from './ClubInfoEditTabMobile.styles';
 import EditField from './components/mobile/EditField/EditField';
 import FreeTagEditPage from './components/mobile/FreeTagEditPage/FreeTagEditPage';
@@ -21,32 +22,51 @@ import LinkEditPage from './components/mobile/LinkEditPage/LinkEditPage';
 import MobileBannerSection from './components/mobile/MobileBannerSection/MobileBannerSection';
 import NavField from './components/mobile/NavField/NavField';
 import TextField from './components/mobile/TextField/TextField';
-import useClubInfoEdit, { categories } from './hooks/useClubInfoEdit';
+import { categories } from './hooks/useClubInfoEdit';
+
+interface ClubInfoEditTabMobileProps {
+  clubDetail: ClubDetail | null;
+  clubName: string;
+  setClubName: (v: string) => void;
+  introduction: string;
+  setIntroduction: (v: string) => void;
+  selectedCategory: string;
+  setSelectedCategory: (v: string) => void;
+  clubTags: string[];
+  setClubTags: (tags: string[]) => void;
+  socialLinks: Record<SNSPlatform, string>;
+  onSocialLinksChange: (links: { instagram: string; youtube: string }) => void;
+  handleUpdateClub: () => void;
+  handleUpdateClubWithLinks: (links: {
+    instagram: string;
+    youtube: string;
+  }) => void;
+  handleUpdateClubWithTags: (newTags: string[]) => void;
+  isDirty: boolean;
+}
 
 type ActivePage = 'main' | 'freeTags' | 'links';
 
-const ClubInfoEditTabMobile = () => {
+const ClubInfoEditTabMobile = ({
+  clubDetail,
+  clubName,
+  setClubName,
+  introduction,
+  setIntroduction,
+  selectedCategory,
+  setSelectedCategory,
+  clubTags,
+  setClubTags,
+  socialLinks,
+  onSocialLinksChange,
+  handleUpdateClub,
+  handleUpdateClubWithLinks,
+  handleUpdateClubWithTags,
+  isDirty,
+}: ClubInfoEditTabMobileProps) => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
   const [activePage, setActivePage] = useState<ActivePage>('main');
-
-  const {
-    clubDetail,
-    clubName,
-    setClubName,
-    introduction,
-    setIntroduction,
-    selectedCategory,
-    setSelectedCategory,
-    clubTags,
-    setClubTags,
-    socialLinks,
-    setSocialLinks,
-    handleUpdateClub,
-    handleUpdateClubWithLinks,
-    handleUpdateClubWithTags,
-    isDirty,
-  } = useClubInfoEdit();
 
   const bannerColor = TAG_COLORS[selectedCategory] || colors.gray[400];
   const snsLinkCount = (['instagram', 'youtube'] as const).filter(
@@ -72,7 +92,7 @@ const ClubInfoEditTabMobile = () => {
           instagram: socialLinks.instagram,
           youtube: socialLinks.youtube,
         }}
-        onSave={(links) => setSocialLinks((prev) => ({ ...prev, ...links }))}
+        onSave={onSocialLinksChange}
         onSaveToServer={handleUpdateClubWithLinks}
         onBack={() => setActivePage('main')}
       />

@@ -5,14 +5,22 @@ import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ClubDetail } from '@/types/club';
 import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
 import { useDragSort } from './hooks/useDragSort';
 import { useFeedItems } from './hooks/useFeedItems';
 import * as Styled from './PhotoEditTab.styles';
+import PhotoEditTabMobile from './PhotoEditTabMobile';
 
 const PhotoEditTab = () => {
+  const { isMobile, isTablet } = useDevice();
+
+  if (isMobile || isTablet) {
+    return <PhotoEditTabMobile />;
+  }
+
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.PHOTO_EDIT_PAGE);
 

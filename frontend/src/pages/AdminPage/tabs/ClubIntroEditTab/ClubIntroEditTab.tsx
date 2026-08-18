@@ -14,13 +14,16 @@ import {
 } from '@/constants/adminFieldPlaceholders';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import * as Styled from './ClubIntroEditTab.styles';
+import ClubIntroEditTabMobile from './ClubIntroEditTabMobile';
 import AwardEditor from './components/desktop/AwardEditor/AwardEditor';
 import FAQEditor from './components/desktop/FAQEditor/FAQEditor';
 import useClubIntroEdit from './hooks/useClubIntroEdit';
 
 const ClubIntroEditTab = () => {
+  const { isMobile, isTablet } = useDevice();
   useTrackPageView(PAGE_VIEW.CLUB_INTRO_EDIT_PAGE);
 
   const {
@@ -39,6 +42,26 @@ const ClubIntroEditTab = () => {
     isDirty,
     handleUpdateClub,
   } = useClubIntroEdit();
+
+  if (isMobile || isTablet) {
+    return (
+      <ClubIntroEditTabMobile
+        introDescription={introDescription}
+        setIntroDescription={setIntroDescription}
+        activityDescription={activityDescription}
+        setActivityDescription={setActivityDescription}
+        awards={awards}
+        idealCandidate={idealCandidate}
+        setIdealCandidate={setIdealCandidate}
+        benefits={benefits}
+        setBenefits={setBenefits}
+        faqs={faqs}
+        setFaqs={setFaqs}
+        isDirty={isDirty}
+        handleUpdateClub={handleUpdateClub}
+      />
+    );
+  }
 
   return (
     <Styled.Container>

@@ -11,9 +11,11 @@ import {
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { SNS_CONFIG } from '@/constants/snsConfig';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useDevice from '@/hooks/useDevice';
 import ClubCoverEditor from '@/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor';
 import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import ClubInfoEditTabMobile from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTabMobile';
 import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/desktop/MakeTags/MakeTags';
 import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/desktop/SelectTags/SelectTags';
 import { SNSPlatform } from '@/types/club';
@@ -24,6 +26,7 @@ import useClubInfoEdit, {
 } from './hooks/useClubInfoEdit';
 
 const ClubInfoEditTab = () => {
+  const { isMobile, isTablet } = useDevice();
   const trackEvent = useMixpanelTrack();
   const {
     clubDetail,
@@ -43,7 +46,34 @@ const ClubInfoEditTab = () => {
     setSnsErrors,
     handleSocialLinkChange,
     handleUpdateClub,
+    handleUpdateClubWithLinks,
+    handleUpdateClubWithTags,
+    isDirty,
   } = useClubInfoEdit();
+
+  if (isMobile || isTablet) {
+    return (
+      <ClubInfoEditTabMobile
+        clubDetail={clubDetail}
+        clubName={clubName}
+        setClubName={setClubName}
+        introduction={introduction}
+        setIntroduction={setIntroduction}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        clubTags={clubTags}
+        setClubTags={setClubTags}
+        socialLinks={socialLinks}
+        onSocialLinksChange={(links) =>
+          setSocialLinks((prev) => ({ ...prev, ...links }))
+        }
+        handleUpdateClub={handleUpdateClub}
+        handleUpdateClubWithLinks={handleUpdateClubWithLinks}
+        handleUpdateClubWithTags={handleUpdateClubWithTags}
+        isDirty={isDirty}
+      />
+    );
+  }
 
   return (
     <Styled.Container>
