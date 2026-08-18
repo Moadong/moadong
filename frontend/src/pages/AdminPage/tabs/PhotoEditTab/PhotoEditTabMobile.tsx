@@ -8,8 +8,8 @@ import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonA
 import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
 import PhotoUploadCard from './components/mobile/PhotoUploadCard/PhotoUploadCard';
 import { useDragSort } from './hooks/useDragSort';
-import { FeedItem } from './types';
 import * as Styled from './PhotoEditTabMobile.styles';
+import { FeedItem } from './types';
 
 interface PhotoEditTabMobileProps {
   feedItems: FeedItem[];

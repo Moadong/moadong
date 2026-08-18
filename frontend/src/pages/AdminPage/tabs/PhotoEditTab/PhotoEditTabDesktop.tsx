@@ -6,8 +6,8 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
 import { useDragSort } from './hooks/useDragSort';
-import { FeedItem } from './types';
 import * as Styled from './PhotoEditTab.styles';
+import { FeedItem } from './types';
 
 interface PhotoEditTabDesktopProps {
   feedItems: FeedItem[];
