@@ -50,6 +50,8 @@ export const Description = styled.p`
   ${setTypography(typography.paragraph.p6)};
   color: ${colors.gray[800]};
   letter-spacing: -0.28px;
+  /* 기본값은 한글을 음절 단위로 끊는다. 두 줄 이상이면 어절 단위로 넘겨야 한다 */
+  word-break: keep-all;
 `;
 
 export const ContentField = styled.div`
@@ -104,6 +106,16 @@ export const AttachButton = styled.label<{ $disabled?: boolean }>`
   ${({ $disabled }) => $disabled && 'pointer-events: none; cursor: default;'}
 `;
 
+/** 시안(11435:18150): 40px 프레임 안에 35.556×27.777 글리프. 내보낸 SVG엔 여백이 없어 박스로 채운다 */
+export const AttachIconBox = styled.span`
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+`;
+
 export const AttachLabel = styled.span<{
   $variant: 'default' | 'max' | 'error';
 }>`
@@ -127,8 +139,8 @@ export const BottomArea = styled.div`
   bottom: 0;
   width: 100%;
   padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
-  background: ${colors.base.white};
-  filter: drop-shadow(0 2px 5px rgba(0, 0, 0, 0.2));
+  /* FixedBottomButtonArea와 같게 버튼 바깥은 비운다. filter는 자식까지 먹어서 같이 지운다 */
+  background: transparent;
 
   button {
     width: 100%;

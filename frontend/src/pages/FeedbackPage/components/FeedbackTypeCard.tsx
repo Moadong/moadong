@@ -18,7 +18,7 @@ const FeedbackTypeCard = ({ type, onClick }: FeedbackTypeCardProps) => {
       onClick={() => onClick(type)}
     >
       <Styled.IconBox>
-        <Icon width={26} height={26} aria-hidden />
+        <Icon width={22} height={22} aria-hidden />
       </Styled.IconBox>
       <Styled.Label>{cardLabel}</Styled.Label>
       <Styled.Chevron>
