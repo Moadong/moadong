@@ -1,35 +1,41 @@
 import { useRef } from 'react';
-import { useNavigate, useOutletContext } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
-import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
-import { ClubDetail } from '@/types/club';
 import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
 import PhotoUploadCard from './components/mobile/PhotoUploadCard/PhotoUploadCard';
 import { useDragSort } from './hooks/useDragSort';
-import { useFeedItems } from './hooks/useFeedItems';
+import { FeedItem } from './types';
 import * as Styled from './PhotoEditTabMobile.styles';
 
-const PhotoEditTabMobile = () => {
+interface PhotoEditTabMobileProps {
+  feedItems: FeedItem[];
+  feedItemsRef: React.MutableRefObject<FeedItem[]>;
+  setFeedItems: React.Dispatch<React.SetStateAction<FeedItem[]>>;
+  isLoading: boolean;
+  pendingChanges: boolean;
+  addFiles: (files: File[]) => void;
+  deleteImage: (index: number) => void;
+  retryItem: (index: number) => void;
+  save: () => void;
+}
+
+const PhotoEditTabMobile = ({
+  feedItems,
+  feedItemsRef,
+  setFeedItems,
+  isLoading,
+  pendingChanges,
+  addFiles,
+  deleteImage,
+  retryItem,
+  save,
+}: PhotoEditTabMobileProps) => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
-  useTrackPageView(PAGE_VIEW.PHOTO_EDIT_PAGE);
-  const clubDetail = useOutletContext<ClubDetail>();
-
-  const {
-    feedItems,
-    feedItemsRef,
-    setFeedItems,
-    isLoading,
-    pendingChanges,
-    addFiles,
-    deleteImage,
-    retryItem,
-    save,
-  } = useFeedItems(clubDetail?.id, clubDetail?.feeds || []);
 
   const { gridRef, dragIndex, dropPosition, handleMouseDown } = useDragSort({
     disabled: isLoading,
