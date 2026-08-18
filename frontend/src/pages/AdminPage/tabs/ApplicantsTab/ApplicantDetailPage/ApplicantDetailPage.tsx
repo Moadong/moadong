@@ -1,25 +1,19 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import NextApplicantButton from '@/assets/images/icons/next_applicant.svg';
 import PrevApplicantButton from '@/assets/images/icons/prev_applicant.svg';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { AVAILABLE_STATUSES } from '@/constants/status';
-import {
-  useGetApplicants,
-  useUpdateApplicant,
-} from '@/hooks/Queries/useApplicants';
-import { useGetApplication } from '@/hooks/Queries/useApplication';
 import useDevice from '@/hooks/useDevice';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
-import { useAdminClubId } from '@/store/useAdminClubStore';
 import { ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
-import { asApplicantId } from '@/types/branded';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantDetailPage.styles';
 import ApplicantDetailPageMobile from './ApplicantDetailPageMobile';
+import { useApplicantDetail } from './hooks/useApplicantDetail';
 
 const getStatusColor = (status: ApplicationStatus | undefined): string => {
   switch (status) {
@@ -43,66 +37,32 @@ const isApplicationStatus = (value: unknown): value is ApplicationStatus => {
   );
 };
 
-const ApplicantDetailPageDesktop = () => {
+const ApplicantDetailPage = () => {
   const { questionId, applicationFormId } = useParams<{
     questionId: string;
     applicationFormId: string;
   }>();
-
   const navigate = useNavigate();
-  const [applicantMemo, setAppMemo] = useState('');
-  const [applicantStatus, setApplicantStatus] = useState<ApplicationStatus>(
-    ApplicationStatus.SUBMITTED,
-  );
-  const { clubId } = useAdminClubId();
-  const {
-    data: applicantsData,
-    isLoading: isApplicantsLoading,
-    isError: isApplicantsError,
-  } = useGetApplicants(applicationFormId ?? undefined);
-
-  const applicantIndex =
-    applicantsData?.applicants.findIndex((a) => a.id === questionId) ?? -1;
-  const applicant = applicantsData?.applicants[applicantIndex];
+  const { isMobile, isTablet } = useDevice();
 
   const {
-    data: formData,
+    applicantsData,
+    isApplicantsLoading,
+    isApplicantsError,
+    formData,
     isLoading,
     isError,
-  } = useGetApplication(clubId!, applicationFormId ?? undefined);
-  const { mutate: updateApplicant } = useUpdateApplicant(
-    applicationFormId ?? undefined,
-  );
+    applicant,
+    applicantIndex,
+    applicantMemo,
+    setApplicantMemo,
+    applicantStatus,
+    setApplicantStatus,
+    updateApplicantDetail,
+    getAnswerByQuestionId,
+  } = useApplicantDetail(applicationFormId, questionId);
 
-  useEffect(() => {
-    if (applicant) {
-      setAppMemo(applicant.memo);
-      setApplicantStatus(mapStatusToGroup(applicant.status).status);
-    }
-  }, [applicant, applicant?.status, applicant?.memo]);
-
-  const updateApplicantDetail = (memo: string, status: ApplicationStatus) => {
-    if (!questionId) return;
-
-    updateApplicant(
-      [
-        {
-          memo,
-          status,
-          applicantId: asApplicantId(questionId),
-        },
-      ],
-      {
-        onError: () => {
-          alert('지원자 정보 수정에 실패했습니다.');
-        },
-      },
-    );
-  };
-
-  if (!applicationFormId) {
-    return <div>지원서 정보를 불러올 수 없습니다.</div>;
-  }
+  if (!applicationFormId) return <div>지원서 정보를 불러올 수 없습니다.</div>;
   if (isLoading || isApplicantsLoading) return <Spinner />;
   if (isApplicantsError)
     return <div>지원자 데이터를 불러오는 중 오류가 발생했습니다.</div>;
@@ -111,41 +71,48 @@ const ApplicantDetailPageDesktop = () => {
   if (!formData) return <div>지원서 정보가 없습니다.</div>;
   if (!applicant) return <div>해당 지원자를 찾을 수 없습니다.</div>;
 
-  // 답변 매핑 함수
-  const getAnswerByQuestionId = (qId: number) => {
-    return applicant.answers
-      .filter((ans) => ans.id === qId)
-      .map((ans) => ans.value);
+  const handlePrev = () => {
+    const prev = applicantsData.applicants[applicantIndex - 1];
+    if (!prev) return;
+    navigate(`/admin/applicants-list/${applicationFormId}/${prev.id}`);
   };
 
-  const handleMemoChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
-    setAppMemo(e.target.value);
+  const handleNext = () => {
+    const next = applicantsData.applicants[applicantIndex + 1];
+    if (!next) return;
+    navigate(`/admin/applicants-list/${applicationFormId}/${next.id}`);
+  };
+
+  const handleStatusChange = (status: ApplicationStatus) => {
+    setApplicantStatus(status);
+    updateApplicantDetail(applicantMemo, status);
   };
 
   const handleMemoBlur = () => {
     updateApplicantDetail(applicantMemo, applicantStatus);
   };
 
-  const handleStatusChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const rawStatus = e.target.value;
-    if (!isApplicationStatus(rawStatus)) return;
-    setApplicantStatus(rawStatus);
-    updateApplicantDetail(applicantMemo, rawStatus);
-  };
-
-  const previousApplicant = () => {
-    const previousData = applicantsData?.applicants[applicantIndex - 1];
-    if (applicantIndex < 0 || !previousData) return;
-
-    navigate(`/admin/applicants-list/${applicationFormId}/${previousData.id}`);
-  };
-
-  const nextApplicant = () => {
-    const nextData = applicantsData?.applicants[applicantIndex + 1];
-    if (applicantIndex < 0 || !nextData) return;
-
-    navigate(`/admin/applicants-list/${applicationFormId}/${nextData.id}`);
-  };
+  if (isMobile || isTablet) {
+    return (
+      <ApplicantDetailPageMobile
+        applicantsData={applicantsData}
+        formData={formData}
+        applicantIndex={applicantIndex}
+        applicantMemo={applicantMemo}
+        setApplicantMemo={setApplicantMemo}
+        applicantStatus={applicantStatus}
+        onStatusChange={handleStatusChange}
+        onMemoBlur={handleMemoBlur}
+        onPrev={handlePrev}
+        onNext={handleNext}
+        onSelect={(id) =>
+          navigate(`/admin/applicants-list/${applicationFormId}/${id}`)
+        }
+        onBack={() => navigate(`/admin/applicants-list/${applicationFormId}`)}
+        getAnswerByQuestionId={getAnswerByQuestionId}
+      />
+    );
+  }
 
   return (
     <>
@@ -154,7 +121,7 @@ const ApplicantDetailPageDesktop = () => {
         <Styled.HeaderContainer>
           <Styled.ApplicantContainer>
             <Styled.NavigationButton
-              onClick={previousApplicant}
+              onClick={handlePrev}
               src={PrevApplicantButton}
               alt='이전 지원자'
             />
@@ -167,14 +134,14 @@ const ApplicantDetailPageDesktop = () => {
                 )
               }
             >
-              {applicantsData?.applicants.map((a) => (
+              {applicantsData.applicants.map((a) => (
                 <option key={a.id} value={a.id}>
                   {a.answers[0].value}
                 </option>
               ))}
             </select>
             <Styled.NavigationButton
-              onClick={nextApplicant}
+              onClick={handleNext}
               src={NextApplicantButton}
               alt='다음 지원자'
             />
@@ -182,7 +149,11 @@ const ApplicantDetailPageDesktop = () => {
           <Styled.StatusSelect
             id='statusSelect'
             value={applicantStatus}
-            onChange={handleStatusChange}
+            onChange={(e) => {
+              const rawStatus = e.target.value;
+              if (!isApplicationStatus(rawStatus)) return;
+              handleStatusChange(rawStatus);
+            }}
             $backgroundColor={getStatusColor(applicantStatus)}
           >
             {AVAILABLE_STATUSES.map((status) => (
@@ -196,11 +167,11 @@ const ApplicantDetailPageDesktop = () => {
         <Styled.MemoContainer>
           <Styled.MemoLabel>메모</Styled.MemoLabel>
           <Styled.MemoTextarea
-            onChange={handleMemoChange}
+            onChange={(e) => setApplicantMemo(e.target.value)}
             onBlur={handleMemoBlur}
             placeholder='메모를 입력해주세요'
             value={applicantMemo}
-          ></Styled.MemoTextarea>
+          />
         </Styled.MemoContainer>
       </Styled.Wrapper>
 
@@ -219,16 +190,6 @@ const ApplicantDetailPageDesktop = () => {
       </Styled.ApplicantInfoContainer>
     </>
   );
-};
-
-const ApplicantDetailPage = () => {
-  const { isMobile, isTablet } = useDevice();
-
-  if (isMobile || isTablet) {
-    return <ApplicantDetailPageMobile />;
-  }
-
-  return <ApplicantDetailPageDesktop />;
 };
 
 export default ApplicantDetailPage;
