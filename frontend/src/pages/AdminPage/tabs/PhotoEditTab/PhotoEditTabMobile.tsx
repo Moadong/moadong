@@ -1,10 +1,10 @@
 import { useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
+import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import MobileSaveButtonArea from '@/pages/AdminPage/components/MobileSaveButtonArea/MobileSaveButtonArea';
 import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
 import PhotoUploadCard from './components/mobile/PhotoUploadCard/PhotoUploadCard';
 import { useDragSort } from './hooks/useDragSort';
@@ -123,10 +123,12 @@ const PhotoEditTabMobile = ({
         </Styled.PhotoSection>
       </Styled.MobileContainer>
 
-      <MobileSaveButtonArea
+      <FixedBottomButtonArea
         onClick={save}
         disabled={isLoading || !pendingChanges}
-      />
+      >
+        저장하기
+      </FixedBottomButtonArea>
     </>
   );
 };
