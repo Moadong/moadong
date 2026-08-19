@@ -34,3 +34,21 @@ API를 래핑하는 React Query 훅 (useClub, useApplication, useApplicants 등)
 `960-3`은 재시도해도 같은 결과라 "다시 시도" UI를 띄우지 않는다.
 Google OAuth 동의 화면이 테스트 모드면 refresh token이 7일 뒤 만료되므로,
 프로덕션 게시 전까지는 이 상태가 정상적으로 자주 발생한다.
+
+## 클럽 로고 (`useClub`)
+
+로고가 없을 때 백엔드가 주는 값이 엔드포인트마다 다르다.
+
+| 훅 | 백엔드 DTO | 로고 없을 때 |
+| --- | --- | --- |
+| `useGetClubDetail` | `ClubDetailedResult` | `""` (null 폴백이 있어 null은 오지 않음) |
+| `useGetCardList` | `ClubSearchResult` | `null` 가능 (로고 삭제 시 `updateLogo(null)`) |
+
+상세는 `""`가 보장되므로 `select`에서 `undefined`로 바꾸지 않는다.
+`Club['logo']` 타입이 `string`인 것과 어긋나고, 소비자가 이미 전부
+`logo || 기본이미지` 가드를 갖고 있어 얻는 것도 없다.
+
+목록은 `null`이 올 수 있는데 타입은 `string`이라 아직 어긋나 있다.
+`convertGoogleDriveUrl`이 null을 받으면 내부 `try/catch`가 삼켜
+`console.error`만 남기고 null을 그대로 돌려주니, 무가드 프로퍼티
+접근을 새로 추가하지 말 것.
