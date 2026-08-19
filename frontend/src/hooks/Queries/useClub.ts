@@ -40,11 +40,11 @@ export const useGetClubDetail = (
     select: (data) =>
       ({
         ...data,
-        logo: data.logo ? convertGoogleDriveUrl(data.logo) : undefined,
+        logo: data.logo ? convertGoogleDriveUrl(data.logo) : '',
         feeds: Array.isArray(data.feeds)
           ? data.feeds.map(convertGoogleDriveUrl)
           : [],
-      }) as ClubDetail,
+      }),
   });
 };
 
