@@ -58,6 +58,7 @@ const ClubCard = ({
         club_id: club.id,
         club_name: club.name,
         recruitment_status: club.recruitmentStatus,
+        has_logo: Boolean(club.logo),
         page,
         scroll_y: capturedScrollY,
         card_top_in_viewport: capturedTop,
@@ -98,7 +99,7 @@ const ClubCard = ({
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       fireImpressionEvent();
     };
-  }, [club.id, club.name, club.recruitmentStatus, page]);
+  }, [club.id, club.name, club.recruitmentStatus, club.logo, page]);
 
   const handleClick = () => {
     setIsClicked(true);
@@ -106,6 +107,7 @@ const ClubCard = ({
       club_id: club.id,
       club_name: club.name,
       recruitment_status: club.recruitmentStatus,
+      has_logo: Boolean(club.logo),
       page,
       card_index: index,
       scroll_y: Math.round(window.scrollY),
