@@ -88,7 +88,8 @@ export const useGetCardList = ({
       totalCount: data.totalCount,
       clubs: data.clubs.map((club) => ({
         ...club,
-        logo: convertGoogleDriveUrl(club.logo),
+        // 로고를 지운 동아리는 목록 응답에 logo가 null로 온다 (타입은 string이지만)
+        logo: club.logo ? convertGoogleDriveUrl(club.logo) : '',
       })),
     }),
   });
