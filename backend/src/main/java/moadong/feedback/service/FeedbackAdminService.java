@@ -2,6 +2,7 @@ package moadong.feedback.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.fcm.enums.FcmAction;
 import moadong.fcm.model.TokenPushPayload;
 import moadong.fcm.model.TokenPushResult;
 import moadong.fcm.payload.request.FcmAdminBatchSendRequest;
@@ -40,6 +41,11 @@ public class FeedbackAdminService {
 
     private static final String REPLY_PUSH_TYPE = "FEEDBACK_REPLY";
     private static final String LETTER_PUSH_TYPE = "FEEDBACK_LETTER";
+    /**
+     * 웹뷰가 웹 주소 뒤에 그대로 이어붙이는 경로라 프론트 라우트({@code /feedback/letters/:letterId})와
+     * 정확히 같아야 한다. 단수(letter)로 바꾸거나 {@code /webview} 접두사를 붙이면 매칭이 실패해 빈 화면이 뜬다.
+     */
+    private static final String LETTER_DETAIL_PATH_PREFIX = "/feedback/letters/";
     private static final int SENDER_ID_LENGTH = 8;
 
     private final FeedbackRepository feedbackRepository;
@@ -168,7 +174,7 @@ public class FeedbackAdminService {
             FcmAdminBatchSendResponse result = fcmAdminService.sendToAll(new FcmAdminBatchSendRequest(
                     letter.getTitle(),
                     letter.preview(),
-                    Map.of("type", LETTER_PUSH_TYPE, "letterId", letter.getId())));
+                    letterNavigationData(LETTER_PUSH_TYPE, letter)));
             if (result.failureCount() > 0) {
                 log.warn("Broadcast push partially failed. letter={}, success={}, failure={}",
                         letter.getId(), result.successCount(), result.failureCount());
@@ -198,12 +204,25 @@ public class FeedbackAdminService {
                     fcmToken,
                     letter.getTitle(),
                     letter.preview(),
-                    Map.of("type", REPLY_PUSH_TYPE, "letterId", letter.getId())));
+                    letterNavigationData(REPLY_PUSH_TYPE, letter)));
             return result.success();
         } catch (RuntimeException e) {
             log.error("Reply push failed. letter={}", letter.getId(), e);
             return false;
         }
+    }
+
+    /**
+     * 푸시를 탭했을 때 편지 상세로 이동시키는 데이터. 앱은 action이 NAVIGATE_WEBVIEW인 경우에만
+     * path를 웹뷰로 넘기므로, 둘 중 하나라도 빠지면 앱 홈만 열린다.
+     */
+    private Map<String, String> letterNavigationData(String pushType, Letter letter) {
+        return Map.of(
+                "type", pushType,
+                "letterId", letter.getId(),
+                "action", FcmAction.NAVIGATE_WEBVIEW.name(),
+                "path", LETTER_DETAIL_PATH_PREFIX + letter.getId()
+        );
     }
 
     /**

@@ -157,6 +157,8 @@ class FeedbackAdminServiceTest {
         assertEquals("fcm-token", payloadCaptor.getValue().token());
         assertEquals("답장 제목", payloadCaptor.getValue().title());
         assertEquals("letter-1", payloadCaptor.getValue().data().get("letterId"));
+        assertEquals("NAVIGATE_WEBVIEW", payloadCaptor.getValue().data().get("action"));
+        assertEquals("/feedback/letters/letter-1", payloadCaptor.getValue().data().get("path"));
         assertTrue(response.pushSent());
     }
 
@@ -231,6 +233,8 @@ class FeedbackAdminServiceTest {
         verify(fcmAdminService).sendToAll(pushCaptor.capture());
         assertEquals("제목", pushCaptor.getValue().title());
         assertEquals("letter-1", pushCaptor.getValue().data().get("letterId"));
+        assertEquals("NAVIGATE_WEBVIEW", pushCaptor.getValue().data().get("action"));
+        assertEquals("/feedback/letters/letter-1", pushCaptor.getValue().data().get("path"));
         assertTrue(response.pushSent());
         assertEquals(118, response.pushSuccessCount());
     }
