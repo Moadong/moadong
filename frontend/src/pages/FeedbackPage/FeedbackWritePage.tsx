@@ -4,6 +4,7 @@ import AttachErrorIcon from '@/assets/images/icons/feedback/feedback_image_attac
 import AttachMaxIcon from '@/assets/images/icons/feedback/feedback_image_attach_max.svg?react';
 import AttachIcon from '@/assets/images/icons/feedback/feedback_image_attach.svg?react';
 import Button from '@/components/common/Button/Button';
+import Toast from '@/components/common/Toast/Toast';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import {
@@ -15,6 +16,7 @@ import {
   FEEDBACK_TYPE_ORDER,
 } from '@/constants/feedback';
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/constants/uploadLimit';
+import { ApiError } from '@/errors';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useCreateFeedback } from '@/hooks/Queries/useFeedback';
@@ -44,6 +46,22 @@ type AttachError = 'count' | 'size' | 'type' | null;
 
 /** File.type은 string이라 리터럴 튜플 그대로는 비교할 수 없다 */
 const ALLOWED_TYPES: readonly string[] = ALLOWED_IMAGE_TYPES;
+
+const SUBMIT_ERROR_FALLBACK = '전송에 실패했어요. 잠시 후 다시 시도해주세요.';
+
+/**
+ * 서버가 내려준 문구를 그대로 보여준다.
+ * `handleResponse`가 error.message를 호출부 기본 문구로 덮어쓰기 때문에 원본은 data에 있다.
+ * 사진이 R2에 없다(601-2), 10자 미만이다 같은 실패는 사용자가 고칠 수 있는 것이라
+ * "실패했어요"보다 이유를 보여주는 편이 낫다.
+ */
+const toSubmitErrorMessage = (error: unknown) => {
+  if (!(error instanceof ApiError)) return SUBMIT_ERROR_FALLBACK;
+
+  const body = error.data as { message?: string } | undefined;
+
+  return body?.message ?? SUBMIT_ERROR_FALLBACK;
+};
 
 const ATTACH_ERROR_LABEL: Record<NonNullable<AttachError>, string> = {
   count: `최대 ${FEEDBACK_IMAGE_MAX_COUNT}장까지 첨부할 수 있어요.`,
@@ -105,6 +123,7 @@ const FeedbackWritePage = () => {
   const [images, setImages] = useState<PickedImage[]>([]);
   const [attachError, setAttachError] = useState<AttachError>(null);
   const [openedModal, setOpenedModal] = useState<'exit' | 'save' | null>(null);
+  const [submitError, setSubmitError] = useState<string | null>(null);
 
   const feedbackType = parseFeedbackType(typeParam);
   // React Compiler가 프로퍼티 접근을 조기 반환 위로 끌어올려도 안전하도록 구조분해를 피한다.
@@ -181,13 +200,17 @@ const FeedbackWritePage = () => {
           });
           navigate('/feedback/complete', { replace: true });
         },
-        // 이미지가 R2에 없거나(601-2) 길이 검증에 걸리면 조용히 막힌다. 남겨야 보인다.
+        // 이미지가 R2에 없거나(601-2) 길이 검증에 걸리면 조용히 막힌다.
         onError: (error) => {
           trackEvent(USER_EVENT.FEEDBACK_SUBMIT_FAILED, {
             type: feedbackType,
             imageCount: images.length,
             message: error instanceof Error ? error.message : 'unknown',
           });
+
+          // 모달을 닫아 토스트가 보이게 한다. 작성한 내용과 사진은 그대로 남아 다시 시도할 수 있다.
+          setOpenedModal(null);
+          setSubmitError(toSubmitErrorMessage(error));
         },
       },
     );
@@ -278,6 +301,12 @@ const FeedbackWritePage = () => {
         {...SAVE_MODAL}
         onConfirm={handleSubmit}
         onClose={() => setOpenedModal(null)}
+      />
+
+      <Toast
+        isOpen={submitError !== null}
+        onClose={() => setSubmitError(null)}
+        message={submitError ?? ''}
       />
     </Styled.Container>
   );
