@@ -7,6 +7,7 @@ API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된
 - `handleResponse<T>()` - 응답 파싱, `{ data: {...} }` 형식 자동 언래핑
 - `secureFetch()` - 인증된 요청, **401 시 토큰 자동 갱신** (`src/apis/auth/secureFetch.ts`)
 - `studentFetch()` - 익명 학생 토큰 요청 (`src/apis/auth/studentFetch.ts`). 우체통 전용
+- `getServerErrorMessage(error, fallback)` - 서버 원본 에러 문구 추출 (`src/apis/utils/getServerErrorMessage.ts`). `handleResponse`가 `error.message`를 호출부 기본 문구로 덮어쓰기 때문에 원본은 `error.data.message`에 남는다. 그걸 되꺼내는 짝. 폴백 문구는 화면마다 달라 인자로 받는다
 - `fetchWithTimeout()` - 타임아웃(기본 10s) 붙은 fetch 래퍼 (`src/apis/utils/fetchWithTimeout.ts`). 타임아웃/네트워크 실패를 `NetworkError`로 변환, 호출부 signal 병합 지원. API 호출은 raw `fetch` 대신 이걸 사용 (예외: SSE 스트림, S3 presigned 업로드)
 
 - 도메인별 API 함수는 이 디렉토리에 둔다 (club, auth, application, applicants). 페이지나 컴포넌트 안에 직접 분산시키지 않는다.
