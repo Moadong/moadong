@@ -37,14 +37,13 @@ export const useGetClubDetail = (
     staleTime: options?.staleTime ?? 60 * 1000,
     gcTime: options?.gcTime,
     enabled: !!clubParam && (options?.enabled ?? true),
-    select: (data) =>
-      ({
-        ...data,
-        logo: data.logo ? convertGoogleDriveUrl(data.logo) : '',
-        feeds: Array.isArray(data.feeds)
-          ? data.feeds.map(convertGoogleDriveUrl)
-          : [],
-      }),
+    select: (data) => ({
+      ...data,
+      logo: data.logo ? convertGoogleDriveUrl(data.logo) : '',
+      feeds: Array.isArray(data.feeds)
+        ? data.feeds.map(convertGoogleDriveUrl)
+        : [],
+    }),
   });
 };
 
