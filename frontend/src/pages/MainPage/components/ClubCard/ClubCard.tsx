@@ -99,7 +99,7 @@ const ClubCard = ({
       document.removeEventListener('visibilitychange', handleVisibilityChange);
       fireImpressionEvent();
     };
-  }, [club.id, club.name, club.recruitmentStatus, club.logo, page]);
+  }, [club.id, club.name, club.recruitmentStatus, page]);
 
   const handleClick = () => {
     setIsClicked(true);
