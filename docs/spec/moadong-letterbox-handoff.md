@@ -513,7 +513,8 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 
 ## 7. ⑫ 답장 도착 푸시 — 앱 릴리즈 후 배포 (결정)
 
-**앱 토큰 주입이 앱·웹 양쪽에 들어갔다.** 앱이 릴리즈되면 답장 푸시가 바로 동작한다.
+**앱 토큰 주입이 앱·웹 양쪽에 들어갔고 앱 릴리즈도 끝났다.** 우체통을 배포하면 답장 푸시가
+바로 동작한다. 다만 푸시를 눌러서 편지가 열리는 건 별개 축이다 — §7-1.
 
 우체통 프로덕션 배포를 **앱 릴리즈 뒤로 맞추기로 했다.** 앱보다 먼저 내면 그 사이
 웹뷰 자체 신원으로 쌓인 편지가 앱 업데이트 시점에 유실되는데, 릴리즈가 얼마 안 걸려
@@ -580,6 +581,45 @@ Reply push skipped. no fcm token for feedback letter={}
    우체통 배포를 앱 릴리즈 뒤로 맞추기로 해서 신원이 갈리는 구간 자체가 없다.
    (앱보다 먼저 냈다면 옛 토큰으로 소유권을 증명해 `Feedback.studentId`와 편지 수신자를
    옮기는 일회성 API가 필요했다)
+
+### 7-1. 푸시가 **가는 것**과 눌러서 **열리는 것**은 다른 축이다
+
+위까지는 전부 **대상 선정**(누구에게 보낼지) 이야기다. 그게 풀려도 푸시를 탭했을 때
+편지가 열리지는 않는다. 앱 릴리즈 후 실제로 이 증상이 나왔다 — 알림은 오는데 눌러도
+앱 홈만 뜬다.
+
+원인은 payload 규약 불일치였다. 앱은 `hooks/use-fcm.ts`에서 `data.action === 'NAVIGATE_WEBVIEW'`
+하나로만 분기하는데, 우체통 푸시는 `{ type, letterId }`만 실어서 분기에 안 걸렸다.
+구독 알림이 쓰던 `ClubNotificationPayloadFactory`의 `action`/`path` 규약을 우체통이
+따르지 않은 결과다.
+
+**백엔드에서 `letterNavigationData()`로 통일해 해결했다.** 답장·전체 발행 양쪽 모두
+아래를 싣는다.
+
+```json
+{ "type": "...", "letterId": "...",
+  "action": "NAVIGATE_WEBVIEW",
+  "path": "/feedback/letters/{letterId}" }
+```
+
+경로에 함정이 둘 있다.
+
+- **`letters` 복수형이다.** 프론트 라우트가 `AppRoutes.tsx`에 `/feedback/letters/:letterId`로
+  등록돼 있다. 단수로 넣으면 매칭에 실패해 빈 화면이 뜬다.
+- **`/webview/` 접두사를 붙이지 않는다.** 앱이 `router.push({ pathname: '/webview/[slug]',
+  params: { slug: 'external', path } })`로 받아 `` `${webviewUrl}${path}` ``로 이어붙이므로
+  `path`는 웹 라우트 원본이어야 한다. 구독 알림의 `/webview/clubDetail/{clubId}`는
+  네이티브 화면으로 빠지는 특수 분기 전용이라 우체통에는 해당하지 않는다.
+
+답장과 전체 발행이 같은 경로를 쓰는 게 맞다. `LetterCategory`에 `REPLY`가 포함되고
+`ReceivedLetterDetail.myFeedback`이 답장일 때 원본을 함께 주므로, 둘 다 받은 편지 상세
+하나로 수렴한다.
+
+앱·프론트는 수정할 게 없고 **앱 재릴리즈도 불필요하다.** 기존 `NAVIGATE_WEBVIEW` 분기가
+그대로 처리한다.
+
+**실패하면 §8-2를 먼저 본다.** 웹뷰의 학생 신원이 푸시 대상과 다르면 경로는 맞게 열리는데
+편지를 못 찾는다. 라우팅 문제로 오인하기 쉬운 증상이다.
 
 ---
 
