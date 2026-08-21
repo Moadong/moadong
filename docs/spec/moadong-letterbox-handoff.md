@@ -3,7 +3,7 @@
 작성일: 2026-08-10 (백엔드 1차 회신 반영)
 작성 배경: 프론트(React)에서 우체통 화면을 MSW 목으로 먼저 구현했다. **응답 형태를 프론트가 임의로 정했으므로**, 실제 API가 이 문서와 다르면 프론트를 그에 맞춰 고쳐야 한다.
 
-### 백엔드 회신 1차 (→ 프론트 반영 완료)
+## 백엔드 회신 1차 (→ 프론트 반영 완료)
 
 | 변경 | 프론트 대응 |
 |---|---|
@@ -344,7 +344,7 @@ issueStudentToken()  →  StudentIssueResponse(String accessToken)
 - `sendToAll`이 체크박스라는 건 **전체 발행이 아닌 경우도 상정했다**는 뜻인데, 시안에 대상 선택 UI는 없다 → §5 참조.
 
 **에디터 툴바 = 지원해야 할 마크다운 문법의 정의다.**
-```
+```text
 H2 · H3 · B · I · 링크 · 인용 · 목록 · 구분선 · 이미지
 ```
 
@@ -380,7 +380,7 @@ spring.servlet.multipart.max-file-size: "10MB"
 ⑭의 `임시저장` 버튼용. 전부 `/api/admin/feedback` 아래라 `ROLE_DEVELOPER`가 필요하다.
 **포털 전용이므로 React 프론트는 호출하지 않는다.**
 
-```
+```text
 POST   /api/admin/feedback/letters/drafts
 GET    /api/admin/feedback/letters/drafts
 PUT    /api/admin/feedback/letters/drafts/{draftId}
@@ -409,7 +409,7 @@ DELETE /api/admin/feedback/letters/drafts/{draftId}
 #### 초안이 사용자에게 노출될 수 없는 구조
 
 컬렉션이 물리적으로 분리돼 있다.
-```
+```text
 Letter.java:15       @Document("feedback_letters")
 LetterDraft.java:20  @Document("feedback_letter_drafts")
 ```
@@ -440,14 +440,14 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 ## 5. 미결 — 정해야 할 것
 
 1. ~~**이미지 업로드**~~ ✅ **백엔드·프론트 모두 완료.** 브라우저에서 실제 흐름까지 확인했다.
-   ```
+   ```text
    POST /images/upload-url  →  PUT ×2 (presignedUrl)  →  POST /feedback (images: [finalUrl])
    ```
    사진이 없으면 `upload-url` 호출 없이 `images`를 생략한다.
 2. ~~**읽음 처리 API**~~ ✅ `PATCH .../read` 신설, 프론트 호출부 연결 완료
 3. ~~**운영 상태 3단계 vs 사용자 2단계**~~ ✅ 운영 3단계 + 전이 API 추가, 사용자 응답은 `PENDING`/`REPLIED` 2단계 유지. 프론트 영향 없음
 4. ~~**보낸 사람 식별자**~~ ✅ **익명 ID로 확정, 구현 완료.**
-   ```
+   ```text
    user_a3f9c2d1     // "user_" + 학생 토큰 sub(UUID)의 앞 8자리
    ```
    학번은 내리지 않는다 — 서버가 학번을 알지 못하고(`StudentUser.studentId`가 랜덤 UUID), 알더라도 운영 화면에 노출할 이유가 없다.
@@ -467,7 +467,7 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 
    **남는 실질적 이슈 2가지** — 백엔드 결정을 따르되 확인이 필요하다.
    - ⑬ 답장 패널에 툴바가 없으므로 **운영자가 마크다운을 손으로 입력**해야 한다. 포털에 툴바를 넣을지 정해야 한다.
-   - 서식 없이 쓴 평문에 `*`, `#`, `- `가 섞이면 **의도치 않게 서식으로 먹는다.** (예: `*중요*` → 이탤릭)
+   - 서식 없이 쓴 평문에 `*`, `#`, 줄머리 `-`(뒤에 공백)가 섞이면 **의도치 않게 서식으로 먹는다.** (예: `*중요*` → 이탤릭)
 
 ### 문서에 명시 안 된 것 (프론트가 가정한 대로 두면 되는지 확인 필요)
 
@@ -482,7 +482,7 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 
 ## 6. 프론트 현황 (참고)
 
-`develop-fe` 계열 `feature/letterbox` 브랜치에 구현 완료. 전부 MSW 목으로 동작한다.
+`develop-fe`에 머지 완료. **실제 API를 호출한다** — MSW 목은 제거됐다.
 
 | 화면 | 라우트 |
 |---|---|
@@ -495,11 +495,11 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 
 진입점: 메뉴 페이지 `모아동 우체통` 카드 → `/feedback`
 
-목 데이터: `frontend/src/mocks/data/feedbackMock.ts`
-핸들러: `frontend/src/mocks/handlers/index.ts`
+API: `frontend/src/apis/feedback.ts` (학생 토큰을 붙이는 `frontend/src/apis/auth/studentFetch.ts` 경유)
+쿼리 훅: `frontend/src/hooks/Queries/useFeedback.ts`
 타입: `frontend/src/types/feedback.ts` ← **이 문서의 계약과 1:1 대응**
 
-실제 API가 나오면 `frontend/src/apis/feedback.ts`와 위 타입만 고치면 된다.
+실제 응답이 이 문서와 다르면 위 API 모듈과 타입을 고치면 된다.
 
 로딩·에러 UI, Mixpanel 트래킹(`PAGE_VIEW` 6종 + `USER_EVENT` 4종), 테스트(`feedback` API 6 · `formatTimeAgo` 4), `FeedbackTag` 스토리까지 붙어 있다.
 
@@ -507,9 +507,9 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 
 우체통 흐름과 **독립적**이라 미뤄둔 것들이다. 없어도 편지를 읽고 쓰는 흐름은 끊기지 않는다.
 
-- **⑩ 만족도 모달 (`11170:1014`)** · **⑪ App Store 리뷰 이동 (`11177:1014`)** — 메인 화면에 뜨는 리뷰 유도 퍼널이다. 만족한 유저만 스토어로, 불만인 유저는 우체통으로 보내는 평점 방어 장치. 노출 조건(앱 3회 접속 또는 동아리 3회 조회)의 카운팅 저장소와 스토어 딥링크가 필요해 별도 작업으로 뺐다.
+- ~~**⑩ 만족도 모달 (`11170:1014`)** · **⑪ App Store 리뷰 이동 (`11177:1014`)**~~ ✅ `SatisfactionModal` + `useSatisfactionSurvey`로 구현했다. 만족하면 스토어 리뷰로, 아니면 `/feedback/write`로 보낸다.
+- ~~**사진 그리드 (보낸 편지 상세)**~~ ✅ presigned 업로드(`uploadFeedbackImages`)와 함께 붙였다.
 - **⑫ 답장 도착 푸시** — 앱·웹 토큰 주입까지 끝났다. 앱 릴리즈 후 우체통을 배포하면 동작한다 (§7).
-- **사진 그리드 (보낸 편지 상세)** — 이미지 업로드가 생기면 함께.
 
 ## 7. ⑫ 답장 도착 푸시 — 앱 릴리즈 후 배포 (결정)
 
@@ -544,7 +544,7 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
 웹뷰의 localStorage는 앱의 AsyncStorage와 별개라, 웹뷰는 앱과 **다른 studentId**를 자체 발급한다.
 그 studentId에는 `StudentUser`가 없으므로 `currentFcmToken`을 못 찾고 아래 로그만 남는다.
 
-```
+```text
 Reply push skipped. no fcm token for feedback letter={}
 ```
 
@@ -640,7 +640,7 @@ Reply push skipped. no fcm token for feedback letter={}
 사파리 ITP는 스크립트가 쓸 수 있는 저장소(localStorage 포함)를 **마지막 상호작용 후
 7일**에 비운다. 우체통 사용 패턴이 정확히 여기 걸린다.
 
-```
+```text
 피드백 보냄 → (며칠~몇 주) → 답장 도착 → 열어보러 옴
                     ↑
             그 사이 방문이 없으면 localStorage 소멸 → 보낸 편지도 받은 편지도 사라짐
@@ -655,7 +655,7 @@ Reply push skipped. no fcm token for feedback letter={}
 
 **제안: 서버가 발급하는 httpOnly 쿠키를 1차 신원으로 둔다.**
 
-```
+```text
 Set-Cookie: studentId=...; HttpOnly; Secure; SameSite=Lax; Max-Age=63072000
 ```
 
@@ -671,7 +671,7 @@ localStorage의 `sub`로 재발급이 가능해지면 **`sub`를 훔친 스크�
 
 프론트는 **쿠키 1차 · localStorage 2차**로 둔다. 둘 중 하나만 살아남아도 신원이 이어진다.
 
-```
+```text
 쿠키에 신원이 있으면 그대로 사용
 없으면 localStorage의 sub로 재발급 요청 (8-2)
 둘 다 없으면 신규 발급 후 양쪽에 저장
