@@ -731,13 +731,11 @@ UUIDv4(36자, 하이픈 포함)와 구조적으로 충돌할 수 없다. 이 제
 `sub`가 곧 인증 수단이 되므로 두 가지가 따라붙었다.
 
 - ~~서버에서 UUIDv4 형식을 검증해야 임의 문자열로 의도적 충돌을 막을 수 있다~~ ✅ 위 참조.
-- ⚠️ **앱의 UUID 생성이 `Math.random()` 기반이다 — 아직 안 고쳤다.**
-  `moadong-react-native/services/auth-token-storage.ts`의 `generateUuidV4()`가
-  `Math.floor(Math.random() * 16)`으로 UUID를 만들고, `issueAccessToken()`이 그 값을
-  `sub`로 보낸다. 서버가 `sub`를 무시하던 때는 버려지는 값이었지만 **이제는 인증 수단이다.**
-  `Math.random()`은 CSPRNG가 아니라 예측 가능한 시드 기반 PRNG이므로, 예측된 `sub`로
-  서버가 정당하게 서명한 토큰을 받아 그 사람의 편지함을 열 수 있다.
-  노출 범위는 해당 학생의 편지함(받은 편지·보낸 편지)이고, UUIDv4는 `userId`와 충돌하지
-  않으므로 관리자 권한으로는 번지지 않는다.
-  → `expo-crypto`의 `randomUUID()` 등 CSPRNG로 교체해야 한다. **앱 레포 작업이다.**
-  웹은 스스로 UUID를 만들지 않고 서버가 발급한 토큰에서 읽은 `sub`만 보내므로 해당 없다.
+- ~~앱의 UUID 생성이 `Math.random()` 기반이다. CSPRNG로 교체해야 한다~~
+  ✅ 앱 PR [#32](https://github.com/Moadong/moadong-react-native/pull/32) (2026-08-18 머지)에서
+  `crypto.getRandomValues` 기반으로 교체했다(`react-native-get-random-values` 폴리필).
+  같은 PR에서 `resolveAuthSubject()`를 추가해, 저장된 토큰이 있으면 그 `payload.sub`를
+  다시 보내고 신규 설치에서만 `@auth_subject`를 쓴다. 서버가 `sub`를 무시하던 시절의
+  기존 설치는 `@auth_subject`와 토큰 안 신원이 서로 다른데, 편지함이 달린 쪽은 토큰이므로
+  이 처리가 필요했다.
+  웹은 애초에 스스로 UUID를 만들지 않고 서버가 발급한 토큰에서 읽은 `sub`만 보낸다.
