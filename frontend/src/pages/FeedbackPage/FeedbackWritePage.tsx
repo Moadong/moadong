@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import { getServerErrorMessage } from '@/apis/utils/getServerErrorMessage';
 import AttachErrorIcon from '@/assets/images/icons/feedback/feedback_image_attach_error.svg?react';
@@ -111,6 +111,22 @@ const FeedbackWritePage = () => {
   const [openedModal, setOpenedModal] = useState<'exit' | 'save' | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
 
+  /**
+   * unmount 시 해제하려면 만들어 둔 URL 전부를 알아야 하는데 images 클로저로는 첫 렌더 값만 잡힌다.
+   * 이미 해제된 URL을 다시 해제해도 아무 일도 일어나지 않아 중복 해제는 문제되지 않는다.
+   */
+  const createdPreviewsRef = useRef<string[]>([]);
+  useEffect(
+    () => () =>
+      createdPreviewsRef.current.forEach((preview) =>
+        URL.revokeObjectURL(preview),
+      ),
+    [],
+  );
+
+  /** isPending은 렌더 결과라, 렌더 전에 두 번 눌리면 두 호출 모두 false를 읽고 전송된다 */
+  const submittingRef = useRef(false);
+
   const feedbackType = parseFeedbackType(typeParam);
   // React Compiler가 프로퍼티 접근을 조기 반환 위로 끌어올려도 안전하도록 구조분해를 피한다.
   const meta = feedbackType ? FEEDBACK_TYPE_META[feedbackType] : null;
@@ -147,10 +163,13 @@ const FeedbackWritePage = () => {
     }
 
     // 시안의 (2/4) → (4/4) 흐름대로 여러 번 나눠 골라도 쌓인다
-    const merged = [
-      ...images,
-      ...files.map((file) => ({ file, preview: URL.createObjectURL(file) })),
-    ];
+    const picked = files.map((file) => ({
+      file,
+      preview: URL.createObjectURL(file),
+    }));
+    createdPreviewsRef.current.push(...picked.map((image) => image.preview));
+
+    const merged = [...images, ...picked];
     const kept = merged.slice(0, FEEDBACK_IMAGE_MAX_COUNT);
 
     merged
@@ -169,7 +188,8 @@ const FeedbackWritePage = () => {
 
   const handleSubmit = () => {
     // 확인 모달은 전송 중에도 떠 있어서 다시 누를 수 있다. 중복 전송을 막는다.
-    if (isPending) return;
+    if (submittingRef.current) return;
+    submittingRef.current = true;
 
     createFeedback(
       {
@@ -188,6 +208,7 @@ const FeedbackWritePage = () => {
         },
         // 이미지가 R2에 없거나(601-2) 길이 검증에 걸리면 조용히 막힌다.
         onError: (error) => {
+          submittingRef.current = false;
           trackEvent(USER_EVENT.FEEDBACK_SUBMIT_FAILED, {
             type: feedbackType,
             imageCount: images.length,
