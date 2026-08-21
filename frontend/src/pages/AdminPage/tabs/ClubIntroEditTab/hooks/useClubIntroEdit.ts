@@ -35,7 +35,8 @@ const useClubIntroEdit = () => {
     introDescription !== initialState.introDescription ||
     activityDescription !== initialState.activityDescription ||
     benefits !== initialState.benefits ||
-    idealCandidate.content !== initialState.idealCandidate.content ||
+    JSON.stringify(idealCandidate) !==
+      JSON.stringify(initialState.idealCandidate) ||
     JSON.stringify(awards) !== JSON.stringify(initialState.awards) ||
     JSON.stringify(faqs) !== JSON.stringify(initialState.faqs);
 
