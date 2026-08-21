@@ -102,13 +102,16 @@ const getStudentToken = async () => {
   );
 };
 
-const withAuthorization = (init: RequestInit | undefined, token: string) => ({
-  ...init,
-  headers: {
-    ...(init?.headers || {}),
-    Authorization: `Bearer ${token}`,
-  },
-});
+/**
+ * 호출자가 headers를 Headers 인스턴스나 [key, value] 배열로 줄 수도 있다.
+ * 객체 전개로는 그 두 형식이 통째로 사라지므로 Headers로 정규화한 뒤 Authorization만 얹는다.
+ */
+const withAuthorization = (init: RequestInit | undefined, token: string) => {
+  const headers = new Headers(init?.headers);
+  headers.set('Authorization', `Bearer ${token}`);
+
+  return { ...init, headers };
+};
 
 export const studentFetch = async (
   input: RequestInfo,
