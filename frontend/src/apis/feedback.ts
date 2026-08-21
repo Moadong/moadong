@@ -83,7 +83,7 @@ export const uploadFeedbackImages = async (files: File[]) => {
 };
 
 export const getReceivedLetters = async (category?: LetterCategory) => {
-  const query = category ? `?category=${category}` : '';
+  const query = category ? `?category=${encodeURIComponent(category)}` : '';
   const response = await studentFetch(`${FEEDBACK_BASE_URL}/received${query}`);
 
   const data = await handleResponse<{ letters: ReceivedLetter[] }>(
@@ -96,7 +96,7 @@ export const getReceivedLetters = async (category?: LetterCategory) => {
 
 export const getReceivedLetter = async (letterId: string) => {
   const response = await studentFetch(
-    `${FEEDBACK_BASE_URL}/received/${letterId}`,
+    `${FEEDBACK_BASE_URL}/received/${encodeURIComponent(letterId)}`,
   );
 
   return handleResponse<ReceivedLetterDetail>(
@@ -107,7 +107,7 @@ export const getReceivedLetter = async (letterId: string) => {
 
 export const markReceivedLetterAsRead = async (letterId: string) => {
   const response = await studentFetch(
-    `${FEEDBACK_BASE_URL}/received/${letterId}/read`,
+    `${FEEDBACK_BASE_URL}/received/${encodeURIComponent(letterId)}/read`,
     { method: 'PATCH' },
   );
 
@@ -116,7 +116,7 @@ export const markReceivedLetterAsRead = async (letterId: string) => {
 
 export const getSentFeedback = async (feedbackId: string) => {
   const response = await studentFetch(
-    `${FEEDBACK_BASE_URL}/sent/${feedbackId}`,
+    `${FEEDBACK_BASE_URL}/sent/${encodeURIComponent(feedbackId)}`,
   );
 
   return handleResponse<SentFeedback>(
