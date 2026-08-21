@@ -40,6 +40,8 @@ const getTokenSubject = (token: string) => {
  * 토큰에 만료가 없으므로 관리자용 secureFetch와 달리 refresh 흐름이 없다.
  *
  * sub를 함께 보내면 서버가 그 신원으로 다시 발급한다. 안 보내면 새 신원이라 편지함이 비어 보인다.
+ * 서버가 sub를 소문자로 정규화하므로 보낸 값을 신원으로 기억하면 안 된다. 토큰만 저장하고
+ * 신원이 필요하면 그때 토큰에서 다시 읽는다.
  */
 const issueStudentToken = async (sub?: string) => {
   const response = await fetchWithTimeout(`${API_BASE_URL}/auth/student`, {

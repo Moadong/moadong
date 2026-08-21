@@ -444,6 +444,11 @@ LetterDraft.java:20  @Document("feedback_letter_drafts")
    POST /images/upload-url  →  PUT ×2 (presignedUrl)  →  POST /feedback (images: [finalUrl])
    ```
    사진이 없으면 `upload-url` 호출 없이 `images`를 생략한다.
+   `PresignedUploadResponse.requiredHeaders`는 `Content-Type` 하나로 고정이고
+   백엔드에 확장 계획이 없다(`CloudflareImageService`가 `putObjectRequest.contentType()`만
+   지정하므로 서명 대상은 host + Content-Type뿐). 프론트는 이 필드를 읽지 않고
+   `file.type`을 직접 보내는데, presign 요청에도 같은 `file.type`을 실으므로 값이 어긋나지
+   않는다. **두 지점이 갈라지면 R2가 403을 낸다** — 한쪽만 고치지 말 것.
 2. ~~**읽음 처리 API**~~ ✅ `PATCH .../read` 신설, 프론트 호출부 연결 완료
 3. ~~**운영 상태 3단계 vs 사용자 2단계**~~ ✅ 운영 3단계 + 전이 API 추가, 사용자 응답은 `PENDING`/`REPLIED` 2단계 유지. 프론트 영향 없음
 4. ~~**보낸 사람 식별자**~~ ✅ **익명 ID로 확정, 구현 완료.**
@@ -677,12 +682,33 @@ localStorage의 `sub`로 재발급이 가능해지면 **`sub`를 훔친 스크�
 둘 다 없으면 신규 발급 후 양쪽에 저장
 ```
 
-### 8-2. `/auth/student`가 `sub`를 버린다
+### 8-2. ~~`/auth/student`가 `sub`를 버린다~~ ✅ 해결
 
-`StudentAuthController.issueStudentToken()`에 `@RequestBody`가 없어서
-`UserCommandService.issueStudentAccessToken()`이 매번 `UUID.randomUUID()`로 새로 만든다.
-앱은 `{ sub, iat }`를 보내고 있는데(`services/api.ts`, `auth-token.service.ts`) 서버가 무시한다.
-의도된 동작이 아니다.
+**백엔드가 `sub`를 받도록 고쳤다.** 아래는 확정된 계약이다.
+
+| 요청 본문 | 동작 |
+|---|---|
+| 없음 / `{}` / `{"sub": null}` | 새 UUID 발급 (하위 호환 — 본문 없이 POST하는 기존 클라이언트도 그대로 동작) |
+| `{"sub": "<UUIDv4>"}` | **소문자로 정규화한 뒤** 그 값을 `sub`로 발급 |
+| UUIDv4가 아닌 값 | 400 |
+
+`StudentIssueRequest`가 `@Pattern(regexp = RegexConstants.UUID_V4)`로 검증하고,
+`resolveStudentId()`가 본문 없음/null이면 `UUID.randomUUID()`를 돌려준다.
+
+⚠️ **보낸 `sub`가 그대로 돌아온다고 가정하면 안 된다.** 서버가 소문자로 정규화하는데
+`Feedback.studentId`는 문자열을 그대로 비교하므로, 대문자로 보낸 값을 클라이언트가
+따로 기억해 쓰면 편지함이 둘로 갈린다. **신원은 항상 응답 토큰에서 다시 읽는다.**
+웹(`studentFetch.ts`)은 발급 응답의 `accessToken`만 저장하고 `sub`는 매번 토큰에서
+꺼내므로 이 조건을 이미 만족한다.
+
+**UUIDv4 제약은 형식 검증이 아니라 권한 경계다.**
+`JwtAuthenticationFilter`가 토큰의 `sub`로 `loadUserByUsername()` → `findUserByUserId()`를
+호출하고, `validateToken()`은 서명과 subject 일치만 본다. 임의 문자열 `sub`를 허용하면
+관리자 `userId`를 담은 토큰을 무인증 엔드포인트에서 정당하게 발급받을 수 있다.
+`userId` 패턴(`^(?=.*[a-z])[a-zA-Z\d!@#$~]{5,20}$`)은 하이픈 불가·최대 20자라
+UUIDv4(36자, 하이픈 포함)와 구조적으로 충돌할 수 없다. 이 제약만으로 경로가 닫힌다.
+
+아래는 결정 배경으로 남겨 둔다.
 
 지금은 구독 푸시에 영향이 없다. `createOrClaimToken()`이 같은 FCM 토큰 레코드를 찾아
 `updateStudentId()`로 새 신원에 갈아끼워 주기 때문에, studentId가 바뀌어도 구독이 따라온다.
@@ -702,7 +728,16 @@ localStorage의 `sub`로 재발급이 가능해지면 **`sub`를 훔친 스크�
 
 두 번째는 로그인이 없는 구조의 한계이고, 8-1의 쿠키로도 완전히는 못 막는다.
 
-고칠 때는 `sub`가 곧 인증 수단이 되므로 두 가지가 따라붙는다.
+`sub`가 곧 인증 수단이 되므로 두 가지가 따라붙었다.
 
-- 앱의 UUID 생성이 `Math.random()` 기반이다(`services/auth-token-storage.ts`). CSPRNG로 교체해야 한다.
-- 서버에서 UUIDv4 형식을 검증해야 임의 문자열로 의도적 충돌을 막을 수 있다.
+- ~~서버에서 UUIDv4 형식을 검증해야 임의 문자열로 의도적 충돌을 막을 수 있다~~ ✅ 위 참조.
+- ⚠️ **앱의 UUID 생성이 `Math.random()` 기반이다 — 아직 안 고쳤다.**
+  `moadong-react-native/services/auth-token-storage.ts`의 `generateUuidV4()`가
+  `Math.floor(Math.random() * 16)`으로 UUID를 만들고, `issueAccessToken()`이 그 값을
+  `sub`로 보낸다. 서버가 `sub`를 무시하던 때는 버려지는 값이었지만 **이제는 인증 수단이다.**
+  `Math.random()`은 CSPRNG가 아니라 예측 가능한 시드 기반 PRNG이므로, 예측된 `sub`로
+  서버가 정당하게 서명한 토큰을 받아 그 사람의 편지함을 열 수 있다.
+  노출 범위는 해당 학생의 편지함(받은 편지·보낸 편지)이고, UUIDv4는 `userId`와 충돌하지
+  않으므로 관리자 권한으로는 번지지 않는다.
+  → `expo-crypto`의 `randomUUID()` 등 CSPRNG로 교체해야 한다. **앱 레포 작업이다.**
+  웹은 스스로 UUID를 만들지 않고 서버가 발급한 토큰에서 읽은 `sub`만 보내므로 해당 없다.
