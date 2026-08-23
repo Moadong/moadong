@@ -10,7 +10,7 @@ API를 래핑하는 React Query 훅 (useClub, useApplication, useApplicants 등)
 | ---------------------------------- | ------------------------ | ---------------- | --------------------------------------- |
 | 거의 변하지 않는 정적 데이터       | `60 * 60 * 1000` (1시간) | `60 * 60 * 1000` | `useBanner`, `useGame` (종료된 최종 순위) |
 | 자주 바뀌지 않는 일반 데이터       | `5 * 60 * 1000` (5분)    | 기본값 (5분)     | `useGoogleCalendar`, 클럽 캘린더 이벤트 |
-| 일반 목록/상세 데이터              | `60 * 1000` (1분)        | 기본값           | 클럽 목록, 클럽 상세                    |
+| 일반 목록/상세 데이터              | `60 * 1000` (1분)        | 기본값           | 클럽 목록, 클럽 상세, `useFeedback`     |
 | 폴링 + stale 마커                  | `60 * 1000` (1분)        | 기본값           | `usePromotion` (refetchInterval 병행)   |
 | 사용자 입력에 반응하는 데이터      | `30 * 1000` (30초)       | 기본값           | 클럽 검색, 자동완성                     |
 | 항상 최신값이 필요한 실시간 데이터 | `0`                      | 기본값           | 실시간 폴링이 필요한 데이터             |
@@ -34,3 +34,21 @@ API를 래핑하는 React Query 훅 (useClub, useApplication, useApplicants 등)
 `960-3`은 재시도해도 같은 결과라 "다시 시도" UI를 띄우지 않는다.
 Google OAuth 동의 화면이 테스트 모드면 refresh token이 7일 뒤 만료되므로,
 프로덕션 게시 전까지는 이 상태가 정상적으로 자주 발생한다.
+
+## 클럽 로고 (`useClub`)
+
+로고가 없을 때 백엔드가 주는 값이 엔드포인트마다 다르다.
+
+| 훅 | 백엔드 DTO | 로고 없을 때 |
+| --- | --- | --- |
+| `useGetClubDetail` | `ClubDetailedResult` | `""` (null 폴백이 있어 null은 오지 않음) |
+| `useGetCardList` | `ClubSearchResult` | `null` 가능 (로고 삭제 시 `updateLogo(null)`) |
+
+상세는 `""`가 보장되므로 `select`에서 `undefined`로 바꾸지 않는다.
+`Club['logo']` 타입이 `string`인 것과 어긋나고, 소비자가 이미 전부
+`logo || 기본이미지` 가드를 갖고 있어 얻는 것도 없다.
+
+목록은 `null`이 올 수 있는데 타입은 `string`이라 아직 어긋나 있다.
+`convertGoogleDriveUrl`이 null을 받으면 내부 `try/catch`가 삼켜
+`console.error`만 남기고 null을 그대로 돌려주니, 무가드 프로퍼티
+접근을 새로 추가하지 말 것.

@@ -44,6 +44,9 @@ export const FloatingButtonGroup = () => {
 
   const isClubDetail = !!(matchByName || matchById);
 
+  // 우체통은 남에게 공유할 성격의 화면이 아니고, 목록의 편지 쓰기 버튼과 위치가 겹친다.
+  const isFeedback = !!useMatch({ path: '/feedback', end: false });
+
   return (
     <Styled.GroupContainer $isClubDetail={isClubDetail}>
       <Styled.FloatingButton
@@ -54,14 +57,16 @@ export const FloatingButtonGroup = () => {
       >
         <ScrollToTopIcon aria-hidden />
       </Styled.FloatingButton>
-      <Styled.FloatingButton
-        type='button'
-        $isVisible={true}
-        onClick={handlePageShare}
-        aria-label='현재 페이지 공유하기'
-      >
-        <ShareFloatingIcon aria-hidden />
-      </Styled.FloatingButton>
+      {!isFeedback && (
+        <Styled.FloatingButton
+          type='button'
+          $isVisible={true}
+          onClick={handlePageShare}
+          aria-label='현재 페이지 공유하기'
+        >
+          <ShareFloatingIcon aria-hidden />
+        </Styled.FloatingButton>
+      )}
     </Styled.GroupContainer>
   );
 };
