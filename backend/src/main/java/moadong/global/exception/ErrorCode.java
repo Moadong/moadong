@@ -89,6 +89,15 @@ public enum ErrorCode {
     STATISTICS_EVENT_INVALID(HttpStatus.BAD_REQUEST, "903-4", "통계 이벤트 요청이 올바르지 않습니다."),
     STATISTICS_EVENT_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "903-5", "통계 이벤트 요청이 너무 많습니다."),
 
+    // 904xx: 우체통(피드백) 오류
+    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "904-1", "피드백이 존재하지 않습니다."),
+    LETTER_NOT_FOUND(HttpStatus.NOT_FOUND, "904-2", "편지가 존재하지 않습니다."),
+    FEEDBACK_ALREADY_REPLIED(HttpStatus.CONFLICT, "904-3", "이미 답장이 발행된 피드백입니다."),
+    LETTER_CATEGORY_NOT_BROADCASTABLE(HttpStatus.BAD_REQUEST, "904-4", "전체 발행은 UPDATE 또는 STORY 편지만 가능합니다."),
+    LETTER_DRAFT_NOT_FOUND(HttpStatus.NOT_FOUND, "904-5", "편지 초안이 존재하지 않습니다."),
+    FEEDBACK_STATUS_NOT_CHANGEABLE(HttpStatus.BAD_REQUEST, "904-6", "답장 완료 상태는 답장 발행으로만 설정되며 되돌릴 수 없습니다."),
+    FEEDBACK_IMAGE_UPLOAD_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "904-7", "사진 업로드 요청이 너무 많습니다. 잠시 후 다시 시도해주세요."),
+
     // 950xx: Notion 연동 오류
     NOTION_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "950-1", "Notion 서버 환경변수가 설정되지 않았습니다."),
     NOTION_TOKEN_EXCHANGE_FAILED(HttpStatus.BAD_REQUEST, "950-2", "Notion 토큰 교환에 실패했습니다."),

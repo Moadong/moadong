@@ -153,6 +153,29 @@
     .promotion-actions button { margin: 0; }
     .promotion-help { margin-top: 8px; color: #666; font-size: 0.85rem; }
     .promotion-id { font-family: monospace; font-size: 0.85rem; color: #666; }
+    .nav-badge { display: inline-block; min-width: 18px; padding: 0 6px; margin-left: 6px; border-radius: 9px; background: #dc2626; color: #fff; font-size: 0.75rem; line-height: 18px; text-align: center; }
+    .feedback-layout { display: grid; grid-template-columns: minmax(0, 1fr) 370px; gap: 16px; align-items: start; }
+    @media (max-width: 1100px) { .feedback-layout { grid-template-columns: 1fr; } }
+    .feedback-quote { margin: 0 0 12px; padding: 12px; border: 1px solid #e5e7eb; border-radius: 8px; background: #f9fafb; font-size: 0.9rem; white-space: pre-wrap; }
+    /* 전역 `input` 규칙이 width:100% · display:block을 걸어 체크박스가 한 줄을 통째로 차지한다.
+       포털의 유일한 체크박스라 여기서만 되돌린다. */
+    .feedback-checkbox { display: block; margin: 12px 0; font-size: 0.9rem; }
+    .feedback-checkbox input { width: auto; max-width: none; display: inline-block; margin: 0 8px 0 0; padding: 0; vertical-align: middle; }
+    .feedback-checkbox span { vertical-align: middle; }
+    .feedback-content-cell { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    /* 유형 · 받은 날짜 · 상태는 짧은 한국어라 폭이 좁아지면 글자 단위로 쪼개진다. */
+    #feedbackList th:nth-child(1), #feedbackList td:nth-child(1),
+    #feedbackList th:nth-child(4), #feedbackList td:nth-child(4),
+    #feedbackList th:nth-child(5), #feedbackList td:nth-child(5) { white-space: nowrap; }
+    .feedback-quote-images { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
+    .feedback-quote-images a { line-height: 0; }
+    .feedback-quote-images img { width: 72px; height: 72px; object-fit: cover; border-radius: 6px; border: 1px solid #e5e7eb; }
+    .feedback-draft-row { display: flex; gap: 8px; align-items: center; margin-bottom: 12px; }
+    .feedback-draft-row select { flex: 1; min-width: 0; }
+    .feedback-draft-row button { margin: 0; }
+    .feedback-upload-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
+    .feedback-upload-row button { margin: 0; }
+    .feedback-upload-help { color: #666; font-size: 0.8rem; }
     .promotion-upload-row { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
     .promotion-upload-row .form-row { flex: 1 1 240px; margin-bottom: 0; }
     .promotion-upload-row button { margin: 0; }
@@ -253,6 +276,7 @@
         <a href="#club">동아리 관리</a>
         <a href="#dict">단어사전</a>
         <a href="#promotion">홍보 게시판</a>
+        <a href="#feedback">받은 피드백 <span id="feedbackNavBadge" class="nav-badge hidden"></span></a>
         <a href="#banner">배너 이미지</a>
         <a href="#fcm">FCM 알림</a>
         <a href="#statistics-backfill">통계 Backfill</a>
@@ -496,6 +520,76 @@
       </div>
     </section>
 
+    <section id="feedback" class="hidden">
+      <div class="section-head">
+        <h2>받은 피드백</h2>
+        <div class="section-head-actions">
+          <button type="button" id="btnLoadFeedback">목록 새로고침</button>
+          <button type="button" id="btnNewFeedbackLetter">+ 새 편지 발행</button>
+        </div>
+      </div>
+      <div id="feedbackBanner" class="banner hidden"></div>
+      <div class="feedback-layout">
+        <div class="promotion-panel">
+          <h3>피드백 목록</h3>
+          <p id="feedbackSummary" class="promotion-summary">피드백 목록을 불러오세요.</p>
+          <div id="feedbackListLoading" class="hidden">목록 불러오는 중...</div>
+          <div class="table-wrap">
+            <table id="feedbackList">
+              <thead><tr><th>유형</th><th>내용</th><th>보낸 사람</th><th>받은 날짜</th><th>상태</th></tr></thead>
+              <tbody>
+                <tr><td colspan="5">피드백 목록을 불러오세요.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="promotion-panel">
+          <h3 id="feedbackEditorTitle">답장 작성</h3>
+          <p id="feedbackSelectionSummary" class="promotion-summary">왼쪽 목록에서 답장할 피드백을 선택하세요.</p>
+          <div id="feedbackQuote" class="feedback-quote hidden"></div>
+          <div id="feedbackQuoteImages" class="feedback-quote-images hidden"></div>
+          <div class="feedback-draft-row hidden" id="feedbackDraftRow">
+            <select id="feedbackDraftSelect"></select>
+            <button type="button" id="btnLoadFeedbackDraft">불러오기</button>
+            <button type="button" id="btnDeleteFeedbackDraft">삭제</button>
+          </div>
+          <div class="form-row hidden" id="feedbackLetterCategoryRow">
+            <label for="feedbackLetterCategory">편지 분류</label>
+            <select id="feedbackLetterCategory">
+              <option value="UPDATE">업데이트</option>
+              <option value="STORY">이야기</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="feedbackReplyTitle">제목</label>
+            <input type="text" id="feedbackReplyTitle" placeholder="답장 제목">
+          </div>
+          <div class="form-row">
+            <label for="feedbackReplyBody">본문 (마크다운)</label>
+            <textarea id="feedbackReplyBody" rows="10" placeholder="답장 본문" style="max-width:100%;"></textarea>
+          </div>
+          <div class="feedback-upload-row" id="feedbackImageUploadRow">
+            <input type="file" id="feedbackImageFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp" class="hidden">
+            <button type="button" id="btnUploadFeedbackImage">이미지 업로드</button>
+            <span class="feedback-upload-help">업로드하면 본문 끝에 <code>![]( )</code> 로 삽입됩니다. 최대 10MB</span>
+          </div>
+          <label class="feedback-checkbox" id="feedbackSendPushRow">
+            <!-- 웹뷰 토큰 주입 전에는 답장 푸시 대상을 찾을 수 없어 기본 해제한다.
+                 전체 편지 발행은 studentId 매칭이 없어 지금도 발송되므로 그때 켜서 쓴다. -->
+            <input type="checkbox" id="feedbackSendPush">
+            <span id="feedbackSendPushLabel">발행하면 이 유저에게 푸시 알림 보내기</span>
+          </label>
+          <div class="promotion-actions">
+            <button type="button" id="btnPublishFeedbackReply">답장 발행</button>
+            <button type="button" id="btnSaveFeedbackDraft" class="hidden">임시저장</button>
+            <button type="button" id="btnClearFeedbackSelection">선택 해제</button>
+          </div>
+          <div id="feedbackSaveResult" class="message-box hidden"></div>
+        </div>
+      </div>
+    </section>
+
     <section id="banner" class="hidden">
       <div class="section-head">
         <h2>배너 이미지 관리</h2>
@@ -730,7 +824,20 @@
     const DEFAULT_PROMOTION_MAP_CENTER = Object.freeze({ latitude: 35.2338, longitude: 129.0826 });
     const DEFAULT_PROMOTION_MAP_ZOOM = 4;
     const PROMOTION_FORM_IDS = ['promotionClubId', 'promotionTitle', 'promotionLocation', 'promotionEventStartDate', 'promotionEventEndDate', 'promotionDescription', 'promotionImages'];
-    const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'banner', 'fcm', 'statistics-backfill', 'conversion-batch'];
+    const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'feedback', 'banner', 'fcm', 'statistics-backfill', 'conversion-batch'];
+    const FEEDBACK_TYPE_LABELS = { BUG: '문제 신고', FEATURE: '기능 요청', QUESTION: '문의', CHEER: '응원' };
+    const FEEDBACK_STATUS_LABELS = { WAITING: '답장 대기', IN_PROGRESS: '확인 중', REPLIED: '답장 완료' };
+    let feedbacks = [];
+    let feedbackSelectedId = '';
+    let feedbackMode = 'reply';
+    let feedbackHasLoaded = false;
+    let feedbackIsLoading = false;
+    let feedbackIsPublishing = false;
+    let feedbackDrafts = [];
+    let feedbackCurrentDraftId = '';
+    let feedbackIsUploading = false;
+    // 발행이 실패해 다시 시도할 때 같은 값을 보내야 편지가 두 번 만들어지지 않는다.
+    let feedbackLetterRequestId = '';
     let fcmTokens = [];
     let fcmFilteredTokens = [];
     let fcmCurrentPage = 1;
@@ -794,6 +901,7 @@
       if (sectionId === 'club') loadClubsIfVisible();
       if (sectionId === 'dict') loadDictIfVisible();
       if (sectionId === 'promotion') loadPromotionIfVisible();
+      if (sectionId === 'feedback') loadFeedbackIfVisible();
       if (sectionId === 'banner') loadBannerIfVisible();
       if (sectionId === 'fcm') loadFcmTokensIfVisible();
     }
@@ -833,6 +941,7 @@
       document.getElementById('club').classList.toggle('hidden', true);
       document.getElementById('dict').classList.toggle('hidden', true);
       document.getElementById('promotion').classList.toggle('hidden', true);
+      document.getElementById('feedback').classList.toggle('hidden', true);
       document.getElementById('banner').classList.toggle('hidden', true);
       document.getElementById('fcm').classList.toggle('hidden', true);
       document.getElementById('statistics-backfill').classList.toggle('hidden', true);
@@ -3175,6 +3284,449 @@
 
     clearBannerState();
     if (getToken()) loadBannerIfVisible();
+
+    function clearFeedbackBanner() {
+      const banner = document.getElementById('feedbackBanner');
+      banner.textContent = '';
+      banner.className = 'banner hidden';
+    }
+
+    function setFeedbackBanner(message, type) {
+      const banner = document.getElementById('feedbackBanner');
+      banner.textContent = message;
+      banner.className = 'banner ' + (type || 'warn');
+      banner.classList.remove('hidden');
+    }
+
+    function formatFeedbackDate(value) {
+      if (!value) return '-';
+      const date = new Date(value);
+      if (Number.isNaN(date.getTime())) return '-';
+      return (date.getMonth() + 1) + '월 ' + date.getDate() + '일';
+    }
+
+    function loadFeedbackIfVisible() {
+      if (feedbackHasLoaded || feedbackIsLoading) return;
+      reloadFeedbackList();
+    }
+
+    function updateFeedbackNavBadge(count) {
+      const badge = document.getElementById('feedbackNavBadge');
+      badge.textContent = String(count);
+      badge.classList.toggle('hidden', !count);
+    }
+
+    async function reloadFeedbackList() {
+      if (feedbackIsLoading) return;
+      feedbackIsLoading = true;
+      document.getElementById('feedbackListLoading').classList.remove('hidden');
+      updateFeedbackEditorState();
+      try {
+        const res = await fetch(API_BASE + '/api/admin/feedback', { headers: headers() });
+        const data = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          setFeedbackBanner(data.message || '피드백 목록 조회 실패 (HTTP ' + res.status + ')', res.status === 403 ? 'warn' : 'error');
+          feedbacks = [];
+          updateFeedbackNavBadge(0);
+        } else {
+          clearFeedbackBanner();
+          feedbacks = data.data?.feedbacks || [];
+          updateFeedbackNavBadge(data.data?.unansweredCount || 0);
+        }
+        feedbackHasLoaded = true;
+      } catch (e) {
+        setFeedbackBanner(e.message || '피드백 목록 조회 실패', 'error');
+        feedbacks = [];
+      } finally {
+        feedbackIsLoading = false;
+        document.getElementById('feedbackListLoading').classList.add('hidden');
+        renderFeedbackList();
+      }
+    }
+
+    function renderFeedbackList() {
+      const tbody = document.querySelector('#feedbackList tbody');
+      const summary = document.getElementById('feedbackSummary');
+      tbody.innerHTML = '';
+      if (!feedbacks.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 5;
+        td.textContent = feedbackHasLoaded ? '받은 피드백이 없습니다.' : '피드백 목록을 불러오세요.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        summary.textContent = feedbackHasLoaded ? '총 0개 피드백' : '피드백 목록을 불러오세요.';
+        updateFeedbackEditorState();
+        return;
+      }
+
+      summary.textContent = '총 ' + feedbacks.length + '개 피드백';
+      feedbacks.forEach((feedback) => {
+        const tr = document.createElement('tr');
+        tr.tabIndex = 0;
+        tr.setAttribute('role', 'button');
+        tr.setAttribute('aria-label', (FEEDBACK_TYPE_LABELS[feedback.type] || feedback.type) + ' 피드백 답장 선택');
+        const isSelected = feedback.id === feedbackSelectedId;
+        tr.classList.toggle('is-selected', isSelected);
+        tr.setAttribute('aria-selected', isSelected ? 'true' : 'false');
+        tr.appendChild(document.createElement('td')).textContent = FEEDBACK_TYPE_LABELS[feedback.type] || feedback.type || '-';
+        const contentCell = tr.appendChild(document.createElement('td'));
+        contentCell.className = 'feedback-content-cell';
+        contentCell.textContent = feedback.content || '';
+        contentCell.title = feedback.content || '';
+        tr.appendChild(document.createElement('td')).textContent = feedback.sender || '-';
+        tr.appendChild(document.createElement('td')).textContent = formatFeedbackDate(feedback.createdAt);
+        tr.appendChild(document.createElement('td')).textContent = FEEDBACK_STATUS_LABELS[feedback.status] || feedback.status || '-';
+        const selectCurrentFeedback = () => selectFeedback(feedback.id);
+        tr.onclick = selectCurrentFeedback;
+        tr.onkeydown = (event) => {
+          if (event.key === 'Enter' || event.key === ' ') {
+            event.preventDefault();
+            selectCurrentFeedback();
+          }
+        };
+        tbody.appendChild(tr);
+      });
+      updateFeedbackEditorState();
+    }
+
+    function getSelectedFeedback() {
+      return feedbacks.find((feedback) => feedback.id === feedbackSelectedId) || null;
+    }
+
+    function generateFeedbackRequestId() {
+      if (window.crypto && typeof window.crypto.randomUUID === 'function') {
+        return window.crypto.randomUUID();
+      }
+      return 'letter-' + Math.random().toString(36).slice(2) + '-' + performance.now().toString(36);
+    }
+
+    function renderFeedbackQuoteImages(images) {
+      const wrap = document.getElementById('feedbackQuoteImages');
+      wrap.innerHTML = '';
+      wrap.classList.toggle('hidden', !images.length);
+      images.forEach((imageUrl, index) => {
+        const link = document.createElement('a');
+        link.href = imageUrl;
+        link.target = '_blank';
+        link.rel = 'noopener';
+        const img = document.createElement('img');
+        img.src = imageUrl;
+        img.alt = '첨부 사진 ' + (index + 1);
+        link.appendChild(img);
+        wrap.appendChild(link);
+      });
+    }
+
+    function selectFeedback(feedbackId) {
+      feedbackMode = 'reply';
+      feedbackSelectedId = feedbackId;
+      document.getElementById('feedbackSaveResult').classList.add('hidden');
+      renderFeedbackList();
+    }
+
+    function enterFeedbackLetterMode() {
+      feedbackMode = 'letter';
+      feedbackSelectedId = '';
+      feedbackCurrentDraftId = '';
+      feedbackLetterRequestId = '';
+      // 초안을 불러온 뒤 새 편지로 넘어오면 이전 분류·푸시 설정이 남는다.
+      document.getElementById('feedbackLetterCategory').value = 'UPDATE';
+      document.getElementById('feedbackSendPush').checked = false;
+      document.getElementById('feedbackReplyTitle').value = '';
+      document.getElementById('feedbackReplyBody').value = '';
+      document.getElementById('feedbackSaveResult').classList.add('hidden');
+      renderFeedbackList();
+      reloadFeedbackDrafts();
+    }
+
+    function clearFeedbackSelection() {
+      feedbackMode = 'reply';
+      feedbackSelectedId = '';
+      feedbackCurrentDraftId = '';
+      document.getElementById('feedbackSendPush').checked = false;
+      document.getElementById('feedbackReplyTitle').value = '';
+      document.getElementById('feedbackReplyBody').value = '';
+      document.getElementById('feedbackSaveResult').classList.add('hidden');
+      renderFeedbackList();
+    }
+
+    async function reloadFeedbackDrafts() {
+      try {
+        const res = await fetch(API_BASE + '/api/admin/feedback/letters/drafts', { headers: headers() });
+        const data = await readJsonOrEmpty(res);
+        feedbackDrafts = res.ok ? (data.data?.drafts || []) : [];
+      } catch (e) {
+        feedbackDrafts = [];
+      }
+      renderFeedbackDraftOptions();
+    }
+
+    function renderFeedbackDraftOptions() {
+      const select = document.getElementById('feedbackDraftSelect');
+      select.innerHTML = '';
+      if (!feedbackDrafts.length) {
+        const option = document.createElement('option');
+        option.value = '';
+        option.textContent = '임시저장한 편지 없음';
+        select.appendChild(option);
+      } else {
+        feedbackDrafts.forEach((draft) => {
+          const option = document.createElement('option');
+          option.value = draft.id;
+          option.textContent = (draft.title || '(제목 없음)') + ' · ' + formatFeedbackDate(draft.updatedAt);
+          select.appendChild(option);
+        });
+      }
+      if (feedbackCurrentDraftId) {
+        select.value = feedbackCurrentDraftId;
+      }
+      updateFeedbackEditorState();
+    }
+
+    function loadSelectedFeedbackDraft() {
+      const draftId = document.getElementById('feedbackDraftSelect').value;
+      const draft = feedbackDrafts.find((it) => it.id === draftId);
+      if (!draft) return;
+
+      feedbackCurrentDraftId = draft.id;
+      document.getElementById('feedbackLetterCategory').value = draft.category || 'UPDATE';
+      document.getElementById('feedbackReplyTitle').value = draft.title || '';
+      document.getElementById('feedbackReplyBody').value = draft.body || '';
+      document.getElementById('feedbackSendPush').checked = !!draft.sendPush;
+      setMessageBox('feedbackSaveResult', true, '임시저장한 편지를 불러왔습니다.');
+      updateFeedbackEditorState();
+    }
+
+    async function saveFeedbackDraft() {
+      const payload = {
+        category: document.getElementById('feedbackLetterCategory').value,
+        title: document.getElementById('feedbackReplyTitle').value,
+        body: document.getElementById('feedbackReplyBody').value,
+        sendPush: document.getElementById('feedbackSendPush').checked
+      };
+      const isUpdate = !!feedbackCurrentDraftId;
+      const url = API_BASE + '/api/admin/feedback/letters/drafts'
+        + (isUpdate ? '/' + encodeURIComponent(feedbackCurrentDraftId) : '');
+
+      try {
+        const res = await fetch(url, {
+          method: isUpdate ? 'PUT' : 'POST',
+          headers: headers(),
+          body: JSON.stringify(payload)
+        });
+        const data = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          setMessageBox('feedbackSaveResult', false, data.message || '임시저장 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        feedbackCurrentDraftId = data.data?.id || feedbackCurrentDraftId;
+        setMessageBox('feedbackSaveResult', true, getApiSuccessMessage(data, '임시저장되었습니다.'));
+        await reloadFeedbackDrafts();
+      } catch (e) {
+        setMessageBox('feedbackSaveResult', false, e.message || '임시저장 실패');
+      }
+    }
+
+    async function deleteSelectedFeedbackDraft() {
+      const draftId = document.getElementById('feedbackDraftSelect').value;
+      if (!draftId) return;
+
+      try {
+        const res = await fetch(API_BASE + '/api/admin/feedback/letters/drafts/' + encodeURIComponent(draftId), {
+          method: 'DELETE',
+          headers: headers()
+        });
+        const data = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          setMessageBox('feedbackSaveResult', false, data.message || '초안 삭제 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        if (feedbackCurrentDraftId === draftId) {
+          feedbackCurrentDraftId = '';
+        }
+        setMessageBox('feedbackSaveResult', true, getApiSuccessMessage(data, '초안이 삭제되었습니다.'));
+        await reloadFeedbackDrafts();
+      } catch (e) {
+        setMessageBox('feedbackSaveResult', false, e.message || '초안 삭제 실패');
+      }
+    }
+
+    async function uploadFeedbackLetterImage(file) {
+      feedbackIsUploading = true;
+      updateFeedbackEditorState();
+      try {
+        const formData = new FormData();
+        formData.append('file', file);
+        const res = await fetch(API_BASE + '/api/admin/feedback/letters/images', {
+          method: 'POST',
+          headers: buildBannerUploadHeaders(),
+          body: formData
+        });
+        const data = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          setMessageBox('feedbackSaveResult', false, data.message || '이미지 업로드 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        const bodyInput = document.getElementById('feedbackReplyBody');
+        const markdown = '![' + (file.name || '이미지') + '](' + data.data.imageUrl + ')';
+        bodyInput.value = bodyInput.value.replace(/\s*$/, '') + '\n\n' + markdown + '\n';
+        setMessageBox('feedbackSaveResult', true, '이미지를 본문에 삽입했습니다.');
+      } catch (e) {
+        setMessageBox('feedbackSaveResult', false, e.message || '이미지 업로드 실패');
+      } finally {
+        feedbackIsUploading = false;
+        updateFeedbackEditorState();
+      }
+    }
+
+    function updateFeedbackEditorState() {
+      const isLetterMode = feedbackMode === 'letter';
+      const selected = getSelectedFeedback();
+      const busy = feedbackIsLoading || feedbackIsPublishing || feedbackIsUploading;
+      const alreadyReplied = !!selected && selected.status === 'REPLIED';
+
+      document.getElementById('feedbackEditorTitle').textContent = isLetterMode ? '새 편지 발행' : '답장 작성';
+      document.getElementById('feedbackLetterCategoryRow').classList.toggle('hidden', !isLetterMode);
+      document.getElementById('feedbackDraftRow').classList.toggle('hidden', !isLetterMode);
+      document.getElementById('feedbackImageUploadRow').classList.toggle('hidden', !isLetterMode);
+      document.getElementById('btnSaveFeedbackDraft').classList.toggle('hidden', !isLetterMode);
+      document.getElementById('feedbackSendPushLabel').textContent = isLetterMode
+        ? '발행 시 전체 유저에게 푸시 알림 보내기'
+        : '발행하면 이 유저에게 푸시 알림 보내기';
+
+      const quote = document.getElementById('feedbackQuote');
+      if (isLetterMode || !selected) {
+        quote.classList.add('hidden');
+        quote.textContent = '';
+      } else {
+        quote.classList.remove('hidden');
+        quote.textContent = [
+          FEEDBACK_TYPE_LABELS[selected.type] || selected.type,
+          selected.sender,
+          formatFeedbackDate(selected.createdAt)
+        ].join(' · ') + '\n\n' + (selected.content || '');
+      }
+      renderFeedbackQuoteImages(isLetterMode ? [] : (selected?.images || []));
+
+      const summary = document.getElementById('feedbackSelectionSummary');
+      if (isLetterMode) {
+        summary.textContent = feedbackCurrentDraftId
+          ? '임시저장한 편지를 이어서 작성 중입니다. 발행하면 초안은 삭제됩니다.'
+          : 'UPDATE / STORY 편지를 전체 사용자에게 발행합니다.';
+      } else if (!selected) {
+        summary.textContent = '왼쪽 목록에서 답장할 피드백을 선택하세요.';
+      } else if (alreadyReplied) {
+        summary.textContent = '이미 답장을 발행한 피드백입니다.';
+      } else {
+        summary.textContent = selected.sender + '에게 답장합니다.';
+      }
+
+      const btnPublish = document.getElementById('btnPublishFeedbackReply');
+      btnPublish.textContent = isLetterMode ? '편지 발행' : '답장 발행';
+      btnPublish.disabled = busy || (!isLetterMode && (!selected || alreadyReplied));
+      document.getElementById('btnLoadFeedback').disabled = busy;
+      document.getElementById('btnNewFeedbackLetter').disabled = busy;
+      document.getElementById('btnSaveFeedbackDraft').disabled = busy;
+      document.getElementById('btnUploadFeedbackImage').disabled = busy;
+
+      const hasDrafts = feedbackDrafts.length > 0;
+      document.getElementById('feedbackDraftSelect').disabled = busy || !hasDrafts;
+      document.getElementById('btnLoadFeedbackDraft').disabled = busy || !hasDrafts;
+      document.getElementById('btnDeleteFeedbackDraft').disabled = busy || !hasDrafts;
+    }
+
+    async function publishFeedbackLetter() {
+      const isLetterMode = feedbackMode === 'letter';
+      const title = document.getElementById('feedbackReplyTitle').value.trim();
+      const body = document.getElementById('feedbackReplyBody').value.trim();
+      if (!title || !body) {
+        setMessageBox('feedbackSaveResult', false, '제목과 본문을 모두 입력하세요.');
+        return;
+      }
+
+      const url = isLetterMode
+        ? API_BASE + '/api/admin/feedback/letters'
+        : API_BASE + '/api/admin/feedback/' + encodeURIComponent(feedbackSelectedId) + '/reply';
+      const sendPush = document.getElementById('feedbackSendPush').checked;
+      if (isLetterMode && !feedbackLetterRequestId) {
+        feedbackLetterRequestId = generateFeedbackRequestId();
+      }
+      const payload = isLetterMode
+        ? {
+            category: document.getElementById('feedbackLetterCategory').value,
+            title,
+            body,
+            sendPush,
+            requestId: feedbackLetterRequestId
+          }
+        : { title, body, sendPush };
+
+      feedbackIsPublishing = true;
+      updateFeedbackEditorState();
+      try {
+        const res = await fetch(url, { method: 'POST', headers: headers(), body: JSON.stringify(payload) });
+        const data = await readJsonOrEmpty(res);
+        if (!res.ok) {
+          setMessageBox('feedbackSaveResult', false, data.message || '발행 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        setMessageBox('feedbackSaveResult', true, getApiSuccessMessage(data, isLetterMode ? '편지가 발행되었습니다.' : '답장이 발행되었습니다.'));
+        if (sendPush && data.data && data.data.pushSent === false) {
+          showToast((isLetterMode ? '편지는' : '답장은') + ' 발행됐지만 푸시는 전송되지 않았습니다.', 'error');
+        } else if (isLetterMode && sendPush && data.data) {
+          showToast('푸시 ' + (data.data.pushSuccessCount || 0) + '건 발송됨');
+        }
+        if (isLetterMode && feedbackCurrentDraftId) {
+          await discardFeedbackDraftAfterPublish(feedbackCurrentDraftId);
+        }
+        document.getElementById('feedbackReplyTitle').value = '';
+        document.getElementById('feedbackReplyBody').value = '';
+        feedbackSelectedId = '';
+        feedbackCurrentDraftId = '';
+        feedbackLetterRequestId = '';
+        feedbackMode = 'reply';
+        await reloadFeedbackList();
+      } catch (e) {
+        setMessageBox('feedbackSaveResult', false, e.message || '발행 실패');
+      } finally {
+        feedbackIsPublishing = false;
+        updateFeedbackEditorState();
+      }
+    }
+
+    /**
+     * 발행된 편지의 초안이 남으면 운영자가 같은 편지를 또 발행할 수 있다.
+     * 삭제 실패는 발행 자체를 되돌리지 않으므로 안내만 한다.
+     */
+    async function discardFeedbackDraftAfterPublish(draftId) {
+      try {
+        const res = await fetch(API_BASE + '/api/admin/feedback/letters/drafts/' + encodeURIComponent(draftId), {
+          method: 'DELETE',
+          headers: headers()
+        });
+        if (!res.ok) {
+          showToast('편지는 발행됐지만 초안이 남아 있습니다. 목록에서 삭제해주세요.', 'error');
+        }
+      } catch (e) {
+        showToast('편지는 발행됐지만 초안이 남아 있습니다. 목록에서 삭제해주세요.', 'error');
+      }
+      await reloadFeedbackDrafts();
+    }
+
+    document.getElementById('btnLoadFeedback').onclick = () => reloadFeedbackList();
+    document.getElementById('btnNewFeedbackLetter').onclick = () => enterFeedbackLetterMode();
+    document.getElementById('btnClearFeedbackSelection').onclick = () => clearFeedbackSelection();
+    document.getElementById('btnPublishFeedbackReply').onclick = () => publishFeedbackLetter();
+    document.getElementById('btnSaveFeedbackDraft').onclick = () => saveFeedbackDraft();
+    document.getElementById('btnLoadFeedbackDraft').onclick = () => loadSelectedFeedbackDraft();
+    document.getElementById('btnDeleteFeedbackDraft').onclick = () => deleteSelectedFeedbackDraft();
+    document.getElementById('btnUploadFeedbackImage').onclick = () => document.getElementById('feedbackImageFile').click();
+    document.getElementById('feedbackImageFile').onchange = (event) => {
+      const file = event.target.files && event.target.files[0];
+      event.target.value = '';
+      if (file) uploadFeedbackLetterImage(file);
+    };
 
     async function readJsonOrEmpty(res) {
       try {
