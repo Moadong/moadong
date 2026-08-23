@@ -37,11 +37,8 @@ describe('feedback API', () => {
 
     await getReceivedLetters();
 
-    const headers = fetchMock.mock.calls[0][1]?.headers as Record<
-      string,
-      string
-    >;
-    expect(headers.Authorization).toBe('Bearer student-token');
+    const headers = new Headers(fetchMock.mock.calls[0][1]?.headers);
+    expect(headers.get('Authorization')).toBe('Bearer student-token');
   });
 
   it('저장된 토큰이 없으면 먼저 발급받아 저장한다', async () => {
@@ -57,11 +54,8 @@ describe('feedback API', () => {
       'issued-token',
     );
 
-    const headers = fetchMock.mock.calls[1][1]?.headers as Record<
-      string,
-      string
-    >;
-    expect(headers.Authorization).toBe('Bearer issued-token');
+    const headers = new Headers(fetchMock.mock.calls[1][1]?.headers);
+    expect(headers.get('Authorization')).toBe('Bearer issued-token');
   });
 
   describe('createFeedback', () => {

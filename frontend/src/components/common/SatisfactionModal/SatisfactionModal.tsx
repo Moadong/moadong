@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useId, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Modal from '@/components/common/Modal/Modal';
 import {
@@ -23,6 +23,8 @@ const SatisfactionModal = () => {
   const handleLink = useNavigator();
 
   // 응답률을 구하려면 노출 자체를 남겨야 한다. 리렌더로 중복되지 않게 ref로 막는다.
+  const titleId = useId();
+
   const trackedShownRef = useRef(false);
   useEffect(() => {
     if (!isOpen || trackedShownRef.current) return;
@@ -51,8 +53,8 @@ const SatisfactionModal = () => {
 
   return (
     <Modal isOpen={isOpen} onClose={handleSnooze} closeOnBackdrop={false}>
-      <Styled.Dialog role='dialog' aria-modal='true'>
-        <Styled.Title>모아동, 잘 사용하고 계신가요?</Styled.Title>
+      <Styled.Dialog role='dialog' aria-modal='true' aria-labelledby={titleId}>
+        <Styled.Title id={titleId}>모아동, 잘 사용하고 계신가요?</Styled.Title>
         <Styled.Actions>
           <Styled.ActionButton type='button' onClick={handleUnsatisfied}>
             아니요

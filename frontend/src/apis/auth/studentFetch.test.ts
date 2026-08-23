@@ -15,8 +15,11 @@ const jsonResponse = (body: unknown, status = 200) =>
 const issued = (accessToken: string) =>
   jsonResponse({ statuscode: '200', message: 'ok', data: { accessToken } });
 
+const headersOf = (call: [RequestInfo, RequestInit?]) =>
+  new Headers(call[1]?.headers);
+
 const authHeaderOf = (call: [RequestInfo, RequestInit?]) =>
-  (call[1]?.headers as Record<string, string>)?.Authorization;
+  headersOf(call).get('Authorization');
 
 const bodyOf = (call: [RequestInfo, RequestInit?]) =>
   JSON.parse((call[1]?.body as string) ?? '{}');
@@ -184,5 +187,28 @@ describe('studentFetch', () => {
 
       expect(authHeaderOf(fetchMock.mock.calls[0])).toBe('Bearer app-token-2');
     });
+  });
+
+  // 객체 전개로 헤더를 합치면 Headers 인스턴스와 튜플 배열이 통째로 사라진다
+  describe('헤더 보존', () => {
+    it.each<[string, HeadersInit]>([
+      ['객체', { 'Content-Type': 'application/json' }],
+      ['Headers', new Headers({ 'Content-Type': 'application/json' })],
+      ['튜플 배열', [['Content-Type', 'application/json']]],
+    ])(
+      '%s 형식으로 준 헤더를 유지한 채 Authorization을 얹는다',
+      async (_, headers) => {
+        localStorage.setItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN, 'web-token');
+
+        await studentFetch('/api/student/feedback', {
+          method: 'POST',
+          headers,
+        });
+
+        const sent = headersOf(fetchMock.mock.calls[0]);
+        expect(sent.get('Content-Type')).toBe('application/json');
+        expect(sent.get('Authorization')).toBe('Bearer web-token');
+      },
+    );
   });
 });
