@@ -3,6 +3,7 @@ import { Outlet } from 'react-router-dom';
 import Header from '@/components/common/Header/Header';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
+import AdminContactFloatingButton from '@/pages/AdminPage/components/AdminContactFloatingButton/AdminContactFloatingButton';
 import PersonalInfoConsentModal from '@/pages/AdminPage/components/PersonalInfoConsentModal/PersonalInfoConsentModal';
 import SideBar from '@/pages/AdminPage/components/SideBar/SideBar';
 import { useAdminClubId } from '@/store/useAdminClubStore';
@@ -38,6 +39,7 @@ const AdminPage = () => {
             <Outlet context={clubDetail} />
           </Styled.MainContent>
         </Styled.Layout>
+        <AdminContactFloatingButton />
       </Styled.Background>
     </>
   );
