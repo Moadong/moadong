@@ -36,6 +36,9 @@ export const useApplicantSSE = (applicationFormId: string | undefined) => {
           accepted: updatedApplicants.filter(
             (a) => a.status === ApplicationStatus.ACCEPTED,
           ).length,
+          declined: updatedApplicants.filter(
+            (a) => a.status === ApplicationStatus.DECLINED,
+          ).length,
         };
       });
     },
