@@ -23,6 +23,11 @@ export const Trigger = styled.button<{ $isOpen: boolean }>`
     $isOpen ? colors.base.white : colors.gray[50]};
   cursor: pointer;
   box-sizing: border-box;
+
+  &:disabled {
+    cursor: default;
+    opacity: 0.5;
+  }
 `;
 
 export const TriggerLabel = styled.span`

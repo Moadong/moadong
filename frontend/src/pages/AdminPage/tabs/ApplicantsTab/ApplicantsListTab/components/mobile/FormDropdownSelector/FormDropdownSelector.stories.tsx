@@ -137,3 +137,12 @@ export const WithScroll: Story = {
   },
   render: (args) => <Interactive {...args} />,
 };
+
+export const Empty: Story = {
+  args: {
+    forms: [],
+    selectedFormId: asApplicationFormId(''),
+    onSelect: () => {},
+  },
+  render: (args) => <Interactive {...args} />,
+};
