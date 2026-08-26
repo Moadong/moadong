@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { USER_EVENT } from '@/constants/eventName';
+import { USER_EVENT, type PageName } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import {
   AppToWebMessage,
@@ -57,11 +57,12 @@ const useWebviewSubscribe = () => {
   }, []);
 
   const toggleSubscribe = useCallback(
-    (clubId: string, subscribed: boolean) => {
+    (clubId: string, subscribed: boolean, source: PageName) => {
       requestSubscribeToggle(clubId);
       trackEvent(USER_EVENT.WEBVIEW_SUBSCRIBE_TOGGLED, {
         club_id: clubId,
         subscribed: !subscribed,
+        source,
       });
     },
     [trackEvent],

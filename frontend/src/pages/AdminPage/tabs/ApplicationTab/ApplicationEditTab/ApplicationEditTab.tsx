@@ -1,13 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
-import { createApplication, updateApplication } from '@/apis/application';
+import {
+  createApplication,
+  generateApplicationDraft,
+  updateApplication,
+} from '@/apis/application';
 import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
+import Spinner from '@/components/common/Spinner/Spinner';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
 import INITIAL_FORM_DATA from '@/constants/initialFormData';
 import { queryKeys } from '@/constants/queryKeys';
-import { useGetApplication } from '@/hooks/Queries/useApplication';
+import { ApiError } from '@/errors';
+import {
+  useAiDraftQuota,
+  useGetApplication,
+} from '@/hooks/Queries/useApplication';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import {
   hasErrors,
@@ -45,6 +54,17 @@ const ApplicationEditTab = () => {
   const [applicationFormMode, setApplicationFormMode] =
     useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
   const [externalApplicationUrl, setExternalApplicationUrl] = useState('');
+
+  const isDraftButtonVisible =
+    !formId && applicationFormMode === ApplicationFormMode.INTERNAL;
+  const { data: draftQuota } = useAiDraftQuota(
+    clubId ?? undefined,
+    isDraftButtonVisible,
+  );
+  // 생성 성공/429로 갱신된 값을 즉시 반영 (quota 조회 전·실패 시에도 동작)
+  const [remainingOverride, setRemainingOverride] = useState<number>();
+  const remaining = remainingOverride ?? draftQuota?.remaining;
+  const isDraftLimitReached = remaining === 0;
 
   useEffect(() => {
     if (!existingFormData) return;
@@ -97,6 +117,58 @@ const ApplicationEditTab = () => {
     onError: (err: Error) =>
       alert(`지원서 수정에 실패했습니다: ${err.message}`),
   });
+
+  const { mutate: generateDraft, isPending: isGenerating } = useMutation({
+    mutationFn: generateApplicationDraft,
+    onSuccess: (draft) => {
+      if (!draft) return;
+      const nameQuestion = { ...INITIAL_FORM_DATA.questions![0] };
+      const draftQuestions = draft.questions.map((q, index) => ({
+        ...q,
+        id: index + 2, // index 0은 이름 고정 질문(id 1)
+      }));
+      setFormData((prev) => ({
+        ...prev,
+        title: draft.title,
+        description: draft.description,
+        questions: [nameQuestion, ...draftQuestions],
+      }));
+      setNextId(draftQuestions.length + 2);
+      if (typeof draft.remaining === 'number') {
+        setRemainingOverride(draft.remaining);
+      }
+      if (!draft.aiGenerated) {
+        alert(
+          'AI 생성에 실패해 기본 템플릿을 제공했어요. 질문을 직접 다듬어주세요.',
+        );
+      }
+    },
+    onError: (err: Error) => {
+      if (err instanceof ApiError && err.status === 429) {
+        setRemainingOverride(0);
+        alert('이번 달 AI 초안 생성 횟수(3회)를 모두 사용했어요.');
+        return;
+      }
+      alert(`지원서 초안 생성에 실패했습니다: ${err.message}`);
+    },
+  });
+
+  const handleGenerateDraft = () => {
+    const hasUserInput =
+      formData.title.trim() !== '' ||
+      formData.description.trim() !== '' ||
+      (formData.questions ?? []).some(
+        (q, index) =>
+          index > 0 && (q.title.trim() !== '' || q.description.trim() !== ''),
+      );
+    if (
+      hasUserInput &&
+      !confirm('작성 중인 내용을 AI 초안으로 덮어씁니다. 계속할까요?')
+    ) {
+      return;
+    }
+    generateDraft();
+  };
 
   const handleFormTitleChange = (value: string) => {
     setFormData((prev) => ({
@@ -163,6 +235,12 @@ const ApplicationEditTab = () => {
 
   return (
     <>
+      {isGenerating && (
+        <Styled.AiLoadingOverlay>
+          <Spinner height='auto' />
+          <Styled.AiLoadingText>지원서 자동 생성 중...</Styled.AiLoadingText>
+        </Styled.AiLoadingOverlay>
+      )}
       <PageContainer>
         <Styled.HeaderContainer>
           <Styled.ChangeButtonWrapper>
@@ -183,6 +261,26 @@ const ApplicationEditTab = () => {
               외부지원서
             </Styled.ApplicationFormChangeButton>
           </Styled.ChangeButtonWrapper>
+          {isDraftButtonVisible && (
+            <Styled.AiDraftActions>
+              {typeof remaining === 'number' && (
+                <Styled.AiDraftRemaining>
+                  이번 달 {remaining}회 남음
+                </Styled.AiDraftRemaining>
+              )}
+              <Styled.AiDraftButton
+                onClick={handleGenerateDraft}
+                disabled={isGenerating || isDraftLimitReached}
+                title={
+                  isDraftLimitReached
+                    ? '이번 달 AI 초안 생성 횟수(3회)를 모두 사용했어요.'
+                    : undefined
+                }
+              >
+                ✨ AI로 초안 생성
+              </Styled.AiDraftButton>
+            </Styled.AiDraftActions>
+          )}
         </Styled.HeaderContainer>
         <Styled.FormTitle
           type='text'

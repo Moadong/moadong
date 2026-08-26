@@ -4,14 +4,14 @@ interface MobileFloatingButtonProps {
   onClick: () => void;
   icon: string;
   ariaLabel?: string;
-  bottom?: string;
+  bottom: string;
 }
 
 const MobileFloatingButton = ({
   onClick,
   icon,
   ariaLabel,
-  bottom = 'calc(24px + env(safe-area-inset-bottom))',
+  bottom,
 }: MobileFloatingButtonProps) => {
   return (
     <Styled.Button

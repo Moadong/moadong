@@ -14,7 +14,7 @@ interface ApplicationActiveSectionMobileProps {
   onEdit: (id: string) => void;
   onMenuToggle: (e: MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
-  onDuplicate?: (id: string) => void;
+  onDuplicate: (id: string) => void;
 }
 
 const ApplicationActiveSectionMobile = ({

@@ -89,3 +89,17 @@ export const ApplicationFormMode = {
 
 export type ApplicationFormMode =
   (typeof ApplicationFormMode)[keyof typeof ApplicationFormMode];
+
+export interface ApplicationDraft {
+  title: string;
+  description: string;
+  questions: Question[];
+  aiGenerated: boolean;
+  remaining?: number;
+}
+
+export interface AiDraftQuota {
+  limit: number;
+  used: number;
+  remaining: number;
+}

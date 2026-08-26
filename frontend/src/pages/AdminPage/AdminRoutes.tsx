@@ -13,6 +13,7 @@ import ClubIntroEditTab from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroE
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import SettingsTab from '@/pages/AdminPage/tabs/SettingsTab/SettingsTab';
+import StatisticsTab from '@/pages/AdminPage/tabs/StatisticsTab/StatisticsTab';
 
 const AdminIndexRoute = () => {
   const { isMobile, isTablet } = useDevice();
@@ -25,11 +26,17 @@ export default function AdminRoutes() {
     <Routes>
       <Route path='' element={<AdminPage />}>
         <Route index element={<AdminIndexRoute />} />
+
+        {/* 동아리 프로필 */}
         <Route path='club-info' element={<ClubInfoEditTab />} />
-        <Route path='recruit-edit' element={<RecruitEditTab />} />
-        <Route path='calendar-sync' element={<CalendarSyncTab />} />
+        <Route path='club-intro' element={<ClubIntroEditTab />} />
         <Route path='photo-edit' element={<PhotoEditTab />} />
-        <Route path='account-edit' element={<AccountEditTab />} />
+
+        {/* 동아리 활동 */}
+        <Route path='calendar-sync' element={<CalendarSyncTab />} />
+        <Route path='recruit-edit' element={<RecruitEditTab />} />
+
+        {/* 지원 관리 */}
         <Route path='application-list' element={<ApplicationListTab />} />
         <Route
           path='application-list/:applicationFormId/edit'
@@ -37,6 +44,7 @@ export default function AdminRoutes() {
         />
         <Route path='application-list/edit' element={<ApplicationEditTab />} />
         <Route path='applicants-list' element={<ApplicantsListTab />} />
+        <Route path='statistics' element={<StatisticsTab />} />
         <Route
           path='applicants-list/:applicationFormId'
           element={<ApplicantsTab />}
@@ -45,7 +53,9 @@ export default function AdminRoutes() {
           path='applicants-list/:applicationFormId/:questionId'
           element={<ApplicantDetailPage />}
         />
-        <Route path='club-intro' element={<ClubIntroEditTab />} />
+
+        {/* 계정 관리 */}
+        <Route path='account-edit' element={<AccountEditTab />} />
       </Route>
     </Routes>
   );

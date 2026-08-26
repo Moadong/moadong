@@ -1,4 +1,5 @@
 import {
+  formatApplicationEditedAt,
   formatKSTDate,
   formatKSTDateTime,
   formatKSTDateTimeFull,
@@ -44,6 +45,34 @@ describe('formatKSTDate', () => {
 
     expect(result).toContain('3월');
     expect(result).toContain('26'); // 날짜 변환 확인
+  });
+});
+
+describe('formatApplicationEditedAt', () => {
+  it('"YYYY. M. D 오전/오후 H:MM" 형식으로 반환한다', () => {
+    // 2025-07-01T03:46:00Z → KST 2025-07-01 12:46 (오후)
+    const result = formatApplicationEditedAt('2025-07-01T03:46:00Z');
+    expect(result).toBe('2025. 7. 1 오후 12:46');
+  });
+
+  it('자정(00:00 KST)은 오전 12:00으로 반환한다', () => {
+    // 2025-07-01T15:00:00Z → KST 2025-07-02 00:00
+    const result = formatApplicationEditedAt('2025-07-01T15:00:00Z');
+    expect(result).toBe('2025. 7. 2 오전 12:00');
+  });
+
+  it('UTC 날짜 경계를 넘는 경우 KST 기준으로 처리한다', () => {
+    // 2025-07-01T16:00:00Z → KST 2025-07-02 01:00 (오전)
+    const result = formatApplicationEditedAt('2025-07-01T16:00:00Z');
+    expect(result).toBe('2025. 7. 2 오전 1:00');
+  });
+
+  it('빈 문자열이면 빈 문자열을 반환한다', () => {
+    expect(formatApplicationEditedAt('')).toBe('');
+  });
+
+  it('유효하지 않은 날짜면 빈 문자열을 반환한다', () => {
+    expect(formatApplicationEditedAt('not-a-date')).toBe('');
   });
 });
 

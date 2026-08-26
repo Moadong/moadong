@@ -4,6 +4,7 @@ import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
@@ -11,7 +12,7 @@ import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import * as Styled from './ClubDetailPage.styles';
-import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
+import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
 
 export const TAB_TYPE = {
   INTRO: 'intro',
@@ -35,6 +36,11 @@ const LegacyClubDetailPage = () => {
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
+  useTrackClubDetailDuration({
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
 
   const handleTabClick = useCallback(
     (tabKey: TabType) => {
@@ -101,12 +107,7 @@ const LegacyClubDetailPage = () => {
         </Styled.ContentWrapper>
       </Styled.Container>
       <Footer />
-      <ClubDetailFooter
-        recruitmentStart={clubDetail.recruitmentStart}
-        recruitmentEnd={clubDetail.recruitmentEnd}
-        recruitmentStatus={clubDetail.recruitmentStatus}
-        hideShareButtonOnMobile
-      />
+      <ClubApplyButton />
     </>
   );
 };

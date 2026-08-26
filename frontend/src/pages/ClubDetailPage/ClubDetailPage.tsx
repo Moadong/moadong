@@ -8,6 +8,7 @@ import MapModal from '@/components/map/MapModal/MapModal';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import {
@@ -16,13 +17,14 @@ import {
 } from '@/hooks/Queries/useClub';
 import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import useDevice from '@/hooks/useDevice';
+import { countClubView } from '@/hooks/useSatisfactionSurvey';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
-import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
+import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 
 export const TAB_TYPE = {
@@ -64,10 +66,10 @@ const ClubDetailPage = () => {
     return tabParam;
   }, [tabParam]);
 
-  const { data: calendarEvents = [] } = useGetClubCalendarEvents(
-    (clubName ?? clubId) || '',
-    { enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE },
-  );
+  const { data: calendarEvents = [], isLoading: isCalendarLoading } =
+    useGetClubCalendarEvents((clubName ?? clubId) || '', {
+      enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE,
+    });
 
   const tabs = useMemo(
     () => [
@@ -84,6 +86,21 @@ const ClubDetailPage = () => {
     !clubDetail,
     clubDetail?.recruitmentStatus,
   );
+  useTrackClubDetailDuration({
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
+
+  // 만족도 모달 노출 조건. 같은 동아리를 다시 렌더해도 한 번만 센다.
+  const countedClubIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    const clubId = clubDetail?.id;
+    if (!clubId || countedClubIdRef.current === clubId) return;
+
+    countedClubIdRef.current = clubId;
+    countClubView();
+  }, [clubDetail?.id]);
 
   const [showStickyTabs, setShowStickyTabs] = useState(false);
   const [inlineTabsEl, setInlineTabsEl] = useState<HTMLDivElement | null>(null);
@@ -217,7 +234,10 @@ const ClubDetailPage = () => {
                   display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none',
                 }}
               >
-                <ClubIntroContent {...clubDetail.description} />
+                <ClubIntroContent
+                  {...clubDetail.description}
+                  clubId={clubDetail.id}
+                />
               </div>
               <div
                 style={{
@@ -234,6 +254,7 @@ const ClubDetailPage = () => {
                 <ClubScheduleCalendar
                   key={clubId ?? clubName}
                   events={calendarEvents}
+                  isLoading={isCalendarLoading}
                 />
               </div>
             </Styled.TabContent>
@@ -250,11 +271,7 @@ const ClubDetailPage = () => {
         />
       )}
       {isInAppWebView() ? <Styled.AppSpacer /> : <Footer />}
-      <ClubDetailFooter
-        recruitmentStart={clubDetail.recruitmentStart}
-        recruitmentEnd={clubDetail.recruitmentEnd}
-        recruitmentStatus={clubDetail.recruitmentStatus}
-      />
+      <ClubApplyButton />
     </>
   );
 };

@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 const spin = keyframes`
   to { transform: rotate(360deg); }
@@ -9,7 +10,7 @@ export const ButtonSpinner = styled.span`
   width: 14px;
   height: 14px;
   border: 2px solid rgba(255, 255, 255, 0.4);
-  border-top-color: #ffffff;
+  border-top-color: ${colors.base.white};
   border-radius: 50%;
   animation: ${spin} 0.7s linear infinite;
   vertical-align: middle;
@@ -32,15 +33,15 @@ export const GridHeader = styled.div`
 export const AddButton = styled.button`
   padding: 6px 14px;
   border-radius: 8px;
-  border: 1.5px solid #d1d5db;
+  border: 1.5px solid ${colors.gray[400]};
   background: transparent;
   font-size: 0.875rem;
-  color: #374151;
+  color: ${colors.gray[800]};
   cursor: pointer;
 
   &:hover {
-    border-color: #6b7280;
-    background: #f9fafb;
+    border-color: ${colors.gray[600]};
+    background: ${colors.gray[50]};
   }
 
   &:disabled {
@@ -64,14 +65,14 @@ export const GridWrapper = styled.div<{ $uploading?: boolean }>`
   padding: 16px;
   min-height: 320px;
   border-radius: 16px;
-  background: #fafafa;
+  background: ${colors.gray[50]};
   display: flex;
   align-items: center;
   justify-content: center;
   border: ${({ $uploading, theme }) =>
     $uploading
       ? `2px solid ${theme.colors.primary[900]}`
-      : '2px dashed #e5e7eb'};
+      : `2px dashed ${colors.gray[400]}`};
   transition: border-color 0.3s;
 `;
 
@@ -117,12 +118,12 @@ export const EmptyState = styled.button`
   align-items: center;
   justify-content: center;
   gap: 8px;
-  color: #9ca3af;
+  color: ${colors.gray[500]};
   font-size: 0.875rem;
   cursor: pointer;
 
   &:hover {
-    color: #6b7280;
+    color: ${colors.gray[600]};
   }
 
   span:first-child {

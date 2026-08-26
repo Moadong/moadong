@@ -2,6 +2,17 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
 
+const trackSafely = (
+  eventName: string,
+  properties: Record<string, unknown>,
+) => {
+  try {
+    mixpanel.track(eventName, properties);
+  } catch (error) {
+    console.warn('Failed to track page view:', eventName, error);
+  }
+};
+
 const useTrackPageView = (
   pageName: string,
   clubName?: string,
@@ -27,34 +38,26 @@ const useTrackPageView = (
     isTracked.current = false;
     startTime.current = Date.now();
 
-    try {
-      mixpanel.track(`${pageName} Visited`, {
-        url: window.location.href,
-        timestamp: startTime.current,
-        referrer: document.referrer || 'direct',
-        clubName: clubNameRef.current,
-        recruitmentStatus: recruitmentStatusRef.current,
-      });
-    } catch (error) {
-      console.warn('Failed to track page view:', pageName, error);
-    }
+    trackSafely(`${pageName} Visited`, {
+      url: window.location.href,
+      timestamp: startTime.current,
+      referrer: document.referrer || 'direct',
+      clubName: clubNameRef.current,
+      recruitmentStatus: recruitmentStatusRef.current,
+    });
 
     const trackPageDuration = () => {
       if (isTracked.current) return;
       isTracked.current = true;
 
       const duration = Date.now() - startTime.current;
-      try {
-        mixpanel.track(`${pageName} Duration`, {
-          url: window.location.href,
-          duration: duration,
-          duration_seconds: Math.round(duration / 1000),
-          clubName: clubNameRef.current,
-          recruitmentStatus: recruitmentStatusRef.current,
-        });
-      } catch (error) {
-        console.warn('Failed to track page duration:', pageName, error);
-      }
+      trackSafely(`${pageName} Duration`, {
+        url: window.location.href,
+        duration: duration,
+        duration_seconds: Math.round(duration / 1000),
+        clubName: clubNameRef.current,
+        recruitmentStatus: recruitmentStatusRef.current,
+      });
     };
 
     window.addEventListener('beforeunload', trackPageDuration);

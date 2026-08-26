@@ -83,13 +83,13 @@ npm run generate:sitemap # sitemap.xml 생성
 - `src/hooks/Queries/` ★ - API를 래핑하는 React Query 훅 + 캐싱 전략
 - `src/store/` - Zustand 스토어 (useCategoryStore, useSearchStore, useAdminClubStore)
 - `src/pages/` - 라우트 기반 페이지 컴포넌트
-- `src/components/` - 공용 UI 컴포넌트
+- `src/components/` ★ - 공용 UI 컴포넌트
 - `src/layouts/` ★ - 웹/웹뷰 통합 라우팅 레이아웃
 - `src/experiments/` ★ - A/B 테스트 실험 정의 및 관리
 - `src/styles/` ★ - 전역 스타일·테마·브레이크포인트
 - `src/constants/` ★ - 상수 관리 (queryKeys, storageKeys, status 등)
 - `src/utils/` ★ - 유틸리티 함수 + 외부 SDK 초기화
-- `src/mocks/` - MSW(Mock Service Worker) 핸들러
+- `src/mocks/` - 정적 목 데이터 (`data/festivalMock.ts`)
 - `src/errors/` - 커스텀 에러 클래스
 - `src/types/` - 공용 타입 정의
 
@@ -121,11 +121,11 @@ npm run generate:sitemap # sitemap.xml 생성
 
 ## 테스트 & Storybook
 
-- Jest + React Testing Library, MSW로 API 모킹
+- Jest + React Testing Library, API 모킹은 `jest-fetch-mock` (`jest.setup.ts`에서 전역 활성화)
 - 테스트 파일은 `*.test.ts` 또는 `*.test.tsx` 형식
 - 커버리지 리포트: `npm run coverage` · 단일 파일: `npx jest path/to/file.test.ts`
-- MSW: `src/mocks/`에서 API 모킹 관리 (`handlers/` 도메인별 핸들러, `browser.ts` 워커). Storybook·개발 환경에서 사용
-- Storybook: 컴포넌트 독립 개발 환경(포트 6006), MSW addon으로 API 모킹, Chromatic으로 시각적 회귀 테스트
+- MSW 목 핸들러는 실제 API 연동 완료로 제거됨. 개발 서버·Storybook 모두 실서버로 붙는다. `msw` 의존성과 `public/mockServiceWorker.js`는 재도입 대비로 남겨 뒀고, 다시 쓸 땐 워커 파일 버전이 설치된 `msw` 버전과 맞는지 확인할 것(`npx msw init public/`)
+- Storybook: 컴포넌트 독립 개발 환경(포트 6006), Chromatic으로 시각적 회귀 테스트
 
 ## Claude Code Agent
 
@@ -143,6 +143,7 @@ Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 | --- | --- |
 | API 레이어·인증·SSE | [`src/apis/CLAUDE.md`](src/apis/CLAUDE.md) |
 | React Query 훅·캐싱 전략 | [`src/hooks/Queries/CLAUDE.md`](src/hooks/Queries/CLAUDE.md) |
+| 공용 UI 컴포넌트·오버레이·Toast | [`src/components/CLAUDE.md`](src/components/CLAUDE.md) |
 | 상수 관리 | [`src/constants/CLAUDE.md`](src/constants/CLAUDE.md) |
 | UI·테마·브레이크포인트·날짜 | [`src/styles/CLAUDE.md`](src/styles/CLAUDE.md) |
 | A/B 테스트 실험 | [`src/experiments/CLAUDE.md`](src/experiments/CLAUDE.md) |

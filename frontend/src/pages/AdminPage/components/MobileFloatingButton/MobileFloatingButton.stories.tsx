@@ -16,6 +16,7 @@ export const Default: Story = {
   args: {
     icon: addLargeIcon,
     ariaLabel: '항목 추가',
+    bottom: '20px',
     onClick: () => console.log('clicked'),
   },
 };

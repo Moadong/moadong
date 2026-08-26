@@ -6,6 +6,8 @@ API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된
 
 - `handleResponse<T>()` - 응답 파싱, `{ data: {...} }` 형식 자동 언래핑
 - `secureFetch()` - 인증된 요청, **401 시 토큰 자동 갱신** (`src/apis/auth/secureFetch.ts`)
+- `studentFetch()` - 익명 학생 토큰 요청 (`src/apis/auth/studentFetch.ts`). 우체통 전용
+- `getServerErrorMessage(error, fallback)` - 서버 원본 에러 문구 추출 (`src/apis/utils/getServerErrorMessage.ts`). `handleResponse`가 `error.message`를 호출부 기본 문구로 덮어쓰기 때문에 원본은 `error.data.message`에 남는다. 그걸 되꺼내는 짝. 폴백 문구는 화면마다 달라 인자로 받는다
 - `fetchWithTimeout()` - 타임아웃(기본 10s) 붙은 fetch 래퍼 (`src/apis/utils/fetchWithTimeout.ts`). 타임아웃/네트워크 실패를 `NetworkError`로 변환, 호출부 signal 병합 지원. API 호출은 raw `fetch` 대신 이걸 사용 (예외: SSE 스트림, S3 presigned 업로드)
 
 - 도메인별 API 함수는 이 디렉토리에 둔다 (club, auth, application, applicants). 페이지나 컴포넌트 안에 직접 분산시키지 않는다.
@@ -17,6 +19,15 @@ API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된
 - 리프레시 토큰은 쿠키로 처리 (`credentials: 'include'`)
 - `secureFetch()`가 1차 요청 → 401이면 `refreshAccessToken()`으로 토큰 재발급 후 재요청. refresh 실패 시 `REFRESH_FAILED` 에러
 - 어드민 라우트는 `PrivateRoute` 컴포넌트로 보호
+
+### 익명 학생 토큰 (우체통)
+
+우체통은 로그인 없이 쓰지만 '내가 보낸 편지'를 구분해야 해서 별도 토큰을 쓴다.
+
+- `POST /auth/student`로 발급, localStorage `studentAccessToken`에 저장
+- 만료가 없어 refresh 흐름이 없다. 저장된 토큰이 무효할 때(서명 키 교체 등)만 401에서 한 번 재발급 후 재시도
+- 발급은 `issueStudentTokenOnce()`로 합친다. 발급마다 새 UUID라 동시 요청이 각자 발급받으면 학생 신원이 갈린다
+- **재발급에는 거부된 토큰의 `sub`를 실어 보낸다** (`{ sub }`). 신원이 토큰 안에만 있어서, 안 보내면 서명 키를 한 번 교체할 때 전 사용자가 같은 날 편지함을 잃는다. 서버는 UUIDv4 형식만 받으므로 `getTokenSubject()`가 형식을 확인하고, 아니면 sub 없이 새 신원으로 발급받는다
 
 ## 실시간 업데이트 (SSE)
 

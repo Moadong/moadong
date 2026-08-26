@@ -23,7 +23,7 @@ export const Inner = styled.div`
   display: flex;
   max-width: 500px;
   margin: 0 auto;
-  padding: 6px 0;
+  padding: 10px 0 16px;
 `;
 
 export const Tab = styled.button<{ $active: boolean }>`

@@ -16,6 +16,6 @@ export const APP_DOWNLOAD_POPUP: PopupConfig = {
       popupType: 'app_download',
       platform: detectPlatform(),
     });
-    window.open(getAppStoreLink(), '_blank');
+    window.open(getAppStoreLink(), '_blank', 'noopener');
   },
 };

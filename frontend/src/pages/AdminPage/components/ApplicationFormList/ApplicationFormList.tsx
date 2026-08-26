@@ -169,13 +169,13 @@ const ApplicationFormList = ({
 
   const yearMap = new Map<number, ApplicationFormItem[]>();
   formGroups.forEach((group) => {
-    const year = Number(group.semesterYear);
-    const existing = yearMap.get(year) ?? [];
-    yearMap.set(year, [...existing, ...group.forms]);
+    const year = group.semesterYear;
+    if (!yearMap.has(year)) yearMap.set(year, []);
+    yearMap.get(year)!.push(...group.forms);
   });
-  const groupedByYear = Array.from(yearMap.entries()).map(
-    ([semesterYear, forms]) => ({ semesterYear, forms }),
-  );
+  const groupedByYear = Array.from(yearMap.entries())
+    .map(([semesterYear, forms]) => ({ semesterYear, forms }))
+    .sort((a, b) => b.semesterYear - a.semesterYear);
 
   const formsToDisplay = isExpanded
     ? activeForms
