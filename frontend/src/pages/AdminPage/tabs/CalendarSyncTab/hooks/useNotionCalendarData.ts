@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import {
   useApplyNotionDatabase,
+  useDisconnectNotionCalendar,
   useGetNotionDatabases,
   useGetNotionPages,
 } from '@/hooks/Queries/useNotionCalendar';
@@ -8,11 +9,14 @@ import {
 interface UseNotionCalendarDataParams {
   onError: (message: string) => void;
   clearError: () => void;
+  /** 해제 성공 시 상위가 들고 있는 연결 정보도 함께 비우게 한다 */
+  onDisconnected: () => void;
 }
 
 export const useNotionCalendarData = ({
   onError,
   clearError,
+  onDisconnected,
 }: UseNotionCalendarDataParams) => {
   /** 사용자가 드롭다운에서 직접 고른 값. 비어 있으면 서버 기준값을 따른다. */
   const [pickedDatabaseId, setPickedDatabaseId] = useState('');
@@ -20,6 +24,7 @@ export const useNotionCalendarData = ({
   const databasesQuery = useGetNotionDatabases();
   const pagesQuery = useGetNotionPages();
   const applyMutation = useApplyNotionDatabase();
+  const disconnectMutation = useDisconnectNotionCalendar();
 
   const notionDatabaseOptions = databasesQuery.data ?? [];
   const notionItems = pagesQuery.data?.items ?? [];
@@ -45,6 +50,17 @@ export const useNotionCalendarData = ({
     });
   };
 
+  const disconnectNotion = () => {
+    clearError();
+    disconnectMutation.mutate(undefined, {
+      onSuccess: () => {
+        setPickedDatabaseId('');
+        onDisconnected();
+      },
+      onError: (error: Error) => onError(error.message),
+    });
+  };
+
   return {
     notionItems,
     notionTotalResults,
@@ -52,6 +68,8 @@ export const useNotionCalendarData = ({
     notionDatabaseOptions,
     selectedNotionDatabaseId,
     setSelectedNotionDatabaseId: setPickedDatabaseId,
+    isNotionDisconnecting: disconnectMutation.isPending,
+    disconnectNotion,
     // 캐시가 있으면 로딩으로 보지 않는다 (탭 재진입 시 깜빡임 방지)
     isNotionLoading: pagesQuery.isLoading,
     isNotionDatabaseApplying: applyMutation.isPending,

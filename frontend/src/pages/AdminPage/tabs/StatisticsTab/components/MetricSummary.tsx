@@ -53,9 +53,18 @@ const MetricSummary = ({
         </div>
       </Styled.MetricCard>
       <Styled.MetricCard>
-        <Styled.MetricLabel>평균 체류 시간</Styled.MetricLabel>
+        <Styled.MetricLabel>고유 방문자</Styled.MetricLabel>
+        <div>
+          <Styled.MetricValue>
+            {formatNumber(data.uniqueDetailVisitors)}
+          </Styled.MetricValue>
+          <Styled.MetricUnit>명</Styled.MetricUnit>
+        </div>
+      </Styled.MetricCard>
+      <Styled.MetricCard>
+        <Styled.MetricLabel>인당 평균 체류 시간</Styled.MetricLabel>
         <Styled.MetricValue>
-          {formatDuration(data.averageDetailDurationSeconds)}
+          {formatDuration(data.averageDetailDurationSecondsPerVisitor)}
         </Styled.MetricValue>
       </Styled.MetricCard>
       <Styled.MetricCard>
