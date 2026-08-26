@@ -3,168 +3,225 @@ import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
+/** 날짜 칸 지름. 칸은 고정 폭이고 남는 공간은 칸 사이로 균등 분배된다. */
+const CELL_SIZE = '34px';
+
+/** 요일/날짜 행 공통 그리드. 기간 띠가 칸 사이 여백까지 함께 덮어 하나로 이어진다. */
+const cellGrid = `
+  display: grid;
+  grid-template-columns: repeat(7, ${CELL_SIZE});
+  justify-content: space-between;
+`;
+
 export const Container = styled.div`
-  padding-top: 16px;
   width: 100%;
   display: flex;
   flex-direction: column;
+  align-items: flex-start;
   gap: 16px;
-
-  ${media.tablet} {
-    padding-top: 20px;
-  }
+  padding: 20px 16px 100px;
+  background-color: ${colors.gray[100]};
 `;
 
-export const CalendarCard = styled.section`
-  border-radius: 20px;
-  border: 1px solid ${colors.gray[200]};
-  background-color: ${colors.base.white};
-  padding: 16px 14px;
+/** Container가 align-items: flex-start라 감싸지 않으면 스피너가 왼쪽에 붙는다 */
+export const LoadingArea = styled.div`
+  width: 100%;
 `;
 
 export const MonthHeader = styled.div`
+  width: 100%;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 14px;
+`;
+
+export const MonthNav = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
 `;
 
 export const MonthLabel = styled.h3`
-  font-size: 30px;
-  line-height: 1;
-  font-weight: 700;
+  ${setTypography(typography.title.title5)};
+  letter-spacing: -0.4px;
   color: ${colors.gray[900]};
 `;
 
 export const MonthMoveButton = styled.button`
-  width: 28px;
-  height: 28px;
+  width: 14px;
+  height: 14px;
   border: none;
-  border-radius: 999px;
-  background-color: ${colors.gray[100]};
-  color: ${colors.gray[700]};
-  font-size: 16px;
+  background: transparent;
+  color: ${colors.gray[400]};
+  font-size: 11px;
+  line-height: 1;
+  padding: 0;
   cursor: pointer;
 `;
 
+export const TodayButton = styled.button`
+  border: none;
+  border-radius: 8px;
+  background-color: ${colors.gray[300]};
+  color: ${colors.gray[800]};
+  ${setTypography(typography.button.button2)};
+  letter-spacing: -0.24px;
+  padding: 4px 12px;
+  cursor: pointer;
+`;
+
+export const CalendarCard = styled.section`
+  width: 100%;
+  border-radius: 12px;
+  background-color: ${colors.base.white};
+  padding: 10px 10px 24px;
+`;
+
 export const WeekdayGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
-  margin-bottom: 8px;
+  ${cellGrid};
 `;
 
 export const Weekday = styled.span<{ $dayIndex: number }>`
-  text-align: center;
-  font-size: 12px;
-  font-weight: 700;
+  height: ${CELL_SIZE};
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  ${setTypography(typography.paragraph.p2)};
+  letter-spacing: -0.32px;
   color: ${({ $dayIndex }) =>
     $dayIndex === 0
       ? colors.secondary[1].main
       : $dayIndex === 6
-        ? colors.secondary[4].main
-        : colors.gray[700]};
+        ? colors.accent[1][900]
+        : colors.gray[600]};
+`;
+
+export const WeekList = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+`;
+
+export const Week = styled.div`
+  position: relative;
+  height: ${CELL_SIZE};
+`;
+
+/** 기간 일정의 배경 띠. 날짜 숫자 뒤에 깔린다. */
+export const BandLayer = styled.div`
+  position: absolute;
+  inset: 0;
+  ${cellGrid};
+`;
+
+export const Band = styled.div<{
+  $startIndex: number;
+  $span: number;
+  $back: string;
+}>`
+  grid-column: ${({ $startIndex, $span }) =>
+    `${$startIndex + 1} / span ${$span}`};
+  grid-row: 1;
+  border-radius: 100px;
+  background-color: ${({ $back }) => $back};
 `;
 
 export const DayGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 6px;
+  position: relative;
+  ${cellGrid};
 `;
 
-export const DayCell = styled.button<{
-  $isCurrentMonth: boolean;
-  $isSelected: boolean;
-}>`
-  border: none;
-  border-radius: 12px;
-  min-height: 54px;
-  background-color: ${({ $isSelected }) =>
-    $isSelected ? colors.gray[100] : 'transparent'};
-  color: ${({ $isCurrentMonth }) =>
-    $isCurrentMonth ? colors.gray[900] : colors.gray[500]};
+export const DayCell = styled.div<{ $isCurrentMonth: boolean }>`
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  cursor: pointer;
-  padding: 6px 0;
+  opacity: ${({ $isCurrentMonth }) => ($isCurrentMonth ? 1 : 0)};
 `;
 
-export const DayNumber = styled.span<{ $highlightColor?: string }>`
-  width: 28px;
-  height: 28px;
-  border-radius: 999px;
+export const DayNumber = styled.span<{
+  $dayIndex: number;
+  $fill?: string;
+  $isToday: boolean;
+}>`
+  width: ${CELL_SIZE};
+  height: ${CELL_SIZE};
+  border-radius: 100px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
-  font-weight: 600;
-  background-color: ${({ $highlightColor }) =>
-    $highlightColor ?? 'transparent'};
-  color: ${({ $highlightColor }) =>
-    $highlightColor ? colors.base.white : 'inherit'};
+  ${setTypography(typography.paragraph.p3)};
+  letter-spacing: -0.32px;
+  background-color: ${({ $fill, $isToday }) =>
+    $fill ?? ($isToday ? colors.gray[300] : 'transparent')};
+  color: ${({ $fill, $dayIndex }) => {
+    if ($fill) return colors.base.white;
+    if ($dayIndex === 0) return colors.secondary[1].main;
+    if ($dayIndex === 6) return colors.accent[1][900];
+    return colors.gray[900];
+  }};
 `;
 
-export const DotRow = styled.div`
+export const ScheduleSection = styled.section`
+  width: 100%;
   display: flex;
-  align-items: center;
-  gap: 4px;
-  min-height: 6px;
-`;
-
-export const Dot = styled.span<{ $color: string }>`
-  width: 6px;
-  height: 6px;
-  border-radius: 999px;
-  background-color: ${({ $color }) => $color};
-`;
-
-export const ScheduleCard = styled.section`
-  border-radius: 20px;
-  border: 1px solid ${colors.gray[200]};
-  background-color: ${colors.base.white};
-  padding: 18px 16px;
+  flex-direction: column;
+  gap: 6px;
 `;
 
 export const SectionTitle = styled.h4`
-  font-size: 20px;
-  font-weight: 700;
-  color: ${colors.gray[900]};
-  margin-bottom: 14px;
+  padding: 0 16px;
+  ${setTypography(typography.paragraph.p2)};
+  letter-spacing: -0.32px;
+  color: ${colors.gray[600]};
 `;
 
-export const EventList = styled.div`
+export const EventList = styled.ul`
+  list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 `;
 
-export const EventItem = styled.article`
-  border-radius: 12px;
-  background-color: ${colors.gray[100]};
-  padding: 12px;
+export const EventItem = styled.li`
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  border-radius: 16px;
+  background-color: ${colors.base.white};
+  padding: 12px 18px;
 `;
 
-export const EventHeader = styled.div`
+export const EventLabel = styled.div`
   display: flex;
   align-items: center;
   gap: 8px;
-  margin-bottom: 6px;
+  min-width: 0;
+`;
+
+export const Dot = styled.span<{ $color: string }>`
+  flex-shrink: 0;
+  width: 10px;
+  height: 10px;
+  border-radius: 100px;
+  background-color: ${({ $color }) => $color};
 `;
 
 export const EventTitle = styled.p`
-  font-size: 17px;
-  font-weight: 700;
+  min-width: 0;
+  ${setTypography(typography.paragraph.p3)};
+  letter-spacing: -0.32px;
   color: ${colors.gray[900]};
-  overflow-wrap: anywhere;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 `;
 
-export const EventDescription = styled.p`
-  font-size: 14px;
-  line-height: 1.45;
-  color: ${colors.gray[700]};
+export const EventDate = styled.span<{ $color: string }>`
+  flex-shrink: 0;
+  ${setTypography(typography.button.button1)};
+  letter-spacing: -0.28px;
+  color: ${({ $color }) => $color};
 `;
 
 export const EmptyState = styled.p`
@@ -181,31 +238,9 @@ export const EmptyState = styled.p`
 `;
 
 export const EmptyText = styled.p`
-  font-size: 15px;
+  border-radius: 16px;
+  background-color: ${colors.base.white};
+  padding: 12px 18px;
+  ${setTypography(typography.paragraph.p5)};
   color: ${colors.gray[600]};
-`;
-
-export const EventLink = styled.a`
-  font-size: 13px;
-  font-weight: 600;
-  color: ${colors.gray[800]};
-  text-decoration: underline;
-  text-underline-offset: 3px;
-`;
-
-export const SelectedDateLabel = styled.p`
-  font-size: 14px;
-  color: ${colors.gray[700]};
-  margin-bottom: 10px;
-`;
-
-export const MobilePanelHint = styled.p`
-  display: none;
-
-  ${media.tablet} {
-    display: block;
-    font-size: 13px;
-    color: ${colors.gray[600]};
-    margin-bottom: 8px;
-  }
 `;

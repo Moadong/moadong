@@ -20,16 +20,18 @@ API는 `ApplicationFormGroup[]`를 내려주는데, 같은 `semesterYear`라도 
 ```
 
 프론트에서 `Map<number, ApplicationFormItem[]>`으로 머지해 같은 년도를 하나의 그룹으로 합친다.
-`Number()` 변환으로 타입 불일치(`string` vs `number`) 방어.
+`semesterYear`는 타입상 `number`라 변환 없이 그대로 키로 쓴다.
 
 ```ts
 const yearMap = new Map<number, ApplicationFormItem[]>();
 formGroups.forEach((group) => {
-  const year = Number(group.semesterYear);
-  const existing = yearMap.get(year) ?? [];
-  yearMap.set(year, [...existing, ...group.forms]);
+  const year = group.semesterYear;
+  if (!yearMap.has(year)) yearMap.set(year, []);
+  yearMap.get(year)!.push(...group.forms);
 });
 ```
+
+합친 뒤 `semesterYear` 내림차순으로 정렬해 최신 년도를 위에 둔다.
 
 ## UI 텍스트 규칙
 

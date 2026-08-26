@@ -8,6 +8,9 @@ module.exports = {
     '\\.(svg|png|jpg|jpeg|gif)$': 'jest-transform-stub',
   },
   moduleNameMapper: {
+    // vite-plugin-svgr의 `?react` 접미사는 transform 패턴(\.svg$)에 걸리지 않아
+    // 별칭(^@/)보다 먼저 컴포넌트 스텁으로 보낸다
+    '\\.svg\\?react$': '<rootDir>/jest.svgMock.tsx',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
   collectCoverage: true,

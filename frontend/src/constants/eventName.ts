@@ -8,6 +8,18 @@ export const USER_EVENT = {
   MAIN_POPUP_CLOSED: 'Main Popup Closed',
   APP_DOWNLOAD_POPUP_CLICKED: 'App Download Popup Clicked',
 
+  // 모아동 우체통
+  FEEDBACK_ENTRY_CLICKED: '우체통 진입 클릭',
+  FEEDBACK_TYPE_SELECTED: '우체통 피드백 유형 선택',
+  FEEDBACK_SUBMITTED: '우체통 피드백 전송',
+  FEEDBACK_SUBMIT_FAILED: '우체통 피드백 전송 실패',
+  FEEDBACK_WRITE_ABANDONED: '우체통 작성 이탈',
+  RECEIVED_LETTER_OPENED: '우체통 받은 편지 열람',
+  /** 응답률·긍정률의 분모가 된다 */
+  SATISFACTION_SHOWN: '만족도 모달 노출',
+  SATISFACTION_ANSWERED: '만족도 응답',
+  SATISFACTION_SNOOZED: '만족도 응답 미룸',
+
   // 동소한 부스
   FESTIVAL_BOOTH_CLICKED: 'Festival Booth Clicked',
 
@@ -114,6 +126,28 @@ export const ADMIN_EVENT = {
   IMAGE_UPLOAD_BUTTON_CLICKED: '활동 사진 업로드 버튼클릭',
   IMAGE_DELETE_BUTTON_CLICKED: '활동 사진 삭제 버튼클릭',
 
+  // 동아리 일정 관리
+  CALENDAR_MONTH_CHANGED: '캘린더 월 이동',
+  CALENDAR_TODAY_BUTTON_CLICKED: '캘린더 오늘 버튼클릭',
+  CALENDAR_DATE_CLICKED: '캘린더 날짜 클릭',
+  CALENDAR_ADD_EVENT_BUTTON_CLICKED: '일정 추가 버튼클릭',
+  CALENDAR_EVENT_TYPE_TAB_CLICKED: '일정 유형 탭 클릭',
+  CALENDAR_TITLE_CLEAR_BUTTON_CLICKED: '일정 제목 입력 초기화 버튼클릭',
+  CALENDAR_EVENT_DATE_SELECTED: '일정 날짜 선택',
+  CALENDAR_COLOR_SELECTED: '일정 색상 선택',
+  CALENDAR_RECURRENCE_FREQUENCY_CHANGED: '반복 주기 변경',
+  CALENDAR_RECURRENCE_WEEKDAY_TOGGLED: '반복 요일 선택',
+  CALENDAR_DATE_PICKER_OPENED: '반복 날짜 시트 열기',
+  CALENDAR_END_DATE_CLEARED: '반복 종료 날짜 지우기',
+  CALENDAR_EVENT_CREATED: '일정 저장',
+  CALENDAR_EVENT_ROW_SWIPED: '일정 스와이프',
+  CALENDAR_EVENT_DELETED: '일정 삭제',
+  CALENDAR_EVENT_HIDDEN: '연동 일정 숨김',
+  CALENDAR_LINK_BUTTON_CLICKED: '캘린더 연동 버튼클릭',
+  CALENDAR_UNLINK_BUTTON_CLICKED: '캘린더 연동 해제 버튼클릭',
+  CALENDAR_UNLINK_CANCELED: '캘린더 연동 해제 취소',
+  CALENDAR_EVENT_VISIBILITY_TOGGLED: '연동 일정 표시 토글',
+
   // 비밀번호 수정
   PASSWORD_CHANGE_BUTTON_CLICKED: '비밀번호 변경 버튼클릭',
   NEW_PASSWORD_CLEAR_BUTTON_CLICKED: '새 비밀번호 입력 초기화 버튼클릭',
@@ -135,6 +169,14 @@ export const PAGE_VIEW = {
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
   GAME_PAGE: 'GamePage',
 
+  // 모아동 우체통
+  FEEDBACK_LIST_PAGE: '우체통 목록 페이지',
+  FEEDBACK_TYPE_SELECT_PAGE: '우체통 유형 선택 페이지',
+  FEEDBACK_WRITE_PAGE: '우체통 편지 작성 페이지',
+  FEEDBACK_COMPLETE_PAGE: '우체통 전송 완료 페이지',
+  RECEIVED_LETTER_DETAIL_PAGE: '우체통 받은 편지 상세 페이지',
+  SENT_FEEDBACK_DETAIL_PAGE: '우체통 보낸 편지 상세 페이지',
+
   WEBVIEW_MAIN_PAGE: 'WebviewMainPage',
 
   // 관리자
@@ -143,7 +185,9 @@ export const PAGE_VIEW = {
   CLUB_INFO_EDIT_PAGE: '동아리 기본 정보 수정 페이지',
   RECRUITMENT_INFO_EDIT_PAGE: '동아리 모집 정보 수정 페이지',
   PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',
+  ADMIN_STATISTICS_PAGE: '동아리 통계 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
+  ADMIN_CALENDAR_PAGE: '동아리 일정 관리 페이지',
 } as const;
 
 export const PAGE_NAME = {
@@ -151,4 +195,7 @@ export const PAGE_NAME = {
   WEBVIEW_MAIN: 'webview-main',
   INTRODUCE: 'introduce',
   SUBSCRIPTIONS: 'subscriptions',
+  CLUB_DETAIL: 'club-detail',
 } as const;
+
+export type PageName = (typeof PAGE_NAME)[keyof typeof PAGE_NAME];

@@ -15,10 +15,7 @@ export const ADMIN_TABS: TabCategory[] = [
       { label: '기본 정보 수정', path: '/admin/club-info' },
       { label: '소개 정보 수정', path: '/admin/club-intro' },
       { label: '활동 사진 수정', path: '/admin/photo-edit' },
-      ...(import.meta.env.DEV ||
-      (typeof __VERCEL_PREVIEW__ !== 'undefined' && __VERCEL_PREVIEW__)
-        ? [{ label: '동아리 일정 관리', path: '/admin/calendar-sync' }]
-        : []),
+      { label: '동아리 일정 관리', path: '/admin/calendar-sync' },
     ],
   },
   {
@@ -30,6 +27,7 @@ export const ADMIN_TABS: TabCategory[] = [
     items: [
       { label: '지원서 관리', path: '/admin/application-list' },
       { label: '지원자 현황', path: '/admin/applicants-list' },
+      { label: '통계', path: '/admin/statistics' },
     ],
   },
   {

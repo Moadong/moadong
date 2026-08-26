@@ -3,7 +3,7 @@
 모든 상수는 이 디렉토리에서 중앙 관리. 문자열 하드코딩 금지.
 
 - `queryKeys.ts` - React Query 쿼리 키 (도메인.액션 형식)
-- `storageKeys.ts` - localStorage 키 (`accessToken`, `hasConsentedPersonalInfo`, `MOADONG_QUERY_CACHE`)
+- `storageKeys.ts` - localStorage 키 (`accessToken`, `studentAccessToken`, `hasConsentedPersonalInfo`, `MOADONG_QUERY_CACHE`)
 - `status.ts` - 지원 상태 정의 (PENDING, APPROVED, REJECTED 등)
 - `eventName.ts` - Mixpanel 이벤트명 (`USER_EVENT`)
 - `api.ts` - API 엔드포인트 URL
@@ -12,3 +12,5 @@
 - `uploadLimit.ts` - 파일 업로드 제한
 - `adminFieldLimits.ts` - 어드민 탭 텍스트 필드 최대 글자수 (ClubInfo, ClubIntro, Recruit, Account)
 - `adminFieldPlaceholders.ts` - 어드민 탭 텍스트 필드 placeholder 문자열 (ClubInfoEditTab, ClubIntroEditTab 데스크탑/모바일 공유)
+- `calendarEventColors.ts` - 커스텀 캘린더 이벤트 색상 팔레트 / 순서 / 기본값
+- `calendarEvent.ts` - 커스텀 캘린더 이벤트 기본값 (`DEFAULT_CUSTOM_EVENT_TYPE`)

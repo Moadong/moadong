@@ -11,10 +11,17 @@ import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
 import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
 import ClubUnionPage from '@/pages/ClubUnionPage/ClubUnionPage';
 import ErrorTestPage from '@/pages/ErrorTestPage/ErrorTestPage';
+import FeedbackCompletePage from '@/pages/FeedbackPage/FeedbackCompletePage';
+import FeedbackListPage from '@/pages/FeedbackPage/FeedbackListPage';
+import FeedbackTypeSelectPage from '@/pages/FeedbackPage/FeedbackTypeSelectPage';
+import FeedbackWritePage from '@/pages/FeedbackPage/FeedbackWritePage';
+import LetterDetailPage from '@/pages/FeedbackPage/LetterDetailPage';
+import SentFeedbackDetailPage from '@/pages/FeedbackPage/SentFeedbackDetailPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import MainPage from '@/pages/MainPage/MainPage';
 import MenuPage from '@/pages/MenuPage/MenuPage';
+import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage/PrivacyPolicyPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
 import SubscriptionsPage from '@/pages/SubscriptionsPage/SubscriptionsPage';
@@ -41,6 +48,14 @@ const AppRoutes = () =>
           element: (
             <ContentErrorBoundary>
               <IntroducePage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/privacy-policy',
+          element: (
+            <ContentErrorBoundary>
+              <PrivacyPolicyPage />
             </ContentErrorBoundary>
           ),
         },
@@ -142,6 +157,54 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <GamePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback',
+      element: (
+        <ContentErrorBoundary>
+          <FeedbackListPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/complete',
+      element: (
+        <ContentErrorBoundary>
+          <FeedbackCompletePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/write',
+      element: (
+        <ContentErrorBoundary>
+          <FeedbackTypeSelectPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/write/:type',
+      element: (
+        <ContentErrorBoundary>
+          <FeedbackWritePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/letters/:letterId',
+      element: (
+        <ContentErrorBoundary>
+          <LetterDetailPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/sent/:feedbackId',
+      element: (
+        <ContentErrorBoundary>
+          <SentFeedbackDetailPage />
         </ContentErrorBoundary>
       ),
     },

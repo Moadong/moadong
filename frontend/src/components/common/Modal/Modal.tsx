@@ -1,4 +1,7 @@
-import { MouseEvent, ReactNode, useEffect, useRef } from 'react';
+import { MouseEvent, ReactNode, useRef } from 'react';
+import useBodyScrollLock from '@/hooks/useBodyScrollLock';
+import useFocusTrap from '@/hooks/useFocusTrap';
+import useTopmostEscape from '@/hooks/useTopmostEscape';
 import Portal from '../Portal/Portal';
 import * as Styled from './Modal.styles';
 
@@ -15,33 +18,11 @@ const Modal = ({
   children,
   closeOnBackdrop = true,
 }: ModalProps) => {
-  const onCloseRef = useRef(onClose);
-  useEffect(() => {
-    onCloseRef.current = onClose;
-  }, [onClose]);
+  const contentRef = useRef<HTMLDivElement>(null);
 
-  useEffect(() => {
-    if (!isOpen) return;
-
-    const scrollY = window.scrollY;
-    document.body.style.position = 'fixed';
-    document.body.style.top = `-${scrollY}px`;
-    document.body.style.width = '100%';
-
-    const handleKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') onCloseRef.current();
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.body.style.position = '';
-      document.body.style.top = '';
-      document.body.style.width = '';
-      window.scrollTo(0, scrollY);
-      document.removeEventListener('keydown', handleKeyDown);
-    };
-  }, [isOpen]);
+  useBodyScrollLock(isOpen);
+  useTopmostEscape(isOpen, onClose);
+  useFocusTrap(isOpen, contentRef);
 
   if (!isOpen) return null;
 
@@ -49,6 +30,8 @@ const Modal = ({
     <Portal>
       <Styled.Overlay onClick={closeOnBackdrop ? onClose : undefined}>
         <Styled.ContentWrapper
+          ref={contentRef}
+          tabIndex={-1}
           onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
         >
           {children}

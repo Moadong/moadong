@@ -18,18 +18,7 @@ if (import.meta.env.DEV) {
   };
 }
 
-async function startApp() {
-  if (import.meta.env.DEV) {
-    const { worker } = await import('./mocks/browser');
-    await worker.start({
-      onUnhandledRequest: 'bypass',
-    });
-  }
-
-  const root = ReactDOM.createRoot(
-    document.getElementById('root') as HTMLElement,
-  );
-  root.render(<App />);
-}
-
-startApp();
+const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement,
+);
+root.render(<App />);
