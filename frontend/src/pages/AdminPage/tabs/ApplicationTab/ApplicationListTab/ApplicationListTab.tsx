@@ -6,6 +6,9 @@ const ApplicationListTab = () => {
 
   return (
     <ApplicationFormList
+      onNavigate={(applicationFormId) =>
+        navigate(`/admin/application-list/${applicationFormId}/edit`)
+      }
       onEdit={(applicationFormId) =>
         navigate(`/admin/application-list/${applicationFormId}/edit`)
       }

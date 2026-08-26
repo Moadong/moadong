@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
 import expandArrow from '@/assets/images/icons/ExpandArrow.svg';
@@ -12,7 +12,7 @@ import {
 } from '@/hooks/Queries/useApplication';
 import ApplicationRowItem from '@/pages/AdminPage/components/ApplicationRow/ApplicationRowItem';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import * as Styled from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab.styles';
+import * as Styled from '@/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/ApplicationListTab.styles';
 import {
   ApplicationFormGroup,
   ApplicationFormItem,
@@ -36,7 +36,9 @@ const ActiveApplicationRow = styled(ApplicationRowItem)<{
 `;
 
 interface ApplicationFormListProps {
-  /** 지원서 행 클릭/편집 시 이동 (탭마다 대상 라우트가 다름) */
+  /** 지원서 행 제목 클릭 시 이동 (탭마다 대상 라우트가 다름) */
+  onNavigate: (applicationFormId: string) => void;
+  /** 컨텍스트 메뉴 수정하기 클릭 시 이동 */
   onEdit: (applicationFormId: string) => void;
   rowHoverColor: string;
   deleteErrorMessage: string;
@@ -52,6 +54,7 @@ interface ApplicationFormListProps {
  * 탭별 차이(이동 대상·메시지·복제 동작·hover색)만 props로 받는다.
  */
 const ApplicationFormList = ({
+  onNavigate,
   onEdit,
   rowHoverColor,
   deleteErrorMessage,
@@ -201,6 +204,7 @@ const ApplicationFormList = ({
                 openMenuId={openMenuId}
                 menuRef={menuRef}
                 onToggleStatus={handleToggleClick}
+                onNavigate={onNavigate}
                 onEdit={onEdit}
                 onMenuToggle={handleMenuToggle}
                 onDelete={handleDeleteApplication}
@@ -254,6 +258,7 @@ const ApplicationFormList = ({
               uniqueKeyPrefix={`yeargroup-${group.semesterYear}`}
               openMenuId={openMenuId}
               menuRef={menuRef}
+              onNavigate={onNavigate}
               onEdit={onEdit}
               onMenuToggle={handleMenuToggle}
               onToggleStatus={handleToggleClick}

@@ -8,15 +8,14 @@ export const FormTitle = styled.input`
   padding: 10px 12px;
   align-items: center;
   border-radius: 10px;
-  background: var(--f5, #f5f5f5);
-  font-size: 2.5rem;
-  font-weight: 700;
+  background: ${colors.gray[100]};
+  ${setTypography(typography.etc.bold28)}
   border: none;
   outline: none;
   margin: 35px 0px;
 
   &::placeholder {
-    color: #c5c5c5;
+    color: ${colors.gray[500]};
     transition: opacity 0.15s;
   }
 
@@ -35,11 +34,10 @@ export const QuestionContainer = styled.div`
 export const AddQuestionButton = styled.button`
   padding: 8px 12px;
   border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 0.875rem;
-  font-weight: 500;
-  background: white;
-  color: #555;
+  border: 1px solid ${colors.gray[500]};
+  ${setTypography(typography.paragraph.p5)}
+  background: ${colors.base.white};
+  color: ${colors.gray[800]};
   margin-bottom: 60px;
   cursor: pointer;
 `;
@@ -48,7 +46,7 @@ export const QuestionDivider = styled.hr`
   margin-top: 40px;
   margin-bottom: 40px;
   border: none;
-  border-top: 1px solid #ddd;
+  border-top: 1px solid ${colors.gray[400]};
 `;
 
 export const ButtonWrapper = styled.div`
@@ -58,10 +56,10 @@ export const ButtonWrapper = styled.div`
 
 export const submitButton = styled.button`
   padding: 10px 56px;
-  background-color: #ff5414;
+  background-color: ${colors.primary[900]};
   border-radius: 10px;
   border: none;
-  color: #fff;
+  color: ${colors.base.white};
   font-size: 1.25rem;
   font-weight: 600;
   letter-spacing: -0.4px;
@@ -69,7 +67,7 @@ export const submitButton = styled.button`
   margin: 50px 0;
 
   &:hover {
-    background-color: #ffad8e;
+    background-color: ${colors.primary[800]};
     animation: pulse 0.4s ease-in-out;
   }
 
@@ -91,7 +89,7 @@ export const ChangeButtonWrapper = styled.div`
   height: 33px;
   align-items: center;
   border-radius: 6px;
-  box-shadow: 0 0 0 1px var(--Gray-400, #dcdcdc) inset;
+  box-shadow: 0 0 0 1px ${colors.gray[400]} inset;
   width: fit-content;
 `;
 
@@ -103,7 +101,7 @@ export const ApplicationFormChangeButton = styled.button<{ $active: boolean }>`
   cursor: pointer;
   padding: 8px 12px;
   white-space: nowrap;
-  color: #787878;
+  color: ${colors.gray[700]};
   border: 0px;
   background: transparent;
   align-self: stretch;
@@ -113,15 +111,13 @@ export const ApplicationFormChangeButton = styled.button<{ $active: boolean }>`
     props.$active &&
     css`
       box-shadow:
-        0 0 0 1px var(--Main-Primary-900, #ff5414) inset,
+        0 0 0 1px ${colors.primary[900]} inset,
         0 1px 2px 0 rgba(0, 0, 0, 0.2);
-      background: var(--Main-Primary-500, #ffece5);
-      color: var(--Main-Primary-900, #ff5414);
+      background: ${colors.primary[500]};
+      color: ${colors.primary[900]};
     `}
 
-  font-size: 12px;
-  font-style: normal;
-  font-weight: 600;
+  ${setTypography(typography.button.button2)}
 `;
 
 export const ExternalApplicationFormContainer = styled.div`
@@ -130,7 +126,7 @@ export const ExternalApplicationFormContainer = styled.div`
   align-items: center;
   gap: 12px;
   border-radius: 10px;
-  background: var(--Gray-100, #f5f5f5);
+  background: ${colors.gray[100]};
 `;
 
 export const ExternalApplicationFormTitle = styled.div`
@@ -142,27 +138,24 @@ export const ExternalApplicationFormTitle = styled.div`
   gap: 4px;
   flex-shrink: 0;
   border-radius: 8px;
-  background: #fff;
-  font-size: 16px;
-  font-weight: 600;
+  background: ${colors.base.white};
+  ${setTypography(typography.paragraph.p2)}
 `;
 
 export const ExternalApplicationFormLinkInput = styled.input`
   background-color: transparent;
   border: none;
-  font-size: 14px;
-  font-weight: 400;
+  ${setTypography(typography.paragraph.p6)}
   outline: none;
   width: 100%;
   &::placeholder {
-    color: var(--Gray-600, #989898);
+    color: ${colors.gray[600]};
   }
 `;
 
 export const ExternalApplicationFormHint = styled.div`
-  color: var(--Gray-600, #989898);
-  font-size: 12px;
-  font-weight: 400;
+  color: ${colors.gray[600]};
+  ${setTypography(typography.paragraph.p7)}
   margin-top: 8px;
   margin-left: 4px;
 `;
