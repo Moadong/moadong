@@ -39,6 +39,7 @@ const meta = {
     onEdit: () => {},
     onMenuToggle: () => {},
     onDelete: () => {},
+    onDuplicate: () => {},
     onNavigate: () => {},
   },
   render: (args) => {

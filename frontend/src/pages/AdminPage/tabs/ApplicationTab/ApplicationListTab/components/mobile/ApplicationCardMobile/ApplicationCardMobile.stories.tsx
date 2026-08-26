@@ -39,6 +39,7 @@ const meta = {
     onEdit: () => {},
     onMenuToggle: () => {},
     onDelete: () => {},
+    onDuplicate: () => {},
   },
   render: (args) => {
     const [isActive, setIsActive] = useState(args.isActive);

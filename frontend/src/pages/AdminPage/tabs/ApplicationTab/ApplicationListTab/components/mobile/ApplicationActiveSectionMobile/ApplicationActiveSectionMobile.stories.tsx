@@ -40,6 +40,7 @@ const meta = {
     onEdit: () => {},
     onMenuToggle: () => {},
     onDelete: () => {},
+    onDuplicate: () => {},
   },
   render: (args) => {
     const [forms, setForms] = useState(args.activeForms);
@@ -72,6 +73,10 @@ const meta = {
         onMenuToggle={handleMenuToggle}
         onDelete={(id) => {
           setForms((prev) => prev.filter((f) => f.id !== id));
+          setOpenMenuId(null);
+        }}
+        onDuplicate={(id) => {
+          console.log('duplicate', id);
           setOpenMenuId(null);
         }}
       />
