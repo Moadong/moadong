@@ -1,3 +1,4 @@
+import { Link } from 'react-router-dom';
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
@@ -44,7 +45,7 @@ export const FooterContent = styled.div`
   }
 `;
 
-export const PolicyLink = styled.a`
+export const PolicyLink = styled(Link)`
   color: #818181;
   font-size: 0.75rem;
   text-decoration: underline;

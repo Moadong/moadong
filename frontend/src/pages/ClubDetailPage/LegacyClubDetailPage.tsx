@@ -4,6 +4,7 @@ import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
@@ -35,6 +36,11 @@ const LegacyClubDetailPage = () => {
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
+  useTrackClubDetailDuration({
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
 
   const handleTabClick = useCallback(
     (tabKey: TabType) => {

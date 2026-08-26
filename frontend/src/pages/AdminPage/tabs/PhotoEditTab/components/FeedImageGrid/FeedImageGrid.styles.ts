@@ -1,11 +1,11 @@
-// FeedImageGrid 컴포넌트 스타일
-
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
-export const ImageGrid = styled.div`
+export const Grid = styled.div<{ $columns: number }>`
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  grid-template-columns: repeat(${({ $columns }) => $columns}, 1fr);
+  gap: 2px;
   width: 100%;
   align-self: flex-start;
   position: relative;
@@ -25,6 +25,85 @@ export const DragItem = styled.div<{
 
   &:active {
     cursor: grabbing;
+  }
+`;
+
+export const PhotoItem = styled.div`
+  position: relative;
+  width: 100%;
+  aspect-ratio: 123 / 160;
+  overflow: hidden;
+  background-color: #d9d9d9;
+`;
+
+export const Photo = styled.img`
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border: none;
+`;
+
+export const Overlay = styled.div<{ $error?: boolean }>`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: ${({ $error }) =>
+    $error ? 'rgba(239, 68, 68, 0.5)' : 'rgba(0, 0, 0, 0.4)'};
+`;
+
+export const StatusText = styled.span`
+  ${setTypography(typography.button.button2)}
+  color: ${colors.base.white};
+`;
+
+export const RetryButton = styled.button`
+  padding: 4px 12px;
+  border: 1.5px solid ${colors.base.white};
+  border-radius: 6px;
+  background: transparent;
+  ${setTypography(typography.button.button2)}
+  color: ${colors.base.white};
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.2);
+  }
+`;
+
+export const PendingBadge = styled.div`
+  position: absolute;
+  bottom: 6px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 2px 8px;
+  background: rgba(0, 0, 0, 0.5);
+  border-radius: 100px;
+  ${setTypography(typography.button.button2)}
+  color: ${colors.base.white};
+  white-space: nowrap;
+`;
+
+export const DeleteButton = styled.button`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;
 

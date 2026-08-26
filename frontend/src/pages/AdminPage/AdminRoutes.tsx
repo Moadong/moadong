@@ -5,8 +5,8 @@ import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab
 import ApplicantDetailPage from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPage';
 import ApplicantsListTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/ApplicantsListTab';
 import ApplicantsTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsTab';
-import ApplicationEditTab from '@/pages/AdminPage/tabs/ApplicationEditTab/ApplicationEditTab';
-import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab';
+import ApplicationEditTab from '@/pages/AdminPage/tabs/ApplicationTab/ApplicationEditTab/ApplicationEditTab';
+import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/ApplicationListTab';
 import CalendarSyncTab from '@/pages/AdminPage/tabs/CalendarSyncTab/CalendarSyncTab';
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import ClubIntroEditTab from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroEditTab';
@@ -26,11 +26,17 @@ export default function AdminRoutes() {
     <Routes>
       <Route path='' element={<AdminPage />}>
         <Route index element={<AdminIndexRoute />} />
+
+        {/* 동아리 프로필 */}
         <Route path='club-info' element={<ClubInfoEditTab />} />
-        <Route path='recruit-edit' element={<RecruitEditTab />} />
-        <Route path='calendar-sync' element={<CalendarSyncTab />} />
+        <Route path='club-intro' element={<ClubIntroEditTab />} />
         <Route path='photo-edit' element={<PhotoEditTab />} />
-        <Route path='account-edit' element={<AccountEditTab />} />
+
+        {/* 동아리 활동 */}
+        <Route path='calendar-sync' element={<CalendarSyncTab />} />
+        <Route path='recruit-edit' element={<RecruitEditTab />} />
+
+        {/* 지원 관리 */}
         <Route path='application-list' element={<ApplicationListTab />} />
         <Route
           path='application-list/:applicationFormId/edit'
@@ -47,7 +53,9 @@ export default function AdminRoutes() {
           path='applicants-list/:applicationFormId/:questionId'
           element={<ApplicantDetailPage />}
         />
-        <Route path='club-intro' element={<ClubIntroEditTab />} />
+
+        {/* 계정 관리 */}
+        <Route path='account-edit' element={<AccountEditTab />} />
       </Route>
     </Routes>
   );

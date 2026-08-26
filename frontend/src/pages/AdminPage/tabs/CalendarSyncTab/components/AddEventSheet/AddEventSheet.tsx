@@ -1,6 +1,8 @@
 import { useMemo, useState } from 'react';
 import ResponsiveSheet from '@/components/common/ResponsiveSheet/ResponsiveSheet';
 import { DEFAULT_CALENDAR_EVENT_COLOR } from '@/constants/calendarEventColors';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useCreateCustomCalendarEvent } from '@/hooks/Queries/useCustomCalendarEvents';
 import { colors } from '@/styles/theme/colors';
 import type {
@@ -9,7 +11,8 @@ import type {
   CustomEventType,
   RecurrenceFrequency,
 } from '@/types/club';
-import { dateFromKey, formatMonthLabel } from '@/utils/calendarSyncUtils';
+import { dateFromKey } from '@/utils/calendarSyncUtils';
+import CalendarLinkPanel from '../CalendarLinkPanel/CalendarLinkPanel';
 import ColorBar from '../ColorBar/ColorBar';
 import DatePickerSheet from '../DatePickerSheet/DatePickerSheet';
 import MiniCalendar from '../MiniCalendar/MiniCalendar';
@@ -30,6 +33,7 @@ const AddEventSheet = ({
   onClose,
   initialDate,
 }: AddEventSheetProps) => {
+  const trackEvent = useMixpanelTrack();
   const createMutation = useCreateCustomCalendarEvent();
 
   const [title, setTitle] = useState('');
@@ -59,7 +63,20 @@ const AddEventSheet = ({
     'start' | 'end' | null
   >(null);
 
+  /** 어느 유형에서 어떤 날짜를 골랐는지 남긴다 */
+  const trackDateSelected = (dateKey: string) =>
+    trackEvent(ADMIN_EVENT.CALENDAR_EVENT_DATE_SELECTED, {
+      eventType,
+      dateKey,
+    });
+
+  const openDatePicker = (target: 'start' | 'end') => {
+    trackEvent(ADMIN_EVENT.CALENDAR_DATE_PICKER_OPENED, { target });
+    setDatePickerTarget(target);
+  };
+
   const handleRangeSelect = (dateKey: string) => {
+    trackDateSelected(dateKey);
     if (!rangeStart || (rangeStart && rangeEnd)) {
       setRangeStart(dateKey);
       setRangeEnd(undefined);
@@ -73,12 +90,14 @@ const AddEventSheet = ({
     setRangeEnd(dateKey);
   };
 
-  const handleMultiSelect = (dateKey: string) =>
+  const handleMultiSelect = (dateKey: string) => {
+    trackDateSelected(dateKey);
     setMultiDates((prev) =>
       prev.includes(dateKey)
         ? prev.filter((d) => d !== dateKey)
         : [...prev, dateKey].sort(),
     );
+  };
 
   /** 반복 기간은 시작/종료를 각각 시트에서 정한다 */
   const handlePickDate = (dateKey: string) => {
@@ -88,15 +107,21 @@ const AddEventSheet = ({
       if (recurEnd && recurEnd <= dateKey) setRecurEnd(null);
     }
     if (datePickerTarget === 'end') setRecurEnd(dateKey);
+    trackDateSelected(dateKey);
     setDatePickerTarget(null);
   };
 
-  const toggleWeekday = (weekday: number) =>
+  const toggleWeekday = (weekday: number) => {
+    trackEvent(ADMIN_EVENT.CALENDAR_RECURRENCE_WEEKDAY_TOGGLED, {
+      weekday,
+      selected: !weekdays.includes(weekday),
+    });
     setWeekdays((prev) =>
       prev.includes(weekday)
         ? prev.filter((d) => d !== weekday)
         : [...prev, weekday],
     );
+  };
 
   const canSave = useMemo(() => {
     if (!title.trim()) return false;
@@ -141,7 +166,15 @@ const AddEventSheet = ({
     }
     setErrorMessage('');
     createMutation.mutate(buildPayload(), {
-      onSuccess: onClose,
+      onSuccess: () => {
+        trackEvent(ADMIN_EVENT.CALENDAR_EVENT_CREATED, {
+          eventType,
+          color,
+          frequency: eventType === 'RECURRING' ? frequency : undefined,
+          hasEndDate: eventType === 'RECURRING' ? recurEnd !== null : undefined,
+        });
+        onClose();
+      },
       onError: () => setErrorMessage('일정 저장에 실패했습니다.'),
     });
   };
@@ -151,20 +184,36 @@ const AddEventSheet = ({
       isOpen={isOpen}
       onClose={onClose}
       sheetBackground={colors.gray[100]}
+      stacked={datePickerTarget !== null}
     >
       <Styled.Body>
-        <TitleInput value={title} onChange={setTitle} />
-        <SegmentTabs value={eventType} onChange={setEventType} />
-        <Styled.MonthLabel>{formatMonthLabel(month)}</Styled.MonthLabel>
-
+        <TitleInput
+          value={title}
+          onChange={setTitle}
+          onClear={() =>
+            trackEvent(ADMIN_EVENT.CALENDAR_TITLE_CLEAR_BUTTON_CLICKED)
+          }
+        />
+        <SegmentTabs
+          value={eventType}
+          onChange={(nextType) => {
+            trackEvent(ADMIN_EVENT.CALENDAR_EVENT_TYPE_TAB_CLICKED, {
+              eventType: nextType,
+            });
+            setEventType(nextType);
+          }}
+        />
+        {/* 달을 넘길 수단이 헤더뿐이라, 헤더를 숨기면 initialDate가 속한 달에만 갇힌다 */}
         {eventType === 'SINGLE' && (
           <MiniCalendar
             month={month}
             onMonthChange={setMonth}
             mode='single'
             selectedDate={selectedDate}
-            onSelectDate={setSelectedDate}
-            showHeader={false}
+            onSelectDate={(dateKey) => {
+              trackDateSelected(dateKey);
+              setSelectedDate(dateKey);
+            }}
             accentColor={color}
           />
         )}
@@ -177,7 +226,6 @@ const AddEventSheet = ({
             rangeStart={rangeStart}
             rangeEnd={rangeEnd}
             onSelectDate={handleRangeSelect}
-            showHeader={false}
             accentColor={color}
           />
         )}
@@ -189,7 +237,6 @@ const AddEventSheet = ({
             mode='multi'
             selectedDates={multiDates}
             onSelectDate={handleMultiSelect}
-            showHeader={false}
             accentColor={color}
           />
         )}
@@ -197,34 +244,61 @@ const AddEventSheet = ({
         {eventType === 'RECURRING' && (
           <RecurrenceFields
             frequency={frequency}
-            onFrequencyChange={setFrequency}
+            onFrequencyChange={(nextFrequency) => {
+              trackEvent(ADMIN_EVENT.CALENDAR_RECURRENCE_FREQUENCY_CHANGED, {
+                frequency: nextFrequency,
+              });
+              setFrequency(nextFrequency);
+            }}
             weekdays={weekdays}
             onToggleWeekday={toggleWeekday}
             startDate={recurStart}
             endDate={recurEnd}
-            onOpenStartPicker={() => setDatePickerTarget('start')}
-            onOpenEndPicker={() => setDatePickerTarget('end')}
+            onOpenStartPicker={() => openDatePicker('start')}
+            onOpenEndPicker={() => openDatePicker('end')}
           />
         )}
 
-        <ColorBar value={color} onChange={setColor} />
+        <ColorBar
+          value={color}
+          onChange={(nextColor) => {
+            trackEvent(ADMIN_EVENT.CALENDAR_COLOR_SELECTED, {
+              color: nextColor,
+            });
+            setColor(nextColor);
+          }}
+        />
 
-        {errorMessage && <Styled.ErrorText>{errorMessage}</Styled.ErrorText>}
+        {eventType === 'SINGLE' && <CalendarLinkPanel />}
 
-        <Styled.SaveButton
-          type='button'
-          disabled={!canSave || createMutation.isPending}
-          onClick={handleSave}
-        >
-          {createMutation.isPending ? '저장 중…' : '저장하기'}
-        </Styled.SaveButton>
+        {/* 날짜 시트가 위에 열려 있는 동안에는 저장할 일이 없다 */}
+        {datePickerTarget === null && (
+          <Styled.SaveArea>
+            {/* 실패 안내는 버튼과 같이 고정돼야 스크롤 밖으로 밀리지 않는다 */}
+            {errorMessage && (
+              <Styled.ErrorText>{errorMessage}</Styled.ErrorText>
+            )}
+            <Styled.SaveButton
+              type='button'
+              disabled={!canSave || createMutation.isPending}
+              onClick={handleSave}
+            >
+              {createMutation.isPending ? '저장 중…' : '저장하기'}
+            </Styled.SaveButton>
+          </Styled.SaveArea>
+        )}
       </Styled.Body>
 
       <DatePickerSheet
         isOpen={datePickerTarget !== null}
         onClose={() => setDatePickerTarget(null)}
         month={month}
-        onMonthChange={setMonth}
+        onMonthChange={(nextMonth) => {
+          trackEvent(ADMIN_EVENT.CALENDAR_MONTH_CHANGED, {
+            calendarType: 'picker',
+          });
+          setMonth(nextMonth);
+        }}
         selectedDate={
           datePickerTarget === 'end' ? (recurEnd ?? undefined) : recurStart
         }
@@ -234,6 +308,7 @@ const AddEventSheet = ({
         onClear={
           datePickerTarget === 'end'
             ? () => {
+                trackEvent(ADMIN_EVENT.CALENDAR_END_DATE_CLEARED);
                 setRecurEnd(null);
                 setDatePickerTarget(null);
               }

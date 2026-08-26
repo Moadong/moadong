@@ -65,7 +65,11 @@ const SubscribedClubs = () => {
               <SubscribeButton
                 subscribed={subscribedClubIds.has(club.id)}
                 onToggle={() =>
-                  toggleSubscribe(club.id, subscribedClubIds.has(club.id))
+                  toggleSubscribe(
+                    club.id,
+                    subscribedClubIds.has(club.id),
+                    PAGE_NAME.SUBSCRIPTIONS,
+                  )
                 }
               />
             </ClubCard>

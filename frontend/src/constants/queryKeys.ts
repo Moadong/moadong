@@ -48,6 +48,19 @@ export const queryKeys = {
     all: ['promotions'] as const,
     list: () => ['promotions', 'list'] as const,
   },
+  feedback: {
+    all: ['feedback'] as const,
+    /** 카테고리별로 나뉜 받은 편지 목록을 한 번에 무효화하는 접두사 */
+    receivedAll: ['feedback', 'received'] as const,
+    received: (category?: string) =>
+      ['feedback', 'received', category ?? 'ALL'] as const,
+    /** 읽음 처리 시 목록만 무효화하려고 상세는 'received' 접두사를 쓰지 않는다 */
+    receivedDetail: (letterId: string) =>
+      ['feedback', 'letter', letterId] as const,
+    sent: () => ['feedback', 'sent'] as const,
+    sentDetail: (feedbackId: string) =>
+      ['feedback', 'sent', 'detail', feedbackId] as const,
+  },
   banner: {
     all: ['banner'] as const,
     list: (type: 'WEB' | 'APP_HOME' | 'WEB_MOBILE') =>

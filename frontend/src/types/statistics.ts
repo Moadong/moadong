@@ -5,6 +5,8 @@ export interface ClubStatisticsOverview {
   to: string;
   totalDetailViews: number;
   averageDetailDurationSeconds: number;
+  uniqueDetailVisitors: number;
+  averageDetailDurationSecondsPerVisitor: number;
   totalApplicants: number;
 }
 

@@ -226,7 +226,7 @@ export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
 
   &:checked {
     border: 0px;
-    background: #ffe7de url(\"${checkIcon}\") center/24px 24px no-repeat;
+    background: #ffe7de url('${checkIcon}') center/24px 24px no-repeat;
   }
 `;
 
@@ -260,7 +260,7 @@ export const ApplicantTableAllSelectCheckbox = styled.input.attrs({
 
   &:checked {
     border: 0px;
-    background: #ffe7de url(\"${checkIcon}\") center/24px 24px no-repeat;
+    background: #ffe7de url('${checkIcon}') center/24px 24px no-repeat;
   }
 `;
 

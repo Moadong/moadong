@@ -128,6 +128,8 @@ describe('useNavigator - 사용자가 링크를 클릭했을 때', () => {
         expect(mockRequestOpenExternalUrl).toHaveBeenCalled();
         expect(window.open).toHaveBeenCalledWith(
           'itms-apps://itunes.apple.com/app/123456',
+          '_blank',
+          'noopener',
         );
       });
     });

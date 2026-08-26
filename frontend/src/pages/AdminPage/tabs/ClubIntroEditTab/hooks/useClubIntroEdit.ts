@@ -12,7 +12,6 @@ const useClubIntroEdit = () => {
   const { mutate: updateClub } = useUpdateClubDetail();
   const queryClient = useQueryClient();
 
-  const [loadedClubId, setLoadedClubId] = useState<string | null>(null);
   const [introDescription, setIntroDescription] = useState('');
   const [activityDescription, setActivityDescription] = useState('');
   const [awards, setAwards] = useState<Award[]>([]);
@@ -32,8 +31,19 @@ const useClubIntroEdit = () => {
     faqs: [] as FAQ[],
   });
 
+  const isDirty =
+    introDescription !== initialState.introDescription ||
+    activityDescription !== initialState.activityDescription ||
+    benefits !== initialState.benefits ||
+    JSON.stringify(idealCandidate) !==
+      JSON.stringify(initialState.idealCandidate) ||
+    JSON.stringify(awards) !== JSON.stringify(initialState.awards) ||
+    JSON.stringify(faqs) !== JSON.stringify(initialState.faqs);
+
   useEffect(() => {
-    if (clubDetail?.description && clubDetail.id !== loadedClubId) {
+    // 편집 중(isDirty)이면 서버 값으로 덮어쓰지 않는다.
+    // isDirty는 의도적으로 deps에서 제외한다 — deps에 넣으면 재동기화 루프가 생긴다.
+    if (clubDetail?.description && !isDirty) {
       const desc = clubDetail.description;
       const initial = {
         introDescription: desc.introDescription || '',
@@ -50,17 +60,8 @@ const useClubIntroEdit = () => {
       setBenefits(initial.benefits);
       setFaqs(initial.faqs);
       setInitialState(initial);
-      setLoadedClubId(clubDetail.id);
     }
-  }, [clubDetail, loadedClubId]);
-
-  const isDirty =
-    introDescription !== initialState.introDescription ||
-    activityDescription !== initialState.activityDescription ||
-    benefits !== initialState.benefits ||
-    idealCandidate.content !== initialState.idealCandidate.content ||
-    JSON.stringify(awards) !== JSON.stringify(initialState.awards) ||
-    JSON.stringify(faqs) !== JSON.stringify(initialState.faqs);
+  }, [clubDetail]); // eslint-disable-line react-hooks/exhaustive-deps
 
   const handleUpdateClubWithAwards = (newAwards: Award[]) => {
     if (!clubDetail?.id) {

@@ -1,18 +1,11 @@
 import { useEffect } from 'react';
 import type { Preview } from '@storybook/react-vite';
 import mixpanel from 'mixpanel-browser';
-import { initialize, mswLoader } from 'msw-storybook-addon';
 import { ThemeProvider } from 'styled-components';
-import { handlers } from '../src/mocks/handlers';
 import GlobalStyles from '../src/styles/Global.styles';
 import { theme } from '../src/styles/theme';
 
-initialize({
-  onUnhandledRequest: 'bypass',
-});
-
 const preview: Preview = {
-  loaders: [mswLoader],
   decorators: [
     (Story) => {
       useEffect(() => {
@@ -43,9 +36,6 @@ const preview: Preview = {
         color: /(background|color)$/i,
         date: /Date$/i,
       },
-    },
-    msw: {
-      handlers,
     },
   },
 };

@@ -92,8 +92,8 @@ export const MoreButton = styled.button`
 `;
 
 export const MoreButtonIcon = styled.img`
-  width: 12px;
-  height: 12px;
+  width: 30px;
+  height: 30px;
 `;
 
 export const MoreButtonContainer = styled.div`

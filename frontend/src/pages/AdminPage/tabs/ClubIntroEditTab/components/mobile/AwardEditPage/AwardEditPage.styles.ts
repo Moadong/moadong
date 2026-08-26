@@ -70,20 +70,3 @@ export const EmptyText = styled.span`
   ${setTypography(typography.paragraph.p6)}
   color: ${colors.gray[700]};
 `;
-
-export const SemesterAddButton = styled.button`
-  position: fixed;
-  bottom: calc(101px + env(safe-area-inset-bottom));
-  right: 20px;
-  width: 48px;
-  height: 48px;
-  border-radius: 133.333px;
-  background: ${colors.primary[900]};
-  box-shadow: 0px 0px 14px rgba(0, 0, 0, 0.16);
-  border: none;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-`;
