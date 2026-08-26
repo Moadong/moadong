@@ -25,14 +25,12 @@ export const EmptyBox = styled.div`
 
 export const EmptyTitle = styled.span`
   ${setTypography(typography.paragraph.p2)}
-  letter-spacing: -0.02em;
   text-align: center;
   color: ${colors.gray[700]};
 `;
 
 export const EmptyDescription = styled.span`
   ${setTypography(typography.etc.medium12)}
-  letter-spacing: -0.02em;
   text-align: center;
   color: ${colors.gray[600]};
 `;
