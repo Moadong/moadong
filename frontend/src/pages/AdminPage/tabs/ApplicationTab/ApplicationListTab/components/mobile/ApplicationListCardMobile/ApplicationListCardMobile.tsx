@@ -70,8 +70,8 @@ const ApplicationListCardMobile = ({
                   onToggleStatus(application.id, application.status)
                 }
                 onEdit={() => onEdit(application.id)}
-                onDelete={() => onDelete(application.id)}
                 onDuplicate={() => onDuplicate(application.id)}
+                onDelete={() => onDelete(application.id)}
               />
             )}
           </Styled.MoreButtonContainer>

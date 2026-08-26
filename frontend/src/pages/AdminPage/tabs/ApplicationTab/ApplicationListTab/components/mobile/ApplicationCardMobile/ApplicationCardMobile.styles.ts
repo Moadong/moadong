@@ -7,7 +7,7 @@ export const Card = styled.div`
   flex-direction: column;
   align-items: center;
   padding: 12px 14px;
-  width: 335px;
+  width: 100%;
   height: 73px;
   background-color: ${colors.gray[50]};
   border: 1px solid ${colors.gray[300]};

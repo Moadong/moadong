@@ -20,7 +20,7 @@ const MobileFloatingButton = ({
       aria-label={ariaLabel}
       $bottom={bottom}
     >
-      <img src={icon} alt='' width={20} height={20} />
+      <img src={icon} alt='' width={17} height={17} />
     </Styled.Button>
   );
 };

@@ -1,8 +1,15 @@
 import { useNavigate } from 'react-router-dom';
+import useDevice from '@/hooks/useDevice';
 import ApplicationFormList from '@/pages/AdminPage/components/ApplicationFormList/ApplicationFormList';
+import ApplicationListTabMobile from './ApplicationListTabMobile';
 
 const ApplicationListTab = () => {
   const navigate = useNavigate();
+  const { isMobile, isTablet } = useDevice();
+
+  if (isMobile || isTablet) {
+    return <ApplicationListTabMobile />;
+  }
 
   return (
     <ApplicationFormList

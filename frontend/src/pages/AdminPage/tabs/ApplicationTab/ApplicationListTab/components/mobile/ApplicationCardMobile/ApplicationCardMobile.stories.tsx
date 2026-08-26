@@ -8,6 +8,7 @@ import ApplicationCardMobile from './ApplicationCardMobile';
 const mockApplication = {
   id: asApplicationFormId('form-1'),
   title: 'OO동아리 8기 신입 지원서',
+  createdAt: '2025-06-01T09:00:00.000Z',
   editedAt: '2025-07-01T12:46:00.000Z',
   status: 'ACTIVE' as ApplicationFormStatus,
 };
