@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import styled from 'styled-components';
-import expandArrow from '@/assets/images/icons/ExpandArrow.svg';
 import Plus from '@/assets/images/icons/Plus.svg';
 import Spinner from '@/components/common/Spinner/Spinner';
 import {
@@ -214,10 +213,7 @@ const ApplicationFormList = ({
             {showExpandButton && (
               <Styled.ExpandButton onClick={handleToggleExpand}>
                 {isExpanded ? '접어두기' : `펼쳐보기 (외 ${overCount}개)`}
-                <Styled.ExpandArrow
-                  src={expandArrow}
-                  $isExpanded={isExpanded}
-                />
+                <Styled.ExpandArrow $isExpanded={isExpanded} />
               </Styled.ExpandButton>
             )}
           </ActiveListBody>
