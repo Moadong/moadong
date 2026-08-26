@@ -17,14 +17,17 @@ export const useScrollTrigger = ({
 }: ScrollTriggerOptions = {}) => {
   const [isTriggered, setIsTriggered] = useState(false);
   const [isScrollingUp, setIsScrollingUp] = useState(false);
+  const [isDisabled, setIsDisabled] = useState(false);
   const prevScrollY = useRef(window.scrollY);
 
   const handleScroll = useCallback(() => {
     if (document.body.style.position === 'fixed') return;
     if (document.body.dataset[SCROLL_TRIGGER_DISABLED]) {
+      setIsDisabled(true);
       setIsTriggered(false);
       return;
     }
+    setIsDisabled(false);
 
     const scrollY = window.scrollY;
     const scrollingUp = scrollY < prevScrollY.current;
@@ -47,5 +50,5 @@ export const useScrollTrigger = ({
     return () => window.removeEventListener('scroll', handleScroll);
   }, [handleScroll, passive]);
 
-  return { isTriggered, isScrollingUp };
+  return { isTriggered, isScrollingUp, isDisabled };
 };
