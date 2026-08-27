@@ -83,7 +83,7 @@ export const StatusTag = styled.span`
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 4px 8px;
+  width: 58px;
   height: 25px;
   border-radius: 8px;
   background: ${colors.gray[200]};

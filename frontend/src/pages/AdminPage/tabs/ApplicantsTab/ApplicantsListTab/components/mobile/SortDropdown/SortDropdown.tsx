@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { CustomDropDown } from '@/components/common/CustomDropDown/CustomDropDown';
 import * as Styled from './SortDropdown.styles';
 
@@ -12,11 +11,16 @@ const SORT_OPTIONS = [
 interface SortDropdownProps {
   value: SortValue;
   onChange: (value: SortValue) => void;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
-const SortDropdown = ({ value, onChange }: SortDropdownProps) => {
-  const [isOpen, setIsOpen] = useState(false);
-
+const SortDropdown = ({
+  value,
+  onChange,
+  isOpen,
+  onToggle,
+}: SortDropdownProps) => {
   const selectedLabel =
     SORT_OPTIONS.find((o) => o.value === value)?.label ?? '제출순';
 
@@ -25,12 +29,9 @@ const SortDropdown = ({ value, onChange }: SortDropdownProps) => {
       <CustomDropDown
         options={SORT_OPTIONS}
         selected={value}
-        onSelect={(v) => {
-          onChange(v);
-          setIsOpen(false);
-        }}
+        onSelect={(v) => onChange(v as SortValue)}
         open={isOpen}
-        onToggle={() => setIsOpen((prev) => !prev)}
+        onToggle={onToggle}
       >
         <CustomDropDown.Trigger>
           <Styled.Trigger>

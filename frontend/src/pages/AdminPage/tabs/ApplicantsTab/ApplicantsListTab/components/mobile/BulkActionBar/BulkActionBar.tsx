@@ -1,4 +1,3 @@
-import { useState } from 'react';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import { ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
@@ -8,23 +7,25 @@ interface BulkActionBarProps {
   enabled: boolean;
   onStatusChange: (status: ApplicationStatus) => void;
   onDelete: () => void;
+  isStatusMenuOpen: boolean;
+  onToggleStatusMenu: () => void;
 }
 
 const BulkActionBar = ({
   enabled,
   onStatusChange,
   onDelete,
+  isStatusMenuOpen,
+  onToggleStatusMenu,
 }: BulkActionBarProps) => {
-  const [isStatusMenuOpen, setIsStatusMenuOpen] = useState(false);
-
   const handleStatusButtonClick = () => {
     if (!enabled) return;
-    setIsStatusMenuOpen((prev) => !prev);
+    onToggleStatusMenu();
   };
 
   const handleStatusSelect = (status: ApplicationStatus) => {
     onStatusChange(status);
-    setIsStatusMenuOpen(false);
+    onToggleStatusMenu();
   };
 
   return (
@@ -35,7 +36,7 @@ const BulkActionBar = ({
           onClick={handleStatusButtonClick}
         >
           <span>상태변경</span>
-          <Styled.TriangleIcon $enabled={enabled} />
+          <Styled.TriangleIcon $enabled={enabled} $isOpen={isStatusMenuOpen} />
         </Styled.StatusButton>
         {isStatusMenuOpen && (
           <Styled.StatusMenu>

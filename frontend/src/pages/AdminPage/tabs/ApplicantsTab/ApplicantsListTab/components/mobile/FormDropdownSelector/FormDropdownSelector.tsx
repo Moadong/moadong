@@ -9,14 +9,17 @@ interface FormDropdownSelectorProps {
   forms: ApplicationFormItem[];
   selectedFormId: string;
   onSelect: (formId: string) => void;
+  isOpen: boolean;
+  onToggle: () => void;
 }
 
 const FormDropdownSelector = ({
   forms,
   selectedFormId,
   onSelect,
+  isOpen,
+  onToggle,
 }: FormDropdownSelectorProps) => {
-  const [isOpen, setIsOpen] = useState(false);
   const [thumbOffset, setThumbOffset] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -24,11 +27,6 @@ const FormDropdownSelector = ({
   const selectedForm = forms.find((f) => f.id === selectedFormId);
   const isFixed = forms.length >= 3;
   const hasScroll = forms.length > 3;
-
-  const handleSelect = (formId: string) => {
-    onSelect(formId);
-    setIsOpen(false);
-  };
 
   const handleScroll = () => {
     if (!listRef.current) return;
@@ -40,17 +38,13 @@ const FormDropdownSelector = ({
 
   return (
     <Styled.Wrapper>
-      <Styled.Trigger
-        $isOpen={isOpen}
-        onClick={() => setIsOpen((prev) => !prev)}
-        disabled={isEmpty}
-      >
+      <Styled.Trigger $isOpen={isOpen} onClick={onToggle} disabled={isEmpty}>
         <Styled.TriggerLabel>
           {isEmpty
             ? '등록된 지원서 없음'
             : (selectedForm?.title ?? '지원서 선택')}
         </Styled.TriggerLabel>
-        <Styled.ChevronIcon />
+        <Styled.ChevronIcon $isOpen={isOpen} />
       </Styled.Trigger>
 
       {isOpen && (
@@ -64,7 +58,10 @@ const FormDropdownSelector = ({
               <Styled.MenuItem
                 key={form.id}
                 $isSelected={form.id === selectedFormId}
-                onClick={() => handleSelect(form.id)}
+                onClick={() => {
+                  onSelect(form.id);
+                  onToggle();
+                }}
               >
                 {form.title}
               </Styled.MenuItem>

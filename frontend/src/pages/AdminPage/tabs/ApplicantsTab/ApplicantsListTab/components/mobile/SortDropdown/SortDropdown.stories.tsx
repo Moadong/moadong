@@ -28,15 +28,34 @@ type Story = StoryObj<typeof meta>;
 
 const Interactive = (args: React.ComponentProps<typeof SortDropdown>) => {
   const [value, setValue] = useState<SortValue>(args.value);
-  return <SortDropdown {...args} value={value} onChange={setValue} />;
+  const [isOpen, setIsOpen] = useState(false);
+  return (
+    <SortDropdown
+      {...args}
+      value={value}
+      onChange={setValue}
+      isOpen={isOpen}
+      onToggle={() => setIsOpen((prev) => !prev)}
+    />
+  );
 };
 
 export const Default: Story = {
-  args: { value: 'date', onChange: () => {} },
+  args: {
+    value: 'date',
+    onChange: () => {},
+    isOpen: false,
+    onToggle: () => {},
+  },
   render: (args) => <Interactive {...args} />,
 };
 
 export const NameSorted: Story = {
-  args: { value: 'name', onChange: () => {} },
+  args: {
+    value: 'name',
+    onChange: () => {},
+    isOpen: false,
+    onToggle: () => {},
+  },
   render: (args) => <Interactive {...args} />,
 };
