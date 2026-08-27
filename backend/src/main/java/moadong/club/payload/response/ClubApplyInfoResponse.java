@@ -11,6 +11,7 @@ public record ClubApplyInfoResponse(
         int reviewRequired,
         int scheduledInterview,
         int accepted,
+        int declined,
         List<ClubApplicantsResult> applicants
 ) {
 }
