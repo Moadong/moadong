@@ -16,11 +16,18 @@ export const typography = {
     p4: { size: '16px', weight: 400, lineHeight: '140%' },
     p5: { size: '14px', weight: 500, lineHeight: '140%' },
     p6: { size: '14px', weight: 400, lineHeight: '140%' },
+    p6r: { size: '14px', weight: 400, lineHeight: '160%' },
     p7: { size: '12px', weight: 400, lineHeight: '140%' },
   },
   button: {
     button1: { size: '14px', weight: 600, lineHeight: '140%' },
     button2: { size: '12px', weight: 600, lineHeight: '140%' },
+  },
+  etc: {
+    bold28: { size: '28px', weight: 700, lineHeight: '140%' },
+    bold36: { size: '36px', weight: 700, lineHeight: '140%' },
+    bold22: { size: '22px', weight: 700, lineHeight: '140%' },
+    medium12: { size: '12px', weight: 500, lineHeight: '140%' },
   },
 } as const;
 

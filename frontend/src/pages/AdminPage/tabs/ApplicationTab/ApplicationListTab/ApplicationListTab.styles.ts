@@ -1,8 +1,7 @@
 import styled, { css } from 'styled-components';
-
-interface MenuItemProps {
-  $ActiveMenu?: boolean;
-}
+import MoreArrowIcon from '@/assets/images/icons/more_arraw_icon.svg?react';
+import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 interface ExpandButtonProps {
   $isExpanded: boolean;
@@ -12,15 +11,9 @@ interface ExpandButtonProps {
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
-  font-family: 'Pretendard', sans-serif;
   line-height: 1.4;
 `;
 
-export const Title = styled.div`
-  font-size: 24px;
-  font-weight: 700;
-  margin-bottom: 24px;
-`;
 // 활성화된 지원서 목록을 감싸는 컨테이너
 export const ActiveListContainer = styled.div`
   flex-direction: column;
@@ -34,17 +27,16 @@ export const ActiveListTitleBox = styled.div`
   height: 46px;
   display: flex;
   padding: 12px 24px;
-  border: 1px solid #dcdcdc;
+  border: 1px solid ${colors.gray[400]};
   border-top-left-radius: 20px;
   border-top-right-radius: 20px;
-  background-color: #ff7543;
+  background-color: ${colors.primary[800]};
 `;
 // "게시된 지원서" 타이틀 텍스트
 export const ActiveListTitle = styled.div`
   width: auto;
-  font-size: 16px;
-  font-weight: 600;
-  color: #ffffff;
+  ${setTypography(typography.paragraph.p2)}
+  color: ${colors.base.white};
   white-space: nowrap;
 `;
 // 펼쳐보기 / 접어두기 버튼
@@ -55,24 +47,24 @@ export const ExpandButton = styled.div`
   gap: 6px;
   padding: 10px;
   cursor: pointer;
-  font-size: 14px;
-  color: #787878;
-  border-top: 1px solid #dcdcdc; /* 리스트와 구분하는 선 */
+  ${setTypography(typography.paragraph.p6)}
+  color: ${colors.gray[700]};
+  border-top: 1px solid ${colors.gray[400]}; /* 리스트와 구분하는 선 */
 
   &:hover {
-    background-color: #f2f2f2;
+    background-color: ${colors.gray[200]};
     border-bottom-left-radius: 20px;
     border-bottom-right-radius: 20px;
   }
 `;
 
-export const ExpandArrow = styled.img<ExpandButtonProps>`
-  width: 19px;
-  height: 19px;
+export const ExpandArrow = styled(MoreArrowIcon)<ExpandButtonProps>`
+  width: 14px;
+  height: 14px;
   ${(props) =>
     props.$isExpanded &&
     css`
-      transform: rotate(180deg); /* 접어두기일때 180도 회전*/
+      transform: rotate(180deg);
     `}
 `;
 
@@ -97,15 +89,13 @@ export const NoActiveFormsMessage = styled.div`
   height: auto;
   padding-top: 2px;
   margin-bottom: 6px;
-  font-size: 16px;
-  font-weight: 600;
-  color: #ff5414;
+  ${setTypography(typography.paragraph.p2)}
+  color: ${colors.primary[900]};
 `;
 
 export const SuggestionText = styled.div`
-  font-size: 14px;
-  font-weight: 500;
-  color: #787878;
+  ${setTypography(typography.paragraph.p5)}
+  color: ${colors.gray[700]};
 `;
 
 // '새 양식 만들기' 버튼을 포함하는 헤더 영역
@@ -123,10 +113,9 @@ export const AddButton = styled.button`
   padding: 8px 16px 8px 16px;
   border: none;
   border-radius: 20px;
-  background-color: #f5f5f5;
-  font-size: 14px;
-  font-weight: 500;
-  color: #111111;
+  background-color: ${colors.gray[100]};
+  ${setTypography(typography.paragraph.p5)}
+  color: ${colors.base.black};
   cursor: pointer;
   transition: background-color 0.2s;
 `;
@@ -140,9 +129,9 @@ export const PlusIcon = styled.img`
 export const ApplicationList = styled.div`
   width: auto;
   height: auto;
-  background-color: #ffffff;
+  background-color: ${colors.base.white};
   border-radius: 20px;
-  border: 1px solid #dcdcdc;
+  border: 1px solid ${colors.gray[400]};
   &:not(:last-child) {
     margin-bottom: 20px;
   }
@@ -153,19 +142,18 @@ export const ListHeader = styled.div`
   display: flex;
   justify-content: space-between;
   padding: 16px 24px;
-  border-bottom: 1px solid #dcdcdc;
+  border-bottom: 1px solid ${colors.gray[400]};
 `;
 
 export const SemesterTitle = styled.span`
-  font-size: 12px;
-  font-weight: 600;
-  color: #787878;
+  ${setTypography(typography.button.button2)}
+  color: ${colors.gray[700]};
 `;
 
 export const DateHeader = styled.span`
   display: flex;
-  font-size: 12px;
-  color: #787878;
+  ${setTypography(typography.paragraph.p7)}
+  color: ${colors.gray[700]};
   margin-right: 35px;
 `;
 
@@ -173,58 +161,5 @@ export const Separation_Bar = styled.div`
   width: 1px;
   height: 12px;
   margin-right: 25px;
-  background-color: #dcdcdc;
-`;
-
-export const MenuContainer = styled.div`
-  position: absolute; /* MoreButtonContainer를 기준으로 위치 결정 */
-  top: 55%; /* 버튼 중앙 바로 아래에 위치 */
-  left: 30%; /* 첫번째 점부분에 정렬 */
-  width: 150px;
-  height: 107px;
-  background-color: white;
-  border-radius: 8px;
-  box-shadow: 0 1px 8px rgba(0, 0, 0, 0.12);
-  padding: 8px 0;
-  z-index: 10;
-`;
-
-export const MenuItem = styled.div<MenuItemProps>`
-  display: flex;
-  align-items: center;
-  padding: 8px 12px;
-  gap: 11px;
-
-  font-weight: 400;
-  font-size: 14px;
-
-  color: #4b4b4b;
-  cursor: pointer;
-  box-sizing: border-box;
-  width: auto;
-  height: 28px;
-
-  &:hover {
-    background-color: #f5f5f5;
-  }
-
-  span {
-    display: flex;
-    align-items: center;
-  }
-  ${(props) =>
-    props.$ActiveMenu &&
-    css`
-      font-weight: 500;
-    `}
-`;
-
-export const MenuIcon = styled.img`
-  width: 12px; /* 아이콘 너비 */
-  height: 12px; /* 아이콘 높이 */
-`;
-export const Separator = styled.div`
-  height: 1px;
-  background-color: #f2f2f2;
-  margin: 3px 5px;
+  background-color: ${colors.gray[400]};
 `;

@@ -6,8 +6,11 @@ const ApplicantsListTab = () => {
 
   return (
     <ApplicationFormList
-      onEdit={(applicationFormId) =>
+      onNavigate={(applicationFormId) =>
         navigate(`/admin/applicants-list/${applicationFormId}`)
+      }
+      onEdit={(applicationFormId) =>
+        navigate(`/admin/application-list/${applicationFormId}/edit`)
       }
       rowHoverColor='#f8f9fa'
       deleteErrorMessage='삭제에 실패했습니다.'

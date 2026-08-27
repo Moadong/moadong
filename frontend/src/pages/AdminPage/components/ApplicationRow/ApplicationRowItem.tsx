@@ -1,5 +1,6 @@
-import Morebutton from '@/assets/images/icons/Morebutton.svg';
-import ApplicationMenu from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationMenu';
+import type { MouseEvent, RefObject } from 'react';
+import Morebutton from '@/assets/images/icons/ellipsis_icon.svg';
+import ApplicationMenu from '@/pages/AdminPage/components/ApplicationMenu/ApplicationMenu';
 import {
   ApplicationFormItem,
   ApplicationFormStatus,
@@ -12,10 +13,11 @@ interface ApplicationRowItemProps {
   isActive: boolean;
   uniqueKeyPrefix: string;
   openMenuId: string | null;
-  menuRef: React.RefObject<HTMLDivElement | null>;
+  menuRef: RefObject<HTMLDivElement | null>;
   onToggleStatus: (id: string, status: ApplicationFormStatus) => void;
+  onNavigate: (id: string) => void;
   onEdit: (id: string) => void;
-  onMenuToggle: (e: React.MouseEvent, id: string, prefix: string) => void;
+  onMenuToggle: (e: MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
   className?: string;
@@ -28,6 +30,7 @@ const ApplicationRowItem = ({
   openMenuId,
   menuRef,
   onToggleStatus,
+  onNavigate,
   onEdit,
   onMenuToggle,
   onDelete,
@@ -41,7 +44,7 @@ const ApplicationRowItem = ({
     <Styled.ApplicationRow className={className} key={application.id}>
       <Styled.ApplicationTitle
         $active={isActive}
-        onClick={() => onEdit(application.id)}
+        onClick={() => onNavigate(application.id)}
       >
         {application.title}
       </Styled.ApplicationTitle>
@@ -61,11 +64,12 @@ const ApplicationRowItem = ({
           {isMenuOpen && (
             <ApplicationMenu
               isActive={isActive}
+              onEdit={() => onEdit(application.id)}
               onDelete={() => onDelete(application.id)}
+              onDuplicate={() => onDuplicate(application.id)}
               onToggleStatus={() =>
                 onToggleStatus(application.id, application.status)
               }
-              onDuplicate={() => onDuplicate(application.id)}
             />
           )}
         </Styled.MoreButtonContainer>

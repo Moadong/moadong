@@ -148,6 +148,15 @@ export const ADMIN_EVENT = {
   CALENDAR_UNLINK_CANCELED: '캘린더 연동 해제 취소',
   CALENDAR_EVENT_VISIBILITY_TOGGLED: '연동 일정 표시 토글',
 
+  // 지원서 관리
+  AI_DRAFT_BUTTON_VIEWED: 'AI 지원서 초안 버튼노출',
+  AI_DRAFT_BUTTON_CLICKED: 'AI 지원서 초안 생성 버튼클릭',
+  AI_DRAFT_OVERWRITE_CANCELED: 'AI 지원서 초안 덮어쓰기 취소',
+  AI_DRAFT_GENERATED: 'AI 지원서 초안 생성 완료',
+  AI_DRAFT_LIMIT_REACHED: 'AI 지원서 초안 생성 한도 초과',
+  AI_DRAFT_GENERATION_FAILED: 'AI 지원서 초안 생성 실패',
+  APPLICATION_FORM_SAVED: '지원서 저장',
+
   // 비밀번호 수정
   PASSWORD_CHANGE_BUTTON_CLICKED: '비밀번호 변경 버튼클릭',
   NEW_PASSWORD_CLEAR_BUTTON_CLICKED: '새 비밀번호 입력 초기화 버튼클릭',

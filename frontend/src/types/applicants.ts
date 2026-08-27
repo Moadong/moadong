@@ -13,6 +13,7 @@ export interface ApplicantsInfo {
   reviewRequired: number;
   scheduledInterview: number;
   accepted: number;
+  declined: number;
   applicants: Applicant[];
 }
 

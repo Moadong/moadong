@@ -12,7 +12,7 @@ import * as Styled from './FloatingButtonGroup.styles';
 const MOADONG_BASE_URL = 'https://www.moadong.com/clubDetail/';
 
 export const FloatingButtonGroup = () => {
-  const { isScrollingUp } = useScrollTrigger();
+  const { isScrollingUp, isDisabled } = useScrollTrigger();
   const { scrollToTop } = useScrollTo();
   const { handleShare } = useShare();
   const trackEvent = useMixpanelTrack();
@@ -49,7 +49,7 @@ export const FloatingButtonGroup = () => {
 
   const isAdmin = !!useMatch({ path: '/admin', end: false });
 
-  if (isAdmin) return null;
+  if (isAdmin || isDisabled) return null;
 
   return (
     <Styled.GroupContainer $isClubDetail={isClubDetail}>

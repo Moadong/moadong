@@ -5,7 +5,7 @@ const mapStatusToGroup = (
 ): { status: ApplicationStatus; label: string } => {
   switch (status) {
     case ApplicationStatus.SUBMITTED:
-      return { status: ApplicationStatus.SUBMITTED, label: '서류검토' };
+      return { status: ApplicationStatus.SUBMITTED, label: '검토 전' };
     case ApplicationStatus.INTERVIEW_SCHEDULED:
       return {
         status: ApplicationStatus.INTERVIEW_SCHEDULED,
@@ -14,7 +14,7 @@ const mapStatusToGroup = (
     case ApplicationStatus.ACCEPTED:
       return { status: ApplicationStatus.ACCEPTED, label: '합격' };
     case ApplicationStatus.DECLINED:
-      return { status: ApplicationStatus.DECLINED, label: '불합' };
+      return { status: ApplicationStatus.DECLINED, label: '불합격' };
     default:
       return { status: ApplicationStatus.SUBMITTED, label: '전체' };
   }
