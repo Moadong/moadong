@@ -47,7 +47,9 @@ export const FloatingButtonGroup = () => {
   // 우체통은 남에게 공유할 성격의 화면이 아니고, 목록의 편지 쓰기 버튼과 위치가 겹친다.
   const isFeedback = !!useMatch({ path: '/feedback', end: false });
 
-  if (isDisabled) return null;
+  const isAdmin = !!useMatch({ path: '/admin', end: false });
+
+  if (isAdmin || isDisabled) return null;
 
   return (
     <Styled.GroupContainer $isClubDetail={isClubDetail}>
