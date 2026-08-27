@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import {
@@ -10,9 +10,11 @@ import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
+import { ADMIN_EVENT } from '@/constants/eventName';
 import INITIAL_FORM_DATA from '@/constants/initialFormData';
 import { queryKeys } from '@/constants/queryKeys';
 import { ApiError } from '@/errors';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import {
   useAiDraftQuota,
   useGetApplication,
@@ -40,6 +42,7 @@ const ApplicationEditTab = () => {
     applicationFormId?: string;
   }>();
   const { clubId } = useAdminClubId();
+  const trackEvent = useMixpanelTrack();
 
   const {
     data: existingFormData,
@@ -65,6 +68,17 @@ const ApplicationEditTab = () => {
   const [remainingOverride, setRemainingOverride] = useState<number>();
   const remaining = remainingOverride ?? draftQuota?.remaining;
   const isDraftLimitReached = remaining === 0;
+  // 저장된 지원서가 AI 초안에서 출발했는지 구분한다
+  const [draftSource, setDraftSource] = useState<'manual' | 'ai' | 'template'>(
+    'manual',
+  );
+
+  const isDraftButtonViewTracked = useRef(false);
+  useEffect(() => {
+    if (!isDraftButtonVisible || isDraftButtonViewTracked.current) return;
+    isDraftButtonViewTracked.current = true;
+    trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_VIEWED);
+  }, [isDraftButtonVisible, trackEvent]);
 
   useEffect(() => {
     if (!existingFormData) return;
@@ -88,6 +102,11 @@ const ApplicationEditTab = () => {
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
+      trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVED, {
+        isEdit: false,
+        formMode: applicationFormMode,
+        draftSource,
+      });
       alert('지원서가 성공적으로 생성되었습니다.');
       navigate(`/admin/application-list`);
     },
@@ -110,6 +129,11 @@ const ApplicationEditTab = () => {
           clubId ?? 'unknown',
           formId ?? '',
         ),
+      });
+      trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVED, {
+        isEdit: true,
+        formMode: applicationFormMode,
+        draftSource,
       });
       alert('지원서가 성공적으로 수정되었습니다.');
       navigate('/admin/application-list');
@@ -134,6 +158,12 @@ const ApplicationEditTab = () => {
         questions: [nameQuestion, ...draftQuestions],
       }));
       setNextId(draftQuestions.length + 2);
+      setDraftSource(draft.aiGenerated ? 'ai' : 'template');
+      trackEvent(ADMIN_EVENT.AI_DRAFT_GENERATED, {
+        aiGenerated: draft.aiGenerated,
+        questionCount: draftQuestions.length,
+        remaining: draft.remaining,
+      });
       if (typeof draft.remaining === 'number') {
         setRemainingOverride(draft.remaining);
       }
@@ -146,9 +176,14 @@ const ApplicationEditTab = () => {
     onError: (err: Error) => {
       if (err instanceof ApiError && err.status === 429) {
         setRemainingOverride(0);
+        trackEvent(ADMIN_EVENT.AI_DRAFT_LIMIT_REACHED);
         alert('이번 달 AI 초안 생성 횟수(3회)를 모두 사용했어요.');
         return;
       }
+      trackEvent(ADMIN_EVENT.AI_DRAFT_GENERATION_FAILED, {
+        status: err instanceof ApiError ? err.status : undefined,
+        message: err.message,
+      });
       alert(`지원서 초안 생성에 실패했습니다: ${err.message}`);
     },
   });
@@ -161,10 +196,15 @@ const ApplicationEditTab = () => {
         (q, index) =>
           index > 0 && (q.title.trim() !== '' || q.description.trim() !== ''),
       );
+    trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_CLICKED, {
+      hasUserInput,
+      remaining,
+    });
     if (
       hasUserInput &&
       !confirm('작성 중인 내용을 AI 초안으로 덮어씁니다. 계속할까요?')
     ) {
+      trackEvent(ADMIN_EVENT.AI_DRAFT_OVERWRITE_CANCELED);
       return;
     }
     generateDraft();
