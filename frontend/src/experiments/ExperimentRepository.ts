@@ -62,8 +62,10 @@ const pickWeightedVariant = <V extends ExperimentVariant>(
 };
 
 class ExperimentRepository {
+  private assignments: ExperimentAssignments = safeReadAssignments();
+
   fetchAndAssignExperiments(experiments: readonly ExperimentDefinition<any>[]) {
-    const assignments = safeReadAssignments();
+    const assignments = this.assignments;
     const definedKeys = new Set(experiments.map((e) => e.key));
 
     // 정의에서 사라진 실험은 Mixpanel super property 및 로컬 배정 정리.
@@ -95,8 +97,7 @@ class ExperimentRepository {
   getVariant<V extends ExperimentVariant>(
     experiment: ExperimentDefinition<V>,
   ): V {
-    const assignments = safeReadAssignments();
-    const assignedVariant = assignments[experiment.key];
+    const assignedVariant = this.assignments[experiment.key];
 
     if (assignedVariant && experiment.variants.includes(assignedVariant as V)) {
       return assignedVariant as V;
@@ -106,6 +107,7 @@ class ExperimentRepository {
   }
 
   resetAssignments() {
+    this.assignments = {};
     localStorage.removeItem(ASSIGNMENT_STORAGE_KEY);
   }
 }
