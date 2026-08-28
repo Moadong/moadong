@@ -1,3 +1,7 @@
+// 최상위 import/export가 없으면 TS가 이 파일을 전역 스크립트로 보고 아래
+// 선언들이 전역에 새어나가, 같은 이름을 쓰는 다른 테스트와 충돌한다.
+export {};
+
 // isolateModules로 모듈을 다시 평가해도 같은 목을 보도록 바깥에 둔다.
 const mockMixpanel = { register: jest.fn(), unregister: jest.fn() };
 
