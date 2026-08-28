@@ -124,6 +124,7 @@ public class ClubApplyAdminService {
         int reviewRequired = 0;
         int scheduledInterview = 0;
         int accepted = 0;
+        int declined = 0;
 
         for (ClubApplicant app : submittedApplications) {
             ClubApplicant sortedApp = sortApplicationAnswers(applicationForm, app);
@@ -133,10 +134,11 @@ public class ClubApplyAdminService {
                 case SUBMITTED -> reviewRequired++;
                 case INTERVIEW_SCHEDULED -> scheduledInterview++;
                 case ACCEPTED -> accepted++;
+                case DECLINED -> declined++;
             }
         }
 
-        return ClubApplyInfoResponse.builder().total(applications.size()).reviewRequired(reviewRequired).scheduledInterview(scheduledInterview).accepted(accepted).applicants(applications).build();
+        return ClubApplyInfoResponse.builder().total(applications.size()).reviewRequired(reviewRequired).scheduledInterview(scheduledInterview).accepted(accepted).declined(declined).applicants(applications).build();
     }
 
     private ClubApplicant sortApplicationAnswers(ClubApplicationForm application, ClubApplicant app) {
