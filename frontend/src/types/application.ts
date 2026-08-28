@@ -71,6 +71,7 @@ export interface ApplicationForm {
 export interface ApplicationFormItem {
   id: ApplicationFormId;
   title: string;
+  createdAt: string;
   editedAt: string;
   status: ApplicationFormStatus;
 }

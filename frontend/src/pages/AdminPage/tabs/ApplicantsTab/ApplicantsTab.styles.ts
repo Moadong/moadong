@@ -3,27 +3,6 @@ import disabledDeleteIcon from '@/assets/images/icons/applicant_delete_disabled.
 import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
 import checkIcon from '@/assets/images/icons/checkBox.svg';
 
-export const ApplicationHeader = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 32px;
-`;
-
-export const ApplicationTitle = styled.h2`
-  font-size: 28px;
-  font-weight: 700;
-  margin: 0;
-`;
-
-export const SemesterSelect = styled.select`
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  background: #fff;
-  font-size: 16px;
-`;
-
 // 지원현황
 export const SummaryWrapper = styled.div`
   display: flex;
@@ -125,32 +104,6 @@ export const StatusSelect = styled.p<{ disabled: boolean }>`
 
   display: inline-flex;
   align-items: center;
-`;
-
-export const StatusSelectMenu = styled.div<{ open: boolean }>`
-  display: ${({ open }) => (open ? 'block' : 'none')};
-  position: absolute;
-  top: 100%;
-  height: auto;
-  background: #fff;
-  left: 0;
-  border: 1px solid #dcdcdc;
-  border-radius: 6px;
-  box-shadow: 0px 1px 8px 0px #0000001f;
-  z-index: 10;
-  padding: 8px 0;
-  color: #787878;
-`;
-
-export const StatusSelectMenuItem = styled.div`
-  font-size: 12px;
-  font-weight: 600;
-  padding: 8px 13px;
-  cursor: pointer;
-  text-align: left;
-  &:hover {
-    background: #f5f5f5;
-  }
 `;
 
 export const ApplicantFilterSelect = styled.div`
@@ -273,7 +226,7 @@ export const ApplicantTableCheckbox = styled.input.attrs({ type: 'checkbox' })`
 
   &:checked {
     border: 0px;
-    background: #ffe7de url(\"${checkIcon}\") center/24px 24px no-repeat;
+    background: #ffe7de url('${checkIcon}') center/24px 24px no-repeat;
   }
 `;
 
@@ -293,33 +246,6 @@ export const ApplicantAllSelectArrow = styled.img`
   cursor: pointer;
 `;
 
-export const ApplicantAllSelectMenu = styled.div<{ open: boolean }>`
-  display: ${({ open }) => (open ? 'block' : 'none')};
-  position: absolute;
-  top: 80%;
-  width: 110px;
-  height: auto;
-  background: #fff;
-  left: 14px;
-  border: 1px solid #dcdcdc;
-  border-radius: 6px;
-  box-shadow: 0px 1px 8px 0px #0000001f;
-  z-index: 10;
-  padding: 8px 0;
-`;
-
-export const ApplicantAllSelectMenuItem = styled.div`
-  font-size: 12px;
-  font-weight: 600;
-  padding: 8px 13px;
-  cursor: pointer;
-  text-align: left;
-  padding-left: 20px;
-  &:hover {
-    background: #f5f5f5;
-  }
-`;
-
 export const ApplicantTableAllSelectCheckbox = styled.input.attrs({
   type: 'checkbox',
 })`
@@ -334,7 +260,7 @@ export const ApplicantTableAllSelectCheckbox = styled.input.attrs({
 
   &:checked {
     border: 0px;
-    background: #ffe7de url(\"${checkIcon}\") center/24px 24px no-repeat;
+    background: #ffe7de url('${checkIcon}') center/24px 24px no-repeat;
   }
 `;
 

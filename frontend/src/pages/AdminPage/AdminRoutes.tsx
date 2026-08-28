@@ -5,8 +5,8 @@ import AccountEditTab from '@/pages/AdminPage/tabs/AccountEditTab/AccountEditTab
 import ApplicantDetailPage from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPage';
 import ApplicantsListTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/ApplicantsListTab';
 import ApplicantsTab from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsTab';
-import ApplicationEditTab from '@/pages/AdminPage/tabs/ApplicationEditTab/ApplicationEditTab';
-import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationListTab';
+import ApplicationEditTab from '@/pages/AdminPage/tabs/ApplicationTab/ApplicationEditTab/ApplicationEditTab';
+import ApplicationListTab from '@/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/ApplicationListTab';
 import CalendarSyncTab from '@/pages/AdminPage/tabs/CalendarSyncTab/CalendarSyncTab';
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import ClubIntroEditTab from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroEditTab';
