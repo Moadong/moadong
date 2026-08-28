@@ -7,6 +7,11 @@ import type {
 
 const ASSIGNMENT_STORAGE_KEY = 'moadong_experiments';
 
+// 배정을 믿을 수 없는 방문을 표시해 분석에서 걸러내기 위한 super property.
+// 실험 결과 해석 시 오염된 표본의 비율을 알아야 차이가 진짜인지 판단할 수 있다.
+const STORAGE_BLOCKED_PROPERTY = 'experiment_storage_blocked';
+const REASSIGNED_PROPERTY = 'experiment_reassigned';
+
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
 
@@ -24,12 +29,14 @@ const safeReadAssignments = (): ExperimentAssignments => {
   }
 };
 
-const writeAssignments = (assignments: ExperimentAssignments) => {
+const writeAssignments = (assignments: ExperimentAssignments): boolean => {
   try {
     localStorage.setItem(ASSIGNMENT_STORAGE_KEY, JSON.stringify(assignments));
+    return true;
   } catch {
-    // localStorage 쓰기 실패(용량 초과, 권한 거부 등)는 무시하고 진행한다.
-    // 실패해도 배정값은 메모리에서 유효하며, 다음 새로고침 시 재배정된다.
+    // 쓰기 실패(용량 초과, 권한 거부 등)해도 이번 방문은 메모리 배정으로 진행한다.
+    // 다만 다음 방문에 다시 추첨되므로 배정이 고정되지 않는다.
+    return false;
   }
 };
 
@@ -76,6 +83,8 @@ export const fetchAndAssignExperiments = (
     delete assignments[key];
   });
 
+  let reassigned = false;
+
   experiments.forEach((experiment) => {
     const existing = assignments[experiment.key];
     const isValidExisting =
@@ -86,12 +95,21 @@ export const fetchAndAssignExperiments = (
       return;
     }
 
+    // 기존 배정이 현재 variants에 없다 = 정의가 바뀌어 그룹이 갈렸다.
+    // 배정이 아예 없던 첫 방문은 오염이 아니므로 구분한다.
+    if (existing) reassigned = true;
+
     const variant = pickWeightedVariant(experiment);
     assignments[experiment.key] = variant;
     mixpanel.register({ [experiment.key]: variant });
   });
 
-  writeAssignments(assignments);
+  const stored = writeAssignments(assignments);
+
+  mixpanel.register({
+    [STORAGE_BLOCKED_PROPERTY]: !stored,
+    [REASSIGNED_PROPERTY]: reassigned,
+  });
 };
 
 export const getVariant = <V extends ExperimentVariant>(

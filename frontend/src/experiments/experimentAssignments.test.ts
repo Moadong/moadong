@@ -1,7 +1,18 @@
+// isolateModules로 모듈을 다시 평가해도 같은 목을 보도록 바깥에 둔다.
+const mockMixpanel = { register: jest.fn(), unregister: jest.fn() };
+
 jest.mock('mixpanel-browser', () => ({
   __esModule: true,
-  default: { register: jest.fn(), unregister: jest.fn() },
+  default: mockMixpanel,
 }));
+
+// 마지막으로 register된 super property 값을 읽는다.
+const lastRegistered = (property: string): unknown => {
+  const calls = mockMixpanel.register.mock.calls.filter(
+    ([properties]) => properties && property in properties,
+  );
+  return calls.length ? calls[calls.length - 1][0][property] : undefined;
+};
 
 type ExperimentAssignmentsModule =
   typeof import('@/experiments/experimentAssignments');
@@ -37,6 +48,8 @@ const assignInNewSession = (
 
 beforeEach(() => {
   localStorage.clear();
+  mockMixpanel.register.mockClear();
+  mockMixpanel.unregister.mockClear();
 });
 
 describe('가중치 추첨', () => {
@@ -120,5 +133,40 @@ describe('메모리 캐시', () => {
     getItem.mockRestore();
 
     expect(readCount).toBe(0);
+  });
+});
+
+describe('오염 계측', () => {
+  it('정상 저장이면 오염 플래그가 모두 false다', () => {
+    assignInNewSession();
+
+    expect(lastRegistered('experiment_storage_blocked')).toBe(false);
+    expect(lastRegistered('experiment_reassigned')).toBe(false);
+  });
+
+  it('저장이 막히면 experiment_storage_blocked를 표시한다', () => {
+    const setItem = jest
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(() => {
+        throw new DOMException('QuotaExceededError');
+      });
+
+    assignInNewSession();
+    setItem.mockRestore();
+
+    expect(lastRegistered('experiment_storage_blocked')).toBe(true);
+  });
+
+  it('정의가 바뀌어 재배정되면 experiment_reassigned를 표시한다', () => {
+    assignInNewSession();
+    expect(lastRegistered('experiment_reassigned')).toBe(false);
+
+    assignInNewSession({
+      ...experiment,
+      variants: ['C', 'D'] as const,
+      defaultVariant: 'C' as const,
+    });
+
+    expect(lastRegistered('experiment_reassigned')).toBe(true);
   });
 });
