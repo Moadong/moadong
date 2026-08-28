@@ -1,6 +1,6 @@
 import { ALL_EXPERIMENTS } from './definitions';
-import { experimentRepository } from './ExperimentRepository';
+import { fetchAndAssignExperiments } from './experimentAssignments';
 
 export const initializeExperiments = () => {
-  experimentRepository.fetchAndAssignExperiments(ALL_EXPERIMENTS);
+  fetchAndAssignExperiments(ALL_EXPERIMENTS);
 };
