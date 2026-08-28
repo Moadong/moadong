@@ -71,7 +71,7 @@ const pickWeightedVariant = <V extends ExperimentVariant>(
 let assignments: ExperimentAssignments = safeReadAssignments();
 
 export const fetchAndAssignExperiments = (
-  experiments: readonly ExperimentDefinition<any>[],
+  experiments: readonly ExperimentDefinition<ExperimentVariant>[],
 ) => {
   const definedKeys = new Set(experiments.map((e) => e.key));
 
