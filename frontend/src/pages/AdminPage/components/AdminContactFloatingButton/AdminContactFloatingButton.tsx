@@ -1,9 +1,14 @@
 import KakaoIcon from '@/assets/images/icons/kakao.svg?react';
+import { useScrollTrigger } from '@/hooks/Scroll/useScrollTrigger';
 import * as Styled from './AdminContactFloatingButton.styles';
 
 const ADMIN_CONTACT_OPEN_CHAT_URL = 'https://open.kakao.com/o/s21dRWjh';
 
 const AdminContactFloatingButton = () => {
+  const { isDisabled } = useScrollTrigger();
+
+  if (isDisabled) return null;
+
   return (
     <Styled.ContactButton
       href={ADMIN_CONTACT_OPEN_CHAT_URL}

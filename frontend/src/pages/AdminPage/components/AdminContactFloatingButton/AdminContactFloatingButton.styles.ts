@@ -58,11 +58,13 @@ export const ContactButton = styled.a`
   }
 
   ${media.tablet} {
-    right: 16px;
-    bottom: calc(88px + env(safe-area-inset-bottom));
+    right: 20px;
+    bottom: calc(101px + env(safe-area-inset-bottom));
 
     width: 48px;
     min-width: 48px;
+    height: 48px;
+    border-radius: 50%;
     padding: 0;
   }
 `;
