@@ -141,7 +141,7 @@ describe('오염 계측', () => {
     assignInNewSession();
 
     expect(lastRegistered('experiment_storage_blocked')).toBe(false);
-    expect(lastRegistered('experiment_reassigned')).toBe(false);
+    expect(lastRegistered('experiment_definition_changed')).toBe(false);
   });
 
   it('저장이 막히면 experiment_storage_blocked를 표시한다', () => {
@@ -157,9 +157,9 @@ describe('오염 계측', () => {
     expect(lastRegistered('experiment_storage_blocked')).toBe(true);
   });
 
-  it('정의가 바뀌어 재배정되면 experiment_reassigned를 표시한다', () => {
+  it('정의가 바뀌어 재배정되면 experiment_definition_changed를 표시한다', () => {
     assignInNewSession();
-    expect(lastRegistered('experiment_reassigned')).toBe(false);
+    expect(lastRegistered('experiment_definition_changed')).toBe(false);
 
     assignInNewSession({
       ...experiment,
@@ -167,6 +167,6 @@ describe('오염 계측', () => {
       defaultVariant: 'C' as const,
     });
 
-    expect(lastRegistered('experiment_reassigned')).toBe(true);
+    expect(lastRegistered('experiment_definition_changed')).toBe(true);
   });
 });

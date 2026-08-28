@@ -10,7 +10,7 @@ const ASSIGNMENT_STORAGE_KEY = 'moadong_experiments';
 // 배정을 믿을 수 없는 방문을 표시해 분석에서 걸러내기 위한 super property.
 // 실험 결과 해석 시 오염된 표본의 비율을 알아야 차이가 진짜인지 판단할 수 있다.
 const STORAGE_BLOCKED_PROPERTY = 'experiment_storage_blocked';
-const REASSIGNED_PROPERTY = 'experiment_reassigned';
+const DEFINITION_CHANGED_PROPERTY = 'experiment_definition_changed';
 
 const isObjectRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null && !Array.isArray(value);
@@ -83,7 +83,7 @@ export const fetchAndAssignExperiments = (
     delete assignments[key];
   });
 
-  let reassigned = false;
+  let definitionChanged = false;
 
   experiments.forEach((experiment) => {
     const existing = assignments[experiment.key];
@@ -97,7 +97,7 @@ export const fetchAndAssignExperiments = (
 
     // 기존 배정이 현재 variants에 없다 = 정의가 바뀌어 그룹이 갈렸다.
     // 배정이 아예 없던 첫 방문은 오염이 아니므로 구분한다.
-    if (existing) reassigned = true;
+    if (existing) definitionChanged = true;
 
     const variant = pickWeightedVariant(experiment);
     assignments[experiment.key] = variant;
@@ -108,7 +108,7 @@ export const fetchAndAssignExperiments = (
 
   mixpanel.register({
     [STORAGE_BLOCKED_PROPERTY]: !stored,
-    [REASSIGNED_PROPERTY]: reassigned,
+    [DEFINITION_CHANGED_PROPERTY]: definitionChanged,
   });
 };
 
