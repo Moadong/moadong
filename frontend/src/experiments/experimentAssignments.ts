@@ -61,55 +61,52 @@ const pickWeightedVariant = <V extends ExperimentVariant>(
   return experiment.defaultVariant;
 };
 
-class ExperimentRepository {
-  private assignments: ExperimentAssignments = safeReadAssignments();
+let assignments: ExperimentAssignments = safeReadAssignments();
 
-  fetchAndAssignExperiments(experiments: readonly ExperimentDefinition<any>[]) {
-    const assignments = this.assignments;
-    const definedKeys = new Set(experiments.map((e) => e.key));
+export const fetchAndAssignExperiments = (
+  experiments: readonly ExperimentDefinition<any>[],
+) => {
+  const definedKeys = new Set(experiments.map((e) => e.key));
 
-    // 정의에서 사라진 실험은 Mixpanel super property 및 로컬 배정 정리.
-    // 누락 시 종료된 실험 key가 모든 이벤트에 계속 따라붙어 데이터가 오염됨.
-    Object.keys(assignments).forEach((key) => {
-      if (definedKeys.has(key)) return;
-      mixpanel.unregister(key);
-      delete assignments[key];
-    });
+  // 정의에서 사라진 실험은 Mixpanel super property 및 로컬 배정 정리.
+  // 누락 시 종료된 실험 key가 모든 이벤트에 계속 따라붙어 데이터가 오염됨.
+  Object.keys(assignments).forEach((key) => {
+    if (definedKeys.has(key)) return;
+    mixpanel.unregister(key);
+    delete assignments[key];
+  });
 
-    experiments.forEach((experiment) => {
-      const existing = assignments[experiment.key];
-      const isValidExisting =
-        !!existing && experiment.variants.includes(existing);
+  experiments.forEach((experiment) => {
+    const existing = assignments[experiment.key];
+    const isValidExisting =
+      !!existing && experiment.variants.includes(existing);
 
-      if (isValidExisting) {
-        mixpanel.register({ [experiment.key]: existing });
-        return;
-      }
-
-      const variant = pickWeightedVariant(experiment);
-      assignments[experiment.key] = variant;
-      mixpanel.register({ [experiment.key]: variant });
-    });
-
-    writeAssignments(assignments);
-  }
-
-  getVariant<V extends ExperimentVariant>(
-    experiment: ExperimentDefinition<V>,
-  ): V {
-    const assignedVariant = this.assignments[experiment.key];
-
-    if (assignedVariant && experiment.variants.includes(assignedVariant as V)) {
-      return assignedVariant as V;
+    if (isValidExisting) {
+      mixpanel.register({ [experiment.key]: existing });
+      return;
     }
 
-    return experiment.defaultVariant;
+    const variant = pickWeightedVariant(experiment);
+    assignments[experiment.key] = variant;
+    mixpanel.register({ [experiment.key]: variant });
+  });
+
+  writeAssignments(assignments);
+};
+
+export const getVariant = <V extends ExperimentVariant>(
+  experiment: ExperimentDefinition<V>,
+): V => {
+  const assignedVariant = assignments[experiment.key];
+
+  if (assignedVariant && experiment.variants.includes(assignedVariant as V)) {
+    return assignedVariant as V;
   }
 
-  resetAssignments() {
-    this.assignments = {};
-    localStorage.removeItem(ASSIGNMENT_STORAGE_KEY);
-  }
-}
+  return experiment.defaultVariant;
+};
 
-export const experimentRepository = new ExperimentRepository();
+export const resetAssignments = () => {
+  assignments = {};
+  localStorage.removeItem(ASSIGNMENT_STORAGE_KEY);
+};
