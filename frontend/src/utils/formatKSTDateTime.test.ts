@@ -85,7 +85,7 @@ describe('formatKSTDateTimeFull', () => {
 
     expect(result).toContain('3월');
     expect(result).toContain('25');
-    expect(result).toMatch(/오전|오후/); // 한국 시간 포맷
+    expect(result).toMatch(/오전|오후|AM|PM/); // 12시간제 표기(문구는 런타임 ICU가 정한다)
   });
 
   it('날짜 경계가 넘어가는 경우도 올바르게 처리한다', () => {
