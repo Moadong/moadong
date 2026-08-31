@@ -16,7 +16,6 @@ export function initializeMixpanel() {
   mixpanel.init(import.meta.env.VITE_MIXPANEL_TOKEN, {
     ignore_dnt: true,
     debug: false,
-    flags: true,
   });
 
   const iosVersion = getIOSVersion();
