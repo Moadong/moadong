@@ -1,6 +1,5 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { runFlagDeliveryCheck } from './experiments/flagDeliveryCheck';
 import { initializeExperiments } from './experiments/initializeExperiments';
 import {
   initializeClarity,
@@ -12,8 +11,6 @@ initializeMixpanel();
 initializeSentry();
 initializeClarity();
 initializeExperiments();
-// 렌더를 막지 않는다. initializeMixpanel()의 identify 이후에 호출되어야 한다
-void runFlagDeliveryCheck();
 
 if (import.meta.env.DEV) {
   window.navermap_authFailure = function () {

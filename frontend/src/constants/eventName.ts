@@ -208,8 +208,3 @@ export const PAGE_NAME = {
 } as const;
 
 export type PageName = (typeof PAGE_NAME)[keyof typeof PAGE_NAME];
-
-/** 실험 인프라 검증용. Mixpanel flag 이관 판단이 끝나면 제거한다 */
-export const DIAGNOSTIC_EVENT = {
-  FLAG_DELIVERY_CHECKED: 'Flag Delivery Checked',
-} as const;
