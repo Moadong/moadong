@@ -34,7 +34,7 @@ export const clubLocations = [
     lat: 35.132367,
     lng: 129.106974,
     building: '한울관(E31)',
-    detailLocation: '301호',
+    detailLocation: '302호',
   },
   {
     clubName: '보블리스',
