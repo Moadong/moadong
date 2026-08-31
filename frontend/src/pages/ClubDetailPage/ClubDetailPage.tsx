@@ -59,12 +59,16 @@ const ClubDetailPage = () => {
 
   const hasCalendarConnection = clubDetail?.hasCalendarConnection ?? false;
 
+  const hasFeeds = (clubDetail?.feeds?.length ?? 0) > 0;
+
   const activeTab: TabType = useMemo(() => {
     if (!tabParam || !Object.values(TAB_TYPE).includes(tabParam)) {
-      return TAB_TYPE.INTRO;
+      // 체류시간 중앙값이 7초라 첫 화면이 판단을 좌우한다.
+      // 유저가 스스로 이동하는 탭도 활동사진이 가장 많아 기본값으로 둔다.
+      return hasFeeds ? TAB_TYPE.PHOTOS : TAB_TYPE.INTRO;
     }
     return tabParam;
-  }, [tabParam]);
+  }, [tabParam, hasFeeds]);
 
   const { data: calendarEvents = [], isLoading: isCalendarLoading } =
     useGetClubCalendarEvents((clubName ?? clubId) || '', {
