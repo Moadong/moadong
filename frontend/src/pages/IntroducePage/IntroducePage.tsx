@@ -2,8 +2,8 @@ import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW } from '@/constants/eventName';
-import useDevice from '@/hooks/useDevice';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import useDevice from '@/hooks/useDevice';
 import isInAppWebView from '@/utils/isInAppWebView';
 import IntroSection from './components/sections/1.IntroSection/IntroSection';
 import ProblemSection from './components/sections/2.ProblemSection/ProblemSection';
@@ -23,20 +23,20 @@ const IntroducePage = () => {
     <>
       {showPageTopBar ? <WebviewTopBar title='서비스 소개' /> : <Header />}
       <Styled.PageWrapper>
-      <Styled.Main>
-        <IntroSection />
-        <ProblemSection />
-        <QuestionSection />
-        <CatchphraseSection />
-        <FeatureSection />
-        <ConvenienceSection />
-        <ContactSection />
-      </Styled.Main>
-      {!isInAppWebView() && (
-        <Styled.IntroducePageFooter>
-          <Footer />
-        </Styled.IntroducePageFooter>
-      )}
+        <Styled.Main>
+          <IntroSection />
+          <ProblemSection />
+          <QuestionSection />
+          <CatchphraseSection />
+          <FeatureSection />
+          <ConvenienceSection />
+          <ContactSection />
+        </Styled.Main>
+        {!isInAppWebView() && (
+          <Styled.IntroducePageFooter>
+            <Footer />
+          </Styled.IntroducePageFooter>
+        )}
       </Styled.PageWrapper>
     </>
   );

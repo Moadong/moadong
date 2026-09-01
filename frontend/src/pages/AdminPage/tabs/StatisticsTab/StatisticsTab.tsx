@@ -70,67 +70,67 @@ const StatisticsTab = () => {
         <WebviewTopBar title='통계' onBack={() => navigate('/admin')} />
       )}
       <Styled.Content>
-      <ContentSection>
-        <ContentSection.Body>
-          <PeriodSelector
-            range={range}
-            activePreset={activePreset}
-            validationMessage={validationMessage}
-            onPresetSelect={handlePresetSelect}
-            onRangeChange={handleRangeChange}
-          />
-          {canFetch && (
-            <MetricSummary
-              data={overviewQuery.data}
-              isLoading={overviewQuery.isLoading}
-              isError={overviewQuery.isError}
-              onRetry={overviewQuery.refetch}
+        <ContentSection>
+          <ContentSection.Body>
+            <PeriodSelector
+              range={range}
+              activePreset={activePreset}
+              validationMessage={validationMessage}
+              onPresetSelect={handlePresetSelect}
+              onRangeChange={handleRangeChange}
             />
-          )}
-        </ContentSection.Body>
-      </ContentSection>
-
-      {canFetch && (
-        <>
-          <Styled.Section>
-            <Styled.SectionHeader>
-              <div>
-                <Styled.SectionTitle>일자별 추이</Styled.SectionTitle>
-                <Styled.SectionDescription>
-                  상세 조회수와 지원자 수를 날짜별로 비교합니다.
-                </Styled.SectionDescription>
-              </div>
-            </Styled.SectionHeader>
-            <Styled.Panel>
-              <TrendChart
-                data={trendQuery.data}
-                isLoading={trendQuery.isLoading}
-                isError={trendQuery.isError}
-                onRetry={trendQuery.refetch}
+            {canFetch && (
+              <MetricSummary
+                data={overviewQuery.data}
+                isLoading={overviewQuery.isLoading}
+                isError={overviewQuery.isError}
+                onRetry={overviewQuery.refetch}
               />
-            </Styled.Panel>
-          </Styled.Section>
+            )}
+          </ContentSection.Body>
+        </ContentSection>
 
-          <Styled.Section>
-            <Styled.SectionHeader>
-              <div>
-                <Styled.SectionTitle>전체 주요 검색어</Styled.SectionTitle>
-                <Styled.SectionDescription>
-                  선택한 기간 동안 전체 사용자가 많이 검색한 키워드입니다.
-                </Styled.SectionDescription>
-              </div>
-            </Styled.SectionHeader>
-            <Styled.Panel>
-              <KeywordRanking
-                data={searchKeywordQuery.data}
-                isLoading={searchKeywordQuery.isLoading}
-                isError={searchKeywordQuery.isError}
-                onRetry={searchKeywordQuery.refetch}
-              />
-            </Styled.Panel>
-          </Styled.Section>
-        </>
-      )}
+        {canFetch && (
+          <>
+            <Styled.Section>
+              <Styled.SectionHeader>
+                <div>
+                  <Styled.SectionTitle>일자별 추이</Styled.SectionTitle>
+                  <Styled.SectionDescription>
+                    상세 조회수와 지원자 수를 날짜별로 비교합니다.
+                  </Styled.SectionDescription>
+                </div>
+              </Styled.SectionHeader>
+              <Styled.Panel>
+                <TrendChart
+                  data={trendQuery.data}
+                  isLoading={trendQuery.isLoading}
+                  isError={trendQuery.isError}
+                  onRetry={trendQuery.refetch}
+                />
+              </Styled.Panel>
+            </Styled.Section>
+
+            <Styled.Section>
+              <Styled.SectionHeader>
+                <div>
+                  <Styled.SectionTitle>전체 주요 검색어</Styled.SectionTitle>
+                  <Styled.SectionDescription>
+                    선택한 기간 동안 전체 사용자가 많이 검색한 키워드입니다.
+                  </Styled.SectionDescription>
+                </div>
+              </Styled.SectionHeader>
+              <Styled.Panel>
+                <KeywordRanking
+                  data={searchKeywordQuery.data}
+                  isLoading={searchKeywordQuery.isLoading}
+                  isError={searchKeywordQuery.isError}
+                  onRetry={searchKeywordQuery.refetch}
+                />
+              </Styled.Panel>
+            </Styled.Section>
+          </>
+        )}
       </Styled.Content>
     </Styled.Container>
   );
