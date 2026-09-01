@@ -2,6 +2,7 @@ import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW } from '@/constants/eventName';
+import useDevice from '@/hooks/useDevice';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import isInAppWebView from '@/utils/isInAppWebView';
 import IntroSection from './components/sections/1.IntroSection/IntroSection';
@@ -15,10 +16,13 @@ import * as Styled from './IntroducePage.styles';
 
 const IntroducePage = () => {
   useTrackPageView(PAGE_VIEW.INTRODUCE_PAGE);
+  const { isMobile, isTablet } = useDevice();
+  const showPageTopBar = isMobile || isTablet || isInAppWebView();
 
   return (
     <>
-      {isInAppWebView() ? <WebviewTopBar title='서비스 소개' /> : <Header />}
+      {showPageTopBar ? <WebviewTopBar title='서비스 소개' /> : <Header />}
+      <Styled.PageWrapper>
       <Styled.Main>
         <IntroSection />
         <ProblemSection />
@@ -33,6 +37,7 @@ const IntroducePage = () => {
           <Footer />
         </Styled.IntroducePageFooter>
       )}
+      </Styled.PageWrapper>
     </>
   );
 };
