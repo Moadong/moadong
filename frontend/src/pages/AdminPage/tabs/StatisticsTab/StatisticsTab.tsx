@@ -1,4 +1,6 @@
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import {
@@ -6,6 +8,7 @@ import {
   useClubStatisticsTrend,
   useSearchKeywordStatistics,
 } from '@/hooks/Queries/useStatistics';
+import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import KeywordRanking from './components/KeywordRanking';
 import MetricSummary from './components/MetricSummary';
@@ -23,6 +26,8 @@ const DEFAULT_PRESET_DAYS = 7;
 
 const StatisticsTab = () => {
   useTrackPageView(PAGE_VIEW.ADMIN_STATISTICS_PAGE);
+  const navigate = useNavigate();
+  const { isMobile, isTablet } = useDevice();
 
   const [range, setRange] = useState<StatisticsDateRange>(() =>
     getRecentDateRange(DEFAULT_PRESET_DAYS),
@@ -61,9 +66,11 @@ const StatisticsTab = () => {
 
   return (
     <Styled.Container>
+      {(isMobile || isTablet) && (
+        <WebviewTopBar title='통계' onBack={() => navigate('/admin')} />
+      )}
+      <Styled.Content>
       <ContentSection>
-        <ContentSection.Header title='통계' />
-
         <ContentSection.Body>
           <PeriodSelector
             range={range}
@@ -124,6 +131,7 @@ const StatisticsTab = () => {
           </Styled.Section>
         </>
       )}
+      </Styled.Content>
     </Styled.Container>
   );
 };
