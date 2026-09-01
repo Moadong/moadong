@@ -176,6 +176,14 @@
     .feedback-upload-row { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; margin-bottom: 12px; }
     .feedback-upload-row button { margin: 0; }
     .feedback-upload-help { color: #666; font-size: 0.8rem; }
+    .feedback-prompt-layout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(360px, 0.9fr); gap: 16px; align-items: start; }
+    @media (max-width: 1100px) { .feedback-prompt-layout { grid-template-columns: 1fr; } }
+    .feedback-prompt-editor textarea { max-width: 100%; font-family: monospace; font-size: 0.86rem; line-height: 1.45; }
+    .feedback-prompt-actions { display: flex; gap: 8px; flex-wrap: wrap; }
+    .feedback-prompt-actions button { margin: 0; }
+    #feedbackPromptList tbody tr { cursor: pointer; }
+    #feedbackPromptList tbody tr:hover { background: #f9fafb; }
+    #feedbackPromptList tbody tr.is-selected { background: #eff6ff; }
     .promotion-upload-row { display: flex; align-items: end; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
     .promotion-upload-row .form-row { flex: 1 1 240px; margin-bottom: 0; }
     .promotion-upload-row button { margin: 0; }
@@ -277,6 +285,7 @@
         <a href="#dict">단어사전</a>
         <a href="#promotion">홍보 게시판</a>
         <a href="#feedback">받은 피드백 <span id="feedbackNavBadge" class="nav-badge hidden"></span></a>
+        <a href="#feedback-prompts">행동 피드백</a>
         <a href="#banner">배너 이미지</a>
         <a href="#fcm">FCM 알림</a>
         <a href="#statistics-backfill">통계 Backfill</a>
@@ -590,6 +599,39 @@
       </div>
     </section>
 
+    <section id="feedback-prompts" class="hidden">
+      <div class="section-head">
+        <h2>행동 피드백 프롬프트 관리</h2>
+        <div class="section-head-actions">
+          <button type="button" id="btnLoadFeedbackPrompts">목록 새로고침</button>
+          <button type="button" id="btnNewFeedbackPrompt">새 프롬프트 템플릿</button>
+        </div>
+      </div>
+      <p class="sub">문항, 선택지, 배치 순서, 활성 여부, 재노출 정책을 JSON으로 수정합니다. reasonOption id는 기존 응답 집계를 위해 변경하지 마세요.</p>
+      <div id="feedbackPromptResult" class="message-box hidden"></div>
+      <div class="feedback-prompt-layout">
+        <div class="table-wrap">
+          <table id="feedbackPromptList">
+            <thead><tr><th>트리거</th><th>대상</th><th>문항</th><th>순서</th><th>활성</th></tr></thead>
+            <tbody>
+              <tr><td colspan="5">프롬프트 목록을 조회하세요.</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <div class="feedback-prompt-editor">
+          <div class="form-row">
+            <label for="feedbackPromptJson">프롬프트 JSON</label>
+            <textarea id="feedbackPromptJson" rows="24" placeholder="목록에서 프롬프트를 선택하거나 새 템플릿을 만드세요."></textarea>
+          </div>
+          <div class="feedback-prompt-actions">
+            <button type="button" id="btnSaveFeedbackPrompt">저장</button>
+            <button type="button" id="btnFormatFeedbackPromptJson">JSON 정렬</button>
+            <button type="button" id="btnClearFeedbackPromptSelection">선택 해제</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="banner" class="hidden">
       <div class="section-head">
         <h2>배너 이미지 관리</h2>
@@ -824,7 +866,7 @@
     const DEFAULT_PROMOTION_MAP_CENTER = Object.freeze({ latitude: 35.2338, longitude: 129.0826 });
     const DEFAULT_PROMOTION_MAP_ZOOM = 4;
     const PROMOTION_FORM_IDS = ['promotionClubId', 'promotionTitle', 'promotionLocation', 'promotionEventStartDate', 'promotionEventEndDate', 'promotionDescription', 'promotionImages'];
-    const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'feedback', 'banner', 'fcm', 'statistics-backfill', 'conversion-batch'];
+    const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'feedback', 'feedback-prompts', 'banner', 'fcm', 'statistics-backfill', 'conversion-batch'];
     const FEEDBACK_TYPE_LABELS = { BUG: '문제 신고', FEATURE: '기능 요청', QUESTION: '문의', CHEER: '응원' };
     const FEEDBACK_STATUS_LABELS = { WAITING: '답장 대기', IN_PROGRESS: '확인 중', REPLIED: '답장 완료' };
     let feedbacks = [];
@@ -836,6 +878,11 @@
     let feedbackDrafts = [];
     let feedbackCurrentDraftId = '';
     let feedbackIsUploading = false;
+    let feedbackPrompts = [];
+    let feedbackPromptSelectedId = '';
+    let feedbackPromptsHasLoaded = false;
+    let feedbackPromptsIsLoading = false;
+    let feedbackPromptIsSaving = false;
     // 발행이 실패해 다시 시도할 때 같은 값을 보내야 편지가 두 번 만들어지지 않는다.
     let feedbackLetterRequestId = '';
     let fcmTokens = [];
@@ -902,6 +949,7 @@
       if (sectionId === 'dict') loadDictIfVisible();
       if (sectionId === 'promotion') loadPromotionIfVisible();
       if (sectionId === 'feedback') loadFeedbackIfVisible();
+      if (sectionId === 'feedback-prompts') loadFeedbackPromptsIfVisible();
       if (sectionId === 'banner') loadBannerIfVisible();
       if (sectionId === 'fcm') loadFcmTokensIfVisible();
     }
@@ -942,6 +990,7 @@
       document.getElementById('dict').classList.toggle('hidden', true);
       document.getElementById('promotion').classList.toggle('hidden', true);
       document.getElementById('feedback').classList.toggle('hidden', true);
+      document.getElementById('feedback-prompts').classList.toggle('hidden', true);
       document.getElementById('banner').classList.toggle('hidden', true);
       document.getElementById('fcm').classList.toggle('hidden', true);
       document.getElementById('statistics-backfill').classList.toggle('hidden', true);
@@ -1026,6 +1075,7 @@
       document.getElementById('dictList').querySelector('tbody').innerHTML = '';
       document.getElementById('dictBanner').classList.add('hidden');
       clearPromotionState();
+      clearFeedbackPromptState();
       clearBannerState();
       clearFcmState();
     }
@@ -4404,6 +4454,257 @@
       } finally {
         btn.disabled = false;
         btn.textContent = 'Backfill 실행';
+      }
+    };
+
+    function clearFeedbackPromptState() {
+      feedbackPrompts = [];
+      feedbackPromptSelectedId = '';
+      feedbackPromptsHasLoaded = false;
+      feedbackPromptsIsLoading = false;
+      feedbackPromptIsSaving = false;
+      const tbody = document.querySelector('#feedbackPromptList tbody');
+      if (tbody) tbody.innerHTML = '<tr><td colspan="5">프롬프트 목록을 조회하세요.</td></tr>';
+      const editor = document.getElementById('feedbackPromptJson');
+      if (editor) editor.value = '';
+      const result = document.getElementById('feedbackPromptResult');
+      if (result) result.classList.add('hidden');
+    }
+
+    function loadFeedbackPromptsIfVisible() {
+      if (feedbackPromptsHasLoaded || feedbackPromptsIsLoading) return;
+      loadFeedbackPrompts();
+    }
+
+    async function loadFeedbackPrompts() {
+      const btn = document.getElementById('btnLoadFeedbackPrompts');
+      feedbackPromptsIsLoading = true;
+      btn.disabled = true;
+      btn.textContent = '불러오는 중...';
+      try {
+        const res = await fetch(API_BASE + '/api/admin/feedback-prompts', { headers: headers() });
+        const data = await res.json();
+        if (res.status === 403) {
+          setMessageBox('feedbackPromptResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('feedbackPromptResult', false, data.message || '프롬프트 목록 조회 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        feedbackPrompts = data.data?.prompts || [];
+        feedbackPromptsHasLoaded = true;
+        renderFeedbackPromptList();
+        setMessageBox('feedbackPromptResult', true, '프롬프트 목록을 불러왔습니다.');
+      } catch (e) {
+        setMessageBox('feedbackPromptResult', false, e.message || '프롬프트 목록 조회 실패');
+      } finally {
+        feedbackPromptsIsLoading = false;
+        btn.disabled = false;
+        btn.textContent = '목록 새로고침';
+      }
+    }
+
+    function renderFeedbackPromptList() {
+      const tbody = document.querySelector('#feedbackPromptList tbody');
+      tbody.innerHTML = '';
+      if (!feedbackPrompts.length) {
+        const tr = document.createElement('tr');
+        const td = document.createElement('td');
+        td.colSpan = 5;
+        td.textContent = '등록된 프롬프트가 없습니다.';
+        tr.appendChild(td);
+        tbody.appendChild(tr);
+        return;
+      }
+      feedbackPrompts.forEach(prompt => {
+        const tr = document.createElement('tr');
+        tr.classList.toggle('is-selected', prompt.id === feedbackPromptSelectedId);
+        tr.onclick = () => selectFeedbackPrompt(prompt.id);
+        [
+          prompt.triggerType,
+          prompt.audience,
+          prompt.title,
+          String(prompt.displayOrder ?? 0),
+          prompt.active ? '활성' : '비활성'
+        ].forEach(value => {
+          const td = document.createElement('td');
+          td.textContent = value || '';
+          tr.appendChild(td);
+        });
+        tbody.appendChild(tr);
+      });
+    }
+
+    async function selectFeedbackPrompt(promptId) {
+      feedbackPromptSelectedId = promptId;
+      renderFeedbackPromptList();
+      try {
+        const res = await fetch(API_BASE + '/api/admin/feedback-prompts/' + encodeURIComponent(promptId), { headers: headers() });
+        const data = await res.json();
+        if (res.status === 403) {
+          setMessageBox('feedbackPromptResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('feedbackPromptResult', false, data.message || '프롬프트 상세 조회 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        const prompt = data.data?.prompt;
+        document.getElementById('feedbackPromptJson').value = JSON.stringify(toFeedbackPromptEditablePayload(prompt), null, 2);
+        setMessageBox('feedbackPromptResult', true, '프롬프트를 선택했습니다.');
+      } catch (e) {
+        setMessageBox('feedbackPromptResult', false, e.message || '프롬프트 상세 조회 실패');
+      }
+    }
+
+    function toFeedbackPromptEditablePayload(prompt) {
+      if (!prompt) return {};
+      return {
+        triggerType: prompt.triggerType,
+        audience: prompt.audience,
+        title: prompt.title,
+        description: prompt.description,
+        ratingOptions: prompt.ratingOptions || [],
+        followUp: prompt.followUp || {
+          reasonQuestion: '',
+          reasonOptions: [],
+          commentQuestion: '',
+          commentPlaceholder: '',
+          commentMaxLength: 500
+        },
+        exposurePolicy: prompt.exposurePolicy || {
+          answeredCooldownDays: 30,
+          dismissedCooldownDays: 7,
+          shownCooldownHours: 24,
+          oncePerClub: false,
+          dailyExposureLimit: 0
+        },
+        displayOrder: prompt.displayOrder || 1,
+        active: !!prompt.active
+      };
+    }
+
+    function createFeedbackPromptTemplate() {
+      return {
+        triggerType: 'ADMIN_CLUB_INFO_UPDATED',
+        audience: 'ADMIN',
+        title: '정보 수정 과정은 어떠셨나요?',
+        description: '더 나은 모아동을 위해 잠깐 시간을 내주세요',
+        ratingOptions: [
+          { rating: 'POSITIVE', label: '편했어요', displayOrder: 1, requiresFollowUp: false },
+          { rating: 'NEUTRAL', label: '보통이에요', displayOrder: 2, requiresFollowUp: false },
+          { rating: 'NEGATIVE', label: '불편했어요', displayOrder: 3, requiresFollowUp: true }
+        ],
+        followUp: {
+          reasonQuestion: '어떤 부분이 가장 불편했나요?',
+          reasonOptions: [
+            { id: 'TOO_MANY_FIELDS', label: '입력해야 할 정보가 많아요', displayOrder: 1, active: true },
+            { id: 'HARD_TO_FIND_ITEM', label: '원하는 항목을 찾기 어려워요', displayOrder: 2, active: true },
+            { id: 'PHOTO_UPLOAD', label: '사진 등록이 불편해요', displayOrder: 3, active: true },
+            { id: 'MOBILE_USABILITY', label: '모바일에서 사용하기 불편해요', displayOrder: 4, active: true },
+            { id: 'SAVE_FLOW', label: '저장/수정 과정이 불편해요', displayOrder: 5, active: true },
+            { id: 'ERROR_OCCURRED', label: '오류가 있었어요', displayOrder: 6, active: true },
+            { id: 'OTHER', label: '기타', displayOrder: 7, active: true }
+          ],
+          commentQuestion: '조금 더 알려주실 수 있나요?',
+          commentPlaceholder: '어떤 상황에서 불편했는지 알려주시면 개선에 큰 도움이 돼요.',
+          commentMaxLength: 500
+        },
+        exposurePolicy: {
+          answeredCooldownDays: 30,
+          dismissedCooldownDays: 7,
+          shownCooldownHours: 24,
+          oncePerClub: false,
+          dailyExposureLimit: 0
+        },
+        displayOrder: 1,
+        active: false
+      };
+    }
+
+    function parseFeedbackPromptEditor() {
+      const text = document.getElementById('feedbackPromptJson').value.trim();
+      if (!text) throw new Error('프롬프트 JSON을 입력하세요.');
+      const payload = JSON.parse(text);
+      delete payload.id;
+      delete payload.createdAt;
+      delete payload.updatedAt;
+      return payload;
+    }
+
+    document.getElementById('btnNewFeedbackPrompt').onclick = () => {
+      feedbackPromptSelectedId = '';
+      renderFeedbackPromptList();
+      document.getElementById('feedbackPromptJson').value = JSON.stringify(createFeedbackPromptTemplate(), null, 2);
+      setMessageBox('feedbackPromptResult', true, '새 프롬프트 템플릿을 만들었습니다. triggerType을 확인한 뒤 저장하세요.');
+    };
+
+    document.getElementById('btnClearFeedbackPromptSelection').onclick = () => {
+      feedbackPromptSelectedId = '';
+      renderFeedbackPromptList();
+      document.getElementById('feedbackPromptJson').value = '';
+      setMessageBox('feedbackPromptResult', true, '선택을 해제했습니다.');
+    };
+
+    document.getElementById('btnFormatFeedbackPromptJson').onclick = () => {
+      try {
+        const payload = parseFeedbackPromptEditor();
+        document.getElementById('feedbackPromptJson').value = JSON.stringify(payload, null, 2);
+        setMessageBox('feedbackPromptResult', true, 'JSON을 정렬했습니다.');
+      } catch (e) {
+        setMessageBox('feedbackPromptResult', false, e.message || 'JSON 형식이 올바르지 않습니다.');
+      }
+    };
+
+    document.getElementById('btnLoadFeedbackPrompts').onclick = () => {
+      feedbackPromptsHasLoaded = false;
+      loadFeedbackPrompts();
+    };
+
+    document.getElementById('btnSaveFeedbackPrompt').onclick = async () => {
+      const btn = document.getElementById('btnSaveFeedbackPrompt');
+      let payload;
+      try {
+        payload = parseFeedbackPromptEditor();
+      } catch (e) {
+        setMessageBox('feedbackPromptResult', false, e.message || 'JSON 형식이 올바르지 않습니다.');
+        return;
+      }
+      feedbackPromptIsSaving = true;
+      btn.disabled = true;
+      btn.textContent = '저장 중...';
+      try {
+        const url = feedbackPromptSelectedId
+          ? API_BASE + '/api/admin/feedback-prompts/' + encodeURIComponent(feedbackPromptSelectedId)
+          : API_BASE + '/api/admin/feedback-prompts';
+        const res = await fetch(url, {
+          method: feedbackPromptSelectedId ? 'PUT' : 'POST',
+          headers: headers(),
+          body: JSON.stringify(payload)
+        });
+        const data = await res.json();
+        if (res.status === 403) {
+          setMessageBox('feedbackPromptResult', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('feedbackPromptResult', false, data.message || '프롬프트 저장 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        feedbackPromptSelectedId = data.data?.id || feedbackPromptSelectedId;
+        feedbackPromptsHasLoaded = false;
+        await loadFeedbackPrompts();
+        if (feedbackPromptSelectedId) {
+          await selectFeedbackPrompt(feedbackPromptSelectedId);
+        }
+        setMessageBox('feedbackPromptResult', true, data.message || '프롬프트가 저장되었습니다.');
+      } catch (e) {
+        setMessageBox('feedbackPromptResult', false, e.message || '프롬프트 저장 실패');
+      } finally {
+        feedbackPromptIsSaving = false;
+        btn.disabled = false;
+        btn.textContent = '저장';
       }
     };
 
