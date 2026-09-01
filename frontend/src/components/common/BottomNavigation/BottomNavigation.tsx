@@ -81,8 +81,10 @@ const BottomNavigation = () => {
     navigate(tab.path, { replace: true });
   };
 
+  const isHome = pathname === '/' || pathname === '/promotions';
+
   return (
-    <Styled.Nav aria-label='하단 네비게이션'>
+    <Styled.Nav aria-label='하단 네비게이션' $isHome={isHome}>
       <Styled.Inner>
         {TABS.map((tab) => {
           const active = isTabActive(pathname, tab.path);

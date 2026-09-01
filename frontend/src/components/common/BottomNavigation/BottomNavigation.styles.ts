@@ -3,19 +3,35 @@ import { media } from '@/styles/mediaQuery';
 import { theme } from '@/styles/theme';
 import { Z_INDEX } from '@/styles/zIndex';
 
-export const Nav = styled.nav`
+export const Nav = styled.nav<{ $isHome?: boolean }>`
   display: none;
 
   ${media.tablet} {
     display: block;
     position: fixed;
     bottom: 0;
-    left: 0;
-    right: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 100%;
+    max-width: 500px;
     background-color: #ffffff;
     border-top: 1px solid #f0f0f0;
     padding-bottom: env(safe-area-inset-bottom);
     z-index: ${Z_INDEX.bottomNav};
+
+    ${({ $isHome }) =>
+      $isHome &&
+      `
+      left: 0;
+      transform: none;
+      max-width: 100%;
+    `}
+  }
+
+  ${media.mobile} {
+    left: 0;
+    transform: none;
+    max-width: 100%;
   }
 `;
 
