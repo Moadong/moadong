@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react';
 import InstagramIcon from '@/assets/images/icons/insta.svg';
 import KakaoIcon from '@/assets/images/icons/kakao.svg';
 import Footer from '@/components/common/Footer/Footer';
@@ -12,13 +11,13 @@ import {
 } from '@/constants/clubUnionInfo';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useDevice from '@/hooks/useDevice';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubUnionPage.styles';
 
 const COLUMN_SIZES = [3, 3, 4, 3];
-const MOBILE_BREAKPOINT = '(max-width: 500px)';
 
 const { cols, offset } = COLUMN_SIZES.reduce<{
   cols: (typeof CLUB_UNION_MEMBERS)[];
@@ -57,30 +56,19 @@ const ProfileCard = ({ member }: { member: ClubUnionMember }) => (
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
   const trackEvent = useMixpanelTrack();
-  const [isMobile, setIsMobile] = useState(
-    () =>
-      typeof window !== 'undefined' &&
-      typeof window.matchMedia === 'function' &&
-      window.matchMedia(MOBILE_BREAKPOINT).matches,
-  );
-
-  useEffect(() => {
-    if (
-      typeof window === 'undefined' ||
-      typeof window.matchMedia !== 'function'
-    )
-      return;
-    const mq = window.matchMedia(MOBILE_BREAKPOINT);
-    const handler = (e: MediaQueryListEvent) => setIsMobile(e.matches);
-    mq.addEventListener('change', handler);
-    return () => mq.removeEventListener('change', handler);
-  }, []);
+  const { isMobile, isTablet } = useDevice();
+  const showPageTopBar = isMobile || isTablet || isInAppWebView();
 
   return (
     <>
-      {isInAppWebView() ? <WebviewTopBar title='총동아리연합회' /> : <Header />}
+      {showPageTopBar ? (
+        <WebviewTopBar title='총동아리 연합회' />
+      ) : (
+        <Header />
+      )}
+      <Styled.PageWrapper>
       <PageContainer>
-        <Styled.Title>총동아리연합회 소개</Styled.Title>
+        <Styled.Title>총동아리 연합회 소개</Styled.Title>
         <Styled.IntroductionText>
           안녕하세요! 부경대학교 제17대 총동아리연합회 'we:sh'입니다.
           <br />
@@ -133,6 +121,7 @@ const ClubUnionPage = () => {
         </Styled.ProfileGrid>
       </PageContainer>
       {!isInAppWebView() && <Footer />}
+      </Styled.PageWrapper>
     </>
   );
 };

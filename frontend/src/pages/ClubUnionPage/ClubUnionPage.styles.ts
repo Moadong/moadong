@@ -3,6 +3,24 @@ import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
+export const PageWrapper = styled.div`
+  width: 100%;
+  min-height: 100dvh;
+  background: ${colors.base.white};
+
+  ${media.tablet} {
+    max-width: 500px;
+    margin: 0 auto;
+    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+`;
+
 export const Title = styled.h1`
   ${setTypography(typography.title.title1)}
   line-height: 140%;
