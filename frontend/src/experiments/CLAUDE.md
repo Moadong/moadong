@@ -12,6 +12,33 @@ const variant = useExperimentVariant(mainBannerExperiment);
 // variant는 'A' 또는 'B'
 ```
 
+## 노출 이벤트는 배정 시점이 아니라 렌더 시점에 보낸다
+
+`trackExperimentExposure(experiment)`가 Mixpanel `$experiment_started`를 보낸다.
+실험당 페이지 로드 1회로 막혀 있다.
+
+**부팅 때 한꺼번에 보내면 안 된다.**
+
+배정은 사이트에 들어온 **모든 사람**에게 일어난다. 하지만 실험으로 화면이
+갈리는 건 그중 일부다. 예를 들어 개편이 모바일에만 적용되면 데스크톱
+사용자는 control이든 treatment든 **똑같은 화면**을 본다.
+
+부팅할 때 노출 이벤트를 다 보내면 이 사람들도 실험 참가자로 집계된다. 같은
+화면을 보니 두 그룹에 절반씩 똑같이 섞이고, 결과적으로 진짜 차이를 묽게
+만든다. 실제로 5%p 차이가 났어도 참가자의 절반이 화면 차이를 못 본
+사람이면 측정값은 2.5%p로 줄어든다.
+
+그래서 **그 화면이 실제로 그려질 때만** 보낸다.
+
+```typescript
+useEffect(() => {
+  if (isNarrow) trackExperimentExposure(someExperiment);
+}, [isNarrow]);
+```
+
+super property 등록(부팅 시)과 노출 이벤트(렌더 시)는 목적이 다르다. 전자는
+"이 방문의 배정이 무엇인가", 후자는 "누구를 분석 모집단에 넣을 것인가"다.
+
 ## 오염 계측
 
 배정이 뒤집힌 방문을 분석에서 걸러내기 위해 `fetchAndAssignExperiments`가
