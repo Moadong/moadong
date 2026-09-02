@@ -15,6 +15,7 @@ import {
   stagger,
   VIEWPORT_CONFIG,
 } from '@/pages/IntroducePage/constants/animations';
+import useClubListPath from '@/hooks/useClubListPath';
 import { floatingClubs } from '@/pages/IntroducePage/constants/mockData';
 import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import * as Styled from './IntroSection.styles';
@@ -67,6 +68,7 @@ const SHAPES = [
 
 const IntroSection = () => {
   const navigate = useNavigate();
+  const clubListPath = useClubListPath();
 
   return (
     <Styled.IntroSection
@@ -90,7 +92,7 @@ const IntroSection = () => {
           <Styled.IntroSubtitle variants={fadeIn}>
             부경대학교의 모든 동아리를 한눈에
           </Styled.IntroSubtitle>
-          <Styled.IntroButton variants={fadeIn} onClick={() => navigate('/')}>
+          <Styled.IntroButton variants={fadeIn} onClick={() => navigate(clubListPath)}>
             동아리 모아보기
             <img
               src={search_button_icon}
