@@ -10,7 +10,7 @@ const meta = {
     docs: {
       description: {
         component:
-          '앱 네이티브 바텀탭을 웹으로 옮긴 하단 네비게이션입니다. (홈 / 구독 / 메뉴)',
+          '앱 네이티브 바텀탭을 웹으로 옮긴 하단 네비게이션입니다. (홈 / 동아리 / 홍보 / 메뉴)',
       },
     },
   },
@@ -30,10 +30,20 @@ export const Home: Story = {
   ],
 };
 
-export const Subscriptions: Story = {
+export const Clubs: Story = {
   decorators: [
     (Story) => (
-      <MemoryRouter initialEntries={['/subscriptions']}>
+      <MemoryRouter initialEntries={['/clubs']}>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+};
+
+export const Promotions: Story = {
+  decorators: [
+    (Story) => (
+      <MemoryRouter initialEntries={['/promotions']}>
         <Story />
       </MemoryRouter>
     ),
@@ -44,6 +54,18 @@ export const Menu: Story = {
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={['/menu']}>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+};
+
+/** 홍보 게시판에 확인하지 않은 새 글이 있을 때 '홍보' 탭에 점이 붙는다 */
+export const WithPromotionNotification: Story = {
+  args: { hasPromotionNotification: true },
+  decorators: [
+    (Story) => (
+      <MemoryRouter initialEntries={['/']}>
         <Story />
       </MemoryRouter>
     ),
