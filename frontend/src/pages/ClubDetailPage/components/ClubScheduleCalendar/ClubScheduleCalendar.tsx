@@ -262,7 +262,11 @@ const ClubScheduleCalendar = ({
 
         <Styled.WeekList>
           {weeks.map((weekDays) => {
-            const bands = buildWeekEventSegments(periodEvents, weekDays);
+            const bands = buildWeekEventSegments(
+              periodEvents,
+              weekDays,
+              visibleMonth,
+            );
 
             return (
               <Styled.Week key={buildDateKeyFromDate(weekDays[0])}>

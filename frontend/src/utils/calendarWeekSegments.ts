@@ -66,12 +66,35 @@ const assignLanes = (
 export const buildWeekEventSegments = (
   events: ClubCalendarEvent[],
   weekDays: Date[],
+  /**
+   * 주면 이 달에 속한 날짜까지만 막대를 그린다.
+   * 월 그리드의 첫/마지막 주에는 앞뒤 달 날짜가 섞여 있는데,
+   * 그 칸까지 색이 새지 않도록 자르는 용도.
+   */
+  visibleMonth?: Date,
 ): WeekEventSegment[] => {
   if (weekDays.length === 0) return [];
 
   const weekKeys = weekDays.map(buildDateKeyFromDate);
   const weekStartKey = weekKeys[0];
   const weekEndKey = weekKeys[weekKeys.length - 1];
+
+  const monthStartKey = visibleMonth
+    ? buildDateKeyFromDate(
+        new Date(visibleMonth.getFullYear(), visibleMonth.getMonth(), 1),
+      )
+    : null;
+  const monthEndKey = visibleMonth
+    ? buildDateKeyFromDate(
+        new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + 1, 0),
+      )
+    : null;
+
+  const rangeStartKey =
+    monthStartKey && monthStartKey > weekStartKey ? monthStartKey : weekStartKey;
+  const rangeEndKey =
+    monthEndKey && monthEndKey < weekEndKey ? monthEndKey : weekEndKey;
+
   const segments: Omit<WeekEventSegment, 'lane'>[] = [];
 
   events.forEach((event) => {
@@ -80,9 +103,9 @@ export const buildWeekEventSegments = (
       const endKey = event.end ? parseDateKey(event.end) : startKey;
       if (!startKey || !endKey) return;
 
-      // 이벤트 기간과 이번 주의 교집합
-      const from = startKey > weekStartKey ? startKey : weekStartKey;
-      const to = endKey < weekEndKey ? endKey : weekEndKey;
+      // 이벤트 기간과 이번 주 표시 범위의 교집합
+      const from = startKey > rangeStartKey ? startKey : rangeStartKey;
+      const to = endKey < rangeEndKey ? endKey : rangeEndKey;
       if (from > to) return;
 
       const startIndex = weekKeys.indexOf(from);
@@ -107,6 +130,8 @@ export const buildWeekEventSegments = (
       weekDays[0],
       weekDays[weekDays.length - 1],
     ).forEach((occurrence) => {
+      if (occurrence.dateKey < rangeStartKey) return;
+      if (occurrence.dateKey > rangeEndKey) return;
       const startIndex = weekKeys.indexOf(occurrence.dateKey);
       if (startIndex === -1) return;
       segments.push({
