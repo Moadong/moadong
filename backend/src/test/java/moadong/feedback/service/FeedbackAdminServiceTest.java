@@ -15,6 +15,7 @@ import moadong.feedback.payload.request.FeedbackReplyRequest;
 import moadong.feedback.payload.request.FeedbackStatusUpdateRequest;
 import moadong.feedback.payload.request.LetterCreateRequest;
 import moadong.feedback.payload.response.AdminFeedbackListResponse;
+import moadong.feedback.payload.response.AdminSentLetterListResponse;
 import moadong.feedback.payload.response.FeedbackReplyResponse;
 import moadong.feedback.payload.response.LetterCreateResponse;
 import moadong.feedback.repository.FeedbackRepository;
@@ -117,6 +118,21 @@ class FeedbackAdminServiceTest {
         assertEquals("user_11111111", response.feedbacks().get(0).sender());
         assertNotEquals(response.feedbacks().get(0).sender(), response.feedbacks().get(1).sender());
         assertEquals(2L, response.unansweredCount());
+    }
+
+    @Test
+    void 보낸_편지_목록은_답장의_받는_사람만_익명_식별자로_표시한다() {
+        when(letterRepository.findAllByOrderByCreatedAtDesc()).thenReturn(List.of(
+                Letter.reply(STUDENT_ID, "feedback-1", "답장 제목", "답장 본문"),
+                Letter.broadcast(LetterCategory.UPDATE, "공지 제목", "공지 본문", "request-1")));
+
+        AdminSentLetterListResponse response = feedbackAdminService.getSentLetters();
+
+        assertEquals(2, response.letters().size());
+        assertEquals("user_11111111", response.letters().get(0).recipient());
+        assertEquals("feedback-1", response.letters().get(0).feedbackId());
+        assertEquals("답장 본문", response.letters().get(0).body());
+        assertNull(response.letters().get(1).recipient());
     }
 
     @Test
