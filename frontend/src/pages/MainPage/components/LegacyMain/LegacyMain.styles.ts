@@ -1,5 +1,19 @@
 import styled from 'styled-components';
+import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
+
+/**
+ * 필터칩이 담당하던 고정 헤더 여백을 대신한다.
+ * 데스크톱은 배너가 자체 margin-top으로 헤더를 피하므로 모바일에서만 필요하다.
+ */
+export const HeaderSpacer = styled.div`
+  display: none;
+
+  ${media.mobile} {
+    display: block;
+    height: ${HEADER_HEIGHT.mobile}px;
+  }
+`;
 
 export const PageContainer = styled.div`
   max-width: 1180px;
