@@ -60,6 +60,9 @@ export const USER_EVENT = {
   APPLICATION_FORM_SUBMITTED: 'Application Form Submitted',
   FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
 
+  // A/B 실험 노출 (Mixpanel 예약 이벤트)
+  EXPERIMENT_STARTED: '$experiment_started',
+
   // 필터칩
   FILTER_OPTION_CLICKED: 'Filter Option Clicked',
 
