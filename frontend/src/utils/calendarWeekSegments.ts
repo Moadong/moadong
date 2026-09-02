@@ -91,7 +91,9 @@ export const buildWeekEventSegments = (
     : null;
 
   const rangeStartKey =
-    monthStartKey && monthStartKey > weekStartKey ? monthStartKey : weekStartKey;
+    monthStartKey && monthStartKey > weekStartKey
+      ? monthStartKey
+      : weekStartKey;
   const rangeEndKey =
     monthEndKey && monthEndKey < weekEndKey ? monthEndKey : weekEndKey;
 
