@@ -115,3 +115,48 @@ describe('useFocusTrap', () => {
     expect(screen.getByTestId('바깥')).toHaveFocus();
   });
 });
+
+describe('useFocusTrap 숨겨진 요소', () => {
+  const proto = HTMLElement.prototype as {
+    checkVisibility?: (this: HTMLElement) => boolean;
+  };
+
+  /** jsdom엔 checkVisibility가 없어 인라인 display만 보는 흉내를 붙인다 */
+  beforeEach(() => {
+    proto.checkVisibility = function (this: HTMLElement) {
+      return this.style.display !== 'none';
+    };
+  });
+  afterEach(() => {
+    delete proto.checkVisibility;
+  });
+
+  const Edges = () => {
+    const ref = useRef<HTMLDivElement>(null);
+    useFocusTrap(true, ref);
+    return (
+      <div ref={ref} tabIndex={-1}>
+        <button style={{ display: 'none' }}>숨긴 첫</button>
+        <button>첫</button>
+        <button>끝</button>
+        <button style={{ display: 'none' }}>숨긴 끝</button>
+      </div>
+    );
+  };
+
+  it('끝자리가 숨겨져 있으면 보이는 마지막 요소에서 첫 요소로 돌아온다', () => {
+    render(<Edges />);
+    screen.getByRole('button', { name: '끝' }).focus();
+
+    expect(pressTab()).toBe(false);
+    expect(screen.getByRole('button', { name: '첫' })).toHaveFocus();
+  });
+
+  it('첫자리가 숨겨져 있으면 보이는 첫 요소에서 마지막 요소로 간다', () => {
+    render(<Edges />);
+    screen.getByRole('button', { name: '첫' }).focus();
+
+    expect(pressTab(true)).toBe(false);
+    expect(screen.getByRole('button', { name: '끝' })).toHaveFocus();
+  });
+});
