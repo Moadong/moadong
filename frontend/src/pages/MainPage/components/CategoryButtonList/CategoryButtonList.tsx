@@ -24,7 +24,17 @@ const clubCategories: Category[] = [
   { id: '공연', name: '공연', type: 'performance' },
 ];
 
-const CategoryButtonList = () => {
+interface CategoryButtonListProps {
+  /** 목록이 없는 화면(홈)에서 카테고리 선택 후 목록으로 이동시킬 때 사용한다 */
+  onSelect?: () => void;
+  /** 목록을 필터링하는 화면에서만 스크롤 시 상단에 고정한다 */
+  sticky?: boolean;
+}
+
+const CategoryButtonList = ({
+  onSelect,
+  sticky = true,
+}: CategoryButtonListProps) => {
   const { selectedCategory, setSelectedCategory } = useSelectedCategory();
   const trackEvent = useMixpanelTrack();
 
@@ -38,10 +48,11 @@ const CategoryButtonList = () => {
     resetSearch();
 
     setSelectedCategory(category.id);
+    onSelect?.();
   };
 
   return (
-    <Styled.CategoryButtonContainer>
+    <Styled.CategoryButtonContainer $sticky={sticky}>
       {clubCategories.map((category) => (
         <Styled.CategoryButton
           key={category.id}

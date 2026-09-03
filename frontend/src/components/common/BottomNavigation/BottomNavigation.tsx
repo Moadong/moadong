@@ -1,7 +1,8 @@
 import { useLocation, useNavigate } from 'react-router-dom';
+import ClubIcon from '@/assets/images/icons/bottomNav/club.svg?react';
 import HomeIcon from '@/assets/images/icons/bottomNav/home.svg?react';
 import MenuIcon from '@/assets/images/icons/bottomNav/menu.svg?react';
-import SubscribeIcon from '@/assets/images/icons/bottomNav/subscribe.svg?react';
+import PromotionIcon from '@/assets/images/icons/bottomNav/promotion.svg?react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './BottomNavigation.styles';
@@ -27,10 +28,16 @@ const TABS: BottomNavTab[] = [
     icon: { type: 'vector', Component: HomeIcon },
   },
   {
-    key: 'subscriptions',
-    label: '구독',
-    path: '/subscriptions',
-    icon: { type: 'vector', Component: SubscribeIcon },
+    key: 'clubs',
+    label: '동아리',
+    path: '/clubs',
+    icon: { type: 'vector', Component: ClubIcon },
+  },
+  {
+    key: 'promotions',
+    label: '홍보',
+    path: '/promotions',
+    icon: { type: 'vector', Component: PromotionIcon },
   },
   {
     key: 'more',
@@ -41,9 +48,8 @@ const TABS: BottomNavTab[] = [
 ];
 
 const isTabActive = (pathname: string, path: string) => {
-  // 홈 탭: 메인 + 상단 Filter로 묶이는 홍보까지 활성
   if (path === '/') {
-    return pathname === '/' || pathname === '/promotions';
+    return pathname === '/';
   }
   // 메뉴 탭: 메뉴 페이지에서 진입하는 소개/연합회 하위 페이지까지 활성
   if (path === '/menu') {
@@ -71,7 +77,14 @@ const renderIcon = (icon: TabIcon, active: boolean) => {
   );
 };
 
-const BottomNavigation = () => {
+interface BottomNavigationProps {
+  /** 홍보 게시판에 확인하지 않은 새 글이 있는지 */
+  hasPromotionNotification?: boolean;
+}
+
+const BottomNavigation = ({
+  hasPromotionNotification = false,
+}: BottomNavigationProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
@@ -95,6 +108,9 @@ const BottomNavigation = () => {
               onClick={() => handleTabClick(tab)}
             >
               {renderIcon(tab.icon, active)}
+              {tab.key === 'promotions' && hasPromotionNotification && (
+                <Styled.NotificationDot />
+              )}
               <Styled.Label>{tab.label}</Styled.Label>
             </Styled.Tab>
           );

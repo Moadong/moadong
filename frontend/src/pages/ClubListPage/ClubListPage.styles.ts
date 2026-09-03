@@ -1,20 +1,28 @@
 import styled from 'styled-components';
+import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
 
 export const PageContainer = styled.div`
   max-width: 1180px;
   margin: 0 auto;
+  padding-top: ${HEADER_HEIGHT.desktop}px;
 
   ${media.laptop} {
-    padding: 0 20px;
+    padding-left: 20px;
+    padding-right: 20px;
+  }
+
+  ${media.tablet} {
+    padding-top: ${HEADER_HEIGHT.tablet}px;
   }
 
   ${media.mobile} {
-    padding: 0 20px;
+    padding-top: ${HEADER_HEIGHT.mobile}px;
   }
 
   ${media.mini_mobile} {
-    padding: 0 10px;
+    padding-left: 10px;
+    padding-right: 10px;
   }
 `;
 
@@ -32,41 +40,17 @@ export const SectionBar = styled.div`
   ${media.mobile} {
     margin: 12px 4px 12px;
   }
-`;
 
-export const SectionTabs = styled.nav`
-  display: flex;
-  gap: 18px;
-
-  ${media.mobile} {
-    gap: 16px;
+  /* 카테고리 줄이 mini_mobile에서 음수 마진으로 겹쳐 오는 만큼 밀어준다 */
+  ${media.mini_mobile} {
+    margin-top: 22px;
   }
 `;
 
-// 현재는 중앙동아리 상태만 유지
-// 과동아리 또는 가동아리 확장성을 위해 active 속성 유지
-export const Tab = styled.button<{ $active?: boolean }>`
-  display: flex;
-  position: relative;
+export const SectionTitle = styled.h2`
   font-size: 20px;
   font-weight: 700;
-  color: ${({ $active }) => ($active ? '#787878' : '#DCDCDC')};
-  border: none;
-  background: none;
-
-  &::after {
-    content: '';
-    position: absolute;
-    left: 0;
-    bottom: -4px;
-    width: 100%;
-    height: 1.5px;
-    background: #787878;
-    border-radius: 1.5px;
-    transform: ${({ $active }) => ($active ? 'scaleX(1)' : 'scaleX(0)')};
-    transform-origin: center;
-    transition: transform 0.2s ease;
-  }
+  color: #787878;
 
   ${media.mobile} {
     font-size: 14px;
@@ -88,9 +72,6 @@ export const CardList = styled.div`
   width: 100%;
   max-width: 100%;
   gap: 20px;
-  transition:
-    gap 0.5s ease,
-    grid-template-columns 0.5s ease;
 
   grid-template-columns: repeat(3, minmax(0, 1fr));
 

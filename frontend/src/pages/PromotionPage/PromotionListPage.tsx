@@ -3,9 +3,7 @@ import Header from '@/components/common/Header/Header';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
-import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
 import isInAppWebView from '@/utils/isInAppWebView';
-import Filter from '../../components/common/Filter/Filter';
 import PromottionGrid from './components/list/PromotionGrid/PromotionGrid';
 import * as Styled from './PromotionListPage.styles';
 
@@ -13,7 +11,6 @@ const PromotionListPage = () => {
   useTrackPageView(PAGE_VIEW.PROMOTION_LIST_PAGE);
 
   const { data, isLoading, isError } = useGetPromotionArticles();
-  const hasNotification = usePromotionNotification();
   const inAppWebView = isInAppWebView();
 
   const content = (
@@ -32,10 +29,7 @@ const PromotionListPage = () => {
   return (
     <>
       <Header />
-      <Styled.Container>
-        <Filter hasNotification={hasNotification} />
-        {content}
-      </Styled.Container>
+      <Styled.Container>{content}</Styled.Container>
       {!inAppWebView && <Footer />}
     </>
   );
