@@ -5,6 +5,7 @@ import MenuIcon from '@/assets/images/icons/bottomNav/menu.svg?react';
 import PromotionIcon from '@/assets/images/icons/bottomNav/promotion.svg?react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import useClubListPath from '@/hooks/useClubListPath';
 import * as Styled from './BottomNavigation.styles';
 
 type SvgComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -88,6 +89,14 @@ const BottomNavigation = ({
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
+  const clubListPath = useClubListPath();
+
+  // 개편을 받지 않은 사용자(main_redesign control 등)는 홈이 곧 전체 목록이라
+  // 동아리 탭을 빼야 treatment 전용 /clubs 화면으로 새지 않는다
+  const tabs =
+    clubListPath === '/clubs'
+      ? TABS
+      : TABS.filter((tab) => tab.key !== 'clubs');
 
   const handleTabClick = (tab: BottomNavTab) => {
     trackEvent(USER_EVENT.BOTTOM_TAB_CLICKED, { tab: tab.key, path: tab.path });
@@ -97,7 +106,7 @@ const BottomNavigation = ({
   return (
     <Styled.Nav aria-label='하단 네비게이션'>
       <Styled.Inner>
-        {TABS.map((tab) => {
+        {tabs.map((tab) => {
           const active = isTabActive(pathname, tab.path);
           return (
             <Styled.Tab
