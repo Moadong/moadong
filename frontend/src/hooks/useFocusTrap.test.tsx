@@ -21,6 +21,21 @@ const Overlay = ({ isOpen, name }: { isOpen: boolean; name: string }) => {
 const pressTab = (shiftKey = false) =>
   fireEvent.keyDown(document, { key: 'Tab', shiftKey });
 
+const Edges = () => {
+  const ref = useRef<HTMLDivElement>(null);
+  useFocusTrap(true, ref);
+  return (
+    <div ref={ref} tabIndex={-1}>
+      <button style={{ display: 'none' }}>숨긴 첫</button>
+      <button style={{ visibility: 'hidden' }}>가려진 첫</button>
+      <button>첫</button>
+      <button>끝</button>
+      <button style={{ visibility: 'hidden' }}>가려진 끝</button>
+      <button style={{ display: 'none' }}>숨긴 끝</button>
+    </div>
+  );
+};
+
 describe('useFocusTrap', () => {
   it('열리면 컨테이너로 포커스가 들어간다', () => {
     render(<Overlay isOpen name='모달' />);
@@ -176,21 +191,6 @@ describe('useFocusTrap 숨겨진 요소', () => {
     delete proto.checkVisibility;
   });
 
-  const Edges = () => {
-    const ref = useRef<HTMLDivElement>(null);
-    useFocusTrap(true, ref);
-    return (
-      <div ref={ref} tabIndex={-1}>
-        <button style={{ display: 'none' }}>숨긴 첫</button>
-        <button style={{ visibility: 'hidden' }}>가려진 첫</button>
-        <button>첫</button>
-        <button>끝</button>
-        <button style={{ visibility: 'hidden' }}>가려진 끝</button>
-        <button style={{ display: 'none' }}>숨긴 끝</button>
-      </div>
-    );
-  };
-
   it('끝자리가 숨겨져 있으면 보이는 마지막 요소에서 첫 요소로 돌아온다', () => {
     render(<Edges />);
     screen.getByRole('button', { name: '끝' }).focus();
@@ -205,5 +205,48 @@ describe('useFocusTrap 숨겨진 요소', () => {
 
     expect(pressTab(true)).toBe(false);
     expect(screen.getByRole('button', { name: '끝' })).toHaveFocus();
+  });
+});
+
+/**
+ * jsdom엔 checkVisibility가 없어서 스텁을 붙이지 않으면 그대로 폴백 경로를 탄다.
+ * 위 describe와 같은 기대값이어야 미지원 환경에서도 트랩이 유지된다는 뜻이다.
+ */
+describe('useFocusTrap checkVisibility 미지원 환경', () => {
+  it('끝자리가 숨겨져 있으면 보이는 마지막 요소에서 첫 요소로 돌아온다', () => {
+    render(<Edges />);
+    screen.getByRole('button', { name: '끝' }).focus();
+
+    expect(pressTab()).toBe(false);
+    expect(screen.getByRole('button', { name: '첫' })).toHaveFocus();
+  });
+
+  it('첫자리가 숨겨져 있으면 보이는 첫 요소에서 마지막 요소로 간다', () => {
+    render(<Edges />);
+    screen.getByRole('button', { name: '첫' }).focus();
+
+    expect(pressTab(true)).toBe(false);
+    expect(screen.getByRole('button', { name: '끝' })).toHaveFocus();
+  });
+
+  it('숨긴 조상 안에 있으면 끝자리에서 제외한다', () => {
+    const Buried = () => {
+      const ref = useRef<HTMLDivElement>(null);
+      useFocusTrap(true, ref);
+      return (
+        <div ref={ref} tabIndex={-1}>
+          <button>첫</button>
+          <button>끝</button>
+          <div style={{ display: 'none' }}>
+            <button>파묻힌 끝</button>
+          </div>
+        </div>
+      );
+    };
+    render(<Buried />);
+    screen.getByRole('button', { name: '끝' }).focus();
+
+    expect(pressTab()).toBe(false);
+    expect(screen.getByRole('button', { name: '첫' })).toHaveFocus();
   });
 });
