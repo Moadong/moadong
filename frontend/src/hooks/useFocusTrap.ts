@@ -23,12 +23,30 @@ const FOCUSABLE_SELECTOR = [
 const stack: HTMLElement[] = [];
 
 /**
+ * display는 상속되지 않아 조상까지 거슬러 올라가야 하고, visibility는 상속되지만
+ * 자식이 visible로 되돌릴 수 있어서 요소 자신의 계산값만 본다.
+ */
+const isHiddenByStyle = (element: HTMLElement) => {
+  if (getComputedStyle(element).visibility !== 'visible') return true;
+
+  let node: HTMLElement | null = element;
+  while (node) {
+    if (getComputedStyle(node).display === 'none') return true;
+    node = node.parentElement;
+  }
+
+  return false;
+};
+
+/**
  * display:none·visibility:hidden 요소는 셀렉터엔 걸리지만 포커스를 못 받는다.
  * 그런 요소가 끝자리에 오면 focus()가 조용히 무시돼 Tab이 먹통이 된다.
- * checkVisibility가 없는 환경(구형 Safari, jsdom)은 걸러내지 않고 그대로 둔다.
+ * checkVisibility가 없는 환경(Safari 17.3 이하)은 계산된 스타일로 대신 본다.
  */
 const isVisible = (element: HTMLElement) =>
-  element.checkVisibility?.({ visibilityProperty: true }) ?? true;
+  element.checkVisibility
+    ? element.checkVisibility({ visibilityProperty: true })
+    : !isHiddenByStyle(element);
 
 const getFocusable = (container: HTMLElement) =>
   Array.from(
