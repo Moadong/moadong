@@ -10,10 +10,11 @@ const meta = {
     docs: {
       description: {
         component:
-          '앱 네이티브 바텀탭을 웹으로 옮긴 하단 네비게이션입니다. (홈 / 동아리 / 홍보 / 메뉴)',
+          '앱 네이티브 바텀탭을 웹으로 옮긴 하단 네비게이션입니다. (홈 / 동아리 / 홍보 / 메뉴) 개편을 받지 않은 사용자(main_redesign control 등)에게는 동아리 대신 구독 탭이 들어갑니다.',
       },
     },
   },
+  args: { showClubsTab: true },
   tags: ['autodocs'],
 } satisfies Meta<typeof BottomNavigation>;
 
@@ -54,6 +55,18 @@ export const Menu: Story = {
   decorators: [
     (Story) => (
       <MemoryRouter initialEntries={['/menu']}>
+        <Story />
+      </MemoryRouter>
+    ),
+  ],
+};
+
+/** 개편을 받지 않은 사용자: 동아리 자리에 구독 탭 */
+export const Control: Story = {
+  args: { showClubsTab: false },
+  decorators: [
+    (Story) => (
+      <MemoryRouter initialEntries={['/subscriptions']}>
         <Story />
       </MemoryRouter>
     ),

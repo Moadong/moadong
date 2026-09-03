@@ -6,7 +6,6 @@ import PromotionIcon from '@/assets/images/icons/bottomNav/promotion.svg?react';
 import SubscribeIcon from '@/assets/images/icons/bottomNav/subscribe.svg?react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import useClubListPath from '@/hooks/useClubListPath';
 import * as Styled from './BottomNavigation.styles';
 
 type SvgComponent = React.ComponentType<React.SVGProps<SVGSVGElement>>;
@@ -91,21 +90,25 @@ const renderIcon = (icon: TabIcon, active: boolean) => {
 };
 
 interface BottomNavigationProps {
+  /**
+   * 두 번째 탭을 동아리(`/clubs`)로 둘지. false면 구독 탭이 들어간다.
+   * 개편을 받지 않은 사용자(main_redesign control 등)는 홈이 곧 전체 목록이라
+   * 동아리 탭을 주면 treatment 전용 /clubs 화면으로 샌다.
+   */
+  showClubsTab?: boolean;
   /** 홍보 게시판에 확인하지 않은 새 글이 있는지 */
   hasPromotionNotification?: boolean;
 }
 
 const BottomNavigation = ({
+  showClubsTab = true,
   hasPromotionNotification = false,
 }: BottomNavigationProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
-  const clubListPath = useClubListPath();
 
-  // 개편을 받지 않은 사용자(main_redesign control 등)는 홈이 곧 전체 목록이라
-  // 동아리 탭을 빼야 treatment 전용 /clubs 화면으로 새지 않는다
-  const secondTab = clubListPath === '/clubs' ? CLUBS_TAB : SUBSCRIPTIONS_TAB;
+  const secondTab = showClubsTab ? CLUBS_TAB : SUBSCRIPTIONS_TAB;
   const tabs = [HOME_TAB, secondTab, ...COMMON_TABS];
 
   const handleTabClick = (tab: BottomNavTab) => {
