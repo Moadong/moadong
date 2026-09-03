@@ -22,21 +22,20 @@ const renderAt = (path: string) =>
   );
 
 describe('BottomNavigation', () => {
-  it('개편을 받은 사용자(/clubs)에게는 동아리 탭을 보여준다', () => {
+  it('개편을 받은 사용자(/clubs)에게는 홈·동아리·홍보·메뉴를 보여준다', () => {
     mockUseClubListPath.mockReturnValue('/clubs');
     renderAt('/');
 
-    expect(screen.getByRole('button', { name: '동아리' })).not.toBeNull();
+    const labels = screen.getAllByRole('button').map((tab) => tab.textContent);
+    expect(labels).toEqual(['홈', '동아리', '홍보', '메뉴']);
   });
 
-  it('개편을 받지 않은 사용자(/)에게는 동아리 탭을 숨긴다', () => {
+  it('개편을 받지 않은 사용자(/)에게는 동아리 대신 구독 탭을 보여준다', () => {
     mockUseClubListPath.mockReturnValue('/');
     renderAt('/');
 
-    expect(screen.queryByRole('button', { name: '동아리' })).toBeNull();
-    expect(screen.getByRole('button', { name: '홈' })).not.toBeNull();
-    expect(screen.getByRole('button', { name: '홍보' })).not.toBeNull();
-    expect(screen.getByRole('button', { name: '메뉴' })).not.toBeNull();
+    const labels = screen.getAllByRole('button').map((tab) => tab.textContent);
+    expect(labels).toEqual(['홈', '구독', '홍보', '메뉴']);
   });
 
   it('개편을 받지 않은 사용자의 홈에서는 활성 탭이 홈 하나뿐이다', () => {

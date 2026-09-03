@@ -3,6 +3,7 @@ import ClubIcon from '@/assets/images/icons/bottomNav/club.svg?react';
 import HomeIcon from '@/assets/images/icons/bottomNav/home.svg?react';
 import MenuIcon from '@/assets/images/icons/bottomNav/menu.svg?react';
 import PromotionIcon from '@/assets/images/icons/bottomNav/promotion.svg?react';
+import SubscribeIcon from '@/assets/images/icons/bottomNav/subscribe.svg?react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useClubListPath from '@/hooks/useClubListPath';
@@ -21,19 +22,30 @@ interface BottomNavTab {
   icon: TabIcon;
 }
 
-const TABS: BottomNavTab[] = [
-  {
-    key: 'home',
-    label: '홈',
-    path: '/',
-    icon: { type: 'vector', Component: HomeIcon },
-  },
-  {
-    key: 'clubs',
-    label: '동아리',
-    path: '/clubs',
-    icon: { type: 'vector', Component: ClubIcon },
-  },
+const HOME_TAB: BottomNavTab = {
+  key: 'home',
+  label: '홈',
+  path: '/',
+  icon: { type: 'vector', Component: HomeIcon },
+};
+
+const CLUBS_TAB: BottomNavTab = {
+  key: 'clubs',
+  label: '동아리',
+  path: '/clubs',
+  icon: { type: 'vector', Component: ClubIcon },
+};
+
+// 개편 홈은 구독 진입점을 헤더 알림 버튼으로 옮겼지만, 기존 홈에는 그게 없어
+// 개편을 받지 않은 사용자에게는 동아리 자리에 구독 탭을 그대로 둔다
+const SUBSCRIPTIONS_TAB: BottomNavTab = {
+  key: 'subscriptions',
+  label: '구독',
+  path: '/subscriptions',
+  icon: { type: 'vector', Component: SubscribeIcon },
+};
+
+const COMMON_TABS: BottomNavTab[] = [
   {
     key: 'promotions',
     label: '홍보',
@@ -93,10 +105,8 @@ const BottomNavigation = ({
 
   // 개편을 받지 않은 사용자(main_redesign control 등)는 홈이 곧 전체 목록이라
   // 동아리 탭을 빼야 treatment 전용 /clubs 화면으로 새지 않는다
-  const tabs =
-    clubListPath === '/clubs'
-      ? TABS
-      : TABS.filter((tab) => tab.key !== 'clubs');
+  const secondTab = clubListPath === '/clubs' ? CLUBS_TAB : SUBSCRIPTIONS_TAB;
+  const tabs = [HOME_TAB, secondTab, ...COMMON_TABS];
 
   const handleTabClick = (tab: BottomNavTab) => {
     trackEvent(USER_EVENT.BOTTOM_TAB_CLICKED, { tab: tab.key, path: tab.path });
