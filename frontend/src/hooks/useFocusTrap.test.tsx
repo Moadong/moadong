@@ -118,13 +118,28 @@ describe('useFocusTrap', () => {
 
 describe('useFocusTrap 숨겨진 요소', () => {
   const proto = HTMLElement.prototype as {
-    checkVisibility?: (this: HTMLElement) => boolean;
+    checkVisibility?: (
+      this: HTMLElement,
+      options?: { visibilityProperty?: boolean },
+    ) => boolean;
   };
 
-  /** jsdom엔 checkVisibility가 없어 인라인 display만 보는 흉내를 붙인다 */
+  /**
+   * jsdom엔 checkVisibility가 없어 인라인 스타일만 보는 흉내를 붙인다.
+   *
+   * visibility는 실제 API와 같이 visibilityProperty를 켰을 때만 본다.
+   * 호출부에서 옵션을 빠뜨리면 '가려진' 요소가 걸러지지 않아 테스트가 깨진다.
+   */
   beforeEach(() => {
-    proto.checkVisibility = function (this: HTMLElement) {
-      return this.style.display !== 'none';
+    proto.checkVisibility = function (
+      this: HTMLElement,
+      options?: { visibilityProperty?: boolean },
+    ) {
+      if (this.style.display === 'none') return false;
+      if (options?.visibilityProperty && this.style.visibility === 'hidden') {
+        return false;
+      }
+      return true;
     };
   });
   afterEach(() => {
@@ -137,8 +152,10 @@ describe('useFocusTrap 숨겨진 요소', () => {
     return (
       <div ref={ref} tabIndex={-1}>
         <button style={{ display: 'none' }}>숨긴 첫</button>
+        <button style={{ visibility: 'hidden' }}>가려진 첫</button>
         <button>첫</button>
         <button>끝</button>
+        <button style={{ visibility: 'hidden' }}>가려진 끝</button>
         <button style={{ display: 'none' }}>숨긴 끝</button>
       </div>
     );
