@@ -22,8 +22,18 @@ const FOCUSABLE_SELECTOR = [
 
 const stack: HTMLElement[] = [];
 
+/**
+ * display:none·visibility:hidden 요소는 셀렉터엔 걸리지만 포커스를 못 받는다.
+ * 그런 요소가 끝자리에 오면 focus()가 조용히 무시돼 Tab이 먹통이 된다.
+ * checkVisibility가 없는 환경(구형 Safari, jsdom)은 걸러내지 않고 그대로 둔다.
+ */
+const isVisible = (element: HTMLElement) =>
+  element.checkVisibility?.({ visibilityProperty: true }) ?? true;
+
 const getFocusable = (container: HTMLElement) =>
-  Array.from(container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR));
+  Array.from(
+    container.querySelectorAll<HTMLElement>(FOCUSABLE_SELECTOR),
+  ).filter(isVisible);
 
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key !== 'Tab') return;

@@ -10,6 +10,8 @@ const stack: Array<() => void> = [];
 
 const handleKeyDown = (event: KeyboardEvent) => {
   if (event.key !== 'Escape') return;
+  /** 한글 조합 중 ESC는 IME가 조합을 정리하는 키라 오버레이까지 닫지 않는다 */
+  if (event.isComposing) return;
   stack[stack.length - 1]?.();
 };
 
