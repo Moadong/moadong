@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { media } from '@/styles/mediaQuery';
+import { media } from '@/styles/mediaQuery;
 import { theme } from '@/styles/theme';
 import { Z_INDEX } from '@/styles/zIndex';
 
@@ -43,6 +43,7 @@ export const Inner = styled.div`
 `;
 
 export const Tab = styled.button<{ $active: boolean }>`
+  position: relative;
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -61,6 +62,16 @@ export const ImageIcon = styled.img`
   width: 28px;
   height: 28px;
   object-fit: contain;
+`;
+
+export const NotificationDot = styled.span`
+  position: absolute;
+  top: 0;
+  left: calc(50% + 8px);
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background-color: ${theme.colors.primary[900]};
 `;
 
 export const Label = styled.span`

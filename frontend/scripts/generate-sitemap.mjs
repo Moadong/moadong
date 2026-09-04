@@ -9,6 +9,7 @@ const SITE_URL =
 // `/`로 리다이렉트돼 검색엔진에 soft 404로 잡힌다.
 const STATIC_PATHS = [
   '/',
+  '/clubs',
   '/introduce',
   '/club-union',
   '/promotions',

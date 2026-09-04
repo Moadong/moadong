@@ -2,6 +2,7 @@ import { useNavigate } from 'react-router-dom';
 import search_button_icon from '@/assets/images/icons/search_button_icon.svg';
 import introduce_phone_mockup from '@/assets/images/introduce/introduce_phone_mockup.webp';
 import { PAGE_NAME } from '@/constants/eventName';
+import useClubListPath from '@/hooks/useClubListPath';
 import {
   BackgroundCircleLarge,
   BackgroundCircleSmall,
@@ -67,6 +68,7 @@ const SHAPES = [
 
 const IntroSection = () => {
   const navigate = useNavigate();
+  const clubListPath = useClubListPath();
 
   return (
     <Styled.IntroSection
@@ -90,7 +92,10 @@ const IntroSection = () => {
           <Styled.IntroSubtitle variants={fadeIn}>
             부경대학교의 모든 동아리를 한눈에
           </Styled.IntroSubtitle>
-          <Styled.IntroButton variants={fadeIn} onClick={() => navigate('/')}>
+          <Styled.IntroButton
+            variants={fadeIn}
+            onClick={() => navigate(clubListPath)}
+          >
             동아리 모아보기
             <img
               src={search_button_icon}

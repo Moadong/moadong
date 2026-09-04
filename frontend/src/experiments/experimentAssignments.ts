@@ -1,4 +1,5 @@
 import mixpanel from 'mixpanel-browser';
+import { USER_EVENT } from '@/constants/eventName';
 import type {
   ExperimentAssignments,
   ExperimentDefinition,
@@ -124,7 +125,27 @@ export const getVariant = <V extends ExperimentVariant>(
   return experiment.defaultVariant;
 };
 
+const exposedKeys = new Set<string>();
+
+/**
+ * Mixpanel 실험 분석용 노출 이벤트. 배정 시점이 아니라 변형이 실제로 화면에
+ * 그려지는 시점에 호출해야 한다. 부팅 때 일괄로 보내면 그 화면을 보지 않는
+ * 사용자까지 분석 모집단에 들어와 효과가 희석된다.
+ */
+export const trackExperimentExposure = <V extends ExperimentVariant>(
+  experiment: ExperimentDefinition<V>,
+) => {
+  if (exposedKeys.has(experiment.key)) return;
+  exposedKeys.add(experiment.key);
+
+  mixpanel.track(USER_EVENT.EXPERIMENT_STARTED, {
+    'Experiment name': experiment.key,
+    'Variant name': getVariant(experiment),
+  });
+};
+
 export const resetAssignments = () => {
   assignments = {};
+  exposedKeys.clear();
   localStorage.removeItem(ASSIGNMENT_STORAGE_KEY);
 };
