@@ -18,14 +18,18 @@ describe('BottomNavigation', () => {
   it('개편을 받은 사용자에게는 홈·동아리·홍보·메뉴를 보여준다', () => {
     renderAt('/', true);
 
-    const labels = screen.getAllByRole('button').map((tab) => tab.textContent);
+    const labels = screen
+      .getAllByRole('button', { hidden: true })
+      .map((tab) => tab.textContent);
     expect(labels).toEqual(['홈', '동아리', '홍보', '메뉴']);
   });
 
   it('개편을 받지 않은 사용자에게는 동아리 대신 구독 탭을 보여준다', () => {
     renderAt('/', false);
 
-    const labels = screen.getAllByRole('button').map((tab) => tab.textContent);
+    const labels = screen
+      .getAllByRole('button', { hidden: true })
+      .map((tab) => tab.textContent);
     expect(labels).toEqual(['홈', '구독', '홍보', '메뉴']);
   });
 
@@ -33,7 +37,7 @@ describe('BottomNavigation', () => {
     renderAt('/', false);
 
     const activeTabs = screen
-      .getAllByRole('button')
+      .getAllByRole('button', { hidden: true })
       .filter((tab) => tab.getAttribute('aria-current') === 'page');
 
     expect(activeTabs).toHaveLength(1);
