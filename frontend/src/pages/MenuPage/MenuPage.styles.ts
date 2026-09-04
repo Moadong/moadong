@@ -7,13 +7,23 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
+  width: 100%;
+  max-width: 500px;
   min-height: 100dvh;
-  padding: 0 20px 20px;
+  margin: 0 auto;
+  padding: 10px 20px 40px;
   background-color: ${theme.colors.gray[50]};
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
 
   /* AppLayout이 바텀네비 자리로 56px을 이미 비워두므로 그만큼 뺀다 */
   ${media.tablet} {
     min-height: calc(100dvh - 56px - env(safe-area-inset-bottom));
+  }
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
   }
 `;
 
@@ -21,13 +31,14 @@ export const Title = styled.h1`
   ${setTypography(typography.title.title4)};
   color: ${theme.colors.base.black};
   letter-spacing: -0.44px;
-  padding: 8px 2px 20px;
+  padding: 2.5px 2px;
 `;
 
 export const CardGrid = styled.div`
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 6px;
+  margin-top: 18px;
 `;
 
 const cardStyles = css`

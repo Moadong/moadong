@@ -1,15 +1,29 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { theme } from '@/styles/theme';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
+  width: 100%;
+  max-width: 500px;
+  min-height: 100dvh;
+  margin: 0 auto;
   padding: 16px;
+  background-color: ${theme.colors.base.white};
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
 `;
 
 export const Title = styled.h1`
-  font-size: 20px;
-  font-weight: 700;
-  color: ${theme.colors.gray[900]};
-  padding: 8px 4px 16px;
+  ${setTypography(typography.title.title4)};
+  color: ${theme.colors.base.black};
+  letter-spacing: -0.44px;
+  padding: 2.5px 2px;
 `;
 
 export const CardList = styled.div`

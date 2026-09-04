@@ -161,4 +161,57 @@ describe('buildWeekEventSegments', () => {
       '2026-03-21',
     ]);
   });
+
+  describe('visibleMonth를 주면 그 달 밖으로 색이 새지 않는다', () => {
+    /** 2026-08-30(일) ~ 2026-09-05(토): 8월 그리드의 마지막 주이자 9월 그리드의 첫 주 */
+    const crossMonthWeek = Array.from(
+      { length: 7 },
+      (_, index) => new Date(2026, 7, 30 + index),
+    );
+
+    const crossMonthEvent = event({
+      id: 'festival',
+      title: '축제',
+      eventType: 'PERIOD',
+      start: '2026-08-25',
+      end: '2026-09-10',
+    });
+
+    it('8월을 보고 있으면 8월 31일에서 끊는다', () => {
+      const segments = buildWeekEventSegments(
+        [crossMonthEvent],
+        crossMonthWeek,
+        new Date(2026, 7, 1),
+      );
+
+      expect(segments[0]).toMatchObject({
+        startIndex: 0,
+        span: 2, // 8/30, 8/31
+        dateKey: '2026-08-30',
+      });
+    });
+
+    it('9월을 보고 있으면 9월 1일부터 시작한다', () => {
+      const segments = buildWeekEventSegments(
+        [crossMonthEvent],
+        crossMonthWeek,
+        new Date(2026, 8, 1),
+      );
+
+      expect(segments[0]).toMatchObject({
+        startIndex: 2, // 9/1
+        span: 5, // 9/1 ~ 9/5
+        dateKey: '2026-09-01',
+      });
+    });
+
+    it('visibleMonth가 없으면 주 전체를 그대로 덮는다', () => {
+      const segments = buildWeekEventSegments(
+        [crossMonthEvent],
+        crossMonthWeek,
+      );
+
+      expect(segments[0]).toMatchObject({ startIndex: 0, span: 7 });
+    });
+  });
 });

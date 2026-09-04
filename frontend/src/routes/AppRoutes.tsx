@@ -8,6 +8,7 @@ import ApplicationFormPage from '@/pages/ApplicationFormPage/ApplicationFormPage
 import GoogleCallbackPage from '@/pages/CallbackPage/GoogleCallbackPage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
+import ClubListPage from '@/pages/ClubListPage/ClubListPage';
 import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
 import ClubUnionPage from '@/pages/ClubUnionPage/ClubUnionPage';
 import ErrorTestPage from '@/pages/ErrorTestPage/ErrorTestPage';
@@ -40,6 +41,14 @@ const AppRoutes = () =>
           element: (
             <ContentErrorBoundary>
               <MainPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/clubs',
+          element: (
+            <ContentErrorBoundary>
+              <ClubListPage />
             </ContentErrorBoundary>
           ),
         },

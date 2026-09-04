@@ -1,11 +1,22 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
+  width: 100%;
+  max-width: 500px;
   min-height: 100dvh;
+  margin: 0 auto;
   padding-bottom: 100px;
   background: ${colors.base.white};
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
 `;
 
 /* 시안 세로 리듬: 탑바 ↓18 탭 ↓20 필터 ↓8 목록 */
@@ -74,7 +85,8 @@ export const EmptyText = styled.p`
 
 export const WriteButton = styled.button`
   position: fixed;
-  right: 20px;
+  /* 500px 셸이 중앙 카드가 되는 구간에서는 카드 오른쪽 20px에 붙인다 */
+  right: max(20px, calc(50% - 230px));
   /* 시안은 24지만 홈 인디케이터에 가리지 않도록 안전 영역을 더한다 */
   bottom: calc(24px + env(safe-area-inset-bottom));
   display: flex;

@@ -6,11 +6,31 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const Container = styled.div`
   display: flex;
   flex-direction: column;
+
+  ${media.tablet} {
+    width: 100%;
+    max-width: 500px;
+    min-height: 100vh;
+    margin: 0 auto;
+    background-color: ${colors.base.white};
+    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+  }
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
+`;
+
+export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
   gap: 60px;
 
   ${media.tablet} {
     gap: 32px;
-    padding: 20px;
+    padding: 16px 20px 20px;
   }
 `;
 

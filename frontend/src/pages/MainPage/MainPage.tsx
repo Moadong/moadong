@@ -1,143 +1,50 @@
-import { useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import Filter from '@/components/common/Filter/Filter';
-import Footer from '@/components/common/Footer/Footer';
-import Header from '@/components/common/Header/Header';
+import { useEffect } from 'react';
 import SatisfactionModal from '@/components/common/SatisfactionModal/SatisfactionModal';
-import Spinner from '@/components/common/Spinner/Spinner';
 import { PAGE_NAME, PAGE_VIEW } from '@/constants/eventName';
+import { mainRedesignExperiment } from '@/experiments/definitions';
+import { trackExperimentExposure } from '@/experiments/experimentAssignments';
+import { useExperimentVariant } from '@/hooks/Experiment/useExperimentVariant';
 import useScrollTracking from '@/hooks/Mixpanel/useScrollTracking';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import { useGetCardList } from '@/hooks/Queries/useClub';
-import usePromotionNotification from '@/hooks/Queries/usePromotionNotification';
-import useWebviewSubscribe from '@/hooks/useWebviewSubscribe';
-import Banner from '@/pages/MainPage/components/Banner/Banner';
-import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
-import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
+import useDevice from '@/hooks/useDevice';
+import LegacyMain from '@/pages/MainPage/components/LegacyMain/LegacyMain';
+import MobileHome from '@/pages/MainPage/components/MobileHome/MobileHome';
 import Popup from '@/pages/MainPage/components/Popup/Popup';
-import { APP_DOWNLOAD_POPUP } from '@/pages/MainPage/components/Popup/popupConfigs';
-import SubscribeButton from '@/pages/MainPage/components/SubscribeButton/SubscribeButton';
-import { useSelectedCategory } from '@/store/useCategoryStore';
-import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
-import { Club } from '@/types/club';
+import {
+  APP_DOWNLOAD_POPUP,
+  MAILBOX_OPEN_POPUP,
+} from '@/pages/MainPage/components/Popup/popupConfigs';
 import isInAppWebView from '@/utils/isInAppWebView';
-import * as Styled from './MainPage.styles';
 
+/**
+ * 개편 홈은 모바일·앱에만 적용하고, 태블릿·웹은 기존 메인을 유지한다.
+ * 모바일·앱 안에서 개편 노출 여부는 `main_redesign` 실험이 가른다.
+ */
 const MainPage = () => {
   const inWebview = isInAppWebView();
+  const { isMobile } = useDevice();
+  const isNarrow = isMobile || inWebview;
+  const variant = useExperimentVariant(mainRedesignExperiment);
+
   useTrackPageView(
     inWebview ? PAGE_VIEW.WEBVIEW_MAIN_PAGE : PAGE_VIEW.MAIN_PAGE,
   );
   useScrollTracking(PAGE_NAME.MAIN);
 
-  const { selectedCategory } = useSelectedCategory();
-  const { keyword } = useSearchKeyword();
-  const { isSearching } = useSearchIsSearching();
-  const recruitmentStatus = 'all';
-  const division = 'all';
-  const searchCategory = isSearching ? 'all' : selectedCategory;
-  const tabs = ['부경대학교 중앙동아리'] as const;
-  const [active, setActive] =
-    useState<(typeof tabs)[number]>('부경대학교 중앙동아리');
-
-  const { data, error, isLoading, refetch } = useGetCardList({
-    keyword,
-    recruitmentStatus,
-    category: searchCategory,
-    division,
-  });
-  const hasNotification = usePromotionNotification();
-  const navigate = useNavigate();
-  const { subscribedClubIds, toggleSubscribe } = useWebviewSubscribe();
-
-  const clubs = data?.clubs || [];
-  const totalCount = data?.totalCount ?? clubs.length;
-
-  const isEmpty = !isLoading && clubs.length === 0;
-  const hasData = clubs.length > 0;
-
-  const clubList = useMemo(() => {
-    if (!hasData) return null;
-    return clubs.map((club: Club, i: number) => (
-      <ClubCard
-        key={club.id}
-        club={club}
-        index={i}
-        page={inWebview ? PAGE_NAME.WEBVIEW_MAIN : PAGE_NAME.MAIN}
-        onCardClick={
-          inWebview
-            ? (c) =>
-                navigate(
-                  `/clubDetail/@${encodeURIComponent(c.name)}?is_subscribed=${subscribedClubIds.has(c.id)}`,
-                )
-            : undefined
-        }
-      >
-        {inWebview && (
-          <SubscribeButton
-            subscribed={subscribedClubIds.has(club.id)}
-            onToggle={() =>
-              toggleSubscribe(
-                club.id,
-                subscribedClubIds.has(club.id),
-                PAGE_NAME.WEBVIEW_MAIN,
-              )
-            }
-          />
-        )}
-      </ClubCard>
-    ));
-  }, [clubs, hasData, inWebview, subscribedClubIds, toggleSubscribe]);
+  useEffect(() => {
+    // 태블릿·웹은 두 변형 중 무엇도 보지 않으므로 노출로 세지 않는다
+    if (isNarrow) trackExperimentExposure(mainRedesignExperiment);
+  }, [isNarrow]);
 
   return (
     <>
-      {!inWebview && <Popup configs={[APP_DOWNLOAD_POPUP]} />}
+      {inWebview ? (
+        <Popup configs={[MAILBOX_OPEN_POPUP]} />
+      ) : (
+        <Popup configs={[APP_DOWNLOAD_POPUP]} />
+      )}
       <SatisfactionModal />
-      <Header />
-      <Filter hasNotification={hasNotification} />
-      <Banner isWebview={inWebview} />
-      <Styled.PageContainer>
-        <CategoryButtonList />
-
-        <Styled.SectionBar>
-          <Styled.SectionTabs>
-            {tabs.map((tab) => (
-              <Styled.Tab
-                key={tab}
-                $active={active === tab}
-                onClick={() => setActive(tab)}
-              >
-                {tab}
-              </Styled.Tab>
-            ))}
-          </Styled.SectionTabs>
-          <Styled.TotalCountResult role='status'>
-            {`전체 ${isLoading ? 0 : totalCount}개의 동아리`}
-          </Styled.TotalCountResult>
-        </Styled.SectionBar>
-        <Styled.ContentWrapper>
-          {isLoading ? (
-            <Spinner />
-          ) : error ? (
-            <Styled.EmptyResult>
-              동아리 목록을 불러오는 중 문제가 발생했습니다.
-              <br />
-              <Styled.RetryButton onClick={() => refetch()}>
-                다시 시도
-              </Styled.RetryButton>
-            </Styled.EmptyResult>
-          ) : isEmpty ? (
-            <Styled.EmptyResult>
-              앗, 조건에 맞는 동아리가 없어요.
-              <br />
-              다른 키워드나 조건으로 다시 시도해보세요!
-            </Styled.EmptyResult>
-          ) : (
-            <Styled.CardList>{clubList}</Styled.CardList>
-          )}
-        </Styled.ContentWrapper>
-      </Styled.PageContainer>
-      {!inWebview && <Footer />}
+      {isNarrow && variant === 'treatment' ? <MobileHome /> : <LegacyMain />}
     </>
   );
 };

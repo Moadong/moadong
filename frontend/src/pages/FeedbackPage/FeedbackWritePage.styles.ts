@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
@@ -6,9 +7,19 @@ export const Container = styled.div`
   display: flex;
   flex-direction: column;
   gap: 32px;
+  width: 100%;
+  max-width: 500px;
   min-height: 100dvh;
+  margin: 0 auto;
   padding-bottom: 120px;
   background: ${colors.base.white};
+  box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+    box-shadow: none;
+  }
 `;
 
 export const Content = styled.div`
@@ -135,9 +146,11 @@ export const HiddenFileInput = styled.input`
 
 export const BottomArea = styled.div`
   position: fixed;
-  left: 0;
+  left: 50%;
   bottom: 0;
+  transform: translateX(-50%);
   width: 100%;
+  max-width: 500px;
   padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
   /* FixedBottomButtonArea와 같게 버튼 바깥은 비운다. filter는 자식까지 먹어서 같이 지운다 */
   background: transparent;

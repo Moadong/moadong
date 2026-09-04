@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
@@ -9,7 +10,7 @@ export const Container = styled.div`
   padding-top: 92px;
 
   ${media.mobile} {
-    padding-top: 0;
+    padding-top: ${HEADER_HEIGHT.mobile}px;
   }
 `;
 

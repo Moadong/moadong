@@ -49,8 +49,6 @@ export const PopupImage = styled.img`
   width: 100%;
   height: auto;
   display: block;
-  transform: scale(1.1);
-  transform-origin: center;
 `;
 
 export const ButtonGroup = styled.div`
