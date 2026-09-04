@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { Z_INDEX } from '@/styles/zIndex';
 
@@ -12,6 +13,16 @@ export const Container = styled.header`
   display: flex;
   align-items: center;
   padding: 0 18px;
+
+  ${media.tablet} {
+    max-width: 500px;
+    margin: 0 auto;
+  }
+
+  ${media.mobile} {
+    max-width: 100%;
+    margin: 0;
+  }
 `;
 
 export const BackButton = styled.button`
