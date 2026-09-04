@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { media } from '@/styles/mediaQuery;
+import { media } from '@/styles/mediaQuery';
 import { theme } from '@/styles/theme';
 import { Z_INDEX } from '@/styles/zIndex';
 
