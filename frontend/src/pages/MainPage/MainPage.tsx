@@ -10,7 +10,10 @@ import useDevice from '@/hooks/useDevice';
 import LegacyMain from '@/pages/MainPage/components/LegacyMain/LegacyMain';
 import MobileHome from '@/pages/MainPage/components/MobileHome/MobileHome';
 import Popup from '@/pages/MainPage/components/Popup/Popup';
-import { APP_DOWNLOAD_POPUP } from '@/pages/MainPage/components/Popup/popupConfigs';
+import {
+  APP_DOWNLOAD_POPUP,
+  MAILBOX_OPEN_POPUP,
+} from '@/pages/MainPage/components/Popup/popupConfigs';
 import isInAppWebView from '@/utils/isInAppWebView';
 
 /**
@@ -35,7 +38,11 @@ const MainPage = () => {
 
   return (
     <>
-      {!inWebview && <Popup configs={[APP_DOWNLOAD_POPUP]} />}
+      {inWebview ? (
+        <Popup configs={[MAILBOX_OPEN_POPUP]} />
+      ) : (
+        <Popup configs={[APP_DOWNLOAD_POPUP]} />
+      )}
       <SatisfactionModal />
       {isNarrow && variant === 'treatment' ? <MobileHome /> : <LegacyMain />}
     </>

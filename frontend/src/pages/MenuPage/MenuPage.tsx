@@ -16,7 +16,7 @@ const MenuPage = () => {
   const appVersion = getAppVersion();
 
   const handleFeedbackClick = () => {
-    trackEvent(USER_EVENT.FEEDBACK_ENTRY_CLICKED);
+    trackEvent(USER_EVENT.FEEDBACK_ENTRY_CLICKED, { source: 'menu' });
     navigate('/feedback');
   };
 

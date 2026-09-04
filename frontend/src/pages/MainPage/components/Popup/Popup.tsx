@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
+import isInAppWebView from '@/utils/isInAppWebView';
 import { isPopupHidden, PopupConfig } from '@/utils/popupUtils';
 import * as Styled from './Popup.styles';
 
@@ -25,7 +26,9 @@ const Popup = ({ configs }: PopupProps) => {
     });
     setActiveConfig(eligible ?? null);
     if (!eligible) {
-      trackEvent(USER_EVENT.MAIN_POPUP_NOT_SHOWN);
+      trackEvent(USER_EVENT.MAIN_POPUP_NOT_SHOWN, {
+        platform: isInAppWebView() ? 'app' : 'web',
+      });
     }
   }, [configs, isMobile, trackEvent]);
 
@@ -95,7 +98,12 @@ const Popup = ({ configs }: PopupProps) => {
           <Styled.ImageWrapper
             onClick={() => {
               activeConfig.onImageClick?.(trackEvent);
-              if (activeConfig.to) navigate(activeConfig.to);
+              if (activeConfig.to) {
+                // 화면을 떠나면 팝업이 언마운트되므로, 돌아왔을 때
+                // 다시 뜨지 않게 이번 세션은 본 것으로 남긴다
+                sessionStorage.setItem(activeConfig.sessionKey, 'true');
+                navigate(activeConfig.to);
+              }
             }}
           >
             <Styled.PopupImage
