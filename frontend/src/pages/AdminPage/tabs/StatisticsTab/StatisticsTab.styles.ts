@@ -24,7 +24,12 @@ export const Container = styled.div`
 `;
 
 export const Content = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 60px;
+
   ${media.tablet} {
+    gap: 32px;
     padding: 16px 20px 20px;
   }
 `;

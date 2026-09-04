@@ -146,9 +146,11 @@ export const HiddenFileInput = styled.input`
 
 export const BottomArea = styled.div`
   position: fixed;
-  left: 0;
+  left: 50%;
   bottom: 0;
+  transform: translateX(-50%);
   width: 100%;
+  max-width: 500px;
   padding: 10px 20px calc(20px + env(safe-area-inset-bottom));
   /* FixedBottomButtonArea와 같게 버튼 바깥은 비운다. filter는 자식까지 먹어서 같이 지운다 */
   background: transparent;
