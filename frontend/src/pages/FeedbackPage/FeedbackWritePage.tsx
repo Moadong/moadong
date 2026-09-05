@@ -21,7 +21,7 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useCreateFeedback } from '@/hooks/Queries/useFeedback';
 import type { FeedbackType } from '@/types/feedback';
-import FeedbackConfirmModal from './components/FeedbackConfirmModal';
+import ConfirmModal from '@/components/common/ConfirmModal/ConfirmModal';
 import FeedbackImageGrid from './components/FeedbackImageGrid';
 import FeedbackTag from './components/FeedbackTag';
 import * as Styled from './FeedbackWritePage.styles';
@@ -297,13 +297,13 @@ const FeedbackWritePage = () => {
         </Button>
       </Styled.BottomArea>
 
-      <FeedbackConfirmModal
+      <ConfirmModal
         isOpen={openedModal === 'exit'}
         {...EXIT_MODAL}
         onConfirm={handleExitConfirm}
         onClose={() => setOpenedModal(null)}
       />
-      <FeedbackConfirmModal
+      <ConfirmModal
         isOpen={openedModal === 'save'}
         {...SAVE_MODAL}
         onConfirm={handleSubmit}
