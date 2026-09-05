@@ -2,6 +2,7 @@ package moadong.club.service;
 
 import moadong.club.entity.Club;
 import moadong.club.entity.PromotionArticle;
+import moadong.club.enums.ClubState;
 import moadong.club.payload.dto.PromotionArticleCreateResultDto;
 import moadong.club.payload.request.PromotionArticleCreateRequest;
 import moadong.club.payload.request.PromotionArticleUpdateRequest;
@@ -10,12 +11,18 @@ import moadong.club.repository.ClubRepository;
 import moadong.club.repository.PromotionArticleRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.user.entity.User;
+import moadong.user.entity.enums.UserRole;
+import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
+import moadong.util.annotations.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.test.util.ReflectionTestUtils;
 
 import java.time.Instant;
 import java.util.List;
@@ -25,11 +32,13 @@ import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+@UnitTest
 @ExtendWith(MockitoExtension.class)
 class PromotionArticleServiceTest {
 
@@ -112,7 +121,7 @@ class PromotionArticleServiceTest {
             .userId("user-1")
             .build()));
 
-        promotionArticleService.updatePromotionArticle("article-1", request);
+        promotionArticleService.updatePromotionArticle("article-1", request, developer());
 
         assertEquals(clubId, article.getClubId());
         assertEquals("수정 동아리", article.getClubName());
@@ -163,7 +172,7 @@ class PromotionArticleServiceTest {
         when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club));
         when(promotionArticleRepository.save(any(PromotionArticle.class))).thenReturn(savedArticle);
 
-        PromotionArticleCreateResultDto result = promotionArticleService.createPromotionArticle(request);
+        PromotionArticleCreateResultDto result = promotionArticleService.createPromotionArticle(request, developer());
 
         assertNotNull(result);
         assertEquals("created-article-id", result.articleId());
@@ -186,7 +195,7 @@ class PromotionArticleServiceTest {
         when(promotionArticleRepository.findActiveById("missing-article")).thenReturn(Optional.empty());
 
         RestApiException exception = assertThrows(RestApiException.class,
-            () -> promotionArticleService.updatePromotionArticle("missing-article", request));
+            () -> promotionArticleService.updatePromotionArticle("missing-article", request, developer()));
 
         assertEquals(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND, exception.getErrorCode());
         verify(clubRepository, never()).findClubById(org.mockito.ArgumentMatchers.any());
@@ -208,7 +217,7 @@ class PromotionArticleServiceTest {
         when(promotionArticleRepository.findActiveById("deleted-article")).thenReturn(Optional.empty());
 
         RestApiException exception = assertThrows(RestApiException.class,
-            () -> promotionArticleService.updatePromotionArticle("deleted-article", request));
+            () -> promotionArticleService.updatePromotionArticle("deleted-article", request, developer()));
 
         assertEquals(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND, exception.getErrorCode());
         verify(clubRepository, never()).findClubById(org.mockito.ArgumentMatchers.any());
@@ -221,7 +230,7 @@ class PromotionArticleServiceTest {
             .build();
         when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
 
-        promotionArticleService.deletePromotionArticle("article-1");
+        promotionArticleService.deletePromotionArticle("article-1", developer());
 
         assertTrue(article.isDeleted());
         assertNotNull(article.getDeletedAt());
@@ -234,9 +243,217 @@ class PromotionArticleServiceTest {
         when(promotionArticleRepository.findActiveById("missing-article")).thenReturn(Optional.empty());
 
         RestApiException exception = assertThrows(RestApiException.class,
-            () -> promotionArticleService.deletePromotionArticle("missing-article"));
+            () -> promotionArticleService.deletePromotionArticle("missing-article", developer()));
 
         assertEquals(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND, exception.getErrorCode());
         verify(promotionArticleRepository, never()).deleteById("missing-article");
+    }
+
+    @Test
+    void 동아리관리자가_생성하면_요청_clubId를_무시하고_본인_동아리로_저장한다() {
+        String ownClubId = new ObjectId().toHexString();
+        String otherClubId = new ObjectId().toHexString();
+        PromotionArticleCreateRequest request = createRequest(otherClubId);
+        when(clubRepository.findClubById(new ObjectId(ownClubId))).thenReturn(Optional.of(club("내 동아리")));
+        when(promotionArticleRepository.save(any(PromotionArticle.class)))
+            .thenReturn(PromotionArticle.builder().id("created-article-id").build());
+
+        promotionArticleService.createPromotionArticle(request, clubAdmin(ownClubId));
+
+        ArgumentCaptor<PromotionArticle> captor = ArgumentCaptor.forClass(PromotionArticle.class);
+        verify(promotionArticleRepository).save(captor.capture());
+        assertEquals(ownClubId, captor.getValue().getClubId());
+        assertEquals("내 동아리", captor.getValue().getClubName());
+        verify(clubRepository, never()).findClubById(new ObjectId(otherClubId));
+    }
+
+    @Test
+    void 동아리관리자가_수정하면_요청_clubId를_무시하고_본인_동아리를_유지한다() {
+        String ownClubId = new ObjectId().toHexString();
+        String otherClubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(ownClubId)
+            .clubName("내 동아리")
+            .title("이전 제목")
+            .build();
+        PromotionArticleUpdateRequest request = updateRequest(otherClubId);
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+        when(clubRepository.findClubById(new ObjectId(ownClubId))).thenReturn(Optional.of(club("내 동아리")));
+
+        promotionArticleService.updatePromotionArticle("article-1", request, clubAdmin(ownClubId));
+
+        assertEquals(ownClubId, article.getClubId());
+        assertEquals("수정 제목", article.getTitle());
+        verify(promotionArticleRepository).save(article);
+    }
+
+    @Test
+    void 동아리관리자는_다른_동아리_게시글을_수정할_수_없다() {
+        String ownClubId = new ObjectId().toHexString();
+        String otherClubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(otherClubId)
+            .title("이전 제목")
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionArticleService.updatePromotionArticle("article-1", updateRequest(ownClubId), clubAdmin(ownClubId)));
+
+        assertEquals(ErrorCode.USER_UNAUTHORIZED, exception.getErrorCode());
+        assertEquals("이전 제목", article.getTitle());
+        verify(promotionArticleRepository, never()).save(any());
+    }
+
+    @Test
+    void 동아리관리자는_다른_동아리_게시글을_삭제할_수_없다() {
+        String ownClubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(new ObjectId().toHexString())
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionArticleService.deletePromotionArticle("article-1", clubAdmin(ownClubId)));
+
+        assertEquals(ErrorCode.USER_UNAUTHORIZED, exception.getErrorCode());
+        assertFalse(article.isDeleted());
+        verify(promotionArticleRepository, never()).save(any());
+    }
+
+    @Test
+    void 동아리관리자는_본인_동아리_게시글을_삭제할_수_있다() {
+        String ownClubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(ownClubId)
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+
+        promotionArticleService.deletePromotionArticle("article-1", clubAdmin(ownClubId));
+
+        assertTrue(article.isDeleted());
+        verify(promotionArticleRepository).save(article);
+    }
+
+    @Test
+    void 개발자는_다른_동아리_게시글을_삭제할_수_있다() {
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(new ObjectId().toHexString())
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+
+        promotionArticleService.deletePromotionArticle("article-1", developer());
+
+        assertTrue(article.isDeleted());
+        verify(promotionArticleRepository).save(article);
+    }
+
+    @Test
+    void 심사전_동아리관리자는_게시글을_생성할_수_없다() {
+        String ownClubId = new ObjectId().toHexString();
+        when(clubRepository.findClubById(new ObjectId(ownClubId))).thenReturn(Optional.of(club("", ClubState.UNAVAILABLE)));
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionArticleService.createPromotionArticle(createRequest(ownClubId), clubAdmin(ownClubId)));
+
+        assertEquals(ErrorCode.PROMOTION_CLUB_NOT_APPROVED, exception.getErrorCode());
+        verify(promotionArticleRepository, never()).save(any());
+    }
+
+    @Test
+    void 심사전_동아리관리자는_게시글을_수정할_수_없다() {
+        String ownClubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(ownClubId)
+            .title("이전 제목")
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+        when(clubRepository.findClubById(new ObjectId(ownClubId))).thenReturn(Optional.of(club("", ClubState.UNAVAILABLE)));
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionArticleService.updatePromotionArticle("article-1", updateRequest(ownClubId), clubAdmin(ownClubId)));
+
+        assertEquals(ErrorCode.PROMOTION_CLUB_NOT_APPROVED, exception.getErrorCode());
+        assertEquals("이전 제목", article.getTitle());
+        verify(promotionArticleRepository, never()).save(any());
+    }
+
+    @Test
+    void 개발자는_심사전_동아리로도_게시글을_생성할_수_있다() {
+        String clubId = new ObjectId().toHexString();
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("", ClubState.UNAVAILABLE)));
+        when(promotionArticleRepository.save(any(PromotionArticle.class)))
+            .thenReturn(PromotionArticle.builder().id("created-article-id").build());
+
+        PromotionArticleCreateResultDto result = promotionArticleService.createPromotionArticle(createRequest(clubId), developer());
+
+        assertEquals("created-article-id", result.articleId());
+    }
+
+    private static CustomUserDetails developer() {
+        return userDetails(new ObjectId().toHexString(), UserRole.DEVELOPER);
+    }
+
+    private static CustomUserDetails clubAdmin(String clubId) {
+        return userDetails(clubId, UserRole.CLUB_ADMIN);
+    }
+
+    private static CustomUserDetails userDetails(String clubId, UserRole role) {
+        return new CustomUserDetails(User.builder()
+            .id("user-doc-id")
+            .userId("user-1")
+            .password("password")
+            .clubId(clubId)
+            .role(role)
+            .build());
+    }
+
+    private static Club club(String name) {
+        return club(name, ClubState.AVAILABLE);
+    }
+
+    private static Club club(String name, ClubState state) {
+        Club club = Club.builder()
+            .name(name)
+            .category("category")
+            .division("division")
+            .userId("user-1")
+            .build();
+        ReflectionTestUtils.setField(club, "state", state);
+        return club;
+    }
+
+    private static PromotionArticleCreateRequest createRequest(String clubId) {
+        return new PromotionArticleCreateRequest(
+            clubId,
+            "신규 제목",
+            "신규 장소",
+            37.5665,
+            126.9780,
+            Instant.parse("2026-04-01T00:00:00Z"),
+            Instant.parse("2026-04-10T00:00:00Z"),
+            "신규 설명",
+            List.of()
+        );
+    }
+
+    private static PromotionArticleUpdateRequest updateRequest(String clubId) {
+        return new PromotionArticleUpdateRequest(
+            clubId,
+            "수정 제목",
+            "수정 장소",
+            37.5665,
+            126.9780,
+            Instant.parse("2026-04-01T00:00:00Z"),
+            Instant.parse("2026-04-10T00:00:00Z"),
+            "수정 설명",
+            List.of("new-image")
+        );
     }
 }

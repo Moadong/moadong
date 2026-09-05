@@ -21,9 +21,6 @@ public interface PromotionArticleRepository extends MongoRepository<PromotionArt
     @Query("{ '_id': ?0, 'deleted': { $ne: true } }")
     Optional<PromotionArticle> findActiveById(String id);
 
-    @Query(value = "{ '_id': ?0, 'deleted': { $ne: true } }", exists = true)
-    boolean existsActiveById(String id);
-
     @Query("{ '_id': ?0, 'deleted': { $ne: true } }")
     @Update("{ '$addToSet': { 'images': ?1 } }")
     long addImageToActiveArticle(String id, String imageUrl);

@@ -81,6 +81,7 @@ public enum ErrorCode {
 
     // 902xx: 홍보게시판 오류
     PROMOTION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "902-1", "홍보 게시글이 존재하지 않습니다."),
+    PROMOTION_CLUB_NOT_APPROVED(HttpStatus.FORBIDDEN, "902-2", "심사가 완료된 동아리만 홍보 게시글을 작성할 수 있습니다."),
 
     // 903xx: 통계/분석 오류
     MIXPANEL_EXPORT_FAILED(HttpStatus.BAD_GATEWAY, "903-1", "Mixpanel 데이터 조회에 실패했습니다."),
