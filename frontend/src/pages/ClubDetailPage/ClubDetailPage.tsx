@@ -106,6 +106,35 @@ const ClubDetailPage = () => {
     countClubView();
   }, [clubDetail?.id]);
 
+  /**
+   * 일정 탭에 실제로 도달했을 때 볼 일정이 있었는지 남긴다.
+   * 탭 클릭뿐 아니라 `?tab=schedule` 딥링크 진입도 포함해야 해서 탭 클릭 이벤트와 별개로 둔다.
+   */
+  const scheduleViewedClubIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    const viewedClubId = clubDetail?.id;
+    if (activeTab !== TAB_TYPE.SCHEDULE || !viewedClubId || isCalendarLoading) {
+      return;
+    }
+    if (scheduleViewedClubIdRef.current === viewedClubId) return;
+
+    scheduleViewedClubIdRef.current = viewedClubId;
+    trackEvent(USER_EVENT.CLUB_SCHEDULE_CALENDAR_VIEWED, {
+      club_id: viewedClubId,
+      club_name: clubDetail?.name,
+      event_count: calendarEvents.length,
+      has_calendar_connection: hasCalendarConnection,
+    });
+  }, [
+    activeTab,
+    clubDetail?.id,
+    clubDetail?.name,
+    isCalendarLoading,
+    calendarEvents.length,
+    hasCalendarConnection,
+    trackEvent,
+  ]);
+
   const [showStickyTabs, setShowStickyTabs] = useState(false);
   const [inlineTabsEl, setInlineTabsEl] = useState<HTMLDivElement | null>(null);
 
@@ -259,6 +288,7 @@ const ClubDetailPage = () => {
                   key={clubId ?? clubName}
                   events={calendarEvents}
                   isLoading={isCalendarLoading}
+                  clubId={clubDetail.id}
                 />
               </div>
             </Styled.TabContent>

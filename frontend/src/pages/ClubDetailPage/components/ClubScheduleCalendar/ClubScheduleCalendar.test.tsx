@@ -1,7 +1,14 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
+import { USER_EVENT } from '@/constants/eventName';
 import type { ClubCalendarEvent } from '@/types/club';
 import ClubScheduleCalendar from './ClubScheduleCalendar';
+
+const trackEvent = jest.fn();
+jest.mock('@/hooks/Mixpanel/useMixpanelTrack', () => ({
+  __esModule: true,
+  default: () => trackEvent,
+}));
 
 /**
  * 공개 피드(ClubCalendarEventResult)가 실제로 내려주는 형태.
@@ -45,6 +52,7 @@ const PUBLIC_FEED: ClubCalendarEvent[] = [
 
 // 캘린더는 항상 '이번 달'로 열리므로 기준 시각을 고정한다
 beforeEach(() => {
+  trackEvent.mockClear();
   jest.useFakeTimers().setSystemTime(new Date(2026, 2, 13));
 });
 
@@ -148,5 +156,21 @@ describe('ClubScheduleCalendar', () => {
     expect(
       screen.getByText('곧 새로운 일정이 업데이트될 예정이에요'),
     ).toBeInTheDocument();
+  });
+
+  it('월 이동·오늘 버튼을 로깅한다', () => {
+    render(<ClubScheduleCalendar events={PUBLIC_FEED} clubId='club-1' />);
+
+    fireEvent.click(screen.getByRole('button', { name: '다음 달' }));
+    expect(trackEvent).toHaveBeenCalledWith(
+      USER_EVENT.CLUB_SCHEDULE_MONTH_CHANGED,
+      { club_id: 'club-1', direction: 'next', month: '2026-04' },
+    );
+
+    fireEvent.click(screen.getByRole('button', { name: '오늘' }));
+    expect(trackEvent).toHaveBeenCalledWith(
+      USER_EVENT.CLUB_SCHEDULE_TODAY_BUTTON_CLICKED,
+      { club_id: 'club-1' },
+    );
   });
 });
