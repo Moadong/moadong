@@ -47,8 +47,14 @@ export const ManyOptions: Story = {
 export const LongOptionText: Story = {
   args: {
     applicationOptions: [
-      { id: asApplicationFormId('1'), title: '2024학년도 1학기 일반전형 신입생 지원' },
-      { id: asApplicationFormId('2'), title: '2024학년도 1학기 특기자전형 신입생 지원' },
+      {
+        id: asApplicationFormId('1'),
+        title: '2024학년도 1학기 일반전형 신입생 지원',
+      },
+      {
+        id: asApplicationFormId('2'),
+        title: '2024학년도 1학기 특기자전형 신입생 지원',
+      },
     ],
   },
 };

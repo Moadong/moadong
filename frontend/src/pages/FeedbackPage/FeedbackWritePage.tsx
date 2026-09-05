@@ -5,6 +5,7 @@ import AttachErrorIcon from '@/assets/images/icons/feedback/feedback_image_attac
 import AttachMaxIcon from '@/assets/images/icons/feedback/feedback_image_attach_max.svg?react';
 import AttachIcon from '@/assets/images/icons/feedback/feedback_image_attach.svg?react';
 import Button from '@/components/common/Button/Button';
+import ConfirmModal from '@/components/common/ConfirmModal/ConfirmModal';
 import Toast from '@/components/common/Toast/Toast';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
@@ -21,7 +22,6 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useCreateFeedback } from '@/hooks/Queries/useFeedback';
 import type { FeedbackType } from '@/types/feedback';
-import ConfirmModal from '@/components/common/ConfirmModal/ConfirmModal';
 import FeedbackImageGrid from './components/FeedbackImageGrid';
 import FeedbackTag from './components/FeedbackTag';
 import * as Styled from './FeedbackWritePage.styles';

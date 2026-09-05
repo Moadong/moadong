@@ -37,19 +37,22 @@ const ApplicationSelectModal = ({
       <Styled.Dialog role='dialog' aria-modal='true'>
         <Styled.Header>
           <Styled.Title>지원서 선택</Styled.Title>
-          <Styled.CloseButton aria-label='close' type='button' onClick={onClose}>
+          <Styled.CloseButton
+            aria-label='close'
+            type='button'
+            onClick={onClose}
+          >
             ✕
           </Styled.CloseButton>
         </Styled.Header>
         <Styled.Body>
           {applicationOptions.length === 0 ? (
-            <Styled.EmptyMessage>지원 가능한 분야가 없습니다.</Styled.EmptyMessage>
+            <Styled.EmptyMessage>
+              지원 가능한 분야가 없습니다.
+            </Styled.EmptyMessage>
           ) : (
             <>
-              <Styled.ListWrapper
-                ref={listRef}
-                onScroll={handleScroll}
-              >
+              <Styled.ListWrapper ref={listRef} onScroll={handleScroll}>
                 <Styled.List>
                   {applicationOptions.map((application) => (
                     <Styled.OptionButton
