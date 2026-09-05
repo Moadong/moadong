@@ -126,13 +126,23 @@ describe('buildPromotionPayload', () => {
 });
 
 describe('createEmptyPromotionForm', () => {
-  it('행사 기간은 오늘로 채워 두고 나머지는 비어 있다', () => {
+  it('행사 기간은 다음 정시로 채워 두고 나머지는 비어 있다', () => {
+    jest.useFakeTimers().setSystemTime(new Date(2026, 8, 5, 14, 23, 45));
     const values = createEmptyPromotionForm();
-    const today = new Date().toDateString();
-    expect(values.eventStart?.toDateString()).toBe(today);
-    expect(values.eventEnd?.toDateString()).toBe(today);
+    jest.useRealTimers();
+
+    expect(values.eventStart).toEqual(new Date(2026, 8, 5, 15, 0, 0));
+    expect(values.eventEnd).toEqual(new Date(2026, 8, 5, 15, 0, 0));
     expect(values.title).toBe('');
     expect(values.coordinates).toBeNull();
+  });
+
+  it('23시대에는 다음 날 0시로 넘어간다', () => {
+    jest.useFakeTimers().setSystemTime(new Date(2026, 8, 5, 23, 10));
+    const values = createEmptyPromotionForm();
+    jest.useRealTimers();
+
+    expect(values.eventStart).toEqual(new Date(2026, 8, 6, 0, 0, 0));
   });
 });
 

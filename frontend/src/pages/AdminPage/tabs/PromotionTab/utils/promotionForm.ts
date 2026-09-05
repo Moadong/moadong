@@ -1,3 +1,4 @@
+import { addHours, startOfHour } from 'date-fns';
 import {
   PROMOTION_DESCRIPTION_MAX,
   PROMOTION_LOCATION_MAX,
@@ -60,15 +61,15 @@ export const findBuildingByCoordinates = (
   );
 };
 
-/** 작성 폼 초기값. 행사 기간은 모집정보 탭과 같이 오늘로 채워 둔다 (모듈 상수로 두면 날짜가 고정돼 함수로 만든다) */
+/** 작성 폼 초기값. 행사 기간은 오늘의 다음 정시로 채워 둔다 (모듈 상수로 두면 날짜가 고정돼 함수로 만든다) */
 export const createEmptyPromotionForm = (): PromotionFormValues => {
-  const today = new Date();
+  const nextHour = startOfHour(addHours(new Date(), 1));
   return {
     title: '',
     location: '',
     coordinates: null,
-    eventStart: today,
-    eventEnd: today,
+    eventStart: nextHour,
+    eventEnd: nextHour,
     description: '',
     existingImages: [],
     localFiles: [],
