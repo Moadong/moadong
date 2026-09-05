@@ -6,6 +6,11 @@ on:
     paths:
       - 'frontend/**'
       - '.github/workflows/frontend-ci.yml'
+  push:
+    branches: [develop-fe]
+    paths:
+      - 'frontend/**'
+      - '.github/workflows/frontend-ci.yml'
 
 jobs:
   ci:
