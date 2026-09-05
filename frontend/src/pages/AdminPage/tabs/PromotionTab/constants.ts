@@ -4,10 +4,6 @@ export const PROMOTION_LIST_PATH = '/admin/promotion';
 export const PROMOTION_NOT_APPROVED_MESSAGE =
   '심사가 완료된 동아리만 홍보 게시글을 작성할 수 있습니다.';
 
-/**
- * 심사 완료 여부. 상세 API(`GET /api/club/{id}`)는 state를 enum 이름이 아니라
- * 설명값('활성화'/'비활성화')으로 내려주고, 목록 API는 'AVAILABLE'을 준다.
- * 둘 다 받아 백엔드가 나중에 이름으로 통일해도 깨지지 않게 한다.
- */
+/** 심사 완료 여부. 상세·목록 API 모두 ClubState enum 이름('AVAILABLE'/'UNAVAILABLE')을 준다 (백엔드 #2013에서 통일) */
 export const isClubApproved = (state: string | undefined) =>
-  state === '활성화' || state === 'AVAILABLE';
+  state === 'AVAILABLE';

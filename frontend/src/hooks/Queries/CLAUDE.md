@@ -59,4 +59,4 @@ Google OAuth 동의 화면이 테스트 모드면 refresh token이 7일 뒤 만�
 
 - 이미지는 글이 있어야 올릴 수 있다(`POST /api/promotion/{id}/upload`). 서버가 업로드된 URL을 글의 `images`에 `$addToSet`으로 바로 넣으므로 **작성은 생성 → 업로드로 끝**, **수정은 업로드 → PUT(기존 유지분 + 새 URL)** 순서다. 순서를 뒤집으면 PUT이 새 URL을 모르거나 삭제한 이미지를 서버가 다시 살린다
 - 수정 PUT은 `images`가 1개 이상이어야 한다(`@NotEmpty`). 생성은 빈 배열 허용
-- 심사 전 동아리는 서버가 403(902-2)로 막는다. 화면은 요청 전에 `ClubDetail.state`로 먼저 막고 같은 문구를 보여준다. 주의: 상세 API의 `state`는 enum 이름이 아니라 설명값(`'활성화'`/`'비활성화'`)이고 목록 API는 `'AVAILABLE'`이다. 판정은 `PromotionTab/constants.ts`의 `isClubApproved`로만 한다
+- 심사 전 동아리는 서버가 403(902-2)로 막는다. 화면은 요청 전에 `ClubDetail.state === 'AVAILABLE'`로 먼저 막고 같은 문구를 보여준다. 판정은 `PromotionTab/constants.ts`의 `isClubApproved`로만 한다. 상세 API가 한때 설명값(`'활성화'`)을 줬는데 백엔드 #2013에서 enum 이름으로 통일됐다

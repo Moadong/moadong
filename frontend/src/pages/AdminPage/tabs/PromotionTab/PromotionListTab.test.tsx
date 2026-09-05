@@ -41,8 +41,7 @@ const makeArticle = (
   ...overrides,
 });
 
-// 상세 API는 state를 설명값('활성화'/'비활성화')으로 준다
-const renderTab = (state = '활성화') => {
+const renderTab = (state = 'AVAILABLE') => {
   render(
     <MemoryRouter initialEntries={['/admin/promotion']}>
       <Routes>
@@ -82,7 +81,7 @@ describe('PromotionListTab', () => {
   });
 
   it('심사 전 동아리는 작성 버튼 대신 안내 문구를 보여준다', () => {
-    renderTab('비활성화');
+    renderTab('UNAVAILABLE');
 
     expect(
       screen.queryByRole('button', { name: /새 게시글 작성/ }),
