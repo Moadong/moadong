@@ -169,6 +169,11 @@ export const ADMIN_EVENT = {
   AI_DRAFT_GENERATION_FAILED: 'AI 지원서 초안 생성 실패',
   APPLICATION_FORM_SAVED: '지원서 저장',
 
+  // 홍보 게시글 관리
+  PROMOTION_CREATE_BUTTON_CLICKED: '홍보 게시글 작성 버튼클릭',
+  PROMOTION_SAVE_BUTTON_CLICKED: '홍보 게시글 저장 버튼클릭',
+  PROMOTION_DELETE_BUTTON_CLICKED: '홍보 게시글 삭제 버튼클릭',
+
   // 비밀번호 수정
   PASSWORD_CHANGE_BUTTON_CLICKED: '비밀번호 변경 버튼클릭',
   NEW_PASSWORD_CLEAR_BUTTON_CLICKED: '새 비밀번호 입력 초기화 버튼클릭',
@@ -210,6 +215,8 @@ export const PAGE_VIEW = {
   ADMIN_STATISTICS_PAGE: '동아리 통계 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
   ADMIN_CALENDAR_PAGE: '동아리 일정 관리 페이지',
+  ADMIN_PROMOTION_LIST_PAGE: '홍보 게시글 관리 페이지',
+  ADMIN_PROMOTION_EDIT_PAGE: '홍보 게시글 작성 페이지',
 } as const;
 
 export const PAGE_NAME = {

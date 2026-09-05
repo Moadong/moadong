@@ -3,7 +3,13 @@ import {
   CreatePromotionArticleRequest,
   PromotionArticle,
 } from '@/types/promotion';
-import { createPromotionArticle, getPromotionArticles } from './promotion';
+import {
+  createPromotionArticle,
+  deletePromotionArticle,
+  getPromotionArticles,
+  updatePromotionArticle,
+  uploadPromotionImage,
+} from './promotion';
 
 jest.mock('@/constants/api', () => ({
   __esModule: true,
@@ -111,16 +117,15 @@ describe('promotion API', () => {
         clubId: 'club1',
         title: '새로운 홍보글',
         location: '서울',
+        latitude: 35.1,
+        longitude: 129.1,
         eventStartDate: '2024-03-01',
         eventEndDate: '2024-03-31',
         description: '홍보 내용',
         images: ['image1.jpg'],
       };
 
-      const mockResponse = {
-        id: '123',
-        message: '생성 성공',
-      };
+      const mockResponse = { articleId: '123' };
 
       fetchMock.mockResponseOnce(JSON.stringify({ data: mockResponse }), {
         headers: { 'content-type': 'application/json' },
@@ -144,6 +149,8 @@ describe('promotion API', () => {
         clubId: 'club1',
         title: '새로운 홍보글',
         location: '부산',
+        latitude: 35.1,
+        longitude: 129.1,
         eventStartDate: '2024-03-01',
         eventEndDate: '2024-03-31',
         description: '홍보 내용',
@@ -156,6 +163,110 @@ describe('promotion API', () => {
 
       await expect(createPromotionArticle(mockPayload)).rejects.toThrow(
         '홍보게시판 글 추가에 실패했습니다.',
+      );
+    });
+  });
+
+  describe('updatePromotionArticle', () => {
+    const payload: CreatePromotionArticleRequest = {
+      clubId: 'club1',
+      title: '수정된 홍보글',
+      location: '부산',
+      latitude: 35.1,
+      longitude: 129.1,
+      eventStartDate: '2024-03-01',
+      eventEndDate: '2024-03-31',
+      description: '수정 내용',
+      images: ['image1.jpg'],
+    };
+
+    it('PUT으로 바디를 보내고 응답 없이 끝난다', async () => {
+      fetchMock.mockResponseOnce('', { status: 200 });
+
+      await expect(
+        updatePromotionArticle('123', payload),
+      ).resolves.toBeUndefined();
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        `${API_BASE_URL}/api/promotion/123`,
+        expect.objectContaining({
+          method: 'PUT',
+          body: JSON.stringify(payload),
+        }),
+      );
+    });
+
+    it('실패 시 기본 문구로 던지고 서버 문구는 data에 남긴다', async () => {
+      fetchMock.mockResponseOnce(
+        JSON.stringify({
+          statusCode: '902-2',
+          message: '심사가 완료된 동아리만 홍보 게시글을 작성할 수 있습니다.',
+        }),
+        { status: 403 },
+      );
+
+      await expect(updatePromotionArticle('123', payload)).rejects.toThrow(
+        '홍보게시판 글 수정에 실패했습니다.',
+      );
+    });
+  });
+
+  describe('deletePromotionArticle', () => {
+    it('DELETE로 요청한다', async () => {
+      fetchMock.mockResponseOnce('', { status: 200 });
+
+      await expect(deletePromotionArticle('123')).resolves.toBeUndefined();
+
+      expect(fetchMock).toHaveBeenCalledWith(
+        `${API_BASE_URL}/api/promotion/123`,
+        expect.objectContaining({ method: 'DELETE' }),
+      );
+    });
+
+    it('404면 에러를 던진다', async () => {
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ statusCode: '902-1', message: '없는 글' }),
+        { status: 404 },
+      );
+
+      await expect(deletePromotionArticle('missing')).rejects.toThrow(
+        '홍보게시판 글 삭제에 실패했습니다.',
+      );
+    });
+  });
+
+  describe('uploadPromotionImage', () => {
+    it('multipart의 file 필드로 올리고 imageUrl을 돌려준다', async () => {
+      fetchMock.mockResponseOnce(
+        JSON.stringify({ data: { imageUrl: 'https://cdn/a.png' } }),
+        { headers: { 'content-type': 'application/json' } },
+      );
+      const file = new File(['x'], 'a.png', { type: 'image/png' });
+
+      const result = await uploadPromotionImage('123', file);
+
+      expect(result).toEqual({ imageUrl: 'https://cdn/a.png' });
+
+      const [url, options] = fetchMock.mock.calls[0];
+      expect(url).toBe(`${API_BASE_URL}/api/promotion/123/upload`);
+      expect(options?.method).toBe('POST');
+      expect(options?.body).toBeInstanceOf(FormData);
+      // jest-fetch-mock이 FormData 값을 문자열로 바꿔 두므로 필드 존재만 확인한다
+      expect((options?.body as FormData).has('file')).toBe(true);
+      // multipart boundary는 브라우저가 붙여야 하므로 Content-Type을 직접 넣지 않는다
+      expect(
+        (options?.headers as Record<string, string>)['Content-Type'],
+      ).toBeUndefined();
+    });
+
+    it('실패 시 에러를 던진다', async () => {
+      fetchMock.mockResponseOnce(JSON.stringify({ message: '실패' }), {
+        status: 500,
+      });
+      const file = new File(['x'], 'a.png', { type: 'image/png' });
+
+      await expect(uploadPromotionImage('123', file)).rejects.toThrow(
+        '홍보 이미지 업로드에 실패했습니다.',
       );
     });
   });
