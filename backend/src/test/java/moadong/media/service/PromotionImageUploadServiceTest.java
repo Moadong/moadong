@@ -3,9 +3,12 @@ package moadong.media.service;
 import moadong.club.entity.PromotionArticle;
 import moadong.club.repository.PromotionArticleRepository;
 import moadong.global.config.properties.AwsProperties;
+import moadong.global.config.properties.ServerProperties;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.media.dto.PresignedUploadResponse;
 import moadong.media.dto.PromotionImageUploadResponse;
+import moadong.media.dto.UploadUrlRequest;
 import moadong.user.entity.User;
 import moadong.user.entity.enums.UserRole;
 import moadong.user.payload.CustomUserDetails;
@@ -16,15 +19,23 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
+import org.springframework.test.util.ReflectionTestUtils;
+import software.amazon.awssdk.services.s3.presigner.S3Presigner;
+import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
+import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
+import java.net.URL;
+import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -40,7 +51,13 @@ class PromotionImageUploadServiceTest {
     private R2ImageUploadService r2ImageUploadService;
 
     @Mock
+    private S3Presigner s3Presigner;
+
+    @Mock
     private AwsProperties awsProperties;
+
+    @Mock
+    private ServerProperties serverProperties;
 
     @InjectMocks
     private PromotionImageUploadService promotionImageUploadService;
@@ -119,6 +136,84 @@ class PromotionImageUploadServiceTest {
 
         assertEquals(uploadedUrl, response.imageUrl());
         verify(promotionArticleRepository).addImageToActiveArticle(articleId, uploadedUrl);
+    }
+
+    @Test
+    void 업로드URL은_요청한_개수만큼_발급되고_게시글은_변경하지_않는다() {
+        String articleId = "article-1";
+        givenPresigner();
+        when(promotionArticleRepository.findActiveById(articleId)).thenReturn(Optional.of(article(articleId, "my-club")));
+
+        List<PresignedUploadResponse> responses = promotionImageUploadService.createUploadUrls(
+            articleId,
+            List.of(new UploadUrlRequest("poster.png", "image/png"), new UploadUrlRequest("poster2.jpg", "image/jpeg")),
+            clubAdmin("my-club"));
+
+        assertEquals(2, responses.size());
+        assertTrue(responses.get(0).success());
+        assertTrue(responses.get(0).finalUrl().startsWith("https://cdn.example.com/promotion/articles/" + articleId + "/"));
+        assertTrue(responses.get(0).finalUrl().endsWith(".png"));
+        assertTrue(responses.get(1).finalUrl().endsWith(".jpg"));
+        assertEquals("image/png", responses.get(0).requiredHeaders().get("Content-Type"));
+        verify(promotionArticleRepository, never()).addImageToActiveArticle(any(), any());
+    }
+
+    @Test
+    void 지원하지_않는_확장자와_contentType은_그_항목만_실패한다() {
+        String articleId = "article-1";
+        givenPresigner();
+        when(promotionArticleRepository.findActiveById(articleId)).thenReturn(Optional.of(article(articleId, "my-club")));
+
+        List<PresignedUploadResponse> responses = promotionImageUploadService.createUploadUrls(
+            articleId,
+            List.of(
+                new UploadUrlRequest("poster.png", "image/png"),
+                new UploadUrlRequest("poster.txt", "image/png"),
+                new UploadUrlRequest("poster.png", "text/html")),
+            clubAdmin("my-club"));
+
+        assertTrue(responses.get(0).success());
+        assertFalse(responses.get(1).success());
+        assertEquals(ErrorCode.UNSUPPORTED_FILE_TYPE.getMessage(), responses.get(1).failureReason());
+        assertFalse(responses.get(2).success());
+        assertEquals(ErrorCode.UNSUPPORTED_FILE_TYPE.getMessage(), responses.get(2).failureReason());
+    }
+
+    @Test
+    void 동아리관리자는_다른_동아리_게시글의_업로드URL을_받을_수_없다() {
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article("article-1", "other-club")));
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionImageUploadService.createUploadUrls("article-1",
+                List.of(new UploadUrlRequest("poster.png", "image/png")), clubAdmin("my-club")));
+
+        assertEquals(ErrorCode.USER_UNAUTHORIZED, exception.getErrorCode());
+        verify(s3Presigner, never()).presignPutObject(any(PutObjectPresignRequest.class));
+    }
+
+    @Test
+    void 존재하지_않는_홍보게시글이면_업로드URL을_발급하지_않는다() {
+        when(promotionArticleRepository.findActiveById("missing")).thenReturn(Optional.empty());
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionImageUploadService.createUploadUrls("missing",
+                List.of(new UploadUrlRequest("poster.png", "image/png")), developer()));
+
+        assertEquals(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND, exception.getErrorCode());
+        verify(s3Presigner, never()).presignPutObject(any(PutObjectPresignRequest.class));
+    }
+
+    private void givenPresigner() {
+        AwsProperties.S3 s3 = new AwsProperties.S3("moadong-dev", "https://r2.example.com", "https://cdn.example.com/");
+        when(awsProperties.s3()).thenReturn(s3);
+        when(serverProperties.fileUrl()).thenReturn(new ServerProperties.FileUrl(200, 10));
+        // @PostConstruct는 단위 테스트에서 호출되지 않는다.
+        ReflectionTestUtils.invokeMethod(promotionImageUploadService, "init");
+        when(s3Presigner.presignPutObject(any(PutObjectPresignRequest.class))).thenAnswer(invocation -> {
+            PresignedPutObjectRequest presigned = mock(PresignedPutObjectRequest.class);
+            when(presigned.url()).thenReturn(new URL("https://r2.example.com/upload?sig=abc"));
+            return presigned;
+        });
     }
 
     private static PromotionArticle article(String id, String clubId) {
