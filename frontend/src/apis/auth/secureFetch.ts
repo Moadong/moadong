@@ -32,10 +32,11 @@ export const secureFetch = async (
         input,
         {
           ...init,
+          // Content-Type은 호출부가 정한 값을 그대로 쓴다.
+          // multipart(FormData)는 브라우저가 boundary를 붙여야 해서 여기서 강제하면 재요청이 깨진다.
           headers: {
             ...(init?.headers || {}),
             Authorization: `Bearer ${newAccessToken}`,
-            'Content-Type': 'application/json',
           },
           credentials: 'include',
         },
