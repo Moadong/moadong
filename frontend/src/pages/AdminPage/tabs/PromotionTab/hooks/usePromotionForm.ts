@@ -9,7 +9,7 @@ import { PromotionArticle } from '@/types/promotion';
 import {
   articleToFormValues,
   buildPromotionPayload,
-  EMPTY_PROMOTION_FORM,
+  createEmptyPromotionForm,
   PromotionFormValues,
   validatePromotionForm,
 } from '../utils/promotionForm';
@@ -35,8 +35,9 @@ export const usePromotionForm = ({
   article,
 }: UsePromotionFormParams) => {
   const mode = article ? 'edit' : 'create';
-  const [values, setValues] =
-    useState<PromotionFormValues>(EMPTY_PROMOTION_FORM);
+  const [values, setValues] = useState<PromotionFormValues>(
+    createEmptyPromotionForm,
+  );
   const [isSaving, setIsSaving] = useState(false);
 
   const { mutateAsync: createArticle } = useCreatePromotionArticle();

@@ -3,7 +3,7 @@ import {
   articleToFormValues,
   BUILDING_OPTIONS,
   buildPromotionPayload,
-  EMPTY_PROMOTION_FORM,
+  createEmptyPromotionForm,
   findBuildingByCoordinates,
   fromDateTimeLocalValue,
   PromotionFormValues,
@@ -120,8 +120,19 @@ describe('buildPromotionPayload', () => {
 
   it('검증 전 값으로 호출하면 던진다', () => {
     expect(() =>
-      buildPromotionPayload(EMPTY_PROMOTION_FORM, 'club-1', []),
+      buildPromotionPayload(createEmptyPromotionForm(), 'club-1', []),
     ).toThrow();
+  });
+});
+
+describe('createEmptyPromotionForm', () => {
+  it('행사 기간은 오늘로 채워 두고 나머지는 비어 있다', () => {
+    const values = createEmptyPromotionForm();
+    const today = new Date().toDateString();
+    expect(values.eventStart?.toDateString()).toBe(today);
+    expect(values.eventEnd?.toDateString()).toBe(today);
+    expect(values.title).toBe('');
+    expect(values.coordinates).toBeNull();
   });
 });
 

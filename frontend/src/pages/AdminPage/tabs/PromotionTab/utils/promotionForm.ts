@@ -60,15 +60,19 @@ export const findBuildingByCoordinates = (
   );
 };
 
-export const EMPTY_PROMOTION_FORM: PromotionFormValues = {
-  title: '',
-  location: '',
-  coordinates: null,
-  eventStart: null,
-  eventEnd: null,
-  description: '',
-  existingImages: [],
-  localFiles: [],
+/** 작성 폼 초기값. 행사 기간은 모집정보 탭과 같이 오늘로 채워 둔다 (모듈 상수로 두면 날짜가 고정돼 함수로 만든다) */
+export const createEmptyPromotionForm = (): PromotionFormValues => {
+  const today = new Date();
+  return {
+    title: '',
+    location: '',
+    coordinates: null,
+    eventStart: today,
+    eventEnd: today,
+    description: '',
+    existingImages: [],
+    localFiles: [],
+  };
 };
 
 const toDateOrNull = (value: string): Date | null => {
