@@ -28,6 +28,14 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: Restore TypeScript incremental cache
+        uses: actions/cache@v4
+        with:
+          path: frontend/node_modules/.cache/tsconfig.tsbuildinfo
+          key: tsbuildinfo-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            tsbuildinfo-${{ runner.os }}-
+
       - name: Prettier check
         run: npx prettier --check "**/*.{ts,tsx,js,jsx,css,scss}"
 

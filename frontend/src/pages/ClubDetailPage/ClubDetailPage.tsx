@@ -59,16 +59,12 @@ const ClubDetailPage = () => {
 
   const hasCalendarConnection = clubDetail?.hasCalendarConnection ?? false;
 
-  const hasFeeds = (clubDetail?.feeds?.length ?? 0) > 0;
-
   const activeTab: TabType = useMemo(() => {
     if (!tabParam || !Object.values(TAB_TYPE).includes(tabParam)) {
-      // 체류시간 중앙값이 7초라 첫 화면이 판단을 좌우한다.
-      // 유저가 스스로 이동하는 탭도 활동사진이 가장 많아 기본값으로 둔다.
-      return hasFeeds ? TAB_TYPE.PHOTOS : TAB_TYPE.INTRO;
+      return TAB_TYPE.INTRO;
     }
     return tabParam;
-  }, [tabParam, hasFeeds]);
+  }, [tabParam]);
 
   const { data: calendarEvents = [], isLoading: isCalendarLoading } =
     useGetClubCalendarEvents((clubName ?? clubId) || '', {
@@ -105,6 +101,35 @@ const ClubDetailPage = () => {
     countedClubIdRef.current = clubId;
     countClubView();
   }, [clubDetail?.id]);
+
+  /**
+   * 일정 탭에 실제로 도달했을 때 볼 일정이 있었는지 남긴다.
+   * 탭 클릭뿐 아니라 `?tab=schedule` 딥링크 진입도 포함해야 해서 탭 클릭 이벤트와 별개로 둔다.
+   */
+  const scheduleViewedClubIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    const viewedClubId = clubDetail?.id;
+    if (activeTab !== TAB_TYPE.SCHEDULE || !viewedClubId || isCalendarLoading) {
+      return;
+    }
+    if (scheduleViewedClubIdRef.current === viewedClubId) return;
+
+    scheduleViewedClubIdRef.current = viewedClubId;
+    trackEvent(USER_EVENT.CLUB_SCHEDULE_CALENDAR_VIEWED, {
+      club_id: viewedClubId,
+      club_name: clubDetail?.name,
+      event_count: calendarEvents.length,
+      has_calendar_connection: hasCalendarConnection,
+    });
+  }, [
+    activeTab,
+    clubDetail?.id,
+    clubDetail?.name,
+    isCalendarLoading,
+    calendarEvents.length,
+    hasCalendarConnection,
+    trackEvent,
+  ]);
 
   const [showStickyTabs, setShowStickyTabs] = useState(false);
   const [inlineTabsEl, setInlineTabsEl] = useState<HTMLDivElement | null>(null);
@@ -259,6 +284,7 @@ const ClubDetailPage = () => {
                   key={clubId ?? clubName}
                   events={calendarEvents}
                   isLoading={isCalendarLoading}
+                  clubId={clubDetail.id}
                 />
               </div>
             </Styled.TabContent>

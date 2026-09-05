@@ -5,6 +5,8 @@ import {
   CALENDAR_EVENT_COLOR_ORDER,
   CALENDAR_EVENT_COLORS,
 } from '@/constants/calendarEventColors';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import type { CalendarEventColor, ClubCalendarEvent } from '@/types/club';
 import {
   buildDateKeyFromDate,
@@ -83,12 +85,17 @@ interface ClubScheduleCalendarProps {
   events: ClubCalendarEvent[];
   /** 연동 캘린더는 서버에서 모아오느라 느려서 캘린더 자리에 스피너를 띄운다 */
   isLoading?: boolean;
+  /** 이벤트 로깅용 */
+  clubId?: string;
 }
 
 const ClubScheduleCalendar = ({
   events,
   isLoading = false,
+  clubId,
 }: ClubScheduleCalendarProps) => {
+  const trackEvent = useMixpanelTrack();
+
   const sortedEvents = [...events]
     .filter((event) => parseDateKey(event.start))
     .sort((a, b) => a.start.localeCompare(b.start));
@@ -195,12 +202,23 @@ const ClubScheduleCalendar = ({
     monthKey === `${today.getFullYear()}-${today.getMonth() + 1}`;
 
   const changeMonth = (diff: number) => {
-    setVisibleMonth(
-      new Date(visibleMonth.getFullYear(), visibleMonth.getMonth() + diff, 1),
+    const nextMonth = new Date(
+      visibleMonth.getFullYear(),
+      visibleMonth.getMonth() + diff,
+      1,
     );
+    trackEvent(USER_EVENT.CLUB_SCHEDULE_MONTH_CHANGED, {
+      club_id: clubId,
+      direction: diff > 0 ? 'next' : 'prev',
+      month: `${nextMonth.getFullYear()}-${String(nextMonth.getMonth() + 1).padStart(2, '0')}`,
+    });
+    setVisibleMonth(nextMonth);
   };
 
   const moveToToday = () => {
+    trackEvent(USER_EVENT.CLUB_SCHEDULE_TODAY_BUTTON_CLICKED, {
+      club_id: clubId,
+    });
     const today = new Date();
     setVisibleMonth(new Date(today.getFullYear(), today.getMonth(), 1));
   };

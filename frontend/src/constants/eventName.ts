@@ -41,6 +41,11 @@ export const USER_EVENT = {
   CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',
   CLUB_SCHEDULE_TAB_CLICKED: 'Club Schedule Tab Clicked',
 
+  // 동아리 행사일정 캘린더
+  CLUB_SCHEDULE_CALENDAR_VIEWED: 'Club Schedule Calendar Viewed',
+  CLUB_SCHEDULE_MONTH_CHANGED: 'Club Schedule Month Changed',
+  CLUB_SCHEDULE_TODAY_BUTTON_CLICKED: 'Club Schedule Today Button Clicked',
+
   // 동아리방 지도
   CLUB_MAP_CLICKED: 'Club Map Clicked',
 
