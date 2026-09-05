@@ -14,7 +14,7 @@ import CalendarLinkCard, {
   type CalendarLinkEvent,
 } from '../CalendarLinkCard/CalendarLinkCard';
 import CalendarLinkSection from '../CalendarLinkSection/CalendarLinkSection';
-import DisconnectConfirmModal from '../DisconnectConfirmModal/DisconnectConfirmModal';
+import ConfirmModal from '@/components/common/ConfirmModal/ConfirmModal';
 import * as Styled from './CalendarLinkPanel.styles';
 
 /** 목록에 표시할 `YYYY. MM. DD` 텍스트로 변환한다 */
@@ -180,8 +180,11 @@ const CalendarLinkPanel = () => {
         isToggleDisabled={isVisibilityUnknown}
       />
 
-      <DisconnectConfirmModal
+      <ConfirmModal
         isOpen={disconnectTarget !== null}
+        title='연동을 해제할까요?'
+        description='가져온 일정은 캘린더에서 사라집니다.'
+        confirmLabel='확인'
         onClose={() => {
           trackEvent(ADMIN_EVENT.CALENDAR_UNLINK_CANCELED, {
             provider: disconnectTarget,
