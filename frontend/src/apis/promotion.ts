@@ -5,7 +5,8 @@ import {
   CreatePromotionArticleRequest,
   CreatePromotionArticleResponse,
   PromotionArticle,
-  PromotionImageUploadResponse,
+  PromotionImageUploadRequest,
+  PromotionPresignedData,
   UpdatePromotionArticleRequest,
 } from '@/types/promotion';
 import { secureFetch } from './auth/secureFetch';
@@ -78,23 +79,46 @@ export const deletePromotionArticle = async (articleId: string) => {
 };
 
 /**
- * 이미지는 글을 먼저 만들어 articleId를 받은 뒤 올린다.
- * 서버가 업로드된 URL을 해당 글의 images에 바로 추가하므로 생성 직후에는 PUT이 필요 없다.
+ * 이미지는 글을 먼저 만들어 articleId를 받은 뒤 presigned URL을 발급받아 R2에 직접 올린다.
+ * 발급 API는 게시글을 건드리지 않으므로 올린 finalUrl은 PUT의 images로 반영해야 한다.
+ * 항목별로 success가 갈릴 수 있어 배열 전체를 실패로 보지 않는다.
  */
-export const uploadPromotionImage = async (articleId: string, file: File) => {
-  const formData = new FormData();
-  formData.append('file', file);
-
+export const getPromotionImageUploadUrls = async (
+  articleId: string,
+  requests: PromotionImageUploadRequest[],
+) => {
   const response = await secureFetch(
-    `${API_BASE_URL}/api/promotion/${articleId}/upload`,
+    `${API_BASE_URL}/api/promotion/${articleId}/upload-url`,
     {
       method: 'POST',
-      body: formData,
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(requests),
     },
   );
 
-  return handleResponse<PromotionImageUploadResponse>(
+  return handleResponse<PromotionPresignedData[]>(
     response,
-    '홍보 이미지 업로드에 실패했습니다.',
+    '홍보 이미지 업로드 URL 생성에 실패했습니다.',
   );
+};
+
+/**
+ * R2로 직접 나가는 요청이라 secureFetch를 쓰지 않는다. Authorization이 붙으면 서명 검증에 걸린다.
+ * requiredHeaders는 서명에 포함된 값이라 빠짐없이 그대로 보낸다.
+ */
+export const uploadPromotionImageToStorage = async (
+  presigned: PromotionPresignedData,
+  file: File,
+) => {
+  if (!presigned.presignedUrl) {
+    throw new Error(presigned.failureReason ?? 'presigned URL 생성 실패');
+  }
+  const response = await fetch(presigned.presignedUrl, {
+    method: 'PUT',
+    body: file,
+    headers: presigned.requiredHeaders,
+  });
+  await handleResponse(response, `스토리지 업로드 실패 : ${response.status}`);
 };

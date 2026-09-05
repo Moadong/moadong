@@ -2,13 +2,15 @@ import fetchMock from 'jest-fetch-mock';
 import {
   CreatePromotionArticleRequest,
   PromotionArticle,
+  PromotionPresignedData,
 } from '@/types/promotion';
 import {
   createPromotionArticle,
   deletePromotionArticle,
   getPromotionArticles,
+  getPromotionImageUploadUrls,
   updatePromotionArticle,
-  uploadPromotionImage,
+  uploadPromotionImageToStorage,
 } from './promotion';
 
 jest.mock('@/constants/api', () => ({
@@ -235,39 +237,103 @@ describe('promotion API', () => {
     });
   });
 
-  describe('uploadPromotionImage', () => {
-    it('multipart의 file 필드로 올리고 imageUrl을 돌려준다', async () => {
-      fetchMock.mockResponseOnce(
-        JSON.stringify({ data: { imageUrl: 'https://cdn/a.png' } }),
-        { headers: { 'content-type': 'application/json' } },
+  describe('getPromotionImageUploadUrls', () => {
+    it('파일 목록을 배열로 보내고 항목별 발급 결과를 돌려준다', async () => {
+      const presigned: PromotionPresignedData[] = [
+        {
+          presignedUrl: 'https://r2/put?sig=1',
+          finalUrl: 'https://cdn/promotion/articles/123/2026/09/a.png',
+          requiredHeaders: { 'Content-Type': 'image/png' },
+          success: true,
+          failureReason: null,
+        },
+        {
+          presignedUrl: null,
+          finalUrl: '',
+          requiredHeaders: {},
+          success: false,
+          failureReason: '허용되지 않는 형식',
+        },
+      ];
+      fetchMock.mockResponseOnce(JSON.stringify({ data: presigned }), {
+        headers: { 'content-type': 'application/json' },
+      });
+      const requests = [
+        { fileName: 'a.png', contentType: 'image/png' },
+        { fileName: 'b.svg', contentType: 'image/svg+xml' },
+      ];
+
+      const result = await getPromotionImageUploadUrls('123', requests);
+
+      // 한 항목이 실패해도 배열 전체를 실패로 보지 않는다
+      expect(result).toEqual(presigned);
+      expect(fetchMock).toHaveBeenCalledWith(
+        `${API_BASE_URL}/api/promotion/123/upload-url`,
+        expect.objectContaining({
+          method: 'POST',
+          body: JSON.stringify(requests),
+        }),
       );
-      const file = new File(['x'], 'a.png', { type: 'image/png' });
-
-      const result = await uploadPromotionImage('123', file);
-
-      expect(result).toEqual({ imageUrl: 'https://cdn/a.png' });
-
-      const [url, options] = fetchMock.mock.calls[0];
-      expect(url).toBe(`${API_BASE_URL}/api/promotion/123/upload`);
-      expect(options?.method).toBe('POST');
-      expect(options?.body).toBeInstanceOf(FormData);
-      // jest-fetch-mock이 FormData 값을 문자열로 바꿔 두므로 필드 존재만 확인한다
-      expect((options?.body as FormData).has('file')).toBe(true);
-      // multipart boundary는 브라우저가 붙여야 하므로 Content-Type을 직접 넣지 않는다
-      expect(
-        (options?.headers as Record<string, string>)['Content-Type'],
-      ).toBeUndefined();
     });
 
-    it('실패 시 에러를 던진다', async () => {
-      fetchMock.mockResponseOnce(JSON.stringify({ message: '실패' }), {
-        status: 500,
+    it('남의 동아리 글이면 에러를 던진다', async () => {
+      fetchMock.mockResponseOnce(JSON.stringify({ message: '권한 없음' }), {
+        status: 403,
       });
-      const file = new File(['x'], 'a.png', { type: 'image/png' });
 
-      await expect(uploadPromotionImage('123', file)).rejects.toThrow(
-        '홍보 이미지 업로드에 실패했습니다.',
-      );
+      await expect(
+        getPromotionImageUploadUrls('123', [
+          { fileName: 'a.png', contentType: 'image/png' },
+        ]),
+      ).rejects.toThrow('홍보 이미지 업로드 URL 생성에 실패했습니다.');
+    });
+  });
+
+  describe('uploadPromotionImageToStorage', () => {
+    const file = new File(['x'], 'a.png', { type: 'image/png' });
+    const presigned: PromotionPresignedData = {
+      presignedUrl: 'https://r2/put?sig=1',
+      finalUrl: 'https://cdn/a.png',
+      requiredHeaders: { 'Content-Type': 'image/png' },
+      success: true,
+      failureReason: null,
+    };
+
+    it('presigned URL에 requiredHeaders만 실어 PUT하고 Authorization은 붙이지 않는다', async () => {
+      fetchMock.mockResponseOnce('', { status: 200 });
+
+      await expect(
+        uploadPromotionImageToStorage(presigned, file),
+      ).resolves.toBeUndefined();
+
+      const [url, options] = fetchMock.mock.calls[0];
+      expect(url).toBe('https://r2/put?sig=1');
+      expect(options?.method).toBe('PUT');
+      expect(options?.body).toBe(file);
+      expect(options?.headers).toEqual({ 'Content-Type': 'image/png' });
+    });
+
+    it('발급이 실패한 항목은 요청 없이 사유로 던진다', async () => {
+      await expect(
+        uploadPromotionImageToStorage(
+          {
+            ...presigned,
+            presignedUrl: null,
+            success: false,
+            failureReason: '허용되지 않는 형식',
+          },
+          file,
+        ),
+      ).rejects.toThrow('허용되지 않는 형식');
+      expect(fetchMock).not.toHaveBeenCalled();
+    });
+
+    it('스토리지가 거부하면 에러를 던진다', async () => {
+      fetchMock.mockResponseOnce('', { status: 403 });
+
+      await expect(
+        uploadPromotionImageToStorage(presigned, file),
+      ).rejects.toThrow('스토리지 업로드 실패 : 403');
     });
   });
 });

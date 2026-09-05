@@ -4,10 +4,12 @@ import {
   createPromotionArticle,
   deletePromotionArticle,
   getPromotionArticles,
+  getPromotionImageUploadUrls,
   updatePromotionArticle,
-  uploadPromotionImage,
+  uploadPromotionImageToStorage,
 } from '@/apis/promotion';
 import { queryKeys } from '@/constants/queryKeys';
+import { ALLOWED_IMAGE_TYPES } from '@/constants/uploadLimit';
 import {
   CreatePromotionArticleRequest,
   PromotionArticle,
@@ -83,20 +85,64 @@ export const useDeletePromotionArticle = () => {
   });
 };
 
-/** 서버가 업로드된 URL을 글의 images에 바로 추가하므로 목록도 함께 무효화한다 */
-export const useUploadPromotionImage = () => {
-  const queryClient = useQueryClient();
+interface PromotionImageUploadParams {
+  articleId: string;
+  files: File[];
+}
 
-  return useMutation({
-    mutationFn: ({ articleId, file }: { articleId: string; file: File }) =>
-      uploadPromotionImage(articleId, file),
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.promotion.list(),
+export interface PromotionImageUploadResult {
+  /** 올라간 파일과 최종 URL. 요청 순서를 유지한다 */
+  uploaded: { file: File; url: string }[];
+  failedFiles: File[];
+}
+
+/**
+ * presigned URL 발급 → R2 병렬 PUT → 성공한 finalUrl 수집 (useUploadFeed와 같은 흐름).
+ * 발급 API는 게시글을 건드리지 않으므로 목록 무효화는 PUT 쪽(useUpdatePromotionArticle)에서 한다.
+ */
+export const useUploadPromotionImages = () =>
+  useMutation({
+    mutationFn: async ({
+      articleId,
+      files,
+    }: PromotionImageUploadParams): Promise<PromotionImageUploadResult> => {
+      if (files.length === 0) return { uploaded: [], failedFiles: [] };
+
+      const requests = files.map((file) => ({
+        fileName: file.name,
+        contentType: (ALLOWED_IMAGE_TYPES as readonly string[]).includes(
+          file.type,
+        )
+          ? file.type
+          : 'image/jpeg',
+      }));
+      const presignedList = await getPromotionImageUploadUrls(
+        articleId,
+        requests,
+      );
+      if (!presignedList) {
+        throw new Error('홍보 이미지 업로드 URL 생성 실패');
+      }
+
+      // 발급 자체가 실패한 항목(success=false)은 PUT을 건너뛰고 실패로 센다
+      const results = await Promise.allSettled(
+        files.map((file, i) =>
+          uploadPromotionImageToStorage(presignedList[i], file),
+        ),
+      );
+
+      const uploaded: PromotionImageUploadResult['uploaded'] = [];
+      const failedFiles: File[] = [];
+      results.forEach((result, i) => {
+        if (result.status === 'fulfilled' && presignedList[i].finalUrl) {
+          uploaded.push({ file: files[i], url: presignedList[i].finalUrl });
+        } else {
+          failedFiles.push(files[i]);
+        }
       });
+      return { uploaded, failedFiles };
     },
     onError: (error) => {
-      console.error('Error uploading promotion image:', error);
+      console.error('Error uploading promotion images:', error);
     },
   });
-};

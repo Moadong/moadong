@@ -35,6 +35,20 @@ export interface CreatePromotionArticleResponse {
   articleId: string;
 }
 
-export interface PromotionImageUploadResponse {
-  imageUrl: string;
+export interface PromotionImageUploadRequest {
+  fileName: string;
+  contentType: string;
+}
+
+/**
+ * presigned URL 발급 결과. 요청 배열과 순서가 1:1로 대응한다.
+ * 확장자·contentType이 허용 목록 밖이면 그 항목만 success=false, presignedUrl=null로 온다.
+ */
+export interface PromotionPresignedData {
+  presignedUrl: string | null;
+  finalUrl: string;
+  /** 서명에 포함된 헤더. 스토리지 PUT에 그대로 실어야 한다 */
+  requiredHeaders: Record<string, string>;
+  success: boolean;
+  failureReason: string | null;
 }

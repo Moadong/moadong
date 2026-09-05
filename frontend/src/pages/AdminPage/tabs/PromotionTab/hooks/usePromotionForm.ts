@@ -3,7 +3,7 @@ import { getServerErrorMessage } from '@/apis/utils/getServerErrorMessage';
 import {
   useCreatePromotionArticle,
   useUpdatePromotionArticle,
-  useUploadPromotionImage,
+  useUploadPromotionImages,
 } from '@/hooks/Queries/usePromotion';
 import { PromotionArticle } from '@/types/promotion';
 import {
@@ -28,7 +28,8 @@ interface UsePromotionFormParams {
 
 /**
  * 작성·수정이 같은 폼을 쓴다. 이미지는 글이 있어야 올릴 수 있어서
- * 작성은 생성 → 업로드, 수정은 업로드 → PUT(합친 images) 순으로 간다.
+ * (작성이면 먼저 생성) → presigned 업로드 → PUT(기존 유지분 + 새 URL) 순으로 간다.
+ * PUT이 이미지 저장의 유일한 경로다.
  */
 export const usePromotionForm = ({
   clubId,
@@ -42,7 +43,7 @@ export const usePromotionForm = ({
 
   const { mutateAsync: createArticle } = useCreatePromotionArticle();
   const { mutateAsync: updateArticle } = useUpdatePromotionArticle();
-  const { mutateAsync: uploadImage } = useUploadPromotionImage();
+  const { mutateAsync: uploadImages } = useUploadPromotionImages();
 
   // 수정 모드에서 목록 쿼리가 늦게 도착해도 폼에 채워지도록 하되,
   // 같은 글의 재조회(업로드 후 invalidate 등)로 입력 중인 값을 덮어쓰지 않도록 id 기준으로 한 번만 채운다.
@@ -100,31 +101,23 @@ export const usePromotionForm = ({
     }));
 
   const uploadFiles = async (articleId: string) => {
-    const uploadedUrls: string[] = [];
-    const uploadedPreviews: string[] = [];
-    let failedCount = 0;
-    for (const { file, previewUrl } of values.localFiles) {
-      try {
-        const result = await uploadImage({ articleId, file });
-        if (result?.imageUrl) {
-          uploadedUrls.push(result.imageUrl);
-          uploadedPreviews.push(previewUrl);
-        } else failedCount += 1;
-      } catch {
-        failedCount += 1;
-      }
-    }
+    const { uploaded, failedFiles } = await uploadImages({
+      articleId,
+      files: values.localFiles.map(({ file }) => file),
+    });
+    const uploadedUrls = uploaded.map(({ url }) => url);
+    const uploadedFiles = new Set(uploaded.map(({ file }) => file));
     // 올라간 파일은 서버 이미지로 옮겨 둔다. 일부 실패로 화면에 남았을 때 다시 저장해도 중복 업로드되지 않는다.
     setValues((prev) => ({
       ...prev,
       existingImages: [...prev.existingImages, ...uploadedUrls],
-      localFiles: prev.localFiles.filter(({ previewUrl }) => {
-        const uploaded = uploadedPreviews.includes(previewUrl);
-        if (uploaded) URL.revokeObjectURL(previewUrl);
-        return !uploaded;
+      localFiles: prev.localFiles.filter(({ file, previewUrl }) => {
+        const isUploaded = uploadedFiles.has(file);
+        if (isUploaded) URL.revokeObjectURL(previewUrl);
+        return !isUploaded;
       }),
     }));
-    return { uploadedUrls, failedCount };
+    return { uploadedUrls, failedCount: failedFiles.length };
   };
 
   const save = async (): Promise<SaveResult> => {
@@ -133,7 +126,8 @@ export const usePromotionForm = ({
 
     setIsSaving(true);
     try {
-      if (mode === 'create') {
+      let articleId = article?.id;
+      if (!articleId) {
         const created = await createArticle(
           buildPromotionPayload(values, clubId, []),
         );
@@ -143,21 +137,26 @@ export const usePromotionForm = ({
             message: '홍보 게시글 저장에 실패했습니다.',
           };
         }
-        const { failedCount } = await uploadFiles(created.articleId);
-        return failedCount > 0
-          ? { status: 'partial', articleId: created.articleId, failedCount }
-          : { status: 'success', articleId: created.articleId };
+        articleId = created.articleId;
       }
 
-      const articleId = article!.id;
       const { uploadedUrls, failedCount } = await uploadFiles(articleId);
       const images = [...values.existingImages, ...uploadedUrls];
+
+      // PUT은 images를 1개 이상 요구한다. 작성에서 올릴 이미지가 없으면 PUT할 것도 없고,
+      // 수정에서 여기 오는 건 검증을 통과한 이미지가 전부 업로드 실패한 경우뿐이다.
       if (images.length === 0) {
-        return {
-          status: 'error',
-          message: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
-        };
+        if (mode === 'edit') {
+          return {
+            status: 'error',
+            message: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
+          };
+        }
+        return failedCount > 0
+          ? { status: 'partial', articleId, failedCount }
+          : { status: 'success', articleId };
       }
+
       await updateArticle({
         articleId,
         payload: buildPromotionPayload(values, clubId, images),
