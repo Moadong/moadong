@@ -50,8 +50,8 @@ public class PromotionArticle {
 
     private Instant deletedAt;
 
-    public void update(PromotionArticleUpdateRequest request, String clubName) {
-        this.clubId = request.clubId();
+    public void update(String clubId, PromotionArticleUpdateRequest request, String clubName) {
+        this.clubId = clubId;
         this.clubName = clubName;
         this.title = request.title();
         this.location = request.location();

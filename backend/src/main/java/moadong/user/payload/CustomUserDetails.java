@@ -39,4 +39,9 @@ public class CustomUserDetails implements UserDetails {
         return password;
     }
 
+    public boolean isDeveloper() {
+        return authorities.stream()
+            .anyMatch(authority -> "ROLE_DEVELOPER".equals(authority.getAuthority()));
+    }
+
 }

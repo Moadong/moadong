@@ -7,6 +7,8 @@ import lombok.RequiredArgsConstructor;
 import moadong.global.payload.Response;
 import moadong.media.dto.PromotionImageUploadResponse;
 import moadong.media.service.PromotionImageUploadService;
+import moadong.user.annotation.CurrentUser;
+import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -26,12 +28,13 @@ public class PromotionImageController {
     private final PromotionImageUploadService promotionImageUploadService;
 
     @PostMapping(value = "/{articleId}/upload", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    @PreAuthorize("hasRole('DEVELOPER')")
+    @PreAuthorize("hasAnyRole('DEVELOPER', 'CLUB_ADMIN')")
     @SecurityRequirement(name = "BearerAuth")
-    @Operation(summary = "홍보 이미지 업로드", description = "홍보 게시글 이미지를 공용 R2 버킷의 promotion 경로에 업로드하고 최종 URL을 반환합니다.")
-    public ResponseEntity<?> uploadPromotionImage(@PathVariable String articleId,
+    @Operation(summary = "홍보 이미지 업로드", description = "홍보 게시글 이미지를 공용 R2 버킷의 promotion 경로에 업로드하고 최종 URL을 반환합니다. 동아리 관리자는 본인 동아리 게시글에만 업로드할 수 있습니다.")
+    public ResponseEntity<?> uploadPromotionImage(@CurrentUser CustomUserDetails user,
+                                                  @PathVariable String articleId,
                                                   @RequestPart("file") MultipartFile file) {
-        PromotionImageUploadResponse response = promotionImageUploadService.upload(articleId, file);
+        PromotionImageUploadResponse response = promotionImageUploadService.upload(articleId, file, user);
         return Response.ok("홍보 이미지가 업로드되었습니다.", response);
     }
 }

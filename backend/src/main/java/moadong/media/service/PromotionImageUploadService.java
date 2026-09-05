@@ -1,11 +1,13 @@
 package moadong.media.service;
 
 import lombok.RequiredArgsConstructor;
+import moadong.club.entity.PromotionArticle;
 import moadong.club.repository.PromotionArticleRepository;
 import moadong.global.config.properties.AwsProperties;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.media.dto.PromotionImageUploadResponse;
+import moadong.user.payload.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
@@ -22,8 +24,12 @@ public class PromotionImageUploadService {
     private final R2ImageUploadService r2ImageUploadService;
     private final AwsProperties awsProperties;
 
-    public PromotionImageUploadResponse upload(String articleId, MultipartFile file) {
-        validateActivePromotionArticle(articleId);
+    public PromotionImageUploadResponse upload(String articleId, MultipartFile file, CustomUserDetails user) {
+        PromotionArticle article = promotionArticleRepository.findActiveById(articleId)
+            .orElseThrow(() -> new RestApiException(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND));
+        if (!user.isDeveloper() && !user.getClubId().equals(article.getClubId())) {
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
         String key = buildPromotionImageKey(articleId, file);
         String imageUrl = r2ImageUploadService.upload(
             file,
@@ -33,12 +39,6 @@ public class PromotionImageUploadService {
         );
         promotionArticleRepository.addImageToActiveArticle(articleId, imageUrl);
         return new PromotionImageUploadResponse(imageUrl);
-    }
-
-    private void validateActivePromotionArticle(String articleId) {
-        if (!promotionArticleRepository.existsActiveById(articleId)) {
-            throw new RestApiException(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND);
-        }
     }
 
     private String buildPromotionImageKey(String articleId, MultipartFile file) {
