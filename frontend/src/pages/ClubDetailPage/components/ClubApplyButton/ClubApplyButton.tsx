@@ -1,7 +1,6 @@
 import { useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { getApplication, getApplicationOptions } from '@/apis/application';
-import ApplicationSelectModal from '../ApplicationSelectModal/ApplicationSelectModal';
 import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -10,6 +9,7 @@ import useNavigator from '@/hooks/useNavigator';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
 import getDeadlineText from '@/utils/getDeadLineText';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import ApplicationSelectModal from '../ApplicationSelectModal/ApplicationSelectModal';
 import * as Styled from './ClubApplyButton.styles';
 
 const ClubApplyButton = () => {

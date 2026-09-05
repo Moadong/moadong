@@ -1,6 +1,6 @@
 import { useId } from 'react';
-import ModalWarningIcon from '@/assets/images/icons/modal_warning.svg?react';
 import ModalCheckIcon from '@/assets/images/icons/modal_check.svg?react';
+import ModalWarningIcon from '@/assets/images/icons/modal_warning.svg?react';
 import Modal from '@/components/common/Modal/Modal';
 import * as Styled from './ConfirmModal.styles';
 
