@@ -23,7 +23,10 @@ const AdminProfile = () => {
           onError={() => setBrokenLogo(logo ?? null)}
         />
       ) : (
-        <Styled.AdminProfilePlaceholder aria-hidden />
+        <Styled.AdminProfilePlaceholder
+          aria-hidden
+          data-testid='admin-profile-placeholder'
+        />
       )}
     </Styled.AdminProfileContainer>
   );
