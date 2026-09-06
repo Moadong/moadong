@@ -35,6 +35,17 @@ const PromotionImageField = ({
     e.target.value = '';
     if (selected.length === 0) return;
 
+    // accept는 선택창 필터일 뿐이라 "모든 파일"로 바꾸면 우회된다. 저장 시점에야 실패를 알지 않도록 여기서 막는다
+    const unsupported = selected.find(
+      (file) => !(ALLOWED_IMAGE_TYPES as readonly string[]).includes(file.type),
+    );
+    if (unsupported) {
+      onReject(
+        `${unsupported.name}은(는) 지원하지 않는 형식입니다. JPG·PNG·GIF·BMP·WebP만 올릴 수 있어요.`,
+      );
+      return;
+    }
+
     const oversized = selected.find((file) => file.size > MAX_FILE_SIZE);
     if (oversized) {
       onReject(`${oversized.name}의 용량이 10MB를 초과했습니다.`);
