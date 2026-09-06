@@ -11,6 +11,7 @@ import moadong.club.repository.ClubRepository;
 import moadong.club.repository.PromotionArticleRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.media.service.PromotionImageUploadService;
 import moadong.user.entity.User;
 import moadong.user.entity.enums.UserRole;
 import moadong.user.payload.CustomUserDetails;
@@ -47,6 +48,9 @@ class PromotionArticleServiceTest {
 
     @Mock
     private ClubRepository clubRepository;
+
+    @Mock
+    private PromotionImageUploadService promotionImageUploadService;
 
     @InjectMocks
     private PromotionArticleService promotionArticleService;
@@ -441,6 +445,43 @@ class PromotionArticleServiceTest {
             "신규 설명",
             images
         );
+    }
+
+    @Test
+    void 수정하면_이전_이미지와_새_이미지를_넘겨_빠진_이미지_삭제를_맡긴다() {
+        String clubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(clubId)
+            .images(List.of("old-1", "old-2"))
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("수정 동아리")));
+
+        promotionArticleService.updatePromotionArticle("article-1",
+            updateRequest(clubId, List.of("old-1", "new-1")), developer());
+
+        verify(promotionImageUploadService).deleteRemovedImages("article-1",
+            List.of("old-1", "old-2"), List.of("old-1", "new-1"));
+    }
+
+    @Test
+    void 저장에_실패하면_이미지를_지우지_않는다() {
+        String clubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(clubId)
+            .images(List.of("old-1"))
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("수정 동아리")));
+        when(promotionArticleRepository.save(article)).thenThrow(new IllegalStateException("save failed"));
+
+        assertThrows(IllegalStateException.class,
+            () -> promotionArticleService.updatePromotionArticle("article-1",
+                updateRequest(clubId, List.of("new-1")), developer()));
+
+        verify(promotionImageUploadService, never()).deleteRemovedImages(any(), any(), any());
     }
 
     private static List<String> images(int count) {

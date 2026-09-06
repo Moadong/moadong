@@ -14,6 +14,7 @@ import moadong.club.repository.PromotionArticleRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
+import moadong.media.service.PromotionImageUploadService;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class PromotionArticleService {
 
     private final PromotionArticleRepository promotionArticleRepository;
     private final ClubRepository clubRepository;
+    private final PromotionImageUploadService promotionImageUploadService;
 
     public PromotionArticleResponse getPromotionArticles() {
         List<PromotionArticleDto> articles = promotionArticleRepository.findAllActiveOrderByCreatedAtDesc()
@@ -70,8 +72,11 @@ public class PromotionArticleService {
         validateClubApproved(club, user);
         validateImageCount(request.images());
 
+        List<String> previousImages = article.getImages();
         article.update(clubId, request, club.getName());
         promotionArticleRepository.save(article);
+        // 저장이 끝난 뒤에 지운다. 저장이 실패하면 아직 참조 중인 객체를 지우게 된다.
+        promotionImageUploadService.deleteRemovedImages(articleId, previousImages, request.images());
     }
 
     @Transactional

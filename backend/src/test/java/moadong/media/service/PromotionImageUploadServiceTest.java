@@ -15,11 +15,14 @@ import moadong.user.payload.CustomUserDetails;
 import moadong.util.annotations.UnitTest;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
@@ -44,11 +47,16 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class PromotionImageUploadServiceTest {
 
+    private static final String CDN = "https://cdn.example.com";
+
     @Mock
     private PromotionArticleRepository promotionArticleRepository;
 
     @Mock
     private R2ImageUploadService r2ImageUploadService;
+
+    @Mock
+    private S3Client s3Client;
 
     @Mock
     private S3Presigner s3Presigner;
@@ -248,6 +256,37 @@ class PromotionImageUploadServiceTest {
         assertEquals(ErrorCode.TOO_MANY_FILES, exception.getErrorCode());
         verify(r2ImageUploadService, never()).upload(any(), any(), any(), any());
         verify(promotionArticleRepository, never()).addImageToActiveArticle(any(), any());
+    }
+
+    @Test
+    void 수정으로_빠진_이미지는_R2에서_지우고_남은_이미지는_그대로_둔다() {
+        givenViewEndpoint();
+        String kept = CDN + "/promotion/articles/article-1/2026/09/uuid-kept.png";
+        String removed = CDN + "/promotion/articles/article-1/2026/09/uuid-removed.png";
+
+        promotionImageUploadService.deleteRemovedImages("article-1", List.of(kept, removed), List.of(kept));
+
+        ArgumentCaptor<DeleteObjectRequest> captor = ArgumentCaptor.forClass(DeleteObjectRequest.class);
+        verify(s3Client).deleteObject(captor.capture());
+        assertEquals("promotion/articles/article-1/2026/09/uuid-removed.png", captor.getValue().key());
+    }
+
+    @Test
+    void 이_게시글_경로가_아닌_URL은_지우지_않는다() {
+        givenViewEndpoint();
+        String otherClubLogo = CDN + "/other-club-id/logo/stolen.png";
+        String otherArticle = CDN + "/promotion/articles/article-2/2026/09/uuid-other.png";
+        String external = "https://evil.example.com/promotion/articles/article-1/x.png";
+
+        promotionImageUploadService.deleteRemovedImages("article-1",
+            List.of(otherClubLogo, otherArticle, external), List.of());
+
+        verify(s3Client, never()).deleteObject(any(DeleteObjectRequest.class));
+    }
+
+    private void givenViewEndpoint() {
+        when(awsProperties.s3()).thenReturn(new AwsProperties.S3("moadong-dev", "https://r2.example.com", CDN));
+        ReflectionTestUtils.invokeMethod(promotionImageUploadService, "init");
     }
 
     private static List<String> images(int count) {

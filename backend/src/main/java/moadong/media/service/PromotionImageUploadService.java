@@ -2,6 +2,7 @@ package moadong.media.service;
 
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.PromotionArticle;
 import moadong.club.repository.PromotionArticleRepository;
 import moadong.global.config.properties.AwsProperties;
@@ -15,7 +16,10 @@ import moadong.user.payload.CustomUserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
+import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
+import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
 
@@ -30,6 +34,7 @@ import java.util.regex.Pattern;
 
 import static moadong.media.util.ClubImageUtil.isImageExtension;
 
+@Slf4j
 @Service
 @RequiredArgsConstructor
 public class PromotionImageUploadService {
@@ -42,6 +47,7 @@ public class PromotionImageUploadService {
 
     private final PromotionArticleRepository promotionArticleRepository;
     private final R2ImageUploadService r2ImageUploadService;
+    private final S3Client s3Client;
     private final S3Presigner s3Presigner;
     private final AwsProperties awsProperties;
     private final ServerProperties serverProperties;
@@ -133,6 +139,51 @@ public class PromotionImageUploadService {
             true,
             null
         );
+    }
+
+    /**
+     * 게시글에서 빠진 이미지를 R2에서 지운다. 활동사진({@code deleteFeedImages})과 같은
+     * "저장 검증을 통과한 뒤 누락분만 삭제" 경계다.
+     *
+     * <p>수정 요청의 images는 URL 형식을 검증하지 않으므로, 남의 동아리 이미지 URL을
+     * 넣었다 빼는 식으로 임의 객체를 지울 수 있다. 그래서 이 게시글의 키 접두사에
+     * 속한 객체만 지운다.
+     *
+     * <p>삭제 실패는 로그만 남긴다. 버킷 정리 때문에 게시글 수정이 막혀서는 안 된다.
+     */
+    public void deleteRemovedImages(String articleId, List<String> previousImages, List<String> newImages) {
+        if (previousImages == null || previousImages.isEmpty()) {
+            return;
+        }
+        List<String> retained = (newImages == null) ? List.of() : newImages;
+        String articleKeyPrefix = "promotion/articles/" + sanitizePathSegment(articleId, "article") + "/";
+        for (String imageUrl : previousImages) {
+            if (retained.contains(imageUrl)) {
+                continue;
+            }
+            String key = extractKeyOrNull(imageUrl);
+            if (key == null || !key.startsWith(articleKeyPrefix)) {
+                log.warn("Skip deleting promotion image outside the article prefix: articleId={}, url={}", articleId, imageUrl);
+                continue;
+            }
+            deleteQuietly(key);
+        }
+    }
+
+    private String extractKeyOrNull(String imageUrl) {
+        String prefix = normalizedViewEndpoint + "/";
+        return (imageUrl != null && imageUrl.startsWith(prefix)) ? imageUrl.substring(prefix.length()) : null;
+    }
+
+    private void deleteQuietly(String key) {
+        try {
+            s3Client.deleteObject(DeleteObjectRequest.builder()
+                .bucket(awsProperties.s3().bucket())
+                .key(key)
+                .build());
+        } catch (S3Exception e) {
+            log.warn("Failed to delete promotion image from R2: key={}, error={}", key, e.getMessage());
+        }
     }
 
     private PresignedUploadResponse errorResponse(ErrorCode errorCode) {
