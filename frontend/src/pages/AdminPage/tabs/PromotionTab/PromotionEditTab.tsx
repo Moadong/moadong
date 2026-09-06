@@ -131,8 +131,10 @@ const PromotionEditTab = () => {
 
   if (isEdit && isLoading) return <Spinner />;
 
-  // 목록 조회 자체가 실패한 것과 글이 없는 것을 구분한다. 실패를 "삭제됨"으로 보여주면 사용자가 잘못된 판단을 한다
-  if (isEdit && isError) {
+  // 목록 조회 자체가 실패한 것과 글이 없는 것을 구분한다. 실패를 "삭제됨"으로 보여주면 사용자가 잘못된 판단을 한다.
+  // 단, 편집 중 백그라운드 재조회(refetchInterval·포커스)가 실패하면 isError여도 캐시된 article이 남으므로
+  // 쓸 데이터가 없을 때만 오류 화면으로 바꾼다. 안 그러면 편집 중인 폼이 통째로 사라진다.
+  if (isEdit && isError && !article) {
     return (
       <Styled.Container>
         {isCompact && <WebviewTopBar title={title} onBack={() => goToList()} />}
