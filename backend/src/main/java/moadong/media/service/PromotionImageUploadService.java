@@ -58,7 +58,10 @@ public class PromotionImageUploadService {
     }
 
     public PromotionImageUploadResponse upload(String articleId, MultipartFile file, CustomUserDetails user) {
-        validateArticleAccess(articleId, user);
+        PromotionArticle article = getAuthorizedArticle(articleId, user);
+        if (imageCountOf(article) >= PromotionArticle.MAX_IMAGE_COUNT) {
+            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
+        }
         String key = buildPromotionImageKey(articleId, (file != null) ? file.getOriginalFilename() : null);
         String imageUrl = r2ImageUploadService.upload(
             file,
@@ -73,22 +76,32 @@ public class PromotionImageUploadService {
     /**
      * 동아리 활동사진({@code generateFeedUploadUrls})·우체통 첨부와 같은 부분 성공 응답을 돌려준다.
      * 한 건이 실패해도 나머지는 발급되고, 실패 항목은 success=false로 표시된다.
+     * 이미 담긴 이미지를 뺀 잔여분까지만 발급하고, 초과분에는 TOO_MANY_FILES를 덧붙인다.
      * URL 발급만 하고 게시글은 건드리지 않는다. 이미지 반영은 게시글 수정 API의 images가 전담한다.
      */
     public List<PresignedUploadResponse> createUploadUrls(String articleId, List<UploadUrlRequest> requests,
                                                           CustomUserDetails user) {
-        validateArticleAccess(articleId, user);
+        PromotionArticle article = getAuthorizedArticle(articleId, user);
         if (requests == null || requests.isEmpty()) {
             return List.of();
         }
 
-        List<PresignedUploadResponse> results = new ArrayList<>(requests.size());
-        for (UploadUrlRequest request : requests) {
+        int remaining = PromotionArticle.MAX_IMAGE_COUNT - imageCountOf(article);
+        if (remaining <= 0) {
+            return List.of(errorResponse(ErrorCode.TOO_MANY_FILES));
+        }
+
+        int limit = Math.min(remaining, requests.size());
+        List<PresignedUploadResponse> results = new ArrayList<>(limit + 1);
+        for (int i = 0; i < limit; i++) {
             try {
-                results.add(createUploadUrl(articleId, request));
+                results.add(createUploadUrl(articleId, requests.get(i)));
             } catch (RestApiException e) {
                 results.add(errorResponse(e.getErrorCode()));
             }
+        }
+        if (requests.size() > limit) {
+            results.add(errorResponse(ErrorCode.TOO_MANY_FILES));
         }
         return results;
     }
@@ -126,12 +139,17 @@ public class PromotionImageUploadService {
         return new PresignedUploadResponse(null, null, null, false, errorCode.getMessage());
     }
 
-    private void validateArticleAccess(String articleId, CustomUserDetails user) {
+    private PromotionArticle getAuthorizedArticle(String articleId, CustomUserDetails user) {
         PromotionArticle article = promotionArticleRepository.findActiveById(articleId)
             .orElseThrow(() -> new RestApiException(ErrorCode.PROMOTION_ARTICLE_NOT_FOUND));
         if (!user.isDeveloper() && !user.getClubId().equals(article.getClubId())) {
             throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
         }
+        return article;
+    }
+
+    private int imageCountOf(PromotionArticle article) {
+        return (article.getImages() == null) ? 0 : article.getImages().size();
     }
 
     private String buildPromotionImageKey(String articleId, String originalFilename) {

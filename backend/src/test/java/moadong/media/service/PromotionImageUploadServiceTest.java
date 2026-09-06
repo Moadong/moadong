@@ -203,6 +203,57 @@ class PromotionImageUploadServiceTest {
         verify(s3Presigner, never()).presignPutObject(any(PutObjectPresignRequest.class));
     }
 
+    @Test
+    void 이미_상한을_채운_게시글은_업로드URL을_발급하지_않는다() {
+        String articleId = "article-1";
+        when(promotionArticleRepository.findActiveById(articleId))
+            .thenReturn(Optional.of(article(articleId, "my-club", images(PromotionArticle.MAX_IMAGE_COUNT))));
+
+        List<PresignedUploadResponse> responses = promotionImageUploadService.createUploadUrls(
+            articleId, List.of(new UploadUrlRequest("poster.png", "image/png")), clubAdmin("my-club"));
+
+        assertEquals(1, responses.size());
+        assertFalse(responses.get(0).success());
+        assertEquals(ErrorCode.TOO_MANY_FILES.getMessage(), responses.get(0).failureReason());
+        verify(s3Presigner, never()).presignPutObject(any(PutObjectPresignRequest.class));
+    }
+
+    @Test
+    void 잔여분까지만_발급하고_초과분에는_TOO_MANY_FILES를_덧붙인다() {
+        String articleId = "article-1";
+        givenPresigner();
+        when(promotionArticleRepository.findActiveById(articleId))
+            .thenReturn(Optional.of(article(articleId, "my-club", images(PromotionArticle.MAX_IMAGE_COUNT - 1))));
+
+        List<PresignedUploadResponse> responses = promotionImageUploadService.createUploadUrls(
+            articleId,
+            List.of(new UploadUrlRequest("poster.png", "image/png"), new UploadUrlRequest("poster2.png", "image/png")),
+            clubAdmin("my-club"));
+
+        assertEquals(2, responses.size());
+        assertTrue(responses.get(0).success());
+        assertFalse(responses.get(1).success());
+        assertEquals(ErrorCode.TOO_MANY_FILES.getMessage(), responses.get(1).failureReason());
+    }
+
+    @Test
+    void 이미_상한을_채운_게시글은_multipart_업로드도_막는다() {
+        when(promotionArticleRepository.findActiveById("article-1"))
+            .thenReturn(Optional.of(article("article-1", "my-club", images(PromotionArticle.MAX_IMAGE_COUNT))));
+        MockMultipartFile file = new MockMultipartFile("file", "poster.png", "image/png", "img".getBytes());
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionImageUploadService.upload("article-1", file, clubAdmin("my-club")));
+
+        assertEquals(ErrorCode.TOO_MANY_FILES, exception.getErrorCode());
+        verify(r2ImageUploadService, never()).upload(any(), any(), any(), any());
+        verify(promotionArticleRepository, never()).addImageToActiveArticle(any(), any());
+    }
+
+    private static List<String> images(int count) {
+        return java.util.stream.IntStream.range(0, count).mapToObj(i -> "image-" + i).toList();
+    }
+
     private void givenPresigner() {
         AwsProperties.S3 s3 = new AwsProperties.S3("moadong-dev", "https://r2.example.com", "https://cdn.example.com/");
         when(awsProperties.s3()).thenReturn(s3);
@@ -217,7 +268,11 @@ class PromotionImageUploadServiceTest {
     }
 
     private static PromotionArticle article(String id, String clubId) {
-        return PromotionArticle.builder().id(id).clubId(clubId).build();
+        return article(id, clubId, List.of());
+    }
+
+    private static PromotionArticle article(String id, String clubId, List<String> images) {
+        return PromotionArticle.builder().id(id).clubId(clubId).images(images).build();
     }
 
     private static CustomUserDetails developer() {

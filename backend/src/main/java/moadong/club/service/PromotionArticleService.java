@@ -41,6 +41,7 @@ public class PromotionArticleService {
         String clubId = resolveClubId(request.clubId(), user);
         Club club = getClub(clubId);
         validateClubApproved(club, user);
+        validateImageCount(request.images());
 
         PromotionArticle article = PromotionArticle.builder()
             .clubId(clubId)
@@ -67,6 +68,7 @@ public class PromotionArticleService {
         String clubId = resolveClubId(request.clubId(), user);
         Club club = getClub(clubId);
         validateClubApproved(club, user);
+        validateImageCount(request.images());
 
         article.update(clubId, request, club.getName());
         promotionArticleRepository.save(article);
@@ -95,6 +97,16 @@ public class PromotionArticleService {
     private void validateClubApproved(Club club, CustomUserDetails user) {
         if (!user.isDeveloper() && club.getState() != ClubState.AVAILABLE) {
             throw new RestApiException(ErrorCode.PROMOTION_CLUB_NOT_APPROVED);
+        }
+    }
+
+    /**
+     * 업로드 URL 발급 쪽에서도 잔여분만 내주지만, images를 통째로 받는 저장 경로가
+     * 유일한 진실이므로 여기서 총량을 다시 막는다.
+     */
+    private void validateImageCount(List<String> images) {
+        if (images != null && images.size() > PromotionArticle.MAX_IMAGE_COUNT) {
+            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
         }
     }
 
