@@ -14,6 +14,7 @@ import moadong.club.repository.PromotionArticleRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.ObjectIdConverter;
+import moadong.media.service.PromotionImageUploadService;
 import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
@@ -27,6 +28,7 @@ public class PromotionArticleService {
 
     private final PromotionArticleRepository promotionArticleRepository;
     private final ClubRepository clubRepository;
+    private final PromotionImageUploadService promotionImageUploadService;
 
     public PromotionArticleResponse getPromotionArticles() {
         List<PromotionArticleDto> articles = promotionArticleRepository.findAllActiveOrderByCreatedAtDesc()
@@ -41,6 +43,7 @@ public class PromotionArticleService {
         String clubId = resolveClubId(request.clubId(), user);
         Club club = getClub(clubId);
         validateClubApproved(club, user);
+        validateImageCount(request.images());
 
         PromotionArticle article = PromotionArticle.builder()
             .clubId(clubId)
@@ -67,9 +70,13 @@ public class PromotionArticleService {
         String clubId = resolveClubId(request.clubId(), user);
         Club club = getClub(clubId);
         validateClubApproved(club, user);
+        validateImageCount(request.images());
 
+        List<String> previousImages = article.getImages();
         article.update(clubId, request, club.getName());
         promotionArticleRepository.save(article);
+        // 저장이 끝난 뒤에 지운다. 저장이 실패하면 아직 참조 중인 객체를 지우게 된다.
+        promotionImageUploadService.deleteRemovedImages(articleId, previousImages, request.images());
     }
 
     @Transactional
@@ -95,6 +102,16 @@ public class PromotionArticleService {
     private void validateClubApproved(Club club, CustomUserDetails user) {
         if (!user.isDeveloper() && club.getState() != ClubState.AVAILABLE) {
             throw new RestApiException(ErrorCode.PROMOTION_CLUB_NOT_APPROVED);
+        }
+    }
+
+    /**
+     * 업로드 URL 발급 쪽에서도 잔여분만 내주지만, images를 통째로 받는 저장 경로가
+     * 유일한 진실이므로 여기서 총량을 다시 막는다.
+     */
+    private void validateImageCount(List<String> images) {
+        if (images != null && images.size() > PromotionArticle.MAX_IMAGE_COUNT) {
+            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
         }
     }
 
