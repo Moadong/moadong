@@ -50,7 +50,12 @@ const PromotionEditTab = () => {
 
   useTrackPageView(PAGE_VIEW.ADMIN_PROMOTION_EDIT_PAGE);
 
-  const { data: articles, isLoading } = useGetPromotionArticles();
+  const {
+    data: articles,
+    isLoading,
+    isError,
+    error,
+  } = useGetPromotionArticles();
   const article = articleId
     ? articles?.find(
         (item) => item.id === articleId && item.clubId === clubDetail.id,
@@ -125,6 +130,20 @@ const PromotionEditTab = () => {
   const title = isEdit ? '홍보 게시글 수정' : '홍보 게시글 작성';
 
   if (isEdit && isLoading) return <Spinner />;
+
+  // 목록 조회 자체가 실패한 것과 글이 없는 것을 구분한다. 실패를 "삭제됨"으로 보여주면 사용자가 잘못된 판단을 한다
+  if (isEdit && isError) {
+    return (
+      <Styled.Container>
+        {isCompact && <WebviewTopBar title={title} onBack={() => goToList()} />}
+        <Styled.EmptyState>
+          <Styled.EmptyTitle>게시글을 불러오지 못했어요</Styled.EmptyTitle>
+          <Styled.EmptyDescription>{error.message}</Styled.EmptyDescription>
+          <Button onClick={() => goToList()}>목록으로</Button>
+        </Styled.EmptyState>
+      </Styled.Container>
+    );
+  }
 
   if (isEdit && !article) {
     return (
