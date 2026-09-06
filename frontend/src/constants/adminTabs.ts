@@ -23,6 +23,10 @@ export const ADMIN_TABS: TabCategory[] = [
     items: [{ label: '모집 정보 수정', path: '/admin/recruit-edit' }],
   },
   {
+    category: '홍보 관리',
+    items: [{ label: '홍보 게시글 관리', path: '/admin/promotion' }],
+  },
+  {
     category: '지원 관리',
     items: [
       { label: '지원서 관리', path: '/admin/application-list' },

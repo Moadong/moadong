@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 import { Z_INDEX } from '@/styles/zIndex';
 
 export const HEADER_HEIGHT = {
@@ -140,6 +141,17 @@ export const AdminProfileText = styled.div`
 
 export const AdminProfileImage = styled.img`
   width: 40px;
-  height: auto;
+  height: 40px;
   border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+`;
+
+/** 로고가 없거나 불러오지 못했을 때 자리를 지키는 회색 원 */
+export const AdminProfilePlaceholder = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: ${colors.gray[300]};
+  flex-shrink: 0;
 `;
