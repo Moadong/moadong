@@ -249,6 +249,7 @@ const PromotionEditTab = () => {
             recruitmentEnd={values.eventEnd}
             onChangeRecruitmentStart={handleStartChange}
             onChangeRecruitmentEnd={handleEndChange}
+            disabled={isFormDisabled}
           />
         )}
       </div>
