@@ -21,4 +21,4 @@ export const PASSWORD_MAX = 20;
 export const PROMOTION_TITLE_MAX = 50;
 export const PROMOTION_LOCATION_MAX = 50;
 export const PROMOTION_DESCRIPTION_MAX = 1000;
-export const PROMOTION_IMAGE_MAX_COUNT = 10;
+export const PROMOTION_IMAGE_MAX_COUNT = 15;
