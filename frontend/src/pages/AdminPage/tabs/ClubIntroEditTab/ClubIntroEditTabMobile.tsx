@@ -15,12 +15,12 @@ import {
   INTRO_DESCRIPTION_PLACEHOLDER,
 } from '@/constants/adminFieldPlaceholders';
 import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
+import InfoSection from '@/pages/AdminPage/components/InfoSection/InfoSection';
 import { Award, FAQ, IdealCandidate } from '@/types/club';
 import * as Styled from './ClubIntroEditTabMobile.styles';
 import AwardEditPage from './components/mobile/AwardEditPage/AwardEditPage';
 import AwardSection from './components/mobile/AwardSection/AwardSection';
 import FAQSection from './components/mobile/FAQSection/FAQSection';
-import InfoSection from './components/mobile/InfoSection/InfoSection';
 
 interface ClubIntroEditTabMobileProps {
   introDescription: string;

@@ -6,9 +6,7 @@ import {
   useParams,
 } from 'react-router-dom';
 import Button from '@/components/common/Button/Button';
-import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
-import InputField from '@/components/common/InputField/InputField';
 import Spinner from '@/components/common/Spinner/Spinner';
 import Toast from '@/components/common/Toast/Toast';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
@@ -23,7 +21,9 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
 import useDevice from '@/hooks/useDevice';
+import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import InfoSection from '@/pages/AdminPage/components/InfoSection/InfoSection';
 import DateTimeRangePicker from '@/pages/AdminPage/tabs/RecruitEditTab/components/DateTimeRangePicker/DateTimeRangePicker';
 import { colors } from '@/styles/theme/colors';
 import { ClubDetail } from '@/types/club';
@@ -194,15 +194,20 @@ const PromotionEditTab = () => {
         </Styled.Notice>
       )}
 
-      <InputField
+      <InfoSection
         label='제목'
-        placeholder='행사 제목을 입력해주세요'
-        value={values.title}
-        onChange={(e) => setField('title', e.target.value)}
-        onClear={() => setField('title', '')}
         maxLength={PROMOTION_TITLE_MAX}
-        disabled={isFormDisabled}
-      />
+        currentLength={values.title.length}
+      >
+        <ClearableTextArea
+          size='large'
+          value={values.title}
+          onChange={(value) => setField('title', value)}
+          placeholder='행사 제목을 입력해주세요'
+          maxLength={PROMOTION_TITLE_MAX}
+          disabled={isFormDisabled}
+        />
+      </InfoSection>
 
       <div>
         <Styled.Label htmlFor='promotion-building'>지도 위치</Styled.Label>
@@ -240,15 +245,20 @@ const PromotionEditTab = () => {
         </Styled.MapPreview>
       </div>
 
-      <InputField
+      <InfoSection
         label='행사 장소'
-        placeholder='예) 한솔관(E16) A동 208호'
-        value={values.location}
-        onChange={(e) => setField('location', e.target.value)}
-        onClear={() => setField('location', '')}
         maxLength={PROMOTION_LOCATION_MAX}
-        disabled={isFormDisabled}
-      />
+        currentLength={values.location.length}
+      >
+        <ClearableTextArea
+          size='large'
+          value={values.location}
+          onChange={(value) => setField('location', value)}
+          placeholder='예) 한솔관(E16) A동 208호'
+          maxLength={PROMOTION_LOCATION_MAX}
+          disabled={isFormDisabled}
+        />
+      </InfoSection>
 
       <div>
         <Styled.Label as='p'>행사 기간</Styled.Label>
@@ -284,16 +294,19 @@ const PromotionEditTab = () => {
         )}
       </div>
 
-      <CustomTextArea
-        variant='filled'
+      <InfoSection
         label='행사 설명'
-        placeholder='행사 내용, 참여 방법, 준비물 등을 적어주세요'
-        value={values.description}
-        onChange={(e) => setField('description', e.target.value)}
         maxLength={PROMOTION_DESCRIPTION_MAX}
-        showMaxChar
-        disabled={isFormDisabled}
-      />
+        currentLength={values.description.length}
+      >
+        <ClearableTextArea
+          value={values.description}
+          onChange={(value) => setField('description', value)}
+          placeholder='행사 내용, 참여 방법, 준비물 등을 적어주세요'
+          maxLength={PROMOTION_DESCRIPTION_MAX}
+          disabled={isFormDisabled}
+        />
+      </InfoSection>
 
       <PromotionImageField
         images={values.images}

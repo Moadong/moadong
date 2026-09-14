@@ -11,6 +11,7 @@ interface ClearableTextAreaProps {
   maxLength?: number;
   rows?: number;
   size?: 'default' | 'large';
+  disabled?: boolean;
 }
 
 const ClearableTextArea = ({
@@ -21,6 +22,7 @@ const ClearableTextArea = ({
   maxLength,
   rows = 1,
   size = 'default',
+  disabled = false,
 }: ClearableTextAreaProps) => {
   const [isFocused, setIsFocused] = useState(false);
   const textareaRef = useAutoGrow(value);
@@ -42,10 +44,11 @@ const ClearableTextArea = ({
         maxLength={maxLength}
         rows={rows}
         $size={size}
+        disabled={disabled}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
       />
-      {isFocused && value.length > 0 && (
+      {!disabled && isFocused && value.length > 0 && (
         <Styled.ClearButton
           type='button'
           onMouseDown={handleClear}

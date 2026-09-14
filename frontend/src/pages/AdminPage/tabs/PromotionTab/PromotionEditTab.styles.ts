@@ -65,11 +65,13 @@ export const Notice = styled.div`
   color: ${colors.gray[800]};
 `;
 
+/* InfoSection 헤더와 같은 토큰. 세 텍스트 필드만 InfoSection을 쓰고 지도 위치·행사 기간은 이 라벨을 쓴다 */
 export const Label = styled.label`
   display: block;
-  font-size: 1.125rem;
   margin-bottom: 8px;
-  font-weight: 600;
+  ${setTypography(typography.button.button1)}
+  color: ${colors.gray[900]};
+  line-height: 140%;
 `;
 
 export const HelperText = styled.p`

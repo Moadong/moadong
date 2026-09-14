@@ -47,7 +47,7 @@ const article: PromotionArticle = {
   images: ['https://cdn/a.png'],
 };
 
-const renderEditTab = (state: unknown) =>
+const renderEditTab = (state: unknown, clubState = 'AVAILABLE') =>
   render(
     <ThemeProvider theme={theme}>
       <MemoryRouter
@@ -56,7 +56,7 @@ const renderEditTab = (state: unknown) =>
         <Routes>
           <Route
             path='/admin'
-            element={<Outlet context={{ id: 'my-club', state: 'AVAILABLE' }} />}
+            element={<Outlet context={{ id: 'my-club', state: clubState }} />}
           >
             <Route
               path='promotion/:articleId/edit'
@@ -94,5 +94,29 @@ describe('PromotionEditTab 넘겨받은 토스트', () => {
     renderEditTab(null);
 
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
+  });
+});
+
+describe('폼 잠금', () => {
+  const PLACEHOLDERS = [
+    '행사 제목을 입력해주세요',
+    '예) 한솔관(E16) A동 208호',
+    '행사 내용, 참여 방법, 준비물 등을 적어주세요',
+  ];
+
+  it('심사 전 동아리는 세 입력 필드가 모두 잠긴다', () => {
+    renderEditTab(null, 'UNAVAILABLE');
+
+    PLACEHOLDERS.forEach((placeholder) => {
+      expect(screen.getByPlaceholderText(placeholder)).toBeDisabled();
+    });
+  });
+
+  it('심사가 끝난 동아리는 입력할 수 있다', () => {
+    renderEditTab(null);
+
+    PLACEHOLDERS.forEach((placeholder) => {
+      expect(screen.getByPlaceholderText(placeholder)).not.toBeDisabled();
+    });
   });
 });
