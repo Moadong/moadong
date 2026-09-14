@@ -16,5 +16,8 @@ export const RECRUIT_TARGET_MAX = 10;
 // 상시모집 종료일로 쓰는 더미 연도
 export const FAR_FUTURE_YEAR = 2999;
 
+// 모집 기간 변경 모달 (RecruitmentPeriodModal)
+export const PERIOD_CHANGE_DAYS_MAX = 365;
+
 // 계정 관리 (AccountEditTab)
 export const PASSWORD_MAX = 20;

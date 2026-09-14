@@ -4,7 +4,10 @@ import { ko } from 'date-fns/locale';
 import InputField from '@/components/common/InputField/InputField';
 import Modal from '@/components/common/Modal/Modal';
 import ToggleButton from '@/components/common/ToggleButton/ToggleButton';
-import { FAR_FUTURE_YEAR } from '@/constants/adminFieldLimits';
+import {
+  FAR_FUTURE_YEAR,
+  PERIOD_CHANGE_DAYS_MAX,
+} from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
@@ -70,6 +73,7 @@ const RecruitmentPeriodModal = ({
 
   const handleEarlyCloseDaysChange = (value: string) => {
     if (value !== '' && !/^\d+$/.test(value)) return;
+    if (value !== '' && parseInt(value, 10) > PERIOD_CHANGE_DAYS_MAX) return;
     setEarlyCloseDays(value);
     if (isAlways) {
       setSwitchToAlways(value !== '');
@@ -81,6 +85,7 @@ const RecruitmentPeriodModal = ({
 
   const handleExtendDaysChange = (value: string) => {
     if (value !== '' && !/^\d+$/.test(value)) return;
+    if (value !== '' && parseInt(value, 10) > PERIOD_CHANGE_DAYS_MAX) return;
     setExtendDays(value);
     setEarlyCloseDays('');
     setSwitchToAlways(false);

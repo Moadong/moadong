@@ -69,15 +69,16 @@ export const InputRow = styled.div`
 `;
 
 export const InputFieldWrapper = styled.div`
-  width: 64px;
-  flex-shrink: 0;
+  flex: 0 0 64px;
+  max-width: 64px;
+  overflow: hidden;
 
   input {
     height: 38px;
     padding: 0 8px;
     text-align: center;
     font-size: 14px;
-    min-width: unset;
+    min-width: 0;
 
     &::placeholder {
       font-size: 14px;
@@ -97,6 +98,10 @@ export const Preview = styled.span<{ $empty?: boolean }>`
   color: ${({ $empty }) => ($empty ? colors.gray[400] : colors.primary[800])};
   letter-spacing: -0.24px;
   white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
 `;
 
 export const Divider = styled.hr`
