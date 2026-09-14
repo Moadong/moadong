@@ -6,6 +6,11 @@ export const Container = styled.div`
   gap: 60px;
 `;
 
+export const FieldWrapper = styled.div<{ $hasError?: boolean }>`
+  position: relative;
+  padding-bottom: ${({ $hasError }) => ($hasError ? '10px' : '0')};
+`;
+
 export const SuccessMessage = styled.p`
   color: #28a745; /* 성공을 의미하는 긍정적인 녹색 */
   font-size: 0.9rem; /* 일반 텍스트보다 약간 작게 설정 */

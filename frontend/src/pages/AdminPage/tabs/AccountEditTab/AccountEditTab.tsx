@@ -6,13 +6,16 @@ import { PASSWORD_MAX } from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import AccountEditTabMobile from './AccountEditTabMobile';
 import * as Styled from './AccountEditTab.styles';
 
 const PASSWORD_REGEX =
   /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^])(?!.*\s).{8,20}$/;
 
 const AccountEditTab = () => {
+  const { isMobile, isTablet } = useDevice();
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.ADMIN_ACCOUNT_EDIT_PAGE);
 
@@ -71,6 +74,22 @@ const AccountEditTab = () => {
     }
   };
 
+  if (isMobile || isTablet) {
+    return (
+      <AccountEditTabMobile
+        newPassword={newPassword}
+        setNewPassword={setNewPassword}
+        confirmPassword={confirmPassword}
+        setConfirmPassword={setConfirmPassword}
+        successMessage={successMessage}
+        isLoading={isLoading}
+        isPasswordValid={isPasswordValid}
+        isPasswordMatching={isPasswordMatching}
+        onChangePassword={handleChangePassword}
+      />
+    );
+  }
+
   return (
     <Styled.Container>
       <ContentSection>
@@ -87,39 +106,43 @@ const AccountEditTab = () => {
             </Styled.GuidanceText>
           </Styled.GuidanceBox>
 
-          <InputField
-            placeholder='새 비밀번호'
-            type='password'
-            value={newPassword}
-            onChange={(e) => setNewPassword(e.target.value)}
-            onClear={() => {
-              setNewPassword('');
-              trackEvent(ADMIN_EVENT.NEW_PASSWORD_CLEAR_BUTTON_CLICKED);
-            }}
-            maxLength={PASSWORD_MAX}
-            isError={isPasswordValid}
-            isSuccess={newPassword.length > 0 && !isPasswordValid}
-            helperText={
-              isPasswordValid ? '영문, 숫자, 특수문자 포함 8~20자' : ''
-            }
-          />
+          <Styled.FieldWrapper $hasError={isPasswordValid}>
+            <InputField
+              placeholder='새 비밀번호'
+              type='password'
+              value={newPassword}
+              onChange={(e) => setNewPassword(e.target.value)}
+              onClear={() => {
+                setNewPassword('');
+                trackEvent(ADMIN_EVENT.NEW_PASSWORD_CLEAR_BUTTON_CLICKED);
+              }}
+              maxLength={PASSWORD_MAX}
+              isError={isPasswordValid}
+              isSuccess={newPassword.length > 0 && !isPasswordValid}
+              helperText={
+                isPasswordValid ? '영문, 숫자, 특수문자 포함 8~20자' : ''
+              }
+            />
+          </Styled.FieldWrapper>
 
-          <InputField
-            placeholder='새 비밀번호 재입력'
-            type='password'
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            onClear={() => {
-              setConfirmPassword('');
-              trackEvent(ADMIN_EVENT.CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED);
-            }}
-            maxLength={PASSWORD_MAX}
-            isError={isPasswordMatching}
-            isSuccess={confirmPassword.length > 0 && !isPasswordMatching}
-            helperText={
-              isPasswordMatching ? '비밀번호가 일치하지 않습니다.' : ''
-            }
-          />
+          <Styled.FieldWrapper $hasError={isPasswordMatching}>
+            <InputField
+              placeholder='새 비밀번호 재입력'
+              type='password'
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              onClear={() => {
+                setConfirmPassword('');
+                trackEvent(ADMIN_EVENT.CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED);
+              }}
+              maxLength={PASSWORD_MAX}
+              isError={isPasswordMatching}
+              isSuccess={confirmPassword.length > 0 && !isPasswordMatching}
+              helperText={
+                isPasswordMatching ? '비밀번호가 일치하지 않습니다.' : ''
+              }
+            />
+          </Styled.FieldWrapper>
 
           {successMessage && (
             <Styled.SuccessMessage>{successMessage}</Styled.SuccessMessage>
