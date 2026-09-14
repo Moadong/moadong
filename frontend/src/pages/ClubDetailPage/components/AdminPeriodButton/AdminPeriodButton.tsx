@@ -2,6 +2,8 @@ import { useState } from 'react';
 import { format } from 'date-fns';
 import { ko } from 'date-fns/locale';
 import Toast from '@/components/common/Toast/Toast';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { ClubDetail } from '@/types/club';
 import getDeadlineText from '@/utils/getDeadLineText';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
@@ -13,6 +15,7 @@ interface AdminPeriodButtonProps {
 }
 
 const AdminPeriodButton = ({ clubDetail }: AdminPeriodButtonProps) => {
+  const trackEvent = useMixpanelTrack();
   const [isPeriodModalOpen, setIsPeriodModalOpen] = useState(false);
   const [isSuccessToastOpen, setIsSuccessToastOpen] = useState(false);
 
@@ -50,7 +53,12 @@ const AdminPeriodButton = ({ clubDetail }: AdminPeriodButtonProps) => {
         </Styled.StatusInfo>
         <Styled.ChangePeriodButton
           type='button'
-          onClick={() => setIsPeriodModalOpen(true)}
+          onClick={() => {
+            trackEvent(ADMIN_EVENT.PERIOD_CHANGE_BUTTON_CLICKED, {
+              clubId: clubDetail.id,
+            });
+            setIsPeriodModalOpen(true);
+          }}
         >
           모집 기간 변경
         </Styled.ChangePeriodButton>

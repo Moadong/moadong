@@ -5,6 +5,8 @@ import InputField from '@/components/common/InputField/InputField';
 import Modal from '@/components/common/Modal/Modal';
 import ToggleButton from '@/components/common/ToggleButton/ToggleButton';
 import { FAR_FUTURE_YEAR } from '@/constants/adminFieldLimits';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
 import { ClubDetail } from '@/types/club';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
@@ -32,6 +34,7 @@ const RecruitmentPeriodModal = ({
   const [extendDays, setExtendDays] = useState('');
   const [switchToAlways, setSwitchToAlways] = useState(false);
 
+  const trackEvent = useMixpanelTrack();
   const { mutate: updateClubDescription, isPending } =
     useUpdateClubDescription();
 
@@ -103,16 +106,27 @@ const RecruitmentPeriodModal = ({
 
   const handleConfirm = () => {
     let newEnd: Date;
+    let actionType: 'earlyClose' | 'extend' | 'switchToAlways' | 'exitAlways';
+    let days: number | null = null;
 
     if (isAlways && switchToAlways) {
-      newEnd = validEarlyClose
-        ? addDays(today, earlyCloseNum)
-        : (currentStart ?? today);
+      actionType = 'exitAlways';
+      if (validEarlyClose) {
+        newEnd = addDays(today, earlyCloseNum);
+        days = earlyCloseNum;
+      } else {
+        newEnd = currentStart ?? today;
+      }
     } else if (!isAlways && switchToAlways) {
+      actionType = 'switchToAlways';
       newEnd = setYear(currentStart ?? today, FAR_FUTURE_YEAR);
     } else if (validEarlyClose) {
+      actionType = 'earlyClose';
+      days = earlyCloseNum;
       newEnd = addDays(today, earlyCloseNum);
     } else if (validExtend && currentEnd) {
+      actionType = 'extend';
+      days = extendNum;
       newEnd = addDays(currentEnd, extendNum);
     } else {
       return;
@@ -127,6 +141,12 @@ const RecruitmentPeriodModal = ({
       },
       {
         onSuccess: () => {
+          trackEvent(ADMIN_EVENT.PERIOD_CHANGE_CONFIRMED, {
+            clubId: clubDetail.id,
+            actionType,
+            days,
+            previousStatus: clubDetail.recruitmentStatus,
+          });
           handleClose();
           onSuccess();
         },
