@@ -327,7 +327,15 @@ const PromotionEditTab = () => {
       {isCompact ? (
         <>
           <WebviewTopBar title={title} onBack={() => goToList()} />
-          <Styled.CompactBody>{fields}</Styled.CompactBody>
+          <Styled.CompactBody>
+            <div>
+              <Styled.PageTitle>행사 정보를 입력해주세요</Styled.PageTitle>
+              <Styled.PageSubtitle>
+                동아리 행사를 홍보하는 곳이에요
+              </Styled.PageSubtitle>
+            </div>
+            {fields}
+          </Styled.CompactBody>
           {isApproved && (
             <FixedBottomButtonArea
               onClick={handleSave}

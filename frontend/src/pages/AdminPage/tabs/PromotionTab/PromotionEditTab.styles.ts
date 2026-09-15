@@ -28,6 +28,19 @@ export const Container = styled.div`
   }
 `;
 
+/* ClubIntroEditTabMobile의 페이지 설명과 같은 토큰. 사용처가 둘뿐이라 아직 공통으로 올리지 않았다 */
+export const PageTitle = styled.h2`
+  ${setTypography(typography.title.title5)}
+  color: ${colors.base.black};
+  margin: 0;
+`;
+
+export const PageSubtitle = styled.p`
+  ${setTypography(typography.button.button1)}
+  color: ${colors.gray[700]};
+  margin: 4px 0 0;
+`;
+
 export const CompactBody = styled.div`
   display: flex;
   flex-direction: column;

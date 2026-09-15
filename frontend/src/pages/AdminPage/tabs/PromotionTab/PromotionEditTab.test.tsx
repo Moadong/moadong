@@ -20,12 +20,13 @@ jest.mock('@/hooks/Queries/usePromotion', () => ({
 }));
 jest.mock('@/hooks/Mixpanel/useMixpanelTrack', () => () => jest.fn());
 jest.mock('@/hooks/Mixpanel/useTrackPageView', () => () => {});
-jest.mock('@/hooks/useDevice', () => () => ({
+const mockDevice = {
   isMobile: false,
   isTablet: false,
   isLaptop: false,
   isDesktop: true,
-}));
+};
+jest.mock('@/hooks/useDevice', () => () => mockDevice);
 jest.mock('@/components/map/NaverMap/NaverMap', () => () => <div />);
 // react-datepicker의 css import를 jest가 파싱하지 못해 통째로 대체한다
 jest.mock(
@@ -69,6 +70,12 @@ const renderEditTab = (state: unknown, clubState = 'AVAILABLE') =>
   );
 
 beforeEach(() => {
+  Object.assign(mockDevice, {
+    isMobile: false,
+    isTablet: false,
+    isLaptop: false,
+    isDesktop: true,
+  });
   mockArticles.length = 0;
   mockArticles.push(article);
   const root = document.createElement('div');
@@ -118,5 +125,26 @@ describe('폼 잠금', () => {
     PLACEHOLDERS.forEach((placeholder) => {
       expect(screen.getByPlaceholderText(placeholder)).not.toBeDisabled();
     });
+  });
+});
+
+describe('페이지 설명', () => {
+  it('컴팩트에서는 이 화면이 무엇인지 알려준다', () => {
+    mockDevice.isMobile = true;
+    mockDevice.isDesktop = false;
+    renderEditTab(null);
+
+    expect(screen.getByText('행사 정보를 입력해주세요')).toBeInTheDocument();
+    expect(
+      screen.getByText('동아리 행사를 홍보하는 곳이에요'),
+    ).toBeInTheDocument();
+  });
+
+  it('데스크톱에는 두지 않는다 - ContentSection 헤더가 제목을 이미 보여준다', () => {
+    renderEditTab(null);
+
+    expect(
+      screen.queryByText('동아리 행사를 홍보하는 곳이에요'),
+    ).not.toBeInTheDocument();
   });
 });
