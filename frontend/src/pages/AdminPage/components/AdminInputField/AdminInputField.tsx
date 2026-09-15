@@ -55,7 +55,9 @@ const AdminInputField = ({
             {isPasswordVisible ? '숨기기' : '보기'}
           </Styled.ToggleButton>
         ) : (
-          isFocused && value && onClear && (
+          isFocused &&
+          value &&
+          onClear && (
             <Styled.ClearButton
               type='button'
               onMouseDown={handleClear}

@@ -8,8 +8,8 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import AccountEditTabMobile from './AccountEditTabMobile';
 import * as Styled from './AccountEditTab.styles';
+import AccountEditTabMobile from './AccountEditTabMobile';
 
 const PASSWORD_REGEX =
   /^(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[!@#$%^])(?!.*\s).{8,20}$/;
