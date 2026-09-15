@@ -51,9 +51,3 @@ export const FieldList = styled.div`
   flex-direction: column;
   gap: 8px;
 `;
-
-export const SuccessMessage = styled.p`
-  ${setTypography(typography.paragraph.p7)};
-  color: ${colors.primary[800]};
-  margin: 0;
-`;
