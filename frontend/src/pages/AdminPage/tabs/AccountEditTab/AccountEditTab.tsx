@@ -139,7 +139,6 @@ const AccountEditTab = () => {
 
           <Button
             width={'100%'}
-            animated
             onClick={handleChangePassword}
             disabled={isLoading}
           >
