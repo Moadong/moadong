@@ -21,8 +21,7 @@ const AccountEditTab = () => {
 
   const [newPassword, setNewPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
-  const [successMessage, setSuccessMessage] = useState('');
-  const [isLoading, setIsLoading] = useState(false); // 1. 로딩 상태 추가
+  const [isLoading, setIsLoading] = useState(false);
 
   const isPasswordValid =
     newPassword.length > 0 && !PASSWORD_REGEX.test(newPassword);
@@ -32,8 +31,6 @@ const AccountEditTab = () => {
 
   const handleChangePassword = async () => {
     if (isLoading) return;
-
-    setSuccessMessage('');
 
     if (!newPassword || !confirmPassword) {
       alert('새 비밀번호와 확인 필드를 모두 입력해주세요.');
@@ -60,7 +57,6 @@ const AccountEditTab = () => {
         confirmPasswordLength: confirmPassword.length,
       });
 
-      setSuccessMessage('비밀번호가 성공적으로 변경되었습니다.');
       setNewPassword('');
       setConfirmPassword('');
     } catch (err) {
@@ -81,7 +77,6 @@ const AccountEditTab = () => {
         setNewPassword={setNewPassword}
         confirmPassword={confirmPassword}
         setConfirmPassword={setConfirmPassword}
-        successMessage={successMessage}
         isLoading={isLoading}
         isPasswordValid={isPasswordValid}
         isPasswordMatching={isPasswordMatching}
@@ -118,7 +113,6 @@ const AccountEditTab = () => {
               }}
               maxLength={PASSWORD_MAX}
               isError={isPasswordValid}
-              isSuccess={newPassword.length > 0 && !isPasswordValid}
               helperText={
                 isPasswordValid ? '영문, 숫자, 특수문자 포함 8~20자' : ''
               }
@@ -137,16 +131,11 @@ const AccountEditTab = () => {
               }}
               maxLength={PASSWORD_MAX}
               isError={isPasswordMatching}
-              isSuccess={confirmPassword.length > 0 && !isPasswordMatching}
               helperText={
                 isPasswordMatching ? '비밀번호가 일치하지 않습니다.' : ''
               }
             />
           </Styled.FieldWrapper>
-
-          {successMessage && (
-            <Styled.SuccessMessage>{successMessage}</Styled.SuccessMessage>
-          )}
 
           <Button
             width={'100%'}

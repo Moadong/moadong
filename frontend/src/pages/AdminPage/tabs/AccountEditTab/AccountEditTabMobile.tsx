@@ -12,7 +12,6 @@ interface AccountEditTabMobileProps {
   setNewPassword: (v: string) => void;
   confirmPassword: string;
   setConfirmPassword: (v: string) => void;
-  successMessage: string;
   isLoading: boolean;
   isPasswordValid: boolean;
   isPasswordMatching: boolean;
@@ -24,7 +23,6 @@ const AccountEditTabMobile = ({
   setNewPassword,
   confirmPassword,
   setConfirmPassword,
-  successMessage,
   isLoading,
   isPasswordValid,
   isPasswordMatching,
@@ -81,10 +79,6 @@ const AccountEditTabMobile = ({
               isError={isPasswordMatching}
               helperText='비밀번호가 일치하지 않습니다.'
             />
-
-          {successMessage && (
-            <Styled.SuccessMessage>{successMessage}</Styled.SuccessMessage>
-          )}
           </Styled.FieldList>
         </Styled.FormSection>
       </Styled.MobileContainer>
@@ -99,7 +93,7 @@ const AccountEditTabMobile = ({
           isLoading
         }
       >
-        저장하기
+        비밀번호 변경하기
       </FixedBottomButtonArea>
     </>
   );
