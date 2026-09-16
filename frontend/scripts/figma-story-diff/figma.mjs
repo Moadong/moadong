@@ -86,11 +86,24 @@ export async function fetchFigma(url, scale = 2) {
   const imageUrl = images.images[nodeId];
   if (!imageUrl) throw new Error(`노드 ${nodeId} 이미지 렌더 실패`);
   const png = Buffer.from(await (await fetch(imageUrl)).arrayBuffer());
-  const { width, height } = doc.absoluteBoundingBox;
+  const box = doc.absoluteBoundingBox;
   return {
     name: doc.name,
-    bbox: { width, height },
+    bbox: { width: box.width, height: box.height },
     png,
+    // itemSpacing은 SPACE_BETWEEN이면 실제 간격과 무관한 값이 남는다. 자식 위치에서 직접 잰다.
+    layout: {
+      mode: doc.layoutMode ?? 'NONE',
+      children: (doc.children ?? [])
+        .filter((c) => c.visible !== false && c.absoluteBoundingBox)
+        .map((c) => ({
+          name: c.name,
+          x: c.absoluteBoundingBox.x - box.x,
+          y: c.absoluteBoundingBox.y - box.y,
+          width: c.absoluteBoundingBox.width,
+          height: c.absoluteBoundingBox.height,
+        })),
+    },
     ...extractTokens(doc),
   };
 }

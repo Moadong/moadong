@@ -10,6 +10,7 @@ import { loadPending, loadTheme, PENDING_DIR } from './theme.mjs';
 const ROOT = path.resolve(import.meta.dirname, '../..');
 const OUT = path.join(ROOT, 'visual-diff');
 const SIZE_TOLERANCE_PX = 2;
+const SPACING_TOLERANCE_PX = 0.5;
 const filter = process.argv[2] ?? '';
 
 async function loadMappings() {
@@ -25,6 +26,20 @@ async function loadMappings() {
     }
   }
   return entries;
+}
+
+// 주축을 따라 앞 여백 · 자식 사이 간격 · 뒤 여백을 잰다. 선언값이 아니라 실제 위치에서 구한다.
+function spacings(box, children, mode) {
+  const [pos, size] = mode === 'HORIZONTAL' ? ['x', 'width'] : ['y', 'height'];
+  if (!children.length) return [];
+  const rows = [['앞 여백', children[0][pos]]];
+  for (let i = 1; i < children.length; i++) {
+    const prev = children[i - 1];
+    rows.push([`간격 ${i}`, children[i][pos] - (prev[pos] + prev[size])]);
+  }
+  const last = children[children.length - 1];
+  rows.push(['뒤 여백', box[size] - (last[pos] + last[size])]);
+  return rows;
 }
 
 const only = (a, b) => [...a].filter(([k]) => !b.has(k));
@@ -105,6 +120,29 @@ async function runEntry(entry, theme, pending) {
   const dh = story.bbox.height - figma.bbox.height;
   const sizePass =
     Math.abs(dw) <= SIZE_TOLERANCE_PX && Math.abs(dh) <= SIZE_TOLERANCE_PX;
+  const layoutMode = figma.layout.mode;
+  const countMatch =
+    figma.layout.children.length === story.layout.children.length;
+  const spacingRows =
+    layoutMode !== 'NONE' && countMatch
+      ? spacings(figma.bbox, figma.layout.children, layoutMode).map(
+          ([label, want], i) => {
+            const got = spacings(
+              story.layout.box,
+              story.layout.children,
+              layoutMode,
+            )[i][1];
+            return [label, want, got, Math.abs(got - want)];
+          },
+        )
+      : [];
+  const spacingBad = spacingRows.filter(
+    ([, , , diff]) => diff > SPACING_TOLERANCE_PX,
+  );
+  // 시안이 auto-layout이 아니면 비교할 축이 없다. 자식 수가 다르면 간격을 짝지을 수 없다.
+  const layoutSkipped = layoutMode === 'NONE';
+  const layoutPass = layoutSkipped || (countMatch && spacingBad.length === 0);
+
   const tokenPass =
     figmaMissingColors.length +
       figmaMissingTypo.length +
@@ -121,7 +159,7 @@ async function runEntry(entry, theme, pending) {
       onlyFigmaTypo.length +
       onlyStoryTypo.length ===
     0;
-  const pass = sizePass && tokenPass && parityPass;
+  const pass = sizePass && tokenPass && parityPass && layoutPass;
 
   const label = (ok) => (ok ? 'PASS' : 'FAIL');
   const report = `# ${entry.name} — ${label(pass)}
@@ -136,6 +174,7 @@ async function runEntry(entry, theme, pending) {
 |---|---|---|
 | 토큰 (theme에 없는 값) | ${label(tokenPass)} | Figma ${figmaMissingColors.length + figmaMissingTypo.length}건 · 구현 ${storyMissingColors.length + storyMissingTypo.length}건 |
 | 토큰 일치 (Figma↔구현 사용 집합) | ${label(parityPass)} | Figma에만 ${onlyFigmaColors.length + onlyFigmaTypo.length}건 · 구현에만 ${onlyStoryColors.length + onlyStoryTypo.length}건 |
+| 레이아웃 (자식 간격·여백, ±${SPACING_TOLERANCE_PX}px) | ${layoutSkipped ? '–' : label(layoutPass)} | ${layoutSkipped ? '시안이 auto-layout이 아님' : countMatch ? `자식 ${figma.layout.children.length}개 · 어긋남 ${spacingBad.length}건` : `자식 수 다름 (시안 ${figma.layout.children.length} · 구현 ${story.layout.children.length})`} |
 | 루트 크기 (±${SIZE_TOLERANCE_PX}px) | ${label(sizePass)} | Figma ${figma.bbox.width}×${figma.bbox.height} · 구현 ${story.bbox.width}×${story.bbox.height} (Δ ${dw.toFixed(2)}, ${dh.toFixed(2)}) |
 | 픽셀 차이 (참고용) | – | ${diff.mismatchPercent.toFixed(2)}% · 이미지 ${diff.sizes.figma.join('×')} vs ${diff.sizes.story.join('×')} |
 
@@ -152,6 +191,23 @@ ${table(figmaMissingTypo, ['타이포 size/weight/lineHeight%', 'Figma 노드'])
 ${table(storyMissingColors, ['색', 'DOM 요소'])}
 
 ${table(storyMissingTypo, ['타이포 size/weight/lineHeight%', 'DOM 요소'])}
+
+## 레이아웃 (${layoutMode})
+
+${
+  layoutSkipped
+    ? '시안 루트가 auto-layout이 아니라 비교하지 않는다.'
+    : !countMatch
+      ? `자식 수가 달라 간격을 짝지을 수 없다. 시안 ${figma.layout.children.length}개(${figma.layout.children.map((c) => c.name).join(', ')}) · 구현 ${story.layout.children.length}개(${story.layout.children.map((c) => c.name).join(', ')}).`
+      : [
+          '| 항목 | 시안 | 구현 | 차이 |',
+          '|---|---|---|---|',
+          ...spacingRows.map(
+            ([lbl, want, got, diff]) =>
+              `| ${lbl} | ${want.toFixed(2)} | ${got.toFixed(2)} | ${diff > SPACING_TOLERANCE_PX ? `**${diff.toFixed(2)}**` : diff.toFixed(2)} |`,
+          ),
+        ].join('\n')
+}
 
 ## Figma 반투명 겹침 fill (토큰 판정 제외, 시안 정리 대상)
 

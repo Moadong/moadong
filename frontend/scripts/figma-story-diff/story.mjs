@@ -98,7 +98,44 @@ export async function captureStory({ story, args, viewport, scale = 2 }) {
               : null,
         });
       }
-      return { bbox: { width: rect.width, height: rect.height }, styles };
+      // 스토리 데코레이터 래퍼는 자식과 박스가 똑같다. 시안 프레임에 대응하는 건 그 안쪽이라 내려간다.
+      let layoutRoot = el;
+      while (layoutRoot.children.length === 1) {
+        const child = layoutRoot.children[0];
+        const a = layoutRoot.getBoundingClientRect();
+        const b = child.getBoundingClientRect();
+        if (
+          a.x !== b.x ||
+          a.y !== b.y ||
+          a.width !== b.width ||
+          a.height !== b.height
+        )
+          break;
+        layoutRoot = child;
+      }
+      const lr = layoutRoot.getBoundingClientRect();
+      const layout = {
+        box: { width: lr.width, height: lr.height },
+        children: [...layoutRoot.children]
+          .filter(
+            (c) => c.checkVisibility() && c.getBoundingClientRect().height > 0,
+          )
+          .map((c) => {
+            const r = c.getBoundingClientRect();
+            return {
+              name: c.tagName.toLowerCase(),
+              x: r.x - lr.x,
+              y: r.y - lr.y,
+              width: r.width,
+              height: r.height,
+            };
+          }),
+      };
+      return {
+        bbox: { width: rect.width, height: rect.height },
+        styles,
+        layout,
+      };
     });
     const colors = new Map();
     const typography = new Map();
@@ -127,7 +164,7 @@ export async function captureStory({ story, args, viewport, scale = 2 }) {
         if (!typography.has(key)) typography.set(key, s.tag);
       }
     }
-    return { url, png, bbox: dom.bbox, colors, typography };
+    return { url, png, bbox: dom.bbox, layout: dom.layout, colors, typography };
   } finally {
     await browser.close();
   }
