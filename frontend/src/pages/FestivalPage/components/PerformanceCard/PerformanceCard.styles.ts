@@ -9,7 +9,11 @@ export const Card = styled.div<{ $active: boolean }>`
   border-radius: 14px;
   background-color: ${({ $active, theme }) =>
     $active ? theme.colors.base.white : theme.colors.gray[100]};
-  border: 1px solid ${({ $active }) => ($active ? '#ffded2' : 'transparent')};
+  /* 시안의 stroke는 INSIDE라 카드 크기에 더해지지 않는다. border로 그리면 위아래 2px이
+     늘어 리스트에서 행마다 누적되므로, 레이아웃에 영향이 없는 inset 그림자로 그린다.
+     비활성일 때 크기가 튀지 않으니 투명 border를 둘 필요도 없다. */
+  box-shadow: ${({ $active }) =>
+    $active ? 'inset 0 0 0 1px #ffded2' : 'none'};
   cursor: pointer;
 `;
 
