@@ -19,7 +19,7 @@ export const ClubName = styled.p<{ $active: boolean }>`
   font-weight: 700;
   line-height: 140%;
   color: ${({ $active, theme }) =>
-    $active ? theme.colors.gray[800] : theme.colors.gray[700]};
+    $active ? theme.colors.base.black : theme.colors.gray[700]};
 `;
 
 export const SongArea = styled.div<{ $active: boolean }>`
