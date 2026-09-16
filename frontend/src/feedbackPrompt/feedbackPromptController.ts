@@ -20,9 +20,12 @@ export interface FeedbackPromptSession {
 }
 
 let activeSession: FeedbackPromptSession | null = null;
+let isCheckingEligibility = false;
+let isSubmittingFeedback = false;
 const listeners = new Set<() => void>();
 const consumedEvents = new Set<string>();
 const notify = () => listeners.forEach((listener) => listener());
+const isDocumentVisible = () => document.visibilityState === 'visible';
 
 export const subscribeFeedbackPrompt = (listener: () => void) => {
   listeners.add(listener);
@@ -33,6 +36,13 @@ export const clearFeedbackPromptSession = () => {
   activeSession = null;
   notify();
 };
+export const beginFeedbackSubmit = () => {
+  isSubmittingFeedback = true;
+};
+export const endFeedbackSubmit = () => {
+  isSubmittingFeedback = false;
+};
+export const isFeedbackSubmitInProgress = () => isSubmittingFeedback;
 
 interface RequestFeedbackOptions {
   eventId: string;
@@ -51,7 +61,14 @@ export const requestFeedbackPrompt = async ({
 }: RequestFeedbackOptions) => {
   const isAdmin = triggerType.startsWith('ADMIN_');
   if ((isAdmin && !isAdminFeedbackPromptEnabled) || (!isAdmin && !isUserFeedbackPromptEnabled)) return;
-  if (activeSession || consumedEvents.has(eventId) || document.visibilityState === 'hidden') return;
+  if (
+    activeSession ||
+    isCheckingEligibility ||
+    isSubmittingFeedback ||
+    consumedEvents.has(eventId) ||
+    !isDocumentVisible() ||
+    document.querySelector('[data-overlay-kind="blocking"], [data-overlay-kind="survey"]')
+  ) return;
   consumedEvents.add(eventId);
   if (consumedEvents.size > 100) consumedEvents.delete(consumedEvents.values().next().value as string);
   const identity = isAdmin
@@ -61,14 +78,22 @@ export const requestFeedbackPrompt = async ({
       return anonymousClientId ? { anonymousClientId } : null;
     })();
   if (!identity) return;
+  isCheckingEligibility = true;
   try {
     const eligibility = await getFeedbackEligibility(triggerType, clubId, identity);
     const prompt = parseFeedbackEligibility(eligibility, triggerType);
-    if (!prompt || activeSession) return;
+    if (
+      !prompt ||
+      activeSession ||
+      !isDocumentVisible() ||
+      document.querySelector('[data-overlay-kind="blocking"], [data-overlay-kind="survey"]')
+    ) return;
     activeSession = { prompt, triggerType, clubId, sourcePath, identity };
     notify();
   } catch {
     // 선택적 설문은 원래 작업을 방해하지 않는다.
+  } finally {
+    isCheckingEligibility = false;
   }
 };
 

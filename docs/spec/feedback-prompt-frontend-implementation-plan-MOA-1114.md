@@ -505,4 +505,11 @@ MSW 정상 fixture는 백엔드 seed와 같은 enum/field shape를 사용한다.
 - 관리자 기본정보·모집정보의 대표 저장 성공 callback에서만 후보를 만들며, 저장 실패·링크/태그 개별 저장은 제외했다.
 - `VITE_FEEDBACK_PROMPT_ADMIN_ENABLED`, `VITE_FEEDBACK_PROMPT_USER_ENABLED`가 정확히 `true`일 때만 각 흐름을 활성화한다. 미설정 상태는 API를 호출하지 않는다.
 
-자동 검증은 문항 계약(1개 평점, 후속 입력 없음, 중복 평점, 잘못된 제한)과 익명 ID 생성·지속성을 포함한다. 전체 Jest 실행 결과는 58 suites, 480 tests passed였다. 운영 API, 활성 문항, 모바일 실기기, 접근성 수동 검증은 별도로 완료해야 한다.
+자동 검증은 문항 계약(1개 평점, 후속 입력 없음, 중복 평점, 잘못된 제한)과 익명 ID 생성·지속성을 포함한다. 전체 Jest 실행 결과는 59 suites, 482 tests passed였다. 운영 API, 활성 문항, 모바일 실기기, 접근성 수동 검증은 별도로 완료해야 한다.
+
+### 리뷰 보완 (2026-09-16)
+
+- eligibility 요청 전에 단일 슬롯을 선점하고 제출 중에도 새 후보를 막아, 여러 행동이 겹쳐도 SHOWN 조회가 중복되지 않게 했다.
+- 제출 중 닫기는 UI만 닫고 dismiss를 보내지 않는다. 응답 요청이 완료될 때까지 전역 제출 잠금을 유지한다.
+- 공통 Modal에 overlay 종류를 표시하고, blocking 또는 기존 survey가 열려 있으면 피드백 설문을 열지 않는다. 기존 만족도 모달은 survey로 표시한다.
+- 상세의 query/hash 변경은 방문을 소진하지 않는다. catch-all의 replace 이동은 사용자 이탈 후보에서 제외한다.
