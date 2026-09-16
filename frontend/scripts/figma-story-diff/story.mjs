@@ -82,6 +82,9 @@ export async function captureStory({ story, args, viewport, scale = 2 }) {
           paints: PAINTED_SVG.has(node.tagName.toLowerCase())
             ? [cs.fill, cs.stroke]
             : [],
+          // Figma의 INSIDE stroke는 레이아웃에 안 더해져서 구현이 inset 그림자로 그리기도 한다.
+          // 그러면 border-color에 안 잡히므로 여기서 같이 걷는다.
+          boxShadow: cs.boxShadow === 'none' ? null : cs.boxShadow,
           text:
             node.childNodes.length &&
             [...node.childNodes].some(
@@ -105,6 +108,7 @@ export async function captureStory({ story, args, viewport, scale = 2 }) {
         s.backgroundColor,
         ...s.borderColors,
         ...s.paints,
+        ...(s.boxShadow?.match(/rgba?\([^)]*\)/g) ?? []),
       ]) {
         const hex = c && rgbToHex(c);
         if (hex && !colors.has(hex)) colors.set(hex, s.tag);

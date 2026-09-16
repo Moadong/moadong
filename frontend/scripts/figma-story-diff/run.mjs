@@ -100,8 +100,9 @@ async function runEntry(entry, theme, pending) {
     };
   }
 
-  const dw = Math.round(story.bbox.width - figma.bbox.width);
-  const dh = Math.round(story.bbox.height - figma.bbox.height);
+  // 반올림하면 2.49px가 2로 접혀 통과한다. 판정은 실제 차이로 하고 표시할 때만 자른다.
+  const dw = story.bbox.width - figma.bbox.width;
+  const dh = story.bbox.height - figma.bbox.height;
   const sizePass =
     Math.abs(dw) <= SIZE_TOLERANCE_PX && Math.abs(dh) <= SIZE_TOLERANCE_PX;
   const tokenPass =
@@ -135,7 +136,7 @@ async function runEntry(entry, theme, pending) {
 |---|---|---|
 | 토큰 (theme에 없는 값) | ${label(tokenPass)} | Figma ${figmaMissingColors.length + figmaMissingTypo.length}건 · 구현 ${storyMissingColors.length + storyMissingTypo.length}건 |
 | 토큰 일치 (Figma↔구현 사용 집합) | ${label(parityPass)} | Figma에만 ${onlyFigmaColors.length + onlyFigmaTypo.length}건 · 구현에만 ${onlyStoryColors.length + onlyStoryTypo.length}건 |
-| 루트 크기 (±${SIZE_TOLERANCE_PX}px) | ${label(sizePass)} | Figma ${figma.bbox.width}×${figma.bbox.height} · 구현 ${story.bbox.width}×${story.bbox.height} (Δ ${dw}, ${dh}) |
+| 루트 크기 (±${SIZE_TOLERANCE_PX}px) | ${label(sizePass)} | Figma ${figma.bbox.width}×${figma.bbox.height} · 구현 ${story.bbox.width}×${story.bbox.height} (Δ ${dw.toFixed(2)}, ${dh.toFixed(2)}) |
 | 픽셀 차이 (참고용) | – | ${diff.mismatchPercent.toFixed(2)}% · 이미지 ${diff.sizes.figma.join('×')} vs ${diff.sizes.story.join('×')} |
 
 ![figma](figma.png) ![story](story.png) ![diff](diff.png)
