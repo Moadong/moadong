@@ -24,6 +24,11 @@ public interface LetterRepository extends MongoRepository<Letter, String> {
             sort = "{ 'createdAt': -1 }")
     List<Letter> findInboxByStudentIdAndCategory(String studentId, LetterCategory category);
 
+    /**
+     * 개발자 포털의 보낸 편지함 = 답장과 전체 발행 편지를 모두 합친 목록.
+     */
+    List<Letter> findAllByOrderByCreatedAtDesc();
+
     @Query("{ '_id': ?0 }")
     @Update("{ '$addToSet': { 'readStudentIds': ?1 } }")
     long markRead(String letterId, String studentId);

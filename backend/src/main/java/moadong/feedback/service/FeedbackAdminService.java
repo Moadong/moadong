@@ -18,6 +18,8 @@ import moadong.feedback.payload.request.FeedbackStatusUpdateRequest;
 import moadong.feedback.payload.request.LetterCreateRequest;
 import moadong.feedback.payload.response.AdminFeedbackListResponse;
 import moadong.feedback.payload.response.AdminFeedbackResponse;
+import moadong.feedback.payload.response.AdminSentLetterListResponse;
+import moadong.feedback.payload.response.AdminSentLetterResponse;
 import moadong.feedback.payload.response.FeedbackReplyResponse;
 import moadong.feedback.payload.response.LetterCreateResponse;
 import moadong.feedback.repository.FeedbackRepository;
@@ -63,6 +65,20 @@ public class FeedbackAdminService {
         return new AdminFeedbackListResponse(
                 feedbacks,
                 feedbackRepository.countByStatusNot(FeedbackStatus.REPLIED));
+    }
+
+    /**
+     * 개발자가 보낸 편지(답장 + 전체 발행)를 최신순으로 돌려준다.
+     * 답장의 받는 사람은 피드백 목록과 같은 익명 식별자로 맞춰, 두 목록에서 같은 학생을 같은 값으로 알아볼 수 있게 한다.
+     */
+    public AdminSentLetterListResponse getSentLetters() {
+        List<AdminSentLetterResponse> letters = letterRepository.findAllByOrderByCreatedAtDesc().stream()
+                .map(letter -> AdminSentLetterResponse.of(
+                        letter,
+                        letter.isBroadcast() ? null : anonymousSender(letter.getRecipientStudentId())))
+                .toList();
+
+        return new AdminSentLetterListResponse(letters);
     }
 
     /**

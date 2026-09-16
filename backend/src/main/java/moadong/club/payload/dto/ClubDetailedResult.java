@@ -68,7 +68,7 @@ public record ClubDetailedResult(
                         : clubRecruitmentInformation.getCover())
                 .tags(clubRecruitmentInformation.getTags() == null ? List.of()
                         : clubRecruitmentInformation.getTags())
-                .state(club.getState() == null ? "" : club.getState().getDesc())
+                .state(club.getState() == null ? "" : club.getState().name())
                 .feeds(clubRecruitmentInformation.getFeedImages() == null ? List.of()
                         : clubRecruitmentInformation.getFeedImages())
                 .category(club.getCategory() == null ? "" : club.getCategory())

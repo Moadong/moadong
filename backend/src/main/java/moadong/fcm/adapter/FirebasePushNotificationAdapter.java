@@ -2,6 +2,8 @@ package moadong.fcm.adapter;
 
 import com.google.firebase.messaging.BatchResponse;
 import com.google.firebase.messaging.FirebaseMessaging;
+import com.google.firebase.messaging.FirebaseMessagingException;
+import com.google.firebase.messaging.MessagingErrorCode;
 import com.google.firebase.messaging.MulticastMessage;
 import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
@@ -24,7 +26,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 @Slf4j
 @Component
@@ -32,6 +33,7 @@ import java.util.stream.IntStream;
 public class FirebasePushNotificationAdapter implements PushNotificationPort {
 
     private static final int MULTICAST_LIMIT = 500;
+    private static final String UNKNOWN_ERROR_CODE = "UNKNOWN";
 
     private final FirebaseMessaging firebaseMessaging;
 
@@ -101,6 +103,7 @@ public class FirebasePushNotificationAdapter implements PushNotificationPort {
             return new MulticastPushResult(0, 0, 0, List.of());
         }
 
+        int totalBatches = (tokens.size() + MULTICAST_LIMIT - 1) / MULTICAST_LIMIT;
         int batchCount = 0;
         int successCount = 0;
         int failureCount = 0;
@@ -127,9 +130,11 @@ public class FirebasePushNotificationAdapter implements PushNotificationPort {
                 BatchResponse response = firebaseMessaging.sendEachForMulticast(builder.build());
                 successCount += response.getSuccessCount();
                 failureCount += response.getFailureCount();
-                collectFailedTokens(batchTokens, response.getResponses(), failedTokens);
+                Map<String, Integer> errorCodeCounts = collectFailedTokens(batchTokens, response.getResponses(), failedTokens);
+                log.info("FCM batch {}/{} - success={} failure={} codes={}",
+                        batchCount, totalBatches, response.getSuccessCount(), response.getFailureCount(), errorCodeCounts);
             } catch (Exception e) {
-                log.error("FCM batch send failed - batch: {}, error: {}", batchCount, e.getMessage(), e);
+                log.error("FCM batch {}/{} send failed - error: {}", batchCount, totalBatches, e.getMessage(), e);
                 failureCount += batchTokens.size();
                 failedTokens.addAll(batchTokens);
             }
@@ -143,11 +148,28 @@ public class FirebasePushNotificationAdapter implements PushNotificationPort {
         );
     }
 
-    private void collectFailedTokens(List<String> batchTokens, List<SendResponse> responses, List<String> failedTokens) {
-        IntStream.range(0, responses.size())
-                .filter(index -> !responses.get(index).isSuccessful())
-                .mapToObj(batchTokens::get)
-                .forEach(failedTokens::add);
+    private Map<String, Integer> collectFailedTokens(List<String> batchTokens, List<SendResponse> responses, List<String> failedTokens) {
+        Map<String, Integer> errorCodeCounts = new LinkedHashMap<>();
+        for (int index = 0; index < responses.size(); index++) {
+            SendResponse response = responses.get(index);
+            if (response.isSuccessful()) {
+                continue;
+            }
+            String token = batchTokens.get(index);
+            String errorCode = resolveErrorCode(response.getException());
+            failedTokens.add(token);
+            errorCodeCounts.merge(errorCode, 1, Integer::sum);
+            log.debug("FCM token send failed - token: {}, code: {}", mask(token), errorCode);
+        }
+        return errorCodeCounts;
+    }
+
+    private String resolveErrorCode(FirebaseMessagingException exception) {
+        if (exception == null) {
+            return UNKNOWN_ERROR_CODE;
+        }
+        MessagingErrorCode code = exception.getMessagingErrorCode();
+        return code == null ? UNKNOWN_ERROR_CODE : code.name();
     }
 
     public Map<String, String> sanitizeData(Map<String, String> data) {

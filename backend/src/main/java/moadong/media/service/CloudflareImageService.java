@@ -166,22 +166,23 @@ public class CloudflareImageService implements ClubImageService{
         return generatePresignedUrl(clubId, fileName, contentType, FileType.LOGO);
     }
 
+    /**
+     * 요청 수만 상한 검증하고, 통과하면 요청 수만큼 전부 발급한다.
+     * 저장된 사진 수는 보지 않는다. 발급 시점에는 아직 저장되지 않은 삭제를 알 수 없어
+     * 기준으로 쓸 수 없고, 최종 개수 검증은 updateFeeds가 담당한다.
+     * 개별 항목이 실패해도 errorResponse로 자리를 채워 응답 길이 == requests.size()를 유지한다.
+     */
     @Override
     public List<PresignedUploadResponse> generateFeedUploadUrls(String clubId, String userId, List<UploadUrlRequest> requests) {
         Club club = getAuthorizedClub(clubId, userId);
         validateClubRecruitmentInformation(club);
-        int existingCount = (club.getClubRecruitmentInformation().getFeedImages() == null)
-            ? 0
-            : club.getClubRecruitmentInformation().getFeedImages().size();
-        int remaining = Math.max(0, serverProperties.feed().maxCount() - existingCount);
-        if (remaining == 0) {
-            return java.util.List.of(errorResponse(ErrorCode.TOO_MANY_FILES));
+
+        if (requests.size() > serverProperties.feed().maxCount()) {
+            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
         }
 
-        int limit = Math.min(remaining, requests.size());
-        java.util.ArrayList<PresignedUploadResponse> results = new java.util.ArrayList<>(limit + 1);
-        for (int i = 0; i < limit; i++) {
-            UploadUrlRequest req = requests.get(i);
+        java.util.ArrayList<PresignedUploadResponse> results = new java.util.ArrayList<>(requests.size());
+        for (UploadUrlRequest req : requests) {
             try {
                 validateFileName(req.fileName());
                 results.add(generatePresignedUrl(clubId, req.fileName(), req.contentType(), FileType.FEED));
@@ -191,9 +192,6 @@ public class CloudflareImageService implements ClubImageService{
                 log.error("Unexpected error generating presigned URL: clubId={}, fileName={}", clubId, req.fileName(), e);
                 results.add(errorResponse(ErrorCode.IMAGE_UPLOAD_FAILED));
             }
-        }
-        if (requests.size() > limit) {
-            results.add(errorResponse(ErrorCode.TOO_MANY_FILES));
         }
         return results;
     }

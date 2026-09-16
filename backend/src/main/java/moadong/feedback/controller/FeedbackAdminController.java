@@ -9,6 +9,7 @@ import moadong.feedback.payload.request.FeedbackStatusUpdateRequest;
 import moadong.feedback.payload.request.LetterCreateRequest;
 import moadong.feedback.payload.request.LetterDraftRequest;
 import moadong.feedback.payload.response.AdminFeedbackListResponse;
+import moadong.feedback.payload.response.AdminSentLetterListResponse;
 import moadong.feedback.payload.response.FeedbackReplyResponse;
 import moadong.feedback.payload.response.LetterCreateResponse;
 import moadong.feedback.payload.response.LetterDraftListResponse;
@@ -63,6 +64,13 @@ public class FeedbackAdminController {
     ) {
         FeedbackReplyResponse response = feedbackAdminService.reply(feedbackId, request);
         return Response.ok("답장이 발행되었습니다.", response);
+    }
+
+    @GetMapping("/letters")
+    @Operation(summary = "보낸 편지 목록", description = "발행한 답장과 전체 편지를 최신순으로 조회합니다.")
+    public ResponseEntity<?> getSentLetters() {
+        AdminSentLetterListResponse response = feedbackAdminService.getSentLetters();
+        return Response.ok(response);
     }
 
     @PostMapping("/letters")
