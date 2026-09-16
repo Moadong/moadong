@@ -38,14 +38,18 @@ const toHex = ({ r, g, b }) =>
 export function extractTokens(
   node,
   acc = { colors: new Map(), typography: new Map(), translucent: new Map() },
+  inheritedOpacity = 1,
 ) {
   if (node.visible === false) return acc;
+  // 노드 opacity는 자식까지 곱해져 내려간다. paint opacity만 보면 반투명을 불투명 토큰으로 잘못 센다.
+  const nodeOpacity = inheritedOpacity * (node.opacity ?? 1);
   for (const paint of [...(node.fills ?? []), ...(node.strokes ?? [])]) {
     if (paint.type !== 'SOLID' || paint.visible === false) continue;
+    const opacity = nodeOpacity * (paint.opacity ?? 1);
     // 반투명 fill은 다른 fill 위에 겹쳐 색을 바꾸는 용도라 토큰이 아니다. 따로 모아 리포트에만 보인다.
-    if ((paint.opacity ?? 1) < 1) {
+    if (opacity < 1) {
       acc.translucent.set(
-        `${toHex(paint.color)}@${Math.round(paint.opacity * 100)}%`,
+        `${toHex(paint.color)}@${Math.round(opacity * 100)}%`,
         node.name,
       );
     } else {
@@ -64,7 +68,8 @@ export function extractTokens(
       node.name,
     );
   }
-  for (const child of node.children ?? []) extractTokens(child, acc);
+  for (const child of node.children ?? [])
+    extractTokens(child, acc, nodeOpacity);
   return acc;
 }
 

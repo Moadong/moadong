@@ -40,15 +40,17 @@ const table = (rows, head) =>
 
 function writePendingTs(pending) {
   const block = (rows) => (rows.length ? `{\n${rows.join('\n')}\n  }` : '{}');
+  // Figma 노드 이름이 그대로 들어온다. 따옴표 하나에 생성 파일이 깨지면 다음 실행의 loadPending()이 죽는다.
+  const str = (v) => JSON.stringify(String(v));
   const colors = block(
     Object.entries(pending.colors).map(
-      ([hex, from]) => `    '${hex}': '${from}',`,
+      ([hex, from]) => `    ${str(hex)}: ${str(from)},`,
     ),
   );
   const typography = block(
     Object.entries(pending.typography).map(
       ([key, t]) =>
-        `    '${key}': { size: '${t.size}', weight: ${t.weight}, lineHeight: '${t.lineHeight}', from: '${t.from}' },`,
+        `    ${str(key)}: { size: ${str(t.size)}, weight: ${t.weight}, lineHeight: ${str(t.lineHeight)}, from: ${str(t.from)} },`,
     ),
   );
   return `// figma-story-diff(scripts/figma-story-diff)가 생성·갱신한다. 손으로 고치지 말 것.

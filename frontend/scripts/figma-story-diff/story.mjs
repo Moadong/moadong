@@ -19,7 +19,8 @@ function encodeArgs(args = {}) {
 
 const rgbToHex = (rgb) => {
   const m = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/);
-  if (!m || (m[4] !== undefined && parseFloat(m[4]) === 0)) return null;
+  // 반투명은 겹쳐 쓰는 값이라 토큰이 아니다. Figma 쪽 opacity 처리와 같은 기준으로 뺀다.
+  if (!m || (m[4] !== undefined && parseFloat(m[4]) < 1)) return null;
   return (
     '#' +
     [m[1], m[2], m[3]]
@@ -41,6 +42,21 @@ export async function captureStory({ story, args, viewport, scale = 2 }) {
     const target = root.locator('> *').first();
     const png = await target.screenshot();
     const dom = await target.evaluate((el) => {
+      // svg·g 같은 래퍼는 paint를 그리지 않는데 fill이 상속되고 초기값이 검정이라, 걷으면 #000000이 딸려 온다.
+      const PAINTED_SVG = new Set([
+        'path',
+        'rect',
+        'circle',
+        'ellipse',
+        'line',
+        'polyline',
+        'polygon',
+        'text',
+        'tspan',
+        'textpath',
+        'use',
+      ]);
+      const SIDES = ['Top', 'Right', 'Bottom', 'Left'];
       const rect = el.getBoundingClientRect();
       const styles = [];
       for (const node of [el, ...el.querySelectorAll('*')]) {
@@ -60,10 +76,12 @@ export async function captureStory({ story, args, viewport, scale = 2 }) {
           tag,
           color: cs.color,
           backgroundColor: cs.backgroundColor,
-          borderColor:
-            parseFloat(cs.borderTopWidth) > 0 ? cs.borderTopColor : null,
-          fill: node instanceof SVGElement ? cs.fill : null,
-          stroke: node instanceof SVGElement ? cs.stroke : null,
+          borderColors: SIDES.filter(
+            (side) => parseFloat(cs[`border${side}Width`]) > 0,
+          ).map((side) => cs[`border${side}Color`]),
+          paints: PAINTED_SVG.has(node.tagName.toLowerCase())
+            ? [cs.fill, cs.stroke]
+            : [],
           text:
             node.childNodes.length &&
             [...node.childNodes].some(
@@ -85,9 +103,8 @@ export async function captureStory({ story, args, viewport, scale = 2 }) {
       for (const c of [
         s.text ? s.color : null,
         s.backgroundColor,
-        s.borderColor,
-        s.fill,
-        s.stroke,
+        ...s.borderColors,
+        ...s.paints,
       ]) {
         const hex = c && rgbToHex(c);
         if (hex && !colors.has(hex)) colors.set(hex, s.tag);
