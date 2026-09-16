@@ -5,12 +5,12 @@
 ## 실행
 
 ```bash
-npm run storybook                                    # 먼저 6006에 띄워 둘 것
-npx dotenv -- npm run visual:figma                   # 전체
-npx dotenv -- npm run visual:figma PerformanceCard   # 매핑 이름 부분일치 필터
+npm run storybook                      # 먼저 6006에 띄워 둘 것
+npm run visual:figma                   # 전체
+npm run visual:figma PerformanceCard   # 매핑 이름 부분일치 필터
 ```
 
-- `FIGMA_TOKEN`(개인 액세스 토큰)이 필요하고 `frontend/.env`에 있다. `run.mjs`는 dotenv를 부르지 않으므로 `npx dotenv --`로 감싸거나 직접 export해야 한다. 안 그러면 `FIGMA_TOKEN(개인 액세스 토큰)이 없다`로 죽는다.
+- `FIGMA_TOKEN`(개인 액세스 토큰)이 필요하고 `frontend/.env`에 있다. npm 스크립트가 `dotenv-cli`로 감싸 두어 자동으로 읽는다. `node scripts/figma-story-diff/run.mjs`를 직접 부를 때는 `npx dotenv --`로 감싸거나 export해야 하고, 안 그러면 `FIGMA_TOKEN(개인 액세스 토큰)이 없다`로 죽는다.
 - Storybook 주소는 `STORYBOOK_URL`로 바꾼다 (기본 `http://localhost:6006`).
 - 종료 코드: `0` 전부 PASS · `1` 하나라도 FAIL · `2` 매핑 없음
 
@@ -47,7 +47,7 @@ npx dotenv -- npm run visual:figma PerformanceCard   # 매핑 이름 부분일�
 ## Claude가 쓰는 법
 
 1. Storybook을 `run_in_background`로 띄우고 6006이 응답할 때까지 기다린다. 대기 루프는 짧게 잡는다(보통 수 초 안에 뜬다).
-2. `npx dotenv -- npm run visual:figma <필터>` 실행.
+2. `npm run visual:figma <필터>` 실행.
 3. `visual-diff/<이름>/report.md`를 Read 한다. FAIL 축과 하단 표가 원인을 바로 가리킨다 — 어느 색이 어느 Figma 노드/DOM 요소에서 왔는지까지 찍힌다.
 4. 필요하면 `figma.png` · `story.png` · `diff.png`를 Read로 직접 본다.
 5. 색 하나가 어긋났을 때 **그 색이 실제로 화면에 칠해지는지 먼저 확인한다.** 글자 없는 wrapper가 상속만 받은 값일 수 있다.

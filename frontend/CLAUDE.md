@@ -37,8 +37,8 @@ npm run build-storybook  # Storybook 빌드
 npm run chromatic        # Chromatic으로 시각적 테스트 배포
 
 # Figma 시안 대조
-npx dotenv -- npm run visual:figma          # 매핑된 컴포넌트를 시안과 대조 (Storybook이 6006에 떠 있어야 함)
-npx dotenv -- npm run visual:figma <필터>   # 매핑 이름 부분일치로 일부만
+npm run visual:figma          # 매핑된 컴포넌트를 시안과 대조 (Storybook이 6006에 떠 있어야 함)
+npm run visual:figma <필터>   # 매핑 이름 부분일치로 일부만
 
 # Storybook 사용 가이드 (공통 컴포넌트 수정 시)
 # - 개발 중: npm run storybook (dev 서버로 실시간 확인)
@@ -79,7 +79,7 @@ npm run generate:sitemap # sitemap.xml 생성
 
 빌드에 들어가지 않는 스크립트 전용 변수도 같은 `.env`에 둔다 (`VITE_` 접두사가 없어 번들에 포함되지 않는다):
 
-- `FIGMA_TOKEN` - Figma 개인 액세스 토큰. 시안 대조 스크립트 전용 → [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md)
+- `FIGMA_TOKEN` - Figma 개인 액세스 토큰. 시안 대조 스크립트 전용(`dotenv-cli`로 자동 로드) → [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md)
 
 ### 프로젝트 구조
 

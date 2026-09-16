@@ -23,7 +23,7 @@
     "analyze:metrics": "depcruise src --focus \"^src/components\" --output-type metrics",
     "analyze:graph": "depcruise src/components --include-only \"^src\" --output-type dot | dot -T svg > deps-components.svg",
     "analyze:circular": "madge src/components --extensions ts,tsx --ts-config tsconfig.json --circular",
-    "visual:figma": "node scripts/figma-story-diff/run.mjs"
+    "visual:figma": "dotenv -- node scripts/figma-story-diff/run.mjs"
   },
   "keywords": [],
   "author": "",
