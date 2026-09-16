@@ -12,6 +12,7 @@ import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ClubDetail } from '@/types/club';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import { requestFeedbackPrompt } from '@/feedbackPrompt/feedbackPromptController';
 import DateTimeRangePicker from './components/DateTimeRangePicker/DateTimeRangePicker';
 import * as Styled from './RecruitEditTab.styles';
 
@@ -125,7 +126,14 @@ const RecruitEditTab = () => {
     };
 
     updateClubDescription(updatedData, {
-      onSuccess: () => alert('모집 정보가 성공적으로 수정되었습니다.'),
+      onSuccess: () => {
+        alert('모집 정보가 성공적으로 수정되었습니다.');
+        void requestFeedbackPrompt({
+          eventId: crypto.randomUUID(), triggerType: 'ADMIN_RECRUITMENT_INFO_SAVED',
+          clubId: clubDetail.id, sourcePath: window.location.pathname,
+          accessToken: localStorage.getItem('accessToken') ?? undefined,
+        });
+      },
       onError: (error) =>
         alert(`모집 정보 수정에 실패했습니다: ${error.message}`),
     });

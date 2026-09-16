@@ -1,0 +1,15 @@
+import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
+export const Dialog = styled.div`position:relative;box-sizing:border-box;width:min(400px,calc(100vw - 32px));max-height:calc(100dvh - 32px);overflow-y:auto;padding:28px 24px 24px;border-radius:20px;background:${colors.base.white};`;
+export const CloseButton = styled.button`position:absolute;right:14px;top:10px;border:0;background:transparent;font-size:28px;color:${colors.gray[600]};cursor:pointer;`;
+export const Title = styled.h2`margin:0;padding-right:24px;color:${colors.base.black};font-size:20px;line-height:1.4;`;
+export const Description = styled.p`margin:8px 0 0;color:${colors.gray[700]};font-size:14px;white-space:pre-wrap;`;
+export const RatingList = styled.div`display:grid;gap:8px;margin-top:22px;`;
+export const RatingButton = styled.button<{ $selected: boolean }>`min-height:44px;border:1px solid ${({$selected})=>$selected?colors.gray[900]:colors.gray[300]};border-radius:12px;background:${({$selected})=>$selected?colors.gray[100]:colors.base.white};color:${colors.gray[900]};font-size:15px;cursor:pointer;`;
+export const FollowUp = styled.div`margin-top:20px;`;
+export const Question = styled.p`margin:16px 0 8px;color:${colors.gray[800]};font-size:14px;font-weight:600;`;
+export const ReasonList = styled.div`display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px;@media(max-width:500px){grid-template-columns:1fr;}`;
+export const ReasonButton = styled.button<{ $selected: boolean }>`min-height:40px;padding:8px;border:1px solid ${({$selected})=>$selected?colors.gray[900]:colors.gray[300]};border-radius:10px;background:${({$selected})=>$selected?colors.gray[100]:colors.base.white};color:${colors.gray[800]};cursor:pointer;`;
+export const Comment = styled.textarea`box-sizing:border-box;width:100%;min-height:84px;padding:10px;border:1px solid ${colors.gray[300]};border-radius:10px;resize:vertical;`;
+export const Count = styled.p`margin:4px 0 14px;text-align:right;color:${colors.gray[600]};font-size:12px;`;
+export const Message = styled.p`margin:24px 0;color:${colors.gray[800]};line-height:1.5;`;

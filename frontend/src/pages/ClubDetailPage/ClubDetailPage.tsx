@@ -18,6 +18,8 @@ import {
 import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import useDevice from '@/hooks/useDevice';
 import { countClubView } from '@/hooks/useSatisfactionSurvey';
+import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
+import { useLocation } from 'react-router-dom';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
@@ -41,6 +43,7 @@ const TOP_BAR_HEIGHT = 50;
 const TOP_BAR_RENDERED_HEIGHT = 73;
 
 const ClubDetailPage = () => {
+  const location = useLocation();
   const trackEvent = useMixpanelTrack();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -101,6 +104,10 @@ const ClubDetailPage = () => {
     countedClubIdRef.current = clubId;
     countClubView();
   }, [clubDetail?.id]);
+
+  useEffect(() => {
+    if (clubDetail?.id && !error) registerClubDetailVisit(clubDetail.id, location.pathname);
+  }, [clubDetail?.id, error, location.pathname]);
 
   /**
    * 일정 탭에 실제로 도달했을 때 볼 일정이 있었는지 남긴다.
