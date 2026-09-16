@@ -72,6 +72,8 @@ npm run generate:sitemap # sitemap.xml 생성
 - `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
 - `VITE_KAKAO_JAVASCRIPT_KEY` - Kakao JavaScript 키
 - `VITE_NAVER_MAP_CLIENT_ID` - 네이버 지도 API 클라이언트 ID
+- `VITE_FEEDBACK_PROMPT_ADMIN_ENABLED` - 관리자 행동 피드백 노출 여부 (`true`일 때만 활성)
+- `VITE_FEEDBACK_PROMPT_USER_ENABLED` - 사용자 상세 이탈 피드백 노출 여부 (`true`일 때만 활성)
 
 ### 프로젝트 구조
 

@@ -1,5 +1,5 @@
-import { useCallback } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
@@ -13,6 +13,7 @@ import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import * as Styled from './ClubDetailPage.styles';
 import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
+import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
 
 export const TAB_TYPE = {
   INTRO: 'intro',
@@ -22,6 +23,7 @@ export const TAB_TYPE = {
 type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
 const LegacyClubDetailPage = () => {
+  const location = useLocation();
   const trackEvent = useMixpanelTrack();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -41,6 +43,9 @@ const LegacyClubDetailPage = () => {
     clubName: clubDetail?.name,
     skip: !clubDetail,
   });
+  useEffect(() => {
+    if (clubDetail?.id && !error) registerClubDetailVisit(clubDetail.id, location.pathname);
+  }, [clubDetail?.id, error, location.pathname]);
 
   const handleTabClick = useCallback(
     (tabKey: TabType) => {

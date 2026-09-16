@@ -52,7 +52,12 @@ const SatisfactionModal = () => {
   };
 
   return (
-    <Modal isOpen={isOpen} onClose={handleSnooze} closeOnBackdrop={false}>
+    <Modal
+      isOpen={isOpen}
+      onClose={handleSnooze}
+      closeOnBackdrop={false}
+      overlayKind='survey'
+    >
       <Styled.Dialog role='dialog' aria-modal='true' aria-labelledby={titleId}>
         <Styled.Title id={titleId}>모아동, 잘 사용하고 계신가요?</Styled.Title>
         <Styled.Actions>

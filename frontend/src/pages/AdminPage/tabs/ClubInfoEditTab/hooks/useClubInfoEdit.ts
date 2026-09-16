@@ -7,6 +7,7 @@ import { useUpdateClubDetail } from '@/hooks/Queries/useClub';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { ClubDetail, SNSPlatform } from '@/types/club';
 import { validateSocialLink } from '@/utils/validateSocialLink';
+import { requestFeedbackPrompt } from '@/feedbackPrompt/feedbackPromptController';
 
 const DIVISION_LABELS: Record<string, string> = {
   중동: '중앙동아리',
@@ -162,6 +163,11 @@ const useClubInfoEdit = () => {
     updateClub(updatedData, {
       onSuccess: () => {
         alert('동아리 정보가 성공적으로 수정되었습니다.');
+        void requestFeedbackPrompt({
+          eventId: crypto.randomUUID(), triggerType: 'ADMIN_CLUB_INFO_UPDATED',
+          clubId: clubDetail.id, sourcePath: window.location.pathname,
+          accessToken: localStorage.getItem('accessToken') ?? undefined,
+        });
         setInitialValues({
           clubName,
           introduction,
