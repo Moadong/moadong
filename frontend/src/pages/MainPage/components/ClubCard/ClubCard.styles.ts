@@ -8,7 +8,7 @@ const CARD_STYLES = {
   },
   mobile: {
     borderRadius: '16px',
-    padding: '16px',
+    padding: '12px',
     gap: '8px',
   },
 } as const;

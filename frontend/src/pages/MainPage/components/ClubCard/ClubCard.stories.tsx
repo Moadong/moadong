@@ -29,7 +29,9 @@ const meta = {
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <Story />
+        <div style={{ width: 335 }}>
+          <Story />
+        </div>
       </MemoryRouter>
     ),
   ],
