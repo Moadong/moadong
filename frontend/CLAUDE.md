@@ -36,6 +36,10 @@ npm run storybook        # 포트 6006에서 Storybook 시작
 npm run build-storybook  # Storybook 빌드
 npm run chromatic        # Chromatic으로 시각적 테스트 배포
 
+# Figma 시안 대조
+npx dotenv -- npm run visual:figma          # 매핑된 컴포넌트를 시안과 대조 (Storybook이 6006에 떠 있어야 함)
+npx dotenv -- npm run visual:figma <필터>   # 매핑 이름 부분일치로 일부만
+
 # Storybook 사용 가이드 (공통 컴포넌트 수정 시)
 # - 개발 중: npm run storybook (dev 서버로 실시간 확인)
 # - 기존 스토리가 있는 컴포넌트 수정 후 PR 전: npm run build-storybook
@@ -72,6 +76,10 @@ npm run generate:sitemap # sitemap.xml 생성
 - `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
 - `VITE_KAKAO_JAVASCRIPT_KEY` - Kakao JavaScript 키
 - `VITE_NAVER_MAP_CLIENT_ID` - 네이버 지도 API 클라이언트 ID
+
+빌드에 들어가지 않는 스크립트 전용 변수도 같은 `.env`에 둔다 (`VITE_` 접두사가 없어 번들에 포함되지 않는다):
+
+- `FIGMA_TOKEN` - Figma 개인 액세스 토큰. 시안 대조 스크립트 전용 → [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md)
 
 ### 프로젝트 구조
 
@@ -148,6 +156,7 @@ Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 | 웹/웹뷰 통합 라우팅 | [`src/layouts/CLAUDE.md`](src/layouts/CLAUDE.md) |
 | 유틸리티·외부 SDK 초기화 | [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md) |
 | OG 태그 (`middleware.ts`) | [`docs/claude/og.md`](docs/claude/og.md) |
+| Figma 시안 ↔ Storybook 대조 | [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md) |
 
 ## Skill routing
 
