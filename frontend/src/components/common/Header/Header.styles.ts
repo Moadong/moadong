@@ -123,6 +123,24 @@ export const LogoButton = styled.button`
   }
 `;
 
+export const SubscriptionBellButton = styled.button`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  background: none;
+  cursor: pointer;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+`;
+
 export const AdminProfileContainer = styled.div`
   display: flex;
   gap: 20px;

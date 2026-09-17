@@ -9,9 +9,10 @@ import * as Styled from './PromotionCard.styles';
 
 interface PromotionCardProps {
   article: PromotionArticle;
+  index?: number;
 }
 
-const PromotionCard = ({ article }: PromotionCardProps) => {
+const PromotionCard = ({ article, index }: PromotionCardProps) => {
   const trackEvent = useMixpanelTrack();
   const handleLink = useNavigator();
   const dday = getDDay(article.eventStartDate, article.eventEndDate);
@@ -19,6 +20,7 @@ const PromotionCard = ({ article }: PromotionCardProps) => {
   const handleCardClick = () => {
     trackEvent(USER_EVENT.PROMOTION_CARD_CLICKED, {
       promotionId: article.id,
+      card_index: index,
     });
 
     handleLink(`/promotions/${article.id}`);

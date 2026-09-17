@@ -85,7 +85,6 @@ npm run generate:sitemap # sitemap.xml 생성
 - `src/pages/` - 라우트 기반 페이지 컴포넌트
 - `src/components/` ★ - 공용 UI 컴포넌트
 - `src/layouts/` ★ - 웹/웹뷰 통합 라우팅 레이아웃
-- `src/experiments/` ★ - A/B 테스트 실험 정의 및 관리
 - `src/styles/` ★ - 전역 스타일·테마·브레이크포인트
 - `src/constants/` ★ - 상수 관리 (queryKeys, storageKeys, status 등)
 - `src/utils/` ★ - 유틸리티 함수 + 외부 SDK 초기화
@@ -146,7 +145,6 @@ Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 | 공용 UI 컴포넌트·오버레이·Toast | [`src/components/CLAUDE.md`](src/components/CLAUDE.md) |
 | 상수 관리 | [`src/constants/CLAUDE.md`](src/constants/CLAUDE.md) |
 | UI·테마·브레이크포인트·날짜 | [`src/styles/CLAUDE.md`](src/styles/CLAUDE.md) |
-| A/B 테스트 실험 | [`src/experiments/CLAUDE.md`](src/experiments/CLAUDE.md) |
 | 웹/웹뷰 통합 라우팅 | [`src/layouts/CLAUDE.md`](src/layouts/CLAUDE.md) |
 | 유틸리티·외부 SDK 초기화 | [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md) |
 | OG 태그 (`middleware.ts`) | [`docs/claude/og.md`](docs/claude/og.md) |

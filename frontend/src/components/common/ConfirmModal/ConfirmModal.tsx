@@ -1,26 +1,28 @@
 import { useId } from 'react';
-import WarningIcon from '@/assets/images/icons/feedback/feedback_warning.svg?react';
+import ModalCheckIcon from '@/assets/images/icons/modal_check.svg?react';
+import ModalWarningIcon from '@/assets/images/icons/modal_warning.svg?react';
 import Modal from '@/components/common/Modal/Modal';
-import * as Styled from './FeedbackConfirmModal.styles';
+import * as Styled from './ConfirmModal.styles';
 
-interface FeedbackConfirmModalProps {
+interface ConfirmModalProps {
   isOpen: boolean;
+  onClose: () => void;
+  onConfirm: () => void;
   title: string;
   description: string;
   confirmLabel: string;
-  onConfirm: () => void;
-  onClose: () => void;
+  variant?: 'warning' | 'check';
 }
 
-const FeedbackConfirmModal = ({
+const ConfirmModal = ({
   isOpen,
+  onClose,
+  onConfirm,
   title,
   description,
   confirmLabel,
-  onConfirm,
-  onClose,
-}: FeedbackConfirmModalProps) => {
-  // 작성 화면은 나가기·전송 모달을 함께 들고 있어서 id가 겹치면 안 된다
+  variant = 'warning',
+}: ConfirmModalProps) => {
   const id = useId();
   const titleId = `${id}-title`;
   const descriptionId = `${id}-description`;
@@ -34,7 +36,11 @@ const FeedbackConfirmModal = ({
         aria-describedby={descriptionId}
       >
         <Styled.Body>
-          <WarningIcon width={24} height={24} aria-hidden />
+          {variant === 'check' ? (
+            <ModalCheckIcon width={24} height={24} aria-hidden />
+          ) : (
+            <ModalWarningIcon width={24} height={24} aria-hidden />
+          )}
           <Styled.Title id={titleId}>{title}</Styled.Title>
           <Styled.Description id={descriptionId}>
             {description}
@@ -53,4 +59,4 @@ const FeedbackConfirmModal = ({
   );
 };
 
-export default FeedbackConfirmModal;
+export default ConfirmModal;

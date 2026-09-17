@@ -1,5 +1,4 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import ClubIcon from '@/assets/images/icons/bottomNav/club.svg?react';
 import HomeIcon from '@/assets/images/icons/bottomNav/home.svg?react';
 import MenuIcon from '@/assets/images/icons/bottomNav/menu.svg?react';
 import PromotionIcon from '@/assets/images/icons/bottomNav/promotion.svg?react';
@@ -26,13 +25,6 @@ const HOME_TAB: BottomNavTab = {
   label: '홈',
   path: '/',
   icon: { type: 'vector', Component: HomeIcon },
-};
-
-const CLUBS_TAB: BottomNavTab = {
-  key: 'clubs',
-  label: '동아리',
-  path: '/clubs',
-  icon: { type: 'vector', Component: ClubIcon },
 };
 
 // 개편 홈은 구독 진입점을 헤더 알림 버튼으로 옮겼지만, 기존 홈에는 그게 없어
@@ -90,26 +82,18 @@ const renderIcon = (icon: TabIcon, active: boolean) => {
 };
 
 interface BottomNavigationProps {
-  /**
-   * 두 번째 탭을 동아리(`/clubs`)로 둘지. false면 구독 탭이 들어간다.
-   * 개편을 받지 않은 사용자(main_redesign control 등)는 홈이 곧 전체 목록이라
-   * 동아리 탭을 주면 treatment 전용 /clubs 화면으로 샌다.
-   */
-  showClubsTab?: boolean;
   /** 홍보 게시판에 확인하지 않은 새 글이 있는지 */
   hasPromotionNotification?: boolean;
 }
 
 const BottomNavigation = ({
-  showClubsTab = true,
   hasPromotionNotification = false,
 }: BottomNavigationProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
-  const secondTab = showClubsTab ? CLUBS_TAB : SUBSCRIPTIONS_TAB;
-  const tabs = [HOME_TAB, secondTab, ...COMMON_TABS];
+  const tabs = [HOME_TAB, SUBSCRIPTIONS_TAB, ...COMMON_TABS];
 
   const handleTabClick = (tab: BottomNavTab) => {
     trackEvent(USER_EVENT.BOTTOM_TAB_CLICKED, { tab: tab.key, path: tab.path });
