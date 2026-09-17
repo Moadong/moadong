@@ -1,15 +1,23 @@
 import { useEffect, useRef } from 'react';
+import Portal from '@/components/common/Portal/Portal';
 import { colors } from '@/styles/theme/colors';
-import Portal from '../Portal/Portal';
-import * as Styled from './Toast.styles';
+import * as Styled from './Snackbar.styles';
 
-const DEFAULT_DURATION = 3500;
+// 읽고 액션까지 눌러야 해서 토스트(3500ms)보다 길게 잡는다
+const DEFAULT_DURATION = 6000;
 const DEFAULT_BACKGROUND_COLOR = 'rgba(17, 17, 17, 0.85)';
 
-interface ToastProps {
+interface SnackbarAction {
+  label: string;
+  onClick: () => void;
+}
+
+interface SnackbarProps {
   isOpen: boolean;
   onClose: () => void;
   message: string;
+  /** 문구 옆에 렌더할 액션. 표면이 아니라 이 버튼만 눌린다 */
+  action: SnackbarAction;
   backgroundColor?: string;
   color?: string;
   duration?: number;
@@ -17,15 +25,16 @@ interface ToastProps {
   bottomOffset?: string;
 }
 
-const Toast = ({
+const Snackbar = ({
   isOpen,
   onClose,
   message,
+  action,
   backgroundColor = DEFAULT_BACKGROUND_COLOR,
   color = colors.base.white,
   duration = DEFAULT_DURATION,
   bottomOffset,
-}: ToastProps) => {
+}: SnackbarProps) => {
   const onCloseRef = useRef(onClose);
   useEffect(() => {
     onCloseRef.current = onClose;
@@ -42,7 +51,7 @@ const Toast = ({
 
   return (
     <Portal>
-      <Styled.ToastMessage
+      <Styled.SnackbarSurface
         role='status'
         $bottomOffset={bottomOffset}
         $backgroundColor={backgroundColor}
@@ -50,9 +59,12 @@ const Toast = ({
         $duration={duration}
       >
         {message}
-      </Styled.ToastMessage>
+        <Styled.SnackbarActionButton type='button' onClick={action.onClick}>
+          {action.label}
+        </Styled.SnackbarActionButton>
+      </Styled.SnackbarSurface>
     </Portal>
   );
 };
 
-export default Toast;
+export default Snackbar;

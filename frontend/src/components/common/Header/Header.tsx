@@ -1,5 +1,5 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import NotificationIcon from '@/assets/images/icons/notification_icon.svg';
+import NotificationIcon from '@/assets/images/icons/notification_icon_home.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import AdminProfile from '@/components/common/Header/admin/AdminProfile';

@@ -24,19 +24,19 @@ common/Toast/
 
 값을 직접 쓰지 말고 토큰을 쓴다.
 
-| 대상 | 토큰 |
-| --- | --- |
-| 색상 | `colors` (`@/styles/theme/colors`) |
-| 타이포 | `setTypography(typography.xxx)` (`@/styles/theme/typography`) |
-| 트랜지션 | `transitions.duration.*`, `transitions.easing.*` |
-| z-index | `Z_INDEX` (`@/styles/zIndex`) |
-| 반응형 | `media.*` (`@/styles/mediaQuery`) |
-| 헤더 높이 | `HEADER_HEIGHT` (`common/Header/Header.styles`) |
+| 대상      | 토큰                                                          |
+| --------- | ------------------------------------------------------------- |
+| 색상      | `colors` (`@/styles/theme/colors`)                            |
+| 타이포    | `setTypography(typography.xxx)` (`@/styles/theme/typography`) |
+| 트랜지션  | `transitions.duration.*`, `transitions.easing.*`              |
+| z-index   | `Z_INDEX` (`@/styles/zIndex`)                                 |
+| 반응형    | `media.*` (`@/styles/mediaQuery`)                             |
+| 헤더 높이 | `HEADER_HEIGHT` (`common/Header/Header.styles`)               |
 
 - 반투명 색상은 예외다. 알파 색상 토큰이나 변환 유틸이 없어서 `rgba()` 리터럴을 그대로 쓴다 (`Modal`, `Toast` 동일).
 - 브레이크포인트는 **max-width 기준**이라 데스크탑 스타일을 먼저 쓰고 `media.tablet` → `media.mobile` 순으로 좁혀간다.
 
-## 오버레이 컴포넌트 (Modal, Toast)
+## 오버레이 컴포넌트 (Modal, Toast, Snackbar)
 
 화면 위에 띄우는 컴포넌트는 아래 규약을 공유한다.
 
@@ -59,14 +59,15 @@ const [isOpen, setIsOpen] = useState(true);
 />;
 ```
 
-| prop | 필수 | 기본값 | 설명 |
-| --- | --- | --- | --- |
-| `isOpen` | ✅ | - | 노출 여부 |
-| `onClose` | ✅ | - | `duration` 경과 시 호출. 호출부가 `isOpen`을 내린다 |
-| `message` | ✅ | - | 표시할 문구 |
-| `backgroundColor` | | `rgba(17,17,17,0.85)` | 배경색 |
-| `color` | | `colors.base.white` | 글자색 |
-| `duration` | | `3500` | 노출 시간(ms) |
+| prop              | 필수 | 기본값                | 설명                                                                                                                                   |
+| ----------------- | ---- | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------- |
+| `isOpen`          | ✅   | -                     | 노출 여부                                                                                                                              |
+| `onClose`         | ✅   | -                     | `duration` 경과 시 호출. 호출부가 `isOpen`을 내린다                                                                                    |
+| `message`         | ✅   | -                     | 표시할 문구                                                                                                                            |
+| `backgroundColor` |      | `rgba(17,17,17,0.85)` | 배경색                                                                                                                                 |
+| `color`           |      | `colors.base.white`   | 글자색                                                                                                                                 |
+| `duration`        |      | `3500`                | 노출 시간(ms)                                                                                                                          |
+| `bottomOffset`    |      | `24px`                | 모바일·태블릿에서 아래로부터의 거리(CSS length). 하단 고정 버튼 위로 띄울 때 `calc(...px + env(safe-area-inset-bottom))` 형태로 넘긴다 |
 
 - **위치가 브레이크포인트별로 다르다.**
   - 701px 초과: 헤더 아래 (`top: HEADER_HEIGHT.desktop + 16px`), 위에서 내려오는 애니메이션
@@ -74,5 +75,35 @@ const [isOpen, setIsOpen] = useState(true);
   - 헤더를 숨기는 화면(`<Header showOn={['desktop', 'laptop']} />`)이 많아 좁은 화면에서 상단에 두면 제목·본문을 가린다. 그래서 하단으로 붙인다.
   - ⚠️ `AppLayout` 하위 페이지(`/`, `/promotions`, `/subscriptions`, `/menu` 등)는 바텀네비가 있어 좁은 화면에서 겹친다. 해당 페이지에서 토스트를 쓰게 되면 오프셋 처리가 필요하다.
 - `pointer-events: none`이라 사용자 입력을 가리지 않고, `role="status"`로 스크린리더에 읽힌다.
+- **이어지는 동작이 있으면 Toast가 아니라 [Snackbar](#snackbar)다.** 토스트 표면을 `<button>`으로 바꾸면 안 된다. 한 요소에 `role="status"`와 버튼 의미를 같이 줄 수 없어, 보조기술에서 버튼 의미가 `status`에 덮여 대화형 컨트롤로 노출되지 않는다.
 - 애니메이션은 `duration` 하나로 페이드인·유지·페이드아웃을 모두 처리한다. `duration` 전에 호출부가 강제로 닫으면 퇴장 애니메이션 없이 사라진다.
 - 상태를 호출부의 `useState`로 들고 있어서 **언마운트·페이지 이동 시 사라진다.** 컴포넌트 밖(훅, react-query `onError`)에서 띄우거나 `navigate` 이후까지 유지해야 하면 전역 스토어(`src/store/`)가 필요하다.
+
+## Snackbar
+
+이어지는 동작이 있는 알림. 문구 옆의 액션 버튼 하나만 누를 수 있다.
+
+```tsx
+<Snackbar
+  isOpen={isOpen}
+  onClose={() => setIsOpen(false)}
+  message='알림 권한을 켜 주세요'
+  action={{ label: '설정에서 켜기', onClick: openSettings }}
+/>;
+```
+
+| prop              | 필수 | 기본값                | 설명                                                                  |
+| ----------------- | ---- | --------------------- | --------------------------------------------------------------------- |
+| `isOpen`          | ✅   | -                     | 노출 여부                                                             |
+| `onClose`         | ✅   | -                     | `duration` 경과 시 호출. 호출부가 `isOpen`을 내린다                   |
+| `message`         | ✅   | -                     | 표시할 문구                                                           |
+| `action`          | ✅   | -                     | `{ label, onClick }`. 문구 옆 버튼                                    |
+| `backgroundColor` |      | `rgba(17,17,17,0.85)` | 배경색                                                                |
+| `color`           |      | `colors.base.white`   | 글자색                                                                |
+| `duration`        |      | `6000`                | 노출 시간(ms). 읽고 누를 시간이 필요해 Toast(3500)보다 길다           |
+| `bottomOffset`    |      | `24px`                | Toast와 동일                                                          |
+
+- **Toast와의 차이는 액션 하나뿐이다.** 위치·애니메이션·브레이크포인트 규칙은 `Snackbar.styles.ts`가 `ToastMessage`를 `styled()`로 이어받아 그대로 쓴다. 토스트 위치를 고치면 스낵바도 같이 따라간다.
+- **표면은 눌리지 않는다.** 컨테이너는 `role="status"` + `pointer-events: none`을 물려받고, 액션 버튼만 `pointer-events: auto`로 되살린다. 표면 전체를 누르게 만들면 위 Toast 항목의 `role` 충돌이 그대로 재현된다.
+- `action`이 필수라 액션 없는 스낵바는 타입에서 막힌다. 액션이 없으면 Toast를 쓴다.
+- ⚠️ 자동으로 사라지는 액션은 WCAG 2.2.1(Timing Adjustable) 회색지대다. 놓치면 곤란한 동작은 스낵바에 담지 않는다.
