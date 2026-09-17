@@ -5,6 +5,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.analytics.config.MixpanelProperties;
 import moadong.analytics.payload.dto.MixpanelRawEvent;
+import moadong.analytics.support.FunnelDefinitions;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.springframework.http.HttpEntity;
@@ -21,17 +22,24 @@ import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.stream.Stream;
 
 @Slf4j
 @Component
 @RequiredArgsConstructor
 public class MixpanelExportClient {
 
-    private static final List<String> BACKFILL_EVENTS = List.of(
+    private static final List<String> CLUB_STATISTICS_EVENTS = List.of(
             "ClubDetailPage Visited",
             "ClubDetailPage Duration",
             "Search Executed"
     );
+
+    /** 동아리 통계 이벤트 + 운영진 퍼널 이벤트. 중복 이름(ClubDetailPage Visited)은 한 번만 요청한다. */
+    private static final List<String> BACKFILL_EVENTS = Stream.concat(
+            CLUB_STATISTICS_EVENTS.stream(),
+            FunnelDefinitions.ALL_EVENT_NAMES.stream()
+    ).distinct().toList();
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
