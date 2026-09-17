@@ -4,6 +4,7 @@ import { useTheme } from 'styled-components';
 import BackChevronIcon from '@/assets/images/icons/back_chevron_icon.svg?react';
 import NotificationIcon from '@/assets/images/icons/notification_icon.svg?react';
 import { FIXED_BOTTOM_BUTTON_AREA_HEIGHT } from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea.styles';
+import Snackbar from '@/components/common/Snackbar/Snackbar';
 import Spinner from '@/components/common/Spinner/Spinner';
 import Toast from '@/components/common/Toast/Toast';
 import { PAGE_NAME, USER_EVENT } from '@/constants/eventName';
@@ -21,11 +22,12 @@ import {
 import * as Styled from './ClubDetailTopBar.styles';
 
 export const SUBSCRIBED_TOAST_MESSAGE = '구독이 완료되었어요';
-export const PERMISSION_TOAST_MESSAGE = '알림 권한을 켜 주세요';
+export const PERMISSION_SNACKBAR_MESSAGE = '알림 권한을 켜 주세요';
+export const PERMISSION_SNACKBAR_ACTION_LABEL = '설정에서 켜기';
 
-// 상세는 하단에 지원하기 버튼이 고정돼 있어 토스트를 그 위로 띄운다
-const TOAST_GAP_ABOVE_BUTTON = 16;
-const TOAST_BOTTOM_OFFSET = `calc(${FIXED_BOTTOM_BUTTON_AREA_HEIGHT + TOAST_GAP_ABOVE_BUTTON}px + env(safe-area-inset-bottom))`;
+// 상세는 하단에 지원하기 버튼이 고정돼 있어 토스트·스낵바를 그 위로 띄운다
+const GAP_ABOVE_FIXED_BUTTON = 16;
+const OVERLAY_BOTTOM_OFFSET = `calc(${FIXED_BOTTOM_BUTTON_AREA_HEIGHT + GAP_ABOVE_FIXED_BUTTON}px + env(safe-area-inset-bottom))`;
 
 interface TabItem {
   key: string;
@@ -59,7 +61,7 @@ const ClubDetailTopBar = ({
   const trackEvent = useMixpanelTrack();
   const [isNotificationActive, setIsNotificationActive] =
     useState(initialIsSubscribed);
-  const [toastMessage, setToastMessage] = useState<string | null>(null);
+  const [noticeMessage, setNoticeMessage] = useState<string | null>(null);
 
   useEffect(() => {
     const handleMessage = (event: MessageEvent) => {
@@ -82,9 +84,9 @@ const ClubDetailTopBar = ({
         setIsNotificationActive(subscribed);
         // 앱이 실제로 처리한 결과에만 반응한다. 권한이 막혀 있으면 "완료"라고 말하지 않는다.
         if (needsPermission) {
-          setToastMessage(PERMISSION_TOAST_MESSAGE);
+          setNoticeMessage(PERMISSION_SNACKBAR_MESSAGE);
         } else if (subscribed) {
-          setToastMessage(SUBSCRIBED_TOAST_MESSAGE);
+          setNoticeMessage(SUBSCRIBED_TOAST_MESSAGE);
         }
       }
     };
@@ -119,9 +121,9 @@ const ClubDetailTopBar = ({
     });
   };
 
-  // 권한 안내 토스트만 탭할 수 있다. 완료 토스트는 이어지는 동작이 없다.
-  const handlePermissionToastClick = () => {
-    setToastMessage(null);
+  // 권한 안내만 스낵바로 띄운다. 완료 알림은 이어지는 동작이 없어 토스트다.
+  const handleOpenSettingsClick = () => {
+    setNoticeMessage(null);
     requestOpenAppSettings();
   };
 
@@ -190,15 +192,20 @@ const ClubDetailTopBar = ({
         )}
       </Styled.TopBarWrapper>
       <Toast
-        isOpen={toastMessage !== null}
-        onClose={() => setToastMessage(null)}
-        message={toastMessage ?? ''}
-        bottomOffset={TOAST_BOTTOM_OFFSET}
-        onClick={
-          toastMessage === PERMISSION_TOAST_MESSAGE
-            ? handlePermissionToastClick
-            : undefined
-        }
+        isOpen={noticeMessage === SUBSCRIBED_TOAST_MESSAGE}
+        onClose={() => setNoticeMessage(null)}
+        message={SUBSCRIBED_TOAST_MESSAGE}
+        bottomOffset={OVERLAY_BOTTOM_OFFSET}
+      />
+      <Snackbar
+        isOpen={noticeMessage === PERMISSION_SNACKBAR_MESSAGE}
+        onClose={() => setNoticeMessage(null)}
+        message={PERMISSION_SNACKBAR_MESSAGE}
+        action={{
+          label: PERMISSION_SNACKBAR_ACTION_LABEL,
+          onClick: handleOpenSettingsClick,
+        }}
+        bottomOffset={OVERLAY_BOTTOM_OFFSET}
       />
     </>
   );

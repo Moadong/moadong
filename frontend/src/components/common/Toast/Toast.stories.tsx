@@ -35,10 +35,6 @@ const meta = {
       control: 'number',
       description: '토스트가 유지되는 시간(ms)입니다.',
     },
-    onClick: {
-      action: 'clicked',
-      description: '지정하면 토스트를 탭할 수 있게 됩니다.',
-    },
     bottomOffset: {
       control: 'text',
       description:
@@ -84,17 +80,6 @@ export const CustomColor: Story = {
     message: '지원서가 제출되었어요.',
     backgroundColor: colors.primary[900],
     color: colors.base.white,
-  },
-  render: (args) => <ToastTrigger {...args} />,
-};
-
-// 탭하면 동작이 이어지는 케이스(예: 알림 권한 안내 → 설정 열기)
-export const Tappable: Story = {
-  args: {
-    isOpen: false,
-    onClose: () => {},
-    onClick: () => {},
-    message: '알림 권한을 켜 주세요',
   },
   render: (args) => <ToastTrigger {...args} />,
 };

@@ -1,11 +1,12 @@
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
 import { theme } from '@/styles/theme';
 import ClubDetailTopBar, {
-  PERMISSION_TOAST_MESSAGE,
+  PERMISSION_SNACKBAR_ACTION_LABEL,
+  PERMISSION_SNACKBAR_MESSAGE,
   SUBSCRIBED_TOAST_MESSAGE,
 } from './ClubDetailTopBar';
 
@@ -79,33 +80,49 @@ describe('구독 중이 아닐 때', () => {
     );
   });
 
-  it('앱이 권한 부족을 회신하면 권한 안내 토스트를 띄운다', () => {
+  it('앱이 권한 부족을 회신하면 권한 안내 스낵바를 띄운다', () => {
     renderTopBar(false);
 
     replyFromApp(false, true);
 
     expect(screen.getByRole('status')).toHaveTextContent(
-      PERMISSION_TOAST_MESSAGE,
+      PERMISSION_SNACKBAR_MESSAGE,
     );
   });
 
-  it('권한 안내 토스트를 탭하면 앱에 설정 열기를 요청하고 토스트를 닫는다', async () => {
+  it('권한 안내 스낵바는 표면이 아니라 안에 든 버튼이 액션을 갖는다', () => {
+    renderTopBar(false);
+
+    replyFromApp(false, true);
+
+    const toast = screen.getByRole('status');
+    const action = screen.getByRole('button', {
+      name: PERMISSION_SNACKBAR_ACTION_LABEL,
+    });
+
+    expect(toast).not.toBe(action);
+    expect(toast).toContainElement(action);
+  });
+
+  it('권한 안내 스낵바의 액션을 누르면 앱에 설정 화면 열기를 요청하고 스낵바를 닫는다', async () => {
     renderTopBar(false);
     replyFromApp(false, true);
 
-    await userEvent.click(screen.getByRole('status'));
+    await userEvent.click(
+      screen.getByRole('button', { name: PERMISSION_SNACKBAR_ACTION_LABEL }),
+    );
 
     expect(sentTypes()).toEqual(['OPEN_APP_SETTINGS']);
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
 
-  it('완료 토스트는 탭할 수 없다', () => {
+  it('완료 토스트에는 액션이 없고 표면은 입력을 가리지 않는다', () => {
     renderTopBar(false);
     replyFromApp(true);
 
     const toast = screen.getByRole('status');
 
-    expect(toast.tagName).not.toBe('BUTTON');
+    expect(within(toast).queryByRole('button')).not.toBeInTheDocument();
     expect(getComputedStyle(toast).pointerEvents).toBe('none');
   });
 });

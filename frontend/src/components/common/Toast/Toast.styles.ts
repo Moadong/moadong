@@ -28,7 +28,6 @@ export const ToastMessage = styled.div<{
   $backgroundColor: string;
   $color: string;
   $duration: number;
-  $clickable: boolean;
   $bottomOffset?: string;
 }>`
   position: fixed;
@@ -37,16 +36,13 @@ export const ToastMessage = styled.div<{
   z-index: ${Z_INDEX.toast};
   max-width: calc(100% - 40px);
   padding: 12px 20px;
-  border: none;
   border-radius: 999px;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   color: ${({ $color }) => $color};
   ${setTypography(typography.paragraph.p5)};
   letter-spacing: -0.2px;
   text-align: center;
-  font-family: inherit;
-  pointer-events: ${({ $clickable }) => ($clickable ? 'auto' : 'none')};
-  cursor: ${({ $clickable }) => ($clickable ? 'pointer' : 'default')};
+  pointer-events: none;
   animation: ${fadeInOutFromTop} ${({ $duration }) => $duration}ms
     ${transitions.easing.easeInOut} forwards;
 
