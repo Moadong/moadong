@@ -86,7 +86,7 @@ describe('validatePromotionForm', () => {
   it.each<[keyof PromotionFormValues, unknown, string]>([
     ['title', '   ', '제목을 입력해주세요.'],
     ['location', '', '행사 장소를 입력해주세요.'],
-    ['coordinates', null, '지도에 표시할 건물을 선택해주세요.'],
+    ['coordinates', null, '지도에서 행사 위치를 선택해주세요.'],
     ['eventStart', null, '행사 기간을 선택해주세요.'],
     ['eventEnd', null, '행사 기간을 선택해주세요.'],
     ['description', '', '행사 설명을 입력해주세요.'],

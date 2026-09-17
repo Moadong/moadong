@@ -41,7 +41,7 @@ export interface BuildingOption {
 const DONG_PREFIX = /^[A-Za-z]동/;
 
 /**
- * 관리자가 위도·경도를 직접 입력하지 않도록 실제로 관리 중인 위치 목록에서 고른다.
+ * 자주 쓰는 건물로 지도를 빠르게 옮기기 위한 목록. 최종 좌표는 지도에서 정한다.
  * 건물명이 아니라 좌표 기준으로 묶는다. 한솔관(E16)처럼 한 건물에 좌표가 둘인 곳이
  * 있어서 건물명으로 묶으면 뒤쪽 좌표가 통째로 사라진다.
  * 건물명이 겹치는 좌표끼리는 동아리방 표기의 동으로 구분한다.
@@ -129,7 +129,7 @@ export const validatePromotionForm = (
   if (!values.location.trim()) return '행사 장소를 입력해주세요.';
   if (values.location.trim().length > PROMOTION_LOCATION_MAX)
     return `행사 장소는 ${PROMOTION_LOCATION_MAX}자 이내로 입력해주세요.`;
-  if (!values.coordinates) return '지도에 표시할 건물을 선택해주세요.';
+  if (!values.coordinates) return '지도에서 행사 위치를 선택해주세요.';
   if (!values.eventStart || !values.eventEnd)
     return '행사 기간을 선택해주세요.';
   if (values.eventEnd < values.eventStart)

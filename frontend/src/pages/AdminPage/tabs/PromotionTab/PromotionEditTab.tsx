@@ -10,7 +10,7 @@ import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/Fix
 import Spinner from '@/components/common/Spinner/Spinner';
 import Toast from '@/components/common/Toast/Toast';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
-import NaverMap from '@/components/map/NaverMap/NaverMap';
+import MapLocationPicker from '@/components/map/MapLocationPicker/MapLocationPicker';
 import {
   PROMOTION_DESCRIPTION_MAX,
   PROMOTION_LOCATION_MAX,
@@ -42,9 +42,7 @@ import {
   toDateTimeLocalValue,
 } from './utils/promotionForm';
 
-const CUSTOM_BUILDING_VALUE = '__custom__';
-
-/** 건물을 고르기 전에도 지도를 보여주기 위한 기준 좌표. 마커는 찍지 않는다 */
+/** 위치를 고르기 전에도 지도를 보여주기 위한 기준 좌표 */
 const DEFAULT_MAP_CENTER = BUILDING_OPTIONS[0].coordinates;
 
 const PromotionEditTab = () => {
@@ -92,13 +90,10 @@ const PromotionEditTab = () => {
 
   const isEdit = Boolean(articleId);
   const isFormDisabled = !isApproved || form.isSaving;
-  const selectedBuilding = findBuildingByCoordinates(values.coordinates);
-  // 개발자가 좌표를 직접 넣은 글은 건물 목록과 안 맞을 수 있다. 그 좌표는 유지하고 표시만 따로 한다.
-  const buildingSelectValue = selectedBuilding
-    ? selectedBuilding.value
-    : values.coordinates
-      ? CUSTOM_BUILDING_VALUE
-      : '';
+  // 이 select는 지도를 건물로 옮기는 이동 컨트롤이다. 최종 좌표는 지도에서 정하므로
+  // 지도로 맞춘 좌표가 목록과 안 맞으면 그냥 선택 없음으로 돌아간다.
+  const buildingSelectValue =
+    findBuildingByCoordinates(values.coordinates)?.value ?? '';
 
   const handleBuildingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const option = BUILDING_OPTIONS.find((o) => o.value === e.target.value);
@@ -219,13 +214,8 @@ const PromotionEditTab = () => {
             disabled={isFormDisabled}
           >
             <option value='' disabled>
-              건물을 선택해주세요
+              자주 쓰는 건물로 이동
             </option>
-            {buildingSelectValue === CUSTOM_BUILDING_VALUE && (
-              <option value={CUSTOM_BUILDING_VALUE} disabled>
-                직접 지정된 위치
-              </option>
-            )}
             {BUILDING_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
@@ -235,12 +225,15 @@ const PromotionEditTab = () => {
           <Styled.SelectChevron />
         </Styled.SelectWrapper>
         <Styled.HelperText>
-          선택한 건물 위치가 홍보글 상세의 지도에 표시돼요.
+          지도를 움직여 가운데 핀을 행사 위치에 맞춰주세요. 건물을 고르면 그
+          위치로 지도가 이동해요.
         </Styled.HelperText>
         <Styled.MapPreview>
-          <NaverMap
-            location={values.coordinates ?? DEFAULT_MAP_CENTER}
-            showMarker={Boolean(values.coordinates)}
+          <MapLocationPicker
+            value={values.coordinates}
+            fallbackCenter={DEFAULT_MAP_CENTER}
+            disabled={isFormDisabled}
+            onChange={(coordinates) => setField('coordinates', coordinates)}
           />
         </Styled.MapPreview>
       </div>
