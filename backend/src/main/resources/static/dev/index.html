@@ -116,6 +116,20 @@
     .copy-icon-btn { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 auto; width: 28px; height: 28px; margin: 0; padding: 0; border-radius: 6px; color: #2563eb; background: #eff6ff; border-color: #bfdbfe; font-size: 0.9rem; }
     .copy-icon-btn:hover:not(:disabled) { background: #dbeafe; }
     .section-head { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 12px; margin-bottom: 12px; }
+    .funnel-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+    .funnel-presets button { margin: 0; }
+    .funnel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; margin-top: 16px; }
+    .funnel-card { border: 1px solid #e5e7eb; border-radius: 8px; padding: 16px; background: #fff; }
+    .funnel-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+    .funnel-card-head h3 { margin: 0; font-size: 1rem; }
+    .funnel-card-head .funnel-overall { color: #2563eb; font-weight: 600; white-space: nowrap; }
+    .funnel-card table { font-size: 0.85rem; }
+    .funnel-card th, .funnel-card td { padding: 6px 8px; }
+    .funnel-card td.num { text-align: right; white-space: nowrap; }
+    .funnel-card td.drop { text-align: right; white-space: nowrap; color: #dc2626; }
+    .funnel-bar { height: 8px; background: #eff6ff; border-radius: 4px; overflow: hidden; min-width: 80px; }
+    .funnel-bar > span { display: block; height: 100%; background: #2563eb; }
+    .funnel-empty { color: #666; font-size: 0.9rem; margin-top: 12px; }
     .section-head h2 { margin: 0; }
     .section-head-actions { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
     .banner-toolbar { display: flex; justify-content: space-between; align-items: center; gap: 12px; flex-wrap: wrap; margin-bottom: 12px; }
@@ -288,6 +302,7 @@
         <a href="#fcm">FCM 알림</a>
         <a href="#statistics-backfill">통계 Backfill</a>
         <a href="#conversion-batch">이미지 변환 배치</a>
+        <a href="#funnel-dashboard">퍼널 이탈율</a>
       </nav>
       <div class="sidebar-footer">
         <div id="headerStatus" class="header-status hidden">
@@ -832,6 +847,31 @@
         </a>
       </div>
     </section>
+
+    <section id="funnel-dashboard" class="hidden">
+      <h2>퍼널 이탈율</h2>
+      <p class="sub">Mixpanel에서 매일 04:00에 수집한 전날 이벤트로 퍼널별 단계 고유 사용자 수와 전환율을 봅니다. 같은 사용자가 이전 단계 이후 24시간 안에 다음 단계를 해야 전환으로 셉니다. 빠진 날짜는 통계 Backfill로 메우세요.</p>
+      <div class="funnel-presets">
+        <button type="button" class="funnel-preset" data-days="7">최근 7일</button>
+        <button type="button" class="funnel-preset" data-days="14">최근 14일</button>
+        <button type="button" class="funnel-preset" data-days="30">최근 30일</button>
+      </div>
+      <div class="form-grid">
+        <div class="form-row">
+          <label for="funnelFrom">시작일</label>
+          <input id="funnelFrom" type="date">
+        </div>
+        <div class="form-row">
+          <label for="funnelTo">종료일</label>
+          <input id="funnelTo" type="date">
+        </div>
+      </div>
+      <button type="button" id="btnFunnelLoad">조회</button>
+      <div id="funnelMessage" class="message-box hidden"></div>
+      <div id="funnelMissingBanner" class="banner warn hidden" style="margin-top:12px;"></div>
+      <div id="funnelCards" class="funnel-grid"></div>
+      <div id="funnelScroll"></div>
+    </section>
       </main>
     </div>
   </div>
@@ -845,7 +885,7 @@
     const DEFAULT_PROMOTION_MAP_CENTER = Object.freeze({ latitude: 35.2338, longitude: 129.0826 });
     const DEFAULT_PROMOTION_MAP_ZOOM = 4;
     const PROMOTION_FORM_IDS = ['promotionClubId', 'promotionTitle', 'promotionLocation', 'promotionEventStartDate', 'promotionEventEndDate', 'promotionDescription', 'promotionImages'];
-    const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'feedback', 'banner', 'fcm', 'statistics-backfill', 'conversion-batch'];
+    const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'feedback', 'banner', 'fcm', 'statistics-backfill', 'conversion-batch', 'funnel-dashboard'];
     const FEEDBACK_TYPE_LABELS = { BUG: '문제 신고', FEATURE: '기능 요청', QUESTION: '문의', CHEER: '응원' };
     const FEEDBACK_STATUS_LABELS = { WAITING: '답장 대기', IN_PROGRESS: '확인 중', REPLIED: '답장 완료' };
     const LETTER_CATEGORY_LABELS = { REPLY: '답장', UPDATE: '업데이트', STORY: '이야기' };
@@ -895,6 +935,8 @@
     let promotionLocationCandidates = [];
     let promotionSelectedCandidateKey = '';
     let promotionLocationResolvedAddress = '';
+    let funnelHasLoaded = false;
+    let funnelIsLoading = false;
 
     function getToken() { return sessionStorage.getItem('devPortalToken') || ''; }
     function setToken(t) { sessionStorage.setItem('devPortalToken', t); }
@@ -931,6 +973,7 @@
       if (sectionId === 'feedback') loadFeedbackIfVisible();
       if (sectionId === 'banner') loadBannerIfVisible();
       if (sectionId === 'fcm') loadFcmTokensIfVisible();
+      if (sectionId === 'funnel-dashboard') loadFunnelDashboardIfVisible();
     }
 
     function showActivePortalSection() {
@@ -973,6 +1016,7 @@
       document.getElementById('fcm').classList.toggle('hidden', true);
       document.getElementById('statistics-backfill').classList.toggle('hidden', true);
       document.getElementById('conversion-batch').classList.toggle('hidden', true);
+      document.getElementById('funnel-dashboard').classList.toggle('hidden', true);
       const headerStatus = document.getElementById('headerStatus');
       const headerUserId = document.getElementById('headerUserId');
       if (show) {
@@ -4602,6 +4646,138 @@
         btn.disabled = false;
       }
     };
+
+    function toDateInputValue(date) {
+      const y = date.getFullYear();
+      const m = String(date.getMonth() + 1).padStart(2, '0');
+      const d = String(date.getDate()).padStart(2, '0');
+      return y + '-' + m + '-' + d;
+    }
+
+    // 오늘 데이터는 다음날 04:00에 수집되므로 프리셋 종료일은 어제로 잡는다.
+    function applyFunnelPreset(days) {
+      const to = new Date();
+      to.setDate(to.getDate() - 1);
+      const from = new Date(to);
+      from.setDate(to.getDate() - (days - 1));
+      document.getElementById('funnelFrom').value = toDateInputValue(from);
+      document.getElementById('funnelTo').value = toDateInputValue(to);
+    }
+
+    function formatRate(rate) {
+      if (rate === null || rate === undefined) return '-';
+      return (rate * 100).toFixed(1) + '%';
+    }
+
+    function formatDropRate(rate) {
+      if (rate === null || rate === undefined) return '-';
+      return (Math.max(0, 1 - rate) * 100).toFixed(1) + '%';
+    }
+
+    function renderFunnelCard(funnel) {
+      const baseUsers = funnel.steps.length ? funnel.steps[0].users : 0;
+      const rows = funnel.steps.map((step, index) => {
+        const conversion = index === 0 ? null : (funnel.conversions[index - 1] || {}).rate;
+        const width = baseUsers > 0 ? Math.round((step.users / baseUsers) * 100) : 0;
+        return '<tr>'
+          + '<td>' + escapeHtml(step.name) + '</td>'
+          + '<td class="num">' + step.users.toLocaleString() + '</td>'
+          + '<td class="num">' + (index === 0 ? '-' : formatRate(conversion)) + '</td>'
+          + '<td class="drop">' + (index === 0 ? '-' : formatDropRate(conversion)) + '</td>'
+          + '<td><div class="funnel-bar"><span style="width:' + width + '%"></span></div></td>'
+          + '</tr>';
+      }).join('');
+      return '<div class="funnel-card">'
+        + '<div class="funnel-card-head"><h3>' + escapeHtml(funnel.name) + '</h3>'
+        + '<span class="funnel-overall">전체 ' + formatRate(funnel.overallRate) + '</span></div>'
+        + '<div class="table-wrap" style="margin-top:0;"><table><thead><tr><th>단계</th><th>고유 사용자</th><th>전환율</th><th>이탈율</th><th></th></tr></thead>'
+        + '<tbody>' + rows + '</tbody></table></div>'
+        + '</div>';
+    }
+
+    function renderScrollDepths(scrollDepths) {
+      const container = document.getElementById('funnelScroll');
+      if (!scrollDepths.length) {
+        container.innerHTML = '<div class="funnel-card" style="margin-top:16px;"><div class="funnel-card-head"><h3>페이지별 스크롤 도달</h3></div><p class="funnel-empty">기간 내 Scroll Depth Reached 이벤트가 없습니다.</p></div>';
+        return;
+      }
+      const rows = scrollDepths.map((item) => {
+        const cells = item.depths.map((depth) => {
+          const rate = depth.percent === 25 ? '' : ' (' + formatRate(depth.rateFrom25) + ')';
+          return '<td class="num">' + depth.users.toLocaleString() + escapeHtml(rate) + '</td>';
+        }).join('');
+        return '<tr><td>' + escapeHtml(item.page) + '</td>' + cells + '</tr>';
+      }).join('');
+      container.innerHTML = '<div class="funnel-card" style="margin-top:16px;">'
+        + '<div class="funnel-card-head"><h3>페이지별 스크롤 도달</h3><span class="funnel-overall">고유 사용자 (25% 대비)</span></div>'
+        + '<div class="table-wrap"><table><thead><tr><th>페이지</th><th>25%</th><th>50%</th><th>75%</th><th>100%</th></tr></thead>'
+        + '<tbody>' + rows + '</tbody></table></div></div>';
+    }
+
+    function renderFunnelDashboard(data) {
+      const banner = document.getElementById('funnelMissingBanner');
+      const missing = data.missingDates || [];
+      if (missing.length) {
+        banner.textContent = '수집 안 됨: 요청 ' + data.requestedDays + '일 중 ' + missing.length + '일 ('
+          + missing.join(', ') + '). 이 구간은 0이 아니라 데이터가 없는 것입니다. 통계 Backfill로 메우세요.';
+        banner.classList.remove('hidden');
+      } else {
+        banner.classList.add('hidden');
+      }
+      document.getElementById('funnelCards').innerHTML = (data.funnels || []).map(renderFunnelCard).join('');
+      renderScrollDepths(data.scrollDepths || []);
+    }
+
+    async function loadFunnelDashboard() {
+      const from = document.getElementById('funnelFrom').value;
+      const to = document.getElementById('funnelTo').value;
+      const btn = document.getElementById('btnFunnelLoad');
+      const messageEl = document.getElementById('funnelMessage');
+      messageEl.classList.add('hidden');
+      if (!from || !to) {
+        setMessageBox('funnelMessage', false, '시작일과 종료일을 모두 입력하세요.');
+        return;
+      }
+      if (funnelIsLoading) return;
+      funnelIsLoading = true;
+      btn.disabled = true;
+      btn.textContent = '조회 중...';
+      try {
+        const query = '?from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to);
+        const res = await fetch(API_BASE + '/api/admin/statistics/funnels' + query, { headers: headers() });
+        const response = await readJsonOrEmpty(res);
+        if (res.status === 403) {
+          setMessageBox('funnelMessage', false, '개발자 계정으로 로그인하세요.');
+          return;
+        }
+        if (!res.ok) {
+          setMessageBox('funnelMessage', false, response.message || '조회 실패 (HTTP ' + res.status + ')');
+          return;
+        }
+        renderFunnelDashboard(response.data || {});
+        funnelHasLoaded = true;
+      } catch (e) {
+        setMessageBox('funnelMessage', false, e.message || '조회 요청 실패');
+      } finally {
+        funnelIsLoading = false;
+        btn.disabled = false;
+        btn.textContent = '조회';
+      }
+    }
+
+    function loadFunnelDashboardIfVisible() {
+      if (funnelHasLoaded || funnelIsLoading) return;
+      if (!document.getElementById('funnelFrom').value) applyFunnelPreset(7);
+      loadFunnelDashboard();
+    }
+
+    document.querySelectorAll('.funnel-preset').forEach((button) => {
+      button.onclick = () => {
+        applyFunnelPreset(Number(button.dataset.days));
+        loadFunnelDashboard();
+      };
+    });
+    document.getElementById('btnFunnelLoad').onclick = loadFunnelDashboard;
 
   </script>
 </body>
