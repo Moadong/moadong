@@ -27,10 +27,9 @@ const mockDevice = {
   isDesktop: true,
 };
 jest.mock('@/hooks/useDevice', () => () => mockDevice);
-jest.mock(
-  '@/components/map/MapLocationPicker/MapLocationPicker',
-  () => () => <div />,
-);
+jest.mock('@/components/map/MapLocationPicker/MapLocationPicker', () => () => (
+  <div />
+));
 // react-datepicker의 css import를 jest가 파싱하지 못해 통째로 대체한다
 jest.mock(
   '@/pages/AdminPage/tabs/RecruitEditTab/components/DateTimeRangePicker/DateTimeRangePicker',
