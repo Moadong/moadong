@@ -18,7 +18,7 @@ common/Toast/
 
 - 스타일은 `* as Styled`로 import: `import * as Styled from './Toast.styles'`
 - styled-components에 넘기는 커스텀 prop은 **`$` 접두사(transient prop)**. DOM에 새어나가지 않는다. 예: `$isActive`, `$duration`
-- `src/components/`에는 테스트 파일이 없다. 검증은 Storybook + `npm run typecheck`로 한다 (루트 `CLAUDE.md`의 Storybook 가이드 참고)
+- `src/components/`는 기본적으로 Storybook + `npm run typecheck`로 검증한다 (루트 `CLAUDE.md`의 Storybook 가이드 참고). 시각으로 확인하기 어려운 분기(이미지 로드 실패 등)만 예외적으로 RTL 테스트를 둔다 (`common/Header/admin/AdminProfile.test.tsx`)
 
 ## 스타일 하드룰
 

@@ -1,20 +1,24 @@
 import { useEffect, useRef, useState } from 'react';
 import { useUpdateFeed, useUploadFeed } from '@/hooks/Queries/useClubImages';
+import { buildFinalUrls } from '@/pages/AdminPage/components/ImageSortGrid/buildFinalUrls';
 import {
-  buildFinalUrls,
+  ImageItem,
+  LocalItem,
+  UploadedItem,
+} from '@/pages/AdminPage/components/ImageSortGrid/types';
+import {
   extractLocalItems,
   findOversizedFile,
   hasPendingChanges,
   sliceToLimit,
 } from '../photoEditUtils';
-import { FeedItem, LocalItem, UploadedItem } from '../types';
 
 export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
   const { mutate: uploadFeed, isPending: isUploading } = useUploadFeed();
   const { mutate: updateFeed, isPending: isUpdating } = useUpdateFeed();
 
-  const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
-  const feedItemsRef = useRef<FeedItem[]>(feedItems);
+  const [feedItems, setFeedItems] = useState<ImageItem[]>([]);
+  const feedItemsRef = useRef<ImageItem[]>(feedItems);
 
   const isLoading = isUploading || isUpdating;
   const pendingChanges = hasPendingChanges(feedItems, originalFeeds);

@@ -1,11 +1,11 @@
 import { useLayoutEffect, useState } from 'react';
 import ClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
-import { DropPosition } from '../../hooks/useDragSort';
-import { FeedItem } from '../../types';
-import * as Styled from './FeedImageGrid.styles';
+import * as Styled from './ImageSortGrid.styles';
+import { ImageItem } from './types';
+import { DropPosition } from './useDragSort';
 
-interface FeedImageGridProps {
-  feedItems: FeedItem[];
+interface ImageSortGridProps {
+  items: ImageItem[];
   gridRef: React.RefObject<HTMLDivElement | null>;
   dragIndex: number | null;
   dropPosition: DropPosition;
@@ -13,7 +13,10 @@ interface FeedImageGridProps {
   columns?: number;
   onMouseDown: (e: React.MouseEvent, index: number) => void;
   onDelete: (index: number) => void;
-  onRetry: (index: number) => void;
+  /** 항목별 업로드 재시도가 있는 화면(활동 사진)에서만 넘긴다 */
+  onRetry?: (index: number) => void;
+  /** 그리드 마지막 칸에 붙일 요소(홍보 화면의 이미지 추가 타일) */
+  children?: React.ReactNode;
 }
 
 const calcDividerStyle = (
@@ -41,8 +44,8 @@ const calcDividerStyle = (
   return { x, top: refRect.top - gridRect.top, height: refRect.height };
 };
 
-export const FeedImageGrid = ({
-  feedItems,
+export const ImageSortGrid = ({
+  items,
   gridRef,
   dragIndex,
   dropPosition,
@@ -51,7 +54,8 @@ export const FeedImageGrid = ({
   onMouseDown,
   onDelete,
   onRetry,
-}: FeedImageGridProps) => {
+  children,
+}: ImageSortGridProps) => {
   const dividerIndex = dropPosition
     ? dropPosition.side === 'before'
       ? dropPosition.index
@@ -78,7 +82,7 @@ export const FeedImageGrid = ({
 
   return (
     <Styled.Grid ref={gridRef} $columns={columns}>
-      {feedItems.map((item, index) => {
+      {items.map((item, index) => {
         const src = item.type === 'uploaded' ? item.url : item.previewUrl;
         const status = item.type === 'local' ? item.status : undefined;
 
@@ -108,9 +112,11 @@ export const FeedImageGrid = ({
               {status === 'failed' && (
                 <Styled.Overlay $error>
                   <Styled.StatusText>실패</Styled.StatusText>
-                  <Styled.RetryButton onClick={() => onRetry(index)}>
-                    재전송
-                  </Styled.RetryButton>
+                  {onRetry && (
+                    <Styled.RetryButton onClick={() => onRetry(index)}>
+                      재전송
+                    </Styled.RetryButton>
+                  )}
                 </Styled.Overlay>
               )}
               {status === 'pending' && (
@@ -129,6 +135,8 @@ export const FeedImageGrid = ({
           </Styled.DragItem>
         );
       })}
+
+      {children}
 
       {divider && (
         <Styled.DropDivider

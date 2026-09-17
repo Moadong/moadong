@@ -11,6 +11,8 @@ interface DateTimeRangePickerProps {
   onChangeRecruitmentStart: (date: Date | null) => void;
   onChangeRecruitmentEnd: (date: Date | null) => void;
   disabledEnd?: boolean;
+  /** 폼 전체 비활성화. 두 입력을 잠그고 열린 패널을 닫는다 */
+  disabled?: boolean;
 }
 
 const DateTimeRangePicker = ({
@@ -19,6 +21,7 @@ const DateTimeRangePicker = ({
   onChangeRecruitmentStart,
   onChangeRecruitmentEnd,
   disabledEnd = false,
+  disabled = false,
 }: DateTimeRangePickerProps) => {
   const [activePicker, setActivePicker] = useState<PickerType | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
@@ -49,12 +52,16 @@ const DateTimeRangePicker = ({
     });
   }, [disabledEnd]);
 
+  // 잠긴 동안은 열려 있던 패널도 숨긴다. 상태를 바꾸지 않고 파생시켜 effect 없이 처리한다
+  const visiblePicker = disabled ? null : activePicker;
+
   return (
     <Styled.Container ref={containerRef}>
       {/* 모집 시작 기간 */}
       <Styled.Input
-        $isActive={activePicker === 'start'}
-        onClick={() => togglePicker('start')}
+        disabled={disabled}
+        $isActive={visiblePicker === 'start'}
+        onClick={() => !disabled && togglePicker('start')}
       >
         {formatRecruitmentDateTime(recruitmentStart) || '모집 시작'}
       </Styled.Input>
@@ -63,19 +70,19 @@ const DateTimeRangePicker = ({
 
       {/* 모집 마감 기간 */}
       <Styled.Input
-        disabled={disabledEnd}
-        $isActive={activePicker === 'end'}
-        onClick={() => !disabledEnd && togglePicker('end')}
+        disabled={disabled || disabledEnd}
+        $isActive={visiblePicker === 'end'}
+        onClick={() => !disabled && !disabledEnd && togglePicker('end')}
       >
         {formatRecruitmentDateTime(recruitmentEnd) || '모집 종료'}
       </Styled.Input>
 
-      {activePicker && (
+      {visiblePicker && (
         <DateTimePanel
-          $alignRight={activePicker === 'end'}
-          date={activePicker === 'start' ? recruitmentStart : recruitmentEnd}
+          $alignRight={visiblePicker === 'end'}
+          date={visiblePicker === 'start' ? recruitmentStart : recruitmentEnd}
           onChangeDate={
-            activePicker === 'start'
+            visiblePicker === 'start'
               ? onChangeRecruitmentStart
               : onChangeRecruitmentEnd
           }

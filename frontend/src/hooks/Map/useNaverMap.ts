@@ -8,6 +8,8 @@ interface UseNaverMapOptions {
   active?: boolean;
   interactive?: boolean;
   markerSize?: number;
+  /** 마커를 찍을지. 좌표가 아직 확정되지 않은 화면에서 지도만 먼저 보여줄 때 false */
+  showMarker?: boolean;
   bubbleText?: string;
   bubbleFontSize?: number;
   bubbleFontWeight?: number;
@@ -70,6 +72,7 @@ export const useNaverMap = (
     active = true,
     interactive = true,
     markerSize = 40,
+    showMarker = true,
     bubbleText,
     bubbleFontSize,
     bubbleFontWeight,
@@ -105,19 +108,21 @@ export const useNaverMap = (
         externalRef.current = mapInstance;
       }
 
-      new naver.maps.Marker({
-        position,
-        map: mapInstance,
-        icon: {
-          content: buildMarkerContent(
-            markerSize,
-            bubbleText,
-            bubbleFontSize,
-            bubbleFontWeight,
-          ),
-          anchor: new naver.maps.Point(markerSize / 2, markerSize),
-        },
-      });
+      if (showMarker) {
+        new naver.maps.Marker({
+          position,
+          map: mapInstance,
+          icon: {
+            content: buildMarkerContent(
+              markerSize,
+              bubbleText,
+              bubbleFontSize,
+              bubbleFontWeight,
+            ),
+            anchor: new naver.maps.Point(markerSize / 2, markerSize),
+          },
+        });
+      }
     });
 
     return () => {
@@ -136,6 +141,7 @@ export const useNaverMap = (
     active,
     interactive,
     markerSize,
+    showMarker,
     bubbleText,
     bubbleFontSize,
     bubbleFontWeight,

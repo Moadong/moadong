@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
-import { reorderItems } from '../photoEditUtils';
-import { FeedItem } from '../types';
+import { reorderItems } from './reorderItems';
+import { ImageItem } from './types';
 
 export type DropPosition = { index: number; side: 'before' | 'after' } | null;
 
@@ -8,14 +8,14 @@ const DRAG_THRESHOLD = 5;
 
 interface UseDragSortOptions {
   disabled?: boolean;
-  onReorder: (items: FeedItem[]) => void;
-  feedItemsRef: React.RefObject<FeedItem[]>;
+  onReorder: (items: ImageItem[]) => void;
+  itemsRef: React.RefObject<ImageItem[]>;
 }
 
 export const useDragSort = ({
   disabled,
   onReorder,
-  feedItemsRef,
+  itemsRef,
 }: UseDragSortOptions) => {
   const gridRef = useRef<HTMLDivElement>(null);
   const dragStartRef = useRef<{ index: number; x: number; y: number } | null>(
@@ -120,7 +120,7 @@ export const useDragSort = ({
         if (pos !== null) {
           const fromIndex = dragStartRef.current.index;
           const targetIndex = pos.side === 'after' ? pos.index + 1 : pos.index;
-          const current = feedItemsRef.current;
+          const current = itemsRef.current;
           if (fromIndex !== targetIndex && fromIndex < current.length) {
             onReorder(reorderItems(current, fromIndex, targetIndex));
           }
@@ -139,7 +139,7 @@ export const useDragSort = ({
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [getDropPositionFromPoint, onReorder, feedItemsRef]);
+  }, [getDropPositionFromPoint, onReorder, itemsRef]);
 
   return { gridRef, dragIndex, dropPosition, handleMouseDown };
 };

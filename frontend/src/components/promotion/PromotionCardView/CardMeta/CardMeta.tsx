@@ -1,16 +1,17 @@
 import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import TimeIcon from '@/assets/images/icons/time_icon.svg?react';
-import { formatKSTDate } from '@/utils/formatKSTDateTime';
+import { formatKSTDateRange } from '@/utils/formatKSTDateTime';
 import * as Styled from './CardMeta.styles';
 
 interface CardMetaProps {
   title: string;
   location: string | null;
   startDate: string;
+  endDate: string;
 }
 
-const CardMeta = ({ title, location, startDate }: CardMetaProps) => {
-  const formattedStartDate = formatKSTDate(startDate);
+const CardMeta = ({ title, location, startDate, endDate }: CardMetaProps) => {
+  const formattedPeriod = formatKSTDateRange(startDate, endDate);
 
   return (
     <Styled.Container>
@@ -30,7 +31,7 @@ const CardMeta = ({ title, location, startDate }: CardMetaProps) => {
           <Styled.Icon>
             <TimeIcon />
           </Styled.Icon>
-          <Styled.MetaText>{formattedStartDate}</Styled.MetaText>
+          <Styled.MetaText>{formattedPeriod}</Styled.MetaText>
         </Styled.MetaRow>
       </Styled.MetaContainer>
     </Styled.Container>

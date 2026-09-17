@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import ApplicationMenu from './ApplicationMenu';
+import AdminMoreMenu from './AdminMoreMenu';
 
 const meta = {
-  title: 'Pages/AdminPage/components/ApplicationMenu',
-  component: ApplicationMenu,
+  title: 'Pages/AdminPage/components/AdminMoreMenu',
+  component: AdminMoreMenu,
   parameters: { layout: 'centered' },
   tags: ['autodocs'],
   decorators: [
@@ -25,7 +25,7 @@ const meta = {
     }, [args.isActive]);
 
     return (
-      <ApplicationMenu
+      <AdminMoreMenu
         {...args}
         isActive={isActive}
         onToggleStatus={() => setIsActive((prev) => !prev)}
@@ -34,7 +34,7 @@ const meta = {
       />
     );
   },
-} satisfies Meta<typeof ApplicationMenu>;
+} satisfies Meta<typeof AdminMoreMenu>;
 
 export default meta;
 type Story = StoryObj<typeof meta>;

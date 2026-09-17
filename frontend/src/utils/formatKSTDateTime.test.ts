@@ -1,6 +1,7 @@
 import {
   formatApplicationEditedAt,
   formatKSTDate,
+  formatKSTDateRange,
   formatKSTDateTime,
   formatKSTDateTimeFull,
 } from './formatKSTDateTime';
@@ -95,5 +96,46 @@ describe('formatKSTDateTimeFull', () => {
     const result = formatKSTDateTimeFull(utc);
 
     expect(result).toContain('26'); // 날짜 넘어갔는지 확인
+  });
+});
+
+describe('formatKSTDateRange', () => {
+  it('시작과 종료가 같은 날이면 요일까지 붙은 하루 표기를 쓴다', () => {
+    expect(
+      formatKSTDateRange(
+        '2026-11-29T04:00:00+09:00',
+        '2026-11-29T22:00:00+09:00',
+      ),
+    ).toBe('11월 29일 일요일');
+  });
+
+  it('날이 다르면 요일 없이 두 날짜를 보여준다', () => {
+    expect(
+      formatKSTDateRange(
+        '2026-11-29T04:00:00+09:00',
+        '2026-11-30T02:00:00+09:00',
+      ),
+    ).toBe('11월 29일 ~ 11월 30일');
+  });
+
+  it('KST 기준으로 같은 날인지 판단한다 (UTC 기준이면 다른 날이 된다)', () => {
+    expect(
+      formatKSTDateRange(
+        '2026-11-29T00:30:00+09:00',
+        '2026-11-29T23:30:00+09:00',
+      ),
+    ).toBe('11월 29일 일요일');
+  });
+
+  it('종료일이 잘못된 값이면 시작만 보여준다', () => {
+    expect(formatKSTDateRange('2026-11-29T04:00:00+09:00', 'not-a-date')).toBe(
+      '11월 29일 일요일',
+    );
+  });
+
+  it('종료가 비면 시작만 보여준다', () => {
+    expect(formatKSTDateRange('2026-11-29T04:00:00+09:00', '')).toBe(
+      '11월 29일 일요일',
+    );
   });
 });

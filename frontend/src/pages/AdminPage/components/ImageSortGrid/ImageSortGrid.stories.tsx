@@ -1,9 +1,9 @@
 import { useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
-import type { FeedItem } from '../../types';
-import { FeedImageGrid } from './FeedImageGrid';
+import { ImageSortGrid } from './ImageSortGrid';
+import type { ImageItem } from './types';
 
-const img = (seed: string): FeedItem => ({
+const img = (seed: string): ImageItem => ({
   type: 'uploaded',
   url: `https://picsum.photos/seed/${seed}/246/320`,
 });
@@ -11,7 +11,7 @@ const img = (seed: string): FeedItem => ({
 const local = (
   seed: string,
   status: 'pending' | 'uploading' | 'failed',
-): FeedItem => ({
+): ImageItem => ({
   type: 'local',
   file: new File([], `${seed}.jpg`),
   previewUrl: `https://picsum.photos/seed/${seed}/246/320`,
@@ -19,23 +19,23 @@ const local = (
 });
 
 const Wrapper = ({
-  feedItems,
+  items,
   isLoading = false,
   dragIndex = null,
   dropPosition = null,
   columns = 3,
 }: {
-  feedItems: FeedItem[];
+  items: ImageItem[];
   isLoading?: boolean;
   dragIndex?: number | null;
-  dropPosition?: Parameters<typeof FeedImageGrid>[0]['dropPosition'];
+  dropPosition?: Parameters<typeof ImageSortGrid>[0]['dropPosition'];
   columns?: number;
 }) => {
   const gridRef = useRef<HTMLDivElement>(null);
   return (
     <div style={{ width: 335 }}>
-      <FeedImageGrid
-        feedItems={feedItems}
+      <ImageSortGrid
+        items={items}
         gridRef={gridRef}
         dragIndex={dragIndex}
         dropPosition={dropPosition}
@@ -50,7 +50,7 @@ const Wrapper = ({
 };
 
 const meta = {
-  title: 'Pages/AdminPage/tabs/PhotoEditTab/components/FeedImageGrid',
+  title: 'Pages/AdminPage/components/ImageSortGrid',
   parameters: { layout: 'centered' },
 } satisfies Meta;
 
@@ -58,13 +58,13 @@ export default meta;
 type Story = StoryObj;
 
 export const AllUploaded: Story = {
-  render: () => <Wrapper feedItems={['a', 'b', 'c', 'd', 'e', 'f'].map(img)} />,
+  render: () => <Wrapper items={['a', 'b', 'c', 'd', 'e', 'f'].map(img)} />,
 };
 
 export const WithPending: Story = {
   render: () => (
     <Wrapper
-      feedItems={[
+      items={[
         img('a'),
         img('b'),
         local('p1', 'pending'),
@@ -79,7 +79,7 @@ export const Uploading: Story = {
   render: () => (
     <Wrapper
       isLoading
-      feedItems={[
+      items={[
         img('a'),
         img('b'),
         local('u1', 'uploading'),
@@ -93,7 +93,7 @@ export const Uploading: Story = {
 export const WithFailure: Story = {
   render: () => (
     <Wrapper
-      feedItems={[
+      items={[
         img('a'),
         local('f1', 'failed'),
         img('c'),
@@ -107,7 +107,7 @@ export const WithFailure: Story = {
 export const MixedStatuses: Story = {
   render: () => (
     <Wrapper
-      feedItems={[
+      items={[
         img('a'),
         local('p', 'pending'),
         local('u', 'uploading'),
@@ -122,7 +122,7 @@ export const MixedStatuses: Story = {
 export const Dragging: Story = {
   render: () => (
     <Wrapper
-      feedItems={['a', 'b', 'c', 'd', 'e'].map(img)}
+      items={['a', 'b', 'c', 'd', 'e'].map(img)}
       dragIndex={1}
       dropPosition={{ index: 3, side: 'after' }}
     />
