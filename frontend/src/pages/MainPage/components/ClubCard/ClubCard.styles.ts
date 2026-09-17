@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 const CARD_STYLES = {
   desktop: {
@@ -80,6 +81,7 @@ const ClubInfo = styled.div`
 const ClubName = styled.p`
   font-size: 1.375rem;
   font-weight: bold;
+  line-height: 140%;
 
   @media (max-width: 500px) {
     font-size: 1rem;
@@ -116,8 +118,8 @@ const Introduction = styled.p`
   font-size: 0.875rem;
   font-weight: normal;
   margin: ${INTRODUCTION_MARGIN.desktop.margin};
-  color: rgba(129, 129, 129, 1);
-  line-height: 16px;
+  color: ${colors.gray[600]};
+  line-height: 140%;
   white-space: nowrap;
 
   @media (max-width: 500px) {

@@ -4,15 +4,17 @@ import { asClubId } from '@/types/branded';
 import { Club } from '@/types/club';
 import ClubCard from './ClubCard';
 
+// 시안(Figma 4060-16963)의 내용과 맞춘다. 카테고리·태그가 다르면 팔레트가 갈려
+// 시안 대조에서 실제 차이가 아닌 불일치가 잡힌다.
 const sampleClub: Club = {
   id: asClubId('club-1'),
-  name: '모아동 밴드',
+  name: 'WAP',
   logo: '',
-  tags: ['락밴드', '공연'],
+  tags: ['프로젝트', '소프트웨어'],
   recruitmentStatus: 'OPEN',
   division: 'central',
-  category: '공연',
-  introduction: '함께 무대에 설 멤버를 모집합니다.',
+  category: '학술',
+  introduction: '프로젝트 중심 개발동아리입니다 입니다',
 };
 
 const meta = {
