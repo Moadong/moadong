@@ -27,12 +27,14 @@ AGENTS.md
 # oh-my-claudecode
 .omc/
 
-# Claude Code (personal settings — commands/ and agents/ are team-shared)
+# Claude Code (personal settings — commands/, agents/, skills/ are team-shared)
 .claude/*
 !.claude/commands/
 !.claude/commands/**
 !.claude/agents/
 !.claude/agents/**
+!.claude/skills/
+!.claude/skills/**
 
 .vercel
 
@@ -44,3 +46,6 @@ deps-components.svg
 
 # session notes
 dailyNote/
+
+# figma-story-diff 산출물
+/visual-diff
