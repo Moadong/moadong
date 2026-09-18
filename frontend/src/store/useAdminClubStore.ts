@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { subscribeWithSelector } from 'zustand/middleware';
+import { persist } from 'zustand/middleware';
+import { STORAGE_KEYS } from '@/constants/storageKeys';
 
 interface AdminClubStore {
   clubId: string | null;
@@ -7,10 +8,21 @@ interface AdminClubStore {
 }
 
 export const useAdminClubStore = create<AdminClubStore>()(
-  subscribeWithSelector((set) => ({
-    clubId: null,
-    setClubId: (id) => set({ clubId: id }),
-  })),
+  persist(
+    (set) => ({
+      clubId: null,
+      setClubId: (id) => set({ clubId: id }),
+    }),
+    {
+      name: STORAGE_KEYS.ADMIN_CLUB_ID,
+      partialize: (state) => ({ clubId: state.clubId }),
+      onRehydrateStorage: () => (state) => {
+        if (!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)) {
+          state?.setClubId(null);
+        }
+      },
+    },
+  ),
 );
 
 export const useAdminClubId = () => {

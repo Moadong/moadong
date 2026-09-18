@@ -10,6 +10,7 @@ import { STORAGE_KEYS } from '@/constants/storageKeys';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import useAuth from '@/hooks/useAuth';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import * as Styled from './LoginTab.styles';
 
 const LoginTab = () => {
@@ -22,6 +23,7 @@ const LoginTab = () => {
   const navigate = useNavigate();
 
   const { isAuthenticated, isLoading: authLoading } = useAuth();
+  const { setClubId } = useAdminClubId();
 
   useEffect(() => {
     if (!authLoading && isAuthenticated) {
@@ -42,6 +44,7 @@ const LoginTab = () => {
         STORAGE_KEYS.HAS_CONSENTED_PERSONAL_INFO,
         JSON.stringify(loginData.allowedPersonalInformation),
       );
+      setClubId(loginData.clubId);
       alert('로그인 성공! 관리자 페이지로 이동합니다.');
       navigate('/admin');
     } catch (error: unknown) {

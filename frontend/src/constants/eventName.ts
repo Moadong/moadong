@@ -177,6 +177,10 @@ export const ADMIN_EVENT = {
   PASSWORD_CHANGE_BUTTON_CLICKED: '비밀번호 변경 버튼클릭',
   NEW_PASSWORD_CLEAR_BUTTON_CLICKED: '새 비밀번호 입력 초기화 버튼클릭',
   CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED: '확인 비밀번호 입력 초기화 버튼클릭',
+
+  // 동아리 상세 - 모집 기간 변경 (관리자 전용)
+  PERIOD_CHANGE_BUTTON_CLICKED: '모집 기간 변경 버튼클릭',
+  PERIOD_CHANGE_CONFIRMED: '모집 기간 변경 완료',
 } as const;
 
 export const PAGE_VIEW = {

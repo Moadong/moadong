@@ -32,6 +32,8 @@ export const queryKeys = {
   },
   club: {
     all: ['clubs'] as const,
+    /** 모든 clubDetail 쿼리를 한 번에 무효화하는 prefix */
+    allDetails: ['clubDetail'] as const,
     detail: (clubParam: string) => ['clubDetail', clubParam] as const,
     calendarEvents: (clubParam: string) =>
       ['clubCalendarEvents', clubParam] as const,
