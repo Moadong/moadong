@@ -37,6 +37,7 @@ import { usePromotionForm } from './hooks/usePromotionForm';
 import * as Styled from './PromotionEditTab.styles';
 import {
   BUILDING_OPTIONS,
+  buildPastLocationOptions,
   findBuildingByCoordinates,
   fromDateTimeLocalValue,
   toDateTimeLocalValue,
@@ -90,13 +91,24 @@ const PromotionEditTab = () => {
 
   const isEdit = Boolean(articleId);
   const isFormDisabled = !isApproved || form.isSaving;
-  // 이 select는 지도를 건물로 옮기는 이동 컨트롤이다. 최종 좌표는 지도에서 정하므로
-  // 지도로 맞춘 좌표가 목록과 안 맞으면 그냥 선택 없음으로 돌아간다.
-  const selectedBuilding = findBuildingByCoordinates(values.coordinates);
+  // 지도로 찍은 좌표는 정적 건물 목록에 없다. 전에 쓴 장소를 다시 고를 수 있게
+  // 이미 받아 둔 글 목록에서 뽑아 붙인다. 추가 요청은 없다.
+  const pastLocationOptions = buildPastLocationOptions(
+    articles ?? [],
+    clubDetail.id,
+  );
+  const locationOptions = [...BUILDING_OPTIONS, ...pastLocationOptions];
+
+  // 이 select는 지도를 저장된 위치로 옮기는 이동 컨트롤이다. 최종 좌표는 지도에서
+  // 정하므로 지도로 맞춘 좌표가 목록과 안 맞으면 그냥 선택 없음으로 돌아간다.
+  const selectedBuilding = findBuildingByCoordinates(
+    values.coordinates,
+    locationOptions,
+  );
   const buildingSelectValue = selectedBuilding?.value ?? '';
 
   const handleBuildingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
-    const option = BUILDING_OPTIONS.find((o) => o.value === e.target.value);
+    const option = locationOptions.find((o) => o.value === e.target.value);
     if (!option) return;
     setField('coordinates', option.coordinates);
     if (!values.location.trim()) setField('location', option.label);
@@ -214,19 +226,28 @@ const PromotionEditTab = () => {
             disabled={isFormDisabled}
           >
             <option value='' disabled>
-              자주 쓰는 건물로 이동
+              저장된 위치로 이동
             </option>
             {BUILDING_OPTIONS.map((option) => (
               <option key={option.value} value={option.value}>
                 {option.label}
               </option>
             ))}
+            {pastLocationOptions.length > 0 && (
+              <optgroup label='이전에 쓴 장소'>
+                {pastLocationOptions.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </optgroup>
+            )}
           </Styled.Select>
           <Styled.SelectChevron />
         </Styled.SelectWrapper>
         <Styled.HelperText>
-          건물을 고르면 그 위치로 지도가 이동해요. 이어서 지도를 끌어 조정할 수
-          있어요.
+          목록에서 고르면 그 위치로 지도가 이동해요. 이어서 지도를 끌어 조정할
+          수 있어요.
         </Styled.HelperText>
         <Styled.MapPreview>
           <MapLocationPicker

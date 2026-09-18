@@ -72,12 +72,54 @@ export const BUILDING_OPTIONS: BuildingOption[] = (() => {
 
 export const findBuildingByCoordinates = (
   coordinates: Coordinates | null,
+  options: BuildingOption[] = BUILDING_OPTIONS,
 ): BuildingOption | undefined => {
   if (!coordinates) return undefined;
-  return BUILDING_OPTIONS.find(
+  return options.find(
     ({ coordinates: c }) =>
       c.lat === coordinates.lat && c.lng === coordinates.lng,
   );
+};
+
+/**
+ * 이 동아리가 전에 쓴 장소. 지도로 찍은 좌표는 BUILDING_OPTIONS에 없어서
+ * 다시 쓰려면 매번 지도를 새로 맞춰야 한다. 이미 받아 둔 글 목록에서 뽑아 쓴다.
+ * 값은 좌표로 만들어 정적 목록과 이름이 겹쳐도 select 값이 부딪히지 않는다.
+ * 이름이 겹치면 행사 시작이 가장 늦은 글의 좌표만 남긴다.
+ */
+export const buildPastLocationOptions = (
+  articles: PromotionArticle[],
+  clubId: string,
+): BuildingOption[] => {
+  const latestByLabel = new Map<
+    string,
+    { option: BuildingOption; startedAt: number }
+  >();
+
+  articles.forEach((article) => {
+    if (article.clubId !== clubId) return;
+    const label = article.location.trim();
+    if (!label || article.latitude == null || article.longitude == null) return;
+
+    const coordinates = { lat: article.latitude, lng: article.longitude };
+    // 정적 목록에 이미 있는 좌표는 두 그룹에 겹쳐 나오지 않게 뺀다
+    if (findBuildingByCoordinates(coordinates)) return;
+
+    const startedAt = Date.parse(article.eventStartDate) || 0;
+    const previous = latestByLabel.get(label);
+    if (previous && startedAt <= previous.startedAt) return;
+
+    latestByLabel.set(label, {
+      option: {
+        label,
+        value: `${coordinates.lat},${coordinates.lng}`,
+        coordinates,
+      },
+      startedAt,
+    });
+  });
+
+  return [...latestByLabel.values()].map(({ option }) => option);
 };
 
 /** 작성 폼 초기값. 행사 기간은 오늘의 다음 정시로 채워 둔다 (모듈 상수로 두면 날짜가 고정돼 함수로 만든다) */
