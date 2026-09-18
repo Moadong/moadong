@@ -157,13 +157,9 @@ export const articleToFormValues = (
   images: (article.images ?? []).map((url) => ({ type: 'uploaded', url })),
 });
 
-/**
- * 저장 전 검증. 문제가 있으면 사용자에게 보여줄 문구를, 없으면 null을 돌려준다.
- * 수정은 서버가 images를 1개 이상 요구하므로 mode로 구분한다.
- */
+/** 저장 전 검증. 문제가 있으면 사용자에게 보여줄 문구를, 없으면 null을 돌려준다 */
 export const validatePromotionForm = (
   values: PromotionFormValues,
-  mode: 'create' | 'edit',
 ): string | null => {
   if (!values.title.trim()) return '제목을 입력해주세요.';
   if (values.title.trim().length > PROMOTION_TITLE_MAX)
@@ -179,8 +175,6 @@ export const validatePromotionForm = (
   if (!values.description.trim()) return '행사 설명을 입력해주세요.';
   if (values.description.trim().length > PROMOTION_DESCRIPTION_MAX)
     return `행사 설명은 ${PROMOTION_DESCRIPTION_MAX}자 이내로 입력해주세요.`;
-  if (mode === 'edit' && values.images.length === 0)
-    return '이미지를 1장 이상 등록해주세요.';
   return null;
 };
 
