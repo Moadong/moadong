@@ -17,13 +17,13 @@ export const ImageWrapper = styled.div`
   aspect-ratio: 1 / 1;
 `;
 
-export const Image = styled.div<{ $imageUrl?: string }>`
+/** 이미지가 없는 글은 호출부가 기본 커버를 넘긴다. url()은 따옴표로 감싼다 */
+export const Image = styled.div<{ $imageUrl: string }>`
   width: 100%;
   height: 100%;
 
   background-color: #ddd;
-  background-image: ${({ $imageUrl }) =>
-    $imageUrl ? `url(${$imageUrl})` : 'none'};
+  background-image: url('${({ $imageUrl }) => $imageUrl}');
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
