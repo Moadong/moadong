@@ -1,6 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import { setYear } from 'date-fns';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
@@ -9,15 +8,18 @@ import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
+import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { ClubDetail } from '@/types/club';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import DateTimeRangePicker from './components/DateTimeRangePicker/DateTimeRangePicker';
 import * as Styled from './RecruitEditTab.styles';
+import RecruitEditTabMobile from './RecruitEditTabMobile';
 
 const FAR_FUTURE_YEAR = 2999;
 
 const RecruitEditTab = () => {
+  const { isMobile, isTablet } = useDevice();
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.RECRUITMENT_INFO_EDIT_PAGE);
 
@@ -29,6 +31,18 @@ const RecruitEditTab = () => {
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
   const [isAlwaysRecruiting, setIsAlwaysRecruiting] = useState(false);
+
+  const [initialValues, setInitialValues] = useState<{
+    recruitmentStart: string | null;
+    recruitmentEnd: string | null;
+    recruitmentTarget: string;
+  } | null>(null);
+
+  const isDirty =
+    initialValues !== null &&
+    (recruitmentStart?.toISOString() !== initialValues.recruitmentStart ||
+      recruitmentEnd?.toISOString() !== initialValues.recruitmentEnd ||
+      recruitmentTarget !== initialValues.recruitmentTarget);
 
   const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({
     start: null,
@@ -59,7 +73,7 @@ const RecruitEditTab = () => {
   };
 
   useEffect(() => {
-    if (!clubDetail) return;
+    if (!clubDetail || isDirty) return;
 
     const parsedStart = clubDetail.recruitmentStart
       ? recruitmentDateParser(clubDetail.recruitmentStart)
@@ -76,6 +90,14 @@ const RecruitEditTab = () => {
 
     if (isAlways)
       backupRangeRef.current = { start: parsedStart, end: parsedEnd };
+
+    setInitialValues({
+      recruitmentStart: parsedStart?.toISOString() ?? null,
+      recruitmentEnd: parsedEnd?.toISOString() ?? null,
+      recruitmentTarget: clubDetail.recruitmentTarget || '',
+    });
+    // isDirty는 의도적으로 deps에서 제외 — clubDetail refetch 시점의 편집 상태만 확인하면 된다
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clubDetail]);
 
   useEffect(() => {
@@ -113,7 +135,7 @@ const RecruitEditTab = () => {
     });
   };
 
-  const handleUpdateClub = async () => {
+  const handleUpdateClub = () => {
     trackEvent(ADMIN_EVENT.UPDATE_RECRUIT_BUTTON_CLICKED);
     if (!clubDetail) return;
 
@@ -125,11 +147,35 @@ const RecruitEditTab = () => {
     };
 
     updateClubDescription(updatedData, {
-      onSuccess: () => alert('모집 정보가 성공적으로 수정되었습니다.'),
+      onSuccess: () => {
+        alert('모집 정보가 성공적으로 수정되었습니다.');
+        setInitialValues({
+          recruitmentStart: recruitmentStart?.toISOString() ?? null,
+          recruitmentEnd: recruitmentEnd?.toISOString() ?? null,
+          recruitmentTarget,
+        });
+      },
       onError: (error) =>
         alert(`모집 정보 수정에 실패했습니다: ${error.message}`),
     });
   };
+
+  if (isMobile || isTablet) {
+    return (
+      <RecruitEditTabMobile
+        recruitmentStart={recruitmentStart}
+        recruitmentEnd={recruitmentEnd}
+        recruitmentTarget={recruitmentTarget}
+        isAlwaysRecruiting={isAlwaysRecruiting}
+        isDirty={isDirty}
+        onStartChange={handleStartChange}
+        onEndChange={handleEndChange}
+        onTargetChange={setRecruitmentTarget}
+        onToggleAlwaysRecruiting={toggleAlwaysRecruiting}
+        onSave={handleUpdateClub}
+      />
+    );
+  }
 
   return (
     <Styled.Container>
