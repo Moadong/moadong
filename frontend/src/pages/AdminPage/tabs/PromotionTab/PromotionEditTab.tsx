@@ -92,8 +92,8 @@ const PromotionEditTab = () => {
   const isFormDisabled = !isApproved || form.isSaving;
   // 이 select는 지도를 건물로 옮기는 이동 컨트롤이다. 최종 좌표는 지도에서 정하므로
   // 지도로 맞춘 좌표가 목록과 안 맞으면 그냥 선택 없음으로 돌아간다.
-  const buildingSelectValue =
-    findBuildingByCoordinates(values.coordinates)?.value ?? '';
+  const selectedBuilding = findBuildingByCoordinates(values.coordinates);
+  const buildingSelectValue = selectedBuilding?.value ?? '';
 
   const handleBuildingChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
     const option = BUILDING_OPTIONS.find((o) => o.value === e.target.value);
@@ -225,8 +225,8 @@ const PromotionEditTab = () => {
           <Styled.SelectChevron />
         </Styled.SelectWrapper>
         <Styled.HelperText>
-          지도를 움직여 가운데 핀을 행사 위치에 맞춰주세요. 건물을 고르면 그
-          위치로 지도가 이동해요.
+          건물을 고르면 그 위치로 지도가 이동해요. 이어서 지도를 끌어 조정할 수
+          있어요.
         </Styled.HelperText>
         <Styled.MapPreview>
           <MapLocationPicker
@@ -236,6 +236,16 @@ const PromotionEditTab = () => {
             onChange={(coordinates) => setField('coordinates', coordinates)}
           />
         </Styled.MapPreview>
+        <Styled.MapStatus
+          role='status'
+          $isConfirmed={Boolean(values.coordinates)}
+        >
+          {!values.coordinates
+            ? '지도를 움직여 가운데 핀을 행사 위치에 맞춰주세요.'
+            : selectedBuilding
+              ? `${selectedBuilding.label} 위치로 지정됐어요.`
+              : '지도에서 지정한 위치예요.'}
+        </Styled.MapStatus>
       </div>
 
       <InfoSection

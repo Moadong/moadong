@@ -151,6 +151,14 @@ export const MapPreview = styled.div`
   background-color: #f2f2f2;
 `;
 
+/** 지도 아래 선택 상태 줄. 좌표가 정해졌는지를 글로도 알려준다 */
+export const MapStatus = styled.p<{ $isConfirmed: boolean }>`
+  margin-top: 8px;
+  font-size: 0.8125rem;
+  color: ${({ $isConfirmed }) =>
+    $isConfirmed ? colors.primary[900] : colors.gray[600]};
+`;
+
 export const DateTimeRow = styled.div`
   display: flex;
   flex-direction: column;
