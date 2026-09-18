@@ -521,6 +521,24 @@ class PromotionArticleServiceTest {
         verify(promotionArticleRepository, never()).save(any(PromotionArticle.class));
     }
 
+    @Test
+    void 이미지를_모두_빼고_수정하면_빈_목록으로_저장하고_이전_이미지를_모두_지운다() {
+        String clubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(clubId)
+            .images(List.of("old-1", "old-2"))
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("수정 동아리")));
+
+        promotionArticleService.updatePromotionArticle("article-1", updateRequest(clubId, List.of()), developer());
+
+        assertEquals(List.of(), article.getImages());
+        verify(promotionArticleRepository).save(article);
+        verify(promotionImageUploadService).deleteRemovedImages("article-1", List.of("old-1", "old-2"), List.of());
+    }
+
     private static PromotionArticleCreateRequest createRequest(String clubId) {
         return new PromotionArticleCreateRequest(
             clubId,
