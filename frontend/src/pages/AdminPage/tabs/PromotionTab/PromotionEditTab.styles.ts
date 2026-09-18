@@ -143,11 +143,20 @@ export const SelectChevron = styled(MoreArrowIcon)`
 export const MapPreview = styled.div`
   margin-top: 12px;
   width: 100%;
-  height: 189px;
+  /* 지도를 끌어 핀을 맞추는 조작이라 189px로는 드래그 여유가 안 난다 */
+  height: 240px;
   border-radius: 20px;
   border: 1px solid ${colors.gray[400]};
   overflow: hidden;
   background-color: #f2f2f2;
+`;
+
+/** 지도 아래 선택 상태 줄. 좌표가 정해졌는지를 글로도 알려준다 */
+export const MapStatus = styled.p<{ $isConfirmed: boolean }>`
+  margin-top: 8px;
+  font-size: 0.8125rem;
+  color: ${({ $isConfirmed }) =>
+    $isConfirmed ? colors.primary[900] : colors.gray[600]};
 `;
 
 export const DateTimeRow = styled.div`

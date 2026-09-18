@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { MemoryRouter, Outlet, Route, Routes } from 'react-router-dom';
-import { render, screen } from '@testing-library/react';
+import { render, screen, within } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import { theme } from '@/styles/theme';
 import { PromotionArticle } from '@/types/promotion';
@@ -27,7 +27,9 @@ const mockDevice = {
   isDesktop: true,
 };
 jest.mock('@/hooks/useDevice', () => () => mockDevice);
-jest.mock('@/components/map/NaverMap/NaverMap', () => () => <div />);
+jest.mock('@/components/map/MapLocationPicker/MapLocationPicker', () => () => (
+  <div />
+));
 // react-datepicker의 css import를 jest가 파싱하지 못해 통째로 대체한다
 jest.mock(
   '@/pages/AdminPage/tabs/RecruitEditTab/components/DateTimeRangePicker/DateTimeRangePicker',
@@ -100,7 +102,10 @@ describe('PromotionEditTab 넘겨받은 토스트', () => {
   it('넘어온 문구가 없으면 토스트를 띄우지 않는다', () => {
     renderEditTab(null);
 
-    expect(screen.queryByRole('status')).not.toBeInTheDocument();
+    // 지도 선택 상태 줄도 role='status'라 화면 전체로 찾으면 안 된다.
+    // 토스트는 Portal로 modal-root에 붙으므로 거기만 본다.
+    const modalRoot = document.getElementById('modal-root') as HTMLElement;
+    expect(within(modalRoot).queryByRole('status')).not.toBeInTheDocument();
   });
 });
 

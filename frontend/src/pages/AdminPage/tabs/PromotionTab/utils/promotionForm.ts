@@ -41,7 +41,7 @@ export interface BuildingOption {
 const DONG_PREFIX = /^[A-Za-z]동/;
 
 /**
- * 관리자가 위도·경도를 직접 입력하지 않도록 실제로 관리 중인 위치 목록에서 고른다.
+ * 자주 쓰는 건물로 지도를 빠르게 옮기기 위한 목록. 최종 좌표는 지도에서 정한다.
  * 건물명이 아니라 좌표 기준으로 묶는다. 한솔관(E16)처럼 한 건물에 좌표가 둘인 곳이
  * 있어서 건물명으로 묶으면 뒤쪽 좌표가 통째로 사라진다.
  * 건물명이 겹치는 좌표끼리는 동아리방 표기의 동으로 구분한다.
@@ -72,12 +72,54 @@ export const BUILDING_OPTIONS: BuildingOption[] = (() => {
 
 export const findBuildingByCoordinates = (
   coordinates: Coordinates | null,
+  options: BuildingOption[] = BUILDING_OPTIONS,
 ): BuildingOption | undefined => {
   if (!coordinates) return undefined;
-  return BUILDING_OPTIONS.find(
+  return options.find(
     ({ coordinates: c }) =>
       c.lat === coordinates.lat && c.lng === coordinates.lng,
   );
+};
+
+/**
+ * 이 동아리가 전에 쓴 장소. 지도로 찍은 좌표는 BUILDING_OPTIONS에 없어서
+ * 다시 쓰려면 매번 지도를 새로 맞춰야 한다. 이미 받아 둔 글 목록에서 뽑아 쓴다.
+ * 값은 좌표로 만들어 정적 목록과 이름이 겹쳐도 select 값이 부딪히지 않는다.
+ * 이름이 겹치면 행사 시작이 가장 늦은 글의 좌표만 남긴다.
+ */
+export const buildPastLocationOptions = (
+  articles: PromotionArticle[],
+  clubId: string,
+): BuildingOption[] => {
+  const latestByLabel = new Map<
+    string,
+    { option: BuildingOption; startedAt: number }
+  >();
+
+  articles.forEach((article) => {
+    if (article.clubId !== clubId) return;
+    const label = article.location.trim();
+    if (!label || article.latitude == null || article.longitude == null) return;
+
+    const coordinates = { lat: article.latitude, lng: article.longitude };
+    // 정적 목록에 이미 있는 좌표는 두 그룹에 겹쳐 나오지 않게 뺀다
+    if (findBuildingByCoordinates(coordinates)) return;
+
+    const startedAt = Date.parse(article.eventStartDate) || 0;
+    const previous = latestByLabel.get(label);
+    if (previous && startedAt <= previous.startedAt) return;
+
+    latestByLabel.set(label, {
+      option: {
+        label,
+        value: `${coordinates.lat},${coordinates.lng}`,
+        coordinates,
+      },
+      startedAt,
+    });
+  });
+
+  return [...latestByLabel.values()].map(({ option }) => option);
 };
 
 /** 작성 폼 초기값. 행사 기간은 오늘의 다음 정시로 채워 둔다 (모듈 상수로 두면 날짜가 고정돼 함수로 만든다) */
@@ -129,7 +171,7 @@ export const validatePromotionForm = (
   if (!values.location.trim()) return '행사 장소를 입력해주세요.';
   if (values.location.trim().length > PROMOTION_LOCATION_MAX)
     return `행사 장소는 ${PROMOTION_LOCATION_MAX}자 이내로 입력해주세요.`;
-  if (!values.coordinates) return '지도에 표시할 건물을 선택해주세요.';
+  if (!values.coordinates) return '지도에서 행사 위치를 선택해주세요.';
   if (!values.eventStart || !values.eventEnd)
     return '행사 기간을 선택해주세요.';
   if (values.eventEnd < values.eventStart)

@@ -4,6 +4,7 @@ import { PromotionArticle } from '@/types/promotion';
 import {
   articleToFormValues,
   BUILDING_OPTIONS,
+  buildPastLocationOptions,
   buildPromotionPayload,
   createEmptyPromotionForm,
   findBuildingByCoordinates,
@@ -78,6 +79,96 @@ describe('BUILDING_OPTIONS', () => {
   });
 });
 
+describe('buildPastLocationOptions', () => {
+  const makeArticle = (
+    over: Partial<PromotionArticle> & { id: string },
+  ): PromotionArticle => ({
+    clubId: 'my-club',
+    clubName: '동아리',
+    title: '행사',
+    location: '수상레저관',
+    latitude: 35.1361,
+    longitude: 129.1049,
+    eventStartDate: '2026-04-01T01:00:00Z',
+    eventEndDate: '2026-04-01T03:00:00Z',
+    description: '설명',
+    images: [],
+    ...over,
+  });
+
+  it('내 동아리 글의 장소만 뽑는다', () => {
+    const options = buildPastLocationOptions(
+      [
+        makeArticle({ id: 'a' }),
+        makeArticle({ id: 'b', clubId: 'other', location: '남의 장소' }),
+      ],
+      'my-club',
+    );
+
+    expect(options.map((o) => o.label)).toEqual(['수상레저관']);
+  });
+
+  it('이름이 겹치면 행사 시작이 가장 늦은 글의 좌표만 남긴다', () => {
+    const options = buildPastLocationOptions(
+      [
+        makeArticle({
+          id: 'old',
+          latitude: 35.1,
+          eventStartDate: '2026-01-01T00:00:00Z',
+        }),
+        makeArticle({
+          id: 'new',
+          latitude: 35.9,
+          eventStartDate: '2026-12-01T00:00:00Z',
+        }),
+      ],
+      'my-club',
+    );
+
+    expect(options).toHaveLength(1);
+    expect(options[0].coordinates.lat).toBe(35.9);
+  });
+
+  it('정적 건물 목록에 이미 있는 좌표는 두 번 나오지 않게 뺀다', () => {
+    const building = BUILDING_OPTIONS[0];
+    const options = buildPastLocationOptions(
+      [
+        makeArticle({
+          id: 'same',
+          location: '아무 이름',
+          latitude: building.coordinates.lat,
+          longitude: building.coordinates.lng,
+        }),
+      ],
+      'my-club',
+    );
+
+    expect(options).toEqual([]);
+  });
+
+  it('좌표나 장소명이 없는 글은 건너뛴다', () => {
+    const options = buildPastLocationOptions(
+      [
+        makeArticle({ id: 'no-coords', latitude: undefined }),
+        makeArticle({ id: 'blank', location: '   ' }),
+      ],
+      'my-club',
+    );
+
+    expect(options).toEqual([]);
+  });
+
+  it('값은 좌표로 만들어 이름이 겹쳐도 부딪히지 않는다', () => {
+    const building = BUILDING_OPTIONS[0];
+    const options = buildPastLocationOptions(
+      [makeArticle({ id: 'a', location: building.label })],
+      'my-club',
+    );
+
+    expect(options[0].value).not.toBe(building.value);
+  });
+});
+
 describe('validatePromotionForm', () => {
   it('모든 필수값이 있으면 null', () => {
     expect(validatePromotionForm(validValues, 'create')).toBeNull();
@@ -86,7 +177,7 @@ describe('validatePromotionForm', () => {
   it.each<[keyof PromotionFormValues, unknown, string]>([
     ['title', '   ', '제목을 입력해주세요.'],
     ['location', '', '행사 장소를 입력해주세요.'],
-    ['coordinates', null, '지도에 표시할 건물을 선택해주세요.'],
+    ['coordinates', null, '지도에서 행사 위치를 선택해주세요.'],
     ['eventStart', null, '행사 기간을 선택해주세요.'],
     ['eventEnd', null, '행사 기간을 선택해주세요.'],
     ['description', '', '행사 설명을 입력해주세요.'],
