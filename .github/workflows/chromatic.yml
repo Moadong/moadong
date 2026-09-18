@@ -21,7 +21,9 @@ jobs:
   chromatic:
     runs-on: ubuntu-latest
     env:
-      CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+      # 토큰 값이 아니라 유무만 올린다. 값을 job env에 두면 npm ci 등
+      # 같은 job의 모든 스텝이 읽을 수 있어 노출면이 넓어진다.
+      HAS_CHROMATIC_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN != '' }}
     defaults:
       run:
         working-directory: frontend
@@ -43,12 +45,12 @@ jobs:
         run: npm ci
 
       - name: Skip notice (토큰 없음)
-        if: env.CHROMATIC_PROJECT_TOKEN == ''
+        if: env.HAS_CHROMATIC_TOKEN != 'true'
         run: echo "::notice::CHROMATIC_PROJECT_TOKEN이 없어 Chromatic을 건너뜁니다. Dependabot PR이라면 Settings > Secrets and variables > Dependabot 에 토큰을 등록하세요."
 
       - name: Run Chromatic
         id: chromatic
-        if: env.CHROMATIC_PROJECT_TOKEN != ''
+        if: env.HAS_CHROMATIC_TOKEN == 'true'
         uses: chromaui/action@latest
         with:
           workingDir: frontend
