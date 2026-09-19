@@ -11,11 +11,16 @@ const Agentation = lazy(() =>
 );
 
 // `?design=1`로 켜고 `?design=0`으로 끈다. 쿼리가 없으면 저장된 값을 따른다.
+// 저장소가 막힌 브라우저(사파리 프라이빗 등)에서 setItem이 던지면 툴바만 포기한다.
 const resolveEnabled = () => {
-  const flag = new URLSearchParams(window.location.search).get('design');
-  if (flag === '1') localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
-  if (flag === '0') localStorage.removeItem(STORAGE_KEYS.DESIGN_FEEDBACK);
-  return localStorage.getItem(STORAGE_KEYS.DESIGN_FEEDBACK) === '1';
+  try {
+    const flag = new URLSearchParams(window.location.search).get('design');
+    if (flag === '1') localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
+    if (flag === '0') localStorage.removeItem(STORAGE_KEYS.DESIGN_FEEDBACK);
+    return localStorage.getItem(STORAGE_KEYS.DESIGN_FEEDBACK) === '1';
+  } catch {
+    return false;
+  }
 };
 
 const DesignFeedbackToolbar = () => {

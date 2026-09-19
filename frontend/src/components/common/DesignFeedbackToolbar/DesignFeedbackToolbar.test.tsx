@@ -58,6 +58,18 @@ describe('DesignFeedbackToolbar', () => {
     expect(screen.queryByTestId('agentation')).not.toBeInTheDocument();
   });
 
+  it('localStorage가 던지면 렌더하지 않고 조용히 넘어간다', () => {
+    setSearch('?design=1');
+    const setItem = jest
+      .spyOn(Storage.prototype, 'setItem')
+      .mockImplementation(() => {
+        throw new Error('QuotaExceededError');
+      });
+    expect(() => render(<DesignFeedbackToolbar />)).not.toThrow();
+    expect(screen.queryByTestId('agentation')).not.toBeInTheDocument();
+    setItem.mockRestore();
+  });
+
   it('인앱 웹뷰에서도 ?design=0이면 localStorage를 지운다', () => {
     localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
     setUserAgent('MoadongApp/1.5.1');
