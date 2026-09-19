@@ -45,6 +45,11 @@ export const usePromotionForm = ({
     createEmptyPromotionForm,
   );
   const [isSaving, setIsSaving] = useState(false);
+  /**
+   * 작성 모드에서 생성까지는 성공했는데 이미지 업로드·PUT이 실패한 경우를 위한 것.
+   * 이 id를 버리면 재시도가 글을 한 번 더 만들어 중복 글과 고아 업로드가 남는다.
+   */
+  const createdArticleIdRef = useRef<string | null>(null);
 
   const { mutateAsync: createArticle } = useCreatePromotionArticle();
   const { mutateAsync: updateArticle } = useUpdatePromotionArticle();
@@ -141,7 +146,7 @@ export const usePromotionForm = ({
 
     setIsSaving(true);
     try {
-      let articleId = article?.id;
+      let articleId = article?.id ?? createdArticleIdRef.current ?? undefined;
       if (!articleId) {
         const created = await createArticle(
           buildPromotionPayload(values, clubId, []),
@@ -153,6 +158,7 @@ export const usePromotionForm = ({
           };
         }
         articleId = created.articleId;
+        createdArticleIdRef.current = articleId;
       }
 
       const { orderedUrls: images, failedCount } = await uploadFiles(articleId);

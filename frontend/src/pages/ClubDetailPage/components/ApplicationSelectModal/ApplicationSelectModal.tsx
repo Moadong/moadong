@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useId, useRef, useState } from 'react';
 import Modal from '@/components/common/Modal/Modal';
 import { ApplicationForm } from '@/types/application';
 import * as Styled from './ApplicationSelectModal.styles';
@@ -19,6 +19,7 @@ const ApplicationSelectModal = ({
   applicationOptions,
   onOptionSelect,
 }: ApplicationSelectModalProps) => {
+  const titleId = useId();
   const [thumbOffset, setThumbOffset] = useState(0);
   const listRef = useRef<HTMLDivElement>(null);
 
@@ -34,9 +35,9 @@ const ApplicationSelectModal = ({
 
   return (
     <Modal isOpen={isOpen} onClose={onClose}>
-      <Styled.Dialog role='dialog' aria-modal='true'>
+      <Styled.Dialog role='dialog' aria-modal='true' aria-labelledby={titleId}>
         <Styled.Header>
-          <Styled.Title>지원서 선택</Styled.Title>
+          <Styled.Title id={titleId}>지원서 선택</Styled.Title>
           <Styled.CloseButton
             aria-label='close'
             type='button'

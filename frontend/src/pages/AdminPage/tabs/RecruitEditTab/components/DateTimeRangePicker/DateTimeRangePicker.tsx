@@ -52,7 +52,12 @@ const DateTimeRangePicker = ({
     });
   }, [disabledEnd]);
 
-  // 잠긴 동안은 열려 있던 패널도 숨긴다. 상태를 바꾸지 않고 파생시켜 effect 없이 처리한다
+  // 잠길 때 activePicker를 안 지우면, disabled가 풀리는 순간 열려 있던 패널이 혼자 다시 열린다
+  useEffect(() => {
+    if (disabled) setActivePicker(null);
+  }, [disabled]);
+
+  // effect가 반영되기 전의 한 프레임에도 패널이 보이지 않도록 파생값으로 한 번 더 막는다
   const visiblePicker = disabled ? null : activePicker;
 
   return (

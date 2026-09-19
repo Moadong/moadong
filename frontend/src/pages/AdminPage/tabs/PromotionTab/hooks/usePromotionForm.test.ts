@@ -227,6 +227,48 @@ describe('usePromotionForm 이미지 순서', () => {
     });
   });
 
+  it('생성 후 실패한 저장을 재시도해도 글을 다시 만들지 않는다', async () => {
+    const file = makeFile('new.png');
+    createArticle.mockResolvedValue({ articleId: 'created-1' });
+    uploadImages
+      .mockRejectedValueOnce(new Error('업로드 실패'))
+      .mockResolvedValueOnce({
+        uploaded: [{ file, url: 'https://cdn/new.png' }],
+        failedFiles: [],
+      });
+    updateArticle.mockResolvedValue({});
+
+    const { result } = renderHook(() => usePromotionForm({ clubId: 'club-1' }));
+
+    act(() => {
+      result.current.setField('title', '봄 정기공연');
+      result.current.setField('location', '한울관(E31) 302호');
+      result.current.setField('coordinates', {
+        lat: 35.132367,
+        lng: 129.106974,
+      });
+      result.current.setField('eventStart', new Date('2026-04-01T10:00:00'));
+      result.current.setField('eventEnd', new Date('2026-04-01T12:00:00'));
+      result.current.setField('description', '설명');
+    });
+    act(() => result.current.addFiles([file]));
+
+    let firstResult;
+    await act(async () => {
+      firstResult = await result.current.save();
+    });
+    expect(firstResult).toMatchObject({ status: 'error' });
+
+    let secondResult;
+    await act(async () => {
+      secondResult = await result.current.save();
+    });
+
+    expect(createArticle).toHaveBeenCalledTimes(1);
+    expect(secondResult).toEqual({ status: 'success', articleId: 'created-1' });
+    expect(updateArticle.mock.calls[0][0].articleId).toBe('created-1');
+  });
+
   it('삭제한 로컬 이미지의 previewUrl은 revoke한다', () => {
     const { result } = renderHook(() =>
       usePromotionForm({ clubId: 'club-1', article }),
