@@ -4728,6 +4728,16 @@
       renderScrollDepths(data.scrollDepths || []);
     }
 
+    // 조회 중에 프리셋·날짜가 바뀌면 이전 기간의 응답이 바뀐 날짜 아래에 붙는다. 요청이 끝날 때까지 잠근다.
+    function setFunnelControlsDisabled(disabled) {
+      document.getElementById('btnFunnelLoad').disabled = disabled;
+      document.getElementById('funnelFrom').disabled = disabled;
+      document.getElementById('funnelTo').disabled = disabled;
+      document.querySelectorAll('.funnel-preset').forEach((button) => {
+        button.disabled = disabled;
+      });
+    }
+
     async function loadFunnelDashboard() {
       const from = document.getElementById('funnelFrom').value;
       const to = document.getElementById('funnelTo').value;
@@ -4740,7 +4750,7 @@
       }
       if (funnelIsLoading) return;
       funnelIsLoading = true;
-      btn.disabled = true;
+      setFunnelControlsDisabled(true);
       btn.textContent = '조회 중...';
       try {
         const query = '?from=' + encodeURIComponent(from) + '&to=' + encodeURIComponent(to);
@@ -4760,7 +4770,7 @@
         setMessageBox('funnelMessage', false, e.message || '조회 요청 실패');
       } finally {
         funnelIsLoading = false;
-        btn.disabled = false;
+        setFunnelControlsDisabled(false);
         btn.textContent = '조회';
       }
     }
