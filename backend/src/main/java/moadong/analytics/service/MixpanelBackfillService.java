@@ -4,10 +4,12 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.analytics.config.MixpanelProperties;
 import moadong.analytics.entity.MixpanelBackfilledEvent;
+import moadong.analytics.entity.MixpanelCollectionStatus;
 import moadong.analytics.entity.MixpanelFunnelEvent;
 import moadong.analytics.payload.dto.MixpanelRawEvent;
 import moadong.analytics.payload.response.MixpanelBackfillResponse;
 import moadong.analytics.repository.MixpanelBackfilledEventRepository;
+import moadong.analytics.repository.MixpanelCollectionStatusRepository;
 import moadong.analytics.repository.MixpanelFunnelEventRepository;
 import moadong.analytics.support.AnalyticsDateRangeValidator;
 import moadong.analytics.support.AnalyticsTime;
@@ -35,6 +37,7 @@ public class MixpanelBackfillService {
     private final MixpanelExportClient mixpanelExportClient;
     private final MixpanelBackfilledEventRepository mixpanelBackfilledEventRepository;
     private final MixpanelFunnelEventRepository mixpanelFunnelEventRepository;
+    private final MixpanelCollectionStatusRepository mixpanelCollectionStatusRepository;
     private final ClubAnalyticsRecordService clubAnalyticsRecordService;
     private final ClubRepository clubRepository;
     private final MixpanelProperties mixpanelProperties;
@@ -87,6 +90,7 @@ public class MixpanelBackfillService {
                     throw e;
                 }
             }
+            markDateCollected(date);
         }
 
         return new MixpanelBackfillResponse(from, to, fetched, processed, duplicated, skipped);
@@ -183,6 +187,17 @@ public class MixpanelBackfillService {
             log.warn("Mixpanel backfill clubName 매핑 실패. clubName={}", clubName);
         }
         return club;
+    }
+
+    /**
+     * 그 날짜를 끝까지 처리했다는 표시. 이벤트가 0건이어도 남겨야 수집 실패와 구분된다.
+     * 중간에 예외가 나면 여기까지 오지 않으므로 실패한 날에는 표시가 남지 않는다.
+     */
+    private void markDateCollected(LocalDate date) {
+        mixpanelCollectionStatusRepository.save(MixpanelCollectionStatus.builder()
+                .eventDate(MixpanelCollectionStatus.idOf(date))
+                .collectedAt(LocalDateTime.now(AnalyticsTime.KST))
+                .build());
     }
 
     private boolean markBackfilled(String backfillKey, MixpanelRawEvent event, LocalDate eventDate) {

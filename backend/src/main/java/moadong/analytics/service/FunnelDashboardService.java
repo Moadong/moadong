@@ -1,6 +1,7 @@
 package moadong.analytics.service;
 
 import lombok.RequiredArgsConstructor;
+import moadong.analytics.entity.MixpanelCollectionStatus;
 import moadong.analytics.entity.MixpanelFunnelEvent;
 import moadong.analytics.payload.response.FunnelDashboardResponse;
 import moadong.analytics.payload.response.FunnelDashboardResponse.ConversionResult;
@@ -9,6 +10,7 @@ import moadong.analytics.payload.response.FunnelDashboardResponse.FunnelResult;
 import moadong.analytics.payload.response.FunnelDashboardResponse.ScrollDepthResult;
 import moadong.analytics.payload.response.FunnelDashboardResponse.StepResult;
 import moadong.analytics.repository.MixpanelBackfilledEventRepository;
+import moadong.analytics.repository.MixpanelCollectionStatusRepository;
 import moadong.analytics.repository.MixpanelFunnelEventRepository;
 import moadong.analytics.support.AnalyticsDateRangeValidator;
 import moadong.analytics.support.FunnelDefinitions;
@@ -41,6 +43,7 @@ public class FunnelDashboardService {
 
     private final MixpanelFunnelEventRepository mixpanelFunnelEventRepository;
     private final MixpanelBackfilledEventRepository mixpanelBackfilledEventRepository;
+    private final MixpanelCollectionStatusRepository mixpanelCollectionStatusRepository;
 
     public FunnelDashboardResponse getDashboard(LocalDate from, LocalDate to) {
         AnalyticsDateRangeValidator.validateQueryRange(from, to);
@@ -149,19 +152,27 @@ public class FunnelDashboardService {
         return results;
     }
 
-    /**
-     * 수집 여부는 그날 퍼널 이벤트가 하나라도 dedup 컬렉션에 있는지로 판단한다.
-     * Export 실패로 비어 있는 날과 트래픽이 0인 날은 구분하지 못한다.
-     */
     private List<LocalDate> findMissingDates(LocalDate from, LocalDate to) {
         List<LocalDate> missing = new ArrayList<>();
         for (LocalDate date = from; !date.isAfter(to); date = date.plusDays(1)) {
-            if (!mixpanelBackfilledEventRepository.existsByEventDateAndEventNameIn(
-                    date, FunnelDefinitions.ALL_EVENT_NAMES)) {
+            if (!isCollected(date)) {
                 missing.add(date);
             }
         }
         return missing;
+    }
+
+    /**
+     * 수집 성공 표시가 있으면 수집된 날이다. 이벤트가 0건인 날도 표시가 남으므로
+     * 트래픽이 없던 날이 계속 미수집으로 보이지 않는다.
+     *
+     * <p>표시를 남기기 전에 수집한 날짜도 있어, 표시가 없으면 그날 퍼널 이벤트가
+     * dedup 컬렉션에 있는지로 한 번 더 본다. 이 경로는 예전 데이터에만 해당한다.
+     */
+    private boolean isCollected(LocalDate date) {
+        return mixpanelCollectionStatusRepository.existsById(MixpanelCollectionStatus.idOf(date))
+                || mixpanelBackfilledEventRepository.existsByEventDateAndEventNameIn(
+                        date, FunnelDefinitions.ALL_EVENT_NAMES);
     }
 
     private static boolean withinWindow(LocalDateTime previous, LocalDateTime current) {
