@@ -65,10 +65,10 @@ cd frontend && npm install -D babel-plugin-styled-components@^2.1.4
           plugins: [
             ['babel-plugin-react-compiler', {}],
             // agentation 툴바가 DOM 클래스에서 styled 변수명을 읽을 수 있게 한다.
-            // fileName: false — 이름만 붙이고 파일 경로는 붙이지 않아 번들 증가를 줄인다.
+            // fileName: true — `Container`처럼 흔한 이름(72곳)을 파일명으로 구분한다.
             [
               'babel-plugin-styled-components',
-              { displayName: true, fileName: false, ssr: false },
+              { displayName: true, fileName: true, ssr: false },
             ],
           ],
         },
@@ -90,10 +90,10 @@ Expected: `dist/assets/index-<hash>.js  <N> kB │ gzip: <M> kB` 한 줄. `<M>`�
 
 ```bash
 cd frontend && npm run build:dev 2>&1 | grep -E "index-.*\.js" | head -3
-grep -o "BannerContainer-sc-[a-z0-9]*" dist/assets/index-*.js | head -1
+grep -o 'displayName:"Bannerstyles__BannerContainer"' dist/assets/index-*.js | head -1
 ```
 
-Expected: 두 번째 명령이 `BannerContainer-sc-xxxxx`를 출력한다. 첫 명령의 gzip 크기와 Step 3의 크기 차이를 PR 본문용으로 적어 둔다.
+Expected: 두 번째 명령이 `displayName:"Bannerstyles__BannerContainer"`를 출력한다. 첫 명령의 gzip 크기와 Step 3의 크기 차이를 PR 본문용으로 적어 둔다.
 
 - [ ] **Step 5: 타입·린트**
 
@@ -560,7 +560,7 @@ name: Design feedback → PR
 
 on:
   issues:
-    types: [opened, labeled]
+    types: [labeled]
 
 permissions:
   contents: write
@@ -574,9 +574,8 @@ jobs:
     # - 조직 멤버가 연 이슈만: 외부인이 이슈로 프롬프트 인젝션 + 쓰기 권한을 얻는 걸 막는다.
     # - labeled 이벤트는 그 라벨이 붙었을 때만: 다른 라벨 추가로 중복 실행되지 않게 한다.
     if: >-
-      ${{ contains(github.event.issue.labels.*.name, 'design-feedback')
-      && contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association)
-      && (github.event.action == 'opened' || github.event.label.name == 'design-feedback') }}
+      ${{ github.event.label.name == 'design-feedback'
+      && contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association) }}
     # 같은 이슈를 다시 라벨링해 재실행할 때 브랜치 push가 겹치지 않게 직렬화한다.
     concurrency: design-feedback-${{ github.event.issue.number }}
     runs-on: ubuntu-latest
@@ -616,7 +615,7 @@ jobs:
             $PR_BASE로 주어진다. 셸 명령에서는 값을 직접 타이핑하지 말고 항상 환경변수를 써라.
           claude_args: |
             --model claude-opus-5
-            --allowedTools Read,Edit,Write,Glob,Grep,Bash
+            --allowedTools Read,Edit,Glob,Grep,Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh pr create:*),Bash(git status:*),Bash(git diff:*),Bash(git fetch origin:*),Bash(git checkout:*),Bash(git add:*),Bash(git commit:*),Bash(git push origin:*),Bash(git config user.name:*),Bash(git config user.email:*),Bash(cd frontend && npm run typecheck),Bash(cd frontend && npx eslint src),Bash(cat:*)
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
