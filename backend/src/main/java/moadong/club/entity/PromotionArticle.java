@@ -19,6 +19,9 @@ import java.util.List;
 @NoArgsConstructor
 public class PromotionArticle {
 
+    /** 게시글 1건당 첨부 가능한 이미지 수. 동아리 활동사진(server.feed.max-count)과 같은 15장. */
+    public static final int MAX_IMAGE_COUNT = 15;
+
     @Id
     private String id;
 
@@ -50,8 +53,8 @@ public class PromotionArticle {
 
     private Instant deletedAt;
 
-    public void update(PromotionArticleUpdateRequest request, String clubName) {
-        this.clubId = request.clubId();
+    public void update(String clubId, PromotionArticleUpdateRequest request, String clubName) {
+        this.clubId = clubId;
         this.clubName = clubName;
         this.title = request.title();
         this.location = request.location();

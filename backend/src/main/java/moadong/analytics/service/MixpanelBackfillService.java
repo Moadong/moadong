@@ -4,11 +4,16 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.analytics.config.MixpanelProperties;
 import moadong.analytics.entity.MixpanelBackfilledEvent;
+import moadong.analytics.entity.MixpanelCollectionStatus;
+import moadong.analytics.entity.MixpanelFunnelEvent;
 import moadong.analytics.payload.dto.MixpanelRawEvent;
 import moadong.analytics.payload.response.MixpanelBackfillResponse;
 import moadong.analytics.repository.MixpanelBackfilledEventRepository;
+import moadong.analytics.repository.MixpanelCollectionStatusRepository;
+import moadong.analytics.repository.MixpanelFunnelEventRepository;
 import moadong.analytics.support.AnalyticsDateRangeValidator;
 import moadong.analytics.support.AnalyticsTime;
+import moadong.analytics.support.FunnelDefinitions;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
@@ -31,6 +36,8 @@ public class MixpanelBackfillService {
 
     private final MixpanelExportClient mixpanelExportClient;
     private final MixpanelBackfilledEventRepository mixpanelBackfilledEventRepository;
+    private final MixpanelFunnelEventRepository mixpanelFunnelEventRepository;
+    private final MixpanelCollectionStatusRepository mixpanelCollectionStatusRepository;
     private final ClubAnalyticsRecordService clubAnalyticsRecordService;
     private final ClubRepository clubRepository;
     private final MixpanelProperties mixpanelProperties;
@@ -70,7 +77,7 @@ public class MixpanelBackfillService {
                     continue;
                 }
                 try {
-                    if (processEvent(event, eventDate, clubNameIndex)) {
+                    if (processEvent(event, backfillKey, eventDate, clubNameIndex)) {
                         processed++;
                     } else {
                         mixpanelBackfilledEventRepository.deleteById(backfillKey);
@@ -83,18 +90,44 @@ public class MixpanelBackfillService {
                     throw e;
                 }
             }
+            markDateCollected(date);
         }
 
         return new MixpanelBackfillResponse(from, to, fetched, processed, duplicated, skipped);
     }
 
-    private boolean processEvent(MixpanelRawEvent event, LocalDate eventDate, ClubNameIndex clubNameIndex) {
-        return switch (event.event()) {
+    private boolean processEvent(MixpanelRawEvent event, String backfillKey, LocalDate eventDate,
+                                 ClubNameIndex clubNameIndex) {
+        // 퍼널 저장과 동아리 통계는 독립이다. ClubDetailPage Visited처럼 둘 다 해당하는 이벤트는 둘 다 수행한다.
+        boolean storedFunnel = FunnelDefinitions.isFunnelEvent(event.event())
+                && storeFunnelEvent(event, backfillKey, eventDate);
+        boolean processedClubStatistics = switch (event.event()) {
             case "ClubDetailPage Visited" -> processDetailView(event, eventDate, clubNameIndex);
             case "ClubDetailPage Duration" -> processDetailDuration(event, eventDate, clubNameIndex);
             case "Search Executed" -> processSearch(event, eventDate);
             default -> false;
         };
+        return storedFunnel || processedClubStatistics;
+    }
+
+    private boolean storeFunnelEvent(MixpanelRawEvent event, String backfillKey, LocalDate eventDate) {
+        String distinctId = stringProperty(event, "distinct_id");
+        Long time = longProperty(event, "time");
+        if (distinctId == null || distinctId.isBlank() || time == null) {
+            return false;
+        }
+        Long depthPercent = longProperty(event, "depth_percent");
+        // save(upsert): 이전 실행이 dedup 키 롤백 전에 죽어 문서만 남았어도 같은 @Id로 덮어써 중복이 생기지 않는다.
+        mixpanelFunnelEventRepository.save(MixpanelFunnelEvent.builder()
+                .insertId(backfillKey)
+                .distinctId(distinctId)
+                .eventName(event.event())
+                .eventTime(AnalyticsTime.toKstDateTimeFromEpochSeconds(time))
+                .eventDate(eventDate)
+                .page(stringProperty(event, "page"))
+                .depthPercent(depthPercent == null ? null : depthPercent.intValue())
+                .build());
+        return true;
     }
 
     private boolean processDetailView(MixpanelRawEvent event, LocalDate eventDate, ClubNameIndex clubNameIndex) {
@@ -154,6 +187,17 @@ public class MixpanelBackfillService {
             log.warn("Mixpanel backfill clubName 매핑 실패. clubName={}", clubName);
         }
         return club;
+    }
+
+    /**
+     * 그 날짜를 끝까지 처리했다는 표시. 이벤트가 0건이어도 남겨야 수집 실패와 구분된다.
+     * 중간에 예외가 나면 여기까지 오지 않으므로 실패한 날에는 표시가 남지 않는다.
+     */
+    private void markDateCollected(LocalDate date) {
+        mixpanelCollectionStatusRepository.save(MixpanelCollectionStatus.builder()
+                .eventDate(MixpanelCollectionStatus.idOf(date))
+                .collectedAt(LocalDateTime.now(AnalyticsTime.KST))
+                .build());
     }
 
     private boolean markBackfilled(String backfillKey, MixpanelRawEvent event, LocalDate eventDate) {
