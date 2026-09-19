@@ -19,6 +19,11 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
 
   const [feedItems, setFeedItems] = useState<ImageItem[]>([]);
   const feedItemsRef = useRef<ImageItem[]>(feedItems);
+  /**
+   * 재시도를 직렬화한다. mutate에 직접 넘긴 onSuccess는 같은 mutation이 연달아 실행되면
+   * 마지막 호출분만 실행돼, 먼저 성공한 항목이 uploading에 갇히고 URL도 updateFeed에서 빠진다.
+   */
+  const isRetryingRef = useRef(false);
 
   const isLoading = isUploading || isUpdating;
   const pendingChanges = hasPendingChanges(feedItems, originalFeeds);
@@ -75,10 +80,12 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
   };
 
   const retryItem = (index: number) => {
+    if (isRetryingRef.current) return;
     const item = feedItems[index];
     if (item.type !== 'local' || item.status !== 'failed') return;
 
     const targetFile = item.file;
+    isRetryingRef.current = true;
 
     setFeedItems((prev) =>
       prev.map((it, i) =>
@@ -114,6 +121,9 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
                 : it,
             ),
           );
+        },
+        onSettled: () => {
+          isRetryingRef.current = false;
         },
       },
     );

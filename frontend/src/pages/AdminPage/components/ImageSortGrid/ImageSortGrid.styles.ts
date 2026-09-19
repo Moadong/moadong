@@ -72,6 +72,11 @@ export const RetryButton = styled.button`
   &:hover {
     background: rgba(255, 255, 255, 0.2);
   }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `;
 
 export const PendingBadge = styled.div`
