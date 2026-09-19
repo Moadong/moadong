@@ -183,6 +183,11 @@ public class CloudflareImageService implements ClubImageService{
 
         java.util.ArrayList<PresignedUploadResponse> results = new java.util.ArrayList<>(requests.size());
         for (UploadUrlRequest req : requests) {
+            // @Valid는 List 요소의 null까지 막지 못한다. 여기서 걸러야 catch 블록 로그에서 다시 NPE가 나지 않는다.
+            if (req == null) {
+                results.add(errorResponse(ErrorCode.IMAGE_UPLOAD_FAILED));
+                continue;
+            }
             try {
                 validateFileName(req.fileName());
                 results.add(generatePresignedUrl(clubId, req.fileName(), req.contentType(), FileType.FEED));
