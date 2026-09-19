@@ -9,8 +9,12 @@ interface PromotionGridProps {
 const PromotionGrid = ({ articles }: PromotionGridProps) => {
   return (
     <Styled.Grid>
-      {articles.map((article) => (
-        <PromotionCard key={article.id + article.title} article={article} />
+      {articles.map((article, index) => (
+        <PromotionCard
+          key={article.id + article.title}
+          article={article}
+          index={index}
+        />
       ))}
     </Styled.Grid>
   );

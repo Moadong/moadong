@@ -1,20 +1,29 @@
 import { useEffect, useRef, useState } from 'react';
 import { useUpdateFeed, useUploadFeed } from '@/hooks/Queries/useClubImages';
+import { buildFinalUrls } from '@/pages/AdminPage/components/ImageSortGrid/buildFinalUrls';
+import {
+  ImageItem,
+  LocalItem,
+  UploadedItem,
+} from '@/pages/AdminPage/components/ImageSortGrid/types';
 import {
   extractLocalItems,
-  extractUploadedUrls,
   findOversizedFile,
   hasPendingChanges,
   sliceToLimit,
 } from '../photoEditUtils';
-import { FeedItem, LocalItem, UploadedItem } from '../types';
 
 export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
   const { mutate: uploadFeed, isPending: isUploading } = useUploadFeed();
   const { mutate: updateFeed, isPending: isUpdating } = useUpdateFeed();
 
-  const [feedItems, setFeedItems] = useState<FeedItem[]>([]);
-  const feedItemsRef = useRef<FeedItem[]>(feedItems);
+  const [feedItems, setFeedItems] = useState<ImageItem[]>([]);
+  const feedItemsRef = useRef<ImageItem[]>(feedItems);
+  /**
+   * 재시도를 직렬화한다. mutate에 직접 넘긴 onSuccess는 같은 mutation이 연달아 실행되면
+   * 마지막 호출분만 실행돼, 먼저 성공한 항목이 uploading에 갇히고 URL도 updateFeed에서 빠진다.
+   */
+  const isRetryingRef = useRef(false);
 
   const isLoading = isUploading || isUpdating;
   const pendingChanges = hasPendingChanges(feedItems, originalFeeds);
@@ -71,11 +80,12 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
   };
 
   const retryItem = (index: number) => {
+    if (isRetryingRef.current) return;
     const item = feedItems[index];
     if (item.type !== 'local' || item.status !== 'failed') return;
 
     const targetFile = item.file;
-    const uploadedUrls = extractUploadedUrls(feedItems);
+    isRetryingRef.current = true;
 
     setFeedItems((prev) =>
       prev.map((it, i) =>
@@ -86,10 +96,10 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
     );
 
     uploadFeed(
-      { clubId, files: [targetFile], existingUrls: uploadedUrls },
+      { clubId, files: [targetFile] },
       {
-        onSuccess: (data) => {
-          const finalUrl = data.successfulUrls[0];
+        onSuccess: ({ urlByFile }) => {
+          const finalUrl = urlByFile.get(targetFile);
           if (!finalUrl) return;
           setFeedItems((prev) =>
             prev.map((it) => {
@@ -97,6 +107,10 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
               URL.revokeObjectURL(it.previewUrl);
               return { type: 'uploaded', url: finalUrl } as UploadedItem;
             }),
+          );
+          updateFeed(
+            { clubId, urls: buildFinalUrls(feedItems, urlByFile) },
+            { onError: () => alert('저장에 실패했어요. 다시 시도해주세요!') },
           );
         },
         onError: () => {
@@ -108,17 +122,19 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
             ),
           );
         },
+        onSettled: () => {
+          isRetryingRef.current = false;
+        },
       },
     );
   };
 
   const save = () => {
     const localItems = extractLocalItems(feedItems);
-    const uploadedUrls = extractUploadedUrls(feedItems);
 
     if (localItems.length === 0) {
       updateFeed(
-        { clubId, urls: uploadedUrls },
+        { clubId, urls: buildFinalUrls(feedItems, new Map<File, string>()) },
         { onError: () => alert('저장에 실패했어요. 다시 시도해주세요!') },
       );
       return;
@@ -136,7 +152,6 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
       {
         clubId,
         files: filesToUpload,
-        existingUrls: uploadedUrls,
         // File 객체 참조로 매핑 — 인덱스 불일치 버그 방지
         onItemStatusChange: (file, status) => {
           setFeedItems((prev) =>
@@ -149,22 +164,26 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
         },
       },
       {
-        onSuccess: (data) => {
-          if (data.failedFiles.length > 0) {
+        onSuccess: ({ failedFiles, urlByFile }) => {
+          if (failedFiles.length > 0) {
             alert(
-              `일부 파일 업로드에 실패했어요.\n실패한 파일: ${data.failedFiles.join(', ')}\n\n성공한 파일은 정상적으로 등록되었어요.`,
+              `일부 파일 업로드에 실패했어요.\n실패한 파일: ${failedFiles.join(', ')}\n\n성공한 파일은 정상적으로 등록되었어요.`,
             );
           }
-          setFeedItems((prev) => {
-            let successIdx = 0;
-            return prev.map((item) => {
-              if (item.type !== 'local' || item.status === 'failed')
-                return item;
-              const finalUrl = data.successfulUrls[successIdx++];
+          setFeedItems((prev) =>
+            prev.map((item) => {
+              if (item.type !== 'local') return item;
+              const finalUrl = urlByFile.get(item.file);
+              if (!finalUrl) return item;
               URL.revokeObjectURL(item.previewUrl);
               return { type: 'uploaded', url: finalUrl } as UploadedItem;
-            });
-          });
+            }),
+          );
+          // 화면 순서를 아는 여기서 최종 배열을 조립해 저장한다.
+          updateFeed(
+            { clubId, urls: buildFinalUrls(feedItems, urlByFile) },
+            { onError: () => alert('저장에 실패했어요. 다시 시도해주세요!') },
+          );
         },
         onError: () => {
           alert('이미지 업로드에 실패했어요. 다시 시도해주세요!');

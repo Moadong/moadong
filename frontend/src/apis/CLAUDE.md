@@ -18,6 +18,7 @@ API는 `src/apis/utils/apiHelpers.ts`의 헬퍼 함수를 사용하는 일관된
 - JWT는 localStorage에 저장 (`accessToken` 키, `src/constants/storageKeys.ts`에서 관리)
 - 리프레시 토큰은 쿠키로 처리 (`credentials: 'include'`)
 - `secureFetch()`가 1차 요청 → 401이면 `refreshAccessToken()`으로 토큰 재발급 후 재요청. refresh 실패 시 `REFRESH_FAILED` 에러
+- 재요청도 호출부가 넘긴 headers를 그대로 쓴다. 예전엔 재요청에만 `Content-Type: application/json`을 강제해서 FormData(multipart)를 보내면 브라우저가 붙인 boundary가 덮여 재요청이 깨졌다. 지금은 multipart 호출부가 없지만(홍보 이미지도 presigned로 올린다) 재시도 경로는 1차와 같은 요청이어야 하므로 유지한다. JSON 호출부는 전부 직접 `Content-Type: application/json`을 넘긴다
 - 어드민 라우트는 `PrivateRoute` 컴포넌트로 보호
 
 ### 익명 학생 토큰 (우체통)

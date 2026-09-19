@@ -52,3 +52,11 @@ Google OAuth 동의 화면이 테스트 모드면 refresh token이 7일 뒤 만�
 `convertGoogleDriveUrl`이 null을 받으면 내부 `try/catch`가 삼켜
 `console.error`만 남기고 null을 그대로 돌려주니, 무가드 프로퍼티
 접근을 새로 추가하지 말 것.
+
+## 홍보 게시글 관리 (`usePromotion`)
+
+관리자 CRUD는 목록 쿼리 하나(`queryKeys.promotion.list()`)만 쓰고 생성·수정·삭제·업로드 뮤테이션이 모두 그 키를 무효화한다. 상세 조회 API가 없어 수정 화면도 목록에서 `id`로 찾는다.
+
+- 이미지는 피드·로고와 같은 presigned 방식이다. `POST /api/promotion/{id}/upload-url`(배열 요청, 항목별 `success`)로 발급받아 R2에 raw `fetch`로 PUT(`requiredHeaders` 그대로, Authorization 금지)하고, `finalUrl`을 **`PUT /api/promotion/{id}`의 `images`에 전체 목록으로** 보낸다. 발급 API는 게시글을 건드리지 않아 PUT이 이미지 저장의 유일한 경로다. 작성·수정 모두 (작성이면 생성) → 업로드 → PUT 순서(`useUploadPromotionImages`, `usePromotionForm`)
+- 수정 PUT은 `images`가 1개 이상이어야 한다(`@NotEmpty`). 생성은 빈 배열 허용
+- 심사 전 동아리는 서버가 403(902-2)로 막는다. 화면은 요청 전에 `ClubDetail.state === 'AVAILABLE'`로 먼저 막고 같은 문구를 보여준다. 판정은 `PromotionTab/constants.ts`의 `isClubApproved`로만 한다. 상세 API가 한때 설명값(`'활성화'`)을 줬는데 백엔드 #2013에서 enum 이름으로 통일됐다

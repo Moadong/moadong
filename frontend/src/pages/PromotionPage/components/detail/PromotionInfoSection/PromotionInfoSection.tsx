@@ -15,7 +15,7 @@ const PromotionInfoSection = ({ article }: Props) => {
         <Styled.Item>
           <Styled.Label>📅 일시</Styled.Label>
           <Styled.Value>
-            {formatKSTDateTimeFull(article.eventStartDate)} -{' '}
+            {formatKSTDateTimeFull(article.eventStartDate)} ~{' '}
             {formatKSTDateTimeFull(article.eventEndDate)}
           </Styled.Value>
         </Styled.Item>

@@ -1,4 +1,5 @@
 import { createGlobalStyle } from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 const GlobalStyles = createGlobalStyle`
   * {
@@ -18,7 +19,7 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
     sans-serif;
-    color: #121212;
+    color: ${colors.base.black};
     letter-spacing: -0.02em;
   }
 `;

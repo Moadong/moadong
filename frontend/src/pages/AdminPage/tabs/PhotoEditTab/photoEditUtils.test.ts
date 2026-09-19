@@ -1,14 +1,16 @@
 import { MAX_FILE_COUNT, MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import {
+  ImageItem,
+  LocalItem,
+} from '@/pages/AdminPage/components/ImageSortGrid/types';
+import {
   findOversizedFile,
   hasPendingChanges,
-  reorderItems,
   sliceToLimit,
 } from './photoEditUtils';
-import { FeedItem } from './types';
 
-const makeUploaded = (url: string): FeedItem => ({ type: 'uploaded', url });
-const makeLocal = (name: string): FeedItem => ({
+const makeUploaded = (url: string): ImageItem => ({ type: 'uploaded', url });
+const makeLocal = (name: string): LocalItem => ({
   type: 'local',
   file: new File([''], name, { type: 'image/jpeg' }),
   previewUrl: `blob:${name}`,
@@ -60,69 +62,24 @@ describe('findOversizedFile', () => {
   });
 });
 
-describe('reorderItems', () => {
-  const items: FeedItem[] = [
-    makeUploaded('a'),
-    makeUploaded('b'),
-    makeUploaded('c'),
-    makeUploaded('d'),
-  ];
-
-  it('앞에서 뒤로 이동한다 (0 → 2)', () => {
-    const result = reorderItems(items, 0, 2);
-    expect(result.map((i) => (i as { url: string }).url)).toEqual([
-      'b',
-      'a',
-      'c',
-      'd',
-    ]);
-  });
-
-  it('뒤에서 앞으로 이동한다 (3 → 1)', () => {
-    const result = reorderItems(items, 3, 1);
-    expect(result.map((i) => (i as { url: string }).url)).toEqual([
-      'a',
-      'd',
-      'b',
-      'c',
-    ]);
-  });
-
-  it('같은 위치로 이동해도 순서가 유지된다', () => {
-    const result = reorderItems(items, 1, 1);
-    expect(result.map((i) => (i as { url: string }).url)).toEqual([
-      'a',
-      'b',
-      'c',
-      'd',
-    ]);
-  });
-
-  it('원본 배열을 변경하지 않는다 (불변성)', () => {
-    reorderItems(items, 0, 3);
-    expect(items).toHaveLength(4);
-    expect((items[0] as { url: string }).url).toBe('a');
-  });
-});
-
 describe('hasPendingChanges', () => {
   it('local 아이템이 있으면 true를 반환한다', () => {
-    const feedItems: FeedItem[] = [makeUploaded('a'), makeLocal('new.jpg')];
+    const feedItems: ImageItem[] = [makeUploaded('a'), makeLocal('new.jpg')];
     expect(hasPendingChanges(feedItems, ['a'])).toBe(true);
   });
 
   it('uploaded URL이 원본과 동일하면 false를 반환한다', () => {
-    const feedItems: FeedItem[] = [makeUploaded('a'), makeUploaded('b')];
+    const feedItems: ImageItem[] = [makeUploaded('a'), makeUploaded('b')];
     expect(hasPendingChanges(feedItems, ['a', 'b'])).toBe(false);
   });
 
   it('이미지가 삭제되면 true를 반환한다', () => {
-    const feedItems: FeedItem[] = [makeUploaded('a')];
+    const feedItems: ImageItem[] = [makeUploaded('a')];
     expect(hasPendingChanges(feedItems, ['a', 'b'])).toBe(true);
   });
 
   it('순서가 바뀌면 true를 반환한다', () => {
-    const feedItems: FeedItem[] = [makeUploaded('b'), makeUploaded('a')];
+    const feedItems: ImageItem[] = [makeUploaded('b'), makeUploaded('a')];
     expect(hasPendingChanges(feedItems, ['a', 'b'])).toBe(true);
   });
 

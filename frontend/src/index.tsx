@@ -1,6 +1,6 @@
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { initializeExperiments } from './experiments/initializeExperiments';
+import { cleanupMainRedesignExperiment } from './utils/cleanupMainRedesignExperiment';
 import {
   initializeClarity,
   initializeMixpanel,
@@ -10,7 +10,7 @@ import {
 initializeMixpanel();
 initializeSentry();
 initializeClarity();
-initializeExperiments();
+cleanupMainRedesignExperiment();
 
 if (import.meta.env.DEV) {
   window.navermap_authFailure = function () {

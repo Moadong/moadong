@@ -65,18 +65,15 @@ export const USER_EVENT = {
   APPLICATION_FORM_SUBMITTED: 'Application Form Submitted',
   FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
 
-  // A/B 실험 노출 (Mixpanel 예약 이벤트)
-  EXPERIMENT_STARTED: '$experiment_started',
-
   // 필터칩
   FILTER_OPTION_CLICKED: 'Filter Option Clicked',
 
   // 하단 네비게이션
   BOTTOM_TAB_CLICKED: 'BottomTab Clicked',
 
-  HOME_SECTION_MORE_CLICKED: 'Home Section More Clicked',
-  HOME_SEARCH_CLICKED: 'Home Search Clicked',
+  // 구독
   HOME_SUBSCRIPTION_CLICKED: 'Home Subscription Clicked',
+  APP_DOWNLOAD_SUBSCRIPTIONS_CLICKED: 'App Download Subscriptions Clicked',
 
   // 동소한 (동아리 소개 한마당)
   FESTIVAL_TAB_CLICKED: 'Festival Tab Clicked',
@@ -92,6 +89,8 @@ export const USER_EVENT = {
   PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
   PROMOTION_CARD_CLICKED: 'Promotion Card Clicked',
   PROMOTION_CLUB_CTA_CLICKED: 'Promotion Club CTA Clicked',
+  PROMOTION_MAP_CLICKED: 'Promotion Map Clicked',
+  PROMOTION_IMAGE_MORE_CLICKED: 'Promotion Image More Clicked',
 
   WEBVIEW_SUBSCRIBE_TOGGLED: 'Webview Subscribe Toggled',
 } as const;
@@ -169,6 +168,11 @@ export const ADMIN_EVENT = {
   AI_DRAFT_GENERATION_FAILED: 'AI 지원서 초안 생성 실패',
   APPLICATION_FORM_SAVED: '지원서 저장',
 
+  // 홍보 게시글 관리
+  PROMOTION_CREATE_BUTTON_CLICKED: '홍보 게시글 작성 버튼클릭',
+  PROMOTION_SAVE_BUTTON_CLICKED: '홍보 게시글 저장 버튼클릭',
+  PROMOTION_DELETE_BUTTON_CLICKED: '홍보 게시글 삭제 버튼클릭',
+
   // 비밀번호 수정
   PASSWORD_CHANGE_BUTTON_CLICKED: '비밀번호 변경 버튼클릭',
   NEW_PASSWORD_CLEAR_BUTTON_CLICKED: '새 비밀번호 입력 초기화 버튼클릭',
@@ -180,7 +184,6 @@ export const PAGE_VIEW = {
   APPLICATION_FORM_PAGE: 'ApplicationFormPage',
   CLUB_DETAIL_PAGE: 'ClubDetailPage',
   MAIN_PAGE: 'MainPage',
-  CLUB_LIST_PAGE: 'ClubListPage',
   SUBSCRIPTIONS_PAGE: 'SubscriptionsPage',
   MENU_PAGE: 'MenuPage',
   INTRODUCE_PAGE: 'IntroducePage',
@@ -210,11 +213,12 @@ export const PAGE_VIEW = {
   ADMIN_STATISTICS_PAGE: '동아리 통계 페이지',
   ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
   ADMIN_CALENDAR_PAGE: '동아리 일정 관리 페이지',
+  ADMIN_PROMOTION_LIST_PAGE: '홍보 게시글 관리 페이지',
+  ADMIN_PROMOTION_EDIT_PAGE: '홍보 게시글 작성 페이지',
 } as const;
 
 export const PAGE_NAME = {
   MAIN: 'main',
-  CLUB_LIST: 'club-list',
   WEBVIEW_MAIN: 'webview-main',
   INTRODUCE: 'introduce',
   SUBSCRIPTIONS: 'subscriptions',

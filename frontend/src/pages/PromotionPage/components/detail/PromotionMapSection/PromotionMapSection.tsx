@@ -3,6 +3,8 @@ import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import MapModal from '@/components/map/MapModal/MapModal';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { ClubLocation } from '@/constants/clubLocation';
+import { USER_EVENT } from '@/constants/eventName';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import { PromotionArticle } from '@/types/promotion';
 import * as Styled from './PromotionMapSection.styles';
@@ -13,6 +15,7 @@ interface Props {
 
 const PromotionMapSection = ({ article }: Props) => {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  const trackEvent = useMixpanelTrack();
   const { data: clubDetail } = useGetClubDetail(`@${article.clubName}`, {
     enabled: isMapModalOpen,
     staleTime: 60 * 60 * 1000,
@@ -31,10 +34,19 @@ const PromotionMapSection = ({ article }: Props) => {
     detailLocation: '',
   };
 
+  const handleMapClick = () => {
+    trackEvent(USER_EVENT.PROMOTION_MAP_CLICKED, {
+      promotion_id: article.id,
+      club_name: article.clubName,
+      location: article.location,
+    });
+    setIsMapModalOpen(true);
+  };
+
   return (
     <>
       <Styled.Container>
-        <Styled.MapCard onClick={() => setIsMapModalOpen(true)}>
+        <Styled.MapCard onClick={handleMapClick}>
           <NaverMap location={location} />
         </Styled.MapCard>
         <Styled.LocationText>
