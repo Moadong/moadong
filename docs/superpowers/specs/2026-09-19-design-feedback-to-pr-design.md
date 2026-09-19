@@ -46,7 +46,8 @@ harry 리뷰봇은 base가 main이 아닌 PR에 자동으로 붙으므로 그대
 - `src/components/common/DesignFeedbackToolbar/DesignFeedbackToolbar.tsx` (신규):
   - `?design=1`이면 localStorage `STORAGE_KEYS.DESIGN_FEEDBACK`에 `'1'` 저장, `?design=0`이면 삭제.
   - 저장값이 `'1'`이고 `isInAppWebView()`가 false일 때만 `React.lazy(() => import('agentation'))`로 `<Agentation />` 렌더. `Suspense` fallback은 null.
-  - 툴바 자체 설정(다크모드 등)은 건드리지 않는다.
+  - 툴바를 켤 때 agentation의 `feedback-toolbar-settings` 키가 비어 있으면 `{"outputDetail":"detailed"}`를 한 번 심는다. 기본값 `standard`로는 `**Classes:**` 줄이 안 붙어 프리뷰 메모로 요소를 특정할 수 없다(5.1절). agentation이 `{...DEFAULT_SETTINGS, ...saved}`로 병합하므로 부분 객체로 충분하고, 디자이너가 직접 바꾼 설정은 덮지 않는다.
+  - 그 밖의 툴바 설정(다크모드 등)은 건드리지 않는다.
 - `src/constants/storageKeys.ts`: 키 하나 추가.
 - `src/App.tsx`: `<FloatingButtonGroup />` 옆에 `<DesignFeedbackToolbar />` 한 줄.
 
@@ -77,7 +78,11 @@ harry 리뷰봇은 base가 main이 아닌 PR에 자동으로 붙으므로 그대
 ## 5. 에이전트 규칙 (`.github/design-feedback-rules.md` 핵심)
 
 ### 5.1 요소 → 소스 찾기
-- 툴바 출력은 `**Location:** #root > .Content-jqvACv > .Header-iaiWsU`(styled 변수명-해시 경로), `**React:**`(컴포넌트 체인, 프로덕션에선 축약될 수 있음), 개발 빌드 한정 `**Source:** 파일:줄`, `**Feedback:**`으로 구성된다. 실측(2026-09-19). Source → Location의 styled 변수명 → 읽을 수 있는 React 이름 → 페이지 경로 순으로 `frontend/src`를 grep한다.
+- 툴바 출력은 `**Location:**`, `**Classes:**`, `**Source:**`, `**Feedback:**`과 개발 서버 한정 `**React:**`으로 구성된다. 프리뷰 배포본 실측(2026-09-19)으로 아래 셋을 확인했고, 규칙 파일은 이 실측을 따른다.
+  - `**Location:**`은 `.MainContentstyles > .MainContentstyles > … > .kAWxDa`. agentation이 클래스를 `_` 앞에서 자르고(`meaningfulClass.split("_")[0]`), 대문자 5연속이 든 클래스는 통째로 버린다. `fileName: true`로 얻은 파일명은 남지만 styled 변수명은 여기서 사라진다.
+  - `**Source:**`는 프로덕션 빌드에서도 나오지만 `assets/agentation-*.js:줄:칸`, 즉 툴바 자기 번들을 가리킨다. React 19에 `_debugSource`가 없어 agentation이 "컴포넌트를 호출해 스택 첫 프레임을 읽는" 폴백을 쓰는데, 그 throw 지점이 agentation 코드이고 우리 청크명(`agentation-*.js`)이 그쪽 skip 패턴(`node_modules/`·`/dist/index.`·`chunk-XXXX`)에 걸리지 않기 때문이다. `src/`로 시작할 때만 신뢰한다.
+  - `**Classes:**`는 `MainContentstyles__Tab-eMTGFS`를 온전히 남긴다. 파일명·변수명이 둘 다 살아 있는 유일한 줄이라 프리뷰에서 요소를 특정하는 단서는 사실상 이것 하나다. 단 `outputDetail`이 `detailed` 이상일 때만 붙는다.
+- Classes → (`src/`로 시작하는) Source → Location의 파일명 → 페이지 경로 순으로 `frontend/src`를 grep한다.
 - 후보 파일이 정확히 하나로 좁혀질 때만 수정한다. 둘 이상이거나 못 찾으면 코드를 건드리지 않고 이슈에 후보 목록과 함께 "어느 쪽인지" 되묻는 댓글을 단다. 추측으로 고치지 않는다.
 
 ### 5.2 바꿀 수 있는 것

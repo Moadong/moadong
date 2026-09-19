@@ -26,19 +26,26 @@ Jira 키(없으면 `_No response_`)다. 툴바 마크다운은 아래 형태다(
 ## Page Feedback: /club/123
 **Viewport:** 1440×900
 
-### 1. <MainPage> <Header> <Container> Headerstyles__Container NuEt
-**Location:** #root > .MainPagestyles__Content-jqvACv > .Headerstyles__Header-iaiWsU > .Headerstyles__Container-NuEt
-**React:** <MainPage> <Header> <Container>
+### 1. button "부경대학교 중앙동아리"
+**Location:** .MainContentstyles > .MainContentstyles > .MainContentstyles > .kAWxDa
+**Source:** assets/agentation-D-aQwypL.js:2109:1093
+**Classes:** MainContentstyles__Tab-eMTGFS, kAWxDa
+**Position:** 38px, 542px (177×24px)
+**Context:** 부경대학교 중앙동아리
 **Feedback:** 헤더 높이를 8px 줄여줘
 ```
 
-- `**Location:**`의 각 `.파일__변수-해시`가 styled-components 이름이다. `파일`은 styled 정의
-  파일명에서 점을 뺀 것(`Header.styles.ts` → `Headerstyles`), `변수`는 `export const` 이름이다.
-  프로덕션에서도 살아남는 가장 믿을 만한 단서다.
-- `**React:**`의 컴포넌트 이름은 프로덕션 빌드에서 축약(minify)돼 `<h>` `<Ct>` 처럼 나올 수 있다.
-  읽을 수 있는 이름일 때만 단서로 쓴다.
-- `**Source:** src/…:줄:칸` 줄은 개발 빌드에서만 붙는다. 있으면 그대로 쓰되, 없다고 실패가 아니다.
-- `## Page Feedback:` 뒤의 경로가 페이지 URL이다. 라우트로 페이지 컴포넌트를 좁힐 때 쓴다.
+- `**Classes:**`의 `파일__변수-해시`가 styled-components 이름이고, **가장 믿을 만한 단서다.**
+  `파일`은 styled 정의 파일명에서 점을 뺀 것(`Header.styles.ts` → `Headerstyles`), `변수`는
+  `export const` 이름이다. 프로덕션·프리뷰 빌드에서도 그대로 살아남는다.
+- `**Location:**`은 클래스가 `__` 앞에서 잘려 파일명만 남는다(`.MainContentstyles`). 해시 클래스만
+  남는 칸(`.kAWxDa`)도 있다. 파일 후보를 좁히는 보조 단서로만 쓰고 변수명은 기대하지 않는다.
+- `**Source:**`는 `src/`로 시작할 때만 쓴다(로컬 개발 서버에서 남긴 메모). `assets/`로 시작하면
+  툴바가 자기 번들 위치를 잘못 보고한 것이니 **무시한다.** 따라가면 엉뚱한 파일로 간다.
+- `**React:**`는 로컬 개발 서버 메모에만 붙는다. 프로덕션·프리뷰 메모에는 줄 자체가 없다.
+  있고 읽을 수 있는 이름일 때만 단서로 쓴다.
+- `**Context:**`는 요소 주변 문구다. `## Page Feedback:` 뒤의 경로가 페이지 URL이고, 라우트로
+  페이지 컴포넌트를 좁힐 때 쓴다.
 
 ## 2. 브랜치 먼저
 
@@ -59,12 +66,16 @@ git checkout -b "$BRANCH" "origin/$PR_BASE"
 
 메모마다 아래 순서로 `frontend/src`를 grep한다. 먼저 맞는 단서로 후보가 하나로 좁혀지면 멈춘다.
 
-1. `**Source:**` 줄이 있으면 그 파일·줄.
-2. `**Location:**`의 마지막 `.파일__변수-해시`에서 `파일`로 `frontend/src` 아래 `<파일>.styles.ts`
+1. `**Classes:**`의 `파일__변수`에서 `파일`로 `frontend/src` 아래 `<파일>.styles.ts`
    (점을 되살린 이름, 예: `Headerstyles` → `Header.styles.ts`)를 찾고, 그 안의 `export const <변수> = styled`.
-   같은 파일명이 여러 폴더에 있으면 앞쪽 `.파일__변수`(부모 요소)와 같은 폴더인 쪽을 고른다.
+   같은 파일명이 여러 폴더에 있으면 `**Location:**` 앞쪽의 파일명(부모 요소)과 같은 폴더인 쪽을 고른다.
+2. `**Source:**`가 `src/`로 시작하면 그 파일·줄. `assets/`로 시작하면 이 단계를 건너뛴다.
 3. `**React:**`의 읽을 수 있는 컴포넌트 이름. `const <이름> = ` 또는 `function <이름>` 으로 grep.
-4. `**Feedback:**`에 인용된 화면 문구나 `## Page Feedback:` 경로로 페이지 컴포넌트를 좁힌다.
+4. `**Context:**`·`**Feedback:**`에 인용된 화면 문구나 `## Page Feedback:` 경로로 페이지 컴포넌트를 좁힌다.
+
+`**Classes:**` 줄이 없으면 툴바 출력이 `Standard`인 채로 남긴 메모다. 1번을 못 쓰니 후보가 하나로
+안 좁혀지기 쉽다. 그때는 추측하지 말고 5절 댓글에 "툴바 출력을 `Detailed`로 바꾸고 다시 남겨 주세요"를
+덧붙인다.
 
 **후보 파일이 정확히 하나일 때만 수정한다.** 둘 이상이거나 없으면 그 메모는 건드리지 않고
 5절의 되묻기 댓글에 후보 목록과 함께 적는다. 추측으로 고치지 않는다.
