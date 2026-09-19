@@ -177,6 +177,56 @@ describe('usePromotionForm 이미지 순서', () => {
       expect(secondTry.url).toBe('https://cdn/late.png');
   });
 
+  it('이미지를 모두 지워도 나머지 수정은 저장한다', async () => {
+    uploadImages.mockResolvedValue({ uploaded: [], failedFiles: [] });
+    updateArticle.mockResolvedValue({});
+
+    const { result } = renderHook(() =>
+      usePromotionForm({ clubId: 'club-1', article }),
+    );
+
+    act(() => result.current.removeImage(1));
+    act(() => result.current.removeImage(0));
+    act(() => result.current.setField('title', '고친 제목'));
+
+    let saveResult;
+    await act(async () => {
+      saveResult = await result.current.save();
+    });
+
+    // PUT을 건너뛰면 제목 수정이 조용히 사라진다
+    expect(updateArticle).toHaveBeenCalledTimes(1);
+    expect(updateArticle.mock.calls[0][0].payload).toMatchObject({
+      title: '고친 제목',
+      images: [],
+    });
+    expect(saveResult).toEqual({ status: 'success', articleId: 'a1' });
+  });
+
+  it('업로드가 모두 실패해 한 장도 안 남으면 빈 목록으로 덮어쓰지 않는다', async () => {
+    const badFile = makeFile('bad.png');
+    uploadImages.mockResolvedValue({ uploaded: [], failedFiles: [badFile] });
+
+    const { result } = renderHook(() =>
+      usePromotionForm({ clubId: 'club-1', article }),
+    );
+
+    act(() => result.current.removeImage(1));
+    act(() => result.current.removeImage(0));
+    act(() => result.current.addFiles([badFile]));
+
+    let saveResult;
+    await act(async () => {
+      saveResult = await result.current.save();
+    });
+
+    expect(updateArticle).not.toHaveBeenCalled();
+    expect(saveResult).toEqual({
+      status: 'error',
+      message: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
+    });
+  });
+
   it('삭제한 로컬 이미지의 previewUrl은 revoke한다', () => {
     const { result } = renderHook(() =>
       usePromotionForm({ clubId: 'club-1', article }),

@@ -1,3 +1,4 @@
+import defaultCover from '@/assets/images/logos/default_cover_image.png';
 import { getDDay } from '@/pages/PromotionPage/utils/getDday';
 import { PromotionArticle } from '@/types/promotion';
 import CardMeta from './CardMeta/CardMeta';
@@ -18,7 +19,7 @@ const PromotionCardView = ({ article }: PromotionCardViewProps) => {
   return (
     <Styled.Container>
       <Styled.ImageWrapper>
-        <Styled.Image $imageUrl={article.images?.[0]} />
+        <Styled.Image $imageUrl={article.images?.[0] || defaultCover} />
         <Styled.DdayWrapper>
           <DdayBadge dday={dday} />
         </Styled.DdayWrapper>

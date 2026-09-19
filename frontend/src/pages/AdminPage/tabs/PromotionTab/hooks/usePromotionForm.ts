@@ -136,7 +136,7 @@ export const usePromotionForm = ({
   };
 
   const save = async (): Promise<SaveResult> => {
-    const validationError = validatePromotionForm(values, mode);
+    const validationError = validatePromotionForm(values);
     if (validationError) return { status: 'error', message: validationError };
 
     setIsSaving(true);
@@ -159,18 +159,23 @@ export const usePromotionForm = ({
 
       // PUT은 images를 1개 이상 요구한다. 작성에서 올릴 이미지가 없으면 PUT할 것도 없고,
       // 수정에서 여기 오는 건 검증을 통과한 이미지가 전부 업로드 실패한 경우뿐이다.
-      if (images.length === 0) {
-        if (mode === 'edit') {
-          return {
-            status: 'error',
-            message: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
-          };
-        }
+      // 생성은 방금 POST가 모든 필드를 저장했다. 올라간 이미지가 없으면 PUT이 할 일이 없다.
+      if (mode === 'create' && images.length === 0) {
         return failedCount > 0
           ? { status: 'partial', articleId, failedCount }
           : { status: 'success', articleId };
       }
 
+      // 수정에서 한 장도 안 남았는데 실패가 있었다면 사용자가 원한 건 빈 목록이 아니다.
+      // 그대로 PUT하면 남기려던 이미지를 지워 버린다.
+      if (images.length === 0 && failedCount > 0) {
+        return {
+          status: 'error',
+          message: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
+        };
+      }
+
+      // 이미지가 0장이어도 PUT은 보낸다. 건너뛰면 제목 같은 다른 수정이 조용히 사라진다.
       await updateArticle({
         articleId,
         payload: buildPromotionPayload(values, clubId, images),

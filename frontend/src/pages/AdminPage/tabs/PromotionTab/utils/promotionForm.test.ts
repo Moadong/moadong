@@ -171,7 +171,7 @@ describe('buildPastLocationOptions', () => {
 
 describe('validatePromotionForm', () => {
   it('모든 필수값이 있으면 null', () => {
-    expect(validatePromotionForm(validValues, 'create')).toBeNull();
+    expect(validatePromotionForm(validValues)).toBeNull();
   });
 
   it.each<[keyof PromotionFormValues, unknown, string]>([
@@ -182,39 +182,33 @@ describe('validatePromotionForm', () => {
     ['eventEnd', null, '행사 기간을 선택해주세요.'],
     ['description', '', '행사 설명을 입력해주세요.'],
   ])('%s 가 비면 안내 문구를 돌려준다', (key, value, message) => {
-    expect(
-      validatePromotionForm({ ...validValues, [key]: value }, 'create'),
-    ).toBe(message);
+    expect(validatePromotionForm({ ...validValues, [key]: value })).toBe(
+      message,
+    );
   });
 
   it('종료가 시작보다 빠르면 막는다', () => {
     expect(
-      validatePromotionForm(
-        {
-          ...validValues,
-          eventEnd: new Date('2026-03-31T10:00:00+09:00'),
-        },
-        'create',
-      ),
+      validatePromotionForm({
+        ...validValues,
+        eventEnd: new Date('2026-03-31T10:00:00+09:00'),
+      }),
     ).toBe('행사 종료 일시는 시작 일시보다 빠를 수 없습니다.');
   });
 
-  it('생성은 이미지가 없어도 되지만 수정은 1장 이상이어야 한다', () => {
-    expect(validatePromotionForm(validValues, 'create')).toBeNull();
-    expect(validatePromotionForm(validValues, 'edit')).toBe(
-      '이미지를 1장 이상 등록해주세요.',
-    );
+  it('이미지는 생성이든 수정이든 없어도 통과한다', () => {
+    expect(validatePromotionForm({ ...validValues, images: [] })).toBeNull();
     expect(
-      validatePromotionForm(
-        { ...validValues, images: [makeUploadedImage('https://cdn/a.png')] },
-        'edit',
-      ),
+      validatePromotionForm({
+        ...validValues,
+        images: [makeUploadedImage('https://cdn/a.png')],
+      }),
     ).toBeNull();
     expect(
-      validatePromotionForm(
-        { ...validValues, images: [makeLocalImage('a.png')] },
-        'edit',
-      ),
+      validatePromotionForm({
+        ...validValues,
+        images: [makeLocalImage('a.png')],
+      }),
     ).toBeNull();
   });
 });
