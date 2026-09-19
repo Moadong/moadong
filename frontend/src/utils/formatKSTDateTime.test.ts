@@ -133,6 +133,12 @@ describe('formatKSTDateRange', () => {
     );
   });
 
+  it('시작이 잘못된 값이면 종료가 멀쩡해도 빈 문자열이다', () => {
+    expect(formatKSTDateRange('not-a-date', '2026-11-30T02:00:00+09:00')).toBe(
+      '',
+    );
+  });
+
   it('종료가 비면 시작만 보여준다', () => {
     expect(formatKSTDateRange('2026-11-29T04:00:00+09:00', '')).toBe(
       '11월 29일 일요일',
