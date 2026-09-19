@@ -43,6 +43,24 @@ describe('DesignFeedbackToolbar', () => {
     expect(await screen.findByTestId('agentation')).toBeInTheDocument();
   });
 
+  it('켤 때 툴바 출력을 detailed로 심는다', async () => {
+    setSearch('?design=1');
+    render(<DesignFeedbackToolbar />);
+    await screen.findByTestId('agentation');
+    expect(
+      JSON.parse(localStorage.getItem('feedback-toolbar-settings') ?? '{}'),
+    ).toEqual({ outputDetail: 'detailed' });
+  });
+
+  it('디자이너가 바꿔 둔 툴바 설정은 덮지 않는다', async () => {
+    const mine = JSON.stringify({ outputDetail: 'forensic' });
+    localStorage.setItem('feedback-toolbar-settings', mine);
+    setSearch('?design=1');
+    render(<DesignFeedbackToolbar />);
+    await screen.findByTestId('agentation');
+    expect(localStorage.getItem('feedback-toolbar-settings')).toBe(mine);
+  });
+
   it('?design=0이면 끄고 localStorage를 지운다', () => {
     localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
     setSearch('?design=0');
