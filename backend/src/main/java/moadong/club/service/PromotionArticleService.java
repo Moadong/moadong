@@ -19,6 +19,8 @@ import moadong.user.payload.CustomUserDetails;
 import org.bson.types.ObjectId;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.util.List;
 
@@ -75,8 +77,25 @@ public class PromotionArticleService {
         List<String> previousImages = article.getImages();
         article.update(clubId, request, club.getName());
         promotionArticleRepository.save(article);
-        // 저장이 끝난 뒤에 지운다. 저장이 실패하면 아직 참조 중인 객체를 지우게 된다.
-        promotionImageUploadService.deleteRemovedImages(articleId, previousImages, request.images());
+        deleteRemovedImagesAfterCommit(articleId, previousImages, request.images());
+    }
+
+    /**
+     * R2 삭제는 Mongo 커밋 뒤로 미룬다. save 직후에 지우면 이후 커밋이 실패했을 때
+     * 게시글은 옛 이미지 URL을 그대로 들고 있는데 객체는 이미 사라진 상태가 된다.
+     * 트랜잭션 밖에서 호출되면 미룰 곳이 없으므로 그 자리에서 지운다.
+     */
+    private void deleteRemovedImagesAfterCommit(String articleId, List<String> previousImages, List<String> newImages) {
+        if (!TransactionSynchronizationManager.isSynchronizationActive()) {
+            promotionImageUploadService.deleteRemovedImages(articleId, previousImages, newImages);
+            return;
+        }
+        TransactionSynchronizationManager.registerSynchronization(new TransactionSynchronization() {
+            @Override
+            public void afterCommit() {
+                promotionImageUploadService.deleteRemovedImages(articleId, previousImages, newImages);
+            }
+        });
     }
 
     @Transactional

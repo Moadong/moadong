@@ -4,7 +4,9 @@ import moadong.analytics.entity.MixpanelFunnelEvent;
 import moadong.analytics.payload.response.FunnelDashboardResponse;
 import moadong.analytics.payload.response.FunnelDashboardResponse.FunnelResult;
 import moadong.analytics.payload.response.FunnelDashboardResponse.ScrollDepthResult;
+import moadong.analytics.entity.MixpanelCollectionStatus;
 import moadong.analytics.repository.MixpanelBackfilledEventRepository;
+import moadong.analytics.repository.MixpanelCollectionStatusRepository;
 import moadong.analytics.repository.MixpanelFunnelEventRepository;
 import moadong.analytics.support.FunnelDefinitions;
 import moadong.global.exception.RestApiException;
@@ -25,6 +27,7 @@ import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
 @UnitTest
@@ -38,6 +41,9 @@ class FunnelDashboardServiceTest {
 
     @Mock
     private MixpanelBackfilledEventRepository mixpanelBackfilledEventRepository;
+
+    @Mock
+    private MixpanelCollectionStatusRepository mixpanelCollectionStatusRepository;
 
     @InjectMocks
     private FunnelDashboardService service;
@@ -178,6 +184,18 @@ class FunnelDashboardServiceTest {
         assertEquals(2, response.collectedDays());
         assertEquals(List.of(from.plusDays(1)), response.missingDates());
         assertEquals(FunnelDefinitions.FUNNELS.size(), response.funnels().size());
+    }
+
+    @Test
+    void 수집_표시가_있으면_이벤트가_0건이어도_missingDates에_넣지_않는다() {
+        when(mixpanelFunnelEventRepository.findByEventDateBetween(DATE, DATE)).thenReturn(List.of());
+        when(mixpanelCollectionStatusRepository.existsById(MixpanelCollectionStatus.idOf(DATE))).thenReturn(true);
+
+        FunnelDashboardResponse response = service.getDashboard(DATE, DATE);
+
+        assertEquals(1, response.collectedDays());
+        assertEquals(List.of(), response.missingDates());
+        verifyNoInteractions(mixpanelBackfilledEventRepository);
     }
 
     @Test

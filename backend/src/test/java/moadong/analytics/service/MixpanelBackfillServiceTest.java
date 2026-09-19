@@ -2,10 +2,12 @@ package moadong.analytics.service;
 
 import moadong.analytics.config.MixpanelProperties;
 import moadong.analytics.entity.MixpanelBackfilledEvent;
+import moadong.analytics.entity.MixpanelCollectionStatus;
 import moadong.analytics.entity.MixpanelFunnelEvent;
 import moadong.analytics.payload.dto.MixpanelRawEvent;
 import moadong.analytics.payload.response.MixpanelBackfillResponse;
 import moadong.analytics.repository.MixpanelBackfilledEventRepository;
+import moadong.analytics.repository.MixpanelCollectionStatusRepository;
 import moadong.analytics.repository.MixpanelFunnelEventRepository;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
@@ -37,6 +39,9 @@ class MixpanelBackfillServiceTest {
 
     @Mock
     private MixpanelFunnelEventRepository mixpanelFunnelEventRepository;
+
+    @Mock
+    private MixpanelCollectionStatusRepository mixpanelCollectionStatusRepository;
 
     @Mock
     private ClubAnalyticsRecordService clubAnalyticsRecordService;
@@ -173,6 +178,41 @@ class MixpanelBackfillServiceTest {
         verifyNoInteractions(mixpanelFunnelEventRepository);
     }
 
+    @Test
+    void 이벤트가_0건이어도_날짜별_수집_표시를_남긴다() {
+        MixpanelBackfillService service = service(true);
+        LocalDate date = LocalDate.of(2026, 7, 8);
+
+        when(clubRepository.findAll()).thenReturn(List.of());
+        when(mixpanelExportClient.fetchEvents(date)).thenReturn(List.of());
+
+        service.backfill(date, date);
+
+        ArgumentCaptor<MixpanelCollectionStatus> captor = ArgumentCaptor.forClass(MixpanelCollectionStatus.class);
+        verify(mixpanelCollectionStatusRepository).save(captor.capture());
+        assertEquals(date.toString(), captor.getValue().getEventDate());
+    }
+
+    @Test
+    void 처리_중_실패한_날짜에는_수집_표시를_남기지_않는다() {
+        MixpanelBackfillService service = service(true);
+        LocalDate date = LocalDate.of(2026, 7, 8);
+        MixpanelRawEvent event = searchEvent("$insert-id", date, "밴드");
+
+        when(clubRepository.findAll()).thenReturn(List.of());
+        when(mixpanelExportClient.fetchEvents(date)).thenReturn(List.of(event));
+        when(mixpanelBackfilledEventRepository.insert(any(MixpanelBackfilledEvent.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+        when(clubAnalyticsRecordService.normalizeKeyword("밴드")).thenReturn("밴드");
+        doThrow(new RuntimeException("mongo error"))
+                .when(clubAnalyticsRecordService)
+                .incrementKeywordDaily("밴드", "밴드", date, 1);
+
+        assertThrows(RuntimeException.class, () -> service.backfill(date, date));
+
+        verifyNoInteractions(mixpanelCollectionStatusRepository);
+    }
+
     private MixpanelBackfillService service(boolean enabled) {
         MixpanelProperties properties = new MixpanelProperties(
                 enabled,
@@ -185,6 +225,7 @@ class MixpanelBackfillServiceTest {
                 mixpanelExportClient,
                 mixpanelBackfilledEventRepository,
                 mixpanelFunnelEventRepository,
+                mixpanelCollectionStatusRepository,
                 clubAnalyticsRecordService,
                 clubRepository,
                 properties

@@ -24,6 +24,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Instant;
 import java.util.List;
@@ -463,6 +465,34 @@ class PromotionArticleServiceTest {
 
         verify(promotionImageUploadService).deleteRemovedImages("article-1",
             List.of("old-1", "old-2"), List.of("old-1", "new-1"));
+    }
+
+    @Test
+    void 트랜잭션_안에서는_커밋_뒤에_빠진_이미지를_지운다() {
+        String clubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(clubId)
+            .images(List.of("old-1", "old-2"))
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("수정 동아리")));
+
+        TransactionSynchronizationManager.initSynchronization();
+        try {
+            promotionArticleService.updatePromotionArticle("article-1",
+                updateRequest(clubId, List.of("old-1")), developer());
+
+            verify(promotionImageUploadService, never()).deleteRemovedImages(any(), any(), any());
+
+            TransactionSynchronizationManager.getSynchronizations()
+                .forEach(TransactionSynchronization::afterCommit);
+        } finally {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
+
+        verify(promotionImageUploadService).deleteRemovedImages("article-1",
+            List.of("old-1", "old-2"), List.of("old-1"));
     }
 
     @Test

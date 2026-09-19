@@ -75,14 +75,19 @@ public class PromotionImageUploadService {
             awsProperties.s3().viewEndpoint(),
             key
         );
-        promotionArticleRepository.addImageToActiveArticle(articleId, imageUrl);
+        // 위 사전 검사와 저장 사이에 다른 업로드가 끼어들 수 있어, 상한은 Mongo 조건부 갱신으로 한 번 더 막는다.
+        if (promotionArticleRepository.addImageToActiveArticle(articleId, imageUrl) == 0) {
+            deleteQuietly(key);
+            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
+        }
         return new PromotionImageUploadResponse(imageUrl);
     }
 
     /**
      * 동아리 활동사진({@code generateFeedUploadUrls})·우체통 첨부와 같은 부분 성공 응답을 돌려준다.
      * 한 건이 실패해도 나머지는 발급되고, 실패 항목은 success=false로 표시된다.
-     * 이미 담긴 이미지를 뺀 잔여분까지만 발급하고, 초과분에는 TOO_MANY_FILES를 덧붙인다.
+     * 이미 담긴 이미지를 뺀 잔여분까지만 발급하고, 초과분에는 TOO_MANY_FILES를 채운다.
+     * 발급에 실패한 요청은 잔여분을 쓰지 않으므로, 응답 길이 == requests.size()가 유지되고 순서도 요청과 1:1로 맞는다.
      * URL 발급만 하고 게시글은 건드리지 않는다. 이미지 반영은 게시글 수정 API의 images가 전담한다.
      */
     public List<PresignedUploadResponse> createUploadUrls(String articleId, List<UploadUrlRequest> requests,
@@ -93,21 +98,19 @@ public class PromotionImageUploadService {
         }
 
         int remaining = PromotionArticle.MAX_IMAGE_COUNT - imageCountOf(article);
-        if (remaining <= 0) {
-            return List.of(errorResponse(ErrorCode.TOO_MANY_FILES));
-        }
-
-        int limit = Math.min(remaining, requests.size());
-        List<PresignedUploadResponse> results = new ArrayList<>(limit + 1);
-        for (int i = 0; i < limit; i++) {
+        int issued = 0;
+        List<PresignedUploadResponse> results = new ArrayList<>(requests.size());
+        for (UploadUrlRequest request : requests) {
+            if (issued >= remaining) {
+                results.add(errorResponse(ErrorCode.TOO_MANY_FILES));
+                continue;
+            }
             try {
-                results.add(createUploadUrl(articleId, requests.get(i)));
+                results.add(createUploadUrl(articleId, request));
+                issued++;
             } catch (RestApiException e) {
                 results.add(errorResponse(e.getErrorCode()));
             }
-        }
-        if (requests.size() > limit) {
-            results.add(errorResponse(ErrorCode.TOO_MANY_FILES));
         }
         return results;
     }
