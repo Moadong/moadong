@@ -1,0 +1,74 @@
+name: Design feedback → PR
+
+on:
+  issues:
+    types: [labeled]
+
+permissions: {}
+
+jobs:
+  design-feedback:
+    # 디자이너 툴바 피드백 이슈만 처리한다.
+    # - 이슈 폼이 design-feedback 라벨을 자동으로 붙이므로 labeled 한 번만 트리거로 쓴다.
+    #   (opened까지 걸면 생성 시 붙는 라벨 때문에 같은 이슈가 두 번 돈다.)
+    #   재실행은 라벨을 뗐다 다시 붙이면 된다.
+    # - 조직 멤버가 연 이슈만: 외부인이 이슈로 프롬프트 인젝션 + 쓰기 권한을 얻는 걸 막는다.
+    # - 이슈 본문에는 실서비스 화면 텍스트(동아리 소개 등 사용자 입력)가 섞여 들어오므로
+    #   에이전트 도구는 규칙 파일이 쓰는 명령만 허용한다.
+    if: >-
+      ${{ github.event.label.name == 'design-feedback'
+      && contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association) }}
+    # 같은 이슈를 다시 라벨링해 재실행할 때 브랜치 push가 겹치지 않게 직렬화한다.
+    concurrency: design-feedback-${{ github.event.issue.number }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
+    steps:
+      - name: Generate harry App token
+        id: app-token
+        uses: actions/create-github-app-token@v1
+        with:
+          app-id: ${{ secrets.HARRY_APP_ID }}
+          private-key: ${{ secrets.HARRY_APP_PRIVATE_KEY }}
+          permission-contents: write
+          permission-pull-requests: write
+          permission-issues: write
+
+      - name: Checkout develop-fe
+        uses: actions/checkout@v4
+        with:
+          ref: develop-fe
+          fetch-depth: 0
+          token: ${{ steps.app-token.outputs.token }}
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Apply design feedback
+        uses: anthropics/claude-code-action@v1
+        with:
+          github_token: ${{ steps.app-token.outputs.token }}
+          prompt: |
+            저장소 루트의 `.github/design-feedback-rules.md`를 읽고, 그 절차를 처음부터 끝까지
+            그대로 따라라. 대상 이슈 번호·레포·base 브랜치는 환경변수 $ISSUE_NUMBER, $REPO,
+            $PR_BASE로 주어진다. 셸 명령에서는 값을 직접 타이핑하지 말고 항상 환경변수를 써라.
+          claude_args: |
+            --model claude-opus-5
+            --allowedTools Read,Edit,Glob,Grep,Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh pr create:*),Bash(git status:*),Bash(git diff:*),Bash(git fetch origin:*),Bash(git checkout:*),Bash(git add:*),Bash(git commit:*),Bash(git push origin:*),Bash(git config user.name:*),Bash(git config user.email:*),Bash(cd frontend && npm run typecheck),Bash(cd frontend && npx eslint src),Bash(cat:*)
+        env:
+          CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+          PR_BASE: develop-fe

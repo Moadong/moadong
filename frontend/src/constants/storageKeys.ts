@@ -11,4 +11,6 @@ export const STORAGE_KEYS = {
   SATISFACTION_ANSWERED: 'satisfactionAnswered',
   HAS_CONSENTED_PERSONAL_INFO: 'hasConsentedPersonalInfo',
   QUERY_CACHE: 'MOADONG_QUERY_CACHE',
+  /** 디자인 피드백 툴바. `?design=1`로 켜고 `?design=0`으로 끈다 */
+  DESIGN_FEEDBACK: 'designFeedback',
 } as const;
