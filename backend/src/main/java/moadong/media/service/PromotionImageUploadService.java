@@ -18,6 +18,8 @@ import org.springframework.util.StringUtils;
 import org.springframework.web.multipart.MultipartFile;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 import software.amazon.awssdk.services.s3.model.S3Exception;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
@@ -145,12 +147,66 @@ public class PromotionImageUploadService {
     }
 
     /**
+     * 게시글에 저장하려는 이미지 URL을 전량 검증한다. 활동사진({@code validateFileConstraints})·
+     * 우체통({@code FeedbackImageService#validateImages})과 같은 "클라이언트가 준 URL은 믿지 않는다" 경계다.
+     * 이 게시글 경로에 실제로 올라온 객체만 통과시킨다.
+     *
+     * <p>접두사는 키를 만들 때({@code buildPromotionImageKey})와 같은 {@code sanitizePathSegment}로
+     * 구성한다. 둘이 어긋나면 정상 업로드가 막힌다.
+     *
+     * <p>이미 저장돼 있던 URL({@code previousImages})은 건너뛴다. 홍보는 검증이 없던 기간에
+     * 상한을 넘는 이미지가 저장됐을 수 있는데, 그걸 다시 검사하면 제목만 고치는 수정에서도
+     * 살아 있는 객체를 지우고 실패한다. R2에서 외부 요인으로 사라진 객체가 있으면 그 게시글이
+     * 영영 수정 불가가 되기도 한다. 검증이 필요한 것은 이번에 새로 주장하는 URL뿐이다.
+     */
+    public void validateImages(String articleId, List<String> images, List<String> previousImages) {
+        if (images == null || images.isEmpty()) {
+            return;
+        }
+        List<String> retained = (previousImages == null) ? List.of() : previousImages;
+        String keyPrefix = "promotion/articles/" + sanitizePathSegment(articleId, "article") + "/";
+        for (String imageUrl : images) {
+            if (retained.contains(imageUrl)) {
+                continue;
+            }
+            validateImage(keyPrefix, imageUrl);
+        }
+    }
+
+    private void validateImage(String keyPrefix, String imageUrl) {
+        if (imageUrl == null || imageUrl.length() > serverProperties.fileUrl().maxLength()) {
+            throw new RestApiException(ErrorCode.INVALID_FILE_URL);
+        }
+        String key = extractKeyOrNull(imageUrl);
+        if (key == null || !key.startsWith(keyPrefix)) {
+            throw new RestApiException(ErrorCode.INVALID_FILE_URL);
+        }
+
+        long contentLength;
+        try {
+            contentLength = s3Client.headObject(HeadObjectRequest.builder()
+                .bucket(awsProperties.s3().bucket())
+                .key(key)
+                .build()).contentLength();
+        } catch (NoSuchKeyException e) {
+            throw new RestApiException(ErrorCode.FILE_NOT_FOUND);
+        } catch (S3Exception e) {
+            throw new RestApiException(ErrorCode.IMAGE_UPLOAD_FAILED);
+        }
+
+        if (contentLength > serverProperties.image().maxSize().toBytes()) {
+            deleteQuietly(key);
+            throw new RestApiException(ErrorCode.FILE_TOO_LARGE);
+        }
+    }
+
+    /**
      * 게시글에서 빠진 이미지를 R2에서 지운다. 활동사진({@code deleteFeedImages})과 같은
      * "저장 검증을 통과한 뒤 누락분만 삭제" 경계다.
      *
-     * <p>수정 요청의 images는 URL 형식을 검증하지 않으므로, 남의 동아리 이미지 URL을
-     * 넣었다 빼는 식으로 임의 객체를 지울 수 있다. 그래서 이 게시글의 키 접두사에
-     * 속한 객체만 지운다.
+     * <p>이제는 {@code validateImages}가 저장 시점에 접두사를 막지만, 검증이 없던 시절에
+     * 저장된 행이 previousImages로 들어올 수 있다. 그래서 이 게시글의 키 접두사에
+     * 속한 객체만 지우는 가드를 그대로 둔다.
      *
      * <p>삭제 실패는 로그만 남긴다. 버킷 정리 때문에 게시글 수정이 막혀서는 안 된다.
      */
