@@ -39,7 +39,8 @@ const StyledBox = styled.div<{ $backgroundColor: string }>`
   background-color: ${({ $backgroundColor }) => $backgroundColor};
   color: ${({ theme }) => theme.colors.base.white};
   font-size: ${BOX_FONT_SIZE.desktop.fontSize};
-  font-weight: 500;
+  font-weight: 600;
+  line-height: 140%;
 
   @media (max-width: 500px) {
     width: ${BOX_DIMENSIONS.mobile.width};
