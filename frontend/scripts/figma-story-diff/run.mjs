@@ -42,6 +42,30 @@ function spacings(box, children, mode) {
   return rows;
 }
 
+// 주축과 직각인 방향의 앞·뒤 여백. 주축만 보면 좌우 여백·정렬 차이가 안 잡힌다.
+function crossInsets(box, children, mode) {
+  const [pos, size] = mode === 'HORIZONTAL' ? ['y', 'height'] : ['x', 'width'];
+  return children.flatMap((c, i) => [
+    [`자식 ${i + 1} 앞 여백(교차)`, c[pos]],
+    [`자식 ${i + 1} 뒤 여백(교차)`, box[size] - (c[pos] + c[size])],
+  ]);
+}
+
+// auto-layout이 아닌 프레임은 간격이라는 개념이 없다. 자식 상자를 그대로 대조한다.
+function offsets(children) {
+  return children.flatMap((c, i) => [
+    [`자식 ${i + 1} x`, c.x],
+    [`자식 ${i + 1} y`, c.y],
+    [`자식 ${i + 1} 너비`, c.width],
+    [`자식 ${i + 1} 높이`, c.height],
+  ]);
+}
+
+// Figma children 순서는 z-order라 DOM 문서 순서와 다를 수 있다. auto-layout 프레임은
+// children 순서가 곧 시각 순서라(SPACE_BETWEEN·역순 포함) 정렬하면 오히려 짝이 틀어진다.
+const byPosition = (children) =>
+  [...children].sort((a, b) => a.y - b.y || a.x - b.x);
+
 const only = (a, b) => [...a].filter(([k]) => !b.has(k));
 const missing = (used, known) => [...used].filter(([k]) => !known.has(k));
 const table = (rows, head) =>
@@ -123,25 +147,33 @@ async function runEntry(entry, theme, pending) {
   const layoutMode = figma.layout.mode;
   const countMatch =
     figma.layout.children.length === story.layout.children.length;
-  const spacingRows =
-    layoutMode !== 'NONE' && countMatch
-      ? spacings(figma.bbox, figma.layout.children, layoutMode).map(
-          ([label, want], i) => {
-            const got = spacings(
-              story.layout.box,
-              story.layout.children,
-              layoutMode,
-            )[i][1];
-            return [label, want, got, Math.abs(got - want)];
-          },
-        )
-      : [];
-  const spacingBad = spacingRows.filter(
+  // auto-layout이면 주축 간격 + 교차축 여백, 아니면 자식 상자 위치를 잰다.
+  const layoutRowsOf = (box, children) =>
+    layoutMode === 'NONE'
+      ? offsets(byPosition(children))
+      : [
+          ...spacings(box, children, layoutMode),
+          ...crossInsets(box, children, layoutMode),
+        ];
+  // 프레임 종류로는 스킵하지 않는다. 비교할 게 없는 경우는 자식이 없을 때뿐이다.
+  const layoutSkipped = figma.layout.children.length === 0;
+  const comparable = !layoutSkipped && countMatch;
+  const storyRows = comparable
+    ? layoutRowsOf(story.layout.box, story.layout.children)
+    : [];
+  const layoutRows = comparable
+    ? layoutRowsOf(figma.bbox, figma.layout.children).map(
+        ([label, want], i) => {
+          const got = storyRows[i][1];
+          return [label, want, got, Math.abs(got - want)];
+        },
+      )
+    : [];
+  const layoutBad = layoutRows.filter(
     ([, , , diff]) => diff > SPACING_TOLERANCE_PX,
   );
-  // 시안이 auto-layout이 아니면 비교할 축이 없다. 자식 수가 다르면 간격을 짝지을 수 없다.
-  const layoutSkipped = layoutMode === 'NONE';
-  const layoutPass = layoutSkipped || (countMatch && spacingBad.length === 0);
+  // 자식 수가 다르면 짝지을 수 없다.
+  const layoutPass = layoutSkipped || (countMatch && layoutBad.length === 0);
 
   const tokenPass =
     figmaMissingColors.length +
@@ -174,7 +206,7 @@ async function runEntry(entry, theme, pending) {
 |---|---|---|
 | 토큰 (theme에 없는 값) | ${label(tokenPass)} | Figma ${figmaMissingColors.length + figmaMissingTypo.length}건 · 구현 ${storyMissingColors.length + storyMissingTypo.length}건 |
 | 토큰 일치 (Figma↔구현 사용 집합) | ${label(parityPass)} | Figma에만 ${onlyFigmaColors.length + onlyFigmaTypo.length}건 · 구현에만 ${onlyStoryColors.length + onlyStoryTypo.length}건 |
-| 레이아웃 (자식 간격·여백, ±${SPACING_TOLERANCE_PX}px) | ${layoutSkipped ? '–' : label(layoutPass)} | ${layoutSkipped ? '시안이 auto-layout이 아님' : countMatch ? `자식 ${figma.layout.children.length}개 · 어긋남 ${spacingBad.length}건` : `자식 수 다름 (시안 ${figma.layout.children.length} · 구현 ${story.layout.children.length})`} |
+| 레이아웃 (자식 위치·간격·여백, ±${SPACING_TOLERANCE_PX}px) | ${layoutSkipped ? '–' : label(layoutPass)} | ${layoutSkipped ? '시안 루트에 자식이 없음' : countMatch ? `자식 ${figma.layout.children.length}개 · 항목 ${layoutRows.length}개 · 어긋남 ${layoutBad.length}건` : `자식 수 다름 (시안 ${figma.layout.children.length} · 구현 ${story.layout.children.length})`} |
 | 루트 크기 (±${SIZE_TOLERANCE_PX}px) | ${label(sizePass)} | Figma ${figma.bbox.width}×${figma.bbox.height} · 구현 ${story.bbox.width}×${story.bbox.height} (Δ ${dw.toFixed(2)}, ${dh.toFixed(2)}) |
 | 픽셀 차이 (참고용) | – | ${diff.mismatchPercent.toFixed(2)}% · 이미지 ${diff.sizes.figma.join('×')} vs ${diff.sizes.story.join('×')} |
 
@@ -196,13 +228,13 @@ ${table(storyMissingTypo, ['타이포 size/weight/lineHeight%', 'DOM 요소'])}
 
 ${
   layoutSkipped
-    ? '시안 루트가 auto-layout이 아니라 비교하지 않는다.'
+    ? '시안 루트에 자식이 없어 비교할 항목이 없다.'
     : !countMatch
-      ? `자식 수가 달라 간격을 짝지을 수 없다. 시안 ${figma.layout.children.length}개(${figma.layout.children.map((c) => c.name).join(', ')}) · 구현 ${story.layout.children.length}개(${story.layout.children.map((c) => c.name).join(', ')}).`
+      ? `자식 수가 달라 짝지을 수 없다. 시안 ${figma.layout.children.length}개(${figma.layout.children.map((c) => c.name).join(', ')}) · 구현 ${story.layout.children.length}개(${story.layout.children.map((c) => c.name).join(', ')}).`
       : [
           '| 항목 | 시안 | 구현 | 차이 |',
           '|---|---|---|---|',
-          ...spacingRows.map(
+          ...layoutRows.map(
             ([lbl, want, got, diff]) =>
               `| ${lbl} | ${want.toFixed(2)} | ${got.toFixed(2)} | ${diff > SPACING_TOLERANCE_PX ? `**${diff.toFixed(2)}**` : diff.toFixed(2)} |`,
           ),
