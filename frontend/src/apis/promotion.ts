@@ -79,16 +79,16 @@ export const deletePromotionArticle = async (articleId: string) => {
 };
 
 /**
- * 이미지는 글을 먼저 만들어 articleId를 받은 뒤 presigned URL을 발급받아 R2에 직접 올린다.
- * 발급 API는 게시글을 건드리지 않으므로 올린 finalUrl은 PUT의 images로 반영해야 한다.
+ * 이미지 키가 동아리 기준(`promotion/{clubId}/`)이라 게시글 없이도 발급받을 수 있다.
+ * 발급받아 R2에 직접 올린 finalUrl은 생성 POST나 수정 PUT의 images로 넘긴다.
  * 항목별로 success가 갈릴 수 있어 배열 전체를 실패로 보지 않는다.
+ * 대상 동아리는 서버가 토큰에서 정한다. 15개를 넘겨 보내면 배열 전체가 거부된다.
  */
 export const getPromotionImageUploadUrls = async (
-  articleId: string,
   requests: PromotionImageUploadRequest[],
 ) => {
   const response = await secureFetch(
-    `${API_BASE_URL}/api/promotion/${articleId}/upload-url`,
+    `${API_BASE_URL}/api/promotion/upload-url`,
     {
       method: 'POST',
       headers: {
