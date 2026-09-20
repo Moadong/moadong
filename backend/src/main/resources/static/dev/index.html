@@ -2595,7 +2595,10 @@
     document.getElementById('btnSavePromotion').onclick = async () => {
       let payload;
       try {
-        payload = normalizePromotionPayload();
+        // 생성 요청의 images는 서버가 거부한다. articleId가 없어 이 게시글 경로에
+        // 올라온 이미지인지 확인할 수 없기 때문이다. 이미지는 생성 뒤 수정으로 붙인다.
+        payload = normalizePromotionPayload({ requireImages: !isPromotionCreateMode() });
+        if (isPromotionCreateMode()) payload.images = [];
       } catch (e) {
         showPromotionSaveResult(false, e.message || '입력값을 확인하세요.');
         return;
