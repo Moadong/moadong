@@ -45,7 +45,8 @@ public class PromotionArticleService {
         String clubId = resolveClubId(request.clubId(), user);
         Club club = getClub(clubId);
         validateClubApproved(club, user);
-        validateNoImagesOnCreate(request.images());
+        validateImageCount(request.images());
+        promotionImageUploadService.validateImages(clubId, request.images(), List.of());
 
         PromotionArticle article = PromotionArticle.builder()
             .clubId(clubId)
@@ -75,7 +76,7 @@ public class PromotionArticleService {
         validateImageCount(request.images());
 
         List<String> previousImages = article.getImages();
-        promotionImageUploadService.validateImages(articleId, request.images(), previousImages);
+        promotionImageUploadService.validateImages(clubId, request.images(), previousImages);
         article.update(clubId, request, club.getName());
         promotionArticleRepository.save(article);
         deleteRemovedImagesAfterCommit(articleId, previousImages, request.images());
@@ -122,17 +123,6 @@ public class PromotionArticleService {
     private void validateClubApproved(Club club, CustomUserDetails user) {
         if (!user.isDeveloper() && club.getState() != ClubState.AVAILABLE) {
             throw new RestApiException(ErrorCode.PROMOTION_CLUB_NOT_APPROVED);
-        }
-    }
-
-    /**
-     * 생성 시점에는 articleId가 없어 이미지가 이 게시글 경로에 올라왔는지 확인할 방법이 없다.
-     * 업로드 URL 발급이 articleId를 요구하므로 정상 발급으로는 나올 수 없는 조합이기도 하다.
-     * 이미지는 게시글을 만든 뒤 수정 API의 images로 붙인다.
-     */
-    private void validateNoImagesOnCreate(List<String> images) {
-        if (images != null && !images.isEmpty()) {
-            throw new RestApiException(ErrorCode.INVALID_FILE_URL);
         }
     }
 
