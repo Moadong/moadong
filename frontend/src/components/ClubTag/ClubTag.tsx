@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { TAG_COLORS } from '@/styles/clubTags';
+import { colors } from '@/styles/theme/colors';
 
 interface TagProps {
   type: string;
@@ -36,7 +37,8 @@ const StyledTag = styled.span<{ color: string }>`
   background-color: ${({ color }) => color};
   font-size: ${TAG_FONT_SIZE.desktop.fontSize};
   font-weight: 600;
-  color: #3a3a3a;
+  line-height: 140%;
+  color: ${colors.gray[800]};
 
   @media (max-width: 500px) {
     height: 25px;
