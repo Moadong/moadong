@@ -19,6 +19,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RequestPart;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
@@ -44,14 +45,14 @@ public class PromotionImageController {
         return Response.ok("홍보 이미지가 업로드되었습니다.", response);
     }
 
-    @PostMapping("/{articleId}/upload-url")
+    @PostMapping("/upload-url")
     @PreAuthorize("hasAnyRole('DEVELOPER', 'CLUB_ADMIN')")
     @SecurityRequirement(name = "BearerAuth")
-    @Operation(summary = "홍보 이미지 업로드 URL 생성", description = "홍보 게시글 이미지 업로드를 위한 Presigned URL을 여러 개 한 번에 생성합니다. 게시글에는 반영되지 않으며, 업로드한 finalUrl은 게시글 수정 API의 images로 전달해야 저장됩니다. 동아리 관리자는 본인 동아리 게시글에만 발급받을 수 있습니다.")
+    @Operation(summary = "홍보 이미지 업로드 URL 생성", description = "홍보 게시글 이미지 업로드를 위한 Presigned URL을 여러 개 한 번에 생성합니다. 키가 동아리 기준이라 게시글을 만들기 전에도 발급받을 수 있고, 업로드한 finalUrl은 생성·수정 요청의 images로 그대로 전달하면 됩니다. clubId는 개발자만 쓰며, 동아리 관리자는 보내더라도 본인 동아리로 강제됩니다.")
     public ResponseEntity<?> generatePromotionImageUploadUrls(@CurrentUser CustomUserDetails user,
-                                                             @PathVariable String articleId,
+                                                             @RequestParam(value = "clubId", required = false) String clubId,
                                                              @RequestBody @Valid List<UploadUrlRequest> requests) {
-        List<PresignedUploadResponse> responses = promotionImageUploadService.createUploadUrls(articleId, requests, user);
+        List<PresignedUploadResponse> responses = promotionImageUploadService.createUploadUrls(clubId, requests, user);
         return Response.ok("홍보 이미지 업로드 URL이 생성되었습니다.", responses);
     }
 }

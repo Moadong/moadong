@@ -47,6 +47,9 @@ public class PromotionImageUploadService {
      */
     private static final Pattern ALLOWED_CONTENT_TYPE = Pattern.compile("^image/(jpeg|jpg|png|gif|bmp|webp)$");
 
+    /** 홍보 이미지 키의 뿌리. 구 키(promotion/articles/...)도 이 아래에 있다. */
+    private static final String PROMOTION_KEY_ROOT = "promotion/";
+
     private final PromotionArticleRepository promotionArticleRepository;
     private final R2ImageUploadService r2ImageUploadService;
     private final S3Client s3Client;
@@ -70,7 +73,7 @@ public class PromotionImageUploadService {
         if (imageCountOf(article) >= PromotionArticle.MAX_IMAGE_COUNT) {
             throw new RestApiException(ErrorCode.TOO_MANY_FILES);
         }
-        String key = buildPromotionImageKey(articleId, (file != null) ? file.getOriginalFilename() : null);
+        String key = buildPromotionImageKey(article.getClubId(), (file != null) ? file.getOriginalFilename() : null);
         String imageUrl = r2ImageUploadService.upload(
             file,
             awsProperties.s3().bucket(),
@@ -88,28 +91,27 @@ public class PromotionImageUploadService {
     /**
      * 동아리 활동사진({@code generateFeedUploadUrls})·우체통 첨부와 같은 부분 성공 응답을 돌려준다.
      * 한 건이 실패해도 나머지는 발급되고, 실패 항목은 success=false로 표시된다.
-     * 이미 담긴 이미지를 뺀 잔여분까지만 발급하고, 초과분에는 TOO_MANY_FILES를 채운다.
-     * 발급에 실패한 요청은 잔여분을 쓰지 않으므로, 응답 길이 == requests.size()가 유지되고 순서도 요청과 1:1로 맞는다.
-     * URL 발급만 하고 게시글은 건드리지 않는다. 이미지 반영은 게시글 수정 API의 images가 전담한다.
+     * URL 발급만 하고 게시글은 건드리지 않는다. 이미지 반영은 게시글 저장 API의 images가 전담한다.
+     *
+     * <p>게시글이 아직 없어도 발급할 수 있도록 키를 동아리 기준으로 잡는다. 그래서 요청 수만
+     * 상한으로 막고 저장된 사진 수는 보지 않는다. 활동사진({@code generateFeedUploadUrls})과
+     * 같은 이유다 — 발급 시점에는 아직 저장되지 않은 삭제를 알 수 없어 기준으로 쓸 수 없고,
+     * 최종 개수 검증은 게시글 저장이 담당한다.
      */
-    public List<PresignedUploadResponse> createUploadUrls(String articleId, List<UploadUrlRequest> requests,
+    public List<PresignedUploadResponse> createUploadUrls(String requestedClubId, List<UploadUrlRequest> requests,
                                                           CustomUserDetails user) {
-        PromotionArticle article = getAuthorizedArticle(articleId, user);
+        String clubId = resolveClubId(requestedClubId, user);
         if (requests == null || requests.isEmpty()) {
             return List.of();
         }
+        if (requests.size() > PromotionArticle.MAX_IMAGE_COUNT) {
+            throw new RestApiException(ErrorCode.TOO_MANY_FILES);
+        }
 
-        int remaining = PromotionArticle.MAX_IMAGE_COUNT - imageCountOf(article);
-        int issued = 0;
         List<PresignedUploadResponse> results = new ArrayList<>(requests.size());
         for (UploadUrlRequest request : requests) {
-            if (issued >= remaining) {
-                results.add(errorResponse(ErrorCode.TOO_MANY_FILES));
-                continue;
-            }
             try {
-                results.add(createUploadUrl(articleId, request));
-                issued++;
+                results.add(createUploadUrl(clubId, request));
             } catch (RestApiException e) {
                 results.add(errorResponse(e.getErrorCode()));
             }
@@ -117,7 +119,19 @@ public class PromotionImageUploadService {
         return results;
     }
 
-    private PresignedUploadResponse createUploadUrl(String articleId, UploadUrlRequest request) {
+    /**
+     * 개발자는 요청의 clubId를 그대로 쓰고, 동아리 관리자는 요청값을 무시하고 본인 동아리로 강제한다.
+     * ({@code PromotionArticleService.resolveClubId}와 같은 규칙)
+     */
+    private String resolveClubId(String requestedClubId, CustomUserDetails user) {
+        String clubId = user.isDeveloper() ? requestedClubId : user.getClubId();
+        if (!StringUtils.hasText(clubId)) {
+            throw new RestApiException(ErrorCode.USER_UNAUTHORIZED);
+        }
+        return clubId;
+    }
+
+    private PresignedUploadResponse createUploadUrl(String clubId, UploadUrlRequest request) {
         if (!isImageExtension(request.fileName())) {
             throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
         }
@@ -125,7 +139,7 @@ public class PromotionImageUploadService {
             throw new RestApiException(ErrorCode.UNSUPPORTED_FILE_TYPE);
         }
 
-        String key = buildPromotionImageKey(articleId, request.fileName());
+        String key = buildPromotionImageKey(clubId, request.fileName());
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
             .bucket(awsProperties.s3().bucket())
             .key(key)
@@ -152,19 +166,20 @@ public class PromotionImageUploadService {
      * 이 게시글 경로에 실제로 올라온 객체만 통과시킨다.
      *
      * <p>접두사는 키를 만들 때({@code buildPromotionImageKey})와 같은 {@code sanitizePathSegment}로
-     * 구성한다. 둘이 어긋나면 정상 업로드가 막힌다.
+     * 구성한다. 둘이 어긋나면 정상 업로드가 막힌다. 동아리 기준이라 게시글이 아직 없는
+     * 생성 요청에도 그대로 걸 수 있다.
      *
      * <p>이미 저장돼 있던 URL({@code previousImages})은 건너뛴다. 홍보는 검증이 없던 기간에
      * 상한을 넘는 이미지가 저장됐을 수 있는데, 그걸 다시 검사하면 제목만 고치는 수정에서도
      * 살아 있는 객체를 지우고 실패한다. R2에서 외부 요인으로 사라진 객체가 있으면 그 게시글이
      * 영영 수정 불가가 되기도 한다. 검증이 필요한 것은 이번에 새로 주장하는 URL뿐이다.
      */
-    public void validateImages(String articleId, List<String> images, List<String> previousImages) {
+    public void validateImages(String clubId, List<String> images, List<String> previousImages) {
         if (images == null || images.isEmpty()) {
             return;
         }
         List<String> retained = (previousImages == null) ? List.of() : previousImages;
-        String keyPrefix = "promotion/articles/" + sanitizePathSegment(articleId, "article") + "/";
+        String keyPrefix = PROMOTION_KEY_ROOT + sanitizePathSegment(clubId, "club") + "/";
         for (String imageUrl : images) {
             if (retained.contains(imageUrl)) {
                 continue;
@@ -204,9 +219,10 @@ public class PromotionImageUploadService {
      * 게시글에서 빠진 이미지를 R2에서 지운다. 활동사진({@code deleteFeedImages})과 같은
      * "저장 검증을 통과한 뒤 누락분만 삭제" 경계다.
      *
-     * <p>이제는 {@code validateImages}가 저장 시점에 접두사를 막지만, 검증이 없던 시절에
-     * 저장된 행이 previousImages로 들어올 수 있다. 그래서 이 게시글의 키 접두사에
-     * 속한 객체만 지우는 가드를 그대로 둔다.
+     * <p>키가 동아리 기준이 되면서 같은 동아리의 다른 게시글 이미지도 접두사가 일치한다.
+     * 그래서 접두사는 홍보 경로인지만 보고, 실제 보호는 "다른 활성 게시글이 쓰고 있으면
+     * 지우지 않는다"로 한다. 접두사를 게시글 단위로 좁히면 구 키(promotion/articles/...)로
+     * 저장된 이미지를 영영 못 지워 고아로 남는다.
      *
      * <p>삭제 실패는 로그만 남긴다. 버킷 정리 때문에 게시글 수정이 막혀서는 안 된다.
      */
@@ -215,14 +231,17 @@ public class PromotionImageUploadService {
             return;
         }
         List<String> retained = (newImages == null) ? List.of() : newImages;
-        String articleKeyPrefix = "promotion/articles/" + sanitizePathSegment(articleId, "article") + "/";
         for (String imageUrl : previousImages) {
             if (retained.contains(imageUrl)) {
                 continue;
             }
             String key = extractKeyOrNull(imageUrl);
-            if (key == null || !key.startsWith(articleKeyPrefix)) {
-                log.warn("Skip deleting promotion image outside the article prefix: articleId={}, url={}", articleId, imageUrl);
+            if (key == null || !key.startsWith(PROMOTION_KEY_ROOT)) {
+                log.warn("Skip deleting image outside the promotion path: articleId={}, url={}", articleId, imageUrl);
+                continue;
+            }
+            if (promotionArticleRepository.existsOtherActiveArticleWithImage(imageUrl, articleId)) {
+                log.info("Skip deleting promotion image still used by another article: articleId={}, url={}", articleId, imageUrl);
                 continue;
             }
             deleteQuietly(key);
@@ -262,12 +281,17 @@ public class PromotionImageUploadService {
         return (article.getImages() == null) ? 0 : article.getImages().size();
     }
 
-    private String buildPromotionImageKey(String articleId, String originalFilename) {
+    /**
+     * 키를 게시글이 아니라 동아리 기준으로 잡는다. 게시글은 이미지와 같은 요청에서 태어날 수
+     * 있어 발급 시점에 id가 없지만, 동아리는 항상 먼저 존재한다. 로고({@code {clubId}/logo/})·
+     * 활동사진과 같은 축이다.
+     */
+    private String buildPromotionImageKey(String clubId, String originalFilename) {
         LocalDate today = LocalDate.now(ZoneOffset.UTC);
         String filename = StringUtils.cleanPath(originalFilename == null ? "" : originalFilename);
         String sanitizedFilename = sanitizeFilename(StringUtils.getFilename(filename));
-        String sanitizedArticleId = sanitizePathSegment(articleId, "article");
-        return "promotion/articles/" + sanitizedArticleId
+        String sanitizedClubId = sanitizePathSegment(clubId, "club");
+        return PROMOTION_KEY_ROOT + sanitizedClubId
             + "/" + today.getYear()
             + "/" + String.format("%02d", today.getMonthValue())
             + "/" + UUID.randomUUID() + "-" + sanitizedFilename;
