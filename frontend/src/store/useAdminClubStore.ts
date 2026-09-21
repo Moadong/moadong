@@ -15,7 +15,6 @@ export const useAdminClubStore = create<AdminClubStore>()(
     }),
     {
       name: STORAGE_KEYS.ADMIN_CLUB_ID,
-      partialize: (state) => ({ clubId: state.clubId }),
       onRehydrateStorage: () => (state) => {
         if (!localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN)) {
           state?.setClubId(null);
