@@ -51,12 +51,12 @@ const RecruitmentPeriodModal = ({
   const validEarlyClose = earlyCloseDays !== '' && earlyCloseNum > 0;
   const validExtend = extendDays !== '' && extendNum > 0 && !!currentEnd;
 
-  const exitAlwaysCanSubmit = isAlways && switchToAlways;
+  const isExitingAlways = isAlways && switchToAlways;
   const canSubmit =
     (validEarlyClose ||
       validExtend ||
       (!isAlways && switchToAlways) ||
-      exitAlwaysCanSubmit) &&
+      isExitingAlways) &&
     !isPending;
 
   const today = new Date();
@@ -67,7 +67,7 @@ const RecruitmentPeriodModal = ({
     validExtend && currentEnd ? addDays(currentEnd, extendNum) : null;
 
   const exitAlwaysDefaultDate =
-    isAlways && switchToAlways && !validEarlyClose ? currentStart : null;
+    isExitingAlways && !validEarlyClose ? currentStart : null;
 
   const validateDaysInput = (value: string): boolean => {
     if (value === '') return true;
@@ -117,7 +117,7 @@ const RecruitmentPeriodModal = ({
     let actionType: 'earlyClose' | 'extend' | 'switchToAlways' | 'exitAlways';
     let days: number | null = null;
 
-    if (isAlways && switchToAlways) {
+    if (isExitingAlways) {
       actionType = 'exitAlways';
       if (validEarlyClose) {
         newEnd = addDays(today, earlyCloseNum);
