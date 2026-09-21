@@ -48,10 +48,8 @@ const RecruitmentPeriodModal = ({
   const earlyCloseNum = parseInt(earlyCloseDays, 10);
   const extendNum = parseInt(extendDays, 10);
 
-  const validEarlyClose =
-    earlyCloseDays !== '' && !isNaN(earlyCloseNum) && earlyCloseNum > 0;
-  const validExtend =
-    extendDays !== '' && !isNaN(extendNum) && extendNum > 0 && !!currentEnd;
+  const validEarlyClose = earlyCloseDays !== '' && earlyCloseNum > 0;
+  const validExtend = extendDays !== '' && extendNum > 0 && !!currentEnd;
 
   const exitAlwaysCanSubmit = isAlways && switchToAlways;
   const canSubmit =
@@ -71,9 +69,15 @@ const RecruitmentPeriodModal = ({
   const exitAlwaysDefaultDate =
     isAlways && switchToAlways && !validEarlyClose ? currentStart : null;
 
+  const validateDaysInput = (value: string): boolean => {
+    if (value === '') return true;
+    if (!/^\d+$/.test(value)) return false;
+    if (parseInt(value, 10) > RECRUIT_PERIOD_CHANGE_DAYS_MAX) return false;
+    return true;
+  };
+
   const handleEarlyCloseDaysChange = (value: string) => {
-    if (value !== '' && !/^\d+$/.test(value)) return;
-    if (value !== '' && parseInt(value, 10) > RECRUIT_PERIOD_CHANGE_DAYS_MAX) return;
+    if (!validateDaysInput(value)) return;
     setEarlyCloseDays(value);
     if (isAlways) {
       setSwitchToAlways(value !== '');
@@ -84,8 +88,7 @@ const RecruitmentPeriodModal = ({
   };
 
   const handleExtendDaysChange = (value: string) => {
-    if (value !== '' && !/^\d+$/.test(value)) return;
-    if (value !== '' && parseInt(value, 10) > RECRUIT_PERIOD_CHANGE_DAYS_MAX) return;
+    if (!validateDaysInput(value)) return;
     setExtendDays(value);
     setEarlyCloseDays('');
     setSwitchToAlways(false);
