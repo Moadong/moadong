@@ -21,8 +21,12 @@ import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockMultipartFile;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.util.unit.DataSize;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
+import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
+import software.amazon.awssdk.services.s3.model.NoSuchKeyException;
 import software.amazon.awssdk.services.s3.presigner.S3Presigner;
 import software.amazon.awssdk.services.s3.presigner.model.PresignedPutObjectRequest;
 import software.amazon.awssdk.services.s3.presigner.model.PutObjectPresignRequest;
@@ -38,6 +42,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.ArgumentMatchers.startsWith;
+import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
@@ -385,5 +390,123 @@ class PromotionImageUploadServiceTest {
             .clubId(clubId)
             .role(role)
             .build());
+    }
+
+    private void givenValidationProperties() {
+        lenient().when(serverProperties.fileUrl()).thenReturn(new ServerProperties.FileUrl(200, 10));
+        lenient().when(serverProperties.image()).thenReturn(new ServerProperties.Image(DataSize.ofMegabytes(10)));
+    }
+
+    private static final String ARTICLE_PREFIX = "/promotion/articles/article-1/2026/09/";
+
+    @Test
+    void 이_게시글_경로에_올라온_이미지는_검증을_통과한다() {
+        givenViewEndpoint();
+        givenValidationProperties();
+        when(s3Client.headObject(any(HeadObjectRequest.class)))
+            .thenReturn(HeadObjectResponse.builder().contentLength(1024L).build());
+
+        promotionImageUploadService.validateImages(
+            "article-1", List.of(CDN + ARTICLE_PREFIX + "uuid-poster.png"), List.of());
+
+        ArgumentCaptor<HeadObjectRequest> captor = ArgumentCaptor.forClass(HeadObjectRequest.class);
+        verify(s3Client).headObject(captor.capture());
+        assertEquals("promotion/articles/article-1/2026/09/uuid-poster.png", captor.getValue().key());
+    }
+
+    @Test
+    void 외부_도메인_URL은_저장할_수_없다() {
+        assertRejected("https://evil.example.com/tracking-pixel.gif", ErrorCode.INVALID_FILE_URL);
+    }
+
+    @Test
+    void 다른_게시글_경로의_이미지는_저장할_수_없다() {
+        assertRejected(CDN + "/promotion/articles/article-2/2026/09/uuid-other.png", ErrorCode.INVALID_FILE_URL);
+    }
+
+    @Test
+    void 타_동아리_로고_URL은_저장할_수_없다() {
+        assertRejected(CDN + "/other-club-id/logo/stolen.png", ErrorCode.INVALID_FILE_URL);
+    }
+
+    /** 접두사 검사에서 걸리면 R2를 호출하지 않는다. */
+    private void assertRejected(String imageUrl, ErrorCode expected) {
+        givenViewEndpoint();
+        givenValidationProperties();
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionImageUploadService.validateImages("article-1", List.of(imageUrl), List.of()));
+
+        assertEquals(expected, exception.getErrorCode());
+        verify(s3Client, never()).headObject(any(HeadObjectRequest.class));
+    }
+
+    @Test
+    void 업로드하지_않은_키는_저장할_수_없다() {
+        givenViewEndpoint();
+        givenValidationProperties();
+        when(s3Client.headObject(any(HeadObjectRequest.class)))
+            .thenThrow(NoSuchKeyException.builder().build());
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionImageUploadService.validateImages(
+                "article-1", List.of(CDN + ARTICLE_PREFIX + "does-not-exist.png"), List.of()));
+
+        assertEquals(ErrorCode.FILE_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void 상한을_넘는_이미지는_저장을_막고_R2에서_지운다() {
+        givenViewEndpoint();
+        givenValidationProperties();
+        when(s3Client.headObject(any(HeadObjectRequest.class)))
+            .thenReturn(HeadObjectResponse.builder()
+                .contentLength(DataSize.ofMegabytes(10).toBytes() + 1).build());
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionImageUploadService.validateImages(
+                "article-1", List.of(CDN + ARTICLE_PREFIX + "uuid-huge.png"), List.of()));
+
+        assertEquals(ErrorCode.FILE_TOO_LARGE, exception.getErrorCode());
+        ArgumentCaptor<DeleteObjectRequest> captor = ArgumentCaptor.forClass(DeleteObjectRequest.class);
+        verify(s3Client).deleteObject(captor.capture());
+        assertEquals("promotion/articles/article-1/2026/09/uuid-huge.png", captor.getValue().key());
+    }
+
+    @Test
+    void 이미지가_없으면_R2를_호출하지_않는다() {
+        promotionImageUploadService.validateImages("article-1", List.of(), List.of());
+        promotionImageUploadService.validateImages("article-1", null, null);
+
+        verify(s3Client, never()).headObject(any(HeadObjectRequest.class));
+    }
+
+    /**
+     * 홍보는 검증이 없던 기간에 상한을 넘는 이미지가 저장됐을 수 있다. 제목만 고치는 수정에서
+     * 그걸 다시 검사해 지워버리면 살아 있는 이미지를 되돌릴 수 없다.
+     */
+    @Test
+    void 이미_저장돼_있던_URL은_다시_검증하지_않는다() {
+        givenViewEndpoint();
+        String legacy = CDN + ARTICLE_PREFIX + "uuid-legacy-huge.png";
+
+        promotionImageUploadService.validateImages("article-1", List.of(legacy), List.of(legacy));
+
+        verify(s3Client, never()).headObject(any(HeadObjectRequest.class));
+        verify(s3Client, never()).deleteObject(any(DeleteObjectRequest.class));
+    }
+
+    @Test
+    void 기존_URL은_건너뛰되_새로_추가된_URL은_검증한다() {
+        givenViewEndpoint();
+        givenValidationProperties();
+        String legacy = CDN + ARTICLE_PREFIX + "uuid-legacy.png";
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionImageUploadService.validateImages("article-1",
+                List.of(legacy, "https://evil.example.com/new.png"), List.of(legacy)));
+
+        assertEquals(ErrorCode.INVALID_FILE_URL, exception.getErrorCode());
+        verify(s3Client, never()).headObject(any(HeadObjectRequest.class));
     }
 }
