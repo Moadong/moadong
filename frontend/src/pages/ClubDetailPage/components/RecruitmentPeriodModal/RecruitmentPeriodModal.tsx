@@ -6,7 +6,7 @@ import Modal from '@/components/common/Modal/Modal';
 import ToggleButton from '@/components/common/ToggleButton/ToggleButton';
 import {
   FAR_FUTURE_YEAR,
-  PERIOD_CHANGE_DAYS_MAX,
+  RECRUIT_PERIOD_CHANGE_DAYS_MAX,
 } from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -73,7 +73,7 @@ const RecruitmentPeriodModal = ({
 
   const handleEarlyCloseDaysChange = (value: string) => {
     if (value !== '' && !/^\d+$/.test(value)) return;
-    if (value !== '' && parseInt(value, 10) > PERIOD_CHANGE_DAYS_MAX) return;
+    if (value !== '' && parseInt(value, 10) > RECRUIT_PERIOD_CHANGE_DAYS_MAX) return;
     setEarlyCloseDays(value);
     if (isAlways) {
       setSwitchToAlways(value !== '');
@@ -85,7 +85,7 @@ const RecruitmentPeriodModal = ({
 
   const handleExtendDaysChange = (value: string) => {
     if (value !== '' && !/^\d+$/.test(value)) return;
-    if (value !== '' && parseInt(value, 10) > PERIOD_CHANGE_DAYS_MAX) return;
+    if (value !== '' && parseInt(value, 10) > RECRUIT_PERIOD_CHANGE_DAYS_MAX) return;
     setExtendDays(value);
     setEarlyCloseDays('');
     setSwitchToAlways(false);
@@ -146,7 +146,7 @@ const RecruitmentPeriodModal = ({
       },
       {
         onSuccess: () => {
-          trackEvent(ADMIN_EVENT.PERIOD_CHANGE_CONFIRMED, {
+          trackEvent(ADMIN_EVENT.RECRUIT_PERIOD_CHANGE_CONFIRMED, {
             clubId: clubDetail.id,
             actionType,
             days,
