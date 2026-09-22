@@ -5,6 +5,7 @@ import {
 } from '@/pages/AdminPage/components/ImageSortGrid/types';
 import {
   findOversizedFile,
+  findUnsupportedFile,
   hasPendingChanges,
   sliceToLimit,
 } from './photoEditUtils';
@@ -59,6 +60,34 @@ describe('findOversizedFile', () => {
 
   it('빈 배열이면 undefined를 반환한다', () => {
     expect(findOversizedFile([])).toBeUndefined();
+  });
+});
+
+describe('findUnsupportedFile', () => {
+  it('허용 목록의 type만 있으면 undefined를 반환한다', () => {
+    const files = [
+      new File(['a'], 'a.jpg', { type: 'image/jpeg' }),
+      new File(['a'], 'b.png', { type: 'image/png' }),
+    ];
+    expect(findUnsupportedFile(files)).toBeUndefined();
+  });
+
+  it('허용 목록 밖의 type이 있으면 해당 파일을 반환한다', () => {
+    const unsupported = new File(['a'], 'a.jpg', {
+      type: 'application/octet-stream',
+    });
+    const normal = new File(['a'], 'b.jpg', { type: 'image/jpeg' });
+    expect(findUnsupportedFile([normal, unsupported])).toBe(unsupported);
+  });
+
+  // type이 비면 presign과 PUT 양쪽이 image/jpeg로 폴백해 서로 맞으므로 막지 않는다.
+  it('type이 빈 파일은 통과시킨다', () => {
+    const files = [new File(['a'], 'a.jpg', { type: '' })];
+    expect(findUnsupportedFile(files)).toBeUndefined();
+  });
+
+  it('빈 배열이면 undefined를 반환한다', () => {
+    expect(findUnsupportedFile([])).toBeUndefined();
   });
 });
 
