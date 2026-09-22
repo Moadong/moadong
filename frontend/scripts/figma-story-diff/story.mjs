@@ -21,6 +21,11 @@ function encodeArgs(args = {}) {
 // 빼되 버리지는 않는다 - 시안이 불투명인데 구현만 반투명이면 구현 쪽 집합이 비어 보여서
 // 리포트만으로는 "구현에 없는 색"인지 "반투명이라 안 세어진 것"인지 구분할 수 없다.
 // alpha 0은 기본 transparent라 실제로 칠해지지 않으므로 뺀다.
+// 반올림하면 0.801과 0.804가 같은 키로 합쳐지고, 0.004가 0%로 표시돼 alpha 0을
+// 제외한다는 규칙과 리포트가 모순된다. 그렇다고 반올림을 빼면 0.801이
+// 80.10000000000001%로 나온다. 한 자리까지만 남기고 뒤의 0은 떼어 낸다.
+const alphaPercent = (alpha) => +(alpha * 100).toFixed(1);
+
 const parseColor = (rgb) => {
   const m = rgb.match(/^rgba?\((\d+),\s*(\d+),\s*(\d+)(?:,\s*([\d.]+))?\)$/);
   if (!m) return null;
@@ -156,7 +161,7 @@ export async function captureStory({ story, args, viewport, scale = 2 }) {
         const parsed = c && parseColor(c);
         if (!parsed) continue;
         if (parsed.alpha < 1) {
-          const key = `${parsed.hex}@${Math.round(parsed.alpha * 100)}%`;
+          const key = `${parsed.hex}@${alphaPercent(parsed.alpha)}%`;
           if (!translucent.has(key)) translucent.set(key, s.tag);
         } else if (!colors.has(parsed.hex)) {
           colors.set(parsed.hex, s.tag);

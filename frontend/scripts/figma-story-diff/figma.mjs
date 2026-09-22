@@ -35,6 +35,9 @@ const toHex = ({ r, g, b }) =>
     .join('')
     .toUpperCase();
 
+// 표기는 story.mjs와 같아야 한다. 두 표를 나란히 눈으로 대조하는 용도다.
+const alphaPercent = (alpha) => +(alpha * 100).toFixed(1);
+
 export function extractTokens(
   node,
   acc = { colors: new Map(), typography: new Map(), translucent: new Map() },
@@ -49,7 +52,7 @@ export function extractTokens(
     // 반투명 fill은 다른 fill 위에 겹쳐 색을 바꾸는 용도라 토큰이 아니다. 따로 모아 리포트에만 보인다.
     if (opacity < 1) {
       acc.translucent.set(
-        `${toHex(paint.color)}@${Math.round(opacity * 100)}%`,
+        `${toHex(paint.color)}@${alphaPercent(opacity)}%`,
         node.name,
       );
     } else {
