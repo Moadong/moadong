@@ -3,6 +3,7 @@ import { useOutletContext } from 'react-router-dom';
 import { setYear } from 'date-fns';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
+import Toast from '@/components/common/Toast/Toast';
 import { RECRUIT_TARGET_MAX } from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
@@ -31,6 +32,9 @@ const RecruitEditTab = () => {
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
   const [isAlwaysRecruiting, setIsAlwaysRecruiting] = useState(false);
+
+  const [toastMessage, setToastMessage] = useState('');
+  const [isToastOpen, setIsToastOpen] = useState(false);
 
   const [initialValues, setInitialValues] = useState<{
     recruitmentStart: string | null;
@@ -148,79 +152,96 @@ const RecruitEditTab = () => {
 
     updateClubDescription(updatedData, {
       onSuccess: () => {
-        alert('모집 정보가 성공적으로 수정되었습니다.');
+        setToastMessage('모집 정보가 수정됐어요.');
+        setIsToastOpen(true);
         setInitialValues({
           recruitmentStart: recruitmentStart?.toISOString() ?? null,
           recruitmentEnd: recruitmentEnd?.toISOString() ?? null,
           recruitmentTarget,
         });
       },
-      onError: (error) =>
-        alert(`모집 정보 수정에 실패했습니다: ${error.message}`),
+      onError: () => {
+        setToastMessage('모집 정보 수정에 실패했어요.');
+        setIsToastOpen(true);
+      },
     });
   };
 
   if (isMobile || isTablet) {
     return (
-      <RecruitEditTabMobile
-        recruitmentStart={recruitmentStart}
-        recruitmentEnd={recruitmentEnd}
-        recruitmentTarget={recruitmentTarget}
-        isAlwaysRecruiting={isAlwaysRecruiting}
-        isDirty={isDirty}
-        onStartChange={handleStartChange}
-        onEndChange={handleEndChange}
-        onTargetChange={setRecruitmentTarget}
-        onToggleAlwaysRecruiting={toggleAlwaysRecruiting}
-        onSave={handleUpdateClub}
-      />
+      <>
+        <RecruitEditTabMobile
+          recruitmentStart={recruitmentStart}
+          recruitmentEnd={recruitmentEnd}
+          recruitmentTarget={recruitmentTarget}
+          isAlwaysRecruiting={isAlwaysRecruiting}
+          isDirty={isDirty}
+          onStartChange={handleStartChange}
+          onEndChange={handleEndChange}
+          onTargetChange={setRecruitmentTarget}
+          onToggleAlwaysRecruiting={toggleAlwaysRecruiting}
+          onSave={handleUpdateClub}
+        />
+        <Toast
+          isOpen={isToastOpen}
+          onClose={() => setIsToastOpen(false)}
+          message={toastMessage}
+        />
+      </>
     );
   }
 
   return (
-    <Styled.Container>
-      <ContentSection>
-        <ContentSection.Header
-          title='모집 정보'
-          action={
-            <Button width='135px' animated onClick={handleUpdateClub}>
-              저장하기
-            </Button>
-          }
-        />
-        <ContentSection.Body>
-          <div>
-            <Styled.Label>모집 기간</Styled.Label>
-            <Styled.RecruitPeriodContainer>
-              <DateTimeRangePicker
-                recruitmentStart={recruitmentStart}
-                recruitmentEnd={recruitmentEnd}
-                onChangeRecruitmentStart={handleStartChange}
-                onChangeRecruitmentEnd={handleEndChange}
-                disabledEnd={isAlwaysRecruiting}
-              />
-              <Styled.AlwaysRecruitButton
-                type='button'
-                $isAlwaysActive={isAlwaysRecruiting}
-                onClick={toggleAlwaysRecruiting}
-                aria-pressed={isAlwaysRecruiting}
-              >
-                상시모집
-              </Styled.AlwaysRecruitButton>
-            </Styled.RecruitPeriodContainer>
-          </div>
-          <InputField
-            label='모집 대상'
-            placeholder='모집대상을 입력해주세요'
-            type='text'
-            value={recruitmentTarget}
-            onChange={(e) => setRecruitmentTarget(e.target.value)}
-            onClear={() => setRecruitmentTarget('')}
-            maxLength={RECRUIT_TARGET_MAX}
+    <>
+      <Styled.Container>
+        <ContentSection>
+          <ContentSection.Header
+            title='모집 정보'
+            action={
+              <Button width='135px' animated onClick={handleUpdateClub}>
+                저장하기
+              </Button>
+            }
           />
-        </ContentSection.Body>
-      </ContentSection>
-    </Styled.Container>
+          <ContentSection.Body>
+            <div>
+              <Styled.Label>모집 기간</Styled.Label>
+              <Styled.RecruitPeriodContainer>
+                <DateTimeRangePicker
+                  recruitmentStart={recruitmentStart}
+                  recruitmentEnd={recruitmentEnd}
+                  onChangeRecruitmentStart={handleStartChange}
+                  onChangeRecruitmentEnd={handleEndChange}
+                  disabledEnd={isAlwaysRecruiting}
+                />
+                <Styled.AlwaysRecruitButton
+                  type='button'
+                  $isAlwaysActive={isAlwaysRecruiting}
+                  onClick={toggleAlwaysRecruiting}
+                  aria-pressed={isAlwaysRecruiting}
+                >
+                  상시모집
+                </Styled.AlwaysRecruitButton>
+              </Styled.RecruitPeriodContainer>
+            </div>
+            <InputField
+              label='모집 대상'
+              placeholder='모집대상을 입력해주세요'
+              type='text'
+              value={recruitmentTarget}
+              onChange={(e) => setRecruitmentTarget(e.target.value)}
+              onClear={() => setRecruitmentTarget('')}
+              maxLength={RECRUIT_TARGET_MAX}
+            />
+          </ContentSection.Body>
+        </ContentSection>
+      </Styled.Container>
+      <Toast
+        isOpen={isToastOpen}
+        onClose={() => setIsToastOpen(false)}
+        message={toastMessage}
+      />
+    </>
   );
 };
 
