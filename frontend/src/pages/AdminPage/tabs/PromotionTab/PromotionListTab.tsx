@@ -22,6 +22,8 @@ import { PromotionArticle } from '@/types/promotion';
 import AdminPromotionCard from './components/AdminPromotionCard/AdminPromotionCard';
 import {
   isClubApproved,
+  PROMOTION_ALERT_EMPTY_GUIDE,
+  PROMOTION_ALERT_GUIDE,
   PROMOTION_LIST_PATH,
   PROMOTION_NOT_APPROVED_MESSAGE,
 } from './constants';
@@ -123,7 +125,7 @@ const PromotionListTab = () => {
           </Styled.EmptyTitle>
           <Styled.EmptyDescription>
             {isApproved
-              ? '행사·공연·전시 소식을 올려 학우들에게 알려보세요.'
+              ? PROMOTION_ALERT_EMPTY_GUIDE
               : PROMOTION_NOT_APPROVED_MESSAGE}
           </Styled.EmptyDescription>
         </Styled.EmptyState>
@@ -163,9 +165,11 @@ const PromotionListTab = () => {
             onBack={() => navigate('/admin')}
           />
           <Styled.CompactBody>
-            {!isApproved && myArticles.length > 0 && (
+            {myArticles.length > 0 && (
               <Styled.Notice role='status'>
-                {PROMOTION_NOT_APPROVED_MESSAGE}
+                {isApproved
+                  ? PROMOTION_ALERT_GUIDE
+                  : PROMOTION_NOT_APPROVED_MESSAGE}
               </Styled.Notice>
             )}
             {renderBody()}
@@ -187,9 +191,11 @@ const PromotionListTab = () => {
             action={desktopCreateButton}
           />
           <ContentSection.Body>
-            {!isApproved && myArticles.length > 0 && (
+            {myArticles.length > 0 && (
               <Styled.Notice role='status'>
-                {PROMOTION_NOT_APPROVED_MESSAGE}
+                {isApproved
+                  ? PROMOTION_ALERT_GUIDE
+                  : PROMOTION_NOT_APPROVED_MESSAGE}
               </Styled.Notice>
             )}
             {renderBody()}
