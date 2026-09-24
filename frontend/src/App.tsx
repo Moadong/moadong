@@ -5,6 +5,7 @@ import { QueryCache, QueryClient, type Query } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { ThemeProvider } from 'styled-components';
 import { FloatingButtonGroup } from '@/components/common/FloatingButtonGroup/FloatingButtonGroup';
+import FeedbackPromptHost from '@/components/common/FeedbackPromptHost/FeedbackPromptHost';
 import { queryKeys } from '@/constants/queryKeys';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { HttpError } from '@/errors';
@@ -94,6 +95,7 @@ const App = () => {
             <BrowserRouter>
               <ScrollToTop />
               <FloatingButtonGroup />
+              <FeedbackPromptHost />
               <AppRoutes />
             </BrowserRouter>
           </ThemeProvider>
