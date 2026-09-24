@@ -31,9 +31,9 @@ Figma REST로 시안 PNG와 노드 속성을 받고, 같은 크기·같은 args�
    - variant가 여러 개면 같은 파일에 키를 여러 개 둔다. 키 이름은 리포트 폴더명이 된다.
    - `story`: Storybook 주소창의 `?path=/story/` 뒤 ID. export 이름은 kebab-case가 된다(`InactiveSingleSong` → `inactive-single-song`).
    - `args`: 스토리 export에 없는 상태를 덧씌울 때만. 불리언·숫자·문자열만 가능하고 객체는 스토리 export로 고정한다.
-2. 실행: `npm run visual:figma [이름필터]`. 필터는 키 이름의 부분 문자열(대소문자 구분). 모든 매핑을 돌리고, 게이트 셋 중 하나라도 FAIL인 항목이 있으면 exit 1.
+2. 실행: `npm run visual:figma [이름필터]`. 필터는 키 이름의 부분 문자열(대소문자 구분). 모든 매핑을 돌리고, 게이트 넷 중 하나라도 FAIL인 항목이 있으면 exit 1.
 3. `visual-diff/<이름>/report.md`를 읽고 판정표 순서로 본다. `figma.png`, `story.png`, `diff.png`가 같은 폴더에 있다.
-4. `src/styles/theme.test/index.ts`에 새 보류 토큰이 생겼으면 `src/styles/theme/`으로 옮기고 `theme.test`에서 지운다. **Figma 시안이 SSOT라 시안에 있는 값은 그대로 토큰이 된다** — 확인을 기다리지 않는다. 이 파일은 스크립트가 덮어쓰므로 손으로 고치지 않는다.
+4. `src/styles/theme.test/index.ts`에 새 보류 토큰이 생겼으면 `src/styles/theme/`으로 옮긴다. 옮긴 토큰은 다음 실행에서 보류 목록에서 자동으로 빠진다. **Figma 시안이 SSOT라 시안에 있는 값은 그대로 토큰이 된다** — 확인을 기다리지 않는다. 이 파일은 스크립트가 덮어쓰므로 손으로 고치지 않는다.
 
 ## 판정 읽는 법
 
