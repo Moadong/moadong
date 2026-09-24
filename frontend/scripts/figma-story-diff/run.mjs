@@ -93,7 +93,7 @@ function writePendingTs(pending) {
     ),
   );
   return `// figma-story-diff(scripts/figma-story-diff)가 생성·갱신한다. 손으로 고치지 말 것.
-// Figma 시안에는 있지만 theme/에 없는 토큰의 보류 목록. 디자이너 컨펌 후 theme/으로 옮기고 여기서 지운다.
+// Figma 시안에는 있지만 theme/에 없는 토큰의 보류 목록. theme/으로 옮기면 다음 실행에서 자동으로 빠진다.
 export const pending = {
   colors: ${colors},
   typography: ${typography},
@@ -269,6 +269,11 @@ if (!entries.length) {
 }
 const theme = await loadTheme();
 const pending = await loadPending();
+// theme으로 옮긴 토큰은 보류 목록에서 뺀다. 여기서 지우지 않으면 아래 쓰기가 옮긴 값을 되살린다.
+for (const hex of Object.keys(pending.colors))
+  if (theme.colors.has(hex.toUpperCase())) delete pending.colors[hex];
+for (const key of Object.keys(pending.typography))
+  if (theme.typography.has(key)) delete pending.typography[key];
 const results = [];
 for (const entry of entries) {
   try {
