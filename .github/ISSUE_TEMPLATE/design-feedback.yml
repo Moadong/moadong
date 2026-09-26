@@ -1,0 +1,29 @@
+name: '디자인 피드백'
+description: '실서비스에서 ?design=1 툴바로 복사한 메모를 붙여넣으면 에이전트가 PR을 만듭니다.'
+labels: [design-feedback]
+title: '[design] '
+body:
+  - type: markdown
+    attributes:
+      value: |
+        1. `https://moadong.com/?design=1`로 접속하면 오른쪽 아래 툴바가 뜹니다.
+        2. 요소를 클릭해 메모를 남기고 "복사"를 누르세요. 여러 개 가능합니다.
+        3. 아래에 붙여넣고 제출하면 에이전트가 PR을 열고 이 이슈에 링크를 답니다.
+        4. PR의 Vercel 프리뷰에서 확인하세요. 더 고칠 게 있으면 PR 댓글에 적으세요.
+
+  - type: textarea
+    id: feedback
+    attributes:
+      label: '🎨 피드백'
+      description: '툴바에서 복사한 내용을 그대로 붙여넣으세요.'
+    validations:
+      required: true
+
+  - type: input
+    id: storyKey
+    attributes:
+      label: '🎟️ 상위 스토리 (선택)'
+      description: '연결할 Jira 스토리 키가 있으면 적으세요 (예: MOA-42).'
+      placeholder: 'MOA-42'
+    validations:
+      required: false
