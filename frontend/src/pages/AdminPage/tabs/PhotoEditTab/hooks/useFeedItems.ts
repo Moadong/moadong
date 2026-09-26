@@ -9,6 +9,7 @@ import {
 import {
   extractLocalItems,
   findOversizedFile,
+  findUnsupportedFile,
   hasPendingChanges,
   sliceToLimit,
 } from '../photoEditUtils';
@@ -54,6 +55,11 @@ export const useFeedItems = (clubId: string, originalFeeds: string[]) => {
     const oversized = findOversizedFile(selected);
     if (oversized) {
       alert(`${oversized.name}의 용량이 제한을 초과했습니다.`);
+      return;
+    }
+    const unsupported = findUnsupportedFile(selected);
+    if (unsupported) {
+      alert(`${unsupported.name}은(는) 지원하지 않는 이미지 형식입니다.`);
       return;
     }
     const newItems: LocalItem[] = selected.map((file) => ({
