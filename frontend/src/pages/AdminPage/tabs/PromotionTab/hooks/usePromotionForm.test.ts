@@ -28,6 +28,18 @@ const article: PromotionArticle = {
 
 const makeFile = (name: string) => new File(['x'], name, { type: 'image/png' });
 
+type SetField = ReturnType<typeof usePromotionForm>['setField'];
+
+/** 작성 모드에서 validatePromotionForm을 통과시키는 최소 입력 */
+const fillCreateForm = (setField: SetField) => {
+  setField('title', '봄 정기공연');
+  setField('location', '한울관(E31) 302호');
+  setField('coordinates', { lat: 35.132367, lng: 129.106974 });
+  setField('eventStart', new Date('2026-04-01T10:00:00'));
+  setField('eventEnd', new Date('2026-04-01T12:00:00'));
+  setField('description', '설명');
+};
+
 beforeEach(() => {
   jest.clearAllMocks();
   global.URL.createObjectURL = jest.fn((file) => `blob:${(file as File).name}`);
@@ -227,7 +239,37 @@ describe('usePromotionForm 이미지 순서', () => {
     });
   });
 
-  it('생성 후 실패한 저장을 재시도해도 글을 다시 만들지 않는다', async () => {
+  it('작성은 업로드한 URL을 담아 POST 한 번으로 끝낸다', async () => {
+    const file = makeFile('new.png');
+    createArticle.mockResolvedValue({ articleId: 'created-1' });
+    uploadImages.mockResolvedValue({
+      uploaded: [{ file, url: 'https://cdn/new.png' }],
+      failedFiles: [],
+    });
+
+    const { result } = renderHook(() => usePromotionForm({ clubId: 'club-1' }));
+
+    act(() => fillCreateForm(result.current.setField));
+    act(() => result.current.addFiles([file]));
+
+    let saveResult;
+    await act(async () => {
+      saveResult = await result.current.save();
+    });
+
+    // 발급에 게시글이 필요 없으므로 업로드는 파일 목록만 받는다
+    expect(uploadImages).toHaveBeenCalledWith([file]);
+    expect(createArticle).toHaveBeenCalledTimes(1);
+    expect(createArticle.mock.calls[0][0]).toMatchObject({
+      title: '봄 정기공연',
+      images: ['https://cdn/new.png'],
+    });
+    // POST가 이미지까지 저장하므로 뒤따르는 PUT이 없다
+    expect(updateArticle).not.toHaveBeenCalled();
+    expect(saveResult).toEqual({ status: 'success', articleId: 'created-1' });
+  });
+
+  it('작성에서 업로드가 실패하면 글을 만들지 않고, 재시도해도 하나만 만든다', async () => {
     const file = makeFile('new.png');
     createArticle.mockResolvedValue({ articleId: 'created-1' });
     uploadImages
@@ -236,21 +278,10 @@ describe('usePromotionForm 이미지 순서', () => {
         uploaded: [{ file, url: 'https://cdn/new.png' }],
         failedFiles: [],
       });
-    updateArticle.mockResolvedValue({});
 
     const { result } = renderHook(() => usePromotionForm({ clubId: 'club-1' }));
 
-    act(() => {
-      result.current.setField('title', '봄 정기공연');
-      result.current.setField('location', '한울관(E31) 302호');
-      result.current.setField('coordinates', {
-        lat: 35.132367,
-        lng: 129.106974,
-      });
-      result.current.setField('eventStart', new Date('2026-04-01T10:00:00'));
-      result.current.setField('eventEnd', new Date('2026-04-01T12:00:00'));
-      result.current.setField('description', '설명');
-    });
+    act(() => fillCreateForm(result.current.setField));
     act(() => result.current.addFiles([file]));
 
     let firstResult;
@@ -258,6 +289,8 @@ describe('usePromotionForm 이미지 순서', () => {
       firstResult = await result.current.save();
     });
     expect(firstResult).toMatchObject({ status: 'error' });
+    // POST가 마지막에 한 번만 나가므로 실패한 시도는 글을 남기지 않는다
+    expect(createArticle).not.toHaveBeenCalled();
 
     let secondResult;
     await act(async () => {
@@ -266,7 +299,6 @@ describe('usePromotionForm 이미지 순서', () => {
 
     expect(createArticle).toHaveBeenCalledTimes(1);
     expect(secondResult).toEqual({ status: 'success', articleId: 'created-1' });
-    expect(updateArticle.mock.calls[0][0].articleId).toBe('created-1');
   });
 
   it('삭제한 로컬 이미지의 previewUrl은 revoke한다', () => {
