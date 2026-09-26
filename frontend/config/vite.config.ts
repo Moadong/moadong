@@ -61,7 +61,9 @@ export default defineConfig(({ mode }) => {
             if (!id.includes('node_modules')) return;
 
             if (id.includes('react-router')) return 'router';
-            if (id.includes('react-datepicker')) return 'dates';
+            // react-datepicker는 관리자 화면에서만 쓰므로 date-fns('dates')와 한 청크로 묶지 않는다.
+            // 묶이면 date-fns를 쓰는 초기 진입 경로 때문에 CSS까지 렌더 차단 리소스가 된다.
+            if (id.includes('react-datepicker')) return 'datepicker';
             if (
               id.includes('react-markdown') ||
               id.includes('remark') ||
