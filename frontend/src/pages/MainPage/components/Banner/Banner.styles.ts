@@ -1,4 +1,5 @@
 import styled, { keyframes } from 'styled-components';
+import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
 
 const shimmer = keyframes`
@@ -37,7 +38,7 @@ export const BannerContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 88px;
+  margin-top: ${HEADER_HEIGHT.desktop}px;
   position: relative;
 
   ${media.laptop} {
