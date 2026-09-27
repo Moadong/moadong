@@ -11,6 +11,13 @@ import useNavigator from '@/hooks/useNavigator';
 import useSatisfactionSurvey from '@/hooks/useSatisfactionSurvey';
 import isIOS from '@/utils/isIOS';
 
+const SATISFACTION_MODAL_TEXT = {
+  MAIN: '솔직한 의견이 더 나은 모아동을 만들어요\n여러분의 한 마디가 큰 힘이 돼요',
+  REVIEW:
+    '저희 앱을 이용해주셔서 감사합니다.\n앱이 마음에 드셨다면 리뷰를 남겨주세요!',
+  FEEDBACK: '불편한 점이나 건의사항을\n저희에게 알려주세요!',
+} as const;
+
 /**
  * 충분히 써본 사용자에게 만족도를 묻는다 (시안 11170:1014).
  * 만족하면 스토어 리뷰 유도 모달을, 아쉬우면 피드백 유도 모달을 한 번 더 띄운다.
@@ -77,11 +84,9 @@ const SatisfactionModal = () => {
         onConfirm={handleSatisfied}
         confirmLabel='좋아요!'
         title='모아동, 잘 사용하고 계신가요?'
-        description={
-          '솔직한 의견이 더 나은 모아동을 만들어요\n여러분의 한 마디가 큰 힘이 돼요'
-        }
+        description={SATISFACTION_MODAL_TEXT.MAIN}
         variant='check'
-        closeOnBackdrop={false}
+
       />
       <ConfirmModal
         isOpen={isReviewModalOpen}
@@ -90,9 +95,9 @@ const SatisfactionModal = () => {
         cancelLabel='나중에 할게요'
         confirmLabel='물론이죠!'
         title='앱이 마음에 드시나요?'
-        description={`저희 앱을 이용해주셔서 감사합니다.\n앱이 마음에 드셨다면 리뷰를 남겨주세요!`}
+        description={SATISFACTION_MODAL_TEXT.REVIEW}
         variant='check'
-        closeOnBackdrop={false}
+
       />
       <ConfirmModal
         isOpen={isFeedbackModalOpen}
@@ -101,9 +106,9 @@ const SatisfactionModal = () => {
         cancelLabel='다음에 할게요'
         confirmLabel='피드백하기'
         title='함께 개선해요'
-        description={'불편한 점이나 건의사항을\n저희에게 알려주세요!'}
+        description={SATISFACTION_MODAL_TEXT.FEEDBACK}
         variant='warning'
-        closeOnBackdrop={false}
+
       />
     </>
   );
