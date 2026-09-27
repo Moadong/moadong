@@ -21,24 +21,24 @@ export const TopBarContent = styled.header<{ $isVisible: boolean }>`
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0 16px;
+  padding: 0 20px;
 `;
 
 export const IconButtonWrapper = styled.div`
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   display: flex;
   align-items: center;
   justify-content: center;
 `;
 
 export const IconButton = styled.button<{ $isVisible: boolean }>`
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   padding: 0;
   border: none;
-  background-color: ${({ $isVisible, theme }) =>
-    $isVisible ? 'transparent' : theme.colors.base.white};
+  background-color: ${({ $isVisible }) =>
+    $isVisible ? 'transparent' : 'rgba(255, 255, 255, 0.4)'};
   border-radius: 50%;
   cursor: pointer;
   display: flex;
@@ -51,18 +51,22 @@ export const NotificationButton = styled.button<{
   $isVisible: boolean;
   $isActive: boolean;
 }>`
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
   padding: 0;
   border: none;
-  background-color: ${({ $isVisible, theme }) =>
-    $isVisible ? 'transparent' : theme.colors.base.white};
+  background-color: ${({ $isVisible }) =>
+    $isVisible ? 'transparent' : 'rgba(255, 255, 255, 0.4)'};
+  box-shadow: ${({ $isVisible }) =>
+    $isVisible ? 'none' : '0 0 8px rgba(0, 0, 0, 0.1)'};
   border-radius: 50%;
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
-  transition: background-color 0.2s ease;
+  transition:
+    background-color 0.2s ease,
+    box-shadow 0.2s ease;
 
   svg {
     transition: all 0.2s ease;
@@ -85,8 +89,8 @@ export const ClubName = styled.h1<{ $isVisible: boolean }>`
 `;
 
 export const Placeholder = styled.div`
-  width: 36px;
-  height: 36px;
+  width: 48px;
+  height: 48px;
 `;
 
 export const TabBar = styled.div`

@@ -4,15 +4,15 @@ import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
-import { useDragSort } from './hooks/useDragSort';
+import { ImageSortGrid } from '@/pages/AdminPage/components/ImageSortGrid/ImageSortGrid';
+import { ImageItem } from '@/pages/AdminPage/components/ImageSortGrid/types';
+import { useDragSort } from '@/pages/AdminPage/components/ImageSortGrid/useDragSort';
 import * as Styled from './PhotoEditTab.styles';
-import { FeedItem } from './types';
 
 interface PhotoEditTabDesktopProps {
-  feedItems: FeedItem[];
-  feedItemsRef: React.MutableRefObject<FeedItem[]>;
-  setFeedItems: React.Dispatch<React.SetStateAction<FeedItem[]>>;
+  feedItems: ImageItem[];
+  feedItemsRef: React.MutableRefObject<ImageItem[]>;
+  setFeedItems: React.Dispatch<React.SetStateAction<ImageItem[]>>;
   isLoading: boolean;
   pendingChanges: boolean;
   addFiles: (files: File[]) => void;
@@ -41,7 +41,7 @@ const PhotoEditTabDesktop = ({
   const { gridRef, dragIndex, dropPosition, handleMouseDown } = useDragSort({
     disabled: isLoading,
     onReorder: setFeedItems,
-    feedItemsRef,
+    itemsRef: feedItemsRef,
   });
 
   const handleAddClick = () => {
@@ -120,8 +120,8 @@ const PhotoEditTabDesktop = ({
                 <span>최대 {MAX_FILE_COUNT}장</span>
               </Styled.EmptyState>
             ) : (
-              <FeedImageGrid
-                feedItems={feedItems}
+              <ImageSortGrid
+                items={feedItems}
                 gridRef={gridRef}
                 dragIndex={dragIndex}
                 dropPosition={dropPosition}

@@ -1,6 +1,6 @@
 import type { MouseEvent, RefObject } from 'react';
 import MorebuttonIcon from '@/assets/images/icons/ellipsis_icon.svg?react';
-import ApplicationMenu from '@/pages/AdminPage/components/ApplicationMenu/ApplicationMenu';
+import AdminMoreMenu from '@/pages/AdminPage/components/AdminMoreMenu/AdminMoreMenu';
 import {
   ApplicationFormItem,
   ApplicationFormStatus,
@@ -64,7 +64,7 @@ const ApplicationListCardMobile = ({
               <MorebuttonIcon />
             </Styled.MoreButton>
             {isMenuOpen && (
-              <ApplicationMenu
+              <AdminMoreMenu
                 isActive={isActive}
                 onToggleStatus={() =>
                   onToggleStatus(application.id, application.status)

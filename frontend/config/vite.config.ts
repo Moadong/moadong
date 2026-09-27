@@ -94,7 +94,10 @@ export default defineConfig(({ mode }) => {
             if (id.includes('swiper')) return 'swiper';
             if (id.includes('date-fns')) return 'dates';
 
-            return 'vendor';
+            // 이름을 붙이지 않은 의존성은 Rollup 기본 배치에 맡긴다.
+            // 여기서 'vendor'를 반환하면 지연 청크(AdminRoutes)에서만 쓰는
+            // 라이브러리까지 엔트리가 참조하는 공용 청크로 끌려온다.
+            return undefined;
           },
         },
       },

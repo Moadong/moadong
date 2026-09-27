@@ -21,3 +21,9 @@ export const RECRUIT_PERIOD_CHANGE_DAYS_MAX = 365;
 
 // 계정 관리 (AccountEditTab)
 export const PASSWORD_MAX = 20;
+
+// 홍보 게시글 관리 (PromotionTab)
+export const PROMOTION_TITLE_MAX = 50;
+export const PROMOTION_LOCATION_MAX = 50;
+export const PROMOTION_DESCRIPTION_MAX = 1000;
+export const PROMOTION_IMAGE_MAX_COUNT = 15;

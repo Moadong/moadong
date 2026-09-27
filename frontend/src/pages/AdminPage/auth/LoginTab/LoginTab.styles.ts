@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const LoginContainer = styled.div`
   display: flex;
@@ -6,10 +7,12 @@ export const LoginContainer = styled.div`
   align-items: center;
   min-height: 100vh;
   background-color: #ffffff;
+  overflow-x: hidden;
 `;
 
 export const LoginBox = styled.div`
-  width: 610px;
+  width: calc(100% - 40px);
+  max-width: 610px;
   padding: 60px;
   border-radius: 20px;
   box-shadow: 0 0 20px rgba(0, 0, 0, 0.25);
@@ -18,6 +21,14 @@ export const LoginBox = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
+
+  ${media.mobile} {
+    width: 100%;
+    max-width: 100%;
+    padding: 40px 20px;
+    border-radius: 0;
+    box-shadow: none;
+  }
 `;
 
 export const Logo = styled.img`

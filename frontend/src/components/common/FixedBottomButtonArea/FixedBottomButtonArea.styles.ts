@@ -4,6 +4,9 @@ import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 import { Z_INDEX } from '@/styles/zIndex';
 
+/** 모바일·태블릿 고정 영역 높이(px). padding 10 + 버튼 50 + padding 20. safe-area는 제외 */
+export const FIXED_BOTTOM_BUTTON_AREA_HEIGHT = 80;
+
 export const ButtonArea = styled.div`
   position: sticky;
   bottom: 0;

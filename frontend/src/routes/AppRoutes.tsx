@@ -8,7 +8,6 @@ import ApplicationFormPage from '@/pages/ApplicationFormPage/ApplicationFormPage
 import GoogleCallbackPage from '@/pages/CallbackPage/GoogleCallbackPage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
-import ClubListPage from '@/pages/ClubListPage/ClubListPage';
 import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
 import ClubUnionPage from '@/pages/ClubUnionPage/ClubUnionPage';
 import ErrorTestPage from '@/pages/ErrorTestPage/ErrorTestPage';
@@ -45,12 +44,10 @@ const AppRoutes = () =>
           ),
         },
         {
+          // 개편 홈에서만 쓰던 목록 화면. 홈이 곧 목록이라 제거했고,
+          // 공유된 링크가 깨지지 않도록 홈으로 보낸다.
           path: '/clubs',
-          element: (
-            <ContentErrorBoundary>
-              <ClubListPage />
-            </ContentErrorBoundary>
-          ),
+          element: <Navigate to='/' replace />,
         },
         {
           path: '/introduce',

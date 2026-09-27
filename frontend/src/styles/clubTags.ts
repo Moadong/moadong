@@ -4,7 +4,7 @@ import { colors } from '@/styles/theme/colors';
 export const TAG_COLORS: Record<string, string> = {
   중동: 'rgba(230, 247, 255, 1)',
   과동: 'rgba(210, 230, 255, 1)',
-  자유: 'rgba(237, 237, 237, 0.8)',
+  자유: colors.gray[200],
   봉사: colors.secondary[1].tag,
   종교: colors.secondary[2].tag,
   취미교양: colors.secondary[3].tag,

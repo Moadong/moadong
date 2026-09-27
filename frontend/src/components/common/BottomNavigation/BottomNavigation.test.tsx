@@ -7,25 +7,16 @@ jest.mock('@/hooks/Mixpanel/useMixpanelTrack', () => ({
   default: () => jest.fn(),
 }));
 
-const renderAt = (path: string, showClubsTab: boolean) =>
+const renderAt = (path: string) =>
   render(
     <MemoryRouter initialEntries={[path]}>
-      <BottomNavigation showClubsTab={showClubsTab} />
+      <BottomNavigation />
     </MemoryRouter>,
   );
 
 describe('BottomNavigation', () => {
-  it('개편을 받은 사용자에게는 홈·동아리·홍보·메뉴를 보여준다', () => {
-    renderAt('/', true);
-
-    const labels = screen
-      .getAllByRole('button', { hidden: true })
-      .map((tab) => tab.textContent);
-    expect(labels).toEqual(['홈', '동아리', '홍보', '메뉴']);
-  });
-
-  it('개편을 받지 않은 사용자에게는 동아리 대신 구독 탭을 보여준다', () => {
-    renderAt('/', false);
+  it('홈·구독·홍보·메뉴 네 탭을 보여준다', () => {
+    renderAt('/');
 
     const labels = screen
       .getAllByRole('button', { hidden: true })
@@ -33,8 +24,8 @@ describe('BottomNavigation', () => {
     expect(labels).toEqual(['홈', '구독', '홍보', '메뉴']);
   });
 
-  it('개편을 받지 않은 사용자의 홈에서는 활성 탭이 홈 하나뿐이다', () => {
-    renderAt('/', false);
+  it('홈에서는 활성 탭이 홈 하나뿐이다', () => {
+    renderAt('/');
 
     const activeTabs = screen
       .getAllByRole('button', { hidden: true })
