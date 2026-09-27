@@ -11,4 +11,6 @@ export const STORAGE_KEYS = {
   SATISFACTION_ANSWERED: 'satisfactionAnswered',
   HAS_CONSENTED_PERSONAL_INFO: 'hasConsentedPersonalInfo',
   QUERY_CACHE: 'MOADONG_QUERY_CACHE',
+  /** 관리자 로그인 시 귀속된 동아리 ID. 새로고침 후에도 관리자 UI 유지에 사용 */
+  ADMIN_CLUB_ID: 'adminClubId',
 } as const;
