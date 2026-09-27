@@ -86,7 +86,6 @@ const SatisfactionModal = () => {
         title='모아동, 잘 사용하고 계신가요?'
         description={SATISFACTION_MODAL_TEXT.MAIN}
         variant='check'
-
       />
       <ConfirmModal
         isOpen={isReviewModalOpen}
@@ -97,7 +96,6 @@ const SatisfactionModal = () => {
         title='앱이 마음에 드시나요?'
         description={SATISFACTION_MODAL_TEXT.REVIEW}
         variant='check'
-
       />
       <ConfirmModal
         isOpen={isFeedbackModalOpen}
@@ -108,7 +106,6 @@ const SatisfactionModal = () => {
         title='함께 개선해요'
         description={SATISFACTION_MODAL_TEXT.FEEDBACK}
         variant='warning'
-
       />
     </>
   );
