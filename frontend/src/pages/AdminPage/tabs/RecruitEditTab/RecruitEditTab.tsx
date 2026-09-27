@@ -3,8 +3,8 @@ import { useOutletContext } from 'react-router-dom';
 import { setYear } from 'date-fns';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
-import ToggleButton from '@/components/common/ToggleButton/ToggleButton';
 import Toast from '@/components/common/Toast/Toast';
+import ToggleButton from '@/components/common/ToggleButton/ToggleButton';
 import {
   FAR_FUTURE_YEAR,
   RECRUIT_TARGET_MAX,
