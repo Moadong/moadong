@@ -7,6 +7,7 @@ import CloseButtonIcon from '@/assets/images/icons/close_button_icon.svg?react';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import Modal from '@/components/common/Modal/Modal';
+import cdnImage from '@/utils/cdnImage';
 import * as Styled from './PhotoModal.styles';
 
 interface PhotoModalProps {
@@ -112,7 +113,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
                     }
                   }}
                 >
-                  <img src={url} alt='썸네일' />
+                  <img src={cdnImage(url, 'thumbnail')} alt='썸네일' />
                 </Styled.Thumbnail>
               ))}
             </Styled.ThumbnailList>

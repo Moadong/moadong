@@ -6,6 +6,7 @@
 - `formatTimeAgo.ts` - 항상 경과 시간으로 표시 ("5일 전"). 우체통 목록/상세에서 사용
 - `recruitmentDateParser.ts` - 모집 기간 파싱
 - `debounce.ts` - 디바운스 함수
+- `cdnImage.ts` - `cdn.moadong.com` 이미지를 용도별 크기의 Cloudflare 변환 URL로 바꿈. 다른 호스트는 그대로. 모달 전체보기에는 쓰지 않는다(원본 유지)
 - `validateSocialLink.ts` - SNS 링크 유효성 검사
 - `isInAppWebView.ts` - 인앱 WebView 감지 (UA의 `MoadongApp`)
 - `isIOS.ts` - UA로 iOS 기기 판별. 스토어 링크 분기 등에 사용

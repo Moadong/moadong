@@ -10,6 +10,7 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useNavigator from '@/hooks/useNavigator';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { SNSPlatform } from '@/types/club';
+import cdnImage from '@/utils/cdnImage';
 import * as Styled from './ClubProfileCard.styles';
 
 interface ClubProfileCardProps {
@@ -65,7 +66,7 @@ const ClubProfileCard = ({
     <Styled.Container>
       <Styled.CoverImageWrapper>
         {cover ? (
-          <Styled.CoverImage src={cover} alt='클럽 커버' />
+          <Styled.CoverImage src={cdnImage(cover, 'cover')} alt='클럽 커버' />
         ) : category && TAG_COLORS[category] ? (
           <Styled.CoverFallback $color={TAG_COLORS[category]} />
         ) : (
@@ -74,7 +75,10 @@ const ClubProfileCard = ({
       </Styled.CoverImageWrapper>
 
       <Styled.LogoWrapper>
-        <Styled.Logo src={logo || DefaultLogo} alt={`${name} 로고`} />
+        <Styled.Logo
+          src={cdnImage(logo || DefaultLogo, 'logo')}
+          alt={`${name} 로고`}
+        />
       </Styled.LogoWrapper>
 
       <Styled.Content>
