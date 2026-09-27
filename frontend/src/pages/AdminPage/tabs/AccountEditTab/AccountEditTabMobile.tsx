@@ -43,8 +43,9 @@ const AccountEditTabMobile = ({
           <Styled.PageTitle>변경할 비밀번호를 입력해주세요</Styled.PageTitle>
           <Styled.PageSubtitleGroup>
             <Styled.PageSubtitle>
-              비밀번호는 영문, 숫자, 특수문자(!@#$%^)를 포함하여 8자 이상 20자
-              이하로 입력해야 합니다.
+              비밀번호는 영문, 숫자, 특수문자(!@#$%^)를 포함하여
+              <br />
+              8자 이상 20자 이하로 입력해야 합니다.
             </Styled.PageSubtitle>
             <Styled.PageSubtitle>
               비밀번호를 잊으신 경우 모아동 관리자에게 연락 주세요.
