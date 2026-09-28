@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import Button from '@/components/common/Button/Button';
 import { setTypography } from '@/styles/theme/typography';
 
 export const CardSection = styled.section`
@@ -57,16 +58,13 @@ export const Tag = styled.button<{ $main: string }>`
   }
 `;
 
-export const RetryButton = styled.button`
+/** 앱의 지원하기 버튼과 같은 공통 Button. 부스용으로 높이·글자만 키운다 */
+export const RetryButton = styled(Button)`
   width: 100%;
-  min-height: 64px;
+  height: 64px;
   margin-top: 12px;
-  border: none;
   border-radius: 16px;
-  background: ${({ theme }) => theme.colors.base.black};
-  color: ${({ theme }) => theme.colors.base.white};
   ${({ theme }) => setTypography(theme.typography.title.title5)};
-  cursor: pointer;
 `;
 
 export const SubLine = styled.p`
@@ -92,16 +90,20 @@ export const QrCaption = styled.p`
   text-align: center;
 `;
 
-export const ShareButton = styled.button`
+/** 공통 Button의 보조 스타일. 채움 대신 회색 테두리 */
+export const ShareButton = styled(Button)`
   width: 100%;
-  min-height: 64px;
+  height: 64px;
   margin-top: 32px;
-  border: 1.5px solid ${({ theme }) => theme.colors.base.black};
+  border: 1.5px solid ${({ theme }) => theme.colors.gray[300]};
   border-radius: 16px;
-  background: ${({ theme }) => theme.colors.base.white};
-  color: ${({ theme }) => theme.colors.base.black};
+  background-color: ${({ theme }) => theme.colors.base.white};
+  color: ${({ theme }) => theme.colors.gray[900]};
   ${({ theme }) => setTypography(theme.typography.title.title5)};
-  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: ${({ theme }) => theme.colors.gray[50]};
+  }
 `;
 
 export const ChipList = styled.div`
