@@ -93,6 +93,14 @@ export const USER_EVENT = {
   PROMOTION_IMAGE_MORE_CLICKED: 'Promotion Image More Clicked',
 
   WEBVIEW_SUBSCRIBE_TOGGLED: 'Webview Subscribe Toggled',
+
+  // 평화축제
+  PEACE_QUIZ_STARTED: 'Peace Quiz Started',
+  PEACE_QUIZ_COMPLETED: 'Peace Quiz Completed',
+  PEACE_CLUB_TAG_CLICKED: 'Peace Club Tag Clicked',
+  PEACE_RETRY_CLICKED: 'Peace Retry Clicked',
+  PEACE_SHARE_CLICKED: 'Peace Share Clicked',
+  PEACE_STUDENT_TOGGLE_OPENED: 'Peace Student Toggle Opened',
 } as const;
 
 export const WEBVIEW_LINK_TARGET = {
@@ -197,6 +205,9 @@ export const PAGE_VIEW = {
   PROMOTION_LIST_PAGE: '홍보 목록 페이지',
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
   GAME_PAGE: 'GamePage',
+  PEACE_INTRO_PAGE: 'PeaceIntroPage',
+  PEACE_QUIZ_PAGE: 'PeaceQuizPage',
+  PEACE_RESULT_PAGE: 'PeaceResultPage',
 
   // 모아동 우체통
   FEEDBACK_LIST_PAGE: '우체통 목록 페이지',
