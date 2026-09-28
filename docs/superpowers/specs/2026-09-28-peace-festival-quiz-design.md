@@ -128,7 +128,7 @@ export const calculatePeaceType = (
 - Blender에서 유형별 카드 6장을 렌더해 WebP(투명 배경, 긴 변 1080px 이하, 장당 200KB 이하 목표)로 `frontend/src/assets/images/peace/`에 둔다.
 - 이미지 import는 `components/ResultCard/cardImages.ts`(`Partial<Record<PeaceTypeId, string>>`)에만 둔다. `data/peaceTypes.ts`에 두지 않는 이유는 jest transform이 `.webp`를 stub하지 않아 데이터 모듈을 import하는 채점 테스트가 깨지기 때문이다.
 - framer-motion으로 등장 시 뒤집기(`rotateY` 180→0)와, 포인터 위치에 따른 기울기(`perspective` + `rotateX/rotateY` ±10°)를 준다. WebGL 없음.
-- 이미지가 준비되지 않은 유형은 장식 카드로 대체한다(`CARD_IMAGES[type]`이 없으면 분과 색 그라데이션 + 유형 심볼 이모지(`PeaceType.symbol`) + 떠다니는 반투명 원 + 모아동 로고). 이미지가 오면 `cardImages.ts`에 import 한 줄만 추가하면 심볼 자리에 이미지가 들어간다. 글자 뒤 하단 그라데이션(Scrim)은 이미지 유무와 무관하게 깔린다(2026-09-28 리뷰 반영).
+- 이미지가 준비되지 않은 유형은 장식 카드로 대체한다(`CARD_IMAGES[type]`이 없으면 분과 색 그라데이션 + 유형 심볼 SVG(`components/ResultCard/symbolImages.ts`, Twemoji CC-BY 4.0, `assets/images/peace/symbols/`) + 떠다니는 반투명 원 + 모아동 로고). 이모지 글꼴 대신 SVG를 쓰는 이유는 OS마다 그림이 다르고 128px 이상에서 비트맵 글꼴이 흐려지기 때문(2026-09-28). `PeaceType.symbol` 이모지는 서브 유형·파트너 문장 같은 본문 텍스트에만 쓴다. 이미지가 오면 `cardImages.ts`에 import 한 줄만 추가하면 심볼 자리에 이미지가 들어간다. 글자 뒤 하단 그라데이션(Scrim)은 이미지 유무와 무관하게 깔린다(2026-09-28 리뷰 반영).
 
 ## 7. 홈 배너 (운영 작업, 코드 변경 없음)
 

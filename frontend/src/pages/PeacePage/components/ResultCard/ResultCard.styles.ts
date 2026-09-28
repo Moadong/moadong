@@ -68,14 +68,12 @@ export const Logo = styled.img`
   opacity: 0.9;
 `;
 
-export const Symbol = styled.div`
+export const Symbol = styled.img`
   position: absolute;
-  top: 18%;
-  left: 0;
-  right: 0;
-  text-align: center;
-  font-size: 128px;
-  line-height: 1;
+  top: 16%;
+  left: 50%;
+  width: 40%;
+  transform: translateX(-50%);
   filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.25));
 `;
 

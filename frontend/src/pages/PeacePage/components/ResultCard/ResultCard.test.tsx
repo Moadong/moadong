@@ -80,18 +80,20 @@ describe('ResultCard', () => {
     expect(after).toBe(before);
   });
 
-  it('유형 심볼과 모아동 로고, 배경 장식을 그린다', () => {
+  it('유형 심볼(벡터 SVG)과 모아동 로고, 배경 장식을 그린다', () => {
     renderCard('daily');
-    expect(screen.getByText(PEACE_TYPES.daily.symbol)).toBeInTheDocument();
+    // 이모지 글꼴은 OS마다 다르고 크게 그리면 흐려져서 SVG 파일로 그린다
+    expect(screen.getByTestId('result-card-symbol')).toBeInTheDocument();
+    expect(
+      screen.queryByText(PEACE_TYPES.daily.symbol),
+    ).not.toBeInTheDocument();
     expect(screen.getByRole('img', { name: '모아동' })).toBeInTheDocument();
     expect(screen.getByTestId('result-card-decor')).toBeInTheDocument();
   });
 
   it('이미지가 있으면 심볼 대신 이미지를 보여준다', () => {
     renderCard('carer');
-    expect(
-      screen.queryByText(PEACE_TYPES.carer.symbol),
-    ).not.toBeInTheDocument();
+    expect(screen.queryByTestId('result-card-symbol')).not.toBeInTheDocument();
   });
 
   it('이미지가 없어도 글자 뒤에 어두운 그라데이션을 깔아 대비를 확보한다', () => {

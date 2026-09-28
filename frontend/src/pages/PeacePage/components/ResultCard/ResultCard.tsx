@@ -4,6 +4,7 @@ import moadongLogo from '@/assets/images/logos/moadong_mobile_logo.svg';
 import { PeaceType } from '../../data/peaceTypes';
 import { CARD_IMAGES } from './cardImages';
 import * as Styled from './ResultCard.styles';
+import { SYMBOL_IMAGES } from './symbolImages';
 
 const MAX_TILT_DEG = 10;
 
@@ -69,7 +70,12 @@ const ResultCard = ({ type }: ResultCardProps) => {
           {image ? (
             <Styled.Image src={image} alt={`${type.name} 카드`} />
           ) : (
-            <Styled.Symbol aria-hidden>{type.symbol}</Styled.Symbol>
+            <Styled.Symbol
+              data-testid='result-card-symbol'
+              src={SYMBOL_IMAGES[type.id]}
+              alt=''
+              aria-hidden
+            />
           )}
           <Styled.Scrim data-testid='result-card-scrim' aria-hidden />
           <Styled.Logo src={moadongLogo} alt='모아동' />
