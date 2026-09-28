@@ -39,6 +39,7 @@ export const StartButton = styled.button`
   width: 100%;
   min-height: 64px;
   margin-top: auto;
+  margin-bottom: 24px;
   border: none;
   border-radius: 16px;
   background: ${PEACE_GREEN.main};

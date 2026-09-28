@@ -19,7 +19,6 @@ export const Main = styled.main<{ $topOffset: number; $tone: Tone }>`
   flex: 1;
   width: 100%;
   max-width: 440px;
-  min-height: 100dvh;
   margin: 0 auto;
   padding: ${({ $topOffset }) => 40 + $topOffset}px 24px 48px;
   display: flex;

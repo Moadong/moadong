@@ -1,10 +1,10 @@
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import analyzingIcon from '@/assets/images/peace/symbols/analyzing.svg';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import PeaceLayout from './components/PeaceLayout/PeaceLayout';
-import { SYMBOL_IMAGES } from './components/ResultCard/symbolImages';
 import { ANALYZING_MS, KIOSK_IDLE_MS } from './constants/kiosk';
 import { PEACE_QUESTIONS } from './data/questions';
 import { useIdleReset } from './hooks/useIdleReset';
@@ -66,15 +66,15 @@ const PeaceQuizPage = () => {
   };
 
   if (!question) {
-    const [type] = rankPeaceTypes(answers);
     return (
       <PeaceLayout tone='green'>
         <Styled.Analyzing role='status'>
+          {/* 결과 심볼을 미리 보여주지 않도록 돋보기로 둔다 */}
           <Styled.AnalyzingSymbol
-            src={SYMBOL_IMAGES[type]}
+            src={analyzingIcon}
             alt=''
-            animate={{ rotate: [0, 12, -12, 0], scale: [1, 1.08, 1] }}
-            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+            animate={{ x: [-10, 10, -10], rotate: [-8, 8, -8] }}
+            transition={{ duration: 1.4, repeat: Infinity, ease: 'easeInOut' }}
           />
           <Styled.AnalyzingText>
             당신의 평화 유형을
