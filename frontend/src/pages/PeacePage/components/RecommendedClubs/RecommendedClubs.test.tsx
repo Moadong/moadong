@@ -10,21 +10,6 @@ const mockUseGetCardList = jest.fn();
 jest.mock('@/hooks/Queries/useClub', () => ({
   useGetCardList: (args: unknown) => mockUseGetCardList(args),
 }));
-jest.mock('@/pages/MainPage/components/ClubCard/ClubCard', () => ({
-  __esModule: true,
-  default: ({
-    club,
-    onCardClick,
-  }: {
-    club: Club;
-    onCardClick?: (club: Club) => void;
-  }) => (
-    <button type='button' onClick={() => onCardClick?.(club)}>
-      {`CARD ${club.name}`}
-    </button>
-  ),
-}));
-
 const club = (name: string, recruitmentStatus: Club['recruitmentStatus']) =>
   ({
     id: name,
@@ -37,12 +22,16 @@ const club = (name: string, recruitmentStatus: Club['recruitmentStatus']) =>
 const renderClubs = (onClubClick = jest.fn()) =>
   render(
     <ThemeProvider theme={theme}>
-      <RecommendedClubs category='학술' onClubClick={onClubClick} />
+      <RecommendedClubs
+        category='학술'
+        accent='#7094FF'
+        onClubClick={onClubClick}
+      />
     </ThemeProvider>,
   );
 
 describe('RecommendedClubs', () => {
-  it('분과로 목록을 요청하고 모집중을 앞세워 3개만 보여준다', () => {
+  it('분과로 목록을 요청하고 모집중을 앞세워 태그 3개만 보여준다', () => {
     mockUseGetCardList.mockReturnValue({
       data: {
         totalCount: 4,
@@ -61,10 +50,10 @@ describe('RecommendedClubs', () => {
       expect.objectContaining({ category: '학술' }),
     );
     const names = screen.getAllByRole('button').map((b) => b.textContent);
-    expect(names).toEqual(['CARD B', 'CARD D', 'CARD A']);
+    expect(names).toEqual(['B', 'D', 'A']);
   });
 
-  it('카드를 누르면 onClubClick에 동아리를 넘긴다', async () => {
+  it('태그를 누르면 onClubClick에 동아리를 넘긴다', async () => {
     const onClubClick = jest.fn();
     mockUseGetCardList.mockReturnValue({
       data: { totalCount: 1, clubs: [club('B', 'OPEN')] },
@@ -72,7 +61,7 @@ describe('RecommendedClubs', () => {
       isError: false,
     });
     renderClubs(onClubClick);
-    await userEvent.click(screen.getByRole('button', { name: 'CARD B' }));
+    await userEvent.click(screen.getByRole('button', { name: 'B' }));
     expect(onClubClick).toHaveBeenCalledWith(
       expect.objectContaining({ name: 'B' }),
     );

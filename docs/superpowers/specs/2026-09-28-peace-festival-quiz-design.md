@@ -23,7 +23,7 @@
 | 화면 골격 | 다른 공개 페이지와 동일. 데스크톱 `Header`, 모바일·태블릿·웹뷰 `WebviewTopBar`, 웹뷰에서 `Footer` 숨김 | 기존 패턴 유지(`IntroducePage`와 동일) |
 | 데이터 | TS 상수 (`data/questions.ts`, `data/peaceTypes.ts`) | JSON보다 유형 ID 오타를 컴파일에서 잡음 |
 | 결과 전달 | `/peace/result?type={PeaceTypeId}` 쿼리 | 새로고침 안전, 이후 공유 버튼 붙일 때 재사용 |
-| 추천 동아리 | "부경대 학생이라면?" 토글을 열 때 모아동 API(`useGetCardList`, 분과 필터)로 받아 모집중을 앞세운 3개를 홈과 같은 `ClubCard`로 표시 (2026-09-28 변경) | 정적 이름은 이름 변경에 깨지고 18개를 손으로 골라야 함. 토글 열 때만 요청하므로 퀴즈 구간은 여전히 네트워크 0회 |
+| 추천 동아리 | "부경대 학생이라면?" 토글을 열 때 모아동 API(`useGetCardList`, 분과 필터)로 받아 모집중을 앞세운 3개를 분과 색 테두리 태그로 표시 (2026-09-28 변경. 처음엔 `ClubCard`였으나 면적이 크고 패널 안에서 레이아웃이 깨져 태그로 바꿈) | 정적 이름은 이름 변경에 깨지고 18개를 손으로 골라야 함. 토글 열 때만 요청하므로 퀴즈 구간은 여전히 네트워크 0회 |
 | 카드 이미지 제작 | 디자이너 리소스 없음. 이미지 생성 AI(또는 blender-mcp)로 직접 제작, 그 전까지 장식 카드로 출시 가능 | 2026-09-28 결정 |
 | 결과 카드 3D | Blender 렌더 이미지 6장 + framer-motion CSS 3D 연출 | 새 의존성 0, 오프라인·태블릿에 가벼움. three.js는 3일 행사에 과함 |
 | 홈 배너 | 프론트 코드 변경 없음. 운영 페이지로 배너 데이터 등록 | 배너는 API 데이터이고 내부 경로 `linkTo`는 이미 처리됨 |
@@ -227,6 +227,6 @@ frontend/src/constants/CLAUDE.md           (상수 추가 반영)
 | `caution` | "가끔은 이런 면도" | |
 | `smallActions[3]` | "오늘의 작은 평화 행동" 목록 | 기존 `smallAction` 대체 |
 | `partnerReason` | "잘 맞는 평화 파트너 · ○○" 아래 한 줄 | |
-| `divisionIntro` + `RecommendedClubs` 컴포넌트 | **"부경대 학생이라면?" 토글** 안에서만 표시. `components/RecommendedClubs/`가 `useGetCardList({ category })`로 분과 동아리를 받아 모집중(OPEN·ALWAYS) 우선 3장을 `ClubCard`로 그림. 로딩은 문구, 실패·빈 목록은 숨김. 카드 클릭은 `PEACE_CLUB_CARD_CLICKED` 후 `/clubDetail/@이름` | 일반 시민에게는 접혀 있음. 열면 `USER_EVENT.PEACE_STUDENT_TOGGLE_OPENED` |
+| `divisionIntro` + `RecommendedClubs` 컴포넌트 | **"부경대 학생이라면?" 토글** 안에서만 표시. `components/RecommendedClubs/`가 `useGetCardList({ category })`로 분과 동아리를 받아 모집중(OPEN·ALWAYS) 우선 3개를 이름 태그로 그림. 로딩은 문구, 실패·빈 목록은 숨김. 카드 클릭은 `PEACE_CLUB_CARD_CLICKED` 후 `/clubDetail/@이름` | 일반 시민에게는 접혀 있음. 열면 `USER_EVENT.PEACE_STUDENT_TOGGLE_OPENED` |
 
 토글은 조건부 렌더 버튼(`aria-expanded`)이다. `<details>`를 쓰지 않은 이유는 열림을 이벤트로 세고 테스트에서 상태를 확실히 잡기 위해서다. 분과 소개 문구는 일반적인 활동 묘사이며 특정 동아리 사실을 단정하지 않는다.

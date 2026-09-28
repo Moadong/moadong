@@ -155,6 +155,7 @@ const PeaceResultPage = () => {
             <Styled.SectionTitle>이런 동아리는 어때요</Styled.SectionTitle>
             <RecommendedClubs
               category={type.category}
+              accent={palette.main}
               onClubClick={handleClubClick}
             />
           </div>

@@ -1,5 +1,4 @@
 import { useGetCardList } from '@/hooks/Queries/useClub';
-import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import { Club, RecruitmentStatus } from '@/types/club';
 import * as Styled from './RecommendedClubs.styles';
 
@@ -14,14 +13,20 @@ const recruitingFirst = (a: Club, b: Club) =>
 interface RecommendedClubsProps {
   /** CategoryButtonList와 같은 한글 분과 라벨 */
   category: string;
+  /** 태그 테두리 색. 유형의 분과 색(secondary[n].main) */
+  accent: string;
   onClubClick: (club: Club) => void;
 }
 
 /**
- * 유형의 분과에 속한 동아리를 모아동 API로 받아 홈과 같은 카드 3장으로 보여준다.
+ * 유형의 분과에 속한 동아리를 모아동 API로 받아 이름 태그 3개로 보여준다.
  * "부경대 학생이라면?"을 열 때만 마운트되므로 퀴즈 구간은 네트워크를 쓰지 않는다.
  */
-const RecommendedClubs = ({ category, onClubClick }: RecommendedClubsProps) => {
+const RecommendedClubs = ({
+  category,
+  accent,
+  onClubClick,
+}: RecommendedClubsProps) => {
   const { data, isPending, isError } = useGetCardList({
     keyword: '',
     recruitmentStatus: 'all',
@@ -35,16 +40,18 @@ const RecommendedClubs = ({ category, onClubClick }: RecommendedClubsProps) => {
   const clubs = [...data.clubs].sort(recruitingFirst).slice(0, MAX_CLUBS);
 
   return (
-    <Styled.CardList>
-      {clubs.map((club, index) => (
-        <ClubCard
+    <Styled.TagList>
+      {clubs.map((club) => (
+        <Styled.Tag
           key={club.id}
-          club={club}
-          index={index}
-          onCardClick={onClubClick}
-        />
+          type='button'
+          $accent={accent}
+          onClick={() => onClubClick(club)}
+        >
+          {club.name}
+        </Styled.Tag>
       ))}
-    </Styled.CardList>
+    </Styled.TagList>
   );
 };
 

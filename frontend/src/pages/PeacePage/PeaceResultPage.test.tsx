@@ -121,7 +121,7 @@ describe('PeaceResultPage', () => {
     expect(screen.getByText(/^INTRO/)).toBeInTheDocument();
   });
 
-  it('추천 동아리 카드를 누르면 동아리 상세로 이동한다', async () => {
+  it('추천 동아리 태그를 누르면 동아리 상세로 이동한다', async () => {
     renderResult('?type=carer');
     await userEvent.click(
       screen.getByRole('button', { name: /부경대 학생이라면/ }),
