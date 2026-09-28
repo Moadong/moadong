@@ -179,6 +179,27 @@ const PeaceResultPage = () => {
       <Styled.RetryButton type='button' onClick={handleRetry}>
         다시하기
       </Styled.RetryButton>
+
+      {/* 카드 심볼 SVG(Twemoji, CC BY 4.0) 저작자 표기 */}
+      <Styled.Credit>
+        아이콘:{' '}
+        <a
+          href='https://github.com/jdecked/twemoji'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          Twemoji
+        </a>{' '}
+        © Twitter, Inc. (
+        <a
+          href='https://creativecommons.org/licenses/by/4.0/'
+          target='_blank'
+          rel='noopener noreferrer'
+        >
+          CC BY 4.0
+        </a>
+        )
+      </Styled.Credit>
     </PeaceLayout>
   );
 };

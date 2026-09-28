@@ -130,6 +130,18 @@ describe('PeaceResultPage', () => {
     expect(screen.getByText('CLUB @테스트 동아리')).toBeInTheDocument();
   });
 
+  it('심볼 아이콘 저작자 표기(CC BY 4.0)를 링크와 함께 보여준다', () => {
+    renderResult('?type=carer');
+    expect(screen.getByRole('link', { name: 'Twemoji' })).toHaveAttribute(
+      'href',
+      'https://github.com/jdecked/twemoji',
+    );
+    expect(screen.getByRole('link', { name: 'CC BY 4.0' })).toHaveAttribute(
+      'href',
+      'https://creativecommons.org/licenses/by/4.0/',
+    );
+  });
+
   it('다시하기를 누르면 /peace로 간다', async () => {
     renderResult('?type=carer');
     await userEvent.click(screen.getByRole('button', { name: '다시하기' }));

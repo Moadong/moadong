@@ -133,3 +133,15 @@ export const StudentPanel = styled.section<{ $back: string }>`
   border-radius: 16px;
   background: ${({ $back }) => $back};
 `;
+
+export const Credit = styled.p`
+  margin-top: 20px;
+  text-align: center;
+  ${({ theme }) => setTypography(theme.typography.paragraph.p7)};
+  color: ${({ theme }) => theme.colors.gray[500]};
+
+  a {
+    color: inherit;
+    text-decoration: underline;
+  }
+`;
