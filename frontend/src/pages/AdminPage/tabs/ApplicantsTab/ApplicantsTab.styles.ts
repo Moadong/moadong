@@ -144,7 +144,6 @@ export const DeleteButton = styled.img<{ disabled?: boolean }>`
     `};
 `;
 
-
 export const ApplicantTable = styled.table`
   width: 100%;
   border-collapse: collapse;
@@ -291,7 +290,8 @@ export const CsvIcon = styled(CsvSvg)<{ $disabled: boolean }>`
   width: 14px;
   height: 14px;
   flex-shrink: 0;
-  filter: ${({ $disabled }) => ($disabled ? 'brightness(0) invert(86%)' : 'none')};
+  filter: ${({ $disabled }) =>
+    $disabled ? 'brightness(0) invert(86%)' : 'none'};
 `;
 
 export const ApplicantStatusBadge = styled.span<{ status: string }>`

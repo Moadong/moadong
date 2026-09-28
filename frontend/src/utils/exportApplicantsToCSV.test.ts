@@ -1,4 +1,4 @@
-import { ApplicationStatus, Applicant } from '@/types/applicants';
+import { Applicant, ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
 import { exportApplicantsToCSV } from '@/utils/exportApplicantsToCSV';
 
@@ -7,7 +7,9 @@ const mockLink = { href: '', download: '', click: mockClick };
 let capturedBlobContent = '';
 
 beforeEach(() => {
-  jest.spyOn(document, 'createElement').mockReturnValue(mockLink as unknown as HTMLElement);
+  jest
+    .spyOn(document, 'createElement')
+    .mockReturnValue(mockLink as unknown as HTMLElement);
   jest.spyOn(URL, 'createObjectURL').mockReturnValue('blob:mock-url');
   jest.spyOn(URL, 'revokeObjectURL').mockImplementation(() => {});
   global.Blob = jest.fn().mockImplementation((content: BlobPart[]) => {
@@ -22,8 +24,22 @@ afterEach(() => {
 });
 
 const mockQuestions: Question[] = [
-  { id: 1, title: '지원 동기', description: '', type: 'LONG_TEXT', options: { required: true }, items: [] },
-  { id: 2, title: '활동 가능 시간', description: '', type: 'SHORT_TEXT', options: { required: false }, items: [] },
+  {
+    id: 1,
+    title: '지원 동기',
+    description: '',
+    type: 'LONG_TEXT',
+    options: { required: true },
+    items: [],
+  },
+  {
+    id: 2,
+    title: '활동 가능 시간',
+    description: '',
+    type: 'SHORT_TEXT',
+    options: { required: false },
+    items: [],
+  },
 ];
 
 const mockApplicants: Applicant[] = [
@@ -96,7 +112,13 @@ describe('exportApplicantsToCSV', () => {
 
   it('쉼표가 포함된 셀은 큰따옴표로 감싼다', () => {
     const applicantWithComma: Applicant[] = [
-      { ...mockApplicants[0], answers: [{ id: 1, value: '월, 화, 수' }, { id: 2, value: '저녁' }] },
+      {
+        ...mockApplicants[0],
+        answers: [
+          { id: 1, value: '월, 화, 수' },
+          { id: 2, value: '저녁' },
+        ],
+      },
     ];
     exportApplicantsToCSV(applicantWithComma, mockQuestions, '테스트');
     expect(capturedBlobContent).toContain('"월, 화, 수"');
@@ -104,7 +126,13 @@ describe('exportApplicantsToCSV', () => {
 
   it('큰따옴표가 포함된 셀은 이스케이프 처리된다', () => {
     const applicantWithQuote: Applicant[] = [
-      { ...mockApplicants[0], answers: [{ id: 1, value: '그는 "열정적"입니다' }, { id: 2, value: '' }] },
+      {
+        ...mockApplicants[0],
+        answers: [
+          { id: 1, value: '그는 "열정적"입니다' },
+          { id: 2, value: '' },
+        ],
+      },
     ];
     exportApplicantsToCSV(applicantWithQuote, mockQuestions, '테스트');
     expect(capturedBlobContent).toContain('"그는 ""열정적""입니다"');

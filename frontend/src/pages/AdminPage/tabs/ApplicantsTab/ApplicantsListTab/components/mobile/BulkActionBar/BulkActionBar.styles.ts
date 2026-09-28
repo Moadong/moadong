@@ -47,7 +47,6 @@ export const ExportButton = styled.button<{ $enabled: boolean }>`
   ${setTypography(typography.button.button2)}
   color: ${({ $enabled }) => ($enabled ? '#2d9e5e' : colors.gray[400])};
   cursor: ${({ $enabled }) => ($enabled ? 'pointer' : 'default')};
-
 `;
 
 export const DeleteButton = styled.button<{ $enabled: boolean }>`
@@ -72,7 +71,8 @@ export const CsvIcon = styled(CsvSvg)<{ $enabled: boolean }>`
   width: 12px;
   height: 12px;
   flex-shrink: 0;
-  filter: ${({ $enabled }) => ($enabled ? 'none' : 'brightness(0) invert(86%)')};
+  filter: ${({ $enabled }) =>
+    $enabled ? 'none' : 'brightness(0) invert(86%)'};
 `;
 
 export const TriangleIcon = styled(TriangleDown)<{

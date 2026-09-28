@@ -18,9 +18,9 @@ import {
 import { useApplicantSelection } from '@/hooks/useApplicantSelection';
 import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import useExportApplicantsCSV from '@/pages/AdminPage/tabs/ApplicantsTab/hooks/useExportApplicantsCSV';
 import { useAdminClubId } from '@/store/useAdminClubStore';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
-import useExportApplicantsCSV from '@/pages/AdminPage/tabs/ApplicantsTab/hooks/useExportApplicantsCSV';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantsTab.styles';
 import ApplicantsTabMobile from './ApplicantsTabMobile';
@@ -542,7 +542,10 @@ const ApplicantsTabDesktop = () => {
           </tbody>
         </Styled.ApplicantTable>
         <Styled.TableFooter>
-          <Styled.CsvButton onClick={handleExportCSV} disabled={filteredApplicants.length === 0}>
+          <Styled.CsvButton
+            onClick={handleExportCSV}
+            disabled={filteredApplicants.length === 0}
+          >
             <Styled.CsvIcon $disabled={filteredApplicants.length === 0} />
             {checkedIds.size > 0
               ? `선택 내보내기 (${checkedIds.size})`
