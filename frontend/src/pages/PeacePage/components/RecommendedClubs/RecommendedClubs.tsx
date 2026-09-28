@@ -15,6 +15,7 @@ interface RecommendedClubsProps {
   category: string;
   /** 태그 테두리 색. 유형의 분과 색(secondary[n].main) */
   accent: string;
+  /** 클릭 트래킹용. 이동은 링크가 한다 */
   onClubClick: (club: Club) => void;
 }
 
@@ -44,7 +45,7 @@ const RecommendedClubs = ({
       {clubs.map((club) => (
         <Styled.Tag
           key={club.id}
-          type='button'
+          to={`/clubDetail/@${encodeURIComponent(club.name)}`}
           $accent={accent}
           onClick={() => onClubClick(club)}
         >

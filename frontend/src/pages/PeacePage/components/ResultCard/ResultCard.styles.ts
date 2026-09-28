@@ -20,8 +20,10 @@ export const Card = styled(motion.div)<{ $bg: string }>`
   width: 100%;
   aspect-ratio: 3 / 4;
   border-radius: 24px;
-  background: ${({ $bg }) =>
-    `linear-gradient(160deg, color-mix(in srgb, ${$bg} 55%, white) 0%, ${$bg} 55%, color-mix(in srgb, ${$bg} 85%, black) 100%)`};
+  /* color-mix 미지원(iOS < 16.2, Chrome < 111)이면 아래 선언이 무효라 단색으로 남는다 */
+  background: ${({ $bg }) => $bg};
+  background: ${({ $bg, theme }) =>
+    `linear-gradient(160deg, color-mix(in srgb, ${$bg} 55%, ${theme.colors.base.white}) 0%, ${$bg} 55%, color-mix(in srgb, ${$bg} 85%, ${theme.colors.base.black}) 100%)`};
   box-shadow: 0 24px 48px rgba(0, 0, 0, 0.16);
   display: flex;
   flex-direction: column;

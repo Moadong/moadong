@@ -25,6 +25,17 @@ describe('useIdleReset', () => {
     expect(onIdle).toHaveBeenCalledTimes(1);
   });
 
+  it('휠 스크롤도 입력으로 보고 타이머를 다시 시작한다', () => {
+    const onIdle = jest.fn();
+    renderHook(() => useIdleReset(true, 1000, onIdle));
+    act(() => jest.advanceTimersByTime(700));
+    act(() => {
+      window.dispatchEvent(new Event('wheel'));
+    });
+    act(() => jest.advanceTimersByTime(700));
+    expect(onIdle).not.toHaveBeenCalled();
+  });
+
   it('비활성이면 아무것도 하지 않는다', () => {
     const onIdle = jest.fn();
     renderHook(() => useIdleReset(false, 1000, onIdle));

@@ -14,7 +14,10 @@ import { theme } from '@/styles/theme';
 import { PEACE_TYPES } from './data/peaceTypes';
 import PeaceResultPage from './PeaceResultPage';
 
-jest.mock('mixpanel-browser', () => ({ track: jest.fn() }));
+const mockTrack = jest.fn();
+jest.mock('mixpanel-browser', () => ({
+  track: (...args: unknown[]) => mockTrack(...args),
+}));
 jest.mock('./components/PeaceLayout/PeaceLayout', () => ({
   __esModule: true,
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -39,12 +42,12 @@ jest.mock('./components/RecommendedClubs/RecommendedClubs', () => ({
     category: string;
     onClubClick: (club: { name: string }) => void;
   }) => (
-    <button
-      type='button'
+    <a
+      href='/clubDetail/@테스트 동아리'
       onClick={() => onClubClick({ name: '테스트 동아리' })}
     >
       {`CLUBS ${category}`}
-    </button>
+    </a>
   ),
 }));
 jest.mock('./components/ResultCard/ResultCard', () => ({
@@ -121,13 +124,18 @@ describe('PeaceResultPage', () => {
     expect(screen.getByText(/^INTRO/)).toBeInTheDocument();
   });
 
-  it('추천 동아리 태그를 누르면 동아리 상세로 이동한다', async () => {
+  it('추천 동아리 태그를 누르면 클릭 이벤트를 남긴다(이동은 링크가 한다)', async () => {
     renderResult('?type=carer');
     await userEvent.click(
       screen.getByRole('button', { name: /부경대 학생이라면/ }),
     );
-    await userEvent.click(screen.getByRole('button', { name: 'CLUBS 봉사' }));
-    expect(screen.getByText('CLUB @테스트 동아리')).toBeInTheDocument();
+    const link = screen.getByRole('link', { name: 'CLUBS 봉사' });
+    link.addEventListener('click', (e) => e.preventDefault());
+    await userEvent.click(link);
+    expect(mockTrack).toHaveBeenCalledWith(
+      'Peace Club Card Clicked',
+      expect.objectContaining({ type: 'carer', clubName: '테스트 동아리' }),
+    );
   });
 
   it('심볼 아이콘 저작자 표기(CC BY 4.0)를 링크와 함께 보여준다', () => {

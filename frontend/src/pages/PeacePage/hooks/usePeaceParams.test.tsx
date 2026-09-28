@@ -22,6 +22,12 @@ describe('usePeaceParams', () => {
     expect(render('').result.current.src).toBeUndefined();
   });
 
+  it('정의되지 않은 src는 버리고 다음 경로에도 싣지 않는다', () => {
+    const { src, withParams } = render('?src=anything&kiosk=1').result.current;
+    expect(src).toBeUndefined();
+    expect(withParams('/peace/quiz')).toBe('/peace/quiz?kiosk=1');
+  });
+
   it('withParams는 kiosk·src를 다음 경로에 이어 붙인다', () => {
     const { withParams } = render('?kiosk=1&src=booth').result.current;
     expect(withParams('/peace/quiz')).toBe('/peace/quiz?kiosk=1&src=booth');

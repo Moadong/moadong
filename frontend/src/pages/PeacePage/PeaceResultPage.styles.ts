@@ -84,6 +84,13 @@ export const ShareButton = styled(Button)`
   }
 `;
 
+/** 공유하기 보조 스타일에서 높이·글자만 줄인다 */
+export const StudentToggle = styled(ShareButton)`
+  height: 56px;
+  margin-top: 16px;
+  ${({ theme }) => setTypography(theme.typography.title.title6)};
+`;
+
 export const ChipList = styled.div`
   display: flex;
   flex-wrap: wrap;
@@ -110,22 +117,6 @@ export const ActionItem = styled.li`
   ${({ theme }) => setTypography(theme.typography.paragraph.p1)};
   color: ${({ theme }) => theme.colors.gray[800]};
   word-break: keep-all;
-`;
-
-/** 공유하기와 같은 공통 Button 보조 스타일 */
-export const StudentToggle = styled(Button)`
-  width: 100%;
-  height: 56px;
-  margin-top: 16px;
-  border: 1.5px solid ${({ theme }) => theme.colors.gray[300]};
-  border-radius: 16px;
-  background-color: ${({ theme }) => theme.colors.base.white};
-  color: ${({ theme }) => theme.colors.gray[900]};
-  ${({ theme }) => setTypography(theme.typography.title.title6)};
-
-  &:hover:not(:disabled) {
-    background-color: ${({ theme }) => theme.colors.gray[50]};
-  }
 `;
 
 /** 기존 드롭다운 화살표(drop_button_icon). 열리면 뒤집는다 */

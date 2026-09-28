@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
@@ -22,11 +23,13 @@ const club = (name: string, recruitmentStatus: Club['recruitmentStatus']) =>
 const renderClubs = (onClubClick = jest.fn()) =>
   render(
     <ThemeProvider theme={theme}>
-      <RecommendedClubs
-        category='학술'
-        accent='#7094FF'
-        onClubClick={onClubClick}
-      />
+      <MemoryRouter>
+        <RecommendedClubs
+          category='학술'
+          accent='#7094FF'
+          onClubClick={onClubClick}
+        />
+      </MemoryRouter>
     </ThemeProvider>,
   );
 
@@ -49,21 +52,23 @@ describe('RecommendedClubs', () => {
     expect(mockUseGetCardList).toHaveBeenCalledWith(
       expect.objectContaining({ category: '학술' }),
     );
-    const names = screen.getAllByRole('button').map((b) => b.textContent);
+    const names = screen.getAllByRole('link').map((b) => b.textContent);
     expect(names).toEqual(['B', 'D', 'A']);
   });
 
-  it('태그를 누르면 onClubClick에 동아리를 넘긴다', async () => {
+  it('태그는 동아리 상세 링크이고 누르면 onClubClick에 동아리를 넘긴다', async () => {
     const onClubClick = jest.fn();
     mockUseGetCardList.mockReturnValue({
-      data: { totalCount: 1, clubs: [club('B', 'OPEN')] },
+      data: { totalCount: 1, clubs: [club('B C', 'OPEN')] },
       isPending: false,
       isError: false,
     });
     renderClubs(onClubClick);
-    await userEvent.click(screen.getByRole('button', { name: 'B' }));
+    const link = screen.getByRole('link', { name: 'B C' });
+    expect(link).toHaveAttribute('href', '/clubDetail/@B%20C');
+    await userEvent.click(link);
     expect(onClubClick).toHaveBeenCalledWith(
-      expect.objectContaining({ name: 'B' }),
+      expect.objectContaining({ name: 'B C' }),
     );
   });
 

@@ -1,6 +1,12 @@
 import { useEffect, useRef } from 'react';
 
-const ACTIVITY_EVENTS = ['pointerdown', 'pointermove', 'keydown', 'touchstart'];
+const ACTIVITY_EVENTS = [
+  'pointerdown',
+  'pointermove',
+  'keydown',
+  'touchstart',
+  'wheel',
+];
 
 /** 부스 태블릿용. enabled일 때 ms 동안 입력이 없으면 onIdle을 한 번 부른다 */
 export const useIdleReset = (

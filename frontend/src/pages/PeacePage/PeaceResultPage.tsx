@@ -65,7 +65,6 @@ const PeaceResultPage = () => {
       clubName: club.name,
       src,
     });
-    navigate(`/clubDetail/@${encodeURIComponent(club.name)}`);
   };
 
   const handleRetry = () => {

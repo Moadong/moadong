@@ -50,16 +50,25 @@ const renderQuiz = (search = '') =>
     </ThemeProvider>,
   );
 
-const answerAll = async () => {
+/** 8문항을 첫 선택지로 답한다. 탭 가드(300ms) 때문에 문항 사이에 가짜 시간을 흘린다 */
+const answerAll = () => {
+  jest.useFakeTimers();
   for (let i = 0; i < PEACE_QUESTIONS.length; i += 1) {
     // 모두 첫 번째 선택지: energizer, daily, carer, carer, carer, carer, embracer, carer → carer 5점
-    await userEvent.click(
+    fireEvent.click(
       screen.getByRole('button', { name: PEACE_QUESTIONS[i].options[0].label }),
     );
+    act(() => {
+      jest.advanceTimersByTime(400);
+    });
   }
 };
 
 describe('PeaceQuizPage', () => {
+  afterEach(() => {
+    jest.useRealTimers();
+  });
+
   it('첫 문항과 진행 표시 1 / 8을 그린다', () => {
     renderQuiz();
     expect(screen.getByText(PEACE_QUESTIONS[0].text)).toBeInTheDocument();
@@ -86,18 +95,39 @@ describe('PeaceQuizPage', () => {
     expect(screen.getByText('INTRO')).toBeInTheDocument();
   });
 
-  it('8문항을 모두 답하면 결과 페이지로 유형 쿼리와 함께 이동한다', async () => {
+  it('답 직후 이어진 탭은 다음 문항의 답으로 잡히지 않는다', () => {
+    jest.useFakeTimers();
     renderQuiz();
-    await answerAll();
+    fireEvent.click(
+      screen.getByRole('button', { name: PEACE_QUESTIONS[0].options[0].label }),
+    );
+    // 리렌더 뒤 같은 자리에 있는 2번 문항 버튼을 곧바로 다시 탭
+    fireEvent.click(
+      screen.getByRole('button', { name: PEACE_QUESTIONS[1].options[0].label }),
+    );
+    expect(screen.getByText('2 / 8')).toBeInTheDocument();
+    act(() => {
+      jest.advanceTimersByTime(400);
+    });
+    fireEvent.click(
+      screen.getByRole('button', { name: PEACE_QUESTIONS[1].options[0].label }),
+    );
+    expect(screen.getByText('3 / 8')).toBeInTheDocument();
+    jest.useRealTimers();
+  });
+
+  it('8문항을 모두 답하면 결과 페이지로 유형 쿼리와 함께 이동한다', () => {
+    renderQuiz();
+    answerAll();
     // 2등은 1점 동점(energizer·daily·embracer) 중 TIE_BREAK_ORDER 첫 항목인 daily
     expect(
       screen.getByText('RESULT ?type=carer&sub=daily'),
     ).toBeInTheDocument();
   });
 
-  it('부스 모드 파라미터를 결과로 이어 넘긴다', async () => {
+  it('부스 모드 파라미터를 결과로 이어 넘긴다', () => {
     renderQuiz('?kiosk=1&src=booth');
-    await answerAll();
+    answerAll();
     expect(
       screen.getByText('RESULT ?type=carer&sub=daily&kiosk=1&src=booth'),
     ).toBeInTheDocument();
@@ -126,11 +156,11 @@ describe('PeaceQuizPage', () => {
     jest.useRealTimers();
   });
 
-  it('결과에서 뒤로 가면 퀴즈가 아니라 랜딩으로 간다', async () => {
+  it('결과에서 뒤로 가면 퀴즈가 아니라 랜딩으로 간다', () => {
     // 퀴즈→결과가 replace라 히스토리는 [/peace, /peace/result]
     renderQuiz();
-    await answerAll();
-    await userEvent.click(screen.getByRole('button', { name: '뒤로' }));
+    answerAll();
+    fireEvent.click(screen.getByRole('button', { name: '뒤로' }));
     expect(screen.getByText('INTRO')).toBeInTheDocument();
   });
 });
