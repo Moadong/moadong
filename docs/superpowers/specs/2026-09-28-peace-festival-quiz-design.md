@@ -104,7 +104,7 @@ export const calculatePeaceType = (
 ## 6. 화면
 
 ### 공통
-- `useDevice()`의 `isMobile || isTablet || isInAppWebView()`이면 `WebviewTopBar title='나와 맞는 평화 활동 찾기'`, 아니면 `Header`. Footer는 두지 않는다(2026-09-28 사용자 피드백: 비율이 커서 몰입을 깬다. 개인정보를 받지 않아 처리방침 링크도 필요 없음). 본문은 데스크톱에서도 최대 폭 440px로 고정해 한 화면에 한 질문·한 카드만 보이게 한다. 세 페이지가 공유하는 `components/PeaceLayout/PeaceLayout.tsx` 하나에 둔다.
+- `useDevice()`의 `isMobile || isTablet || isInAppWebView()`이면 `WebviewTopBar title='나와 맞는 평화 활동 찾기'`, 아니면 `Header`. Footer는 두지 않는다(2026-09-28 사용자 피드백: 비율이 커서 몰입을 깬다. 개인정보를 받지 않아 처리방침 링크도 필요 없음). 본문은 데스크톱에서도 최대 폭 440px로 고정해 한 화면에 한 질문·한 카드만 보이게 한다. 레이아웃은 `tint` prop(연한 색)을 받아 칼럼에는 그 색→흰색 그라데이션, 칼럼 바깥에는 단색을 깐다. 랜딩·퀴즈는 평화 초록, 결과는 유형 분과의 `secondary[n].back`(2026-09-29). 결과의 상세·학생 패널은 바탕과 구분되게 흰색. 세 페이지가 공유하는 `components/PeaceLayout/PeaceLayout.tsx` 하나에 둔다.
 - `isTablet`은 501~700px이다. 부스 태블릿(보통 768~1024px)은 `isLaptop`이라 데스크톱 `Header`가 뜬다.
 - 글자·버튼은 기존 토큰 중 큰 쪽(`title.title3` 이상, 버튼 높이 56px 이상)을 쓴다. 한 화면에 질문 하나, 선택지 4개는 세로 버튼.
 - 개인정보 입력 UI 없음. `localStorage`·`sessionStorage` 쓰지 않음.

@@ -6,6 +6,7 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import PeaceLayout from './components/PeaceLayout/PeaceLayout';
 import { ANALYZING_MS, KIOSK_IDLE_MS } from './constants/kiosk';
+import { PEACE_GREEN } from './constants/peaceColors';
 import { PEACE_QUESTIONS } from './data/questions';
 import { useIdleReset } from './hooks/useIdleReset';
 import { usePeaceParams } from './hooks/usePeaceParams';
@@ -67,7 +68,7 @@ const PeaceQuizPage = () => {
 
   if (!question) {
     return (
-      <PeaceLayout tone='green'>
+      <PeaceLayout tint={PEACE_GREEN.soft}>
         <Styled.Analyzing role='status'>
           {/* 결과 심볼을 미리 보여주지 않도록 돋보기로 둔다 */}
           <Styled.AnalyzingSymbol
@@ -87,7 +88,7 @@ const PeaceQuizPage = () => {
   }
 
   return (
-    <PeaceLayout tone='green'>
+    <PeaceLayout tint={PEACE_GREEN.soft}>
       <Styled.TopRow>
         <Styled.BackButton type='button' onClick={handleBack}>
           이전

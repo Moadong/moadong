@@ -93,7 +93,7 @@ const PeaceResultPage = () => {
   };
 
   return (
-    <PeaceLayout>
+    <PeaceLayout tint={palette.back}>
       <Styled.CardSection>
         <Styled.Lead>당신의 평화 유형은</Styled.Lead>
         <ResultCard type={type} />
@@ -104,7 +104,7 @@ const PeaceResultPage = () => {
         )}
       </Styled.CardSection>
 
-      <Styled.Detail $back={palette.back}>
+      <Styled.Detail>
         <div>
           <Styled.SectionTitle>{`${type.name}는 이런 사람이에요`}</Styled.SectionTitle>
           <Styled.Body>{type.description}</Styled.Body>
@@ -147,7 +147,7 @@ const PeaceResultPage = () => {
         <Styled.ToggleIcon src={chevronIcon} alt='' $open={isStudentOpen} />
       </Styled.StudentToggle>
       {isStudentOpen && (
-        <Styled.StudentPanel $back={palette.back}>
+        <Styled.StudentPanel>
           <div>
             <Styled.SectionTitle>{`${type.category} 분과 동아리에서는`}</Styled.SectionTitle>
             <Styled.Body>{type.divisionIntro}</Styled.Body>

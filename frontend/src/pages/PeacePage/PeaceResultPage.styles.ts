@@ -15,13 +15,14 @@ export const Lead = styled.p`
   color: ${({ theme }) => theme.colors.gray[700]};
 `;
 
-export const Detail = styled.section<{ $back: string }>`
+/** 바탕이 분과 색이라 패널은 흰색으로 띄운다 */
+export const Detail = styled.section`
   display: flex;
   flex-direction: column;
   gap: 24px;
   padding: 32px 24px;
   border-radius: 24px;
-  background: ${({ $back }) => $back};
+  background: ${({ theme }) => theme.colors.base.white};
 `;
 
 export const SectionTitle = styled.h2`
@@ -128,14 +129,14 @@ export const ToggleIcon = styled.img<{ $open: boolean }>`
   transition: transform ${({ theme }) => theme.transitions.duration.fast};
 `;
 
-export const StudentPanel = styled.section<{ $back: string }>`
+export const StudentPanel = styled.section`
   display: flex;
   flex-direction: column;
   gap: 24px;
   margin-top: 8px;
   padding: 24px;
   border-radius: 16px;
-  background: ${({ $back }) => $back};
+  background: ${({ theme }) => theme.colors.base.white};
 `;
 
 export const Credit = styled.p`

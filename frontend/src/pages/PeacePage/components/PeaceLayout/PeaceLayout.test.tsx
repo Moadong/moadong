@@ -19,11 +19,11 @@ jest.mock('@/components/common/WebviewTopBar/WebviewTopBar', () => ({
   default: ({ title }: { title: string }) => <div>TOPBAR {title}</div>,
 }));
 
-const renderLayout = (tone?: 'green') =>
+const renderLayout = (tint?: string) =>
   render(
     <ThemeProvider theme={theme}>
       <MemoryRouter>
-        <PeaceLayout tone={tone}>
+        <PeaceLayout tint={tint}>
           <p>본문</p>
         </PeaceLayout>
       </MemoryRouter>
@@ -43,9 +43,9 @@ describe('PeaceLayout', () => {
     expect(screen.getByText('본문')).toBeInTheDocument();
   });
 
-  it('green 톤이면 본문 칼럼에만 그라데이션을, 바깥에는 단색을 깐다', () => {
+  it('tint를 주면 본문 칼럼에만 그라데이션을, 바깥에는 단색을 깐다', () => {
     setWidth(1280);
-    renderLayout('green');
+    renderLayout('#E6F4EC');
     const main = screen.getByRole('main');
     const css = document.head.textContent ?? '';
     const mainRule = [...main.classList]

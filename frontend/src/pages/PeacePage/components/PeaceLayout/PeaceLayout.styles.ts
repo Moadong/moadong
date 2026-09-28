@@ -1,21 +1,17 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
-import { PEACE_GREEN } from '../../constants/peaceColors';
-
-type Tone = 'green' | undefined;
 
 /** 칼럼 바깥(넓은 화면)은 단색. 모바일에서는 칼럼이 화면을 다 채워 보이지 않는다 */
-export const PageWrapper = styled.div<{ $tone: Tone }>`
+export const PageWrapper = styled.div<{ $tint?: string }>`
   width: 100%;
   min-height: 100dvh;
   display: flex;
   flex-direction: column;
-  background: ${({ $tone, theme }) =>
-    $tone === 'green' ? PEACE_GREEN.soft : theme.colors.base.white};
+  background: ${({ $tint, theme }) => $tint ?? theme.colors.base.white};
 `;
 
 /** 데스크톱에서도 모바일 폭으로 고정해 한 화면에 한 질문·한 카드가 보이게 한다 */
-export const Main = styled.main<{ $topOffset: number; $tone: Tone }>`
+export const Main = styled.main<{ $topOffset: number; $tint?: string }>`
   flex: 1;
   width: 100%;
   max-width: 440px;
@@ -24,9 +20,9 @@ export const Main = styled.main<{ $topOffset: number; $tone: Tone }>`
   display: flex;
   flex-direction: column;
   align-items: stretch;
-  background: ${({ $tone, theme }) =>
-    $tone === 'green'
-      ? `linear-gradient(180deg, ${PEACE_GREEN.soft} 0%, ${theme.colors.base.white} 100%)`
+  background: ${({ $tint, theme }) =>
+    $tint
+      ? `linear-gradient(180deg, ${$tint} 0%, ${theme.colors.base.white} 100%)`
       : 'transparent'};
 
   ${media.mobile} {

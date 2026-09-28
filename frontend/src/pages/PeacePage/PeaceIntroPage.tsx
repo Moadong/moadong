@@ -8,6 +8,7 @@ import PeaceLayout, {
 } from './components/PeaceLayout/PeaceLayout';
 import { CARD_IMAGES } from './components/ResultCard/cardImages';
 import { SYMBOL_IMAGES } from './components/ResultCard/symbolImages';
+import { PEACE_GREEN } from './constants/peaceColors';
 import { usePeaceParams } from './hooks/usePeaceParams';
 import * as Styled from './PeaceIntroPage.styles';
 
@@ -30,7 +31,7 @@ const PeaceIntroPage = () => {
   };
 
   return (
-    <PeaceLayout tone='green'>
+    <PeaceLayout tint={PEACE_GREEN.soft}>
       <Styled.Hero>
         <Styled.Dove src={SYMBOL_IMAGES.embracer} alt='' aria-hidden />
         <Styled.Eyebrow>연결이 곧 평화</Styled.Eyebrow>
