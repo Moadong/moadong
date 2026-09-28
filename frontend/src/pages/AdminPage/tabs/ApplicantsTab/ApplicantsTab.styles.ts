@@ -2,6 +2,7 @@ import styled from 'styled-components';
 import disabledDeleteIcon from '@/assets/images/icons/applicant_delete_disabled.svg';
 import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
 import checkIcon from '@/assets/images/icons/checkBox.svg';
+import CsvSvg from '@/assets/images/icons/csv.svg?react';
 
 // 지원현황
 export const SummaryWrapper = styled.div`
@@ -42,6 +43,12 @@ export const ApplicantListTitle = styled.h2`
   font-size: 28px;
   font-weight: 700;
   margin-bottom: 24px;
+`;
+
+export const TableFooter = styled.div`
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 16px;
 `;
 
 export const ApplicantListHeader = styled.div`
@@ -137,14 +144,6 @@ export const DeleteButton = styled.img<{ disabled?: boolean }>`
     `};
 `;
 
-export const ApplicantSearchBox = styled.input`
-  margin-left: auto;
-  padding: 8px 16px;
-  border-radius: 8px;
-  border: 1px solid #ddd;
-  width: 240px;
-  font-size: 16px;
-`;
 
 export const ApplicantTable = styled.table`
   width: 100%;
@@ -262,6 +261,37 @@ export const ApplicantTableAllSelectCheckbox = styled.input.attrs({
     border: 0px;
     background: #ffe7de url('${checkIcon}') center/24px 24px no-repeat;
   }
+`;
+
+export const CsvButton = styled.button`
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  background: #fff;
+  font-size: 13px;
+  font-weight: 600;
+  color: #dcdcdc;
+  cursor: default;
+
+  &:not(:disabled) {
+    border-color: #2d9e5e;
+    color: #2d9e5e;
+    cursor: pointer;
+
+    &:hover {
+      background: #f0f7f3;
+    }
+  }
+`;
+
+export const CsvIcon = styled(CsvSvg)<{ $disabled: boolean }>`
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+  filter: ${({ $disabled }) => ($disabled ? 'brightness(0) invert(86%)' : 'none')};
 `;
 
 export const ApplicantStatusBadge = styled.span<{ status: string }>`

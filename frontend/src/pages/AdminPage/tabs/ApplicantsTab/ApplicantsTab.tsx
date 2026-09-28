@@ -18,7 +18,9 @@ import {
 import { useApplicantSelection } from '@/hooks/useApplicantSelection';
 import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
+import useExportApplicantsCSV from '@/pages/AdminPage/tabs/ApplicantsTab/hooks/useExportApplicantsCSV';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantsTab.styles';
 import ApplicantsTabMobile from './ApplicantsTabMobile';
@@ -41,6 +43,7 @@ const ApplicantsTab = () => {
 const ApplicantsTabDesktop = () => {
   const { applicationFormId } = useParams<{ applicationFormId: string }>();
   const navigate = useNavigate();
+  const { clubId } = useAdminClubId();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const statusOptions = AVAILABLE_STATUSES.map((status) => ({
@@ -234,6 +237,12 @@ const ApplicantsTabDesktop = () => {
       },
     );
   };
+
+  const handleExportCSV = useExportApplicantsCSV(
+    applicationFormId,
+    filteredApplicants,
+    checkedIds,
+  );
 
   return (
     <>
@@ -532,6 +541,16 @@ const ApplicantsTabDesktop = () => {
             ))}
           </tbody>
         </Styled.ApplicantTable>
+        <Styled.TableFooter>
+          <Styled.CsvButton onClick={handleExportCSV} disabled={filteredApplicants.length === 0}>
+            <Styled.CsvIcon $disabled={filteredApplicants.length === 0} />
+            {checkedIds.size > 0
+              ? `선택 내보내기 (${checkedIds.size})`
+              : currentFilter === 'ALL'
+                ? '전체 내보내기'
+                : '내보내기'}
+          </Styled.CsvButton>
+        </Styled.TableFooter>
       </Styled.ApplicantListWrapper>
     </>
   );
