@@ -112,16 +112,20 @@ export const ActionItem = styled.li`
   word-break: keep-all;
 `;
 
-export const StudentToggle = styled.button`
+/** 공유하기와 같은 공통 Button 보조 스타일 */
+export const StudentToggle = styled(Button)`
   width: 100%;
-  min-height: 56px;
+  height: 56px;
   margin-top: 16px;
-  border: 1px solid ${({ theme }) => theme.colors.gray[200]};
+  border: 1.5px solid ${({ theme }) => theme.colors.gray[300]};
   border-radius: 16px;
-  background: ${({ theme }) => theme.colors.base.white};
-  color: ${({ theme }) => theme.colors.base.black};
+  background-color: ${({ theme }) => theme.colors.base.white};
+  color: ${({ theme }) => theme.colors.gray[900]};
   ${({ theme }) => setTypography(theme.typography.title.title6)};
-  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background-color: ${({ theme }) => theme.colors.gray[50]};
+  }
 `;
 
 export const StudentPanel = styled.section<{ $back: string }>`
