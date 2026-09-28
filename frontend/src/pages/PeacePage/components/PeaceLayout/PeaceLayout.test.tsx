@@ -19,11 +19,11 @@ jest.mock('@/components/common/WebviewTopBar/WebviewTopBar', () => ({
   default: ({ title }: { title: string }) => <div>TOPBAR {title}</div>,
 }));
 
-const renderLayout = (kiosk = false) =>
+const renderLayout = () =>
   render(
     <ThemeProvider theme={theme}>
       <MemoryRouter>
-        <PeaceLayout kiosk={kiosk}>
+        <PeaceLayout>
           <p>본문</p>
         </PeaceLayout>
       </MemoryRouter>
@@ -40,15 +40,6 @@ describe('PeaceLayout', () => {
     renderLayout();
     expect(screen.getByText('HEADER')).toBeInTheDocument();
     expect(screen.getByText('FOOTER')).toBeInTheDocument();
-    expect(screen.getByText('본문')).toBeInTheDocument();
-  });
-
-  it('부스 모드에서는 헤더·탑바·푸터를 모두 숨긴다', () => {
-    setWidth(1024);
-    renderLayout(true);
-    expect(screen.queryByText('HEADER')).not.toBeInTheDocument();
-    expect(screen.queryByText('FOOTER')).not.toBeInTheDocument();
-    expect(screen.queryByText(/TOPBAR/)).not.toBeInTheDocument();
     expect(screen.getByText('본문')).toBeInTheDocument();
   });
 

@@ -157,14 +157,14 @@ describe('PeaceResultPage', () => {
     ).toBeInTheDocument();
   });
 
-  it('부스 모드에서는 QR을 보여주고 공유 버튼은 숨긴다', () => {
+  it('부스 모드에서는 QR을 공유 버튼 위에 하나 더 보여준다', () => {
     renderResult('?type=carer&sub=daily&kiosk=1&src=booth');
     expect(screen.getByTestId('qr')).toHaveTextContent(
       'http://localhost/peace/result?type=carer&sub=daily&src=qr',
     );
     expect(
-      screen.queryByRole('button', { name: '공유하기' }),
-    ).not.toBeInTheDocument();
+      screen.getByRole('button', { name: '공유하기' }),
+    ).toBeInTheDocument();
   });
 
   it('부스 모드가 아니면 공유 버튼이 결과 링크를 공유한다', async () => {

@@ -91,7 +91,7 @@ const PeaceResultPage = () => {
   };
 
   return (
-    <PeaceLayout kiosk={isKiosk}>
+    <PeaceLayout>
       <Styled.CardSection>
         <Styled.Lead>당신의 평화 유형은</Styled.Lead>
         <ResultCard type={type} />
@@ -169,7 +169,7 @@ const PeaceResultPage = () => {
         </Styled.StudentPanel>
       )}
 
-      {isKiosk ? (
+      {isKiosk && (
         <Styled.QrBlock>
           <QRCodeSVG
             value={buildResultUrl(type.id, sub?.id, 'qr')}
@@ -179,11 +179,10 @@ const PeaceResultPage = () => {
             내 폰 카메라로 찍으면 이 결과를 가져갈 수 있어요
           </Styled.QrCaption>
         </Styled.QrBlock>
-      ) : (
-        <Styled.ShareButton type='button' onClick={handleShareClick}>
-          공유하기
-        </Styled.ShareButton>
       )}
+      <Styled.ShareButton type='button' onClick={handleShareClick}>
+        공유하기
+      </Styled.ShareButton>
 
       <Styled.RetryButton type='button' onClick={handleRetry}>
         다시하기

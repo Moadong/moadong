@@ -94,7 +94,7 @@ export const QrCaption = styled.p`
 export const ShareButton = styled(Button)`
   width: 100%;
   height: 64px;
-  margin-top: 32px;
+  margin-top: 16px;
   border: 1.5px solid ${({ theme }) => theme.colors.gray[300]};
   border-radius: 16px;
   background-color: ${({ theme }) => theme.colors.base.white};

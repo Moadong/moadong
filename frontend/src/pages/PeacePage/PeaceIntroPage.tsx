@@ -21,7 +21,7 @@ const PeaceIntroPage = () => {
   }, []);
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
-  const { isKiosk, src, withParams } = usePeaceParams();
+  const { src, withParams } = usePeaceParams();
 
   const handleStart = () => {
     trackEvent(USER_EVENT.PEACE_QUIZ_STARTED, { src });
@@ -29,7 +29,7 @@ const PeaceIntroPage = () => {
   };
 
   return (
-    <PeaceLayout kiosk={isKiosk}>
+    <PeaceLayout>
       <Styled.Hero>
         <Styled.Eyebrow>연결이 곧 평화</Styled.Eyebrow>
         <Styled.Title>{PEACE_PAGE_TITLE}</Styled.Title>

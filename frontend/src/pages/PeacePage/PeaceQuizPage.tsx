@@ -54,7 +54,7 @@ const PeaceQuizPage = () => {
   if (!question) return null;
 
   return (
-    <PeaceLayout kiosk={isKiosk}>
+    <PeaceLayout>
       <Styled.TopRow>
         <Styled.BackButton type='button' onClick={handleBack}>
           이전
