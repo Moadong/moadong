@@ -19,11 +19,11 @@ jest.mock('@/components/common/WebviewTopBar/WebviewTopBar', () => ({
   default: ({ title }: { title: string }) => <div>TOPBAR {title}</div>,
 }));
 
-const renderLayout = () =>
+const renderLayout = (tone?: 'green') =>
   render(
     <ThemeProvider theme={theme}>
       <MemoryRouter>
-        <PeaceLayout>
+        <PeaceLayout tone={tone}>
           <p>본문</p>
         </PeaceLayout>
       </MemoryRouter>
@@ -41,6 +41,22 @@ describe('PeaceLayout', () => {
     expect(screen.getByText('HEADER')).toBeInTheDocument();
     expect(screen.queryByText('FOOTER')).not.toBeInTheDocument();
     expect(screen.getByText('본문')).toBeInTheDocument();
+  });
+
+  it('green 톤이면 본문 칼럼에만 그라데이션을, 바깥에는 단색을 깐다', () => {
+    setWidth(1280);
+    renderLayout('green');
+    const main = screen.getByRole('main');
+    const css = document.head.textContent ?? '';
+    const mainRule = [...main.classList]
+      .map((cls) => css.match(new RegExp(`\\.${cls}\\{[^}]*\\}`))?.[0])
+      .find((r) => r?.includes('linear-gradient'));
+    expect(mainRule).toBeDefined();
+    const wrapper = main.parentElement as HTMLElement;
+    const wrapperRule = [...wrapper.classList]
+      .map((cls) => css.match(new RegExp(`\\.${cls}\\{[^}]*\\}`))?.[0])
+      .find((r) => r?.includes('#E6F4EC'));
+    expect(wrapperRule).toBeDefined();
   });
 
   it('모바일 폭에서는 WebviewTopBar를 그린다', () => {

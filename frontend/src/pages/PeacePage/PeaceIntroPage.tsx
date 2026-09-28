@@ -30,8 +30,7 @@ const PeaceIntroPage = () => {
   };
 
   return (
-    <PeaceLayout>
-      <Styled.Backdrop aria-hidden />
+    <PeaceLayout tone='green'>
       <Styled.Hero>
         <Styled.Dove src={SYMBOL_IMAGES.embracer} alt='' aria-hidden />
         <Styled.Eyebrow>연결이 곧 평화</Styled.Eyebrow>
