@@ -68,7 +68,7 @@ const PeaceQuizPage = () => {
   if (!question) {
     const [type] = rankPeaceTypes(answers);
     return (
-      <PeaceLayout>
+      <PeaceLayout tone='green'>
         <Styled.Analyzing role='status'>
           <Styled.AnalyzingSymbol
             src={SYMBOL_IMAGES[type]}
@@ -87,7 +87,7 @@ const PeaceQuizPage = () => {
   }
 
   return (
-    <PeaceLayout>
+    <PeaceLayout tone='green'>
       <Styled.TopRow>
         <Styled.BackButton type='button' onClick={handleBack}>
           이전

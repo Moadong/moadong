@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { setTypography } from '@/styles/theme/typography';
+import { PEACE_GREEN } from './constants/peaceColors';
 
 export const TopRow = styled.div`
   display: flex;
@@ -27,7 +28,7 @@ export const ProgressBar = styled.div<{ $ratio: number }>`
   width: 100%;
   height: 6px;
   border-radius: 3px;
-  background: ${({ theme }) => theme.colors.gray[200]};
+  background: ${({ theme }) => theme.colors.base.white};
   margin-bottom: 32px;
   overflow: hidden;
 
@@ -36,7 +37,7 @@ export const ProgressBar = styled.div<{ $ratio: number }>`
     display: block;
     width: ${({ $ratio }) => $ratio * 100}%;
     height: 100%;
-    background: ${({ theme }) => theme.colors.primary[900]};
+    background: ${PEACE_GREEN.main};
     transition: width ${({ theme }) => theme.transitions.duration.normal};
   }
 `;
@@ -44,7 +45,7 @@ export const ProgressBar = styled.div<{ $ratio: number }>`
 export const QuestionLabel = styled.span`
   display: block;
   ${({ theme }) => setTypography(theme.typography.title.title5)};
-  color: ${({ theme }) => theme.colors.primary[900]};
+  color: ${PEACE_GREEN.main};
   margin-bottom: 8px;
 `;
 
@@ -96,7 +97,7 @@ export const OptionButton = styled.button`
   cursor: pointer;
 
   &:active {
-    background: ${({ theme }) => theme.colors.primary[500]};
-    border-color: ${({ theme }) => theme.colors.primary[900]};
+    background: ${PEACE_GREEN.soft};
+    border-color: ${PEACE_GREEN.main};
   }
 `;
