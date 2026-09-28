@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import Spinner from '@/components/common/Spinner/Spinner';
+
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
   useDeleteApplicants,
@@ -22,6 +23,7 @@ import SortDropdown from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab
 import StatusFilterPills from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusFilterPills/StatusFilterPills';
 import StatusSummaryCard from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusSummaryCard/StatusSummaryCard';
 import { ApplicationStatus } from '@/types/applicants';
+import useExportApplicantsCSV from '@/pages/AdminPage/tabs/ApplicantsTab/hooks/useExportApplicantsCSV';
 import * as Styled from './ApplicantsTabMobile.styles';
 
 type OpenDropdown = 'form' | 'sort' | 'status' | null;
@@ -111,6 +113,7 @@ const ApplicantsTabMobile = () => {
     updateSearchParam('filter', isAll ? null : filters.join(','));
   };
 
+
   const { mutate: deleteApplicants } = useDeleteApplicants(effectiveFormId);
   const { mutate: updateApplicant } = useUpdateApplicant(effectiveFormId);
 
@@ -166,6 +169,12 @@ const ApplicantsTabMobile = () => {
         alert('지원자 상태 변경에 실패했습니다. 다시 시도해주세요.'),
     });
   };
+
+  const handleExportCSV = useExportApplicantsCSV(
+    effectiveFormId,
+    filteredApplicants,
+    checkedIds,
+  );
 
   const isInitialLoading =
     isFormsLoading || (!!effectiveFormId && isApplicantsLoading);
@@ -227,6 +236,8 @@ const ApplicantsTabMobile = () => {
                 enabled={isAnyChecked}
                 onStatusChange={handleStatusChange}
                 onDelete={handleDelete}
+                onExport={handleExportCSV}
+                exportEnabled={isAnyChecked}
                 isStatusMenuOpen={openDropdown === 'status'}
                 onToggleStatusMenu={() => toggleDropdown('status')}
               />
