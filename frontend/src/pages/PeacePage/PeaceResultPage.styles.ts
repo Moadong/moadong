@@ -128,6 +128,15 @@ export const StudentToggle = styled(Button)`
   }
 `;
 
+/** 기존 드롭다운 화살표(drop_button_icon). 열리면 뒤집는다 */
+export const ToggleIcon = styled.img<{ $open: boolean }>`
+  width: 14px;
+  height: 8px;
+  margin-left: 8px;
+  transform: rotate(${({ $open }) => ($open ? 180 : 0)}deg);
+  transition: transform ${({ theme }) => theme.transitions.duration.fast};
+`;
+
 export const StudentPanel = styled.section<{ $back: string }>`
   display: flex;
   flex-direction: column;
