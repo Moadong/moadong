@@ -39,10 +39,10 @@ export const Body = styled.p`
 /** 앱의 지원하기 버튼과 같은 공통 Button. 부스용으로 높이·글자만 키운다 */
 export const RetryButton = styled(Button)`
   width: 100%;
-  height: 64px;
+  height: 56px;
   margin-top: 12px;
   border-radius: 16px;
-  ${({ theme }) => setTypography(theme.typography.title.title5)};
+  ${({ theme }) => setTypography(theme.typography.title.title6)};
 `;
 
 export const SubLine = styled.p`
@@ -71,13 +71,13 @@ export const QrCaption = styled.p`
 /** 공통 Button의 보조 스타일. 채움 대신 회색 테두리 */
 export const ShareButton = styled(Button)`
   width: 100%;
-  height: 64px;
+  height: 56px;
   margin-top: 16px;
   border: 1.5px solid ${({ theme }) => theme.colors.gray[300]};
   border-radius: 16px;
   background-color: ${({ theme }) => theme.colors.base.white};
   color: ${({ theme }) => theme.colors.gray[900]};
-  ${({ theme }) => setTypography(theme.typography.title.title5)};
+  ${({ theme }) => setTypography(theme.typography.title.title6)};
 
   &:hover:not(:disabled) {
     background-color: ${({ theme }) => theme.colors.gray[50]};

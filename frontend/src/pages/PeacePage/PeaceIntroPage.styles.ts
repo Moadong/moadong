@@ -37,14 +37,14 @@ export const Description = styled.p`
 
 export const StartButton = styled.button`
   width: 100%;
-  min-height: 64px;
+  min-height: 56px;
   margin-top: auto;
   margin-bottom: 24px;
   border: none;
   border-radius: 16px;
   background: ${PEACE_GREEN.main};
   color: ${({ theme }) => theme.colors.base.white};
-  ${({ theme }) => setTypography(theme.typography.title.title5)};
+  ${({ theme }) => setTypography(theme.typography.title.title6)};
   cursor: pointer;
 
   &:active {
