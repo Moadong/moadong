@@ -4,7 +4,8 @@ import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import PeaceLayout from './components/PeaceLayout/PeaceLayout';
-import { KIOSK_IDLE_MS } from './constants/kiosk';
+import { SYMBOL_IMAGES } from './components/ResultCard/symbolImages';
+import { ANALYZING_MS, KIOSK_IDLE_MS } from './constants/kiosk';
 import { PEACE_QUESTIONS } from './data/questions';
 import { useIdleReset } from './hooks/useIdleReset';
 import { usePeaceParams } from './hooks/usePeaceParams';
@@ -47,9 +48,12 @@ const PeaceQuizPage = () => {
     if (next.length === TOTAL) {
       const [type, sub] = rankPeaceTypes(next);
       trackEvent(USER_EVENT.PEACE_QUIZ_COMPLETED, { type, sub, src });
-      navigate(withParams(`/peace/result?type=${type}&sub=${sub}`), {
-        replace: true,
-      });
+      // "분석 중"을 잠깐 보여준 뒤 결과로 간다. 유형은 이미 정해져 있다
+      window.setTimeout(() => {
+        navigate(withParams(`/peace/result?type=${type}&sub=${sub}`), {
+          replace: true,
+        });
+      }, ANALYZING_MS);
     }
   };
 
@@ -61,7 +65,26 @@ const PeaceQuizPage = () => {
     setAnswers((prev) => prev.slice(0, -1));
   };
 
-  if (!question) return null;
+  if (!question) {
+    const [type] = rankPeaceTypes(answers);
+    return (
+      <PeaceLayout>
+        <Styled.Analyzing role='status'>
+          <Styled.AnalyzingSymbol
+            src={SYMBOL_IMAGES[type]}
+            alt=''
+            animate={{ rotate: [0, 12, -12, 0], scale: [1, 1.08, 1] }}
+            transition={{ duration: 1.2, repeat: Infinity, ease: 'easeInOut' }}
+          />
+          <Styled.AnalyzingText>
+            당신의 평화 유형을
+            <br />
+            분석하고 있어요…
+          </Styled.AnalyzingText>
+        </Styled.Analyzing>
+      </PeaceLayout>
+    );
+  }
 
   return (
     <PeaceLayout>
@@ -72,7 +95,10 @@ const PeaceQuizPage = () => {
         <Styled.Progress>{`${questionIndex + 1} / ${TOTAL}`}</Styled.Progress>
       </Styled.TopRow>
       <Styled.ProgressBar $ratio={questionIndex / TOTAL} />
-      <Styled.Question>{question?.text}</Styled.Question>
+      <Styled.Question>
+        <Styled.QuestionLabel>{`Q${questionIndex + 1}.`}</Styled.QuestionLabel>
+        {question?.text}
+      </Styled.Question>
       <Styled.OptionList>
         {question?.options.map((option, i) => (
           <Styled.OptionButton

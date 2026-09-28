@@ -64,14 +64,22 @@ const answerAll = () => {
   }
 };
 
+/** 분석 중 화면(ANALYZING_MS)을 지나 결과로 넘어갈 때까지 시간을 흘린다 */
+const finishAnalyzing = () => {
+  act(() => {
+    jest.advanceTimersByTime(2000);
+  });
+};
+
 describe('PeaceQuizPage', () => {
   afterEach(() => {
     jest.useRealTimers();
   });
 
-  it('첫 문항과 진행 표시 1 / 8을 그린다', () => {
+  it('첫 문항과 Q1 라벨, 진행 표시 1 / 8을 그린다', () => {
     renderQuiz();
     expect(screen.getByText(PEACE_QUESTIONS[0].text)).toBeInTheDocument();
+    expect(screen.getByText('Q1.')).toBeInTheDocument();
     expect(screen.getByText('1 / 8')).toBeInTheDocument();
   });
 
@@ -116,9 +124,12 @@ describe('PeaceQuizPage', () => {
     jest.useRealTimers();
   });
 
-  it('8문항을 모두 답하면 결과 페이지로 유형 쿼리와 함께 이동한다', () => {
+  it('8문항을 모두 답하면 분석 중 화면을 보여준 뒤 결과로 이동한다', () => {
     renderQuiz();
     answerAll();
+    expect(screen.getByText(/분석하고 있어요/)).toBeInTheDocument();
+    expect(screen.queryByText(/^RESULT/)).not.toBeInTheDocument();
+    finishAnalyzing();
     // 2등은 1점 동점(energizer·daily·embracer) 중 TIE_BREAK_ORDER 첫 항목인 daily
     expect(
       screen.getByText('RESULT ?type=carer&sub=daily'),
@@ -128,6 +139,7 @@ describe('PeaceQuizPage', () => {
   it('부스 모드 파라미터를 결과로 이어 넘긴다', () => {
     renderQuiz('?kiosk=1&src=booth');
     answerAll();
+    finishAnalyzing();
     expect(
       screen.getByText('RESULT ?type=carer&sub=daily&kiosk=1&src=booth'),
     ).toBeInTheDocument();
@@ -160,6 +172,7 @@ describe('PeaceQuizPage', () => {
     // 퀴즈→결과가 replace라 히스토리는 [/peace, /peace/result]
     renderQuiz();
     answerAll();
+    finishAnalyzing();
     fireEvent.click(screen.getByRole('button', { name: '뒤로' }));
     expect(screen.getByText('INTRO')).toBeInTheDocument();
   });

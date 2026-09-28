@@ -119,12 +119,12 @@ export const ActionItem = styled.li`
   word-break: keep-all;
 `;
 
-/** 기존 드롭다운 화살표(drop_button_icon). 열리면 뒤집는다 */
+/** 상세 탑바와 같은 둥근 셰브론(chevron_right_small). 오른쪽 화살표라 90도 돌려 쓰고 열리면 반대로 */
 export const ToggleIcon = styled.img<{ $open: boolean }>`
-  width: 14px;
-  height: 8px;
-  margin-left: 8px;
-  transform: rotate(${({ $open }) => ($open ? 180 : 0)}deg);
+  width: 8px;
+  height: 13px;
+  margin-left: 10px;
+  transform: rotate(${({ $open }) => ($open ? -90 : 90)}deg);
   transition: transform ${({ theme }) => theme.transitions.duration.fast};
 `;
 

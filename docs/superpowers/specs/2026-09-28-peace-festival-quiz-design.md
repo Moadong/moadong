@@ -104,18 +104,18 @@ export const calculatePeaceType = (
 ## 6. 화면
 
 ### 공통
-- `useDevice()`의 `isMobile || isTablet || isInAppWebView()`이면 `WebviewTopBar title='나와 맞는 평화 활동 찾기'`, 아니면 `Header`. `!isInAppWebView()`일 때 `Footer`. 세 페이지가 공유하는 `components/PeaceLayout/PeaceLayout.tsx` 하나에 둔다.
+- `useDevice()`의 `isMobile || isTablet || isInAppWebView()`이면 `WebviewTopBar title='나와 맞는 평화 활동 찾기'`, 아니면 `Header`. Footer는 두지 않는다(2026-09-28 사용자 피드백: 비율이 커서 몰입을 깬다. 개인정보를 받지 않아 처리방침 링크도 필요 없음). 본문은 데스크톱에서도 최대 폭 440px로 고정해 한 화면에 한 질문·한 카드만 보이게 한다. 세 페이지가 공유하는 `components/PeaceLayout/PeaceLayout.tsx` 하나에 둔다.
 - `isTablet`은 501~700px이다. 부스 태블릿(보통 768~1024px)은 `isLaptop`이라 데스크톱 `Header`가 뜬다.
 - 글자·버튼은 기존 토큰 중 큰 쪽(`title.title3` 이상, 버튼 높이 56px 이상)을 쓴다. 한 화면에 질문 하나, 선택지 4개는 세로 버튼.
 - 개인정보 입력 UI 없음. `localStorage`·`sessionStorage` 쓰지 않음.
 
 ### `/peace` 랜딩
-- 제목, 2~3줄 소개("연결이 곧 평화"), "시작하기" 버튼.
+- 제목, 2~3줄 소개("연결이 곧 평화"), "시작하기" 버튼. 화면은 연한 초록 그라데이션(`constants/peaceColors.ts`, 테마에 없는 평화 톤이라 페이지 전용 상수)이고 상단에 비둘기 심볼, 시작 버튼은 화면 아래에 붙인다(2026-09-28).
 - 마운트 시 6장 카드 이미지를 `new Image()`로 프리로드해 결과 화면이 네트워크 없이도 뜨게 한다.
 
 ### `/peace/quiz`
-- 진행 표시(n / 8), 질문, 선택지 4개. 선택 즉시 다음 문항. 뒤로가기 버튼 하나(이전 문항).
-- 8번째 선택 시 `calculatePeaceType` → `navigate('/peace/result?type=…', { replace: true })`.
+- 진행 표시(n / 8), `Q{n}.` 라벨과 질문(title2), 선택지 4개. 선택 즉시 다음 문항. 뒤로가기 버튼 하나(이전 문항).
+- 8번째 선택 시 `rankPeaceTypes` → 유형 심볼이 흔들리는 "분석하고 있어요" 화면을 `ANALYZING_MS`(1.6초) 보여준 뒤 `navigate('/peace/result?type=…&sub=…', { replace: true })`. 유형은 이미 정해져 있고 연출만이다(2026-09-28).
 
 ### `/peace/result`
 - 첫 화면: `ResultCard` (유형명, 캐치프레이즈, 카드 이미지, 분과 색 배경).

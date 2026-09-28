@@ -1,3 +1,4 @@
+import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { setTypography } from '@/styles/theme/typography';
 
@@ -40,10 +41,38 @@ export const ProgressBar = styled.div<{ $ratio: number }>`
   }
 `;
 
+export const QuestionLabel = styled.span`
+  display: block;
+  ${({ theme }) => setTypography(theme.typography.title.title5)};
+  color: ${({ theme }) => theme.colors.primary[900]};
+  margin-bottom: 8px;
+`;
+
 export const Question = styled.h2`
-  ${({ theme }) => setTypography(theme.typography.title.title3)};
+  ${({ theme }) => setTypography(theme.typography.title.title2)};
   color: ${({ theme }) => theme.colors.base.black};
   margin-bottom: 32px;
+  word-break: keep-all;
+`;
+
+export const Analyzing = styled.div`
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 20px;
+  text-align: center;
+`;
+
+export const AnalyzingSymbol = styled(motion.img)`
+  width: 96px;
+  height: 96px;
+`;
+
+export const AnalyzingText = styled.p`
+  ${({ theme }) => setTypography(theme.typography.title.title4)};
+  color: ${({ theme }) => theme.colors.base.black};
   word-break: keep-all;
 `;
 

@@ -1,5 +1,4 @@
 import { ReactNode } from 'react';
-import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
@@ -23,7 +22,6 @@ const PeaceLayout = ({ children }: PeaceLayoutProps) => {
       <Styled.Main $topOffset={showPageTopBar ? 0 : HEADER_HEIGHT.desktop}>
         {children}
       </Styled.Main>
-      {!isInAppWebView() && <Footer />}
     </Styled.PageWrapper>
   );
 };

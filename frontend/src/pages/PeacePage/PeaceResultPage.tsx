@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { Navigate, useNavigate, useSearchParams } from 'react-router-dom';
 import { QRCodeSVG } from 'qrcode.react';
 import { useTheme } from 'styled-components';
-import dropdownIcon from '@/assets/images/icons/drop_button_icon.svg';
+import chevronIcon from '@/assets/images/icons/chevron_right_small.svg';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -144,7 +144,7 @@ const PeaceResultPage = () => {
         aria-expanded={isStudentOpen}
       >
         부경대 학생이라면?
-        <Styled.ToggleIcon src={dropdownIcon} alt='' $open={isStudentOpen} />
+        <Styled.ToggleIcon src={chevronIcon} alt='' $open={isStudentOpen} />
       </Styled.StudentToggle>
       {isStudentOpen && (
         <Styled.StudentPanel $back={palette.back}>

@@ -35,11 +35,11 @@ const setWidth = (width: number) => {
 };
 
 describe('PeaceLayout', () => {
-  it('데스크톱 폭에서는 Header와 Footer를 그린다', () => {
+  it('데스크톱 폭에서는 Header를 그리고 Footer는 두지 않는다(몰입 유지)', () => {
     setWidth(1024);
     renderLayout();
     expect(screen.getByText('HEADER')).toBeInTheDocument();
-    expect(screen.getByText('FOOTER')).toBeInTheDocument();
+    expect(screen.queryByText('FOOTER')).not.toBeInTheDocument();
     expect(screen.getByText('본문')).toBeInTheDocument();
   });
 
