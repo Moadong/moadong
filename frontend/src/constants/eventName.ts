@@ -97,7 +97,7 @@ export const USER_EVENT = {
   // 평화축제
   PEACE_QUIZ_STARTED: 'Peace Quiz Started',
   PEACE_QUIZ_COMPLETED: 'Peace Quiz Completed',
-  PEACE_CLUB_TAG_CLICKED: 'Peace Club Tag Clicked',
+  PEACE_CLUB_CARD_CLICKED: 'Peace Club Card Clicked',
   PEACE_RETRY_CLICKED: 'Peace Retry Clicked',
   PEACE_SHARE_CLICKED: 'Peace Share Clicked',
   PEACE_STUDENT_TOGGLE_OPENED: 'Peace Student Toggle Opened',

@@ -6,9 +6,11 @@ import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import useShare from '@/hooks/useShare';
+import { Club } from '@/types/club';
 import PeaceLayout, {
   PEACE_PAGE_TITLE,
 } from './components/PeaceLayout/PeaceLayout';
+import RecommendedClubs from './components/RecommendedClubs/RecommendedClubs';
 import ResultCard from './components/ResultCard/ResultCard';
 import { KIOSK_IDLE_MS } from './constants/kiosk';
 import { isPeaceTypeId, PEACE_TYPES, PeaceTypeId } from './data/peaceTypes';
@@ -56,13 +58,13 @@ const PeaceResultPage = () => {
   const partner = PEACE_TYPES[type.partner];
   const palette = theme.colors.secondary[type.colorIndex];
 
-  const handleClubClick = (clubName: string) => {
-    trackEvent(USER_EVENT.PEACE_CLUB_TAG_CLICKED, {
+  const handleClubClick = (club: Club) => {
+    trackEvent(USER_EVENT.PEACE_CLUB_CARD_CLICKED, {
       type: type.id,
-      clubName,
+      clubName: club.name,
       src,
     });
-    navigate(`/clubDetail/@${encodeURIComponent(clubName)}`);
+    navigate(`/clubDetail/@${encodeURIComponent(club.name)}`);
   };
 
   const handleRetry = () => {
@@ -149,23 +151,13 @@ const PeaceResultPage = () => {
             <Styled.SectionTitle>{`${type.category} 분과 동아리에서는`}</Styled.SectionTitle>
             <Styled.Body>{type.divisionIntro}</Styled.Body>
           </div>
-          {type.recommendedClubs.length > 0 && (
-            <div>
-              <Styled.SectionTitle>추천 동아리</Styled.SectionTitle>
-              <Styled.TagList>
-                {type.recommendedClubs.map((name) => (
-                  <Styled.Tag
-                    key={name}
-                    type='button'
-                    $main={palette.main}
-                    onClick={() => handleClubClick(name)}
-                  >
-                    {name}
-                  </Styled.Tag>
-                ))}
-              </Styled.TagList>
-            </div>
-          )}
+          <div>
+            <Styled.SectionTitle>이런 동아리는 어때요</Styled.SectionTitle>
+            <RecommendedClubs
+              category={type.category}
+              onClubClick={handleClubClick}
+            />
+          </div>
         </Styled.StudentPanel>
       )}
 

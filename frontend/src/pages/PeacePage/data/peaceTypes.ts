@@ -32,8 +32,6 @@ export interface PeaceType {
   partnerReason: string;
   /** "부경대 학생이라면?" 안에서 보여줄 분과 소개 2문장 */
   divisionIntro: string;
-  /** 동아리 정확한 이름. 비어 있으면 결과 화면에서 태그 영역을 숨긴다 */
-  recommendedClubs: string[];
 }
 
 export const PEACE_TYPE_IDS: PeaceTypeId[] = [
@@ -80,7 +78,6 @@ export const PEACE_TYPES: Record<PeaceTypeId, PeaceType> = {
       '돌봄가가 받아 준 마음을 표현가가 세상에 꺼내 보입니다. 객석과 무대가 이어지는 조합.',
     divisionIntro:
       '봉사 분과에는 지역 아동 학습 지도, 유기동물 돌봄, 헌혈·환경 캠페인처럼 몸으로 움직이는 동아리가 모여 있어요. 학기 중 정기 봉사와 방학 농활·연합 봉사로 이어집니다.',
-    recommendedClubs: [],
   },
   embracer: {
     id: 'embracer',
@@ -106,7 +103,6 @@ export const PEACE_TYPES: Record<PeaceTypeId, PeaceType> = {
       '포용가가 열어 둔 마음에 탐구가가 새로운 세계를 채웁니다. 다름을 이해하는 두 가지 방식이 만나는 조합.',
     divisionIntro:
       '종교 분과는 특정 종교를 강요하는 곳이 아니라, 같은 가치를 나누는 사람들이 매주 모여 이야기하고 봉사하는 공동체예요. 명상·기도 모임부터 연합 행사와 나눔 활동까지 이어집니다.',
-    recommendedClubs: [],
   },
   daily: {
     id: 'daily',
@@ -132,7 +128,6 @@ export const PEACE_TYPES: Record<PeaceTypeId, PeaceType> = {
       '일상가의 페이스에 활력가가 시동을 걸고, 활력가의 과열을 일상가가 식혀 줍니다. 서로의 속도를 맞춰 주는 조합.',
     divisionIntro:
       '취미교양 분과에는 사진, 보드게임, 요리, 독서, 손뜨개처럼 좋아하는 걸 같이 하는 동아리가 가장 많아요. 부담 없는 정기 모임과 전시·소모임으로 이어집니다.',
-    recommendedClubs: [],
   },
   explorer: {
     id: 'explorer',
@@ -158,7 +153,6 @@ export const PEACE_TYPES: Record<PeaceTypeId, PeaceType> = {
       '탐구가가 찾아온 사실을 포용가가 사람의 언어로 풀어 줍니다. 아는 것과 품는 것이 만나는 조합.',
     divisionIntro:
       '학술 분과에는 개발·창업 프로젝트, 어학·토론, 경제·시사 스터디, 과학 탐구 동아리가 모여 있어요. 스터디와 세미나가 기본이고 공모전·프로젝트 결과물로 이어집니다.',
-    recommendedClubs: [],
   },
   energizer: {
     id: 'energizer',
@@ -184,7 +178,6 @@ export const PEACE_TYPES: Record<PeaceTypeId, PeaceType> = {
       '활력가가 끌고 가면 일상가가 쉬는 법을 알려 줍니다. 달리기와 쉼표가 번갈아 오는 조합.',
     divisionIntro:
       '운동 분과에는 축구, 농구, 배드민턴, 클라이밍, 러닝처럼 함께 땀 흘리는 동아리가 모여 있어요. 주간 정기 운동과 교내·연합 대회로 이어집니다.',
-    recommendedClubs: [],
   },
   expresser: {
     id: 'expresser',
@@ -210,7 +203,6 @@ export const PEACE_TYPES: Record<PeaceTypeId, PeaceType> = {
       '표현가가 마음을 꺼내 놓으면 돌봄가가 그 마음을 받아 줄 사람에게 전합니다. 무대와 객석이 이어지는 조합.',
     divisionIntro:
       '공연 분과에는 밴드, 연극, 댄스, 합창, 국악처럼 무대에서 함께 만드는 동아리가 모여 있어요. 학기마다 정기 공연을 올리고 대동제 무대에도 섭니다.',
-    recommendedClubs: [],
   },
 };
 

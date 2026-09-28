@@ -30,6 +30,23 @@ jest.mock('qrcode.react', () => ({
     <div data-testid='qr'>{value}</div>
   ),
 }));
+jest.mock('./components/RecommendedClubs/RecommendedClubs', () => ({
+  __esModule: true,
+  default: ({
+    category,
+    onClubClick,
+  }: {
+    category: string;
+    onClubClick: (club: { name: string }) => void;
+  }) => (
+    <button
+      type='button'
+      onClick={() => onClubClick({ name: '테스트 동아리' })}
+    >
+      {`CLUBS ${category}`}
+    </button>
+  ),
+}));
 jest.mock('./components/ResultCard/ResultCard', () => ({
   __esModule: true,
   default: ({ type }: { type: { name: string } }) => (
@@ -63,12 +80,6 @@ const renderResult = (search: string) =>
   );
 
 describe('PeaceResultPage', () => {
-  const originalClubs = PEACE_TYPES.carer.recommendedClubs;
-
-  afterEach(() => {
-    PEACE_TYPES.carer.recommendedClubs = originalClubs;
-  });
-
   it('유효한 type이면 카드·설명·강점·주의점·작은 행동을 그린다', () => {
     renderResult('?type=carer');
     const carer = PEACE_TYPES.carer;
@@ -86,19 +97,18 @@ describe('PeaceResultPage', () => {
   });
 
   it('분과 소개와 추천 동아리는 "부경대 학생이라면?"을 눌러야 보인다', async () => {
-    PEACE_TYPES.carer.recommendedClubs = ['테스트 동아리'];
     renderResult('?type=carer');
     expect(
       screen.queryByText(PEACE_TYPES.carer.divisionIntro),
     ).not.toBeInTheDocument();
-    expect(screen.queryByText('추천 동아리')).not.toBeInTheDocument();
+    expect(screen.queryByText('CLUBS 봉사')).not.toBeInTheDocument();
     await userEvent.click(
       screen.getByRole('button', { name: /부경대 학생이라면/ }),
     );
     expect(
       screen.getByText(PEACE_TYPES.carer.divisionIntro),
     ).toBeInTheDocument();
-    expect(screen.getByText('추천 동아리')).toBeInTheDocument();
+    expect(screen.getByText('CLUBS 봉사')).toBeInTheDocument();
   });
 
   it('type이 없으면 /peace로 돌려보낸다', () => {
@@ -111,28 +121,12 @@ describe('PeaceResultPage', () => {
     expect(screen.getByText(/^INTRO/)).toBeInTheDocument();
   });
 
-  it('추천 동아리가 비어 있으면 토글을 열어도 태그 영역을 그리지 않는다', async () => {
-    PEACE_TYPES.carer.recommendedClubs = [];
+  it('추천 동아리 카드를 누르면 동아리 상세로 이동한다', async () => {
     renderResult('?type=carer');
     await userEvent.click(
       screen.getByRole('button', { name: /부경대 학생이라면/ }),
     );
-    expect(
-      screen.getByText(PEACE_TYPES.carer.divisionIntro),
-    ).toBeInTheDocument();
-    expect(screen.queryByText('추천 동아리')).not.toBeInTheDocument();
-  });
-
-  it('추천 동아리 태그를 누르면 동아리 상세로 이동한다', async () => {
-    PEACE_TYPES.carer.recommendedClubs = ['테스트 동아리'];
-    renderResult('?type=carer');
-    await userEvent.click(
-      screen.getByRole('button', { name: /부경대 학생이라면/ }),
-    );
-    expect(screen.getByText('추천 동아리')).toBeInTheDocument();
-    await userEvent.click(
-      screen.getByRole('button', { name: '테스트 동아리' }),
-    );
+    await userEvent.click(screen.getByRole('button', { name: 'CLUBS 봉사' }));
     expect(screen.getByText('CLUB @테스트 동아리')).toBeInTheDocument();
   });
 

@@ -36,28 +36,6 @@ export const Body = styled.p`
   word-break: keep-all;
 `;
 
-export const TagList = styled.div`
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
-`;
-
-export const Tag = styled.button<{ $main: string }>`
-  min-height: 48px;
-  padding: 10px 18px;
-  border: 1.5px solid ${({ $main }) => $main};
-  border-radius: 999px;
-  background: ${({ theme }) => theme.colors.base.white};
-  ${({ theme }) => setTypography(theme.typography.paragraph.p2)};
-  color: ${({ theme }) => theme.colors.base.black};
-  cursor: pointer;
-
-  &:active {
-    background: ${({ $main }) => $main};
-    color: ${({ theme }) => theme.colors.base.white};
-  }
-`;
-
 /** 앱의 지원하기 버튼과 같은 공통 Button. 부스용으로 높이·글자만 키운다 */
 export const RetryButton = styled(Button)`
   width: 100%;
