@@ -94,7 +94,7 @@ const AccountEditTab = () => {
             onChange={(e) => setNewPassword(e.target.value)}
             onClear={() => {
               setNewPassword('');
-              trackEvent(ADMIN_EVENT.NEW_PASSWORD_CLEAR_BUTTON_CLICKED);
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, { field: 'new_password' });
             }}
             maxLength={PASSWORD_MAX}
             isError={isPasswordValid}
@@ -111,7 +111,9 @@ const AccountEditTab = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             onClear={() => {
               setConfirmPassword('');
-              trackEvent(ADMIN_EVENT.CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED);
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: 'confirm_password',
+              });
             }}
             maxLength={PASSWORD_MAX}
             isError={isPasswordMatching}

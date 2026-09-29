@@ -26,7 +26,7 @@ const Popup = ({ configs }: PopupProps) => {
     });
     setActiveConfig(eligible ?? null);
     if (!eligible) {
-      trackEvent(USER_EVENT.MAIN_POPUP_NOT_SHOWN, {
+      trackEvent(USER_EVENT.MAIN_POPUP_SKIPPED, {
         platform: isInAppWebView() ? 'app' : 'web',
       });
     }

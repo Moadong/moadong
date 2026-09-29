@@ -191,7 +191,9 @@ const AddEventSheet = ({
           value={title}
           onChange={setTitle}
           onClear={() =>
-            trackEvent(ADMIN_EVENT.CALENDAR_TITLE_CLEAR_BUTTON_CLICKED)
+            trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+              field: 'calendar_event_title',
+            })
           }
         />
         <SegmentTabs

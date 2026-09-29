@@ -13,6 +13,9 @@ import PerformanceList from '../components/PerformanceList/PerformanceList';
 import { BUSKING_DAYS } from '../data/buskingDays';
 import * as Styled from './BuskingPage.styles';
 
+// 행사가 바뀌어도 같은 이벤트를 쓰도록 행사 구분은 속성으로 보낸다
+const BUSKING_FESTIVAL = 'daedong_2026';
+
 const availableDays = BUSKING_DAYS.filter(
   (d) =>
     d.performances.length > 0 || (d.mainStagePerformances?.length ?? 0) > 0,
@@ -39,7 +42,8 @@ const BuskingPage = () => {
     const startTime = Date.now();
     return () => {
       const duration = Date.now() - startTime;
-      trackEvent(USER_EVENT.DAEDONG2026_DAY_DURATION, {
+      trackEvent(USER_EVENT.BUSKING_DAY_LEFT, {
+        festival: BUSKING_FESTIVAL,
         day: activeDayId,
         duration,
         duration_seconds: Math.round(duration / 1000),
@@ -51,7 +55,8 @@ const BuskingPage = () => {
     dayId: string,
     interaction: 'click' | 'swipe' = 'click',
   ) => {
-    trackEvent(USER_EVENT.DAEDONG2026_DAY_CHANGED, {
+    trackEvent(USER_EVENT.BUSKING_DAY_CHANGED, {
+      festival: BUSKING_FESTIVAL,
       from_day: activeDayId,
       to_day: dayId,
       interaction,

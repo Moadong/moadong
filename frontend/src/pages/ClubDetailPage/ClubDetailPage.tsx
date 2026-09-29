@@ -165,13 +165,7 @@ const ClubDetailPage = () => {
   const handleTabClick = useCallback(
     (tabKey: TabType) => {
       setSearchParams({ tab: tabKey }, { replace: true });
-      trackEvent(
-        tabKey === TAB_TYPE.INTRO
-          ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
-          : tabKey === TAB_TYPE.PHOTOS
-            ? USER_EVENT.CLUB_FEED_TAB_CLICKED
-            : USER_EVENT.CLUB_SCHEDULE_TAB_CLICKED,
-      );
+      trackEvent(USER_EVENT.CLUB_DETAIL_TAB_CLICKED, { tab: tabKey });
     },
     [setSearchParams, trackEvent],
   );

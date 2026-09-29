@@ -96,7 +96,7 @@ const ClubInfoEditTab = () => {
             value={clubName}
             onChange={(e) => setClubName(e.target.value)}
             onClear={() => {
-              trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED);
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, { field: 'club_name' });
               setClubName('');
             }}
             width='50%'
@@ -113,7 +113,9 @@ const ClubInfoEditTab = () => {
             value={introduction}
             onChange={(e) => setIntroduction(e.target.value)}
             onClear={() => {
-              trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED);
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: 'club_introduction',
+              });
               setIntroduction('');
             }}
           />
@@ -154,12 +156,10 @@ const ClubInfoEditTab = () => {
                       handleSocialLinkChange(key, e.target.value)
                     }
                     onClear={() => {
-                      trackEvent(
-                        ADMIN_EVENT.CLUB_SNS_LINK_CLEAR_BUTTON_CLICKED,
-                        {
-                          snsPlatform: label,
-                        },
-                      );
+                      trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                        field: 'club_sns_link',
+                        snsPlatform: label,
+                      });
                       setSocialLinks((prev) => ({ ...prev, [key]: '' }));
                       setSnsErrors((prev) => ({ ...prev, [key]: '' }));
                     }}

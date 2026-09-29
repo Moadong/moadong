@@ -1,98 +1,148 @@
+/**
+ * Mixpanel 이벤트명 상수.
+ * 이름 규칙은 docs/features/analytics/mixpanel-naming-convention.md를 따른다.
+ * - 이벤트 값: 영문 Title Case, `[명사] + [과거형 동사]`
+ * - 변형·동적 값은 이벤트명이 아니라 속성(snake_case)으로 보낸다
+ * - 한글 설명은 값이 아니라 JSDoc 주석에 적는다 (IDE hover로 확인)
+ */
 export const USER_EVENT = {
-  CATEGORY_BUTTON_CLICKED: 'CategoryButton Clicked',
-  SEARCH_EXCUTED: 'Search Executed',
+  // 메인 탐색
+  /** 메인 카테고리 버튼 클릭 */
+  CATEGORY_BUTTON_CLICKED: 'Category Button Clicked',
+  /** 검색 실행 (엔터·검색 버튼) */
+  SEARCH_EXECUTED: 'Search Executed',
 
   // 메인 페이지 팝업
+  /** 메인 팝업 노출 */
   MAIN_POPUP_VIEWED: 'Main Popup Viewed',
-  MAIN_POPUP_NOT_SHOWN: 'Main Popup Not Shown',
+  /** 노출 조건에 맞는 팝업이 없어 메인 팝업을 띄우지 않음 */
+  MAIN_POPUP_SKIPPED: 'Main Popup Skipped',
+  /** 메인 팝업 닫기 (action으로 닫기 방식 구분) */
   MAIN_POPUP_CLOSED: 'Main Popup Closed',
+  /** 앱 다운로드 팝업 클릭 */
   APP_DOWNLOAD_POPUP_CLICKED: 'App Download Popup Clicked',
 
   // 모아동 우체통
-  FEEDBACK_ENTRY_CLICKED: '우체통 진입 클릭',
-  FEEDBACK_TYPE_SELECTED: '우체통 피드백 유형 선택',
-  FEEDBACK_SUBMITTED: '우체통 피드백 전송',
-  FEEDBACK_SUBMIT_FAILED: '우체통 피드백 전송 실패',
-  FEEDBACK_WRITE_ABANDONED: '우체통 작성 이탈',
-  RECEIVED_LETTER_OPENED: '우체통 받은 편지 열람',
-  /** 응답률·긍정률의 분모가 된다 */
-  SATISFACTION_SHOWN: '만족도 모달 노출',
-  SATISFACTION_ANSWERED: '만족도 응답',
-  SATISFACTION_SNOOZED: '만족도 응답 미룸',
+  /** 우체통 진입 클릭 (source로 진입 위치 구분) */
+  FEEDBACK_ENTRY_CLICKED: 'Feedback Entry Clicked',
+  /** 우체통 피드백 유형 선택 */
+  FEEDBACK_TYPE_SELECTED: 'Feedback Type Selected',
+  /** 우체통 피드백 전송 성공 */
+  FEEDBACK_SUBMITTED: 'Feedback Submitted',
+  /** 우체통 피드백 전송 실패 */
+  FEEDBACK_SUBMIT_FAILED: 'Feedback Submit Failed',
+  /** 우체통 작성 중 이탈 */
+  FEEDBACK_WRITE_ABANDONED: 'Feedback Write Abandoned',
+  /** 우체통 받은 편지 열람 */
+  RECEIVED_LETTER_OPENED: 'Received Letter Opened',
 
-  // 동소한 부스
-  FESTIVAL_BOOTH_CLICKED: 'Festival Booth Clicked',
+  // 만족도 모달
+  /** 만족도 모달 노출. 응답률·긍정률의 분모가 된다 */
+  SATISFACTION_MODAL_VIEWED: 'Satisfaction Modal Viewed',
+  /** 만족도 응답 (satisfied로 긍정/부정 구분) */
+  SATISFACTION_ANSWERED: 'Satisfaction Answered',
+  /** 만족도 응답 미룸 */
+  SATISFACTION_SNOOZED: 'Satisfaction Snoozed',
 
-  // 배너 클릭
+  // 배너
+  /** 메인 배너 클릭 */
   BANNER_CLICKED: 'Banner Clicked',
+  /** 앱 다운로드 배너 클릭 */
   APP_DOWNLOAD_BANNER_CLICKED: 'App Download Banner Clicked',
+  /** 배너 좌우 이동 버튼 클릭 */
   BANNER_NAVIGATION_CLICKED: 'Banner Navigation Clicked',
 
-  // 네비게이션
+  // 헤더·상단 바 네비게이션
+  /** 뒤로가기 버튼 클릭 */
   BACK_BUTTON_CLICKED: 'Back Button Clicked',
+  /** 헤더 홈(로고) 클릭 */
   HOME_BUTTON_CLICKED: 'Home Button Clicked',
+  /** 헤더 관리자 버튼 클릭 */
   ADMIN_BUTTON_CLICKED: 'Admin Button Clicked',
-
-  // 탭 & 섹션
-  CLUB_CARD_CLICKED: 'ClubCard Clicked',
-  CLUB_CARD_VIEWED: 'ClubCard Viewed',
-  SCROLL_DEPTH_REACHED: 'Scroll Depth Reached',
-  CLUB_INTRO_TAB_CLICKED: 'Club Intro Tab Clicked',
-  CLUB_FEED_TAB_CLICKED: 'Club Feed Tab Clicked',
-  CLUB_SCHEDULE_TAB_CLICKED: 'Club Schedule Tab Clicked',
-
-  // 동아리 행사일정 캘린더
-  CLUB_SCHEDULE_CALENDAR_VIEWED: 'Club Schedule Calendar Viewed',
-  CLUB_SCHEDULE_MONTH_CHANGED: 'Club Schedule Month Changed',
-  CLUB_SCHEDULE_TODAY_BUTTON_CLICKED: 'Club Schedule Today Button Clicked',
-
-  // 동아리방 지도
-  CLUB_MAP_CLICKED: 'Club Map Clicked',
-
-  // 동아리 지원
-  CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked',
+  /** 헤더 모아동 소개 버튼 클릭 */
+  INTRODUCE_BUTTON_CLICKED: 'Introduce Button Clicked',
+  /** 헤더 총동연 버튼 클릭 */
   CLUB_UNION_BUTTON_CLICKED: 'Club Union Button Clicked',
+  /** 헤더 홍보 버튼 클릭 */
+  PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
+  /** 헤더 구독 버튼 클릭 */
+  HOME_SUBSCRIPTION_CLICKED: 'Home Subscription Clicked',
+
+  // 동아리 목록
+  /** 동아리 카드 클릭 */
+  CLUB_CARD_CLICKED: 'Club Card Clicked',
+  /** 동아리 카드가 화면에 일정 시간 이상 노출됨 */
+  CLUB_CARD_VIEWED: 'Club Card Viewed',
+  /** 스크롤 깊이 마일스톤 도달 */
+  SCROLL_DEPTH_REACHED: 'Scroll Depth Reached',
+  /** 모집중만 보기 토글 클릭 */
+  STATUS_RADIO_BUTTON_CLICKED: 'Status Radio Button Clicked',
+  /** 필터칩 클릭 */
+  FILTER_OPTION_CLICKED: 'Filter Option Clicked',
+  /** 하단 탭 클릭 */
+  BOTTOM_TAB_CLICKED: 'Bottom Tab Clicked',
+
+  // 동아리 상세
+  /** 동아리 상세 탭 클릭 (tab: intro | photos | schedule) */
+  CLUB_DETAIL_TAB_CLICKED: 'Club Detail Tab Clicked',
+  /** 동아리 행사일정 캘린더 노출 */
+  CLUB_SCHEDULE_CALENDAR_VIEWED: 'Club Schedule Calendar Viewed',
+  /** 동아리 행사일정 캘린더 월 이동 */
+  CLUB_SCHEDULE_MONTH_CHANGED: 'Club Schedule Month Changed',
+  /** 동아리 행사일정 캘린더 오늘 버튼 클릭 */
+  CLUB_SCHEDULE_TODAY_BUTTON_CLICKED: 'Club Schedule Today Button Clicked',
+  /** 동아리방 지도 클릭 */
+  CLUB_MAP_CLICKED: 'Club Map Clicked',
+  /** 지원하기 버튼 클릭. 외부 폼 동아리까지 포함한 지원 의도 지표 */
+  CLUB_APPLY_BUTTON_CLICKED: 'Club Apply Button Clicked',
+  /** 공유 버튼 클릭 */
+  SHARE_BUTTON_CLICKED: 'Share Button Clicked',
+  /** 동아리 SNS 링크 클릭 */
+  SNS_LINK_CLICKED: 'SNS Link Button Clicked',
+  /** FAQ 펼치기/접기 */
+  FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
+  /** 동아리 구독 토글 (웹뷰 상단 바·구독 버튼) */
+  CLUB_SUBSCRIPTION_TOGGLED: 'Club Subscription Toggled',
+
+  // 지원서
+  /** 내부 지원서 제출. 내부 지원서를 쓰는 동아리만 발생한다 */
+  APPLICATION_FORM_SUBMITTED: 'Application Form Submitted',
 
   // 총동연 페이지
+  /** 총동연 SNS 클릭 */
   CLUB_UNION_SNS_CLICKED: 'Club Union SNS Clicked',
 
-  // 공유 버튼
-  SHARE_BUTTON_CLICKED: 'Share Button Clicked',
-  SNS_LINK_CLICKED: 'SNS Link Button Clicked',
-
-  STATUS_RADIO_BUTTON_CLICKED: 'StatusRadioButton Clicked',
-  INTRODUCE_BUTTON_CLICKED: 'Introduce Button Clicked',
-  APPLICATION_FORM_SUBMITTED: 'Application Form Submitted',
-  FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
-
-  // 필터칩
-  FILTER_OPTION_CLICKED: 'Filter Option Clicked',
-
-  // 하단 네비게이션
-  BOTTOM_TAB_CLICKED: 'BottomTab Clicked',
-
-  // 구독
-  HOME_SUBSCRIPTION_CLICKED: 'Home Subscription Clicked',
+  // 구독 페이지
+  /** 구독 페이지 앱 다운로드 버튼 클릭 */
   APP_DOWNLOAD_SUBSCRIPTIONS_CLICKED: 'App Download Subscriptions Clicked',
 
   // 동소한 (동아리 소개 한마당)
+  /** 동소한 탭 클릭 */
   FESTIVAL_TAB_CLICKED: 'Festival Tab Clicked',
-  FESTIVAL_BOOTH_MAP_SLIDE_CHANGED: 'Festival BoothMap Slide Changed',
-  FESTIVAL_PERFORMANCE_CARD_CLICKED: 'Festival PerformanceCard Clicked',
-  FESTIVAL_TAB_DURATION: 'Festival Tab Duration',
+  /** 동소한 탭을 떠남 (duration_seconds로 체류시간) */
+  FESTIVAL_TAB_LEFT: 'Festival Tab Left',
+  /** 동소한 부스 클릭 */
+  FESTIVAL_BOOTH_CLICKED: 'Festival Booth Clicked',
+  /** 동소한 부스 지도 슬라이드 이동 */
+  FESTIVAL_BOOTH_MAP_SLIDE_CHANGED: 'Festival Booth Map Slide Changed',
+  /** 동소한 공연 카드 클릭 */
+  FESTIVAL_PERFORMANCE_CARD_CLICKED: 'Festival Performance Card Clicked',
 
   // 버스킹 시간표
-  DAEDONG2026_DAY_CHANGED: '2026-daedong Day Changed',
-  DAEDONG2026_DAY_DURATION: '2026-daedong Day Duration',
+  /** 버스킹 시간표 날짜 이동 (festival로 행사 구분) */
+  BUSKING_DAY_CHANGED: 'Busking Day Changed',
+  /** 버스킹 시간표 날짜를 떠남 (duration_seconds로 체류시간) */
+  BUSKING_DAY_LEFT: 'Busking Day Left',
 
   // 홍보
-  PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
+  /** 홍보 카드 클릭 */
   PROMOTION_CARD_CLICKED: 'Promotion Card Clicked',
+  /** 홍보 상세의 동아리 보러가기 클릭 */
   PROMOTION_CLUB_CTA_CLICKED: 'Promotion Club CTA Clicked',
+  /** 홍보 상세 지도 클릭 */
   PROMOTION_MAP_CLICKED: 'Promotion Map Clicked',
+  /** 홍보 상세 이미지 더보기 클릭 */
   PROMOTION_IMAGE_MORE_CLICKED: 'Promotion Image More Clicked',
-
-  WEBVIEW_SUBSCRIBE_TOGGLED: 'Webview Subscribe Toggled',
 } as const;
 
 export const WEBVIEW_LINK_TARGET = {
@@ -101,86 +151,133 @@ export const WEBVIEW_LINK_TARGET = {
 
 export const ADMIN_EVENT = {
   // 로그인 페이지
-  LOGIN_BUTTON_CLICKED: '로그인 버튼클릭',
-  SIGNUP_BUTTON_CLICKED: '회원가입 버튼클릭',
-  FORGOT_ID_BUTTON_CLICKED: '아이디 찾기 버튼클릭',
-  FORGOT_PASSWORD_BUTTON_CLICKED: '비밀번호 찾기 버튼클릭',
+  /** 로그인 버튼 클릭 */
+  LOGIN_BUTTON_CLICKED: 'Login Button Clicked',
+  /** 회원가입 버튼 클릭 */
+  SIGNUP_BUTTON_CLICKED: 'Signup Button Clicked',
+  /** 아이디 찾기 버튼 클릭 */
+  FORGOT_ID_BUTTON_CLICKED: 'Forgot ID Button Clicked',
+  /** 비밀번호 찾기 버튼 클릭 */
+  FORGOT_PASSWORD_BUTTON_CLICKED: 'Forgot Password Button Clicked',
+
+  // 공통 입력
+  /** 입력 필드 초기화(X) 버튼 클릭 (field로 어떤 입력인지 구분) */
+  INPUT_CLEARED: 'Input Cleared',
 
   // 사이드바
-  CLUB_COVER_UPLOAD_BUTTON_CLICKED: '동아리 커버 업로드 버튼클릭',
-  CLUB_COVER_RESET_BUTTON_CLICKED: '동아리 커버 초기화 버튼클릭',
-  CLUB_LOGO_UPLOAD_BUTTON_CLICKED: '동아리 로고 업로드 버튼클릭',
-  CLUB_LOGO_EDIT_BUTTON_CLICKED: '동아리 로고 수정 버튼클릭',
-  CLUB_LOGO_RESET_BUTTON_CLICKED: '동아리 로고 초기화 버튼클릭',
-  TAB_CLICKED: '사이드바 탭 클릭',
-  LOGOUT_BUTTON_CLICKED: '로그아웃 버튼클릭',
+  /** 동아리 커버 업로드 버튼 클릭 */
+  CLUB_COVER_UPLOAD_BUTTON_CLICKED: 'Club Cover Upload Button Clicked',
+  /** 동아리 커버 초기화 버튼 클릭 */
+  CLUB_COVER_RESET_BUTTON_CLICKED: 'Club Cover Reset Button Clicked',
+  /** 동아리 로고 업로드 버튼 클릭 */
+  CLUB_LOGO_UPLOAD_BUTTON_CLICKED: 'Club Logo Upload Button Clicked',
+  /** 동아리 로고 수정 버튼 클릭 */
+  CLUB_LOGO_EDIT_BUTTON_CLICKED: 'Club Logo Edit Button Clicked',
+  /** 동아리 로고 초기화 버튼 클릭 */
+  CLUB_LOGO_RESET_BUTTON_CLICKED: 'Club Logo Reset Button Clicked',
+  /** 관리자 탭 이동 (사이드바·모바일 탭·설정 탭 공통, tab_name으로 구분) */
+  TAB_CLICKED: 'Admin Tab Clicked',
+  /** 로그아웃 버튼 클릭 */
+  LOGOUT_BUTTON_CLICKED: 'Logout Button Clicked',
 
-  // 기본 정보 수정
-  UPDATE_CLUB_BUTTON_CLICKED: '동아리 기본 정보 수정 버튼클릭',
-  CLUB_NAME_CLEAR_BUTTON_CLICKED: '동아리 명 입력 초기화 버튼클릭',
-  CLUB_PRESIDENT_CLEAR_BUTTON_CLICKED: '회장 정보 입력 초기화 버튼클릭',
-  TELEPHONE_NUMBER_CLEAR_BUTTON_CLICKED: '전화번호 입력 초기화 버튼클릭',
-  CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED: '한줄소개 입력 초기화 버튼클릭',
-  CLUB_TAG_SELECT_BUTTON_CLICKED: '분류/분과/자유태그 선택 버튼클릭',
-  CLUB_TAG_CLEAR_BUTTON_CLICKED: '자유태그 입력 초기화 버튼클릭',
-  CLUB_SNS_LINK_CLEAR_BUTTON_CLICKED: 'SNS 링크 입력 초기화 버튼클릭',
+  // 기본 정보·소개 수정
+  /** 동아리 정보 저장 버튼 클릭 (section: info | intro) */
+  UPDATE_CLUB_BUTTON_CLICKED: 'Club Update Button Clicked',
+  /** 분류/분과/자유태그 선택 */
+  CLUB_TAG_SELECT_BUTTON_CLICKED: 'Club Tag Selected',
 
   // 모집 정보 수정
-  UPDATE_RECRUIT_BUTTON_CLICKED: '동아리 모집 정보 수정 버튼클릭',
-  ALWAYS_RECRUIT_BUTTON_CLICKED: '상시모집 버튼클릭',
-  RECRUITMENT_START_CHANGED: '모집 시작 날짜 변경',
-  RECRUITMENT_END_CHANGED: '모집 종료 날짜 변경',
-  RECRUITMENT_TARGET_CLEAR_BUTTON_CLICKED: '모집 대상 입력 초기화 버튼클릭',
-  MARKDOWN_EDITOR_PREVIEW_BUTTON_CLICKED: '소개글 미리보기/편집 버튼클릭',
+  /** 모집 정보 저장 버튼 클릭 */
+  UPDATE_RECRUIT_BUTTON_CLICKED: 'Recruitment Update Button Clicked',
+  /** 상시모집 버튼 클릭 */
+  ALWAYS_RECRUIT_BUTTON_CLICKED: 'Always Recruit Button Clicked',
+  /** 모집 시작 날짜 변경 */
+  RECRUITMENT_START_CHANGED: 'Recruitment Start Changed',
+  /** 모집 종료 날짜 변경 */
+  RECRUITMENT_END_CHANGED: 'Recruitment End Changed',
+  /** 소개글 미리보기/편집 전환 */
+  MARKDOWN_EDITOR_PREVIEW_BUTTON_CLICKED: 'Markdown Preview Button Clicked',
 
   // 활동 사진 수정
-  IMAGE_UPLOAD_BUTTON_CLICKED: '활동 사진 업로드 버튼클릭',
-  IMAGE_DELETE_BUTTON_CLICKED: '활동 사진 삭제 버튼클릭',
+  /** 활동 사진 업로드 버튼 클릭 */
+  IMAGE_UPLOAD_BUTTON_CLICKED: 'Club Photo Upload Button Clicked',
+  /** 활동 사진 삭제 버튼 클릭 */
+  IMAGE_DELETE_BUTTON_CLICKED: 'Club Photo Delete Button Clicked',
 
   // 동아리 일정 관리
-  CALENDAR_MONTH_CHANGED: '캘린더 월 이동',
-  CALENDAR_TODAY_BUTTON_CLICKED: '캘린더 오늘 버튼클릭',
-  CALENDAR_DATE_CLICKED: '캘린더 날짜 클릭',
-  CALENDAR_ADD_EVENT_BUTTON_CLICKED: '일정 추가 버튼클릭',
-  CALENDAR_EVENT_TYPE_TAB_CLICKED: '일정 유형 탭 클릭',
-  CALENDAR_TITLE_CLEAR_BUTTON_CLICKED: '일정 제목 입력 초기화 버튼클릭',
-  CALENDAR_EVENT_DATE_SELECTED: '일정 날짜 선택',
-  CALENDAR_COLOR_SELECTED: '일정 색상 선택',
-  CALENDAR_RECURRENCE_FREQUENCY_CHANGED: '반복 주기 변경',
-  CALENDAR_RECURRENCE_WEEKDAY_TOGGLED: '반복 요일 선택',
-  CALENDAR_DATE_PICKER_OPENED: '반복 날짜 시트 열기',
-  CALENDAR_END_DATE_CLEARED: '반복 종료 날짜 지우기',
-  CALENDAR_EVENT_CREATED: '일정 저장',
-  CALENDAR_EVENT_ROW_SWIPED: '일정 스와이프',
-  CALENDAR_EVENT_DELETED: '일정 삭제',
-  CALENDAR_EVENT_HIDDEN: '연동 일정 숨김',
-  CALENDAR_LINK_BUTTON_CLICKED: '캘린더 연동 버튼클릭',
-  CALENDAR_UNLINK_BUTTON_CLICKED: '캘린더 연동 해제 버튼클릭',
-  CALENDAR_UNLINK_CANCELED: '캘린더 연동 해제 취소',
-  CALENDAR_EVENT_VISIBILITY_TOGGLED: '연동 일정 표시 토글',
+  /** 관리자 캘린더 월 이동 */
+  CALENDAR_MONTH_CHANGED: 'Calendar Month Changed',
+  /** 관리자 캘린더 오늘 버튼 클릭 */
+  CALENDAR_TODAY_BUTTON_CLICKED: 'Calendar Today Button Clicked',
+  /** 관리자 캘린더 날짜 클릭 */
+  CALENDAR_DATE_CLICKED: 'Calendar Date Clicked',
+  /** 일정 추가 버튼 클릭 */
+  CALENDAR_ADD_EVENT_BUTTON_CLICKED: 'Calendar Add Event Button Clicked',
+  /** 일정 유형 탭 클릭 */
+  CALENDAR_EVENT_TYPE_TAB_CLICKED: 'Calendar Event Type Tab Clicked',
+  /** 일정 날짜 선택 */
+  CALENDAR_EVENT_DATE_SELECTED: 'Calendar Event Date Selected',
+  /** 일정 색상 선택 */
+  CALENDAR_COLOR_SELECTED: 'Calendar Color Selected',
+  /** 반복 주기 변경 */
+  CALENDAR_RECURRENCE_FREQUENCY_CHANGED:
+    'Calendar Recurrence Frequency Changed',
+  /** 반복 요일 선택/해제 */
+  CALENDAR_RECURRENCE_WEEKDAY_TOGGLED: 'Calendar Recurrence Weekday Toggled',
+  /** 반복 날짜 시트 열기 */
+  CALENDAR_DATE_PICKER_OPENED: 'Calendar Date Picker Opened',
+  /** 반복 종료 날짜 지우기 */
+  CALENDAR_END_DATE_CLEARED: 'Calendar End Date Cleared',
+  /** 일정 저장 성공 */
+  CALENDAR_EVENT_CREATED: 'Calendar Event Created',
+  /** 일정 행 스와이프 */
+  CALENDAR_EVENT_ROW_SWIPED: 'Calendar Event Row Swiped',
+  /** 일정 삭제 */
+  CALENDAR_EVENT_DELETED: 'Calendar Event Deleted',
+  /** 연동 일정 숨김 */
+  CALENDAR_EVENT_HIDDEN: 'Calendar Event Hidden',
+  /** 외부 캘린더 연동 버튼 클릭 */
+  CALENDAR_LINK_BUTTON_CLICKED: 'Calendar Link Button Clicked',
+  /** 외부 캘린더 연동 해제 버튼 클릭 */
+  CALENDAR_UNLINK_BUTTON_CLICKED: 'Calendar Unlink Button Clicked',
+  /** 외부 캘린더 연동 해제 취소 */
+  CALENDAR_UNLINK_CANCELED: 'Calendar Unlink Canceled',
+  /** 연동 일정 표시 토글 */
+  CALENDAR_EVENT_VISIBILITY_TOGGLED: 'Calendar Event Visibility Toggled',
 
   // 지원서 관리
-  AI_DRAFT_BUTTON_VIEWED: 'AI 지원서 초안 버튼노출',
-  AI_DRAFT_BUTTON_CLICKED: 'AI 지원서 초안 생성 버튼클릭',
-  AI_DRAFT_OVERWRITE_CANCELED: 'AI 지원서 초안 덮어쓰기 취소',
-  AI_DRAFT_GENERATED: 'AI 지원서 초안 생성 완료',
-  AI_DRAFT_LIMIT_REACHED: 'AI 지원서 초안 생성 한도 초과',
-  AI_DRAFT_GENERATION_FAILED: 'AI 지원서 초안 생성 실패',
-  APPLICATION_FORM_SAVED: '지원서 저장',
+  /** AI 지원서 초안 버튼 노출 */
+  AI_DRAFT_BUTTON_VIEWED: 'AI Draft Button Viewed',
+  /** AI 지원서 초안 생성 버튼 클릭 */
+  AI_DRAFT_BUTTON_CLICKED: 'AI Draft Button Clicked',
+  /** AI 지원서 초안 덮어쓰기 취소 */
+  AI_DRAFT_OVERWRITE_CANCELED: 'AI Draft Overwrite Canceled',
+  /** AI 지원서 초안 생성 완료 */
+  AI_DRAFT_GENERATED: 'AI Draft Generated',
+  /** AI 지원서 초안 생성 한도 초과 */
+  AI_DRAFT_LIMIT_REACHED: 'AI Draft Limit Reached',
+  /** AI 지원서 초안 생성 실패 */
+  AI_DRAFT_GENERATION_FAILED: 'AI Draft Generation Failed',
+  /** 지원서 저장 */
+  APPLICATION_FORM_SAVED: 'Application Form Saved',
 
   // 홍보 게시글 관리
-  PROMOTION_CREATE_BUTTON_CLICKED: '홍보 게시글 작성 버튼클릭',
-  PROMOTION_SAVE_BUTTON_CLICKED: '홍보 게시글 저장 버튼클릭',
-  PROMOTION_DELETE_BUTTON_CLICKED: '홍보 게시글 삭제 버튼클릭',
+  /** 홍보 게시글 작성 버튼 클릭 */
+  PROMOTION_CREATE_BUTTON_CLICKED: 'Promotion Create Button Clicked',
+  /** 홍보 게시글 저장 버튼 클릭 */
+  PROMOTION_SAVE_BUTTON_CLICKED: 'Promotion Save Button Clicked',
+  /** 홍보 게시글 삭제 버튼 클릭 */
+  PROMOTION_DELETE_BUTTON_CLICKED: 'Promotion Delete Button Clicked',
 
   // 비밀번호 수정
-  PASSWORD_CHANGE_BUTTON_CLICKED: '비밀번호 변경 버튼클릭',
-  NEW_PASSWORD_CLEAR_BUTTON_CLICKED: '새 비밀번호 입력 초기화 버튼클릭',
-  CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED: '확인 비밀번호 입력 초기화 버튼클릭',
+  /** 비밀번호 변경 버튼 클릭 */
+  PASSWORD_CHANGE_BUTTON_CLICKED: 'Password Change Button Clicked',
 
   // 동아리 상세 - 모집 기간 변경 (관리자 전용)
-  RECRUIT_PERIOD_CHANGE_BUTTON_CLICKED: '모집 기간 변경 버튼클릭',
-  RECRUIT_PERIOD_CHANGE_CONFIRMED: '모집 기간 변경 완료',
+  /** 모집 기간 변경 버튼 클릭 */
+  RECRUIT_PERIOD_CHANGE_BUTTON_CLICKED: 'Recruit Period Change Button Clicked',
+  /** 모집 기간 변경 완료 */
+  RECRUIT_PERIOD_CHANGE_CONFIRMED: 'Recruit Period Changed',
 } as const;
 
 export const PAGE_VIEW = {

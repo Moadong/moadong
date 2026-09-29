@@ -33,7 +33,8 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
       return tag;
     });
 
-    trackEvent(ADMIN_EVENT.CLUB_TAG_CLEAR_BUTTON_CLICKED, {
+    trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+      field: 'club_tag',
       tagIndex: index + 1,
     });
 

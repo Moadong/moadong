@@ -120,7 +120,7 @@ const ClubInfoEditTabMobile = ({
             maxLength={CLUB_NAME_MAX}
             onChange={setClubName}
             onClear={() =>
-              trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED)
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, { field: 'club_name' })
             }
           />
 
@@ -131,7 +131,9 @@ const ClubInfoEditTabMobile = ({
             maxLength={CLUB_INTRODUCTION_MAX}
             onChange={setIntroduction}
             onClear={() =>
-              trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED)
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: 'club_introduction',
+              })
             }
           />
 
