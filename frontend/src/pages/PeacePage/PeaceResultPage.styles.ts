@@ -46,9 +46,48 @@ export const RetryButton = styled(Button)`
   ${({ theme }) => setTypography(theme.typography.title.title6)};
 `;
 
-export const SubLine = styled.p`
-  ${({ theme }) => setTypography(theme.typography.paragraph.p2)};
+/** 카드 아래 유형별 비율. 답 8개 중 각 유형에 간 개수 / 8 */
+export const ShareList = styled.ul`
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 16px 20px;
+  border-radius: 16px;
+  background: ${({ theme }) => theme.colors.base.white};
+`;
+
+export const ShareRow = styled.li`
+  display: grid;
+  grid-template-columns: 56px 1fr 44px;
+  align-items: center;
+  gap: 10px;
+`;
+
+export const ShareName = styled.span`
+  ${({ theme }) => setTypography(theme.typography.paragraph.p5)};
+  color: ${({ theme }) => theme.colors.gray[800]};
+`;
+
+export const ShareBar = styled.div`
+  height: 10px;
+  border-radius: 5px;
+  background: ${({ theme }) => theme.colors.gray[100]};
+  overflow: hidden;
+`;
+
+export const ShareFill = styled.div<{ $percent: number; $color: string }>`
+  width: ${({ $percent }) => $percent}%;
+  height: 100%;
+  border-radius: 5px;
+  background: ${({ $color }) => $color};
+  transition: width ${({ theme }) => theme.transitions.duration.slow};
+`;
+
+export const SharePercent = styled.span`
+  ${({ theme }) => setTypography(theme.typography.paragraph.p5)};
   color: ${({ theme }) => theme.colors.gray[700]};
+  text-align: right;
 `;
 
 export const QrBlock = styled.div`

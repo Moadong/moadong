@@ -14,22 +14,34 @@ import PeaceLayout, {
 import RecommendedClubs from './components/RecommendedClubs/RecommendedClubs';
 import ResultCard from './components/ResultCard/ResultCard';
 import { KIOSK_IDLE_MS } from './constants/kiosk';
-import { isPeaceTypeId, PEACE_TYPES, PeaceTypeId } from './data/peaceTypes';
+import {
+  isPeaceTypeId,
+  PEACE_TYPE_IDS,
+  PEACE_TYPES,
+  PeaceTypeId,
+} from './data/peaceTypes';
+import { PEACE_QUESTIONS } from './data/questions';
 import { useIdleReset } from './hooks/useIdleReset';
 import { PeaceSource, usePeaceParams } from './hooks/usePeaceParams';
 import * as Styled from './PeaceResultPage.styles';
+import { scorePeaceTypes } from './utils/calculatePeaceType';
 
-/** 방문객 폰에서 열 결과 링크. 부스 모드 플래그는 빼고 유입 경로만 붙인다 */
+/** 방문객 폰에서 열 결과 링크. 부스 모드 플래그는 빼고 답과 유입 경로만 붙인다 */
 const buildResultUrl = (
   type: PeaceTypeId,
-  sub: PeaceTypeId | undefined,
+  answersParam: string | null,
   source: PeaceSource,
 ) => {
   const params = new URLSearchParams({ type });
-  if (sub) params.set('sub', sub);
+  if (answersParam) params.set('a', answersParam);
   params.set('src', source);
   return `${window.location.origin}/peace/result?${params.toString()}`;
 };
+
+/** a=01230123 형식(문항 수만큼의 0~3)만 답으로 인정한다 */
+const ANSWERS_PATTERN = new RegExp(`^[0-3]{${PEACE_QUESTIONS.length}}$`);
+const parseAnswers = (value: string | null): number[] | null =>
+  value && ANSWERS_PATTERN.test(value) ? [...value].map(Number) : null;
 
 const PeaceResultPage = () => {
   useTrackPageView(PAGE_VIEW.PEACE_RESULT_PAGE);
@@ -51,11 +63,17 @@ const PeaceResultPage = () => {
   }
 
   const type = PEACE_TYPES[typeParam];
-  const subParam = searchParams.get('sub');
-  const sub =
-    isPeaceTypeId(subParam) && subParam !== type.id
-      ? PEACE_TYPES[subParam]
-      : undefined;
+  const answers = parseAnswers(searchParams.get('a'));
+  const answersParam = answers ? searchParams.get('a') : null;
+  const scores = answers ? scorePeaceTypes(answers) : null;
+  const shares = scores
+    ? [...PEACE_TYPE_IDS]
+        .sort((a, b) => scores[b] - scores[a])
+        .map((id) => ({
+          type: PEACE_TYPES[id],
+          percent: Math.round((scores[id] / PEACE_QUESTIONS.length) * 100),
+        }))
+    : null;
   const partner = PEACE_TYPES[type.partner];
   const palette = theme.colors.secondary[type.colorIndex];
 
@@ -83,7 +101,7 @@ const PeaceResultPage = () => {
   };
 
   const handleShareClick = () => {
-    const url = buildResultUrl(type.id, sub?.id, 'share');
+    const url = buildResultUrl(type.id, answersParam, 'share');
     trackEvent(USER_EVENT.PEACE_SHARE_CLICKED, { type: type.id, src });
     handleShare({
       title: PEACE_PAGE_TITLE,
@@ -97,10 +115,21 @@ const PeaceResultPage = () => {
       <Styled.CardSection>
         <Styled.Lead>당신의 평화 유형은</Styled.Lead>
         <ResultCard type={type} />
-        {sub && (
-          <Styled.SubLine>
-            {`당신 안에는 ${sub.name}도 있어요 ${sub.symbol}`}
-          </Styled.SubLine>
+        {shares && (
+          <Styled.ShareList aria-label='유형별 비율'>
+            {shares.map(({ type: t, percent }) => (
+              <Styled.ShareRow key={t.id}>
+                <Styled.ShareName>{t.name}</Styled.ShareName>
+                <Styled.ShareBar>
+                  <Styled.ShareFill
+                    $percent={percent}
+                    $color={theme.colors.secondary[t.colorIndex].main}
+                  />
+                </Styled.ShareBar>
+                <Styled.SharePercent>{`${percent}%`}</Styled.SharePercent>
+              </Styled.ShareRow>
+            ))}
+          </Styled.ShareList>
         )}
       </Styled.CardSection>
 
@@ -166,7 +195,7 @@ const PeaceResultPage = () => {
       {isKiosk && (
         <Styled.QrBlock>
           <QRCodeSVG
-            value={buildResultUrl(type.id, sub?.id, 'qr')}
+            value={buildResultUrl(type.id, answersParam, 'qr')}
             size={168}
           />
           <Styled.QrCaption>

@@ -1,6 +1,10 @@
 import { PeaceTypeId } from '../data/peaceTypes';
 import { PEACE_QUESTIONS } from '../data/questions';
-import { calculatePeaceType, rankPeaceTypes } from './calculatePeaceType';
+import {
+  calculatePeaceType,
+  rankPeaceTypes,
+  scorePeaceTypes,
+} from './calculatePeaceType';
 
 /** 문항별로 원하는 유형의 선택지 인덱스를 고른다. 없으면 테스트 데이터가 잘못된 것이므로 throw */
 const choose = (plan: PeaceTypeId[]): number[] =>
@@ -79,6 +83,25 @@ describe('calculatePeaceType', () => {
       'expresser',
       'explorer',
     ]);
+  });
+
+  it('scorePeaceTypes는 유형별 점수를 돌려주고 합은 문항 수다', () => {
+    const answers = choose([
+      'carer',
+      'daily',
+      'carer',
+      'carer',
+      'carer',
+      'carer',
+      'daily',
+      'carer',
+    ]);
+    const scores = scorePeaceTypes(answers);
+    expect(scores.carer).toBe(6);
+    expect(scores.daily).toBe(2);
+    expect(Object.values(scores).reduce((a, b) => a + b, 0)).toBe(
+      PEACE_QUESTIONS.length,
+    );
   });
 
   it('답 개수가 문항 수와 다르면 throw한다', () => {

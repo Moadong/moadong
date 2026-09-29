@@ -133,9 +133,9 @@ describe('PeaceQuizPage', () => {
     expect(screen.getByText(/분석하고 있어요/)).toBeInTheDocument();
     expect(screen.queryByText(/^RESULT/)).not.toBeInTheDocument();
     finishAnalyzing();
-    // 2등은 1점 동점(energizer·daily·embracer) 중 TIE_BREAK_ORDER 첫 항목인 daily
+    // 답 8개를 a에 실어 결과 화면이 유형별 비율을 계산한다
     expect(
-      screen.getByText('RESULT ?type=carer&sub=daily'),
+      screen.getByText('RESULT ?type=carer&a=00000000'),
     ).toBeInTheDocument();
   });
 
@@ -155,7 +155,7 @@ describe('PeaceQuizPage', () => {
     answerAll();
     finishAnalyzing();
     expect(
-      screen.getByText('RESULT ?type=carer&sub=daily&kiosk=1&src=booth'),
+      screen.getByText('RESULT ?type=carer&a=00000000&kiosk=1&src=booth'),
     ).toBeInTheDocument();
   });
 

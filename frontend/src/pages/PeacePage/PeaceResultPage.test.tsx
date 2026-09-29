@@ -7,7 +7,7 @@ import {
   useLocation,
   useParams,
 } from 'react-router-dom';
-import { act, render, screen } from '@testing-library/react';
+import { act, render, screen, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
 import { theme } from '@/styles/theme';
@@ -156,12 +156,28 @@ describe('PeaceResultPage', () => {
     expect(screen.getByText(/^INTRO/)).toBeInTheDocument();
   });
 
-  it('sub가 있으면 서브 유형 한 줄을, 없으면 생략한다', () => {
-    const { unmount } = renderResult('?type=carer&sub=daily');
-    expect(screen.getByText(/당신 안에는 일상가도/)).toBeInTheDocument();
-    unmount();
-    renderResult('?type=carer');
+  it('답이 있으면 유형별 비율을 점수 순으로 보여준다', () => {
+    // 모두 첫 선택지: carer 5, energizer 1, daily 1, embracer 1
+    renderResult('?type=carer&a=00000000');
+    const list = screen.getByRole('list', { name: '유형별 비율' });
+    const rows = within(list).getAllByRole('listitem');
+    expect(rows).toHaveLength(6);
+    expect(rows[0]).toHaveTextContent('돌봄가');
+    expect(rows[0]).toHaveTextContent('63%');
+    expect(within(list).getAllByText('0%')).toHaveLength(2);
     expect(screen.queryByText(/당신 안에는/)).not.toBeInTheDocument();
+  });
+
+  it('답이 없거나 형식이 틀리면 비율 영역을 그리지 않는다', () => {
+    const { unmount } = renderResult('?type=carer');
+    expect(
+      screen.queryByRole('list', { name: '유형별 비율' }),
+    ).not.toBeInTheDocument();
+    unmount();
+    renderResult('?type=carer&a=0123');
+    expect(
+      screen.queryByRole('list', { name: '유형별 비율' }),
+    ).not.toBeInTheDocument();
   });
 
   it('잘 맞는 파트너 유형을 보여준다', () => {
@@ -172,9 +188,9 @@ describe('PeaceResultPage', () => {
   });
 
   it('부스 모드에서는 QR을 공유 버튼 위에 하나 더 보여준다', () => {
-    renderResult('?type=carer&sub=daily&kiosk=1&src=booth');
+    renderResult('?type=carer&a=00000000&kiosk=1&src=booth');
     expect(screen.getByTestId('qr')).toHaveTextContent(
-      'http://localhost/peace/result?type=carer&sub=daily&src=qr',
+      'http://localhost/peace/result?type=carer&a=00000000&src=qr',
     );
     expect(
       screen.getByRole('button', { name: '공유하기' }),
@@ -182,12 +198,12 @@ describe('PeaceResultPage', () => {
   });
 
   it('부스 모드가 아니면 공유 버튼이 결과 링크를 공유한다', async () => {
-    renderResult('?type=carer&sub=daily');
+    renderResult('?type=carer&a=00000000');
     expect(screen.queryByTestId('qr')).not.toBeInTheDocument();
     await userEvent.click(screen.getByRole('button', { name: '공유하기' }));
     expect(mockHandleShare).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: 'http://localhost/peace/result?type=carer&sub=daily&src=share',
+        url: 'http://localhost/peace/result?type=carer&a=00000000&src=share',
       }),
     );
   });

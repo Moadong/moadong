@@ -209,7 +209,7 @@ frontend/src/constants/CLAUDE.md           (상수 추가 반영)
 |---|---|---|
 | 부스 모드 | `?kiosk=1`이면 퀴즈·결과 화면에서 60초 입력이 없을 때 랜딩(`/peace?kiosk=1&src=…`)으로 replace 이동. 헤더·푸터는 일반 화면과 같다(2026-09-28 축소: 원래는 숨겼으나 원 설계와 너무 달라져 되돌림) | `hooks/useIdleReset.ts`, `constants/kiosk.ts`. 동아리 상세로 나간 뒤에는 리셋이 안 되므로 스태프가 되돌린다 |
 | 파라미터 전파 | `kiosk`·`src`는 `hooks/usePeaceParams.ts`의 `withParams`로 랜딩→퀴즈→결과→다시하기까지 이어 붙인다 | 저장소 없음 |
-| 서브 유형·파트너 | `rankPeaceTypes`가 점수 순 6개를 돌려주고 2등을 `sub` 쿼리로 넘긴다. 결과에 "당신 안에는 ○○도 있어요"와 `PeaceType.partner`(서로를 가리키는 짝: 돌봄↔표현, 포용↔탐구, 일상↔활력) 한 줄 | `sub`가 없거나 `type`과 같으면 줄을 생략 |
+| 유형별 비율·파트너 | 퀴즈가 답 8개를 `a=01230123`로 결과 URL에 싣고, 결과는 `scorePeaceTypes`로 유형별 점수/8을 카드 아래 막대 6개로 보여준다(점수 순, 분과 색). `PeaceType.partner`(서로를 가리키는 짝: 돌봄↔표현, 포용↔탐구, 일상↔활력) 한 줄. "당신 안에는 ○○도 있어요" 서브 문장은 2026-09-29 제거 | `a`가 없거나 형식이 틀리면 비율 영역 생략. `sub` 쿼리는 더 쓰지 않음 |
 | 폰으로 가져가기 | "공유하기" 버튼은 항상 표시(기존 `useShare`, `src=share`). 부스 모드에서는 그 위에 결과 링크(`/peace/result?type&sub&src=qr`, kiosk 제외) QR을 `qrcode.react`로 하나 더 얹는다 | 새 의존성 `qrcode.react@4.2.0` 1개. QR은 `window.location.origin` 기준이라 부스 태블릿은 프로덕션 도메인으로 열어야 폰에서 열린다 |
 | 유입 구분 | 모든 `PEACE_*` 이벤트에 `src`(booth/qr/share/없음) 속성. `USER_EVENT.PEACE_SHARE_CLICKED` 추가 | 부스 태블릿은 `/peace?kiosk=1&src=booth`로 연다 |
 

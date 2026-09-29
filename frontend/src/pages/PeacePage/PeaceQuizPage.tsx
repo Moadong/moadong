@@ -60,9 +60,10 @@ const PeaceQuizPage = () => {
     if (next.length === TOTAL) {
       const [type, sub] = rankPeaceTypes(next);
       trackEvent(USER_EVENT.PEACE_QUIZ_COMPLETED, { type, sub, src });
-      // "분석 중"을 잠깐 보여준 뒤 결과로 간다. 유형은 이미 정해져 있다
+      // "분석 중"을 잠깐 보여준 뒤 결과로 간다. 답 8개를 실어 결과가 유형별 비율을 계산한다
+      const answersParam = next.join('');
       analyzingTimerRef.current = window.setTimeout(() => {
-        navigate(withParams(`/peace/result?type=${type}&sub=${sub}`), {
+        navigate(withParams(`/peace/result?type=${type}&a=${answersParam}`), {
           replace: true,
         });
       }, ANALYZING_MS);
