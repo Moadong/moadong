@@ -78,12 +78,13 @@ describe('useTrackPageView', () => {
   });
 
   describe('페이지 방문 트래킹 테스트', () => {
-    it('페이지 방문 시 Visited 이벤트를 트래킹한다', () => {
+    it('페이지 방문 시 Page Viewed 이벤트를 트래킹한다', () => {
       // When
       renderHook(() => useTrackPageView('Test Page'));
 
       // Then
-      expect(mixpanel.track).toHaveBeenCalledWith('Test Page Visited', {
+      expect(mixpanel.track).toHaveBeenCalledWith('Page Viewed', {
+        page_name: 'Test Page',
         url: 'https://example.com/test-page',
         timestamp: 1234567890,
         referrer: 'https://google.com',
@@ -96,7 +97,8 @@ describe('useTrackPageView', () => {
       renderHook(() => useTrackPageView('Club Detail', '테스트 동아리'));
 
       // Then
-      expect(mixpanel.track).toHaveBeenCalledWith('Club Detail Visited', {
+      expect(mixpanel.track).toHaveBeenCalledWith('Page Viewed', {
+        page_name: 'Club Detail',
         url: 'https://example.com/test-page',
         timestamp: 1234567890,
         referrer: 'https://google.com',
@@ -117,8 +119,9 @@ describe('useTrackPageView', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith(
-        'Test Page Visited',
+        'Page Viewed',
         expect.objectContaining({
+          page_name: 'Test Page',
           referrer: 'direct',
         }),
       );
@@ -134,7 +137,7 @@ describe('useTrackPageView', () => {
   });
 
   describe('페이지 체류 시간 트래킹 테스트', () => {
-    it('컴포넌트 언마운트 시 Duration 이벤트를 트래킹한다', () => {
+    it('컴포넌트 언마운트 시 Page Left 이벤트를 트래킹한다', () => {
       // Given
       let currentTime = 1234567890;
       Date.now = jest.fn(() => currentTime);
@@ -149,7 +152,8 @@ describe('useTrackPageView', () => {
       unmount();
 
       // Then
-      expect(mixpanel.track).toHaveBeenCalledWith('Test Page Duration', {
+      expect(mixpanel.track).toHaveBeenCalledWith('Page Left', {
+        page_name: 'Test Page',
         url: 'https://example.com/test-page',
         duration: 5000,
         duration_seconds: 5,
@@ -157,7 +161,7 @@ describe('useTrackPageView', () => {
       });
     });
 
-    it('beforeunload 이벤트 발생 시 Duration을 트래킹한다', () => {
+    it('beforeunload 이벤트 발생 시 Page Left를 트래킹한다', () => {
       // Given
       let currentTime = 1234567890;
       Date.now = jest.fn(() => currentTime);
@@ -172,7 +176,8 @@ describe('useTrackPageView', () => {
       window.dispatchEvent(new Event('beforeunload'));
 
       // Then
-      expect(mixpanel.track).toHaveBeenCalledWith('Test Page Duration', {
+      expect(mixpanel.track).toHaveBeenCalledWith('Page Left', {
+        page_name: 'Test Page',
         url: 'https://example.com/test-page',
         duration: 10000,
         duration_seconds: 10,
@@ -180,7 +185,7 @@ describe('useTrackPageView', () => {
       });
     });
 
-    it('페이지가 숨겨질 때 (visibilitychange) Duration을 트래킹한다', () => {
+    it('페이지가 숨겨질 때 (visibilitychange) Page Left를 트래킹한다', () => {
       // Given
       let currentTime = 1234567890;
       Date.now = jest.fn(() => currentTime);
@@ -200,7 +205,8 @@ describe('useTrackPageView', () => {
       document.dispatchEvent(new Event('visibilitychange'));
 
       // Then
-      expect(mixpanel.track).toHaveBeenCalledWith('Test Page Duration', {
+      expect(mixpanel.track).toHaveBeenCalledWith('Page Left', {
+        page_name: 'Test Page',
         url: 'https://example.com/test-page',
         duration: 3000,
         duration_seconds: 3,
@@ -208,7 +214,7 @@ describe('useTrackPageView', () => {
       });
     });
 
-    it('페이지가 다시 보일 때는 Duration을 트래킹하지 않는다', () => {
+    it('페이지가 다시 보일 때는 Page Left를 트래킹하지 않는다', () => {
       // Given
       renderHook(() => useTrackPageView('Test Page'));
       jest.clearAllMocks();
@@ -221,14 +227,14 @@ describe('useTrackPageView', () => {
       });
       document.dispatchEvent(new Event('visibilitychange'));
 
-      // Then - Duration 이벤트가 트래킹되지 않음
+      // Then - Page Left 이벤트가 트래킹되지 않음
       expect(mixpanel.track).not.toHaveBeenCalledWith(
-        'Test Page Duration',
-        expect.any(Object),
+        'Page Left',
+        expect.objectContaining({ page_name: 'Test Page' }),
       );
     });
 
-    it('Duration은 한 번만 트래킹된다 (중복 방지)', () => {
+    it('Page Left는 한 번만 트래킹된다 (중복 방지)', () => {
       // Given
       let currentTime = 1234567890;
       Date.now = jest.fn(() => currentTime);
@@ -251,17 +257,17 @@ describe('useTrackPageView', () => {
       // 언마운트
       unmount();
 
-      // Then - Duration 이벤트가 한 번만 호출됨 (Visited 1번 + Duration 1번 = 총 2번)
+      // Then - Page Left 이벤트가 한 번만 호출됨 (Page Viewed 1번 + Page Left 1번 = 총 2번)
       expect(mixpanel.track).toHaveBeenCalledTimes(2);
       expect(mixpanel.track).toHaveBeenCalledWith(
-        'Test Page Duration',
-        expect.any(Object),
+        'Page Left',
+        expect.objectContaining({ page_name: 'Test Page' }),
       );
     });
   });
 
   describe('경로 변경 시 재트래킹 테스트', () => {
-    it('경로가 변경되면 새로운 Visited 이벤트를 트래킹한다', () => {
+    it('경로가 변경되면 새로운 Page Viewed 이벤트를 트래킹한다', () => {
       // Given
       const { rerender } = renderHook(() => useTrackPageView('Test Page'));
       jest.clearAllMocks();
@@ -277,12 +283,12 @@ describe('useTrackPageView', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith(
-        'Test Page Visited',
-        expect.any(Object),
+        'Page Viewed',
+        expect.objectContaining({ page_name: 'Test Page' }),
       );
     });
 
-    it('clubName이 변경되면 새로운 Visited 이벤트를 트래킹한다', () => {
+    it('clubName이 변경되면 새로운 Page Viewed 이벤트를 트래킹한다', () => {
       // Given
       const { rerender } = renderHook(
         ({ clubName }) => useTrackPageView('Club Detail', clubName),
@@ -295,14 +301,15 @@ describe('useTrackPageView', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith(
-        'Club Detail Visited',
+        'Page Viewed',
         expect.objectContaining({
+          page_name: 'Club Detail',
           clubName: '동아리B',
         }),
       );
     });
 
-    it('pageName이 변경되면 새로운 Visited 이벤트를 트래킹한다', () => {
+    it('pageName이 변경되면 새로운 Page Viewed 이벤트를 트래킹한다', () => {
       // Given
       const { rerender } = renderHook(
         ({ pageName }) => useTrackPageView(pageName),
@@ -315,8 +322,8 @@ describe('useTrackPageView', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith(
-        'Page B Visited',
-        expect.any(Object),
+        'Page Viewed',
+        expect.objectContaining({ page_name: 'Page B' }),
       );
     });
   });
@@ -364,8 +371,9 @@ describe('useTrackPageView', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith(
-        'Test Page Duration',
+        'Page Left',
         expect.objectContaining({
+          page_name: 'Test Page',
           duration: 7600,
           duration_seconds: 8, // 반올림
         }),
@@ -386,8 +394,9 @@ describe('useTrackPageView', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith(
-        'Test Page Duration',
+        'Page Left',
         expect.objectContaining({
+          page_name: 'Test Page',
           duration: 500,
           duration_seconds: 1, // 반올림
         }),
@@ -402,8 +411,8 @@ describe('useTrackPageView', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith(
-        'Test Page Visited',
-        expect.any(Object),
+        'Page Viewed',
+        expect.objectContaining({ page_name: 'Test Page' }),
       );
     });
 
@@ -420,8 +429,8 @@ describe('useTrackPageView', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith(
-        'Test Page Visited',
-        expect.any(Object),
+        'Page Viewed',
+        expect.objectContaining({ page_name: 'Test Page' }),
       );
     });
   });

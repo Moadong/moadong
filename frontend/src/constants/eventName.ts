@@ -280,42 +280,80 @@ export const ADMIN_EVENT = {
   RECRUIT_PERIOD_CHANGE_CONFIRMED: 'Recruit Period Changed',
 } as const;
 
+/** 모든 페이지(학생·관리자) 공통 페이지뷰 이벤트. 어떤 페이지인지는 page_name으로 구분한다 */
+export const PAGE_EVENT = {
+  /** 페이지 진입 */
+  PAGE_VIEWED: 'Page Viewed',
+  /** 페이지 이탈·탭 숨김 (duration_seconds로 체류시간) */
+  PAGE_LEFT: 'Page Left',
+} as const;
+
+/** 페이지뷰 이벤트의 page_name 값 */
 export const PAGE_VIEW = {
   // 사용자
-  APPLICATION_FORM_PAGE: 'ApplicationFormPage',
-  CLUB_DETAIL_PAGE: 'ClubDetailPage',
-  MAIN_PAGE: 'MainPage',
-  SUBSCRIPTIONS_PAGE: 'SubscriptionsPage',
-  MENU_PAGE: 'MenuPage',
-  INTRODUCE_PAGE: 'IntroducePage',
-  CLUB_UNION_PAGE: 'ClubUnionPage',
-  FESTIVAL_INTRODUCTION_PAGE: '동소한 페이지',
-  DAEDONG2026_BUSKING_PAGE: '2026 대동제 버스킹 시간표 페이지',
-  PROMOTION_LIST_PAGE: '홍보 목록 페이지',
-  PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
-  GAME_PAGE: 'GamePage',
+  /** 내부 지원서 작성 */
+  APPLICATION_FORM_PAGE: 'application_form',
+  /** 동아리 상세 */
+  CLUB_DETAIL_PAGE: 'club_detail',
+  /** 메인 (웹) */
+  MAIN_PAGE: 'main',
+  /** 구독 목록 */
+  SUBSCRIPTIONS_PAGE: 'subscriptions',
+  /** 메뉴 */
+  MENU_PAGE: 'menu',
+  /** 모아동 소개 */
+  INTRODUCE_PAGE: 'introduce',
+  /** 총동연 */
+  CLUB_UNION_PAGE: 'club_union',
+  /** 동소한 (동아리 소개 한마당) */
+  FESTIVAL_INTRODUCTION_PAGE: 'festival_introduction',
+  /** 2026 대동제 버스킹 시간표 */
+  DAEDONG2026_BUSKING_PAGE: 'busking_timetable',
+  /** 홍보 목록 */
+  PROMOTION_LIST_PAGE: 'promotion_list',
+  /** 홍보 상세 */
+  PROMOTION_DETAIL_PAGE: 'promotion_detail',
+  /** 게임 */
+  GAME_PAGE: 'game',
 
   // 모아동 우체통
-  FEEDBACK_LIST_PAGE: '우체통 목록 페이지',
-  FEEDBACK_TYPE_SELECT_PAGE: '우체통 유형 선택 페이지',
-  FEEDBACK_WRITE_PAGE: '우체통 편지 작성 페이지',
-  FEEDBACK_COMPLETE_PAGE: '우체통 전송 완료 페이지',
-  RECEIVED_LETTER_DETAIL_PAGE: '우체통 받은 편지 상세 페이지',
-  SENT_FEEDBACK_DETAIL_PAGE: '우체통 보낸 편지 상세 페이지',
+  /** 우체통 목록 */
+  FEEDBACK_LIST_PAGE: 'feedback_list',
+  /** 우체통 유형 선택 */
+  FEEDBACK_TYPE_SELECT_PAGE: 'feedback_type_select',
+  /** 우체통 편지 작성 */
+  FEEDBACK_WRITE_PAGE: 'feedback_write',
+  /** 우체통 전송 완료 */
+  FEEDBACK_COMPLETE_PAGE: 'feedback_complete',
+  /** 우체통 받은 편지 상세 */
+  RECEIVED_LETTER_DETAIL_PAGE: 'received_letter_detail',
+  /** 우체통 보낸 편지 상세 */
+  SENT_FEEDBACK_DETAIL_PAGE: 'sent_feedback_detail',
 
-  WEBVIEW_MAIN_PAGE: 'WebviewMainPage',
+  /** 메인 (앱 웹뷰) */
+  WEBVIEW_MAIN_PAGE: 'webview_main',
 
   // 관리자
-  LOGIN_PAGE: '로그인페이지',
-  CLUB_INTRO_EDIT_PAGE: '동아리 소개 수정 페이지',
-  CLUB_INFO_EDIT_PAGE: '동아리 기본 정보 수정 페이지',
-  RECRUITMENT_INFO_EDIT_PAGE: '동아리 모집 정보 수정 페이지',
-  PHOTO_EDIT_PAGE: '동아리 활동 사진 수정 페이지',
-  ADMIN_STATISTICS_PAGE: '동아리 통계 페이지',
-  ADMIN_ACCOUNT_EDIT_PAGE: '관리자 계정 수정 페이지',
-  ADMIN_CALENDAR_PAGE: '동아리 일정 관리 페이지',
-  ADMIN_PROMOTION_LIST_PAGE: '홍보 게시글 관리 페이지',
-  ADMIN_PROMOTION_EDIT_PAGE: '홍보 게시글 작성 페이지',
+  /** 관리자 로그인 */
+  LOGIN_PAGE: 'admin_login',
+  /** 동아리 소개 수정 */
+  CLUB_INTRO_EDIT_PAGE: 'admin_club_intro_edit',
+  /** 동아리 기본 정보 수정 */
+  CLUB_INFO_EDIT_PAGE: 'admin_club_info_edit',
+  /** 동아리 모집 정보 수정 */
+  RECRUITMENT_INFO_EDIT_PAGE: 'admin_recruitment_info_edit',
+  /** 동아리 활동 사진 수정 */
+  PHOTO_EDIT_PAGE: 'admin_photo_edit',
+  /** 동아리 통계 */
+  ADMIN_STATISTICS_PAGE: 'admin_statistics',
+  /** 관리자 계정 수정 */
+  ADMIN_ACCOUNT_EDIT_PAGE: 'admin_account_edit',
+  /** 동아리 일정 관리 */
+  ADMIN_CALENDAR_PAGE: 'admin_calendar',
+  /** 홍보 게시글 관리 */
+  ADMIN_PROMOTION_LIST_PAGE: 'admin_promotion_list',
+  /** 홍보 게시글 작성 */
+  ADMIN_PROMOTION_EDIT_PAGE: 'admin_promotion_edit',
 } as const;
 
 export const PAGE_NAME = {

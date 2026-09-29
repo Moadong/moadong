@@ -1,6 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
+import { PAGE_EVENT } from '@/constants/eventName';
 
 const trackSafely = (
   eventName: string,
@@ -38,7 +39,8 @@ const useTrackPageView = (
     isTracked.current = false;
     startTime.current = Date.now();
 
-    trackSafely(`${pageName} Visited`, {
+    trackSafely(PAGE_EVENT.PAGE_VIEWED, {
+      page_name: pageName,
       url: window.location.href,
       timestamp: startTime.current,
       referrer: document.referrer || 'direct',
@@ -51,7 +53,8 @@ const useTrackPageView = (
       isTracked.current = true;
 
       const duration = Date.now() - startTime.current;
-      trackSafely(`${pageName} Duration`, {
+      trackSafely(PAGE_EVENT.PAGE_LEFT, {
+        page_name: pageName,
         url: window.location.href,
         duration: duration,
         duration_seconds: Math.round(duration / 1000),
