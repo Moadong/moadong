@@ -1,7 +1,7 @@
 import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
-import { PAGE_EVENT } from '@/constants/eventName';
+import { PAGE_EVENT, PageViewName } from '@/constants/eventName';
 
 const trackSafely = (
   eventName: string,
@@ -15,7 +15,7 @@ const trackSafely = (
 };
 
 const useTrackPageView = (
-  pageName: string,
+  pageName: PageViewName,
   clubName?: string,
   skip: boolean = false,
   recruitmentStatus?: string,

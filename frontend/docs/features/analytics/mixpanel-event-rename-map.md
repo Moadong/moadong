@@ -156,6 +156,17 @@
 | `전화번호 입력 초기화 버튼클릭`  | 〃                                                      |
 | `모집 대상 입력 초기화 버튼클릭` | 〃                                                      |
 
+## 속성 값
+
+`Club Card Viewed`·`Club Card Clicked`·`Scroll Depth Reached`의 `page`, `Club Subscription Toggled`의 `source` 값을 `page_name`과 같은 snake_case로 맞췄다. 페이지뷰와 같은 값으로 이어서 볼 수 있다.
+
+| 옛 값          | 새 값          |
+| -------------- | -------------- |
+| `webview-main` | `webview_main` |
+| `club-detail`  | `club_detail`  |
+
+`main`, `introduce`, `subscriptions`는 그대로다.
+
 ## 속성 키
 
 값은 그대로이고 키 이름만 바뀌었다. `club_id`, `club_name`은 원래 두 형태가 섞여 있던 것을 하나로 합친 것이다.

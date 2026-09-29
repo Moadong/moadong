@@ -356,12 +356,15 @@ export const PAGE_VIEW = {
   ADMIN_PROMOTION_EDIT_PAGE: 'admin_promotion_edit',
 } as const;
 
+export type PageViewName = (typeof PAGE_VIEW)[keyof typeof PAGE_VIEW];
+
+/** 카드·스크롤·구독 이벤트의 page/source 값. page_name과 같은 값을 써서 페이지뷰와 이어 본다 */
 export const PAGE_NAME = {
-  MAIN: 'main',
-  WEBVIEW_MAIN: 'webview-main',
-  INTRODUCE: 'introduce',
-  SUBSCRIPTIONS: 'subscriptions',
-  CLUB_DETAIL: 'club-detail',
+  MAIN: PAGE_VIEW.MAIN_PAGE,
+  WEBVIEW_MAIN: PAGE_VIEW.WEBVIEW_MAIN_PAGE,
+  INTRODUCE: PAGE_VIEW.INTRODUCE_PAGE,
+  SUBSCRIPTIONS: PAGE_VIEW.SUBSCRIPTIONS_PAGE,
+  CLUB_DETAIL: PAGE_VIEW.CLUB_DETAIL_PAGE,
 } as const;
 
 export type PageName = (typeof PAGE_NAME)[keyof typeof PAGE_NAME];
