@@ -35,6 +35,8 @@ mcp-cli call claude_ai_mixpanel/<tool-name> '{...}'
 
 ### 주요 이벤트
 
+> ⚠️ **2026-09-29 이벤트명·속성 키 변경.** 배포 이후 데이터는 새 이름으로 쌓인다(예: `MainPage Visited` → `Page Viewed` + `page_name: 'main'`, `ClubCard Clicked` → `Club Card Clicked`, `clubName` → `club_name`). 아래 예시는 옛 이름 기준이므로, 기간이 배포일을 걸치면 `frontend/docs/features/analytics/mixpanel-event-rename-map.md`로 새 이름을 확인해 함께 조회한다.
+
 **공통 사용자 플로우** (모든 동아리):
 
 - `MainPage Visited` - 메인 페이지 방문
