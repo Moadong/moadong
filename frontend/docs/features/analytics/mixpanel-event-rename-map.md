@@ -6,6 +6,14 @@
 
 배포 시점 이전 데이터는 옛 이름, 이후 데이터는 새 이름으로 쌓인다. 코드는 새 이름만 보낸다(이중 전송 없음). 과거 데이터까지 이어서 보려면 아래 **배포 후 할 일**을 한다.
 
+## 백엔드 통계와의 관계
+
+백엔드(`backend/src/main/java/moadong/analytics`)는 Mixpanel Export API로 이벤트를 **이름으로** 가져와 관리자 통계·운영진 퍼널을 계산한다. 새 이름은 `MixpanelEventNormalizer`가 수집 시점에 옛 내부 이름으로 번역한다(예: `Page Viewed` + `page_name: club_detail` → `ClubDetailPage Visited`, `club_name` → `clubName`).
+
+- **배포 순서**: 백엔드(번역 포함)를 먼저 배포한 뒤 프론트를 배포한다.
+- **순서를 어기면**: 프론트 배포 ~ 백엔드 배포 사이의 통계·퍼널이 0으로 쌓인다. 백엔드 배포 후 `POST /api/admin/statistics/mixpanel/backfill`로 그 기간을 다시 수집하면 복구된다.
+- 백엔드가 쓰는 이벤트명을 새로 바꾸거나 추가하면 `MixpanelEventNormalizer`에도 반영한다.
+
 ## 배포 후 할 일 (Mixpanel에서 사람이 직접)
 
 1. **Lexicon Merge**: 아래 표에서 `이름 변경`인 이벤트는 옛 이름을 새 이름에 Merge한다. 과거 데이터가 새 이름으로 함께 조회된다.
