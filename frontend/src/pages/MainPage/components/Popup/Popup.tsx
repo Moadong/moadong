@@ -44,7 +44,7 @@ const Popup = ({ configs }: PopupProps) => {
   useEffect(() => {
     if (!imageLoaded || !activeConfig) return;
     setIsOpen(true);
-    trackEvent(USER_EVENT.MAIN_POPUP_VIEWED, { popupType: activeConfig.id });
+    trackEvent(USER_EVENT.MAIN_POPUP_VIEWED, { popup_type: activeConfig.id });
   }, [imageLoaded, activeConfig, trackEvent]);
 
   useEffect(() => {
@@ -61,7 +61,7 @@ const Popup = ({ configs }: PopupProps) => {
   ) => {
     if (!activeConfig) return;
     trackEvent(USER_EVENT.MAIN_POPUP_CLOSED, {
-      popupType: activeConfig.id,
+      popup_type: activeConfig.id,
       action,
     });
     sessionStorage.setItem(activeConfig.sessionKey, 'true');
@@ -71,7 +71,7 @@ const Popup = ({ configs }: PopupProps) => {
   const handleDontShowAgain = () => {
     if (!activeConfig) return;
     trackEvent(USER_EVENT.MAIN_POPUP_CLOSED, {
-      popupType: activeConfig.id,
+      popup_type: activeConfig.id,
       action: 'dont_show_again',
     });
     localStorage.setItem(activeConfig.storageKey, Date.now().toString());

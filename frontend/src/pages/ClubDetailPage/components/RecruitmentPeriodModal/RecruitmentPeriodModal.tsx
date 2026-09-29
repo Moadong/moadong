@@ -150,10 +150,10 @@ const RecruitmentPeriodModal = ({
       {
         onSuccess: () => {
           trackEvent(ADMIN_EVENT.RECRUIT_PERIOD_CHANGE_CONFIRMED, {
-            clubId: clubDetail.id,
-            actionType,
+            club_id: clubDetail.id,
+            action_type: actionType,
             days,
-            previousStatus: clubDetail.recruitmentStatus,
+            previous_status: clubDetail.recruitmentStatus,
           });
           handleClose();
           onSuccess();

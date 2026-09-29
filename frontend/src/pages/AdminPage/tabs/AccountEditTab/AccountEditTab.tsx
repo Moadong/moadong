@@ -53,8 +53,8 @@ const AccountEditTab = () => {
       await changePassword({ password: newPassword });
 
       trackEvent(ADMIN_EVENT.PASSWORD_CHANGE_BUTTON_CLICKED, {
-        newPasswordLength: newPassword.length,
-        confirmPasswordLength: confirmPassword.length,
+        new_password_length: newPassword.length,
+        confirm_password_length: confirmPassword.length,
       });
 
       setSuccessMessage('비밀번호가 성공적으로 변경되었습니다.');

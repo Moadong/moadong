@@ -158,7 +158,7 @@ const ClubInfoEditTab = () => {
                     onClear={() => {
                       trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
                         field: 'club_sns_link',
-                        snsPlatform: label,
+                        sns_platform: label,
                       });
                       setSocialLinks((prev) => ({ ...prev, [key]: '' }));
                       setSnsErrors((prev) => ({ ...prev, [key]: '' }));

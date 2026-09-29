@@ -35,7 +35,7 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
 
     trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
       field: 'club_tag',
-      tagIndex: index + 1,
+      tag_index: index + 1,
     });
 
     onChange(updatedTags);

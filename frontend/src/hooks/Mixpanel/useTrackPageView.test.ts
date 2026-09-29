@@ -88,7 +88,7 @@ describe('useTrackPageView', () => {
         url: 'https://example.com/test-page',
         timestamp: 1234567890,
         referrer: 'https://google.com',
-        clubName: undefined,
+        club_name: undefined,
       });
     });
 
@@ -102,7 +102,7 @@ describe('useTrackPageView', () => {
         url: 'https://example.com/test-page',
         timestamp: 1234567890,
         referrer: 'https://google.com',
-        clubName: '테스트 동아리',
+        club_name: '테스트 동아리',
       });
     });
 
@@ -157,7 +157,7 @@ describe('useTrackPageView', () => {
         url: 'https://example.com/test-page',
         duration: 5000,
         duration_seconds: 5,
-        clubName: undefined,
+        club_name: undefined,
       });
     });
 
@@ -181,7 +181,7 @@ describe('useTrackPageView', () => {
         url: 'https://example.com/test-page',
         duration: 10000,
         duration_seconds: 10,
-        clubName: undefined,
+        club_name: undefined,
       });
     });
 
@@ -210,7 +210,7 @@ describe('useTrackPageView', () => {
         url: 'https://example.com/test-page',
         duration: 3000,
         duration_seconds: 3,
-        clubName: undefined,
+        club_name: undefined,
       });
     });
 
@@ -304,7 +304,7 @@ describe('useTrackPageView', () => {
         'Page Viewed',
         expect.objectContaining({
           page_name: 'Club Detail',
-          clubName: '동아리B',
+          club_name: '동아리B',
         }),
       );
     });

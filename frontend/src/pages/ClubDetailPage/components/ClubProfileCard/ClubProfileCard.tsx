@@ -108,7 +108,7 @@ const ClubProfileCard = ({
                   e.preventDefault();
                   trackEvent(USER_EVENT.SNS_LINK_CLICKED, {
                     platform,
-                    clubName: name,
+                    club_name: name,
                   });
                   handleLink(url);
                 }}

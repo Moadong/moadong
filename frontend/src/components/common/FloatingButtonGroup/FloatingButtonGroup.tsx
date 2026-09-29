@@ -33,7 +33,7 @@ export const FloatingButtonGroup = () => {
       await handleShare({ title: clubDetail.name, text, url });
 
       trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
-        clubName: clubDetail.name,
+        club_name: clubDetail.name,
       });
       return;
     }

@@ -27,7 +27,7 @@ const SelectTags = ({ label, tags, selected, onChange }: SelectTagsProps) => {
             key={index}
             onClick={() => {
               trackEvent(ADMIN_EVENT.CLUB_TAG_SELECT_BUTTON_CLICKED, {
-                tagName: tag.value,
+                tag_name: tag.value,
                 category: label,
               });
               onChange(tag.value);

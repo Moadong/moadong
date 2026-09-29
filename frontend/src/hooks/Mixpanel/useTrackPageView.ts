@@ -44,8 +44,8 @@ const useTrackPageView = (
       url: window.location.href,
       timestamp: startTime.current,
       referrer: document.referrer || 'direct',
-      clubName: clubNameRef.current,
-      recruitmentStatus: recruitmentStatusRef.current,
+      club_name: clubNameRef.current,
+      recruitment_status: recruitmentStatusRef.current,
     });
 
     const trackPageDuration = () => {
@@ -58,8 +58,8 @@ const useTrackPageView = (
         url: window.location.href,
         duration: duration,
         duration_seconds: Math.round(duration / 1000),
-        clubName: clubNameRef.current,
-        recruitmentStatus: recruitmentStatusRef.current,
+        club_name: clubNameRef.current,
+        recruitment_status: recruitmentStatusRef.current,
       });
     };
 

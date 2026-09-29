@@ -155,7 +155,7 @@ const ClubInfoEditTabMobile = ({
           <NavField
             label='자유태그 (5자이내)'
             onNavigate={() => {
-              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: '자유태그' });
+              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tab_name: '자유태그' });
               setActivePage('freeTags');
             }}
           >
@@ -173,7 +173,7 @@ const ClubInfoEditTabMobile = ({
           <NavField
             label='링크 추가'
             onNavigate={() => {
-              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: '링크 추가' });
+              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tab_name: '링크 추가' });
               setActivePage('links');
             }}
           >

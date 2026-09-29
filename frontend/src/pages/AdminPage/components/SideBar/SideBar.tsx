@@ -22,7 +22,7 @@ const SideBar = () => {
 
   const handleTabClick = (item: TabItem) => {
     trackEvent(ADMIN_EVENT.TAB_CLICKED, {
-      tabName: item.label,
+      tab_name: item.label,
     });
     queryClient.invalidateQueries();
     navigate(item.path);

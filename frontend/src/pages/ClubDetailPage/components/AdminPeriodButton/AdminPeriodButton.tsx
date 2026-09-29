@@ -55,7 +55,7 @@ const AdminPeriodButton = ({ clubDetail }: AdminPeriodButtonProps) => {
           type='button'
           onClick={() => {
             trackEvent(ADMIN_EVENT.RECRUIT_PERIOD_CHANGE_BUTTON_CLICKED, {
-              clubId: clubDetail.id,
+              club_id: clubDetail.id,
             });
             setIsPeriodModalOpen(true);
           }}

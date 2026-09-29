@@ -103,9 +103,9 @@ const ApplicationEditTab = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
       trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVED, {
-        isEdit: false,
-        formMode: applicationFormMode,
-        draftSource,
+        is_edit: false,
+        form_mode: applicationFormMode,
+        draft_source: draftSource,
       });
       alert('지원서가 성공적으로 생성되었습니다.');
       navigate(`/admin/application-list`);
@@ -131,9 +131,9 @@ const ApplicationEditTab = () => {
         ),
       });
       trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVED, {
-        isEdit: true,
-        formMode: applicationFormMode,
-        draftSource,
+        is_edit: true,
+        form_mode: applicationFormMode,
+        draft_source: draftSource,
       });
       alert('지원서가 성공적으로 수정되었습니다.');
       navigate('/admin/application-list');
@@ -160,8 +160,8 @@ const ApplicationEditTab = () => {
       setNextId(draftQuestions.length + 2);
       setDraftSource(draft.aiGenerated ? 'ai' : 'template');
       trackEvent(ADMIN_EVENT.AI_DRAFT_GENERATED, {
-        aiGenerated: draft.aiGenerated,
-        questionCount: draftQuestions.length,
+        ai_generated: draft.aiGenerated,
+        question_count: draftQuestions.length,
         remaining: draft.remaining,
       });
       if (typeof draft.remaining === 'number') {
@@ -197,7 +197,7 @@ const ApplicationEditTab = () => {
           index > 0 && (q.title.trim() !== '' || q.description.trim() !== ''),
       );
     trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_CLICKED, {
-      hasUserInput,
+      has_user_input: hasUserInput,
       remaining,
     });
     if (
