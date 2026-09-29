@@ -1,6 +1,7 @@
 import '@testing-library/jest-dom';
 import { ReactNode } from 'react';
 import {
+  Link,
   MemoryRouter,
   Route,
   Routes,
@@ -41,6 +42,8 @@ const renderQuiz = (search = '') =>
         initialEntries={['/peace', `/peace/quiz${search}`]}
         initialIndex={1}
       >
+        {/* 헤더 로고처럼 퀴즈 밖에서 페이지를 떠나게 하는 링크 */}
+        <Link to='/peace'>홈으로</Link>
         <Routes>
           <Route path='/peace' element={<div>INTRO</div>} />
           <Route path='/peace/quiz' element={<PeaceQuizPage />} />
@@ -134,6 +137,17 @@ describe('PeaceQuizPage', () => {
     expect(
       screen.getByText('RESULT ?type=carer&sub=daily'),
     ).toBeInTheDocument();
+  });
+
+  it('분석 중에 페이지를 떠나면 결과로 끌려가지 않는다', () => {
+    renderQuiz();
+    answerAll();
+    expect(screen.getByText(/분석하고 있어요/)).toBeInTheDocument();
+    fireEvent.click(screen.getByRole('link', { name: '홈으로' }));
+    expect(screen.getByText('INTRO')).toBeInTheDocument();
+    finishAnalyzing();
+    expect(screen.getByText('INTRO')).toBeInTheDocument();
+    expect(screen.queryByText(/^RESULT/)).not.toBeInTheDocument();
   });
 
   it('부스 모드 파라미터를 결과로 이어 넘긴다', () => {

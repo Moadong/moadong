@@ -3,6 +3,7 @@ import { MemoryRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import { theme } from '@/styles/theme';
+import { PEACE_GREEN } from '../../constants/peaceColors';
 import PeaceLayout from './PeaceLayout';
 
 jest.mock('mixpanel-browser', () => ({ track: jest.fn() }));
@@ -45,7 +46,7 @@ describe('PeaceLayout', () => {
 
   it('tint를 주면 본문 칼럼에만 그라데이션을, 바깥에는 단색을 깐다', () => {
     setWidth(1280);
-    renderLayout('#E6F4EC');
+    renderLayout(PEACE_GREEN.soft);
     const main = screen.getByRole('main');
     const css = document.head.textContent ?? '';
     const mainRule = [...main.classList]
@@ -55,7 +56,7 @@ describe('PeaceLayout', () => {
     const wrapper = main.parentElement as HTMLElement;
     const wrapperRule = [...wrapper.classList]
       .map((cls) => css.match(new RegExp(`\\.${cls}\\{[^}]*\\}`))?.[0])
-      .find((r) => r?.includes('#E6F4EC'));
+      .find((r) => r?.includes(PEACE_GREEN.soft));
     expect(wrapperRule).toBeDefined();
   });
 

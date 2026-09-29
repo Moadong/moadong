@@ -5,4 +5,6 @@
 export const PEACE_GREEN = {
   main: '#2F9E6B',
   soft: '#E6F4EC',
+  /** main의 25% 투명 그림자 */
+  shadow: 'rgba(47, 158, 107, 0.25)',
 } as const;

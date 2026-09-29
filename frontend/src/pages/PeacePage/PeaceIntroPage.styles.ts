@@ -16,7 +16,7 @@ export const Dove = styled.img`
   width: 96px;
   height: 96px;
   margin-bottom: 8px;
-  filter: drop-shadow(0 12px 24px rgba(47, 158, 107, 0.25));
+  filter: drop-shadow(0 12px 24px ${PEACE_GREEN.shadow});
 `;
 
 export const Eyebrow = styled.p`

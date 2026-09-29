@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import analyzingIcon from '@/assets/images/peace/symbols/analyzing.svg';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
@@ -26,6 +26,17 @@ const PeaceQuizPage = () => {
   const [answers, setAnswers] = useState<number[]>([]);
   // 답 직후 잠깐 잠근다. 시각 비교 대신 타이머로 풀어 렌더 순수성 규칙을 피한다
   const isLockedRef = useRef(false);
+  const lockTimerRef = useRef(0);
+  const analyzingTimerRef = useRef(0);
+
+  // 분석 중 뒤로가기·로고·유휴 리셋으로 떠나면 예약된 결과 이동을 취소한다
+  useEffect(
+    () => () => {
+      window.clearTimeout(lockTimerRef.current);
+      window.clearTimeout(analyzingTimerRef.current);
+    },
+    [],
+  );
 
   // 부스에서 중간에 떠난 방문객의 답이 다음 사람에게 넘어가지 않게 한다
   useIdleReset(isKiosk, KIOSK_IDLE_MS, () =>
@@ -41,7 +52,7 @@ const PeaceQuizPage = () => {
   const handleSelect = (optionIndex: number) => {
     if (isLockedRef.current) return;
     isLockedRef.current = true;
-    window.setTimeout(() => {
+    lockTimerRef.current = window.setTimeout(() => {
       isLockedRef.current = false;
     }, TAP_GUARD_MS);
     const next = [...answers, optionIndex];
@@ -50,7 +61,7 @@ const PeaceQuizPage = () => {
       const [type, sub] = rankPeaceTypes(next);
       trackEvent(USER_EVENT.PEACE_QUIZ_COMPLETED, { type, sub, src });
       // "분석 중"을 잠깐 보여준 뒤 결과로 간다. 유형은 이미 정해져 있다
-      window.setTimeout(() => {
+      analyzingTimerRef.current = window.setTimeout(() => {
         navigate(withParams(`/peace/result?type=${type}&sub=${sub}`), {
           replace: true,
         });
