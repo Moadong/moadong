@@ -153,6 +153,39 @@ class MixpanelBackfillServiceTest {
     }
 
     @Test
+    void 새_컨벤션의_동아리_상세_Page_Viewed도_옛_이벤트와_같이_통계와_퍼널에_반영한다() {
+        MixpanelBackfillService service = service(true);
+        LocalDate date = LocalDate.of(2026, 7, 8);
+        long epochSeconds = date.atStartOfDay(ZoneId.of("Asia/Seoul")).toEpochSecond();
+        MixpanelRawEvent event = new MixpanelRawEvent(
+                "Page Viewed",
+                Map.of(
+                        "$insert_id", "detail-new-1",
+                        "distinct_id", "user-1",
+                        "time", epochSeconds,
+                        "page_name", "club_detail",
+                        "club_name", "밴드부"
+                )
+        );
+        Club club = mock(Club.class);
+        when(club.getId()).thenReturn("club-1");
+        when(club.getName()).thenReturn("밴드부");
+
+        when(clubRepository.findAll()).thenReturn(List.of(club));
+        when(mixpanelExportClient.fetchEvents(date)).thenReturn(List.of(event));
+        when(mixpanelBackfilledEventRepository.insert(any(MixpanelBackfilledEvent.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.backfill(date, date);
+
+        verify(clubAnalyticsRecordService)
+                .incrementClubDailyWithoutExistenceCheck("club-1", "밴드부", date, 1, 0, 0);
+        ArgumentCaptor<MixpanelFunnelEvent> captor = ArgumentCaptor.forClass(MixpanelFunnelEvent.class);
+        verify(mixpanelFunnelEventRepository).save(captor.capture());
+        assertEquals("ClubDetailPage Visited", captor.getValue().getEventName());
+    }
+
+    @Test
     void 같은_insert_id를_다시_처리하면_퍼널_이벤트를_저장하지_않는다() {
         MixpanelBackfillService service = service(true);
         LocalDate date = LocalDate.of(2026, 7, 8);

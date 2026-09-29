@@ -14,6 +14,7 @@ import moadong.analytics.repository.MixpanelFunnelEventRepository;
 import moadong.analytics.support.AnalyticsDateRangeValidator;
 import moadong.analytics.support.AnalyticsTime;
 import moadong.analytics.support.FunnelDefinitions;
+import moadong.analytics.support.MixpanelEventNormalizer;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
@@ -61,7 +62,8 @@ public class MixpanelBackfillService {
             List<MixpanelRawEvent> events = mixpanelExportClient.fetchEvents(date);
             fetched += events.size();
 
-            for (MixpanelRawEvent event : events) {
+            for (MixpanelRawEvent rawEvent : events) {
+                MixpanelRawEvent event = MixpanelEventNormalizer.normalize(rawEvent);
                 if (event == null || event.event() == null) {
                     skipped++;
                     continue;
