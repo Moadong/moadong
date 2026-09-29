@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { FIXED_BOTTOM_BUTTON_AREA_HEIGHT } from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea.styles';
+import { media } from '@/styles/mediaQuery';
 import { setTypography } from '@/styles/theme/typography';
 import { PEACE_GREEN } from './constants/peaceColors';
 
@@ -10,6 +12,11 @@ export const Hero = styled.section`
   justify-content: center;
   text-align: center;
   gap: 16px;
+
+  ${media.tablet} {
+    /* 아래 고정 버튼에 가리지 않게 */
+    padding-bottom: ${FIXED_BOTTOM_BUTTON_AREA_HEIGHT}px;
+  }
 `;
 
 export const Dove = styled.img`
@@ -49,5 +56,23 @@ export const StartButton = styled.button`
 
   &:active {
     transform: scale(0.98);
+  }
+
+  /* 모바일·태블릿은 동아리 상세의 '지원하기'(FixedBottomButtonArea)와 같은 자리에 고정 */
+  ${media.tablet} {
+    position: fixed;
+    bottom: calc(20px + env(safe-area-inset-bottom));
+    left: 50%;
+    transform: translateX(-50%);
+    width: calc(100% - 40px);
+    max-width: 460px;
+    min-height: 50px;
+    margin: 0;
+    border-radius: 14px;
+    ${({ theme }) => setTypography(theme.typography.paragraph.p2)};
+
+    &:active {
+      transform: translateX(-50%) scale(0.98);
+    }
   }
 `;
