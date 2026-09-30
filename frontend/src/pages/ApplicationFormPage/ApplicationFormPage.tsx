@@ -39,10 +39,10 @@ const ApplicationFormPage = () => {
     error: applicationError,
   } = useGetApplication(clubId, applicationFormId);
 
-  useTrackPageView(
-    PAGE_VIEW.APPLICATION_FORM_PAGE,
-    clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
-  );
+  useTrackPageView(PAGE_VIEW.APPLICATION_FORM_PAGE, {
+    clubId: clubDetail?.id ?? clubId,
+    clubName: clubDetail?.name,
+  });
 
   const STORAGE_KEY =
     clubId && applicationFormId

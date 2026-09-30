@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
 import getDeviceLocale from '@/utils/getDeviceLocale';
 import getIOSVersion from '@/utils/getIOSVersion';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const LOCALHOST_HOSTNAME = 'localhost';
 
@@ -22,6 +23,9 @@ export function initializeMixpanel() {
   if (iosVersion) {
     mixpanel.register({ $os_version: iosVersion });
   }
+
+  // 같은 화면이 웹과 앱 웹뷰에서 열리므로 이벤트·페이지를 나누지 않고 이 속성으로 구분한다
+  mixpanel.register({ is_webview: isInAppWebView() });
 
   // 외국인 유학생 등 비한국어 사용자 식별용 — 이후 모든 이벤트에 자동 포함
   const deviceLocale = getDeviceLocale();

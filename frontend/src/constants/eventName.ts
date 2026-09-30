@@ -295,7 +295,7 @@ export const PAGE_VIEW = {
   APPLICATION_FORM_PAGE: 'application_form',
   /** 동아리 상세 */
   CLUB_DETAIL_PAGE: 'club_detail',
-  /** 메인 (웹) */
+  /** 메인. 웹·앱 웹뷰 공통이며 is_webview 슈퍼 속성으로 구분한다 */
   MAIN_PAGE: 'main',
   /** 구독 목록 */
   SUBSCRIPTIONS_PAGE: 'subscriptions',
@@ -330,9 +330,6 @@ export const PAGE_VIEW = {
   /** 우체통 보낸 편지 상세 */
   SENT_FEEDBACK_DETAIL_PAGE: 'sent_feedback_detail',
 
-  /** 메인 (앱 웹뷰) */
-  WEBVIEW_MAIN_PAGE: 'webview_main',
-
   // 관리자
   /** 관리자 로그인 */
   LOGIN_PAGE: 'admin_login',
@@ -361,7 +358,6 @@ export type PageViewName = (typeof PAGE_VIEW)[keyof typeof PAGE_VIEW];
 /** 카드·스크롤·구독 이벤트의 page/source 값. page_name과 같은 값을 써서 페이지뷰와 이어 본다 */
 export const PAGE_NAME = {
   MAIN: PAGE_VIEW.MAIN_PAGE,
-  WEBVIEW_MAIN: PAGE_VIEW.WEBVIEW_MAIN_PAGE,
   INTRODUCE: PAGE_VIEW.INTRODUCE_PAGE,
   SUBSCRIPTIONS: PAGE_VIEW.SUBSCRIPTIONS_PAGE,
   CLUB_DETAIL: PAGE_VIEW.CLUB_DETAIL_PAGE,

@@ -86,6 +86,7 @@ describe('useTrackPageView', () => {
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Page Viewed', {
         page_name: 'main',
+        user_area: 'student',
         url: 'https://example.com/test-page',
         timestamp: 1234567890,
         referrer: 'https://google.com',
@@ -95,16 +96,50 @@ describe('useTrackPageView', () => {
 
     it('clubName과 함께 페이지 방문을 트래킹한다', () => {
       // When
-      renderHook(() => useTrackPageView('club_detail', '테스트 동아리'));
+      renderHook(() =>
+        useTrackPageView('club_detail', { clubName: '테스트 동아리' }),
+      );
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Page Viewed', {
         page_name: 'club_detail',
+        user_area: 'student',
         url: 'https://example.com/test-page',
         timestamp: 1234567890,
         referrer: 'https://google.com',
         club_name: '테스트 동아리',
       });
+    });
+
+    it('동아리 페이지는 club_id와 club_name을 함께 보낸다', () => {
+      // When
+      renderHook(() =>
+        useTrackPageView('club_detail', {
+          clubId: 'club-1',
+          clubName: '테스트 동아리',
+        }),
+      );
+
+      // Then
+      expect(mixpanel.track).toHaveBeenCalledWith(
+        'Page Viewed',
+        expect.objectContaining({
+          page_name: 'club_detail',
+          club_id: 'club-1',
+          club_name: '테스트 동아리',
+        }),
+      );
+    });
+
+    it('관리자 페이지는 user_area를 admin으로 보낸다', () => {
+      // When
+      renderHook(() => useTrackPageView('admin_calendar'));
+
+      // Then
+      expect(mixpanel.track).toHaveBeenCalledWith(
+        'Page Viewed',
+        expect.objectContaining({ user_area: 'admin' }),
+      );
     });
 
     it('referrer가 없을 때 direct로 표시한다', () => {
@@ -130,7 +165,7 @@ describe('useTrackPageView', () => {
 
     it('skip이 true일 때 트래킹하지 않는다', () => {
       // When
-      renderHook(() => useTrackPageView('main', undefined, true));
+      renderHook(() => useTrackPageView('main', { skip: true }));
 
       // Then
       expect(mixpanel.track).not.toHaveBeenCalled();
@@ -155,6 +190,7 @@ describe('useTrackPageView', () => {
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Page Left', {
         page_name: 'main',
+        user_area: 'student',
         url: 'https://example.com/test-page',
         duration: 5000,
         duration_seconds: 5,
@@ -179,6 +215,7 @@ describe('useTrackPageView', () => {
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Page Left', {
         page_name: 'main',
+        user_area: 'student',
         url: 'https://example.com/test-page',
         duration: 10000,
         duration_seconds: 10,
@@ -208,6 +245,7 @@ describe('useTrackPageView', () => {
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Page Left', {
         page_name: 'main',
+        user_area: 'student',
         url: 'https://example.com/test-page',
         duration: 3000,
         duration_seconds: 3,
@@ -292,7 +330,7 @@ describe('useTrackPageView', () => {
     it('clubName이 변경되면 새로운 Page Viewed 이벤트를 트래킹한다', () => {
       // Given
       const { rerender } = renderHook(
-        ({ clubName }) => useTrackPageView('club_detail', clubName),
+        ({ clubName }) => useTrackPageView('club_detail', { clubName }),
         { initialProps: { clubName: '동아리A' } },
       );
       jest.clearAllMocks();
@@ -408,7 +446,7 @@ describe('useTrackPageView', () => {
   describe('skip 파라미터 테스트', () => {
     it('skip이 false일 때 정상적으로 트래킹한다', () => {
       // When
-      renderHook(() => useTrackPageView('main', undefined, false));
+      renderHook(() => useTrackPageView('main', { skip: false }));
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith(
@@ -420,7 +458,7 @@ describe('useTrackPageView', () => {
     it('skip이 true에서 false로 변경되면 트래킹을 시작한다', () => {
       // Given
       const { rerender } = renderHook(
-        ({ skip }) => useTrackPageView('main', undefined, skip),
+        ({ skip }) => useTrackPageView('main', { skip }),
         { initialProps: { skip: true } },
       );
       jest.clearAllMocks();

@@ -2,6 +2,7 @@ import { useEffect, useRef } from 'react';
 import { useLocation } from 'react-router-dom';
 import mixpanel from 'mixpanel-browser';
 import { PAGE_EVENT, PageViewName } from '@/constants/eventName';
+import { getPageUserArea } from './getUserArea';
 
 const trackSafely = (
   eventName: string,
@@ -14,15 +15,28 @@ const trackSafely = (
   }
 };
 
+interface TrackPageViewOptions {
+  /** 동아리 페이지면 넣는다. 이름은 바뀌거나 겹칠 수 있어 id가 기준이다 */
+  clubId?: string;
+  clubName?: string;
+  recruitmentStatus?: string;
+  /** 데이터가 준비되기 전 등 아직 기록하지 않을 때 true */
+  skip?: boolean;
+}
+
 const useTrackPageView = (
   pageName: PageViewName,
-  clubName?: string,
-  skip: boolean = false,
-  recruitmentStatus?: string,
+  {
+    clubId,
+    clubName,
+    recruitmentStatus,
+    skip = false,
+  }: TrackPageViewOptions = {},
 ) => {
   const location = useLocation();
   const isTracked = useRef(false);
   const startTime = useRef(0);
+  const clubIdRef = useRef(clubId);
   const clubNameRef = useRef(clubName);
   const recruitmentStatusRef = useRef(recruitmentStatus);
 
@@ -32,6 +46,7 @@ const useTrackPageView = (
   }, [recruitmentStatus]);
 
   useEffect(() => {
+    clubIdRef.current = clubId;
     clubNameRef.current = clubName;
 
     if (skip) return;
@@ -41,9 +56,11 @@ const useTrackPageView = (
 
     trackSafely(PAGE_EVENT.PAGE_VIEWED, {
       page_name: pageName,
+      user_area: getPageUserArea(pageName),
       url: window.location.href,
       timestamp: startTime.current,
       referrer: document.referrer || 'direct',
+      club_id: clubIdRef.current,
       club_name: clubNameRef.current,
       recruitment_status: recruitmentStatusRef.current,
     });
@@ -55,9 +72,11 @@ const useTrackPageView = (
       const duration = Date.now() - startTime.current;
       trackSafely(PAGE_EVENT.PAGE_LEFT, {
         page_name: pageName,
+        user_area: getPageUserArea(pageName),
         url: window.location.href,
         duration: duration,
         duration_seconds: Math.round(duration / 1000),
+        club_id: clubIdRef.current,
         club_name: clubNameRef.current,
         recruitment_status: recruitmentStatusRef.current,
       });
@@ -77,7 +96,7 @@ const useTrackPageView = (
       window.removeEventListener('beforeunload', trackPageDuration);
       document.removeEventListener('visibilitychange', handleVisibilityChange);
     };
-  }, [location.pathname, clubName, skip, pageName]);
+  }, [location.pathname, clubId, clubName, skip, pageName]);
 };
 
 export default useTrackPageView;

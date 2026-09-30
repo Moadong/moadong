@@ -51,7 +51,7 @@ const MainContent = () => {
         key={club.id}
         club={club}
         index={i}
-        page={inWebview ? PAGE_NAME.WEBVIEW_MAIN : PAGE_NAME.MAIN}
+        page={PAGE_NAME.MAIN}
         onCardClick={
           inWebview
             ? (c) =>
@@ -68,7 +68,7 @@ const MainContent = () => {
               toggleSubscribe(
                 club.id,
                 subscribedClubIds.has(club.id),
-                PAGE_NAME.WEBVIEW_MAIN,
+                PAGE_NAME.MAIN,
               )
             }
           />
