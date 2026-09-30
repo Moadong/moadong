@@ -82,22 +82,14 @@ class MixpanelEventNormalizerTest {
     }
 
     @Test
-    void 웹뷰의_메인_스크롤_깊이는_옛_page_값_webview_main으로_맞춘다() {
+    void 스크롤_깊이의_page는_웹뷰여도_그대로_둔다() {
+        // 스크롤 깊이는 컨벤션 변경 전에도 웹뷰에서 page=main으로 보냈다. 바꾸면 대시보드 main 줄이 갈라진다.
         MixpanelRawEvent normalized = MixpanelEventNormalizer.normalize(new MixpanelRawEvent(
                 "Scroll Depth Reached",
                 Map.of("page", "main", "is_webview", true, "depth_percent", 50)
         ));
 
-        assertEquals("webview-main", normalized.properties().get("page"));
-    }
-
-    @Test
-    void 웹의_메인_스크롤_깊이는_page_값을_그대로_둔다() {
-        MixpanelRawEvent normalized = MixpanelEventNormalizer.normalize(new MixpanelRawEvent(
-                "Scroll Depth Reached",
-                Map.of("page", "main", "is_webview", false, "depth_percent", 50)
-        ));
-
+        assertEquals("Scroll Depth Reached", normalized.event());
         assertEquals("main", normalized.properties().get("page"));
     }
 

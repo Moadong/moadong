@@ -220,6 +220,31 @@ class MixpanelBackfillServiceTest {
     }
 
     @Test
+    void 통계와_무관한_페이지의_Page_Viewed는_dedup_키를_쓰지_않고_버린다() {
+        MixpanelBackfillService service = service(true);
+        LocalDate date = LocalDate.of(2026, 7, 8);
+        long epochSeconds = date.atStartOfDay(ZoneId.of("Asia/Seoul")).toEpochSecond();
+        MixpanelRawEvent event = new MixpanelRawEvent(
+                "Page Viewed",
+                Map.of(
+                        "$insert_id", "menu-1",
+                        "distinct_id", "user-1",
+                        "time", epochSeconds,
+                        "page_name", "menu"
+                )
+        );
+
+        when(clubRepository.findAll()).thenReturn(List.of());
+        when(mixpanelExportClient.fetchEvents(date)).thenReturn(List.of(event));
+
+        MixpanelBackfillResponse response = service.backfill(date, date);
+
+        verify(mixpanelBackfilledEventRepository, never()).insert(any(MixpanelBackfilledEvent.class));
+        verifyNoInteractions(mixpanelFunnelEventRepository, clubAnalyticsRecordService);
+        assertEquals(0, response.processedEvents());
+    }
+
+    @Test
     void 같은_insert_id를_다시_처리하면_퍼널_이벤트를_저장하지_않는다() {
         MixpanelBackfillService service = service(true);
         LocalDate date = LocalDate.of(2026, 7, 8);

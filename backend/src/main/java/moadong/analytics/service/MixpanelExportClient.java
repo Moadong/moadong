@@ -30,7 +30,8 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class MixpanelExportClient {
 
-    private static final List<String> CLUB_STATISTICS_EVENTS = List.of(
+    /** 동아리 통계(상세 조회·체류시간·검색어)에 쓰는 이벤트. MixpanelBackfillService의 처리 분기와 맞춘다 */
+    static final List<String> CLUB_STATISTICS_EVENTS = List.of(
             "ClubDetailPage Visited",
             "ClubDetailPage Duration",
             "Search Executed"

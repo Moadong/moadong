@@ -56,11 +56,6 @@ public final class MixpanelEventNormalizer {
             "input_value", "inputValue"
     );
 
-    /** page 속성(스크롤 깊이 등)의 새 값 → 내부 값. 같은 페이지가 대시보드에서 둘로 갈라지지 않게 한다 */
-    private static final Map<String, String> RENAMED_PAGE_VALUES = Map.of(
-            "club_detail", "club-detail"
-    );
-    private static final String WEBVIEW_MAIN_PAGE_VALUE = "webview-main";
 
     /** Export API에 추가로 요청해야 하는 새 이벤트명 */
     public static final List<String> NEW_EVENT_NAMES = Stream.concat(
@@ -86,13 +81,6 @@ public final class MixpanelEventNormalizer {
                 properties.put(internalKey, properties.get(newKey));
             }
         });
-        if (properties.get("page") instanceof String page) {
-            if (webview && MAIN_PAGE_NAME.equals(page)) {
-                properties.put("page", WEBVIEW_MAIN_PAGE_VALUE);
-            } else if (RENAMED_PAGE_VALUES.containsKey(page)) {
-                properties.put("page", RENAMED_PAGE_VALUES.get(page));
-            }
-        }
         return new MixpanelRawEvent(eventName, properties);
     }
 

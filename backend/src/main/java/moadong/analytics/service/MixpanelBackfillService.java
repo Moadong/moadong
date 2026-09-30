@@ -68,6 +68,11 @@ public class MixpanelBackfillService {
                     skipped++;
                     continue;
                 }
+                // Page Viewed/Page Left는 모든 페이지가 함께 오므로, 통계·퍼널과 무관한 페이지는
+                // dedup 키를 쓰기 전에 버린다. skipped에 넣지 않아 동아리 매핑 실패 같은 진짜 skip과 섞이지 않는다.
+                if (!isCollectedEvent(event.event())) {
+                    continue;
+                }
                 LocalDate eventDate = eventDate(event);
                 if (eventDate == null || !eventDate.equals(date)) {
                     skipped++;
@@ -96,6 +101,11 @@ public class MixpanelBackfillService {
         }
 
         return new MixpanelBackfillResponse(from, to, fetched, processed, duplicated, skipped);
+    }
+
+    private boolean isCollectedEvent(String eventName) {
+        return FunnelDefinitions.isFunnelEvent(eventName)
+                || MixpanelExportClient.CLUB_STATISTICS_EVENTS.contains(eventName);
     }
 
     private boolean processEvent(MixpanelRawEvent event, String backfillKey, LocalDate eventDate,
