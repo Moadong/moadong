@@ -75,7 +75,7 @@ export const Logo = styled.img`
 /** $disc: 심볼과 카드 색이 같아 묻히는 유형(활력가)에만 흰 원을 깐다 */
 export const Symbol = styled.img<{ $disc: boolean }>`
   position: absolute;
-  top: 14%;
+  top: 22%;
   left: 50%;
   width: 40%;
   transform: translateX(-50%);
