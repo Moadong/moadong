@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { setTypography } from '@/styles/theme/typography';
 
 export const Perspective = styled.div`
@@ -81,16 +81,22 @@ export const Symbol = styled.img<{ $disc: boolean }>`
   transform: translateX(-50%);
   filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.25));
 
-  ${({ $disc }) =>
+  ${({ $disc, theme }) =>
     $disc &&
-    `
-    width: 46%;
-    padding: 9%;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.85);
-    filter: none;
-    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
-  `}
+    css`
+      width: 46%;
+      padding: 9%;
+      border-radius: 50%;
+      /* color-mix 미지원이면 불투명 흰색으로 남는다 */
+      background: ${theme.colors.base.white};
+      background: color-mix(
+        in srgb,
+        ${theme.colors.base.white} 85%,
+        transparent
+      );
+      filter: none;
+      box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+    `}
 `;
 
 export const Image = styled.img`
