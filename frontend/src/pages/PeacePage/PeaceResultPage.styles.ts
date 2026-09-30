@@ -49,6 +49,7 @@ export const RetryButton = styled(Button)`
 /** 카드 아래 유형별 비율. 답 8개 중 각 유형에 간 개수 / 8 */
 export const ShareList = styled.ul`
   width: 100%;
+  margin-top: 12px;
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -112,7 +113,7 @@ export const QrCaption = styled.p`
 export const ShareButton = styled(Button)`
   width: 100%;
   height: 56px;
-  margin-top: 16px;
+  margin-top: 12px;
   border: 1.5px solid ${({ theme }) => theme.colors.gray[300]};
   border-radius: 16px;
   background-color: ${({ theme }) => theme.colors.base.white};
@@ -127,7 +128,7 @@ export const ShareButton = styled(Button)`
 /** 공유하기 보조 스타일에서 높이·글자만 줄인다 */
 export const StudentToggle = styled(ShareButton)`
   height: 56px;
-  margin-top: 16px;
+  margin-top: 12px;
   ${({ theme }) => setTypography(theme.typography.title.title6)};
 `;
 

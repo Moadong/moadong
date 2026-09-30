@@ -23,8 +23,8 @@ export const Card = styled(motion.div)<{ $bg: string }>`
   /* color-mix 미지원(iOS < 16.2, Chrome < 111)이면 아래 선언이 무효라 단색으로 남는다 */
   background: ${({ $bg }) => $bg};
   background: ${({ $bg, theme }) =>
-    `linear-gradient(160deg, color-mix(in srgb, ${$bg} 55%, ${theme.colors.base.white}) 0%, ${$bg} 55%, color-mix(in srgb, ${$bg} 85%, ${theme.colors.base.black}) 100%)`};
-  box-shadow: 0 24px 48px rgba(0, 0, 0, 0.16);
+    `linear-gradient(160deg, color-mix(in srgb, ${$bg} 55%, ${theme.colors.base.white}) 0%, ${$bg} 55%, color-mix(in srgb, ${$bg} 92%, ${theme.colors.base.black}) 100%)`};
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.14);
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -72,11 +72,14 @@ export const Logo = styled.img`
 
 export const Symbol = styled.img`
   position: absolute;
-  top: 16%;
+  top: 14%;
   left: 50%;
-  width: 40%;
+  width: 46%;
+  padding: 9%;
   transform: translateX(-50%);
-  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.25));
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.85);
+  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
 `;
 
 export const Image = styled.img`
@@ -91,9 +94,10 @@ export const Image = styled.img`
 export const Scrim = styled.div`
   position: absolute;
   inset: 0;
+  /* 글자가 있는 아래 1/3에만 어둡게. 위쪽까지 깔면 주황·노랑 카드가 갈색으로 탁해진다 */
   background-image: linear-gradient(
     to bottom,
-    rgba(0, 0, 0, 0) 45%,
+    rgba(0, 0, 0, 0) 60%,
     rgba(0, 0, 0, 0.55) 100%
   );
   pointer-events: none;
