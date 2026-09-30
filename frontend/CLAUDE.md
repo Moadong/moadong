@@ -173,6 +173,7 @@ Key routing rules:
 - QA/testing site behavior → invoke /qa or /qa-only
 - Code review/diff check → invoke /review
 - Visual polish → invoke /design-review
+- Commit or PR that changes `frontend/src` → invoke frontend-fundamentals first, even when asked in plain words ("커밋해줘", "PR 올려줘") or before /ship. The /commit command already runs it
 - Ship/deploy/PR → invoke /ship or /land-and-deploy
 - Save progress → invoke /context-save
 - Resume context → invoke /context-restore
