@@ -61,13 +61,28 @@
 - 마크다운은 `renderLetterMarkdown()`만 쓴다(marked + DOMPurify, raw HTML은 글자 그대로). `innerHTML`에 사용자/운영자 입력을 직접 넣지 않는다.
 - 작성/미리보기 전환은 `.segmented` + `bindSegmentedTabs()`.
 
+### 목록
+- 목록이 길면 상단에 `.list-search` 검색, 상태가 있으면 `.segmented-compact` 필터(개수 표시)를 둔다.
+- 빈 목록은 `.table-empty`로 상황에 맞는 한 줄(검색 결과 없음 / 처리할 것 없음)을 보여준다.
+- 시각은 목록에선 `formatRelativeTime`, `title`에 `formatDateTime`.
+
+### 문구
+- 해요체 한 줄. 화면을 보면 알 수 있는 설명은 쓰지 않는다.
+- 개발 용어(모드, 동기화, 로직, API 이름)를 운영진이 보는 문구에 쓰지 않는다.
+- "왼쪽/위 목록"처럼 레이아웃에 기대는 표현은 모바일에서 틀리므로 "목록에서"로 쓴다.
+
+### 모바일
+- 900px 이하에서는 사이드바가 서랍(`body.nav-open`)으로 접힌다. 상단 바에 현재 화면 이름이 보인다.
+- 목록과 편집 영역이 세로로 쌓이면 선택 시 `revealOnNarrowScreen()`으로 편집 영역까지 내려준다.
+
 ## 6) 상호작용/구현 컨벤션
 ### 상태/인증
 - 토큰/유저 저장 키는 기존 키 유지: `devPortalToken`, `devPortalUserId` (sessionStorage)
 - 로그인 직후 첫 화면은 `DEFAULT_SECTION_ID`(받은 피드백).
 
 ### 되돌릴 수 없는 동작
-- 전체 사용자에게 나가거나 전체 데이터를 바꾸는 동작은 실행 전에 `confirm`으로 대상·내용을 보여준다.
+- 브라우저 기본 `confirm` 대신 `await confirmDialog({ title, message, details, confirmLabel, danger })`를 쓴다.
+- 전체 사용자에게 나가거나 전체 데이터를 바꾸는 동작은 실행 전에 대상·내용을 `details`로 보여준다. 위험 동작은 `danger: true`(취소에 포커스).
   - 예: 전체 푸시 발송, 편지 발행, 이미지 변환 배치, 삭제
 - 수정 중인 내용이 있는 상태에서 다른 항목을 고르거나 페이지를 떠나면 확인을 받는다(`main.js`의 `beforeunload`에 dirty 판정을 추가).
 
@@ -78,6 +93,13 @@
 ### 네이밍
 - 버튼 id: `btn + 동사/기능` (`btnLoadDict`, `btnSaveSentLetter`)
 - 렌더 함수 `render...`, 로드 함수 `load...` / `reload...`, 섹션 진입 로더 `load...IfVisible`
+
+### 보안
+- 관리자 토큰이 sessionStorage에 있어 XSS 한 번이면 토큰이 털린다.
+- 서버·사용자 값은 `textContent`로 넣는다. HTML 문자열을 만들 수밖에 없으면 모든 값을 `escapeHtml`로 감싼다.
+- 외부 값을 `href`/`src`에 넣을 때는 `toSafeHttpUrl`을 거친다.
+- 마크다운은 `renderLetterMarkdown`(DOMPurify)만 쓴다.
+- CDN 스크립트는 버전을 고정하고 `integrity`(SRI)를 붙인다.
 
 ## 7) 새 섹션 추가 체크리스트
 - [ ] `index.html`에 `section#<id>`를 추가하고 `.section-head` + `.sub` 설명을 넣었다.
