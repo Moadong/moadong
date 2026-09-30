@@ -168,6 +168,28 @@ describe('PeaceResultPage', () => {
     expect(screen.queryByText(/당신 안에는/)).not.toBeInTheDocument();
   });
 
+  it('동점이면 비율 목록도 퀴즈와 같은 동점 규칙으로 주 유형을 맨 위에 둔다', () => {
+    // 돌봄가 4, 일상가 4. TIE_BREAK_ORDER상 일상가가 주 유형
+    renderResult('?type=daily&a=30030330');
+    const list = screen.getByRole('list', { name: '유형별 비율' });
+    const rows = within(list).getAllByRole('listitem');
+    expect(rows[0]).toHaveTextContent('일상가');
+    expect(rows[1]).toHaveTextContent('돌봄가');
+  });
+
+  it('답의 1위가 type과 다르면 답을 버리고 비율·공유 링크에서 뺀다', async () => {
+    renderResult('?type=carer&a=30030330');
+    expect(
+      screen.queryByRole('list', { name: '유형별 비율' }),
+    ).not.toBeInTheDocument();
+    await userEvent.click(screen.getByRole('button', { name: '공유하기' }));
+    expect(mockHandleShare).toHaveBeenCalledWith(
+      expect.objectContaining({
+        url: 'http://localhost/peace/result?type=carer&src=share',
+      }),
+    );
+  });
+
   it('답이 없거나 형식이 틀리면 비율 영역을 그리지 않는다', () => {
     const { unmount } = renderResult('?type=carer');
     expect(

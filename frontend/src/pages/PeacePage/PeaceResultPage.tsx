@@ -14,17 +14,12 @@ import PeaceLayout, {
 import RecommendedClubs from './components/RecommendedClubs/RecommendedClubs';
 import ResultCard from './components/ResultCard/ResultCard';
 import { KIOSK_IDLE_MS } from './constants/kiosk';
-import {
-  isPeaceTypeId,
-  PEACE_TYPE_IDS,
-  PEACE_TYPES,
-  PeaceTypeId,
-} from './data/peaceTypes';
+import { isPeaceTypeId, PEACE_TYPES, PeaceTypeId } from './data/peaceTypes';
 import { PEACE_QUESTIONS } from './data/questions';
 import { useIdleReset } from './hooks/useIdleReset';
 import { PeaceSource, usePeaceParams } from './hooks/usePeaceParams';
 import * as Styled from './PeaceResultPage.styles';
-import { scorePeaceTypes } from './utils/calculatePeaceType';
+import { rankPeaceTypes, scorePeaceTypes } from './utils/calculatePeaceType';
 
 /** 방문객 폰에서 열 결과 링크. 부스 모드 플래그는 빼고 답과 유입 경로만 붙인다 */
 const buildResultUrl = (
@@ -63,17 +58,19 @@ const PeaceResultPage = () => {
   }
 
   const type = PEACE_TYPES[typeParam];
-  const answers = parseAnswers(searchParams.get('a'));
+  // 순위는 퀴즈와 같은 rankPeaceTypes로 정한다. 1위가 type과 다르면(손으로 고친 링크) 답을 버린다
+  const parsedAnswers = parseAnswers(searchParams.get('a'));
+  const ranked = parsedAnswers ? rankPeaceTypes(parsedAnswers) : null;
+  const answers = ranked?.[0] === type.id ? parsedAnswers : null;
   const answersParam = answers ? searchParams.get('a') : null;
   const scores = answers ? scorePeaceTypes(answers) : null;
-  const shares = scores
-    ? [...PEACE_TYPE_IDS]
-        .sort((a, b) => scores[b] - scores[a])
-        .map((id) => ({
+  const shares =
+    ranked && scores
+      ? ranked.map((id) => ({
           type: PEACE_TYPES[id],
           percent: Math.round((scores[id] / PEACE_QUESTIONS.length) * 100),
         }))
-    : null;
+      : null;
   const partner = PEACE_TYPES[type.partner];
   const palette = theme.colors.secondary[type.colorIndex];
 
