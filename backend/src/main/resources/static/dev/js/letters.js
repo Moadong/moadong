@@ -54,6 +54,7 @@ function renderSentLetterList() {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
     td.colSpan = 4;
+    td.className = 'table-empty';
     td.textContent = sentLettersHaveLoaded ? '보낸 편지가 없어요.' : '보낸 편지 목록을 불러오세요.';
     tr.appendChild(td);
     tbody.appendChild(tr);

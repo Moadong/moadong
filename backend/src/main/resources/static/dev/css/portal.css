@@ -428,6 +428,22 @@ button.btn-small { height: 30px; margin: 0; padding: 0 10px; font-size: 12px; }
   .list-toolbar .segmented::-webkit-scrollbar { display: none; }
   .list-toolbar .segmented button { flex: 0 0 auto; }
   .list-search { max-width: none; }
+  /* 목록 표를 카드형 행으로: 윗줄 태그·시각·상태, 아랫줄 내용 */
+  #feedbackList thead, #sentLetterList thead { display: none; }
+  #feedbackList tbody tr, #sentLetterList tbody tr { display: grid; grid-template-columns: auto 1fr auto; align-items: center; gap: 6px 8px; padding: 12px 8px; border-bottom: 1px solid var(--gray-250); }
+  #feedbackList td, #sentLetterList td { padding: 0; border: none; }
+  #feedbackList tbody tr { grid-template-areas: "type time status" "content content content"; }
+  #feedbackList td:nth-child(1) { grid-area: type; }
+  #feedbackList td:nth-child(2) { grid-area: content; }
+  #feedbackList td:nth-child(3) { grid-area: time; justify-self: end; color: var(--gray-600); font-size: 12px; }
+  #feedbackList td:nth-child(4) { grid-area: status; }
+  #sentLetterList tbody tr { grid-template-areas: "cat recipient date" "title title title"; }
+  #sentLetterList td:nth-child(1) { grid-area: cat; }
+  #sentLetterList td:nth-child(2) { grid-area: title; }
+  #sentLetterList td:nth-child(3) { grid-area: recipient; color: var(--gray-700); font-size: 13px; overflow: hidden; text-overflow: ellipsis; }
+  #sentLetterList td:nth-child(4) { grid-area: date; color: var(--gray-600); font-size: 12px; }
+  .feedback-content-cell, .sent-letter-title-cell { width: auto; max-width: none; min-width: 0; }
+  #feedbackList td.table-empty, #sentLetterList td.table-empty { grid-column: 1 / -1; }
   .banner-item-body { grid-template-columns: 1fr; }
   .promotion-layout { grid-template-columns: 1fr; }
   .promotion-location-input { flex-direction: column; align-items: stretch; }
