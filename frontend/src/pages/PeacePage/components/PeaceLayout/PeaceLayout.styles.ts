@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { PEACE_COLUMN_MAX_WIDTH } from '../../constants/layout';
 
 /** 칼럼 바깥(넓은 화면)은 단색. 모바일에서는 칼럼이 화면을 다 채워 보이지 않는다 */
 export const PageWrapper = styled.div<{ $tint?: string }>`
@@ -14,7 +15,7 @@ export const PageWrapper = styled.div<{ $tint?: string }>`
 export const Main = styled.main<{ $topOffset: number; $tint?: string }>`
   flex: 1;
   width: 100%;
-  max-width: 440px;
+  max-width: ${PEACE_COLUMN_MAX_WIDTH}px;
   margin: 0 auto;
   padding: ${({ $topOffset }) => 40 + $topOffset}px 24px 48px;
   display: flex;

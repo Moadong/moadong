@@ -5,6 +5,7 @@ import {
 } from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea.styles';
 import { BREAKPOINT, media } from '@/styles/mediaQuery';
 import { setTypography } from '@/styles/theme/typography';
+import { PEACE_COLUMN_MAX_WIDTH } from './constants/layout';
 import { PEACE_GREEN } from './constants/peaceColors';
 
 export const Hero = styled.section`
@@ -53,9 +54,9 @@ const DESKTOP_UP = `@media (min-width: ${BREAKPOINT.tablet + 1}px)`;
  * 넓은 화면에서는 고정하지 않고 본문 칼럼 맨 아래에 둔다
  */
 export const StartArea = styled(ButtonArea)`
-  /* 공통 영역은 최대 500px이라 본문 칼럼(440px) 밖으로 나온다. 칼럼 폭으로 줄인다 */
+  /* 공통 영역은 최대 500px이라 본문 칼럼 밖으로 나온다. 칼럼 폭으로 줄인다 */
   ${TABLET_ONLY} {
-    max-width: 440px;
+    max-width: ${PEACE_COLUMN_MAX_WIDTH}px;
   }
 
   ${DESKTOP_UP} {
