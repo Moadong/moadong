@@ -30,7 +30,8 @@ export const Card = styled(motion.div)<{ $bg: string }>`
   flex-direction: column;
   align-items: center;
   justify-content: flex-end;
-  padding: 24px;
+  /* 글자를 바닥에서 조금 띄워 카드 중앙의 빈 공간을 줄인다 */
+  padding: 24px 24px 48px;
   overflow: hidden;
   transform-style: preserve-3d;
   will-change: transform;
