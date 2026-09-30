@@ -166,14 +166,14 @@
 
 ## 속성 값
 
-`Club Card Viewed`·`Club Card Clicked`·`Scroll Depth Reached`의 `page`, `Club Subscription Toggled`의 `source` 값을 `page_name`과 같은 snake_case로 맞췄다. 페이지뷰와 같은 값으로 이어서 볼 수 있다.
+`Club Card Viewed`·`Club Card Clicked`의 `page`와 `Club Subscription Toggled`의 `source` 값을 `page_name`과 같은 표기로 맞췄다. 웹뷰 메인은 따로 구분하지 않고 `is_webview`로 구분한다.
 
 | 옛 값          | 새 값                       |
 | -------------- | --------------------------- |
 | `webview-main` | `main` + `is_webview: true` |
 | `club-detail`  | `club_detail`               |
 
-`main`, `introduce`, `subscriptions`는 그대로다.
+`Scroll Depth Reached`의 `page`는 원래부터 웹뷰에서도 `main`이었고 바뀌지 않았다. `main`, `introduce`, `subscriptions`는 그대로다.
 
 ## 새로 붙는 속성
 

@@ -229,6 +229,7 @@ Bad : 2026-daedong Day Changed, Peace Quiz Completed
 - [ ] 동적 값이 이벤트명에 들어가지 않았는가?
 - [ ] 속성 키가 snake_case인가?
 - [ ] PII가 포함되지 않았는가?
+- [ ] 관리자 행동이면 `USER_EVENT`가 아니라 `ADMIN_EVENT`에 넣었는가? (5-2, user_area가 이걸로 정해진다)
 - [ ] 동아리 관련 이벤트라면 `club_id`를 넣었는가? (5-4)
 - [ ] 행사 기능이라면 행사명·연도 대신 `festival` 속성을 썼는가? (5-5)
 - [ ] 백엔드 통계·퍼널이 쓰는 이벤트를 바꿨다면 `MixpanelEventNormalizer`도 고쳤는가? (5-1)
