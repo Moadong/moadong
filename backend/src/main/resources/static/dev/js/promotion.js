@@ -613,6 +613,13 @@ function updatePromotionEditorState() {
     : (isCreateMode ? '생성' : '저장');
   btnDelete.textContent = promotionIsDeleting ? '삭제 중...' : '삭제';
 
+  // 편집 대상이 없으면 비활성 폼 대신 안내만 보여준다. 숨겨져 있다 다시 보이면 지도 크기를 다시 잡는다.
+  const editorBody = document.getElementById('promotionEditorBody');
+  const wasEditorHidden = editorBody.classList.contains('hidden');
+  editorBody.classList.toggle('hidden', !hasEditorTarget);
+  document.getElementById('promotionEditorEmpty').classList.toggle('hidden', hasEditorTarget);
+  if (wasEditorHidden && hasEditorTarget) initializePromotionMapIfVisible();
+
   if (isCreateMode) {
     badge.textContent = dirty ? '새 게시글 작성 중 · 저장되지 않은 변경 있음' : '새 게시글 작성 중';
     badge.classList.remove('hidden');
@@ -626,7 +633,7 @@ function updatePromotionEditorState() {
   if (!hasSelection) {
     badge.classList.add('hidden');
     badge.textContent = '';
-    summary.textContent = '왼쪽 목록에서 수정할 게시글을 선택하세요.';
+    summary.textContent = '위 목록에서 수정할 게시글을 선택하세요.';
     return;
   }
 
@@ -1041,7 +1048,7 @@ document.getElementById('btnLoadPromotion').onclick = async () => {
   } finally {
     promotionIsLoading = false;
     loading.classList.add('hidden');
-    btn.textContent = '목록 새로고침';
+    btn.textContent = '새로고침';
     renderPromotionList();
   }
 };

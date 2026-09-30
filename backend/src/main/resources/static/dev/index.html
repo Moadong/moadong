@@ -4,14 +4,16 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>모아동 개발자 포털</title>
+  <link rel="icon" href="/dev/assets/favicon.ico">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link rel="stylesheet" href="/dev/css/portal.css">
 </head>
 <body>
   <section id="login" class="login-page">
     <div class="login-card">
       <div class="login-brand">
-        <p class="login-eyebrow">MOADONG</p>
-        <h1>모아동 운영 포털</h1>
+        <img class="login-logo" src="/dev/assets/moadong_name_logo.svg" alt="모아동">
+        <h1>운영 포털</h1>
         <p class="sub">운영 계정으로 로그인하면 피드백 답장, 홍보 글, 푸시 알림 등을 관리할 수 있어요.</p>
       </div>
       <div id="loginForm">
@@ -34,11 +36,10 @@
   <div id="appShell" class="app-shell hidden">
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <span class="sidebar-logo" aria-hidden="true">M</span>
-        <div>
-          <h1>모아동 운영 포털</h1>
-          <p>개발자 · 운영진 전용</p>
-        </div>
+        <a href="#feedback" class="sidebar-home" aria-label="모아동 운영 포털 홈">
+          <img class="sidebar-logo" src="/dev/assets/moadong_name_logo.svg" alt="모아동">
+        </a>
+        <span class="sidebar-label">운영 포털</span>
       </div>
       <nav class="sidebar-nav" id="sideNav">
         <div class="nav-group">
@@ -131,7 +132,7 @@
         <h2>검색 단어사전</h2>
         <div class="section-head-actions">
           <div id="dictPagination" class="pagination hidden"></div>
-          <button type="button" id="btnLoadDict">목록 새로고침</button>
+          <button type="button" id="btnLoadDict">새로고침</button>
           <button type="button" id="btnRefreshDictCache">캐시 새로고침</button>
         </div>
       </div>
@@ -203,8 +204,10 @@
         </div>
 
         <div class="promotion-panel">
-          <h3>선택된 게시글 편집</h3>
-          <p id="promotionSelectionSummary" class="promotion-summary">왼쪽 목록에서 수정할 게시글을 선택하세요.</p>
+          <h3>게시글 편집</h3>
+          <p id="promotionSelectionSummary" class="promotion-summary">위 목록에서 수정할 게시글을 선택하세요.</p>
+          <div id="promotionEditorEmpty" class="promotion-empty">위 목록에서 글을 고르거나 <strong>+ 새 게시글</strong>을 누르면 여기서 편집할 수 있어요.</div>
+          <div id="promotionEditorBody" class="hidden">
           <div id="promotionEditingBadge" class="editing-badge hidden"></div>
           <div class="form-grid">
             <div class="form-row">
@@ -289,7 +292,7 @@
             <div id="promotionImagePreviewEmpty" class="promotion-empty">이미지 URL을 입력하거나 업로드하면 여기에서 미리볼 수 있습니다.</div>
             <div id="promotionImagePreviewList" class="promotion-preview-grid"></div>
           </div>
-          <div class="promotion-actions">
+          <div class="promotion-actions sticky-actions">
             <button type="button" id="btnSavePromotion" class="btn-primary">저장</button>
             <button type="button" id="btnResetPromotion">원본으로 되돌리기</button>
             <button type="button" id="btnDeletePromotion" class="btn-danger">삭제</button>
@@ -297,6 +300,7 @@
           </div>
           <p id="promotionHelpText" class="promotion-help">기존 게시글의 `clubId`는 읽기 전용입니다. 저장 후 목록을 다시 조회해 서버 기준 최신값으로 동기화합니다.</p>
           <div id="promotionSaveResult" class="message-box hidden"></div>
+          </div>
         </div>
       </div>
     </section>
@@ -594,7 +598,7 @@
 
     <section id="statistics-backfill" class="hidden">
       <h2>통계 Backfill</h2>
-      <p class="sub">Mixpanel 과거 이벤트를 관리자 통계 컬렉션에 반영합니다. 개발자 계정에서만 실행하세요.</p>
+      <p class="sub">Mixpanel 과거 이벤트를 다시 가져와 관리자 통계 데이터의 빠진 날짜를 채워요. 퍼널 이탈율에서 "수집 안 됨" 날짜가 보이면 여기서 그 기간을 실행해요.</p>
       <div class="form-grid">
         <div class="form-row">
           <label for="statisticsBackfillFrom">시작일</label>
@@ -610,8 +614,9 @@
     </section>
 
     <section id="conversion-batch" class="hidden">
-      <h2>이미지 변환 배치 (전체 동아리)</h2>
-      <p class="sub">source → destination 이미지 URL을 모든 동아리의 로고/커버/피드 이미지에서 일괄 갱신합니다. event=batch.completed, images 배열 필수.</p>
+      <h2>이미지 변환 배치</h2>
+      <p class="sub">모든 동아리의 로고·커버·피드 이미지 URL을 source → destination으로 한 번에 바꿔요. 이미지 변환 작업이 끝난 뒤 개발자가 실행하는 화면이에요.</p>
+      <div class="banner warn">전체 동아리 데이터가 바뀌어요. 실행 전에 images 배열을 한 번 더 확인해 주세요.</div>
       <div id="conversionBanner" class="banner hidden"></div>
       <div class="form-row">
         <label for="conversionImagesJson">images (JSON 배열)</label>

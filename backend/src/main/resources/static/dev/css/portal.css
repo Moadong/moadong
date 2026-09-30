@@ -43,7 +43,7 @@ body.is-authenticated { overflow-x: hidden; }
 .login-page { min-height: 100vh; margin: 0; padding: 48px 20px; border: 0; border-radius: 0; display: grid; place-items: center; background: var(--gray-100); box-shadow: none; }
 .login-card { width: min(100%, 400px); padding: 40px 32px 32px; border-radius: var(--radius-lg); background: #fff; box-shadow: var(--shadow-card); }
 .login-brand { margin-bottom: 32px; }
-.login-eyebrow { margin: 0 0 8px; color: var(--primary); font-size: 13px; font-weight: 700; letter-spacing: 0.4px; }
+.login-logo { display: block; height: 32px; width: auto; margin: 0 0 20px; }
 .login-card h1 { margin: 0; font-size: 24px; font-weight: 700; line-height: 1.4; letter-spacing: -0.5px; }
 .login-card .sub { margin: 8px 0 0; }
 .login-card input { max-width: none; }
@@ -52,10 +52,11 @@ body.is-authenticated { overflow-x: hidden; }
 /* ── 셸 ─────────────────────────────── */
 .app-shell { min-height: 100vh; display: grid; grid-template-columns: 240px minmax(0, 1fr); }
 .sidebar { position: sticky; top: 0; height: 100vh; display: flex; flex-direction: column; background: #fff; border-right: 1px solid var(--gray-250); overflow-y: auto; }
-.sidebar-brand { display: flex; align-items: center; gap: 10px; padding: 24px 20px 16px; }
-.sidebar-logo { display: inline-flex; align-items: center; justify-content: center; width: 32px; height: 32px; border-radius: 10px; background: var(--primary); color: #fff; font-size: 16px; font-weight: 800; flex: 0 0 auto; }
-.sidebar-brand h1 { margin: 0; font-size: 16px; font-weight: 700; line-height: 1.3; }
-.sidebar-brand p { margin: 2px 0 0; color: var(--gray-600); font-size: 12px; }
+.sidebar-brand { display: flex; align-items: center; gap: 8px; padding: 24px 20px 16px; }
+.sidebar-home { display: inline-flex; line-height: 0; }
+.sidebar-home:hover { text-decoration: none; }
+.sidebar-logo { display: block; height: 22px; width: auto; }
+.sidebar-label { padding: 3px 8px; border-radius: 6px; background: var(--primary-soft); color: var(--primary); font-size: 12px; font-weight: 600; white-space: nowrap; }
 .sidebar-nav { display: flex; flex-direction: column; gap: 20px; padding: 12px 12px 24px; }
 .nav-group { display: flex; flex-direction: column; gap: 2px; }
 .nav-group-title { margin: 0 0 4px; padding: 0 12px; color: var(--gray-600); font-size: 12px; font-weight: 500; }
@@ -189,6 +190,8 @@ tbody tr.is-selected, tbody tr.is-selected:hover { background: var(--primary-sof
 .promotion-summary { margin: 0 0 12px; color: var(--gray-700); font-size: 13px; }
 .promotion-empty { padding: 20px; border: 1px dashed var(--gray-400); border-radius: var(--radius); background: var(--gray-50); color: var(--gray-700); font-size: 14px; text-align: center; }
 .promotion-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 16px; }
+/* 긴 편집 폼에서도 저장 버튼이 항상 보이게 화면 아래에 붙인다. */
+.sticky-actions { position: sticky; bottom: 0; z-index: 5; margin: 16px -20px 0; padding: 14px 20px; border-top: 1px solid var(--gray-250); background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); }
 .promotion-help { margin-top: 10px; color: var(--gray-700); font-size: 13px; }
 .promotion-id { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; color: var(--gray-700); }
 

@@ -431,7 +431,7 @@ document.getElementById('btnLoadBanner').onclick = async () => {
   } finally {
     bannerIsLoading = false;
     loading.classList.add('hidden');
-    btn.textContent = '목록 불러오기';
+    btn.textContent = '불러오기';
     updateBannerControls();
   }
 };
@@ -480,7 +480,7 @@ document.getElementById('btnSaveBanner').onclick = async () => {
     showBannerSaveResult(false, e.message || '요청 실패');
   } finally {
     bannerIsSaving = false;
-    btn.textContent = '현재 배열 저장';
+    btn.textContent = '변경사항 저장';
     updateBannerControls();
   }
 };
