@@ -85,3 +85,71 @@ function createTag(label, tone) {
   el.textContent = label;
   return el;
 }
+
+/**
+ * 브라우저 기본 confirm 대신 쓰는 확인 모달. 확인이면 true, 취소·Esc·바깥 클릭이면 false.
+ * options: { title, message, details: [[라벨, 값]], confirmLabel, cancelLabel, danger }
+ */
+function confirmDialog(options) {
+  const opts = typeof options === 'string' ? { title: options } : options;
+  return new Promise((resolve) => {
+    const previousFocus = document.activeElement;
+    const backdrop = document.createElement('div');
+    backdrop.className = 'modal-backdrop';
+    const dialog = backdrop.appendChild(document.createElement('div'));
+    dialog.className = 'modal';
+    dialog.setAttribute('role', 'alertdialog');
+    dialog.setAttribute('aria-modal', 'true');
+
+    const title = dialog.appendChild(document.createElement('h3'));
+    title.className = 'modal-title';
+    title.textContent = opts.title || '계속할까요?';
+    title.id = 'modalTitle';
+    dialog.setAttribute('aria-labelledby', title.id);
+    if (opts.message) {
+      const message = dialog.appendChild(document.createElement('p'));
+      message.className = 'modal-message';
+      message.textContent = opts.message;
+    }
+    if (opts.details && opts.details.length) {
+      const list = dialog.appendChild(document.createElement('dl'));
+      list.className = 'modal-details';
+      opts.details.forEach(([label, value]) => {
+        const row = list.appendChild(document.createElement('div'));
+        row.appendChild(document.createElement('dt')).textContent = label;
+        row.appendChild(document.createElement('dd')).textContent = value;
+      });
+    }
+    const actions = dialog.appendChild(document.createElement('div'));
+    actions.className = 'modal-actions';
+    const cancel = actions.appendChild(document.createElement('button'));
+    cancel.type = 'button';
+    cancel.textContent = opts.cancelLabel || '취소';
+    const ok = actions.appendChild(document.createElement('button'));
+    ok.type = 'button';
+    ok.className = opts.danger ? 'btn-danger-solid' : 'btn-primary';
+    ok.textContent = opts.confirmLabel || '확인';
+
+    const close = (result) => {
+      document.removeEventListener('keydown', onKey, true);
+      backdrop.remove();
+      if (previousFocus && typeof previousFocus.focus === 'function') previousFocus.focus();
+      resolve(result);
+    };
+    const onKey = (event) => {
+      if (event.key === 'Escape') { event.preventDefault(); close(false); }
+      if (event.key === 'Tab') {
+        // 모달 안에서만 포커스가 돌게 한다.
+        event.preventDefault();
+        (document.activeElement === ok ? cancel : ok).focus();
+      }
+    };
+    cancel.onclick = () => close(false);
+    ok.onclick = () => close(true);
+    backdrop.onclick = (event) => { if (event.target === backdrop) close(false); };
+    document.addEventListener('keydown', onKey, true);
+    document.body.appendChild(backdrop);
+    // 위험한 동작은 Enter 한 번에 실행되지 않게 취소에 포커스를 둔다.
+    (opts.danger ? cancel : ok).focus();
+  });
+}

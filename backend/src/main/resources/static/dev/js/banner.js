@@ -315,10 +315,10 @@ function loadBannerIfVisible() {
   }
 }
 
-document.getElementById('bannerType').addEventListener('change', (e) => {
+document.getElementById('bannerType').addEventListener('change', async (e) => {
   const nextType = e.target.value;
   if (nextType === bannerActiveType) return;
-  if (bannerDirty && !confirm('저장하지 않은 배너 변경사항이 사라집니다. 계속할까요?')) {
+  if (bannerDirty && !(await confirmDialog({ title: '저장하지 않은 변경사항이 있어요', message: '다른 타입으로 넘어가면 지금 수정한 내용이 사라져요.', confirmLabel: '넘어가기', danger: true }))) {
     e.target.value = bannerActiveType;
     return;
   }
@@ -396,7 +396,7 @@ document.getElementById('btnUploadBannerImage').onclick = async () => {
 };
 
 document.getElementById('btnLoadBanner').onclick = async () => {
-  if (bannerDirty && !confirm('현재 수정 중인 배너 내용이 덮어써집니다. 계속할까요?')) return;
+  if (bannerDirty && !(await confirmDialog({ title: '저장하지 않은 변경사항이 있어요', message: '다시 불러오면 지금 수정한 내용이 사라져요.', confirmLabel: '다시 불러오기', danger: true }))) return;
   const btn = document.getElementById('btnLoadBanner');
   const loading = document.getElementById('bannerListLoading');
   bannerIsLoading = true;

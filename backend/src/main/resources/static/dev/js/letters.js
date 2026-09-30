@@ -100,13 +100,14 @@ function isSentLetterEditDirty() {
     || document.getElementById('sentLetterEditBody').value !== (letter.body || '');
 }
 
-function confirmDiscardSentLetterEdit() {
-  return !isSentLetterEditDirty() || confirm('수정 중인 내용이 저장되지 않았어요. 버리고 넘어갈까요?');
+async function confirmDiscardSentLetterEdit() {
+  if (!isSentLetterEditDirty()) return true;
+  return confirmDialog({ title: '저장하지 않은 수정 내용이 있어요', message: '넘어가면 수정한 내용이 사라져요.', confirmLabel: '버리기', danger: true });
 }
 
-function selectSentLetter(letterId) {
+async function selectSentLetter(letterId) {
   if (letterId === sentLetterSelectedId) return;
-  if (!confirmDiscardSentLetterEdit()) return;
+  if (!(await confirmDiscardSentLetterEdit())) return;
   sentLetterSelectedId = letterId;
   sentLetterIsEditing = false;
   renderSentLetterList();
@@ -184,8 +185,8 @@ function startSentLetterEdit() {
   document.getElementById('sentLetterEditTitle').focus();
 }
 
-function cancelSentLetterEdit() {
-  if (!confirmDiscardSentLetterEdit()) return;
+async function cancelSentLetterEdit() {
+  if (!(await confirmDiscardSentLetterEdit())) return;
   sentLetterIsEditing = false;
   renderSentLetterDetail();
 }
@@ -232,8 +233,8 @@ async function saveSentLetter() {
 }
 
 bindSegmentedTabs('sentLetterEditTabs', showSentLetterEditTab);
-document.getElementById('btnLoadSentLetters').onclick = () => {
-  if (!confirmDiscardSentLetterEdit()) return;
+document.getElementById('btnLoadSentLetters').onclick = async () => {
+  if (!(await confirmDiscardSentLetterEdit())) return;
   sentLetterIsEditing = false;
   reloadSentLetters();
 };

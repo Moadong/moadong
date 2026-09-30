@@ -213,7 +213,7 @@ document.getElementById('btnDictCsvUpload').onclick = async () => {
 };
 
 async function deleteDict(id) {
-  if (!id || !confirm('이 단어사전 항목을 삭제할까요?')) return;
+  if (!id || !(await confirmDialog({ title: '이 단어를 삭제할까요?', confirmLabel: '삭제', danger: true }))) return;
   try {
     const res = await fetch(API_BASE + '/api/admin/word-dictionary/' + encodeURIComponent(id), {
       method: 'DELETE',

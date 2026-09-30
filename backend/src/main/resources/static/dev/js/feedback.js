@@ -406,9 +406,15 @@ async function publishFeedbackLetter() {
     ? API_BASE + '/api/admin/feedback/letters'
     : API_BASE + '/api/admin/feedback/' + encodeURIComponent(feedbackSelectedId) + '/reply';
   const sendPush = document.getElementById('feedbackSendPush').checked;
-  const target = isLetterMode ? '모든 사용자' : ((getSelectedFeedback()?.sender || '이 사용자') + '님');
-  const pushNote = sendPush ? ' 푸시 알림도 함께 발송됩니다.' : '';
-  if (!confirm(target + '에게 편지를 발행할까요?' + pushNote + '\n\n제목: ' + title)) return;
+  const target = isLetterMode ? '모든 사용자' : (getSelectedFeedback()?.sender || '이 사용자');
+  const confirmed = await confirmDialog({
+    title: isLetterMode ? '모든 사용자에게 편지를 보낼까요?' : '답장을 보낼까요?',
+    message: '보낸 뒤에는 보낸 편지에서 제목·본문만 고칠 수 있어요.',
+    details: [['받는 사람', target], ['제목', title], ['푸시', sendPush ? '보냄' : '안 보냄']],
+    confirmLabel: '보내기',
+    danger: isLetterMode && sendPush
+  });
+  if (!confirmed) return;
   if (isLetterMode && !feedbackLetterRequestId) {
     feedbackLetterRequestId = generateFeedbackRequestId();
   }

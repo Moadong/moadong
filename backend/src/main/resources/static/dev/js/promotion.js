@@ -490,15 +490,17 @@ function isPromotionCreateMode() {
   return promotionEditorMode === 'create';
 }
 
-function getPromotionDiscardMessage(kind) {
-  if (kind === 'reload') {
-    return isPromotionCreateMode()
-      ? '현재 작성 중인 새 홍보 게시글 내용은 유지되고 목록만 새로고침됩니다. 계속할까요?'
-      : '현재 수정 중인 홍보 게시글 내용이 덮어써집니다. 계속할까요?';
+function confirmPromotionDiscard(kind) {
+  // 새 글 작성 중 목록만 새로고침하면 작성 내용은 그대로 남는다.
+  if (kind === 'reload' && isPromotionCreateMode()) {
+    return confirmDialog({ title: '목록만 새로고침할까요?', message: '작성 중인 새 게시글은 그대로 남아요.', confirmLabel: '새로고침' });
   }
-  return isPromotionCreateMode()
-    ? '현재 작성 중인 새 홍보 게시글 내용이 사라집니다. 계속할까요?'
-    : '현재 수정 중인 홍보 게시글 변경사항이 사라집니다. 계속할까요?';
+  return confirmDialog({
+    title: '저장하지 않은 변경사항이 있어요',
+    message: kind === 'reload' ? '새로고침하면 수정한 내용이 사라져요.' : '넘어가면 작성·수정한 내용이 사라져요.',
+    confirmLabel: '버리기',
+    danger: true
+  });
 }
 
 function getPromotionCurrentFormState() {
@@ -869,8 +871,8 @@ function clearPromotionSelection(options) {
   renderPromotionList();
 }
 
-function enterPromotionCreateMode() {
-  if (isPromotionDirty() && !confirm(getPromotionDiscardMessage('clear'))) return;
+async function enterPromotionCreateMode() {
+  if (isPromotionDirty() && !(await confirmPromotionDiscard('clear'))) return;
   promotionEditorMode = 'create';
   promotionSelectedArticleId = '';
   promotionSelectedOriginal = getEmptyPromotionFormState();
@@ -880,14 +882,14 @@ function enterPromotionCreateMode() {
   renderPromotionList();
 }
 
-function selectPromotionArticle(articleId, options) {
+async function selectPromotionArticle(articleId, options) {
   const next = promotionArticles.find((article) => article.id === articleId);
   if (!next) return;
   const shouldConfirm = isPromotionDirty()
     && !options?.skipConfirm
     && (isPromotionCreateMode() || promotionSelectedArticleId !== articleId);
   if (shouldConfirm) {
-    if (!confirm(getPromotionDiscardMessage('clear'))) {
+    if (!(await confirmPromotionDiscard('clear'))) {
       return;
     }
   }
@@ -1020,7 +1022,7 @@ function loadPromotionIfVisible() {
 }
 
 document.getElementById('btnLoadPromotion').onclick = async () => {
-  if (isPromotionDirty() && !confirm(getPromotionDiscardMessage('reload'))) return;
+  if (isPromotionDirty() && !(await confirmPromotionDiscard('reload'))) return;
   const btn = document.getElementById('btnLoadPromotion');
   const loading = document.getElementById('promotionListLoading');
   promotionIsLoading = true;
@@ -1063,8 +1065,8 @@ document.getElementById('btnResetPromotion').onclick = () => {
   hidePromotionSaveResult();
 };
 
-document.getElementById('btnClearPromotionSelection').onclick = () => {
-  if (isPromotionDirty() && !confirm(getPromotionDiscardMessage('clear'))) return;
+document.getElementById('btnClearPromotionSelection').onclick = async () => {
+  if (isPromotionDirty() && !(await confirmPromotionDiscard('clear'))) return;
   clearPromotionSelection();
 };
 
@@ -1076,11 +1078,14 @@ document.getElementById('btnDeletePromotion').onclick = async () => {
     return;
   }
 
-  const articleLabel = selectedArticle.title ? '"' + selectedArticle.title + '"' : '선택한 홍보 게시글';
-  const confirmMessage = isPromotionDirty()
-    ? '저장되지 않은 변경사항이 있습니다. ' + articleLabel + '을(를) 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.'
-    : articleLabel + '을(를) 정말 삭제하시겠습니까? 이 작업은 되돌릴 수 없습니다.';
-  if (!confirm(confirmMessage)) return;
+  const confirmed = await confirmDialog({
+    title: '이 게시글을 삭제할까요?',
+    message: '삭제하면 되돌릴 수 없어요.' + (isPromotionDirty() ? ' 저장하지 않은 수정 내용도 함께 사라져요.' : ''),
+    details: [['제목', selectedArticle.title || '(제목 없음)']],
+    confirmLabel: '삭제',
+    danger: true
+  });
+  if (!confirmed) return;
 
   promotionIsDeleting = true;
   updatePromotionEditorState();
