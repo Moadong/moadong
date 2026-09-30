@@ -91,6 +91,25 @@ describe('ResultCard', () => {
     expect(screen.getByTestId('result-card-decor')).toBeInTheDocument();
   });
 
+  it('흰 원 배경은 활력가(주황 위 주황 번개)에만 깐다', () => {
+    const css = () => document.head.textContent ?? '';
+    const hasDisc = (el: HTMLElement) =>
+      [...el.classList].some((cls) =>
+        css()
+          .match(new RegExp(`\\.${cls}\\{[^}]*\\}`))?.[0]
+          ?.includes('border-radius:50%'),
+      );
+    const { unmount } = renderCard('daily');
+    expect(hasDisc(screen.getByTestId('result-card-symbol'))).toBe(false);
+    unmount();
+    render(
+      <ThemeProvider theme={theme}>
+        <ResultCard type={PEACE_TYPES.energizer} />
+      </ThemeProvider>,
+    );
+    expect(hasDisc(screen.getByTestId('result-card-symbol'))).toBe(true);
+  });
+
   it('이미지가 있으면 심볼 대신 이미지를 보여준다', () => {
     renderCard('carer');
     expect(screen.queryByTestId('result-card-symbol')).not.toBeInTheDocument();

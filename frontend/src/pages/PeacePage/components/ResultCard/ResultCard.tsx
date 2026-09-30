@@ -72,6 +72,7 @@ const ResultCard = ({ type }: ResultCardProps) => {
           ) : (
             <Styled.Symbol
               data-testid='result-card-symbol'
+              $disc={type.id === 'energizer'}
               src={SYMBOL_IMAGES[type.id]}
               alt=''
               aria-hidden

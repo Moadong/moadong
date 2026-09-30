@@ -70,16 +70,25 @@ export const Logo = styled.img`
   opacity: 0.9;
 `;
 
-export const Symbol = styled.img`
+/** $disc: 심볼과 카드 색이 같아 묻히는 유형(활력가)에만 흰 원을 깐다 */
+export const Symbol = styled.img<{ $disc: boolean }>`
   position: absolute;
   top: 14%;
   left: 50%;
-  width: 46%;
-  padding: 9%;
+  width: 40%;
   transform: translateX(-50%);
-  border-radius: 50%;
-  background: rgba(255, 255, 255, 0.85);
-  box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.25));
+
+  ${({ $disc }) =>
+    $disc &&
+    `
+    width: 46%;
+    padding: 9%;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.85);
+    filter: none;
+    box-shadow: 0 12px 24px rgba(0, 0, 0, 0.18);
+  `}
 `;
 
 export const Image = styled.img`
