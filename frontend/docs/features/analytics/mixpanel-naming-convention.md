@@ -168,7 +168,57 @@ export const USER_EVENT = {
 2. 옛 이름 → 새 이름 매핑을 [mixpanel-event-rename-map.md](mixpanel-event-rename-map.md)에 남긴다.
 3. 배포 직후 Lexicon에서 Merge(이름만 바뀐 경우) 또는 Hide(없어진 경우)를 하고, 리포트를 새 이름으로 고친다.
 
-## 5. 신규 이벤트 추가 체크리스트
+## 5. 모아동 전용 규칙
+
+위 규칙은 일반 원칙이다. 아래는 모아동의 구조(서버 통계, 학생·관리자 공존, 웹·앱 웹뷰, 동아리 중심, 시즌 행사) 때문에 추가로 지키는 규칙이다.
+
+### 5-1. 백엔드가 읽는 이벤트는 백엔드와 함께 바꾼다
+
+백엔드(`backend/src/main/java/moadong/analytics`)가 Mixpanel Export API로 이벤트를 **이름으로** 가져와 관리자 동아리 통계와 개발자 포털 퍼널을 계산한다. 대상은 `FunnelDefinitions`와 `MixpanelExportClient`에 있는 이벤트다.
+
+- 이 이벤트들의 이름·속성 키·`page_name` 값을 바꾸거나 퍼널에 새 이벤트를 넣으면 `MixpanelEventNormalizer`(새 이름 → 내부 이름 번역)도 같이 고친다.
+- **백엔드를 먼저 배포**하고 프론트를 배포한다. 순서를 어기면 그 사이 통계가 0으로 쌓이고, `POST /api/admin/statistics/mixpanel/backfill`로 복구해야 한다.
+
+**이유**: 이벤트명이 바뀌어도 에러가 나지 않고 숫자만 조용히 0이 되므로, 규칙으로 막지 않으면 알아채기 어렵다.
+
+### 5-2. 학생·관리자 구분은 이벤트명이 아니라 속성으로
+
+학생과 동아리 운영진이 같은 프로젝트에 이벤트를 보낸다. 관리자 이벤트에 `Admin` 접두어를 붙이지 않고, `user_area: 'student' | 'admin'` 속성으로 구분한다.
+
+- **현재 상태**: 아직 `user_area`를 보내지 않는다. 그동안 관리자 행동은 `ADMIN_EVENT` 상수 목록과 `page_name`의 `admin_` 접두어로 구분한다. 슈퍼 속성으로 붙이는 작업은 후속으로 한다.
+
+**이유**: "활성 사용자", "리텐션" 같은 지표에 운영진이 섞이면 학생 지표가 부풀려진다.
+
+### 5-3. 웹·앱 웹뷰 구분은 속성으로
+
+같은 화면이 웹 브라우저와 앱 웹뷰에서 열린다. 새 이벤트나 새 페이지는 웹뷰용을 따로 만들지 않고 `platform: 'web' | 'webview'` 속성으로 구분한다.
+
+- **현재 상태**: 메인 페이지는 `page_name`이 `main` / `webview_main`으로 나뉘어 있고, 일부 이벤트는 `platform`을 이벤트마다 직접 넣는다. 백엔드 퍼널이 `webview_main`을 쓰므로, 슈퍼 속성으로 옮길 때 5-1 절차를 따른다.
+
+### 5-4. 동아리 관련 이벤트에는 `club_id`를 넣는다
+
+모아동 이벤트 대부분이 특정 동아리에 대한 행동이다. 동아리를 가리키는 이벤트에는 `club_id`를 **반드시** 넣고, 사람이 읽기 위한 `club_name`은 보조로 넣는다.
+
+- **현재 상태**: 동아리 상세 페이지뷰(`Page Viewed` / `Page Left`, `page_name: club_detail`)는 `club_name`만 보내고, 백엔드 통계도 이름으로 동아리를 찾는다. 새 이벤트부터 `club_id`를 넣고, 페이지뷰와 백엔드 매칭은 후속으로 `club_id` 기준으로 옮긴다.
+
+**이유**: 동아리 이름은 바뀌거나 겹칠 수 있다. 이름으로 찾으면 그 동아리의 통계가 조용히 빠진다(백엔드에 "clubName 중복으로 skip" 경고가 있다).
+
+### 5-5. 시즌 행사 기능은 `festival` 속성으로
+
+동소한, 대동제, 평화축제처럼 기간 한정 기능이 반복해서 생긴다. 행사 이름·연도를 이벤트명에 넣지 않고, 행동을 기준으로 이름 짓고 `festival` 속성으로 구분한다.
+
+```text
+Good: Busking Day Changed + { festival: 'daedong_2026' }
+      Quiz Completed + { festival: 'un_peace_2026' }
+Bad : 2026-daedong Day Changed, Peace Quiz Completed
+```
+
+- `festival` 값은 `{행사}_{연도}` snake_case로 쓴다.
+- 행사 페이지의 `page_name`에도 연도를 넣지 않는다(`busking_timetable`). 행사가 끝난 뒤 이벤트는 Lexicon에서 Hide한다.
+
+**이유**: 행사가 돌아올 때마다 이벤트가 새로 생기면 해마다 비교할 수 없고, 끝난 행사 이벤트가 목록에 계속 쌓인다.
+
+## 6. 신규 이벤트 추가 체크리스트
 
 - [ ] 영문 `[명사] + [과거형 동사]`, Title Case인가?
 - [ ] 같은 행동을 이미 추적하는 이벤트가 있는가? (중복 금지. 있으면 속성을 추가한다)
@@ -176,6 +226,9 @@ export const USER_EVENT = {
 - [ ] 동적 값이 이벤트명에 들어가지 않았는가?
 - [ ] 속성 키가 snake_case인가?
 - [ ] PII가 포함되지 않았는가?
+- [ ] 동아리 관련 이벤트라면 `club_id`를 넣었는가? (5-4)
+- [ ] 행사 기능이라면 행사명·연도 대신 `festival` 속성을 썼는가? (5-5)
+- [ ] 백엔드 통계·퍼널이 쓰는 이벤트를 바꿨다면 `MixpanelEventNormalizer`도 고쳤는가? (5-1)
 - [ ] `src/constants/eventName.ts`에 상수와 한글 JSDoc을 등록했는가?
 - [ ] 배포 후 Lexicon에 설명을 적었는가?
 
