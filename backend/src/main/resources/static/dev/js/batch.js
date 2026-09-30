@@ -69,7 +69,7 @@ document.getElementById('btnConversionBatch').onclick = async () => {
       headers: headers(),
       body: JSON.stringify({ event: 'batch.completed', images })
     });
-    const data = await res.json();
+    const data = await readJsonOrEmpty(res);
     if (res.status === 403) {
       banner.textContent = '개발자 계정으로 로그인하세요.';
       banner.className = 'banner warn';

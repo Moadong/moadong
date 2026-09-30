@@ -549,6 +549,7 @@ async function createFcmSchedule() {
 }
 
 async function cancelFcmSchedule(scheduleId) {
+  if (fcmScheduleCancelingIds.has(scheduleId)) return;
   if (!(await confirmDialog({ title: '이 예약을 취소할까요?', confirmLabel: '예약 취소', cancelLabel: '닫기', danger: true }))) return;
   fcmScheduleCancelingIds.add(scheduleId);
   renderFcmScheduleRows();

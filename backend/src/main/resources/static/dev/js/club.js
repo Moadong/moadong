@@ -114,7 +114,14 @@ document.getElementById('btnLoadClubs').onclick = async () => {
       setClubTableMessage('목록을 불러올 수 없어요.');
       return;
     }
-    const data = await res.json();
+    const data = await readJsonOrEmpty(res);
+    if (!res.ok) {
+      // 오류를 빈 목록으로 보여주면 요청 실패와 동아리 없음을 구분할 수 없다.
+      banner.textContent = data.message || ('요청 실패 (HTTP ' + res.status + ')');
+      banner.className = 'banner error';
+      setClubTableMessage('목록을 불러올 수 없어요.');
+      return;
+    }
     allClubs = data.data?.clubs || [];
     currentPage = 1;
     renderClubs();

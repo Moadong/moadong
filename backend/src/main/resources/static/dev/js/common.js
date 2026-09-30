@@ -44,8 +44,9 @@ function truncateId(id) {
 }
 
 function copyTextToClipboard(text, message) {
-  navigator.clipboard.writeText(text || '');
-  showToast(message || '복사됨', 'success');
+  navigator.clipboard.writeText(text || '')
+    .then(() => showToast(message || '복사됨', 'success'))
+    .catch(() => showToast('복사하지 못했어요. 직접 선택해 복사하세요.', 'error'));
 }
 
 async function readJsonOrEmpty(res) {

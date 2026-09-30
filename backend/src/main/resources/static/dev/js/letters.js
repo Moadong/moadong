@@ -3,6 +3,8 @@
 let sentLetters = [];
 let sentLettersHaveLoaded = false;
 let sentLettersAreLoading = false;
+// 진행 중인 목록 로드. 다른 곳에서 목록을 기다려야 할 때 이 Promise를 await한다.
+let sentLettersLoadPromise = null;
 let sentLetterSelectedId = '';
 let sentLetterIsEditing = false;
 let sentLetterIsSaving = false;
@@ -12,8 +14,14 @@ function loadSentLettersIfVisible() {
   reloadSentLetters();
 }
 
-async function reloadSentLetters() {
-  if (sentLettersAreLoading) return;
+function reloadSentLetters() {
+  if (!sentLettersLoadPromise) {
+    sentLettersLoadPromise = fetchSentLetters().finally(() => { sentLettersLoadPromise = null; });
+  }
+  return sentLettersLoadPromise;
+}
+
+async function fetchSentLetters() {
   sentLettersAreLoading = true;
   document.getElementById('sentLetterListLoading').classList.remove('hidden');
   try {

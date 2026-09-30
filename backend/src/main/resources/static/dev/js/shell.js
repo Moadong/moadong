@@ -125,8 +125,8 @@ document.getElementById('loginFormEl').addEventListener('submit', async (e) => {
       setUserId(userId);
       document.getElementById('tokenDisplay').textContent = token;
       showLogin(true);
+      // 섹션은 showLogin에서 한 번만 연다. 지도 키가 늦게 와도 loadDevPortalConfig가 지도를 다시 초기화한다.
       await loadDevPortalConfig();
-      showActivePortalSection();
     } else {
       errEl.textContent = '토큰 없음';
       errEl.classList.remove('hidden');

@@ -9,7 +9,6 @@ window.addEventListener('beforeunload', (event) => {
 if (getToken()) {
   document.getElementById('tokenDisplay').textContent = getToken();
   showLogin(true);
-  loadDevPortalConfig().finally(() => {
-    showActivePortalSection();
-  });
+  // 섹션은 showLogin에서 이미 열었다. 다시 열면 목록 API가 두 번 호출된다.
+  loadDevPortalConfig();
 }
