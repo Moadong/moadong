@@ -115,6 +115,43 @@ describe('PromotionListTab', () => {
     ).toBeInTheDocument();
   });
 
+  it('글이 없으면 이벤트 생성부터 안내한다', () => {
+    renderTab();
+
+    expect(
+      screen.getByText(
+        '이벤트를 만들면 알림을 보낼 수 있어요! 오른쪽 하단 버튼을 클릭해 저희에게 문의해주세요!',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('글이 있으면 알림 문의 안내를 보여준다', () => {
+    mockArticles.push(makeArticle({ id: 'mine', clubId: 'my-club' }));
+    renderTab();
+
+    expect(
+      screen.getByText(
+        '이벤트 알림을 보내려면 오른쪽 하단 버튼을 클릭해 저희에게 문의해주세요!',
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it('심사 전 동아리는 글이 있어도 알림 안내 대신 심사 안내를 보여준다', () => {
+    mockArticles.push(makeArticle({ id: 'mine', clubId: 'my-club' }));
+    renderTab('UNAVAILABLE');
+
+    expect(
+      screen.getByText(
+        '심사가 완료된 동아리만 홍보 게시글을 작성할 수 있습니다.',
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        '이벤트 알림을 보내려면 오른쪽 하단 버튼을 클릭해 저희에게 문의해주세요!',
+      ),
+    ).not.toBeInTheDocument();
+  });
+
   it('카드 본문을 누르면 수정 화면으로 간다', () => {
     mockArticles.push(makeArticle({ id: 'mine', clubId: 'my-club' }));
     renderTab();

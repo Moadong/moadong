@@ -7,3 +7,10 @@ export const PROMOTION_NOT_APPROVED_MESSAGE =
 /** 심사 완료 여부. 상세·목록 API 모두 ClubState enum 이름('AVAILABLE'/'UNAVAILABLE')을 준다 (백엔드 #2013에서 통일) */
 export const isClubApproved = (state: string | undefined) =>
   state === 'AVAILABLE';
+
+/** 알림 발송은 운영진이 수동으로 처리한다. 관리자는 오픈채팅(오른쪽 하단 문의 버튼)으로 요청해야 한다 */
+export const PROMOTION_ALERT_EMPTY_GUIDE =
+  '이벤트를 만들면 알림을 보낼 수 있어요! 오른쪽 하단 버튼을 클릭해 저희에게 문의해주세요!';
+
+export const PROMOTION_ALERT_GUIDE =
+  '이벤트 알림을 보내려면 오른쪽 하단 버튼을 클릭해 저희에게 문의해주세요!';

@@ -32,6 +32,7 @@ export const queryKeys = {
   },
   club: {
     all: ['clubs'] as const,
+    allDetails: ['clubDetail'] as const,
     detail: (clubParam: string) => ['clubDetail', clubParam] as const,
     calendarEvents: (clubParam: string) =>
       ['clubCalendarEvents', clubParam] as const,

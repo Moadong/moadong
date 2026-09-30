@@ -113,7 +113,10 @@ export const ImageSortGrid = ({
                 <Styled.Overlay $error>
                   <Styled.StatusText>실패</Styled.StatusText>
                   {onRetry && (
-                    <Styled.RetryButton onClick={() => onRetry(index)}>
+                    <Styled.RetryButton
+                      onClick={() => onRetry(index)}
+                      disabled={isLoading}
+                    >
                       재전송
                     </Styled.RetryButton>
                   )}

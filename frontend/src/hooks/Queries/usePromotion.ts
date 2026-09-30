@@ -85,11 +85,6 @@ export const useDeletePromotionArticle = () => {
   });
 };
 
-interface PromotionImageUploadParams {
-  articleId: string;
-  files: File[];
-}
-
 export interface PromotionImageUploadResult {
   /** 올라간 파일과 최종 URL. 요청 순서를 유지한다 */
   uploaded: { file: File; url: string }[];
@@ -98,14 +93,12 @@ export interface PromotionImageUploadResult {
 
 /**
  * presigned URL 발급 → R2 병렬 PUT → 성공한 finalUrl 수집 (useUploadFeed와 같은 흐름).
- * 발급 API는 게시글을 건드리지 않으므로 목록 무효화는 PUT 쪽(useUpdatePromotionArticle)에서 한다.
+ * 발급 API는 게시글을 건드리지 않으므로 목록 무효화는 글을 저장하는 쪽
+ * (useCreatePromotionArticle·useUpdatePromotionArticle)에서 한다.
  */
 export const useUploadPromotionImages = () =>
   useMutation({
-    mutationFn: async ({
-      articleId,
-      files,
-    }: PromotionImageUploadParams): Promise<PromotionImageUploadResult> => {
+    mutationFn: async (files: File[]): Promise<PromotionImageUploadResult> => {
       if (files.length === 0) return { uploaded: [], failedFiles: [] };
 
       const requests = files.map((file) => ({
@@ -116,10 +109,7 @@ export const useUploadPromotionImages = () =>
           ? file.type
           : 'image/jpeg',
       }));
-      const presignedList = await getPromotionImageUploadUrls(
-        articleId,
-        requests,
-      );
+      const presignedList = await getPromotionImageUploadUrls(requests);
       if (!presignedList) {
         throw new Error('홍보 이미지 업로드 URL 생성 실패');
       }

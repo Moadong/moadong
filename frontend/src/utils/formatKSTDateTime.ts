@@ -41,10 +41,12 @@ const kstDayKey = (dateStr: string) =>
  * 하루짜리면 "11월 29일 일요일", 여러 날이면 요일을 빼고 "11월 29일 ~ 11월 30일".
  */
 export const formatKSTDateRange = (startStr: string, endStr: string) => {
-  if (!startStr) return '';
+  // 시작일이 비었거나 파싱되지 않으면 기간 자체가 성립하지 않는다. " ~ 11월 30일"을 내보내면 안 된다
+  const startKey = kstDayKey(startStr);
+  if (!startKey) return '';
   // 종료일이 비었거나 파싱되지 않으면 하루짜리로 본다. 안 그러면 "11월 29일 ~ "로 끝난다
   const endKey = kstDayKey(endStr);
-  if (!endKey || endKey === kstDayKey(startStr)) return formatKSTDate(startStr);
+  if (!endKey || endKey === startKey) return formatKSTDate(startStr);
 
   const short = (dateStr: string) =>
     formatKSTDateTime(dateStr, { month: 'long', day: 'numeric' });

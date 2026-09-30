@@ -32,9 +32,9 @@ interface UsePromotionFormParams {
 }
 
 /**
- * 작성·수정이 같은 폼을 쓴다. 이미지는 글이 있어야 올릴 수 있어서
- * (작성이면 먼저 생성) → presigned 업로드 → PUT(기존 유지분 + 새 URL) 순으로 간다.
- * PUT이 이미지 저장의 유일한 경로다.
+ * 작성·수정이 같은 폼을 쓴다. 이미지 발급이 게시글을 요구하지 않으므로
+ * presigned 업로드 → 저장(작성이면 POST 한 번, 수정이면 기존 유지분 + 새 URL을 PUT) 순으로 간다.
+ * 작성에서 저장 요청은 마지막 POST 하나뿐이라 실패해도 남는 글이 없다.
  */
 export const usePromotionForm = ({
   clubId,
@@ -104,14 +104,14 @@ export const usePromotionForm = ({
     setValues((prev) => ({ ...prev, images }));
 
   /** 아직 안 올린 파일만 업로드하고, 화면 순서를 유지한 채 URL 목록을 만든다 */
-  const uploadFiles = async (articleId: string) => {
+  const uploadFiles = async () => {
     const localFiles = values.images
       .filter((item): item is LocalItem => item.type === 'local')
       .map(({ file }) => file);
 
     const { uploaded, failedFiles } =
       localFiles.length > 0
-        ? await uploadImages({ articleId, files: localFiles })
+        ? await uploadImages(localFiles)
         : { uploaded: [], failedFiles: [] };
     const urlByFile = new Map(uploaded.map(({ file, url }) => [file, url]));
 
@@ -136,15 +136,25 @@ export const usePromotionForm = ({
   };
 
   const save = async (): Promise<SaveResult> => {
-    const validationError = validatePromotionForm(values, mode);
+    const validationError = validatePromotionForm(values);
     if (validationError) return { status: 'error', message: validationError };
 
     setIsSaving(true);
     try {
-      let articleId = article?.id;
-      if (!articleId) {
+      const { orderedUrls: images, failedCount } = await uploadFiles();
+
+      // 한 장도 안 남았는데 실패가 있었다면 사용자가 원한 건 빈 목록이 아니다.
+      // 수정이면 남기려던 이미지를 지우고, 작성이면 이미지 없는 글을 만들어 버린다.
+      if (images.length === 0 && failedCount > 0) {
+        return {
+          status: 'error',
+          message: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
+        };
+      }
+
+      if (!article) {
         const created = await createArticle(
-          buildPromotionPayload(values, clubId, []),
+          buildPromotionPayload(values, clubId, images),
         );
         if (!created?.articleId) {
           return {
@@ -152,32 +162,19 @@ export const usePromotionForm = ({
             message: '홍보 게시글 저장에 실패했습니다.',
           };
         }
-        articleId = created.articleId;
-      }
-
-      const { orderedUrls: images, failedCount } = await uploadFiles(articleId);
-
-      // PUT은 images를 1개 이상 요구한다. 작성에서 올릴 이미지가 없으면 PUT할 것도 없고,
-      // 수정에서 여기 오는 건 검증을 통과한 이미지가 전부 업로드 실패한 경우뿐이다.
-      if (images.length === 0) {
-        if (mode === 'edit') {
-          return {
-            status: 'error',
-            message: '이미지 업로드에 실패했습니다. 다시 시도해주세요.',
-          };
-        }
         return failedCount > 0
-          ? { status: 'partial', articleId, failedCount }
-          : { status: 'success', articleId };
+          ? { status: 'partial', articleId: created.articleId, failedCount }
+          : { status: 'success', articleId: created.articleId };
       }
 
+      // 이미지가 0장이어도 PUT은 보낸다. 건너뛰면 제목 같은 다른 수정이 조용히 사라진다.
       await updateArticle({
-        articleId,
+        articleId: article.id,
         payload: buildPromotionPayload(values, clubId, images),
       });
       return failedCount > 0
-        ? { status: 'partial', articleId, failedCount }
-        : { status: 'success', articleId };
+        ? { status: 'partial', articleId: article.id, failedCount }
+        : { status: 'success', articleId: article.id };
     } catch (error) {
       return {
         status: 'error',

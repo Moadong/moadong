@@ -85,8 +85,9 @@ const ClubDetailTopBar = ({
         // 앱이 실제로 처리한 결과에만 반응한다. 권한이 막혀 있으면 "완료"라고 말하지 않는다.
         if (needsPermission) {
           setNoticeMessage(PERMISSION_SNACKBAR_MESSAGE);
-        } else if (subscribed) {
-          setNoticeMessage(SUBSCRIBED_TOAST_MESSAGE);
+        } else {
+          // 구독 해제는 알릴 게 없지만, 떠 있던 "구독 완료" 토스트는 내려야 한다
+          setNoticeMessage(subscribed ? SUBSCRIBED_TOAST_MESSAGE : null);
         }
       }
     };

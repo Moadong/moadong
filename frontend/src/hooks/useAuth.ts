@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { getClubIdByToken } from '@/apis/auth';
+import { useAdminClubStore } from '@/store/useAdminClubStore';
 
 const useAuth = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
-  const [clubId, setClubId] = useState<string | null>(null);
+  const setClubId = useAdminClubStore((state) => state.setClubId);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -14,16 +15,15 @@ const useAuth = () => {
         setIsAuthenticated(true);
       } catch {
         setIsAuthenticated(false);
-        setClubId(null);
       } finally {
         setIsLoading(false);
       }
     };
 
     checkAuth();
-  }, []);
+  }, [setClubId]);
 
-  return { isLoading, isAuthenticated, clubId };
+  return { isLoading, isAuthenticated };
 };
 
 export default useAuth;

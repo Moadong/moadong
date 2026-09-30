@@ -144,4 +144,17 @@ describe('구독 중일 때', () => {
 
     expect(screen.queryByRole('status')).not.toBeInTheDocument();
   });
+
+  it('완료 토스트가 떠 있는 채로 구독을 해제하면 토스트를 내린다', () => {
+    renderTopBar(false);
+
+    replyFromApp(true);
+    expect(screen.getByText(SUBSCRIBED_TOAST_MESSAGE)).toBeInTheDocument();
+
+    replyFromApp(false);
+
+    expect(
+      screen.queryByText(SUBSCRIBED_TOAST_MESSAGE),
+    ).not.toBeInTheDocument();
+  });
 });
