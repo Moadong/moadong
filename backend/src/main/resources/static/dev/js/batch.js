@@ -60,6 +60,7 @@ document.getElementById('btnConversionBatch').onclick = async () => {
     banner.classList.remove('hidden');
     return;
   }
+  if (!confirm('모든 동아리의 로고·커버·피드 이미지에서 ' + images.length + '개 URL을 바꿉니다. 되돌리려면 반대 방향으로 다시 실행해야 해요.\n\n실행할까요?')) return;
   const btn = document.getElementById('btnConversionBatch');
   btn.disabled = true;
   try {
@@ -94,6 +95,7 @@ document.getElementById('btnConversionBatch').onclick = async () => {
 };
 
 document.getElementById('btnWebpMigrate').onclick = async () => {
+  if (!confirm('전체 동아리 이미지를 WebP로 마이그레이션합니다. 실행할까요?')) return;
   const btn = document.getElementById('btnWebpMigrate');
   btn.disabled = true;
   try {
