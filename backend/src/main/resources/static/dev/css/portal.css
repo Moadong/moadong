@@ -263,6 +263,16 @@ tbody tr.is-selected, tbody tr.is-selected:hover { background: var(--primary-sof
 
 .label-hint { margin-left: 6px; color: var(--gray-600); font-size: 12px; font-weight: 400; }
 
+/* 목록 상단 필터·검색 */
+.list-toolbar { display: flex; align-items: center; justify-content: space-between; gap: 12px; flex-wrap: wrap; margin-bottom: 4px; }
+.list-toolbar .segmented { margin: 0; }
+.list-search { flex: 1 1 180px; max-width: 240px; height: 36px; padding: 6px 12px; font-size: 13px; }
+.segmented-compact button span { margin-left: 4px; color: var(--gray-600); font-weight: 500; }
+.segmented-compact button.is-active span { color: var(--primary); }
+.table-empty { padding: 32px 14px; color: var(--gray-600); text-align: center; }
+.quote-actions { display: flex; gap: 6px; flex-wrap: wrap; margin: -4px 0 16px; }
+button.btn-small { height: 30px; margin: 0; padding: 0 10px; font-size: 12px; }
+
 /* 작성 / 미리보기 전환 */
 .segmented { display: inline-flex; gap: 2px; margin: 4px 0 16px; padding: 3px; border-radius: 10px; background: var(--gray-200); }
 .segmented button { height: 32px; margin: 0; padding: 0 14px; border-radius: 8px; background: transparent; color: var(--gray-700); font-size: 13px; }

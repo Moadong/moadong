@@ -321,12 +321,20 @@
       <div id="feedbackBanner" class="banner hidden"></div>
       <div class="feedback-layout">
         <div class="promotion-panel">
-          <h3>피드백 목록</h3>
-          <p id="feedbackSummary" class="promotion-summary">피드백 목록을 불러오세요.</p>
+          <div class="list-toolbar">
+            <div class="segmented segmented-compact" id="feedbackFilterTabs" role="tablist" aria-label="피드백 상태">
+              <button type="button" data-tab="WAITING" class="is-active" aria-selected="true">답장 대기 <span data-count="WAITING"></span></button>
+              <button type="button" data-tab="IN_PROGRESS" aria-selected="false">확인 중 <span data-count="IN_PROGRESS"></span></button>
+              <button type="button" data-tab="REPLIED" aria-selected="false">답장 완료 <span data-count="REPLIED"></span></button>
+              <button type="button" data-tab="ALL" aria-selected="false">전체 <span data-count="ALL"></span></button>
+            </div>
+            <input type="search" id="feedbackSearch" class="list-search" placeholder="내용, 보낸 사람 검색">
+          </div>
+          <p id="feedbackSummary" class="promotion-summary hidden"></p>
           <div id="feedbackListLoading" class="hidden">목록 불러오는 중...</div>
           <div class="table-wrap">
             <table id="feedbackList">
-              <thead><tr><th>유형</th><th>내용</th><th>보낸 사람</th><th>받은 날짜</th><th>상태</th></tr></thead>
+              <thead><tr><th>유형</th><th>내용</th><th>보낸 사람</th><th>받은 시각</th><th>상태</th></tr></thead>
               <tbody>
                 <tr><td colspan="5">피드백 목록을 불러오세요.</td></tr>
               </tbody>
@@ -339,6 +347,10 @@
           <p id="feedbackSelectionSummary" class="promotion-summary">왼쪽 목록에서 답장할 피드백을 선택하세요.</p>
           <div id="feedbackQuote" class="feedback-quote hidden"></div>
           <div id="feedbackQuoteImages" class="feedback-quote-images hidden"></div>
+          <div id="feedbackQuoteActions" class="quote-actions hidden">
+            <button type="button" id="btnToggleFeedbackStatus" class="btn-small"></button>
+            <button type="button" id="btnViewFeedbackReply" class="btn-small hidden">보낸 답장 보기</button>
+          </div>
           <div class="feedback-draft-row hidden" id="feedbackDraftRow">
             <select id="feedbackDraftSelect"></select>
             <button type="button" id="btnLoadFeedbackDraft">불러오기</button>

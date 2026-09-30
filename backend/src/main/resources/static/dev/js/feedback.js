@@ -16,6 +16,10 @@ let feedbackIsPublishing = false;
 let feedbackDrafts = [];
 let feedbackCurrentDraftId = '';
 let feedbackIsUploading = false;
+// 기본은 답장이 필요한 것만 본다.
+let feedbackFilter = 'WAITING';
+let feedbackQuery = '';
+let feedbackIsChangingStatus = false;
 // 발행이 실패해 다시 시도할 때 같은 값을 보내야 편지가 두 번 만들어지지 않는다.
 let feedbackLetterRequestId = '';
 
@@ -78,24 +82,45 @@ async function reloadFeedbackList() {
   }
 }
 
+function getVisibleFeedbacks() {
+  const query = feedbackQuery.trim().toLowerCase();
+  return feedbacks.filter((feedback) => {
+    if (feedbackFilter !== 'ALL' && feedback.status !== feedbackFilter) return false;
+    if (!query) return true;
+    return (feedback.content || '').toLowerCase().includes(query)
+      || (feedback.sender || '').toLowerCase().includes(query);
+  });
+}
+
+function renderFeedbackFilterCounts() {
+  const counts = { ALL: feedbacks.length, WAITING: 0, IN_PROGRESS: 0, REPLIED: 0 };
+  feedbacks.forEach((feedback) => { counts[feedback.status] = (counts[feedback.status] || 0) + 1; });
+  document.querySelectorAll('#feedbackFilterTabs [data-count]').forEach((el) => {
+    el.textContent = feedbackHasLoaded ? String(counts[el.dataset.count] || 0) : '';
+  });
+}
+
 function renderFeedbackList() {
   const tbody = document.querySelector('#feedbackList tbody');
-  const summary = document.getElementById('feedbackSummary');
   tbody.innerHTML = '';
-  if (!feedbacks.length) {
+  renderFeedbackFilterCounts();
+  const visible = getVisibleFeedbacks();
+  if (!visible.length) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
     td.colSpan = 5;
-    td.textContent = feedbackHasLoaded ? '받은 피드백이 없습니다.' : '피드백 목록을 불러오세요.';
+    td.className = 'table-empty';
+    if (!feedbackHasLoaded) td.textContent = '불러오는 중...';
+    else if (feedbackQuery.trim()) td.textContent = '검색 결과가 없어요.';
+    else if (feedbackFilter === 'WAITING') td.textContent = '답장할 피드백이 없어요.';
+    else td.textContent = '피드백이 없어요.';
     tr.appendChild(td);
     tbody.appendChild(tr);
-    summary.textContent = feedbackHasLoaded ? '총 0개 피드백' : '피드백 목록을 불러오세요.';
     updateFeedbackEditorState();
     return;
   }
 
-  summary.textContent = '총 ' + feedbacks.length + '개 피드백';
-  feedbacks.forEach((feedback) => {
+  visible.forEach((feedback) => {
     const tr = document.createElement('tr');
     tr.tabIndex = 0;
     tr.setAttribute('role', 'button');
@@ -110,7 +135,9 @@ function renderFeedbackList() {
     contentCell.textContent = feedback.content || '';
     contentCell.title = feedback.content || '';
     tr.appendChild(document.createElement('td')).textContent = feedback.sender || '-';
-    tr.appendChild(document.createElement('td')).textContent = formatFeedbackDate(feedback.createdAt);
+    const timeCell = tr.appendChild(document.createElement('td'));
+    timeCell.textContent = formatRelativeTime(feedback.createdAt);
+    timeCell.title = formatDateTime(feedback.createdAt);
     tr.appendChild(document.createElement('td')).appendChild(
       createTag(FEEDBACK_STATUS_LABELS[feedback.status] || feedback.status || '-', FEEDBACK_STATUS_TONES[feedback.status]));
     const selectCurrentFeedback = () => selectFeedback(feedback.id);
@@ -172,7 +199,22 @@ function showFeedbackEditorTab(tab) {
   }, isLetterMode ? null : selected));
 }
 
-function selectFeedback(feedbackId) {
+function isFeedbackComposeDirty() {
+  return !!(document.getElementById('feedbackReplyTitle').value.trim()
+    || document.getElementById('feedbackReplyBody').value.trim());
+}
+
+async function confirmDiscardFeedbackCompose() {
+  if (!isFeedbackComposeDirty()) return true;
+  return confirmDialog({ title: '작성 중인 내용이 있어요', message: '넘어가면 쓰던 내용이 사라져요. 전체 편지라면 먼저 임시저장하세요.', confirmLabel: '버리기', danger: true });
+}
+
+async function selectFeedback(feedbackId) {
+  if (feedbackMode === 'reply' && feedbackId === feedbackSelectedId) return;
+  if (!(await confirmDiscardFeedbackCompose())) return;
+  document.getElementById('feedbackReplyTitle').value = '';
+  document.getElementById('feedbackReplyBody').value = '';
+  document.getElementById('feedbackSendPush').checked = false;
   showFeedbackEditorTab('write');
   feedbackMode = 'reply';
   feedbackSelectedId = feedbackId;
@@ -180,7 +222,9 @@ function selectFeedback(feedbackId) {
   renderFeedbackList();
 }
 
-function enterFeedbackLetterMode() {
+async function enterFeedbackLetterMode() {
+  if (feedbackMode === 'letter') return;
+  if (!(await confirmDiscardFeedbackCompose())) return;
   showFeedbackEditorTab('write');
   feedbackMode = 'letter';
   feedbackSelectedId = '';
@@ -196,7 +240,8 @@ function enterFeedbackLetterMode() {
   reloadFeedbackDrafts();
 }
 
-function clearFeedbackSelection() {
+async function clearFeedbackSelection() {
+  if (!(await confirmDiscardFeedbackCompose())) return;
   showFeedbackEditorTab('write');
   feedbackMode = 'reply';
   feedbackSelectedId = '';
@@ -366,17 +411,27 @@ function updateFeedbackEditorState() {
   }
   renderFeedbackQuoteImages(isLetterMode ? [] : (selected?.images || []));
 
+  const quoteActions = document.getElementById('feedbackQuoteActions');
+  quoteActions.classList.toggle('hidden', isLetterMode || !selected);
+  if (!isLetterMode && selected) {
+    const btnStatus = document.getElementById('btnToggleFeedbackStatus');
+    btnStatus.classList.toggle('hidden', alreadyReplied);
+    btnStatus.disabled = busy || feedbackIsChangingStatus;
+    btnStatus.textContent = selected.status === 'IN_PROGRESS' ? '답장 대기로 되돌리기' : '확인 중으로 표시';
+    document.getElementById('btnViewFeedbackReply').classList.toggle('hidden', !alreadyReplied);
+  }
+
   const summary = document.getElementById('feedbackSelectionSummary');
   if (isLetterMode) {
     summary.textContent = feedbackCurrentDraftId
       ? '임시저장한 편지를 이어서 작성 중입니다. 발행하면 초안은 삭제됩니다.'
       : 'UPDATE / STORY 편지를 전체 사용자에게 발행합니다.';
   } else if (!selected) {
-    summary.textContent = '왼쪽 목록에서 답장할 피드백을 선택하세요.';
+    summary.textContent = '목록에서 피드백을 고르세요.';
   } else if (alreadyReplied) {
-    summary.textContent = '이미 답장을 발행한 피드백입니다.';
+    summary.textContent = '이미 답장한 피드백이에요.';
   } else {
-    summary.textContent = selected.sender + '에게 답장합니다.';
+    summary.textContent = selected.sender + '에게 답장';
   }
 
   const btnPublish = document.getElementById('btnPublishFeedbackReply');
@@ -454,6 +509,11 @@ async function publishFeedbackLetter() {
     feedbackMode = 'reply';
     showFeedbackEditorTab('write');
     await reloadFeedbackList();
+    // 답장을 보냈으면 다음 대기 피드백을 바로 연다.
+    if (!isLetterMode) {
+      const next = getVisibleFeedbacks().find((feedback) => feedback.status === 'WAITING');
+      if (next) selectFeedback(next.id);
+    }
     // 보낸 편지 화면을 한 번이라도 열었다면 방금 발행한 편지가 보이게 다시 불러온다.
     if (sentLettersHaveLoaded) await reloadSentLetters();
   } catch (e) {
@@ -497,3 +557,64 @@ document.getElementById('feedbackImageFile').onchange = (event) => {
   event.target.value = '';
   if (file) uploadFeedbackLetterImage(file);
 };
+
+async function toggleSelectedFeedbackStatus() {
+  const selected = getSelectedFeedback();
+  if (!selected || selected.status === 'REPLIED') return;
+  const nextStatus = selected.status === 'IN_PROGRESS' ? 'WAITING' : 'IN_PROGRESS';
+  feedbackIsChangingStatus = true;
+  updateFeedbackEditorState();
+  try {
+    const res = await fetch(API_BASE + '/api/admin/feedback/' + encodeURIComponent(selected.id) + '/status', {
+      method: 'PATCH',
+      headers: headers(),
+      body: JSON.stringify({ status: nextStatus })
+    });
+    const data = await readJsonOrEmpty(res);
+    if (!res.ok) {
+      showToast(data.message || '상태 변경 실패 (HTTP ' + res.status + ')', 'error');
+      return;
+    }
+    selected.status = nextStatus;
+    showToast(nextStatus === 'IN_PROGRESS' ? '확인 중으로 표시했어요' : '답장 대기로 되돌렸어요');
+    renderFeedbackList();
+  } catch (e) {
+    showToast(e.message || '상태 변경 실패', 'error');
+  } finally {
+    feedbackIsChangingStatus = false;
+    updateFeedbackEditorState();
+  }
+}
+
+// 피드백 응답에는 답장 편지 id가 없어서, 보낸 편지 목록에서 feedbackId로 찾는다.
+async function openFeedbackReplyLetter() {
+  const selected = getSelectedFeedback();
+  if (!selected) return;
+  if (!sentLettersHaveLoaded) await reloadSentLetters();
+  const letter = sentLetters.find((it) => it.feedbackId === selected.id);
+  if (!letter) {
+    showToast('보낸 편지에서 이 답장을 찾지 못했어요.', 'error');
+    return;
+  }
+  window.location.hash = '#letters';
+  selectSentLetter(letter.id);
+}
+
+bindSegmentedTabs('feedbackFilterTabs', (tab) => {
+  feedbackFilter = tab;
+  renderFeedbackList();
+});
+document.getElementById('feedbackSearch').addEventListener('input', (event) => {
+  feedbackQuery = event.target.value;
+  renderFeedbackList();
+});
+document.getElementById('btnToggleFeedbackStatus').onclick = toggleSelectedFeedbackStatus;
+document.getElementById('btnViewFeedbackReply').onclick = openFeedbackReplyLetter;
+// 본문에서 Ctrl/⌘ + Enter로 바로 보내기(확인 모달은 그대로 뜬다)
+document.getElementById('feedbackReplyBody').addEventListener('keydown', (event) => {
+  if (event.key === 'Enter' && (event.metaKey || event.ctrlKey)) {
+    event.preventDefault();
+    const btn = document.getElementById('btnPublishFeedbackReply');
+    if (!btn.disabled) publishFeedbackLetter();
+  }
+});

@@ -153,3 +153,25 @@ function confirmDialog(options) {
     (opts.danger ? cancel : ok).focus();
   });
 }
+
+/** 목록용 상대 시간. 일주일이 지나면 날짜로 보여준다. */
+function formatRelativeTime(value) {
+  if (!value) return '-';
+  const date = new Date(value);
+  if (Number.isNaN(date.getTime())) return '-';
+  const minutes = Math.floor((Date.now() - date.getTime()) / 60000);
+  if (minutes < 1) return '방금';
+  if (minutes < 60) return minutes + '분 전';
+  const hours = Math.floor(minutes / 60);
+  if (hours < 24) return hours + '시간 전';
+  const days = Math.floor(hours / 24);
+  if (days === 1) return '어제';
+  if (days < 7) return days + '일 전';
+  return (date.getMonth() + 1) + '월 ' + date.getDate() + '일';
+}
+
+function formatDateTime(value) {
+  const date = new Date(value);
+  if (!value || Number.isNaN(date.getTime())) return '';
+  return date.toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' });
+}
