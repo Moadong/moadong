@@ -85,6 +85,10 @@ public final class MixpanelEventNormalizer {
     }
 
     private static String internalEventName(String eventName, Object pageName, boolean webview) {
+        // Map.of는 null 키 조회에 NPE를 던진다. page_name이 없는 페이지 이벤트 한 건이 백필 전체를 멈추지 않게 먼저 거른다.
+        if (pageName == null && (PAGE_VIEWED.equals(eventName) || PAGE_LEFT.equals(eventName))) {
+            return eventName;
+        }
         if (PAGE_VIEWED.equals(eventName)) {
             if (webview && MAIN_PAGE_NAME.equals(pageName)) {
                 return WEBVIEW_MAIN_PAGE_VISITED;

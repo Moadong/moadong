@@ -114,6 +114,25 @@ class MixpanelEventNormalizerTest {
     }
 
     @Test
+    void page_name이_없는_페이지_이벤트는_예외없이_이름을_그대로_둔다() {
+        MixpanelRawEvent viewed = MixpanelEventNormalizer.normalize(
+                new MixpanelRawEvent("Page Viewed", Map.of("club_name", "밴드부")));
+        MixpanelRawEvent left = MixpanelEventNormalizer.normalize(
+                new MixpanelRawEvent("Page Left", Map.of("duration_seconds", 3)));
+
+        assertEquals("Page Viewed", viewed.event());
+        assertEquals("Page Left", left.event());
+    }
+
+    @Test
+    void properties가_null인_페이지_이벤트도_예외없이_이름을_그대로_둔다() {
+        assertEquals("Page Viewed",
+                MixpanelEventNormalizer.normalize(new MixpanelRawEvent("Page Viewed", null)).event());
+        assertEquals("Page Left",
+                MixpanelEventNormalizer.normalize(new MixpanelRawEvent("Page Left", null)).event());
+    }
+
+    @Test
     void 새_이벤트명은_Export_요청_목록에_모두_포함된다() {
         assertTrue(MixpanelEventNormalizer.NEW_EVENT_NAMES.containsAll(
                 List.of("Page Viewed", "Page Left", "Club Card Clicked", "Feedback Submitted")));
