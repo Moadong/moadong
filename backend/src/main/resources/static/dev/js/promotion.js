@@ -206,21 +206,21 @@ function updatePromotionMapStatus() {
   status.className = 'promotion-map-status';
   if (!hasEditorTarget) {
     status.classList.add('is-muted');
-    status.textContent = '게시글을 선택하거나 새 게시글 작성 모드로 전환하면 위치를 선택할 수 있습니다.';
+    status.textContent = '게시글을 고르면 위치를 선택할 수 있어요.';
     return;
   }
   if (!getStoredKakaoMapsKey()) {
     status.classList.add('is-warning');
-    status.textContent = '카카오 지도 JavaScript 키를 저장하면 주소 검색과 실제 지도를 사용할 수 있습니다.';
+    status.textContent = '카카오 지도 키가 없어 주소 검색과 지도를 쓸 수 없어요.';
     return;
   }
   if (latitude !== null && longitude !== null) {
     const addressText = promotionLocationResolvedAddress ? ' · ' + promotionLocationResolvedAddress : '';
-    status.textContent = '선택된 좌표: ' + normalizePromotionCoordinateValue(latitude) + ', ' + normalizePromotionCoordinateValue(longitude) + addressText;
+    status.textContent = '좌표 ' + normalizePromotionCoordinateValue(latitude) + ', ' + normalizePromotionCoordinateValue(longitude) + addressText;
     return;
   }
   status.classList.add('is-muted');
-  status.textContent = '주소를 검색하거나 지도에서 위치를 클릭해 좌표를 선택하세요.';
+  status.textContent = '주소를 검색하거나 지도를 눌러 좌표를 고르세요.';
 }
 
 function updatePromotionMapMarker(options) {
@@ -623,25 +623,25 @@ function updatePromotionEditorState() {
   if (wasEditorHidden && hasEditorTarget) initializePromotionMapIfVisible();
 
   if (isCreateMode) {
-    badge.textContent = dirty ? '새 게시글 작성 중 · 저장되지 않은 변경 있음' : '새 게시글 작성 중';
+    badge.textContent = dirty ? '새 게시글 · 저장 안 됨' : '새 게시글 작성 중';
     badge.classList.remove('hidden');
-    summary.textContent = '새 홍보 게시글을 작성 중입니다. `clubId`를 직접 입력한 뒤 저장하거나 이미지를 먼저 업로드할 수 있습니다.';
-    help.textContent = 'create 모드에서 이미지 업로드를 누르면 게시글을 먼저 생성한 뒤 기존 홍보 이미지 업로드/수정 로직으로 반영합니다.';
+    summary.textContent = 'clubId를 입력하고 저장하세요.';
+    help.textContent = '이미지를 먼저 올리면 게시글이 먼저 만들어져요.';
     return;
   }
 
-  help.textContent = '기존 게시글의 `clubId`는 읽기 전용입니다. 저장 후 목록을 다시 조회해 서버 기준 최신값으로 동기화합니다.';
+  help.textContent = '';
 
   if (!hasSelection) {
     badge.classList.add('hidden');
     badge.textContent = '';
-    summary.textContent = '위 목록에서 수정할 게시글을 선택하세요.';
+    summary.textContent = '';
     return;
   }
 
-  badge.textContent = (dirty ? '수정 중' : '편집 중') + ' · ' + (selected?.title || '제목 없음');
+  badge.textContent = (dirty ? '저장 안 됨' : '편집 중') + ' · ' + (selected?.title || '제목 없음');
   badge.classList.remove('hidden');
-  summary.textContent = (selected?.clubName || '-') + ' / ' + formatPromotionPeriod(selected) + (dirty ? ' / 저장되지 않은 변경 있음' : '');
+  summary.textContent = (selected?.clubName || '-') + ' / ' + formatPromotionPeriod(selected) + '';
 }
 
 function renderPromotionList() {
@@ -652,7 +652,7 @@ function renderPromotionList() {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
     td.colSpan = 5;
-    td.textContent = promotionHasLoaded ? '등록된 홍보 게시글이 없습니다.' : '홍보 게시글 목록을 불러오세요.';
+    td.textContent = promotionHasLoaded ? '등록된 홍보 게시글이 없어요.' : '홍보 게시글 목록을 불러오세요.';
     tr.appendChild(td);
     tbody.appendChild(tr);
     summary.textContent = promotionHasLoaded ? '총 0개 게시글' : '홍보 게시글 목록을 불러오세요.';
@@ -677,8 +677,13 @@ function renderPromotionList() {
     tr.appendChild(document.createElement('td')).textContent = article.location || '-';
     tr.appendChild(document.createElement('td')).textContent = formatPromotionPeriod(article);
     tr.appendChild(document.createElement('td')).textContent = String((article.images || []).length);
-    const selectCurrentArticle = () => {
-      selectPromotionArticle(article.id);
+    const selectCurrentArticle = async () => {
+      const previousId = promotionSelectedArticleId;
+      await selectPromotionArticle(article.id);
+      // 편집기는 항상 목록 아래에 있어서, 실제로 선택이 바뀌었을 때만 내려준다.
+      if (promotionSelectedArticleId !== previousId) {
+        document.getElementById('promotionEditorBody').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
     };
     tr.onclick = selectCurrentArticle;
     tr.onkeydown = (event) => {
@@ -736,7 +741,7 @@ async function reloadPromotionList(options) {
 
   if (!keepMessage) hidePromotionSaveResult();
   if (!promotionArticles.length) {
-    setPromotionBanner('등록된 홍보 게시글이 없습니다.', 'warn');
+    setPromotionBanner('등록된 홍보 게시글이 없어요.', 'warn');
   }
   return { ok: true, data, status: res.status };
 }
@@ -786,7 +791,7 @@ function createPromotionPreviewCard(url, index) {
 
   const placeholder = document.createElement('div');
   placeholder.className = 'promotion-preview-placeholder';
-  placeholder.textContent = safeUrl ? '이미지를 불러올 수 없습니다.' : 'http/https 이미지 URL만 미리보기할 수 있습니다.';
+  placeholder.textContent = safeUrl ? '이미지를 불러올 수 없어요.' : 'http/https 이미지 URL만 미리보기할 수 있습니다.';
 
   if (safeUrl) {
     const img = document.createElement('img');
@@ -925,7 +930,7 @@ function normalizePromotionPayload(options) {
     throw new Error('행사 시작/종료 일시를 확인하세요.');
   }
   if (startDate.getTime() > endDate.getTime()) {
-    throw new Error('행사 시작일은 종료일보다 늦을 수 없습니다.');
+    throw new Error('행사 시작일은 종료일보다 늦을 수 없어요.');
   }
   if (!Number.isFinite(latitude) || !Number.isFinite(longitude)) {
     throw new Error('지도에서 위치를 선택해 위도/경도를 확정하세요.');
@@ -1411,7 +1416,7 @@ document.getElementById('btnUploadPromotionImage').onclick = async () => {
 
       const imageUrl = data.data?.imageUrl;
       if (!imageUrl) {
-        await handlePartialUploadFailure(file.name + ' 업로드 결과 URL을 확인할 수 없습니다.', 'error');
+        await handlePartialUploadFailure(file.name + ' 업로드 결과 URL을 확인할 수 없어요.', 'error');
         return;
       }
       uploadedUrls.push(imageUrl);

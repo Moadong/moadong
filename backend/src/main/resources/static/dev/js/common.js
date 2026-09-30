@@ -175,3 +175,10 @@ function formatDateTime(value) {
   if (!value || Number.isNaN(date.getTime())) return '';
   return date.toLocaleString('ko-KR', { dateStyle: 'medium', timeStyle: 'short' });
 }
+
+// 목록과 편집 영역이 세로로 쌓이는 폭에서는 고른 항목의 편집 영역으로 내려준다.
+function revealOnNarrowScreen(elementId) {
+  if (!window.matchMedia('(max-width: 1180px)').matches) return;
+  const el = document.getElementById(elementId);
+  if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
+}

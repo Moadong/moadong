@@ -25,7 +25,7 @@ function parseFcmDataMap(raw, fieldName) {
   const mapped = {};
   for (const [key, value] of Object.entries(parsed)) {
     if (!String(key).trim()) {
-      throw new Error(fieldName + ' key는 비어 있을 수 없습니다.');
+      throw new Error(fieldName + ' key는 비어 있을 수 없어요.');
     }
     if (value !== null && typeof value === 'object') {
       throw new Error(fieldName + ' 값은 문자열/숫자/불리언만 허용됩니다.');
@@ -112,7 +112,7 @@ function updateFcmTokenSummary() {
   const summary = document.getElementById('fcmTokenSummary');
   const keyword = document.getElementById('fcmTokenSearch').value.trim();
   if (!fcmTokens.length) {
-    summary.textContent = '조회된 토큰이 없습니다.';
+    summary.textContent = '조회된 토큰이 없어요.';
     return;
   }
   if (!keyword) {
@@ -199,7 +199,7 @@ document.getElementById('btnLoadFcmTokens').onclick = async () => {
       banner.classList.remove('hidden');
       fcmTokens = [];
       applyFcmTokenFilter(true);
-      summary.textContent = '권한이 없습니다.';
+      summary.textContent = '권한이 없어요.';
       return;
     }
     const data = await readJsonOrEmpty(res);
@@ -209,13 +209,13 @@ document.getElementById('btnLoadFcmTokens').onclick = async () => {
       banner.classList.remove('hidden');
       fcmTokens = [];
       applyFcmTokenFilter(true);
-      summary.textContent = '토큰 조회에 실패했습니다.';
+      summary.textContent = '토큰 조회에 실패했어요.';
       return;
     }
     fcmTokens = data.data?.tokens || [];
     applyFcmTokenFilter(true);
     if (!fcmTokens.length) {
-      banner.textContent = '저장된 토큰이 없습니다.';
+      banner.textContent = '저장된 토큰이 없어요.';
       banner.className = 'banner warn';
       banner.classList.remove('hidden');
       return;
@@ -227,7 +227,7 @@ document.getElementById('btnLoadFcmTokens').onclick = async () => {
     banner.classList.remove('hidden');
     fcmTokens = [];
     applyFcmTokenFilter(true);
-    summary.textContent = '토큰 조회에 실패했습니다.';
+    summary.textContent = '토큰 조회에 실패했어요.';
   } finally {
     loading.classList.add('hidden');
     btn.disabled = false;
@@ -243,7 +243,7 @@ document.getElementById('btnFcmSendSingle').onclick = async () => {
   try {
     data = parseFcmDataMap(document.getElementById('fcmSingleData').value, '단건 data');
   } catch (e) {
-    setMessageBox('fcmSingleResult', false, e.message || 'data 형식이 올바르지 않습니다.');
+    setMessageBox('fcmSingleResult', false, e.message || 'data 형식이 올바르지 않아요.');
     return;
   }
   if (!token) {
@@ -292,7 +292,7 @@ document.getElementById('btnFcmSendAll').onclick = async () => {
   try {
     data = parseFcmDataMap(document.getElementById('fcmBatchData').value, '전체 data');
   } catch (e) {
-    setMessageBox('fcmBatchResult', false, e.message || 'data 형식이 올바르지 않습니다.');
+    setMessageBox('fcmBatchResult', false, e.message || 'data 형식이 올바르지 않아요.');
     return;
   }
   if (!title || !body) {
@@ -382,7 +382,7 @@ function buildFcmSchedulePayload() {
   if (!date || !time) throw new Error('예약 날짜와 시간을 모두 입력하세요.');
 
   const scheduledDate = new Date(date + 'T' + time + ':00+09:00');
-  if (Number.isNaN(scheduledDate.getTime())) throw new Error('예약 시각 형식이 올바르지 않습니다.');
+  if (Number.isNaN(scheduledDate.getTime())) throw new Error('예약 시각 형식이 올바르지 않아요.');
   if (scheduledDate.getTime() <= Date.now()) throw new Error('예약 시각은 현재보다 이후여야 합니다.');
 
   const payload = {
@@ -512,7 +512,7 @@ async function createFcmSchedule() {
   try {
     payload = buildFcmSchedulePayload();
   } catch (e) {
-    setMessageBox('fcmScheduleResult', false, e.message || '예약 입력값이 올바르지 않습니다.');
+    setMessageBox('fcmScheduleResult', false, e.message || '예약 입력값이 올바르지 않아요.');
     return;
   }
 

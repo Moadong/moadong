@@ -150,7 +150,7 @@ function createBannerPreview(item) {
   });
   img.addEventListener('error', () => {
     img.classList.add('hidden');
-    placeholder.textContent = '이미지를 불러올 수 없습니다.';
+    placeholder.textContent = '이미지를 불러올 수 없어요.';
     placeholder.classList.remove('hidden');
     preview.classList.add('is-empty');
   });
@@ -376,7 +376,7 @@ document.getElementById('btnUploadBannerImage').onclick = async () => {
 
     const imageUrl = data.data?.imageUrl;
     if (!imageUrl) {
-      setBannerBanner('업로드 결과 URL을 확인할 수 없습니다.', 'error');
+      setBannerBanner('업로드 결과 URL을 확인할 수 없어요.', 'error');
       return;
     }
 

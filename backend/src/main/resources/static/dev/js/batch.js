@@ -49,7 +49,7 @@ document.getElementById('btnConversionBatch').onclick = async () => {
   try {
     images = text ? JSON.parse(text) : [];
   } catch (e) {
-    banner.textContent = 'JSON 형식이 올바르지 않습니다.';
+    banner.textContent = 'JSON 형식이 올바르지 않아요.';
     banner.className = 'banner error';
     banner.classList.remove('hidden');
     return;

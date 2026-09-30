@@ -54,7 +54,7 @@ function renderSentLetterList() {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
     td.colSpan = 5;
-    td.textContent = sentLettersHaveLoaded ? '보낸 편지가 없습니다.' : '보낸 편지 목록을 불러오세요.';
+    td.textContent = sentLettersHaveLoaded ? '보낸 편지가 없어요.' : '보낸 편지 목록을 불러오세요.';
     tr.appendChild(td);
     tbody.appendChild(tr);
     summary.textContent = sentLettersHaveLoaded ? '총 0개 편지' : '보낸 편지 목록을 불러오세요.';
@@ -112,6 +112,7 @@ async function selectSentLetter(letterId) {
   sentLetterIsEditing = false;
   renderSentLetterList();
   renderSentLetterDetail();
+  revealOnNarrowScreen('sentLetterView');
 }
 
 function renderSentLetterMeta(letter) {

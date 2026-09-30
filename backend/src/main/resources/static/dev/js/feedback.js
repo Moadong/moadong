@@ -220,6 +220,7 @@ async function selectFeedback(feedbackId) {
   feedbackSelectedId = feedbackId;
   document.getElementById('feedbackSaveResult').classList.add('hidden');
   renderFeedbackList();
+  revealOnNarrowScreen('feedbackEditorTitle');
 }
 
 async function enterFeedbackLetterMode() {

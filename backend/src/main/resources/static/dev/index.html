@@ -6,7 +6,7 @@
   <title>모아동 개발자 포털</title>
   <link rel="icon" href="/dev/assets/favicon.ico">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
-  <link rel="stylesheet" href="/dev/css/portal.css?v=20260930">
+  <link rel="stylesheet" href="/dev/css/portal.css?v=20260930-2">
   <!-- 편지 미리보기용 마크다운 렌더러. 버전 고정 + SRI로 변조된 스크립트는 실행되지 않는다. -->
   <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" integrity="sha384-/TQbtLCAerC3jgaim+N78RZSDYV7ryeoBCVqTuzRrFec2akfBkHS7ACQ3PQhvMVi" crossorigin="anonymous"></script>
   <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js" integrity="sha384-+VfUPEb0PdtChMwmBcBmykRMDd+v6D/oFmB3rZM/puCMDYcIvF968OimRh4KQY9a" crossorigin="anonymous"></script>
@@ -17,7 +17,6 @@
       <div class="login-brand">
         <img class="login-logo" src="/dev/assets/moadong_name_logo.svg" alt="모아동">
         <h1>운영 포털</h1>
-        <p class="sub">운영 계정으로 로그인하면 피드백 답장, 홍보 글, 푸시 알림 등을 관리할 수 있어요.</p>
       </div>
       <div id="loginForm">
         <form id="loginFormEl" novalidate>
@@ -93,7 +92,7 @@
 
     <section id="api-docs" class="hidden">
       <h2>API 문서 · 토큰</h2>
-      <p class="sub">Swagger에서 API를 직접 호출할 때 쓰는 페이지예요. 운영 작업만 한다면 왼쪽 메뉴에서 바로 고르면 돼요.</p>
+      <p class="sub">Swagger의 Authorize에 토큰을 붙여 넣어 호출해요.</p>
       <div id="tokenArea" class="token-area hidden">
         <strong>내 액세스 토큰</strong>
         <div class="token-actions">
@@ -128,7 +127,7 @@
           <button type="button" id="btnLoadClubs">새로고침</button>
         </div>
       </div>
-      <p class="sub">모아동에 등록된 동아리예요. 행을 누르면 새 창에서 동아리 정보와 지원서를 수정할 수 있어요.</p>
+      <p class="sub">행을 누르면 새 창에서 동아리 정보와 지원서를 고쳐요.</p>
       <div id="clubBanner" class="banner hidden"></div>
       <div id="clubListLoading" class="hidden">목록 불러오는 중...</div>
       <div class="table-wrap">
@@ -148,7 +147,7 @@
           <button type="button" id="btnRefreshDictCache">캐시 새로고침</button>
         </div>
       </div>
-      <p class="sub">학생이 검색창에 입력한 단어를 표준 단어로 묶어 검색 결과를 넓혀줘요. 예를 들어 'band'로 검색해도 '밴드' 동아리가 나오게 돼요. 추가·수정한 내용이 검색에 바로 안 보이면 캐시 새로고침을 눌러요.</p>
+      <p class="sub">검색어를 표준 단어로 묶어요. 예: band → 밴드. 바꾼 뒤 검색에 안 보이면 캐시를 새로고침하세요.</p>
       <div id="dictBanner" class="banner hidden"></div>
       <div id="dictListLoading" class="hidden">목록 불러오는 중...</div>
       <div class="table-wrap">
@@ -159,7 +158,6 @@
       </div>
       <div class="panel" style="margin-top:24px;">
       <h3>단어 추가</h3>
-      <p class="promotion-summary">한 개씩 추가하거나 CSV로 한 번에 올릴 수 있어요.</p>
       <div class="form-grid">
         <div>
           <div class="form-row">
@@ -198,7 +196,6 @@
           <button type="button" id="btnCreatePromotion" class="btn-primary">+ 새 게시글</button>
         </div>
       </div>
-      <p class="sub">모아동 홍보 게시판에 올라가는 행사 글이에요. 목록에서 글을 고르면 아래에서 수정할 수 있어요.</p>
       <div id="promotionBanner" class="banner hidden"></div>
       <div class="promotion-layout">
         <div class="promotion-panel">
@@ -217,8 +214,8 @@
 
         <div class="promotion-panel">
           <h3>게시글 편집</h3>
-          <p id="promotionSelectionSummary" class="promotion-summary">위 목록에서 수정할 게시글을 선택하세요.</p>
-          <div id="promotionEditorEmpty" class="promotion-empty">위 목록에서 글을 고르거나 <strong>+ 새 게시글</strong>을 누르면 여기서 편집할 수 있어요.</div>
+          <p id="promotionSelectionSummary" class="promotion-summary"></p>
+          <div id="promotionEditorEmpty" class="promotion-empty">목록에서 글을 고르거나 <strong>+ 새 게시글</strong>을 누르세요.</div>
           <div id="promotionEditorBody" class="hidden">
           <div id="promotionEditingBadge" class="editing-badge hidden"></div>
           <div class="form-grid">
@@ -248,7 +245,7 @@
           </div>
           <div class="promotion-map-card">
             <h4>장소 선택</h4>
-            <p class="promotion-map-sub">장소명 입력과 좌표 선택은 분리되어 있습니다. 아래 검색창이나 지도를 사용해 위도/경도를 선택하세요.</p>
+            <p class="promotion-map-sub">장소명과 좌표는 따로 저장돼요. 좌표는 검색하거나 지도에서 고르세요.</p>
             <div id="promotionMapConfigBanner" class="banner warn hidden">
               <div class="promotion-map-config">
                 <div>
@@ -258,7 +255,7 @@
               </div>
             </div>
             <div class="promotion-location-search-row">
-              <input type="search" id="promotionLocationSearchQuery" placeholder="좌표를 찾을 주소나 건물명을 검색하세요.">
+              <input type="search" id="promotionLocationSearchQuery" placeholder="주소나 건물명">
               <button type="button" id="btnPromotionLocationSearch">검색</button>
               <button type="button" id="btnPromotionClearCoordinates">좌표 초기화</button>
             </div>
@@ -276,11 +273,11 @@
             <div class="promotion-map-meta-grid">
               <div class="form-row">
                 <label for="promotionLatitude">위도</label>
-                <input type="text" id="promotionLatitude" readonly placeholder="지도를 선택하면 자동 입력">
+                <input type="text" id="promotionLatitude" readonly placeholder="지도에서 선택">
               </div>
               <div class="form-row">
                 <label for="promotionLongitude">경도</label>
-                <input type="text" id="promotionLongitude" readonly placeholder="지도를 선택하면 자동 입력">
+                <input type="text" id="promotionLongitude" readonly placeholder="지도에서 선택">
               </div>
             </div>
           </div>
@@ -301,7 +298,7 @@
           </div>
           <div>
             <label style="display:block; font-weight:500; margin-bottom:4px; font-size:0.9rem;">이미지 미리보기</label>
-            <div id="promotionImagePreviewEmpty" class="promotion-empty">이미지 URL을 입력하거나 업로드하면 여기에서 미리볼 수 있습니다.</div>
+            <div id="promotionImagePreviewEmpty" class="promotion-empty">이미지 없음</div>
             <div id="promotionImagePreviewList" class="promotion-preview-grid"></div>
           </div>
           <div class="promotion-actions sticky-actions">
@@ -310,7 +307,7 @@
             <button type="button" id="btnDeletePromotion" class="btn-danger">삭제</button>
             <button type="button" id="btnClearPromotionSelection">선택 해제</button>
           </div>
-          <p id="promotionHelpText" class="promotion-help">기존 게시글의 `clubId`는 읽기 전용입니다. 저장 후 목록을 다시 조회해 서버 기준 최신값으로 동기화합니다.</p>
+          <p id="promotionHelpText" class="promotion-help"></p>
           <div id="promotionSaveResult" class="message-box hidden"></div>
           </div>
         </div>
@@ -325,7 +322,6 @@
           <button type="button" id="btnNewFeedbackLetter" class="btn-primary">+ 전체 편지 쓰기</button>
         </div>
       </div>
-      <p class="sub">학생들이 우체통으로 보낸 피드백이에요. 목록에서 하나를 고르면 오른쪽에서 답장을 쓸 수 있어요. 모든 사용자에게 소식을 전하려면 전체 편지 쓰기를 눌러요.</p>
       <div id="feedbackBanner" class="banner hidden"></div>
       <div class="feedback-layout">
         <div class="promotion-panel">
@@ -352,7 +348,7 @@
 
         <div class="promotion-panel">
           <h3 id="feedbackEditorTitle">답장 작성</h3>
-          <p id="feedbackSelectionSummary" class="promotion-summary">왼쪽 목록에서 답장할 피드백을 선택하세요.</p>
+          <p id="feedbackSelectionSummary" class="promotion-summary">목록에서 피드백을 고르세요.</p>
           <div id="feedbackQuote" class="feedback-quote hidden"></div>
           <div id="feedbackQuoteImages" class="feedback-quote-images hidden"></div>
           <div id="feedbackQuoteActions" class="quote-actions hidden">
@@ -381,13 +377,13 @@
               <input type="text" id="feedbackReplyTitle" placeholder="답장 제목">
             </div>
             <div class="form-row">
-              <label for="feedbackReplyBody">본문 <span class="label-hint">마크다운 · ## 소제목, **굵게**, - 목록, &gt; 인용</span></label>
+              <label for="feedbackReplyBody">본문 <span class="label-hint">마크다운</span></label>
               <textarea id="feedbackReplyBody" rows="12" placeholder="답장 본문" style="max-width:100%;"></textarea>
             </div>
             <div class="feedback-upload-row" id="feedbackImageUploadRow">
               <input type="file" id="feedbackImageFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp" class="hidden">
               <button type="button" id="btnUploadFeedbackImage">이미지 업로드</button>
-              <span class="feedback-upload-help">본문 끝에 이미지로 들어가요. 최대 10MB</span>
+              <span class="feedback-upload-help">본문 끝에 삽입 · 최대 10MB</span>
             </div>
           </div>
           <div id="feedbackPreviewPane" class="hidden"></div>
@@ -415,7 +411,6 @@
           <button type="button" id="btnLoadSentLetters">새로고침</button>
         </div>
       </div>
-      <p class="sub">지금까지 보낸 답장과 전체 편지예요. 편지를 고르면 학생에게 보이는 모습 그대로 확인할 수 있고, 오탈자가 있으면 바로 고칠 수 있어요.</p>
       <div class="letters-layout">
         <div class="panel">
           <h3>편지 목록</h3>
@@ -432,7 +427,7 @@
         </div>
 
         <div class="panel letter-detail-panel">
-          <div id="sentLetterEmpty" class="promotion-empty">왼쪽 목록에서 편지를 고르면 학생 화면 그대로 미리보기가 나와요.</div>
+          <div id="sentLetterEmpty" class="promotion-empty">편지를 고르면 학생이 보는 화면 그대로 보여줘요.</div>
           <div id="sentLetterView" class="hidden">
             <div class="letter-detail-head">
               <dl id="sentLetterMeta" class="letter-meta"></dl>
@@ -442,7 +437,7 @@
           </div>
           <div id="sentLetterEdit" class="hidden">
             <h3>편지 수정</h3>
-            <p class="promotion-summary">제목과 본문만 고칠 수 있어요. 푸시는 다시 보내지 않고, 이미 받은 푸시 문구도 바뀌지 않아요.</p>
+            <p class="promotion-summary">제목과 본문만 바뀌고, 푸시는 다시 가지 않아요.</p>
             <div class="segmented" id="sentLetterEditTabs" role="tablist" aria-label="편지 수정 보기 전환">
               <button type="button" data-tab="write" class="is-active" aria-selected="true">작성</button>
               <button type="button" data-tab="preview" aria-selected="false">미리보기</button>
@@ -476,7 +471,7 @@
         </div>
       </div>
       <div id="bannerBanner" class="banner hidden"></div>
-      <p class="sub">웹·앱 메인 상단에 도는 배너예요. 이미지를 올리면 목록 끝에 추가되고, 위/아래 버튼으로 순서를 바꿀 수 있어요. 변경사항 저장을 눌러야 실제 화면에 반영돼요.</p>
+      <p class="sub">웹·앱 메인 상단 배너예요. 변경사항 저장을 눌러야 반영돼요.</p>
       <div class="form-grid" style="margin-bottom:8px;">
         <div class="form-row">
           <label for="bannerType">배너 타입</label>
@@ -518,16 +513,16 @@
           <button type="button" id="btnClearFcmSelection" class="btn-ghost">입력 초기화</button>
         </div>
       </div>
-      <p class="sub">앱 사용자에게 푸시 알림을 보내요. 테스트할 때는 특정 기기로 먼저 보내 보고, 문구를 확인한 뒤에 전체 발송이나 예약을 해요.</p>
+      <p class="sub">전체 발송 전에 내 기기로 먼저 보내 확인하세요.</p>
       <div id="fcmBanner" class="banner hidden"></div>
 
       <div class="panel">
         <h3>기기 토큰</h3>
-        <p id="fcmTokenSummary" class="promotion-summary">토큰 조회를 누르면 푸시를 받을 수 있는 기기 목록이 나와요. 선택을 누르면 아래 입력칸에 채워져요.</p>
+        <p id="fcmTokenSummary" class="promotion-summary">선택을 누르면 아래 입력칸에 채워져요.</p>
         <div id="fcmTokenLoading" class="hidden">토큰 불러오는 중...</div>
         <div class="form-row" style="margin-bottom:8px;">
           <label for="fcmTokenSearch">토큰 검색</label>
-          <input type="search" id="fcmTokenSearch" placeholder="토큰 일부를 입력하세요.">
+          <input type="search" id="fcmTokenSearch" placeholder="토큰 일부">
         </div>
         <div id="fcmTokenPagination" class="pagination hidden"></div>
         <div class="table-wrap">
@@ -542,10 +537,9 @@
 
       <div class="panel">
         <h3>특정 기기에 보내기</h3>
-        <p class="promotion-summary">내 기기로 먼저 보내서 문구와 이동 경로를 확인할 때 써요.</p>
         <div class="form-row">
           <label for="fcmSingleToken">대상 토큰</label>
-          <textarea id="fcmSingleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
+          <textarea id="fcmSingleToken" rows="3" placeholder="위 목록에서 선택하거나 붙여 넣기" style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
         </div>
         <div class="form-grid">
           <div class="form-row">
@@ -569,7 +563,7 @@
 
       <div class="panel panel-danger">
         <h3>모든 사용자에게 보내기</h3>
-        <p class="promotion-summary">누르는 즉시 앱을 설치한 모든 사용자에게 발송되고, 되돌릴 수 없어요.</p>
+        <p class="promotion-summary">앱을 설치한 모든 사용자에게 바로 가요. 취소할 수 없어요.</p>
         <div class="form-grid">
           <div class="form-row">
             <label for="fcmBatchTitle">제목</label>
@@ -592,7 +586,7 @@
 
       <div class="panel">
         <h3>예약 발송</h3>
-        <p class="promotion-summary">정해진 시각에 자동으로 보내요. 발송 전까지는 아래 목록에서 취소할 수 있어요.</p>
+        <p class="promotion-summary">발송 전까지 예약 목록에서 취소할 수 있어요.</p>
         <div class="form-grid">
           <div class="form-row">
             <label for="fcmScheduleTargetType">받는 사람</label>
@@ -603,7 +597,7 @@
           </div>
           <div class="form-row">
             <label for="fcmScheduleToken">대상 토큰</label>
-            <textarea id="fcmScheduleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
+            <textarea id="fcmScheduleToken" rows="3" placeholder="위 목록에서 선택하거나 붙여 넣기" style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
           </div>
         </div>
         <div class="form-grid">
@@ -675,7 +669,7 @@
 
     <section id="statistics-backfill" class="hidden">
       <h2>통계 Backfill</h2>
-      <p class="sub">Mixpanel 과거 이벤트를 다시 가져와 관리자 통계 데이터의 빠진 날짜를 채워요. 퍼널 이탈율에서 "수집 안 됨" 날짜가 보이면 여기서 그 기간을 실행해요.</p>
+      <p class="sub">Mixpanel 과거 이벤트로 관리자 통계의 빠진 날짜를 채워요. 퍼널 이탈율에 "수집 안 됨"이 보이면 그 기간으로 실행하세요.</p>
       <div class="form-grid">
         <div class="form-row">
           <label for="statisticsBackfillFrom">시작일</label>
@@ -692,8 +686,8 @@
 
     <section id="conversion-batch" class="hidden">
       <h2>이미지 변환 배치</h2>
-      <p class="sub">모든 동아리의 로고·커버·피드 이미지 URL을 source → destination으로 한 번에 바꿔요. 이미지 변환 작업이 끝난 뒤 개발자가 실행하는 화면이에요.</p>
-      <div class="banner warn">전체 동아리 데이터가 바뀌어요. 실행 전에 images 배열을 한 번 더 확인해 주세요.</div>
+      <p class="sub">전체 동아리의 로고·커버·피드 이미지 URL을 source → destination으로 바꿔요.</p>
+      <div class="banner warn">전체 동아리 데이터가 바뀌어요. 실행 전에 images 배열을 확인하세요.</div>
       <div id="conversionBanner" class="banner hidden"></div>
       <div class="form-row">
         <label for="conversionImagesJson">images (JSON 배열)</label>
@@ -711,7 +705,7 @@
 
     <section id="funnel-dashboard" class="hidden">
       <h2>퍼널 이탈율</h2>
-      <p class="sub">Mixpanel에서 매일 04:00에 수집한 전날 이벤트로 퍼널별 단계 고유 사용자 수와 전환율을 봅니다. 같은 사용자가 이전 단계 이후 24시간 안에 다음 단계를 해야 전환으로 셉니다. 빠진 날짜는 통계 Backfill로 메우세요.</p>
+      <p class="sub">전날 이벤트를 매일 04:00에 모아요. 이전 단계 후 24시간 안에 다음 단계로 간 사용자만 전환으로 세요. 빠진 날짜는 통계 Backfill로 채우세요.</p>
       <div class="funnel-presets">
         <button type="button" class="funnel-preset" data-days="7">최근 7일</button>
         <button type="button" class="funnel-preset" data-days="14">최근 14일</button>
@@ -737,18 +731,18 @@
     </div>
   </div>
 
-  <script src="/dev/js/common.js?v=20260930"></script>
-  <script src="/dev/js/shell.js?v=20260930"></script>
-  <script src="/dev/js/club.js?v=20260930"></script>
-  <script src="/dev/js/dict.js?v=20260930"></script>
-  <script src="/dev/js/promotion.js?v=20260930"></script>
-  <script src="/dev/js/banner.js?v=20260930"></script>
-  <script src="/dev/js/letter-preview.js?v=20260930"></script>
-  <script src="/dev/js/feedback.js?v=20260930"></script>
-  <script src="/dev/js/letters.js?v=20260930"></script>
-  <script src="/dev/js/fcm.js?v=20260930"></script>
-  <script src="/dev/js/batch.js?v=20260930"></script>
-  <script src="/dev/js/funnel.js?v=20260930"></script>
-  <script src="/dev/js/main.js?v=20260930"></script>
+  <script src="/dev/js/common.js?v=20260930-2"></script>
+  <script src="/dev/js/shell.js?v=20260930-2"></script>
+  <script src="/dev/js/club.js?v=20260930-2"></script>
+  <script src="/dev/js/dict.js?v=20260930-2"></script>
+  <script src="/dev/js/promotion.js?v=20260930-2"></script>
+  <script src="/dev/js/banner.js?v=20260930-2"></script>
+  <script src="/dev/js/letter-preview.js?v=20260930-2"></script>
+  <script src="/dev/js/feedback.js?v=20260930-2"></script>
+  <script src="/dev/js/letters.js?v=20260930-2"></script>
+  <script src="/dev/js/fcm.js?v=20260930-2"></script>
+  <script src="/dev/js/batch.js?v=20260930-2"></script>
+  <script src="/dev/js/funnel.js?v=20260930-2"></script>
+  <script src="/dev/js/main.js?v=20260930-2"></script>
 </body>
 </html>
