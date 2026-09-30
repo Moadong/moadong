@@ -299,6 +299,7 @@ document.getElementById('btnFcmSendAll').onclick = async () => {
     setMessageBox('fcmBatchResult', false, '제목과 본문을 모두 입력하세요.');
     return;
   }
+  if (!confirm('앱을 설치한 모든 사용자에게 바로 푸시가 발송됩니다. 되돌릴 수 없어요.\n\n제목: ' + title + '\n본문: ' + body + '\n\n발송할까요?')) return;
 
   const btn = document.getElementById('btnFcmSendAll');
   document.getElementById('fcmBatchResult').classList.add('hidden');

@@ -476,6 +476,9 @@ async function publishFeedbackLetter() {
     ? API_BASE + '/api/admin/feedback/letters'
     : API_BASE + '/api/admin/feedback/' + encodeURIComponent(feedbackSelectedId) + '/reply';
   const sendPush = document.getElementById('feedbackSendPush').checked;
+  const target = isLetterMode ? '모든 사용자' : ((getSelectedFeedback()?.sender || '이 사용자') + '님');
+  const pushNote = sendPush ? ' 푸시 알림도 함께 발송됩니다.' : '';
+  if (!confirm(target + '에게 편지를 발행할까요?' + pushNote + '\n\n제목: ' + title)) return;
   if (isLetterMode && !feedbackLetterRequestId) {
     feedbackLetterRequestId = generateFeedbackRequestId();
   }
