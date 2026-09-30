@@ -397,14 +397,24 @@ button.btn-small { height: 30px; margin: 0; padding: 0 10px; font-size: 12px; }
 @media (max-width: 1024px) {
   .promotion-map-layout { grid-template-columns: 1fr; }
 }
+/* 모바일·좁은 태블릿: 사이드바를 서랍으로 접는다 */
+.mobile-topbar, .nav-backdrop { display: none; }
+.icon-btn { width: 40px; height: 40px; margin: 0; padding: 0; border-radius: 10px; background: transparent; color: var(--black); }
+.icon-btn:hover:not(:disabled) { background: var(--gray-100); }
+@media (max-width: 900px) {
+  .app-shell { display: block; }
+  .mobile-topbar { position: sticky; top: 0; z-index: 30; display: flex; align-items: center; gap: 8px; height: 56px; padding: 0 8px; border-bottom: 1px solid var(--gray-250); background: rgba(255, 255, 255, 0.94); backdrop-filter: blur(8px); }
+  .mobile-topbar-logo { height: 18px; width: auto; }
+  .mobile-topbar-title { margin-left: 4px; padding-left: 10px; border-left: 1px solid var(--gray-300); color: var(--gray-800); font-size: 14px; font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .sidebar { position: fixed; top: 0; left: 0; bottom: 0; z-index: 50; width: min(280px, 84vw); height: 100%; border-right: none; box-shadow: 8px 0 32px rgba(0, 0, 0, 0.12); transform: translateX(-100%); transition: transform 0.2s ease; }
+  .nav-backdrop { position: fixed; inset: 0; z-index: 40; display: block; background: rgba(17, 17, 17, 0.4); opacity: 0; pointer-events: none; transition: opacity 0.2s ease; }
+  body.nav-open .sidebar { transform: translateX(0); }
+  body.nav-open .nav-backdrop { opacity: 1; pointer-events: auto; }
+  body.nav-open { overflow: hidden; }
+}
 @media (max-width: 720px) {
   .login-page { padding: 20px; }
   .login-card { padding: 28px 20px 20px; }
-  .app-shell { grid-template-columns: 1fr; }
-  .sidebar { position: static; height: auto; border-right: none; border-bottom: 1px solid var(--gray-250); }
-  .sidebar-nav { gap: 12px; }
-  .nav-group { flex-direction: row; flex-wrap: wrap; align-items: center; }
-  .nav-group-title { width: 100%; }
   .content { padding: 16px; }
   section { padding: 20px 16px; }
   .banner-item-body { grid-template-columns: 1fr; }

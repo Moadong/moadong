@@ -37,7 +37,15 @@
   </section>
 
   <div id="appShell" class="app-shell hidden">
-    <aside class="sidebar">
+    <header class="mobile-topbar">
+      <button type="button" id="btnOpenNav" class="icon-btn" aria-label="메뉴 열기" aria-controls="sidebar" aria-expanded="false">
+        <svg width="20" height="20" viewBox="0 0 20 20" aria-hidden="true"><path d="M3 5h14M3 10h14M3 15h14" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+      </button>
+      <img class="mobile-topbar-logo" src="/dev/assets/moadong_name_logo.svg" alt="모아동">
+      <span id="mobileTopbarTitle" class="mobile-topbar-title"></span>
+    </header>
+    <div id="navBackdrop" class="nav-backdrop"></div>
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-brand">
         <a href="#feedback" class="sidebar-home" aria-label="모아동 운영 포털 홈">
           <img class="sidebar-logo" src="/dev/assets/moadong_name_logo.svg" alt="모아동">

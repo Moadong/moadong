@@ -36,9 +36,27 @@ function showActivePortalSection() {
 function updateActiveNav() {
   const hash = '#' + getActivePortalSectionId();
   document.querySelectorAll('#sideNav a').forEach(link => {
-    link.classList.toggle('is-active', link.getAttribute('href') === hash);
+    const isActive = link.getAttribute('href') === hash;
+    link.classList.toggle('is-active', isActive);
+    if (isActive) link.setAttribute('aria-current', 'page'); else link.removeAttribute('aria-current');
+    // 모바일 상단 바에 지금 화면 이름을 보여준다. 배지 숫자는 빼고 첫 텍스트만 쓴다.
+    if (isActive) document.getElementById('mobileTopbarTitle').textContent = link.firstChild.textContent.trim();
   });
 }
+
+function setNavOpen(open) {
+  document.body.classList.toggle('nav-open', open);
+  document.getElementById('btnOpenNav').setAttribute('aria-expanded', open ? 'true' : 'false');
+}
+
+document.getElementById('btnOpenNav').onclick = () => setNavOpen(!document.body.classList.contains('nav-open'));
+document.getElementById('navBackdrop').onclick = () => setNavOpen(false);
+document.getElementById('sideNav').addEventListener('click', (event) => {
+  if (event.target.closest('a')) setNavOpen(false);
+});
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape' && document.body.classList.contains('nav-open')) setNavOpen(false);
+});
 
 window.addEventListener('hashchange', () => {
   if (!getToken()) return;
@@ -133,6 +151,7 @@ document.getElementById('btnCopyToken').onclick = () => {
 };
 
 function clearLogoutState() {
+  setNavOpen(false);
   clearToken();
   clearUserId();
   promotionMapKey = '';
