@@ -18,10 +18,23 @@ function headers() {
 }
 
 function showToast(message, type) {
+  let stack = document.getElementById('toastStack');
+  if (!stack) {
+    stack = document.createElement('div');
+    stack.id = 'toastStack';
+    stack.className = 'toast-stack';
+    document.body.appendChild(stack);
+  }
+  const tone = type === 'error' ? 'error' : 'success';
   const el = document.createElement('div');
-  el.className = 'toast ' + (type || 'success');
-  el.textContent = message;
-  document.body.appendChild(el);
+  el.className = 'toast ' + tone;
+  el.setAttribute('role', tone === 'error' ? 'alert' : 'status');
+  const icon = el.appendChild(document.createElement('span'));
+  icon.className = 'toast-icon';
+  icon.setAttribute('aria-hidden', 'true');
+  icon.textContent = tone === 'error' ? '!' : '✓';
+  el.appendChild(document.createElement('span')).textContent = message;
+  stack.appendChild(el);
   setTimeout(() => el.remove(), 3000);
 }
 
@@ -63,4 +76,12 @@ function truncateMiddle(value, left, right) {
   if (!value) return '';
   if (value.length <= (left + right + 1)) return value;
   return value.slice(0, left) + '…' + value.slice(value.length - right);
+}
+
+// 웹 FEEDBACK_TYPE_META · LETTER_CATEGORY_META와 같은 색 조합을 쓰는 태그. tone은 css/portal.css의 .tag-* 이름이다.
+function createTag(label, tone) {
+  const el = document.createElement('span');
+  el.className = 'tag tag-' + (tone || 'gray');
+  el.textContent = label;
+  return el;
 }

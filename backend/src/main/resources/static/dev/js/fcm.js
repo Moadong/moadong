@@ -281,7 +281,7 @@ document.getElementById('btnFcmSendSingle').onclick = async () => {
     setMessageBox('fcmSingleResult', false, e.message || '요청 실패');
   } finally {
     btn.disabled = false;
-    btn.textContent = '개별 메시지 전송';
+    btn.textContent = '이 기기로 보내기';
   }
 };
 
@@ -334,7 +334,7 @@ document.getElementById('btnFcmSendAll').onclick = async () => {
     setMessageBox('fcmBatchResult', false, e.message || '요청 실패');
   } finally {
     btn.disabled = false;
-    btn.textContent = '전체 메시지 전송';
+    btn.textContent = '전체 발송';
   }
 };
 
@@ -438,6 +438,7 @@ function renderFcmScheduleRows() {
     btnCell.appendChild(detailBtn);
     const cancelBtn = document.createElement('button');
     cancelBtn.type = 'button';
+    cancelBtn.className = 'btn-danger';
     cancelBtn.textContent = isCanceling ? '취소 중...' : '취소';
     cancelBtn.disabled = !canCancel || isCanceling;
     cancelBtn.onclick = () => cancelFcmSchedule(schedule.id);
@@ -542,7 +543,7 @@ async function createFcmSchedule() {
   } finally {
     fcmScheduleIsCreating = false;
     btn.disabled = false;
-    btn.textContent = '예약';
+    btn.textContent = '예약하기';
   }
 }
 

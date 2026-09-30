@@ -49,6 +49,7 @@ function renderDictTableRows(dicts, page) {
     editBtn.onclick = (e) => { e.stopPropagation(); openDictEditWindow(d); };
     const delBtn = document.createElement('button');
     delBtn.type = 'button';
+    delBtn.className = 'btn-danger';
     delBtn.textContent = '삭제';
     delBtn.onclick = (e) => { e.stopPropagation(); deleteDict(d.id); };
     btnCell.appendChild(editBtn);

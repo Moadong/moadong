@@ -10,9 +10,9 @@
   <section id="login" class="login-page">
     <div class="login-card">
       <div class="login-brand">
-        <p class="login-eyebrow">MOADONG BACK OFFICE</p>
-        <h1>모아동 개발자 포털</h1>
-        <p class="sub">개발자 전용 계정으로 로그인한 후 운영 도구를 사용할 수 있습니다.</p>
+        <p class="login-eyebrow">MOADONG</p>
+        <h1>모아동 운영 포털</h1>
+        <p class="sub">운영 계정으로 로그인하면 피드백 답장, 홍보 글, 푸시 알림 등을 관리할 수 있어요.</p>
       </div>
       <div id="loginForm">
         <form id="loginFormEl" novalidate>
@@ -25,7 +25,7 @@
             <label for="loginPassword">비밀번호</label>
             <input type="password" id="loginPassword" placeholder="password" autocomplete="current-password">
           </div>
-          <button type="submit" id="btnLogin">로그인</button>
+          <button type="submit" id="btnLogin" class="btn-primary">로그인</button>
         </form>
       </div>
     </div>
@@ -34,53 +34,61 @@
   <div id="appShell" class="app-shell hidden">
     <aside class="sidebar">
       <div class="sidebar-brand">
-        <h1>모아동 개발자 포털</h1>
-        <p>운영 데이터 관리 콘솔</p>
+        <span class="sidebar-logo" aria-hidden="true">M</span>
+        <div>
+          <h1>모아동 운영 포털</h1>
+          <p>개발자 · 운영진 전용</p>
+        </div>
       </div>
       <nav class="sidebar-nav" id="sideNav">
-        <a href="#api-docs" id="navApiDocs" class="hidden">API 문서</a>
-        <a href="#club">동아리 관리</a>
-        <a href="#dict">단어사전</a>
-        <a href="#promotion">홍보 게시판</a>
-        <a href="#feedback">받은 피드백 <span id="feedbackNavBadge" class="nav-badge hidden"></span></a>
-        <a href="#banner">배너 이미지</a>
-        <a href="#fcm">FCM 알림</a>
-        <a href="#statistics-backfill">통계 Backfill</a>
-        <a href="#conversion-batch">이미지 변환 배치</a>
-        <a href="#funnel-dashboard">퍼널 이탈율</a>
+        <div class="nav-group">
+          <p class="nav-group-title">우체통</p>
+          <a href="#feedback">받은 피드백 <span id="feedbackNavBadge" class="nav-badge hidden"></span></a>
+        </div>
+        <div class="nav-group">
+          <p class="nav-group-title">콘텐츠</p>
+          <a href="#club">동아리</a>
+          <a href="#promotion">홍보 게시판</a>
+          <a href="#banner">배너</a>
+          <a href="#dict">검색 단어사전</a>
+        </div>
+        <div class="nav-group">
+          <p class="nav-group-title">알림</p>
+          <a href="#fcm">푸시 알림</a>
+        </div>
+        <div class="nav-group">
+          <p class="nav-group-title">데이터</p>
+          <a href="#funnel-dashboard">퍼널 이탈율</a>
+          <a href="#statistics-backfill">통계 Backfill</a>
+          <a href="#conversion-batch">이미지 변환 배치</a>
+        </div>
+        <div class="nav-group">
+          <p class="nav-group-title">개발</p>
+          <a href="#api-docs" id="navApiDocs" class="hidden">API 문서 · 토큰</a>
+        </div>
       </nav>
       <div class="sidebar-footer">
         <div id="headerStatus" class="header-status hidden">
           <span id="headerUserId"></span>
-          <button type="button" class="logout-btn" id="headerLogout">로그아웃</button>
-        </div>
-        <div id="tokenArea" class="token-area hidden">
-          <strong>토큰</strong>
-          <div class="token-actions">
-            <button type="button" id="btnCopyToken">복사</button>
-            <span id="copyFeedback" class="copy-feedback hidden">복사됨</span>
-          </div>
-          <div class="token-box" id="tokenDisplay"></div>
+          <button type="button" class="logout-btn btn-ghost" id="headerLogout">로그아웃</button>
         </div>
       </div>
     </aside>
 
     <div class="workspace">
-      <header class="topbar">
-        <div>
-          <h2>운영 관리</h2>
-          <p>데이터 변경 전 대상과 영향 범위를 확인하세요.</p>
-        </div>
-        <div class="topbar-actions">
-          <a href="/swagger-ui.html" target="_blank" rel="noopener" class="card" style="padding:10px 12px;">Swagger</a>
-          <a href="/v3/api-docs" target="_blank" rel="noopener" class="card" style="padding:10px 12px;">OpenAPI</a>
-        </div>
-      </header>
-
       <main class="content">
 
     <section id="api-docs" class="hidden">
-      <h2>API 문서</h2>
+      <h2>API 문서 · 토큰</h2>
+      <p class="sub">Swagger에서 API를 직접 호출할 때 쓰는 페이지예요. 운영 작업만 한다면 왼쪽 메뉴에서 바로 고르면 돼요.</p>
+      <div id="tokenArea" class="token-area hidden">
+        <strong>내 액세스 토큰</strong>
+        <div class="token-actions">
+          <button type="button" id="btnCopyToken">토큰 복사</button>
+          <span id="copyFeedback" class="copy-feedback hidden">복사됐어요</span>
+        </div>
+        <div class="token-box" id="tokenDisplay"></div>
+      </div>
       <div class="card-grid">
         <a href="/swagger-ui.html" target="_blank" rel="noopener" class="card">
           <strong>Swagger UI</strong>
@@ -101,12 +109,13 @@
 
     <section id="club" class="hidden">
       <div class="section-head">
-        <h2>동아리 관리</h2>
+        <h2>동아리</h2>
         <div class="section-head-actions">
           <div id="clubPagination" class="pagination hidden"></div>
-          <button type="button" id="btnLoadClubs">동아리 목록 새로고침</button>
+          <button type="button" id="btnLoadClubs">새로고침</button>
         </div>
       </div>
+      <p class="sub">모아동에 등록된 동아리예요. 행을 누르면 새 창에서 동아리 정보와 지원서를 수정할 수 있어요.</p>
       <div id="clubBanner" class="banner hidden"></div>
       <div id="clubListLoading" class="hidden">목록 불러오는 중...</div>
       <div class="table-wrap">
@@ -119,13 +128,14 @@
 
     <section id="dict" class="hidden">
       <div class="section-head">
-        <h2>단어사전 관리</h2>
+        <h2>검색 단어사전</h2>
         <div class="section-head-actions">
           <div id="dictPagination" class="pagination hidden"></div>
           <button type="button" id="btnLoadDict">목록 새로고침</button>
           <button type="button" id="btnRefreshDictCache">캐시 새로고침</button>
         </div>
       </div>
+      <p class="sub">학생이 검색창에 입력한 단어를 표준 단어로 묶어 검색 결과를 넓혀줘요. 예를 들어 'band'로 검색해도 '밴드' 동아리가 나오게 돼요. 추가·수정한 내용이 검색에 바로 안 보이면 캐시 새로고침을 눌러요.</p>
       <div id="dictBanner" class="banner hidden"></div>
       <div id="dictListLoading" class="hidden">목록 불러오는 중...</div>
       <div class="table-wrap">
@@ -134,7 +144,9 @@
           <tbody></tbody>
         </table>
       </div>
-      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">단어사전 추가</h3>
+      <div class="panel" style="margin-top:24px;">
+      <h3>단어 추가</h3>
+      <p class="promotion-summary">한 개씩 추가하거나 CSV로 한 번에 올릴 수 있어요.</p>
       <div class="form-grid">
         <div>
           <div class="form-row">
@@ -145,7 +157,7 @@
             <label for="dictNewInputWords">입력단어 (쉼표로 구분)</label>
             <textarea id="dictNewInputWords" rows="3" placeholder="단어1, 단어2, 단어3" style="max-width:100%;"></textarea>
           </div>
-          <button type="button" id="btnDictCreate">단일 추가</button>
+          <button type="button" id="btnDictCreate" class="btn-primary">추가</button>
         </div>
         <div>
           <div class="form-row">
@@ -155,6 +167,7 @@
           <p class="sub" style="margin-top:4px; margin-bottom:8px;">형식: 표준단어,입력단어,입력단어_정규화,표준단어_정규화</p>
           <button type="button" id="btnDictCsvUpload">CSV 업로드</button>
         </div>
+      </div>
       </div>
       <div class="card-grid" style="margin-top:16px;">
         <a href="/swagger-ui.html#/Word_Dictionary_Admin" target="_blank" rel="noopener" class="card">
@@ -166,12 +179,13 @@
 
     <section id="promotion" class="hidden">
       <div class="section-head">
-        <h2>홍보 게시판 관리</h2>
+        <h2>홍보 게시판</h2>
         <div class="section-head-actions">
-          <button type="button" id="btnLoadPromotion">목록 새로고침</button>
-          <button type="button" id="btnCreatePromotion">새 게시글 작성</button>
+          <button type="button" id="btnLoadPromotion">새로고침</button>
+          <button type="button" id="btnCreatePromotion" class="btn-primary">+ 새 게시글</button>
         </div>
       </div>
+      <p class="sub">모아동 홍보 게시판에 올라가는 행사 글이에요. 목록에서 글을 고르면 아래에서 수정할 수 있어요.</p>
       <div id="promotionBanner" class="banner hidden"></div>
       <div class="promotion-layout">
         <div class="promotion-panel">
@@ -276,9 +290,9 @@
             <div id="promotionImagePreviewList" class="promotion-preview-grid"></div>
           </div>
           <div class="promotion-actions">
-            <button type="button" id="btnSavePromotion">저장</button>
+            <button type="button" id="btnSavePromotion" class="btn-primary">저장</button>
             <button type="button" id="btnResetPromotion">원본으로 되돌리기</button>
-            <button type="button" id="btnDeletePromotion">삭제</button>
+            <button type="button" id="btnDeletePromotion" class="btn-danger">삭제</button>
             <button type="button" id="btnClearPromotionSelection">선택 해제</button>
           </div>
           <p id="promotionHelpText" class="promotion-help">기존 게시글의 `clubId`는 읽기 전용입니다. 저장 후 목록을 다시 조회해 서버 기준 최신값으로 동기화합니다.</p>
@@ -291,10 +305,11 @@
       <div class="section-head">
         <h2>받은 피드백</h2>
         <div class="section-head-actions">
-          <button type="button" id="btnLoadFeedback">목록 새로고침</button>
-          <button type="button" id="btnNewFeedbackLetter">+ 새 편지 발행</button>
+          <button type="button" id="btnLoadFeedback">새로고침</button>
+          <button type="button" id="btnNewFeedbackLetter" class="btn-primary">+ 전체 편지 쓰기</button>
         </div>
       </div>
+      <p class="sub">학생들이 우체통으로 보낸 피드백이에요. 목록에서 하나를 고르면 오른쪽에서 답장을 쓸 수 있어요. 모든 사용자에게 소식을 전하려면 전체 편지 쓰기를 눌러요.</p>
       <div id="feedbackBanner" class="banner hidden"></div>
       <div class="feedback-layout">
         <div class="promotion-panel">
@@ -319,7 +334,7 @@
           <div class="feedback-draft-row hidden" id="feedbackDraftRow">
             <select id="feedbackDraftSelect"></select>
             <button type="button" id="btnLoadFeedbackDraft">불러오기</button>
-            <button type="button" id="btnDeleteFeedbackDraft">삭제</button>
+            <button type="button" id="btnDeleteFeedbackDraft" class="btn-danger">삭제</button>
           </div>
           <div class="form-row hidden" id="feedbackLetterCategoryRow">
             <label for="feedbackLetterCategory">편지 분류</label>
@@ -348,9 +363,9 @@
             <span id="feedbackSendPushLabel">발행하면 이 유저에게 푸시 알림 보내기</span>
           </label>
           <div class="promotion-actions">
-            <button type="button" id="btnPublishFeedbackReply">답장 발행</button>
+            <button type="button" id="btnPublishFeedbackReply" class="btn-primary">답장 발행</button>
             <button type="button" id="btnSaveFeedbackDraft" class="hidden">임시저장</button>
-            <button type="button" id="btnClearFeedbackSelection">선택 해제</button>
+            <button type="button" id="btnClearFeedbackSelection" class="btn-ghost">선택 해제</button>
           </div>
           <div id="feedbackSaveResult" class="message-box hidden"></div>
         </div>
@@ -373,14 +388,14 @@
 
     <section id="banner" class="hidden">
       <div class="section-head">
-        <h2>배너 이미지 관리</h2>
+        <h2>배너</h2>
         <div class="section-head-actions">
-          <button type="button" id="btnLoadBanner">목록 불러오기</button>
-          <button type="button" id="btnSaveBanner">현재 배열 저장</button>
+          <button type="button" id="btnLoadBanner">불러오기</button>
+          <button type="button" id="btnSaveBanner" class="btn-primary">변경사항 저장</button>
         </div>
       </div>
       <div id="bannerBanner" class="banner hidden"></div>
-      <p class="sub" style="margin-bottom:12px;">타입별 배너 배열을 조회하고 수정할 수 있습니다. 이미지를 업로드하면 현재 배열에 바로 추가되고, 각 항목의 위/아래 버튼으로 순서를 변경할 수 있습니다.</p>
+      <p class="sub">웹·앱 메인 상단에 도는 배너예요. 이미지를 올리면 목록 끝에 추가되고, 위/아래 버튼으로 순서를 바꿀 수 있어요. 변경사항 저장을 눌러야 실제 화면에 반영돼요.</p>
       <div class="form-grid" style="margin-bottom:8px;">
         <div class="form-row">
           <label for="bannerType">배너 타입</label>
@@ -416,141 +431,160 @@
 
     <section id="fcm" class="hidden">
       <div class="section-head">
-        <h2>FCM 알림 관리</h2>
+        <h2>푸시 알림</h2>
         <div class="section-head-actions">
           <button type="button" id="btnLoadFcmTokens">토큰 조회</button>
-          <button type="button" id="btnClearFcmSelection">선택 초기화</button>
+          <button type="button" id="btnClearFcmSelection" class="btn-ghost">입력 초기화</button>
         </div>
       </div>
+      <p class="sub">앱 사용자에게 푸시 알림을 보내요. 테스트할 때는 특정 기기로 먼저 보내 보고, 문구를 확인한 뒤에 전체 발송이나 예약을 해요.</p>
       <div id="fcmBanner" class="banner hidden"></div>
-      <p class="sub" style="margin-bottom:8px;">1) 토큰을 조회해 선택한 뒤 개별 메시지를 보낼 수 있습니다. 2) 전체 토큰 대상으로 일괄 발송할 수 있습니다.</p>
 
-      <h3 style="font-size:1rem; margin-top:0; margin-bottom:8px;">토큰 조회</h3>
-      <div id="fcmTokenLoading" class="hidden">토큰 불러오는 중...</div>
-      <p id="fcmTokenSummary" class="sub" style="margin-top:0; margin-bottom:8px;">토큰 조회를 실행하세요.</p>
-      <div class="form-grid" style="margin-bottom:8px;">
-        <div class="form-row">
+      <div class="panel">
+        <h3>기기 토큰</h3>
+        <p id="fcmTokenSummary" class="promotion-summary">토큰 조회를 누르면 푸시를 받을 수 있는 기기 목록이 나와요. 선택을 누르면 아래 입력칸에 채워져요.</p>
+        <div id="fcmTokenLoading" class="hidden">토큰 불러오는 중...</div>
+        <div class="form-row" style="margin-bottom:8px;">
           <label for="fcmTokenSearch">토큰 검색</label>
           <input type="search" id="fcmTokenSearch" placeholder="토큰 일부를 입력하세요.">
         </div>
-      </div>
-      <div id="fcmTokenPagination" class="pagination hidden" style="margin-bottom:8px;"></div>
-      <div class="table-wrap">
-        <table id="fcmTokenList">
-          <thead><tr><th>#</th><th>토큰</th><th>액션</th></tr></thead>
-          <tbody>
-            <tr><td colspan="3">토큰 조회를 실행하세요.</td></tr>
-          </tbody>
-        </table>
+        <div id="fcmTokenPagination" class="pagination hidden"></div>
+        <div class="table-wrap">
+          <table id="fcmTokenList">
+            <thead><tr><th>#</th><th>토큰</th><th>액션</th></tr></thead>
+            <tbody>
+              <tr><td colspan="3">토큰 조회를 실행하세요.</td></tr>
+            </tbody>
+          </table>
+        </div>
       </div>
 
-      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">개별 토큰 메시지 전송</h3>
-      <div class="form-row">
-        <label for="fcmSingleToken">대상 토큰</label>
-        <textarea id="fcmSingleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
-      </div>
-      <div class="form-grid">
+      <div class="panel">
+        <h3>특정 기기에 보내기</h3>
+        <p class="promotion-summary">내 기기로 먼저 보내서 문구와 이동 경로를 확인할 때 써요.</p>
         <div class="form-row">
-          <label for="fcmSingleTitle">제목</label>
-          <input type="text" id="fcmSingleTitle" placeholder="알림 제목">
+          <label for="fcmSingleToken">대상 토큰</label>
+          <textarea id="fcmSingleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
         </div>
-        <div class="form-row">
-          <label for="fcmSingleBody">본문</label>
-          <input type="text" id="fcmSingleBody" placeholder="알림 내용">
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="fcmSingleTitle">제목</label>
+            <input type="text" id="fcmSingleTitle" placeholder="알림 제목">
+          </div>
+          <div class="form-row">
+            <label for="fcmSingleBody">본문</label>
+            <input type="text" id="fcmSingleBody" placeholder="알림 내용">
+          </div>
         </div>
-      </div>
-      <div class="form-row">
-        <label for="fcmSingleData">data (JSON 객체, 선택)</label>
-        <textarea id="fcmSingleData" rows="4" placeholder='{"screen":"club","clubId":"123"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
-      </div>
-      <button type="button" id="btnFcmSendSingle">개별 메시지 전송</button>
-      <div id="fcmSingleResult" class="message-box hidden"></div>
-
-      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">전체 메시지 전송</h3>
-      <div class="form-grid">
-        <div class="form-row">
-          <label for="fcmBatchTitle">제목</label>
-          <input type="text" id="fcmBatchTitle" placeholder="알림 제목">
-        </div>
-        <div class="form-row">
-          <label for="fcmBatchBody">본문</label>
-          <input type="text" id="fcmBatchBody" placeholder="알림 내용">
-        </div>
-      </div>
-      <div class="form-row">
-        <label for="fcmBatchData">data (JSON 객체, 선택)</label>
-        <textarea id="fcmBatchData" rows="4" placeholder='{"type":"admin","scope":"all"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
-      </div>
-      <button type="button" id="btnFcmSendAll">전체 메시지 전송</button>
-      <div id="fcmBatchResult" class="message-box hidden"></div>
-
-      <h3 style="font-size:1rem; margin-top:24px; margin-bottom:8px;">예약 알림 만들기</h3>
-      <div class="form-grid">
-        <div class="form-row">
-          <label for="fcmScheduleTargetType">대상 유형</label>
-          <select id="fcmScheduleTargetType">
-            <option value="SINGLE_TOKEN">단건 토큰</option>
-            <option value="ALL_TOKENS">전체 토큰</option>
-          </select>
-        </div>
-        <div class="form-row">
-          <label for="fcmScheduleToken">대상 토큰</label>
-          <textarea id="fcmScheduleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
-        </div>
-      </div>
-      <div class="form-grid">
-        <div class="form-row">
-          <label for="fcmScheduleTitle">제목</label>
-          <input type="text" id="fcmScheduleTitle" placeholder="알림 제목">
-        </div>
-        <div class="form-row">
-          <label for="fcmScheduleBody">본문</label>
-          <input type="text" id="fcmScheduleBody" placeholder="알림 내용">
-        </div>
-      </div>
-      <div class="form-row">
-        <label for="fcmScheduleData">data (JSON 객체, 선택)</label>
-        <textarea id="fcmScheduleData" rows="4" placeholder='{"path":"/webview/clubDetail/123","action":"NAVIGATE_WEBVIEW"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
-      </div>
-      <div class="form-grid">
-        <div class="form-row">
-          <label for="fcmScheduleDate">예약 날짜</label>
-          <input type="date" id="fcmScheduleDate">
-        </div>
-        <div class="form-row">
-          <label for="fcmScheduleTime">예약 시간</label>
-          <input type="time" id="fcmScheduleTime">
-        </div>
-      </div>
-      <button type="button" id="btnFcmScheduleCreate">예약</button>
-      <button type="button" id="btnFcmScheduleReset">초기화</button>
-      <div id="fcmScheduleResult" class="message-box hidden"></div>
-
-      <div class="section-head" style="margin-top:24px;">
-        <h3 style="font-size:1rem; margin:0;">예약 알림 목록</h3>
-        <div class="section-head-actions">
-          <select id="fcmScheduleStatusFilter">
-            <option value="">전체</option>
-            <option value="SCHEDULED">대기</option>
-            <option value="SENDING">발송 중</option>
-            <option value="SENT">발송 완료</option>
-            <option value="CANCELED">취소됨</option>
-            <option value="FAILED">실패</option>
-          </select>
-          <button type="button" id="btnLoadFcmSchedules">예약 목록 조회</button>
-        </div>
-      </div>
-      <div id="fcmScheduleLoading" class="hidden">예약 알림을 불러오는 중...</div>
-      <div class="table-wrap">
-        <table id="fcmScheduleList">
-          <thead><tr><th>예약 시각</th><th>대상</th><th>제목</th><th>상태</th><th>결과</th><th>생성 시각</th><th>액션</th></tr></thead>
-          <tbody>
-            <tr><td colspan="7">예약 목록을 조회하세요.</td></tr>
-          </tbody>
-        </table>
+        <details class="collapsible">
+          <summary class="collapsible-summary">고급 · data (JSON, 선택)</summary>
+          <div class="collapsible-body">
+            <textarea id="fcmSingleData" rows="4" placeholder='{"screen":"club","clubId":"123"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+          </div>
+        </details>
+        <button type="button" id="btnFcmSendSingle" class="btn-primary" style="margin-top:16px;">이 기기로 보내기</button>
+        <div id="fcmSingleResult" class="message-box hidden"></div>
       </div>
 
-      <div class="card-grid" style="margin-top:16px;">
+      <div class="panel panel-danger">
+        <h3>모든 사용자에게 보내기</h3>
+        <p class="promotion-summary">누르는 즉시 앱을 설치한 모든 사용자에게 발송되고, 되돌릴 수 없어요.</p>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="fcmBatchTitle">제목</label>
+            <input type="text" id="fcmBatchTitle" placeholder="알림 제목">
+          </div>
+          <div class="form-row">
+            <label for="fcmBatchBody">본문</label>
+            <input type="text" id="fcmBatchBody" placeholder="알림 내용">
+          </div>
+        </div>
+        <details class="collapsible">
+          <summary class="collapsible-summary">고급 · data (JSON, 선택)</summary>
+          <div class="collapsible-body">
+            <textarea id="fcmBatchData" rows="4" placeholder='{"type":"admin","scope":"all"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+          </div>
+        </details>
+        <button type="button" id="btnFcmSendAll" class="btn-danger" style="margin-top:16px;">전체 발송</button>
+        <div id="fcmBatchResult" class="message-box hidden"></div>
+      </div>
+
+      <div class="panel">
+        <h3>예약 발송</h3>
+        <p class="promotion-summary">정해진 시각에 자동으로 보내요. 발송 전까지는 아래 목록에서 취소할 수 있어요.</p>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="fcmScheduleTargetType">받는 사람</label>
+            <select id="fcmScheduleTargetType">
+              <option value="SINGLE_TOKEN">특정 기기</option>
+              <option value="ALL_TOKENS">모든 사용자</option>
+            </select>
+          </div>
+          <div class="form-row">
+            <label for="fcmScheduleToken">대상 토큰</label>
+            <textarea id="fcmScheduleToken" rows="3" placeholder="토큰 목록에서 선택하거나 직접 입력하세요." style="max-width:100%; font-family:monospace; font-size:0.85rem;"></textarea>
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="fcmScheduleTitle">제목</label>
+            <input type="text" id="fcmScheduleTitle" placeholder="알림 제목">
+          </div>
+          <div class="form-row">
+            <label for="fcmScheduleBody">본문</label>
+            <input type="text" id="fcmScheduleBody" placeholder="알림 내용">
+          </div>
+        </div>
+        <div class="form-grid">
+          <div class="form-row">
+            <label for="fcmScheduleDate">예약 날짜</label>
+            <input type="date" id="fcmScheduleDate">
+          </div>
+          <div class="form-row">
+            <label for="fcmScheduleTime">예약 시간</label>
+            <input type="time" id="fcmScheduleTime">
+          </div>
+        </div>
+        <details class="collapsible">
+          <summary class="collapsible-summary">고급 · data (JSON, 선택)</summary>
+          <div class="collapsible-body">
+            <textarea id="fcmScheduleData" rows="4" placeholder='{"path":"/webview/clubDetail/123","action":"NAVIGATE_WEBVIEW"}' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
+          </div>
+        </details>
+        <div class="promotion-actions">
+          <button type="button" id="btnFcmScheduleCreate" class="btn-primary">예약하기</button>
+          <button type="button" id="btnFcmScheduleReset" class="btn-ghost">초기화</button>
+        </div>
+        <div id="fcmScheduleResult" class="message-box hidden"></div>
+      </div>
+
+      <div class="panel">
+        <div class="section-head" style="margin-bottom:0;">
+          <h3 style="margin:0;">예약 목록</h3>
+          <div class="section-head-actions">
+            <select id="fcmScheduleStatusFilter">
+              <option value="">전체</option>
+              <option value="SCHEDULED">대기</option>
+              <option value="SENDING">발송 중</option>
+              <option value="SENT">발송 완료</option>
+              <option value="CANCELED">취소됨</option>
+              <option value="FAILED">실패</option>
+            </select>
+            <button type="button" id="btnLoadFcmSchedules">조회</button>
+          </div>
+        </div>
+        <div id="fcmScheduleLoading" class="hidden">예약 알림을 불러오는 중...</div>
+        <div class="table-wrap">
+          <table id="fcmScheduleList">
+            <thead><tr><th>예약 시각</th><th>대상</th><th>제목</th><th>상태</th><th>결과</th><th>생성 시각</th><th>액션</th></tr></thead>
+            <tbody>
+              <tr><td colspan="7">예약 목록을 조회하세요.</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="card-grid">
         <a href="/swagger-ui.html#/Fcm_Notification_Admin" target="_blank" rel="noopener" class="card">
           <strong>FCM Notification Admin API</strong>
           <span>토큰 조회, 단건 전송, 전체 배치 전송</span>
@@ -571,7 +605,7 @@
           <input id="statisticsBackfillTo" type="date">
         </div>
       </div>
-      <button type="button" id="btnStatisticsBackfill">Backfill 실행</button>
+      <button type="button" id="btnStatisticsBackfill" class="btn-primary">Backfill 실행</button>
       <div id="statisticsBackfillResult" class="message-box hidden"></div>
     </section>
 
@@ -583,7 +617,7 @@
         <label for="conversionImagesJson">images (JSON 배열)</label>
         <textarea id="conversionImagesJson" rows="8" placeholder='[{"source":"old-key.png","destination":"new-key.webp"}]' style="max-width:100%; font-family:monospace; font-size:0.9rem;"></textarea>
       </div>
-      <button type="button" id="btnConversionBatch">배치 실행</button>
+      <button type="button" id="btnConversionBatch" class="btn-primary">배치 실행</button>
       <button type="button" id="btnWebpMigrate">WebP 마이그레이션 실행</button>
       <div class="card-grid" style="margin-top:16px;">
         <a href="/swagger-ui.html#/Conversion_Batch_Admin" target="_blank" rel="noopener" class="card">
@@ -611,7 +645,7 @@
           <input id="funnelTo" type="date">
         </div>
       </div>
-      <button type="button" id="btnFunnelLoad">조회</button>
+      <button type="button" id="btnFunnelLoad" class="btn-primary">조회</button>
       <div id="funnelMessage" class="message-box hidden"></div>
       <div id="funnelMissingBanner" class="banner warn hidden" style="margin-top:12px;"></div>
       <div id="funnelCards" class="funnel-grid"></div>

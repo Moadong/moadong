@@ -1,10 +1,12 @@
 // 로그인·로그아웃과 사이드바 해시 라우팅으로 섹션을 전환하는 포털 셸
 
 const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'feedback', 'banner', 'fcm', 'statistics-backfill', 'conversion-batch', 'funnel-dashboard'];
+// 운영진이 가장 자주 여는 화면을 첫 화면으로 둔다.
+const DEFAULT_SECTION_ID = 'feedback';
 
 function getActivePortalSectionId() {
-  const sectionId = (window.location.hash || '#api-docs').replace('#', '');
-  return PORTAL_SECTION_IDS.includes(sectionId) ? sectionId : 'api-docs';
+  const sectionId = (window.location.hash || '#' + DEFAULT_SECTION_ID).replace('#', '');
+  return PORTAL_SECTION_IDS.includes(sectionId) ? sectionId : DEFAULT_SECTION_ID;
 }
 
 function loadActivePortalSectionData(sectionId) {
@@ -62,10 +64,10 @@ function showLogin(show) {
   const headerStatus = document.getElementById('headerStatus');
   const headerUserId = document.getElementById('headerUserId');
   if (show) {
-    headerUserId.textContent = '로그인됨 (' + (getUserId() || 'developer') + ')';
+    headerUserId.textContent = getUserId() || 'developer';
     headerStatus.classList.remove('hidden');
     if (!window.location.hash || window.location.hash === '#login') {
-      history.replaceState(null, '', '#api-docs');
+      history.replaceState(null, '', '#' + DEFAULT_SECTION_ID);
     }
     showActivePortalSection();
   } else {

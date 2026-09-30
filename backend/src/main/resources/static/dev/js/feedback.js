@@ -3,6 +3,10 @@
 const FEEDBACK_TYPE_LABELS = { BUG: '문제 신고', FEATURE: '기능 요청', QUESTION: '문의', CHEER: '응원' };
 const FEEDBACK_STATUS_LABELS = { WAITING: '답장 대기', IN_PROGRESS: '확인 중', REPLIED: '답장 완료' };
 const LETTER_CATEGORY_LABELS = { REPLY: '답장', UPDATE: '업데이트', STORY: '이야기' };
+const FEEDBACK_TYPE_TONES = { BUG: 'pink', FEATURE: 'yellow', QUESTION: 'blue', CHEER: 'mint' };
+// 답장을 기다리는 피드백이 가장 눈에 띄어야 한다.
+const FEEDBACK_STATUS_TONES = { WAITING: 'primary', IN_PROGRESS: 'blue', REPLIED: 'gray' };
+const LETTER_CATEGORY_TONES = { REPLY: 'yellow', UPDATE: 'sky', STORY: 'purple' };
 let feedbacks = [];
 let feedbackSelectedId = '';
 let feedbackMode = 'reply';
@@ -105,14 +109,16 @@ function renderFeedbackList() {
     const isSelected = feedback.id === feedbackSelectedId;
     tr.classList.toggle('is-selected', isSelected);
     tr.setAttribute('aria-selected', isSelected ? 'true' : 'false');
-    tr.appendChild(document.createElement('td')).textContent = FEEDBACK_TYPE_LABELS[feedback.type] || feedback.type || '-';
+    tr.appendChild(document.createElement('td')).appendChild(
+      createTag(FEEDBACK_TYPE_LABELS[feedback.type] || feedback.type || '-', FEEDBACK_TYPE_TONES[feedback.type]));
     const contentCell = tr.appendChild(document.createElement('td'));
     contentCell.className = 'feedback-content-cell';
     contentCell.textContent = feedback.content || '';
     contentCell.title = feedback.content || '';
     tr.appendChild(document.createElement('td')).textContent = feedback.sender || '-';
     tr.appendChild(document.createElement('td')).textContent = formatFeedbackDate(feedback.createdAt);
-    tr.appendChild(document.createElement('td')).textContent = FEEDBACK_STATUS_LABELS[feedback.status] || feedback.status || '-';
+    tr.appendChild(document.createElement('td')).appendChild(
+      createTag(FEEDBACK_STATUS_LABELS[feedback.status] || feedback.status || '-', FEEDBACK_STATUS_TONES[feedback.status]));
     const selectCurrentFeedback = () => selectFeedback(feedback.id);
     tr.onclick = selectCurrentFeedback;
     tr.onkeydown = (event) => {
@@ -179,8 +185,8 @@ function renderSentLetterList() {
     tr.setAttribute('aria-label', (letter.title || '제목 없음') + ' 편지 본문 ' + (isExpanded ? '접기' : '펼치기'));
     tr.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
     tr.classList.toggle('is-selected', isExpanded);
-    tr.appendChild(document.createElement('td')).textContent =
-      LETTER_CATEGORY_LABELS[letter.category] || letter.category || '-';
+    tr.appendChild(document.createElement('td')).appendChild(
+      createTag(LETTER_CATEGORY_LABELS[letter.category] || letter.category || '-', LETTER_CATEGORY_TONES[letter.category]));
     const titleCell = tr.appendChild(document.createElement('td'));
     titleCell.className = 'sent-letter-title-cell';
     titleCell.textContent = letter.title || '';
