@@ -7,6 +7,9 @@
   <link rel="icon" href="/dev/assets/favicon.ico">
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css">
   <link rel="stylesheet" href="/dev/css/portal.css">
+  <!-- 편지 미리보기용 마크다운 렌더러. 버전 고정 + SRI로 변조된 스크립트는 실행되지 않는다. -->
+  <script src="https://cdn.jsdelivr.net/npm/marked@12.0.2/marked.min.js" integrity="sha384-/TQbtLCAerC3jgaim+N78RZSDYV7ryeoBCVqTuzRrFec2akfBkHS7ACQ3PQhvMVi" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.6/dist/purify.min.js" integrity="sha384-+VfUPEb0PdtChMwmBcBmykRMDd+v6D/oFmB3rZM/puCMDYcIvF968OimRh4KQY9a" crossorigin="anonymous"></script>
 </head>
 <body>
   <section id="login" class="login-page">
@@ -45,6 +48,7 @@
         <div class="nav-group">
           <p class="nav-group-title">우체통</p>
           <a href="#feedback">받은 피드백 <span id="feedbackNavBadge" class="nav-badge hidden"></span></a>
+          <a href="#letters">보낸 편지</a>
         </div>
         <div class="nav-group">
           <p class="nav-group-title">콘텐츠</p>
@@ -347,19 +351,26 @@
               <option value="STORY">이야기</option>
             </select>
           </div>
-          <div class="form-row">
-            <label for="feedbackReplyTitle">제목</label>
-            <input type="text" id="feedbackReplyTitle" placeholder="답장 제목">
+          <div class="segmented" id="feedbackEditorTabs" role="tablist" aria-label="편지 작성 보기 전환">
+            <button type="button" data-tab="write" class="is-active" aria-selected="true">작성</button>
+            <button type="button" data-tab="preview" aria-selected="false">미리보기</button>
           </div>
-          <div class="form-row">
-            <label for="feedbackReplyBody">본문 (마크다운)</label>
-            <textarea id="feedbackReplyBody" rows="10" placeholder="답장 본문" style="max-width:100%;"></textarea>
+          <div id="feedbackWritePane">
+            <div class="form-row">
+              <label for="feedbackReplyTitle">제목</label>
+              <input type="text" id="feedbackReplyTitle" placeholder="답장 제목">
+            </div>
+            <div class="form-row">
+              <label for="feedbackReplyBody">본문 <span class="label-hint">마크다운 · ## 소제목, **굵게**, - 목록, &gt; 인용</span></label>
+              <textarea id="feedbackReplyBody" rows="12" placeholder="답장 본문" style="max-width:100%;"></textarea>
+            </div>
+            <div class="feedback-upload-row" id="feedbackImageUploadRow">
+              <input type="file" id="feedbackImageFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp" class="hidden">
+              <button type="button" id="btnUploadFeedbackImage">이미지 업로드</button>
+              <span class="feedback-upload-help">본문 끝에 이미지로 들어가요. 최대 10MB</span>
+            </div>
           </div>
-          <div class="feedback-upload-row" id="feedbackImageUploadRow">
-            <input type="file" id="feedbackImageFile" accept="image/jpeg,image/png,image/gif,image/bmp,image/webp" class="hidden">
-            <button type="button" id="btnUploadFeedbackImage">이미지 업로드</button>
-            <span class="feedback-upload-help">업로드하면 본문 끝에 <code>![]( )</code> 로 삽입됩니다. 최대 10MB</span>
-          </div>
+          <div id="feedbackPreviewPane" class="hidden"></div>
           <label class="feedback-checkbox" id="feedbackSendPushRow">
             <!-- 웹뷰 토큰 주입 전에는 답장 푸시 대상을 찾을 수 없어 기본 해제한다.
                  전체 편지 발행은 studentId 매칭이 없어 지금도 발송되므로 그때 켜서 쓴다. -->
@@ -375,17 +386,63 @@
         </div>
       </div>
 
-      <div class="promotion-panel feedback-sent-panel">
-        <h3>보낸 편지</h3>
-        <p id="sentLetterSummary" class="promotion-summary">보낸 편지 목록을 불러오세요.</p>
-        <div id="sentLetterListLoading" class="hidden">목록 불러오는 중...</div>
-        <div class="table-wrap">
-          <table id="sentLetterList">
-            <thead><tr><th>분류</th><th>제목</th><th>받는 사람</th><th>보낸 날짜</th><th>푸시</th></tr></thead>
-            <tbody>
-              <tr><td colspan="5">보낸 편지 목록을 불러오세요.</td></tr>
-            </tbody>
-          </table>
+    </section>
+
+    <section id="letters" class="hidden">
+      <div class="section-head">
+        <h2>보낸 편지</h2>
+        <div class="section-head-actions">
+          <button type="button" id="btnLoadSentLetters">새로고침</button>
+        </div>
+      </div>
+      <p class="sub">지금까지 보낸 답장과 전체 편지예요. 편지를 고르면 학생에게 보이는 모습 그대로 확인할 수 있고, 오탈자가 있으면 바로 고칠 수 있어요.</p>
+      <div class="letters-layout">
+        <div class="panel">
+          <h3>편지 목록</h3>
+          <p id="sentLetterSummary" class="promotion-summary">보낸 편지 목록을 불러오세요.</p>
+          <div id="sentLetterListLoading" class="hidden">목록 불러오는 중...</div>
+          <div class="table-wrap">
+            <table id="sentLetterList">
+              <thead><tr><th>분류</th><th>제목</th><th>받는 사람</th><th>보낸 날짜</th><th>푸시</th></tr></thead>
+              <tbody>
+                <tr><td colspan="5">보낸 편지 목록을 불러오세요.</td></tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <div class="panel letter-detail-panel">
+          <div id="sentLetterEmpty" class="promotion-empty">왼쪽 목록에서 편지를 고르면 학생 화면 그대로 미리보기가 나와요.</div>
+          <div id="sentLetterView" class="hidden">
+            <div class="letter-detail-head">
+              <dl id="sentLetterMeta" class="letter-meta"></dl>
+              <button type="button" id="btnEditSentLetter">수정</button>
+            </div>
+            <div id="sentLetterPreview"></div>
+          </div>
+          <div id="sentLetterEdit" class="hidden">
+            <h3>편지 수정</h3>
+            <p class="promotion-summary">제목과 본문만 고칠 수 있어요. 푸시는 다시 보내지 않고, 이미 받은 푸시 문구도 바뀌지 않아요.</p>
+            <div class="segmented" id="sentLetterEditTabs" role="tablist" aria-label="편지 수정 보기 전환">
+              <button type="button" data-tab="write" class="is-active" aria-selected="true">작성</button>
+              <button type="button" data-tab="preview" aria-selected="false">미리보기</button>
+            </div>
+            <div id="sentLetterEditWrite">
+              <div class="form-row">
+                <label for="sentLetterEditTitle">제목</label>
+                <input type="text" id="sentLetterEditTitle" style="max-width:none;">
+              </div>
+              <div class="form-row">
+                <label for="sentLetterEditBody">본문 <span class="label-hint">마크다운</span></label>
+                <textarea id="sentLetterEditBody" rows="14" style="max-width:100%;"></textarea>
+              </div>
+            </div>
+            <div id="sentLetterEditPreview" class="hidden"></div>
+            <div class="promotion-actions">
+              <button type="button" id="btnSaveSentLetter" class="btn-primary">저장</button>
+              <button type="button" id="btnCancelSentLetter" class="btn-ghost">취소</button>
+            </div>
+          </div>
         </div>
       </div>
     </section>
@@ -666,7 +723,9 @@
   <script src="/dev/js/dict.js"></script>
   <script src="/dev/js/promotion.js"></script>
   <script src="/dev/js/banner.js"></script>
+  <script src="/dev/js/letter-preview.js"></script>
   <script src="/dev/js/feedback.js"></script>
+  <script src="/dev/js/letters.js"></script>
   <script src="/dev/js/fcm.js"></script>
   <script src="/dev/js/batch.js"></script>
   <script src="/dev/js/funnel.js"></script>

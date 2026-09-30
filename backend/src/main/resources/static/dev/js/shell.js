@@ -1,6 +1,6 @@
 // 로그인·로그아웃과 사이드바 해시 라우팅으로 섹션을 전환하는 포털 셸
 
-const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'feedback', 'banner', 'fcm', 'statistics-backfill', 'conversion-batch', 'funnel-dashboard'];
+const PORTAL_SECTION_IDS = ['api-docs', 'club', 'dict', 'promotion', 'feedback', 'letters', 'banner', 'fcm', 'statistics-backfill', 'conversion-batch', 'funnel-dashboard'];
 // 운영진이 가장 자주 여는 화면을 첫 화면으로 둔다.
 const DEFAULT_SECTION_ID = 'feedback';
 
@@ -15,6 +15,7 @@ function loadActivePortalSectionData(sectionId) {
   if (sectionId === 'dict') loadDictIfVisible();
   if (sectionId === 'promotion') loadPromotionIfVisible();
   if (sectionId === 'feedback') loadFeedbackIfVisible();
+  if (sectionId === 'letters') loadSentLettersIfVisible();
   if (sectionId === 'banner') loadBannerIfVisible();
   if (sectionId === 'fcm') loadFcmTokensIfVisible();
   if (sectionId === 'funnel-dashboard') loadFunnelDashboardIfVisible();
@@ -56,6 +57,7 @@ function showLogin(show) {
   document.getElementById('dict').classList.toggle('hidden', true);
   document.getElementById('promotion').classList.toggle('hidden', true);
   document.getElementById('feedback').classList.toggle('hidden', true);
+  document.getElementById('letters').classList.toggle('hidden', true);
   document.getElementById('banner').classList.toggle('hidden', true);
   document.getElementById('fcm').classList.toggle('hidden', true);
   document.getElementById('statistics-backfill').classList.toggle('hidden', true);

@@ -18,11 +18,6 @@ let feedbackCurrentDraftId = '';
 let feedbackIsUploading = false;
 // 발행이 실패해 다시 시도할 때 같은 값을 보내야 편지가 두 번 만들어지지 않는다.
 let feedbackLetterRequestId = '';
-let sentLetters = [];
-let sentLettersHaveLoaded = false;
-let sentLettersAreLoading = false;
-// 본문을 펼쳐 둔 편지. 한 번에 하나만 펼친다.
-let sentLetterExpandedId = '';
 
 function clearFeedbackBanner() {
   const banner = document.getElementById('feedbackBanner');
@@ -47,7 +42,6 @@ function formatFeedbackDate(value) {
 function loadFeedbackIfVisible() {
   if (feedbackHasLoaded || feedbackIsLoading) return;
   reloadFeedbackList();
-  reloadSentLetters();
 }
 
 function updateFeedbackNavBadge(count) {
@@ -136,91 +130,6 @@ function getSelectedFeedback() {
   return feedbacks.find((feedback) => feedback.id === feedbackSelectedId) || null;
 }
 
-async function reloadSentLetters() {
-  if (sentLettersAreLoading) return;
-  sentLettersAreLoading = true;
-  document.getElementById('sentLetterListLoading').classList.remove('hidden');
-  try {
-    const res = await fetch(API_BASE + '/api/admin/feedback/letters', { headers: headers() });
-    const data = await readJsonOrEmpty(res);
-    if (!res.ok) {
-      sentLetters = [];
-      showToast(data.message || '보낸 편지 목록 조회 실패 (HTTP ' + res.status + ')', 'error');
-    } else {
-      sentLetters = data.data?.letters || [];
-    }
-    sentLettersHaveLoaded = true;
-  } catch (e) {
-    sentLetters = [];
-    showToast(e.message || '보낸 편지 목록 조회 실패', 'error');
-  } finally {
-    sentLettersAreLoading = false;
-    document.getElementById('sentLetterListLoading').classList.add('hidden');
-    renderSentLetterList();
-  }
-}
-
-function renderSentLetterList() {
-  const tbody = document.querySelector('#sentLetterList tbody');
-  const summary = document.getElementById('sentLetterSummary');
-  tbody.innerHTML = '';
-
-  if (!sentLetters.length) {
-    const tr = document.createElement('tr');
-    const td = document.createElement('td');
-    td.colSpan = 5;
-    td.textContent = sentLettersHaveLoaded ? '보낸 편지가 없습니다.' : '보낸 편지 목록을 불러오세요.';
-    tr.appendChild(td);
-    tbody.appendChild(tr);
-    summary.textContent = sentLettersHaveLoaded ? '총 0개 편지' : '보낸 편지 목록을 불러오세요.';
-    return;
-  }
-
-  summary.textContent = '총 ' + sentLetters.length + '개 편지 · 행을 누르면 본문을 볼 수 있습니다.';
-  sentLetters.forEach((letter) => {
-    const isExpanded = letter.id === sentLetterExpandedId;
-    const tr = document.createElement('tr');
-    tr.tabIndex = 0;
-    tr.setAttribute('role', 'button');
-    tr.setAttribute('aria-label', (letter.title || '제목 없음') + ' 편지 본문 ' + (isExpanded ? '접기' : '펼치기'));
-    tr.setAttribute('aria-expanded', isExpanded ? 'true' : 'false');
-    tr.classList.toggle('is-selected', isExpanded);
-    tr.appendChild(document.createElement('td')).appendChild(
-      createTag(LETTER_CATEGORY_LABELS[letter.category] || letter.category || '-', LETTER_CATEGORY_TONES[letter.category]));
-    const titleCell = tr.appendChild(document.createElement('td'));
-    titleCell.className = 'sent-letter-title-cell';
-    titleCell.textContent = letter.title || '';
-    titleCell.title = letter.title || '';
-    // 받는 사람이 없는 편지는 전체 사용자에게 발행한 편지다.
-    tr.appendChild(document.createElement('td')).textContent = letter.recipient || '전체';
-    tr.appendChild(document.createElement('td')).textContent = formatFeedbackDate(letter.createdAt);
-    tr.appendChild(document.createElement('td')).textContent =
-      letter.pushSuccessCount ? letter.pushSuccessCount + '건' : '-';
-    const toggleCurrentLetter = () => {
-      sentLetterExpandedId = isExpanded ? '' : letter.id;
-      renderSentLetterList();
-    };
-    tr.onclick = toggleCurrentLetter;
-    tr.onkeydown = (event) => {
-      if (event.key === 'Enter' || event.key === ' ') {
-        event.preventDefault();
-        toggleCurrentLetter();
-      }
-    };
-    tbody.appendChild(tr);
-
-    if (isExpanded) {
-      const bodyRow = document.createElement('tr');
-      bodyRow.className = 'sent-letter-body-row';
-      const bodyCell = document.createElement('td');
-      bodyCell.colSpan = 5;
-      bodyCell.textContent = letter.body || '(본문 없음)';
-      bodyRow.appendChild(bodyCell);
-      tbody.appendChild(bodyRow);
-    }
-  });
-}
-
 function generateFeedbackRequestId() {
   if (window.crypto && typeof window.crypto.randomUUID === 'function') {
     return window.crypto.randomUUID();
@@ -245,7 +154,26 @@ function renderFeedbackQuoteImages(images) {
   });
 }
 
+function showFeedbackEditorTab(tab) {
+  const isPreview = tab === 'preview';
+  setSegmentedTab('feedbackEditorTabs', tab);
+  document.getElementById('feedbackWritePane').classList.toggle('hidden', isPreview);
+  document.getElementById('feedbackPreviewPane').classList.toggle('hidden', !isPreview);
+  if (!isPreview) return;
+  const isLetterMode = feedbackMode === 'letter';
+  const selected = getSelectedFeedback();
+  const pane = document.getElementById('feedbackPreviewPane');
+  pane.innerHTML = '';
+  pane.appendChild(buildLetterPreview({
+    category: isLetterMode ? document.getElementById('feedbackLetterCategory').value : 'REPLY',
+    title: document.getElementById('feedbackReplyTitle').value.trim(),
+    body: document.getElementById('feedbackReplyBody').value,
+    createdAt: null
+  }, isLetterMode ? null : selected));
+}
+
 function selectFeedback(feedbackId) {
+  showFeedbackEditorTab('write');
   feedbackMode = 'reply';
   feedbackSelectedId = feedbackId;
   document.getElementById('feedbackSaveResult').classList.add('hidden');
@@ -253,6 +181,7 @@ function selectFeedback(feedbackId) {
 }
 
 function enterFeedbackLetterMode() {
+  showFeedbackEditorTab('write');
   feedbackMode = 'letter';
   feedbackSelectedId = '';
   feedbackCurrentDraftId = '';
@@ -268,6 +197,7 @@ function enterFeedbackLetterMode() {
 }
 
 function clearFeedbackSelection() {
+  showFeedbackEditorTab('write');
   feedbackMode = 'reply';
   feedbackSelectedId = '';
   feedbackCurrentDraftId = '';
@@ -516,8 +446,10 @@ async function publishFeedbackLetter() {
     feedbackCurrentDraftId = '';
     feedbackLetterRequestId = '';
     feedbackMode = 'reply';
+    showFeedbackEditorTab('write');
     await reloadFeedbackList();
-    await reloadSentLetters();
+    // 보낸 편지 화면을 한 번이라도 열었다면 방금 발행한 편지가 보이게 다시 불러온다.
+    if (sentLettersHaveLoaded) await reloadSentLetters();
   } catch (e) {
     setMessageBox('feedbackSaveResult', false, e.message || '발행 실패');
   } finally {
@@ -545,10 +477,8 @@ async function discardFeedbackDraftAfterPublish(draftId) {
   await reloadFeedbackDrafts();
 }
 
-document.getElementById('btnLoadFeedback').onclick = () => {
-  reloadFeedbackList();
-  reloadSentLetters();
-};
+document.getElementById('btnLoadFeedback').onclick = () => reloadFeedbackList();
+bindSegmentedTabs('feedbackEditorTabs', showFeedbackEditorTab);
 document.getElementById('btnNewFeedbackLetter').onclick = () => enterFeedbackLetterMode();
 document.getElementById('btnClearFeedbackSelection').onclick = () => clearFeedbackSelection();
 document.getElementById('btnPublishFeedbackReply').onclick = () => publishFeedbackLetter();
