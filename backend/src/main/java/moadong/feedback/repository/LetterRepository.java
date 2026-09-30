@@ -33,5 +33,12 @@ public interface LetterRepository extends MongoRepository<Letter, String> {
     @Update("{ '$addToSet': { 'readStudentIds': ?1 } }")
     long markRead(String letterId, String studentId);
 
+    /**
+     * 제목·본문만 바꾼다. 문서 전체를 save하면 그 사이 markRead로 추가된 readStudentIds가 덮여 사라진다.
+     */
+    @Query("{ '_id': ?0 }")
+    @Update("{ '$set': { 'title': ?1, 'body': ?2 } }")
+    long updateContent(String letterId, String title, String body);
+
     Optional<Letter> findByIdempotencyKey(String idempotencyKey);
 }

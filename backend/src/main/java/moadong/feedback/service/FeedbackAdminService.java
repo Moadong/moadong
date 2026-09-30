@@ -16,6 +16,7 @@ import moadong.feedback.enums.LetterCategory;
 import moadong.feedback.payload.request.FeedbackReplyRequest;
 import moadong.feedback.payload.request.FeedbackStatusUpdateRequest;
 import moadong.feedback.payload.request.LetterCreateRequest;
+import moadong.feedback.payload.request.LetterUpdateRequest;
 import moadong.feedback.payload.response.AdminFeedbackListResponse;
 import moadong.feedback.payload.response.AdminFeedbackResponse;
 import moadong.feedback.payload.response.AdminSentLetterListResponse;
@@ -79,6 +80,27 @@ public class FeedbackAdminService {
                 .toList();
 
         return new AdminSentLetterListResponse(letters);
+    }
+
+    /**
+     * 발행한 편지의 제목·본문을 고친다. 푸시는 다시 보내지 않는다.
+     * <p>
+     * 학생이 편지를 열 때 readStudentIds가 $addToSet으로 따로 쌓이므로, 문서 전체를 save하지 않고
+     * 제목·본문만 $set한다. 읽어 온 문서는 응답을 만드는 데만 쓴다.
+     */
+    public AdminSentLetterResponse updateLetter(String letterId, LetterUpdateRequest request) {
+        Letter letter = letterRepository.findById(letterId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.LETTER_NOT_FOUND));
+
+        // 조회와 수정 사이에 문서가 지워졌으면 수정된 문서가 없다.
+        if (letterRepository.updateContent(letterId, request.title(), request.body()) == 0) {
+            throw new RestApiException(ErrorCode.LETTER_NOT_FOUND);
+        }
+        letter.edit(request.title(), request.body());
+
+        return AdminSentLetterResponse.of(
+                letter,
+                letter.isBroadcast() ? null : anonymousSender(letter.getRecipientStudentId()));
     }
 
     /**
