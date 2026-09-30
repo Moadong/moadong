@@ -7,6 +7,8 @@ interface BulkActionBarProps {
   enabled: boolean;
   onStatusChange: (status: ApplicationStatus) => void;
   onDelete: () => void;
+  onExport: () => void;
+  exportEnabled: boolean;
   isStatusMenuOpen: boolean;
   onToggleStatusMenu: () => void;
 }
@@ -15,6 +17,8 @@ const BulkActionBar = ({
   enabled,
   onStatusChange,
   onDelete,
+  onExport,
+  exportEnabled,
   isStatusMenuOpen,
   onToggleStatusMenu,
 }: BulkActionBarProps) => {
@@ -51,6 +55,14 @@ const BulkActionBar = ({
           </Styled.StatusMenu>
         )}
       </Styled.StatusButtonWrapper>
+
+      <Styled.ExportButton
+        $enabled={exportEnabled}
+        onClick={exportEnabled ? onExport : undefined}
+      >
+        <Styled.CsvIcon $enabled={exportEnabled} />
+        내보내기
+      </Styled.ExportButton>
 
       <Styled.DeleteButton
         $enabled={enabled}

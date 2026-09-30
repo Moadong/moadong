@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import CsvSvg from '@/assets/images/icons/csv.svg?react';
 import TriangleDown from '@/assets/images/icons/triangle_down.svg?react';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
@@ -31,6 +32,23 @@ export const StatusButton = styled.button<{ $enabled: boolean }>`
   cursor: ${({ $enabled }) => ($enabled ? 'pointer' : 'default')};
 `;
 
+export const ExportButton = styled.button<{ $enabled: boolean }>`
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding: 6px 8px;
+  gap: 4px;
+  height: 29px;
+  border-radius: 8px;
+  border: 1px solid
+    ${({ $enabled }) => ($enabled ? '#2d9e5e' : colors.gray[300])};
+  background: ${colors.gray[50]};
+  ${setTypography(typography.button.button2)}
+  color: ${({ $enabled }) => ($enabled ? '#2d9e5e' : colors.gray[400])};
+  cursor: ${({ $enabled }) => ($enabled ? 'pointer' : 'default')};
+`;
+
 export const DeleteButton = styled.button<{ $enabled: boolean }>`
   display: flex;
   flex-direction: row;
@@ -47,6 +65,14 @@ export const DeleteButton = styled.button<{ $enabled: boolean }>`
   color: ${({ $enabled }) =>
     $enabled ? colors.primary[800] : colors.gray[400]};
   cursor: ${({ $enabled }) => ($enabled ? 'pointer' : 'default')};
+`;
+
+export const CsvIcon = styled(CsvSvg)<{ $enabled: boolean }>`
+  width: 12px;
+  height: 12px;
+  flex-shrink: 0;
+  filter: ${({ $enabled }) =>
+    $enabled ? 'none' : 'brightness(0) invert(86%)'};
 `;
 
 export const TriangleIcon = styled(TriangleDown)<{
