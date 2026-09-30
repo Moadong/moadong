@@ -417,6 +417,12 @@ button.btn-small { height: 30px; margin: 0; padding: 0 10px; font-size: 12px; }
   .login-card { padding: 28px 20px 20px; }
   .content { padding: 16px; }
   section { padding: 20px 16px; }
+  .panel, .promotion-panel { padding: 16px; }
+  /* 필터 탭이 패널보다 넓어지면 페이지 전체가 가로로 밀린다. 탭만 가로 스크롤한다. */
+  .list-toolbar .segmented { max-width: 100%; overflow-x: auto; scrollbar-width: none; }
+  .list-toolbar .segmented::-webkit-scrollbar { display: none; }
+  .list-toolbar .segmented button { flex: 0 0 auto; }
+  .list-search { max-width: none; }
   .banner-item-body { grid-template-columns: 1fr; }
   .promotion-layout { grid-template-columns: 1fr; }
   .promotion-location-input { flex-direction: column; align-items: stretch; }
