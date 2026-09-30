@@ -53,7 +53,7 @@ function renderSentLetterList() {
   if (!sentLetters.length) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 5;
+    td.colSpan = 4;
     td.textContent = sentLettersHaveLoaded ? '보낸 편지가 없어요.' : '보낸 편지 목록을 불러오세요.';
     tr.appendChild(td);
     tbody.appendChild(tr);
@@ -79,8 +79,6 @@ function renderSentLetterList() {
     // 받는 사람이 없는 편지는 전체 사용자에게 발행한 편지다.
     tr.appendChild(document.createElement('td')).textContent = letter.recipient || '전체';
     tr.appendChild(document.createElement('td')).textContent = formatFeedbackDate(letter.createdAt);
-    tr.appendChild(document.createElement('td')).textContent =
-      letter.pushSuccessCount ? letter.pushSuccessCount.toLocaleString() + '건' : '-';
     const selectCurrentLetter = () => selectSentLetter(letter.id);
     tr.onclick = selectCurrentLetter;
     tr.onkeydown = (event) => {

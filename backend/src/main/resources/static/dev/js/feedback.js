@@ -108,7 +108,7 @@ function renderFeedbackList() {
   if (!visible.length) {
     const tr = document.createElement('tr');
     const td = document.createElement('td');
-    td.colSpan = 5;
+    td.colSpan = 4;
     td.className = 'table-empty';
     if (!feedbackHasLoaded) td.textContent = '불러오는 중...';
     else if (feedbackQuery.trim()) td.textContent = '검색 결과가 없어요.';
@@ -130,11 +130,16 @@ function renderFeedbackList() {
     tr.setAttribute('aria-selected', isSelected ? 'true' : 'false');
     tr.appendChild(document.createElement('td')).appendChild(
       createTag(FEEDBACK_TYPE_LABELS[feedback.type] || feedback.type || '-', FEEDBACK_TYPE_TONES[feedback.type]));
+    // 내용이 가장 넓게 보이도록 보낸 사람은 내용 아래 작은 줄로 둔다.
     const contentCell = tr.appendChild(document.createElement('td'));
     contentCell.className = 'feedback-content-cell';
-    contentCell.textContent = feedback.content || '';
     contentCell.title = feedback.content || '';
-    tr.appendChild(document.createElement('td')).textContent = feedback.sender || '-';
+    const contentText = contentCell.appendChild(document.createElement('span'));
+    contentText.className = 'cell-main';
+    contentText.textContent = feedback.content || '';
+    const senderText = contentCell.appendChild(document.createElement('span'));
+    senderText.className = 'cell-sub';
+    senderText.textContent = feedback.sender || '-';
     const timeCell = tr.appendChild(document.createElement('td'));
     timeCell.textContent = formatRelativeTime(feedback.createdAt);
     timeCell.title = formatDateTime(feedback.createdAt);

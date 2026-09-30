@@ -241,11 +241,13 @@ tbody tr.is-selected, tbody tr.is-selected:hover { background: var(--primary-sof
 .feedback-checkbox { display: block; margin: 12px 0; font-size: 14px; color: var(--gray-800); cursor: pointer; }
 .feedback-checkbox input { display: inline-block; width: 18px; height: 18px; max-width: none; margin: 0 8px 0 0; padding: 0; vertical-align: middle; accent-color: var(--primary); box-shadow: none; }
 .feedback-checkbox span { vertical-align: middle; }
-.feedback-content-cell { max-width: 220px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.feedback-content-cell { overflow: hidden; }
 /* 유형 · 받은 날짜 · 상태는 짧은 한국어라 폭이 좁아지면 글자 단위로 쪼개진다. */
 #feedbackList th:nth-child(1), #feedbackList td:nth-child(1),
-#feedbackList th:nth-child(4), #feedbackList td:nth-child(4),
-#feedbackList th:nth-child(5), #feedbackList td:nth-child(5) { white-space: nowrap; }
+#feedbackList th:nth-child(3), #feedbackList td:nth-child(3),
+#feedbackList th:nth-child(4), #feedbackList td:nth-child(4) { white-space: nowrap; }
+.cell-main, .cell-sub { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cell-sub { margin-top: 2px; color: var(--gray-600); font-size: 12px; }
 .feedback-quote-images { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 0 12px; }
 .feedback-quote-images a { line-height: 0; }
 .feedback-quote-images img { width: 72px; height: 72px; object-fit: cover; border-radius: var(--radius-sm); border: 1px solid var(--gray-300); }
@@ -258,8 +260,7 @@ tbody tr.is-selected, tbody tr.is-selected:hover { background: var(--primary-sof
 .sent-letter-title-cell { max-width: 320px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 #sentLetterList th:nth-child(1), #sentLetterList td:nth-child(1),
 #sentLetterList th:nth-child(3), #sentLetterList td:nth-child(3),
-#sentLetterList th:nth-child(4), #sentLetterList td:nth-child(4),
-#sentLetterList th:nth-child(5), #sentLetterList td:nth-child(5) { white-space: nowrap; }
+#sentLetterList th:nth-child(4), #sentLetterList td:nth-child(4) { white-space: nowrap; }
 
 .label-hint { margin-left: 6px; color: var(--gray-600); font-size: 12px; font-weight: 400; }
 
@@ -284,6 +285,10 @@ button.btn-small { height: 30px; margin: 0; padding: 0 10px; font-size: 12px; }
 @media (max-width: 1180px) { .letters-layout { grid-template-columns: 1fr; } .letter-detail-panel { position: static; } }
 /* 그리드 칸의 기본 min-width:auto 때문에 넓은 테이블이 칸을 밀어 가로 스크롤이 생긴다. */
 .letters-layout > *, .feedback-layout > *, .promotion-layout > * { min-width: 0; }
+/* 2열 그리드 안에서는 .panel + .panel 세로 간격이 오른쪽 칸만 밀어 내린다. */
+.letters-layout > .panel + .panel, .feedback-layout > * + * { margin-top: 0; }
+/* 내용·제목 칸이 남는 폭만 쓰고 말줄임되게 해서 상태·날짜 칸이 밀려나지 않게 한다. */
+.feedback-content-cell, .sent-letter-title-cell { width: 100%; max-width: 0; }
 .letter-detail-panel { position: sticky; top: 24px; }
 .letter-detail-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
 .letter-detail-head button { margin: 0; }
