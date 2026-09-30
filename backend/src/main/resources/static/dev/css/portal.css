@@ -198,7 +198,7 @@ tbody tr.is-selected, tbody tr.is-selected:hover { background: var(--primary-sof
 /* ── 퍼널 ───────────────────────────── */
 .funnel-presets { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 16px; }
 .funnel-presets button { margin: 0; }
-.funnel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(360px, 1fr)); gap: 16px; margin-top: 20px; }
+.funnel-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); gap: 16px; margin-top: 20px; }
 .funnel-card { padding: 20px; border: 1px solid var(--gray-300); border-radius: 14px; background: #fff; }
 .funnel-card-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; margin-bottom: 12px; }
 .funnel-card-head h3 { margin: 0; font-size: 16px; }
@@ -270,6 +270,8 @@ tbody tr.is-selected, tbody tr.is-selected:hover { background: var(--primary-sof
 /* ── 보낸 편지 ─────────────────────── */
 .letters-layout { display: grid; grid-template-columns: minmax(0, 1fr) 440px; gap: 16px; align-items: start; }
 @media (max-width: 1180px) { .letters-layout { grid-template-columns: 1fr; } .letter-detail-panel { position: static; } }
+/* 그리드 칸의 기본 min-width:auto 때문에 넓은 테이블이 칸을 밀어 가로 스크롤이 생긴다. */
+.letters-layout > *, .feedback-layout > *, .promotion-layout > * { min-width: 0; }
 .letter-detail-panel { position: sticky; top: 24px; }
 .letter-detail-head { display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; margin-bottom: 16px; }
 .letter-detail-head button { margin: 0; }
