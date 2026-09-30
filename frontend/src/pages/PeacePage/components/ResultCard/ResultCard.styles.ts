@@ -10,8 +10,9 @@ export const Perspective = styled.div`
 `;
 
 /** 등장 시 한 번 뒤집히는 바깥 껍질 */
+/** 아래 비율 목록·상세 패널과 같은 폭(칼럼 안쪽 전체) */
 export const Flip = styled(motion.div)`
-  width: min(100%, 360px);
+  width: 100%;
   transform-style: preserve-3d;
 `;
 
