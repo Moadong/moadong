@@ -1,6 +1,9 @@
 import styled from 'styled-components';
-import { FIXED_BOTTOM_BUTTON_AREA_HEIGHT } from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea.styles';
-import { media } from '@/styles/mediaQuery';
+import {
+  ButtonArea,
+  FIXED_BOTTOM_BUTTON_AREA_HEIGHT,
+} from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea.styles';
+import { BREAKPOINT, media } from '@/styles/mediaQuery';
 import { setTypography } from '@/styles/theme/typography';
 import { PEACE_GREEN } from './constants/peaceColors';
 
@@ -42,38 +45,42 @@ export const Description = styled.p`
   white-space: pre-line;
 `;
 
+const TABLET_ONLY = `@media (min-width: ${BREAKPOINT.mobile + 1}px) and (max-width: ${BREAKPOINT.tablet}px)`;
+const DESKTOP_UP = `@media (min-width: ${BREAKPOINT.tablet + 1}px)`;
+
+/**
+ * 모바일·태블릿은 동아리 상세의 '지원하기'(FixedBottomButtonArea)와 같은 고정 영역을 그대로 쓴다.
+ * 넓은 화면에서는 고정하지 않고 본문 칼럼 맨 아래에 둔다
+ */
+export const StartArea = styled(ButtonArea)`
+  /* 공통 영역은 최대 500px이라 본문 칼럼(440px) 밖으로 나온다. 칼럼 폭으로 줄인다 */
+  ${TABLET_ONLY} {
+    max-width: 440px;
+  }
+
+  ${DESKTOP_UP} {
+    position: static;
+    margin-top: auto;
+    padding: 0 0 24px;
+    background: transparent;
+    box-shadow: none;
+
+    button {
+      width: 100%;
+      height: 56px;
+      border-radius: 16px;
+      ${({ theme }) => setTypography(theme.typography.title.title6)};
+    }
+  }
+`;
+
 export const StartButton = styled.button`
-  width: 100%;
-  min-height: 56px;
-  margin-top: auto;
-  margin-bottom: 24px;
   border: none;
-  border-radius: 16px;
   background: ${PEACE_GREEN.main};
   color: ${({ theme }) => theme.colors.base.white};
-  ${({ theme }) => setTypography(theme.typography.title.title6)};
   cursor: pointer;
 
   &:active {
     transform: scale(0.98);
-  }
-
-  /* 모바일·태블릿은 동아리 상세의 '지원하기'(FixedBottomButtonArea)와 같은 자리에 고정 */
-  ${media.tablet} {
-    position: fixed;
-    bottom: calc(20px + env(safe-area-inset-bottom));
-    left: 50%;
-    transform: translateX(-50%);
-    /* 본문 칼럼(440px) 안에 머물도록 좌우 20px을 뺀 400px까지만 */
-    width: calc(100% - 40px);
-    max-width: 400px;
-    min-height: 50px;
-    margin: 0;
-    border-radius: 14px;
-    ${({ theme }) => setTypography(theme.typography.paragraph.p2)};
-
-    &:active {
-      transform: translateX(-50%) scale(0.98);
-    }
   }
 `;

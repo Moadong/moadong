@@ -42,9 +42,11 @@ const PeaceIntroPage = () => {
           }
         </Styled.Description>
       </Styled.Hero>
-      <Styled.StartButton type='button' onClick={handleStart}>
-        시작하기
-      </Styled.StartButton>
+      <Styled.StartArea>
+        <Styled.StartButton type='button' onClick={handleStart}>
+          시작하기
+        </Styled.StartButton>
+      </Styled.StartArea>
     </PeaceLayout>
   );
 };
