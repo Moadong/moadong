@@ -32,10 +32,14 @@ public final class MixpanelEventNormalizer {
             "AI Draft Generated", "AI 지원서 초안 생성 완료"
     );
 
-    /** Page Viewed의 page_name → 내부 페이지 방문 이벤트 */
+    /**
+     * Page Viewed의 page_name → 내부 페이지 방문 이벤트.
+     * 메인은 웹·앱 웹뷰가 같은 page_name(main)이고 is_webview 슈퍼 속성으로 구분한다.
+     */
+    private static final String MAIN_PAGE_NAME = "main";
+    private static final String WEBVIEW_MAIN_PAGE_VISITED = "WebviewMainPage Visited";
     private static final Map<String, String> PAGE_VIEWED_EVENTS = Map.of(
-            "main", "MainPage Visited",
-            "webview_main", "WebviewMainPage Visited",
+            MAIN_PAGE_NAME, "MainPage Visited",
             "club_detail", "ClubDetailPage Visited",
             "application_form", "ApplicationFormPage Visited",
             "promotion_list", "홍보 목록 페이지 Visited"
@@ -54,9 +58,9 @@ public final class MixpanelEventNormalizer {
 
     /** page 속성(스크롤 깊이 등)의 새 값 → 내부 값. 같은 페이지가 대시보드에서 둘로 갈라지지 않게 한다 */
     private static final Map<String, String> RENAMED_PAGE_VALUES = Map.of(
-            "webview_main", "webview-main",
             "club_detail", "club-detail"
     );
+    private static final String WEBVIEW_MAIN_PAGE_VALUE = "webview-main";
 
     /** Export API에 추가로 요청해야 하는 새 이벤트명 */
     public static final List<String> NEW_EVENT_NAMES = Stream.concat(
@@ -74,21 +78,29 @@ public final class MixpanelEventNormalizer {
         Map<String, Object> properties = event.properties() == null
                 ? new HashMap<>()
                 : new HashMap<>(event.properties());
-        String eventName = internalEventName(event.event(), properties.get("page_name"));
+        boolean webview = Boolean.TRUE.equals(properties.get("is_webview"));
+        String eventName = internalEventName(event.event(), properties.get("page_name"), webview);
 
         RENAMED_PROPERTIES.forEach((newKey, internalKey) -> {
             if (properties.containsKey(newKey) && !properties.containsKey(internalKey)) {
                 properties.put(internalKey, properties.get(newKey));
             }
         });
-        if (properties.get("page") instanceof String page && RENAMED_PAGE_VALUES.containsKey(page)) {
-            properties.put("page", RENAMED_PAGE_VALUES.get(page));
+        if (properties.get("page") instanceof String page) {
+            if (webview && MAIN_PAGE_NAME.equals(page)) {
+                properties.put("page", WEBVIEW_MAIN_PAGE_VALUE);
+            } else if (RENAMED_PAGE_VALUES.containsKey(page)) {
+                properties.put("page", RENAMED_PAGE_VALUES.get(page));
+            }
         }
         return new MixpanelRawEvent(eventName, properties);
     }
 
-    private static String internalEventName(String eventName, Object pageName) {
+    private static String internalEventName(String eventName, Object pageName, boolean webview) {
         if (PAGE_VIEWED.equals(eventName)) {
+            if (webview && MAIN_PAGE_NAME.equals(pageName)) {
+                return WEBVIEW_MAIN_PAGE_VISITED;
+            }
             return PAGE_VIEWED_EVENTS.getOrDefault(pageName, eventName);
         }
         if (PAGE_LEFT.equals(eventName)) {

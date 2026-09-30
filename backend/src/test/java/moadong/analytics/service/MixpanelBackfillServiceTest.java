@@ -186,6 +186,40 @@ class MixpanelBackfillServiceTest {
     }
 
     @Test
+    void club_id가_있으면_이름이_겹쳐도_club_id로_동아리를_찾는다() {
+        MixpanelBackfillService service = service(true);
+        LocalDate date = LocalDate.of(2026, 7, 8);
+        long epochSeconds = date.atStartOfDay(ZoneId.of("Asia/Seoul")).toEpochSecond();
+        MixpanelRawEvent event = new MixpanelRawEvent(
+                "Page Viewed",
+                Map.of(
+                        "$insert_id", "detail-id-1",
+                        "distinct_id", "user-1",
+                        "time", epochSeconds,
+                        "page_name", "club_detail",
+                        "club_id", "club-2",
+                        "club_name", "밴드부"
+                )
+        );
+        Club first = mock(Club.class);
+        when(first.getId()).thenReturn("club-1");
+        when(first.getName()).thenReturn("밴드부");
+        Club second = mock(Club.class);
+        when(second.getId()).thenReturn("club-2");
+        when(second.getName()).thenReturn("밴드부");
+
+        when(clubRepository.findAll()).thenReturn(List.of(first, second));
+        when(mixpanelExportClient.fetchEvents(date)).thenReturn(List.of(event));
+        when(mixpanelBackfilledEventRepository.insert(any(MixpanelBackfilledEvent.class)))
+                .thenAnswer(invocation -> invocation.getArgument(0));
+
+        service.backfill(date, date);
+
+        verify(clubAnalyticsRecordService)
+                .incrementClubDailyWithoutExistenceCheck("club-2", "밴드부", date, 1, 0, 0);
+    }
+
+    @Test
     void 같은_insert_id를_다시_처리하면_퍼널_이벤트를_저장하지_않는다() {
         MixpanelBackfillService service = service(true);
         LocalDate date = LocalDate.of(2026, 7, 8);

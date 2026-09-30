@@ -82,13 +82,34 @@ class MixpanelEventNormalizerTest {
     }
 
     @Test
-    void 스크롤_깊이의_새_page_값을_옛_값으로_맞춘다() {
+    void 웹뷰의_메인_스크롤_깊이는_옛_page_값_webview_main으로_맞춘다() {
         MixpanelRawEvent normalized = MixpanelEventNormalizer.normalize(new MixpanelRawEvent(
                 "Scroll Depth Reached",
-                Map.of("page", "webview_main", "depth_percent", 50)
+                Map.of("page", "main", "is_webview", true, "depth_percent", 50)
         ));
 
         assertEquals("webview-main", normalized.properties().get("page"));
+    }
+
+    @Test
+    void 웹의_메인_스크롤_깊이는_page_값을_그대로_둔다() {
+        MixpanelRawEvent normalized = MixpanelEventNormalizer.normalize(new MixpanelRawEvent(
+                "Scroll Depth Reached",
+                Map.of("page", "main", "is_webview", false, "depth_percent", 50)
+        ));
+
+        assertEquals("main", normalized.properties().get("page"));
+    }
+
+    @Test
+    void 메인_Page_Viewed는_is_webview로_웹과_웹뷰_이벤트를_나눈다() {
+        MixpanelRawEvent web = MixpanelEventNormalizer.normalize(new MixpanelRawEvent(
+                "Page Viewed", Map.of("page_name", "main", "is_webview", false)));
+        MixpanelRawEvent webview = MixpanelEventNormalizer.normalize(new MixpanelRawEvent(
+                "Page Viewed", Map.of("page_name", "main", "is_webview", true)));
+
+        assertEquals("MainPage Visited", web.event());
+        assertEquals("WebviewMainPage Visited", webview.event());
     }
 
     @Test
