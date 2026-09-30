@@ -14,8 +14,10 @@ import moadong.feedback.enums.LetterCategory;
 import moadong.feedback.payload.request.FeedbackReplyRequest;
 import moadong.feedback.payload.request.FeedbackStatusUpdateRequest;
 import moadong.feedback.payload.request.LetterCreateRequest;
+import moadong.feedback.payload.request.LetterUpdateRequest;
 import moadong.feedback.payload.response.AdminFeedbackListResponse;
 import moadong.feedback.payload.response.AdminSentLetterListResponse;
+import moadong.feedback.payload.response.AdminSentLetterResponse;
 import moadong.feedback.payload.response.FeedbackReplyResponse;
 import moadong.feedback.payload.response.LetterCreateResponse;
 import moadong.feedback.repository.FeedbackRepository;
@@ -35,6 +37,7 @@ import org.springframework.transaction.support.TransactionTemplate;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertFalse;
@@ -392,6 +395,64 @@ class FeedbackAdminServiceTest {
                 "feedback-1", new FeedbackStatusUpdateRequest(FeedbackStatus.IN_PROGRESS)));
 
         assertEquals(ErrorCode.FEEDBACK_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void 보낸_편지를_수정하면_제목과_본문만_바뀌고_나머지는_그대로다() {
+        Letter letter = Letter.builder()
+                .id("letter-1")
+                .category(LetterCategory.REPLY)
+                .recipientStudentId(STUDENT_ID)
+                .feedbackId("feedback-1")
+                .title("오타 있는 제목")
+                .body("오타 있는 본문")
+                .pushSuccessCount(1)
+                .readStudentIds(Set.of(STUDENT_ID))
+                .build();
+        when(letterRepository.findById("letter-1")).thenReturn(Optional.of(letter));
+        when(letterRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AdminSentLetterResponse response = feedbackAdminService.updateLetter(
+                "letter-1", new LetterUpdateRequest("고친 제목", "고친 본문"));
+
+        ArgumentCaptor<Letter> captor = ArgumentCaptor.forClass(Letter.class);
+        verify(letterRepository).save(captor.capture());
+        Letter saved = captor.getValue();
+        assertEquals("고친 제목", saved.getTitle());
+        assertEquals("고친 본문", saved.getBody());
+        assertEquals(LetterCategory.REPLY, saved.getCategory());
+        assertEquals(STUDENT_ID, saved.getRecipientStudentId());
+        assertEquals("feedback-1", saved.getFeedbackId());
+        assertEquals(1, saved.getPushSuccessCount());
+        assertTrue(saved.isReadBy(STUDENT_ID));
+
+        assertEquals("고친 제목", response.title());
+        assertEquals("user_11111111", response.recipient());
+    }
+
+    @Test
+    void 편지를_수정해도_푸시는_다시_보내지_않는다() {
+        when(letterRepository.findById("letter-1")).thenReturn(Optional.of(
+                Letter.broadcast(LetterCategory.UPDATE, "공지 제목", "공지 본문", "request-1")));
+        when(letterRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+
+        AdminSentLetterResponse response = feedbackAdminService.updateLetter(
+                "letter-1", new LetterUpdateRequest("고친 공지", "고친 본문"));
+
+        verify(fcmAdminService, never()).sendToAll(any());
+        verify(pushNotificationPort, never()).sendToToken(any());
+        assertNull(response.recipient());
+    }
+
+    @Test
+    void 없는_편지를_수정하면_LETTER_NOT_FOUND() {
+        when(letterRepository.findById("missing")).thenReturn(Optional.empty());
+
+        RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.updateLetter(
+                "missing", new LetterUpdateRequest("제목", "본문")));
+
+        assertEquals(ErrorCode.LETTER_NOT_FOUND, exception.getErrorCode());
+        verify(letterRepository, never()).save(any());
     }
 
     private Feedback feedbackOf(String feedbackId, String studentId) {

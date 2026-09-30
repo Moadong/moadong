@@ -16,6 +16,7 @@ import moadong.feedback.enums.LetterCategory;
 import moadong.feedback.payload.request.FeedbackReplyRequest;
 import moadong.feedback.payload.request.FeedbackStatusUpdateRequest;
 import moadong.feedback.payload.request.LetterCreateRequest;
+import moadong.feedback.payload.request.LetterUpdateRequest;
 import moadong.feedback.payload.response.AdminFeedbackListResponse;
 import moadong.feedback.payload.response.AdminFeedbackResponse;
 import moadong.feedback.payload.response.AdminSentLetterListResponse;
@@ -79,6 +80,21 @@ public class FeedbackAdminService {
                 .toList();
 
         return new AdminSentLetterListResponse(letters);
+    }
+
+    /**
+     * 발행한 편지의 제목·본문을 고친다. 푸시는 다시 보내지 않는다.
+     */
+    public AdminSentLetterResponse updateLetter(String letterId, LetterUpdateRequest request) {
+        Letter letter = letterRepository.findById(letterId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.LETTER_NOT_FOUND));
+
+        letter.edit(request.title(), request.body());
+        Letter saved = letterRepository.save(letter);
+
+        return AdminSentLetterResponse.of(
+                saved,
+                saved.isBroadcast() ? null : anonymousSender(saved.getRecipientStudentId()));
     }
 
     /**
