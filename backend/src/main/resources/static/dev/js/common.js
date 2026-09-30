@@ -182,3 +182,16 @@ function revealOnNarrowScreen(elementId) {
   const el = document.getElementById(elementId);
   if (el) el.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
+
+// 외부 입력을 href/src에 넣기 전에 http(s)만 남긴다. javascript: 같은 스킴은 빈 문자열이 된다.
+function toSafeHttpUrl(rawUrl) {
+  const value = String(rawUrl || '').trim();
+  if (!value) return '';
+  try {
+    const parsed = new URL(value);
+    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
+    return parsed.href;
+  } catch (_) {
+    return '';
+  }
+}

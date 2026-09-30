@@ -769,18 +769,6 @@ function removePromotionImageAt(index) {
   writePromotionImageUrls(urls);
 }
 
-function toSafeHttpUrl(rawUrl) {
-  const value = String(rawUrl || '').trim();
-  if (!value) return '';
-  try {
-    const parsed = new URL(value);
-    if (parsed.protocol !== 'http:' && parsed.protocol !== 'https:') return '';
-    return parsed.href;
-  } catch (_) {
-    return '';
-  }
-}
-
 function createPromotionPreviewCard(url, index) {
   const card = document.createElement('div');
   card.className = 'promotion-preview-card';

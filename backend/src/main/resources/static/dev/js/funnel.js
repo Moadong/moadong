@@ -37,10 +37,10 @@ function renderFunnelCard(funnel) {
     const width = baseUsers > 0 ? Math.round((step.users / baseUsers) * 100) : 0;
     return '<tr>'
       + '<td>' + escapeHtml(step.name) + '</td>'
-      + '<td class="num">' + step.users.toLocaleString() + '</td>'
+      + '<td class="num">' + Number(step.users || 0).toLocaleString() + '</td>'
       + '<td class="num">' + (index === 0 ? '-' : formatRate(conversion)) + '</td>'
       + '<td class="drop">' + (index === 0 ? '-' : formatDropRate(conversion)) + '</td>'
-      + '<td><div class="funnel-bar"><span style="width:' + width + '%"></span></div></td>'
+      + '<td><div class="funnel-bar"><span style="width:' + (Number(width) || 0) + '%"></span></div></td>'
       + '</tr>';
   }).join('');
   return '<div class="funnel-card">'
@@ -60,7 +60,7 @@ function renderScrollDepths(scrollDepths) {
   const rows = scrollDepths.map((item) => {
     const cells = item.depths.map((depth) => {
       const rate = depth.percent === 25 ? '' : ' (' + formatRate(depth.rateFrom25) + ')';
-      return '<td class="num">' + depth.users.toLocaleString() + escapeHtml(rate) + '</td>';
+      return '<td class="num">' + Number(depth.users || 0).toLocaleString() + escapeHtml(rate) + '</td>';
     }).join('');
     return '<tr><td>' + escapeHtml(item.page) + '</td>' + cells + '</tr>';
   }).join('');

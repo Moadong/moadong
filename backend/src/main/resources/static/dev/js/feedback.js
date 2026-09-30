@@ -168,11 +168,14 @@ function renderFeedbackQuoteImages(images) {
   const wrap = document.getElementById('feedbackQuoteImages');
   wrap.innerHTML = '';
   wrap.classList.toggle('hidden', !images.length);
-  images.forEach((imageUrl, index) => {
+  images.forEach((rawUrl, index) => {
+    // 학생이 올린 값이라 관리자 화면에서 링크로 쓰기 전에 스킴을 한 번 더 거른다.
+    const imageUrl = toSafeHttpUrl(rawUrl);
+    if (!imageUrl) return;
     const link = document.createElement('a');
     link.href = imageUrl;
     link.target = '_blank';
-    link.rel = 'noopener';
+    link.rel = 'noopener noreferrer';
     const img = document.createElement('img');
     img.src = imageUrl;
     img.alt = '첨부 사진 ' + (index + 1);

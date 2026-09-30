@@ -115,7 +115,8 @@ document.getElementById('btnLoadDict').onclick = async () => {
     banner.textContent = '요청 실패: ' + (e.message || '');
     banner.className = 'banner error';
     banner.classList.remove('hidden');
-    tbody.innerHTML = '<tr><td colspan="4">' + (e.message || '오류') + '</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4"></td></tr>';
+    tbody.querySelector('td').textContent = e.message || '오류';
   } finally {
     loading.classList.add('hidden');
   }
