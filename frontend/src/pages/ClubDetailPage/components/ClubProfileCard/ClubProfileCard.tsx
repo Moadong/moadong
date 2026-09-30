@@ -108,7 +108,7 @@ const ClubProfileCard = ({
                 rel='noopener noreferrer'
                 onClick={(e) => {
                   e.preventDefault();
-                  trackEvent(USER_EVENT.SNS_LINK_CLICKED, {
+                  trackEvent(USER_EVENT.SNS_LINK_BUTTON_CLICKED, {
                     sns_platform: platform,
                     club_id: clubId,
                     club_name: name,

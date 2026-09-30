@@ -149,7 +149,7 @@ const RecruitmentPeriodModal = ({
       },
       {
         onSuccess: () => {
-          trackEvent(ADMIN_EVENT.RECRUIT_PERIOD_CHANGE_CONFIRMED, {
+          trackEvent(ADMIN_EVENT.RECRUITMENT_PERIOD_CHANGED, {
             club_id: clubDetail.id,
             action_type: actionType,
             days,

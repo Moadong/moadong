@@ -58,67 +58,67 @@
 
 ### 관리자(ADMIN_EVENT)
 
-| 옛 이벤트명                          | 새 이벤트명                             | 추가 속성                       | 처리      |
-| ------------------------------------ | --------------------------------------- | ------------------------------- | --------- |
-| `로그인 버튼클릭`                    | `Login Button Clicked`                  |                                 | 이름 변경 |
-| `회원가입 버튼클릭`                  | `Signup Button Clicked`                 |                                 | 이름 변경 |
-| `아이디 찾기 버튼클릭`               | `Forgot ID Button Clicked`              |                                 | 이름 변경 |
-| `비밀번호 찾기 버튼클릭`             | `Forgot Password Button Clicked`        |                                 | 이름 변경 |
-| `동아리 커버 업로드 버튼클릭`        | `Club Cover Upload Button Clicked`      |                                 | 이름 변경 |
-| `동아리 커버 초기화 버튼클릭`        | `Club Cover Reset Button Clicked`       |                                 | 이름 변경 |
-| `동아리 로고 업로드 버튼클릭`        | `Club Logo Upload Button Clicked`       |                                 | 이름 변경 |
-| `동아리 로고 수정 버튼클릭`          | `Club Logo Edit Button Clicked`         |                                 | 이름 변경 |
-| `동아리 로고 초기화 버튼클릭`        | `Club Logo Reset Button Clicked`        |                                 | 이름 변경 |
-| `사이드바 탭 클릭`                   | `Admin Tab Clicked`                     |                                 | 이름 변경 |
-| `로그아웃 버튼클릭`                  | `Logout Button Clicked`                 |                                 | 이름 변경 |
-| `동아리 기본 정보 수정 버튼클릭`     | `Club Update Button Clicked`            | `section: 'info' \| 'intro'`    | 이름 변경 |
-| `동아리 명 입력 초기화 버튼클릭`     | `Input Cleared`                         | `field: 'club_name'`            | 통합      |
-| `한줄소개 입력 초기화 버튼클릭`      | `Input Cleared`                         | `field: 'club_introduction'`    | 통합      |
-| `분류/분과/자유태그 선택 버튼클릭`   | `Club Tag Selected`                     |                                 | 이름 변경 |
-| `자유태그 입력 초기화 버튼클릭`      | `Input Cleared`                         | `field: 'club_tag'`             | 통합      |
-| `SNS 링크 입력 초기화 버튼클릭`      | `Input Cleared`                         | `field: 'club_sns_link'`        | 통합      |
-| `동아리 모집 정보 수정 버튼클릭`     | `Recruitment Update Button Clicked`     |                                 | 이름 변경 |
-| `상시모집 버튼클릭`                  | `Always Recruit Button Clicked`         |                                 | 이름 변경 |
-| `모집 시작 날짜 변경`                | `Recruitment Start Changed`             |                                 | 이름 변경 |
-| `모집 종료 날짜 변경`                | `Recruitment End Changed`               |                                 | 이름 변경 |
-| `소개글 미리보기/편집 버튼클릭`      | `Markdown Preview Button Clicked`       |                                 | 이름 변경 |
-| `활동 사진 업로드 버튼클릭`          | `Club Photo Upload Button Clicked`      |                                 | 이름 변경 |
-| `활동 사진 삭제 버튼클릭`            | `Club Photo Delete Button Clicked`      |                                 | 이름 변경 |
-| `캘린더 월 이동`                     | `Calendar Month Changed`                |                                 | 이름 변경 |
-| `캘린더 오늘 버튼클릭`               | `Calendar Today Button Clicked`         |                                 | 이름 변경 |
-| `캘린더 날짜 클릭`                   | `Calendar Date Clicked`                 |                                 | 이름 변경 |
-| `일정 추가 버튼클릭`                 | `Calendar Add Event Button Clicked`     |                                 | 이름 변경 |
-| `일정 유형 탭 클릭`                  | `Calendar Event Type Tab Clicked`       |                                 | 이름 변경 |
-| `일정 제목 입력 초기화 버튼클릭`     | `Input Cleared`                         | `field: 'calendar_event_title'` | 통합      |
-| `일정 날짜 선택`                     | `Calendar Event Date Selected`          |                                 | 이름 변경 |
-| `일정 색상 선택`                     | `Calendar Color Selected`               |                                 | 이름 변경 |
-| `반복 주기 변경`                     | `Calendar Recurrence Frequency Changed` |                                 | 이름 변경 |
-| `반복 요일 선택`                     | `Calendar Recurrence Weekday Toggled`   |                                 | 이름 변경 |
-| `반복 날짜 시트 열기`                | `Calendar Date Picker Opened`           |                                 | 이름 변경 |
-| `반복 종료 날짜 지우기`              | `Calendar End Date Cleared`             |                                 | 이름 변경 |
-| `일정 저장`                          | `Calendar Event Created`                |                                 | 이름 변경 |
-| `일정 스와이프`                      | `Calendar Event Row Swiped`             |                                 | 이름 변경 |
-| `일정 삭제`                          | `Calendar Event Deleted`                |                                 | 이름 변경 |
-| `연동 일정 숨김`                     | `Calendar Event Hidden`                 |                                 | 이름 변경 |
-| `캘린더 연동 버튼클릭`               | `Calendar Link Button Clicked`          |                                 | 이름 변경 |
-| `캘린더 연동 해제 버튼클릭`          | `Calendar Unlink Button Clicked`        |                                 | 이름 변경 |
-| `캘린더 연동 해제 취소`              | `Calendar Unlink Canceled`              |                                 | 이름 변경 |
-| `연동 일정 표시 토글`                | `Calendar Event Visibility Toggled`     |                                 | 이름 변경 |
-| `AI 지원서 초안 버튼노출`            | `AI Draft Button Viewed`                |                                 | 이름 변경 |
-| `AI 지원서 초안 생성 버튼클릭`       | `AI Draft Button Clicked`               |                                 | 이름 변경 |
-| `AI 지원서 초안 덮어쓰기 취소`       | `AI Draft Overwrite Canceled`           |                                 | 이름 변경 |
-| `AI 지원서 초안 생성 완료`           | `AI Draft Generated`                    |                                 | 이름 변경 |
-| `AI 지원서 초안 생성 한도 초과`      | `AI Draft Limit Reached`                |                                 | 이름 변경 |
-| `AI 지원서 초안 생성 실패`           | `AI Draft Generation Failed`            |                                 | 이름 변경 |
-| `지원서 저장`                        | `Application Form Saved`                |                                 | 이름 변경 |
-| `홍보 게시글 작성 버튼클릭`          | `Promotion Create Button Clicked`       |                                 | 이름 변경 |
-| `홍보 게시글 저장 버튼클릭`          | `Promotion Save Button Clicked`         |                                 | 이름 변경 |
-| `홍보 게시글 삭제 버튼클릭`          | `Promotion Delete Button Clicked`       |                                 | 이름 변경 |
-| `비밀번호 변경 버튼클릭`             | `Password Change Button Clicked`        |                                 | 이름 변경 |
-| `새 비밀번호 입력 초기화 버튼클릭`   | `Input Cleared`                         | `field: 'new_password'`         | 통합      |
-| `확인 비밀번호 입력 초기화 버튼클릭` | `Input Cleared`                         | `field: 'confirm_password'`     | 통합      |
-| `모집 기간 변경 버튼클릭`            | `Recruit Period Change Button Clicked`  |                                 | 이름 변경 |
-| `모집 기간 변경 완료`                | `Recruit Period Changed`                |                                 | 이름 변경 |
+| 옛 이벤트명                          | 새 이벤트명                                | 추가 속성                       | 처리      |
+| ------------------------------------ | ------------------------------------------ | ------------------------------- | --------- |
+| `로그인 버튼클릭`                    | `Login Button Clicked`                     |                                 | 이름 변경 |
+| `회원가입 버튼클릭`                  | `Signup Button Clicked`                    |                                 | 이름 변경 |
+| `아이디 찾기 버튼클릭`               | `Forgot ID Button Clicked`                 |                                 | 이름 변경 |
+| `비밀번호 찾기 버튼클릭`             | `Forgot Password Button Clicked`           |                                 | 이름 변경 |
+| `동아리 커버 업로드 버튼클릭`        | `Club Cover Upload Button Clicked`         |                                 | 이름 변경 |
+| `동아리 커버 초기화 버튼클릭`        | `Club Cover Reset Button Clicked`          |                                 | 이름 변경 |
+| `동아리 로고 업로드 버튼클릭`        | `Club Logo Upload Button Clicked`          |                                 | 이름 변경 |
+| `동아리 로고 수정 버튼클릭`          | `Club Logo Edit Button Clicked`            |                                 | 이름 변경 |
+| `동아리 로고 초기화 버튼클릭`        | `Club Logo Reset Button Clicked`           |                                 | 이름 변경 |
+| `사이드바 탭 클릭`                   | `Admin Tab Clicked`                        |                                 | 이름 변경 |
+| `로그아웃 버튼클릭`                  | `Logout Button Clicked`                    |                                 | 이름 변경 |
+| `동아리 기본 정보 수정 버튼클릭`     | `Club Update Button Clicked`               | `section: 'info' \| 'intro'`    | 이름 변경 |
+| `동아리 명 입력 초기화 버튼클릭`     | `Input Cleared`                            | `field: 'club_name'`            | 통합      |
+| `한줄소개 입력 초기화 버튼클릭`      | `Input Cleared`                            | `field: 'club_introduction'`    | 통합      |
+| `분류/분과/자유태그 선택 버튼클릭`   | `Club Tag Selected`                        |                                 | 이름 변경 |
+| `자유태그 입력 초기화 버튼클릭`      | `Input Cleared`                            | `field: 'club_tag'`             | 통합      |
+| `SNS 링크 입력 초기화 버튼클릭`      | `Input Cleared`                            | `field: 'club_sns_link'`        | 통합      |
+| `동아리 모집 정보 수정 버튼클릭`     | `Recruitment Update Button Clicked`        |                                 | 이름 변경 |
+| `상시모집 버튼클릭`                  | `Always Open Recruitment Button Clicked`   |                                 | 이름 변경 |
+| `모집 시작 날짜 변경`                | `Recruitment Start Changed`                |                                 | 이름 변경 |
+| `모집 종료 날짜 변경`                | `Recruitment End Changed`                  |                                 | 이름 변경 |
+| `소개글 미리보기/편집 버튼클릭`      | `Markdown Preview Button Clicked`          |                                 | 이름 변경 |
+| `활동 사진 업로드 버튼클릭`          | `Club Photo Upload Button Clicked`         |                                 | 이름 변경 |
+| `활동 사진 삭제 버튼클릭`            | `Club Photo Delete Button Clicked`         |                                 | 이름 변경 |
+| `캘린더 월 이동`                     | `Calendar Month Changed`                   |                                 | 이름 변경 |
+| `캘린더 오늘 버튼클릭`               | `Calendar Today Button Clicked`            |                                 | 이름 변경 |
+| `캘린더 날짜 클릭`                   | `Calendar Date Clicked`                    |                                 | 이름 변경 |
+| `일정 추가 버튼클릭`                 | `Calendar Add Event Button Clicked`        |                                 | 이름 변경 |
+| `일정 유형 탭 클릭`                  | `Calendar Event Type Tab Clicked`          |                                 | 이름 변경 |
+| `일정 제목 입력 초기화 버튼클릭`     | `Input Cleared`                            | `field: 'calendar_event_title'` | 통합      |
+| `일정 날짜 선택`                     | `Calendar Event Date Selected`             |                                 | 이름 변경 |
+| `일정 색상 선택`                     | `Calendar Color Selected`                  |                                 | 이름 변경 |
+| `반복 주기 변경`                     | `Calendar Recurrence Frequency Changed`    |                                 | 이름 변경 |
+| `반복 요일 선택`                     | `Calendar Recurrence Weekday Toggled`      |                                 | 이름 변경 |
+| `반복 날짜 시트 열기`                | `Calendar Date Picker Opened`              |                                 | 이름 변경 |
+| `반복 종료 날짜 지우기`              | `Calendar End Date Cleared`                |                                 | 이름 변경 |
+| `일정 저장`                          | `Calendar Event Created`                   |                                 | 이름 변경 |
+| `일정 스와이프`                      | `Calendar Event Row Swiped`                |                                 | 이름 변경 |
+| `일정 삭제`                          | `Calendar Event Deleted`                   |                                 | 이름 변경 |
+| `연동 일정 숨김`                     | `Calendar Event Hidden`                    |                                 | 이름 변경 |
+| `캘린더 연동 버튼클릭`               | `Calendar Link Button Clicked`             |                                 | 이름 변경 |
+| `캘린더 연동 해제 버튼클릭`          | `Calendar Unlink Button Clicked`           |                                 | 이름 변경 |
+| `캘린더 연동 해제 취소`              | `Calendar Unlink Canceled`                 |                                 | 이름 변경 |
+| `연동 일정 표시 토글`                | `Calendar Event Visibility Toggled`        |                                 | 이름 변경 |
+| `AI 지원서 초안 버튼노출`            | `AI Draft Button Viewed`                   |                                 | 이름 변경 |
+| `AI 지원서 초안 생성 버튼클릭`       | `AI Draft Button Clicked`                  |                                 | 이름 변경 |
+| `AI 지원서 초안 덮어쓰기 취소`       | `AI Draft Overwrite Canceled`              |                                 | 이름 변경 |
+| `AI 지원서 초안 생성 완료`           | `AI Draft Generated`                       |                                 | 이름 변경 |
+| `AI 지원서 초안 생성 한도 초과`      | `AI Draft Limit Reached`                   |                                 | 이름 변경 |
+| `AI 지원서 초안 생성 실패`           | `AI Draft Generation Failed`               |                                 | 이름 변경 |
+| `지원서 저장`                        | `Application Form Saved`                   |                                 | 이름 변경 |
+| `홍보 게시글 작성 버튼클릭`          | `Promotion Create Button Clicked`          |                                 | 이름 변경 |
+| `홍보 게시글 저장 버튼클릭`          | `Promotion Save Button Clicked`            |                                 | 이름 변경 |
+| `홍보 게시글 삭제 버튼클릭`          | `Promotion Delete Button Clicked`          |                                 | 이름 변경 |
+| `비밀번호 변경 버튼클릭`             | `Password Change Button Clicked`           |                                 | 이름 변경 |
+| `새 비밀번호 입력 초기화 버튼클릭`   | `Input Cleared`                            | `field: 'new_password'`         | 통합      |
+| `확인 비밀번호 입력 초기화 버튼클릭` | `Input Cleared`                            | `field: 'confirm_password'`     | 통합      |
+| `모집 기간 변경 버튼클릭`            | `Recruitment Period Change Button Clicked` |                                 | 이름 변경 |
+| `모집 기간 변경 완료`                | `Recruitment Period Changed`               |                                 | 이름 변경 |
 
 ### 페이지뷰(PAGE_VIEW)
 

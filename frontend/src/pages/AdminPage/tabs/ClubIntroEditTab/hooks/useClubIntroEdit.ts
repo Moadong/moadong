@@ -111,7 +111,7 @@ const useClubIntroEdit = () => {
       return;
     }
 
-    trackEvent(ADMIN_EVENT.UPDATE_CLUB_BUTTON_CLICKED, { section: 'intro' });
+    trackEvent(ADMIN_EVENT.CLUB_UPDATE_BUTTON_CLICKED, { section: 'intro' });
 
     updateClub(
       {

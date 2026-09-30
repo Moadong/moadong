@@ -32,7 +32,7 @@ const getInitialDayId = (): string => {
 };
 
 const BuskingPage = () => {
-  useTrackPageView(PAGE_VIEW.DAEDONG2026_BUSKING_PAGE);
+  useTrackPageView(PAGE_VIEW.BUSKING_TIMETABLE_PAGE);
   const trackEvent = useMixpanelTrack();
   const [activeDayId, setActiveDayId] = useState(getInitialDayId);
 

@@ -26,7 +26,7 @@ const SelectTags = ({ label, tags, selected, onChange }: SelectTagsProps) => {
           <Styled.Button
             key={index}
             onClick={() => {
-              trackEvent(ADMIN_EVENT.CLUB_TAG_SELECT_BUTTON_CLICKED, {
+              trackEvent(ADMIN_EVENT.CLUB_TAG_SELECTED, {
                 tag_name: tag.value,
                 category: label,
               });

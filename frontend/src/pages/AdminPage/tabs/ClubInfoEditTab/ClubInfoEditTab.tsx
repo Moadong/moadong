@@ -8,7 +8,7 @@ import {
   CLUB_INTRODUCTION_PLACEHOLDER,
   CLUB_NAME_PLACEHOLDER,
 } from '@/constants/adminFieldPlaceholders';
-import { ADMIN_EVENT } from '@/constants/eventName';
+import { ADMIN_EVENT, INPUT_FIELD } from '@/constants/eventName';
 import { SNS_CONFIG } from '@/constants/snsConfig';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useDevice from '@/hooks/useDevice';
@@ -96,7 +96,9 @@ const ClubInfoEditTab = () => {
             value={clubName}
             onChange={(e) => setClubName(e.target.value)}
             onClear={() => {
-              trackEvent(ADMIN_EVENT.INPUT_CLEARED, { field: 'club_name' });
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: INPUT_FIELD.CLUB_NAME,
+              });
               setClubName('');
             }}
             width='50%'
@@ -114,7 +116,7 @@ const ClubInfoEditTab = () => {
             onChange={(e) => setIntroduction(e.target.value)}
             onClear={() => {
               trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
-                field: 'club_introduction',
+                field: INPUT_FIELD.CLUB_INTRODUCTION,
               });
               setIntroduction('');
             }}
@@ -157,7 +159,7 @@ const ClubInfoEditTab = () => {
                     }
                     onClear={() => {
                       trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
-                        field: 'club_sns_link',
+                        field: INPUT_FIELD.CLUB_SNS_LINK,
                         sns_platform: label,
                       });
                       setSocialLinks((prev) => ({ ...prev, [key]: '' }));

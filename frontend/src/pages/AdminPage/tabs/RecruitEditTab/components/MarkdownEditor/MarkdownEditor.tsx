@@ -59,7 +59,7 @@ const MarkdownEditor = ({ value, onChange }: MarkdownEditorProps) => {
         <Styled.Spacer />
         <button
           onClick={() => {
-            trackEvent(ADMIN_EVENT.MARKDOWN_EDITOR_PREVIEW_BUTTON_CLICKED, {
+            trackEvent(ADMIN_EVENT.MARKDOWN_PREVIEW_BUTTON_CLICKED, {
               show_to_preview: showPreview ? '편집' : '미리보기',
             });
             setShowPreview((prev) => !prev);

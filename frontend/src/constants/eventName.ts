@@ -98,7 +98,7 @@ export const USER_EVENT = {
   /** 공유 버튼 클릭 */
   SHARE_BUTTON_CLICKED: 'Share Button Clicked',
   /** 동아리 SNS 링크 클릭 */
-  SNS_LINK_CLICKED: 'SNS Link Button Clicked',
+  SNS_LINK_BUTTON_CLICKED: 'SNS Link Button Clicked',
   /** FAQ 펼치기/접기 */
   FAQ_TOGGLE_CLICKED: 'FAQ Toggle Clicked',
   /** 동아리 구독 토글 (웹뷰 상단 바·구독 버튼) */
@@ -176,33 +176,34 @@ export const ADMIN_EVENT = {
   /** 동아리 로고 초기화 버튼 클릭 */
   CLUB_LOGO_RESET_BUTTON_CLICKED: 'Club Logo Reset Button Clicked',
   /** 관리자 탭 이동 (사이드바·모바일 탭·설정 탭 공통, tab_name으로 구분) */
-  TAB_CLICKED: 'Admin Tab Clicked',
+  ADMIN_TAB_CLICKED: 'Admin Tab Clicked',
   /** 로그아웃 버튼 클릭 */
   LOGOUT_BUTTON_CLICKED: 'Logout Button Clicked',
 
   // 기본 정보·소개 수정
   /** 동아리 정보 저장 버튼 클릭 (section: info | intro) */
-  UPDATE_CLUB_BUTTON_CLICKED: 'Club Update Button Clicked',
+  CLUB_UPDATE_BUTTON_CLICKED: 'Club Update Button Clicked',
   /** 분류/분과/자유태그 선택 */
-  CLUB_TAG_SELECT_BUTTON_CLICKED: 'Club Tag Selected',
+  CLUB_TAG_SELECTED: 'Club Tag Selected',
 
   // 모집 정보 수정
   /** 모집 정보 저장 버튼 클릭 */
-  UPDATE_RECRUIT_BUTTON_CLICKED: 'Recruitment Update Button Clicked',
+  RECRUITMENT_UPDATE_BUTTON_CLICKED: 'Recruitment Update Button Clicked',
   /** 상시모집 버튼 클릭 */
-  ALWAYS_RECRUIT_BUTTON_CLICKED: 'Always Recruit Button Clicked',
+  ALWAYS_OPEN_RECRUITMENT_BUTTON_CLICKED:
+    'Always Open Recruitment Button Clicked',
   /** 모집 시작 날짜 변경 */
   RECRUITMENT_START_CHANGED: 'Recruitment Start Changed',
   /** 모집 종료 날짜 변경 */
   RECRUITMENT_END_CHANGED: 'Recruitment End Changed',
   /** 소개글 미리보기/편집 전환 */
-  MARKDOWN_EDITOR_PREVIEW_BUTTON_CLICKED: 'Markdown Preview Button Clicked',
+  MARKDOWN_PREVIEW_BUTTON_CLICKED: 'Markdown Preview Button Clicked',
 
   // 활동 사진 수정
   /** 활동 사진 업로드 버튼 클릭 */
-  IMAGE_UPLOAD_BUTTON_CLICKED: 'Club Photo Upload Button Clicked',
+  CLUB_PHOTO_UPLOAD_BUTTON_CLICKED: 'Club Photo Upload Button Clicked',
   /** 활동 사진 삭제 버튼 클릭 */
-  IMAGE_DELETE_BUTTON_CLICKED: 'Club Photo Delete Button Clicked',
+  CLUB_PHOTO_DELETE_BUTTON_CLICKED: 'Club Photo Delete Button Clicked',
 
   // 동아리 일정 관리
   /** 관리자 캘린더 월 이동 */
@@ -275,9 +276,21 @@ export const ADMIN_EVENT = {
 
   // 동아리 상세 - 모집 기간 변경 (관리자 전용)
   /** 모집 기간 변경 버튼 클릭 */
-  RECRUIT_PERIOD_CHANGE_BUTTON_CLICKED: 'Recruit Period Change Button Clicked',
+  RECRUITMENT_PERIOD_CHANGE_BUTTON_CLICKED:
+    'Recruitment Period Change Button Clicked',
   /** 모집 기간 변경 완료 */
-  RECRUIT_PERIOD_CHANGE_CONFIRMED: 'Recruit Period Changed',
+  RECRUITMENT_PERIOD_CHANGED: 'Recruitment Period Changed',
+} as const;
+
+/** ADMIN_EVENT.INPUT_CLEARED의 field 값. 어떤 입력을 지웠는지 구분한다 */
+export const INPUT_FIELD = {
+  CLUB_NAME: 'club_name',
+  CLUB_INTRODUCTION: 'club_introduction',
+  CLUB_SNS_LINK: 'club_sns_link',
+  CLUB_TAG: 'club_tag',
+  CALENDAR_EVENT_TITLE: 'calendar_event_title',
+  NEW_PASSWORD: 'new_password',
+  CONFIRM_PASSWORD: 'confirm_password',
 } as const;
 
 /** 모든 페이지(학생·관리자) 공통 페이지뷰 이벤트. 어떤 페이지인지는 page_name으로 구분한다 */
@@ -308,7 +321,7 @@ export const PAGE_VIEW = {
   /** 동소한 (동아리 소개 한마당) */
   FESTIVAL_INTRODUCTION_PAGE: 'festival_introduction',
   /** 2026 대동제 버스킹 시간표 */
-  DAEDONG2026_BUSKING_PAGE: 'busking_timetable',
+  BUSKING_TIMETABLE_PAGE: 'busking_timetable',
   /** 홍보 목록 */
   PROMOTION_LIST_PAGE: 'promotion_list',
   /** 홍보 상세 */

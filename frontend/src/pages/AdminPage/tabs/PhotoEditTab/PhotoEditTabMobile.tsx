@@ -49,7 +49,7 @@ const PhotoEditTabMobile = ({
 
   const handleAddClick = () => {
     if (isLoading || isFull) return;
-    trackEvent(ADMIN_EVENT.IMAGE_UPLOAD_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.CLUB_PHOTO_UPLOAD_BUTTON_CLICKED);
     inputRef.current?.click();
   };
 
@@ -60,7 +60,7 @@ const PhotoEditTabMobile = ({
   };
 
   const handleDelete = (index: number) => {
-    trackEvent(ADMIN_EVENT.IMAGE_DELETE_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.CLUB_PHOTO_DELETE_BUTTON_CLICKED);
     deleteImage(index);
   };
 
