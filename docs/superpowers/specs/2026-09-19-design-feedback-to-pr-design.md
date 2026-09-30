@@ -16,7 +16,7 @@
 | 디자이너 환경 | 브라우저만. 레포·Node·Claude Code 없음 | 사용자 확인 |
 | 주석 대상 화면 | 실서비스(moadong.com) | 페이지 맥락 안에서 느끼는 피드백이라서. Storybook은 스토리 있는 컴포넌트만 보임 |
 | 주석 도구 | `agentation` 패키지의 `<Agentation />` 툴바 | 요소 클릭 → 메모 → 마크다운 복사. React 컴포넌트 이름·DOM 경로·클래스·좌표·주변 텍스트를 자동 첨부 |
-| 브라우저 → CI 전달 | 툴바 "복사" → GitHub 이슈 폼에 붙여넣기 | 브라우저에 토큰을 두지 않아도 되고 프론트 레포만 만짐. 나중에 `webhookUrl`로 직접 전송 승격 가능 |
+| 브라우저 → CI 전달 | 툴바 "복사" → 내용이 채워진 GitHub 이슈 폼이 새 탭으로 열림 → 제출 | 브라우저에 토큰을 두지 않아도 되고 프론트 레포만 만짐. 이슈 작성자가 디자이너 본인이라 `author_association` 가드가 그대로 산다. `webhookUrl` 직접 전송은 그 가드를 무력화해서 보류 |
 | 에이전트 실행 위치 | GitHub Actions, `anthropics/claude-code-action@v1` | harry 리뷰봇과 같은 인프라. 새 시크릿 없음 |
 | 봇 정체성 | harry GitHub App 토큰 재사용 | PR·댓글 작성자가 `reviewer-harry[bot]` |
 | 트리거 | `issues: [opened, labeled]` + 라벨 `design-feedback` + 작성자 OWNER/MEMBER/COLLABORATOR | 프롬프트 인젝션 방어. 디자이너는 조직 멤버(확인됨) |
@@ -46,6 +46,7 @@ harry 리뷰봇은 base가 main이 아닌 PR에 자동으로 붙으므로 그대
 - `src/components/common/DesignFeedbackToolbar/DesignFeedbackToolbar.tsx` (신규):
   - `?design=1`이면 localStorage `STORAGE_KEYS.DESIGN_FEEDBACK`에 `'1'` 저장, `?design=0`이면 삭제.
   - 저장값이 `'1'`이고 `isInAppWebView()`가 false일 때만 `React.lazy(() => import('agentation'))`로 `<Agentation />` 렌더. `Suspense` fallback은 null.
+  - `onCopy`로 마크다운을 받아 `issues/new?template=design-feedback.yml&feedback=…`를 새 탭으로 연다. 인코딩 후 전체 URL이 6,000자를 넘으면 프리필을 버리고 빈 폼만 연다(툴바가 이미 클립보드에 넣어 뒀다). 실측(2026-09-30) GitHub은 7,000자쯤부터 500, 8,200자부터 414를 준다. 현실적인 메모 9개까지 프리필된다.
   - 툴바를 켤 때 agentation의 `feedback-toolbar-settings` 키가 비어 있으면 `{"outputDetail":"detailed"}`를 한 번 심는다. 기본값 `standard`로는 `**Classes:**` 줄이 안 붙어 프리뷰 메모로 요소를 특정할 수 없다(5.1절). agentation이 `{...DEFAULT_SETTINGS, ...saved}`로 병합하므로 부분 객체로 충분하고, 디자이너가 직접 바꾼 설정은 덮지 않는다.
   - 그 밖의 툴바 설정(다크모드 등)은 건드리지 않는다.
 - `src/constants/storageKeys.ts`: 키 하나 추가.

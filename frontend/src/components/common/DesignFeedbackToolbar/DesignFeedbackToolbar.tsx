@@ -35,13 +35,29 @@ const resolveEnabled = () => {
   }
 };
 
+const ISSUE_FORM_URL =
+  'https://github.com/Moadong/moadong/issues/new?template=design-feedback.yml';
+
+// 실측(2026-09-30): feedback 값이 7,000자쯤부터 500, 8,200자부터 414가 난다. 넉넉히 아래로 끊는다.
+// 한글은 encodeURIComponent를 거치며 한 자가 9자로 부푸니 인코딩한 뒤 길이로 재야 한다.
+const MAX_ISSUE_URL_LENGTH = 6000;
+
+// 복사 버튼을 누르면 이슈 폼을 채워서 연다. 디자이너가 GitHub에서 폼을 찾아 붙여넣는 과정을 없앤다.
+// 너무 길면 프리필을 포기하고 빈 폼만 연다. 툴바가 이미 클립보드에 넣어 둬서 붙여넣기로 이어진다.
+const openIssueForm = (markdown: string) => {
+  const prefilled = `${ISSUE_FORM_URL}&feedback=${encodeURIComponent(markdown)}`;
+  const url =
+    prefilled.length <= MAX_ISSUE_URL_LENGTH ? prefilled : ISSUE_FORM_URL;
+  window.open(url, '_blank', 'noopener');
+};
+
 const DesignFeedbackToolbar = () => {
   const enabled = resolveEnabled();
   if (!enabled || isInAppWebView()) return null;
 
   return (
     <Suspense fallback={null}>
-      <Agentation />
+      <Agentation onCopy={openIssueForm} />
     </Suspense>
   );
 };

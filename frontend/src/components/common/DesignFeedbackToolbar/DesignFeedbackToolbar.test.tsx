@@ -3,8 +3,13 @@ import { render, screen } from '@testing-library/react';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import DesignFeedbackToolbar from './DesignFeedbackToolbar';
 
+let mockOnCopy: ((markdown: string) => void) | undefined;
+
 jest.mock('agentation', () => ({
-  Agentation: () => <div data-testid='agentation' />,
+  Agentation: ({ onCopy }: { onCopy?: (markdown: string) => void }) => {
+    mockOnCopy = onCopy;
+    return <div data-testid='agentation' />;
+  },
 }));
 
 const setSearch = (search: string) => {
@@ -86,6 +91,40 @@ describe('DesignFeedbackToolbar', () => {
     expect(() => render(<DesignFeedbackToolbar />)).not.toThrow();
     expect(screen.queryByTestId('agentation')).not.toBeInTheDocument();
     setItem.mockRestore();
+  });
+
+  it('복사하면 피드백이 채워진 이슈 폼을 연다', async () => {
+    const open = jest.spyOn(window, 'open').mockImplementation(() => null);
+    setSearch('?design=1');
+    render(<DesignFeedbackToolbar />);
+    await screen.findByTestId('agentation');
+
+    mockOnCopy?.('**Classes:** Headerstyles__Container-NuEt\n8px 줄여줘');
+
+    const [url, target] = open.mock.calls[0];
+    expect(url).toBe(
+      'https://github.com/Moadong/moadong/issues/new?template=design-feedback.yml' +
+        '&feedback=**Classes%3A**%20Headerstyles__Container-NuEt%0A8px%20%EC%A4%84%EC%97%AC%EC%A4%98',
+    );
+    expect(target).toBe('_blank');
+    open.mockRestore();
+  });
+
+  it('프리필이 URL 한계를 넘으면 빈 이슈 폼을 연다', async () => {
+    const open = jest.spyOn(window, 'open').mockImplementation(() => null);
+    setSearch('?design=1');
+    render(<DesignFeedbackToolbar />);
+    await screen.findByTestId('agentation');
+
+    // 한글은 인코딩하면 한 자가 9자가 된다. 1,000자면 9,000자라 한계를 넘는다.
+    mockOnCopy?.('줄'.repeat(1000));
+
+    expect(open).toHaveBeenCalledWith(
+      'https://github.com/Moadong/moadong/issues/new?template=design-feedback.yml',
+      '_blank',
+      'noopener',
+    );
+    open.mockRestore();
   });
 
   it('인앱 웹뷰에서도 ?design=0이면 localStorage를 지운다', () => {
