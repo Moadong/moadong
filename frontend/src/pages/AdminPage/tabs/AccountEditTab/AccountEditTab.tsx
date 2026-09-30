@@ -3,7 +3,7 @@ import { changePassword } from '@/apis/auth';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import { PASSWORD_MAX } from '@/constants/adminFieldLimits';
-import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { ADMIN_EVENT, INPUT_FIELD, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
@@ -53,8 +53,8 @@ const AccountEditTab = () => {
       await changePassword({ password: newPassword });
 
       trackEvent(ADMIN_EVENT.PASSWORD_CHANGE_BUTTON_CLICKED, {
-        newPasswordLength: newPassword.length,
-        confirmPasswordLength: confirmPassword.length,
+        new_password_length: newPassword.length,
+        confirm_password_length: confirmPassword.length,
       });
 
       setSuccessMessage('비밀번호가 성공적으로 변경되었습니다.');
@@ -94,7 +94,9 @@ const AccountEditTab = () => {
             onChange={(e) => setNewPassword(e.target.value)}
             onClear={() => {
               setNewPassword('');
-              trackEvent(ADMIN_EVENT.NEW_PASSWORD_CLEAR_BUTTON_CLICKED);
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: INPUT_FIELD.NEW_PASSWORD,
+              });
             }}
             maxLength={PASSWORD_MAX}
             isError={isPasswordValid}
@@ -111,7 +113,9 @@ const AccountEditTab = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             onClear={() => {
               setConfirmPassword('');
-              trackEvent(ADMIN_EVENT.CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED);
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: INPUT_FIELD.CONFIRM_PASSWORD,
+              });
             }}
             maxLength={PASSWORD_MAX}
             isError={isPasswordMatching}

@@ -115,7 +115,7 @@ const ClubDetailTopBar = ({
 
   const handleNotificationClick = () => {
     requestSubscribeToggle(clubId);
-    trackEvent(USER_EVENT.WEBVIEW_SUBSCRIBE_TOGGLED, {
+    trackEvent(USER_EVENT.CLUB_SUBSCRIPTION_TOGGLED, {
       club_id: clubId,
       subscribed: !isNotificationActive,
       source: PAGE_NAME.CLUB_DETAIL,

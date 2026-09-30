@@ -113,7 +113,7 @@ const RecruitEditTab = () => {
   }, [isAlwaysRecruiting, recruitmentStart]);
 
   const toggleAlwaysRecruiting = () => {
-    trackEvent(ADMIN_EVENT.ALWAYS_RECRUIT_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.ALWAYS_OPEN_RECRUITMENT_BUTTON_CLICKED);
 
     setIsAlwaysRecruiting((prevMode) => {
       const nextMode = !prevMode;
@@ -142,7 +142,7 @@ const RecruitEditTab = () => {
   };
 
   const handleUpdateClub = () => {
-    trackEvent(ADMIN_EVENT.UPDATE_RECRUIT_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.RECRUITMENT_UPDATE_BUTTON_CLICKED);
     if (!clubDetail) return;
 
     const updatedData = {
