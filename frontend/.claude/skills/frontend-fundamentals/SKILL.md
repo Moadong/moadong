@@ -47,7 +47,7 @@ description: Use before committing frontend changes (the /commit command runs it
 
 - 동작을 바꾸지 않는다. 가이드 적용은 리팩터링이지 기능 변경이 아니다
 - `useMemo`·`useCallback`·`memo`를 새로 넣지 않는다(React Compiler 사용). 훅을 쪼갤 때도 마찬가지
-- 레포 컨벤션이 가이드보다 우선이다(`CLAUDE.md` 네이밍·상수 위치·Import 순서). 단, "상수는 `src/constants/`에서 관리"는 여러 파일이 공유하는 상수에 대한 규칙으로 읽는다. 한 파일에서만 쓰는 상수는 파일 상단에 둔다(레포의 기존 로컬 상수도 이렇게 쓴다). 공유 상수를 `src/constants/`로 옮기는 일은 다른 파일을 건드리므로 리포트로 내린다
+- 레포 컨벤션이 가이드보다 우선이다(`CLAUDE.md` 네이밍·Import 순서, 상수 위치는 `src/constants/CLAUDE.md`)
 
 ## 검증
 
