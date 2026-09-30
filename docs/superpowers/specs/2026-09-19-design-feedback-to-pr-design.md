@@ -66,6 +66,7 @@ harry 리뷰봇은 base가 main이 아닌 PR에 자동으로 붙으므로 그대
   - 프롬프트는 짧게: 규칙 파일을 읽고, `$ISSUE_NUMBER` 이슈 본문을 `gh issue view`로 가져와 규칙대로 처리하라. 환경변수 `ISSUE_NUMBER`, `GH_TOKEN`, `CLAUDE_CODE_OAUTH_TOKEN`.
   - `claude_args`: `--model claude-opus-5`, allowedTools는 규칙 파일이 쓰는 명령만(`gh issue view/comment`, `gh pr create`, `git` 하위 명령별, `cd frontend && npm run typecheck`, `cd frontend && npx eslint src`). 이슈 본문에 실서비스 화면 텍스트(사용자 입력)가 섞여 들어오므로 무제한 Bash는 주지 않는다.
   - 배포 순서 제약: `issues` 이벤트 워크플로는 **기본 브랜치(main)의 YAML**만 읽는다. 규칙 파일은 체크아웃한 develop-fe에서 읽는다. 따라서 YAML은 main까지 가야 트리거되고, 규칙 파일은 develop-fe에 있으면 된다. develop-fe에만 머지하면 조용히 안 돈다.
+  - **이슈 템플릿도 같은 제약이다.** GitHub은 `.github/ISSUE_TEMPLATE/`를 기본 브랜치에서만 읽는다. `design-feedback.yml`이 main에 없으면 `?template=design-feedback.yml`이 해석되지 않아 "Blank issue"로 떨어지고, 프리필도 같이 죽는다(2026-09-30 실측). 프리필 기능 자체는 main에 이미 있는 `jira-issue-form.yml`로 동작을 확인했다.
 - `design-feedback-rules.md`: 에이전트 규칙(5절).
 
 ### 4.3 로컬 커맨드 (`frontend/.claude/commands/design-feedback.md`)
