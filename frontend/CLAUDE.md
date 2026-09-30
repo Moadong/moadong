@@ -142,6 +142,8 @@ npm run generate:sitemap # sitemap.xml 생성
 
 Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 
+`src/`를 바꾸는 커밋·PR 전에는 `.claude/skills/frontend-fundamentals` 스킬을 먼저 돌린다. "커밋해줘", "PR 올려줘"처럼 말로 요청받아도 마찬가지다(`/commit`은 이미 포함).
+
 ## 폴더별 문서 인덱스
 
 도메인 상세는 코드 옆 `CLAUDE.md`에 있다. 해당 폴더 작업 시 자동 로드되며, 코드 변경 시 같은 파일을 갱신한다.
@@ -173,7 +175,6 @@ Key routing rules:
 - QA/testing site behavior → invoke /qa or /qa-only
 - Code review/diff check → invoke /review
 - Visual polish → invoke /design-review
-- Commit or PR that changes `frontend/src` → invoke frontend-fundamentals first, even when asked in plain words ("커밋해줘", "PR 올려줘") or before /ship. The /commit command already runs it
 - Ship/deploy/PR → invoke /ship or /land-and-deploy
 - Save progress → invoke /context-save
 - Resume context → invoke /context-restore
