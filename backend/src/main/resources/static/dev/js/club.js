@@ -6,14 +6,44 @@ function openEditWindow(clubId) {
 
 let allClubs = [];
 let currentPage = 1;
+let clubQuery = '';
+
+function getVisibleClubs() {
+  const query = clubQuery.trim().toLowerCase();
+  if (!query) return allClubs;
+  return allClubs.filter((c) => [c.name, c.id, c.userId].some((v) => (v || '').toLowerCase().includes(query)));
+}
+
+function renderClubs() {
+  const clubs = getVisibleClubs();
+  renderClubTableRows(clubs, currentPage);
+  renderPagination(clubs.length);
+}
+
+function setClubTableMessage(message) {
+  const tbody = document.querySelector('#clubList tbody');
+  tbody.innerHTML = '';
+  const td = tbody.appendChild(document.createElement('tr')).appendChild(document.createElement('td'));
+  td.colSpan = 3;
+  td.className = 'table-empty';
+  td.textContent = message;
+}
 
 function renderClubTableRows(clubs, page) {
   const start = (page - 1) * PAGE_SIZE;
   const slice = clubs.slice(start, start + PAGE_SIZE);
   const tbody = document.querySelector('#clubList tbody');
   tbody.innerHTML = '';
+  if (!slice.length) {
+    setClubTableMessage(clubQuery.trim() ? '검색 결과가 없어요.' : '동아리가 없어요.');
+    return;
+  }
   slice.forEach(c => {
     const tr = document.createElement('tr');
+    tr.tabIndex = 0;
+    tr.onkeydown = (event) => {
+      if (event.key === 'Enter') openEditWindow(c.id);
+    };
     const idCell = document.createElement('td');
     idCell.className = 'id-cell copy-id-cell';
     idCell.title = c.id || '';
@@ -56,8 +86,8 @@ function renderPagination(total) {
   wrap.innerHTML = html;
   const prev = document.getElementById('clubPrev');
   const next = document.getElementById('clubNext');
-  if (prev) prev.onclick = () => { currentPage--; renderClubTableRows(allClubs, currentPage); renderPagination(allClubs.length); };
-  if (next) next.onclick = () => { currentPage++; renderClubTableRows(allClubs, currentPage); renderPagination(allClubs.length); };
+  if (prev) prev.onclick = () => { currentPage--; renderClubs(); };
+  if (next) next.onclick = () => { currentPage++; renderClubs(); };
 }
 
 function loadClubsIfVisible() {
@@ -81,21 +111,25 @@ document.getElementById('btnLoadClubs').onclick = async () => {
       banner.textContent = '개발자 계정으로 로그인하세요.';
       banner.className = 'banner warn';
       banner.classList.remove('hidden');
-      tbody.innerHTML = '<tr><td colspan="3">목록을 불러올 수 없습니다.</td></tr>';
+      setClubTableMessage('목록을 불러올 수 없어요.');
       return;
     }
     const data = await res.json();
-    const clubs = data.data?.clubs || [];
-    allClubs = clubs;
+    allClubs = data.data?.clubs || [];
     currentPage = 1;
-    renderClubTableRows(clubs, 1);
-    renderPagination(clubs.length);
+    renderClubs();
   } catch (e) {
     banner.textContent = '요청 실패: ' + (e.message || '');
     banner.className = 'banner error';
     banner.classList.remove('hidden');
-    tbody.innerHTML = '<tr><td colspan="3">' + (e.message || '오류') + '</td></tr>';
+    setClubTableMessage(e.message || '오류');
   } finally {
     loading.classList.add('hidden');
   }
 };
+
+document.getElementById('clubSearch').addEventListener('input', (event) => {
+  clubQuery = event.target.value;
+  currentPage = 1;
+  renderClubs();
+});
