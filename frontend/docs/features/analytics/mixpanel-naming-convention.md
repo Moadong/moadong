@@ -9,13 +9,14 @@
 
 ## 0. 한 줄 요약
 
-| 구분           | 규칙                                             | 예시                        |
-| -------------- | ------------------------------------------------ | --------------------------- |
-| 이벤트         | 영문 Title Case + 공백, `[명사] + [과거형 동사]` | `Club Card Clicked`         |
-| 이벤트 속성    | snake_case                                       | `club_id`                   |
-| 속성 값        | 제한 없음 (한글 데이터 그대로)                   | `club_name: '모아동'`       |
-| 유저·슈퍼 속성 | snake*case (불리언은 `is*`/`has\_`)              | `device_locale`, `has_logo` |
-| 한글 설명      | 이벤트명이 아니라 코드 JSDoc + Lexicon 설명에    | `/** 동아리 카드 클릭 */`   |
+| 구분           | 규칙                                             | 예시                          |
+| -------------- | ------------------------------------------------ | ----------------------------- |
+| 이벤트         | 영문 Title Case + 공백, `[명사] + [과거형 동사]` | `Club Card Clicked`           |
+| 이벤트 속성    | snake_case                                       | `club_id`                     |
+| 속성 값        | 제한 없음 (한글 데이터 그대로)                   | `club_name: '모아동'`         |
+| 유저·슈퍼 속성 | `snake_case`, 불리언은 `is_`·`has_` 접두어       | `device_locale`, `is_webview` |
+| 자동 공통 속성 | 모든 이벤트에 자동으로 붙음 (5절)                | `user_area`, `is_webview`     |
+| 한글 설명      | 이벤트명이 아니라 코드 JSDoc + Lexicon 설명에    | `/** 동아리 카드 클릭 */`     |
 
 ## 1. 케이스 & 시제 규칙
 
@@ -121,10 +122,10 @@ Good: club_id, content_length (길이만)
 
 모든 페이지(학생·관리자)는 `useTrackPageView`로 아래 두 이벤트만 보낸다.
 
-| 이벤트        | 시점                           | 주요 속성                                                                      |
-| ------------- | ------------------------------ | ------------------------------------------------------------------------------ |
-| `Page Viewed` | 페이지 진입                    | `page_name`, `url`, `referrer`, `club_name`, `recruitment_status`              |
-| `Page Left`   | 이탈·새로고침·탭 숨김(한 번만) | `page_name`, `duration`, `duration_seconds`, `club_name`, `recruitment_status` |
+| 이벤트        | 시점                           | 주요 속성                                                                                              |
+| ------------- | ------------------------------ | ------------------------------------------------------------------------------------------------------ |
+| `Page Viewed` | 페이지 진입                    | `page_name`, `user_area`, `url`, `referrer`, `club_id`, `club_name`, `recruitment_status`              |
+| `Page Left`   | 이탈·새로고침·탭 숨김(한 번만) | `page_name`, `user_area`, `duration`, `duration_seconds`, `club_id`, `club_name`, `recruitment_status` |
 
 - `page_name` 값은 `PAGE_VIEW` 상수의 snake_case 영문이다(`club_detail`, `admin_calendar`).
 - 관리자 페이지는 `admin_` 접두어를 붙인다.
@@ -185,21 +186,23 @@ export const USER_EVENT = {
 
 학생과 동아리 운영진이 같은 프로젝트에 이벤트를 보낸다. 관리자 이벤트에 `Admin` 접두어를 붙이지 않고, `user_area: 'student' | 'admin'` 속성으로 구분한다.
 
-- **현재 상태**: 아직 `user_area`를 보내지 않는다. 그동안 관리자 행동은 `ADMIN_EVENT` 상수 목록과 `page_name`의 `admin_` 접두어로 구분한다. 슈퍼 속성으로 붙이는 작업은 후속으로 한다.
+- **적용 방식**: 직접 넣지 않는다. `useMixpanelTrack`은 `ADMIN_EVENT`에 있는 이벤트면 `admin`을, `useTrackPageView`는 `page_name`이 `admin_`으로 시작하면 `admin`을 자동으로 붙인다(`hooks/Mixpanel/getUserArea.ts`). 동아리 상세의 모집 기간 변경처럼 학생 화면에서 일어나는 관리자 행동도 `ADMIN_EVENT`에 두면 `admin`이 된다.
 
 **이유**: "활성 사용자", "리텐션" 같은 지표에 운영진이 섞이면 학생 지표가 부풀려진다.
 
 ### 5-3. 웹·앱 웹뷰 구분은 속성으로
 
-같은 화면이 웹 브라우저와 앱 웹뷰에서 열린다. 새 이벤트나 새 페이지는 웹뷰용을 따로 만들지 않고 `platform: 'web' | 'webview'` 속성으로 구분한다.
+같은 화면이 웹 브라우저와 앱 웹뷰에서 열린다. 새 이벤트나 새 페이지는 웹뷰용을 따로 만들지 않고 `is_webview` 속성으로 구분한다.
 
-- **현재 상태**: 메인 페이지는 `page_name`이 `main` / `webview_main`으로 나뉘어 있고, 일부 이벤트는 `platform`을 이벤트마다 직접 넣는다. 백엔드 퍼널이 `webview_main`을 쓰므로, 슈퍼 속성으로 옮길 때 5-1 절차를 따른다.
+- **적용 방식**: `initSDK`에서 `is_webview`를 슈퍼 속성으로 등록해 모든 이벤트에 붙는다. 메인 페이지도 `page_name: 'main'` 하나다.
+- `platform`이라는 키는 쓰지 않는다. 뜻이 겹치기 때문이다. SNS 종류는 `sns_platform`, 앱스토어 OS는 기존 `platform`(`detectPlatform()`)을 쓴다.
 
 ### 5-4. 동아리 관련 이벤트에는 `club_id`를 넣는다
 
 모아동 이벤트 대부분이 특정 동아리에 대한 행동이다. 동아리를 가리키는 이벤트에는 `club_id`를 **반드시** 넣고, 사람이 읽기 위한 `club_name`은 보조로 넣는다.
 
-- **현재 상태**: 동아리 상세 페이지뷰(`Page Viewed` / `Page Left`, `page_name: club_detail`)는 `club_name`만 보내고, 백엔드 통계도 이름으로 동아리를 찾는다. 새 이벤트부터 `club_id`를 넣고, 페이지뷰와 백엔드 매칭은 후속으로 `club_id` 기준으로 옮긴다.
+- **적용 방식**: 동아리 페이지는 `useTrackPageView(PAGE_VIEW.X, { clubId, clubName })`로 넘긴다. 백엔드 통계는 `club_id`로 먼저 찾고, 없으면(컨벤션 변경 전 이벤트) `clubName`으로 찾는다.
+- **예외**: `Festival Performance Card Clicked`는 공연 데이터에 동아리 id가 없어 `club_name`만 보낸다.
 
 **이유**: 동아리 이름은 바뀌거나 겹칠 수 있다. 이름으로 찾으면 그 동아리의 통계가 조용히 빠진다(백엔드에 "clubName 중복으로 skip" 경고가 있다).
 

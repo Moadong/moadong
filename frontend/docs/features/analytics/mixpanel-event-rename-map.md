@@ -144,7 +144,7 @@
 | `우체통 전송 완료 페이지 Visited` / `우체통 전송 완료 페이지 Duration`                   | `feedback_complete`           |
 | `우체통 받은 편지 상세 페이지 Visited` / `우체통 받은 편지 상세 페이지 Duration`         | `received_letter_detail`      |
 | `우체통 보낸 편지 상세 페이지 Visited` / `우체통 보낸 편지 상세 페이지 Duration`         | `sent_feedback_detail`        |
-| `WebviewMainPage Visited` / `WebviewMainPage Duration`                                   | `webview_main`                |
+| `WebviewMainPage Visited` / `WebviewMainPage Duration`                                   | `main` + `is_webview: true`   |
 | `로그인페이지 Visited` / `로그인페이지 Duration`                                         | `admin_login`                 |
 | `동아리 소개 수정 페이지 Visited` / `동아리 소개 수정 페이지 Duration`                   | `admin_club_intro_edit`       |
 | `동아리 기본 정보 수정 페이지 Visited` / `동아리 기본 정보 수정 페이지 Duration`         | `admin_club_info_edit`        |
@@ -168,12 +168,20 @@
 
 `Club Card Viewed`·`Club Card Clicked`·`Scroll Depth Reached`의 `page`, `Club Subscription Toggled`의 `source` 값을 `page_name`과 같은 snake_case로 맞췄다. 페이지뷰와 같은 값으로 이어서 볼 수 있다.
 
-| 옛 값          | 새 값          |
-| -------------- | -------------- |
-| `webview-main` | `webview_main` |
-| `club-detail`  | `club_detail`  |
+| 옛 값          | 새 값                       |
+| -------------- | --------------------------- |
+| `webview-main` | `main` + `is_webview: true` |
+| `club-detail`  | `club_detail`               |
 
 `main`, `introduce`, `subscriptions`는 그대로다.
+
+## 새로 붙는 속성
+
+| 속성         | 붙는 곳                                                                                                                                                                      | 값                  |
+| ------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ------------------- |
+| `user_area`  | 모든 이벤트 (자동)                                                                                                                                                           | `student` / `admin` |
+| `is_webview` | 모든 이벤트 (슈퍼 속성)                                                                                                                                                      | `true` / `false`    |
+| `club_id`    | 동아리 상세 페이지뷰, `Club Apply Button Clicked`, `Club Map Clicked`, `Club Detail Tab Clicked`, `Share Button Clicked`, `SNS Link Button Clicked`, `Promotion Map Clicked` | 동아리 id           |
 
 ## 속성 키
 
@@ -197,3 +205,5 @@
 | `eventType`             | `event_type`              |     | `linkTo`                   | `link_to`                    |
 | `dateKey`               | `date_key`                |     | `popupType`                | `popup_type`                 |
 |                         |                           |     | `promotionId`              | `promotion_id`               |
+
+SNS 종류를 뜻하던 `platform`(`SNS Link Button Clicked`, `Club Union SNS Clicked`)은 `sns_platform`으로 바뀌었다. 앱스토어 OS를 뜻하는 `platform`(앱 다운로드 이벤트)은 그대로다.
