@@ -13,4 +13,6 @@ export const STORAGE_KEYS = {
   QUERY_CACHE: 'MOADONG_QUERY_CACHE',
   /** 관리자 로그인 시 귀속된 동아리 ID. 새로고침 후에도 관리자 UI 유지에 사용 */
   ADMIN_CLUB_ID: 'adminClubId',
+  /** 디자인 피드백 툴바. `?design=1`로 켜고 `?design=0`으로 끈다 */
+  DESIGN_FEEDBACK: 'designFeedback',
 } as const;
