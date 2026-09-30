@@ -410,31 +410,37 @@ class FeedbackAdminServiceTest {
                 .readStudentIds(Set.of(STUDENT_ID))
                 .build();
         when(letterRepository.findById("letter-1")).thenReturn(Optional.of(letter));
-        when(letterRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(letterRepository.updateContent("letter-1", "고친 제목", "고친 본문")).thenReturn(1L);
 
         AdminSentLetterResponse response = feedbackAdminService.updateLetter(
                 "letter-1", new LetterUpdateRequest("고친 제목", "고친 본문"));
 
-        ArgumentCaptor<Letter> captor = ArgumentCaptor.forClass(Letter.class);
-        verify(letterRepository).save(captor.capture());
-        Letter saved = captor.getValue();
-        assertEquals("고친 제목", saved.getTitle());
-        assertEquals("고친 본문", saved.getBody());
-        assertEquals(LetterCategory.REPLY, saved.getCategory());
-        assertEquals(STUDENT_ID, saved.getRecipientStudentId());
-        assertEquals("feedback-1", saved.getFeedbackId());
-        assertEquals(1, saved.getPushSuccessCount());
-        assertTrue(saved.isReadBy(STUDENT_ID));
-
+        verify(letterRepository).updateContent("letter-1", "고친 제목", "고친 본문");
         assertEquals("고친 제목", response.title());
+        assertEquals("고친 본문", response.body());
+        assertEquals(LetterCategory.REPLY, response.category());
+        assertEquals("feedback-1", response.feedbackId());
+        assertEquals(1, response.pushSuccessCount());
         assertEquals("user_11111111", response.recipient());
+    }
+
+    @Test
+    void 편지를_수정해도_문서_전체를_다시_저장하지_않는다() {
+        // 전체 save는 조회 이후 markRead($addToSet)로 추가된 읽음 기록을 옛 값으로 덮어쓴다.
+        when(letterRepository.findById("letter-1")).thenReturn(Optional.of(
+                Letter.broadcast(LetterCategory.UPDATE, "공지 제목", "공지 본문", "request-1")));
+        when(letterRepository.updateContent(any(), any(), any())).thenReturn(1L);
+
+        feedbackAdminService.updateLetter("letter-1", new LetterUpdateRequest("고친 공지", "고친 본문"));
+
+        verify(letterRepository, never()).save(any());
     }
 
     @Test
     void 편지를_수정해도_푸시는_다시_보내지_않는다() {
         when(letterRepository.findById("letter-1")).thenReturn(Optional.of(
                 Letter.broadcast(LetterCategory.UPDATE, "공지 제목", "공지 본문", "request-1")));
-        when(letterRepository.save(any())).thenAnswer(invocation -> invocation.getArgument(0));
+        when(letterRepository.updateContent(any(), any(), any())).thenReturn(1L);
 
         AdminSentLetterResponse response = feedbackAdminService.updateLetter(
                 "letter-1", new LetterUpdateRequest("고친 공지", "고친 본문"));
@@ -452,7 +458,19 @@ class FeedbackAdminServiceTest {
                 "missing", new LetterUpdateRequest("제목", "본문")));
 
         assertEquals(ErrorCode.LETTER_NOT_FOUND, exception.getErrorCode());
-        verify(letterRepository, never()).save(any());
+        verify(letterRepository, never()).updateContent(any(), any(), any());
+    }
+
+    @Test
+    void 조회_뒤_수정_전에_편지가_지워지면_LETTER_NOT_FOUND() {
+        when(letterRepository.findById("letter-1")).thenReturn(Optional.of(
+                Letter.broadcast(LetterCategory.UPDATE, "공지 제목", "공지 본문", "request-1")));
+        when(letterRepository.updateContent(any(), any(), any())).thenReturn(0L);
+
+        RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.updateLetter(
+                "letter-1", new LetterUpdateRequest("고친 공지", "고친 본문")));
+
+        assertEquals(ErrorCode.LETTER_NOT_FOUND, exception.getErrorCode());
     }
 
     private Feedback feedbackOf(String feedbackId, String studentId) {
