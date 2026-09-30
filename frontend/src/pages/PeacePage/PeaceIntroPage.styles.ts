@@ -64,8 +64,9 @@ export const StartButton = styled.button`
     bottom: calc(20px + env(safe-area-inset-bottom));
     left: 50%;
     transform: translateX(-50%);
+    /* 본문 칼럼(440px) 안에 머물도록 좌우 20px을 뺀 400px까지만 */
     width: calc(100% - 40px);
-    max-width: 460px;
+    max-width: 400px;
     min-height: 50px;
     margin: 0;
     border-radius: 14px;
