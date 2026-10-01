@@ -1,5 +1,6 @@
 import { lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
 import { ContentErrorBoundary } from '@/components/common/ErrorBoundary';
 import AppLayout from '@/layouts/AppLayout';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
@@ -29,8 +30,11 @@ import webviewRoutes from './webviewRoutes';
 
 const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
 
+// Sentry init 이후에 평가되어야 감싸진다 (src/instrument.ts 참고).
+const useSentryRoutes = Sentry.wrapUseRoutesV7(useRoutes);
+
 const AppRoutes = () =>
-  useRoutes([
+  useSentryRoutes([
     /* 바텀 네비게이션이 있는 일반 웹 페이지 */
     {
       element: <AppLayout />,
