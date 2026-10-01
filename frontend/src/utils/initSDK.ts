@@ -12,6 +12,7 @@ import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
 import getDeviceLocale from '@/utils/getDeviceLocale';
 import getIOSVersion from '@/utils/getIOSVersion';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const LOCALHOST_HOSTNAME = 'localhost';
 
@@ -104,6 +105,15 @@ function useDecodedLocation() {
   return decoded;
 }
 
+// 빌드 MODE는 Vercel 프리뷰도 production이라 실제 접속한 도메인으로 구분한다.
+// 실사용자는 moadong.com·moadong.vercel.app 모두 www로 redirect되어 여기에 도착한다.
+function getSentryEnvironment() {
+  const { hostname } = window.location;
+  if (hostname === 'www.moadong.com') return 'production';
+  if (hostname === LOCALHOST_HOSTNAME) return 'development';
+  return 'preview';
+}
+
 export function initializeSentry() {
   const enableInDev = import.meta.env.VITE_ENABLE_SENTRY_IN_DEV === 'true';
 
@@ -124,7 +134,7 @@ export function initializeSentry() {
     sendDefaultPii: false,
     release: import.meta.env.VITE_SENTRY_RELEASE,
     tracesSampleRate: 0.1,
-    environment: import.meta.env.MODE || 'production',
+    environment: getSentryEnvironment(),
     // 트랜잭션 이름을 실제 URL이 아니라 라우트 패턴(/clubDetail/:clubId)으로 묶는다.
     integrations: [
       Sentry.reactRouterV7BrowserTracingIntegration({
@@ -136,4 +146,7 @@ export function initializeSentry() {
       }),
     ],
   });
+
+  // 웹뷰 진입(/webview/main)은 곧바로 /로 redirect되므로 라우트 이름만으로는 웹과 구분할 수 없다.
+  Sentry.setTag('webview', isInAppWebView());
 }
