@@ -133,7 +133,8 @@ export function initializeSentry() {
     dsn: import.meta.env.VITE_SENTRY_DSN,
     sendDefaultPii: false,
     release: import.meta.env.VITE_SENTRY_RELEASE,
-    tracesSampleRate: 0.1,
+    // Developer 플랜 spans 5M/월 대비 1.0에서도 월 약 460K(2026-10 기준)라 전량 수집한다.
+    tracesSampleRate: 1.0,
     environment: getSentryEnvironment(),
     // 트랜잭션 이름을 실제 URL이 아니라 라우트 패턴(/clubDetail/:clubId)으로 묶는다.
     integrations: [
