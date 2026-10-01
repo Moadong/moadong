@@ -46,6 +46,7 @@ public class PromotionArticleService {
         Club club = getClub(clubId);
         validateClubApproved(club, user);
         validateImageCount(request.images());
+        promotionImageUploadService.validateImages(clubId, request.images(), List.of());
 
         PromotionArticle article = PromotionArticle.builder()
             .clubId(clubId)
@@ -75,6 +76,7 @@ public class PromotionArticleService {
         validateImageCount(request.images());
 
         List<String> previousImages = article.getImages();
+        promotionImageUploadService.validateImages(clubId, request.images(), previousImages);
         article.update(clubId, request, club.getName());
         promotionArticleRepository.save(article);
         deleteRemovedImagesAfterCommit(articleId, previousImages, request.images());
