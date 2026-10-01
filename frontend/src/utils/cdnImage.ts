@@ -19,6 +19,7 @@ export const CDN_IMAGE_SIZES = {
   logo: { width: 192, height: 192, fit: 'crop' },
   // 1:1 고정. 40 ×2, 28 ×3
   thumbnail: { width: 88, height: 88, fit: 'crop' },
+  // 비율이 사진마다 다르다. 모달 최대 1200 ×2. 면적이 AVIF 상한을 넘어 큰 사진은 WebP로 나간다
   modal: { width: 2400, height: 2400, fit: 'scale-down' },
 } as const;
 
