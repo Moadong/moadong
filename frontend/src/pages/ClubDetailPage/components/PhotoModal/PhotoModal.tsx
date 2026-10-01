@@ -26,7 +26,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
   const { currentIndex, urls, onChangeIndex } = photos;
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const swiperRef = useRef<SwiperType | null>(null);
-  // Swiper가 슬라이드를 전부 마운트하므로, 원본은 현재 사진과 양옆만 요청한다.
+  // Swiper가 슬라이드를 전부 마운트하므로, 본 이미지는 현재 사진과 양옆만 요청한다.
   // 한 번 가까이 간 사진은 목록에 남겨서 되돌아올 때 다시 받거나 깜빡이지 않게 한다.
   const [visitedUrls, setVisitedUrls] = useState<Set<string>>(() => new Set());
   const nearbyUrls = getAdjacentIndexes(currentIndex, urls.length).map(
@@ -92,7 +92,10 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
                 <SwiperSlide key={url}>
                   <Styled.SlideInner>
                     {shouldLoad(url) && (
-                      <Styled.Image src={url} alt={`활동 사진 ${idx + 1}`} />
+                      <Styled.Image
+                        src={cdnImage(url, 'modal')}
+                        alt={`활동 사진 ${idx + 1}`}
+                      />
                     )}
                   </Styled.SlideInner>
                 </SwiperSlide>
