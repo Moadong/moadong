@@ -40,7 +40,7 @@ const renderModal = (currentIndex: number, onChangeIndex = jest.fn()) =>
     </ThemeProvider>,
   );
 
-// 본 이미지(원본)만 센다. 썸네일은 alt가 '썸네일'이라 제외된다.
+// 본 이미지만 센다. 썸네일은 alt가 '썸네일'이라 제외된다.
 const loadedSlides = () =>
   screen
     .queryAllByAltText(/^활동 사진 \d+$/)
@@ -61,7 +61,7 @@ afterEach(() => {
 });
 
 describe('PhotoModal 본 이미지 지연 로딩', () => {
-  it('열 때는 누른 사진과 양옆만 원본을 요청한다', () => {
+  it('열 때는 누른 사진과 양옆만 본 이미지를 요청한다', () => {
     renderModal(3);
 
     expect(loadedSlides()).toEqual([
@@ -69,6 +69,14 @@ describe('PhotoModal 본 이미지 지연 로딩', () => {
       '활동 사진 4',
       '활동 사진 5',
     ]);
+  });
+
+  it('본 이미지는 Cloudflare에서 긴 변 2400px로 줄인 주소로 요청한다', () => {
+    renderModal(3);
+
+    expect(screen.getByAltText('활동 사진 4').getAttribute('src')).toBe(
+      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=2400,height=2400,fit=scale-down/club/feed/3.jpg',
+    );
   });
 
   it('썸네일은 전부 그린다', () => {
