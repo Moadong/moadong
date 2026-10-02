@@ -1,11 +1,5 @@
 import { useEffect } from 'react';
-import {
-  createRoutesFromChildren,
-  matchRoutes,
-  useLocation,
-  useNavigationType,
-  type Location,
-} from 'react-router-dom';
+import { createRoutesFromChildren, useNavigationType } from 'react-router-dom';
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import Clarity from '@microsoft/clarity';
 import * as Sentry from '@sentry/react';
@@ -13,6 +7,11 @@ import mixpanel from 'mixpanel-browser';
 import getDeviceLocale from '@/utils/getDeviceLocale';
 import getIOSVersion from '@/utils/getIOSVersion';
 import isInAppWebView from '@/utils/isInAppWebView';
+import {
+  getSentryEnvironment,
+  matchRoutesByOriginal,
+  useDecodedLocation,
+} from '@/utils/sentryRouting';
 
 const LOCALHOST_HOSTNAME = 'localhost';
 
@@ -77,43 +76,6 @@ export function initializeChannelService() {
   }
 }
 
-// Sentry는 useLocation의 pathname(퍼센트 인코딩)과 matchRoutes가 돌려주는 pathname(디코딩)을
-// 문자열로 비교해 라우트 이름을 정한다. 한글 동아리명 URL은 이 비교에서 어긋나 실제 URL로 남으므로
-// 디코딩한 pathname을 넘긴다. Sentry가 이 값을 effect 의존성으로 쓰기 때문에 같은 location에는
-// 같은 객체를 돌려줘야 한다(아니면 리렌더마다 navigation 스팬이 새로 생긴다).
-const decodedLocations = new WeakMap<Location, Location>();
-
-// matchRoutes와 같은 방식(세그먼트별 decodeURIComponent)이어야 '&'·'+'가 든 동아리명도 맞는다.
-function decodePathname(pathname: string) {
-  try {
-    return pathname
-      .split('/')
-      .map((segment) => decodeURIComponent(segment).replace(/\//g, '%2F'))
-      .join('/');
-  } catch {
-    return pathname;
-  }
-}
-
-function useDecodedLocation() {
-  const location = useLocation();
-  let decoded = decodedLocations.get(location);
-  if (!decoded) {
-    decoded = { ...location, pathname: decodePathname(location.pathname) };
-    decodedLocations.set(location, decoded);
-  }
-  return decoded;
-}
-
-// 빌드 MODE는 Vercel 프리뷰도 production이라 실제 접속한 도메인으로 구분한다.
-// 실사용자는 moadong.com·moadong.vercel.app 모두 www로 redirect되어 여기에 도착한다.
-function getSentryEnvironment() {
-  const { hostname } = window.location;
-  if (hostname === 'www.moadong.com') return 'production';
-  if (hostname === LOCALHOST_HOSTNAME) return 'development';
-  return 'preview';
-}
-
 export function initializeSentry() {
   const enableInDev = import.meta.env.VITE_ENABLE_SENTRY_IN_DEV === 'true';
 
@@ -135,7 +97,7 @@ export function initializeSentry() {
     release: import.meta.env.VITE_SENTRY_RELEASE,
     // Developer 플랜 spans 5M/월 대비 1.0에서도 월 약 460K(2026-10 기준)라 전량 수집한다.
     tracesSampleRate: 1.0,
-    environment: getSentryEnvironment(),
+    environment: getSentryEnvironment(window.location.hostname),
     // 트랜잭션 이름을 실제 URL이 아니라 라우트 패턴(/clubDetail/:clubId)으로 묶는다.
     integrations: [
       Sentry.reactRouterV7BrowserTracingIntegration({
@@ -143,7 +105,7 @@ export function initializeSentry() {
         useLocation: useDecodedLocation,
         useNavigationType,
         createRoutesFromChildren,
-        matchRoutes,
+        matchRoutes: matchRoutesByOriginal,
       }),
     ],
   });
