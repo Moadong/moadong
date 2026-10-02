@@ -105,7 +105,7 @@ allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Ba
 
 ## Phase 3: Frontend Fundamentals 점검
 
-`src/` 코드가 바뀌었으면 `.claude/skills/frontend-fundamentals/SKILL.md` 절차를 그대로 수행합니다.
+`src/` 코드가 바뀌었으면 `.claude/skills/frontend-fundamentals/SKILL.md` 절차를 그대로 수행합니다. 코드 품질과 접근성(A11y) 가이드를 함께 봅니다.
 
 - 자동 수정 단계는 바로 적용하고, 검증(typecheck·eslint·jest)을 통과해야 Phase 4로 넘어갑니다
 - 자동 수정은 해당 기능의 커밋 그룹에 그대로 포함합니다(별도 refactor 커밋으로 나누지 않음)
