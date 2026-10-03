@@ -22,6 +22,9 @@ import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
 import MainPage from '@/pages/MainPage/MainPage';
 import MenuPage from '@/pages/MenuPage/MenuPage';
+import PeaceIntroPage from '@/pages/PeacePage/PeaceIntroPage';
+import PeaceQuizPage from '@/pages/PeacePage/PeaceQuizPage';
+import PeaceResultPage from '@/pages/PeacePage/PeaceResultPage';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage/PrivacyPolicyPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
@@ -167,6 +170,30 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <GamePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/peace',
+      element: (
+        <ContentErrorBoundary>
+          <PeaceIntroPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/peace/quiz',
+      element: (
+        <ContentErrorBoundary>
+          <PeaceQuizPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/peace/result',
+      element: (
+        <ContentErrorBoundary>
+          <PeaceResultPage />
         </ContentErrorBoundary>
       ),
     },
