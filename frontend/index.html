@@ -52,9 +52,12 @@
       rel="stylesheet"
       href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css"
     />
+    <!-- Krona One은 관리자 로그인 화면 제목에서만 쓰므로 렌더를 막지 않게 비동기로 불러온다. -->
     <link
       rel="stylesheet"
       href="https://fonts.googleapis.com/css2?family=Krona+One&display=swap"
+      media="print"
+      onload="this.media='all'"
     />
   </head>
 
