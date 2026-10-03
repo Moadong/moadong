@@ -1,7 +1,7 @@
 import { useLayoutEffect, useState } from 'react';
 import ClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
+import { ImageItem } from '@/types/imageItem';
 import * as Styled from './ImageSortGrid.styles';
-import { ImageItem } from './types';
 import { DropPosition } from './useDragSort';
 
 interface ImageSortGridProps {

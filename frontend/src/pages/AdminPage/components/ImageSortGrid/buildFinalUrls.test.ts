@@ -1,5 +1,5 @@
+import { ImageItem, LocalItem } from '@/types/imageItem';
 import { buildFinalUrls } from './buildFinalUrls';
-import { ImageItem, LocalItem } from './types';
 
 const makeUploaded = (url: string): ImageItem => ({ type: 'uploaded', url });
 const makeLocal = (name: string): LocalItem => ({

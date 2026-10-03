@@ -2,8 +2,8 @@ import { useEffect, useRef } from 'react';
 import { PROMOTION_IMAGE_MAX_COUNT } from '@/constants/adminFieldLimits';
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import { ImageSortGrid } from '@/pages/AdminPage/components/ImageSortGrid/ImageSortGrid';
-import { ImageItem } from '@/pages/AdminPage/components/ImageSortGrid/types';
 import { useDragSort } from '@/pages/AdminPage/components/ImageSortGrid/useDragSort';
+import { ImageItem } from '@/types/imageItem';
 import * as Styled from './PromotionImageField.styles';
 
 interface PromotionImageFieldProps {
