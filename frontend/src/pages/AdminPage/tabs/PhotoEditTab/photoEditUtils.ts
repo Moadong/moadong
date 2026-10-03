@@ -3,11 +3,7 @@ import {
   MAX_FILE_COUNT,
   MAX_FILE_SIZE,
 } from '@/constants/uploadLimit';
-import {
-  ImageItem,
-  LocalItem,
-  UploadedItem,
-} from '@/pages/AdminPage/components/ImageSortGrid/types';
+import { ImageItem, LocalItem, UploadedItem } from '@/types/imageItem';
 
 export const findOversizedFile = (files: File[]): File | undefined =>
   files.find((f) => f.size > MAX_FILE_SIZE);

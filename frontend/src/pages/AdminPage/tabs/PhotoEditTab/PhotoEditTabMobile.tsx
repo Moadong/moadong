@@ -6,8 +6,8 @@ import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { ImageSortGrid } from '@/pages/AdminPage/components/ImageSortGrid/ImageSortGrid';
-import { ImageItem } from '@/pages/AdminPage/components/ImageSortGrid/types';
 import { useDragSort } from '@/pages/AdminPage/components/ImageSortGrid/useDragSort';
+import { ImageItem } from '@/types/imageItem';
 import PhotoUploadCard from './components/mobile/PhotoUploadCard/PhotoUploadCard';
 import * as Styled from './PhotoEditTabMobile.styles';
 
