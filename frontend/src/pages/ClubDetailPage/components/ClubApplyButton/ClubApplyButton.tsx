@@ -6,9 +6,12 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import useNavigator from '@/hooks/useNavigator';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
+import { asClubId } from '@/types/branded';
 import getDeadlineText from '@/utils/getDeadLineText';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import AdminPeriodButton from '../AdminPeriodButton/AdminPeriodButton';
 import ApplicationSelectModal from '../ApplicationSelectModal/ApplicationSelectModal';
 import * as Styled from './ClubApplyButton.styles';
 
@@ -21,6 +24,7 @@ const ClubApplyButton = () => {
   const handleLink = useNavigator();
   const trackEvent = useMixpanelTrack();
   const { data: clubDetail } = useGetClubDetail((clubName ?? clubId) || '');
+  const { clubId: adminClubId } = useAdminClubId();
 
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [applicationOptions, setApplicationOptions] = useState<
@@ -28,6 +32,26 @@ const ClubApplyButton = () => {
   >([]);
 
   if (!clubId || !clubDetail) return null;
+
+  const recruitmentStatus = clubDetail.recruitmentStatus;
+  const isRecruitmentClosed = recruitmentStatus === 'CLOSED';
+  const isRecruitmentUpcoming = recruitmentStatus === 'UPCOMING';
+  const isAlwaysRecruiting = recruitmentStatus === 'ALWAYS';
+
+  const isAdmin =
+    adminClubId !== null && asClubId(adminClubId) === clubDetail.id;
+  const canManagePeriod =
+    isAdmin && (recruitmentStatus === 'OPEN' || isAlwaysRecruiting);
+
+  if (canManagePeriod) {
+    return <AdminPeriodButton clubDetail={clubDetail} />;
+  }
+
+  const deadlineText = getDeadlineText(
+    recruitmentDateParser(clubDetail.recruitmentStart),
+    recruitmentDateParser(clubDetail.recruitmentEnd),
+    recruitmentStatus,
+  );
 
   const navigateToApplicationForm = async (formId: string) => {
     try {
@@ -86,17 +110,6 @@ const ClubApplyButton = () => {
       console.error('지원서 옵션 조회 중 오류가 발생했습니다.', e);
     }
   };
-
-  const recruitmentStatus = clubDetail.recruitmentStatus;
-  const isRecruitmentClosed = recruitmentStatus === 'CLOSED';
-  const isRecruitmentUpcoming = recruitmentStatus === 'UPCOMING';
-  const isAlwaysRecruiting = recruitmentStatus === 'ALWAYS';
-
-  const deadlineText = getDeadlineText(
-    recruitmentDateParser(clubDetail.recruitmentStart),
-    recruitmentDateParser(clubDetail.recruitmentEnd),
-    recruitmentStatus,
-  );
 
   const renderButtonContent = () => {
     if (isRecruitmentClosed || isRecruitmentUpcoming) {

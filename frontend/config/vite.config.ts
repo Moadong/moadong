@@ -28,7 +28,15 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react({
         babel: {
-          plugins: [['babel-plugin-react-compiler', {}]],
+          plugins: [
+            ['babel-plugin-react-compiler', {}],
+            // agentation 툴바가 DOM 클래스에서 styled 변수명을 읽을 수 있게 한다.
+            // fileName: true — `Container`처럼 흔한 이름(72곳)을 파일명으로 구분한다.
+            [
+              'babel-plugin-styled-components',
+              { displayName: true, fileName: true, ssr: false },
+            ],
+          ],
         },
       }),
       tsconfigPaths(),
@@ -59,6 +67,10 @@ export default defineConfig(({ mode }) => {
         output: {
           manualChunks(id) {
             if (!id.includes('node_modules')) return;
+
+            // 디자인 피드백 툴바는 ?design=1일 때만 lazy 로드한다.
+            // vendor에 묶이면 모든 사용자가 받게 되므로 자체 청크로 분리한다.
+            if (id.includes('node_modules/agentation/')) return 'agentation';
 
             if (id.includes('react-router')) return 'router';
             if (id.includes('react-datepicker')) return 'dates';
