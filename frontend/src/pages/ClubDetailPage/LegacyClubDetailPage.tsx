@@ -100,7 +100,12 @@ const LegacyClubDetailPage = () => {
                   display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none',
                 }}
               >
-                <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
+                {activeTab === TAB_TYPE.PHOTOS && (
+                  <ClubFeed
+                    feed={clubDetail.feeds}
+                    clubName={clubDetail.name}
+                  />
+                )}
               </div>
             </Styled.TabContent>
           </Styled.RightSection>
