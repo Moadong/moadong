@@ -222,13 +222,18 @@ const FeedbackWritePage = () => {
       // 발급 요청 자체가 실패하면 넘긴 파일 전부를 실패로 둔다
     }
 
+    // 업데이터는 순수해야 해서 미리보기 해제는 밖에서 한다.
+    // 업로드 중에는 추가·삭제를 막아 두어 이 렌더의 images로 찾아도 대상이 같다.
+    images
+      .filter(isTarget)
+      .filter((item) => urlByFile.has(item.file))
+      .forEach((item) => URL.revokeObjectURL(item.previewUrl));
+
     setImages((prev) =>
       prev.map((item): ImageItem => {
         if (!isTarget(item)) return item;
         const url = urlByFile.get(item.file);
-        if (!url) return { ...item, status: 'failed' };
-        URL.revokeObjectURL(item.previewUrl);
-        return { type: 'uploaded', url };
+        return url ? { type: 'uploaded', url } : { ...item, status: 'failed' };
       }),
     );
 

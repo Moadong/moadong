@@ -57,7 +57,10 @@ export const RemoveButton = styled.button`
   }
 `;
 
-/** 시안에 없는 상태라 활동사진 편집(ImageSortGrid)의 오버레이를 썸네일 모양에 맞춰 옮겼다 */
+/**
+ * 시안에 없는 상태라 활동사진 편집(ImageSortGrid)의 오버레이를 썸네일 모양에 맞춰 옮겼다.
+ * colors에 반투명 토큰이 없어 배경색은 ImageSortGrid 값을 그대로 둔다. 토큰으로 모을 때 두 곳을 같이 바꾼다.
+ */
 export const Overlay = styled.div<{ $error?: boolean }>`
   position: absolute;
   inset: 0;
