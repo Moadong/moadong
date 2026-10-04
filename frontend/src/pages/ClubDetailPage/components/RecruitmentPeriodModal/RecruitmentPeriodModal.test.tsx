@@ -65,7 +65,10 @@ describe('RecruitmentPeriodModal', () => {
     });
 
     expect(confirmButton()).toBeDisabled();
-    expect(screen.getByText('→ 10월 6일 전이어야 해요')).toBeInTheDocument();
+    expect(screen.getByText('→ 10월 6일 전이어야 해요')).toHaveAttribute(
+      'aria-live',
+      'polite',
+    );
   });
 
   it('지금 마감일보다 이른 조기 마감은 오늘부터 N일 뒤로 저장한다', () => {

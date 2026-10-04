@@ -93,9 +93,24 @@ export const InputSuffix = styled.span`
   white-space: nowrap;
 `;
 
-export const Preview = styled.span<{ $empty?: boolean }>`
+const previewColor = ({
+  $empty,
+  $error,
+}: {
+  $empty?: boolean;
+  $error?: boolean;
+}) => {
+  // 오류 문구가 플레이스홀더와 같은 회색이면 확인 버튼이 왜 꺼졌는지 놓친다.
+  // 테마에 빨강 토큰이 없어 InputField 오류 테두리와 같은 primary[900]을 쓴다.
+  if ($error) return colors.primary[900];
+  if ($empty) return colors.gray[400];
+  return colors.primary[800];
+};
+
+export const Preview = styled.span<{ $empty?: boolean; $error?: boolean }>`
   ${setTypography(typography.paragraph.p7)};
-  color: ${({ $empty }) => ($empty ? colors.gray[400] : colors.primary[800])};
+  color: ${previewColor};
+  font-weight: ${({ $error }) => ($error ? 600 : 'inherit')};
   letter-spacing: -0.24px;
   white-space: nowrap;
   flex: 1;

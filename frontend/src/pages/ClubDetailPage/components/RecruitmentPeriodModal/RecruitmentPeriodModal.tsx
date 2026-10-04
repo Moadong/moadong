@@ -222,7 +222,12 @@ const RecruitmentPeriodModal = ({
                   />
                 </Styled.InputFieldWrapper>
                 <Styled.InputSuffix>일 뒤 마감</Styled.InputSuffix>
-                <Styled.Preview $empty={!earlyClosePreview}>
+                {/* 확인이 꺼진 이유(마감일 이후)가 이 문구로만 드러나서 스크린 리더에도 바뀔 때 읽힌다 */}
+                <Styled.Preview
+                  $empty={!earlyClosePreview}
+                  $error={isEarlyCloseTooLate}
+                  aria-live='polite'
+                >
                   {getEarlyClosePreviewText()}
                 </Styled.Preview>
               </Styled.InputRow>
