@@ -60,3 +60,11 @@ Google OAuth 동의 화면이 테스트 모드면 refresh token이 7일 뒤 만�
 - 이미지는 피드·로고와 같은 presigned 방식이다. `POST /api/promotion/upload-url`(배열 요청, 항목별 `success`)로 발급받아 R2에 raw `fetch`로 PUT(`requiredHeaders` 그대로, Authorization 금지)하고, `finalUrl`을 **글 저장 요청의 `images`에 전체 목록으로** 보낸다. 키가 동아리 기준(`promotion/{clubId}/`)이라 게시글 없이도 발급되므로 순서는 **업로드 → 저장**이고, 작성은 POST 한 번으로 끝난다(`useUploadPromotionImages`, `usePromotionForm`). 한 요청에 16개 이상을 담으면 배열 전체가 거부된다
 - 수정 PUT은 `images`가 1개 이상이어야 한다(`@NotEmpty`). 생성은 빈 배열 허용
 - 심사 전 동아리는 서버가 403(902-2)로 막는다. 화면은 요청 전에 `ClubDetail.state === 'AVAILABLE'`로 먼저 막고 같은 문구를 보여준다. 판정은 `PromotionTab/constants.ts`의 `isClubApproved`로만 한다. 상세 API가 한때 설명값(`'활성화'`)을 줬는데 백엔드 #2013에서 enum 이름으로 통일됐다
+
+## 관리자 clubId 확인 (`useVerifiedAdminClubId`)
+
+저장된 `adminClubId`를 `getClubIdByToken`으로 다시 확인한다. 공개 동아리 상세의 관리자 버튼(`ClubApplyButton`)이 저장값이 아니라 이 결과로 판단한다. 저장값만 믿으면 토큰이 만료되거나 다른 계정 토큰으로 바뀌어도 이전 동아리의 관리자 버튼이 남는다.
+
+- 저장값이 없으면 요청하지 않아 일반 방문자에게는 비용이 없다
+- 키에 저장값을 넣어(`queryKeys.auth.adminClubId(storedClubId)`) 다른 계정으로 다시 로그인하면 이전 확인 결과를 쓰지 않는다
+- `auth` 루트는 `PERSISTED_QUERY_ROOTS`에 없어 localStorage 캐시에 저장되지 않는다. 넣지 말 것
