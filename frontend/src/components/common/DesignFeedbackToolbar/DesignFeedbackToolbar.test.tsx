@@ -110,7 +110,7 @@ describe('DesignFeedbackToolbar', () => {
     open.mockRestore();
   });
 
-  it('프리필이 URL 한계를 넘으면 빈 이슈 폼을 연다', async () => {
+  it('프리필이 URL 한계를 넘으면 앞부분만 담고 잘렸다고 알린다', async () => {
     const open = jest.spyOn(window, 'open').mockImplementation(() => null);
     setSearch('?design=1');
     render(<DesignFeedbackToolbar />);
@@ -119,11 +119,23 @@ describe('DesignFeedbackToolbar', () => {
     // 한글은 인코딩하면 한 자가 9자가 된다. 1,000자면 9,000자라 한계를 넘는다.
     mockOnCopy?.('줄'.repeat(1000));
 
-    expect(open).toHaveBeenCalledWith(
-      'https://github.com/Moadong/moadong/issues/new?template=design-feedback.yml',
-      '_blank',
-      'noopener',
-    );
+    const [url, target] = open.mock.calls[0] as [string, string];
+    expect(url.length).toBeLessThanOrEqual(6000);
+    const feedback = new URL(url).searchParams.get('feedback') ?? '';
+    expect(feedback.startsWith('줄줄줄')).toBe(true);
+    expect(feedback).toContain('길어서 여기까지만 담겼어요');
+    expect(target).toBe('_blank');
+    open.mockRestore();
+  });
+
+  it('자를 때 이모지를 반으로 가르지 않는다', async () => {
+    const open = jest.spyOn(window, 'open').mockImplementation(() => null);
+    setSearch('?design=1');
+    render(<DesignFeedbackToolbar />);
+    await screen.findByTestId('agentation');
+
+    expect(() => mockOnCopy?.('🎨'.repeat(2000))).not.toThrow();
+    expect(open).toHaveBeenCalledTimes(1);
     open.mockRestore();
   });
 
