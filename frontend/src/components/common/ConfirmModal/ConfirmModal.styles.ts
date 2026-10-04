@@ -34,6 +34,7 @@ export const Description = styled.p`
   color: ${colors.gray[600]};
   text-align: center;
   letter-spacing: -0.28px;
+  white-space: pre-line;
 `;
 
 export const Footer = styled.div`

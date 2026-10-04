@@ -19,6 +19,8 @@ export const USER_EVENT = {
   SATISFACTION_SHOWN: '만족도 모달 노출',
   SATISFACTION_ANSWERED: '만족도 응답',
   SATISFACTION_SNOOZED: '만족도 응답 미룸',
+  SATISFACTION_REVIEWED: '만족도 리뷰 이동',
+  SATISFACTION_FEEDBACK: '만족도 피드백 이동',
 
   // 동소한 부스
   FESTIVAL_BOOTH_CLICKED: 'Festival Booth Clicked',

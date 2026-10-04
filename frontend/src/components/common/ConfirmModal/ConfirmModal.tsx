@@ -11,6 +11,8 @@ interface ConfirmModalProps {
   title: string;
   description: string;
   confirmLabel: string;
+  cancelLabel?: string;
+  onCancel?: () => void;
   variant?: 'warning' | 'check';
 }
 
@@ -21,6 +23,8 @@ const ConfirmModal = ({
   title,
   description,
   confirmLabel,
+  cancelLabel = '취소',
+  onCancel,
   variant = 'warning',
 }: ConfirmModalProps) => {
   const id = useId();
@@ -28,7 +32,7 @@ const ConfirmModal = ({
   const descriptionId = `${id}-description`;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} closeOnBackdrop={false}>
       <Styled.Dialog
         role='dialog'
         aria-modal='true'
@@ -47,8 +51,8 @@ const ConfirmModal = ({
           </Styled.Description>
         </Styled.Body>
         <Styled.Footer>
-          <Styled.FooterButton type='button' onClick={onClose}>
-            취소
+          <Styled.FooterButton type='button' onClick={onCancel ?? onClose}>
+            {cancelLabel}
           </Styled.FooterButton>
           <Styled.FooterButton type='button' $emphasized onClick={onConfirm}>
             {confirmLabel}
