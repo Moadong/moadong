@@ -80,9 +80,11 @@ Frontend Fundamentals의 [코드 품질 가이드](https://frontend-fundamentals
 
 ```bash
 npm run typecheck
-npx eslint <수정한 파일들>
-npx jest --findRelatedTests <수정한 파일들> --passWithNoTests
+npx --no-install eslint <수정한 파일들>
+npx --no-install jest --findRelatedTests <수정한 파일들> --passWithNoTests
 ```
+
+`--no-install`은 로컬에 없을 때 레지스트리에서 받아 실행하는 npx 폴백을 막는다. 없으면 실패하니 `npm ci`부터 한다.
 
 `aria-label`을 붙이면 접근 가능한 이름이 보이는 텍스트 대신 그 값이 된다. `getByRole('button', { name: '삭제' })` 같은 테스트 쿼리도 호출부라서 위의 "diff 안에서 끝난다"를 따른다. 깨진 테스트 파일이 이번 diff에 있으면 쿼리를 새 이름에 맞추고, diff 밖이면 수정을 되돌리고 리포트로 내린다.
 

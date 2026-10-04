@@ -70,7 +70,7 @@ git checkout -b "$BRANCH" "origin/$PR_BASE"
    (점을 되살린 이름, 예: `Headerstyles` → `Header.styles.ts`)를 찾고, 그 안의 `export const <변수> = styled`.
    같은 파일명이 여러 폴더에 있으면 `**Location:**` 앞쪽의 파일명(부모 요소)과 같은 폴더인 쪽을 고른다.
 2. `**Source:**`가 `src/`로 시작하면 그 파일·줄. `assets/`로 시작하면 이 단계를 건너뛴다.
-3. `**React:**`의 읽을 수 있는 컴포넌트 이름. `const <이름> = ` 또는 `function <이름>` 으로 grep.
+3. `**React:**`의 읽을 수 있는 컴포넌트 이름. `const <이름> =` 또는 `function <이름>`으로 grep.
 4. `**Context:**`·`**Feedback:**`에 인용된 화면 문구나 `## Page Feedback:` 경로로 페이지 컴포넌트를 좁힌다.
 
 `**Classes:**` 줄이 없으면 툴바 출력이 `Standard`인 채로 남긴 메모다. 1번을 못 쓰니 후보가 하나로
