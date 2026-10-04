@@ -1,6 +1,6 @@
 ---
 description: 세션 작업 기록 + 기능 문서화 + 변경 내용 커밋
-allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Bash(npm run typecheck), Bash(npx eslint *), Bash(npx jest *), Bash(git status), Bash(git diff *), Bash(git log *), Bash(git add *), Bash(git commit *), Read, Write, Edit, Glob, Grep
+allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Bash(npm run typecheck), Bash(npx --no-install eslint *), Bash(npx --no-install jest *), Bash(git status), Bash(git diff *), Bash(git ls-files *), Bash(git log *), Bash(git add *), Bash(git commit *), Read, Write, Edit, Glob, Grep
 ---
 
 # 작업 지시
@@ -119,7 +119,7 @@ allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Ba
 
 점검이 끝나면 커밋을 수행합니다.
 
-1. `npm run format` 실행하여 코드 포맷팅
+1. `npm run format` 실행하여 코드 포맷팅. 포맷이 `src/` 파일을 바꿨으면 Phase 3 검증(typecheck·eslint·jest)을 다시 돌려 통과해야 다음으로 넘어갑니다
 2. `git status`로 변경된 파일 확인
 3. `git diff HEAD`로 모든 변경사항 확인 (또는 `git diff`와 `git diff --staged`를 각각 실행)
 4. `git log --oneline -5`로 최근 커밋 스타일 참고

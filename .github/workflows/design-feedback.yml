@@ -43,6 +43,9 @@ jobs:
           ref: develop-fe
           fetch-depth: 0
           token: ${{ steps.app-token.outputs.token }}
+          # 기본값이면 App 토큰이 .git/config에 남아 npm ci의 의존성 설치 스크립트가 읽을 수 있다.
+          # push 인증은 npm ci 뒤에 gh auth setup-git으로 되살린다.
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4
@@ -54,6 +57,12 @@ jobs:
       - name: Install dependencies
         working-directory: frontend
         run: npm ci
+
+      # 에이전트의 git push가 GH_TOKEN으로 인증되게 gh를 credential helper로 등록한다.
+      - name: Set up git credentials
+        run: gh auth setup-git
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
 
       - name: Apply design feedback
         uses: anthropics/claude-code-action@v1

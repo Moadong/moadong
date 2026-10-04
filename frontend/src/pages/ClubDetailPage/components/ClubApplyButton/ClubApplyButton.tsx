@@ -5,6 +5,7 @@ import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/Fix
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
+import { useVerifiedAdminClubId } from '@/hooks/Queries/useVerifiedAdminClubId';
 import useNavigator from '@/hooks/useNavigator';
 import { useAdminClubId } from '@/store/useAdminClubStore';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
@@ -25,6 +26,8 @@ const ClubApplyButton = () => {
   const trackEvent = useMixpanelTrack();
   const { data: clubDetail } = useGetClubDetail((clubName ?? clubId) || '');
   const { clubId: adminClubId } = useAdminClubId();
+  const { data: verifiedAdminClubId, isSuccess: isAdminVerified } =
+    useVerifiedAdminClubId(adminClubId);
 
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [applicationOptions, setApplicationOptions] = useState<
@@ -38,8 +41,10 @@ const ClubApplyButton = () => {
   const isRecruitmentUpcoming = recruitmentStatus === 'UPCOMING';
   const isAlwaysRecruiting = recruitmentStatus === 'ALWAYS';
 
+  // 저장된 clubId가 아니라 토큰으로 확인한 clubId로 판단한다. 확인 전·실패 시에는 일반 지원 버튼을 보여준다.
+  // data만 보면 안 된다. 재확인이 실패해도 React Query는 직전 성공 data를 남겨 둔다.
   const isAdmin =
-    adminClubId !== null && asClubId(adminClubId) === clubDetail.id;
+    isAdminVerified && asClubId(verifiedAdminClubId) === clubDetail.id;
   const canManagePeriod =
     isAdmin && (recruitmentStatus === 'OPEN' || isAlwaysRecruiting);
 

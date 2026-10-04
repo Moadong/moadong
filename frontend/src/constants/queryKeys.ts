@@ -45,6 +45,11 @@ export const queryKeys = {
     suggestions: (keyword: string) =>
       ['clubs', 'suggestions', keyword] as const,
   },
+  auth: {
+    /** 저장된 clubId별로 나눈다. 다른 계정으로 다시 로그인하면 이전 확인 결과를 쓰지 않는다 */
+    adminClubId: (storedClubId: string) =>
+      ['auth', 'adminClubId', storedClubId] as const,
+  },
   promotion: {
     all: ['promotions'] as const,
     list: () => ['promotions', 'list'] as const,

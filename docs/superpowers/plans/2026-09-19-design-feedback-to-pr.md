@@ -562,10 +562,8 @@ on:
   issues:
     types: [labeled]
 
-permissions:
-  contents: write
-  pull-requests: write
-  issues: write
+# 최상위는 최소 권한으로 두고 쓰기 권한은 job에서만 올린다.
+permissions: {}
 
 jobs:
   design-feedback:
@@ -579,6 +577,10 @@ jobs:
     # 같은 이슈를 다시 라벨링해 재실행할 때 브랜치 push가 겹치지 않게 직렬화한다.
     concurrency: design-feedback-${{ github.event.issue.number }}
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pull-requests: write
+      issues: write
     steps:
       - name: Generate harry App token
         id: app-token
