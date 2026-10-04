@@ -110,7 +110,7 @@ const previewColor = ({
 export const Preview = styled.span<{ $empty?: boolean; $error?: boolean }>`
   ${setTypography(typography.paragraph.p7)};
   color: ${previewColor};
-  font-weight: ${({ $error }) => ($error ? 600 : 'inherit')};
+  ${({ $error }) => $error && 'font-weight: 600;'}
   letter-spacing: -0.24px;
   white-space: nowrap;
   flex: 1;
