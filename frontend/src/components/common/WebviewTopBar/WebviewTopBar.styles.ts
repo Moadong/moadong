@@ -13,15 +13,12 @@ export const Container = styled.header`
   display: flex;
   align-items: center;
   padding: 0 18px;
-
-  ${media.tablet} {
-    max-width: 500px;
-    margin: 0 auto;
-  }
+  max-width: 500px;
+  margin: 0 auto;
+  width: 100%;
 
   ${media.mobile} {
     max-width: 100%;
-    margin: 0;
   }
 `;
 
@@ -42,11 +39,14 @@ export const BackButton = styled.button`
 `;
 
 export const Title = styled.h1`
-  position: absolute;
-  left: 54px;
-  right: 54px;
+  flex: 1;
   text-align: center;
   font-size: 20px;
   font-weight: 700;
   color: ${colors.gray[900]};
+`;
+
+export const RightSpacer = styled.div`
+  width: 36px;
+  flex-shrink: 0;
 `;
