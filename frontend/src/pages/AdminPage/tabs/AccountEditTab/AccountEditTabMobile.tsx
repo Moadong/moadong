@@ -1,10 +1,10 @@
 import { useNavigate } from 'react-router-dom';
 import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
+import InputField from '@/components/common/InputField/InputField';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PASSWORD_MAX } from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import InputField from '@/components/common/InputField/InputField';
 import * as Styled from './AccountEditTabMobile.styles';
 
 interface AccountEditTabMobileProps {
@@ -65,7 +65,9 @@ const AccountEditTabMobile = ({
                 }}
                 maxLength={PASSWORD_MAX}
                 isError={isPasswordValid}
-                helperText={isPasswordValid ? '영문, 숫자, 특수문자 포함 8~20자' : ''}
+                helperText={
+                  isPasswordValid ? '영문, 숫자, 특수문자 포함 8~20자' : ''
+                }
               />
             </Styled.FieldWrapper>
 
@@ -81,7 +83,9 @@ const AccountEditTabMobile = ({
                 }}
                 maxLength={PASSWORD_MAX}
                 isError={isPasswordMatching}
-                helperText={isPasswordMatching ? '비밀번호가 일치하지 않습니다.' : ''}
+                helperText={
+                  isPasswordMatching ? '비밀번호가 일치하지 않습니다.' : ''
+                }
               />
             </Styled.FieldWrapper>
           </Styled.FieldList>
