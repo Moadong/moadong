@@ -51,3 +51,8 @@ export const FieldList = styled.div`
   flex-direction: column;
   gap: 8px;
 `;
+
+export const FieldWrapper = styled.div<{ $hasError?: boolean }>`
+  position: relative;
+  padding-bottom: ${({ $hasError }) => ($hasError ? '16px' : '0')};
+`;

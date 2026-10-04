@@ -4,7 +4,7 @@ import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PASSWORD_MAX } from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import AdminInputField from '@/pages/AdminPage/components/AdminInputField/AdminInputField';
+import InputField from '@/components/common/InputField/InputField';
 import * as Styled from './AccountEditTabMobile.styles';
 
 interface AccountEditTabMobileProps {
@@ -53,33 +53,37 @@ const AccountEditTabMobile = ({
           </Styled.PageSubtitleGroup>
 
           <Styled.FieldList>
-            <AdminInputField
-              placeholder='새 비밀번호'
-              type='password'
-              value={newPassword}
-              onChange={(e) => setNewPassword(e.target.value)}
-              onClear={() => {
-                setNewPassword('');
-                trackEvent(ADMIN_EVENT.NEW_PASSWORD_CLEAR_BUTTON_CLICKED);
-              }}
-              maxLength={PASSWORD_MAX}
-              isError={isPasswordValid}
-              helperText='영문, 숫자, 특수문자 포함 8~20자'
-            />
+            <Styled.FieldWrapper $hasError={isPasswordValid}>
+              <InputField
+                placeholder='새 비밀번호'
+                type='password'
+                value={newPassword}
+                onChange={(e) => setNewPassword(e.target.value)}
+                onClear={() => {
+                  setNewPassword('');
+                  trackEvent(ADMIN_EVENT.NEW_PASSWORD_CLEAR_BUTTON_CLICKED);
+                }}
+                maxLength={PASSWORD_MAX}
+                isError={isPasswordValid}
+                helperText={isPasswordValid ? '영문, 숫자, 특수문자 포함 8~20자' : ''}
+              />
+            </Styled.FieldWrapper>
 
-            <AdminInputField
-              placeholder='새 비밀번호 재입력'
-              type='password'
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              onClear={() => {
-                setConfirmPassword('');
-                trackEvent(ADMIN_EVENT.CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED);
-              }}
-              maxLength={PASSWORD_MAX}
-              isError={isPasswordMatching}
-              helperText='비밀번호가 일치하지 않습니다.'
-            />
+            <Styled.FieldWrapper $hasError={isPasswordMatching}>
+              <InputField
+                placeholder='새 비밀번호 재입력'
+                type='password'
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                onClear={() => {
+                  setConfirmPassword('');
+                  trackEvent(ADMIN_EVENT.CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED);
+                }}
+                maxLength={PASSWORD_MAX}
+                isError={isPasswordMatching}
+                helperText={isPasswordMatching ? '비밀번호가 일치하지 않습니다.' : ''}
+              />
+            </Styled.FieldWrapper>
           </Styled.FieldList>
         </Styled.FormSection>
       </Styled.MobileContainer>
