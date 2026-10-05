@@ -27,7 +27,9 @@ export const typography = {
     bold28: { size: '28px', weight: 700, lineHeight: '140%' },
     bold36: { size: '36px', weight: 700, lineHeight: '140%' },
     bold22: { size: '22px', weight: 700, lineHeight: '140%' },
+    bold18: { size: '17.83px', weight: 700, lineHeight: '140%' },
     medium12: { size: '12px', weight: 500, lineHeight: '140%' },
+    semibold15: { size: '15px', weight: 600, lineHeight: '18px' },
   },
 } as const;
 
