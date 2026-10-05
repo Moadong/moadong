@@ -9,6 +9,7 @@ import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import useHeaderVisibility from '@/hooks/Header/useHeaderVisibility';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useScrollDetection } from '@/hooks/Scroll/useScrollDetection';
+import useDevice from '@/hooks/useDevice';
 import { DeviceType } from '@/types/device';
 import * as Styled from './Header.styles';
 
@@ -25,6 +26,7 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
   const trackEvent = useMixpanelTrack();
   const isScrolled = useScrollDetection();
   const isVisible = useHeaderVisibility(showOn, hideOn);
+  const { isMobile } = useDevice();
   const {
     handleHomeClick,
     handleIntroduceClick,
@@ -49,6 +51,8 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
       path: '/promotions',
     },
   ];
+
+  const handleLoginClick = () => navigate('/login');
 
   const handleSubscriptionClick = () => {
     trackEvent(USER_EVENT.HOME_SUBSCRIPTION_CLICKED);
@@ -90,13 +94,13 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
           )}
         </Styled.LeftSection>
 
-        {!isAdminPage && (
-          <Styled.SearchArea $hideOnMobile={isLoginPage}>
+        {!isAdminPage && !(isMobile && isLoginPage) && (
+          <Styled.SearchArea>
             <SearchBox />
           </Styled.SearchArea>
         )}
         {!isAdminPage && (
-          <Styled.LoginButton onClick={() => navigate('/login')}>
+          <Styled.LoginButton onClick={handleLoginClick}>
             로그인
           </Styled.LoginButton>
         )}

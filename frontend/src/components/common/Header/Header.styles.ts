@@ -80,7 +80,7 @@ export const NavLink = styled.button<{ $isActive?: boolean }>`
   }
 `;
 
-export const SearchArea = styled.div<{ $hideOnMobile?: boolean }>`
+export const SearchArea = styled.div`
   width: 345px;
   max-width: 100%;
   margin-left: auto;
@@ -93,10 +93,6 @@ export const SearchArea = styled.div<{ $hideOnMobile?: boolean }>`
     flex: 1;
     width: auto;
     margin-left: 0;
-  }
-
-  ${media.mobile} {
-    ${({ $hideOnMobile }) => $hideOnMobile && 'display: none;'}
   }
 `;
 
