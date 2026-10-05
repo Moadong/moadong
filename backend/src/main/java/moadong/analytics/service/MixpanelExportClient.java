@@ -6,6 +6,7 @@ import lombok.extern.slf4j.Slf4j;
 import moadong.analytics.config.MixpanelProperties;
 import moadong.analytics.payload.dto.MixpanelRawEvent;
 import moadong.analytics.support.FunnelDefinitions;
+import moadong.analytics.support.MixpanelEventNormalizer;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import org.springframework.http.HttpEntity;
@@ -29,17 +30,22 @@ import java.util.stream.Stream;
 @RequiredArgsConstructor
 public class MixpanelExportClient {
 
-    private static final List<String> CLUB_STATISTICS_EVENTS = List.of(
+    /** 동아리 통계(상세 조회·체류시간·검색어)에 쓰는 이벤트. MixpanelBackfillService의 처리 분기와 맞춘다 */
+    static final List<String> CLUB_STATISTICS_EVENTS = List.of(
             "ClubDetailPage Visited",
             "ClubDetailPage Duration",
             "Search Executed"
     );
 
-    /** 동아리 통계 이벤트 + 운영진 퍼널 이벤트. 중복 이름(ClubDetailPage Visited)은 한 번만 요청한다. */
-    private static final List<String> BACKFILL_EVENTS = Stream.concat(
+    /**
+     * 동아리 통계 이벤트 + 운영진 퍼널 이벤트 + 프론트 컨벤션 변경 후의 새 이벤트명.
+     * 새 이름은 수집 시 MixpanelEventNormalizer가 내부 이름으로 번역한다. 중복 이름은 한 번만 요청한다.
+     */
+    private static final List<String> BACKFILL_EVENTS = Stream.of(
             CLUB_STATISTICS_EVENTS.stream(),
-            FunnelDefinitions.ALL_EVENT_NAMES.stream()
-    ).distinct().toList();
+            FunnelDefinitions.ALL_EVENT_NAMES.stream(),
+            MixpanelEventNormalizer.NEW_EVENT_NAMES.stream()
+    ).flatMap(names -> names).distinct().toList();
 
     private final RestTemplate restTemplate;
     private final ObjectMapper objectMapper;
