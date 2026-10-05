@@ -124,6 +124,26 @@ export const LogoButton = styled.button`
   }
 `;
 
+export const LoginButton = styled.button`
+  border: none;
+  font-weight: 500;
+  font-size: 14px;
+  cursor: pointer;
+  white-space: nowrap;
+  color: #3a3a3a;
+  background: transparent;
+  transition: color 0.2s ease-in-out;
+  flex-shrink: 0;
+
+  &:hover {
+    opacity: 0.7;
+  }
+
+  ${media.mobile} {
+    display: none;
+  }
+`;
+
 export const SubscriptionBellButton = styled.button`
   display: flex;
   align-items: center;

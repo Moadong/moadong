@@ -94,6 +94,11 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
             <SearchBox />
           </Styled.SearchArea>
         )}
+        {!isAdminPage && (
+          <Styled.LoginButton onClick={() => navigate('/login')}>
+            로그인
+          </Styled.LoginButton>
+        )}
         {!isAdminPage && showSubscriptionBell && (
           <Styled.SubscriptionBellButton
             onClick={handleSubscriptionClick}
