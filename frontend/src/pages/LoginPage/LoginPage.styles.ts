@@ -40,7 +40,7 @@ export const Page = styled.div`
   ${media.tablet} {
     width: 100%;
     max-width: none;
-    padding: 0 20px 46px;
+    padding: 0 20px calc(46px + env(safe-area-inset-bottom));
     /* 아이템을 하단부터 쌓음 → 넘치면 상단(로고)이 클리핑됨 */
     height: 100%;
     justify-content: flex-end;
