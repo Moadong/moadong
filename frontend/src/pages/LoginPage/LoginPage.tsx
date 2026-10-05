@@ -7,6 +7,8 @@ import * as Styled from './LoginPage.styles';
 const LoginPage = () => {
   const navigate = useNavigate();
 
+  const handleAdminLoginClick = () => navigate('/admin/login');
+
   return (
     <>
       <Header />
@@ -27,7 +29,7 @@ const LoginPage = () => {
               <SocialLoginButton provider='google' onClick={() => {}} />
               <SocialLoginButton provider='apple' onClick={() => {}} />
             </Styled.ButtonList>
-            <Styled.AdminLoginText onClick={() => navigate('/admin/login')}>
+            <Styled.AdminLoginText onClick={handleAdminLoginClick}>
               관리자 로그인
             </Styled.AdminLoginText>
           </Styled.LoginBox>

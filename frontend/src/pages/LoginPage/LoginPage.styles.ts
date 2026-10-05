@@ -31,7 +31,6 @@ export const Page = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 0;
   width: 100%;
   max-width: 600px;
   padding: 0 48px;
@@ -169,11 +168,14 @@ export const ButtonList = styled.div`
   }
 `;
 
-export const AdminLoginText = styled.span`
+export const AdminLoginText = styled.button`
   ${setTypography(typography.etc.medium12)}
   color: ${colors.base.black};
-  margin-top: 20px;
+  background: none;
+  border: none;
+  padding: 0;
   cursor: pointer;
+  margin-top: 20px;
 
   &:hover {
     opacity: 0.7;
