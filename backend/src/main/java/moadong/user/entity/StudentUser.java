@@ -72,4 +72,39 @@ public class StudentUser {
         this.currentFcmToken = currentFcmToken;
         this.lastSeenAt = new Date();
     }
+
+    public void addRefreshToken(RefreshToken refreshToken) {
+        if (this.refreshTokens == null) {
+            this.refreshTokens = new ArrayList<>();
+        }
+        this.refreshTokens.add(refreshToken);
+    }
+
+    public void replaceRefreshToken(String oldToken, RefreshToken newToken) {
+        if (this.refreshTokens == null) {
+            this.refreshTokens = new ArrayList<>();
+            return;
+        }
+        for (int i = 0; i < this.refreshTokens.size(); i++) {
+            if (this.refreshTokens.get(i).getToken().equals(oldToken)) {
+                this.refreshTokens.set(i, newToken);
+                return;
+            }
+        }
+    }
+
+    public void removeRefreshToken(String refreshToken) {
+        if (this.refreshTokens == null) {
+            return;
+        }
+        this.refreshTokens.removeIf(t -> t.getToken().equals(refreshToken));
+    }
+
+    public void removeAllRefreshTokens() {
+        if (this.refreshTokens == null) {
+            this.refreshTokens = new ArrayList<>();
+            return;
+        }
+        this.refreshTokens.clear();
+    }
 }
