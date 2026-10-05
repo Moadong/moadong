@@ -1,9 +1,12 @@
+import { useNavigate } from 'react-router-dom';
 import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
 import Header from '@/components/common/Header/Header';
 import SocialLoginButton from '@/components/SocialLoginButton/SocialLoginButton';
 import * as Styled from './LoginPage.styles';
 
 const LoginPage = () => {
+  const navigate = useNavigate();
+
   return (
     <>
       <Header />
@@ -26,7 +29,9 @@ const LoginPage = () => {
               <SocialLoginButton provider='google' onClick={() => {}} />
               <SocialLoginButton provider='apple' onClick={() => {}} />
             </Styled.ButtonList>
-            <Styled.SignUpText>관리자 로그인</Styled.SignUpText>
+            <Styled.SignUpText onClick={() => navigate('/admin/login')}>
+              관리자 로그인
+            </Styled.SignUpText>
           </Styled.LoginBox>
         </Styled.Page>
       </Styled.Wrapper>

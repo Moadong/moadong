@@ -207,6 +207,11 @@ export const SignUpText = styled.span`
   ${setTypography(typography.etc.medium12)}
   color: ${colors.base.black};
   margin-top: 20px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
 
   ${media.tablet} {
     flex-shrink: 0;
