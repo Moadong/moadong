@@ -114,8 +114,8 @@ export const Subtitle = styled.p`
   margin: 0;
 
   ${media.tablet} {
-    max-width: 238px;
     margin: 4px 0 0 0;
+    white-space: nowrap;
   }
 `;
 
