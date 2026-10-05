@@ -4,6 +4,7 @@ import * as Sentry from '@sentry/react';
 import { ContentErrorBoundary } from '@/components/common/ErrorBoundary';
 import AppLayout from '@/layouts/AppLayout';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
+import LoginPage from '@/pages/LoginPage/LoginPage';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ApplicationFormPage from '@/pages/ApplicationFormPage/ApplicationFormPage';
 import GoogleCallbackPage from '@/pages/CallbackPage/GoogleCallbackPage';
@@ -250,6 +251,10 @@ const AppRoutes = () =>
     {
       path: '/callback/google',
       element: <GoogleCallbackPage />,
+    },
+    {
+      path: '/login',
+      element: <LoginPage />,
     },
     {
       path: '/admin/login',

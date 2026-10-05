@@ -34,6 +34,7 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
 
   const isAdminPage = location.pathname.startsWith('/admin');
   const isAdminLoginPage = location.pathname.startsWith('/admin/login');
+  const isLoginPage = location.pathname === '/login';
 
   const navLinks = [
     { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
@@ -90,7 +91,7 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
         </Styled.LeftSection>
 
         {!isAdminPage && (
-          <Styled.SearchArea>
+          <Styled.SearchArea $hideOnMobile={isLoginPage}>
             <SearchBox />
           </Styled.SearchArea>
         )}

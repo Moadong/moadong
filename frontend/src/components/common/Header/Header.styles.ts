@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { Z_INDEX } from '@/styles/zIndex';
@@ -80,7 +80,7 @@ export const NavLink = styled.button<{ $isActive?: boolean }>`
   }
 `;
 
-export const SearchArea = styled.div`
+export const SearchArea = styled.div<{ $hideOnMobile?: boolean }>`
   width: 345px;
   max-width: 100%;
   margin-left: auto;
@@ -94,6 +94,14 @@ export const SearchArea = styled.div`
     width: auto;
     margin-left: 0;
   }
+
+  ${({ $hideOnMobile }) =>
+    $hideOnMobile &&
+    css`
+      ${media.mobile} {
+        display: none;
+      }
+    `}
 `;
 
 export const LogoButton = styled.button`
