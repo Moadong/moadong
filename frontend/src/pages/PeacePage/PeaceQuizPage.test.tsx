@@ -78,6 +78,10 @@ const finishAnalyzing = () => {
 };
 
 describe('PeaceQuizPage', () => {
+  beforeEach(() => {
+    mockTrack.mockClear();
+  });
+
   afterEach(() => {
     jest.useRealTimers();
   });

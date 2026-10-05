@@ -35,6 +35,10 @@ const renderIntro = (search = '') =>
   );
 
 describe('PeaceIntroPage', () => {
+  beforeEach(() => {
+    mockTrack.mockClear();
+  });
+
   it('제목과 시작하기 버튼을 그린다', () => {
     renderIntro();
     expect(screen.getByText('나와 맞는 평화 활동 찾기')).toBeInTheDocument();
