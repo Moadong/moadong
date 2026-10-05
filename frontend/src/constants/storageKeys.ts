@@ -2,8 +2,6 @@ export const STORAGE_KEYS = {
   ACCESS_TOKEN: 'accessToken',
   /** 우체통용 익명 학생 토큰. 만료가 없어 refresh 흐름 대신 401 시 재발급만 한다 */
   STUDENT_ACCESS_TOKEN: 'studentAccessToken',
-  /** 소셜 로그인 사용자 토큰 */
-  USER_ACCESS_TOKEN: 'userAccessToken',
   /** 만족도 모달 노출 조건. 둘 중 하나가 임계값에 닿으면 묻는다 */
   VISIT_DAY_COUNT: 'visitDayCount',
   CLUB_VIEW_COUNT: 'clubViewCount',
