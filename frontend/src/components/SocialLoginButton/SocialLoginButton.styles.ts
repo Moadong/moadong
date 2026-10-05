@@ -38,7 +38,7 @@ export const Button = styled.button<{ $provider: Provider }>`
   outline: none;
   padding: 0 24px;
 
-  ${media.mobile} {
+  ${media.tablet} {
     justify-content: flex-start;
     gap: 0;
     padding: 0;
@@ -57,7 +57,7 @@ export const LogoWrapper = styled.span<{ $width: number }>`
   justify-content: center;
   flex-shrink: 0;
 
-  ${media.mobile} {
+  ${media.tablet} {
     width: ${({ $width }) => $width}px;
   }
 `;
@@ -65,7 +65,7 @@ export const LogoWrapper = styled.span<{ $width: number }>`
 export const Label = styled.span`
   text-align: left;
 
-  ${media.mobile} {
+  ${media.tablet} {
     flex: 1;
     text-align: center;
   }
@@ -74,7 +74,7 @@ export const Label = styled.span`
 export const Spacer = styled.span<{ $width: number }>`
   display: none;
 
-  ${media.mobile} {
+  ${media.tablet} {
     display: block;
     width: ${({ $width }) => $width}px;
     flex-shrink: 0;

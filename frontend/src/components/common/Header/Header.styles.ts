@@ -98,7 +98,7 @@ export const SearchArea = styled.div<{ $hideOnMobile?: boolean }>`
   ${({ $hideOnMobile }) =>
     $hideOnMobile &&
     css`
-      ${media.mobile} {
+      ${media.tablet} {
         display: none;
       }
     `}

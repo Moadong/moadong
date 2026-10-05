@@ -11,15 +11,20 @@ export const Wrapper = styled.div`
   margin-top: ${HEADER_HEIGHT.desktop}px;
   min-height: calc(100vh - ${HEADER_HEIGHT.desktop}px);
   background: ${colors.base.white};
-  padding-bottom: 6vh;
+  padding-bottom: 12vh;
 
-  ${media.mobile} {
+  ${media.tablet} {
     align-items: flex-start;
-    margin-top: ${HEADER_HEIGHT.mobile}px;
+    margin-top: ${HEADER_HEIGHT.tablet}px;
     /* height 고정 + overflow hidden → 스크롤 완전히 제거 */
-    height: calc(100vh - ${HEADER_HEIGHT.mobile}px);
+    height: calc(100vh - ${HEADER_HEIGHT.tablet}px);
     overflow: hidden;
     padding-bottom: 0;
+  }
+
+  ${media.mobile} {
+    margin-top: ${HEADER_HEIGHT.mobile}px;
+    height: calc(100vh - ${HEADER_HEIGHT.mobile}px);
   }
 `;
 
@@ -32,7 +37,7 @@ export const Page = styled.div`
   max-width: 600px;
   padding: 0 48px;
 
-  ${media.mobile} {
+  ${media.tablet} {
     width: 100%;
     max-width: none;
     padding: 0 20px 46px;
@@ -48,9 +53,9 @@ export const LogoGroup = styled.div`
   flex-direction: column;
   align-items: center;
   gap: 8px;
-  margin-bottom: clamp(24px, 6vh, 72px);
+  margin-bottom: clamp(20px, 4vh, 56px);
 
-  ${media.mobile} {
+  ${media.tablet} {
     margin-bottom: 0;
     flex-shrink: 0;
     gap: 4px;
@@ -67,7 +72,7 @@ export const LogoGroup = styled.div`
 export const TopSpacer = styled.div`
   display: none;
 
-  ${media.mobile} {
+  ${media.tablet} {
     display: block;
     flex-shrink: 0;
     height: 80px;
@@ -83,7 +88,7 @@ export const TopSpacer = styled.div`
 export const MiddleSpacer = styled.div`
   display: none;
 
-  ${media.mobile} {
+  ${media.tablet} {
     display: block;
     flex: 0 1 168px;
     min-height: 32px;
@@ -96,7 +101,7 @@ export const Logo = styled.img`
   height: auto;
   object-fit: contain;
 
-  ${media.mobile} {
+  ${media.tablet} {
     width: 259px;
     height: 55px;
   }
@@ -108,9 +113,29 @@ export const Subtitle = styled.p`
   text-align: center;
   margin: 0;
 
-  ${media.mobile} {
+  ${media.tablet} {
     max-width: 238px;
     margin: 4px 0 0 0;
+  }
+`;
+
+/**
+ * 데스크탑 전용 카드 박스 (네이버 로그인 참고).
+ * 모바일에서는 display:contents로 박스가 사라지고
+ * 자식 요소들이 Page의 flex 아이템으로 직접 참여함.
+ */
+export const LoginBox = styled.div`
+  width: 100%;
+  max-width: 480px;
+  border: 1px solid ${colors.gray[300]};
+  border-radius: 16px;
+  padding: 40px 48px 32px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+
+  ${media.tablet} {
+    display: contents;
   }
 `;
 
@@ -119,7 +144,7 @@ export const TooltipWrapper = styled.div`
   max-width: 260px;
   margin-bottom: clamp(8px, 2vh, 16px);
 
-  ${media.mobile} {
+  ${media.tablet} {
     flex-shrink: 0;
     width: 77%;
     max-width: 252px;
@@ -143,7 +168,7 @@ export const TooltipPill = styled.div`
   position: relative;
   white-space: nowrap;
 
-  ${media.mobile} {
+  ${media.tablet} {
     /* 좁은 화면에서 줄바꿈 방지: vw 기준으로 폰트 축소 */
     font-size: clamp(9px, 3.2vw, 12px);
   }
@@ -170,7 +195,7 @@ export const ButtonList = styled.div`
   gap: 12px;
   margin-top: clamp(4px, 1.5vh, 12px);
 
-  ${media.mobile} {
+  ${media.tablet} {
     flex-shrink: 0;
     width: 100%;
     max-width: 400px;
@@ -183,7 +208,7 @@ export const SignUpText = styled.span`
   color: ${colors.base.black};
   margin-top: 20px;
 
-  ${media.mobile} {
+  ${media.tablet} {
     flex-shrink: 0;
     margin-top: 20px;
   }
