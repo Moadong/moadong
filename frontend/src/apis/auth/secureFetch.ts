@@ -1,12 +1,13 @@
 import { refreshAccessToken } from '@/apis/auth/refreshAccessToken';
 import { fetchWithTimeout } from '@/apis/utils/fetchWithTimeout';
+import { STORAGE_KEYS } from '@/constants/storageKeys';
 
 export const secureFetch = async (
   input: RequestInfo,
   init?: RequestInit,
   timeoutMs?: number,
 ): Promise<Response> => {
-  const accessToken = localStorage.getItem('accessToken');
+  const accessToken = localStorage.getItem(STORAGE_KEYS.ACCESS_TOKEN);
 
   // 1차 요청 시도
   let response = await fetchWithTimeout(
@@ -24,28 +25,32 @@ export const secureFetch = async (
 
   // accessToken 만료 시 → refresh 시도
   if (response.status === 401) {
+    let newAccessToken: string;
     try {
-      const newAccessToken = await refreshAccessToken();
-      localStorage.setItem('accessToken', newAccessToken);
-
-      response = await fetchWithTimeout(
-        input,
-        {
-          ...init,
-          // Content-Type은 호출부가 정한 값을 그대로 쓴다.
-          // multipart(FormData)는 브라우저가 boundary를 붙여야 해서 여기서 강제하면 재요청이 깨진다.
-          headers: {
-            ...(init?.headers || {}),
-            Authorization: `Bearer ${newAccessToken}`,
-          },
-          credentials: 'include',
-        },
-        timeoutMs,
-      );
+      newAccessToken = await refreshAccessToken();
     } catch (err) {
-      // refresh도 실패한 경우
+      // refresh도 실패한 경우 → 토큰 제거로 다음 접속 시 관리자 UI 노출 방지
+      localStorage.removeItem(STORAGE_KEYS.ACCESS_TOKEN);
       throw new Error(`REFRESH_FAILED: ${(err as Error).message}`);
     }
+    localStorage.setItem(STORAGE_KEYS.ACCESS_TOKEN, newAccessToken);
+
+    // 재요청 실패는 refresh 실패가 아니다. 여기서 토큰을 지우면 방금 받은 유효한 토큰이 사라져
+    // 일시적인 네트워크 오류 한 번에 로그아웃된다. 그래서 위 try 밖에서 보낸다.
+    response = await fetchWithTimeout(
+      input,
+      {
+        ...init,
+        // Content-Type은 호출부가 정한 값을 그대로 쓴다.
+        // multipart(FormData)는 브라우저가 boundary를 붙여야 해서 여기서 강제하면 재요청이 깨진다.
+        headers: {
+          ...(init?.headers || {}),
+          Authorization: `Bearer ${newAccessToken}`,
+        },
+        credentials: 'include',
+      },
+      timeoutMs,
+    );
   }
 
   return response;

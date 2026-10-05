@@ -4,7 +4,11 @@ import { setYear } from 'date-fns';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
 import Toast from '@/components/common/Toast/Toast';
-import { RECRUIT_TARGET_MAX } from '@/constants/adminFieldLimits';
+import ToggleButton from '@/components/common/ToggleButton/ToggleButton';
+import {
+  FAR_FUTURE_YEAR,
+  RECRUIT_TARGET_MAX,
+} from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -16,8 +20,6 @@ import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
 import DateTimeRangePicker from './components/DateTimeRangePicker/DateTimeRangePicker';
 import * as Styled from './RecruitEditTab.styles';
 import RecruitEditTabMobile from './RecruitEditTabMobile';
-
-const FAR_FUTURE_YEAR = 2999;
 
 const RecruitEditTab = () => {
   const { isMobile, isTablet } = useDevice();
@@ -214,14 +216,15 @@ const RecruitEditTab = () => {
                   onChangeRecruitmentEnd={handleEndChange}
                   disabledEnd={isAlwaysRecruiting}
                 />
-                <Styled.AlwaysRecruitButton
-                  type='button'
-                  $isAlwaysActive={isAlwaysRecruiting}
-                  onClick={toggleAlwaysRecruiting}
-                  aria-pressed={isAlwaysRecruiting}
-                >
-                  상시모집
-                </Styled.AlwaysRecruitButton>
+                <Styled.AlwaysRecruitButtonWrapper>
+                  <ToggleButton
+                    active={isAlwaysRecruiting}
+                    onClick={toggleAlwaysRecruiting}
+                    aria-pressed={isAlwaysRecruiting}
+                  >
+                    상시모집
+                  </ToggleButton>
+                </Styled.AlwaysRecruitButtonWrapper>
               </Styled.RecruitPeriodContainer>
             </div>
             <InputField

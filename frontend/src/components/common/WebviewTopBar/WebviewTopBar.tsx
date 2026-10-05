@@ -36,6 +36,7 @@ const WebviewTopBar = ({ title, onBack }: WebviewTopBarProps) => {
         <PrevButtonIcon width={36} height={36} />
       </Styled.BackButton>
       <Styled.Title>{title}</Styled.Title>
+      <Styled.RightSpacer />
     </Styled.Container>
   );
 };

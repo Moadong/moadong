@@ -93,6 +93,14 @@ export const USER_EVENT = {
   PROMOTION_IMAGE_MORE_CLICKED: 'Promotion Image More Clicked',
 
   WEBVIEW_SUBSCRIBE_TOGGLED: 'Webview Subscribe Toggled',
+
+  // 평화축제
+  PEACE_QUIZ_STARTED: 'Peace Quiz Started',
+  PEACE_QUIZ_COMPLETED: 'Peace Quiz Completed',
+  PEACE_CLUB_CARD_CLICKED: 'Peace Club Card Clicked',
+  PEACE_RETRY_CLICKED: 'Peace Retry Clicked',
+  PEACE_SHARE_CLICKED: 'Peace Share Clicked',
+  PEACE_STUDENT_TOGGLE_OPENED: 'Peace Student Toggle Opened',
 } as const;
 
 export const WEBVIEW_LINK_TARGET = {
@@ -177,6 +185,10 @@ export const ADMIN_EVENT = {
   PASSWORD_CHANGE_BUTTON_CLICKED: '비밀번호 변경 버튼클릭',
   NEW_PASSWORD_CLEAR_BUTTON_CLICKED: '새 비밀번호 입력 초기화 버튼클릭',
   CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED: '확인 비밀번호 입력 초기화 버튼클릭',
+
+  // 동아리 상세 - 모집 기간 변경 (관리자 전용)
+  RECRUIT_PERIOD_CHANGE_BUTTON_CLICKED: '모집 기간 변경 버튼클릭',
+  RECRUIT_PERIOD_CHANGE_CONFIRMED: '모집 기간 변경 완료',
 } as const;
 
 export const PAGE_VIEW = {
@@ -193,6 +205,9 @@ export const PAGE_VIEW = {
   PROMOTION_LIST_PAGE: '홍보 목록 페이지',
   PROMOTION_DETAIL_PAGE: '홍보 상세 페이지',
   GAME_PAGE: 'GamePage',
+  PEACE_INTRO_PAGE: 'PeaceIntroPage',
+  PEACE_QUIZ_PAGE: 'PeaceQuizPage',
+  PEACE_RESULT_PAGE: 'PeaceResultPage',
 
   // 모아동 우체통
   FEEDBACK_LIST_PAGE: '우체통 목록 페이지',

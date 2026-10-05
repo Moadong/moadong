@@ -242,7 +242,7 @@ describe('promotion API', () => {
       const presigned: PromotionPresignedData[] = [
         {
           presignedUrl: 'https://r2/put?sig=1',
-          finalUrl: 'https://cdn/promotion/articles/123/2026/09/a.png',
+          finalUrl: 'https://cdn/promotion/club-1/2026/09/a.png',
           requiredHeaders: { 'Content-Type': 'image/png' },
           success: true,
           failureReason: null,
@@ -263,12 +263,13 @@ describe('promotion API', () => {
         { fileName: 'b.svg', contentType: 'image/svg+xml' },
       ];
 
-      const result = await getPromotionImageUploadUrls('123', requests);
+      const result = await getPromotionImageUploadUrls(requests);
 
       // 한 항목이 실패해도 배열 전체를 실패로 보지 않는다
       expect(result).toEqual(presigned);
+      // 게시글 없이 발급받는다. 대상 동아리는 서버가 토큰에서 정한다
       expect(fetchMock).toHaveBeenCalledWith(
-        `${API_BASE_URL}/api/promotion/123/upload-url`,
+        `${API_BASE_URL}/api/promotion/upload-url`,
         expect.objectContaining({
           method: 'POST',
           body: JSON.stringify(requests),
@@ -276,13 +277,13 @@ describe('promotion API', () => {
       );
     });
 
-    it('남의 동아리 글이면 에러를 던진다', async () => {
+    it('발급 권한이 없으면 에러를 던진다', async () => {
       fetchMock.mockResponseOnce(JSON.stringify({ message: '권한 없음' }), {
         status: 403,
       });
 
       await expect(
-        getPromotionImageUploadUrls('123', [
+        getPromotionImageUploadUrls([
           { fileName: 'a.png', contentType: 'image/png' },
         ]),
       ).rejects.toThrow('홍보 이미지 업로드 URL 생성에 실패했습니다.');

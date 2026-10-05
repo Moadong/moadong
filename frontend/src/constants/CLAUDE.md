@@ -1,11 +1,11 @@
 # constants — 상수 관리
 
-모든 상수는 이 디렉토리에서 중앙 관리. 문자열 하드코딩 금지.
+여러 파일이 공유하는 상수는 이 디렉토리에서 중앙 관리. 한 파일에서만 쓰는 상수는 그 파일 상단에 둔다. 문자열 하드코딩 금지.
 
 - `queryKeys.ts` - React Query 쿼리 키 (도메인.액션 형식)
 - `storageKeys.ts` - localStorage 키 (`accessToken`, `studentAccessToken`, `hasConsentedPersonalInfo`, `MOADONG_QUERY_CACHE`)
 - `status.ts` - 지원 상태 정의 (PENDING, APPROVED, REJECTED 등)
-- `eventName.ts` - Mixpanel 이벤트명 (`USER_EVENT`)
+- `eventName.ts` - Mixpanel 이벤트명 (`USER_EVENT`, `PAGE_VIEW`, `PAGE_NAME`). 평화축제(`PEACE_*`)는 2026-10 행사 종료 후 제거 대상
 - `api.ts` - API 엔드포인트 URL
 - `snsConfig.ts` - SNS 플랫폼 설정
 - `applicationForm.ts` - 지원서 폼 설정
