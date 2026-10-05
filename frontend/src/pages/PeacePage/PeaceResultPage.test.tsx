@@ -83,6 +83,10 @@ const renderResult = (search: string) =>
   );
 
 describe('PeaceResultPage', () => {
+  beforeEach(() => {
+    mockTrack.mockClear();
+  });
+
   it('유효한 type이면 카드·설명·강점·주의점·작은 행동을 그린다', () => {
     renderResult('?type=carer');
     const carer = PEACE_TYPES.carer;
@@ -159,6 +163,10 @@ describe('PeaceResultPage', () => {
     renderResult('?type=carer');
     await userEvent.click(screen.getByRole('button', { name: '다시하기' }));
     expect(screen.getByText(/^INTRO/)).toBeInTheDocument();
+    expect(mockTrack).toHaveBeenCalledWith(
+      'Quiz Retry Button Clicked',
+      expect.objectContaining({ festival: 'un_peace_2026', type: 'carer' }),
+    );
   });
 
   it('답이 있으면 유형별 비율을 점수 순으로 보여준다', () => {
@@ -232,6 +240,10 @@ describe('PeaceResultPage', () => {
       expect.objectContaining({
         url: 'http://localhost/peace/result?type=carer&a=00000000&src=share',
       }),
+    );
+    expect(mockTrack).toHaveBeenCalledWith(
+      'Quiz Share Button Clicked',
+      expect.objectContaining({ festival: 'un_peace_2026', type: 'carer' }),
     );
   });
 

@@ -15,7 +15,10 @@ import { theme } from '@/styles/theme';
 import { PEACE_QUESTIONS } from './data/questions';
 import PeaceQuizPage from './PeaceQuizPage';
 
-jest.mock('mixpanel-browser', () => ({ track: jest.fn() }));
+const mockTrack = jest.fn();
+jest.mock('mixpanel-browser', () => ({
+  track: (...args: unknown[]) => mockTrack(...args),
+}));
 jest.mock('./components/PeaceLayout/PeaceLayout', () => ({
   __esModule: true,
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -132,6 +135,15 @@ describe('PeaceQuizPage', () => {
     answerAll();
     expect(screen.getByText(/분석하고 있어요/)).toBeInTheDocument();
     expect(screen.queryByText(/^RESULT/)).not.toBeInTheDocument();
+    // 모두 첫 선택지면 carer 5점, 1점 동점 중 TIE_BREAK_ORDER 앞순위인 daily가 sub
+    expect(mockTrack).toHaveBeenCalledWith(
+      'Quiz Completed',
+      expect.objectContaining({
+        festival: 'un_peace_2026',
+        type: 'carer',
+        sub: 'daily',
+      }),
+    );
     finishAnalyzing();
     // 답 8개를 a에 실어 결과 화면이 유형별 비율을 계산한다
     expect(
