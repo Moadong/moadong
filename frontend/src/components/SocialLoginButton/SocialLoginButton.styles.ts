@@ -1,53 +1,50 @@
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
+import Button from '@/components/common/Button/Button';
 import { colors } from '@/styles/theme/colors';
 import { media } from '@/styles/mediaQuery';
 import { setTypography, typography } from '@/styles/theme/typography';
 
-type Provider = 'kakao' | 'google' | 'apple';
+export type Provider = 'kakao' | 'google' | 'apple';
 
-const providerStyles: Record<Provider, ReturnType<typeof css>> = {
-  kakao: css`
-    background-color: ${colors.social.kakao};
-    color: ${colors.gray[950]};
-    border: none;
-  `,
-  google: css`
-    background-color: ${colors.base.white};
-    color: ${colors.gray[900]};
-    border: 1px solid ${colors.gray[400]};
-  `,
-  apple: css`
-    background-color: ${colors.base.black};
-    color: ${colors.base.white};
-    border: none;
-  `,
+const PROVIDER_BG: Record<Provider, string> = {
+  kakao: colors.social.kakao,
+  google: colors.base.white,
+  apple: colors.base.black,
 };
 
-export const Button = styled.button<{ $provider: Provider }>`
+const PROVIDER_COLOR: Record<Provider, string> = {
+  kakao: colors.gray[950],
+  google: colors.gray[900],
+  apple: colors.base.white,
+};
+
+const PROVIDER_BORDER: Record<Provider, string> = {
+  kakao: 'none',
+  google: `1px solid ${colors.gray[400]}`,
+  apple: 'none',
+};
+
+export const SocialButton = styled(Button)<{ $provider: Provider }>`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
   width: 100%;
   height: 48px;
   border-radius: 12px;
-  font-family: 'Inter', sans-serif;
-  ${setTypography(typography.etc.semibold15)}
-  cursor: pointer;
-  outline: none;
   padding: 0 24px;
+  gap: 8px;
+  ${setTypography(typography.etc.semibold15)}
+  font-family: 'Inter', sans-serif;
+  background-color: ${({ $provider }) => PROVIDER_BG[$provider]};
+  color: ${({ $provider }) => PROVIDER_COLOR[$provider]};
+  border: ${({ $provider }) => PROVIDER_BORDER[$provider]};
+
+  &:hover:not(:disabled) {
+    background-color: ${({ $provider }) => PROVIDER_BG[$provider]};
+  }
 
   ${media.tablet} {
     justify-content: flex-start;
     gap: 0;
     padding: 0;
-  }
-
-  ${({ $provider }) => providerStyles[$provider]}
-
-  &:active {
-    opacity: 0.85;
   }
 `;
 
