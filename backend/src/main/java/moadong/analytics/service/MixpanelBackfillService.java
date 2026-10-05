@@ -14,6 +14,7 @@ import moadong.analytics.repository.MixpanelFunnelEventRepository;
 import moadong.analytics.support.AnalyticsDateRangeValidator;
 import moadong.analytics.support.AnalyticsTime;
 import moadong.analytics.support.FunnelDefinitions;
+import moadong.analytics.support.MixpanelEventNormalizer;
 import moadong.club.entity.Club;
 import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
@@ -51,7 +52,7 @@ public class MixpanelBackfillService {
                 : mixpanelProperties.backfill().effectiveMaxRangeDays();
         AnalyticsDateRangeValidator.validateBackfillRange(from, to, maxRangeDays);
 
-        ClubNameIndex clubNameIndex = buildClubNameIndex();
+        ClubIndex clubIndex = buildClubIndex();
         int fetched = 0;
         int processed = 0;
         int duplicated = 0;
@@ -61,9 +62,15 @@ public class MixpanelBackfillService {
             List<MixpanelRawEvent> events = mixpanelExportClient.fetchEvents(date);
             fetched += events.size();
 
-            for (MixpanelRawEvent event : events) {
+            for (MixpanelRawEvent rawEvent : events) {
+                MixpanelRawEvent event = MixpanelEventNormalizer.normalize(rawEvent);
                 if (event == null || event.event() == null) {
                     skipped++;
+                    continue;
+                }
+                // Page Viewed/Page Left는 모든 페이지가 함께 오므로, 통계·퍼널과 무관한 페이지는
+                // dedup 키를 쓰기 전에 버린다. skipped에 넣지 않아 동아리 매핑 실패 같은 진짜 skip과 섞이지 않는다.
+                if (!isCollectedEvent(event.event())) {
                     continue;
                 }
                 LocalDate eventDate = eventDate(event);
@@ -77,7 +84,7 @@ public class MixpanelBackfillService {
                     continue;
                 }
                 try {
-                    if (processEvent(event, backfillKey, eventDate, clubNameIndex)) {
+                    if (processEvent(event, backfillKey, eventDate, clubIndex)) {
                         processed++;
                     } else {
                         mixpanelBackfilledEventRepository.deleteById(backfillKey);
@@ -96,14 +103,19 @@ public class MixpanelBackfillService {
         return new MixpanelBackfillResponse(from, to, fetched, processed, duplicated, skipped);
     }
 
+    private boolean isCollectedEvent(String eventName) {
+        return FunnelDefinitions.isFunnelEvent(eventName)
+                || MixpanelExportClient.CLUB_STATISTICS_EVENTS.contains(eventName);
+    }
+
     private boolean processEvent(MixpanelRawEvent event, String backfillKey, LocalDate eventDate,
-                                 ClubNameIndex clubNameIndex) {
+                                 ClubIndex clubIndex) {
         // 퍼널 저장과 동아리 통계는 독립이다. ClubDetailPage Visited처럼 둘 다 해당하는 이벤트는 둘 다 수행한다.
         boolean storedFunnel = FunnelDefinitions.isFunnelEvent(event.event())
                 && storeFunnelEvent(event, backfillKey, eventDate);
         boolean processedClubStatistics = switch (event.event()) {
-            case "ClubDetailPage Visited" -> processDetailView(event, eventDate, clubNameIndex);
-            case "ClubDetailPage Duration" -> processDetailDuration(event, eventDate, clubNameIndex);
+            case "ClubDetailPage Visited" -> processDetailView(event, eventDate, clubIndex);
+            case "ClubDetailPage Duration" -> processDetailDuration(event, eventDate, clubIndex);
             case "Search Executed" -> processSearch(event, eventDate);
             default -> false;
         };
@@ -130,8 +142,8 @@ public class MixpanelBackfillService {
         return true;
     }
 
-    private boolean processDetailView(MixpanelRawEvent event, LocalDate eventDate, ClubNameIndex clubNameIndex) {
-        Club club = findClubByEventClubName(event, clubNameIndex);
+    private boolean processDetailView(MixpanelRawEvent event, LocalDate eventDate, ClubIndex clubIndex) {
+        Club club = findClub(event, clubIndex);
         if (club == null) {
             return false;
         }
@@ -146,8 +158,8 @@ public class MixpanelBackfillService {
         return true;
     }
 
-    private boolean processDetailDuration(MixpanelRawEvent event, LocalDate eventDate, ClubNameIndex clubNameIndex) {
-        Club club = findClubByEventClubName(event, clubNameIndex);
+    private boolean processDetailDuration(MixpanelRawEvent event, LocalDate eventDate, ClubIndex clubIndex) {
+        Club club = findClub(event, clubIndex);
         Long durationSeconds = longProperty(event, "duration_seconds");
         if (club == null || durationSeconds == null || durationSeconds < 0 || durationSeconds > MAX_DURATION_SECONDS) {
             return false;
@@ -173,16 +185,25 @@ public class MixpanelBackfillService {
         return true;
     }
 
-    private Club findClubByEventClubName(MixpanelRawEvent event, ClubNameIndex clubNameIndex) {
+    private Club findClub(MixpanelRawEvent event, ClubIndex clubIndex) {
+        // 동아리 이름은 바뀌거나 겹칠 수 있어 club_id가 있으면 먼저 쓴다. 컨벤션 변경 전 이벤트는 clubName만 있다.
+        String clubId = stringProperty(event, "club_id");
+        if (clubId != null && !clubId.isBlank()) {
+            Club club = clubIndex.clubById().get(clubId);
+            if (club != null) {
+                return club;
+            }
+            log.warn("Mixpanel backfill club_id 매핑 실패, clubName으로 재시도. clubId={}", clubId);
+        }
         String clubName = stringProperty(event, "clubName");
         if (clubName == null || clubName.isBlank()) {
             return null;
         }
-        if (clubNameIndex.ambiguousNames().contains(clubName)) {
+        if (clubIndex.ambiguousNames().contains(clubName)) {
             log.warn("Mixpanel backfill clubName 중복으로 skip. clubName={}", clubName);
             return null;
         }
-        Club club = clubNameIndex.clubByName().get(clubName);
+        Club club = clubIndex.clubByName().get(clubName);
         if (club == null) {
             log.warn("Mixpanel backfill clubName 매핑 실패. clubName={}", clubName);
         }
@@ -255,7 +276,7 @@ public class MixpanelBackfillService {
         return null;
     }
 
-    private ClubNameIndex buildClubNameIndex() {
+    private ClubIndex buildClubIndex() {
         List<Club> clubs = clubRepository.findAll();
         Map<String, List<Club>> grouped = clubs.stream()
                 .filter(club -> club.getName() != null && !club.getName().isBlank())
@@ -268,9 +289,12 @@ public class MixpanelBackfillService {
                 .filter(entry -> entry.getValue().size() == 1)
                 .map(entry -> entry.getValue().get(0))
                 .collect(Collectors.toMap(Club::getName, Function.identity()));
-        return new ClubNameIndex(clubByName, ambiguousNames);
+        Map<String, Club> clubById = clubs.stream()
+                .filter(club -> club.getId() != null)
+                .collect(Collectors.toMap(Club::getId, Function.identity(), (first, second) -> first));
+        return new ClubIndex(clubById, clubByName, ambiguousNames);
     }
 
-    private record ClubNameIndex(Map<String, Club> clubByName, Set<String> ambiguousNames) {
+    private record ClubIndex(Map<String, Club> clubById, Map<String, Club> clubByName, Set<String> ambiguousNames) {
     }
 }
