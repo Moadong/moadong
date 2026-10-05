@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import Button from '@/components/common/Button/Button';
-import { colors } from '@/styles/theme/colors';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
 export type Provider = 'kakao' | 'google' | 'apple';

@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
-import { colors } from '@/styles/theme/colors';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Wrapper = styled.div`
