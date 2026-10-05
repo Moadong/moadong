@@ -203,7 +203,7 @@ export const ButtonList = styled.div`
   }
 `;
 
-export const SignUpText = styled.span`
+export const AdminLoginText = styled.span`
   ${setTypography(typography.etc.medium12)}
   color: ${colors.base.black};
   margin-top: 20px;

@@ -29,9 +29,9 @@ const LoginPage = () => {
               <SocialLoginButton provider='google' onClick={() => {}} />
               <SocialLoginButton provider='apple' onClick={() => {}} />
             </Styled.ButtonList>
-            <Styled.SignUpText onClick={() => navigate('/admin/login')}>
+            <Styled.AdminLoginText onClick={() => navigate('/admin/login')}>
               관리자 로그인
-            </Styled.SignUpText>
+            </Styled.AdminLoginText>
           </Styled.LoginBox>
         </Styled.Page>
       </Styled.Wrapper>
