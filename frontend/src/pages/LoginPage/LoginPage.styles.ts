@@ -63,7 +63,7 @@ export const LogoGroup = styled.div`
 `;
 
 /**
- * 모바일 전용: 로고 위 최소 여백 확보용 spacer.
+ * 태블릿 이하 전용: 로고 위 최소 여백 확보용 spacer.
  * flex-shrink: 0 → 절대 줄어들지 않음.
  * justify-content: flex-end의 free space가 0이 된 뒤에도
  * 이 높이만큼은 로고 위 여백이 유지됨.
@@ -81,7 +81,7 @@ export const TopSpacer = styled.div`
 `;
 
 /**
- * 모바일 전용: 로고~말풍선 사이 간격.
+ * 태블릿 이하 전용: 로고~말풍선 사이 간격.
  * flex-shrink: 1 → TopSpacer free space가 소진된 뒤 이 간격이 줄어들고,
  * min-height에 닿으면 그때부터 로고가 상단 클리핑됨.
  */
@@ -197,8 +197,6 @@ export const ButtonList = styled.div`
 
   ${media.tablet} {
     flex-shrink: 0;
-    width: 100%;
-    max-width: 400px;
     margin-top: 0;
   }
 `;
@@ -215,6 +213,5 @@ export const AdminLoginText = styled.span`
 
   ${media.tablet} {
     flex-shrink: 0;
-    margin-top: 20px;
   }
 `;
