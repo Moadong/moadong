@@ -11,22 +11,19 @@ interface SocialLoginButtonProps {
 
 const WRAPPER_WIDTH = 47.92;
 
-const PROVIDER_CONFIG: Record<
-  Provider,
-  { icon: string; alt: string; label: string }
-> = {
-  kakao: { icon: kakaoIcon, alt: '카카오', label: '카카오로 로그인하기' },
-  google: { icon: googleIcon, alt: '구글', label: '구글로 로그인하기' },
-  apple: { icon: appleIcon, alt: 'Apple', label: 'Apple로 로그인하기' },
+const PROVIDER_CONFIG: Record<Provider, { icon: string; label: string }> = {
+  kakao: { icon: kakaoIcon, label: '카카오로 로그인하기' },
+  google: { icon: googleIcon, label: '구글로 로그인하기' },
+  apple: { icon: appleIcon, label: 'Apple로 로그인하기' },
 };
 
 const SocialLoginButton = ({ provider, onClick }: SocialLoginButtonProps) => {
-  const { icon, alt, label } = PROVIDER_CONFIG[provider];
+  const { icon, label } = PROVIDER_CONFIG[provider];
 
   return (
     <Styled.SocialButton $provider={provider} onClick={onClick}>
       <Styled.LogoWrapper $width={WRAPPER_WIDTH}>
-        <img src={icon} alt={alt} />
+        <img src={icon} alt="" />
       </Styled.LogoWrapper>
       <Styled.Label>{label}</Styled.Label>
       <Styled.Spacer $width={WRAPPER_WIDTH} />

@@ -32,7 +32,6 @@ export const SocialButton = styled(Button)<{ $provider: Provider }>`
   padding: 0 24px;
   gap: 8px;
   ${setTypography(typography.etc.semibold15)}
-  font-family: 'Inter', sans-serif;
   background-color: ${({ $provider }) => PROVIDER_BG[$provider]};
   color: ${({ $provider }) => PROVIDER_COLOR[$provider]};
   border: ${({ $provider }) => PROVIDER_BORDER[$provider]};
