@@ -324,6 +324,8 @@ async function loadPromotionMapSdk() {
     };
     script.onerror = () => {
       logPromotionMapDebug('loadPromotionMapSdk:scriptError', { sdkUrl });
+      // 실패한 script를 남겨 두면 재시도 때 이미 끝난 load/error를 기다리느라 영원히 대기한다.
+      script.remove();
       reject(new Error('카카오 지도 SDK를 불러오지 못했습니다.'));
     };
     document.head.appendChild(script);
@@ -1308,6 +1310,10 @@ document.getElementById('btnUploadPromotionImage').onclick = async () => {
     showToast('업로드할 이미지를 선택하세요.', 'error');
     return;
   }
+  // 업로드 뒤 목록을 다시 불러오며 폼을 서버 값으로 채우므로, 저장 안 한 수정은 먼저 확인받는다.
+  if (!isPromotionCreateMode() && isPromotionDirty() && !(await confirmPromotionDiscard('reload'))) {
+    return;
+  }
 
   const files = Array.from(fileInput.files);
   const btn = document.getElementById('btnUploadPromotionImage');
@@ -1339,6 +1345,8 @@ document.getElementById('btnUploadPromotionImage').onclick = async () => {
         setPromotionBanner(createData.message || '홍보 게시글 생성 실패 (HTTP ' + createRes.status + ')', 'error');
         return;
       }
+      // 생성은 끝났으니 create 모드를 벗어난다. 이후 단계가 실패해도 다시 누르면 같은 글이 또 생성되지 않는다.
+      promotionEditorMode = 'edit';
 
       targetArticleId = extractCreatedPromotionId(createData);
       if (!targetArticleId) {
