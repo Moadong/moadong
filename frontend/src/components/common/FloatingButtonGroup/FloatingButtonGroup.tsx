@@ -48,8 +48,9 @@ export const FloatingButtonGroup = () => {
   const isFeedback = !!useMatch({ path: '/feedback', end: false });
 
   const isAdmin = !!useMatch({ path: '/admin', end: false });
+  const isLogin = !!useMatch('/login');
 
-  if (isAdmin || isDisabled) return null;
+  if (isAdmin || isLogin || isDisabled) return null;
 
   return (
     <Styled.GroupContainer $isClubDetail={isClubDetail}>
