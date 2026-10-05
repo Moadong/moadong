@@ -40,11 +40,11 @@ jest.mock('./components/RecommendedClubs/RecommendedClubs', () => ({
     onClubClick,
   }: {
     category: string;
-    onClubClick: (club: { name: string }) => void;
+    onClubClick: (club: { id: string; name: string }) => void;
   }) => (
     <a
       href='/clubDetail/@테스트 동아리'
-      onClick={() => onClubClick({ name: '테스트 동아리' })}
+      onClick={() => onClubClick({ id: 'club-1', name: '테스트 동아리' })}
     >
       {`CLUBS ${category}`}
     </a>
@@ -133,8 +133,13 @@ describe('PeaceResultPage', () => {
     link.addEventListener('click', (e) => e.preventDefault());
     await userEvent.click(link);
     expect(mockTrack).toHaveBeenCalledWith(
-      'Peace Club Card Clicked',
-      expect.objectContaining({ type: 'carer', club_name: '테스트 동아리' }),
+      'Recommended Club Clicked',
+      expect.objectContaining({
+        festival: 'un_peace_2026',
+        type: 'carer',
+        club_id: 'club-1',
+        club_name: '테스트 동아리',
+      }),
     );
   });
 

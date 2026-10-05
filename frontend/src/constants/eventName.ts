@@ -144,19 +144,19 @@ export const USER_EVENT = {
   /** 홍보 상세 이미지 더보기 클릭 */
   PROMOTION_IMAGE_MORE_CLICKED: 'Promotion Image More Clicked',
 
-  // 평화축제 (2026-10 행사 종료 후 제거 대상)
-  /** 평화축제 퀴즈 시작 */
-  PEACE_QUIZ_STARTED: 'Peace Quiz Started',
-  /** 평화축제 퀴즈 완료 */
-  PEACE_QUIZ_COMPLETED: 'Peace Quiz Completed',
-  /** 평화축제 결과의 추천 동아리 카드 클릭 */
-  PEACE_CLUB_CARD_CLICKED: 'Peace Club Card Clicked',
-  /** 평화축제 다시하기 클릭 */
-  PEACE_RETRY_CLICKED: 'Peace Retry Clicked',
-  /** 평화축제 결과 공유 클릭 */
-  PEACE_SHARE_CLICKED: 'Peace Share Clicked',
-  /** 평화축제 결과의 "부경대 학생이라면?" 토글 펼침 */
-  PEACE_STUDENT_TOGGLE_OPENED: 'Peace Student Toggle Opened',
+  // 퀴즈 (festival로 행사 구분. 평화축제는 2026-10 행사 종료 후 제거 대상)
+  /** 퀴즈 시작 */
+  QUIZ_STARTED: 'Quiz Started',
+  /** 퀴즈 완료 (type으로 결과 유형) */
+  QUIZ_COMPLETED: 'Quiz Completed',
+  /** 퀴즈 결과의 추천 동아리 클릭. 홈 퍼널을 오염시키지 않도록 Club Card Clicked와 분리한다 */
+  RECOMMENDED_CLUB_CLICKED: 'Recommended Club Clicked',
+  /** 퀴즈 다시하기 버튼 클릭 */
+  QUIZ_RETRY_BUTTON_CLICKED: 'Quiz Retry Button Clicked',
+  /** 퀴즈 결과 공유 버튼 클릭 */
+  QUIZ_SHARE_BUTTON_CLICKED: 'Quiz Share Button Clicked',
+  /** 퀴즈 결과의 "부경대 학생이라면?" 영역 펼침 */
+  QUIZ_STUDENT_SECTION_OPENED: 'Quiz Student Section Opened',
 } as const;
 
 export const WEBVIEW_LINK_TARGET = {

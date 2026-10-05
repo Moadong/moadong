@@ -29,32 +29,38 @@
 
 ### 학생(USER_EVENT)
 
-| 옛 이벤트명                        | 새 이벤트명                         | 추가 속성                  | 처리      |
-| ---------------------------------- | ----------------------------------- | -------------------------- | --------- |
-| `CategoryButton Clicked`           | `Category Button Clicked`           |                            | 이름 변경 |
-| `Main Popup Not Shown`             | `Main Popup Skipped`                |                            | 이름 변경 |
-| `우체통 진입 클릭`                 | `Feedback Entry Clicked`            |                            | 이름 변경 |
-| `우체통 피드백 유형 선택`          | `Feedback Type Selected`            |                            | 이름 변경 |
-| `우체통 피드백 전송`               | `Feedback Submitted`                |                            | 이름 변경 |
-| `우체통 피드백 전송 실패`          | `Feedback Submit Failed`            |                            | 이름 변경 |
-| `우체통 작성 이탈`                 | `Feedback Write Abandoned`          |                            | 이름 변경 |
-| `우체통 받은 편지 열람`            | `Received Letter Opened`            |                            | 이름 변경 |
-| `만족도 모달 노출`                 | `Satisfaction Modal Viewed`         |                            | 이름 변경 |
-| `만족도 응답`                      | `Satisfaction Answered`             |                            | 이름 변경 |
-| `만족도 응답 미룸`                 | `Satisfaction Snoozed`              |                            | 이름 변경 |
-| `ClubCard Clicked`                 | `Club Card Clicked`                 |                            | 이름 변경 |
-| `ClubCard Viewed`                  | `Club Card Viewed`                  |                            | 이름 변경 |
-| `Club Intro Tab Clicked`           | `Club Detail Tab Clicked`           | `tab: 'intro'`             | 통합      |
-| `Club Feed Tab Clicked`            | `Club Detail Tab Clicked`           | `tab: 'photos'`            | 통합      |
-| `Club Schedule Tab Clicked`        | `Club Detail Tab Clicked`           | `tab: 'schedule'`          | 통합      |
-| `StatusRadioButton Clicked`        | `Status Radio Button Clicked`       |                            | 이름 변경 |
-| `BottomTab Clicked`                | `Bottom Tab Clicked`                |                            | 이름 변경 |
-| `Festival BoothMap Slide Changed`  | `Festival Booth Map Slide Changed`  |                            | 이름 변경 |
-| `Festival PerformanceCard Clicked` | `Festival Performance Card Clicked` |                            | 이름 변경 |
-| `Festival Tab Duration`            | `Festival Tab Left`                 |                            | 이름 변경 |
-| `2026-daedong Day Changed`         | `Busking Day Changed`               | `festival: 'daedong_2026'` | 이름 변경 |
-| `2026-daedong Day Duration`        | `Busking Day Left`                  | `festival: 'daedong_2026'` | 이름 변경 |
-| `Webview Subscribe Toggled`        | `Club Subscription Toggled`         |                            | 이름 변경 |
+| 옛 이벤트명                        | 새 이벤트명                         | 추가 속성                              | 처리      |
+| ---------------------------------- | ----------------------------------- | -------------------------------------- | --------- |
+| `CategoryButton Clicked`           | `Category Button Clicked`           |                                        | 이름 변경 |
+| `Main Popup Not Shown`             | `Main Popup Skipped`                |                                        | 이름 변경 |
+| `우체통 진입 클릭`                 | `Feedback Entry Clicked`            |                                        | 이름 변경 |
+| `우체통 피드백 유형 선택`          | `Feedback Type Selected`            |                                        | 이름 변경 |
+| `우체통 피드백 전송`               | `Feedback Submitted`                |                                        | 이름 변경 |
+| `우체통 피드백 전송 실패`          | `Feedback Submit Failed`            |                                        | 이름 변경 |
+| `우체통 작성 이탈`                 | `Feedback Write Abandoned`          |                                        | 이름 변경 |
+| `우체통 받은 편지 열람`            | `Received Letter Opened`            |                                        | 이름 변경 |
+| `만족도 모달 노출`                 | `Satisfaction Modal Viewed`         |                                        | 이름 변경 |
+| `만족도 응답`                      | `Satisfaction Answered`             |                                        | 이름 변경 |
+| `만족도 응답 미룸`                 | `Satisfaction Snoozed`              |                                        | 이름 변경 |
+| `ClubCard Clicked`                 | `Club Card Clicked`                 |                                        | 이름 변경 |
+| `ClubCard Viewed`                  | `Club Card Viewed`                  |                                        | 이름 변경 |
+| `Club Intro Tab Clicked`           | `Club Detail Tab Clicked`           | `tab: 'intro'`                         | 통합      |
+| `Club Feed Tab Clicked`            | `Club Detail Tab Clicked`           | `tab: 'photos'`                        | 통합      |
+| `Club Schedule Tab Clicked`        | `Club Detail Tab Clicked`           | `tab: 'schedule'`                      | 통합      |
+| `StatusRadioButton Clicked`        | `Status Radio Button Clicked`       |                                        | 이름 변경 |
+| `BottomTab Clicked`                | `Bottom Tab Clicked`                |                                        | 이름 변경 |
+| `Festival BoothMap Slide Changed`  | `Festival Booth Map Slide Changed`  |                                        | 이름 변경 |
+| `Festival PerformanceCard Clicked` | `Festival Performance Card Clicked` |                                        | 이름 변경 |
+| `Festival Tab Duration`            | `Festival Tab Left`                 |                                        | 이름 변경 |
+| `2026-daedong Day Changed`         | `Busking Day Changed`               | `festival: 'daedong_2026'`             | 이름 변경 |
+| `2026-daedong Day Duration`        | `Busking Day Left`                  | `festival: 'daedong_2026'`             | 이름 변경 |
+| `Webview Subscribe Toggled`        | `Club Subscription Toggled`         |                                        | 이름 변경 |
+| `Peace Quiz Started`               | `Quiz Started`                      | `festival: 'un_peace_2026'`            | 이름 변경 |
+| `Peace Quiz Completed`             | `Quiz Completed`                    | `festival: 'un_peace_2026'`            | 이름 변경 |
+| `Peace Club Card Clicked`          | `Recommended Club Clicked`          | `festival: 'un_peace_2026'`, `club_id` | 이름 변경 |
+| `Peace Retry Clicked`              | `Quiz Retry Button Clicked`         | `festival: 'un_peace_2026'`            | 이름 변경 |
+| `Peace Share Clicked`              | `Quiz Share Button Clicked`         | `festival: 'un_peace_2026'`            | 이름 변경 |
+| `Peace Student Toggle Opened`      | `Quiz Student Section Opened`       | `festival: 'un_peace_2026'`            | 이름 변경 |
 
 ### 관리자(ADMIN_EVENT)
 

@@ -5,6 +5,7 @@ import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import PeaceLayout from './components/PeaceLayout/PeaceLayout';
+import { PEACE_FESTIVAL } from './constants/festival';
 import { ANALYZING_MS, KIOSK_IDLE_MS } from './constants/kiosk';
 import { PEACE_GREEN } from './constants/peaceColors';
 import { PEACE_QUESTIONS } from './data/questions';
@@ -59,7 +60,12 @@ const PeaceQuizPage = () => {
     setAnswers(next);
     if (next.length === TOTAL) {
       const [type, sub] = rankPeaceTypes(next);
-      trackEvent(USER_EVENT.PEACE_QUIZ_COMPLETED, { type, sub, src });
+      trackEvent(USER_EVENT.QUIZ_COMPLETED, {
+        festival: PEACE_FESTIVAL,
+        type,
+        sub,
+        src,
+      });
       // "분석 중"을 잠깐 보여준 뒤 결과로 간다. 답 8개를 실어 결과가 유형별 비율을 계산한다
       const answersParam = next.join('');
       analyzingTimerRef.current = window.setTimeout(() => {
