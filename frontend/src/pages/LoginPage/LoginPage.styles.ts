@@ -54,7 +54,7 @@ export const LogoGroup = styled.div`
   margin-bottom: clamp(20px, 4vh, 56px);
 
   ${media.tablet} {
-    margin-top: 100px;
+    margin-top: auto;
     margin-bottom: 40px;
     flex-shrink: 0;
     gap: 4px;
