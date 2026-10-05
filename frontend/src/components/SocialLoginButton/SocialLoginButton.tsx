@@ -23,7 +23,7 @@ const SocialLoginButton = ({ provider, onClick }: SocialLoginButtonProps) => {
   return (
     <Styled.SocialButton $provider={provider} onClick={onClick}>
       <Styled.LogoWrapper $width={WRAPPER_WIDTH}>
-        <img src={icon} alt="" />
+        <img src={icon} alt='' />
       </Styled.LogoWrapper>
       <Styled.Label>{label}</Styled.Label>
       <Styled.Spacer $width={WRAPPER_WIDTH} />
