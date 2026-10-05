@@ -466,11 +466,27 @@ class FeedbackAdminServiceTest {
         when(letterRepository.findById("letter-1")).thenReturn(Optional.of(
                 Letter.broadcast(LetterCategory.UPDATE, "공지 제목", "공지 본문", "request-1")));
         when(letterRepository.updateContent(any(), any(), any())).thenReturn(0L);
+        when(letterRepository.existsById("letter-1")).thenReturn(false);
 
         RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.updateLetter(
                 "letter-1", new LetterUpdateRequest("고친 공지", "고친 본문")));
 
         assertEquals(ErrorCode.LETTER_NOT_FOUND, exception.getErrorCode());
+    }
+
+    @Test
+    void 같은_내용으로_다시_저장해도_성공한다() {
+        // 바뀐 문서가 없어 updateContent가 0을 돌려줘도 편지가 남아 있으면 실패가 아니다.
+        when(letterRepository.findById("letter-1")).thenReturn(Optional.of(
+                Letter.broadcast(LetterCategory.UPDATE, "공지 제목", "공지 본문", "request-1")));
+        when(letterRepository.updateContent(any(), any(), any())).thenReturn(0L);
+        when(letterRepository.existsById("letter-1")).thenReturn(true);
+
+        AdminSentLetterResponse response = feedbackAdminService.updateLetter(
+                "letter-1", new LetterUpdateRequest("공지 제목", "공지 본문"));
+
+        assertEquals("공지 제목", response.title());
+        assertEquals("공지 본문", response.body());
     }
 
     private Feedback feedbackOf(String feedbackId, String studentId) {

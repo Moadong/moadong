@@ -92,8 +92,10 @@ public class FeedbackAdminService {
         Letter letter = letterRepository.findById(letterId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.LETTER_NOT_FOUND));
 
-        // 조회와 수정 사이에 문서가 지워졌으면 수정된 문서가 없다.
-        if (letterRepository.updateContent(letterId, request.title(), request.body()) == 0) {
+        // @Update의 반환값은 실제로 바뀐 문서 수라서, 같은 내용을 다시 저장해도 0이다.
+        // 0일 때만 다시 확인해 조회와 수정 사이에 지워진 경우를 가려낸다.
+        if (letterRepository.updateContent(letterId, request.title(), request.body()) == 0
+                && !letterRepository.existsById(letterId)) {
             throw new RestApiException(ErrorCode.LETTER_NOT_FOUND);
         }
         letter.edit(request.title(), request.body());
