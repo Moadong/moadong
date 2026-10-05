@@ -37,6 +37,7 @@ const PromotionMapSection = ({ article }: Props) => {
   const handleMapClick = () => {
     trackEvent(USER_EVENT.PROMOTION_MAP_CLICKED, {
       promotion_id: article.id,
+      club_id: article.clubId,
       club_name: article.clubName,
       location: article.location,
     });

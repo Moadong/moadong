@@ -129,7 +129,7 @@ const useClubInfoEdit = () => {
   };
 
   const handleUpdateClub = () => {
-    trackEvent(ADMIN_EVENT.UPDATE_CLUB_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.CLUB_UPDATE_BUTTON_CLICKED, { section: 'info' });
 
     if (!clubDetail || !clubDetail.id) {
       alert('클럽 정보가 로드되지 않았습니다.');

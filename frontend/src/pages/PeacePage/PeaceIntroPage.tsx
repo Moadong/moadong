@@ -8,6 +8,7 @@ import PeaceLayout, {
 } from './components/PeaceLayout/PeaceLayout';
 import { CARD_IMAGES } from './components/ResultCard/cardImages';
 import { SYMBOL_IMAGES } from './components/ResultCard/symbolImages';
+import { PEACE_FESTIVAL } from './constants/festival';
 import { PEACE_GREEN } from './constants/peaceColors';
 import { usePeaceParams } from './hooks/usePeaceParams';
 import * as Styled from './PeaceIntroPage.styles';
@@ -26,7 +27,7 @@ const PeaceIntroPage = () => {
   const { src, withParams } = usePeaceParams();
 
   const handleStart = () => {
-    trackEvent(USER_EVENT.PEACE_QUIZ_STARTED, { src });
+    trackEvent(USER_EVENT.QUIZ_STARTED, { festival: PEACE_FESTIVAL, src });
     navigate(withParams('/peace/quiz'));
   };
 

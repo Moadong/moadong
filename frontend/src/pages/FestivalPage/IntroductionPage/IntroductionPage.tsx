@@ -29,7 +29,7 @@ const IntroductionPage = () => {
     const startTime = Date.now();
     return () => {
       const duration = Date.now() - startTime;
-      trackEvent(USER_EVENT.FESTIVAL_TAB_DURATION, {
+      trackEvent(USER_EVENT.FESTIVAL_TAB_LEFT, {
         tab: activeTab,
         duration,
         duration_seconds: Math.round(duration / 1000),
