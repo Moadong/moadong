@@ -89,7 +89,10 @@ const ClubApplyButton = () => {
   };
 
   const handleApplyButtonClick = async () => {
-    trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED);
+    trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED, {
+      club_id: clubDetail.id,
+      club_name: clubDetail.name,
+    });
 
     if (isRecruitmentClosed) {
       alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);

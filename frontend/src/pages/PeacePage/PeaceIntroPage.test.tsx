@@ -7,7 +7,10 @@ import { ThemeProvider } from 'styled-components';
 import { theme } from '@/styles/theme';
 import PeaceIntroPage from './PeaceIntroPage';
 
-jest.mock('mixpanel-browser', () => ({ track: jest.fn() }));
+const mockTrack = jest.fn();
+jest.mock('mixpanel-browser', () => ({
+  track: (...args: unknown[]) => mockTrack(...args),
+}));
 jest.mock('./components/PeaceLayout/PeaceLayout', () => ({
   __esModule: true,
   default: ({ children }: { children: ReactNode }) => <div>{children}</div>,
@@ -32,6 +35,10 @@ const renderIntro = (search = '') =>
   );
 
 describe('PeaceIntroPage', () => {
+  beforeEach(() => {
+    mockTrack.mockClear();
+  });
+
   it('제목과 시작하기 버튼을 그린다', () => {
     renderIntro();
     expect(screen.getByText('나와 맞는 평화 활동 찾기')).toBeInTheDocument();
@@ -44,6 +51,10 @@ describe('PeaceIntroPage', () => {
     renderIntro();
     await userEvent.click(screen.getByRole('button', { name: '시작하기' }));
     expect(screen.getByText('QUIZ')).toBeInTheDocument();
+    expect(mockTrack).toHaveBeenCalledWith(
+      'Quiz Started',
+      expect.objectContaining({ festival: 'un_peace_2026' }),
+    );
   });
 
   it('부스 모드와 유입 경로 파라미터를 퀴즈로 이어 넘긴다', async () => {

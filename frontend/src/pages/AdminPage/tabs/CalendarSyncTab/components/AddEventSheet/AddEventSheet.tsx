@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import ResponsiveSheet from '@/components/common/ResponsiveSheet/ResponsiveSheet';
 import { DEFAULT_CALENDAR_EVENT_COLOR } from '@/constants/calendarEventColors';
-import { ADMIN_EVENT } from '@/constants/eventName';
+import { ADMIN_EVENT, INPUT_FIELD } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useCreateCustomCalendarEvent } from '@/hooks/Queries/useCustomCalendarEvents';
 import { colors } from '@/styles/theme/colors';
@@ -66,8 +66,8 @@ const AddEventSheet = ({
   /** 어느 유형에서 어떤 날짜를 골랐는지 남긴다 */
   const trackDateSelected = (dateKey: string) =>
     trackEvent(ADMIN_EVENT.CALENDAR_EVENT_DATE_SELECTED, {
-      eventType,
-      dateKey,
+      event_type: eventType,
+      date_key: dateKey,
     });
 
   const openDatePicker = (target: 'start' | 'end') => {
@@ -168,10 +168,11 @@ const AddEventSheet = ({
     createMutation.mutate(buildPayload(), {
       onSuccess: () => {
         trackEvent(ADMIN_EVENT.CALENDAR_EVENT_CREATED, {
-          eventType,
+          event_type: eventType,
           color,
           frequency: eventType === 'RECURRING' ? frequency : undefined,
-          hasEndDate: eventType === 'RECURRING' ? recurEnd !== null : undefined,
+          has_end_date:
+            eventType === 'RECURRING' ? recurEnd !== null : undefined,
         });
         onClose();
       },
@@ -191,14 +192,16 @@ const AddEventSheet = ({
           value={title}
           onChange={setTitle}
           onClear={() =>
-            trackEvent(ADMIN_EVENT.CALENDAR_TITLE_CLEAR_BUTTON_CLICKED)
+            trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+              field: INPUT_FIELD.CALENDAR_EVENT_TITLE,
+            })
           }
         />
         <SegmentTabs
           value={eventType}
           onChange={(nextType) => {
             trackEvent(ADMIN_EVENT.CALENDAR_EVENT_TYPE_TAB_CLICKED, {
-              eventType: nextType,
+              event_type: nextType,
             });
             setEventType(nextType);
           }}
@@ -295,7 +298,7 @@ const AddEventSheet = ({
         month={month}
         onMonthChange={(nextMonth) => {
           trackEvent(ADMIN_EVENT.CALENDAR_MONTH_CHANGED, {
-            calendarType: 'picker',
+            calendar_type: 'picker',
           });
           setMonth(nextMonth);
         }}

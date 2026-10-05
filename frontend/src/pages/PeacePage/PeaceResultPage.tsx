@@ -13,6 +13,7 @@ import PeaceLayout, {
 } from './components/PeaceLayout/PeaceLayout';
 import RecommendedClubs from './components/RecommendedClubs/RecommendedClubs';
 import ResultCard from './components/ResultCard/ResultCard';
+import { PEACE_FESTIVAL } from './constants/festival';
 import { KIOSK_IDLE_MS } from './constants/kiosk';
 import { isPeaceTypeId, PEACE_TYPES, PeaceTypeId } from './data/peaceTypes';
 import { PEACE_QUESTIONS } from './data/questions';
@@ -75,21 +76,28 @@ const PeaceResultPage = () => {
   const palette = theme.colors.secondary[type.colorIndex];
 
   const handleClubClick = (club: Club) => {
-    trackEvent(USER_EVENT.PEACE_CLUB_CARD_CLICKED, {
+    trackEvent(USER_EVENT.RECOMMENDED_CLUB_CLICKED, {
+      festival: PEACE_FESTIVAL,
       type: type.id,
-      clubName: club.name,
+      club_id: club.id,
+      club_name: club.name,
       src,
     });
   };
 
   const handleRetry = () => {
-    trackEvent(USER_EVENT.PEACE_RETRY_CLICKED, { type: type.id, src });
+    trackEvent(USER_EVENT.QUIZ_RETRY_BUTTON_CLICKED, {
+      festival: PEACE_FESTIVAL,
+      type: type.id,
+      src,
+    });
     navigate(withParams('/peace'), { replace: true });
   };
 
   const handleStudentToggle = () => {
     if (!isStudentOpen) {
-      trackEvent(USER_EVENT.PEACE_STUDENT_TOGGLE_OPENED, {
+      trackEvent(USER_EVENT.QUIZ_STUDENT_SECTION_OPENED, {
+        festival: PEACE_FESTIVAL,
         type: type.id,
         src,
       });
@@ -99,7 +107,11 @@ const PeaceResultPage = () => {
 
   const handleShareClick = () => {
     const url = buildResultUrl(type.id, answersParam, 'share');
-    trackEvent(USER_EVENT.PEACE_SHARE_CLICKED, { type: type.id, src });
+    trackEvent(USER_EVENT.QUIZ_SHARE_BUTTON_CLICKED, {
+      festival: PEACE_FESTIVAL,
+      type: type.id,
+      src,
+    });
     handleShare({
       title: PEACE_PAGE_TITLE,
       text: `나는 ${type.name}! ${type.catchphrase} ${url}`,

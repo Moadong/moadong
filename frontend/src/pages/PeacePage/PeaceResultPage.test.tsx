@@ -40,11 +40,11 @@ jest.mock('./components/RecommendedClubs/RecommendedClubs', () => ({
     onClubClick,
   }: {
     category: string;
-    onClubClick: (club: { name: string }) => void;
+    onClubClick: (club: { id: string; name: string }) => void;
   }) => (
     <a
       href='/clubDetail/@테스트 동아리'
-      onClick={() => onClubClick({ name: '테스트 동아리' })}
+      onClick={() => onClubClick({ id: 'club-1', name: '테스트 동아리' })}
     >
       {`CLUBS ${category}`}
     </a>
@@ -83,6 +83,10 @@ const renderResult = (search: string) =>
   );
 
 describe('PeaceResultPage', () => {
+  beforeEach(() => {
+    mockTrack.mockClear();
+  });
+
   it('유효한 type이면 카드·설명·강점·주의점·작은 행동을 그린다', () => {
     renderResult('?type=carer');
     const carer = PEACE_TYPES.carer;
@@ -133,8 +137,13 @@ describe('PeaceResultPage', () => {
     link.addEventListener('click', (e) => e.preventDefault());
     await userEvent.click(link);
     expect(mockTrack).toHaveBeenCalledWith(
-      'Peace Club Card Clicked',
-      expect.objectContaining({ type: 'carer', clubName: '테스트 동아리' }),
+      'Recommended Club Clicked',
+      expect.objectContaining({
+        festival: 'un_peace_2026',
+        type: 'carer',
+        club_id: 'club-1',
+        club_name: '테스트 동아리',
+      }),
     );
   });
 
@@ -154,6 +163,10 @@ describe('PeaceResultPage', () => {
     renderResult('?type=carer');
     await userEvent.click(screen.getByRole('button', { name: '다시하기' }));
     expect(screen.getByText(/^INTRO/)).toBeInTheDocument();
+    expect(mockTrack).toHaveBeenCalledWith(
+      'Quiz Retry Button Clicked',
+      expect.objectContaining({ festival: 'un_peace_2026', type: 'carer' }),
+    );
   });
 
   it('답이 있으면 유형별 비율을 점수 순으로 보여준다', () => {
@@ -227,6 +240,10 @@ describe('PeaceResultPage', () => {
       expect.objectContaining({
         url: 'http://localhost/peace/result?type=carer&a=00000000&src=share',
       }),
+    );
+    expect(mockTrack).toHaveBeenCalledWith(
+      'Quiz Share Button Clicked',
+      expect.objectContaining({ festival: 'un_peace_2026', type: 'carer' }),
     );
   });
 

@@ -35,7 +35,11 @@ const LegacyClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
-  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
+  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, {
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
   useTrackClubDetailDuration({
     clubId: clubDetail?.id,
     clubName: clubDetail?.name,
@@ -45,13 +49,13 @@ const LegacyClubDetailPage = () => {
   const handleTabClick = useCallback(
     (tabKey: TabType) => {
       setSearchParams({ tab: tabKey }, { replace: true });
-      trackEvent(
-        tabKey === TAB_TYPE.INTRO
-          ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
-          : USER_EVENT.CLUB_FEED_TAB_CLICKED,
-      );
+      trackEvent(USER_EVENT.CLUB_DETAIL_TAB_CLICKED, {
+        tab: tabKey,
+        club_id: clubDetail?.id,
+        club_name: clubDetail?.name,
+      });
     },
-    [setSearchParams, trackEvent],
+    [setSearchParams, trackEvent, clubDetail?.id, clubDetail?.name],
   );
 
   if (error) {
@@ -68,6 +72,7 @@ const LegacyClubDetailPage = () => {
       <Styled.Container>
         <Styled.ContentWrapper>
           <ClubProfileCard
+            clubId={clubDetail.id}
             name={clubDetail.name}
             logo={clubDetail.logo}
             cover={clubDetail.cover}

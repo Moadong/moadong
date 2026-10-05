@@ -123,7 +123,9 @@ npm run generate:sitemap # sitemap.xml 생성
 
 ### Mixpanel 이벤트 트래킹
 
-- 이벤트명은 `src/constants/eventName.ts`의 `USER_EVENT`에서 관리, 문자열 하드코딩 금지
+- 네이밍 규칙은 [`docs/features/analytics/mixpanel-naming-convention.md`](docs/features/analytics/mixpanel-naming-convention.md)를 따른다. 이벤트는 영문 Title Case `[명사] + [과거형 동사]`, 속성 키는 snake_case, 한글 설명은 JSDoc 주석으로
+- 이벤트명은 `src/constants/eventName.ts`(`USER_EVENT`·`ADMIN_EVENT`·`PAGE_EVENT`)에서 관리, 문자열 하드코딩·동적 이벤트명 금지 (ESLint `local/no-hardcoded-event-name`)
+- 변형·동적 값(탭 종류, 페이지명, 연도 등)은 이벤트명이 아니라 속성으로 보낸다. 페이지뷰는 `useTrackPageView(PAGE_VIEW.XXX)` → `Page Viewed` / `Page Left` + `page_name`
 - sessionStorage 키는 `page + id` 스코프로 작성
 
 ## 테스트 & Storybook

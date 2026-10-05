@@ -30,7 +30,7 @@ const SatisfactionModal = () => {
     if (!isOpen || trackedShownRef.current) return;
 
     trackedShownRef.current = true;
-    trackEvent(USER_EVENT.SATISFACTION_SHOWN);
+    trackEvent(USER_EVENT.SATISFACTION_MODAL_VIEWED);
   }, [isOpen, trackEvent]);
 
   const handleSatisfied = () => {

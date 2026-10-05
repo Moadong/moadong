@@ -39,10 +39,13 @@ const ApplicationFormPage = () => {
     error: applicationError,
   } = useGetApplication(clubId, applicationFormId);
 
-  useTrackPageView(
-    PAGE_VIEW.APPLICATION_FORM_PAGE,
-    clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
-  );
+  // 동아리 정보가 오기 전에 기록하면 이름이 채워질 때 한 번 더 기록된다. 조회가 실패해도 방문은 남긴다.
+  // 실패 뒤 재조회로 이름이 채워지면 한 번 더 기록되는데, 드물고 동아리 정보가 붙은 기록을 남기는 편이 낫다고 보고 허용한다.
+  useTrackPageView(PAGE_VIEW.APPLICATION_FORM_PAGE, {
+    clubId: clubDetail?.id ?? clubId,
+    clubName: clubDetail?.name,
+    skip: !clubDetail && !clubError,
+  });
 
   const STORAGE_KEY =
     clubId && applicationFormId

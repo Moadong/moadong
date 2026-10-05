@@ -3,7 +3,7 @@ import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/Fix
 import InputField from '@/components/common/InputField/InputField';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PASSWORD_MAX } from '@/constants/adminFieldLimits';
-import { ADMIN_EVENT } from '@/constants/eventName';
+import { ADMIN_EVENT, INPUT_FIELD } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './AccountEditTabMobile.styles';
 
@@ -61,7 +61,9 @@ const AccountEditTabMobile = ({
                 onChange={(e) => setNewPassword(e.target.value)}
                 onClear={() => {
                   setNewPassword('');
-                  trackEvent(ADMIN_EVENT.NEW_PASSWORD_CLEAR_BUTTON_CLICKED);
+                  trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                    field: INPUT_FIELD.NEW_PASSWORD,
+                  });
                 }}
                 maxLength={PASSWORD_MAX}
                 isError={isPasswordValid}
@@ -79,7 +81,9 @@ const AccountEditTabMobile = ({
                 onChange={(e) => setConfirmPassword(e.target.value)}
                 onClear={() => {
                   setConfirmPassword('');
-                  trackEvent(ADMIN_EVENT.CONFIRM_PASSWORD_CLEAR_BUTTON_CLICKED);
+                  trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                    field: INPUT_FIELD.CONFIRM_PASSWORD,
+                  });
                 }}
                 maxLength={PASSWORD_MAX}
                 isError={isPasswordMatching}

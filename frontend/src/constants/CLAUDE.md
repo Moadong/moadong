@@ -5,7 +5,7 @@
 - `queryKeys.ts` - React Query 쿼리 키 (도메인.액션 형식)
 - `storageKeys.ts` - localStorage 키 (`accessToken`, `studentAccessToken`, `hasConsentedPersonalInfo`, `MOADONG_QUERY_CACHE`)
 - `status.ts` - 지원 상태 정의 (PENDING, APPROVED, REJECTED 등)
-- `eventName.ts` - Mixpanel 이벤트명 (`USER_EVENT`, `PAGE_VIEW`, `PAGE_NAME`). 평화축제(`PEACE_*`)는 2026-10 행사 종료 후 제거 대상
+- `eventName.ts` - Mixpanel 이벤트명 (`USER_EVENT` 학생, `ADMIN_EVENT` 관리자, `PAGE_EVENT` + `PAGE_VIEW` 페이지뷰). 값은 영문, 상수마다 한글 JSDoc (규칙: `docs/features/analytics/mixpanel-naming-convention.md`). 평화축제 퀴즈 이벤트(`QUIZ_*`·`RECOMMENDED_CLUB_CLICKED`, `PEACE_*_PAGE`)는 2026-10 행사 종료 후 제거 대상
 - `api.ts` - API 엔드포인트 URL
 - `snsConfig.ts` - SNS 플랫폼 설정
 - `applicationForm.ts` - 지원서 폼 설정
