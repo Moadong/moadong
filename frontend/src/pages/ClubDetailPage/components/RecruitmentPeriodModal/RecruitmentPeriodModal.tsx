@@ -45,10 +45,19 @@ const RecruitmentPeriodModal = ({
   const currentEnd = recruitmentDateParser(clubDetail.recruitmentEnd);
   const currentStart = recruitmentDateParser(clubDetail.recruitmentStart);
 
+  const today = new Date();
   const earlyCloseNum = parseInt(earlyCloseDays, 10);
   const extendNum = parseInt(extendDays, 10);
 
-  const validEarlyClose = earlyCloseDays !== '' && earlyCloseNum > 0;
+  // 조기 마감일이 지금 마감일보다 늦으면 "조기 마감"이라는 이름으로 기간이 늘어난다.
+  // 상시 모집은 마감일이 먼 미래라 해당 없다.
+  const isEarlyCloseTooLate =
+    !isAlways &&
+    !!currentEnd &&
+    earlyCloseNum > 0 &&
+    addDays(today, earlyCloseNum) >= currentEnd;
+  const validEarlyClose =
+    earlyCloseDays !== '' && earlyCloseNum > 0 && !isEarlyCloseTooLate;
   const validExtend = extendDays !== '' && extendNum > 0 && !!currentEnd;
 
   const isExitingAlways = isAlways && switchToAlways;
@@ -59,15 +68,18 @@ const RecruitmentPeriodModal = ({
       isExitingAlways) &&
     !isPending;
 
-  const today = new Date();
   const earlyClosePreview = validEarlyClose
     ? addDays(today, earlyCloseNum)
     : null;
   const extendPreview =
     validExtend && currentEnd ? addDays(currentEnd, extendNum) : null;
 
+  // 일수 없이 상시 모집을 해제하면 바로 마감한다. 시작일이 이미 지났으면 시작일 대신 오늘로 마감해
+  // 과거 날짜가 마감일로 저장되지 않게 한다.
+  const exitAlwaysEnd =
+    currentStart && currentStart > today ? currentStart : today;
   const exitAlwaysDefaultDate =
-    isExitingAlways && !validEarlyClose ? currentStart : null;
+    isExitingAlways && !validEarlyClose ? exitAlwaysEnd : null;
 
   const validateDaysInput = (value: string): boolean => {
     if (value === '') return true;
@@ -123,7 +135,7 @@ const RecruitmentPeriodModal = ({
         newEnd = addDays(today, earlyCloseNum);
         days = earlyCloseNum;
       } else {
-        newEnd = currentStart ?? today;
+        newEnd = exitAlwaysEnd;
       }
     } else if (!isAlways && switchToAlways) {
       actionType = 'switchToAlways';
@@ -158,6 +170,10 @@ const RecruitmentPeriodModal = ({
           handleClose();
           onSuccess();
         },
+        // 공통 훅의 onError는 콘솔에만 남겨서, 여기서 안내하지 않으면 모달만 열린 채 아무 일도 없어 보인다.
+        onError: () => {
+          alert('모집 기간 변경에 실패했어요. 다시 시도해주세요.');
+        },
       },
     );
   };
@@ -167,6 +183,13 @@ const RecruitmentPeriodModal = ({
     : `${formatShort(currentStart)} ~ ${formatShort(currentEnd)}`;
 
   const earlyCloseDisabled = !isAlways && switchToAlways;
+
+  const getEarlyClosePreviewText = () => {
+    if (earlyClosePreview) return `→ ${formatPreview(earlyClosePreview)} 마감`;
+    if (isEarlyCloseTooLate && currentEnd)
+      return `→ ${formatPreview(currentEnd)} 전이어야 해요`;
+    return '→ 날짜 미리보기';
+  };
 
   return (
     <Modal isOpen={isOpen} onClose={handleClose}>
@@ -192,16 +215,20 @@ const RecruitmentPeriodModal = ({
                     width='100%'
                     showClearButton={false}
                     placeholder='0'
+                    ariaLabel='조기 마감 일수'
                     value={earlyCloseDays}
                     onChange={(e) => handleEarlyCloseDaysChange(e.target.value)}
                     disabled={earlyCloseDisabled}
                   />
                 </Styled.InputFieldWrapper>
                 <Styled.InputSuffix>일 뒤 마감</Styled.InputSuffix>
-                <Styled.Preview $empty={!earlyClosePreview}>
-                  {earlyClosePreview
-                    ? `→ ${formatPreview(earlyClosePreview)} 마감`
-                    : '→ 날짜 미리보기'}
+                {/* 확인이 꺼진 이유(마감일 이후)가 이 문구로만 드러나서 스크린 리더에도 바뀔 때 읽힌다 */}
+                <Styled.Preview
+                  $empty={!earlyClosePreview}
+                  $error={isEarlyCloseTooLate}
+                  aria-live='polite'
+                >
+                  {getEarlyClosePreviewText()}
                 </Styled.Preview>
               </Styled.InputRow>
             </Styled.FieldGroup>
@@ -215,6 +242,7 @@ const RecruitmentPeriodModal = ({
                       width='100%'
                       showClearButton={false}
                       placeholder='0'
+                      ariaLabel='기간 연장 일수'
                       value={extendDays}
                       onChange={(e) => handleExtendDaysChange(e.target.value)}
                       disabled={switchToAlways}
@@ -233,6 +261,7 @@ const RecruitmentPeriodModal = ({
             <Styled.AlwaysToggleWrapper>
               <ToggleButton
                 active={switchToAlways}
+                aria-pressed={switchToAlways}
                 onClick={handleToggleAlways}
               >
                 {isAlways ? '상시 모집 해제' : '상시 모집으로 전환'}

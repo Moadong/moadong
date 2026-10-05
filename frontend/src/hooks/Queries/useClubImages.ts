@@ -1,7 +1,6 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { feedApi, logoApi, uploadToStorage } from '@/apis/image';
 import { queryKeys } from '@/constants/queryKeys';
-import { ALLOWED_IMAGE_TYPES } from '@/constants/uploadLimit';
 
 type ItemStatus = 'pending' | 'uploading' | 'failed';
 
@@ -29,13 +28,11 @@ export const useUploadFeed = () => {
       onItemStatusChange,
     }: FeedUploadParams) => {
       // 1. presigned URL 요청
+      // presign에 실은 값과 PUT의 Content-Type이 어긋나면 서명이 깨져 R2가 403을 낸다.
+      // uploadToStorage가 file.type || 'image/jpeg'를 보내므로 같은 식을 쓴다.
       const uploadRequests = files.map((file) => ({
         fileName: file.name,
-        contentType: (ALLOWED_IMAGE_TYPES as readonly string[]).includes(
-          file.type,
-        )
-          ? file.type
-          : 'image/jpeg',
+        contentType: file.type || 'image/jpeg',
       }));
       const feedResArr = await feedApi.getUploadUrls(clubId, uploadRequests);
 

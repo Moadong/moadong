@@ -117,7 +117,7 @@ npm run generate:sitemap # sitemap.xml 생성
 
 - styled-components 사용, 테마 시스템 활용
 - `any` 금지, 명시적 타입 정의
-- 상수는 `src/constants/`에서 관리
+- 여러 파일이 공유하는 상수는 `src/constants/`에서 관리, 한 파일에서만 쓰는 상수는 그 파일 상단에 둔다
 - 데이터 패칭은 `src/hooks/Queries/`의 기존 패턴을 우선 재사용
 - API 호출은 `src/apis/`에 두고 페이지/컴포넌트에 분산시키지 않음
 
@@ -143,6 +143,8 @@ npm run generate:sitemap # sitemap.xml 생성
 - `API훅부서.md` - React Query 훅 생성 및 관리 전담
 
 Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
+
+`src/`를 바꾸는 커밋·PR 전에는 `.claude/skills/frontend-fundamentals` 스킬을 먼저 돌린다. "커밋해줘", "PR 올려줘"처럼 말로 요청받아도 마찬가지다(`/commit`은 이미 포함).
 
 ## 폴더별 문서 인덱스
 

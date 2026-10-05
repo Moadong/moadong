@@ -138,6 +138,9 @@
 | `홍보 목록 페이지 Visited` / `홍보 목록 페이지 Duration`                                 | `promotion_list`              |
 | `홍보 상세 페이지 Visited` / `홍보 상세 페이지 Duration`                                 | `promotion_detail`            |
 | `GamePage Visited` / `GamePage Duration`                                                 | `game`                        |
+| `PeaceIntroPage Visited` / `PeaceIntroPage Duration`                                     | `peace_intro`                 |
+| `PeaceQuizPage Visited` / `PeaceQuizPage Duration`                                       | `peace_quiz`                  |
+| `PeaceResultPage Visited` / `PeaceResultPage Duration`                                   | `peace_result`                |
 | `우체통 목록 페이지 Visited` / `우체통 목록 페이지 Duration`                             | `feedback_list`               |
 | `우체통 유형 선택 페이지 Visited` / `우체통 유형 선택 페이지 Duration`                   | `feedback_type_select`        |
 | `우체통 편지 작성 페이지 Visited` / `우체통 편지 작성 페이지 Duration`                   | `feedback_write`              |
