@@ -16,15 +16,14 @@ export const Wrapper = styled.div`
   ${media.tablet} {
     align-items: flex-start;
     margin-top: ${HEADER_HEIGHT.tablet}px;
-    /* height 고정 + overflow hidden → 스크롤 완전히 제거 */
-    height: calc(100vh - ${HEADER_HEIGHT.tablet}px);
+    height: calc(100dvh - ${HEADER_HEIGHT.tablet}px);
     overflow: hidden;
     padding-bottom: 0;
   }
 
   ${media.mobile} {
     margin-top: ${HEADER_HEIGHT.mobile}px;
-    height: calc(100vh - ${HEADER_HEIGHT.mobile}px);
+    height: calc(100dvh - ${HEADER_HEIGHT.mobile}px);
   }
 `;
 
@@ -41,10 +40,9 @@ export const Page = styled.div`
     width: 100%;
     max-width: none;
     padding: 0 20px calc(46px + env(safe-area-inset-bottom));
-    /* 아이템을 하단부터 쌓음 → 넘치면 상단(로고)이 클리핑됨 */
     height: 100%;
-    justify-content: flex-end;
-    overflow: hidden;
+    justify-content: flex-start;
+    overflow-y: auto;
   }
 `;
 
@@ -56,43 +54,10 @@ export const LogoGroup = styled.div`
   margin-bottom: clamp(20px, 4vh, 56px);
 
   ${media.tablet} {
-    margin-bottom: 0;
+    margin-top: 100px;
+    margin-bottom: 40px;
     flex-shrink: 0;
     gap: 4px;
-  }
-`;
-
-/**
- * 태블릿 이하 전용: 로고 위 최소 여백 확보용 spacer.
- * flex-shrink: 0 → 절대 줄어들지 않음.
- * justify-content: flex-end의 free space가 0이 된 뒤에도
- * 이 높이만큼은 로고 위 여백이 유지됨.
- * 이후 MiddleSpacer가 먼저 줄고, 그다음 이 spacer가 클리핑됨.
- */
-export const TopSpacer = styled.div`
-  display: none;
-
-  ${media.tablet} {
-    display: block;
-    flex-shrink: 0;
-    height: 80px;
-    width: 100%;
-  }
-`;
-
-/**
- * 태블릿 이하 전용: 로고~말풍선 사이 간격.
- * flex-shrink: 1 → TopSpacer free space가 소진된 뒤 이 간격이 줄어들고,
- * min-height에 닿으면 그때부터 로고가 상단 클리핑됨.
- */
-export const MiddleSpacer = styled.div`
-  display: none;
-
-  ${media.tablet} {
-    display: block;
-    flex: 0 1 168px;
-    min-height: 32px;
-    width: 100%;
   }
 `;
 
@@ -121,7 +86,7 @@ export const Subtitle = styled.p`
 
 /**
  * 데스크탑 전용 카드 박스 (네이버 로그인 참고).
- * 모바일에서는 display:contents로 박스가 사라지고
+ * 태블릿 이하에서는 display:contents로 박스가 사라지고
  * 자식 요소들이 Page의 flex 아이템으로 직접 참여함.
  */
 export const LoginBox = styled.div`
@@ -148,6 +113,7 @@ export const TooltipWrapper = styled.div`
     flex-shrink: 0;
     width: 77%;
     max-width: 252px;
+    margin-top: auto;
     margin-bottom: 20px;
   }
 `;
@@ -198,6 +164,8 @@ export const ButtonList = styled.div`
   ${media.tablet} {
     flex-shrink: 0;
     margin-top: 0;
+    width: 100%;
+    max-width: 460px;
   }
 `;
 

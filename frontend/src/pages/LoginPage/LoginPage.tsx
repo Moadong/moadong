@@ -12,12 +12,10 @@ const LoginPage = () => {
       <Header />
       <Styled.Wrapper>
         <Styled.Page>
-          <Styled.TopSpacer />
           <Styled.LogoGroup>
             <Styled.Logo src={moadong_name_logo} alt='모아동 로고' />
             <Styled.Subtitle>부경대학교의 모든 동아리를 한눈에</Styled.Subtitle>
           </Styled.LogoGroup>
-          <Styled.MiddleSpacer />
           <Styled.LoginBox>
             <Styled.TooltipWrapper>
               <Styled.TooltipPill>
