@@ -73,7 +73,7 @@ export const useNotionCalendarData = ({
     // 캐시가 있으면 로딩으로 보지 않는다 (탭 재진입 시 깜빡임 방지)
     isNotionLoading: pagesQuery.isLoading,
     isNotionDatabaseApplying: applyMutation.isPending,
-    // 401·403 외의 실제 오류는 '미연동' 빈 상태와 구분되지 않아 따로 알린다
+    // 미연동 외의 실제 오류는 '미연동' 빈 상태와 구분되지 않아 따로 알린다
     hasDataError: databasesQuery.isError || pagesQuery.isError,
     retryData: () => {
       if (databasesQuery.isError) databasesQuery.refetch();
