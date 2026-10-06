@@ -20,6 +20,7 @@ import LetterDetailPage from '@/pages/FeedbackPage/LetterDetailPage';
 import SentFeedbackDetailPage from '@/pages/FeedbackPage/SentFeedbackDetailPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
+import LoginPage from '@/pages/LoginPage/LoginPage';
 import MainPage from '@/pages/MainPage/MainPage';
 import MenuPage from '@/pages/MenuPage/MenuPage';
 import PeaceIntroPage from '@/pages/PeacePage/PeaceIntroPage';
@@ -250,6 +251,10 @@ const AppRoutes = () =>
     {
       path: '/callback/google',
       element: <GoogleCallbackPage />,
+    },
+    {
+      path: '/login',
+      element: <LoginPage />,
     },
     {
       path: '/admin/login',

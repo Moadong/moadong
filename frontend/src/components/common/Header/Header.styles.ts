@@ -124,6 +124,14 @@ export const LogoButton = styled.button`
   }
 `;
 
+export const LoginButton = styled(NavLink)`
+  flex-shrink: 0;
+
+  ${media.mobile} {
+    display: none;
+  }
+`;
+
 export const SubscriptionBellButton = styled.button`
   display: flex;
   align-items: center;

@@ -79,5 +79,11 @@ export const colors = {
     700: '#787878',
     800: '#4B4B4B',
     900: '#3A3A3A',
+    950: '#191919',
+  },
+
+  // Social Brand Color : 소셜 로그인 브랜드 컬러
+  social: {
+    kakao: '#FEE500',
   },
 } as const;

@@ -9,6 +9,7 @@ import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import useHeaderVisibility from '@/hooks/Header/useHeaderVisibility';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useScrollDetection } from '@/hooks/Scroll/useScrollDetection';
+import useDevice from '@/hooks/useDevice';
 import { DeviceType } from '@/types/device';
 import * as Styled from './Header.styles';
 
@@ -25,6 +26,7 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
   const trackEvent = useMixpanelTrack();
   const isScrolled = useScrollDetection();
   const isVisible = useHeaderVisibility(showOn, hideOn);
+  const { isMobile } = useDevice();
   const {
     handleHomeClick,
     handleIntroduceClick,
@@ -34,6 +36,8 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
 
   const isAdminPage = location.pathname.startsWith('/admin');
   const isAdminLoginPage = location.pathname.startsWith('/admin/login');
+  const isLoginPage = location.pathname === '/login';
+  const shouldShowSearch = !isAdminPage && !(isMobile && isLoginPage);
 
   const navLinks = [
     { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
@@ -48,6 +52,8 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
       path: '/promotions',
     },
   ];
+
+  const handleLoginClick = () => navigate('/login');
 
   const handleSubscriptionClick = () => {
     trackEvent(USER_EVENT.HOME_SUBSCRIPTION_CLICKED);
@@ -89,10 +95,19 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
           )}
         </Styled.LeftSection>
 
-        {!isAdminPage && (
+        {shouldShowSearch && (
           <Styled.SearchArea>
             <SearchBox />
           </Styled.SearchArea>
+        )}
+        {!isAdminPage && (
+          <Styled.LoginButton
+            $isActive={isLoginPage}
+            aria-current={isLoginPage ? 'page' : undefined}
+            onClick={handleLoginClick}
+          >
+            로그인
+          </Styled.LoginButton>
         )}
         {!isAdminPage && showSubscriptionBell && (
           <Styled.SubscriptionBellButton
