@@ -100,7 +100,10 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
           </Styled.SearchArea>
         )}
         {!isAdminPage && (
-          <Styled.LoginButton onClick={handleLoginClick}>
+          <Styled.LoginButton
+            $isActive={isLoginPage}
+            onClick={handleLoginClick}
+          >
             로그인
           </Styled.LoginButton>
         )}
