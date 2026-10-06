@@ -32,4 +32,14 @@ public class StudentOAuthController {
                 request.code(), request.redirectUri(), response);
         return Response.ok(result);
     }
+
+    @PostMapping("/google/callback")
+    @Operation(summary = "구글 OAuth 콜백", description = "구글 인가 코드로 학생 JWT를 발급합니다.")
+    public ResponseEntity<?> googleCallback(
+            @Valid @RequestBody SocialCallbackRequest request,
+            HttpServletResponse response) {
+        StudentLoginResponse result = studentOAuthService.loginWithGoogle(
+                request.code(), request.redirectUri(), response);
+        return Response.ok(result);
+    }
 }
