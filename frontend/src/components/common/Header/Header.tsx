@@ -103,6 +103,7 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
         {!isAdminPage && (
           <Styled.LoginButton
             $isActive={isLoginPage}
+            aria-current={isLoginPage ? 'page' : undefined}
             onClick={handleLoginClick}
           >
             로그인
