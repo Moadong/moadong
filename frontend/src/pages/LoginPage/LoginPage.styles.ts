@@ -17,6 +17,7 @@ export const Wrapper = styled.div`
     align-items: flex-start;
     margin-top: ${HEADER_HEIGHT.tablet}px;
     height: calc(100dvh - ${HEADER_HEIGHT.tablet}px);
+    min-height: 0;
     overflow: hidden;
     padding-bottom: 0;
   }
@@ -24,6 +25,7 @@ export const Wrapper = styled.div`
   ${media.mobile} {
     margin-top: ${HEADER_HEIGHT.mobile}px;
     height: calc(100dvh - ${HEADER_HEIGHT.mobile}px);
+    min-height: 0;
   }
 `;
 
