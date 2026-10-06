@@ -131,7 +131,11 @@ public enum ErrorCode {
     CUSTOM_EVENT_INVALID_DELETE_SCOPE(HttpStatus.BAD_REQUEST, "970-6", "삭제 범위 값이 올바르지 않습니다."),
 
     HIDDEN_EVENT_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "971-1", "동아리 정보를 찾을 수 없습니다."),
-    HIDDEN_EVENT_INVALID_SOURCE(HttpStatus.BAD_REQUEST, "971-2", "숨김 처리할 수 없는 이벤트 소스입니다.")
+    HIDDEN_EVENT_INVALID_SOURCE(HttpStatus.BAD_REQUEST, "971-2", "숨김 처리할 수 없는 이벤트 소스입니다."),
+
+    // 980xx: 소셜 로그인 오류
+    SOCIAL_OAUTH_TOKEN_FAILED(HttpStatus.BAD_REQUEST, "980-1", "소셜 로그인 토큰 교환에 실패했습니다."),
+    SOCIAL_OAUTH_FAILED(HttpStatus.BAD_GATEWAY, "980-2", "소셜 로그인 사용자 정보 조회에 실패했습니다.")
     ;
 
     private final HttpStatus httpStatus;
