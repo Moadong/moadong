@@ -170,7 +170,7 @@ export const ButtonList = styled.div`
   }
 `;
 
-export const AdminLoginText = styled.button`
+export const AdminLoginButton = styled.button`
   ${setTypography(typography.etc.medium12)}
   color: ${colors.base.black};
   background: none;
