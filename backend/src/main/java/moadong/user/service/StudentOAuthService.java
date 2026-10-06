@@ -2,7 +2,6 @@ package moadong.user.service;
 
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Map;
-import java.util.UUID;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.global.exception.ErrorCode;
@@ -180,7 +179,6 @@ public class StudentOAuthService {
 
     private StudentUser buildStudentUser(SocialProvider provider, String socialId, String nickname, String profileImageUrl) {
         return StudentUser.builder()
-                .studentId(UUID.randomUUID().toString())
                 .provider(provider)
                 .socialId(socialId)
                 .nickname(nickname)
@@ -189,8 +187,8 @@ public class StudentOAuthService {
     }
 
     private StudentLoginResponse issueTokens(StudentUser student, boolean isNewUser, HttpServletResponse response) {
-        String accessToken = jwtProvider.generateAccessToken(student.getStudentId());
-        RefreshToken refreshToken = jwtProvider.generateRefreshToken(student.getStudentId());
+        String accessToken = jwtProvider.generateAccessToken(student.getSocialId());
+        RefreshToken refreshToken = jwtProvider.generateRefreshToken(student.getSocialId());
 
         student.addRefreshToken(refreshToken);
         studentUserRepository.save(student);
