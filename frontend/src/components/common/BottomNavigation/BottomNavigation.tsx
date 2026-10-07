@@ -27,8 +27,7 @@ const HOME_TAB: BottomNavTab = {
   icon: { type: 'vector', Component: HomeIcon },
 };
 
-// 개편 홈은 구독 진입점을 헤더 알림 버튼으로 옮겼지만, 기존 홈에는 그게 없어
-// 개편을 받지 않은 사용자에게는 동아리 자리에 구독 탭을 그대로 둔다
+// 구독 진입점은 이 탭 하나다(헤더 구독 벨은 2026-10 제거)
 const SUBSCRIPTIONS_TAB: BottomNavTab = {
   key: 'subscriptions',
   label: '구독',
@@ -52,8 +51,9 @@ const COMMON_TABS: BottomNavTab[] = [
 ];
 
 const isTabActive = (pathname: string, path: string) => {
+  // 모바일·앱 홈의 '전체보기'로 들어가는 동아리 목록도 홈 탭으로 본다
   if (path === '/') {
-    return pathname === '/';
+    return pathname === '/' || pathname === '/clubs';
   }
   // 메뉴 탭: 메뉴 페이지에서 진입하는 소개/연합회 하위 페이지까지 활성
   if (path === '/menu') {

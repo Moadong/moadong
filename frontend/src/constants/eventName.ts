@@ -79,6 +79,8 @@ export const USER_EVENT = {
   FILTER_OPTION_CLICKED: 'Filter Option Clicked',
   /** 하단 탭 클릭 */
   BOTTOM_TAB_CLICKED: 'Bottom Tab Clicked',
+  /** 홈 섹션의 전체보기 버튼 클릭 (section으로 어느 섹션인지 구분) */
+  HOME_SECTION_MORE_CLICKED: 'Home Section More Clicked',
 
   // 동아리 상세
   /** 동아리 상세 탭 클릭 (tab: intro | photos | schedule) */
@@ -322,6 +324,8 @@ export const PAGE_VIEW = {
   CLUB_DETAIL_PAGE: 'club_detail',
   /** 메인. 웹·앱 웹뷰 공통이며 is_webview 슈퍼 속성으로 구분한다 */
   MAIN_PAGE: 'main',
+  /** 동아리 전체 목록. 모바일·앱 웹뷰에서 홈 대신 목록을 맡는다 */
+  CLUB_LIST_PAGE: 'club_list',
   /** 구독 목록 */
   SUBSCRIPTIONS_PAGE: 'subscriptions',
   /** 메뉴 */
@@ -389,6 +393,7 @@ export type PageViewName = (typeof PAGE_VIEW)[keyof typeof PAGE_VIEW];
 /** 카드·스크롤·구독 이벤트의 page/source 값. page_name과 같은 값을 써서 페이지뷰와 이어 본다 */
 export const PAGE_NAME = {
   MAIN: PAGE_VIEW.MAIN_PAGE,
+  CLUB_LIST: PAGE_VIEW.CLUB_LIST_PAGE,
   INTRODUCE: PAGE_VIEW.INTRODUCE_PAGE,
   SUBSCRIPTIONS: PAGE_VIEW.SUBSCRIPTIONS_PAGE,
   CLUB_DETAIL: PAGE_VIEW.CLUB_DETAIL_PAGE,

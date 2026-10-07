@@ -34,4 +34,15 @@ describe('BottomNavigation', () => {
     expect(activeTabs).toHaveLength(1);
     expect(activeTabs[0].textContent).toBe('홈');
   });
+
+  it('동아리 전체 목록(/clubs)에서는 홈 탭이 활성이다', () => {
+    renderAt('/clubs');
+
+    const activeTabs = screen
+      .getAllByRole('button', { hidden: true })
+      .filter((tab) => tab.getAttribute('aria-current') === 'page');
+
+    expect(activeTabs).toHaveLength(1);
+    expect(activeTabs[0].textContent).toBe('홈');
+  });
 });
