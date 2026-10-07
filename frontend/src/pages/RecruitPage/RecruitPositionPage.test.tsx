@@ -71,7 +71,7 @@ describe('RecruitPositionPage', () => {
   it('포지션의 자격요건과 우대사항을 그린다', () => {
     renderPage('designer');
     expect(
-      screen.getByRole('heading', { name: '프로덕트 디자이너' }),
+      screen.getByRole('heading', { name: '디자이너' }),
     ).toBeInTheDocument();
     expect(screen.getByText('자격요건')).toBeInTheDocument();
     expect(screen.getByText('우대사항')).toBeInTheDocument();

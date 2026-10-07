@@ -26,7 +26,7 @@ export interface RecruitPosition {
 export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
   {
     id: 'designer',
-    title: '프로덕트 디자이너',
+    title: '디자이너',
     summary: '학생과 동아리 운영진이 쓰는 웹·앱 화면을 설계해요.',
     responsibilities: [
       '동아리 탐색·지원·알림 흐름의 UX 설계와 UI 디자인',

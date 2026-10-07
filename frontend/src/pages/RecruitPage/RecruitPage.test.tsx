@@ -34,17 +34,13 @@ const renderPage = () =>
 describe('RecruitPage', () => {
   it('디자이너와 개발자 포지션 카드를 그린다', () => {
     renderPage();
-    expect(
-      screen.getByRole('link', { name: /프로덕트 디자이너/ }),
-    ).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: /디자이너/ })).toBeInTheDocument();
     expect(screen.getByRole('link', { name: /개발자/ })).toBeInTheDocument();
   });
 
   it('포지션 카드를 누르면 해당 포지션 상세로 이동한다', async () => {
     renderPage();
-    await userEvent.click(
-      screen.getByRole('link', { name: /프로덕트 디자이너/ }),
-    );
+    await userEvent.click(screen.getByRole('link', { name: /디자이너/ }));
     expect(screen.getByText('POSITION designer')).toBeInTheDocument();
   });
 });
