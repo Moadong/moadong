@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import OutlinePillButton from '@/pages/AdminPage/components/OutlinePillButton';
 import { colors } from '@/styles/theme/colors';
 
 export const BannerArea = styled.div<{ $bgColor?: string }>`
@@ -69,4 +70,9 @@ export const LogoEditButton = styled.button`
 
 export const HiddenInput = styled.input`
   display: none;
+`;
+
+// 모바일 배너 시안은 두 버튼을 너비 95로 맞춘다
+export const BannerEditButton = styled(OutlinePillButton)`
+  min-width: 95px;
 `;
