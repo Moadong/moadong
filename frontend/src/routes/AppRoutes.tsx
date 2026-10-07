@@ -76,14 +76,6 @@ const AppRoutes = () =>
           ),
         },
         {
-          path: '/recruit/:position',
-          element: (
-            <ContentErrorBoundary>
-              <RecruitPositionPage />
-            </ContentErrorBoundary>
-          ),
-        },
-        {
           path: '/privacy-policy',
           element: (
             <ContentErrorBoundary>
@@ -189,6 +181,14 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <GamePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/recruit/:position',
+      element: (
+        <ContentErrorBoundary>
+          <RecruitPositionPage />
         </ContentErrorBoundary>
       ),
     },
