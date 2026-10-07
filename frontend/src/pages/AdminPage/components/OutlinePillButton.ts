@@ -10,7 +10,10 @@ const TONE_COLOR = {
 type Tone = keyof typeof TONE_COLOR;
 
 // 시안(관리자 기본정보 "이미지 수정")은 테두리를 안쪽에 그려 높이 37이다. 1px 테두리를 빼고 세로 패딩을 9로 맞춘다
-const OutlinePillButton = styled.button<{ $tone: Tone }>`
+// 공용 Button과 같이 기본 type을 button으로 둔다. form 안에 놓여도 제출되지 않는다
+const OutlinePillButton = styled.button.attrs({ type: 'button' })<{
+  $tone: Tone;
+}>`
   display: flex;
   align-items: center;
   justify-content: center;
