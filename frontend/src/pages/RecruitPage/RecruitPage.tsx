@@ -1,5 +1,8 @@
+import type { ComponentType } from 'react';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import PaintIllustration from './components/PositionIllustration/PaintIllustration';
+import SpaceIllustration from './components/PositionIllustration/SpaceIllustration';
 import RecruitLayout from './components/RecruitLayout/RecruitLayout';
 import {
   RECRUIT_PERIOD,
@@ -7,7 +10,13 @@ import {
   RECRUIT_SCHEDULE,
   RECRUIT_VALUES,
 } from './constants/recruit';
+import type { RecruitPositionId } from './constants/recruit';
 import * as Styled from './RecruitPage.styles';
+
+const POSITION_ILLUSTRATIONS: Record<RecruitPositionId, ComponentType> = {
+  designer: PaintIllustration,
+  developer: SpaceIllustration,
+};
 
 const RecruitPage = () => {
   useTrackPageView(PAGE_VIEW.RECRUIT_PAGE);
@@ -32,19 +41,32 @@ const RecruitPage = () => {
           모집 포지션
         </Styled.SectionTitle>
         <Styled.PositionGrid>
-          {RECRUIT_POSITIONS.map((position) => (
-            <li key={position.id}>
-              <Styled.PositionCard to={`/recruit/${position.id}`}>
-                <Styled.PositionTitle>{position.title}</Styled.PositionTitle>
-                <Styled.PositionSummary>
-                  {position.summary}
-                </Styled.PositionSummary>
-                <Styled.PositionMore aria-hidden>
-                  자세히 보기 →
-                </Styled.PositionMore>
-              </Styled.PositionCard>
-            </li>
-          ))}
+          {RECRUIT_POSITIONS.map((position) => {
+            const Illustration = POSITION_ILLUSTRATIONS[position.id];
+            return (
+              <li key={position.id}>
+                <Styled.PositionCard
+                  to={`/recruit/${position.id}`}
+                  $variant={position.id}
+                >
+                  <Styled.PositionText>
+                    <Styled.PositionTitle>
+                      {position.title}
+                    </Styled.PositionTitle>
+                    <Styled.PositionSummary>
+                      {position.summary}
+                    </Styled.PositionSummary>
+                    <Styled.PositionMore aria-hidden>
+                      자세히 보기 →
+                    </Styled.PositionMore>
+                  </Styled.PositionText>
+                  <Styled.PositionArt>
+                    <Illustration />
+                  </Styled.PositionArt>
+                </Styled.PositionCard>
+              </li>
+            );
+          })}
         </Styled.PositionGrid>
       </Styled.Section>
 
