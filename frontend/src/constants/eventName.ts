@@ -330,6 +330,10 @@ export const PAGE_VIEW = {
   MENU_PAGE: 'menu',
   /** 모아동 소개 */
   INTRODUCE_PAGE: 'introduce',
+  /** 모아동 팀원 모집 */
+  RECRUIT_PAGE: 'recruit',
+  /** 모아동 팀원 모집 포지션 상세 */
+  RECRUIT_POSITION_PAGE: 'recruit_position',
   /** 총동연 */
   CLUB_UNION_PAGE: 'club_union',
   /** 동소한 (동아리 소개 한마당) */
