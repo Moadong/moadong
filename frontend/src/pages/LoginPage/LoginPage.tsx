@@ -1,11 +1,19 @@
 import { useNavigate } from 'react-router-dom';
+import { fetchStudentOAuthUrl, type OAuthProvider } from '@/apis/studentAuth';
 import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
 import Header from '@/components/common/Header/Header';
 import SocialLoginButton from '@/components/SocialLoginButton/SocialLoginButton';
+import { STUDENT_OAUTH_PROVIDER_KEY } from '@/pages/CallbackPage/StudentOAuthCallbackPage';
 import * as Styled from './LoginPage.styles';
 
 const LoginPage = () => {
   const navigate = useNavigate();
+
+  const handleSocialLogin = async (provider: OAuthProvider) => {
+    const redirectUrl = await fetchStudentOAuthUrl(provider);
+    sessionStorage.setItem(STUDENT_OAUTH_PROVIDER_KEY, provider);
+    window.location.href = redirectUrl;
+  };
 
   const handleAdminLoginClick = () => navigate('/admin/login');
 
@@ -25,8 +33,14 @@ const LoginPage = () => {
               </Styled.TooltipPill>
             </Styled.TooltipWrapper>
             <Styled.ButtonList>
-              <SocialLoginButton provider='kakao' onClick={() => {}} />
-              <SocialLoginButton provider='google' onClick={() => {}} />
+              <SocialLoginButton
+                provider='kakao'
+                onClick={() => handleSocialLogin('kakao')}
+              />
+              <SocialLoginButton
+                provider='google'
+                onClick={() => handleSocialLogin('google')}
+              />
               <SocialLoginButton provider='apple' onClick={() => {}} />
             </Styled.ButtonList>
             <Styled.AdminLoginButton onClick={handleAdminLoginClick}>

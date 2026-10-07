@@ -7,6 +7,7 @@ import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ApplicationFormPage from '@/pages/ApplicationFormPage/ApplicationFormPage';
 import GoogleCallbackPage from '@/pages/CallbackPage/GoogleCallbackPage';
+import StudentOAuthCallbackPage from '@/pages/CallbackPage/StudentOAuthCallbackPage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
 import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
@@ -251,6 +252,10 @@ const AppRoutes = () =>
     {
       path: '/callback/google',
       element: <GoogleCallbackPage />,
+    },
+    {
+      path: '/login/callback',
+      element: <StudentOAuthCallbackPage />,
     },
     {
       path: '/login',
