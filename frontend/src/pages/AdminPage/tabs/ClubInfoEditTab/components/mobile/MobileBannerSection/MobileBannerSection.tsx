@@ -4,6 +4,7 @@ import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import { useDeleteCover, useUploadCover } from '@/hooks/Queries/useClubCover';
 import { useUploadLogo } from '@/hooks/Queries/useClubImages';
+import OutlinePillButton from '@/pages/AdminPage/components/OutlinePillButton';
 import { useAdminClubId } from '@/store/useAdminClubStore';
 import * as Styled from './MobileBannerSection.styles';
 
@@ -57,13 +58,16 @@ const MobileBannerSection = ({
     <Styled.BannerArea $bgColor={bannerColor}>
       {coverUrl && <Styled.CoverImage src={coverUrl} alt='커버 이미지' />}
       <Styled.BannerButtonGroup>
-        <Styled.BannerEditButton onClick={() => coverInputRef.current?.click()}>
+        <OutlinePillButton
+          $tone='gray'
+          onClick={() => coverInputRef.current?.click()}
+        >
           배너 수정
-        </Styled.BannerEditButton>
+        </OutlinePillButton>
         {coverUrl && (
-          <Styled.BannerEditButton onClick={handleDeleteCover}>
+          <OutlinePillButton $tone='gray' onClick={handleDeleteCover}>
             초기화
-          </Styled.BannerEditButton>
+          </OutlinePillButton>
         )}
       </Styled.BannerButtonGroup>
 
