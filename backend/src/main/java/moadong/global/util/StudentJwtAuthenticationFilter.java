@@ -39,6 +39,10 @@ public class StudentJwtAuthenticationFilter extends OncePerRequestFilter {
         }
 
         String token = header.substring(7);
+        if (token.isBlank()) {
+            sendError(response, ErrorCode.TOKEN_INVALID);
+            return;
+        }
         try {
             String studentId = jwtProvider.extractSubjectIfValid(token);
             var auth = new UsernamePasswordAuthenticationToken(studentId, null, List.of());
