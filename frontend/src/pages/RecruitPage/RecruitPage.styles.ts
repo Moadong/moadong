@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import styled, { keyframes } from 'styled-components';
+import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography } from '@/styles/theme/typography';
@@ -85,36 +85,38 @@ export const PositionGrid = styled.ul`
   }
 `;
 
-/** 포지션별 카드 색. 개발자는 밤하늘, 디자이너는 물감이 번진 캔버스 */
-const CARD_THEMES = {
-  developer: {
-    background:
-      'linear-gradient(150deg, #1E2150 0%, #312B6E 55%, #4A3A94 100%)',
-    shadow: 'rgba(49, 43, 110, 0.45)',
-    title: colors.base.white,
-    summary: 'rgba(255, 255, 255, 0.72)',
-    more: colors.secondary[2].main,
-  },
-  designer: {
-    background: `linear-gradient(150deg, #FFF8EE 0%, #FFEFE6 55%, ${colors.secondary[1].back} 100%)`,
-    shadow: 'rgba(255, 125, 164, 0.35)',
-    title: colors.base.black,
-    summary: colors.gray[800],
-    more: colors.primary[900],
-  },
-} as const satisfies Record<RecruitPositionId, Record<string, string>>;
+export const PositionTitle = styled.h3`
+  ${({ theme }) => setTypography(theme.typography.title.title4)};
+  color: ${({ theme }) => theme.colors.base.black};
 
-const twinkle = keyframes`
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.25; }
+  ${media.mobile} {
+    ${({ theme }) => setTypography(theme.typography.etc.bold18)};
+  }
 `;
 
-export const PositionCard = styled(Link)<{ $variant: RecruitPositionId }>`
-  --card-title: ${({ $variant }) => CARD_THEMES[$variant].title};
-  --card-summary: ${({ $variant }) => CARD_THEMES[$variant].summary};
-  --card-more: ${({ $variant }) => CARD_THEMES[$variant].more};
-  --card-shadow: ${({ $variant }) => CARD_THEMES[$variant].shadow};
+export const PositionSummary = styled.p`
+  flex: 1;
+  ${({ theme }) => setTypography(theme.typography.paragraph.p4)};
+  color: ${({ theme }) => theme.colors.gray[800]};
 
+  ${media.mobile} {
+    ${({ theme }) => setTypography(theme.typography.paragraph.p6r)};
+  }
+`;
+
+export const PositionMore = styled.span`
+  ${({ theme }) => setTypography(theme.typography.button.button1)};
+  color: ${({ theme }) => theme.colors.gray[950]};
+  text-underline-offset: 4px;
+`;
+
+/** 개발자는 하늘, 디자이너는 노란 종이. 그림의 잉크 선과 주황 포인트가 두 카드를 잇는다 */
+const CARD_BACKGROUNDS = {
+  developer: colors.accent[1][600],
+  designer: colors.secondary[2].back,
+} as const satisfies Record<RecruitPositionId, string>;
+
+export const PositionCard = styled(Link)<{ $variant: RecruitPositionId }>`
   position: relative;
   height: 100%;
   min-height: 260px;
@@ -122,55 +124,16 @@ export const PositionCard = styled(Link)<{ $variant: RecruitPositionId }>`
   overflow: hidden;
   padding: 28px 24px;
   border-radius: 24px;
-  background: ${({ $variant }) => CARD_THEMES[$variant].background};
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.18),
-    0 2px 4px rgba(0, 0, 0, 0.06),
-    0 16px 32px -12px var(--card-shadow);
+  background: ${({ $variant }) => CARD_BACKGROUNDS[$variant]};
   text-decoration: none;
-  transition:
-    transform 0.3s ease,
-    box-shadow 0.3s ease;
 
-  [data-part='float'],
-  [data-part='float-slow'] {
-    transition: transform 0.4s ease;
+  &:hover ${PositionMore} {
+    text-decoration: underline;
   }
 
-  [data-part='twinkle'] circle {
-    animation: ${twinkle} 2.4s ease-in-out infinite;
-  }
-
-  [data-part='twinkle'] circle:nth-child(even) {
-    animation-delay: 1.2s;
-  }
-
-  &:hover {
-    transform: translateY(-6px);
-    box-shadow:
-      inset 0 1px 0 rgba(255, 255, 255, 0.18),
-      0 4px 8px rgba(0, 0, 0, 0.08),
-      0 28px 48px -16px var(--card-shadow);
-  }
-
-  &:hover [data-part='float'] {
-    transform: translateY(-8px);
-  }
-
-  &:hover [data-part='float-slow'] {
-    transform: translateY(-4px);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &,
-    [data-part='float'],
-    [data-part='float-slow'] {
-      transition: none;
-    }
-
-    [data-part='twinkle'] circle {
-      animation: none;
-    }
+  &:focus-visible {
+    outline: 3px solid ${({ theme }) => theme.colors.gray[950]};
+    outline-offset: 3px;
   }
 
   ${media.mobile} {
@@ -191,46 +154,20 @@ export const PositionText = styled.div`
 
 export const PositionArt = styled.div`
   position: absolute;
-  right: -8px;
-  bottom: -12px;
+  right: 0;
+  bottom: -8px;
   width: 200px;
   height: 200px;
-  filter: drop-shadow(0 12px 16px rgba(0, 0, 0, 0.18));
 
   svg {
     width: 100%;
     height: 100%;
-    overflow: visible;
   }
 
   ${media.mobile} {
     width: 160px;
     height: 160px;
   }
-`;
-
-export const PositionTitle = styled.h3`
-  ${({ theme }) => setTypography(theme.typography.title.title4)};
-  color: var(--card-title);
-
-  ${media.mobile} {
-    ${({ theme }) => setTypography(theme.typography.etc.bold18)};
-  }
-`;
-
-export const PositionSummary = styled.p`
-  flex: 1;
-  ${({ theme }) => setTypography(theme.typography.paragraph.p4)};
-  color: var(--card-summary);
-
-  ${media.mobile} {
-    ${({ theme }) => setTypography(theme.typography.paragraph.p6r)};
-  }
-`;
-
-export const PositionMore = styled.span`
-  ${({ theme }) => setTypography(theme.typography.button.button1)};
-  color: var(--card-more);
 `;
 
 export const ValueList = styled.ul`

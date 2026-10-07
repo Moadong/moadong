@@ -1,96 +1,132 @@
 import { colors } from '@/styles/theme/colors';
 
-const STARS = [
-  { cx: 24, cy: 30, r: 1.6 },
-  { cx: 62, cy: 14, r: 1.2 },
-  { cx: 118, cy: 22, r: 1.8 },
-  { cx: 190, cy: 92, r: 1.4 },
-  { cx: 14, cy: 96, r: 1.2 },
-  { cx: 182, cy: 150, r: 1.6 },
-];
+const INK = colors.gray[950];
+const STROKE = {
+  stroke: INK,
+  strokeWidth: 3,
+  strokeLinejoin: 'round',
+  strokeLinecap: 'round',
+} as const;
 
-/** 개발자 카드 그림. 우주 헬멧 바이저에 코드 기호를 비춘다 */
+/** 개발자 카드 그림. 생명줄에 매달려 손을 흔드는 우주인 */
 const SpaceIllustration = () => (
   <svg viewBox='0 0 200 200' aria-hidden focusable='false'>
-    <defs>
-      <radialGradient id='recruit-space-planet' cx='35%' cy='30%' r='75%'>
-        <stop offset='0%' stopColor='#C7D4FF' />
-        <stop offset='55%' stopColor={colors.secondary[4].main} />
-        <stop offset='100%' stopColor='#3A4BB8' />
-      </radialGradient>
-      <radialGradient id='recruit-space-helmet' cx='32%' cy='28%' r='85%'>
-        <stop offset='0%' stopColor={colors.base.white} />
-        <stop offset='65%' stopColor='#E3E8F5' />
-        <stop offset='100%' stopColor='#9AA5C4' />
-      </radialGradient>
-      <linearGradient id='recruit-space-visor' x1='0' y1='0' x2='1' y2='1'>
-        <stop offset='0%' stopColor='#363B78' />
-        <stop offset='100%' stopColor='#0B0D2A' />
-      </linearGradient>
-    </defs>
+    <path
+      d='M168 22 A16 16 0 0 0 168 54 A20 20 0 0 1 168 22 Z'
+      fill={colors.secondary[2].main}
+      {...STROKE}
+    />
+    <path
+      d='M34 30 L37 40 L47 43 L37 46 L34 56 L31 46 L21 43 L31 40 Z'
+      fill={colors.base.white}
+      {...STROKE}
+      strokeWidth={2.5}
+    />
+    <path
+      d='M178 118 L180 125 L187 127 L180 129 L178 136 L176 129 L169 127 L176 125 Z'
+      fill={colors.base.white}
+      {...STROKE}
+      strokeWidth={2.5}
+    />
 
-    <g data-part='twinkle'>
-      {STARS.map((star) => (
-        <circle key={`${star.cx}-${star.cy}`} {...star} fill='#FFFFFF' />
-      ))}
-    </g>
+    <path
+      d='M70 146 C 46 168, 34 128, 2 156'
+      fill='none'
+      {...STROKE}
+      strokeWidth={2.5}
+      strokeDasharray='1 7'
+    />
 
-    <g data-part='float-slow'>
-      <circle cx='160' cy='46' r='20' fill='url(#recruit-space-planet)' />
-      <ellipse
-        cx='160'
-        cy='46'
-        rx='34'
-        ry='8'
-        fill='none'
-        stroke={colors.secondary[2].main}
-        strokeWidth='3'
-        opacity='0.9'
-        transform='rotate(-18 160 46)'
-      />
-    </g>
-
-    <g data-part='float'>
-      <line
-        x1='62'
-        y1='70'
-        x2='50'
-        y2='44'
-        stroke='#AEB7CF'
-        strokeWidth='4'
-        strokeLinecap='round'
-      />
-      <circle cx='49' cy='41' r='6' fill={colors.primary[900]} />
-      <ellipse cx='96' cy='184' rx='48' ry='12' fill='#B8C1DA' />
-      <circle cx='96' cy='122' r='62' fill='url(#recruit-space-helmet)' />
-      <rect x='26' y='108' width='14' height='30' rx='7' fill='#C9D1E6' />
+    <g transform='rotate(-12 100 112)'>
       <rect
-        x='52'
-        y='86'
-        width='92'
-        height='70'
-        rx='34'
-        fill='url(#recruit-space-visor)'
+        x='74'
+        y='148'
+        width='20'
+        height='34'
+        rx='9'
+        fill={colors.base.white}
+        {...STROKE}
+      />
+      <rect
+        x='106'
+        y='148'
+        width='20'
+        height='34'
+        rx='9'
+        fill={colors.base.white}
+        {...STROKE}
       />
       <path
-        d='M64 104 C 70 94, 84 90, 96 90'
-        fill='none'
-        stroke='#FFFFFF'
-        strokeWidth='5'
-        strokeLinecap='round'
-        opacity='0.45'
+        d='M74 172 H94 V176 A6 6 0 0 1 88 182 H80 A6 6 0 0 1 74 176 Z'
+        fill={INK}
       />
-      <text
-        x='98'
-        y='130'
-        textAnchor='middle'
-        fontSize='24'
-        fontWeight='700'
-        fontFamily='monospace'
-        fill={colors.accent[1][800]}
-      >
-        {'</>'}
-      </text>
+      <path
+        d='M106 172 H126 V176 A6 6 0 0 1 120 182 H112 A6 6 0 0 1 106 176 Z'
+        fill={INK}
+      />
+
+      <rect
+        x='60'
+        y='96'
+        width='80'
+        height='60'
+        rx='14'
+        fill={colors.gray[400]}
+        {...STROKE}
+      />
+      <rect
+        x='68'
+        y='100'
+        width='64'
+        height='60'
+        rx='22'
+        fill={colors.base.white}
+        {...STROKE}
+      />
+      <rect
+        x='86'
+        y='118'
+        width='28'
+        height='16'
+        rx='4'
+        fill={colors.primary[900]}
+        {...STROKE}
+        strokeWidth={2.5}
+      />
+      <circle cx='94' cy='126' r='2.5' fill={colors.base.white} />
+      <circle cx='104' cy='126' r='2.5' fill={colors.base.white} />
+
+      <rect
+        x='36'
+        y='92'
+        width='38'
+        height='18'
+        rx='9'
+        fill={colors.base.white}
+        {...STROKE}
+        transform='rotate(-40 72 104)'
+      />
+      <rect
+        x='126'
+        y='108'
+        width='32'
+        height='18'
+        rx='9'
+        fill={colors.base.white}
+        {...STROKE}
+        transform='rotate(28 128 116)'
+      />
+
+      <circle cx='100' cy='70' r='36' fill={colors.base.white} {...STROKE} />
+      <rect x='75' y='54' width='50' height='34' rx='16' fill={INK} />
+      <path
+        d='M84 64 Q 88 59, 95 59'
+        fill='none'
+        stroke={colors.base.white}
+        strokeWidth='3'
+        strokeLinecap='round'
+      />
+      <circle cx='112' cy='78' r='2.5' fill={colors.accent[1][900]} />
     </g>
   </svg>
 );

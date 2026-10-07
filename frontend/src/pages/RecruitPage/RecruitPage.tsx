@@ -57,7 +57,7 @@ const RecruitPage = () => {
                       {position.summary}
                     </Styled.PositionSummary>
                     <Styled.PositionMore aria-hidden>
-                      자세히 보기 →
+                      자세히 보기
                     </Styled.PositionMore>
                   </Styled.PositionText>
                   <Styled.PositionArt>
