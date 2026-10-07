@@ -52,16 +52,13 @@ public class StudentOAuthService {
         Map<String, Object> userInfo = fetchKakaoUserInfo(kakaoAccessToken);
 
         String socialId = String.valueOf(userInfo.get("id"));
-        Map<String, Object> props = asMap(userInfo.get("properties"));
-        String nickname = asString(props != null ? props.get("nickname") : null);
-        String profileImage = asString(props != null ? props.get("profile_image") : null);
 
         boolean[] isNew = {false};
         StudentUser student = studentUserRepository
                 .findByProviderAndSocialId(SocialProvider.KAKAO, socialId)
                 .orElseGet(() -> {
                     isNew[0] = true;
-                    return buildStudentUser(SocialProvider.KAKAO, socialId, nickname, profileImage);
+                    return buildStudentUser(SocialProvider.KAKAO, socialId);
                 });
 
         return issueTokens(student, isNew[0], response);
@@ -72,15 +69,13 @@ public class StudentOAuthService {
         Map<String, Object> userInfo = fetchGoogleUserInfo(googleAccessToken);
 
         String socialId = asString(userInfo.get("id"));
-        String name = asString(userInfo.get("name"));
-        String picture = asString(userInfo.get("picture"));
 
         boolean[] isNew = {false};
         StudentUser student = studentUserRepository
                 .findByProviderAndSocialId(SocialProvider.GOOGLE, socialId)
                 .orElseGet(() -> {
                     isNew[0] = true;
-                    return buildStudentUser(SocialProvider.GOOGLE, socialId, name, picture);
+                    return buildStudentUser(SocialProvider.GOOGLE, socialId);
                 });
 
         return issueTokens(student, isNew[0], response);
@@ -178,12 +173,10 @@ public class StudentOAuthService {
         }
     }
 
-    private StudentUser buildStudentUser(SocialProvider provider, String socialId, String nickname, String profileImageUrl) {
+    private StudentUser buildStudentUser(SocialProvider provider, String socialId) {
         return StudentUser.builder()
                 .provider(provider)
                 .socialId(socialId)
-                .nickname(nickname)
-                .profileImageUrl(profileImageUrl)
                 .build();
     }
 
