@@ -13,6 +13,7 @@ module.exports = {
     '\\.svg\\?react$': '<rootDir>/jest.svgMock.tsx',
     '^@/(.*)$': '<rootDir>/src/$1',
   },
+  testPathIgnorePatterns: ['/node_modules/', '<rootDir>/scripts/button-migration/'],
   collectCoverage: true,
   coverageDirectory: 'coverage',
   coverageReporters: ['text', 'lcov'], // text(콘솔 출력), lcov(Codecov용)

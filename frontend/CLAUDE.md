@@ -40,6 +40,13 @@ npm run chromatic        # Chromatic으로 시각적 테스트 배포
 npm run visual:figma          # 매핑된 컴포넌트를 시안과 대조 (Storybook이 6006에 떠 있어야 함)
 npm run visual:figma <필터>   # 매핑 이름 부분일치로 일부만
 
+# 버튼 이전 (scripts/button-migration/CLAUDE.md)
+npm run button:inventory         # 버튼 정의·사용처 인벤토리 → sites.json + 리포트
+npm run button:figma-candidates  # 후보 자리의 시안 노드 후보 찾기
+npm run button:figma-match       # 자리를 시안과 대조
+npm run button:before-after      # 기준 커밋과 작업 트리의 렌더 결과 비교
+npm run test:scripts             # 위 스크립트의 node:test 단위 테스트
+
 # Storybook 사용 가이드 (공통 컴포넌트 수정 시)
 # - 개발 중: npm run storybook (dev 서버로 실시간 확인)
 # - 기존 스토리가 있는 컴포넌트 수정 후 PR 전: npm run build-storybook
@@ -80,6 +87,7 @@ npm run generate:sitemap # sitemap.xml 생성
 빌드에 들어가지 않는 스크립트 전용 변수도 같은 `.env`에 둔다 (`VITE_` 접두사가 없어 번들에 포함되지 않는다):
 
 - `FIGMA_TOKEN` - Figma 개인 액세스 토큰. 시안 대조 스크립트 전용(`dotenv-cli`로 자동 로드) → [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md)
+- `DEV_ADMIN_ID`·`DEV_ADMIN_PASSWORD` - dev 서버 테스트 관리자 계정. 버튼 before/after·시안 대조가 관리자 화면을 열 때 쓴다 → [`scripts/button-migration/CLAUDE.md`](scripts/button-migration/CLAUDE.md)
 
 ### 프로젝트 구조
 
@@ -161,6 +169,7 @@ Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 | 유틸리티·외부 SDK 초기화 | [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md) |
 | OG 태그 (`middleware.ts`) | [`docs/claude/og.md`](docs/claude/og.md) |
 | Figma 시안 ↔ Storybook 대조 | [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md) |
+| 버튼 인벤토리·시안 대조·before/after | [`scripts/button-migration/CLAUDE.md`](scripts/button-migration/CLAUDE.md) |
 
 ## Skill routing
 
