@@ -80,15 +80,18 @@ const IGNORED_RESOURCE_TYPES = new Set(['websocket', 'eventsource']);
 // load는 끝났지만 그 뒤 fetch가 DOM을 늦게 고치는 경우를 잡는다. 네비게이션 전에 호출해
 // 리스너를 먼저 걸고, goto 뒤에 await해야 로드 중 쏜 요청도 추적된다.
 //
-// requestGraceMs: 이 앱의 모든 API 호출은 fetchWithTimeout(src/apis/utils/fetchWithTimeout.ts,
-// 기본 10초)으로 자체 중단된다. 그런데 관리자 인증 체크(/auth/user/find/club, /auth/user/refresh)를
-// dev 서버의 server.proxy로 중계할 때는, 응답(상태코드·본문 길이)이 이미 다 왔는데도 Chromium이
-// 이 요청을 40초가 지나도 끝난 걸로 보지 않는 경우가 실측으로 확인됐다(response.text()도 멈춤 —
-// 프록시가 HTTP/2 업스트림을 HTTP/1.1로 중계하며 종료 신호를 안 보내는 것으로 보임). 앱 자신도
-// 10초면 포기하고 화면을 그리므로, 그보다 늦게까지 안 끝나는 요청은 idle 판정에서 빼지 않으면
-// 모든 관리자 페이지에서 영원히 timeoutMs에 걸려 던진다. 포기한 요청은 writtenOff로 돌려줘서
-// 호출자가 리포트에 남길 수 있게 한다 — 남은 위험 한 줄: 그레이스로 포기한 요청이 그 뒤에도
-// 계속 스트리밍되다가 한참 늦게 DOM을 고치면 그 변경은 못 잡는다.
+// requestGraceMs: 관리자 인증 체크(/auth/user/find/club, /auth/user/refresh)를 dev 서버의
+// server.proxy로 중계할 때는, 응답(상태코드·본문 길이)이 이미 다 왔는데도 Chromium이 이 요청을
+// 40초가 지나도 끝난 걸로 보지 않는 경우가 실측으로 확인됐다(response.text()도 멈춤 — 프록시가
+// HTTP/2 업스트림을 HTTP/1.1로 중계하며 종료 신호를 안 보내는 것으로 보임). 이런 요청을 idle
+// 판정에서 빼지 않으면 모든 관리자 페이지에서 영원히 timeoutMs에 걸려 던진다.
+// 앱이 이 요청을 포기해 주지는 않는다. fetchWithTimeout(src/apis/utils/fetchWithTimeout.ts, 10초)은
+// `await fetch()`가 풀리는 순간(헤더 도착) 타이머를 지우고, 그 뒤 본문 읽기(handleResponse →
+// response.json/text)에는 시한이 없다. 그래서 본문이 멈춘 요청에 기대는 화면은 로딩 상태로 남고,
+// before·after가 같은 요청을 포기했다면 두 쪽 다 로딩 화면을 재서 비교한 것일 수 있다. 포기한
+// 요청은 writtenOff로 돌려줘서 호출자가 리포트에 남기고, 그런 PASS는 verified로 올리지 않는다.
+// 남은 위험 한 줄: 그레이스로 포기한 요청이 그 뒤에도 계속 스트리밍되다가 한참 늦게 DOM을
+// 고치면 그 변경은 못 잡는다.
 //
 // timeoutMs는 함수 시작부터의 고정 예산이 아니라 "함수 시작으로부터의 절대 상한"이다. 실제
 // 마감(deadline)은 가장 최근에 시작한 요청 기준으로 requestGraceMs + idleMs + 2_000ms보다

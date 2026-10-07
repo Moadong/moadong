@@ -1,6 +1,6 @@
 // before/after·시안 대조가 쓰는 Vite 서버, 기준 커밋 worktree, 관리자 로그인.
 import { execFileSync, spawn } from 'node:child_process';
-import { copyFileSync, existsSync } from 'node:fs';
+import { copyFileSync, existsSync, writeFileSync } from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
 import { waitForQuiet } from './measure.mjs';
@@ -212,6 +212,11 @@ export async function startVite(cwd, port, { timeoutMs = 120_000 } = {}) {
   );
 }
 
+// node_modules가 있다는 것만으로는 설치가 끝났는지 모른다. npm ci가 중간에 끊기거나 실패하면
+// 반쯤 찬 node_modules가 남고, 그걸 다시 쓰면 기준 쪽 vite가 계속 깨진다. 그래서 npm ci가
+// 성공한 뒤에만 이 표시 파일을 쓰고, 표시가 있을 때만 다시 쓴다.
+const INSTALL_OK = 'node_modules/.button-migration-install-ok';
+
 // node_modules를 심볼릭 링크로 공유하면 Vite가 worktree 밖 파일 서빙을 막는다. 기준 커밋 lockfile로 따로 설치한다.
 export function prepareBaseWorktree(ref) {
   const sha = git('rev-parse', ref);
@@ -219,7 +224,7 @@ export function prepareBaseWorktree(ref) {
   const reusable =
     existsSync(WORKTREE) &&
     git('-C', WORKTREE, 'rev-parse', 'HEAD') === sha &&
-    existsSync(path.join(fe, 'node_modules'));
+    existsSync(path.join(fe, INSTALL_OK));
   if (!reusable) {
     if (existsSync(WORKTREE)) git('worktree', 'remove', '--force', WORKTREE);
     git('worktree', 'add', '--detach', WORKTREE, sha);
@@ -227,6 +232,7 @@ export function prepareBaseWorktree(ref) {
       cwd: fe,
       stdio: 'inherit',
     });
+    writeFileSync(path.join(fe, INSTALL_OK), `${sha}\n`);
   }
   copyFileSync(path.join(FRONTEND, '.env'), path.join(fe, '.env'));
   return fe;

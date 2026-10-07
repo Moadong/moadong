@@ -166,18 +166,30 @@ export const staleSites = (sites, changedFiles) =>
   );
 
 // PASS한 migrated 자리만 verified로 올린다. 점검용으로 돌린 다른 상태는 건드리지 않는다.
-// src가 기준과 같으면 같은 코드끼리 비교한 것이라 이전 검증이 아니다.
-export function promoteVerified(sites, results, { srcChanged }) {
-  if (!srcChanged) return sites;
-  const passed = new Map(
-    results.filter((r) => r.pass).map((r) => [r.site.id, r.writtenOff]),
-  );
-  return sites.map((s) =>
-    passed.has(s.id) && s.status === 'migrated'
-      ? // write-off가 있는 PASS는 근거가 약하다. 대장에서도 보이게 남긴다
-        { ...s, status: 'verified', writtenOff: passed.get(s.id) }
-      : s,
-  );
+// src 전체가 기준과 같으면 같은 코드끼리 비교한 것이라 이전 검증이 아니다(호출자가 전역 WARN).
+// src의 다른 곳만 바뀌고 이 자리의 정의·사용처 파일이 그대로여도 같은 코드끼리 비교한 것이다.
+// 요청을 포기한 PASS는 양쪽 다 로딩 화면을 쟀을 수 있어 올리지 않는다(measure.mjs waitForQuiet).
+// 올리지 않은 PASS는 held로 돌려줘서 호출자가 자리마다 알린다.
+export function promoteVerified(sites, results, { changedFiles }) {
+  if (!changedFiles.size) return { sites, held: [] };
+  const held = [];
+  const promote = new Set();
+  for (const r of results) {
+    if (!r.pass || r.site.status !== 'migrated') continue;
+    const { id, defFile, usageFile } = r.site;
+    if (!changedFiles.has(defFile) && !changedFiles.has(usageFile))
+      held.push({ id, reason: 'unchanged' });
+    else if (r.writtenOff?.length) held.push({ id, reason: 'written-off' });
+    else promote.add(id);
+  }
+  return {
+    sites: sites.map((s) =>
+      promote.has(s.id) && s.status === 'migrated'
+        ? { ...s, status: 'verified' }
+        : s,
+    ),
+    held,
+  };
 }
 
 // 시안 대조 대상. 이전이 끝난 자리는 --ids로 골라도 판정을 덮어쓰지 않는다.

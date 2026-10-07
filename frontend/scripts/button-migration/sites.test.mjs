@@ -267,42 +267,91 @@ test('기준 커밋과 달라진 파일의 자리인데 migrated가 아니면 �
   );
 });
 
-test('PASS한 migrated 자리만 verified로 올리고 writtenOff를 남긴다', () => {
+const changedOf = (...ids) =>
+  new Set(ids.map((id) => `src/pages/${id}/${id}.tsx`));
+
+test('PASS한 migrated 자리만 verified로 올린다', () => {
   const all = [
     rec('A', { status: 'migrated' }),
     rec('B', { status: 'migrated' }),
     rec('C'),
   ];
   const results = [
-    { site: all[0], pass: true, writtenOff: ['/auth/user/refresh'] },
+    { site: all[0], pass: true, writtenOff: [] },
     { site: all[1], pass: false, writtenOff: [] },
     { site: all[2], pass: true, writtenOff: [] },
   ];
-  const out = promoteVerified(all, results, { srcChanged: true });
+  const { sites, held } = promoteVerified(all, results, {
+    changedFiles: changedOf('A', 'B', 'C'),
+  });
   assert.deepEqual(
-    out.map((s) => [s.id, s.status, s.writtenOff]),
+    sites.map((s) => [s.id, s.status]),
     [
-      ['A', 'verified', ['/auth/user/refresh']],
-      ['B', 'migrated', undefined],
-      ['C', 'inventoried', undefined],
+      ['A', 'verified'],
+      ['B', 'migrated'],
+      ['C', 'inventoried'],
     ],
   );
-  const clean = promoteVerified([all[0]], [{ ...results[0], writtenOff: [] }], {
-    srcChanged: true,
+  assert.deepEqual(held, []);
+});
+
+test('요청 포기가 있는 PASS는 verified로 올리지 않고 migrated로 두며 알린다', () => {
+  const all = [
+    rec('A', { status: 'migrated' }),
+    rec('B', { status: 'migrated' }),
+  ];
+  const results = [
+    { site: all[0], pass: true, writtenOff: ['/auth/user/refresh'] },
+    { site: all[1], pass: true, writtenOff: [] },
+  ];
+  const { sites, held } = promoteVerified(all, results, {
+    changedFiles: changedOf('A', 'B'),
   });
-  assert.deepEqual(clean[0].writtenOff, []);
+  assert.deepEqual(
+    sites.map((s) => [s.id, s.status]),
+    [
+      ['A', 'migrated'],
+      ['B', 'verified'],
+    ],
+  );
+  assert.deepEqual(held, [{ id: 'A', reason: 'written-off' }]);
+});
+
+test('PASS여도 그 자리의 정의·사용처 파일이 기준과 같으면 verified로 올리지 않고 알린다', () => {
+  const all = [
+    rec('A', { status: 'migrated' }),
+    rec('B', { status: 'migrated' }),
+    rec('C', { status: 'migrated' }),
+  ];
+  const results = all.map((site) => ({ site, pass: true, writtenOff: [] }));
+  // C는 정의 파일만 바뀌었다 — 그것도 이 자리의 변경이다
+  const changedFiles = new Set([
+    'src/pages/A/A.tsx',
+    'src/pages/C/C.styles.ts',
+    'src/pages/Other/Other.tsx',
+  ]);
+  const { sites, held } = promoteVerified(all, results, { changedFiles });
+  assert.deepEqual(
+    sites.map((s) => [s.id, s.status]),
+    [
+      ['A', 'verified'],
+      ['B', 'migrated'],
+      ['C', 'verified'],
+    ],
+  );
+  assert.deepEqual(held, [{ id: 'B', reason: 'unchanged' }]);
 });
 
 test('src가 기준 커밋과 같으면 PASS여도 verified로 올리지 않는다', () => {
   const all = [rec('A', { status: 'migrated' })];
-  const out = promoteVerified(
+  const { sites, held } = promoteVerified(
     all,
     [{ site: all[0], pass: true, writtenOff: [] }],
-    {
-      srcChanged: false,
-    },
+    { changedFiles: new Set() },
   );
-  assert.equal(out[0].status, 'migrated');
+  assert.equal(sites[0].status, 'migrated');
+  // 전역 WARN 한 줄로 이미 알렸으니 자리마다 또 알리지 않는다
+  assert.deepEqual(held, []);
 });
 
 test('figma-match 대상: migrated·verified는 --ids로 골라도 덮어쓰지 않고, 모르는 id·빈 필드는 알린다', () => {

@@ -98,6 +98,27 @@ test('양쪽 다 어디서도 안 보이면 실패', async () => {
   assert.equal(r.rows[0].diffs[0].key, 'not-found');
 });
 
+// 어떤 폭에서 원래 숨는 버튼이 있어 실패로는 안 보지만, 잰 폭으로 세지도 않는다.
+test('일부 폭에서만 양쪽 다 숨으면 통과하되, 그 폭은 비교한 폭에서 빠지고 행에 표시된다', async () => {
+  const m = (await run(SAME))[1440];
+  const r = compareRuns(
+    { 1440: m, 375: { hidden: true } },
+    { 1440: m, 375: { hidden: true } },
+  );
+  assert.equal(r.pass, true);
+  assert.equal(r.measuredWidths, 1);
+  assert.equal(r.totalWidths, 2);
+  assert.deepEqual(r.hiddenWidths, ['375']);
+  const hiddenRow = r.rows.find((row) => row.width === '375');
+  assert.equal(hiddenRow.bothHidden, true);
+  assert.equal(hiddenRow.state, '양쪽 안 보임');
+  assert.ok(
+    r.rows
+      .filter((row) => row.width === '1440')
+      .every((row) => !row.bothHidden),
+  );
+});
+
 test('안쪽 요소만 바뀌어도 픽셀로 잡는다', async () => {
   const withSpan = (css) => html(css, '<button><span>지원하기</span></button>');
   const r = compareRuns(

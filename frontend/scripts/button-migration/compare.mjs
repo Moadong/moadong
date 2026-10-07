@@ -85,6 +85,9 @@ export function compareRuns(before, after) {
   if (widths.every((w) => before[w]?.hidden && after[w]?.hidden))
     return {
       pass: false,
+      measuredWidths: 0,
+      totalWidths: widths.length,
+      hiddenWidths: widths,
       rows: [
         {
           width: '*',
@@ -101,6 +104,10 @@ export function compareRuns(before, after) {
       ],
     };
   const rows = [];
+  // 양쪽 다 숨은 폭은 그 브레이크포인트에서 원래 숨는 버튼일 수 있어 실패로 보지 않는다. 대신
+  // 잰 폭으로 세지 않고 따로 돌려줘서, "5폭 다 같다"와 "1폭만 쟀다"가 같은 PASS로 안 보이게 한다.
+  const hiddenWidths = [];
+  let measuredWidths = 0;
   for (const width of widths) {
     const b = before[width];
     const a = after[width];
@@ -113,18 +120,27 @@ export function compareRuns(before, after) {
       });
       continue;
     }
-    if (b.hidden || a.hidden) {
+    if (b.hidden && a.hidden) {
+      hiddenWidths.push(width);
       rows.push({
         width,
-        state: '-',
-        diffs:
-          b.hidden === a.hidden
-            ? []
-            : [{ key: 'visible', before: !b.hidden, after: !a.hidden }],
+        state: '양쪽 안 보임',
+        bothHidden: true,
+        diffs: [],
         pixel: null,
       });
       continue;
     }
+    if (b.hidden || a.hidden) {
+      rows.push({
+        width,
+        state: '-',
+        diffs: [{ key: 'visible', before: !b.hidden, after: !a.hidden }],
+        pixel: null,
+      });
+      continue;
+    }
+    measuredWidths += 1;
     for (const state of ['default', 'hover']) {
       const pixel = exactPixelDiff(b[state].png, a[state].png);
       const diffs = compareSnapshot(b[state], a[state]);
@@ -149,5 +165,11 @@ export function compareRuns(before, after) {
       });
     }
   }
-  return { pass: rows.every((r) => r.diffs.length === 0), rows };
+  return {
+    pass: rows.every((r) => r.diffs.length === 0),
+    measuredWidths,
+    totalWidths: widths.length,
+    hiddenWidths,
+    rows,
+  };
 }

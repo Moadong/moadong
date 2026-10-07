@@ -117,10 +117,14 @@ function renderReport(site, r, writtenOff) {
       `| ${row.width} | ${row.state} | ${row.diffs.length ? 'FAIL' : 'PASS'} | ${row.pixel == null ? '–' : `${row.pixel.toFixed(3)}%`} | ${row.diffs.map((d) => `${d.key}: ${d.before} → ${d.after}`).join('<br>') || '–'} |`,
   );
   const fmt = (urls) => (urls.length ? urls.join(', ') : '없음');
+  const hidden = r.hiddenWidths.length
+    ? ` (양쪽 안 보임: ${r.hiddenWidths.join(', ')})`
+    : '';
   return `# ${site.id} — ${r.pass ? 'PASS' : 'FAIL'}
 
 - 기준: \`${base}\` · 비교: 현재 작업 트리
 - 경로: \`${site.route}\` · locator: \`${JSON.stringify(site.locator)}\`
+- 비교한 폭 ${r.measuredWidths}/${r.totalWidths}${hidden}
 - 요청 포기(before, ${base}): ${fmt(writtenOff.before)}
 - 요청 포기(after, 현재 작업 트리): ${fmt(writtenOff.after)}
 
@@ -169,20 +173,30 @@ for (const site of targets) {
     pass: r.pass,
     note: `${path.relative(FRONTEND, dir)}/report.md`,
     writtenOff: writtenOffAll,
+    widths: `(비교 폭 ${r.measuredWidths}/${r.totalWidths})`,
   });
 }
 
-if (fromLedger)
-  saveSites(
-    SITES_FILE,
-    promoteVerified(all, results, { srcChanged: changed.size > 0 }),
-  );
+const HELD_MESSAGE = {
+  'written-off': '요청 포기가 있어 verified로 올리지 않음 (리포트 참고)',
+  unchanged: '기준과 같은 코드라 verified로 올리지 않음',
+};
+let held = new Map();
+if (fromLedger) {
+  const promoted = promoteVerified(all, results, { changedFiles: changed });
+  saveSites(SITES_FILE, promoted.sites);
+  held = new Map(promoted.held.map((h) => [h.id, h.reason]));
+}
 if (args.clean) removeBaseWorktree();
 for (const x of results) {
-  console.log(`${x.pass ? 'PASS' : 'FAIL'}  ${x.site.id}  ${x.note}`);
+  console.log(
+    `${x.pass ? 'PASS' : 'FAIL'}  ${x.site.id}  ${x.note}${x.widths ? `  ${x.widths}` : ''}`,
+  );
   if (x.writtenOff?.length)
     console.log(
       `NOTE  ${x.site.id}  요청 포기: ${x.writtenOff.length}건 (리포트 참고)`,
     );
+  if (held.has(x.site.id))
+    console.log(`WARN  ${x.site.id}  ${HELD_MESSAGE[held.get(x.site.id)]}`);
 }
 process.exit(results.every((x) => x.pass) ? 0 : 1);
