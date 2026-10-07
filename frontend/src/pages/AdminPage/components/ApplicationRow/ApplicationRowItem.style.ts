@@ -74,8 +74,6 @@ export const ApplicationDate = styled.span`
   color: #4b4b4b;
 `;
 
-// 더보기(...) 버튼
-
 export const MoreButtonIcon = styled.img`
   width: 30px;
   height: 30px;
