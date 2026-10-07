@@ -5,6 +5,8 @@ import PaintIllustration from './components/PositionIllustration/PaintIllustrati
 import SpaceIllustration from './components/PositionIllustration/SpaceIllustration';
 import RecruitLayout from './components/RecruitLayout/RecruitLayout';
 import {
+  RECRUIT_HERO_DESCRIPTION,
+  RECRUIT_HERO_TITLE,
   RECRUIT_PERIOD,
   RECRUIT_POSITIONS,
   RECRUIT_SCHEDULE,
@@ -25,13 +27,9 @@ const RecruitPage = () => {
     <RecruitLayout>
       <Styled.Hero>
         <Styled.Eyebrow>MOADONG RECRUIT</Styled.Eyebrow>
-        <Styled.HeroTitle>
-          {'모아동을 함께 만들\n팀원을 찾아요'}
-        </Styled.HeroTitle>
+        <Styled.HeroTitle>{RECRUIT_HERO_TITLE}</Styled.HeroTitle>
         <Styled.HeroDescription>
-          {
-            '동아리를 찾고, 지원하고, 소식을 받는 모든 과정을 모아동에서.\n학생들의 동아리 생활을 더 쉽게 만들 디자이너와 개발자를 모집해요.'
-          }
+          {RECRUIT_HERO_DESCRIPTION}
         </Styled.HeroDescription>
         <Styled.Period>{RECRUIT_PERIOD}</Styled.Period>
       </Styled.Hero>

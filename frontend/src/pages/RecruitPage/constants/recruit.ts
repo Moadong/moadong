@@ -2,6 +2,11 @@
 
 export const RECRUIT_PAGE_TITLE = '팀원 모집';
 
+export const RECRUIT_HERO_TITLE = '모아동을 함께 만들\n팀원을 찾아요';
+
+export const RECRUIT_HERO_DESCRIPTION =
+  '동아리를 찾고, 지원하고, 소식을 받는 모든 과정을 모아동에서.\n학생들의 동아리 생활을 더 쉽게 만들 디자이너와 개발자를 모집해요.';
+
 /**
  * 지원서를 받을 모아동 동아리 id. 메인에 노출되지 않도록 state가 UNAVAILABLE인 동아리여야 한다.
  * 동아리 정보 저장을 누르면 AVAILABLE로 바뀌어 메인에 뜨므로 관리자 화면에서 저장하지 않는다.
