@@ -65,8 +65,6 @@ export const USER_EVENT = {
   CLUB_UNION_BUTTON_CLICKED: 'Club Union Button Clicked',
   /** 헤더 홍보 버튼 클릭 */
   PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
-  /** 헤더 구독 버튼 클릭 */
-  HOME_SUBSCRIPTION_CLICKED: 'Home Subscription Clicked',
 
   // 동아리 목록
   /** 동아리 카드 클릭 */
