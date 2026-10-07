@@ -110,10 +110,10 @@ export const PositionMore = styled.span`
   text-underline-offset: 4px;
 `;
 
-/** 개발자는 하늘, 디자이너는 노란 종이. 그림의 잉크 선과 주황 포인트가 두 카드를 잇는다 */
+/** 개발자는 하늘, 디자이너는 노란 종이. 오른쪽 아래 그림 쪽만 한 톤 어둡게 깔아 그림을 받친다 */
 const CARD_BACKGROUNDS = {
-  developer: colors.accent[1][600],
-  designer: colors.secondary[2].back,
+  developer: `linear-gradient(to top left, #BFE3FB, ${colors.accent[1][600]} 75%)`,
+  designer: `linear-gradient(to top left, #FFEAB0, ${colors.secondary[2].back} 75%)`,
 } as const satisfies Record<RecruitPositionId, string>;
 
 export const PositionCard = styled(Link)<{ $variant: RecruitPositionId }>`
@@ -156,8 +156,8 @@ export const PositionArt = styled.div`
   position: absolute;
   right: 0;
   bottom: -8px;
-  width: 200px;
-  height: 200px;
+  width: 232px;
+  height: 232px;
 
   svg {
     width: 100%;
@@ -165,8 +165,8 @@ export const PositionArt = styled.div`
   }
 
   ${media.mobile} {
-    width: 160px;
-    height: 160px;
+    width: 184px;
+    height: 184px;
   }
 `;
 
