@@ -5,7 +5,6 @@ import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { PAGE_NAME } from '@/constants/eventName';
 import { useGetCardList } from '@/hooks/Queries/useClub';
-import useDevice from '@/hooks/useDevice';
 import useWebviewSubscribe from '@/hooks/useWebviewSubscribe';
 import Banner from '@/pages/MainPage/components/Banner/Banner';
 import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
@@ -20,7 +19,6 @@ import * as Styled from './MainContent.styles';
 /** 메인(`/`)의 본문. 홈이 곧 동아리 전체 목록이다. */
 const MainContent = () => {
   const inWebview = isInAppWebView();
-  const { isMobile } = useDevice();
   const { selectedCategory } = useSelectedCategory();
   const { keyword } = useSearchKeyword();
   const { isSearching } = useSearchIsSearching();
@@ -79,7 +77,7 @@ const MainContent = () => {
 
   return (
     <>
-      <Header showSubscriptionBell={isMobile || inWebview} />
+      <Header />
       <Styled.HeaderSpacer />
       <Banner isWebview={inWebview} />
       <Styled.PageContainer>
