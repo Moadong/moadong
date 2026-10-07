@@ -225,14 +225,6 @@ public class StudentOAuthService {
         return new StudentLoginResponse(accessToken, isNewUser);
     }
 
-    @SuppressWarnings("unchecked")
-    private Map<String, Object> asMap(Object value) {
-        if (value instanceof Map<?, ?>) {
-            return (Map<String, Object>) value;
-        }
-        return null;
-    }
-
     private String asString(Object value) {
         if (value instanceof String s && StringUtils.hasText(s)) {
             return s;
