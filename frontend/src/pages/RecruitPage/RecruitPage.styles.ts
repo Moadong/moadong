@@ -245,70 +245,98 @@ export const ValueList = styled.ul`
 `;
 
 export const ValueItem = styled.li`
+  min-height: 180px;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-  padding: 24px;
-  border-radius: 16px;
+  gap: 12px;
+  padding: 32px 28px;
+  border-radius: 24px;
   background: ${({ theme }) => theme.colors.gray[100]};
 
+  ${media.tablet} {
+    min-height: auto;
+  }
+
   ${media.mobile} {
-    padding: 20px;
+    padding: 24px 20px;
   }
 `;
 
 export const ValueTitle = styled.h3`
-  ${({ theme }) => setTypography(theme.typography.title.title6)};
+  ${({ theme }) => setTypography(theme.typography.title.title4)};
   color: ${({ theme }) => theme.colors.base.black};
+
+  ${media.mobile} {
+    ${({ theme }) => setTypography(theme.typography.etc.bold18)};
+  }
 `;
 
 export const ValueDescription = styled.p`
-  ${({ theme }) => setTypography(theme.typography.paragraph.p6r)};
+  ${({ theme }) => setTypography(theme.typography.paragraph.p4)};
   color: ${({ theme }) => theme.colors.gray[800]};
+
+  ${media.mobile} {
+    ${({ theme }) => setTypography(theme.typography.paragraph.p6r)};
+  }
 `;
 
 export const ScheduleList = styled.ol`
   display: grid;
   list-style: none;
   grid-template-columns: repeat(4, 1fr);
-  gap: 12px;
+  gap: 16px;
 
   ${media.tablet} {
     grid-template-columns: 1fr;
+    gap: 12px;
   }
 `;
 
 export const ScheduleItem = styled.li`
+  min-height: 180px;
   display: flex;
   flex-direction: column;
-  gap: 6px;
-  padding: 20px;
+  gap: 8px;
+  padding: 28px;
   border: 1px solid ${({ theme }) => theme.colors.gray[300]};
-  border-radius: 12px;
+  border-radius: 24px;
 
   ${media.tablet} {
+    min-height: auto;
     flex-direction: row;
     align-items: center;
-    gap: 12px;
-    padding: 16px 20px;
+    gap: 16px;
+    padding: 20px 24px;
+    border-radius: 20px;
   }
 `;
 
 export const ScheduleIndex = styled.span`
-  ${({ theme }) => setTypography(theme.typography.button.button1)};
+  margin-bottom: auto;
+  ${({ theme }) => setTypography(theme.typography.title.title2)};
   color: ${({ theme }) => theme.colors.primary[900]};
+
+  ${media.tablet} {
+    margin-bottom: 0;
+    ${({ theme }) => setTypography(theme.typography.title.title3)};
+  }
 `;
 
 export const ScheduleStep = styled.span`
-  ${({ theme }) => setTypography(theme.typography.paragraph.p2)};
+  ${({ theme }) => setTypography(theme.typography.title.title5)};
   color: ${({ theme }) => theme.colors.base.black};
 
   ${media.tablet} {
     flex: 1;
+    ${({ theme }) => setTypography(theme.typography.etc.bold18)};
   }
 `;
 
 export const ScheduleDate = styled.span`
-  ${({ theme }) => setTypography(theme.typography.paragraph.p6)};
+  ${({ theme }) => setTypography(theme.typography.paragraph.p4)};
   color: ${({ theme }) => theme.colors.gray[700]};
+
+  ${media.tablet} {
+    ${({ theme }) => setTypography(theme.typography.paragraph.p6)};
+  }
 `;

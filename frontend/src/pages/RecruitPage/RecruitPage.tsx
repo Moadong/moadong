@@ -93,7 +93,9 @@ const RecruitPage = () => {
         <Styled.ScheduleList>
           {RECRUIT_SCHEDULE.map((item, index) => (
             <Styled.ScheduleItem key={item.step}>
-              <Styled.ScheduleIndex>{index + 1}</Styled.ScheduleIndex>
+              <Styled.ScheduleIndex>
+                {String(index + 1).padStart(2, '0')}
+              </Styled.ScheduleIndex>
               <Styled.ScheduleStep>{item.step}</Styled.ScheduleStep>
               <Styled.ScheduleDate>{item.date}</Styled.ScheduleDate>
             </Styled.ScheduleItem>
