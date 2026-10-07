@@ -10,8 +10,22 @@ import RecruitPositionPage from './RecruitPositionPage';
 jest.mock('mixpanel-browser', () => ({ track: jest.fn() }));
 jest.mock('./components/RecruitLayout/RecruitLayout', () => ({
   __esModule: true,
-  default: ({ children }: { children: React.ReactNode }) => (
-    <div>{children}</div>
+  // 상단바 대신, 페이지가 넘긴 onBack이 있을 때만 버튼으로 드러낸다
+  default: ({
+    children,
+    onBack,
+  }: {
+    children: React.ReactNode;
+    onBack?: () => void;
+  }) => (
+    <div>
+      {onBack && (
+        <button type='button' onClick={onBack}>
+          상단바 뒤로가기
+        </button>
+      )}
+      {children}
+    </div>
   ),
 }));
 jest.mock('./constants/recruit', () => ({
@@ -47,10 +61,16 @@ const ApplicationProbe = () => {
   );
 };
 
-const renderPage = (position: string) =>
+const renderPage = (position: string, previousPath?: string) =>
   render(
     <ThemeProvider theme={theme}>
-      <MemoryRouter initialEntries={[`/recruit/${position}`]}>
+      <MemoryRouter
+        initialEntries={[
+          ...(previousPath ? [previousPath] : []),
+          `/recruit/${position}`,
+        ]}
+        initialIndex={previousPath ? 1 : 0}
+      >
         <Routes>
           <Route path='/recruit' element={<div>RECRUIT LIST</div>} />
           <Route path='/recruit/:position' element={<RecruitPositionPage />} />
@@ -99,5 +119,20 @@ describe('RecruitPositionPage', () => {
     renderPage('developer');
     await userEvent.click(screen.getByRole('link', { name: '지원하기' }));
     expect(screen.getByText('APPLICATION club-1/form-dev')).toBeInTheDocument();
+  });
+
+  it('상세 주소로 바로 들어오면 상단바 뒤로가기가 모집 목록으로 보낸다', async () => {
+    renderPage('designer');
+    await userEvent.click(
+      screen.getByRole('button', { name: '상단바 뒤로가기' }),
+    );
+    expect(screen.getByText('RECRUIT LIST')).toBeInTheDocument();
+  });
+
+  it('이전 화면이 있으면 상단바 기본 뒤로가기를 그대로 쓴다', () => {
+    renderPage('designer', '/recruit');
+    expect(
+      screen.queryByRole('button', { name: '상단바 뒤로가기' }),
+    ).not.toBeInTheDocument();
   });
 });
