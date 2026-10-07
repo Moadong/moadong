@@ -17,6 +17,9 @@ export const Main = styled.main<{ $topOffset: number }>`
   padding: ${({ $topOffset }) => 56 + $topOffset}px 24px 80px;
   display: flex;
   flex-direction: column;
+  /* 한글이 어절 중간에서 끊기지 않게 한다. 긴 영단어는 overflow-wrap이 받는다 */
+  word-break: keep-all;
+  overflow-wrap: break-word;
 
   ${media.mobile} {
     padding: ${({ $topOffset }) => 24 + $topOffset}px 20px 56px;
