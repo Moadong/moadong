@@ -12,6 +12,7 @@ import moadong.user.config.KakaoLoginProperties;
 import moadong.user.entity.RefreshToken;
 import moadong.user.entity.StudentUser;
 import moadong.user.entity.enums.SocialProvider;
+import moadong.user.payload.response.RefreshResponse;
 import moadong.user.payload.response.StudentLoginResponse;
 import moadong.user.repository.StudentUserRepository;
 import moadong.user.util.CookieMaker;
@@ -184,6 +185,45 @@ public class StudentOAuthService {
                 .nickname(nickname)
                 .profileImageUrl(profileImageUrl)
                 .build();
+    }
+
+    public void logout(String refreshToken) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new RestApiException(ErrorCode.TOKEN_INVALID);
+        }
+        StudentUser student = studentUserRepository.findByRefreshTokens_Token(refreshToken)
+                .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
+        student.removeRefreshToken(refreshToken);
+        studentUserRepository.save(student);
+    }
+
+    public RefreshResponse refreshAccessToken(String refreshToken, HttpServletResponse response) {
+        if (refreshToken == null || refreshToken.isBlank()) {
+            throw new RestApiException(ErrorCode.TOKEN_INVALID);
+        }
+
+        String socialId = jwtProvider.extractSubjectIfValid(refreshToken);
+        if (socialId == null) {
+            throw new RestApiException(ErrorCode.TOKEN_INVALID);
+        }
+
+        StudentUser student = studentUserRepository.findByRefreshTokens_Token(refreshToken)
+                .orElseThrow(() -> new RestApiException(ErrorCode.TOKEN_INVALID));
+
+        if (jwtProvider.isTokenExpired(refreshToken)) {
+            throw new RestApiException(ErrorCode.TOKEN_INVALID);
+        }
+
+        String newAccessToken = jwtProvider.generateAccessToken(student.getSocialId());
+        RefreshToken newRefreshToken = jwtProvider.generateRefreshToken(student.getSocialId());
+
+        student.replaceRefreshToken(refreshToken, newRefreshToken);
+        studentUserRepository.save(student);
+
+        ResponseCookie cookie = cookieMaker.makeRefreshTokenCookie(newRefreshToken.getToken());
+        response.addHeader("Set-Cookie", cookie.toString());
+
+        return new RefreshResponse(newAccessToken);
     }
 
     private StudentLoginResponse issueTokens(StudentUser student, boolean isNewUser, HttpServletResponse response) {
