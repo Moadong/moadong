@@ -200,8 +200,8 @@ public class StudentOAuthService {
         StudentUser student = studentUserRepository.findByRefreshTokens_Token(refreshToken)
                 .orElseThrow(() -> new RestApiException(ErrorCode.TOKEN_INVALID));
 
-        String newAccessToken = jwtProvider.generateAccessToken(student.getSocialId());
-        RefreshToken newRefreshToken = jwtProvider.generateRefreshToken(student.getSocialId());
+        String newAccessToken = jwtProvider.generateAccessToken(student.getId());
+        RefreshToken newRefreshToken = jwtProvider.generateRefreshToken(student.getId());
 
         student.replaceRefreshToken(refreshToken, newRefreshToken);
         studentUserRepository.save(student);
@@ -213,8 +213,8 @@ public class StudentOAuthService {
     }
 
     private StudentLoginResponse issueTokens(StudentUser student, boolean isNewUser, HttpServletResponse response) {
-        String accessToken = jwtProvider.generateAccessToken(student.getSocialId());
-        RefreshToken refreshToken = jwtProvider.generateRefreshToken(student.getSocialId());
+        String accessToken = jwtProvider.generateAccessToken(student.getId());
+        RefreshToken refreshToken = jwtProvider.generateRefreshToken(student.getId());
 
         student.addRefreshToken(refreshToken);
         studentUserRepository.save(student);
