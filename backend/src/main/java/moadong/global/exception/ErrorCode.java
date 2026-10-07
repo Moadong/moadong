@@ -135,7 +135,8 @@ public enum ErrorCode {
 
     // 980xx: 소셜 로그인 오류
     SOCIAL_OAUTH_TOKEN_FAILED(HttpStatus.BAD_REQUEST, "980-1", "소셜 로그인 토큰 교환에 실패했습니다."),
-    SOCIAL_OAUTH_FAILED(HttpStatus.BAD_GATEWAY, "980-2", "소셜 로그인 사용자 정보 조회에 실패했습니다.")
+    SOCIAL_OAUTH_FAILED(HttpStatus.BAD_GATEWAY, "980-2", "소셜 로그인 사용자 정보 조회에 실패했습니다."),
+    STUDENT_USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "980-3", "존재하지 않는 학생 사용자입니다.")
     ;
 
     private final HttpStatus httpStatus;
