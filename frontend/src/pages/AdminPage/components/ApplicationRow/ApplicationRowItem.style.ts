@@ -75,21 +75,6 @@ export const ApplicationDate = styled.span`
 `;
 
 // 더보기(...) 버튼
-export const MoreButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  &:hover {
-    background-color: #dcdcdc;
-  }
-`;
 
 export const MoreButtonIcon = styled.img`
   width: 30px;
