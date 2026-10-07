@@ -49,9 +49,9 @@ export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
     id: 'developer',
     title: '개발자',
     summary:
-      '웹 프론트엔드·백엔드·앱 중 한 분야를 맡아 실제 사용자가 쓰는 기능을 만들어요.',
+      '웹 프론트엔드나 백엔드를 맡아 실제 사용자가 쓰는 기능을 만들어요.',
     responsibilities: [
-      'React 웹, Spring 백엔드, React Native 앱 중 한 분야의 기능 개발',
+      'React 웹 또는 Spring 백엔드 기능 개발',
       '코드 리뷰와 PR 기반 협업',
       '배포 이후 지표와 오류를 보고 개선',
     ],
@@ -61,7 +61,7 @@ export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
       '주 1회 정기 회의에 참여할 수 있는 분',
     ],
     preferred: [
-      'React·Spring·React Native 실무 또는 프로젝트 경험',
+      'React나 Spring으로 실무 또는 프로젝트를 해 본 경험',
       '운영 중인 서비스를 개선해 본 경험',
       '동아리 활동 경험',
     ],
