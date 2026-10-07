@@ -202,17 +202,10 @@ public class StudentOAuthService {
             throw new RestApiException(ErrorCode.TOKEN_INVALID);
         }
 
-        String socialId = jwtProvider.extractSubjectIfValid(refreshToken);
-        if (socialId == null) {
-            throw new RestApiException(ErrorCode.TOKEN_INVALID);
-        }
+        jwtProvider.extractSubjectIfValid(refreshToken);
 
         StudentUser student = studentUserRepository.findByRefreshTokens_Token(refreshToken)
                 .orElseThrow(() -> new RestApiException(ErrorCode.TOKEN_INVALID));
-
-        if (jwtProvider.isTokenExpired(refreshToken)) {
-            throw new RestApiException(ErrorCode.TOKEN_INVALID);
-        }
 
         String newAccessToken = jwtProvider.generateAccessToken(student.getSocialId());
         RefreshToken newRefreshToken = jwtProvider.generateRefreshToken(student.getSocialId());
