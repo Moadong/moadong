@@ -95,6 +95,11 @@ let rejectedInjectedToken: string | undefined;
  * 앱이 안 넣어주는 환경(브라우저, 구버전 앱)에서는 undefined라 기존 흐름 그대로다.
  */
 const getStudentToken = async () => {
+  const oauthToken = localStorage.getItem(
+    STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+  );
+  if (oauthToken) return oauthToken;
+
   const injectedToken = window.__MOADONG_STUDENT_TOKEN__;
 
   return (
