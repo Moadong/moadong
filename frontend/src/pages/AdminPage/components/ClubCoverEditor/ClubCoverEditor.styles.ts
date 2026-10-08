@@ -40,42 +40,6 @@ export const ButtonGroup = styled.div`
   gap: 6px;
 `;
 
-export const UploadButton = styled.button`
-  padding: 10px 20px;
-  border: 1px solid ${({ theme }) => theme.colors.primary[900]};
-  border-radius: 80px;
-  background: ${({ theme }) => theme.colors.base.white};
-  color: ${({ theme }) => theme.colors.primary[900]};
-  font-size: 12px;
-  line-height: 140%;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primary[900]};
-    color: ${({ theme }) => theme.colors.base.white};
-  }
-`;
-
-export const ResetButton = styled.button`
-  padding: 10px 20px;
-  border: 1px solid ${({ theme }) => theme.colors.gray[600]};
-  border-radius: 80px;
-  background: ${({ theme }) => theme.colors.base.white};
-  color: ${({ theme }) => theme.colors.gray[600]};
-  font-size: 12px;
-  line-height: 140%;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.gray[600]};
-    color: ${({ theme }) => theme.colors.base.white};
-  }
-`;
-
 export const HelpText = styled.p`
   font-size: 12px;
   color: ${({ theme }) => theme.colors.gray[500]};
