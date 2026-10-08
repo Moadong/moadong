@@ -118,8 +118,8 @@ export const QuestionWrapper = styled.div<{ readOnly?: boolean }>`
   gap: 20px;
   border-radius: 10px;
   border: 1px solid #f0f0f0;
-  pointer-events: ${({ readOnly }) => (readOnly ? 'none' : 'auto')};
-  cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'auto')};
+  pointer-events: ${({ readOnly }) => (readOnly ? 'none' : 'inherit')};
+  cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'inherit')};
 
   &:hover {
     box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);

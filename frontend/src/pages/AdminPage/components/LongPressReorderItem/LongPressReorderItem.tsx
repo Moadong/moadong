@@ -1,7 +1,7 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Reorder, useDragControls } from 'framer-motion';
 
-const LONG_PRESS_MS = 400;
+const LONG_PRESS_MS = 200;
 // 브라우저가 스크롤로 판정하기 전(터치 슬롭 약 15px)에 취소되도록 그보다 작게 둔다
 const MOVE_TOLERANCE_PX = 8;
 // 버튼·드롭다운 위에서 누르면 클릭이 우선이므로 드래그를 시작하지 않는다.
@@ -112,11 +112,15 @@ const LongPressReorderItem = <T,>({
       }}
       style={{
         position: 'relative',
+        cursor: disabled ? undefined : 'pointer',
         zIndex: isDragging ? 1 : 0,
         userSelect: isDragging ? 'none' : undefined,
       }}
     >
-      {children}
+      {/* 드래그 중엔 안쪽 입력이 포인터를 받지 않게 해 커서가 텍스트 커서로 바뀌지 않게 한다 */}
+      <div style={{ pointerEvents: isDragging ? 'none' : undefined }}>
+        {children}
+      </div>
     </Reorder.Item>
   );
 };
