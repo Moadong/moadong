@@ -25,10 +25,14 @@
   - 한 탭·페이지에서만 쓰는 순수 함수는 그 탭·페이지 폴더의 `utils/`에, 훅은 `hooks/`에, 컴포넌트는 `components/`에 둬요.
     모바일 전용 컴포넌트는 `components/mobile/`에 둬요(예: `PromotionTab/utils/promotionForm.ts`, `ApplicationListTab/components/mobile/`).
     탭·페이지 폴더 바로 아래에 유틸·훅 파일을 흩어 두면 지적해요.
+  - 상수·타입은 한 파일에서만 쓰면 그 파일 안(상단)에 두고, 탭·페이지 안 여러 파일이 쓰면 `constants/` 폴더나
+    탭·페이지 바로 아래 단일 `constants.ts`·`types.ts`에 둬요(예: `PeacePage/constants/`, `PromotionTab/constants.ts`).
+    질문 목록·공연표처럼 화면에 그리는 정적 콘텐츠는 `data/`에 둬요(예: `PeacePage/data/`).
   - 테스트 파일은 대상 파일 바로 옆에 `*.test.ts(x)`로 둬요.
   - 한 컴포넌트만 쓰는 헬퍼·훅은 그 컴포넌트 폴더 안에 둬도 돼요(예: `components/ImageSortGrid/reorderItems.ts`).
   - 여러 페이지가 함께 쓰는 것만 `frontend/src/utils`·`hooks`·`components`·`constants`로 올려요.
-    한 곳에서만 쓰는데 공용 폴더에 두었거나, 여러 곳이 쓰는데 한 페이지 폴더에 두고 다른 페이지가 `../../다른페이지`로 import하면 지적해요.
+    한 곳에서만 쓰는데 공용 폴더에 두었거나, 여러 곳이 쓰는데 한 페이지 폴더에 두고 다른 페이지·공용 폴더가
+    `@/pages/다른페이지/...`나 `../../다른페이지`로 import하면 지적해요(`routes/`에서 페이지 진입 컴포넌트를 import하는 건 제외).
 - **테마 색상 토큰 사용**: styled-components에 색상을 하드코딩(`#dc2626`, `rgba(...)` 등)하지 말고
   `@/styles/theme/colors`의 `colors` 토큰을 쓰게 해요. 기존 색을 토큰으로 옮기는 변경 안에서
   새로 추가한 스타일이 다시 하드코딩 hex를 들여오면 지적해요.
