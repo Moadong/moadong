@@ -1,4 +1,5 @@
 import type { ComponentType } from 'react';
+import ChevronRightIcon from '@/assets/images/icons/chevron_right_small.svg?react';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import PaintIllustration from './components/PositionIllustration/PaintIllustration';
@@ -72,6 +73,7 @@ const RecruitPage = () => {
                     </Styled.PositionSummary>
                     <Styled.PositionMore aria-hidden>
                       자세히 보기
+                      <ChevronRightIcon />
                     </Styled.PositionMore>
                   </Styled.PositionText>
                   <Styled.PositionArt>

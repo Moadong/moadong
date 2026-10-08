@@ -116,10 +116,26 @@ export const PositionSummary = styled.p`
   }
 `;
 
+/** 카드 전체가 링크라, 글자 옆 셰브론으로 누를 수 있다는 것만 알린다 */
 export const PositionMore = styled.span`
+  align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   ${({ theme }) => setTypography(theme.typography.button.button1)};
   color: ${({ theme }) => theme.colors.gray[950]};
-  text-underline-offset: 4px;
+
+  svg {
+    width: 7px;
+    height: 12px;
+    transition: transform 0.2s ease;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    svg {
+      transition: none;
+    }
+  }
 `;
 
 /** 개발자는 하늘, 디자이너는 노란 종이. 오른쪽 아래 그림 쪽만 한 톤 어둡게 깔아 그림을 받친다 */
@@ -139,8 +155,8 @@ export const PositionCard = styled(Link)<{ $variant: RecruitPositionId }>`
   background: ${({ $variant }) => CARD_BACKGROUNDS[$variant]};
   text-decoration: none;
 
-  &:hover ${PositionMore} {
-    text-decoration: underline;
+  &:hover ${PositionMore} svg {
+    transform: translateX(3px);
   }
 
   &:focus-visible {
