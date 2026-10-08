@@ -36,8 +36,8 @@ import {
 } from '@/types/application';
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
-import { createQuestionId } from './createQuestionId';
-import { pinFirstQuestion } from './pinFirstQuestion';
+import { createQuestionId } from './utils/createQuestionId';
+import { pinFirstQuestion } from './utils/pinFirstQuestion';
 
 const ApplicationEditTab = () => {
   const queryClient = useQueryClient();
