@@ -60,6 +60,4 @@ export const logoutStudentOAuth = async (): Promise<void> => {
     method: 'GET',
     credentials: 'include',
   });
-
-  localStorage.removeItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN);
 };
