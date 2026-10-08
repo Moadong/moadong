@@ -1,5 +1,6 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Reorder, useDragControls } from 'framer-motion';
+import { colors } from '@/styles/theme/colors';
 
 const LONG_PRESS_MS = 200;
 // 브라우저가 스크롤로 판정하기 전(터치 슬롭 약 15px)에 취소되도록 그보다 작게 둔다
@@ -18,7 +19,6 @@ const CLICK_TARGET_SELECTOR = [
 
 interface LongPressReorderItemProps<T> {
   value: T;
-  disabled?: boolean;
   children: ReactNode;
 }
 
@@ -28,42 +28,60 @@ interface LongPressReorderItemProps<T> {
  */
 const LongPressReorderItem = <T,>({
   value,
-  disabled = false,
   children,
 }: LongPressReorderItemProps<T>) => {
   const dragControls = useDragControls();
+  const itemRef = useRef<HTMLDivElement>(null);
   // 누르고 있는 동안의 타이머·리스너 정리 함수. 누르고 있지 않으면 null
   const pendingPressCleanupRef = useRef<(() => void) | null>(null);
+  // 터치 리스너가 렌더를 기다리지 않고 바로 읽어야 해서 상태와 따로 둔다
+  const isDraggingRef = useRef(false);
   const [isDragging, setIsDragging] = useState(false);
+
+  const updateDragging = (next: boolean) => {
+    isDraggingRef.current = next;
+    setIsDragging(next);
+  };
 
   const cancelPress = () => pendingPressCleanupRef.current?.();
 
   useEffect(() => cancelPress, []);
 
-  // 터치 드래그 중 브라우저가 스크롤을 시작하면 pointercancel로 드래그가 끊긴다
+  // 터치 드래그 중 브라우저가 스크롤을 시작하면 pointercancel로 드래그가 끊긴다.
+  // 모바일 브라우저는 터치를 시작한 순간 그 자리에 스크롤을 막는 리스너가 있는지로
+  // touchmove를 막을 수 있는지 정하므로, 드래그 시작 시점이 아니라 처음부터 항목에 붙여 둔다.
+  useEffect(() => {
+    const item = itemRef.current;
+    if (!item) return;
+    const preventScrollWhileDragging = (e: TouchEvent) => {
+      if (isDraggingRef.current) e.preventDefault();
+    };
+    item.addEventListener('touchmove', preventScrollWhileDragging, {
+      passive: false,
+    });
+    return () =>
+      item.removeEventListener('touchmove', preventScrollWhileDragging);
+  }, []);
+
+  // 길게 누른 뒤 움직이지 않고 떼면 framer-motion이 onDragEnd를 부르지 않는다.
+  // 여기서도 끝내지 않으면 드래그 상태가 남는다.
   useEffect(() => {
     if (!isDragging) return;
-    const preventScroll = (e: TouchEvent) => e.preventDefault();
-    // 길게 누른 뒤 움직이지 않고 떼면 framer-motion이 onDragEnd를 부르지 않는다.
-    // 여기서도 끝내지 않으면 스크롤 차단이 남아 페이지가 굳는다.
-    const endDrag = () => setIsDragging(false);
-    window.addEventListener('touchmove', preventScroll, { passive: false });
+    const endDrag = () => updateDragging(false);
     window.addEventListener('pointerup', endDrag);
     window.addEventListener('pointercancel', endDrag);
     return () => {
-      window.removeEventListener('touchmove', preventScroll);
       window.removeEventListener('pointerup', endDrag);
       window.removeEventListener('pointercancel', endDrag);
     };
   }, [isDragging]);
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-    if (disabled || e.button !== 0) return;
+    if (e.button !== 0) return;
     if ((e.target as Element).closest(CLICK_TARGET_SELECTOR)) return;
     cancelPress();
 
     const pointerEvent = e.nativeEvent;
-    const item = e.currentTarget;
     const { clientX: startX, clientY: startY } = e;
 
     // 포인터가 카드 밖(카드 사이 간격·다른 카드)으로 나가도 움직임·뗌을 놓치지 않도록 window에서 듣는다
@@ -76,12 +94,12 @@ const LongPressReorderItem = <T,>({
     };
     const timer = window.setTimeout(() => {
       cleanup();
-      // 입력 위에서 시작했으면 포커스·선택을 풀어 키보드·텍스트 선택이 드래그와 겹치지 않게 한다
-      if (item.contains(document.activeElement)) {
-        (document.activeElement as HTMLElement).blur();
+      // 드래그를 시작할 때 포커스·선택을 풀어 키보드·텍스트 선택이 드래그와 겹치지 않게 한다
+      if (document.activeElement instanceof HTMLElement) {
+        document.activeElement.blur();
       }
       window.getSelection()?.removeAllRanges();
-      setIsDragging(true);
+      updateDragging(true);
       dragControls.start(pointerEvent);
     }, LONG_PRESS_MS);
     const cleanup = () => {
@@ -100,24 +118,24 @@ const LongPressReorderItem = <T,>({
 
   return (
     <Reorder.Item
+      ref={itemRef}
       as='div'
       value={value}
       dragListener={false}
       dragControls={dragControls}
       onPointerDown={handlePointerDown}
-      onDragEnd={() => setIsDragging(false)}
+      onDragEnd={() => updateDragging(false)}
       whileDrag={{
         scale: 1.02,
-        boxShadow: '0 8px 24px rgba(0, 0, 0, 0.12)',
+        boxShadow: `0 8px 24px ${colors.base.black}1F`,
       }}
       style={{
         position: 'relative',
-        cursor: disabled ? undefined : 'pointer',
-        zIndex: isDragging ? 1 : 0,
+        cursor: isDragging ? 'grabbing' : 'grab',
         userSelect: isDragging ? 'none' : undefined,
       }}
     >
-      {/* 드래그 중엔 안쪽 입력이 포인터를 받지 않게 해 커서가 텍스트 커서로 바뀌지 않게 한다 */}
+      {/* 드래그 중엔 안쪽 입력이 포인터를 받지 않게 해 커서가 grabbing에서 텍스트 커서로 바뀌지 않게 한다 */}
       <div style={{ pointerEvents: isDragging ? 'none' : undefined }}>
         {children}
       </div>
