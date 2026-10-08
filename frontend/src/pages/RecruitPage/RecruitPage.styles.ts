@@ -128,7 +128,8 @@ export const PositionMore = styled.span`
   svg {
     width: 7px;
     height: 12px;
-    transition: transform 0.2s ease;
+    transition: transform ${({ theme }) => theme.transitions.duration.fast}
+      ${({ theme }) => theme.transitions.easing.ease};
   }
 
   @media (prefers-reduced-motion: reduce) {

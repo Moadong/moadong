@@ -1,8 +1,8 @@
 import styled, { css } from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { transitions } from '@/styles/theme/transitions';
 import { setTypography } from '@/styles/theme/typography';
 
-const FADE_UP_MS = 600;
 const STAGGER_MS = 80;
 
 export const Section = styled.section`
@@ -74,8 +74,8 @@ export const Card = styled.li<{
       opacity: ${$isVisible ? 1 : 0};
       transform: translateY(${$isVisible ? 0 : 16}px);
       transition:
-        opacity ${FADE_UP_MS}ms ease-out,
-        transform ${FADE_UP_MS}ms ease-out;
+        opacity ${transitions.duration.slow} ${transitions.easing.easeOut},
+        transform ${transitions.duration.slow} ${transitions.easing.easeOut};
       transition-delay: ${$index * STAGGER_MS}ms;
     `}
 
