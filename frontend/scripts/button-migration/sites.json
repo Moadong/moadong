@@ -1201,7 +1201,7 @@
     "name": "AddItemButton",
     "kind": "styled.button",
     "usageFile": "src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection/FAQSection.tsx",
-    "line": 92,
+    "line": 93,
     "domain": "AdminPage/tabs/ClubIntroEditTab",
     "signatureKey": "4c310a3c",
     "signature": {
@@ -1234,7 +1234,7 @@
     "name": "AddItemButton",
     "kind": "styled.button",
     "usageFile": "src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection/FAQSection.tsx",
-    "line": 108,
+    "line": 109,
     "domain": "AdminPage/tabs/ClubIntroEditTab",
     "signatureKey": "4c310a3c",
     "signature": {
@@ -1262,28 +1262,23 @@
     "status": "inventoried"
   },
   {
-    "id": "src/pages/AdminPage/components/ApplicationRow/ApplicationRowItem.style.ts::MoreButton::src/pages/AdminPage/components/ApplicationRow/ApplicationRowItem.tsx::0",
-    "defFile": "src/pages/AdminPage/components/ApplicationRow/ApplicationRowItem.style.ts",
-    "name": "MoreButton",
+    "id": "src/pages/AdminPage/components/ClearButton.ts::ClearButton::src/pages/AdminPage/components/ClearableTextArea/ClearableTextArea.tsx::0",
+    "defFile": "src/pages/AdminPage/components/ClearButton.ts",
+    "name": "ClearButton",
     "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/components/ApplicationRow/ApplicationRowItem.tsx",
-    "line": 58,
+    "usageFile": "src/pages/AdminPage/components/ClearableTextArea/ClearableTextArea.tsx",
+    "line": 53,
     "domain": "AdminPage/components",
-    "signatureKey": "2bd45d98",
+    "signatureKey": "574e0818",
     "signature": {
-      "height": "30px",
+      "height": "22px",
       "padding": "0 0 0 0",
-      "border-radius": "50%",
       "background-color": "none",
       "border": "none"
     },
-    "nested": {
-      "&:hover": {
-        "background-color": "#DCDCDC"
-      }
-    },
+    "nested": {},
     "dynamic": [],
-    "typeAttr": null,
+    "typeAttr": "button",
     "label": null,
     "route": null,
     "locator": null,
@@ -1292,13 +1287,13 @@
     "status": "inventoried"
   },
   {
-    "id": "src/pages/AdminPage/components/ClearableTextArea/ClearableTextArea.styles.ts::ClearButton::src/pages/AdminPage/components/ClearableTextArea/ClearableTextArea.tsx::0",
-    "defFile": "src/pages/AdminPage/components/ClearableTextArea/ClearableTextArea.styles.ts",
+    "id": "src/pages/AdminPage/components/ClearButton.ts::ClearButton::src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/LinkEditPage/LinkField.tsx::0",
+    "defFile": "src/pages/AdminPage/components/ClearButton.ts",
     "name": "ClearButton",
     "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/components/ClearableTextArea/ClearableTextArea.tsx",
-    "line": 52,
-    "domain": "AdminPage/components",
+    "usageFile": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/LinkEditPage/LinkField.tsx",
+    "line": 49,
+    "domain": "AdminPage/tabs/ClubInfoEditTab",
     "signatureKey": "574e0818",
     "signature": {
       "height": "22px",
@@ -1367,149 +1362,26 @@
     "status": "inventoried"
   },
   {
-    "id": "src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.styles.ts::ResetButton::src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.tsx::0",
-    "defFile": "src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.styles.ts",
-    "name": "ResetButton",
+    "id": "src/pages/AdminPage/components/ClearButton.ts::ClearButton::src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection/FAQSection.tsx::0",
+    "defFile": "src/pages/AdminPage/components/ClearButton.ts",
+    "name": "ClearButton",
     "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.tsx",
-    "line": 88,
-    "domain": "AdminPage/components",
-    "signatureKey": "f3964511",
+    "usageFile": "src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection/FAQSection.tsx",
+    "line": 38,
+    "domain": "AdminPage/tabs/ClubIntroEditTab",
+    "signatureKey": "574e0818",
     "signature": {
-      "padding": "10px 20px 10px 20px",
-      "border-radius": "80px",
-      "background-color": "#FFFFFF",
-      "color": "#989898",
-      "font-size": "12px",
-      "font-weight": "600",
-      "line-height": "140%",
-      "border": "1px solid #989898"
+      "height": "22px",
+      "padding": "0 0 0 0",
+      "background-color": "none",
+      "border": "none"
     },
-    "nested": {
-      "&:hover": {
-        "background-color": "#989898",
-        "color": "#FFFFFF"
-      }
-    },
+    "nested": {},
     "dynamic": [],
-    "typeAttr": null,
-    "label": "초기화",
+    "typeAttr": "button",
+    "label": null,
     "route": null,
-    "locator": {
-      "role": "button",
-      "name": "초기화"
-    },
-    "figma": null,
-    "figmaViewport": null,
-    "status": "inventoried"
-  },
-  {
-    "id": "src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.styles.ts::UploadButton::src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.tsx::0",
-    "defFile": "src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.styles.ts",
-    "name": "UploadButton",
-    "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.tsx",
-    "line": 83,
-    "domain": "AdminPage/components",
-    "signatureKey": "8fe26dde",
-    "signature": {
-      "padding": "10px 20px 10px 20px",
-      "border-radius": "80px",
-      "background-color": "#FFFFFF",
-      "color": "#FF5414",
-      "font-size": "12px",
-      "font-weight": "600",
-      "line-height": "140%",
-      "border": "1px solid #FF5414"
-    },
-    "nested": {
-      "&:hover": {
-        "background-color": "#FF5414",
-        "color": "#FFFFFF"
-      }
-    },
-    "dynamic": [],
-    "typeAttr": null,
-    "label": "이미지 수정",
-    "route": null,
-    "locator": {
-      "role": "button",
-      "name": "이미지 수정"
-    },
-    "figma": null,
-    "figmaViewport": null,
-    "status": "inventoried"
-  },
-  {
-    "id": "src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.styles.ts::ResetButton::src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.tsx::0",
-    "defFile": "src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.styles.ts",
-    "name": "ResetButton",
-    "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.tsx",
-    "line": 86,
-    "domain": "AdminPage/components",
-    "signatureKey": "fc8c2d27",
-    "signature": {
-      "padding": "10px 20px 10px 20px",
-      "border-radius": "80px",
-      "background-color": "#FFFFFF",
-      "color": "#999999",
-      "font-size": "12px",
-      "font-weight": "600",
-      "line-height": "140%",
-      "border": "1px solid #999999"
-    },
-    "nested": {
-      "&:hover": {
-        "background-color": "#999999",
-        "color": "#FFFFFF"
-      }
-    },
-    "dynamic": [],
-    "typeAttr": null,
-    "label": "초기화",
-    "route": null,
-    "locator": {
-      "role": "button",
-      "name": "초기화"
-    },
-    "figma": null,
-    "figmaViewport": null,
-    "status": "inventoried"
-  },
-  {
-    "id": "src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.styles.ts::UploadButton::src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.tsx::0",
-    "defFile": "src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.styles.ts",
-    "name": "UploadButton",
-    "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.tsx",
-    "line": 81,
-    "domain": "AdminPage/components",
-    "signatureKey": "537ec328",
-    "signature": {
-      "padding": "10px 20px 10px 20px",
-      "border-radius": "80px",
-      "background-color": "#FFFFFF",
-      "color": "#FF6B35",
-      "font-size": "12px",
-      "font-weight": "600",
-      "line-height": "140%",
-      "border": "1px solid #FF6B35"
-    },
-    "nested": {
-      "&:hover": {
-        "background-color": "#FF6B35",
-        "color": "#FFFFFF"
-      }
-    },
-    "dynamic": [],
-    "typeAttr": null,
-    "label": "이미지 수정",
-    "route": null,
-    "locator": {
-      "role": "button",
-      "name": "이미지 수정"
-    },
+    "locator": null,
     "figma": null,
     "figmaViewport": null,
     "status": "inventoried"
@@ -1600,6 +1472,260 @@
     "label": null,
     "route": null,
     "locator": null,
+    "figma": null,
+    "figmaViewport": null,
+    "status": "inventoried"
+  },
+  {
+    "id": "src/pages/AdminPage/components/MoreButton.ts::MoreButton::src/pages/AdminPage/components/ApplicationRow/ApplicationRowItem.tsx::0",
+    "defFile": "src/pages/AdminPage/components/MoreButton.ts",
+    "name": "MoreButton",
+    "kind": "styled.button",
+    "usageFile": "src/pages/AdminPage/components/ApplicationRow/ApplicationRowItem.tsx",
+    "line": 59,
+    "domain": "AdminPage/components",
+    "signatureKey": "2bd45d98",
+    "signature": {
+      "height": "30px",
+      "padding": "0 0 0 0",
+      "border-radius": "50%",
+      "background-color": "none",
+      "border": "none"
+    },
+    "nested": {
+      "&:hover": {
+        "background-color": "#DCDCDC"
+      }
+    },
+    "dynamic": [],
+    "typeAttr": null,
+    "label": null,
+    "route": null,
+    "locator": null,
+    "figma": null,
+    "figmaViewport": null,
+    "status": "inventoried"
+  },
+  {
+    "id": "src/pages/AdminPage/components/MoreButton.ts::MoreButton::src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationCardMobile/ApplicationCardMobile.tsx::0",
+    "defFile": "src/pages/AdminPage/components/MoreButton.ts",
+    "name": "MoreButton",
+    "kind": "styled.button",
+    "usageFile": "src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationCardMobile/ApplicationCardMobile.tsx",
+    "line": 51,
+    "domain": "AdminPage/tabs/ApplicationTab",
+    "signatureKey": "2bd45d98",
+    "signature": {
+      "height": "30px",
+      "padding": "0 0 0 0",
+      "border-radius": "50%",
+      "background-color": "none",
+      "border": "none"
+    },
+    "nested": {
+      "&:hover": {
+        "background-color": "#DCDCDC"
+      }
+    },
+    "dynamic": [],
+    "typeAttr": null,
+    "label": null,
+    "route": null,
+    "locator": null,
+    "figma": null,
+    "figmaViewport": null,
+    "status": "inventoried"
+  },
+  {
+    "id": "src/pages/AdminPage/components/MoreButton.ts::MoreButton::src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationListCardMobile/ApplicationListCardMobile.tsx::0",
+    "defFile": "src/pages/AdminPage/components/MoreButton.ts",
+    "name": "MoreButton",
+    "kind": "styled.button",
+    "usageFile": "src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationListCardMobile/ApplicationListCardMobile.tsx",
+    "line": 62,
+    "domain": "AdminPage/tabs/ApplicationTab",
+    "signatureKey": "2bd45d98",
+    "signature": {
+      "height": "30px",
+      "padding": "0 0 0 0",
+      "border-radius": "50%",
+      "background-color": "none",
+      "border": "none"
+    },
+    "nested": {
+      "&:hover": {
+        "background-color": "#DCDCDC"
+      }
+    },
+    "dynamic": [],
+    "typeAttr": null,
+    "label": null,
+    "route": null,
+    "locator": null,
+    "figma": null,
+    "figmaViewport": null,
+    "status": "inventoried"
+  },
+  {
+    "id": "src/pages/AdminPage/components/OutlinePillButton.ts::OutlinePillButton::src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.tsx::0",
+    "defFile": "src/pages/AdminPage/components/OutlinePillButton.ts",
+    "name": "OutlinePillButton",
+    "kind": "styled.button",
+    "usageFile": "src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.tsx",
+    "line": 84,
+    "domain": "AdminPage/components",
+    "signatureKey": "e65fb442",
+    "signature": {
+      "padding": "9px 20px 9px 20px",
+      "border-radius": "80px",
+      "background-color": "#FFFFFF",
+      "color": "__DYNAMIC__",
+      "font-size": "12px",
+      "font-weight": "600",
+      "line-height": "140%",
+      "border": "1px solid __DYNAMIC__"
+    },
+    "nested": {
+      "&:hover": {
+        "background-color": "__DYNAMIC__",
+        "color": "#FFFFFF"
+      }
+    },
+    "dynamic": [
+      "color",
+      "border",
+      "&:hover background-color"
+    ],
+    "typeAttr": null,
+    "label": "이미지 수정",
+    "route": null,
+    "locator": {
+      "role": "button",
+      "name": "이미지 수정"
+    },
+    "figma": null,
+    "figmaViewport": null,
+    "status": "inventoried"
+  },
+  {
+    "id": "src/pages/AdminPage/components/OutlinePillButton.ts::OutlinePillButton::src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.tsx::1",
+    "defFile": "src/pages/AdminPage/components/OutlinePillButton.ts",
+    "name": "OutlinePillButton",
+    "kind": "styled.button",
+    "usageFile": "src/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor.tsx",
+    "line": 89,
+    "domain": "AdminPage/components",
+    "signatureKey": "e65fb442",
+    "signature": {
+      "padding": "9px 20px 9px 20px",
+      "border-radius": "80px",
+      "background-color": "#FFFFFF",
+      "color": "__DYNAMIC__",
+      "font-size": "12px",
+      "font-weight": "600",
+      "line-height": "140%",
+      "border": "1px solid __DYNAMIC__"
+    },
+    "nested": {
+      "&:hover": {
+        "background-color": "__DYNAMIC__",
+        "color": "#FFFFFF"
+      }
+    },
+    "dynamic": [
+      "color",
+      "border",
+      "&:hover background-color"
+    ],
+    "typeAttr": null,
+    "label": "초기화",
+    "route": null,
+    "locator": {
+      "role": "button",
+      "name": "초기화"
+    },
+    "figma": null,
+    "figmaViewport": null,
+    "status": "inventoried"
+  },
+  {
+    "id": "src/pages/AdminPage/components/OutlinePillButton.ts::OutlinePillButton::src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.tsx::0",
+    "defFile": "src/pages/AdminPage/components/OutlinePillButton.ts",
+    "name": "OutlinePillButton",
+    "kind": "styled.button",
+    "usageFile": "src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.tsx",
+    "line": 82,
+    "domain": "AdminPage/components",
+    "signatureKey": "e65fb442",
+    "signature": {
+      "padding": "9px 20px 9px 20px",
+      "border-radius": "80px",
+      "background-color": "#FFFFFF",
+      "color": "__DYNAMIC__",
+      "font-size": "12px",
+      "font-weight": "600",
+      "line-height": "140%",
+      "border": "1px solid __DYNAMIC__"
+    },
+    "nested": {
+      "&:hover": {
+        "background-color": "__DYNAMIC__",
+        "color": "#FFFFFF"
+      }
+    },
+    "dynamic": [
+      "color",
+      "border",
+      "&:hover background-color"
+    ],
+    "typeAttr": null,
+    "label": "이미지 수정",
+    "route": null,
+    "locator": {
+      "role": "button",
+      "name": "이미지 수정"
+    },
+    "figma": null,
+    "figmaViewport": null,
+    "status": "inventoried"
+  },
+  {
+    "id": "src/pages/AdminPage/components/OutlinePillButton.ts::OutlinePillButton::src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.tsx::1",
+    "defFile": "src/pages/AdminPage/components/OutlinePillButton.ts",
+    "name": "OutlinePillButton",
+    "kind": "styled.button",
+    "usageFile": "src/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor.tsx",
+    "line": 87,
+    "domain": "AdminPage/components",
+    "signatureKey": "e65fb442",
+    "signature": {
+      "padding": "9px 20px 9px 20px",
+      "border-radius": "80px",
+      "background-color": "#FFFFFF",
+      "color": "__DYNAMIC__",
+      "font-size": "12px",
+      "font-weight": "600",
+      "line-height": "140%",
+      "border": "1px solid __DYNAMIC__"
+    },
+    "nested": {
+      "&:hover": {
+        "background-color": "__DYNAMIC__",
+        "color": "#FFFFFF"
+      }
+    },
+    "dynamic": [
+      "color",
+      "border",
+      "&:hover background-color"
+    ],
+    "typeAttr": null,
+    "label": "초기화",
+    "route": null,
+    "locator": {
+      "role": "button",
+      "name": "초기화"
+    },
     "figma": null,
     "figmaViewport": null,
     "status": "inventoried"
@@ -2199,66 +2325,6 @@
     "nested": {},
     "dynamic": [],
     "typeAttr": "button",
-    "label": null,
-    "route": null,
-    "locator": null,
-    "figma": null,
-    "figmaViewport": null,
-    "status": "inventoried"
-  },
-  {
-    "id": "src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationCardMobile/ApplicationCardMobile.styles.ts::MoreButton::src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationCardMobile/ApplicationCardMobile.tsx::0",
-    "defFile": "src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationCardMobile/ApplicationCardMobile.styles.ts",
-    "name": "MoreButton",
-    "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationCardMobile/ApplicationCardMobile.tsx",
-    "line": 50,
-    "domain": "AdminPage/tabs/ApplicationTab",
-    "signatureKey": "2bd45d98",
-    "signature": {
-      "height": "30px",
-      "padding": "0 0 0 0",
-      "border-radius": "50%",
-      "background-color": "none",
-      "border": "none"
-    },
-    "nested": {
-      "&:hover": {
-        "background-color": "#DCDCDC"
-      }
-    },
-    "dynamic": [],
-    "typeAttr": null,
-    "label": null,
-    "route": null,
-    "locator": null,
-    "figma": null,
-    "figmaViewport": null,
-    "status": "inventoried"
-  },
-  {
-    "id": "src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationListCardMobile/ApplicationListCardMobile.styles.ts::MoreButton::src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationListCardMobile/ApplicationListCardMobile.tsx::0",
-    "defFile": "src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationListCardMobile/ApplicationListCardMobile.styles.ts",
-    "name": "MoreButton",
-    "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/tabs/ApplicationTab/ApplicationListTab/components/mobile/ApplicationListCardMobile/ApplicationListCardMobile.tsx",
-    "line": 61,
-    "domain": "AdminPage/tabs/ApplicationTab",
-    "signatureKey": "2bd45d98",
-    "signature": {
-      "height": "30px",
-      "padding": "0 0 0 0",
-      "border-radius": "50%",
-      "background-color": "none",
-      "border": "none"
-    },
-    "nested": {
-      "&:hover": {
-        "background-color": "#DCDCDC"
-      }
-    },
-    "dynamic": [],
-    "typeAttr": null,
     "label": null,
     "route": null,
     "locator": null,
@@ -3140,56 +3206,19 @@
     "status": "inventoried"
   },
   {
-    "id": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/LinkEditPage/LinkField.styles.ts::ClearButton::src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/LinkEditPage/LinkField.tsx::0",
-    "defFile": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/LinkEditPage/LinkField.styles.ts",
-    "name": "ClearButton",
-    "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/LinkEditPage/LinkField.tsx",
-    "line": 48,
-    "domain": "AdminPage/tabs/ClubInfoEditTab",
-    "signatureKey": "574e0818",
-    "signature": {
-      "height": "22px",
-      "padding": "0 0 0 0",
-      "background-color": "none",
-      "border": "none"
-    },
-    "nested": {},
-    "dynamic": [],
-    "typeAttr": "button",
-    "label": null,
-    "route": null,
-    "locator": null,
-    "figma": null,
-    "figmaViewport": null,
-    "status": "inventoried"
-  },
-  {
     "id": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/MobileBannerSection.styles.ts::BannerEditButton::src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/MobileBannerSection.tsx::0",
     "defFile": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/MobileBannerSection.styles.ts",
     "name": "BannerEditButton",
-    "kind": "styled.button",
+    "kind": "styled(button-def)",
     "usageFile": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/MobileBannerSection.tsx",
     "line": 60,
     "domain": "AdminPage/tabs/ClubInfoEditTab",
-    "signatureKey": "3609cbca",
-    "signature": {
-      "padding": "10px 10px 10px 10px",
-      "border-radius": "80px",
-      "background-color": "#FFFFFF",
-      "color": "#787878",
-      "font-size": "12px",
-      "font-weight": "600",
-      "line-height": "140%",
-      "border": "1px solid #787878"
-    },
-    "nested": {
-      "&:hover": {
-        "background-color": "#787878",
-        "color": "#FFFFFF"
-      }
-    },
-    "dynamic": [],
+    "signatureKey": "77939a61",
+    "signature": {},
+    "nested": {},
+    "dynamic": [
+      "inherits"
+    ],
     "typeAttr": null,
     "label": "배너 수정",
     "route": null,
@@ -3205,28 +3234,16 @@
     "id": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/MobileBannerSection.styles.ts::BannerEditButton::src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/MobileBannerSection.tsx::1",
     "defFile": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/MobileBannerSection.styles.ts",
     "name": "BannerEditButton",
-    "kind": "styled.button",
+    "kind": "styled(button-def)",
     "usageFile": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/MobileBannerSection.tsx",
-    "line": 64,
+    "line": 67,
     "domain": "AdminPage/tabs/ClubInfoEditTab",
-    "signatureKey": "3609cbca",
-    "signature": {
-      "padding": "10px 10px 10px 10px",
-      "border-radius": "80px",
-      "background-color": "#FFFFFF",
-      "color": "#787878",
-      "font-size": "12px",
-      "font-weight": "600",
-      "line-height": "140%",
-      "border": "1px solid #787878"
-    },
-    "nested": {
-      "&:hover": {
-        "background-color": "#787878",
-        "color": "#FFFFFF"
-      }
-    },
-    "dynamic": [],
+    "signatureKey": "77939a61",
+    "signature": {},
+    "nested": {},
+    "dynamic": [
+      "inherits"
+    ],
     "typeAttr": null,
     "label": "초기화",
     "route": null,
@@ -3244,7 +3261,7 @@
     "name": "LogoEditButton",
     "kind": "styled.button",
     "usageFile": "src/pages/AdminPage/tabs/ClubInfoEditTab/components/mobile/MobileBannerSection/MobileBannerSection.tsx",
-    "line": 78,
+    "line": 81,
     "domain": "AdminPage/tabs/ClubInfoEditTab",
     "signatureKey": "e8516ba7",
     "signature": {
@@ -3509,31 +3526,6 @@
       "role": "button",
       "name": "추가하기"
     },
-    "figma": null,
-    "figmaViewport": null,
-    "status": "inventoried"
-  },
-  {
-    "id": "src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection/FAQSection.styles.ts::DeleteButton::src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection/FAQSection.tsx::0",
-    "defFile": "src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection/FAQSection.styles.ts",
-    "name": "DeleteButton",
-    "kind": "styled.button",
-    "usageFile": "src/pages/AdminPage/tabs/ClubIntroEditTab/components/mobile/FAQSection/FAQSection.tsx",
-    "line": 37,
-    "domain": "AdminPage/tabs/ClubIntroEditTab",
-    "signatureKey": "574e0818",
-    "signature": {
-      "height": "22px",
-      "padding": "0 0 0 0",
-      "background-color": "none",
-      "border": "none"
-    },
-    "nested": {},
-    "dynamic": [],
-    "typeAttr": "button",
-    "label": null,
-    "route": null,
-    "locator": null,
     "figma": null,
     "figmaViewport": null,
     "status": "inventoried"
