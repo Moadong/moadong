@@ -4,11 +4,10 @@ import { Reorder, useDragControls } from 'framer-motion';
 const LONG_PRESS_MS = 400;
 // 브라우저가 스크롤로 판정하기 전(터치 슬롭 약 15px)에 취소되도록 그보다 작게 둔다
 const MOVE_TOLERANCE_PX = 8;
-// 편집 가능한 입력·버튼 위에서 누르면 편집·클릭이 우선이므로 드래그를 시작하지 않는다.
-// 비활성 입력(답변 미리보기)은 카드 몸통으로 보고 드래그를 허용한다.
-const INTERACTIVE_SELECTOR = [
-  'input:not(:disabled)',
-  'textarea:not(:disabled)',
+// 버튼·드롭다운 위에서 누르면 클릭이 우선이므로 드래그를 시작하지 않는다.
+// 질문 제목·설명 입력은 카드 대부분을 차지해서 제외하면 길게 누를 곳이 여백뿐이다.
+// 입력 위에서는 짧게 누르면 편집, 길게 누르면 드래그로 나눈다.
+const CLICK_TARGET_SELECTOR = [
   'select:not(:disabled)',
   'button:not(:disabled)',
   'a[href]',
@@ -60,10 +59,11 @@ const LongPressReorderItem = <T,>({
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (disabled || e.button !== 0) return;
-    if ((e.target as Element).closest(INTERACTIVE_SELECTOR)) return;
+    if ((e.target as Element).closest(CLICK_TARGET_SELECTOR)) return;
     cancelPress();
 
     const pointerEvent = e.nativeEvent;
+    const item = e.currentTarget;
     const { clientX: startX, clientY: startY } = e;
 
     // 포인터가 카드 밖(카드 사이 간격·다른 카드)으로 나가도 움직임·뗌을 놓치지 않도록 window에서 듣는다
@@ -76,6 +76,10 @@ const LongPressReorderItem = <T,>({
     };
     const timer = window.setTimeout(() => {
       cleanup();
+      // 입력 위에서 시작했으면 포커스·선택을 풀어 키보드·텍스트 선택이 드래그와 겹치지 않게 한다
+      if (item.contains(document.activeElement)) {
+        (document.activeElement as HTMLElement).blur();
+      }
       window.getSelection()?.removeAllRanges();
       setIsDragging(true);
       dragControls.start(pointerEvent);
