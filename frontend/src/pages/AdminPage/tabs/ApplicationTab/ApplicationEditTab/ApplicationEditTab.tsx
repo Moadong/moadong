@@ -53,7 +53,6 @@ const ApplicationEditTab = () => {
 
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
-  const [nextId, setNextId] = useState(1);
   const [applicationFormMode, setApplicationFormMode] =
     useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
   const [externalApplicationUrl, setExternalApplicationUrl] = useState('');
@@ -94,7 +93,6 @@ const ApplicationEditTab = () => {
 
     setApplicationFormMode(formMode);
     setExternalApplicationUrl(externalApplicationUrl);
-    setNextId(Math.max(...currentQuestions.map((q) => q.id)) + 1);
     setFormData({ ...existingFormData, questions: currentQuestions });
   }, [existingFormData]);
 
@@ -157,7 +155,6 @@ const ApplicationEditTab = () => {
         description: draft.description,
         questions: [nameQuestion, ...draftQuestions],
       }));
-      setNextId(draftQuestions.length + 2);
       setDraftSource(draft.aiGenerated ? 'ai' : 'template');
       trackEvent(ADMIN_EVENT.AI_DRAFT_GENERATED, {
         ai_generated: draft.aiGenerated,
@@ -245,11 +242,6 @@ const ApplicationEditTab = () => {
       return;
     }
 
-    const reorderedQuestions = formData.questions?.map((q, idx) => ({
-      ...q,
-      id: idx + 1,
-    }));
-
     const payload: ApplicationFormData = {
       title: formData.title,
       description: formData.description,
@@ -258,7 +250,7 @@ const ApplicationEditTab = () => {
     };
 
     if (applicationFormMode === ApplicationFormMode.INTERNAL) {
-      payload.questions = reorderedQuestions;
+      payload.questions = formData.questions;
     } else if (applicationFormMode === ApplicationFormMode.EXTERNAL) {
       payload.externalApplicationUrl = externalApplicationUrl;
     }
@@ -333,8 +325,6 @@ const ApplicationEditTab = () => {
           <InternalApplicationComponent
             formData={formData}
             setFormData={setFormData}
-            nextId={nextId}
-            setNextId={setNextId}
           />
         ) : (
           <ExternalApplicationComponent
@@ -355,19 +345,20 @@ const ApplicationEditTab = () => {
 interface InternalApplicationComponentProps {
   formData: ApplicationFormData;
   setFormData: React.Dispatch<React.SetStateAction<ApplicationFormData>>;
-  nextId: number;
-  setNextId: React.Dispatch<React.SetStateAction<number>>;
 }
+
+// 지원자 답변은 질문 id로 질문을 찾는다. 지운 질문의 id를 새 질문이 다시 받으면
+// 옛 답변이 새 질문에 붙으므로, 남은 질문 최댓값이 아니라 시간 기반으로 만든다.
+const createQuestionId = (questions: Question[]) =>
+  Math.max(Date.now(), ...questions.map((q) => q.id + 1));
 
 const InternalApplicationComponent = ({
   formData,
   setFormData,
-  nextId,
-  setNextId,
 }: InternalApplicationComponentProps) => {
   const addQuestion = () => {
     const newQuestion: Question = {
-      id: nextId,
+      id: createQuestionId(formData.questions ?? []),
       title: '',
       description: '',
       type: 'SHORT_TEXT',
@@ -378,7 +369,6 @@ const InternalApplicationComponent = ({
       ...prev,
       questions: [...(prev.questions ?? []), newQuestion],
     }));
-    setNextId((currentId) => currentId + 1);
   };
 
   const removeQuestion = (id: number) => {
