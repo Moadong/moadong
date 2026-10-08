@@ -21,6 +21,14 @@
   fetch/axios가 흩어져 있으면 지적한다.
 - **공통 UI 재사용**: 새 UI가 `frontend/src/components/`의 기존 컴포넌트로
   대체 가능한데 새로 만들었으면 지적한다.
+- **폴더 구조**: 이번 PR에서 새로 만들거나 옮긴 `frontend/src` 파일의 위치만 봐요. 기존 파일 위치는 지적하지 않아요.
+  - 한 탭·페이지에서만 쓰는 순수 함수는 그 탭·페이지 폴더의 `utils/`에, 훅은 `hooks/`에, 컴포넌트는 `components/`에 둬요.
+    모바일 전용 컴포넌트는 `components/mobile/`에 둬요(예: `PromotionTab/utils/promotionForm.ts`, `ApplicationListTab/components/mobile/`).
+    탭·페이지 폴더 바로 아래에 유틸·훅 파일을 흩어 두면 지적해요.
+  - 테스트 파일은 대상 파일 바로 옆에 `*.test.ts(x)`로 둬요.
+  - 한 컴포넌트만 쓰는 헬퍼·훅은 그 컴포넌트 폴더 안에 둬도 돼요(예: `components/ImageSortGrid/reorderItems.ts`).
+  - 여러 페이지가 함께 쓰는 것만 `frontend/src/utils`·`hooks`·`components`·`constants`로 올려요.
+    한 곳에서만 쓰는데 공용 폴더에 두었거나, 여러 곳이 쓰는데 한 페이지 폴더에 두고 다른 페이지가 `../../다른페이지`로 import하면 지적해요.
 - **테마 색상 토큰 사용**: styled-components에 색상을 하드코딩(`#dc2626`, `rgba(...)` 등)하지 말고
   `@/styles/theme/colors`의 `colors` 토큰을 쓰게 해요. 기존 색을 토큰으로 옮기는 변경 안에서
   새로 추가한 스타일이 다시 하드코딩 hex를 들여오면 지적해요.
