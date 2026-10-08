@@ -1,12 +1,6 @@
-import {
-  Navigate,
-  useLocation,
-  useNavigate,
-  useParams,
-} from 'react-router-dom';
+import { Navigate, useParams } from 'react-router-dom';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import isInAppWebView from '@/utils/isInAppWebView';
 import RecruitLayout from './components/RecruitLayout/RecruitLayout';
 import { MOADONG_CLUB_ID, RECRUIT_POSITIONS } from './constants/recruit';
 import type { RecruitPosition } from './constants/recruit';
@@ -31,17 +25,6 @@ const RecruitPositionContent = ({
 }: {
   position: RecruitPosition;
 }) => {
-  const location = useLocation();
-  const navigate = useNavigate();
-
-  // 공유 링크로 바로 들어오면 이전 화면이 없어 상단바가 '/'로 보낸다. 목록으로 돌려보낸다.
-  // 앱 웹뷰는 뒤로가기를 앱이 처리하므로 건드리지 않는다
-  const hasNoPreviousPage = location.key === 'default';
-  const handleBackToList =
-    hasNoPreviousPage && !isInAppWebView()
-      ? () => navigate('/recruit', { replace: true })
-      : undefined;
-
   // 동아리·지원서가 아직 없으면 지원서 페이지가 오류를 띄우고 튕겨 내므로 버튼을 막는다
   const applicationPath =
     MOADONG_CLUB_ID && position.applicationFormId
@@ -54,8 +37,9 @@ const RecruitPositionContent = ({
     { title: '우대사항', items: position.preferred },
   ];
 
+  // 공유 링크로 바로 들어와 이전 화면이 없으면 상단바 뒤로가기가 '/' 대신 목록으로 간다
   return (
-    <RecruitLayout onBack={handleBackToList}>
+    <RecruitLayout backFallbackPath='/recruit'>
       <Styled.BackLink to='/recruit'>← 전체 포지션</Styled.BackLink>
       <Styled.Header>
         <Styled.Title>{position.title}</Styled.Title>

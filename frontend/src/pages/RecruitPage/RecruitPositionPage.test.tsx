@@ -10,20 +10,16 @@ import RecruitPositionPage from './RecruitPositionPage';
 jest.mock('mixpanel-browser', () => ({ track: jest.fn() }));
 jest.mock('./components/RecruitLayout/RecruitLayout', () => ({
   __esModule: true,
-  // 상단바 대신, 페이지가 넘긴 onBack이 있을 때만 버튼으로 드러낸다
+  // 상단바 대신, 페이지가 넘긴 뒤로가기 대체 경로를 글자로 드러낸다
   default: ({
     children,
-    onBack,
+    backFallbackPath,
   }: {
     children: React.ReactNode;
-    onBack?: () => void;
+    backFallbackPath?: string;
   }) => (
     <div>
-      {onBack && (
-        <button type='button' onClick={onBack}>
-          상단바 뒤로가기
-        </button>
-      )}
+      <span>BACK FALLBACK {backFallbackPath}</span>
       {children}
     </div>
   ),
@@ -61,16 +57,10 @@ const ApplicationProbe = () => {
   );
 };
 
-const renderPage = (position: string, previousPath?: string) =>
+const renderPage = (position: string) =>
   render(
     <ThemeProvider theme={theme}>
-      <MemoryRouter
-        initialEntries={[
-          ...(previousPath ? [previousPath] : []),
-          `/recruit/${position}`,
-        ]}
-        initialIndex={previousPath ? 1 : 0}
-      >
+      <MemoryRouter initialEntries={[`/recruit/${position}`]}>
         <Routes>
           <Route path='/recruit' element={<div>RECRUIT LIST</div>} />
           <Route path='/recruit/:position' element={<RecruitPositionPage />} />
@@ -121,18 +111,8 @@ describe('RecruitPositionPage', () => {
     expect(screen.getByText('APPLICATION club-1/form-dev')).toBeInTheDocument();
   });
 
-  it('상세 주소로 바로 들어오면 상단바 뒤로가기가 모집 목록으로 보낸다', async () => {
+  it('상단바 뒤로가기가 갈 곳이 없으면 모집 목록으로 보내도록 경로를 넘긴다', () => {
     renderPage('designer');
-    await userEvent.click(
-      screen.getByRole('button', { name: '상단바 뒤로가기' }),
-    );
-    expect(screen.getByText('RECRUIT LIST')).toBeInTheDocument();
-  });
-
-  it('이전 화면이 있으면 상단바 기본 뒤로가기를 그대로 쓴다', () => {
-    renderPage('designer', '/recruit');
-    expect(
-      screen.queryByRole('button', { name: '상단바 뒤로가기' }),
-    ).not.toBeInTheDocument();
+    expect(screen.getByText('BACK FALLBACK /recruit')).toBeInTheDocument();
   });
 });

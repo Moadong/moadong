@@ -10,18 +10,21 @@ import * as Styled from './RecruitLayout.styles';
 
 interface RecruitLayoutProps {
   children: ReactNode;
-  /** 상단바 뒤로가기를 바꿀 때만 넘긴다. 없으면 WebviewTopBar 기본 동작을 따른다 */
-  onBack?: () => void;
+  /** 이전 화면이 없을 때 상단바 뒤로가기가 보낼 경로. 없으면 '/' */
+  backFallbackPath?: string;
 }
 
-const RecruitLayout = ({ children, onBack }: RecruitLayoutProps) => {
+const RecruitLayout = ({ children, backFallbackPath }: RecruitLayoutProps) => {
   const { isMobile, isTablet } = useDevice();
   const showPageTopBar = isMobile || isTablet || isInAppWebView();
 
   return (
     <Styled.PageWrapper>
       {showPageTopBar ? (
-        <WebviewTopBar title={RECRUIT_PAGE_TITLE} onBack={onBack} />
+        <WebviewTopBar
+          title={RECRUIT_PAGE_TITLE}
+          fallbackPath={backFallbackPath}
+        />
       ) : (
         <Header />
       )}
