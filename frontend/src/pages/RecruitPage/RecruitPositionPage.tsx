@@ -1,4 +1,6 @@
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import ChevronRightIcon from '@/assets/images/icons/chevron_right_small.svg?react';
+import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import RecruitLayout from './components/RecruitLayout/RecruitLayout';
@@ -25,6 +27,7 @@ const RecruitPositionContent = ({
 }: {
   position: RecruitPosition;
 }) => {
+  const navigate = useNavigate();
   // 동아리·지원서가 아직 없으면 지원서 페이지가 오류를 띄우고 튕겨 내므로 버튼을 막는다
   const applicationPath =
     MOADONG_CLUB_ID && position.applicationFormId
@@ -39,8 +42,11 @@ const RecruitPositionContent = ({
 
   // 공유 링크로 바로 들어와 이전 화면이 없으면 상단바 뒤로가기가 '/' 대신 목록으로 간다
   return (
-    <RecruitLayout backFallbackPath='/recruit'>
-      <Styled.BackLink to='/recruit'>← 전체 포지션</Styled.BackLink>
+    <RecruitLayout backFallbackPath='/recruit' hasFixedBottomButton>
+      <Styled.BackLink to='/recruit'>
+        <ChevronRightIcon aria-hidden />
+        전체 포지션
+      </Styled.BackLink>
       <Styled.Header>
         <Styled.Title>{position.title}</Styled.Title>
         <Styled.Summary>{position.summary}</Styled.Summary>
@@ -57,15 +63,13 @@ const RecruitPositionContent = ({
         </Styled.Section>
       ))}
 
-      <Styled.ApplyArea>
-        {applicationPath ? (
-          <Styled.ApplyLink to={applicationPath}>지원하기</Styled.ApplyLink>
-        ) : (
-          <Styled.ApplyButton type='button' disabled>
-            모집 준비 중이에요
-          </Styled.ApplyButton>
-        )}
-      </Styled.ApplyArea>
+      {/* 동아리 상세의 지원하기와 같은 하단 고정 버튼을 쓴다 */}
+      <FixedBottomButtonArea
+        onClick={() => applicationPath && navigate(applicationPath)}
+        disabled={!applicationPath}
+      >
+        {applicationPath ? '지원하기' : '모집 준비 중이에요'}
+      </FixedBottomButtonArea>
     </RecruitLayout>
   );
 };

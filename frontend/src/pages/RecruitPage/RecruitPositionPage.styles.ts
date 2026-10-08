@@ -1,11 +1,14 @@
 import { Link } from 'react-router-dom';
-import styled, { css } from 'styled-components';
+import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { setTypography } from '@/styles/theme/typography';
 
 /** 모바일·웹뷰는 상단바에 뒤로가기가 있어 데스크톱에서만 보인다 */
 export const BackLink = styled(Link)`
   align-self: flex-start;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
   margin-bottom: 24px;
   ${({ theme }) => setTypography(theme.typography.paragraph.p5)};
   color: ${({ theme }) => theme.colors.gray[700]};
@@ -13,6 +16,13 @@ export const BackLink = styled(Link)`
 
   &:hover {
     color: ${({ theme }) => theme.colors.base.black};
+  }
+
+  /* 오른쪽 셰브론을 돌려 '자세히 보기'와 같은 아이콘을 쓴다 */
+  svg {
+    width: 6px;
+    height: 10px;
+    transform: rotate(180deg);
   }
 
   ${media.tablet} {
@@ -102,46 +112,4 @@ export const Item = styled.li`
       top: 8px;
     }
   }
-`;
-
-export const ApplyArea = styled.div`
-  display: flex;
-  justify-content: center;
-  padding-top: 40px;
-`;
-
-const applyBase = css`
-  width: 100%;
-  max-width: 360px;
-  height: 56px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border: none;
-  border-radius: 12px;
-  ${({ theme }) => setTypography(theme.typography.title.title6)};
-
-  ${media.mobile} {
-    max-width: none;
-  }
-`;
-
-export const ApplyLink = styled(Link)`
-  ${applyBase};
-  background: ${({ theme }) => theme.colors.primary[900]};
-  color: ${({ theme }) => theme.colors.base.white};
-  text-decoration: none;
-  transition: background-color 0.2s;
-
-  &:hover {
-    background: ${({ theme }) => theme.colors.primary[800]};
-  }
-`;
-
-/** 동아리·지원서 id가 없을 때만 그린다 */
-export const ApplyButton = styled.button`
-  ${applyBase};
-  background: ${({ theme }) => theme.colors.gray[400]};
-  color: ${({ theme }) => theme.colors.gray[700]};
-  cursor: not-allowed;
 `;

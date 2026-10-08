@@ -107,7 +107,7 @@ describe('RecruitPositionPage', () => {
   it('id가 모두 있으면 해당 포지션의 지원서로 이동한다', async () => {
     setRecruitIds('club-1', { developer: 'form-dev' });
     renderPage('developer');
-    await userEvent.click(screen.getByRole('link', { name: '지원하기' }));
+    await userEvent.click(screen.getByRole('button', { name: '지원하기' }));
     expect(screen.getByText('APPLICATION club-1/form-dev')).toBeInTheDocument();
   });
 
