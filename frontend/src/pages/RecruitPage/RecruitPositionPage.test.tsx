@@ -14,13 +14,16 @@ jest.mock('./components/RecruitLayout/RecruitLayout', () => ({
   default: ({
     children,
     backFallbackPath,
+    bottomAction,
   }: {
     children: React.ReactNode;
     backFallbackPath?: string;
+    bottomAction?: React.ReactNode;
   }) => (
     <div>
       <span>BACK FALLBACK {backFallbackPath}</span>
       {children}
+      {bottomAction}
     </div>
   ),
 }));

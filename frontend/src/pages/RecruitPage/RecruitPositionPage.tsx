@@ -42,7 +42,18 @@ const RecruitPositionContent = ({
 
   // 공유 링크로 바로 들어와 이전 화면이 없으면 상단바 뒤로가기가 '/' 대신 목록으로 간다
   return (
-    <RecruitLayout backFallbackPath='/recruit' hasFixedBottomButton>
+    <RecruitLayout
+      backFallbackPath='/recruit'
+      bottomAction={
+        // 동아리 상세의 지원하기와 같은 하단 고정 버튼을 쓴다
+        <FixedBottomButtonArea
+          onClick={() => applicationPath && navigate(applicationPath)}
+          disabled={!applicationPath}
+        >
+          {applicationPath ? '지원하기' : '모집 준비 중이에요'}
+        </FixedBottomButtonArea>
+      }
+    >
       <Styled.BackLink to='/recruit'>
         <ChevronRightIcon aria-hidden />
         전체 포지션
@@ -62,14 +73,6 @@ const RecruitPositionContent = ({
           </Styled.ItemList>
         </Styled.Section>
       ))}
-
-      {/* 동아리 상세의 지원하기와 같은 하단 고정 버튼을 쓴다 */}
-      <FixedBottomButtonArea
-        onClick={() => applicationPath && navigate(applicationPath)}
-        disabled={!applicationPath}
-      >
-        {applicationPath ? '지원하기' : '모집 준비 중이에요'}
-      </FixedBottomButtonArea>
     </RecruitLayout>
   );
 };

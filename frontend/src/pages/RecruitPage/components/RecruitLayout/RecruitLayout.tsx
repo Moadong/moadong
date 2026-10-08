@@ -12,20 +12,23 @@ interface RecruitLayoutProps {
   children: ReactNode;
   /** 이전 화면이 없을 때 상단바 뒤로가기가 보낼 경로. 없으면 '/' */
   backFallbackPath?: string;
-  /** 하단 고정 버튼(FixedBottomButtonArea)이 있으면 그만큼 아래 여백을 둔다 */
-  hasFixedBottomButton?: boolean;
+  /**
+   * 하단 고정 버튼(FixedBottomButtonArea). 동아리 상세처럼 본문 칼럼 밖, 푸터 다음에 그려
+   * 데스크톱에서도 화면 폭 전체 바가 된다
+   */
+  bottomAction?: ReactNode;
 }
 
 const RecruitLayout = ({
   children,
   backFallbackPath,
-  hasFixedBottomButton = false,
+  bottomAction,
 }: RecruitLayoutProps) => {
   const { isMobile, isTablet } = useDevice();
   const showPageTopBar = isMobile || isTablet || isInAppWebView();
 
   return (
-    <Styled.PageWrapper $hasFixedBottomButton={hasFixedBottomButton}>
+    <Styled.PageWrapper $hasFixedBottomButton={!!bottomAction}>
       {showPageTopBar ? (
         <WebviewTopBar
           title={RECRUIT_PAGE_TITLE}
@@ -38,6 +41,7 @@ const RecruitLayout = ({
         {children}
       </Styled.Main>
       {!isInAppWebView() && <Footer />}
+      {bottomAction}
     </Styled.PageWrapper>
   );
 };
