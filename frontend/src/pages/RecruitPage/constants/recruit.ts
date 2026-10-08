@@ -1,3 +1,5 @@
+import type { RecruitStat } from '../components/RecruitStats/RecruitStats';
+
 // 문구·일정은 확정 전 초안이다. 운영진이 확정하면 이 파일만 고친다.
 
 export const RECRUIT_PAGE_TITLE = '팀원 모집';
@@ -16,6 +18,48 @@ export const MOADONG_CLUB_ID: string = '';
 export const RECRUIT_PERIOD = '2026년 10월 15일(목) ~ 11월 30일(월) 23:59 모집';
 
 export const RECRUIT_PERIOD_NOTE = '* 합격자가 나오면 조기 마감될 수 있어요.';
+
+export const RECRUIT_STATS_TITLE = '숫자로 보는 모아동';
+
+export const RECRUIT_STATS_PERIOD = '최근 12개월';
+
+export const RECRUIT_STATS: readonly RecruitStat[] = [
+  {
+    label: '메인 방문자',
+    value: 12848,
+    unit: '명',
+    desc: '모아동 메인을 방문했어요',
+  },
+  {
+    label: '동아리 탐색',
+    value: 8995,
+    unit: '명',
+    desc: '동아리 상세 페이지까지 살펴봤어요',
+  },
+  {
+    label: '3월 모집 시즌',
+    value: 6312,
+    unit: '명',
+    desc: '한 달 동안 찾아왔어요',
+    highlight: true,
+  },
+  {
+    label: '지원하기 클릭',
+    value: 18000,
+    unit: '번',
+    prefix: '약',
+    desc: '지원하기 버튼이 눌렸어요',
+  },
+  {
+    label: '등록 동아리',
+    value: 69,
+    unit: '개',
+    desc: '동아리가 모아동에 있어요',
+  },
+];
+
+export const RECRUIT_STATS_CLOSING =
+  "학교 공식 서비스가 아닌데도, 모집 시즌이면 부경대 학생들이 동아리를 찾을 때 모아동을 열어요.\n이제는 '시즌에만 여는 서비스'를 넘어 '1년 내내 동아리와 학생을 잇는 서비스'로 가려고 해요.";
 
 export type RecruitPositionId = 'designer' | 'developer';
 

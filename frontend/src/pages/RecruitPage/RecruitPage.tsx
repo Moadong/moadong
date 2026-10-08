@@ -4,6 +4,7 @@ import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import PaintIllustration from './components/PositionIllustration/PaintIllustration';
 import SpaceIllustration from './components/PositionIllustration/SpaceIllustration';
 import RecruitLayout from './components/RecruitLayout/RecruitLayout';
+import RecruitStats from './components/RecruitStats/RecruitStats';
 import {
   RECRUIT_HERO_DESCRIPTION,
   RECRUIT_HERO_TITLE,
@@ -11,6 +12,10 @@ import {
   RECRUIT_PERIOD_NOTE,
   RECRUIT_POSITIONS,
   RECRUIT_SCHEDULE,
+  RECRUIT_STATS,
+  RECRUIT_STATS_CLOSING,
+  RECRUIT_STATS_PERIOD,
+  RECRUIT_STATS_TITLE,
   RECRUIT_VALUES,
 } from './constants/recruit';
 import type { RecruitPositionId } from './constants/recruit';
@@ -37,6 +42,13 @@ const RecruitPage = () => {
           <Styled.PeriodNote>{RECRUIT_PERIOD_NOTE}</Styled.PeriodNote>
         </Styled.PeriodGroup>
       </Styled.Hero>
+
+      <RecruitStats
+        title={RECRUIT_STATS_TITLE}
+        caption={RECRUIT_STATS_PERIOD}
+        stats={RECRUIT_STATS}
+        closing={RECRUIT_STATS_CLOSING}
+      />
 
       <Styled.Section aria-labelledby='recruit-positions'>
         <Styled.SectionTitle id='recruit-positions'>
