@@ -37,6 +37,7 @@ import {
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
 import { createQuestionId } from './createQuestionId';
+import { pinFirstQuestion } from './pinFirstQuestion';
 
 const ApplicationEditTab = () => {
   const queryClient = useQueryClient();
@@ -375,7 +376,7 @@ const InternalApplicationComponent = ({
   const handleReorder = (reordered: Question[]) => {
     setFormData((prev) => ({
       ...prev,
-      questions: [...(prev.questions ?? []).slice(0, 1), ...reordered],
+      questions: pinFirstQuestion(prev.questions ?? [], reordered),
     }));
   };
 
@@ -447,7 +448,11 @@ const InternalApplicationComponent = ({
     }));
   };
 
-  const renderQuestionBuilder = (question: Question, index: number) => (
+  const renderQuestionBuilder = (
+    question: Question,
+    index: number,
+    readOnly = false,
+  ) => (
     <QuestionBuilder
       id={index + 1}
       title={question.title}
@@ -455,7 +460,7 @@ const InternalApplicationComponent = ({
       options={question.options}
       items={question.items}
       type={question.type}
-      readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
+      readOnly={readOnly}
       onTitleChange={handleTitleChange(question.id)}
       onDescriptionChange={handleDescriptionChange(question.id)}
       onItemsChange={handleItemsChange(question.id)}
@@ -484,7 +489,8 @@ const InternalApplicationComponent = ({
         values={reorderableQuestions}
         onReorder={handleReorder}
       >
-        {nameQuestion && renderQuestionBuilder(nameQuestion, 0)}
+        {/* 이름 질문은 수정할 수 없다 */}
+        {nameQuestion && renderQuestionBuilder(nameQuestion, 0, true)}
         {reorderableQuestions.map((question, index) => (
           <LongPressReorderItem key={question.id} value={question}>
             {renderQuestionBuilder(question, index + 1)}
