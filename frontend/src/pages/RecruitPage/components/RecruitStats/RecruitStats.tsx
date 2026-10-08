@@ -1,16 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
+import type { RecruitStat } from '../../constants/recruit';
 import * as Styled from './RecruitStats.styles';
-
-export interface RecruitStat {
-  label: string;
-  value: number;
-  unit: string;
-  desc: string;
-  /** "약 18,000번"처럼 근사값 앞에 붙일 말 */
-  prefix?: string;
-  /** 포인트 컬러(--accent)로 칠할 숫자. 섹션에 하나만 둔다 */
-  highlight?: boolean;
-}
 
 interface RecruitStatsProps {
   title: string;

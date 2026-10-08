@@ -2,7 +2,8 @@ import '@testing-library/jest-dom';
 import { act, render, screen, within } from '@testing-library/react';
 import { ThemeProvider } from 'styled-components';
 import { theme } from '@/styles/theme';
-import RecruitStats, { type RecruitStat } from './RecruitStats';
+import type { RecruitStat } from '../../constants/recruit';
+import RecruitStats from './RecruitStats';
 
 const STATS: RecruitStat[] = [
   { label: '메인 방문자', value: 12848, unit: '명', desc: '방문했어요' },

@@ -1,5 +1,3 @@
-import type { RecruitStat } from '../components/RecruitStats/RecruitStats';
-
 // 문구·일정은 확정 전 초안이다. 운영진이 확정하면 이 파일만 고친다.
 
 export const RECRUIT_PAGE_TITLE = '팀원 모집';
@@ -18,6 +16,17 @@ export const MOADONG_CLUB_ID: string = '';
 export const RECRUIT_PERIOD = '2026년 10월 15일(목) ~ 11월 30일(월) 23:59 모집';
 
 export const RECRUIT_PERIOD_NOTE = '* 합격자가 나오면 조기 마감될 수 있어요.';
+
+export interface RecruitStat {
+  label: string;
+  value: number;
+  unit: string;
+  desc: string;
+  /** "약 18,000번"처럼 근사값 앞에 붙일 말 */
+  prefix?: string;
+  /** 포인트 컬러(--accent)로 칠할 숫자. 섹션에 하나만 둔다 */
+  highlight?: boolean;
+}
 
 export const RECRUIT_STATS_TITLE = '숫자로 보는 모아동';
 
