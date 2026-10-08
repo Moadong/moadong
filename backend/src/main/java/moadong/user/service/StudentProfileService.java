@@ -16,7 +16,7 @@ public class StudentProfileService {
     public void updateNickname(String studentId, String nickname) {
         StudentUser student = studentUserRepository.findById(studentId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
-        student.updateNickname(nickname);
+        student.updateNickname(nickname.strip());
         studentUserRepository.save(student);
     }
 }
