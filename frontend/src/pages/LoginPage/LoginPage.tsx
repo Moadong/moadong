@@ -1,5 +1,5 @@
 import { useNavigate } from 'react-router-dom';
-import { fetchStudentOAuthUrl, type OAuthProvider } from '@/apis/studentAuth';
+import { getStudentOAuthUrl, type OAuthProvider } from '@/apis/studentAuth';
 import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
 import Header from '@/components/common/Header/Header';
 import SocialLoginButton from '@/components/SocialLoginButton/SocialLoginButton';
@@ -9,10 +9,9 @@ import * as Styled from './LoginPage.styles';
 const LoginPage = () => {
   const navigate = useNavigate();
 
-  const handleSocialLogin = async (provider: OAuthProvider) => {
-    const redirectUrl = await fetchStudentOAuthUrl(provider);
+  const handleSocialLogin = (provider: OAuthProvider) => {
     sessionStorage.setItem(STUDENT_OAUTH_PROVIDER_KEY, provider);
-    window.location.href = redirectUrl;
+    window.location.href = getStudentOAuthUrl(provider);
   };
 
   const handleAdminLoginClick = () => navigate('/admin/login');
@@ -41,7 +40,9 @@ const LoginPage = () => {
                 provider='google'
                 onClick={() => handleSocialLogin('google')}
               />
+              {/* Apple 로그인 미구현 - 추후 활성화
               <SocialLoginButton provider='apple' onClick={() => {}} />
+              */}
             </Styled.ButtonList>
             <Styled.AdminLoginButton onClick={handleAdminLoginClick}>
               관리자 로그인

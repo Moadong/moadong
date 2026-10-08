@@ -1,6 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { exchangeStudentOAuthCode, type OAuthProvider } from '@/apis/studentAuth';
+import {
+  exchangeStudentOAuthCode,
+  type OAuthProvider,
+} from '@/apis/studentAuth';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 
 export const STUDENT_OAUTH_PROVIDER_KEY = 'student_oauth_provider';
@@ -32,7 +35,10 @@ const StudentOAuthCallbackPage = () => {
           code,
         );
 
-        localStorage.setItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN, accessToken);
+        localStorage.setItem(
+          STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+          accessToken,
+        );
 
         navigate(isNewUser ? '/profile/setup' : '/', { replace: true });
       } catch {

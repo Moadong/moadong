@@ -5,30 +5,27 @@ import { fetchWithTimeout } from './utils/fetchWithTimeout';
 
 export type OAuthProvider = 'kakao' | 'google';
 
-interface OAuthAuthorizeResponse {
-  redirectUrl: string;
-}
-
 interface OAuthCallbackResponse {
   accessToken: string;
   isNewUser: boolean;
 }
 
-export const fetchStudentOAuthUrl = async (
-  provider: OAuthProvider,
-): Promise<string> => {
-  const response = await fetchWithTimeout(
-    `${API_BASE_URL}/auth/student/oauth/${provider}`,
-    { method: 'GET' },
-  );
-  const data = await handleResponse<OAuthAuthorizeResponse>(
-    response,
-    `${provider} 로그인 URL 조회에 실패했습니다.`,
-  );
-  if (!data?.redirectUrl) {
-    throw new Error('로그인 URL이 비어있습니다.');
+const STUDENT_OAUTH_REDIRECT_URI = `${window.location.origin}/login/callback`;
+
+export const getStudentOAuthUrl = (provider: OAuthProvider): string => {
+  const params = new URLSearchParams({
+    redirect_uri: STUDENT_OAUTH_REDIRECT_URI,
+    response_type: 'code',
+  });
+
+  if (provider === 'kakao') {
+    params.set('client_id', import.meta.env.VITE_KAKAO_CLIENT_ID);
+    return `https://kauth.kakao.com/oauth/authorize?${params}`;
   }
-  return data.redirectUrl;
+
+  params.set('client_id', import.meta.env.VITE_GOOGLE_CLIENT_ID);
+  params.set('scope', 'openid');
+  return `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
 };
 
 export const exchangeStudentOAuthCode = async (
@@ -40,7 +37,7 @@ export const exchangeStudentOAuthCode = async (
     {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code }),
+      body: JSON.stringify({ code, redirectUri: STUDENT_OAUTH_REDIRECT_URI }),
     },
   );
   const data = await handleResponse<OAuthCallbackResponse>(
