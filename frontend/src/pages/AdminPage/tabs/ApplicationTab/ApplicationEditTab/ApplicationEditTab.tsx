@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Reorder } from 'framer-motion';
 import {
   createApplication,
   generateApplicationDraft,
@@ -19,6 +20,7 @@ import {
   useAiDraftQuota,
   useGetApplication,
 } from '@/hooks/Queries/useApplication';
+import LongPressReorderItem from '@/pages/AdminPage/components/LongPressReorderItem/LongPressReorderItem';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import {
   hasErrors,
@@ -371,6 +373,12 @@ const InternalApplicationComponent = ({
     }));
   };
 
+  const handleReorder = (reordered: Question[]) => {
+    // 이름 질문은 맨 앞에 고정한다
+    if (reordered[0]?.id !== formData.questions?.[0]?.id) return;
+    setFormData((prev) => ({ ...prev, questions: reordered }));
+  };
+
   const removeQuestion = (id: number) => {
     if (!formData.questions) return;
     setFormData((prev) => ({
@@ -451,24 +459,35 @@ const InternalApplicationComponent = ({
         showMaxChar
         width='100%'
       />
-      <Styled.QuestionContainer>
+      <Styled.QuestionContainer
+        as={Reorder.Group<Question>}
+        forwardedAs='div'
+        axis='y'
+        values={formData.questions ?? []}
+        onReorder={handleReorder}
+      >
         {formData.questions?.map((question, index) => (
-          <QuestionBuilder
+          <LongPressReorderItem
             key={question.id}
-            id={index + 1}
-            title={question.title}
-            description={question.description}
-            options={question.options}
-            items={question.items}
-            type={question.type}
-            readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
-            onTitleChange={handleTitleChange(question.id)}
-            onDescriptionChange={handleDescriptionChange(question.id)}
-            onItemsChange={handleItemsChange(question.id)}
-            onTypeChange={handleTypeChange(question.id)}
-            onRequiredChange={handleRequiredChange(question.id)}
-            onRemoveQuestion={() => removeQuestion(question.id)}
-          />
+            value={question}
+            disabled={index === 0}
+          >
+            <QuestionBuilder
+              id={index + 1}
+              title={question.title}
+              description={question.description}
+              options={question.options}
+              items={question.items}
+              type={question.type}
+              readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
+              onTitleChange={handleTitleChange(question.id)}
+              onDescriptionChange={handleDescriptionChange(question.id)}
+              onItemsChange={handleItemsChange(question.id)}
+              onTypeChange={handleTypeChange(question.id)}
+              onRequiredChange={handleRequiredChange(question.id)}
+              onRemoveQuestion={() => removeQuestion(question.id)}
+            />
+          </LongPressReorderItem>
         ))}
       </Styled.QuestionContainer>
       <QuestionDivider />
