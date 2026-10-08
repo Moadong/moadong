@@ -13,7 +13,9 @@ export const RECRUIT_HERO_DESCRIPTION =
  */
 export const MOADONG_CLUB_ID: string = '';
 
-export const RECRUIT_PERIOD = '모집 기간은 추후 공지해요';
+export const RECRUIT_PERIOD = '2026년 10월 15일(목) ~ 11월 30일(월) 23:59 모집';
+
+export const RECRUIT_PERIOD_NOTE = '* 합격자가 나오면 조기 마감될 수 있어요.';
 
 export type RecruitPositionId = 'designer' | 'developer';
 
@@ -34,19 +36,21 @@ export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
     title: '디자이너',
     summary: '학생과 동아리 운영진이 쓰는 웹·앱 화면을 설계해요.',
     responsibilities: [
-      '동아리 탐색·지원·알림 흐름의 UX 설계와 UI 디자인',
-      '디자인 시스템 컴포넌트 정리와 유지',
-      '사용자 피드백과 지표를 보고 개선안 제안',
+      '모아동 앱 UI/UX 디자인 및 사용자 경험 개선',
+      '서비스 기능과 사용자 흐름을 고려한 화면 설계',
+      '디자인 시스템 구축 및 UI 컴포넌트 관리',
+      '개발자와 협업하여 디자인 구현 및 UI 디테일 조율',
+      '사용자 피드백과 서비스 데이터를 바탕으로 UX 개선 방향 제안',
     ],
     qualifications: [
-      'Figma로 화면과 컴포넌트를 설계할 수 있는 분',
-      '개발자와 화면 구현을 함께 논의할 수 있는 분',
+      'Figma 등을 활용해 앱 또는 웹 UI/UX 디자인 프로젝트를 진행해 본 분',
       '주 1회 정기 회의에 참여할 수 있는 분',
     ],
     preferred: [
-      '실제 서비스나 프로젝트를 출시해 본 경험',
-      '디자인 시스템을 만들거나 운영해 본 경험',
-      '동아리 활동 경험',
+      '실제 서비스 출시 또는 운영 경험이 있는 분',
+      '동아리 등 팀 프로젝트에서 디자이너로 협업한 경험이 있는 분',
+      '사용자 관점에서 문제를 정의하고 디자인으로 해결해 본 분',
+      '서비스 기획 단계부터 참여하거나 디자인 방향을 주도적으로 제안해 본 분',
     ],
     applicationFormId: '',
   },
@@ -56,19 +60,20 @@ export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
     summary:
       '웹 프론트엔드나 백엔드를 맡아 실제 사용자가 쓰는 기능을 만들어요.',
     responsibilities: [
-      'React 웹 또는 Spring 백엔드 기능 개발',
-      '코드 리뷰와 PR 기반 협업',
-      '배포 이후 지표와 오류를 보고 개선',
+      '프론트: React 기능 개발, 디자인 시스템',
+      '백엔드: Spring API 개발, Docker·K8s 운영, GitOps·GitHub Actions로 배포 자동화',
+      '공통: PR 기반 코드 리뷰, Observability 구축과 지표 기반 개선, Agent 커맨드·훅·스킬 개발',
     ],
     qualifications: [
-      'TypeScript 또는 Java로 프로젝트를 만들어 본 분',
-      'Git과 GitHub PR로 협업할 수 있는 분',
+      'React·TypeScript 또는 Spring·Java로 프로젝트를 만들어 본 분',
+      '한 학기 이상 꾸준히 참여할 수 있는 분',
       '주 1회 정기 회의에 참여할 수 있는 분',
     ],
     preferred: [
-      'React나 Spring으로 실무 또는 프로젝트를 해 본 경험',
-      '운영 중인 서비스를 개선해 본 경험',
-      '동아리 활동 경험',
+      '서비스를 배포하거나 운영해 본 분',
+      '전환율, 이탈률 같은 지표로 개선 방향을 잡아 본 분',
+      '동아리 활동 경험이 있는 분',
+      '서비스를 주도적으로 이끌어 본 분',
     ],
     applicationFormId: '',
   },
@@ -90,8 +95,7 @@ export const RECRUIT_VALUES = [
 ] as const;
 
 export const RECRUIT_SCHEDULE = [
-  { step: '서류 접수', date: '추후 공지' },
-  { step: '서류 발표', date: '추후 공지' },
-  { step: '인터뷰', date: '추후 공지' },
-  { step: '최종 발표', date: '추후 공지' },
+  { step: '서류 접수', date: '10.15(목) ~ 11.30(월)' },
+  { step: '인터뷰', date: '지원자와 일정 조율' },
+  { step: '최종 발표', date: '지원자와 일정 조율' },
 ] as const;

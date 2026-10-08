@@ -43,13 +43,25 @@ export const HeroDescription = styled.p`
   }
 `;
 
+/** 모집 기간 배지와 조기 마감 안내를 한 덩어리로 붙인다 */
+export const PeriodGroup = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 8px;
+`;
+
 export const Period = styled.p`
-  align-self: flex-start;
   padding: 8px 14px;
   border-radius: 999px;
   background: ${({ theme }) => theme.colors.primary[500]};
   color: ${({ theme }) => theme.colors.primary[900]};
   ${({ theme }) => setTypography(theme.typography.paragraph.p5)};
+`;
+
+export const PeriodNote = styled.p`
+  ${({ theme }) => setTypography(theme.typography.paragraph.p6)};
+  color: ${({ theme }) => theme.colors.gray[700]};
 `;
 
 export const Section = styled.section`
@@ -220,7 +232,7 @@ export const ValueDescription = styled.p`
 export const ScheduleList = styled.ol`
   display: grid;
   list-style: none;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(3, 1fr);
   gap: 16px;
 
   ${media.tablet} {
