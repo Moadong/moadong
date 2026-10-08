@@ -33,7 +33,7 @@ public class StudentProfileController {
         return Response.ok(profile);
     }
 
-    @PatchMapping("/nickname")
+    @PatchMapping
     @Operation(summary = "닉네임 수정", description = "학생의 닉네임을 수정합니다.")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updateNickname(
