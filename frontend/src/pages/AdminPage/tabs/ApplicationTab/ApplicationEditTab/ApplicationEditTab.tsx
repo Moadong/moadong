@@ -36,6 +36,7 @@ import {
 } from '@/types/application';
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
+import { createQuestionId } from './createQuestionId';
 
 const ApplicationEditTab = () => {
   const queryClient = useQueryClient();
@@ -349,11 +350,6 @@ interface InternalApplicationComponentProps {
   setFormData: React.Dispatch<React.SetStateAction<ApplicationFormData>>;
 }
 
-// 지원자 답변은 질문 id로 질문을 찾는다. 지운 질문의 id를 새 질문이 다시 받으면
-// 옛 답변이 새 질문에 붙으므로, 남은 질문 최댓값이 아니라 시간 기반으로 만든다.
-const createQuestionId = (questions: Question[]) =>
-  Math.max(Date.now(), ...questions.map((q) => q.id + 1));
-
 const InternalApplicationComponent = ({
   formData,
   setFormData,
@@ -373,10 +369,14 @@ const InternalApplicationComponent = ({
     }));
   };
 
+  // 이름 질문은 드래그 대상이 아니라 맨 앞에 고정되고, 나머지 질문만 순서가 바뀐다
+  const [nameQuestion, ...reorderableQuestions] = formData.questions ?? [];
+
   const handleReorder = (reordered: Question[]) => {
-    // 이름 질문은 맨 앞에 고정한다
-    if (reordered[0]?.id !== formData.questions?.[0]?.id) return;
-    setFormData((prev) => ({ ...prev, questions: reordered }));
+    setFormData((prev) => ({
+      ...prev,
+      questions: [...(prev.questions ?? []).slice(0, 1), ...reordered],
+    }));
   };
 
   const removeQuestion = (id: number) => {
@@ -447,6 +447,24 @@ const InternalApplicationComponent = ({
     }));
   };
 
+  const renderQuestionBuilder = (question: Question, index: number) => (
+    <QuestionBuilder
+      id={index + 1}
+      title={question.title}
+      description={question.description}
+      options={question.options}
+      items={question.items}
+      type={question.type}
+      readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
+      onTitleChange={handleTitleChange(question.id)}
+      onDescriptionChange={handleDescriptionChange(question.id)}
+      onItemsChange={handleItemsChange(question.id)}
+      onTypeChange={handleTypeChange(question.id)}
+      onRequiredChange={handleRequiredChange(question.id)}
+      onRemoveQuestion={() => removeQuestion(question.id)}
+    />
+  );
+
   return (
     <>
       <CustomTextArea
@@ -463,30 +481,13 @@ const InternalApplicationComponent = ({
         as={Reorder.Group<Question>}
         forwardedAs='div'
         axis='y'
-        values={formData.questions ?? []}
+        values={reorderableQuestions}
         onReorder={handleReorder}
       >
-        {formData.questions?.map((question, index) => (
-          <LongPressReorderItem
-            key={question.id}
-            value={question}
-            disabled={index === 0}
-          >
-            <QuestionBuilder
-              id={index + 1}
-              title={question.title}
-              description={question.description}
-              options={question.options}
-              items={question.items}
-              type={question.type}
-              readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
-              onTitleChange={handleTitleChange(question.id)}
-              onDescriptionChange={handleDescriptionChange(question.id)}
-              onItemsChange={handleItemsChange(question.id)}
-              onTypeChange={handleTypeChange(question.id)}
-              onRequiredChange={handleRequiredChange(question.id)}
-              onRemoveQuestion={() => removeQuestion(question.id)}
-            />
+        {nameQuestion && renderQuestionBuilder(nameQuestion, 0)}
+        {reorderableQuestions.map((question, index) => (
+          <LongPressReorderItem key={question.id} value={question}>
+            {renderQuestionBuilder(question, index + 1)}
           </LongPressReorderItem>
         ))}
       </Styled.QuestionContainer>
