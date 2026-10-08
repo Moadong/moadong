@@ -21,6 +21,8 @@ describe('pinFirstQuestion', () => {
   });
 
   it('질문이 없으면 새 순서만 돌려준다', () => {
-    expect(pinFirstQuestion([], [])).toEqual([]);
+    const reordered = [question(2), question(1)];
+
+    expect(pinFirstQuestion([], reordered)).toEqual(reordered);
   });
 });
