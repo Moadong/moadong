@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   exchangeStudentOAuthCode,
+  STUDENT_OAUTH_STATE_KEY,
   type OAuthProvider,
 } from '@/apis/studentAuth';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
@@ -20,11 +21,14 @@ const StudentOAuthCallbackPage = () => {
     const handleCallback = async () => {
       const params = new URLSearchParams(window.location.search);
       const code = params.get('code');
+      const state = params.get('state');
       const provider = sessionStorage.getItem(STUDENT_OAUTH_PROVIDER_KEY);
+      const savedState = sessionStorage.getItem(STUDENT_OAUTH_STATE_KEY);
 
       sessionStorage.removeItem(STUDENT_OAUTH_PROVIDER_KEY);
+      sessionStorage.removeItem(STUDENT_OAUTH_STATE_KEY);
 
-      if (!code || !isOAuthProvider(provider)) {
+      if (!code || !isOAuthProvider(provider) || !state || state !== savedState) {
         navigate('/', { replace: true });
         return;
       }

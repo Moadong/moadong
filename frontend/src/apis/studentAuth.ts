@@ -5,6 +5,8 @@ import { fetchWithTimeout } from './utils/fetchWithTimeout';
 
 export type OAuthProvider = 'kakao' | 'google';
 
+export const STUDENT_OAUTH_STATE_KEY = 'student_oauth_state';
+
 interface OAuthCallbackResponse {
   accessToken: string;
   isNewUser: boolean;
@@ -13,9 +15,13 @@ interface OAuthCallbackResponse {
 const STUDENT_OAUTH_REDIRECT_URI = `${window.location.origin}/login/callback`;
 
 export const getStudentOAuthUrl = (provider: OAuthProvider): string => {
+  const state = crypto.randomUUID();
+  sessionStorage.setItem(STUDENT_OAUTH_STATE_KEY, state);
+
   const params = new URLSearchParams({
     redirect_uri: STUDENT_OAUTH_REDIRECT_URI,
     response_type: 'code',
+    state,
   });
 
   if (provider === 'kakao') {
