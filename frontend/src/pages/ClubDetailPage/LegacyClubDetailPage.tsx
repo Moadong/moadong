@@ -1,9 +1,10 @@
-import { useCallback } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
 import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -22,6 +23,7 @@ export const TAB_TYPE = {
 type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
 const LegacyClubDetailPage = () => {
+  const location = useLocation();
   const trackEvent = useMixpanelTrack();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -45,6 +47,10 @@ const LegacyClubDetailPage = () => {
     clubName: clubDetail?.name,
     skip: !clubDetail,
   });
+  useEffect(() => {
+    if (clubDetail?.id && !error)
+      registerClubDetailVisit(clubDetail.id, location.pathname);
+  }, [clubDetail?.id, error, location.pathname]);
 
   const handleTabClick = useCallback(
     (tabKey: TabType) => {

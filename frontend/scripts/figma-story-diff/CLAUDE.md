@@ -6,13 +6,13 @@
 
 ## 구성
 
-| 파일 | 역할 |
-| --- | --- |
-| `run.mjs` | 매핑 수집 → 실행 → 판정 → 리포트 작성. 보류 토큰 파일도 여기서 생성한다 |
+| 파일        | 역할                                                                                  |
+| ----------- | ------------------------------------------------------------------------------------- |
+| `run.mjs`   | 매핑 수집 → 실행 → 판정 → 리포트 작성. 보류 토큰 파일도 여기서 생성한다               |
 | `figma.mjs` | Figma REST로 노드 트리·렌더 PNG를 받아 토큰 수집. 노드 opacity를 자식까지 곱해 내린다 |
-| `story.mjs` | Playwright로 Storybook iframe을 열어 computed style에서 같은 축을 수집 |
-| `theme.mjs` | esbuild로 `theme/index.ts`·`theme.test/index.ts`를 번들해 토큰 집합 생성 |
-| `diff.mjs` | pixelmatch 기반 참고용 픽셀 차이 |
+| `story.mjs` | Playwright로 Storybook iframe을 열어 computed style에서 같은 축을 수집                |
+| `theme.mjs` | esbuild로 `theme/index.ts`·`theme.test/index.ts`를 번들해 토큰 집합 생성              |
+| `diff.mjs`  | pixelmatch(threshold 0.1) 기반 참고용 픽셀 차이. 이 스킬 전용이다. 판정에 쓰지 않는다 |
 
 ## 고칠 때 알아야 할 것
 
@@ -24,4 +24,5 @@
 - **구현 쪽 레이아웃 루트는 측정 루트가 아니다.** 스토리 데코레이터 래퍼는 자식과 박스가 같아서, 박스가 일치하는 동안 한 겹씩 내려가 시안 프레임에 대응하는 요소를 찾는다. 이걸 안 하면 래퍼의 `gap`·`padding`(둘 다 0)과 시안을 비교하게 돼 전부 오탐이다.
 - **크기 판정에 반올림을 넣지 않는다.** 표시할 때만 자른다. 판정에 섞으면 허용치가 실제보다 0.5px 넓어지고, 그 틈에 진짜 차이가 숨는다.
 - **`theme.test/index.ts`는 생성 파일이다.** `JSON.stringify`로 이스케이프해서 쓴다 — Figma 노드 이름에 따옴표가 하나라도 들어가면 다음 실행의 `loadPending()`이 esbuild에서 죽는다. 포맷 검사에서 빼려고 `.prettierignore`에 등록해 두었다.
+- **`diff.mjs`는 이 스킬의 참고값 전용이다.** 시안과 구현은 렌더러가 달라 허용치(threshold 0.1)를 둔다. 그 허용치 때문에 `#333333`↔`#3A3A3A` 같은 차이는 0%가 된다. 같은 브라우저끼리 비교하는 `button-migration`의 before/after는 이걸 쓰지 않고 `compare.mjs`에서 RGBA 정확 비교를 한다. 기본값을 바꾸면 이 스킬의 참고값이 바뀌므로 건드리지 않는다.
 - `visual-diff/`는 gitignore 대상이다. 리뷰에 남기려면 내용을 PR 본문으로 옮긴다.

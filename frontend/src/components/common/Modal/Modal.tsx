@@ -10,6 +10,7 @@ interface ModalProps {
   onClose: () => void;
   children: ReactNode;
   closeOnBackdrop?: boolean;
+  overlayKind?: 'blocking' | 'survey';
 }
 
 const Modal = ({
@@ -17,6 +18,7 @@ const Modal = ({
   onClose,
   children,
   closeOnBackdrop = true,
+  overlayKind = 'blocking',
 }: ModalProps) => {
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -28,7 +30,10 @@ const Modal = ({
 
   return (
     <Portal>
-      <Styled.Overlay onClick={closeOnBackdrop ? onClose : undefined}>
+      <Styled.Overlay
+        data-overlay-kind={overlayKind}
+        onClick={closeOnBackdrop ? onClose : undefined}
+      >
         <Styled.ContentWrapper
           ref={contentRef}
           tabIndex={-1}

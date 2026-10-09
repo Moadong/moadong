@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -8,6 +8,7 @@ import MapModal from '@/components/map/MapModal/MapModal';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
 import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -41,6 +42,7 @@ const TOP_BAR_HEIGHT = 50;
 const TOP_BAR_RENDERED_HEIGHT = 73;
 
 const ClubDetailPage = () => {
+  const location = useLocation();
   const trackEvent = useMixpanelTrack();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -101,6 +103,11 @@ const ClubDetailPage = () => {
     countedClubIdRef.current = clubId;
     countClubView();
   }, [clubDetail?.id]);
+
+  useEffect(() => {
+    if (clubDetail?.id && !error)
+      registerClubDetailVisit(clubDetail.id, location.pathname);
+  }, [clubDetail?.id, error, location.pathname]);
 
   /**
    * 일정 탭에 실제로 도달했을 때 볼 일정이 있었는지 남긴다.
