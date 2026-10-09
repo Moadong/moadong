@@ -1,0 +1,12 @@
+{
+  "PerformanceCard/Inactive": {
+    "figma": "https://www.figma.com/design/LB4VudDhuIGjFayrm1kge1/모아동?node-id=8790-9732",
+    "story": "pages-festivalpage-components-performancecard--inactive-single-song",
+    "args": {}
+  },
+  "PerformanceCard/Active": {
+    "figma": "https://www.figma.com/design/LB4VudDhuIGjFayrm1kge1/모아동?node-id=8790-9742",
+    "story": "pages-festivalpage-components-performancecard--active",
+    "args": {}
+  }
+}

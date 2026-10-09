@@ -9,6 +9,6 @@
 - **필터탭(동아리/홍보)**: `Filter.tsx`는 남아 있지만 **현재 렌더되는 곳이 없다.** 바텀네비 탭과 목적지가 겹쳐 메인·홍보 목록 양쪽에서 뺐다. 되살릴 땐 `margin-top: 56px`으로 fixed 헤더를 비우던 역할을 지금은 각 페이지가 직접 처리한다는 점에 주의(`HeaderSpacer`, `padding-top`).
 - **웹뷰 전용 동작**: `isInAppWebView()`로 분기 (예: 메인 카드 구독 버튼, `WebviewGlobalStyles`). 상세/홍보상세는 자체 TopBar가 있어 `Header`를 `hideOn={['webview']}`로 숨긴다.
 - **메인(`/`)은 폭과 무관하게 하나다**: 전부 `MainContent`(홈이 곧 동아리 전체 목록). 2026-09 `main_redesign` 실험에서 홈을 허브로 바꾸고 목록을 `/clubs`로 빼는 안을 검증했으나, 목적이던 홍보 노출이 늘지 않아(홍보 상세 도달 하루 1~4명, 목록→상세 전환 11%) 기존 홈으로 확정하고 개편 홈·`/clubs`를 제거했다. `/clubs`는 공유된 링크 보호용으로 `/` 리다이렉트만 남아 있다.
-  - 구독 진입점은 홈 헤더의 벨(`Header`의 `showSubscriptionBell`)과 바텀네비 구독 탭 둘이다. 벨은 `MainContent`가 `isMobile || isInAppWebView()`일 때 켠다(제거한 `HomeHeader`와 같은 범위). 구독은 앱 브리지(`useWebviewSubscribe`) 기능이라 웹 브라우저에서는 목록이 비는데, 이건 결함이 아니라 `SubscriptionsPage`가 '앱 다운로드' CTA를 띄우는 **설치 퍼널**이라 의도된 동작이다. 조건을 웹뷰로 좁히지 말 것.
+  - 구독 진입점은 바텀네비 구독 탭 하나다(홈 헤더의 구독 벨은 2026-10 제거). 구독은 앱 브리지(`useWebviewSubscribe`) 기능이라 웹 브라우저에서는 목록이 비는데, 이건 결함이 아니라 `SubscriptionsPage`가 '앱 다운로드' CTA를 띄우는 **설치 퍼널**이라 의도된 동작이다.
   - 종료된 실험의 mixpanel super property는 코드를 지워도 남는다. `src/utils/cleanupMainRedesignExperiment.ts`가 `unregister`로 털어내며, 기존 방문자가 한 번씩 재방문하면 삭제해도 된다.
 - **구버전 앱 호환**: `src/routes/webviewRoutes.tsx`는 `/webview/* → 웹 경로` 리다이렉트만 담당(`/webview/main`→`/`, `/webview/club/:id`→`/clubDetail/:id` 등). 구버전 앱 진입 URL 보호용이라 제거 금지.

@@ -33,7 +33,8 @@ export const FloatingButtonGroup = () => {
       await handleShare({ title: clubDetail.name, text, url });
 
       trackEvent(USER_EVENT.SHARE_BUTTON_CLICKED, {
-        clubName: clubDetail.name,
+        club_id: clubDetail.id,
+        club_name: clubDetail.name,
       });
       return;
     }
@@ -48,8 +49,9 @@ export const FloatingButtonGroup = () => {
   const isFeedback = !!useMatch({ path: '/feedback', end: false });
 
   const isAdmin = !!useMatch({ path: '/admin', end: false });
+  const isLogin = !!useMatch('/login');
 
-  if (isAdmin || isDisabled) return null;
+  if (isAdmin || isLogin || isDisabled) return null;
 
   return (
     <Styled.GroupContainer $isClubDetail={isClubDetail}>

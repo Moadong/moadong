@@ -16,7 +16,8 @@ export type WebViewMessage =
   | { type: 'SUBSCRIBE_TOGGLE'; payload: { clubId: string } }
   | { type: 'REQUEST_SUBSCRIBE_STATE' }
   | { type: 'NAVIGATE_WEBVIEW'; payload: { slug: string; clubId?: string } }
-  | { type: 'OPEN_EXTERNAL_URL'; payload: { url: string } };
+  | { type: 'OPEN_EXTERNAL_URL'; payload: { url: string } }
+  | { type: 'OPEN_APP_SETTINGS' };
 
 // 앱 → 웹 방향 메시지 타입
 // 앱이 window.postMessage()로 전송하며, 웹이 message 이벤트로 수신
@@ -152,4 +153,9 @@ export const requestOpenExternalUrl = (url: string): boolean => {
     return false;
   }
   return postMessageToApp({ type: 'OPEN_EXTERNAL_URL', payload: { url } });
+};
+
+/** 알림 권한이 꺼진 사용자를 OS 설정의 앱 페이지로 보낸다. 앱이 Linking.openSettings()를 호출한다. */
+export const requestOpenAppSettings = (): boolean => {
+  return postMessageToApp({ type: 'OPEN_APP_SETTINGS' });
 };

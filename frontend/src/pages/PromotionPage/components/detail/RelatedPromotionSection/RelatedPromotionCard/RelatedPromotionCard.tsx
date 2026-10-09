@@ -1,5 +1,5 @@
+import CardMeta from '@/components/promotion/PromotionCardView/CardMeta/CardMeta';
 import { PromotionArticle } from '@/types/promotion';
-import CardMeta from '../../../list/PromotionCard/CardMeta/CardMeta';
 import ClubTag from '../../../list/PromotionCard/ClubTag/ClubTag';
 import * as Styled from './RelatedPromotionCard.styles';
 
@@ -19,6 +19,7 @@ const RelatedPromotionCard = ({ article, onClick }: Props) => {
         title={article.title}
         location={article.location}
         startDate={article.eventStartDate}
+        endDate={article.eventEndDate}
       />
     </Styled.Card>
   );

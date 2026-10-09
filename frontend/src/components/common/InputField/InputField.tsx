@@ -8,6 +8,8 @@ interface CustomInputProps {
   maxLength?: number;
   type?: 'text' | 'password';
   label?: string;
+  /** 화면에 label을 그리지 않을 때 입력칸의 접근 가능한 이름 */
+  ariaLabel?: string;
   showClearButton?: boolean;
   showMaxChar?: boolean;
   disabled?: boolean;
@@ -26,6 +28,7 @@ const InputField = ({
   maxLength,
   type = 'text',
   label,
+  ariaLabel,
   showClearButton = true,
   showMaxChar = false,
   disabled = false,
@@ -65,6 +68,7 @@ const InputField = ({
       <Styled.InputWrapper>
         <Styled.Input
           id={id}
+          aria-label={ariaLabel}
           type={type === 'password' && !isPasswordVisible ? 'password' : 'text'}
           value={value}
           onChange={onChange}

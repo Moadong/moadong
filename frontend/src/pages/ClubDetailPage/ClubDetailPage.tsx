@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -8,6 +8,7 @@ import MapModal from '@/components/map/MapModal/MapModal';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
 import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -18,8 +19,6 @@ import {
 import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import useDevice from '@/hooks/useDevice';
 import { countClubView } from '@/hooks/useSatisfactionSurvey';
-import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
-import { useLocation } from 'react-router-dom';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
@@ -83,12 +82,12 @@ const ClubDetailPage = () => {
     [],
   );
 
-  useTrackPageView(
-    PAGE_VIEW.CLUB_DETAIL_PAGE,
-    clubDetail?.name,
-    !clubDetail,
-    clubDetail?.recruitmentStatus,
-  );
+  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, {
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    recruitmentStatus: clubDetail?.recruitmentStatus,
+    skip: !clubDetail,
+  });
   useTrackClubDetailDuration({
     clubId: clubDetail?.id,
     clubName: clubDetail?.name,
@@ -106,7 +105,8 @@ const ClubDetailPage = () => {
   }, [clubDetail?.id]);
 
   useEffect(() => {
-    if (clubDetail?.id && !error) registerClubDetailVisit(clubDetail.id, location.pathname);
+    if (clubDetail?.id && !error)
+      registerClubDetailVisit(clubDetail.id, location.pathname);
   }, [clubDetail?.id, error, location.pathname]);
 
   /**
@@ -172,15 +172,13 @@ const ClubDetailPage = () => {
   const handleTabClick = useCallback(
     (tabKey: TabType) => {
       setSearchParams({ tab: tabKey }, { replace: true });
-      trackEvent(
-        tabKey === TAB_TYPE.INTRO
-          ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
-          : tabKey === TAB_TYPE.PHOTOS
-            ? USER_EVENT.CLUB_FEED_TAB_CLICKED
-            : USER_EVENT.CLUB_SCHEDULE_TAB_CLICKED,
-      );
+      trackEvent(USER_EVENT.CLUB_DETAIL_TAB_CLICKED, {
+        tab: tabKey,
+        club_id: clubDetail?.id,
+        club_name: clubDetail?.name,
+      });
     },
-    [setSearchParams, trackEvent],
+    [setSearchParams, trackEvent, clubDetail?.id, clubDetail?.name],
   );
 
   const clubLocation = clubLocations.find(
@@ -218,6 +216,7 @@ const ClubDetailPage = () => {
         <Styled.ContentWrapper>
           <Styled.LeftSection>
             <ClubProfileCard
+              clubId={clubDetail.id}
               name={clubDetail.name}
               logo={clubDetail.logo}
               cover={clubDetail.cover}
@@ -228,7 +227,10 @@ const ClubDetailPage = () => {
               location={clubLocation}
               onMapClick={() => {
                 setIsMapModalOpen(true);
-                trackEvent(USER_EVENT.CLUB_MAP_CLICKED);
+                trackEvent(USER_EVENT.CLUB_MAP_CLICKED, {
+                  club_id: clubDetail.id,
+                  club_name: clubDetail.name,
+                });
               }}
             />
             {clubLocation && (
@@ -236,7 +238,10 @@ const ClubDetailPage = () => {
                 <Styled.MapCard
                   onClick={() => {
                     setIsMapModalOpen(true);
-                    trackEvent(USER_EVENT.CLUB_MAP_CLICKED);
+                    trackEvent(USER_EVENT.CLUB_MAP_CLICKED, {
+                      club_id: clubDetail.id,
+                      club_name: clubDetail.name,
+                    });
                   }}
                 >
                   <NaverMap location={clubLocation} />

@@ -14,7 +14,7 @@ export const APP_DOWNLOAD_POPUP: PopupConfig = {
   mobileOnly: true,
   onImageClick: (trackEvent) => {
     trackEvent(USER_EVENT.APP_DOWNLOAD_POPUP_CLICKED, {
-      popupType: 'app_download',
+      popup_type: 'app_download',
       platform: detectPlatform(),
     });
     window.open(getAppStoreLink(), '_blank', 'noopener');

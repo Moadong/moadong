@@ -1,11 +1,11 @@
 ---
 description: 세션 작업 기록 + 기능 문서화 + 변경 내용 커밋
-allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Bash(git status), Bash(git diff *), Bash(git log *), Bash(git add *), Bash(git commit *), Read, Write, Edit, Glob, Grep
+allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Bash(npm run typecheck), Bash(npx --no-install eslint *), Bash(npx --no-install jest *), Bash(git status), Bash(git diff *), Bash(git ls-files *), Bash(git log *), Bash(git add *), Bash(git commit *), Read, Write, Edit, Glob, Grep
 ---
 
 # 작업 지시
 
-현재 세션의 작업 내용을 기록하고, 기능별 문서를 자동 생성한 뒤, 변경 파일을 커밋합니다.
+현재 세션의 작업 내용을 기록하고, 기능별 문서를 자동 생성하고, Frontend Fundamentals로 점검한 뒤, 변경 파일을 커밋합니다.
 
 ---
 
@@ -103,11 +103,23 @@ allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Ba
 
 ---
 
-## Phase 3: Git Commit
+## Phase 3: Frontend Fundamentals 점검
 
-기록이 완료되면 커밋을 수행합니다.
+`src/` 코드가 바뀌었으면 `.claude/skills/frontend-fundamentals/SKILL.md` 절차를 그대로 수행합니다. 코드 품질과 접근성(A11y) 가이드를 함께 봅니다.
 
-1. `npm run format` 실행하여 코드 포맷팅
+- 자동 수정 단계는 바로 적용하고, 검증(typecheck·eslint·jest)을 통과해야 Phase 4로 넘어갑니다
+- 자동 수정은 해당 기능의 커밋 그룹에 그대로 포함합니다(별도 refactor 커밋으로 나누지 않음)
+- 리포트 단계 지적은 Phase 4의 그룹핑 계획과 함께 사용자에게 보여줍니다
+
+`src/` 변경이 없으면 건너뜁니다.
+
+---
+
+## Phase 4: Git Commit
+
+점검이 끝나면 커밋을 수행합니다.
+
+1. `npm run format` 실행하여 코드 포맷팅. 포맷이 `src/` 파일을 바꿨으면 Phase 3 검증(typecheck·eslint·jest)을 다시 돌려 통과해야 다음으로 넘어갑니다
 2. `git status`로 변경된 파일 확인
 3. `git diff HEAD`로 모든 변경사항 확인 (또는 `git diff`와 `git diff --staged`를 각각 실행)
 4. `git log --oneline -5`로 최근 커밋 스타일 참고
@@ -116,7 +128,7 @@ allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Ba
    - 논리적으로 독립적인 변경은 별도 커밋으로 분리
    - `docs/features/` 문서 파일은 관련 기능 커밋에 포함
    - `dailyNote/`는 gitignore 대상이므로 제외
-6. **커밋 전에 그룹핑 계획과 각 커밋 메시지를 사용자에게 확인 요청**
+6. **커밋 전에 그룹핑 계획과 각 커밋 메시지를 사용자에게 확인 요청** (Phase 3 리포트가 있으면 함께 제시)
 7. 사용자 승인 후 그룹별로 순서대로 커밋 실행
    - 각 그룹: `git add <관련 파일들>` → `git commit -m "..."` 순으로 반복
 

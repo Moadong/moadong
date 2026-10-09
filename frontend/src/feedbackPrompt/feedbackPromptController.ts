@@ -1,15 +1,15 @@
 import {
   dismissFeedbackPrompt,
-  getFeedbackEligibility,
   FeedbackRequestIdentity,
+  getFeedbackEligibility,
 } from '@/apis/feedbackPrompt';
 import {
   isAdminFeedbackPromptEnabled,
   isUserFeedbackPromptEnabled,
 } from '@/constants/feedbackPrompt';
+import { FeedbackPrompt, FeedbackTriggerType } from '@/types/feedbackPrompt';
 import { getFeedbackAnonymousClientId } from '@/utils/feedbackPromptIdentity';
 import { parseFeedbackEligibility } from '@/utils/feedbackPromptValidation';
-import { FeedbackPrompt, FeedbackTriggerType } from '@/types/feedbackPrompt';
 
 export interface FeedbackPromptSession {
   prompt: FeedbackPrompt;
@@ -60,34 +60,51 @@ export const requestFeedbackPrompt = async ({
   accessToken,
 }: RequestFeedbackOptions) => {
   const isAdmin = triggerType.startsWith('ADMIN_');
-  if ((isAdmin && !isAdminFeedbackPromptEnabled) || (!isAdmin && !isUserFeedbackPromptEnabled)) return;
+  if (
+    (isAdmin && !isAdminFeedbackPromptEnabled) ||
+    (!isAdmin && !isUserFeedbackPromptEnabled)
+  )
+    return;
   if (
     activeSession ||
     isCheckingEligibility ||
     isSubmittingFeedback ||
     consumedEvents.has(eventId) ||
     !isDocumentVisible() ||
-    document.querySelector('[data-overlay-kind="blocking"], [data-overlay-kind="survey"]')
-  ) return;
+    document.querySelector(
+      '[data-overlay-kind="blocking"], [data-overlay-kind="survey"]',
+    )
+  )
+    return;
   consumedEvents.add(eventId);
-  if (consumedEvents.size > 100) consumedEvents.delete(consumedEvents.values().next().value as string);
+  if (consumedEvents.size > 100)
+    consumedEvents.delete(consumedEvents.values().next().value as string);
   const identity = isAdmin
-    ? accessToken ? { accessToken } : null
+    ? accessToken
+      ? { accessToken }
+      : null
     : (() => {
-      const anonymousClientId = getFeedbackAnonymousClientId();
-      return anonymousClientId ? { anonymousClientId } : null;
-    })();
+        const anonymousClientId = getFeedbackAnonymousClientId();
+        return anonymousClientId ? { anonymousClientId } : null;
+      })();
   if (!identity) return;
   isCheckingEligibility = true;
   try {
-    const eligibility = await getFeedbackEligibility(triggerType, clubId, identity);
+    const eligibility = await getFeedbackEligibility(
+      triggerType,
+      clubId,
+      identity,
+    );
     const prompt = parseFeedbackEligibility(eligibility, triggerType);
     if (
       !prompt ||
       activeSession ||
       !isDocumentVisible() ||
-      document.querySelector('[data-overlay-kind="blocking"], [data-overlay-kind="survey"]')
-    ) return;
+      document.querySelector(
+        '[data-overlay-kind="blocking"], [data-overlay-kind="survey"]',
+      )
+    )
+      return;
     activeSession = { prompt, triggerType, clubId, sourcePath, identity };
     notify();
   } catch {
@@ -101,9 +118,13 @@ export const dismissActiveFeedbackPrompt = () => {
   const session = activeSession;
   clearFeedbackPromptSession();
   if (!session) return;
-  void dismissFeedbackPrompt(session.prompt.id, {
-    triggerType: session.triggerType,
-    clubId: session.clubId,
-    anonymousClientId: session.identity.anonymousClientId,
-  }, session.identity).catch(() => undefined);
+  void dismissFeedbackPrompt(
+    session.prompt.id,
+    {
+      triggerType: session.triggerType,
+      clubId: session.clubId,
+      anonymousClientId: session.identity.anonymousClientId,
+    },
+    session.identity,
+  ).catch(() => undefined);
 };

@@ -27,8 +27,7 @@ const HOME_TAB: BottomNavTab = {
   icon: { type: 'vector', Component: HomeIcon },
 };
 
-// 개편 홈은 구독 진입점을 헤더 알림 버튼으로 옮겼지만, 기존 홈에는 그게 없어
-// 개편을 받지 않은 사용자에게는 동아리 자리에 구독 탭을 그대로 둔다
+// 구독 진입점은 이 탭 하나다(홈 헤더의 구독 벨은 2026-10 제거)
 const SUBSCRIPTIONS_TAB: BottomNavTab = {
   key: 'subscriptions',
   label: '구독',

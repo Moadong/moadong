@@ -1,4 +1,4 @@
-import { RefObject, useEffect } from 'react';
+import { RefObject, useEffect, useRef } from 'react';
 import markerIcon from '@/assets/images/icons/marker.svg';
 import { colors } from '@/styles/theme/colors';
 import { loadNaverMapScript } from '@/utils/loadNaverMapScript';
@@ -8,10 +8,19 @@ interface UseNaverMapOptions {
   active?: boolean;
   interactive?: boolean;
   markerSize?: number;
+  /** 마커를 찍을지. 좌표가 아직 확정되지 않은 화면에서 지도만 먼저 보여줄 때 false */
+  showMarker?: boolean;
   bubbleText?: string;
   bubbleFontSize?: number;
   bubbleFontWeight?: number;
   mapInstanceRef?: RefObject<NaverMapInstance | null>;
+  /**
+   * 사용자가 지도를 직접 움직여 중심이 바뀌었을 때만 부른다.
+   * setCenter 같은 프로그램 이동은 부르지 않는다 (호출부가 이미 아는 값이라
+   * 되돌려 주면 상태가 순환한다).
+   * 지도는 생성 시점의 콜백을 계속 쓰므로 렌더마다 새 함수를 넘겨도 지도를 다시 만들지 않는다.
+   */
+  onCenterChange?: (lat: number, lng: number) => void;
 }
 
 const buildMarkerContent = (
@@ -70,11 +79,18 @@ export const useNaverMap = (
     active = true,
     interactive = true,
     markerSize = 40,
+    showMarker = true,
     bubbleText,
     bubbleFontSize,
     bubbleFontWeight,
     mapInstanceRef: externalRef,
+    onCenterChange,
   } = options ?? {};
+
+  const onCenterChangeRef = useRef(onCenterChange);
+  useEffect(() => {
+    onCenterChangeRef.current = onCenterChange;
+  }, [onCenterChange]);
 
   useEffect(() => {
     if (!active) return;
@@ -105,19 +121,30 @@ export const useNaverMap = (
         externalRef.current = mapInstance;
       }
 
-      new naver.maps.Marker({
-        position,
-        map: mapInstance,
-        icon: {
-          content: buildMarkerContent(
-            markerSize,
-            bubbleText,
-            bubbleFontSize,
-            bubbleFontWeight,
-          ),
-          anchor: new naver.maps.Point(markerSize / 2, markerSize),
-        },
-      });
+      if (onCenterChangeRef.current) {
+        const emitCenter = () => {
+          const center = mapInstance?.getCenter();
+          if (center) onCenterChangeRef.current?.(center.lat(), center.lng());
+        };
+        naver.maps.Event.addListener(mapInstance, 'dragend', emitCenter);
+        naver.maps.Event.addListener(mapInstance, 'zoom_changed', emitCenter);
+      }
+
+      if (showMarker) {
+        new naver.maps.Marker({
+          position,
+          map: mapInstance,
+          icon: {
+            content: buildMarkerContent(
+              markerSize,
+              bubbleText,
+              bubbleFontSize,
+              bubbleFontWeight,
+            ),
+            anchor: new naver.maps.Point(markerSize / 2, markerSize),
+          },
+        });
+      }
     });
 
     return () => {
@@ -136,6 +163,7 @@ export const useNaverMap = (
     active,
     interactive,
     markerSize,
+    showMarker,
     bubbleText,
     bubbleFontSize,
     bubbleFontWeight,

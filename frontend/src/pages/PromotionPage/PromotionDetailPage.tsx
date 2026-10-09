@@ -85,7 +85,10 @@ const PromotionDetail = () => {
               </Styled.LeftSection>
 
               <Styled.RightSection>
-                <PromotionImageGallery images={article.images} />
+                <PromotionImageGallery
+                  images={article.images}
+                  promotionId={article.id}
+                />
               </Styled.RightSection>
             </Styled.ContentWrapper>
           </>

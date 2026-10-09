@@ -4,8 +4,9 @@ import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persi
 import { QueryCache, QueryClient, type Query } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { ThemeProvider } from 'styled-components';
-import { FloatingButtonGroup } from '@/components/common/FloatingButtonGroup/FloatingButtonGroup';
+import DesignFeedbackToolbar from '@/components/common/DesignFeedbackToolbar/DesignFeedbackToolbar';
 import FeedbackPromptHost from '@/components/common/FeedbackPromptHost/FeedbackPromptHost';
+import { FloatingButtonGroup } from '@/components/common/FloatingButtonGroup/FloatingButtonGroup';
 import { queryKeys } from '@/constants/queryKeys';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { HttpError } from '@/errors';
@@ -95,6 +96,7 @@ const App = () => {
             <BrowserRouter>
               <ScrollToTop />
               <FloatingButtonGroup />
+              <DesignFeedbackToolbar />
               <FeedbackPromptHost />
               <AppRoutes />
             </BrowserRouter>

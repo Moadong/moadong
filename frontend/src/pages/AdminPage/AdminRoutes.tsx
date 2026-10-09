@@ -11,6 +11,8 @@ import CalendarSyncTab from '@/pages/AdminPage/tabs/CalendarSyncTab/CalendarSync
 import ClubInfoEditTab from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTab';
 import ClubIntroEditTab from '@/pages/AdminPage/tabs/ClubIntroEditTab/ClubIntroEditTab';
 import PhotoEditTab from '@/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab';
+import PromotionEditTab from '@/pages/AdminPage/tabs/PromotionTab/PromotionEditTab';
+import PromotionListTab from '@/pages/AdminPage/tabs/PromotionTab/PromotionListTab';
 import RecruitEditTab from '@/pages/AdminPage/tabs/RecruitEditTab/RecruitEditTab';
 import SettingsTab from '@/pages/AdminPage/tabs/SettingsTab/SettingsTab';
 import StatisticsTab from '@/pages/AdminPage/tabs/StatisticsTab/StatisticsTab';
@@ -35,6 +37,14 @@ export default function AdminRoutes() {
         {/* 동아리 활동 */}
         <Route path='calendar-sync' element={<CalendarSyncTab />} />
         <Route path='recruit-edit' element={<RecruitEditTab />} />
+
+        {/* 홍보 관리 */}
+        <Route path='promotion' element={<PromotionListTab />} />
+        <Route path='promotion/new' element={<PromotionEditTab />} />
+        <Route
+          path='promotion/:articleId/edit'
+          element={<PromotionEditTab />}
+        />
 
         {/* 지원 관리 */}
         <Route path='application-list' element={<ApplicationListTab />} />

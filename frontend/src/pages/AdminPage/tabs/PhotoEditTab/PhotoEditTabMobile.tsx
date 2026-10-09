@@ -5,16 +5,16 @@ import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_COUNT } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import { FeedImageGrid } from './components/FeedImageGrid/FeedImageGrid';
+import { ImageSortGrid } from '@/pages/AdminPage/components/ImageSortGrid/ImageSortGrid';
+import { ImageItem } from '@/pages/AdminPage/components/ImageSortGrid/types';
+import { useDragSort } from '@/pages/AdminPage/components/ImageSortGrid/useDragSort';
 import PhotoUploadCard from './components/mobile/PhotoUploadCard/PhotoUploadCard';
-import { useDragSort } from './hooks/useDragSort';
 import * as Styled from './PhotoEditTabMobile.styles';
-import { FeedItem } from './types';
 
 interface PhotoEditTabMobileProps {
-  feedItems: FeedItem[];
-  feedItemsRef: React.MutableRefObject<FeedItem[]>;
-  setFeedItems: React.Dispatch<React.SetStateAction<FeedItem[]>>;
+  feedItems: ImageItem[];
+  feedItemsRef: React.MutableRefObject<ImageItem[]>;
+  setFeedItems: React.Dispatch<React.SetStateAction<ImageItem[]>>;
   isLoading: boolean;
   pendingChanges: boolean;
   addFiles: (files: File[]) => void;
@@ -40,7 +40,7 @@ const PhotoEditTabMobile = ({
   const { gridRef, dragIndex, dropPosition, handleMouseDown } = useDragSort({
     disabled: isLoading,
     onReorder: setFeedItems,
-    feedItemsRef,
+    itemsRef: feedItemsRef,
   });
 
   const inputRef = useRef<HTMLInputElement>(null);
@@ -49,7 +49,7 @@ const PhotoEditTabMobile = ({
 
   const handleAddClick = () => {
     if (isLoading || isFull) return;
-    trackEvent(ADMIN_EVENT.IMAGE_UPLOAD_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.CLUB_PHOTO_UPLOAD_BUTTON_CLICKED);
     inputRef.current?.click();
   };
 
@@ -60,7 +60,7 @@ const PhotoEditTabMobile = ({
   };
 
   const handleDelete = (index: number) => {
-    trackEvent(ADMIN_EVENT.IMAGE_DELETE_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.CLUB_PHOTO_DELETE_BUTTON_CLICKED);
     deleteImage(index);
   };
 
@@ -107,8 +107,8 @@ const PhotoEditTabMobile = ({
                 활동사진 수정하기
               </Styled.GridSectionTitle>
 
-              <FeedImageGrid
-                feedItems={feedItems}
+              <ImageSortGrid
+                items={feedItems}
                 gridRef={gridRef}
                 dragIndex={dragIndex}
                 dropPosition={dropPosition}

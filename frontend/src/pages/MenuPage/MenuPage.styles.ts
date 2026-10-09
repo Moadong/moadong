@@ -15,12 +15,9 @@ export const Container = styled.div`
   background-color: ${theme.colors.gray[50]};
   box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
 
-  /* AppLayout이 바텀네비 자리로 56px을 이미 비워두므로 그만큼 뺀다 */
-  ${media.tablet} {
-    min-height: calc(100dvh - 56px - env(safe-area-inset-bottom));
-  }
-
+  /* 모바일은 바텀네비 56px을 AppLayout이 padding-bottom으로 비워두므로 그만큼 뺀다 */
   ${media.mobile} {
+    min-height: calc(100dvh - 56px - env(safe-area-inset-bottom));
     max-width: 100%;
     margin: 0;
     box-shadow: none;

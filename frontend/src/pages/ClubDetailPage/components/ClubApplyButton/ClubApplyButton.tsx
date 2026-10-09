@@ -5,10 +5,14 @@ import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/Fix
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
+import { useVerifiedAdminClubId } from '@/hooks/Queries/useVerifiedAdminClubId';
 import useNavigator from '@/hooks/useNavigator';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import { ApplicationForm, ApplicationFormMode } from '@/types/application';
+import { asClubId } from '@/types/branded';
 import getDeadlineText from '@/utils/getDeadLineText';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import AdminPeriodButton from '../AdminPeriodButton/AdminPeriodButton';
 import ApplicationSelectModal from '../ApplicationSelectModal/ApplicationSelectModal';
 import * as Styled from './ClubApplyButton.styles';
 
@@ -21,6 +25,9 @@ const ClubApplyButton = () => {
   const handleLink = useNavigator();
   const trackEvent = useMixpanelTrack();
   const { data: clubDetail } = useGetClubDetail((clubName ?? clubId) || '');
+  const { clubId: adminClubId } = useAdminClubId();
+  const { data: verifiedAdminClubId, isSuccess: isAdminVerified } =
+    useVerifiedAdminClubId(adminClubId);
 
   const [isApplicationModalOpen, setIsApplicationModalOpen] = useState(false);
   const [applicationOptions, setApplicationOptions] = useState<
@@ -28,6 +35,28 @@ const ClubApplyButton = () => {
   >([]);
 
   if (!clubId || !clubDetail) return null;
+
+  const recruitmentStatus = clubDetail.recruitmentStatus;
+  const isRecruitmentClosed = recruitmentStatus === 'CLOSED';
+  const isRecruitmentUpcoming = recruitmentStatus === 'UPCOMING';
+  const isAlwaysRecruiting = recruitmentStatus === 'ALWAYS';
+
+  // 저장된 clubId가 아니라 토큰으로 확인한 clubId로 판단한다. 확인 전·실패 시에는 일반 지원 버튼을 보여준다.
+  // data만 보면 안 된다. 재확인이 실패해도 React Query는 직전 성공 data를 남겨 둔다.
+  const isAdmin =
+    isAdminVerified && asClubId(verifiedAdminClubId) === clubDetail.id;
+  const canManagePeriod =
+    isAdmin && (recruitmentStatus === 'OPEN' || isAlwaysRecruiting);
+
+  if (canManagePeriod) {
+    return <AdminPeriodButton clubDetail={clubDetail} />;
+  }
+
+  const deadlineText = getDeadlineText(
+    recruitmentDateParser(clubDetail.recruitmentStart),
+    recruitmentDateParser(clubDetail.recruitmentEnd),
+    recruitmentStatus,
+  );
 
   const navigateToApplicationForm = async (formId: string) => {
     try {
@@ -60,7 +89,10 @@ const ClubApplyButton = () => {
   };
 
   const handleApplyButtonClick = async () => {
-    trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED);
+    trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED, {
+      club_id: clubDetail.id,
+      club_name: clubDetail.name,
+    });
 
     if (isRecruitmentClosed) {
       alert(`현재 ${clubDetail.name} 동아리는 모집 기간이 아닙니다.`);
@@ -86,17 +118,6 @@ const ClubApplyButton = () => {
       console.error('지원서 옵션 조회 중 오류가 발생했습니다.', e);
     }
   };
-
-  const recruitmentStatus = clubDetail.recruitmentStatus;
-  const isRecruitmentClosed = recruitmentStatus === 'CLOSED';
-  const isRecruitmentUpcoming = recruitmentStatus === 'UPCOMING';
-  const isAlwaysRecruiting = recruitmentStatus === 'ALWAYS';
-
-  const deadlineText = getDeadlineText(
-    recruitmentDateParser(clubDetail.recruitmentStart),
-    recruitmentDateParser(clubDetail.recruitmentEnd),
-    recruitmentStatus,
-  );
 
   const renderButtonContent = () => {
     if (isRecruitmentClosed || isRecruitmentUpcoming) {

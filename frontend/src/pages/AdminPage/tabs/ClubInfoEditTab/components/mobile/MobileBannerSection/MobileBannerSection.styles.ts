@@ -1,6 +1,6 @@
 import styled from 'styled-components';
+import OutlinePillButton from '@/pages/AdminPage/components/OutlinePillButton';
 import { colors } from '@/styles/theme/colors';
-import { setTypography, typography } from '@/styles/theme/typography';
 
 export const BannerArea = styled.div<{ $bgColor?: string }>`
   position: relative;
@@ -24,26 +24,6 @@ export const BannerButtonGroup = styled.div`
   transform: translate(-50%, -50%);
   display: flex;
   gap: 6px;
-`;
-
-export const BannerEditButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 10px;
-  min-width: 95px;
-  background: ${colors.base.white};
-  border: 1px solid ${colors.gray[700]};
-  border-radius: 80px;
-  cursor: pointer;
-  ${setTypography(typography.button.button2)}
-  color: ${colors.gray[700]};
-  transition: all 0.2s;
-
-  &:hover {
-    background: ${colors.gray[700]};
-    color: ${colors.base.white};
-  }
 `;
 
 export const LogoWrapper = styled.div`
@@ -90,4 +70,9 @@ export const LogoEditButton = styled.button`
 
 export const HiddenInput = styled.input`
   display: none;
+`;
+
+// 모바일 배너 시안은 두 버튼을 너비 95로 맞춘다
+export const BannerEditButton = styled(OutlinePillButton)`
+  min-width: 95px;
 `;

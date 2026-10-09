@@ -4,6 +4,7 @@ import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
 import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -13,7 +14,6 @@ import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import * as Styled from './ClubDetailPage.styles';
 import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
-import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
 
 export const TAB_TYPE = {
   INTRO: 'intro',
@@ -37,26 +37,31 @@ const LegacyClubDetailPage = () => {
   const { clubId } = useParams<{ clubId: string }>();
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
-  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
+  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, {
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
   useTrackClubDetailDuration({
     clubId: clubDetail?.id,
     clubName: clubDetail?.name,
     skip: !clubDetail,
   });
   useEffect(() => {
-    if (clubDetail?.id && !error) registerClubDetailVisit(clubDetail.id, location.pathname);
+    if (clubDetail?.id && !error)
+      registerClubDetailVisit(clubDetail.id, location.pathname);
   }, [clubDetail?.id, error, location.pathname]);
 
   const handleTabClick = useCallback(
     (tabKey: TabType) => {
       setSearchParams({ tab: tabKey }, { replace: true });
-      trackEvent(
-        tabKey === TAB_TYPE.INTRO
-          ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
-          : USER_EVENT.CLUB_FEED_TAB_CLICKED,
-      );
+      trackEvent(USER_EVENT.CLUB_DETAIL_TAB_CLICKED, {
+        tab: tabKey,
+        club_id: clubDetail?.id,
+        club_name: clubDetail?.name,
+      });
     },
-    [setSearchParams, trackEvent],
+    [setSearchParams, trackEvent, clubDetail?.id, clubDetail?.name],
   );
 
   if (error) {
@@ -73,6 +78,7 @@ const LegacyClubDetailPage = () => {
       <Styled.Container>
         <Styled.ContentWrapper>
           <ClubProfileCard
+            clubId={clubDetail.id}
             name={clubDetail.name}
             logo={clubDetail.logo}
             cover={clubDetail.cover}

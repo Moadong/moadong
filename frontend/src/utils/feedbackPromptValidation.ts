@@ -43,32 +43,63 @@ export const parseFeedbackEligibility = (
       typeof option.displayOrder !== 'number' ||
       typeof option.requiresFollowUp !== 'boolean' ||
       ratings.has(option.rating as string)
-    ) return null;
+    )
+      return null;
     ratings.add(option.rating as string);
   }
   if (prompt.followUp === null) {
-    return prompt.ratingOptions.some((option) =>
-      isRecord(option) && option.requiresFollowUp === true,
-    ) ? null : (prompt as unknown as FeedbackPrompt);
+    return prompt.ratingOptions.some(
+      (option) => isRecord(option) && option.requiresFollowUp === true,
+    )
+      ? null
+      : (prompt as unknown as FeedbackPrompt);
   }
-  if (!isRecord(prompt.followUp) || !Array.isArray(prompt.followUp.reasonOptions)) return null;
+  if (
+    !isRecord(prompt.followUp) ||
+    !Array.isArray(prompt.followUp.reasonOptions)
+  )
+    return null;
   const { commentMaxLength, reasonOptions } = prompt.followUp;
-  if (!Number.isInteger(commentMaxLength) || (commentMaxLength as number) < 0 || (commentMaxLength as number) > 500) return null;
+  if (
+    !Number.isInteger(commentMaxLength) ||
+    (commentMaxLength as number) < 0 ||
+    (commentMaxLength as number) > 500
+  )
+    return null;
   const reasons = new Set<string>();
   for (const reason of reasonOptions) {
-    if (!isRecord(reason) || !isText(reason.id) || !isText(reason.label) || typeof reason.active !== 'boolean' || typeof reason.displayOrder !== 'number' || reasons.has(reason.id as string)) return null;
+    if (
+      !isRecord(reason) ||
+      !isText(reason.id) ||
+      !isText(reason.label) ||
+      typeof reason.active !== 'boolean' ||
+      typeof reason.displayOrder !== 'number' ||
+      reasons.has(reason.id as string)
+    )
+      return null;
     reasons.add(reason.id as string);
   }
-  if (reasonOptions.filter((reason) => isRecord(reason) && reason.active === true).length > 8) return null;
+  if (
+    reasonOptions.filter((reason) => isRecord(reason) && reason.active === true)
+      .length > 8
+  )
+    return null;
   return prompt as unknown as FeedbackPrompt;
 };
 
-export const parseFeedbackResponse = (value: unknown): FeedbackResponseResult | null => {
+export const parseFeedbackResponse = (
+  value: unknown,
+): FeedbackResponseResult | null => {
   if (!isRecord(value) || !isText(value.responseId)) return null;
-  return { responseId: value.responseId, message: typeof value.message === 'string' ? value.message : undefined };
+  return {
+    responseId: value.responseId,
+    message: typeof value.message === 'string' ? value.message : undefined,
+  };
 };
 
-export const asFeedbackEligibility = (value: unknown): FeedbackEligibility | null =>
+export const asFeedbackEligibility = (
+  value: unknown,
+): FeedbackEligibility | null =>
   isRecord(value) && typeof value.eligible === 'boolean'
     ? (value as unknown as FeedbackEligibility)
     : null;

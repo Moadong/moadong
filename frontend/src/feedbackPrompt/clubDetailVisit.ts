@@ -5,7 +5,8 @@ export interface ClubDetailVisit {
 }
 let currentVisit: ClubDetailVisit | null = null;
 export const registerClubDetailVisit = (clubId: string, pathname: string) => {
-  if (currentVisit?.clubId === clubId && currentVisit.pathname === pathname) return;
+  if (currentVisit?.clubId === clubId && currentVisit.pathname === pathname)
+    return;
   currentVisit = { id: crypto.randomUUID(), clubId, pathname };
 };
 export const consumeClubDetailVisit = () => {
@@ -13,4 +14,6 @@ export const consumeClubDetailVisit = () => {
   currentVisit = null;
   return visit;
 };
-export const clearClubDetailVisit = () => { currentVisit = null; };
+export const clearClubDetailVisit = () => {
+  currentVisit = null;
+};

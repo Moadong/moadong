@@ -36,6 +36,17 @@ npm run storybook        # 포트 6006에서 Storybook 시작
 npm run build-storybook  # Storybook 빌드
 npm run chromatic        # Chromatic으로 시각적 테스트 배포
 
+# Figma 시안 대조
+npm run visual:figma          # 매핑된 컴포넌트를 시안과 대조 (Storybook이 6006에 떠 있어야 함)
+npm run visual:figma <필터>   # 매핑 이름 부분일치로 일부만
+
+# 버튼 이전 (scripts/button-migration/CLAUDE.md)
+npm run button:inventory         # 버튼 정의·사용처 인벤토리 → sites.json + 리포트
+npm run button:figma-candidates  # 후보 자리의 시안 노드 후보 찾기
+npm run button:figma-match       # 자리를 시안과 대조
+npm run button:before-after      # 기준 커밋과 작업 트리의 렌더 결과 비교
+npm run test:scripts             # 위 스크립트의 node:test 단위 테스트
+
 # Storybook 사용 가이드 (공통 컴포넌트 수정 시)
 # - 개발 중: npm run storybook (dev 서버로 실시간 확인)
 # - 기존 스토리가 있는 컴포넌트 수정 후 PR 전: npm run build-storybook
@@ -75,6 +86,11 @@ npm run generate:sitemap # sitemap.xml 생성
 - `VITE_FEEDBACK_PROMPT_ADMIN_ENABLED` - 관리자 행동 피드백 노출 여부 (`true`일 때만 활성)
 - `VITE_FEEDBACK_PROMPT_USER_ENABLED` - 사용자 상세 이탈 피드백 노출 여부 (`true`일 때만 활성)
 
+빌드에 들어가지 않는 스크립트 전용 변수도 같은 `.env`에 둔다 (`VITE_` 접두사가 없어 번들에 포함되지 않는다):
+
+- `FIGMA_TOKEN` - Figma 개인 액세스 토큰. 시안 대조 스크립트 전용(`dotenv-cli`로 자동 로드) → [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md)
+- `DEV_ADMIN_ID`·`DEV_ADMIN_PASSWORD` - dev 서버 테스트 관리자 계정. 버튼 before/after·시안 대조가 관리자 화면을 열 때 쓴다 → [`scripts/button-migration/CLAUDE.md`](scripts/button-migration/CLAUDE.md)
+
 ### 프로젝트 구조
 
 **경로 별칭**: `@/*`는 `src/*`로 매핑
@@ -111,13 +127,15 @@ npm run generate:sitemap # sitemap.xml 생성
 
 - styled-components 사용, 테마 시스템 활용
 - `any` 금지, 명시적 타입 정의
-- 상수는 `src/constants/`에서 관리
+- 여러 파일이 공유하는 상수는 `src/constants/`에서 관리, 한 파일에서만 쓰는 상수는 그 파일 상단에 둔다
 - 데이터 패칭은 `src/hooks/Queries/`의 기존 패턴을 우선 재사용
 - API 호출은 `src/apis/`에 두고 페이지/컴포넌트에 분산시키지 않음
 
 ### Mixpanel 이벤트 트래킹
 
-- 이벤트명은 `src/constants/eventName.ts`의 `USER_EVENT`에서 관리, 문자열 하드코딩 금지
+- 네이밍 규칙은 [`docs/features/analytics/mixpanel-naming-convention.md`](docs/features/analytics/mixpanel-naming-convention.md)를 따른다. 이벤트는 영문 Title Case `[명사] + [과거형 동사]`, 속성 키는 snake_case, 한글 설명은 JSDoc 주석으로
+- 이벤트명은 `src/constants/eventName.ts`(`USER_EVENT`·`ADMIN_EVENT`·`PAGE_EVENT`)에서 관리, 문자열 하드코딩·동적 이벤트명 금지 (ESLint `local/no-hardcoded-event-name`)
+- 변형·동적 값(탭 종류, 페이지명, 연도 등)은 이벤트명이 아니라 속성으로 보낸다. 페이지뷰는 `useTrackPageView(PAGE_VIEW.XXX)` → `Page Viewed` / `Page Left` + `page_name`
 - sessionStorage 키는 `page + id` 스코프로 작성
 
 ## 테스트 & Storybook
@@ -136,6 +154,8 @@ npm run generate:sitemap # sitemap.xml 생성
 
 Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 
+`src/`를 바꾸는 커밋·PR 전에는 `.claude/skills/frontend-fundamentals` 스킬을 먼저 돌린다. "커밋해줘", "PR 올려줘"처럼 말로 요청받아도 마찬가지다(`/commit`은 이미 포함).
+
 ## 폴더별 문서 인덱스
 
 도메인 상세는 코드 옆 `CLAUDE.md`에 있다. 해당 폴더 작업 시 자동 로드되며, 코드 변경 시 같은 파일을 갱신한다.
@@ -150,6 +170,8 @@ Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 | 웹/웹뷰 통합 라우팅 | [`src/layouts/CLAUDE.md`](src/layouts/CLAUDE.md) |
 | 유틸리티·외부 SDK 초기화 | [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md) |
 | OG 태그 (`middleware.ts`) | [`docs/claude/og.md`](docs/claude/og.md) |
+| Figma 시안 ↔ Storybook 대조 | [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md) |
+| 버튼 인벤토리·시안 대조·before/after | [`scripts/button-migration/CLAUDE.md`](scripts/button-migration/CLAUDE.md) |
 
 ## Skill routing
 

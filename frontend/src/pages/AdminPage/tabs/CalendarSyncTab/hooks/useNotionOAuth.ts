@@ -40,32 +40,28 @@ export const useNotionOAuth = ({
       });
   };
 
+  // 넘겨받는 콜백이 렌더마다 바뀌어 이 effect는 렌더마다 다시 돈다
   useEffect(() => {
-    const clearOAuthParamsFromUrl = () => {
-      const cleanUrl = window.location.pathname;
-      window.history.replaceState({}, document.title, cleanUrl);
-    };
-
     const params = new URLSearchParams(window.location.search);
     const code = params.get('code');
     const state = params.get('state');
     const error = params.get('error');
-    const hasOAuthParams = Boolean(code || state || error);
+
+    // 콜백이 아니면 Notion으로 이동하기 직전일 수 있으니 저장한 state를 건드리지 않는다
+    if (!code && !state && !error) return;
+
+    // 다시 돌아도 같은 code를 또 교환하지 않도록 교환 전에 URL과 state를 비운다
     const expectedState = sessionStorage.getItem(NOTION_STATE_KEY);
+    sessionStorage.removeItem(NOTION_STATE_KEY);
+    window.history.replaceState({}, document.title, window.location.pathname);
 
     if (error) {
       onError(`Notion OAuth 실패: ${error}`);
-      sessionStorage.removeItem(NOTION_STATE_KEY);
-      clearOAuthParamsFromUrl();
       return;
     }
 
     if (!code || !state || !expectedState || state !== expectedState) {
-      if (hasOAuthParams) {
-        onError('Notion OAuth 인증 정보가 올바르지 않습니다.');
-      }
-      sessionStorage.removeItem(NOTION_STATE_KEY);
-      if (hasOAuthParams) clearOAuthParamsFromUrl();
+      onError('Notion OAuth 인증 정보가 올바르지 않습니다.');
       return;
     }
 
@@ -83,8 +79,6 @@ export const useNotionOAuth = ({
       })
       .finally(() => {
         setIsNotionOAuthLoading(false);
-        sessionStorage.removeItem(NOTION_STATE_KEY);
-        clearOAuthParamsFromUrl();
       });
   }, [clearError, loadNotionPages, onError, onWorkspaceName]);
 

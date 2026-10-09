@@ -1,30 +1,26 @@
 import { useLocation, useNavigate } from 'react-router-dom';
-import NotificationIcon from '@/assets/images/icons/notification_icon.svg';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
 import AdminProfile from '@/components/common/Header/admin/AdminProfile';
 import SearchBox from '@/components/common/SearchBox/SearchBox';
-import { USER_EVENT } from '@/constants/eventName';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import useHeaderVisibility from '@/hooks/Header/useHeaderVisibility';
-import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useScrollDetection } from '@/hooks/Scroll/useScrollDetection';
+import useDevice from '@/hooks/useDevice';
 import { DeviceType } from '@/types/device';
 import * as Styled from './Header.styles';
 
 interface HeaderProps {
   showOn?: DeviceType[];
   hideOn?: DeviceType[];
-  /** 구독 목록으로 가는 벨. 구독은 앱 브리지 기능이라 웹뷰 화면에서만 켠다. */
-  showSubscriptionBell?: boolean;
 }
 
-const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
+const Header = ({ showOn, hideOn }: HeaderProps) => {
   const location = useLocation();
   const navigate = useNavigate();
-  const trackEvent = useMixpanelTrack();
   const isScrolled = useScrollDetection();
   const isVisible = useHeaderVisibility(showOn, hideOn);
+  const { isMobile } = useDevice();
   const {
     handleHomeClick,
     handleIntroduceClick,
@@ -34,6 +30,8 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
 
   const isAdminPage = location.pathname.startsWith('/admin');
   const isAdminLoginPage = location.pathname.startsWith('/admin/login');
+  const isLoginPage = location.pathname === '/login';
+  const shouldShowSearch = !isAdminPage && !(isMobile && isLoginPage);
 
   const navLinks = [
     { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
@@ -49,10 +47,7 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
     },
   ];
 
-  const handleSubscriptionClick = () => {
-    trackEvent(USER_EVENT.HOME_SUBSCRIPTION_CLICKED);
-    navigate('/subscriptions');
-  };
+  const handleLoginClick = () => navigate('/login');
 
   if (!isVisible) {
     return null;
@@ -89,18 +84,19 @@ const Header = ({ showOn, hideOn, showSubscriptionBell }: HeaderProps) => {
           )}
         </Styled.LeftSection>
 
-        {!isAdminPage && (
+        {shouldShowSearch && (
           <Styled.SearchArea>
             <SearchBox />
           </Styled.SearchArea>
         )}
-        {!isAdminPage && showSubscriptionBell && (
-          <Styled.SubscriptionBellButton
-            onClick={handleSubscriptionClick}
-            aria-label='구독한 동아리'
+        {!isAdminPage && (
+          <Styled.LoginButton
+            $isActive={isLoginPage}
+            aria-current={isLoginPage ? 'page' : undefined}
+            onClick={handleLoginClick}
           >
-            <img src={NotificationIcon} alt='' aria-hidden />
-          </Styled.SubscriptionBellButton>
+            로그인
+          </Styled.LoginButton>
         )}
         {isAdminPage && !isAdminLoginPage && <AdminProfile />}
       </Styled.Container>

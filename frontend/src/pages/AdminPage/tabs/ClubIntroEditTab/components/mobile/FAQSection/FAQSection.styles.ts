@@ -94,19 +94,6 @@ export const QuestionInput = styled.input`
   }
 `;
 
-export const DeleteButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  width: 22px;
-  height: 22px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-`;
-
 export const AnswerWrapper = styled.div`
   display: flex;
   flex-direction: column;
