@@ -124,7 +124,7 @@ export const LogoButton = styled.button`
   }
 `;
 
-export const LoginButton = styled(NavLink)`
+export const AuthButton = styled(NavLink)`
   flex-shrink: 0;
 `;
 

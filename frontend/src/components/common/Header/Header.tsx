@@ -117,17 +117,17 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
           )}
           {shouldShowHeaderControls &&
             (isStudentLoggedIn ? (
-              <Styled.LoginButton $isActive={false} onClick={handleLogoutClick}>
+              <Styled.AuthButton onClick={handleLogoutClick}>
                 로그아웃
-              </Styled.LoginButton>
+              </Styled.AuthButton>
             ) : (
-              <Styled.LoginButton
+              <Styled.AuthButton
                 $isActive={isLoginPage}
                 aria-current={isLoginPage ? 'page' : undefined}
                 onClick={handleLoginClick}
               >
                 로그인
-              </Styled.LoginButton>
+              </Styled.AuthButton>
             ))}
           {isAdminPage && !isAdminLoginPage && <AdminProfile />}
         </Styled.Container>
