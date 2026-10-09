@@ -24,6 +24,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.test.util.ReflectionTestUtils;
+import org.springframework.transaction.support.TransactionSynchronization;
+import org.springframework.transaction.support.TransactionSynchronizationManager;
 
 import java.time.Instant;
 import java.util.List;
@@ -466,6 +468,34 @@ class PromotionArticleServiceTest {
     }
 
     @Test
+    void 트랜잭션_안에서는_커밋_뒤에_빠진_이미지를_지운다() {
+        String clubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(clubId)
+            .images(List.of("old-1", "old-2"))
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("수정 동아리")));
+
+        TransactionSynchronizationManager.initSynchronization();
+        try {
+            promotionArticleService.updatePromotionArticle("article-1",
+                updateRequest(clubId, List.of("old-1")), developer());
+
+            verify(promotionImageUploadService, never()).deleteRemovedImages(any(), any(), any());
+
+            TransactionSynchronizationManager.getSynchronizations()
+                .forEach(TransactionSynchronization::afterCommit);
+        } finally {
+            TransactionSynchronizationManager.clearSynchronization();
+        }
+
+        verify(promotionImageUploadService).deleteRemovedImages("article-1",
+            List.of("old-1", "old-2"), List.of("old-1"));
+    }
+
+    @Test
     void 저장에_실패하면_이미지를_지우지_않는다() {
         String clubId = new ObjectId().toHexString();
         PromotionArticle article = PromotionArticle.builder()
@@ -488,16 +518,60 @@ class PromotionArticleServiceTest {
         return java.util.stream.IntStream.range(0, count).mapToObj(i -> "image-" + i).toList();
     }
 
+    /** 키가 동아리 기준이라 생성 요청의 images도 같은 검증을 받는다. */
     @Test
-    void 상한을_넘는_이미지로는_게시글을_생성할_수_없다() {
+    void 생성_시_이미지_URL_검증에_실패하면_저장하지_않는다() {
         String clubId = new ObjectId().toHexString();
         when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("생성 동아리")));
+        org.mockito.Mockito.doThrow(new RestApiException(ErrorCode.INVALID_FILE_URL))
+            .when(promotionImageUploadService)
+            .validateImages(org.mockito.ArgumentMatchers.eq(clubId),
+                org.mockito.ArgumentMatchers.anyList(), org.mockito.ArgumentMatchers.anyList());
 
         RestApiException exception = assertThrows(RestApiException.class,
             () -> promotionArticleService.createPromotionArticle(
-                createRequest(clubId, images(PromotionArticle.MAX_IMAGE_COUNT + 1)), developer()));
+                createRequest(clubId, List.of("https://evil.example.com/a.png")), developer()));
 
-        assertEquals(ErrorCode.TOO_MANY_FILES, exception.getErrorCode());
+        assertEquals(ErrorCode.INVALID_FILE_URL, exception.getErrorCode());
+        verify(promotionArticleRepository, never()).save(any(PromotionArticle.class));
+    }
+
+    /** 게시글을 만들기 전에 발급받은 URL이므로 생성 요청에 이미지를 함께 담을 수 있다. */
+    @Test
+    void 생성_요청에_이미지를_함께_담아_저장한다() {
+        String clubId = new ObjectId().toHexString();
+        List<String> images = List.of("https://cdn.example.com/promotion/" + clubId + "/2026/09/uuid-a.png");
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("생성 동아리")));
+        when(promotionArticleRepository.save(any(PromotionArticle.class))).thenAnswer(inv -> inv.getArgument(0));
+
+        promotionArticleService.createPromotionArticle(createRequest(clubId, images), developer());
+
+        ArgumentCaptor<PromotionArticle> captor = ArgumentCaptor.forClass(PromotionArticle.class);
+        verify(promotionArticleRepository).save(captor.capture());
+        assertEquals(images, captor.getValue().getImages());
+    }
+
+    @Test
+    void 수정_시_이미지_URL_검증에_실패하면_저장하지_않는다() {
+        String clubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(clubId)
+            .images(List.of("old-image"))
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("수정 동아리")));
+        org.mockito.Mockito.doThrow(new RestApiException(ErrorCode.INVALID_FILE_URL))
+            .when(promotionImageUploadService)
+            .validateImages(org.mockito.ArgumentMatchers.eq(clubId),
+                org.mockito.ArgumentMatchers.anyList(), org.mockito.ArgumentMatchers.anyList());
+
+        RestApiException exception = assertThrows(RestApiException.class,
+            () -> promotionArticleService.updatePromotionArticle("article-1",
+                updateRequest(clubId, List.of("https://evil.example.com/x.png")), developer()));
+
+        assertEquals(ErrorCode.INVALID_FILE_URL, exception.getErrorCode());
+        assertEquals(List.of("old-image"), article.getImages());
         verify(promotionArticleRepository, never()).save(any(PromotionArticle.class));
     }
 
@@ -519,6 +593,24 @@ class PromotionArticleServiceTest {
         assertEquals(ErrorCode.TOO_MANY_FILES, exception.getErrorCode());
         assertEquals(List.of("old-image"), article.getImages());
         verify(promotionArticleRepository, never()).save(any(PromotionArticle.class));
+    }
+
+    @Test
+    void 이미지를_모두_빼고_수정하면_빈_목록으로_저장하고_이전_이미지를_모두_지운다() {
+        String clubId = new ObjectId().toHexString();
+        PromotionArticle article = PromotionArticle.builder()
+            .id("article-1")
+            .clubId(clubId)
+            .images(List.of("old-1", "old-2"))
+            .build();
+        when(promotionArticleRepository.findActiveById("article-1")).thenReturn(Optional.of(article));
+        when(clubRepository.findClubById(new ObjectId(clubId))).thenReturn(Optional.of(club("수정 동아리")));
+
+        promotionArticleService.updatePromotionArticle("article-1", updateRequest(clubId, List.of()), developer());
+
+        assertEquals(List.of(), article.getImages());
+        verify(promotionArticleRepository).save(article);
+        verify(promotionImageUploadService).deleteRemovedImages("article-1", List.of("old-1", "old-2"), List.of());
     }
 
     private static PromotionArticleCreateRequest createRequest(String clubId) {

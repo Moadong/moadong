@@ -81,7 +81,7 @@ public enum ErrorCode {
 
     // 902xx: 홍보게시판 오류
     PROMOTION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "902-1", "홍보 게시글이 존재하지 않습니다."),
-    PROMOTION_CLUB_NOT_APPROVED(HttpStatus.FORBIDDEN, "902-2", "심사가 완료된 동아리만 홍보 게시글을 작성할 수 있습니다."),
+    PROMOTION_CLUB_NOT_APPROVED(HttpStatus.FORBIDDEN, "902-2", "심사가 완료된 동아리만 홍보 게시글을 작성하거나 수정할 수 있습니다."),
 
     // 903xx: 통계/분석 오류
     MIXPANEL_EXPORT_FAILED(HttpStatus.BAD_GATEWAY, "903-1", "Mixpanel 데이터 조회에 실패했습니다."),
@@ -137,7 +137,12 @@ public enum ErrorCode {
     CUSTOM_EVENT_INVALID_DELETE_SCOPE(HttpStatus.BAD_REQUEST, "970-6", "삭제 범위 값이 올바르지 않습니다."),
 
     HIDDEN_EVENT_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "971-1", "동아리 정보를 찾을 수 없습니다."),
-    HIDDEN_EVENT_INVALID_SOURCE(HttpStatus.BAD_REQUEST, "971-2", "숨김 처리할 수 없는 이벤트 소스입니다.")
+    HIDDEN_EVENT_INVALID_SOURCE(HttpStatus.BAD_REQUEST, "971-2", "숨김 처리할 수 없는 이벤트 소스입니다."),
+
+    // 980xx: 소셜 로그인 오류
+    SOCIAL_OAUTH_TOKEN_FAILED(HttpStatus.BAD_REQUEST, "980-1", "소셜 로그인 토큰 교환에 실패했습니다."),
+    SOCIAL_OAUTH_FAILED(HttpStatus.BAD_GATEWAY, "980-2", "소셜 로그인 사용자 정보 조회에 실패했습니다."),
+    STUDENT_USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "980-3", "존재하지 않는 학생 사용자입니다.")
     ;
 
     private final HttpStatus httpStatus;

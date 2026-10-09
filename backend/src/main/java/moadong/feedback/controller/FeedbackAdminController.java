@@ -8,8 +8,10 @@ import moadong.feedback.payload.request.FeedbackReplyRequest;
 import moadong.feedback.payload.request.FeedbackStatusUpdateRequest;
 import moadong.feedback.payload.request.LetterCreateRequest;
 import moadong.feedback.payload.request.LetterDraftRequest;
+import moadong.feedback.payload.request.LetterUpdateRequest;
 import moadong.feedback.payload.response.AdminFeedbackListResponse;
 import moadong.feedback.payload.response.AdminSentLetterListResponse;
+import moadong.feedback.payload.response.AdminSentLetterResponse;
 import moadong.feedback.payload.response.FeedbackReplyResponse;
 import moadong.feedback.payload.response.LetterCreateResponse;
 import moadong.feedback.payload.response.LetterDraftListResponse;
@@ -78,6 +80,16 @@ public class FeedbackAdminController {
     public ResponseEntity<?> createLetter(@RequestBody @Valid LetterCreateRequest request) {
         LetterCreateResponse response = feedbackAdminService.createBroadcastLetter(request);
         return Response.ok("편지가 발행되었습니다.", response);
+    }
+
+    @PutMapping("/letters/{letterId}")
+    @Operation(summary = "보낸 편지 수정", description = "발행한 편지의 제목과 본문을 고칩니다. 분류·받는 사람은 바뀌지 않고 푸시도 다시 보내지 않습니다.")
+    public ResponseEntity<?> updateLetter(
+            @PathVariable String letterId,
+            @RequestBody @Valid LetterUpdateRequest request
+    ) {
+        AdminSentLetterResponse response = feedbackAdminService.updateLetter(letterId, request);
+        return Response.ok("편지가 수정되었습니다.", response);
     }
 
     @PostMapping(value = "/letters/images", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)

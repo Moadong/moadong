@@ -169,4 +169,22 @@ class CloudflareImageServiceFeedUploadUrlsTest {
 		assertEquals(ErrorCode.UNSUPPORTED_FILE_TYPE.getMessage(), responses.get(1).failureReason());
 		assertTrue(responses.get(2).success());
 	}
+
+	@Test
+	void 항목이_null이어도_그_자리만_실패하고_나머지는_발급한다() {
+		givenSavedFeedImages(0);
+		List<UploadUrlRequest> requests = java.util.Arrays.asList(
+			new UploadUrlRequest("ok.png", "image/png"),
+			null,
+			new UploadUrlRequest("also-ok.jpg", "image/jpeg"));
+
+		List<PresignedUploadResponse> responses =
+			cloudflareImageService.generateFeedUploadUrls(clubId, "", requests);
+
+		assertEquals(requests.size(), responses.size());
+		assertTrue(responses.get(0).success());
+		assertFalse(responses.get(1).success());
+		assertEquals(ErrorCode.IMAGE_UPLOAD_FAILED.getMessage(), responses.get(1).failureReason());
+		assertTrue(responses.get(2).success());
+	}
 }

@@ -117,6 +117,15 @@ public class Letter {
                 .build();
     }
 
+    /**
+     * 발행 후 오탈자·내용을 고친다. 분류·받는 사람·읽음 여부·푸시 결과는 발행 시점 그대로 둔다.
+     * 이미 나간 푸시 문구는 바뀌지 않는다.
+     */
+    public void edit(String title, String body) {
+        this.title = title;
+        this.body = body;
+    }
+
     public void recordPushResult(int successCount) {
         this.pushSuccessCount = successCount;
     }
