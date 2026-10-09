@@ -1,4 +1,5 @@
 import API_BASE_URL from '@/constants/api';
+import { GOOGLE_CLIENT_ID, KAKAO_CLIENT_ID } from '@/constants/oauthClient';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { handleResponse } from './utils/apiHelpers';
 import { fetchWithTimeout } from './utils/fetchWithTimeout';
@@ -23,11 +24,11 @@ export const getStudentOAuthUrl = (provider: OAuthProvider): string => {
   });
 
   if (provider === 'kakao') {
-    params.set('client_id', import.meta.env.VITE_KAKAO_CLIENT_ID);
+    params.set('client_id', KAKAO_CLIENT_ID);
     return `https://kauth.kakao.com/oauth/authorize?${params}`;
   }
 
-  params.set('client_id', import.meta.env.VITE_GOOGLE_CLIENT_ID);
+  params.set('client_id', GOOGLE_CLIENT_ID);
   params.set('scope', 'openid');
   return `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
 };
