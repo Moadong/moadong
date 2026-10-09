@@ -8,6 +8,7 @@ export const STORAGE_KEYS = {
   STUDENT_OAUTH_PROVIDER: 'studentOAuthProvider',
   /** 소셜 로그인 CSRF 방어용 state. 콜백에서 검증 후 제거한다 */
   STUDENT_OAUTH_STATE: 'studentOAuthState',
+  FEEDBACK_PROMPT_ANONYMOUS_ID: 'moadong.feedbackPrompt.anonymousClientId',
   /** 만족도 모달 노출 조건. 둘 중 하나가 임계값에 닿으면 묻는다 */
   VISIT_DAY_COUNT: 'visitDayCount',
   CLUB_VIEW_COUNT: 'clubViewCount',
