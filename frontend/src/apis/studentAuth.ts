@@ -62,8 +62,12 @@ export const logoutStudentOAuth = async (): Promise<void> => {
   );
   if (!accessToken) return;
 
-  await fetchWithTimeout(`${API_BASE_URL}/auth/student/oauth/logout`, {
-    method: 'GET',
-    credentials: 'include',
-  });
+  const response = await fetchWithTimeout(
+    `${API_BASE_URL}/auth/student/oauth/logout`,
+    {
+      method: 'GET',
+      credentials: 'include',
+    },
+  );
+  await handleResponse(response, '로그아웃에 실패했습니다.');
 };
