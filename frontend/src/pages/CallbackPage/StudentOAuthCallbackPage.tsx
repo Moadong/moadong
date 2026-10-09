@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   exchangeStudentOAuthCode,
@@ -13,10 +13,19 @@ const isOAuthProvider = (value: string | null): value is OAuthProvider =>
 
 const StudentOAuthCallbackPage = () => {
   const navigate = useNavigate();
+  const [status, setStatus] = useState('로그인 처리 중...');
 
   useEffect(() => {
     const handleCallback = async () => {
       const params = new URLSearchParams(window.location.search);
+      const error = params.get('error');
+
+      if (error) {
+        setStatus('로그인이 취소됐어요.');
+        navigate('/login', { replace: true });
+        return;
+      }
+
       const code = params.get('code');
       const state = params.get('state');
       const provider = sessionStorage.getItem(STORAGE_KEYS.STUDENT_OAUTH_PROVIDER);
@@ -26,7 +35,7 @@ const StudentOAuthCallbackPage = () => {
       sessionStorage.removeItem(STORAGE_KEYS.STUDENT_OAUTH_STATE);
 
       if (!code || !isOAuthProvider(provider) || !state || state !== savedState) {
-        navigate('/', { replace: true });
+        navigate('/login', { replace: true });
         return;
       }
 
@@ -50,7 +59,19 @@ const StudentOAuthCallbackPage = () => {
     handleCallback();
   }, [navigate]);
 
-  return null;
+  return (
+    <div
+      style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '18px',
+      }}
+    >
+      {status}
+    </div>
+  );
 };
 
 export default StudentOAuthCallbackPage;
