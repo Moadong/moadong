@@ -33,7 +33,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
   } = useHeaderNavigation();
 
   const [isStudentLoggedIn, setIsStudentLoggedIn] = useState(
-    !!localStorage.getItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN),
+    () => !!localStorage.getItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN),
   );
   const [showLogoutToast, setShowLogoutToast] = useState(false);
 
