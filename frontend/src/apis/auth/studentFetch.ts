@@ -3,6 +3,13 @@ import { fetchWithTimeout } from '@/apis/utils/fetchWithTimeout';
 import API_BASE_URL from '@/constants/api';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 
+declare global {
+  interface Window {
+    /** 앱 웹뷰가 injectedJavaScriptBeforeContentLoaded로 넣어주는 학생 토큰 */
+    __MOADONG_STUDENT_TOKEN__?: string;
+  }
+}
+
 /** 서버가 sub로 받아주는 형식. 다른 값은 400이라 보내봐야 새 신원이 된다 */
 const UUID_V4 =
   /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -29,7 +36,7 @@ const getTokenSubject = (token: string) => {
 };
 
 /**
- * 우체통은 소셜 로그인 필수. 익명 토큰은 구버전 앱·브라우저 호환 폴백.
+ * 우체통은 소셜 로그인 필수가 아닌 동안 익명 토큰도 지원한다.
  * 토큰에 만료가 없으므로(익명 토큰 한정) 관리자용 secureFetch와 달리 refresh 흐름이 없다.
  *
  * sub를 함께 보내면 서버가 그 신원으로 다시 발급한다. 안 보내면 새 신원이라 편지함이 비어 보인다.
@@ -76,11 +83,30 @@ const issueStudentTokenOnce = (sub?: string) => {
 };
 
 /**
- * 소셜 로그인 토큰을 우선 사용한다. 없으면 익명 학생 토큰으로 폴백한다(구버전 앱·브라우저 호환).
+ * 서버가 거부한 주입 토큰. 앱이 새 토큰을 넣어주면 값이 달라져 다시 후보가 된다.
+ * 기록해 두지 않으면 요청마다 같은 토큰으로 401을 받고 매번 새로 발급하게 되는데,
+ * 발급마다 신원이 갈려서 방금 보낸 편지가 다음 조회에서 안 보인다.
+ */
+let rejectedInjectedToken: string | undefined;
+
+/**
+ * 토큰 우선순위:
+ * 1. 소셜 로그인 토큰 — 로그인한 사용자
+ * 2. 앱 주입 토큰 (injectedToken) — 소셜 전환 전 앱 사용자. FCM 연결 유지를 위해 보존.
+ *    앱이 injectedToken으로 FCM을 등록하므로, 소셜 필수 전환 전까지 제거하면 안 된다.
+ * 3. localStorage UUID — 웹 사용자
+ * 4. 신규 발급
  */
 const getStudentToken = async () => {
+  const oauthToken = localStorage.getItem(
+    STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+  );
+  if (oauthToken) return oauthToken;
+
+  const injectedToken = window.__MOADONG_STUDENT_TOKEN__;
+
   return (
-    localStorage.getItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN) ??
+    (injectedToken === rejectedInjectedToken ? undefined : injectedToken) ??
     localStorage.getItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN) ??
     (await issueStudentTokenOnce())
   );
@@ -122,6 +148,11 @@ export const studentFetch = async (
     throw new Error('STUDENT_OAUTH_EXPIRED');
   }
 
+  // 주입 토큰이 거부된 경우 — 저장분은 앱과 무관한 옛 토큰이라 재시도해도 같이 실패한다.
+  // 재시도 없이 새로 발급한다.
+  const wasInjected = token === window.__MOADONG_STUDENT_TOKEN__;
+  if (wasInjected) rejectedInjectedToken = token;
+
   // 저장된 익명 토큰이 무효할 수 있다(서명 키 교체 등).
   // 한 번만 재발급해 재시도한다. 안 그러면 localStorage를 비우기 전까지 계속 실패한다.
   //
@@ -131,7 +162,7 @@ export const studentFetch = async (
   // 거부된 토큰의 sub로 재발급해 신원을 잇는다. 이게 없으면 서명 키를 한 번 교체할 때
   // 전 사용자가 같은 날 편지함을 잃는다.
   const reissuedToken =
-    storedToken && storedToken !== token
+    !wasInjected && storedToken && storedToken !== token
       ? storedToken
       : await issueStudentTokenOnce(getTokenSubject(token));
 
