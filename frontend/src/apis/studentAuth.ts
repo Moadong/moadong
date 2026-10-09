@@ -13,24 +13,38 @@ interface OAuthCallbackResponse {
 
 const STUDENT_OAUTH_REDIRECT_URI = `${window.location.origin}/login/callback`;
 
+interface OAuthProviderConfig {
+  authUrl: string;
+  clientId: string;
+  extraParams?: Record<string, string>;
+}
+
+const OAUTH_PROVIDERS: Record<OAuthProvider, OAuthProviderConfig> = {
+  kakao: {
+    authUrl: 'https://kauth.kakao.com/oauth/authorize',
+    clientId: KAKAO_CLIENT_ID,
+  },
+  google: {
+    authUrl: 'https://accounts.google.com/o/oauth2/v2/auth',
+    clientId: GOOGLE_CLIENT_ID,
+    extraParams: { scope: 'openid' },
+  },
+};
+
 export const getStudentOAuthUrl = (provider: OAuthProvider): string => {
   const state = crypto.randomUUID();
   sessionStorage.setItem(STORAGE_KEYS.STUDENT_OAUTH_STATE, state);
 
+  const { authUrl, clientId, extraParams = {} } = OAUTH_PROVIDERS[provider];
   const params = new URLSearchParams({
     redirect_uri: STUDENT_OAUTH_REDIRECT_URI,
     response_type: 'code',
     state,
+    client_id: clientId,
+    ...extraParams,
   });
 
-  if (provider === 'kakao') {
-    params.set('client_id', KAKAO_CLIENT_ID);
-    return `https://kauth.kakao.com/oauth/authorize?${params}`;
-  }
-
-  params.set('client_id', GOOGLE_CLIENT_ID);
-  params.set('scope', 'openid');
-  return `https://accounts.google.com/o/oauth2/v2/auth?${params}`;
+  return `${authUrl}?${params}`;
 };
 
 export const exchangeStudentOAuthCode = async (
