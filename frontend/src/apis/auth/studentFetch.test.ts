@@ -48,7 +48,10 @@ beforeEach(async () => {
 describe('studentFetch', () => {
   describe('토큰 선택 순서', () => {
     it('OAuth 토큰을 가장 먼저 쓴다', async () => {
-      localStorage.setItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN, 'oauth-token');
+      localStorage.setItem(
+        STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+        'oauth-token',
+      );
       window.__MOADONG_STUDENT_TOKEN__ = 'app-token';
       localStorage.setItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN, 'web-token');
 

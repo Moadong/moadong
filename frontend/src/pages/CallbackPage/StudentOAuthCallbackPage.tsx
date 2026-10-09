@@ -28,13 +28,22 @@ const StudentOAuthCallbackPage = () => {
 
       const code = params.get('code');
       const state = params.get('state');
-      const provider = sessionStorage.getItem(STORAGE_KEYS.STUDENT_OAUTH_PROVIDER);
-      const savedState = sessionStorage.getItem(STORAGE_KEYS.STUDENT_OAUTH_STATE);
+      const provider = sessionStorage.getItem(
+        STORAGE_KEYS.STUDENT_OAUTH_PROVIDER,
+      );
+      const savedState = sessionStorage.getItem(
+        STORAGE_KEYS.STUDENT_OAUTH_STATE,
+      );
 
       sessionStorage.removeItem(STORAGE_KEYS.STUDENT_OAUTH_PROVIDER);
       sessionStorage.removeItem(STORAGE_KEYS.STUDENT_OAUTH_STATE);
 
-      if (!code || !isOAuthProvider(provider) || !state || state !== savedState) {
+      if (
+        !code ||
+        !isOAuthProvider(provider) ||
+        !state ||
+        state !== savedState
+      ) {
         navigate('/login', { replace: true });
         return;
       }

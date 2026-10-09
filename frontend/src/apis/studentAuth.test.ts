@@ -30,9 +30,8 @@ beforeEach(async () => {
   });
 
   jest.resetModules();
-  ({ getStudentOAuthUrl, exchangeStudentOAuthCode } = await import(
-    './studentAuth'
-  ));
+  ({ getStudentOAuthUrl, exchangeStudentOAuthCode } =
+    await import('./studentAuth'));
 
   fetchMock = jest.fn().mockResolvedValue(jsonResponse({ ok: true }));
   global.fetch = fetchMock as unknown as typeof fetch;
