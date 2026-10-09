@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation } from 'react-router-dom';
 import { logoutStudentOAuth } from '@/apis/studentAuth';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
@@ -10,7 +10,6 @@ import { STORAGE_KEYS } from '@/constants/storageKeys';
 import useHeaderNavigation from '@/hooks/Header/useHeaderNavigation';
 import useHeaderVisibility from '@/hooks/Header/useHeaderVisibility';
 import { useScrollDetection } from '@/hooks/Scroll/useScrollDetection';
-import useDevice from '@/hooks/useDevice';
 import { DeviceType } from '@/types/device';
 import * as Styled from './Header.styles';
 
@@ -21,10 +20,8 @@ interface HeaderProps {
 
 const Header = ({ showOn, hideOn }: HeaderProps) => {
   const location = useLocation();
-  const navigate = useNavigate();
   const isScrolled = useScrollDetection();
   const isVisible = useHeaderVisibility(showOn, hideOn);
-  const { isMobile, isTablet } = useDevice();
   const {
     handleHomeClick,
     handleIntroduceClick,
@@ -39,9 +36,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
 
   const isAdminPage = location.pathname.startsWith('/admin');
   const isAdminLoginPage = location.pathname.startsWith('/admin/login');
-  const isLoginPage = location.pathname === '/login';
-  const isNarrow = isMobile || isTablet;
-  const shouldShowHeaderControls = !isAdminPage && !(isNarrow && isLoginPage);
+  const shouldShowHeaderControls = !isAdminPage;
 
   const navLinks = [
     { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
@@ -56,8 +51,6 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
       path: '/promotions',
     },
   ];
-
-  const handleLoginClick = () => navigate('/login');
 
   const handleLogoutClick = async () => {
     try {
@@ -115,20 +108,12 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
               <SearchBox />
             </Styled.SearchArea>
           )}
-          {shouldShowHeaderControls &&
-            (isStudentLoggedIn ? (
-              <Styled.AuthButton onClick={handleLogoutClick}>
-                로그아웃
-              </Styled.AuthButton>
-            ) : (
-              <Styled.AuthButton
-                $isActive={isLoginPage}
-                aria-current={isLoginPage ? 'page' : undefined}
-                onClick={handleLoginClick}
-              >
-                로그인
-              </Styled.AuthButton>
-            ))}
+          {/* TODO: 소셜 로그인 미완성 — 배포 준비 전까지 로그인 버튼 숨김 */}
+          {shouldShowHeaderControls && isStudentLoggedIn && (
+            <Styled.AuthButton onClick={handleLogoutClick}>
+              로그아웃
+            </Styled.AuthButton>
+          )}
           {isAdminPage && !isAdminLoginPage && <AdminProfile />}
         </Styled.Container>
       </Styled.Header>
