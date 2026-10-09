@@ -2,12 +2,9 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   exchangeStudentOAuthCode,
-  STUDENT_OAUTH_STATE_KEY,
   type OAuthProvider,
 } from '@/apis/studentAuth';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
-
-export const STUDENT_OAUTH_PROVIDER_KEY = 'student_oauth_provider';
 
 const VALID_PROVIDERS: OAuthProvider[] = ['kakao', 'google'];
 
@@ -22,11 +19,11 @@ const StudentOAuthCallbackPage = () => {
       const params = new URLSearchParams(window.location.search);
       const code = params.get('code');
       const state = params.get('state');
-      const provider = sessionStorage.getItem(STUDENT_OAUTH_PROVIDER_KEY);
-      const savedState = sessionStorage.getItem(STUDENT_OAUTH_STATE_KEY);
+      const provider = sessionStorage.getItem(STORAGE_KEYS.STUDENT_OAUTH_PROVIDER);
+      const savedState = sessionStorage.getItem(STORAGE_KEYS.STUDENT_OAUTH_STATE);
 
-      sessionStorage.removeItem(STUDENT_OAUTH_PROVIDER_KEY);
-      sessionStorage.removeItem(STUDENT_OAUTH_STATE_KEY);
+      sessionStorage.removeItem(STORAGE_KEYS.STUDENT_OAUTH_PROVIDER);
+      sessionStorage.removeItem(STORAGE_KEYS.STUDENT_OAUTH_STATE);
 
       if (!code || !isOAuthProvider(provider) || !state || state !== savedState) {
         navigate('/', { replace: true });

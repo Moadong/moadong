@@ -3,14 +3,14 @@ import { getStudentOAuthUrl, type OAuthProvider } from '@/apis/studentAuth';
 import moadong_name_logo from '@/assets/images/logos/moadong_name_logo.svg';
 import Header from '@/components/common/Header/Header';
 import SocialLoginButton from '@/components/SocialLoginButton/SocialLoginButton';
-import { STUDENT_OAUTH_PROVIDER_KEY } from '@/pages/CallbackPage/StudentOAuthCallbackPage';
+import { STORAGE_KEYS } from '@/constants/storageKeys';
 import * as Styled from './LoginPage.styles';
 
 const LoginPage = () => {
   const navigate = useNavigate();
 
   const handleSocialLogin = (provider: OAuthProvider) => {
-    sessionStorage.setItem(STUDENT_OAUTH_PROVIDER_KEY, provider);
+    sessionStorage.setItem(STORAGE_KEYS.STUDENT_OAUTH_PROVIDER, provider);
     window.location.href = getStudentOAuthUrl(provider);
   };
 
