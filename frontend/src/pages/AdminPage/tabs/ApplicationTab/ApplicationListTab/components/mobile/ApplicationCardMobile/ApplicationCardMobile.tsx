@@ -1,6 +1,7 @@
 import type { MouseEvent, RefObject } from 'react';
 import MorebuttonIcon from '@/assets/images/icons/ellipsis_icon.svg?react';
 import AdminMoreMenu from '@/pages/AdminPage/components/AdminMoreMenu/AdminMoreMenu';
+import MoreButton from '@/pages/AdminPage/components/MoreButton';
 import {
   ApplicationFormItem,
   ApplicationFormStatus,
@@ -47,11 +48,11 @@ const ApplicationCardMobile = ({
         </Styled.TitleArea>
 
         <Styled.MoreButtonContainer ref={isMenuOpen ? menuRef : null}>
-          <Styled.MoreButton
+          <MoreButton
             onClick={(e) => onMenuToggle(e, application.id, uniqueKeyPrefix)}
           >
             <MorebuttonIcon />
-          </Styled.MoreButton>
+          </MoreButton>
 
           {isMenuOpen && (
             <AdminMoreMenu

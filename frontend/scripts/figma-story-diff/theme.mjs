@@ -10,7 +10,7 @@ const CACHE = path.join(ROOT, 'node_modules/.cache/figma-story-diff');
 export const THEME_DIR = path.join(ROOT, 'src/styles/theme');
 export const PENDING_DIR = path.join(ROOT, 'src/styles/theme.test');
 
-async function importTs(entry) {
+export async function importTs(entry) {
   await mkdir(CACHE, { recursive: true });
   const outfile = path.join(
     CACHE,

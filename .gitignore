@@ -10,3 +10,6 @@ dailyNote/
 /.omc
 .gstack/
 .playwright-mcp/
+
+# button-migration 기준 커밋 worktree (복사한 .env가 들어 있다)
+.context/
