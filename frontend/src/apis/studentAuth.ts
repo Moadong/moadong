@@ -57,6 +57,7 @@ export const exchangeStudentOAuthCode = async (
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ code, redirectUri: STUDENT_OAUTH_REDIRECT_URI }),
+      credentials: 'include',
     },
   );
   const data = await handleResponse<OAuthCallbackResponse>(

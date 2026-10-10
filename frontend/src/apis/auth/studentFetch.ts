@@ -90,6 +90,14 @@ const issueStudentTokenOnce = (sub?: string) => {
 let rejectedInjectedToken: string | undefined;
 
 /**
+ * 서버가 거부한 OAuth 토큰.
+ * OAuth 401 이후 localStorage에서 제거되더라도 이 값으로 만료된 토큰을 식별해,
+ * 병렬 요청이나 후속 요청이 익명 신원으로 전환되지 않도록 막는다.
+ * 사용자가 재로그인해 새 OAuth 토큰이 저장되면 자동으로 해제된다.
+ */
+let expiredOauthToken: string | undefined;
+
+/**
  * 토큰 우선순위:
  * 1. 소셜 로그인 토큰 — 로그인한 사용자
  * 2. 앱 주입 토큰 (injectedToken) — 소셜 전환 전 앱 사용자. FCM 연결 유지를 위해 보존.
@@ -101,7 +109,18 @@ const getStudentToken = async () => {
   const oauthToken = localStorage.getItem(
     STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
   );
-  if (oauthToken) return oauthToken;
+  if (oauthToken) {
+    // 재로그인으로 새 토큰이 저장되면 만료 상태를 해제한다
+    if (expiredOauthToken && oauthToken !== expiredOauthToken) {
+      expiredOauthToken = undefined;
+    }
+    return oauthToken;
+  }
+
+  // OAuth가 활성 상태였다가 만료됐으면 재로그인 전까지 다른 신원으로 전환하지 않는다
+  if (expiredOauthToken !== undefined) {
+    throw new Error('STUDENT_OAUTH_EXPIRED');
+  }
 
   const injectedToken = window.__MOADONG_STUDENT_TOKEN__;
 
@@ -143,8 +162,10 @@ export const studentFetch = async (
   const oauthToken = localStorage.getItem(
     STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
   );
-  if (token === oauthToken) {
-    localStorage.removeItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN);
+  // 병렬 요청이 이미 OAuth 토큰을 제거했을 수 있으므로 expiredOauthToken도 확인한다
+  if (token === oauthToken || token === expiredOauthToken) {
+    expiredOauthToken = token;
+    if (oauthToken) localStorage.removeItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN);
     throw new Error('STUDENT_OAUTH_EXPIRED');
   }
 
