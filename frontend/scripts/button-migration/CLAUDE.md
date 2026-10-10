@@ -41,7 +41,7 @@
 - `sites.json`은 커밋한다. 인벤토리를 다시 돌려도 `route`·`locator`·`figma`·`figmaViewport`·`status`는 보존되고, 시그니처가 바뀐 자리만 `status`가 `inventoried`로 돌아간다. 자리 id 끝의 `::n`은 같은 파일 안에서 몇 번째 사용처인지일 뿐이라, 사용처가 끼어들거나 하나를 옮기면 다른 버튼을 가리키게 된다. 그래서:
   - **라벨이 바뀌면 아무것도 이어 받지 않는다**(`locator`뿐 아니라 `route`·`figma`·`figmaViewport`·`status`도). 다른 버튼의 시안 판정을 들고 있는 게 빈칸보다 위험하다. 라벨까지 같은 두 버튼이 자리를 바꾸는 경우는 못 가린다.
   - **`migrated`·`verified`는 살아 있는 사용처에 절대 물려주지 않는다.** 살아 있는 styled 정의의 사용처는 정의상 아직 안 옮긴 자리다. 이전 끝난 기록은 `<id>#migrated`(겹치면 `#migrated-2`…)로 따로 남긴다. 두 사용처 중 하나만 옮긴 뒤 다시 인벤토리를 돌리면 남은 쪽이 `::0`이 되는데, 예전엔 이게 `migrated`를 물려받고 진짜 이전 기록은 사라졌다.
-- **`--ids`에 대장에 없는 id가 있으면 exit 2로 멈춘다**(`before-after`·`figma-match` 둘 다). 조용히 빼면 일부만 잰 결과가 전부 잰 것처럼 보인다.
+- **`--ids`에 대장에 없는 id가 있으면 exit 2로 멈춘다**(`before-after`·`figma-match`·`figma-candidates` 모두). 조용히 빼면 일부만 잰 결과가 전부 잰 것처럼 보인다.
 - **`figma-match`는 `migrated`·`verified` 자리를 `--ids`로 골라도 덮어쓰지 않는다**(`SKIP` 줄). 덮어쓰면 이전 기록이 시안 판정으로 되돌아간다.
 - **`before-after` 대장 모드의 경고·승격 규칙.** 기준 대비 바뀐 src 파일(추적 안 되는 새 파일 포함)에 있는데 `status`가 `migrated`가 아닌 자리는 `WARN`으로 알린다 — 옮겨 놓고 상태를 안 바꾸면 그 자리는 아예 안 잰다. src가 기준과 같으면 같은 코드끼리 비교라 PASS여도 `verified`로 올리지 않고 `WARN`만 낸다. src의 다른 곳만 바뀌고 그 자리의 `defFile`·`usageFile`이 기준과 같아도 마찬가지라, 그 자리는 `migrated`로 두고 `WARN  <id>  기준과 같은 코드라 verified로 올리지 않음`을 낸다. before·after 어느 쪽이든(모든 폭 합쳐) 포기한 요청이 하나라도 있는 PASS도 `migrated`로 두고 `WARN  <id>  요청 포기가 있어 verified로 올리지 않음 (리포트 참고)`을 낸다 — 양쪽 로딩 화면끼리의 PASS일 수 있다. 판정은 `sites.mjs`의 `promoteVerified`(바뀐 파일 집합을 받는 순수 함수)가 하고, 올리지 않은 자리는 `held`로 돌려준다. `--targets`(스모크)는 대장을 건드리지 않으니 이 규칙과 무관하다.
 - 스토리·테스트 파일과 `Button.tsx` 내부의 `StyledButton`은 인벤토리에서 뺀다.
