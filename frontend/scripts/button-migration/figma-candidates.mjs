@@ -3,7 +3,7 @@ import { mkdir, writeFile } from 'node:fs/promises';
 import path from 'node:path';
 import { parseArgs } from 'node:util';
 import { findCandidates, loadPage } from './figma-search.mjs';
-import { clusters, loadSites, SITES_FILE } from './sites.mjs';
+import { clusters, loadSites, pickByIds, SITES_FILE } from './sites.mjs';
 
 const OUT = path.resolve(import.meta.dirname, '../../visual-diff/button-figma');
 const { values: args } = parseArgs({
@@ -19,10 +19,17 @@ const candidateKeys = new Set(
     .filter((c) => c.candidate)
     .map((c) => c.key),
 );
-const wanted = args.ids ? new Set(args.ids.split(',')) : null;
-const targets = sites.filter((s) =>
-  wanted ? wanted.has(s.id) : candidateKeys.has(s.signatureKey) && !s.figma,
-);
+let targets;
+if (args.ids) {
+  const { picked, unknown } = pickByIds(sites, args.ids.split(','));
+  if (unknown.length) {
+    console.error(`대장에 없는 id:\n${unknown.join('\n')}`);
+    process.exit(2);
+  }
+  targets = picked;
+} else {
+  targets = sites.filter((s) => candidateKeys.has(s.signatureKey) && !s.figma);
+}
 
 const page = await loadPage({ refresh: args.refresh });
 const lines = ['# 시안 노드 후보', ''];

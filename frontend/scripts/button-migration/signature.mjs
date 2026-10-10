@@ -34,9 +34,33 @@ export const LAYOUT_PROPS = new Set([
   'order',
 ]);
 
-// `https://`의 //는 남긴다. 앞 글자가 `:`면 주석이 아니다.
-const stripComments = (css) =>
-  css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+// 따옴표·괄호 밖의 `/* */`와 `//`(줄 끝까지)만 주석이다. 문자열(`"a // b"`)과
+// `url(https://…)`·`url(//cdn…)`의 //는 남긴다.
+function stripComments(css) {
+  let out = '';
+  let quote = null;
+  let depth = 0;
+  for (let i = 0; i < css.length; i++) {
+    const ch = css[i];
+    if (quote) {
+      out += ch;
+      if (ch === '\\') out += css[++i] ?? '';
+      else if (ch === quote) quote = null;
+    } else if (ch === '/' && css[i + 1] === '*') {
+      const close = css.indexOf('*/', i + 2);
+      i = close === -1 ? css.length : close + 1;
+    } else if (ch === '/' && css[i + 1] === '/' && depth === 0) {
+      const newline = css.indexOf('\n', i);
+      i = (newline === -1 ? css.length : newline) - 1;
+    } else {
+      if (ch === '"' || ch === "'") quote = ch;
+      else if (ch === '(') depth += 1;
+      else if (ch === ')') depth = Math.max(0, depth - 1);
+      out += ch;
+    }
+  }
+  return out;
+}
 
 export function parseCss(css) {
   const text = stripComments(css);

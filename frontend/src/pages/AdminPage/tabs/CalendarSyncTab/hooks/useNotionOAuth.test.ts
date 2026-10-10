@@ -85,4 +85,18 @@ describe('useNotionOAuth', () => {
     expect(window.location.search).toBe('');
     expect(sessionStorage.getItem(NOTION_STATE_KEY)).toBeNull();
   });
+
+  it('값이 빈 콜백도 오류를 알리고 URL과 state를 비운다', () => {
+    sessionStorage.setItem(NOTION_STATE_KEY, 'saved-state');
+    window.history.replaceState({}, '', `${PATH}?code=&state=`);
+
+    const { onError } = renderNotionOAuth();
+
+    expect(mockExchange).not.toHaveBeenCalled();
+    expect(onError).toHaveBeenCalledWith(
+      'Notion OAuth 인증 정보가 올바르지 않습니다.',
+    );
+    expect(window.location.search).toBe('');
+    expect(sessionStorage.getItem(NOTION_STATE_KEY)).toBeNull();
+  });
 });

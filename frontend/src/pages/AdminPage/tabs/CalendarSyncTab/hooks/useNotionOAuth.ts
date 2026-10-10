@@ -47,8 +47,12 @@ export const useNotionOAuth = ({
     const state = params.get('state');
     const error = params.get('error');
 
-    // 콜백이 아니면 Notion으로 이동하기 직전일 수 있으니 저장한 state를 건드리지 않는다
-    if (!code && !state && !error) return;
+    // 콜백이 아니면 Notion으로 이동하기 직전일 수 있으니 저장한 state를 건드리지 않는다.
+    // 값이 빈 콜백(`?code=&state=`)도 콜백이라 값이 아닌 키 존재로 가른다
+    const isOAuthCallback = ['code', 'state', 'error'].some((key) =>
+      params.has(key),
+    );
+    if (!isOAuthCallback) return;
 
     // 다시 돌아도 같은 code를 또 교환하지 않도록 교환 전에 URL과 state를 비운다
     const expectedState = sessionStorage.getItem(NOTION_STATE_KEY);

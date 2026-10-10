@@ -61,13 +61,16 @@ Figma와 구현을 맞추는 일은 기존 `figma-story-diff` 스킬로 따로 �
 
 레코드 하나가 버튼이 쓰이는 자리 하나다. 정의 하나가 여러 곳에서 쓰이면 레코드가 여러 개다.
 
+주요 필드만 추렸다. 전체 필드는 `sites.json`을 본다.
+
 ```jsonc
 {
-  "id": "ClubDetailPage/ShareButton#0",
-  "file": "src/pages/ClubDetailPage/...styles.ts",
-  "styledName": "ShareButton",
-  "usage": "src/pages/ClubDetailPage/...tsx:42",
-  "domain": "ClubDetailPage",
+  "id": "src/pages/ClubDetailPage/...styles.ts::ShareButton::src/pages/ClubDetailPage/...tsx::0",
+  "defFile": "src/pages/ClubDetailPage/...styles.ts",
+  "name": "ShareButton",
+  "usageFile": "src/pages/ClubDetailPage/...tsx",
+  "line": 42,
+  "domain": "pages/ClubDetailPage",
   "signatureKey": "b3f1…",
   "route": "/clubDetail/@...",
   "locator": { "role": "button", "name": "공유하기" },
@@ -138,7 +141,7 @@ Figma와 구현을 맞추는 일은 기존 `figma-story-diff` 스킬로 따로 �
 ## 7. 검증
 
 도구 자체:
-- 인벤토리 파서 단위 테스트(jest). 작은 `styled.button` 예제로 테마 해석, `dynamic` 표시, hover·미디어쿼리 하위 시그니처, padding 정규화를 확인한다.
+- 인벤토리 파서 단위 테스트(`node:test`, `npm run test:scripts`. jest는 이 폴더를 돌리지 않는다). 작은 `styled.button` 예제로 테마 해석, `dynamic` 표시, hover·미디어쿼리 하위 시그니처, padding 정규화를 확인한다.
 - before/after 판정기 변이 테스트. 같은 커밋끼리 비교하면 PASS, 아래 세 변이는 각각 FAIL이어야 한다: 패딩 1px 변경, `type` submit→button, hover 배경색 변경. 이게 통과하기 전에는 판정 결과를 믿지 않는다.
 
 제품 코드:
