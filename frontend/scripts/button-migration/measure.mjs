@@ -101,7 +101,7 @@ const IGNORED_RESOURCE_TYPES = new Set(['websocket', 'eventsource']);
 // 페이지는 그래도 60초 뒤 소리 내며 실패한다.
 export function waitForQuiet(
   page,
-  { idleMs = 500, timeoutMs = 60_000, requestGraceMs = 11_000 } = {},
+  { idleMs = 500, timeoutMs = 60_000, requestGraceMs = 11_000, signal } = {},
 ) {
   const startedAt = new Map(); // request -> 시작 시각(ms)
   const writtenOff = new Set(); // 그레이스로 포기한 요청의 path(쿼리 제거, 중복 제거)
@@ -210,9 +210,36 @@ export function waitForQuiet(
       );
     }
 
+    // 네비게이션이 먼저 실패하면 아무도 이 promise를 기다리지 않는다. 그대로 두면 리스너·타이머가
+    // 남아 있다가 절대 상한에서 reject되고, 핸들러가 없어 프로세스가 죽는다.
+    signal?.addEventListener(
+      'abort',
+      () => {
+        if (settled) return;
+        settled = true;
+        detach();
+        reject(signal.reason);
+      },
+      { once: true },
+    );
+
     scheduleTimeoutTimer();
     scheduleIdleCheck();
   });
+}
+
+// action(네비게이션)보다 먼저 waitForQuiet을 걸고, action이 던지면 대기를 거둔 뒤 그 오류를 던진다.
+export async function withQuiet(page, action, options) {
+  const controller = new AbortController();
+  const quiet = waitForQuiet(page, { ...options, signal: controller.signal });
+  try {
+    await action();
+  } catch (e) {
+    quiet.catch(() => {});
+    controller.abort(e);
+    throw e;
+  }
+  return quiet;
 }
 
 export async function resolveTarget(page, spec) {
@@ -283,11 +310,9 @@ export async function measureSite(page, baseUrl, site) {
     // 폭마다 다시 연다. 마운트 시점 폭으로 분기하는 컴포넌트가 있다.
     // Vite HMR이 띄우는 WebSocket이 계속 열려 있어 networkidle은 dev 서버에서 절대 안 끝난다.
     // load로 멈추고, load 뒤에도 이어지는 fetch(데이터 로딩)는 waitForQuiet으로 따로 기다린다.
-    const quiet = waitForQuiet(page);
-    await page.goto(new URL(site.route, baseUrl).href, {
-      waitUntil: 'load',
-    });
-    const { writtenOff } = await quiet;
+    const { writtenOff } = await withQuiet(page, () =>
+      page.goto(new URL(site.route, baseUrl).href, { waitUntil: 'load' }),
+    );
     out[width] = { ...(await measureStates(page, site.locator)), writtenOff };
   }
   return out;

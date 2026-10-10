@@ -1,6 +1,6 @@
 import assert from 'node:assert/strict';
 import { after, before, test } from 'node:test';
-import { launchBrowser, waitForQuiet } from './measure.mjs';
+import { launchBrowser, waitForQuiet, withQuiet } from './measure.mjs';
 
 // load는 끝났지만 그 뒤 fetch가 DOM을 늦게 고치는 상황을 재현한다.
 const HTML = `<!doctype html>
@@ -140,6 +140,31 @@ test('초기 마감 뒤에야 풀리는 늦은 요청도 마감이 늘어나 wri
       `초기 마감 전에 끝남: ${Date.now() - t0}ms`,
     );
   } finally {
+    await page.close();
+  }
+});
+
+// goto가 던진 뒤 남은 대기가 절대 상한에서 reject되면 핸들러가 없어 프로세스가 죽는다.
+// 문서 요청 자체를 붙잡아 goto를 타임아웃시키고, 대기의 상한(600ms)을 넘겨 기다려 본다.
+test('withQuiet은 네비게이션이 실패하면 그 오류를 던지고 대기를 거둔다', async () => {
+  const page = await browser.newPage();
+  const unhandled = [];
+  const onUnhandled = (reason) => unhandled.push(reason);
+  process.on('unhandledRejection', onUnhandled);
+  try {
+    await page.route('http://quiet.test/**', () => new Promise(() => {}));
+    await assert.rejects(
+      withQuiet(page, () => page.goto('http://quiet.test/', { timeout: 300 }), {
+        timeoutMs: 600,
+        requestGraceMs: 10_000,
+      }),
+      /Timeout/,
+    );
+    assert.equal(page.listenerCount('request'), 0);
+    await new Promise((r) => setTimeout(r, 900));
+    assert.deepEqual(unhandled, []);
+  } finally {
+    process.off('unhandledRejection', onUnhandled);
     await page.close();
   }
 });

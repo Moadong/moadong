@@ -3,7 +3,7 @@ import { execFileSync, spawn } from 'node:child_process';
 import { copyFileSync, existsSync, writeFileSync } from 'node:fs';
 import net from 'node:net';
 import path from 'node:path';
-import { waitForQuiet } from './measure.mjs';
+import { withQuiet } from './measure.mjs';
 
 export const FRONTEND = path.resolve(import.meta.dirname, '../..');
 const REPO = path.resolve(FRONTEND, '..');
@@ -45,23 +45,23 @@ export async function loginAdmin(page, baseUrl) {
   // 콜드 서버의 첫 모듈 트랜스폼에 대비해 타임아웃만 넉넉히 둔다.
   // load 뒤에도 인증 상태 확인용 fetch가 이어지면 라벨은 같아도 로딩 중 화면일 수 있어
   // waitForQuiet으로 그 fetch들이 끝나길 기다린다. 네비게이션 전에 걸어야 로드 중 요청도 잡힌다.
-  const loginPageQuiet = waitForQuiet(page);
-  await page.goto(new URL('/admin/login', baseUrl).href, {
-    waitUntil: 'load',
-    timeout: 60_000,
-  });
-  await loginPageQuiet;
+  await withQuiet(page, () =>
+    page.goto(new URL('/admin/login', baseUrl).href, {
+      waitUntil: 'load',
+      timeout: 60_000,
+    }),
+  );
   await page.getByPlaceholder('아이디').fill(id);
   await page.getByPlaceholder('비밀번호').fill(pw);
-  const postLoginQuiet = waitForQuiet(page);
-  await page.getByRole('button', { name: '로그인', exact: true }).click();
-  await page.waitForURL(
-    (url) =>
-      url.pathname.startsWith('/admin') &&
-      !url.pathname.startsWith('/admin/login'),
-    { timeout: 20_000 },
-  );
-  await postLoginQuiet;
+  await withQuiet(page, async () => {
+    await page.getByRole('button', { name: '로그인', exact: true }).click();
+    await page.waitForURL(
+      (url) =>
+        url.pathname.startsWith('/admin') &&
+        !url.pathname.startsWith('/admin/login'),
+      { timeout: 20_000 },
+    );
+  });
 }
 
 // 로그인 화면은 로그인한 세션으로 열면 /admin으로 튕긴다. 세션을 둘로 나눈다.

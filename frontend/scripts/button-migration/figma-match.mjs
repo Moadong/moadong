@@ -11,7 +11,7 @@ import {
   FREEZE_CSS,
   launchBrowser,
   resolveTarget,
-  waitForQuiet,
+  withQuiet,
 } from './measure.mjs';
 import { figmaTargets, loadSites, saveSites, SITES_FILE } from './sites.mjs';
 
@@ -65,11 +65,9 @@ try {
       });
       // Vite HMR WebSocket이 계속 열려 있어 networkidle은 dev 서버에서 절대 안 끝난다(measure.mjs와 같은 이유).
       // load로 멈추고, load 뒤에도 이어지는 fetch는 waitForQuiet으로 따로 기다린다.
-      const quiet = waitForQuiet(page);
-      await page.goto(new URL(site.route, server.url).href, {
-        waitUntil: 'load',
-      });
-      const { writtenOff } = await quiet;
+      const { writtenOff } = await withQuiet(page, () =>
+        page.goto(new URL(site.route, server.url).href, { waitUntil: 'load' }),
+      );
       await page.addStyleTag({ content: FREEZE_CSS });
       const target = await resolveTarget(page, site.locator);
       if (!target) throw new Error('요소가 안 보인다');
