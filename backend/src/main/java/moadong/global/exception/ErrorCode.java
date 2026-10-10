@@ -98,6 +98,12 @@ public enum ErrorCode {
     LETTER_DRAFT_NOT_FOUND(HttpStatus.NOT_FOUND, "904-5", "편지 초안이 존재하지 않습니다."),
     FEEDBACK_STATUS_NOT_CHANGEABLE(HttpStatus.BAD_REQUEST, "904-6", "답장 완료 상태는 답장 발행으로만 설정되며 되돌릴 수 없습니다."),
     FEEDBACK_IMAGE_UPLOAD_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "904-7", "사진 업로드 요청이 너무 많습니다. 잠시 후 다시 시도해주세요."),
+    FEEDBACK_PROMPT_NOT_FOUND(HttpStatus.NOT_FOUND, "904-8", "피드백 프롬프트가 존재하지 않습니다."),
+    FEEDBACK_PROMPT_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "904-9", "피드백 프롬프트 요청이 올바르지 않습니다."),
+    FEEDBACK_PROMPT_POLICY_INVALID(HttpStatus.BAD_REQUEST, "904-10", "피드백 재노출 정책이 올바르지 않습니다."),
+    FEEDBACK_PROMPT_REASON_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "904-11", "피드백 선택지는 최대 8개까지 등록할 수 있습니다."),
+    FEEDBACK_PROMPT_COMMENT_TOO_LONG(HttpStatus.BAD_REQUEST, "904-12", "피드백 의견은 최대 500자까지 입력할 수 있습니다."),
+    FEEDBACK_PROMPT_ACTIVE_DUPLICATED(HttpStatus.CONFLICT, "904-13", "같은 트리거에 활성화된 피드백 프롬프트가 이미 존재합니다."),
 
     // 950xx: Notion 연동 오류
     NOTION_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "950-1", "Notion 서버 환경변수가 설정되지 않았습니다."),
@@ -131,7 +137,12 @@ public enum ErrorCode {
     CUSTOM_EVENT_INVALID_DELETE_SCOPE(HttpStatus.BAD_REQUEST, "970-6", "삭제 범위 값이 올바르지 않습니다."),
 
     HIDDEN_EVENT_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "971-1", "동아리 정보를 찾을 수 없습니다."),
-    HIDDEN_EVENT_INVALID_SOURCE(HttpStatus.BAD_REQUEST, "971-2", "숨김 처리할 수 없는 이벤트 소스입니다.")
+    HIDDEN_EVENT_INVALID_SOURCE(HttpStatus.BAD_REQUEST, "971-2", "숨김 처리할 수 없는 이벤트 소스입니다."),
+
+    // 980xx: 소셜 로그인 오류
+    SOCIAL_OAUTH_TOKEN_FAILED(HttpStatus.BAD_REQUEST, "980-1", "소셜 로그인 토큰 교환에 실패했습니다."),
+    SOCIAL_OAUTH_FAILED(HttpStatus.BAD_GATEWAY, "980-2", "소셜 로그인 사용자 정보 조회에 실패했습니다."),
+    STUDENT_USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "980-3", "존재하지 않는 학생 사용자입니다.")
     ;
 
     private final HttpStatus httpStatus;

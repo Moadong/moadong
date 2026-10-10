@@ -64,6 +64,10 @@ public class StudentUser {
 
     private String currentFcmToken;
 
+    public void updateNickname(String nickname) {
+        this.nickname = nickname;
+    }
+
     public void updateLastSeen() {
         this.lastSeenAt = new Date();
     }

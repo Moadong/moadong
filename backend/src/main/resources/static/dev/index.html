@@ -56,6 +56,7 @@
           <p class="nav-group-title">우체통</p>
           <a href="#feedback">받은 피드백 <span id="feedbackNavBadge" class="nav-badge hidden"></span></a>
           <a href="#letters">보낸 편지</a>
+          <a href="#feedback-prompts">행동 피드백</a>
         </div>
         <div class="nav-group">
           <p class="nav-group-title">콘텐츠</p>
@@ -704,6 +705,39 @@
       </div>
     </section>
 
+    <section id="feedback-prompts" class="hidden">
+      <div class="section-head">
+        <h2>행동 피드백 프롬프트</h2>
+        <div class="section-head-actions">
+          <button type="button" id="btnLoadFeedbackPrompts">새로고침</button>
+          <button type="button" id="btnNewFeedbackPrompt" class="btn-primary">새 프롬프트</button>
+        </div>
+      </div>
+      <p class="sub">문항, 선택지, 노출 정책을 JSON으로 관리합니다. 기존 사유 ID는 변경하지 마세요.</p>
+      <div id="feedbackPromptResult" class="message-box hidden"></div>
+      <div class="promotion-layout">
+        <div class="panel">
+          <div class="table-wrap">
+            <table id="feedbackPromptList">
+              <thead><tr><th>트리거</th><th>대상</th><th>문항</th><th>순서</th><th>활성</th></tr></thead>
+              <tbody><tr><td colspan="5">프롬프트 목록을 불러오세요.</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+        <div class="panel">
+          <div class="form-row">
+            <label for="feedbackPromptJson">프롬프트 JSON</label>
+            <textarea id="feedbackPromptJson" rows="24" style="max-width:100%;font-family:monospace;font-size:.86rem" placeholder="목록에서 프롬프트를 선택하거나 새 프롬프트를 만드세요."></textarea>
+          </div>
+          <div class="promotion-actions">
+            <button type="button" id="btnSaveFeedbackPrompt" class="btn-primary">저장</button>
+            <button type="button" id="btnFormatFeedbackPromptJson">JSON 정렬</button>
+            <button type="button" id="btnClearFeedbackPromptSelection" class="btn-ghost">선택 해제</button>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <section id="funnel-dashboard" class="hidden">
       <h2>퍼널 이탈율</h2>
       <p class="sub">전날 이벤트를 매일 04:00에 모아요. 이전 단계 후 24시간 안에 다음 단계로 간 사용자만 전환으로 세요. 빠진 날짜는 통계 Backfill로 채우세요.</p>
@@ -744,6 +778,7 @@
   <script src="/dev/js/fcm.js?v=20260930-7"></script>
   <script src="/dev/js/batch.js?v=20260930-7"></script>
   <script src="/dev/js/funnel.js?v=20260930-7"></script>
+  <script src="/dev/js/feedback-prompts.js?v=20261009-1"></script>
   <script src="/dev/js/main.js?v=20260930-7"></script>
 </body>
 </html>
