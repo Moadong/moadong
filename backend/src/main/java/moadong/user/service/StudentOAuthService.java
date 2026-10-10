@@ -213,6 +213,10 @@ public class StudentOAuthService {
     }
 
     private StudentLoginResponse issueTokens(StudentUser student, boolean isNewUser, HttpServletResponse response) {
+        if (student.getId() == null) {
+            student = studentUserRepository.save(student);
+        }
+
         String accessToken = jwtProvider.generateAccessToken(student.getId());
         RefreshToken refreshToken = jwtProvider.generateRefreshToken(student.getId());
 
