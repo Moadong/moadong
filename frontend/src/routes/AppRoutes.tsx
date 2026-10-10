@@ -30,6 +30,8 @@ import PeaceResultPage from '@/pages/PeacePage/PeaceResultPage';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage/PrivacyPolicyPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
+import RecruitPage from '@/pages/RecruitPage/RecruitPage';
+import RecruitPositionPage from '@/pages/RecruitPage/RecruitPositionPage';
 import SubscriptionsPage from '@/pages/SubscriptionsPage/SubscriptionsPage';
 import webviewRoutes from './webviewRoutes';
 
@@ -63,6 +65,14 @@ const AppRoutes = () =>
           element: (
             <ContentErrorBoundary>
               <IntroducePage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/recruit',
+          element: (
+            <ContentErrorBoundary>
+              <RecruitPage />
             </ContentErrorBoundary>
           ),
         },
@@ -172,6 +182,14 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <GamePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/recruit/:position',
+      element: (
+        <ContentErrorBoundary>
+          <RecruitPositionPage />
         </ContentErrorBoundary>
       ),
     },
