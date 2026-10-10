@@ -36,11 +36,21 @@ interface FeedbackImagePresigned {
   failureReason: string | null;
 }
 
+export interface FeedbackImageUploadResult {
+  urlByFile: Map<File, string>;
+  failedFiles: File[];
+}
+
 /**
- * 첨부 사진을 R2에 올리고 저장에 쓸 finalUrl 배열을 돌려준다.
+ * 첨부 사진을 R2에 올리고 파일별 결과를 돌려준다.
  * 기존 활동사진과 같은 presigned 방식이라 uploadToStorage를 그대로 재사용한다.
+ *
+ * 한 장이 실패해도 나머지 결과를 버리지 않는다. 버리면 이미 R2에 올라간 사진이
+ * 어디에도 등록되지 않은 채 남고, 다시 보낼 때 전부 새로 올려야 한다.
  */
-export const uploadFeedbackImages = async (files: File[]) => {
+export const uploadFeedbackImages = async (
+  files: File[],
+): Promise<FeedbackImageUploadResult> => {
   const response = await studentFetch(
     `${FEEDBACK_BASE_URL}/images/upload-url`,
     {
@@ -60,26 +70,32 @@ export const uploadFeedbackImages = async (files: File[]) => {
   );
 
   // 항목별 부분 실패가 가능하고, 4장을 넘기면 TOO_MANY_FILES 항목이 덧붙어
-  // 응답 길이가 요청 수와 달라질 수 있다. 하나라도 실패면 전송을 멈춘다.
-  const failed = presigned?.find((item) => !item.success);
-  if (failed) {
-    throw new Error(
-      failed.failureReason ?? '이미지 업로드 준비에 실패했습니다.',
-    );
-  }
-
-  if (presigned?.length !== files.length) {
-    throw new Error('이미지 업로드 준비에 실패했습니다.');
-  }
-
-  // 저장 시점에 서버가 R2에 파일이 있는지 확인하므로 업로드를 모두 끝낸 뒤 반환한다
-  await Promise.all(
-    files.map((file, index) =>
-      uploadToStorage(presigned[index].presignedUrl, file, file.type),
-    ),
+  // 응답 길이가 요청 수와 달라질 수 있다. 짝이 없거나 실패한 항목은 그 파일만 실패로 둔다.
+  // 저장 시점에 서버가 R2에 파일이 있는지 확인하므로 업로드를 모두 끝낸 뒤 반환한다.
+  const results = await Promise.allSettled(
+    files.map(async (file, index) => {
+      const item = presigned?.[index];
+      if (!item?.success || !item.presignedUrl || !item.finalUrl) {
+        throw new Error(
+          item?.failureReason ?? '이미지 업로드 준비에 실패했습니다.',
+        );
+      }
+      await uploadToStorage(item.presignedUrl, file, file.type);
+      return item.finalUrl;
+    }),
   );
 
-  return presigned.map((item) => item.finalUrl);
+  const urlByFile = new Map<File, string>();
+  const failedFiles: File[] = [];
+  results.forEach((result, index) => {
+    if (result.status === 'fulfilled') {
+      urlByFile.set(files[index], result.value);
+    } else {
+      failedFiles.push(files[index]);
+    }
+  });
+
+  return { urlByFile, failedFiles };
 };
 
 export const getReceivedLetters = async (category?: LetterCategory) => {

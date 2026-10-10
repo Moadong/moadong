@@ -5,7 +5,7 @@ import {
   PROMOTION_TITLE_MAX,
 } from '@/constants/adminFieldLimits';
 import { clubLocations } from '@/constants/clubLocation';
-import { ImageItem } from '@/pages/AdminPage/components/ImageSortGrid/types';
+import { ImageItem } from '@/types/imageItem';
 import {
   CreatePromotionArticleRequest,
   PromotionArticle,
