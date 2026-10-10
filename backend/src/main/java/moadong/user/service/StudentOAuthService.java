@@ -16,6 +16,7 @@ import moadong.user.payload.response.RefreshResponse;
 import moadong.user.payload.response.StudentLoginResponse;
 import moadong.user.repository.StudentUserRepository;
 import moadong.user.util.CookieMaker;
+import moadong.user.util.NicknameGenerator;
 import org.springframework.core.ParameterizedTypeReference;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -177,6 +178,7 @@ public class StudentOAuthService {
         return StudentUser.builder()
                 .provider(provider)
                 .socialId(socialId)
+                .nickname(NicknameGenerator.generate())
                 .build();
     }
 
