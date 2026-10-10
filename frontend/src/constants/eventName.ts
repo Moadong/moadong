@@ -65,8 +65,6 @@ export const USER_EVENT = {
   CLUB_UNION_BUTTON_CLICKED: 'Club Union Button Clicked',
   /** 헤더 홍보 버튼 클릭 */
   PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
-  /** 헤더 구독 버튼 클릭 */
-  HOME_SUBSCRIPTION_CLICKED: 'Home Subscription Clicked',
 
   // 동아리 목록
   /** 동아리 카드 클릭 */
@@ -330,6 +328,10 @@ export const PAGE_VIEW = {
   MENU_PAGE: 'menu',
   /** 모아동 소개 */
   INTRODUCE_PAGE: 'introduce',
+  /** 모아동 팀원 모집 */
+  RECRUIT_PAGE: 'recruit',
+  /** 모아동 팀원 모집 포지션 상세 */
+  RECRUIT_POSITION_PAGE: 'recruit_position',
   /** 총동연 */
   CLUB_UNION_PAGE: 'club_union',
   /** 동소한 (동아리 소개 한마당) */

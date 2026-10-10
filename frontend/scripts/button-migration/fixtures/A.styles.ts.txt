@@ -1,0 +1,38 @@
+import styled from 'styled-components';
+import Button from '@/components/common/Button/Button';
+import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
+
+export const Primary = styled.button`
+  background: ${colors.gray[900]};
+  color: ${({ theme }) => theme.colors.base.white};
+  ${setTypography(typography.paragraph.p2)};
+  padding: 0 16px;
+
+  ${media.mobile} {
+    padding: 0 8px;
+  }
+`;
+
+export const Toggle = styled.button<{ $active: boolean }>`
+  height: 32px;
+  color: ${({ $active }) => ($active ? colors.gray[900] : colors.base.white)};
+`;
+
+export const Submit = styled.button.attrs({ type: 'submit' })`
+  height: 40px;
+`;
+
+export const Wide = styled(Button)`
+  width: 100%;
+  margin-top: 8px;
+`;
+
+export const Dark = styled(Button)`
+  background: ${colors.gray[900]};
+`;
+
+export const Box = styled.div`
+  height: 10px;
+`;

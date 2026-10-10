@@ -2,6 +2,13 @@ export const STORAGE_KEYS = {
   ACCESS_TOKEN: 'accessToken',
   /** 우체통용 익명 학생 토큰. 만료가 없어 refresh 흐름 대신 401 시 재발급만 한다 */
   STUDENT_ACCESS_TOKEN: 'studentAccessToken',
+  /** 소셜 로그인(카카오·구글)으로 인증된 학생 OAuth 토큰 */
+  STUDENT_LOGIN_ACCESS_TOKEN: 'studentLoginAccessToken',
+  /** 소셜 로그인 시작 시 저장하는 OAuth provider. 콜백에서 읽고 제거한다 */
+  STUDENT_OAUTH_PROVIDER: 'studentOAuthProvider',
+  /** 소셜 로그인 CSRF 방어용 state. 콜백에서 검증 후 제거한다 */
+  STUDENT_OAUTH_STATE: 'studentOAuthState',
+  FEEDBACK_PROMPT_ANONYMOUS_ID: 'moadong.feedbackPrompt.anonymousClientId',
   /** 만족도 모달 노출 조건. 둘 중 하나가 임계값에 닿으면 묻는다 */
   VISIT_DAY_COUNT: 'visitDayCount',
   CLUB_VIEW_COUNT: 'clubViewCount',

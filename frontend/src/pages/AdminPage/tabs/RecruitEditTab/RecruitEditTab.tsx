@@ -10,6 +10,7 @@ import {
   RECRUIT_TARGET_MAX,
 } from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { requestFeedbackPrompt } from '@/feedbackPrompt/feedbackPromptController';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
@@ -160,6 +161,13 @@ const RecruitEditTab = () => {
           recruitmentStart: recruitmentStart?.toISOString() ?? null,
           recruitmentEnd: recruitmentEnd?.toISOString() ?? null,
           recruitmentTarget,
+        });
+        void requestFeedbackPrompt({
+          eventId: crypto.randomUUID(),
+          triggerType: 'ADMIN_RECRUITMENT_INFO_SAVED',
+          clubId: clubDetail.id,
+          sourcePath: window.location.pathname,
+          accessToken: localStorage.getItem('accessToken') ?? undefined,
         });
       },
       onError: () => {

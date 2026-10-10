@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { requestFeedbackPrompt } from '@/feedbackPrompt/feedbackPromptController';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useUpdateClubDetail } from '@/hooks/Queries/useClub';
@@ -162,6 +163,13 @@ const useClubInfoEdit = () => {
     updateClub(updatedData, {
       onSuccess: () => {
         alert('동아리 정보가 성공적으로 수정되었습니다.');
+        void requestFeedbackPrompt({
+          eventId: crypto.randomUUID(),
+          triggerType: 'ADMIN_CLUB_INFO_UPDATED',
+          clubId: clubDetail.id,
+          sourcePath: window.location.pathname,
+          accessToken: localStorage.getItem('accessToken') ?? undefined,
+        });
         setInitialValues({
           clubName,
           introduction,

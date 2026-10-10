@@ -4,6 +4,7 @@ import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useDeleteLogo, useUploadLogo } from '@/hooks/Queries/useClubImages';
+import OutlinePillButton from '@/pages/AdminPage/components/OutlinePillButton';
 import { useAdminClubId } from '@/store/useAdminClubStore';
 import * as Styled from './ClubLogoEditor.styles';
 
@@ -78,14 +79,14 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
 
         <Styled.ButtonTextGroup>
           <Styled.ButtonGroup>
-            <Styled.UploadButton onClick={triggerFileInput}>
+            <OutlinePillButton $tone='primary' onClick={triggerFileInput}>
               이미지 수정
-            </Styled.UploadButton>
+            </OutlinePillButton>
 
             {!isClubLogoEmpty && (
-              <Styled.ResetButton onClick={handleLogoReset}>
+              <OutlinePillButton $tone='gray' onClick={handleLogoReset}>
                 초기화
-              </Styled.ResetButton>
+              </OutlinePillButton>
             )}
           </Styled.ButtonGroup>
 

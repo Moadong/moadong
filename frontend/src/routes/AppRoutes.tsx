@@ -7,6 +7,7 @@ import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ApplicationFormPage from '@/pages/ApplicationFormPage/ApplicationFormPage';
 import GoogleCallbackPage from '@/pages/CallbackPage/GoogleCallbackPage';
+import StudentOAuthCallbackPage from '@/pages/CallbackPage/StudentOAuthCallbackPage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
 import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
@@ -20,6 +21,7 @@ import LetterDetailPage from '@/pages/FeedbackPage/LetterDetailPage';
 import SentFeedbackDetailPage from '@/pages/FeedbackPage/SentFeedbackDetailPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
+import LoginPage from '@/pages/LoginPage/LoginPage';
 import MainPage from '@/pages/MainPage/MainPage';
 import MenuPage from '@/pages/MenuPage/MenuPage';
 import PeaceIntroPage from '@/pages/PeacePage/PeaceIntroPage';
@@ -28,6 +30,8 @@ import PeaceResultPage from '@/pages/PeacePage/PeaceResultPage';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage/PrivacyPolicyPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
+import RecruitPage from '@/pages/RecruitPage/RecruitPage';
+import RecruitPositionPage from '@/pages/RecruitPage/RecruitPositionPage';
 import SubscriptionsPage from '@/pages/SubscriptionsPage/SubscriptionsPage';
 import webviewRoutes from './webviewRoutes';
 
@@ -61,6 +65,14 @@ const AppRoutes = () =>
           element: (
             <ContentErrorBoundary>
               <IntroducePage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/recruit',
+          element: (
+            <ContentErrorBoundary>
+              <RecruitPage />
             </ContentErrorBoundary>
           ),
         },
@@ -174,6 +186,14 @@ const AppRoutes = () =>
       ),
     },
     {
+      path: '/recruit/:position',
+      element: (
+        <ContentErrorBoundary>
+          <RecruitPositionPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
       path: '/peace',
       element: (
         <ContentErrorBoundary>
@@ -250,6 +270,14 @@ const AppRoutes = () =>
     {
       path: '/callback/google',
       element: <GoogleCallbackPage />,
+    },
+    {
+      path: '/login/callback',
+      element: <StudentOAuthCallbackPage />,
+    },
+    {
+      path: '/login',
+      element: <LoginPage />,
     },
     {
       path: '/admin/login',

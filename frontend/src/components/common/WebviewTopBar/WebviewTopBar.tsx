@@ -8,9 +8,15 @@ import * as Styled from './WebviewTopBar.styles';
 interface WebviewTopBarProps {
   title: string;
   onBack?: () => void;
+  /** 앱이 처리하지 않고 이전 화면도 없을 때 보낼 경로. 공유 링크로 상세에 바로 들어온 경우 등 */
+  fallbackPath?: string;
 }
 
-const WebviewTopBar = ({ title, onBack }: WebviewTopBarProps) => {
+const WebviewTopBar = ({
+  title,
+  onBack,
+  fallbackPath = '/',
+}: WebviewTopBarProps) => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
 
@@ -25,7 +31,7 @@ const WebviewTopBar = ({ title, onBack }: WebviewTopBarProps) => {
       if (window.history.state && window.history.state.idx > 0) {
         navigate(-1);
       } else {
-        navigate('/', { replace: true });
+        navigate(fallbackPath, { replace: true });
       }
     }
   };
