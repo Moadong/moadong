@@ -34,7 +34,7 @@ function editablePrompt(prompt) {
     ratingOptions: prompt.ratingOptions || [],
     followUp: prompt.followUp,
     exposurePolicy: prompt.exposurePolicy,
-    displayOrder: prompt.displayOrder || 1,
+    displayOrder: prompt.displayOrder ?? 1,
     active: Boolean(prompt.active),
   };
 }
