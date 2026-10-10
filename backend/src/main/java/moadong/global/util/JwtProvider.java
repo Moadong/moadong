@@ -21,14 +21,9 @@ public class JwtProvider {
 
     private final JwtProperties jwtProperties;
 
-    private static final String TOKEN_TYPE_CLAIM = "type";
-    public static final String ACCESS_TOKEN_TYPE = "access";
-    public static final String REFRESH_TOKEN_TYPE = "refresh";
-
     public String generateAccessToken(String username) {
         return Jwts.builder()
                 .setSubject(username)
-                .claim(TOKEN_TYPE_CLAIM, ACCESS_TOKEN_TYPE)
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + (long) jwtProperties.accessToken().expiration().min() * 1000 * 60))
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.secretKey())
@@ -47,7 +42,6 @@ public class JwtProvider {
         Date expiresAt = new Date(System.currentTimeMillis() + (long) jwtProperties.refreshToken().expiration().hour() * 1000 * 60 * 60);
         String refreshToken = Jwts.builder()
                 .setSubject(username)
-                .claim(TOKEN_TYPE_CLAIM, REFRESH_TOKEN_TYPE)
                 .setIssuedAt(new Date())
                 .setExpiration(expiresAt)
                 .signWith(SignatureAlgorithm.HS256, jwtProperties.secretKey())
@@ -76,19 +70,6 @@ public class JwtProvider {
         Date expiration = claims.getExpiration();
         if (expiration != null && expiration.before(new Date())) {
             throw new RestApiException(ErrorCode.TOKEN_EXPIRED);
-        }
-        return claims.getSubject();
-    }
-
-    // access token 전용: type 클레임이 access인 경우에만 subject 반환
-    public String extractAccessTokenSubject(String token) {
-        Claims claims = getClaims(token);
-        Date expiration = claims.getExpiration();
-        if (expiration != null && expiration.before(new Date())) {
-            throw new RestApiException(ErrorCode.TOKEN_EXPIRED);
-        }
-        if (!ACCESS_TOKEN_TYPE.equals(claims.get(TOKEN_TYPE_CLAIM, String.class))) {
-            throw new RestApiException(ErrorCode.TOKEN_INVALID);
         }
         return claims.getSubject();
     }

@@ -44,7 +44,7 @@ public class StudentJwtAuthenticationFilter extends OncePerRequestFilter {
             return;
         }
         try {
-            String studentId = jwtProvider.extractAccessTokenSubject(token);
+            String studentId = jwtProvider.extractSubjectIfValid(token);
             var auth = new UsernamePasswordAuthenticationToken(studentId, null, List.of());
             SecurityContextHolder.getContext().setAuthentication(auth);
         } catch (RestApiException e) {
