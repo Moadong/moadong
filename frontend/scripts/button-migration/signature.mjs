@@ -34,9 +34,10 @@ export const LAYOUT_PROPS = new Set([
   'order',
 ]);
 
-// `https://`의 //는 남긴다. 앞 글자가 `:`면 주석이 아니다.
+// 줄 시작·공백·`;{}` 뒤의 //만 주석이다. `https://`, `url("//cdn…")`, `content: "a//b"`의 //는
+// 남긴다. 문자열 안이라도 앞이 공백이면(`"a // b"`) 주석으로 본다 — 문자열을 해석하지 않는 한계.
 const stripComments = (css) =>
-  css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/[^\n]*/g, '$1');
+  css.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[\s;{}])\/\/[^\n]*/g, '$1');
 
 export function parseCss(css) {
   const text = stripComments(css);

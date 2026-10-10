@@ -29,6 +29,19 @@ test('url 안의 //는 주석이 아니다', () => {
   assert.equal(parsed.decls.color, '#fff');
 });
 
+test('따옴표 안이나 프로토콜 없는 //는 주석이 아니다', () => {
+  const parsed = parseCss(
+    'background-image: url("//cdn.example.com/x.png"); content: "a//b"; color: #fff;// 끝 주석\nheight: 40px;',
+  );
+  assert.equal(
+    parsed.decls['background-image'],
+    'url("//cdn.example.com/x.png")',
+  );
+  assert.equal(parsed.decls.content, '"a//b"');
+  assert.equal(parsed.decls.color, '#fff');
+  assert.equal(parsed.decls.height, '40px');
+});
+
 test('축약·색·0 표기가 달라도 같은 시그니처', () => {
   const a = buttonSignature(
     parseCss('padding: 8px 12px; background: #fff; border: 0; color: #111111;'),
