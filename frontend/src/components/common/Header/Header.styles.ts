@@ -124,12 +124,8 @@ export const LogoButton = styled.button`
   }
 `;
 
-export const LoginButton = styled(NavLink)`
+export const AuthButton = styled(NavLink)`
   flex-shrink: 0;
-
-  ${media.mobile} {
-    display: none;
-  }
 `;
 
 export const AdminProfileContainer = styled.div`
