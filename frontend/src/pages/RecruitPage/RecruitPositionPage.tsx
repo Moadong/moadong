@@ -34,6 +34,10 @@ const RecruitPositionContent = ({
       ? `/application/${MOADONG_CLUB_ID}/${position.applicationFormId}`
       : null;
 
+  const handleApplyClick = () => {
+    if (applicationPath) navigate(applicationPath);
+  };
+
   const sections = [
     { title: '이런 일을 해요', items: position.responsibilities },
     { title: '자격요건', items: position.qualifications },
@@ -45,9 +49,8 @@ const RecruitPositionContent = ({
     <RecruitLayout
       backFallbackPath='/recruit'
       bottomAction={
-        // 동아리 상세의 지원하기와 같은 하단 고정 버튼을 쓴다
         <FixedBottomButtonArea
-          onClick={() => applicationPath && navigate(applicationPath)}
+          onClick={handleApplyClick}
           disabled={!applicationPath}
         >
           {applicationPath ? '지원하기' : '모집 준비 중이에요'}

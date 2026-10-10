@@ -1,6 +1,5 @@
 import styled, { css } from 'styled-components';
 import { media } from '@/styles/mediaQuery';
-import { transitions } from '@/styles/theme/transitions';
 import { setTypography } from '@/styles/theme/typography';
 
 const STAGGER_MS = 80;
@@ -68,14 +67,16 @@ export const Card = styled.li<{
   background: ${({ theme }) => theme.colors.gray[100]};
   container-type: inline-size;
 
-  ${({ $animate, $isVisible, $index }) =>
+  ${({ $animate, $isVisible, $index, theme }) =>
     $animate &&
     css`
       opacity: ${$isVisible ? 1 : 0};
       transform: translateY(${$isVisible ? 0 : 16}px);
       transition:
-        opacity ${transitions.duration.slow} ${transitions.easing.easeOut},
-        transform ${transitions.duration.slow} ${transitions.easing.easeOut};
+        opacity ${theme.transitions.duration.slow}
+          ${theme.transitions.easing.easeOut},
+        transform ${theme.transitions.duration.slow}
+          ${theme.transitions.easing.easeOut};
       transition-delay: ${$index * STAGGER_MS}ms;
     `}
 
