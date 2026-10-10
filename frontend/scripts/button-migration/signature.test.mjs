@@ -42,6 +42,17 @@ test('따옴표 안이나 프로토콜 없는 //는 주석이 아니다', () => 
   assert.equal(parsed.decls.height, '40px');
 });
 
+test('따옴표 안이면 공백 뒤 //도 주석이 아니다', () => {
+  const parsed = parseCss('content: "a // b"; height: 40px;');
+  assert.equal(parsed.decls.content, '"a // b"');
+  assert.equal(parsed.decls.height, '40px');
+});
+
+test('따옴표·괄호 밖의 //는 앞에 공백이 없어도 주석이다', () => {
+  const parsed = parseCss('color: #fff; height: 40px// 끝 주석\n');
+  assert.equal(parsed.decls.height, '40px');
+});
+
 test('축약·색·0 표기가 달라도 같은 시그니처', () => {
   const a = buttonSignature(
     parseCss('padding: 8px 12px; background: #fff; border: 0; color: #111111;'),
