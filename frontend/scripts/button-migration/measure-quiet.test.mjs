@@ -168,3 +168,30 @@ test('withQuiet은 네비게이션이 실패하면 그 오류를 던지고 대�
     await page.close();
   }
 });
+
+// action이 아직 도는 동안 대기가 먼저 상한에 걸리는 경우. 핸들러를 action이 던진 뒤에만
+// 붙이면 이 reject는 그 순간 받을 곳이 없어 unhandled가 된다.
+test('withQuiet은 action보다 대기가 먼저 상한에 걸려도 unhandled 없이 그 오류를 돌려준다', async () => {
+  const page = await browser.newPage();
+  const unhandled = [];
+  const onUnhandled = (reason) => unhandled.push(reason);
+  process.on('unhandledRejection', onUnhandled);
+  try {
+    await page.route('http://quiet.test/**', () => new Promise(() => {}));
+    await assert.rejects(
+      withQuiet(
+        page,
+        async () => {
+          page.goto('http://quiet.test/').catch(() => {});
+          await new Promise((r) => setTimeout(r, 900));
+        },
+        { timeoutMs: 300, requestGraceMs: 10_000 },
+      ),
+      /절대 상한/,
+    );
+    assert.deepEqual(unhandled, []);
+  } finally {
+    process.off('unhandledRejection', onUnhandled);
+    await page.close();
+  }
+});

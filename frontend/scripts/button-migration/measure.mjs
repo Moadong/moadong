@@ -232,10 +232,12 @@ export function waitForQuiet(
 export async function withQuiet(page, action, options) {
   const controller = new AbortController();
   const quiet = waitForQuiet(page, { ...options, signal: controller.signal });
+  // action이 끝나기 전에 대기가 먼저 상한에 걸려 reject돼도 unhandled가 되지 않게 핸들러를 먼저
+  // 붙인다. 원래 quiet은 그대로 reject되므로 return quiet을 기다리는 쪽은 그 오류를 받는다.
+  quiet.catch(() => {});
   try {
     await action();
   } catch (e) {
-    quiet.catch(() => {});
     controller.abort(e);
     throw e;
   }
