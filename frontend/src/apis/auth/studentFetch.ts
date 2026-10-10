@@ -165,7 +165,8 @@ export const studentFetch = async (
   // 병렬 요청이 이미 OAuth 토큰을 제거했을 수 있으므로 expiredOauthToken도 확인한다
   if (token === oauthToken || token === expiredOauthToken) {
     expiredOauthToken = token;
-    if (oauthToken) localStorage.removeItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN);
+    if (oauthToken)
+      localStorage.removeItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN);
     throw new Error('STUDENT_OAUTH_EXPIRED');
   }
 
