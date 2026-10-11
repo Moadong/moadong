@@ -28,6 +28,7 @@ import PeaceIntroPage from '@/pages/PeacePage/PeaceIntroPage';
 import PeaceQuizPage from '@/pages/PeacePage/PeaceQuizPage';
 import PeaceResultPage from '@/pages/PeacePage/PeaceResultPage';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage/PrivacyPolicyPage';
+import ProfileSetupPage from '@/pages/ProfileSetupPage/ProfileSetupPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
 import RecruitPage from '@/pages/RecruitPage/RecruitPage';
@@ -278,6 +279,14 @@ const AppRoutes = () =>
     {
       path: '/login',
       element: <LoginPage />,
+    },
+    {
+      path: '/profile/setup',
+      element: (
+        <ContentErrorBoundary>
+          <ProfileSetupPage />
+        </ContentErrorBoundary>
+      ),
     },
     {
       path: '/admin/login',
