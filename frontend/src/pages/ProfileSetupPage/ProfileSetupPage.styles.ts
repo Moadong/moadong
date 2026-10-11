@@ -58,11 +58,15 @@ export const ProfileSection = styled.div`
   margin-bottom: 32px;
 `;
 
-export const ProfileImageWrapper = styled.div`
+export const ProfileImageButton = styled.button`
   position: relative;
   width: 120px;
   height: 120px;
   flex-shrink: 0;
+  padding: 0;
+  background: none;
+  border: none;
+  cursor: pointer;
 `;
 
 export const ProfileImageBox = styled.div`
@@ -81,20 +85,16 @@ export const ProfileImageBox = styled.div`
   }
 `;
 
-export const ProfileImageEditButton = styled.button`
+export const ProfileImageEditIcon = styled.div`
   position: absolute;
-  right: -12px;
-  bottom: -9px;
-  width: 32px;
-  height: 32px;
-  padding: 0;
-  background: none;
-  border: none;
-  cursor: pointer;
+  right: -14px;
+  bottom: -10px;
+  width: 36px;
+  height: 36px;
 
   svg {
-    width: 32px;
-    height: 32px;
+    width: 36px;
+    height: 36px;
   }
 `;
 

@@ -15,6 +15,7 @@ import {
   useUpdateStudentProfile,
 } from '@/hooks/Queries/useStudentProfile';
 import useDevice from '@/hooks/useDevice';
+import { colors } from '@/styles/theme/colors';
 import generateNickname from '@/utils/generateOnboardingNickname';
 import * as Styled from './ProfileSetupPage.styles';
 
@@ -118,17 +119,17 @@ const ProfileSetupPage = () => {
             </Styled.DescriptionSection>
 
             <Styled.ProfileSection>
-              <Styled.ProfileImageWrapper>
+              <Styled.ProfileImageButton
+                type='button'
+                aria-label='프로필 사진 수정'
+              >
                 <Styled.ProfileImageBox>
                   <img src={defaultProfileImage} alt='' />
                 </Styled.ProfileImageBox>
-                <Styled.ProfileImageEditButton
-                  type='button'
-                  aria-label='프로필 사진 수정'
-                >
+                <Styled.ProfileImageEditIcon>
                   <LogoEditIcon aria-hidden='true' />
-                </Styled.ProfileImageEditButton>
-              </Styled.ProfileImageWrapper>
+                </Styled.ProfileImageEditIcon>
+              </Styled.ProfileImageButton>
               <Styled.ProfileImageCaption>
                 사진은 나중에 올려도 괜찮아요
               </Styled.ProfileImageCaption>
@@ -237,6 +238,7 @@ const ProfileSetupPage = () => {
         isOpen={!!errorToast}
         onClose={() => setErrorToast('')}
         message={errorToast}
+        backgroundColor={colors.primary[900]}
       />
     </>
   );
