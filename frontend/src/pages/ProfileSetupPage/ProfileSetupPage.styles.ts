@@ -119,6 +119,7 @@ export const NicknameLabelRow = styled.div`
 
 export const NicknameLabel = styled.span`
   ${setTypography(typography.paragraph.p5)}
+  font-weight: 600;
   color: ${colors.gray[800]};
 `;
 
@@ -172,7 +173,6 @@ export const RegenerateButton = styled.button`
 export const HintSection = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 3px;
 `;
 
 export const HintText = styled.p`
@@ -191,6 +191,7 @@ export const SuggestionSection = styled.div`
 
 export const SuggestionTitle = styled.p`
   ${setTypography(typography.paragraph.p5)}
+  font-weight: 600;
   color: ${colors.gray[800]};
   margin: 0;
 `;
