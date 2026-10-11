@@ -14,7 +14,7 @@ import {
   useUpdateStudentProfile,
 } from '@/hooks/Queries/useStudentProfile';
 import useDevice from '@/hooks/useDevice';
-import generateNickname from './generateNickname';
+import generateNickname from './utils/generateNickname';
 import * as Styled from './ProfileSetupPage.styles';
 
 const MAX_NICKNAME_LENGTH = 12;
