@@ -167,13 +167,12 @@ const ProfileSetupPage = () => {
             <Styled.DesktopCard>
               <Styled.DesktopCardHeader>
                 <Styled.DesktopHeaderLeft>
-                  <Styled.DesktopWelcomeText>
+                  <Styled.DesktopCardTitle>
                     <Styled.PageTitleHighlight>
                       모아동
                     </Styled.PageTitleHighlight>
                     에 오신 걸 환영합니다!
-                  </Styled.DesktopWelcomeText>
-                  <Styled.DesktopCardTitle>프로필 설정</Styled.DesktopCardTitle>
+                  </Styled.DesktopCardTitle>
                   <Styled.DesktopCardSubtitle>
                     프로필 사진과 닉네임을 설정해보세요!
                   </Styled.DesktopCardSubtitle>

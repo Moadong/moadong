@@ -253,12 +253,6 @@ export const DesktopHeaderLeft = styled.div`
   flex-direction: column;
 `;
 
-export const DesktopWelcomeText = styled.p`
-  ${setTypography(typography.paragraph.p6)}
-  color: ${colors.gray[700]};
-  margin: 0 0 4px;
-`;
-
 export const DesktopCardTitle = styled.h1`
   font-size: 1.5rem;
   font-weight: bold;
