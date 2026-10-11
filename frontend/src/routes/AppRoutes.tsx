@@ -281,7 +281,7 @@ const AppRoutes = () =>
       element: <LoginPage />,
     },
     {
-      path: '/profile/setup',
+      path: '/onboarding/profile',
       element: (
         <ContentErrorBoundary>
           <ProfileSetupPage />
