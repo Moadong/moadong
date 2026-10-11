@@ -313,7 +313,6 @@ export const DesktopProfileButtons = styled.div`
   gap: 8px;
 `;
 
-
 export const DesktopProfileCaption = styled.p`
   ${setTypography(typography.paragraph.p7)}
   color: ${colors.gray[500]};

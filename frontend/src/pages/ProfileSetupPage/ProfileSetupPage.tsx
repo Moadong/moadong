@@ -201,9 +201,7 @@ const ProfileSetupPage = () => {
                       <OutlinePillButton $tone='primary'>
                         이미지 수정
                       </OutlinePillButton>
-                      <OutlinePillButton $tone='gray'>
-                        초기화
-                      </OutlinePillButton>
+                      <OutlinePillButton $tone='gray'>초기화</OutlinePillButton>
                     </Styled.DesktopProfileButtons>
                     <Styled.DesktopProfileCaption>
                       사진은 나중에 올려도 괜찮아요. (JPG, PNG)
