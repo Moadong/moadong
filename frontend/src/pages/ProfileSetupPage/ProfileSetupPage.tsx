@@ -6,6 +6,7 @@ import defaultProfileImage from '@/assets/images/logos/default_profile_image.svg
 import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import Header from '@/components/common/Header/Header';
 import InputField from '@/components/common/InputField/InputField';
+import OutlinePillButton from '@/components/common/OutlinePillButton/OutlinePillButton';
 import Spinner from '@/components/common/Spinner/Spinner';
 import Toast from '@/components/common/Toast/Toast';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
@@ -197,12 +198,12 @@ const ProfileSetupPage = () => {
                   />
                   <Styled.DesktopProfileRight>
                     <Styled.DesktopProfileButtons>
-                      <Styled.DesktopImageEditButton type='button'>
+                      <OutlinePillButton $tone='primary'>
                         이미지 수정
-                      </Styled.DesktopImageEditButton>
-                      <Styled.DesktopImageResetButton type='button'>
+                      </OutlinePillButton>
+                      <OutlinePillButton $tone='gray'>
                         초기화
-                      </Styled.DesktopImageResetButton>
+                      </OutlinePillButton>
                     </Styled.DesktopProfileButtons>
                     <Styled.DesktopProfileCaption>
                       사진은 나중에 올려도 괜찮아요. (JPG, PNG)

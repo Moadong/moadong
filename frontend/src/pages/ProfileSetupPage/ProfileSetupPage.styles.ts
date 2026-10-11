@@ -313,43 +313,6 @@ export const DesktopProfileButtons = styled.div`
   gap: 8px;
 `;
 
-export const DesktopImageEditButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 9px 20px;
-  background: ${colors.base.white};
-  border: 1px solid ${colors.primary[800]};
-  border-radius: 80px;
-  cursor: pointer;
-  ${setTypography(typography.button.button2)}
-  color: ${colors.primary[800]};
-  transition: all 0.2s;
-
-  &:hover {
-    background: ${colors.primary[800]};
-    color: ${colors.base.white};
-  }
-`;
-
-export const DesktopImageResetButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 9px 20px;
-  background: ${colors.base.white};
-  border: 1px solid ${colors.gray[700]};
-  border-radius: 80px;
-  cursor: pointer;
-  ${setTypography(typography.button.button2)}
-  color: ${colors.gray[700]};
-  transition: all 0.2s;
-
-  &:hover {
-    background: ${colors.gray[700]};
-    color: ${colors.base.white};
-  }
-`;
 
 export const DesktopProfileCaption = styled.p`
   ${setTypography(typography.paragraph.p7)}

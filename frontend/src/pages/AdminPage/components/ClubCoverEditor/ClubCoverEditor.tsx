@@ -4,7 +4,7 @@ import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useDeleteCover, useUploadCover } from '@/hooks/Queries/useClubCover';
-import OutlinePillButton from '@/pages/AdminPage/components/OutlinePillButton';
+import OutlinePillButton from '@/components/common/OutlinePillButton/OutlinePillButton';
 import { useAdminClubId } from '@/store/useAdminClubStore';
 import * as Styled from './ClubCoverEditor.styles';
 
