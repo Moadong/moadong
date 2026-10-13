@@ -14,6 +14,8 @@ import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.RandomStringUtil;
 import moadong.media.dto.PresignedUploadResponse;
+import moadong.user.entity.StudentUser;
+import moadong.user.repository.StudentUserRepository;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
@@ -36,6 +38,7 @@ public class StudentProfileImageService {
     private final S3Presigner s3Presigner;
     private final AwsProperties awsProperties;
     private final ServerProperties serverProperties;
+    private final StudentUserRepository studentUserRepository;
 
     private String normalizedViewEndpoint;
 
@@ -104,6 +107,18 @@ public class StudentProfileImageService {
         } catch (S3Exception e) {
             throw new RestApiException(ErrorCode.IMAGE_UPLOAD_FAILED);
         }
+    }
+
+    public void deleteProfileImage(String studentId) {
+        StudentUser student = studentUserRepository.findById(studentId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
+
+        if (student.getProfileImageUrl() != null) {
+            deleteImageQuietly(student.getProfileImageUrl());
+        }
+
+        student.updateProfileImage(null);
+        studentUserRepository.save(student);
     }
 
     public void deleteImageQuietly(String imageUrl) {

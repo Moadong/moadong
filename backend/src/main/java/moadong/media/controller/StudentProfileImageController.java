@@ -9,7 +9,6 @@ import moadong.global.payload.Response;
 import moadong.media.dto.PresignedUploadResponse;
 import moadong.media.dto.UploadProfileImageUrlRequest;
 import moadong.media.service.StudentProfileImageService;
-import moadong.user.service.StudentProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 public class StudentProfileImageController {
 
     private final StudentProfileImageService studentProfileImageService;
-    private final StudentProfileService studentProfileService;
 
     @PostMapping("/upload-url")
     @Operation(summary = "프로필 이미지 업로드 URL 발급", description = "프로필 이미지 업로드를 위한 presigned URL을 발급합니다.")
@@ -42,7 +40,7 @@ public class StudentProfileImageController {
     @Operation(summary = "프로필 이미지 삭제", description = "프로필 이미지를 삭제하고 기본 이미지로 초기화합니다.")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> deleteProfileImage(@AuthenticationPrincipal String studentId) {
-        studentProfileService.deleteProfileImage(studentId);
+        studentProfileImageService.deleteProfileImage(studentId);
         return Response.ok("success");
     }
 }

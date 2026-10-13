@@ -2,8 +2,8 @@ package moadong.user.service;
 
 import lombok.RequiredArgsConstructor;
 import moadong.global.exception.ErrorCode;
-import moadong.media.service.StudentProfileImageService;
 import moadong.global.exception.RestApiException;
+import moadong.media.service.StudentProfileImageService;
 import moadong.user.entity.StudentUser;
 import moadong.user.payload.response.StudentProfileResponse;
 import moadong.user.repository.StudentUserRepository;
@@ -31,13 +31,6 @@ public class StudentProfileService {
         }
 
         student.updateNickname(nickname.strip());
-        studentUserRepository.save(student);
-    }
-
-    public void deleteProfileImage(String studentId) {
-        StudentUser student = getStudent(studentId);
-        studentProfileImageService.deleteImageQuietly(student.getProfileImageUrl());
-        student.updateProfileImage(null);
         studentUserRepository.save(student);
     }
 
