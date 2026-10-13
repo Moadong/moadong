@@ -1,4 +1,4 @@
-package moadong.user.payload.request;
+package moadong.media.dto;
 
 import jakarta.validation.constraints.NotBlank;
 

@@ -2,6 +2,7 @@ package moadong.user.service;
 
 import lombok.RequiredArgsConstructor;
 import moadong.global.exception.ErrorCode;
+import moadong.media.service.StudentProfileImageService;
 import moadong.global.exception.RestApiException;
 import moadong.user.entity.StudentUser;
 import moadong.user.payload.response.StudentProfileResponse;

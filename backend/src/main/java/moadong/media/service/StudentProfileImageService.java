@@ -1,4 +1,4 @@
-package moadong.user.service;
+package moadong.media.service;
 
 import static moadong.media.util.ClubImageUtil.isImageExtension;
 
