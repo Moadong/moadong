@@ -34,12 +34,7 @@ const ProfileSetupPage = () => {
   );
   const [errorToast, setErrorToast] = useState('');
 
-  const {
-    data: profile,
-    isLoading,
-    isError,
-    refetch,
-  } = useStudentProfile();
+  const { data: profile, isLoading, isError, refetch } = useStudentProfile();
   const { mutateAsync: updateProfile, isPending: isSaving } =
     useUpdateStudentProfile();
 
