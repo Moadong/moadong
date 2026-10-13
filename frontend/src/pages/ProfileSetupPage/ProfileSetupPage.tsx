@@ -19,7 +19,7 @@ import { colors } from '@/styles/theme/colors';
 import generateNickname from '@/utils/generateOnboardingNickname';
 import * as Styled from './ProfileSetupPage.styles';
 
-const MAX_NICKNAME_LENGTH = 12;
+const MAX_NICKNAME_LENGTH = 20;
 
 const ProfileSetupPage = () => {
   const navigate = useNavigate();
@@ -34,7 +34,12 @@ const ProfileSetupPage = () => {
   );
   const [errorToast, setErrorToast] = useState('');
 
-  const { data: profile, isLoading } = useStudentProfile();
+  const {
+    data: profile,
+    isLoading,
+    isError,
+    refetch,
+  } = useStudentProfile();
   const { mutateAsync: updateProfile, isPending: isSaving } =
     useUpdateStudentProfile();
 
@@ -57,6 +62,19 @@ const ProfileSetupPage = () => {
   };
 
   if (isLoading) return <Spinner />;
+  if (isError)
+    return (
+      <Styled.MobileContainer>
+        <Styled.DescriptionSection>
+          <Styled.PageSubtitle>
+            프로필 정보를 불러오지 못했어요.
+          </Styled.PageSubtitle>
+        </Styled.DescriptionSection>
+        <OutlinePillButton $tone='primary' onClick={() => refetch()}>
+          다시 시도
+        </OutlinePillButton>
+      </Styled.MobileContainer>
+    );
 
   const nicknameInputBlock = (
     <Styled.NicknameInputWrapper>
@@ -122,9 +140,13 @@ const ProfileSetupPage = () => {
               <Styled.ProfileImageButton
                 type='button'
                 aria-label='프로필 사진 수정'
+                disabled
               >
                 <Styled.ProfileImageBox>
-                  <img src={defaultProfileImage} alt='' />
+                  <img
+                    src={profile?.profileImageUrl ?? defaultProfileImage}
+                    alt=''
+                  />
                 </Styled.ProfileImageBox>
                 <Styled.ProfileImageEditIcon>
                   <LogoEditIcon aria-hidden='true' />
@@ -193,15 +215,17 @@ const ProfileSetupPage = () => {
                 </Styled.DesktopSectionTitle>
                 <Styled.DesktopProfileRow>
                   <Styled.DesktopProfileImage
-                    src={defaultProfileImage}
+                    src={profile?.profileImageUrl ?? defaultProfileImage}
                     alt=''
                   />
                   <Styled.DesktopProfileRight>
                     <Styled.DesktopProfileButtons>
-                      <OutlinePillButton $tone='primary'>
+                      <OutlinePillButton $tone='primary' disabled>
                         이미지 수정
                       </OutlinePillButton>
-                      <OutlinePillButton $tone='gray'>초기화</OutlinePillButton>
+                      <OutlinePillButton $tone='gray' disabled>
+                        초기화
+                      </OutlinePillButton>
                     </Styled.DesktopProfileButtons>
                     <Styled.DesktopProfileCaption>
                       사진은 나중에 올려도 괜찮아요. (JPG, PNG)

@@ -62,9 +62,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
       localStorage.removeItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN);
       setIsStudentLoggedIn(false);
       setShowLogoutToast(true);
-      if (location.pathname !== '/') {
-        navigate('/', { replace: true });
-      }
+      navigate('/', { replace: true });
     }
   };
 
