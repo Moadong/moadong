@@ -68,6 +68,10 @@ public class StudentUser {
         this.nickname = nickname;
     }
 
+    public void updateProfileImage(String profileImageUrl) {
+        this.profileImageUrl = profileImageUrl;
+    }
+
     public void updateLastSeen() {
         this.lastSeenAt = new Date();
     }
