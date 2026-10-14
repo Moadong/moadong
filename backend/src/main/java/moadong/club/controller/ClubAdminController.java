@@ -7,6 +7,7 @@ import jakarta.validation.Valid;
 import lombok.AllArgsConstructor;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
+import moadong.club.payload.request.ClubStateUpdateRequest;
 import moadong.club.payload.response.ClubListResponse;
 import moadong.club.service.ClubProfileService;
 import moadong.global.payload.Response;
@@ -56,5 +57,16 @@ public class ClubAdminController {
             @RequestBody ClubRecruitmentInfoUpdateRequest request) {
         clubProfileService.updateClubRecruitmentInfoByClubId(clubId, request, user);
         return Response.ok("success update club description");
+    }
+
+    @PutMapping("/club/{clubId}/state")
+    @Operation(summary = "동아리 상태 변경 (관리자)", description = "지정한 clubId 동아리의 상태(AVAILABLE/UNAVAILABLE)를 변경합니다. DEVELOPER 역할 필요.")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> updateClubState(
+            @CurrentUser CustomUserDetails user,
+            @PathVariable String clubId,
+            @RequestBody @Valid ClubStateUpdateRequest request) {
+        clubProfileService.updateClubStateByClubId(clubId, request, user);
+        return Response.ok("success update club state");
     }
 }
