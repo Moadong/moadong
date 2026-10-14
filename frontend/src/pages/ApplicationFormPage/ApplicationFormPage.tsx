@@ -162,6 +162,7 @@ const ApplicationFormPage = () => {
             >
               <QuestionAnswerer
                 question={q}
+                number={i + 1}
                 selectedAnswers={getAnswersById(q.id)}
                 onChange={onAnswerChange}
               />

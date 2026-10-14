@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Reorder } from 'framer-motion';
 import {
   createApplication,
   generateApplicationDraft,
@@ -19,6 +20,7 @@ import {
   useAiDraftQuota,
   useGetApplication,
 } from '@/hooks/Queries/useApplication';
+import LongPressReorderItem from '@/pages/AdminPage/components/LongPressReorderItem/LongPressReorderItem';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import {
   hasErrors,
@@ -34,6 +36,8 @@ import {
 } from '@/types/application';
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
+import { createQuestionId } from './utils/createQuestionId';
+import { pinFirstQuestion } from './utils/pinFirstQuestion';
 
 const ApplicationEditTab = () => {
   const queryClient = useQueryClient();
@@ -53,7 +57,6 @@ const ApplicationEditTab = () => {
 
   const [formData, setFormData] =
     useState<ApplicationFormData>(INITIAL_FORM_DATA);
-  const [nextId, setNextId] = useState(1);
   const [applicationFormMode, setApplicationFormMode] =
     useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
   const [externalApplicationUrl, setExternalApplicationUrl] = useState('');
@@ -94,7 +97,6 @@ const ApplicationEditTab = () => {
 
     setApplicationFormMode(formMode);
     setExternalApplicationUrl(externalApplicationUrl);
-    setNextId(Math.max(...currentQuestions.map((q) => q.id)) + 1);
     setFormData({ ...existingFormData, questions: currentQuestions });
   }, [existingFormData]);
 
@@ -157,7 +159,6 @@ const ApplicationEditTab = () => {
         description: draft.description,
         questions: [nameQuestion, ...draftQuestions],
       }));
-      setNextId(draftQuestions.length + 2);
       setDraftSource(draft.aiGenerated ? 'ai' : 'template');
       trackEvent(ADMIN_EVENT.AI_DRAFT_GENERATED, {
         ai_generated: draft.aiGenerated,
@@ -245,11 +246,6 @@ const ApplicationEditTab = () => {
       return;
     }
 
-    const reorderedQuestions = formData.questions?.map((q, idx) => ({
-      ...q,
-      id: idx + 1,
-    }));
-
     const payload: ApplicationFormData = {
       title: formData.title,
       description: formData.description,
@@ -258,7 +254,7 @@ const ApplicationEditTab = () => {
     };
 
     if (applicationFormMode === ApplicationFormMode.INTERNAL) {
-      payload.questions = reorderedQuestions;
+      payload.questions = formData.questions;
     } else if (applicationFormMode === ApplicationFormMode.EXTERNAL) {
       payload.externalApplicationUrl = externalApplicationUrl;
     }
@@ -333,8 +329,6 @@ const ApplicationEditTab = () => {
           <InternalApplicationComponent
             formData={formData}
             setFormData={setFormData}
-            nextId={nextId}
-            setNextId={setNextId}
           />
         ) : (
           <ExternalApplicationComponent
@@ -355,19 +349,15 @@ const ApplicationEditTab = () => {
 interface InternalApplicationComponentProps {
   formData: ApplicationFormData;
   setFormData: React.Dispatch<React.SetStateAction<ApplicationFormData>>;
-  nextId: number;
-  setNextId: React.Dispatch<React.SetStateAction<number>>;
 }
 
 const InternalApplicationComponent = ({
   formData,
   setFormData,
-  nextId,
-  setNextId,
 }: InternalApplicationComponentProps) => {
   const addQuestion = () => {
     const newQuestion: Question = {
-      id: nextId,
+      id: createQuestionId(formData.questions ?? []),
       title: '',
       description: '',
       type: 'SHORT_TEXT',
@@ -378,7 +368,16 @@ const InternalApplicationComponent = ({
       ...prev,
       questions: [...(prev.questions ?? []), newQuestion],
     }));
-    setNextId((currentId) => currentId + 1);
+  };
+
+  // 이름 질문은 드래그 대상이 아니라 맨 앞에 고정되고, 나머지 질문만 순서가 바뀐다
+  const [nameQuestion, ...reorderableQuestions] = formData.questions ?? [];
+
+  const handleReorder = (reordered: Question[]) => {
+    setFormData((prev) => ({
+      ...prev,
+      questions: pinFirstQuestion(prev.questions ?? [], reordered),
+    }));
   };
 
   const removeQuestion = (id: number) => {
@@ -449,6 +448,28 @@ const InternalApplicationComponent = ({
     }));
   };
 
+  const renderQuestionBuilder = (
+    question: Question,
+    index: number,
+    readOnly = false,
+  ) => (
+    <QuestionBuilder
+      id={index + 1}
+      title={question.title}
+      description={question.description}
+      options={question.options}
+      items={question.items}
+      type={question.type}
+      readOnly={readOnly}
+      onTitleChange={handleTitleChange(question.id)}
+      onDescriptionChange={handleDescriptionChange(question.id)}
+      onItemsChange={handleItemsChange(question.id)}
+      onTypeChange={handleTypeChange(question.id)}
+      onRequiredChange={handleRequiredChange(question.id)}
+      onRemoveQuestion={() => removeQuestion(question.id)}
+    />
+  );
+
   return (
     <>
       <CustomTextArea
@@ -461,24 +482,19 @@ const InternalApplicationComponent = ({
         showMaxChar
         width='100%'
       />
-      <Styled.QuestionContainer>
-        {formData.questions?.map((question, index) => (
-          <QuestionBuilder
-            key={question.id}
-            id={index + 1}
-            title={question.title}
-            description={question.description}
-            options={question.options}
-            items={question.items}
-            type={question.type}
-            readOnly={index === 0} //인덱스 0번은 이름을 위한 고정 부분이므로 수정 불가
-            onTitleChange={handleTitleChange(question.id)}
-            onDescriptionChange={handleDescriptionChange(question.id)}
-            onItemsChange={handleItemsChange(question.id)}
-            onTypeChange={handleTypeChange(question.id)}
-            onRequiredChange={handleRequiredChange(question.id)}
-            onRemoveQuestion={() => removeQuestion(question.id)}
-          />
+      <Styled.QuestionContainer
+        as={Reorder.Group<Question>}
+        forwardedAs='div'
+        axis='y'
+        values={reorderableQuestions}
+        onReorder={handleReorder}
+      >
+        {/* 이름 질문은 수정할 수 없다 */}
+        {nameQuestion && renderQuestionBuilder(nameQuestion, 0, true)}
+        {reorderableQuestions.map((question, index) => (
+          <LongPressReorderItem key={question.id} value={question}>
+            {renderQuestionBuilder(question, index + 1)}
+          </LongPressReorderItem>
         ))}
       </Styled.QuestionContainer>
       <QuestionDivider />

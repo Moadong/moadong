@@ -181,6 +181,7 @@ const ApplicantDetailPage = () => {
             <QuestionContainer key={q.id} hasError={false}>
               <QuestionAnswerer
                 question={q}
+                number={i + 1}
                 selectedAnswers={getAnswerByQuestionId(q.id)}
                 onChange={() => {}}
               />
