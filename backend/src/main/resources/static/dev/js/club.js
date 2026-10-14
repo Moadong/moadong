@@ -24,7 +24,7 @@ function setClubTableMessage(message) {
   const tbody = document.querySelector('#clubList tbody');
   tbody.innerHTML = '';
   const td = tbody.appendChild(document.createElement('tr')).appendChild(document.createElement('td'));
-  td.colSpan = 3;
+  td.colSpan = 5;
   td.className = 'table-empty';
   td.textContent = message;
 }
@@ -42,7 +42,7 @@ function renderClubTableRows(clubs, page) {
     const tr = document.createElement('tr');
     tr.tabIndex = 0;
     tr.onkeydown = (event) => {
-      if (event.key === 'Enter') openEditWindow(c.id);
+      if (event.key === 'Enter' && event.target === tr) openEditWindow(c.id);
     };
     const idCell = document.createElement('td');
     idCell.className = 'id-cell copy-id-cell';
@@ -65,9 +65,53 @@ function renderClubTableRows(clubs, page) {
     tr.appendChild(idCell);
     tr.appendChild(document.createElement('td')).textContent = c.name || '';
     tr.appendChild(document.createElement('td')).textContent = c.userId || '';
+    const available = c.state === 'AVAILABLE';
+    const stateTag = tr.appendChild(document.createElement('td')).appendChild(document.createElement('span'));
+    stateTag.className = 'tag ' + (available ? 'tag-mint' : 'tag-gray');
+    stateTag.textContent = available ? '활성화' : '비활성화';
+    const btnCell = tr.appendChild(document.createElement('td'));
+    btnCell.className = 'btn-cell';
+    const toggleBtn = btnCell.appendChild(document.createElement('button'));
+    toggleBtn.type = 'button';
+    toggleBtn.className = available ? 'btn-danger' : '';
+    toggleBtn.textContent = available ? '비활성화' : '활성화';
+    toggleBtn.onclick = (e) => { e.stopPropagation(); toggleClubState(c, toggleBtn); };
     tr.onclick = () => openEditWindow(c.id);
     tbody.appendChild(tr);
   });
+}
+
+// 동아리 쪽에서 약력을 저장하면 서버가 다시 AVAILABLE로 바꾼다. 비활성화는 그 전까지만 유지된다.
+async function toggleClubState(club, button) {
+  const next = club.state === 'AVAILABLE' ? 'UNAVAILABLE' : 'AVAILABLE';
+  const turningOff = next === 'UNAVAILABLE';
+  const confirmed = await confirmDialog({
+    title: (club.name || club.id) + (turningOff ? ' 동아리를 비활성화할까요?' : ' 동아리를 활성화할까요?'),
+    message: turningOff ? '검색 결과에서 사라져요. 동아리가 약력을 저장하면 다시 활성화돼요.' : '검색 결과에 다시 보여요.',
+    confirmLabel: turningOff ? '비활성화' : '활성화',
+    danger: turningOff
+  });
+  if (!confirmed) return;
+  button.disabled = true;
+  try {
+    const res = await fetch(API_BASE + '/api/admin/club/' + encodeURIComponent(club.id) + '/state', {
+      method: 'PUT',
+      headers: headers(),
+      body: JSON.stringify({ state: next })
+    });
+    const data = await readJsonOrEmpty(res);
+    if (!res.ok) {
+      showToast(data.message || ('상태 변경 실패 (HTTP ' + res.status + ')'), 'error');
+      return;
+    }
+    club.state = next;
+    showToast(turningOff ? '비활성화했어요' : '활성화했어요', 'success');
+    renderClubs();
+  } catch (e) {
+    showToast(e.message || '요청 실패', 'error');
+  } finally {
+    button.disabled = false;
+  }
 }
 
 function renderPagination(total) {
