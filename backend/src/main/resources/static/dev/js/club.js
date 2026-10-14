@@ -75,6 +75,7 @@ function renderClubTableRows(clubs, page) {
     toggleBtn.type = 'button';
     toggleBtn.className = available ? 'btn-danger' : '';
     toggleBtn.textContent = available ? '비활성화' : '활성화';
+    toggleBtn.dataset.clubId = c.id || '';
     toggleBtn.onclick = (e) => { e.stopPropagation(); toggleClubState(c, toggleBtn); };
     tr.onclick = () => openEditWindow(c.id);
     tbody.appendChild(tr);
@@ -107,6 +108,10 @@ async function toggleClubState(club, button) {
     club.state = next;
     showToast(turningOff ? '비활성화했어요' : '활성화했어요', 'success');
     renderClubs();
+    // 다시 그리면 누른 버튼이 사라지므로 같은 동아리의 새 버튼으로 초점을 옮긴다.
+    const nextButton = [...document.querySelectorAll('#clubList button[data-club-id]')]
+      .find((b) => b.dataset.clubId === club.id);
+    if (nextButton) nextButton.focus();
   } catch (e) {
     showToast(e.message || '요청 실패', 'error');
   } finally {
