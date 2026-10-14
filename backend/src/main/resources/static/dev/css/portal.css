@@ -141,8 +141,8 @@ tbody tr { transition: background-color 0.1s ease; }
 #clubList tbody tr:hover, #dictList tbody tr:hover, #fcmTokenList tbody tr:hover,
 #promotionList tbody tr:hover, #feedbackList tbody tr:hover, #sentLetterList tbody tr:hover { background: var(--gray-50); }
 tbody tr.is-selected, tbody tr.is-selected:hover { background: var(--primary-soft) !important; }
-#dictList .btn-cell, #fcmTokenList .btn-cell { white-space: nowrap; }
-#dictList .btn-cell button, #fcmTokenList .btn-cell button, #fcmScheduleList td button { height: 32px; margin: 0 4px 0 0; padding: 0 12px; font-size: 13px; }
+#dictList .btn-cell, #fcmTokenList .btn-cell, #clubList .btn-cell { white-space: nowrap; }
+#dictList .btn-cell button, #fcmTokenList .btn-cell button, #clubList .btn-cell button, #fcmScheduleList td button { height: 32px; margin: 0 4px 0 0; padding: 0 12px; font-size: 13px; }
 .id-cell { max-width: 100px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: 13px; color: var(--gray-700); }
 .id-cell[title] { cursor: pointer; }
 .copy-id-cell { max-width: 160px; }
