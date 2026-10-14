@@ -30,19 +30,25 @@ jest.mock('./components/RecruitLayout/RecruitLayout', () => ({
 jest.mock('./constants/recruit', () => ({
   ...jest.requireActual('./constants/recruit'),
 }));
+jest.mock('@/constants/moadongClub', () => ({
+  ...jest.requireActual('@/constants/moadongClub'),
+}));
 
 type Recruit = typeof RecruitConstants;
 const actualRecruit = jest.requireActual<Recruit>('./constants/recruit');
 const mockedRecruit = jest.requireMock<{
   -readonly [K in keyof Recruit]: Recruit[K];
 }>('./constants/recruit');
+const mockedMoadongClub = jest.requireMock<{ MOADONG_CLUB_ID: string }>(
+  '@/constants/moadongClub',
+);
 
 /** 페이지는 렌더할 때 모듈 값을 읽으므로 목 모듈의 값을 바꿔 id 유무를 흉내 낸다 */
 const setRecruitIds = (
   clubId: string,
   formIds: Partial<Record<RecruitConstants.RecruitPositionId, string>> = {},
 ) => {
-  mockedRecruit.MOADONG_CLUB_ID = clubId;
+  mockedMoadongClub.MOADONG_CLUB_ID = clubId;
   mockedRecruit.RECRUIT_POSITIONS = actualRecruit.RECRUIT_POSITIONS.map(
     (position) => ({
       ...position,
