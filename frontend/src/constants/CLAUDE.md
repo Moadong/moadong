@@ -14,3 +14,4 @@
 - `adminFieldPlaceholders.ts` - 어드민 탭 텍스트 필드 placeholder 문자열 (ClubInfoEditTab, ClubIntroEditTab 데스크탑/모바일 공유)
 - `calendarEventColors.ts` - 커스텀 캘린더 이벤트 색상 팔레트 / 순서 / 기본값
 - `calendarEvent.ts` - 커스텀 캘린더 이벤트 기본값 (`DEFAULT_CUSTOM_EVENT_TYPE`)
+- `moadongClub.ts` - 팀원 모집 지원서를 받는 모아동 동아리 id (`MOADONG_CLUB_ID`). 모집 포지션 페이지는 지원 경로를, 지원서 페이지는 제출 후 `/recruit`로 돌려보낼지를 이 값으로 정한다
