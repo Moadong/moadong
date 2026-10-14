@@ -2,9 +2,10 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import ChevronRightIcon from '@/assets/images/icons/chevron_right_small.svg?react';
 import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import { PAGE_VIEW } from '@/constants/eventName';
+import { MOADONG_CLUB_ID } from '@/constants/moadongClub';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import RecruitLayout from './components/RecruitLayout/RecruitLayout';
-import { MOADONG_CLUB_ID, RECRUIT_POSITIONS } from './constants/recruit';
+import { RECRUIT_POSITIONS } from './constants/recruit';
 import type { RecruitPosition } from './constants/recruit';
 import * as Styled from './RecruitPositionPage.styles';
 

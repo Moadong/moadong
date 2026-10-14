@@ -6,6 +6,7 @@ import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import Toast from '@/components/common/Toast/Toast';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import { MOADONG_CLUB_ID } from '@/constants/moadongClub';
 import { useAnswers } from '@/hooks/Application/useAnswers';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -19,6 +20,12 @@ import { Question } from '@/types/application';
 import { linkifyText } from '@/utils/linkifyText';
 import { validateAnswers } from '@/utils/useValidateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
+
+/** 모아동은 메인에서 숨긴 동아리라 상세 대신 팀원 모집 페이지로 돌려보낸다 */
+const getReturnPath = (clubId?: string, clubName?: string) => {
+  if (clubId === MOADONG_CLUB_ID) return '/recruit';
+  return clubName ? `/clubDetail/@${encodeURIComponent(clubName)}` : '/';
+};
 
 const ApplicationFormPage = () => {
   const { clubId, applicationFormId } = useParams<{
@@ -66,15 +73,13 @@ const ApplicationFormPage = () => {
   }, [answers, STORAGE_KEY]);
 
   const hasLoadError = isError || !!clubError;
-  const clubName = clubDetail?.name;
+  const returnPath = getReturnPath(clubId, clubDetail?.name);
 
   useEffect(() => {
     if (!hasLoadError) return;
     alert(applicationError?.message || '문제가 발생했어요.');
-    navigate(clubName ? `/clubDetail/@${encodeURIComponent(clubName)}` : `/`, {
-      replace: true,
-    });
-  }, [hasLoadError, applicationError, clubName, navigate]);
+    navigate(returnPath, { replace: true });
+  }, [hasLoadError, applicationError, returnPath, navigate]);
 
   if (!clubId || !applicationFormId) return null;
 
@@ -131,9 +136,7 @@ const ApplicationFormPage = () => {
       alert(
         `"${clubDetail.name}" 동아리에 성공적으로 지원되었습니다.\n좋은 결과 있으시길 바랍니다`,
       );
-      navigate(`/clubDetail/@${encodeURIComponent(clubDetail.name)}`, {
-        replace: true,
-      });
+      navigate(returnPath, { replace: true });
     } catch (error) {
       alert(
         '답변 제출에 실패했어요.\n네트워크 상태를 확인하거나 잠시 후 다시 시도해 주세요.',

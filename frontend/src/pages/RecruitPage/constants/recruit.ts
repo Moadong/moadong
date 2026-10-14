@@ -7,12 +7,6 @@ export const RECRUIT_HERO_TITLE = '모아동을 함께 만들\n팀원을 찾아�
 export const RECRUIT_HERO_DESCRIPTION =
   '동아리를 찾고, 지원하고, 소식을 받는 모든 과정을 모아동에서.\n학생들의 동아리 생활을 더 쉽게 만들 디자이너와 개발자를 모집해요.';
 
-/**
- * 지원서를 받을 모아동 동아리 id. 메인에 노출되지 않도록 state가 UNAVAILABLE인 동아리여야 한다.
- * 동아리 정보 저장을 누르면 AVAILABLE로 바뀌어 메인에 뜨므로 관리자 화면에서 저장하지 않는다.
- */
-export const MOADONG_CLUB_ID: string = '';
-
 export const RECRUIT_PERIOD = '2026년 10월 15일(목) ~ 11월 30일(월) 23:59 모집';
 
 export const RECRUIT_PERIOD_NOTE = '* 합격자가 나오면 조기 마감될 수 있어요.';
@@ -105,7 +99,7 @@ export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
       '사용자 관점에서 문제를 정의하고 디자인으로 해결해 본 분',
       '서비스 기획 단계부터 참여하거나 디자인 방향을 주도적으로 제안해 본 분',
     ],
-    applicationFormId: '',
+    applicationFormId: '6acfc337a9be71734de95dfe',
   },
   {
     id: 'developer',
@@ -128,7 +122,7 @@ export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
       '동아리 활동 경험이 있는 분',
       '서비스를 주도적으로 이끌어 본 분',
     ],
-    applicationFormId: '',
+    applicationFormId: '6acfc2cba9be71734de95dfd',
   },
 ];
 
