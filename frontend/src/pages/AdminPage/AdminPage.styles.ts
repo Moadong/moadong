@@ -29,9 +29,9 @@ export const MainContent = styled.main`
   width: 100%;
   max-width: 960px;
   background-color: ${colors.base.white};
-  padding: 54px;
+  padding: 54px 54px 30px;
   border-radius: 20px;
-  margin-bottom: 50px;
+  margin-bottom: 106px;
 
   ${media.tablet} {
     padding: 0;

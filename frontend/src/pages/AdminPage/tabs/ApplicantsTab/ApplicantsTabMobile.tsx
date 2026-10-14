@@ -21,6 +21,7 @@ import FormDropdownSelector from '@/pages/AdminPage/tabs/ApplicantsTab/Applicant
 import SortDropdown from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/SortDropdown/SortDropdown';
 import StatusFilterPills from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusFilterPills/StatusFilterPills';
 import StatusSummaryCard from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusSummaryCard/StatusSummaryCard';
+import useExportApplicantsCSV from '@/pages/AdminPage/tabs/ApplicantsTab/hooks/useExportApplicantsCSV';
 import { ApplicationStatus } from '@/types/applicants';
 import * as Styled from './ApplicantsTabMobile.styles';
 
@@ -167,6 +168,12 @@ const ApplicantsTabMobile = () => {
     });
   };
 
+  const handleExportCSV = useExportApplicantsCSV(
+    effectiveFormId,
+    filteredApplicants,
+    checkedIds,
+  );
+
   const isInitialLoading =
     isFormsLoading || (!!effectiveFormId && isApplicantsLoading);
 
@@ -227,6 +234,8 @@ const ApplicantsTabMobile = () => {
                 enabled={isAnyChecked}
                 onStatusChange={handleStatusChange}
                 onDelete={handleDelete}
+                onExport={handleExportCSV}
+                exportEnabled={isAnyChecked}
                 isStatusMenuOpen={openDropdown === 'status'}
                 onToggleStatusMenu={() => toggleDropdown('status')}
               />
