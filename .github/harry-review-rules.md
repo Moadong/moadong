@@ -50,10 +50,7 @@
 
 ## 백엔드 (Spring Boot)
 
-- controller / service / repository / dto(payload) 역할을 한 클래스에 섞으면 지적한다.
-- 도메인 패키지 구성을 벗어나면 지적한다.
-- 파일 업로드 / 알림 / 실시간 이벤트처럼 부작용이 있는 로직은 영향 범위를
-  확인했는지 본다.
+`backend/` 아래 파일이 바뀌었으면 `.github/harry-review-rules-backend.md`도 읽고 그 기준을 함께 적용한다.
 
 ## 주석 (공통, 클린 코드 기준)
 
