@@ -10,7 +10,6 @@ import {
   RECRUIT_HERO_DESCRIPTION,
   RECRUIT_HERO_TITLE,
   RECRUIT_PERIOD,
-  RECRUIT_PERIOD_NOTE,
   RECRUIT_POSITIONS,
   RECRUIT_SCHEDULE,
   RECRUIT_STATS,
@@ -38,10 +37,7 @@ const RecruitPage = () => {
         <Styled.HeroDescription>
           {RECRUIT_HERO_DESCRIPTION}
         </Styled.HeroDescription>
-        <Styled.PeriodGroup>
-          <Styled.Period>{RECRUIT_PERIOD}</Styled.Period>
-          <Styled.PeriodNote>{RECRUIT_PERIOD_NOTE}</Styled.PeriodNote>
-        </Styled.PeriodGroup>
+        <Styled.Period>{RECRUIT_PERIOD}</Styled.Period>
       </Styled.Hero>
 
       <RecruitStats

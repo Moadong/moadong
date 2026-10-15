@@ -9,8 +9,6 @@ export const RECRUIT_HERO_DESCRIPTION =
 
 export const RECRUIT_PERIOD = '2026년 10월 15일(목) ~ 11월 30일(월) 23:59 모집';
 
-export const RECRUIT_PERIOD_NOTE = '* 합격자가 나오면 조기 마감될 수 있어요.';
-
 export interface RecruitStat {
   label: string;
   value: number;
