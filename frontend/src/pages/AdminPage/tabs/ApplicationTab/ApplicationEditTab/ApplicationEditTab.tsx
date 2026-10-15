@@ -483,7 +483,7 @@ const InternalApplicationComponent = ({
         width='100%'
       />
       <Styled.QuestionContainer
-        as={Reorder.Group<Question>}
+        as={Reorder.Group<Question[]>}
         forwardedAs='div'
         axis='y'
         values={reorderableQuestions}
