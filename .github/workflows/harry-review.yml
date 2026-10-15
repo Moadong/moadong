@@ -30,6 +30,8 @@ jobs:
         with:
           app-id: ${{ secrets.HARRY_APP_ID }}
           private-key: ${{ secrets.HARRY_APP_PRIVATE_KEY }}
+          permission-contents: read
+          permission-pull-requests: write
 
       - name: Checkout
         uses: actions/checkout@v4
@@ -49,6 +51,7 @@ jobs:
             너는 'harry'라는 이름의 PR 리뷰봇이다.
             저장소 루트의 `.github/harry-review-rules.md` 파일을 읽고,
             그 기준에 따라 이 PR의 변경사항을 리뷰해라.
+            `backend/` 아래 파일이 바뀌었으면 `.github/harry-review-rules-backend.md`도 읽고 함께 적용해라.
 
             ## 리뷰 범위
             - 이번 실행 이벤트는 '${{ github.event.action }}'다.
@@ -121,13 +124,15 @@ jobs:
           github_token: ${{ steps.app-token.outputs.token }}
           prompt: |
             너는 'harry'. 이 PR의 변경사항(diff)을 보고, harry의 리뷰 룰을
-            "스스로 키우는" 작업을 한다. 대상 파일은 `.github/harry-review-rules.md`.
+            "스스로 키우는" 작업을 한다. 대상 파일은 `.github/harry-review-rules.md`이고,
+            `backend/` 코드에서 나온 패턴이면 `.github/harry-review-rules-backend.md`다.
 
             대상 PR 번호와 base 브랜치는 환경변수 $PR_NUMBER, $PR_BASE 로 주어진다.
             셸 명령에서는 반드시 이 환경변수를 그대로 써라(값을 직접 타이핑하지 마라).
 
             절차:
-            1. `.github/harry-review-rules.md`를 읽어 이미 있는 룰을 모두 파악한다.
+            1. `.github/harry-review-rules.md`와 `.github/harry-review-rules-backend.md`를 읽어
+               이미 있는 룰을 모두 파악한다.
             2. `gh pr diff "$PR_NUMBER"`로 이 PR의 diff를 가져온다(checkout 기본 ref에
                의존하지 말고 항상 이 명령으로 받아라). 이 diff 분석은 반드시 아래 5번의
                git checkout 전에 끝내라(checkout 후엔 working tree가 base로 바뀐다).
@@ -136,6 +141,7 @@ jobs:
                - 일회성이거나 사소한 문제는 룰로 만들지 않는다.
                - 레포 오너 취향(surgical change, React Compiler 전제, 불필요한
                  useEffect 금지, 데이터 패칭/ API 함수 위치 일관성 등)과 결이 맞아야 한다.
+                 백엔드 룰은 실제 보안·장애·데이터 손실·API 호환성 문제로 이어지는 패턴만 만든다.
             3. 룰로 만들 가치가 있는 패턴이 "없으면" 아무것도 하지 말고 그냥 끝낸다.
                대부분의 PR은 여기서 끝난다. 억지로 룰을 만들지 마라.
             4. 가치 있는 패턴이 있으면 "최대 1개"만 추가한다. 기존 파일의 알맞은
@@ -146,8 +152,9 @@ jobs:
                  git config user.email "harry@users.noreply.github.com"
                  git fetch origin "$PR_BASE"
                  git checkout -b "harry/rule-$PR_NUMBER" "origin/$PR_BASE"
-               그 위에서 `.github/harry-review-rules.md`만 셸 명령(heredoc 추가나 sed
+               그 위에서 대상 룰 파일 하나만 셸 명령(heredoc 추가나 sed
                등)으로 수정한 뒤 커밋·푸시한다. 파일 편집 전용 도구는 없으니 Bash로 한다.
+               checkout한 base에 대상 룰 파일이 없으면 새로 만들지 말고 끝낸다.
             6. `gh pr create --base "$PR_BASE"`로 PR을 연다. 제목은
                `[chore] harry 리뷰 룰 추가 제안 (#${PR_NUMBER})`,
                본문에는 "어떤 PR의 어떤 패턴에서 이 룰을 도출했는지"를 1~2줄로 적는다.
@@ -216,7 +223,8 @@ jobs:
                  방금 달린 $REPLY_COMMENT_ID 답글이 사람이 harry에게 한 말이다.
             3. 그 답글에 harry로서 답한다:
                - 상대 말이 맞으면 인정하고, 지적이 타당했으면 근거를 짧게 보강한다.
-               - 반박·질문이면 룰(`.github/harry-review-rules.md`) 기준으로 논리적으로 답한다.
+               - 반박·질문이면 룰(`.github/harry-review-rules.md`, 루트 코멘트가 `backend/` 파일이면
+                 `.github/harry-review-rules-backend.md`도) 기준으로 논리적으로 답한다.
                - 확정 못 할 내용은 단정하지 말고 확인이 필요하다고 말한다.
                - 단순 확인/감사처럼 답할 내용이 없으면 아무것도 하지 마라.
             4. 답변은 반드시 **그 인라인 스레드에만** 단다:
