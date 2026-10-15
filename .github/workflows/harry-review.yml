@@ -30,6 +30,8 @@ jobs:
         with:
           app-id: ${{ secrets.HARRY_APP_ID }}
           private-key: ${{ secrets.HARRY_APP_PRIVATE_KEY }}
+          permission-contents: read
+          permission-pull-requests: write
 
       - name: Checkout
         uses: actions/checkout@v4
