@@ -51,7 +51,7 @@ jobs:
             너는 'harry'라는 이름의 PR 리뷰봇이다.
             저장소 루트의 `.github/harry-review-rules.md` 파일을 읽고,
             그 기준에 따라 이 PR의 변경사항을 리뷰해라.
-            `backend/` 아래 파일이 바뀌었으면 `.github/harry-review-rules-backend.md`도 읽고 함께 적용해라.
+            `backend/` 아래 파일이 바뀌었으면 `.github/harry-review-rules-backend.md`도 읽어 `backend/` 아래 변경에만 함께 적용해라.
 
             ## 리뷰 범위
             - 이번 실행 이벤트는 '${{ github.event.action }}'다.
