@@ -3,6 +3,7 @@ package moadong.user.service;
 import lombok.RequiredArgsConstructor;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
+import moadong.media.service.StudentProfileImageService;
 import moadong.user.entity.StudentUser;
 import moadong.user.payload.response.StudentProfileResponse;
 import moadong.user.repository.StudentUserRepository;
@@ -13,17 +14,28 @@ import org.springframework.stereotype.Service;
 public class StudentProfileService {
 
     private final StudentUserRepository studentUserRepository;
+    private final StudentProfileImageService studentProfileImageService;
 
     public StudentProfileResponse getProfile(String studentId) {
-        StudentUser student = studentUserRepository.findById(studentId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
+        StudentUser student = getStudent(studentId);
         return new StudentProfileResponse(student.getNickname(), student.getProfileImageUrl());
     }
 
-    public void updateNickname(String studentId, String nickname) {
-        StudentUser student = studentUserRepository.findById(studentId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
+    public void updateProfile(String studentId, String nickname, String imageUrl) {
+        StudentUser student = getStudent(studentId);
+
+        if (imageUrl != null) {
+            studentProfileImageService.validateImageUrl(studentId, imageUrl);
+            studentProfileImageService.deleteImageQuietly(student.getProfileImageUrl());
+            student.updateProfileImage(imageUrl);
+        }
+
         student.updateNickname(nickname.strip());
         studentUserRepository.save(student);
+    }
+
+    private StudentUser getStudent(String studentId) {
+        return studentUserRepository.findById(studentId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
     }
 }
