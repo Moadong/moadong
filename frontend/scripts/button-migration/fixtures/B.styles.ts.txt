@@ -1,0 +1,7 @@
+import styled from 'styled-components';
+
+const DefaultBtn = styled.button`
+  height: 44px;
+`;
+
+export default DefaultBtn;

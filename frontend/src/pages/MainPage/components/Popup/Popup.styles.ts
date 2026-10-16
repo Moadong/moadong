@@ -31,7 +31,7 @@ export const Container = styled.div`
   width: 100%;
   overflow: hidden;
   background-color: #ffffff;
-  border-radius: 10px;
+  border-radius: 16px;
 `;
 
 export const ImageWrapper = styled.div`
@@ -49,7 +49,6 @@ export const PopupImage = styled.img`
   width: 100%;
   height: auto;
   display: block;
-  object-fit: cover;
 `;
 
 export const ButtonGroup = styled.div`

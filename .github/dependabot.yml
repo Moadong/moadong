@@ -1,0 +1,21 @@
+version: 2
+
+# 이 파일은 default branch(main)에서만 읽힌다.
+# security update는 target-branch를 보지 않고 항상 default branch를 대상으로 하므로,
+# 여기서 base를 develop-fe로 옮길 수는 없다. 그룹화만 적용한다.
+updates:
+  - package-ecosystem: 'npm'
+    directory: '/frontend'
+    schedule:
+      interval: 'weekly'
+    # version update는 열지 않는다. 이 설정은 security update 그룹화 용도로만 쓴다.
+    open-pull-requests-limit: 0
+    groups:
+      # 번들에 실려 나가는 의존성. 따로 떼어 리뷰한다.
+      frontend-production:
+        applies-to: security-updates
+        dependency-type: 'production'
+      # 빌드·테스트 툴체인. 묶어서 한 번에 올린다.
+      frontend-development:
+        applies-to: security-updates
+        dependency-type: 'development'

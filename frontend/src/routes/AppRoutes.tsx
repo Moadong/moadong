@@ -1,0 +1,308 @@
+import { lazy } from 'react';
+import { Navigate, useRoutes } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
+import { ContentErrorBoundary } from '@/components/common/ErrorBoundary';
+import AppLayout from '@/layouts/AppLayout';
+import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
+import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
+import ApplicationFormPage from '@/pages/ApplicationFormPage/ApplicationFormPage';
+import GoogleCallbackPage from '@/pages/CallbackPage/GoogleCallbackPage';
+import StudentOAuthCallbackPage from '@/pages/CallbackPage/StudentOAuthCallbackPage';
+import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
+import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
+import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
+import ClubUnionPage from '@/pages/ClubUnionPage/ClubUnionPage';
+import ErrorTestPage from '@/pages/ErrorTestPage/ErrorTestPage';
+import FeedbackCompletePage from '@/pages/FeedbackPage/FeedbackCompletePage';
+import FeedbackListPage from '@/pages/FeedbackPage/FeedbackListPage';
+import FeedbackTypeSelectPage from '@/pages/FeedbackPage/FeedbackTypeSelectPage';
+import FeedbackWritePage from '@/pages/FeedbackPage/FeedbackWritePage';
+import LetterDetailPage from '@/pages/FeedbackPage/LetterDetailPage';
+import SentFeedbackDetailPage from '@/pages/FeedbackPage/SentFeedbackDetailPage';
+import GamePage from '@/pages/GamePage/GamePage';
+import IntroducePage from '@/pages/IntroducePage/IntroducePage';
+import LoginPage from '@/pages/LoginPage/LoginPage';
+import MainPage from '@/pages/MainPage/MainPage';
+import MenuPage from '@/pages/MenuPage/MenuPage';
+import PeaceIntroPage from '@/pages/PeacePage/PeaceIntroPage';
+import PeaceQuizPage from '@/pages/PeacePage/PeaceQuizPage';
+import PeaceResultPage from '@/pages/PeacePage/PeaceResultPage';
+import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage/PrivacyPolicyPage';
+import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
+import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
+import RecruitPage from '@/pages/RecruitPage/RecruitPage';
+import RecruitPositionPage from '@/pages/RecruitPage/RecruitPositionPage';
+import SubscriptionsPage from '@/pages/SubscriptionsPage/SubscriptionsPage';
+import webviewRoutes from './webviewRoutes';
+
+const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
+
+// Sentry init 이후에 평가되어야 감싸진다 (src/instrument.ts 참고).
+const useSentryRoutes = Sentry.wrapUseRoutesV7(useRoutes);
+
+const AppRoutes = () =>
+  useSentryRoutes([
+    /* 바텀 네비게이션이 있는 일반 웹 페이지 */
+    {
+      element: <AppLayout />,
+      children: [
+        {
+          path: '/',
+          element: (
+            <ContentErrorBoundary>
+              <MainPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          // 개편 홈에서만 쓰던 목록 화면. 홈이 곧 목록이라 제거했고,
+          // 공유된 링크가 깨지지 않도록 홈으로 보낸다.
+          path: '/clubs',
+          element: <Navigate to='/' replace />,
+        },
+        {
+          path: '/introduce',
+          element: (
+            <ContentErrorBoundary>
+              <IntroducePage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/recruit',
+          element: (
+            <ContentErrorBoundary>
+              <RecruitPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/privacy-policy',
+          element: (
+            <ContentErrorBoundary>
+              <PrivacyPolicyPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/club-union',
+          element: (
+            <ContentErrorBoundary>
+              <ClubUnionPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/promotions',
+          element: (
+            <ContentErrorBoundary>
+              <PromotionListPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/subscriptions',
+          element: (
+            <ContentErrorBoundary>
+              <SubscriptionsPage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/menu',
+          element: (
+            <ContentErrorBoundary>
+              <MenuPage />
+            </ContentErrorBoundary>
+          ),
+        },
+      ],
+    },
+
+    /* 기존 웹 & 안드로이드 url (android: v1.1.0) */
+    {
+      path: '/club/:clubId',
+      element: (
+        <ContentErrorBoundary>
+          <LegacyClubDetailPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    /* 웹 유저에게 신규 상세페이지 보여주기 위한 임시 url */
+    {
+      path: '/clubDetail/:clubId',
+      element: (
+        <ContentErrorBoundary>
+          <ClubDetailPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/clubDetail/:clubId/map',
+      element: (
+        <ContentErrorBoundary>
+          <ClubMapPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/clubDetail/@:clubName',
+      element: (
+        <ContentErrorBoundary>
+          <ClubDetailPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/clubDetail/@:clubName/map',
+      element: (
+        <ContentErrorBoundary>
+          <ClubMapPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/promotions/:promotionId',
+      element: (
+        <ContentErrorBoundary>
+          <PromotionDetailPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/application/:clubId/:applicationFormId',
+      element: (
+        <ContentErrorBoundary>
+          <ApplicationFormPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/game',
+      element: (
+        <ContentErrorBoundary>
+          <GamePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/recruit/:position',
+      element: (
+        <ContentErrorBoundary>
+          <RecruitPositionPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/peace',
+      element: (
+        <ContentErrorBoundary>
+          <PeaceIntroPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/peace/quiz',
+      element: (
+        <ContentErrorBoundary>
+          <PeaceQuizPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/peace/result',
+      element: (
+        <ContentErrorBoundary>
+          <PeaceResultPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback',
+      element: (
+        <ContentErrorBoundary>
+          <FeedbackListPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/complete',
+      element: (
+        <ContentErrorBoundary>
+          <FeedbackCompletePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/write',
+      element: (
+        <ContentErrorBoundary>
+          <FeedbackTypeSelectPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/write/:type',
+      element: (
+        <ContentErrorBoundary>
+          <FeedbackWritePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/letters/:letterId',
+      element: (
+        <ContentErrorBoundary>
+          <LetterDetailPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/feedback/sent/:feedbackId',
+      element: (
+        <ContentErrorBoundary>
+          <SentFeedbackDetailPage />
+        </ContentErrorBoundary>
+      ),
+    },
+
+    /* 인증 */
+    {
+      path: '/callback/google',
+      element: <GoogleCallbackPage />,
+    },
+    {
+      path: '/login/callback',
+      element: <StudentOAuthCallbackPage />,
+    },
+    {
+      path: '/login',
+      element: <LoginPage />,
+    },
+    {
+      path: '/admin/login',
+      element: <LoginTab />,
+    },
+    {
+      path: '/admin/*',
+      element: (
+        <ContentErrorBoundary>
+          <PrivateRoute>
+            <AdminRoutes />
+          </PrivateRoute>
+        </ContentErrorBoundary>
+      ),
+    },
+
+    /* 웹뷰 */
+    ...webviewRoutes,
+
+    /* 개발 환경 전용 */
+    ...(import.meta.env.DEV
+      ? [{ path: '/error-test', element: <ErrorTestPage /> }]
+      : []),
+
+    { path: '*', element: <Navigate to='/' replace /> },
+  ]);
+
+export default AppRoutes;

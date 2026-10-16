@@ -1,13 +1,16 @@
 import { createGlobalStyle } from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 const GlobalStyles = createGlobalStyle`
   * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+    -webkit-tap-highlight-color: transparent;
   }
   html {
     overscroll-behavior-y: none;
+    scrollbar-gutter: stable;
   }
   textarea, button, input, select {
     font-family: 'Pretendard', sans-serif;
@@ -16,7 +19,7 @@ const GlobalStyles = createGlobalStyle`
     font-family: 'Pretendard', -apple-system, BlinkMacSystemFont, 'Segoe UI',
     Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue',
     sans-serif;
-    color: #121212;
+    color: ${colors.base.black};
     letter-spacing: -0.02em;
   }
 `;

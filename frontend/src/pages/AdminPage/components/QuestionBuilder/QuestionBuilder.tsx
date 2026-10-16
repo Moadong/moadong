@@ -27,10 +27,6 @@ const QuestionBuilder = ({
   onRequiredChange,
   onRemoveQuestion,
 }: QuestionBuilderProps) => {
-  if (!(type in QUESTION_LABEL_MAP)) {
-    return null;
-  }
-
   const [selectionType, setSelectionType] = useState<'single' | 'multi'>(
     type === 'MULTI_CHOICE' ? 'multi' : 'single',
   );
@@ -44,6 +40,10 @@ const QuestionBuilder = ({
       setSelectionType('single');
     }
   }, [type]);
+
+  if (!(type in QUESTION_LABEL_MAP)) {
+    return null;
+  }
 
   const renderFieldByQuestionType = () => {
     switch (type) {

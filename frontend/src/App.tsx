@@ -1,29 +1,43 @@
-import { lazy } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { BrowserRouter } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
+import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
+import { QueryCache, QueryClient, type Query } from '@tanstack/react-query';
+import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { ThemeProvider } from 'styled-components';
-import { ScrollToTopButton } from '@/components/common/ScrollToTopButton/ScrollToTopButton';
-import { AdminClubProvider } from '@/context/AdminClubContext';
+import DesignFeedbackToolbar from '@/components/common/DesignFeedbackToolbar/DesignFeedbackToolbar';
+import FeedbackPromptHost from '@/components/common/FeedbackPromptHost/FeedbackPromptHost';
+import { FloatingButtonGroup } from '@/components/common/FloatingButtonGroup/FloatingButtonGroup';
+import { queryKeys } from '@/constants/queryKeys';
+import { STORAGE_KEYS } from '@/constants/storageKeys';
+import { HttpError } from '@/errors';
 import { ScrollToTop } from '@/hooks/Scroll/ScrollToTop';
-import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
-import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
-import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
-import MainPage from '@/pages/MainPage/MainPage';
+import AppRoutes from '@/routes/AppRoutes';
 import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
-import ApplicationFormPage from './pages/ApplicationFormPage/ApplicationFormPage';
-import ClubUnionPage from './pages/ClubUnionPage/ClubUnionPage';
-import IntroducePage from './pages/IntroducePage/IntroducePage';
-import 'swiper/css';
+import WebviewGlobalStyles from '@/styles/WebviewGlobal.styles';
+import isInAppWebView from '@/utils/isInAppWebView';
 import { GlobalBoundary } from './components/common/ErrorBoundary';
-import LegacyClubDetailPage from './pages/ClubDetailPage/LegacyClubDetailPage';
-import ErrorTestPage from './pages/ErrorTestPage/ErrorTestPage';
+import 'swiper/css';
 
 const queryClient = new QueryClient({
+  // 쿼리 에러는 기본적으로 바운더리로 전파되지 않으므로(throwOnError: false),
+  // 전역 캐시 레벨에서 Sentry로 리포팅한다. 사용자에게 안내되는 4xx는 노이즈라 제외.
+  queryCache: new QueryCache({
+    onError: (error) => {
+      if (error instanceof HttpError && error.isClientError()) return;
+      Sentry.captureException(error);
+    },
+  }),
   defaultOptions: {
     queries: {
       staleTime: 60 * 1000,
-      retry: 1,
+      // 4xx는 재시도해도 결과가 같으므로 제외하고, 5xx·네트워크 오류만 최대 2회 재시도.
+      retry: (failureCount, error) => {
+        if (error instanceof HttpError && error.isClientError()) return false;
+        return failureCount < 2;
+      },
+      // 지수 백오프(1s → 2s, 최대 10s)로 장애 중인 서버 부하 가중을 완화.
+      retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 10_000),
     },
     mutations: {
       retry: 0,
@@ -31,61 +45,63 @@ const queryClient = new QueryClient({
   },
 });
 
-const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
+// 백엔드 장애로 refetch가 불가능한 상황에서도 메인페이지가 마지막 데이터를 보여주도록
+// 성공한 공개 쿼리만 localStorage에 영속화한다.
+const PERSISTED_QUERY_ROOTS: string[] = [
+  queryKeys.club.all[0],
+  queryKeys.promotion.all[0],
+  queryKeys.banner.all[0],
+  queryKeys.game.all[0],
+];
+const SUGGESTIONS_KEY_SEGMENT = queryKeys.club.suggestions('')[1];
+
+const persister = createAsyncStoragePersister({
+  storage: window.localStorage,
+  key: STORAGE_KEYS.QUERY_CACHE,
+});
+
+const persistOptions = {
+  persister,
+  // 장애로 refetch를 못 할 때 옛 데이터를 보여줄 상한(모집상태 등 stale 노출 방지).
+  maxAge: 60 * 60 * 1000,
+  // 배포 버전이 바뀌면(쿼리 구조·데이터 shape 변경 가능) 옛 캐시를 폐기한다.
+  // Vercel 빌드는 커밋 SHA(__BUILD_ID__)가 배포마다 자동 주입되고, 그 외엔 SENTRY_RELEASE 폴백.
+  buster:
+    __BUILD_ID__ ||
+    ((import.meta.env.VITE_SENTRY_RELEASE as string | undefined) ?? ''),
+  dehydrateOptions: {
+    // 성공한 메인 공개 데이터만 저장. 개인/인증/어드민 데이터·검색 자동완성·실패 응답은 제외.
+    shouldDehydrateQuery: (query: Query) => {
+      if (query.state.status !== 'success') return false;
+      const [root, second] = query.queryKey as [string, string?];
+      if (!PERSISTED_QUERY_ROOTS.includes(root)) return false;
+      if (root === queryKeys.club.all[0] && second === SUGGESTIONS_KEY_SEGMENT)
+        return false;
+      return true;
+    },
+  },
+};
 
 const App = () => {
   return (
     <>
       <GlobalStyles />
+      {isInAppWebView() && <WebviewGlobalStyles />}
       <GlobalBoundary>
-        <QueryClientProvider client={queryClient}>
+        <PersistQueryClientProvider
+          client={queryClient}
+          persistOptions={persistOptions}
+        >
           <ThemeProvider theme={theme}>
             <BrowserRouter>
               <ScrollToTop />
-              <ScrollToTopButton />
-              <Routes>
-                <Route path='/' element={<MainPage />} />
-                {/*기존 웹 & 안드로이드 url (android: v1.1.0)*/}
-                <Route
-                  path='/club/:clubId'
-                  element={<LegacyClubDetailPage />}
-                />
-                {/*웹 유저에게 신규 상세페이지 보유주기 위한 임시 url*/}
-                <Route
-                  path='/clubDetail/:clubId'
-                  element={<ClubDetailPage />}
-                />
-                {/*새로 빌드해서 배포할 앱 주소 url*/}
-                <Route
-                  path='/webview/club/:clubId'
-                  element={<ClubDetailPage />}
-                />
-                <Route path='/introduce' element={<IntroducePage />} />
-                <Route path='/admin/login' element={<LoginTab />} />
-                <Route
-                  path='/admin/*'
-                  element={
-                    <AdminClubProvider>
-                      <PrivateRoute>
-                        <AdminRoutes />
-                      </PrivateRoute>
-                    </AdminClubProvider>
-                  }
-                />
-                <Route
-                  path='/application/:clubId/:applicationFormId'
-                  element={<ApplicationFormPage />}
-                />
-                <Route path='/club-union' element={<ClubUnionPage />} />
-                {/* 개발 환경에서만 사용 가능한 에러 테스트 페이지 */}
-                {import.meta.env.DEV && (
-                  <Route path='/error-test' element={<ErrorTestPage />} />
-                )}
-                <Route path='*' element={<Navigate to='/' replace />} />
-              </Routes>
+              <FloatingButtonGroup />
+              <DesignFeedbackToolbar />
+              <FeedbackPromptHost />
+              <AppRoutes />
             </BrowserRouter>
           </ThemeProvider>
-        </QueryClientProvider>
+        </PersistQueryClientProvider>
       </GlobalBoundary>
     </>
   );

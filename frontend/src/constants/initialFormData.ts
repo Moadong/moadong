@@ -1,11 +1,5 @@
 import { ApplicationFormData, ApplicationFormMode } from '@/types/application';
 
-const now = new Date();
-const currentYear = now.getFullYear();
-const currentMonth = now.getMonth();
-
-const currentSemesterTerm = currentMonth <= 6 ? 'FIRST' : 'SECOND';
-
 const INITIAL_FORM_DATA: ApplicationFormData = {
   title: '',
   description: '',
@@ -36,11 +30,13 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
       items: [{ value: '' }, { value: '' }],
     },
   ],
-  semesterYear: currentYear,
-  semesterTerm: currentSemesterTerm,
+  // now를 모듈 로드 시점에 한 번만 계산하면, 탭을 연도 경계를 넘겨 오래 열어둘 때
+  // stale 값이 전송될 수 있다. getter로 폼 초기화·제출 시점에 현재 연도를 동적 계산한다.
+  get semesterYear() {
+    return new Date().getFullYear();
+  },
   formMode: ApplicationFormMode.INTERNAL,
   externalApplicationUrl: '',
-  active: 'unpublished',
 };
 
 export default INITIAL_FORM_DATA;

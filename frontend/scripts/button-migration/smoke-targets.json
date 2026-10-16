@@ -1,0 +1,12 @@
+[
+  {
+    "id": "smoke/admin-login-signup",
+    "route": "/admin/login",
+    "locator": { "role": "button", "name": "회원가입" }
+  },
+  {
+    "id": "smoke/club-info-save",
+    "route": "/admin/club-info",
+    "locator": { "role": "button", "name": "저장하기" }
+  }
+]

@@ -1,99 +1,30 @@
-import { useMemo, useState } from 'react';
-import Footer from '@/components/common/Footer/Footer';
-import Header from '@/components/common/Header/Header';
-import Spinner from '@/components/common/Spinner/Spinner';
-import { PAGE_VIEW } from '@/constants/eventName';
+import SatisfactionModal from '@/components/common/SatisfactionModal/SatisfactionModal';
+import { PAGE_NAME, PAGE_VIEW } from '@/constants/eventName';
+import useScrollTracking from '@/hooks/Mixpanel/useScrollTracking';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import { useGetCardList } from '@/hooks/Queries/useClub';
-import Banner from '@/pages/MainPage/components/Banner/Banner';
-import CategoryButtonList from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList';
-import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
-import Filter from '@/pages/MainPage/components/Filter/Filter';
+import MainContent from '@/pages/MainPage/components/MainContent/MainContent';
 import Popup from '@/pages/MainPage/components/Popup/Popup';
-import { useSelectedCategory } from '@/store/useCategoryStore';
-import { useSearchIsSearching, useSearchKeyword } from '@/store/useSearchStore';
-import { Club } from '@/types/club';
-import * as Styled from './MainPage.styles';
+import {
+  APP_DOWNLOAD_POPUP,
+  MAILBOX_OPEN_POPUP,
+} from '@/pages/MainPage/components/Popup/popupConfigs';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 const MainPage = () => {
+  const inWebview = isInAppWebView();
+
   useTrackPageView(PAGE_VIEW.MAIN_PAGE);
-
-  const { selectedCategory } = useSelectedCategory();
-  const { keyword } = useSearchKeyword();
-  const { isSearching } = useSearchIsSearching();
-  const recruitmentStatus = 'all';
-  const division = 'all';
-  const searchCategory = isSearching ? 'all' : selectedCategory;
-  const tabs = ['부경대학교 중앙동아리'] as const;
-  const [active, setActive] =
-    useState<(typeof tabs)[number]>('부경대학교 중앙동아리');
-
-  const { data, error, isLoading, refetch } = useGetCardList({
-    keyword,
-    recruitmentStatus,
-    category: searchCategory,
-    division,
-  });
-
-  const clubs = data?.clubs || [];
-  const totalCount = data?.totalCount ?? clubs.length;
-
-  const isEmpty = !isLoading && clubs.length === 0;
-  const hasData = clubs.length > 0;
-
-  const clubList = useMemo(() => {
-    if (!hasData) return null;
-    return clubs.map((club: Club) => <ClubCard key={club.id} club={club} />);
-  }, [clubs, hasData]);
+  useScrollTracking(PAGE_NAME.MAIN);
 
   return (
     <>
-      <Popup />
-      <Header />
-      {/* <Filter /> */}
-      <Banner />
-      <Styled.PageContainer>
-        <CategoryButtonList />
-
-        <Styled.SectionBar>
-          <Styled.SectionTabs>
-            {tabs.map((tab) => (
-              <Styled.Tab
-                key={tab}
-                $active={active === tab}
-                onClick={() => setActive(tab)}
-              >
-                {tab}
-              </Styled.Tab>
-            ))}
-          </Styled.SectionTabs>
-          <Styled.TotalCountResult role='status'>
-            {`전체 ${isLoading ? 0 : totalCount}개의 동아리`}
-          </Styled.TotalCountResult>
-        </Styled.SectionBar>
-        <Styled.ContentWrapper>
-          {isLoading ? (
-            <Spinner />
-          ) : error ? (
-            <Styled.EmptyResult>
-              동아리 목록을 불러오는 중 문제가 발생했습니다.
-              <br />
-              <Styled.RetryButton onClick={() => refetch()}>
-                다시 시도
-              </Styled.RetryButton>
-            </Styled.EmptyResult>
-          ) : isEmpty ? (
-            <Styled.EmptyResult>
-              앗, 조건에 맞는 동아리가 없어요.
-              <br />
-              다른 키워드나 조건으로 다시 시도해보세요!
-            </Styled.EmptyResult>
-          ) : (
-            <Styled.CardList>{clubList}</Styled.CardList>
-          )}
-        </Styled.ContentWrapper>
-      </Styled.PageContainer>
-      <Footer />
+      {inWebview ? (
+        <Popup configs={[MAILBOX_OPEN_POPUP]} />
+      ) : (
+        <Popup configs={[APP_DOWNLOAD_POPUP]} />
+      )}
+      <SatisfactionModal />
+      <MainContent />
     </>
   );
 };

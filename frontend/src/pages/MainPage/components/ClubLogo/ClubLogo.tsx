@@ -26,9 +26,8 @@ const StyledClubLogo = styled.div<{
   ${({ $variant, $imageSrc }) => css`
     width: ${presets[$variant].desktop.width};
     height: ${presets[$variant].desktop.height};
-    border: 0.5px solid ${colors.gray[400]};
     border-radius: ${presets[$variant].desktop.radius};
-    background-color: ${colors.base.white};
+    background-color: ${colors.gray[250]};
     background-size: cover;
     background-position: center;
     background-image: ${$imageSrc ? `url("${$imageSrc}")` : 'none'};

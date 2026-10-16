@@ -5,6 +5,8 @@ import { handleResponse } from './utils/apiHelpers';
 interface PresignedData {
   presignedUrl: string;
   finalUrl: string;
+  success: boolean;
+  failureReason: string | null;
 }
 
 interface FeedUploadRequest {
@@ -16,11 +18,13 @@ interface FeedUploadRequest {
 export async function uploadToStorage(
   presignedUrl: string,
   file: File,
+  contentType?: string,
 ): Promise<void> {
+  const resolvedContentType = contentType || file.type || 'image/jpeg';
   const response = await fetch(presignedUrl, {
     method: 'PUT',
     body: file,
-    headers: { 'Content-Type': file.type },
+    headers: { 'Content-Type': resolvedContentType },
   });
   await handleResponse(response, `S3 업로드 실패 : ${response.status}`);
 }

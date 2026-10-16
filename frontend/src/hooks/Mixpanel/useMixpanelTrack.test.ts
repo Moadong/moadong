@@ -1,21 +1,18 @@
 import { renderHook } from '@testing-library/react';
 import mixpanel from 'mixpanel-browser';
+import { ADMIN_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from './useMixpanelTrack';
 
 jest.mock('mixpanel-browser', () => ({
   track: jest.fn(),
-  get_distinct_id: jest.fn(),
 }));
 
 describe('useMixpanelTrack', () => {
-  const mockDistinctId = 'test-user-123';
   const originalLocation = window.location;
   const originalDateNow = Date.now;
 
   beforeEach(() => {
     jest.clearAllMocks();
-
-    (mixpanel.get_distinct_id as jest.Mock).mockReturnValue(mockDistinctId);
 
     const mockTimestamp = 1234567890;
     Date.now = jest.fn(() => mockTimestamp);
@@ -44,7 +41,7 @@ describe('useMixpanelTrack', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Test Event', {
-        distinct_id: mockDistinctId,
+        user_area: 'student',
         timestamp: 1234567890,
         url: 'https://example.com/test-page',
       });
@@ -63,9 +60,9 @@ describe('useMixpanelTrack', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Button Clicked', {
+        user_area: 'student',
         button_name: 'Submit',
         page_section: 'Header',
-        distinct_id: mockDistinctId,
         timestamp: 1234567890,
         url: 'https://example.com/test-page',
       });
@@ -80,7 +77,7 @@ describe('useMixpanelTrack', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Simple Event', {
-        distinct_id: mockDistinctId,
+        user_area: 'student',
         timestamp: 1234567890,
         url: 'https://example.com/test-page',
       });
@@ -88,17 +85,16 @@ describe('useMixpanelTrack', () => {
   });
 
   describe('자동 추가 속성 테스트', () => {
-    it('distinct_id를 자동으로 추가한다', () => {
+    it('관리자 이벤트는 user_area를 admin으로 붙인다', () => {
       // Given
       const { result } = renderHook(() => useMixpanelTrack());
 
       // When
-      result.current('Event');
+      result.current(ADMIN_EVENT.LOGIN_BUTTON_CLICKED);
 
       // Then
       const callArgs = (mixpanel.track as jest.Mock).mock.calls[0][1];
-      expect(callArgs.distinct_id).toBe(mockDistinctId);
-      expect(mixpanel.get_distinct_id).toHaveBeenCalled();
+      expect(callArgs.user_area).toBe('admin');
     });
 
     it('timestamp를 자동으로 추가한다', () => {
@@ -134,8 +130,8 @@ describe('useMixpanelTrack', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Event', {
+        user_area: 'student',
         custom_prop: 'value',
-        distinct_id: mockDistinctId,
         timestamp: 1234567890,
         url: 'https://example.com/test-page',
       });
@@ -277,7 +273,7 @@ describe('useMixpanelTrack', () => {
 
       // Then
       expect(mixpanel.track).toHaveBeenCalledWith('Event', {
-        distinct_id: mockDistinctId,
+        user_area: 'student',
         timestamp: 1234567890,
         url: 'https://example.com/test-page',
       });

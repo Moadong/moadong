@@ -1,0 +1,102 @@
+import { useLayoutEffect } from 'react';
+import { useLocation, useParams } from 'react-router-dom';
+import Footer from '@/components/common/Footer/Footer';
+import Header from '@/components/common/Header/Header';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import { PAGE_VIEW } from '@/constants/eventName';
+import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
+import BuskingPage from '@/pages/FestivalPage/BuskingPage/BuskingPage';
+import IntroductionPage from '@/pages/FestivalPage/IntroductionPage/IntroductionPage';
+import isInAppWebView from '@/utils/isInAppWebView';
+import PromotionClubCTA from './components/detail/PromotionClubCTA/PromotionClubCTA';
+import PromotionImageGallery from './components/detail/PromotionImageGallery/PromotionImageGallery';
+import PromotionInfoSection from './components/detail/PromotionInfoSection/PromotionInfoSection';
+import PromotionMapSection from './components/detail/PromotionMapSection/PromotionMapSection';
+import PromotionTitleSection from './components/detail/PromotionTitleSection/PromotionTitleSection';
+import RelatedPromotionSection from './components/detail/RelatedPromotionSection/RelatedPromotionSection';
+import * as Styled from './PromotionDetailPage.styles';
+
+const PromotionDetailPage = () => {
+  const { promotionId } = useParams<{ promotionId: string }>();
+
+  if (promotionId?.startsWith('club-fest-')) return <IntroductionPage />;
+  if (promotionId?.startsWith('main-fest-')) return <BuskingPage />;
+
+  return <PromotionDetail />;
+};
+
+const PromotionDetail = () => {
+  useTrackPageView(PAGE_VIEW.PROMOTION_DETAIL_PAGE);
+
+  const { promotionId } = useParams<{ promotionId: string }>();
+  const { data, isLoading, isError } = useGetPromotionArticles();
+
+  const article = data?.find((item) => item.id === promotionId) ?? null;
+  const showRelatedPromotion = false; // 관련 이벤트 추천 기능은 현재 비활성화 상태
+  const { pathname } = useLocation();
+
+  useLayoutEffect(() => {
+    window.scrollTo(0, 0);
+  }, [pathname]);
+
+  return (
+    <>
+      <Styled.DesktopHeader>
+        <Header hideOn={['webview']} />
+      </Styled.DesktopHeader>
+      <Styled.Container>
+        <Styled.MobileTopBar>
+          <WebviewTopBar title='이벤트 정보' />
+        </Styled.MobileTopBar>
+
+        {isLoading && <Styled.Message>로딩 중...</Styled.Message>}
+        {isError && <Styled.Message>오류가 발생했습니다.</Styled.Message>}
+
+        {!isLoading && !isError && !article && (
+          <Styled.Message>존재하지 않는 이벤트입니다.</Styled.Message>
+        )}
+
+        {!isLoading && !isError && article && (
+          <>
+            <Styled.TitleWrapper>
+              <PromotionTitleSection article={article} />
+            </Styled.TitleWrapper>
+
+            <Styled.ContentWrapper>
+              <Styled.LeftSection>
+                <PromotionInfoSection article={article} />
+                <PromotionMapSection article={article} />
+                <PromotionClubCTA
+                  clubId={article.clubId}
+                  clubName={article.clubName}
+                />
+                {/* 
+                  TODO: 관련 이벤트 추천 기능
+                  현재는 기획 미정으로 비활성화 상태.
+                  showRelatedPromotion 값을 true로 변경하면 활성화됨.
+                */}
+                {showRelatedPromotion && (
+                  <RelatedPromotionSection
+                    currentPromotionId={article.id}
+                    articles={article ? data || [] : []}
+                  />
+                )}
+              </Styled.LeftSection>
+
+              <Styled.RightSection>
+                <PromotionImageGallery
+                  images={article.images}
+                  promotionId={article.id}
+                />
+              </Styled.RightSection>
+            </Styled.ContentWrapper>
+          </>
+        )}
+      </Styled.Container>
+      {!isInAppWebView() && <Footer />}
+    </>
+  );
+};
+
+export default PromotionDetailPage;

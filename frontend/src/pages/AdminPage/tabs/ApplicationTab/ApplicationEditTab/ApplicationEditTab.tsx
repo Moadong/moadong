@@ -1,0 +1,534 @@
+import { useEffect, useRef, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { Reorder } from 'framer-motion';
+import {
+  createApplication,
+  generateApplicationDraft,
+  updateApplication,
+} from '@/apis/application';
+import Button from '@/components/common/Button/Button';
+import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
+import Spinner from '@/components/common/Spinner/Spinner';
+import { APPLICATION_FORM } from '@/constants/applicationForm';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import INITIAL_FORM_DATA from '@/constants/initialFormData';
+import { queryKeys } from '@/constants/queryKeys';
+import { ApiError } from '@/errors';
+import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
+import {
+  useAiDraftQuota,
+  useGetApplication,
+} from '@/hooks/Queries/useApplication';
+import LongPressReorderItem from '@/pages/AdminPage/components/LongPressReorderItem/LongPressReorderItem';
+import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
+import {
+  hasErrors,
+  validateApplicationForm,
+} from '@/pages/AdminPage/validation/validateApplicationForm';
+import { useAdminClubId } from '@/store/useAdminClubStore';
+import { PageContainer } from '@/styles/PageContainer.styles';
+import {
+  ApplicationFormData,
+  ApplicationFormMode,
+  Question,
+  QuestionType,
+} from '@/types/application';
+import * as Styled from './ApplicationEditTab.styles';
+import { QuestionDivider } from './ApplicationEditTab.styles';
+import { createQuestionId } from './utils/createQuestionId';
+import { pinFirstQuestion } from './utils/pinFirstQuestion';
+
+const ApplicationEditTab = () => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const { applicationFormId: formId } = useParams<{
+    applicationFormId?: string;
+  }>();
+  const { clubId } = useAdminClubId();
+  const trackEvent = useMixpanelTrack();
+
+  const {
+    data: existingFormData,
+    isLoading,
+    isError,
+    error,
+  } = useGetApplication(clubId ?? undefined, formId ?? '');
+
+  const [formData, setFormData] =
+    useState<ApplicationFormData>(INITIAL_FORM_DATA);
+  const [applicationFormMode, setApplicationFormMode] =
+    useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
+  const [externalApplicationUrl, setExternalApplicationUrl] = useState('');
+
+  const isDraftButtonVisible =
+    !formId && applicationFormMode === ApplicationFormMode.INTERNAL;
+  const { data: draftQuota } = useAiDraftQuota(
+    clubId ?? undefined,
+    isDraftButtonVisible,
+  );
+  // 생성 성공/429로 갱신된 값을 즉시 반영 (quota 조회 전·실패 시에도 동작)
+  const [remainingOverride, setRemainingOverride] = useState<number>();
+  const remaining = remainingOverride ?? draftQuota?.remaining;
+  const isDraftLimitReached = remaining === 0;
+  // 저장된 지원서가 AI 초안에서 출발했는지 구분한다
+  const [draftSource, setDraftSource] = useState<'manual' | 'ai' | 'template'>(
+    'manual',
+  );
+
+  const isDraftButtonViewTracked = useRef(false);
+  useEffect(() => {
+    if (!isDraftButtonVisible || isDraftButtonViewTracked.current) return;
+    isDraftButtonViewTracked.current = true;
+    trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_VIEWED);
+  }, [isDraftButtonVisible, trackEvent]);
+
+  useEffect(() => {
+    if (!existingFormData) return;
+
+    const {
+      formMode = ApplicationFormMode.INTERNAL,
+      externalApplicationUrl = '',
+      questions = [],
+    } = existingFormData;
+
+    const currentQuestions =
+      questions.length > 0 ? questions : INITIAL_FORM_DATA.questions!;
+
+    setApplicationFormMode(formMode);
+    setExternalApplicationUrl(externalApplicationUrl);
+    setFormData({ ...existingFormData, questions: currentQuestions });
+  }, [existingFormData]);
+
+  const { mutate: createMutate, isPending: isCreating } = useMutation({
+    mutationFn: (payload: ApplicationFormData) => createApplication(payload),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
+      trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVED, {
+        is_edit: false,
+        form_mode: applicationFormMode,
+        draft_source: draftSource,
+      });
+      alert('지원서가 성공적으로 생성되었습니다.');
+      navigate(`/admin/application-list`);
+    },
+    onError: (err: Error) =>
+      alert(`지원서 생성에 실패했습니다.: ${err.message}`),
+  });
+
+  const { mutate: updateMutate, isPending: isUpdating } = useMutation({
+    mutationFn: ({
+      data,
+      applicationFormId,
+    }: {
+      data: ApplicationFormData;
+      applicationFormId: string;
+    }) => updateApplication(data, applicationFormId),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.application.detail(
+          clubId ?? 'unknown',
+          formId ?? '',
+        ),
+      });
+      trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVED, {
+        is_edit: true,
+        form_mode: applicationFormMode,
+        draft_source: draftSource,
+      });
+      alert('지원서가 성공적으로 수정되었습니다.');
+      navigate('/admin/application-list');
+    },
+    onError: (err: Error) =>
+      alert(`지원서 수정에 실패했습니다: ${err.message}`),
+  });
+
+  const { mutate: generateDraft, isPending: isGenerating } = useMutation({
+    mutationFn: generateApplicationDraft,
+    onSuccess: (draft) => {
+      if (!draft) return;
+      const nameQuestion = { ...INITIAL_FORM_DATA.questions![0] };
+      const draftQuestions = draft.questions.map((q, index) => ({
+        ...q,
+        id: index + 2, // index 0은 이름 고정 질문(id 1)
+      }));
+      setFormData((prev) => ({
+        ...prev,
+        title: draft.title,
+        description: draft.description,
+        questions: [nameQuestion, ...draftQuestions],
+      }));
+      setDraftSource(draft.aiGenerated ? 'ai' : 'template');
+      trackEvent(ADMIN_EVENT.AI_DRAFT_GENERATED, {
+        ai_generated: draft.aiGenerated,
+        question_count: draftQuestions.length,
+        remaining: draft.remaining,
+      });
+      if (typeof draft.remaining === 'number') {
+        setRemainingOverride(draft.remaining);
+      }
+      if (!draft.aiGenerated) {
+        alert(
+          'AI 생성에 실패해 기본 템플릿을 제공했어요. 질문을 직접 다듬어주세요.',
+        );
+      }
+    },
+    onError: (err: Error) => {
+      if (err instanceof ApiError && err.status === 429) {
+        setRemainingOverride(0);
+        trackEvent(ADMIN_EVENT.AI_DRAFT_LIMIT_REACHED);
+        alert('이번 달 AI 초안 생성 횟수(3회)를 모두 사용했어요.');
+        return;
+      }
+      trackEvent(ADMIN_EVENT.AI_DRAFT_GENERATION_FAILED, {
+        status: err instanceof ApiError ? err.status : undefined,
+        message: err.message,
+      });
+      alert(`지원서 초안 생성에 실패했습니다: ${err.message}`);
+    },
+  });
+
+  const handleGenerateDraft = () => {
+    const hasUserInput =
+      formData.title.trim() !== '' ||
+      formData.description.trim() !== '' ||
+      (formData.questions ?? []).some(
+        (q, index) =>
+          index > 0 && (q.title.trim() !== '' || q.description.trim() !== ''),
+      );
+    trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_CLICKED, {
+      has_user_input: hasUserInput,
+      remaining,
+    });
+    if (
+      hasUserInput &&
+      !confirm('작성 중인 내용을 AI 초안으로 덮어씁니다. 계속할까요?')
+    ) {
+      trackEvent(ADMIN_EVENT.AI_DRAFT_OVERWRITE_CANCELED);
+      return;
+    }
+    generateDraft();
+  };
+
+  const handleFormTitleChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      title: value,
+    }));
+  };
+
+  if (!clubId) return <div>클럽 정보가 없습니다.</div>;
+
+  if (isLoading) {
+    return <div>지원서 정보를 불러오는 중...</div>;
+  }
+  if (isError) {
+    return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
+  }
+
+  const handleSubmit = async () => {
+    if (!clubId) return;
+
+    const validationErrors = validateApplicationForm(
+      formData,
+      applicationFormMode,
+      externalApplicationUrl,
+    );
+    if (hasErrors(validationErrors)) {
+      const messages: string[] = [
+        ...(validationErrors.title ? [validationErrors.title] : []),
+        ...(validationErrors.description ? [validationErrors.description] : []),
+        ...Object.values(validationErrors.questions ?? {}),
+        ...(validationErrors.externalUrl ? [validationErrors.externalUrl] : []),
+      ];
+      alert(messages.join('\n'));
+      return;
+    }
+
+    const payload: ApplicationFormData = {
+      title: formData.title,
+      description: formData.description,
+      semesterYear: formData.semesterYear,
+      formMode: applicationFormMode,
+    };
+
+    if (applicationFormMode === ApplicationFormMode.INTERNAL) {
+      payload.questions = formData.questions;
+    } else if (applicationFormMode === ApplicationFormMode.EXTERNAL) {
+      payload.externalApplicationUrl = externalApplicationUrl;
+    }
+
+    if (formId) {
+      updateMutate({
+        data: payload,
+        applicationFormId: formId,
+      });
+    } else {
+      createMutate(payload);
+    }
+  };
+
+  return (
+    <>
+      {isGenerating && (
+        <Styled.AiLoadingOverlay>
+          <Spinner height='auto' />
+          <Styled.AiLoadingText>지원서 자동 생성 중...</Styled.AiLoadingText>
+        </Styled.AiLoadingOverlay>
+      )}
+      <PageContainer>
+        <Styled.HeaderContainer>
+          <Styled.ChangeButtonWrapper>
+            <Styled.ApplicationFormChangeButton
+              $active={applicationFormMode === ApplicationFormMode.INTERNAL}
+              onClick={() =>
+                setApplicationFormMode(ApplicationFormMode.INTERNAL)
+              }
+            >
+              모아동지원서
+            </Styled.ApplicationFormChangeButton>
+            <Styled.ApplicationFormChangeButton
+              $active={applicationFormMode === ApplicationFormMode.EXTERNAL}
+              onClick={() =>
+                setApplicationFormMode(ApplicationFormMode.EXTERNAL)
+              }
+            >
+              외부지원서
+            </Styled.ApplicationFormChangeButton>
+          </Styled.ChangeButtonWrapper>
+          {isDraftButtonVisible && (
+            <Styled.AiDraftActions>
+              {typeof remaining === 'number' && (
+                <Styled.AiDraftRemaining>
+                  이번 달 {remaining}회 남음
+                </Styled.AiDraftRemaining>
+              )}
+              <Styled.AiDraftButton
+                onClick={handleGenerateDraft}
+                disabled={isGenerating || isDraftLimitReached}
+                title={
+                  isDraftLimitReached
+                    ? '이번 달 AI 초안 생성 횟수(3회)를 모두 사용했어요.'
+                    : undefined
+                }
+              >
+                ✨ AI로 초안 생성
+              </Styled.AiDraftButton>
+            </Styled.AiDraftActions>
+          )}
+        </Styled.HeaderContainer>
+        <Styled.FormTitle
+          type='text'
+          maxLength={50}
+          value={formData.title}
+          onChange={(e) => handleFormTitleChange(e.target.value)}
+          placeholder='지원서 제목을 입력하세요'
+        ></Styled.FormTitle>
+        {applicationFormMode === ApplicationFormMode.INTERNAL ? (
+          <InternalApplicationComponent
+            formData={formData}
+            setFormData={setFormData}
+          />
+        ) : (
+          <ExternalApplicationComponent
+            externalApplicationUrl={externalApplicationUrl}
+            setExternalApplicationUrl={setExternalApplicationUrl}
+          />
+        )}
+        <Styled.ButtonWrapper>
+          <Button width={'150px'} animated onClick={handleSubmit}>
+            저장하기
+          </Button>
+        </Styled.ButtonWrapper>
+      </PageContainer>
+    </>
+  );
+};
+
+interface InternalApplicationComponentProps {
+  formData: ApplicationFormData;
+  setFormData: React.Dispatch<React.SetStateAction<ApplicationFormData>>;
+}
+
+const InternalApplicationComponent = ({
+  formData,
+  setFormData,
+}: InternalApplicationComponentProps) => {
+  const addQuestion = () => {
+    const newQuestion: Question = {
+      id: createQuestionId(formData.questions ?? []),
+      title: '',
+      description: '',
+      type: 'SHORT_TEXT',
+      items: [],
+      options: { required: false },
+    };
+    setFormData((prev) => ({
+      ...prev,
+      questions: [...(prev.questions ?? []), newQuestion],
+    }));
+  };
+
+  // 이름 질문은 드래그 대상이 아니라 맨 앞에 고정되고, 나머지 질문만 순서가 바뀐다
+  const [nameQuestion, ...reorderableQuestions] = formData.questions ?? [];
+
+  const handleReorder = (reordered: Question[]) => {
+    setFormData((prev) => ({
+      ...prev,
+      questions: pinFirstQuestion(prev.questions ?? [], reordered),
+    }));
+  };
+
+  const removeQuestion = (id: number) => {
+    if (!formData.questions) return;
+    setFormData((prev) => ({
+      ...prev,
+      questions: prev.questions!.filter((q) => q.id !== id),
+    }));
+  };
+
+  const updateQuestionField = <K extends keyof Question>(
+    id: number,
+    key: K,
+    value: Question[K],
+  ) => {
+    if (!formData.questions) return;
+    setFormData((prev) => ({
+      ...prev,
+      questions: prev.questions!.map((q) =>
+        q.id === id ? { ...q, [key]: value } : q,
+      ),
+    }));
+  };
+
+  const handleFormDescriptionChange = (value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      description: value,
+    }));
+  };
+
+  const handleTitleChange = (id: number) => (value: string) =>
+    updateQuestionField(id, 'title', value);
+
+  const handleDescriptionChange = (id: number) => (value: string) =>
+    updateQuestionField(id, 'description', value);
+
+  const handleItemsChange = (id: number) => (items: { value: string }[]) =>
+    updateQuestionField(id, 'items', items);
+
+  const handleTypeChange = (id: number) => (newType: QuestionType) => {
+    if (!formData.questions) return;
+    setFormData((prev) => ({
+      ...prev,
+      questions: prev.questions!.map((q) => {
+        if (q.id !== id) return q;
+        const isChoice = newType === 'CHOICE' || newType === 'MULTI_CHOICE';
+        return {
+          ...q,
+          type: newType,
+          items: isChoice
+            ? q.items && q.items.length >= 1
+              ? q.items
+              : [{ value: '' }]
+            : [],
+        };
+      }),
+    }));
+  };
+
+  const handleRequiredChange = (id: number) => (value: boolean) => {
+    if (!formData.questions) return;
+    setFormData((prev) => ({
+      ...prev,
+      questions: prev.questions!.map((q) =>
+        q.id === id ? { ...q, options: { ...q.options, required: value } } : q,
+      ),
+    }));
+  };
+
+  const renderQuestionBuilder = (
+    question: Question,
+    index: number,
+    readOnly = false,
+  ) => (
+    <QuestionBuilder
+      id={index + 1}
+      title={question.title}
+      description={question.description}
+      options={question.options}
+      items={question.items}
+      type={question.type}
+      readOnly={readOnly}
+      onTitleChange={handleTitleChange(question.id)}
+      onDescriptionChange={handleDescriptionChange(question.id)}
+      onItemsChange={handleItemsChange(question.id)}
+      onTypeChange={handleTypeChange(question.id)}
+      onRequiredChange={handleRequiredChange(question.id)}
+      onRemoveQuestion={() => removeQuestion(question.id)}
+    />
+  );
+
+  return (
+    <>
+      <CustomTextArea
+        variant='filled'
+        label='지원서 설명'
+        value={formData.description}
+        onChange={(e) => handleFormDescriptionChange(e.target.value)}
+        placeholder={APPLICATION_FORM.APPLICATION_DESCRIPTION.placeholder}
+        maxLength={APPLICATION_FORM.APPLICATION_DESCRIPTION.maxLength}
+        showMaxChar
+        width='100%'
+      />
+      <Styled.QuestionContainer
+        as={Reorder.Group<Question>}
+        forwardedAs='div'
+        axis='y'
+        values={reorderableQuestions}
+        onReorder={handleReorder}
+      >
+        {/* 이름 질문은 수정할 수 없다 */}
+        {nameQuestion && renderQuestionBuilder(nameQuestion, 0, true)}
+        {reorderableQuestions.map((question, index) => (
+          <LongPressReorderItem key={question.id} value={question}>
+            {renderQuestionBuilder(question, index + 1)}
+          </LongPressReorderItem>
+        ))}
+      </Styled.QuestionContainer>
+      <QuestionDivider />
+      <Styled.AddQuestionButton onClick={addQuestion}>
+        질문 추가 +
+      </Styled.AddQuestionButton>
+    </>
+  );
+};
+
+const ExternalApplicationComponent = ({
+  externalApplicationUrl,
+  setExternalApplicationUrl,
+}: {
+  externalApplicationUrl: string;
+  setExternalApplicationUrl: React.Dispatch<React.SetStateAction<string>>;
+}) => {
+  return (
+    <>
+      <Styled.ExternalApplicationFormContainer>
+        <Styled.ExternalApplicationFormTitle>
+          링크
+        </Styled.ExternalApplicationFormTitle>
+        <Styled.ExternalApplicationFormLinkInput
+          placeholder='https://~~'
+          value={externalApplicationUrl}
+          onChange={(e) => setExternalApplicationUrl(e.target.value)}
+        />
+      </Styled.ExternalApplicationFormContainer>
+      <Styled.ExternalApplicationFormHint>
+        현재 구글폼, 네이버폼, 에브리타임 링크만 제출가능합니다.
+      </Styled.ExternalApplicationFormHint>
+    </>
+  );
+};
+
+export default ApplicationEditTab;

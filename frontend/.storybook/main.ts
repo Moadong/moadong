@@ -2,11 +2,7 @@ import type { StorybookConfig } from '@storybook/react-vite';
 
 const config: StorybookConfig = {
   stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|jsx|mjs|ts|tsx)'],
-  addons: [
-    '@storybook/addon-onboarding',
-    '@chromatic-com/storybook',
-    '@storybook/addon-docs',
-  ],
+  addons: ['@chromatic-com/storybook', '@storybook/addon-docs'],
   framework: {
     name: '@storybook/react-vite',
     options: {},
@@ -14,9 +10,10 @@ const config: StorybookConfig = {
   viteFinal: async (config) => {
     const { mergeConfig } = await import('vite');
     const { default: tsconfigPaths } = await import('vite-tsconfig-paths');
+    const { default: svgr } = await import('vite-plugin-svgr');
 
     return mergeConfig(config, {
-      plugins: [tsconfigPaths()],
+      plugins: [tsconfigPaths(), svgr()],
     });
   },
 };

@@ -1,17 +1,21 @@
 import { MemoryRouter } from 'react-router-dom';
 import type { Meta, StoryObj } from '@storybook/react';
+import { asClubId } from '@/types/branded';
 import { Club } from '@/types/club';
 import ClubCard from './ClubCard';
 
+// 카테고리·태그를 시안(Figma 4060-16963)과 맞춘다. 다르면 팔레트가 갈려
+// 시안 대조에서 실제 차이가 아닌 불일치가 잡힌다.
+// 소개 문구는 시안에 '입니다'가 중복돼 있어 그것만 바로잡았다.
 const sampleClub: Club = {
-  id: 'club-1',
-  name: '모아동 밴드',
+  id: asClubId('club-1'),
+  name: 'WAP',
   logo: '',
-  tags: ['락밴드', '공연'],
+  tags: ['프로젝트', '소프트웨어'],
   recruitmentStatus: 'OPEN',
   division: 'central',
-  category: '공연',
-  introduction: '함께 무대에 설 멤버를 모집합니다.',
+  category: '학술',
+  introduction: '프로젝트 중심 개발동아리입니다',
 };
 
 const meta = {
@@ -28,7 +32,9 @@ const meta = {
   decorators: [
     (Story) => (
       <MemoryRouter>
-        <Story />
+        <div style={{ width: 335 }}>
+          <Story />
+        </div>
       </MemoryRouter>
     ),
   ],
@@ -54,7 +60,7 @@ export const Closed: Story = {
   args: {
     club: {
       ...sampleClub,
-      id: 'club-2',
+      id: asClubId('club-2'),
       recruitmentStatus: 'CLOSED',
       name: '모아동 사진회',
       introduction: '정기 출사와 전시를 준비합니다.',

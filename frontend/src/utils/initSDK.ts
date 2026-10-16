@@ -1,6 +1,16 @@
+import { useEffect } from 'react';
+import { createRoutesFromChildren, useNavigationType } from 'react-router-dom';
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
+import Clarity from '@microsoft/clarity';
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
+import isInAppWebView from '@/utils/isInAppWebView';
+import registerMixpanelSuperProperties from '@/utils/registerMixpanelSuperProperties';
+import {
+  getSentryEnvironment,
+  matchRoutesByOriginal,
+  useDecodedLocation,
+} from '@/utils/sentryRouting';
 
 const LOCALHOST_HOSTNAME = 'localhost';
 
@@ -14,6 +24,8 @@ export function initializeMixpanel() {
     ignore_dnt: true,
     debug: false,
   });
+
+  registerMixpanelSuperProperties();
 
   if (window.location.hostname === LOCALHOST_HOSTNAME) {
     mixpanel.disable();
@@ -32,6 +44,19 @@ export function initializeMixpanel() {
   }
 }
 
+export function initializeClarity() {
+  if (!import.meta.env.VITE_CLARITY_PROJECT_ID) {
+    console.warn('Clarity 환경변수 설정이 안 되어 있습니다.');
+    return;
+  }
+
+  if (import.meta.env.DEV) {
+    return;
+  }
+
+  Clarity.init(import.meta.env.VITE_CLARITY_PROJECT_ID);
+}
+
 export function initializeChannelService() {
   ChannelService.loadScript();
   if (import.meta.env.VITE_CHANNEL_PLUGIN_KEY) {
@@ -42,7 +67,17 @@ export function initializeChannelService() {
 }
 
 export function initializeSentry() {
-  if (import.meta.env.NODE_ENV === 'development') {
+  const enableInDev = import.meta.env.VITE_ENABLE_SENTRY_IN_DEV === 'true';
+
+  if (import.meta.env.DEV && !enableInDev) {
+    console.log(
+      'Sentry는 개발 환경에서 비활성화되어 있습니다. 테스트하려면 VITE_ENABLE_SENTRY_IN_DEV=true로 설정하세요.',
+    );
+    return;
+  }
+
+  if (!import.meta.env.VITE_SENTRY_DSN) {
+    console.warn('Sentry DSN이 설정되지 않았습니다.');
     return;
   }
 
@@ -50,25 +85,21 @@ export function initializeSentry() {
     dsn: import.meta.env.VITE_SENTRY_DSN,
     sendDefaultPii: false,
     release: import.meta.env.VITE_SENTRY_RELEASE,
-    tracesSampleRate: 0.1,
-    integrations: [Sentry.browserTracingIntegration()],
+    // Developer 플랜 spans 5M/월 대비 1.0에서도 월 약 460K(2026-10 기준)라 전량 수집한다.
+    tracesSampleRate: 1.0,
+    environment: getSentryEnvironment(window.location.hostname),
+    // 트랜잭션 이름을 실제 URL이 아니라 라우트 패턴(/clubDetail/:clubId)으로 묶는다.
+    integrations: [
+      Sentry.reactRouterV7BrowserTracingIntegration({
+        useEffect,
+        useLocation: useDecodedLocation,
+        useNavigationType,
+        createRoutesFromChildren,
+        matchRoutes: matchRoutesByOriginal,
+      }),
+    ],
   });
-}
 
-export function initializeKakaoSDK() {
-  if (!import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY) {
-    console.warn('환경변수가 설정되어 있지 않습니다.');
-    return;
-  }
-
-  if (!window.Kakao) {
-    console.error('카카오 SDK가 로드되지 않았습니다.');
-    return;
-  }
-
-  try {
-    window.Kakao.init(`${import.meta.env.VITE_KAKAO_JAVASCRIPT_KEY}`);
-  } catch (error) {
-    console.error('카카오 SDK 초기화에 실패했습니다:', error);
-  }
+  // 웹뷰 진입(/webview/main)은 곧바로 /로 redirect되므로 라우트 이름만으로는 웹과 구분할 수 없다.
+  Sentry.setTag('webview', isInAppWebView());
 }

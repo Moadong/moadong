@@ -1,6 +1,11 @@
-import Morebutton from '@/assets/images/icons/Morebutton.svg';
-import ApplicationMenu from '@/pages/AdminPage/tabs/ApplicationListTab/ApplicationMenu';
-import { ApplicationFormItem } from '@/types/application';
+import type { MouseEvent, RefObject } from 'react';
+import Morebutton from '@/assets/images/icons/ellipsis_icon.svg';
+import AdminMoreMenu from '@/pages/AdminPage/components/AdminMoreMenu/AdminMoreMenu';
+import MoreButton from '@/pages/AdminPage/components/MoreButton';
+import {
+  ApplicationFormItem,
+  ApplicationFormStatus,
+} from '@/types/application';
 import { formatRelativeDateTime } from '@/utils/formatRelativeDateTime';
 import * as Styled from './ApplicationRowItem.style';
 
@@ -9,10 +14,11 @@ interface ApplicationRowItemProps {
   isActive: boolean;
   uniqueKeyPrefix: string;
   openMenuId: string | null;
-  menuRef: React.RefObject<HTMLDivElement | null>;
-  onToggleStatus: (id: string, status: string) => void;
+  menuRef: RefObject<HTMLDivElement | null>;
+  onToggleStatus: (id: string, status: ApplicationFormStatus) => void;
+  onNavigate: (id: string) => void;
   onEdit: (id: string) => void;
-  onMenuToggle: (e: React.MouseEvent, id: string, prefix: string) => void;
+  onMenuToggle: (e: MouseEvent, id: string, prefix: string) => void;
   onDelete: (id: string) => void;
   onDuplicate: (id: string) => void;
   className?: string;
@@ -25,6 +31,7 @@ const ApplicationRowItem = ({
   openMenuId,
   menuRef,
   onToggleStatus,
+  onNavigate,
   onEdit,
   onMenuToggle,
   onDelete,
@@ -38,7 +45,7 @@ const ApplicationRowItem = ({
     <Styled.ApplicationRow className={className} key={application.id}>
       <Styled.ApplicationTitle
         $active={isActive}
-        onClick={() => onEdit(application.id)}
+        onClick={() => onNavigate(application.id)}
       >
         {application.title}
       </Styled.ApplicationTitle>
@@ -49,20 +56,21 @@ const ApplicationRowItem = ({
         </Styled.ApplicationDate>
 
         <Styled.MoreButtonContainer ref={isMenuOpen ? menuRef : null}>
-          <Styled.MoreButton
+          <MoreButton
             onClick={(e) => onMenuToggle(e, application.id, uniqueKeyPrefix)}
           >
             <Styled.MoreButtonIcon src={Morebutton} />
-          </Styled.MoreButton>
+          </MoreButton>
 
           {isMenuOpen && (
-            <ApplicationMenu
+            <AdminMoreMenu
               isActive={isActive}
+              onEdit={() => onEdit(application.id)}
               onDelete={() => onDelete(application.id)}
+              onDuplicate={() => onDuplicate(application.id)}
               onToggleStatus={() =>
                 onToggleStatus(application.id, application.status)
               }
-              onDuplicate={() => onDuplicate(application.id)}
             />
           )}
         </Styled.MoreButtonContainer>

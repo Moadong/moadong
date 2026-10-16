@@ -1,9 +1,11 @@
 import AllClubsDesktopImage from '@/assets/images/banners/banner_desktop1.png';
 import StartNowDesktopImage from '@/assets/images/banners/banner_desktop2.png';
 import AppReleaseDesktopImage from '@/assets/images/banners/banner_desktop4.png';
+import ClubFairDesktopImage from '@/assets/images/banners/banner_desktop5.png';
 import AllClubsMobileImage from '@/assets/images/banners/banner_mobile1.png';
 import StartNowMobileImage from '@/assets/images/banners/banner_mobile2.png';
 import AppReleaseMobileImage from '@/assets/images/banners/banner_mobile4.png';
+import ClubFairMobileImage from '@/assets/images/banners/banner_mobile5.png';
 
 interface BannerItem {
   id: string;
@@ -14,13 +16,6 @@ interface BannerItem {
 }
 
 const BANNERS: BannerItem[] = [
-  {
-    id: 'app-release-december-2025',
-    desktopImage: AppReleaseDesktopImage,
-    mobileImage: AppReleaseMobileImage,
-    linkTo: 'APP_STORE_LINK',
-    alt: '앱 다운로드 배너',
-  },
   {
     id: 'all-clubs-in-one-place',
     desktopImage: AllClubsDesktopImage,
@@ -34,6 +29,13 @@ const BANNERS: BannerItem[] = [
     mobileImage: StartNowMobileImage,
     linkTo: '/introduce',
     alt: '지금 바로 모아동에서 시작하세요',
+  },
+  {
+    id: 'app-release-december-2025',
+    desktopImage: AppReleaseDesktopImage,
+    mobileImage: AppReleaseMobileImage,
+    linkTo: 'APP_STORE_LINK',
+    alt: '앱 다운로드 배너',
   },
 ];
 

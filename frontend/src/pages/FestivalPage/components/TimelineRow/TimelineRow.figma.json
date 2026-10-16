@@ -1,0 +1,12 @@
+{
+  "TimelineRow/Past": {
+    "figma": "https://www.figma.com/design/LB4VudDhuIGjFayrm1kge1/모아동?node-id=8790-9728",
+    "story": "pages-festivalpage-components-timelinerow--past",
+    "args": {}
+  },
+  "TimelineRow/Active": {
+    "figma": "https://www.figma.com/design/LB4VudDhuIGjFayrm1kge1/모아동?node-id=8790-9738",
+    "story": "pages-festivalpage-components-timelinerow--active",
+    "args": {}
+  }
+}

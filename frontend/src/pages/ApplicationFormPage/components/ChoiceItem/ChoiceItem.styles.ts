@@ -1,7 +1,9 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 
 export const ItemWrapper = styled.div`
   flex: 1;
+  max-width: 60%;
   height: 45px;
   padding: 12px 18px;
   border: none;
@@ -18,6 +20,10 @@ export const ItemWrapper = styled.div`
   transition:
     background-color 0.2s,
     border-color 0.2s;
+
+  ${media.tablet} {
+    max-width: 100%;
+  }
 `;
 
 export const Label = styled.span`

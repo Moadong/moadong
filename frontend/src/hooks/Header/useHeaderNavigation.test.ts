@@ -188,6 +188,32 @@ describe('useHeaderNavigation 테스트', () => {
     });
   });
 
+  describe('홍보 게시판 버튼 클릭 테스트', () => {
+    it('홍보 게시판 버튼 클릭 시 홍보 페이지로 이동한다', () => {
+      // Given
+      const { result } = renderHook(() => useHeaderNavigation());
+
+      // When
+      result.current.handlePromotionClick();
+
+      // Then
+      expect(mockNavigate).toHaveBeenCalledWith('/promotions');
+    });
+
+    it('홍보 게시판 버튼 클릭 시 Mixpanel 이벤트를 전송한다', () => {
+      // Given
+      const { result } = renderHook(() => useHeaderNavigation());
+
+      // When
+      result.current.handlePromotionClick();
+
+      // Then
+      expect(mockTrackEvent).toHaveBeenCalledWith(
+        USER_EVENT.PROMOTION_BUTTON_CLICKED,
+      );
+    });
+  });
+
   describe('관리자 버튼 클릭 테스트', () => {
     it('관리자 버튼 클릭 시 관리자 페이지로 이동한다', () => {
       // Given
@@ -223,6 +249,7 @@ describe('useHeaderNavigation 테스트', () => {
       expect(result.current).toHaveProperty('handleHomeClick');
       expect(result.current).toHaveProperty('handleIntroduceClick');
       expect(result.current).toHaveProperty('handleClubUnionClick');
+      expect(result.current).toHaveProperty('handlePromotionClick');
       expect(result.current).toHaveProperty('handleAdminClick');
     });
 
@@ -234,6 +261,7 @@ describe('useHeaderNavigation 테스트', () => {
       expect(typeof result.current.handleHomeClick).toBe('function');
       expect(typeof result.current.handleIntroduceClick).toBe('function');
       expect(typeof result.current.handleClubUnionClick).toBe('function');
+      expect(typeof result.current.handlePromotionClick).toBe('function');
       expect(typeof result.current.handleAdminClick).toBe('function');
     });
   });
@@ -246,13 +274,15 @@ describe('useHeaderNavigation 테스트', () => {
       // When
       result.current.handleHomeClick();
       result.current.handleIntroduceClick();
+      result.current.handlePromotionClick();
       result.current.handleAdminClick();
 
       // Then
-      expect(mockNavigate).toHaveBeenCalledTimes(3);
+      expect(mockNavigate).toHaveBeenCalledTimes(4);
       expect(mockNavigate).toHaveBeenNthCalledWith(1, '/');
       expect(mockNavigate).toHaveBeenNthCalledWith(2, '/introduce');
-      expect(mockNavigate).toHaveBeenNthCalledWith(3, '/admin');
+      expect(mockNavigate).toHaveBeenNthCalledWith(3, '/promotions');
+      expect(mockNavigate).toHaveBeenNthCalledWith(4, '/admin');
     });
 
     it('모든 네비게이션 액션이 Mixpanel 이벤트를 트리거한다', () => {
@@ -263,10 +293,11 @@ describe('useHeaderNavigation 테스트', () => {
       result.current.handleHomeClick();
       result.current.handleIntroduceClick();
       result.current.handleClubUnionClick();
+      result.current.handlePromotionClick();
       result.current.handleAdminClick();
 
       // Then
-      expect(mockTrackEvent).toHaveBeenCalledTimes(4);
+      expect(mockTrackEvent).toHaveBeenCalledTimes(5);
     });
   });
 });

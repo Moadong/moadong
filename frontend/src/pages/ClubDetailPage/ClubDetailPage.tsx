@@ -1,48 +1,166 @@
-import { useCallback, useRef } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
+import MapModal from '@/components/map/MapModal/MapModal';
+import NaverMap from '@/components/map/NaverMap/NaverMap';
+import { clubLocations } from '@/constants/clubLocation';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
+import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import { useGetClubDetail } from '@/hooks/Queries/useClub';
+import {
+  useGetClubCalendarEvents,
+  useGetClubDetail,
+} from '@/hooks/Queries/useClub';
 import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import useDevice from '@/hooks/useDevice';
+import { countClubView } from '@/hooks/useSatisfactionSurvey';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
+import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
+import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
-import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
+import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 
 export const TAB_TYPE = {
   INTRO: 'intro',
   PHOTOS: 'photos',
+  SCHEDULE: 'schedule',
 } as const;
 
 type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
-// 소개내용/활동사진 탭 클릭 시 스크롤이 탑바 하단에 정확히 위치하도록 하는 높이 값
+// 탭 클릭 시 스크롤이 탑바 하단에 정확히 위치하도록 하는 높이 값
 const TOP_BAR_HEIGHT = 50;
+// 인라인 탭이 TopBar 뒤로 가려지는 시점을 감지하는 IntersectionObserver rootMargin 값 (TopBarContent 60px + 하단 여백)
+const TOP_BAR_RENDERED_HEIGHT = 73;
 
 const ClubDetailPage = () => {
+  const location = useLocation();
   const trackEvent = useMixpanelTrack();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab') as TabType | null;
 
-  const activeTab: TabType =
-    tabParam && Object.values(TAB_TYPE).includes(tabParam)
-      ? tabParam
-      : TAB_TYPE.INTRO;
-
-  const { clubId } = useParams<{ clubId: string }>();
-  const { isMobile, isTablet, isLaptop, isDesktop } = useDevice();
+  const { clubId, clubName } = useParams<{
+    clubId: string;
+    clubName: string;
+  }>();
+  const { isMobile, isTablet } = useDevice();
   const showTopBar = isMobile || isTablet;
 
-  const { data: clubDetail, error } = useGetClubDetail(clubId || '');
+  const { data: clubDetail, error } = useGetClubDetail(
+    (clubName ?? clubId) || '',
+  );
 
-  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
+  const hasCalendarConnection = clubDetail?.hasCalendarConnection ?? false;
+
+  const activeTab: TabType = useMemo(() => {
+    if (!tabParam || !Object.values(TAB_TYPE).includes(tabParam)) {
+      return TAB_TYPE.INTRO;
+    }
+    return tabParam;
+  }, [tabParam]);
+
+  const { data: calendarEvents = [], isLoading: isCalendarLoading } =
+    useGetClubCalendarEvents((clubName ?? clubId) || '', {
+      enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE,
+    });
+
+  const tabs = useMemo(
+    () => [
+      { key: TAB_TYPE.INTRO, label: '소개내용' },
+      { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+      { key: TAB_TYPE.SCHEDULE, label: '행사일정' },
+    ],
+    [],
+  );
+
+  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, {
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    recruitmentStatus: clubDetail?.recruitmentStatus,
+    skip: !clubDetail,
+  });
+  useTrackClubDetailDuration({
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
+
+  // 만족도 모달 노출 조건. 같은 동아리를 다시 렌더해도 한 번만 센다.
+  const countedClubIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    const clubId = clubDetail?.id;
+    if (!clubId || countedClubIdRef.current === clubId) return;
+
+    countedClubIdRef.current = clubId;
+    countClubView();
+  }, [clubDetail?.id]);
+
+  useEffect(() => {
+    if (clubDetail?.id && !error)
+      registerClubDetailVisit(clubDetail.id, location.pathname);
+  }, [clubDetail?.id, error, location.pathname]);
+
+  /**
+   * 일정 탭에 실제로 도달했을 때 볼 일정이 있었는지 남긴다.
+   * 탭 클릭뿐 아니라 `?tab=schedule` 딥링크 진입도 포함해야 해서 탭 클릭 이벤트와 별개로 둔다.
+   */
+  const scheduleViewedClubIdRef = useRef<string | null>(null);
+  useEffect(() => {
+    const viewedClubId = clubDetail?.id;
+    if (activeTab !== TAB_TYPE.SCHEDULE || !viewedClubId || isCalendarLoading) {
+      return;
+    }
+    if (scheduleViewedClubIdRef.current === viewedClubId) return;
+
+    scheduleViewedClubIdRef.current = viewedClubId;
+    trackEvent(USER_EVENT.CLUB_SCHEDULE_CALENDAR_VIEWED, {
+      club_id: viewedClubId,
+      club_name: clubDetail?.name,
+      event_count: calendarEvents.length,
+      has_calendar_connection: hasCalendarConnection,
+    });
+  }, [
+    activeTab,
+    clubDetail?.id,
+    clubDetail?.name,
+    isCalendarLoading,
+    calendarEvents.length,
+    hasCalendarConnection,
+    trackEvent,
+  ]);
+
+  const [showStickyTabs, setShowStickyTabs] = useState(false);
+  const [inlineTabsEl, setInlineTabsEl] = useState<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!showTopBar || !inlineTabsEl) return;
+
+    // top < TOP_BAR_RENDERED_HEIGHT: viewport가 좁아 탭이 아래에 있는 경우를 제외하고 sticky 활성화
+    const observer = new IntersectionObserver(
+      ([entry]) => {
+        if (
+          !entry.isIntersecting &&
+          entry.boundingClientRect.top < TOP_BAR_RENDERED_HEIGHT
+        ) {
+          setShowStickyTabs(true);
+        } else {
+          setShowStickyTabs(false);
+        }
+      },
+      { rootMargin: `-${TOP_BAR_RENDERED_HEIGHT}px 0px 0px 0px`, threshold: 1 },
+    );
+    observer.observe(inlineTabsEl);
+    return () => observer.disconnect();
+  }, [showTopBar, inlineTabsEl]);
 
   const contentRef = useRef<HTMLDivElement>(null);
   const { scrollToElement } = useScrollTo();
@@ -54,14 +172,20 @@ const ClubDetailPage = () => {
   const handleTabClick = useCallback(
     (tabKey: TabType) => {
       setSearchParams({ tab: tabKey }, { replace: true });
-      trackEvent(
-        tabKey === TAB_TYPE.INTRO
-          ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
-          : USER_EVENT.CLUB_FEED_TAB_CLICKED,
-      );
+      trackEvent(USER_EVENT.CLUB_DETAIL_TAB_CLICKED, {
+        tab: tabKey,
+        club_id: clubDetail?.id,
+        club_name: clubDetail?.name,
+      });
     },
-    [setSearchParams, trackEvent],
+    [setSearchParams, trackEvent, clubDetail?.id, clubDetail?.name],
   );
+
+  const clubLocation = clubLocations.find(
+    (loc) => loc.clubName === clubDetail?.name,
+  );
+
+  const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   if (error) {
     return <div>동아리 정보를 불러오는데 실패했습니다.</div>;
@@ -76,46 +200,74 @@ const ClubDetailPage = () => {
       <Header hideOn={['mobile', 'tablet']} />
       {showTopBar && (
         <ClubDetailTopBar
-          clubId={clubId || ''}
+          clubId={clubDetail.id}
           clubName={clubDetail.name}
-          tabs={[
-            { key: TAB_TYPE.INTRO, label: '소개내용' },
-            { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-          ]}
+          tabs={tabs}
           activeTab={activeTab}
           onTabClick={(tabKey) => {
             handleTabClick(tabKey as TabType);
             scrollToContent();
           }}
           initialIsSubscribed={searchParams.get('is_subscribed') === 'true'}
+          showTabs={showStickyTabs}
         />
       )}
       <Styled.Container>
         <Styled.ContentWrapper>
-          <ClubProfileCard
-            name={clubDetail.name}
-            logo={clubDetail.logo}
-            cover={clubDetail.cover}
-            recruitmentStatus={clubDetail.recruitmentStatus}
-            socialLinks={clubDetail.socialLinks}
-            introDescription={clubDetail.description.introDescription}
-          />
+          <Styled.LeftSection>
+            <ClubProfileCard
+              clubId={clubDetail.id}
+              name={clubDetail.name}
+              logo={clubDetail.logo}
+              cover={clubDetail.cover}
+              category={clubDetail.category}
+              recruitmentStatus={clubDetail.recruitmentStatus}
+              socialLinks={clubDetail.socialLinks}
+              introDescription={clubDetail.description.introDescription}
+              location={clubLocation}
+              onMapClick={() => {
+                setIsMapModalOpen(true);
+                trackEvent(USER_EVENT.CLUB_MAP_CLICKED, {
+                  club_id: clubDetail.id,
+                  club_name: clubDetail.name,
+                });
+              }}
+            />
+            {clubLocation && (
+              <Styled.MapInfo>
+                <Styled.MapCard
+                  onClick={() => {
+                    setIsMapModalOpen(true);
+                    trackEvent(USER_EVENT.CLUB_MAP_CLICKED, {
+                      club_id: clubDetail.id,
+                      club_name: clubDetail.name,
+                    });
+                  }}
+                >
+                  <NaverMap location={clubLocation} />
+                </Styled.MapCard>
+
+                <Styled.MapDetailText>
+                  <LocationIcon />
+                  동아리방 위치 {clubLocation.building}{' '}
+                  {clubLocation.detailLocation}
+                </Styled.MapDetailText>
+              </Styled.MapInfo>
+            )}
+          </Styled.LeftSection>
 
           <Styled.RightSection ref={contentRef}>
-            <Styled.TabList>
-              <Styled.TabButton
-                $active={activeTab === TAB_TYPE.INTRO}
-                onClick={() => handleTabClick(TAB_TYPE.INTRO)}
-              >
-                소개 내용
-              </Styled.TabButton>
-              <Styled.TabButton
-                $active={activeTab === TAB_TYPE.PHOTOS}
-                onClick={() => handleTabClick(TAB_TYPE.PHOTOS)}
-              >
-                활동사진
-              </Styled.TabButton>
-            </Styled.TabList>
+            <Styled.InlineTabsWrapper
+              ref={setInlineTabsEl}
+              $hidden={showTopBar && showStickyTabs}
+            >
+              <UnderlineTabs
+                tabs={tabs}
+                activeKey={activeTab}
+                onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
+                centerOnMobile
+              />
+            </Styled.InlineTabsWrapper>
 
             <Styled.TabContent>
               <div
@@ -123,7 +275,10 @@ const ClubDetailPage = () => {
                   display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none',
                 }}
               >
-                <ClubIntroContent {...clubDetail.description} />
+                <ClubIntroContent
+                  {...clubDetail.description}
+                  clubId={clubDetail.id}
+                />
               </div>
               <div
                 style={{
@@ -132,16 +287,33 @@ const ClubDetailPage = () => {
               >
                 <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
               </div>
+              <div
+                style={{
+                  display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
+                }}
+              >
+                <ClubScheduleCalendar
+                  key={clubId ?? clubName}
+                  events={calendarEvents}
+                  isLoading={isCalendarLoading}
+                  clubId={clubDetail.id}
+                />
+              </div>
             </Styled.TabContent>
           </Styled.RightSection>
         </Styled.ContentWrapper>
       </Styled.Container>
-      <Footer />
-      <ClubDetailFooter
-        recruitmentStart={clubDetail.recruitmentStart}
-        recruitmentEnd={clubDetail.recruitmentEnd}
-        recruitmentStatus={clubDetail.recruitmentStatus}
-      />
+      {clubLocation && (
+        <MapModal
+          isOpen={isMapModalOpen}
+          onClose={() => setIsMapModalOpen(false)}
+          clubName={clubDetail.name}
+          clubLogo={clubDetail.logo}
+          location={clubLocation}
+        />
+      )}
+      {isInAppWebView() ? <Styled.AppSpacer /> : <Footer />}
+      <ClubApplyButton />
     </>
   );
 };

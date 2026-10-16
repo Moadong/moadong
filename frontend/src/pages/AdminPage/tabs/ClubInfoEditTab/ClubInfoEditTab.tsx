@@ -1,144 +1,79 @@
-import { useEffect, useState } from 'react';
-import { useOutletContext } from 'react-router-dom';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
-import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import {
+  CLUB_INTRODUCTION_MAX,
+  CLUB_NAME_MAX,
+} from '@/constants/adminFieldLimits';
+import {
+  CLUB_INTRODUCTION_PLACEHOLDER,
+  CLUB_NAME_PLACEHOLDER,
+} from '@/constants/adminFieldPlaceholders';
+import { ADMIN_EVENT, INPUT_FIELD } from '@/constants/eventName';
 import { SNS_CONFIG } from '@/constants/snsConfig';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
-import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import { useUpdateClubDetail } from '@/hooks/Queries/useClub';
+import useDevice from '@/hooks/useDevice';
 import ClubCoverEditor from '@/pages/AdminPage/components/ClubCoverEditor/ClubCoverEditor';
 import ClubLogoEditor from '@/pages/AdminPage/components/ClubLogoEditor/ClubLogoEditor';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/MakeTags/MakeTags';
-import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/SelectTags/SelectTags';
-import { TAG_COLORS } from '@/styles/clubTags';
-import { ClubDetail, SNSPlatform } from '@/types/club';
-import { validateSocialLink } from '@/utils/validateSocialLink';
+import ClubInfoEditTabMobile from '@/pages/AdminPage/tabs/ClubInfoEditTab/ClubInfoEditTabMobile';
+import MakeTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/desktop/MakeTags/MakeTags';
+import SelectTags from '@/pages/AdminPage/tabs/ClubInfoEditTab/components/desktop/SelectTags/SelectTags';
+import { SNSPlatform } from '@/types/club';
 import * as Styled from './ClubInfoEditTab.styles';
-
-const DIVISION_LABELS: Record<string, string> = {
-  중동: '중앙동아리',
-  과동: '과동아리',
-};
-
-const divisions = [
-  {
-    value: '중동',
-    label: DIVISION_LABELS['중동'],
-    color: TAG_COLORS['중동'],
-  },
-  {
-    value: '과동',
-    label: DIVISION_LABELS['과동'],
-    color: TAG_COLORS['과동'],
-  },
-];
-
-const categories = [
-  { value: '봉사', label: '봉사', color: TAG_COLORS['봉사'] },
-  { value: '종교', label: '종교', color: TAG_COLORS['종교'] },
-  { value: '취미교양', label: '취미교양', color: TAG_COLORS['취미교양'] },
-  { value: '학술', label: '학술', color: TAG_COLORS['학술'] },
-  { value: '운동', label: '운동', color: TAG_COLORS['운동'] },
-  { value: '공연', label: '공연', color: TAG_COLORS['공연'] },
-];
+import useClubInfoEdit, {
+  categories,
+  divisions,
+} from './hooks/useClubInfoEdit';
 
 const ClubInfoEditTab = () => {
+  const { isMobile, isTablet } = useDevice();
   const trackEvent = useMixpanelTrack();
-  useTrackPageView(PAGE_VIEW.CLUB_INFO_EDIT_PAGE);
+  const {
+    clubDetail,
+    clubName,
+    setClubName,
+    introduction,
+    setIntroduction,
+    selectedDivision,
+    setSelectedDivision,
+    selectedCategory,
+    setSelectedCategory,
+    clubTags,
+    setClubTags,
+    socialLinks,
+    setSocialLinks,
+    snsErrors,
+    setSnsErrors,
+    handleSocialLinkChange,
+    handleUpdateClub,
+    handleUpdateClubWithLinks,
+    handleUpdateClubWithTags,
+    isDirty,
+  } = useClubInfoEdit();
 
-  const clubDetail = useOutletContext<ClubDetail | null>();
-  const { mutate: updateClub } = useUpdateClubDetail();
-
-  const [clubName, setClubName] = useState('');
-  const [clubPresidentName, setClubPresidentName] = useState('');
-  const [telephoneNumber, setTelephoneNumber] = useState('');
-  const [introduction, setIntroduction] = useState('');
-  const [selectedDivision, setSelectedDivision] = useState<string>('');
-  const [selectedCategory, setSelectedCategory] = useState<string>('');
-  const [clubTags, setClubTags] = useState<string[]>(() => ['', '']);
-  const [socialLinks, setSocialLinks] = useState<Record<SNSPlatform, string>>({
-    instagram: '',
-    youtube: '',
-    x: '',
-  });
-
-  const [snsErrors, setSnsErrors] = useState<Record<SNSPlatform, string>>({
-    instagram: '',
-    youtube: '',
-    x: '',
-  });
-
-  useEffect(() => {
-    if (clubDetail) {
-      setClubName(clubDetail.name);
-      setClubPresidentName(clubDetail.presidentName);
-      setTelephoneNumber(clubDetail.presidentPhoneNumber);
-      setIntroduction(clubDetail.introduction);
-      setSelectedDivision(clubDetail.division);
-      setSelectedCategory(clubDetail.category);
-      setClubTags(
-        clubDetail.tags.length >= 2
-          ? clubDetail.tags
-          : [...clubDetail.tags, ''],
-      );
-    }
-    if (clubDetail?.socialLinks) {
-      setSocialLinks({
-        instagram: clubDetail.socialLinks.instagram || '',
-        youtube: clubDetail.socialLinks.youtube || '',
-        x: clubDetail.socialLinks.x || '',
-      });
-    }
-  }, [clubDetail]);
-
-  const handleSocialLinkChange = (key: SNSPlatform, value: string) => {
-    const errorMsg = validateSocialLink(key, value);
-    setSnsErrors((prev) => ({ ...prev, [key]: errorMsg }));
-    setSocialLinks((prev) => ({ ...prev, [key]: value }));
-  };
-
-  const handleUpdateClub = () => {
-    trackEvent(ADMIN_EVENT.UPDATE_CLUB_BUTTON_CLICKED);
-
-    if (!clubDetail || !clubDetail.id) {
-      alert('클럽 정보가 로드되지 않았습니다.');
-      console.error(
-        '[ERROR] clubDetail or clubDetail.id is undefined:',
-        clubDetail,
-      );
-      return;
-    }
-
-    const hasSnsErrors = Object.values(snsErrors).some((error) => error !== '');
-    if (hasSnsErrors) {
-      alert('SNS 링크에 오류가 있어요. 수정 후 다시 시도해주세요!');
-      return;
-    }
-
-    const updatedData = {
-      id: clubDetail.id,
-      name: clubName,
-      category: selectedCategory,
-      division: selectedDivision,
-      tags: clubTags,
-      introduction: introduction,
-      presidentName: clubPresidentName,
-      presidentPhoneNumber: telephoneNumber,
-      socialLinks: socialLinks,
-      description: clubDetail.description,
-    };
-
-    updateClub(updatedData, {
-      onSuccess: () => {
-        alert('동아리 정보가 성공적으로 수정되었습니다.');
-      },
-      onError: (error) => {
-        alert(`동아리 정보 수정에 실패했습니다: ${error.message}`);
-      },
-    });
-  };
+  if (isMobile || isTablet) {
+    return (
+      <ClubInfoEditTabMobile
+        clubDetail={clubDetail}
+        clubName={clubName}
+        setClubName={setClubName}
+        introduction={introduction}
+        setIntroduction={setIntroduction}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+        clubTags={clubTags}
+        setClubTags={setClubTags}
+        socialLinks={socialLinks}
+        onSocialLinksChange={(links) =>
+          setSocialLinks((prev) => ({ ...prev, ...links }))
+        }
+        handleUpdateClub={handleUpdateClub}
+        handleUpdateClubWithLinks={handleUpdateClubWithLinks}
+        handleUpdateClubWithTags={handleUpdateClubWithTags}
+        isDirty={isDirty}
+      />
+    );
+  }
 
   return (
     <Styled.Container>
@@ -157,28 +92,32 @@ const ClubInfoEditTab = () => {
           <ClubCoverEditor coverImage={clubDetail?.cover} />
           <InputField
             label='동아리명'
-            placeholder='동아리명'
+            placeholder={CLUB_NAME_PLACEHOLDER}
             value={clubName}
             onChange={(e) => setClubName(e.target.value)}
             onClear={() => {
-              trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED);
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: INPUT_FIELD.CLUB_NAME,
+              });
               setClubName('');
             }}
             width='50%'
-            maxLength={20}
+            maxLength={CLUB_NAME_MAX}
             showMaxChar={true}
           />
 
           <InputField
             label='한줄소개'
-            placeholder='한줄소개를 입력해주세요'
+            placeholder={CLUB_INTRODUCTION_PLACEHOLDER}
             type='text'
-            maxLength={20}
+            maxLength={CLUB_INTRODUCTION_MAX}
             showMaxChar={true}
             value={introduction}
             onChange={(e) => setIntroduction(e.target.value)}
             onClear={() => {
-              trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED);
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: INPUT_FIELD.CLUB_INTRODUCTION,
+              });
               setIntroduction('');
             }}
           />
@@ -219,12 +158,10 @@ const ClubInfoEditTab = () => {
                       handleSocialLinkChange(key, e.target.value)
                     }
                     onClear={() => {
-                      trackEvent(
-                        ADMIN_EVENT.CLUB_SNS_LINK_CLEAR_BUTTON_CLICKED,
-                        {
-                          snsPlatform: label,
-                        },
-                      );
+                      trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                        field: INPUT_FIELD.CLUB_SNS_LINK,
+                        sns_platform: label,
+                      });
                       setSocialLinks((prev) => ({ ...prev, [key]: '' }));
                       setSnsErrors((prev) => ({ ...prev, [key]: '' }));
                     }}

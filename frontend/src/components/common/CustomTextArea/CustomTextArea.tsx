@@ -1,5 +1,5 @@
-import { useEffect, useRef } from 'react';
 import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
+import useAutoGrow from '@/hooks/useAutoGrow';
 import * as Styled from './CustomTextArea.styles';
 
 //Todo : InputField 컴포넌트와 중복되는 부분이 많아 추후 리팩토링 검토
@@ -35,18 +35,7 @@ const CustomTextArea = ({
   isError,
   helperText,
 }: CustomTextAreaProps) => {
-  const textAreaRef = useRef<HTMLTextAreaElement>(null);
-
-  useEffect(() => {
-    if (disabled) {
-      return;
-    }
-    const el = textAreaRef.current;
-    if (el) {
-      el.style.height = 'auto'; // 초기화
-      el.style.height = `${el.scrollHeight}px`;
-    }
-  }, [value]);
+  const textAreaRef = useAutoGrow(disabled ? '' : value);
 
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const inputValue = e.target.value;

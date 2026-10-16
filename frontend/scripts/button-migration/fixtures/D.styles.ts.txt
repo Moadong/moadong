@@ -1,0 +1,60 @@
+import { motion } from 'framer-motion';
+import styled from 'styled-components';
+import Button from '@/components/common/Button/Button';
+import { colors } from '@/styles/theme/colors';
+import { Primary } from './A.styles';
+import * as AStyles from './A.styles';
+import DefaultAlias from './B.styles';
+import Card from './Card';
+
+const BaseButton = styled.button`
+  height: 40px;
+`;
+
+const Box = styled.div`
+  height: 10px;
+`;
+
+export const PrimaryButton = styled(BaseButton)`
+  background: ${colors.gray[900]};
+`;
+
+export const Share = styled(Button)`
+  border-radius: 16px;
+`;
+
+export const StudentToggle = styled(Share)`
+  height: 56px;
+`;
+
+export const LayoutOnly = styled(Share)`
+  margin-top: 12px;
+`;
+
+export const Clear = styled(Primary)`
+  color: ${colors.base.white};
+`;
+
+export const NsDerived = styled(AStyles.Toggle)`
+  height: 30px;
+`;
+
+export const DefaultDerived = styled(DefaultAlias)`
+  height: 50px;
+`;
+
+export const Chained = styled(PrimaryButton)`
+  height: 44px;
+`;
+
+export const Intro = styled(motion.button)`
+  height: 48px;
+`;
+
+export const WrappedCard = styled(Card)`
+  height: 60px;
+`;
+
+export const Tagged = styled(Box)`
+  height: 12px;
+`;

@@ -2,10 +2,12 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { feedApi, logoApi, uploadToStorage } from '@/apis/image';
 import { queryKeys } from '@/constants/queryKeys';
 
+type ItemStatus = 'pending' | 'uploading' | 'failed';
+
 interface FeedUploadParams {
   clubId: string;
   files: File[];
-  existingUrls: string[];
+  onItemStatusChange?: (file: File, status: ItemStatus) => void;
 }
 
 interface FeedUpdateParams {
@@ -19,14 +21,18 @@ interface LogoUploadParams {
 }
 
 export const useUploadFeed = () => {
-  const queryClient = useQueryClient();
-
   return useMutation({
-    mutationFn: async ({ clubId, files, existingUrls }: FeedUploadParams) => {
+    mutationFn: async ({
+      clubId,
+      files,
+      onItemStatusChange,
+    }: FeedUploadParams) => {
       // 1. presigned URL 요청
+      // presign에 실은 값과 PUT의 Content-Type이 어긋나면 서명이 깨져 R2가 403을 낸다.
+      // uploadToStorage가 file.type || 'image/jpeg'를 보내므로 같은 식을 쓴다.
       const uploadRequests = files.map((file) => ({
         fileName: file.name,
-        contentType: file.type,
+        contentType: file.type || 'image/jpeg',
       }));
       const feedResArr = await feedApi.getUploadUrls(clubId, uploadRequests);
 
@@ -35,44 +41,45 @@ export const useUploadFeed = () => {
       }
 
       // 2. r2에 병렬 업로드 (개별 성공/실패 추적)
+      // presigned URL 생성 자체가 실패한 항목은 업로드 건너뜀
+      // 서버가 개수 제한에 걸리면 요청보다 짧은 배열을 돌려준다.
+      // 인덱스로 매칭하므로 없는 항목도 실패로 처리해야 뒤 파일에서 터지지 않는다.
       const uploadResults = await Promise.allSettled(
-        files.map((file, i) =>
-          uploadToStorage(feedResArr[i].presignedUrl, file),
-        ),
+        files.map((file, i) => {
+          const res = feedResArr[i];
+          if (!res?.success || !res.presignedUrl || !res.finalUrl) {
+            return Promise.reject(
+              new Error(res?.failureReason ?? 'presigned URL 생성 실패'),
+            );
+          }
+          return uploadToStorage(res.presignedUrl, file);
+        }),
       );
 
-      // 3. 성공한 파일만 추출
-      const successfulUrls: string[] = [];
+      // 3. 성공한 파일만 추출 (파일 -> 최종 URL 매핑)
+      const urlByFile = new Map<File, string>();
       const failedFiles: string[] = [];
 
       uploadResults.forEach((result, i) => {
-        if (result.status === 'fulfilled') {
-          successfulUrls.push(feedResArr[i].finalUrl);
+        const finalUrl = feedResArr[i]?.finalUrl;
+        if (result.status === 'fulfilled' && finalUrl) {
+          urlByFile.set(files[i], finalUrl);
         } else {
           failedFiles.push(files[i].name);
+          onItemStatusChange?.(files[i], 'failed');
         }
       });
 
       // 4. 성공한 파일이 없으면 에러
-      if (successfulUrls.length === 0) {
+      if (urlByFile.size === 0) {
         throw new Error('모든 파일 업로드에 실패했습니다.');
       }
 
-      // 5. 기존 URL과 성공한 URL만 합쳐서 전체 배열 생성
-      const allUrls = [...existingUrls, ...successfulUrls];
-
-      // 6. 서버에 전체 배열 PUT으로 갱신
-      await feedApi.updateFeeds(clubId, allUrls);
-
-      // 7. 실패한 파일 정보 반환
-      return { clubId, failedFiles };
+      // 5. 저장(updateFeeds)은 호출부가 한다.
+      // 화면 순서를 모르는 여기서 배열을 조립하면 새 사진이 항상 뒤로 밀린다.
+      return { failedFiles, urlByFile };
     },
 
-    onSuccess: (data) => {
-      queryClient.invalidateQueries({
-        queryKey: queryKeys.club.detail(data.clubId),
-      });
-    },
     onError: () => {
       console.error('Error uploading feed images');
     },

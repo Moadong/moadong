@@ -53,7 +53,8 @@ const meta = {
     },
     helperText: {
       control: 'text',
-      description: '하단에 표시되는 도움말 텍스트입니다 (에러 시 표시).',
+      description:
+        '하단에 표시되는 도움말 텍스트입니다 (에러 또는 성공 시 표시).',
     },
     showClearButton: {
       control: 'boolean',
@@ -143,6 +144,19 @@ export const ErrorState: Story = {
   },
   render: InputRender,
 };
+export const SuccessState: Story = {
+  args: {
+    label: '닉네임',
+    value: '사용 가능한 닉네임',
+    isSuccess: true,
+    helperText: '사용 가능한 닉네임입니다.',
+    width: '300px',
+    onChange: () => {},
+    onClear: () => {},
+  },
+  render: InputRender,
+};
+
 export const WithMaxLength: Story = {
   args: {
     label: '한줄 소개',

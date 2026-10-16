@@ -1,7 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 
-export const CategoryButtonContainer = styled.div`
+export const CategoryButtonContainer = styled.div<{ $sticky: boolean }>`
   display: flex;
   justify-content: space-between;
   flex-wrap: nowrap;
@@ -9,7 +9,7 @@ export const CategoryButtonContainer = styled.div`
 
   ${media.mobile} {
     background-color: white;
-    position: sticky;
+    position: ${({ $sticky }) => ($sticky ? 'sticky' : 'static')};
     top: 56px;
     z-index: 1;
 

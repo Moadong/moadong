@@ -1,5 +1,10 @@
 import { Award, SemesterTerm, SemesterTermType } from '@/types/club';
-import { formatSemesterLabel, getAwardKey } from './awardHelpers';
+import {
+  formatSemesterLabel,
+  generateSemesterOptions,
+  getAwardKey,
+  getAwardSortValue,
+} from './awardHelpers';
 
 describe('awardHelpers', () => {
   const createAward = (
@@ -12,9 +17,12 @@ describe('awardHelpers', () => {
     achievements,
   });
 
+  const currentYear = new Date().getFullYear();
+
   const validAward2024First = createAward(2024, SemesterTerm.FIRST);
   const validAward2024Second = createAward(2024, SemesterTerm.SECOND);
   const validAward2023First = createAward(2023, SemesterTerm.FIRST);
+  const validAward2023Second = createAward(2023, SemesterTerm.SECOND);
   const validAward2025Second = createAward(2025, SemesterTerm.SECOND);
 
   describe('formatSemesterLabel', () => {
@@ -94,6 +102,93 @@ describe('awardHelpers', () => {
 
     it('큰 인덱스 숫자를 올바르게 처리해야 한다', () => {
       expect(getAwardKey(validAward2024First, 999)).toBe('2024-FIRST-999');
+    });
+  });
+
+  describe('getAwardSortValue', () => {
+    it('1학기는 2학기보다 작은 값을 반환해야 한다', () => {
+      const first = getAwardSortValue(validAward2024First);
+      const second = getAwardSortValue(validAward2024Second);
+
+      expect(first).toBeLessThan(second);
+    });
+
+    it('연도가 클수록 더 큰 값을 반환해야 한다', () => {
+      const award2023 = getAwardSortValue(validAward2023First);
+      const award2024 = getAwardSortValue(validAward2024First);
+
+      expect(award2023).toBeLessThan(award2024);
+    });
+
+    it('이전 연도의 2학기보다 다음 연도의 1학기가 더 커야 한다', () => {
+      const prev2nd = getAwardSortValue(validAward2023Second);
+      const next1st = getAwardSortValue(validAward2024First);
+
+      expect(prev2nd).toBeLessThan(next1st);
+    });
+  });
+
+  describe('generateSemesterOptions', () => {
+    it('현재 연도 기준 -3년 ~ +1년 범위의 옵션을 반환해야 한다', () => {
+      const options = generateSemesterOptions([]);
+      const years = [...new Set(options.map((o) => o.year))];
+
+      expect(years).toEqual([
+        currentYear - 3,
+        currentYear - 2,
+        currentYear - 1,
+        currentYear,
+        currentYear + 1,
+      ]);
+    });
+
+    it('각 연도에 1학기와 2학기가 포함되어야 한다', () => {
+      const options = generateSemesterOptions([]);
+
+      expect(options).toHaveLength(10);
+      expect(
+        options.filter((o) => o.semesterTerm === SemesterTerm.FIRST),
+      ).toHaveLength(5);
+      expect(
+        options.filter((o) => o.semesterTerm === SemesterTerm.SECOND),
+      ).toHaveLength(5);
+    });
+
+    it('이미 존재하는 학기는 옵션에서 제외해야 한다', () => {
+      const options = generateSemesterOptions([validAward2024First]);
+
+      expect(
+        options.some(
+          (o) => o.year === 2024 && o.semesterTerm === SemesterTerm.FIRST,
+        ),
+      ).toBe(false);
+    });
+
+    it('여러 기존 수상이 있을 때 해당 학기들을 모두 제외해야 한다', () => {
+      const existing = [validAward2024First, validAward2024Second];
+      const options = generateSemesterOptions(existing);
+
+      expect(options.some((o) => o.year === 2024)).toBe(false);
+      expect(options).toHaveLength(8);
+    });
+
+    it('기존 수상이 없으면 전체 옵션을 반환해야 한다', () => {
+      const options = generateSemesterOptions([]);
+
+      expect(options).toHaveLength(10);
+    });
+
+    it('label 형식이 올바르게 생성되어야 한다', () => {
+      const options = generateSemesterOptions([]);
+      const first = options.find(
+        (o) => o.year === currentYear && o.semesterTerm === SemesterTerm.FIRST,
+      );
+      const second = options.find(
+        (o) => o.year === currentYear && o.semesterTerm === SemesterTerm.SECOND,
+      );
+
+      expect(first?.label).toBe(`${currentYear} 1학기`);
+      expect(second?.label).toBe(`${currentYear} 2학기`);
     });
   });
 });

@@ -1,183 +1,259 @@
 import { useEffect, useRef, useState } from 'react';
 import { useOutletContext } from 'react-router-dom';
-import { useQueryClient } from '@tanstack/react-query';
 import { setYear } from 'date-fns';
 import Button from '@/components/common/Button/Button';
 import InputField from '@/components/common/InputField/InputField';
+import Toast from '@/components/common/Toast/Toast';
+import ToggleButton from '@/components/common/ToggleButton/ToggleButton';
+import {
+  FAR_FUTURE_YEAR,
+  RECRUIT_TARGET_MAX,
+} from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { requestFeedbackPrompt } from '@/feedbackPrompt/feedbackPromptController';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
+import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
-import Calendar from '@/pages/AdminPage/tabs/RecruitEditTab/components/Calendar/Calendar';
 import { ClubDetail } from '@/types/club';
 import { recruitmentDateParser } from '@/utils/recruitmentDateParser';
+import DateTimeRangePicker from './components/DateTimeRangePicker/DateTimeRangePicker';
 import * as Styled from './RecruitEditTab.styles';
-
-const FAR_FUTURE_YEAR = 2999;
+import RecruitEditTabMobile from './RecruitEditTabMobile';
 
 const RecruitEditTab = () => {
+  const { isMobile, isTablet } = useDevice();
   const trackEvent = useMixpanelTrack();
   useTrackPageView(PAGE_VIEW.RECRUITMENT_INFO_EDIT_PAGE);
 
-  const queryClient = useQueryClient();
   const { mutate: updateClubDescription } = useUpdateClubDescription();
-
   const clubDetail = useOutletContext<ClubDetail>();
 
+  // 모집 정보 상태 관리
   const [recruitmentStart, setRecruitmentStart] = useState<Date | null>(null);
   const [recruitmentEnd, setRecruitmentEnd] = useState<Date | null>(null);
   const [recruitmentTarget, setRecruitmentTarget] = useState('');
+  const [isAlwaysRecruiting, setIsAlwaysRecruiting] = useState(false);
 
-  const [always, setAlways] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [isToastOpen, setIsToastOpen] = useState(false);
+
+  const [initialValues, setInitialValues] = useState<{
+    recruitmentStart: string | null;
+    recruitmentEnd: string | null;
+    recruitmentTarget: string;
+  } | null>(null);
+
+  const isDirty =
+    initialValues !== null &&
+    (recruitmentStart?.toISOString() !== initialValues.recruitmentStart ||
+      recruitmentEnd?.toISOString() !== initialValues.recruitmentEnd ||
+      recruitmentTarget !== initialValues.recruitmentTarget);
 
   const backupRangeRef = useRef<{ start: Date | null; end: Date | null }>({
     start: null,
     end: null,
   });
 
-  const isFarFuture = (date: Date | null) =>
-    !!date && date.getFullYear() === FAR_FUTURE_YEAR;
+  const isFarFuture = (date: Date | null) => {
+    return date?.getFullYear() === FAR_FUTURE_YEAR;
+  };
+
+  const handleStartChange = (newStart: Date | null) => {
+    setRecruitmentStart(newStart);
+    if (
+      !isAlwaysRecruiting &&
+      newStart &&
+      recruitmentEnd &&
+      newStart > recruitmentEnd
+    ) {
+      setRecruitmentEnd(newStart);
+    }
+  };
+
+  const handleEndChange = (newEnd: Date | null) => {
+    setRecruitmentEnd(newEnd);
+    if (newEnd && recruitmentStart && newEnd < recruitmentStart) {
+      setRecruitmentStart(newEnd);
+    }
+  };
 
   useEffect(() => {
-    if (!clubDetail) return;
+    if (!clubDetail || isDirty) return;
 
-    const now = new Date();
-    const start = clubDetail.recruitmentStart
+    const parsedStart = clubDetail.recruitmentStart
       ? recruitmentDateParser(clubDetail.recruitmentStart)
-      : null;
-    const end = clubDetail.recruitmentEnd
+      : new Date();
+    const parsedEnd = clubDetail.recruitmentEnd
       ? recruitmentDateParser(clubDetail.recruitmentEnd)
-      : null;
-    const isAlways = isFarFuture(end);
+      : new Date();
+    const isAlways = isFarFuture(parsedEnd);
 
-    if (isAlways) {
-      setAlways(true);
-      backupRangeRef.current = { start, end };
-      setRecruitmentStart(start ?? now);
-    } else {
-      setRecruitmentStart(start ?? now);
-      setRecruitmentEnd(end ?? now);
-    }
+    setIsAlwaysRecruiting(isAlways);
+    setRecruitmentStart(parsedStart);
+    setRecruitmentEnd(parsedEnd);
+    setRecruitmentTarget(clubDetail.recruitmentTarget || '');
 
-    setRecruitmentTarget((prev) => prev || clubDetail.recruitmentTarget || '');
+    if (isAlways)
+      backupRangeRef.current = { start: parsedStart, end: parsedEnd };
+
+    setInitialValues({
+      recruitmentStart: parsedStart?.toISOString() ?? null,
+      recruitmentEnd: parsedEnd?.toISOString() ?? null,
+      recruitmentTarget: clubDetail.recruitmentTarget || '',
+    });
+    // isDirty는 의도적으로 deps에서 제외 — clubDetail refetch 시점의 편집 상태만 확인하면 된다
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clubDetail]);
 
   useEffect(() => {
-    if (always && recruitmentStart) {
+    if (isAlwaysRecruiting && recruitmentStart) {
       setRecruitmentEnd(setYear(recruitmentStart, FAR_FUTURE_YEAR));
     }
-  }, [always, recruitmentStart]);
+  }, [isAlwaysRecruiting, recruitmentStart]);
 
-  const toggleAlways = () => {
-    trackEvent(ADMIN_EVENT.ALWAYS_RECRUIT_BUTTON_CLICKED);
-    setAlways((prev) => {
+  const toggleAlwaysRecruiting = () => {
+    trackEvent(ADMIN_EVENT.ALWAYS_OPEN_RECRUITMENT_BUTTON_CLICKED);
+
+    setIsAlwaysRecruiting((prevMode) => {
+      const nextMode = !prevMode;
       const now = new Date();
-
-      if (!prev) {
-        // 상시모집 활성화
+      if (nextMode) {
+        // 상시모집 활성화 시 현재 날짜 백업
         backupRangeRef.current = {
           start: recruitmentStart,
           end: recruitmentEnd,
         };
       } else {
-        // 상시모집 비활성화
-        const { start, end } = backupRangeRef.current;
-        const backupWasAlways = isFarFuture(end);
-        if (backupWasAlways) {
-          // 백업이 상시모집인 경우
-          const base = start ?? now;
-          setRecruitmentStart(base);
-          setRecruitmentEnd(base);
+        // 상시모집 비활성화 시 백업 데이터 복구
+        const backup = backupRangeRef.current;
+        const baseDate = backup.start || now;
+
+        setRecruitmentStart(baseDate);
+
+        if (isFarFuture(backup.end)) {
+          setRecruitmentEnd(baseDate);
         } else {
-          // 백업이 상시모집이 아닌 경우
-          setRecruitmentStart(start ?? now);
-          setRecruitmentEnd(end ?? now);
+          setRecruitmentEnd(backup.end || now);
         }
       }
-      return !prev;
+      return nextMode;
     });
   };
 
-  const handleUpdateClub = async () => {
-    trackEvent(ADMIN_EVENT.UPDATE_RECRUIT_BUTTON_CLICKED);
+  const handleUpdateClub = () => {
+    trackEvent(ADMIN_EVENT.RECRUITMENT_UPDATE_BUTTON_CLICKED);
     if (!clubDetail) return;
-
-    let startForSave: Date | null = recruitmentStart;
-    let endForSave: Date | null = recruitmentEnd;
-
-    if (always) {
-      const base = recruitmentStart ?? new Date();
-      startForSave = base;
-      endForSave = setYear(base, FAR_FUTURE_YEAR);
-    }
 
     const updatedData = {
       id: clubDetail.id,
-      recruitmentStart: startForSave?.toISOString() ?? null,
-      recruitmentEnd: endForSave?.toISOString() ?? null,
-      recruitmentTarget: recruitmentTarget,
+      recruitmentStart: recruitmentStart?.toISOString() ?? null,
+      recruitmentEnd: recruitmentEnd?.toISOString() ?? null,
+      recruitmentTarget,
     };
 
     updateClubDescription(updatedData, {
       onSuccess: () => {
-        alert('모집 정보가 성공적으로 수정되었습니다.');
+        setToastMessage('모집 정보가 수정됐어요.');
+        setIsToastOpen(true);
+        setInitialValues({
+          recruitmentStart: recruitmentStart?.toISOString() ?? null,
+          recruitmentEnd: recruitmentEnd?.toISOString() ?? null,
+          recruitmentTarget,
+        });
+        void requestFeedbackPrompt({
+          eventId: crypto.randomUUID(),
+          triggerType: 'ADMIN_RECRUITMENT_INFO_SAVED',
+          clubId: clubDetail.id,
+          sourcePath: window.location.pathname,
+          accessToken: localStorage.getItem('accessToken') ?? undefined,
+        });
       },
-      onError: (error) => {
-        alert(`모집 정보 수정에 실패했습니다: ${error.message}`);
+      onError: () => {
+        setToastMessage('모집 정보 수정에 실패했어요.');
+        setIsToastOpen(true);
       },
     });
   };
 
-  return (
-    <Styled.Container>
-      <ContentSection>
-        <ContentSection.Header
-          title='모집 정보'
-          action={
-            <Button width={'135px'} animated onClick={handleUpdateClub}>
-              저장하기
-            </Button>
-          }
+  if (isMobile || isTablet) {
+    return (
+      <>
+        <RecruitEditTabMobile
+          recruitmentStart={recruitmentStart}
+          recruitmentEnd={recruitmentEnd}
+          recruitmentTarget={recruitmentTarget}
+          isAlwaysRecruiting={isAlwaysRecruiting}
+          isDirty={isDirty}
+          onStartChange={handleStartChange}
+          onEndChange={handleEndChange}
+          onTargetChange={setRecruitmentTarget}
+          onToggleAlwaysRecruiting={toggleAlwaysRecruiting}
+          onSave={handleUpdateClub}
         />
+        <Toast
+          isOpen={isToastOpen}
+          onClose={() => setIsToastOpen(false)}
+          message={toastMessage}
+        />
+      </>
+    );
+  }
 
-        <ContentSection.Body>
-          <div>
-            <Styled.Label>모집 기간</Styled.Label>
-            <Styled.RecruitPeriodContainer>
-              <Calendar
-                recruitmentStart={recruitmentStart}
-                recruitmentEnd={recruitmentEnd}
-                onChangeStart={setRecruitmentStart}
-                onChangeEnd={setRecruitmentEnd}
-                disabledEnd={always}
-              />
-              <Styled.AlwaysRecruitButton
-                type='button'
-                $active={always}
-                onClick={toggleAlways}
-                aria-pressed={always}
-              >
-                상시모집
-              </Styled.AlwaysRecruitButton>
-            </Styled.RecruitPeriodContainer>
-          </div>
-
-          <InputField
-            label='모집 대상'
-            placeholder='모집대상을 입력해주세요'
-            type='text'
-            value={recruitmentTarget}
-            onChange={(e) => setRecruitmentTarget(e.target.value)}
-            onClear={() => {
-              trackEvent(ADMIN_EVENT.RECRUITMENT_TARGET_CLEAR_BUTTON_CLICKED);
-              setRecruitmentTarget('');
-            }}
-            maxLength={10}
+  return (
+    <>
+      <Styled.Container>
+        <ContentSection>
+          <ContentSection.Header
+            title='모집 정보'
+            action={
+              <Button width='135px' animated onClick={handleUpdateClub}>
+                저장하기
+              </Button>
+            }
           />
-        </ContentSection.Body>
-      </ContentSection>
-    </Styled.Container>
+          <ContentSection.Body>
+            <div>
+              <Styled.Label>모집 기간</Styled.Label>
+              <Styled.RecruitPeriodContainer>
+                <DateTimeRangePicker
+                  recruitmentStart={recruitmentStart}
+                  recruitmentEnd={recruitmentEnd}
+                  onChangeRecruitmentStart={handleStartChange}
+                  onChangeRecruitmentEnd={handleEndChange}
+                  disabledEnd={isAlwaysRecruiting}
+                />
+                <Styled.AlwaysRecruitButtonWrapper>
+                  <ToggleButton
+                    active={isAlwaysRecruiting}
+                    onClick={toggleAlwaysRecruiting}
+                    aria-pressed={isAlwaysRecruiting}
+                  >
+                    상시모집
+                  </ToggleButton>
+                </Styled.AlwaysRecruitButtonWrapper>
+              </Styled.RecruitPeriodContainer>
+            </div>
+            <InputField
+              label='모집 대상'
+              placeholder='모집대상을 입력해주세요'
+              type='text'
+              value={recruitmentTarget}
+              onChange={(e) => setRecruitmentTarget(e.target.value)}
+              onClear={() => setRecruitmentTarget('')}
+              maxLength={RECRUIT_TARGET_MAX}
+            />
+          </ContentSection.Body>
+        </ContentSection>
+      </Styled.Container>
+      <Toast
+        isOpen={isToastOpen}
+        onClose={() => setIsToastOpen(false)}
+        message={toastMessage}
+      />
+    </>
   );
 };
+
 export default RecruitEditTab;

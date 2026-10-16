@@ -2,11 +2,19 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
-import { typography } from '@/styles/theme/typography';
+import { setTypography, typography } from '@/styles/theme/typography';
 
-const setTypography = (typo: { size: string; weight: number }) => `
-  font-size: ${typo.size};
-  font-weight: ${typo.weight};
+export const EmptyState = styled.p`
+  padding-top: 120px;
+  ${setTypography(typography.paragraph.p3)};
+  line-height: 140%;
+  color: ${colors.gray[700]};
+  text-align: center;
+
+  ${media.tablet} {
+    padding-top: 60px;
+    ${setTypography(typography.paragraph.p5)};
+  }
 `;
 
 export const Container = styled.div`
@@ -14,10 +22,10 @@ export const Container = styled.div`
   flex-direction: column;
   gap: 16px;
   width: 100%;
-  padding: 0 0 16px 0;
+  padding: 16px 0;
 
   ${media.tablet} {
-    padding: 0 20px;
+    padding: 20px 20px 0;
     gap: 20px;
   }
 `;
@@ -34,7 +42,7 @@ export const SectionTitle = styled.h2`
   color: ${colors.gray[800]};
 
   ${media.mobile} {
-    ${setTypography(typography.title.title7)};
+    ${setTypography(typography.title.title6)};
   }
 `;
 
@@ -128,7 +136,7 @@ export const FaqHeader = styled.div`
   color: ${colors.gray[800]};
 
   ${media.mobile} {
-    ${setTypography(typography.title.title7)};
+    ${setTypography(typography.title.title6)};
   }
 `;
 

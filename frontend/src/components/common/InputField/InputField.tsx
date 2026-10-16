@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useId, useState } from 'react';
 import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import * as Styled from './InputField.styles';
 
@@ -8,6 +8,8 @@ interface CustomInputProps {
   maxLength?: number;
   type?: 'text' | 'password';
   label?: string;
+  /** 화면에 label을 그리지 않을 때 입력칸의 접근 가능한 이름 */
+  ariaLabel?: string;
   showClearButton?: boolean;
   showMaxChar?: boolean;
   disabled?: boolean;
@@ -26,6 +28,7 @@ const InputField = ({
   maxLength,
   type = 'text',
   label,
+  ariaLabel,
   showClearButton = true,
   showMaxChar = false,
   disabled = false,
@@ -37,6 +40,7 @@ const InputField = ({
   readOnly = false,
   isSuccess,
 }: CustomInputProps) => {
+  const id = useId();
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   const getActiveButtonVariant = () => {
@@ -58,24 +62,16 @@ const InputField = ({
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    if (maxLength !== undefined && inputValue.length > maxLength) {
-      return;
-    }
-    if (onChange) {
-      onChange(e);
-    }
-  };
-
   return (
     <Styled.InputContainer width={width}>
-      {label && <Styled.Label>{label}</Styled.Label>}
+      {label && <Styled.Label htmlFor={id}>{label}</Styled.Label>}
       <Styled.InputWrapper>
         <Styled.Input
+          id={id}
+          aria-label={ariaLabel}
           type={type === 'password' && !isPasswordVisible ? 'password' : 'text'}
           value={value}
-          onChange={handleChange}
+          onChange={onChange}
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
@@ -100,8 +96,8 @@ const InputField = ({
           {value.length}/{maxLength}
         </Styled.CharCount>
       )}
-      {isError && helperText && (
-        <Styled.HelperText>{helperText}</Styled.HelperText>
+      {(isError || isSuccess) && helperText && (
+        <Styled.HelperText isError={isError}>{helperText}</Styled.HelperText>
       )}
     </Styled.InputContainer>
   );

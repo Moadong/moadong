@@ -112,17 +112,6 @@ export const MemoLabel = styled.label`
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
-
-  &::after {
-    content: '';
-    position: absolute;
-    right: -20px;
-    top: 30%;
-    height: 40%;
-    width: 4px;
-    height: 14px;
-    background: #d9d9d9;
-  }
 `;
 
 export const MemoTextarea = styled.textarea`

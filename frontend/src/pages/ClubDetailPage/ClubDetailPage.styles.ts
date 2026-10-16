@@ -12,6 +12,14 @@ export const Container = styled.div`
   }
 `;
 
+export const AppSpacer = styled.div`
+  height: calc(71px + env(safe-area-inset-bottom));
+
+  ${media.tablet} {
+    height: calc(87px + env(safe-area-inset-bottom));
+  }
+`;
+
 export const ContentWrapper = styled.div`
   max-width: 1180px;
   width: 100%;
@@ -33,44 +41,78 @@ export const ContentWrapper = styled.div`
   }
 `;
 
+export const LeftSection = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  flex-shrink: 0;
+  width: 400px;
+
+  ${media.tablet} {
+    width: 100%;
+    gap: 0px;
+  }
+`;
+
+export const MapInfo = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+
+  ${media.tablet} {
+    display: none;
+  }
+`;
+
+export const MapCard = styled.button`
+  padding: 0;
+  font: inherit;
+  width: 100%;
+  height: 189px;
+
+  border-radius: 20px;
+  border: 1px solid ${colors.gray[400]};
+  overflow: hidden;
+  cursor: pointer;
+
+  background-color: #f2f2f2;
+
+  * {
+    cursor: pointer !important;
+  }
+`;
+
+export const MapDetailText = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  padding: 0 2px;
+
+  font-size: 14px;
+  color: ${colors.gray[700]};
+  cursor: default;
+  user-select: none;
+
+  svg {
+    width: 18px;
+    height: 18px;
+    margin: 1px 2px 1px 0px;
+    color: ${colors.gray[500]};
+  }
+`;
+
 export const RightSection = styled.div`
   width: 100%;
-`;
-
-export const TabList = styled.div`
-  display: flex;
-  margin-bottom: 16px;
-  border-bottom: 1px solid ${colors.gray[200]};
 
   ${media.tablet} {
-    padding: 0 20px;
-  }
-
-  ${media.mobile} {
-    justify-content: center;
+    border-top: 6px solid ${colors.gray[200]};
+    padding-top: 12px;
   }
 `;
 
-export const TabButton = styled.button<{ $active: boolean }>`
-  font-size: 14px;
-  font-weight: 700;
-  width: 167px;
-  height: 26px;
-  padding-bottom: 4px;
-  color: ${({ $active }) => ($active ? colors.gray[800] : colors.gray[400])};
-  background: none;
-  border: none;
-  border-bottom: 2px solid
-    ${({ $active }) => ($active ? colors.gray[800] : colors.gray[400])};
-  cursor: pointer;
-  transition:
-    color ${transitions.duration.normal} ${transitions.easing.easeInOut},
-    border-color ${transitions.duration.normal} ${transitions.easing.easeInOut};
-
-  ${media.tablet} {
-    flex: 1;
-    width: auto;
-  }
+export const InlineTabsWrapper = styled.div<{ $hidden: boolean }>`
+  visibility: ${({ $hidden }) => ($hidden ? 'hidden' : 'visible')};
 `;
 
 export const TabContent = styled.div`

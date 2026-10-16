@@ -4,7 +4,9 @@ import { applyToClub } from '@/apis/application';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
+import Toast from '@/components/common/Toast/Toast';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import { MOADONG_CLUB_ID } from '@/constants/moadongClub';
 import { useAnswers } from '@/hooks/Application/useAnswers';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
@@ -13,10 +15,17 @@ import { useGetClubDetail } from '@/hooks/Queries/useClub';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { PageContainer } from '@/styles/PageContainer.styles';
+import { colors } from '@/styles/theme/colors';
 import { Question } from '@/types/application';
 import { linkifyText } from '@/utils/linkifyText';
 import { validateAnswers } from '@/utils/useValidateAnswers';
 import * as Styled from './ApplicationFormPage.styles';
+
+/** 모아동은 메인에서 숨긴 동아리라 상세 대신 팀원 모집 페이지로 돌려보낸다 */
+const getReturnPath = (clubId?: string, clubName?: string) => {
+  if (clubId === MOADONG_CLUB_ID) return '/recruit';
+  return clubName ? `/clubDetail/@${encodeURIComponent(clubName)}` : '/';
+};
 
 const ApplicationFormPage = () => {
   const { clubId, applicationFormId } = useParams<{
@@ -26,11 +35,10 @@ const ApplicationFormPage = () => {
   const navigate = useNavigate();
   const questionRefs = useRef<Array<HTMLDivElement | null>>([]);
   const [invalidQuestionIds, setInvalidQuestionIds] = useState<number[]>([]);
+  const [isSaveNoticeOpen, setIsSaveNoticeOpen] = useState(true);
   const trackEvent = useMixpanelTrack();
 
-  if (!clubId || !applicationFormId) return null;
-
-  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId);
+  const { data: clubDetail, error: clubError } = useGetClubDetail(clubId ?? '');
   const {
     data: formData,
     isLoading,
@@ -38,13 +46,19 @@ const ApplicationFormPage = () => {
     error: applicationError,
   } = useGetApplication(clubId, applicationFormId);
 
-  useTrackPageView(
-    PAGE_VIEW.APPLICATION_FORM_PAGE,
-    clubDetail?.name ?? `club:${clubId ?? 'unknown'}`,
-  );
+  // 동아리 정보가 오기 전에 기록하면 이름이 채워질 때 한 번 더 기록된다. 조회가 실패해도 방문은 남긴다.
+  // 실패 뒤 재조회로 이름이 채워지면 한 번 더 기록되는데, 드물고 동아리 정보가 붙은 기록을 남기는 편이 낫다고 보고 허용한다.
+  useTrackPageView(PAGE_VIEW.APPLICATION_FORM_PAGE, {
+    clubId: clubDetail?.id ?? clubId,
+    clubName: clubDetail?.name,
+    skip: !clubDetail && !clubError,
+  });
 
-  const STORAGE_KEY = `applicationAnswers_${clubId}_${applicationFormId}`;
-  const saved = localStorage.getItem(STORAGE_KEY);
+  const STORAGE_KEY =
+    clubId && applicationFormId
+      ? `applicationAnswers_${clubId}_${applicationFormId}`
+      : null;
+  const saved = STORAGE_KEY ? localStorage.getItem(STORAGE_KEY) : null;
   const initialAnswers = saved ? JSON.parse(saved) : [];
 
   const {
@@ -54,15 +68,23 @@ const ApplicationFormPage = () => {
   } = useAnswers(initialAnswers);
 
   useEffect(() => {
+    if (!STORAGE_KEY) return;
     localStorage.setItem(STORAGE_KEY, JSON.stringify(answers));
-  }, [answers, clubId, applicationFormId]);
+  }, [answers, STORAGE_KEY]);
+
+  const hasLoadError = isError || !!clubError;
+  const returnPath = getReturnPath(clubId, clubDetail?.name);
+
+  useEffect(() => {
+    if (!hasLoadError) return;
+    alert(applicationError?.message || '문제가 발생했어요.');
+    navigate(returnPath, { replace: true });
+  }, [hasLoadError, applicationError, returnPath, navigate]);
+
+  if (!clubId || !applicationFormId) return null;
 
   if (isLoading) return <Spinner />;
-  if (isError || clubError) {
-    alert(applicationError?.message || '문제가 발생했어요.');
-    navigate(`/clubDetail/${clubId}`);
-    return null;
-  }
+  if (hasLoadError) return null;
   if (!formData || !clubDetail || !formData.questions) {
     return (
       <div>
@@ -85,8 +107,8 @@ const ApplicationFormPage = () => {
   };
 
   const handleScrollToInvalid = (invalidIds: number[]) => {
-    const firstInvalidIndex = formData.questions!.findIndex((q: Question) =>
-      invalidIds.includes(q.id),
+    const firstInvalidIndex = (formData?.questions ?? []).findIndex(
+      (q: Question) => invalidIds.includes(q.id),
     );
     const targetEl = questionRefs.current[firstInvalidIndex];
     targetEl?.scrollIntoView({ behavior: 'smooth', block: 'start' });
@@ -98,7 +120,10 @@ const ApplicationFormPage = () => {
       club_name: clubDetail?.name,
     });
 
-    const invalidIds = validateAnswers(formData.questions!, getAnswersById);
+    const invalidIds = validateAnswers(
+      formData?.questions ?? [],
+      getAnswersById,
+    );
     if (invalidIds.length > 0) {
       setInvalidQuestionIds(invalidIds);
       handleScrollToInvalid(invalidIds);
@@ -107,11 +132,11 @@ const ApplicationFormPage = () => {
 
     try {
       await applyToClub(clubId, applicationFormId, answers);
-      localStorage.removeItem(STORAGE_KEY);
+      if (STORAGE_KEY) localStorage.removeItem(STORAGE_KEY);
       alert(
         `"${clubDetail.name}" 동아리에 성공적으로 지원되었습니다.\n좋은 결과 있으시길 바랍니다`,
       );
-      navigate(`/clubDetail/${clubId}`, { replace: true });
+      navigate(returnPath, { replace: true });
     } catch (error) {
       alert(
         '답변 제출에 실패했어요.\n네트워크 상태를 확인하거나 잠시 후 다시 시도해 주세요.',
@@ -129,7 +154,7 @@ const ApplicationFormPage = () => {
             {linkifyText(formData.description)}
           </Styled.FormDescription>
         )}
-        <Styled.QuestionsWrapper>
+        <Styled.QuestionsWrapper data-clarity-mask='true'>
           {formData.questions.map((q: Question, i: number) => (
             <QuestionContainer
               key={q.id}
@@ -140,6 +165,7 @@ const ApplicationFormPage = () => {
             >
               <QuestionAnswerer
                 question={q}
+                number={i + 1}
                 selectedAnswers={getAnswersById(q.id)}
                 onChange={onAnswerChange}
               />
@@ -153,6 +179,12 @@ const ApplicationFormPage = () => {
           </Styled.SubmitButton>
         </Styled.ButtonWrapper>
       </PageContainer>
+      <Toast
+        isOpen={isSaveNoticeOpen}
+        onClose={() => setIsSaveNoticeOpen(false)}
+        message='같은 기기에서 작성 상태는 저장돼요.'
+        backgroundColor={colors.primary[900]}
+      />
       <Footer />
     </>
   );

@@ -1,17 +1,19 @@
-import { useCallback } from 'react';
-import { useParams, useSearchParams } from 'react-router-dom';
+import { useCallback, useEffect } from 'react';
+import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
+import { registerClubDetailVisit } from '@/feedbackPrompt/clubDetailVisit';
+import useTrackClubDetailDuration from '@/hooks/Analytics/useTrackClubDetailDuration';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
-import useDevice from '@/hooks/useDevice';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
 import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import * as Styled from './ClubDetailPage.styles';
-import ClubDetailFooter from './components/ClubDetailFooter/ClubDetailFooter';
+import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
 
 export const TAB_TYPE = {
   INTRO: 'intro',
@@ -21,6 +23,7 @@ export const TAB_TYPE = {
 type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
 const LegacyClubDetailPage = () => {
+  const location = useLocation();
   const trackEvent = useMixpanelTrack();
 
   const [searchParams, setSearchParams] = useSearchParams();
@@ -32,22 +35,33 @@ const LegacyClubDetailPage = () => {
       : TAB_TYPE.INTRO;
 
   const { clubId } = useParams<{ clubId: string }>();
-  const { isMobile, isTablet, isLaptop, isDesktop } = useDevice();
-
   const { data: clubDetail, error } = useGetClubDetail(clubId || '');
 
-  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, clubDetail?.name, !clubDetail);
+  useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, {
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
+  useTrackClubDetailDuration({
+    clubId: clubDetail?.id,
+    clubName: clubDetail?.name,
+    skip: !clubDetail,
+  });
+  useEffect(() => {
+    if (clubDetail?.id && !error)
+      registerClubDetailVisit(clubDetail.id, location.pathname);
+  }, [clubDetail?.id, error, location.pathname]);
 
   const handleTabClick = useCallback(
     (tabKey: TabType) => {
       setSearchParams({ tab: tabKey }, { replace: true });
-      trackEvent(
-        tabKey === TAB_TYPE.INTRO
-          ? USER_EVENT.CLUB_INTRO_TAB_CLICKED
-          : USER_EVENT.CLUB_FEED_TAB_CLICKED,
-      );
+      trackEvent(USER_EVENT.CLUB_DETAIL_TAB_CLICKED, {
+        tab: tabKey,
+        club_id: clubDetail?.id,
+        club_name: clubDetail?.name,
+      });
     },
-    [setSearchParams, trackEvent],
+    [setSearchParams, trackEvent, clubDetail?.id, clubDetail?.name],
   );
 
   if (error) {
@@ -64,6 +78,7 @@ const LegacyClubDetailPage = () => {
       <Styled.Container>
         <Styled.ContentWrapper>
           <ClubProfileCard
+            clubId={clubDetail.id}
             name={clubDetail.name}
             logo={clubDetail.logo}
             cover={clubDetail.cover}
@@ -73,20 +88,15 @@ const LegacyClubDetailPage = () => {
           />
 
           <Styled.RightSection>
-            <Styled.TabList>
-              <Styled.TabButton
-                $active={activeTab === TAB_TYPE.INTRO}
-                onClick={() => handleTabClick(TAB_TYPE.INTRO)}
-              >
-                소개 내용
-              </Styled.TabButton>
-              <Styled.TabButton
-                $active={activeTab === TAB_TYPE.PHOTOS}
-                onClick={() => handleTabClick(TAB_TYPE.PHOTOS)}
-              >
-                활동사진
-              </Styled.TabButton>
-            </Styled.TabList>
+            <UnderlineTabs
+              tabs={[
+                { key: TAB_TYPE.INTRO, label: '소개 내용' },
+                { key: TAB_TYPE.PHOTOS, label: '활동사진' },
+              ]}
+              activeKey={activeTab}
+              onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
+              centerOnMobile
+            />
 
             <Styled.TabContent>
               <div
@@ -108,12 +118,7 @@ const LegacyClubDetailPage = () => {
         </Styled.ContentWrapper>
       </Styled.Container>
       <Footer />
-      <ClubDetailFooter
-        recruitmentStart={clubDetail.recruitmentStart}
-        recruitmentEnd={clubDetail.recruitmentEnd}
-        recruitmentStatus={clubDetail.recruitmentStatus}
-        hideShareButtonOnMobile
-      />
+      <ClubApplyButton />
     </>
   );
 };

@@ -1,4 +1,6 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const SidebarWrapper = styled.aside`
   display: flex;
@@ -8,8 +10,12 @@ export const SidebarWrapper = styled.aside`
   width: 190px;
   padding: 12px 10px 10px;
   border-radius: 20px;
-  background-color: #ffffff;
+  background-color: ${colors.base.white};
   height: fit-content;
+
+  ${media.tablet} {
+    display: none;
+  }
 `;
 
 export const SidebarHeader = styled.p`
@@ -22,7 +28,7 @@ export const SidebarDivider = styled.hr`
   width: 100%;
   margin: 10px 0 12px;
   border: none;
-  border-top: 1px solid #c5c5c5;
+  border-top: 1px solid ${colors.gray[400]};
 `;
 
 export const SidebarButtonContainer = styled.ul`
@@ -36,7 +42,7 @@ export const SidebarCategoryTitle = styled.p`
   padding: 6px 10px;
   font-size: 0.75rem;
   font-weight: 500;
-  color: #989898;
+  color: ${colors.gray[600]};
 `;
 
 export const SidebarButton = styled.button`
@@ -53,8 +59,8 @@ export const SidebarButton = styled.button`
   transition: background-color 0.1s ease;
 
   &.active {
-    background-color: rgba(255, 117, 67, 1);
-    color: white;
+    background-color: ${colors.primary[800]};
+    color: ${colors.base.white};
     font-weight: 600;
   }
 `;

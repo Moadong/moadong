@@ -39,42 +39,6 @@ export const ButtonGroup = styled.div`
   gap: 6px;
 `;
 
-export const UploadButton = styled.button`
-  padding: 10px 20px;
-  border: 1px solid #ff6b35;
-  border-radius: 80px;
-  background: white;
-  color: #ff6b35;
-  font-size: 12px;
-  line-height: 140%;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #ff6b35;
-    color: white;
-  }
-`;
-
-export const ResetButton = styled.button`
-  padding: 10px 20px;
-  border: 1px solid #999;
-  border-radius: 80px;
-  background: white;
-  color: #999;
-  font-size: 12px;
-  line-height: 140%;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    background: #999;
-    color: white;
-  }
-`;
-
 export const HelpText = styled.p`
   font-size: 12px;
   color: #c5c5c5;

@@ -1,3 +1,4 @@
+import { ApplicantId, ApplicationFormId, ClubId } from '@/types/branded';
 import { AnswerItem } from './application';
 
 export enum ApplicationStatus {
@@ -12,31 +13,32 @@ export interface ApplicantsInfo {
   reviewRequired: number;
   scheduledInterview: number;
   accepted: number;
+  declined: number;
   applicants: Applicant[];
 }
 
 export interface Applicant {
-  id: string;
+  id: ApplicantId;
   status: ApplicationStatus;
   answers: AnswerItem[];
   memo: string;
   createdAt: string;
-  applicationFormId: string;
+  applicationFormId: ApplicationFormId;
 }
 
 export interface UpdateApplicantParams {
   memo: string;
   status: ApplicationStatus;
-  applicantId: string | undefined;
+  applicantId: ApplicantId | undefined;
 }
 
 export interface ApplicantStatusEvent {
-  applicantId: string;
+  applicantId: ApplicantId;
   status: ApplicationStatus;
   memo: string;
   timestamp: string;
-  clubId: string;
-  applicationFormId: string;
+  clubId: ClubId;
+  applicationFormId: ApplicationFormId;
 }
 
 export interface ApplicantSSECallbacks {

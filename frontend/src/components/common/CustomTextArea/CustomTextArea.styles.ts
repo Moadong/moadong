@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 //Todo : InputField 컴포넌트와 중복되는 부분이 많아 추후 리팩토링 검토
@@ -8,6 +9,10 @@ export const TextAreaContainer = styled.div<{ width: string }>`
   max-width: 100%;
   display: flex;
   flex-direction: column;
+
+  ${media.tablet} {
+    width: 100%;
+  }
 `;
 
 export const Label = styled.label`

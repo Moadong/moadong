@@ -2,9 +2,10 @@ import React, { useRef } from 'react';
 import defaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
-import { useAdminClubContext } from '@/context/AdminClubContext';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useDeleteLogo, useUploadLogo } from '@/hooks/Queries/useClubImages';
+import OutlinePillButton from '@/pages/AdminPage/components/OutlinePillButton';
+import { useAdminClubId } from '@/store/useAdminClubStore';
 import * as Styled from './ClubLogoEditor.styles';
 
 interface ClubLogoEditorProps {
@@ -14,13 +15,12 @@ interface ClubLogoEditorProps {
 const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
   const trackEvent = useMixpanelTrack();
 
-  const { clubId } = useAdminClubContext();
-  if (!clubId) return null;
-
+  const { clubId } = useAdminClubId();
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   const uploadMutation = useUploadLogo();
   const deleteMutation = useDeleteLogo();
+
+  if (!clubId) return null;
 
   const isClubLogoEmpty = !clubLogo || clubLogo.trim() === '';
   const displayedLogo = isClubLogoEmpty ? defaultLogo : clubLogo;
@@ -79,14 +79,14 @@ const ClubLogoEditor = ({ clubLogo }: ClubLogoEditorProps) => {
 
         <Styled.ButtonTextGroup>
           <Styled.ButtonGroup>
-            <Styled.UploadButton onClick={triggerFileInput}>
+            <OutlinePillButton $tone='primary' onClick={triggerFileInput}>
               이미지 수정
-            </Styled.UploadButton>
+            </OutlinePillButton>
 
             {!isClubLogoEmpty && (
-              <Styled.ResetButton onClick={handleLogoReset}>
+              <OutlinePillButton $tone='gray' onClick={handleLogoReset}>
                 초기화
-              </Styled.ResetButton>
+              </OutlinePillButton>
             )}
           </Styled.ButtonGroup>
 

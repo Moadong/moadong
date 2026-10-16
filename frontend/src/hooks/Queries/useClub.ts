@@ -5,13 +5,19 @@ import {
   useQueryClient,
 } from '@tanstack/react-query';
 import {
+  getClubCalendarEvents,
   getClubDetail,
   getClubList,
   updateClubDescription,
   updateClubDetail,
 } from '@/apis/club';
 import { queryKeys } from '@/constants/queryKeys';
-import { ClubDescription, ClubDetail, ClubSearchResponse } from '@/types/club';
+import {
+  ClubCalendarEvent,
+  ClubDescription,
+  ClubDetail,
+  ClubSearchResponse,
+} from '@/types/club';
 import convertGoogleDriveUrl from '@/utils/convertGoogleDriveUrl';
 
 interface UseGetCardListProps {
@@ -21,20 +27,43 @@ interface UseGetCardListProps {
   division: string;
 }
 
-export const useGetClubDetail = (clubId: string) => {
+export const useGetClubDetail = (
+  clubParam: string,
+  options?: { enabled?: boolean; staleTime?: number; gcTime?: number },
+) => {
   return useQuery<ClubDetail>({
-    queryKey: queryKeys.club.detail(clubId),
-    queryFn: () => getClubDetail(clubId as string),
-    staleTime: 60 * 1000,
-    enabled: !!clubId,
+    queryKey: queryKeys.club.detail(clubParam),
+    queryFn: () => getClubDetail(clubParam as string),
+    staleTime: options?.staleTime ?? 60 * 1000,
+    gcTime: options?.gcTime,
+    enabled: !!clubParam && (options?.enabled ?? true),
+    select: (data) => ({
+      ...data,
+      logo: data.logo ? convertGoogleDriveUrl(data.logo) : '',
+      feeds: Array.isArray(data.feeds)
+        ? data.feeds.map(convertGoogleDriveUrl)
+        : [],
+    }),
+  });
+};
+
+export const useGetClubCalendarEvents = (
+  clubParam: string,
+  options?: { enabled?: boolean },
+) => {
+  return useQuery<ClubCalendarEvent[]>({
+    queryKey: queryKeys.club.calendarEvents(clubParam),
+    queryFn: () => getClubCalendarEvents(clubParam),
+    staleTime: 5 * 60 * 1000,
+    enabled: (options?.enabled ?? true) && !!clubParam,
     select: (data) =>
-      ({
-        ...data,
-        logo: data.logo ? convertGoogleDriveUrl(data.logo) : undefined,
-        feeds: Array.isArray(data.feeds)
-          ? data.feeds.map(convertGoogleDriveUrl)
-          : [],
-      }) as ClubDetail,
+      data.filter(
+        (event): event is ClubCalendarEvent =>
+          !!event &&
+          typeof event.id === 'string' &&
+          typeof event.title === 'string' &&
+          typeof event.start === 'string',
+      ),
   });
 };
 
@@ -58,9 +87,32 @@ export const useGetCardList = ({
       totalCount: data.totalCount,
       clubs: data.clubs.map((club) => ({
         ...club,
-        logo: convertGoogleDriveUrl(club.logo),
+        // 로고를 지운 동아리는 목록 응답에 logo가 null로 온다 (타입은 string이지만)
+        logo: club.logo ? convertGoogleDriveUrl(club.logo) : '',
       })),
     }),
+  });
+};
+
+export const useValidateClubName = () => {
+  const queryClient = useQueryClient();
+  return async (name: string) => {
+    const { clubs } = await queryClient.ensureQueryData({
+      queryKey: queryKeys.club.suggestions(name),
+      queryFn: () => getClubList(name),
+      staleTime: 30 * 1000,
+    });
+    return clubs.some((c) => c.name === name);
+  };
+};
+
+export const useClubSuggestions = (keyword: string) => {
+  return useQuery({
+    queryKey: queryKeys.club.suggestions(keyword),
+    queryFn: () => getClubList(keyword),
+    enabled: !!keyword.trim(),
+    staleTime: 30 * 1000,
+    select: (data) => data.clubs.map((c) => c.name),
   });
 };
 
@@ -70,9 +122,12 @@ export const useUpdateClubDescription = () => {
   return useMutation({
     mutationFn: (updatedData: ClubDescription) =>
       updateClubDescription(updatedData),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.club.detail(variables.id),
+        queryKey: queryKeys.club.allDetails,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.all,
       });
     },
     onError: (error) => {
@@ -87,12 +142,13 @@ export const useUpdateClubDetail = () => {
   return useMutation({
     mutationFn: (updatedData: Partial<ClubDetail>) =>
       updateClubDetail(updatedData),
-    onSuccess: (_, variables) => {
-      if (variables.id) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.club.detail(variables.id),
-        });
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allDetails,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.all,
+      });
     },
 
     onError: (error) => {

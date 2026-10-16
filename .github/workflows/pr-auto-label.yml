@@ -1,0 +1,75 @@
+name: PR Auto Label
+
+on:
+  pull_request:
+    types: [opened, edited, synchronize]
+    branches: [main, develop-fe, develop/be]
+
+jobs:
+  label:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: write
+
+    steps:
+      - name: Auto Label PR
+        uses: actions/github-script@v7
+        with:
+          script: |
+            const title = context.payload.pull_request.title.toLowerCase();
+            const prNumber = context.payload.pull_request.number;
+
+            // 1. PR 제목 기반 타입 라벨 (conventional commit)
+            const typeMap = [
+              { pattern: /^feat/,             label: '✨ Feature' },
+              { pattern: /^hotfix/,           label: '🚀 hotfix' },
+              { pattern: /^fix/,              label: '🛠Fix' },
+              { pattern: /^bug/,              label: '🐞 Bug' },
+              { pattern: /^refactor/,         label: '🔨 Refactor' },
+              { pattern: /^docs/,             label: '📃 Docs' },
+              { pattern: /^chore/,            label: '🚗 Chore' },
+              { pattern: /^style/,            label: '🎨 Design' },
+              { pattern: /^test/,             label: '✅ Test' },
+              { pattern: /^ci|^cd/,           label: '📦 CI/CD' },
+              { pattern: /^deploy|^release/,  label: '🌏 Deploy' },
+              { pattern: /^setup|^setting/,   label: '⚙ Setting' },
+              { pattern: /^api/,              label: '📬 API' },
+            ];
+
+            const labelsToAdd = [];
+
+            for (const { pattern, label } of typeMap) {
+              if (pattern.test(title)) {
+                labelsToAdd.push(label);
+                break;
+              }
+            }
+
+            // AB TEST
+            if (/experiment|ab.?test/i.test(title)) labelsToAdd.push('AB TEST');
+
+            // AI 활용 감지 (제목 또는 본문)
+            const body = context.payload.pull_request.body ?? '';
+            if (/claude|codex/i.test(title + body)) labelsToAdd.push('🚁AI');
+
+            // 2. 변경 파일 경로 기반 FE/BE 라벨
+            const { data: files } = await github.rest.pulls.listFiles({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              pull_number: prNumber,
+            });
+
+            const filenames = files.map(f => f.filename);
+            if (filenames.some(f => f.startsWith('frontend/'))) labelsToAdd.push('💻 FE');
+            if (filenames.some(f => f.startsWith('backend/')))  labelsToAdd.push('💾 BE');
+
+            if (labelsToAdd.length > 0) {
+              await github.rest.issues.addLabels({
+                owner: context.repo.owner,
+                repo: context.repo.repo,
+                issue_number: prNumber,
+                labels: labelsToAdd,
+              });
+              core.info(`Added labels: ${labelsToAdd.join(', ')}`);
+            }

@@ -1,0 +1,5 @@
+import Aliased from './B.styles';
+
+const B = () => <Aliased>저장</Aliased>;
+
+export default B;

@@ -18,5 +18,34 @@ build-storybook.log
 /storybook-static
 *storybook.log
 coverage/ 
+public/sitemap.xml
 # Sentry Config File
 .env.sentry-build-plugin
+
+AGENTS.md
+
+# oh-my-claudecode
+.omc/
+
+# Claude Code (personal settings — commands/, agents/, skills/ are team-shared)
+.claude/*
+!.claude/commands/
+!.claude/commands/**
+!.claude/agents/
+!.claude/agents/**
+!.claude/skills/
+!.claude/skills/**
+
+.vercel
+
+# AI 작업 문서
+docs/superpowers/
+
+# dependency graph artifact
+deps-components.svg
+
+# session notes
+dailyNote/
+
+# figma-story-diff 산출물
+/visual-diff

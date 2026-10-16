@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
   display: flex;
@@ -13,27 +13,13 @@ export const RecruitPeriodContainer = styled.div`
   max-width: 706px;
 `;
 
-export const AlwaysRecruitButton = styled.button<{ $active: boolean }>`
-  border-radius: 10px;
-  width: 120px;
-  height: 45px;
-  padding: 0px 16px;
-  font-weight: 600;
-  font-size: 1rem;
-  cursor: pointer;
+export const AlwaysRecruitButtonWrapper = styled.div`
   flex-shrink: 0;
 
-  color: ${({ $active }) => ($active ? colors.base.white : colors.gray[700])};
-  background: ${({ $active }) =>
-    $active ? colors.primary[800] : colors.gray[300]};
-  border: ${({ $active }) =>
-    $active ? 'none' : `1px solid ${colors.gray[500]}`};
-  transition:
-    background-color 0.12s ease,
-    transform 0.06s ease;
-
-  &:active {
-    transform: translateY(1px);
+  button {
+    width: 120px;
+    height: 45px;
+    ${setTypography(typography.paragraph.p2)};
   }
 `;
 

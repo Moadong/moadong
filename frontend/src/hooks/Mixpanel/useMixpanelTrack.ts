@@ -1,15 +1,20 @@
 import { useCallback } from 'react';
 import mixpanel from 'mixpanel-browser';
+import { getEventUserArea } from './getUserArea';
 
 const useMixpanelTrack = () => {
   const trackEvent = useCallback(
     (eventName: string, properties: Record<string, any> = {}) => {
-      mixpanel.track(eventName, {
-        ...properties,
-        distinct_id: mixpanel.get_distinct_id(),
-        timestamp: Date.now(),
-        url: window.location.href,
-      });
+      try {
+        mixpanel.track(eventName, {
+          user_area: getEventUserArea(eventName),
+          ...properties,
+          timestamp: Date.now(),
+          url: window.location.href,
+        });
+      } catch (error) {
+        console.warn('Failed to track event:', eventName, error);
+      }
     },
     [],
   );

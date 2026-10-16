@@ -1,76 +1,126 @@
-import InstagramIcon from '@/assets/images/icons/sns/instagram_icon.svg';
+import InstagramIcon from '@/assets/images/icons/insta.svg';
+import KakaoIcon from '@/assets/images/icons/kakao.svg';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
-import { CLUB_UNION_MEMBERS, CLUB_UNION_SNS } from '@/constants/clubUnionInfo';
+import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
+import {
+  CLUB_UNION_MEMBERS,
+  CLUB_UNION_MEMBERS_MOBILE,
+  CLUB_UNION_SNS,
+  type ClubUnionMember,
+} from '@/constants/clubUnionInfo';
 import { PAGE_VIEW, USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
+import useDevice from '@/hooks/useDevice';
 import { PageContainer } from '@/styles/PageContainer.styles';
+import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubUnionPage.styles';
+
+const COLUMN_SIZES = [3, 3, 4, 3];
+
+const { cols, offset } = COLUMN_SIZES.reduce<{
+  cols: (typeof CLUB_UNION_MEMBERS)[];
+  offset: number;
+}>(
+  ({ cols, offset }, size) => ({
+    cols: [...cols, CLUB_UNION_MEMBERS.slice(offset, offset + size)],
+    offset: offset + size,
+  }),
+  { cols: [], offset: 0 },
+);
+
+const COLUMNS =
+  offset < CLUB_UNION_MEMBERS.length
+    ? [...cols, CLUB_UNION_MEMBERS.slice(offset)]
+    : cols;
+
+const ProfileCard = ({ member }: { member: ClubUnionMember }) => (
+  <Styled.ProfileCard $bgColor={member.bgColor}>
+    <Styled.CardContent>
+      <Styled.CardTitleRow>
+        <Styled.CardName>{member.name}</Styled.CardName>
+        <Styled.CardRoleBadge>{member.role}</Styled.CardRoleBadge>
+      </Styled.CardTitleRow>
+      <Styled.CardDescription>{member.description}</Styled.CardDescription>
+    </Styled.CardContent>
+    <Styled.CardIllustrationWrap>
+      <Styled.CardIllustration
+        src={member.imageSrc}
+        alt={`${member.name} 아이콘`}
+      />
+    </Styled.CardIllustrationWrap>
+  </Styled.ProfileCard>
+);
 
 const ClubUnionPage = () => {
   useTrackPageView(PAGE_VIEW.CLUB_UNION_PAGE);
   const trackEvent = useMixpanelTrack();
+  const { isMobile, isTablet } = useDevice();
+  const showPageTopBar = isMobile || isTablet || isInAppWebView();
 
   return (
     <>
-      <Header hideOn={['webview']} />
-      <PageContainer>
-        <Styled.Title>총동아리연합회 소개</Styled.Title>
-        <Styled.IntroductionText>
-          안녕하세요! 부경대학교 제17대 총동아리연합회 'we:sh'입니다.
-          <br />
-          As we wish, 우리가 바라는 대로.
-        </Styled.IntroductionText>
-        <Styled.SnsLinkContainer>
-          <Styled.SnsLink
-            href={CLUB_UNION_SNS.instagram}
-            target='_blank'
-            rel='noopener noreferrer'
-            onClick={() =>
-              trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
-                platform: 'instagram',
-              })
-            }
-          >
-            <img src={InstagramIcon} alt='인스타그램' />
-            Instagram
-          </Styled.SnsLink>
-          <Styled.SnsLink
-            href={CLUB_UNION_SNS.kakaotalk}
-            target='_blank'
-            rel='noopener noreferrer'
-            onClick={() =>
-              trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
-                platform: 'kakaotalk',
-              })
-            }
-          >
-            💬 카카오톡
-          </Styled.SnsLink>
-        </Styled.SnsLinkContainer>
-        <Styled.ProfileGrid>
-          {CLUB_UNION_MEMBERS.map((member) => (
-            <Styled.ProfileCardContainer key={member.id}>
-              <Styled.ProfileImage
-                src={member.imageSrc}
-                alt={`${member.name} 프로필`}
-              />
-
-              {/* 평소에 보이는 이름 배지 */}
-              <Styled.NameBadge>{member.name}</Styled.NameBadge>
-
-              {/* 호버 시 나타나는 정보 */}
-              <Styled.InfoOverlay>
-                <Styled.Role>{member.role}</Styled.Role>
-                <Styled.Name>{member.name}</Styled.Name>
-                <Styled.Description>{member.description}</Styled.Description>
-              </Styled.InfoOverlay>
-            </Styled.ProfileCardContainer>
-          ))}
-        </Styled.ProfileGrid>
-      </PageContainer>
-      <Footer />
+      {showPageTopBar ? <WebviewTopBar title='총동아리 연합회' /> : <Header />}
+      <Styled.PageWrapper>
+        <PageContainer>
+          <Styled.Title>총동아리 연합회 소개</Styled.Title>
+          <Styled.IntroductionText>
+            안녕하세요! 부경대학교 제17대 총동아리연합회 'we:sh'입니다.
+            <br />
+            As we wish, 우리가 바라는 대로.
+          </Styled.IntroductionText>
+          <Styled.SnsLinkContainer>
+            <Styled.SnsLink
+              href={CLUB_UNION_SNS.instagram}
+              target='_blank'
+              rel='noopener noreferrer'
+              onClick={() =>
+                trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
+                  sns_platform: 'instagram',
+                })
+              }
+            >
+              <img src={InstagramIcon} alt='인스타그램' />
+              instagram
+            </Styled.SnsLink>
+            <Styled.SnsLink
+              href={CLUB_UNION_SNS.kakaotalk}
+              target='_blank'
+              rel='noopener noreferrer'
+              onClick={() =>
+                trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
+                  sns_platform: 'kakaotalk',
+                })
+              }
+            >
+              <img src={KakaoIcon} alt='카카오톡' />
+              kakaotalk
+            </Styled.SnsLink>
+          </Styled.SnsLinkContainer>
+          <Styled.ProfileGrid>
+            {isMobile ? (
+              <Styled.ProfileColumn $staggered={false}>
+                {CLUB_UNION_MEMBERS_MOBILE.map((member) => (
+                  <ProfileCard key={member.id} member={member} />
+                ))}
+              </Styled.ProfileColumn>
+            ) : (
+              COLUMNS.map((columnMembers, colIdx) => (
+                <Styled.ProfileColumn
+                  key={colIdx}
+                  $staggered={colIdx % 2 === 1}
+                >
+                  {columnMembers.map((member) => (
+                    <ProfileCard key={member.id} member={member} />
+                  ))}
+                </Styled.ProfileColumn>
+              ))
+            )}
+          </Styled.ProfileGrid>
+        </PageContainer>
+        {!isInAppWebView() && <Footer />}
+      </Styled.PageWrapper>
     </>
   );
 };
