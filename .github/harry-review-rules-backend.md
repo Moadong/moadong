@@ -1,6 +1,7 @@
 # harry 백엔드 리뷰 기준
 
-`backend/` 아래 파일이 바뀐 PR에 `.github/harry-review-rules.md`와 함께 적용해요.
+`backend/` 아래 파일이 바뀐 PR에서 `backend/` 아래 변경에만 `.github/harry-review-rules.md`와 함께 적용해요.
+같은 PR의 다른 파일 변경은 공통 기준만 따라요.
 페르소나·말투·출력 형식과 주석·보안(공통) 기준은 그 파일을 따라요.
 
 ## 지적 기준

@@ -50,7 +50,7 @@
 
 ## 백엔드 (Spring Boot)
 
-`backend/` 아래 파일이 바뀌었으면 `.github/harry-review-rules-backend.md`도 읽고 그 기준을 함께 적용한다.
+`backend/` 아래 파일이 바뀌었으면 `.github/harry-review-rules-backend.md`도 읽고 그 기준을 `backend/` 아래 변경에만 함께 적용한다.
 
 ## 주석 (공통, 클린 코드 기준)
 
