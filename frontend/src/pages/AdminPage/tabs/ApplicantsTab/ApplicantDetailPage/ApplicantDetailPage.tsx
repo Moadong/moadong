@@ -6,6 +6,7 @@ import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
 import { AVAILABLE_STATUSES } from '@/constants/status';
 import useDevice from '@/hooks/useDevice';
+import { getApplicantName } from '@/pages/AdminPage/tabs/ApplicantsTab/utils/getApplicantName';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { ApplicationStatus } from '@/types/applicants';
@@ -136,7 +137,7 @@ const ApplicantDetailPage = () => {
             >
               {applicantsData.applicants.map((a) => (
                 <option key={a.id} value={a.id}>
-                  {a.answers[0].value}
+                  {getApplicantName(a.answers)}
                 </option>
               ))}
             </select>

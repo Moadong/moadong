@@ -1,5 +1,6 @@
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { AVAILABLE_STATUSES } from '@/constants/status';
+import { getApplicantName } from '@/pages/AdminPage/tabs/ApplicantsTab/utils/getApplicantName';
 import { ApplicantsInfo, ApplicationStatus } from '@/types/applicants';
 import { ApplicationFormData, Question } from '@/types/application';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
@@ -40,7 +41,7 @@ const ApplicantDetailPageMobile = ({
 }: ApplicantDetailPageMobileProps) => {
   const applicantNavItems = applicantsData.applicants.map((a) => ({
     id: a.id,
-    name: a.answers[0]?.value ?? '-',
+    name: getApplicantName(a.answers) ?? '-',
   }));
 
   return (

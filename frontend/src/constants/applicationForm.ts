@@ -41,3 +41,9 @@ export const DROPDOWN_OPTIONS = DROPDOWN_QUESTION_TYPES.map((type) => ({
   value: type,
   label: QUESTION_LABEL_MAP[type],
 }));
+
+/**
+ * 지원자 이름을 받는 질문의 id. 새 지원서에 기본으로 들어가고 수정·삭제할 수 없다.
+ * 순서를 바꿀 수 있어서 위치가 아니라 이 id로 이름 질문과 그 답을 찾는다.
+ */
+export const NAME_QUESTION_ID = 1;
