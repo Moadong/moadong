@@ -163,4 +163,33 @@ describe('ApplicationEditTab', () => {
 
     expect(title).toHaveValue('편집 중인 제목');
   });
+  it('받아 둔 지원서가 있으면 다시 불러오기가 실패해도 편집 중인 내용을 유지한다', async () => {
+    mockApplication({ data: savedForm() });
+    const { rerenderEditTab } = renderEditTab();
+
+    const title = screen.getByPlaceholderText('지원서 제목을 입력하세요');
+    await userEvent.clear(title);
+    await userEvent.type(title, '편집 중인 제목');
+
+    // 백그라운드 재조회 실패: 이전 데이터는 남아 있고 isError만 true가 된다
+    mockApplication({
+      data: savedForm(),
+      isError: true,
+      error: new Error('네트워크 오류'),
+    });
+    rerenderEditTab();
+
+    expect(title).toBeInTheDocument();
+    expect(title).toHaveValue('편집 중인 제목');
+  });
+
+  it('받아 둔 지원서 없이 불러오기가 실패하면 실패 안내를 보여 준다', () => {
+    mockApplication({ isError: true, error: new Error('네트워크 오류') });
+
+    renderEditTab();
+
+    expect(
+      screen.getByText(/지원서 정보를 불러오는데 실패했습니다/),
+    ).toBeInTheDocument();
+  });
 });

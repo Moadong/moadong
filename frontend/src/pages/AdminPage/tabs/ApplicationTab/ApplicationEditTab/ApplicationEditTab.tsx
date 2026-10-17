@@ -60,7 +60,9 @@ const ApplicationEditTab = () => {
   if (isLoading) {
     return <div>지원서 정보를 불러오는 중...</div>;
   }
-  if (isError) {
+  // 받아 둔 지원서가 있는데 백그라운드 재조회만 실패했으면 편집 화면을 그대로 둔다.
+  // 실패 안내로 바꾸면 편집 컴포넌트가 언마운트돼 편집 중인 내용이 사라진다.
+  if (isError && !existingFormData) {
     return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
   }
 
@@ -220,13 +222,13 @@ const ApplicationEditor = ({
   });
 
   const handleGenerateDraft = () => {
-    const isOverwriting = hasUserInput(formData);
+    const hasWrittenContent = hasUserInput(formData);
     trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_CLICKED, {
-      has_user_input: isOverwriting,
+      has_user_input: hasWrittenContent,
       remaining,
     });
     if (
-      isOverwriting &&
+      hasWrittenContent &&
       !confirm('작성 중인 내용을 AI 초안으로 덮어씁니다. 계속할까요?')
     ) {
       trackEvent(ADMIN_EVENT.AI_DRAFT_OVERWRITE_CANCELED);
