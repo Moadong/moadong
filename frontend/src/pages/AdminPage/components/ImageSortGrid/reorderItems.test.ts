@@ -1,5 +1,5 @@
+import { ImageItem } from '@/types/imageItem';
 import { reorderItems } from './reorderItems';
-import { ImageItem } from './types';
 
 const makeUploaded = (url: string): ImageItem => ({ type: 'uploaded', url });
 
