@@ -1,5 +1,5 @@
 diff --git a/node_modules/framer-motion/dist/cjs/index.js b/node_modules/framer-motion/dist/cjs/index.js
-index 7ba755a..6422ab8 100644
+index 7ba755a..2554b1f 100644
 --- a/node_modules/framer-motion/dist/cjs/index.js
 +++ b/node_modules/framer-motion/dist/cjs/index.js
 @@ -873,7 +873,8 @@ function useMapTransform(inputValue, inputRange, outputMap, options) {
@@ -18,21 +18,21 @@ index 7ba755a..6422ab8 100644
      if (distanceFromStart < threshold) {
 -        const intensity = 1 - distanceFromStart / threshold;
 -        return { amount: -maxSpeed * intensity * intensity, edge: "start" };
-+        // moadong patch: cap at 1 so a pointer past the edge (or a drifted pointer) cannot exceed maxSpeed
++        // moadong patch: cap at 1 so a pointer past the edge (or drifted by motiondivision/motion#3944) cannot exceed maxSpeed
 +        const intensity = Math.min(1 - distanceFromStart / threshold, 1);
 +        return { amount: -maxSpeed * intensity * intensity * (motionDom.frameData.delta / 1000), edge: "start" };
      }
      else if (distanceFromEnd < threshold) {
 -        const intensity = 1 - distanceFromEnd / threshold;
 -        return { amount: maxSpeed * intensity * intensity, edge: "end" };
-+        // moadong patch: cap at 1 so a pointer past the edge (or a drifted pointer) cannot exceed maxSpeed
++        // moadong patch: cap at 1 so a pointer past the edge (or drifted by motiondivision/motion#3944) cannot exceed maxSpeed
 +        const intensity = Math.min(1 - distanceFromEnd / threshold, 1);
 +        return { amount: maxSpeed * intensity * intensity * (motionDom.frameData.delta / 1000), edge: "end" };
      }
      return { amount: 0, edge: null };
  }
 diff --git a/node_modules/framer-motion/dist/es/components/Reorder/utils/auto-scroll.mjs b/node_modules/framer-motion/dist/es/components/Reorder/utils/auto-scroll.mjs
-index a2e4a8f..452f71a 100644
+index a2e4a8f..ce31c41 100644
 --- a/node_modules/framer-motion/dist/es/components/Reorder/utils/auto-scroll.mjs
 +++ b/node_modules/framer-motion/dist/es/components/Reorder/utils/auto-scroll.mjs
 @@ -1,5 +1,7 @@
@@ -50,14 +50,14 @@ index a2e4a8f..452f71a 100644
      if (distanceFromStart < threshold) {
 -        const intensity = 1 - distanceFromStart / threshold;
 -        return { amount: -maxSpeed * intensity * intensity, edge: "start" };
-+        // moadong patch: cap at 1 so a pointer past the edge (or a drifted pointer) cannot exceed maxSpeed
++        // moadong patch: cap at 1 so a pointer past the edge (or drifted by motiondivision/motion#3944) cannot exceed maxSpeed
 +        const intensity = Math.min(1 - distanceFromStart / threshold, 1);
 +        return { amount: -maxSpeed * intensity * intensity * (frameData.delta / 1000), edge: "start" };
      }
      else if (distanceFromEnd < threshold) {
 -        const intensity = 1 - distanceFromEnd / threshold;
 -        return { amount: maxSpeed * intensity * intensity, edge: "end" };
-+        // moadong patch: cap at 1 so a pointer past the edge (or a drifted pointer) cannot exceed maxSpeed
++        // moadong patch: cap at 1 so a pointer past the edge (or drifted by motiondivision/motion#3944) cannot exceed maxSpeed
 +        const intensity = Math.min(1 - distanceFromEnd / threshold, 1);
 +        return { amount: maxSpeed * intensity * intensity * (frameData.delta / 1000), edge: "end" };
      }
