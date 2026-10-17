@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { ApplicationStatus } from '@/types/applicants';
+import { getApplicantName } from '@/utils/getApplicantName';
 import { useGetApplicants } from './Queries/useApplicants';
 import { useApplicantSSE } from './useApplicantSSE';
 
@@ -47,13 +48,17 @@ export const useApplicantList = (
     if (keyword.trim()) {
       const kw = keyword.trim().toLowerCase();
       list = list.filter((a) =>
-        a.answers?.[0]?.value?.toLowerCase().includes(kw),
+        getApplicantName(a.answers ?? [])
+          ?.toLowerCase()
+          .includes(kw),
       );
     }
 
     if (selectedSort === 'name') {
       list.sort((a, b) =>
-        a.answers?.[0]?.value.localeCompare(b.answers?.[0]?.value),
+        (getApplicantName(a.answers ?? []) ?? '').localeCompare(
+          getApplicantName(b.answers ?? []) ?? '',
+        ),
       );
     } else {
       list.sort(

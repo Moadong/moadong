@@ -8,7 +8,7 @@
 - `eventName.ts` - Mixpanel 이벤트명 (`USER_EVENT` 학생, `ADMIN_EVENT` 관리자, `PAGE_EVENT` + `PAGE_VIEW` 페이지뷰). 값은 영문, 상수마다 한글 JSDoc (규칙: `docs/features/analytics/mixpanel-naming-convention.md`). 평화축제 퀴즈 이벤트(`QUIZ_*`·`RECOMMENDED_CLUB_CLICKED`, `PEACE_*_PAGE`)는 2026-10 행사 종료 후 제거 대상
 - `api.ts` - API 엔드포인트 URL
 - `snsConfig.ts` - SNS 플랫폼 설정
-- `applicationForm.ts` - 지원서 폼 설정. `NAME_QUESTION_ID`(이름 질문 id 1)는 편집 화면의 수정 불가 판정과 지원자 화면의 이름 표시가 함께 쓴다. 이름 질문은 순서를 바꿀 수 있어 위치로 찾지 않는다
+- `applicationForm.ts` - 지원서 폼 설정. `NAME_QUESTION_ID`(이름 질문 id 1)는 편집 화면의 수정 불가 판정과 지원자 화면의 이름 표시·검색·정렬(`utils/getApplicantName.ts`)이 함께 쓴다. 이름 질문은 순서를 바꿀 수 있어 위치로 찾지 않는다
 - `uploadLimit.ts` - 파일 업로드 제한
 - `adminFieldLimits.ts` - 어드민 탭 텍스트 필드 최대 글자수 (ClubInfo, ClubIntro, Recruit, Account)
 - `adminFieldPlaceholders.ts` - 어드민 탭 텍스트 필드 placeholder 문자열 (ClubInfoEditTab, ClubIntroEditTab 데스크탑/모바일 공유)

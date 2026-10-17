@@ -1,5 +1,5 @@
-import { getApplicantName } from '@/pages/AdminPage/tabs/ApplicantsTab/utils/getApplicantName';
 import { Applicant } from '@/types/applicants';
+import { getApplicantName } from '@/utils/getApplicantName';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantListRow.styles';
 

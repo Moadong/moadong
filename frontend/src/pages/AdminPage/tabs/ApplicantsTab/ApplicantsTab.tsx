@@ -19,10 +19,10 @@ import { useApplicantSelection } from '@/hooks/useApplicantSelection';
 import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
+import { getApplicantName } from '@/utils/getApplicantName';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantsTab.styles';
 import ApplicantsTabMobile from './ApplicantsTabMobile';
-import { getApplicantName } from './utils/getApplicantName';
 
 const sortOptions = [
   { value: 'date', label: '제출순' },
