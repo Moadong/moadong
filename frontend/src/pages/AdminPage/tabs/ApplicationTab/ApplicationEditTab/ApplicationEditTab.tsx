@@ -40,15 +40,13 @@ import {
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
 import { createQuestionId } from './utils/createQuestionId';
+import { hasUserInput } from './utils/hasUserInput';
 
 const ApplicationEditTab = () => {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { applicationFormId: formId } = useParams<{
     applicationFormId?: string;
   }>();
   const { clubId } = useAdminClubId();
-  const trackEvent = useMixpanelTrack();
 
   const {
     data: existingFormData,
@@ -57,18 +55,70 @@ const ApplicationEditTab = () => {
     error,
   } = useGetApplication(clubId ?? undefined, formId ?? '');
 
-  const [formData, setFormData] =
-    useState<ApplicationFormData>(INITIAL_FORM_DATA);
+  if (!clubId) return <div>클럽 정보가 없습니다.</div>;
+
+  if (isLoading) {
+    return <div>지원서 정보를 불러오는 중...</div>;
+  }
+  // 받아 둔 지원서가 있는데 백그라운드 재조회만 실패했으면 편집 화면을 그대로 둔다.
+  // 실패 안내로 바꾸면 편집 컴포넌트가 언마운트돼 편집 중인 내용이 사라진다.
+  if (isError && !existingFormData) {
+    return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
+  }
+
+  // 편집 state는 지원서가 준비된 뒤 마운트할 때 한 번만 초깃값으로 정한다.
+  // 같은 지원서를 다시 불러와도 편집 중인 내용을 덮어쓰지 않고, 다른 지원서로 가면 새로 마운트한다.
+  return (
+    <ApplicationEditor
+      key={`${clubId}:${formId ?? 'new'}`}
+      clubId={clubId}
+      formId={formId}
+      initialFormData={existingFormData}
+    />
+  );
+};
+
+const toEditableFormData = (
+  savedFormData: ApplicationFormData | undefined,
+): ApplicationFormData => {
+  if (!savedFormData) return INITIAL_FORM_DATA;
+  const questions = savedFormData.questions ?? [];
+  return {
+    ...savedFormData,
+    questions: questions.length > 0 ? questions : INITIAL_FORM_DATA.questions!,
+  };
+};
+
+interface ApplicationEditorProps {
+  clubId: string;
+  formId: string | undefined;
+  /** 수정할 저장된 지원서. 새 지원서면 undefined */
+  initialFormData: ApplicationFormData | undefined;
+}
+
+const ApplicationEditor = ({
+  clubId,
+  formId,
+  initialFormData,
+}: ApplicationEditorProps) => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const trackEvent = useMixpanelTrack();
+
+  const [formData, setFormData] = useState<ApplicationFormData>(() =>
+    toEditableFormData(initialFormData),
+  );
   const [applicationFormMode, setApplicationFormMode] =
-    useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
-  const [externalApplicationUrl, setExternalApplicationUrl] = useState('');
+    useState<ApplicationFormMode>(
+      initialFormData?.formMode ?? ApplicationFormMode.INTERNAL,
+    );
+  const [externalApplicationUrl, setExternalApplicationUrl] = useState(
+    initialFormData?.externalApplicationUrl ?? '',
+  );
 
   const isDraftButtonVisible =
     !formId && applicationFormMode === ApplicationFormMode.INTERNAL;
-  const { data: draftQuota } = useAiDraftQuota(
-    clubId ?? undefined,
-    isDraftButtonVisible,
-  );
+  const { data: draftQuota } = useAiDraftQuota(clubId, isDraftButtonVisible);
   // 생성 성공/429로 갱신된 값을 즉시 반영 (quota 조회 전·실패 시에도 동작)
   const [remainingOverride, setRemainingOverride] = useState<number>();
   const remaining = remainingOverride ?? draftQuota?.remaining;
@@ -84,29 +134,6 @@ const ApplicationEditTab = () => {
     isDraftButtonViewTracked.current = true;
     trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_VIEWED);
   }, [isDraftButtonVisible, trackEvent]);
-
-  // 불러온 지원서를 렌더 중에 반영해 템플릿 상태가 화면에 커밋되지 않게 한다.
-  // effect로 넣으면 템플릿(이름 질문이 맨 앞)이 한 번 그려진 뒤, 이름 질문 카드가
-  // Reorder.Item 레이아웃 애니메이션으로 제자리까지 미끄러져 내려간다.
-  // 초깃값을 existingFormData로 두면 캐시에 데이터가 이미 있을 때 반영되지 않으므로 비워 둔다
-  const [syncedFormData, setSyncedFormData] =
-    useState<typeof existingFormData>();
-  if (existingFormData && existingFormData !== syncedFormData) {
-    setSyncedFormData(existingFormData);
-
-    const {
-      formMode = ApplicationFormMode.INTERNAL,
-      externalApplicationUrl = '',
-      questions = [],
-    } = existingFormData;
-
-    const currentQuestions =
-      questions.length > 0 ? questions : INITIAL_FORM_DATA.questions!;
-
-    setApplicationFormMode(formMode);
-    setExternalApplicationUrl(externalApplicationUrl);
-    setFormData({ ...existingFormData, questions: currentQuestions });
-  }
 
   const { mutate: createMutate, isPending: isCreating } = useMutation({
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
@@ -135,10 +162,7 @@ const ApplicationEditTab = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.application.detail(
-          clubId ?? 'unknown',
-          formId ?? '',
-        ),
+        queryKey: queryKeys.application.detail(clubId, formId ?? ''),
       });
       trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVED, {
         is_edit: true,
@@ -198,19 +222,13 @@ const ApplicationEditTab = () => {
   });
 
   const handleGenerateDraft = () => {
-    const hasUserInput =
-      formData.title.trim() !== '' ||
-      formData.description.trim() !== '' ||
-      (formData.questions ?? []).some(
-        (q, index) =>
-          index > 0 && (q.title.trim() !== '' || q.description.trim() !== ''),
-      );
+    const hasWrittenContent = hasUserInput(formData);
     trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_CLICKED, {
-      has_user_input: hasUserInput,
+      has_user_input: hasWrittenContent,
       remaining,
     });
     if (
-      hasUserInput &&
+      hasWrittenContent &&
       !confirm('작성 중인 내용을 AI 초안으로 덮어씁니다. 계속할까요?')
     ) {
       trackEvent(ADMIN_EVENT.AI_DRAFT_OVERWRITE_CANCELED);
@@ -226,18 +244,7 @@ const ApplicationEditTab = () => {
     }));
   };
 
-  if (!clubId) return <div>클럽 정보가 없습니다.</div>;
-
-  if (isLoading) {
-    return <div>지원서 정보를 불러오는 중...</div>;
-  }
-  if (isError) {
-    return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
-  }
-
   const handleSubmit = async () => {
-    if (!clubId) return;
-
     const validationErrors = validateApplicationForm(
       formData,
       applicationFormMode,
