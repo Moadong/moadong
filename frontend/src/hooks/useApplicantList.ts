@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
-import { ApplicationStatus } from '@/types/applicants';
-import { getApplicantName } from '@/utils/getApplicantName';
+import {
+  ApplicantFilter,
+  ApplicantSort,
+  filterAndSortApplicants,
+} from '@/utils/filterAndSortApplicants';
 import { useGetApplicants } from './Queries/useApplicants';
 import { useApplicantSSE } from './useApplicantSSE';
 
-export type ApplicantFilter = 'ALL' | ApplicationStatus;
-export type ApplicantSort = 'date' | 'name';
+export type { ApplicantFilter, ApplicantSort };
 
 export const useApplicantList = (
   applicationFormId: string | undefined,
@@ -37,37 +39,11 @@ export const useApplicantList = (
   const filteredApplicants = useMemo(() => {
     const data = applicantsData ?? fetchedData;
     if (!data?.applicants) return [];
-    let list = [...data.applicants];
-
-    if (!selectedFilter.includes('ALL')) {
-      list = list.filter((a) =>
-        selectedFilter.includes(a.status as ApplicantFilter),
-      );
-    }
-
-    if (keyword.trim()) {
-      const kw = keyword.trim().toLowerCase();
-      list = list.filter((a) =>
-        getApplicantName(a.answers ?? [])
-          ?.toLowerCase()
-          .includes(kw),
-      );
-    }
-
-    if (selectedSort === 'name') {
-      list.sort((a, b) =>
-        (getApplicantName(a.answers ?? []) ?? '').localeCompare(
-          getApplicantName(b.answers ?? []) ?? '',
-        ),
-      );
-    } else {
-      list.sort(
-        (a, b) =>
-          new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime(),
-      );
-    }
-
-    return list;
+    return filterAndSortApplicants(data.applicants, {
+      selectedFilter,
+      keyword,
+      selectedSort,
+    });
   }, [applicantsData, fetchedData, selectedFilter, keyword, selectedSort]);
 
   return {

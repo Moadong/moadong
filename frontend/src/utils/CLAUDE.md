@@ -7,6 +7,7 @@
 - `recruitmentDateParser.ts` - 모집 기간 파싱
 - `debounce.ts` - 디바운스 함수
 - `getApplicantName.ts` - 지원자 답변 중 이름 질문(`NAME_QUESTION_ID`)의 답. 이름 질문은 순서를 바꿀 수 있어 `answers[0]`으로 읽으면 안 된다. 지원자 목록·상세·이름 검색·정렬에서 사용
+- `filterAndSortApplicants.ts` - 지원자 목록 상태 필터·이름 검색·이름순/최신순 정렬. `useApplicantList`가 쓰고, 훅은 API 모듈(`import.meta`)을 끌고 와 Jest로 못 불러오므로 테스트는 이 함수로 한다
 - `cdnImage.ts` - `cdn.moadong.com` 이미지를 용도별 크기의 Cloudflare 변환 URL로 바꿈. 다른 호스트는 그대로. 모달 전체보기에는 쓰지 않는다(원본 유지)
 - `validateSocialLink.ts` - SNS 링크 유효성 검사
 - `isInAppWebView.ts` - 인앱 WebView 감지 (UA의 `MoadongApp`)
