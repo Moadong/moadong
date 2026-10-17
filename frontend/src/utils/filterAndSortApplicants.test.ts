@@ -1,9 +1,9 @@
+import { NAME_QUESTION_ID } from '@/constants/applicationForm';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
 import { AnswerItem } from '@/types/application';
 import { asApplicantId, asApplicationFormId } from '@/types/branded';
 import { filterAndSortApplicants } from './filterAndSortApplicants';
 
-// 이름 질문(id 1)이 두 번째에 있는 지원서. 첫 번째 답은 학번이다
 const applicant = (
   id: string,
   answers: AnswerItem[],
@@ -17,14 +17,15 @@ const applicant = (
   applicationFormId: asApplicationFormId('form'),
 });
 
+// 이름 질문이 두 번째에 있는 지원서. 첫 번째 답은 학번이다.
 // 학번순(첫 번째 답)이면 lee가 먼저, 이름순이면 kim이 먼저라 둘을 구분할 수 있다
 const kim = applicant('kim', [
   { id: 7, value: '20230009' },
-  { id: 1, value: '김철수' },
+  { id: NAME_QUESTION_ID, value: '김철수' },
 ]);
 const lee = applicant('lee', [
   { id: 7, value: '20230002' },
-  { id: 1, value: '이영희' },
+  { id: NAME_QUESTION_ID, value: '이영희' },
 ]);
 const noName = applicant('noName', [{ id: 7, value: '20230003' }]);
 
