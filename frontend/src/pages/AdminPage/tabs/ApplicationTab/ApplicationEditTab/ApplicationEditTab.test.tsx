@@ -1,10 +1,13 @@
 import '@testing-library/jest-dom';
 import { MemoryRouter, Route, Routes } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { render, screen } from '@testing-library/react';
+import { render, screen, waitFor } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { ThemeProvider } from 'styled-components';
+import { updateApplication } from '@/apis/application';
 import { NAME_QUESTION_ID } from '@/constants/applicationForm';
+import { ADMIN_EVENT } from '@/constants/eventName';
+import { NetworkError } from '@/errors';
 import {
   useAiDraftQuota,
   useGetApplication,
@@ -23,9 +26,10 @@ jest.mock('@/hooks/Queries/useApplication', () => ({
   useGetApplication: jest.fn(),
   useAiDraftQuota: jest.fn(),
 }));
+const mockTrackEvent = jest.fn();
 jest.mock('@/hooks/Mixpanel/useMixpanelTrack', () => ({
   __esModule: true,
-  default: () => jest.fn(),
+  default: () => mockTrackEvent,
 }));
 
 const FORM_ID = 'form-id';
@@ -191,5 +195,24 @@ describe('ApplicationEditTab', () => {
     expect(
       screen.getByText(/지원서 정보를 불러오는데 실패했습니다/),
     ).toBeInTheDocument();
+  });
+  it('저장이 실패하면 실패 원인과 함께 이벤트를 남긴다', async () => {
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
+    jest.mocked(updateApplication).mockRejectedValue(new NetworkError());
+    mockApplication({ data: savedForm() });
+    renderEditTab();
+
+    await userEvent.click(screen.getByRole('button', { name: '저장하기' }));
+
+    await waitFor(() =>
+      expect(mockTrackEvent).toHaveBeenCalledWith(
+        ADMIN_EVENT.APPLICATION_FORM_SAVE_FAILED,
+        expect.objectContaining({
+          is_edit: true,
+          form_mode: ApplicationFormMode.INTERNAL,
+          error_type: 'network',
+        }),
+      ),
+    );
   });
 });
