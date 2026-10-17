@@ -40,6 +40,7 @@ import {
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
 import { createQuestionId } from './utils/createQuestionId';
+import { hasUserInput } from './utils/hasUserInput';
 
 const ApplicationEditTab = () => {
   const { applicationFormId: formId } = useParams<{
@@ -219,19 +220,13 @@ const ApplicationEditor = ({
   });
 
   const handleGenerateDraft = () => {
-    const hasUserInput =
-      formData.title.trim() !== '' ||
-      formData.description.trim() !== '' ||
-      (formData.questions ?? []).some(
-        (q, index) =>
-          index > 0 && (q.title.trim() !== '' || q.description.trim() !== ''),
-      );
+    const isOverwriting = hasUserInput(formData);
     trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_CLICKED, {
-      has_user_input: hasUserInput,
+      has_user_input: isOverwriting,
       remaining,
     });
     if (
-      hasUserInput &&
+      isOverwriting &&
       !confirm('작성 중인 내용을 AI 초안으로 덮어씁니다. 계속할까요?')
     ) {
       trackEvent(ADMIN_EVENT.AI_DRAFT_OVERWRITE_CANCELED);
