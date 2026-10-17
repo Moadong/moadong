@@ -85,8 +85,14 @@ const ApplicationEditTab = () => {
     trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_VIEWED);
   }, [isDraftButtonVisible, trackEvent]);
 
-  useEffect(() => {
-    if (!existingFormData) return;
+  // 불러온 지원서를 렌더 중에 반영해 템플릿 상태가 화면에 커밋되지 않게 한다.
+  // effect로 넣으면 템플릿(이름 질문이 맨 앞)이 한 번 그려진 뒤, 이름 질문 카드가
+  // Reorder.Item 레이아웃 애니메이션으로 제자리까지 미끄러져 내려간다.
+  // 초깃값을 existingFormData로 두면 캐시에 데이터가 이미 있을 때 반영되지 않으므로 비워 둔다
+  const [syncedFormData, setSyncedFormData] =
+    useState<typeof existingFormData>();
+  if (existingFormData && existingFormData !== syncedFormData) {
+    setSyncedFormData(existingFormData);
 
     const {
       formMode = ApplicationFormMode.INTERNAL,
@@ -100,7 +106,7 @@ const ApplicationEditTab = () => {
     setApplicationFormMode(formMode);
     setExternalApplicationUrl(externalApplicationUrl);
     setFormData({ ...existingFormData, questions: currentQuestions });
-  }, [existingFormData]);
+  }
 
   const { mutate: createMutate, isPending: isCreating } = useMutation({
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
