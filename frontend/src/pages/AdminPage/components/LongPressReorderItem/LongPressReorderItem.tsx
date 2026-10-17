@@ -1,13 +1,12 @@
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Reorder, useDragControls } from 'framer-motion';
 import { colors } from '@/styles/theme/colors';
+import * as Styled from './LongPressReorderItem.styles';
 
 const LONG_PRESS_MS = 200;
 // 브라우저가 스크롤로 판정하기 전(터치 슬롭 약 15px)에 취소되도록 그보다 작게 둔다
 const MOVE_TOLERANCE_PX = 8;
 // 버튼·드롭다운 위에서 누르면 클릭이 우선이므로 드래그를 시작하지 않는다.
-// 질문 제목·설명 입력은 카드 대부분을 차지해서 제외하면 길게 누를 곳이 여백뿐이다.
-// 입력 위에서는 짧게 누르면 편집, 길게 누르면 드래그로 나눈다.
 const CLICK_TARGET_SELECTOR = [
   'select:not(:disabled)',
   'button:not(:disabled)',
@@ -16,6 +15,9 @@ const CLICK_TARGET_SELECTOR = [
   '[role="listbox"]',
   '[role="option"]',
 ].join(', ');
+// 입력칸에서 누른 채 잠깐 멈췄다 끄는 건 텍스트 선택이라, 길게 누르기로 보지 않고 드래그를 시작하지 않는다.
+// 카드를 옮길 땐 입력칸 밖(여백·메뉴 열)을 길게 누른다.
+const TEXT_INPUT_SELECTOR = 'input, textarea, [contenteditable="true"]';
 
 interface LongPressReorderItemProps<T> {
   value: T;
@@ -78,7 +80,9 @@ const LongPressReorderItem = <T,>({
 
   const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
     if (e.button !== 0) return;
-    if ((e.target as Element).closest(CLICK_TARGET_SELECTOR)) return;
+    const target = e.target as Element;
+    if (target.closest(CLICK_TARGET_SELECTOR)) return;
+    if (target.closest(TEXT_INPUT_SELECTOR)) return;
     cancelPress();
 
     const pointerEvent = e.nativeEvent;
@@ -132,13 +136,14 @@ const LongPressReorderItem = <T,>({
       style={{
         position: 'relative',
         cursor: isDragging ? 'grabbing' : 'grab',
-        userSelect: isDragging ? 'none' : undefined,
       }}
     >
       {/* 드래그 중엔 안쪽 입력이 포인터를 받지 않게 해 커서가 grabbing에서 텍스트 커서로 바뀌지 않게 한다 */}
-      <div style={{ pointerEvents: isDragging ? 'none' : undefined }}>
+      <Styled.Content
+        style={{ pointerEvents: isDragging ? 'none' : undefined }}
+      >
         {children}
-      </div>
+      </Styled.Content>
     </Reorder.Item>
   );
 };
