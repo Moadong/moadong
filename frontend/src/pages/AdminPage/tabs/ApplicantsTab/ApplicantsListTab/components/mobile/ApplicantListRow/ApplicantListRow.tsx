@@ -1,4 +1,5 @@
 import { Applicant } from '@/types/applicants';
+import { getApplicantName } from '@/utils/getApplicantName';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantListRow.styles';
 
@@ -24,7 +25,7 @@ const ApplicantListRow = ({
   onClick,
 }: ApplicantListRowProps) => {
   const { label } = mapStatusToGroup(applicant.status);
-  const name = applicant.answers[0]?.value ?? '';
+  const name = getApplicantName(applicant.answers) ?? '';
 
   return (
     <Styled.Row onClick={onClick}>

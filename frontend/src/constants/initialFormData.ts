@@ -1,3 +1,4 @@
+import { NAME_QUESTION_ID } from '@/constants/applicationForm';
 import { ApplicationFormData, ApplicationFormMode } from '@/types/application';
 
 const INITIAL_FORM_DATA: ApplicationFormData = {
@@ -6,7 +7,7 @@ const INITIAL_FORM_DATA: ApplicationFormData = {
   questions: [
     //맨 처음은 이름
     {
-      id: 1,
+      id: NAME_QUESTION_ID,
       title: '이름을 입력해주세요',
       description: '지원자의 이름을 입력해주세요. (예: 홍길동)',
       type: 'SHORT_TEXT',

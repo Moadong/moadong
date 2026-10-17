@@ -19,6 +19,7 @@ import { useApplicantSelection } from '@/hooks/useApplicantSelection';
 import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
+import { getApplicantName } from '@/utils/getApplicantName';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantsTab.styles';
 import ApplicantsTabMobile from './ApplicantsTabMobile';
@@ -508,7 +509,7 @@ const ApplicantsTabDesktop = () => {
                   </Styled.ApplicantStatusBadge>
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
-                  {item.answers[0].value}
+                  {getApplicantName(item.answers)}
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol isMemo={true}>
                   {item.memo && item.memo.length > 0 ? (
