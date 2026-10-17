@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
+    "postinstall": "patch-package",
     "dev": "vite --config ./config/vite.config.ts",
     "generate:sitemap": "node ./scripts/generate-sitemap.mjs",
     "build": "npm run generate:sitemap && tsc --noEmit && vite build --config ./config/vite.config.ts",
@@ -97,6 +98,7 @@
     "madge": "^8.0.0",
     "msw": "^2.12.2",
     "msw-storybook-addon": "^2.0.6",
+    "patch-package": "^8.0.1",
     "path": "^0.12.7",
     "pixelmatch": "^7.2.0",
     "playwright": "^1.63.0",
