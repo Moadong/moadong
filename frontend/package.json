@@ -45,7 +45,7 @@
     "agentation": "^3.0.2",
     "date-fns": "^4.1.0",
     "eventsource": "^4.1.0",
-    "framer-motion": "^12.43.0",
+    "framer-motion": "12.43.0",
     "jest-fixed-jsdom": "^0.0.9",
     "mixpanel-browser": "^2.60.0",
     "qrcode.react": "^4.2.0",
