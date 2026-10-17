@@ -17,7 +17,7 @@ import {
 import { ADMIN_EVENT } from '@/constants/eventName';
 import INITIAL_FORM_DATA from '@/constants/initialFormData';
 import { queryKeys } from '@/constants/queryKeys';
-import { ApiError } from '@/errors';
+import { ApiError, HttpError } from '@/errors';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import {
   useAiDraftQuota,
@@ -40,6 +40,7 @@ import {
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
 import { createQuestionId } from './utils/createQuestionId';
+import { getSaveFailureType } from './utils/getSaveFailureType';
 import { hasUserInput } from './utils/hasUserInput';
 
 const ApplicationEditTab = () => {
@@ -135,6 +136,17 @@ const ApplicationEditor = ({
     trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_VIEWED);
   }, [isDraftButtonVisible, trackEvent]);
 
+  // 저장 실패가 얼마나 자주, 어떤 원인으로 일어나는지 보려고 남긴다
+  const trackSaveFailed = (err: Error, isEdit: boolean) => {
+    trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVE_FAILED, {
+      is_edit: isEdit,
+      form_mode: applicationFormMode,
+      error_type: getSaveFailureType(err),
+      status: err instanceof HttpError ? err.status : undefined,
+      message: err.message,
+    });
+  };
+
   const { mutate: createMutate, isPending: isCreating } = useMutation({
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
     onSuccess: () => {
@@ -147,8 +159,10 @@ const ApplicationEditor = ({
       alert('지원서가 성공적으로 생성되었습니다.');
       navigate(`/admin/application-list`);
     },
-    onError: (err: Error) =>
-      alert(`지원서 생성에 실패했습니다.: ${err.message}`),
+    onError: (err: Error) => {
+      trackSaveFailed(err, false);
+      alert(`지원서 생성에 실패했습니다.: ${err.message}`);
+    },
   });
 
   const { mutate: updateMutate, isPending: isUpdating } = useMutation({
@@ -172,8 +186,10 @@ const ApplicationEditor = ({
       alert('지원서가 성공적으로 수정되었습니다.');
       navigate('/admin/application-list');
     },
-    onError: (err: Error) =>
-      alert(`지원서 수정에 실패했습니다: ${err.message}`),
+    onError: (err: Error) => {
+      trackSaveFailed(err, true);
+      alert(`지원서 수정에 실패했습니다: ${err.message}`);
+    },
   });
 
   const { mutate: generateDraft, isPending: isGenerating } = useMutation({
