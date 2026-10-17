@@ -20,6 +20,7 @@ const renderItem = () => {
   render(
     <Reorder.Group axis='y' values={['a']} onReorder={() => {}}>
       <LongPressReorderItem value='a'>
+        <p>여백</p>
         <textarea aria-label='질문 제목' />
         <button type='button'>삭제</button>
       </LongPressReorderItem>
@@ -28,7 +29,12 @@ const renderItem = () => {
   const textarea = screen.getByLabelText('질문 제목');
   // 드래그 중에는 안쪽 내용이 포인터를 받지 않는다
   const content = textarea.parentElement!;
-  return { textarea, content, button: screen.getByRole('button') };
+  return {
+    textarea,
+    content,
+    blank: screen.getByText('여백'),
+    button: screen.getByRole('button'),
+  };
 };
 
 const press = (el: Element) =>
@@ -43,24 +49,33 @@ describe('LongPressReorderItem', () => {
     jest.useRealTimers();
   });
 
-  it('입력 위에서 길게 누르기 전에 떼면 드래그하지 않고 포커스를 유지한다', () => {
+  it('입력 위에서는 길게 눌러도 드래그하지 않고 포커스를 유지한다', () => {
     const { textarea, content } = renderItem();
     textarea.focus();
 
     press(textarea);
-    act(() => jest.advanceTimersByTime(150));
-    fireEvent.pointerUp(window);
     act(() => jest.advanceTimersByTime(500));
 
     expect(document.activeElement).toBe(textarea);
     expect(content.style.pointerEvents).toBe('');
   });
 
-  it('입력 위에서 길게 누르면 포커스를 풀고 드래그를 시작한다', () => {
-    const { textarea, content } = renderItem();
+  it('여백에서 길게 누르기 전에 떼면 드래그하지 않는다', () => {
+    const { blank, content } = renderItem();
+
+    press(blank);
+    act(() => jest.advanceTimersByTime(150));
+    fireEvent.pointerUp(window);
+    act(() => jest.advanceTimersByTime(500));
+
+    expect(content.style.pointerEvents).toBe('');
+  });
+
+  it('여백에서 길게 누르면 입력 포커스를 풀고 드래그를 시작한다', () => {
+    const { textarea, blank, content } = renderItem();
     textarea.focus();
 
-    press(textarea);
+    press(blank);
     act(() => jest.advanceTimersByTime(200));
 
     expect(document.activeElement).not.toBe(textarea);
@@ -68,9 +83,9 @@ describe('LongPressReorderItem', () => {
   });
 
   it('누른 채 8px 넘게 움직이면 스크롤로 보고 드래그하지 않는다', () => {
-    const { textarea, content } = renderItem();
+    const { blank, content } = renderItem();
 
-    press(textarea);
+    press(blank);
     fireEvent.pointerMove(window, { clientX: 10, clientY: 30 });
     act(() => jest.advanceTimersByTime(500));
 
@@ -89,9 +104,9 @@ describe('LongPressReorderItem', () => {
   });
 
   it('길게 누른 뒤 움직이지 않고 떼면 드래그 상태를 끝낸다', () => {
-    const { textarea, content } = renderItem();
+    const { blank, content } = renderItem();
 
-    press(textarea);
+    press(blank);
     act(() => jest.advanceTimersByTime(200));
     expect(content.style.pointerEvents).toBe('none');
 
