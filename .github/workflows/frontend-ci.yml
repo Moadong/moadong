@@ -53,6 +53,9 @@ jobs:
       - name: Tracking audit (미사용 USER_EVENT 검사)
         run: npm run audit:tracking
 
+      - name: Codex skill sync check (.codex/skills가 .claude 원본과 같은지)
+        run: npm run codex:check
+
       - name: Build
         env:
           SKIP_DYNAMIC_SITEMAP: 'true'
