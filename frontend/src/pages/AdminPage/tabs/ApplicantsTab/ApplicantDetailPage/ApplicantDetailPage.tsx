@@ -10,6 +10,7 @@ import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAns
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { ApplicationStatus } from '@/types/applicants';
 import { Question } from '@/types/application';
+import { getApplicantName } from '@/utils/getApplicantName';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantDetailPage.styles';
 import ApplicantDetailPageMobile from './ApplicantDetailPageMobile';
@@ -136,7 +137,7 @@ const ApplicantDetailPage = () => {
             >
               {applicantsData.applicants.map((a) => (
                 <option key={a.id} value={a.id}>
-                  {a.answers[0].value}
+                  {getApplicantName(a.answers)}
                 </option>
               ))}
             </select>

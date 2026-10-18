@@ -10,11 +10,14 @@ import {
 import Button from '@/components/common/Button/Button';
 import CustomTextArea from '@/components/common/CustomTextArea/CustomTextArea';
 import Spinner from '@/components/common/Spinner/Spinner';
-import { APPLICATION_FORM } from '@/constants/applicationForm';
+import {
+  APPLICATION_FORM,
+  NAME_QUESTION_ID,
+} from '@/constants/applicationForm';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import INITIAL_FORM_DATA from '@/constants/initialFormData';
 import { queryKeys } from '@/constants/queryKeys';
-import { ApiError } from '@/errors';
+import { ApiError, HttpError } from '@/errors';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import {
   useAiDraftQuota,
@@ -37,16 +40,14 @@ import {
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
 import { createQuestionId } from './utils/createQuestionId';
-import { pinFirstQuestion } from './utils/pinFirstQuestion';
+import { getSaveFailureType } from './utils/getSaveFailureType';
+import { hasUserInput } from './utils/hasUserInput';
 
 const ApplicationEditTab = () => {
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
   const { applicationFormId: formId } = useParams<{
     applicationFormId?: string;
   }>();
   const { clubId } = useAdminClubId();
-  const trackEvent = useMixpanelTrack();
 
   const {
     data: existingFormData,
@@ -55,18 +56,70 @@ const ApplicationEditTab = () => {
     error,
   } = useGetApplication(clubId ?? undefined, formId ?? '');
 
-  const [formData, setFormData] =
-    useState<ApplicationFormData>(INITIAL_FORM_DATA);
+  if (!clubId) return <div>클럽 정보가 없습니다.</div>;
+
+  if (isLoading) {
+    return <div>지원서 정보를 불러오는 중...</div>;
+  }
+  // 받아 둔 지원서가 있는데 백그라운드 재조회만 실패했으면 편집 화면을 그대로 둔다.
+  // 실패 안내로 바꾸면 편집 컴포넌트가 언마운트돼 편집 중인 내용이 사라진다.
+  if (isError && !existingFormData) {
+    return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
+  }
+
+  // 편집 state는 지원서가 준비된 뒤 마운트할 때 한 번만 초깃값으로 정한다.
+  // 같은 지원서를 다시 불러와도 편집 중인 내용을 덮어쓰지 않고, 다른 지원서로 가면 새로 마운트한다.
+  return (
+    <ApplicationEditor
+      key={`${clubId}:${formId ?? 'new'}`}
+      clubId={clubId}
+      formId={formId}
+      initialFormData={existingFormData}
+    />
+  );
+};
+
+const toEditableFormData = (
+  savedFormData: ApplicationFormData | undefined,
+): ApplicationFormData => {
+  if (!savedFormData) return INITIAL_FORM_DATA;
+  const questions = savedFormData.questions ?? [];
+  return {
+    ...savedFormData,
+    questions: questions.length > 0 ? questions : INITIAL_FORM_DATA.questions!,
+  };
+};
+
+interface ApplicationEditorProps {
+  clubId: string;
+  formId: string | undefined;
+  /** 수정할 저장된 지원서. 새 지원서면 undefined */
+  initialFormData: ApplicationFormData | undefined;
+}
+
+const ApplicationEditor = ({
+  clubId,
+  formId,
+  initialFormData,
+}: ApplicationEditorProps) => {
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const trackEvent = useMixpanelTrack();
+
+  const [formData, setFormData] = useState<ApplicationFormData>(() =>
+    toEditableFormData(initialFormData),
+  );
   const [applicationFormMode, setApplicationFormMode] =
-    useState<ApplicationFormMode>(ApplicationFormMode.INTERNAL);
-  const [externalApplicationUrl, setExternalApplicationUrl] = useState('');
+    useState<ApplicationFormMode>(
+      initialFormData?.formMode ?? ApplicationFormMode.INTERNAL,
+    );
+  const [externalApplicationUrl, setExternalApplicationUrl] = useState(
+    initialFormData?.externalApplicationUrl ?? '',
+  );
 
   const isDraftButtonVisible =
     !formId && applicationFormMode === ApplicationFormMode.INTERNAL;
-  const { data: draftQuota } = useAiDraftQuota(
-    clubId ?? undefined,
-    isDraftButtonVisible,
-  );
+  const { data: draftQuota } = useAiDraftQuota(clubId, isDraftButtonVisible);
   // 생성 성공/429로 갱신된 값을 즉시 반영 (quota 조회 전·실패 시에도 동작)
   const [remainingOverride, setRemainingOverride] = useState<number>();
   const remaining = remainingOverride ?? draftQuota?.remaining;
@@ -83,22 +136,16 @@ const ApplicationEditTab = () => {
     trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_VIEWED);
   }, [isDraftButtonVisible, trackEvent]);
 
-  useEffect(() => {
-    if (!existingFormData) return;
-
-    const {
-      formMode = ApplicationFormMode.INTERNAL,
-      externalApplicationUrl = '',
-      questions = [],
-    } = existingFormData;
-
-    const currentQuestions =
-      questions.length > 0 ? questions : INITIAL_FORM_DATA.questions!;
-
-    setApplicationFormMode(formMode);
-    setExternalApplicationUrl(externalApplicationUrl);
-    setFormData({ ...existingFormData, questions: currentQuestions });
-  }, [existingFormData]);
+  // 저장 실패가 얼마나 자주, 어떤 원인으로 일어나는지 보려고 남긴다
+  const trackSaveFailed = (err: Error, isEdit: boolean) => {
+    trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVE_FAILED, {
+      is_edit: isEdit,
+      form_mode: applicationFormMode,
+      error_type: getSaveFailureType(err),
+      status: err instanceof HttpError ? err.status : undefined,
+      message: err.message,
+    });
+  };
 
   const { mutate: createMutate, isPending: isCreating } = useMutation({
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
@@ -112,8 +159,10 @@ const ApplicationEditTab = () => {
       alert('지원서가 성공적으로 생성되었습니다.');
       navigate(`/admin/application-list`);
     },
-    onError: (err: Error) =>
-      alert(`지원서 생성에 실패했습니다.: ${err.message}`),
+    onError: (err: Error) => {
+      trackSaveFailed(err, false);
+      alert(`지원서 생성에 실패했습니다.: ${err.message}`);
+    },
   });
 
   const { mutate: updateMutate, isPending: isUpdating } = useMutation({
@@ -127,10 +176,7 @@ const ApplicationEditTab = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
       queryClient.invalidateQueries({
-        queryKey: queryKeys.application.detail(
-          clubId ?? 'unknown',
-          formId ?? '',
-        ),
+        queryKey: queryKeys.application.detail(clubId, formId ?? ''),
       });
       trackEvent(ADMIN_EVENT.APPLICATION_FORM_SAVED, {
         is_edit: true,
@@ -140,8 +186,10 @@ const ApplicationEditTab = () => {
       alert('지원서가 성공적으로 수정되었습니다.');
       navigate('/admin/application-list');
     },
-    onError: (err: Error) =>
-      alert(`지원서 수정에 실패했습니다: ${err.message}`),
+    onError: (err: Error) => {
+      trackSaveFailed(err, true);
+      alert(`지원서 수정에 실패했습니다: ${err.message}`);
+    },
   });
 
   const { mutate: generateDraft, isPending: isGenerating } = useMutation({
@@ -151,7 +199,7 @@ const ApplicationEditTab = () => {
       const nameQuestion = { ...INITIAL_FORM_DATA.questions![0] };
       const draftQuestions = draft.questions.map((q, index) => ({
         ...q,
-        id: index + 2, // index 0은 이름 고정 질문(id 1)
+        id: index + 2, // id 1은 이름 질문(NAME_QUESTION_ID)이 쓴다
       }));
       setFormData((prev) => ({
         ...prev,
@@ -190,19 +238,13 @@ const ApplicationEditTab = () => {
   });
 
   const handleGenerateDraft = () => {
-    const hasUserInput =
-      formData.title.trim() !== '' ||
-      formData.description.trim() !== '' ||
-      (formData.questions ?? []).some(
-        (q, index) =>
-          index > 0 && (q.title.trim() !== '' || q.description.trim() !== ''),
-      );
+    const hasWrittenContent = hasUserInput(formData);
     trackEvent(ADMIN_EVENT.AI_DRAFT_BUTTON_CLICKED, {
-      has_user_input: hasUserInput,
+      has_user_input: hasWrittenContent,
       remaining,
     });
     if (
-      hasUserInput &&
+      hasWrittenContent &&
       !confirm('작성 중인 내용을 AI 초안으로 덮어씁니다. 계속할까요?')
     ) {
       trackEvent(ADMIN_EVENT.AI_DRAFT_OVERWRITE_CANCELED);
@@ -218,18 +260,7 @@ const ApplicationEditTab = () => {
     }));
   };
 
-  if (!clubId) return <div>클럽 정보가 없습니다.</div>;
-
-  if (isLoading) {
-    return <div>지원서 정보를 불러오는 중...</div>;
-  }
-  if (isError) {
-    return <div>지원서 정보를 불러오는데 실패했습니다. {error.message}</div>;
-  }
-
   const handleSubmit = async () => {
-    if (!clubId) return;
-
     const validationErrors = validateApplicationForm(
       formData,
       applicationFormMode,
@@ -370,13 +401,10 @@ const InternalApplicationComponent = ({
     }));
   };
 
-  // 이름 질문은 드래그 대상이 아니라 맨 앞에 고정되고, 나머지 질문만 순서가 바뀐다
-  const [nameQuestion, ...reorderableQuestions] = formData.questions ?? [];
-
   const handleReorder = (reordered: Question[]) => {
     setFormData((prev) => ({
       ...prev,
-      questions: pinFirstQuestion(prev.questions ?? [], reordered),
+      questions: reordered,
     }));
   };
 
@@ -448,11 +476,7 @@ const InternalApplicationComponent = ({
     }));
   };
 
-  const renderQuestionBuilder = (
-    question: Question,
-    index: number,
-    readOnly = false,
-  ) => (
+  const renderQuestionBuilder = (question: Question, index: number) => (
     <QuestionBuilder
       id={index + 1}
       title={question.title}
@@ -460,7 +484,8 @@ const InternalApplicationComponent = ({
       options={question.options}
       items={question.items}
       type={question.type}
-      readOnly={readOnly}
+      // 이름 질문은 순서만 바꿀 수 있고 수정·삭제할 수 없다
+      readOnly={question.id === NAME_QUESTION_ID}
       onTitleChange={handleTitleChange(question.id)}
       onDescriptionChange={handleDescriptionChange(question.id)}
       onItemsChange={handleItemsChange(question.id)}
@@ -483,17 +508,15 @@ const InternalApplicationComponent = ({
         width='100%'
       />
       <Styled.QuestionContainer
-        as={Reorder.Group<Question>}
+        as={Reorder.Group<Question[]>}
         forwardedAs='div'
         axis='y'
-        values={reorderableQuestions}
+        values={formData.questions ?? []}
         onReorder={handleReorder}
       >
-        {/* 이름 질문은 수정할 수 없다 */}
-        {nameQuestion && renderQuestionBuilder(nameQuestion, 0, true)}
-        {reorderableQuestions.map((question, index) => (
+        {formData.questions?.map((question, index) => (
           <LongPressReorderItem key={question.id} value={question}>
-            {renderQuestionBuilder(question, index + 1)}
+            {renderQuestionBuilder(question, index)}
           </LongPressReorderItem>
         ))}
       </Styled.QuestionContainer>

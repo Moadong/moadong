@@ -273,6 +273,8 @@ export const ADMIN_EVENT = {
   AI_DRAFT_GENERATION_FAILED: 'AI Draft Generation Failed',
   /** 지원서 저장 */
   APPLICATION_FORM_SAVED: 'Application Form Saved',
+  /** 지원서 저장 실패. error_type으로 네트워크·세션 만료·서버 오류를 나눈다 */
+  APPLICATION_FORM_SAVE_FAILED: 'Application Form Save Failed',
 
   // 홍보 게시글 관리
   /** 홍보 게시글 작성 버튼 클릭 */
