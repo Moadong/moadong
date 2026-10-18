@@ -17,7 +17,6 @@ import FeedbackCompletePage from '@/pages/FeedbackPage/FeedbackCompletePage';
 import FeedbackListPage from '@/pages/FeedbackPage/FeedbackListPage';
 import FeedbackTypeSelectPage from '@/pages/FeedbackPage/FeedbackTypeSelectPage';
 import FeedbackWritePage from '@/pages/FeedbackPage/FeedbackWritePage';
-import LetterDetailPage from '@/pages/FeedbackPage/LetterDetailPage';
 import SentFeedbackDetailPage from '@/pages/FeedbackPage/SentFeedbackDetailPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
@@ -36,6 +35,10 @@ import SubscriptionsPage from '@/pages/SubscriptionsPage/SubscriptionsPage';
 import webviewRoutes from './webviewRoutes';
 
 const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
+// 학생용 화면에서 react-markdown을 쓰는 곳은 이 페이지뿐이라, 정적 import하면 첫 로드에 마크다운 청크가 딸려 온다.
+const LetterDetailPage = lazy(
+  () => import('@/pages/FeedbackPage/LetterDetailPage'),
+);
 
 // Sentry init 이후에 평가되어야 감싸진다 (src/instrument.ts 참고).
 const useSentryRoutes = Sentry.wrapUseRoutesV7(useRoutes);
