@@ -105,10 +105,18 @@ function stripFrontmatter(text) {
   return text.slice(end + '\n---\n'.length).replace(/^\n+/, '');
 }
 
+// autocrlf가 켜진 체크아웃에서 CRLF로 바뀌어도 frontmatter 경계와 비교가 어긋나지 않게 LF로 맞춘다.
+function readLf(path) {
+  return readFileSync(path, 'utf8').replace(/\r\n/g, '\n');
+}
+
 function sourceBody(relPath) {
-  const raw = readFileSync(join(FRONTEND_ROOT, relPath), 'utf8');
+  const raw = readLf(join(FRONTEND_ROOT, relPath));
   // $ARGUMENTS는 Claude slash command 전용 치환자라 Codex에는 뜻이 없다.
-  return stripFrontmatter(raw).replaceAll('$ARGUMENTS', '사용자의 현재 요청');
+  // `${ARGUMENTS:-x}`를 셸에 그대로 두면 Codex에는 그 변수가 없어 항상 기본값으로 돈다.
+  return stripFrontmatter(raw)
+    .replace(/\$\{ARGUMENTS:-([^}]*)\}/g, '<사용자의 현재 요청, 비어 있으면 $1>')
+    .replaceAll('$ARGUMENTS', '사용자의 현재 요청');
 }
 
 function render(name, { title, description, sources }) {
@@ -133,7 +141,12 @@ function generate() {
 
 function check(generated) {
   const problems = [];
-  const existing = existsSync(OUT_DIR) ? readdirSync(OUT_DIR) : [];
+  // 파일(.DS_Store 등)은 건너뛰고 디렉터리만 스킬로 본다.
+  const existing = existsSync(OUT_DIR)
+    ? readdirSync(OUT_DIR, { withFileTypes: true })
+        .filter((entry) => entry.isDirectory())
+        .map((entry) => entry.name)
+    : [];
   for (const name of existing) {
     if (!(name in generated)) problems.push(`.codex/skills/${name}: MANIFEST에 없는 스킬`);
   }
@@ -141,7 +154,7 @@ function check(generated) {
     const file = join(OUT_DIR, name, 'SKILL.md');
     if (!existsSync(file)) {
       problems.push(`.codex/skills/${name}/SKILL.md: 없음`);
-    } else if (readFileSync(file, 'utf8') !== content) {
+    } else if (readLf(file) !== content) {
       problems.push(`.codex/skills/${name}/SKILL.md: 원본과 다름`);
     }
   }
