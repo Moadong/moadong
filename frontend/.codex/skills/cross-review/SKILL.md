@@ -25,5 +25,5 @@ description: "다른 AI가 작성한 코드를 리뷰하기 위해 모아동 cro
 아래 명령을 실행하고 결과를 그대로 출력합니다:
 
 ```bash
-./scripts/cross-review.sh --writer 작성자 인자, 기본값 claude
+./scripts/cross-review.sh --writer <사용자의 현재 요청, 비어 있으면 claude>
 ```
