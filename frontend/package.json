@@ -17,7 +17,7 @@
     "build-storybook": "storybook build",
     "chromatic": "dotenv chromatic",
     "test": "jest",
-    "test:scripts": "node --test scripts/button-migration/*.test.mjs",
+    "test:scripts": "node --test scripts/button-migration/*.test.mjs scripts/sync-codex-skills.test.mjs",
     "button:inventory": "node scripts/button-migration/inventory.mjs",
     "button:before-after": "dotenv -- node scripts/button-migration/before-after.mjs",
     "button:figma-candidates": "dotenv -- node scripts/button-migration/figma-candidates.mjs",
