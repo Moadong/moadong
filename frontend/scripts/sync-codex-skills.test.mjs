@@ -21,6 +21,10 @@ test('ARGUMENTS 세 가지 형태를 모두 치환하고 서로 겹치지 않는
   );
   assert.equal(replaceArguments('`${ARGUMENTS}`가 비어 있으면'), '`사용자의 현재 요청`가 비어 있으면');
   assert.equal(replaceArguments('`$ARGUMENTS`가 비어 있으면'), '`사용자의 현재 요청`가 비어 있으면');
+  assert.equal(
+    replaceArguments('${ARGUMENTS:-a} ${ARGUMENTS} $ARGUMENTS'),
+    '<사용자의 현재 요청, 비어 있으면 a> 사용자의 현재 요청 사용자의 현재 요청',
+  );
 });
 
 test('--check는 디렉터리만 스킬로 보고 .DS_Store 같은 파일은 무시한다', () => {

@@ -151,7 +151,7 @@ export function check(generated, outDir = OUT_DIR) {
         .map((entry) => entry.name)
     : [];
   for (const name of existing) {
-    if (!(name in generated)) problems.push(`.codex/skills/${name}: MANIFEST에 없는 스킬`);
+    if (!Object.hasOwn(generated, name)) problems.push(`.codex/skills/${name}: MANIFEST에 없는 스킬`);
   }
   for (const [name, content] of Object.entries(generated)) {
     const file = join(outDir, name, 'SKILL.md');
