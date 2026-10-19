@@ -10,7 +10,7 @@
 
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
-import { fileURLToPath } from 'node:url';
+import { fileURLToPath, pathToFileURL } from 'node:url';
 
 const FRONTEND_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = join(FRONTEND_ROOT, '.codex', 'skills');
@@ -98,11 +98,19 @@ const CODEX_RULES = `## Codex 적용 규칙
 - 모든 작업은 저장소의 \`AGENTS.md\` 지침을 우선해서 따른다.`;
 
 // Claude 커맨드 frontmatter(description, allowed-tools)를 떼고 본문만 남긴다.
-function stripFrontmatter(text) {
+export function stripFrontmatter(text) {
   if (!text.startsWith('---\n')) return text;
   const end = text.indexOf('\n---\n', 4);
   if (end === -1) return text;
   return text.slice(end + '\n---\n'.length).replace(/^\n+/, '');
+}
+
+// $ARGUMENTS는 Claude slash command 전용 치환자라 Codex에는 뜻이 없다.
+// `${ARGUMENTS:-x}`나 `${ARGUMENTS}`를 셸에 그대로 두면 Codex에는 그 변수가 없어 빈 값이나 기본값으로 돈다.
+export function replaceArguments(text) {
+  return text.replace(/\$\{ARGUMENTS(?::-([^}]*))?\}|\$ARGUMENTS/g, (_, fallback) =>
+    fallback === undefined ? '사용자의 현재 요청' : `<사용자의 현재 요청, 비어 있으면 ${fallback}>`,
+  );
 }
 
 // autocrlf가 켜진 체크아웃에서 CRLF로 바뀌어도 frontmatter 경계와 비교가 어긋나지 않게 LF로 맞춘다.
@@ -111,12 +119,7 @@ function readLf(path) {
 }
 
 function sourceBody(relPath) {
-  const raw = readLf(join(FRONTEND_ROOT, relPath));
-  // $ARGUMENTS는 Claude slash command 전용 치환자라 Codex에는 뜻이 없다.
-  // `${ARGUMENTS:-x}`를 셸에 그대로 두면 Codex에는 그 변수가 없어 항상 기본값으로 돈다.
-  return stripFrontmatter(raw)
-    .replace(/\$\{ARGUMENTS:-([^}]*)\}/g, '<사용자의 현재 요청, 비어 있으면 $1>')
-    .replaceAll('$ARGUMENTS', '사용자의 현재 요청');
+  return replaceArguments(stripFrontmatter(readLf(join(FRONTEND_ROOT, relPath))));
 }
 
 function render(name, { title, description, sources }) {
@@ -135,15 +138,15 @@ function render(name, { title, description, sources }) {
   ].join('\n');
 }
 
-function generate() {
+export function generate() {
   return Object.fromEntries(Object.entries(MANIFEST).map(([name, entry]) => [name, render(name, entry)]));
 }
 
-function check(generated) {
+export function check(generated, outDir = OUT_DIR) {
   const problems = [];
   // 파일(.DS_Store 등)은 건너뛰고 디렉터리만 스킬로 본다.
-  const existing = existsSync(OUT_DIR)
-    ? readdirSync(OUT_DIR, { withFileTypes: true })
+  const existing = existsSync(outDir)
+    ? readdirSync(outDir, { withFileTypes: true })
         .filter((entry) => entry.isDirectory())
         .map((entry) => entry.name)
     : [];
@@ -151,7 +154,7 @@ function check(generated) {
     if (!(name in generated)) problems.push(`.codex/skills/${name}: MANIFEST에 없는 스킬`);
   }
   for (const [name, content] of Object.entries(generated)) {
-    const file = join(OUT_DIR, name, 'SKILL.md');
+    const file = join(outDir, name, 'SKILL.md');
     if (!existsSync(file)) {
       problems.push(`.codex/skills/${name}/SKILL.md: 없음`);
     } else if (readLf(file) !== content) {
@@ -161,23 +164,25 @@ function check(generated) {
   return problems;
 }
 
-function write(generated) {
+export function write(generated, outDir = OUT_DIR) {
   for (const [name, content] of Object.entries(generated)) {
-    mkdirSync(join(OUT_DIR, name), { recursive: true });
-    writeFileSync(join(OUT_DIR, name, 'SKILL.md'), content);
+    mkdirSync(join(outDir, name), { recursive: true });
+    writeFileSync(join(outDir, name, 'SKILL.md'), content);
   }
 }
 
-const generated = generate();
-if (process.argv.includes('--check')) {
-  const problems = check(generated);
-  if (problems.length > 0) {
-    console.error('Codex 스킬이 .claude 원본과 어긋났다. `npm run codex:sync`를 실행해 커밋한다.');
-    for (const p of problems) console.error(`  - ${p}`);
-    process.exit(1);
+if (import.meta.url === pathToFileURL(process.argv[1]).href) {
+  const generated = generate();
+  if (process.argv.includes('--check')) {
+    const problems = check(generated);
+    if (problems.length > 0) {
+      console.error('Codex 스킬이 .claude 원본과 어긋났다. `npm run codex:sync`를 실행해 커밋한다.');
+      for (const p of problems) console.error(`  - ${p}`);
+      process.exit(1);
+    }
+    console.log(`Codex 스킬 ${Object.keys(generated).length}개가 원본과 같다.`);
+  } else {
+    write(generated);
+    console.log(`Codex 스킬 ${Object.keys(generated).length}개를 생성했다.`);
   }
-  console.log(`Codex 스킬 ${Object.keys(generated).length}개가 원본과 같다.`);
-} else {
-  write(generated);
-  console.log(`Codex 스킬 ${Object.keys(generated).length}개를 생성했다.`);
 }
