@@ -38,6 +38,14 @@ test('--check는 디렉터리만 스킬로 보고 .DS_Store 같은 파일은 무
   assert.deepEqual(check(generated, outDir), ['.codex/skills/zzz: MANIFEST에 없는 스킬']);
 });
 
+test('--check는 constructor처럼 프로토타입에 있는 이름의 디렉터리도 MANIFEST 밖으로 본다', () => {
+  const outDir = mkdtempSync(path.join(tmpdir(), 'codex-skills-'));
+  const generated = { a: '---\nname: "a"\n---\n본문\n' };
+  write(generated, outDir);
+  mkdirSync(path.join(outDir, 'constructor'));
+  assert.deepEqual(check(generated, outDir), ['.codex/skills/constructor: MANIFEST에 없는 스킬']);
+});
+
 test('--check는 CRLF로 저장된 사본도 LF 생성 결과와 같다고 본다', () => {
   const outDir = mkdtempSync(path.join(tmpdir(), 'codex-skills-'));
   const generated = { a: '---\nname: "a"\n---\n본문\n' };
