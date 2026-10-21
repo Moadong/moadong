@@ -81,12 +81,22 @@ const renderIcon = (icon: TabIcon, active: boolean) => {
 };
 
 interface BottomNavigationProps {
-  /** 홍보 게시판에 확인하지 않은 새 글이 있는지 */
-  hasPromotionNotification?: boolean;
+  /** 홍보 탭 알림. 'dot'은 점, 숫자는 새 글 수(0이면 표시 없음, 10 이상은 9+) */
+  promotionNotification?: number | 'dot';
 }
 
+const getPromotionAriaLabel = (
+  label: string,
+  notification: number | 'dot',
+): string | undefined => {
+  if (notification === 'dot') return `${label}, 새 글 있음`;
+  if (notification <= 0) return undefined;
+  if (notification > 9) return `${label}, 새 글 9개 이상`;
+  return `${label}, 새 글 ${notification}개`;
+};
+
 const BottomNavigation = ({
-  hasPromotionNotification = false,
+  promotionNotification = 0,
 }: BottomNavigationProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -106,18 +116,30 @@ const BottomNavigation = ({
       <Styled.Inner>
         {tabs.map((tab) => {
           const active = isTabActive(pathname, tab.path);
+          const ariaLabel =
+            tab.key === 'promotions'
+              ? getPromotionAriaLabel(tab.label, promotionNotification)
+              : undefined;
           return (
             <Styled.Tab
               key={tab.key}
               type='button'
               $active={active}
               aria-current={active ? 'page' : undefined}
+              aria-label={ariaLabel}
               onClick={() => handleTabClick(tab)}
             >
               {renderIcon(tab.icon, active)}
-              {tab.key === 'promotions' && hasPromotionNotification && (
-                <Styled.NotificationDot />
+              {tab.key === 'promotions' && promotionNotification === 'dot' && (
+                <Styled.NotificationDot aria-hidden />
               )}
+              {tab.key === 'promotions' &&
+                typeof promotionNotification === 'number' &&
+                promotionNotification > 0 && (
+                  <Styled.NotificationBadge aria-hidden>
+                    {promotionNotification > 9 ? '9+' : promotionNotification}
+                  </Styled.NotificationBadge>
+                )}
               <Styled.Label>{tab.label}</Styled.Label>
             </Styled.Tab>
           );
