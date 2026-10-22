@@ -11,4 +11,4 @@
 - **메인(`/`)은 폭과 무관하게 하나다**: 전부 `MainContent`(홈이 곧 동아리 전체 목록). 2026-09 `main_redesign` 실험에서 홈을 허브로 바꾸고 목록을 `/clubs`로 빼는 안을 검증했으나, 목적이던 홍보 노출이 늘지 않아(홍보 상세 도달 하루 1~4명, 목록→상세 전환 11%) 기존 홈으로 확정하고 개편 홈·`/clubs`를 제거했다. `/clubs`는 공유된 링크 보호용으로 `/` 리다이렉트만 남아 있다.
   - 구독 진입점은 바텀네비 구독 탭 하나다(홈 헤더의 구독 벨은 2026-10 제거). 구독은 앱 브리지(`useWebviewSubscribe`) 기능이라 웹 브라우저에서는 목록이 비는데, 이건 결함이 아니라 `SubscriptionsPage`가 '앱 다운로드' CTA를 띄우는 **설치 퍼널**이라 의도된 동작이다.
   - 종료된 실험의 mixpanel super property는 코드를 지워도 남는다. `src/utils/cleanupMainRedesignExperiment.ts`가 `unregister`로 털어내며, 기존 방문자가 한 번씩 재방문하면 삭제해도 된다.
-- **구버전 앱 호환**: `src/routes/webviewRoutes.tsx`는 `/webview/* → 웹 경로` 리다이렉트만 담당(`/webview/main`→`/`, `/webview/club/:id`→`/clubDetail/:id` 등). 구버전 앱 진입 URL 보호용이라 제거 금지.
+- **구버전 앱 호환**: `src/routes/webviewRoutes.tsx`는 `/webview/* → 웹 경로` 리다이렉트만 담당(`/webview/main`→`/`, `/webview/club/:id`→`/clubDetail/:id` 등). 구버전 앱 진입 URL 보호용이라 제거 금지. 그 밖의 `/webview/:slug?path=/경로`는 `path`로 보낸다. 앱이 깔린 폰은 www.moadong.com 링크를 전부 앱이 가로채고(유니버설·앱 링크 `/*`) 앱 라우터는 `/peace` 같은 웹 전용 경로를 몰라 열리다 만다. 그래서 QR·외부 공유처럼 밖에서 여는 링크는 이 형태로 만든다(앱은 path를 웹뷰로 열고, 앱이 없으면 웹이 여기서 path로 보낸다).
