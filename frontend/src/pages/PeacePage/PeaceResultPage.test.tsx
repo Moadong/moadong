@@ -69,6 +69,10 @@ const IntroProbe = () => {
   return <div>INTRO {search}</div>;
 };
 
+/** 앱이 가로채지 않게 /webview/peace?path= 로 감싼 결과 링크 */
+const appLink = (path: string) =>
+  `http://localhost/webview/peace?${new URLSearchParams({ path, hideHeader: 'true' })}`;
+
 const renderResult = (search: string) =>
   render(
     <ThemeProvider theme={theme}>
@@ -198,7 +202,7 @@ describe('PeaceResultPage', () => {
     await userEvent.click(screen.getByRole('button', { name: '공유하기' }));
     expect(mockHandleShare).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: 'http://localhost/peace/result?type=carer&src=share',
+        url: appLink('/peace/result?type=carer&src=share'),
       }),
     );
   });
@@ -225,7 +229,7 @@ describe('PeaceResultPage', () => {
   it('부스 모드에서는 QR을 공유 버튼 위에 하나 더 보여준다', () => {
     renderResult('?type=carer&a=00000000&kiosk=1&src=booth');
     expect(screen.getByTestId('qr')).toHaveTextContent(
-      'http://localhost/peace/result?type=carer&a=00000000&src=qr',
+      appLink('/peace/result?type=carer&a=00000000&src=qr'),
     );
     expect(
       screen.getByRole('button', { name: '공유하기' }),
@@ -238,7 +242,7 @@ describe('PeaceResultPage', () => {
     await userEvent.click(screen.getByRole('button', { name: '공유하기' }));
     expect(mockHandleShare).toHaveBeenCalledWith(
       expect.objectContaining({
-        url: 'http://localhost/peace/result?type=carer&a=00000000&src=share',
+        url: appLink('/peace/result?type=carer&a=00000000&src=share'),
       }),
     );
     expect(mockTrack).toHaveBeenCalledWith(
