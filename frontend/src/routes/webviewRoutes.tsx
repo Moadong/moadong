@@ -21,10 +21,18 @@ const ClubDetailRedirect = ({ map = false }: { map?: boolean }) => {
   return <Navigate to={`/clubDetail/${slug}${map ? '/map' : ''}`} replace />;
 };
 
-// `//host`, `/\host`, `/<탭>/host`는 브라우저가 다른 오리진으로 해석하므로 오리진으로 비교한다
-const isInternalPath = (path: string) =>
-  path.startsWith('/') &&
-  new URL(path, window.location.origin).origin === window.location.origin;
+// `//host`, `/\host`, `/<탭>/host`는 브라우저가 다른 오리진으로 해석하므로 오리진으로 비교한다.
+// `//[`처럼 호스트를 파싱하지 못하면 URL이 예외를 던지므로 내부 경로가 아닌 것으로 본다
+const isInternalPath = (path: string) => {
+  if (!path.startsWith('/')) return false;
+  try {
+    return (
+      new URL(path, window.location.origin).origin === window.location.origin
+    );
+  } catch {
+    return false;
+  }
+};
 
 /**
  * 앱이 설치된 폰은 www.moadong.com 링크를 전부 앱이 가로채는데(유니버설·앱 링크 `/*`),

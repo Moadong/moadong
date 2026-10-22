@@ -43,6 +43,7 @@ describe('webviewRoutes', () => {
     expect(renderAt('/webview/peace?path=https%3A%2F%2Fevil.com')).toBe('/');
     expect(renderAt('/webview/peace?path=%2F%5Cevil.com')).toBe('/');
     expect(renderAt('/webview/peace?path=%2F%09%2Fevil.com')).toBe('/');
+    expect(renderAt('/webview/peace?path=%2F%2F%5B')).toBe('/');
   });
 
   it('기존 구버전 앱 리다이렉트가 우선한다', () => {
