@@ -22,7 +22,11 @@ import { PeaceSource, usePeaceParams } from './hooks/usePeaceParams';
 import * as Styled from './PeaceResultPage.styles';
 import { rankPeaceTypes, scorePeaceTypes } from './utils/calculatePeaceType';
 
-/** 방문객 폰에서 열 결과 링크. 부스 모드 플래그는 빼고 답과 유입 경로만 붙인다 */
+/**
+ * 방문객 폰에서 열 결과 링크. 부스 모드 플래그는 빼고 답과 유입 경로만 붙인다.
+ * 앱이 깔린 폰은 이 도메인 링크를 앱이 가로채는데 앱 라우터에 /peace 화면이 없어 열리다 만다.
+ * 그래서 앱은 웹뷰로, 앱이 없는 브라우저는 웹 리다이렉트로 여는 /webview/:slug?path= 형태로 감싼다.
+ */
 const buildResultUrl = (
   type: PeaceTypeId,
   answersParam: string | null,
@@ -31,7 +35,11 @@ const buildResultUrl = (
   const params = new URLSearchParams({ type });
   if (answersParam) params.set('a', answersParam);
   params.set('src', source);
-  return `${window.location.origin}/peace/result?${params.toString()}`;
+  const link = new URLSearchParams({
+    path: `/peace/result?${params.toString()}`,
+    hideHeader: 'true',
+  });
+  return `${window.location.origin}/webview/peace?${link.toString()}`;
 };
 
 /** a=01230123 형식(문항 수만큼의 0~3)만 답으로 인정한다 */
