@@ -7,11 +7,9 @@ import * as Styled from './AppLayout.styles';
 
 /** 하단바가 실제로 보일 때만 홍보 알림 쿼리를 돌린다 */
 const BottomNavigationWithNotification = () => {
-  const hasPromotionNotification = usePromotionNotification();
+  const promotionNotification = usePromotionNotification();
 
-  return (
-    <BottomNavigation hasPromotionNotification={hasPromotionNotification} />
-  );
+  return <BottomNavigation promotionNotification={promotionNotification} />;
 };
 
 const AppLayout = () => {

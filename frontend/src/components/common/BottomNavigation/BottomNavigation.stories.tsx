@@ -60,14 +60,28 @@ export const Subscriptions: Story = {
   ],
 };
 
-/** 홍보 게시판에 확인하지 않은 새 글이 있을 때 '홍보' 탭에 점이 붙는다 */
-export const WithPromotionNotification: Story = {
-  args: { hasPromotionNotification: true },
-  decorators: [
-    (Story) => (
-      <MemoryRouter initialEntries={['/']}>
-        <Story />
-      </MemoryRouter>
-    ),
-  ],
+const withHomeRouter: Story['decorators'] = [
+  (Story) => (
+    <MemoryRouter initialEntries={['/']}>
+      <Story />
+    </MemoryRouter>
+  ),
+];
+
+/** 첫 방문이고 홍보 글이 있으면 '홍보' 탭에 점이 붙는다 */
+export const WithPromotionDot: Story = {
+  args: { promotionNotification: 'dot' },
+  decorators: withHomeRouter,
+};
+
+/** 마지막 확인 이후 새로 생성된 홍보 글 수가 '홍보' 탭에 붙는다 */
+export const WithPromotionCount: Story = {
+  args: { promotionNotification: 3 },
+  decorators: withHomeRouter,
+};
+
+/** 새 글이 10개 이상이면 9+로 표시한다 */
+export const WithPromotionCountOverflow: Story = {
+  args: { promotionNotification: 12 },
+  decorators: withHomeRouter,
 };
