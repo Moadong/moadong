@@ -210,19 +210,19 @@ export const PhoneImage = styled.img`
 `;
 
 export const CardImage = styled(motion.div)<{
-  top?: string;
-  left?: string;
-  right?: string;
-  bottom?: string;
-  transform?: string;
+  $top?: string;
+  $left?: string;
+  $right?: string;
+  $bottom?: string;
+  $transform?: string;
 }>`
   position: absolute;
   pointer-events: none;
-  top: ${({ top }) => top || 'auto'};
-  left: ${({ left }) => left || 'auto'};
-  right: ${({ right }) => right || 'auto'};
-  bottom: ${({ bottom }) => bottom || 'auto'};
-  transform: ${({ transform }) => transform || 'none'};
+  top: ${({ $top }) => $top || 'auto'};
+  left: ${({ $left }) => $left || 'auto'};
+  right: ${({ $right }) => $right || 'auto'};
+  bottom: ${({ $bottom }) => $bottom || 'auto'};
+  transform: ${({ $transform }) => $transform || 'none'};
   z-index: 2;
 
   ${media.mobile} {
