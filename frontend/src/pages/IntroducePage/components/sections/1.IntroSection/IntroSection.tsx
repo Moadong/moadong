@@ -20,10 +20,10 @@ import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import * as Styled from './IntroSection.styles';
 
 const cardPositions = [
-  { top: '280px', left: '-300px' },
-  { top: '330px', left: '-630px' },
-  { top: '280px', right: '-220px' },
-  { top: '310px', right: '-580px' },
+  { $top: '280px', $left: '-300px' },
+  { $top: '330px', $left: '-630px' },
+  { $top: '280px', $right: '-220px' },
+  { $top: '310px', $right: '-580px' },
 ];
 
 const SHAPES = [
