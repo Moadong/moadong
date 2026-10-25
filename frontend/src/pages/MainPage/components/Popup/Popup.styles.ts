@@ -13,7 +13,7 @@ export const Overlay = styled.div<{ $isOpen: boolean }>`
   transition: background-color 0.2s ease;
 `;
 
-export const ModalContainer = styled.div<{ $isOpen: boolean }>`
+export const ModalContainer = styled.div`
   position: relative;
   z-index: ${Z_INDEX.modal};
   max-width: 500px;

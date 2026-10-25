@@ -91,7 +91,6 @@ const Popup = ({ configs }: PopupProps) => {
       aria-modal='true'
     >
       <Styled.ModalContainer
-        $isOpen={isOpen}
         onClick={(e: MouseEvent<HTMLDivElement>) => e.stopPropagation()}
       >
         <Styled.Container>
