@@ -70,7 +70,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
 
   return (
     <>
-      <Styled.Header isScrolled={isScrolled}>
+      <Styled.Header $isScrolled={isScrolled}>
         <Styled.Container>
           <Styled.LeftSection>
             <Styled.LogoButton

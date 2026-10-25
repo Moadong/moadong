@@ -12,9 +12,9 @@ const BORDER_ERROR = colors.primary[900];
 const BORDER_SUCCESS = '#28a745';
 const BORDER_FOCUS = '#007bff';
 
-export const InputContainer = styled.div<{ width: string }>`
+export const InputContainer = styled.div<{ $width: string }>`
   position: relative;
-  width: ${(props) => props.width};
+  width: ${(props) => props.$width};
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -36,9 +36,9 @@ export const InputWrapper = styled.div`
 `;
 
 export const Input = styled.input<{
-  hasError?: boolean;
+  $hasError?: boolean;
   readOnly?: boolean;
-  isSuccess?: boolean;
+  $isSuccess?: boolean;
   $variant?: 'text' | 'password' | 'none';
 }>`
   flex: 1;
@@ -46,8 +46,12 @@ export const Input = styled.input<{
   padding: 12px ${({ $variant }) => INPUT_RIGHT_PADDING[$variant ?? 'none']}
     12px 18px;
   border: 1px solid
-    ${({ hasError, isSuccess }) =>
-      hasError ? BORDER_ERROR : isSuccess ? BORDER_SUCCESS : colors.gray[500]};
+    ${({ $hasError, $isSuccess }) =>
+      $hasError
+        ? BORDER_ERROR
+        : $isSuccess
+          ? BORDER_SUCCESS
+          : colors.gray[500]};
   background-color: transparent;
   border-radius: 6px;
   outline: none;
@@ -64,12 +68,12 @@ export const Input = styled.input<{
   :focus {
     outline: none;
     box-shadow: 0 0 3px;
-    border-color: ${({ hasError, isSuccess, readOnly }) =>
+    border-color: ${({ $hasError, $isSuccess, readOnly }) =>
       readOnly
         ? colors.gray[500]
-        : hasError
+        : $hasError
           ? BORDER_ERROR
-          : isSuccess
+          : $isSuccess
             ? BORDER_SUCCESS
             : BORDER_FOCUS};
     ${({ readOnly }) => readOnly && 'cursor: pointer;'}
@@ -136,12 +140,12 @@ export const CharCount = styled.span`
   letter-spacing: -0.96px;
 `;
 
-export const HelperText = styled.div<{ isError?: boolean }>`
+export const HelperText = styled.div<{ $isError?: boolean }>`
   position: absolute;
   left: 0;
   top: 100%;
   font-size: 0.75rem;
-  color: ${({ isError }) => (isError ? BORDER_ERROR : BORDER_SUCCESS)};
+  color: ${({ $isError }) => ($isError ? BORDER_ERROR : BORDER_SUCCESS)};
   margin-top: 4px;
   pointer-events: none;
   white-space: nowrap;

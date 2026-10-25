@@ -33,43 +33,43 @@ export const Container = styled.div`
 `;
 
 export const Shape = styled.div<{
-  top?: string;
-  left?: string;
-  right?: string;
-  bottom?: string;
-  laptop?: { top?: string; left?: string; right?: string; bottom?: string };
-  tablet?: { top?: string; left?: string; right?: string; bottom?: string };
-  mobile?: { top?: string; left?: string; right?: string; bottom?: string };
+  $top?: string;
+  $left?: string;
+  $right?: string;
+  $bottom?: string;
+  $laptop?: { top?: string; left?: string; right?: string; bottom?: string };
+  $tablet?: { top?: string; left?: string; right?: string; bottom?: string };
+  $mobile?: { top?: string; left?: string; right?: string; bottom?: string };
 }>`
   position: absolute;
   z-index: 0;
-  top: ${({ top }) => top || 'auto'};
-  left: ${({ left }) => left || 'auto'};
-  right: ${({ right }) => right || 'auto'};
-  bottom: ${({ bottom }) => bottom || 'auto'};
+  top: ${({ $top }) => $top || 'auto'};
+  left: ${({ $left }) => $left || 'auto'};
+  right: ${({ $right }) => $right || 'auto'};
+  bottom: ${({ $bottom }) => $bottom || 'auto'};
 
   ${media.laptop} {
     transform: scale(0.85);
-    top: ${({ laptop }) => laptop?.top || 'auto'};
-    left: ${({ laptop }) => laptop?.left || 'auto'};
-    right: ${({ laptop }) => laptop?.right || 'auto'};
-    bottom: ${({ laptop }) => laptop?.bottom || 'auto'};
+    top: ${({ $laptop }) => $laptop?.top || 'auto'};
+    left: ${({ $laptop }) => $laptop?.left || 'auto'};
+    right: ${({ $laptop }) => $laptop?.right || 'auto'};
+    bottom: ${({ $laptop }) => $laptop?.bottom || 'auto'};
   }
 
   ${media.tablet} {
     transform: scale(0.7);
-    top: ${({ tablet }) => tablet?.top || 'auto'};
-    left: ${({ tablet }) => tablet?.left || 'auto'};
-    right: ${({ tablet }) => tablet?.right || 'auto'};
-    bottom: ${({ tablet }) => tablet?.bottom || 'auto'};
+    top: ${({ $tablet }) => $tablet?.top || 'auto'};
+    left: ${({ $tablet }) => $tablet?.left || 'auto'};
+    right: ${({ $tablet }) => $tablet?.right || 'auto'};
+    bottom: ${({ $tablet }) => $tablet?.bottom || 'auto'};
   }
 
   ${media.mobile} {
     transform: scale(0.5);
-    top: ${({ mobile }) => mobile?.top || 'auto'};
-    left: ${({ mobile }) => mobile?.left || 'auto'};
-    right: ${({ mobile }) => mobile?.right || 'auto'};
-    bottom: ${({ mobile }) => mobile?.bottom || 'auto'};
+    top: ${({ $mobile }) => $mobile?.top || 'auto'};
+    left: ${({ $mobile }) => $mobile?.left || 'auto'};
+    right: ${({ $mobile }) => $mobile?.right || 'auto'};
+    bottom: ${({ $mobile }) => $mobile?.bottom || 'auto'};
   }
 `;
 
