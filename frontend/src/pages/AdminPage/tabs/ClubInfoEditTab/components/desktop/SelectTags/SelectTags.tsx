@@ -32,8 +32,8 @@ const SelectTags = ({ label, tags, selected, onChange }: SelectTagsProps) => {
               });
               onChange(tag.value);
             }}
-            selected={selected === tag.value}
-            color={tag.color}
+            $selected={selected === tag.value}
+            $color={tag.color}
           >
             #{tag.label}
           </Styled.Button>

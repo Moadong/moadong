@@ -63,7 +63,7 @@ const InputField = ({
   };
 
   return (
-    <Styled.InputContainer width={width}>
+    <Styled.InputContainer $width={width}>
       {label && <Styled.Label htmlFor={id}>{label}</Styled.Label>}
       <Styled.InputWrapper>
         <Styled.Input
@@ -75,8 +75,8 @@ const InputField = ({
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
-          hasError={isError}
-          isSuccess={isSuccess}
+          $hasError={isError}
+          $isSuccess={isSuccess}
           readOnly={readOnly}
           $variant={getActiveButtonVariant()}
         />
@@ -97,7 +97,7 @@ const InputField = ({
         </Styled.CharCount>
       )}
       {(isError || isSuccess) && helperText && (
-        <Styled.HelperText isError={isError}>{helperText}</Styled.HelperText>
+        <Styled.HelperText $isError={isError}>{helperText}</Styled.HelperText>
       )}
     </Styled.InputContainer>
   );

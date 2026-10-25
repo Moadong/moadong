@@ -9,7 +9,7 @@ export const HEADER_HEIGHT = {
   mobile: 56,
 } as const;
 
-export const Header = styled.header<{ isScrolled: boolean }>`
+export const Header = styled.header<{ $isScrolled: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -22,8 +22,8 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   background-color: white;
   z-index: ${Z_INDEX.header};
 
-  box-shadow: ${({ isScrolled }) =>
-    isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
+  box-shadow: ${({ $isScrolled }) =>
+    $isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
   transition: box-shadow 0.2s ease-in-out;
 
   ${media.laptop} {
