@@ -137,7 +137,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
           {displayBanners?.map((banner, index) => (
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
-                isClickable={!!banner.linkTo}
+                $isClickable={!!banner.linkTo}
                 onClick={() =>
                   handleBannerClick(
                     banner.id,
@@ -167,7 +167,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
         {!isMobile && !isWebview && (
           <Styled.DotPagination>
             {displayBanners?.map((_, index) => (
-              <Styled.Dot key={index} active={currentIndex === index} />
+              <Styled.Dot key={index} $active={currentIndex === index} />
             ))}
           </Styled.DotPagination>
         )}

@@ -4,8 +4,8 @@ import { colors } from '@/styles/theme/colors';
 
 //Todo : InputField 컴포넌트와 중복되는 부분이 많아 추후 리팩토링 검토
 
-export const TextAreaContainer = styled.div<{ width: string }>`
-  width: ${(props) => props.width};
+export const TextAreaContainer = styled.div<{ $width: string }>`
+  width: ${(props) => props.$width};
   max-width: 100%;
   display: flex;
   flex-direction: column;
@@ -27,15 +27,15 @@ export const TextAreaWrapper = styled.div`
 `;
 
 export const TextArea = styled.textarea<{
-  hasError?: boolean;
+  $hasError?: boolean;
   $variant?: 'outlined' | 'filled';
 }>`
   flex: 1;
   padding: 12px 36px 12px 18px;
-  border: ${({ hasError, $variant }) =>
+  border: ${({ $hasError, $variant }) =>
     $variant === 'filled'
       ? 'none'
-      : `1px solid ${hasError ? 'red' : colors.gray[500]}`};
+      : `1px solid ${$hasError ? 'red' : colors.gray[500]}`};
   border-radius: ${({ $variant }) => ($variant === 'filled' ? '8px' : '6px')};
   outline: none;
   font-size: 1.125rem;
