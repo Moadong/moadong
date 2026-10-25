@@ -51,11 +51,7 @@ export default defineConfig(({ mode }) => {
                 name: env.VITE_SENTRY_RELEASE,
               },
               sourcemaps: {
-                filesToDeleteAfterUpload: [
-                  './**/*.map',
-                  './**/public/**/*.map',
-                  './dist/**/*.map',
-                ],
+                filesToDeleteAfterUpload: ['./dist/**/*.map'],
               },
             }),
           ]
