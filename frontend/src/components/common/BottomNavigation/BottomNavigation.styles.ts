@@ -74,6 +74,22 @@ export const NotificationDot = styled.span`
   background-color: ${theme.colors.primary[900]};
 `;
 
+export const NotificationBadge = styled.span`
+  position: absolute;
+  top: -2px;
+  left: calc(50% + 6px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  color: ${theme.colors.base.white};
+  background-color: ${theme.colors.primary[900]};
+`;
+
 export const Label = styled.span`
   font-size: 10px;
   font-weight: 500;
