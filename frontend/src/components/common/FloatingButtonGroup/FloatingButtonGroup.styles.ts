@@ -43,8 +43,10 @@ export const FloatingButton = styled.button<{
     display: block;
   }
 
-  &:hover svg {
-    transform: scale(1.12);
+  @media (hover: hover) {
+    &:hover svg {
+      transform: scale(1.12);
+    }
   }
 
   &:active svg {
