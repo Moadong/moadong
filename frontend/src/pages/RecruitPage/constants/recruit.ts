@@ -89,7 +89,7 @@ export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
     ],
     qualifications: [
       'Figma 등을 활용해 앱 또는 웹 UI/UX 디자인 프로젝트를 진행해 본 분',
-      '주 1회 정기 회의에 참여할 수 있는 분',
+      '2주에 1회 정기 모임에 참여 가능하신 분',
     ],
     preferred: [
       '실제 서비스 출시 또는 운영 경험이 있는 분',
@@ -105,20 +105,18 @@ export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
     summary:
       '웹 프론트엔드나 백엔드를 맡아 실제 사용자가 쓰는 기능을 만들어요.',
     responsibilities: [
-      '프론트: React 기능 개발, 디자인 시스템',
-      '백엔드: Spring API 개발, Docker·K8s 운영, GitOps·GitHub Actions로 배포 자동화',
-      '공통: PR 기반 코드 리뷰, Observability 구축과 지표 기반 개선, Agent 커맨드·훅·스킬 개발',
+      '사용자 기능: 로그인 기반 개인화 기능 개발 (관심 동아리, 지원 내역 등)',
+      '동아리 기능: 동아리 관리자 기능 개발 (모집 공고, 지원자 관리 등)',
+      '서비스 운영: 사용자 피드백 기반 기능 개선과 성능·품질 관리',
     ],
     qualifications: [
-      'React·TypeScript 또는 Spring·Java로 프로젝트를 만들어 본 분',
-      '한 학기 이상 꾸준히 참여할 수 있는 분',
-      '주 1회 정기 회의에 참여할 수 있는 분',
+      '프로젝트를 만들어 본 분',
+      '2주에 1회 정기 모임에 참여 가능하신 분',
     ],
     preferred: [
-      '서비스를 배포하거나 운영해 본 분',
-      '전환율, 이탈률 같은 지표로 개선 방향을 잡아 본 분',
       '동아리 활동 경험이 있는 분',
       '서비스를 주도적으로 이끌어 본 분',
+      'AI를 활용해 프로젝트를 만들어 본 분',
     ],
     applicationFormId: '6acfc2cba9be71734de95dfd',
   },
