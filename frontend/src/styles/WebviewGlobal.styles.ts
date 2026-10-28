@@ -10,7 +10,7 @@ const WebviewGlobalStyles = createGlobalStyle`
     -webkit-text-size-adjust: 100%;
     cursor: default;
   }
-  button, a, [role='button'], img {
+  button, [role='button'], img {
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
