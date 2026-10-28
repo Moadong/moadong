@@ -134,6 +134,9 @@ const rowStyles = css`
 
 export const InfoLink = styled(Link)`
   ${rowStyles}
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 `;
 
 export const InfoRow = styled.div`
