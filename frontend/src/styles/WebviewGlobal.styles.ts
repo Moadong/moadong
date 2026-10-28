@@ -8,10 +8,12 @@ const WebviewGlobalStyles = createGlobalStyle`
     overscroll-behavior: none;
     -webkit-font-smoothing: antialiased;
     -webkit-text-size-adjust: 100%;
+    cursor: default;
+  }
+  button, a, [role='button'], img {
     user-select: none;
     -webkit-user-select: none;
     -webkit-touch-callout: none;
-    cursor: default;
   }
   * {
     -webkit-tap-highlight-color: transparent;
