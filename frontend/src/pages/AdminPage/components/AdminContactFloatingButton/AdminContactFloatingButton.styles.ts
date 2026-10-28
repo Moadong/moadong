@@ -43,9 +43,11 @@ export const ContactButton = styled.a`
     fill: ${colors.base.black};
   }
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgb(0 0 0 / 20%);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgb(0 0 0 / 20%);
+    }
   }
 
   &:active {

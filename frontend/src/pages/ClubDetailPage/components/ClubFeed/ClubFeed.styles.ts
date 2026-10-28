@@ -27,9 +27,11 @@ export const PhotoItem = styled.div`
   background-color: ${colors.gray[100]};
   transition: all ${transitions.duration.normal} ${transitions.easing.ease};
 
-  &:hover {
-    transform: translateY(-4px);
-    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15);
+    }
   }
 `;
 

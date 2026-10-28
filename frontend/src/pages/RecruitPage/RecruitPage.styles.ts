@@ -144,8 +144,10 @@ export const PositionCard = styled(Link)<{ $variant: RecruitPositionId }>`
   background: ${({ $variant }) => CARD_BACKGROUNDS[$variant]};
   text-decoration: none;
 
-  &:hover ${PositionMore} svg {
-    transform: translateX(3px);
+  @media (hover: hover) {
+    &:hover ${PositionMore} svg {
+      transform: translateX(3px);
+    }
   }
 
   &:focus-visible {
