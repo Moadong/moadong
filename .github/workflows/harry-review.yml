@@ -218,8 +218,8 @@ jobs:
                아니다 → 아무것도 하지 말고 즉시 끝낸다.
             2. harry의 스레드가 맞으면 맥락을 파악한다:
                - 루트 코멘트(harry의 원래 지적)의 코드 위치(`.path`, `.line`, `.diff_hunk`)와 본문.
-               - 스레드의 이후 답글들: `gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments" --paginate`로
-                 받아 `in_reply_to_id == ${{ github.event.comment.in_reply_to_id }}` 인 것들을 시간순으로 읽는다.
+               - 스레드의 이후 답글들: `gh api "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments" --paginate --jq '.[] | select(.in_reply_to_id == ${{ github.event.comment.in_reply_to_id }})'`로
+                 받아 시간순으로 읽는다. 걸러낼 때는 `| jq` 파이프 대신 이처럼 `gh api`의 `--jq`를 쓴다(파이프는 권한 검사에서 거부된다).
                  방금 달린 ${{ github.event.comment.id }} 답글이 사람이 harry에게 한 말이다.
             3. 그 답글에 harry로서 답한다:
                - 상대 말이 맞으면 인정하고, 지적이 타당했으면 근거를 짧게 보강한다.
@@ -227,14 +227,15 @@ jobs:
                  `.github/harry-review-rules-backend.md`도) 기준으로 논리적으로 답한다.
                - 확정 못 할 내용은 단정하지 말고 확인이 필요하다고 말한다.
                - 단순 확인/감사처럼 답할 내용이 없으면 아무것도 하지 마라.
-            4. 답변은 반드시 **그 인라인 스레드에만** 단다:
-               `gh api --method POST "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments/${{ github.event.comment.in_reply_to_id }}/replies" -f body="답변내용"`
+            4. 답변은 반드시 **그 인라인 스레드에만** 단다. 본문에 백틱이나 `$`가 있어도 셸이 해석하지 않도록,
+               먼저 Write 도구로 답변을 작업 디렉터리의 `harry-reply.md`에 쓰고 파일로 보낸다:
+               `gh api --method POST "repos/${{ github.repository }}/pulls/${{ github.event.pull_request.number }}/comments/${{ github.event.comment.in_reply_to_id }}/replies" -F body=@harry-reply.md`
                PR 본문에 새 top-level 코멘트나 다른 새 인라인 코멘트를 만들지 마라. 오직 이 스레드 답글 하나만.
 
             모든 답변은 한국어 '해요체'로 작성한다.
           claude_args: |
             --model claude-opus-5-5
-            --allowedTools "Read,Bash(gh api:*)"
+            --allowedTools "Read,Write,Bash(gh api:*)"
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
