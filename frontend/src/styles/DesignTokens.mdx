@@ -1,0 +1,72 @@
+import { ColorItem, ColorPalette, Meta } from '@storybook/addon-docs/blocks';
+import { colors } from './theme/colors';
+import { typography } from './theme/typography';
+
+<Meta title='Design System/Tokens' />
+
+# 디자인 토큰
+
+`src/styles/theme/`의 값을 그대로 읽어 그린다. 토큰을 고치면 이 페이지도 따라 바뀐다.
+스타일에 색이나 글자 크기를 직접 쓰지 말고 아래 토큰을 쓴다(`src/components/CLAUDE.md`의 스타일 하드룰).
+
+## 색상
+
+코드에서는 `colors.<그룹>.<키>`로 쓴다. 예: `colors.primary[900]`, `colors.secondary[1].main`.
+
+<ColorPalette>
+  {Object.entries(colors).flatMap(([group, values]) =>
+    Object.values(values).every((value) => typeof value === 'string') ? (
+      <ColorItem
+        key={group}
+        title={group}
+        subtitle={`colors.${group}`}
+        colors={values}
+      />
+    ) : (
+      Object.entries(values).map(([key, nested]) => (
+        <ColorItem
+          key={`${group}.${key}`}
+          title={`${group}.${key}`}
+          subtitle={`colors.${group}[${key}]`}
+          colors={nested}
+        />
+      ))
+    ),
+  )}
+</ColorPalette>
+
+## 타이포그래피
+
+코드에서는 `setTypography(typography.<그룹>.<키>)`로 쓴다. 크기·굵기·행간이 한 묶음이다.
+
+<table>
+  <thead>
+    <tr>
+      <th>토큰</th>
+      <th>크기 / 굵기 / 행간</th>
+      <th>예시</th>
+    </tr>
+  </thead>
+  <tbody>
+    {Object.entries(typography).flatMap(([group, tokens]) =>
+      Object.entries(tokens).map(([key, token]) => (
+        <tr key={`${group}.${key}`}>
+          <td>
+            <code>{`typography.${group}.${key}`}</code>
+          </td>
+          <td>{`${token.size} / ${token.weight} / ${token.lineHeight}`}</td>
+          <td
+            style={{
+              fontFamily: "'Pretendard', sans-serif",
+              fontSize: token.size,
+              fontWeight: token.weight,
+              lineHeight: token.lineHeight,
+            }}
+          >
+            모아동 동아리 모집
+          </td>
+        </tr>
+      )),
+    )}
+  </tbody>
+</table>
