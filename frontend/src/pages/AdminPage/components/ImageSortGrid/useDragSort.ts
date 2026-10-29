@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { ImageItem } from '@/types/imageItem';
 import { reorderItems } from './reorderItems';
-import { ImageItem } from './types';
 
 export type DropPosition = { index: number; side: 'before' | 'after' } | null;
 

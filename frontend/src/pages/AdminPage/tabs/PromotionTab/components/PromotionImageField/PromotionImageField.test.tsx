@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { ImageItem } from '@/pages/AdminPage/components/ImageSortGrid/types';
+import { ImageItem } from '@/types/imageItem';
 import PromotionImageField from './PromotionImageField';
 
 const renderWithImages = (images: ImageItem[]) =>

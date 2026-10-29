@@ -20,8 +20,12 @@ import {
 import { ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import { useCreateFeedback } from '@/hooks/Queries/useFeedback';
+import {
+  useCreateFeedback,
+  useUploadFeedbackImages,
+} from '@/hooks/Queries/useFeedback';
 import type { FeedbackType } from '@/types/feedback';
+import type { ImageItem, LocalItem } from '@/types/imageItem';
 import FeedbackImageGrid from './components/FeedbackImageGrid';
 import FeedbackTag from './components/FeedbackTag';
 import * as Styled from './FeedbackWritePage.styles';
@@ -55,15 +59,8 @@ const ATTACH_ERROR_LABEL: Record<NonNullable<AttachError>, string> = {
   type: '이미지 파일만 첨부할 수 있어요.',
 };
 
-/**
- * 미리보기 URL을 파일과 함께 들고 있는다.
- * 렌더 중에 만들면 매 렌더마다 새 URL이 생기고, 이펙트에서 만들면 setState가 연쇄 렌더를 부른다.
- * 선택하는 순간 한 번만 만들고 목록에서 빠질 때 해제한다.
- */
-interface PickedImage {
-  file: File;
-  preview: string;
-}
+const getImageSrc = (item: ImageItem) =>
+  item.type === 'uploaded' ? item.url : item.previewUrl;
 
 /**
  * 시안 Component 13(11435:18202)의 4가지 상태.
@@ -104,9 +101,15 @@ const FeedbackWritePage = () => {
   const { type: typeParam } = useParams<{ type: string }>();
   const navigate = useNavigate();
   const { mutate: createFeedback, isPending } = useCreateFeedback();
+  const { mutateAsync: uploadImages } = useUploadFeedbackImages();
 
   const [content, setContent] = useState('');
-  const [images, setImages] = useState<PickedImage[]>([]);
+  /**
+   * 올라간 사진은 그 칸을 URL로 바꿔 끼워, 다시 보낼 때 그 장은 건너뛴다(활동사진 편집과 같은 구조).
+   * 미리보기 URL은 고르는 순간 한 번만 만든다. 렌더 중에 만들면 매 렌더마다 새 URL이 생기고,
+   * 이펙트에서 만들면 setState가 연쇄 렌더를 부른다. 목록에서 빠지거나 올라가면 해제한다.
+   */
+  const [images, setImages] = useState<ImageItem[]>([]);
   const [attachError, setAttachError] = useState<AttachError>(null);
   const [openedModal, setOpenedModal] = useState<'exit' | 'save' | null>(null);
   const [submitError, setSubmitError] = useState<string | null>(null);
@@ -124,8 +127,11 @@ const FeedbackWritePage = () => {
     [],
   );
 
-  /** isPending은 렌더 결과라, 렌더 전에 두 번 눌리면 두 호출 모두 false를 읽고 전송된다 */
-  const submittingRef = useRef(false);
+  /**
+   * 업로드·재전송·전송을 한 번에 하나만 돌린다. isPending은 렌더 결과라 렌더 전에 두 번 눌리면
+   * 둘 다 false를 읽고 전송된다. 재전송이 겹치면 앞선 결과를 반영하는 사이 목록이 바뀐다.
+   */
+  const busyRef = useRef(false);
 
   const feedbackType = parseFeedbackType(typeParam);
   // React Compiler가 프로퍼티 접근을 조기 반환 위로 끌어올려도 안전하도록 구조분해를 피한다.
@@ -135,6 +141,10 @@ const FeedbackWritePage = () => {
   const canSubmit = content.trim().length >= FEEDBACK_CONTENT_MIN_LENGTH;
   const attachState = getAttachState(images.length, attachError);
   const isAttachFull = images.length >= FEEDBACK_IMAGE_MAX_COUNT;
+  const isUploading = images.some(
+    (item) => item.type === 'local' && item.status === 'uploading',
+  );
+  const isBusy = isUploading || isPending;
 
   const handleBack = () => {
     if (content.length === 0) {
@@ -163,39 +173,124 @@ const FeedbackWritePage = () => {
     }
 
     // 시안의 (2/4) → (4/4) 흐름대로 여러 번 나눠 골라도 쌓인다
-    const picked = files.map((file) => ({
-      file,
-      preview: URL.createObjectURL(file),
-    }));
-    createdPreviewsRef.current.push(...picked.map((image) => image.preview));
+    const picked = files.map(
+      (file): LocalItem => ({
+        type: 'local',
+        file,
+        previewUrl: URL.createObjectURL(file),
+        status: 'pending',
+      }),
+    );
+    createdPreviewsRef.current.push(...picked.map((item) => item.previewUrl));
 
     const merged = [...images, ...picked];
     const kept = merged.slice(0, FEEDBACK_IMAGE_MAX_COUNT);
+    // 넘친 건 방금 고른 사진뿐이다
+    const dropped = picked.slice(FEEDBACK_IMAGE_MAX_COUNT - images.length);
 
-    merged
-      .slice(FEEDBACK_IMAGE_MAX_COUNT)
-      .forEach((image) => URL.revokeObjectURL(image.preview));
+    dropped.forEach((item) => URL.revokeObjectURL(item.previewUrl));
 
     setAttachError(merged.length > FEEDBACK_IMAGE_MAX_COUNT ? 'count' : null);
     setImages(kept);
   };
 
   const handleImageRemove = (index: number) => {
-    URL.revokeObjectURL(images[index].preview);
+    const target = images[index];
+    if (target.type === 'local') URL.revokeObjectURL(target.previewUrl);
     setAttachError(null);
     setImages(images.filter((_, i) => i !== index));
   };
 
-  const handleSubmit = () => {
+  /**
+   * 넘긴 파일만 올리고 그 칸을 제자리에서 바꾼다. 성공한 칸은 URL이 되고, 실패한 칸은 재전송을 기다린다.
+   * setImages가 반영되기 전에 호출부가 URL을 모아야 해서 결과 Map을 돌려준다.
+   */
+  const uploadFiles = async (files: File[]) => {
+    const isTarget = (item: ImageItem): item is LocalItem =>
+      item.type === 'local' && files.includes(item.file);
+
+    setImages((prev) =>
+      prev.map((item) =>
+        isTarget(item) ? { ...item, status: 'uploading' } : item,
+      ),
+    );
+
+    let urlByFile = new Map<File, string>();
+    try {
+      ({ urlByFile } = await uploadImages(files));
+    } catch {
+      // 발급 요청 자체가 실패하면 넘긴 파일 전부를 실패로 둔다
+    }
+
+    // 업데이터는 순수해야 해서 미리보기 해제는 밖에서 한다.
+    // 업로드 중에는 추가·삭제를 막아 두어 이 렌더의 images로 찾아도 대상이 같다.
+    images
+      .filter(isTarget)
+      .filter((item) => urlByFile.has(item.file))
+      .forEach((item) => URL.revokeObjectURL(item.previewUrl));
+
+    setImages((prev) =>
+      prev.map((item): ImageItem => {
+        if (!isTarget(item)) return item;
+        const url = urlByFile.get(item.file);
+        return url ? { type: 'uploaded', url } : { ...item, status: 'failed' };
+      }),
+    );
+
+    return urlByFile;
+  };
+
+  const handleImageRetry = async (index: number) => {
+    const target = images[index];
+    if (busyRef.current || target.type !== 'local') return;
+    if (target.status !== 'failed') return;
+
+    busyRef.current = true;
+    await uploadFiles([target.file]);
+    busyRef.current = false;
+  };
+
+  /** 아직 안 올라간 사진을 먼저 올리고, 모든 사진이 URL이 됐을 때만 편지를 보낸다 */
+  const handleSubmit = async () => {
     // 확인 모달은 전송 중에도 떠 있어서 다시 누를 수 있다. 중복 전송을 막는다.
-    if (submittingRef.current) return;
-    submittingRef.current = true;
+    if (busyRef.current) return;
+    busyRef.current = true;
+
+    const localFiles = images
+      .filter((item): item is LocalItem => item.type === 'local')
+      .map((item) => item.file);
+    const urlByFile =
+      localFiles.length > 0
+        ? await uploadFiles(localFiles)
+        : new Map<File, string>();
+
+    const imageUrls = images.flatMap((item) => {
+      const url =
+        item.type === 'uploaded' ? item.url : urlByFile.get(item.file);
+      return url ? [url] : [];
+    });
+    const failedCount = images.length - imageUrls.length;
+
+    // 사진이 일부만 붙은 편지는 보내지 않는다. 실패한 칸에 재전송 버튼이 뜬다.
+    if (failedCount > 0) {
+      busyRef.current = false;
+      trackEvent(USER_EVENT.FEEDBACK_SUBMIT_FAILED, {
+        type: feedbackType,
+        imageCount: images.length,
+        message: `사진 ${failedCount}장 업로드 실패`,
+      });
+      setOpenedModal(null);
+      setSubmitError(
+        `사진 ${failedCount}장을 올리지 못했어요. 실패한 사진을 다시 보내주세요.`,
+      );
+      return;
+    }
 
     createFeedback(
       {
         type: feedbackType,
         content: content.trim(),
-        files: images.map((image) => image.file),
+        images: imageUrls.length > 0 ? imageUrls : undefined,
       },
       {
         onSuccess: () => {
@@ -208,7 +303,7 @@ const FeedbackWritePage = () => {
         },
         // 이미지가 R2에 없거나(601-2) 길이 검증에 걸리면 조용히 막힌다.
         onError: (error) => {
-          submittingRef.current = false;
+          busyRef.current = false;
           trackEvent(USER_EVENT.FEEDBACK_SUBMIT_FAILED, {
             type: feedbackType,
             image_count: images.length,
@@ -266,7 +361,8 @@ const FeedbackWritePage = () => {
           </Styled.CharCount>
         </Styled.ContentField>
 
-        <Styled.AttachButton $disabled={isAttachFull}>
+        {/* 업로드 중에 사진이 늘면 전송할 URL을 모으는 사이 목록이 바뀌므로 막는다 */}
+        <Styled.AttachButton $disabled={isAttachFull || isBusy}>
           <Styled.AttachIconBox>
             <attachState.Icon width={36} height={28} aria-hidden />
           </Styled.AttachIconBox>
@@ -277,21 +373,26 @@ const FeedbackWritePage = () => {
             type='file'
             accept={ALLOWED_IMAGE_TYPES.join(',')}
             multiple
-            disabled={isAttachFull}
+            disabled={isAttachFull || isBusy}
             onChange={handleImageChange}
           />
         </Styled.AttachButton>
 
         <FeedbackImageGrid
-          srcs={images.map((image) => image.preview)}
+          srcs={images.map(getImageSrc)}
+          statuses={images.map((item) =>
+            item.type === 'local' ? item.status : undefined,
+          )}
           onRemove={handleImageRemove}
+          onRetry={handleImageRetry}
+          disabled={isBusy}
         />
       </Styled.Content>
 
       <Styled.BottomArea>
         <Button
           onClick={() => setOpenedModal('save')}
-          disabled={!canSubmit || isPending}
+          disabled={!canSubmit || isBusy}
         >
           저장하기
         </Button>
