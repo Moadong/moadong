@@ -93,6 +93,10 @@ const preview: Preview = {
     viewport: {
       options: BREAKPOINT_VIEWPORTS,
     },
+    a11y: {
+      // 위반을 패널에만 보여 주고 빌드·Chromatic은 막지 않는다.
+      test: 'todo',
+    },
   },
 };
 
