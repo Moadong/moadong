@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import { colors } from '@/styles/theme/colors';
 import Button from '../Button/Button';
 import ResponsiveSheet from './ResponsiveSheet';
 
@@ -60,7 +61,7 @@ const SheetTemplate = (args: Story['args']) => {
       >
         <div style={{ padding: '8px 0 40px' }}>
           <h4 style={{ margin: '0 0 12px' }}>시트 콘텐츠</h4>
-          <p style={{ margin: 0, color: '#787878' }}>
+          <p style={{ margin: 0, color: colors.gray[700] }}>
             작은 화면에서는 하단 시트로, 큰 화면에서는 모달로 열립니다.
           </p>
         </div>
@@ -84,7 +85,7 @@ export const CustomBackground: Story = {
     isOpen: false,
     onClose: () => {},
     children: null,
-    sheetBackground: '#f5f5f5',
+    sheetBackground: colors.gray[100],
   },
   render: (args) => <SheetTemplate {...args} />,
 };
