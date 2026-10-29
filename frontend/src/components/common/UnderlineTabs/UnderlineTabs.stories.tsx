@@ -67,5 +67,7 @@ export const CenterOnMobile: Story = {
       defaultViewport: 'iphone6',
     },
   },
+  // defaultViewport는 Chromatic 스냅샷 폭에 쓰이고, Storybook 10 화면은 globals.viewport를 읽는다.
+  globals: { viewport: { value: 'iphone6', isRotated: false } },
   render: () => <InteractiveTabs centerOnMobile />,
 };
