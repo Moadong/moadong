@@ -147,7 +147,7 @@ npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI�
 - 커버리지 리포트: `npm run coverage` · 단일 파일: `npx jest path/to/file.test.ts`
 - MSW 목 핸들러는 실제 API 연동 완료로 제거됨. 개발 서버·Storybook 모두 실서버로 붙는다. `msw` 의존성과 `public/mockServiceWorker.js`는 재도입 대비로 남겨 뒀고, 다시 쓸 땐 워커 파일 버전이 설치된 `msw` 버전과 맞는지 확인할 것(`npx msw init public/`)
 - Storybook: 컴포넌트 독립 개발 환경(포트 6006), Chromatic으로 시각적 회귀 테스트
-  - 툴바: 뷰포트 선택지는 `mediaQuery.ts`의 `BREAKPOINT` 폭이고, `웹뷰` 토글을 켜면 userAgent에 `MoadongApp`을 붙이고 `WebviewGlobalStyles`를 깐다(`isInAppWebView()` 분기 확인용). 모듈 최상위에서 한 번만 판정하는 코드는 토글을 따라오지 않는다
+  - 툴바: 뷰포트 선택지는 `mediaQuery.ts`의 `BREAKPOINT` 폭이고, `웹뷰` 토글을 켜면 userAgent에 `MoadongApp`을 붙이고 `WebviewGlobalStyles`를 깐다(`isInAppWebView()` 분기 확인용). 토글을 바꾸면 스토리를 다시 마운트하지만, 모듈 최상위에서 한 번만 판정하는 코드는 토글을 따라오지 않는다
   - 접근성 패널(`addon-a11y`)은 위반을 보여 주기만 하고 빌드·Chromatic을 막지 않는다(`a11y.test: 'todo'`)
 
 ## Claude Code Agent
