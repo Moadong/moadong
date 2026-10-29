@@ -1,4 +1,4 @@
-import { useEffect, useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { Swiper as SwiperType } from 'swiper';
 import { Keyboard, Navigation } from 'swiper/modules';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -8,6 +8,7 @@ import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import Modal from '@/components/common/Modal/Modal';
 import cdnImage from '@/utils/cdnImage';
+import getAdjacentIndexes from './getAdjacentIndexes';
 import * as Styled from './PhotoModal.styles';
 
 interface PhotoModalProps {
@@ -25,6 +26,22 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
   const { currentIndex, urls, onChangeIndex } = photos;
   const thumbnailRefs = useRef<(HTMLButtonElement | null)[]>([]);
   const swiperRef = useRef<SwiperType | null>(null);
+  // Swiper가 슬라이드를 전부 마운트하므로, 원본은 현재 사진과 양옆만 요청한다.
+  // 한 번 가까이 간 사진은 목록에 남겨서 되돌아올 때 다시 받거나 깜빡이지 않게 한다.
+  const [visitedUrls, setVisitedUrls] = useState<Set<string>>(() => new Set());
+  const nearbyUrls = getAdjacentIndexes(currentIndex, urls.length).map(
+    (i) => urls[i],
+  );
+  const shouldLoad = (url: string) =>
+    visitedUrls.has(url) || nearbyUrls.includes(url);
+
+  const handleSlideChange = (swiper: SwiperType) => {
+    const nextUrls = getAdjacentIndexes(swiper.realIndex, urls.length).map(
+      (i) => urls[i],
+    );
+    setVisitedUrls((prev) => new Set([...prev, ...nearbyUrls, ...nextUrls]));
+    onChangeIndex(swiper.realIndex);
+  };
 
   // 현재 인덱스가 변경되면 해당 썸네일로 스크롤
   useEffect(() => {
@@ -58,7 +75,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
               modules={[Navigation, Keyboard]}
               initialSlide={currentIndex}
               onSwiper={(swiper) => (swiperRef.current = swiper)}
-              onSlideChange={(swiper) => onChangeIndex(swiper.realIndex)}
+              onSlideChange={handleSlideChange}
               navigation={{
                 prevEl: '.swiper-button-prev-custom',
                 nextEl: '.swiper-button-next-custom',
@@ -74,7 +91,9 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
               {urls.map((url, idx) => (
                 <SwiperSlide key={url}>
                   <Styled.SlideInner>
-                    <Styled.Image src={url} alt={`활동 사진 ${idx + 1}`} />
+                    {shouldLoad(url) && (
+                      <Styled.Image src={url} alt={`활동 사진 ${idx + 1}`} />
+                    )}
                   </Styled.SlideInner>
                 </SwiperSlide>
               ))}
