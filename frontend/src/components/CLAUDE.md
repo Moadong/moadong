@@ -41,7 +41,7 @@ common/Toast/
 화면 위에 띄우는 컴포넌트는 아래 규약을 공유한다.
 
 - **제어형**: `isOpen` + `onClose`를 받고 상태는 호출부가 소유한다. 컴포넌트가 스스로 열림 상태를 들지 않는다.
-- **Portal**: `common/Portal/Portal.tsx`로 `#modal-root`(`index.html`)에 렌더한다. 조상의 `transform`·`overflow`로 인한 stacking context 문제를 피한다. Storybook에서는 `.storybook/preview.tsx`가 `#modal-root`를 만들어 준다.
+- **Portal**: `common/Portal/Portal.tsx`로 `#modal-root`(`index.html`)에 렌더한다. 조상의 `transform`·`overflow`로 인한 stacking context 문제를 피한다. Storybook에서는 `.storybook/preview-body.html`이 `#modal-root`를 처음부터 둔다.
 - **z-index**: `Z_INDEX`에 정의된 값만 사용 (`overlay: 1100` < `modal: 1200` < `toast: 1300`).
 
 ## Toast
