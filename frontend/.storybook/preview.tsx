@@ -78,7 +78,8 @@ const preview: Preview = {
         <ThemeProvider theme={theme}>
           <GlobalStyles />
           {isWebviewMode && <WebviewGlobalStyles />}
-          <Story />
+          {/* 토글을 바꾸면 다시 마운트해 useState 초기값·마운트 effect에서 판정하는 코드도 따라오게 한다. */}
+          <Story key={context.globals.webview} />
         </ThemeProvider>
       );
     },
