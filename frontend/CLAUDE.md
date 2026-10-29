@@ -149,6 +149,7 @@ npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI�
 - Storybook: 컴포넌트 독립 개발 환경(포트 6006), Chromatic으로 시각적 회귀 테스트
   - 툴바: 뷰포트 선택지는 `mediaQuery.ts`의 `BREAKPOINT` 폭이고, `웹뷰` 토글을 켜면 userAgent에 `MoadongApp`을 붙이고 `WebviewGlobalStyles`를 깐다(`isInAppWebView()` 분기 확인용). 토글을 바꾸면 스토리를 다시 마운트하지만, 모듈 최상위에서 한 번만 판정하는 코드는 토글을 따라오지 않는다
   - 접근성 패널(`addon-a11y`)은 위반을 보여 주기만 하고 빌드·Chromatic을 막지 않는다(`a11y.test: 'todo'`)
+  - 시안 대조 매핑(`*.figma.json`)이 있는 스토리 export에 `parameters.design`을 붙이면 Design 패널에서 시안을 같이 본다. 자동으로 붙지 않는다 → [`.claude/skills/figma-story-diff/SKILL.md`](.claude/skills/figma-story-diff/SKILL.md)
 
 ## Claude Code Agent
 

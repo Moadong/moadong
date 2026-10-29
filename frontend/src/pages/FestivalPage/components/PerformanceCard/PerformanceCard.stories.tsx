@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import PerformanceCard from './PerformanceCard';
+import figmaMapping from './PerformanceCard.figma.json';
 
 const samplePerformance = {
   id: 2,
@@ -55,6 +56,12 @@ export const Inactive: Story = {
 };
 
 export const Active: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['PerformanceCard/Active'].figma,
+    },
+  },
   args: {
     performance: samplePerformance,
     active: true,
@@ -62,6 +69,12 @@ export const Active: Story = {
 };
 
 export const InactiveSingleSong: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['PerformanceCard/Inactive'].figma,
+    },
+  },
   args: {
     performance: singleSongPerformance,
     active: false,
