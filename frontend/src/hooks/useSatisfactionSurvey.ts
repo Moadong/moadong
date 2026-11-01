@@ -76,7 +76,10 @@ const useSatisfactionSurvey = () => {
     setIsOpen(false);
   };
 
-  return { isOpen, closeForever, snooze };
+  /** 첫 모달만 닫는다. localStorage는 건드리지 않는다 */
+  const closeFirst = () => setIsOpen(false);
+
+  return { isOpen, closeFirst, closeForever, snooze };
 };
 
 export default useSatisfactionSurvey;

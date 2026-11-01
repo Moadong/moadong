@@ -30,13 +30,11 @@ import * as Styled from './FeedbackWritePage.styles';
 const EXIT_MODAL = {
   title: '질문을 삭제할까요?',
   description: '삭제된 질문은 복구할 수 없습니다.',
-  confirmLabel: '삭제',
 };
 
 const SAVE_MODAL = {
   title: '편지를 전송하시겠습니까?',
   description: '전송된 편지는 수정하거나 삭제할 수 없습니다.',
-  confirmLabel: '확인',
 };
 
 const parseFeedbackType = (value?: string): FeedbackType | undefined =>
@@ -300,14 +298,28 @@ const FeedbackWritePage = () => {
       <ConfirmModal
         isOpen={openedModal === 'exit'}
         {...EXIT_MODAL}
-        onConfirm={handleExitConfirm}
         onClose={() => setOpenedModal(null)}
+        actions={[
+          {
+            label: '취소',
+            variant: 'secondary',
+            onClick: () => setOpenedModal(null),
+          },
+          { label: '삭제', variant: 'primary', onClick: handleExitConfirm },
+        ]}
       />
       <ConfirmModal
         isOpen={openedModal === 'save'}
         {...SAVE_MODAL}
-        onConfirm={handleSubmit}
         onClose={() => setOpenedModal(null)}
+        actions={[
+          {
+            label: '취소',
+            variant: 'secondary',
+            onClick: () => setOpenedModal(null),
+          },
+          { label: '확인', variant: 'primary', onClick: handleSubmit },
+        ]}
       />
 
       <Toast
