@@ -20,15 +20,16 @@ const meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component:
-          '앱 웹뷰에서 동아리 상세를 3번 이상 본 사용자에게 만족도를 묻는다. 좋아요는 스토어 리뷰로, 아쉬워요는 우체통으로 보낸다.',
+        component: `앱 웹뷰에서 ${SATISFACTION_ASK_THRESHOLD}일 이상 방문했거나 동아리 상세를 ${SATISFACTION_ASK_THRESHOLD}번 이상 본 사용자에게 만족도를 묻는다. 좋아요는 스토어 리뷰로, 아쉬워요는 우체통으로 보낸다.`,
       },
     },
   },
   // 앱 웹뷰에서만 뜨는 모달이라 웹뷰 모드로 연다.
   globals: { webview: 'on' },
   beforeEach: () => {
-    const saved = SURVEY_KEYS.map((key) => [key, localStorage.getItem(key)]);
+    const saved = SURVEY_KEYS.map(
+      (key) => [key, localStorage.getItem(key)] as const,
+    );
     SURVEY_KEYS.forEach((key) => localStorage.removeItem(key));
     localStorage.setItem(
       STORAGE_KEYS.CLUB_VIEW_COUNT,
@@ -38,8 +39,8 @@ const meta = {
     return () => {
       saved.forEach(([key, value]) =>
         value === null
-          ? localStorage.removeItem(key as string)
-          : localStorage.setItem(key as string, value),
+          ? localStorage.removeItem(key)
+          : localStorage.setItem(key, value),
       );
     };
   },
