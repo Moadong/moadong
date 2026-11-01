@@ -26,8 +26,12 @@ export const exportApplicantsToCSV = (
     const createdAt = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
     const status = mapStatusToGroup(applicant.status).label;
 
-    const answerMap = new Map(applicant.answers.map((a) => [a.id, a.value]));
-    const answerCells = questions.map((q) => answerMap.get(q.id) ?? '');
+    const answerCells = questions.map((q) =>
+      applicant.answers
+        .filter((a) => a.id === q.id)
+        .map((a) => a.value)
+        .join(', '),
+    );
 
     return [createdAt, status, ...answerCells, applicant.memo];
   });

@@ -145,6 +145,24 @@ describe('exportApplicantsToCSV', () => {
     expect(lines[0]).toBe('제출일시,상태,지원 동기,활동 가능 시간,메모');
   });
 
+  it('복수 선택 문항의 답변이 모두 포함된다', () => {
+    const applicantWithMultipleAnswers: Applicant[] = [
+      {
+        ...mockApplicants[0],
+        answers: [
+          { id: 1, value: 'A' },
+          { id: 1, value: 'B' },
+          { id: 1, value: 'C' },
+          { id: 2, value: '평일' },
+        ],
+      },
+    ];
+    exportApplicantsToCSV(applicantWithMultipleAnswers, mockQuestions, '테스트');
+    const lines = capturedBlobContent.replace('\uFEFF', '').split('\n');
+    expect(lines[1]).toContain('A, B, C');
+    expect(lines[1]).toContain('평일');
+  });
+
   it('질문이 없으면 제출일시, 상태, 메모만 포함된다', () => {
     exportApplicantsToCSV(mockApplicants, [], '테스트');
     const lines = capturedBlobContent.replace('\uFEFF', '').split('\n');
