@@ -73,8 +73,10 @@ jobs:
           # 진단 파일을 못 읽으면 검사가 됐는지 알 수 없으므로 제한된 것으로 본다.
           limited=$(jq -r 'if .build then (.build.wasLimited // false) else "unknown" end' chromatic-diagnostics.json 2>/dev/null || echo unknown)
           echo "limited=$limited" >> "$GITHUB_OUTPUT"
-          if [ "$limited" != "false" ]; then
-            echo "::warning::Chromatic 스냅샷을 찍지 않은 빌드입니다(wasLimited=$limited). 스냅샷 한도를 확인하세요."
+          if [ "$limited" = "true" ]; then
+            echo "::warning::Chromatic 스냅샷 한도에 걸려 스냅샷을 찍지 않은 빌드입니다."
+          elif [ "$limited" != "false" ]; then
+            echo "::warning::Chromatic 진단 파일을 읽지 못해 스냅샷을 찍었는지 확인하지 못했습니다."
           fi
 
       - name: Comment PR (변경 있음)
@@ -116,7 +118,7 @@ jobs:
           message: |
             ## ⚠️ UI 변경사항을 검사하지 못했어요
 
-            > Chromatic 스냅샷 한도에 걸려 이 빌드는 스냅샷을 찍지 않았어요. **변경이 없다는 뜻이 아니에요.** 한도가 풀린 뒤 다시 실행하거나 로컬에서 Storybook으로 확인해 주세요.
+            > ${{ steps.snapshot.outputs.limited == 'true' && 'Chromatic 스냅샷 한도에 걸려 이 빌드는 스냅샷을 찍지 않았어요.' || 'Chromatic 진단 파일을 읽지 못해 스냅샷을 찍었는지 확인하지 못했어요.' }} **변경이 없다는 뜻이 아니에요.** 다시 실행하거나 로컬에서 Storybook으로 확인해 주세요.
 
             | 구분 | 링크 |
             |---|---|
