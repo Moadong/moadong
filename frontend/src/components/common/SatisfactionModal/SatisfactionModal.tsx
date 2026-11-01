@@ -83,7 +83,11 @@ const SatisfactionModal = () => {
         description={SATISFACTION_MODAL_TEXT.MAIN}
         variant='check'
         actions={[
-          { label: '아쉬워요', variant: 'secondary', onClick: handleUnsatisfied },
+          {
+            label: '아쉬워요',
+            variant: 'secondary',
+            onClick: handleUnsatisfied,
+          },
           { label: '좋아요!', variant: 'primary', onClick: handleSatisfied },
         ]}
       />
@@ -94,8 +98,16 @@ const SatisfactionModal = () => {
         description={SATISFACTION_MODAL_TEXT.REVIEW}
         variant='check'
         actions={[
-          { label: '나중에 할게요', variant: 'secondary', onClick: handleSnooze },
-          { label: '물론이죠!', variant: 'primary', onClick: handleReviewConfirm },
+          {
+            label: '나중에 할게요',
+            variant: 'secondary',
+            onClick: handleSnooze,
+          },
+          {
+            label: '물론이죠!',
+            variant: 'primary',
+            onClick: handleReviewConfirm,
+          },
         ]}
       />
       <ConfirmModal
@@ -105,8 +117,16 @@ const SatisfactionModal = () => {
         description={SATISFACTION_MODAL_TEXT.FEEDBACK}
         variant='warning'
         actions={[
-          { label: '다음에 할게요', variant: 'secondary', onClick: handleSnooze },
-          { label: '피드백하기', variant: 'primary', onClick: handleFeedbackConfirm },
+          {
+            label: '다음에 할게요',
+            variant: 'secondary',
+            onClick: handleSnooze,
+          },
+          {
+            label: '피드백하기',
+            variant: 'primary',
+            onClick: handleFeedbackConfirm,
+          },
         ]}
       />
     </>

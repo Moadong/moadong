@@ -56,7 +56,8 @@ export const Satisfaction: Story = {
   args: {
     variant: 'check',
     title: '모아동, 잘 사용하고 계신가요?',
-    description: '솔직한 의견이 더 나은 모아동을 만들어요\n여러분의 한 마디가 큰 힘이 돼요',
+    description:
+      '솔직한 의견이 더 나은 모아동을 만들어요\n여러분의 한 마디가 큰 힘이 돼요',
     actions: [
       { label: '아쉬워요', variant: 'secondary', onClick: () => {} },
       { label: '좋아요!', variant: 'primary', onClick: () => {} },

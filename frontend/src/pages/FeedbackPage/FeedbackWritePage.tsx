@@ -300,7 +300,11 @@ const FeedbackWritePage = () => {
         {...EXIT_MODAL}
         onClose={() => setOpenedModal(null)}
         actions={[
-          { label: '취소', variant: 'secondary', onClick: () => setOpenedModal(null) },
+          {
+            label: '취소',
+            variant: 'secondary',
+            onClick: () => setOpenedModal(null),
+          },
           { label: '삭제', variant: 'primary', onClick: handleExitConfirm },
         ]}
       />
@@ -309,7 +313,11 @@ const FeedbackWritePage = () => {
         {...SAVE_MODAL}
         onClose={() => setOpenedModal(null)}
         actions={[
-          { label: '취소', variant: 'secondary', onClick: () => setOpenedModal(null) },
+          {
+            label: '취소',
+            variant: 'secondary',
+            onClick: () => setOpenedModal(null),
+          },
           { label: '확인', variant: 'primary', onClick: handleSubmit },
         ]}
       />
