@@ -87,7 +87,7 @@ describe('SatisfactionModal', () => {
     await userEvent.click(screen.getByRole('button', { name: '좋아요!' }));
     await userEvent.click(screen.getByRole('button', { name: '물론이죠!' }));
 
-    expect(trackedNames()).toContain(USER_EVENT.SATISFACTION_REVIEWED);
+    expect(trackedNames()).toContain(USER_EVENT.SATISFACTION_REVIEW_CLICKED);
     expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBe(
       'true',
     );
@@ -133,7 +133,7 @@ describe('SatisfactionModal', () => {
     await userEvent.click(screen.getByRole('button', { name: '아쉬워요' }));
     await userEvent.click(screen.getByRole('button', { name: '피드백하기' }));
 
-    expect(trackedNames()).toContain(USER_EVENT.SATISFACTION_FEEDBACK);
+    expect(trackedNames()).toContain(USER_EVENT.SATISFACTION_FEEDBACK_CLICKED);
     expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBe(
       'true',
     );

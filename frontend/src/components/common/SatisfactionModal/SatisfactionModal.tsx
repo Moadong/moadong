@@ -54,14 +54,14 @@ const SatisfactionModal = () => {
   };
 
   const handleReviewConfirm = () => {
-    trackEvent(USER_EVENT.SATISFACTION_REVIEWED);
+    trackEvent(USER_EVENT.SATISFACTION_REVIEW_CLICKED);
     closeForever();
     setIsReviewModalOpen(false);
     handleLink(isIOS() ? APP_STORE_REVIEW_URL : PLAY_STORE_REVIEW_URL);
   };
 
   const handleFeedbackConfirm = () => {
-    trackEvent(USER_EVENT.SATISFACTION_FEEDBACK);
+    trackEvent(USER_EVENT.SATISFACTION_FEEDBACK_CLICKED);
     closeForever();
     setIsFeedbackModalOpen(false);
     navigate('/feedback/write');
