@@ -79,33 +79,35 @@ const SatisfactionModal = () => {
       <ConfirmModal
         isOpen={isOpen}
         onClose={handleSnooze}
-        onCancel={handleUnsatisfied}
-        cancelLabel='아쉬워요'
-        onConfirm={handleSatisfied}
-        confirmLabel='좋아요!'
         title='모아동, 잘 사용하고 계신가요?'
         description={SATISFACTION_MODAL_TEXT.MAIN}
         variant='check'
+        actions={[
+          { label: '아쉬워요', variant: 'secondary', onClick: handleUnsatisfied },
+          { label: '좋아요!', variant: 'primary', onClick: handleSatisfied },
+        ]}
       />
       <ConfirmModal
         isOpen={isReviewModalOpen}
         onClose={handleSnooze}
-        onConfirm={handleReviewConfirm}
-        cancelLabel='나중에 할게요'
-        confirmLabel='물론이죠!'
         title='앱이 마음에 드시나요?'
         description={SATISFACTION_MODAL_TEXT.REVIEW}
         variant='check'
+        actions={[
+          { label: '나중에 할게요', variant: 'secondary', onClick: handleSnooze },
+          { label: '물론이죠!', variant: 'primary', onClick: handleReviewConfirm },
+        ]}
       />
       <ConfirmModal
         isOpen={isFeedbackModalOpen}
         onClose={handleSnooze}
-        onConfirm={handleFeedbackConfirm}
-        cancelLabel='다음에 할게요'
-        confirmLabel='피드백하기'
         title='함께 개선해요'
         description={SATISFACTION_MODAL_TEXT.FEEDBACK}
         variant='warning'
+        actions={[
+          { label: '다음에 할게요', variant: 'secondary', onClick: handleSnooze },
+          { label: '피드백하기', variant: 'primary', onClick: handleFeedbackConfirm },
+        ]}
       />
     </>
   );

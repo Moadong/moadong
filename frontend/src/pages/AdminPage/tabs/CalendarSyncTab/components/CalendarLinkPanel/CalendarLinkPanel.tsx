@@ -184,14 +184,25 @@ const CalendarLinkPanel = () => {
         isOpen={disconnectTarget !== null}
         title='연동을 해제할까요?'
         description='가져온 일정은 캘린더에서 사라집니다.'
-        confirmLabel='확인'
         onClose={() => {
           trackEvent(ADMIN_EVENT.CALENDAR_UNLINK_CANCELED, {
             provider: disconnectTarget,
           });
           setDisconnectTarget(null);
         }}
-        onConfirm={confirmDisconnect}
+        actions={[
+          {
+            label: '취소',
+            variant: 'secondary',
+            onClick: () => {
+              trackEvent(ADMIN_EVENT.CALENDAR_UNLINK_CANCELED, {
+                provider: disconnectTarget,
+              });
+              setDisconnectTarget(null);
+            },
+          },
+          { label: '확인', variant: 'primary', onClick: confirmDisconnect },
+        ]}
       />
     </CalendarLinkSection>
   );
