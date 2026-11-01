@@ -235,7 +235,7 @@ export const Thumbnail = styled.button<{ $isActive: boolean }>`
 
   &:hover {
     border-color: ${({ $isActive }) =>
-      $isActive ? colors.primary[900] : '#ddd'};
+      $isActive ? colors.primary[900] : colors.gray[400]};
   }
 
   img {

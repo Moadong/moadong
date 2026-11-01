@@ -53,7 +53,7 @@ export const CatchphraseWrapper = styled(motion.div)`
 
 export const CatchphraseSubtitle = styled(motion.p)`
   font-size: 30px;
-  color: #121212;
+  color: ${colors.base.black};
   font-weight: bold;
   margin-bottom: 2px;
 

@@ -26,7 +26,7 @@ export const IntroducePageHeader = styled.header`
 `;
 export const IntroducePageFooter = styled.footer`
   background: ${colors.base.white};
-  border-top: 1px solid #eee;
+  border-top: 1px solid ${colors.gray[250]};
 `;
 export const Main = styled.main`
   background: ${colors.base.white};

@@ -12,7 +12,7 @@ export const SearchBoxContainer = styled.form<{ $isFocused: boolean }>`
   border: 1px solid transparent;
   border-radius: 41px;
   background-color: ${({ $isFocused }) =>
-    $isFocused ? colors.base.white : '#eeeeee'};
+    $isFocused ? colors.base.white : colors.gray[250]};
   transition: all 0.2s ease-in-out;
 
   border-color: ${({ $isFocused }) =>
