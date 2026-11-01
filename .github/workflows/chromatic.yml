@@ -70,7 +70,7 @@ jobs:
         id: snapshot
         if: steps.chromatic.outcome == 'success'
         run: |
-          # 진단 파일을 못 읽으면 검사가 됐는지 알 수 없으므로 제한된 것으로 본다.
+          # 진단 파일을 못 읽으면 검사가 됐는지 알 수 없으므로 unknown으로 두고 "검사 안 됨"으로 처리한다.
           limited=$(jq -r 'if .build then (.build.wasLimited // false) else "unknown" end' chromatic-diagnostics.json 2>/dev/null || echo unknown)
           echo "limited=$limited" >> "$GITHUB_OUTPUT"
           if [ "$limited" = "true" ]; then
