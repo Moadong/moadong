@@ -62,9 +62,23 @@ jobs:
           workingDir: frontend
           projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
           autoAcceptChanges: "main"
+          # 스냅샷 한도에 걸린 빌드는 publish-only로 끝나 종료 코드와 changeCount가
+          # 정상 빌드와 같다. 제한 여부(build.wasLimited)는 진단 파일에만 남는다.
+          diagnosticsFile: true
+
+      - name: Check snapshot limit
+        id: snapshot
+        if: steps.chromatic.outcome == 'success'
+        run: |
+          # 진단 파일을 못 읽으면 검사가 됐는지 알 수 없으므로 제한된 것으로 본다.
+          limited=$(jq -r 'if .build then (.build.wasLimited // false) else "unknown" end' chromatic-diagnostics.json 2>/dev/null || echo unknown)
+          echo "limited=$limited" >> "$GITHUB_OUTPUT"
+          if [ "$limited" != "false" ]; then
+            echo "::warning::Chromatic 스냅샷을 찍지 않은 빌드입니다(wasLimited=$limited). 스냅샷 한도를 확인하세요."
+          fi
 
       - name: Comment PR (변경 있음)
-        if: github.event_name == 'pull_request' && steps.chromatic.outcome == 'success' && steps.chromatic.outputs.changeCount > 0
+        if: github.event_name == 'pull_request' && steps.snapshot.outputs.limited == 'false' && steps.chromatic.outputs.changeCount > 0
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: chromatic
@@ -81,12 +95,28 @@ jobs:
             **${{ steps.chromatic.outputs.changeCount }}개** 스토리 변경 · 전체 **${{ steps.chromatic.outputs.specCount }}개** 스토리 · **${{ steps.chromatic.outputs.componentCount }}개** 컴포넌트
 
       - name: Comment PR (변경 없음)
-        if: github.event_name == 'pull_request' && steps.chromatic.outcome == 'success' && steps.chromatic.outputs.changeCount == 0
+        if: github.event_name == 'pull_request' && steps.snapshot.outputs.limited == 'false' && steps.chromatic.outputs.changeCount == 0
         uses: marocchino/sticky-pull-request-comment@v2
         with:
           header: chromatic
           message: |
             ## ✅ UI 변경사항 없음
+
+            | 구분 | 링크 |
+            |---|---|
+            | 📖 Storybook | ${{ steps.chromatic.outputs.storybookUrl }} |
+
+            전체 **${{ steps.chromatic.outputs.specCount }}개** 스토리 · **${{ steps.chromatic.outputs.componentCount }}개** 컴포넌트
+
+      - name: Comment PR (검사 안 됨)
+        if: github.event_name == 'pull_request' && steps.chromatic.outcome == 'success' && steps.snapshot.outputs.limited != 'false'
+        uses: marocchino/sticky-pull-request-comment@v2
+        with:
+          header: chromatic
+          message: |
+            ## ⚠️ UI 변경사항을 검사하지 못했어요
+
+            > Chromatic 스냅샷 한도에 걸려 이 빌드는 스냅샷을 찍지 않았어요. **변경이 없다는 뜻이 아니에요.** 한도가 풀린 뒤 다시 실행하거나 로컬에서 Storybook으로 확인해 주세요.
 
             | 구분 | 링크 |
             |---|---|
