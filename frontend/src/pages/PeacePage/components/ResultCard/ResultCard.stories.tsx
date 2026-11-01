@@ -1,4 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import isChromatic from 'chromatic/isChromatic';
+import { MotionConfig } from 'framer-motion';
 import { PEACE_TYPE_IDS, PEACE_TYPES } from '../../data/peaceTypes';
 import ResultCard from './ResultCard';
 
@@ -15,10 +17,14 @@ const meta = {
     },
   },
   decorators: [
+    // 배경 Blob이 framer-motion으로 무한 반복해 찍는 순간마다 위치가 달라진다.
+    // Chromatic에서만 모션을 꺼 스냅샷을 고정하고, 사람이 보는 Storybook에서는 그대로 움직인다.
     (Story) => (
-      <div style={{ width: 360 }}>
-        <Story />
-      </div>
+      <MotionConfig reducedMotion={isChromatic() ? 'always' : 'never'}>
+        <div style={{ width: 360 }}>
+          <Story />
+        </div>
+      </MotionConfig>
     ),
   ],
 } satisfies Meta<typeof ResultCard>;
