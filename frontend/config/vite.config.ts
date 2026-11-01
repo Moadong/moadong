@@ -28,7 +28,15 @@ export default defineConfig(({ mode }) => {
     plugins: [
       react({
         babel: {
-          plugins: [['babel-plugin-react-compiler', {}]],
+          plugins: [
+            ['babel-plugin-react-compiler', {}],
+            // agentation 툴바가 DOM 클래스에서 styled 변수명을 읽을 수 있게 한다.
+            // fileName: true — `Container`처럼 흔한 이름(72곳)을 파일명으로 구분한다.
+            [
+              'babel-plugin-styled-components',
+              { displayName: true, fileName: true, ssr: false },
+            ],
+          ],
         },
       }),
       tsconfigPaths(),
@@ -43,11 +51,7 @@ export default defineConfig(({ mode }) => {
                 name: env.VITE_SENTRY_RELEASE,
               },
               sourcemaps: {
-                filesToDeleteAfterUpload: [
-                  './**/*.map',
-                  './**/public/**/*.map',
-                  './dist/**/*.map',
-                ],
+                filesToDeleteAfterUpload: ['./dist/**/*.map'],
               },
             }),
           ]
@@ -60,8 +64,14 @@ export default defineConfig(({ mode }) => {
           manualChunks(id) {
             if (!id.includes('node_modules')) return;
 
+            // 디자인 피드백 툴바는 ?design=1일 때만 lazy 로드한다.
+            // vendor에 묶이면 모든 사용자가 받게 되므로 자체 청크로 분리한다.
+            if (id.includes('node_modules/agentation/')) return 'agentation';
+
             if (id.includes('react-router')) return 'router';
-            if (id.includes('react-datepicker')) return 'dates';
+            // react-datepicker는 관리자 화면에서만 쓰므로 date-fns('dates')와 한 청크로 묶지 않는다.
+            // 묶이면 date-fns를 쓰는 초기 진입 경로 때문에 CSS까지 렌더 차단 리소스가 된다.
+            if (id.includes('react-datepicker')) return 'datepicker';
             if (
               id.includes('react-markdown') ||
               id.includes('remark') ||
@@ -94,7 +104,10 @@ export default defineConfig(({ mode }) => {
             if (id.includes('swiper')) return 'swiper';
             if (id.includes('date-fns')) return 'dates';
 
-            return 'vendor';
+            // 이름을 붙이지 않은 의존성은 Rollup 기본 배치에 맡긴다.
+            // 여기서 'vendor'를 반환하면 지연 청크(AdminRoutes)에서만 쓰는
+            // 라이브러리까지 엔트리가 참조하는 공용 청크로 끌려온다.
+            return undefined;
           },
         },
       },

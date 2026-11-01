@@ -57,23 +57,6 @@ export const MoreButtonContainer = styled.div`
   flex-shrink: 0;
 `;
 
-export const MoreButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-
-  &:hover {
-    background-color: ${colors.gray[400]};
-  }
-`;
-
 export const DateText = styled.span`
   width: 100%;
   ${setTypography(typography.etc.medium12)}

@@ -57,7 +57,7 @@ describe('SatisfactionModal', () => {
   it('노출되면 응답률의 분모가 될 이벤트를 한 번 남긴다', () => {
     const { rerender } = renderModal();
 
-    expect(trackedNames()).toEqual([USER_EVENT.SATISFACTION_SHOWN]);
+    expect(trackedNames()).toEqual([USER_EVENT.SATISFACTION_MODAL_VIEWED]);
 
     // 리렌더로 중복 발화되지 않아야 한다
     rerender(
@@ -65,7 +65,7 @@ describe('SatisfactionModal', () => {
         <SatisfactionModal />
       </MemoryRouter>,
     );
-    expect(trackedNames()).toEqual([USER_EVENT.SATISFACTION_SHOWN]);
+    expect(trackedNames()).toEqual([USER_EVENT.SATISFACTION_MODAL_VIEWED]);
   });
 
   it('「좋아요!」는 만족으로 남기고 리뷰 유도 모달을 띄운다', async () => {

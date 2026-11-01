@@ -7,6 +7,7 @@ import {
 } from '@/constants/adminFieldPlaceholders';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import ClearableTextArea from '@/pages/AdminPage/components/ClearableTextArea/ClearableTextArea';
+import ClearButton from '@/pages/AdminPage/components/ClearButton';
 import { FAQ } from '@/types/club';
 import * as Styled from './FAQSection.styles';
 
@@ -34,9 +35,9 @@ const FAQItemEditor = ({
           maxLength={FAQ_QUESTION_MAX}
         />
       </Styled.QuestionContent>
-      <Styled.DeleteButton onClick={() => onDelete(index)} type='button'>
+      <ClearButton onClick={() => onDelete(index)} type='button'>
         <img src={closeCircleIcon} alt='삭제' />
-      </Styled.DeleteButton>
+      </ClearButton>
     </Styled.QuestionRow>
     <Styled.AnswerWrapper>
       <Styled.AnswerCard>

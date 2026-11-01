@@ -122,9 +122,12 @@ export const useUpdateClubDescription = () => {
   return useMutation({
     mutationFn: (updatedData: ClubDescription) =>
       updateClubDescription(updatedData),
-    onSuccess: (_, variables) => {
+    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: queryKeys.club.detail(variables.id),
+        queryKey: queryKeys.club.allDetails,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.all,
       });
     },
     onError: (error) => {
@@ -139,12 +142,13 @@ export const useUpdateClubDetail = () => {
   return useMutation({
     mutationFn: (updatedData: Partial<ClubDetail>) =>
       updateClubDetail(updatedData),
-    onSuccess: (_, variables) => {
-      if (variables.id) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.club.detail(variables.id),
-        });
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allDetails,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.all,
+      });
     },
 
     onError: (error) => {

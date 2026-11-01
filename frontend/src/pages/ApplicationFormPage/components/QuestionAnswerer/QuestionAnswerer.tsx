@@ -5,17 +5,20 @@ import { Question } from '@/types/application';
 
 interface QuestionAnswererProps {
   question: Question;
+  /** 화면에 보이는 질문 번호. 질문 id는 순서와 무관하므로 번호로 쓰지 않는다 */
+  number: number;
   selectedAnswers: string[];
   onChange: (id: number, value: string | string[]) => void;
 }
 
 const QuestionAnswerer = ({
   question,
+  number,
   selectedAnswers,
   onChange,
 }: QuestionAnswererProps) => {
   const baseProps = {
-    id: question.id,
+    id: number,
     title: question.title,
     description: question.description,
     required: question.options.required,

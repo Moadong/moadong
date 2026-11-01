@@ -1,9 +1,16 @@
+import { useEffect } from 'react';
+import { createRoutesFromChildren, useNavigationType } from 'react-router-dom';
 import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import Clarity from '@microsoft/clarity';
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
-import getDeviceLocale from '@/utils/getDeviceLocale';
-import getIOSVersion from '@/utils/getIOSVersion';
+import isInAppWebView from '@/utils/isInAppWebView';
+import registerMixpanelSuperProperties from '@/utils/registerMixpanelSuperProperties';
+import {
+  getSentryEnvironment,
+  matchRoutesByOriginal,
+  useDecodedLocation,
+} from '@/utils/sentryRouting';
 
 const LOCALHOST_HOSTNAME = 'localhost';
 
@@ -18,16 +25,7 @@ export function initializeMixpanel() {
     debug: false,
   });
 
-  const iosVersion = getIOSVersion();
-  if (iosVersion) {
-    mixpanel.register({ $os_version: iosVersion });
-  }
-
-  // 외국인 유학생 등 비한국어 사용자 식별용 — 이후 모든 이벤트에 자동 포함
-  const deviceLocale = getDeviceLocale();
-  if (deviceLocale) {
-    mixpanel.register({ device_locale: deviceLocale });
-  }
+  registerMixpanelSuperProperties();
 
   if (window.location.hostname === LOCALHOST_HOSTNAME) {
     mixpanel.disable();
@@ -87,8 +85,21 @@ export function initializeSentry() {
     dsn: import.meta.env.VITE_SENTRY_DSN,
     sendDefaultPii: false,
     release: import.meta.env.VITE_SENTRY_RELEASE,
-    tracesSampleRate: 0.1,
-    environment: import.meta.env.MODE || 'production',
-    integrations: [Sentry.browserTracingIntegration()],
+    // Developer 플랜 spans 5M/월 대비 1.0에서도 월 약 460K(2026-10 기준)라 전량 수집한다.
+    tracesSampleRate: 1.0,
+    environment: getSentryEnvironment(window.location.hostname),
+    // 트랜잭션 이름을 실제 URL이 아니라 라우트 패턴(/clubDetail/:clubId)으로 묶는다.
+    integrations: [
+      Sentry.reactRouterV7BrowserTracingIntegration({
+        useEffect,
+        useLocation: useDecodedLocation,
+        useNavigationType,
+        createRoutesFromChildren,
+        matchRoutes: matchRoutesByOriginal,
+      }),
+    ],
   });
+
+  // 웹뷰 진입(/webview/main)은 곧바로 /로 redirect되므로 라우트 이름만으로는 웹과 구분할 수 없다.
+  Sentry.setTag('webview', isInAppWebView());
 }

@@ -1,5 +1,6 @@
 import { useRef, useState } from 'react';
 import ClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
+import ClearButton from '@/pages/AdminPage/components/ClearButton';
 import { colors } from '@/styles/theme/colors';
 import EditField from '../EditField/EditField';
 import * as Styled from './LinkField.styles';
@@ -45,13 +46,13 @@ const LinkField = ({
             onBlur={() => setIsActive(false)}
           />
           {isActive && value.length > 0 && (
-            <Styled.ClearButton
+            <ClearButton
               type='button'
               onMouseDown={handleClear}
               aria-label='지우기'
             >
               <ClearButtonIcon />
-            </Styled.ClearButton>
+            </ClearButton>
           )}
         </Styled.ContentRow>
       </EditField>

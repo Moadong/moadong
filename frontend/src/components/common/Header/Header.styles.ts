@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 import { Z_INDEX } from '@/styles/zIndex';
 
 export const HEADER_HEIGHT = {
@@ -8,7 +9,7 @@ export const HEADER_HEIGHT = {
   mobile: 56,
 } as const;
 
-export const Header = styled.header<{ isScrolled: boolean }>`
+export const Header = styled.header<{ $isScrolled: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -21,8 +22,8 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   background-color: white;
   z-index: ${Z_INDEX.header};
 
-  box-shadow: ${({ isScrolled }) =>
-    isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
+  box-shadow: ${({ $isScrolled }) =>
+    $isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
   transition: box-shadow 0.2s ease-in-out;
 
   ${media.laptop} {
@@ -123,22 +124,8 @@ export const LogoButton = styled.button`
   }
 `;
 
-export const SubscriptionBellButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+export const AuthButton = styled(NavLink)`
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
 `;
 
 export const AdminProfileContainer = styled.div`
@@ -158,6 +145,17 @@ export const AdminProfileText = styled.div`
 
 export const AdminProfileImage = styled.img`
   width: 40px;
-  height: auto;
+  height: 40px;
   border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+`;
+
+/** 로고가 없거나 불러오지 못했을 때 자리를 지키는 회색 원 */
+export const AdminProfilePlaceholder = styled.div`
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  background-color: ${colors.gray[300]};
+  flex-shrink: 0;
 `;

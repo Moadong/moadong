@@ -1,11 +1,13 @@
 import { lazy } from 'react';
 import { Navigate, useRoutes } from 'react-router-dom';
+import * as Sentry from '@sentry/react';
 import { ContentErrorBoundary } from '@/components/common/ErrorBoundary';
 import AppLayout from '@/layouts/AppLayout';
 import LoginTab from '@/pages/AdminPage/auth/LoginTab/LoginTab';
 import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ApplicationFormPage from '@/pages/ApplicationFormPage/ApplicationFormPage';
 import GoogleCallbackPage from '@/pages/CallbackPage/GoogleCallbackPage';
+import StudentOAuthCallbackPage from '@/pages/CallbackPage/StudentOAuthCallbackPage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
 import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
@@ -15,22 +17,34 @@ import FeedbackCompletePage from '@/pages/FeedbackPage/FeedbackCompletePage';
 import FeedbackListPage from '@/pages/FeedbackPage/FeedbackListPage';
 import FeedbackTypeSelectPage from '@/pages/FeedbackPage/FeedbackTypeSelectPage';
 import FeedbackWritePage from '@/pages/FeedbackPage/FeedbackWritePage';
-import LetterDetailPage from '@/pages/FeedbackPage/LetterDetailPage';
 import SentFeedbackDetailPage from '@/pages/FeedbackPage/SentFeedbackDetailPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
+import LoginPage from '@/pages/LoginPage/LoginPage';
 import MainPage from '@/pages/MainPage/MainPage';
 import MenuPage from '@/pages/MenuPage/MenuPage';
+import PeaceIntroPage from '@/pages/PeacePage/PeaceIntroPage';
+import PeaceQuizPage from '@/pages/PeacePage/PeaceQuizPage';
+import PeaceResultPage from '@/pages/PeacePage/PeaceResultPage';
 import PrivacyPolicyPage from '@/pages/PrivacyPolicyPage/PrivacyPolicyPage';
 import PromotionDetailPage from '@/pages/PromotionPage/PromotionDetailPage';
 import PromotionListPage from '@/pages/PromotionPage/PromotionListPage';
+import RecruitPage from '@/pages/RecruitPage/RecruitPage';
+import RecruitPositionPage from '@/pages/RecruitPage/RecruitPositionPage';
 import SubscriptionsPage from '@/pages/SubscriptionsPage/SubscriptionsPage';
 import webviewRoutes from './webviewRoutes';
 
 const AdminRoutes = lazy(() => import('@/pages/AdminPage/AdminRoutes'));
+// 학생용 화면에서 react-markdown을 쓰는 곳은 이 페이지뿐이라, 정적 import하면 첫 로드에 마크다운 청크가 딸려 온다.
+const LetterDetailPage = lazy(
+  () => import('@/pages/FeedbackPage/LetterDetailPage'),
+);
+
+// Sentry init 이후에 평가되어야 감싸진다 (src/instrument.ts 참고).
+const useSentryRoutes = Sentry.wrapUseRoutesV7(useRoutes);
 
 const AppRoutes = () =>
-  useRoutes([
+  useSentryRoutes([
     /* 바텀 네비게이션이 있는 일반 웹 페이지 */
     {
       element: <AppLayout />,
@@ -54,6 +68,14 @@ const AppRoutes = () =>
           element: (
             <ContentErrorBoundary>
               <IntroducePage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/recruit',
+          element: (
+            <ContentErrorBoundary>
+              <RecruitPage />
             </ContentErrorBoundary>
           ),
         },
@@ -167,6 +189,38 @@ const AppRoutes = () =>
       ),
     },
     {
+      path: '/recruit/:position',
+      element: (
+        <ContentErrorBoundary>
+          <RecruitPositionPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/peace',
+      element: (
+        <ContentErrorBoundary>
+          <PeaceIntroPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/peace/quiz',
+      element: (
+        <ContentErrorBoundary>
+          <PeaceQuizPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/peace/result',
+      element: (
+        <ContentErrorBoundary>
+          <PeaceResultPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
       path: '/feedback',
       element: (
         <ContentErrorBoundary>
@@ -219,6 +273,14 @@ const AppRoutes = () =>
     {
       path: '/callback/google',
       element: <GoogleCallbackPage />,
+    },
+    {
+      path: '/login/callback',
+      element: <StudentOAuthCallbackPage />,
+    },
+    {
+      path: '/login',
+      element: <LoginPage />,
     },
     {
       path: '/admin/login',

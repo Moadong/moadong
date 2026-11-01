@@ -13,9 +13,7 @@ import isInAppWebView from '@/utils/isInAppWebView';
 const MainPage = () => {
   const inWebview = isInAppWebView();
 
-  useTrackPageView(
-    inWebview ? PAGE_VIEW.WEBVIEW_MAIN_PAGE : PAGE_VIEW.MAIN_PAGE,
-  );
+  useTrackPageView(PAGE_VIEW.MAIN_PAGE);
   useScrollTracking(PAGE_NAME.MAIN);
 
   return (

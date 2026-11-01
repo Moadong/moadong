@@ -89,15 +89,15 @@ export const ContactButton = styled.a`
 `;
 
 export const Shape = styled.div<{
-  top?: string;
-  left?: string;
-  right?: string;
-  bottom?: string;
+  $top?: string;
+  $left?: string;
+  $right?: string;
+  $bottom?: string;
 }>`
   position: absolute;
   z-index: 0;
-  top: ${({ top }) => top || 'auto'};
-  left: ${({ left }) => left || 'auto'};
-  right: ${({ right }) => right || 'auto'};
-  bottom: ${({ bottom }) => bottom || 'auto'};
+  top: ${({ $top }) => $top || 'auto'};
+  left: ${({ $left }) => $left || 'auto'};
+  right: ${({ $right }) => $right || 'auto'};
+  bottom: ${({ $bottom }) => $bottom || 'auto'};
 `;

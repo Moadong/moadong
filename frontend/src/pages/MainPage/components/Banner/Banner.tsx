@@ -74,9 +74,9 @@ const Banner = ({ isWebview = false }: BannerProps) => {
     if (!url) return;
 
     trackEvent(USER_EVENT.BANNER_CLICKED, {
-      bannerId,
-      bannerName,
-      linkTo: url,
+      banner_id: bannerId,
+      banner_name: bannerName,
+      link_to: url,
     });
 
     if (url === WEBVIEW_LINK_TARGET.CLUB_FESTIVAL) {
@@ -87,8 +87,8 @@ const Banner = ({ isWebview = false }: BannerProps) => {
     if (url === 'APP_STORE_LINK') {
       const storeLink = getAppStoreLink();
       trackEvent(USER_EVENT.APP_DOWNLOAD_BANNER_CLICKED, {
-        bannerId,
-        bannerName,
+        banner_id: bannerId,
+        banner_name: bannerName,
         platform: detectPlatform(),
       });
       handleLink(storeLink);
@@ -137,7 +137,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
           {displayBanners?.map((banner, index) => (
             <SwiperSlide key={banner.id}>
               <Styled.BannerItem
-                isClickable={!!banner.linkTo}
+                $isClickable={!!banner.linkTo}
                 onClick={() =>
                   handleBannerClick(
                     banner.id,
@@ -167,7 +167,7 @@ const Banner = ({ isWebview = false }: BannerProps) => {
         {!isMobile && !isWebview && (
           <Styled.DotPagination>
             {displayBanners?.map((_, index) => (
-              <Styled.Dot key={index} active={currentIndex === index} />
+              <Styled.Dot key={index} $active={currentIndex === index} />
             ))}
           </Styled.DotPagination>
         )}

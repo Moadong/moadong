@@ -4,12 +4,16 @@ import * as Styled from './NaverMap.styles';
 
 interface NaverMapProps {
   location: { lat: number; lng: number };
+  showMarker?: boolean;
 }
 
-const NaverMap = ({ location }: NaverMapProps) => {
+const NaverMap = ({ location, showMarker = true }: NaverMapProps) => {
   const mapRef = useRef<HTMLDivElement | null>(null);
 
-  useNaverMap(mapRef, location.lat, location.lng, { interactive: false });
+  useNaverMap(mapRef, location.lat, location.lng, {
+    interactive: false,
+    showMarker,
+  });
 
   return <Styled.MapContainer ref={mapRef} />;
 };

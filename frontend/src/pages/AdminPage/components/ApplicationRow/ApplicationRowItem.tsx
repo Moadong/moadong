@@ -1,6 +1,7 @@
 import type { MouseEvent, RefObject } from 'react';
 import Morebutton from '@/assets/images/icons/ellipsis_icon.svg';
-import ApplicationMenu from '@/pages/AdminPage/components/ApplicationMenu/ApplicationMenu';
+import AdminMoreMenu from '@/pages/AdminPage/components/AdminMoreMenu/AdminMoreMenu';
+import MoreButton from '@/pages/AdminPage/components/MoreButton';
 import {
   ApplicationFormItem,
   ApplicationFormStatus,
@@ -55,14 +56,14 @@ const ApplicationRowItem = ({
         </Styled.ApplicationDate>
 
         <Styled.MoreButtonContainer ref={isMenuOpen ? menuRef : null}>
-          <Styled.MoreButton
+          <MoreButton
             onClick={(e) => onMenuToggle(e, application.id, uniqueKeyPrefix)}
           >
             <Styled.MoreButtonIcon src={Morebutton} />
-          </Styled.MoreButton>
+          </MoreButton>
 
           {isMenuOpen && (
-            <ApplicationMenu
+            <AdminMoreMenu
               isActive={isActive}
               onEdit={() => onEdit(application.id)}
               onDelete={() => onDelete(application.id)}

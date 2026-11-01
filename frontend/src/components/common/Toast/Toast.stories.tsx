@@ -35,6 +35,11 @@ const meta = {
       control: 'number',
       description: '토스트가 유지되는 시간(ms)입니다.',
     },
+    bottomOffset: {
+      control: 'text',
+      description:
+        '모바일·태블릿에서 화면 아래로부터의 거리(CSS length)입니다.',
+    },
   },
 } satisfies Meta<typeof Toast>;
 

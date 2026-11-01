@@ -199,8 +199,8 @@ const FeedbackWritePage = () => {
         onSuccess: () => {
           trackEvent(USER_EVENT.FEEDBACK_SUBMITTED, {
             type: feedbackType,
-            contentLength: content.trim().length,
-            imageCount: images.length,
+            content_length: content.trim().length,
+            image_count: images.length,
           });
           navigate('/feedback/complete', { replace: true });
         },
@@ -209,7 +209,7 @@ const FeedbackWritePage = () => {
           submittingRef.current = false;
           trackEvent(USER_EVENT.FEEDBACK_SUBMIT_FAILED, {
             type: feedbackType,
-            imageCount: images.length,
+            image_count: images.length,
             message: error instanceof Error ? error.message : 'unknown',
           });
 
@@ -225,8 +225,8 @@ const FeedbackWritePage = () => {
   const handleExitConfirm = () => {
     trackEvent(USER_EVENT.FEEDBACK_WRITE_ABANDONED, {
       type: feedbackType,
-      contentLength: content.trim().length,
-      imageCount: images.length,
+      content_length: content.trim().length,
+      image_count: images.length,
     });
     navigate(-1);
   };

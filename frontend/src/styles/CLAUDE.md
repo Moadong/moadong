@@ -16,6 +16,8 @@ styled-components 사용, 테마 시스템 활용.
 
 테마는 `src/styles/theme/`에 colors, typography, transitions로 정의. styled-components `ThemeProvider`를 통해 접근.
 
+`DesignTokens.mdx`가 colors·typography를 import해서 Storybook `Design System/Tokens` 페이지로 그린다. 토큰 그룹 구조(값이 문자열인 그룹 / 한 단계 더 중첩된 그룹)를 바꾸면 이 페이지도 확인한다.
+
 ## 애니메이션
 
 - `framer-motion` 라이브러리로 페이지 전환, 모달, 제스처 등 애니메이션 구현

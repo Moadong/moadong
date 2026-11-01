@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 interface ButtonProps {
-  selected: boolean;
-  color?: string;
+  $selected: boolean;
+  $color?: string;
 }
 
 export const Button = styled.button<ButtonProps>`
@@ -14,13 +14,13 @@ export const Button = styled.button<ButtonProps>`
   font-weight: 600;
   cursor: pointer;
   background-color: ${(props) =>
-    props.selected ? props.color || '#FF5414' : 'rgba(0, 0, 0, 0.05)'};
-  color: ${(props) => (props.selected ? '#3a3a3a' : '#4B4B4B')};
+    props.$selected ? props.$color || '#FF5414' : 'rgba(0, 0, 0, 0.05)'};
+  color: ${(props) => (props.$selected ? '#3a3a3a' : '#4B4B4B')};
 
   &:hover {
-    opacity: ${(props) => (props.selected ? 0.9 : 1)};
+    opacity: ${(props) => (props.$selected ? 0.9 : 1)};
     background-color: ${(props) =>
-      props.selected ? props.color || '#ea580c' : '#d1d5db'};
+      props.$selected ? props.$color || '#ea580c' : '#d1d5db'};
   }
 `;
 

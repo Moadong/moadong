@@ -21,16 +21,16 @@ const ContactSection = () => {
       >
         문의하기
       </Styled.ContactButton>
-      <Styled.Shape top='-40px' left='20px'>
+      <Styled.Shape $top='-40px' $left='20px'>
         <BackgroundTwistLeft />
       </Styled.Shape>
-      <Styled.Shape top='163px' right='-10px'>
+      <Styled.Shape $top='163px' $right='-10px'>
         <BackgroundTwistRight />
       </Styled.Shape>
-      <Styled.Shape top='575px' left='411px'>
+      <Styled.Shape $top='575px' $left='411px'>
         <BackgroundCircleSmall />
       </Styled.Shape>
-      <Styled.Shape top='380px' right='477px'>
+      <Styled.Shape $top='380px' $right='477px'>
         <BackgroundCircleLarge />
       </Styled.Shape>
     </Styled.ContactSection>

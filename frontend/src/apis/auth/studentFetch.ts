@@ -36,8 +36,8 @@ const getTokenSubject = (token: string) => {
 };
 
 /**
- * 우체통은 로그인 없이 쓰지만 '내가 보낸 편지'를 구분해야 해서 익명 학생 토큰을 쓴다.
- * 토큰에 만료가 없으므로 관리자용 secureFetch와 달리 refresh 흐름이 없다.
+ * 우체통은 소셜 로그인 필수가 아닌 동안 익명 토큰도 지원한다.
+ * 토큰에 만료가 없으므로(익명 토큰 한정) 관리자용 secureFetch와 달리 refresh 흐름이 없다.
  *
  * sub를 함께 보내면 서버가 그 신원으로 다시 발급한다. 안 보내면 새 신원이라 편지함이 비어 보인다.
  * 서버가 sub를 소문자로 정규화하므로 보낸 값을 신원으로 기억하면 안 된다. 토큰만 저장하고
@@ -90,11 +90,38 @@ const issueStudentTokenOnce = (sub?: string) => {
 let rejectedInjectedToken: string | undefined;
 
 /**
- * 앱 웹뷰가 주입해 주는 토큰을 가장 먼저 쓴다.
- * 웹이 따로 발급하면 앱과 신원이 갈려 답장 푸시가 대상을 못 찾는다.
- * 앱이 안 넣어주는 환경(브라우저, 구버전 앱)에서는 undefined라 기존 흐름 그대로다.
+ * 서버가 거부한 OAuth 토큰.
+ * OAuth 401 이후 localStorage에서 제거되더라도 이 값으로 만료된 토큰을 식별해,
+ * 병렬 요청이나 후속 요청이 익명 신원으로 전환되지 않도록 막는다.
+ * 사용자가 재로그인해 새 OAuth 토큰이 저장되면 자동으로 해제된다.
+ */
+let expiredOauthToken: string | undefined;
+
+/**
+ * 토큰 우선순위:
+ * 1. 소셜 로그인 토큰 — 로그인한 사용자
+ * 2. 앱 주입 토큰 (injectedToken) — 소셜 전환 전 앱 사용자. FCM 연결 유지를 위해 보존.
+ *    앱이 injectedToken으로 FCM을 등록하므로, 소셜 필수 전환 전까지 제거하면 안 된다.
+ * 3. localStorage UUID — 웹 사용자
+ * 4. 신규 발급
  */
 const getStudentToken = async () => {
+  const oauthToken = localStorage.getItem(
+    STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+  );
+  if (oauthToken) {
+    // 재로그인으로 새 토큰이 저장되면 만료 상태를 해제한다
+    if (expiredOauthToken && oauthToken !== expiredOauthToken) {
+      expiredOauthToken = undefined;
+    }
+    return oauthToken;
+  }
+
+  // OAuth가 활성 상태였다가 만료됐으면 재로그인 전까지 다른 신원으로 전환하지 않는다
+  if (expiredOauthToken !== undefined) {
+    throw new Error('STUDENT_OAUTH_EXPIRED');
+  }
+
   const injectedToken = window.__MOADONG_STUDENT_TOKEN__;
 
   return (
@@ -128,18 +155,31 @@ export const studentFetch = async (
     timeoutMs,
   );
 
-  // 만료는 없지만 저장된 토큰이 무효할 수 있다(환경 변경, 서명 키 교체).
-  // 한 번만 재발급해 재시도한다. 안 그러면 localStorage를 비우기 전까지 계속 실패한다.
   if (response.status !== 401) return response;
 
-  // 다른 요청이 이미 재발급을 끝냈으면 그 토큰을 쓴다.
-  // 401이 순차로 오면 issueStudentTokenOnce가 각각 새로 발급해 신원이 갈린다.
-  //
-  // 단 주입 토큰이 거부된 경우는 제외한다. 저장분은 앱과 무관한 옛 토큰이라 재시도해도
-  // 같이 실패한다. 이때는 앱과 신원을 맞출 방법이 없어 자체 발급으로 폴백한다.
+  // OAuth 토큰이 만료된 경우 — 제거하고 재로그인을 유도한다.
+  // studentFetch는 refresh 흐름이 없어서 만료된 채로 두면 요청마다 401이 반복된다.
+  const oauthToken = localStorage.getItem(
+    STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+  );
+  // 병렬 요청이 이미 OAuth 토큰을 제거했을 수 있으므로 expiredOauthToken도 확인한다
+  if (token === oauthToken || token === expiredOauthToken) {
+    expiredOauthToken = token;
+    if (oauthToken)
+      localStorage.removeItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN);
+    throw new Error('STUDENT_OAUTH_EXPIRED');
+  }
+
+  // 주입 토큰이 거부된 경우 — 저장분은 앱과 무관한 옛 토큰이라 재시도해도 같이 실패한다.
+  // 재시도 없이 새로 발급한다.
   const wasInjected = token === window.__MOADONG_STUDENT_TOKEN__;
   if (wasInjected) rejectedInjectedToken = token;
 
+  // 저장된 익명 토큰이 무효할 수 있다(서명 키 교체 등).
+  // 한 번만 재발급해 재시도한다. 안 그러면 localStorage를 비우기 전까지 계속 실패한다.
+  //
+  // 다른 요청이 이미 재발급을 끝냈으면 그 토큰을 쓴다.
+  // 401이 순차로 오면 issueStudentTokenOnce가 각각 새로 발급해 신원이 갈린다.
   const storedToken = localStorage.getItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN);
   // 거부된 토큰의 sub로 재발급해 신원을 잇는다. 이게 없으면 서명 키를 한 번 교체할 때
   // 전 사용자가 같은 날 편지함을 잃는다.

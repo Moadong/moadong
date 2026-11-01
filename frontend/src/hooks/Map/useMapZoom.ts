@@ -4,6 +4,7 @@ export interface NaverMapInstance {
   getZoom: () => number;
   setZoom: (zoom: number) => void;
   setCenter: (latlng: unknown) => void;
+  getCenter: () => { lat: () => number; lng: () => number };
   destroy: () => void;
 }
 
