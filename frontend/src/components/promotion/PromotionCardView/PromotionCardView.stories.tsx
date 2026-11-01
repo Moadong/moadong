@@ -1,4 +1,5 @@
 import type { Meta, StoryObj } from '@storybook/react';
+import MockDate from 'mockdate';
 import { PromotionArticle } from '@/types/promotion';
 import PromotionCardView from './PromotionCardView';
 
@@ -20,6 +21,11 @@ const meta = {
   title: 'Components/promotion/PromotionCardView',
   component: PromotionCardView,
   parameters: { layout: 'centered' },
+  // D-day 배지를 오늘 날짜로 계산해서, 고정하지 않으면 날마다 Chromatic 스냅샷이 바뀐다.
+  beforeEach: () => {
+    MockDate.set('2026-11-20T12:00:00+09:00');
+    return () => MockDate.reset();
+  },
   decorators: [
     (Story) => (
       <div style={{ width: 240 }}>

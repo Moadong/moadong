@@ -1,6 +1,7 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import PerformanceCard from '../PerformanceCard/PerformanceCard';
 import TimelineRow from './TimelineRow';
+import figmaMapping from './TimelineRow.figma.json';
 
 const pastPerformance = {
   id: 1,
@@ -66,6 +67,9 @@ type Story = StoryObj<{
 }>;
 
 export const Past: Story = {
+  parameters: {
+    design: { type: 'figma', url: figmaMapping['TimelineRow/Past'].figma },
+  },
   args: {
     time: '12:30',
     status: 'past',
@@ -78,6 +82,9 @@ export const Past: Story = {
 };
 
 export const Active: Story = {
+  parameters: {
+    design: { type: 'figma', url: figmaMapping['TimelineRow/Active'].figma },
+  },
   args: {
     time: '13:00',
     status: 'active',

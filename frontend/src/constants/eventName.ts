@@ -43,6 +43,10 @@ export const USER_EVENT = {
   SATISFACTION_ANSWERED: 'Satisfaction Answered',
   /** 만족도 응답 미룸 */
   SATISFACTION_SNOOZED: 'Satisfaction Snoozed',
+  /** 만족도 리뷰 이동 */
+  SATISFACTION_REVIEW_CLICKED: 'Satisfaction Review Clicked',
+  /** 만족도 피드백 이동 */
+  SATISFACTION_FEEDBACK_CLICKED: 'Satisfaction Feedback Clicked',
 
   // 배너
   /** 메인 배너 클릭 */
