@@ -1,16 +1,17 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 type Status = 'past' | 'active' | 'upcoming';
 
 const timeColor: Record<Status, string> = {
-  past: '#989898',
-  active: '#4b4b4b',
-  upcoming: '#989898',
+  past: colors.gray[600],
+  active: colors.gray[800],
+  upcoming: colors.gray[600],
 };
 
 const lineColor: Record<Status, string> = {
-  past: '#989898',
-  active: '#ff5414',
+  past: colors.gray[600],
+  active: colors.primary[900],
   upcoming: '#a8a8a8',
 };
 

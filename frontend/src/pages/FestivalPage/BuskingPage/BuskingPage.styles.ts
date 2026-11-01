@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const PageWrapper = styled.div`
   display: flex;
@@ -51,7 +52,7 @@ export const TimetableHeader = styled.div`
 
 export const TimetableDate = styled.p`
   margin: 0;
-  color: #3a3a3a;
+  color: ${colors.gray[900]};
   font-size: 14px;
   font-weight: 700;
 `;

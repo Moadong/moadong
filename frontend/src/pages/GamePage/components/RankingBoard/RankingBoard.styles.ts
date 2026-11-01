@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Wrapper = styled.div`
   width: 100%;
@@ -17,7 +18,8 @@ export const Header = styled.div`
 export const Title = styled.h3<{ $dark: boolean }>`
   font-size: 1.125rem;
   font-weight: 700;
-  color: ${({ $dark, theme }) => ($dark ? '#FFFFFF' : theme.colors.gray[900])};
+  color: ${({ $dark, theme }) =>
+    $dark ? colors.base.white : theme.colors.gray[900]};
 `;
 
 export const List = styled.ol`
@@ -35,7 +37,7 @@ export const Item = styled.div<{
   gap: 12px;
   padding: 12px 16px;
   border-radius: 10px;
-  background: ${({ $dark }) => ($dark ? '#22222E' : '#FFFFFF')};
+  background: ${({ $dark }) => ($dark ? '#22222E' : colors.base.white)};
   border: ${({ $dark, theme }) =>
     $dark ? '2px solid transparent' : `2px solid ${theme.colors.gray[300]}`};
   box-shadow: ${({ $dark }) =>
@@ -45,7 +47,7 @@ export const Item = styled.div<{
   text-decoration: none;
 
   &:hover {
-    background: ${({ $dark }) => ($dark ? '#2C2C3A' : '#F5F5F5')};
+    background: ${({ $dark }) => ($dark ? '#2C2C3A' : colors.gray[100])};
   }
 `;
 

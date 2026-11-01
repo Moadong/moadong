@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Spacer = styled.div`
   flex-grow: 1;
@@ -15,7 +16,7 @@ export const PreviewContainer = styled.div`
   flex: 1;
   border: 1px solid #ddd;
   border-radius: 4px;
-  background: #fafafa;
+  background: ${colors.gray[50]};
   padding: 10px;
   overflow: hidden;
 `;
@@ -24,7 +25,7 @@ export const Toolbar = styled.div`
   display: flex;
   gap: 8px;
   padding: 8px;
-  background: #f5f5f5;
+  background: ${colors.gray[100]};
   border-bottom: 1px solid #ddd;
 
   button {

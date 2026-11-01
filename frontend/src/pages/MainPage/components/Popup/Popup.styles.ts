@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { theme } from '@/styles/theme';
+import { colors } from '@/styles/theme/colors';
 import { Z_INDEX } from '@/styles/zIndex';
 
 export const Overlay = styled.div<{ $isOpen: boolean }>`
@@ -30,7 +31,7 @@ export const Container = styled.div`
   flex-direction: column;
   width: 100%;
   overflow: hidden;
-  background-color: #ffffff;
+  background-color: ${colors.base.white};
   border-radius: 16px;
 `;
 

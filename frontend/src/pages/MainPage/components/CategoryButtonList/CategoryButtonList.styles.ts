@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const CategoryButtonContainer = styled.div<{ $sticky: boolean }>`
   display: flex;
@@ -59,7 +60,7 @@ export const CategoryButton = styled.button`
   span {
     font-size: 14px;
     font-weight: 500;
-    color: #787878;
+    color: ${colors.gray[700]};
     margin-top: 8px;
     line-height: 17px;
     white-space: nowrap;

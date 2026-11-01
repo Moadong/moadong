@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const ItemWrapper = styled.div`
   flex: 1;
@@ -9,12 +10,12 @@ export const ItemWrapper = styled.div`
   border: none;
   border-radius: 6px;
   font-size: 1.125rem;
-  background-color: #f5f5f5;
+  background-color: ${colors.gray[100]};
   color: #818181;
 
   &[data-selected='true'] {
     background-color: #ffd9cb;
-    color: #111111;
+    color: ${colors.base.black};
   }
   cursor: pointer;
   transition:

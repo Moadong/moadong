@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const SliderWrapper = styled.div`
   padding: 0;
@@ -43,7 +44,7 @@ export const SideLabel = styled.span<{
   position: absolute;
   left: ${({ $x }) => $x};
   top: ${({ $y }) => $y};
-  color: #787878;
+  color: ${colors.gray[700]};
   font-size: 15px;
   font-weight: 600;
   line-height: 17.667px;
@@ -58,8 +59,8 @@ export const SideLabel = styled.span<{
 export const Booth = styled.div<{ $shadowColor: string }>`
   position: absolute;
   border-radius: 10px;
-  background: #ffffff;
-  color: #4b4b4b;
+  background: ${colors.base.white};
+  color: ${colors.gray[800]};
   font-size: 14px;
   font-weight: 500;
   line-height: 1.4;
@@ -86,10 +87,11 @@ export const Dot = styled.button<{ $active: boolean }>`
   border: none;
   padding: 0;
   cursor: pointer;
-  background: ${({ $active }) => ($active ? '#ff5414' : '#dcdcdc')};
+  background: ${({ $active }) =>
+    $active ? colors.primary[900] : colors.gray[400]};
 
   &:focus-visible {
-    outline: 2px solid #ff5414;
+    outline: 2px solid ${colors.primary[900]};
     outline-offset: 2px;
   }
 `;

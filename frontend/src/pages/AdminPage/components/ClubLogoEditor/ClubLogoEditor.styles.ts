@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Label = styled.label`
   display: block;
@@ -41,7 +42,7 @@ export const ButtonGroup = styled.div`
 
 export const HelpText = styled.p`
   font-size: 12px;
-  color: #c5c5c5;
+  color: ${colors.gray[500]};
 `;
 
 export const HiddenFileInput = styled.input`

@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
   width: 100%;
@@ -50,7 +51,7 @@ export const TimetableHeader = styled.div`
 
 export const TimetableDate = styled.p`
   margin: 0;
-  color: #3a3a3a;
+  color: ${colors.gray[900]};
   font-size: 14px;
   font-weight: 700;
 `;

@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const PageContainer = styled.div<{ $dark: boolean }>`
   position: relative;
   overflow-x: clip;
   min-height: 100vh;
   background: ${({ $dark, theme }) =>
-    $dark ? '#111111' : theme.colors.gray[100]};
+    $dark ? colors.base.black : theme.colors.gray[100]};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -52,7 +53,7 @@ export const ToggleKnob = styled.span<{ $dark: boolean }>`
   width: 24px;
   height: 24px;
   border-radius: 50%;
-  background: ${({ $dark }) => ($dark ? '#111111' : '#FFFFFF')};
+  background: ${({ $dark }) => ($dark ? colors.base.black : colors.base.white)};
   color: ${({ $dark }) => ($dark ? '#FFD432' : '#FF9500')};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   transform: translateX(${({ $dark }) => ($dark ? '28px' : '0')});
@@ -75,7 +76,8 @@ export const Content = styled.div`
 export const PageTitle = styled.h1<{ $dark: boolean }>`
   font-size: 1.75rem;
   font-weight: 800;
-  color: ${({ $dark, theme }) => ($dark ? '#FFFFFF' : theme.colors.gray[900])};
+  color: ${({ $dark, theme }) =>
+    $dark ? colors.base.white : theme.colors.gray[900]};
   margin-bottom: 4px;
 
   ${media.mobile} {

@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 const shimmer = keyframes`
   0% { background-position: -800px 0; }
@@ -122,7 +123,7 @@ export const NumericPagination = styled.div`
   right: -10px;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.4);
-  color: #ffffff;
+  color: ${colors.base.white};
   padding: 3px 12px;
   border-radius: 50px;
   font-size: 11px;
@@ -143,7 +144,8 @@ export const DotPagination = styled.div`
 export const Dot = styled.div<{ $active: boolean }>`
   width: 8px;
   height: 8px;
-  background-color: ${(props) => (props.$active ? '#ff5414' : '#f5f5f5')};
+  background-color: ${(props) =>
+    props.$active ? colors.primary[900] : colors.gray[100]};
   border-radius: 50%;
   transition: background-color 0.3s ease;
 `;

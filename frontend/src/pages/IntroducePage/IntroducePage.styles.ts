@@ -1,10 +1,11 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const PageWrapper = styled.div`
   width: 100%;
   min-height: 100dvh;
-  background: #fff;
+  background: ${colors.base.white};
 
   ${media.tablet} {
     max-width: 500px;
@@ -21,14 +22,14 @@ export const PageWrapper = styled.div`
 
 export const IntroducePageHeader = styled.header`
   width: 100%;
-  background: #fff;
+  background: ${colors.base.white};
 `;
 export const IntroducePageFooter = styled.footer`
-  background: #fff;
+  background: ${colors.base.white};
   border-top: 1px solid #eee;
 `;
 export const Main = styled.main`
-  background: #fff;
+  background: ${colors.base.white};
   display: flex;
   flex-direction: column;
   align-items: center;

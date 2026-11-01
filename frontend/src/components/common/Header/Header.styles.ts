@@ -71,7 +71,8 @@ export const NavLink = styled.button<{ $isActive?: boolean }>`
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
-  color: ${({ $isActive }) => ($isActive ? '#FF5414' : '#3A3A3A')};
+  color: ${({ $isActive }) =>
+    $isActive ? colors.primary[900] : colors.gray[900]};
   background: transparent;
   transition: color 0.2s ease-in-out;
 

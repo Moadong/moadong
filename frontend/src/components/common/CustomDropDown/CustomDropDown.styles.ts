@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const DropDownWrapper = styled.div`
   position: relative;
@@ -17,8 +18,8 @@ export const OptionList = styled.ul<{
   width: ${({ $width }) => $width || '100%'};
   right: ${({ $right }) => $right || 'auto'};
   border-radius: 6px;
-  border: 1px solid #dcdcdc;
-  background: #fff;
+  border: 1px solid ${colors.gray[400]};
+  background: ${colors.base.white};
   box-shadow: 0 1px 8px 0 rgba(0, 0, 0, 0.12);
   padding: 6px 0;
   z-index: 10;
@@ -32,14 +33,15 @@ export const OptionItem = styled.li<{ $isSelected: boolean }>`
   justify-content: center;
   text-align: center;
   font-weight: 600;
-  color: #787878;
-  background-color: ${({ $isSelected }) => ($isSelected ? '#f5f5f5' : '#fff')};
+  color: ${colors.gray[700]};
+  background-color: ${({ $isSelected }) =>
+    $isSelected ? colors.gray[100] : colors.base.white};
   cursor: pointer;
   padding: 8px 13px;
   height: 27px;
 
   &:hover {
-    background-color: #f5f5f5;
+    background-color: ${colors.gray[100]};
   }
 
   transition: background-color 0.2s ease;

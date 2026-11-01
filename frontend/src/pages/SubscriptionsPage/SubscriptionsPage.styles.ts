@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { theme } from '@/styles/theme';
+import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
 export const Container = styled.div`
@@ -50,7 +51,7 @@ export const CtaButton = styled.button`
   border: none;
   border-radius: 100px;
   background-color: ${theme.colors.primary[900]};
-  color: #ffffff;
+  color: ${colors.base.white};
   font-weight: 600;
   cursor: pointer;
 `;

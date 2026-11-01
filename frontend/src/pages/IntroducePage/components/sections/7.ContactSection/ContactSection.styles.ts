@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const ContactSection = styled(motion.section)`
   width: 100%;
@@ -36,7 +37,7 @@ export const ContactTitle = styled.h2`
   margin-top: 55px;
   font-size: 3rem;
   font-weight: bold;
-  color: #ff5414;
+  color: ${colors.primary[900]};
 
   ${media.laptop} {
     margin-top: 40px;
@@ -61,18 +62,18 @@ export const ContactButton = styled.a`
   cursor: pointer;
   z-index: 1;
 
-  background: #ffffff;
-  color: #ff5414;
+  background: ${colors.base.white};
+  color: ${colors.primary[900]};
   font-size: 1rem;
   font-weight: bold;
   padding: 14px 64px;
-  border: 1px solid #ff5414;
+  border: 1px solid ${colors.primary[900]};
   border-radius: 50px;
   transition: all 0.3s ease;
 
   &:hover {
-    background: #ff5414;
-    color: #ffffff;
+    background: ${colors.primary[900]};
+    color: ${colors.base.white};
   }
 
   ${media.laptop} {
