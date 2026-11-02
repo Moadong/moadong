@@ -14,7 +14,7 @@ export const EditorContainer = styled.div`
 
 export const PreviewContainer = styled.div`
   flex: 1;
-  border: 1px solid #ddd;
+  border: 1px solid ${colors.gray[400]};
   border-radius: 4px;
   background: ${colors.gray[50]};
   padding: 10px;
@@ -26,7 +26,7 @@ export const Toolbar = styled.div`
   gap: 8px;
   padding: 8px;
   background: ${colors.gray[100]};
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid ${colors.gray[400]};
 
   button {
     padding: 6px 10px;
@@ -55,7 +55,7 @@ export const Editor = styled.textarea`
   width: 100%;
   padding: 10px;
   font-size: 16px;
-  border: 1px solid #ddd;
+  border: 1px solid ${colors.gray[400]};
   border-radius: 4px;
   resize: none;
   overflow: hidden;

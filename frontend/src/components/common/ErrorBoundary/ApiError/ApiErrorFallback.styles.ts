@@ -44,7 +44,7 @@ export const Message = styled.p`
 `;
 
 export const ErrorDetails = styled.div`
-  background: #f8f8f8;
+  background: ${colors.gray[50]};
   border: 1px solid ${colors.gray[300]};
   border-radius: 6px;
   padding: 10px 12px;

@@ -51,7 +51,7 @@ export const FeatureTitle = styled(motion.h2)`
 
 export const FeatureSubtitle = styled(motion.p)`
   font-size: 24px;
-  color: #121212;
+  color: ${colors.base.black};
   margin-top: 22px;
   margin-bottom: 16px;
 
@@ -128,7 +128,7 @@ export const TypingText = styled.p`
   align-self: center;
   font-size: 20px;
   font-weight: 600;
-  color: #121212;
+  color: ${colors.base.black};
   line-height: 1.6;
   border-bottom: 1px solid ${colors.primary[900]};
 

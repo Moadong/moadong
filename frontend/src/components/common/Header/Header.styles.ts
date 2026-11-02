@@ -137,7 +137,7 @@ export const AdminProfileContainer = styled.div`
 
 export const AdminProfileText = styled.div`
   font-size: 14px;
-  color: #767676;
+  color: ${colors.gray[700]};
 
   ${media.mobile} {
     display: none;

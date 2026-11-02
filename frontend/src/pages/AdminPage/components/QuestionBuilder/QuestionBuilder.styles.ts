@@ -55,14 +55,15 @@ export const RequiredToggleCircle = styled.span<{ $active?: boolean }>`
 
 export const SelectionToggleWrapper = styled.div`
   display: flex;
-  background-color: #f7f7f7;
+  background-color: ${colors.gray[100]};
   border-radius: 0.375rem;
   padding: 2px;
 `;
 
 export const SelectionToggleButton = styled.button<{ $active: boolean }>`
   border: none;
-  background-color: ${(props) => (props.$active ? '#ddd' : 'transparent')};
+  background-color: ${(props) =>
+    props.$active ? colors.gray[400] : 'transparent'};
   color: ${colors.gray[700]};
   font-size: 0.875rem;
   border-radius: 0.375rem;
@@ -118,7 +119,7 @@ export const QuestionWrapper = styled.div<{ $readOnly?: boolean }>`
   padding: 26px 20px;
   gap: 20px;
   border-radius: 10px;
-  border: 1px solid #f0f0f0;
+  border: 1px solid ${colors.gray[250]};
   pointer-events: ${({ $readOnly }) => ($readOnly ? 'none' : 'inherit')};
   cursor: ${({ $readOnly }) => ($readOnly ? 'not-allowed' : 'inherit')};
 
