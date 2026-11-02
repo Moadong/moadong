@@ -33,7 +33,7 @@ export const ErrorText = styled.p`
   border-radius: 8px;
   background: ${colors.gray[100]};
   font-size: 0.85rem;
-  color: #dc2626;
+  color: ${colors.primary[900]};
 `;
 
 export const SaveButton = styled.button`
