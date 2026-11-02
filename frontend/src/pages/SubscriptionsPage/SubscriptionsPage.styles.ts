@@ -50,7 +50,7 @@ export const CtaButton = styled.button`
   border: none;
   border-radius: 100px;
   background-color: ${theme.colors.primary[900]};
-  color: #ffffff;
+  color: ${theme.colors.base.white};
   font-weight: 600;
   cursor: pointer;
 `;

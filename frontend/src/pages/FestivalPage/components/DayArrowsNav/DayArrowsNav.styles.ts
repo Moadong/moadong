@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
   display: flex;
@@ -21,12 +22,12 @@ export const ArrowButton = styled.button`
   background: none;
   font-size: 28px;
   line-height: 1;
-  color: #3a3a3a;
+  color: ${colors.gray[900]};
   cursor: pointer;
   transition: color 0.15s ease-in-out;
 
   &:hover:not(:disabled) {
-    color: #ff5414;
+    color: ${colors.primary[900]};
   }
 
   &:disabled {
@@ -40,5 +41,5 @@ export const DayLabel = styled.span`
   text-align: center;
   font-size: 16px;
   font-weight: 700;
-  color: #3a3a3a;
+  color: ${colors.gray[900]};
 `;

@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const IntroSection = styled(motion.section)`
   width: 100%;
@@ -93,7 +94,7 @@ export const TextWrapper = styled(motion.div)`
 `;
 
 export const IntroTitle = styled(motion.h1)`
-  color: #ff5414;
+  color: ${colors.primary[900]};
   font-size: 80px;
 
   ${media.laptop} {
@@ -133,8 +134,8 @@ export const IntroButton = styled(motion.button)`
   align-items: center;
   gap: 12px;
   padding: 14px 46px 14px 50px;
-  background: #ff5414;
-  color: #fff;
+  background: ${colors.primary[900]};
+  color: ${colors.base.white};
   font-weight: bold;
   font-size: 16px;
   border: none;

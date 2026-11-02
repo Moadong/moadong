@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
   display: flex;
@@ -16,7 +17,7 @@ export const Content = styled.div`
 
 export const IconWrapper = styled.div`
   margin-bottom: 12px;
-  color: #989898;
+  color: ${colors.gray[600]};
   display: flex;
   justify-content: center;
 
@@ -37,14 +38,14 @@ export const Title = styled.p`
 export const Message = styled.p`
   font-size: 13px;
   font-weight: 400;
-  color: #989898;
+  color: ${colors.gray[600]};
   line-height: 1.5;
   margin-bottom: 16px;
 `;
 
 export const ErrorDetails = styled.div`
-  background: #f8f8f8;
-  border: 1px solid #ebebeb;
+  background: ${colors.gray[50]};
+  border: 1px solid ${colors.gray[300]};
   border-radius: 6px;
   padding: 10px 12px;
   margin-bottom: 16px;
@@ -54,7 +55,7 @@ export const ErrorDetails = styled.div`
 export const ErrorDetailsMessage = styled.p`
   font-size: 12px;
   font-weight: 500;
-  color: #ff5414;
+  color: ${colors.primary[900]};
   margin-top: 4px;
   word-break: break-word;
 `;
@@ -64,16 +65,16 @@ export const RetryButton = styled.button`
   font-size: 14px;
   font-weight: 600;
   border-radius: 6px;
-  border: 1px solid #dcdcdc;
+  border: 1px solid ${colors.gray[400]};
   background: white;
-  color: #4b4b4b;
+  color: ${colors.gray[800]};
   cursor: pointer;
   transition: all 0.2s ease;
   font-family: 'Pretendard', sans-serif;
 
   &:hover {
-    background: #f5f5f5;
-    border-color: #c5c5c5;
+    background: ${colors.gray[100]};
+    border-color: ${colors.gray[500]};
   }
 
   &:active {

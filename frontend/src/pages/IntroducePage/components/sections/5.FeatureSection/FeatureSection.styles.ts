@@ -2,11 +2,12 @@ import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import ClubTag from '@/components/ClubTag/ClubTag';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const FeatureSection = styled(motion.section)`
   width: 100%;
   padding: 150px 0;
-  background-color: #fff;
+  background-color: ${colors.base.white};
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -50,7 +51,7 @@ export const FeatureTitle = styled(motion.h2)`
 
 export const FeatureSubtitle = styled(motion.p)`
   font-size: 24px;
-  color: #121212;
+  color: ${colors.base.black};
   margin-top: 22px;
   margin-bottom: 16px;
 
@@ -83,7 +84,7 @@ export const SearchWrapper = styled(motion.div)`
   height: 60px;
   padding: 0 16px;
   border-radius: 28px;
-  background: #fff;
+  background: ${colors.base.white};
   box-shadow: 0px 2px 8px rgba(0, 0, 0, 0.15);
 
   ${media.tablet} {
@@ -127,20 +128,20 @@ export const TypingText = styled.p`
   align-self: center;
   font-size: 20px;
   font-weight: 600;
-  color: #121212;
+  color: ${colors.base.black};
   line-height: 1.6;
-  border-bottom: 1px solid #ff5414;
+  border-bottom: 1px solid ${colors.primary[900]};
 
   ${media.tablet} {
     font-size: 16px;
     line-height: 1.5;
-    border-bottom: 1px solid #ff5414;
+    border-bottom: 1px solid ${colors.primary[900]};
   }
 
   ${media.mobile} {
     font-size: 14px;
     line-height: 1.4;
-    border-bottom: 0.8px solid #ff5414;
+    border-bottom: 0.8px solid ${colors.primary[900]};
   }
 `;
 
@@ -207,12 +208,20 @@ export const TagWindow = styled.div`
 
   &::before {
     left: 0;
-    background: linear-gradient(to right, #ffffff, rgba(255, 255, 255, 0));
+    background: linear-gradient(
+      to right,
+      ${colors.base.white},
+      rgba(255, 255, 255, 0)
+    );
   }
 
   &::after {
     right: 0;
-    background: linear-gradient(to left, #ffffff, rgba(255, 255, 255, 0));
+    background: linear-gradient(
+      to left,
+      ${colors.base.white},
+      rgba(255, 255, 255, 0)
+    );
   }
 
   ${media.laptop} {

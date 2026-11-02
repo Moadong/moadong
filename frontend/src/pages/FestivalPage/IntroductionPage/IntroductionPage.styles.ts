@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
   width: 100%;
@@ -42,7 +43,7 @@ export const TimetableHeader = styled.div`
   padding: 14px 16px;
   border-radius: 14px;
   background: #fff7f3;
-  border: 1px solid #ffe0d4;
+  border: 1px solid ${colors.primary[600]};
   display: flex;
   flex-direction: column;
   gap: 4px;
@@ -50,14 +51,14 @@ export const TimetableHeader = styled.div`
 
 export const TimetableDate = styled.p`
   margin: 0;
-  color: #3a3a3a;
+  color: ${colors.gray[900]};
   font-size: 14px;
   font-weight: 700;
 `;
 
 export const TimetableLocation = styled.p`
   margin: 0;
-  color: #7a7a7a;
+  color: ${colors.gray[700]};
   font-size: 12px;
   font-weight: 600;
 `;

@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Container = styled.div`
   display: flex;
@@ -20,7 +21,7 @@ export const Content = styled.div`
 
 export const IconWrapper = styled.div`
   margin-bottom: 20px;
-  color: #ff5414;
+  color: ${colors.primary[900]};
   display: flex;
   justify-content: center;
 
@@ -33,7 +34,7 @@ export const IconWrapper = styled.div`
 export const Title = styled.h2`
   font-size: 20px;
   font-weight: 700;
-  color: #111111;
+  color: ${colors.base.black};
   margin-bottom: 12px;
   line-height: 1.4;
 `;
@@ -41,14 +42,14 @@ export const Title = styled.h2`
 export const Message = styled.p`
   font-size: 15px;
   font-weight: 500;
-  color: #787878;
+  color: ${colors.gray[700]};
   line-height: 1.6;
   margin-bottom: 28px;
 `;
 
 export const ErrorDetails = styled.div`
-  background: #f5f5f5;
-  border: 1px solid #ebebeb;
+  background: ${colors.gray[100]};
+  border: 1px solid ${colors.gray[300]};
   border-radius: 8px;
   padding: 14px;
   margin-bottom: 28px;
@@ -60,7 +61,7 @@ export const ErrorDetails = styled.div`
 export const ErrorMessage = styled.div`
   font-size: 13px;
   font-weight: 600;
-  color: #ff5414;
+  color: ${colors.primary[900]};
   word-break: break-word;
 `;
 
@@ -88,22 +89,22 @@ const BaseButton = styled.button`
 `;
 
 export const PrimaryButton = styled(BaseButton)`
-  background: #ff5414;
+  background: ${colors.primary[900]};
   color: white;
 
   &:hover {
-    background: #ff7543;
+    background: ${colors.primary[800]};
     box-shadow: 0 4px 12px rgba(255, 84, 20, 0.3);
   }
 `;
 
 export const SecondaryButton = styled(BaseButton)`
   background: white;
-  color: #4b4b4b;
-  border: 1px solid #dcdcdc;
+  color: ${colors.gray[800]};
+  border: 1px solid ${colors.gray[400]};
 
   &:hover {
-    background: #f5f5f5;
-    border-color: #c5c5c5;
+    background: ${colors.gray[100]};
+    border-color: ${colors.gray[500]};
   }
 `;
