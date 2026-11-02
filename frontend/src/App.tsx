@@ -53,7 +53,6 @@ const PERSISTED_QUERY_ROOTS: string[] = [
   queryKeys.banner.all[0],
   queryKeys.game.all[0],
 ];
-const SUGGESTIONS_KEY_SEGMENT = queryKeys.club.suggestions('')[1];
 
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
@@ -70,14 +69,11 @@ const persistOptions = {
     __BUILD_ID__ ||
     ((import.meta.env.VITE_SENTRY_RELEASE as string | undefined) ?? ''),
   dehydrateOptions: {
-    // 성공한 메인 공개 데이터만 저장. 개인/인증/어드민 데이터·검색 자동완성·실패 응답은 제외.
+    // 성공한 메인 공개 데이터만 저장. 개인/인증/어드민 데이터·실패 응답은 제외.
     shouldDehydrateQuery: (query: Query) => {
       if (query.state.status !== 'success') return false;
-      const [root, second] = query.queryKey as [string, string?];
-      if (!PERSISTED_QUERY_ROOTS.includes(root)) return false;
-      if (root === queryKeys.club.all[0] && second === SUGGESTIONS_KEY_SEGMENT)
-        return false;
-      return true;
+      const [root] = query.queryKey as [string];
+      return PERSISTED_QUERY_ROOTS.includes(root);
     },
   },
 };
