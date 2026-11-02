@@ -1,13 +1,12 @@
 import { BrowserRouter } from 'react-router-dom';
 import * as Sentry from '@sentry/react';
 import { createAsyncStoragePersister } from '@tanstack/query-async-storage-persister';
-import { QueryCache, QueryClient, type Query } from '@tanstack/react-query';
+import { QueryCache, QueryClient } from '@tanstack/react-query';
 import { PersistQueryClientProvider } from '@tanstack/react-query-persist-client';
 import { ThemeProvider } from 'styled-components';
 import DesignFeedbackToolbar from '@/components/common/DesignFeedbackToolbar/DesignFeedbackToolbar';
 import FeedbackPromptHost from '@/components/common/FeedbackPromptHost/FeedbackPromptHost';
 import { FloatingButtonGroup } from '@/components/common/FloatingButtonGroup/FloatingButtonGroup';
-import { queryKeys } from '@/constants/queryKeys';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import { HttpError } from '@/errors';
 import { ScrollToTop } from '@/hooks/Scroll/ScrollToTop';
@@ -16,6 +15,7 @@ import GlobalStyles from '@/styles/Global.styles';
 import { theme } from '@/styles/theme';
 import WebviewGlobalStyles from '@/styles/WebviewGlobal.styles';
 import isInAppWebView from '@/utils/isInAppWebView';
+import shouldPersistQuery from '@/utils/shouldPersistQuery';
 import { GlobalBoundary } from './components/common/ErrorBoundary';
 import 'swiper/css';
 
@@ -45,16 +45,6 @@ const queryClient = new QueryClient({
   },
 });
 
-// 백엔드 장애로 refetch가 불가능한 상황에서도 메인페이지가 마지막 데이터를 보여주도록
-// 성공한 공개 쿼리만 localStorage에 영속화한다.
-const PERSISTED_QUERY_ROOTS: string[] = [
-  queryKeys.club.all[0],
-  queryKeys.promotion.all[0],
-  queryKeys.banner.all[0],
-  queryKeys.game.all[0],
-];
-const SUGGESTIONS_KEY_SEGMENT = queryKeys.club.suggestions('')[1];
-
 const persister = createAsyncStoragePersister({
   storage: window.localStorage,
   key: STORAGE_KEYS.QUERY_CACHE,
@@ -70,15 +60,7 @@ const persistOptions = {
     __BUILD_ID__ ||
     ((import.meta.env.VITE_SENTRY_RELEASE as string | undefined) ?? ''),
   dehydrateOptions: {
-    // 성공한 메인 공개 데이터만 저장. 개인/인증/어드민 데이터·검색 자동완성·실패 응답은 제외.
-    shouldDehydrateQuery: (query: Query) => {
-      if (query.state.status !== 'success') return false;
-      const [root, second] = query.queryKey as [string, string?];
-      if (!PERSISTED_QUERY_ROOTS.includes(root)) return false;
-      if (root === queryKeys.club.all[0] && second === SUGGESTIONS_KEY_SEGMENT)
-        return false;
-      return true;
-    },
+    shouldDehydrateQuery: shouldPersistQuery,
   },
 };
 

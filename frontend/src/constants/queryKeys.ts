@@ -42,8 +42,6 @@ export const queryKeys = {
       category: string,
       division: string,
     ) => ['clubs', keyword, recruitmentStatus, category, division] as const,
-    suggestions: (keyword: string) =>
-      ['clubs', 'suggestions', keyword] as const,
   },
   auth: {
     /** 저장된 clubId별로 나눈다. 다른 계정으로 다시 로그인하면 이전 확인 결과를 쓰지 않는다 */
