@@ -1,5 +1,4 @@
 import styled from 'styled-components';
-import { colors } from '@/styles/theme/colors';
 
 export const Card = styled.div<{ $active: boolean }>`
   width: 100%;
@@ -13,8 +12,8 @@ export const Card = styled.div<{ $active: boolean }>`
   /* 시안의 stroke는 INSIDE라 카드 크기에 더해지지 않는다. border로 그리면 위아래 2px이
      늘어 리스트에서 행마다 누적되므로, 레이아웃에 영향이 없는 inset 그림자로 그린다.
      비활성일 때 크기가 튀지 않으니 투명 border를 둘 필요도 없다. */
-  box-shadow: ${({ $active }) =>
-    $active ? `inset 0 0 0 1px ${colors.primary[600]}` : 'none'};
+  box-shadow: ${({ $active, theme }) =>
+    $active ? `inset 0 0 0 1px ${theme.colors.primary[600]}` : 'none'};
   cursor: pointer;
 `;
 
@@ -35,8 +34,8 @@ export const SongArea = styled.div<{ $active: boolean }>`
   gap: 8px;
   padding: ${({ $active }) => ($active ? '8px 12px' : '6px 12px')};
   border-radius: 8px;
-  background-color: ${({ $active }) =>
-    $active ? colors.primary[500] : colors.gray[300]};
+  background-color: ${({ $active, theme }) =>
+    $active ? theme.colors.primary[500] : theme.colors.gray[300]};
 `;
 
 export const SongList = styled.ul`
@@ -72,5 +71,5 @@ export const ChevronIcon = styled.svg<{ $expanded: boolean; $active: boolean }>`
   transform: ${({ $expanded }) =>
     $expanded ? 'rotate(180deg)' : 'rotate(0deg)'};
   stroke: ${({ $active, theme }) =>
-    $active ? colors.primary[700] : theme.colors.gray[500]};
+    $active ? theme.colors.primary[700] : theme.colors.gray[500]};
 `;

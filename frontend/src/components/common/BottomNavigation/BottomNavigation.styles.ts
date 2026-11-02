@@ -1,7 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { theme } from '@/styles/theme';
-import { colors } from '@/styles/theme/colors';
 import { Z_INDEX } from '@/styles/zIndex';
 
 export const Nav = styled.nav<{ $isHome?: boolean }>`
@@ -15,8 +14,8 @@ export const Nav = styled.nav<{ $isHome?: boolean }>`
     transform: translateX(-50%);
     width: 100%;
     max-width: 500px;
-    background-color: ${colors.base.white};
-    border-top: 1px solid ${colors.gray[250]};
+    background-color: ${theme.colors.base.white};
+    border-top: 1px solid ${theme.colors.gray[250]};
     padding-bottom: env(safe-area-inset-bottom);
     z-index: ${Z_INDEX.bottomNav};
 
