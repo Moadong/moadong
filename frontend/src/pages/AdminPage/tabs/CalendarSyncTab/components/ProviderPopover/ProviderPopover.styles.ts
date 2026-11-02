@@ -55,12 +55,12 @@ export const DisconnectBadge = styled.button`
   padding: 0;
   border: 1.5px solid ${colors.base.white};
   border-radius: 50%;
-  background: #dc2626;
+  background: ${colors.primary[900]};
   color: ${colors.base.white};
   cursor: pointer;
 
   &:hover {
-    background: #b91c1c;
+    background: ${colors.primary[800]};
   }
 `;
 

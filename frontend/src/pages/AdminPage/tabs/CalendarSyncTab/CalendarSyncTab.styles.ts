@@ -44,7 +44,7 @@ export const TokenText = styled.code`
 export const ErrorText = styled.p`
   margin-top: 8px;
   font-size: 0.9rem;
-  color: #dc2626;
+  color: ${colors.primary[900]};
   font-weight: 600;
 `;
 
