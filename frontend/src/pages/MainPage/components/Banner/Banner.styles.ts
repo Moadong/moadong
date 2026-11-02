@@ -13,10 +13,10 @@ export const SkeletonBannerWrapper = styled.div`
   max-width: 1180px;
   aspect-ratio: 1180 / 316;
   border-radius: 26px;
+  /* 양 끝(gray[250])과 밝기 차이가 있어야 shimmer가 보인다. gray[300]은 너무 가깝고 gray[400]은 진해서 그 사이 값(#e4e4e4)을 쓴다 */
   background: linear-gradient(
     90deg,
     ${colors.gray[250]} 25%,
-    // 양 끝(gray[250])과 밝기 차이가 있어야 shimmer가 보인다. gray[300]은 너무 가깝고 gray[400]은 진해서 그 사이 값을 쓴다
     #e4e4e4 50%,
     ${colors.gray[250]} 75%
   );
@@ -33,10 +33,10 @@ export const SkeletonOverlay = styled.div`
   position: absolute;
   inset: 0;
   z-index: 10;
+  /* 양 끝(gray[250])과 밝기 차이가 있어야 shimmer가 보인다. gray[300]은 너무 가깝고 gray[400]은 진해서 그 사이 값(#e4e4e4)을 쓴다 */
   background: linear-gradient(
     90deg,
     ${colors.gray[250]} 25%,
-    // 양 끝(gray[250])과 밝기 차이가 있어야 shimmer가 보인다. gray[300]은 너무 가깝고 gray[400]은 진해서 그 사이 값을 쓴다
     #e4e4e4 50%,
     ${colors.gray[250]} 75%
   );
