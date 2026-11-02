@@ -9,7 +9,7 @@ const INPUT_RIGHT_PADDING = {
 } as const;
 
 const BORDER_ERROR = colors.primary[900];
-const BORDER_SUCCESS = colors.accent[2][900];
+const BORDER_SUCCESS = colors.accent[2][950];
 const BORDER_FOCUS = '#007bff';
 
 export const InputContainer = styled.div<{ $width: string }>`
