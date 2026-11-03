@@ -27,7 +27,8 @@ npm run coverage         # 커버리지 리포트와 함께 테스트 실행
 npx jest path/to/file.test.ts  # 단일 테스트 파일 실행
 
 # 코드 품질
-npm run lint             # ESLint 자동 수정
+npm run lint             # ESLint 검사
+npm run lint:fix         # ESLint 자동 수정
 npm run format           # Prettier 포맷팅
 npm run typecheck        # TypeScript 타입 체크만 실행
 
