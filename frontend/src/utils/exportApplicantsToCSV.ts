@@ -3,10 +3,11 @@ import { Question } from '@/types/application';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 
 const escapeCsvCell = (value: string): string => {
-  if (value.includes(',') || value.includes('"') || value.includes('\n')) {
-    return `"${value.replace(/"/g, '""')}"`;
+  const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  if (/[",\n\r]/.test(safe)) {
+    return `"${safe.replace(/"/g, '""')}"`;
   }
-  return value;
+  return safe;
 };
 
 export const exportApplicantsToCSV = (

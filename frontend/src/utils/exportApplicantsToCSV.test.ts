@@ -124,6 +124,21 @@ describe('exportApplicantsToCSV', () => {
     expect(capturedBlobContent).toContain('"월, 화, 수"');
   });
 
+  it('수식 시작 문자(=, +, -, @)로 시작하는 셀은 앞에 작은따옴표를 붙인다', () => {
+    const applicantWithFormula: Applicant[] = [
+      {
+        ...mockApplicants[0],
+        answers: [
+          { id: 1, value: '=HYPERLINK("http://evil.com","클릭")' },
+          { id: 2, value: '+1234' },
+        ],
+      },
+    ];
+    exportApplicantsToCSV(applicantWithFormula, mockQuestions, '테스트');
+    expect(capturedBlobContent).toContain("'=HYPERLINK");
+    expect(capturedBlobContent).toContain("'+1234");
+  });
+
   it('큰따옴표가 포함된 셀은 이스케이프 처리된다', () => {
     const applicantWithQuote: Applicant[] = [
       {
