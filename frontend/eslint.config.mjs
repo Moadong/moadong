@@ -36,7 +36,7 @@ const config = [
     },
     rules: {
       'local/no-hardcoded-event-name': 'error',
-      'no-console': 'warn',
+      'no-console': ['warn', { allow: ['error', 'warn'] }],
       '@typescript-eslint/no-unused-vars': [
         'warn',
         { argsIgnorePattern: '^_' },
@@ -49,6 +49,7 @@ const config = [
   {
     files: ['**/*.stories.{js,ts,jsx,tsx}'],
     rules: {
+      'no-console': 'off',
       'react-hooks/rules-of-hooks': 'off',
     },
   },
