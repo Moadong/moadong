@@ -189,53 +189,6 @@ export const PositionArt = styled.div`
   }
 `;
 
-export const ValueList = styled.ul`
-  display: grid;
-  list-style: none;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-
-  ${media.tablet} {
-    grid-template-columns: 1fr;
-  }
-`;
-
-export const ValueItem = styled.li`
-  min-height: 180px;
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
-  padding: 32px 28px;
-  border-radius: 24px;
-  background: ${({ theme }) => theme.colors.gray[100]};
-
-  ${media.tablet} {
-    min-height: auto;
-  }
-
-  ${media.mobile} {
-    padding: 24px 20px;
-  }
-`;
-
-export const ValueTitle = styled.h3`
-  ${({ theme }) => setTypography(theme.typography.title.title4)};
-  color: ${({ theme }) => theme.colors.base.black};
-
-  ${media.mobile} {
-    ${({ theme }) => setTypography(theme.typography.etc.bold18)};
-  }
-`;
-
-export const ValueDescription = styled.p`
-  ${({ theme }) => setTypography(theme.typography.paragraph.p4)};
-  color: ${({ theme }) => theme.colors.gray[800]};
-
-  ${media.mobile} {
-    ${({ theme }) => setTypography(theme.typography.paragraph.p6r)};
-  }
-`;
-
 export const ScheduleList = styled.ol`
   display: grid;
   list-style: none;

@@ -67,11 +67,6 @@ const preview: Preview = {
         } catch (error) {
           console.warn('Failed to initialize mixpanel for Storybook:', error);
         }
-        if (!document.getElementById('modal-root')) {
-          const modalRoot = document.createElement('div');
-          modalRoot.id = 'modal-root';
-          document.body.appendChild(modalRoot);
-        }
       }, []);
 
       return (

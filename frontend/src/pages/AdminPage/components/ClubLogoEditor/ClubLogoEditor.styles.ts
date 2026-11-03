@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Label = styled.label`
   display: block;
@@ -23,7 +24,7 @@ export const ClubLogoWrapper = styled.div`
 export const ClubLogo = styled.img`
   width: 100px;
   height: 100px;
-  background: #ededed;
+  background: ${colors.gray[250]};
   border-radius: 20px;
   object-fit: cover;
 `;
@@ -41,7 +42,7 @@ export const ButtonGroup = styled.div`
 
 export const HelpText = styled.p`
   font-size: 12px;
-  color: #c5c5c5;
+  color: ${colors.gray[500]};
 `;
 
 export const HiddenFileInput = styled.input`

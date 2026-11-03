@@ -1,12 +1,13 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const LoginContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #ffffff;
+  background-color: ${colors.base.white};
   overflow-x: hidden;
 `;
 

@@ -194,10 +194,10 @@ export const AiDraftButton = styled.button`
   align-items: center;
   height: 33px;
   padding: 0 12px;
-  border: 1px solid var(--Main-Primary-900, #ff5414);
+  border: 1px solid var(--Main-Primary-900, ${colors.primary[900]});
   border-radius: 6px;
-  background-color: #fff;
-  color: var(--Main-Primary-900, #ff5414);
+  background-color: ${colors.base.white};
+  color: var(--Main-Primary-900, ${colors.primary[900]});
   font-size: 12px;
   font-weight: 600;
   white-space: nowrap;

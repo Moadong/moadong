@@ -64,7 +64,8 @@ export const Tab = styled.button<{ $active?: boolean }>`
   position: relative;
   font-size: 20px;
   font-weight: 700;
-  color: ${({ $active }) => ($active ? '#787878' : '#DCDCDC')};
+  color: ${({ $active, theme }) =>
+    $active ? theme.colors.gray[700] : theme.colors.gray[400]};
   border: none;
   background: none;
 
@@ -75,7 +76,7 @@ export const Tab = styled.button<{ $active?: boolean }>`
     bottom: -4px;
     width: 100%;
     height: 1.5px;
-    background: #787878;
+    background: ${({ theme }) => theme.colors.gray[700]};
     border-radius: 1.5px;
     transform: ${({ $active }) => ($active ? 'scaleX(1)' : 'scaleX(0)')};
     transform-origin: center;
@@ -90,7 +91,7 @@ export const Tab = styled.button<{ $active?: boolean }>`
 export const TotalCountResult = styled.span`
   font-size: 18px;
   font-weight: bold;
-  color: #787878;
+  color: ${({ theme }) => theme.colors.gray[700]};
 
   ${media.mobile} {
     font-size: 12px;

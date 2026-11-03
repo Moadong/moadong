@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 interface ButtonProps {
   $selected: boolean;
@@ -14,8 +15,10 @@ export const Button = styled.button<ButtonProps>`
   font-weight: 600;
   cursor: pointer;
   background-color: ${(props) =>
-    props.$selected ? props.$color || '#FF5414' : 'rgba(0, 0, 0, 0.05)'};
-  color: ${(props) => (props.$selected ? '#3a3a3a' : '#4B4B4B')};
+    props.$selected
+      ? props.$color || colors.primary[900]
+      : 'rgba(0, 0, 0, 0.05)'};
+  color: ${(props) => (props.$selected ? colors.gray[900] : colors.gray[800])};
 
   &:hover {
     opacity: ${(props) => (props.$selected ? 0.9 : 1)};

@@ -14,8 +14,8 @@ export const Nav = styled.nav<{ $isHome?: boolean }>`
     transform: translateX(-50%);
     width: 100%;
     max-width: 500px;
-    background-color: #ffffff;
-    border-top: 1px solid #f0f0f0;
+    background-color: ${theme.colors.base.white};
+    border-top: 1px solid ${theme.colors.gray[250]};
     padding-bottom: env(safe-area-inset-bottom);
     z-index: ${Z_INDEX.bottomNav};
 

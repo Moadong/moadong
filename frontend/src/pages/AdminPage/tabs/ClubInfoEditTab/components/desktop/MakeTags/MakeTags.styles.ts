@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const Label = styled.label`
   display: block;
@@ -17,14 +18,14 @@ export const TagItem = styled.div`
   position: relative;
   display: inline-flex;
   align-items: center;
-  background-color: #f5f5f5;
+  background-color: ${colors.gray[100]};
   border-radius: 8px;
   padding: 0.5rem 0.75rem;
 `;
 
 export const Hashtag = styled.span`
   margin-right: 4px;
-  color: #4b4b4b;
+  color: ${colors.gray[800]};
   font-weight: bold;
   font-size: 0.875rem;
 `;
@@ -34,7 +35,7 @@ export const TagTextInput = styled.input`
   outline: none;
   background: transparent;
   font-size: 0.875rem;
-  color: #4b4b4b;
+  color: ${colors.gray[800]};
   width: 100px;
   padding-right: 30px;
 `;

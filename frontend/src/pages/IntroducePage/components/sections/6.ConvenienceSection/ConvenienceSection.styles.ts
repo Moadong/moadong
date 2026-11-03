@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const ConvenienceSection = styled.section`
   max-width: 1180px;
@@ -61,7 +62,7 @@ export const Card4 = styled(FeatureCard)`
 export const ConvenienceTitle = styled.h2`
   font-size: 32px;
   font-weight: 700;
-  color: #111;
+  color: ${colors.base.black};
   margin-bottom: 24px;
   text-align: center;
 

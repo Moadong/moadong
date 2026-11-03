@@ -148,7 +148,7 @@ export const MapPreview = styled.div`
   border-radius: 20px;
   border: 1px solid ${colors.gray[400]};
   overflow: hidden;
-  background-color: #f2f2f2;
+  background-color: ${colors.gray[200]};
 `;
 
 /** 지도 아래 선택 상태 줄. 좌표가 정해졌는지를 글로도 알려준다 */

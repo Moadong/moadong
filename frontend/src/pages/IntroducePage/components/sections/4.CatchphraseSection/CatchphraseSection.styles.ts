@@ -1,6 +1,7 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const CatchphraseSection = styled(motion.section)`
   width: 100%;
@@ -52,7 +53,7 @@ export const CatchphraseWrapper = styled(motion.div)`
 
 export const CatchphraseSubtitle = styled(motion.p)`
   font-size: 30px;
-  color: #121212;
+  color: ${colors.base.black};
   font-weight: bold;
   margin-bottom: 2px;
 
@@ -72,7 +73,7 @@ export const CatchphraseSubtitle = styled(motion.p)`
 export const CatchphraseTitle = styled(motion.h2)`
   font-size: 48px;
   font-weight: bold;
-  color: #ff5414;
+  color: ${colors.primary[900]};
 
   ${media.laptop} {
     font-size: 40px;

@@ -16,6 +16,7 @@
 - `webviewBridge.ts` - 네이티브 앱과 통신
 - `initSDK.ts` - 외부 SDK 초기화
 - `sentryRouting.ts` - Sentry 라우트 연동에 넘기는 디코딩 location·원본 매칭 어댑터, 접속 도메인 기준 environment
+- `shouldPersistQuery.ts` - React Query 캐시 중 localStorage에 저장할 쿼리 판정(`App.tsx`의 `shouldDehydrateQuery`). 성공 상태이고 키 첫 칸이 `PERSISTED_QUERY_ROOTS`에 있을 때만 저장한다. 상세(`clubDetail`)는 루트가 달라 저장되지 않으므로, 상세 키를 `clubs` 아래로 옮기면 여기에 예외를 넣어야 한다
 
 ## 외부 서비스 통합
 
