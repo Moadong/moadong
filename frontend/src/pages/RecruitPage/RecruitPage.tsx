@@ -16,7 +16,6 @@ import {
   RECRUIT_STATS_CLOSING,
   RECRUIT_STATS_PERIOD,
   RECRUIT_STATS_TITLE,
-  RECRUIT_VALUES,
 } from './constants/recruit';
 import type { RecruitPositionId } from './constants/recruit';
 import * as Styled from './RecruitPage.styles';
@@ -80,22 +79,6 @@ const RecruitPage = () => {
             );
           })}
         </Styled.PositionGrid>
-      </Styled.Section>
-
-      <Styled.Section aria-labelledby='recruit-values'>
-        <Styled.SectionTitle id='recruit-values'>
-          이런 분과 함께하고 싶어요
-        </Styled.SectionTitle>
-        <Styled.ValueList>
-          {RECRUIT_VALUES.map((value) => (
-            <Styled.ValueItem key={value.title}>
-              <Styled.ValueTitle>{value.title}</Styled.ValueTitle>
-              <Styled.ValueDescription>
-                {value.description}
-              </Styled.ValueDescription>
-            </Styled.ValueItem>
-          ))}
-        </Styled.ValueList>
       </Styled.Section>
 
       <Styled.Section aria-labelledby='recruit-schedule'>

@@ -122,21 +122,6 @@ export const RECRUIT_POSITIONS: readonly RecruitPosition[] = [
   },
 ];
 
-export const RECRUIT_VALUES = [
-  {
-    title: '사용자에서 출발해요',
-    description: '학생과 운영진이 실제로 겪는 불편에서 문제를 찾아요.',
-  },
-  {
-    title: '끝까지 책임져요',
-    description: '맡은 기능을 출시하고 반응을 확인할 때까지 챙겨요.',
-  },
-  {
-    title: '함께 결정해요',
-    description: '근거를 나누고 직군을 넘어 같이 결정해요.',
-  },
-] as const;
-
 export const RECRUIT_SCHEDULE = [
   { step: '서류 접수', date: '10.15(목) ~ 11.30(월)' },
   { step: '인터뷰', date: '지원자와 일정 조율' },
