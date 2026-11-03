@@ -129,7 +129,7 @@ cd frontend && npm run typecheck
 cd frontend && npx eslint src
 ```
 
-`npm run lint`는 `--fix`가 붙어 있어 무관한 파일을 고치니 쓰지 않는다. 기준은 종료 코드다
+`npm run lint:fix`는 무관한 파일을 고치니 쓰지 않는다. 기준은 종료 코드다
 (경고는 통과). 둘 중 하나라도 실패하면 PR을 열지 않는다. 변경을 되돌리고(`git checkout -- .`)
 이슈에 실패 원인을 3줄 이내로 댓글 단다.
 
