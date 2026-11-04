@@ -174,7 +174,11 @@ describe('exportApplicantsToCSV', () => {
         ],
       },
     ];
-    exportApplicantsToCSV(applicantWithMultipleAnswers, mockQuestions, '테스트');
+    exportApplicantsToCSV(
+      applicantWithMultipleAnswers,
+      mockQuestions,
+      '테스트',
+    );
     const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
     expect(lines[1]).toContain('A, B, C');
     expect(lines[1]).toContain('평일');

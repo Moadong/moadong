@@ -1,9 +1,9 @@
 import styled from 'styled-components';
-import { colors } from '@/styles/theme/colors';
 import disabledDeleteIcon from '@/assets/images/icons/applicant_delete_disabled.svg';
 import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
 import checkIcon from '@/assets/images/icons/checkBox.svg';
 import CsvSvg from '@/assets/images/icons/csv.svg?react';
+import { colors } from '@/styles/theme/colors';
 
 // 지원현황
 export const SummaryWrapper = styled.div`
