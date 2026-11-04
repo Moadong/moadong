@@ -5,6 +5,7 @@ import { exportApplicantsToCSV } from '@/utils/exportApplicantsToCSV';
 const mockClick = jest.fn();
 const mockLink = { href: '', download: '', click: mockClick };
 let capturedBlobContent = '';
+const originalBlob = global.Blob;
 
 beforeEach(() => {
   jest
@@ -21,6 +22,7 @@ beforeEach(() => {
 
 afterEach(() => {
   jest.restoreAllMocks();
+  global.Blob = originalBlob;
 });
 
 const mockQuestions: Question[] = [
