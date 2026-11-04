@@ -21,6 +21,15 @@ API를 래핑하는 React Query 훅 (useClub, useApplication, useApplicants 등)
 - 정적 데이터처럼 메모리에 오래 유지해야 하는 경우에만 `gcTime`을 `staleTime`과 함께 명시
 - 실시간성이 중요한 데이터는 `staleTime: 0` (기본값이므로 생략 가능하나 의도 명시를 위해 작성)
 
+## 쿼리 옵션 (`queryOptions`)
+
+`queryClient`에 키를 넘겨 캐시를 직접 읽거나 쓰는 쿼리(`getQueryData`·`setQueryData`·`cancelQueries` 등)는 `queryOptions`로 정의하고, 키는 옵션에서 꺼내 쓴다(`notionQueries.pages().queryKey`). 꺼낸 키에는 데이터 타입이 붙어 있어 `setQueryData`에 모양이 다른 값을 넣으면 컴파일 에러가 난다. `queryKeys`의 키를 그대로 넘기면 이 검사가 없고, `getQueryData<T>`처럼 손으로 적은 타입은 틀려도 통과한다.
+
+- 옵션은 훅 파일에 `도메인Queries` 객체로 둔다(`useNotionCalendar.ts`). `constants/queryKeys.ts`는 import 없는 상수 파일이고 영속화 판정(`utils/shouldPersistQuery.ts`)도 가져다 쓰므로 `queryFn`을 거기 넣지 않는다
+- 옵션으로 바꾼 쿼리는 `useQuery`에 제네릭을 넘기지 않는다. 데이터 타입은 `queryFn`의 반환 타입에서 추론한다
+- `useQuery`로만 쓰고 `invalidateQueries`만 거는 쿼리는 바꾸지 않아도 된다. 무효화는 접두사 키로 맞추므로 데이터 타입과 관계없다
+- 남은 대상: `useApplicants`(낙관적 업데이트의 `getQueryData<ApplicantsInfo>`·`setQueryData<ApplicantsInfo>`)
+
 ## Google 캘린더 연동 상태 (`useGoogleCalendar`)
 
 연동이 안 된 상태는 두 가지이고, 백엔드 에러 코드로 구분한다. 둘을 뭉치면
