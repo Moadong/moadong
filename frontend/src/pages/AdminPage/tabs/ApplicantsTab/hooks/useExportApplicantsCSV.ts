@@ -17,13 +17,14 @@ const useExportApplicantsCSV = (
   );
 
   const handleExportCSV = () => {
-    const questions = applicationData?.questions ?? [];
+    if (!applicationData) return;
+    const questions = applicationData.questions;
     const toExport =
       checkedIds.size > 0
         ? filteredApplicants.filter((a) => checkedIds.has(a.id))
         : filteredApplicants;
     const clubName = clubDetail?.name ?? '동아리';
-    const formTitle = applicationData?.title ?? '지원서';
+    const formTitle = applicationData.title ?? '지원서';
     exportApplicantsToCSV(toExport, questions, `${clubName}_${formTitle}`);
   };
 
