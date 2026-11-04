@@ -28,7 +28,6 @@ API를 래핑하는 React Query 훅 (useClub, useApplication, useApplicants 등)
 - 옵션은 훅 파일에 `도메인Queries` 객체로 둔다(`useNotionCalendar.ts`). `constants/queryKeys.ts`는 import 없는 상수 파일이고 영속화 판정(`utils/shouldPersistQuery.ts`)도 가져다 쓰므로 `queryFn`을 거기 넣지 않는다
 - 옵션으로 바꾼 쿼리는 `useQuery`에 제네릭을 넘기지 않는다. 데이터 타입은 `queryFn`의 반환 타입에서 추론한다
 - `useQuery`로만 쓰고 `invalidateQueries`만 거는 쿼리는 바꾸지 않아도 된다. 무효화는 접두사 키로 맞추므로 데이터 타입과 관계없다
-- 남은 대상: `useApplicants`(낙관적 업데이트의 `getQueryData<ApplicantsInfo>`·`setQueryData<ApplicantsInfo>`)
 
 ## Google 캘린더 연동 상태 (`useGoogleCalendar`)
 
