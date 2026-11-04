@@ -19,7 +19,7 @@ export const FooterContainer = styled.footer`
 
 export const Divider = styled.hr`
   border: none;
-  border-top: 1px solid #c5c5c5;
+  border-top: 1px solid ${colors.gray[500]};
 `;
 
 export const LeftSection = styled.div`

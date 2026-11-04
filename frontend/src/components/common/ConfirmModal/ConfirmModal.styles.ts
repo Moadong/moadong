@@ -34,6 +34,7 @@ export const Description = styled.p`
   color: ${colors.gray[600]};
   text-align: center;
   letter-spacing: -0.28px;
+  white-space: pre-line;
 `;
 
 export const Footer = styled.div`
@@ -43,19 +44,21 @@ export const Footer = styled.div`
   border-top: 1px solid ${colors.gray[200]};
 `;
 
-export const FooterButton = styled.button<{ $emphasized?: boolean }>`
+export const FooterButton = styled.button<{
+  $variant: 'primary' | 'secondary';
+}>`
   flex: 1;
   padding: 12px 10px;
   border: none;
   background: transparent;
   cursor: pointer;
   letter-spacing: -0.28px;
-  ${({ $emphasized }) =>
-    $emphasized
+  ${({ $variant }) =>
+    $variant === 'primary'
       ? setTypography(typography.button.button1)
       : setTypography(typography.paragraph.p5)};
-  color: ${({ $emphasized }) =>
-    $emphasized ? colors.primary[800] : colors.gray[700]};
+  color: ${({ $variant }) =>
+    $variant === 'primary' ? colors.primary[800] : colors.gray[700]};
 
   & + & {
     border-left: 1px solid ${colors.gray[200]};

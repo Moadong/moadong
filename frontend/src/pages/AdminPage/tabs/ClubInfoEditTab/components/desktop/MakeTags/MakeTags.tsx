@@ -1,7 +1,7 @@
 import clearButton from '@/assets/images/icons/input_clear_button_icon.svg';
 import { CLUB_TAG_MAX } from '@/constants/adminFieldLimits';
 import { CLUB_TAG_PLACEHOLDER } from '@/constants/adminFieldPlaceholders';
-import { ADMIN_EVENT } from '@/constants/eventName';
+import { ADMIN_EVENT, INPUT_FIELD } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import * as Styled from './MakeTags.styles';
 
@@ -33,8 +33,9 @@ const MakeTags = ({ value, onChange }: MakeTagsProps) => {
       return tag;
     });
 
-    trackEvent(ADMIN_EVENT.CLUB_TAG_CLEAR_BUTTON_CLICKED, {
-      tagIndex: index + 1,
+    trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+      field: INPUT_FIELD.CLUB_TAG,
+      tag_index: index + 1,
     });
 
     onChange(updatedTags);

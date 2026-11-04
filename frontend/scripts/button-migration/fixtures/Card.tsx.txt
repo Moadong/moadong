@@ -1,0 +1,5 @@
+const Card = ({ className }: { className?: string }) => (
+  <button className={className}>카드</button>
+);
+
+export default Card;

@@ -1,14 +1,10 @@
+import './instrument';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { cleanupMainRedesignExperiment } from './utils/cleanupMainRedesignExperiment';
-import {
-  initializeClarity,
-  initializeMixpanel,
-  initializeSentry,
-} from './utils/initSDK';
+import { initializeClarity, initializeMixpanel } from './utils/initSDK';
 
 initializeMixpanel();
-initializeSentry();
 initializeClarity();
 cleanupMainRedesignExperiment();
 

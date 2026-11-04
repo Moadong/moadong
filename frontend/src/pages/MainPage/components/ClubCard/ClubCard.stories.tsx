@@ -3,6 +3,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { asClubId } from '@/types/branded';
 import { Club } from '@/types/club';
 import ClubCard from './ClubCard';
+import figmaMapping from './ClubCard.figma.json';
 
 // 카테고리·태그를 시안(Figma 4060-16963)과 맞춘다. 다르면 팔레트가 갈려
 // 시안 대조에서 실제 차이가 아닌 불일치가 잡힌다.
@@ -51,6 +52,9 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  parameters: {
+    design: { type: 'figma', url: figmaMapping['ClubCard/Mobile'].figma },
+  },
   args: {
     club: sampleClub,
   },

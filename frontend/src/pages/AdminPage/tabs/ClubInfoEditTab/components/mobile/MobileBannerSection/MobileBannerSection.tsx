@@ -57,11 +57,14 @@ const MobileBannerSection = ({
     <Styled.BannerArea $bgColor={bannerColor}>
       {coverUrl && <Styled.CoverImage src={coverUrl} alt='커버 이미지' />}
       <Styled.BannerButtonGroup>
-        <Styled.BannerEditButton onClick={() => coverInputRef.current?.click()}>
+        <Styled.BannerEditButton
+          $tone='gray'
+          onClick={() => coverInputRef.current?.click()}
+        >
           배너 수정
         </Styled.BannerEditButton>
         {coverUrl && (
-          <Styled.BannerEditButton onClick={handleDeleteCover}>
+          <Styled.BannerEditButton $tone='gray' onClick={handleDeleteCover}>
             초기화
           </Styled.BannerEditButton>
         )}

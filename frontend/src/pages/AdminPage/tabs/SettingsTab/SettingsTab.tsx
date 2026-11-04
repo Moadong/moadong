@@ -11,7 +11,7 @@ const SettingsTab = () => {
   const trackEvent = useMixpanelTrack();
 
   const handleItemClick = (label: string, path: string) => {
-    trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: label });
+    trackEvent(ADMIN_EVENT.ADMIN_TAB_CLICKED, { tab_name: label });
     navigate(path);
   };
 

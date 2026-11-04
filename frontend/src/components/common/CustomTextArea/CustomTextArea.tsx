@@ -52,7 +52,7 @@ const CustomTextArea = ({
   };
 
   return (
-    <Styled.TextAreaContainer width={width}>
+    <Styled.TextAreaContainer $width={width}>
       {label && <Styled.Label>{label}</Styled.Label>}
       <Styled.TextAreaWrapper>
         <Styled.TextArea
@@ -61,7 +61,7 @@ const CustomTextArea = ({
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
-          hasError={isError}
+          $hasError={isError}
           value={value}
           $variant={variant}
         />

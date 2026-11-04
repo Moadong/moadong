@@ -8,6 +8,8 @@ interface CustomInputProps {
   maxLength?: number;
   type?: 'text' | 'password';
   label?: string;
+  /** 화면에 label을 그리지 않을 때 입력칸의 접근 가능한 이름 */
+  ariaLabel?: string;
   showClearButton?: boolean;
   showMaxChar?: boolean;
   disabled?: boolean;
@@ -26,6 +28,7 @@ const InputField = ({
   maxLength,
   type = 'text',
   label,
+  ariaLabel,
   showClearButton = true,
   showMaxChar = false,
   disabled = false,
@@ -60,19 +63,20 @@ const InputField = ({
   };
 
   return (
-    <Styled.InputContainer width={width}>
+    <Styled.InputContainer $width={width}>
       {label && <Styled.Label htmlFor={id}>{label}</Styled.Label>}
       <Styled.InputWrapper>
         <Styled.Input
           id={id}
+          aria-label={ariaLabel}
           type={type === 'password' && !isPasswordVisible ? 'password' : 'text'}
           value={value}
           onChange={onChange}
           placeholder={placeholder}
           maxLength={maxLength}
           disabled={disabled}
-          hasError={isError}
-          isSuccess={isSuccess}
+          $hasError={isError}
+          $isSuccess={isSuccess}
           readOnly={readOnly}
           $variant={getActiveButtonVariant()}
         />
@@ -93,7 +97,7 @@ const InputField = ({
         </Styled.CharCount>
       )}
       {(isError || isSuccess) && helperText && (
-        <Styled.HelperText isError={isError}>{helperText}</Styled.HelperText>
+        <Styled.HelperText $isError={isError}>{helperText}</Styled.HelperText>
       )}
     </Styled.InputContainer>
   );

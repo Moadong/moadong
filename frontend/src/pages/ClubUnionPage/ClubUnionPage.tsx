@@ -77,7 +77,7 @@ const ClubUnionPage = () => {
               rel='noopener noreferrer'
               onClick={() =>
                 trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
-                  platform: 'instagram',
+                  sns_platform: 'instagram',
                 })
               }
             >
@@ -90,7 +90,7 @@ const ClubUnionPage = () => {
               rel='noopener noreferrer'
               onClick={() =>
                 trackEvent(USER_EVENT.CLUB_UNION_SNS_CLICKED, {
-                  platform: 'kakaotalk',
+                  sns_platform: 'kakaotalk',
                 })
               }
             >

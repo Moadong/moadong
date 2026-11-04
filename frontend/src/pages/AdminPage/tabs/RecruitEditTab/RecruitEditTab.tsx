@@ -10,6 +10,7 @@ import {
   RECRUIT_TARGET_MAX,
 } from '@/constants/adminFieldLimits';
 import { ADMIN_EVENT, PAGE_VIEW } from '@/constants/eventName';
+import { requestFeedbackPrompt } from '@/feedbackPrompt/feedbackPromptController';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useUpdateClubDescription } from '@/hooks/Queries/useClub';
@@ -113,7 +114,7 @@ const RecruitEditTab = () => {
   }, [isAlwaysRecruiting, recruitmentStart]);
 
   const toggleAlwaysRecruiting = () => {
-    trackEvent(ADMIN_EVENT.ALWAYS_RECRUIT_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.ALWAYS_OPEN_RECRUITMENT_BUTTON_CLICKED);
 
     setIsAlwaysRecruiting((prevMode) => {
       const nextMode = !prevMode;
@@ -142,7 +143,7 @@ const RecruitEditTab = () => {
   };
 
   const handleUpdateClub = () => {
-    trackEvent(ADMIN_EVENT.UPDATE_RECRUIT_BUTTON_CLICKED);
+    trackEvent(ADMIN_EVENT.RECRUITMENT_UPDATE_BUTTON_CLICKED);
     if (!clubDetail) return;
 
     const updatedData = {
@@ -160,6 +161,13 @@ const RecruitEditTab = () => {
           recruitmentStart: recruitmentStart?.toISOString() ?? null,
           recruitmentEnd: recruitmentEnd?.toISOString() ?? null,
           recruitmentTarget,
+        });
+        void requestFeedbackPrompt({
+          eventId: crypto.randomUUID(),
+          triggerType: 'ADMIN_RECRUITMENT_INFO_SAVED',
+          clubId: clubDetail.id,
+          sourcePath: window.location.pathname,
+          accessToken: localStorage.getItem('accessToken') ?? undefined,
         });
       },
       onError: () => {

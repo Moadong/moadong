@@ -7,9 +7,19 @@ import {
   type NotionPagesResponse,
 } from '@/apis/calendarOAuth';
 import { queryKeys } from '@/constants/queryKeys';
+import { ApiError } from '@/errors';
 
-/** 연동 전에는 401·403이 정상 흐름이므로 에러 대신 빈 상태로 처리한다. */
+// 백엔드는 연동 이력이 없으면 400과 함께 이 코드(NOTION_NOT_CONNECTED)를 준다
+const NOT_CONNECTED_ERROR_CODE = '950-6';
+
+/** 연동 전에는 미연동 응답·401·403이 정상 흐름이므로 에러 대신 빈 상태로 처리한다. */
 const isNotConnectedError = (error: unknown) => {
+  if (
+    error instanceof ApiError &&
+    error.errorCode === NOT_CONNECTED_ERROR_CODE
+  ) {
+    return true;
+  }
   const status =
     typeof error === 'object' &&
     error !== null &&

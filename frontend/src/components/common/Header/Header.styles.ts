@@ -9,7 +9,7 @@ export const HEADER_HEIGHT = {
   mobile: 56,
 } as const;
 
-export const Header = styled.header<{ isScrolled: boolean }>`
+export const Header = styled.header<{ $isScrolled: boolean }>`
   position: fixed;
   top: 0;
   left: 0;
@@ -22,8 +22,8 @@ export const Header = styled.header<{ isScrolled: boolean }>`
   background-color: white;
   z-index: ${Z_INDEX.header};
 
-  box-shadow: ${({ isScrolled }) =>
-    isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
+  box-shadow: ${({ $isScrolled }) =>
+    $isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
   transition: box-shadow 0.2s ease-in-out;
 
   ${media.laptop} {
@@ -71,7 +71,8 @@ export const NavLink = styled.button<{ $isActive?: boolean }>`
   font-size: 14px;
   cursor: pointer;
   white-space: nowrap;
-  color: ${({ $isActive }) => ($isActive ? '#FF5414' : '#3A3A3A')};
+  color: ${({ $isActive }) =>
+    $isActive ? colors.primary[900] : colors.gray[900]};
   background: transparent;
   transition: color 0.2s ease-in-out;
 
@@ -124,22 +125,8 @@ export const LogoButton = styled.button`
   }
 `;
 
-export const SubscriptionBellButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
+export const AuthButton = styled(NavLink)`
   flex-shrink: 0;
-  width: 24px;
-  height: 24px;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-
-  img {
-    width: 24px;
-    height: 24px;
-  }
 `;
 
 export const AdminProfileContainer = styled.div`
@@ -150,7 +137,7 @@ export const AdminProfileContainer = styled.div`
 
 export const AdminProfileText = styled.div`
   font-size: 14px;
-  color: #767676;
+  color: ${colors.gray[700]};
 
   ${media.mobile} {
     display: none;

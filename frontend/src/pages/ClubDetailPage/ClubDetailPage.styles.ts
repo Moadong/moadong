@@ -75,7 +75,7 @@ export const MapCard = styled.button`
   overflow: hidden;
   cursor: pointer;
 
-  background-color: #f2f2f2;
+  background-color: ${colors.gray[200]};
 
   * {
     cursor: pointer !important;

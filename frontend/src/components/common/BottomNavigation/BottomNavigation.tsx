@@ -27,8 +27,7 @@ const HOME_TAB: BottomNavTab = {
   icon: { type: 'vector', Component: HomeIcon },
 };
 
-// 개편 홈은 구독 진입점을 헤더 알림 버튼으로 옮겼지만, 기존 홈에는 그게 없어
-// 개편을 받지 않은 사용자에게는 동아리 자리에 구독 탭을 그대로 둔다
+// 구독 진입점은 이 탭 하나다(홈 헤더의 구독 벨은 2026-10 제거)
 const SUBSCRIPTIONS_TAB: BottomNavTab = {
   key: 'subscriptions',
   label: '구독',
@@ -81,13 +80,27 @@ const renderIcon = (icon: TabIcon, active: boolean) => {
   );
 };
 
+/** 배지에 그대로 보여 주는 최대 새 글 수. 넘으면 `9+`로 줄인다 */
+const MAX_BADGE_COUNT = 9;
+
 interface BottomNavigationProps {
-  /** 홍보 게시판에 확인하지 않은 새 글이 있는지 */
-  hasPromotionNotification?: boolean;
+  /** 홍보 탭 알림. 'dot'은 점, 숫자는 새 글 수(0이면 표시 없음, 10 이상은 9+) */
+  promotionNotification?: number | 'dot';
 }
 
+const getPromotionAriaLabel = (
+  label: string,
+  notification: number | 'dot',
+): string | undefined => {
+  if (notification === 'dot') return `${label}, 새 글 있음`;
+  if (notification <= 0) return undefined;
+  if (notification > MAX_BADGE_COUNT)
+    return `${label}, 새 글 ${MAX_BADGE_COUNT}개 이상`;
+  return `${label}, 새 글 ${notification}개`;
+};
+
 const BottomNavigation = ({
-  hasPromotionNotification = false,
+  promotionNotification = 0,
 }: BottomNavigationProps) => {
   const { pathname } = useLocation();
   const navigate = useNavigate();
@@ -107,18 +120,32 @@ const BottomNavigation = ({
       <Styled.Inner>
         {tabs.map((tab) => {
           const active = isTabActive(pathname, tab.path);
+          const ariaLabel =
+            tab.key === 'promotions'
+              ? getPromotionAriaLabel(tab.label, promotionNotification)
+              : undefined;
           return (
             <Styled.Tab
               key={tab.key}
               type='button'
               $active={active}
               aria-current={active ? 'page' : undefined}
+              aria-label={ariaLabel}
               onClick={() => handleTabClick(tab)}
             >
               {renderIcon(tab.icon, active)}
-              {tab.key === 'promotions' && hasPromotionNotification && (
-                <Styled.NotificationDot />
+              {tab.key === 'promotions' && promotionNotification === 'dot' && (
+                <Styled.NotificationDot aria-hidden />
               )}
+              {tab.key === 'promotions' &&
+                typeof promotionNotification === 'number' &&
+                promotionNotification > 0 && (
+                  <Styled.NotificationBadge aria-hidden>
+                    {promotionNotification > MAX_BADGE_COUNT
+                      ? `${MAX_BADGE_COUNT}+`
+                      : promotionNotification}
+                  </Styled.NotificationBadge>
+                )}
               <Styled.Label>{tab.label}</Styled.Label>
             </Styled.Tab>
           );

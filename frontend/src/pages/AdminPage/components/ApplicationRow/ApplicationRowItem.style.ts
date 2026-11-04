@@ -1,13 +1,5 @@
 import styled, { css } from 'styled-components';
 
-interface MenuItemProps {
-  $ActiveMenu?: boolean;
-}
-
-interface ExpandButtonProps {
-  $isExpanded: boolean;
-}
-
 // 개별 지원서 한 줄 (Row)
 export const ApplicationRow = styled.div`
   display: flex;
@@ -72,23 +64,6 @@ export const ApplicationDate = styled.span`
   text-align: right;
   font-size: 16px;
   color: #4b4b4b;
-`;
-
-// 더보기(...) 버튼
-export const MoreButton = styled.button`
-  background: none;
-  border: none;
-  cursor: pointer;
-  padding: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 30px;
-  height: 30px;
-  border-radius: 50%;
-  &:hover {
-    background-color: #dcdcdc;
-  }
 `;
 
 export const MoreButtonIcon = styled.img`

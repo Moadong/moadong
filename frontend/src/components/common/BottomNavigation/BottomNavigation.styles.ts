@@ -14,8 +14,8 @@ export const Nav = styled.nav<{ $isHome?: boolean }>`
     transform: translateX(-50%);
     width: 100%;
     max-width: 500px;
-    background-color: #ffffff;
-    border-top: 1px solid #f0f0f0;
+    background-color: ${theme.colors.base.white};
+    border-top: 1px solid ${theme.colors.gray[250]};
     padding-bottom: env(safe-area-inset-bottom);
     z-index: ${Z_INDEX.bottomNav};
 
@@ -71,6 +71,22 @@ export const NotificationDot = styled.span`
   width: 8px;
   height: 8px;
   border-radius: 50%;
+  background-color: ${theme.colors.primary[900]};
+`;
+
+export const NotificationBadge = styled.span`
+  position: absolute;
+  top: -2px;
+  left: calc(50% + 6px);
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: 8px;
+  font-size: 10px;
+  font-weight: 600;
+  line-height: 16px;
+  text-align: center;
+  color: ${theme.colors.base.white};
   background-color: ${theme.colors.primary[900]};
 `;
 

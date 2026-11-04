@@ -1,0 +1,21 @@
+import styled from 'styled-components';
+import Button from '@/components/common/Button/Button';
+import * as Styled from './A.styles';
+
+const Inline = styled.button`
+  height: 24px;
+`;
+
+const A = ({ label }: { label: string }) => (
+  <form>
+    <Styled.Primary>지원하기</Styled.Primary>
+    <Styled.Primary type='button'>지원하기</Styled.Primary>
+    <Styled.Toggle $active type={label}>{label}</Styled.Toggle>
+    <Styled.Box />
+    <Inline>닫기</Inline>
+    <Button>저장</Button>
+    <div>무시</div>
+  </form>
+);
+
+export default A;

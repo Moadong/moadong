@@ -2,18 +2,18 @@ import styled from 'styled-components';
 import { theme } from '@/styles/theme';
 import { Z_INDEX } from '@/styles/zIndex';
 
-export const Overlay = styled.div<{ isOpen: boolean }>`
+export const Overlay = styled.div<{ $isOpen: boolean }>`
   inset: 0;
   position: fixed;
   z-index: ${Z_INDEX.overlay};
-  background: rgba(0, 0, 0, ${({ isOpen }) => (isOpen ? 0.45 : 0)});
+  background: rgba(0, 0, 0, ${({ $isOpen }) => ($isOpen ? 0.45 : 0)});
   display: grid;
   place-items: center;
   padding: 24px;
   transition: background-color 0.2s ease;
 `;
 
-export const ModalContainer = styled.div<{ isOpen: boolean }>`
+export const ModalContainer = styled.div`
   position: relative;
   z-index: ${Z_INDEX.modal};
   max-width: 500px;
@@ -30,7 +30,7 @@ export const Container = styled.div`
   flex-direction: column;
   width: 100%;
   overflow: hidden;
-  background-color: #ffffff;
+  background-color: ${theme.colors.base.white};
   border-radius: 16px;
 `;
 

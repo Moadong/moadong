@@ -94,28 +94,6 @@ export const useGetCardList = ({
   });
 };
 
-export const useValidateClubName = () => {
-  const queryClient = useQueryClient();
-  return async (name: string) => {
-    const { clubs } = await queryClient.ensureQueryData({
-      queryKey: queryKeys.club.suggestions(name),
-      queryFn: () => getClubList(name),
-      staleTime: 30 * 1000,
-    });
-    return clubs.some((c) => c.name === name);
-  };
-};
-
-export const useClubSuggestions = (keyword: string) => {
-  return useQuery({
-    queryKey: queryKeys.club.suggestions(keyword),
-    queryFn: () => getClubList(keyword),
-    enabled: !!keyword.trim(),
-    staleTime: 30 * 1000,
-    select: (data) => data.clubs.map((c) => c.name),
-  });
-};
-
 export const useUpdateClubDescription = () => {
   const queryClient = useQueryClient();
 
@@ -142,12 +120,13 @@ export const useUpdateClubDetail = () => {
   return useMutation({
     mutationFn: (updatedData: Partial<ClubDetail>) =>
       updateClubDetail(updatedData),
-    onSuccess: (_, variables) => {
-      if (variables.id) {
-        queryClient.invalidateQueries({
-          queryKey: queryKeys.club.detail(variables.id),
-        });
-      }
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allDetails,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.all,
+      });
     },
 
     onError: (error) => {

@@ -14,6 +14,7 @@ import cdnImage from '@/utils/cdnImage';
 import * as Styled from './ClubProfileCard.styles';
 
 interface ClubProfileCardProps {
+  clubId: string;
   name: string;
   logo?: string;
   cover?: string;
@@ -26,6 +27,7 @@ interface ClubProfileCardProps {
 }
 
 const ClubProfileCard = ({
+  clubId,
   name,
   logo,
   cover,
@@ -106,9 +108,10 @@ const ClubProfileCard = ({
                 rel='noopener noreferrer'
                 onClick={(e) => {
                   e.preventDefault();
-                  trackEvent(USER_EVENT.SNS_LINK_CLICKED, {
-                    platform,
-                    clubName: name,
+                  trackEvent(USER_EVENT.SNS_LINK_BUTTON_CLICKED, {
+                    sns_platform: platform,
+                    club_id: clubId,
+                    club_name: name,
                   });
                   handleLink(url);
                 }}

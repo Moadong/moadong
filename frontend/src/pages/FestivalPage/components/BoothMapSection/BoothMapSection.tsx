@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import type { Swiper as SwiperType } from 'swiper';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -600,8 +600,8 @@ const BoothMapSection = () => {
             const index = swiper.realIndex;
             setCurrentMapIndex(index);
             trackEvent(USER_EVENT.FESTIVAL_BOOTH_MAP_SLIDE_CHANGED, {
-              slideIndex: index,
-              slideName: CLUB_MAP_SLIDES[index]?.leftLabel.text,
+              slide_index: index,
+              slide_name: CLUB_MAP_SLIDES[index]?.leftLabel.text,
             });
           }}
           loop

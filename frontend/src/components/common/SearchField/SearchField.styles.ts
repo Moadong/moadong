@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const SearchBoxContainer = styled.form<{ $isFocused: boolean }>`
   display: flex;
@@ -10,7 +11,8 @@ export const SearchBoxContainer = styled.form<{ $isFocused: boolean }>`
   padding: 3px 20px;
   border: 1px solid transparent;
   border-radius: 41px;
-  background-color: ${({ $isFocused }) => ($isFocused ? '#ffffff' : '#eeeeee')};
+  background-color: ${({ $isFocused }) =>
+    $isFocused ? colors.base.white : colors.gray[250]};
   transition: all 0.2s ease-in-out;
 
   border-color: ${({ $isFocused }) =>

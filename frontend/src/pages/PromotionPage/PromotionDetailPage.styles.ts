@@ -13,7 +13,7 @@ export const DesktopHeader = styled.div`
 export const Container = styled.div`
   width: 100%;
   min-height: 100vh;
-  background: #fff;
+  background: ${colors.base.white};
 `;
 
 export const MobileTopBar = styled.div`

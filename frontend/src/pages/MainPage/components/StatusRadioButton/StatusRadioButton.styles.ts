@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const RadioLabel = styled.label`
   display: flex;
@@ -22,7 +23,7 @@ export const CustomRadio = styled.span<{ $isActive: boolean }>`
   ${({ $isActive }) =>
     $isActive &&
     `
-    background-color: #fff;
+    background-color: ${colors.base.white};
     &::after {
       content: '';
       width: 14px;

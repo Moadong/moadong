@@ -10,7 +10,7 @@ import {
   CLUB_INTRODUCTION_PLACEHOLDER,
   CLUB_NAME_PLACEHOLDER,
 } from '@/constants/adminFieldPlaceholders';
-import { ADMIN_EVENT } from '@/constants/eventName';
+import { ADMIN_EVENT, INPUT_FIELD } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { TAG_COLORS } from '@/styles/clubTags';
 import { colors } from '@/styles/theme/colors';
@@ -120,7 +120,9 @@ const ClubInfoEditTabMobile = ({
             maxLength={CLUB_NAME_MAX}
             onChange={setClubName}
             onClear={() =>
-              trackEvent(ADMIN_EVENT.CLUB_NAME_CLEAR_BUTTON_CLICKED)
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: INPUT_FIELD.CLUB_NAME,
+              })
             }
           />
 
@@ -131,7 +133,9 @@ const ClubInfoEditTabMobile = ({
             maxLength={CLUB_INTRODUCTION_MAX}
             onChange={setIntroduction}
             onClear={() =>
-              trackEvent(ADMIN_EVENT.CLUB_INTRODUCTION_CLEAR_BUTTON_CLICKED)
+              trackEvent(ADMIN_EVENT.INPUT_CLEARED, {
+                field: INPUT_FIELD.CLUB_INTRODUCTION,
+              })
             }
           />
 
@@ -153,7 +157,9 @@ const ClubInfoEditTabMobile = ({
           <NavField
             label='자유태그 (5자이내)'
             onNavigate={() => {
-              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: '자유태그' });
+              trackEvent(ADMIN_EVENT.ADMIN_TAB_CLICKED, {
+                tab_name: '자유태그',
+              });
               setActivePage('freeTags');
             }}
           >
@@ -171,7 +177,9 @@ const ClubInfoEditTabMobile = ({
           <NavField
             label='링크 추가'
             onNavigate={() => {
-              trackEvent(ADMIN_EVENT.TAB_CLICKED, { tabName: '링크 추가' });
+              trackEvent(ADMIN_EVENT.ADMIN_TAB_CLICKED, {
+                tab_name: '링크 추가',
+              });
               setActivePage('links');
             }}
           >

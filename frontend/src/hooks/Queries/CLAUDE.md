@@ -12,7 +12,7 @@ API를 래핑하는 React Query 훅 (useClub, useApplication, useApplicants 등)
 | 자주 바뀌지 않는 일반 데이터       | `5 * 60 * 1000` (5분)    | 기본값 (5분)     | `useGoogleCalendar`, 클럽 캘린더 이벤트 |
 | 일반 목록/상세 데이터              | `60 * 1000` (1분)        | 기본값           | 클럽 목록, 클럽 상세, `useFeedback`     |
 | 폴링 + stale 마커                  | `60 * 1000` (1분)        | 기본값           | `usePromotion` (refetchInterval 병행)   |
-| 사용자 입력에 반응하는 데이터      | `30 * 1000` (30초)       | 기본값           | 클럽 검색, 자동완성                     |
+| 사용자 입력에 반응하는 데이터      | `30 * 1000` (30초)       | 기본값           | (현재 사용처 없음)                      |
 | 항상 최신값이 필요한 실시간 데이터 | `0`                      | 기본값           | 실시간 폴링이 필요한 데이터             |
 
 **규칙:**
@@ -34,6 +34,12 @@ API를 래핑하는 React Query 훅 (useClub, useApplication, useApplicants 등)
 `960-3`은 재시도해도 같은 결과라 "다시 시도" UI를 띄우지 않는다.
 Google OAuth 동의 화면이 테스트 모드면 refresh token이 7일 뒤 만료되므로,
 프로덕션 게시 전까지는 이 상태가 정상적으로 자주 발생한다.
+
+## Notion 캘린더 연동 상태 (`useNotionCalendar`)
+
+연동 이력이 없으면 백엔드가 데이터베이스·페이지 조회에 400 + `950-6`을 준다.
+에러가 아니라 데이터베이스는 `[]`, 페이지는 `null`로 반환해 "연결 안 됨"으로 표시한다.
+401·403도 같은 빈 상태로 처리하고, 나머지 `950-*`는 쿼리 오류로 남긴다.
 
 ## 클럽 로고 (`useClub`)
 
@@ -57,6 +63,14 @@ Google OAuth 동의 화면이 테스트 모드면 refresh token이 7일 뒤 만�
 
 관리자 CRUD는 목록 쿼리 하나(`queryKeys.promotion.list()`)만 쓰고 생성·수정·삭제·업로드 뮤테이션이 모두 그 키를 무효화한다. 상세 조회 API가 없어 수정 화면도 목록에서 `id`로 찾는다.
 
-- 이미지는 피드·로고와 같은 presigned 방식이다. `POST /api/promotion/{id}/upload-url`(배열 요청, 항목별 `success`)로 발급받아 R2에 raw `fetch`로 PUT(`requiredHeaders` 그대로, Authorization 금지)하고, `finalUrl`을 **`PUT /api/promotion/{id}`의 `images`에 전체 목록으로** 보낸다. 발급 API는 게시글을 건드리지 않아 PUT이 이미지 저장의 유일한 경로다. 작성·수정 모두 (작성이면 생성) → 업로드 → PUT 순서(`useUploadPromotionImages`, `usePromotionForm`)
+- 이미지는 피드·로고와 같은 presigned 방식이다. `POST /api/promotion/upload-url`(배열 요청, 항목별 `success`)로 발급받아 R2에 raw `fetch`로 PUT(`requiredHeaders` 그대로, Authorization 금지)하고, `finalUrl`을 **글 저장 요청의 `images`에 전체 목록으로** 보낸다. 키가 동아리 기준(`promotion/{clubId}/`)이라 게시글 없이도 발급되므로 순서는 **업로드 → 저장**이고, 작성은 POST 한 번으로 끝난다(`useUploadPromotionImages`, `usePromotionForm`). 한 요청에 16개 이상을 담으면 배열 전체가 거부된다
 - 수정 PUT은 `images`가 1개 이상이어야 한다(`@NotEmpty`). 생성은 빈 배열 허용
 - 심사 전 동아리는 서버가 403(902-2)로 막는다. 화면은 요청 전에 `ClubDetail.state === 'AVAILABLE'`로 먼저 막고 같은 문구를 보여준다. 판정은 `PromotionTab/constants.ts`의 `isClubApproved`로만 한다. 상세 API가 한때 설명값(`'활성화'`)을 줬는데 백엔드 #2013에서 enum 이름으로 통일됐다
+
+## 관리자 clubId 확인 (`useVerifiedAdminClubId`)
+
+저장된 `adminClubId`를 `getClubIdByToken`으로 다시 확인한다. 공개 동아리 상세의 관리자 버튼(`ClubApplyButton`)이 저장값이 아니라 이 결과로 판단한다. 저장값만 믿으면 토큰이 만료되거나 다른 계정 토큰으로 바뀌어도 이전 동아리의 관리자 버튼이 남는다.
+
+- 저장값이 없으면 요청하지 않아 일반 방문자에게는 비용이 없다
+- 키에 저장값을 넣어(`queryKeys.auth.adminClubId(storedClubId)`) 다른 계정으로 다시 로그인하면 이전 확인 결과를 쓰지 않는다
+- `auth` 루트는 `PERSISTED_QUERY_ROOTS`에 없어 localStorage 캐시에 저장되지 않는다. 넣지 말 것

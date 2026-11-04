@@ -87,7 +87,7 @@ const DayEventsModal = ({
       {
         onSuccess: () => {
           trackEvent(ADMIN_EVENT.CALENDAR_EVENT_DELETED, {
-            eventType: occurrence.event.eventType,
+            event_type: occurrence.event.eventType,
             scope: scope ?? 'THIS',
           });
           setPendingDelete(null);
@@ -125,7 +125,7 @@ const DayEventsModal = ({
                       onOpenChange={(isRowOpen) => {
                         if (isRowOpen) {
                           trackEvent(ADMIN_EVENT.CALENDAR_EVENT_ROW_SWIPED, {
-                            eventType: occurrence.event.eventType,
+                            event_type: occurrence.event.eventType,
                             source: occurrence.event.source,
                           });
                         }
@@ -154,7 +154,7 @@ const DayEventsModal = ({
             type='button'
             onClick={() => {
               trackEvent(ADMIN_EVENT.CALENDAR_ADD_EVENT_BUTTON_CLICKED, {
-                dateKey,
+                date_key: dateKey,
               });
               onAddEvent();
             }}

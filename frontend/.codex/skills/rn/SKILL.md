@@ -28,8 +28,8 @@ Agent 툴로 `RN에이전트` 서브에이전트를 호출하여 위 작업을 �
 
 다음 컨텍스트를 에이전트에게 전달하세요:
 
-- RN 프로젝트 경로: `../moadong-react-native/`
-- 현재 프론트엔드 프로젝트 경로: `./`
+- RN 프로젝트 경로: `/Users/seokyoung-won/Desktop/moadong-react-native/`
+- 현재 프론트엔드 프로젝트 경로: `/Users/seokyoung-won/Desktop/moadong/frontend/`
 - 두 프로젝트가 WebView로 연동되어 있음 (프론트엔드 웹 → RN WebView)
 
 ---
@@ -43,7 +43,7 @@ WebView 브릿지, 딥링크/라우팅, Push 알림, API/인증 관련 코드를
 
 ## 프로젝트 경로
 
-../moadong-react-native/
+/Users/seokyoung-won/Desktop/moadong-react-native/
 
 ## 기술 스택
 

@@ -20,6 +20,7 @@ import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import useExportApplicantsCSV from '@/pages/AdminPage/tabs/ApplicantsTab/hooks/useExportApplicantsCSV';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
+import { getApplicantName } from '@/utils/getApplicantName';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantsTab.styles';
 import ApplicantsTabMobile from './ApplicantsTabMobile';
@@ -249,28 +250,28 @@ const ApplicantsTabDesktop = () => {
       </div>
 
       <Styled.SummaryWrapper>
-        <Styled.SummaryCard bgColor={'#F5F5F5'}>
+        <Styled.SummaryCard $bgColor={'#F5F5F5'}>
           <Styled.SummaryLabel>전체 지원자 수</Styled.SummaryLabel>
           <Styled.SummaryValue>
             {applicantsData?.total}
             <Styled.SummaryPeople>명</Styled.SummaryPeople>
           </Styled.SummaryValue>
         </Styled.SummaryCard>
-        <Styled.SummaryCard bgColor={'#E6F4FB'}>
+        <Styled.SummaryCard $bgColor={'#E6F4FB'}>
           <Styled.SummaryLabel>서류 검토 필요</Styled.SummaryLabel>
           <Styled.SummaryValue>
             {applicantsData?.reviewRequired}
             <Styled.SummaryPeople>명</Styled.SummaryPeople>
           </Styled.SummaryValue>
         </Styled.SummaryCard>
-        <Styled.SummaryCard bgColor={'#E6FBF0'}>
+        <Styled.SummaryCard $bgColor={'#E6FBF0'}>
           <Styled.SummaryLabel>면접 예정</Styled.SummaryLabel>
           <Styled.SummaryValue>
             {applicantsData?.scheduledInterview}
             <Styled.SummaryPeople>명</Styled.SummaryPeople>
           </Styled.SummaryValue>
         </Styled.SummaryCard>
-        <Styled.SummaryCard bgColor={'#F5F5F5'}>
+        <Styled.SummaryCard $bgColor={'#F5F5F5'}>
           <Styled.SummaryLabel>합격</Styled.SummaryLabel>
           <Styled.SummaryValue>
             {applicantsData?.accepted}
@@ -380,7 +381,7 @@ const ApplicantsTabDesktop = () => {
                 }}
               >
                 <CustomDropDown.Trigger>
-                  <Styled.StatusSelect disabled={!isChecked}>
+                  <Styled.StatusSelect $disabled={!isChecked}>
                     상태변경
                   </Styled.StatusSelect>
                   <Styled.Arrow width={8} height={8} src={selectIcon} />
@@ -401,7 +402,7 @@ const ApplicantsTabDesktop = () => {
             <Styled.DeleteButton
               src={deleteIcon}
               alt='삭제'
-              disabled={!isChecked}
+              $disabled={!isChecked}
               onClick={() => {
                 const toBeDeleted = filteredApplicants
                   .filter((a) => checkedIds.has(a.id))
@@ -476,13 +477,13 @@ const ApplicantsTabDesktop = () => {
               <Styled.ApplicantTableHeader width={120}>
                 현재상태
               </Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader width={80} borderLeft={true}>
+              <Styled.ApplicantTableHeader width={80} $borderLeft={true}>
                 이름
               </Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader borderLeft={true} isMemo={true}>
+              <Styled.ApplicantTableHeader $borderLeft={true} $isMemo={true}>
                 메모
               </Styled.ApplicantTableHeader>
-              <Styled.ApplicantTableHeader width={140} borderLeft={true}>
+              <Styled.ApplicantTableHeader width={140} $borderLeft={true}>
                 제출날짜
               </Styled.ApplicantTableHeader>
             </Styled.ApplicantTableRow>
@@ -509,15 +510,15 @@ const ApplicantsTabDesktop = () => {
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
                   <Styled.ApplicantStatusBadge
-                    status={mapStatusToGroup(item.status).label}
+                    $status={mapStatusToGroup(item.status).label}
                   >
                     {mapStatusToGroup(item.status).label}
                   </Styled.ApplicantStatusBadge>
                 </Styled.ApplicantTableCol>
                 <Styled.ApplicantTableCol>
-                  {item.answers[0].value}
+                  {getApplicantName(item.answers)}
                 </Styled.ApplicantTableCol>
-                <Styled.ApplicantTableCol isMemo={true}>
+                <Styled.ApplicantTableCol $isMemo={true}>
                   {item.memo && item.memo.length > 0 ? (
                     item.memo
                   ) : (

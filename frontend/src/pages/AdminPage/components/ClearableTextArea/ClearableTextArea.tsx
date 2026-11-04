@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import ClearButtonIcon from '@/assets/images/icons/dark_clear_button_icon.svg?react';
 import useAutoGrow from '@/hooks/useAutoGrow';
+import ClearButton from '@/pages/AdminPage/components/ClearButton';
 import * as Styled from './ClearableTextArea.styles';
 
 interface ClearableTextAreaProps {
@@ -49,13 +50,13 @@ const ClearableTextArea = ({
         onBlur={() => setIsFocused(false)}
       />
       {!disabled && isFocused && value.length > 0 && (
-        <Styled.ClearButton
+        <ClearButton
           type='button'
           onMouseDown={handleClear}
           aria-label='지우기'
         >
           <ClearButtonIcon />
-        </Styled.ClearButton>
+        </ClearButton>
       )}
     </Styled.Row>
   );

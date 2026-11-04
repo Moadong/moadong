@@ -10,11 +10,10 @@ const ruleTester = new RuleTester({
 
 ruleTester.run('no-hardcoded-event-name', rule, {
   valid: [
-    // USER_EVENT 상수 사용 — 정상
+    // eventName.ts 상수 사용 — 정상
     'trackEvent(USER_EVENT.BANNER_CLICKED, { id: 1 });',
-    'mixpanel.track(USER_EVENT.SEARCH_EXCUTED);',
-    // 동적 템플릿(페이지뷰 패턴)은 허용
-    'mixpanel.track(`${pageName} Visited`);',
+    'mixpanel.track(USER_EVENT.SEARCH_EXECUTED);',
+    'mixpanel.track(PAGE_EVENT.PAGE_VIEWED, { page_name: pageName });',
     // 추적 호출이 아니면 무시
     "track('something');",
     "logger.track('event');",
@@ -32,6 +31,16 @@ ruleTester.run('no-hardcoded-event-name', rule, {
       // 표현식 없는 정적 템플릿도 하드코딩으로 간주
       code: 'trackEvent(`Banner Clicked`);',
       errors: [{ messageId: 'hardcoded' }],
+    },
+    {
+      // 동적 템플릿 이벤트명은 값마다 이벤트가 생기므로 금지
+      code: 'mixpanel.track(`${pageName} Visited`);',
+      errors: [{ messageId: 'dynamic' }],
+    },
+    {
+      // 문자열 연결로 만든 이벤트명도 금지
+      code: "trackEvent(pageName + ' Visited');",
+      errors: [{ messageId: 'dynamic' }],
     },
     {
       // 옵셔널 체이닝(mixpanel?.track)으로 우회해도 검출

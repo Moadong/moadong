@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 export const QuestionMenu = styled.div`
   display: flex;
@@ -19,22 +20,22 @@ export const RequiredToggleButton = styled.div`
   justify-content: space-between;
   align-items: center;
   border-radius: 0.375rem;
-  background: #f5f5f5;
+  background: ${colors.gray[100]};
   cursor: pointer;
   margin: 0;
-  color: #787878;
+  color: ${colors.gray[700]};
   font-size: 0.875rem;
   font-weight: 600;
   user-select: none;
 `;
 
-export const RequiredToggleCircle = styled.span<{ active?: boolean }>`
+export const RequiredToggleCircle = styled.span<{ $active?: boolean }>`
   position: relative;
   width: 16px;
   height: 16px;
   border-radius: 50%;
-  border: 1px solid ${({ active }) => (active ? '#ff5000' : '#ccc')};
-  background-color: #fff;
+  border: 1px solid ${({ $active }) => ($active ? '#ff5000' : '#ccc')};
+  background-color: ${colors.base.white};
   transition: background-color 0.2s ease;
 
   &::after {
@@ -47,22 +48,23 @@ export const RequiredToggleCircle = styled.span<{ active?: boolean }>`
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
-    opacity: ${({ active }) => (active ? 1 : 0)};
+    opacity: ${({ $active }) => ($active ? 1 : 0)};
     transition: opacity 0.1s ease;
   }
 `;
 
 export const SelectionToggleWrapper = styled.div`
   display: flex;
-  background-color: #f7f7f7;
+  background-color: ${colors.gray[100]};
   border-radius: 0.375rem;
   padding: 2px;
 `;
 
-export const SelectionToggleButton = styled.button<{ active: boolean }>`
+export const SelectionToggleButton = styled.button<{ $active: boolean }>`
   border: none;
-  background-color: ${(props) => (props.active ? '#ddd' : 'transparent')};
-  color: #787878;
+  background-color: ${(props) =>
+    props.$active ? colors.gray[400] : 'transparent'};
+  color: ${colors.gray[700]};
   font-size: 0.875rem;
   border-radius: 0.375rem;
   padding: 10px;
@@ -75,15 +77,15 @@ export const SelectionToggleButton = styled.button<{ active: boolean }>`
     color 0.2s ease;
 `;
 
-export const Selected = styled.div<{ open: boolean }>`
+export const Selected = styled.div<{ $open: boolean }>`
   padding: 12px 16px;
   border-radius: 0.375rem;
-  background: ${({ open }) => (open ? '#fff' : '#f5f5f5')};
-  color: #787878;
+  background: ${({ $open }) => ($open ? colors.base.white : colors.gray[100])};
+  color: ${colors.gray[700]};
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
-  border: 1px solid ${({ open }) => (open ? '#c5c5c5' : 'transparent')};
+  border: 1px solid ${({ $open }) => ($open ? colors.gray[500] : 'transparent')};
   transition:
     border-color 0.2s ease,
     background-color 0.2s ease;
@@ -107,19 +109,19 @@ export const DeleteButton = styled.button`
   width: 100%;
   height: 20px;
   border-radius: 6px;
-  border: 1px solid #ffded2;
-  background: #fff;
+  border: 1px solid ${colors.primary[600]};
+  background: ${colors.base.white};
   cursor: pointer;
 `;
 
-export const QuestionWrapper = styled.div<{ readOnly?: boolean }>`
+export const QuestionWrapper = styled.div<{ $readOnly?: boolean }>`
   display: flex;
   padding: 26px 20px;
   gap: 20px;
   border-radius: 10px;
-  border: 1px solid #f0f0f0;
-  pointer-events: ${({ readOnly }) => (readOnly ? 'none' : 'auto')};
-  cursor: ${({ readOnly }) => (readOnly ? 'not-allowed' : 'auto')};
+  border: 1px solid ${colors.gray[250]};
+  pointer-events: ${({ $readOnly }) => ($readOnly ? 'none' : 'inherit')};
+  cursor: ${({ $readOnly }) => ($readOnly ? 'not-allowed' : 'inherit')};
 
   &:hover {
     box-shadow: 0 2px 10px 0 rgba(0, 0, 0, 0.1);

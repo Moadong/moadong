@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const QuestionTitleRow = styled.div`
   display: flex;
@@ -9,7 +10,7 @@ export const QuestionTitleRow = styled.div`
 `;
 
 export const QuestionTitleId = styled.p`
-  color: #ff5414;
+  color: ${colors.primary[900]};
   font-size: 1.25rem;
   font-weight: 700;
   margin: 0;
@@ -37,7 +38,7 @@ export const QuestionTitleText = styled.textarea`
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.5;
-  color: #111;
+  color: ${colors.base.black};
   background: transparent;
   white-space: pre-wrap;
   overflow-wrap: break-word;
@@ -45,7 +46,7 @@ export const QuestionTitleText = styled.textarea`
 
   &:empty:before {
     content: attr(data-placeholder);
-    color: #c5c5c5;
+    color: ${colors.gray[500]};
   }
 
   &:focus:before {
@@ -59,7 +60,7 @@ export const QuestionTitleText = styled.textarea`
 `;
 
 export const RequiredStar = styled.span`
-  color: #ff5414;
+  color: ${colors.primary[900]};
   font-weight: 700;
   font-size: 1.25rem;
   line-height: 1.5;
@@ -70,7 +71,7 @@ export const QuestionTitleReadOnly = styled.span`
   font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.5;
-  color: #111;
+  color: ${colors.base.black};
   white-space: pre-wrap;
   word-break: break-word;
 

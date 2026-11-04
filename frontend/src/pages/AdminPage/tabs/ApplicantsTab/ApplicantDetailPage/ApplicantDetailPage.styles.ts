@@ -1,6 +1,7 @@
 import styled from 'styled-components';
 import DropdownArrow from '@/assets/images/icons/applicant_drop.svg';
 import * as ApplicationFormPageStyles from '@/pages/ApplicationFormPage/ApplicationFormPage.styles';
+import { colors } from '@/styles/theme/colors';
 
 export const Wrapper = styled.div`
   display: flex;
@@ -29,7 +30,7 @@ export const ApplicantContainer = styled.div`
   height: 100%;
   border: none;
   border-radius: 10px;
-  background: var(--f5, #f5f5f5);
+  background: var(--f5, ${colors.gray[100]});
 
   select {
     font-size: 24px;
@@ -63,7 +64,7 @@ export const StatusSelect = styled.select<{ $backgroundColor: string }>`
   height: 100%;
   cursor: pointer;
 
-  color: var(--4B, #4b4b4b);
+  color: var(--4B, ${colors.gray[800]});
   text-align: center;
   font-size: 16px;
   font-style: normal;
@@ -93,7 +94,7 @@ export const MemoContainer = styled.div`
   gap: 24px;
   padding: 12px 12px;
   min-height: 100px;
-  background: var(--f5, #f5f5f5);
+  background: var(--f5, ${colors.gray[100]});
   border-radius: 10px;
 `;
 
@@ -105,10 +106,10 @@ export const MemoLabel = styled.label`
   align-self: flex-start;
   width: 60px;
   height: 32px;
-  background: #fff;
+  background: ${colors.base.white};
   border-radius: 10px;
   padding: 6px 14px;
-  color: var(--, #111);
+  color: var(--, ${colors.base.black});
   font-size: 16px;
   font-style: normal;
   font-weight: 600;
@@ -119,13 +120,13 @@ export const MemoTextarea = styled.textarea`
   min-height: 80px;
   border: none;
   border-radius: 10px;
-  background: var(--f5, #f5f5f5);
+  background: var(--f5, ${colors.gray[100]});
   padding: 12px;
   resize: none;
   font-size: 14px;
   font-style: normal;
   font-weight: 400;
-  color: var(--4B, #4b4b4b);
+  color: var(--4B, ${colors.gray[800]});
 
   &:focus {
     outline: none;
@@ -137,7 +138,7 @@ export const ApplicantInfoContainer = styled.div`
   width: 100%;
   padding: 10px 30px;
   border-radius: 10px;
-  border: 1px solid #f2f2f2;
+  border: 1px solid ${colors.gray[200]};
 `;
 
 export const QuestionsWrapper = styled(

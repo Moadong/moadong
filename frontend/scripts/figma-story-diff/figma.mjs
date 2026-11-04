@@ -13,7 +13,7 @@ export function parseFigmaUrl(url) {
   return { key, nodeId };
 }
 
-async function api(pathname) {
+export async function api(pathname) {
   if (!TOKEN) throw new Error('FIGMA_TOKEN(개인 액세스 토큰)이 없다');
   const res = await fetch(`${API}${pathname}`, {
     headers: { 'X-Figma-Token': TOKEN },

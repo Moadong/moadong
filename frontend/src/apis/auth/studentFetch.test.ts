@@ -47,14 +47,27 @@ beforeEach(async () => {
 
 describe('studentFetch', () => {
   describe('토큰 선택 순서', () => {
-    it('앱이 주입한 토큰을 가장 먼저 쓴다', async () => {
+    it('OAuth 토큰을 가장 먼저 쓴다', async () => {
+      localStorage.setItem(
+        STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+        'oauth-token',
+      );
+      window.__MOADONG_STUDENT_TOKEN__ = 'app-token';
+      localStorage.setItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN, 'web-token');
+
+      await studentFetch('/api/student/feedback/sent');
+
+      expect(authHeaderOf(fetchMock.mock.calls[0])).toBe('Bearer oauth-token');
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('OAuth 토큰이 없으면 앱 주입 토큰을 쓴다', async () => {
       window.__MOADONG_STUDENT_TOKEN__ = 'app-token';
       localStorage.setItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN, 'web-token');
 
       await studentFetch('/api/student/feedback/sent');
 
       expect(authHeaderOf(fetchMock.mock.calls[0])).toBe('Bearer app-token');
-      // 주입 토큰이 있으면 발급을 부르지 않는다
       expect(fetchMock).toHaveBeenCalledTimes(1);
     });
 
@@ -84,7 +97,84 @@ describe('studentFetch', () => {
   });
 
   describe('401 재시도', () => {
-    it('저장된 토큰이 거부되면 재발급해 다시 보낸다', async () => {
+    it('OAuth 토큰이 거부되면 localStorage에서 제거하고 에러를 던진다', async () => {
+      localStorage.setItem(
+        STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+        'oauth-token',
+      );
+      fetchMock.mockResolvedValueOnce(jsonResponse({}, 401));
+
+      await expect(studentFetch('/api/student/feedback/sent')).rejects.toThrow(
+        'STUDENT_OAUTH_EXPIRED',
+      );
+      expect(
+        localStorage.getItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN),
+      ).toBeNull();
+    });
+
+    it('OAuth 만료 후 후속 요청은 익명 신원으로 전환하지 않고 에러를 던진다', async () => {
+      localStorage.setItem(
+        STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+        'oauth-token',
+      );
+      window.__MOADONG_STUDENT_TOKEN__ = 'app-token';
+      localStorage.setItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN, 'web-token');
+      fetchMock.mockResolvedValueOnce(jsonResponse({}, 401));
+
+      await expect(studentFetch('/api/student/feedback/sent')).rejects.toThrow(
+        'STUDENT_OAUTH_EXPIRED',
+      );
+
+      // 후속 요청은 fetch 호출 없이 같은 에러를 던져야 한다
+      await expect(
+        studentFetch('/api/student/feedback/received'),
+      ).rejects.toThrow('STUDENT_OAUTH_EXPIRED');
+      expect(fetchMock).toHaveBeenCalledTimes(1);
+    });
+
+    it('OAuth 만료 후 재로그인하면 새 토큰으로 정상 요청한다', async () => {
+      localStorage.setItem(
+        STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+        'oauth-token',
+      );
+      fetchMock.mockResolvedValueOnce(jsonResponse({}, 401));
+      await expect(studentFetch('/api/student/feedback/sent')).rejects.toThrow(
+        'STUDENT_OAUTH_EXPIRED',
+      );
+
+      // 재로그인: 다른 값의 새 토큰이 저장됨
+      localStorage.setItem(
+        STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+        'new-oauth-token',
+      );
+      fetchMock.mockClear();
+
+      await studentFetch('/api/student/feedback/received');
+
+      expect(authHeaderOf(fetchMock.mock.calls[0])).toBe(
+        'Bearer new-oauth-token',
+      );
+    });
+
+    it('병렬 요청이 이미 OAuth 토큰을 제거했어도 같은 토큰으로 401이 오면 에러를 던진다', async () => {
+      // 첫 번째 요청이 이미 OAuth 토큰을 만료 처리해 localStorage에서 제거했음
+      localStorage.setItem(
+        STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN,
+        'oauth-token',
+      );
+      fetchMock.mockResolvedValueOnce(jsonResponse({}, 401));
+      await expect(studentFetch('/api/student/feedback/sent')).rejects.toThrow(
+        'STUDENT_OAUTH_EXPIRED',
+      );
+
+      // 병렬로 진행 중이던 요청도 같은 OAuth 토큰으로 401을 받은 상황:
+      // expiredOauthToken 덕분에 익명으로 전환하지 않고 에러를 던진다
+      await expect(
+        studentFetch('/api/student/feedback/received'),
+      ).rejects.toThrow('STUDENT_OAUTH_EXPIRED');
+    });
+
+    it('저장된 익명 토큰이 거부되면 재발급해 다시 보낸다', async () => {
       localStorage.setItem(STORAGE_KEYS.STUDENT_ACCESS_TOKEN, 'stale');
       fetchMock
         .mockResolvedValueOnce(jsonResponse({}, 401))
@@ -124,14 +214,13 @@ describe('studentFetch', () => {
 
       await studentFetch('/api/student/feedback/received');
 
-      // 주입 토큰을 건너뛰고 방금 발급받은 토큰으로 한 번에 나간다
       expect(fetchMock).toHaveBeenCalledTimes(1);
       expect(authHeaderOf(fetchMock.mock.calls[0])).toBe('Bearer fresh');
     });
 
     // 서명 키를 교체하면 전 사용자의 토큰이 한 번에 무효가 된다.
     // sub를 다시 보내지 않으면 그 자리에서 새 신원이 되고 편지함이 비어 보인다.
-    it('거부된 토큰의 sub로 재발급해 신원을 잇는다', async () => {
+    it('거부된 익명 토큰의 sub로 재발급해 신원을 잇는다', async () => {
       localStorage.setItem(
         STORAGE_KEYS.STUDENT_ACCESS_TOKEN,
         tokenWithSubject(STUDENT_SUB),

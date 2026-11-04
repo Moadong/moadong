@@ -31,7 +31,7 @@ export const Image = styled.div<{ $imageUrl: string }>`
   width: 100%;
   height: 100%;
 
-  background-color: #ddd;
+  background-color: ${colors.gray[400]};
   background-image: ${({ $imageUrl }) => toCssUrl($imageUrl)};
   background-size: cover;
   background-position: center;

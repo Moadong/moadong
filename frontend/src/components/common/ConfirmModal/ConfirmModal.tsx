@@ -4,23 +4,27 @@ import ModalWarningIcon from '@/assets/images/icons/modal_warning.svg?react';
 import Modal from '@/components/common/Modal/Modal';
 import * as Styled from './ConfirmModal.styles';
 
+export interface ConfirmModalAction {
+  label: string;
+  variant: 'primary' | 'secondary';
+  onClick: () => void;
+}
+
 interface ConfirmModalProps {
   isOpen: boolean;
   onClose: () => void;
-  onConfirm: () => void;
   title: string;
   description: string;
-  confirmLabel: string;
+  actions: ConfirmModalAction[];
   variant?: 'warning' | 'check';
 }
 
 const ConfirmModal = ({
   isOpen,
   onClose,
-  onConfirm,
   title,
   description,
-  confirmLabel,
+  actions,
   variant = 'warning',
 }: ConfirmModalProps) => {
   const id = useId();
@@ -28,7 +32,7 @@ const ConfirmModal = ({
   const descriptionId = `${id}-description`;
 
   return (
-    <Modal isOpen={isOpen} onClose={onClose}>
+    <Modal isOpen={isOpen} onClose={onClose} closeOnBackdrop={false}>
       <Styled.Dialog
         role='dialog'
         aria-modal='true'
@@ -47,12 +51,16 @@ const ConfirmModal = ({
           </Styled.Description>
         </Styled.Body>
         <Styled.Footer>
-          <Styled.FooterButton type='button' onClick={onClose}>
-            취소
-          </Styled.FooterButton>
-          <Styled.FooterButton type='button' $emphasized onClick={onConfirm}>
-            {confirmLabel}
-          </Styled.FooterButton>
+          {actions.map((action) => (
+            <Styled.FooterButton
+              key={action.label}
+              type='button'
+              $variant={action.variant}
+              onClick={action.onClick}
+            >
+              {action.label}
+            </Styled.FooterButton>
+          ))}
         </Styled.Footer>
       </Styled.Dialog>
     </Modal>

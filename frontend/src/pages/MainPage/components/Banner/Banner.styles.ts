@@ -1,6 +1,7 @@
 import styled, { keyframes } from 'styled-components';
 import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 const shimmer = keyframes`
   0% { background-position: -800px 0; }
@@ -12,7 +13,13 @@ export const SkeletonBannerWrapper = styled.div`
   max-width: 1180px;
   aspect-ratio: 1180 / 316;
   border-radius: 26px;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+  /* 양 끝(gray[250])과 밝기 차이가 있어야 shimmer가 보인다. gray[300]은 너무 가깝고 gray[400]은 진해서 그 사이 값(#e4e4e4)을 쓴다 */
+  background: linear-gradient(
+    90deg,
+    ${colors.gray[250]} 25%,
+    #e4e4e4 50%,
+    ${colors.gray[250]} 75%
+  );
   background-size: 800px 100%;
   animation: ${shimmer} 1.5s infinite linear;
 
@@ -26,7 +33,13 @@ export const SkeletonOverlay = styled.div`
   position: absolute;
   inset: 0;
   z-index: 10;
-  background: linear-gradient(90deg, #f0f0f0 25%, #e4e4e4 50%, #f0f0f0 75%);
+  /* 양 끝(gray[250])과 밝기 차이가 있어야 shimmer가 보인다. gray[300]은 너무 가깝고 gray[400]은 진해서 그 사이 값(#e4e4e4)을 쓴다 */
+  background: linear-gradient(
+    90deg,
+    ${colors.gray[250]} 25%,
+    #e4e4e4 50%,
+    ${colors.gray[250]} 75%
+  );
   background-size: 800px 100%;
   animation: ${shimmer} 1.5s infinite linear;
 `;
@@ -68,7 +81,7 @@ export const BannerWrapper = styled.div`
   }
 `;
 
-export const BannerItem = styled.div<{ isClickable: boolean }>`
+export const BannerItem = styled.div<{ $isClickable: boolean }>`
   width: 100%;
   height: 100%;
 
@@ -77,7 +90,7 @@ export const BannerItem = styled.div<{ isClickable: boolean }>`
     height: 100%;
     object-fit: cover;
   }
-  cursor: ${(props) => (props.isClickable ? 'pointer' : 'default')};
+  cursor: ${(props) => (props.$isClickable ? 'pointer' : 'default')};
 `;
 
 export const ButtonContainer = styled.div`
@@ -122,7 +135,7 @@ export const NumericPagination = styled.div`
   right: -10px;
   transform: translateX(-50%);
   background-color: rgba(0, 0, 0, 0.4);
-  color: #ffffff;
+  color: ${colors.base.white};
   padding: 3px 12px;
   border-radius: 50px;
   font-size: 11px;
@@ -140,10 +153,11 @@ export const DotPagination = styled.div`
   z-index: 3;
 `;
 
-export const Dot = styled.div<{ active: boolean }>`
+export const Dot = styled.div<{ $active: boolean }>`
   width: 8px;
   height: 8px;
-  background-color: ${(props) => (props.active ? '#ff5414' : '#f5f5f5')};
+  background-color: ${(props) =>
+    props.$active ? colors.primary[900] : colors.gray[100]};
   border-radius: 50%;
   transition: background-color 0.3s ease;
 `;

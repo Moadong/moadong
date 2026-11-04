@@ -101,7 +101,7 @@ const QuestionBuilder = ({
     return (
       <Styled.SelectionToggleWrapper>
         <Styled.SelectionToggleButton
-          active={selectionType === 'single'}
+          $active={selectionType === 'single'}
           onClick={() => {
             setSelectionType('single');
             onTypeChange?.('CHOICE');
@@ -110,7 +110,7 @@ const QuestionBuilder = ({
           단일선택
         </Styled.SelectionToggleButton>
         <Styled.SelectionToggleButton
-          active={selectionType === 'multi'}
+          $active={selectionType === 'multi'}
           onClick={() => {
             setSelectionType('multi');
             onTypeChange?.('MULTI_CHOICE');
@@ -128,13 +128,13 @@ const QuestionBuilder = ({
   )?.label;
 
   return (
-    <Styled.QuestionWrapper readOnly={readOnly}>
+    <Styled.QuestionWrapper $readOnly={readOnly}>
       <Styled.QuestionMenu>
         <Styled.RequiredToggleButton
           onClick={() => onRequiredChange?.(!options?.required)}
         >
           답변 필수
-          <Styled.RequiredToggleCircle active={options?.required} />
+          <Styled.RequiredToggleCircle $active={options?.required} />
         </Styled.RequiredToggleButton>
         <CustomDropDown
           selected={selectedType}
@@ -146,7 +146,7 @@ const QuestionBuilder = ({
           onToggle={(isOpen) => setIsDropdownOpen(!isOpen)}
         >
           <CustomDropDown.Trigger>
-            <Styled.Selected open={isDropdownOpen}>
+            <Styled.Selected $open={isDropdownOpen}>
               <span>{selectedLabel}</span>
               <Styled.Icon src={dropdown_icon} alt='드롭다운 버튼' />
             </Styled.Selected>

@@ -27,7 +27,8 @@ npm run coverage         # 커버리지 리포트와 함께 테스트 실행
 npx jest path/to/file.test.ts  # 단일 테스트 파일 실행
 
 # 코드 품질
-npm run lint             # ESLint 자동 수정
+npm run lint             # ESLint 검사
+npm run lint:fix         # ESLint 자동 수정
 npm run format           # Prettier 포맷팅
 npm run typecheck        # TypeScript 타입 체크만 실행
 
@@ -40,6 +41,13 @@ npm run chromatic        # Chromatic으로 시각적 테스트 배포
 npm run visual:figma          # 매핑된 컴포넌트를 시안과 대조 (Storybook이 6006에 떠 있어야 함)
 npm run visual:figma <필터>   # 매핑 이름 부분일치로 일부만
 
+# 버튼 이전 (scripts/button-migration/CLAUDE.md)
+npm run button:inventory         # 버튼 정의·사용처 인벤토리 → sites.json + 리포트
+npm run button:figma-candidates  # 후보 자리의 시안 노드 후보 찾기
+npm run button:figma-match       # 자리를 시안과 대조
+npm run button:before-after      # 기준 커밋과 작업 트리의 렌더 결과 비교
+npm run test:scripts             # 위 스크립트의 node:test 단위 테스트
+
 # Storybook 사용 가이드 (공통 컴포넌트 수정 시)
 # - 개발 중: npm run storybook (dev 서버로 실시간 확인)
 # - 기존 스토리가 있는 컴포넌트 수정 후 PR 전: npm run build-storybook
@@ -47,6 +55,8 @@ npm run visual:figma <필터>   # 매핑 이름 부분일치로 일부만
 
 # 유틸리티
 npm run generate:sitemap # sitemap.xml 생성
+npm run codex:sync       # .claude/commands·agents 원본에서 .codex/skills 재생성
+npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI에서 실행)
 ```
 
 ## 아키텍처 개요
@@ -76,10 +86,13 @@ npm run generate:sitemap # sitemap.xml 생성
 - `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
 - `VITE_KAKAO_JAVASCRIPT_KEY` - Kakao JavaScript 키
 - `VITE_NAVER_MAP_CLIENT_ID` - 네이버 지도 API 클라이언트 ID
+- `VITE_FEEDBACK_PROMPT_ADMIN_ENABLED` - 관리자 행동 피드백 노출 여부 (`true`일 때만 활성)
+- `VITE_FEEDBACK_PROMPT_USER_ENABLED` - 사용자 상세 이탈 피드백 노출 여부 (`true`일 때만 활성)
 
 빌드에 들어가지 않는 스크립트 전용 변수도 같은 `.env`에 둔다 (`VITE_` 접두사가 없어 번들에 포함되지 않는다):
 
 - `FIGMA_TOKEN` - Figma 개인 액세스 토큰. 시안 대조 스크립트 전용(`dotenv-cli`로 자동 로드) → [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md)
+- `DEV_ADMIN_ID`·`DEV_ADMIN_PASSWORD` - dev 서버 테스트 관리자 계정. 버튼 before/after·시안 대조가 관리자 화면을 열 때 쓴다 → [`scripts/button-migration/CLAUDE.md`](scripts/button-migration/CLAUDE.md)
 
 ### 프로젝트 구조
 
@@ -117,13 +130,15 @@ npm run generate:sitemap # sitemap.xml 생성
 
 - styled-components 사용, 테마 시스템 활용
 - `any` 금지, 명시적 타입 정의
-- 상수는 `src/constants/`에서 관리
+- 여러 파일이 공유하는 상수는 `src/constants/`에서 관리, 한 파일에서만 쓰는 상수는 그 파일 상단에 둔다
 - 데이터 패칭은 `src/hooks/Queries/`의 기존 패턴을 우선 재사용
 - API 호출은 `src/apis/`에 두고 페이지/컴포넌트에 분산시키지 않음
 
 ### Mixpanel 이벤트 트래킹
 
-- 이벤트명은 `src/constants/eventName.ts`의 `USER_EVENT`에서 관리, 문자열 하드코딩 금지
+- 네이밍 규칙은 [`docs/features/analytics/mixpanel-naming-convention.md`](docs/features/analytics/mixpanel-naming-convention.md)를 따른다. 이벤트는 영문 Title Case `[명사] + [과거형 동사]`, 속성 키는 snake_case, 한글 설명은 JSDoc 주석으로
+- 이벤트명은 `src/constants/eventName.ts`(`USER_EVENT`·`ADMIN_EVENT`·`PAGE_EVENT`)에서 관리, 문자열 하드코딩·동적 이벤트명 금지 (ESLint `local/no-hardcoded-event-name`)
+- 변형·동적 값(탭 종류, 페이지명, 연도 등)은 이벤트명이 아니라 속성으로 보낸다. 페이지뷰는 `useTrackPageView(PAGE_VIEW.XXX)` → `Page Viewed` / `Page Left` + `page_name`
 - sessionStorage 키는 `page + id` 스코프로 작성
 
 ## 테스트 & Storybook
@@ -133,6 +148,9 @@ npm run generate:sitemap # sitemap.xml 생성
 - 커버리지 리포트: `npm run coverage` · 단일 파일: `npx jest path/to/file.test.ts`
 - MSW 목 핸들러는 실제 API 연동 완료로 제거됨. 개발 서버·Storybook 모두 실서버로 붙는다. `msw` 의존성과 `public/mockServiceWorker.js`는 재도입 대비로 남겨 뒀고, 다시 쓸 땐 워커 파일 버전이 설치된 `msw` 버전과 맞는지 확인할 것(`npx msw init public/`)
 - Storybook: 컴포넌트 독립 개발 환경(포트 6006), Chromatic으로 시각적 회귀 테스트
+  - 툴바: 뷰포트 선택지는 `mediaQuery.ts`의 `BREAKPOINT` 폭이고, `웹뷰` 토글을 켜면 userAgent에 `MoadongApp`을 붙이고 `WebviewGlobalStyles`를 깐다(`isInAppWebView()` 분기 확인용). 토글을 바꾸면 스토리를 다시 마운트하지만, 모듈 최상위에서 한 번만 판정하는 코드는 토글을 따라오지 않는다
+  - 접근성 패널(`addon-a11y`)은 위반을 보여 주기만 하고 빌드·Chromatic을 막지 않는다(`a11y.test: 'todo'`)
+  - 시안 대조 매핑(`*.figma.json`)이 있는 스토리 export에 `parameters.design`을 붙이면 Design 패널에서 시안을 같이 본다. 자동으로 붙지 않는다 → [`.claude/skills/figma-story-diff/SKILL.md`](.claude/skills/figma-story-diff/SKILL.md)
 
 ## Claude Code Agent
 
@@ -141,6 +159,10 @@ npm run generate:sitemap # sitemap.xml 생성
 - `API훅부서.md` - React Query 훅 생성 및 관리 전담
 
 Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
+
+`.codex/skills/`는 `.claude/commands/`·`.claude/agents/`에서 `scripts/sync-codex-skills.mjs`가 생성한 사본이다. 직접 고치지 말고 `.claude/` 쪽을 고친 뒤 `npm run codex:sync`를 돌려 함께 커밋한다. Codex 전용 이름·설명·제목·원본 매핑은 스크립트의 `MANIFEST`에 있고, 새 커맨드를 Codex에도 노출하려면 거기에 항목을 더한다.
+
+`src/`를 바꾸는 커밋·PR 전에는 `.claude/skills/frontend-fundamentals` 스킬을 먼저 돌린다. "커밋해줘", "PR 올려줘"처럼 말로 요청받아도 마찬가지다(`/commit`은 이미 포함).
 
 ## 폴더별 문서 인덱스
 
@@ -157,6 +179,7 @@ Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 | 유틸리티·외부 SDK 초기화 | [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md) |
 | OG 태그 (`middleware.ts`) | [`docs/claude/og.md`](docs/claude/og.md) |
 | Figma 시안 ↔ Storybook 대조 | [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md) |
+| 버튼 인벤토리·시안 대조·before/after | [`scripts/button-migration/CLAUDE.md`](scripts/button-migration/CLAUDE.md) |
 
 ## Skill routing
 

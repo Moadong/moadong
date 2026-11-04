@@ -19,7 +19,7 @@ export const ContactButton = styled.a`
   padding: 0 16px;
 
   border-radius: 999px;
-  background-color: #fee500;
+  background-color: ${colors.social.kakao};
   color: ${colors.base.black};
   box-shadow: 0 6px 18px rgb(0 0 0 / 16%);
 
@@ -43,9 +43,11 @@ export const ContactButton = styled.a`
     fill: ${colors.base.black};
   }
 
-  &:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 22px rgb(0 0 0 / 20%);
+  @media (hover: hover) {
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 22px rgb(0 0 0 / 20%);
+    }
   }
 
   &:active {

@@ -16,7 +16,7 @@ const PromotionCard = ({ article, index }: PromotionCardProps) => {
 
   const handleCardClick = () => {
     trackEvent(USER_EVENT.PROMOTION_CARD_CLICKED, {
-      promotionId: article.id,
+      promotion_id: article.id,
       card_index: index,
     });
 

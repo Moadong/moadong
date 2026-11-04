@@ -1,11 +1,12 @@
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import { colors } from '@/styles/theme/colors';
 
 export const QuestionSection = styled(motion.section)`
   width: 100%;
   padding: 150px 0;
-  background-color: #fff;
+  background-color: ${colors.base.white};
   display: flex;
   flex-direction: column;
   align-items: center;

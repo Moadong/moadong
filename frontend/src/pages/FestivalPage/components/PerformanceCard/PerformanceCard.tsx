@@ -26,7 +26,7 @@ const PerformanceCard = ({
   const toggleExpanded = () => {
     const nextExpanded = !expanded;
     trackEvent(USER_EVENT.FESTIVAL_PERFORMANCE_CARD_CLICKED, {
-      clubName: performance.clubName,
+      club_name: performance.clubName,
       expanded: nextExpanded,
       active,
     });

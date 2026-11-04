@@ -71,7 +71,7 @@ const CalendarBoard = ({ events }: CalendarBoardProps) => {
 
   const changeMonth = (diff: number) => {
     trackEvent(ADMIN_EVENT.CALENDAR_MONTH_CHANGED, {
-      calendarType: 'board',
+      calendar_type: 'board',
       direction: diff > 0 ? 'next' : 'prev',
     });
     setMonth((prev) => new Date(prev.getFullYear(), prev.getMonth() + diff, 1));
@@ -86,8 +86,8 @@ const CalendarBoard = ({ events }: CalendarBoardProps) => {
   /** 날짜를 눌러 그 날 일정 모달을 연다 */
   const openDay = (targetDateKey: string) => {
     trackEvent(ADMIN_EVENT.CALENDAR_DATE_CLICKED, {
-      dateKey: targetDateKey,
-      eventCount: occurrencesByDate[targetDateKey]?.length ?? 0,
+      date_key: targetDateKey,
+      event_count: occurrencesByDate[targetDateKey]?.length ?? 0,
     });
     setSelectedDateKey(targetDateKey);
   };
