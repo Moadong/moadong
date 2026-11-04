@@ -17,7 +17,7 @@ const useExportApplicantsCSV = (
   );
 
   const handleExportCSV = () => {
-    if (!applicationData) return;
+    if (!applicationData?.questions) return;
     const questions = applicationData.questions;
     const toExport =
       checkedIds.size > 0
