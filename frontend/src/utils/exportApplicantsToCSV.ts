@@ -24,7 +24,7 @@ export const exportApplicantsToCSV = (
 
   const rows = applicants.map((applicant) => {
     const date = new Date(applicant.createdAt);
-    const createdAt = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')}`;
+    const createdAt = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     const status = mapStatusToGroup(applicant.status).label;
 
     const answerCells = questions.map((q) =>
@@ -39,7 +39,7 @@ export const exportApplicantsToCSV = (
 
   const csvContent = [headers, ...rows]
     .map((row) => row.map(escapeCsvCell).join(','))
-    .join('\n');
+    .join('\r\n');
 
   const bom = '\uFEFF';
   const blob = new Blob([bom + csvContent], {

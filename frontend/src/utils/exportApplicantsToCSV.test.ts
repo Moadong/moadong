@@ -81,21 +81,21 @@ describe('exportApplicantsToCSV', () => {
 
   it('헤더가 제출일시, 상태, 질문 제목, 메모 순서로 생성된다', () => {
     exportApplicantsToCSV(mockApplicants, mockQuestions, '테스트');
-    const lines = capturedBlobContent.replace('\uFEFF', '').split('\n');
+    const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
     expect(lines[0]).toBe('제출일시,상태,지원 동기,활동 가능 시간,메모');
   });
 
   it('지원자 데이터가 올바른 행으로 변환된다', () => {
     exportApplicantsToCSV(mockApplicants, mockQuestions, '테스트');
-    const lines = capturedBlobContent.replace('\uFEFF', '').split('\n');
-    expect(lines[1]).toContain('2024.03.15');
+    const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
+    expect(lines[1]).toMatch(/2024\.03\.15 \d{2}:\d{2}/);
     expect(lines[1]).toContain('검토 전');
     expect(lines[1]).toContain('면접 일정 조율 필요');
   });
 
   it('질문 ID 기준으로 답변이 매핑된다', () => {
     exportApplicantsToCSV(mockApplicants, mockQuestions, '테스트');
-    const lines = capturedBlobContent.replace('\uFEFF', '').split('\n');
+    const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
     expect(lines[1]).toContain('동아리 활동을 통해 성장하고 싶습니다.');
     expect(lines[1]).toContain('주말 포함 매일');
   });
@@ -105,7 +105,7 @@ describe('exportApplicantsToCSV', () => {
       { ...mockApplicants[0], answers: [{ id: 1, value: '지원 동기 답변' }] },
     ];
     exportApplicantsToCSV(applicantWithMissingAnswer, mockQuestions, '테스트');
-    const lines = capturedBlobContent.replace('\uFEFF', '').split('\n');
+    const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
     expect(lines[1]).toContain('지원 동기 답변');
     expect(lines[1]).toMatch(/지원 동기 답변,,/);
   });
@@ -155,7 +155,7 @@ describe('exportApplicantsToCSV', () => {
 
   it('지원자가 없으면 헤더만 포함된다', () => {
     exportApplicantsToCSV([], mockQuestions, '테스트');
-    const lines = capturedBlobContent.replace('\uFEFF', '').split('\n');
+    const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
     expect(lines).toHaveLength(1);
     expect(lines[0]).toBe('제출일시,상태,지원 동기,활동 가능 시간,메모');
   });
@@ -173,14 +173,14 @@ describe('exportApplicantsToCSV', () => {
       },
     ];
     exportApplicantsToCSV(applicantWithMultipleAnswers, mockQuestions, '테스트');
-    const lines = capturedBlobContent.replace('\uFEFF', '').split('\n');
+    const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
     expect(lines[1]).toContain('A, B, C');
     expect(lines[1]).toContain('평일');
   });
 
   it('질문이 없으면 제출일시, 상태, 메모만 포함된다', () => {
     exportApplicantsToCSV(mockApplicants, [], '테스트');
-    const lines = capturedBlobContent.replace('\uFEFF', '').split('\n');
+    const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
     expect(lines[0]).toBe('제출일시,상태,메모');
   });
 });
