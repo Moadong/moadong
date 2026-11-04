@@ -19,7 +19,6 @@ import { useApplicantSelection } from '@/hooks/useApplicantSelection';
 import useDevice from '@/hooks/useDevice';
 import { ContentSection } from '@/pages/AdminPage/components/ContentSection/ContentSection';
 import useExportApplicantsCSV from '@/pages/AdminPage/tabs/ApplicantsTab/hooks/useExportApplicantsCSV';
-import { useAdminClubId } from '@/store/useAdminClubStore';
 import { Applicant, ApplicationStatus } from '@/types/applicants';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './ApplicantsTab.styles';
@@ -43,7 +42,6 @@ const ApplicantsTab = () => {
 const ApplicantsTabDesktop = () => {
   const { applicationFormId } = useParams<{ applicationFormId: string }>();
   const navigate = useNavigate();
-  const { clubId } = useAdminClubId();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const statusOptions = AVAILABLE_STATUSES.map((status) => ({
