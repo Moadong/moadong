@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 import disabledDeleteIcon from '@/assets/images/icons/applicant_delete_disabled.svg';
 import hoverDeleteIcon from '@/assets/images/icons/applicant_delete_hover.svg';
 import checkIcon from '@/assets/images/icons/checkBox.svg';
@@ -267,12 +268,12 @@ export const CsvButton = styled.button`
   align-items: center;
   gap: 6px;
   padding: 6px 14px;
-  border: 1px solid #dcdcdc;
+  border: 1px solid ${colors.gray[400]};
   border-radius: 8px;
-  background: #fff;
+  background: ${colors.base.white};
   font-size: 13px;
   font-weight: 600;
-  color: #dcdcdc;
+  color: ${colors.gray[400]};
   cursor: default;
 
   &:not(:disabled) {
