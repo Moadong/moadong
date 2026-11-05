@@ -78,7 +78,9 @@ jq -c '.[]' <<<"$issues" | while read -r issue; do
     continue
   fi
   title="$prefix $title_text"
-  body=$(jq -rn --argjson issue "$issue" --argjson event "$event" "$JQ_MASK"'
+  # 이벤트는 프레임·주변 코드가 붙으면 수백 KB가 되어 명령줄 인자 하나의 길이 한도(리눅스 128KB)를 넘는다.
+  # --argjson으로 넘기면 execve가 실패하므로 stdin으로 넘긴다.
+  body=$(jq -r --argjson issue "$issue" "$JQ_MASK"' . as $event |
     def tag($k): ([$event.tags[]? | select(.key == $k) | .value][0] // "-");
     def frame_line: "\(.filename // .absPath // "?"):\(.lineNo // "?"):\(.colNo // "?") (\(.function // "?"))";
     def fenced: tostring | gsub("```"; "'"'''"'");
@@ -121,7 +123,7 @@ jq -c '.[]' <<<"$issues" | while read -r issue; do
       ]
     | join("\n")
     | .[0:60000]
-  ') || { echo "::warning::$short_id 본문 변환에 실패해 건너뛴다."; continue; }
+  ' <<<"$event") || { echo "::warning::$short_id 본문 변환에 실패해 건너뛴다."; continue; }
 
   created=$((created + 1))
   if [[ "${DRY_RUN:-}" == "1" ]]; then
