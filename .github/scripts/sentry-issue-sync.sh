@@ -4,6 +4,7 @@
 #
 # 필요한 환경변수: SENTRY_READ_TOKEN(event:read, project:read), GH_TOKEN, REPO(owner/name)
 # DRY_RUN=1이면 GitHub 이슈를 만들지 않고 만들 내용만 출력한다.
+# FIRST_SEEN(기본 7d)으로 처음 발생 기간을 바꾼다. 수동 실행에서 오래된 에러로 sentry-fix를 시험할 때 쓴다.
 #
 # Sentry 조회가 실패하면 curl -f가 0이 아닌 코드로 끝나고, set -e로 job 전체가 실패한다.
 # 조용히 넘어가면 "새 에러 없음"과 "조회 실패"가 구분되지 않는다.
@@ -15,8 +16,13 @@ SENTRY_API=https://sentry.io/api/0
 SENTRY_ORG=moadong
 SENTRY_PROJECT=moadong
 # 하루 한 번 돌지만 cron이 밀리거나 한 번 실패해도 놓치지 않게 7일을 본다. 이미 옮긴 이슈는 제목으로 걸러진다.
+FIRST_SEEN="${FIRST_SEEN:-7d}"
+if [[ ! "$FIRST_SEEN" =~ ^[0-9]+d$ ]]; then
+  echo "::error::FIRST_SEEN은 7d처럼 일 단위여야 한다: $FIRST_SEEN"
+  exit 1
+fi
 # NetworkError는 사용자 네트워크 문제라 코드로 고칠 대상이 아니다(Sentry fingerprint로 한 이슈에 묶여 있다).
-QUERY='is:unresolved firstSeen:-7d environment:production !error.type:NetworkError'
+QUERY="is:unresolved firstSeen:-$FIRST_SEEN environment:production !error.type:NetworkError"
 # DSN은 공개라 이벤트를 위조해 이슈를 쏟아낼 수 있다. 한 번에 만드는 수를 제한하고 나머지는 다음 실행으로 넘긴다.
 MAX_CREATE=10
 
@@ -25,9 +31,9 @@ sentry_get() {
 }
 
 project_id=$(sentry_get "/projects/$SENTRY_ORG/$SENTRY_PROJECT/" | jq -r '.id')
-issues=$(sentry_get "/organizations/$SENTRY_ORG/issues/?project=$project_id&statsPeriod=14d&sort=new&limit=100&query=$(jq -rn --arg q "$QUERY" '$q|@uri')")
+issues=$(sentry_get "/organizations/$SENTRY_ORG/issues/?project=$project_id&statsPeriod=$FIRST_SEEN&sort=new&limit=100&query=$(jq -rn --arg q "$QUERY" '$q|@uri')")
 
-echo "Sentry 신규 이슈 $(jq length <<<"$issues")건"
+echo "Sentry 신규 이슈 $(jq length <<<"$issues")건 (처음 발생 $FIRST_SEEN 이내)"
 
 if [[ "${DRY_RUN:-}" != "1" ]]; then
   gh label create sentry --repo "$REPO" --force --color FB4226 --description "Sentry에서 옮긴 에러"
