@@ -87,23 +87,25 @@ describe('PhotoModal 본 이미지 지연 로딩', () => {
     ]);
   });
 
-  it('넘긴 뒤에도 이미 불러온 사진은 남겨 둔다', () => {
+  it('여러 번 넘겨도 지나온 사진은 모두 남겨 둔다', () => {
     const onChangeIndex = jest.fn();
     const { rerender } = renderModal(3, onChangeIndex);
+    const moveTo = (index: number) => {
+      act(() => fireSlideChange(index));
+      expect(onChangeIndex).toHaveBeenLastCalledWith(index);
+      rerender(
+        <ThemeProvider theme={theme}>
+          <PhotoModal
+            isOpen
+            onClose={jest.fn()}
+            clubName='테스트 동아리'
+            photos={{ currentIndex: index, urls, onChangeIndex }}
+          />
+        </ThemeProvider>,
+      );
+    };
 
-    act(() => fireSlideChange(5));
-    expect(onChangeIndex).toHaveBeenCalledWith(5);
-    rerender(
-      <ThemeProvider theme={theme}>
-        <PhotoModal
-          isOpen
-          onClose={jest.fn()}
-          clubName='테스트 동아리'
-          photos={{ currentIndex: 5, urls, onChangeIndex }}
-        />
-      </ThemeProvider>,
-    );
-
+    moveTo(5);
     expect(loadedSlides()).toEqual([
       '활동 사진 3',
       '활동 사진 4',
@@ -111,5 +113,9 @@ describe('PhotoModal 본 이미지 지연 로딩', () => {
       '활동 사진 6',
       '활동 사진 7',
     ]);
+
+    // 한 번 이동만으로는 기록을 덮어써도 결과가 같다. 두 번째 이동에서 첫 이동의 기록(사진 3·4)이 남는지 본다.
+    moveTo(0);
+    expect(loadedSlides()).toEqual(urls.map((_, i) => `활동 사진 ${i + 1}`));
   });
 });
