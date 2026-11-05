@@ -10,6 +10,17 @@ const path = require('path');
 
 const HEX = /#(?:[0-9a-fA-F]{8}|[0-9a-fA-F]{6}|[0-9a-fA-F]{3,4})\b/g;
 const CONSTANT_NAME = /^[A-Z][A-Z0-9_]*$/;
+// 기준선 키의 기준. 실행 위치(cwd)가 아니라 이 파일 위치로 잡아 어디서 돌려도 같은 키가 나온다
+const FRONTEND_ROOT = path.resolve(__dirname, '../..');
+// 상수 값으로 인정하는 모양. css`` 스타일 블록이나 함수 호출 안의 hex는 색 상수로 보지 않는다
+const VALUE_SHAPES = new Set([
+  'ObjectExpression',
+  'Property',
+  'ArrayExpression',
+  'TemplateLiteral',
+  'TSAsExpression',
+  'TSSatisfiesExpression',
+]);
 
 /** #fff·#FfFfFf → #FFFFFF 처럼 같은 색을 같은 키로 맞춘다 */
 function normalize(hex) {
@@ -40,34 +51,34 @@ module.exports = {
   create(context) {
     const baseline = context.options[0]?.baseline ?? {};
     const file = path
-      .relative(context.cwd, context.filename)
+      .relative(FRONTEND_ROOT, context.filename)
       .split(path.sep)
       .join('/');
     const allowedInFile = baseline[file] ?? {};
-    const isPageFile = file.includes('/pages/');
+    const isPageFile = file.startsWith('src/pages/');
     const sourceCode = context.sourceCode;
     /** 값 → 이 파일에서 나온 위치들 */
     const found = new Map();
 
-    /** const FOO = ... 처럼 모듈 최상위 상수 안에 있는지 */
+    /** const FOO = ... 처럼 모듈 최상위 상수의 값(문자열·객체·배열) 안에 있는지 */
     function isInTopLevelConstant(node) {
-      for (const ancestor of sourceCode.getAncestors(node)) {
-        if (
-          ancestor.type === 'VariableDeclarator' &&
-          ancestor.id.type === 'Identifier' &&
-          CONSTANT_NAME.test(ancestor.id.name)
-        ) {
-          const declaration = ancestor.parent;
-          const owner = declaration.parent;
-          return (
-            declaration.kind === 'const' &&
-            (owner.type === 'Program' ||
-              (owner.type === 'ExportNamedDeclaration' &&
-                owner.parent.type === 'Program'))
-          );
-        }
-      }
-      return false;
+      const ancestors = sourceCode.getAncestors(node);
+      const index = ancestors.findIndex((a) => a.type === 'VariableDeclarator');
+      if (index === -1) return false;
+      const declarator = ancestors[index];
+      const declaration = declarator.parent;
+      const owner = declaration.parent;
+      const isTopLevel =
+        owner.type === 'Program' ||
+        (owner.type === 'ExportNamedDeclaration' &&
+          owner.parent.type === 'Program');
+      return (
+        isTopLevel &&
+        declaration.kind === 'const' &&
+        declarator.id.type === 'Identifier' &&
+        CONSTANT_NAME.test(declarator.id.name) &&
+        ancestors.slice(index + 1).every((a) => VALUE_SHAPES.has(a.type))
+      );
     }
 
     function collect(node, raw) {

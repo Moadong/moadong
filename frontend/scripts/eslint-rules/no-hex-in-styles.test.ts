@@ -1,4 +1,5 @@
 import path from 'path';
+import * as tsParser from '@typescript-eslint/parser';
 import { RuleTester } from 'eslint';
 import rule from './no-hex-in-styles';
 
@@ -9,11 +10,10 @@ const ruleTester = new RuleTester({
   },
 });
 
-const filename = path.join(process.cwd(), 'src/pages/A/A.styles.ts');
-const componentFile = path.join(
-  process.cwd(),
-  'src/components/common/B/B.styles.ts',
-);
+// 규칙과 같은 기준(frontend 루트)으로 경로를 만든다
+const ROOT = path.resolve(__dirname, '../..');
+const filename = path.join(ROOT, 'src/pages/A/A.styles.ts');
+const componentFile = path.join(ROOT, 'src/components/common/B/B.styles.ts');
 const baseline = { 'src/pages/A/A.styles.ts': { '#F0F0F0': 2 } };
 
 ruleTester.run('no-hex-in-styles', rule, {
@@ -27,6 +27,17 @@ ruleTester.run('no-hex-in-styles', rule, {
     // 페이지 전용 색: 모듈 최상위 UPPER_SNAKE_CASE 상수
     { code: "const MEDAL_COLORS = { 1: '#FFB300' };", filename },
     { code: "export const DARK_ROW = { hover: '#2C2C3A' };", filename },
+    // 객체 안 그라디언트 템플릿도 색 상수 (RecruitPage CARD_BACKGROUNDS)
+    {
+      code: 'const CARD = { dev: `linear-gradient(#BFE3FB, ${colors.accent[1][600]})` };',
+      filename,
+    },
+    {
+      // as const는 TS 문법이라 실제 lint처럼 TS 파서로 읽는다
+      code: "const ICONS = ['#FFD432', '#FF9500'] as const;",
+      filename,
+      languageOptions: { parser: tsParser },
+    },
     // baseline 개수까지는 허용 (#f0f0f0과 #F0F0F0은 같은 값)
     {
       code: "const a = css`color: #f0f0f0;`; const b = '#F0F0F0';",
@@ -66,6 +77,24 @@ ruleTester.run('no-hex-in-styles', rule, {
       // 공용 컴포넌트의 상수는 페이지 전용 색이 아니라 예외가 아니다
       code: "const BORDER_FOCUS = '#007bff';",
       filename: componentFile,
+      errors: [{ messageId: 'hex' }],
+    },
+    {
+      // 상수여도 css`` 스타일 블록 안의 hex는 색 상수가 아니다
+      code: 'export const CARD_STYLE = css`color: #123456;`;',
+      filename,
+      errors: [{ messageId: 'hex' }],
+    },
+    {
+      // 함수 호출 안의 hex도 마찬가지
+      code: "const ACCENT = lighten('#123456');",
+      filename,
+      errors: [{ messageId: 'hex' }],
+    },
+    {
+      // 경로에 pages가 있어도 src/pages 아래가 아니면 예외가 아니다
+      code: "const DARK = '#22222E';",
+      filename: path.join(ROOT, 'src/components/pages/C.styles.ts'),
       errors: [{ messageId: 'hex' }],
     },
     {
