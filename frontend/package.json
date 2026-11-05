@@ -13,6 +13,7 @@
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,css,scss}\"",
     "lint": "eslint",
     "lint:fix": "eslint --fix",
+    "lint:hex-baseline": "node scripts/eslint-rules/build-hex-baseline.mjs",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
     "chromatic": "dotenv chromatic",

@@ -1,8 +1,13 @@
+import { createRequire } from 'node:module';
 import typescript from '@typescript-eslint/eslint-plugin';
 import parser from '@typescript-eslint/parser';
 import configPrettier from 'eslint-config-prettier';
 import reactHooks from 'eslint-plugin-react-hooks';
 import localRules from './scripts/eslint-rules/index.js';
+
+const hexBaseline = createRequire(import.meta.url)(
+  './scripts/eslint-rules/hex-in-styles-baseline.json',
+);
 
 const config = [
   {
@@ -44,6 +49,13 @@ const config = [
       // React Compiler 도입 가드레일 (Rules of React 위반 상시 감지)
       ...reactHooks.configs['recommended-latest'].rules,
       'react-hooks/set-state-in-effect': 'warn',
+    },
+  },
+  {
+    // 색은 colors 토큰으로. 기존 hex는 기준선만큼 허용 (npm run lint:hex-baseline)
+    files: ['src/**/*.styles.ts'],
+    rules: {
+      'local/no-hex-in-styles': ['warn', { baseline: hexBaseline }],
     },
   },
   {

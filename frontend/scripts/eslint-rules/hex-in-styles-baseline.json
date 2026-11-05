@@ -1,0 +1,118 @@
+{
+  "src/components/application/questionTypes/Choice.styles.ts": {
+    "#555555": 1,
+    "#CCCCCC": 1
+  },
+  "src/components/common/ErrorBoundary/ApiError/ApiErrorFallback.styles.ts": {
+    "#333333": 1
+  },
+  "src/components/common/ErrorBoundary/GlobalError/GlobalErrorFallback.styles.ts": {
+    "#FFF5F0": 1
+  },
+  "src/components/common/Footer/Footer.styles.ts": {
+    "#818181": 3
+  },
+  "src/components/common/InputField/InputField.styles.ts": {
+    "#007BFF": 1
+  },
+  "src/pages/AdminPage/auth/LoginTab/LoginTab.styles.ts": {
+    "#666666": 2,
+    "#CCCCCC": 1
+  },
+  "src/pages/AdminPage/components/AdminMoreMenu/AdminMoreMenu.styles.ts": {
+    "#FF3B30": 1
+  },
+  "src/pages/AdminPage/components/ImageSortGrid/ImageSortGrid.styles.ts": {
+    "#D9D9D9": 1
+  },
+  "src/pages/AdminPage/components/QuestionBuilder/QuestionBuilder.styles.ts": {
+    "#CCCCCC": 1,
+    "#FF5000": 2
+  },
+  "src/pages/AdminPage/tabs/ApplicantsTab/ApplicantsTab.styles.ts": {
+    "#000000": 2,
+    "#222222": 1,
+    "#787878": 2,
+    "#888888": 2,
+    "#C5C5C5": 1,
+    "#DCDCDC": 6,
+    "#DDDDDD": 1,
+    "#E6F4FB": 1,
+    "#E6FBF0": 1,
+    "#EBEBEB": 1,
+    "#EEEEEE": 1,
+    "#F0F0F0": 1,
+    "#F5F5F5": 3,
+    "#F7FAFF": 1,
+    "#FAFAFA": 2,
+    "#FFE7DE": 2,
+    "#FFE8E8": 1,
+    "#FFFFFF": 4
+  },
+  "src/pages/AdminPage/tabs/ClubInfoEditTab/components/desktop/SelectTags/SelectTags.styles.ts": {
+    "#D1D5DB": 1,
+    "#EA580C": 1
+  },
+  "src/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab.styles.ts": {
+    "#EF4444": 2,
+    "#FCA5A5": 1,
+    "#FFF1F2": 1
+  },
+  "src/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor.styles.ts": {
+    "#555555": 1,
+    "#CCCCCC": 1,
+    "#D4D4D4": 1,
+    "#E0E0E0": 1
+  },
+  "src/pages/ApplicationFormPage/components/ChoiceItem/ChoiceItem.styles.ts": {
+    "#818181": 1,
+    "#FFD9CB": 1
+  },
+  "src/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard.styles.ts": {
+    "#009CF6": 1,
+    "#3366BB": 1
+  },
+  "src/pages/FestivalPage/BuskingPage/BuskingPage.styles.ts": {
+    "#E8E8E8": 1,
+    "#FFF7F3": 1
+  },
+  "src/pages/FestivalPage/IntroductionPage/IntroductionPage.styles.ts": {
+    "#FFF7F3": 1
+  },
+  "src/pages/FestivalPage/components/BoothMapSection/BoothMapSection.styles.ts": {
+    "#454545": 1,
+    "#E5E5E5": 1
+  },
+  "src/pages/FestivalPage/components/DayArrowsNav/DayArrowsNav.styles.ts": {
+    "#D0D0D0": 1,
+    "#E0E0E0": 1
+  },
+  "src/pages/FestivalPage/components/TimelineRow/TimelineRow.styles.ts": {
+    "#A8A8A8": 1
+  },
+  "src/pages/IntroducePage/components/sections/1.IntroSection/IntroSection.styles.ts": {
+    "#E04E0F": 1
+  },
+  "src/pages/IntroducePage/components/sections/3.QuestionSection/QuestionSection.styles.ts": {
+    "#333333": 1
+  },
+  "src/pages/IntroducePage/components/sections/5.FeatureSection/FeatureSection.styles.ts": {
+    "#333333": 1
+  },
+  "src/pages/MainPage/components/Banner/Banner.styles.ts": {
+    "#E4E4E4": 4
+  },
+  "src/pages/MainPage/components/ClubCard/ClubCard.styles.ts": {
+    "#FFFFFF": 1
+  },
+  "src/pages/MainPage/components/MainContent/MainContent.styles.ts": {
+    "#555555": 1
+  },
+  "src/pages/MainPage/components/StatusRadioButton/StatusRadioButton.styles.ts": {
+    "#00A6FF": 1,
+    "#818181": 1,
+    "#AAAAAA": 1,
+    "#CCCCCC": 1,
+    "#D9D9D9": 1
+  }
+}

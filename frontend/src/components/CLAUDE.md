@@ -33,6 +33,7 @@ common/Toast/
 | 반응형    | `media.*` (`@/styles/mediaQuery`)                             |
 | 헤더 높이 | `HEADER_HEIGHT` (`common/Header/Header.styles`)               |
 
+- `*.styles.ts`에 hex를 새로 쓰면 `local/no-hex-in-styles`가 경고한다. 기존 hex는 `scripts/eslint-rules/hex-in-styles-baseline.json`만큼 허용하고, hex를 토큰으로 바꿔 줄였으면 `npm run lint:hex-baseline`으로 기준선을 좁힌다. `src/pages` 아래에서만 쓰는 색은 파일 위 `UPPER_SNAKE_CASE` 상수에 두면 허용된다.
 - 반투명 색상은 예외다. 알파 색상 토큰이나 변환 유틸이 없어서 `rgba()` 리터럴을 그대로 쓴다 (`Modal`, `Toast` 동일).
 - 브레이크포인트는 **max-width 기준**이라 데스크탑 스타일을 먼저 쓰고 `media.tablet` → `media.mobile` 순으로 좁혀간다.
 
