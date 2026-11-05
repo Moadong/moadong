@@ -4,7 +4,14 @@ on:
   # schedule은 기본 브랜치(main)의 워크플로만 돈다.
   schedule:
     - cron: '17 0 * * *' # 매일 09:17 KST. 정각은 Actions 부하로 밀리거나 건너뛰기 쉽다.
+  # 수동 실행에서만 기간을 넓혀 오래된 에러도 옮길 수 있다(sentry-fix 시험용). 매일 실행은 7d.
   workflow_dispatch:
+    inputs:
+      first_seen:
+        description: '처음 발생 기간'
+        type: choice
+        options: ['7d', '30d', '90d']
+        default: '7d'
 
 permissions: {}
 
@@ -30,3 +37,4 @@ jobs:
           SENTRY_READ_TOKEN: ${{ secrets.SENTRY_READ_TOKEN }}
           GH_TOKEN: ${{ github.token }}
           REPO: ${{ github.repository }}
+          FIRST_SEEN: ${{ inputs.first_seen }}
