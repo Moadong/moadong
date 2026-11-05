@@ -1,4 +1,4 @@
-name: Design feedback → PR
+name: Design feedback → fix branch
 
 on:
   issues:
@@ -6,45 +6,43 @@ on:
 
 permissions: {}
 
+# 라벨 이름까지 넣어야 같은 이슈에 다른 라벨이 붙을 때 대기 중인 실행이 밀려 취소되지 않는다.
+# 같은 이슈를 다시 라벨링해 재실행할 때 브랜치 push가 겹치지 않게 직렬화한다.
+concurrency: design-feedback-${{ github.event.issue.number }}-${{ github.event.label.name }}
+
+# 이슈 본문에는 실서비스 화면 텍스트(동아리 소개 등 누구나 쓸 수 있는 내용)가 섞여 들어온다.
+# 그래서 에이전트를 돌리는 job에는 쓰기 권한을 주지 않고, 사람이 diff를 보기 전에는 PR도 열지 않는다.
+#   analyze: 에이전트가 스타일을 고치고 패치·PR 문구·되묻기 댓글을 파일로 남긴다. 읽기 토큰만 있다.
+#   verify:  시크릿·sudo 없이 패치를 적용해 타입체크·린트를 돌린다.
+#   publish: 에이전트 없이 고정 브랜치 design/<이슈번호>로 push하고 PR 만들기 링크를 댓글로 단다.
+#            PR을 자동으로 열면 사람이 보기 전에 frontend-ci가 쓰기 토큰을 가진 채 패치 코드를 실행한다.
+#            GITHUB_TOKEN으로 한 push는 다른 워크플로를 트리거하지 않는다.
+# harry App 토큰은 쓰지 않는다. 설치된 App에는 contents 쓰기 권한이 없고, 있더라도 에이전트 손에 쓰기 토큰이 간다.
+
 jobs:
-  design-feedback:
+  analyze:
     # 디자이너 툴바 피드백 이슈만 처리한다.
     # - 이슈 폼이 design-feedback 라벨을 자동으로 붙이므로 labeled 한 번만 트리거로 쓴다.
     #   (opened까지 걸면 생성 시 붙는 라벨 때문에 같은 이슈가 두 번 돈다.)
     #   재실행은 라벨을 뗐다 다시 붙이면 된다.
-    # - 조직 멤버가 연 이슈만: 외부인이 이슈로 프롬프트 인젝션 + 쓰기 권한을 얻는 걸 막는다.
-    # - 이슈 본문에는 실서비스 화면 텍스트(동아리 소개 등 사용자 입력)가 섞여 들어오므로
-    #   에이전트 도구는 규칙 파일이 쓰는 명령만 허용한다.
+    # - 조직 멤버가 연 이슈만: 외부인이 이슈로 에이전트를 돌리지 못하게 한다.
     if: >-
       ${{ github.event.label.name == 'design-feedback'
       && contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.issue.author_association) }}
-    # 같은 이슈를 다시 라벨링해 재실행할 때 브랜치 push가 겹치지 않게 직렬화한다.
-    concurrency: design-feedback-${{ github.event.issue.number }}
     runs-on: ubuntu-latest
     timeout-minutes: 30
     permissions:
-      contents: write
-      pull-requests: write
-      issues: write
+      contents: read
+      issues: read
+    outputs:
+      has_patch: ${{ steps.collect.outputs.has_patch }}
+      has_comment: ${{ steps.collect.outputs.has_comment }}
+      base_sha: ${{ steps.collect.outputs.base_sha }}
     steps:
-      - name: Generate harry App token
-        id: app-token
-        uses: actions/create-github-app-token@v1
-        with:
-          app-id: ${{ secrets.HARRY_APP_ID }}
-          private-key: ${{ secrets.HARRY_APP_PRIVATE_KEY }}
-          permission-contents: write
-          permission-pull-requests: write
-          permission-issues: write
-
       - name: Checkout develop-fe
         uses: actions/checkout@v4
         with:
           ref: develop-fe
-          fetch-depth: 0
-          token: ${{ steps.app-token.outputs.token }}
-          # 기본값이면 App 토큰이 .git/config에 남아 npm ci의 의존성 설치 스크립트가 읽을 수 있다.
-          # push 인증은 npm ci 뒤에 gh auth setup-git으로 되살린다.
           persist-credentials: false
 
       - name: Setup Node.js
@@ -58,26 +56,229 @@ jobs:
         working-directory: frontend
         run: npm ci
 
-      # 에이전트의 git push가 GH_TOKEN으로 인증되게 gh를 credential helper로 등록한다.
-      - name: Set up git credentials
-        run: gh auth setup-git
-        env:
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+      - name: Prepare output directory
+        run: mkdir -p design-feedback-out
 
+      # 에이전트는 frontend/src와 결과 폴더만 고칠 수 있고, 실행할 수 있는 건 인자 없는 명령 셋뿐이다.
+      # git log·git diff에 인자를 허용하면 --output=으로 node_modules를 덮어 typecheck 때 코드를 실행할 수 있다.
+      # 린트는 설정 파일을 실행하므로 시크릿 없는 verify job에서 돌린다.
+      # 프로세스 환경변수(OAuth 토큰)를 읽어 결과 파일에 옮기지 못하게 /proc 등은 읽기를 막는다.
       - name: Apply design feedback
         uses: anthropics/claude-code-action@v1
         with:
-          github_token: ${{ steps.app-token.outputs.token }}
+          github_token: ${{ github.token }}
           prompt: |
-            저장소 루트의 `.github/design-feedback-rules.md`를 읽고, 그 절차를 처음부터 끝까지
-            그대로 따라라. 대상 이슈 번호·레포·base 브랜치는 환경변수 $ISSUE_NUMBER, $REPO,
-            $PR_BASE로 주어진다. 셸 명령에서는 값을 직접 타이핑하지 말고 항상 환경변수를 써라.
+            저장소 루트의 `.github/design-feedback-rules.md`를 읽고, 그 절차를 처음부터 끝까지 그대로 따라라.
+            대상 이슈 번호는 ${{ github.event.issue.number }}, 레포는 ${{ github.repository }}다.
+            셸 명령에는 이 값을 그대로 적어라(셸 변수를 쓰면 권한 검사에서 거부된다).
           claude_args: |
             --model claude-opus-5
-            --allowedTools Read,Edit,Glob,Grep,Bash(gh issue view:*),Bash(gh issue comment:*),Bash(gh pr create:*),Bash(git status:*),Bash(git diff:*),Bash(git fetch origin:*),Bash(git checkout:*),Bash(git add:*),Bash(git commit:*),Bash(git push origin:*),Bash(git config user.name:*),Bash(git config user.email:*),Bash(cd frontend && npm run typecheck),Bash(cd frontend && npx eslint src),Bash(cat:*)
+            --allowedTools "Read,Glob,Grep,Edit(frontend/src/**),Edit(design-feedback-out/**),Write(design-feedback-out/**),Bash(gh issue view:*),Bash(git status),Bash(git diff),Bash(npm --prefix frontend run typecheck)"
+            --disallowedTools "Read(//proc/**),Read(//sys/**),Read(//run/**),Read(//home/runner/work/_temp/**),Grep(//proc/**),Glob(//proc/**)"
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
-          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          GH_TOKEN: ${{ github.token }}
+
+      # 고칠 수 있는 메모만 고치고 나머지는 되묻는 부분 처리를 허용하므로, 패치와 댓글이 함께 나올 수 있다.
+      - name: Collect result
+        id: collect
+        run: |
+          out=design-feedback-out
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          git add -A frontend/src
+          git diff --cached --binary -- frontend/src > "$out/fix.patch"
+          has_patch=false
+          has_comment=false
+          if [[ -s $out/fix.patch && -s $out/pr-title.txt && -s $out/pr-body.md && -s $out/commit-message.txt ]]; then
+            has_patch=true
+          elif [[ -s $out/fix.patch ]]; then
+            echo "::warning::frontend/src 변경은 있지만 PR 결과 파일이 비어 있어 패치를 버린다."
+          fi
+          if [[ -s $out/comment.md ]]; then
+            has_comment=true
+          fi
+          if [[ $has_patch == false && $has_comment == false ]]; then
+            echo "::error::에이전트가 PR 결과 파일도 되묻기 댓글도 남기지 않았다."
+            exit 1
+          fi
+          echo "has_patch=$has_patch" >> "$GITHUB_OUTPUT"
+          echo "has_comment=$has_comment" >> "$GITHUB_OUTPUT"
+
+      # 공개 레포 아티팩트는 누구나 받을 수 있다. 정해진 파일만 올리고, 토큰 모양 문자열이 있으면 멈춘다.
+      - name: Scan result for secrets
+        run: |
+          if grep -rEl 'sk-ant-|ghs_|ghp_|gho_|github_pat_|sntry[su]_' design-feedback-out; then
+            echo "::error::결과 파일에 토큰 모양 문자열이 있다."
+            exit 1
+          fi
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: design-feedback-out
+          path: |
+            design-feedback-out/fix.patch
+            design-feedback-out/commit-message.txt
+            design-feedback-out/pr-title.txt
+            design-feedback-out/pr-body.md
+            design-feedback-out/comment.md
+          if-no-files-found: ignore
+          retention-days: 7
+
+  verify:
+    needs: analyze
+    if: ${{ needs.analyze.outputs.has_patch == 'true' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      # 패치·설정 코드가 sudo로 러너 메모리에서 런타임 토큰을 꺼내 기본 브랜치 캐시를 오염시키지 못하게 한다.
+      - name: Disable sudo
+        run: |
+          sudo rm -f /etc/sudoers.d/runner
+          if sudo -n true 2>/dev/null; then
+            echo "::error::sudo가 아직 살아 있다."
+            exit 1
+          fi
+
+      - name: Checkout analyzed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.analyze.outputs.base_sha }}
+          persist-credentials: false
+
+      - name: Download result
+        uses: actions/download-artifact@v4
+        with:
+          name: design-feedback-out
+          path: design-feedback-out
+
+      - name: Apply patch
+        id: apply
+        run: |
+          # frontend/src 밖을 건드리는 패치는 받지 않는다.
+          outside=$(git apply --numstat design-feedback-out/fix.patch | cut -f3 | grep -v '^frontend/src/' || true)
+          if [[ -n "$outside" ]]; then
+            echo "::error::frontend/src 밖의 변경: $outside"
+            exit 1
+          fi
+          # --index로 적용해야 새 파일도 아래 목록에 잡힌다.
+          git apply --index design-feedback-out/fix.patch
+          files=$(git diff --cached --name-only --diff-filter=d -- frontend/src | sed 's#^frontend/##' | tr '\n' ' ')
+          # 파일 이름은 에이전트가 정한 값이라 뒤 단계 인자로 넘기기 전에 문자를 제한한다.
+          if [[ "$files" =~ [^A-Za-z0-9._/@\ -] ]]; then
+            echo "::error::허용하지 않는 문자가 든 파일 이름: $files"
+            exit 1
+          fi
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+      # 캐시를 쓰지 않는다. 이 job이 저장한 캐시는 다른 브랜치가 복원한다.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: frontend
+        run: npm run typecheck
+
+      # 기준은 종료 코드다(경고는 통과). lint:fix는 무관한 파일을 고치니 쓰지 않는다.
+      - name: Lint changed files
+        if: ${{ steps.apply.outputs.files != '' }}
+        working-directory: frontend
+        run: npx eslint $FILES
+        env:
+          FILES: ${{ steps.apply.outputs.files }}
+
+  publish:
+    needs: [analyze, verify]
+    if: ${{ !cancelled() && needs.analyze.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Download result
+        uses: actions/download-artifact@v4
+        with:
+          name: design-feedback-out
+          path: design-feedback-out
+
+      # 처리하지 못한 메모의 되묻기·거부 댓글. 브랜치 push가 실패해도 남도록 먼저 단다.
+      - name: Comment questions
+        if: ${{ needs.analyze.outputs.has_comment == 'true' }}
+        run: gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file design-feedback-out/comment.md
+
+      - name: Comment verify failure
+        if: ${{ needs.analyze.outputs.has_patch == 'true' && needs.verify.result == 'failure' }}
+        run: |
+          printf '수정안을 만들었지만 검증(타입체크·린트)을 통과하지 못해 브랜치를 올리지 않았어요.\n로그: %s\n' "$RUN_URL" > /tmp/comment.md
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md
+
+      - name: Checkout analyzed commit
+        if: ${{ needs.analyze.outputs.has_patch == 'true' && needs.verify.result == 'success' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.analyze.outputs.base_sha }}
+          path: repo
+
+      - name: Push branch and comment PR link
+        if: ${{ needs.analyze.outputs.has_patch == 'true' && needs.verify.result == 'success' }}
+        working-directory: repo
+        run: |
+          branch="design/$ISSUE_NUMBER"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git apply ../design-feedback-out/fix.patch
+          git add -A frontend/src
+          git commit -F ../design-feedback-out/commit-message.txt
+          # 라벨을 다시 붙여 재실행하면 같은 브랜치를 새 결과로 덮는다.
+          git push --force origin "HEAD:refs/heads/$branch"
+          compare="https://github.com/$REPO/compare/develop-fe...$branch?quick_pull=1&title=$(head -n1 ../design-feedback-out/pr-title.txt | tr -d '\n' | jq -sRr @uri)"
+          {
+            echo "디자인 수정 브랜치 \`$branch\`를 올렸어요. 검증(타입체크·린트)은 통과했어요."
+            echo
+            echo "1. diff를 먼저 확인해 주세요: https://github.com/$REPO/compare/develop-fe...$branch"
+            echo "2. 문제없으면 PR을 열어 주세요: [PR 만들기]($compare). 본문은 아래를 붙여 넣으면 됩니다."
+            echo "   PR을 열면 CI가 이 코드를 실행하니, diff를 보기 전에는 열지 마세요."
+            echo "3. PR에 Vercel 프리뷰 댓글이 달리면 거기서 화면을 확인해 주세요."
+            echo
+            echo '<details><summary>PR 본문</summary>'
+            echo
+            echo '````markdown'
+            cat ../design-feedback-out/pr-body.md
+            echo '````'
+            echo '</details>'
+          } > /tmp/comment.md
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md
+
+  # analyze가 중간에 죽거나(턴 소진·API 오류·결과 없음) publish가 실패하면 라벨을 붙인 사람에게 알린다.
+  # verify 실패는 publish가 따로 댓글을 단다.
+  notify-failure:
+    needs: [analyze, verify, publish]
+    if: ${{ !cancelled() && (needs.analyze.result == 'failure' || needs.publish.result == 'failure') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Comment failure
+        run: |
+          printf '디자인 피드백 자동화가 중간에 실패했어요. 로그: %s\n라벨을 뗐다 다시 붙이면 재실행돼요.\n' "$RUN_URL" > /tmp/comment.md
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md
+        env:
+          GH_TOKEN: ${{ github.token }}
           ISSUE_NUMBER: ${{ github.event.issue.number }}
           REPO: ${{ github.repository }}
-          PR_BASE: develop-fe
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
