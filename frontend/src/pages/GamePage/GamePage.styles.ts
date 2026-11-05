@@ -1,6 +1,10 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 
+// 게임 페이지에서만 쓰는 색이라 디자인 토큰이 아니라 여기 둔다
+const DARK_TOGGLE = { border: '#3A3A4A', background: '#262633' };
+const TOGGLE_ICON = { dark: '#FFD432', light: '#FF9500' };
+
 export const PageContainer = styled.div<{ $dark: boolean }>`
   position: relative;
   overflow-x: clip;
@@ -33,9 +37,10 @@ export const ToggleSwitch = styled.button<{ $dark: boolean }>`
   padding: 0;
   border-radius: 999px;
   border: 1px solid
-    ${({ $dark, theme }) => ($dark ? '#3A3A4A' : theme.colors.gray[300])};
+    ${({ $dark, theme }) =>
+      $dark ? DARK_TOGGLE.border : theme.colors.gray[300]};
   background: ${({ $dark, theme }) =>
-    $dark ? '#262633' : theme.colors.gray[200]};
+    $dark ? DARK_TOGGLE.background : theme.colors.gray[200]};
   cursor: pointer;
   transition:
     background 0.25s,
@@ -54,7 +59,7 @@ export const ToggleKnob = styled.span<{ $dark: boolean }>`
   border-radius: 50%;
   background: ${({ $dark, theme }) =>
     $dark ? theme.colors.base.black : theme.colors.base.white};
-  color: ${({ $dark }) => ($dark ? '#FFD432' : '#FF9500')};
+  color: ${({ $dark }) => ($dark ? TOGGLE_ICON.dark : TOGGLE_ICON.light)};
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.25);
   transform: translateX(${({ $dark }) => ($dark ? '28px' : '0')});
   transition:

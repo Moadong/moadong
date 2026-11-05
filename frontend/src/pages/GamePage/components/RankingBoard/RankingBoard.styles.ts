@@ -1,5 +1,13 @@
 import styled from 'styled-components';
 
+// 게임 랭킹에서만 쓰는 색이라 디자인 토큰이 아니라 여기 둔다
+const DARK_ROW = { background: '#22222E', hover: '#2C2C3A' };
+const MEDAL_COLORS: Record<number, string> = {
+  1: '#FFB300',
+  2: '#9E9E9E',
+  3: '#CD7F32',
+};
+
 export const Wrapper = styled.div`
   width: 100%;
   max-width: 480px;
@@ -37,7 +45,7 @@ export const Item = styled.div<{
   padding: 12px 16px;
   border-radius: 10px;
   background: ${({ $dark, theme }) =>
-    $dark ? '#22222E' : theme.colors.base.white};
+    $dark ? DARK_ROW.background : theme.colors.base.white};
   border: ${({ $dark, theme }) =>
     $dark ? '2px solid transparent' : `2px solid ${theme.colors.gray[300]}`};
   box-shadow: ${({ $dark }) =>
@@ -48,7 +56,7 @@ export const Item = styled.div<{
 
   &:hover {
     background: ${({ $dark, theme }) =>
-      $dark ? '#2C2C3A' : theme.colors.gray[100]};
+      $dark ? DARK_ROW.hover : theme.colors.gray[100]};
   }
 `;
 
@@ -57,12 +65,7 @@ export const Rank = styled.span<{ $rank: number }>`
   text-align: center;
   font-size: 1rem;
   font-weight: 800;
-  color: ${({ $rank, theme }) => {
-    if ($rank === 1) return '#FFB300';
-    if ($rank === 2) return '#9E9E9E';
-    if ($rank === 3) return '#CD7F32';
-    return theme.colors.gray[600];
-  }};
+  color: ${({ $rank, theme }) => MEDAL_COLORS[$rank] ?? theme.colors.gray[600]};
 `;
 
 export const ClubName = styled.span<{ $dark: boolean }>`
