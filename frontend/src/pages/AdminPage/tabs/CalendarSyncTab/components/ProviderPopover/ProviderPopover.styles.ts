@@ -59,8 +59,13 @@ export const DisconnectBadge = styled.button`
   color: ${colors.base.white};
   cursor: pointer;
 
+  /* 더 밝은 primary[800]으로 바꾸면 흰 X 대비가 3:1 아래로 떨어져, 배경만 어둡게 섞는다 */
   &:hover {
-    background: ${colors.primary[800]};
+    background: color-mix(
+      in srgb,
+      ${colors.primary[900]} 90%,
+      ${colors.base.black}
+    );
   }
 `;
 
