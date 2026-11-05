@@ -51,12 +51,12 @@ export const AddButton = styled.button`
 `;
 
 export const ClearAllButton = styled(AddButton)`
-  color: #ef4444;
-  border-color: #fca5a5;
+  color: ${colors.primary[900]};
+  border-color: ${colors.primary[700]};
 
   &:hover {
-    border-color: #ef4444;
-    background: #fff1f2;
+    border-color: ${colors.primary[900]};
+    background: ${colors.primary[500]};
   }
 `;
 
