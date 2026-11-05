@@ -17,8 +17,10 @@ PR은 사람이 diff를 본 뒤 연다.
 ## 1. 이슈 읽기
 
 ```bash
-gh issue view <ISSUE> --repo <REPO> --json title,body,labels
+gh issue view <ISSUE> --repo <REPO>
 ```
+
+이 형태 그대로만 허용된다. `--comments`·`--json` 같은 옵션을 붙이면 거부된다. 댓글은 읽지 않는다.
 
 본문에서 `### 🎨 피드백` 아래가 툴바 마크다운이고, `### 🎟️ 상위 스토리 (선택)` 아래가
 Jira 키(없으면 `_No response_`)다. 툴바 마크다운은 아래 형태다(메모가 여러 개면 `### N.` 블록이 반복된다).
