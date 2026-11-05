@@ -107,12 +107,5 @@
   },
   "src/pages/MainPage/components/MainContent/MainContent.styles.ts": {
     "#555555": 1
-  },
-  "src/pages/MainPage/components/StatusRadioButton/StatusRadioButton.styles.ts": {
-    "#00A6FF": 1,
-    "#818181": 1,
-    "#AAAAAA": 1,
-    "#CCCCCC": 1,
-    "#D9D9D9": 1
   }
 }
