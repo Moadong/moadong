@@ -1,0 +1,32 @@
+name: Sentry → GitHub issue
+
+on:
+  # schedule은 기본 브랜치(main)의 워크플로만 돈다.
+  schedule:
+    - cron: '17 0 * * *' # 매일 09:17 KST. 정각은 Actions 부하로 밀리거나 건너뛰기 쉽다.
+  workflow_dispatch:
+
+permissions: {}
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    # 겹쳐 돌면 같은 Sentry 이슈로 GitHub 이슈가 두 번 생길 수 있다.
+    concurrency: sentry-issue-sync
+    permissions:
+      contents: read
+      issues: write
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          sparse-checkout: .github/scripts
+          persist-credentials: false
+
+      - name: Sync Sentry issues
+        run: bash .github/scripts/sentry-issue-sync.sh
+        env:
+          SENTRY_READ_TOKEN: ${{ secrets.SENTRY_READ_TOKEN }}
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}

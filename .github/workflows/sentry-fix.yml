@@ -1,0 +1,280 @@
+name: Sentry issue → fix branch
+
+on:
+  issues:
+    types: [labeled]
+
+permissions: {}
+
+# 라벨 이름까지 넣어야 같은 이슈에 다른 라벨이 붙을 때 대기 중인 실행이 밀려 취소되지 않는다.
+concurrency: sentry-fix-${{ github.event.issue.number }}-${{ github.event.label.name }}
+
+# Sentry DSN은 번들에 공개돼 있어 누구나 이벤트를 위조할 수 있고, 위조 이벤트는 sync를 거쳐 이슈 본문이 된다.
+# 그래서 에이전트를 돌리는 job에는 쓰기 권한을 주지 않고, 사람이 diff를 보기 전에는 PR도 열지 않는다.
+#   analyze: 에이전트가 원인을 보고 패치 또는 분석 댓글을 파일로 남긴다. 읽기 토큰만 있다.
+#   verify:  시크릿·sudo 없이 패치를 적용해 타입체크·린트·관련 테스트를 돌린다.
+#   publish: 에이전트 없이 고정 브랜치 sentry/<이슈번호>로 push하고 PR 만들기 링크를 댓글로 단다.
+#            PR을 자동으로 열면 사람이 보기 전에 frontend-ci가 쓰기 토큰을 가진 채 패치의 테스트 코드를 실행한다.
+#            GITHUB_TOKEN으로 한 push는 다른 워크플로를 트리거하지 않는다.
+
+jobs:
+  analyze:
+    # sentry-issue-sync.yml이 만든 이슈에 사람이 sentry-fix 라벨을 붙였을 때만 돈다.
+    # 라벨을 붙이는 사람이 본문을 읽고 실행을 승인하는 관문이다.
+    if: >-
+      ${{ github.event.label.name == 'sentry-fix'
+      && github.event.issue.user.login == 'github-actions[bot]' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    permissions:
+      contents: read
+      issues: read
+    outputs:
+      result: ${{ steps.collect.outputs.result }}
+      base_sha: ${{ steps.collect.outputs.base_sha }}
+    steps:
+      - name: Checkout develop-fe
+        uses: actions/checkout@v4
+        with:
+          ref: develop-fe
+          persist-credentials: false
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: 'npm'
+          cache-dependency-path: frontend/package-lock.json
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Prepare output directory
+        run: mkdir -p sentry-fix-out
+
+      # 에이전트는 frontend/src와 결과 폴더만 고칠 수 있고, 실행할 수 있는 건 인자가 고정된 명령 넷(이 이슈 보기, git status, git diff, typecheck)뿐이다.
+      # git log·git diff에 인자를 허용하면 --output=으로 node_modules를 덮어 typecheck 때 코드를 실행할 수 있다.
+      # 린트·테스트는 설정 파일이나 테스트 코드를 실행하므로 시크릿 없는 verify job에서 돌린다.
+      # 프로세스 환경변수(API 키)를 읽어 결과 파일에 옮기지 못하게 /proc 등은 Read·Grep·Glob 모두 막는다.
+      # gh issue view는 이 이슈의 제목·본문만 읽게 고정한다. --comments를 허용하면 라벨 붙인 사람이 읽지 않은
+      # 공개 댓글이 에이전트 입력이 된다.
+      - name: Analyze
+        uses: anthropics/claude-code-action@v1
+        with:
+          github_token: ${{ github.token }}
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            저장소 루트의 `.github/sentry-fix-rules.md`를 읽고, 그 절차를 처음부터 끝까지 그대로 따라라.
+            대상 이슈 번호는 ${{ github.event.issue.number }}, 레포는 ${{ github.repository }}다.
+            셸 명령에는 이 값을 그대로 적어라(셸 변수를 쓰면 권한 검사에서 거부된다).
+          claude_args: |
+            --model claude-sonnet-5-5
+            --max-turns 60
+            --allowedTools "Read,Glob,Grep,Edit(frontend/src/**),Edit(sentry-fix-out/**),Write(sentry-fix-out/**),Bash(gh issue view ${{ github.event.issue.number }} --repo ${{ github.repository }}),Bash(git status),Bash(git diff),Bash(npm --prefix frontend run typecheck)"
+            --disallowedTools "Read(//proc/**),Read(//sys/**),Read(//run/**),Read(//home/runner/work/_temp/**),Grep(//proc/**),Grep(//sys/**),Grep(//run/**),Grep(//home/runner/work/_temp/**),Glob(//proc/**),Glob(//sys/**),Glob(//run/**),Glob(//home/runner/work/_temp/**)"
+        env:
+          GH_TOKEN: ${{ github.token }}
+
+      - name: Collect result
+        id: collect
+        run: |
+          echo "base_sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+          git add -A frontend/src
+          git diff --cached --binary -- frontend/src > sentry-fix-out/fix.patch
+          if [[ -s sentry-fix-out/comment.md && -s sentry-fix-out/pr-body.md ]]; then
+            echo "::error::PR 결과와 분석 댓글을 둘 다 남겼다. 규칙상 하나만 남겨야 한다."
+            exit 1
+          elif [[ -s sentry-fix-out/fix.patch && -s sentry-fix-out/pr-title.txt && -s sentry-fix-out/pr-body.md && -s sentry-fix-out/commit-message.txt ]]; then
+            echo "result=pr" >> "$GITHUB_OUTPUT"
+          elif [[ -s sentry-fix-out/comment.md ]]; then
+            echo "result=comment" >> "$GITHUB_OUTPUT"
+          else
+            echo "::error::에이전트가 PR 결과 파일도 분석 댓글도 남기지 않았다."
+            exit 1
+          fi
+
+      # 공개 레포 아티팩트는 누구나 받을 수 있다. 정해진 파일만 올리고, 토큰 모양 문자열이 있으면 멈춘다.
+      - name: Scan result for secrets
+        run: |
+          if grep -rEl 'sk-ant-|ghs_|ghp_|gho_|github_pat_|sntry[su]_' sentry-fix-out; then
+            echo "::error::결과 파일에 토큰 모양 문자열이 있다."
+            exit 1
+          fi
+
+      - name: Upload result
+        uses: actions/upload-artifact@v4
+        with:
+          name: sentry-fix-out
+          path: |
+            sentry-fix-out/fix.patch
+            sentry-fix-out/commit-message.txt
+            sentry-fix-out/pr-title.txt
+            sentry-fix-out/pr-body.md
+            sentry-fix-out/comment.md
+          if-no-files-found: ignore
+          retention-days: 7
+
+  verify:
+    needs: analyze
+    if: ${{ needs.analyze.outputs.result == 'pr' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      # 패치의 테스트·설정 코드가 sudo로 러너 메모리에서 런타임 토큰을 꺼내 기본 브랜치 캐시를 오염시키지 못하게 한다.
+      - name: Disable sudo
+        run: |
+          sudo rm -f /etc/sudoers.d/runner
+          if sudo -n true 2>/dev/null; then
+            echo "::error::sudo가 아직 살아 있다."
+            exit 1
+          fi
+
+      - name: Checkout analyzed commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.analyze.outputs.base_sha }}
+          persist-credentials: false
+
+      - name: Download result
+        uses: actions/download-artifact@v4
+        with:
+          name: sentry-fix-out
+          path: sentry-fix-out
+
+      - name: Apply patch
+        id: apply
+        run: |
+          # frontend/src 밖을 건드리는 패치는 받지 않는다.
+          outside=$(git apply --numstat sentry-fix-out/fix.patch | cut -f3 | grep -v '^frontend/src/' || true)
+          if [[ -n "$outside" ]]; then
+            echo "::error::frontend/src 밖의 변경: $outside"
+            exit 1
+          fi
+          # --index로 새 파일(테스트 등)도 스테이징해야 아래 목록에 잡힌다.
+          git apply --index sentry-fix-out/fix.patch
+          names=$(git diff --cached --name-only --diff-filter=d -- frontend/src | sed 's#^frontend/##')
+          # 파일 이름은 에이전트가 정한 값이라 뒤 단계에서 따옴표 없이 인자로 펼쳐진다.
+          # 공백을 허용하면 `a -c src/x.mjs` 같은 디렉터리 이름으로 eslint에 옵션을 주입할 수 있어 줄 단위로 막는다.
+          if [[ -n "$names" ]] && grep -qvE '^src/[A-Za-z0-9._/@-]+$' <<<"$names"; then
+            echo "::error::허용하지 않는 파일 이름: $names"
+            exit 1
+          fi
+          files=$(tr '\n' ' ' <<<"$names")
+          echo "files=$files" >> "$GITHUB_OUTPUT"
+
+      # 캐시를 쓰지 않는다. 이 job이 저장한 캐시는 다른 브랜치가 복원한다.
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      - name: Typecheck
+        working-directory: frontend
+        run: npm run typecheck
+
+      - name: Lint changed files
+        if: ${{ steps.apply.outputs.files != '' }}
+        working-directory: frontend
+        run: npx eslint $FILES
+        env:
+          FILES: ${{ steps.apply.outputs.files }}
+
+      - name: Test related files
+        if: ${{ steps.apply.outputs.files != '' }}
+        working-directory: frontend
+        run: npx jest --findRelatedTests $FILES --passWithNoTests
+        env:
+          FILES: ${{ steps.apply.outputs.files }}
+
+  publish:
+    needs: [analyze, verify]
+    if: ${{ !cancelled() && needs.analyze.result == 'success' }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+      issues: write
+    env:
+      GH_TOKEN: ${{ github.token }}
+      ISSUE_NUMBER: ${{ github.event.issue.number }}
+      REPO: ${{ github.repository }}
+      RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+    steps:
+      - name: Download result
+        uses: actions/download-artifact@v4
+        with:
+          name: sentry-fix-out
+          path: sentry-fix-out
+
+      - name: Comment analysis
+        if: ${{ needs.analyze.outputs.result == 'comment' }}
+        run: gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file sentry-fix-out/comment.md
+
+      - name: Comment verify failure
+        if: ${{ needs.analyze.outputs.result == 'pr' && needs.verify.result == 'failure' }}
+        run: |
+          printf '수정안을 만들었지만 검증(타입체크·린트·관련 테스트)을 통과하지 못해 브랜치를 올리지 않았어요.\n로그: %s\n' "$RUN_URL" > /tmp/comment.md
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md
+
+      - name: Checkout analyzed commit
+        if: ${{ needs.analyze.outputs.result == 'pr' && needs.verify.result == 'success' }}
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.analyze.outputs.base_sha }}
+          path: repo
+
+      - name: Push branch and comment PR link
+        if: ${{ needs.analyze.outputs.result == 'pr' && needs.verify.result == 'success' }}
+        working-directory: repo
+        run: |
+          branch="sentry/$ISSUE_NUMBER"
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git apply ../sentry-fix-out/fix.patch
+          git add -A frontend/src
+          git commit -F ../sentry-fix-out/commit-message.txt
+          # 라벨을 다시 붙여 재실행하면 같은 브랜치를 새 결과로 덮는다.
+          git push --force origin "HEAD:refs/heads/$branch"
+          compare="https://github.com/$REPO/compare/develop-fe...$branch?quick_pull=1&title=$(head -n1 ../sentry-fix-out/pr-title.txt | tr -d '\n' | jq -sRr @uri)"
+          {
+            echo "수정 브랜치 \`$branch\`를 올렸어요. 검증(타입체크·린트·관련 테스트)은 통과했어요."
+            echo
+            echo "1. diff를 먼저 확인해 주세요: https://github.com/$REPO/compare/develop-fe...$branch"
+            echo "2. 문제없으면 PR을 열어 주세요: [PR 만들기]($compare). 본문은 아래를 붙여 넣으면 됩니다."
+            echo "   PR을 열면 CI가 이 코드를 실행하니, diff를 보기 전에는 열지 마세요."
+            echo
+            echo '<details><summary>PR 본문</summary>'
+            echo
+            echo '````markdown'
+            cat ../sentry-fix-out/pr-body.md
+            echo '````'
+            echo '</details>'
+          } > /tmp/comment.md
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md
+
+  # analyze가 중간에 죽거나(턴 소진·API 오류·결과 없음) publish가 실패하면 라벨을 붙인 사람에게 알린다.
+  # verify 실패는 publish가 따로 댓글을 단다.
+  notify-failure:
+    needs: [analyze, verify, publish]
+    if: ${{ !cancelled() && (needs.analyze.result == 'failure' || needs.publish.result == 'failure') }}
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    permissions:
+      issues: write
+    steps:
+      - name: Comment failure
+        run: |
+          printf 'Sentry 수정 자동화가 중간에 실패했어요. 로그: %s\n라벨을 뗐다 다시 붙이면 재실행돼요.\n' "$RUN_URL" > /tmp/comment.md
+          gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md
+        env:
+          GH_TOKEN: ${{ github.token }}
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
+          REPO: ${{ github.repository }}
+          RUN_URL: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
