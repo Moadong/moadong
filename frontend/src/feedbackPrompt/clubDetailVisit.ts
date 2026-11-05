@@ -1,3 +1,5 @@
+import { createUuid } from '@/utils/feedbackPromptIdentity';
+
 export interface ClubDetailVisit {
   id: string;
   clubId: string;
@@ -7,7 +9,7 @@ let currentVisit: ClubDetailVisit | null = null;
 export const registerClubDetailVisit = (clubId: string, pathname: string) => {
   if (currentVisit?.clubId === clubId && currentVisit.pathname === pathname)
     return;
-  currentVisit = { id: crypto.randomUUID(), clubId, pathname };
+  currentVisit = { id: createUuid(), clubId, pathname };
 };
 export const consumeClubDetailVisit = () => {
   const visit = currentVisit;
