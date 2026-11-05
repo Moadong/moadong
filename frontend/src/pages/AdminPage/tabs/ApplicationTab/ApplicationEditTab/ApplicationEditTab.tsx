@@ -147,7 +147,7 @@ const ApplicationEditor = ({
     });
   };
 
-  const { mutate: createMutate, isPending: isCreating } = useMutation({
+  const { mutate: createMutate } = useMutation({
     mutationFn: (payload: ApplicationFormData) => createApplication(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.application.all });
@@ -165,7 +165,7 @@ const ApplicationEditor = ({
     },
   });
 
-  const { mutate: updateMutate, isPending: isUpdating } = useMutation({
+  const { mutate: updateMutate } = useMutation({
     mutationFn: ({
       data,
       applicationFormId,

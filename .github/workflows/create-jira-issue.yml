@@ -10,6 +10,10 @@ jobs:
     if: contains(github.event.issue.body, '🎟️ 상위 작업 (Ticket Number)')
     name: Create Jira issue
     runs-on: ubuntu-latest
+    # 브랜치를 만들어 push하고(contents) 이슈 제목·댓글을 고친다(issues).
+    permissions:
+      contents: write
+      issues: write
 
     steps:
       - name: Parse Issue Form

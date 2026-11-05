@@ -38,7 +38,7 @@ export const Empty: Story = {
     onNavigate: handleNavigate,
   },
   render: (args) => {
-    const [awards, setAwards] = useState<Award[]>(args.awards);
+    const [awards] = useState<Award[]>(args.awards);
     return <AwardSection awards={awards} onNavigate={args.onNavigate} />;
   },
 };

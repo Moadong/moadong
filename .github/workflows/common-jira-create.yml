@@ -10,6 +10,10 @@ jobs:
     if: contains(github.event.issue.body, '🎟️ 상위 스토리 (Story Key)')
     name: Create Jira issue
     runs-on: ubuntu-latest
+    # 브랜치를 만들어 push하고(contents) 이슈 제목·댓글을 고친다(issues).
+    permissions:
+      contents: write
+      issues: write
 
     steps:
       - name: Parse Issue Form
@@ -74,6 +78,8 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
+          # job에 contents: write가 있으니 판정 단계(신뢰할 수 없는 이슈 본문을 읽음)에 토큰을 남기지 않는다.
+          persist-credentials: false
 
       - name: Triage issue priority
         if: startsWith(steps.issue-parser.outputs.parentKey, 'MOA-') && env.BRANCH_EXISTS == 'true' && steps.priority-token.outputs.token != ''

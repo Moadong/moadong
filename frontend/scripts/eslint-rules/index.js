@@ -5,5 +5,6 @@
 module.exports = {
   rules: {
     'no-hardcoded-event-name': require('./no-hardcoded-event-name'),
+    'no-hex-in-styles': require('./no-hex-in-styles'),
   },
 };
