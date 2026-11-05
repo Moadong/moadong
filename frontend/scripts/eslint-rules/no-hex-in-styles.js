@@ -30,6 +30,8 @@ function normalize(hex) {
 }
 
 module.exports = {
+  // 기준선 생성기도 같은 정규화로 키를 만들도록 내보낸다
+  normalize,
   meta: {
     type: 'suggestion',
     docs: {

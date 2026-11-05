@@ -6,10 +6,8 @@ import path from 'node:path';
 import { ESLint } from 'eslint';
 import localRules from './index.js';
 
-const normalize = (hex) => {
-  const body = hex.slice(1).toUpperCase();
-  return `#${body.length <= 4 ? [...body].map((c) => c + c).join('') : body}`;
-};
+// 규칙과 같은 함수로 키를 만들어야 기준선 키와 규칙의 조회 키가 어긋나지 않는다
+const { normalize } = localRules.rules['no-hex-in-styles'];
 
 const ROOT = path.resolve(import.meta.dirname, '../..');
 const OUT = path.join(import.meta.dirname, 'hex-in-styles-baseline.json');
