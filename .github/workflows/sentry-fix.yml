@@ -57,6 +57,8 @@ jobs:
       # git log·git diff에 인자를 허용하면 --output=으로 node_modules를 덮어 typecheck 때 코드를 실행할 수 있다.
       # 린트·테스트는 설정 파일이나 테스트 코드를 실행하므로 시크릿 없는 verify job에서 돌린다.
       # 프로세스 환경변수(API 키)를 읽어 결과 파일에 옮기지 못하게 /proc 등은 읽기를 막는다.
+      # gh issue view는 이 이슈의 제목·본문만 읽게 고정한다. --comments를 허용하면 라벨 붙인 사람이 읽지 않은
+      # 공개 댓글이 에이전트 입력이 된다.
       - name: Analyze
         uses: anthropics/claude-code-action@v1
         with:
@@ -69,8 +71,8 @@ jobs:
           claude_args: |
             --model claude-sonnet-5-5
             --max-turns 60
-            --allowedTools "Read,Glob,Grep,Edit(frontend/src/**),Edit(sentry-fix-out/**),Write(sentry-fix-out/**),Bash(gh issue view:*),Bash(git status),Bash(git diff),Bash(npm --prefix frontend run typecheck)"
-            --disallowedTools "Read(//proc/**),Read(//sys/**),Read(//run/**),Read(//home/runner/work/_temp/**),Grep(//proc/**),Glob(//proc/**)"
+            --allowedTools "Read,Glob,Grep,Edit(frontend/src/**),Edit(sentry-fix-out/**),Write(sentry-fix-out/**),Bash(gh issue view ${{ github.event.issue.number }} --repo ${{ github.repository }}),Bash(git status),Bash(git diff),Bash(npm --prefix frontend run typecheck)"
+            --disallowedTools "Read(//proc/**),Read(//sys/**),Read(//run/**),Read(//home/runner/work/_temp/**),Grep(//proc/**),Grep(//sys/**),Grep(//run/**),Grep(//home/runner/work/_temp/**),Glob(//proc/**),Glob(//sys/**),Glob(//run/**),Glob(//home/runner/work/_temp/**)"
         env:
           GH_TOKEN: ${{ github.token }}
 

@@ -21,8 +21,10 @@ GitHub 이슈를 읽고, 원인을 확정할 수 있을 때만 `frontend/src`를
 ## 1. 이슈 읽기
 
 ```bash
-gh issue view <ISSUE> --repo <REPO> --json title,body
+gh issue view <ISSUE> --repo <REPO>
 ```
+
+이 형태 그대로만 허용된다. `--comments`·`--json` 같은 옵션을 붙이면 거부된다. 댓글은 읽지 않는다.
 
 - 제목의 `[Sentry MOADONG-XX]`가 Sentry 이슈 ID다. 커밋 메시지와 PR에 그대로 쓴다.
 - 프레임 경로 `../../src/...`는 `frontend/src/...`다. 앱 코드 프레임이 없으면 본문에 가장 안쪽 라이브러리 프레임이

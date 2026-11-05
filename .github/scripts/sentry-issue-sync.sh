@@ -31,7 +31,7 @@ echo "Sentry 신규 이슈 $(jq length <<<"$issues")건"
 
 if [[ "${DRY_RUN:-}" != "1" ]]; then
   gh label create sentry --repo "$REPO" --force --color FB4226 --description "Sentry에서 옮긴 에러"
-  gh label create sentry-fix --repo "$REPO" --force --color 5319E7 --description "붙이면 에이전트가 Sentry 에러 수정 PR을 시도한다"
+  gh label create sentry-fix --repo "$REPO" --force --color 5319E7 --description "붙이면 에이전트가 Sentry 에러 수정 브랜치나 분석 댓글을 남긴다"
 fi
 
 # 이미 옮긴 이슈는 제목 앞의 `[Sentry <shortId>]`로 알아본다. 닫힌 이슈도 포함해야 재생성되지 않는다.
@@ -67,7 +67,11 @@ jq -c '.[]' <<<"$issues" | while read -r issue; do
     continue
   fi
 
-  title="$prefix $(jq -r "$JQ_MASK"' .title | mask | .[0:200]' <<<"$issue")"
+  if ! title_text=$(jq -r "$JQ_MASK"' .title // "" | tostring | mask | .[0:200]' <<<"$issue"); then
+    echo "::warning::$short_id 제목 변환에 실패해 건너뛴다."
+    continue
+  fi
+  title="$prefix $title_text"
   body=$(jq -rn --argjson issue "$issue" --argjson event "$event" "$JQ_MASK"'
     def tag($k): ([$event.tags[]? | select(.key == $k) | .value][0] // "-");
     def frame_line: "\(.filename // .absPath // "?"):\(.lineNo // "?"):\(.colNo // "?") (\(.function // "?"))";
