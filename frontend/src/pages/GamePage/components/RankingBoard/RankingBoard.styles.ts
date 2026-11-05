@@ -2,7 +2,7 @@ import styled from 'styled-components';
 
 // 게임 랭킹에서만 쓰는 색이라 디자인 토큰이 아니라 여기 둔다
 const DARK_ROW = { background: '#22222E', hover: '#2C2C3A' };
-const MEDAL_COLORS: Record<number, string> = {
+const MEDAL_COLORS: Partial<Record<number, string>> = {
   1: '#FFB300',
   2: '#9E9E9E',
   3: '#CD7F32',
