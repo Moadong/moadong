@@ -93,6 +93,8 @@ jobs:
   update-deployment-file:
     runs-on: ubuntu-latest
     needs: build
+    # gitops 레포는 PAT로 push한다. 이 레포의 GITHUB_TOKEN은 쓰지 않는다.
+    permissions: {}
     steps:
       - name: Checkout deploy-manifests repository
         uses: actions/checkout@v4

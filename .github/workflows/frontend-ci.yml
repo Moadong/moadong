@@ -12,6 +12,10 @@ on:
       - 'frontend/**'
       - '.github/workflows/frontend-ci.yml'
 
+# PR의 테스트·린트 설정 코드를 실행하므로 읽기 권한만 주고, 토큰을 .git/config에 남기지 않는다.
+permissions:
+  contents: read
+
 jobs:
   ci:
     runs-on: ubuntu-latest
@@ -22,6 +26,8 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          persist-credentials: false
 
       - name: Setup Node.js
         uses: actions/setup-node@v4

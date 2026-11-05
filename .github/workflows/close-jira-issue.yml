@@ -8,11 +8,15 @@ jobs:
     close-issue:
       name: Close Jira Issue
       runs-on: ubuntu-latest
+      permissions:
+        issues: write
       steps:
         - name: Extract Jira Issue Key from Title
           id: extract-key
+          # 제목은 누구나 쓸 수 있는 값이라 ${{ }}로 run에 바로 넣으면 셸 명령이 주입된다. env로 넘긴다.
+          env:
+            TITLE: ${{ github.event.issue.title }}
           run: |
-            TITLE="${{ github.event.issue.title }}"
             ISSUE_KEY=$(echo "$TITLE" | grep -oE '[A-Z]+-[0-9]+' | head -1)
             echo "JIRA_ISSUE_KEY=$ISSUE_KEY" >> $GITHUB_ENV
             echo "Extracted Jira Issue Key: $ISSUE_KEY"
