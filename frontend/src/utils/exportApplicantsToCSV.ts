@@ -16,6 +16,7 @@ export const exportApplicantsToCSV = (
   filename: string,
 ) => {
   const headers = [
+    '지원자ID',
     '제출일시',
     '상태',
     ...questions.map((q) => q.title),
@@ -31,10 +32,10 @@ export const exportApplicantsToCSV = (
       applicant.answers
         .filter((a) => a.id === q.id)
         .map((a) => a.value)
-        .join(', '),
+        .join('; '),
     );
 
-    return [createdAt, status, ...answerCells, applicant.memo];
+    return [applicant.id, createdAt, status, ...answerCells, applicant.memo];
   });
 
   const csvContent = [headers, ...rows]
@@ -46,10 +47,13 @@ export const exportApplicantsToCSV = (
     type: 'text/csv;charset=utf-8;',
   });
 
+  const today = new Date();
+  const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');
   link.href = url;
-  link.download = `${filename}.csv`;
+  link.download = `${filename}_${dateStr}.csv`;
   link.click();
   URL.revokeObjectURL(url);
 };
