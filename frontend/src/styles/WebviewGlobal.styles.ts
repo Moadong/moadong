@@ -1,8 +1,10 @@
 import { createGlobalStyle } from 'styled-components';
+import { colors } from '@/styles/theme/colors';
 
 const WebviewGlobalStyles = createGlobalStyle`
   html {
     overflow-x: hidden;
+    background-color: ${colors.base.white};
   }
   body {
     overscroll-behavior: none;
