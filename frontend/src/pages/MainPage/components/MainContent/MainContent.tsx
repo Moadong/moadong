@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
@@ -36,44 +36,43 @@ const MainContent = () => {
   const navigate = useNavigate();
   const { subscribedClubIds, toggleSubscribe } = useWebviewSubscribe();
 
-  const clubs = useMemo(() => data?.clubs ?? [], [data]);
+  const clubs = data?.clubs ?? [];
   const totalCount = data?.totalCount ?? clubs.length;
 
   const isEmpty = !isLoading && clubs.length === 0;
   const hasData = clubs.length > 0;
 
-  const clubList = useMemo(() => {
-    if (!hasData) return null;
-    return clubs.map((club: Club, i: number) => (
-      <ClubCard
-        key={club.id}
-        club={club}
-        index={i}
-        page={PAGE_NAME.MAIN}
-        onCardClick={
-          inWebview
-            ? (c) =>
-                navigate(
-                  `/clubDetail/@${encodeURIComponent(c.name)}?is_subscribed=${subscribedClubIds.has(c.id)}`,
+  const clubList = hasData
+    ? clubs.map((club: Club, i: number) => (
+        <ClubCard
+          key={club.id}
+          club={club}
+          index={i}
+          page={PAGE_NAME.MAIN}
+          onCardClick={
+            inWebview
+              ? (c) =>
+                  navigate(
+                    `/clubDetail/@${encodeURIComponent(c.name)}?is_subscribed=${subscribedClubIds.has(c.id)}`,
+                  )
+              : undefined
+          }
+        >
+          {inWebview && (
+            <SubscribeButton
+              subscribed={subscribedClubIds.has(club.id)}
+              onToggle={() =>
+                toggleSubscribe(
+                  club.id,
+                  subscribedClubIds.has(club.id),
+                  PAGE_NAME.MAIN,
                 )
-            : undefined
-        }
-      >
-        {inWebview && (
-          <SubscribeButton
-            subscribed={subscribedClubIds.has(club.id)}
-            onToggle={() =>
-              toggleSubscribe(
-                club.id,
-                subscribedClubIds.has(club.id),
-                PAGE_NAME.MAIN,
-              )
-            }
-          />
-        )}
-      </ClubCard>
-    ));
-  }, [clubs, hasData, inWebview, subscribedClubIds, toggleSubscribe]);
+              }
+            />
+          )}
+        </ClubCard>
+      ))
+    : null;
 
   return (
     <>
