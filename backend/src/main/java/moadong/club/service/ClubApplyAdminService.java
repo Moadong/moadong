@@ -142,9 +142,10 @@ public class ClubApplyAdminService {
     }
 
     private ClubApplicant sortApplicationAnswers(ClubApplicationForm application, ClubApplicant app) {
-        Map<Long, ClubQuestionAnswer> answerMap = app.getAnswers().stream().collect(Collectors.toMap(ClubQuestionAnswer::getId, answer -> answer));
+        // 다중 선택 질문은 같은 질문 id로 답이 여러 개 저장된다. groupingBy는 null 키를 못 받으므로 id 없는 답은 미리 뺀다
+        Map<Long, List<ClubQuestionAnswer>> answersByQuestionId = app.getAnswers().stream().filter(answer -> answer.getId() != null).collect(Collectors.groupingBy(ClubQuestionAnswer::getId));
 
-        List<ClubQuestionAnswer> sortedAnswers = application.getQuestions().stream().map(question -> answerMap.get(question.getId())).filter(Objects::nonNull).collect(Collectors.toList());
+        List<ClubQuestionAnswer> sortedAnswers = application.getQuestions().stream().flatMap(question -> answersByQuestionId.getOrDefault(question.getId(), List.of()).stream()).collect(Collectors.toList());
 
         app.updateAnswers(sortedAnswers);
         return app;
