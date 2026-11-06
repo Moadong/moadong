@@ -54,7 +54,7 @@ jobs:
       - name: Prepare output directory
         run: mkdir -p sentry-fix-out
 
-      # 에이전트는 frontend/src와 결과 폴더만 고칠 수 있고(새 파일은 재현 테스트만), 실행할 수 있는 건 인자가 고정된 명령 넷(이 이슈 보기, git status, git diff, typecheck)뿐이다.
+      # 에이전트는 frontend/src와 결과 폴더만 고칠 수 있고(새 파일은 재현 테스트만, verify가 강제), 실행할 수 있는 건 인자가 고정된 명령 넷(이 이슈 보기, git status, git diff, typecheck)뿐이다.
       # git log·git diff에 인자를 허용하면 --output=으로 node_modules를 덮어 typecheck 때 코드를 실행할 수 있다.
       # 린트·테스트는 설정 파일이나 테스트 코드를 실행하므로 시크릿 없는 verify job에서 돌린다.
       # 프로세스 환경변수(API 키)를 읽어 결과 파일에 옮기지 못하게 /proc 등은 Read·Grep·Glob 모두 막는다.
@@ -156,6 +156,12 @@ jobs:
           fi
           # --index로 새 파일(테스트 등)도 스테이징해야 아래 목록에 잡힌다.
           git apply --index sentry-fix-out/fix.patch
+          # 에이전트가 새로 만들 수 있는 건 재현 테스트뿐이다. Edit 권한 규칙이 Write까지 열 수 있어 여기서 강제한다.
+          added=$(git diff --cached --name-only --diff-filter=A -- frontend/src | grep -vE '\.test\.tsx?$' || true)
+          if [[ -n "$added" ]]; then
+            echo "::error::테스트가 아닌 새 파일: $added"
+            exit 1
+          fi
           names=$(git diff --cached --name-only --diff-filter=d -- frontend/src | sed 's#^frontend/##')
           # 파일 이름은 에이전트가 정한 값이라 뒤 단계에서 따옴표 없이 인자로 펼쳐진다.
           # 공백을 허용하면 `a -c src/x.mjs` 같은 디렉터리 이름으로 eslint에 옵션을 주입할 수 있어 줄 단위로 막는다.
@@ -231,7 +237,6 @@ jobs:
         id: jira
         if: ${{ needs.analyze.outputs.result == 'pr' && needs.verify.result == 'success' }}
         env:
-          ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_URL: ${{ github.event.issue.html_url }}
           SENDER: ${{ github.event.sender.login }}
           JIRA_PARENT_KEY: MOA-1269
@@ -240,6 +245,9 @@ jobs:
           JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
           JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
         run: |
+          # 이벤트 payload의 제목은 run을 시작한 시점 값이라 Actions에서 Re-run하면 키를 붙이기 전 제목이 들어온다.
+          # 지금 제목을 읽어야 라벨 재부착과 Re-run 두 경로 모두 키를 다시 쓴다.
+          ISSUE_TITLE=$(gh issue view "$ISSUE_NUMBER" --repo "$REPO" --json title --jq .title)
           key=$(grep -oE 'MOA-[0-9]+' <<<"$ISSUE_TITLE" | head -1 || true)
           if [[ -z "$key" ]]; then
             summary=$(head -n1 sentry-fix-out/pr-title.txt | sed -E 's/^\[fix\] *//')
@@ -249,7 +257,7 @@ jobs:
               --arg assignee "$assignee" --arg issue_url "$ISSUE_URL" '{
                 fields: {
                   project: { key: "MOA" },
-                  summary: $summary,
+                  summary: ($summary | .[0:255]),
                   issuetype: { name: "하위 작업" },
                   parent: { key: $parent },
                   description: {
