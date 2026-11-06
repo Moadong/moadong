@@ -13,7 +13,8 @@ concurrency: sentry-fix-${{ github.event.issue.number }}-${{ github.event.label.
 # 그래서 에이전트를 돌리는 job에는 쓰기 권한을 주지 않고, 사람이 diff를 보기 전에는 PR도 열지 않는다.
 #   analyze: 에이전트가 원인을 보고 패치 또는 분석 댓글을 파일로 남긴다. 읽기 토큰만 있다.
 #   verify:  시크릿·sudo 없이 패치를 적용해 타입체크·린트·관련 테스트를 돌린다.
-#   publish: 에이전트 없이 고정 브랜치 sentry/<이슈번호>로 push하고 PR 만들기 링크를 댓글로 단다.
+#   publish: 에이전트 없이 Jira 하위 작업을 만들고 fix/#<이슈번호>-sentry-<ID>-<Jira 키>로 push한 뒤
+#            PR 만들기 링크를 댓글로 단다.
 #            PR을 자동으로 열면 사람이 보기 전에 frontend-ci가 쓰기 토큰을 가진 채 패치의 테스트 코드를 실행한다.
 #            GITHUB_TOKEN으로 한 push는 다른 워크플로를 트리거하지 않는다.
 
@@ -53,7 +54,7 @@ jobs:
       - name: Prepare output directory
         run: mkdir -p sentry-fix-out
 
-      # 에이전트는 frontend/src와 결과 폴더만 고칠 수 있고, 실행할 수 있는 건 인자가 고정된 명령 넷(이 이슈 보기, git status, git diff, typecheck)뿐이다.
+      # 에이전트는 frontend/src와 결과 폴더만 고칠 수 있고(새 파일은 재현 테스트만), 실행할 수 있는 건 인자가 고정된 명령 넷(이 이슈 보기, git status, git diff, typecheck)뿐이다.
       # git log·git diff에 인자를 허용하면 --output=으로 node_modules를 덮어 typecheck 때 코드를 실행할 수 있다.
       # 린트·테스트는 설정 파일이나 테스트 코드를 실행하므로 시크릿 없는 verify job에서 돌린다.
       # 프로세스 환경변수(API 키)를 읽어 결과 파일에 옮기지 못하게 /proc 등은 Read·Grep·Glob 모두 막는다.
@@ -71,7 +72,7 @@ jobs:
           claude_args: |
             --model claude-sonnet-5-5
             --max-turns 60
-            --allowedTools "Read,Glob,Grep,Edit(frontend/src/**),Edit(sentry-fix-out/**),Write(sentry-fix-out/**),Bash(gh issue view ${{ github.event.issue.number }} --repo ${{ github.repository }}),Bash(git status),Bash(git diff),Bash(npm --prefix frontend run typecheck)"
+            --allowedTools "Read,Glob,Grep,Edit(frontend/src/**),Write(frontend/src/**/*.test.ts),Write(frontend/src/**/*.test.tsx),Edit(sentry-fix-out/**),Write(sentry-fix-out/**),Bash(gh issue view ${{ github.event.issue.number }} --repo ${{ github.repository }}),Bash(git status),Bash(git diff),Bash(npm --prefix frontend run typecheck)"
             --disallowedTools "Read(//proc/**),Read(//sys/**),Read(//run/**),Read(//home/runner/work/_temp/**),Grep(//proc/**),Grep(//sys/**),Grep(//run/**),Grep(//home/runner/work/_temp/**),Glob(//proc/**),Glob(//sys/**),Glob(//run/**),Glob(//home/runner/work/_temp/**)"
         env:
           GH_TOKEN: ${{ github.token }}
@@ -223,6 +224,54 @@ jobs:
           printf '수정안을 만들었지만 검증(타입체크·린트·관련 테스트)을 통과하지 못해 브랜치를 올리지 않았어요.\n로그: %s\n' "$RUN_URL" > /tmp/comment.md
           gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md
 
+      # 실제 작업물(검증된 수정 브랜치)이 생길 때만 "Sentry 에러를 수정한다"(MOA-1269) 아래에 하위 작업을 만든다.
+      # 분석만 남긴 건은 만들지 않는다. 라벨을 다시 붙여 재실행하면 이슈 제목에 이미 붙은 키를 다시 쓴다.
+      # 이슈 제목 앞에 `[fix] MOA-키`를 붙여 두면 이슈가 닫힐 때 close-jira-issue가 하위 작업을 완료로 옮긴다.
+      - name: Create Jira subtask
+        id: jira
+        if: ${{ needs.analyze.outputs.result == 'pr' && needs.verify.result == 'success' }}
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_URL: ${{ github.event.issue.html_url }}
+          SENDER: ${{ github.event.sender.login }}
+          JIRA_PARENT_KEY: MOA-1269
+          JIRA_USER_MAP: ${{ secrets.JIRA_USER_MAP }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
+          JIRA_USER_EMAIL: ${{ secrets.JIRA_USER_EMAIL }}
+          JIRA_API_TOKEN: ${{ secrets.JIRA_API_TOKEN }}
+        run: |
+          key=$(grep -oE 'MOA-[0-9]+' <<<"$ISSUE_TITLE" | head -1 || true)
+          if [[ -z "$key" ]]; then
+            summary=$(head -n1 sentry-fix-out/pr-title.txt | sed -E 's/^\[fix\] *//')
+            # 라벨을 붙인 사람을 담당자로 둔다. 매핑이 없으면 비워 둔다.
+            assignee=$(jq -r --arg u "$SENDER" '.[$u] // empty' <<<"$JIRA_USER_MAP")
+            jq -n --arg summary "$summary" --arg parent "$JIRA_PARENT_KEY" \
+              --arg assignee "$assignee" --arg issue_url "$ISSUE_URL" '{
+                fields: {
+                  project: { key: "MOA" },
+                  summary: $summary,
+                  issuetype: { name: "하위 작업" },
+                  parent: { key: $parent },
+                  description: {
+                    version: 1,
+                    type: "doc",
+                    content: [{ type: "paragraph", content: [{ type: "text", text: ("GitHub Issue: " + $issue_url) }] }]
+                  }
+                }
+              } | if $assignee != "" then .fields.assignee = { id: $assignee } else . end' > /tmp/jira-payload.json
+            code=$(curl -sS -o /tmp/jira-response.json -w '%{http_code}' -X POST \
+              -u "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" -H 'Content-Type: application/json' \
+              --data-binary @/tmp/jira-payload.json "$JIRA_BASE_URL/rest/api/3/issue")
+            key=$(jq -r '.key // empty' /tmp/jira-response.json)
+            if [[ "$code" != 201 || ! "$key" =~ ^MOA-[0-9]+$ ]]; then
+              echo "::error::Jira 하위 작업을 만들지 못했다(HTTP $code)."
+              jq -c '.errors // .errorMessages // .' /tmp/jira-response.json || true
+              exit 1
+            fi
+            gh issue edit "$ISSUE_NUMBER" --repo "$REPO" --title "[fix] $key $ISSUE_TITLE"
+          fi
+          echo "key=$key" >> "$GITHUB_OUTPUT"
+
       - name: Checkout analyzed commit
         if: ${{ needs.analyze.outputs.result == 'pr' && needs.verify.result == 'success' }}
         uses: actions/checkout@v4
@@ -233,8 +282,16 @@ jobs:
       - name: Push branch and comment PR link
         if: ${{ needs.analyze.outputs.result == 'pr' && needs.verify.result == 'success' }}
         working-directory: repo
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          JIRA_KEY: ${{ steps.jira.outputs.key }}
+          JIRA_BASE_URL: ${{ secrets.JIRA_BASE_URL }}
         run: |
-          branch="sentry/$ISSUE_NUMBER"
+          # 팀 브랜치 규칙 `<type>/#<이슈>-<슬러그>-<Jira 키>`. 슬러그는 Sentry ID(예: sentry-moadong-4r)라 재실행해도 같다.
+          sentry_id=$(grep -oE '\[Sentry [A-Za-z0-9-]+\]' <<<"$ISSUE_TITLE" | head -1 | sed -E 's/^\[Sentry (.*)\]$/\1/' | tr 'A-Z' 'a-z' || true)
+          branch="fix/#$ISSUE_NUMBER-sentry-${sentry_id:-fix}-$JIRA_KEY"
+          # URL 안의 `#`는 프래그먼트가 되므로 링크에서는 %23으로 바꾼다.
+          branch_url="${branch//#/%23}"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git apply ../sentry-fix-out/fix.patch
@@ -242,11 +299,12 @@ jobs:
           git commit -F ../sentry-fix-out/commit-message.txt
           # 라벨을 다시 붙여 재실행하면 같은 브랜치를 새 결과로 덮는다.
           git push --force origin "HEAD:refs/heads/$branch"
-          compare="https://github.com/$REPO/compare/develop-fe...$branch?quick_pull=1&title=$(head -n1 ../sentry-fix-out/pr-title.txt | tr -d '\n' | jq -sRr @uri)"
+          compare="https://github.com/$REPO/compare/develop-fe...$branch_url?quick_pull=1&title=$(head -n1 ../sentry-fix-out/pr-title.txt | tr -d '\n' | jq -sRr @uri)"
           {
             echo "수정 브랜치 \`$branch\`를 올렸어요. 검증(타입체크·린트·관련 테스트)은 통과했어요."
+            echo "Jira: [$JIRA_KEY]($JIRA_BASE_URL/browse/$JIRA_KEY)"
             echo
-            echo "1. diff를 먼저 확인해 주세요: https://github.com/$REPO/compare/develop-fe...$branch"
+            echo "1. diff를 먼저 확인해 주세요: https://github.com/$REPO/compare/develop-fe...$branch_url"
             echo "2. 문제없으면 PR을 열어 주세요: [PR 만들기]($compare). 본문은 아래를 붙여 넣으면 됩니다."
             echo "   PR을 열면 CI가 이 코드를 실행하니, diff를 보기 전에는 열지 마세요."
             echo
