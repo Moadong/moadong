@@ -27,7 +27,7 @@ export const MenuItem = styled.div<{ $danger?: boolean }>`
   gap: 11px;
   ${setTypography(typography.paragraph.p6)}
   letter-spacing: -0.02em;
-  color: ${({ $danger }) => ($danger ? '#FF3B30' : colors.gray[800])};
+  color: ${({ $danger }) => ($danger ? colors.primary[900] : colors.gray[800])};
   background-color: transparent;
   cursor: pointer;
   box-sizing: border-box;

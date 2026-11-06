@@ -3,7 +3,7 @@ import { STORAGE_KEYS } from '@/constants/storageKeys';
 const UUID_PATTERN =
   /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
 
-const createUuid = () => {
+export const createUuid = () => {
   if (typeof crypto.randomUUID === 'function') return crypto.randomUUID();
   const bytes = new Uint8Array(16);
   crypto.getRandomValues(bytes);

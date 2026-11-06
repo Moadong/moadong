@@ -77,8 +77,6 @@ export const USER_EVENT = {
   CLUB_CARD_VIEWED: 'Club Card Viewed',
   /** 스크롤 깊이 마일스톤 도달 */
   SCROLL_DEPTH_REACHED: 'Scroll Depth Reached',
-  /** 모집중만 보기 토글 클릭 */
-  STATUS_RADIO_BUTTON_CLICKED: 'Status Radio Button Clicked',
   /** 필터칩 클릭 */
   FILTER_OPTION_CLICKED: 'Filter Option Clicked',
   /** 하단 탭 클릭 */
