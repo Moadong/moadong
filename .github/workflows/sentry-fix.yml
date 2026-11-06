@@ -157,7 +157,8 @@ jobs:
           # --index로 새 파일(테스트 등)도 스테이징해야 아래 목록에 잡힌다.
           git apply --index sentry-fix-out/fix.patch
           # 에이전트가 새로 만들 수 있는 건 재현 테스트뿐이다. Edit 권한 규칙이 Write까지 열 수 있어 여기서 강제한다.
-          added=$(git diff --cached --name-only --diff-filter=A -- frontend/src | grep -vE '\.test\.tsx?$' || true)
+          # --no-renames: 기존 파일을 새 경로로 옮기는 패치는 rename(R)으로 잡혀 A 필터를 비켜 가므로 삭제+추가로 본다.
+          added=$(git diff --cached --name-only --no-renames --diff-filter=A -- frontend/src | grep -vE '\.test\.tsx?$' || true)
           if [[ -n "$added" ]]; then
             echo "::error::테스트가 아닌 새 파일: $added"
             exit 1
