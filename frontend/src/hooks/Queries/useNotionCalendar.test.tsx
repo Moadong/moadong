@@ -3,7 +3,11 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { renderHook, waitFor } from '@testing-library/react';
 import { fetchNotionDatabases, fetchNotionPages } from '@/apis/calendarOAuth';
 import { ApiError } from '@/errors';
-import { useGetNotionDatabases, useGetNotionPages } from './useNotionCalendar';
+import {
+  notionQueries,
+  useGetNotionDatabases,
+  useGetNotionPages,
+} from './useNotionCalendar';
 
 jest.mock('@/apis/calendarOAuth', () => ({
   fetchNotionDatabases: jest.fn(),
@@ -53,5 +57,11 @@ describe('useNotionCalendar', () => {
     const { result } = renderHook(() => useGetNotionPages(), { wrapper });
 
     await waitFor(() => expect(result.current.isError).toBe(true));
+  });
+
+  it('페이지 캐시 키는 데이터 타입이 다른 값을 거부한다', () => {
+    const queryClient = new QueryClient();
+    // @ts-expect-error totalResults가 빠진 값은 페이지 캐시에 넣을 수 없다
+    queryClient.setQueryData(notionQueries.pages().queryKey, { items: [] });
   });
 });

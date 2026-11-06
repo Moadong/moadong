@@ -1,10 +1,14 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  queryOptions,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import {
   disconnectNotionCalendar,
   fetchNotionDatabasePages,
   fetchNotionDatabases,
   fetchNotionPages,
-  type NotionPagesResponse,
 } from '@/apis/calendarOAuth';
 import { queryKeys } from '@/constants/queryKeys';
 import { ApiError } from '@/errors';
@@ -30,35 +34,38 @@ const isNotConnectedError = (error: unknown) => {
   return status === 401 || status === 403;
 };
 
-export const useGetNotionDatabases = () => {
-  return useQuery({
-    queryKey: queryKeys.notionCalendar.databases(),
-    queryFn: async () => {
-      try {
-        return await fetchNotionDatabases();
-      } catch (error) {
-        if (isNotConnectedError(error)) return [];
-        throw error;
-      }
-    },
-    staleTime: 5 * 60 * 1000,
-  });
+export const notionQueries = {
+  databases: () =>
+    queryOptions({
+      queryKey: queryKeys.notionCalendar.databases(),
+      queryFn: async () => {
+        try {
+          return await fetchNotionDatabases();
+        } catch (error) {
+          if (isNotConnectedError(error)) return [];
+          throw error;
+        }
+      },
+      staleTime: 5 * 60 * 1000,
+    }),
+  pages: () =>
+    queryOptions({
+      queryKey: queryKeys.notionCalendar.pages(),
+      queryFn: async () => {
+        try {
+          return await fetchNotionPages();
+        } catch (error) {
+          if (isNotConnectedError(error)) return null;
+          throw error;
+        }
+      },
+      staleTime: 5 * 60 * 1000,
+    }),
 };
 
-export const useGetNotionPages = () => {
-  return useQuery<NotionPagesResponse | null>({
-    queryKey: queryKeys.notionCalendar.pages(),
-    queryFn: async () => {
-      try {
-        return await fetchNotionPages();
-      } catch (error) {
-        if (isNotConnectedError(error)) return null;
-        throw error;
-      }
-    },
-    staleTime: 5 * 60 * 1000,
-  });
-};
+export const useGetNotionDatabases = () => useQuery(notionQueries.databases());
+
+export const useGetNotionPages = () => useQuery(notionQueries.pages());
 
 export const useDisconnectNotionCalendar = () => {
   const queryClient = useQueryClient();
@@ -77,7 +84,7 @@ export const useApplyNotionDatabase = () => {
     mutationFn: (databaseId: string) =>
       fetchNotionDatabasePages({ databaseId }),
     onSuccess: (response) => {
-      queryClient.setQueryData(queryKeys.notionCalendar.pages(), response);
+      queryClient.setQueryData(notionQueries.pages().queryKey, response);
     },
   });
 };
