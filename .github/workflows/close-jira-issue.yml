@@ -17,7 +17,8 @@ jobs:
           env:
             TITLE: ${{ github.event.issue.title }}
           run: |
-            ISSUE_KEY=$(echo "$TITLE" | grep -oE '[A-Z]+-[0-9]+' | head -1)
+            # Sentry 봇 이슈 제목의 `[Sentry MOADONG-4R]`을 Jira 키로 잘못 잡지 않게 Jira 프로젝트 키(MOA)만 본다.
+            ISSUE_KEY=$(echo "$TITLE" | grep -oE 'MOA-[0-9]+' | head -1)
             echo "JIRA_ISSUE_KEY=$ISSUE_KEY" >> $GITHUB_ENV
             echo "Extracted Jira Issue Key: $ISSUE_KEY"
 
