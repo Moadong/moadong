@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
@@ -31,7 +31,6 @@ const ClubCard = ({
 }: ClubCardProps) => {
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
-  const [isClicked, setIsClicked] = useState(false);
   const containerRef = useRef<HTMLDivElement>(null);
 
   const SS_LAST_KEY = `clubcard_last_${page ?? 'default'}_${club.id}`;
@@ -102,7 +101,6 @@ const ClubCard = ({
   }, [club.id, club.name, club.recruitmentStatus, page]);
 
   const handleClick = () => {
-    setIsClicked(true);
     trackEvent(USER_EVENT.CLUB_CARD_CLICKED, {
       club_id: club.id,
       club_name: club.name,
@@ -118,21 +116,17 @@ const ClubCard = ({
       device_type: getDeviceType(),
     });
 
-    setTimeout(() => {
-      setIsClicked(false);
-      if (onCardClick) {
-        onCardClick(club);
-      } else {
-        navigate(`/clubDetail/@${encodeURIComponent(club.name)}`);
-      }
-    }, 150);
+    if (onCardClick) {
+      onCardClick(club);
+    } else {
+      navigate(`/clubDetail/@${encodeURIComponent(club.name)}`);
+    }
   };
 
   return (
     <Styled.CardContainer
       ref={containerRef}
       $state={club.recruitmentStatus}
-      $isClicked={isClicked}
       onClick={handleClick}
     >
       <Styled.CardHeader>
