@@ -17,8 +17,9 @@ jobs:
           env:
             TITLE: ${{ github.event.issue.title }}
           run: |
-            # Sentry 봇 이슈 제목의 `[Sentry MOADONG-4R]`을 Jira 키로 잘못 잡지 않게 Jira 프로젝트 키(MOA)만 본다.
-            ISSUE_KEY=$(echo "$TITLE" | grep -oE 'MOA-[0-9]+' | head -1)
+            # 키는 Jira 연동이 붙이는 제목 맨 앞 `[type] MOA-키`에서만 읽는다. 제목 본문(Sentry 에러 메시지 등
+            # 누구나 넣을 수 있는 값)에 섞인 `MOA-123`이나 `[Sentry MOADONG-4R]`을 키로 잡으면 엉뚱한 Jira를 닫는다.
+            ISSUE_KEY=$(echo "$TITLE" | grep -oE '^\[[a-z]+\] MOA-[0-9]+' | grep -oE 'MOA-[0-9]+' | head -1)
             echo "JIRA_ISSUE_KEY=$ISSUE_KEY" >> $GITHUB_ENV
             echo "Extracted Jira Issue Key: $ISSUE_KEY"
 

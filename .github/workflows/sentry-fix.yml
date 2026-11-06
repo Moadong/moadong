@@ -249,7 +249,8 @@ jobs:
           # 이벤트 payload의 제목은 run을 시작한 시점 값이라 Actions에서 Re-run하면 키를 붙이기 전 제목이 들어온다.
           # 지금 제목을 읽어야 라벨 재부착과 Re-run 두 경로 모두 키를 다시 쓴다.
           ISSUE_TITLE=$(gh issue view "$ISSUE_NUMBER" --repo "$REPO" --json title --jq .title)
-          key=$(grep -oE 'MOA-[0-9]+' <<<"$ISSUE_TITLE" | head -1 || true)
+          # 이 단계가 붙인 맨 앞 `[fix] MOA-키`만 인정한다. 본문(위조 가능한 에러 메시지)의 키는 무시한다.
+          key=$(grep -oE '^\[fix\] MOA-[0-9]+' <<<"$ISSUE_TITLE" | grep -oE 'MOA-[0-9]+' || true)
           if [[ -z "$key" ]]; then
             summary=$(head -n1 sentry-fix-out/pr-title.txt | sed -E 's/^\[fix\] *//')
             # 라벨을 붙인 사람을 담당자로 둔다. 매핑이 없으면 비워 둔다.
@@ -271,10 +272,10 @@ jobs:
             code=$(curl -sS -o /tmp/jira-response.json -w '%{http_code}' -X POST \
               -u "$JIRA_USER_EMAIL:$JIRA_API_TOKEN" -H 'Content-Type: application/json' \
               --data-binary @/tmp/jira-payload.json "$JIRA_BASE_URL/rest/api/3/issue")
-            key=$(jq -r '.key // empty' /tmp/jira-response.json)
+            key=$(jq -r '.key // empty' /tmp/jira-response.json 2>/dev/null || true)
             if [[ "$code" != 201 || ! "$key" =~ ^MOA-[0-9]+$ ]]; then
               echo "::error::Jira 하위 작업을 만들지 못했다(HTTP $code)."
-              jq -c '.errors // .errorMessages // .' /tmp/jira-response.json || true
+              jq -c '{errorMessages, errors}' /tmp/jira-response.json 2>/dev/null || head -c 500 /tmp/jira-response.json
               exit 1
             fi
             gh issue edit "$ISSUE_NUMBER" --repo "$REPO" --title "[fix] $key $ISSUE_TITLE"
