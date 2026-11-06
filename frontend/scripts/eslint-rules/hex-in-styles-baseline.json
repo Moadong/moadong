@@ -19,9 +19,6 @@
     "#666666": 2,
     "#CCCCCC": 1
   },
-  "src/pages/AdminPage/components/AdminMoreMenu/AdminMoreMenu.styles.ts": {
-    "#FF3B30": 1
-  },
   "src/pages/AdminPage/components/ImageSortGrid/ImageSortGrid.styles.ts": {
     "#D9D9D9": 1
   },
@@ -52,11 +49,6 @@
   "src/pages/AdminPage/tabs/ClubInfoEditTab/components/desktop/SelectTags/SelectTags.styles.ts": {
     "#D1D5DB": 1,
     "#EA580C": 1
-  },
-  "src/pages/AdminPage/tabs/PhotoEditTab/PhotoEditTab.styles.ts": {
-    "#EF4444": 2,
-    "#FCA5A5": 1,
-    "#FFF1F2": 1
   },
   "src/pages/AdminPage/tabs/RecruitEditTab/components/MarkdownEditor/MarkdownEditor.styles.ts": {
     "#555555": 1,
