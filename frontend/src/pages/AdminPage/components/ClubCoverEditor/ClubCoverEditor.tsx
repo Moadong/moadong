@@ -1,10 +1,10 @@
 import { useRef } from 'react';
 import defaultCover from '@/assets/images/logos/default_profile_image.svg';
+import OutlinePillButton from '@/components/common/OutlinePillButton/OutlinePillButton';
 import { ADMIN_EVENT } from '@/constants/eventName';
 import { MAX_FILE_SIZE } from '@/constants/uploadLimit';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { useDeleteCover, useUploadCover } from '@/hooks/Queries/useClubCover';
-import OutlinePillButton from '@/pages/AdminPage/components/OutlinePillButton';
 import { useAdminClubId } from '@/store/useAdminClubStore';
 import * as Styled from './ClubCoverEditor.styles';
 

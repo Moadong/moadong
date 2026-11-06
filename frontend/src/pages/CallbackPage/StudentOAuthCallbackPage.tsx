@@ -59,7 +59,7 @@ const StudentOAuthCallbackPage = () => {
           accessToken,
         );
 
-        navigate(isNewUser ? '/profile/setup' : '/', { replace: true });
+        navigate(isNewUser ? '/onboarding/profile' : '/', { replace: true });
       } catch {
         navigate('/login', { replace: true });
       }
