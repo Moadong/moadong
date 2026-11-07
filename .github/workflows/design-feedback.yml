@@ -1,4 +1,4 @@
-name: Design feedback → fix branch
+name: Design feedback → draft PR
 
 on:
   issues:
@@ -11,12 +11,13 @@ permissions: {}
 concurrency: design-feedback-${{ github.event.issue.number }}-${{ github.event.label.name }}
 
 # 이슈 본문에는 실서비스 화면 텍스트(동아리 소개 등 누구나 쓸 수 있는 내용)가 섞여 들어온다.
-# 그래서 에이전트를 돌리는 job에는 쓰기 권한을 주지 않고, 사람이 diff를 보기 전에는 PR도 열지 않는다.
+# 그래서 에이전트를 돌리는 job에는 쓰기 권한을 주지 않고, 사람이 diff를 보기 전에는 시크릿을 쓰는 CI가 돌지 않게 한다.
 #   analyze: 에이전트가 스타일을 고치고 패치·PR 문구·되묻기 댓글을 파일로 남긴다. 읽기 토큰만 있다.
 #   verify:  시크릿·sudo 없이 패치를 적용해 타입체크·린트를 돌린다.
-#   publish: 에이전트 없이 고정 브랜치 design/<이슈번호>로 push하고 PR 만들기 링크를 댓글로 단다.
-#            PR을 자동으로 열면 사람이 보기 전에 frontend-ci가 쓰기 토큰을 가진 채 패치 코드를 실행한다.
-#            GITHUB_TOKEN으로 한 push는 다른 워크플로를 트리거하지 않는다.
+#   publish: 에이전트 없이 고정 브랜치 design/<이슈번호>로 push하고 draft PR을 연다.
+#            GITHUB_TOKEN으로 한 push·PR 생성은 다른 워크플로를 트리거하지 않는다. 그래서 chromatic·harry-review는
+#            사람이 Ready for review를 누를 때(ready_for_review) 처음 이 코드를 실행한다. 결정 기록은 위키 ADR-015.
+#            레포 설정 "Allow GitHub Actions to create and approve pull requests"가 켜져 있어야 PR을 만들 수 있다.
 # harry App 토큰은 쓰지 않는다. 설치된 App에는 contents 쓰기 권한이 없고, 있더라도 에이전트 손에 쓰기 토큰이 간다.
 
 jobs:
@@ -154,6 +155,28 @@ jobs:
           name: design-feedback-out
           path: design-feedback-out
 
+      # PR 제목·본문·커밋 메시지는 에이전트가 쓴 글이 그대로 PR에 올라가고, Ready 뒤 harry가 읽는다(커밋은 git log로).
+      # comment.md는 이슈 댓글로만 달리고 이를 읽는 에이전트가 없어 검사하지 않는다(되묻기만 있으면 이 job은 돌지도 않는다).
+      # 렌더링하면 안 보이는 곳(HTML 주석·태그, 링크 참조 정의, 링크 제목, 서식 문자)에 지시를 숨기면
+      # 사람이 PR 화면에서 못 본다. 숨길 자리를 하나씩 막는 대신, 규칙 파일의 본문 형식(표·제목·Close 줄)에
+      # 필요 없는 구문을 통째로 받지 않는다: `<`(HTML), `]:`(참조 정의·각주), `](`(링크·이미지),
+      # 유니코드 Cf 범주(태그 문자·제로폭·양방향 제어처럼 화면에 안 그려지는 문자).
+      - name: Check PR text
+        run: |
+          python3 - design-feedback-out/pr-title.txt design-feedback-out/pr-body.md design-feedback-out/commit-message.txt <<'PY'
+          import sys, unicodedata
+          bad = False
+          for path in sys.argv[1:]:
+              for n, line in enumerate(open(path, encoding='utf-8'), 1):
+                  hits = [s for s in ('<', ']:', '](') if s in line]
+                  if any(unicodedata.category(c) == 'Cf' for c in line):
+                      hits.append('보이지 않는 서식 문자')
+                  if hits:
+                      print(f"::error::{path}:{n}: 허용하지 않는 구문 {hits}")
+                      bad = True
+          sys.exit(1 if bad else 0)
+          PY
+
       - name: Apply patch
         id: apply
         run: |
@@ -161,6 +184,13 @@ jobs:
           outside=$(git apply --numstat design-feedback-out/fix.patch | cut -f3 | grep -v '^frontend/src/' || true)
           if [[ -n "$outside" ]]; then
             echo "::error::frontend/src 밖의 변경: $outside"
+            exit 1
+          fi
+          # frontend/src 안에도 CLAUDE.md가 있다. Ready 뒤 harry 같은 에이전트가 이 파일을 지시로 읽으므로
+          # 스타일 수정에 필요 없는 마크다운 변경은 받지 않는다.
+          docs=$(git apply --numstat design-feedback-out/fix.patch | cut -f3 | grep -E '\.md$' || true)
+          if [[ -n "$docs" ]]; then
+            echo "::error::마크다운 변경은 받지 않는다: $docs"
             exit 1
           fi
           # --index로 적용해야 새 파일도 아래 목록에 잡힌다.
@@ -205,6 +235,7 @@ jobs:
     permissions:
       contents: write
       issues: write
+      pull-requests: write
     env:
       GH_TOKEN: ${{ github.token }}
       ISSUE_NUMBER: ${{ github.event.issue.number }}
@@ -235,33 +266,54 @@ jobs:
           ref: ${{ needs.analyze.outputs.base_sha }}
           path: repo
 
-      - name: Push branch and comment PR link
+      - name: Push branch and open draft PR
         if: ${{ needs.analyze.outputs.has_patch == 'true' && needs.verify.result == 'success' }}
         working-directory: repo
         run: |
+          out=../design-feedback-out
           branch="design/$ISSUE_NUMBER"
           git config user.name "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git apply ../design-feedback-out/fix.patch
+          git apply "$out/fix.patch"
           git add -A frontend/src
-          git commit -F ../design-feedback-out/commit-message.txt
+          git commit -F "$out/commit-message.txt"
+
+          # --head는 브랜치 이름만 보고 포크 PR까지 잡는다. 포크에 같은 이름 브랜치로 먼저 연 PR을
+          # 봇 수정안으로 착각해 덮어쓰지 않게 이 레포 브랜치 PR만 고른다.
+          existing=$(gh pr list --repo "$REPO" --head "$branch" --state open \
+            --json url,isDraft,isCrossRepository \
+            --jq 'map(select(.isCrossRepository | not)) | .[0] // empty | "\(.url) \(.isDraft)"')
+          pr= is_draft=
+          if [[ -n $existing ]]; then
+            read -r pr is_draft <<<"$existing"
+          fi
+          # 사람이 Ready를 눌렀더라도 코드가 바뀌니 다시 승인을 받는다.
+          # push보다 먼저 돌려야 검토 안 된 코드가 Ready 상태로 올라가는 틈이 없다.
+          if [[ $is_draft == false ]]; then
+            gh pr ready "$pr" --repo "$REPO" --undo
+          fi
+
           # 라벨을 다시 붙여 재실행하면 같은 브랜치를 새 결과로 덮는다.
           git push --force origin "HEAD:refs/heads/$branch"
-          compare="https://github.com/$REPO/compare/develop-fe...$branch?quick_pull=1&title=$(head -n1 ../design-feedback-out/pr-title.txt | tr -d '\n' | jq -sRr @uri)"
+
+          # 제목은 에이전트가 정한 값이라 --title=로 붙여 넘긴다. -로 시작해도 옵션으로 읽히지 않는다.
+          title=$(head -n1 "$out/pr-title.txt" | tr -d '\n')
+          if [[ -z $pr ]]; then
+            pr=$(gh pr create --repo "$REPO" --draft --base develop-fe --head "$branch" \
+              --title="$title" --body-file "$out/pr-body.md")
+            done_msg="디자인 수정안으로 draft PR을 열었어요"
+          else
+            gh pr edit "$pr" --repo "$REPO" --title="$title" --body-file "$out/pr-body.md"
+            done_msg="PR을 새 수정안으로 바꾸고 draft로 뒀어요"
+          fi
+
           {
-            echo "디자인 수정 브랜치 \`$branch\`를 올렸어요. 검증(타입체크·린트)은 통과했어요."
+            echo "$done_msg: $pr"
+            echo "검증(타입체크·린트)은 통과했어요."
             echo
-            echo "1. diff를 먼저 확인해 주세요: https://github.com/$REPO/compare/develop-fe...$branch"
-            echo "2. 문제없으면 PR을 열어 주세요: [PR 만들기]($compare). 본문은 아래를 붙여 넣으면 됩니다."
-            echo "   PR을 열면 CI가 이 코드를 실행하니, diff를 보기 전에는 열지 마세요."
-            echo "3. PR에 Vercel 프리뷰 댓글이 달리면 거기서 화면을 확인해 주세요."
-            echo
-            echo '<details><summary>PR 본문</summary>'
-            echo
-            echo '````markdown'
-            cat ../design-feedback-out/pr-body.md
-            echo '````'
-            echo '</details>'
+            echo "1. PR의 Files changed와 Vercel 프리뷰로 확인해 주세요."
+            echo "2. 괜찮으면 **Ready for review**를 눌러 주세요. 그때부터 CI와 리뷰봇이 이 코드를 실행해요."
+            echo "3. 아니면 PR을 닫으면 돼요."
           } > /tmp/comment.md
           gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md
 
