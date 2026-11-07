@@ -91,7 +91,7 @@ export const Tab = styled.button<{ $active?: boolean }>`
 export const TotalCountResult = styled.span`
   font-size: 18px;
   font-weight: bold;
-  color: ${({ theme }) => theme.colors.gray[700]};
+  color: ${({ theme }) => theme.colors.base.black};
 
   ${media.mobile} {
     font-size: 12px;
