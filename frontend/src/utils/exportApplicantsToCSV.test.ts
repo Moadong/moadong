@@ -76,9 +76,12 @@ describe('exportApplicantsToCSV', () => {
   });
 
   it('올바른 파일명으로 다운로드된다', () => {
+    jest.useFakeTimers();
+    jest.setSystemTime(new Date(2024, 0, 5));
     exportApplicantsToCSV(mockApplicants, mockQuestions, '동아리_지원서');
-    expect(mockLink.download).toMatch(/^동아리_지원서_\d{8}\.csv$/);
+    expect(mockLink.download).toBe('동아리_지원서_20240105.csv');
     expect(mockClick).toHaveBeenCalledTimes(1);
+    jest.useRealTimers();
   });
 
   it('헤더가 지원자ID, 제출일시, 상태, 질문 제목, 메모 순서로 생성된다', () => {

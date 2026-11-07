@@ -237,7 +237,7 @@ const ApplicantsTabDesktop = () => {
     );
   };
 
-  const handleExportCSV = useExportApplicantsCSV(
+  const { handleExportCSV, isReady: isCsvReady } = useExportApplicantsCSV(
     applicationFormId,
     filteredApplicants,
     checkedIds,
@@ -543,9 +543,11 @@ const ApplicantsTabDesktop = () => {
         <Styled.TableFooter>
           <Styled.CsvButton
             onClick={handleExportCSV}
-            disabled={filteredApplicants.length === 0}
+            disabled={!isCsvReady || filteredApplicants.length === 0}
           >
-            <Styled.CsvIcon $disabled={filteredApplicants.length === 0} />
+            <Styled.CsvIcon
+              $disabled={!isCsvReady || filteredApplicants.length === 0}
+            />
             {checkedIds.size > 0
               ? `선택 내보내기 (${checkedIds.size})`
               : currentFilter === 'ALL'

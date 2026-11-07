@@ -1,3 +1,4 @@
+import { format } from 'date-fns';
 import { Applicant } from '@/types/applicants';
 import { Question } from '@/types/application';
 import mapStatusToGroup from '@/utils/mapStatusToGroup';
@@ -47,8 +48,7 @@ export const exportApplicantsToCSV = (
     type: 'text/csv;charset=utf-8;',
   });
 
-  const today = new Date();
-  const dateStr = `${today.getFullYear()}${String(today.getMonth() + 1).padStart(2, '0')}${String(today.getDate()).padStart(2, '0')}`;
+  const dateStr = format(new Date(), 'yyyyMMdd');
 
   const url = URL.createObjectURL(blob);
   const link = document.createElement('a');

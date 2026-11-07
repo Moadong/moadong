@@ -16,6 +16,8 @@ const useExportApplicantsCSV = (
     formId,
   );
 
+  const isReady = !!applicationData?.questions;
+
   const handleExportCSV = () => {
     if (!applicationData?.questions) return;
     const questions = applicationData.questions;
@@ -28,7 +30,7 @@ const useExportApplicantsCSV = (
     exportApplicantsToCSV(toExport, questions, `${clubName}_${formTitle}`);
   };
 
-  return handleExportCSV;
+  return { handleExportCSV, isReady };
 };
 
 export default useExportApplicantsCSV;
