@@ -98,7 +98,17 @@ describe('SatisfactionModal', () => {
     );
   });
 
-  it('리뷰 모달에서 「나중에 할게요」는 스토어로 보내지 않고 스누즈한다', async () => {
+  it('첫 질문에 답하면 리뷰 모달을 닫지 않아도 다시 묻지 않도록 기록한다', async () => {
+    renderModal();
+
+    await userEvent.click(screen.getByRole('button', { name: '좋아요!' }));
+
+    expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBe(
+      'true',
+    );
+  });
+
+  it('리뷰 모달에서 「나중에 할게요」는 스토어로 보내지 않고 닫기만 한다', async () => {
     renderModal();
 
     await userEvent.click(screen.getByRole('button', { name: '좋아요!' }));
@@ -108,10 +118,14 @@ describe('SatisfactionModal', () => {
 
     expect(window.open).not.toHaveBeenCalled();
     expect(screen.queryByText('앱이 마음에 드시나요?')).not.toBeInTheDocument();
-    expect(trackedNames()).toContain(USER_EVENT.SATISFACTION_SNOOZED);
-    expect(localStorage.getItem(STORAGE_KEYS.VISIT_DAY_COUNT)).toBe('0');
-    expect(localStorage.getItem(STORAGE_KEYS.CLUB_VIEW_COUNT)).toBe('0');
-    expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBeNull();
+    expect(mixpanel.track).toHaveBeenCalledWith(
+      USER_EVENT.SATISFACTION_SNOOZED,
+      expect.objectContaining({ step: 'review' }),
+    );
+    expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBe(
+      'true',
+    );
+    expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_SNOOZED)).toBeNull();
   });
 
   it('「아쉬워요」는 불만으로 남기고 피드백 유도 모달을 띄운다', async () => {
@@ -141,7 +155,7 @@ describe('SatisfactionModal', () => {
     expect(window.open).not.toHaveBeenCalled();
   });
 
-  it('피드백 모달에서 「다음에 할게요」는 피드백 없이 스누즈한다', async () => {
+  it('피드백 모달에서 「다음에 할게요」는 피드백 없이 닫기만 한다', async () => {
     renderModal();
 
     await userEvent.click(screen.getByRole('button', { name: '아쉬워요' }));
@@ -151,18 +165,52 @@ describe('SatisfactionModal', () => {
 
     expect(mockNavigate).not.toHaveBeenCalled();
     expect(screen.queryByText('함께 개선해요')).not.toBeInTheDocument();
-    expect(trackedNames()).toContain(USER_EVENT.SATISFACTION_SNOOZED);
-    expect(localStorage.getItem(STORAGE_KEYS.VISIT_DAY_COUNT)).toBe('0');
-    expect(localStorage.getItem(STORAGE_KEYS.CLUB_VIEW_COUNT)).toBe('0');
-    expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBeNull();
+    expect(mixpanel.track).toHaveBeenCalledWith(
+      USER_EVENT.SATISFACTION_SNOOZED,
+      expect.objectContaining({ step: 'feedback' }),
+    );
+    expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBe(
+      'true',
+    );
+    expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_SNOOZED)).toBeNull();
   });
 
-  it('ESC 키로 닫으면 스누즈한다', async () => {
+  it.each([
+    ['좋아요!', 'review'],
+    ['아쉬워요', 'feedback'],
+  ])(
+    '「%s」 뒤 안내 모달을 ESC 키로 닫으면 스누즈하지 않는다',
+    async (answerLabel, step) => {
+      renderModal();
+
+      await userEvent.click(screen.getByRole('button', { name: answerLabel }));
+      await userEvent.keyboard('{Escape}');
+
+      expect(mixpanel.track).toHaveBeenCalledWith(
+        USER_EVENT.SATISFACTION_SNOOZED,
+        expect.objectContaining({ step }),
+      );
+      expect(
+        localStorage.getItem(STORAGE_KEYS.SATISFACTION_SNOOZED),
+      ).toBeNull();
+      expect(localStorage.getItem(STORAGE_KEYS.CLUB_VIEW_COUNT)).toBe(
+        String(SATISFACTION_ASK_THRESHOLD),
+      );
+    },
+  );
+
+  it('첫 질문을 ESC 키로 닫으면 스누즈한다', async () => {
     renderModal();
 
     await userEvent.keyboard('{Escape}');
 
-    expect(trackedNames()).toContain(USER_EVENT.SATISFACTION_SNOOZED);
+    expect(mixpanel.track).toHaveBeenCalledWith(
+      USER_EVENT.SATISFACTION_SNOOZED,
+      expect.objectContaining({ step: 'question' }),
+    );
+    expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_SNOOZED)).toBe(
+      'true',
+    );
     expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBeNull();
   });
 });

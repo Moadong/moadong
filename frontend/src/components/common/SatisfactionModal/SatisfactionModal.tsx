@@ -21,10 +21,10 @@ const SATISFACTION_MODAL_TEXT = {
 /**
  * 충분히 써본 사용자에게 만족도를 묻는다 (시안 11170:1014).
  * 만족하면 스토어 리뷰 유도 모달을, 아쉬우면 피드백 유도 모달을 한 번 더 띄운다.
- * ESC·백드롭 클릭은 스누즈로 처리한다.
+ * 첫 질문을 ESC로 닫으면 스누즈다. 답한 뒤의 안내 모달은 넘겨도 다시 묻지 않는다.
  */
 const SatisfactionModal = () => {
-  const { isOpen, closeFirst, closeForever, snooze } = useSatisfactionSurvey();
+  const { isOpen, answer, snooze } = useSatisfactionSurvey();
   const [isReviewModalOpen, setIsReviewModalOpen] = useState(false);
   const [isFeedbackModalOpen, setIsFeedbackModalOpen] = useState(false);
   const trackEvent = useMixpanelTrack();
@@ -42,35 +42,42 @@ const SatisfactionModal = () => {
 
   const handleSatisfied = () => {
     trackEvent(USER_EVENT.SATISFACTION_ANSWERED, { satisfied: true });
-    closeFirst();
+    answer();
     setIsReviewModalOpen(true);
   };
 
   // 불만은 스토어로 보내지 않는다. 우리가 먼저 받는다.
   const handleUnsatisfied = () => {
     trackEvent(USER_EVENT.SATISFACTION_ANSWERED, { satisfied: false });
-    closeFirst();
+    answer();
     setIsFeedbackModalOpen(true);
   };
 
   const handleReviewConfirm = () => {
     trackEvent(USER_EVENT.SATISFACTION_REVIEW_CLICKED);
-    closeForever();
     setIsReviewModalOpen(false);
     handleLink(isIOS() ? APP_STORE_REVIEW_URL : PLAY_STORE_REVIEW_URL);
   };
 
   const handleFeedbackConfirm = () => {
     trackEvent(USER_EVENT.SATISFACTION_FEEDBACK_CLICKED);
-    closeForever();
     setIsFeedbackModalOpen(false);
     navigate('/feedback/write');
   };
 
   const handleSnooze = () => {
-    trackEvent(USER_EVENT.SATISFACTION_SNOOZED);
+    trackEvent(USER_EVENT.SATISFACTION_SNOOZED, { step: 'question' });
     snooze();
+  };
+
+  // 이미 답했으므로 스누즈가 아니다. 이벤트만 같은 이름에 step으로 나눠 남긴다.
+  const handleReviewLater = () => {
+    trackEvent(USER_EVENT.SATISFACTION_SNOOZED, { step: 'review' });
     setIsReviewModalOpen(false);
+  };
+
+  const handleFeedbackLater = () => {
+    trackEvent(USER_EVENT.SATISFACTION_SNOOZED, { step: 'feedback' });
     setIsFeedbackModalOpen(false);
   };
 
@@ -93,7 +100,7 @@ const SatisfactionModal = () => {
       />
       <ConfirmModal
         isOpen={isReviewModalOpen}
-        onClose={handleSnooze}
+        onClose={handleReviewLater}
         title='앱이 마음에 드시나요?'
         description={SATISFACTION_MODAL_TEXT.REVIEW}
         variant='check'
@@ -101,7 +108,7 @@ const SatisfactionModal = () => {
           {
             label: '나중에 할게요',
             variant: 'secondary',
-            onClick: handleSnooze,
+            onClick: handleReviewLater,
           },
           {
             label: '물론이죠!',
@@ -112,7 +119,7 @@ const SatisfactionModal = () => {
       />
       <ConfirmModal
         isOpen={isFeedbackModalOpen}
-        onClose={handleSnooze}
+        onClose={handleFeedbackLater}
         title='함께 개선해요'
         description={SATISFACTION_MODAL_TEXT.FEEDBACK}
         variant='warning'
@@ -120,7 +127,7 @@ const SatisfactionModal = () => {
           {
             label: '다음에 할게요',
             variant: 'secondary',
-            onClick: handleSnooze,
+            onClick: handleFeedbackLater,
           },
           {
             label: '피드백하기',

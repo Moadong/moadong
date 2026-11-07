@@ -41,7 +41,7 @@ export const USER_EVENT = {
   SATISFACTION_MODAL_VIEWED: 'Satisfaction Modal Viewed',
   /** 만족도 응답 (satisfied로 긍정/부정 구분) */
   SATISFACTION_ANSWERED: 'Satisfaction Answered',
-  /** 만족도 응답 미룸 */
+  /** 만족도 미룸·넘김 (step: question 첫 질문 미룸, review·feedback 답한 뒤 안내 넘김) */
   SATISFACTION_SNOOZED: 'Satisfaction Snoozed',
   /** 만족도 리뷰 이동 */
   SATISFACTION_REVIEW_CLICKED: 'Satisfaction Review Clicked',
