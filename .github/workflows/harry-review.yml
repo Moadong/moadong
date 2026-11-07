@@ -173,10 +173,12 @@ jobs:
     # - 사람(비봇) 답글만 반응: 봇 답글(harry 자신 포함)에 반응하면 무한 루프.
     # - in_reply_to_id 있는 답글만: 최초 인라인 코멘트나 새 top-level 코멘트엔 반응 안 함.
     # - 포크 PR 제외(프롬프트 인젝션) + main 대상 제외 — 리뷰 job과 동일 정책.
+    # - draft 제외도 리뷰 job과 같다. 디자인 피드백 PR은 재실행되면 검토 전 코드로 draft에 돌아온다(위키 ADR-015).
     # - '스레드 루트가 harry인지'는 harry가 프롬프트에서 확인 후, 아니면 아무것도 안 한다.
     if: >-
       ${{ github.event_name == 'pull_request_review_comment'
       && github.event.action == 'created'
+      && github.event.pull_request.draft == false
       && github.event.comment.user.type != 'Bot'
       && contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
       && github.event.comment.in_reply_to_id != null
