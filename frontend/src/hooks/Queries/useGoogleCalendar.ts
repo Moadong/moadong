@@ -67,6 +67,9 @@ export const useSelectGoogleCalendar = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.googleCalendar.calendars(),
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allCalendarEvents,
+      });
     },
   });
 };
@@ -78,6 +81,9 @@ export const useDisconnectGoogleCalendar = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.googleCalendar.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allCalendarEvents,
       });
     },
   });

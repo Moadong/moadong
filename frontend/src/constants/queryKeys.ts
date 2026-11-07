@@ -34,6 +34,8 @@ export const queryKeys = {
     all: ['clubs'] as const,
     allDetails: ['clubDetail'] as const,
     detail: (clubParam: string) => ['clubDetail', clubParam] as const,
+    /** 공개 캘린더 키는 동아리 이름·id 어느 쪽으로도 만들어져, 관리자 화면은 이 접두사로 한꺼번에 무효화한다 */
+    allCalendarEvents: ['clubCalendarEvents'] as const,
     calendarEvents: (clubParam: string) =>
       ['clubCalendarEvents', clubParam] as const,
     list: (
