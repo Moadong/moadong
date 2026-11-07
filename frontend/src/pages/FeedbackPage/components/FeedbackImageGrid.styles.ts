@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
+import { setTypography, typography } from '@/styles/theme/typography';
 
 /**
  * 시안(11435:17403): 107px 정사각 3열, 가로·세로 간격 7px.
@@ -48,5 +49,47 @@ export const RemoveButton = styled.button`
     content: '';
     position: absolute;
     inset: -11px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+`;
+
+/**
+ * 시안에 없는 상태라 활동사진 편집(ImageSortGrid)의 오버레이를 썸네일 모양에 맞춰 옮겼다.
+ * colors에 반투명 토큰이 없어 배경색은 ImageSortGrid 값을 그대로 둔다. 토큰으로 모을 때 두 곳을 같이 바꾼다.
+ */
+export const Overlay = styled.div<{ $error?: boolean }>`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border-radius: 10px;
+  background: ${({ $error }) =>
+    $error ? 'rgba(239, 68, 68, 0.5)' : 'rgba(0, 0, 0, 0.4)'};
+`;
+
+export const StatusText = styled.span`
+  ${setTypography(typography.button.button2)}
+  color: ${colors.base.white};
+`;
+
+export const RetryButton = styled.button`
+  padding: 4px 12px;
+  border: 1.5px solid ${colors.base.white};
+  border-radius: 6px;
+  background: transparent;
+  ${setTypography(typography.button.button2)}
+  color: ${colors.base.white};
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
   }
 `;

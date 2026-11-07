@@ -1,4 +1,4 @@
-import { ImageItem } from './types';
+import { ImageItem } from '@/types/imageItem';
 
 // 화면 순서(items)를 그대로 보존한 최종 URL 배열을 만든다.
 // 업로드되지 않아 URL이 없는 local 아이템은 제외된다.

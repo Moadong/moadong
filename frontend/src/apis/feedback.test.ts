@@ -92,15 +92,14 @@ describe('feedback API', () => {
         failureReason: null,
       }));
 
-    it('presigned를 받아 업로드하고 finalUrl 배열을 반환한다', async () => {
+    it('presigned를 받아 업로드하고 파일별 finalUrl을 반환한다', async () => {
       mockJson({ data: presignedOf(['a.jpg', 'b.jpg']) });
       fetchMock.mockResponseOnce('', { status: 200 }); // PUT a.jpg
       fetchMock.mockResponseOnce('', { status: 200 }); // PUT b.jpg
 
-      const result = await uploadFeedbackImages([
-        makeFile('a.jpg'),
-        makeFile('b.jpg'),
-      ]);
+      const a = makeFile('a.jpg');
+      const b = makeFile('b.jpg');
+      const result = await uploadFeedbackImages([a, b]);
 
       expect(fetchMock.mock.calls[0][0]).toBe(
         `${FEEDBACK_BASE_URL}/images/upload-url`,
@@ -115,13 +114,29 @@ describe('feedback API', () => {
       expect(fetchMock.mock.calls[1][1]?.method).toBe('PUT');
 
       // 저장에 쓰는 값은 presignedUrl이 아니라 finalUrl이다
-      expect(result).toEqual([
+      expect(result.urlByFile.get(a)).toBe(
         'https://r2.test/feedback/student-1/a.jpg',
+      );
+      expect(result.urlByFile.get(b)).toBe(
         'https://r2.test/feedback/student-1/b.jpg',
-      ]);
+      );
+      expect(result.failedFiles).toEqual([]);
     });
 
-    it('항목이 하나라도 실패하면 업로드하지 않고 에러를 던진다', async () => {
+    it('PUT이 한 장만 실패하면 나머지 결과는 살려 둔다', async () => {
+      mockJson({ data: presignedOf(['a.jpg', 'b.jpg']) });
+      fetchMock.mockResponseOnce('', { status: 200 }); // PUT a.jpg
+      fetchMock.mockResponseOnce('', { status: 500 }); // PUT b.jpg
+
+      const a = makeFile('a.jpg');
+      const b = makeFile('b.jpg');
+      const result = await uploadFeedbackImages([a, b]);
+
+      expect([...result.urlByFile.keys()]).toEqual([a]);
+      expect(result.failedFiles).toEqual([b]);
+    });
+
+    it('발급에 실패한 항목은 PUT 없이 그 파일만 실패로 둔다', async () => {
       mockJson({
         data: [
           ...presignedOf(['a.jpg']),
@@ -133,13 +148,24 @@ describe('feedback API', () => {
           },
         ],
       });
+      fetchMock.mockResponseOnce('', { status: 200 }); // PUT a.jpg
+
+      const a = makeFile('a.jpg');
+      const b = makeFile('b.jpg');
+      const result = await uploadFeedbackImages([a, b]);
+
+      expect([...result.urlByFile.keys()]).toEqual([a]);
+      expect(result.failedFiles).toEqual([b]);
+      // 발급 1건 + a의 PUT 1건 — b는 PUT이 나가지 않았다
+      expect(fetchMock.mock.calls).toHaveLength(2);
+    });
+
+    it('발급 요청 자체가 실패하면 에러를 던진다', async () => {
+      fetchMock.mockResponseOnce('', { status: 500 });
 
       await expect(uploadFeedbackImages([makeFile('a.jpg')])).rejects.toThrow(
-        'TOO_MANY_FILES',
+        '이미지 업로드 준비에 실패했습니다.',
       );
-
-      // 발급 요청 1건뿐 — PUT은 나가지 않았다
-      expect(fetchMock.mock.calls).toHaveLength(1);
     });
   });
 
