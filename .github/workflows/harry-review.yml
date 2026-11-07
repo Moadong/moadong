@@ -89,12 +89,15 @@ jobs:
     #   매 push마다 돌지 않게 해 비용/노이즈를 줄인다.
     # - 포크 PR은 제외: 프롬프트 인젝션 + 쓰기 권한이 겹치면 위험하다(리뷰 job과 동일 정책).
     # - 룰은 절대 자동 머지하지 않는다. 항상 사람이 검토 후 머지한다.
+    # - 디자인 피드백 PR(design/*)은 제외: 제목·본문·diff를 에이전트가 썼는데, 이 job은 제한 없는 Bash와
+    #   쓰기 토큰을 쥔다. Ready를 눌러도 렌더링된 본문에 숨은 지시까지 사람이 본 건 아니다(위키 ADR-015).
     if: >-
       ${{ github.event_name == 'pull_request'
       && (github.event.action == 'opened'
       || github.event.action == 'ready_for_review'
       || (github.event.action == 'edited' && github.event.changes.base.ref.from == 'main'))
       && github.event.pull_request.draft == false
+      && !startsWith(github.event.pull_request.head.ref, 'design/')
       && github.event.pull_request.head.repo.full_name == github.repository
       && github.event.pull_request.base.ref != 'main' }}
     # 같은 PR을 re-run 하거나 직전 룰 PR이 아직 안 머지된 경우 같은 브랜치명이 겹쳐
