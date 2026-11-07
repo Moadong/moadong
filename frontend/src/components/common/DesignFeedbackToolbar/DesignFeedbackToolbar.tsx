@@ -38,6 +38,9 @@ const resolveEnabled = () => {
 const ISSUE_FORM_URL =
   'https://github.com/Moadong/moadong/issues/new?template=design-feedback.yml';
 
+/** design-feedback.yml의 title과 맞춘다. title을 넘기면 템플릿 제목을 덮어쓴다 */
+const ISSUE_TITLE_PREFIX = '[design]';
+
 // 실측(2026-09-30): feedback 값이 7,000자쯤부터 500, 8,200자부터 414가 난다. 넉넉히 아래로 끊는다.
 // 한글은 encodeURIComponent를 거치며 한 자가 9자로 부푸니 인코딩한 뒤 길이로 재야 한다.
 const MAX_ISSUE_URL_LENGTH = 6000;
@@ -53,7 +56,7 @@ const MAX_TITLE_MEMO_LENGTH = 40;
 
 const FEEDBACK_LINE = /^\*\*Feedback:\*\*[ \t]*(.+)$/gm;
 
-// 템플릿 기본 제목('[design] ')만으로는 이슈 목록에서 무슨 피드백인지 알 수 없다.
+// 템플릿 기본 제목(ISSUE_TITLE_PREFIX)만으로는 이슈 목록에서 무슨 피드백인지 알 수 없다.
 // 첫 메모와 나머지 개수로 채운다. 메모 줄을 못 찾으면 null을 돌려 템플릿 제목을 그대로 쓴다.
 const buildIssueTitle = (markdown: string) => {
   const memos = Array.from(markdown.matchAll(FEEDBACK_LINE), (m) =>
@@ -67,7 +70,7 @@ const buildIssueTitle = (markdown: string) => {
       ? `${chars.slice(0, MAX_TITLE_MEMO_LENGTH).join('')}…`
       : memos[0];
   const rest = memos.length > 1 ? ` 외 ${memos.length - 1}건` : '';
-  return `[design] ${first}${rest}`;
+  return `${ISSUE_TITLE_PREFIX} ${first}${rest}`;
 };
 
 const buildIssueUrl = (feedback: string, title: string | null) =>
