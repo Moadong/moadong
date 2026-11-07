@@ -93,7 +93,7 @@ describe('DesignFeedbackToolbar', () => {
     setItem.mockRestore();
   });
 
-  it('복사하면 피드백이 채워진 이슈 폼을 연다', async () => {
+  it('복사하면 피드백이 채워진 이슈 폼을 연다 (메모 줄이 없으면 제목은 템플릿 그대로)', async () => {
     const open = jest.spyOn(window, 'open').mockImplementation(() => null);
     setSearch('?design=1');
     render(<DesignFeedbackToolbar />);
@@ -136,6 +136,59 @@ describe('DesignFeedbackToolbar', () => {
 
     expect(() => mockOnCopy?.('🎨'.repeat(2000))).not.toThrow();
     expect(open).toHaveBeenCalledTimes(1);
+    open.mockRestore();
+  });
+
+  it('첫 메모로 이슈 제목을 채운다', async () => {
+    const open = jest.spyOn(window, 'open').mockImplementation(() => null);
+    setSearch('?design=1');
+    render(<DesignFeedbackToolbar />);
+    await screen.findByTestId('agentation');
+
+    mockOnCopy?.(
+      '## Page Feedback: /?design=1\n### 1. "전체 69개의 동아리"\n**Feedback:** 색상 검은색으로 설정해줘.',
+    );
+
+    const [url] = open.mock.calls[0] as [string];
+    expect(new URL(url).searchParams.get('title')).toBe(
+      '[design] 색상 검은색으로 설정해줘.',
+    );
+    open.mockRestore();
+  });
+
+  it('메모가 여럿이면 나머지는 개수로, 긴 메모는 40자로 줄여 적는다', async () => {
+    const open = jest.spyOn(window, 'open').mockImplementation(() => null);
+    setSearch('?design=1');
+    render(<DesignFeedbackToolbar />);
+    await screen.findByTestId('agentation');
+
+    const long = '가'.repeat(41);
+    mockOnCopy?.(
+      `**Feedback:** ${long}\n**Feedback:** 두 번째\n**Feedback:** 세 번째`,
+    );
+
+    const [url] = open.mock.calls[0] as [string];
+    expect(new URL(url).searchParams.get('title')).toBe(
+      `[design] ${'가'.repeat(40)}… 외 2건`,
+    );
+    open.mockRestore();
+  });
+
+  it('본문이 잘려도 제목의 메모 개수는 전체 기준이다', async () => {
+    const open = jest.spyOn(window, 'open').mockImplementation(() => null);
+    setSearch('?design=1');
+    render(<DesignFeedbackToolbar />);
+    await screen.findByTestId('agentation');
+
+    mockOnCopy?.(
+      `**Feedback:** 첫 메모\n${'줄'.repeat(1000)}\n**Feedback:** 마지막 메모`,
+    );
+
+    const [url] = open.mock.calls[0] as [string];
+    expect(url.length).toBeLessThanOrEqual(6000);
+    const params = new URL(url).searchParams;
+    expect(params.get('title')).toBe('[design] 첫 메모 외 1건');
+    expect(params.get('feedback')).not.toContain('마지막 메모');
     open.mockRestore();
   });
 
