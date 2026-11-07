@@ -48,20 +48,45 @@ const TRUNCATED_NOTE =
 /** 한계를 넘으면 남길 글자 수를 이 비율로 줄여 가며 다시 잰다 */
 const TRUNCATE_STEP_RATIO = 0.9;
 
-const buildIssueUrl = (feedback: string) =>
-  `${ISSUE_FORM_URL}&feedback=${encodeURIComponent(feedback)}`;
+/** 제목에 넣을 첫 메모 글자 수. 이슈 목록에서 한 줄에 보이는 정도 */
+const MAX_TITLE_MEMO_LENGTH = 40;
+
+const FEEDBACK_LINE = /^\*\*Feedback:\*\*[ \t]*(.+)$/gm;
+
+// 템플릿 기본 제목('[design] ')만으로는 이슈 목록에서 무슨 피드백인지 알 수 없다.
+// 첫 메모와 나머지 개수로 채운다. 메모 줄을 못 찾으면 null을 돌려 템플릿 제목을 그대로 쓴다.
+const buildIssueTitle = (markdown: string) => {
+  const memos = Array.from(markdown.matchAll(FEEDBACK_LINE), (m) =>
+    m[1].trim(),
+  ).filter(Boolean);
+  if (memos.length === 0) return null;
+
+  const chars = Array.from(memos[0]);
+  const first =
+    chars.length > MAX_TITLE_MEMO_LENGTH
+      ? `${chars.slice(0, MAX_TITLE_MEMO_LENGTH).join('')}…`
+      : memos[0];
+  const rest = memos.length > 1 ? ` 외 ${memos.length - 1}건` : '';
+  return `[design] ${first}${rest}`;
+};
+
+const buildIssueUrl = (feedback: string, title: string | null) =>
+  `${ISSUE_FORM_URL}${title ? `&title=${encodeURIComponent(title)}` : ''}` +
+  `&feedback=${encodeURIComponent(feedback)}`;
 
 // 복사 버튼을 누르면 이슈 폼을 채워서 연다. 디자이너가 GitHub에서 폼을 찾아 붙여넣는 과정을 없앤다.
 // 너무 길면 앞부분만 담는다. agentation은 클립보드 쓰기가 실패해도 onCopy를 부르므로,
 // 빈 폼을 열면 클립보드까지 실패한 경우 피드백이 통째로 사라진다.
 const openIssueForm = (markdown: string) => {
-  let url = buildIssueUrl(markdown);
+  // 제목은 자르기 전 전체에서 뽑는다. 메모 개수가 잘린 본문 기준으로 줄면 안 된다.
+  const title = buildIssueTitle(markdown);
+  let url = buildIssueUrl(markdown, title);
   // 코드 포인트 단위로 자른다. 서로게이트 쌍(이모지)이 반으로 갈리면 encodeURIComponent가 던진다.
   const chars = Array.from(markdown);
   let keep = chars.length;
   while (url.length > MAX_ISSUE_URL_LENGTH && keep > 0) {
     keep = Math.floor(keep * TRUNCATE_STEP_RATIO);
-    url = buildIssueUrl(chars.slice(0, keep).join('') + TRUNCATED_NOTE);
+    url = buildIssueUrl(chars.slice(0, keep).join('') + TRUNCATED_NOTE, title);
   }
   window.open(url, '_blank', 'noopener');
 };
