@@ -116,7 +116,7 @@ git diff
   트레일러(`Co-Authored-By` 등)를 넣지 않는다.
 - `design-feedback-out/pr-title.txt`: `[design] <메모 요지 한 줄>` 한 줄.
 - `design-feedback-out/pr-body.md`: 아래 형식. 첫 줄의 `Close #<ISSUE>`가 머지 시 이슈를 닫는다.
-  제목·본문에는 `<` 문자(HTML 태그·주석 포함)와 `[이름]: ...` 꼴 링크 참조 줄을 쓰지 않는다. 있으면 워크플로가 패치를 버린다.
+  제목·본문에는 `<`(HTML 태그·주석 포함), `]:`, `](`(링크·이미지)를 쓰지 않는다. 파일 경로는 링크 없이 그대로 적는다. 있으면 워크플로가 패치를 버린다.
 
 ```
 Close #<ISSUE>
