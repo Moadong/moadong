@@ -1,6 +1,5 @@
 // 관리자 화면에서 한 줄 소개를 고쳐 쓰고 저장을 누르면, 아래 학생이 보는 동아리 페이지(실제 카드)가 그 자리에서 바뀌는 데모
 import { useEffect, useRef, useState } from 'react';
-import { AnimatePresence } from 'framer-motion';
 import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import MacCursor from '@/pages/IntroducePage/components/MacCursor/MacCursor';
 import { MOCK_CLUB_PROFILE } from '@/pages/IntroducePage/constants/showcaseMocks';
@@ -60,38 +59,29 @@ const LiveEditDemo = () => {
 
   return (
     <Styled.Root ref={rootRef}>
-      <Styled.Screen>
-        <Styled.ScreenLabel>관리자 페이지</Styled.ScreenLabel>
-        <Styled.FieldLabel>한 줄 소개</Styled.FieldLabel>
-        <Styled.Input data-demo='intro-input' $focused={typing && !saved}>
-          {draft}
-          {typing && !saved && <Styled.Caret aria-hidden='true' />}
-        </Styled.Input>
-        <Styled.SaveRow>
-          <Styled.SaveButton type='button'>저장</Styled.SaveButton>
-        </Styled.SaveRow>
-        <AnimatePresence>
-          {saved && (
-            <Styled.Toast
-              initial={{ opacity: 0, y: 6 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0 }}
-            >
-              저장했어요. 학생 화면에도 바로 반영됐어요
-            </Styled.Toast>
-          )}
-        </AnimatePresence>
-      </Styled.Screen>
+      <Styled.Fit>
+        <Styled.Screen>
+          <Styled.ScreenLabel>관리자 페이지</Styled.ScreenLabel>
+          <Styled.FieldLabel>한 줄 소개</Styled.FieldLabel>
+          <Styled.Input data-demo='intro-input' $focused={typing && !saved}>
+            {draft}
+            {typing && !saved && <Styled.Caret aria-hidden='true' />}
+          </Styled.Input>
+          <Styled.SaveRow>
+            <Styled.SaveButton type='button'>저장</Styled.SaveButton>
+          </Styled.SaveRow>
+        </Styled.Screen>
 
-      <Styled.Screen $highlight={saved}>
-        <Styled.ScreenLabel>학생이 보는 동아리 페이지</Styled.ScreenLabel>
-        <Styled.StudentCard>
-          <ClubProfileCard
-            {...MOCK_CLUB_PROFILE}
-            introDescription={saved ? AFTER_INTRO : BEFORE_INTRO}
-          />
-        </Styled.StudentCard>
-      </Styled.Screen>
+        <Styled.Screen $highlight={saved}>
+          <Styled.ScreenLabel>학생이 보는 동아리 페이지</Styled.ScreenLabel>
+          <Styled.StudentCard>
+            <ClubProfileCard
+              {...MOCK_CLUB_PROFILE}
+              introDescription={saved ? AFTER_INTRO : BEFORE_INTRO}
+            />
+          </Styled.StudentCard>
+        </Styled.Screen>
+      </Styled.Fit>
       {enabled && <MacCursor cursor={cursor} />}
     </Styled.Root>
   );

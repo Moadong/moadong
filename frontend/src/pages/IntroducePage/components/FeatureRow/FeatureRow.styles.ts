@@ -143,13 +143,13 @@ export const MoreLink = styled.a`
 `;
 
 /* 모든 기능 줄의 화면 칸은 같은 크기다. 내용이 길면 아래를 흐리게 자른다 */
-export const PANEL_HEIGHT = { desktop: 560, tablet: 440 } as const;
+export const PANEL_HEIGHT = { desktop: 500, tablet: 420 } as const;
 
 export const Panel = styled(motion.div)`
   display: flex;
   justify-content: center;
   height: ${PANEL_HEIGHT.desktop}px;
-  padding: 48px 40px 0;
+  padding: 40px 40px 0;
   border-radius: 32px;
   background: ${colors.gray[100]};
   overflow: hidden;

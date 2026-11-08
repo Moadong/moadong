@@ -1,16 +1,20 @@
-// 실시간 반영 데모의 관리자 입력 화면(저장 버튼 포함), 학생 화면 카드, 반영 알림 스타일
-import { motion } from 'framer-motion';
+// 실시간 반영 데모의 관리자 입력 화면(저장 버튼 포함)과 학생 화면 카드 스타일
 import styled, { keyframes } from 'styled-components';
 import * as CardStyled from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard.styles';
 import { colors } from '@/styles/theme/colors';
 
 export const Root = styled.div`
   position: relative;
+  width: 100%;
+  max-width: 420px;
+`;
+
+/* 두 화면이 화면 칸 높이에 들어오도록 살짝 줄인다. 커서는 바깥(Root)에 있어 좌표가 어긋나지 않는다 */
+export const Fit = styled.div`
   display: flex;
   flex-direction: column;
   gap: 10px;
-  width: 100%;
-  max-width: 420px;
+  zoom: 0.86;
 `;
 
 export const Screen = styled.div<{ $highlight?: boolean }>`
@@ -99,18 +103,4 @@ export const StudentCard = styled.div`
   ${CardStyled.LogoWrapper} {
     top: 0;
   }
-`;
-
-export const Toast = styled(motion.div)`
-  position: absolute;
-  bottom: 14px;
-  left: 14px;
-  z-index: 5;
-  padding: 9px 16px;
-  border-radius: 999px;
-  background: rgba(17, 17, 17, 0.86);
-  font-size: 13px;
-  font-weight: 600;
-  color: ${colors.base.white};
-  white-space: nowrap;
 `;

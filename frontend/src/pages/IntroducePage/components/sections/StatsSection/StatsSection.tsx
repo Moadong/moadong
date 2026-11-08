@@ -7,17 +7,17 @@ import * as Styled from './StatsSection.styles';
 
 /**
  * Mixpanel 기준 실제 값을 내림해 "+"를 붙인다(부풀리지 않는다). 모두 2026년 1학기 모집 기간(02-01 ~ 04-30) 값이다.
- * 총합은 와닿지 않아 운영진에게는 동아리별 평균, 학생에게는 1명당 평균으로 바꿔 보여 준다.
+ * 총합은 와닿지 않아 운영진에게는 동아리별 평균, 학생에게는 전체 조회 수로 바꿔 보여 준다.
  * 다음 모집 시즌이 끝나면 같은 기준으로 다시 뽑아 갱신한다.
  * - 전체 이벤트 순사용자 9,443명 → 9,400+
  * - "ClubDetailPage Visited" 85,792회 ÷ 등록 동아리 69곳 ≈ 1,243 → 평균 1,200+
  * - "Club Apply Button Clicked" 9,826회 ÷ 69곳 ≈ 142 → 평균 140+
- * - 85,792회 ÷ 9,443명 ≈ 9.1 → 1명이 평균 9개
+ * - 학생에게는 총합 85,792회 → 85,000+ (1명당 평균 9개는 작아 보여 쓰지 않는다)
  */
 const VISITORS = 9400;
 const PAGE_VIEWS_PER_CLUB = 1200;
 const APPLY_CLICKS_PER_CLUB = 140;
-const CLUBS_VIEWED_PER_VISITOR = 9;
+const TOTAL_PAGE_VIEWS = 85000;
 
 const HEADLINES: Record<Audience, string> = {
   student: '이미 많은 학생들이\n모아동에서 동아리를 찾고 있어요',
@@ -96,9 +96,10 @@ const StatsSection = ({ audience }: StatsSectionProps) => {
             : []),
           visitors,
           {
-            label: '1명이 평균 둘러본 동아리',
-            value: CLUBS_VIEWED_PER_VISITOR,
-            unit: '개',
+            label: '동아리 페이지 조회',
+            value: TOTAL_PAGE_VIEWS,
+            unit: '번',
+            plus: true,
           },
         ]
       : [
