@@ -2,6 +2,7 @@
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { detectPlatform, getAppStoreLink } from '@/utils/appStoreLink';
+import isInAppWebView from '@/utils/isInAppWebView';
 
 /** 버튼이 놓인 자리 (분석 속성). qr은 PC 화면의 QR을 폰으로 찍고 들어온 경우 */
 export type AppDownloadLocation = 'hero' | 'feature' | 'footer' | 'qr';
@@ -14,7 +15,10 @@ export const APP_DOWNLOAD_QUERY = { key: 'download', value: 'app' } as const;
  * (큰 폰 가로·아이패드도 포함하고, iPad처럼 맥으로 보이는 기기는 터치 지원으로 가린다)
  */
 export const isStoreDevice = () =>
-  detectPlatform() !== 'Other' && navigator.maxTouchPoints > 0;
+  detectPlatform() !== 'Other' &&
+  navigator.maxTouchPoints > 0 &&
+  // 앱이 설치돼 있으면 링크가 앱으로 열리는데, 앱 웹뷰 안에서 다시 스토어로 보내면 안 된다
+  !isInAppWebView();
 
 /** 마우스로 보는 PC라 폰으로 찍을 설치 QR을 보여 줄 기기인가 */
 export const shouldShowInstallQr = () =>
