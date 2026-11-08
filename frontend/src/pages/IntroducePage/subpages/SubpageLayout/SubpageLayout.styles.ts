@@ -1,23 +1,24 @@
 // 소개 페이지 전용 헤더(로고·가운데 슬롯·메뉴)와 본문 칼럼 스타일
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
+import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
-
-export const SUBPAGE_HEADER_HEIGHT = { desktop: 72, mobile: 56 } as const;
 
 export const Page = styled.div`
   min-height: 100dvh;
   background: ${colors.base.white};
 `;
 
-export const Header = styled.header`
+/* 모아동 메인 헤더와 높이·폭·로고·메뉴 글자를 맞춰, 오가도 헤더가 흔들리지 않게 한다 */
+export const Header = styled.header<{ $isScrolled: boolean }>`
   position: sticky;
   top: 0;
   z-index: 30;
-  background: rgba(255, 255, 255, 0.88);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
+  background: ${colors.base.white};
+  box-shadow: ${({ $isScrolled }) =>
+    $isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
+  transition: box-shadow 0.2s ease-in-out;
 `;
 
 /* 로고 | 가운데 슬롯 | 메뉴. 가운데가 정확히 화면 중앙에 오도록 양옆 칸을 같은 비율로 둔다 */
@@ -25,15 +26,21 @@ export const HeaderInner = styled.div`
   display: grid;
   grid-template-columns: 1fr auto 1fr;
   align-items: center;
-  gap: 12px;
-  max-width: 1120px;
-  height: ${SUBPAGE_HEADER_HEIGHT.desktop}px;
+  gap: 16px;
+  max-width: 1180px;
+  height: ${HEADER_HEIGHT.desktop}px;
   margin: 0 auto;
-  padding: 0 24px;
+
+  ${media.laptop} {
+    padding: 0 20px;
+  }
 
   ${media.tablet} {
-    height: ${SUBPAGE_HEADER_HEIGHT.mobile}px;
-    padding: 0 16px;
+    height: ${HEADER_HEIGHT.tablet}px;
+  }
+
+  ${media.mobile} {
+    height: ${HEADER_HEIGHT.mobile}px;
   }
 `;
 
@@ -57,20 +64,23 @@ export const BackButton = styled.button`
   cursor: pointer;
 `;
 
+/* 메인 헤더와 같은 크기와 전환 폭(870px) */
 export const Logo = styled.img`
   display: block;
-  height: 24px;
+  width: 152px;
+  height: auto;
 
-  ${media.tablet} {
+  @media (max-width: 870px) {
     display: none;
   }
 `;
 
 export const Mark = styled.img`
   display: none;
-  height: 28px;
+  width: 32px;
+  height: auto;
 
-  ${media.tablet} {
+  @media (max-width: 870px) {
     display: block;
   }
 `;
@@ -85,24 +95,27 @@ export const CenterSlot = styled(motion.div)``;
 export const Nav = styled.nav<{ $hiddenOnNarrow: boolean }>`
   display: flex;
   justify-content: flex-end;
-  gap: 24px;
+  gap: 45px;
 
   a {
-    font-size: 15px;
-    font-weight: 600;
-    color: ${colors.gray[700]};
+    font-size: 14px;
+    font-weight: 500;
+    color: ${colors.gray[900]};
     text-decoration: none;
     white-space: nowrap;
-    transition: color 0.2s ease;
+    transition: color 0.2s ease-in-out;
   }
 
-  a:hover,
+  a:hover {
+    opacity: 0.7;
+  }
+
   a[aria-current='page'] {
-    color: ${colors.gray[950]};
+    color: ${colors.primary[900]};
   }
 
   ${media.laptop} {
-    gap: 18px;
+    gap: 28px;
   }
 
   /* 좁은 화면에서 가운데 슬롯이 떠 있으면 메뉴는 잠시 숨긴다 (맨 위로 올리면 다시 보인다) */

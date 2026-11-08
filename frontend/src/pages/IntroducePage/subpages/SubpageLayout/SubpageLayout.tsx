@@ -1,5 +1,5 @@
 // 소개 페이지들(서비스 소개·업데이트 기록·만드는 사람들) 공통 틀: 모아동 메인 헤더 대신 쓰는 전용 헤더와 푸터
-import { ReactNode } from 'react';
+import { ReactNode, useEffect, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import moadongMark from '@/assets/images/logos/moadong_mobile_logo.svg';
@@ -42,10 +42,19 @@ const SubpageLayout = ({
 }: SubpageLayoutProps) => {
   const navigate = useNavigate();
   const inWebView = isInAppWebView();
+  const [isScrolled, setIsScrolled] = useState(false);
+
+  // 메인 헤더처럼 내려가면 아래에 옅은 그림자를 깐다
+  useEffect(() => {
+    const onScroll = () => setIsScrolled(window.scrollY > 0);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   return (
     <Styled.Page>
-      <Styled.Header>
+      <Styled.Header $isScrolled={isScrolled}>
         <Styled.HeaderInner>
           <Styled.Start>
             {/* 앱에서는 브라우저 뒤로가기가 없어 직접 둔다 */}
