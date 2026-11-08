@@ -24,6 +24,19 @@ jobs:
       && (github.event.action != 'edited' || github.event.changes.base.ref.from == 'main') }}
     runs-on: ubuntu-latest
     steps:
+      # 승인 대기로 쌓였다가 나중에 승인된 실행은 payload의 draft·head가 지금과 다를 수 있다(위키 ADR-015).
+      # 시크릿을 쓰기 전에 PR의 지금 상태를 다시 보고, draft이거나 head가 바뀌었으면 멈춘다.
+      - name: Check PR is still ready at this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          EVENT_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          state=$(gh pr view "$PR_URL" --json isDraft,headRefOid --jq '"\(.isDraft) \(.headRefOid)"')
+          if [[ $state != "false $EVENT_SHA" ]]; then
+            echo "::error::PR이 지금 draft이거나 head가 이벤트 뒤에 바뀌었다(지금: $state, 이벤트: $EVENT_SHA). 시크릿을 쓰지 않고 멈춘다."
+            exit 1
+          fi
       - name: Generate harry App token
         id: app-token
         uses: actions/create-github-app-token@v1
@@ -89,12 +102,15 @@ jobs:
     #   매 push마다 돌지 않게 해 비용/노이즈를 줄인다.
     # - 포크 PR은 제외: 프롬프트 인젝션 + 쓰기 권한이 겹치면 위험하다(리뷰 job과 동일 정책).
     # - 룰은 절대 자동 머지하지 않는다. 항상 사람이 검토 후 머지한다.
+    # - 디자인 피드백 PR(design/*)은 제외: 제목·본문·diff를 에이전트가 썼는데, 이 job은 제한 없는 Bash와
+    #   쓰기 토큰을 쥔다. Ready를 눌러도 렌더링된 본문에 숨은 지시까지 사람이 본 건 아니다(위키 ADR-015).
     if: >-
       ${{ github.event_name == 'pull_request'
       && (github.event.action == 'opened'
       || github.event.action == 'ready_for_review'
       || (github.event.action == 'edited' && github.event.changes.base.ref.from == 'main'))
       && github.event.pull_request.draft == false
+      && !startsWith(github.event.pull_request.head.ref, 'design/')
       && github.event.pull_request.head.repo.full_name == github.repository
       && github.event.pull_request.base.ref != 'main' }}
     # 같은 PR을 re-run 하거나 직전 룰 PR이 아직 안 머지된 경우 같은 브랜치명이 겹쳐
@@ -173,10 +189,12 @@ jobs:
     # - 사람(비봇) 답글만 반응: 봇 답글(harry 자신 포함)에 반응하면 무한 루프.
     # - in_reply_to_id 있는 답글만: 최초 인라인 코멘트나 새 top-level 코멘트엔 반응 안 함.
     # - 포크 PR 제외(프롬프트 인젝션) + main 대상 제외 — 리뷰 job과 동일 정책.
+    # - draft 제외도 리뷰 job과 같다. 디자인 피드백 PR은 재실행되면 검토 전 코드로 draft에 돌아온다(위키 ADR-015).
     # - '스레드 루트가 harry인지'는 harry가 프롬프트에서 확인 후, 아니면 아무것도 안 한다.
     if: >-
       ${{ github.event_name == 'pull_request_review_comment'
       && github.event.action == 'created'
+      && github.event.pull_request.draft == false
       && github.event.comment.user.type != 'Bot'
       && contains(fromJson('["OWNER", "MEMBER", "COLLABORATOR"]'), github.event.comment.author_association)
       && github.event.comment.in_reply_to_id != null
@@ -184,6 +202,19 @@ jobs:
       && github.event.pull_request.base.ref != 'main' }}
     runs-on: ubuntu-latest
     steps:
+      # 승인 대기로 쌓였다가 나중에 승인된 실행은 payload의 draft·head가 지금과 다를 수 있다(위키 ADR-015).
+      # 시크릿을 쓰기 전에 PR의 지금 상태를 다시 보고, draft이거나 head가 바뀌었으면 멈춘다.
+      - name: Check PR is still ready at this commit
+        env:
+          GH_TOKEN: ${{ github.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+          EVENT_SHA: ${{ github.event.pull_request.head.sha }}
+        run: |
+          state=$(gh pr view "$PR_URL" --json isDraft,headRefOid --jq '"\(.isDraft) \(.headRefOid)"')
+          if [[ $state != "false $EVENT_SHA" ]]; then
+            echo "::error::PR이 지금 draft이거나 head가 이벤트 뒤에 바뀌었다(지금: $state, 이벤트: $EVENT_SHA). 시크릿을 쓰지 않고 멈춘다."
+            exit 1
+          fi
       - name: Generate harry App token
         id: app-token
         uses: actions/create-github-app-token@v1

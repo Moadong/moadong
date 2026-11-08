@@ -4,8 +4,8 @@
 툴바로 남긴 메모를 받아 `frontend/src`의 **스타일 값만** 고친다. 판단이 갈리면 고치지 말고 되묻는다.
 
 너는 브랜치 생성·커밋·push·댓글·PR을 하지 않는다. `frontend/src`를 고치고 결과를 `design-feedback-out/`
-아래 파일로 남기면, 워크플로가 검증한 뒤 수정 브랜치와 PR 만들기 링크, 되묻기 댓글로 올린다.
-PR은 사람이 diff를 본 뒤 연다.
+아래 파일로 남기면, 워크플로가 검증한 뒤 수정 브랜치와 draft PR, 되묻기 댓글로 올린다.
+시크릿을 쓰는 CI(Chromatic·harry)는 사람이 diff를 보고 Ready for review를 누른 뒤에 돈다.
 이슈 번호와 레포는 프롬프트에 값으로 주어진다. 아래 명령의 `<ISSUE>`, `<REPO>`를 그 값으로 바꿔 적는다.
 셸 변수(`$ISSUE` 등)는 쓰지 않는다. 권한 검사에서 거부된다.
 
@@ -116,6 +116,7 @@ git diff
   트레일러(`Co-Authored-By` 등)를 넣지 않는다.
 - `design-feedback-out/pr-title.txt`: `[design] <메모 요지 한 줄>` 한 줄.
 - `design-feedback-out/pr-body.md`: 아래 형식. 첫 줄의 `Close #<ISSUE>`가 머지 시 이슈를 닫는다.
+  제목·본문·커밋 메시지에는 `<`(HTML 태그·주석 포함), `]:`, `](`(링크·이미지)를 쓰지 않는다. 파일 경로는 링크 없이 그대로 적는다. 있으면 워크플로가 패치를 버린다.
 
 ```
 Close #<ISSUE>
