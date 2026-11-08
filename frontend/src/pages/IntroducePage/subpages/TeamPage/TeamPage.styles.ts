@@ -4,7 +4,7 @@ import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
-/* 엘스 소개와 같은 비율: 큰 제목, 25px대 회색 본문, 48px 마무리 */
+/* 엘스 소개와 같은 비율: 큰 제목, 회색 본문, 큰 글씨 마무리 */
 export const Intro = styled.section`
   max-width: 640px;
 `;
@@ -87,10 +87,10 @@ export const StoryBody = styled.div`
 
 /* 마무리: 팀원 모집을 큰 글씨 블록으로 둔다 */
 export const Closing = styled.section`
-  margin-top: 160px;
+  margin: 160px 0 80px;
 
   ${media.tablet} {
-    margin-top: 96px;
+    margin: 96px 0 48px;
   }
 `;
 
