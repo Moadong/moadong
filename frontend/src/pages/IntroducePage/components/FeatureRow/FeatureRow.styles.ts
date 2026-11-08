@@ -159,6 +159,11 @@ export const Panel = styled(motion.div)`
     padding: 28px 20px 0;
     border-radius: 24px;
   }
+
+  /* 320px대 폰에서는 달력 같은 넓은 화면이 칸 밖으로 나가지 않게 여백을 줄인다 */
+  ${media.mini_mobile} {
+    padding: 20px 10px 0;
+  }
 `;
 
 /* 실제 화면 한 장. 칸 끝까지 같은 높이로 채우고, 길면 아래를 흐리게 잘라 화면이 이어지는 느낌을 준다 */
@@ -168,6 +173,11 @@ export const Screen = styled.div`
   height: 100%;
   padding: 18px;
   border-radius: 24px 24px 0 0;
+
+  ${media.mini_mobile} {
+    padding: 12px;
+  }
+
   background: ${colors.base.white};
   box-shadow: 0 -2px 30px rgba(17, 17, 17, 0.06);
   overflow: hidden;

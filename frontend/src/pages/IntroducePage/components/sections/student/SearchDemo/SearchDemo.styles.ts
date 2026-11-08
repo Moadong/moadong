@@ -1,6 +1,7 @@
 // 검색 데모의 결과 영역(높이 고정)과 동아리 카드 모양 스타일
 import styled from 'styled-components';
 import * as CategoryStyled from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList.styles';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 export const Root = styled.div`
@@ -79,5 +80,17 @@ export const CategoryFit = styled.div`
     margin-top: 4px;
     font-size: 12px;
     font-weight: 600;
+  }
+
+  /* 폰 폭에서는 일곱 개가 한 줄에 들어가도록 더 줄인다 */
+  ${media.mobile} {
+    ${CategoryStyled.CategoryButton} img {
+      width: 34px;
+      height: 34px;
+    }
+
+    ${CategoryStyled.CategoryButton} span {
+      font-size: 10px;
+    }
   }
 `;

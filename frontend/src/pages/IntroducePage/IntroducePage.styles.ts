@@ -1,23 +1,11 @@
 import styled from 'styled-components';
-import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
+/* 소개는 메인 앱과 따로 떨어진 화면이라, 태블릿 폭에서도 500px 칸에 가두지 않고 화면 전체를 쓴다 */
 export const PageWrapper = styled.div`
   width: 100%;
   min-height: 100dvh;
   background: ${colors.base.white};
-
-  ${media.tablet} {
-    max-width: 500px;
-    margin: 0 auto;
-    box-shadow: 0px 2px 12px rgba(0, 0, 0, 0.04);
-  }
-
-  ${media.mobile} {
-    max-width: 100%;
-    margin: 0;
-    box-shadow: none;
-  }
 `;
 
 export const IntroducePageHeader = styled.header`
@@ -39,7 +27,7 @@ export const Main = styled.main`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  /* hidden은 스크롤 컨테이너를 만들어 상단 토글의 sticky를 깨뜨려서 clip을 쓴다 */
+  /* 장식 도형이 가로 스크롤을 만들지 않게 자른다 (hidden은 스크롤 컨테이너를 만들어 clip을 쓴다) */
   overflow-x: clip;
 `;
 

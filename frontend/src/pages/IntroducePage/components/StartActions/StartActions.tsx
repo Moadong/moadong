@@ -172,17 +172,8 @@ const StartActions = ({ audience, location }: StartActionsProps) => {
     );
   }
 
-  // 앱 안에서 열었으면 이미 앱이 있으니 웹 이동만 둔다
-  if (isInAppWebView()) {
-    return (
-      <Styled.Actions>
-        <Styled.Primary onClick={() => navigate('/')}>
-          동아리 보러 가기
-          <ArrowIcon />
-        </Styled.Primary>
-      </Styled.Actions>
-    );
-  }
+  // 앱 안에서 열었으면 이미 앱이 있으니 앱 다운로드·웹으로 보기 버튼이 필요 없다
+  if (isInAppWebView()) return null;
 
   return (
     <Styled.Actions>

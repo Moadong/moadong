@@ -82,7 +82,9 @@ const StudentShowcaseSection = () => {
       </FeatureRow>
 
       <FeatureRow title={'동아리 일정을\n달력으로 미리 봐요'}>
-        <ClubScheduleCalendar events={MOCK_CALENDAR_EVENTS} />
+        <Styled.CalendarFit>
+          <ClubScheduleCalendar events={MOCK_CALENDAR_EVENTS} />
+        </Styled.CalendarFit>
       </FeatureRow>
 
       <FeatureRow
