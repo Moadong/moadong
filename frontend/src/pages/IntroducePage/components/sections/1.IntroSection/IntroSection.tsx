@@ -31,6 +31,8 @@ interface IntroSectionProps {
   subtitle: string;
   /** 대상별 시작 버튼 */
   actions: ReactNode;
+  /** 제목 위, 첫 화면 배경 안에 두는 요소 (학생/운영진 토글) */
+  top?: ReactNode;
   /** 제목 아래 큰 화면 (학생은 폰, 운영진은 관리자 대시보드) */
   visual: ReactNode;
 }
@@ -40,6 +42,7 @@ const IntroSection = ({
   subtitle,
   actions,
   visual,
+  top,
 }: IntroSectionProps) => {
   const sectionRef = useRef<HTMLElement>(null);
   const reduceMotion = useReducedMotion();
@@ -82,6 +85,7 @@ const IntroSection = ({
       </Styled.Doodles>
 
       <Styled.Container>
+        {top}
         <Styled.TextWrapper
           style={reduceMotion ? undefined : { y: textY, opacity: textOpacity }}
         >

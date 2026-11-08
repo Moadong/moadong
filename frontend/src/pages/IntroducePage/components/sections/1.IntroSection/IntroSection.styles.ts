@@ -22,11 +22,11 @@ export const IntroSection = styled(motion.section)`
   }
 
   ${media.tablet} {
-    padding: 40px 0 80px;
+    padding: 0 0 80px;
   }
 
   ${media.mobile} {
-    padding: 30px 0 60px;
+    padding: 0 0 60px;
   }
 `;
 
@@ -42,18 +42,19 @@ export const TextWrapper = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  margin-top: 80px;
+  /* 바로 위 학생/운영진 토글과의 간격 */
+  margin-top: 56px;
 
   ${media.laptop} {
-    margin-top: 60px;
+    margin-top: 48px;
   }
 
   ${media.tablet} {
-    margin-top: 40px;
+    margin-top: 32px;
   }
 
   ${media.mobile} {
-    margin-top: 30px;
+    margin-top: 24px;
   }
 `;
 

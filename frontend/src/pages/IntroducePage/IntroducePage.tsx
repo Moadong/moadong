@@ -76,11 +76,16 @@ const IntroducePage = () => {
       <TossfaceStylesheet />
       <Styled.PageWrapper>
         <Styled.Main>
-          <div ref={inlineToggleRef} style={{ width: '100%' }}>
-            <AudienceToggle value={audience} onChange={handleAudienceChange} />
-          </div>
           <IntroSection
             {...content.hero}
+            top={
+              <div ref={inlineToggleRef}>
+                <AudienceToggle
+                  value={audience}
+                  onChange={handleAudienceChange}
+                />
+              </div>
+            }
             actions={<StartActions audience={audience} location='hero' />}
             visual={
               audience === 'student' ? (
