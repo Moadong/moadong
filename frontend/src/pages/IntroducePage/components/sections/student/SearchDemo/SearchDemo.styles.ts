@@ -1,5 +1,6 @@
 // 검색 데모의 결과 영역(높이 고정)과 동아리 카드 모양 스타일
 import styled from 'styled-components';
+import * as CategoryStyled from '@/pages/MainPage/components/CategoryButtonList/CategoryButtonList.styles';
 import { colors } from '@/styles/theme/colors';
 
 export const Root = styled.div`
@@ -56,4 +57,27 @@ export const CardFooter = styled.div`
   flex-wrap: wrap;
   align-items: center;
   gap: 6px;
+`;
+
+/* 실제 분과 버튼 줄을 그대로 쓰되, 좁은 데모 칸에서도 아이콘 사이가 고르게 벌어지도록 모바일 크기로 줄인다 */
+export const CategoryFit = styled.div`
+  ${CategoryStyled.CategoryButtonContainer} {
+    margin: 0;
+    padding: 0;
+  }
+
+  ${CategoryStyled.CategoryButton} {
+    padding: 0;
+  }
+
+  ${CategoryStyled.CategoryButton} img {
+    width: 42px;
+    height: 42px;
+  }
+
+  ${CategoryStyled.CategoryButton} span {
+    margin-top: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
 `;

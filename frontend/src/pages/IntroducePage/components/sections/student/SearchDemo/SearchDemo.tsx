@@ -88,7 +88,9 @@ const SearchDemo = () => {
         onChange={noop}
         placeholder='어떤 동아리를 찾으세요?'
       />
-      <CategoryButtonList sticky={false} />
+      <Styled.CategoryFit>
+        <CategoryButtonList sticky={false} />
+      </Styled.CategoryFit>
 
       <Styled.Results>
         <AnimatePresence mode='popLayout'>
@@ -120,7 +122,7 @@ const SearchDemo = () => {
                     <ClubTag type={club.category} />
                     {club.tags.map((tag) => (
                       <ClubTag key={tag} type='자유'>
-                        #{tag}
+                        {tag}
                       </ClubTag>
                     ))}
                   </Styled.CardFooter>

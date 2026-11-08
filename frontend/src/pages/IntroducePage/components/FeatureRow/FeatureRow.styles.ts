@@ -142,25 +142,30 @@ export const MoreLink = styled.a`
   }
 `;
 
+/* 모든 기능 줄의 화면 칸은 같은 크기다. 내용이 길면 아래를 흐리게 자른다 */
+export const PANEL_HEIGHT = { desktop: 560, tablet: 440 } as const;
+
 export const Panel = styled(motion.div)`
   display: flex;
   justify-content: center;
+  height: ${PANEL_HEIGHT.desktop}px;
   padding: 48px 40px 0;
   border-radius: 32px;
   background: ${colors.gray[100]};
   overflow: hidden;
 
   ${media.tablet} {
+    height: ${PANEL_HEIGHT.tablet}px;
     padding: 28px 20px 0;
     border-radius: 24px;
   }
 `;
 
-/* 실제 화면 한 장. 길면 아래를 흐리게 잘라 화면이 이어지는 느낌을 준다 */
-export const Screen = styled.div<{ $maxHeight: number }>`
+/* 실제 화면 한 장. 칸 끝까지 같은 높이로 채우고, 길면 아래를 흐리게 잘라 화면이 이어지는 느낌을 준다 */
+export const Screen = styled.div`
   width: 100%;
   max-width: 420px;
-  max-height: ${({ $maxHeight }) => $maxHeight}px;
+  height: 100%;
   padding: 18px;
   border-radius: 24px 24px 0 0;
   background: ${colors.base.white};

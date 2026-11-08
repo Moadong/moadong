@@ -3,7 +3,6 @@ import PromotionCardView from '@/components/promotion/PromotionCardView/Promotio
 import CalendarBoard from '@/pages/AdminPage/tabs/CalendarSyncTab/components/CalendarBoard/CalendarBoard';
 import MetricSummary from '@/pages/AdminPage/tabs/StatisticsTab/components/MetricSummary';
 import TrendChart from '@/pages/AdminPage/tabs/StatisticsTab/components/TrendChart';
-import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
 import FeatureRow from '@/pages/IntroducePage/components/FeatureRow/FeatureRow';
 import {
   List,
@@ -12,13 +11,13 @@ import {
 } from '@/pages/IntroducePage/components/FeatureRow/FeatureRow.styles';
 import {
   MOCK_CALENDAR_EVENTS,
-  MOCK_CLUB_PROFILE,
   MOCK_PROMOTION,
   MOCK_STATISTICS_OVERVIEW,
   MOCK_STATISTICS_TREND,
 } from '@/pages/IntroducePage/constants/showcaseMocks';
 import AiDraftDemo from '../demos/AiDraftDemo';
 import ApplicantsDemo from '../demos/ApplicantsDemo';
+import LiveEditDemo from '../demos/LiveEditDemo';
 import * as Styled from './ClubShowcaseSection.styles';
 
 const noop = () => {};
@@ -48,42 +47,43 @@ const ClubShowcaseSection = () => {
         title={'지원서 질문 고민은\nAI에게 맡기세요'}
         caption='우리 동아리 정보를 읽고, 바로 쓸 수 있는 지원서를 만들어줘요.'
         link={{ label: '지원서 만들기', to: '/admin/application-list' }}
-        screenMaxHeight={460}
       >
         <AiDraftDemo />
       </FeatureRow>
 
       <FeatureRow
-        title={'고치면 바로\n반영돼요'}
-        caption='동아리 페이지를 고치면 학생에게 바로 보여요. 에타에 수정 공지를 다시 올릴 필요 없어요.'
+        title={'동아리 소개를 고치면\n학생 화면에 바로 보여요'}
+        caption='저장 한 번이면 끝. 바뀐 내용을 알리려고 에타에 수정 공지를 다시 올릴 필요 없어요.'
         link={{ label: '동아리 정보 수정하기', to: '/admin/club-info' }}
+        bare
       >
-        <ClubProfileCard {...MOCK_CLUB_PROFILE} />
+        <LiveEditDemo />
       </FeatureRow>
 
       <FeatureRow
         reverse
-        title={'동아리 일정,\n학생에게 쉽게 보여줘요'}
-        caption='쓰던 Google·Notion 캘린더를 연결하거나 직접 추가하면 동아리 페이지 달력에 바로 나타나요.'
+        title={'쓰던 캘린더를 연결하면\n동아리 일정이 그대로 보여요'}
+        caption='Google·Notion 캘린더를 연결하거나 직접 추가하면, 학생이 보는 동아리 페이지 달력에 나타나요.'
         link={{ label: '일정 연결하기', to: '/admin/calendar-sync' }}
-        screenMaxHeight={460}
       >
         <CalendarBoard events={MOCK_CALENDAR_EVENTS} />
       </FeatureRow>
 
       <FeatureRow
         title={'공연·행사 소식을\n홍보 게시판에 올려요'}
+        caption='올린 글은 모아동 홍보 탭에 바로 올라가요. 많은 학생에게 알리고 싶다면 앱 알림 발송도 요청할 수 있어요.'
         link={{ label: '홍보 글 쓰기', to: '/admin/promotion' }}
-        screenMaxHeight={380}
       >
-        <PromotionCardView article={MOCK_PROMOTION} />
+        <Styled.PromotionFit>
+          <PromotionCardView article={MOCK_PROMOTION} />
+        </Styled.PromotionFit>
       </FeatureRow>
 
       <FeatureRow
         reverse
-        title={'조회수와 지원자 수를\n기간별로 확인해요'}
+        title={'홍보 효과를\n숫자로 확인해요'}
+        caption='동아리 페이지 조회수와 지원자 수를 기간별로 볼 수 있어요.'
         link={{ label: '통계 보기', to: '/admin/statistics' }}
-        screenMaxHeight={460}
       >
         <Styled.Stack>
           <MetricSummary

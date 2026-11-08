@@ -35,8 +35,6 @@ interface FeatureRowProps {
   bare?: boolean;
   /** 화면 패널을 왼쪽에 둔다 */
   reverse?: boolean;
-  /** 화면이 길면 이 높이에서 아래를 흐리게 자른다 */
-  screenMaxHeight?: number;
   children: ReactNode;
 }
 
@@ -47,7 +45,6 @@ const FeatureRow = ({
   action,
   bare = false,
   reverse = false,
-  screenMaxHeight = 420,
   children,
 }: FeatureRowProps) => {
   return (
@@ -76,7 +73,7 @@ const FeatureRow = ({
             {children}
           </Styled.Bare>
         ) : (
-          <Styled.Screen aria-hidden='true' inert $maxHeight={screenMaxHeight}>
+          <Styled.Screen aria-hidden='true' inert>
             {children}
           </Styled.Screen>
         )}

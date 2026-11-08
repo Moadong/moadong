@@ -11,7 +11,7 @@ import { ADMIN_TABS } from '@/constants/adminTabs';
 import ApplicantListRow from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantListRow/ApplicantListRow';
 import StatusSummaryCard from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusSummaryCard/StatusSummaryCard';
 import {
-  ARRIVING_APPLICANT_NAMES,
+  ARRIVING_APPLICANTS,
   MOCK_APPLICANT_SUMMARY,
   MOCK_APPLICANTS,
 } from '@/pages/IntroducePage/constants/showcaseMocks';
@@ -28,19 +28,18 @@ const VISIBLE_ROWS = 5;
 
 const noop = () => {};
 
-const newApplicant = (index: number): Applicant => ({
-  id: asApplicantId(`arrived-${index}`),
-  status: ApplicationStatus.SUBMITTED,
-  answers: [
-    {
-      id: 1,
-      value: ARRIVING_APPLICANT_NAMES[index % ARRIVING_APPLICANT_NAMES.length],
-    },
-  ],
-  memo: '',
-  createdAt: new Date().toISOString(),
-  applicationFormId: asApplicationFormId('form-intro'),
-});
+const newApplicant = (index: number): Applicant => {
+  const { name, memo } =
+    ARRIVING_APPLICANTS[index % ARRIVING_APPLICANTS.length];
+  return {
+    id: asApplicantId(`arrived-${index}`),
+    status: ApplicationStatus.SUBMITTED,
+    answers: [{ id: 1, value: name }],
+    memo,
+    createdAt: new Date().toISOString(),
+    applicationFormId: asApplicationFormId('form-intro'),
+  };
+};
 
 /** 보이는 동안 일정 간격으로 새 지원자를 맨 위에 하나씩 넣는다 */
 const useArrivingApplicants = (inView: boolean) => {

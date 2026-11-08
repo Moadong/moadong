@@ -17,3 +17,13 @@ export const DesktopOnlyScale = styled(Stack)`
     zoom: 0.46;
   }
 `;
+
+/* 홍보 카드는 포스터가 길어 화면 칸 안에 카드 전체(포스터·제목·날짜)가 들어오도록 폭을 줄인다 */
+export const PromotionFit = styled.div`
+  width: 300px;
+  margin: 0 auto;
+
+  ${media.tablet} {
+    width: 220px;
+  }
+`;

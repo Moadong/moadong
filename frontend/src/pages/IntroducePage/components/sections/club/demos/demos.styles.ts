@@ -1,6 +1,6 @@
-// 커서 데모 공통: 커서 기준 영역, 데스크탑 화면 축소, 일괄 변경 줄, AI 생성 중 덮개 스타일
+// 커서 데모 공통: 커서 기준 영역, 데스크탑 화면 축소, 일괄 변경 줄, AI 초안 시작·생성 중·결과 스타일
 import { motion } from 'framer-motion';
-import styled from 'styled-components';
+import styled, { keyframes } from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
@@ -48,15 +48,87 @@ export const Questions = styled.div`
   margin-top: 16px;
 `;
 
-/* 실제 화면의 전체 덮개 대신, 편집 영역 위에만 생성 중 표시를 띄운다 */
-export const Generating = styled(motion.div)`
+export const DraftResult = styled(motion.div)`
+  position: relative;
+  overflow: hidden;
+  border-radius: 12px;
+`;
+
+/* 생성이 끝나는 순간 결과 위를 한 번 훑는 무지갯빛 */
+export const Sweep = styled(motion.span)`
   position: absolute;
-  inset: 0;
+  inset: 0 0 auto;
+  height: 40%;
+  background: linear-gradient(
+    180deg,
+    transparent,
+    rgba(195, 121, 246, 0.18),
+    rgba(255, 125, 164, 0.22),
+    transparent
+  );
+  pointer-events: none;
+`;
+
+export const Thinking = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+`;
+
+const shimmer = keyframes`
+  from { background-position: 200% 0; }
+  to { background-position: -200% 0; }
+`;
+
+/* 질문 칸 자리에 흐르는 무지갯빛 반짝임 */
+export const Skeleton = styled.div<{ $height: number }>`
+  height: ${({ $height }) => $height}px;
+  border-radius: 12px;
+  background: linear-gradient(
+    100deg,
+    ${colors.gray[100]} 20%,
+    ${colors.primary[500]} 35%,
+    ${colors.secondary[6].back} 45%,
+    ${colors.secondary[4].back} 55%,
+    ${colors.gray[100]} 70%
+  );
+  background-size: 200% 100%;
+  animation: ${shimmer} 1.6s linear infinite;
+`;
+
+/* AI 초안 생성 전 화면: 실제 편집 화면 대신 무엇을 누르면 되는지만 크게 보여 준다 */
+export const DraftStart = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  border-radius: 12px;
-  background: rgba(0, 0, 0, 0.5);
+  min-height: 354px;
+  padding: 32px 24px;
+  border-radius: 20px;
+  background: ${colors.base.white};
+  box-shadow: 0 0 0 1px ${colors.gray[300]};
+  text-align: center;
+
+  ${media.tablet} {
+    min-height: 240px;
+  }
+`;
+
+export const DraftStartTitle = styled.p`
+  margin-top: 18px;
+  font-size: 20px;
+  font-weight: 700;
+  color: ${colors.gray[950]};
+`;
+
+export const DraftStartText = styled.p`
+  margin-top: 6px;
+  font-size: 14px;
+  line-height: 1.6;
+  color: ${colors.gray[700]};
+`;
+
+export const RealButtonScale = styled.div`
+  margin-top: 22px;
+  zoom: 1.4;
 `;

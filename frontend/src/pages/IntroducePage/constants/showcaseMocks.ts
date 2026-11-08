@@ -88,19 +88,39 @@ const applicant = (
   name: string,
   status: ApplicationStatus,
   daysAgo: number,
+  memo = '',
 ): Applicant => ({
   id: asApplicantId(id),
   status,
   answers: [{ id: 1, value: name }],
-  memo: '',
+  memo,
   createdAt: subDays(new Date(), daysAgo).toISOString(),
   applicationFormId: asApplicationFormId('form-intro'),
 });
 
 export const MOCK_APPLICANTS: Applicant[] = [
-  applicant('a1', '김모아', ApplicationStatus.SUBMITTED, 0),
-  applicant('a2', '이동아', ApplicationStatus.INTERVIEW_SCHEDULED, 1),
-  applicant('a3', '박부경', ApplicationStatus.ACCEPTED, 2),
+  // 부경대 캠퍼스(대연·용당)와 학교 이름에서 따온 이름
+  applicant(
+    'a1',
+    '김부경',
+    ApplicationStatus.SUBMITTED,
+    0,
+    '보컬 지원 · 버스킹 경험 있음',
+  ),
+  applicant(
+    'a2',
+    '이대연',
+    ApplicationStatus.INTERVIEW_SCHEDULED,
+    1,
+    '드럼 3년',
+  ),
+  applicant(
+    'a3',
+    '박용당',
+    ApplicationStatus.ACCEPTED,
+    2,
+    '베이스 처음이지만 열정 최고',
+  ),
 ];
 
 /** 첫 번째 지원자의 상태가 이 순서로 바뀌며 상태 관리를 보여준다 */
@@ -198,7 +218,7 @@ export const AI_DRAFT_TITLE = '모아밴드 신입 부원 모집';
 /** AI 초안 데모에서 하나씩 나타나는 질문 */
 export const AI_DRAFT_QUESTIONS: Question[] = [
   {
-    id: 11,
+    id: 1,
     title: '이름과 학번을 알려주세요',
     description: '',
     type: 'SHORT_TEXT',
@@ -206,7 +226,7 @@ export const AI_DRAFT_QUESTIONS: Question[] = [
     items: [],
   },
   {
-    id: 12,
+    id: 2,
     title: '어떤 파트를 하고 싶나요?',
     description: '처음이어도 괜찮아요.',
     type: 'CHOICE',
@@ -219,7 +239,7 @@ export const AI_DRAFT_QUESTIONS: Question[] = [
     ],
   },
   {
-    id: 13,
+    id: 3,
     title: '지원한 이유를 한 줄로 적어주세요',
     description: '',
     type: 'SHORT_TEXT',
@@ -228,14 +248,14 @@ export const AI_DRAFT_QUESTIONS: Question[] = [
   },
 ];
 
-/** 운영진 첫 화면에서 차례로 새로 지원하는 사람 이름 */
-export const ARRIVING_APPLICANT_NAMES = [
-  '정새내',
-  '한동아',
-  '윤부경',
-  '강모아',
-  '조신입',
-  '임밴드',
+/** 운영진 첫 화면에서 차례로 새로 지원하는 사람 이름 (부경대 캠퍼스·학교 앞 동네에서 따왔다) */
+export const ARRIVING_APPLICANTS = [
+  { name: '정부캉', memo: '기타 · 축제 공연 경험' },
+  { name: '한광안', memo: '보컬 지원' },
+  { name: '윤경성', memo: '키보드 2년' },
+  { name: '강남천', memo: '드럼은 처음이에요' },
+  { name: '조대연', memo: '베이스 · 합주 경험 있음' },
+  { name: '임용당', memo: '보컬 · 자작곡 있음' },
 ];
 
 export interface SearchResultClub {
@@ -276,21 +296,21 @@ export const SEARCH_SCENARIOS: {
     ],
   },
   {
-    keyword: '축구',
+    keyword: '농구',
     results: [
       {
-        name: '모아FC',
+        name: '모아농구단',
         category: '운동',
         recruitmentStatus: 'OPEN',
-        introduction: '주 2회 풋살과 축구를 함께해요',
-        tags: ['풋살', '친목'],
+        introduction: '주 2회 체육관에서 함께 농구해요',
+        tags: ['농구', '친목'],
         icon: 'sport',
       },
       {
-        name: '킥모아',
+        name: '덩크모아',
         category: '운동',
         recruitmentStatus: 'CLOSED',
-        introduction: '교내 리그에 나가는 축구 동아리',
+        introduction: '대학 리그에 나가는 농구 동아리',
         tags: ['리그'],
         icon: 'sport',
       },

@@ -50,10 +50,9 @@ const StudentShowcaseSection = () => {
       </ListHeading>
 
       <FeatureRow
-        title={'검색하거나\n분야만 골라 보세요'}
+        title={'이름을 몰라도\n분야로 찾을 수 있어요'}
         caption='부경대 동아리가 모두 한 곳에 있어요.'
         link={{ label: '동아리 찾아보기', to: '/' }}
-        screenMaxHeight={520}
       >
         <SearchDemo />
       </FeatureRow>
@@ -74,10 +73,7 @@ const StudentShowcaseSection = () => {
         </PhoneMockup>
       </FeatureRow>
 
-      <FeatureRow
-        title={'동아리 일정을\n달력으로 미리 봐요'}
-        screenMaxHeight={460}
-      >
+      <FeatureRow title={'동아리 일정을\n달력으로 미리 봐요'}>
         <ClubScheduleCalendar events={MOCK_CALENDAR_EVENTS} />
       </FeatureRow>
 
@@ -110,7 +106,6 @@ const StudentShowcaseSection = () => {
         title={'동아리 공연과 행사 소식도\n모아동에서'}
         caption='동아리 소개 한마당, 대동제 동아리 버스킹 시간표처럼 동아리 소식이 홍보 게시판에 올라와요.'
         link={{ label: '홍보 게시판 보기', to: '/promotions' }}
-        screenMaxHeight={380}
       >
         <Styled.PromotionGrid>
           {MOCK_PROMOTIONS.map((article) => (
@@ -122,8 +117,8 @@ const StudentShowcaseSection = () => {
       <FeatureRow
         reverse
         bare
-        title={'앱에서 구독하면\n새 소식을 알려드려요'}
-        caption='관심 동아리의 모집과 행사를 놓치지 않아요.'
+        title={'관심 동아리를 구독하면\n모집 소식을 알려 드려요'}
+        caption='모집이 시작되면 앱 알림으로 알려 드려요. 놓칠 걱정 없어요.'
         action={
           !isInAppWebView() && (
             <MoreButton type='button' onClick={() => openStore()}>

@@ -1,7 +1,5 @@
-// 커서가 "✨ AI로 초안 생성"을 누르면 잠깐 생성 중을 보여준 뒤 지원서 제목과 질문이 하나씩 채워지는 AI 초안 데모
+// "AI로 초안 생성"을 누르면 잠깐 반짝이는 자리 표시 뒤에 실제 지원서 편집 화면에 제목과 질문이 한 번에 채워지는 AI 초안 데모
 import { useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import Spinner from '@/components/common/Spinner/Spinner';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import * as EditStyled from '@/pages/AdminPage/tabs/ApplicationTab/ApplicationEditTab/ApplicationEditTab.styles';
 import MacCursor from '@/pages/IntroducePage/components/MacCursor/MacCursor';
@@ -13,41 +11,58 @@ import useScriptedCursor, {
   CursorStep,
   findByText,
 } from '@/pages/IntroducePage/hooks/useScriptedCursor';
+import AiSparkle from './AiSparkle';
 import * as Styled from './demos.styles';
 
 const noop = () => {};
-const MONTHLY_LIMIT = 3;
-
-type Phase = 'empty' | 'loading' | 'done';
+type Phase = 'empty' | 'thinking' | 'done';
 
 const AiDraftDemo = () => {
   const rootRef = useRef<HTMLDivElement>(null);
   const [phase, setPhase] = useState<Phase>('empty');
-  const [shown, setShown] = useState(0);
 
   const steps: CursorStep[] = [
     {
-      target: (root) => findByText(root, 'button', '✨ AI로 초안 생성'),
+      target: (root) => findByText(root, 'button', 'AI로 초안 생성'),
       click: true,
-      action: () => setPhase('loading'),
-      wait: 1400,
+      action: () => setPhase('thinking'),
+      hide: true,
+      wait: 700,
     },
-    ...AI_DRAFT_QUESTIONS.map((_, index) => ({
-      action: () => {
-        setPhase('done');
-        setShown(index + 1);
-      },
-      wait: 450,
-    })),
-    { wait: 2400 },
+    { action: () => setPhase('done'), wait: 3600 },
   ];
 
-  const reset = () => {
-    setPhase('empty');
-    setShown(0);
-  };
+  const reset = () => setPhase('empty');
 
-  const { cursor, enabled } = useScriptedCursor(rootRef, steps, reset);
+  const { cursor, enabled } = useScriptedCursor(rootRef, steps, reset, {
+    startAtFirstTarget: true,
+  });
+
+  // 생성 전은 실제 편집 화면 대신 버튼 하나만 크게 둔 시작 화면으로 보여 준다
+  if (phase === 'empty') {
+    return (
+      <Styled.DemoRoot ref={rootRef}>
+        <Styled.DraftStart>
+          <AiSparkle />
+          <Styled.DraftStartTitle>
+            지원서 질문, AI가 먼저 써 드려요
+          </Styled.DraftStartTitle>
+          <Styled.DraftStartText>
+            동아리 소개를 읽고
+            <br />
+            우리 동아리에 꼭 맞는 질문을 만들어요
+          </Styled.DraftStartText>
+          {/* 실제 지원서 편집 화면의 버튼을 그대로 쓰고 크기만 키운다 */}
+          <Styled.RealButtonScale>
+            <EditStyled.AiDraftButton type='button'>
+              AI로 초안 생성
+            </EditStyled.AiDraftButton>
+          </Styled.RealButtonScale>
+        </Styled.DraftStart>
+        {enabled && <MacCursor cursor={cursor} />}
+      </Styled.DemoRoot>
+    );
+  }
 
   return (
     <Styled.DemoRoot ref={rootRef}>
@@ -62,58 +77,46 @@ const AiDraftDemo = () => {
             </EditStyled.ApplicationFormChangeButton>
           </EditStyled.ChangeButtonWrapper>
           <EditStyled.AiDraftActions>
-            <EditStyled.AiDraftRemaining>
-              이번 달 {phase === 'empty' ? MONTHLY_LIMIT : MONTHLY_LIMIT - 1}회
-              남음
-            </EditStyled.AiDraftRemaining>
             <EditStyled.AiDraftButton type='button'>
-              ✨ AI로 초안 생성
+              AI로 초안 생성
             </EditStyled.AiDraftButton>
           </EditStyled.AiDraftActions>
         </EditStyled.HeaderContainer>
 
-        <EditStyled.FormTitle
-          readOnly
-          value={phase === 'done' ? AI_DRAFT_TITLE : ''}
-          placeholder='지원서 제목을 입력하세요'
-        />
-
-        <Styled.Questions>
-          <AnimatePresence>
-            {AI_DRAFT_QUESTIONS.slice(0, shown).map((question) => (
-              <motion.div
-                key={question.id}
-                initial={{ opacity: 0, y: 16 }}
-                animate={{ opacity: 1, y: 0 }}
-                exit={{ opacity: 0 }}
-                transition={{ duration: 0.35, ease: [0.22, 1, 0.36, 1] }}
-              >
+        {phase === 'done' ? (
+          // 제목과 질문이 한꺼번에 흐릿했다 또렷해지고, 빛이 위에서 아래로 한 번 훑고 지나간다
+          <Styled.DraftResult
+            initial={{ opacity: 0, filter: 'blur(8px)' }}
+            animate={{ opacity: 1, filter: 'blur(0px)' }}
+            transition={{ duration: 0.6, ease: [0.22, 1, 0.36, 1] }}
+          >
+            <EditStyled.FormTitle readOnly value={AI_DRAFT_TITLE} />
+            <Styled.Questions>
+              {AI_DRAFT_QUESTIONS.map((question) => (
                 <QuestionBuilder
+                  key={question.id}
                   {...question}
                   readOnly
                   onTitleChange={noop}
                   onDescriptionChange={noop}
                   onRemoveQuestion={noop}
                 />
-              </motion.div>
-            ))}
-          </AnimatePresence>
-        </Styled.Questions>
-
-        <AnimatePresence>
-          {phase === 'loading' && (
-            <Styled.Generating
-              initial={{ opacity: 0 }}
-              animate={{ opacity: 1 }}
-              exit={{ opacity: 0 }}
-            >
-              <Spinner height='auto' />
-              <EditStyled.AiLoadingText>
-                지원서 자동 생성 중...
-              </EditStyled.AiLoadingText>
-            </Styled.Generating>
-          )}
-        </AnimatePresence>
+              ))}
+            </Styled.Questions>
+            <Styled.Sweep
+              initial={{ y: '-30%', opacity: 1 }}
+              animate={{ y: '130%', opacity: 0 }}
+              transition={{ duration: 1.1, ease: 'easeInOut' }}
+            />
+          </Styled.DraftResult>
+        ) : (
+          // AI가 쓰는 잠깐 동안 자리만 잡힌 질문 칸이 무지갯빛으로 반짝인다
+          <Styled.Thinking>
+            <Styled.Skeleton $height={56} />
+            <Styled.Skeleton $height={150} />
+            <Styled.Skeleton $height={150} />
+          </Styled.Thinking>
+        )}
       </Styled.DesktopCanvas>
       {enabled && <MacCursor cursor={cursor} />}
     </Styled.DemoRoot>
