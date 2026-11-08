@@ -1,5 +1,6 @@
 // 업데이트 기록의 제목, 날짜·내용 두 칸 목록, 실제 화면을 담는 연한 색 프레임 스타일
 import styled from 'styled-components';
+import type { UpdateImageKind } from '@/pages/IntroducePage/constants/updates';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
@@ -75,23 +76,36 @@ export const EntryTitle = styled.h2`
   }
 `;
 
-/* 실제 앱 화면을 연한 브랜드색 판 위에 세워 보여 준다 */
+/**
+ * 이미지 규격: 본문 칼럼 전체 폭, 4:3 고정. 연한 브랜드색 판 위에 실제 화면 캡처를 위에서부터 세우고
+ * 아래는 판 밖으로 잘라 낸다. 종류별 폭은 constants/updates.ts의 규격을 따른다
+ */
 export const Frame = styled.div`
-  display: flex;
-  justify-content: center;
+  position: relative;
+  aspect-ratio: 4 / 3;
   margin-top: 20px;
-  padding: 32px 24px 0;
   border-radius: 20px;
   background: ${colors.primary[500]};
   overflow: hidden;
 `;
 
-export const Shot = styled.img`
+const SHOT_WIDTH: Record<UpdateImageKind, string> = {
+  phone: '46%',
+  panel: '70%',
+  mockup: 'auto',
+};
+
+export const Shot = styled.img<{ $kind: UpdateImageKind }>`
+  position: absolute;
+  top: ${({ $kind }) => ($kind === 'mockup' ? '6%' : '9%')};
+  left: 50%;
   display: block;
-  width: min(300px, 80%);
-  height: auto;
-  border-radius: 20px 20px 0 0;
-  box-shadow: 0 -2px 24px rgba(17, 17, 17, 0.08);
+  width: ${({ $kind }) => SHOT_WIDTH[$kind]};
+  height: ${({ $kind }) => ($kind === 'mockup' ? '94%' : 'auto')};
+  border-radius: ${({ $kind }) => ($kind === 'mockup' ? 0 : '20px')};
+  box-shadow: ${({ $kind }) =>
+    $kind === 'mockup' ? 'none' : '0 8px 32px rgba(17, 17, 17, 0.1)'};
+  translate: -50% 0;
 `;
 
 export const Description = styled.p`

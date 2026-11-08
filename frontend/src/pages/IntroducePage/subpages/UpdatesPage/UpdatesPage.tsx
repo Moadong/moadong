@@ -30,16 +30,15 @@ const UpdatesPage = () => {
             <Styled.Date dateTime={date}>{formatDate(date)}</Styled.Date>
             <Styled.Body>
               <Styled.EntryTitle>{title}</Styled.EntryTitle>
-              {image && (
-                <Styled.Frame>
-                  <Styled.Shot
-                    src={image.src}
-                    alt={image.alt}
-                    loading='lazy'
-                    decoding='async'
-                  />
-                </Styled.Frame>
-              )}
+              <Styled.Frame>
+                <Styled.Shot
+                  $kind={image.kind}
+                  src={image.src}
+                  alt={image.alt}
+                  loading='lazy'
+                  decoding='async'
+                />
+              </Styled.Frame>
               <Styled.Description>{description}</Styled.Description>
             </Styled.Body>
           </Styled.Entry>
