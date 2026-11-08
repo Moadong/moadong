@@ -17,7 +17,9 @@ export const Header = styled.header<{ $isScrolled: boolean }>`
   z-index: 30;
   background: ${colors.base.white};
   box-shadow: ${({ $isScrolled }) =>
-    $isScrolled ? '0px 2px 12px rgba(0, 0, 0, 0.04)' : 'none'};
+    $isScrolled
+      ? `0px 2px 12px color-mix(in srgb, ${colors.base.black} 4%, transparent)`
+      : 'none'};
   transition: box-shadow 0.2s ease-in-out;
 `;
 
@@ -152,7 +154,8 @@ export const MobileMenu = styled(motion.nav)`
   flex-direction: column;
   padding: 8px 20px 16px;
   background: ${colors.base.white};
-  box-shadow: 0 12px 24px rgba(17, 17, 17, 0.08);
+  box-shadow: 0 12px 24px
+    color-mix(in srgb, ${colors.gray[950]} 8%, transparent);
 
   a {
     padding: 14px 0;

@@ -114,7 +114,9 @@ export const Shot = styled.img<{ $kind: UpdateImageKind }>`
   height: ${({ $kind }) => ($kind === 'mockup' ? '94%' : 'auto')};
   border-radius: ${({ $kind }) => ($kind === 'mockup' ? 0 : '20px')};
   box-shadow: ${({ $kind }) =>
-    $kind === 'mockup' ? 'none' : '0 8px 32px rgba(17, 17, 17, 0.1)'};
+    $kind === 'mockup'
+      ? 'none'
+      : `0 8px 32px color-mix(in srgb, ${colors.gray[950]} 10%, transparent)`};
   translate: -50% 0;
 `;
 

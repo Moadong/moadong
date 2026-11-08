@@ -37,7 +37,8 @@ export const AppIcon = styled.div`
   height: 112px;
   border-radius: 26px;
   background: ${colors.primary[900]};
-  box-shadow: 0 16px 36px rgba(255, 84, 20, 0.32);
+  box-shadow: 0 16px 36px
+    color-mix(in srgb, ${colors.primary[900]} 32%, transparent);
 
   img {
     width: 64px;

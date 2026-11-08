@@ -1,7 +1,7 @@
 // 모아동이 어떻게 달라져 왔는지 날짜별 변경 내용과 실제 화면으로 보여 주는 업데이트 기록 페이지
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import { UPDATE_ENTRIES } from '../../constants/updates';
+import { UPDATE_ENTRIES } from '@/pages/IntroducePage/constants/updates';
 import SubpageLayout from '../SubpageLayout/SubpageLayout';
 import StoreLaunch from './StoreLaunch';
 import * as Styled from './UpdatesPage.styles';

@@ -1,4 +1,4 @@
-// 소개 페이지들(서비스 소개·업데이트 기록·만드는 사람들) 공통 틀: 모아동 메인 헤더 대신 쓰는 전용 헤더와 푸터
+// 소개 페이지들(서비스 소개·업데이트 기록) 공통 틀: 모아동 메인 헤더 대신 쓰는 전용 헤더와 푸터
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
@@ -6,8 +6,13 @@ import moadongMark from '@/assets/images/logos/moadong_mobile_logo.svg';
 import moadongLogo from '@/assets/images/moadong_name_logo.svg';
 import Footer from '@/components/common/Footer/Footer';
 import isInAppWebView from '@/utils/isInAppWebView';
-import { SUBPAGE_NAV } from '../subpageNav';
 import * as Styled from './SubpageLayout.styles';
+
+/** 소개 전용 헤더의 메뉴 */
+const SUBPAGE_NAV = [
+  { label: '서비스 소개', to: '/introduce' },
+  { label: '업데이트 기록', to: '/introduce/updates' },
+] as const;
 
 interface SubpageLayoutProps {
   children: ReactNode;
