@@ -7,18 +7,21 @@ import * as Styled from './StatsSection.styles';
 
 /**
  * Mixpanel 기준 실제 값을 내림해 "+"를 붙인다(부풀리지 않는다). 모두 2026년 1학기 모집 기간(02-01 ~ 04-30) 값이다.
+ * 총합은 와닿지 않아 운영진에게는 동아리별 평균, 학생에게는 1명당 평균으로 바꿔 보여 준다.
  * 다음 모집 시즌이 끝나면 같은 기준으로 다시 뽑아 갱신한다.
  * - 전체 이벤트 순사용자 9,443명 → 9,400+
- * - "ClubDetailPage Visited" 85,792회 → 85,000+
- * - "Club Apply Button Clicked" 9,826회 → 9,800+
+ * - "ClubDetailPage Visited" 85,792회 ÷ 등록 동아리 69곳 ≈ 1,243 → 평균 1,200+
+ * - "Club Apply Button Clicked" 9,826회 ÷ 69곳 ≈ 142 → 평균 140+
+ * - 85,792회 ÷ 9,443명 ≈ 9.1 → 1명이 평균 9개
  */
 const VISITORS = 9400;
-const CLUB_PAGE_VIEWS = 85000;
-const APPLY_CLICKS = 9800;
+const PAGE_VIEWS_PER_CLUB = 1200;
+const APPLY_CLICKS_PER_CLUB = 140;
+const CLUBS_VIEWED_PER_VISITOR = 9;
 
 const HEADLINES: Record<Audience, string> = {
   student: '이미 많은 학생들이\n모아동에서 동아리를 찾고 있어요',
-  club: '지난 모집 기간에만\n동아리 페이지가 85,000번 넘게 열렸어요',
+  club: '지난 모집 기간,\n동아리마다 페이지가 평균 1,200번 넘게 열렸어요',
 };
 
 /** 동아리 수는 지금 등록된 수라 따로 적지 않는다 */
@@ -76,20 +79,8 @@ const StatsSection = ({ audience }: StatsSectionProps) => {
     unit: '명',
     plus: true,
   };
-  const pageViews: StatItem = {
-    label: '동아리 페이지 조회',
-    value: CLUB_PAGE_VIEWS,
-    unit: '번',
-    plus: true,
-  };
-  const applyClicks: StatItem = {
-    label: '지원하기 버튼 클릭',
-    value: APPLY_CLICKS,
-    unit: '번',
-    plus: true,
-  };
 
-  // 학생: 고를 수 있는 폭과 다른 학생들의 움직임, 운영진: 우리 동아리로 올 수 있는 학생 흐름
+  // 학생: 고를 수 있는 폭과 다른 학생들이 얼마나 둘러보는지, 운영진: 우리 동아리 한 곳이 받는 관심
   // 실시간 동아리 수는 불러오지 못했으면 빼고 보여준다
   const items: StatItem[] =
     audience === 'student'
@@ -103,10 +94,28 @@ const StatsSection = ({ audience }: StatsSectionProps) => {
                 },
               ]
             : []),
-          pageViews,
           visitors,
+          {
+            label: '1명이 평균 둘러본 동아리',
+            value: CLUBS_VIEWED_PER_VISITOR,
+            unit: '개',
+          },
         ]
-      : [visitors, pageViews, applyClicks];
+      : [
+          visitors,
+          {
+            label: '동아리별 평균 페이지 조회',
+            value: PAGE_VIEWS_PER_CLUB,
+            unit: '번',
+            plus: true,
+          },
+          {
+            label: '동아리별 평균 지원하기 클릭',
+            value: APPLY_CLICKS_PER_CLUB,
+            unit: '번',
+            plus: true,
+          },
+        ];
 
   return (
     <Styled.Section ref={ref} aria-label='모아동 숫자로 보기'>
