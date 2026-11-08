@@ -86,5 +86,4 @@ const PhoneMockup = ({
   );
 };
 
-/** 화면 캡처 이미지를 폰 화면 폭에 맞춰 넣는다 */
 export default PhoneMockup;

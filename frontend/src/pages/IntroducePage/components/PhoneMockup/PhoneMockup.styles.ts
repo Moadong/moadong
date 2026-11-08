@@ -138,7 +138,6 @@ export const StatusIcons = styled.span`
   }
 `;
 
-/* 캡처 이미지를 화면 폭에 맞춰 넣는다 */
 /* 긴 캡처가 스크롤되는 창 */
 export const ScrollViewport = styled.div`
   overflow: hidden;

@@ -37,8 +37,12 @@ export const findByText = (
 
 const useScriptedCursor = (
   rootRef: RefObject<HTMLElement | null>,
+  /**
+   * 커서가 차례로 밟을 단계. **첫 렌더 값만 쓴다.** action은 setState처럼 바뀌지 않는 함수만 잡을 것
+   * (렌더마다 바뀌는 props·상태 값을 읽으면 오래된 값을 쓰게 된다)
+   */
   steps: CursorStep[],
-  /** 한 바퀴가 끝나면 데모 상태를 처음으로 되돌린다 */
+  /** 한 바퀴가 끝나면 데모 상태를 처음으로 되돌린다. steps와 같이 첫 렌더 값만 쓴다 */
   reset: () => void,
   { startAtFirstTarget = false }: ScriptedCursorOptions = {},
 ) => {
@@ -123,6 +127,7 @@ const useScriptedCursor = (
         if (cancelled) return;
         resetRef.current();
         await sleep(100);
+        if (cancelled) return;
         setCursor((prev) => ({ ...prev, ...startPoint() }));
         await sleep(400);
         if (cancelled) return;

@@ -82,9 +82,11 @@ export const DownloadAnchor = styled.div`
 `;
 
 /* 토스 홈의 앱 다운로드 카드처럼: 흰 카드에 QR, 오른쪽 안내 문구, 우상단 닫기 */
-export const QrCard = styled(motion.div)`
+/* 맨 아래 시작 버튼에서는 섹션이 아래를 잘라 내므로 카드를 버튼 위로 연다 */
+export const QrCard = styled(motion.div)<{ $openUpward: boolean }>`
   position: absolute;
-  top: calc(100% + 12px);
+  ${({ $openUpward }) =>
+    $openUpward ? 'bottom: calc(100% + 12px);' : 'top: calc(100% + 12px);'}
   left: 50%;
   z-index: 20;
   display: flex;
