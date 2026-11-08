@@ -5,7 +5,7 @@
 
 너는 브랜치 생성·커밋·push·댓글·PR을 하지 않는다. `frontend/src`를 고치고 결과를 `design-feedback-out/`
 아래 파일로 남기면, 워크플로가 검증한 뒤 수정 브랜치와 draft PR, 되묻기 댓글로 올린다.
-CI는 사람이 diff를 보고 Ready for review를 누른 뒤에 돈다.
+시크릿을 쓰는 CI(Chromatic·harry)는 사람이 diff를 보고 Ready for review를 누른 뒤에 돈다.
 이슈 번호와 레포는 프롬프트에 값으로 주어진다. 아래 명령의 `<ISSUE>`, `<REPO>`를 그 값으로 바꿔 적는다.
 셸 변수(`$ISSUE` 등)는 쓰지 않는다. 권한 검사에서 거부된다.
 
