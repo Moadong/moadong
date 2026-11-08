@@ -83,7 +83,7 @@ export const EntryTitle = styled.h2`
 export const Frame = styled.div<{ $tone: number }>`
   position: relative;
   aspect-ratio: 4 / 3;
-  margin-top: 20px;
+  margin-top: 24px;
   border-radius: 20px;
   background: ${({ $tone }) => FRAME_TONES[$tone % FRAME_TONES.length]};
   overflow: hidden;
@@ -92,7 +92,6 @@ export const Frame = styled.div<{ $tone: number }>`
 const SHOT_WIDTH: Record<UpdateImageKind, string> = {
   phone: '46%',
   panel: '70%',
-  wide: '88%',
   mockup: 'auto',
 };
 
@@ -113,17 +112,37 @@ export const Shot = styled.img<{ $kind: UpdateImageKind }>`
   display: block;
   width: ${({ $kind }) => SHOT_WIDTH[$kind]};
   height: ${({ $kind }) => ($kind === 'mockup' ? '94%' : 'auto')};
-  border-radius: ${({ $kind }) =>
-    $kind === 'mockup' ? 0 : $kind === 'wide' ? '12px' : '20px'};
+  border-radius: ${({ $kind }) => ($kind === 'mockup' ? 0 : '20px')};
   box-shadow: ${({ $kind }) =>
     $kind === 'mockup' ? 'none' : '0 8px 32px rgba(17, 17, 17, 0.1)'};
   translate: -50% 0;
 `;
 
 export const Description = styled.p`
-  margin-top: 16px;
+  margin-top: 10px;
   font-size: 16px;
   line-height: 1.7;
   color: ${colors.gray[800]};
   word-break: keep-all;
+`;
+
+/* 스토어 출시 항목: 판 가운데에 로고와 스토어 이름 */
+export const StoreMark = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 16px;
+
+  svg {
+    filter: drop-shadow(0 10px 24px rgba(17, 17, 17, 0.12));
+  }
+
+  span {
+    font-size: 22px;
+    font-weight: 700;
+    color: ${colors.gray[900]};
+  }
 `;

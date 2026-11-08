@@ -3,6 +3,7 @@ import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { UPDATE_ENTRIES } from '../../constants/updates';
 import SubpageLayout from '../SubpageLayout/SubpageLayout';
+import StoreLogo from './StoreLogo';
 import * as Styled from './UpdatesPage.styles';
 
 /** 2026-08-15 → 2026. 8. 15. */
@@ -25,24 +26,34 @@ const UpdatesPage = () => {
       </Styled.Hero>
 
       <Styled.List>
-        {UPDATE_ENTRIES.map(({ date, title, description, image }, index) => (
-          <Styled.Entry key={`${date}-${title}`}>
-            <Styled.Date dateTime={date}>{formatDate(date)}</Styled.Date>
-            <Styled.Body>
-              <Styled.EntryTitle>{title}</Styled.EntryTitle>
-              <Styled.Frame $tone={index}>
-                <Styled.Shot
-                  $kind={image.kind}
-                  src={image.src}
-                  alt={image.alt}
-                  loading='lazy'
-                  decoding='async'
-                />
-              </Styled.Frame>
-              <Styled.Description>{description}</Styled.Description>
-            </Styled.Body>
-          </Styled.Entry>
-        ))}
+        {UPDATE_ENTRIES.map(
+          ({ date, title, description, image, store }, index) => (
+            <Styled.Entry key={`${date}-${title}`}>
+              <Styled.Date dateTime={date}>{formatDate(date)}</Styled.Date>
+              <Styled.Body>
+                <Styled.EntryTitle>{title}</Styled.EntryTitle>
+                <Styled.Description>{description}</Styled.Description>
+                <Styled.Frame $tone={index}>
+                  {store ? (
+                    <Styled.StoreMark>
+                      <StoreLogo store={store} />
+                    </Styled.StoreMark>
+                  ) : (
+                    image && (
+                      <Styled.Shot
+                        $kind={image.kind}
+                        src={image.src}
+                        alt={image.alt}
+                        loading='lazy'
+                        decoding='async'
+                      />
+                    )
+                  )}
+                </Styled.Frame>
+              </Styled.Body>
+            </Styled.Entry>
+          ),
+        )}
       </Styled.List>
     </SubpageLayout>
   );
