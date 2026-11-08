@@ -26,7 +26,7 @@ import update_search from '@/assets/images/introduce/updates/update_search.webp'
  */
 export type UpdateImageKind = 'phone' | 'panel' | 'mockup';
 
-/** 앱 출시 항목은 화면 캡처 대신 스토어 로고를 보여 준다 */
+/** 앱 출시 항목은 화면 캡처 대신 앱 아이콘과 공식 스토어 배지를 보여 준다 */
 export type StoreKind = 'app_store' | 'google_play';
 
 export interface UpdateEntry {
@@ -34,7 +34,7 @@ export interface UpdateEntry {
   date: string;
   title: string;
   description: string;
-  /** 화면 캡처. 스토어 출시처럼 화면보다 로고가 나은 항목은 store를 대신 쓴다 */
+  /** 화면 캡처. 스토어 출시 항목은 store를 대신 쓴다 */
   image?: { src: string; alt: string; kind: UpdateImageKind };
   store?: StoreKind;
 }

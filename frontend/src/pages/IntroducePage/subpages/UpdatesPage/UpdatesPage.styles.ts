@@ -125,24 +125,3 @@ export const Description = styled.p`
   color: ${colors.gray[800]};
   word-break: keep-all;
 `;
-
-/* 스토어 출시 항목: 판 가운데에 로고와 스토어 이름 */
-export const StoreMark = styled.div`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 16px;
-
-  svg {
-    filter: drop-shadow(0 10px 24px rgba(17, 17, 17, 0.12));
-  }
-
-  span {
-    font-size: 22px;
-    font-weight: 700;
-    color: ${colors.gray[900]};
-  }
-`;

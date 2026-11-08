@@ -3,7 +3,7 @@ import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { UPDATE_ENTRIES } from '../../constants/updates';
 import SubpageLayout from '../SubpageLayout/SubpageLayout';
-import StoreLogo from './StoreLogo';
+import StoreLaunch from './StoreLaunch';
 import * as Styled from './UpdatesPage.styles';
 
 /** 2026-08-15 → 2026. 8. 15. */
@@ -35,9 +35,7 @@ const UpdatesPage = () => {
                 <Styled.Description>{description}</Styled.Description>
                 <Styled.Frame $tone={index}>
                   {store ? (
-                    <Styled.StoreMark>
-                      <StoreLogo store={store} />
-                    </Styled.StoreMark>
+                    <StoreLaunch store={store} />
                   ) : (
                     image && (
                       <Styled.Shot
