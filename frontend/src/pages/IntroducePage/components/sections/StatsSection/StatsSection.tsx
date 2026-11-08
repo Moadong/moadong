@@ -21,10 +21,8 @@ const HEADLINES: Record<Audience, string> = {
   club: '지난 모집 기간에만\n9,400명 넘게 모아동을 찾았어요',
 };
 
-const SOURCE_NOTES: Record<Audience, string> = {
-  student: '동아리 수는 실시간, 나머지는 2026년 1학기 모집 기간 기준',
-  club: '2026년 1학기 모집 기간 기준',
-};
+/** 동아리 수는 지금 등록된 수라 따로 적지 않는다 */
+const SOURCE_NOTE = '2026년 1학기 모집 기간 기준';
 
 interface StatItem {
   label: string;
@@ -125,7 +123,7 @@ const StatsSection = ({ audience }: StatsSectionProps) => {
           </Styled.Item>
         ))}
       </Styled.Grid>
-      <Styled.SourceNote>{SOURCE_NOTES[audience]}</Styled.SourceNote>
+      <Styled.SourceNote>{SOURCE_NOTE}</Styled.SourceNote>
     </Styled.Section>
   );
 };
