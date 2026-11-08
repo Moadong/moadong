@@ -43,7 +43,9 @@ const StudentShowcaseSection = () => {
   const openStore = useAppDownload('feature');
   const [motivationQuestion, daysQuestion] = MOCK_QUESTIONS;
   // 홍보 게시판 페이지와 같은 조회라 실제 최근 소식을 보여 준다. 아직 없으면 지난 축제 기록으로 채운다
-  const { data: promotionArticles } = useGetPromotionArticles();
+  const { data: promotionArticles } = useGetPromotionArticles({
+    poll: false,
+  });
   const recentPromotions = promotionArticles?.length
     ? promotionArticles.slice(0, RECENT_PROMOTION_COUNT)
     : MOCK_PROMOTIONS;

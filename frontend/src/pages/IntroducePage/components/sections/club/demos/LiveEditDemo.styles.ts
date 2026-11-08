@@ -94,13 +94,14 @@ export const SaveButton = styled.button`
   color: ${colors.base.white};
 `;
 
-/* 실제 동아리 카드를 쓰되, 데모 칸에 맞게 커버만 낮춘다 */
+/* 실제 동아리 카드를 쓰되, 데모 칸이 좁아 커버와 로고는 빼고 이름·상태·소개만 보여 준다 */
 export const StudentCard = styled.div`
-  ${CardStyled.CoverImage}, ${CardStyled.CoverFallback} {
-    height: 36px;
+  ${CardStyled.CoverImageWrapper}, ${CardStyled.LogoWrapper} {
+    display: none;
   }
 
-  ${CardStyled.LogoWrapper} {
-    top: 0;
+  ${CardStyled.Content} {
+    margin-top: 0;
+    padding-top: 18px;
   }
 `;

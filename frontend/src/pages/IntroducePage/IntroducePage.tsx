@@ -23,7 +23,10 @@ import StudentShowcaseSection from './components/sections/student/StudentShowcas
 import StartActions from './components/StartActions/StartActions';
 import { TossfaceStylesheet } from './components/Tossface/Tossface';
 import { Audience, AUDIENCE_CONTENT } from './constants/audience';
-import useAppDownload, { APP_DOWNLOAD_QUERY } from './hooks/useAppDownload';
+import useAppDownload, {
+  APP_DOWNLOAD_QUERY,
+  isStoreDevice,
+} from './hooks/useAppDownload';
 import useAudience from './hooks/useAudience';
 import * as Styled from './IntroducePage.styles';
 
@@ -49,7 +52,7 @@ const IntroducePage = () => {
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     if (params.get(APP_DOWNLOAD_QUERY.key) !== APP_DOWNLOAD_QUERY.value) return;
-    if (isMobile || isTablet) redirectToStore('redirect');
+    if (isStoreDevice()) redirectToStore('redirect');
     // 마운트 때 한 번만 확인한다
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

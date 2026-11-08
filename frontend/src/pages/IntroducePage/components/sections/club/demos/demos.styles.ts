@@ -30,14 +30,15 @@ export const SelectedCount = styled.span<{ $visible: boolean }>`
 `;
 
 /* 지원서 편집 화면은 데스크탑 레이아웃이라 데스크탑 크기로 그린 뒤 줄여 보여준다 */
+/* 지원서 편집 화면은 데스크톱 레이아웃이라 줄여 보여 준다. zoom 안의 100%는 줄이기 전 폭으로 계산돼 칸을 꽉 채운다 */
 export const DesktopCanvas = styled.div`
   position: relative;
-  width: 560px;
+  width: 100%;
   min-height: 520px;
   zoom: 0.68;
 
   ${media.tablet} {
-    zoom: 0.46;
+    zoom: 0.5;
   }
 `;
 

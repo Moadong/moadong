@@ -8,16 +8,6 @@ export const Stack = styled.div`
   gap: 12px;
 `;
 
-/* 지원서 빌더는 데스크탑 레이아웃이라 데스크탑 크기로 그린 뒤 화면 폭에 맞게 줄여 보여준다 */
-export const DesktopOnlyScale = styled(Stack)`
-  width: 560px;
-  zoom: 0.68;
-
-  ${media.tablet} {
-    zoom: 0.46;
-  }
-`;
-
 /* 홍보 카드는 포스터가 길어 화면 칸 안에 카드 전체(포스터·제목·날짜)가 들어오도록 폭을 줄인다 */
 export const PromotionFit = styled.div`
   width: 300px;

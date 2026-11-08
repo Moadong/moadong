@@ -117,7 +117,7 @@ export const USER_EVENT = {
   APP_DOWNLOAD_SUBSCRIPTIONS_CLICKED: 'App Download Subscriptions Clicked',
 
   // 소개 페이지
-  /** 소개 페이지 앱 다운로드 버튼 클릭 (location으로 위치, store로 스토어 구분) */
+  /** 소개 페이지 앱 다운로드 버튼 클릭. location: 버튼 위치(hero·feature·footer·qr), action: open(스토어 새 탭)·redirect(QR로 들어와 스토어로 이동)·qr(PC에서 설치 QR 열기) */
   APP_DOWNLOAD_INTRODUCE_CLICKED: 'App Download Introduce Clicked',
 
   // 동소한 (동아리 소개 한마당)

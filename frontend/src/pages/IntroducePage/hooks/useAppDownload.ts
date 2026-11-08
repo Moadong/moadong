@@ -9,6 +9,18 @@ export type AppDownloadLocation = 'hero' | 'feature' | 'footer' | 'qr';
 /** PC 화면의 QR에 담는 주소. 폰으로 열면 소개 페이지가 바로 스토어로 넘긴다 */
 export const APP_DOWNLOAD_QUERY = { key: 'download', value: 'app' } as const;
 
+/**
+ * 스토어로 바로 보낼 수 있는 폰·태블릿인가. 화면 폭이 아니라 기기로 판단한다
+ * (큰 폰 가로·아이패드도 포함하고, iPad처럼 맥으로 보이는 기기는 터치 지원으로 가린다)
+ */
+export const isStoreDevice = () =>
+  detectPlatform() !== 'Other' && navigator.maxTouchPoints > 0;
+
+/** 마우스로 보는 PC라 폰으로 찍을 설치 QR을 보여 줄 기기인가 */
+export const shouldShowInstallQr = () =>
+  window.matchMedia('(hover: hover) and (pointer: fine)').matches &&
+  !isStoreDevice();
+
 export const getAppDownloadQrUrl = () =>
   `${window.location.origin}/introduce?${APP_DOWNLOAD_QUERY.key}=${APP_DOWNLOAD_QUERY.value}`;
 

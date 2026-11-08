@@ -16,7 +16,8 @@ import {
   UpdatePromotionArticleRequest,
 } from '@/types/promotion';
 
-export const useGetPromotionArticles = () => {
+/** poll=false면 주기적으로 다시 받지 않는다 (소개 페이지처럼 목록을 장식으로만 쓰는 곳) */
+export const useGetPromotionArticles = ({ poll = true } = {}) => {
   const location = useLocation();
   const isPromotionPage = location.pathname.startsWith('/promotions');
 
@@ -25,7 +26,7 @@ export const useGetPromotionArticles = () => {
     queryFn: getPromotionArticles,
     staleTime: 60 * 1000,
     refetchOnWindowFocus: true,
-    refetchInterval: isPromotionPage ? 180000 : 300000,
+    refetchInterval: poll ? (isPromotionPage ? 180000 : 300000) : false,
     refetchIntervalInBackground: false,
   });
 };

@@ -4,11 +4,11 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import moadongMark from '@/assets/images/logos/moadong_mobile_logo.svg';
-import useDevice from '@/hooks/useDevice';
 import type { Audience } from '@/pages/IntroducePage/constants/audience';
 import useAppDownload, {
   AppDownloadLocation,
   getAppDownloadQrUrl,
+  shouldShowInstallQr,
 } from '@/pages/IntroducePage/hooks/useAppDownload';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './StartActions.styles';
@@ -151,7 +151,6 @@ interface StartActionsProps {
 const StartActions = ({ audience, location }: StartActionsProps) => {
   const navigate = useNavigate();
   const openStore = useAppDownload(location);
-  const { isDesktop } = useDevice();
 
   if (audience === 'club') {
     return (
@@ -177,7 +176,7 @@ const StartActions = ({ audience, location }: StartActionsProps) => {
 
   return (
     <Styled.Actions>
-      {isDesktop ? (
+      {shouldShowInstallQr() ? (
         <DesktopDownload location={location} />
       ) : (
         <Styled.Primary onClick={() => openStore()}>
