@@ -20,6 +20,7 @@ import FeedbackWritePage from '@/pages/FeedbackPage/FeedbackWritePage';
 import SentFeedbackDetailPage from '@/pages/FeedbackPage/SentFeedbackDetailPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
+import TeamPage from '@/pages/IntroducePage/subpages/TeamPage/TeamPage';
 import UpdatesPage from '@/pages/IntroducePage/subpages/UpdatesPage/UpdatesPage';
 import LoginPage from '@/pages/LoginPage/LoginPage';
 import MainPage from '@/pages/MainPage/MainPage';
@@ -134,6 +135,14 @@ const AppRoutes = () =>
     },
 
     /* 기존 웹 & 안드로이드 url (android: v1.1.0) */
+    {
+      path: '/introduce/team',
+      element: (
+        <ContentErrorBoundary>
+          <TeamPage />
+        </ContentErrorBoundary>
+      ),
+    },
     {
       path: '/club/:clubId',
       element: (
