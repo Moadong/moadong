@@ -15,8 +15,10 @@ concurrency: design-feedback-${{ github.event.issue.number }}-${{ github.event.l
 #   analyze: 에이전트가 스타일을 고치고 패치·PR 문구·되묻기 댓글을 파일로 남긴다. 읽기 토큰만 있다.
 #   verify:  시크릿·sudo 없이 패치를 적용해 타입체크·린트를 돌린다.
 #   publish: 에이전트 없이 고정 브랜치 design/<이슈번호>로 push하고 draft PR을 연다.
-#            GITHUB_TOKEN으로 한 push·PR 생성은 다른 워크플로를 트리거하지 않는다. 그래서 chromatic·harry-review는
-#            사람이 Ready for review를 누를 때(ready_for_review) 처음 이 코드를 실행한다. 결정 기록은 위키 ADR-015.
+#            GITHUB_TOKEN으로 만든·갱신한 PR의 opened·synchronize·reopened는 실행을 승인 대기 상태로만 만든다.
+#            누가 승인하거나 draft에서 Update branch·reopen을 눌러도, 시크릿을 쓰는 chromatic·harry는 draft 조건에
+#            걸려 돌지 않는다. 그 job들은 사람이 Ready for review를 누를 때(ready_for_review) 처음 이 코드를 실행한다.
+#            시크릿 없는 frontend-ci는 draft에서도 돌 수 있다. 결정 기록은 위키 ADR-015.
 #            레포 설정 "Allow GitHub Actions to create and approve pull requests"가 켜져 있어야 PR을 만들 수 있다.
 # harry App 토큰은 쓰지 않는다. 설치된 App에는 contents 쓰기 권한이 없고, 있더라도 에이전트 손에 쓰기 토큰이 간다.
 
@@ -162,15 +164,27 @@ jobs:
       # 필요 없는 구문을 통째로 받지 않는다: `<`(HTML), `]:`(참조 정의·각주), `](`(링크·이미지),
       # 유니코드 Cf 범주(태그 문자·제로폭·양방향 제어처럼 화면에 안 그려지는 문자).
       - name: Check PR text
+        env:
+          ISSUE_NUMBER: ${{ github.event.issue.number }}
         run: |
           python3 - design-feedback-out/pr-title.txt design-feedback-out/pr-body.md design-feedback-out/commit-message.txt <<'PY'
-          import sys, unicodedata
+          import os, re, sys, unicodedata
+          # 머지 때 close-issue 워크플로가 본문의 "Close #N"을 모두 닫는다. 이 이슈 말고 다른 번호는 받지 않는다.
+          # 그 워크플로의 정규식에 GitHub 기본 키워드(closed·fixed·resolved, owner/repo#N)까지 더해 넓게 잡는다.
+          CLOSING = re.compile(r'\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\b\s*:?\s+(?:[\w.-]+/[\w.-]+)?#(\d+)', re.I)
+          issue = os.environ['ISSUE_NUMBER']
+          # Cf(태그 문자·제로폭·양방향 제어)에 더해, 범주는 달라도 화면에 안 보이는 문자를 막는다.
+          # 변형 선택자(Mn)는 글자 뒤에 이어 붙여 바이트를 숨기는 데 쓰이고, 한글 채움·점자 공백은 빈칸으로 보인다.
+          def is_blank_glyph(c):
+              o = ord(c)
+              return 0xFE00 <= o <= 0xFE0F or 0xE0100 <= o <= 0xE01EF or c in '\u115f\u1160\u3164\uffa0\u2800'
           bad = False
           for path in sys.argv[1:]:
               for n, line in enumerate(open(path, encoding='utf-8'), 1):
                   hits = [s for s in ('<', ']:', '](') if s in line]
-                  if any(unicodedata.category(c) == 'Cf' for c in line):
+                  if any(unicodedata.category(c) == 'Cf' or is_blank_glyph(c) for c in line):
                       hits.append('보이지 않는 서식 문자')
+                  hits += [f'다른 이슈 닫기 #{m}' for m in CLOSING.findall(line) if m != issue]
                   if hits:
                       print(f"::error::{path}:{n}: 허용하지 않는 구문 {hits}")
                       bad = True
@@ -188,7 +202,7 @@ jobs:
           fi
           # frontend/src 안에도 CLAUDE.md가 있다. Ready 뒤 harry 같은 에이전트가 이 파일을 지시로 읽으므로
           # 스타일 수정에 필요 없는 마크다운 변경은 받지 않는다.
-          docs=$(git apply --numstat design-feedback-out/fix.patch | cut -f3 | grep -E '\.md$' || true)
+          docs=$(git apply --numstat design-feedback-out/fix.patch | cut -f3 | grep -iE '\.md$' || true)
           if [[ -n "$docs" ]]; then
             echo "::error::마크다운 변경은 받지 않는다: $docs"
             exit 1
@@ -278,23 +292,31 @@ jobs:
           git add -A frontend/src
           git commit -F "$out/commit-message.txt"
 
-          # --head는 브랜치 이름만 보고 포크 PR까지 잡는다. 포크에 같은 이름 브랜치로 먼저 연 PR을
-          # 봇 수정안으로 착각해 덮어쓰지 않게 이 레포 브랜치 PR만 고른다.
-          existing=$(gh pr list --repo "$REPO" --head "$branch" --state open \
-            --json url,isDraft,isCrossRepository \
-            --jq 'map(select(.isCrossRepository | not)) | .[0] // empty | "\(.url) \(.isDraft)"')
-          pr= is_draft=
-          if [[ -n $existing ]]; then
-            read -r pr is_draft <<<"$existing"
-          fi
-          # 사람이 Ready를 눌렀더라도 코드가 바뀌니 다시 승인을 받는다.
-          # push보다 먼저 돌려야 검토 안 된 코드가 Ready 상태로 올라가는 틈이 없다.
-          if [[ $is_draft == false ]]; then
-            gh pr ready "$pr" --repo "$REPO" --undo
-          fi
+          # 이 브랜치를 head로 쓰는 Ready PR을 대상 브랜치와 상관없이 모두 draft로 돌린다.
+          # 사람이 Ready를 눌렀더라도 코드가 바뀌니 다시 승인을 받는다. 누가 대상을 main으로 바꾼 PR도
+          # 같은 브랜치라 force-push가 그대로 올라가므로 빼면 안 된다.
+          # --head는 브랜치 이름만 보고 포크 PR까지 잡으니 이 레포 브랜치 PR만 고른다.
+          undo_ready() {
+            local urls u
+            urls=$(gh pr list --repo "$REPO" --head "$branch" --state open \
+              --json url,isDraft,isCrossRepository \
+              --jq '.[] | select((.isCrossRepository | not) and (.isDraft | not)) | .url')
+            for u in $urls; do
+              gh pr ready "$u" --repo "$REPO" --undo
+            done
+          }
 
+          # push 전에 돌려야 검토 안 된 코드가 Ready 상태로 올라가는 틈이 없고,
+          # 조회와 push 사이에 Ready가 눌렸을 수 있어 push 뒤에 한 번 더 돌린다.
+          undo_ready
           # 라벨을 다시 붙여 재실행하면 같은 브랜치를 새 결과로 덮는다.
           git push --force origin "HEAD:refs/heads/$branch"
+          undo_ready
+
+          # 제목·본문을 고치거나 새로 여는 건 develop-fe 대상 PR만이다.
+          pr=$(gh pr list --repo "$REPO" --head "$branch" --base develop-fe --state open \
+            --json url,isCrossRepository \
+            --jq 'map(select(.isCrossRepository | not)) | .[0].url // empty')
 
           # 제목은 에이전트가 정한 값이라 --title=로 붙여 넘긴다. -로 시작해도 옵션으로 읽히지 않는다.
           title=$(head -n1 "$out/pr-title.txt" | tr -d '\n')
@@ -312,7 +334,9 @@ jobs:
             echo "검증(타입체크·린트)은 통과했어요."
             echo
             echo "1. PR의 Files changed와 Vercel 프리뷰로 확인해 주세요."
-            echo "2. 괜찮으면 **Ready for review**를 눌러 주세요. 그때부터 CI와 리뷰봇이 이 코드를 실행해요."
+            echo "2. 괜찮으면 **Ready for review**를 눌러 주세요. 그때부터 Chromatic·리뷰봇까지 모든 검사가 이 코드를 실행해요."
+            echo "   PR에 뜨는 **Approve workflows to run**은 누르지 마세요. Ready를 누르면 필요한 검사가 다 돌고,"
+            echo "   승인 버튼은 Ready 전 상태로 만들어진 실행까지 돌릴 수 있어요."
             echo "3. 아니면 PR을 닫으면 돼요."
           } > /tmp/comment.md
           gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md

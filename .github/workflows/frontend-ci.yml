@@ -3,7 +3,8 @@ name: Frontend CI
 on:
   pull_request:
     branches: [main, develop-fe]
-    # GITHUB_TOKEN으로 연 PR(디자인 피드백 draft)은 opened로 돌지 않는다. 사람이 Ready를 누를 때 돈다(위키 ADR-015).
+    # GITHUB_TOKEN으로 연 PR(디자인 피드백 draft)은 opened가 승인 대기 실행으로만 생긴다.
+    # 사람이 Ready를 누르면 사람이 일으킨 이벤트라 승인 없이 돈다(위키 ADR-015).
     types: [opened, synchronize, reopened, ready_for_review]
     paths:
       - 'frontend/**'
