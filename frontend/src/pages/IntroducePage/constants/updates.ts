@@ -1,9 +1,9 @@
 // 업데이트 기록 페이지에 보여 줄 학생·운영진 체감 변경 목록 (최신순, 배포 이력 기준)
-import introduce_main_screen from '@/assets/images/introduce/introduce_main_screen.webp';
 import update_admin_ai from '@/assets/images/introduce/updates/update_admin_ai.webp';
 import update_admin_applicants from '@/assets/images/introduce/updates/update_admin_applicants.webp';
 import update_admin_edit from '@/assets/images/introduce/updates/update_admin_edit.webp';
 import update_admin_stats from '@/assets/images/introduce/updates/update_admin_stats.webp';
+import update_app_store from '@/assets/images/introduce/updates/update_app_store.webp';
 import update_apply from '@/assets/images/introduce/updates/update_apply.webp';
 import update_bottom_nav from '@/assets/images/introduce/updates/update_bottom_nav.webp';
 import update_calendar from '@/assets/images/introduce/updates/update_calendar.webp';
@@ -12,6 +12,7 @@ import update_club_detail from '@/assets/images/introduce/updates/update_club_de
 import update_club_union from '@/assets/images/introduce/updates/update_club_union.webp';
 import update_deadline_push from '@/assets/images/introduce/updates/update_deadline_push.webp';
 import update_first_open from '@/assets/images/introduce/updates/update_first_open.webp';
+import update_google_play from '@/assets/images/introduce/updates/update_google_play.webp';
 import update_letterbox from '@/assets/images/introduce/updates/update_letterbox.webp';
 import update_main_cards from '@/assets/images/introduce/updates/update_main_cards.webp';
 import update_promotion_badge from '@/assets/images/introduce/updates/update_promotion_badge.webp';
@@ -23,12 +24,13 @@ import update_search from '@/assets/images/introduce/updates/update_search.webp'
  * 이미지 규격(4:3 프레임 안에 놓는 방식)
  * - phone: 폰 화면 캡처(390px 폭, 2배율). 가운데 좁게 세우고 아래는 자른다
  * - panel: 실제 컴포넌트 화면 한 칸 캡처. 넓게 세우고 아래는 자른다
+ * - wide: 가로로 긴 PC 화면 캡처. 거의 꽉 차게 놓는다
  * - mockup: 이미 폰 틀이 그려진 이미지. 잘리지 않게 프레임 높이에 맞춘다
  */
-export type UpdateImageKind = 'phone' | 'panel' | 'mockup';
+export type UpdateImageKind = 'phone' | 'panel' | 'wide' | 'mockup';
 
 export interface UpdateEntry {
-  /** YYYY-MM-DD. 2026년 3월부터는 릴리스 태그일, 그 전은 main 머지일 */
+  /** YYYY-MM-DD. 2026년 3월부터는 릴리스 태그일, 그 전은 main 머지일 (App Store는 스토어 첫 출시일) */
   date: string;
   title: string;
   description: string;
@@ -184,12 +186,23 @@ export const UPDATE_ENTRIES: readonly UpdateEntry[] = [
   },
   {
     date: '2025-12-19',
-    title: '모아동 앱이 나왔어요',
+    title: 'Google Play에도 모아동 앱이 나왔어요',
     description:
-      'iOS와 Android 앱이 나왔어요. 관심 동아리를 구독하면 모집 소식을 알림으로 받아 볼 수 있어요.',
+      '이제 Android에서도 모아동 앱을 쓸 수 있어요. 웹, iPhone, Android 어디서든 같은 모아동을 만나요.',
     image: {
-      src: introduce_main_screen,
-      alt: '모아동 앱 홈 화면',
+      src: update_google_play,
+      alt: 'Google Play의 모아동 앱 페이지',
+      kind: 'wide',
+    },
+  },
+  {
+    date: '2025-11-20',
+    title: 'App Store에 모아동 앱이 올라왔어요',
+    description:
+      'iPhone에서 모아동을 검색하면 바로 받을 수 있어요. 관심 동아리를 구독하면 모집 소식을 앱 알림으로 받아 봐요.',
+    image: {
+      src: update_app_store,
+      alt: 'App Store의 모아동 앱 페이지',
       kind: 'phone',
     },
   },

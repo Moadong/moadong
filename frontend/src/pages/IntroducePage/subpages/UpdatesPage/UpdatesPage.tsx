@@ -25,12 +25,12 @@ const UpdatesPage = () => {
       </Styled.Hero>
 
       <Styled.List>
-        {UPDATE_ENTRIES.map(({ date, title, description, image }) => (
+        {UPDATE_ENTRIES.map(({ date, title, description, image }, index) => (
           <Styled.Entry key={`${date}-${title}`}>
             <Styled.Date dateTime={date}>{formatDate(date)}</Styled.Date>
             <Styled.Body>
               <Styled.EntryTitle>{title}</Styled.EntryTitle>
-              <Styled.Frame>
+              <Styled.Frame $tone={index}>
                 <Styled.Shot
                   $kind={image.kind}
                   src={image.src}

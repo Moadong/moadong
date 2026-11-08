@@ -80,20 +80,31 @@ export const EntryTitle = styled.h2`
  * 이미지 규격: 본문 칼럼 전체 폭, 4:3 고정. 연한 브랜드색 판 위에 실제 화면 캡처를 위에서부터 세우고
  * 아래는 판 밖으로 잘라 낸다. 종류별 폭은 constants/updates.ts의 규격을 따른다
  */
-export const Frame = styled.div`
+export const Frame = styled.div<{ $tone: number }>`
   position: relative;
   aspect-ratio: 4 / 3;
   margin-top: 20px;
   border-radius: 20px;
-  background: ${colors.primary[500]};
+  background: ${({ $tone }) => FRAME_TONES[$tone % FRAME_TONES.length]};
   overflow: hidden;
 `;
 
 const SHOT_WIDTH: Record<UpdateImageKind, string> = {
   phone: '46%',
   panel: '70%',
+  wide: '88%',
   mockup: 'auto',
 };
+
+/* 항목마다 판 색을 돌려 가며 칠해 목록이 단조롭지 않게 한다 (브랜드 주황 → 파랑 → 민트 → 보라 → 노랑 → 분홍) */
+const FRAME_TONES = [
+  colors.primary[500],
+  colors.secondary[4].back,
+  colors.secondary[3].back,
+  colors.secondary[6].back,
+  colors.secondary[2].back,
+  colors.secondary[1].back,
+];
 
 export const Shot = styled.img<{ $kind: UpdateImageKind }>`
   position: absolute;
@@ -102,7 +113,8 @@ export const Shot = styled.img<{ $kind: UpdateImageKind }>`
   display: block;
   width: ${({ $kind }) => SHOT_WIDTH[$kind]};
   height: ${({ $kind }) => ($kind === 'mockup' ? '94%' : 'auto')};
-  border-radius: ${({ $kind }) => ($kind === 'mockup' ? 0 : '20px')};
+  border-radius: ${({ $kind }) =>
+    $kind === 'mockup' ? 0 : $kind === 'wide' ? '12px' : '20px'};
   box-shadow: ${({ $kind }) =>
     $kind === 'mockup' ? 'none' : '0 8px 32px rgba(17, 17, 17, 0.1)'};
   translate: -50% 0;
