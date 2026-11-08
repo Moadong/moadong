@@ -1,4 +1,4 @@
-// 만드는 사람들 페이지의 인사말, 두 칸 이야기 블록, 큰 글씨 마무리(팀원 모집·연락처) 스타일
+// 만드는 사람들 페이지의 인사말, 두 칸 이야기 블록, 큰 글씨 팀원 모집 마무리 스타일
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
@@ -39,13 +39,12 @@ export const Lead = styled.p`
   }
 `;
 
-/* 굵은 두 줄 제목 아래에 본문을 둔다 */
+/* 굵은 두 줄 제목과 본문을 좌우로 둔다. 좁은 화면에서는 위아래로 쌓는다 */
 export const Story = styled.section`
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 20px;
-  max-width: 640px;
-  margin-top: 140px;
+  grid-template-columns: 300px 1fr;
+  gap: 40px;
+  margin-top: 120px;
 
   ${media.tablet} {
     grid-template-columns: 1fr;
@@ -55,7 +54,7 @@ export const Story = styled.section`
 `;
 
 export const StoryTitle = styled.h2`
-  font-size: 40px;
+  font-size: 30px;
   font-weight: 700;
   line-height: 1.4;
   letter-spacing: -0.02em;
@@ -63,39 +62,34 @@ export const StoryTitle = styled.h2`
   word-break: keep-all;
 
   ${media.mobile} {
-    font-size: 26px;
+    font-size: 24px;
   }
 `;
 
 export const StoryBody = styled.div`
   p {
-    font-size: 22px;
-    font-weight: 500;
-    line-height: 1.6;
+    font-size: 17px;
+    line-height: 1.75;
     color: ${colors.gray[800]};
     word-break: keep-all;
   }
 
   p + p {
-    margin-top: 16px;
+    margin-top: 12px;
   }
 
   ${media.mobile} {
     p {
-      font-size: 17px;
+      font-size: 16px;
     }
   }
 `;
 
-/* 마무리: 팀원 모집과 연락처를 같은 큰 글씨 블록 두 개로 쌓는다 */
+/* 마무리: 팀원 모집을 큰 글씨 블록으로 둔다 */
 export const Closing = styled.section`
-  display: flex;
-  flex-direction: column;
-  gap: 88px;
   margin-top: 160px;
 
   ${media.tablet} {
-    gap: 56px;
     margin-top: 96px;
   }
 `;
@@ -139,7 +133,6 @@ export const ClosingAction = styled.a`
   margin-top: 4px;
   color: ${colors.primary[900]};
   text-decoration: none;
-  word-break: break-all;
   background-image: linear-gradient(currentColor, currentColor);
   background-size: 0% 2px;
   background-position: 0 100%;

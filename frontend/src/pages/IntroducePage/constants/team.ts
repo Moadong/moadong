@@ -27,5 +27,3 @@ export const TEAM_STORIES: readonly TeamStory[] = [
     ],
   },
 ];
-
-export const TEAM_CONTACT_EMAIL = 'pknu.moadong@gmail.com';
