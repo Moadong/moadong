@@ -77,15 +77,6 @@ const IntroSection = ({
           fillOpacity={0.1}
           delay={0.35}
         />
-        <BrandDoodle
-          shape='mark'
-          trigger='mount'
-          width='min(10vw, 110px)'
-          position={{ bottom: '120px', left: 'max(12px, calc(50% - 420px))' }}
-          rotate={-14}
-          fillOpacity={0.14}
-          delay={0.7}
-        />
       </Styled.Doodles>
 
       <Styled.Container>
