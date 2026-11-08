@@ -1,15 +1,17 @@
-// 업데이트 기록의 앱 출시 항목: 모아동 앱 아이콘 주위로 폭죽 조각이 터지고, 아래에 공식 스토어 배지를 두는 장면
-import { useReducedMotion } from 'framer-motion';
-import badgeAppStore from '@/assets/images/introduce/updates/badge_app_store.svg';
-import badgeGooglePlay from '@/assets/images/introduce/updates/badge_google_play.png';
+// 업데이트 기록의 앱 출시 항목: 모아동 앱 아이콘과 스토어 로고를 두고, 화면에 들어올 때마다 종이 폭죽이 터졌다가 떨어지는 장면
+import { useEffect, useRef } from 'react';
+import confetti from 'canvas-confetti';
+import { useInView, useReducedMotion } from 'framer-motion';
+import logoAppStore from '@/assets/images/introduce/updates/logo_app_store.svg';
+import logoGooglePlay from '@/assets/images/introduce/updates/logo_google_play.svg';
 import moadongMark from '@/assets/images/logos/moadong_mobile_logo.svg';
 import type { StoreKind } from '@/pages/IntroducePage/constants/updates';
 import { colors } from '@/styles/theme/colors';
 import * as Styled from './StoreLaunch.styles';
 
-const BADGE: Record<StoreKind, { src: string; alt: string }> = {
-  app_store: { src: badgeAppStore, alt: 'App Store에서 다운로드' },
-  google_play: { src: badgeGooglePlay, alt: 'Google Play에서 다운로드' },
+const STORE: Record<StoreKind, { logo: string; name: string }> = {
+  app_store: { logo: logoAppStore, name: 'App Store' },
+  google_play: { logo: logoGooglePlay, name: 'Google Play' },
 };
 
 const CONFETTI_COLORS = [
@@ -21,66 +23,54 @@ const CONFETTI_COLORS = [
   colors.secondary[6].main,
 ];
 
-/** 아이콘 둘레로 고르게 흩어지는 조각들 (각도·거리·모양을 미리 정해 두어 매번 같은 모양으로 터진다) */
-const PIECES = Array.from({ length: 16 }, (_, i) => {
-  const angle = (i / 16) * Math.PI * 2 + (i % 2 ? 0.18 : -0.12);
-  const distance = 92 + (i % 4) * 18;
-  return {
-    x: Math.cos(angle) * distance,
-    y: Math.sin(angle) * distance * 0.78,
-    rotate: (i * 47) % 360,
-    round: i % 3 === 0,
-    color: CONFETTI_COLORS[i % CONFETTI_COLORS.length],
-  };
-});
+/** 아이콘 높이쯤에서 양옆으로 두 번 터뜨린다 */
+const BURSTS = [
+  { angle: 60, x: 0.3 },
+  { angle: 120, x: 0.7 },
+];
 
 interface StoreLaunchProps {
   store: StoreKind;
 }
 
 const StoreLaunch = ({ store }: StoreLaunchProps) => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const inView = useInView(canvasRef, { amount: 0.6 });
   const reduceMotion = useReducedMotion();
-  const viewport = { once: true, amount: 0.6 };
+
+  // 화면에 들어올 때마다 한 번씩 터진다. 조각은 중력으로 떨어지며 사라진다
+  useEffect(() => {
+    const canvas = canvasRef.current;
+    if (!canvas || !inView || reduceMotion) return;
+    const fire = confetti.create(canvas, { resize: true });
+    BURSTS.forEach(({ angle, x }) =>
+      fire({
+        particleCount: 60,
+        angle,
+        spread: 70,
+        startVelocity: 38,
+        gravity: 1,
+        ticks: 180,
+        scalar: 0.9,
+        origin: { x, y: 0.62 },
+        colors: CONFETTI_COLORS,
+      }),
+    );
+    return () => fire.reset();
+  }, [inView, reduceMotion]);
+
+  const { logo, name } = STORE[store];
 
   return (
     <Styled.Scene>
-      <Styled.IconArea>
-        {PIECES.map((piece, i) => (
-          <Styled.Piece
-            key={i}
-            aria-hidden='true'
-            $round={piece.round}
-            style={{ background: piece.color }}
-            initial={
-              reduceMotion
-                ? { x: piece.x, y: piece.y, rotate: piece.rotate, opacity: 1 }
-                : { x: 0, y: 0, rotate: 0, opacity: 0, scale: 0.4 }
-            }
-            whileInView={{
-              x: piece.x,
-              y: piece.y,
-              rotate: piece.rotate,
-              opacity: 1,
-              scale: 1,
-            }}
-            viewport={viewport}
-            transition={{
-              duration: 0.7,
-              delay: 0.15 + (i % 4) * 0.03,
-              ease: [0.22, 1, 0.36, 1],
-            }}
-          />
-        ))}
-        <Styled.AppIcon
-          initial={reduceMotion ? false : { scale: 0.6, opacity: 0 }}
-          whileInView={{ scale: 1, opacity: 1 }}
-          viewport={viewport}
-          transition={{ type: 'spring', stiffness: 260, damping: 16 }}
-        >
-          <img src={moadongMark} alt='모아동 앱 아이콘' />
-        </Styled.AppIcon>
-      </Styled.IconArea>
-      <Styled.Badge src={BADGE[store].src} alt={BADGE[store].alt} />
+      <Styled.Canvas ref={canvasRef} aria-hidden='true' />
+      <Styled.AppIcon>
+        <img src={moadongMark} alt='모아동 앱 아이콘' />
+      </Styled.AppIcon>
+      <Styled.StoreName>
+        <img src={logo} alt='' />
+        {name}
+      </Styled.StoreName>
     </Styled.Scene>
   );
 };

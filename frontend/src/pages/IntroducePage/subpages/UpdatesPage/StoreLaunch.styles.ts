@@ -1,5 +1,4 @@
-// 앱 출시 장면의 배치, 모아동 앱 아이콘, 폭죽 조각, 스토어 배지 스타일
-import { motion } from 'framer-motion';
+// 앱 출시 장면의 배치, 폭죽 캔버스, 모아동 앱 아이콘, 스토어 이름 스타일
 import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 
@@ -10,29 +9,20 @@ export const Scene = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 36px;
+  gap: 24px;
 `;
 
-export const IconArea = styled.div`
-  position: relative;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`;
-
-/* 폭죽 조각은 아이콘 한가운데에서 출발해 둘레로 퍼진다 */
-export const Piece = styled(motion.span)<{ $round: boolean }>`
+/* 폭죽은 판 전체를 덮는 캔버스에 그리고, 판 밖으로는 나가지 않는다 */
+export const Canvas = styled.canvas`
   position: absolute;
-  top: 50%;
-  left: 50%;
-  width: ${({ $round }) => ($round ? 10 : 8)}px;
-  height: ${({ $round }) => ($round ? 10 : 16)}px;
-  margin: -6px 0 0 -5px;
-  border-radius: ${({ $round }) => ($round ? '50%' : '2px')};
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  pointer-events: none;
 `;
 
 /* 실제 앱 아이콘처럼 주황 바탕에 흰 모아동 로고 */
-export const AppIcon = styled(motion.div)`
+export const AppIcon = styled.div`
   position: relative;
   display: flex;
   align-items: center;
@@ -50,8 +40,18 @@ export const AppIcon = styled(motion.div)`
   }
 `;
 
-export const Badge = styled.img`
-  display: block;
-  height: 48px;
-  width: auto;
+/* 누르는 버튼이 아니라 어느 스토어인지 알려 주는 표시 */
+export const StoreName = styled.p`
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 20px;
+  font-weight: 700;
+  color: ${colors.gray[900]};
+
+  img {
+    width: 28px;
+    height: 28px;
+  }
 `;
