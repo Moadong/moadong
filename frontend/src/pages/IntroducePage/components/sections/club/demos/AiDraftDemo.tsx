@@ -45,13 +45,8 @@ const AiDraftDemo = () => {
         <Styled.DraftStart>
           <AiSparkle />
           <Styled.DraftStartTitle>
-            지원서 질문, AI가 먼저 써 드려요
+            소개와 지난 지원서로 이번 학기 지원서를 만들어요
           </Styled.DraftStartTitle>
-          <Styled.DraftStartText>
-            동아리 소개를 읽고
-            <br />
-            우리 동아리에 꼭 맞는 질문을 만들어요
-          </Styled.DraftStartText>
           {/* 실제 지원서 편집 화면의 버튼을 그대로 쓰고 크기만 키운다 */}
           <Styled.RealButtonScale>
             <EditStyled.AiDraftButton type='button'>

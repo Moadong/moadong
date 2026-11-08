@@ -1,6 +1,7 @@
 // 학생에게 실제 서비스 화면 컴포넌트(검색·카테고리·동아리 정보·일정·지원·홍보·구독)를 목업 데이터로 한 줄씩 보여주는 섹션
 import introduce_club_detail from '@/assets/images/introduce/introduce_club_detail.webp';
 import PromotionCardView from '@/components/promotion/PromotionCardView/PromotionCardView';
+import { useGetPromotionArticles } from '@/hooks/Queries/usePromotion';
 import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
@@ -29,6 +30,8 @@ import SearchDemo from '../SearchDemo/SearchDemo';
 import * as Styled from './StudentShowcaseSection.styles';
 
 const APPLY_TYPE_MS = 70;
+/** 두 줄로 채우고 아래 줄은 화면 칸 끝에서 잘리게 둔다 */
+const RECENT_PROMOTION_COUNT = 4;
 
 const noop = () => {};
 
@@ -39,6 +42,11 @@ const StudentShowcaseSection = () => {
   );
   const openStore = useAppDownload('feature');
   const [motivationQuestion, daysQuestion] = MOCK_QUESTIONS;
+  // 홍보 게시판 페이지와 같은 조회라 실제 최근 소식을 보여 준다. 아직 없으면 지난 축제 기록으로 채운다
+  const { data: promotionArticles } = useGetPromotionArticles();
+  const recentPromotions = promotionArticles?.length
+    ? promotionArticles.slice(0, RECENT_PROMOTION_COUNT)
+    : MOCK_PROMOTIONS;
 
   return (
     <List aria-label='모아동 기능 소개'>
@@ -104,11 +112,11 @@ const StudentShowcaseSection = () => {
 
       <FeatureRow
         title={'동아리 공연과 행사 소식도\n모아동에서'}
-        caption='동아리 소개 한마당, 대동제 동아리 버스킹 시간표처럼 동아리 소식이 홍보 게시판에 올라와요.'
+        caption='정기 공연, 전시회, 버스킹까지. 동아리들이 올린 최근 소식을 홍보 게시판에서 한눈에 봐요.'
         link={{ label: '홍보 게시판 보기', to: '/promotions' }}
       >
         <Styled.PromotionGrid>
-          {MOCK_PROMOTIONS.map((article) => (
+          {recentPromotions.map((article) => (
             <PromotionCardView key={article.id} article={article} />
           ))}
         </Styled.PromotionGrid>

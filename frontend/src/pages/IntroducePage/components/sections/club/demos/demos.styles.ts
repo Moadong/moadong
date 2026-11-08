@@ -73,6 +73,7 @@ export const Thinking = styled.div`
   display: flex;
   flex-direction: column;
   gap: 16px;
+  margin-top: 24px;
 `;
 
 const shimmer = keyframes`
@@ -116,16 +117,10 @@ export const DraftStart = styled.div`
 
 export const DraftStartTitle = styled.p`
   margin-top: 18px;
-  font-size: 20px;
+  font-size: 16px;
+  white-space: nowrap;
   font-weight: 700;
   color: ${colors.gray[950]};
-`;
-
-export const DraftStartText = styled.p`
-  margin-top: 6px;
-  font-size: 14px;
-  line-height: 1.6;
-  color: ${colors.gray[700]};
 `;
 
 export const RealButtonScale = styled.div`
