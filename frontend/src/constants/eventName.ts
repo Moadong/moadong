@@ -116,6 +116,10 @@ export const USER_EVENT = {
   /** 구독 페이지 앱 다운로드 버튼 클릭 */
   APP_DOWNLOAD_SUBSCRIPTIONS_CLICKED: 'App Download Subscriptions Clicked',
 
+  // 소개 페이지
+  /** 소개 페이지 앱 다운로드 버튼 클릭 (location으로 위치, store로 스토어 구분) */
+  APP_DOWNLOAD_INTRODUCE_CLICKED: 'App Download Introduce Clicked',
+
   // 동소한 (동아리 소개 한마당)
   /** 동소한 탭 클릭 */
   FESTIVAL_TAB_CLICKED: 'Festival Tab Clicked',

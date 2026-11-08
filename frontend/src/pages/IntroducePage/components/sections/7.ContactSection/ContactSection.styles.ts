@@ -9,6 +9,7 @@ export const ContactSection = styled(motion.section)`
   background-color: rgba(255, 84, 20, 0.08);
   position: relative;
   overflow: hidden;
+  isolation: isolate;
 
   display: flex;
   flex-direction: column;
@@ -34,6 +35,10 @@ export const ContactSection = styled(motion.section)`
 `;
 
 export const ContactTitle = styled.h2`
+  position: relative;
+  z-index: 1;
+  text-align: center;
+  word-break: keep-all;
   margin-top: 55px;
   font-size: 3rem;
   font-weight: bold;
@@ -54,51 +59,4 @@ export const ContactTitle = styled.h2`
     font-size: 1.5rem;
     text-align: center;
   }
-`;
-
-export const ContactButton = styled.a`
-  display: inline-block;
-  text-decoration: none;
-  cursor: pointer;
-  z-index: 1;
-
-  background: ${colors.base.white};
-  color: ${colors.primary[900]};
-  font-size: 1rem;
-  font-weight: bold;
-  padding: 14px 64px;
-  border: 1px solid ${colors.primary[900]};
-  border-radius: 50px;
-  transition: all 0.3s ease;
-
-  &:hover {
-    background: ${colors.primary[900]};
-    color: ${colors.base.white};
-  }
-
-  ${media.laptop} {
-    padding: 12px 56px;
-  }
-
-  ${media.tablet} {
-    padding: 10px 48px;
-  }
-
-  ${media.mobile} {
-    padding: 8px 40px;
-  }
-`;
-
-export const Shape = styled.div<{
-  $top?: string;
-  $left?: string;
-  $right?: string;
-  $bottom?: string;
-}>`
-  position: absolute;
-  z-index: 0;
-  top: ${({ $top }) => $top || 'auto'};
-  left: ${({ $left }) => $left || 'auto'};
-  right: ${({ $right }) => $right || 'auto'};
-  bottom: ${({ $bottom }) => $bottom || 'auto'};
 `;

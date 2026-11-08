@@ -1,38 +1,32 @@
-import {
-  BackgroundCircleLarge,
-  BackgroundCircleSmall,
-  BackgroundTwistLeft,
-  BackgroundTwistRight,
-} from '@/pages/IntroducePage/components/BackgroundShapes';
+import { ReactNode } from 'react';
+import BrandDoodle from '@/pages/IntroducePage/components/BrandDoodle/BrandDoodle';
 import * as Styled from './ContactSection.styles';
 
-const kakaoLink = 'https://open.kakao.com/o/s21dRWjh';
+interface ContactSectionProps {
+  title: string;
+  /** 대상별 시작 버튼 */
+  actions: ReactNode;
+}
 
-const ContactSection = () => {
+const ContactSection = ({ title, actions }: ContactSectionProps) => {
   return (
     <Styled.ContactSection>
-      <Styled.ContactTitle>
-        모아동과 함께하고 싶은 동아리는 연락해주세요!
-      </Styled.ContactTitle>
-      <Styled.ContactButton
-        href={kakaoLink}
-        target='_blank'
-        rel='noopener noreferrer'
-      >
-        문의하기
-      </Styled.ContactButton>
-      <Styled.Shape $top='-40px' $left='20px'>
-        <BackgroundTwistLeft />
-      </Styled.Shape>
-      <Styled.Shape $top='163px' $right='-10px'>
-        <BackgroundTwistRight />
-      </Styled.Shape>
-      <Styled.Shape $top='575px' $left='411px'>
-        <BackgroundCircleSmall />
-      </Styled.Shape>
-      <Styled.Shape $top='380px' $right='477px'>
-        <BackgroundCircleLarge />
-      </Styled.Shape>
+      <BrandDoodle
+        shape='twistRight'
+        width='min(20vw, 240px)'
+        position={{ top: '-30px', left: 'max(-60px, calc(50% - 600px))' }}
+        rotate={160}
+      />
+      <BrandDoodle
+        shape='mark'
+        width='min(12vw, 120px)'
+        position={{ bottom: '28px', right: 'max(16px, calc(50% - 540px))' }}
+        rotate={12}
+        fillOpacity={0.14}
+        delay={0.4}
+      />
+      <Styled.ContactTitle>{title}</Styled.ContactTitle>
+      {actions}
     </Styled.ContactSection>
   );
 };
