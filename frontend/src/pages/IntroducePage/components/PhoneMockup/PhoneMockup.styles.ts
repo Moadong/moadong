@@ -139,13 +139,13 @@ export const StatusIcons = styled.span`
 `;
 
 /* 캡처 이미지를 화면 폭에 맞춰 넣는다 */
-export const Capture = styled.img`
-  display: block;
-  width: 100%;
-  height: auto;
-`;
-
 /* 긴 캡처가 스크롤되는 창 */
 export const ScrollViewport = styled.div`
+  overflow: hidden;
+`;
+
+/* 비율로 크기를 정하는 스크롤 창 (폰 폭이 바뀌어도 같은 비율로 보인다) */
+export const LoopViewport = styled.div`
+  width: 100%;
   overflow: hidden;
 `;

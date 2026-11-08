@@ -1,6 +1,6 @@
 import { lazy, Suspense, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
-import introduce_main_screen from '@/assets/images/introduce/introduce_main_screen.webp';
+import introduce_main_long from '@/assets/images/introduce/introduce_main_long.webp';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
@@ -11,9 +11,8 @@ import isInAppWebView from '@/utils/isInAppWebView';
 import AudienceToggle, {
   AUDIENCE_PANEL_ID,
 } from './components/AudienceToggle/AudienceToggle';
-import PhoneMockup, {
-  PhoneCapture,
-} from './components/PhoneMockup/PhoneMockup';
+import LoopingScreen from './components/PhoneMockup/LoopingScreen';
+import PhoneMockup from './components/PhoneMockup/PhoneMockup';
 import IntroSection from './components/sections/1.IntroSection/IntroSection';
 import ProblemSection from './components/sections/2.ProblemSection/ProblemSection';
 import ContactSection from './components/sections/7.ContactSection/ContactSection';
@@ -75,9 +74,14 @@ const IntroducePage = () => {
             visual={
               audience === 'student' ? (
                 <PhoneMockup>
-                  <PhoneCapture
-                    src={introduce_main_screen}
+                  {/* 실제 메인 화면을 위에서 아래로 천천히 둘러본다 */}
+                  <LoopingScreen
+                    src={introduce_main_long}
                     alt='모아동 메인 화면'
+                    imageWidth={390}
+                    imageHeight={1900}
+                    viewWidth={390}
+                    viewHeight={844}
                   />
                 </PhoneMockup>
               ) : (

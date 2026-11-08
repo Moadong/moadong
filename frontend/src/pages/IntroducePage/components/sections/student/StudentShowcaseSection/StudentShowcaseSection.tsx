@@ -83,7 +83,10 @@ const StudentShowcaseSection = () => {
         </PhoneMockup>
       </FeatureRow>
 
-      <FeatureRow title={'동아리 일정을\n달력으로 미리 봐요'}>
+      <FeatureRow
+        title={'동아리 일정을\n달력으로 미리 봐요'}
+        caption='정기 모임, 공연, 행사 날짜를 동아리 페이지 달력에서 미리 확인해요.'
+      >
         <Styled.CalendarFit>
           <ClubScheduleCalendar events={MOCK_CALENDAR_EVENTS} />
         </Styled.CalendarFit>
