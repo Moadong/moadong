@@ -1,119 +1,130 @@
-// 커서가 지원자 두 명을 고르고 상태변경에서 합격을 누르면 목록과 현황 숫자가 함께 바뀌는 지원자 관리 데모
+// 지원서 답변을 읽고 상태(면접예정·합격)를 누른 뒤 다음 지원자로 넘어가는 지원서 상세 데모 (실제 모바일 지원서 상세 화면의 부품을 쓴다)
 import { useRef, useState } from 'react';
-import ApplicantListRow from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantListRow/ApplicantListRow';
-import BulkActionBar from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/BulkActionBar/BulkActionBar';
-import StatusSummaryCard from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/StatusSummaryCard/StatusSummaryCard';
+import { AnimatePresence, motion } from 'framer-motion';
+import { AVAILABLE_STATUSES } from '@/constants/status';
+import * as DetailStyled from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPageMobile.styles';
+import AnswerCard from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/components/mobile/AnswerCard/AnswerCard';
+import ApplicantNavHeader from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/components/mobile/ApplicantNavHeader/ApplicantNavHeader';
 import MacCursor from '@/pages/IntroducePage/components/MacCursor/MacCursor';
 import {
-  MOCK_APPLICANT_SUMMARY,
-  MOCK_APPLICANTS,
+  AI_DRAFT_QUESTIONS,
+  REVIEW_APPLICANTS,
 } from '@/pages/IntroducePage/constants/showcaseMocks';
 import useScriptedCursor, {
   CursorStep,
   findByText,
 } from '@/pages/IntroducePage/hooks/useScriptedCursor';
 import { ApplicationStatus } from '@/types/applicants';
+import mapStatusToGroup from '@/utils/mapStatusToGroup';
 import * as Styled from './demos.styles';
 
 const noop = () => {};
 
-/** 데모에서 합격 처리할 지원자 (서류검토 1명, 면접예정 1명) */
-const PICKED = [MOCK_APPLICANTS[0].id, MOCK_APPLICANTS[1].id];
+const NAV_ITEMS = REVIEW_APPLICANTS.map(({ id, name }) => ({ id, name }));
+const INITIAL_STATUSES = REVIEW_APPLICANTS.map(
+  () => ApplicationStatus.SUBMITTED,
+);
 
-const rowCheckbox = (index: number) => (root: HTMLElement) =>
-  root.querySelector(`[data-demo="row-${index}"]`)?.firstElementChild
-    ?.firstElementChild;
+const statusTab = (status: ApplicationStatus) => (root: HTMLElement) =>
+  findByText(
+    root,
+    '[data-demo="status"] button',
+    mapStatusToGroup(status).label,
+  );
+const nextButton = (root: HTMLElement) =>
+  root.querySelector('[aria-label="다음 지원자"]');
 
 const ApplicantsDemo = () => {
   const rootRef = useRef<HTMLDivElement>(null);
-  const [checked, setChecked] = useState<string[]>([]);
-  const [menuOpen, setMenuOpen] = useState(false);
-  const [accepted, setAccepted] = useState(false);
+  const [index, setIndex] = useState(0);
+  const [statuses, setStatuses] = useState(INITIAL_STATUSES);
 
+  const setStatus = (target: number, status: ApplicationStatus) =>
+    setStatuses((prev) =>
+      prev.map((current, i) => (i === target ? status : current)),
+    );
+
+  // 답변을 읽을 시간을 두고 상태를 정한 뒤 다음 지원자로 넘어간다
   const steps: CursorStep[] = [
     {
-      target: rowCheckbox(0),
+      target: statusTab(ApplicationStatus.ACCEPTED),
       click: true,
-      action: () => setChecked([PICKED[0]]),
+      action: () => setStatus(0, ApplicationStatus.ACCEPTED),
+      wait: 450,
     },
+    { target: nextButton, click: true, action: () => setIndex(1), wait: 900 },
     {
-      target: rowCheckbox(1),
+      target: statusTab(ApplicationStatus.INTERVIEW_SCHEDULED),
       click: true,
-      action: () => setChecked(PICKED),
+      action: () => setStatus(1, ApplicationStatus.INTERVIEW_SCHEDULED),
+      wait: 450,
     },
+    { target: nextButton, click: true, action: () => setIndex(2), wait: 900 },
     {
-      target: (root) => findByText(root, 'button', '상태변경'),
+      target: statusTab(ApplicationStatus.ACCEPTED),
       click: true,
-      action: () => setMenuOpen(true),
-    },
-    {
-      target: (root) => findByText(root, '[data-demo="bulk"] *', '합격'),
-      click: true,
-      action: () => {
-        setMenuOpen(false);
-        setChecked([]);
-        setAccepted(true);
-      },
-      // 결과가 깔끔하게 보이도록 누른 뒤 커서는 사라진다
+      action: () => setStatus(2, ApplicationStatus.ACCEPTED),
       hide: true,
-      wait: 2400,
+      wait: 1800,
     },
   ];
 
   const reset = () => {
-    setChecked([]);
-    setMenuOpen(false);
-    setAccepted(false);
+    setIndex(0);
+    setStatuses(INITIAL_STATUSES);
   };
 
   const { cursor, enabled } = useScriptedCursor(rootRef, steps, reset, {
     startAtFirstTarget: true,
   });
 
-  const applicants = MOCK_APPLICANTS.map((applicant) =>
-    accepted && PICKED.includes(applicant.id)
-      ? { ...applicant, status: ApplicationStatus.ACCEPTED }
-      : applicant,
-  );
-  // 서류검토 1명, 면접예정 1명이 합격으로 옮겨 간다
-  const summary = accepted
-    ? {
-        ...MOCK_APPLICANT_SUMMARY,
-        reviewRequired: MOCK_APPLICANT_SUMMARY.reviewRequired - 1,
-        scheduledInterview: MOCK_APPLICANT_SUMMARY.scheduledInterview - 1,
-        accepted: MOCK_APPLICANT_SUMMARY.accepted + 2,
-      }
-    : MOCK_APPLICANT_SUMMARY;
+  const applicant = REVIEW_APPLICANTS[index];
 
   return (
     <Styled.DemoRoot ref={rootRef}>
-      <Styled.Stack>
-        <StatusSummaryCard data={summary} />
-        <Styled.Toolbar data-demo='bulk'>
-          <BulkActionBar
-            enabled={checked.length > 0}
-            isStatusMenuOpen={menuOpen}
-            onToggleStatusMenu={noop}
-            onStatusChange={noop}
-            onDelete={noop}
-          />
-          <Styled.SelectedCount $visible={checked.length > 0}>
-            {checked.length}명 선택
-          </Styled.SelectedCount>
-        </Styled.Toolbar>
-        <div>
-          {applicants.map((applicant, index) => (
-            <div key={applicant.id} data-demo={`row-${index}`}>
-              <ApplicantListRow
-                applicant={applicant}
-                isChecked={checked.includes(applicant.id)}
-                onCheck={noop}
-                onClick={noop}
-              />
-            </div>
+      <DetailStyled.TopSection>
+        <ApplicantNavHeader
+          applicants={NAV_ITEMS}
+          currentIndex={index}
+          onPrev={noop}
+          onNext={noop}
+          onSelect={noop}
+        />
+        <DetailStyled.StatusTabRow data-demo='status'>
+          {AVAILABLE_STATUSES.map((status) => (
+            <DetailStyled.StatusTab
+              key={status}
+              type='button'
+              $isSelected={statuses[index] === status}
+            >
+              {mapStatusToGroup(status).label}
+            </DetailStyled.StatusTab>
           ))}
-        </div>
-      </Styled.Stack>
+        </DetailStyled.StatusTabRow>
+      </DetailStyled.TopSection>
+
+      <DetailStyled.Divider />
+
+      <AnimatePresence mode='wait' initial={false}>
+        <motion.div
+          key={applicant.id}
+          initial={{ opacity: 0, x: 24 }}
+          animate={{ opacity: 1, x: 0 }}
+          exit={{ opacity: 0, x: -24 }}
+          transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <DetailStyled.AnswerList>
+            {AI_DRAFT_QUESTIONS.map((question, i) => (
+              <AnswerCard
+                key={question.id}
+                index={i + 1}
+                question={question}
+                answers={applicant.answers[question.id] ?? []}
+              />
+            ))}
+          </DetailStyled.AnswerList>
+        </motion.div>
+      </AnimatePresence>
       {enabled && <MacCursor cursor={cursor} />}
     </Styled.DemoRoot>
   );

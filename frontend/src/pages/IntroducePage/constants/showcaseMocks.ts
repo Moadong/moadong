@@ -1,7 +1,6 @@
 // 소개 페이지 쇼케이스에서 실제 학생·관리자 컴포넌트에 넣는 목업 데이터
 import { addDays, format, startOfMonth, subDays } from 'date-fns';
 import { inactiveCategoryIcons } from '@/assets/images/icons/category_button';
-import { festivalMock } from '@/mocks/data/festivalMock';
 import { ApplicationStatus } from '@/types/applicants';
 import type { Applicant, ApplicantsInfo } from '@/types/applicants';
 import type { Question } from '@/types/application';
@@ -75,12 +74,76 @@ export const MOCK_CALENDAR_EVENTS: ClubCalendarEvent[] = [
 ];
 
 /**
- * 홍보 게시판에 실제로 올라갔던 총동연·총학생회 행사 기록(동아리 소개 한마당, 대동제 청해제).
- * 지어낸 포스터 대신 실제 포스터와 일정을 쓴다.
+ * 홍보 게시판에 실제 동아리가 올렸던 공연·전시 글 (2026년 모아동 홍보 게시판 공개 글).
+ * 실시간 글을 불러오지 못할 때 대신 보여 준다. 학교 행사(대동제 등)가 아닌 동아리 행사만 고른다.
  */
-export const MOCK_PROMOTIONS: PromotionArticle[] = [...festivalMock].reverse();
+const CDN = 'https://cdn.moadong.com/promotion';
+export const MOCK_PROMOTIONS: PromotionArticle[] = [
+  {
+    id: '6ae4580aa9be71734de95e04',
+    clubName: '테크니칼',
+    clubId: '67ee1e07b35e3c267e3c2478',
+    title: '테크니칼 정기 공연',
+    location: '바이널언더그라운드',
+    latitude: 35.1363864,
+    longitude: 129.1019273,
+    eventStartDate: '2026-11-07T09:00:00Z',
+    eventEndDate: '2026-11-07T11:00:00Z',
+    description:
+      '11월 7일 토요일 18시 더 바이널 언더그라운드에서 밴드동아리 테크니칼의 정기 공연이 예정되어 있습니다!',
+    images: [
+      `${CDN}/67ee1e07b35e3c267e3c2478/2026/10/3d816e90-b3d8-4557-b4be-59d1a9b51cca-everytime-1793340987643.jpg`,
+    ],
+  },
+  {
+    id: '6ab2c4f765552f598675ee10',
+    clubName: '송웨이브',
+    clubId: '67ebf9f75c8623081055881c',
+    title: '🌊🎵송웨이브 광안리 버스킹🌊🎶',
+    location: '부산광역시 수영구 광안해변로 21 호메르스 호텔 앞',
+    latitude: 35.1530585,
+    longitude: 129.1182604,
+    eventStartDate: '2026-09-23T09:30:00Z',
+    eventEndDate: '2026-09-23T11:30:00Z',
+    description:
+      '어쿠스틱 통기타 밴드 동아리 송웨이브가 가을을 맞이하여 광안리 바닷가에서 버스킹 공연을 합니다.',
+    images: [
+      `${CDN}/articles/6ab2c4f765552f598675ee10/2026/09/738babda-969f-4579-90c5-7ce4a0dcceee-1000015553.jpg`,
+    ],
+  },
+  {
+    id: '6aa3a5101be3f8604e68bd68',
+    clubName: 'UCDC',
+    clubId: '6873bd299033815c4391192e',
+    title: '🇰🇷유시디시 34회 발표회🇰🇷',
+    location: '부경대학교 대학극장 (D21)',
+    latitude: 35.1323825,
+    longitude: 129.1049924,
+    eventStartDate: '2026-09-11T10:00:00Z',
+    eventEndDate: '2026-09-11T12:30:00Z',
+    description: 'UCDC의 연중 가장 큰 무대, 1년에 단 한 번 열리는 발표회예요.',
+    images: [
+      `${CDN}/articles/6aa3a5101be3f8604e68bd68/2026/09/d1eb0db5-cf17-4b15-999b-d2dfc3eb9b71-1.jpg`,
+    ],
+  },
+  {
+    id: '6a1d8036fab60821276371b9',
+    clubName: '네오쇼크',
+    clubId: '67e54ae51cfd27718dd40bde',
+    title: '🍀 네오쇼크 2026 1학기 정기공연 🍀',
+    location: '부경대학교 대학극장',
+    latitude: 35.1323825,
+    longitude: 129.1049924,
+    eventStartDate: '2026-06-02T09:30:00Z',
+    eventEndDate: '2026-06-02T11:30:00Z',
+    description: '2026 1학기 네오쇼크 정기공연이 찾아옵니다!',
+    images: [
+      `${CDN}/articles/6a1d8036fab60821276371b9/2026/06/06ee8e7d-7096-46ee-9cb3-3493f305edd2-1.jpg`,
+    ],
+  },
+];
 
-/** 운영진 쪽에서 홍보 글 하나를 보여줄 때 쓰는 대동제 청해제 */
+/** 운영진 쪽에서 홍보 글 하나를 보여 줄 때 쓰는 실제 동아리 정기 공연 글 */
 export const MOCK_PROMOTION: PromotionArticle = MOCK_PROMOTIONS[0];
 
 const applicant = (
@@ -121,13 +184,6 @@ export const MOCK_APPLICANTS: Applicant[] = [
     2,
     '베이스 처음이지만 열정 최고',
   ),
-];
-
-/** 첫 번째 지원자의 상태가 이 순서로 바뀌며 상태 관리를 보여준다 */
-export const APPLICANT_STATUS_CYCLE = [
-  ApplicationStatus.SUBMITTED,
-  ApplicationStatus.INTERVIEW_SCHEDULED,
-  ApplicationStatus.ACCEPTED,
 ];
 
 export const MOCK_APPLICANT_SUMMARY: Pick<
@@ -336,5 +392,40 @@ export const SEARCH_SCENARIOS: {
         icon: 'volunteer',
       },
     ],
+  },
+];
+
+/** 운영진 지원서 상세 데모에서 차례로 넘겨 보는 지원자와 답변 (질문은 AI_DRAFT_QUESTIONS의 id) */
+export const REVIEW_APPLICANTS: {
+  id: string;
+  name: string;
+  answers: Record<number, string[]>;
+}[] = [
+  {
+    id: 'review-1',
+    name: '김부경',
+    answers: {
+      1: ['김부경 / 202512345'],
+      2: ['보컬'],
+      3: ['축제 무대에서 노래해 보고 싶어요! 버스킹 경험이 있어요.'],
+    },
+  },
+  {
+    id: 'review-2',
+    name: '이대연',
+    answers: {
+      1: ['이대연 / 202498765'],
+      2: ['드럼'],
+      3: ['고등학교 밴드부에서 3년 동안 드럼을 쳤어요.'],
+    },
+  },
+  {
+    id: 'review-3',
+    name: '박용당',
+    answers: {
+      1: ['박용당 / 202533333'],
+      2: ['베이스'],
+      3: ['베이스는 처음이지만 꼭 배워 보고 싶어요.'],
+    },
   },
 ];

@@ -35,8 +35,8 @@ const ClubShowcaseSection = () => {
       </ListHeading>
 
       <FeatureRow
-        title={'서류부터 합격까지\n지원자를 한 화면에서'}
-        caption='지원자마다 서류검토·면접예정·합격·불합격을 표시하고, 여러 명을 한 번에 바꿀 수 있어요.'
+        title={'지원서를 읽으면서\n바로 합격까지'}
+        caption='답변을 보며 면접예정·합격·불합격을 정하고, 다음 지원자로 바로 넘어가요. 엑셀을 따로 열 필요 없어요.'
         link={{ label: '지원자 관리하기', to: '/admin/applicants-list' }}
       >
         <ApplicantsDemo />
