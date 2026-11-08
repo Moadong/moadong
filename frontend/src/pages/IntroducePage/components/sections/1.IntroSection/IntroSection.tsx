@@ -10,15 +10,17 @@ import {
 } from '@/pages/IntroducePage/constants/animations';
 import * as Styled from './IntroSection.styles';
 
-/** 제목 줄마다 아래에서 밀려 올라오며 나타난다 */
+/** 제목 줄마다 흐릿하게 시작해 살짝 떠오르며 선명해진다. 글자를 자르지 않아 처음부터 온전한 모양으로 보인다 */
 const titleLineVariants: Variants = {
-  hidden: { y: '110%' },
+  hidden: { opacity: 0, y: 18, filter: 'blur(10px)' },
   show: (index: number) => ({
-    y: '0%',
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
     transition: {
-      duration: 0.7,
+      duration: 0.8,
       ease: [0.22, 1, 0.36, 1],
-      delay: 0.1 + index * 0.12,
+      delay: 0.1 + index * 0.14,
     },
   }),
 };
@@ -91,11 +93,13 @@ const IntroSection = ({
             animate='show'
           >
             {title.split('\n').map((line, index) => (
-              <Styled.TitleLineMask key={line}>
-                <Styled.TitleLine custom={index} variants={titleLineVariants}>
-                  {line}
-                </Styled.TitleLine>
-              </Styled.TitleLineMask>
+              <Styled.TitleLine
+                key={line}
+                custom={index}
+                variants={titleLineVariants}
+              >
+                {line}
+              </Styled.TitleLine>
             ))}
           </Styled.IntroTitle>
           <Styled.IntroSubtitle

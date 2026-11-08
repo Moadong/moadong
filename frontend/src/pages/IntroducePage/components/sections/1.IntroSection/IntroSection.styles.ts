@@ -88,13 +88,6 @@ export const IntroTitle = styled(motion.h1)`
   }
 `;
 
-/* 줄 아래쪽을 잘라 글자가 바닥에서 올라오는 것처럼 보이게 한다 */
-export const TitleLineMask = styled.span`
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.06em;
-`;
-
 export const TitleLine = styled(motion.span)`
   display: block;
 `;
