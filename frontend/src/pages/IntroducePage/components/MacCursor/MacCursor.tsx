@@ -1,5 +1,5 @@
 // 데모 화면 위를 움직이며 누르는 맥 화살표 커서 (누를 때 살짝 작아지고 원이 퍼진다)
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence } from 'framer-motion';
 import { colors } from '@/styles/theme/colors';
 import * as Styled from './MacCursor.styles';
 
@@ -22,8 +22,9 @@ const MacCursor = ({ cursor }: MacCursorProps) => {
       initial={false}
       animate={{ x: cursor.x, y: cursor.y, opacity: cursor.visible ? 1 : 0 }}
       transition={{
-        x: { type: 'spring', stiffness: 120, damping: 20, mass: 0.8 },
-        y: { type: 'spring', stiffness: 120, damping: 20, mass: 0.8 },
+        // 튕김 없이 한 번에 감속하며 도착한다
+        x: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+        y: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
         opacity: { duration: 0.25 },
       }}
     >
@@ -38,16 +39,8 @@ const MacCursor = ({ cursor }: MacCursorProps) => {
           />
         )}
       </AnimatePresence>
-      <motion.svg
-        key={cursor.clickId}
-        viewBox='0 0 24 28'
-        width='30'
-        height='35'
-        initial={{ scale: 0.86 }}
-        animate={{ scale: 1 }}
-        transition={{ duration: 0.18 }}
-        style={{ transformOrigin: '3px 3px' }}
-      >
+      {/* 누를 때 커서 자체는 움직이지 않고 퍼지는 원으로만 알린다 */}
+      <svg viewBox='0 0 24 28' width='30' height='35'>
         <path
           d='M3 2.5v20.2l5.4-5.2 3.4 7.9 3.6-1.5-3.4-7.8h7.4L3 2.5Z'
           fill={colors.base.black}
@@ -55,7 +48,7 @@ const MacCursor = ({ cursor }: MacCursorProps) => {
           strokeWidth='1.6'
           strokeLinejoin='round'
         />
-      </motion.svg>
+      </svg>
     </Styled.Layer>
   );
 };

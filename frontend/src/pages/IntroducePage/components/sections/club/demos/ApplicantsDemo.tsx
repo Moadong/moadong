@@ -54,7 +54,9 @@ const ApplicantsDemo = () => {
         setChecked([]);
         setAccepted(true);
       },
-      wait: 2200,
+      // 결과가 깔끔하게 보이도록 누른 뒤 커서는 사라진다
+      hide: true,
+      wait: 2400,
     },
   ];
 
@@ -64,7 +66,9 @@ const ApplicantsDemo = () => {
     setAccepted(false);
   };
 
-  const { cursor, enabled } = useScriptedCursor(rootRef, steps, reset);
+  const { cursor, enabled } = useScriptedCursor(rootRef, steps, reset, {
+    startAtFirstTarget: true,
+  });
 
   const applicants = MOCK_APPLICANTS.map((applicant) =>
     accepted && PICKED.includes(applicant.id)

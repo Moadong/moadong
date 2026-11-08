@@ -12,6 +12,13 @@ export interface CursorStep {
   action?: () => void;
   /** 다음 단계로 가기 전 기다리는 시간(ms) */
   wait?: number;
+  /** 이 단계가 끝나면 커서를 감춘다 (다음 목표가 생기면 다시 나타난다) */
+  hide?: boolean;
+}
+
+interface ScriptedCursorOptions {
+  /** 오른쪽 아래에서 날아오지 않고, 첫 목표 위에 놓인 채로 나타난다 */
+  startAtFirstTarget?: boolean;
 }
 
 const TRAVEL_MS = 700;
@@ -33,6 +40,7 @@ const useScriptedCursor = (
   steps: CursorStep[],
   /** 한 바퀴가 끝나면 데모 상태를 처음으로 되돌린다 */
   reset: () => void,
+  { startAtFirstTarget = false }: ScriptedCursorOptions = {},
 ) => {
   const reduceMotion = useReducedMotion();
   const inView = useInView(rootRef, { amount: 0.5 });
@@ -69,16 +77,29 @@ const useScriptedCursor = (
       }));
     };
 
-    const run = async () => {
-      // 처음에는 화면 오른쪽 아래쯤에서 등장한다
+    const startPoint = () => {
       const rootRect = root.getBoundingClientRect();
-      setCursor({
-        x: rootRect.width * 0.8,
-        y: rootRect.height * 0.75,
-        clickId: 0,
-        visible: true,
-      });
+      const first = startAtFirstTarget
+        ? stepsRef.current[0]?.target?.(root)
+        : null;
+      if (first) {
+        const rect = first.getBoundingClientRect();
+        return {
+          x: rect.left - rootRect.left + rect.width / 2,
+          y: rect.top - rootRect.top + rect.height / 2,
+        };
+      }
+      return { x: rootRect.width * 0.8, y: rootRect.height * 0.75 };
+    };
+
+    // 매 바퀴 같은 자리(기본은 화면 오른쪽 아래쯤)에서 나타나 시작한다
+    const appearAtStart = async () => {
+      setCursor((prev) => ({ ...prev, ...startPoint(), visible: true }));
       await sleep(400);
+    };
+
+    const run = async () => {
+      await appearAtStart();
 
       while (!cancelled) {
         for (const step of stepsRef.current) {
@@ -94,11 +115,20 @@ const useScriptedCursor = (
             await sleep(PRESS_MS);
           }
           step.action?.();
+          if (step.hide) setCursor((prev) => ({ ...prev, visible: false }));
           await sleep(step.wait ?? DEFAULT_WAIT_MS);
         }
         if (cancelled) return;
+        // 마지막 자리에서 첫 목표로 미끄러지지 않게, 사라진 뒤 시작 자리로 옮겨 다시 나타난다
+        setCursor((prev) => ({ ...prev, visible: false }));
+        await sleep(300);
+        if (cancelled) return;
         resetRef.current();
-        await sleep(600);
+        await sleep(100);
+        setCursor((prev) => ({ ...prev, ...startPoint() }));
+        await sleep(400);
+        if (cancelled) return;
+        await appearAtStart();
       }
     };
 
@@ -107,7 +137,7 @@ const useScriptedCursor = (
       cancelled = true;
       resetRef.current();
     };
-  }, [rootRef, inView, reduceMotion]);
+  }, [rootRef, inView, reduceMotion, startAtFirstTarget]);
 
   return { cursor, enabled: !reduceMotion };
 };
