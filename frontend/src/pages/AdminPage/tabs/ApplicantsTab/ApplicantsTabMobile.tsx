@@ -168,7 +168,7 @@ const ApplicantsTabMobile = () => {
     });
   };
 
-  const handleExportCSV = useExportApplicantsCSV(
+  const { handleExportCSV, isReady: isCsvReady } = useExportApplicantsCSV(
     effectiveFormId,
     filteredApplicants,
     checkedIds,
@@ -235,7 +235,7 @@ const ApplicantsTabMobile = () => {
                 onStatusChange={handleStatusChange}
                 onDelete={handleDelete}
                 onExport={handleExportCSV}
-                exportEnabled={isAnyChecked}
+                exportEnabled={isCsvReady && isAnyChecked}
                 isStatusMenuOpen={openDropdown === 'status'}
                 onToggleStatusMenu={() => toggleDropdown('status')}
               />
