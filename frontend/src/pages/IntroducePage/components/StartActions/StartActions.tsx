@@ -74,6 +74,9 @@ const DesktopDownload = ({ location }: { location: AppDownloadLocation }) => {
   const [open, setOpen] = useState(false);
   const rootRef = useRef<HTMLDivElement>(null);
   const download = useAppDownload(location);
+  // 맨 아래 시작 버튼에서는 섹션이 아래를 잘라 내므로 카드를 위로 연다
+  const openUpward = location === 'footer';
+  const enterOffsetY = openUpward ? 6 : -6;
 
   useEffect(() => {
     if (!open) return;
@@ -107,18 +110,18 @@ const DesktopDownload = ({ location }: { location: AppDownloadLocation }) => {
         {open && (
           // 페이지를 막는 모달이 아니라 버튼에 붙은 팝오버라 dialog 역할은 두지 않는다
           <Styled.QrCard
-            $openUpward={location === 'footer'}
+            $openUpward={openUpward}
             id={INSTALL_QR_ID}
             aria-label='모아동 앱 설치 QR 코드'
             initial={{
               opacity: 0,
-              y: location === 'footer' ? 6 : -6,
+              y: enterOffsetY,
               scale: 0.97,
             }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
             exit={{
               opacity: 0,
-              y: location === 'footer' ? 6 : -6,
+              y: enterOffsetY,
               scale: 0.97,
             }}
             transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1] }}
