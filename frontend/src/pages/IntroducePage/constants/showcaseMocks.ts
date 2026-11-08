@@ -1,6 +1,7 @@
 // 소개 페이지 쇼케이스에서 실제 학생·관리자 컴포넌트에 넣는 목업 데이터
 import { addDays, format, startOfMonth, subDays } from 'date-fns';
 import { inactiveCategoryIcons } from '@/assets/images/icons/category_button';
+import { festivalMock } from '@/mocks/data/festivalMock';
 import { ApplicationStatus } from '@/types/applicants';
 import type { Applicant, ApplicantsInfo } from '@/types/applicants';
 import type { Question } from '@/types/application';
@@ -36,21 +37,21 @@ export const MOCK_CLUB_PROFILE = {
 export const MOCK_CALENDAR_EVENTS: ClubCalendarEvent[] = [
   {
     id: 'e1',
-    title: '정기 모임',
+    title: '합주',
     start: dayOfMonth(4),
     source: 'GOOGLE',
     color: 'BLUE',
   },
   {
     id: 'e2',
-    title: '신입 환영회',
+    title: '환영회',
     start: dayOfMonth(9),
     source: 'CUSTOM',
     color: 'PINK',
   },
   {
     id: 'e3',
-    title: '공연 연습',
+    title: '공연',
     start: dayOfMonth(13),
     end: dayOfMonth(15),
     source: 'NOTION',
@@ -58,7 +59,7 @@ export const MOCK_CALENDAR_EVENTS: ClubCalendarEvent[] = [
   },
   {
     id: 'e4',
-    title: '정기 모임',
+    title: '합주',
     start: dayOfMonth(18),
     source: 'GOOGLE',
     color: 'BLUE',
@@ -142,6 +143,11 @@ export const MOCK_PROMOTIONS: PromotionArticle[] = [
     ],
   },
 ];
+
+/** 학교 단위 행사(대동제, 총동연 동아리 소개 한마당)로 홍보 게시판에 실제로 올라갔던 기록 */
+export const SCHOOL_EVENT_PROMOTIONS: PromotionArticle[] = [
+  ...festivalMock,
+].reverse();
 
 /** 운영진 쪽에서 홍보 글 하나를 보여 줄 때 쓰는 실제 동아리 정기 공연 글 */
 export const MOCK_PROMOTION: PromotionArticle = MOCK_PROMOTIONS[0];

@@ -16,6 +16,7 @@ import ScrollingCapture from '@/pages/IntroducePage/components/PhoneMockup/Scrol
 import {
   MOCK_CALENDAR_EVENTS,
   MOCK_PROMOTIONS,
+  SCHOOL_EVENT_PROMOTIONS,
   SUBSCRIBE_NOTIFICATIONS,
 } from '@/pages/IntroducePage/constants/showcaseMocks';
 import useAppDownload from '@/pages/IntroducePage/hooks/useAppDownload';
@@ -25,7 +26,8 @@ import SearchDemo from '../SearchDemo/SearchDemo';
 import * as Styled from './StudentShowcaseSection.styles';
 
 /** 두 줄로 채우고 아래 줄은 화면 칸 끝에서 잘리게 둔다 */
-const RECENT_PROMOTION_COUNT = 4;
+/** 아랫줄에 놓는 동아리 글 수 */
+const CLUB_PROMOTION_COUNT = 2;
 
 const StudentShowcaseSection = () => {
   const openStore = useAppDownload('feature');
@@ -33,9 +35,20 @@ const StudentShowcaseSection = () => {
   const { data: promotionArticles } = useGetPromotionArticles({
     poll: false,
   });
-  const recentPromotions = promotionArticles?.length
-    ? promotionArticles.slice(0, RECENT_PROMOTION_COUNT)
-    : MOCK_PROMOTIONS;
+  // 윗줄은 학교 행사(대동제·동아리 소개 한마당), 아랫줄은 서로 다른 동아리 글 두 개. 같은 글이 겹치지 않게 제목으로 거른다
+  const schoolEventIds = new Set(SCHOOL_EVENT_PROMOTIONS.map(({ id }) => id));
+  const liveClubPromotions = (promotionArticles ?? [])
+    .filter(({ id }) => !schoolEventIds.has(id))
+    .filter(
+      (article, index, list) =>
+        list.findIndex(({ title }) => title === article.title) === index,
+    )
+    .slice(0, CLUB_PROMOTION_COUNT);
+  const clubPromotions =
+    liveClubPromotions.length === CLUB_PROMOTION_COUNT
+      ? liveClubPromotions
+      : MOCK_PROMOTIONS.slice(0, CLUB_PROMOTION_COUNT);
+  const promotions = [...SCHOOL_EVENT_PROMOTIONS, ...clubPromotions];
 
   return (
     <List aria-label='모아동 기능 소개'>
@@ -93,7 +106,7 @@ const StudentShowcaseSection = () => {
         link={{ label: '홍보 게시판 보기', to: '/promotions' }}
       >
         <Styled.PromotionGrid>
-          {recentPromotions.map((article) => (
+          {promotions.map((article) => (
             <PromotionCardView key={article.id} article={article} />
           ))}
         </Styled.PromotionGrid>

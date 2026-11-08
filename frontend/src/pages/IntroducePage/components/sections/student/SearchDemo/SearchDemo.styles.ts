@@ -67,13 +67,18 @@ export const CategoryFit = styled.div`
     padding: 0;
   }
 
+  /* 일곱 개가 칸 폭을 나눠 가지고, 아이콘은 최대 42px까지만 커진다 */
   ${CategoryStyled.CategoryButton} {
+    flex: 1;
+    min-width: 0;
     padding: 0;
   }
 
   ${CategoryStyled.CategoryButton} img {
-    width: 42px;
-    height: 42px;
+    width: 100%;
+    max-width: 42px;
+    height: auto;
+    aspect-ratio: 1;
   }
 
   ${CategoryStyled.CategoryButton} span {
@@ -84,11 +89,6 @@ export const CategoryFit = styled.div`
 
   /* 폰 폭에서는 일곱 개가 한 줄에 들어가도록 더 줄인다 */
   ${media.mobile} {
-    ${CategoryStyled.CategoryButton} img {
-      width: 34px;
-      height: 34px;
-    }
-
     ${CategoryStyled.CategoryButton} span {
       font-size: 10px;
     }
