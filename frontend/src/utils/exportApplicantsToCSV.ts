@@ -17,14 +17,14 @@ export const exportApplicantsToCSV = (
   filename: string,
 ) => {
   const headers = [
-    '지원자ID',
+    '번호',
     '제출일시',
     '상태',
     ...questions.map((q) => q.title),
     '메모',
   ];
 
-  const rows = applicants.map((applicant) => {
+  const rows = applicants.map((applicant, index) => {
     const date = new Date(applicant.createdAt);
     const createdAt = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
     const status = mapStatusToGroup(applicant.status).label;
@@ -36,7 +36,13 @@ export const exportApplicantsToCSV = (
         .join('; '),
     );
 
-    return [applicant.id, createdAt, status, ...answerCells, applicant.memo];
+    return [
+      String(index + 1),
+      createdAt,
+      status,
+      ...answerCells,
+      applicant.memo,
+    ];
   });
 
   const csvContent = [headers, ...rows]

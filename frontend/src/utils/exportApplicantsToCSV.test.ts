@@ -84,18 +84,17 @@ describe('exportApplicantsToCSV', () => {
     jest.useRealTimers();
   });
 
-  it('헤더가 지원자ID, 제출일시, 상태, 질문 제목, 메모 순서로 생성된다', () => {
+  it('헤더가 번호, 제출일시, 상태, 질문 제목, 메모 순서로 생성된다', () => {
     exportApplicantsToCSV(mockApplicants, mockQuestions, '테스트');
     const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
-    expect(lines[0]).toBe(
-      '지원자ID,제출일시,상태,지원 동기,활동 가능 시간,메모',
-    );
+    expect(lines[0]).toBe('번호,제출일시,상태,지원 동기,활동 가능 시간,메모');
   });
 
   it('지원자 데이터가 올바른 행으로 변환된다', () => {
     exportApplicantsToCSV(mockApplicants, mockQuestions, '테스트');
     const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
-    expect(lines[1]).toContain('applicant-1');
+    expect(lines[1]).toContain('1,');
+    expect(lines[2]).toContain('2,');
     expect(lines[1]).toMatch(/2024\.03\.15 \d{2}:\d{2}/);
     expect(lines[1]).toContain('검토 전');
     expect(lines[1]).toContain('면접 일정 조율 필요');
@@ -165,9 +164,7 @@ describe('exportApplicantsToCSV', () => {
     exportApplicantsToCSV([], mockQuestions, '테스트');
     const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
     expect(lines).toHaveLength(1);
-    expect(lines[0]).toBe(
-      '지원자ID,제출일시,상태,지원 동기,활동 가능 시간,메모',
-    );
+    expect(lines[0]).toBe('번호,제출일시,상태,지원 동기,활동 가능 시간,메모');
   });
 
   it('복수 선택 문항의 답변이 모두 포함된다', () => {
@@ -192,9 +189,9 @@ describe('exportApplicantsToCSV', () => {
     expect(lines[1]).toContain('평일');
   });
 
-  it('질문이 없으면 지원자ID, 제출일시, 상태, 메모만 포함된다', () => {
+  it('질문이 없으면 번호, 제출일시, 상태, 메모만 포함된다', () => {
     exportApplicantsToCSV(mockApplicants, [], '테스트');
     const lines = capturedBlobContent.replace('\uFEFF', '').split('\r\n');
-    expect(lines[0]).toBe('지원자ID,제출일시,상태,메모');
+    expect(lines[0]).toBe('번호,제출일시,상태,메모');
   });
 });
