@@ -20,6 +20,7 @@ import FeedbackWritePage from '@/pages/FeedbackPage/FeedbackWritePage';
 import SentFeedbackDetailPage from '@/pages/FeedbackPage/SentFeedbackDetailPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
+import UpdatesPage from '@/pages/IntroducePage/subpages/UpdatesPage/UpdatesPage';
 import LoginPage from '@/pages/LoginPage/LoginPage';
 import MainPage from '@/pages/MainPage/MainPage';
 import MenuPage from '@/pages/MenuPage/MenuPage';
@@ -68,6 +69,14 @@ const AppRoutes = () =>
           element: (
             <ContentErrorBoundary>
               <IntroducePage />
+            </ContentErrorBoundary>
+          ),
+        },
+        {
+          path: '/introduce/updates',
+          element: (
+            <ContentErrorBoundary>
+              <UpdatesPage />
             </ContentErrorBoundary>
           ),
         },
