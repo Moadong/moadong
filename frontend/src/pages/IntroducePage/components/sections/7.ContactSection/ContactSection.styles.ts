@@ -6,7 +6,7 @@ import { colors } from '@/styles/theme/colors';
 export const ContactSection = styled(motion.section)`
   width: 100%;
   height: 500px;
-  background-color: rgba(255, 84, 20, 0.08);
+  background-color: color-mix(in srgb, ${colors.primary[900]} 8%, transparent);
   position: relative;
   overflow: hidden;
   isolation: isolate;

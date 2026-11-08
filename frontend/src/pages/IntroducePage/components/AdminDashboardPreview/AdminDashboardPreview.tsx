@@ -15,6 +15,7 @@ import {
   MOCK_APPLICANT_SUMMARY,
   MOCK_APPLICANTS,
 } from '@/pages/IntroducePage/constants/showcaseMocks';
+import { colors } from '@/styles/theme/colors';
 import { ApplicationStatus } from '@/types/applicants';
 import type { Applicant } from '@/types/applicants';
 import { asApplicantId, asApplicationFormId } from '@/types/branded';
@@ -123,12 +124,12 @@ const AdminDashboardPreview = () => {
                     initial={{
                       opacity: 0,
                       y: -16,
-                      backgroundColor: 'rgba(255, 84, 20, 0.12)',
+                      backgroundColor: `color-mix(in srgb, ${colors.primary[900]} 12%, transparent)`,
                     }}
                     animate={{
                       opacity: 1,
                       y: 0,
-                      backgroundColor: 'rgba(255, 84, 20, 0)',
+                      backgroundColor: `color-mix(in srgb, ${colors.primary[900]} 0%, transparent)`,
                     }}
                     exit={{ opacity: 0 }}
                     transition={{

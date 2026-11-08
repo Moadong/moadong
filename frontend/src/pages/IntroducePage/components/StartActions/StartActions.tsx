@@ -1,6 +1,6 @@
 // 대상별 시작 버튼: 학생은 앱 다운로드(PC는 설치 QR)·웹으로 보기, 운영진은 관리자 페이지·문의하기
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import { QRCodeSVG } from 'qrcode.react';
 import moadongMark from '@/assets/images/logos/moadong_mobile_logo.svg';
@@ -13,6 +13,7 @@ import useAppDownload, {
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './StartActions.styles';
 
+const INSTALL_QR_ID = 'introduce-install-qr';
 const CLUB_CONTACT_LINK = 'https://open.kakao.com/o/s21dRWjh';
 
 const DownloadIcon = () => (
@@ -94,7 +95,7 @@ const DesktopDownload = ({ location }: { location: AppDownloadLocation }) => {
     <Styled.DownloadAnchor ref={rootRef}>
       <Styled.Primary
         aria-expanded={open}
-        aria-haspopup='dialog'
+        aria-controls={open ? INSTALL_QR_ID : undefined}
         onClick={() => {
           if (!open) download('qr');
           setOpen((prev) => !prev);
@@ -104,8 +105,9 @@ const DesktopDownload = ({ location }: { location: AppDownloadLocation }) => {
       </Styled.Primary>
       <AnimatePresence>
         {open && (
+          // 페이지를 막는 모달이 아니라 버튼에 붙은 팝오버라 dialog 역할은 두지 않는다
           <Styled.QrCard
-            role='dialog'
+            id={INSTALL_QR_ID}
             aria-label='모아동 앱 설치 QR 코드'
             initial={{ opacity: 0, y: -6, scale: 0.97 }}
             animate={{ opacity: 1, y: 0, scale: 1 }}
@@ -149,13 +151,12 @@ interface StartActionsProps {
 }
 
 const StartActions = ({ audience, location }: StartActionsProps) => {
-  const navigate = useNavigate();
   const openStore = useAppDownload(location);
 
   if (audience === 'club') {
     return (
       <Styled.Actions>
-        <Styled.Primary onClick={() => navigate('/admin/login')}>
+        <Styled.Primary as={Link} to='/admin/login'>
           관리자 페이지 시작하기
           <ArrowIcon />
         </Styled.Primary>
@@ -183,7 +184,7 @@ const StartActions = ({ audience, location }: StartActionsProps) => {
           <DownloadIcon />앱 다운로드
         </Styled.Primary>
       )}
-      <Styled.Secondary onClick={() => navigate('/')}>
+      <Styled.Secondary as={Link} to='/'>
         웹에서 바로 보기
         <ArrowIcon />
       </Styled.Secondary>

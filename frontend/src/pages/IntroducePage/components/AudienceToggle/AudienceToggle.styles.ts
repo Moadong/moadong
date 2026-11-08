@@ -70,7 +70,8 @@ export const Indicator = styled(motion.span)`
   inset: 0;
   border-radius: 999px;
   background: ${colors.primary[900]};
-  box-shadow: 0 4px 12px rgba(255, 84, 20, 0.28);
+  box-shadow: 0 4px 12px
+    color-mix(in srgb, ${colors.primary[900]} 28%, transparent);
 `;
 
 export const Label = styled.span`

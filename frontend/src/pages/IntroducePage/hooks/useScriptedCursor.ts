@@ -50,13 +50,9 @@ const useScriptedCursor = (
     clickId: 0,
     visible: false,
   });
-  // 매 렌더마다 새로 만들어지는 함수들을 최신 값으로만 참조한다
+  // 데모의 steps·reset은 setState만 잡고 있어 첫 값으로 충분하다 (렌더마다 바꿔 끼우지 않는다)
   const stepsRef = useRef(steps);
   const resetRef = useRef(reset);
-  useEffect(() => {
-    stepsRef.current = steps;
-    resetRef.current = reset;
-  });
 
   useEffect(() => {
     const root = rootRef.current;
@@ -114,6 +110,8 @@ const useScriptedCursor = (
             setCursor((prev) => ({ ...prev, clickId: prev.clickId + 1 }));
             await sleep(PRESS_MS);
           }
+          // 누르는 사이 화면 밖으로 나가 정리됐으면 상태를 바꾸지 않는다
+          if (cancelled) return;
           step.action?.();
           if (step.hide) setCursor((prev) => ({ ...prev, visible: false }));
           await sleep(step.wait ?? DEFAULT_WAIT_MS);
@@ -133,9 +131,10 @@ const useScriptedCursor = (
     };
 
     run();
+    const resetDemo = resetRef.current;
     return () => {
       cancelled = true;
-      resetRef.current();
+      resetDemo();
     };
   }, [rootRef, inView, reduceMotion, startAtFirstTarget]);
 

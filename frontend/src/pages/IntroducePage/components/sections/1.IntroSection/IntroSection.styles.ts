@@ -8,9 +8,9 @@ export const IntroSection = styled(motion.section)`
   padding: 0 0 150px;
   background: linear-gradient(
     180deg,
-    rgba(255, 84, 20, 0.004) 0%,
-    rgba(255, 84, 20, 0.08) 55.29%,
-    rgba(255, 84, 20, 0.004) 100%
+    color-mix(in srgb, ${colors.primary[900]} 0.4%, transparent) 0%,
+    color-mix(in srgb, ${colors.primary[900]} 8%, transparent) 55.29%,
+    color-mix(in srgb, ${colors.primary[900]} 0.4%, transparent) 100%
   );
   position: relative;
   overflow: hidden;

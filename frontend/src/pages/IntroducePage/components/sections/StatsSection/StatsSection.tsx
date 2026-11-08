@@ -85,42 +85,37 @@ const StatsSection = ({ audience }: StatsSectionProps) => {
     plus: true,
   };
 
-  // 학생: 고를 수 있는 폭과 다른 학생들이 얼마나 둘러보는지, 운영진: 우리 동아리 한 곳이 받는 관심
   // 실시간 동아리 수는 불러오지 못했으면 빼고 보여준다
-  const items: StatItem[] =
-    audience === 'student'
-      ? [
-          ...(clubCount
-            ? [
-                {
-                  label: '모아동에 모인 중앙동아리',
-                  value: clubCount,
-                  unit: '개',
-                },
-              ]
-            : []),
-          visitors,
-          {
-            label: '1인당 평균 살펴본 동아리',
-            value: CLUBS_VIEWED_PER_VISITOR,
-            unit: '곳',
-          },
-        ]
-      : [
-          visitors,
-          {
-            label: '동아리별 평균 페이지 조회',
-            value: PAGE_VIEWS_PER_CLUB,
-            unit: '번',
-            plus: true,
-          },
-          {
-            label: '동아리별 평균 지원하기 클릭',
-            value: APPLY_CLICKS_PER_CLUB,
-            unit: '번',
-            plus: true,
-          },
-        ];
+  const clubCountItems: StatItem[] = clubCount
+    ? [{ label: '모아동에 모인 중앙동아리', value: clubCount, unit: '개' }]
+    : [];
+  // 학생: 고를 수 있는 폭과 다른 학생들이 얼마나 둘러보는지
+  const studentItems: StatItem[] = [
+    ...clubCountItems,
+    visitors,
+    {
+      label: '1인당 평균 살펴본 동아리',
+      value: CLUBS_VIEWED_PER_VISITOR,
+      unit: '곳',
+    },
+  ];
+  // 운영진: 우리 동아리 한 곳이 받는 관심
+  const clubItems: StatItem[] = [
+    visitors,
+    {
+      label: '동아리별 평균 페이지 조회',
+      value: PAGE_VIEWS_PER_CLUB,
+      unit: '번',
+      plus: true,
+    },
+    {
+      label: '동아리별 평균 지원하기 클릭',
+      value: APPLY_CLICKS_PER_CLUB,
+      unit: '번',
+      plus: true,
+    },
+  ];
+  const items = audience === 'student' ? studentItems : clubItems;
 
   return (
     <Styled.Section ref={ref} aria-label='모아동 숫자로 보기'>

@@ -51,7 +51,8 @@ export const Primary = styled.button`
   border: none;
   background: ${colors.primary[900]};
   color: ${colors.base.white};
-  box-shadow: 0 8px 20px rgba(255, 84, 20, 0.28);
+  box-shadow: 0 8px 20px
+    color-mix(in srgb, ${colors.primary[900]} 28%, transparent);
 
   @media (hover: hover) {
     &:hover {

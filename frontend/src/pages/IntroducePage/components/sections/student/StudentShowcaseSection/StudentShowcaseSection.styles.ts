@@ -2,12 +2,6 @@
 import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 
-export const Stack = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-`;
-
 /* 홍보 게시판처럼 포스터 카드를 두 장씩 나란히 둔다 */
 export const PromotionGrid = styled.div`
   display: grid;
