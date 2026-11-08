@@ -23,8 +23,8 @@ const MacCursor = ({ cursor }: MacCursorProps) => {
       animate={{ x: cursor.x, y: cursor.y, opacity: cursor.visible ? 1 : 0 }}
       transition={{
         // 튕김 없이 한 번에 감속하며 도착한다
-        x: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
-        y: { duration: 0.65, ease: [0.4, 0, 0.2, 1] },
+        x: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
+        y: { duration: 0.5, ease: [0.4, 0, 0.2, 1] },
         opacity: { duration: 0.25 },
       }}
     >

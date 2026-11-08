@@ -12,7 +12,7 @@ import * as Styled from './LiveEditDemo.styles';
 const BEFORE_INTRO = MOCK_CLUB_PROFILE.introDescription;
 const AFTER_INTRO =
   '매주 목요일 합주, 학기마다 정기공연을 여는 밴드 동아리예요. 악기가 없어도 동방 악기로 시작할 수 있어요 🎸';
-const TYPE_MS = 40;
+const TYPE_MS = 22;
 
 const LiveEditDemo = () => {
   const rootRef = useRef<HTMLDivElement>(null);

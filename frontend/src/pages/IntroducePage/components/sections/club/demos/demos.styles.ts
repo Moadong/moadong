@@ -117,7 +117,7 @@ export const DraftStart = styled.div`
 
 export const DraftStartTitle = styled.p`
   margin-top: 18px;
-  font-size: 16px;
+  font-size: 21px;
   white-space: nowrap;
   font-weight: 700;
   color: ${colors.gray[950]};

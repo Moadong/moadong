@@ -27,7 +27,7 @@ const AiDraftDemo = () => {
       click: true,
       action: () => setPhase('thinking'),
       hide: true,
-      wait: 700,
+      wait: 1200,
     },
     { action: () => setPhase('done'), wait: 3600 },
   ];
@@ -45,7 +45,7 @@ const AiDraftDemo = () => {
         <Styled.DraftStart>
           <AiSparkle />
           <Styled.DraftStartTitle>
-            소개와 지난 지원서로 이번 학기 지원서를 만들어요
+            이번 학기 지원서, AI가 써 드려요
           </Styled.DraftStartTitle>
           {/* 실제 지원서 편집 화면의 버튼을 그대로 쓰고 크기만 키운다 */}
           <Styled.RealButtonScale>

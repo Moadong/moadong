@@ -21,7 +21,7 @@ interface ScriptedCursorOptions {
   startAtFirstTarget?: boolean;
 }
 
-const TRAVEL_MS = 700;
+const TRAVEL_MS = 520;
 const PRESS_MS = 160;
 const DEFAULT_WAIT_MS = 500;
 
