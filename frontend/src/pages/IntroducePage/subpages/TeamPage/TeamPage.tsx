@@ -43,24 +43,38 @@ const TeamPage = () => {
         </Styled.Story>
       ))}
 
-      <Styled.Recruit>
-        <Styled.RecruitText>
-          모아동을 함께 만들 디자이너와 개발자를 찾고 있어요.
-        </Styled.RecruitText>
-        <Styled.RecruitLink as={Link} to='/recruit'>
-          팀원 모집 보러 가기
-        </Styled.RecruitLink>
-      </Styled.Recruit>
-
-      <Styled.Contact>
-        <Styled.ContactStrong>궁금한 점이 있으신가요?</Styled.ContactStrong>
-        <Styled.ContactSoft>
-          아래 이메일로 편하게 연락 주세요 :)
-        </Styled.ContactSoft>
-        <Styled.ContactMail href={`mailto:${TEAM_CONTACT_EMAIL}`}>
-          {TEAM_CONTACT_EMAIL}
-        </Styled.ContactMail>
-      </Styled.Contact>
+      {/* 엘스 소개 끝처럼 굵은 질문 · 옅은 안내 · 굵은 행동을 같은 큰 글씨로 잇는다 */}
+      <Styled.Closing>
+        <Styled.ClosingBlock
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Styled.ClosingStrong>
+            모아동을 함께 만들어 볼래요?
+          </Styled.ClosingStrong>
+          <Styled.ClosingSoft>
+            디자이너와 개발자를 찾고 있어요
+          </Styled.ClosingSoft>
+          <Styled.ClosingAction as={Link} to='/recruit'>
+            팀원 모집 보러 가기
+            <Styled.Arrow aria-hidden='true'>→</Styled.Arrow>
+          </Styled.ClosingAction>
+        </Styled.ClosingBlock>
+        <Styled.ClosingBlock
+          initial={{ opacity: 0, y: 24 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true, amount: 0.6 }}
+          transition={{ duration: 0.5, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+        >
+          <Styled.ClosingStrong>궁금한 점이 있으신가요?</Styled.ClosingStrong>
+          <Styled.ClosingSoft>메일로 편하게 연락 주세요 :)</Styled.ClosingSoft>
+          <Styled.ClosingAction href={`mailto:${TEAM_CONTACT_EMAIL}`}>
+            {TEAM_CONTACT_EMAIL}
+          </Styled.ClosingAction>
+        </Styled.ClosingBlock>
+      </Styled.Closing>
     </SubpageLayout>
   );
 };
