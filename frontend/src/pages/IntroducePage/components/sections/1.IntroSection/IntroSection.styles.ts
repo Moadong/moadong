@@ -77,6 +77,11 @@ export const IntroTitle = styled(motion.h1)`
     font-size: 40px;
   }
 
+  /* 390px 폰에서도 '이제 모아동에서 끝내세요' 양옆에 여백이 남게 */
+  ${media.mobile} {
+    font-size: 34px;
+  }
+
   /* 320px대에서 '이제 모아동에서 끝내세요'가 한 줄에 들어가게 */
   ${media.mini_mobile} {
     font-size: 30px;

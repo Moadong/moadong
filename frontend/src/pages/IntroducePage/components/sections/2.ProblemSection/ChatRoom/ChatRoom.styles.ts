@@ -13,7 +13,8 @@ const SCENE = {
   name: 'rgba(0, 0, 0, 0.68)',
   time: 'rgba(0, 0, 0, 0.45)',
   icon: 'rgba(0, 0, 0, 0.72)',
-  divider: 'rgba(0, 0, 0, 0.14)',
+  // 날짜 띠 위 흰 글씨가 읽히게 조금 진하게
+  divider: 'rgba(0, 0, 0, 0.26)',
 };
 
 const PROFILE_SIZE = 40;
