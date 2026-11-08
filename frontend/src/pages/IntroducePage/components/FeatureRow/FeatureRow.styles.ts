@@ -23,7 +23,7 @@ export const List = styled.section`
   ${media.tablet} {
     gap: 96px;
     margin-bottom: 120px;
-    padding: 0 20px;
+    padding: 0 24px;
   }
 `;
 
@@ -117,6 +117,13 @@ export const Caption = styled.p`
   ${media.tablet} {
     margin-top: 14px;
     font-size: 16px;
+  }
+
+  /* 폰 폭에서는 글자를 살짝 줄이고 줄 간격을 넓혀 답답하지 않게 */
+  ${media.mobile} {
+    margin-top: 12px;
+    font-size: 15px;
+    line-height: 1.7;
   }
 `;
 

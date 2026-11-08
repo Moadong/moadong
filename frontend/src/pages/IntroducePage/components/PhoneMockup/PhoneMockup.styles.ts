@@ -5,14 +5,21 @@ import { colors } from '@/styles/theme/colors';
 
 const PHONE_WIDTH = 320;
 const STATUS_BAR_HEIGHT = 50;
+/** 폰 그림자가 네모나게 잘리지 않도록 양옆에 두는 여유 */
+const SHADOW_SPACE = 32;
 
-/* 폰 아래쪽이 배경으로 자연스럽게 사라지게 한다. zoomed면 폰을 크게 키우고 위쪽만 보여준다 */
+/*
+ * 폰 아래쪽이 배경으로 자연스럽게 사라지게 한다. zoomed면 폰을 크게 키우고 위쪽만 보여준다.
+ * 그림자까지 담도록 양옆에 여유를 두고 그만큼 바깥으로 빼서, 그림자 가장자리가 네모 띠로 보이지 않게 한다
+ */
 export const Fade = styled.div<{ $zoomed: boolean }>`
   position: relative;
+  box-sizing: content-box;
   width: ${({ $zoomed }) => ($zoomed ? 400 : PHONE_WIDTH)}px;
   max-height: ${({ $zoomed }) => ($zoomed ? 430 : 600)}px;
   overflow: hidden;
-  padding: 0 4px;
+  margin: 0 -${SHADOW_SPACE}px;
+  padding: 0 ${SHADOW_SPACE}px;
   mask-image: linear-gradient(180deg, black 68%, transparent 100%);
   -webkit-mask-image: linear-gradient(180deg, black 68%, transparent 100%);
 
@@ -97,6 +104,10 @@ export const StatusBar = styled.div<{
     height: 42px;
     padding: 2px 20px 0 26px;
   }
+
+  ${media.mobile} {
+    padding: 2px 14px 0 22px;
+  }
 `;
 
 export const Time = styled.span`
@@ -124,6 +135,13 @@ export const Island = styled.span`
     width: 80px;
     height: 24px;
   }
+
+  /* 좁은 폰 목업에서는 시간·신호 아이콘을 가리지 않게 더 작게 */
+  ${media.mobile} {
+    top: 8px;
+    width: 62px;
+    height: 20px;
+  }
 `;
 
 export const StatusIcons = styled.span`
@@ -135,6 +153,11 @@ export const StatusIcons = styled.span`
     gap: 4px;
     transform: scale(0.88);
     transform-origin: right center;
+  }
+
+  ${media.mobile} {
+    gap: 3px;
+    transform: scale(0.76);
   }
 `;
 
