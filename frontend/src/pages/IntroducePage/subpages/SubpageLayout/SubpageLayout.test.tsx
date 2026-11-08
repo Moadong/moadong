@@ -24,7 +24,7 @@ const renderLayout = () =>
     </MemoryRouter>,
   );
 
-// 햄버거는 좁은 화면에서만 보이는(데스크톱 display:none) 버튼이라 접근성 이름 대신 aria-label로 찾는다
+// 햄버거는 데스크톱에서 display:none이라 getByRole로는 숨은 요소로 빠지므로, 숨김 여부를 따지지 않는 getByLabelText로 찾는다
 describe('SubpageLayout 햄버거 메뉴', () => {
   beforeEach(() => setUserAgent('Mozilla/5.0 (iPhone)'));
 
