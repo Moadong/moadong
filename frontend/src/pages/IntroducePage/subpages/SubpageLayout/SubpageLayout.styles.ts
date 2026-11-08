@@ -92,9 +92,14 @@ export const Center = styled.div`
 
 export const CenterSlot = styled(motion.div)``;
 
-export const Nav = styled.nav<{ $hiddenOnNarrow: boolean }>`
+export const End = styled.div`
   display: flex;
   justify-content: flex-end;
+  align-items: center;
+`;
+
+export const Nav = styled.nav`
+  display: flex;
   gap: 45px;
 
   a {
@@ -118,14 +123,55 @@ export const Nav = styled.nav<{ $hiddenOnNarrow: boolean }>`
     gap: 28px;
   }
 
-  /* 좁은 화면에서 가운데 슬롯이 떠 있으면 메뉴는 잠시 숨긴다 (맨 위로 올리면 다시 보인다) */
   ${media.tablet} {
-    display: ${({ $hiddenOnNarrow }) => ($hiddenOnNarrow ? 'none' : 'flex')};
-    gap: 12px;
+    display: none;
+  }
+`;
 
-    a {
-      font-size: 13px;
-    }
+export const MenuButton = styled.button`
+  display: none;
+  margin-right: -6px;
+  padding: 6px;
+  border: none;
+  background: none;
+  color: ${colors.gray[900]};
+  cursor: pointer;
+
+  ${media.tablet} {
+    display: flex;
+  }
+`;
+
+/* 햄버거를 누르면 헤더 아래로 펼쳐지는 메뉴 목록 */
+export const MobileMenu = styled(motion.nav)`
+  position: absolute;
+  top: 100%;
+  left: 0;
+  right: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 8px 20px 16px;
+  background: ${colors.base.white};
+  box-shadow: 0 12px 24px rgba(17, 17, 17, 0.08);
+
+  a {
+    padding: 14px 0;
+    font-size: 17px;
+    font-weight: 600;
+    color: ${colors.gray[900]};
+    text-decoration: none;
+  }
+
+  a + a {
+    border-top: 1px solid ${colors.gray[200]};
+  }
+
+  a[aria-current='page'] {
+    color: ${colors.primary[900]};
+  }
+
+  ${media.tablet} {
+    display: flex;
   }
 `;
 

@@ -1,4 +1,4 @@
-// 앱 출시 장면의 배치, 폭죽 캔버스, 모아동 앱 아이콘, 스토어 이름 스타일
+// 앱 출시 장면의 배치, 흩어진 종이 조각, 모아동 앱 아이콘, 스토어 이름 스타일
 import styled from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 
@@ -12,13 +12,19 @@ export const Scene = styled.div`
   gap: 24px;
 `;
 
-/* 폭죽은 판 전체를 덮는 캔버스에 그리고, 판 밖으로는 나가지 않는다 */
-export const Canvas = styled.canvas`
+const PIECE_SIZE = {
+  rect: { width: 10, height: 10, radius: '2px' },
+  circle: { width: 9, height: 9, radius: '50%' },
+  ribbon: { width: 6, height: 18, radius: '3px' },
+} as const;
+
+/* 막 터진 뒤 판 위에 흩어져 있는 종이 조각 */
+export const Piece = styled.span<{ $shape: keyof typeof PIECE_SIZE }>`
   position: absolute;
-  inset: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
+  width: ${({ $shape }) => PIECE_SIZE[$shape].width}px;
+  height: ${({ $shape }) => PIECE_SIZE[$shape].height}px;
+  border-radius: ${({ $shape }) => PIECE_SIZE[$shape].radius};
+  opacity: 0.85;
 `;
 
 /* 실제 앱 아이콘처럼 주황 바탕에 흰 모아동 로고 */
