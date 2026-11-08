@@ -124,6 +124,7 @@ export const Caption = styled.p`
     margin-top: 12px;
     font-size: 15px;
     line-height: 1.7;
+    color: ${colors.gray[800]};
   }
 `;
 
@@ -132,7 +133,9 @@ export const MoreLink = styled.a`
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-top: 28px;
+  /* 손가락으로 누르기 쉽게 누르는 영역만 위아래로 10px 넓히고, 보이는 간격은 여백으로 맞춘다 */
+  margin: 18px 0 -10px;
+  padding: 10px 0;
   font-size: 18px;
   font-weight: 600;
   color: ${colors.primary[900]};
@@ -144,7 +147,7 @@ export const MoreLink = styled.a`
   }
 
   ${media.tablet} {
-    margin-top: 18px;
+    margin-top: 8px;
     font-size: 16px;
   }
 `;
@@ -209,8 +212,9 @@ export const MoreButton = styled.button`
   display: inline-flex;
   align-items: center;
   gap: 4px;
-  margin-top: 28px;
-  padding: 0;
+  /* 손가락으로 누르기 쉽게 누르는 영역만 위아래로 10px 넓히고, 보이는 간격은 여백으로 맞춘다 */
+  margin: 18px 0 -10px;
+  padding: 10px 0;
   border: none;
   background: none;
   font-size: 18px;
@@ -224,7 +228,7 @@ export const MoreButton = styled.button`
   }
 
   ${media.tablet} {
-    margin-top: 18px;
+    margin-top: 8px;
     font-size: 16px;
   }
 `;

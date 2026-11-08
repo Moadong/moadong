@@ -12,6 +12,12 @@ export const Actions = styled.div`
   flex-wrap: wrap;
   justify-content: center;
   gap: 10px;
+
+  /* 버튼이 두 줄로 내려가도 화면 끝에 붙지 않게 */
+  ${media.mini_mobile} {
+    padding: 0 16px;
+    gap: 8px;
+  }
 `;
 
 const base = css`

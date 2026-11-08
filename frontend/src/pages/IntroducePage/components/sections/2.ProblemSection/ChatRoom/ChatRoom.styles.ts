@@ -73,7 +73,7 @@ export const DateDivider = styled.span`
   padding: 4px 12px;
   border-radius: 999px;
   background: ${SCENE.divider};
-  font-size: 11.5px;
+  font-size: 12px;
   color: ${colors.base.white};
 `;
 
@@ -174,13 +174,13 @@ export const Meta = styled.span<{ $mine: boolean }>`
 `;
 
 export const Unread = styled.span`
-  font-size: 10.5px;
+  font-size: 12px;
   font-weight: 700;
   color: ${colors.secondary[2].main};
 `;
 
 export const Time = styled.span`
-  font-size: 10.5px;
+  font-size: 12px;
   color: ${SCENE.time};
 `;
 

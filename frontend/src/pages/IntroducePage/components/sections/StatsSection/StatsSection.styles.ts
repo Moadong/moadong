@@ -70,6 +70,10 @@ export const Label = styled.p`
   ${media.tablet} {
     font-size: 15px;
   }
+  /* 폰에서는 회색 글을 한 단계 진하게 해 밝은 데서도 읽히게 한다 (WCAG 4.5:1) */
+  ${media.mobile} {
+    color: ${colors.gray[800]};
+  }
 `;
 
 export const Value = styled.p`
@@ -96,6 +100,10 @@ export const Unit = styled.span`
   ${media.tablet} {
     font-size: 18px;
   }
+  /* 폰에서는 회색 글을 한 단계 진하게 해 밝은 데서도 읽히게 한다 (WCAG 4.5:1) */
+  ${media.mobile} {
+    color: ${colors.gray[800]};
+  }
 `;
 
 /* 기준 시점은 칸마다 반복하지 않고 오른쪽 아래 한 줄로 */
@@ -103,10 +111,14 @@ export const SourceNote = styled.p`
   margin-top: 12px;
   font-size: 12px;
   text-align: right;
-  color: ${colors.gray[600]};
+  color: ${colors.gray[700]};
   word-break: keep-all;
 
   ${media.tablet} {
     text-align: center;
+  }
+  /* 폰에서는 회색 글을 한 단계 진하게 해 밝은 데서도 읽히게 한다 (WCAG 4.5:1) */
+  ${media.mobile} {
+    color: ${colors.gray[800]};
   }
 `;

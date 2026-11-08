@@ -77,8 +77,9 @@ export const IntroTitle = styled(motion.h1)`
     font-size: 40px;
   }
 
+  /* 320px대에서 '이제 모아동에서 끝내세요'가 한 줄에 들어가게 */
   ${media.mini_mobile} {
-    font-size: 34px;
+    font-size: 30px;
   }
 `;
 
@@ -104,6 +105,10 @@ export const IntroSubtitle = styled(motion.p)`
   ${media.tablet} {
     margin-top: 14px;
     font-size: 17px;
+  }
+  /* 폰에서는 회색 글을 한 단계 진하게 해 밝은 데서도 읽히게 한다 (WCAG 4.5:1) */
+  ${media.mobile} {
+    color: ${colors.gray[800]};
   }
 `;
 
