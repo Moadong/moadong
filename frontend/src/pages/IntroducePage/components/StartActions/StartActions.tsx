@@ -86,11 +86,15 @@ const DesktopDownload = ({ location }: { location: AppDownloadLocation }) => {
     const closeOnEscape = (event: KeyboardEvent) => {
       if (event.key === 'Escape') setOpen(false);
     };
+    // 첫 화면 글 영역은 스크롤하면 흐려지는데 카드도 그 안에 있어 같이 비쳐 보인다. 스크롤하면 닫는다
+    const closeOnScroll = () => setOpen(false);
     document.addEventListener('mousedown', closeOnOutside);
     document.addEventListener('keydown', closeOnEscape);
+    window.addEventListener('scroll', closeOnScroll, { passive: true });
     return () => {
       document.removeEventListener('mousedown', closeOnOutside);
       document.removeEventListener('keydown', closeOnEscape);
+      window.removeEventListener('scroll', closeOnScroll);
     };
   }, [open]);
 

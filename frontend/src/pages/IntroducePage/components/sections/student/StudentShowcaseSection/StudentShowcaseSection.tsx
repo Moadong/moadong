@@ -37,8 +37,10 @@ const StudentShowcaseSection = () => {
   });
   // 윗줄은 학교 행사(대동제·동아리 소개 한마당), 아랫줄은 서로 다른 동아리 글 두 개. 같은 글이 겹치지 않게 제목으로 거른다
   const schoolEventIds = new Set(SCHOOL_EVENT_PROMOTIONS.map(({ id }) => id));
+  // 이미지 없는 글(개발 서버 테스트 글 등)은 기본 커버만 떠서 뺀다
   const liveClubPromotions = (promotionArticles ?? [])
     .filter(({ id }) => !schoolEventIds.has(id))
+    .filter(({ images }) => Boolean(images?.[0]))
     .filter(
       (article, index, list) =>
         list.findIndex(({ title }) => title === article.title) === index,
