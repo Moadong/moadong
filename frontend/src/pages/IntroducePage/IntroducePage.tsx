@@ -3,7 +3,6 @@ import { AnimatePresence, motion, useInView } from 'framer-motion';
 import introduce_main_long from '@/assets/images/introduce/introduce_main_long.webp';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import useDevice from '@/hooks/useDevice';
 import AudienceToggle, {
   AUDIENCE_PANEL_ID,
 } from './components/AudienceToggle/AudienceToggle';
@@ -38,7 +37,6 @@ const ClubShowcaseSection = lazy(
 
 const IntroducePage = () => {
   useTrackPageView(PAGE_VIEW.INTRODUCE_PAGE);
-  const { isMobile, isTablet } = useDevice();
   const { audience, changeAudience } = useAudience();
   const content = AUDIENCE_CONTENT[audience];
   // 첫 화면의 큰 토글이 화면 밖으로 나가면 헤더 가운데에 작은 토글을 띄운다
@@ -79,7 +77,8 @@ const IntroducePage = () => {
           <IntroSection
             {...content.hero}
             top={
-              <div ref={inlineToggleRef}>
+              // 헤더 토글이 떠 있는 동안 화면 밖 큰 토글은 보조기기에서 빼서 탭 목록이 둘로 읽히지 않게 한다
+              <div ref={inlineToggleRef} inert={!inlineToggleVisible}>
                 <AudienceToggle
                   value={audience}
                   onChange={handleAudienceChange}

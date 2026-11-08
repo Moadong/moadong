@@ -1,5 +1,5 @@
 // 소개 페이지들(서비스 소개·업데이트 기록·만드는 사람들) 공통 틀: 모아동 메인 헤더 대신 쓰는 전용 헤더와 푸터
-import { ReactNode, useEffect, useState } from 'react';
+import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
 import moadongMark from '@/assets/images/logos/moadong_mobile_logo.svg';
@@ -61,14 +61,26 @@ const SubpageLayout = ({
   const inWebView = isInAppWebView();
   const [isScrolled, setIsScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const headerRef = useRef<HTMLElement>(null);
 
+  // 메뉴 바깥을 누르거나, 스크롤하거나, Esc를 누르면 닫는다
   useEffect(() => {
     if (!menuOpen) return;
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === 'Escape') setMenuOpen(false);
+    const close = () => setMenuOpen(false);
+    const closeOnOutside = (event: PointerEvent) => {
+      if (!headerRef.current?.contains(event.target as Node)) close();
     };
+    const closeOnEscape = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') close();
+    };
+    document.addEventListener('pointerdown', closeOnOutside);
     document.addEventListener('keydown', closeOnEscape);
-    return () => document.removeEventListener('keydown', closeOnEscape);
+    window.addEventListener('scroll', close, { passive: true });
+    return () => {
+      document.removeEventListener('pointerdown', closeOnOutside);
+      document.removeEventListener('keydown', closeOnEscape);
+      window.removeEventListener('scroll', close);
+    };
   }, [menuOpen]);
 
   // 메인 헤더처럼 내려가면 아래에 옅은 그림자를 깐다
@@ -81,7 +93,7 @@ const SubpageLayout = ({
 
   return (
     <Styled.Page>
-      <Styled.Header $isScrolled={isScrolled}>
+      <Styled.Header ref={headerRef} $isScrolled={isScrolled}>
         <Styled.HeaderInner>
           <Styled.Start>
             {/* 앱에서는 브라우저 뒤로가기가 없어 직접 둔다 */}
@@ -130,7 +142,7 @@ const SubpageLayout = ({
               type='button'
               aria-label={menuOpen ? '메뉴 닫기' : '메뉴 열기'}
               aria-expanded={menuOpen}
-              aria-controls='introduce-mobile-menu'
+              aria-controls={menuOpen ? 'introduce-mobile-menu' : undefined}
               onClick={() => setMenuOpen((prev) => !prev)}
             >
               <MenuIcon open={menuOpen} />
