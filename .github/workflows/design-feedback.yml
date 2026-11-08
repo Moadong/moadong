@@ -171,7 +171,8 @@ jobs:
           import os, re, sys, unicodedata
           # 머지 때 close-issue 워크플로가 본문의 "Close #N"을 모두 닫는다. 이 이슈 말고 다른 번호는 받지 않는다.
           # 그 워크플로의 정규식에 GitHub 기본 키워드(closed·fixed·resolved, owner/repo#N)까지 더해 넓게 잡는다.
-          CLOSING = re.compile(r'\b(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\b\s*:?\s+(?:[\w.-]+/[\w.-]+)?#(\d+)', re.I)
+          # 그 워크플로처럼 단어 경계를 보지 않는다(prefixes #5, 한글에 붙은 close #5도 그쪽은 닫는다).
+          CLOSING = re.compile(r'(?:close[sd]?|fix(?:e[sd])?|resolve[sd]?)\s*:?\s+(?:[\w.-]+/[\w.-]+)?#(\d+)', re.I)
           issue = os.environ['ISSUE_NUMBER']
           # Cf(태그 문자·제로폭·양방향 제어)에 더해, 범주는 달라도 화면에 안 보이는 문자를 막는다.
           # 변형 선택자(Mn)는 글자 뒤에 이어 붙여 바이트를 숨기는 데 쓰이고, 한글 채움·점자 공백은 빈칸으로 보인다.
