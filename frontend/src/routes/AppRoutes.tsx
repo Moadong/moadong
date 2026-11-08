@@ -65,22 +65,6 @@ const AppRoutes = () =>
           element: <Navigate to='/' replace />,
         },
         {
-          path: '/introduce',
-          element: (
-            <ContentErrorBoundary>
-              <IntroducePage />
-            </ContentErrorBoundary>
-          ),
-        },
-        {
-          path: '/introduce/updates',
-          element: (
-            <ContentErrorBoundary>
-              <UpdatesPage />
-            </ContentErrorBoundary>
-          ),
-        },
-        {
           path: '/recruit',
           element: (
             <ContentErrorBoundary>
@@ -132,6 +116,23 @@ const AppRoutes = () =>
     },
 
     /* 기존 웹 & 안드로이드 url (android: v1.1.0) */
+    /* 소개 페이지들: 모아동 메인 헤더·하단바 없이 소개 전용 헤더를 쓰는 별도 화면 */
+    {
+      path: '/introduce',
+      element: (
+        <ContentErrorBoundary>
+          <IntroducePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/introduce/updates',
+      element: (
+        <ContentErrorBoundary>
+          <UpdatesPage />
+        </ContentErrorBoundary>
+      ),
+    },
     {
       path: '/club/:clubId',
       element: (

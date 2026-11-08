@@ -1,51 +1,46 @@
 // 학생/운영진 전환 토글의 sticky 바와 슬라이딩 인디케이터 스타일
 import { motion } from 'framer-motion';
 import styled from 'styled-components';
-import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
-const WEBVIEW_TOP_BAR_HEIGHT = 48;
-
-export const Bar = styled.div`
-  position: sticky;
-  top: ${HEADER_HEIGHT.desktop + 12}px;
-  z-index: 10;
+/* 큰 토글은 첫 화면 위에 그대로 두고(따라다니지 않는다), 작은 토글은 헤더 가운데에 들어간다 */
+export const Bar = styled.div<{ $compact: boolean }>`
   display: flex;
   justify-content: center;
-  width: 100%;
-  margin-top: ${HEADER_HEIGHT.desktop + 24}px;
-  pointer-events: none;
+  width: ${({ $compact }) => ($compact ? 'auto' : '100%')};
+  margin-top: ${({ $compact }) => ($compact ? 0 : 32)}px;
 
   ${media.tablet} {
-    top: ${WEBVIEW_TOP_BAR_HEIGHT + 8}px;
-    margin-top: 16px;
+    margin-top: ${({ $compact }) => ($compact ? 0 : 16)}px;
   }
 `;
 
-export const Track = styled.div`
+export const Track = styled.div<{ $compact: boolean }>`
   display: flex;
-  gap: 4px;
-  padding: 5px;
+  gap: ${({ $compact }) => ($compact ? 2 : 4)}px;
+  padding: ${({ $compact }) => ($compact ? 3 : 5)}px;
   border-radius: 999px;
-  background: rgba(255, 255, 255, 0.82);
-  border: 1px solid ${colors.gray[300]};
-  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.06);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  pointer-events: auto;
+  background: ${({ $compact }) =>
+    $compact ? colors.gray[100] : colors.base.white};
+  border: 1px solid
+    ${({ $compact }) => ($compact ? 'transparent' : colors.gray[300])};
+  box-shadow: ${({ $compact }) =>
+    $compact ? 'none' : '0 6px 24px rgba(0, 0, 0, 0.06)'};
 `;
 
-export const Tab = styled.button<{ $selected: boolean }>`
+export const Tab = styled.button<{ $selected: boolean; $compact: boolean }>`
   position: relative;
-  padding: 10px 22px 10px 18px;
+  padding: ${({ $compact }) =>
+    $compact ? '6px 14px 6px 10px' : '10px 22px 10px 18px'};
   border: none;
   border-radius: 999px;
   background: transparent;
   color: ${({ $selected }) =>
     $selected ? colors.base.white : colors.gray[700]};
-  font-size: 16px;
+  font-size: ${({ $compact }) => ($compact ? 14 : 16)}px;
   font-weight: 700;
+  white-space: nowrap;
   cursor: pointer;
   transition: color 0.2s ease;
 
@@ -60,8 +55,8 @@ export const Tab = styled.button<{ $selected: boolean }>`
   }
 
   ${media.mobile} {
-    padding: 9px 18px;
-    font-size: 14px;
+    padding: ${({ $compact }) => ($compact ? '5px 12px 5px 9px' : '9px 18px')};
+    font-size: ${({ $compact }) => ($compact ? 13 : 14)}px;
   }
 `;
 
@@ -78,18 +73,10 @@ export const Label = styled.span`
   position: relative;
   display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: 0.4em;
 
   & > span:first-child {
-    font-size: 20px;
-  }
-
-  ${media.mobile} {
-    gap: 6px;
-
-    & > span:first-child {
-      font-size: 18px;
-    }
+    font-size: 1.25em;
   }
 `;
 
