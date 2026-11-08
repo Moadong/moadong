@@ -10,14 +10,25 @@ interface FaqSectionProps {
 
 const FaqSection = ({ items }: FaqSectionProps) => {
   const baseId = useId();
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  // 여러 질문을 함께 펼쳐 두고 비교할 수 있게 펼친 항목을 모두 기억한다
+  const [openIndexes, setOpenIndexes] = useState<ReadonlySet<number>>(
+    () => new Set(),
+  );
+
+  const toggle = (index: number) =>
+    setOpenIndexes((prev) => {
+      const next = new Set(prev);
+      if (next.has(index)) next.delete(index);
+      else next.add(index);
+      return next;
+    });
 
   return (
     <Styled.Section aria-labelledby={`${baseId}-title`}>
       <Styled.Title id={`${baseId}-title`}>자주 묻는 질문</Styled.Title>
       <Styled.List>
         {items.map(({ question, answer }, index) => {
-          const open = openIndex === index;
+          const open = openIndexes.has(index);
           const panelId = `${baseId}-panel-${index}`;
           return (
             <Styled.Item key={question}>
@@ -25,7 +36,7 @@ const FaqSection = ({ items }: FaqSectionProps) => {
                 type='button'
                 aria-expanded={open}
                 aria-controls={panelId}
-                onClick={() => setOpenIndex(open ? null : index)}
+                onClick={() => toggle(index)}
               >
                 {question}
                 <Styled.Toggle $open={open} aria-hidden='true' />
