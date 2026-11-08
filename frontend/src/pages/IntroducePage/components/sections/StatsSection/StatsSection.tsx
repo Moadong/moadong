@@ -18,7 +18,7 @@ const APPLY_CLICKS = 9800;
 
 const HEADLINES: Record<Audience, string> = {
   student: '이미 많은 학생들이\n모아동에서 동아리를 찾고 있어요',
-  club: '지난 모집 기간에만\n9,400명 넘게 모아동을 찾았어요',
+  club: '지난 모집 기간에만\n동아리 페이지가 85,000번 넘게 열렸어요',
 };
 
 /** 동아리 수는 지금 등록된 수라 따로 적지 않는다 */
