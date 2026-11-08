@@ -118,6 +118,11 @@ export const ClosingStrong = styled.p`
 
 export const ClosingSoft = styled.p`
   color: ${colors.gray[500]};
+
+  /* 폰에서는 옅은 안내가 밝은 데서도 읽히게 큰 글씨 기준(3:1)을 넘게 진하게 */
+  ${media.mobile} {
+    color: ${colors.gray[700]};
+  }
 `;
 
 export const Arrow = styled.span`
