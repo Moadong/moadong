@@ -56,7 +56,12 @@ export const Entry = styled.li`
 export const Date = styled.time`
   padding-top: 6px;
   font-size: 15px;
-  color: ${colors.gray[600]};
+  color: ${colors.gray[700]};
+
+  /* 폰에서는 날짜를 한 단계 진하게 해 밝은 데서도 읽히게 한다 */
+  ${media.mobile} {
+    color: ${colors.gray[800]};
+  }
 `;
 
 export const Body = styled.div`
