@@ -55,7 +55,7 @@ export const AUDIENCE_CONTENT: Record<Audience, AudienceContent> = {
       subtitle: '찾고, 보고, 지원까지 모아동에서 한 번에',
     },
     problem: {
-      title: '동아리 찾기 너무 불편하지 않으셨나요',
+      title: '동아리 찾기 너무 불편하지 않으셨나요?',
       roomName: '26학번 새내기방',
       messages: [
         {
@@ -102,7 +102,7 @@ export const AUDIENCE_CONTENT: Record<Audience, AudienceContent> = {
       subtitle: '홍보부터 지원서, 지원자 관리까지 한 곳에서',
     },
     problem: {
-      title: '동아리 운영, 이런 게 번거롭지 않으셨나요',
+      title: '동아리 운영, 이런 게 번거롭지 않으셨나요?',
       roomName: '동아리 운영진방',
       messages: [
         {
