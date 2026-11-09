@@ -1,5 +1,11 @@
 /// <reference types="node" />
 
+import {
+  CLUB_FAQ,
+  STUDENT_FAQ,
+  type IntroduceFaqItem,
+} from './src/pages/IntroducePage/constants/introduceFaq';
+
 // `bot`/`crawl`로 잡히지 않는 AI 답변엔진 UA는 개별 토큰으로 추가한다.
 // (GPTBot·OAI-SearchBot·ClaudeBot·PerplexityBot·bingbot·Applebot은 `bot`으로 이미 매칭)
 // LINE은 인앱 브라우저(`Line/<버전>`) 오탐을 피하려 봇 전용 토큰만 넣는다.
@@ -293,6 +299,79 @@ function buildHomeHtml(clubs: CrawlerClub[]): string {
 </html>`;
 }
 
+const INTRODUCE_TITLE =
+  '모아동 소개 - 부경대학교 동아리 찾기부터 부원 모집까지';
+const INTRODUCE_DESCRIPTION =
+  '모아동은 부경대학교 동아리를 한 곳에 모아 보여주는 서비스예요. 학생은 동아리를 찾고 지원하고, 동아리 운영진은 홍보부터 지원자 관리까지 할 수 있어요.';
+
+function buildFaqList(items: IntroduceFaqItem[]): string {
+  return items
+    .map(
+      (faq) =>
+        `\n    <dt>${escapeHtml(faq.question)}</dt><dd>${escapeHtml(faq.answer)}</dd>`,
+    )
+    .join('');
+}
+
+/**
+ * 소개 페이지: 화면의 자주 묻는 질문과 같은 데이터(introduceFaq.ts)로 FAQPage를 내려준다.
+ * 문구를 복제하지 않고 같은 파일을 읽으므로 화면과 어긋나지 않는다.
+ */
+function buildIntroduceHtml(): string {
+  const canonical = `${SITE_URL}/introduce`;
+  const jsonLd = toJsonLdScript({
+    '@context': 'https://schema.org',
+    '@graph': [
+      {
+        '@type': 'WebPage',
+        '@id': canonical,
+        url: canonical,
+        name: INTRODUCE_TITLE,
+        description: INTRODUCE_DESCRIPTION,
+        inLanguage: 'ko',
+        isPartOf: { '@id': `${SITE_URL}/` },
+      },
+      {
+        '@type': 'FAQPage',
+        '@id': `${canonical}#faq`,
+        mainEntity: [...STUDENT_FAQ, ...CLUB_FAQ].map((faq) => ({
+          '@type': 'Question',
+          name: faq.question,
+          acceptedAnswer: { '@type': 'Answer', text: faq.answer },
+        })),
+      },
+    ],
+  });
+
+  return `<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="utf-8" />
+  <title>${escapeHtml(INTRODUCE_TITLE)}</title>
+  <meta name="description" content="${escapeHtml(INTRODUCE_DESCRIPTION)}" />
+  <link rel="canonical" href="${canonical}" />
+  <meta property="og:type" content="website" />
+  <meta property="og:title" content="${escapeHtml(INTRODUCE_TITLE)}" />
+  <meta property="og:description" content="${escapeHtml(INTRODUCE_DESCRIPTION)}" />
+  <meta property="og:image" content="${DEFAULT_OG_IMAGE}" />
+  <meta property="og:url" content="${canonical}" />
+  <meta property="og:site_name" content="모아동" />
+  <script type="application/ld+json">${jsonLd}</script>
+</head>
+<body>
+  <h1>모아동 — 부경대학교 동아리 찾기부터 부원 모집까지</h1>
+  <p>${escapeHtml(INTRODUCE_DESCRIPTION)}</p>
+  <h2>학생이 자주 묻는 질문</h2>
+  <dl>${buildFaqList(STUDENT_FAQ)}
+  </dl>
+  <h2>동아리 운영진이 자주 묻는 질문</h2>
+  <dl>${buildFaqList(CLUB_FAQ)}
+  </dl>
+  <p><a href="${SITE_URL}/">모아동에서 부경대학교 동아리 둘러보기</a></p>
+</body>
+</html>`;
+}
+
 function htmlResponse(html: string): Response {
   return new Response(html, {
     headers: {
@@ -339,6 +418,7 @@ export default async function middleware(request: Request) {
   const { pathname } = new URL(request.url);
 
   if (pathname === '/') return renderHome();
+  if (pathname === '/introduce') return htmlResponse(buildIntroduceHtml());
 
   // /club/:clubId, /clubDetail/:clubId, /club/@:clubName, /clubDetail/@:clubName 매칭
   const match = pathname.match(/^\/club(?:Detail)?\/([a-f0-9]{24}|@[^/]+)$/i);
@@ -385,5 +465,5 @@ export default async function middleware(request: Request) {
 }
 
 export const config = {
-  matcher: ['/', '/club/:path*', '/clubDetail/:path*'],
+  matcher: ['/', '/introduce', '/club/:path*', '/clubDetail/:path*'],
 };

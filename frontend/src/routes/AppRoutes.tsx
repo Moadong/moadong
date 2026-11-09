@@ -20,6 +20,8 @@ import FeedbackWritePage from '@/pages/FeedbackPage/FeedbackWritePage';
 import SentFeedbackDetailPage from '@/pages/FeedbackPage/SentFeedbackDetailPage';
 import GamePage from '@/pages/GamePage/GamePage';
 import IntroducePage from '@/pages/IntroducePage/IntroducePage';
+import TeamPage from '@/pages/IntroducePage/subpages/TeamPage/TeamPage';
+import UpdatesPage from '@/pages/IntroducePage/subpages/UpdatesPage/UpdatesPage';
 import LoginPage from '@/pages/LoginPage/LoginPage';
 import MainPage from '@/pages/MainPage/MainPage';
 import MenuPage from '@/pages/MenuPage/MenuPage';
@@ -62,14 +64,6 @@ const AppRoutes = () =>
           // 공유된 링크가 깨지지 않도록 홈으로 보낸다.
           path: '/clubs',
           element: <Navigate to='/' replace />,
-        },
-        {
-          path: '/introduce',
-          element: (
-            <ContentErrorBoundary>
-              <IntroducePage />
-            </ContentErrorBoundary>
-          ),
         },
         {
           path: '/recruit',
@@ -122,7 +116,33 @@ const AppRoutes = () =>
       ],
     },
 
+    /* 소개 페이지들: 모아동 메인 헤더·하단바 없이 소개 전용 헤더를 쓰는 별도 화면 */
+    {
+      path: '/introduce',
+      element: (
+        <ContentErrorBoundary>
+          <IntroducePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/introduce/updates',
+      element: (
+        <ContentErrorBoundary>
+          <UpdatesPage />
+        </ContentErrorBoundary>
+      ),
+    },
+
     /* 기존 웹 & 안드로이드 url (android: v1.1.0) */
+    {
+      path: '/introduce/team',
+      element: (
+        <ContentErrorBoundary>
+          <TeamPage />
+        </ContentErrorBoundary>
+      ),
+    },
     {
       path: '/club/:clubId',
       element: (

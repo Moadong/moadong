@@ -1,121 +1,135 @@
-import { useNavigate } from 'react-router-dom';
-import search_button_icon from '@/assets/images/icons/search_button_icon.svg';
-import introduce_phone_mockup from '@/assets/images/introduce/introduce_phone_mockup.webp';
-import { PAGE_NAME } from '@/constants/eventName';
-import {
-  BackgroundCircleLarge,
-  BackgroundCircleSmall,
-  BackgroundTwistLeft,
-  BackgroundTwistRight,
-} from '@/pages/IntroducePage/components/BackgroundShapes';
+import { ReactNode, useRef } from 'react';
+import { useReducedMotion, useScroll, useTransform } from 'framer-motion';
+import type { Variants } from 'framer-motion';
+import BrandDoodle from '@/pages/IntroducePage/components/BrandDoodle/BrandDoodle';
 import {
   fade,
   fadeIn,
-  fadeUp,
   stagger,
   VIEWPORT_CONFIG,
 } from '@/pages/IntroducePage/constants/animations';
-import { floatingClubs } from '@/pages/IntroducePage/constants/mockData';
-import ClubCard from '@/pages/MainPage/components/ClubCard/ClubCard';
 import * as Styled from './IntroSection.styles';
 
-const cardPositions = [
-  { $top: '280px', $left: '-300px' },
-  { $top: '330px', $left: '-630px' },
-  { $top: '280px', $right: '-220px' },
-  { $top: '310px', $right: '-580px' },
-];
+/** 제목 줄마다 흐릿하게 시작해 살짝 떠오르며 선명해진다. 글자를 자르지 않아 처음부터 온전한 모양으로 보인다 */
+const titleLineVariants: Variants = {
+  hidden: { opacity: 0, y: 18, filter: 'blur(10px)' },
+  show: (index: number) => ({
+    opacity: 1,
+    y: 0,
+    filter: 'blur(0px)',
+    transition: {
+      duration: 0.8,
+      ease: [0.22, 1, 0.36, 1],
+      delay: 0.1 + index * 0.14,
+    },
+  }),
+};
 
-const SHAPES = [
-  {
-    id: 'twistLeft',
-    component: BackgroundTwistLeft,
-    $top: '-40px',
-    $left: '20px',
-    $laptop: { top: '-30px', left: '-20px' },
-    $tablet: { top: '-20px', left: '-50px' },
-    $mobile: { top: '-15px', left: '-100px' },
-  },
-  {
-    id: 'twistRight',
-    component: BackgroundTwistRight,
-    $top: '163px',
-    $right: '-10px',
-    $laptop: { top: '180px', right: '-0px' },
-    $tablet: { top: '200px', right: '-50px' },
-    $mobile: { top: '250px', right: '-80px' },
-  },
-  {
-    id: 'circleSmall',
-    component: BackgroundCircleSmall,
-    $top: '575px',
-    $left: '411px',
-    $laptop: { top: '550px', left: '320px' },
-    $tablet: { top: '500px', left: '110px' },
-    $mobile: { top: '380px', left: '20px' },
-  },
-  {
-    id: 'circleLarge',
-    component: BackgroundCircleLarge,
-    $top: '380px',
-    $right: '477px',
-    $laptop: { top: '300px', right: '350px' },
-    $tablet: { top: '120px', right: '50px' },
-    $mobile: { top: '180px', right: '-10px' },
-  },
-];
+interface IntroSectionProps {
+  /** 큰 제목. 줄바꿈은 \n으로 */
+  title: string;
+  subtitle: string;
+  /** 대상별 시작 버튼 */
+  actions: ReactNode;
+  /** 제목 위, 첫 화면 배경 안에 두는 요소 (학생/운영진 토글) */
+  top?: ReactNode;
+  /** 제목 아래 큰 화면 (학생은 폰, 운영진은 관리자 대시보드) */
+  visual: ReactNode;
+}
 
-const IntroSection = () => {
-  const navigate = useNavigate();
+const IntroSection = ({
+  title,
+  subtitle,
+  actions,
+  visual,
+  top,
+}: IntroSectionProps) => {
+  const sectionRef = useRef<HTMLElement>(null);
+  const reduceMotion = useReducedMotion();
+  const { scrollYProgress } = useScroll({
+    target: sectionRef,
+    offset: ['start start', 'end start'],
+  });
+  // 스크롤하면 글자는 빠르게 올라가며 흐려지고, 폰은 천천히 올라가며 커진다
+  const textY = useTransform(scrollYProgress, [0, 1], [0, -160]);
+  const textOpacity = useTransform(scrollYProgress, [0, 0.6], [1, 0]);
+  const visualY = useTransform(scrollYProgress, [0, 1], [0, -80]);
+  const visualScale = useTransform(scrollYProgress, [0, 1], [1, 1.08]);
 
   return (
     <Styled.IntroSection
+      ref={sectionRef}
       variants={stagger}
       initial='hidden'
       whileInView='show'
       viewport={VIEWPORT_CONFIG}
       aria-labelledby='intro-title'
     >
-      {SHAPES.map(({ id, component: Shape, ...pos }) => (
-        <Styled.Shape key={id} {...pos}>
-          <Shape />
-        </Styled.Shape>
-      ))}
+      {/* 대상을 바꾸면 로고 도형을 처음부터 다시 그린다 */}
+      <Styled.Doodles key={title}>
+        <BrandDoodle
+          shape='twistLeft'
+          trigger='mount'
+          width='min(34vw, 460px)'
+          position={{ top: '-40px', left: 'max(-160px, calc(50% - 720px))' }}
+          fillOpacity={0.09}
+        />
+        <BrandDoodle
+          shape='twistRight'
+          trigger='mount'
+          width='min(22vw, 290px)'
+          position={{ top: '220px', right: 'max(-90px, calc(50% - 660px))' }}
+          fillOpacity={0.1}
+          delay={0.35}
+        />
+      </Styled.Doodles>
 
       <Styled.Container>
-        <Styled.TextWrapper>
-          <Styled.IntroTitle variants={fadeIn} id='intro-title'>
-            모아동아리
+        {top}
+        <Styled.TextWrapper
+          style={reduceMotion ? undefined : { y: textY, opacity: textOpacity }}
+        >
+          {/* 대상을 바꾸면 key가 바뀌어 다시 마운트되므로, 부모 상태와 무관하게 직접 show로 보낸다 */}
+          <Styled.IntroTitle
+            key={title}
+            id='intro-title'
+            initial='hidden'
+            animate='show'
+          >
+            {title.split('\n').map((line, index) => (
+              <Styled.TitleLine
+                key={line}
+                custom={index}
+                variants={titleLineVariants}
+              >
+                {line}
+              </Styled.TitleLine>
+            ))}
           </Styled.IntroTitle>
-          <Styled.IntroSubtitle variants={fadeIn}>
-            부경대학교의 모든 동아리를 한눈에
+          <Styled.IntroSubtitle
+            key={subtitle}
+            variants={fadeIn}
+            initial='hidden'
+            animate='show'
+          >
+            {subtitle}
           </Styled.IntroSubtitle>
-          <Styled.IntroButton variants={fadeIn} onClick={() => navigate('/')}>
-            동아리 모아보기
-            <img
-              src={search_button_icon}
-              alt='검색 버튼 아이콘'
-              className='icon'
-            />
-          </Styled.IntroButton>
+          <Styled.ActionsWrapper variants={fadeIn}>
+            {actions}
+          </Styled.ActionsWrapper>
         </Styled.TextWrapper>
 
-        <Styled.VisualWrapper>
-          <Styled.PhoneImageWrapper variants={fade}>
-            <Styled.PhoneImage
-              src={introduce_phone_mockup}
-              alt='모아동아리 앱 화면 목업'
-            />
-            {floatingClubs.map((club, index) => (
-              <Styled.CardImage
-                key={club.id}
-                variants={fadeUp}
-                {...cardPositions[index]}
-              >
-                <ClubCard club={club} page={PAGE_NAME.INTRODUCE} />
-              </Styled.CardImage>
-            ))}
-          </Styled.PhoneImageWrapper>
+        <Styled.VisualWrapper
+          style={reduceMotion ? undefined : { y: visualY, scale: visualScale }}
+        >
+          <Styled.Phone
+            key={title}
+            variants={fade}
+            initial='hidden'
+            animate='show'
+          >
+            {visual}
+          </Styled.Phone>
         </Styled.VisualWrapper>
       </Styled.Container>
     </Styled.IntroSection>

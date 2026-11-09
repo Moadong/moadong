@@ -1,0 +1,65 @@
+import { format } from 'date-fns';
+import { Applicant } from '@/types/applicants';
+import { Question } from '@/types/application';
+import mapStatusToGroup from '@/utils/mapStatusToGroup';
+
+const escapeCsvCell = (value: string): string => {
+  const safe = /^[=+\-@\t\r]/.test(value) ? `'${value}` : value;
+  if (/[",\n\r]/.test(safe)) {
+    return `"${safe.replace(/"/g, '""')}"`;
+  }
+  return safe;
+};
+
+export const exportApplicantsToCSV = (
+  applicants: Applicant[],
+  questions: Question[],
+  filename: string,
+) => {
+  const headers = [
+    '번호',
+    '제출일시',
+    '상태',
+    ...questions.map((q) => q.title),
+    '메모',
+  ];
+
+  const rows = applicants.map((applicant, index) => {
+    const date = new Date(applicant.createdAt);
+    const createdAt = `${date.getFullYear()}.${String(date.getMonth() + 1).padStart(2, '0')}.${String(date.getDate()).padStart(2, '0')} ${String(date.getHours()).padStart(2, '0')}:${String(date.getMinutes()).padStart(2, '0')}`;
+    const status = mapStatusToGroup(applicant.status).label;
+
+    const answerCells = questions.map((q) =>
+      applicant.answers
+        .filter((a) => a.id === q.id)
+        .map((a) => a.value)
+        .join('; '),
+    );
+
+    return [
+      String(index + 1),
+      createdAt,
+      status,
+      ...answerCells,
+      applicant.memo,
+    ];
+  });
+
+  const csvContent = [headers, ...rows]
+    .map((row) => row.map(escapeCsvCell).join(','))
+    .join('\r\n');
+
+  const bom = '\uFEFF';
+  const blob = new Blob([bom + csvContent], {
+    type: 'text/csv;charset=utf-8;',
+  });
+
+  const dateStr = format(new Date(), 'yyyyMMdd');
+
+  const url = URL.createObjectURL(blob);
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `${filename}_${dateStr}.csv`;
+  link.click();
+  URL.revokeObjectURL(url);
+};
