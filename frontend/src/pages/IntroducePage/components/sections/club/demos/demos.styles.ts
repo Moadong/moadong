@@ -1,8 +1,8 @@
 // 커서 데모 공통: 커서 기준 영역, 데스크탑 화면 축소, 일괄 변경 줄, AI 초안 시작·생성 중·결과 스타일
 import { motion } from 'framer-motion';
 import styled, { keyframes } from 'styled-components';
-import { media } from '@/styles/mediaQuery';
 import * as DetailStyled from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPageMobile.styles';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
 /* 커서 좌표의 기준이 되는 영역 */
