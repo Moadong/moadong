@@ -39,16 +39,16 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
   const shouldShowHeaderControls = !isAdminPage;
 
   const navLinks = [
-    { label: '모아동 소개', handler: handleIntroduceClick, path: '/introduce' },
-    {
-      label: '총동아리연합회 소개',
-      handler: handleClubUnionClick,
-      path: '/club-union',
-    },
+    { label: '서비스 소개', handler: handleIntroduceClick, path: '/introduce' },
     {
       label: '홍보•이벤트',
       handler: handlePromotionClick,
       path: '/promotions',
+    },
+    {
+      label: '총동아리연합회',
+      handler: handleClubUnionClick,
+      path: '/club-union',
     },
   ];
 

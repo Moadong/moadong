@@ -8,16 +8,6 @@ export const PageWrapper = styled.div`
   background: ${colors.base.white};
 `;
 
-export const IntroducePageHeader = styled.header`
-  width: 100%;
-  background: ${colors.base.white};
-`;
-export const IntroducePageFooter = styled.footer`
-  position: relative;
-  z-index: 1;
-  background: ${colors.base.white};
-  border-top: 1px solid ${colors.gray[250]};
-`;
 export const Main = styled.main`
   /* 섹션 뒤 장식 도형(z-index:-1)이 본문 아래, 페이지 배경 위에 놓이도록 쌓임 맥락을 만든다 */
   position: relative;

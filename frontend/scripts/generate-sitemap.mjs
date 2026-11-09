@@ -11,6 +11,7 @@ const STATIC_PATHS = [
   '/',
   '/clubs',
   '/introduce',
+  '/introduce/updates',
   '/club-union',
   '/promotions',
   '/privacy-policy',

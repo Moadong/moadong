@@ -1,13 +1,8 @@
-import { lazy, Suspense, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { lazy, Suspense, useEffect, useRef } from 'react';
+import { AnimatePresence, motion, useInView } from 'framer-motion';
 import introduce_main_long from '@/assets/images/introduce/introduce_main_long.webp';
-import Footer from '@/components/common/Footer/Footer';
-import Header from '@/components/common/Header/Header';
-import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import { PAGE_VIEW } from '@/constants/eventName';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
-import useDevice from '@/hooks/useDevice';
-import isInAppWebView from '@/utils/isInAppWebView';
 import AudienceToggle, {
   AUDIENCE_PANEL_ID,
 } from './components/AudienceToggle/AudienceToggle';
@@ -28,6 +23,7 @@ import useAppDownload, {
 } from './hooks/useAppDownload';
 import useAudience from './hooks/useAudience';
 import * as Styled from './IntroducePage.styles';
+import SubpageLayout from './subpages/SubpageLayout/SubpageLayout';
 
 // 운영진 첫 화면(관리자 화면 미리보기)은 학생 방문자가 받지 않게 나눈다
 const AdminDashboardPreview = lazy(
@@ -41,10 +37,11 @@ const ClubShowcaseSection = lazy(
 
 const IntroducePage = () => {
   useTrackPageView(PAGE_VIEW.INTRODUCE_PAGE);
-  const { isMobile, isTablet } = useDevice();
-  const showPageTopBar = isMobile || isTablet || isInAppWebView();
   const { audience, changeAudience } = useAudience();
   const content = AUDIENCE_CONTENT[audience];
+  // 첫 화면의 큰 토글이 화면 밖으로 나가면 헤더 가운데에 작은 토글을 띄운다
+  const inlineToggleRef = useRef<HTMLDivElement>(null);
+  const inlineToggleVisible = useInView(inlineToggleRef, { initial: true });
   const redirectToStore = useAppDownload('qr');
 
   // PC 화면의 설치 QR을 폰으로 찍고 들어오면 기기에 맞는 스토어로 바로 넘긴다
@@ -62,14 +59,32 @@ const IntroducePage = () => {
   };
 
   return (
-    <>
-      {showPageTopBar ? <WebviewTopBar title='서비스 소개' /> : <Header />}
+    <SubpageLayout
+      fullWidth
+      center={
+        !inlineToggleVisible && (
+          <AudienceToggle
+            compact
+            value={audience}
+            onChange={handleAudienceChange}
+          />
+        )
+      }
+    >
       <TossfaceStylesheet />
       <Styled.PageWrapper>
         <Styled.Main>
-          <AudienceToggle value={audience} onChange={handleAudienceChange} />
           <IntroSection
             {...content.hero}
+            top={
+              // 헤더 토글이 떠 있는 동안 화면 밖 큰 토글은 보조기기에서 빼서 탭 목록이 둘로 읽히지 않게 한다
+              <div ref={inlineToggleRef} inert={!inlineToggleVisible}>
+                <AudienceToggle
+                  value={audience}
+                  onChange={handleAudienceChange}
+                />
+              </div>
+            }
             actions={<StartActions audience={audience} location='hero' />}
             visual={
               audience === 'student' ? (
@@ -119,13 +134,8 @@ const IntroducePage = () => {
             </motion.div>
           </AnimatePresence>
         </Styled.Main>
-        {!isInAppWebView() && (
-          <Styled.IntroducePageFooter>
-            <Footer />
-          </Styled.IntroducePageFooter>
-        )}
       </Styled.PageWrapper>
-    </>
+    </SubpageLayout>
   );
 };
 

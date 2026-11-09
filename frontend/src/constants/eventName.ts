@@ -336,6 +336,8 @@ export const PAGE_VIEW = {
   MENU_PAGE: 'menu',
   /** 모아동 소개 */
   INTRODUCE_PAGE: 'introduce',
+  /** 모아동 업데이트 기록 */
+  INTRODUCE_UPDATES_PAGE: 'introduce_updates',
   /** 모아동 팀원 모집 */
   RECRUIT_PAGE: 'recruit',
   /** 모아동 팀원 모집 포지션 상세 */
