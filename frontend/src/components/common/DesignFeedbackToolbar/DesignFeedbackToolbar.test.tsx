@@ -1,4 +1,5 @@
 import '@testing-library/jest-dom';
+import { MemoryRouter } from 'react-router-dom';
 import { render, screen } from '@testing-library/react';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import DesignFeedbackToolbar from './DesignFeedbackToolbar';
@@ -23,6 +24,13 @@ const setUserAgent = (ua: string) => {
   });
 };
 
+const renderToolbar = (path = '/') =>
+  render(
+    <MemoryRouter initialEntries={[path]}>
+      <DesignFeedbackToolbar />
+    </MemoryRouter>,
+  );
+
 beforeEach(() => {
   localStorage.clear();
   setSearch('');
@@ -31,26 +39,26 @@ beforeEach(() => {
 
 describe('DesignFeedbackToolbar', () => {
   it('기본 상태에서는 렌더하지 않는다', () => {
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     expect(screen.queryByTestId('agentation')).not.toBeInTheDocument();
   });
 
   it('?design=1이면 켜고 localStorage에 남긴다', async () => {
     setSearch('?design=1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     expect(await screen.findByTestId('agentation')).toBeInTheDocument();
     expect(localStorage.getItem(STORAGE_KEYS.DESIGN_FEEDBACK)).toBe('1');
   });
 
   it('localStorage에 남아 있으면 쿼리가 없어도 켠다', async () => {
     localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     expect(await screen.findByTestId('agentation')).toBeInTheDocument();
   });
 
   it('켤 때 툴바 출력을 detailed로 심는다', async () => {
     setSearch('?design=1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     await screen.findByTestId('agentation');
     expect(
       JSON.parse(localStorage.getItem('feedback-toolbar-settings') ?? '{}'),
@@ -61,7 +69,7 @@ describe('DesignFeedbackToolbar', () => {
     const mine = JSON.stringify({ outputDetail: 'forensic' });
     localStorage.setItem('feedback-toolbar-settings', mine);
     setSearch('?design=1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     await screen.findByTestId('agentation');
     expect(localStorage.getItem('feedback-toolbar-settings')).toBe(mine);
   });
@@ -69,7 +77,7 @@ describe('DesignFeedbackToolbar', () => {
   it('?design=0이면 끄고 localStorage를 지운다', () => {
     localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
     setSearch('?design=0');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     expect(screen.queryByTestId('agentation')).not.toBeInTheDocument();
     expect(localStorage.getItem(STORAGE_KEYS.DESIGN_FEEDBACK)).toBeNull();
   });
@@ -77,7 +85,7 @@ describe('DesignFeedbackToolbar', () => {
   it('인앱 웹뷰에서는 켜져 있어도 렌더하지 않는다', () => {
     localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
     setUserAgent('MoadongApp/1.5.1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     expect(screen.queryByTestId('agentation')).not.toBeInTheDocument();
   });
 
@@ -88,7 +96,7 @@ describe('DesignFeedbackToolbar', () => {
       .mockImplementation(() => {
         throw new Error('QuotaExceededError');
       });
-    expect(() => render(<DesignFeedbackToolbar />)).not.toThrow();
+    expect(() => renderToolbar()).not.toThrow();
     expect(screen.queryByTestId('agentation')).not.toBeInTheDocument();
     setItem.mockRestore();
   });
@@ -96,7 +104,7 @@ describe('DesignFeedbackToolbar', () => {
   it('복사하면 피드백이 채워진 이슈 폼을 연다 (메모 줄이 없으면 제목은 템플릿 그대로)', async () => {
     const open = jest.spyOn(window, 'open').mockImplementation(() => null);
     setSearch('?design=1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     await screen.findByTestId('agentation');
 
     mockOnCopy?.('**Classes:** Headerstyles__Container-NuEt\n8px 줄여줘');
@@ -113,7 +121,7 @@ describe('DesignFeedbackToolbar', () => {
   it('프리필이 URL 한계를 넘으면 앞부분만 담고 잘렸다고 알린다', async () => {
     const open = jest.spyOn(window, 'open').mockImplementation(() => null);
     setSearch('?design=1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     await screen.findByTestId('agentation');
 
     // 한글은 인코딩하면 한 자가 9자가 된다. 1,000자면 9,000자라 한계를 넘는다.
@@ -131,7 +139,7 @@ describe('DesignFeedbackToolbar', () => {
   it('자를 때 이모지를 반으로 가르지 않는다', async () => {
     const open = jest.spyOn(window, 'open').mockImplementation(() => null);
     setSearch('?design=1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     await screen.findByTestId('agentation');
 
     expect(() => mockOnCopy?.('🎨'.repeat(2000))).not.toThrow();
@@ -142,7 +150,7 @@ describe('DesignFeedbackToolbar', () => {
   it('첫 메모로 이슈 제목을 채운다', async () => {
     const open = jest.spyOn(window, 'open').mockImplementation(() => null);
     setSearch('?design=1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     await screen.findByTestId('agentation');
 
     mockOnCopy?.(
@@ -159,7 +167,7 @@ describe('DesignFeedbackToolbar', () => {
   it('메모가 여럿이면 나머지는 개수로, 긴 메모는 40자로 줄여 적는다', async () => {
     const open = jest.spyOn(window, 'open').mockImplementation(() => null);
     setSearch('?design=1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     await screen.findByTestId('agentation');
 
     const long = '가'.repeat(41);
@@ -177,7 +185,7 @@ describe('DesignFeedbackToolbar', () => {
   it('본문이 잘려도 제목의 메모 개수는 전체 기준이다', async () => {
     const open = jest.spyOn(window, 'open').mockImplementation(() => null);
     setSearch('?design=1');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     await screen.findByTestId('agentation');
 
     mockOnCopy?.(
@@ -196,7 +204,31 @@ describe('DesignFeedbackToolbar', () => {
     localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
     setUserAgent('MoadongApp/1.5.1');
     setSearch('?design=0');
-    render(<DesignFeedbackToolbar />);
+    renderToolbar();
     expect(localStorage.getItem(STORAGE_KEYS.DESIGN_FEEDBACK)).toBeNull();
+  });
+
+  it('관리자 하위 경로에서는 켜져 있어도 렌더하지 않는다', () => {
+    localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
+    renderToolbar('/admin/applicants');
+    expect(screen.queryByTestId('agentation')).not.toBeInTheDocument();
+  });
+
+  it('/admin 경로에서도 켜져 있어도 렌더하지 않는다', () => {
+    localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
+    renderToolbar('/admin');
+    expect(screen.queryByTestId('agentation')).not.toBeInTheDocument();
+  });
+
+  it('관리자 경로에 있어도 저장된 켜짐 상태는 지우지 않는다', () => {
+    localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
+    renderToolbar('/admin/login');
+    expect(localStorage.getItem(STORAGE_KEYS.DESIGN_FEEDBACK)).toBe('1');
+  });
+
+  it('관리자가 아닌 경로에서는 켜져 있으면 렌더한다', async () => {
+    localStorage.setItem(STORAGE_KEYS.DESIGN_FEEDBACK, '1');
+    renderToolbar('/');
+    expect(await screen.findByTestId('agentation')).toBeInTheDocument();
   });
 });

@@ -1,4 +1,5 @@
 import { lazy, Suspense } from 'react';
+import { useMatch } from 'react-router-dom';
 import { STORAGE_KEYS } from '@/constants/storageKeys';
 import isInAppWebView from '@/utils/isInAppWebView';
 
@@ -95,8 +96,10 @@ const openIssueForm = (markdown: string) => {
 };
 
 const DesignFeedbackToolbar = () => {
+  const isAdmin = !!useMatch({ path: '/admin', end: false });
   const enabled = resolveEnabled();
-  if (!enabled || isInAppWebView()) return null;
+  // 지원자 개인정보가 있는 관리자 화면의 글을 툴바가 공개 이슈로 복사하지 않게 막는다.
+  if (!enabled || isAdmin || isInAppWebView()) return null;
 
   return (
     <Suspense fallback={null}>
