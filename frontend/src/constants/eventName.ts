@@ -338,6 +338,8 @@ export const PAGE_VIEW = {
   INTRODUCE_PAGE: 'introduce',
   /** 모아동 업데이트 기록 */
   INTRODUCE_UPDATES_PAGE: 'introduce_updates',
+  /** 모아동 만드는 사람들 */
+  INTRODUCE_TEAM_PAGE: 'introduce_team',
   /** 모아동 팀원 모집 */
   RECRUIT_PAGE: 'recruit',
   /** 모아동 팀원 모집 포지션 상세 */

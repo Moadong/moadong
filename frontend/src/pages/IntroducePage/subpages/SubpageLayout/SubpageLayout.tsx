@@ -1,4 +1,4 @@
-// 소개 페이지들(서비스 소개·업데이트 기록) 공통 틀: 모아동 메인 헤더 대신 쓰는 전용 헤더와 푸터
+// 소개 페이지들(서비스 소개·업데이트 기록·만드는 사람들) 공통 틀: 모아동 메인 헤더 대신 쓰는 전용 헤더와 푸터
 import { ReactNode, useEffect, useRef, useState } from 'react';
 import { Link, NavLink, useNavigate } from 'react-router-dom';
 import { AnimatePresence } from 'framer-motion';
@@ -12,6 +12,7 @@ import * as Styled from './SubpageLayout.styles';
 const SUBPAGE_NAV = [
   { label: '서비스 소개', to: '/introduce' },
   { label: '업데이트 기록', to: '/introduce/updates' },
+  { label: '만드는 사람들', to: '/introduce/team' },
 ] as const;
 
 interface SubpageLayoutProps {
