@@ -30,7 +30,12 @@ React SPA는 클라이언트 사이드 렌더링이라 카카오톡/페이스북
 - `@graph`에 `WebSite` + 전체 동아리 `ItemList`
 - `<body>` — `h1`, 서비스 설명, `등록된 동아리 N개` 헤딩, 동아리별 `<li>`(상세 링크 · 카테고리 · 분과 · 모집 상태 · 한 줄 소개)
 
-정적 텍스트 페이지(`/introduce`, `/club-union`)는 커버하지 않는다. 문구가 React 컴포넌트·상수에 있어 middleware로 옮기면 복제본이 생기고 드리프트하는데, 답변엔진 관점의 이득은 작다.
+**소개 `/introduce`** (`buildIntroduceHtml`) — 학생·운영진 자주 묻는 질문을 `FAQPage`로 내려준다. 문구는 `src/pages/IntroducePage/constants/introduceFaq.ts` 한 곳에만 있고, 화면(`FaqSection`)과 middleware가 같은 파일을 import한다. 그래서 복제본이 생기지 않는다. 이 파일은 middleware 번들에 들어가므로 `@/` 별칭이나 다른 모듈을 import하지 않는다.
+
+- `@graph`에 `WebPage` + `FAQPage`
+- `<body>` — `h1`, 서비스 설명, `학생이 자주 묻는 질문`·`동아리 운영진이 자주 묻는 질문` `dl`
+
+`/club-union`은 커버하지 않는다. 문구가 React 컴포넌트·상수에 있어 middleware로 옮기면 복제본이 생기고 드리프트하는데, 답변엔진 관점의 이득은 작다.
 
 값이 비어 있으면 해당 항목·섹션은 통째로 생략된다(`nonEmpty` / `buildSection`). JSON-LD는 `</script>` 조기 종료를 막기 위해 모든 `<`를 유니코드 이스케이프 시퀀스 `\u003c`로 치환한다(`toJsonLdScript`).
 
@@ -39,6 +44,7 @@ React SPA는 클라이언트 사이드 렌더링이라 카카오톡/페이스북
 **커버하는 라우트:**
 
 - `/` — 홈 (동아리 목록)
+- `/introduce` — 서비스 소개 (자주 묻는 질문)
 - `/club/:objectId` — 클럽 상세 (ObjectId)
 - `/clubDetail/:objectId`
 - `/club/@:clubName` — 클럽 상세 (이름)
