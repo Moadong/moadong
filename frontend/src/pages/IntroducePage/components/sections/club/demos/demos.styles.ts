@@ -2,11 +2,18 @@
 import { motion } from 'framer-motion';
 import styled, { keyframes } from 'styled-components';
 import { media } from '@/styles/mediaQuery';
+import * as DetailStyled from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantDetailPage/ApplicantDetailPageMobile.styles';
 import { colors } from '@/styles/theme/colors';
 
 /* 커서 좌표의 기준이 되는 영역 */
 export const DemoRoot = styled.div`
   position: relative;
+`;
+
+/* 좁은 칸에서도 상태 이름이 두 줄로 꺾이지 않게 한다 */
+export const StatusTab = styled(DetailStyled.StatusTab)`
+  padding: 6px 4px;
+  white-space: nowrap;
 `;
 
 export const Stack = styled.div`

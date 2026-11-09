@@ -92,13 +92,13 @@ const ApplicantsDemo = () => {
         />
         <DetailStyled.StatusTabRow data-demo='status'>
           {AVAILABLE_STATUSES.map((status) => (
-            <DetailStyled.StatusTab
+            <Styled.StatusTab
               key={status}
               type='button'
               $isSelected={statuses[index] === status}
             >
               {mapStatusToGroup(status).label}
-            </DetailStyled.StatusTab>
+            </Styled.StatusTab>
           ))}
         </DetailStyled.StatusTabRow>
       </DetailStyled.TopSection>

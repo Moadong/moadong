@@ -170,6 +170,11 @@ export const Panel = styled(motion.div)`
     border-radius: 24px;
   }
 
+  /* 폰에서는 페이지·칸·화면 여백이 겹쳐 화면 폭이 크게 줄어드니 칸 여백을 줄인다 */
+  ${media.mobile} {
+    padding: 20px 12px 0;
+  }
+
   /* 320px대 폰에서는 달력 같은 넓은 화면이 칸 밖으로 나가지 않게 여백을 줄인다 */
   ${media.mini_mobile} {
     padding: 20px 10px 0;
@@ -184,7 +189,7 @@ export const Screen = styled.div`
   padding: 18px;
   border-radius: 24px 24px 0 0;
 
-  ${media.mini_mobile} {
+  ${media.mobile} {
     padding: 12px;
   }
 
