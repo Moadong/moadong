@@ -20,6 +20,7 @@ import {
   SUBSCRIBE_NOTIFICATIONS,
 } from '@/pages/IntroducePage/constants/showcaseMocks';
 import useAppDownload from '@/pages/IntroducePage/hooks/useAppDownload';
+import useLoadedImages from '@/pages/IntroducePage/hooks/useLoadedImages';
 import isInAppWebView from '@/utils/isInAppWebView';
 import ApplyDemo from '../ApplyDemo/ApplyDemo';
 import SearchDemo from '../SearchDemo/SearchDemo';
@@ -38,13 +39,19 @@ const StudentShowcaseSection = () => {
   // 윗줄은 학교 행사(대동제·동아리 소개 한마당), 아랫줄은 서로 다른 동아리 글 두 개. 같은 글이 겹치지 않게 제목으로 거른다
   const schoolEventIds = new Set(SCHOOL_EVENT_PROMOTIONS.map(({ id }) => id));
   // 이미지 없는 글(개발 서버 테스트 글 등)은 기본 커버만 떠서 뺀다
-  const liveClubPromotions = (promotionArticles ?? [])
+  const candidates = (promotionArticles ?? [])
     .filter(({ id }) => !schoolEventIds.has(id))
     .filter(({ images }) => Boolean(images?.[0]))
     .filter(
       (article, index, list) =>
         list.findIndex(({ title }) => title === article.title) === index,
-    )
+    );
+  // 이미지 주소가 있어도 서버가 죽어 있으면 회색 칸만 뜨니, 실제로 열린 글만 쓴다. 확인 전에는 지난 축제 기록을 보여 준다
+  const loadedImages = useLoadedImages(
+    candidates.map(({ images }) => images[0]),
+  );
+  const liveClubPromotions = candidates
+    .filter(({ images }) => loadedImages.has(images[0]))
     .slice(0, CLUB_PROMOTION_COUNT);
   const clubPromotions =
     liveClubPromotions.length === CLUB_PROMOTION_COUNT
