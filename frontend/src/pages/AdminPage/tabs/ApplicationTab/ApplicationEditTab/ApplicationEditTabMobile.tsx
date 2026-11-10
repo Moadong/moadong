@@ -166,7 +166,10 @@ const ApplicationEditTabMobile = ({
               <QuestionCard
                 number={index + 1}
                 question={question}
-                focused={focusedQuestionId === question.id}
+                focused={
+                  focusedQuestionId === question.id ||
+                  (isTooltipOpen && index === 0)
+                }
                 readOnly={question.id === NAME_QUESTION_ID}
                 onFocus={() => setFocusedQuestionId(question.id)}
                 onTitleChange={handleTitleChange(question.id)}
