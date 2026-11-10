@@ -23,8 +23,6 @@ import { useQuestionEditor } from './hooks/useQuestionEditor';
 const REORDER_TOOLTIP_STORAGE_KEY =
   'moadong:applicationEdit:reorderTooltipSeen';
 
-const FORM_TITLE_MAX_LENGTH = 50;
-
 type EditTabKey = 'info' | 'questions' | 'preview';
 
 const EDIT_TABS: { key: EditTabKey; label: string }[] = [
@@ -104,7 +102,8 @@ const ApplicationEditTabMobile = ({
 
   // 삭제 확인 모달의 스크롤 잠금은 body를 position: fixed로 바꿔 window.scrollY를 0으로 만든다.
   // 이 렌더에서 질문 카드(Reorder.Item)가 레이아웃 애니메이션을 재면 페이지 좌표가 스크롤만큼
-  // 바뀐 것을 이동으로 보고 카드를 미끄러뜨리므로, 모달을 여닫는 렌더는 애니메이션 없이 반영한다
+  // 바뀐 것을 이동으로 보고 카드를 미끄러뜨리므로, 모달을 여닫는 렌더는 애니메이션 없이 반영한다.
+  // 삭제를 확정하면 모달이 닫히는 렌더에서 질문도 빠지므로, 남은 카드가 빈자리로 올라오는 것도 즉시 반영된다
   const setPendingDeleteInstantly = (id: number | undefined) =>
     startInstantLayout(() => setPendingDeleteId(id));
 
@@ -120,13 +119,14 @@ const ApplicationEditTabMobile = ({
         <Styled.FieldHeader>
           <span>지원서 제목</span>
           <span>
-            {formData.title.length}/{FORM_TITLE_MAX_LENGTH}
+            {formData.title.length}/
+            {APPLICATION_FORM.APPLICATION_TITLE.maxLength}
           </span>
         </Styled.FieldHeader>
         <Styled.TextInput
           aria-label='지원서 제목'
           value={formData.title}
-          maxLength={FORM_TITLE_MAX_LENGTH}
+          maxLength={APPLICATION_FORM.APPLICATION_TITLE.maxLength}
           placeholder='지원서 제목을 입력하세요'
           onChange={(e) => handleFormTitleChange(e.target.value)}
         />
@@ -231,13 +231,14 @@ const ApplicationEditTabMobile = ({
         <Styled.FieldHeader>
           <span>지원서 제목</span>
           <span>
-            {formData.title.length}/{FORM_TITLE_MAX_LENGTH}
+            {formData.title.length}/
+            {APPLICATION_FORM.APPLICATION_TITLE.maxLength}
           </span>
         </Styled.FieldHeader>
         <Styled.TextInput
           aria-label='지원서 제목'
           value={formData.title}
-          maxLength={FORM_TITLE_MAX_LENGTH}
+          maxLength={APPLICATION_FORM.APPLICATION_TITLE.maxLength}
           placeholder='지원서 제목을 입력하세요'
           onChange={(e) => handleFormTitleChange(e.target.value)}
         />
@@ -282,7 +283,13 @@ const ApplicationEditTabMobile = ({
           title='지원서'
           onBack={() => navigate('/admin/application-list')}
         />
-        <Styled.Content>
+        <Styled.Content
+          // 순서 변경 툴팁은 딤·카드 포인터 말고도 키보드(포커스 이동, Escape)로 닫히게 한다
+          onFocusCapture={() => setIsTooltipOpen(false)}
+          onKeyDown={(e) => {
+            if (e.key === 'Escape') setIsTooltipOpen(false);
+          }}
+        >
           <ApplicationTypeTab
             activeMode={applicationFormMode}
             onChange={setApplicationFormMode}

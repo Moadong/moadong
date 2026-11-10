@@ -7,8 +7,8 @@ import ChoiceItem from '@/pages/ApplicationFormPage/components/ChoiceItem/Choice
 import { ChoiceProps } from '@/types/application';
 import * as Styled from './Choice.styles';
 
-export const MIN_ITEMS = 1;
-export const MAX_ITEMS = 6;
+const MIN_ITEMS = APPLICATION_FORM.CHOICE.minItems;
+const MAX_ITEMS = APPLICATION_FORM.CHOICE.maxItems;
 
 const Choice = ({
   id,

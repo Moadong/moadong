@@ -371,7 +371,7 @@ const ApplicationEditor = ({
         </Styled.HeaderContainer>
         <Styled.FormTitle
           type='text'
-          maxLength={50}
+          maxLength={APPLICATION_FORM.APPLICATION_TITLE.maxLength}
           value={formData.title}
           onChange={(e) => handleFormTitleChange(e.target.value)}
           placeholder='지원서 제목을 입력하세요'

@@ -397,4 +397,50 @@ describe('ApplicationEditTabMobile', () => {
       screen.queryByRole('button', { name: '선택지 삭제' }),
     ).not.toBeInTheDocument();
   });
+
+  it('선택지 X는 키보드로도 누를 수 있다(입력창에서 Tab으로 옮겨도 사라지지 않는다)', async () => {
+    const user = userEvent.setup();
+    renderMobile(choiceForm());
+    await openQuestionsTab(user);
+    await user.click(screen.getByTestId('reorder-tooltip-dim'));
+
+    await user.click(screen.getByLabelText('선택지 1'));
+    await user.tab();
+    expect(screen.getByRole('button', { name: '선택지 지우기' })).toHaveFocus();
+
+    await user.keyboard('{Enter}');
+    expect(screen.getByLabelText('선택지 1')).toHaveValue('');
+  });
+
+  it('복수선택인 객관식에서 유형으로 객관식을 다시 골라도 복수선택이 유지된다', async () => {
+    const user = userEvent.setup();
+    renderMobile(choiceForm());
+    await openQuestionsTab(user);
+    await user.click(screen.getByTestId('reorder-tooltip-dim'));
+
+    const multiToggle = screen.getByRole('button', { name: /복수선택/ });
+    await user.click(multiToggle);
+    expect(multiToggle).toHaveAttribute('aria-pressed', 'true');
+
+    await user.click(screen.getByRole('button', { name: /^객관식/ }));
+    await user.click(screen.getByRole('option', { name: '객관식' }));
+    expect(screen.getByRole('button', { name: /복수선택/ })).toHaveAttribute(
+      'aria-pressed',
+      'true',
+    );
+  });
+
+  it('순서 변경 툴팁은 Escape로도 닫힌다', async () => {
+    const user = userEvent.setup();
+    renderMobile();
+    await openQuestionsTab(user);
+    expect(
+      screen.getByText('길게 눌러 순서를 변경할 수 있어요'),
+    ).toBeInTheDocument();
+
+    await user.keyboard('{Escape}');
+    expect(
+      screen.queryByText('길게 눌러 순서를 변경할 수 있어요'),
+    ).not.toBeInTheDocument();
+  });
 });
