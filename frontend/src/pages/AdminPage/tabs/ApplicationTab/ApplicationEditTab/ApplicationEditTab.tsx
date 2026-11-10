@@ -35,11 +35,10 @@ import {
   ApplicationFormData,
   ApplicationFormMode,
   Question,
-  QuestionType,
 } from '@/types/application';
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
-import { createQuestionId } from './utils/createQuestionId';
+import { useQuestionEditor } from './hooks/useQuestionEditor';
 import { getSaveFailureType } from './utils/getSaveFailureType';
 import { hasUserInput } from './utils/hasUserInput';
 
@@ -386,95 +385,17 @@ const InternalApplicationComponent = ({
   formData,
   setFormData,
 }: InternalApplicationComponentProps) => {
-  const addQuestion = () => {
-    const newQuestion: Question = {
-      id: createQuestionId(formData.questions ?? []),
-      title: '',
-      description: '',
-      type: 'SHORT_TEXT',
-      items: [],
-      options: { required: false },
-    };
-    setFormData((prev) => ({
-      ...prev,
-      questions: [...(prev.questions ?? []), newQuestion],
-    }));
-  };
-
-  const handleReorder = (reordered: Question[]) => {
-    setFormData((prev) => ({
-      ...prev,
-      questions: reordered,
-    }));
-  };
-
-  const removeQuestion = (id: number) => {
-    if (!formData.questions) return;
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions!.filter((q) => q.id !== id),
-    }));
-  };
-
-  const updateQuestionField = <K extends keyof Question>(
-    id: number,
-    key: K,
-    value: Question[K],
-  ) => {
-    if (!formData.questions) return;
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions!.map((q) =>
-        q.id === id ? { ...q, [key]: value } : q,
-      ),
-    }));
-  };
-
-  const handleFormDescriptionChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      description: value,
-    }));
-  };
-
-  const handleTitleChange = (id: number) => (value: string) =>
-    updateQuestionField(id, 'title', value);
-
-  const handleDescriptionChange = (id: number) => (value: string) =>
-    updateQuestionField(id, 'description', value);
-
-  const handleItemsChange = (id: number) => (items: { value: string }[]) =>
-    updateQuestionField(id, 'items', items);
-
-  const handleTypeChange = (id: number) => (newType: QuestionType) => {
-    if (!formData.questions) return;
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions!.map((q) => {
-        if (q.id !== id) return q;
-        const isChoice = newType === 'CHOICE' || newType === 'MULTI_CHOICE';
-        return {
-          ...q,
-          type: newType,
-          items: isChoice
-            ? q.items && q.items.length >= 1
-              ? q.items
-              : [{ value: '' }]
-            : [],
-        };
-      }),
-    }));
-  };
-
-  const handleRequiredChange = (id: number) => (value: boolean) => {
-    if (!formData.questions) return;
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions!.map((q) =>
-        q.id === id ? { ...q, options: { ...q.options, required: value } } : q,
-      ),
-    }));
-  };
+  const {
+    addQuestion,
+    handleReorder,
+    removeQuestion,
+    handleFormDescriptionChange,
+    handleTitleChange,
+    handleDescriptionChange,
+    handleItemsChange,
+    handleTypeChange,
+    handleRequiredChange,
+  } = useQuestionEditor(formData, setFormData);
 
   const renderQuestionBuilder = (question: Question, index: number) => (
     <QuestionBuilder
