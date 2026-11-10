@@ -54,7 +54,7 @@ const AdminMoreMenu = ({
             복제하기
           </Styled.MenuItem>
         )}
-        <Styled.MenuItem onClick={onDelete} $danger>
+        <Styled.MenuItem onClick={onDelete}>
           <Styled.MenuIcon src={Delete_applicant} />
           삭제
         </Styled.MenuItem>
