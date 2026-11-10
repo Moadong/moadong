@@ -52,10 +52,7 @@ export const StatusTab = styled.button<{ $isSelected: boolean }>`
   box-sizing: border-box;
   cursor: pointer;
   background: ${({ $isSelected }) =>
-    $isSelected
-      ? /* 시안은 gray[800] 위에 검정 20%를 두 겹 덮는다 */
-        `linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), ${colors.gray[800]}`
-      : colors.gray[100]};
+    $isSelected ? colors.gray[925] : colors.gray[100]};
   ${({ $isSelected }) =>
     $isSelected
       ? setTypography(typography.button.button1)

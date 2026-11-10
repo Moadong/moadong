@@ -26,11 +26,7 @@ export const Pill = styled.button<{ $active: boolean }>`
   ${({ $active }) =>
     $active
       ? css`
-          /* 시안은 gray[800] 위에 검정 20%를 두 겹 덮는다 */
-          background:
-            linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-            linear-gradient(rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)),
-            ${colors.gray[800]};
+          background: ${colors.gray[925]};
           color: ${colors.base.white};
           ${setTypography(typography.button.button1)}
         `
