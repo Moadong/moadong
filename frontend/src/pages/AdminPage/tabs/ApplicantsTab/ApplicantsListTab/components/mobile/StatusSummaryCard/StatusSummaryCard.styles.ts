@@ -16,9 +16,10 @@ export const Card = styled.div`
   box-sizing: border-box;
 `;
 
-export const Item = styled.div`
-  /* 시안 폭(50px)을 기본으로 하되, 좁은 곳(소개 페이지 미리보기)에서는 줄어들어 넘치지 않게 한다 */
-  flex: 0 1 50px;
+export const Item = styled.div<{ $spread: boolean }>`
+  /* 시안 폭(50px)을 기본으로 하되 좁은 화면에서는 줄어들어 넘치지 않게 한다.
+     spread면 카드 폭을 항목끼리 고르게 나눈다 */
+  flex: ${({ $spread }) => ($spread ? '1 1 0' : '0 1 50px')};
   min-width: 0;
   display: flex;
   flex-direction: column;
