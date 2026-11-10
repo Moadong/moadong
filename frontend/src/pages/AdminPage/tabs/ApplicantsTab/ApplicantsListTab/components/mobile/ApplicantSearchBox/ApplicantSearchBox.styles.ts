@@ -12,12 +12,12 @@ export const Wrapper = styled.div`
   height: 48px;
   width: 100%;
   background: ${colors.gray[50]};
-  border: 1px solid ${colors.gray[200]};
+  box-shadow: inset 0 0 0 1px ${colors.gray[200]};
   border-radius: 14px;
   box-sizing: border-box;
 
   &:focus-within {
-    border-color: ${colors.primary[800]};
+    box-shadow: inset 0 0 0 1px ${colors.primary[800]};
     background: ${colors.base.white};
 
     path,
@@ -41,8 +41,9 @@ export const Input = styled.input`
 `;
 
 export const SearchIcon = styled(SearchButtonIcon)`
-  width: 17px;
-  height: 17px;
+  width: 16px;
+  height: 16px;
+  margin-right: 4px;
   flex-shrink: 0;
 
   path,
