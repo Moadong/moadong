@@ -46,7 +46,7 @@ export const FieldList = styled.div`
   gap: 16px;
 `;
 
-export const Field = styled.label`
+export const Field = styled.div`
   display: flex;
   flex-direction: column;
   gap: 8px;
@@ -149,7 +149,7 @@ export const QuestionList = styled.div`
 `;
 
 /** 툴팁이 떠 있는 동안 첫 질문 카드를 딤 위로 올린다 */
-export const FirstCardSlot = styled.div<{ $raised: boolean }>`
+export const CardSlot = styled.div<{ $raised: boolean }>`
   position: relative;
   z-index: ${({ $raised }) => ($raised ? Z_INDEX.overlay + 1 : 'auto')};
 `;

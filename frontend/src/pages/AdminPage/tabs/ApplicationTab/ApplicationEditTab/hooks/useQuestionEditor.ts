@@ -1,3 +1,4 @@
+import { NAME_QUESTION_ID } from '@/constants/applicationForm';
 import {
   ApplicationFormData,
   Question,
@@ -35,8 +36,9 @@ export const useQuestionEditor = (
     }));
   };
 
+  // 이름 질문은 UI가 막아도 키보드·보조기기로 닿을 수 있어 동작 자체에서 막는다
   const removeQuestion = (id: number) => {
-    if (!formData.questions) return;
+    if (!formData.questions || id === NAME_QUESTION_ID) return;
     setFormData((prev) => ({
       ...prev,
       questions: prev.questions!.filter((q) => q.id !== id),
@@ -74,7 +76,7 @@ export const useQuestionEditor = (
     updateQuestionField(id, 'items', items);
 
   const handleTypeChange = (id: number) => (newType: QuestionType) => {
-    if (!formData.questions) return;
+    if (!formData.questions || id === NAME_QUESTION_ID) return;
     setFormData((prev) => ({
       ...prev,
       questions: prev.questions!.map((q) => {
@@ -94,7 +96,7 @@ export const useQuestionEditor = (
   };
 
   const handleRequiredChange = (id: number) => (value: boolean) => {
-    if (!formData.questions) return;
+    if (!formData.questions || id === NAME_QUESTION_ID) return;
     setFormData((prev) => ({
       ...prev,
       questions: prev.questions!.map((q) =>

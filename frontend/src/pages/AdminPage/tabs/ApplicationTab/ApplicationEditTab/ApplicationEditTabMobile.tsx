@@ -116,6 +116,7 @@ const ApplicationEditTabMobile = ({
           </span>
         </Styled.FieldHeader>
         <Styled.TextInput
+          aria-label='지원서 제목'
           value={formData.title}
           maxLength={FORM_TITLE_MAX_LENGTH}
           placeholder='지원서 제목을 입력하세요'
@@ -131,6 +132,7 @@ const ApplicationEditTabMobile = ({
           </span>
         </Styled.FieldHeader>
         <Styled.TextArea
+          aria-label='지원서 설명'
           value={formData.description}
           maxLength={APPLICATION_FORM.APPLICATION_DESCRIPTION.maxLength}
           placeholder={APPLICATION_FORM.APPLICATION_DESCRIPTION.placeholder}
@@ -157,7 +159,10 @@ const ApplicationEditTabMobile = ({
       >
         {questions.map((question, index) => (
           <LongPressReorderItem key={question.id} value={question}>
-            <Styled.FirstCardSlot $raised={isTooltipOpen && index === 0}>
+            <Styled.CardSlot
+              $raised={isTooltipOpen && index === 0}
+              onPointerDownCapture={() => setIsTooltipOpen(false)}
+            >
               {isTooltipOpen && index === 0 && (
                 <Styled.Tooltip role='status'>
                   길게 눌러 순서를 변경할 수 있어요
@@ -177,9 +182,12 @@ const ApplicationEditTabMobile = ({
                 onItemsChange={handleItemsChange(question.id)}
                 onTypeChange={handleTypeChange(question.id)}
                 onRequiredChange={handleRequiredChange(question.id)}
-                onRemove={() => setPendingDeleteId(question.id)}
+                onRemove={() => {
+                  setIsTooltipOpen(false);
+                  setPendingDeleteId(question.id);
+                }}
               />
-            </Styled.FirstCardSlot>
+            </Styled.CardSlot>
           </LongPressReorderItem>
         ))}
       </Styled.QuestionList>
@@ -219,6 +227,7 @@ const ApplicationEditTabMobile = ({
           </span>
         </Styled.FieldHeader>
         <Styled.TextInput
+          aria-label='지원서 제목'
           value={formData.title}
           maxLength={FORM_TITLE_MAX_LENGTH}
           placeholder='지원서 제목을 입력하세요'

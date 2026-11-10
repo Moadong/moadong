@@ -119,8 +119,12 @@ const ApplicationEditor = ({
     initialFormData?.externalApplicationUrl ?? '',
   );
 
+  const isMobileLayout = isMobile || isTablet;
+  // 모바일 화면에는 AI 초안 버튼이 없으므로 노출 이벤트와 잔여 횟수 조회도 하지 않는다
   const isDraftButtonVisible =
-    !formId && applicationFormMode === ApplicationFormMode.INTERNAL;
+    !isMobileLayout &&
+    !formId &&
+    applicationFormMode === ApplicationFormMode.INTERNAL;
   const { data: draftQuota } = useAiDraftQuota(clubId, isDraftButtonVisible);
   // 생성 성공/429로 갱신된 값을 즉시 반영 (quota 조회 전·실패 시에도 동작)
   const [remainingOverride, setRemainingOverride] = useState<number>();
@@ -302,7 +306,7 @@ const ApplicationEditor = ({
     }
   };
 
-  if (isMobile || isTablet) {
+  if (isMobileLayout) {
     return (
       <ApplicationEditTabMobile
         formData={formData}

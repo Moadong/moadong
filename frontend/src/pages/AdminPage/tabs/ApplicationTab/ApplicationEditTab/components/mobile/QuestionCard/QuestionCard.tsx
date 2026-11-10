@@ -127,7 +127,11 @@ const QuestionCard = ({
             onToggle={(isOpen) => setIsDropdownOpen(!isOpen)}
           >
             <CustomDropDown.Trigger>
-              <Styled.TypeTrigger type='button' $open={isDropdownOpen}>
+              <Styled.TypeTrigger
+                type='button'
+                disabled={readOnly}
+                $open={isDropdownOpen}
+              >
                 <span>{selectedLabel}</span>
                 <ChevronDownIcon aria-hidden='true' />
               </Styled.TypeTrigger>
@@ -145,29 +149,40 @@ const QuestionCard = ({
           <Styled.ToggleGroup>
             <Styled.ToggleButton
               type='button'
+              disabled={readOnly}
               aria-pressed={question.options?.required}
               onClick={() => onRequiredChange(!question.options?.required)}
             >
               답변필수
-              <Styled.CheckCircle $checked={!!question.options?.required}>
+              <Styled.CheckCircle
+                $checked={!!question.options?.required}
+                aria-hidden='true'
+              >
                 ✓
               </Styled.CheckCircle>
             </Styled.ToggleButton>
             {isChoice && (
               <Styled.ToggleButton
                 type='button'
+                disabled={readOnly}
                 aria-pressed={isMulti}
                 onClick={() =>
                   onTypeChange(isMulti ? 'CHOICE' : 'MULTI_CHOICE')
                 }
               >
                 복수선택
-                <Styled.CheckCircle $checked={isMulti}>✓</Styled.CheckCircle>
+                <Styled.CheckCircle $checked={isMulti} aria-hidden='true'>
+                  ✓
+                </Styled.CheckCircle>
               </Styled.ToggleButton>
             )}
           </Styled.ToggleGroup>
           {!readOnly && (
-            <Styled.DeleteButton type='button' onClick={onRemove}>
+            <Styled.DeleteButton
+              type='button'
+              aria-label={`질문 ${number} 삭제`}
+              onClick={onRemove}
+            >
               <DeleteIcon aria-hidden='true' />
               삭제
             </Styled.DeleteButton>
