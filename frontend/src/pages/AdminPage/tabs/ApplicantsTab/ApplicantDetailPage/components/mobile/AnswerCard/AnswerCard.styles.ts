@@ -10,7 +10,7 @@ export const Card = styled.div`
   padding: 16px 18px;
   gap: 10px;
   border-radius: 14px;
-  border: 1px solid ${colors.gray[200]};
+  box-shadow: inset 0 0 0 1px ${colors.gray[200]};
   background: ${colors.gray[50]};
   box-sizing: border-box;
   width: 100%;
@@ -55,7 +55,7 @@ export const TextAnswerBox = styled.div`
   gap: 10px;
   width: 100%;
   background: ${colors.base.white};
-  border: 1px solid ${colors.gray[100]};
+  box-shadow: inset 0 0 0 1px ${colors.gray[100]};
   border-radius: 10px;
   box-sizing: border-box;
 `;
@@ -86,7 +86,7 @@ export const ChoiceItem = styled.div<{ $isSelected: boolean }>`
   width: 100%;
   height: 46px;
   border-radius: 10px;
-  border: 1px solid
+  box-shadow: inset 0 0 0 1px
     ${({ $isSelected }) =>
       $isSelected ? colors.primary[700] : colors.gray[100]};
   background: ${({ $isSelected }) =>

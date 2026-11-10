@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { ApplicationStatus } from '@/types/applicants';
 import StatusFilterPills, { FilterValue } from './StatusFilterPills';
+import figmaMapping from './StatusFilterPills.figma.json';
 
 const meta = {
   title:
@@ -10,7 +11,7 @@ const meta = {
   parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
-      <div style={{ width: 375, background: '#fff', padding: '16px 0' }}>
+      <div style={{ width: 261, background: '#fff' }}>
         <Story />
       </div>
     ),
@@ -28,6 +29,12 @@ const Interactive = (args: React.ComponentProps<typeof StatusFilterPills>) => {
 };
 
 export const Default: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['StatusFilterPills/Default'].figma,
+    },
+  },
   args: { selected: ['ALL'], onChange: () => {} },
   render: (args) => <Interactive {...args} />,
 };

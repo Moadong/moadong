@@ -18,8 +18,9 @@ export const Trigger = styled.button<{ $isOpen: boolean }>`
   width: 100%;
   height: 52px;
   border-radius: 14px;
-  border: 1px solid
+  box-shadow: inset 0 0 0 1px
     ${({ $isOpen }) => ($isOpen ? colors.primary[800] : colors.gray[200])};
+  border: none;
   background: ${({ $isOpen }) =>
     $isOpen ? colors.base.white : colors.gray[50]};
   cursor: pointer;
@@ -43,9 +44,17 @@ export const TriggerLabel = styled.span`
 
 export const ChevronIcon = styled(MoreArrowIcon)<{ $isOpen: boolean }>`
   flex-shrink: 0;
-  width: 16px;
-  height: 16px;
+  width: 12px;
+  height: 6px;
+  margin: 9px 6px;
   color: ${colors.gray[500]};
+
+  /* 선 굵기 1.8의 둥근 끝이 높이 6px viewBox 밖으로 나가 잘리지 않게 한다 */
+  overflow: visible;
+
+  path {
+    stroke-width: 1.8;
+  }
   transform: ${({ $isOpen }) => ($isOpen ? 'rotate(180deg)' : 'rotate(0deg)')};
 `;
 

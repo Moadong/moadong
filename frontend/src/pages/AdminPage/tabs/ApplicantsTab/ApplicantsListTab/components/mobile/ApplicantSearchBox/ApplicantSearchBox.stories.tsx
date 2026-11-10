@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import ApplicantSearchBox from './ApplicantSearchBox';
+import figmaMapping from './ApplicantSearchBox.figma.json';
 
 const meta = {
   title:
@@ -25,6 +26,12 @@ const Interactive = (args: React.ComponentProps<typeof ApplicantSearchBox>) => {
 };
 
 export const Empty: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['ApplicantSearchBox/Empty'].figma,
+    },
+  },
   args: { value: '', onChange: () => {} },
   render: (args) => <Interactive {...args} />,
 };

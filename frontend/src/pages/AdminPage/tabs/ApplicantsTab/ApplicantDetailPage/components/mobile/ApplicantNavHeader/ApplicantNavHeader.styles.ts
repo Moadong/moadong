@@ -16,7 +16,7 @@ export const Container = styled.div`
   width: 100%;
   height: 52px;
   background: ${colors.gray[50]};
-  border: 1px solid ${colors.gray[200]};
+  box-shadow: inset 0 0 0 1px ${colors.gray[200]};
   border-radius: 14px;
   box-sizing: border-box;
 `;

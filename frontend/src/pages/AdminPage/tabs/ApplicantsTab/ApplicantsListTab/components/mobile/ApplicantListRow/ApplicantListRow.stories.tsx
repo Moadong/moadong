@@ -4,6 +4,7 @@ import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemBut
 import { ApplicationStatus } from '@/types/applicants';
 import { asApplicantId, asApplicationFormId } from '@/types/branded';
 import ApplicantListRow from './ApplicantListRow';
+import figmaMapping from './ApplicantListRow.figma.json';
 
 const mockApplicant = {
   id: asApplicantId('applicant-1'),
@@ -45,6 +46,12 @@ const InteractiveRow = (
 };
 
 export const Unchecked: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['ApplicantListRow/Default'].figma,
+    },
+  },
   args: {
     applicant: mockApplicant,
     isChecked: false,

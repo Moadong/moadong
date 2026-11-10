@@ -2,6 +2,7 @@ import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import { asApplicationFormId } from '@/types/branded';
 import FormDropdownSelector from './FormDropdownSelector';
+import figmaMapping from './FormDropdownSelector.figma.json';
 
 const mockForms = [
   {
@@ -79,7 +80,7 @@ const meta = {
   parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
-      <div style={{ width: 335, position: 'relative', paddingBottom: 160 }}>
+      <div style={{ width: 335, position: 'relative' }}>
         <Story />
       </div>
     ),
@@ -106,6 +107,12 @@ const Interactive = (
 };
 
 export const Default: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['FormDropdownSelector/Closed'].figma,
+    },
+  },
   args: {
     forms: mockForms,
     selectedFormId: asApplicationFormId('form-1'),
