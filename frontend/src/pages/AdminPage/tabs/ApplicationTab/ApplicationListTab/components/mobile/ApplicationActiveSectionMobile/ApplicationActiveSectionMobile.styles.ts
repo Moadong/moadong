@@ -18,7 +18,7 @@ export const EmptyBox = styled.div`
   height: 75px;
   width: 100%;
   background-color: ${colors.gray[50]};
-  border: 1px solid ${colors.gray[300]};
+  box-shadow: inset 0 0 0 1px ${colors.gray[300]};
   border-radius: 14px;
   box-sizing: border-box;
 `;
