@@ -72,7 +72,7 @@ export const MemoContainer = styled.div`
   padding: 14px 18px;
   width: 100%;
   background: ${colors.gray[50]};
-  border: 1px solid ${colors.gray[200]};
+  box-shadow: inset 0 0 0 1px ${colors.gray[200]};
   border-radius: 14px;
   box-sizing: border-box;
 `;

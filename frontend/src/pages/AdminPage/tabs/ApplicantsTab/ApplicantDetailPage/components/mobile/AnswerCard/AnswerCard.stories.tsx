@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import AnswerCard from './AnswerCard';
+import figmaMapping from './AnswerCard.figma.json';
 
 const meta = {
   title:
@@ -10,8 +11,7 @@ const meta = {
     (Story) => (
       <div
         style={{
-          width: 375,
-          padding: '0 20px',
+          width: 335,
           display: 'flex',
           flexDirection: 'column',
           gap: 12,
@@ -27,6 +27,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const ShortText: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['AnswerCard/ShortText'].figma,
+    },
+  },
   args: {
     index: 1,
     question: {
@@ -42,6 +48,12 @@ export const ShortText: Story = {
 };
 
 export const LongText: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['AnswerCard/LongText'].figma,
+    },
+  },
   args: {
     index: 2,
     question: {
