@@ -59,16 +59,26 @@ const ProfileSetupPage = () => {
   if (isLoading) return <Spinner />;
   if (isError)
     return (
-      <Styled.MobileContainer>
-        <Styled.DescriptionSection>
-          <Styled.PageSubtitle>
-            프로필 정보를 불러오지 못했어요.
-          </Styled.PageSubtitle>
-        </Styled.DescriptionSection>
-        <OutlinePillButton $tone='primary' onClick={() => refetch()}>
-          다시 시도
-        </OutlinePillButton>
-      </Styled.MobileContainer>
+      <>
+        {isMobileOrTablet ? (
+          <WebviewTopBar
+            title='프로필 설정'
+            onBack={() => navigate('/', { replace: true })}
+          />
+        ) : (
+          <Header />
+        )}
+        <Styled.MobileContainer>
+          <Styled.DescriptionSection>
+            <Styled.PageSubtitle>
+              프로필 정보를 불러오지 못했어요.
+            </Styled.PageSubtitle>
+          </Styled.DescriptionSection>
+          <OutlinePillButton $tone='primary' onClick={() => refetch()}>
+            다시 시도
+          </OutlinePillButton>
+        </Styled.MobileContainer>
+      </>
     );
 
   const nicknameInputBlock = (
