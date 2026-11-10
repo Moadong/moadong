@@ -49,6 +49,9 @@ export const ChevronIcon = styled(MoreArrowIcon)<{ $isOpen: boolean }>`
   margin: 9px 6px;
   color: ${colors.gray[500]};
 
+  /* 선 굵기 1.8의 둥근 끝이 높이 6px viewBox 밖으로 나가 잘리지 않게 한다 */
+  overflow: visible;
+
   path {
     stroke-width: 1.8;
   }

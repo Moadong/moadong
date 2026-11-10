@@ -17,8 +17,9 @@ export const Card = styled.div`
 `;
 
 export const Item = styled.div`
-  flex-shrink: 0;
-  width: 50px;
+  /* 시안 폭(50px)을 기본으로 하되, 좁은 곳(소개 페이지 미리보기)에서는 줄어들어 넘치지 않게 한다 */
+  flex: 0 1 50px;
+  min-width: 0;
   display: flex;
   flex-direction: column;
   align-items: center;
