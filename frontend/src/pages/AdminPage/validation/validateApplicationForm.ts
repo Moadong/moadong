@@ -31,7 +31,7 @@ export const validateApplicationForm = (
   } else if (
     formData.title.length > APPLICATION_FORM.APPLICATION_TITLE.maxLength
   ) {
-    errors.title = '지원서 제목은 최대 50자까지 입력할 수 있습니다.';
+    errors.title = `지원서 제목은 최대 ${APPLICATION_FORM.APPLICATION_TITLE.maxLength}자까지 입력할 수 있습니다.`;
   }
 
   if (mode === ApplicationFormMode.INTERNAL) {
