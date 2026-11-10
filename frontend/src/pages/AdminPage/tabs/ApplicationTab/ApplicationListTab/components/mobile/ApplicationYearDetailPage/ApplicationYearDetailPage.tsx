@@ -97,7 +97,7 @@ const ApplicationYearDetailPage = ({
             >
               {isCreated ? <SortByCreatedIcon /> : <SortByEditedIcon />}
               <Styled.SortText>
-                {isCreated ? '최근 생성순' : '최근 수정순'}
+                {isCreated ? '최근 생성 순' : '최근 수정 순'}
               </Styled.SortText>
             </Styled.SortButton>
           </Styled.SortRow>

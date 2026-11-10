@@ -12,7 +12,7 @@ export const Card = styled.div`
   height: 113px;
   box-sizing: border-box;
   background-color: ${colors.gray[50]};
-  border: 1px solid ${colors.gray[300]};
+  box-shadow: inset 0 0 0 1px ${colors.gray[300]};
   border-radius: 14px;
 `;
 
@@ -52,14 +52,14 @@ export const DividerWrapper = styled.div`
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  padding: 10px 0;
+  padding: 10px 0 9px;
   align-self: stretch;
 `;
 
 export const Divider = styled.div`
   width: 100%;
   height: 0;
-  border: 1px solid ${colors.gray[300]};
+  border-top: 1px solid ${colors.gray[300]};
 `;
 
 export const ContentSection = styled.div`

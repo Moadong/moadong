@@ -1,0 +1,10 @@
+{
+  "ApplicationListCardMobile/Active": {
+    "figma": "https://www.figma.com/design/LB4VudDhuIGjFayrm1kge1/x?node-id=10615-25644",
+    "story": "pages-adminpage-tabs-applicationtab-applicationlisttab-components-mobile-applicationlistcardmobile--active"
+  },
+  "ApplicationListCardMobile/Inactive": {
+    "figma": "https://www.figma.com/design/LB4VudDhuIGjFayrm1kge1/x?node-id=10615-25645",
+    "story": "pages-adminpage-tabs-applicationtab-applicationlisttab-components-mobile-applicationlistcardmobile--inactive"
+  }
+}

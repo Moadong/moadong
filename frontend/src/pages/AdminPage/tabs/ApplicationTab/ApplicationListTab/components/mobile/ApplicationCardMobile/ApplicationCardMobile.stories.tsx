@@ -4,6 +4,7 @@ import type { Meta, StoryObj } from '@storybook/react';
 import { ApplicationFormStatus } from '@/types/application';
 import { asApplicationFormId } from '@/types/branded';
 import ApplicationCardMobile from './ApplicationCardMobile';
+import figmaMapping from './ApplicationCardMobile.figma.json';
 
 const mockApplication = {
   id: asApplicationFormId('form-1'),
@@ -85,10 +86,22 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Active: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['ApplicationCardMobile/Active'].figma,
+    },
+  },
   args: { isActive: true },
 };
 
 export const Inactive: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['ApplicationCardMobile/Inactive'].figma,
+    },
+  },
   args: {
     application: { ...mockApplication, status: 'INACTIVE' },
     isActive: false,
