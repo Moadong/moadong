@@ -6,7 +6,7 @@ export const TabContainer = styled.div`
   flex-direction: row;
   align-items: center;
   padding: 4px;
-  width: 335px;
+  width: 100%;
   height: 52px;
   background: ${colors.gray[100]};
   border: 1px solid ${colors.gray[300]};
