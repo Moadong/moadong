@@ -1,6 +1,8 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { applyToClub } from '@/apis/application';
+import QuestionAnswerer from '@/components/application/QuestionAnswerer/QuestionAnswerer';
+import QuestionContainer from '@/components/application/QuestionContainer/QuestionContainer';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import Spinner from '@/components/common/Spinner/Spinner';
@@ -12,8 +14,6 @@ import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import useTrackPageView from '@/hooks/Mixpanel/useTrackPageView';
 import { useGetApplication } from '@/hooks/Queries/useApplication';
 import { useGetClubDetail } from '@/hooks/Queries/useClub';
-import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
-import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
 import { PageContainer } from '@/styles/PageContainer.styles';
 import { colors } from '@/styles/theme/colors';
 import { Question } from '@/types/application';

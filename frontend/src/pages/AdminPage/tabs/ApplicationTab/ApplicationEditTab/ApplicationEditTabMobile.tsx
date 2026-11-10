@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Reorder, useInstantLayoutTransition } from 'framer-motion';
+import QuestionAnswerer from '@/components/application/QuestionAnswerer/QuestionAnswerer';
 import ConfirmModal from '@/components/common/ConfirmModal/ConfirmModal';
 import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
@@ -9,7 +10,6 @@ import {
   NAME_QUESTION_ID,
 } from '@/constants/applicationForm';
 import LongPressReorderItem from '@/pages/AdminPage/components/LongPressReorderItem/LongPressReorderItem';
-import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
 import {
   ApplicationFormData,
   ApplicationFormMode,
