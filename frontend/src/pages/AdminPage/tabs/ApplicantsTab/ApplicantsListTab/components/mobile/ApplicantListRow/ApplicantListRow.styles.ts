@@ -31,7 +31,6 @@ export const Checkbox = styled.div<{ $checked: boolean }>`
   height: 24px;
   border-radius: 6px;
   border: 1px solid ${colors.gray[400]};
-  background-color: ${colors.base.white};
   cursor: pointer;
   flex-shrink: 0;
 
