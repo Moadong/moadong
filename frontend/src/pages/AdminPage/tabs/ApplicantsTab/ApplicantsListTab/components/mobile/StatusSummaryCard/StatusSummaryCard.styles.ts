@@ -5,36 +5,33 @@ import { setTypography, typography } from '@/styles/theme/typography';
 export const Card = styled.div`
   display: flex;
   flex-direction: row;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
-  padding: 12px 0;
+  padding: 12px 10px;
   height: 65px;
   width: 100%;
   background: ${colors.gray[50]};
-  border: 1px solid ${colors.gray[200]};
+  box-shadow: inset 0 0 0 1px ${colors.gray[200]};
   border-radius: 14px;
   box-sizing: border-box;
 `;
 
 export const Item = styled.div`
-  flex: 1;
+  flex-shrink: 0;
+  width: 50px;
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 2px;
-  position: relative;
+`;
 
-  &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    right: 0;
-    top: 50%;
-    transform: translateY(-50%);
-    width: 1px;
-    height: 30px;
-    background: ${colors.gray[300]};
-    border-radius: 100px;
-  }
+export const Divider = styled.div`
+  flex-shrink: 0;
+  width: 1px;
+  height: 30px;
+  margin: 0 -0.5px;
+  background: ${colors.gray[300]};
+  border-radius: 100px;
 `;
 
 export const Label = styled.span`
