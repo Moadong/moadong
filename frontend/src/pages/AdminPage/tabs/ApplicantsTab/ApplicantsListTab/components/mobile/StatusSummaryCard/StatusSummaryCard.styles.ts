@@ -31,6 +31,7 @@ export const Divider = styled.div`
   flex-shrink: 0;
   width: 1px;
   height: 30px;
+  /* 구분선 폭(1px)이 항목 간격을 차지하지 않게 양옆으로 0.5px씩 겹친다 */
   margin: 0 -0.5px;
   background: ${colors.gray[300]};
   border-radius: 100px;

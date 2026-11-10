@@ -73,6 +73,9 @@ export const MemoContainer = styled.div`
   width: 100%;
   background: ${colors.gray[50]};
   box-shadow: inset 0 0 0 1px ${colors.gray[200]};
+  /* 강제 색상(고대비) 모드는 box-shadow를 지우므로, 평소엔 안 보이고 그 모드에서만 테두리로 그려지는 outline을 둔다 */
+  outline: 1px solid transparent;
+  outline-offset: -1px;
   border-radius: 14px;
   box-sizing: border-box;
 `;
