@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Reorder } from 'framer-motion';
+import { Reorder, useInstantLayoutTransition } from 'framer-motion';
 import ConfirmModal from '@/components/common/ConfirmModal/ConfirmModal';
 import FixedBottomButtonArea from '@/components/common/FixedBottomButtonArea/FixedBottomButtonArea';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
@@ -73,6 +73,7 @@ const ApplicationEditTabMobile = ({
   const [focusedQuestionId, setFocusedQuestionId] = useState<number>();
   const [pendingDeleteId, setPendingDeleteId] = useState<number>();
   const [isTooltipOpen, setIsTooltipOpen] = useState(false);
+  const startInstantLayout = useInstantLayoutTransition();
 
   const {
     addQuestion,
@@ -101,10 +102,17 @@ const ApplicationEditTabMobile = ({
   const handleFormTitleChange = (value: string) =>
     setFormData((prev) => ({ ...prev, title: value }));
 
-  const confirmDelete = () => {
-    if (pendingDeleteId !== undefined) removeQuestion(pendingDeleteId);
-    setPendingDeleteId(undefined);
-  };
+  // 삭제 확인 모달의 스크롤 잠금은 body를 position: fixed로 바꿔 window.scrollY를 0으로 만든다.
+  // 이 렌더에서 질문 카드(Reorder.Item)가 레이아웃 애니메이션을 재면 페이지 좌표가 스크롤만큼
+  // 바뀐 것을 이동으로 보고 카드를 미끄러뜨리므로, 모달을 여닫는 렌더는 애니메이션 없이 반영한다
+  const setPendingDeleteInstantly = (id: number | undefined) =>
+    startInstantLayout(() => setPendingDeleteId(id));
+
+  const confirmDelete = () =>
+    startInstantLayout(() => {
+      if (pendingDeleteId !== undefined) removeQuestion(pendingDeleteId);
+      setPendingDeleteId(undefined);
+    });
 
   const renderInfoTab = () => (
     <Styled.FieldList>
@@ -184,7 +192,7 @@ const ApplicationEditTabMobile = ({
                 onRequiredChange={handleRequiredChange(question.id)}
                 onRemove={() => {
                   setIsTooltipOpen(false);
-                  setPendingDeleteId(question.id);
+                  setPendingDeleteInstantly(question.id);
                 }}
               />
             </Styled.CardSlot>
@@ -285,14 +293,14 @@ const ApplicationEditTabMobile = ({
       <FixedBottomButtonArea onClick={onSubmit}>저장하기</FixedBottomButtonArea>
       <ConfirmModal
         isOpen={pendingDeleteId !== undefined}
-        onClose={() => setPendingDeleteId(undefined)}
+        onClose={() => setPendingDeleteInstantly(undefined)}
         title='질문을 삭제할까요?'
         description='삭제된 질문은 복구할 수 없습니다.'
         actions={[
           {
             label: '취소',
             variant: 'secondary',
-            onClick: () => setPendingDeleteId(undefined),
+            onClick: () => setPendingDeleteInstantly(undefined),
           },
           { label: '삭제', variant: 'primary', onClick: confirmDelete },
         ]}
