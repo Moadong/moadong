@@ -7,6 +7,7 @@ import {
 } from '@/types/application';
 import { asApplicationFormId } from '@/types/branded';
 import ApplicationActiveSectionMobile from './ApplicationActiveSectionMobile';
+import figmaMapping from './ApplicationActiveSectionMobile.figma.json';
 
 const makeForm = (id: string, title: string): ApplicationFormItem => ({
   id: asApplicationFormId(id),
@@ -90,6 +91,12 @@ type Story = StoryObj<typeof meta>;
 
 /** 활성화된 지원서 없음 */
 export const Empty: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['ApplicationActiveSectionMobile/Empty'].figma,
+    },
+  },
   args: { activeForms: [] },
 };
 
