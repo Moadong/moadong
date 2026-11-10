@@ -23,6 +23,7 @@ import {
   useAiDraftQuota,
   useGetApplication,
 } from '@/hooks/Queries/useApplication';
+import useDevice from '@/hooks/useDevice';
 import LongPressReorderItem from '@/pages/AdminPage/components/LongPressReorderItem/LongPressReorderItem';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import {
@@ -38,6 +39,7 @@ import {
 } from '@/types/application';
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
+import ApplicationEditTabMobile from './ApplicationEditTabMobile';
 import { useQuestionEditor } from './hooks/useQuestionEditor';
 import { getSaveFailureType } from './utils/getSaveFailureType';
 import { hasUserInput } from './utils/hasUserInput';
@@ -104,6 +106,7 @@ const ApplicationEditor = ({
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
+  const { isMobile, isTablet } = useDevice();
 
   const [formData, setFormData] = useState<ApplicationFormData>(() =>
     toEditableFormData(initialFormData),
@@ -298,6 +301,20 @@ const ApplicationEditor = ({
       createMutate(payload);
     }
   };
+
+  if (isMobile || isTablet) {
+    return (
+      <ApplicationEditTabMobile
+        formData={formData}
+        setFormData={setFormData}
+        applicationFormMode={applicationFormMode}
+        setApplicationFormMode={setApplicationFormMode}
+        externalApplicationUrl={externalApplicationUrl}
+        setExternalApplicationUrl={setExternalApplicationUrl}
+        onSubmit={handleSubmit}
+      />
+    );
+  }
 
   return (
     <>
