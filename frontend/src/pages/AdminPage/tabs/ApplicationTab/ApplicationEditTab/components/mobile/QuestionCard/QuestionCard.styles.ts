@@ -30,15 +30,16 @@ export const TypeTrigger = styled.button<{ $open: boolean }>`
   width: 100%;
   padding: 12px 16px;
   box-sizing: border-box;
-  border: 1px solid ${colors.gray[200]};
+  border: 1px solid
+    ${({ $open }) => ($open ? colors.primary[700] : colors.gray[200])};
   border-radius: 10px;
   background: ${colors.base.white};
   color: ${colors.gray[800]};
   ${setTypography(typography.button.button1)};
   cursor: pointer;
 
-  img {
-    transform: rotate(${({ $open }) => ($open ? '180deg' : '0deg')});
+  svg {
+    flex-shrink: 0;
   }
 `;
 
@@ -102,9 +103,10 @@ export const DeleteButton = styled.button`
   ${setTypography(typography.paragraph.p5)};
   cursor: pointer;
 
-  img {
+  svg {
     width: 16px;
     height: 16px;
+    color: ${colors.gray[400]};
   }
 `;
 
@@ -204,14 +206,6 @@ export const ItemClearButton = styled.button`
   border: none;
   background: none;
   transform: translateY(-50%);
-  cursor: pointer;
-`;
-
-export const ItemRemoveButton = styled.button`
-  display: flex;
-  padding: 0;
-  border: none;
-  background: none;
   cursor: pointer;
 `;
 

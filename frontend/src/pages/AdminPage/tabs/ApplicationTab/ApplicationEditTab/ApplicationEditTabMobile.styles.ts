@@ -1,4 +1,5 @@
 import styled from 'styled-components';
+import LinkSvg from '@/assets/images/icons/link_icon.svg?react';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
@@ -113,6 +114,11 @@ export const LinkBox = styled.div`
   background: ${colors.gray[50]};
 `;
 
+export const LinkIcon = styled(LinkSvg)`
+  flex-shrink: 0;
+  color: ${colors.accent[1][950]};
+`;
+
 export const LinkInput = styled.input`
   flex: 1;
   min-width: 0;
@@ -120,7 +126,7 @@ export const LinkInput = styled.input`
   border: none;
   outline: none;
   background: transparent;
-  color: ${colors.accent[1][900]};
+  color: ${colors.accent[1][950]};
   text-decoration: underline;
   ${setTypography(typography.paragraph.p5)};
 
@@ -171,7 +177,7 @@ export const Dim = styled.div`
 
 export const Tooltip = styled.div`
   position: absolute;
-  top: -45px;
+  top: calc(100% + 8px);
   left: 50%;
   padding: 10px 14px;
   border-radius: 100px;
@@ -184,9 +190,9 @@ export const Tooltip = styled.div`
   &::after {
     content: '';
     position: absolute;
-    bottom: -6px;
+    top: -6px;
     left: 50%;
-    border-top: 7px solid ${colors.gray[800]};
+    border-bottom: 7px solid ${colors.gray[800]};
     border-right: 7px solid transparent;
     border-left: 7px solid transparent;
     transform: translateX(-50%);

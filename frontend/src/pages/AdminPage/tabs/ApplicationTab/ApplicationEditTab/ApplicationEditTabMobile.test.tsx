@@ -65,9 +65,9 @@ const savedForm = (): ApplicationFormData => ({
   ],
 });
 
-const renderMobile = () => {
+const renderMobile = (form: ApplicationFormData = savedForm()) => {
   jest.mocked(useGetApplication).mockReturnValue({
-    data: savedForm(),
+    data: form,
     isLoading: false,
     isError: false,
     error: null,
@@ -224,5 +224,37 @@ describe('ApplicationEditTabMobile', () => {
       screen.getByRole('group', { name: '지원서 미리보기' }),
     ).toBeDisabled();
     expect(screen.getByText('지원 동기')).toBeInTheDocument();
+  });
+
+  it('선택지 X는 글자가 있으면 지우고, 비어 있으면 항목을 없애며 최소 1개는 남긴다', async () => {
+    const user = userEvent.setup();
+    const form = savedForm();
+    form.questions = [
+      {
+        id: 2,
+        title: '희망 활동',
+        description: '',
+        type: 'CHOICE',
+        options: { required: false },
+        items: [{ value: '운동' }, { value: '' }],
+      },
+    ];
+    renderMobile(form);
+    await openQuestionsTab(user);
+
+    // 글자가 있는 선택지: X가 글자를 지운다
+    await user.click(screen.getByLabelText('선택지 1'));
+    await user.click(screen.getByRole('button', { name: '선택지 지우기' }));
+    expect(screen.getByLabelText('선택지 1')).toHaveValue('');
+
+    // 비어 있고 항목이 2개 이상: X가 항목을 없앤다
+    await user.click(screen.getByRole('button', { name: '선택지 삭제' }));
+    expect(screen.queryByLabelText('선택지 2')).not.toBeInTheDocument();
+
+    // 마지막 1개는 비어 있어도 X가 없다
+    await user.click(screen.getByLabelText('선택지 1'));
+    expect(
+      screen.queryByRole('button', { name: '선택지 삭제' }),
+    ).not.toBeInTheDocument();
   });
 });

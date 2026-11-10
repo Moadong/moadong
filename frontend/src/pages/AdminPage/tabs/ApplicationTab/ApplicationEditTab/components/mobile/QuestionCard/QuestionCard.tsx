@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import DeleteIcon from '@/assets/images/icons/delete_question.svg';
-import dropdownIcon from '@/assets/images/icons/drop_button_icon.svg';
-import clearIcon from '@/assets/images/icons/input_clear_button_icon.svg';
+import ChevronDownIcon from '@/assets/images/icons/chevron_down_dark.svg?react';
+import clearIcon from '@/assets/images/icons/dark_clear_button_icon.svg';
+import DeleteIcon from '@/assets/images/icons/delete_question_gray.svg?react';
 import {
   MAX_ITEMS,
   MIN_ITEMS,
@@ -77,30 +77,22 @@ const QuestionCard = ({
                   onBlur={() => setFocusedItemIndex(undefined)}
                   onChange={(e) => handleItemChange(index, e.target.value)}
                 />
-                {focusedItemIndex === index && item.value.length > 0 && (
-                  <Styled.ItemClearButton
-                    type='button'
-                    aria-label='선택지 지우기'
-                    onMouseDown={(e) => {
-                      e.preventDefault();
-                      handleItemChange(index, '');
-                    }}
-                  >
-                    <img src={clearIcon} alt='' aria-hidden='true' />
-                  </Styled.ItemClearButton>
-                )}
+                {focusedItemIndex === index &&
+                  (item.value.length > 0 || items.length > MIN_ITEMS) && (
+                    <Styled.ItemClearButton
+                      type='button'
+                      aria-label={item.value ? '선택지 지우기' : '선택지 삭제'}
+                      onMouseDown={(e) => {
+                        e.preventDefault();
+                        // 글자가 있으면 지우고, 비어 있으면 항목을 없앤다(최소 항목 수는 유지)
+                        if (item.value) handleItemChange(index, '');
+                        else onItemsChange(items.filter((_, i) => i !== index));
+                      }}
+                    >
+                      <img src={clearIcon} alt='' aria-hidden='true' />
+                    </Styled.ItemClearButton>
+                  )}
               </Styled.ItemInputWrapper>
-              {items.length > MIN_ITEMS && (
-                <Styled.ItemRemoveButton
-                  type='button'
-                  aria-label='선택지 삭제'
-                  onClick={() =>
-                    onItemsChange(items.filter((_, i) => i !== index))
-                  }
-                >
-                  <img src={DeleteIcon} alt='' aria-hidden='true' />
-                </Styled.ItemRemoveButton>
-              )}
             </Styled.ItemRow>
           ))}
           {items.length < MAX_ITEMS && (
@@ -137,7 +129,7 @@ const QuestionCard = ({
             <CustomDropDown.Trigger>
               <Styled.TypeTrigger type='button' $open={isDropdownOpen}>
                 <span>{selectedLabel}</span>
-                <img src={dropdownIcon} alt='' aria-hidden='true' />
+                <ChevronDownIcon aria-hidden='true' />
               </Styled.TypeTrigger>
             </CustomDropDown.Trigger>
             <CustomDropDown.Menu>
@@ -176,7 +168,7 @@ const QuestionCard = ({
           </Styled.ToggleGroup>
           {!readOnly && (
             <Styled.DeleteButton type='button' onClick={onRemove}>
-              <img src={DeleteIcon} alt='' aria-hidden='true' />
+              <DeleteIcon aria-hidden='true' />
               삭제
             </Styled.DeleteButton>
           )}

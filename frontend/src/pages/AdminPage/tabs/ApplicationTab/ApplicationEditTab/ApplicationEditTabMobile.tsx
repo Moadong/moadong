@@ -230,6 +230,7 @@ const ApplicationEditTabMobile = ({
           <span>지원서 링크</span>
         </Styled.FieldHeader>
         <Styled.LinkBox>
+          <Styled.LinkIcon aria-hidden='true' />
           <Styled.LinkInput
             aria-label='지원서 링크'
             value={externalApplicationUrl}
