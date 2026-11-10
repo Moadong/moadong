@@ -45,6 +45,7 @@ export const colors = {
   // Accent Color : 상태/의미 전달용 강조 컬러
   accent: {
     1: {
+      950: '#3EA6FF',
       900: '#3DBBFF',
       800: '#73CEFF',
       700: '#D9F2FF',
