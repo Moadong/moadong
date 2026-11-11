@@ -13,8 +13,10 @@ import lombok.Builder;
 import lombok.Getter;
 import moadong.club.enums.ApplicantStatus;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.data.mongodb.core.index.CompoundIndex;
 
 @Document("club_applicants")
+@CompoundIndex(name = "form_created_at_idx", def = "{'formId': 1, 'createdAt': 1}")
 @AllArgsConstructor
 @Getter
 @Builder(toBuilder = true)

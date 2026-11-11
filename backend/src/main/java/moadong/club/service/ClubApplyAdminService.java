@@ -4,15 +4,16 @@ import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import moadong.club.entity.*;
 import moadong.club.enums.ApplicationFormMode;
-import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.dto.ApplicantStatusEvent;
 import moadong.club.payload.dto.ClubApplicantsResult;
 import moadong.club.payload.request.*;
+import moadong.club.payload.response.AdminClubApplicationFormResponse;
 import moadong.club.payload.response.ClubApplicationFormsResponse;
 import moadong.club.payload.response.ClubApplyInfoResponse;
 import moadong.club.repository.ClubApplicantsRepository;
 import moadong.club.repository.ClubApplicationFormsRepository;
 import moadong.club.repository.ClubApplicationFormsRepositoryCustom;
+import moadong.club.repository.ClubRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.global.util.AESCipher;
@@ -24,7 +25,6 @@ import org.springframework.transaction.support.TransactionSynchronization;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 import org.springframework.util.StringUtils;
 
-import java.time.LocalDate;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.util.*;
@@ -40,41 +40,7 @@ public class ClubApplyAdminService {
     private final AESCipher cipher;
     private final ClubApplicationFormsRepositoryCustom clubApplicationFormsRepositoryCustom;
     private final ApplicantsStatusShareSse applicantsStatusShareSse;
-
-    private record OptionItem(int year, SemesterTerm term) {
-    }
-
-    private List<OptionItem> buildOptionItems(LocalDate baseDate, int count) {
-        List<OptionItem> items = new ArrayList<>();
-
-        int year = baseDate.getYear();
-        int month = baseDate.getMonthValue();
-
-        SemesterTerm startTerm = (month < 7) ? SemesterTerm.FIRST : SemesterTerm.SECOND;
-
-        int semesterYear = year;
-        SemesterTerm semesterTerm = startTerm;
-        for (int i = 0; i < count; i++) {
-            items.add(new OptionItem(semesterYear, semesterTerm));
-            if (semesterTerm == SemesterTerm.FIRST) {
-                semesterTerm = SemesterTerm.SECOND;
-            } else {
-                semesterTerm = SemesterTerm.FIRST;
-                semesterYear += 1;
-            }
-        }
-        return items;
-    }
-
-    private void validateSemester(Integer semesterYear, SemesterTerm semesterTerm) {
-        LocalDate baseDate = ZonedDateTime.now(ZoneId.of("Asia/Seoul")).toLocalDate();
-        List<OptionItem> items = buildOptionItems(baseDate, 3);
-        boolean allowed = items.stream().anyMatch(it -> it.year() == semesterYear && it.term() == semesterTerm);
-        if (!allowed) {
-            throw new RestApiException(ErrorCode.APPLICATION_SEMESTER_INVALID);
-        }
-
-    }
+    private final ClubRepository clubRepository;
 
     private void validateFinalApplicationFormState(ClubApplicationForm clubApplicationForm, ClubApplicationFormEditRequest request) {
         ApplicationFormMode finalFormMode = Optional.ofNullable(request.formMode()).orElse(clubApplicationForm.getFormMode());
@@ -97,8 +63,6 @@ public class ClubApplyAdminService {
     }
 
     public void createClubApplicationForm(CustomUserDetails user, ClubApplicationFormCreateRequest request) {
-        validateSemester(request.semesterYear(), request.semesterTerm());
-
         ClubApplicationForm clubApplicationForm = createApplicationForm(ClubApplicationForm.builder().clubId(user.getClubId()).build(), request);
         clubApplicationFormsRepository.save(clubApplicationForm);
     }
@@ -160,6 +124,7 @@ public class ClubApplyAdminService {
         int reviewRequired = 0;
         int scheduledInterview = 0;
         int accepted = 0;
+        int declined = 0;
 
         for (ClubApplicant app : submittedApplications) {
             ClubApplicant sortedApp = sortApplicationAnswers(applicationForm, app);
@@ -169,16 +134,18 @@ public class ClubApplyAdminService {
                 case SUBMITTED -> reviewRequired++;
                 case INTERVIEW_SCHEDULED -> scheduledInterview++;
                 case ACCEPTED -> accepted++;
+                case DECLINED -> declined++;
             }
         }
 
-        return ClubApplyInfoResponse.builder().total(applications.size()).reviewRequired(reviewRequired).scheduledInterview(scheduledInterview).accepted(accepted).applicants(applications).build();
+        return ClubApplyInfoResponse.builder().total(applications.size()).reviewRequired(reviewRequired).scheduledInterview(scheduledInterview).accepted(accepted).declined(declined).applicants(applications).build();
     }
 
     private ClubApplicant sortApplicationAnswers(ClubApplicationForm application, ClubApplicant app) {
-        Map<Long, ClubQuestionAnswer> answerMap = app.getAnswers().stream().collect(Collectors.toMap(ClubQuestionAnswer::getId, answer -> answer));
+        // 다중 선택 질문은 같은 질문 id로 답이 여러 개 저장된다. groupingBy는 null 키를 못 받으므로 id 없는 답은 미리 뺀다
+        Map<Long, List<ClubQuestionAnswer>> answersByQuestionId = app.getAnswers().stream().filter(answer -> answer.getId() != null).collect(Collectors.groupingBy(ClubQuestionAnswer::getId));
 
-        List<ClubQuestionAnswer> sortedAnswers = application.getQuestions().stream().map(question -> answerMap.get(question.getId())).filter(Objects::nonNull).collect(Collectors.toList());
+        List<ClubQuestionAnswer> sortedAnswers = application.getQuestions().stream().flatMap(question -> answersByQuestionId.getOrDefault(question.getId(), List.of()).stream()).collect(Collectors.toList());
 
         app.updateAnswers(sortedAnswers);
         return app;
@@ -242,7 +209,6 @@ public class ClubApplyAdminService {
         clubApplicationForm.updateFormTitle(request.title());
         clubApplicationForm.updateFormDescription(request.description());
         clubApplicationForm.updateSemesterYear(request.semesterYear());
-        clubApplicationForm.updateSemesterTerm(request.semesterTerm());
         clubApplicationForm.updateFormMode(request.formMode());
 
         return clubApplicationForm;
@@ -260,13 +226,8 @@ public class ClubApplyAdminService {
         if (request.externalApplicationUrl() != null)
             clubApplicationForm.updateExternalApplicationUrl(request.externalApplicationUrl());
 
-        if (request.semesterYear() != null || request.semesterTerm() != null) {
-            Integer semesterYear = Optional.ofNullable(request.semesterYear()).orElse(clubApplicationForm.getSemesterYear());
-            SemesterTerm semesterTerm = Optional.ofNullable(request.semesterTerm()).orElse(clubApplicationForm.getSemesterTerm());
-            validateSemester(semesterYear, semesterTerm);
-
-            clubApplicationForm.updateSemesterYear(semesterYear);
-            clubApplicationForm.updateSemesterTerm(semesterTerm);
+        if (request.semesterYear() != null) {
+            clubApplicationForm.updateSemesterYear(request.semesterYear());
         }
 
         return clubApplicationForm;
@@ -294,5 +255,42 @@ public class ClubApplyAdminService {
         }
 
         return formQuestions;
+    }
+
+    public List<AdminClubApplicationFormResponse> getApplicationFormsForClub(String clubId) {
+        return clubApplicationFormsRepository.findByClubId(clubId).stream()
+                .map(AdminClubApplicationFormResponse::from)
+                .toList();
+    }
+
+    public void connectExternalApplicationFormForClub(String clubId, AdminExternalFormConnectRequest request) {
+        if (!clubRepository.existsById(clubId)) {
+            throw new RestApiException(ErrorCode.CLUB_NOT_FOUND);
+        }
+
+        ClubApplicationForm form = ClubApplicationForm.builder().clubId(clubId).build();
+        form.updateFormTitle(request.titleOrDefault());
+        form.updateFormMode(ApplicationFormMode.EXTERNAL);
+        form.updateExternalApplicationUrl(request.externalApplicationUrl());
+        form.updateSemesterYear(request.semesterYear());
+        form.updateFormStatus(true); // ACTIVE (게시)
+        clubApplicationFormsRepository.save(form);
+    }
+
+    @Transactional
+    public void setApplicationFormStatusForClub(String clubId, String formId, boolean active) {
+        ClubApplicationForm form = clubApplicationFormsRepository.findByClubIdAndId(clubId, formId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
+        form.updateFormStatus(active);
+        form.updateEditedAt();
+        clubApplicationFormsRepository.save(form);
+    }
+
+    @Transactional
+    public void deleteApplicationFormForClub(String clubId, String formId) {
+        ClubApplicationForm form = clubApplicationFormsRepository.findByClubIdAndId(clubId, formId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.APPLICATION_NOT_FOUND));
+        clubApplicantsRepository.deleteAllByFormId(form.getId());
+        clubApplicationFormsRepository.delete(form);
     }
 }

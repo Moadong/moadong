@@ -4,6 +4,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.analytics.service.ClubAnalyticsRecordService;
 import moadong.club.enums.ClubCategory;
 import moadong.club.enums.ClubRecruitmentStatus;
 import moadong.club.payload.dto.ClubSearchResult;
@@ -25,6 +26,7 @@ public class ClubSearchService {
     private final WordDictionaryService wordDictionaryService;
     private final ClubSearchMatcher clubSearchMatcher;
     private final ClubSearchRanker clubSearchRanker;
+    private final ClubAnalyticsRecordService clubAnalyticsRecordService;
 
     public ClubSearchResponse searchClubsByKeyword(String keyword,
                                                    String recruitmentStatus,
@@ -40,6 +42,8 @@ public class ClubSearchService {
         if (keyword == null || keyword.trim().isEmpty()) {
             return sortAndBuildBrowseResponse(candidates);
         }
+
+        clubAnalyticsRecordService.recordSearchKeyword(keyword);
 
         List<String> expandedKeywords = wordDictionaryService.expandKeywords(keyword);
         List<ClubSearchCandidate> matchedCandidates = candidates.stream()

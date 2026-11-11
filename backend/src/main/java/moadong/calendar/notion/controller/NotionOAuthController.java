@@ -13,6 +13,7 @@ import moadong.user.annotation.CurrentUser;
 import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -71,5 +72,14 @@ public class NotionOAuthController {
                                               @PathVariable String databaseId,
                                               @RequestParam(required = false) String dateProperty) {
         return Response.ok(notionOAuthService.getDatabasePages(user, databaseId, dateProperty));
+    }
+
+    @DeleteMapping("/connection")
+    @Operation(summary = "Notion 연결 해제", description = "Notion 연결을 해제합니다.")
+    @PreAuthorize("isAuthenticated()")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> deleteConnection(@CurrentUser CustomUserDetails user) {
+        notionOAuthService.deleteConnection(user);
+        return Response.ok("Notion 연결이 해제되었습니다.");
     }
 }

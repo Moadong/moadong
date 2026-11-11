@@ -62,7 +62,6 @@ public class ClubApplyPublicService {
                 .formMode(clubApplicationForm.getFormMode())
                 .externalApplicationUrl(clubApplicationForm.getExternalApplicationUrl())
                 .semesterYear(clubApplicationForm.getSemesterYear())
-                .semesterTerm(clubApplicationForm.getSemesterTerm())
                 .status(clubApplicationForm.getStatus())
                 .build();
 

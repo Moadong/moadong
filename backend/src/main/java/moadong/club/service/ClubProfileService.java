@@ -2,12 +2,14 @@ package moadong.club.service;
 
 import lombok.AllArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import moadong.analytics.service.ClubAnalyticsRecordService;
 import moadong.calendar.service.CalendarAggregationService;
 import moadong.club.entity.Club;
 import moadong.club.payload.dto.ClubCalendarEventResult;
 import moadong.club.payload.dto.ClubDetailedResult;
 import moadong.club.payload.request.ClubInfoRequest;
 import moadong.club.payload.request.ClubRecruitmentInfoUpdateRequest;
+import moadong.club.payload.request.ClubStateUpdateRequest;
 import moadong.club.payload.response.ClubCalendarEventsResponse;
 import moadong.club.payload.response.ClubDetailedResponse;
 import moadong.club.payload.response.ClubListResponse;
@@ -38,6 +40,7 @@ public class ClubProfileService {
     private final PushNotificationPort pushNotificationPort;
     private final Javers javers;
     private final CalendarAggregationService calendarAggregationService;
+    private final ClubAnalyticsRecordService clubAnalyticsRecordService;
 
     @Transactional
     public void updateClubInfo(ClubInfoRequest request, CustomUserDetails user) {
@@ -79,7 +82,8 @@ public class ClubProfileService {
                 .map(c -> new ClubListResponse.ClubListResponseItem(
                         c.getId() != null ? c.getId() : "",
                         c.getName() != null ? c.getName() : "",
-                        c.getUserId() != null ? c.getUserId() : ""
+                        c.getUserId() != null ? c.getUserId() : "",
+                        c.getState()
                 ))
                 .toList();
         return new ClubListResponse(items);
@@ -92,6 +96,7 @@ public class ClubProfileService {
 
         boolean hasCalendarConnection = calendarAggregationService.hasAnyCalendarConnection(club.getId());
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarConnection);
+        clubAnalyticsRecordService.recordDetailView(club.getId(), club.getName());
         return new ClubDetailedResponse(clubDetailedResult);
     }
 
@@ -101,6 +106,7 @@ public class ClubProfileService {
 
         boolean hasCalendarConnection = calendarAggregationService.hasAnyCalendarConnection(club.getId());
         ClubDetailedResult clubDetailedResult = ClubDetailedResult.of(club, List.of(), hasCalendarConnection);
+        clubAnalyticsRecordService.recordDetailView(club.getId(), club.getName());
         return new ClubDetailedResponse(clubDetailedResult);
     }
 
@@ -155,6 +161,16 @@ public class ClubProfileService {
                     )
             );
         }
+    }
+
+    @Transactional
+    public void updateClubStateByClubId(String clubId, ClubStateUpdateRequest request, CustomUserDetails user) {
+        ObjectId objectId = ObjectIdConverter.convertString(clubId);
+        Club club = clubRepository.findClubById(objectId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.CLUB_NOT_FOUND));
+        club.updateState(request.state());
+        Club saved = clubRepository.save(club);
+        javers.commit(user.getUsername(), saved);
     }
 
     private void validateClubNameUnique(String clubId, String name) {

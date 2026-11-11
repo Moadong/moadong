@@ -1,119 +1,119 @@
 # 개발자 페이지 컨벤션 & 디자인 가이드
 
 ## 1) 목적
-- `src/main/resources/static/dev` 하위 정적 페이지에 기능을 추가할 때, 기존 UI/UX 톤과 구현 방식을 일관되게 유지하기 위한 기준 문서.
+- `src/main/resources/static/dev` 하위 정적 페이지(모아동 운영 포털)에 기능을 추가할 때, UI 톤과 구현 방식을 일관되게 유지하기 위한 기준 문서.
+- 포털은 개발자뿐 아니라 운영진도 쓴다. 처음 들어온 사람이 설명 없이 쓸 수 있는지를 기준으로 판단한다.
 
-## 2) 분석 대상
-- `src/main/resources/static/dev/index.html`
-- `src/main/resources/static/dev/edit.html`
-- `src/main/resources/static/dev/dict-edit.html`
+## 2) 파일 구조
+- `dev/index.html` — 마크업만 둔다. 인라인 `<style>`/`<script>`를 새로 넣지 않는다.
+- `dev/css/portal.css` — 메인 포털 스타일. 색·간격은 `:root` 토큰만 쓴다.
+- `dev/js/*.js` — 도메인별 classic script. 모든 파일이 전역 스코프를 공유한다.
+  - 로드 순서: `common` → `shell` → 도메인 파일들 → `main`(마지막)
+  - classic script 사이에는 함수 호이스팅이 되지 않는다. **로드 시점에 다른 파일의 함수를 부르는 코드는 `main.js`에만 둔다.**
+  - ES module(`type="module"`)로 바꾸면 전역 참조가 깨진다.
+- `dev/assets/` — 로고·파비콘. 웹(frontend)과 같은 파일을 복사해 쓴다.
+- `dev/edit.html`, `dev/dict-edit.html` — 팝업. 아직 예전 스타일(인라인)이다.
 
-## 3) 공통 디자인 토큰
+### 배포 캐시
+- `index.html`의 CSS/JS 링크에는 `?v=날짜`가 붙어 있다. **JS/CSS를 바꾸면 이 값을 올린다.** 올리지 않으면 브라우저가 예전 파일을 새 HTML과 섞어 써서 화면이 깨질 수 있다.
 
-### 타이포그래피
-- 기본 폰트: `system-ui, sans-serif`
-- 기본 줄간격: `line-height: 1.5`
-- 제목 크기:
-  - 메인 타이틀: `1.25rem` 내외
-  - 섹션 타이틀: `1.1rem` 내외
-  - 서브 타이틀: `1rem` 내외
+## 3) 디자인 토큰 — 모아동 디자인 시스템 기준
+`frontend/src/styles/theme`(colors, typography)의 값을 그대로 옮겨 쓴다.
 
-### 색상
-- Primary(링크/포커스/강조): `#2563eb`
-- Neutral Border: `#e5e7eb`, `#d1d5db`
-- Neutral Background: `#f9fafb`, `#f3f4f6`
-- Success:
-  - 텍스트: `#16a34a` 또는 `#166534`
-  - 배경/보더: `#f0fdf4`, `#bbf7d0`
-- Error:
-  - 텍스트: `#dc2626`
-  - 배경/보더: `#fef2f2`, `#fecaca`
-- Warning:
-  - 텍스트: `#92400e`
-  - 배경/보더: `#fffbeb`, `#fde68a`
+- 폰트: Pretendard (jsdelivr)
+- Primary: `#FF5414`(`--primary`), hover `#FF7543`, 옅은 배경 `#FFECE5`
+- Gray: `--gray-50` ~ `--gray-900` (colors.gray와 같은 값), 본문 `#111111`
+- 상태: 성공 `--success`/`--success-soft`, 위험 `--danger`/`--danger-soft`, 경고 `--warn`/`--warn-soft`
+- 태그 색: `.tag-pink | yellow | blue | mint | sky | purple | primary | gray` — 웹 `FEEDBACK_TYPE_META`, `LETTER_CATEGORY_META`와 같은 조합
+- 라운드: 입력·버튼 10px, 패널 14px, 섹션 카드 20px
+- 페이지 배경 `--gray-100`, 섹션은 흰 카드 + `--shadow-card`
 
-### 간격/라운드
-- 주 사용 간격 단위: `4, 8, 12, 16, 24px`
-- 주 사용 반경: `6px`, `8px`
+## 4) 레이아웃
+- 사이드바는 `.nav-group`(카테고리) 단위로 묶는다. 현재 카테고리: 우체통 / 콘텐츠 / 알림 / 데이터 / 개발.
+- 한 메뉴 = 한 `section`. 섹션 첫머리는 `.section-head`(제목 + 우측 버튼) → `.sub`(이 화면에서 무엇을 하는지 한 줄 설명).
+- 섹션 안에서 작업 단위는 `.panel`로 나눈다. 긴 폼은 목적별 패널로 쪼갠다.
+- 목록 + 상세 편집 화면은 `.letters-layout` / `.feedback-layout`처럼 2열 그리드. 그리드 자식에는 `min-width: 0`이 걸려 있어야 테이블이 칸을 밀지 않는다.
+- 선택 전에는 비활성 폼 대신 `.promotion-empty` 안내를 보여준다.
+- 긴 편집 폼은 `.sticky-actions`로 저장 버튼을 화면 아래에 붙인다.
+- 고급 입력(data JSON 등)은 `<details class="collapsible">`로 접어 둔다.
 
-### 폭/레이아웃
-- 메인 포털: `max-width: 900px`
-- 팝업(동아리 수정): `max-width: 560px`
-- 팝업(단어사전 수정): `max-width: 480px`
-
-## 4) 공통 레이아웃 규칙
-- 모든 페이지 최상단에 `* { box-sizing: border-box; }` 유지.
-- 메인 페이지는 `header + main + section` 구조를 유지.
-- 기능 단위는 `section`으로 분리하고, 섹션 기본 스타일은 아래를 유지:
-  - `padding: 16px`
-  - `border: 1px solid #e5e7eb`
-  - `border-radius: 8px`
-  - 섹션 간 간격 `margin-bottom: 24px`
-- 메인 탐색 링크는 섹션 `id` 앵커(`#...`)와 1:1로 맞춘다.
-
-## 5) 컴포넌트 컨벤션
-
-### 폼
-- 입력 컨트롤(`input`, `select`, `textarea`)은 기본적으로 `width: 100%`.
-- 레이블은 `.form-row > label` 패턴으로 필드 위에 배치.
-- 여러 필드 배치는 `.form-grid` 사용(반응형 `auto-fill + minmax` 유지).
-
+## 5) 컴포넌트
 ### 버튼
-- 기본 버튼 톤:
-  - 배경 `#f9fafb`
-  - 보더 `1px solid #d1d5db`
-  - `border-radius: 6px`
-- 상태:
-  - hover 시 배경 `#f3f4f6`
-  - disabled 시 `opacity: 0.7`, `cursor: not-allowed`
-- 비동기 처리 시 버튼 `disabled` + 텍스트 `"처리 중..."` 패턴 사용.
+- 기본: 회색(`--gray-200`) 배경.
+- `.btn-primary` — 화면에서 가장 중요한 동작 **하나**에만.
+- `.btn-danger` — 삭제, 전체 발송처럼 되돌릴 수 없거나 전체에 영향을 주는 동작.
+- `.btn-ghost` — 선택 해제, 취소, 초기화.
+- 비동기 처리 중에는 `disabled` + `"처리 중..."`/`"저장 중..."`. 끝나면 원래 문구로 되돌린다(HTML의 문구와 JS의 복구 문구를 같이 바꾼다).
 
-### 메시지/피드백
-- 인라인 결과: `.message-box.success | .message-box.error`
+### 피드백
+- 전역 알림: `showToast(message, 'success' | 'error')` — 하단 중앙 알약형, 여러 개면 쌓인다(웹 Toast와 같은 모양).
+- 인라인 결과: `setMessageBox(id, ok, message)` → `.message-box.success | .error`
 - 섹션 배너: `.banner.warn | .banner.error`
-- 전역 알림: `.toast.success | .toast.error` (3초 후 사라짐)
-- 화면 제어용 유틸:
-  - `.hidden { display: none !important; }`
-  - `.loading`(로딩 시 시각 피드백)
+- 상태·분류 값은 글자 대신 `createTag(label, tone)` 태그로 보여준다.
 
 ### 테이블
-- 기본: `border-collapse: collapse; width: 100%`
-- 셀 보더/패딩: `1px solid #e5e7eb`, `8px`
-- 행 hover 배경: `#f9fafb`
+- 세로 보더 없음, 행 아래 구분선만. 헤더는 `--gray-700` 13px.
+- 선택된 행은 `.is-selected`(primary 옅은 배경).
 - 긴 ID는 `.id-cell` 패턴(ellipsis + title tooltip + 클릭 복사) 재사용.
 
-## 6) 상호작용/구현 컨벤션
+### 편지 미리보기
+- `buildLetterPreview(letter, quote)` — 웹 `LetterDetailPage`와 같은 모양. 스타일 수치를 바꾸면 웹 쪽과 함께 맞춘다.
+- 마크다운은 `renderLetterMarkdown()`만 쓴다(marked + DOMPurify, raw HTML은 글자 그대로). `innerHTML`에 사용자/운영자 입력을 직접 넣지 않는다.
+- 작성/미리보기 전환은 `.segmented` + `bindSegmentedTabs()`.
 
+### 목록
+- 목록이 길면 상단에 `.list-search` 검색, 상태가 있으면 `.segmented-compact` 필터(개수 표시)를 둔다.
+- 빈 목록은 `.table-empty`로 상황에 맞는 한 줄(검색 결과 없음 / 처리할 것 없음)을 보여준다.
+- 시각은 목록에선 `formatRelativeTime`, `title`에 `formatDateTime`.
+
+### 문구
+- 해요체 한 줄. 화면을 보면 알 수 있는 설명은 쓰지 않는다.
+- 개발 용어(모드, 동기화, 로직, API 이름)를 운영진이 보는 문구에 쓰지 않는다.
+- "왼쪽/위 목록"처럼 레이아웃에 기대는 표현은 모바일에서 틀리므로 "목록에서"로 쓴다.
+
+### 모바일
+- 900px 이하에서는 사이드바가 서랍(`body.nav-open`)으로 접힌다. 상단 바에 현재 화면 이름이 보인다.
+- 목록과 편집 영역이 세로로 쌓이면 선택 시 `revealOnNarrowScreen()`으로 편집 영역까지 내려준다.
+
+## 6) 상호작용/구현 컨벤션
 ### 상태/인증
-- 토큰/유저 저장 키는 기존 키 유지:
-  - `devPortalToken`
-  - `devPortalUserId`
-- 로그인 여부에 따라 섹션 노출을 `classList.toggle('hidden', ...)`로 제어.
+- 토큰/유저 저장 키는 기존 키 유지: `devPortalToken`, `devPortalUserId` (sessionStorage)
+- 로그인 직후 첫 화면은 `DEFAULT_SECTION_ID`(받은 피드백).
+
+### 되돌릴 수 없는 동작
+- 브라우저 기본 `confirm` 대신 `await confirmDialog({ title, message, details, confirmLabel, danger })`를 쓴다.
+- 전체 사용자에게 나가거나 전체 데이터를 바꾸는 동작은 실행 전에 대상·내용을 `details`로 보여준다. 위험 동작은 `danger: true`(취소에 포커스).
+  - 예: 전체 푸시 발송, 편지 발행, 이미지 변환 배치, 삭제
+- 수정 중인 내용이 있는 상태에서 다른 항목을 고르거나 페이지를 떠나면 확인을 받는다(`main.js`의 `beforeunload`에 dirty 판정을 추가).
 
 ### API 호출 패턴
-- 공통 `headers()` 함수에서 Authorization 헤더를 조립.
-- `fetch` 후:
-  - `res.ok` 분기
-  - `res.status === 403` 명시 처리(개발자 로그인 안내)
-  - `try/catch/finally`로 로딩/버튼 복구 보장
+- 공통 `headers()`에서 Authorization 헤더를 조립한다.
+- `fetch` 후 `readJsonOrEmpty(res)` → `res.ok` 분기 → 403은 개발자 로그인 안내 → `try/catch/finally`로 로딩·버튼 복구.
 
 ### 네이밍
-- 버튼 id: `btn + 동사/기능` (`btnLoadDict`, `btnSave`)
-- 입력 id: `edit...`, `dict...`, `login...`처럼 도메인 접두어 사용.
-- 렌더 함수: `render...`
-- 로드 함수: `load...`
+- 버튼 id: `btn + 동사/기능` (`btnLoadDict`, `btnSaveSentLetter`)
+- 렌더 함수 `render...`, 로드 함수 `load...` / `reload...`, 섹션 진입 로더 `load...IfVisible`
 
-## 7) 접근성/사용성 최소 기준
-- 모든 인터랙션 요소에 `:focus-visible` 아웃라인 유지 (`2px solid #2563eb`).
+### 보안
+- 관리자 토큰이 sessionStorage에 있어 XSS 한 번이면 토큰이 털린다.
+- 서버·사용자 값은 `textContent`로 넣는다. HTML 문자열을 만들 수밖에 없으면 모든 값을 `escapeHtml`로 감싼다.
+- 외부 값을 `href`/`src`에 넣을 때는 `toSafeHttpUrl`을 거친다.
+- 마크다운은 `renderLetterMarkdown`(DOMPurify)만 쓴다.
+- CDN 스크립트는 버전을 고정하고 `integrity`(SRI)를 붙인다.
+
+## 7) 새 섹션 추가 체크리스트
+- [ ] `index.html`에 `section#<id>`를 추가하고 `.section-head` + `.sub` 설명을 넣었다.
+- [ ] 사이드바 알맞은 `.nav-group`에 `<a href="#<id>">`를 추가했다.
+- [ ] `shell.js`의 `PORTAL_SECTION_IDS`, `showLogin()`의 hidden 목록, `loadActivePortalSectionData()`에 반영했다.
+- [ ] 새 JS 파일이면 `main.js`보다 앞에 `<script src="...?v=...">`로 추가하고 파일 첫 줄에 역할 주석을 달았다.
+- [ ] 주요 버튼 하나만 `.btn-primary`, 위험 동작은 `.btn-danger` + `confirm`.
+- [ ] 비동기 액션마다 로딩/실패/성공 UI와 버튼 복구 처리를 넣었다.
+- [ ] 375px 폭에서 가로 스크롤이 생기지 않는다.
+- [ ] `index.html`의 `?v=` 값을 올렸다.
+
+## 8) 접근성/사용성 최소 기준
+- 모든 인터랙션 요소에 `:focus-visible` 아웃라인 유지 (`2px solid var(--primary)`).
 - `label for`와 입력 `id`를 항상 연결.
 - 버튼은 항상 `type="button"` 또는 `type="submit"` 명시.
 - 새 창 링크는 `target="_blank"` 시 `rel="noopener"` 포함.
-
-## 8) 기능 추가 체크리스트
-- [ ] 새 기능을 기존 섹션 안에 넣을지, 새 `section`으로 분리할지 결정했다.
-- [ ] 새 `section`이면 헤더 내 앵커 링크를 추가하고 `id`를 일치시켰다.
-- [ ] 폼은 `.form-row`/`.form-grid` 패턴으로 구성했다.
-- [ ] 버튼/배너/메시지 박스는 기존 클래스(`.banner`, `.message-box`, `.toast`)를 재사용했다.
-- [ ] 비동기 액션마다 로딩/실패/성공 UI와 버튼 복구 처리를 넣었다.
-- [ ] 403/네트워크 오류를 사용자 메시지로 분리 처리했다.
-- [ ] 모바일 폭에서 레이아웃 깨짐 없이 동작하는지 확인했다.
+- 클릭 가능한 테이블 행은 `tabIndex=0`, `role="button"`, Enter/Space 처리.

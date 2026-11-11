@@ -3,7 +3,6 @@ package moadong.club.payload.request;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.*;
 import moadong.club.enums.ApplicationFormMode;
-import moadong.club.enums.SemesterTerm;
 
 import java.util.List;
 
@@ -25,8 +24,6 @@ public record ClubApplicationFormEditRequest(
 
         @Min(2000)
         @Max(2999)
-        Integer semesterYear,
-
-        SemesterTerm semesterTerm
+        Integer semesterYear
 ) {
 }
