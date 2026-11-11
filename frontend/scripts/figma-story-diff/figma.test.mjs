@@ -15,6 +15,17 @@ const solid = (hex, opacity) => {
   };
 };
 
+const toHex = ({ r, g, b }) =>
+  '#' +
+  [r, g, b]
+    .map((c) =>
+      Math.round(c * 255)
+        .toString(16)
+        .padStart(2, '0'),
+    )
+    .join('')
+    .toUpperCase();
+
 describe('compositeSolidStack', () => {
   it('불투명 바닥 위 반투명 단색을 아래부터 차례로 합성한다', () => {
     const color = compositeSolidStack([
@@ -22,8 +33,8 @@ describe('compositeSolidStack', () => {
       solid('#000000', 0.2),
       solid('#000000', 0.2),
     ]);
-    // 75 × 0.8 × 0.8 = 48
-    assert.equal(Math.round(color.r * 255), 48);
+    // 채널마다 75 × 0.8 × 0.8 = 48
+    assert.equal(toHex(color), '#303030');
   });
 
   it('레이어가 하나뿐이거나 바닥이 반투명이면 합성하지 않는다', () => {
@@ -44,12 +55,31 @@ describe('compositeSolidStack', () => {
   });
 
   it('숨긴 레이어는 합성에서 뺀다', () => {
+    const color = compositeSolidStack([
+      solid('#4B4B4B'),
+      { ...solid('#000000', 0.2), visible: false },
+      solid('#000000', 0.2),
+    ]);
+    // 보이는 겹침 한 겹만 합성된다: 75 × 0.8 = 60
+    assert.equal(toHex(color), '#3C3C3C');
+  });
+
+  it('일반 겹침이 아닌 블렌드 모드가 섞이면 합성하지 않는다', () => {
     assert.equal(
       compositeSolidStack([
         solid('#4B4B4B'),
-        { ...solid('#000000', 0.2), visible: false },
+        { ...solid('#000000', 0.2), blendMode: 'MULTIPLY' },
       ]),
       null,
+    );
+    assert.equal(
+      toHex(
+        compositeSolidStack([
+          { ...solid('#4B4B4B'), blendMode: 'NORMAL' },
+          { ...solid('#000000', 0.2), blendMode: 'NORMAL' },
+        ]),
+      ),
+      '#3C3C3C',
     );
   });
 });

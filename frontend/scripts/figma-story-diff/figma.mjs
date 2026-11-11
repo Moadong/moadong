@@ -43,7 +43,13 @@ const alphaPercent = (alpha) => +(alpha * 100).toFixed(1);
 export function compositeSolidStack(paints, nodeOpacity = 1) {
   const visible = paints.filter((p) => p.visible !== false);
   if (visible.length < 2 || nodeOpacity < 1) return null;
-  if (visible.some((p) => p.type !== 'SOLID')) return null;
+  // 합성식은 일반(source-over) 겹침일 때만 맞다. MULTIPLY 같은 블렌드가 섞이면 합성하지 않는다.
+  if (
+    visible.some(
+      (p) => p.type !== 'SOLID' || (p.blendMode ?? 'NORMAL') !== 'NORMAL',
+    )
+  )
+    return null;
   const [base, ...overlays] = visible;
   if ((base.opacity ?? 1) < 1) return null;
   const color = { r: base.color.r, g: base.color.g, b: base.color.b };
