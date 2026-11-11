@@ -3,7 +3,6 @@ package moadong.user.service;
 import com.mongodb.MongoWriteException;
 import jakarta.servlet.http.HttpServletResponse;
 import java.util.Date;
-import java.util.UUID;
 
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -113,8 +112,7 @@ public class UserCommandService {
         }
     }
 
-    public StudentIssueResponse issueStudentAccessToken() {
-        String studentId = UUID.randomUUID().toString();
+    public StudentIssueResponse issueStudentAccessToken(String studentId) {
         String accessToken = jwtProvider.generateAccessTokenWithoutExpiration(studentId);
         return new StudentIssueResponse(accessToken);
     }

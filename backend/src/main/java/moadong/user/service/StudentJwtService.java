@@ -6,8 +6,6 @@ import moadong.global.exception.RestApiException;
 import moadong.global.util.JwtProvider;
 import org.springframework.stereotype.Service;
 
-import java.util.UUID;
-
 @Service
 @RequiredArgsConstructor
 public class StudentJwtService {
@@ -24,12 +22,6 @@ public class StudentJwtService {
         String token = authorizationHeader.substring(BEARER_PREFIX.length());
         String studentId = jwtProvider.extractUsername(token);
         if (studentId == null || studentId.isBlank()) {
-            throw new RestApiException(ErrorCode.TOKEN_INVALID);
-        }
-
-        try {
-            UUID.fromString(studentId);
-        } catch (RuntimeException e) {
             throw new RestApiException(ErrorCode.TOKEN_INVALID);
         }
 

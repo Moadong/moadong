@@ -1,7 +1,6 @@
 package moadong.fixture;
 
 import moadong.club.enums.ApplicationFormMode;
-import moadong.club.enums.SemesterTerm;
 import moadong.club.payload.request.ClubApplicationFormEditRequest;
 import java.util.ArrayList;
 
@@ -23,8 +22,7 @@ public class ClubApplicationEditFixture {
                 new ArrayList<>(),
                 "",
                 ApplicationFormMode.INTERNAL,
-                2025,
-                SemesterTerm.SECOND
+                2025
         );
     }
 }

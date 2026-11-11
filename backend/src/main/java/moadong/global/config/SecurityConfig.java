@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.enums.SecuritySchemeType;
 import io.swagger.v3.oas.annotations.security.SecurityScheme;
 import moadong.global.util.JwtAuthenticationFilter;
 import moadong.global.util.JwtProvider;
+import moadong.global.util.StudentJwtAuthenticationFilter;
 import moadong.user.service.CustomUserDetailService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,6 +49,7 @@ public class SecurityConfig {
                 .anyRequest().permitAll()
             );
 
+        http.addFilterBefore(new StudentJwtAuthenticationFilter(jwtProvider), UsernamePasswordAuthenticationFilter.class);
         http.addFilterBefore(new JwtAuthenticationFilter(jwtProvider, userDetailsService), UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

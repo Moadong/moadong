@@ -144,6 +144,10 @@ public class Club implements Persistable<String> {
         this.clubRecruitmentInformation.updateRecruitmentStatus(clubRecruitmentStatus);
     }
 
+    public void updateState(ClubState state) {
+        this.state = state;
+    }
+
     @Override
     public boolean isNew() {
         return this.version == null;

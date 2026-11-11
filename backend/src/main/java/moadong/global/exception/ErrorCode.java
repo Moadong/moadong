@@ -23,6 +23,8 @@ public enum ErrorCode {
     CLICK_COUNT_INVALID(HttpStatus.BAD_REQUEST, "600-13", "클릭 수는 1 이상 5 이하이어야 합니다."),
     CLICK_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "600-14", "비정상적인 요청이 감지되었습니다. 30초 후 다시 시도해주세요."),
     CLICK_TIMESTAMP_INVALID(HttpStatus.BAD_REQUEST, "600-15", "클릭 시각이 유효하지 않습니다."),
+    CLICK_GAME_ENDED(HttpStatus.GONE, "600-16", "클릭 이벤트가 종료되었습니다."),
+    AI_DRAFT_LIMIT_EXCEEDED(HttpStatus.TOO_MANY_REQUESTS, "600-17", "이번 달 AI 초안 생성 횟수(3회)를 모두 사용했습니다."),
 
     // 601xx: 파일/미디어 관련 오류
     IMAGE_UPLOAD_FAILED(HttpStatus.INTERNAL_SERVER_ERROR, "601-1", "이미지 업로드에 실패하였습니다."),
@@ -59,7 +61,6 @@ public enum ErrorCode {
     QUESTION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-4", "존재하지 않은 질문입니다."),
     REQUIRED_QUESTION_MISSING(HttpStatus.BAD_REQUEST, "800-5", "필수 응답 질문이 누락되었습니다."),
     ACTIVE_APPLICATION_NOT_FOUND(HttpStatus.NOT_FOUND, "800-6", "활성화된 지원서 양식이 존재하지 않습니다."),
-    APPLICATION_SEMESTER_INVALID(HttpStatus.BAD_REQUEST, "800-7", "올바르지 않은 학기입니다."),
     NOT_ALLOWED_EXTERNAL_URL(HttpStatus.BAD_REQUEST, "800-8", "형식에 맞지않은 외부지원서 URL 입니다."),
     DUPLICATE_QUESTIONS_ITEMS(HttpStatus.BAD_REQUEST, "800-9", "중복된 질문 선택지가 존재합니다."),
     APPLICATION_REQUIRED_FIELDS_MISSING(HttpStatus.BAD_REQUEST, "800-10", "지원서 양식에 필요한 필드가 누락되었습니다."),
@@ -80,6 +81,29 @@ public enum ErrorCode {
 
     // 902xx: 홍보게시판 오류
     PROMOTION_ARTICLE_NOT_FOUND(HttpStatus.NOT_FOUND, "902-1", "홍보 게시글이 존재하지 않습니다."),
+    PROMOTION_CLUB_NOT_APPROVED(HttpStatus.FORBIDDEN, "902-2", "심사가 완료된 동아리만 홍보 게시글을 작성하거나 수정할 수 있습니다."),
+
+    // 903xx: 통계/분석 오류
+    MIXPANEL_EXPORT_FAILED(HttpStatus.BAD_GATEWAY, "903-1", "Mixpanel 데이터 조회에 실패했습니다."),
+    STATISTICS_DATE_RANGE_INVALID(HttpStatus.BAD_REQUEST, "903-2", "통계 조회 기간이 올바르지 않습니다."),
+    STATISTICS_BACKFILL_RANGE_TOO_LONG(HttpStatus.BAD_REQUEST, "903-3", "통계 백필 기간이 너무 깁니다."),
+    STATISTICS_EVENT_INVALID(HttpStatus.BAD_REQUEST, "903-4", "통계 이벤트 요청이 올바르지 않습니다."),
+    STATISTICS_EVENT_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "903-5", "통계 이벤트 요청이 너무 많습니다."),
+
+    // 904xx: 우체통(피드백) 오류
+    FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "904-1", "피드백이 존재하지 않습니다."),
+    LETTER_NOT_FOUND(HttpStatus.NOT_FOUND, "904-2", "편지가 존재하지 않습니다."),
+    FEEDBACK_ALREADY_REPLIED(HttpStatus.CONFLICT, "904-3", "이미 답장이 발행된 피드백입니다."),
+    LETTER_CATEGORY_NOT_BROADCASTABLE(HttpStatus.BAD_REQUEST, "904-4", "전체 발행은 UPDATE 또는 STORY 편지만 가능합니다."),
+    LETTER_DRAFT_NOT_FOUND(HttpStatus.NOT_FOUND, "904-5", "편지 초안이 존재하지 않습니다."),
+    FEEDBACK_STATUS_NOT_CHANGEABLE(HttpStatus.BAD_REQUEST, "904-6", "답장 완료 상태는 답장 발행으로만 설정되며 되돌릴 수 없습니다."),
+    FEEDBACK_IMAGE_UPLOAD_RATE_LIMITED(HttpStatus.TOO_MANY_REQUESTS, "904-7", "사진 업로드 요청이 너무 많습니다. 잠시 후 다시 시도해주세요."),
+    FEEDBACK_PROMPT_NOT_FOUND(HttpStatus.NOT_FOUND, "904-8", "피드백 프롬프트가 존재하지 않습니다."),
+    FEEDBACK_PROMPT_INVALID_REQUEST(HttpStatus.BAD_REQUEST, "904-9", "피드백 프롬프트 요청이 올바르지 않습니다."),
+    FEEDBACK_PROMPT_POLICY_INVALID(HttpStatus.BAD_REQUEST, "904-10", "피드백 재노출 정책이 올바르지 않습니다."),
+    FEEDBACK_PROMPT_REASON_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "904-11", "피드백 선택지는 최대 8개까지 등록할 수 있습니다."),
+    FEEDBACK_PROMPT_COMMENT_TOO_LONG(HttpStatus.BAD_REQUEST, "904-12", "피드백 의견은 최대 500자까지 입력할 수 있습니다."),
+    FEEDBACK_PROMPT_ACTIVE_DUPLICATED(HttpStatus.CONFLICT, "904-13", "같은 트리거에 활성화된 피드백 프롬프트가 이미 존재합니다."),
 
     // 950xx: Notion 연동 오류
     NOTION_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "950-1", "Notion 서버 환경변수가 설정되지 않았습니다."),
@@ -103,7 +127,22 @@ public enum ErrorCode {
     GOOGLE_API_FAILED(HttpStatus.BAD_GATEWAY, "960-6", "Google API 호출에 실패했습니다."),
     GOOGLE_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "960-7", "연동할 동아리 정보를 찾을 수 없습니다."),
     GOOGLE_INVALID_TIME_FORMAT(HttpStatus.BAD_REQUEST, "960-8", "시간 형식이 올바르지 않습니다. RFC3339 형식을 사용해주세요."),
-    GOOGLE_INVALID_TIME_RANGE(HttpStatus.BAD_REQUEST, "960-9", "시작 시간은 종료 시간보다 이전이어야 합니다.")
+    GOOGLE_INVALID_TIME_RANGE(HttpStatus.BAD_REQUEST, "960-9", "시작 시간은 종료 시간보다 이전이어야 합니다."),
+
+    CUSTOM_EVENT_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "970-1", "동아리 정보를 찾을 수 없습니다."),
+    CUSTOM_EVENT_NOT_FOUND(HttpStatus.NOT_FOUND, "970-2", "커스텀 캘린더 이벤트를 찾을 수 없습니다."),
+    CUSTOM_EVENT_INVALID_DATE_FORMAT(HttpStatus.BAD_REQUEST, "970-3", "날짜 형식이 올바르지 않습니다. YYYY-MM-DD 형식을 사용해주세요."),
+    CUSTOM_EVENT_INVALID_DATE_RANGE(HttpStatus.BAD_REQUEST, "970-4", "시작일은 종료일보다 이전이거나 같아야 합니다."),
+    CUSTOM_EVENT_INVALID_FIELD_VALUE(HttpStatus.BAD_REQUEST, "970-5", "이벤트 유형, 색상 또는 반복 주기 값이 올바르지 않습니다."),
+    CUSTOM_EVENT_INVALID_DELETE_SCOPE(HttpStatus.BAD_REQUEST, "970-6", "삭제 범위 값이 올바르지 않습니다."),
+
+    HIDDEN_EVENT_CLUB_NOT_FOUND(HttpStatus.BAD_REQUEST, "971-1", "동아리 정보를 찾을 수 없습니다."),
+    HIDDEN_EVENT_INVALID_SOURCE(HttpStatus.BAD_REQUEST, "971-2", "숨김 처리할 수 없는 이벤트 소스입니다."),
+
+    // 980xx: 소셜 로그인 오류
+    SOCIAL_OAUTH_TOKEN_FAILED(HttpStatus.BAD_REQUEST, "980-1", "소셜 로그인 토큰 교환에 실패했습니다."),
+    SOCIAL_OAUTH_FAILED(HttpStatus.BAD_GATEWAY, "980-2", "소셜 로그인 사용자 정보 조회에 실패했습니다."),
+    STUDENT_USER_NOT_FOUND(HttpStatus.UNAUTHORIZED, "980-3", "존재하지 않는 학생 사용자입니다.")
     ;
 
     private final HttpStatus httpStatus;

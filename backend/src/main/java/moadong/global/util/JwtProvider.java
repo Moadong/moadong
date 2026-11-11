@@ -64,6 +64,16 @@ public class JwtProvider {
         return (username.equals(extractUsername(token)) && !isTokenExpired(token));
     }
 
+    // 만료 여부와 무관하게 서명이 유효하면 subject를 반환 (만료가 설정된 경우에만 만료 검사)
+    public String extractSubjectIfValid(String token) {
+        Claims claims = getClaims(token);
+        Date expiration = claims.getExpiration();
+        if (expiration != null && expiration.before(new Date())) {
+            throw new RestApiException(ErrorCode.TOKEN_EXPIRED);
+        }
+        return claims.getSubject();
+    }
+
     // Claims 추출
     private Claims getClaims(String token) {
         try {

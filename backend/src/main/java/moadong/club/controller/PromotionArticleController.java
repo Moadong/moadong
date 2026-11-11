@@ -10,6 +10,8 @@ import moadong.club.payload.request.PromotionArticleUpdateRequest;
 import moadong.club.payload.response.PromotionArticleResponse;
 import moadong.club.service.PromotionArticleService;
 import moadong.global.payload.Response;
+import moadong.user.annotation.CurrentUser;
+import moadong.user.payload.CustomUserDetails;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -38,32 +40,35 @@ public class PromotionArticleController {
     }
 
     @PostMapping
-    @Operation(summary = "홍보 게시글 생성", description = "새로운 홍보 게시글을 생성합니다.")
-    @PreAuthorize("hasRole('DEVELOPER')")
+    @Operation(summary = "홍보 게시글 생성", description = "새로운 홍보 게시글을 생성합니다. 동아리 관리자는 요청의 clubId와 무관하게 본인 동아리로 생성됩니다.")
+    @PreAuthorize("hasAnyRole('DEVELOPER', 'CLUB_ADMIN')")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> createPromotionArticle(
+        @CurrentUser CustomUserDetails user,
         @RequestBody @Validated PromotionArticleCreateRequest request) {
-        PromotionArticleCreateResultDto response = promotionArticleService.createPromotionArticle(request);
+        PromotionArticleCreateResultDto response = promotionArticleService.createPromotionArticle(request, user);
         return Response.ok("홍보 게시글이 생성되었습니다.", response);
     }
 
     @PutMapping("/{articleId}")
-    @Operation(summary = "홍보 게시글 수정", description = "기존 홍보 게시글을 수정합니다.")
-    @PreAuthorize("hasRole('DEVELOPER')")
+    @Operation(summary = "홍보 게시글 수정", description = "기존 홍보 게시글을 수정합니다. 동아리 관리자는 본인 동아리 게시글만 수정할 수 있습니다.")
+    @PreAuthorize("hasAnyRole('DEVELOPER', 'CLUB_ADMIN')")
     @SecurityRequirement(name = "BearerAuth")
     public ResponseEntity<?> updatePromotionArticle(
+        @CurrentUser CustomUserDetails user,
         @PathVariable String articleId,
         @RequestBody @Validated PromotionArticleUpdateRequest request) {
-        promotionArticleService.updatePromotionArticle(articleId, request);
+        promotionArticleService.updatePromotionArticle(articleId, request, user);
         return Response.ok("홍보 게시글이 수정되었습니다.");
     }
 
     @DeleteMapping("/{articleId}")
-    @Operation(summary = "홍보 게시글 삭제", description = "기존 홍보 게시글을 삭제합니다.")
-    @PreAuthorize("hasRole('DEVELOPER')")
+    @Operation(summary = "홍보 게시글 삭제", description = "기존 홍보 게시글을 삭제합니다. 동아리 관리자는 본인 동아리 게시글만 삭제할 수 있습니다.")
+    @PreAuthorize("hasAnyRole('DEVELOPER', 'CLUB_ADMIN')")
     @SecurityRequirement(name = "BearerAuth")
-    public ResponseEntity<?> deletePromotionArticle(@PathVariable String articleId) {
-        promotionArticleService.deletePromotionArticle(articleId);
+    public ResponseEntity<?> deletePromotionArticle(@PathVariable String articleId,
+                                                    @CurrentUser CustomUserDetails user) {
+        promotionArticleService.deletePromotionArticle(articleId, user);
         return Response.ok("홍보 게시글이 삭제되었습니다.", null);
     }
 }
