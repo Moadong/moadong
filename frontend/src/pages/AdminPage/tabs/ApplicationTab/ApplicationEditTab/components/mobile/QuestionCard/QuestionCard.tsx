@@ -45,7 +45,6 @@ const QuestionCard = ({
 }: QuestionCardProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>();
-  // textarea 높이를 내용(줄바꿈·자동 줄넘김)에 맞춘다
   const titleRef = useAutoGrow(question.title);
   const descriptionRef = useAutoGrow(question.description);
 
