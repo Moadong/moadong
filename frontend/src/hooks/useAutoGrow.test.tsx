@@ -46,6 +46,15 @@ describe('useAutoGrow', () => {
     return { ...utils, textarea };
   };
 
+  it('observe 직후 첫 알림은 너비만 기억하고 높이를 다시 쓰지 않는다', () => {
+    const { textarea } = setup();
+    textarea.style.height = '20px';
+
+    resize(300);
+
+    expect(textarea.style.height).toBe('20px');
+  });
+
   it('너비가 그대로면(높이 조정으로 생긴 알림) 높이를 다시 쓰지 않는다', () => {
     const { textarea } = setup();
     resize(300); // observe 직후 첫 알림: 너비만 기억한다
