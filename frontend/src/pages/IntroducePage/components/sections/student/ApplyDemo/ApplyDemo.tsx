@@ -1,8 +1,8 @@
 // 실제 지원서 질문 칸에 지원 동기가 한 글자씩 채워지는 지원 데모 (보일 때만 타이핑해 섹션 전체가 다시 그려지지 않게 따로 둔다)
 import { useRef } from 'react';
 import { useInView } from 'framer-motion';
-import QuestionAnswerer from '@/pages/ApplicationFormPage/components/QuestionAnswerer/QuestionAnswerer';
-import QuestionContainer from '@/pages/ApplicationFormPage/components/QuestionContainer/QuestionContainer';
+import QuestionAnswerer from '@/components/application/QuestionAnswerer/QuestionAnswerer';
+import QuestionContainer from '@/components/application/QuestionContainer/QuestionContainer';
 import {
   APPLY_MOTIVATION_EXAMPLES,
   APPLY_SELECTED_DAYS,
