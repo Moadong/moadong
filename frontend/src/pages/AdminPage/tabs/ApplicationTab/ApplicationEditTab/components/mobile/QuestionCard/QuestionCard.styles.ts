@@ -34,7 +34,7 @@ export const TypeTrigger = styled.button<{ $open: boolean }>`
     ${({ $open }) => ($open ? colors.primary[700] : colors.gray[200])};
   border-radius: 10px;
   background: ${colors.base.white};
-  color: ${colors.gray[800]};
+  color: ${colors.gray[925]};
   ${setTypography(typography.button.button1)};
   cursor: pointer;
 
@@ -184,7 +184,7 @@ export const ItemInput = styled.input`
   border-radius: 10px;
   outline: none;
   background: ${colors.base.white};
-  color: ${colors.gray[800]};
+  color: ${colors.gray[925]};
   ${setTypography(typography.paragraph.p5)};
 
   &::placeholder {
