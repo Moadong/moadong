@@ -13,6 +13,7 @@ import {
   useApplicantList,
 } from '@/hooks/useApplicantList';
 import { useApplicantSelection } from '@/hooks/useApplicantSelection';
+import useDevice from '@/hooks/useDevice';
 import AddItemButton from '@/pages/AdminPage/components/AddItemButton/AddItemButton';
 import ApplicantListRow from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantListRow/ApplicantListRow';
 import ApplicantSearchBox from '@/pages/AdminPage/tabs/ApplicantsTab/ApplicantsListTab/components/mobile/ApplicantSearchBox/ApplicantSearchBox';
@@ -32,6 +33,8 @@ const ApplicantsTabMobile = () => {
     applicationFormId: string;
   }>();
   const navigate = useNavigate();
+  // 이 화면은 태블릿도 함께 쓴다. CSV 내보내기는 모바일 시안에 없어 폰 폭에서만 숨기고 태블릿에서는 보여 준다
+  const { isMobile } = useDevice();
   const [searchParams, setSearchParams] = useSearchParams();
 
   const [openDropdown, setOpenDropdown] = useState<OpenDropdown>(null);
@@ -234,7 +237,7 @@ const ApplicantsTabMobile = () => {
                 enabled={isAnyChecked}
                 onStatusChange={handleStatusChange}
                 onDelete={handleDelete}
-                onExport={handleExportCSV}
+                onExport={isMobile ? undefined : handleExportCSV}
                 exportEnabled={isCsvReady && isAnyChecked}
                 isStatusMenuOpen={openDropdown === 'status'}
                 onToggleStatusMenu={() => toggleDropdown('status')}
