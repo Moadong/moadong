@@ -26,7 +26,7 @@ export const Pill = styled.button<{ $active: boolean }>`
   ${({ $active }) =>
     $active
       ? css`
-          background: ${colors.gray[800]};
+          background: ${colors.gray[925]};
           color: ${colors.base.white};
           ${setTypography(typography.button.button1)}
         `

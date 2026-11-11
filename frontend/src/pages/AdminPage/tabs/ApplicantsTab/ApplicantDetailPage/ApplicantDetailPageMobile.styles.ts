@@ -52,9 +52,7 @@ export const StatusTab = styled.button<{ $isSelected: boolean }>`
   box-sizing: border-box;
   cursor: pointer;
   background: ${({ $isSelected }) =>
-    $isSelected
-      ? `linear-gradient(0deg, rgba(0, 0, 0, 0.2), rgba(0, 0, 0, 0.2)), ${colors.gray[800]}`
-      : colors.gray[100]};
+    $isSelected ? colors.gray[925] : colors.gray[100]};
   ${({ $isSelected }) =>
     $isSelected
       ? setTypography(typography.button.button1)
