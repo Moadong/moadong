@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useLayoutEffect, useRef, useState } from 'react';
 import ChevronDownIcon from '@/assets/images/icons/chevron_down_dark.svg?react';
 import clearIcon from '@/assets/images/icons/dark_clear_button_icon.svg';
 import DeleteIcon from '@/assets/images/icons/delete_question_gray.svg?react';
@@ -44,6 +44,17 @@ const QuestionCard = ({
 }: QuestionCardProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>();
+  const titleRef = useRef<HTMLTextAreaElement>(null);
+  const descriptionRef = useRef<HTMLTextAreaElement>(null);
+
+  // textarea 높이를 내용(줄바꿈·자동 줄넘김)에 맞춘다
+  useLayoutEffect(() => {
+    for (const el of [titleRef.current, descriptionRef.current]) {
+      if (!el) continue;
+      el.style.height = 'auto';
+      el.style.height = `${el.scrollHeight}px`;
+    }
+  }, [question.title, question.description]);
 
   if (!(question.type in QUESTION_LABEL_MAP)) return null;
 
@@ -200,6 +211,8 @@ const QuestionCard = ({
         <Styled.QuestionHead>
           <Styled.QuestionNumber>{number}.</Styled.QuestionNumber>
           <Styled.TitleInput
+            ref={titleRef}
+            rows={1}
             aria-label={`질문 ${number} 제목`}
             value={question.title}
             maxLength={APPLICATION_FORM.QUESTION_TITLE.maxLength}
@@ -209,6 +222,8 @@ const QuestionCard = ({
           />
         </Styled.QuestionHead>
         <Styled.DescriptionInput
+          ref={descriptionRef}
+          rows={1}
           aria-label={`질문 ${number} 설명`}
           value={question.description}
           maxLength={APPLICATION_FORM.QUESTION_DESCRIPTION.maxLength}
