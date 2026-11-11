@@ -7,7 +7,8 @@ interface BulkActionBarProps {
   enabled: boolean;
   onStatusChange: (status: ApplicationStatus) => void;
   onDelete: () => void;
-  onExport: () => void;
+  /** 넘기지 않으면 내보내기 버튼을 그리지 않는다(폰 폭) */
+  onExport?: () => void;
   exportEnabled: boolean;
   isStatusMenuOpen: boolean;
   onToggleStatusMenu: () => void;
@@ -56,13 +57,15 @@ const BulkActionBar = ({
         )}
       </Styled.StatusButtonWrapper>
 
-      <Styled.ExportButton
-        $enabled={exportEnabled}
-        onClick={exportEnabled ? onExport : undefined}
-      >
-        <Styled.CsvIcon $enabled={exportEnabled} />
-        내보내기
-      </Styled.ExportButton>
+      {onExport && (
+        <Styled.ExportButton
+          $enabled={exportEnabled}
+          onClick={exportEnabled ? onExport : undefined}
+        >
+          <Styled.CsvIcon $enabled={exportEnabled} />
+          내보내기
+        </Styled.ExportButton>
+      )}
 
       <Styled.DeleteButton
         $enabled={enabled}
