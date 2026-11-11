@@ -1,4 +1,4 @@
-import { useLayoutEffect, useRef, useState } from 'react';
+import { useState } from 'react';
 import ChevronDownIcon from '@/assets/images/icons/chevron_down_dark.svg?react';
 import clearIcon from '@/assets/images/icons/dark_clear_button_icon.svg';
 import DeleteIcon from '@/assets/images/icons/delete_question_gray.svg?react';
@@ -8,6 +8,7 @@ import {
   DROPDOWN_OPTIONS,
   QUESTION_LABEL_MAP,
 } from '@/constants/applicationForm';
+import useAutoGrow from '@/hooks/useAutoGrow';
 import { Question, QuestionType } from '@/types/application';
 import * as Styled from './QuestionCard.styles';
 
@@ -44,17 +45,9 @@ const QuestionCard = ({
 }: QuestionCardProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>();
-  const titleRef = useRef<HTMLTextAreaElement>(null);
-  const descriptionRef = useRef<HTMLTextAreaElement>(null);
-
   // textarea 높이를 내용(줄바꿈·자동 줄넘김)에 맞춘다
-  useLayoutEffect(() => {
-    for (const el of [titleRef.current, descriptionRef.current]) {
-      if (!el) continue;
-      el.style.height = 'auto';
-      el.style.height = `${el.scrollHeight}px`;
-    }
-  }, [question.title, question.description]);
+  const titleRef = useAutoGrow(question.title);
+  const descriptionRef = useAutoGrow(question.description);
 
   if (!(question.type in QUESTION_LABEL_MAP)) return null;
 

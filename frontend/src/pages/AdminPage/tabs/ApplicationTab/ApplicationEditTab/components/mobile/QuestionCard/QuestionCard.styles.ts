@@ -147,6 +147,13 @@ export const TitleInput = styled.textarea`
   &:focus-visible {
     box-shadow: 0 1px 0 0 ${colors.gray[400]};
   }
+
+  /* 강제 색상 모드는 box-shadow를 지우므로 시스템 강조색 outline으로 대신 보인다 */
+  @media (forced-colors: active) {
+    &:focus-visible {
+      outline: 1px solid Highlight;
+    }
+  }
 `;
 
 export const DescriptionInput = styled.textarea`
@@ -162,6 +169,13 @@ export const DescriptionInput = styled.textarea`
   /* 카드 안에서 지금 입력 중인 칸을 알 수 있게 밑줄로 표시한다 */
   &:focus-visible {
     box-shadow: 0 1px 0 0 ${colors.gray[400]};
+  }
+
+  /* 강제 색상 모드는 box-shadow를 지우므로 시스템 강조색 outline으로 대신 보인다 */
+  @media (forced-colors: active) {
+    &:focus-visible {
+      outline: 1px solid Highlight;
+    }
   }
 `;
 
