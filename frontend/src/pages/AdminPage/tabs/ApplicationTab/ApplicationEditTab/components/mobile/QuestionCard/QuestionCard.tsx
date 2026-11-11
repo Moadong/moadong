@@ -8,6 +8,7 @@ import {
   DROPDOWN_OPTIONS,
   QUESTION_LABEL_MAP,
 } from '@/constants/applicationForm';
+import useAutoGrow from '@/hooks/useAutoGrow';
 import { Question, QuestionType } from '@/types/application';
 import * as Styled from './QuestionCard.styles';
 
@@ -44,6 +45,9 @@ const QuestionCard = ({
 }: QuestionCardProps) => {
   const [isDropdownOpen, setIsDropdownOpen] = useState(false);
   const [focusedItemIndex, setFocusedItemIndex] = useState<number>();
+  // textarea 높이를 내용(줄바꿈·자동 줄넘김)에 맞춘다
+  const titleRef = useAutoGrow(question.title);
+  const descriptionRef = useAutoGrow(question.description);
 
   if (!(question.type in QUESTION_LABEL_MAP)) return null;
 
@@ -200,6 +204,8 @@ const QuestionCard = ({
         <Styled.QuestionHead>
           <Styled.QuestionNumber>{number}.</Styled.QuestionNumber>
           <Styled.TitleInput
+            ref={titleRef}
+            rows={1}
             aria-label={`질문 ${number} 제목`}
             value={question.title}
             maxLength={APPLICATION_FORM.QUESTION_TITLE.maxLength}
@@ -209,6 +215,8 @@ const QuestionCard = ({
           />
         </Styled.QuestionHead>
         <Styled.DescriptionInput
+          ref={descriptionRef}
+          rows={1}
           aria-label={`질문 ${number} 설명`}
           value={question.description}
           maxLength={APPLICATION_FORM.QUESTION_DESCRIPTION.maxLength}

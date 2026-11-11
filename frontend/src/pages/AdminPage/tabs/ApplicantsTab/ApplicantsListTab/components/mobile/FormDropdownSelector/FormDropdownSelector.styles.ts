@@ -30,6 +30,12 @@ export const Trigger = styled.button<{ $isOpen: boolean }>`
     cursor: default;
     opacity: 0.5;
   }
+
+  /* 강제 색상(고대비) 모드는 box-shadow를 지우므로 그 모드에서만 테두리를 그린다.
+     평소 outline을 건드리지 않아 키보드 포커스 링은 그대로 남는다 */
+  @media (forced-colors: active) {
+    border: 1px solid;
+  }
 `;
 
 export const TriggerLabel = styled.span`

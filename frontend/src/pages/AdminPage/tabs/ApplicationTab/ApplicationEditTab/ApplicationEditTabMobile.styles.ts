@@ -112,6 +112,18 @@ export const LinkBox = styled.div`
   border: 1px solid ${colors.gray[200]};
   border-radius: 14px;
   background: ${colors.gray[50]};
+
+  /* 링크 입력에 포커스가 있으면 지원자 검색창처럼 테두리로 보여 준다 */
+  &:focus-within {
+    border-color: ${colors.primary[800]};
+    background: ${colors.base.white};
+  }
+
+  @media (forced-colors: active) {
+    &:focus-within {
+      outline: 2px solid Highlight;
+    }
+  }
 `;
 
 export const LinkIcon = styled(LinkSvg)`

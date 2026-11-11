@@ -308,6 +308,28 @@ describe('ApplicationEditTabMobile', () => {
     });
   });
 
+  it('줄바꿈이 있는 질문 제목·설명을 모바일에서 고쳐도 줄바꿈이 남는다', async () => {
+    const user = userEvent.setup();
+    jest.mocked(updateApplication).mockResolvedValue(undefined as never);
+    jest.spyOn(window, 'alert').mockImplementation(() => {});
+    const form = savedForm();
+    form.questions![0].title = '지원 동기\n(자유롭게)';
+    form.questions![0].description = '첫 줄\n둘째 줄';
+    renderMobile(form);
+    await openQuestionsTab(user);
+    await user.click(screen.getByTestId('reorder-tooltip-dim'));
+
+    await user.type(screen.getByLabelText('질문 1 제목'), '!');
+    await user.type(screen.getByLabelText('질문 1 설명'), '!');
+    await user.click(screen.getByRole('button', { name: '저장하기' }));
+
+    await waitFor(() => expect(updateApplication).toHaveBeenCalledTimes(1));
+    expect(savedPayload().payload.questions?.[0]).toMatchObject({
+      title: '지원 동기\n(자유롭게)!',
+      description: '첫 줄\n둘째 줄!',
+    });
+  });
+
   it('검증에 실패하면 저장하지 않는다', async () => {
     const user = userEvent.setup();
     const alertSpy = jest.spyOn(window, 'alert').mockImplementation(() => {});
