@@ -46,7 +46,7 @@ export const ActiveDot = styled.span`
 export const Title = styled.span<{ $active: boolean }>`
   ${setTypography(typography.paragraph.p2)}
   letter-spacing: -0.02em;
-  color: ${({ $active }) => ($active ? colors.primary[900] : colors.gray[800])};
+  color: ${({ $active }) => ($active ? colors.primary[900] : colors.gray[925])};
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;

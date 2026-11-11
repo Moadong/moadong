@@ -27,7 +27,7 @@ export const MenuItem = styled.div`
   gap: 11px;
   ${setTypography(typography.paragraph.p6)}
   letter-spacing: -0.02em;
-  color: ${colors.gray[800]};
+  color: ${colors.gray[925]};
   background-color: transparent;
   cursor: pointer;
   box-sizing: border-box;
