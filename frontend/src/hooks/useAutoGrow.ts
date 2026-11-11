@@ -17,11 +17,15 @@ const useAutoGrow = (value: string) => {
   useEffect(() => {
     const el = ref.current;
     if (!el || typeof ResizeObserver === 'undefined') return;
-    let lastWidth = el.clientWidth;
-    const observer = new ResizeObserver(() => {
-      if (el.clientWidth === lastWidth) return;
-      lastWidth = el.clientWidth;
-      fitHeight(el);
+    // clientWidth는 정수라 소수점 너비 변화를 놓치므로 콘텐츠 상자 너비(contentRect)로 비교한다
+    let lastWidth: number | undefined;
+    const observer = new ResizeObserver(([entry]) => {
+      const width = entry?.contentRect.width;
+      if (width === undefined || width === lastWidth) return;
+      const isFirst = lastWidth === undefined;
+      lastWidth = width;
+      // observe 직후의 첫 알림은 지금 너비를 기억만 한다(높이는 값 기준 effect가 이미 맞췄다)
+      if (!isFirst) fitHeight(el);
     });
     observer.observe(el);
     return () => observer.disconnect();
