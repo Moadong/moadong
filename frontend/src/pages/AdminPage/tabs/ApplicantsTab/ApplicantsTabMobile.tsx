@@ -33,7 +33,7 @@ const ApplicantsTabMobile = () => {
     applicationFormId: string;
   }>();
   const navigate = useNavigate();
-  // 이 화면은 태블릿도 함께 쓴다. CSV 내보내기는 폰에서만 숨긴다(모바일 시안에 없고, 앱 웹뷰는 Blob 다운로드를 받지 못한다)
+  // 이 화면은 태블릿도 함께 쓴다. CSV 내보내기는 모바일 시안에 없어 폰 폭에서만 숨기고 태블릿에서는 보여 준다
   const { isMobile } = useDevice();
   const [searchParams, setSearchParams] = useSearchParams();
 
