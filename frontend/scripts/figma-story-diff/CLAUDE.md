@@ -18,6 +18,7 @@
 
 - **색 수집은 "실제로 칠해지는 것"만 센다.** 글자를 그리지 않는 요소의 상속된 `color`, paint를 그리지 않는 `svg`·`g`의 `fill`은 제외한다. 이 규칙이 깨지면 body 색을 상속받는 모든 컴포넌트가 영구 FAIL이 된다.
 - **반투명은 양쪽 기준이 같아야 한다.** Figma는 노드·paint opacity를 곱한 유효값, 구현은 CSS alpha. 1 미만이면 토큰으로 세지 않는다.
+- **겹친 단색 fill은 합성한다.** 불투명 바닥 위에 단색만 겹친 스택(`compositeSolidStack`)은 아래부터 알파 합성한 한 색을 센다. 스택 안의 불투명 레이어는 그대로 보이지 않으므로 따로 세지 않는다. 노드 opacity가 1 미만이거나, 그라디언트·이미지 또는 `NORMAL`이 아닌 블렌드 모드가 섞이면 합성하지 않고 예전처럼 나눠 센다. 단위 테스트는 `figma.test.mjs`(`npm run test:scripts`).
 - **테두리 색은 `border-color`에만 있지 않다.** 시안의 INSIDE stroke를 `box-shadow: inset`으로 구현하는 경우가 있어 box-shadow 색도 걷는다.
 - **레이아웃 축은 선언값이 아니라 위치에서 잰다.** Figma `itemSpacing`은 `SPACE_BETWEEN`이면 실제 간격과 무관한 값이 남는다. 자식 bbox로 앞 여백·간격·뒤 여백을 계산해 비교한다.
 - **자식 짝짓기 규칙이 경로마다 다르다.** auto-layout 프레임은 `children` 순서가 곧 시각 순서라 그대로 짝짓는다(`SPACE_BETWEEN`·역순도 이 순서가 맞다). auto-layout이 아닌 프레임은 `children`이 **z-order**라 DOM 문서 순서와 어긋날 수 있어, 그 경로에서만 양쪽을 `(y, x)`로 정렬한다. 두 경로에 같은 규칙을 쓰면 한쪽이 반드시 깨진다.
