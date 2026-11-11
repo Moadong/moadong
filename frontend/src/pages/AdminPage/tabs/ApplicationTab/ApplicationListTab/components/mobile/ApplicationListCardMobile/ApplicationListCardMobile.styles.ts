@@ -44,7 +44,7 @@ export const ChevronIcon = styled(RightArrowIcon)`
   flex-shrink: 0;
 
   path {
-    stroke: ${colors.gray[800]};
+    stroke: ${colors.gray[925]};
   }
 `;
 

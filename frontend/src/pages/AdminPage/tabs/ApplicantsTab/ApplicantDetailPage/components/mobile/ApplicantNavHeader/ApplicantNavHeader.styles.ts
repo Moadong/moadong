@@ -54,13 +54,13 @@ const navIconBase = `
 export const PrevIcon = styled(PrevApplicant)<{ $disabled: boolean }>`
   ${navIconBase}
   color: ${({ $disabled }) =>
-    $disabled ? colors.gray[500] : colors.gray[800]};
+    $disabled ? colors.gray[500] : colors.gray[925]};
 `;
 
 export const NextIcon = styled(NextApplicant)<{ $disabled: boolean }>`
   ${navIconBase}
   color: ${({ $disabled }) =>
-    $disabled ? colors.gray[500] : colors.gray[800]};
+    $disabled ? colors.gray[500] : colors.gray[925]};
 `;
 
 export const Center = styled.div`
