@@ -9,13 +9,15 @@ export const STORAGE_KEYS = {
   /** 소셜 로그인 CSRF 방어용 state. 콜백에서 검증 후 제거한다 */
   STUDENT_OAUTH_STATE: 'studentOAuthState',
   FEEDBACK_PROMPT_ANONYMOUS_ID: 'moadong.feedbackPrompt.anonymousClientId',
-  /** 만족도 모달 노출 조건. 둘 중 하나가 임계값에 닿으면 묻는다 */
+  /** 만족도 모달 노출 조건. 둘 중 하나가 임계값에 닿으면 묻는다 (미룬 뒤에는 방문일만) */
   VISIT_DAY_COUNT: 'visitDayCount',
   CLUB_VIEW_COUNT: 'clubViewCount',
   /** 같은 날 여러 번 켜도 방문일이 한 번만 오르게 하는 기준 */
   LAST_VISIT_DATE: 'lastVisitDate',
   /** 답을 했으면 다시 묻지 않는다 */
   SATISFACTION_ANSWERED: 'satisfactionAnswered',
+  /** 한 번 미뤘으면 동아리 조회 수로는 다시 묻지 않고 방문일만 본다 */
+  SATISFACTION_SNOOZED: 'satisfactionSnoozed',
   HAS_CONSENTED_PERSONAL_INFO: 'hasConsentedPersonalInfo',
   QUERY_CACHE: 'MOADONG_QUERY_CACHE',
   /** 관리자 로그인 시 귀속된 동아리 ID. 새로고침 후에도 관리자 UI 유지에 사용 */

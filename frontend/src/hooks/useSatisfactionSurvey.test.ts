@@ -99,10 +99,10 @@ describe('useSatisfactionSurvey', () => {
       return open();
     };
 
-    it('답을 받으면 닫고 다시 묻지 않도록 기록한다', () => {
+    it('첫 질문에 답하면 닫고 다시 묻지 않도록 기록한다', () => {
       const { result } = opened();
 
-      act(() => result.current.closeForever());
+      act(() => result.current.answer());
 
       expect(result.current.isOpen).toBe(false);
       expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED)).toBe(
@@ -118,9 +118,21 @@ describe('useSatisfactionSurvey', () => {
       expect(result.current.isOpen).toBe(false);
       expect(localStorage.getItem(STORAGE_KEYS.VISIT_DAY_COUNT)).toBe('0');
       expect(localStorage.getItem(STORAGE_KEYS.CLUB_VIEW_COUNT)).toBe('0');
+      expect(localStorage.getItem(STORAGE_KEYS.SATISFACTION_SNOOZED)).toBe(
+        'true',
+      );
       expect(
         localStorage.getItem(STORAGE_KEYS.SATISFACTION_ANSWERED),
       ).toBeNull();
+    });
+
+    it('미룬 뒤에는 같은 날 동아리를 다시 봐도 묻지 않는다', () => {
+      const { result } = opened();
+      act(() => result.current.snooze());
+
+      for (let i = 0; i < SATISFACTION_ASK_THRESHOLD; i += 1) countClubView();
+
+      expect(open().result.current.isOpen).toBe(false);
     });
 
     it('미룬 당일에는 다시 뜨지 않는다', () => {
@@ -129,6 +141,16 @@ describe('useSatisfactionSurvey', () => {
 
       expect(open().result.current.isOpen).toBe(false);
       expect(localStorage.getItem(STORAGE_KEYS.VISIT_DAY_COUNT)).toBe('0');
+    });
+
+    it('미룬 다음 날에도 동아리 조회 수로는 묻지 않는다', () => {
+      const { result } = opened();
+      act(() => result.current.snooze());
+
+      setToday('2026-08-15');
+      for (let i = 0; i < SATISFACTION_ASK_THRESHOLD; i += 1) countClubView();
+
+      expect(open().result.current.isOpen).toBe(false);
     });
 
     it(`미룬 뒤에는 ${SATISFACTION_ASK_THRESHOLD}일을 더 방문해야 다시 묻는다`, () => {
