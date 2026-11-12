@@ -12,8 +12,8 @@ concurrency: design-feedback-${{ github.event.issue.number }}-${{ github.event.l
 
 # 이슈 본문에는 실서비스 화면 텍스트(동아리 소개 등 누구나 쓸 수 있는 내용)가 섞여 들어온다.
 # 그래서 에이전트를 돌리는 job에는 쓰기 권한을 주지 않고, 사람이 diff를 보기 전에는 시크릿을 쓰는 CI가 돌지 않게 한다.
-#   analyze: 에이전트가 스타일을 고치고 패치·PR 문구·되묻기 댓글을 파일로 남긴다. 읽기 토큰만 있다.
-#   verify:  시크릿·sudo 없이 패치를 적용해 타입체크·린트를 돌린다.
+#   analyze: 에이전트가 frontend/src를 고치고 패치·PR 문구·되묻기 댓글을 파일로 남긴다. 읽기 토큰만 있다.
+#   verify:  시크릿·sudo 없이 패치를 적용해 타입체크·린트·테스트를 돌린다.
 #   publish: 에이전트 없이 고정 브랜치 design/<이슈번호>로 push하고 draft PR을 연다.
 #            GITHUB_TOKEN으로 만든·갱신한 PR의 opened·synchronize·reopened는 실행을 승인 대기 상태로만 만든다.
 #            누가 승인하거나 draft에서 Update branch·reopen을 눌러도, 시크릿을 쓰는 chromatic·harry는 draft 조건에
@@ -62,9 +62,10 @@ jobs:
       - name: Prepare output directory
         run: mkdir -p design-feedback-out
 
-      # 에이전트는 frontend/src와 결과 폴더만 고칠 수 있고, 실행할 수 있는 건 인자가 고정된 명령 넷(이 이슈 보기, git status, git diff, typecheck)뿐이다.
+      # 에이전트는 frontend/src(새 파일 생성 포함)와 결과 폴더만 고칠 수 있고, 실행할 수 있는 건 인자가 고정된 명령 넷(이 이슈 보기, git status, git diff, typecheck)뿐이다.
       # git log·git diff에 인자를 허용하면 --output=으로 node_modules를 덮어 typecheck 때 코드를 실행할 수 있다.
       # 린트는 설정 파일을 실행하므로 시크릿 없는 verify job에서 돌린다.
+      # 테스트는 에이전트가 쓴 코드를 실행하는데 이 job의 환경변수에 OAuth 토큰이 있으니 여기서 돌리지 않고 verify job에서 돌린다.
       # 프로세스 환경변수(OAuth 토큰)를 읽어 결과 파일에 옮기지 못하게 /proc 등은 Read·Grep·Glob 모두 막는다.
       - name: Apply design feedback
         uses: anthropics/claude-code-action@v1
@@ -76,7 +77,7 @@ jobs:
             셸 명령에는 이 값을 그대로 적어라(셸 변수를 쓰면 권한 검사에서 거부된다).
           claude_args: |
             --model claude-opus-5
-            --allowedTools "Read,Glob,Grep,Edit(frontend/src/**),Edit(design-feedback-out/**),Write(design-feedback-out/**),Bash(gh issue view ${{ github.event.issue.number }} --repo ${{ github.repository }}),Bash(git status),Bash(git diff),Bash(npm --prefix frontend run typecheck)"
+            --allowedTools "Read,Glob,Grep,Edit(frontend/src/**),Write(frontend/src/**),Edit(design-feedback-out/**),Write(design-feedback-out/**),Bash(gh issue view ${{ github.event.issue.number }} --repo ${{ github.repository }}),Bash(git status),Bash(git diff),Bash(npm --prefix frontend run typecheck)"
             --disallowedTools "Read(//proc/**),Read(//sys/**),Read(//run/**),Read(//home/runner/work/_temp/**),Grep(//proc/**),Grep(//sys/**),Grep(//run/**),Grep(//home/runner/work/_temp/**),Glob(//proc/**),Glob(//sys/**),Glob(//run/**),Glob(//home/runner/work/_temp/**)"
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
@@ -202,7 +203,7 @@ jobs:
             exit 1
           fi
           # frontend/src 안에도 CLAUDE.md가 있다. Ready 뒤 harry 같은 에이전트가 이 파일을 지시로 읽으므로
-          # 스타일 수정에 필요 없는 마크다운 변경은 받지 않는다.
+          # 수정에 필요 없는 마크다운 변경은 받지 않는다.
           docs=$(git apply --numstat design-feedback-out/fix.patch | cut -f3 | grep -iE '\.md$' || true)
           if [[ -n "$docs" ]]; then
             echo "::error::마크다운 변경은 받지 않는다: $docs"
@@ -210,6 +211,44 @@ jobs:
           fi
           # --index로 적용해야 새 파일도 아래 목록에 잡힌다.
           git apply --index design-feedback-out/fix.patch
+          # 새 파일은 TS·TSX만 받는다. Edit 권한 규칙이 Write까지 열 수 있어 권한 문자열이 아니라 여기서 강제한다.
+          # --no-renames: 기존 파일을 새 경로로 옮기는 패치는 rename(R)으로 잡혀 A 필터를 비켜 가므로 삭제+추가로 본다.
+          added=$(git diff --cached --name-only --no-renames --diff-filter=A -- frontend/src | grep -vE '\.tsx?$' || true)
+          if [[ -n "$added" ]]; then
+            echo "::error::TS·TSX가 아닌 새 파일: $added"
+            exit 1
+          fi
+          # 점으로 시작하는 경로(.gitattributes로 PR diff를 접는 등)와 __mocks__(jest가 모든 테스트에 자동으로 적용)는 받지 않는다.
+          hidden=$(git diff --cached --name-only --no-renames -- frontend/src | grep -E '(^|/)(\.|__mocks__/)' || true)
+          if [[ -n "$hidden" ]]; then
+            echo "::error::점으로 시작하는 경로나 __mocks__: $hidden"
+            exit 1
+          fi
+          # 일반 파일(100644)과 삭제(000000)만 받는다. 심링크·실행 비트·서브모듈을 하나씩 막지 않고 나머지를 모두 거부한다.
+          modes=$(git diff --cached --raw --no-renames -- frontend/src | awk '$2 != "000000" && $2 != "100644" { print $NF }')
+          if [[ -n "$modes" ]]; then
+            echo "::error::일반 파일이 아닌 변경: $modes"
+            exit 1
+          fi
+          # NUL 바이트 하나로 파일이 binary가 되면 PR 화면과 git diff에 내용이 안 보이고 아래 검사도 비켜 간다.
+          bin=$(git diff --cached --numstat --no-renames -- frontend/src | awk -F'\t' '$1 == "-" { print $3 }')
+          if [[ -n "$bin" ]]; then
+            echo "::error::binary 변경: $bin"
+            exit 1
+          fi
+          # 테스트를 건너뛰거나 일부만 돌게 하는 구문을 더하면 테스트 통과가 아무것도 보장하지 않는다.
+          # 철자를 바꾸면(변수에 담기 등) 비켜 갈 수 있는 best-effort 검사다. 최종 관문은 사람이 diff를 보는 것이다.
+          skips=$(git diff --cached -U0 -- 'frontend/src/*.test.*' 'frontend/src/*.spec.*' 'frontend/src/*__tests__/*' \
+            | grep -E '^\+' \
+            | grep -E '\.(skip|only|todo|failing)\b|\b[fx](it|describe|test)\s*\(|\b(it|test|describe)\s*\[' || true)
+          # 테스트가 아닌 파일에서 jest 전역을 건드리면(jest.mock, globalThis.it 바꾸기) 모든 테스트에 영향을 준다.
+          globals=$(git diff --cached -U0 -- frontend/src \
+            ':(exclude)frontend/src/*.test.*' ':(exclude)frontend/src/*.spec.*' ':(exclude)frontend/src/*__tests__/*' \
+            | grep -E '^\+' | grep -E '\bjest\.|globalThis\.(it|test|describe)\b' || true)
+          if [[ -n "$skips$globals" ]]; then
+            echo "::error::테스트를 건너뛰거나 jest 전역을 건드리는 구문: $skips $globals"
+            exit 1
+          fi
           names=$(git diff --cached --name-only --diff-filter=d -- frontend/src | sed 's#^frontend/##')
           # 파일 이름은 에이전트가 정한 값이라 뒤 단계에서 따옴표 없이 인자로 펼쳐진다.
           # 공백을 허용하면 `a -c src/x.mjs` 같은 디렉터리 이름으로 eslint에 옵션을 주입할 수 있어 줄 단위로 막는다.
@@ -242,6 +281,18 @@ jobs:
         env:
           FILES: ${{ steps.apply.outputs.files }}
 
+      # 테스트는 에이전트가 쓴 코드를 실행한다. 러너 위에서 바로 돌리면 sudo가 없어도 runner 사용자로
+      # 뒤에 도는 액션 post 스텝(런타임 토큰을 받는다)의 파일을 덮어쓰거나 그 환경변수를 읽을 수 있고,
+      # docker 그룹이라 호스트 root도 얻는다. 그래서 frontend만 마운트한 컨테이너에서 네트워크 없이 돌린다.
+      # 의존성은 위에서 base의 lockfile로 설치한 node_modules를 그대로 쓴다.
+      - name: Test
+        working-directory: frontend
+        run: >-
+          docker run --rm --network none
+          --user "$(id -u):$(id -g)" -e HOME=/tmp -e CI=true
+          -v "$PWD":/app -w /app
+          node:20 npm test
+
   publish:
     needs: [analyze, verify]
     if: ${{ !cancelled() && needs.analyze.result == 'success' }}
@@ -271,7 +322,7 @@ jobs:
       - name: Comment verify failure
         if: ${{ needs.analyze.outputs.has_patch == 'true' && needs.verify.result == 'failure' }}
         run: |
-          printf '수정안을 만들었지만 검증(타입체크·린트)을 통과하지 못해 브랜치를 올리지 않았어요.\n로그: %s\n' "$RUN_URL" > /tmp/comment.md
+          printf '수정안을 만들었지만 검증(타입체크·린트·테스트)을 통과하지 못해 브랜치를 올리지 않았어요.\n로그: %s\n' "$RUN_URL" > /tmp/comment.md
           gh issue comment "$ISSUE_NUMBER" --repo "$REPO" --body-file /tmp/comment.md
 
       - name: Checkout analyzed commit
@@ -332,7 +383,7 @@ jobs:
 
           {
             echo "$done_msg: $pr"
-            echo "검증(타입체크·린트)은 통과했어요."
+            echo "검증(타입체크·린트·테스트)은 통과했어요."
             echo
             echo "1. PR의 Files changed와 Vercel 프리뷰로 확인해 주세요."
             echo "2. 괜찮으면 **Ready for review**를 눌러 주세요. 그때부터 Chromatic·리뷰봇까지 모든 검사가 이 코드를 실행해요."
