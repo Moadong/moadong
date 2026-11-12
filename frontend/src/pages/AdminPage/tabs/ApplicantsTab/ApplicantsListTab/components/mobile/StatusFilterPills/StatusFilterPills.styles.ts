@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled, { css } from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
@@ -25,14 +25,14 @@ export const Pill = styled.button<{ $active: boolean }>`
 
   ${({ $active }) =>
     $active
-      ? `
-    background: ${colors.gray[800]};
-    color: ${colors.base.white};
-    ${setTypography(typography.button.button1)}
-  `
-      : `
-    background: ${colors.gray[100]};
-    color: ${colors.gray[600]};
-    ${setTypography(typography.paragraph.p6)}
-  `}
+      ? css`
+          background: ${colors.gray[925]};
+          color: ${colors.base.white};
+          ${setTypography(typography.button.button1)}
+        `
+      : css`
+          background: ${colors.gray[100]};
+          color: ${colors.gray[600]};
+          ${setTypography(typography.paragraph.p6)}
+        `}
 `;

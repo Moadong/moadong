@@ -34,3 +34,15 @@ export const Enabled: Story = {
     onToggleStatusMenu: () => {},
   },
 };
+
+/** 폰 폭: onExport를 넘기지 않아 내보내기 버튼이 없다(모바일 시안과 같다) */
+export const Phone: Story = {
+  args: {
+    enabled: true,
+    onStatusChange: () => {},
+    onDelete: () => {},
+    exportEnabled: false,
+    isStatusMenuOpen: false,
+    onToggleStatusMenu: () => {},
+  },
+};

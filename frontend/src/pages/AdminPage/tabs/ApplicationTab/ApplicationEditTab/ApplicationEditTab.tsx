@@ -23,6 +23,7 @@ import {
   useAiDraftQuota,
   useGetApplication,
 } from '@/hooks/Queries/useApplication';
+import useDevice from '@/hooks/useDevice';
 import LongPressReorderItem from '@/pages/AdminPage/components/LongPressReorderItem/LongPressReorderItem';
 import QuestionBuilder from '@/pages/AdminPage/components/QuestionBuilder/QuestionBuilder';
 import {
@@ -35,11 +36,11 @@ import {
   ApplicationFormData,
   ApplicationFormMode,
   Question,
-  QuestionType,
 } from '@/types/application';
 import * as Styled from './ApplicationEditTab.styles';
 import { QuestionDivider } from './ApplicationEditTab.styles';
-import { createQuestionId } from './utils/createQuestionId';
+import ApplicationEditTabMobile from './ApplicationEditTabMobile';
+import { useQuestionEditor } from './hooks/useQuestionEditor';
 import { getSaveFailureType } from './utils/getSaveFailureType';
 import { hasUserInput } from './utils/hasUserInput';
 
@@ -105,6 +106,7 @@ const ApplicationEditor = ({
   const queryClient = useQueryClient();
   const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
+  const { isMobile, isTablet } = useDevice();
 
   const [formData, setFormData] = useState<ApplicationFormData>(() =>
     toEditableFormData(initialFormData),
@@ -117,8 +119,12 @@ const ApplicationEditor = ({
     initialFormData?.externalApplicationUrl ?? '',
   );
 
+  const isMobileLayout = isMobile || isTablet;
+  // 모바일 화면에는 AI 초안 버튼이 없으므로 노출 이벤트와 잔여 횟수 조회도 하지 않는다
   const isDraftButtonVisible =
-    !formId && applicationFormMode === ApplicationFormMode.INTERNAL;
+    !isMobileLayout &&
+    !formId &&
+    applicationFormMode === ApplicationFormMode.INTERNAL;
   const { data: draftQuota } = useAiDraftQuota(clubId, isDraftButtonVisible);
   // 생성 성공/429로 갱신된 값을 즉시 반영 (quota 조회 전·실패 시에도 동작)
   const [remainingOverride, setRemainingOverride] = useState<number>();
@@ -300,6 +306,20 @@ const ApplicationEditor = ({
     }
   };
 
+  if (isMobileLayout) {
+    return (
+      <ApplicationEditTabMobile
+        formData={formData}
+        setFormData={setFormData}
+        applicationFormMode={applicationFormMode}
+        setApplicationFormMode={setApplicationFormMode}
+        externalApplicationUrl={externalApplicationUrl}
+        setExternalApplicationUrl={setExternalApplicationUrl}
+        onSubmit={handleSubmit}
+      />
+    );
+  }
+
   return (
     <>
       {isGenerating && (
@@ -351,7 +371,7 @@ const ApplicationEditor = ({
         </Styled.HeaderContainer>
         <Styled.FormTitle
           type='text'
-          maxLength={50}
+          maxLength={APPLICATION_FORM.APPLICATION_TITLE.maxLength}
           value={formData.title}
           onChange={(e) => handleFormTitleChange(e.target.value)}
           placeholder='지원서 제목을 입력하세요'
@@ -386,95 +406,17 @@ const InternalApplicationComponent = ({
   formData,
   setFormData,
 }: InternalApplicationComponentProps) => {
-  const addQuestion = () => {
-    const newQuestion: Question = {
-      id: createQuestionId(formData.questions ?? []),
-      title: '',
-      description: '',
-      type: 'SHORT_TEXT',
-      items: [],
-      options: { required: false },
-    };
-    setFormData((prev) => ({
-      ...prev,
-      questions: [...(prev.questions ?? []), newQuestion],
-    }));
-  };
-
-  const handleReorder = (reordered: Question[]) => {
-    setFormData((prev) => ({
-      ...prev,
-      questions: reordered,
-    }));
-  };
-
-  const removeQuestion = (id: number) => {
-    if (!formData.questions) return;
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions!.filter((q) => q.id !== id),
-    }));
-  };
-
-  const updateQuestionField = <K extends keyof Question>(
-    id: number,
-    key: K,
-    value: Question[K],
-  ) => {
-    if (!formData.questions) return;
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions!.map((q) =>
-        q.id === id ? { ...q, [key]: value } : q,
-      ),
-    }));
-  };
-
-  const handleFormDescriptionChange = (value: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      description: value,
-    }));
-  };
-
-  const handleTitleChange = (id: number) => (value: string) =>
-    updateQuestionField(id, 'title', value);
-
-  const handleDescriptionChange = (id: number) => (value: string) =>
-    updateQuestionField(id, 'description', value);
-
-  const handleItemsChange = (id: number) => (items: { value: string }[]) =>
-    updateQuestionField(id, 'items', items);
-
-  const handleTypeChange = (id: number) => (newType: QuestionType) => {
-    if (!formData.questions) return;
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions!.map((q) => {
-        if (q.id !== id) return q;
-        const isChoice = newType === 'CHOICE' || newType === 'MULTI_CHOICE';
-        return {
-          ...q,
-          type: newType,
-          items: isChoice
-            ? q.items && q.items.length >= 1
-              ? q.items
-              : [{ value: '' }]
-            : [],
-        };
-      }),
-    }));
-  };
-
-  const handleRequiredChange = (id: number) => (value: boolean) => {
-    if (!formData.questions) return;
-    setFormData((prev) => ({
-      ...prev,
-      questions: prev.questions!.map((q) =>
-        q.id === id ? { ...q, options: { ...q.options, required: value } } : q,
-      ),
-    }));
-  };
+  const {
+    addQuestion,
+    handleReorder,
+    removeQuestion,
+    handleFormDescriptionChange,
+    handleTitleChange,
+    handleDescriptionChange,
+    handleItemsChange,
+    handleTypeChange,
+    handleRequiredChange,
+  } = useQuestionEditor(formData, setFormData);
 
   const renderQuestionBuilder = (question: Question, index: number) => (
     <QuestionBuilder

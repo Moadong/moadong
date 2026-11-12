@@ -1,3 +1,4 @@
+import { APPLICATION_FORM } from '@/constants/applicationForm';
 import { ApplicationFormData, ApplicationFormMode } from '@/types/application';
 
 const ALLOWED_EXTERNAL_URLS = [
@@ -27,8 +28,10 @@ export const validateApplicationForm = (
 
   if (!formData.title?.trim()) {
     errors.title = '지원서 제목을 입력해주세요.';
-  } else if (formData.title.length > 50) {
-    errors.title = '지원서 제목은 최대 50자까지 입력할 수 있습니다.';
+  } else if (
+    formData.title.length > APPLICATION_FORM.APPLICATION_TITLE.maxLength
+  ) {
+    errors.title = `지원서 제목은 최대 ${APPLICATION_FORM.APPLICATION_TITLE.maxLength}자까지 입력할 수 있습니다.`;
   }
 
   if (mode === ApplicationFormMode.INTERNAL) {

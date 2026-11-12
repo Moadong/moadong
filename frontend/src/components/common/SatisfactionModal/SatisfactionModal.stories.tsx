@@ -11,6 +11,7 @@ const SURVEY_KEYS = [
   STORAGE_KEYS.VISIT_DAY_COUNT,
   STORAGE_KEYS.LAST_VISIT_DATE,
   STORAGE_KEYS.SATISFACTION_ANSWERED,
+  STORAGE_KEYS.SATISFACTION_SNOOZED,
 ];
 
 const meta = {
@@ -20,7 +21,7 @@ const meta = {
     layout: 'fullscreen',
     docs: {
       description: {
-        component: `앱 웹뷰에서 ${SATISFACTION_ASK_THRESHOLD}일 이상 방문했거나 동아리 상세를 ${SATISFACTION_ASK_THRESHOLD}번 이상 본 사용자에게 만족도를 묻는다. 좋아요는 스토어 리뷰로, 아쉬워요는 우체통으로 보낸다.`,
+        component: `앱 웹뷰에서 ${SATISFACTION_ASK_THRESHOLD}일 이상 방문했거나 동아리 상세를 ${SATISFACTION_ASK_THRESHOLD}번 이상 본 사용자에게 만족도를 묻는다(한 번 미루면 방문일만 본다). 좋아요는 스토어 리뷰로, 아쉬워요는 우체통으로 보낸다.`,
       },
     },
   },

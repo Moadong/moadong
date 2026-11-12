@@ -34,9 +34,9 @@ export const TopSection = styled.div`
 export const FilterSection = styled.div`
   display: flex;
   align-items: center;
-  padding: 10px 0 10px 20px;
-  margin-top: 12px;
-  border-top: 4px solid ${colors.gray[200]};
+  padding: 8px 0 10px 20px;
+  margin-top: 10px;
+  border-top: 4px solid ${colors.gray[100]};
 `;
 
 export const FilterPillsWrapper = styled.div`
@@ -50,14 +50,15 @@ export const ControlRow = styled.div`
   align-items: center;
   justify-content: space-between;
   padding: 10px 20px;
-  border-top: 1px solid ${colors.gray[200]};
-  border-bottom: 1px solid ${colors.gray[200]};
+  box-shadow:
+    inset 0 1px 0 ${colors.gray[300]},
+    inset 0 -1px 0 ${colors.gray[300]};
 `;
 
 export const AllSelectArea = styled.button`
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 12px;
   background: none;
   border: none;
   cursor: pointer;
@@ -69,7 +70,6 @@ export const AllCheckbox = styled.div<{ $checked: boolean }>`
   height: 24px;
   border-radius: 6px;
   border: 1px solid ${colors.gray[400]};
-  background-color: ${colors.base.white};
   flex-shrink: 0;
 
   ${({ $checked }) =>
@@ -110,5 +110,5 @@ export const EmptyState = styled.div`
 
 export const EmptyLabel = styled.span`
   ${setTypography(typography.paragraph.p2)}
-  color: ${colors.gray[900]};
+  color: ${colors.gray[800]};
 `;

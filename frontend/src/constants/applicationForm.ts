@@ -1,4 +1,7 @@
 export const APPLICATION_FORM = {
+  APPLICATION_TITLE: {
+    maxLength: 50,
+  },
   APPLICATION_DESCRIPTION: {
     placeholder: '지원서 설명을 입력해주세요 (최대 3000자)',
     maxLength: 3000,
@@ -22,6 +25,8 @@ export const APPLICATION_FORM = {
   CHOICE: {
     placeholder: '항목(최대 20자)',
     maxLength: 20,
+    minItems: 1,
+    maxItems: 6,
   },
 } as const;
 

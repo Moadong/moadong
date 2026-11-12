@@ -19,7 +19,7 @@ export const MenuContainer = styled.div`
   z-index: 10;
 `;
 
-export const MenuItem = styled.div<{ $danger?: boolean }>`
+export const MenuItem = styled.div`
   display: flex;
   align-items: center;
   align-self: stretch;
@@ -27,7 +27,7 @@ export const MenuItem = styled.div<{ $danger?: boolean }>`
   gap: 11px;
   ${setTypography(typography.paragraph.p6)}
   letter-spacing: -0.02em;
-  color: ${({ $danger }) => ($danger ? colors.primary[900] : colors.gray[800])};
+  color: ${colors.gray[925]};
   background-color: transparent;
   cursor: pointer;
   box-sizing: border-box;
@@ -40,6 +40,7 @@ export const MenuItem = styled.div<{ $danger?: boolean }>`
 export const ToggleMenuItem = styled(MenuItem)<{ $active?: boolean }>`
   ${setTypography(typography.paragraph.p5)}
   letter-spacing: -0.02em;
+  background-color: ${colors.gray[100]};
 `;
 
 export const EditDeleteGroup = styled.div`
@@ -73,6 +74,6 @@ export const ToggleIcon = styled.span<{ $active: boolean }>`
 export const Separator = styled.div`
   width: 150px;
   height: 0;
-  border: 1px solid ${colors.gray[200]};
+  border-top: 1px solid ${colors.gray[200]};
   flex-shrink: 0;
 `;

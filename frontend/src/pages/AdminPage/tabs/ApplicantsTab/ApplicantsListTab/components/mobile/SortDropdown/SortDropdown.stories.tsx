@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import SortDropdown, { SortValue } from './SortDropdown';
+import figmaMapping from './SortDropdown.figma.json';
 
 const meta = {
   title:
@@ -11,7 +12,7 @@ const meta = {
     (Story) => (
       <div
         style={{
-          width: 375,
+          width: 94,
           display: 'flex',
           justifyContent: 'flex-end',
           position: 'relative',
@@ -41,6 +42,12 @@ const Interactive = (args: React.ComponentProps<typeof SortDropdown>) => {
 };
 
 export const Default: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['SortDropdown/Default'].figma,
+    },
+  },
   args: {
     value: 'date',
     onChange: () => {},

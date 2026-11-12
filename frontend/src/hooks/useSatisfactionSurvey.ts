@@ -36,10 +36,17 @@ const shouldAskOnMount = () => {
   }
 
   const pendingVisitDay = isTodayCounted() ? 0 : 1;
+  const hasVisitedEnoughDays =
+    readCount(STORAGE_KEYS.VISIT_DAY_COUNT) + pendingVisitDay >=
+    SATISFACTION_ASK_THRESHOLD;
+
+  // 조회 수는 하루 만에 채울 수 있어, 미룬 뒤에는 방문일로만 다시 묻는다
+  if (localStorage.getItem(STORAGE_KEYS.SATISFACTION_SNOOZED) === 'true') {
+    return hasVisitedEnoughDays;
+  }
 
   return (
-    readCount(STORAGE_KEYS.VISIT_DAY_COUNT) + pendingVisitDay >=
-      SATISFACTION_ASK_THRESHOLD ||
+    hasVisitedEnoughDays ||
     readCount(STORAGE_KEYS.CLUB_VIEW_COUNT) >= SATISFACTION_ASK_THRESHOLD
   );
 };
@@ -60,7 +67,11 @@ const useSatisfactionSurvey = () => {
     bumpCount(STORAGE_KEYS.VISIT_DAY_COUNT);
   }, []);
 
-  const closeForever = () => {
+  /**
+   * 첫 질문에 답한 순간 다시 묻지 않도록 기록한다.
+   * 이어지는 리뷰·우체통 안내를 넘기거나 앱을 꺼도 이미 답한 사람이다.
+   */
+  const answer = () => {
     localStorage.setItem(STORAGE_KEYS.SATISFACTION_ANSWERED, 'true');
     setIsOpen(false);
   };
@@ -68,18 +79,16 @@ const useSatisfactionSurvey = () => {
   /**
    * 미루면 카운터를 비워 임계값만큼 더 쓴 뒤에 다시 묻는다.
    * 마지막 방문일은 오늘 그대로 두어 오늘이 다시 세지지 않게 한다.
-   * 방문일 기준이라 재노출까지 최소 임계값만큼의 날이 보장된다.
+   * 미룬 기록이 조회 수 조건을 끄므로 재노출까지 최소 임계값만큼의 날이 보장된다.
    */
   const snooze = () => {
     localStorage.setItem(STORAGE_KEYS.VISIT_DAY_COUNT, '0');
     localStorage.setItem(STORAGE_KEYS.CLUB_VIEW_COUNT, '0');
+    localStorage.setItem(STORAGE_KEYS.SATISFACTION_SNOOZED, 'true');
     setIsOpen(false);
   };
 
-  /** 첫 모달만 닫는다. localStorage는 건드리지 않는다 */
-  const closeFirst = () => setIsOpen(false);
-
-  return { isOpen, closeFirst, closeForever, snooze };
+  return { isOpen, answer, snooze };
 };
 
 export default useSatisfactionSurvey;

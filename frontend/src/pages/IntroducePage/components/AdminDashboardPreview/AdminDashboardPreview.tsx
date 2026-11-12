@@ -114,7 +114,7 @@ const AdminDashboardPreview = () => {
               <Styled.PageTitle>지원자 현황</Styled.PageTitle>
               <Styled.FormName>2026년 2학기 신입 부원 모집</Styled.FormName>
             </Styled.PageHeader>
-            <StatusSummaryCard data={summary} />
+            <StatusSummaryCard data={summary} spread />
             <Styled.List>
               <AnimatePresence initial={false}>
                 {rows.map((applicant) => (

@@ -1,0 +1,10 @@
+{
+  "AnswerCard/ShortText": {
+    "figma": "https://www.figma.com/design/LB4VudDhuIGjFayrm1kge1/x?node-id=10676-83645",
+    "story": "pages-adminpage-tabs-applicantstab-applicantdetailpage-components-mobile-answercard--short-text"
+  },
+  "AnswerCard/LongText": {
+    "figma": "https://www.figma.com/design/LB4VudDhuIGjFayrm1kge1/x?node-id=10676-83789",
+    "story": "pages-adminpage-tabs-applicantstab-applicantdetailpage-components-mobile-answercard--long-text"
+  }
+}

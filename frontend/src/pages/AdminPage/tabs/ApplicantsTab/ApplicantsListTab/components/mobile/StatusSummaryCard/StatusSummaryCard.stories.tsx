@@ -1,5 +1,6 @@
 import type { Meta, StoryObj } from '@storybook/react';
 import StatusSummaryCard from './StatusSummaryCard';
+import figmaMapping from './StatusSummaryCard.figma.json';
 
 const meta = {
   title:
@@ -8,7 +9,7 @@ const meta = {
   parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
-      <div style={{ width: 375, padding: '0 20px' }}>
+      <div style={{ width: 335 }}>
         <Story />
       </div>
     ),
@@ -19,6 +20,12 @@ export default meta;
 type Story = StoryObj<typeof meta>;
 
 export const Default: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['StatusSummaryCard/Default'].figma,
+    },
+  },
   args: {
     data: {
       total: 50,

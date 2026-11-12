@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
 import ApplicantNavHeader from './ApplicantNavHeader';
+import figmaMapping from './ApplicantNavHeader.figma.json';
 
 const mockApplicants = [
   { id: 'a1', name: '이유주' },
@@ -17,7 +18,7 @@ const meta = {
   parameters: { layout: 'centered' },
   decorators: [
     (Story) => (
-      <div style={{ width: 375, padding: '0 20px' }}>
+      <div style={{ width: 335 }}>
         <Story />
       </div>
     ),
@@ -60,6 +61,12 @@ export const Default: Story = {
 };
 
 export const Middle: Story = {
+  parameters: {
+    design: {
+      type: 'figma',
+      url: figmaMapping['ApplicantNavHeader/Middle'].figma,
+    },
+  },
   args: {
     applicants: mockApplicants,
     currentIndex: 2,

@@ -1,14 +1,14 @@
 import DeleteIcon from '@/assets/images/icons/delete_choice.svg';
+import ChoiceItem from '@/components/application/ChoiceItem/ChoiceItem';
 import QuestionDescription from '@/components/application/QuestionDescription/QuestionDescription';
 import QuestionTitle from '@/components/application/QuestionTitle/QuestionTitle';
 import InputField from '@/components/common/InputField/InputField';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
-import ChoiceItem from '@/pages/ApplicationFormPage/components/ChoiceItem/ChoiceItem';
 import { ChoiceProps } from '@/types/application';
 import * as Styled from './Choice.styles';
 
-const MIN_ITEMS = 1;
-const MAX_ITEMS = 6;
+const MIN_ITEMS = APPLICATION_FORM.CHOICE.minItems;
+const MAX_ITEMS = APPLICATION_FORM.CHOICE.maxItems;
 
 const Choice = ({
   id,

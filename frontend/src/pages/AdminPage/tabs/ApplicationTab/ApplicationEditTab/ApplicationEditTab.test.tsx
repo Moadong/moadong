@@ -26,6 +26,15 @@ jest.mock('@/hooks/Queries/useApplication', () => ({
   useGetApplication: jest.fn(),
   useAiDraftQuota: jest.fn(),
 }));
+jest.mock('@/hooks/useDevice', () => ({
+  __esModule: true,
+  default: () => ({
+    isMobile: false,
+    isTablet: false,
+    isLaptop: false,
+    isDesktop: true,
+  }),
+}));
 const mockTrackEvent = jest.fn();
 jest.mock('@/hooks/Mixpanel/useMixpanelTrack', () => ({
   __esModule: true,

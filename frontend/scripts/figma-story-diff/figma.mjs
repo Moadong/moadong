@@ -38,6 +38,28 @@ const toHex = ({ r, g, b }) =>
 // 표기는 story.mjs와 같아야 한다. 두 표를 나란히 눈으로 대조하는 용도다.
 const alphaPercent = (alpha) => +(alpha * 100).toFixed(1);
 
+// paints는 Figma 순서(아래 → 위)다. 바닥이 불투명 단색이고 그 위가 전부 단색이면, 위 레이어를
+// 차례로 알파 합성해 화면에 보이는 한 색을 돌려준다. 그 밖(바닥이 반투명, 그라디언트·이미지 섞임)은 null.
+export function compositeSolidStack(paints, nodeOpacity = 1) {
+  const visible = paints.filter((p) => p.visible !== false);
+  if (visible.length < 2 || nodeOpacity < 1) return null;
+  // 합성식은 일반(source-over) 겹침일 때만 맞다. MULTIPLY 같은 블렌드가 섞이면 합성하지 않는다.
+  if (
+    visible.some(
+      (p) => p.type !== 'SOLID' || (p.blendMode ?? 'NORMAL') !== 'NORMAL',
+    )
+  )
+    return null;
+  const [base, ...overlays] = visible;
+  if ((base.opacity ?? 1) < 1) return null;
+  const color = { r: base.color.r, g: base.color.g, b: base.color.b };
+  for (const { color: c, opacity = 1 } of overlays) {
+    for (const ch of ['r', 'g', 'b'])
+      color[ch] = color[ch] * (1 - opacity) + c[ch] * opacity;
+  }
+  return color;
+}
+
 export function extractTokens(
   node,
   acc = { colors: new Map(), typography: new Map(), translucent: new Map() },
@@ -46,18 +68,25 @@ export function extractTokens(
   if (node.visible === false) return acc;
   // 노드 opacity는 자식까지 곱해져 내려간다. paint opacity만 보면 반투명을 불투명 토큰으로 잘못 센다.
   const nodeOpacity = inheritedOpacity * (node.opacity ?? 1);
-  for (const paint of [...(node.fills ?? []), ...(node.strokes ?? [])]) {
-    if (paint.type !== 'SOLID' || paint.visible === false) continue;
-    const opacity = nodeOpacity * (paint.opacity ?? 1);
-    // 반투명 fill은 다른 fill 위에 겹쳐 색을 바꾸는 용도라 토큰이 아니다. 따로 모아 리포트에만 보인다.
-    if (opacity < 1) {
-      acc.translucent.set(
-        `${toHex(paint.color)}@${alphaPercent(opacity)}%`,
-        node.name,
-      );
-    } else {
-      acc.colors.set(toHex(paint.color), node.name);
+  for (const paints of [node.fills ?? [], node.strokes ?? []]) {
+    // 불투명 바닥 위에 반투명 단색을 겹친 스택은 합성색이 화면에 보이는 색이라 그 색을 센다.
+    // 시안을 SSOT로 따르므로 겹침도 의도한 색으로 본다. 겹친 레이어는 리포트의 반투명 절에 그대로 남긴다.
+    const composite = compositeSolidStack(paints, nodeOpacity);
+    for (const paint of paints) {
+      if (paint.type !== 'SOLID' || paint.visible === false) continue;
+      const opacity = nodeOpacity * (paint.opacity ?? 1);
+      // 반투명 fill은 다른 fill 위에 겹쳐 색을 바꾸는 용도라 단독으로는 토큰이 아니다. 따로 모아 리포트에만 보인다.
+      if (opacity < 1) {
+        acc.translucent.set(
+          `${toHex(paint.color)}@${alphaPercent(opacity)}%`,
+          node.name,
+        );
+      } else if (!composite) {
+        // 합성했으면 스택 안의 불투명 레이어는 그대로 보이지 않으므로 합성색만 센다
+        acc.colors.set(toHex(paint.color), node.name);
+      }
     }
+    if (composite) acc.colors.set(toHex(composite), node.name);
   }
   if (node.type === 'TEXT' && node.style) {
     const { fontSize, fontWeight, lineHeightPercentFontSize, lineHeightUnit } =

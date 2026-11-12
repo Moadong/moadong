@@ -1,4 +1,8 @@
 {
+  "src/components/application/ChoiceItem/ChoiceItem.styles.ts": {
+    "#818181": 1,
+    "#FFD9CB": 1
+  },
   "src/components/application/questionTypes/Choice.styles.ts": {
     "#555555": 1,
     "#CCCCCC": 1
@@ -55,10 +59,6 @@
     "#CCCCCC": 1,
     "#D4D4D4": 1,
     "#E0E0E0": 1
-  },
-  "src/pages/ApplicationFormPage/components/ChoiceItem/ChoiceItem.styles.ts": {
-    "#818181": 1,
-    "#FFD9CB": 1
   },
   "src/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard.styles.ts": {
     "#009CF6": 1,
