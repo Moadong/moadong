@@ -211,7 +211,7 @@ jobs:
           fi
           # --index로 적용해야 새 파일도 아래 목록에 잡힌다.
           git apply --index design-feedback-out/fix.patch
-          # 새 파일은 TS·TSX만 받는다. Edit 권한 규칙이 Write까지 열 수 있어 권한 문자열이 아니라 여기서 강제한다.
+          # 새 파일은 TS·TSX만 받는다. analyze에 Write(frontend/src/**)를 열었으니 확장자는 권한 문자열이 아니라 여기서 강제한다.
           # --no-renames: 기존 파일을 새 경로로 옮기는 패치는 rename(R)으로 잡혀 A 필터를 비켜 가므로 삭제+추가로 본다.
           added=$(git diff --cached --name-only --no-renames --diff-filter=A -- frontend/src | grep -vE '\.tsx?$' || true)
           if [[ -n "$added" ]]; then
@@ -247,6 +247,14 @@ jobs:
             | grep -E '^\+' | grep -E '\bjest\.|globalThis\.(it|test|describe)\b' || true)
           if [[ -n "$skips$globals" ]]; then
             echo "::error::테스트를 건너뛰거나 jest 전역을 건드리는 구문: $skips $globals"
+            exit 1
+          fi
+          # 실패하는 테스트 파일을 지우면 skip보다 쉽게 테스트를 통과한다. 테스트 파일을 일반 이름으로 옮겨도
+          # --no-renames로 삭제로 잡힌다. 테스트 케이스 블록만 지우는 경우는 사람이 diff로 본다.
+          deleted_tests=$(git diff --cached --name-only --no-renames --diff-filter=D -- \
+            'frontend/src/*.test.*' 'frontend/src/*.spec.*' 'frontend/src/*__tests__/*' || true)
+          if [[ -n "$deleted_tests" ]]; then
+            echo "::error::테스트 파일 삭제: $deleted_tests"
             exit 1
           fi
           names=$(git diff --cached --name-only --diff-filter=d -- frontend/src | sed 's#^frontend/##')
