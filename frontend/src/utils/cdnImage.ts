@@ -51,13 +51,14 @@ const cdnImage = (url: string, usage: CdnImageUsage): string => {
 
 /**
  * 존에서 변환 자체가 꺼지면 변환 URL이 실패해 onerror=redirect도 동작하지 않는다.
- * <img>의 onError에서 원본 URL로 한 번만 바꾼다. 원본도 실패하면 더 바꾸지 않는다.
+ * <img>의 onError에서 원본 URL로 한 번만 바꾼다.
+ * 폴백 여부는 요소에 표시를 남기지 않고 지금 src로 판단한다. React가 같은 <img>를 재사용하며
+ * src만 바꿔도 새 이미지가 다시 폴백할 수 있고, 이미 원본이면(원본도 실패) 더 바꾸지 않는다.
  */
 export const fallbackToOriginal =
   (originalUrl: string) => (event: SyntheticEvent<HTMLImageElement>) => {
     const img = event.currentTarget;
-    if (img.dataset.cdnFallback) return;
-    img.dataset.cdnFallback = 'true';
+    if (img.getAttribute('src') === originalUrl) return;
     img.src = originalUrl;
   };
 

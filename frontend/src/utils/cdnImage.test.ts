@@ -78,29 +78,41 @@ describe('cdnImage', () => {
 });
 
 describe('fallbackToOriginal', () => {
-  const ORIGINAL = 'https://cdn.moadong.com/club/feed/a.webp';
-  const fireError = (img: HTMLImageElement) =>
-    fallbackToOriginal(ORIGINAL)({
+  const ORIGINAL_A = 'https://cdn.moadong.com/club/feed/a.webp';
+  const ORIGINAL_B = 'https://cdn.moadong.com/club/feed/b.webp';
+  const fireError = (img: HTMLImageElement, originalUrl: string) =>
+    fallbackToOriginal(originalUrl)({
       currentTarget: img,
     } as unknown as SyntheticEvent<HTMLImageElement>);
 
   it('변환 이미지가 실패하면 원본 주소로 바꾼다', () => {
     const img = document.createElement('img');
-    img.src = cdnImage(ORIGINAL, 'grid');
+    img.src = cdnImage(ORIGINAL_A, 'grid');
 
-    fireError(img);
+    fireError(img, ORIGINAL_A);
 
-    expect(img.src).toBe(ORIGINAL);
+    expect(img.getAttribute('src')).toBe(ORIGINAL_A);
   });
 
   it('원본도 실패하면 다시 바꾸지 않는다', () => {
     const img = document.createElement('img');
-    img.src = cdnImage(ORIGINAL, 'grid');
-    fireError(img);
-    img.src = 'https://cdn.moadong.com/changed-after-fallback.webp';
+    img.src = ORIGINAL_A;
+    const setSrc = jest.spyOn(img, 'src', 'set');
 
-    fireError(img);
+    fireError(img, ORIGINAL_A);
 
-    expect(img.src).toBe('https://cdn.moadong.com/changed-after-fallback.webp');
+    expect(setSrc).not.toHaveBeenCalled();
+  });
+
+  it('같은 요소가 다른 이미지를 받으면 그 이미지도 원본으로 바꾼다', () => {
+    // 라우트 이동처럼 React가 <img>를 재사용하면서 src만 바꾸는 경우
+    const img = document.createElement('img');
+    img.src = cdnImage(ORIGINAL_A, 'grid');
+    fireError(img, ORIGINAL_A);
+
+    img.src = cdnImage(ORIGINAL_B, 'grid');
+    fireError(img, ORIGINAL_B);
+
+    expect(img.getAttribute('src')).toBe(ORIGINAL_B);
   });
 });
