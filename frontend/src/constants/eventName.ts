@@ -63,14 +63,16 @@ export const USER_EVENT = {
   HOME_BUTTON_CLICKED: 'Home Button Clicked',
   /** 헤더 관리자 버튼 클릭 */
   ADMIN_BUTTON_CLICKED: 'Admin Button Clicked',
-  /** 푸터 모아동 인스타그램 링크 클릭 */
-  FOOTER_INSTAGRAM_CLICKED: 'Footer Instagram Clicked',
   /** 헤더 모아동 소개 버튼 클릭 */
   INTRODUCE_BUTTON_CLICKED: 'Introduce Button Clicked',
   /** 헤더 총동연 버튼 클릭 */
   CLUB_UNION_BUTTON_CLICKED: 'Club Union Button Clicked',
   /** 헤더 홍보 버튼 클릭 */
   PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
+
+  // 푸터
+  /** 푸터 모아동 인스타그램 링크 클릭 (page: 현재 경로) */
+  FOOTER_INSTAGRAM_CLICKED: 'Footer Instagram Clicked',
 
   // 동아리 목록
   /** 동아리 카드 클릭 */
