@@ -1,3 +1,5 @@
+import type { SyntheticEvent } from 'react';
+
 const CDN_HOST = 'cdn.moadong.com';
 
 /**
@@ -28,6 +30,9 @@ export type CdnImageUsage = keyof typeof CDN_IMAGE_SIZES;
 /**
  * cdn.moadong.com 이미지를 Cloudflare Image Transformations URL로 바꾼다.
  * 다른 호스트(dev의 cdn.yourun.shop, 번들 에셋, blob 등)는 변환할 수 없으니 그대로 돌려준다.
+ *
+ * onerror=redirect: 변환이 실패하면(변환 오류, 월 한도 초과 등) Cloudflare가 원본으로 307 리다이렉트한다.
+ * CSS 배경처럼 onError를 받을 수 없는 곳도 이걸로 원본이 보인다.
  */
 const cdnImage = (url: string, usage: CdnImageUsage): string => {
   let parsed: URL;
@@ -41,7 +46,19 @@ const cdnImage = (url: string, usage: CdnImageUsage): string => {
   if (parsed.hostname !== CDN_HOST || parsed.search) return url;
 
   const { width, height, fit } = CDN_IMAGE_SIZES[usage];
-  return `https://${CDN_HOST}/cdn-cgi/image/format=auto,width=${width},height=${height},fit=${fit}${parsed.pathname}`;
+  return `https://${CDN_HOST}/cdn-cgi/image/format=auto,width=${width},height=${height},fit=${fit},onerror=redirect${parsed.pathname}`;
 };
+
+/**
+ * 존에서 변환 자체가 꺼지면 변환 URL이 실패해 onerror=redirect도 동작하지 않는다.
+ * <img>의 onError에서 원본 URL로 한 번만 바꾼다. 원본도 실패하면 더 바꾸지 않는다.
+ */
+export const fallbackToOriginal =
+  (originalUrl: string) => (event: SyntheticEvent<HTMLImageElement>) => {
+    const img = event.currentTarget;
+    if (img.dataset.cdnFallback) return;
+    img.dataset.cdnFallback = 'true';
+    img.src = originalUrl;
+  };
 
 export default cdnImage;

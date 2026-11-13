@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import useDevice from '@/hooks/useDevice';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
-import cdnImage from '@/utils/cdnImage';
+import cdnImage, { fallbackToOriginal } from '@/utils/cdnImage';
 import * as Styled from './ClubFeed.styles';
 
 const DESKTOP_EAGER_IMAGE_COUNT = 15;
@@ -54,6 +54,7 @@ const ClubFeed = ({ feed, clubName = '동아리' }: Props) => {
             <Styled.PhotoItem key={`${f}-${index}`} onClick={() => open(index)}>
               <Styled.PhotoImage
                 src={cdnImage(f, 'grid')}
+                onError={fallbackToOriginal(f)}
                 alt={`활동사진 ${index + 1}`}
                 loading={index < loadingThreshold ? 'eager' : 'lazy'}
               />
