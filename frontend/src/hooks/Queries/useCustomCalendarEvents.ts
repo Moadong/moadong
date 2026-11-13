@@ -28,6 +28,9 @@ export const useCreateCustomCalendarEvent = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.customCalendarEvents.all,
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allCalendarEvents,
+      });
     },
   });
 };
@@ -46,6 +49,9 @@ export const useUpdateCustomCalendarEvent = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.customCalendarEvents.all,
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allCalendarEvents,
+      });
     },
   });
 };
@@ -63,6 +69,9 @@ export const useDeleteCustomCalendarEvent = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.customCalendarEvents.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allCalendarEvents,
       });
     },
   });

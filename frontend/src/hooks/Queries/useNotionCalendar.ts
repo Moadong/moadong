@@ -73,11 +73,14 @@ export const useDisconnectNotionCalendar = () => {
     mutationFn: disconnectNotionCalendar,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.notionCalendar.all });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allCalendarEvents,
+      });
     },
   });
 };
 
-/** 선택한 데이터베이스의 페이지를 불러와 페이지 캐시에 반영한다. */
+/** 선택한 데이터베이스의 페이지를 불러와 페이지 캐시에 반영한다. 서버도 이 요청에서 선택한 데이터베이스를 저장하므로 공개 캘린더를 무효화한다. */
 export const useApplyNotionDatabase = () => {
   const queryClient = useQueryClient();
   return useMutation({
@@ -85,6 +88,9 @@ export const useApplyNotionDatabase = () => {
       fetchNotionDatabasePages({ databaseId }),
     onSuccess: (response) => {
       queryClient.setQueryData(notionQueries.pages().queryKey, response);
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allCalendarEvents,
+      });
     },
   });
 };
