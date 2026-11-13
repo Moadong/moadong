@@ -1,5 +1,5 @@
 import { clubLocations } from '@/constants/clubLocation';
-import { ImageItem } from '@/pages/AdminPage/components/ImageSortGrid/types';
+import { ImageItem } from '@/types/imageItem';
 import { PromotionArticle } from '@/types/promotion';
 import {
   articleToFormValues,

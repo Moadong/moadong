@@ -1,11 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useUpdateFeed, useUploadFeed } from '@/hooks/Queries/useClubImages';
 import { buildFinalUrls } from '@/pages/AdminPage/components/ImageSortGrid/buildFinalUrls';
-import {
-  ImageItem,
-  LocalItem,
-  UploadedItem,
-} from '@/pages/AdminPage/components/ImageSortGrid/types';
+import { ImageItem, LocalItem, UploadedItem } from '@/types/imageItem';
 import {
   extractLocalItems,
   findOversizedFile,

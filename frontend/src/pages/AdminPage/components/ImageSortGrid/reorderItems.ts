@@ -1,4 +1,4 @@
-import { ImageItem } from './types';
+import { ImageItem } from '@/types/imageItem';
 
 export const reorderItems = (
   items: ImageItem[],
