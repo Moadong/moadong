@@ -75,7 +75,7 @@ describe('PhotoModal 본 이미지 지연 로딩', () => {
     renderModal(3);
 
     expect(screen.getByAltText('활동 사진 4').getAttribute('src')).toBe(
-      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=2400,height=2400,fit=scale-down/club/feed/3.jpg',
+      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=2400,height=2400,fit=scale-down,onerror=redirect/club/feed/3.jpg',
     );
   });
 
