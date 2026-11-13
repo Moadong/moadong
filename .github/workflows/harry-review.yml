@@ -52,6 +52,7 @@ jobs:
           fetch-depth: 0
 
       - name: harry review
+        id: claude
         uses: anthropics/claude-code-action@v1
         with:
           github_token: ${{ steps.app-token.outputs.token }}
@@ -96,6 +97,22 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
 
+      # 토큰 사용량·비용을 `HARRY_USAGE` 한 줄로 로그와 Job Summary에 남긴다(실행 로그는 90일 뒤 지워져 따로 모은다).
+      # 실행 파일 전체엔 도구 결과(시크릿이 섞일 수 있다)가 있어 결과 메시지의 사용량 필드만 골라 꺼낸다. 실패해도 잡 결과엔 영향 없다.
+      - name: Record token usage
+        if: always() && steps.claude.outputs.execution_file != ''
+        continue-on-error: true
+        env:
+          EXECUTION_FILE: ${{ steps.claude.outputs.execution_file }}
+          EVENT_ACTION: ${{ github.event.action }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          usage=$(jq -c --arg job "$GITHUB_JOB" --arg event "$GITHUB_EVENT_NAME.$EVENT_ACTION" --arg pr "$PR_NUMBER" \
+            'map(select(.type == "result")) | last | {job: $job, event: $event, pr: $pr, num_turns, duration_ms, total_cost_usd, usage, model_usage: .modelUsage}' \
+            "$EXECUTION_FILE")
+          printf 'HARRY_USAGE %s\n' "$usage"
+          { echo '### harry 토큰 사용량'; echo '```json'; jq . <<< "$usage"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
   harry-rule-suggest:
     # 리뷰에서 발견한 "반복될 만한" 실수 패턴을 harry의 룰 파일에 반영하는 PR을 따로 연다.
     # - 최초 리뷰 때만 실행(opened, ready_for_review, base가 main에서 바뀐 edited):
@@ -135,6 +152,7 @@ jobs:
           token: ${{ steps.app-token.outputs.token }}
 
       - name: harry rule suggestion
+        id: claude
         uses: anthropics/claude-code-action@v1
         with:
           github_token: ${{ steps.app-token.outputs.token }}
@@ -184,6 +202,22 @@ jobs:
           PR_NUMBER: ${{ github.event.pull_request.number }}
           PR_BASE: ${{ github.event.pull_request.base.ref }}
 
+      # 토큰 사용량·비용을 `HARRY_USAGE` 한 줄로 로그와 Job Summary에 남긴다(실행 로그는 90일 뒤 지워져 따로 모은다).
+      # 실행 파일 전체엔 도구 결과(시크릿이 섞일 수 있다)가 있어 결과 메시지의 사용량 필드만 골라 꺼낸다. 실패해도 잡 결과엔 영향 없다.
+      - name: Record token usage
+        if: always() && steps.claude.outputs.execution_file != ''
+        continue-on-error: true
+        env:
+          EXECUTION_FILE: ${{ steps.claude.outputs.execution_file }}
+          EVENT_ACTION: ${{ github.event.action }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          usage=$(jq -c --arg job "$GITHUB_JOB" --arg event "$GITHUB_EVENT_NAME.$EVENT_ACTION" --arg pr "$PR_NUMBER" \
+            'map(select(.type == "result")) | last | {job: $job, event: $event, pr: $pr, num_turns, duration_ms, total_cost_usd, usage, model_usage: .modelUsage}' \
+            "$EXECUTION_FILE")
+          printf 'HARRY_USAGE %s\n' "$usage"
+          { echo '### harry 토큰 사용량'; echo '```json'; jq . <<< "$usage"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
+
   harry-reply:
     # harry의 인라인 리뷰 코멘트에 사람이 답글을 달면, 그 스레드에만 답변한다.
     # - 사람(비봇) 답글만 반응: 봇 답글(harry 자신 포함)에 반응하면 무한 루프.
@@ -230,6 +264,7 @@ jobs:
           persist-credentials: false
 
       - name: harry reply
+        id: claude
         uses: anthropics/claude-code-action@v1
         with:
           github_token: ${{ steps.app-token.outputs.token }}
@@ -270,3 +305,19 @@ jobs:
         env:
           CLAUDE_CODE_OAUTH_TOKEN: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
           GH_TOKEN: ${{ steps.app-token.outputs.token }}
+
+      # 토큰 사용량·비용을 `HARRY_USAGE` 한 줄로 로그와 Job Summary에 남긴다(실행 로그는 90일 뒤 지워져 따로 모은다).
+      # 실행 파일 전체엔 도구 결과(시크릿이 섞일 수 있다)가 있어 결과 메시지의 사용량 필드만 골라 꺼낸다. 실패해도 잡 결과엔 영향 없다.
+      - name: Record token usage
+        if: always() && steps.claude.outputs.execution_file != ''
+        continue-on-error: true
+        env:
+          EXECUTION_FILE: ${{ steps.claude.outputs.execution_file }}
+          EVENT_ACTION: ${{ github.event.action }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+        run: |
+          usage=$(jq -c --arg job "$GITHUB_JOB" --arg event "$GITHUB_EVENT_NAME.$EVENT_ACTION" --arg pr "$PR_NUMBER" \
+            'map(select(.type == "result")) | last | {job: $job, event: $event, pr: $pr, num_turns, duration_ms, total_cost_usd, usage, model_usage: .modelUsage}' \
+            "$EXECUTION_FILE")
+          printf 'HARRY_USAGE %s\n' "$usage"
+          { echo '### harry 토큰 사용량'; echo '```json'; jq . <<< "$usage"; echo '```'; } >> "$GITHUB_STEP_SUMMARY"
