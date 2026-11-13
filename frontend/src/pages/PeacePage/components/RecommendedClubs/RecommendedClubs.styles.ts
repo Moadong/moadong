@@ -21,6 +21,9 @@ export const Tag = styled(Link)<{ $accent: string }>`
   ${({ theme }) => setTypography(theme.typography.paragraph.p5)};
   color: ${({ $accent }) => $accent};
   cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-touch-callout: none;
 
   &:active {
     background: ${({ $accent }) => $accent};
