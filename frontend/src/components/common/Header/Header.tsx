@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { logoutStudentOAuth } from '@/apis/studentAuth';
 import MobileMainIcon from '@/assets/images/logos/moadong_mobile_logo.svg';
 import DesktopMainIcon from '@/assets/images/moadong_name_logo.svg';
@@ -20,6 +20,7 @@ interface HeaderProps {
 
 const Header = ({ showOn, hideOn }: HeaderProps) => {
   const location = useLocation();
+  const navigate = useNavigate();
   const isScrolled = useScrollDetection();
   const isVisible = useHeaderVisibility(showOn, hideOn);
   const {
@@ -61,6 +62,7 @@ const Header = ({ showOn, hideOn }: HeaderProps) => {
       localStorage.removeItem(STORAGE_KEYS.STUDENT_LOGIN_ACCESS_TOKEN);
       setIsStudentLoggedIn(false);
       setShowLogoutToast(true);
+      navigate('/', { replace: true });
     }
   };
 
