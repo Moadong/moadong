@@ -240,7 +240,7 @@ jobs:
           # 철자를 바꾸면(변수에 담기 등) 비켜 갈 수 있는 best-effort 검사다. 최종 관문은 사람이 diff를 보는 것이다.
           skips=$(git diff --cached -U0 -- 'frontend/src/*.test.*' 'frontend/src/*.spec.*' 'frontend/src/*__tests__/*' \
             | grep -E '^\+' \
-            | grep -E '\.(skip|only|todo|failing)\b|\b[fx](it|describe|test)\s*\(|\b(it|test|describe)\s*\[' || true)
+            | grep -E '\.(skip|only|todo|failing)\b|\b[fx](it|describe|test)\s*[(.[`]|\b(it|test|describe)\s*\[' || true)
           # 테스트가 아닌 파일에서 jest 전역을 건드리면(jest.mock, globalThis.it 바꾸기) 모든 테스트에 영향을 준다.
           globals=$(git diff --cached -U0 -- frontend/src \
             ':(exclude)frontend/src/*.test.*' ':(exclude)frontend/src/*.spec.*' ':(exclude)frontend/src/*__tests__/*' \
