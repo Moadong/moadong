@@ -56,10 +56,18 @@ describe('cdnImage', () => {
     expect(cdnImage(url, 'grid')).toBe(url);
   });
 
-  it('모든 용도의 출력 면적은 AVIF 상한(2,560,000px) 이하다', () => {
-    (Object.keys(CDN_IMAGE_SIZES) as CdnImageUsage[]).forEach((usage) => {
-      const { width, height } = CDN_IMAGE_SIZES[usage];
-      expect(width * height).toBeLessThanOrEqual(2_560_000);
-    });
+  it('모달은 원본 비율을 유지한 채 긴 변 2400px 이하로 줄인다', () => {
+    expect(cdnImage(FEED, 'modal')).toBe(
+      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=2400,height=2400,fit=scale-down/6873c0bb9033815c43911964/feed/qOr54TrgWQ.webp',
+    );
+  });
+
+  it('모달을 뺀 모든 용도의 출력 면적은 AVIF 상한(2,560,000px) 이하다', () => {
+    (Object.keys(CDN_IMAGE_SIZES) as CdnImageUsage[])
+      .filter((usage) => usage !== 'modal')
+      .forEach((usage) => {
+        const { width, height } = CDN_IMAGE_SIZES[usage];
+        expect(width * height).toBeLessThanOrEqual(2_560_000);
+      });
   });
 });

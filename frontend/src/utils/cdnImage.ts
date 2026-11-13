@@ -3,7 +3,8 @@ const CDN_HOST = 'cdn.moadong.com';
 /**
  * 용도별 요청 크기. 표시 칸이 가장 커지는 화면 기준 CSS px × DPR로 잡는다.
  * 출력 면적이 2,560,000px(1600×1600)을 넘으면 Cloudflare가 AVIF 대신 WebP로 내려서
- * 원본보다 커질 수 있으니 모든 크기를 그 아래로 둔다.
+ * 원본보다 커질 수 있으니 모든 크기를 그 아래로 둔다. 단 modal은 예외다. 1200px 모달을
+ * 레티나로 보려면 긴 변 2400px가 필요하고, 큰 사진은 WebP로 나가는 것을 감수한다.
  *
  * - crop: 칸 비율이 화면과 무관하게 고정인 곳. CSS object-fit: cover와 같은 가운데 기준으로
  *   미리 자르고, 원본이 더 작으면 키우지 않는다.
@@ -18,6 +19,8 @@ export const CDN_IMAGE_SIZES = {
   logo: { width: 192, height: 192, fit: 'crop' },
   // 1:1 고정. 40 ×2, 28 ×3
   thumbnail: { width: 88, height: 88, fit: 'crop' },
+  // 비율이 사진마다 다르다. 모달 최대 1200 ×2. 면적이 AVIF 상한을 넘어 큰 사진은 WebP로 나간다
+  modal: { width: 2400, height: 2400, fit: 'scale-down' },
 } as const;
 
 export type CdnImageUsage = keyof typeof CDN_IMAGE_SIZES;
