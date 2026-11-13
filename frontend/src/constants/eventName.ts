@@ -63,6 +63,8 @@ export const USER_EVENT = {
   HOME_BUTTON_CLICKED: 'Home Button Clicked',
   /** 헤더 관리자 버튼 클릭 */
   ADMIN_BUTTON_CLICKED: 'Admin Button Clicked',
+  /** 푸터 모아동 인스타그램 링크 클릭 */
+  FOOTER_INSTAGRAM_CLICKED: 'Footer Instagram Clicked',
   /** 헤더 모아동 소개 버튼 클릭 */
   INTRODUCE_BUTTON_CLICKED: 'Introduce Button Clicked',
   /** 헤더 총동연 버튼 클릭 */
