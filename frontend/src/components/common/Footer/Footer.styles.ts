@@ -71,8 +71,12 @@ export const EmailText = styled.p`
 
 export const SnsLink = styled.a`
   display: inline-flex;
+  align-items: center;
+  gap: 2px;
   width: fit-content;
   margin-left: -4px;
+  color: inherit;
+  text-decoration: none;
 
   img {
     width: 24px;
@@ -80,7 +84,7 @@ export const SnsLink = styled.a`
   }
 
   &:hover {
-    opacity: 0.8;
+    text-decoration: underline;
   }
 `;
 

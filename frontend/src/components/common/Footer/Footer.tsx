@@ -25,9 +25,9 @@ const Footer = () => {
               href='https://www.instagram.com/_moadong/'
               target='_blank'
               rel='noopener noreferrer'
-              aria-label='모아동 인스타그램'
             >
-              <img src={InstagramIcon} alt='' />
+              <img src={InstagramIcon} alt='인스타그램' />
+              @_moadong
             </Styled.SnsLink>
           </Styled.LeftSection>
 
