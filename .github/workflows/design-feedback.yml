@@ -277,9 +277,12 @@ jobs:
         working-directory: frontend
         run: npm ci
 
+      # 캐시 없이 전체를 검사하면 힙이 약 3GB 필요한데, 러너 Node 기본 힙은 약 2GB라 OOM으로 죽는다.
       - name: Typecheck
         working-directory: frontend
         run: npm run typecheck
+        env:
+          NODE_OPTIONS: --max-old-space-size=4096
 
       # 기준은 종료 코드다(경고는 통과). lint:fix는 무관한 파일을 고치니 쓰지 않는다.
       - name: Lint changed files
