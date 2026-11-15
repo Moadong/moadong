@@ -10,6 +10,7 @@ import {
   NAME_QUESTION_ID,
 } from '@/constants/applicationForm';
 import LongPressReorderItem from '@/pages/AdminPage/components/LongPressReorderItem/LongPressReorderItem';
+import { validateApplicationForm } from '@/pages/AdminPage/validation/validateApplicationForm';
 import {
   ApplicationFormData,
   ApplicationFormMode,
@@ -205,25 +206,38 @@ const ApplicationEditTabMobile = ({
     </>
   );
 
-  const renderPreviewTab = () => (
-    <Styled.PreviewFieldset disabled aria-label='지원서 미리보기'>
-      <Styled.PreviewTitle>{formData.title}</Styled.PreviewTitle>
-      {formData.description && (
-        <Styled.PreviewDescription>
-          {formData.description}
-        </Styled.PreviewDescription>
-      )}
-      {questions.map((question, index) => (
-        <QuestionAnswerer
-          key={question.id}
-          question={question}
-          number={index + 1}
-          selectedAnswers={[]}
-          onChange={() => {}}
-        />
-      ))}
-    </Styled.PreviewFieldset>
-  );
+  // 저장 검증에 걸리는 질문은 그대로 저장할 수 없어 지원자에게 나가지 못하므로 미리보기에서도 뺀다.
+  // 기준은 저장할 때 쓰는 검증 함수에서 그대로 받아 와 저장 결과와 미리보기가 어긋나지 않게 한다
+  const renderPreviewTab = () => {
+    const { questions: questionErrors } = validateApplicationForm(
+      formData,
+      ApplicationFormMode.INTERNAL,
+      externalApplicationUrl,
+    );
+    const previewQuestions = questions.filter(
+      (question) => !questionErrors?.[question.id],
+    );
+
+    return (
+      <Styled.PreviewFieldset disabled aria-label='지원서 미리보기'>
+        <Styled.PreviewTitle>{formData.title}</Styled.PreviewTitle>
+        {formData.description && (
+          <Styled.PreviewDescription>
+            {formData.description}
+          </Styled.PreviewDescription>
+        )}
+        {previewQuestions.map((question, index) => (
+          <QuestionAnswerer
+            key={question.id}
+            question={question}
+            number={index + 1}
+            selectedAnswers={[]}
+            onChange={() => {}}
+          />
+        ))}
+      </Styled.PreviewFieldset>
+    );
+  };
 
   const renderExternal = () => (
     <Styled.FieldList>
