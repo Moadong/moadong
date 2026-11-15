@@ -23,6 +23,9 @@ export const useHideCalendarEvent = () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.hiddenCalendarEvents.all,
       });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allCalendarEvents,
+      });
     },
   });
 };
@@ -34,6 +37,9 @@ export const useUnhideCalendarEvent = () => {
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.hiddenCalendarEvents.all,
+      });
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.club.allCalendarEvents,
       });
     },
   });

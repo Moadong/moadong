@@ -7,6 +7,7 @@ import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import ClubLogo from '@/pages/MainPage/components/ClubLogo/ClubLogo';
 import { Club } from '@/types/club';
+import cdnImage from '@/utils/cdnImage';
 import getDeviceType from '@/utils/getDeviceType';
 import * as Styled from './ClubCard.styles';
 
@@ -137,7 +138,9 @@ const ClubCard = ({
     >
       <Styled.CardHeader>
         <Styled.ClubProfile>
-          <ClubLogo $imageSrc={club.logo || default_profile_image} />
+          <ClubLogo
+            $imageSrc={cdnImage(club.logo || default_profile_image, 'logo')}
+          />
           <Styled.ClubInfo>
             <Styled.ClubName>{club.name}</Styled.ClubName>
             <Styled.Introduction>{club.introduction}</Styled.Introduction>
