@@ -2,47 +2,13 @@
 
 ## 목적
 
-이 문서는 코딩 에이전트가 `moadong` 저장소에 들어왔을 때 바로 작업을 시작할 수 있도록 프로젝트 구조, 실행 방법, 코드 작성 규칙, 검증 방식, 협업 규칙을 전달하기 위한 가이드다.
-
-## 프로젝트 구조
-
-- 루트는 `frontend/`와 `backend/`로 나뉜다.
-- 프론트엔드는 React + TypeScript + Vite 기반이다.
-- 백엔드는 Spring Boot + Gradle 기반이다.
-
-### 프론트엔드 주요 경로
-
-- `frontend/src/pages/`
-  - 라우트 단위 페이지
-- `frontend/src/components/`
-  - 공통 UI 컴포넌트
-- `frontend/src/hooks/`
-  - 재사용 훅
-- `frontend/src/hooks/Queries/`
-  - 서버 상태 조회 및 변경 훅
-- `frontend/src/apis/`
-  - API 호출 함수
-- `frontend/src/store/`
-  - 클라이언트 상태
-- `frontend/src/styles/`
-  - 전역 스타일 및 테마
-
-### 백엔드 주요 경로
-
-- `backend/src/main/java/moadong/`
-  - 도메인별 패키지 루트
-- `backend/src/main/java/moadong/global/`
-  - 공통 설정, 예외, 유틸
-- `backend/src/main/java/moadong/club/`
-  - 동아리 관련 도메인
-- `backend/src/main/java/moadong/user/`
-  - 사용자 관련 도메인
+이 문서는 코딩 에이전트가 `moadong` 저장소에 들어왔을 때 바로 작업을 시작할 수 있도록 실행 방법, 코드 작성 규칙, 검증 방식, 협업 규칙을 전달하기 위한 가이드다.
 
 ## 개발 환경
 
 ### 프론트엔드
 
-- 작업 경로: `/Users/seokyoung-won/Desktop/moadong/frontend`
+- 작업 경로: `frontend/`
 - Node 버전: `frontend/.nvmrc` 기준
 - 현재 확인된 버전: `22.12.0`
 - 번들러: Vite
@@ -50,7 +16,7 @@
 
 ### 백엔드
 
-- 작업 경로: `/Users/seokyoung-won/Desktop/moadong/backend`
+- 작업 경로: `backend/`
 - Java 버전: 17
 - 빌드 도구: Gradle
 
@@ -93,6 +59,7 @@ npm run typecheck
 - 학생용 흐름과 관리자용 흐름에 공통으로 영향을 주는 수정은 양쪽 화면을 함께 의식한다.
 - API 계약을 바꾸는 수정은 프론트와 백엔드 영향 범위를 같이 확인한다.
 - 프론트, 백엔드, 앱 중 둘 이상에 걸치는 변경은 코드부터 만들지 않는다. 레포별로 무엇이 필요한지, 어떤 순서로 배포해야 하는지, 순서를 어기면 무슨 일이 생기는지를 먼저 정리해 판단을 받는다. 구현이 이미 끝난 상태로 보고하면 결정할 사항이 완료 보고처럼 보이고, 되돌리는 비용이 생긴다.
+- 운영 데이터나 배포 방식은 문서가 없으면 추측하지 말고 팀의 기존 절차를 확인한다.
 
 ## 코드 스타일 규칙
 
@@ -154,11 +121,3 @@ test: 지원 폼 유효성 검사 케이스 추가
 - 문제와 검증에 가장 공을 들인다. 문제는 증상과 원인을 함께 적고, 검증은 실제로 확인한 시나리오와 확인하지 못한 경로를 적는다. 테스트·타입체크 통과만 적지 않는다.
 - 영향 범위에는 학생용·관리자용·앱 웹뷰 중 어디에 닿는지 드러나게 적는다. "영향 없음"이면 근거를 함께 적는다.
 - UI 변경이면 가능하면 스크린샷 또는 화면 설명을 첨부한다.
-
-## 신규 멤버를 위한 메모
-
-- 먼저 `README.md`를 읽고 서비스 맥락을 파악한다.
-- 프론트엔드는 `frontend/package.json`, `frontend/src/pages/`, `frontend/src/hooks/Queries/`를 먼저 보면 구조 파악이 빠르다.
-- 백엔드는 `backend/build.gradle`과 주요 도메인 패키지를 먼저 보면 된다.
-- 처음 수정할 때는 넓은 리팩터링보다 작은 기능 단위로 진입하는 편이 안전하다.
-- 운영 데이터나 배포 방식은 문서가 없으면 추측하지 말고 팀의 기존 절차를 확인한다.
