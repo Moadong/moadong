@@ -8,6 +8,7 @@
 
 ### 프론트엔드
 
+- 작업 경로: `frontend/`
 - Node 버전: `frontend/.nvmrc` 기준
 - 현재 확인된 버전: `22.12.0`
 - 번들러: Vite
@@ -15,6 +16,7 @@
 
 ### 백엔드
 
+- 작업 경로: `backend/`
 - Java 버전: 17
 - 빌드 도구: Gradle
 
