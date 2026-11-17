@@ -118,7 +118,7 @@ const Introduction = styled.p`
   font-size: 0.875rem;
   font-weight: normal;
   margin: ${INTRODUCTION_MARGIN.desktop.margin};
-  color: ${colors.gray[600]};
+  color: ${colors.base.black};
   line-height: 140%;
   white-space: nowrap;
 
