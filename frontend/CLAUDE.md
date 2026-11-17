@@ -181,22 +181,3 @@ Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
 | OG 태그 (`middleware.ts`) | [`docs/claude/og.md`](docs/claude/og.md) |
 | Figma 시안 ↔ Storybook 대조 | [`scripts/figma-story-diff/CLAUDE.md`](scripts/figma-story-diff/CLAUDE.md) |
 | 버튼 인벤토리·시안 대조·before/after | [`scripts/button-migration/CLAUDE.md`](scripts/button-migration/CLAUDE.md) |
-
-## Skill routing
-
-When the user's request matches an available skill, invoke it via the Skill tool. When in doubt, invoke the skill.
-
-Key routing rules:
-
-- Product ideas/brainstorming → invoke /office-hours
-- Strategy/scope → invoke /plan-ceo-review
-- Architecture → invoke /plan-eng-review
-- Design system/plan review → invoke /design-consultation or /plan-design-review
-- Full review pipeline → invoke /autoplan
-- Bugs/errors → invoke /investigate
-- QA/testing site behavior → invoke /qa or /qa-only
-- Code review/diff check → invoke /review
-- Visual polish → invoke /design-review
-- Ship/deploy/PR → invoke /ship or /land-and-deploy
-- Save progress → invoke /context-save
-- Resume context → invoke /context-restore
