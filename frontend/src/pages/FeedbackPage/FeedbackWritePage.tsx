@@ -274,7 +274,7 @@ const FeedbackWritePage = () => {
       busyRef.current = false;
       trackEvent(USER_EVENT.FEEDBACK_SUBMIT_FAILED, {
         type: feedbackType,
-        imageCount: images.length,
+        image_count: images.length,
         message: `사진 ${failedCount}장 업로드 실패`,
       });
       setOpenedModal(null);
