@@ -28,13 +28,15 @@ const StyledButton = styled.button<{ $animated: boolean; $width?: string }>`
   transition: background-color 0.2s;
   width: ${({ $width }) => $width ?? 'auto'};
 
-  &:hover:not(:disabled) {
-    background-color: ${({ theme }) => theme.colors.gray[800]};
-    ${({ $animated }) =>
-      $animated &&
-      css`
-        animation: ${pulse} 0.4s ease-in-out;
-      `}
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      background-color: ${({ theme }) => theme.colors.gray[800]};
+      ${({ $animated }) =>
+        $animated &&
+        css`
+          animation: ${pulse} 0.4s ease-in-out;
+        `}
+    }
   }
 
   &:active:not(:disabled) {
