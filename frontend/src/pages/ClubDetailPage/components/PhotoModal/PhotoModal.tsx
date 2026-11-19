@@ -7,7 +7,7 @@ import CloseButtonIcon from '@/assets/images/icons/close_button_icon.svg?react';
 import NextButton from '@/assets/images/icons/next_button_icon.svg';
 import PrevButton from '@/assets/images/icons/prev_button_icon.svg';
 import Modal from '@/components/common/Modal/Modal';
-import cdnImage from '@/utils/cdnImage';
+import cdnImage, { fallbackToOriginal } from '@/utils/cdnImage';
 import getAdjacentIndexes from './getAdjacentIndexes';
 import * as Styled from './PhotoModal.styles';
 
@@ -92,6 +92,7 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
                     {shouldLoad(url) && (
                       <Styled.Image
                         src={cdnImage(url, 'modal')}
+                        onError={fallbackToOriginal(url)}
                         alt={`활동 사진 ${idx + 1}`}
                       />
                     )}
@@ -133,7 +134,11 @@ const PhotoModal = ({ isOpen, onClose, clubName, photos }: PhotoModalProps) => {
                     }
                   }}
                 >
-                  <img src={cdnImage(url, 'thumbnail')} alt='썸네일' />
+                  <img
+                    src={cdnImage(url, 'thumbnail')}
+                    onError={fallbackToOriginal(url)}
+                    alt='썸네일'
+                  />
                 </Styled.Thumbnail>
               ))}
             </Styled.ThumbnailList>

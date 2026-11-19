@@ -1,6 +1,6 @@
 import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
-import cdnImage from '@/utils/cdnImage';
+import cdnImage, { fallbackToOriginal } from '@/utils/cdnImage';
 import * as Styled from './MapClubInfoCard.styles';
 
 interface MapClubInfoCardProps {
@@ -20,6 +20,7 @@ const MapClubInfoCard = ({
     <Styled.Card>
       <Styled.ClubLogo
         src={cdnImage(logo || DefaultLogo, 'logo')}
+        onError={fallbackToOriginal(logo || DefaultLogo)}
         alt={`${name} 로고`}
       />
       <Styled.ClubInfo>
