@@ -15,7 +15,7 @@ set -euo pipefail
 SENTRY_API=https://sentry.io/api/0
 SENTRY_ORG=moadong
 SENTRY_PROJECT=moadong
-# 하루 한 번 돌지만 cron이 밀리거나 한 번 실패해도 놓치지 않게 7일을 본다. 이미 옮긴 이슈는 제목으로 걸러진다.
+# 매시간 돌지만 cron이 밀리거나 며칠 실패해도 놓치지 않게 7일을 본다. 이미 옮긴 이슈는 제목으로 걸러진다.
 FIRST_SEEN="${FIRST_SEEN:-7d}"
 if [[ ! "$FIRST_SEEN" =~ ^[0-9]+d$ ]]; then
   echo "::error::FIRST_SEEN은 7d처럼 일 단위여야 한다: $FIRST_SEEN"
@@ -23,7 +23,8 @@ if [[ ! "$FIRST_SEEN" =~ ^[0-9]+d$ ]]; then
 fi
 # NetworkError는 사용자 네트워크 문제라 코드로 고칠 대상이 아니다(Sentry fingerprint로 한 이슈에 묶여 있다).
 QUERY="is:unresolved firstSeen:-$FIRST_SEEN environment:production !error.type:NetworkError"
-# DSN은 공개라 이벤트를 위조해 이슈를 쏟아낼 수 있다. 한 번에 만드는 수를 제한하고 나머지는 다음 실행으로 넘긴다.
+# DSN은 공개라 이벤트를 위조해 이슈를 쏟아낼 수 있다. 최근 24시간 동안 만드는 수를 제한하고 나머지는 다음 실행으로 넘긴다.
+# 실행마다가 아니라 24시간으로 세야 실행 주기를 줄여도 하루 상한이 늘지 않는다.
 MAX_CREATE=10
 
 sentry_get() {
@@ -41,7 +42,10 @@ if [[ "${DRY_RUN:-}" != "1" ]]; then
 fi
 
 # 이미 옮긴 이슈는 제목 앞의 `[Sentry <shortId>]`로 알아본다. 닫힌 이슈도 포함해야 재생성되지 않는다.
-existing_titles=$(gh issue list --repo "$REPO" --state all --label sentry --limit 500 --json title --jq '.[].title')
+existing=$(gh issue list --repo "$REPO" --state all --label sentry --limit 500 --json title,createdAt)
+existing_titles=$(jq -r '.[].title' <<<"$existing")
+created=$(jq '[.[] | select((.createdAt | fromdateiso8601) > now - 86400)] | length' <<<"$existing")
+echo "최근 24시간 동안 만든 이슈 ${created}건 (상한 $MAX_CREATE)"
 
 # 공개 레포라 이슈는 누구나 본다. 에러 제목·메시지·URL에 섞일 수 있는 식별자를 가린다.
 # 사용자 입력이 섞이기 쉬운 브레드크럼(콘솔·요청 URL·클릭 문구)은 아예 옮기지 않는다.
@@ -52,7 +56,6 @@ JQ_MASK='def mask: gsub("[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Za-z]{2,}"; "<ema
   | gsub("0[0-9]{1,2}-?[0-9]{3,4}-?[0-9]{4}"; "<phone>")
   | gsub("[0-9]{6,}"; "<num>");'
 
-created=0
 jq -c '.[]' <<<"$issues" | while read -r issue; do
   short_id=$(jq -r '.shortId' <<<"$issue")
   prefix="[Sentry $short_id]"
@@ -61,7 +64,7 @@ jq -c '.[]' <<<"$issues" | while read -r issue; do
     continue
   fi
   if (( created >= MAX_CREATE )); then
-    echo "::warning::한 번에 만드는 이슈 수($MAX_CREATE)를 넘어 $short_id 이후는 다음 실행으로 넘긴다."
+    echo "::warning::최근 24시간 동안 만드는 이슈 수($MAX_CREATE)를 넘어 $short_id 이후는 다음 실행으로 넘긴다."
     break
   fi
 
