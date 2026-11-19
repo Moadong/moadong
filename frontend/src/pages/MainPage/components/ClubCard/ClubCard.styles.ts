@@ -16,7 +16,6 @@ const CARD_STYLES = {
 
 const CardContainer = styled.div<{
   $state: string;
-  $isClicked: boolean;
 }>`
   width: 100%;
   display: flex;
@@ -34,7 +33,6 @@ const CardContainer = styled.div<{
   transition:
     transform 0.2s ease-in-out,
     box-shadow 0.2s ease-in-out;
-  transform: ${({ $isClicked }) => ($isClicked ? 'scale(1.05)' : 'scale(1)')};
   cursor: pointer;
   touch-action: manipulation;
 
@@ -47,8 +45,7 @@ const CardContainer = styled.div<{
 
   @media (hover: hover) {
     &:hover {
-      transform: ${({ $isClicked }) =>
-        $isClicked ? 'scale(1.05)' : 'scale(1.03)'};
+      transform: scale(1.03);
     }
   }
 

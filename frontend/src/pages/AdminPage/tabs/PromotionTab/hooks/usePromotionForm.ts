@@ -6,10 +6,7 @@ import {
   useUploadPromotionImages,
 } from '@/hooks/Queries/usePromotion';
 import { buildFinalUrls } from '@/pages/AdminPage/components/ImageSortGrid/buildFinalUrls';
-import {
-  ImageItem,
-  LocalItem,
-} from '@/pages/AdminPage/components/ImageSortGrid/types';
+import { ImageItem, LocalItem } from '@/types/imageItem';
 import { PromotionArticle } from '@/types/promotion';
 import {
   articleToFormValues,

@@ -12,23 +12,19 @@ import { queryKeys } from '@/constants/queryKeys';
 import { CreateFeedbackRequest, LetterCategory } from '@/types/feedback';
 
 /**
- * 사진 업로드까지 한 뮤테이션 안에서 처리한다.
+ * 첨부 사진 업로드. 저장과 분리해 실패한 장만 다시 올릴 수 있게 한다.
  * 서버가 저장 직전에 R2에 파일이 있는지 확인하므로 업로드가 끝난 뒤에 저장해야 한다.
  */
+export const useUploadFeedbackImages = () =>
+  useMutation({
+    mutationFn: (files: File[]) => uploadFeedbackImages(files),
+  });
+
 export const useCreateFeedback = () => {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({
-      files,
-      ...payload
-    }: CreateFeedbackRequest & { files: File[] }) => {
-      const images = files.length
-        ? await uploadFeedbackImages(files)
-        : undefined;
-
-      return createFeedback({ ...payload, images });
-    },
+    mutationFn: (payload: CreateFeedbackRequest) => createFeedback(payload),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: queryKeys.feedback.sent() });
     },

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import type { Meta, StoryObj } from '@storybook/react';
+import type { ImageItem } from '@/types/imageItem';
 import { ImageSortGrid } from './ImageSortGrid';
-import type { ImageItem } from './types';
 
 const img = (seed: string): ImageItem => ({
   type: 'uploaded',

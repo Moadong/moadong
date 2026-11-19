@@ -1,4 +1,9 @@
-import cdnImage, { CDN_IMAGE_SIZES, CdnImageUsage } from './cdnImage';
+import type { SyntheticEvent } from 'react';
+import cdnImage, {
+  CDN_IMAGE_SIZES,
+  CdnImageUsage,
+  fallbackToOriginal,
+} from './cdnImage';
 
 const FEED =
   'https://cdn.moadong.com/6873c0bb9033815c43911964/feed/qOr54TrgWQ.webp';
@@ -6,10 +11,10 @@ const FEED =
 describe('cdnImage', () => {
   it('cdn.moadong.com 이미지는 용도별 크기의 경로형 변환 URL로 바꾼다', () => {
     expect(cdnImage(FEED, 'grid')).toBe(
-      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=480,height=600,fit=crop/6873c0bb9033815c43911964/feed/qOr54TrgWQ.webp',
+      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=480,height=600,fit=crop,onerror=redirect/6873c0bb9033815c43911964/feed/qOr54TrgWQ.webp',
     );
     expect(cdnImage(FEED, 'thumbnail')).toBe(
-      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=88,height=88,fit=crop/6873c0bb9033815c43911964/feed/qOr54TrgWQ.webp',
+      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=88,height=88,fit=crop,onerror=redirect/6873c0bb9033815c43911964/feed/qOr54TrgWQ.webp',
     );
   });
 
@@ -20,7 +25,7 @@ describe('cdnImage', () => {
         'cover',
       ),
     ).toBe(
-      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=1500,height=1500,fit=scale-down/6873c0bb9033815c43911964/cover/DybuJqvG3F.webp',
+      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=1500,height=1500,fit=scale-down,onerror=redirect/6873c0bb9033815c43911964/cover/DybuJqvG3F.webp',
     );
   });
 
@@ -31,7 +36,7 @@ describe('cdnImage', () => {
         'grid',
       ),
     ).toBe(
-      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=480,height=600,fit=crop/67e54ae51cfd27718dd40be8/feed/1741570733929%20-%20know%20U.webp',
+      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=480,height=600,fit=crop,onerror=redirect/67e54ae51cfd27718dd40be8/feed/1741570733929%20-%20know%20U.webp',
     );
   });
 
@@ -58,7 +63,7 @@ describe('cdnImage', () => {
 
   it('모달은 원본 비율을 유지한 채 긴 변 2400px 이하로 줄인다', () => {
     expect(cdnImage(FEED, 'modal')).toBe(
-      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=2400,height=2400,fit=scale-down/6873c0bb9033815c43911964/feed/qOr54TrgWQ.webp',
+      'https://cdn.moadong.com/cdn-cgi/image/format=auto,width=2400,height=2400,fit=scale-down,onerror=redirect/6873c0bb9033815c43911964/feed/qOr54TrgWQ.webp',
     );
   });
 
@@ -69,5 +74,45 @@ describe('cdnImage', () => {
         const { width, height } = CDN_IMAGE_SIZES[usage];
         expect(width * height).toBeLessThanOrEqual(2_560_000);
       });
+  });
+});
+
+describe('fallbackToOriginal', () => {
+  const ORIGINAL_A = 'https://cdn.moadong.com/club/feed/a.webp';
+  const ORIGINAL_B = 'https://cdn.moadong.com/club/feed/b.webp';
+  const fireError = (img: HTMLImageElement, originalUrl: string) =>
+    fallbackToOriginal(originalUrl)({
+      currentTarget: img,
+    } as unknown as SyntheticEvent<HTMLImageElement>);
+
+  it('변환 이미지가 실패하면 원본 주소로 바꾼다', () => {
+    const img = document.createElement('img');
+    img.src = cdnImage(ORIGINAL_A, 'grid');
+
+    fireError(img, ORIGINAL_A);
+
+    expect(img.getAttribute('src')).toBe(ORIGINAL_A);
+  });
+
+  it('원본도 실패하면 다시 바꾸지 않는다', () => {
+    const img = document.createElement('img');
+    img.src = ORIGINAL_A;
+    const setSrc = jest.spyOn(img, 'src', 'set');
+
+    fireError(img, ORIGINAL_A);
+
+    expect(setSrc).not.toHaveBeenCalled();
+  });
+
+  it('같은 요소가 다른 이미지를 받으면 그 이미지도 원본으로 바꾼다', () => {
+    // 라우트 이동처럼 React가 <img>를 재사용하면서 src만 바꾸는 경우
+    const img = document.createElement('img');
+    img.src = cdnImage(ORIGINAL_A, 'grid');
+    fireError(img, ORIGINAL_A);
+
+    img.src = cdnImage(ORIGINAL_B, 'grid');
+    fireError(img, ORIGINAL_B);
+
+    expect(img.getAttribute('src')).toBe(ORIGINAL_B);
   });
 });

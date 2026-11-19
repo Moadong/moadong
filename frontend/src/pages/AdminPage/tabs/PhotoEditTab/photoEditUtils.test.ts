@@ -1,8 +1,5 @@
 import { MAX_FILE_COUNT, MAX_FILE_SIZE } from '@/constants/uploadLimit';
-import {
-  ImageItem,
-  LocalItem,
-} from '@/pages/AdminPage/components/ImageSortGrid/types';
+import { ImageItem, LocalItem } from '@/types/imageItem';
 import {
   findOversizedFile,
   findUnsupportedFile,
