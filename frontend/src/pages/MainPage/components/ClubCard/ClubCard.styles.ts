@@ -23,7 +23,7 @@ const CardContainer = styled.div<{
   border-radius: ${CARD_STYLES.desktop.borderRadius};
   padding: ${CARD_STYLES.desktop.padding};
   gap: ${CARD_STYLES.desktop.gap};
-  background-color: #fff;
+  background-color: ${colors.primary[900]};
 
   box-shadow: ${({ $state }) =>
     $state === 'open'
