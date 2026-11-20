@@ -33,4 +33,10 @@ export const Label = styled.span`
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+
+  /* 내용이 없는 선택지 안내는 값이 아니라 안내 문구라서 입력 필드의 hint text와 같은 글자색·크기로 둔다 */
+  &[data-empty='true'] {
+    color: ${colors.gray[600]};
+    font-size: 16px;
+  }
 `;
