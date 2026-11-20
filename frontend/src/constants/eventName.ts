@@ -70,6 +70,10 @@ export const USER_EVENT = {
   /** 헤더 홍보 버튼 클릭 */
   PROMOTION_BUTTON_CLICKED: 'Promotion Button Clicked',
 
+  // 푸터
+  /** 푸터 모아동 인스타그램 링크 클릭 (page: 현재 경로) */
+  FOOTER_INSTAGRAM_CLICKED: 'Footer Instagram Clicked',
+
   // 동아리 목록
   /** 동아리 카드 클릭 */
   CLUB_CARD_CLICKED: 'Club Card Clicked',
