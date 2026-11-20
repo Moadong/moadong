@@ -84,4 +84,8 @@ export const queryKeys = {
     searchKeywords: (startDate: string, endDate: string, limit: number) =>
       ['statistics', 'searchKeywords', startDate, endDate, limit] as const,
   },
+  studentProfile: {
+    all: ['studentProfile'] as const,
+    profile: () => ['studentProfile', 'profile'] as const,
+  },
 } as const;
