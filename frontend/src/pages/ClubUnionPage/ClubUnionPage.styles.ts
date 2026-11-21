@@ -275,8 +275,8 @@ export const CardIllustrationWrap = styled.div`
 `;
 
 export const CardIllustration = styled.img`
-  width: 210px;
-  height: 210px;
+  width: 283.5px;
+  height: 283.5px;
   object-fit: contain;
 
   ${media.laptop} {
