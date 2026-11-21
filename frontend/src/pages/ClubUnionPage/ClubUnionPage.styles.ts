@@ -125,6 +125,7 @@ export const ProfileColumn = styled.div<{ $staggered: boolean }>`
 
 export const ProfileCard = styled.div<{ $bgColor: string }>`
   position: relative;
+  width: 324px;
   height: 250px;
   border-radius: 20px;
   padding: 40px 0 0 25px;
@@ -150,6 +151,7 @@ export const ProfileCard = styled.div<{ $bgColor: string }>`
   }
 
   ${media.laptop} {
+    width: auto;
     height: 220px;
     padding: 30px 0 30px 20px;
   }
