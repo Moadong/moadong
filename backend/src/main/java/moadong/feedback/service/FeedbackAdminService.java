@@ -28,6 +28,7 @@ import moadong.feedback.repository.LetterRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.user.repository.StudentUserRepository;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -141,8 +142,11 @@ public class FeedbackAdminService {
                 feedbackRepository.save(feedback);
                 return saved;
             });
-        } catch (DuplicateKeyException e) {
-            // 동시 요청이 둘 다 조회를 통과한 경우. 먼저 저장한 쪽 결과를 돌려주고 이쪽은 푸시를 보내지 않는다.
+        } catch (DataAccessException e) {
+            // 같은 키의 동시 요청이 둘 다 조회를 통과한 경우. 첫 요청이 커밋한 뒤면 중복 키(11000),
+            // 커밋 전이면 트랜잭션 쓰기 충돌(112)이나 @Version 충돌로 오는데, 어느 쪽이든 같은 키로
+            // 저장된 답장이 있으면 그 결과를 돌려주고 이쪽은 푸시를 보내지 않는다.
+            // 아직 커밋 전이라 못 찾으면 원래 예외를 던지고, 클라이언트가 같은 키로 재시도하면 처음 결과를 받는다.
             return findPublishedReply(feedbackId, requestId).orElseThrow(() -> e);
         } catch (RestApiException e) {
             // 같은 키의 첫 요청이 조회 뒤에 커밋되면, 재시도는 중복 키가 아니라 OUTDATED에 먼저 걸린다.
@@ -257,6 +261,11 @@ public class FeedbackAdminService {
     private Optional<LetterCreateResponse> findPublished(String requestId) {
         return letterRepository.findByIdempotencyKey(requestId)
                 .map(letter -> {
+                    // 답장도 같은 키 공간을 쓴다. 답장을 전체 발행 결과로 돌려주면 전체 편지와 푸시가
+                    // 나가지 않았는데 성공으로 보인다.
+                    if (!letter.isBroadcast()) {
+                        throw new RestApiException(ErrorCode.LETTER_REQUEST_ID_MISMATCH);
+                    }
                     log.info("Broadcast letter republish ignored. letter={}, requestId={}",
                             letter.getId(), requestId);
                     return new LetterCreateResponse(letter.getId(),

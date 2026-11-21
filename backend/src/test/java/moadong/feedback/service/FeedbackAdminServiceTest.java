@@ -32,6 +32,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.mongodb.UncategorizedMongoDbException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -285,6 +286,43 @@ class FeedbackAdminServiceTest {
     }
 
     @Test
+    void 같은_키_동시_요청이_트랜잭션_쓰기_충돌로_실패해도_먼저_저장된_답장을_돌려준다() {
+        // 첫 요청이 커밋하기 전이면 중복 키(11000)가 아니라 쓰기 충돌(112)로 온다.
+        givenTransactionRunsInline();
+        givenWaitingFeedback();
+        when(letterRepository.findByIdempotencyKey("req-1"))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(Letter.builder()
+                        .id("letter-1")
+                        .category(LetterCategory.REPLY)
+                        .recipientStudentId(STUDENT_ID)
+                        .feedbackId("feedback-1")
+                        .idempotencyKey("req-1")
+                        .pushSuccessCount(1)
+                        .build()));
+        when(letterRepository.save(any())).thenThrow(new UncategorizedMongoDbException("WriteConflict", null));
+
+        FeedbackReplyResponse response = feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
+
+        assertEquals("letter-1", response.letterId());
+        assertTrue(response.pushSent());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 쓰기_충돌인데_같은_키의_답장이_아직_없으면_원래_예외를_던진다() {
+        givenTransactionRunsInline();
+        givenWaitingFeedback();
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.empty());
+        when(letterRepository.save(any())).thenThrow(new UncategorizedMongoDbException("WriteConflict", null));
+
+        assertThrows(UncategorizedMongoDbException.class, () -> feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null)));
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
     void requestId가_다른_피드백의_답장이면_409로_거절하고_아무것도_보내지_않는다() {
         when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.of(
                 Letter.reply(STUDENT_ID, "feedback-other", "답장 제목", "답장 본문", "req-1")));
@@ -463,6 +501,20 @@ class FeedbackAdminServiceTest {
 
         assertEquals("letter-1", response.letterId());
         assertEquals(118, response.pushSuccessCount());
+        verify(letterRepository, never()).save(any());
+        verify(fcmAdminService, never()).sendToAll(any());
+    }
+
+    @Test
+    void 전체_발행에_답장의_requestId가_오면_409로_거절한다() {
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.of(
+                Letter.reply(STUDENT_ID, "feedback-1", "답장 제목", "답장 본문", "req-1")));
+
+        RestApiException exception = assertThrows(RestApiException.class,
+                () -> feedbackAdminService.createBroadcastLetter(
+                        new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", true, "req-1")));
+
+        assertEquals(ErrorCode.LETTER_REQUEST_ID_MISMATCH, exception.getErrorCode());
         verify(letterRepository, never()).save(any());
         verify(fcmAdminService, never()).sendToAll(any());
     }
