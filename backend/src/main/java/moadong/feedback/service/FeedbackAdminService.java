@@ -28,6 +28,7 @@ import moadong.feedback.repository.LetterRepository;
 import moadong.global.exception.ErrorCode;
 import moadong.global.exception.RestApiException;
 import moadong.user.repository.StudentUserRepository;
+import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -35,6 +36,7 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -106,30 +108,91 @@ public class FeedbackAdminService {
     }
 
     /**
+     * 이미 답장한 피드백에도 답장을 더 보낼 수 있다. 중복 발행은 상태가 아니라 requestId로 막는다.
+     * requestId가 같은 재시도는 편지를 다시 만들지 않고 처음 결과를 그대로 돌려준다.
+     * 재시도 확인을 먼저 해야 한다. 첫 요청이 replyLetterId를 바꿔 놓아서, 순서가 바뀌면 재시도가 OUTDATED로 막힌다.
+     * <p>
      * 편지 저장과 상태 변경만 트랜잭션으로 묶고, 푸시는 커밋된 뒤에 보낸다.
      * 트랜잭션 안에서 보내면 커밋이 실패했을 때 존재하지 않는 답장의 알림이 나간다.
      */
     public FeedbackReplyResponse reply(String feedbackId, FeedbackReplyRequest request) {
-        Letter letter = transactionTemplate.execute(status -> {
-            Feedback feedback = feedbackRepository.findById(feedbackId)
-                    .orElseThrow(() -> new RestApiException(ErrorCode.FEEDBACK_NOT_FOUND));
+        String requestId = request.requestId().trim();
 
-            if (feedback.getStatus() == FeedbackStatus.REPLIED) {
-                throw new RestApiException(ErrorCode.FEEDBACK_ALREADY_REPLIED);
+        Optional<FeedbackReplyResponse> published = findPublishedReply(feedbackId, requestId);
+        if (published.isPresent()) {
+            return published.get();
+        }
+
+        Letter letter;
+        try {
+            letter = transactionTemplate.execute(status -> {
+                Feedback feedback = feedbackRepository.findById(feedbackId)
+                        .orElseThrow(() -> new RestApiException(ErrorCode.FEEDBACK_NOT_FOUND));
+
+                // 운영자 둘이 같은 화면을 보고 각자 답장하면 학생이 답장 두 통을 받는다.
+                // 화면에서 본 마지막 답장과 서버 값이 다르면 늦은 쪽을 거절한다.
+                if (!Objects.equals(request.lastReplyLetterId(), feedback.getReplyLetterId())) {
+                    throw new RestApiException(ErrorCode.FEEDBACK_REPLY_OUTDATED);
+                }
+
+                Letter saved = letterRepository.save(Letter.reply(
+                        feedback.getStudentId(), feedback.getId(), request.title(), request.body(), requestId));
+
+                feedback.markReplied(saved.getId());
+                feedbackRepository.save(feedback);
+                return saved;
+            });
+        } catch (DataAccessException e) {
+            // 같은 키의 동시 요청이 둘 다 조회를 통과한 경우. 첫 요청이 커밋한 뒤면 중복 키(11000),
+            // 커밋 전이면 트랜잭션 쓰기 충돌(112)이나 @Version 충돌로 오는데, 어느 쪽이든 같은 키로
+            // 저장된 답장이 있으면 그 결과를 돌려주고 이쪽은 푸시를 보내지 않는다.
+            // 아직 커밋 전이라 못 찾으면 원래 예외를 던지고, 클라이언트가 같은 키로 재시도하면 처음 결과를 받는다.
+            return findPublishedReply(feedbackId, requestId).orElseThrow(() -> e);
+        } catch (RestApiException e) {
+            // 같은 키의 첫 요청이 조회 뒤에 커밋되면, 재시도는 중복 키가 아니라 OUTDATED에 먼저 걸린다.
+            // 그대로 거절하면 운영자가 동료의 답장으로 오해하고 같은 답장을 다시 보낼 수 있다.
+            if (e.getErrorCode() != ErrorCode.FEEDBACK_REPLY_OUTDATED) {
+                throw e;
             }
-
-            Letter saved = letterRepository.save(Letter.reply(
-                    feedback.getStudentId(), feedback.getId(), request.title(), request.body()));
-
-            feedback.markReplied(saved.getId());
-            feedbackRepository.save(feedback);
-            return saved;
-        });
+            return findPublishedReply(feedbackId, requestId).orElseThrow(() -> e);
+        }
 
         boolean pushSent = request.sendPush()
                 && sendReplyPush(letter.getRecipientStudentId(), letter);
+        if (pushSent) {
+            recordReplyPushSent(letter.getId());
+        }
 
         return new FeedbackReplyResponse(letter.getId(), pushSent);
+    }
+
+    /**
+     * 같은 requestId로 이미 발행한 답장. 키가 다른 피드백의 답장이나 전체 발행 편지를 가리키면,
+     * 그 편지를 돌려주는 순간 이 피드백에는 아무것도 가지 않았는데 성공으로 보이므로 409로 거절한다.
+     * <p>
+     * 첫 요청이 푸시를 보내는 도중에 재시도가 오면 pushSuccessCount가 아직 0이라 pushSent가 false로 보일 수 있다.
+     * 답장이 중복 발행되지 않는 것이 목적이라 그대로 둔다.
+     */
+    private Optional<FeedbackReplyResponse> findPublishedReply(String feedbackId, String requestId) {
+        return letterRepository.findByIdempotencyKey(requestId)
+                .map(letter -> {
+                    if (letter.getCategory() != LetterCategory.REPLY || !feedbackId.equals(letter.getFeedbackId())) {
+                        throw new RestApiException(ErrorCode.LETTER_REQUEST_ID_MISMATCH);
+                    }
+                    log.info("Reply republish ignored. letter={}, requestId={}", letter.getId(), requestId);
+                    return new FeedbackReplyResponse(letter.getId(), letter.getPushSuccessCount() > 0);
+                });
+    }
+
+    /**
+     * 푸시는 이미 나갔으므로 결과 저장이 실패해도 요청을 실패시키지 않는다.
+     */
+    private void recordReplyPushSent(String letterId) {
+        try {
+            letterRepository.updatePushSuccessCount(letterId, 1);
+        } catch (RuntimeException e) {
+            log.warn("Reply push result not recorded. letter={}", letterId, e);
+        }
     }
 
     /**
@@ -198,6 +261,11 @@ public class FeedbackAdminService {
     private Optional<LetterCreateResponse> findPublished(String requestId) {
         return letterRepository.findByIdempotencyKey(requestId)
                 .map(letter -> {
+                    // 답장도 같은 키 공간을 쓴다. 답장을 전체 발행 결과로 돌려주면 전체 편지와 푸시가
+                    // 나가지 않았는데 성공으로 보인다.
+                    if (!letter.isBroadcast()) {
+                        throw new RestApiException(ErrorCode.LETTER_REQUEST_ID_MISMATCH);
+                    }
                     log.info("Broadcast letter republish ignored. letter={}, requestId={}",
                             letter.getId(), requestId);
                     return new LetterCreateResponse(letter.getId(),
