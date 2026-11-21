@@ -226,7 +226,7 @@ async function selectFeedback(feedbackId) {
   showFeedbackEditorTab('write');
   feedbackMode = 'reply';
   feedbackSelectedId = feedbackId;
-  // 다른 피드백에 이전 키를 보내면 서버가 그 피드백의 답장을 돌려준다.
+  // 다른 피드백에 이전 키를 보내면 서버가 409(904-14)로 거절한다.
   feedbackPublishRequestId = '';
   document.getElementById('feedbackSaveResult').classList.add('hidden');
   renderFeedbackList();
@@ -612,13 +612,18 @@ async function toggleSelectedFeedbackStatus() {
   }
 }
 
-// 피드백 응답에는 답장 편지 id가 없어서, 보낸 편지 목록에서 feedbackId로 찾는다.
-// 답장이 여러 통이면 목록이 최신순이라 가장 최근 답장이 열린다.
+// 답장이 여러 통이어도 피드백 응답의 replyLetterId가 가장 최근 답장을 가리킨다.
 async function openFeedbackReplyLetter() {
   const selected = getSelectedFeedback();
-  if (!selected) return;
+  if (!selected || !selected.replyLetterId) return;
+  const findReply = () => sentLetters.find((it) => it.id === selected.replyLetterId);
   if (!sentLettersHaveLoaded) await reloadSentLetters();
-  const letter = sentLetters.find((it) => it.feedbackId === selected.id);
+  // 보낸 편지 목록을 연 뒤에 다른 운영자가 답장했으면 목록에 아직 없다.
+  let letter = findReply();
+  if (!letter) {
+    await reloadSentLetters();
+    letter = findReply();
+  }
   if (!letter) {
     showToast('보낸 편지에서 이 답장을 찾지 못했어요.', 'error');
     return;
