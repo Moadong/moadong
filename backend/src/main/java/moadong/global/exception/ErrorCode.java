@@ -93,7 +93,6 @@ public enum ErrorCode {
     // 904xx: 우체통(피드백) 오류
     FEEDBACK_NOT_FOUND(HttpStatus.NOT_FOUND, "904-1", "피드백이 존재하지 않습니다."),
     LETTER_NOT_FOUND(HttpStatus.NOT_FOUND, "904-2", "편지가 존재하지 않습니다."),
-    FEEDBACK_ALREADY_REPLIED(HttpStatus.CONFLICT, "904-3", "이미 답장이 발행된 피드백입니다."),
     LETTER_CATEGORY_NOT_BROADCASTABLE(HttpStatus.BAD_REQUEST, "904-4", "전체 발행은 UPDATE 또는 STORY 편지만 가능합니다."),
     LETTER_DRAFT_NOT_FOUND(HttpStatus.NOT_FOUND, "904-5", "편지 초안이 존재하지 않습니다."),
     FEEDBACK_STATUS_NOT_CHANGEABLE(HttpStatus.BAD_REQUEST, "904-6", "답장 완료 상태는 답장 발행으로만 설정되며 되돌릴 수 없습니다."),
@@ -104,6 +103,8 @@ public enum ErrorCode {
     FEEDBACK_PROMPT_REASON_LIMIT_EXCEEDED(HttpStatus.BAD_REQUEST, "904-11", "피드백 선택지는 최대 8개까지 등록할 수 있습니다."),
     FEEDBACK_PROMPT_COMMENT_TOO_LONG(HttpStatus.BAD_REQUEST, "904-12", "피드백 의견은 최대 500자까지 입력할 수 있습니다."),
     FEEDBACK_PROMPT_ACTIVE_DUPLICATED(HttpStatus.CONFLICT, "904-13", "같은 트리거에 활성화된 피드백 프롬프트가 이미 존재합니다."),
+    LETTER_REQUEST_ID_MISMATCH(HttpStatus.CONFLICT, "904-14", "다른 발행 요청에서 이미 사용한 requestId입니다."),
+    FEEDBACK_REPLY_OUTDATED(HttpStatus.CONFLICT, "904-15", "그 사이 다른 답장이 발행되었습니다. 목록을 새로고침한 뒤 다시 확인해주세요."),
 
     // 950xx: Notion 연동 오류
     NOTION_CONFIG_MISSING(HttpStatus.INTERNAL_SERVER_ERROR, "950-1", "Notion 서버 환경변수가 설정되지 않았습니다."),

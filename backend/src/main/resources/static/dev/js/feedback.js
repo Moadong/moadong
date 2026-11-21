@@ -21,7 +21,7 @@ let feedbackFilter = 'WAITING';
 let feedbackQuery = '';
 let feedbackIsChangingStatus = false;
 // 발행이 실패해 다시 시도할 때 같은 값을 보내야 편지가 두 번 만들어지지 않는다.
-let feedbackLetterRequestId = '';
+let feedbackPublishRequestId = '';
 
 function clearFeedbackBanner() {
   const banner = document.getElementById('feedbackBanner');
@@ -226,6 +226,8 @@ async function selectFeedback(feedbackId) {
   showFeedbackEditorTab('write');
   feedbackMode = 'reply';
   feedbackSelectedId = feedbackId;
+  // 다른 피드백에 이전 키를 보내면 서버가 그 피드백의 답장을 돌려준다.
+  feedbackPublishRequestId = '';
   document.getElementById('feedbackSaveResult').classList.add('hidden');
   renderFeedbackList();
   revealOnNarrowScreen('feedbackEditorTitle');
@@ -238,7 +240,7 @@ async function enterFeedbackLetterMode() {
   feedbackMode = 'letter';
   feedbackSelectedId = '';
   feedbackCurrentDraftId = '';
-  feedbackLetterRequestId = '';
+  feedbackPublishRequestId = '';
   // 초안을 불러온 뒤 새 편지로 넘어오면 이전 분류·푸시 설정이 남는다.
   document.getElementById('feedbackLetterCategory').value = 'UPDATE';
   document.getElementById('feedbackSendPush').checked = false;
@@ -255,6 +257,7 @@ async function clearFeedbackSelection() {
   feedbackMode = 'reply';
   feedbackSelectedId = '';
   feedbackCurrentDraftId = '';
+  feedbackPublishRequestId = '';
   document.getElementById('feedbackSendPush').checked = false;
   document.getElementById('feedbackReplyTitle').value = '';
   document.getElementById('feedbackReplyBody').value = '';
@@ -438,14 +441,14 @@ function updateFeedbackEditorState() {
   } else if (!selected) {
     summary.textContent = '목록에서 피드백을 고르세요.';
   } else if (alreadyReplied) {
-    summary.textContent = '이미 답장한 피드백이에요.';
+    summary.textContent = '이미 답장한 피드백이에요. 발행하면 답장이 한 통 더 가요.';
   } else {
     summary.textContent = selected.sender + '에게 답장';
   }
 
   const btnPublish = document.getElementById('btnPublishFeedbackReply');
   btnPublish.textContent = isLetterMode ? '편지 발행' : '답장 발행';
-  btnPublish.disabled = busy || (!isLetterMode && (!selected || alreadyReplied));
+  btnPublish.disabled = busy || (!isLetterMode && !selected);
   document.getElementById('btnLoadFeedback').disabled = busy;
   document.getElementById('btnNewFeedbackLetter').disabled = busy;
   document.getElementById('btnSaveFeedbackDraft').disabled = busy;
@@ -470,17 +473,19 @@ async function publishFeedbackLetter() {
     ? API_BASE + '/api/admin/feedback/letters'
     : API_BASE + '/api/admin/feedback/' + encodeURIComponent(feedbackSelectedId) + '/reply';
   const sendPush = document.getElementById('feedbackSendPush').checked;
-  const target = isLetterMode ? '모든 사용자' : (getSelectedFeedback()?.sender || '이 사용자');
+  const selected = getSelectedFeedback();
+  const target = isLetterMode ? '모든 사용자' : (selected?.sender || '이 사용자');
+  const replyTitle = selected?.status === 'REPLIED' ? '답장을 한 통 더 보낼까요?' : '답장을 보낼까요?';
   const confirmed = await confirmDialog({
-    title: isLetterMode ? '모든 사용자에게 편지를 보낼까요?' : '답장을 보낼까요?',
+    title: isLetterMode ? '모든 사용자에게 편지를 보낼까요?' : replyTitle,
     message: '보낸 뒤에는 보낸 편지에서 제목·본문만 고칠 수 있어요.',
     details: [['받는 사람', target], ['제목', title], ['푸시', sendPush ? '보냄' : '안 보냄']],
     confirmLabel: '보내기',
     danger: isLetterMode && sendPush
   });
   if (!confirmed) return;
-  if (isLetterMode && !feedbackLetterRequestId) {
-    feedbackLetterRequestId = generateFeedbackRequestId();
+  if (!feedbackPublishRequestId) {
+    feedbackPublishRequestId = generateFeedbackRequestId();
   }
   const payload = isLetterMode
     ? {
@@ -488,9 +493,15 @@ async function publishFeedbackLetter() {
         title,
         body,
         sendPush,
-        requestId: feedbackLetterRequestId
+        requestId: feedbackPublishRequestId
       }
-    : { title, body, sendPush };
+    : {
+        title,
+        body,
+        sendPush,
+        requestId: feedbackPublishRequestId,
+        lastReplyLetterId: selected?.replyLetterId || null
+      };
 
   feedbackIsPublishing = true;
   updateFeedbackEditorState();
@@ -499,6 +510,12 @@ async function publishFeedbackLetter() {
     const data = await readJsonOrEmpty(res);
     if (!res.ok) {
       setMessageBox('feedbackSaveResult', false, data.message || '발행 실패 (HTTP ' + res.status + ')');
+      // 그 사이 다른 답장이 나갔다. 목록을 다시 받아 최신 답장을 보고 다시 판단하게 한다.
+      // 내용은 그대로 두고 키만 새로 만든다. 같은 키는 서버가 이미 거절한 요청이다.
+      if (data.statuscode === '904-15') {
+        feedbackPublishRequestId = '';
+        await reloadFeedbackList();
+      }
       return;
     }
     setMessageBox('feedbackSaveResult', true, getApiSuccessMessage(data, isLetterMode ? '편지가 발행되었습니다.' : '답장이 발행되었습니다.'));
@@ -514,7 +531,7 @@ async function publishFeedbackLetter() {
     document.getElementById('feedbackReplyBody').value = '';
     feedbackSelectedId = '';
     feedbackCurrentDraftId = '';
-    feedbackLetterRequestId = '';
+    feedbackPublishRequestId = '';
     feedbackMode = 'reply';
     showFeedbackEditorTab('write');
     await reloadFeedbackList();
@@ -596,6 +613,7 @@ async function toggleSelectedFeedbackStatus() {
 }
 
 // 피드백 응답에는 답장 편지 id가 없어서, 보낸 편지 목록에서 feedbackId로 찾는다.
+// 답장이 여러 통이면 목록이 최신순이라 가장 최근 답장이 열린다.
 async function openFeedbackReplyLetter() {
   const selected = getSelectedFeedback();
   if (!selected) return;
