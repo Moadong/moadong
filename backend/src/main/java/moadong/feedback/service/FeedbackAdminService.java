@@ -31,6 +31,7 @@ import moadong.user.repository.StudentUserRepository;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.TransactionTemplate;
 import org.springframework.util.StringUtils;
 
@@ -142,10 +143,12 @@ public class FeedbackAdminService {
                 feedbackRepository.save(feedback);
                 return saved;
             });
-        } catch (DataAccessException e) {
+        } catch (DataAccessException | TransactionSystemException e) {
             // 같은 키의 동시 요청이 둘 다 조회를 통과한 경우. 첫 요청이 커밋한 뒤면 중복 키(11000),
             // 커밋 전이면 트랜잭션 쓰기 충돌(112)이나 @Version 충돌로 오는데, 어느 쪽이든 같은 키로
             // 저장된 답장이 있으면 그 결과를 돌려주고 이쪽은 푸시를 보내지 않는다.
+            // 커밋 단계의 Mongo 오류는 MongoTransactionManager가 TransactionSystemException으로 감싼다.
+            // 커밋 응답만 잃었으면 답장은 이미 저장돼 있으므로 같은 방식으로 다시 찾는다.
             // 아직 커밋 전이라 못 찾으면 원래 예외를 던지고, 클라이언트가 같은 키로 재시도하면 처음 결과를 받는다.
             return findPublishedReply(feedbackId, requestId).orElseThrow(() -> e);
         } catch (RestApiException e) {

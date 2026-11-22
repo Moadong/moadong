@@ -22,6 +22,8 @@ let feedbackQuery = '';
 let feedbackIsChangingStatus = false;
 // 발행이 실패해 다시 시도할 때 같은 값을 보내야 편지가 두 번 만들어지지 않는다.
 let feedbackPublishRequestId = '';
+const PUBLISH_OUTCOME_UNKNOWN_HINT = ' 발행됐는지 확인하지 못했어요. 같은 내용으로 다시 발행하면 결과를 확인할 수 있어요.'
+  + ' 그동안 내용은 고칠 수 없어요. 고치려면 보낸 편지에서 발행 여부를 먼저 확인하고 선택을 해제하세요.';
 
 function clearFeedbackBanner() {
   const banner = document.getElementById('feedbackBanner');
@@ -218,6 +220,8 @@ async function confirmDiscardFeedbackCompose() {
 }
 
 async function selectFeedback(feedbackId) {
+  // 발행 중에 대상을 바꾸면 키가 비워져 입력 잠금이 풀리고, 응답이 성공하면 새로 쓰던 내용까지 지워진다.
+  if (feedbackIsPublishing) return;
   if (feedbackMode === 'reply' && feedbackId === feedbackSelectedId) return;
   if (!(await confirmDiscardFeedbackCompose())) return;
   document.getElementById('feedbackReplyTitle').value = '';
@@ -252,6 +256,7 @@ async function enterFeedbackLetterMode() {
 }
 
 async function clearFeedbackSelection() {
+  if (feedbackIsPublishing) return;
   if (!(await confirmDiscardFeedbackCompose())) return;
   showFeedbackEditorTab('write');
   feedbackMode = 'reply';
@@ -451,12 +456,20 @@ function updateFeedbackEditorState() {
   btnPublish.disabled = busy || (!isLetterMode && !selected);
   document.getElementById('btnLoadFeedback').disabled = busy;
   document.getElementById('btnNewFeedbackLetter').disabled = busy;
+  document.getElementById('btnClearFeedbackSelection').disabled = busy;
   document.getElementById('btnSaveFeedbackDraft').disabled = busy;
-  document.getElementById('btnUploadFeedbackImage').disabled = busy;
+  // 발행 키가 남아 있으면 그 요청의 결과를 아직 모른다. 같은 키로 다시 보내면 서버는 처음 요청의 편지를
+  // 돌려주므로, 그 사이 고친 내용은 발행되지 않은 채 성공 처리로 지워진다. 결과가 정해질 때까지 입력을 잠근다.
+  const publishPending = !!feedbackPublishRequestId;
+  document.getElementById('feedbackReplyTitle').readOnly = publishPending;
+  document.getElementById('feedbackReplyBody').readOnly = publishPending;
+  document.getElementById('feedbackSendPush').disabled = publishPending;
+  document.getElementById('feedbackLetterCategory').disabled = publishPending;
+  document.getElementById('btnUploadFeedbackImage').disabled = busy || publishPending;
 
   const hasDrafts = feedbackDrafts.length > 0;
-  document.getElementById('feedbackDraftSelect').disabled = busy || !hasDrafts;
-  document.getElementById('btnLoadFeedbackDraft').disabled = busy || !hasDrafts;
+  document.getElementById('feedbackDraftSelect').disabled = busy || !hasDrafts || publishPending;
+  document.getElementById('btnLoadFeedbackDraft').disabled = busy || !hasDrafts || publishPending;
   document.getElementById('btnDeleteFeedbackDraft').disabled = busy || !hasDrafts;
 }
 
@@ -503,17 +516,26 @@ async function publishFeedbackLetter() {
         lastReplyLetterId: selected?.replyLetterId || null
       };
 
+  let nextFeedbackIdToOpen = '';
   feedbackIsPublishing = true;
   updateFeedbackEditorState();
   try {
     const res = await fetch(url, { method: 'POST', headers: headers(), body: JSON.stringify(payload) });
     const data = await readJsonOrEmpty(res);
     if (!res.ok) {
-      setMessageBox('feedbackSaveResult', false, data.message || '발행 실패 (HTTP ' + res.status + ')');
+      const message = data.message || '발행 실패 (HTTP ' + res.status + ')';
+      // 5xx와 정체를 모르는 409(동시 요청 충돌)는 서버에서 편지가 저장됐을 수도 있다. 키를 남겨 같은
+      // 내용으로 다시 보내게 한다. 나머지 4xx는 서버가 확실히 거절한 요청이라 키를 버리고 잠금을 푼다.
+      const outcomeUnknown = res.status >= 500
+        || (res.status === 409 && data.statuscode !== '904-14' && data.statuscode !== '904-15');
+      if (outcomeUnknown) {
+        setMessageBox('feedbackSaveResult', false, message + PUBLISH_OUTCOME_UNKNOWN_HINT);
+        return;
+      }
+      setMessageBox('feedbackSaveResult', false, message);
+      feedbackPublishRequestId = '';
       // 그 사이 다른 답장이 나갔다. 목록을 다시 받아 최신 답장을 보고 다시 판단하게 한다.
-      // 내용은 그대로 두고 키만 새로 만든다. 같은 키는 서버가 이미 거절한 요청이다.
       if (data.statuscode === '904-15') {
-        feedbackPublishRequestId = '';
         await reloadFeedbackList();
       }
       return;
@@ -535,19 +557,21 @@ async function publishFeedbackLetter() {
     feedbackMode = 'reply';
     showFeedbackEditorTab('write');
     await reloadFeedbackList();
-    // 답장을 보냈으면 다음 대기 피드백을 바로 연다.
+    // 답장을 보냈으면 다음 대기 피드백을 바로 연다. selectFeedback은 발행 중에 막히므로 발행 상태를 끈 뒤에 연다.
     if (!isLetterMode) {
       const next = getVisibleFeedbacks().find((feedback) => feedback.status === 'WAITING');
-      if (next) selectFeedback(next.id);
+      if (next) nextFeedbackIdToOpen = next.id;
     }
     // 보낸 편지 화면을 한 번이라도 열었다면 방금 발행한 편지가 보이게 다시 불러온다.
     if (sentLettersHaveLoaded) await reloadSentLetters();
   } catch (e) {
-    setMessageBox('feedbackSaveResult', false, e.message || '발행 실패');
+    // 응답을 받지 못했으니 서버에서 저장됐는지 알 수 없다. 키를 남긴다.
+    setMessageBox('feedbackSaveResult', false, (e.message || '발행 실패') + PUBLISH_OUTCOME_UNKNOWN_HINT);
   } finally {
     feedbackIsPublishing = false;
     updateFeedbackEditorState();
   }
+  if (nextFeedbackIdToOpen) await selectFeedback(nextFeedbackIdToOpen);
 }
 
 /**

@@ -33,6 +33,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.dao.DuplicateKeyException;
 import org.springframework.data.mongodb.UncategorizedMongoDbException;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -307,6 +308,38 @@ class FeedbackAdminServiceTest {
 
         assertEquals("letter-1", response.letterId());
         assertTrue(response.pushSent());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 커밋_응답을_잃어_TransactionSystemException이_나도_저장된_답장이_있으면_돌려준다() {
+        when(transactionTemplate.execute(any()))
+                .thenThrow(new TransactionSystemException("Could not commit Mongo transaction"));
+        when(letterRepository.findByIdempotencyKey("req-1"))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(Letter.builder()
+                        .id("letter-1")
+                        .category(LetterCategory.REPLY)
+                        .recipientStudentId(STUDENT_ID)
+                        .feedbackId("feedback-1")
+                        .idempotencyKey("req-1")
+                        .build()));
+
+        FeedbackReplyResponse response = feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
+
+        assertEquals("letter-1", response.letterId());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 커밋이_실패하고_저장된_답장도_없으면_원래_예외를_던진다() {
+        when(transactionTemplate.execute(any()))
+                .thenThrow(new TransactionSystemException("Could not commit Mongo transaction"));
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.empty());
+
+        assertThrows(TransactionSystemException.class, () -> feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null)));
         verify(pushNotificationPort, never()).sendToToken(any());
     }
 
