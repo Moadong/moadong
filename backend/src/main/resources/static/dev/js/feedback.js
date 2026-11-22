@@ -220,6 +220,8 @@ async function confirmDiscardFeedbackCompose() {
 }
 
 async function selectFeedback(feedbackId) {
+  // 발행 중에 대상을 바꾸면 키가 비워져 입력 잠금이 풀리고, 응답이 성공하면 새로 쓰던 내용까지 지워진다.
+  if (feedbackIsPublishing) return;
   if (feedbackMode === 'reply' && feedbackId === feedbackSelectedId) return;
   if (!(await confirmDiscardFeedbackCompose())) return;
   document.getElementById('feedbackReplyTitle').value = '';
@@ -254,6 +256,7 @@ async function enterFeedbackLetterMode() {
 }
 
 async function clearFeedbackSelection() {
+  if (feedbackIsPublishing) return;
   if (!(await confirmDiscardFeedbackCompose())) return;
   showFeedbackEditorTab('write');
   feedbackMode = 'reply';
@@ -453,6 +456,7 @@ function updateFeedbackEditorState() {
   btnPublish.disabled = busy || (!isLetterMode && !selected);
   document.getElementById('btnLoadFeedback').disabled = busy;
   document.getElementById('btnNewFeedbackLetter').disabled = busy;
+  document.getElementById('btnClearFeedbackSelection').disabled = busy;
   document.getElementById('btnSaveFeedbackDraft').disabled = busy;
   // 발행 키가 남아 있으면 그 요청의 결과를 아직 모른다. 같은 키로 다시 보내면 서버는 처음 요청의 편지를
   // 돌려주므로, 그 사이 고친 내용은 발행되지 않은 채 성공 처리로 지워진다. 결과가 정해질 때까지 입력을 잠근다.
@@ -512,6 +516,7 @@ async function publishFeedbackLetter() {
         lastReplyLetterId: selected?.replyLetterId || null
       };
 
+  let nextFeedbackIdToOpen = '';
   feedbackIsPublishing = true;
   updateFeedbackEditorState();
   try {
@@ -552,10 +557,10 @@ async function publishFeedbackLetter() {
     feedbackMode = 'reply';
     showFeedbackEditorTab('write');
     await reloadFeedbackList();
-    // 답장을 보냈으면 다음 대기 피드백을 바로 연다.
+    // 답장을 보냈으면 다음 대기 피드백을 바로 연다. selectFeedback은 발행 중에 막히므로 발행 상태를 끈 뒤에 연다.
     if (!isLetterMode) {
       const next = getVisibleFeedbacks().find((feedback) => feedback.status === 'WAITING');
-      if (next) selectFeedback(next.id);
+      if (next) nextFeedbackIdToOpen = next.id;
     }
     // 보낸 편지 화면을 한 번이라도 열었다면 방금 발행한 편지가 보이게 다시 불러온다.
     if (sentLettersHaveLoaded) await reloadSentLetters();
@@ -566,6 +571,7 @@ async function publishFeedbackLetter() {
     feedbackIsPublishing = false;
     updateFeedbackEditorState();
   }
+  if (nextFeedbackIdToOpen) await selectFeedback(nextFeedbackIdToOpen);
 }
 
 /**
