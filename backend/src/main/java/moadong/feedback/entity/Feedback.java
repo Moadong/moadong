@@ -27,7 +27,8 @@ public class Feedback {
     private String id;
 
     /**
-     * 운영자 둘이 동시에 답장을 발행하면 늦은 쪽이 충돌하도록 한다.
+     * 운영자 둘의 답장 발행이 실제로 겹치면 늦은 쪽이 충돌하도록 한다.
+     * 앞 답장이 커밋된 뒤에 온 답장은 요청의 lastReplyLetterId로 걸러낸다.
      * {@code GlobalExceptionHandler}가 이 예외를 409로 변환한다.
      */
     @Version
@@ -54,8 +55,14 @@ public class Feedback {
 
     private Instant repliedAt;
 
+    /**
+     * 가장 최근 답장. 한 피드백에 답장을 여러 번 보낼 수 있어서, 전체 답장은 Letter.feedbackId로 찾는다.
+     */
     private String replyLetterId;
 
+    /**
+     * 답장할 때마다 호출된다. 이미 REPLIED여도 replyLetterId · repliedAt을 마지막 답장으로 갱신한다.
+     */
     public void markReplied(String replyLetterId) {
         this.status = FeedbackStatus.REPLIED;
         this.replyLetterId = replyLetterId;

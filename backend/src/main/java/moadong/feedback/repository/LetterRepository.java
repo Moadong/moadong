@@ -40,5 +40,12 @@ public interface LetterRepository extends MongoRepository<Letter, String> {
     @Update("{ '$set': { 'title': ?1, 'body': ?2 } }")
     long updateContent(String letterId, String title, String body);
 
+    /**
+     * 푸시 결과만 남긴다. 푸시를 탭한 학생의 markRead가 먼저 반영될 수 있어 문서 전체를 save하지 않는다.
+     */
+    @Query("{ '_id': ?0 }")
+    @Update("{ '$set': { 'pushSuccessCount': ?1 } }")
+    long updatePushSuccessCount(String letterId, int pushSuccessCount);
+
     Optional<Letter> findByIdempotencyKey(String idempotencyKey);
 }

@@ -32,6 +32,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.springframework.dao.DuplicateKeyException;
+import org.springframework.data.mongodb.UncategorizedMongoDbException;
+import org.springframework.transaction.TransactionSystemException;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
@@ -92,7 +94,7 @@ class FeedbackAdminServiceTest {
         givenSavedLetterId("letter-1");
 
         FeedbackReplyResponse response = feedbackAdminService.reply(
-                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", false));
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", false, "req-1", null));
 
         ArgumentCaptor<Letter> letterCaptor = ArgumentCaptor.forClass(Letter.class);
         verify(letterRepository).save(letterCaptor.capture());
@@ -126,7 +128,7 @@ class FeedbackAdminServiceTest {
     @Test
     void 보낸_편지_목록은_답장의_받는_사람만_익명_식별자로_표시한다() {
         when(letterRepository.findAllByOrderByCreatedAtDesc()).thenReturn(List.of(
-                Letter.reply(STUDENT_ID, "feedback-1", "답장 제목", "답장 본문"),
+                Letter.reply(STUDENT_ID, "feedback-1", "답장 제목", "답장 본문", null),
                 Letter.broadcast(LetterCategory.UPDATE, "공지 제목", "공지 본문", "request-1")));
 
         AdminSentLetterListResponse response = feedbackAdminService.getSentLetters();
@@ -139,22 +141,262 @@ class FeedbackAdminServiceTest {
     }
 
     @Test
-    void 이미_답장한_피드백에는_다시_답장할_수_없다() {
+    void 이미_답장한_피드백에도_답장을_더_보낼_수_있다() {
         Feedback replied = Feedback.builder()
                 .id("feedback-1")
                 .studentId(STUDENT_ID)
                 .type(FeedbackType.BUG)
                 .content("버그가 있어요")
                 .status(FeedbackStatus.REPLIED)
+                .replyLetterId("letter-1")
                 .build();
         givenTransactionRunsInline();
         when(feedbackRepository.findById("feedback-1")).thenReturn(Optional.of(replied));
+        givenSavedLetterId("letter-2");
+
+        FeedbackReplyResponse response = feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("추가 답장", "추가 본문", false, "req-1", "letter-1"));
+
+        ArgumentCaptor<Letter> letterCaptor = ArgumentCaptor.forClass(Letter.class);
+        verify(letterRepository).save(letterCaptor.capture());
+        assertEquals(STUDENT_ID, letterCaptor.getValue().getRecipientStudentId());
+        assertEquals("feedback-1", letterCaptor.getValue().getFeedbackId());
+
+        ArgumentCaptor<Feedback> feedbackCaptor = ArgumentCaptor.forClass(Feedback.class);
+        verify(feedbackRepository).save(feedbackCaptor.capture());
+        assertEquals(FeedbackStatus.REPLIED, feedbackCaptor.getValue().getStatus());
+        assertEquals("letter-2", feedbackCaptor.getValue().getReplyLetterId());
+        assertEquals("letter-2", response.letterId());
+    }
+
+    @Test
+    void 대기_중으로_보고_답장했는데_그_사이_답장이_나갔으면_409로_거절한다() {
+        givenTransactionRunsInline();
+        givenRepliedFeedback("letter-1");
 
         RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.reply(
-                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", false)));
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-2", null)));
 
-        assertEquals(ErrorCode.FEEDBACK_ALREADY_REPLIED, exception.getErrorCode());
+        assertEquals(ErrorCode.FEEDBACK_REPLY_OUTDATED, exception.getErrorCode());
         verify(letterRepository, never()).save(any());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 조회_뒤에_같은_키의_첫_요청이_커밋되면_OUTDATED_대신_처음_결과를_돌려준다() {
+        Letter committed = Letter.reply(STUDENT_ID, "feedback-1", "답장 제목", "답장 본문", "req-1");
+        givenTransactionRunsInline();
+        givenRepliedFeedback("letter-1");
+        when(letterRepository.findByIdempotencyKey("req-1"))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(Letter.builder()
+                        .id("letter-1")
+                        .category(committed.getCategory())
+                        .recipientStudentId(committed.getRecipientStudentId())
+                        .feedbackId(committed.getFeedbackId())
+                        .idempotencyKey("req-1")
+                        .pushSuccessCount(1)
+                        .build()));
+
+        FeedbackReplyResponse response = feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
+
+        assertEquals("letter-1", response.letterId());
+        assertTrue(response.pushSent());
+        verify(letterRepository, never()).save(any());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 화면에서_본_마지막_답장보다_새_답장이_있으면_409로_거절한다() {
+        givenTransactionRunsInline();
+        givenRepliedFeedback("letter-2");
+
+        RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", false, "req-3", "letter-1")));
+
+        assertEquals(ErrorCode.FEEDBACK_REPLY_OUTDATED, exception.getErrorCode());
+        verify(letterRepository, never()).save(any());
+    }
+
+    @Test
+    void 같은_requestId로_다시_답장하면_편지도_푸시도_반복되지_않는다() {
+        Letter published = Letter.builder()
+                .id("letter-1")
+                .category(LetterCategory.REPLY)
+                .recipientStudentId(STUDENT_ID)
+                .feedbackId("feedback-1")
+                .title("답장 제목")
+                .body("답장 본문")
+                .idempotencyKey("req-1")
+                .pushSuccessCount(1)
+                .build();
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.of(published));
+
+        FeedbackReplyResponse response = feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
+
+        assertEquals("letter-1", response.letterId());
+        assertTrue(response.pushSent());
+        verify(letterRepository, never()).save(any());
+        verify(feedbackRepository, never()).save(any());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 처음_답장할_때는_requestId를_편지에_남긴다() {
+        givenTransactionRunsInline();
+        givenWaitingFeedback();
+        givenSavedLetterId("letter-1");
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.empty());
+
+        feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", false, " req-1 ", null));
+
+        ArgumentCaptor<Letter> captor = ArgumentCaptor.forClass(Letter.class);
+        verify(letterRepository).save(captor.capture());
+        assertEquals("req-1", captor.getValue().getIdempotencyKey());
+    }
+
+    @Test
+    void 동시_답장이_충돌하면_먼저_저장된_답장을_돌려주고_푸시는_보내지_않는다() {
+        Letter winner = Letter.builder()
+                .id("letter-1")
+                .category(LetterCategory.REPLY)
+                .recipientStudentId(STUDENT_ID)
+                .feedbackId("feedback-1")
+                .title("답장 제목")
+                .body("답장 본문")
+                .idempotencyKey("req-1")
+                .pushSuccessCount(1)
+                .build();
+        givenTransactionRunsInline();
+        givenWaitingFeedback();
+        when(letterRepository.findByIdempotencyKey("req-1"))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(winner));
+        when(letterRepository.save(any())).thenThrow(new DuplicateKeyException("duplicate idempotencyKey"));
+
+        FeedbackReplyResponse response = feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
+
+        assertEquals("letter-1", response.letterId());
+        assertTrue(response.pushSent());
+        verify(feedbackRepository, never()).save(any());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 같은_키_동시_요청이_트랜잭션_쓰기_충돌로_실패해도_먼저_저장된_답장을_돌려준다() {
+        // 첫 요청이 커밋하기 전이면 중복 키(11000)가 아니라 쓰기 충돌(112)로 온다.
+        givenTransactionRunsInline();
+        givenWaitingFeedback();
+        when(letterRepository.findByIdempotencyKey("req-1"))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(Letter.builder()
+                        .id("letter-1")
+                        .category(LetterCategory.REPLY)
+                        .recipientStudentId(STUDENT_ID)
+                        .feedbackId("feedback-1")
+                        .idempotencyKey("req-1")
+                        .pushSuccessCount(1)
+                        .build()));
+        when(letterRepository.save(any())).thenThrow(new UncategorizedMongoDbException("WriteConflict", null));
+
+        FeedbackReplyResponse response = feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
+
+        assertEquals("letter-1", response.letterId());
+        assertTrue(response.pushSent());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 커밋_응답을_잃어_TransactionSystemException이_나도_저장된_답장이_있으면_돌려준다() {
+        when(transactionTemplate.execute(any()))
+                .thenThrow(new TransactionSystemException("Could not commit Mongo transaction"));
+        when(letterRepository.findByIdempotencyKey("req-1"))
+                .thenReturn(Optional.empty())
+                .thenReturn(Optional.of(Letter.builder()
+                        .id("letter-1")
+                        .category(LetterCategory.REPLY)
+                        .recipientStudentId(STUDENT_ID)
+                        .feedbackId("feedback-1")
+                        .idempotencyKey("req-1")
+                        .build()));
+
+        FeedbackReplyResponse response = feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
+
+        assertEquals("letter-1", response.letterId());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 커밋이_실패하고_저장된_답장도_없으면_원래_예외를_던진다() {
+        when(transactionTemplate.execute(any()))
+                .thenThrow(new TransactionSystemException("Could not commit Mongo transaction"));
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.empty());
+
+        assertThrows(TransactionSystemException.class, () -> feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null)));
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void 쓰기_충돌인데_같은_키의_답장이_아직_없으면_원래_예외를_던진다() {
+        givenTransactionRunsInline();
+        givenWaitingFeedback();
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.empty());
+        when(letterRepository.save(any())).thenThrow(new UncategorizedMongoDbException("WriteConflict", null));
+
+        assertThrows(UncategorizedMongoDbException.class, () -> feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null)));
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void requestId가_다른_피드백의_답장이면_409로_거절하고_아무것도_보내지_않는다() {
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.of(
+                Letter.reply(STUDENT_ID, "feedback-other", "답장 제목", "답장 본문", "req-1")));
+
+        RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null)));
+
+        assertEquals(ErrorCode.LETTER_REQUEST_ID_MISMATCH, exception.getErrorCode());
+        verify(letterRepository, never()).save(any());
+        verify(pushNotificationPort, never()).sendToToken(any());
+    }
+
+    @Test
+    void requestId가_전체_발행_편지의_것이면_409로_거절한다() {
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.of(
+                Letter.broadcast(LetterCategory.UPDATE, "공지 제목", "공지 본문", "req-1")));
+
+        RestApiException exception = assertThrows(RestApiException.class, () -> feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null)));
+
+        assertEquals(ErrorCode.LETTER_REQUEST_ID_MISMATCH, exception.getErrorCode());
+        verify(letterRepository, never()).save(any());
+    }
+
+    @Test
+    void 푸시_결과_저장이_실패해도_푸시를_보냈다고_응답한다() {
+        givenTransactionRunsInline();
+        givenWaitingFeedback();
+        givenSavedLetterId("letter-1");
+        when(studentUserRepository.findByStudentId(STUDENT_ID)).thenReturn(Optional.of(StudentUser.builder()
+                .studentId(STUDENT_ID)
+                .currentFcmToken("fcm-token")
+                .build()));
+        when(pushNotificationPort.sendToToken(any())).thenReturn(new TokenPushResult(true, "message-1"));
+        when(letterRepository.updatePushSuccessCount("letter-1", 1)).thenThrow(new IllegalStateException("mongo down"));
+
+        FeedbackReplyResponse response = feedbackAdminService.reply(
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
+
+        assertEquals("letter-1", response.letterId());
+        assertTrue(response.pushSent());
     }
 
     @Test
@@ -169,7 +411,7 @@ class FeedbackAdminServiceTest {
         when(pushNotificationPort.sendToToken(any())).thenReturn(new TokenPushResult(true, "message-1"));
 
         FeedbackReplyResponse response = feedbackAdminService.reply(
-                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true));
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
 
         ArgumentCaptor<TokenPushPayload> payloadCaptor = ArgumentCaptor.forClass(TokenPushPayload.class);
         verify(pushNotificationPort).sendToToken(payloadCaptor.capture());
@@ -179,6 +421,8 @@ class FeedbackAdminServiceTest {
         assertEquals("NAVIGATE_WEBVIEW", payloadCaptor.getValue().data().get("action"));
         assertEquals("/feedback/letters/letter-1", payloadCaptor.getValue().data().get("path"));
         assertTrue(response.pushSent());
+        // 재시도에 같은 결과를 돌려주려면 푸시 성공을 편지에 남겨야 한다.
+        verify(letterRepository).updatePushSuccessCount("letter-1", 1);
     }
 
     @Test
@@ -189,9 +433,10 @@ class FeedbackAdminServiceTest {
         when(studentUserRepository.findByStudentId(STUDENT_ID)).thenReturn(Optional.empty());
 
         FeedbackReplyResponse response = feedbackAdminService.reply(
-                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true));
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
 
         verify(pushNotificationPort, never()).sendToToken(any());
+        verify(letterRepository, never()).updatePushSuccessCount(any(), org.mockito.ArgumentMatchers.anyInt());
         assertEquals("letter-1", response.letterId());
         assertFalse(response.pushSent());
     }
@@ -208,7 +453,7 @@ class FeedbackAdminServiceTest {
         when(pushNotificationPort.sendToToken(any())).thenThrow(new IllegalStateException("firebase down"));
 
         FeedbackReplyResponse response = feedbackAdminService.reply(
-                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true));
+                "feedback-1", new FeedbackReplyRequest("답장 제목", "답장 본문", true, "req-1", null));
 
         verify(feedbackRepository).save(any());
         assertEquals("letter-1", response.letterId());
@@ -289,6 +534,20 @@ class FeedbackAdminServiceTest {
 
         assertEquals("letter-1", response.letterId());
         assertEquals(118, response.pushSuccessCount());
+        verify(letterRepository, never()).save(any());
+        verify(fcmAdminService, never()).sendToAll(any());
+    }
+
+    @Test
+    void 전체_발행에_답장의_requestId가_오면_409로_거절한다() {
+        when(letterRepository.findByIdempotencyKey("req-1")).thenReturn(Optional.of(
+                Letter.reply(STUDENT_ID, "feedback-1", "답장 제목", "답장 본문", "req-1")));
+
+        RestApiException exception = assertThrows(RestApiException.class,
+                () -> feedbackAdminService.createBroadcastLetter(
+                        new LetterCreateRequest(LetterCategory.UPDATE, "제목", "본문", true, "req-1")));
+
+        assertEquals(ErrorCode.LETTER_REQUEST_ID_MISMATCH, exception.getErrorCode());
         verify(letterRepository, never()).save(any());
         verify(fcmAdminService, never()).sendToAll(any());
     }
@@ -506,6 +765,17 @@ class FeedbackAdminServiceTest {
                 .type(FeedbackType.FEATURE)
                 .content("즐겨찾기 알림이 있으면 좋겠어요")
                 .status(FeedbackStatus.WAITING)
+                .build()));
+    }
+
+    private void givenRepliedFeedback(String replyLetterId) {
+        when(feedbackRepository.findById("feedback-1")).thenReturn(Optional.of(Feedback.builder()
+                .id("feedback-1")
+                .studentId(STUDENT_ID)
+                .type(FeedbackType.BUG)
+                .content("버그가 있어요")
+                .status(FeedbackStatus.REPLIED)
+                .replyLetterId(replyLetterId)
                 .build()));
     }
 

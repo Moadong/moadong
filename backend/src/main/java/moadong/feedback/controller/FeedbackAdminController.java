@@ -59,7 +59,7 @@ public class FeedbackAdminController {
     }
 
     @PostMapping("/{feedbackId}/reply")
-    @Operation(summary = "답장 발행", description = "해당 피드백을 보낸 사용자의 받은 편지함에 REPLY 편지를 생성하고 상태를 답장 완료로 바꿉니다.")
+    @Operation(summary = "답장 발행", description = "해당 피드백을 보낸 사용자의 받은 편지함에 REPLY 편지를 생성하고 상태를 답장 완료로 바꿉니다. 이미 답장한 피드백에도 추가로 보낼 수 있고, 같은 requestId로 다시 요청하면 처음 결과를 돌려줍니다. lastReplyLetterId가 서버의 마지막 답장과 다르면 409(904-15)입니다.")
     public ResponseEntity<?> reply(
             @PathVariable String feedbackId,
             @RequestBody @Valid FeedbackReplyRequest request

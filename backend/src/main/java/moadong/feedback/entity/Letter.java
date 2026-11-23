@@ -45,15 +45,15 @@ public class Letter {
     private String body;
 
     /**
-     * 전체 발행 요청의 재시도를 걸러내기 위한 키. 클라이언트가 편지 한 건에 대해 같은 값을 재사용한다.
-     * 답장은 {@code FEEDBACK_ALREADY_REPLIED}로 막히므로 전체 발행 편지에만 쓴다.
+     * 발행 요청(전체 발행 · 답장)의 재시도를 걸러내기 위한 키. 클라이언트가 편지 한 건에 대해 같은 값을 재사용한다.
+     * 한 피드백에 답장을 여러 번 보낼 수 있으므로, 답장의 중복 발행도 이 키로만 막는다.
      * 조회로만 거르면 동시 요청이 둘 다 통과하므로 유니크 인덱스로 최종 방어한다.
      */
     @Indexed(unique = true, sparse = true)
     private String idempotencyKey;
 
     /**
-     * 전체 발행 시 푸시가 도달한 기기 수. 재시도로 같은 요청이 다시 와도 원래 결과를 그대로 돌려주기 위해 보관한다.
+     * 푸시가 도달한 기기 수(답장은 0 또는 1). 재시도로 같은 요청이 다시 와도 원래 결과를 그대로 돌려주기 위해 보관한다.
      */
     private int pushSuccessCount;
 
@@ -98,13 +98,15 @@ public class Letter {
                 .replaceAll("\\*{1,2}", "");
     }
 
-    public static Letter reply(String recipientStudentId, String feedbackId, String title, String body) {
+    public static Letter reply(String recipientStudentId, String feedbackId, String title, String body,
+                               String idempotencyKey) {
         return Letter.builder()
                 .category(LetterCategory.REPLY)
                 .recipientStudentId(recipientStudentId)
                 .feedbackId(feedbackId)
                 .title(title)
                 .body(body)
+                .idempotencyKey(idempotencyKey)
                 .build();
     }
 
