@@ -534,6 +534,7 @@ async function publishFeedbackLetter() {
       const message = data.message || '발행 실패 (HTTP ' + res.status + ')';
       // 5xx와 정체를 모르는 409(동시 요청 충돌)는 서버에서 편지가 저장됐을 수도 있다. 키를 남겨 같은
       // 내용으로 다시 보내게 한다. 나머지 4xx는 서버가 확실히 거절한 요청이라 키를 버리고 잠금을 푼다.
+      // 단, 이 키로 결과를 모르는 실패가 이미 있었다면 4xx여도 키를 남긴다.
       const outcomeUnknown = res.status >= 500
         || (res.status === 409 && data.statuscode !== '904-14' && data.statuscode !== '904-15');
       if (outcomeUnknown) feedbackPublishOutcomeUnknown = true;
