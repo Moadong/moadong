@@ -22,6 +22,14 @@ let feedbackQuery = '';
 let feedbackIsChangingStatus = false;
 // 발행이 실패해 다시 시도할 때 같은 값을 보내야 편지가 두 번 만들어지지 않는다.
 let feedbackPublishRequestId = '';
+// 이 키로 보낸 요청 중 결과를 모르고 끝난 것이 있었는지. 있었다면 서버에 이 키의 편지가 이미 저장됐을 수 있어서,
+// 뒤이은 재시도가 4xx(로그인 만료 등)로 거절돼도 키를 버리지 않는다. 버리면 새 키로 한 번 더 발행된다.
+let feedbackPublishOutcomeUnknown = false;
+
+function discardFeedbackPublishRequest() {
+  feedbackPublishRequestId = '';
+  feedbackPublishOutcomeUnknown = false;
+}
 const PUBLISH_OUTCOME_UNKNOWN_HINT = ' 발행됐는지 확인하지 못했어요. 같은 내용으로 다시 발행하면 결과를 확인할 수 있어요.'
   + ' 그동안 내용은 고칠 수 없어요. 고치려면 보낸 편지에서 발행 여부를 먼저 확인하고 선택을 해제하세요.';
 
@@ -231,7 +239,7 @@ async function selectFeedback(feedbackId) {
   feedbackMode = 'reply';
   feedbackSelectedId = feedbackId;
   // 다른 피드백에 이전 키를 보내면 서버가 409(904-14)로 거절한다.
-  feedbackPublishRequestId = '';
+  discardFeedbackPublishRequest();
   document.getElementById('feedbackSaveResult').classList.add('hidden');
   renderFeedbackList();
   revealOnNarrowScreen('feedbackEditorTitle');
@@ -244,7 +252,7 @@ async function enterFeedbackLetterMode() {
   feedbackMode = 'letter';
   feedbackSelectedId = '';
   feedbackCurrentDraftId = '';
-  feedbackPublishRequestId = '';
+  discardFeedbackPublishRequest();
   // 초안을 불러온 뒤 새 편지로 넘어오면 이전 분류·푸시 설정이 남는다.
   document.getElementById('feedbackLetterCategory').value = 'UPDATE';
   document.getElementById('feedbackSendPush').checked = false;
@@ -262,7 +270,7 @@ async function clearFeedbackSelection() {
   feedbackMode = 'reply';
   feedbackSelectedId = '';
   feedbackCurrentDraftId = '';
-  feedbackPublishRequestId = '';
+  discardFeedbackPublishRequest();
   document.getElementById('feedbackSendPush').checked = false;
   document.getElementById('feedbackReplyTitle').value = '';
   document.getElementById('feedbackReplyBody').value = '';
@@ -528,16 +536,17 @@ async function publishFeedbackLetter() {
       // 내용으로 다시 보내게 한다. 나머지 4xx는 서버가 확실히 거절한 요청이라 키를 버리고 잠금을 푼다.
       const outcomeUnknown = res.status >= 500
         || (res.status === 409 && data.statuscode !== '904-14' && data.statuscode !== '904-15');
-      if (outcomeUnknown) {
-        setMessageBox('feedbackSaveResult', false, message + PUBLISH_OUTCOME_UNKNOWN_HINT);
-        return;
-      }
-      setMessageBox('feedbackSaveResult', false, message);
-      feedbackPublishRequestId = '';
+      if (outcomeUnknown) feedbackPublishOutcomeUnknown = true;
       // 그 사이 다른 답장이 나갔다. 목록을 다시 받아 최신 답장을 보고 다시 판단하게 한다.
       if (data.statuscode === '904-15') {
         await reloadFeedbackList();
       }
+      if (feedbackPublishOutcomeUnknown) {
+        setMessageBox('feedbackSaveResult', false, message + PUBLISH_OUTCOME_UNKNOWN_HINT);
+        return;
+      }
+      setMessageBox('feedbackSaveResult', false, message);
+      discardFeedbackPublishRequest();
       return;
     }
     setMessageBox('feedbackSaveResult', true, getApiSuccessMessage(data, isLetterMode ? '편지가 발행되었습니다.' : '답장이 발행되었습니다.'));
@@ -553,7 +562,7 @@ async function publishFeedbackLetter() {
     document.getElementById('feedbackReplyBody').value = '';
     feedbackSelectedId = '';
     feedbackCurrentDraftId = '';
-    feedbackPublishRequestId = '';
+    discardFeedbackPublishRequest();
     feedbackMode = 'reply';
     showFeedbackEditorTab('write');
     await reloadFeedbackList();
@@ -566,6 +575,7 @@ async function publishFeedbackLetter() {
     if (sentLettersHaveLoaded) await reloadSentLetters();
   } catch (e) {
     // 응답을 받지 못했으니 서버에서 저장됐는지 알 수 없다. 키를 남긴다.
+    feedbackPublishOutcomeUnknown = true;
     setMessageBox('feedbackSaveResult', false, (e.message || '발행 실패') + PUBLISH_OUTCOME_UNKNOWN_HINT);
   } finally {
     feedbackIsPublishing = false;
