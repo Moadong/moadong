@@ -65,6 +65,12 @@ export const RequiredStar = styled.span`
   font-size: 1.25rem;
   line-height: 1.5;
   margin-left: 4px;
+
+  /* 제목보다 큰 글자가 섞이면 줄 상자가 커져 제목이 질문 번호보다 내려간다. 제목과 같은 크기로 줄인다 */
+  ${media.mobile} {
+    font-size: 1.05rem;
+    line-height: 1.4;
+  }
 `;
 
 export const QuestionTitleReadOnly = styled.span`
