@@ -209,8 +209,8 @@ jobs:
             echo "::error::테스트 파일 삭제: $deleted_tests"
             exit 1
           fi
-          # 규칙 파일 3절은 재현 테스트를 반드시 남기게 한다. 아래 Test는 --passWithNoTests라 관련 테스트가 0개면 통과하므로,
-          # 줄을 더한 테스트 파일이 없는 패치는 여기서 거부한다. 기존 단언을 지우기만 한 수정도 걸린다.
+          # 규칙 파일 3절은 재현 테스트를 반드시 남기게 한다. 테스트 파일을 건드리지 않은 패치는 관련 테스트가 없어
+          # 빈 검증이 되므로, 줄을 더한 테스트 파일이 없는 패치는 여기서 거부한다. 기존 단언을 지우기만 한 수정도 걸린다.
           # 빈 줄·주석만 더한 경우는 비켜 가니 최종 관문은 사람이 diff를 보는 것이다.
           tests=$(git diff --cached --numstat --no-renames -- 'frontend/src/*.test.ts' 'frontend/src/*.test.tsx' \
             | awk -F'\t' '$1 > 0 { print $3 }')
@@ -256,6 +256,7 @@ jobs:
       # 뒤에 도는 액션 post 스텝(런타임 토큰을 받는다)의 파일을 덮어쓰거나 그 환경변수를 읽을 수 있고,
       # docker 그룹이라 호스트 root도 얻는다. 그래서 frontend만 마운트한 컨테이너에서 네트워크 없이 돌린다(design-feedback과 같음).
       # 의존성은 위에서 base의 lockfile로 설치한 node_modules를 그대로 쓴다. 줄을 더한 테스트 파일이 있는지는 Apply patch가 강제한다.
+      # 그래서 --passWithNoTests를 쓰지 않는다. jest가 그 테스트를 수집하지 않으면(예: node_modules 아래 경로) 실행된 테스트가 없어 실패한다.
       - name: Test related files
         if: ${{ steps.apply.outputs.files != '' }}
         working-directory: frontend
@@ -263,7 +264,7 @@ jobs:
           docker run --rm --network none
           --user "$(id -u):$(id -g)" -e HOME=/tmp -e CI=true
           -v "$PWD":/app -w /app
-          node:20 node_modules/.bin/jest --findRelatedTests $FILES --passWithNoTests
+          node:20 node_modules/.bin/jest --findRelatedTests $FILES
         env:
           FILES: ${{ steps.apply.outputs.files }}
 
