@@ -191,12 +191,11 @@ jobs:
       # 린트는 설정 파일을 실행하므로 시크릿 없는 verify job에서 돌린다.
       # 테스트는 에이전트가 쓴 코드를 실행하는데 이 job의 환경변수에 OAuth 토큰이 있으니 여기서 돌리지 않고 verify job에서 돌린다.
       # 프로세스 환경변수(OAuth 토큰)를 읽어 결과 파일에 옮기지 못하게 /proc 등은 Read·Grep·Glob 모두 막는다.
-      # restrict_untrusted_prs: 액션은 PR 작성자에게 쓰기 권한이 없으면 npm·node 등 코드를 실행하는 명령을
-      # claude_args 허용보다 우선해 막는다. design/* PR의 작성자는 github-actions[bot]이고 액션은 봇을 신뢰하지 않아,
-      # 이어서 모드에서 typecheck가 막혀 에이전트가 같은 시도를 되풀이했다(#2450, 46턴). 이어서 모드는 resolve가
-      # frontend/src 밖 변경을 거부하므로 package.json·.npmrc·설정 파일은 develop-fe 것이고, 허용된 Bash는
-      # typecheck(tsc는 소스를 실행하지 않음)와 인자 없는 git status·diff뿐이라 이어서 모드에서만 끈다.
-      # resolve의 frontend/src 밖 변경 검사를 풀거나 좁히면 이 값도 다시 켠다. 이슈 모드는 PR이 아니라 원래 걸리지 않는다.
+      # restrict_untrusted_prs: 액션은 PR 작성자에게 쓰기 권한이 없으면 npm·node 등을 claude_args 허용보다 우선해 막는다.
+      # design/* PR 작성자는 github-actions[bot]이고 액션은 봇을 신뢰하지 않아 이어서 모드에서 typecheck까지 막힌다.
+      # 이어서 모드는 resolve가 frontend/src 밖 변경을 거부해 package.json·.npmrc·설정 파일이 develop-fe 것이고,
+      # 허용된 Bash는 typecheck(tsc는 소스를 실행하지 않음)와 인자 없는 git status·diff뿐이라 이어서 모드에서만 끈다.
+      # resolve의 frontend/src 밖 변경 검사를 풀거나 좁히면 이 값도 다시 켠다.
       - name: Apply design feedback
         uses: anthropics/claude-code-action@v1
         with:
