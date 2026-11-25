@@ -23,8 +23,9 @@ export const SkeletonBannerWrapper = styled.div`
   background-size: 800px 100%;
   animation: ${shimmer} 1.5s infinite linear;
 
+  /* 모바일 배너 이미지는 1.875(1500×800)다. 이미지에 글자가 들어 있어 자르지 않도록 그 비율을 그대로 쓴다 */
   ${media.mobile} {
-    aspect-ratio: 1.8;
+    aspect-ratio: 1.875;
     border-radius: 0;
   }
 `;
@@ -76,7 +77,7 @@ export const BannerWrapper = styled.div`
 
   ${media.mobile} {
     width: 100%;
-    aspect-ratio: 1.8;
+    aspect-ratio: 1.875;
     border-radius: 0;
   }
 `;
@@ -131,15 +132,14 @@ export const SlideButton = styled.button`
 
 export const NumericPagination = styled.div`
   position: absolute;
-  bottom: 17px;
-  right: -10px;
-  transform: translateX(-50%);
-  background-color: rgba(0, 0, 0, 0.4);
+  right: 12px;
+  bottom: 12px;
+  background-color: rgba(0, 0, 0, 0.6);
   color: ${colors.base.white};
   padding: 3px 12px;
   border-radius: 50px;
   font-size: 11px;
-  font-weight: medium;
+  font-weight: 500;
   z-index: 3;
 `;
 
