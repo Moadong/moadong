@@ -1,8 +1,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
-import LocationIcon from '@/assets/images/icons/location_icon.svg?react';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
+import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import MapModal from '@/components/map/MapModal/MapModal';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
@@ -18,11 +18,18 @@ import {
 } from '@/hooks/Queries/useClub';
 import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import useDevice from '@/hooks/useDevice';
+import useNavigator from '@/hooks/useNavigator';
 import { countClubView } from '@/hooks/useSatisfactionSurvey';
 import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
-import ClubIntroContent from '@/pages/ClubDetailPage/components/ClubIntroContent/ClubIntroContent';
-import ClubProfileCard from '@/pages/ClubDetailPage/components/ClubProfileCard/ClubProfileCard';
+import ClubHomeTab from '@/pages/ClubDetailPage/components/ClubHomeTab/ClubHomeTab';
+import ClubInfoList from '@/pages/ClubDetailPage/components/ClubInfoList/ClubInfoList';
+import ClubPhotoHero from '@/pages/ClubDetailPage/components/ClubPhotoHero/ClubPhotoHero';
 import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
+import ClubSummary from '@/pages/ClubDetailPage/components/ClubSummary/ClubSummary';
+import {
+  getRecruitmentSummary,
+  getUpdatedLabel,
+} from '@/pages/ClubDetailPage/utils/clubDetailSummary';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
 import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
@@ -36,6 +43,8 @@ export const TAB_TYPE = {
 
 type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
 
+type SocialPlatform = 'instagram' | 'youtube';
+
 // 탭 클릭 시 스크롤이 탑바 하단에 정확히 위치하도록 하는 높이 값
 const TOP_BAR_HEIGHT = 50;
 // 인라인 탭이 TopBar 뒤로 가려지는 시점을 감지하는 IntersectionObserver rootMargin 값 (TopBarContent 60px + 하단 여백)
@@ -44,6 +53,7 @@ const TOP_BAR_RENDERED_HEIGHT = 73;
 const ClubDetailPage = () => {
   const location = useLocation();
   const trackEvent = useMixpanelTrack();
+  const handleLink = useNavigator();
 
   const [searchParams, setSearchParams] = useSearchParams();
   const tabParam = searchParams.get('tab') as TabType | null;
@@ -73,13 +83,17 @@ const ClubDetailPage = () => {
       enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE,
     });
 
+  const feedCount = clubDetail?.feeds.length ?? 0;
   const tabs = useMemo(
     () => [
-      { key: TAB_TYPE.INTRO, label: '소개내용' },
-      { key: TAB_TYPE.PHOTOS, label: '활동사진' },
-      { key: TAB_TYPE.SCHEDULE, label: '행사일정' },
+      { key: TAB_TYPE.INTRO, label: '홈' },
+      {
+        key: TAB_TYPE.PHOTOS,
+        label: feedCount > 0 ? `사진 ${feedCount}` : '사진',
+      },
+      { key: TAB_TYPE.SCHEDULE, label: '일정' },
     ],
-    [],
+    [feedCount],
   );
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, {
@@ -166,8 +180,11 @@ const ClubDetailPage = () => {
   const { scrollToElement } = useScrollTo();
 
   const scrollToContent = useCallback(() => {
-    scrollToElement(contentRef.current, TOP_BAR_HEIGHT);
-  }, [scrollToElement]);
+    scrollToElement(
+      contentRef.current,
+      showTopBar ? TOP_BAR_HEIGHT : HEADER_HEIGHT.desktop,
+    );
+  }, [scrollToElement, showTopBar]);
 
   const handleTabClick = useCallback(
     (tabKey: TabType) => {
@@ -181,6 +198,12 @@ const ClubDetailPage = () => {
     [setSearchParams, trackEvent, clubDetail?.id, clubDetail?.name],
   );
 
+  // 요약의 '행사일정'·홈의 '전체보기'처럼 본문 밖에서 탭을 바꿀 때는 탭 위치까지 내려준다
+  const goToTab = (tabKey: TabType) => {
+    handleTabClick(tabKey);
+    scrollToContent();
+  };
+
   const clubLocation = clubLocations.find(
     (loc) => loc.clubName === clubDetail?.name,
   );
@@ -188,12 +211,77 @@ const ClubDetailPage = () => {
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
 
   if (error) {
-    return <div>동아리 정보를 불러오는데 실패했습니다.</div>;
+    return (
+      <>
+        <Header hideOn={['mobile', 'tablet']} />
+        <Styled.ErrorMessage>
+          동아리 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.
+        </Styled.ErrorMessage>
+      </>
+    );
   }
 
   if (!clubDetail) {
     return null;
   }
+
+  const recruitment = getRecruitmentSummary(
+    clubDetail.recruitmentStatus,
+    clubDetail.recruitmentStart,
+    clubDetail.recruitmentEnd,
+  );
+  const updatedLabel = getUpdatedLabel(clubDetail.lastModifiedDate);
+
+  const socialLinks = (['instagram', 'youtube'] as const)
+    .map((platform) => ({
+      platform,
+      url: clubDetail.socialLinks?.[platform]?.trim() ?? '',
+    }))
+    .filter(({ url }) => !!url);
+  const instagramUrl = socialLinks.find((s) => s.platform === 'instagram')?.url;
+  const youtubeUrl = socialLinks.find((s) => s.platform === 'youtube')?.url;
+
+  const handleSocialClick = (platform: SocialPlatform, url: string) => {
+    trackEvent(USER_EVENT.SNS_LINK_BUTTON_CLICKED, {
+      sns_platform: platform,
+      club_id: clubDetail.id,
+      club_name: clubDetail.name,
+    });
+    handleLink(url);
+  };
+
+  const openMap = () => {
+    setIsMapModalOpen(true);
+    trackEvent(USER_EVENT.CLUB_MAP_CLICKED, {
+      club_id: clubDetail.id,
+      club_name: clubDetail.name,
+    });
+  };
+
+  const mapCard = clubLocation && (
+    <div>
+      <Styled.MapCard
+        type='button'
+        onClick={openMap}
+        aria-label={`${clubDetail.name} 동아리방 지도 크게 보기`}
+      >
+        <NaverMap location={clubLocation} />
+      </Styled.MapCard>
+      <Styled.MapCaption>
+        {clubLocation.building} {clubLocation.detailLocation}
+      </Styled.MapCaption>
+    </div>
+  );
+
+  const infoListProps = {
+    recruitment,
+    recruitmentTarget: clubDetail.recruitmentTarget,
+    location: clubLocation,
+    onMapClick: clubLocation ? openMap : undefined,
+    socialLinks,
+    onSocialClick: handleSocialClick,
+    updatedLabel,
+  };
 
   return (
     <>
@@ -204,105 +292,110 @@ const ClubDetailPage = () => {
           clubName={clubDetail.name}
           tabs={tabs}
           activeTab={activeTab}
-          onTabClick={(tabKey) => {
-            handleTabClick(tabKey as TabType);
-            scrollToContent();
-          }}
+          onTabClick={(tabKey) => goToTab(tabKey as TabType)}
           initialIsSubscribed={searchParams.get('is_subscribed') === 'true'}
           showTabs={showStickyTabs}
         />
       )}
-      <Styled.Container>
-        <Styled.ContentWrapper>
-          <Styled.LeftSection>
-            <ClubProfileCard
-              clubId={clubDetail.id}
-              name={clubDetail.name}
-              logo={clubDetail.logo}
-              cover={clubDetail.cover}
-              category={clubDetail.category}
-              recruitmentStatus={clubDetail.recruitmentStatus}
-              socialLinks={clubDetail.socialLinks}
-              introDescription={clubDetail.description.introDescription}
-              location={clubLocation}
-              onMapClick={() => {
-                setIsMapModalOpen(true);
-                trackEvent(USER_EVENT.CLUB_MAP_CLICKED, {
-                  club_id: clubDetail.id,
-                  club_name: clubDetail.name,
-                });
-              }}
-            />
-            {clubLocation && (
-              <Styled.MapInfo>
-                <Styled.MapCard
-                  onClick={() => {
-                    setIsMapModalOpen(true);
-                    trackEvent(USER_EVENT.CLUB_MAP_CLICKED, {
-                      club_id: clubDetail.id,
-                      club_name: clubDetail.name,
-                    });
-                  }}
-                >
-                  <NaverMap location={clubLocation} />
-                </Styled.MapCard>
+      <Styled.Page>
+        <Styled.Inner>
+          <ClubPhotoHero
+            clubName={clubDetail.name}
+            logo={clubDetail.logo}
+            cover={clubDetail.cover}
+            feeds={clubDetail.feeds}
+            category={clubDetail.category}
+          />
 
-                <Styled.MapDetailText>
-                  <LocationIcon />
-                  동아리방 위치 {clubLocation.building}{' '}
-                  {clubLocation.detailLocation}
-                </Styled.MapDetailText>
-              </Styled.MapInfo>
-            )}
-          </Styled.LeftSection>
-
-          <Styled.RightSection ref={contentRef}>
-            <Styled.InlineTabsWrapper
-              ref={setInlineTabsEl}
-              $hidden={showTopBar && showStickyTabs}
-            >
-              <UnderlineTabs
-                tabs={tabs}
-                activeKey={activeTab}
-                onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
-                centerOnMobile
+          <Styled.Columns>
+            <Styled.Main>
+              <ClubSummary
+                name={clubDetail.name}
+                logo={clubDetail.logo}
+                category={clubDetail.category}
+                division={clubDetail.division}
+                introduction={clubDetail.introduction}
+                tags={clubDetail.tags}
+                recruitmentStatus={clubDetail.recruitmentStatus}
+                recruitment={recruitment}
+                instagramUrl={instagramUrl}
+                youtubeUrl={youtubeUrl}
+                onSocialClick={handleSocialClick}
+                onLocationClick={clubLocation ? openMap : undefined}
+                onScheduleClick={() => goToTab(TAB_TYPE.SCHEDULE)}
               />
-            </Styled.InlineTabsWrapper>
 
-            <Styled.TabContent>
-              <div
-                style={{
-                  display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none',
-                }}
-              >
-                <ClubIntroContent
-                  {...clubDetail.description}
-                  clubId={clubDetail.id}
-                />
-              </div>
-              <div
-                style={{
-                  display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none',
-                }}
-              >
-                <ClubFeed feed={clubDetail.feeds} clubName={clubDetail.name} />
-              </div>
-              <div
-                style={{
-                  display: activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
-                }}
-              >
-                <ClubScheduleCalendar
-                  key={clubId ?? clubName}
-                  events={calendarEvents}
-                  isLoading={isCalendarLoading}
-                  clubId={clubDetail.id}
-                />
-              </div>
-            </Styled.TabContent>
-          </Styled.RightSection>
-        </Styled.ContentWrapper>
-      </Styled.Container>
+              {showTopBar && (
+                <>
+                  <ClubInfoList {...infoListProps} />
+                  <Styled.Divider />
+                </>
+              )}
+
+              <Styled.TabArea ref={contentRef}>
+                <Styled.TabsWrapper
+                  ref={setInlineTabsEl}
+                  $hidden={showTopBar && showStickyTabs}
+                >
+                  <UnderlineTabs
+                    tabs={tabs}
+                    activeKey={activeTab}
+                    onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
+                    centerOnMobile
+                  />
+                </Styled.TabsWrapper>
+
+                <Styled.TabContent>
+                  <div
+                    style={{
+                      display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none',
+                    }}
+                  >
+                    <ClubHomeTab
+                      clubId={clubDetail.id}
+                      clubName={clubDetail.name}
+                      description={clubDetail.description}
+                      feeds={clubDetail.feeds}
+                      onShowAllPhotos={() => goToTab(TAB_TYPE.PHOTOS)}
+                      locationSlot={showTopBar ? mapCard : undefined}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none',
+                    }}
+                  >
+                    <ClubFeed
+                      feed={clubDetail.feeds}
+                      clubName={clubDetail.name}
+                    />
+                  </div>
+                  <div
+                    style={{
+                      display:
+                        activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
+                    }}
+                  >
+                    <ClubScheduleCalendar
+                      key={clubId ?? clubName}
+                      events={calendarEvents}
+                      isLoading={isCalendarLoading}
+                      clubId={clubDetail.id}
+                    />
+                  </div>
+                </Styled.TabContent>
+              </Styled.TabArea>
+            </Styled.Main>
+
+            {!showTopBar && (
+              <Styled.Aside>
+                <ClubInfoList {...infoListProps} variant='card' />
+                {mapCard}
+              </Styled.Aside>
+            )}
+          </Styled.Columns>
+        </Styled.Inner>
+      </Styled.Page>
       {clubLocation && (
         <MapModal
           isOpen={isMapModalOpen}
