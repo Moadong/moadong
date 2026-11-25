@@ -1,136 +1,241 @@
-import styled from 'styled-components';
+import { Link } from 'react-router-dom';
+import styled, { css } from 'styled-components';
+import ClubTag from '@/components/ClubTag/ClubTag';
+import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 
+export type CardVariant = 'default' | 'compact';
+
 const CARD_STYLES = {
-  desktop: {
-    borderRadius: '20px',
-    padding: '20px',
-    gap: '16px',
+  default: {
+    desktop: { borderRadius: '20px', padding: '20px', gap: '20px' },
+    mobile: { borderRadius: '16px', padding: '14px', gap: '12px' },
   },
-  mobile: {
-    borderRadius: '16px',
-    padding: '12px',
-    gap: '8px',
+  compact: {
+    desktop: { borderRadius: '10px', padding: '14px 0', gap: '14px' },
+    mobile: { borderRadius: '10px', padding: '12px 0', gap: '12px' },
   },
 } as const;
 
-const CardContainer = styled.div<{
-  $state: string;
-}>`
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  border-radius: ${CARD_STYLES.desktop.borderRadius};
-  padding: ${CARD_STYLES.desktop.padding};
-  gap: ${CARD_STYLES.desktop.gap};
-  background-color: #fff;
+// 모집 중: 테두리 카드. 지원할 수 있는 동아리라 면을 세워 눈에 띄게 한다
+const raisedCard = css`
+  border-radius: ${CARD_STYLES.default.desktop.borderRadius};
+  background-color: ${colors.base.white};
+  border: 1px solid ${colors.gray[300]};
 
-  box-shadow: ${({ $state }) =>
-    $state === 'open'
-      ? '0 0 14px rgba(0, 166, 255, 0.15)'
-      : '0 0 14px rgba(0, 0, 0, 0.08)'};
-
+  ${media.mobile} {
+    border-radius: ${CARD_STYLES.default.mobile.borderRadius};
+  }
   transition:
     transform 0.2s ease-in-out,
+    background-color 0.2s ease-in-out,
+    border-color 0.2s ease-in-out,
     box-shadow 0.2s ease-in-out;
-  cursor: pointer;
-  touch-action: manipulation;
-
-  @media (max-width: 500px) {
-    border-radius: ${CARD_STYLES.mobile.borderRadius};
-    padding: ${CARD_STYLES.mobile.padding};
-    gap: ${CARD_STYLES.mobile.gap};
-    box-shadow: 0 0 8px 0 rgba(0, 0, 0, 0.1);
-  }
 
   @media (hover: hover) {
     &:hover {
-      transform: scale(1.03);
+      border-color: ${colors.gray[500]};
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.06);
     }
   }
 
   &:active {
     transform: scale(0.98);
-  }
-
-  @media (max-width: 300px) {
-    height: auto;
+    background-color: ${colors.gray[50]};
   }
 `;
 
-const CardHeader = styled.div`
-  display: flex;
-  justify-content: space-between;
+// 모집 마감: 면 없는 행. 구분선으로만 나눠 모집 중 카드보다 조용하게 둔다.
+// 눌림·hover 면은 글자 정렬을 건드리지 않게 ::before로 좌우 8px 넓혀 깐다.
+// 행 자체에는 모서리 반경을 주지 않는다(주면 구분선 양 끝이 말려 올라간다)
+const flatRow = css`
+  isolation: isolate;
+  border-bottom: 1px solid ${colors.gray[300]};
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: 0 -8px;
+    z-index: -1;
+    border-radius: ${CARD_STYLES.compact.mobile.borderRadius};
+    background-color: ${colors.gray[100]};
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+  }
+
+  @media (hover: hover) {
+    &:hover::before {
+      opacity: 1;
+    }
+  }
+
+  &:active::before {
+    opacity: 1;
+  }
 `;
 
-const ClubProfile = styled.div`
+const CardContainer = styled.div<{ $variant: CardVariant }>`
+  position: relative;
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 20px;
+  padding: ${({ $variant }) => CARD_STYLES[$variant].desktop.padding};
+  gap: ${({ $variant }) => CARD_STYLES[$variant].desktop.gap};
+  touch-action: manipulation;
+
+  ${({ $variant }) => ($variant === 'compact' ? flatRow : raisedCard)}
+
+  ${media.mobile} {
+    padding: ${({ $variant }) => CARD_STYLES[$variant].mobile.padding};
+    gap: ${({ $variant }) => CARD_STYLES[$variant].mobile.gap};
+  }
 `;
 
 const ClubInfo = styled.div`
+  flex: 1;
+  min-width: 0;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
 `;
 
-const ClubName = styled.p`
-  font-size: 1.375rem;
-  font-weight: bold;
+const NameRow = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 8px;
+`;
+
+const ellipsis = css`
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+`;
+
+const ClubName = styled.h3<{ $variant: CardVariant }>`
+  min-width: 0;
+  ${ellipsis}
   line-height: 140%;
 
-  @media (max-width: 500px) {
-    font-size: 1rem;
+  ${({ $variant }) =>
+    $variant === 'compact'
+      ? css`
+          font-size: 0.9375rem;
+          font-weight: 600;
+        `
+      : css`
+          font-size: 1.25rem;
+          font-weight: bold;
+
+          ${media.mobile} {
+            font-size: 1rem;
+          }
+        `}
+`;
+
+// 카드 전체를 덮는 링크(stretched link). 구독 버튼은 ChildrenSlot으로 이 위에 올린다.
+// border-radius는 상속 속성이 아니라 ::after의 inherit은 링크(0)를 따른다. 그래서 카드 값을 직접 준다
+const CardLink = styled(Link)<{ $variant: CardVariant }>`
+  color: inherit;
+  text-decoration: none;
+  outline: none;
+
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: ${({ $variant }) =>
+      CARD_STYLES[$variant].desktop.borderRadius};
+
+    ${media.mobile} {
+      border-radius: ${({ $variant }) =>
+        CARD_STYLES[$variant].mobile.borderRadius};
+    }
+  }
+
+  &:focus-visible::after {
+    outline: 2px solid ${colors.primary[900]};
+    outline-offset: 2px;
   }
 `;
 
-export const StateBoxTagContainer = styled.div`
+const BadgeSlot = styled.div`
   display: flex;
-  flex-direction: row;
-  align-items: center;
-  gap: 20px;
+  flex-shrink: 0;
+`;
+
+const Introduction = styled.p<{ $variant: CardVariant }>`
+  ${ellipsis}
+  color: ${colors.gray[800]};
+  font-weight: normal;
+  line-height: 140%;
+
+  ${({ $variant }) =>
+    $variant === 'compact'
+      ? css`
+          margin-top: 2px;
+          font-size: 0.75rem;
+        `
+      : css`
+          margin-top: 6px;
+          font-size: 0.875rem;
+
+          ${media.mobile} {
+            margin-top: 2px;
+            font-size: 0.8125rem;
+          }
+        `}
 `;
 
 const TagsContainer = styled.div`
   display: flex;
-  gap: 5px;
   flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+  margin-top: 12px;
 
-  @media (max-width: 500px) {
-    gap: 6px;
+  ${media.mobile} {
+    margin-top: 8px;
   }
 `;
 
-const INTRODUCTION_MARGIN = {
-  desktop: {
-    margin: '10px 0px 0px 0px',
-  },
-  mobile: {
-    margin: '6px 0px 0px 0px',
-  },
-} as const;
-
-const Introduction = styled.p`
+// 자유 태그는 칩 없이 글자 메타로 그린다. 공용 ClubTag는 분과 칩에만 쓴다
+const TagText = styled.span`
+  color: ${colors.gray[800]};
   font-size: 0.875rem;
-  font-weight: normal;
-  margin: ${INTRODUCTION_MARGIN.desktop.margin};
-  color: ${colors.gray[600]};
+  font-weight: 500;
   line-height: 140%;
-  white-space: nowrap;
 
-  @media (max-width: 500px) {
-    margin: ${INTRODUCTION_MARGIN.mobile.margin};
+  ${media.mobile} {
     font-size: 0.75rem;
+  }
+`;
+
+const CompactCategoryTag = styled(ClubTag)`
+  flex-shrink: 0;
+`;
+
+// 링크(::after) 위에서 눌리도록 쌓임 순서를 올린다.
+// 버튼 둘레의 빈 자리는 링크로 넘겨, 눌러도 반응 없는 곳이 생기지 않게 한다
+const ChildrenSlot = styled.div`
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  pointer-events: none;
+
+  & > * {
+    pointer-events: auto;
   }
 `;
 
 export {
   CardContainer,
-  CardHeader,
-  ClubProfile,
-  ClubName,
   ClubInfo,
-  TagsContainer,
+  NameRow,
+  ClubName,
+  CardLink,
+  BadgeSlot,
   Introduction,
+  TagsContainer,
+  TagText,
+  CompactCategoryTag,
+  ChildrenSlot,
 };

@@ -1,5 +1,4 @@
 import { useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
 import default_profile_image from '@/assets/images/logos/default_profile_image.svg';
 import ClubStateBox from '@/components/ClubStateBox/ClubStateBox';
 import ClubTag from '@/components/ClubTag/ClubTag';
@@ -13,7 +12,12 @@ import * as Styled from './ClubCard.styles';
 
 interface ClubCardProps {
   club: Club;
+  /** 화면에 보인 순서(0부터). Mixpanel `card_index`로 남긴다 */
   index?: number;
+  /** 서버 응답 배열에서의 순서(0부터). Mixpanel `server_index`로 남긴다 */
+  serverIndex?: number;
+  /** 'compact'는 모집 마감 구간용 낮은 밀도 행. 기본 'default' */
+  variant?: 'default' | 'compact';
   page?: string;
   children?: React.ReactNode;
   onCardClick?: (club: Club) => void;
@@ -26,11 +30,12 @@ const MIN_DWELL_MS = 300; // 안구 고정 최소 시간 기반, fly-by 스크�
 const ClubCard = ({
   club,
   index,
+  serverIndex,
+  variant = 'default',
   page,
   children,
   onCardClick,
 }: ClubCardProps) => {
-  const navigate = useNavigate();
   const trackEvent = useMixpanelTrack();
   const containerRef = useRef<HTMLDivElement>(null);
 
@@ -101,7 +106,7 @@ const ClubCard = ({
     };
   }, [club.id, club.name, club.recruitmentStatus, page]);
 
-  const handleClick = () => {
+  const handleClick = (e: React.MouseEvent<HTMLAnchorElement>) => {
     trackEvent(USER_EVENT.CLUB_CARD_CLICKED, {
       club_id: club.id,
       club_name: club.name,
@@ -109,6 +114,7 @@ const ClubCard = ({
       has_logo: Boolean(club.logo),
       page,
       card_index: index,
+      server_index: serverIndex,
       scroll_y: Math.round(window.scrollY),
       card_top_in_viewport: (() => {
         const rect = containerRef.current?.getBoundingClientRect();
@@ -118,44 +124,56 @@ const ClubCard = ({
     });
 
     if (onCardClick) {
+      e.preventDefault();
       onCardClick(club);
-    } else {
-      navigate(`/clubDetail/@${encodeURIComponent(club.name)}`);
     }
   };
 
-  return (
-    <Styled.CardContainer
-      ref={containerRef}
-      $state={club.recruitmentStatus}
-      onClick={handleClick}
-    >
-      <Styled.CardHeader>
-        <Styled.ClubProfile>
-          <ClubLogo
-            $imageSrc={cdnImage(club.logo || default_profile_image, 'logo')}
-          />
-          <Styled.ClubInfo>
-            <Styled.ClubName>{club.name}</Styled.ClubName>
-            <Styled.Introduction>{club.introduction}</Styled.Introduction>
-          </Styled.ClubInfo>
-        </Styled.ClubProfile>
-        {children}
-      </Styled.CardHeader>
+  const isCompact = variant === 'compact';
 
-      <Styled.StateBoxTagContainer>
-        <ClubStateBox state={club.recruitmentStatus} />
-        <Styled.TagsContainer>
-          <ClubTag key={`category-${club.id}`} type={club.category} />
-          {club.tags
-            .filter((tag) => tag.trim())
-            .map((tag) => (
-              <ClubTag key={`tag-${club.id}-${tag}`} type={'자유'}>
-                {tag}
-              </ClubTag>
-            ))}
-        </Styled.TagsContainer>
-      </Styled.StateBoxTagContainer>
+  return (
+    <Styled.CardContainer ref={containerRef} $variant={variant}>
+      <ClubLogo
+        $imageSrc={cdnImage(club.logo || default_profile_image, 'logo')}
+        $variant={isCompact ? 'compact' : 'card'}
+      />
+      <Styled.ClubInfo>
+        <Styled.NameRow>
+          <Styled.ClubName $variant={variant}>
+            <Styled.CardLink
+              to={`/clubDetail/@${encodeURIComponent(club.name)}`}
+              $variant={variant}
+              onClick={handleClick}
+            >
+              {club.name}
+            </Styled.CardLink>
+          </Styled.ClubName>
+          {!isCompact && (
+            <Styled.BadgeSlot>
+              <ClubStateBox state={club.recruitmentStatus} />
+            </Styled.BadgeSlot>
+          )}
+        </Styled.NameRow>
+        {club.introduction && (
+          <Styled.Introduction $variant={variant}>
+            {club.introduction}
+          </Styled.Introduction>
+        )}
+        {!isCompact && (
+          <Styled.TagsContainer>
+            <ClubTag type={club.category} />
+            {club.tags
+              .filter((tag) => tag.trim())
+              .map((tag) => (
+                <Styled.TagText key={`tag-${club.id}-${tag}`}>
+                  #{tag}
+                </Styled.TagText>
+              ))}
+          </Styled.TagsContainer>
+        )}
+      </Styled.ClubInfo>
+      {isCompact && <Styled.CompactCategoryTag type={club.category} />}
+      {children && <Styled.ChildrenSlot>{children}</Styled.ChildrenSlot>}
     </Styled.CardContainer>
   );
 };
