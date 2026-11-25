@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { STATUS_COLORS } from '@/styles/clubTags';
+import { colors } from '@/styles/theme/colors';
 
 const STATE_TEXT: Record<string, string> = {
   OPEN: '모집중',
@@ -28,7 +29,12 @@ const BOX_FONT_SIZE = {
   },
 } as const;
 
-const StyledBox = styled.div<{ $backgroundColor: string }>`
+const FALLBACK_COLORS = {
+  background: colors.gray[200],
+  text: colors.gray[800],
+} as const;
+
+const StyledBox = styled.div<{ $backgroundColor: string; $textColor: string }>`
   display: flex;
   justify-content: center;
   align-items: center;
@@ -37,7 +43,7 @@ const StyledBox = styled.div<{ $backgroundColor: string }>`
   height: ${BOX_DIMENSIONS.desktop.height};
   border-radius: 8px;
   background-color: ${({ $backgroundColor }) => $backgroundColor};
-  color: ${({ theme }) => theme.colors.base.white};
+  color: ${({ $textColor }) => $textColor};
   font-size: ${BOX_FONT_SIZE.desktop.fontSize};
   font-weight: 600;
   line-height: 140%;
@@ -55,9 +61,14 @@ interface ClubStateBoxProps {
 
 const ClubStateBox = ({ state }: ClubStateBoxProps) => {
   const text = STATE_TEXT[state] || '알 수 없음';
-  const backgroundColor = STATUS_COLORS[text] || '#f5f5f5';
+  const { background, text: textColor } =
+    STATUS_COLORS[text] ?? FALLBACK_COLORS;
 
-  return <StyledBox $backgroundColor={backgroundColor}>{text}</StyledBox>;
+  return (
+    <StyledBox $backgroundColor={background} $textColor={textColor}>
+      {text}
+    </StyledBox>
+  );
 };
 
 export default ClubStateBox;

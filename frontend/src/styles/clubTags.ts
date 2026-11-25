@@ -13,10 +13,13 @@ export const TAG_COLORS: Record<string, string> = {
   공연: colors.secondary[6].tag,
 };
 
-// 모집 상태별 색상 매핑
-export const STATUS_COLORS: Record<string, string> = {
-  모집중: colors.accent[1][900],
-  모집마감: colors.gray[500],
-  상시모집: colors.accent[2][900],
-  모집예정: colors.accent[1][900],
+// 모집 상태별 배지 면·글자 색. 글자는 면 위 대비 4.5:1 이상
+export const STATUS_COLORS: Record<
+  string,
+  { background: string; text: string }
+> = {
+  모집중: { background: colors.accent[1][600], text: colors.accent[1][1000] },
+  모집마감: { background: colors.gray[200], text: colors.gray[800] },
+  상시모집: { background: colors.accent[2][500], text: colors.accent[2][1000] },
+  모집예정: { background: colors.accent[1][600], text: colors.accent[1][1000] },
 };
