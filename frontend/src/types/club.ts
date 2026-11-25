@@ -34,6 +34,8 @@ export interface ClubDetail extends Club {
   socialLinks: Record<SNSPlatform, string>;
   externalApplicationUrl?: string;
   hasCalendarConnection?: boolean;
+  /** 동아리 정보가 마지막으로 수정된 시각. "YYYY.MM.DD HH:mm" */
+  lastModifiedDate?: string;
 }
 
 export type CustomEventType = 'SINGLE' | 'PERIOD' | 'RECURRING' | 'MULTI';
