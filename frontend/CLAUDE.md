@@ -56,7 +56,7 @@ npm run test:scripts             # 위 스크립트의 node:test 단위 테스�
 
 # 유틸리티
 npm run generate:sitemap # sitemap.xml 생성
-npm run codex:sync       # .claude/commands·agents 원본에서 .codex/skills 재생성
+npm run codex:sync       # .claude/commands 원본에서 .codex/skills 재생성
 npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI에서 실행)
 ```
 
@@ -153,15 +153,9 @@ npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI�
   - 접근성 패널(`addon-a11y`)은 위반을 보여 주기만 하고 빌드·Chromatic을 막지 않는다(`a11y.test: 'todo'`)
   - 시안 대조 매핑(`*.figma.json`)이 있는 스토리 export에 `parameters.design`을 붙이면 Design 패널에서 시안을 같이 본다. 자동으로 붙지 않는다 → [`.claude/skills/figma-story-diff/SKILL.md`](.claude/skills/figma-story-diff/SKILL.md)
 
-## Claude Code Agent
+## Codex 스킬
 
-`.claude/agents/` 디렉토리에 전담 agent 정의:
-
-- `API훅부서.md` - React Query 훅 생성 및 관리 전담
-
-Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
-
-`.codex/skills/`는 `.claude/commands/`·`.claude/agents/`에서 `scripts/sync-codex-skills.mjs`가 생성한 사본이다. 직접 고치지 말고 `.claude/` 쪽을 고친 뒤 `npm run codex:sync`를 돌려 함께 커밋한다. Codex 전용 이름·설명·제목·원본 매핑은 스크립트의 `MANIFEST`에 있고, 새 커맨드를 Codex에도 노출하려면 거기에 항목을 더한다.
+`.codex/skills/`는 `.claude/commands/`에서 `scripts/sync-codex-skills.mjs`가 생성한 사본이다. 직접 고치지 말고 `.claude/` 쪽을 고친 뒤 `npm run codex:sync`를 돌려 함께 커밋한다. Codex 전용 이름·설명·제목·원본 매핑은 스크립트의 `MANIFEST`에 있고, 새 커맨드를 Codex에도 노출하려면 거기에 항목을 더한다.
 
 `src/`를 바꾸는 커밋·PR 전에는 `.claude/skills/frontend-fundamentals` 스킬을 먼저 돌린다. "커밋해줘", "PR 올려줘"처럼 말로 요청받아도 마찬가지다(`/commit`은 이미 포함).
 

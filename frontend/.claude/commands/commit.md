@@ -57,21 +57,16 @@ allowed-tools: Bash(mkdir *), Bash(ls *), Bash(date *), Bash(npm run format), Ba
 | Admin - Info        | `docs/features/admin/info/`        | ClubInfoEditTab, MakeTags, SelectTags                                                     |
 | Admin - Intro       | `docs/features/admin/intro/`       | ClubIntroEditTab, AwardEditor, FAQEditor                                                  |
 | Admin - Photo       | `docs/features/admin/photo/`       | PhotoEditTab, ImagePreview, ClubLogoEditor, ClubCoverEditor                               |
-| Admin - Recruit     | `docs/features/admin/recruit/`     | RecruitEditTab, DateTimeRangePicker, MarkdownEditor                                       |
 | Admin - Application | `docs/features/admin/application/` | ApplicationEditTab, QuestionBuilder, ApplicationListTab                                   |
-| Admin - Applicants  | `docs/features/admin/applicants/`  | ApplicantsTab, ApplicantDetailPage, ApplicantsListTab                                     |
 | Admin - Calendar    | `docs/features/admin/calendar/`    | CalendarSyncTab, calendarOAuth                                                            |
 | Admin - Account     | `docs/features/admin/account/`     | AccountEditTab, LoginTab, PrivateRoute                                                    |
-| Application Form    | `docs/features/application-form/`  | ApplicationFormPage, QuestionAnswerer, QuestionContainer                                  |
 | Auth                | `docs/features/auth/`              | auth, secureFetch, refreshAccessToken, JWT                                                |
-| API Layer           | `docs/features/api/`               | apis, apiHelpers, handleResponse, withErrorHandling                                       |
 | Hooks               | `docs/features/hooks/`             | useClub, useApplication, useApplicants, React Query                                       |
 | Store               | `docs/features/store/`             | Zustand, useCategoryStore, useSearchStore                                                 |
 | Components          | `docs/features/components/`        | 공용 컴포넌트                                                                             |
 | Utils               | `docs/features/utils/`             | debounce, validateSocialLink, formatRelativeDateTime, recruitmentDateParser               |
 | Experiments         | `docs/features/experiments/`       | A/B test, useExperiment, Mixpanel                                                         |
 | Festival            | `docs/features/festival/`          | FestivalPage, PerformanceCard, TimelineRow, BoothMapSection                               |
-| Introduce           | `docs/features/introduce/`         | IntroducePage, FeatureSection                                                             |
 
 어려우면 사용자에게 물어봅니다. 매핑에 없는 기능이면 새 폴더를 만듭니다.
 
