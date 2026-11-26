@@ -1,6 +1,5 @@
 import { useEffect } from 'react';
 import { createRoutesFromChildren, useNavigationType } from 'react-router-dom';
-import * as ChannelService from '@channel.io/channel-web-sdk-loader';
 import Clarity from '@microsoft/clarity';
 import * as Sentry from '@sentry/react';
 import mixpanel from 'mixpanel-browser';
@@ -55,15 +54,6 @@ export function initializeClarity() {
   }
 
   Clarity.init(import.meta.env.VITE_CLARITY_PROJECT_ID);
-}
-
-export function initializeChannelService() {
-  ChannelService.loadScript();
-  if (import.meta.env.VITE_CHANNEL_PLUGIN_KEY) {
-    ChannelService.boot({
-      pluginKey: import.meta.env.VITE_CHANNEL_PLUGIN_KEY,
-    });
-  }
 }
 
 export function initializeSentry() {
