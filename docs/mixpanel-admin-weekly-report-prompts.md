@@ -17,7 +17,7 @@
 
 1. `지난주(월~일, Asia/Seoul) 관리자 핵심 KPI를 보여줘. 다음 이벤트를 기준으로 유저 수와 이벤트 수를 각각 보여줘: "Page Viewed"(page_name=admin_login), "Login Button Clicked", "Admin Tab Clicked", "Club Update Button Clicked", "Recruitment Update Button Clicked", "Club Photo Upload Button Clicked", "Password Change Button Clicked". 직전 주 대비 증감률(%) 포함.`
 
-2. `지난주 관리자 진입 퍼널을 보여줘: "Page Viewed"(page_name=admin_login) -> "Login Button Clicked" -> "Page Viewed"(page_name=admin_club_info_edit, 또는 다른 admin_* page_name). 단계별 전환율/이탈률과 직전 주 대비 변화를 계산해줘.`
+2. `지난주 관리자 진입 퍼널을 보여줘: "Page Viewed"(page_name=admin_login) -> "Login Button Clicked" -> "Page Viewed"(page_name=admin_club_info_edit, 또는 admin_login을 뺀 다른 admin_* page_name). 단계별 전환율/이탈률과 직전 주 대비 변화를 계산해줘.`
 
 3. `지난주 사이드바 탭 이동 패턴을 분석해줘. "Admin Tab Clicked" 이벤트의 tab_name 속성 기준으로 탭별 클릭 수, 유저 수, 전주 대비 증감을 표로 보여줘.`
 

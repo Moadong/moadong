@@ -11,6 +11,7 @@
 - 비교 기준은 항상 `직전 주`로 고정한다.
 - 지표가 비어 있거나 이벤트명이 불일치하면, 추정하지 말고 누락 항목으로 명시한다.
 - 이벤트명은 2026-10-05부터 쌓인 새 이름 기준이다. 페이지 방문·체류는 `Page Viewed`·`Page Left` 하나씩이고 페이지는 `page_name` 속성으로 구분한다. 그 전 주를 조회할 때는 `frontend/docs/features/analytics/mixpanel-event-rename-map.md`의 옛 이름을 쓴다.
+- `page_name=main`은 웹과 앱 웹뷰를 합친 값이다. 옛 `MainPage Visited`는 웹만 셌으므로(앱은 `WebviewMainPage Visited`) 2026-10-05 이전 리포트의 메인 수치와 바로 비교하지 않는다. 웹만 보려면 `is_webview=false` 조건을 붙인다.
 - 결과는 아래 "리포트 템플릿" 순서로 정리한다.
 
 ## 고정 프롬프트 8개 (moadong 이벤트명 1차 치환)
