@@ -65,7 +65,7 @@ npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI�
 ### 기술 스택
 
 - React 19 + TypeScript
-- Vite 번들러 (webpack 설정도 있으나 Vite가 주력)
+- Vite 번들러
 - styled-components 스타일링
 - TanStack React Query v5 서버 상태 관리
 - Zustand 클라이언트 상태 관리
@@ -73,19 +73,21 @@ npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI�
 - date-fns 날짜 처리 · Framer Motion 애니메이션 · Swiper 캐러셀
 - react-datepicker 날짜 선택 · react-markdown 마크다운 렌더링
 
-외부 서비스: Mixpanel, Sentry, Channel.io, Naver Map → 초기화·상세는 [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md)
+외부 서비스: Mixpanel, Sentry, Clarity, Naver Map → 초기화·상세는 [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md)
 
 ### 환경 변수
 
 `.env` 파일에 다음 환경 변수 설정 필요 (모두 `VITE_` 접두사 사용):
 
-- `VITE_API_URL` - 백엔드 API URL
+- `VITE_API_BASE_URL` - 백엔드 API URL
 - `VITE_MIXPANEL_TOKEN` - Mixpanel 프로젝트 토큰
 - `VITE_SENTRY_DSN` - Sentry DSN
 - `VITE_SENTRY_RELEASE` - Sentry 릴리즈 버전
 - `VITE_ENABLE_SENTRY_IN_DEV` - 개발 환경에서 Sentry 활성화 여부 (true/false)
 - `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
-- `VITE_KAKAO_JAVASCRIPT_KEY` - Kakao JavaScript 키
+- `VITE_KAKAO_CLIENT_ID` - 카카오 OAuth 로그인 클라이언트 ID
+- `VITE_GOOGLE_CLIENT_ID` - 구글 OAuth 로그인 클라이언트 ID
+- `VITE_CLARITY_PROJECT_ID` - Microsoft Clarity 프로젝트 ID
 - `VITE_NAVER_MAP_CLIENT_ID` - 네이버 지도 API 클라이언트 ID
 - `VITE_FEEDBACK_PROMPT_ADMIN_ENABLED` - 관리자 행동 피드백 노출 여부 (`true`일 때만 활성)
 - `VITE_FEEDBACK_PROMPT_USER_ENABLED` - 사용자 상세 이탈 피드백 노출 여부 (`true`일 때만 활성)

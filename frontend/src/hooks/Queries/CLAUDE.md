@@ -67,20 +67,21 @@ Google OAuth 동의 화면이 테스트 모드면 refresh token이 7일 뒤 만�
 | 훅 | 백엔드 DTO | 로고 없을 때 |
 | --- | --- | --- |
 | `useGetClubDetail` | `ClubDetailedResult` | `""` (null 폴백이 있어 null은 오지 않음) |
-| `useGetCardList` | `ClubSearchResult` | `null` 가능 (로고 삭제 시 `updateLogo(null)`) |
+| `useGetCardList` | `ClubSearchResult` | 응답은 `null` 가능 (로고 삭제 시 `updateLogo(null)`)이지만 `select`가 `""`로 바꿔 준다 |
 
 상세는 `""`가 보장되므로 `select`에서 `undefined`로 바꾸지 않는다.
 `Club['logo']` 타입이 `string`인 것과 어긋나고, 소비자가 이미 전부
 `logo || 기본이미지` 가드를 갖고 있어 얻는 것도 없다.
 
-목록은 `null`이 올 수 있는데 타입은 `string`이라 아직 어긋나 있다.
+목록 응답은 `null`이 올 수 있는데 타입은 `string`이라 어긋나 있다. `useGetCardList`가
+`select`에서 `""`로 바꾸므로 이 훅으로 받은 값에는 null이 없다.
 `convertGoogleDriveUrl`이 null을 받으면 내부 `try/catch`가 삼켜
-`console.error`만 남기고 null을 그대로 돌려주니, 무가드 프로퍼티
+`console.error`만 남기고 null을 그대로 돌려주니, 직접 호출하는 곳에서는 무가드 프로퍼티
 접근을 새로 추가하지 말 것.
 
 ## 홍보 게시글 관리 (`usePromotion`)
 
-관리자 CRUD는 목록 쿼리 하나(`queryKeys.promotion.list()`)만 쓰고 생성·수정·삭제·업로드 뮤테이션이 모두 그 키를 무효화한다. 상세 조회 API가 없어 수정 화면도 목록에서 `id`로 찾는다.
+관리자 CRUD는 목록 쿼리 하나(`queryKeys.promotion.list()`)만 쓰고 생성·수정·삭제 뮤테이션이 그 키를 무효화한다(업로드는 게시글을 건드리지 않아 저장 쪽에서 한다). 상세 조회 API가 없어 수정 화면도 목록에서 `id`로 찾는다.
 
 - 이미지는 피드·로고와 같은 presigned 방식이다. `POST /api/promotion/upload-url`(배열 요청, 항목별 `success`)로 발급받아 R2에 raw `fetch`로 PUT(`requiredHeaders` 그대로, Authorization 금지)하고, `finalUrl`을 **글 저장 요청의 `images`에 전체 목록으로** 보낸다. 키가 동아리 기준(`promotion/{clubId}/`)이라 게시글 없이도 발급되므로 순서는 **업로드 → 저장**이고, 작성은 POST 한 번으로 끝난다(`useUploadPromotionImages`, `usePromotionForm`). 한 요청에 16개 이상을 담으면 배열 전체가 거부된다
 - 수정 PUT은 `images`가 1개 이상이어야 한다(`@NotEmpty`). 생성은 빈 배열 허용
