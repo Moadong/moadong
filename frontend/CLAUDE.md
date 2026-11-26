@@ -84,7 +84,7 @@ npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI�
 - `VITE_SENTRY_DSN` - Sentry DSN
 - `VITE_SENTRY_RELEASE` - Sentry 릴리즈 버전
 - `VITE_ENABLE_SENTRY_IN_DEV` - 개발 환경에서 Sentry 활성화 여부 (true/false)
-- `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
+- `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키 (현재 `initializeChannelService`를 호출하는 곳이 없어 쓰이지 않음)
 - `VITE_KAKAO_CLIENT_ID` - 카카오 OAuth 로그인 클라이언트 ID
 - `VITE_GOOGLE_CLIENT_ID` - 구글 OAuth 로그인 클라이언트 ID
 - `VITE_CLARITY_PROJECT_ID` - Microsoft Clarity 프로젝트 ID
