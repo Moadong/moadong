@@ -1,10 +1,21 @@
-// 토스페이스를 font-display: swap으로 다시 정의한다. 원본 CSS는 swap이 없어 글꼴(조각당 약 840KB)을 받는 동안 이모지가 비어 보인다
+// 토스페이스 이모지를 '그릴 수 있는 브라우저에서만' 쓰고, 나머지는 기기 기본 이모지로 보여준다.
+// 토스페이스 웹 글꼴은 애플식 sbix 컬러 표만 담고 있어 일부 브라우저(윈도우·안드로이드의 파이어폭스 등)는
+// 글꼴을 받아도 이모지를 그리지 못하고 빈칸으로 남긴다. 원본 CSS는 font-display도 없어 받는 동안에도 빈칸이다.
+import { useEffect } from 'react';
 import styled, { createGlobalStyle } from 'styled-components';
 
-/** 기기 기본 이모지를 먼저 보이고 토스페이스가 받아지면 바꿔 끼운다. 원본과 같은 jsDelivr v1.6.1 파일을 쓴다 */
-export const SwapTossfaceFont = createGlobalStyle`
+const FAMILY = 'Tossface Swap';
+const PROBE_EMOJI = '😀';
+const PROBE_SIZE = 32;
+const PROBE_ATTEMPTS = 4;
+const PROBE_RETRY_MS = 800;
+/** <html>에 붙는 표시. 'ok'일 때만 Emoji가 토스페이스를 쓴다 */
+const SUPPORT_ATTR = 'data-tossface';
+
+/** 원본과 같은 jsDelivr v1.6.1 파일을 font-display: swap으로 다시 정의한다 */
+const TossfaceFontFaces = createGlobalStyle`
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-00.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-00.woff") format("woff");
@@ -17,7 +28,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-01.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-01.woff") format("woff");
@@ -27,7 +38,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-02.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-02.woff") format("woff");
@@ -38,7 +49,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-03.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-03.woff") format("woff");
@@ -49,7 +60,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-04.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-04.woff") format("woff");
@@ -59,7 +70,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-05.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-05.woff") format("woff");
@@ -69,7 +80,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-06.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-06.woff") format("woff");
@@ -80,7 +91,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-07.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-07.woff") format("woff");
@@ -97,7 +108,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-08.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-08.woff") format("woff");
@@ -126,7 +137,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-09.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-09.woff") format("woff");
@@ -150,7 +161,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-10.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-10.woff") format("woff");
@@ -160,7 +171,7 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 
 @font-face {
-  font-family: "Tossface Swap";
+  font-family: "${FAMILY}";
   font-display: swap;
   src: url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-11.woff2") format("woff2"),
     url("https://cdn.jsdelivr.net/gh/toss/tossface@v1.6.1/dist/TossFaceFontMac-11.woff") format("woff");
@@ -172,11 +183,75 @@ export const SwapTossfaceFont = createGlobalStyle`
 }
 `;
 
+/** 토스페이스를 받은 뒤 캔버스에 한 글자 그려 보고, 픽셀이 찍히면 그릴 수 있는 브라우저로 본다 */
+const canRenderTossface = async () => {
+  if (typeof document === 'undefined' || !document.fonts) return false;
+  const font = `${PROBE_SIZE}px "${FAMILY}"`;
+  try {
+    await document.fonts.load(font, PROBE_EMOJI);
+  } catch {
+    return false;
+  }
+  if (!document.fonts.check(font, PROBE_EMOJI)) return false;
+
+  const canvas = document.createElement('canvas');
+  canvas.width = PROBE_SIZE;
+  canvas.height = PROBE_SIZE;
+  const context = canvas.getContext('2d');
+  if (!context) return false;
+  context.font = font;
+  context.textBaseline = 'top';
+  context.fillText(PROBE_EMOJI, 0, 0);
+  const { data } = context.getImageData(0, 0, PROBE_SIZE, PROBE_SIZE);
+  // 알파 채널만 본다
+  for (let i = 3; i < data.length; i += 4) {
+    if (data[i] > 0) return true;
+  }
+  return false;
+};
+
+const wait = (ms: number) => new Promise((resolve) => setTimeout(resolve, ms));
+
+/** 글꼴 정의를 깔고, 이 브라우저가 토스페이스를 그릴 수 있는지 확인해 <html>에 표시한다 */
+export const SwapTossfaceFont = () => {
+  useEffect(() => {
+    const root = document.documentElement;
+    if (root.getAttribute(SUPPORT_ATTR) === 'ok') return;
+    let cancelled = false;
+
+    // 처음 방문해 글꼴을 막 받은 직후에는 아직 그려지지 않아 실패할 수 있다. 몇 번 더 확인하고,
+    // 그동안은 기기 기본 이모지로 보여준다
+    const probe = async () => {
+      for (let attempt = 0; attempt < PROBE_ATTEMPTS; attempt += 1) {
+        if (await canRenderTossface()) {
+          if (!cancelled) root.setAttribute(SUPPORT_ATTR, 'ok');
+          return;
+        }
+        await wait(PROBE_RETRY_MS);
+        if (cancelled) return;
+      }
+      root.setAttribute(SUPPORT_ATTR, 'no');
+    };
+    void probe();
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+
+  return <TossfaceFontFaces />;
+};
+
+// 기본은 기기 이모지, 토스페이스를 그릴 수 있다고 확인된 브라우저에서만 토스페이스
 export const Emoji = styled.span`
   display: inline-block;
   font-family:
-    'Tossface Swap', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji',
-    sans-serif;
+    'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji', sans-serif;
   font-style: normal;
   line-height: 1;
+
+  html[${SUPPORT_ATTR}='ok'] & {
+    font-family:
+      '${FAMILY}', 'Apple Color Emoji', 'Segoe UI Emoji', 'Noto Color Emoji',
+      sans-serif;
+  }
 `;
