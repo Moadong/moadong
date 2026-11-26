@@ -37,6 +37,7 @@ import {
 import { TAG_COLORS } from '@/styles/clubTags';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
+import ApplyIntroSheet from './components/ApplyIntroSheet/ApplyIntroSheet';
 import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 
@@ -164,6 +165,12 @@ const ClubDetailPage = () => {
   );
 
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
+  // 지원하기를 누르면 바로 지원서로 가지 않고 모집 안내 시트를 먼저 띄운다. 확인하면 원래 지원 흐름을 이어간다
+  const [pendingApply, setPendingApply] = useState<(() => void) | null>(null);
+
+  // 일정이 하나도 없으면 섹션과 바로가기를 숨긴다. '곧 업데이트'처럼 확인 못 하는 약속은 하지 않는다
+  const hasSchedule =
+    hasCalendarConnection && (isCalendarLoading || calendarEvents.length > 0);
 
   if (error) {
     return (
@@ -278,8 +285,10 @@ const ClubDetailPage = () => {
                 youtubeUrl={youtubeUrl}
                 onSocialClick={handleSocialClick}
                 onLocationClick={clubLocation ? openMap : undefined}
-                onScheduleClick={() =>
-                  scrollToSection(CLUB_SECTION_ID.SCHEDULE)
+                onScheduleClick={
+                  hasSchedule
+                    ? () => scrollToSection(CLUB_SECTION_ID.SCHEDULE)
+                    : undefined
                 }
               />
 
@@ -315,17 +324,17 @@ const ClubDetailPage = () => {
                 description={clubDetail.description}
                 feeds={clubDetail.feeds}
                 insights={insights}
-                applyMethod={applyMethod}
-                recruitmentStatus={clubDetail.recruitmentStatus}
                 scheduleSlot={
-                  <Styled.ScheduleFrame>
-                    <ClubScheduleCalendar
-                      key={clubId ?? clubName}
-                      events={calendarEvents}
-                      isLoading={hasCalendarConnection && isCalendarLoading}
-                      clubId={clubDetail.id}
-                    />
-                  </Styled.ScheduleFrame>
+                  hasSchedule && (
+                    <Styled.ScheduleFrame>
+                      <ClubScheduleCalendar
+                        key={clubId ?? clubName}
+                        events={calendarEvents}
+                        isLoading={hasCalendarConnection && isCalendarLoading}
+                        clubId={clubDetail.id}
+                      />
+                    </Styled.ScheduleFrame>
+                  )
                 }
                 locationSlot={isCompact ? mapCard : undefined}
               />
@@ -350,7 +359,20 @@ const ClubDetailPage = () => {
         />
       )}
       {isInAppWebView() ? <Styled.AppSpacer /> : <Footer />}
-      <ClubApplyButton />
+      <ClubApplyButton
+        onBeforeApply={(proceed) => setPendingApply(() => proceed)}
+      />
+      <ApplyIntroSheet
+        isOpen={pendingApply !== null}
+        onClose={() => setPendingApply(null)}
+        onConfirm={() => pendingApply?.()}
+        clubName={clubDetail.name}
+        recruitmentStatus={clubDetail.recruitmentStatus}
+        recruitment={recruitment}
+        recruitmentTarget={clubDetail.recruitmentTarget}
+        applyMethod={applyMethod}
+        afterApplySteps={insights?.afterApplySteps}
+      />
     </>
   );
 };

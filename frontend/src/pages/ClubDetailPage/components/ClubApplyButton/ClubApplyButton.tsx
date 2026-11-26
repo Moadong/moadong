@@ -16,7 +16,12 @@ import AdminPeriodButton from '../AdminPeriodButton/AdminPeriodButton';
 import ApplicationSelectModal from '../ApplicationSelectModal/ApplicationSelectModal';
 import * as Styled from './ClubApplyButton.styles';
 
-const ClubApplyButton = () => {
+interface ClubApplyButtonProps {
+  /** 지원 흐름에 들어가기 전에 끼어들 단계. proceed를 부르면 원래 지원 흐름이 이어진다 */
+  onBeforeApply?: (proceed: () => void) => void;
+}
+
+const ClubApplyButton = ({ onBeforeApply }: ClubApplyButtonProps = {}) => {
   const { clubId, clubName } = useParams<{
     clubId: string;
     clubName: string;
@@ -99,6 +104,16 @@ const ClubApplyButton = () => {
       return;
     }
 
+    // 상세페이지가 모집 안내를 먼저 보여주고 싶으면 여기서 넘겨받아, 사용자가 확인하면 이어서 진행한다
+    if (onBeforeApply) {
+      onBeforeApply(() => void proceedToApplication());
+      return;
+    }
+
+    await proceedToApplication();
+  };
+
+  const proceedToApplication = async () => {
     try {
       const forms = await getApplicationOptions(clubDetail.id);
 

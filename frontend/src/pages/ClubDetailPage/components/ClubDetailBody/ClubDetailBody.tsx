@@ -1,4 +1,4 @@
-// 상세 본문. 탭 없이 한 번에 내려 읽도록 판단 정보 → 소개·사진 → 일정 → 가입·FAQ·위치 순으로 섹션을 쌓는다
+// 상세 본문. 탭 없이 신입생이 궁금해하는 순서(뭐 하는 곳·부담·분위기·활동·가입 후)대로 섹션을 쌓는다
 import {
   ReactNode,
   SyntheticEvent,
@@ -12,16 +12,14 @@ import { ChevronDownIcon } from '@/pages/ClubDetailPage/components/ClubDetailIco
 import {
   ClubAtAGlance,
   ClubFitCheck,
-  ClubJoinSteps,
   ClubKeywordVotes,
   ClubMemberVoices,
+  ClubPerks,
   ClubYearTimeline,
-  getApplyStep,
 } from '@/pages/ClubDetailPage/components/ClubInsights/ClubInsights';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
-import { ApplyMethod } from '@/pages/ClubDetailPage/hooks/useApplyMethod';
 import { sortAwardsByLatest } from '@/pages/ClubDetailPage/utils/clubDetailSummary';
-import { DetailedDescription, RecruitmentStatus } from '@/types/club';
+import { DetailedDescription } from '@/types/club';
 import { ClubInsights } from '@/types/clubInsights';
 import { formatSemesterLabel, getAwardKey } from '@/utils/awardHelpers';
 import cdnImage, { fallbackToOriginal } from '@/utils/cdnImage';
@@ -42,10 +40,8 @@ interface ClubDetailBodyProps {
   description: DetailedDescription;
   feeds: string[];
   insights?: ClubInsights;
-  /** 지원서 설정에서 읽은 지원 방법. 불러오기 전에는 지원 과정 섹션을 숨긴다 */
-  applyMethod?: ApplyMethod;
-  recruitmentStatus: RecruitmentStatus;
-  scheduleSlot: ReactNode;
+  /** 볼 일정이 없으면 넘기지 않는다. 빈 달력이나 '곧 업데이트' 같은 약속은 보여주지 않는다 */
+  scheduleSlot?: ReactNode;
   /** 모바일에서만 넘긴다. 데스크톱은 오른쪽 카드에 지도가 있다 */
   locationSlot?: ReactNode;
 }
@@ -105,8 +101,6 @@ const ClubDetailBody = ({
   description,
   feeds,
   insights,
-  applyMethod,
-  recruitmentStatus,
   scheduleSlot,
   locationSlot,
 }: ClubDetailBodyProps) => {
@@ -164,15 +158,23 @@ const ClubDetailBody = ({
     });
   };
 
-  // 섹션을 네 묶음(판단 정보·동아리 이야기·일정과 성과·가입 안내)으로 모으고, 굵은 구분선은 묶음 사이에만 둔다
-  const decide: ReactNode[] = [];
-  const story: ReactNode[] = [];
-  const time: ReactNode[] = [];
-  const join: ReactNode[] = [];
+  // 신입생이 묻는 순서대로 네 묶음을 쌓고, 굵은 구분선은 묶음 사이에만 둔다.
+  // 뭐 하는 곳·부담은? → 분위기·나랑 맞나? → 실제로 뭘 하나? → 들어가면?
+  const what: ReactNode[] = [];
+  const vibe: ReactNode[] = [];
+  const doing: ReactNode[] = [];
+  const after: ReactNode[] = [];
 
-  // 1. 판단에 바로 쓰는 사실
+  if (introDescription?.trim()) {
+    what.push(
+      <Section key='intro' title='동아리 소개'>
+        <CollapsibleText text={introDescription} />
+      </Section>,
+    );
+  }
+
   if (insights?.facts) {
-    decide.push(
+    what.push(
       <Section key='facts' title='한눈에 보기'>
         <ClubAtAGlance facts={insights.facts} />
       </Section>,
@@ -180,7 +182,7 @@ const ClubDetailBody = ({
   }
 
   if (insights?.keywords && insights.keywords.keywords.length > 0) {
-    decide.push(
+    vibe.push(
       <Section
         key='keywords'
         title='부원들이 꼽은 매력'
@@ -191,15 +193,23 @@ const ClubDetailBody = ({
     );
   }
 
+  if (insights?.memberVoices && insights.memberVoices.length > 0) {
+    vibe.push(
+      <Section key='voices' title='부원 한마디'>
+        <ClubMemberVoices voices={insights.memberVoices} />
+      </Section>,
+    );
+  }
+
   // 구조화된 맞춤 정보가 없으면 동아리가 쓴 인재상 글로 대신한다
   if (hasFit && insights?.fit) {
-    decide.push(
+    vibe.push(
       <Section key='fit' title='나랑 잘 맞을까?'>
         <ClubFitCheck fit={insights.fit} />
       </Section>,
     );
   } else if (idealCandidate?.content?.trim() || idealTags.length > 0) {
-    decide.push(
+    vibe.push(
       <Section key='ideal' title='이런 분을 찾아요'>
         {idealTags.length > 0 && (
           <Styled.ChipList>
@@ -217,17 +227,8 @@ const ClubDetailBody = ({
     );
   }
 
-  // 2. 동아리 이야기
-  if (introDescription?.trim()) {
-    story.push(
-      <Section key='intro' title='동아리 소개'>
-        <CollapsibleText text={introDescription} />
-      </Section>,
-    );
-  }
-
   if (activityDescription?.trim()) {
-    story.push(
+    doing.push(
       <Section key='activity' title='주요 활동'>
         <CollapsibleText text={activityDescription} />
       </Section>,
@@ -235,7 +236,7 @@ const ClubDetailBody = ({
   }
 
   if (previewPhotos.length > 0) {
-    story.push(
+    doing.push(
       <Section
         key='photos'
         id={CLUB_SECTION_ID.PHOTOS}
@@ -268,17 +269,8 @@ const ClubDetailBody = ({
     );
   }
 
-  if (insights?.memberVoices && insights.memberVoices.length > 0) {
-    story.push(
-      <Section key='voices' title='부원 한마디'>
-        <ClubMemberVoices voices={insights.memberVoices} />
-      </Section>,
-    );
-  }
-
-  // 3. 시간 계획
   if (insights?.yearlyEvents && insights.yearlyEvents.length > 0) {
-    time.push(
+    doing.push(
       <Section
         key='year'
         title='1년 동안 이런 걸 해요'
@@ -289,14 +281,16 @@ const ClubDetailBody = ({
     );
   }
 
-  time.push(
-    <Section key='schedule' id={CLUB_SECTION_ID.SCHEDULE} title='행사일정'>
-      {scheduleSlot}
-    </Section>,
-  );
+  if (scheduleSlot) {
+    doing.push(
+      <Section key='schedule' id={CLUB_SECTION_ID.SCHEDULE} title='행사일정'>
+        {scheduleSlot}
+      </Section>,
+    );
+  }
 
   if (sortedAwards.length > 0) {
-    time.push(
+    doing.push(
       <Section key='awards' title='활동 성과'>
         <Styled.Timeline>
           {sortedAwards.map((award, index) => {
@@ -321,26 +315,15 @@ const ClubDetailBody = ({
     );
   }
 
-  // 4. 가입. 첫 단계(지원 방법)는 실제 지원서 설정에서, 그다음은 동아리가 적은 과정에서 가져온다
-  if (applyMethod) {
-    join.push(
-      <Section
-        key='join'
-        title='지원부터 합류까지'
-        description='아래 지원하기 버튼으로 시작해요'
-      >
-        <ClubJoinSteps
-          steps={[
-            getApplyStep(applyMethod, recruitmentStatus),
-            ...(insights?.afterApplySteps ?? []),
-          ]}
-        />
+  // 정리된 혜택 목록이 있으면 그걸 쓰고, 없을 때만 동아리가 쓴 자유 글을 보여준다
+  if (insights?.perks && insights.perks.length > 0) {
+    after.push(
+      <Section key='benefits' title='부원이 되면 이런 게 좋아요'>
+        <ClubPerks perks={insights.perks} />
       </Section>,
     );
-  }
-
-  if (benefits?.trim()) {
-    join.push(
+  } else if (benefits?.trim()) {
+    after.push(
       <Section key='benefits' title='부원이 되면'>
         <Styled.Callout>{linkifyText(benefits)}</Styled.Callout>
       </Section>,
@@ -348,7 +331,7 @@ const ClubDetailBody = ({
   }
 
   if (validFaqs.length > 0) {
-    join.push(
+    after.push(
       <Section key='faq' title='자주 묻는 질문'>
         <Styled.FaqList>
           {validFaqs.map((faq, index) => {
@@ -384,7 +367,7 @@ const ClubDetailBody = ({
   }
 
   if (locationSlot) {
-    join.push(
+    after.push(
       <Section key='location' title='동아리방 위치'>
         {locationSlot}
       </Section>,
@@ -394,7 +377,7 @@ const ClubDetailBody = ({
   return (
     <>
       <Styled.Container>
-        {[decide, story, time, join]
+        {[what, vibe, doing, after]
           .filter((chapter) => chapter.length > 0)
           .map((chapter, index) => (
             <Styled.Chapter key={index}>{chapter}</Styled.Chapter>

@@ -369,6 +369,45 @@ export const StepDescription = styled.p`
   color: ${colors.gray[700]};
 `;
 
+/* 부원 혜택 */
+
+export const PerkGrid = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+
+  ${media.mobile} {
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const PerkItem = styled.li`
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background-color: ${colors.gray[100]};
+  ${setTypography(typography.paragraph.p3)};
+  font-weight: 600;
+  color: ${colors.gray[950]};
+  word-break: keep-all;
+
+  ${media.tablet} {
+    padding: 12px 14px;
+    ${setTypography(typography.paragraph.p5)};
+    font-weight: 600;
+  }
+`;
+
+export const PerkEmoji = styled.span`
+  flex-shrink: 0;
+  font-size: 22px;
+`;
+
 /* 부원 한마디 */
 
 export const VoiceScroller = styled.ul`

@@ -61,5 +61,7 @@ export interface ClubInsights {
   yearlyEvents?: ClubYearlyEvent[];
   /** 지원한 다음 동아리가 진행하는 과정 (면접·발표·첫 모임 등). 지원 방법 자체는 지원서 설정에서 읽는다 */
   afterApplySteps?: ClubJoinStep[];
+  /** 부원이 되면 실제로 얻는 것. 자유 글(benefits)에 모집 안내가 섞이는 일이 많아 따로 받는다 */
+  perks?: { emoji: string; label: string }[];
   memberVoices?: ClubMemberVoice[];
 }

@@ -71,6 +71,12 @@ export const clubInsightsMock: Record<string, ClubInsights> = {
         description: '같은 학번 동기들과 인사해요',
       },
     ],
+    perks: [
+      { emoji: '🧤', label: '글러브·배트·스파이크 무료 대여' },
+      { emoji: '🏟️', label: '단체 야구 직관' },
+      { emoji: '⚾', label: '재부리그·KUSF 대회 출전' },
+      { emoji: '🍻', label: '회식·MT' },
+    ],
     memberVoices: [
       {
         quote:

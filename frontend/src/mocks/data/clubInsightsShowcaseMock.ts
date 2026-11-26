@@ -136,6 +136,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         description: '기본기부터 차근차근',
       },
     ],
+    perks: [
+      { emoji: '🎤', label: '축제·버스킹 무대 경험' },
+      { emoji: '🤝', label: '4개 대학 연합 친구' },
+      { emoji: '🕺', label: '원하는 장르 직접 선택' },
+      { emoji: '🍗', label: '매주 회식' },
+    ],
     memberVoices: [
       {
         quote:
@@ -199,6 +205,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         emoji: '📞',
         title: '이틀 안에 결과 연락',
       },
+    ],
+    perks: [
+      { emoji: '🎸', label: '선배가 알려주는 기타' },
+      { emoji: '🌊', label: '광안리 버스킹' },
+      { emoji: '🎳', label: '보드게임·볼링·러닝 친목' },
+      { emoji: '🧾', label: '회비 사용 내역 공개' },
     ],
     memberVoices: [
       {
@@ -269,6 +281,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         description: '장비는 동아리에 다 있어요',
       },
     ],
+    perks: [
+      { emoji: '🪪', label: 'PADI 오픈워터 자격증' },
+      { emoji: '🤿', label: '스쿠버 장비 전부 구비' },
+      { emoji: '🏝️', label: '제주·해외 원정' },
+      { emoji: '🦺', label: '42년 무사고 안전 교육' },
+    ],
     memberVoices: [
       {
         quote:
@@ -333,6 +351,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         description: '8월 말 예정',
       },
     ],
+    perks: [
+      { emoji: '📰', label: '매주 영어 기사 토론' },
+      { emoji: '🏫', label: '고교 멘토링 대외활동' },
+      { emoji: '⚾', label: '야구장·볼링 번개' },
+      { emoji: '📚', label: '시험기간엔 쉬어요' },
+    ],
     memberVoices: [
       {
         quote:
@@ -390,6 +414,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         title: '첫 모임',
         description: '가벼운 게임으로 감각부터 익혀요',
       },
+    ],
+    perks: [
+      { emoji: '📁', label: '공모전 결과물 포트폴리오' },
+      { emoji: '🧭', label: '기획서 상시 피드백' },
+      { emoji: '🏆', label: '학기 말 발표회 시상' },
+      { emoji: '🧠', label: '60명의 기획 동료' },
     ],
     memberVoices: [
       {
@@ -453,6 +483,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         description: '조원들과 뒷풀이까지',
       },
     ],
+    perks: [
+      { emoji: '🍵', label: '여러 가지 차 시음' },
+      { emoji: '🎲', label: '보드게임·문화 여가 모임' },
+      { emoji: '📣', label: '응원전·MT' },
+      { emoji: '🕊️', label: '모든 활동 자유 참여' },
+    ],
     memberVoices: [
       {
         quote:
@@ -514,6 +550,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         title: '회비 입금 후 활동 시작',
       },
     ],
+    perks: [
+      { emoji: '🧑‍🏫', label: '기초·인물·스마트폰 포토클래스' },
+      { emoji: '🖼️', label: '정기 전시회 참여' },
+      { emoji: '🎁', label: '포토 리뷰 상품' },
+      { emoji: '📷', label: '출사 때 기술부원 도움' },
+    ],
     memberVoices: [
       {
         quote:
@@ -574,6 +616,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         emoji: '🧒',
         title: '멘토링 배정',
       },
+    ],
+    perks: [
+      { emoji: '🧒', label: '지역아동센터 정기 멘토링' },
+      { emoji: '🎤', label: '진로 강연 경험' },
+      { emoji: '🌍', label: '전국 미담장학회 교류' },
+      { emoji: '⚡', label: '번개모임' },
     ],
     memberVoices: [
       {
@@ -638,6 +686,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         description: '스케치 선생님 도안에 색만 칠해요',
       },
     ],
+    perks: [
+      { emoji: '⏱️', label: '1회 약 8시간 봉사 인정' },
+      { emoji: '🍱', label: '점심·다과 제공' },
+      { emoji: '🎨', label: '스케치 선생님 도안 제공' },
+      { emoji: '🎳', label: '볼링·영화 친목' },
+    ],
     memberVoices: [
       {
         quote:
@@ -697,6 +751,12 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         title: '소그룹 배정',
       },
     ],
+    perks: [
+      { emoji: '🫂', label: '소그룹 교제' },
+      { emoji: '📖', label: '시험기간 스터디' },
+      { emoji: '🧺', label: '나들이·MT' },
+      { emoji: '⛺', label: '수련회' },
+    ],
     memberVoices: [
       {
         quote:
@@ -746,6 +806,11 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         emoji: '👥',
         title: '소그룹 참여',
       },
+    ],
+    perks: [
+      { emoji: '🔥', label: '매일 아침 모닥불 기도회' },
+      { emoji: '👥', label: '화요일 소그룹' },
+      { emoji: '🙏', label: '목요일 큰모임' },
     ],
     memberVoices: [
       {

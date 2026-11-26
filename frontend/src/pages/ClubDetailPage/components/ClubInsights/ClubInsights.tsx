@@ -7,6 +7,7 @@ import { RecruitmentStatus } from '@/types/club';
 import {
   ClubFacts,
   ClubFit,
+  ClubInsights,
   ClubJoinStep,
   ClubKeywordSummary,
   ClubMemberVoice,
@@ -266,25 +267,25 @@ export const getApplyStep = (
       return {
         emoji: '📝',
         title: '모아동에서 지원서 작성',
-        description: '지원하기를 누르면 바로 작성할 수 있어요',
+        description: '모아동 안에서 바로 작성해요',
       };
     case 'EXTERNAL':
       return {
         emoji: '🔗',
         title: `${method.platform}로 지원`,
-        description: `지원하기를 누르면 동아리의 ${method.platform}로 이동해요`,
+        description: `동아리가 만든 ${method.platform}로 이동해요`,
       };
     case 'MULTIPLE':
       return {
         emoji: '🗂️',
         title: '지원서 골라서 작성',
-        description: `지원서가 ${method.count}개 있어요. 지원하기를 누르면 고를 수 있어요`,
+        description: `지원서가 ${method.count}개 있어요. 하나를 골라 작성해요`,
       };
     case 'CONTACT':
       return {
         emoji: '💬',
         title: '동아리에 직접 연락',
-        description: '위쪽 인스타그램이나 연락처로 문의해 주세요',
+        description: '동아리 인스타그램이나 연락처로 문의해 주세요',
       };
   }
 };
@@ -308,6 +309,25 @@ export const ClubJoinSteps = ({ steps }: { steps: ClubJoinStep[] }) => (
       </Styled.StepItem>
     ))}
   </Styled.StepList>
+);
+
+/* ── 부원 혜택 ───────────────────────────────────────────────────────── */
+
+export const ClubPerks = ({
+  perks,
+}: {
+  perks: NonNullable<ClubInsights['perks']>;
+}) => (
+  <Styled.PerkGrid>
+    {perks.map((perk) => (
+      <Styled.PerkItem key={perk.label}>
+        <Styled.PerkEmoji>
+          <Emoji aria-hidden>{perk.emoji}</Emoji>
+        </Styled.PerkEmoji>
+        <span>{perk.label}</span>
+      </Styled.PerkItem>
+    ))}
+  </Styled.PerkGrid>
 );
 
 /* ── 부원 한마디 ─────────────────────────────────────────────────────── */

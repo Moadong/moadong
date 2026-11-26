@@ -35,7 +35,8 @@ interface ClubSummaryProps {
   youtubeUrl?: string;
   onSocialClick: (platform: 'instagram' | 'youtube', url: string) => void;
   onLocationClick?: () => void;
-  onScheduleClick: () => void;
+  /** 볼 일정이 있을 때만 넘긴다 */
+  onScheduleClick?: () => void;
 }
 
 const ClubSummary = ({
@@ -81,12 +82,14 @@ const ClubSummary = ({
       onClick: onLocationClick,
     });
   }
-  actions.push({
-    key: 'schedule',
-    label: '행사일정',
-    icon: <CalendarIcon width={22} height={22} />,
-    onClick: onScheduleClick,
-  });
+  if (onScheduleClick) {
+    actions.push({
+      key: 'schedule',
+      label: '행사일정',
+      icon: <CalendarIcon width={22} height={22} />,
+      onClick: onScheduleClick,
+    });
+  }
 
   return (
     <Styled.Container>
