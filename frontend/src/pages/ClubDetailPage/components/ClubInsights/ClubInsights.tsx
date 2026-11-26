@@ -1,14 +1,10 @@
 // 신입생 판단을 돕는 구조화 섹션들: 한눈에 보기·부원 키워드·나랑 맞을까·1년 활동·가입 과정·부원 한마디
 import { useEffect, useState } from 'react';
 import HorizontalScroller from '@/pages/ClubDetailPage/components/HorizontalScroller/HorizontalScroller';
-import { ApplyMethod } from '@/pages/ClubDetailPage/hooks/useApplyMethod';
 import { Emoji } from '@/pages/IntroducePage/components/Tossface/Tossface';
-import { RecruitmentStatus } from '@/types/club';
 import {
   ClubFacts,
   ClubFit,
-  ClubInsights,
-  ClubJoinStep,
   ClubKeywordSummary,
   ClubMemberVoice,
   ClubYearlyEvent,
@@ -116,10 +112,6 @@ export const ClubKeywordVotes = ({
 
   return (
     <Styled.VoteBlock>
-      <Styled.VoteMeta>
-        <Emoji aria-hidden>🙋</Emoji> 부원 {summary.participantCount}명이
-        참여했어요
-      </Styled.VoteMeta>
       <Styled.VoteList>
         {visible.map((keyword, index) => {
           const ratio = maxCount > 0 ? keyword.count / maxCount : 0;
@@ -225,110 +217,6 @@ export const ClubYearTimeline = ({
     </HorizontalScroller>
   );
 };
-
-/* ── 지원 방법 → 첫 단계 ─────────────────────────────────────────────── */
-
-/** 지원하기 버튼이 실제로 하는 일을 첫 단계 문구로 옮긴다. 모집 기간이 아니면 그 사실을 먼저 알린다 */
-export const getApplyStep = (
-  method: ApplyMethod,
-  status: RecruitmentStatus,
-): ClubJoinStep => {
-  // 모집 기간이 아니어도 '다음엔 어떻게 지원하는지'는 알려준다
-  const howTo = (() => {
-    switch (method.kind) {
-      case 'MOADONG':
-        return '모아동 지원서로';
-      case 'EXTERNAL':
-        return `${method.platform}로`;
-      case 'MULTIPLE':
-        return '모아동에서 지원서를 골라';
-      case 'CONTACT':
-        return '동아리에 직접 연락해';
-    }
-  })();
-
-  if (status === 'CLOSED') {
-    return {
-      emoji: '⏳',
-      title: '지금은 모집 기간이 아니에요',
-      description: `다음 모집 때 ${howTo} 지원해요`,
-    };
-  }
-  if (status === 'UPCOMING') {
-    return {
-      emoji: '⏳',
-      title: '곧 모집이 시작돼요',
-      description: `모집이 열리면 ${howTo} 지원해요`,
-    };
-  }
-
-  switch (method.kind) {
-    case 'MOADONG':
-      return {
-        emoji: '📝',
-        title: '모아동에서 지원서 작성',
-        description: '모아동 안에서 바로 작성해요',
-      };
-    case 'EXTERNAL':
-      return {
-        emoji: '🔗',
-        title: `${method.platform}로 지원`,
-        description: `동아리가 만든 ${method.platform}로 이동해요`,
-      };
-    case 'MULTIPLE':
-      return {
-        emoji: '🗂️',
-        title: '지원서 골라서 작성',
-        description: `지원서가 ${method.count}개 있어요. 하나를 골라 작성해요`,
-      };
-    case 'CONTACT':
-      return {
-        emoji: '💬',
-        title: '동아리에 직접 연락',
-        description: '동아리 인스타그램이나 연락처로 문의해 주세요',
-      };
-  }
-};
-
-/* ── 가입 과정 ───────────────────────────────────────────────────────── */
-
-export const ClubJoinSteps = ({ steps }: { steps: ClubJoinStep[] }) => (
-  <Styled.StepList>
-    {steps.map((step, index) => (
-      <Styled.StepItem key={step.title}>
-        <Styled.StepBadge>
-          <Emoji aria-hidden>{step.emoji}</Emoji>
-        </Styled.StepBadge>
-        <div>
-          <Styled.StepIndex>STEP {index + 1}</Styled.StepIndex>
-          <Styled.StepTitle>{step.title}</Styled.StepTitle>
-          {step.description && (
-            <Styled.StepDescription>{step.description}</Styled.StepDescription>
-          )}
-        </div>
-      </Styled.StepItem>
-    ))}
-  </Styled.StepList>
-);
-
-/* ── 부원 혜택 ───────────────────────────────────────────────────────── */
-
-export const ClubPerks = ({
-  perks,
-}: {
-  perks: NonNullable<ClubInsights['perks']>;
-}) => (
-  <Styled.PerkGrid>
-    {perks.map((perk) => (
-      <Styled.PerkItem key={perk.label}>
-        <Styled.PerkEmoji>
-          <Emoji aria-hidden>{perk.emoji}</Emoji>
-        </Styled.PerkEmoji>
-        <span>{perk.label}</span>
-      </Styled.PerkItem>
-    ))}
-  </Styled.PerkGrid>
-);
 
 /* ── 부원 한마디 ─────────────────────────────────────────────────────── */
 

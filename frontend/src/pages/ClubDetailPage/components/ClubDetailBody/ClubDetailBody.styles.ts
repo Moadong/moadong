@@ -86,21 +86,21 @@ export const BodyText = styled.div<{ $clamped?: boolean }>`
 `;
 
 export const MoreButton = styled.button`
-  align-self: stretch;
-  display: flex;
+  align-self: flex-start;
+  display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: 4px;
-  height: 44px;
-  border: 1px solid ${colors.gray[300]};
-  border-radius: 12px;
-  background-color: ${colors.base.white};
+  gap: 2px;
+  margin-top: -4px;
+  padding: 4px 0;
+  border: none;
+  background: none;
   cursor: pointer;
   ${setTypography(typography.paragraph.p5)};
-  color: ${colors.gray[800]};
+  font-weight: 600;
+  color: ${colors.gray[700]};
 
   &:hover {
-    background-color: ${colors.gray[50]};
+    color: ${colors.gray[950]};
   }
 `;
 

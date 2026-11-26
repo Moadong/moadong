@@ -137,8 +137,78 @@ export const getUpdatedLabel = (
   return `${format(date, 'yyyy년 M월 d일')} 업데이트`;
 };
 
-/** SNS 주소에서 계정 이름만 뽑는다. 예: https://instagram.com/pknu_hurrah?igsh=1 → pknu_hurrah */
-export const getSocialHandle = (url: string): string => {
-  const path = url.split(/[?#]/)[0];
-  return path.split('/').filter(Boolean).pop() ?? '';
+const MS_PER_MINUTE = 60 * 1000;
+const MINUTES_PER_HOUR = 60;
+const HOURS_PER_DAY = 24;
+
+export interface DeadlineCountdown {
+  /** 크게 보여줄 한 줄. 예: "마감까지 3일 4시간" */
+  headline: string;
+  /** 아래 작은 줄. 예: "11월 28일 (토) 23:59 마감" */
+  sub: string | null;
+  /** 하루 안쪽으로 남았는지 */
+  isUrgent: boolean;
+}
+
+/** 지원 안내 맨 위에 보일 남은 시간. 상시 모집·모집 전·마감 후도 각각 한 줄로 말한다 */
+export const getDeadlineCountdown = (
+  status: RecruitmentStatus,
+  startValue?: string | null,
+  endValue?: string | null,
+  now: Date = new Date(),
+): DeadlineCountdown => {
+  const start = safeParse(startValue);
+  const end = safeParse(endValue);
+
+  if (status === 'CLOSED') {
+    return {
+      headline: '이번 모집은 끝났어요',
+      sub: end ? `${format(end, 'yyyy년 M월 d일')} 마감` : null,
+      isUrgent: false,
+    };
+  }
+
+  if (status === 'UPCOMING') {
+    if (!start)
+      return { headline: '곧 모집을 시작해요', sub: null, isUrgent: false };
+    const days = differenceInCalendarDays(start, now);
+    return {
+      headline: days > 0 ? `모집 시작까지 ${days}일` : '오늘 모집을 시작해요',
+      sub: `${formatDayTime(start)} 시작`,
+      isUrgent: false,
+    };
+  }
+
+  const isAlways =
+    status === 'ALWAYS' ||
+    !end ||
+    differenceInCalendarDays(end, now) > ALWAYS_THRESHOLD_DAYS;
+  if (isAlways) {
+    return {
+      headline: '상시 모집 중이에요',
+      sub: '언제든 지원할 수 있어요',
+      isUrgent: false,
+    };
+  }
+
+  const totalMinutes = Math.max(
+    0,
+    Math.floor((end.getTime() - now.getTime()) / MS_PER_MINUTE),
+  );
+  const days = Math.floor(totalMinutes / (MINUTES_PER_HOUR * HOURS_PER_DAY));
+  const hours = Math.floor(totalMinutes / MINUTES_PER_HOUR) % HOURS_PER_DAY;
+  const minutes = totalMinutes % MINUTES_PER_HOUR;
+
+  const remaining =
+    days > 0
+      ? `${days}일 ${hours}시간`
+      : hours > 0
+        ? `${hours}시간 ${minutes}분`
+        : `${minutes}분`;
+
+  return {
+    headline: totalMinutes > 0 ? `마감까지 ${remaining}` : '곧 마감돼요',
+    sub: `${format(end, 'M월 d일 (E) HH:mm', { locale: ko })} 마감`,
+    isUrgent: days === 0,
+  };
 };

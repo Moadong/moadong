@@ -59,24 +59,17 @@ export const clubInsightsMock: Record<string, ClubInsights> = {
       { month: 10, emoji: '🤝', title: '타대 교류전' },
       { month: 12, emoji: '🎄', title: '종강 총회 · 시상' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '👋',
-        title: '첫 훈련에 놀러오기',
-        description: '용당캠퍼스 대운동장, 장비는 빌려드려요',
-      },
-      {
-        emoji: '🎊',
-        title: '신입 환영회',
-        description: '같은 학번 동기들과 인사해요',
-      },
-    ],
-    perks: [
-      { emoji: '🧤', label: '글러브·배트·스파이크 무료 대여' },
-      { emoji: '🏟️', label: '단체 야구 직관' },
-      { emoji: '⚾', label: '재부리그·KUSF 대회 출전' },
-      { emoji: '🍻', label: '회식·MT' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        { label: '첫 훈련', date: '매주', place: '용당캠퍼스 대운동장' },
+        { label: '신입 환영회', date: '합류 후 첫 달' },
+      ],
+      notices: [
+        '지원서에 적은 전화번호로 회비 안내 문자가 가요',
+        '회비는 신입 남 2만원 · 여 1만원이에요',
+        '장비가 없어도 공용 장비로 바로 참여할 수 있어요',
+      ],
+    },
     memberVoices: [
       {
         quote:

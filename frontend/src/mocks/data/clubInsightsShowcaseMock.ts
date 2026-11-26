@@ -124,24 +124,16 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 9, emoji: '🎤', title: '버스킹' },
       { month: 11, emoji: '🌟', title: '정기 발표회' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '🕺',
-        title: '장르 체험',
-        description: '오디션 없이 합류해서 여름방학 전까지 여러 장르를 해 봐요',
-      },
-      {
-        emoji: '🎤',
-        title: '첫 무대 준비',
-        description: '기본기부터 차근차근',
-      },
-    ],
-    perks: [
-      { emoji: '🎤', label: '축제·버스킹 무대 경험' },
-      { emoji: '🤝', label: '4개 대학 연합 친구' },
-      { emoji: '🕺', label: '원하는 장르 직접 선택' },
-      { emoji: '🍗', label: '매주 회식' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        { label: '장르 체험', date: '합류 후 여름방학 전까지' },
+        { label: '첫 무대 준비', date: '장르를 정한 뒤' },
+      ],
+      notices: [
+        '오디션 없이 네이버 폼이나 동방 방문으로 신청해요',
+        '정규 연습은 월·수·금 오후 6~8시예요 (요일은 바뀔 수 있어요)',
+      ],
+    },
     memberVoices: [
       {
         quote:
@@ -195,23 +187,30 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 10, emoji: '🎸', title: '기타 소발표회' },
       { month: 12, emoji: '🌟', title: '정기 발표회 · 동계 MT' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '🎙️',
-        title: '오디션',
-        description: '1·2·3차 중 편한 날에, 떨어져도 다시 볼 수 있어요',
-      },
-      {
-        emoji: '📞',
-        title: '이틀 안에 결과 연락',
-      },
-    ],
-    perks: [
-      { emoji: '🎸', label: '선배가 알려주는 기타' },
-      { emoji: '🌊', label: '광안리 버스킹' },
-      { emoji: '🎳', label: '보드게임·볼링·러닝 친목' },
-      { emoji: '🧾', label: '회비 사용 내역 공개' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        {
+          label: '1차 오디션',
+          date: '3/5(목) 18:30',
+          place: '나비센터(B12) 2층 소극장',
+        },
+        {
+          label: '2차 오디션',
+          date: '3/11(수) 18:30',
+          place: '미래관(A21) 소민홀',
+        },
+        {
+          label: '3차 오디션',
+          date: '3/16(월) 18:30',
+          place: '나비센터(B12) 2층 소극장',
+        },
+        { label: '결과 연락', date: '오디션 후 이틀 안에' },
+      ],
+      notices: [
+        '떨어져도 다음 차수에 다시 지원할 수 있어요',
+        '입회비는 3만 5천원이에요',
+      ],
+    },
     memberVoices: [
       {
         quote:
@@ -269,24 +268,21 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 10, emoji: '🌙', title: '나이트 다이빙' },
       { month: 1, emoji: '✈️', title: '해외 원정' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '💬',
-        title: '면접',
-        description: '동아리 소개 행사 날 한 번에 봐요',
-      },
-      {
-        emoji: '🤿',
-        title: '오픈워터 교육 시작',
-        description: '장비는 동아리에 다 있어요',
-      },
-    ],
-    perks: [
-      { emoji: '🪪', label: 'PADI 오픈워터 자격증' },
-      { emoji: '🤿', label: '스쿠버 장비 전부 구비' },
-      { emoji: '🏝️', label: '제주·해외 원정' },
-      { emoji: '🦺', label: '42년 무사고 안전 교육' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        {
+          label: '면접',
+          date: '3/5 동아리 소개 행사 날',
+          place: '안 되면 따로 일정 조율',
+        },
+        { label: '오픈워터 교육', date: '합격 후 4월부터' },
+      ],
+      notices: [
+        '가입비 4만원, 학기 회비 4만원이에요',
+        '자격증이 없으면 취득 비용 50만원이 따로 들어요 (2~3회 분납 가능)',
+        '수영을 못해도, 시력이 나빠도 괜찮아요',
+      ],
+    },
     memberVoices: [
       {
         quote:
@@ -339,24 +335,18 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 9, emoji: '🎂', title: '창립제' },
       { month: 11, emoji: '🏆', title: '시사 퀴즈 대회' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '💬',
-        title: '회장에게 카톡·문자로 연락',
-        description: '지원서를 낸 뒤 꼭 연락해 주세요',
-      },
-      {
-        emoji: '🗣️',
-        title: '면접',
-        description: '8월 말 예정',
-      },
-    ],
-    perks: [
-      { emoji: '📰', label: '매주 영어 기사 토론' },
-      { emoji: '🏫', label: '고교 멘토링 대외활동' },
-      { emoji: '⚾', label: '야구장·볼링 번개' },
-      { emoji: '📚', label: '시험기간엔 쉬어요' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        { label: '면접 신청 마감', date: '8/26' },
+        { label: '면접', date: '8월 말' },
+        { label: '첫 정기 모임', date: '개강 후 매주 목 18:10' },
+      ],
+      notices: [
+        '지원서를 낸 뒤 회장 번호로 카톡이나 문자를 꼭 보내 주세요',
+        '1·2학년을 먼저 뽑지만 3·4학년도 지원할 수 있어요',
+        '학기 회비는 2만원이에요',
+      ],
+    },
     memberVoices: [
       {
         quote:
@@ -408,19 +398,13 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 9, emoji: '🎮', title: '2학기 시즌 시작' },
       { month: 12, emoji: '🏆', title: '최종 발표회 · 시상' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '🎮',
-        title: '첫 모임',
-        description: '가벼운 게임으로 감각부터 익혀요',
-      },
-    ],
-    perks: [
-      { emoji: '📁', label: '공모전 결과물 포트폴리오' },
-      { emoji: '🧭', label: '기획서 상시 피드백' },
-      { emoji: '🏆', label: '학기 말 발표회 시상' },
-      { emoji: '🧠', label: '60명의 기획 동료' },
-    ],
+    recruitmentGuide: {
+      schedule: [{ label: '첫 정기 모임', date: '매주 목 18:30' }],
+      notices: [
+        '궁금한 점은 오픈채팅이나 인스타그램 DM으로 물어보세요',
+        '학기 회비는 1만 5천원이에요',
+      ],
+    },
     memberVoices: [
       {
         quote:
@@ -471,24 +455,16 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 10, emoji: '🏕️', title: 'MT' },
       { month: 12, emoji: '🎉', title: '종강총회' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '☕',
-        title: '가벼운 면접',
-        description: '합불보다 서로 얼굴 익히는 자리예요',
-      },
-      {
-        emoji: '🍵',
-        title: '첫 주회 참여',
-        description: '조원들과 뒷풀이까지',
-      },
-    ],
-    perks: [
-      { emoji: '🍵', label: '여러 가지 차 시음' },
-      { emoji: '🎲', label: '보드게임·문화 여가 모임' },
-      { emoji: '📣', label: '응원전·MT' },
-      { emoji: '🕊️', label: '모든 활동 자유 참여' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        { label: '가벼운 면접', date: '지원 후 개별 연락' },
+        { label: '첫 주회', date: '매주 목요일' },
+      ],
+      notices: [
+        '면접이 있지만 합불보다 얼굴을 익히는 자리예요',
+        '학번·나이·성별과 관계없이 재학생이면 지원할 수 있어요',
+      ],
+    },
     memberVoices: [
       {
         quote:
@@ -540,22 +516,17 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 10, emoji: '🍁', title: '가을 정기출사' },
       { month: 12, emoji: '🖼️', title: '정기 전시회 · 종강총회' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '📩',
-        title: '합격 발표',
-      },
-      {
-        emoji: '💳',
-        title: '회비 입금 후 활동 시작',
-      },
-    ],
-    perks: [
-      { emoji: '🧑‍🏫', label: '기초·인물·스마트폰 포토클래스' },
-      { emoji: '🖼️', label: '정기 전시회 참여' },
-      { emoji: '🎁', label: '포토 리뷰 상품' },
-      { emoji: '📷', label: '출사 때 기술부원 도움' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        { label: '합격 발표', date: '지원 마감 후 개별 연락' },
+        { label: '회비 입금', date: '합격 발표 후' },
+      ],
+      notices: [
+        '부경대 학부 재학생, 98년생 이하만 지원할 수 있어요',
+        '학기 회비는 2만 5천원이에요',
+        '카메라가 없어도 괜찮아요',
+      ],
+    },
     memberVoices: [
       {
         quote:
@@ -606,23 +577,14 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 8, emoji: '📝', title: '2학기 신규 모집' },
       { month: 11, emoji: '🌍', title: '타대학 연합 활동' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '💬',
-        title: '면접',
-        description: '순차적으로 연락드려요',
-      },
-      {
-        emoji: '🧒',
-        title: '멘토링 배정',
-      },
-    ],
-    perks: [
-      { emoji: '🧒', label: '지역아동센터 정기 멘토링' },
-      { emoji: '🎤', label: '진로 강연 경험' },
-      { emoji: '🌍', label: '전국 미담장학회 교류' },
-      { emoji: '⚡', label: '번개모임' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        { label: '지원서 접수', date: '7/20(월) ~ 8/29(토)' },
+        { label: '면접', date: '8/10부터 순차 연락' },
+        { label: '합격 발표', date: '접수 마감 후 개별 공지' },
+      ],
+      notices: ['휴학생도 지원할 수 있어요', '이번에 70~80명을 추가로 뽑아요'],
+    },
     memberVoices: [
       {
         quote:
@@ -675,23 +637,17 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 9, emoji: '🎳', title: '볼링 · 영화 번개' },
       { month: 11, emoji: '🏕️', title: 'MT' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '📩',
-        title: '합격 연락',
-      },
-      {
-        emoji: '🎨',
-        title: '첫 벽화 봉사',
-        description: '스케치 선생님 도안에 색만 칠해요',
-      },
-    ],
-    perks: [
-      { emoji: '⏱️', label: '1회 약 8시간 봉사 인정' },
-      { emoji: '🍱', label: '점심·다과 제공' },
-      { emoji: '🎨', label: '스케치 선생님 도안 제공' },
-      { emoji: '🎳', label: '볼링·영화 친목' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        { label: '합격 연락', date: '지원 후 개별 연락' },
+        { label: '첫 벽화 봉사', date: '매월 1~2회 주말' },
+      ],
+      notices: [
+        '네이버 폼을 성실히 작성해 주세요',
+        '신입 학기 회비는 1만 5천원이에요',
+        '그림 실력은 전혀 상관없어요',
+      ],
+    },
     memberVoices: [
       {
         quote:
@@ -740,23 +696,13 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 7, emoji: '⛺', title: '여름 수련회' },
       { month: 10, emoji: '🏕️', title: 'MT' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '🙏',
-        title: '큰모임 참여',
-        description: '상시 모집이라 언제든 와도 돼요',
-      },
-      {
-        emoji: '👥',
-        title: '소그룹 배정',
-      },
-    ],
-    perks: [
-      { emoji: '🫂', label: '소그룹 교제' },
-      { emoji: '📖', label: '시험기간 스터디' },
-      { emoji: '🧺', label: '나들이·MT' },
-      { emoji: '⛺', label: '수련회' },
-    ],
+    recruitmentGuide: {
+      schedule: [{ label: '큰모임', date: '매주 진행' }],
+      notices: [
+        '상시 모집이고 휴학생도 지원할 수 있어요',
+        '지원서 작성이 어려우면 인스타그램 @kpt_ivf로 DM 주세요',
+      ],
+    },
     memberVoices: [
       {
         quote:
@@ -796,22 +742,15 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       { month: 9, emoji: '🔥', title: '2학기 모닥불 기도회' },
       { month: 12, emoji: '🎄', title: '성탄 모임' },
     ],
-    afterApplySteps: [
-      {
-        emoji: '💬',
-        title: '인스타 DM으로 꼭 연락',
-        description: '지원 알림이 늦을 수 있어요',
-      },
-      {
-        emoji: '👥',
-        title: '소그룹 참여',
-      },
-    ],
-    perks: [
-      { emoji: '🔥', label: '매일 아침 모닥불 기도회' },
-      { emoji: '👥', label: '화요일 소그룹' },
-      { emoji: '🙏', label: '목요일 큰모임' },
-    ],
+    recruitmentGuide: {
+      schedule: [
+        { label: '작은모임', date: '매주 화 18:00' },
+        { label: '큰모임', date: '매주 목 18:30' },
+      ],
+      notices: [
+        '지원서를 낸 뒤 인스타그램 @pknu_sfc로 DM을 꼭 보내 주세요 (지원 알림이 늦을 수 있어요)',
+      ],
+    },
     memberVoices: [
       {
         quote: '아침 기도회로 하루를 시작하니까 학교 생활 리듬이 잡혔어요.',

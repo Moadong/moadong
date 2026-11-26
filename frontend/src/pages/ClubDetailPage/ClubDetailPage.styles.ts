@@ -1,6 +1,11 @@
 import styled from 'styled-components';
 import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
-import { Container as ScheduleCalendarContainer } from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar.styles';
+import {
+  CalendarCard as ScheduleCalendarCard,
+  Container as ScheduleCalendarContainer,
+  EventItem as ScheduleEventItem,
+  SectionTitle as ScheduleListTitle,
+} from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar.styles';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
@@ -204,27 +209,19 @@ export const ErrorMessage = styled.p`
   color: ${colors.gray[700]};
 `;
 
-// 달력은 원래 탭 하나를 통째로 채우던 회색 판이라, 본문 섹션 안에서는 다른 회색 카드처럼 둥글게 줄인다
+// 달력은 원래 회색 판 위에 흰 카드를 얹은 탭 화면이라, 본문에서는 판을 걷어내고 카드에 얇은 테두리만 둔다 (상자 안 상자 방지)
 export const ScheduleFrame = styled.div`
   ${ScheduleCalendarContainer} {
-    padding: 20px 16px;
-    border-radius: 20px;
-
-    ${media.tablet} {
-      padding: 16px 12px;
-      border-radius: 16px;
-    }
+    padding: 0;
+    gap: 12px;
+    background-color: transparent;
   }
-`;
 
-// 시안 공유용: 구조화 섹션이 예시 데이터라는 걸 알린다
-export const SampleNotice = styled.p`
-  margin-top: 10px;
-  ${setTypography(typography.paragraph.p7)};
-  color: ${colors.gray[600]};
-  word-break: keep-all;
+  ${ScheduleCalendarCard}, ${ScheduleEventItem} {
+    border: 1px solid ${colors.gray[300]};
+  }
 
-  ${media.tablet} {
-    margin: 8px 20px 0;
+  ${ScheduleListTitle} {
+    padding: 0 4px;
   }
 `;

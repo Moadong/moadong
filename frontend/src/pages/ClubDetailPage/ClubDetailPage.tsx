@@ -1,5 +1,10 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation, useParams, useSearchParams } from 'react-router-dom';
+import {
+  useLocation,
+  useNavigate,
+  useParams,
+  useSearchParams,
+} from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
 import MapModal from '@/components/map/MapModal/MapModal';
@@ -24,7 +29,6 @@ import ClubInfoList from '@/pages/ClubDetailPage/components/ClubInfoList/ClubInf
 import ClubPhotoHero from '@/pages/ClubDetailPage/components/ClubPhotoHero/ClubPhotoHero';
 import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
 import ClubSummary from '@/pages/ClubDetailPage/components/ClubSummary/ClubSummary';
-import useApplyMethod from '@/pages/ClubDetailPage/hooks/useApplyMethod';
 import useClubInsights from '@/pages/ClubDetailPage/hooks/useClubInsights';
 import {
   getRecruitmentSummary,
@@ -37,7 +41,6 @@ import {
 import { TAG_COLORS } from '@/styles/clubTags';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
-import ApplyIntroSheet from './components/ApplyIntroSheet/ApplyIntroSheet';
 import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 
@@ -59,6 +62,7 @@ const ClubDetailPage = () => {
   const location = useLocation();
   const trackEvent = useMixpanelTrack();
   const handleLink = useNavigator();
+  const navigate = useNavigate();
 
   const [searchParams] = useSearchParams();
   const tabParam = searchParams.get('tab');
@@ -74,7 +78,6 @@ const ClubDetailPage = () => {
     (clubName ?? clubId) || '',
   );
   const insights = useClubInsights(clubDetail?.id);
-  const { data: applyMethod } = useApplyMethod(clubDetail?.id);
 
   const hasCalendarConnection = clubDetail?.hasCalendarConnection ?? false;
 
@@ -165,8 +168,6 @@ const ClubDetailPage = () => {
   );
 
   const [isMapModalOpen, setIsMapModalOpen] = useState(false);
-  // 지원하기를 누르면 바로 지원서로 가지 않고 모집 안내 시트를 먼저 띄운다. 확인하면 원래 지원 흐름을 이어간다
-  const [pendingApply, setPendingApply] = useState<(() => void) | null>(null);
 
   // 일정이 하나도 없으면 섹션과 바로가기를 숨긴다. '곧 업데이트'처럼 확인 못 하는 약속은 하지 않는다
   const hasSchedule =
@@ -240,8 +241,6 @@ const ClubDetailPage = () => {
     recruitmentTarget: clubDetail.recruitmentTarget,
     location: clubLocation,
     onMapClick: clubLocation ? openMap : undefined,
-    socialLinks,
-    onSocialClick: handleSocialClick,
     updatedLabel,
   };
 
@@ -284,7 +283,13 @@ const ClubDetailPage = () => {
                 instagramUrl={instagramUrl}
                 youtubeUrl={youtubeUrl}
                 onSocialClick={handleSocialClick}
-                onLocationClick={clubLocation ? openMap : undefined}
+                onLocationClick={
+                  clubLocation
+                    ? isCompact
+                      ? () => scrollToSection(CLUB_SECTION_ID.LOCATION)
+                      : openMap
+                    : undefined
+                }
                 onScheduleClick={
                   hasSchedule
                     ? () => scrollToSection(CLUB_SECTION_ID.SCHEDULE)
@@ -302,13 +307,6 @@ const ClubDetailPage = () => {
                     {topKeyword.label}”를 골랐어요
                   </span>
                 </Styled.Highlight>
-              )}
-
-              {insights && (
-                <Styled.SampleNotice>
-                  시안 · 한눈에 보기, 부원 키워드, 부원 한마디 등은 실제
-                  소개글을 바탕으로 만든 예시 데이터예요
-                </Styled.SampleNotice>
               )}
 
               {isCompact && (
@@ -359,20 +357,8 @@ const ClubDetailPage = () => {
         />
       )}
       {isInAppWebView() ? <Styled.AppSpacer /> : <Footer />}
-      <ClubApplyButton
-        onBeforeApply={(proceed) => setPendingApply(() => proceed)}
-      />
-      <ApplyIntroSheet
-        isOpen={pendingApply !== null}
-        onClose={() => setPendingApply(null)}
-        onConfirm={() => pendingApply?.()}
-        clubName={clubDetail.name}
-        recruitmentStatus={clubDetail.recruitmentStatus}
-        recruitment={recruitment}
-        recruitmentTarget={clubDetail.recruitmentTarget}
-        applyMethod={applyMethod}
-        afterApplySteps={insights?.afterApplySteps}
-      />
+      {/* 지원하기는 바로 지원서로 가지 않고 모집 시간·일정·확인할 점을 정리한 지원 안내 페이지로 보낸다 */}
+      <ClubApplyButton onBeforeApply={() => navigate('apply')} />
     </>
   );
 };

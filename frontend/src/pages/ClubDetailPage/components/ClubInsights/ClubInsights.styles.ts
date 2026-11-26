@@ -81,11 +81,6 @@ export const VoteBlock = styled.div`
   gap: 10px;
 `;
 
-export const VoteMeta = styled.p`
-  ${setTypography(typography.paragraph.p5)};
-  color: ${colors.gray[700]};
-`;
-
 export const VoteList = styled.ul`
   margin: 0;
   padding: 0;
@@ -299,113 +294,6 @@ export const MonthTitle = styled.span`
   font-weight: 600;
   color: ${colors.gray[950]};
   word-break: keep-all;
-`;
-
-/* 가입 과정 */
-
-export const StepList = styled.ol`
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-`;
-
-export const StepItem = styled.li`
-  position: relative;
-  display: grid;
-  grid-template-columns: 48px 1fr;
-  gap: 14px;
-  padding-bottom: 22px;
-
-  &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 23px;
-    top: 52px;
-    bottom: 4px;
-    width: 2px;
-    border-radius: 1px;
-    background-color: ${colors.gray[300]};
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
-`;
-
-export const StepBadge = styled.span`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 48px;
-  height: 48px;
-  border-radius: 50%;
-  background-color: ${colors.gray[100]};
-  font-size: 24px;
-`;
-
-export const StepIndex = styled.span`
-  display: block;
-  margin-top: 2px;
-  ${setTypography(typography.button.button2)};
-  letter-spacing: 0.04em;
-  color: ${colors.primary[900]};
-`;
-
-export const StepTitle = styled.p`
-  ${setTypography(typography.paragraph.p2)};
-  color: ${colors.gray[950]};
-
-  ${media.tablet} {
-    ${setTypography(typography.paragraph.p5)};
-    font-weight: 700;
-  }
-`;
-
-export const StepDescription = styled.p`
-  margin-top: 2px;
-  ${setTypography(typography.paragraph.p6)};
-  color: ${colors.gray[700]};
-`;
-
-/* 부원 혜택 */
-
-export const PerkGrid = styled.ul`
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 8px;
-
-  ${media.mobile} {
-    grid-template-columns: 1fr;
-  }
-`;
-
-export const PerkItem = styled.li`
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 14px 16px;
-  border-radius: 14px;
-  background-color: ${colors.gray[100]};
-  ${setTypography(typography.paragraph.p3)};
-  font-weight: 600;
-  color: ${colors.gray[950]};
-  word-break: keep-all;
-
-  ${media.tablet} {
-    padding: 12px 14px;
-    ${setTypography(typography.paragraph.p5)};
-    font-weight: 600;
-  }
-`;
-
-export const PerkEmoji = styled.span`
-  flex-shrink: 0;
-  font-size: 22px;
 `;
 
 /* 부원 한마디 */

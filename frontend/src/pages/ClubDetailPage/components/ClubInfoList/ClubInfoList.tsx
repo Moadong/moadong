@@ -1,47 +1,29 @@
-// 모집 기간·지원 대상·동아리방·SNS·업데이트 시점을 아이콘 행으로 나열하는 정보 목록
+// 모집 기간·지원 대상·동아리방·업데이트 시점을 아이콘 행으로 나열하는 정보 목록 (SNS는 위 바로가기 버튼이 맡는다)
 import { ReactNode } from 'react';
 import {
   CalendarIcon,
-  LinkIcon,
   PeopleIcon,
   PinIcon,
   RefreshIcon,
 } from '@/pages/ClubDetailPage/components/ClubDetailIcons/ClubDetailIcons';
-import {
-  getSocialHandle,
-  RecruitmentSummary,
-} from '@/pages/ClubDetailPage/utils/clubDetailSummary';
+import { RecruitmentSummary } from '@/pages/ClubDetailPage/utils/clubDetailSummary';
 import * as Styled from './ClubInfoList.styles';
-
-interface SocialLink {
-  platform: 'instagram' | 'youtube';
-  url: string;
-}
 
 interface ClubInfoListProps {
   recruitment: RecruitmentSummary;
   recruitmentTarget?: string;
   location?: { building: string; detailLocation: string };
   onMapClick?: () => void;
-  socialLinks: SocialLink[];
-  onSocialClick: (platform: SocialLink['platform'], url: string) => void;
   updatedLabel: string | null;
   /** 데스크톱 오른쪽 카드처럼 테두리 있는 상자로 그린다 */
   variant?: 'plain' | 'card';
 }
-
-const PLATFORM_LABEL: Record<SocialLink['platform'], string> = {
-  instagram: '인스타그램',
-  youtube: '유튜브',
-};
 
 const ClubInfoList = ({
   recruitment,
   recruitmentTarget,
   location,
   onMapClick,
-  socialLinks,
-  onSocialClick,
   updatedLabel,
   variant = 'plain',
 }: ClubInfoListProps) => {
@@ -88,33 +70,6 @@ const ClubInfoList = ({
             </Styled.InlineLink>
           )}
         </Styled.RowText>
-      ),
-    });
-  }
-
-  if (socialLinks.length > 0) {
-    rows.push({
-      key: 'sns',
-      icon: <LinkIcon />,
-      content: (
-        <Styled.SocialList>
-          {socialLinks.map(({ platform, url }) => (
-            <li key={platform}>
-              <Styled.SocialLink
-                href={url}
-                target='_blank'
-                rel='noopener noreferrer'
-                onClick={(e) => {
-                  e.preventDefault();
-                  onSocialClick(platform, url);
-                }}
-              >
-                <Styled.RowLabel>{PLATFORM_LABEL[platform]}</Styled.RowLabel>@
-                {getSocialHandle(url)}
-              </Styled.SocialLink>
-            </li>
-          ))}
-        </Styled.SocialList>
       ),
     });
   }

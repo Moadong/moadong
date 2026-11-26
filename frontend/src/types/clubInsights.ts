@@ -40,12 +40,6 @@ export interface ClubYearlyEvent {
   title: string;
 }
 
-export interface ClubJoinStep {
-  emoji: string;
-  title: string;
-  description?: string;
-}
-
 export interface ClubMemberVoice {
   quote: string;
   /** 예: "23학번 · 기계공학과" */
@@ -54,14 +48,19 @@ export interface ClubMemberVoice {
   tenure?: string;
 }
 
+/** 지원 안내 페이지에 보일 모집 정보. 관리자가 자유 글 대신 칸을 채우도록 나눈 것 */
+export interface ClubRecruitmentGuide {
+  /** 오디션·면접·발표처럼 날짜가 정해진 일정 */
+  schedule?: { label: string; date: string; place?: string }[];
+  /** 지원 전에 꼭 알아야 할 조건·비용·지원 후 할 일 */
+  notices?: string[];
+}
+
 export interface ClubInsights {
   facts?: ClubFacts;
   keywords?: ClubKeywordSummary;
   fit?: ClubFit;
   yearlyEvents?: ClubYearlyEvent[];
-  /** 지원한 다음 동아리가 진행하는 과정 (면접·발표·첫 모임 등). 지원 방법 자체는 지원서 설정에서 읽는다 */
-  afterApplySteps?: ClubJoinStep[];
-  /** 부원이 되면 실제로 얻는 것. 자유 글(benefits)에 모집 안내가 섞이는 일이 많아 따로 받는다 */
-  perks?: { emoji: string; label: string }[];
   memberVoices?: ClubMemberVoice[];
+  recruitmentGuide?: ClubRecruitmentGuide;
 }

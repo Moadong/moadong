@@ -77,29 +77,3 @@ export const InlineLink = styled.button`
   text-decoration: underline;
   text-underline-offset: 3px;
 `;
-
-export const SocialList = styled.ul`
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  min-width: 0;
-`;
-
-export const SocialLink = styled.a`
-  ${setTypography(typography.paragraph.p3)};
-  color: ${colors.gray[900]};
-  text-decoration: none;
-  word-break: break-all;
-
-  &:hover {
-    text-decoration: underline;
-    text-underline-offset: 3px;
-  }
-
-  ${media.tablet} {
-    ${setTypography(typography.paragraph.p5)};
-  }
-`;

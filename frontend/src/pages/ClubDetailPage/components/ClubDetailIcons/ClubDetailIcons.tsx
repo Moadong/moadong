@@ -38,13 +38,6 @@ export const PinIcon = (props: IconProps) => (
   </svg>
 );
 
-export const LinkIcon = (props: IconProps) => (
-  <svg {...base(props)}>
-    <path d='M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1 1' />
-    <path d='M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1-1' />
-  </svg>
-);
-
 export const RefreshIcon = (props: IconProps) => (
   <svg {...base(props)}>
     <path d='M20 11a8 8 0 0 0-14.5-4.5L4 8' />

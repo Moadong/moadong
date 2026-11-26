@@ -14,7 +14,6 @@ import {
   ClubFitCheck,
   ClubKeywordVotes,
   ClubMemberVoices,
-  ClubPerks,
   ClubYearTimeline,
 } from '@/pages/ClubDetailPage/components/ClubInsights/ClubInsights';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
@@ -32,6 +31,7 @@ const PHOTO_PREVIEW_COUNT = 6;
 export const CLUB_SECTION_ID = {
   PHOTOS: 'club-section-photos',
   SCHEDULE: 'club-section-schedule',
+  LOCATION: 'club-section-location',
 } as const;
 
 interface ClubDetailBodyProps {
@@ -68,8 +68,15 @@ const Section = ({
   </Styled.Section>
 );
 
-/** 긴 글을 4줄로 접고, 넘칠 때만 더보기 버튼을 보여준다 */
-const CollapsibleText = ({ text }: { text: string }) => {
+/** 긴 글을 4줄로 접고, 넘칠 때만 무엇을 펼치는지 적힌 버튼을 보여준다 */
+const CollapsibleText = ({
+  text,
+  moreLabel,
+}: {
+  text: string;
+  /** 예: "소개 전체 보기" */
+  moreLabel: string;
+}) => {
   const ref = useRef<HTMLDivElement>(null);
   const [isExpanded, setIsExpanded] = useState(false);
   const [isOverflowing, setIsOverflowing] = useState(false);
@@ -87,8 +94,8 @@ const CollapsibleText = ({ text }: { text: string }) => {
       </Styled.BodyText>
       {isOverflowing && !isExpanded && (
         <Styled.MoreButton type='button' onClick={() => setIsExpanded(true)}>
-          더보기
-          <ChevronDownIcon width={16} height={16} />
+          {moreLabel}
+          <ChevronDownIcon width={14} height={14} />
         </Styled.MoreButton>
       )}
     </>
@@ -159,16 +166,16 @@ const ClubDetailBody = ({
   };
 
   // 신입생이 묻는 순서대로 네 묶음을 쌓고, 굵은 구분선은 묶음 사이에만 둔다.
-  // 뭐 하는 곳·부담은? → 분위기·나랑 맞나? → 실제로 뭘 하나? → 들어가면?
+  // 이 동아리는(뭐 하는 곳·부담·나랑 맞나) → 부원들의 이야기 → 활동 → 궁금한 점
   const what: ReactNode[] = [];
-  const vibe: ReactNode[] = [];
+  const voices: ReactNode[] = [];
   const doing: ReactNode[] = [];
   const after: ReactNode[] = [];
 
   if (introDescription?.trim()) {
     what.push(
       <Section key='intro' title='동아리 소개'>
-        <CollapsibleText text={introDescription} />
+        <CollapsibleText text={introDescription} moreLabel='소개 전체 보기' />
       </Section>,
     );
   }
@@ -181,35 +188,40 @@ const ClubDetailBody = ({
     );
   }
 
-  if (insights?.keywords && insights.keywords.keywords.length > 0) {
-    vibe.push(
+  // 키워드 투표와 부원 한마디는 같은 '부원 목소리'라 한 섹션으로 묶는다
+  const hasKeywords =
+    !!insights?.keywords && insights.keywords.keywords.length > 0;
+  const hasVoices = !!insights?.memberVoices?.length;
+  if (hasKeywords || hasVoices) {
+    voices.push(
       <Section
-        key='keywords'
-        title='부원들이 꼽은 매력'
-        description='실제 부원이 직접 고른 키워드예요'
+        key='voices'
+        title='부원들의 이야기'
+        description={
+          insights?.keywords
+            ? `부원 ${insights.keywords.participantCount}명이 직접 고르고 남긴 이야기예요`
+            : '부원들이 직접 남긴 이야기예요'
+        }
       >
-        <ClubKeywordVotes summary={insights.keywords} />
-      </Section>,
-    );
-  }
-
-  if (insights?.memberVoices && insights.memberVoices.length > 0) {
-    vibe.push(
-      <Section key='voices' title='부원 한마디'>
-        <ClubMemberVoices voices={insights.memberVoices} />
+        {hasKeywords && insights?.keywords && (
+          <ClubKeywordVotes summary={insights.keywords} />
+        )}
+        {hasVoices && insights?.memberVoices && (
+          <ClubMemberVoices voices={insights.memberVoices} />
+        )}
       </Section>,
     );
   }
 
   // 구조화된 맞춤 정보가 없으면 동아리가 쓴 인재상 글로 대신한다
   if (hasFit && insights?.fit) {
-    vibe.push(
+    what.push(
       <Section key='fit' title='나랑 잘 맞을까?'>
         <ClubFitCheck fit={insights.fit} />
       </Section>,
     );
   } else if (idealCandidate?.content?.trim() || idealTags.length > 0) {
-    vibe.push(
+    what.push(
       <Section key='ideal' title='이런 분을 찾아요'>
         {idealTags.length > 0 && (
           <Styled.ChipList>
@@ -227,10 +239,20 @@ const ClubDetailBody = ({
     );
   }
 
-  if (activityDescription?.trim()) {
+  // 활동 설명과 1년 흐름은 같은 질문(뭘 하나?)의 답이라 한 섹션으로 묶는다
+  const hasYear = !!insights?.yearlyEvents?.length;
+  if (activityDescription?.trim() || hasYear) {
     doing.push(
-      <Section key='activity' title='주요 활동'>
-        <CollapsibleText text={activityDescription} />
+      <Section key='activity' title='이런 활동을 해요'>
+        {activityDescription?.trim() && (
+          <CollapsibleText
+            text={activityDescription}
+            moreLabel='활동 설명 전체 보기'
+          />
+        )}
+        {hasYear && insights?.yearlyEvents && (
+          <ClubYearTimeline events={insights.yearlyEvents} />
+        )}
       </Section>,
     );
   }
@@ -269,18 +291,6 @@ const ClubDetailBody = ({
     );
   }
 
-  if (insights?.yearlyEvents && insights.yearlyEvents.length > 0) {
-    doing.push(
-      <Section
-        key='year'
-        title='1년 동안 이런 걸 해요'
-        description='들어오면 1년이 이렇게 흘러가요'
-      >
-        <ClubYearTimeline events={insights.yearlyEvents} />
-      </Section>,
-    );
-  }
-
   if (scheduleSlot) {
     doing.push(
       <Section key='schedule' id={CLUB_SECTION_ID.SCHEDULE} title='행사일정'>
@@ -315,14 +325,8 @@ const ClubDetailBody = ({
     );
   }
 
-  // 정리된 혜택 목록이 있으면 그걸 쓰고, 없을 때만 동아리가 쓴 자유 글을 보여준다
-  if (insights?.perks && insights.perks.length > 0) {
-    after.push(
-      <Section key='benefits' title='부원이 되면 이런 게 좋아요'>
-        <ClubPerks perks={insights.perks} />
-      </Section>,
-    );
-  } else if (benefits?.trim()) {
+  // 정리된 정보가 있으면 혜택은 '한눈에 보기'에 담긴다. 자유 글은 모집 안내가 섞이는 일이 많아 정리된 정보가 없을 때만 보여준다
+  if (!insights && benefits?.trim()) {
     after.push(
       <Section key='benefits' title='부원이 되면'>
         <Styled.Callout>{linkifyText(benefits)}</Styled.Callout>
@@ -368,7 +372,11 @@ const ClubDetailBody = ({
 
   if (locationSlot) {
     after.push(
-      <Section key='location' title='동아리방 위치'>
+      <Section
+        key='location'
+        id={CLUB_SECTION_ID.LOCATION}
+        title='동아리방 위치'
+      >
         {locationSlot}
       </Section>,
     );
@@ -377,7 +385,7 @@ const ClubDetailBody = ({
   return (
     <>
       <Styled.Container>
-        {[what, vibe, doing, after]
+        {[what, voices, doing, after]
           .filter((chapter) => chapter.length > 0)
           .map((chapter, index) => (
             <Styled.Chapter key={index}>{chapter}</Styled.Chapter>

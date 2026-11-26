@@ -8,6 +8,7 @@ import PrivateRoute from '@/pages/AdminPage/auth/PrivateRoute/PrivateRoute';
 import ApplicationFormPage from '@/pages/ApplicationFormPage/ApplicationFormPage';
 import GoogleCallbackPage from '@/pages/CallbackPage/GoogleCallbackPage';
 import StudentOAuthCallbackPage from '@/pages/CallbackPage/StudentOAuthCallbackPage';
+import ClubApplyGuidePage from '@/pages/ClubApplyGuidePage/ClubApplyGuidePage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
 import ClubDetailShowcasePage from '@/pages/ClubDetailShowcasePage/ClubDetailShowcasePage';
@@ -167,6 +168,23 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <ClubDetailPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    /* 지원하기를 누르면 오는 지원 안내 */
+    {
+      path: '/clubDetail/:clubId/apply',
+      element: (
+        <ContentErrorBoundary>
+          <ClubApplyGuidePage />
+        </ContentErrorBoundary>
+      ),
+    },
+    {
+      path: '/clubDetail/@:clubName/apply',
+      element: (
+        <ContentErrorBoundary>
+          <ClubApplyGuidePage />
         </ContentErrorBoundary>
       ),
     },

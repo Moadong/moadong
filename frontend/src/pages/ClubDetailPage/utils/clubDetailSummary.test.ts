@@ -1,9 +1,9 @@
 // 상세 화면 요약 정보 함수의 경계 조건을 검증하는 테스트
 import { Award } from '@/types/club';
 import {
+  getDeadlineCountdown,
   getDivisionLabel,
   getRecruitmentSummary,
-  getSocialHandle,
   getUpdatedLabel,
   sortAwardsByLatest,
 } from './clubDetailSummary';
@@ -121,16 +121,70 @@ describe('getUpdatedLabel', () => {
   });
 });
 
-describe('getDivisionLabel / getSocialHandle', () => {
+describe('getDivisionLabel', () => {
   it('분과 약칭을 풀어 쓴다', () => {
     expect(getDivisionLabel('중동')).toBe('중앙동아리');
     expect(getDivisionLabel('과동')).toBe('과동아리');
     expect(getDivisionLabel('')).toBeNull();
   });
+});
 
-  it('SNS 주소에서 계정명만 남긴다', () => {
+describe('getDeadlineCountdown', () => {
+  const NOW = new Date('2026-11-25T12:00:00+09:00');
+
+  it('마감 전이면 남은 일·시간을 말한다', () => {
+    const result = getDeadlineCountdown(
+      'OPEN',
+      '2026.11.20 00:00',
+      '2026.11.28 16:30',
+      NOW,
+    );
+    expect(result.headline).toBe('마감까지 3일 4시간');
+    expect(result.sub).toBe('11월 28일 (토) 16:30 마감');
+    expect(result.isUrgent).toBe(false);
+  });
+
+  it('하루 안쪽이면 시간·분으로 말하고 급하다고 표시한다', () => {
+    const result = getDeadlineCountdown(
+      'OPEN',
+      '2026.11.20 00:00',
+      '2026.11.25 17:20',
+      NOW,
+    );
+    expect(result.headline).toBe('마감까지 5시간 20분');
+    expect(result.isUrgent).toBe(true);
+  });
+
+  it('상시 모집은 기간 대신 언제든 지원할 수 있다고 말한다', () => {
     expect(
-      getSocialHandle('https://www.instagram.com/pknu_hurrah/?igsh=x'),
-    ).toBe('pknu_hurrah');
+      getDeadlineCountdown(
+        'ALWAYS',
+        '2026.01.01 00:00',
+        '2999.01.01 00:00',
+        NOW,
+      ).headline,
+    ).toBe('상시 모집 중이에요');
+  });
+
+  it('모집 전이면 시작까지 남은 날을 말한다', () => {
+    expect(
+      getDeadlineCountdown(
+        'UPCOMING',
+        '2026.12.01 10:00',
+        '2026.12.10 00:00',
+        NOW,
+      ).headline,
+    ).toBe('모집 시작까지 6일');
+  });
+
+  it('마감됐으면 언제 끝났는지 말한다', () => {
+    const result = getDeadlineCountdown(
+      'CLOSED',
+      '2026.03.02 00:00',
+      '2026.03.17 00:00',
+      NOW,
+    );
+    expect(result.headline).toBe('이번 모집은 끝났어요');
+    expect(result.sub).toBe('2026년 3월 17일 마감');
   });
 });
