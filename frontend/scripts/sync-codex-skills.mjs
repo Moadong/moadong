@@ -1,12 +1,12 @@
 #!/usr/bin/env node
-// .claude/commands·.claude/agents 원본에서 .codex/skills/<name>/SKILL.md를 생성한다.
+// .claude/commands 원본에서 .codex/skills/<name>/SKILL.md를 생성한다.
 // 사람이 고치는 파일은 .claude/ 쪽 하나다. .codex/는 항상 이 스크립트의 출력과 같아야 한다.
 //
 //   node scripts/sync-codex-skills.mjs          # .codex/skills를 다시 생성한다
 //   node scripts/sync-codex-skills.mjs --check  # 생성 결과와 다르면 목록을 찍고 exit 1
 //
 // Codex 전용 메타(이름·설명·제목·원본 목록)는 원본에서 끌어낼 수 없어 아래 MANIFEST에 둔다.
-// 새 커맨드·에이전트를 Codex에도 노출하려면 MANIFEST에 항목을 더한다.
+// 새 커맨드를 Codex에도 노출하려면 MANIFEST에 항목을 더한다.
 
 import { readFileSync, writeFileSync, mkdirSync, readdirSync, existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
@@ -16,12 +16,6 @@ const FRONTEND_ROOT = join(dirname(fileURLToPath(import.meta.url)), '..');
 const OUT_DIR = join(FRONTEND_ROOT, '.codex', 'skills');
 
 const MANIFEST = {
-  'api-hooks': {
-    title: '모아동 API 훅',
-    description:
-      '모아동 프론트엔드에서 React Query API 훅을 생성하거나 수정할 때 사용한다. src/hooks/Queries, src/apis, 쿼리 키, 캐시 무효화, mutation 성공 처리, API 훅 일관성 작업에 사용한다.',
-    sources: ['.claude/agents/API훅부서.md'],
-  },
   'check-tracking': {
     title: '모아동 이벤트 트래킹 감사',
     description:
@@ -33,12 +27,6 @@ const MANIFEST = {
     description:
       '모아동 세션 dailyNote를 작성하고 필요하면 기능 문서를 갱신한 뒤 현재 변경사항을 커밋할 때 사용한다. /commit 흐름이나 세션 기록과 git commit을 함께 요청할 때 사용한다.',
     sources: ['.claude/commands/commit.md'],
-  },
-  'common-components': {
-    title: '모아동 공통 컴포넌트',
-    description:
-      '모아동 프론트엔드의 재사용 가능한 공통 UI 컴포넌트를 생성, 수정, 리팩터링할 때 사용한다. src/components/common, 공통 컴포넌트 API, styled-components, 접근성, 컴포넌트 재사용 패턴 작업에 사용한다.',
-    sources: ['.claude/agents/공통컴포넌트부서.md'],
   },
   'cross-review': {
     title: '모아동 크로스 리뷰',
@@ -58,12 +46,6 @@ const MANIFEST = {
       '기존 모아동 Jira 스토리 키를 기반으로 GitHub 이슈, Jira 하위 작업, 브랜치를 생성할 때 사용한다. /jira-task 또는 Jira 스토리에서 구현 태스크 생성을 요청할 때 사용한다.',
     sources: ['.claude/commands/jira-task.md'],
   },
-  'mixpanel-ab': {
-    title: '모아동 Mixpanel A/B 분석',
-    description:
-      '모아동 A/B 테스트 결과를 분석하고 통계적 오류를 피할 때 사용한다. Mixpanel 실험, variant, 유의성, 신뢰구간, MDE, 실험 분석 요청에 사용한다.',
-    sources: ['.claude/commands/mixpanel-ab.md'],
-  },
   mixpanel: {
     title: '모아동 Mixpanel 분석',
     description:
@@ -76,16 +58,10 @@ const MANIFEST = {
       '모아동 기능 요구사항을 대화형으로 수집하고 하위 작업으로 분해한 뒤 Jira 스토리와 GitHub 이슈를 일괄 생성할 때 사용한다. /prd 또는 기능 기획을 Jira/GitHub 태스크로 나누는 요청에 사용한다.',
     sources: ['.claude/commands/prd.md'],
   },
-  rn: {
-    title: '모아동 React Native',
-    description:
-      '모아동 React Native + Expo 프로젝트와 프론트엔드 WebView 연동을 작업할 때 사용한다. RN, React Native, Expo, WebView 브릿지, 딥링크, 푸시 알림, 앱 라우팅, /RN 요청에 사용한다.',
-    sources: ['.claude/commands/RN.md', '.claude/agents/RN에이전트.md'],
-  },
   test: {
     title: '모아동 테스트 작성',
     description:
-      '모아동 프론트엔드의 Jest, React Testing Library, Playwright 테스트를 작성할 때 사용한다. 테스트 추가, 특정 파일/기능 테스트, /test 흐름 요청에 사용한다.',
+      '모아동 프론트엔드의 Jest, React Testing Library 테스트를 작성할 때 사용한다. 테스트 추가, 특정 파일/기능 테스트, /test 흐름 요청에 사용한다.',
     sources: ['.claude/commands/test.md'],
   },
 };

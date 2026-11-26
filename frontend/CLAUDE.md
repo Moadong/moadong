@@ -56,7 +56,7 @@ npm run test:scripts             # 위 스크립트의 node:test 단위 테스�
 
 # 유틸리티
 npm run generate:sitemap # sitemap.xml 생성
-npm run codex:sync       # .claude/commands·agents 원본에서 .codex/skills 재생성
+npm run codex:sync       # .claude/commands 원본에서 .codex/skills 재생성
 npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI에서 실행)
 ```
 
@@ -65,7 +65,7 @@ npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI�
 ### 기술 스택
 
 - React 19 + TypeScript
-- Vite 번들러 (webpack 설정도 있으나 Vite가 주력)
+- Vite 번들러
 - styled-components 스타일링
 - TanStack React Query v5 서버 상태 관리
 - Zustand 클라이언트 상태 관리
@@ -73,19 +73,21 @@ npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI�
 - date-fns 날짜 처리 · Framer Motion 애니메이션 · Swiper 캐러셀
 - react-datepicker 날짜 선택 · react-markdown 마크다운 렌더링
 
-외부 서비스: Mixpanel, Sentry, Channel.io, Naver Map → 초기화·상세는 [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md)
+외부 서비스: Mixpanel, Sentry, Clarity, Naver Map → 초기화·상세는 [`src/utils/CLAUDE.md`](src/utils/CLAUDE.md)
 
 ### 환경 변수
 
 `.env` 파일에 다음 환경 변수 설정 필요 (모두 `VITE_` 접두사 사용):
 
-- `VITE_API_URL` - 백엔드 API URL
+- `VITE_API_BASE_URL` - 백엔드 API URL
 - `VITE_MIXPANEL_TOKEN` - Mixpanel 프로젝트 토큰
 - `VITE_SENTRY_DSN` - Sentry DSN
 - `VITE_SENTRY_RELEASE` - Sentry 릴리즈 버전
 - `VITE_ENABLE_SENTRY_IN_DEV` - 개발 환경에서 Sentry 활성화 여부 (true/false)
-- `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키
-- `VITE_KAKAO_JAVASCRIPT_KEY` - Kakao JavaScript 키
+- `VITE_CHANNEL_PLUGIN_KEY` - Channel.io 플러그인 키 (현재 `initializeChannelService`를 호출하는 곳이 없어 쓰이지 않음)
+- `VITE_KAKAO_CLIENT_ID` - 카카오 OAuth 로그인 클라이언트 ID
+- `VITE_GOOGLE_CLIENT_ID` - 구글 OAuth 로그인 클라이언트 ID
+- `VITE_CLARITY_PROJECT_ID` - Microsoft Clarity 프로젝트 ID
 - `VITE_NAVER_MAP_CLIENT_ID` - 네이버 지도 API 클라이언트 ID
 - `VITE_FEEDBACK_PROMPT_ADMIN_ENABLED` - 관리자 행동 피드백 노출 여부 (`true`일 때만 활성)
 - `VITE_FEEDBACK_PROMPT_USER_ENABLED` - 사용자 상세 이탈 피드백 노출 여부 (`true`일 때만 활성)
@@ -153,15 +155,9 @@ npm run codex:check      # 위 결과와 .codex/skills가 같은지 검사 (CI�
   - 접근성 패널(`addon-a11y`)은 위반을 보여 주기만 하고 빌드·Chromatic을 막지 않는다(`a11y.test: 'todo'`)
   - 시안 대조 매핑(`*.figma.json`)이 있는 스토리 export에 `parameters.design`을 붙이면 Design 패널에서 시안을 같이 본다. 자동으로 붙지 않는다 → [`.claude/skills/figma-story-diff/SKILL.md`](.claude/skills/figma-story-diff/SKILL.md)
 
-## Claude Code Agent
+## Codex 스킬
 
-`.claude/agents/` 디렉토리에 전담 agent 정의:
-
-- `API훅부서.md` - React Query 훅 생성 및 관리 전담
-
-Agent 사용 시 해당 문서를 참조하여 일관된 패턴 유지.
-
-`.codex/skills/`는 `.claude/commands/`·`.claude/agents/`에서 `scripts/sync-codex-skills.mjs`가 생성한 사본이다. 직접 고치지 말고 `.claude/` 쪽을 고친 뒤 `npm run codex:sync`를 돌려 함께 커밋한다. Codex 전용 이름·설명·제목·원본 매핑은 스크립트의 `MANIFEST`에 있고, 새 커맨드를 Codex에도 노출하려면 거기에 항목을 더한다.
+`.codex/skills/`는 `.claude/commands/`에서 `scripts/sync-codex-skills.mjs`가 생성한 사본이다. 직접 고치지 말고 `.claude/` 쪽을 고친 뒤 `npm run codex:sync`를 돌려 함께 커밋한다. Codex 전용 이름·설명·제목·원본 매핑은 스크립트의 `MANIFEST`에 있고, 새 커맨드를 Codex에도 노출하려면 거기에 항목을 더한다.
 
 `src/`를 바꾸는 커밋·PR 전에는 `.claude/skills/frontend-fundamentals` 스킬을 먼저 돌린다. "커밋해줘", "PR 올려줘"처럼 말로 요청받아도 마찬가지다(`/commit`은 이미 포함).
 

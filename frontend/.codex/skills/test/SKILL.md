@@ -1,6 +1,6 @@
 ---
 name: "test"
-description: "모아동 프론트엔드의 Jest, React Testing Library, Playwright 테스트를 작성할 때 사용한다. 테스트 추가, 특정 파일/기능 테스트, /test 흐름 요청에 사용한다."
+description: "모아동 프론트엔드의 Jest, React Testing Library 테스트를 작성할 때 사용한다. 테스트 추가, 특정 파일/기능 테스트, /test 흐름 요청에 사용한다."
 ---
 
 # 모아동 테스트 작성
@@ -26,7 +26,6 @@ description: "모아동 프론트엔드의 Jest, React Testing Library, Playwrig
 
 1. **단위 테스트 (Jest)** - 유틸리티 함수, 훅, 순수 로직
 2. **컴포넌트 테스트 (RTL)** - React 컴포넌트 렌더링 및 인터랙션
-3. **E2E 테스트 (Playwright)** - 사용자 시나리오 기반 통합 테스트
 
 ---
 
@@ -148,50 +147,6 @@ describe('TargetComponent', () => {
 - [ ] 로딩/에러 상태
 - [ ] 조건부 렌더링
 - [ ] Props 변경에 따른 업데이트
-- [ ] 필요시 MSW로 API 모킹
-
----
-
-### E2E 테스트 (Playwright)
-
-**파일 위치**: `e2e/` 폴더에 `*.spec.ts` 생성
-
-**패턴**:
-
-```typescript
-import { expect, test } from '@playwright/test';
-
-test.describe('기능명', () => {
-  test.beforeEach(async ({ page }) => {
-    await page.goto('/target-page');
-  });
-
-  test('사용자 시나리오를 완료한다', async ({ page }) => {
-    // 1. 페이지 로드 확인
-    await expect(
-      page.getByRole('heading', { name: '페이지 제목' }),
-    ).toBeVisible();
-
-    // 2. 사용자 액션
-    await page.getByRole('button', { name: '버튼명' }).click();
-
-    // 3. 결과 확인
-    await expect(page.getByText('성공 메시지')).toBeVisible();
-  });
-
-  test('에러 케이스를 처리한다', async ({ page }) => {
-    // ...
-  });
-});
-```
-
-**체크리스트**:
-
-- [ ] 핵심 사용자 플로우
-- [ ] 폼 제출 및 유효성 검사
-- [ ] 네비게이션
-- [ ] 반응형 (모바일/데스크톱)
-- [ ] 에러 처리 및 복구
 
 ---
 
@@ -203,12 +158,6 @@ npx jest path/to/file.test.ts
 
 # 전체 테스트
 npm run test
-
-# E2E 테스트
-npx playwright test e2e/file.spec.ts
-
-# E2E 테스트 (UI 모드)
-npx playwright test --ui
 ```
 
 ---
@@ -227,5 +176,3 @@ npx playwright test --ui
 
 - Jest 설정: `jest.config.js`
 - RTL 설정: `@testing-library/react`, `@testing-library/jest-dom`
-- MSW 핸들러: `src/mocks/handlers/`
-- Playwright 설정: `playwright.config.ts` (없으면 생성 필요)
