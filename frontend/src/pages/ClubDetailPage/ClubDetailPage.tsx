@@ -29,16 +29,16 @@ import ClubInfoList from '@/pages/ClubDetailPage/components/ClubInfoList/ClubInf
 import ClubPhotoHero from '@/pages/ClubDetailPage/components/ClubPhotoHero/ClubPhotoHero';
 import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
 import ClubSummary from '@/pages/ClubDetailPage/components/ClubSummary/ClubSummary';
+import {
+  Emoji,
+  SwapTossfaceFont,
+} from '@/pages/ClubDetailPage/components/SwapTossface/SwapTossface';
 import useClubInsights from '@/pages/ClubDetailPage/hooks/useClubInsights';
 import {
   getDeadlineCountdown,
   getRecruitmentSummary,
   getUpdatedLabel,
 } from '@/pages/ClubDetailPage/utils/clubDetailSummary';
-import {
-  Emoji,
-  TossfaceStylesheet,
-} from '@/pages/IntroducePage/components/Tossface/Tossface';
 import { TAG_COLORS } from '@/styles/clubTags';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
@@ -265,7 +265,7 @@ const ClubDetailPage = () => {
 
   return (
     <>
-      <TossfaceStylesheet />
+      <SwapTossfaceFont />
       <Header hideOn={['mobile', 'tablet']} />
       {isCompact && (
         <ClubDetailTopBar

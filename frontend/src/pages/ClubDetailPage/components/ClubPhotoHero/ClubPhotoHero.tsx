@@ -6,7 +6,7 @@ import { TAG_COLORS } from '@/styles/clubTags';
 import cdnImage, { fallbackToOriginal } from '@/utils/cdnImage';
 import * as Styled from './ClubPhotoHero.styles';
 
-// 데스크톱 모자이크는 큰 사진 1장 + 작은 사진 4장
+// 큰 사진 1장 + 작은 사진 최대 4장
 const MAX_TILES = 5;
 
 interface ClubPhotoHeroProps {
@@ -57,34 +57,41 @@ const ClubPhotoHero = ({
     );
   }
 
-  const tiles = photos.slice(0, MAX_TILES);
-  const hiddenCount = photos.length - tiles.length;
+  const [main, ...rest] = photos.slice(0, MAX_TILES);
+  const sideTiles = rest;
+  const hiddenCount = photos.length - 1 - sideTiles.length;
+
+  const renderTile = (url: string, index: number, isLast: boolean) => (
+    <Styled.Tile
+      key={`${url}-${index}`}
+      type='button'
+      onClick={() => setOpenIndex(index)}
+      aria-label={`${clubName} 사진 ${index + 1} 크게 보기`}
+    >
+      <Styled.TileImage
+        src={cdnImage(url, index === 0 ? 'cover' : 'grid')}
+        onError={handleError(url)}
+        alt=''
+        loading={index === 0 ? 'eager' : 'lazy'}
+      />
+      {isLast && hiddenCount > 0 && (
+        <Styled.MoreOverlay>+{hiddenCount}</Styled.MoreOverlay>
+      )}
+    </Styled.Tile>
+  );
 
   return (
     <>
-      <Styled.Mosaic $count={tiles.length}>
-        {tiles.map((url, index) => {
-          const isLastTile = index === tiles.length - 1;
-          return (
-            <Styled.Tile
-              key={`${url}-${index}`}
-              type='button'
-              $index={index}
-              onClick={() => setOpenIndex(index)}
-              aria-label={`${clubName} 사진 ${index + 1} 크게 보기`}
-            >
-              <Styled.TileImage
-                src={cdnImage(url, index === 0 ? 'cover' : 'grid')}
-                onError={handleError(url)}
-                alt=''
-                loading={index === 0 ? 'eager' : 'lazy'}
-              />
-              {isLastTile && hiddenCount > 0 && (
-                <Styled.MoreOverlay>+{hiddenCount}</Styled.MoreOverlay>
-              )}
-            </Styled.Tile>
-          );
-        })}
+      {/* 큰 사진은 본문 칸, 작은 사진 묶음은 아래 지원 카드 칸과 같은 폭·간격으로 나눈다 */}
+      <Styled.Mosaic $hasSide={sideTiles.length > 0}>
+        {renderTile(main, 0, false)}
+        {sideTiles.length > 0 && (
+          <Styled.Side $count={sideTiles.length}>
+            {sideTiles.map((url, i) =>
+              renderTile(url, i + 1, i === sideTiles.length - 1),
+            )}
+          </Styled.Side>
+        )}
         <Styled.PhotoCount type='button' onClick={() => setOpenIndex(0)}>
           사진 {photos.length}장 모두 보기
         </Styled.PhotoCount>

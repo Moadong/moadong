@@ -1,7 +1,7 @@
 // 신입생 판단을 돕는 구조화 섹션들: 한눈에 보기·부원 키워드·나랑 맞을까·1년 활동·가입 과정·부원 한마디
 import { useEffect, useState } from 'react';
 import HorizontalScroller from '@/pages/ClubDetailPage/components/HorizontalScroller/HorizontalScroller';
-import { Emoji } from '@/pages/IntroducePage/components/Tossface/Tossface';
+import { Emoji } from '@/pages/ClubDetailPage/components/SwapTossface/SwapTossface';
 import {
   ClubFacts,
   ClubFit,

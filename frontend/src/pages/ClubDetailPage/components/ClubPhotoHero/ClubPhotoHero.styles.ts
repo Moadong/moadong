@@ -1,5 +1,12 @@
 // 상단 사진 모자이크의 그리드·타일·대체 배경 스타일
 import styled, { css } from 'styled-components';
+import {
+  DETAIL_ASIDE_WIDTH,
+  DETAIL_ASIDE_WIDTH_NARROW,
+  DETAIL_COLUMN_GAP,
+  DETAIL_COLUMN_GAP_NARROW,
+  DETAIL_NARROW_MEDIA,
+} from '@/pages/ClubDetailPage/detailLayout';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
@@ -7,85 +14,91 @@ import { setTypography, typography } from '@/styles/theme/typography';
 
 const DESKTOP_HEIGHT = 360;
 const MOBILE_HEIGHT = 240;
+const TILE_GAP = 4;
+const MOBILE_TILE_GAP = 2;
 
-// 타일 수에 따라 큰 사진 1장 + 나머지를 배치한다. 모바일은 최대 3장만 보인다.
-const desktopGrid = (count: number) => {
-  if (count === 1)
-    return css`
-      grid-template-columns: 1fr;
-    `;
-  if (count === 2)
-    return css`
-      grid-template-columns: 2fr 1fr;
-    `;
-  if (count === 3)
-    return css`
-      grid-template-columns: 2fr 1fr;
-      grid-template-rows: 1fr 1fr;
-    `;
-  return css`
-    grid-template-columns: 2fr 1fr 1fr;
-    grid-template-rows: 1fr 1fr;
-  `;
-};
-
-const mobileGrid = (count: number) => {
-  if (count === 1)
-    return css`
-      grid-template-columns: 1fr;
-      grid-template-rows: 1fr;
-    `;
-  if (count === 2)
-    return css`
-      grid-template-columns: 2fr 1fr;
-      grid-template-rows: 1fr;
-    `;
-  return css`
-    grid-template-columns: 2fr 1fr;
-    grid-template-rows: 1fr 1fr;
-  `;
-};
-
-export const Mosaic = styled.div<{ $count: number }>`
+// 큰 사진 | 작은 사진 묶음. 오른쪽 묶음 폭·간격은 아래 지원 카드 칸과 같다
+export const Mosaic = styled.div<{ $hasSide: boolean }>`
   position: relative;
   display: grid;
-  gap: 4px;
+  grid-template-columns: ${({ $hasSide }) =>
+    $hasSide ? `minmax(0, 1fr) ${DETAIL_ASIDE_WIDTH}px` : '1fr'};
+  column-gap: ${DETAIL_COLUMN_GAP}px;
   height: ${DESKTOP_HEIGHT}px;
-  border-radius: 20px;
-  overflow: hidden;
-  ${({ $count }) => desktopGrid($count)};
+
+  > button:first-child {
+    border-radius: 20px;
+  }
+
+  ${DETAIL_NARROW_MEDIA} {
+    grid-template-columns: ${({ $hasSide }) =>
+      $hasSide ? `minmax(0, 1fr) ${DETAIL_ASIDE_WIDTH_NARROW}px` : '1fr'};
+    column-gap: ${DETAIL_COLUMN_GAP_NARROW}px;
+  }
 
   ${media.tablet} {
     height: ${MOBILE_HEIGHT}px;
-    gap: 2px;
-    border-radius: 0;
-    ${({ $count }) => mobileGrid($count)};
+    grid-template-columns: ${({ $hasSide }) => ($hasSide ? '2fr 1fr' : '1fr')};
+    column-gap: ${MOBILE_TILE_GAP}px;
+
+    > button:first-child {
+      border-radius: 0;
+    }
   }
 `;
 
-export const Tile = styled.button<{ $index: number }>`
+// 작은 사진 수에 맞춘 배치: 1장 → 꽉, 2장 → 위아래, 3장 → 위 1·아래 2, 4장 → 2×2
+const sideLayout = (count: number) => {
+  if (count === 1)
+    return css`
+      grid-template: 1fr / 1fr;
+    `;
+  if (count === 2)
+    return css`
+      grid-template: 1fr 1fr / 1fr;
+    `;
+  if (count === 3)
+    return css`
+      grid-template: 1fr 1fr / 1fr 1fr;
+      > :first-child {
+        grid-column: 1 / -1;
+      }
+    `;
+  return css`
+    grid-template: 1fr 1fr / 1fr 1fr;
+  `;
+};
+
+export const Side = styled.div<{ $count: number }>`
+  display: grid;
+  gap: ${TILE_GAP}px;
+  border-radius: 20px;
+  overflow: hidden;
+  ${({ $count }) => sideLayout($count)};
+
+  ${media.tablet} {
+    gap: ${MOBILE_TILE_GAP}px;
+    border-radius: 0;
+    grid-template: ${({ $count }) => ($count >= 2 ? '1fr 1fr' : '1fr')} / 1fr;
+
+    > :first-child {
+      grid-column: auto;
+    }
+
+    /* 모바일은 작은 사진 2장까지만 */
+    > :nth-child(n + 3) {
+      display: none;
+    }
+  }
+`;
+
+export const Tile = styled.button`
   position: relative;
   padding: 0;
   border: none;
   overflow: hidden;
   cursor: pointer;
   background-color: ${colors.gray[100]};
-
-  /* 첫 사진은 세로 두 칸을 다 차지한다 */
-  ${({ $index }) =>
-    $index === 0 &&
-    css`
-      grid-row: 1 / -1;
-    `};
-
-  ${media.tablet} {
-    /* 모바일은 큰 사진 1장 + 작은 사진 2장까지만 */
-    ${({ $index }) =>
-      $index > 2 &&
-      css`
-        display: none;
-      `};
-  }
 
   &:focus-visible {
     outline: 3px solid ${colors.primary[800]};

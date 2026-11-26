@@ -6,14 +6,17 @@ import {
   EventItem as ScheduleEventItem,
   SectionTitle as ScheduleListTitle,
 } from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar.styles';
+import {
+  DETAIL_ASIDE_WIDTH,
+  DETAIL_ASIDE_WIDTH_NARROW,
+  DETAIL_COLUMN_GAP,
+  DETAIL_COLUMN_GAP_NARROW,
+  DETAIL_NARROW_MEDIA,
+} from '@/pages/ClubDetailPage/detailLayout';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
 import { setTypography, typography } from '@/styles/theme/typography';
-
-// 데스크톱 오른쪽 정보 카드 폭
-const ASIDE_WIDTH = 340;
-const ASIDE_WIDTH_NARROW = 280;
 
 /* ── LegacyClubDetailPage가 함께 쓰는 스타일 ─────────────────────────── */
 
@@ -109,13 +112,13 @@ export const Inner = styled.div`
 
 export const Columns = styled.div`
   display: grid;
-  grid-template-columns: minmax(0, 1fr) ${ASIDE_WIDTH}px;
-  gap: 48px;
+  grid-template-columns: minmax(0, 1fr) ${DETAIL_ASIDE_WIDTH}px;
+  gap: ${DETAIL_COLUMN_GAP}px;
   align-items: start;
 
-  @media (max-width: 960px) {
-    grid-template-columns: minmax(0, 1fr) ${ASIDE_WIDTH_NARROW}px;
-    gap: 28px;
+  ${DETAIL_NARROW_MEDIA} {
+    grid-template-columns: minmax(0, 1fr) ${DETAIL_ASIDE_WIDTH_NARROW}px;
+    gap: ${DETAIL_COLUMN_GAP_NARROW}px;
   }
 
   ${media.tablet} {

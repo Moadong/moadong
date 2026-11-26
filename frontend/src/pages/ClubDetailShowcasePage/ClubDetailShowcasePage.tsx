@@ -4,8 +4,8 @@ import Header from '@/components/common/Header/Header';
 import { SHOWCASE_CLUBS } from '@/mocks/data/clubInsightsShowcaseMock';
 import {
   Emoji,
-  TossfaceStylesheet,
-} from '@/pages/IntroducePage/components/Tossface/Tossface';
+  SwapTossfaceFont,
+} from '@/pages/ClubDetailPage/components/SwapTossface/SwapTossface';
 import * as Styled from './ClubDetailShowcasePage.styles';
 
 const CATEGORY_EMOJI: Record<string, string> = {
@@ -19,7 +19,7 @@ const CATEGORY_EMOJI: Record<string, string> = {
 
 const ClubDetailShowcasePage = () => (
   <>
-    <TossfaceStylesheet />
+    <SwapTossfaceFont />
     <Header hideOn={['mobile', 'tablet']} />
     <Styled.Page>
       <Styled.Hero>
