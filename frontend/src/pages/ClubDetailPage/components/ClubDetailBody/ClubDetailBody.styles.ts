@@ -115,58 +115,6 @@ export const SectionDescription = styled.p`
   }
 `;
 
-export const PhotoGrid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 6px;
-
-  ${media.tablet} {
-    gap: 3px;
-    margin: 0 -20px;
-  }
-`;
-
-export const PhotoTile = styled.button`
-  position: relative;
-  aspect-ratio: 1 / 1;
-  padding: 0;
-  border: none;
-  border-radius: 12px;
-  overflow: hidden;
-  cursor: pointer;
-  background-color: ${colors.gray[100]};
-
-  img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-    transition: transform ${transitions.duration.normal}
-      ${transitions.easing.easeInOut};
-  }
-
-  @media (hover: hover) {
-    &:hover img {
-      transform: scale(1.05);
-    }
-  }
-
-  ${media.tablet} {
-    border-radius: 0;
-  }
-`;
-
-export const PhotoMore = styled.span`
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background-color: rgba(0, 0, 0, 0.5);
-  color: ${colors.base.white};
-  ${setTypography(typography.title.title5)};
-`;
-
 export const ChipList = styled.ul`
   margin: 0;
   padding: 0;

@@ -1,4 +1,4 @@
-// 상세 최상단에 커버·활동사진을 모자이크로 보여주고 눌러서 크게 보는 영역
+// 상세 최상단에 커버·활동사진을 모자이크로 보여주고 눌러서 크게 보는 영역. 사진을 보는 유일한 입구다
 import { SyntheticEvent, useState } from 'react';
 import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
@@ -85,7 +85,9 @@ const ClubPhotoHero = ({
             </Styled.Tile>
           );
         })}
-        <Styled.PhotoCount aria-hidden>사진 {photos.length}</Styled.PhotoCount>
+        <Styled.PhotoCount type='button' onClick={() => setOpenIndex(0)}>
+          사진 {photos.length}장 모두 보기
+        </Styled.PhotoCount>
       </Styled.Mosaic>
 
       <PhotoModal

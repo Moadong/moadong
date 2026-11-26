@@ -1,28 +1,16 @@
-// 아이콘 정보 목록 스타일 (모바일은 평평한 목록, 데스크톱 사이드는 카드)
-import styled, { css } from 'styled-components';
+// 모바일 아이콘 정보 목록 스타일
+import styled from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { setTypography, typography } from '@/styles/theme/typography';
 
-export const List = styled.ul<{ $variant: 'plain' | 'card' }>`
+export const List = styled.ul`
   margin: 0;
-  padding: 0;
+  padding: 18px 20px 22px;
   list-style: none;
   display: flex;
   flex-direction: column;
   gap: 14px;
-
-  ${({ $variant }) =>
-    $variant === 'card'
-      ? css`
-          padding: 22px 20px;
-          border: 1px solid ${colors.gray[300]};
-          border-radius: 20px;
-          background-color: ${colors.base.white};
-        `
-      : css`
-          padding: 18px 20px 22px;
-        `}
 `;
 
 export const Row = styled.li`

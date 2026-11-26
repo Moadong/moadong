@@ -225,3 +225,9 @@ export const ScheduleFrame = styled.div`
     padding: 0 4px;
   }
 `;
+
+export const UpdatedNote = styled.p`
+  padding: 8px 0 24px;
+  ${setTypography(typography.paragraph.p7)};
+  color: ${colors.gray[500]};
+`;

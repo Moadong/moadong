@@ -1,11 +1,5 @@
 // 상세 본문. 탭 없이 신입생이 궁금해하는 순서(뭐 하는 곳·부담·분위기·활동·가입 후)대로 섹션을 쌓는다
-import {
-  ReactNode,
-  SyntheticEvent,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from 'react';
+import { ReactNode, useLayoutEffect, useRef, useState } from 'react';
 import { USER_EVENT } from '@/constants/eventName';
 import useMixpanelTrack from '@/hooks/Mixpanel/useMixpanelTrack';
 import { ChevronDownIcon } from '@/pages/ClubDetailPage/components/ClubDetailIcons/ClubDetailIcons';
@@ -16,33 +10,26 @@ import {
   ClubMemberVoices,
   ClubYearTimeline,
 } from '@/pages/ClubDetailPage/components/ClubInsights/ClubInsights';
-import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
 import { sortAwardsByLatest } from '@/pages/ClubDetailPage/utils/clubDetailSummary';
 import { DetailedDescription } from '@/types/club';
 import { ClubInsights } from '@/types/clubInsights';
 import { formatSemesterLabel, getAwardKey } from '@/utils/awardHelpers';
-import cdnImage, { fallbackToOriginal } from '@/utils/cdnImage';
 import { linkifyText } from '@/utils/linkifyText';
 import * as Styled from './ClubDetailBody.styles';
 
-const PHOTO_PREVIEW_COUNT = 6;
-
 /** 바로가기·딥링크(`?tab=`)가 스크롤할 섹션 id */
 export const CLUB_SECTION_ID = {
-  PHOTOS: 'club-section-photos',
   SCHEDULE: 'club-section-schedule',
   LOCATION: 'club-section-location',
 } as const;
 
 interface ClubDetailBodyProps {
   clubId: string;
-  clubName: string;
   description: DetailedDescription;
-  feeds: string[];
   insights?: ClubInsights;
   /** 볼 일정이 없으면 넘기지 않는다. 빈 달력이나 '곧 업데이트' 같은 약속은 보여주지 않는다 */
   scheduleSlot?: ReactNode;
-  /** 모바일에서만 넘긴다. 데스크톱은 오른쪽 카드에 지도가 있다 */
+  /** 동아리방 지도·주소. 위치를 모르는 동아리는 넘기지 않는다 */
   locationSlot?: ReactNode;
 }
 
@@ -104,9 +91,7 @@ const CollapsibleText = ({
 
 const ClubDetailBody = ({
   clubId,
-  clubName,
   description,
-  feeds,
   insights,
   scheduleSlot,
   locationSlot,
@@ -115,19 +100,6 @@ const ClubDetailBody = ({
   const [openFaqIndexes, setOpenFaqIndexes] = useState<Set<number>>(
     () => new Set(),
   );
-  const [photoIndex, setPhotoIndex] = useState<number | null>(null);
-  // 원본까지 깨진 사진은 그리드에서 뺀다 (업로드가 지워진 경우가 실제로 있다)
-  const [brokenPhotos, setBrokenPhotos] = useState<Set<string>>(
-    () => new Set(),
-  );
-  const handlePhotoError =
-    (url: string) => (event: SyntheticEvent<HTMLImageElement>) => {
-      if (event.currentTarget.getAttribute('src') === url) {
-        setBrokenPhotos((prev) => new Set(prev).add(url));
-        return;
-      }
-      fallbackToOriginal(url)(event);
-    };
 
   const {
     introDescription,
@@ -142,9 +114,6 @@ const ClubDetailBody = ({
   const idealTags = idealCandidate?.tags?.filter((tag) => tag.trim()) ?? [];
   const validFaqs =
     faqs?.filter((faq) => faq.question.trim() && faq.answer.trim()) ?? [];
-  const photos = feeds.filter((url) => !brokenPhotos.has(url));
-  const previewPhotos = photos.slice(0, PHOTO_PREVIEW_COUNT);
-  const hiddenPhotoCount = photos.length - previewPhotos.length;
   const hasFit =
     !!insights?.fit &&
     (insights.fit.goodFor.length > 0 || insights.fit.thinkTwice.length > 0);
@@ -257,40 +226,6 @@ const ClubDetailBody = ({
     );
   }
 
-  if (previewPhotos.length > 0) {
-    doing.push(
-      <Section
-        key='photos'
-        id={CLUB_SECTION_ID.PHOTOS}
-        title={`활동사진 ${photos.length}`}
-      >
-        <Styled.PhotoGrid>
-          {previewPhotos.map((url, index) => {
-            const isLast = index === previewPhotos.length - 1;
-            return (
-              <Styled.PhotoTile
-                key={`${url}-${index}`}
-                type='button'
-                onClick={() => setPhotoIndex(index)}
-                aria-label={`${clubName} 활동사진 ${index + 1} 크게 보기`}
-              >
-                <img
-                  src={cdnImage(url, 'grid')}
-                  onError={handlePhotoError(url)}
-                  alt=''
-                  loading='lazy'
-                />
-                {isLast && hiddenPhotoCount > 0 && (
-                  <Styled.PhotoMore>+{hiddenPhotoCount}</Styled.PhotoMore>
-                )}
-              </Styled.PhotoTile>
-            );
-          })}
-        </Styled.PhotoGrid>
-      </Section>,
-    );
-  }
-
   if (scheduleSlot) {
     doing.push(
       <Section key='schedule' id={CLUB_SECTION_ID.SCHEDULE} title='행사일정'>
@@ -383,25 +318,13 @@ const ClubDetailBody = ({
   }
 
   return (
-    <>
-      <Styled.Container>
-        {[what, voices, doing, after]
-          .filter((chapter) => chapter.length > 0)
-          .map((chapter, index) => (
-            <Styled.Chapter key={index}>{chapter}</Styled.Chapter>
-          ))}
-      </Styled.Container>
-      <PhotoModal
-        isOpen={photoIndex !== null}
-        onClose={() => setPhotoIndex(null)}
-        clubName={clubName}
-        photos={{
-          currentIndex: photoIndex ?? 0,
-          urls: photos,
-          onChangeIndex: setPhotoIndex,
-        }}
-      />
-    </>
+    <Styled.Container>
+      {[what, voices, doing, after]
+        .filter((chapter) => chapter.length > 0)
+        .map((chapter, index) => (
+          <Styled.Chapter key={index}>{chapter}</Styled.Chapter>
+        ))}
+    </Styled.Container>
   );
 };
 

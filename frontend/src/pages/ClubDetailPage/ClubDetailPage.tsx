@@ -31,6 +31,7 @@ import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubSchedule
 import ClubSummary from '@/pages/ClubDetailPage/components/ClubSummary/ClubSummary';
 import useClubInsights from '@/pages/ClubDetailPage/hooks/useClubInsights';
 import {
+  getDeadlineCountdown,
   getRecruitmentSummary,
   getUpdatedLabel,
 } from '@/pages/ClubDetailPage/utils/clubDetailSummary';
@@ -42,11 +43,12 @@ import { TAG_COLORS } from '@/styles/clubTags';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
 import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
+import ClubApplyCard from './components/ClubApplyCard/ClubApplyCard';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 
-// 예전 탭 주소(`?tab=photos`, `?tab=schedule`)로 들어오면 해당 섹션으로 내려준다
+// 예전 탭 주소(`?tab=schedule`)로 들어오면 해당 섹션으로 내려준다.
+// `?tab=photos`는 사진을 맡는 맨 위 모자이크가 이미 보이니 스크롤하지 않는다
 const LEGACY_TAB_SECTION: Record<string, string> = {
-  photos: CLUB_SECTION_ID.PHOTOS,
   schedule: CLUB_SECTION_ID.SCHEDULE,
 };
 
@@ -194,6 +196,19 @@ const ClubDetailPage = () => {
     clubDetail.recruitmentEnd,
   );
   const updatedLabel = getUpdatedLabel(clubDetail.lastModifiedDate);
+  const countdown = getDeadlineCountdown(
+    clubDetail.recruitmentStatus,
+    clubDetail.recruitmentStart,
+    clubDetail.recruitmentEnd,
+  );
+
+  const goToApplyGuide = () => {
+    trackEvent(USER_EVENT.CLUB_APPLY_BUTTON_CLICKED, {
+      club_id: clubDetail.id,
+      club_name: clubDetail.name,
+    });
+    navigate('apply');
+  };
 
   const socialLinks = (['instagram', 'youtube'] as const)
     .map((platform) => ({
@@ -285,9 +300,7 @@ const ClubDetailPage = () => {
                 onSocialClick={handleSocialClick}
                 onLocationClick={
                   clubLocation
-                    ? isCompact
-                      ? () => scrollToSection(CLUB_SECTION_ID.LOCATION)
-                      : openMap
+                    ? () => scrollToSection(CLUB_SECTION_ID.LOCATION)
                     : undefined
                 }
                 onScheduleClick={
@@ -318,9 +331,7 @@ const ClubDetailPage = () => {
 
               <ClubDetailBody
                 clubId={clubDetail.id}
-                clubName={clubDetail.name}
                 description={clubDetail.description}
-                feeds={clubDetail.feeds}
                 insights={insights}
                 scheduleSlot={
                   hasSchedule && (
@@ -334,14 +345,25 @@ const ClubDetailPage = () => {
                     </Styled.ScheduleFrame>
                   )
                 }
-                locationSlot={isCompact ? mapCard : undefined}
+                locationSlot={mapCard}
               />
+
+              {/* 데스크톱은 정보 목록이 없으니 업데이트 시점을 본문 끝에 작게 남긴다 */}
+              {!isCompact && updatedLabel && (
+                <Styled.UpdatedNote>{updatedLabel}</Styled.UpdatedNote>
+              )}
             </Styled.Main>
 
             {!isCompact && (
               <Styled.Aside>
-                <ClubInfoList {...infoListProps} variant='card' />
-                {mapCard}
+                <ClubApplyCard
+                  status={clubDetail.recruitmentStatus}
+                  recruitment={recruitment}
+                  countdown={countdown}
+                  recruitmentTarget={clubDetail.recruitmentTarget}
+                  facts={insights?.facts}
+                  onApply={goToApplyGuide}
+                />
               </Styled.Aside>
             )}
           </Styled.Columns>
@@ -357,8 +379,9 @@ const ClubDetailPage = () => {
         />
       )}
       {isInAppWebView() ? <Styled.AppSpacer /> : <Footer />}
-      {/* 지원하기는 바로 지원서로 가지 않고 모집 시간·일정·확인할 점을 정리한 지원 안내 페이지로 보낸다 */}
-      <ClubApplyButton onBeforeApply={() => navigate('apply')} />
+      {/* 지원하기는 바로 지원서로 가지 않고 모집 시간·일정·확인할 점을 정리한 지원 안내 페이지로 보낸다.
+          데스크톱은 오른쪽 지원 카드가 버튼을 맡는다 */}
+      {isCompact && <ClubApplyButton onBeforeApply={() => navigate('apply')} />}
     </>
   );
 };

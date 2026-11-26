@@ -15,8 +15,6 @@ interface ClubInfoListProps {
   location?: { building: string; detailLocation: string };
   onMapClick?: () => void;
   updatedLabel: string | null;
-  /** 데스크톱 오른쪽 카드처럼 테두리 있는 상자로 그린다 */
-  variant?: 'plain' | 'card';
 }
 
 const ClubInfoList = ({
@@ -25,7 +23,6 @@ const ClubInfoList = ({
   location,
   onMapClick,
   updatedLabel,
-  variant = 'plain',
 }: ClubInfoListProps) => {
   const rows: { key: string; icon: ReactNode; content: ReactNode }[] = [];
 
@@ -83,7 +80,7 @@ const ClubInfoList = ({
   }
 
   return (
-    <Styled.List $variant={variant}>
+    <Styled.List>
       {rows.map((row) => (
         <Styled.Row key={row.key}>
           <Styled.IconBox>{row.icon}</Styled.IconBox>

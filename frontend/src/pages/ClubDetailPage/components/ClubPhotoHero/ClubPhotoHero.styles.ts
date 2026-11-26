@@ -123,16 +123,18 @@ export const MoreOverlay = styled.span`
   }
 `;
 
-export const PhotoCount = styled.span`
+// 모바일은 작은 사진 2장까지만 보이니 전체 사진으로 가는 버튼을 둔다 (데스크톱은 마지막 칸의 +N)
+export const PhotoCount = styled.button`
   position: absolute;
   right: 12px;
   bottom: 12px;
-  padding: 4px 10px;
+  padding: 6px 12px;
+  border: none;
   border-radius: 999px;
-  background-color: rgba(0, 0, 0, 0.55);
+  background-color: rgba(0, 0, 0, 0.6);
   color: ${colors.base.white};
   ${setTypography(typography.button.button2)};
-  pointer-events: none;
+  cursor: pointer;
   display: none;
 
   ${media.tablet} {
