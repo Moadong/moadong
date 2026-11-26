@@ -47,16 +47,19 @@ const ClubInfoList = ({
 }: ClubInfoListProps) => {
   const rows: { key: string; icon: ReactNode; content: ReactNode }[] = [];
 
-  rows.push({
-    key: 'period',
-    icon: <CalendarIcon />,
-    content: (
-      <Styled.RowText>
-        <Styled.RowLabel>모집</Styled.RowLabel>
-        {recruitment.period ?? recruitment.label}
-      </Styled.RowText>
-    ),
-  });
+  // 모집 상태는 이름 아래 상태 줄이 이미 말하니, 여기엔 실제 기간이 있을 때만 기간을 보탠다
+  if (recruitment.period) {
+    rows.push({
+      key: 'period',
+      icon: <CalendarIcon />,
+      content: (
+        <Styled.RowText>
+          <Styled.RowLabel>모집 기간</Styled.RowLabel>
+          {recruitment.period}
+        </Styled.RowText>
+      ),
+    });
+  }
 
   if (recruitmentTarget?.trim()) {
     rows.push({

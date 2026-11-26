@@ -10,6 +10,7 @@ import GoogleCallbackPage from '@/pages/CallbackPage/GoogleCallbackPage';
 import StudentOAuthCallbackPage from '@/pages/CallbackPage/StudentOAuthCallbackPage';
 import ClubDetailPage from '@/pages/ClubDetailPage/ClubDetailPage';
 import LegacyClubDetailPage from '@/pages/ClubDetailPage/LegacyClubDetailPage';
+import ClubDetailShowcasePage from '@/pages/ClubDetailShowcasePage/ClubDetailShowcasePage';
 import ClubMapPage from '@/pages/ClubMapPage/ClubMapPage';
 import ClubUnionPage from '@/pages/ClubUnionPage/ClubUnionPage';
 import ErrorTestPage from '@/pages/ErrorTestPage/ErrorTestPage';
@@ -148,6 +149,15 @@ const AppRoutes = () =>
       element: (
         <ContentErrorBoundary>
           <LegacyClubDetailPage />
+        </ContentErrorBoundary>
+      ),
+    },
+    /* 새 상세페이지 시안을 팀에 공유하기 위한 임시 목록 */
+    {
+      path: '/preview/club-detail',
+      element: (
+        <ContentErrorBoundary>
+          <ClubDetailShowcasePage />
         </ContentErrorBoundary>
       ),
     },

@@ -1,5 +1,6 @@
-// 상세페이지 시안 확인용 구조화 정보 목 데이터. 후라의 실제 소개·FAQ 내용을 옮겨 만들었다
+// 상세페이지 시안 확인용 구조화 정보 목 데이터. 후라는 실제 소개·FAQ에서 옮겼고, 나머지 분과별 예시는 showcase 파일에 있다
 import { ClubInsights } from '@/types/clubInsights';
+import { showcaseInsights } from './clubInsightsShowcaseMock';
 
 const HURRAH_ID = '6873c0609033815c43911958';
 
@@ -7,7 +8,7 @@ export const clubInsightsMock: Record<string, ClubInsights> = {
   [HURRAH_ID]: {
     facts: {
       meetingSchedule: '주 1~2회 자율 훈련 · 토요일 시합',
-      feePerSemester: 20000,
+      fee: { amount: 20000, period: 'SEMESTER' },
       feeNote: '신입 남 기준 · 여 1만원',
       memberCount: 48,
       beginnerFriendly: true,
@@ -58,12 +59,7 @@ export const clubInsightsMock: Record<string, ClubInsights> = {
       { month: 10, emoji: '🤝', title: '타대 교류전' },
       { month: 12, emoji: '🎄', title: '종강 총회 · 시상' },
     ],
-    joinSteps: [
-      {
-        emoji: '💬',
-        title: '인스타그램 DM으로 연락',
-        description: '면접 없이 바로 합류해요',
-      },
+    afterApplySteps: [
       {
         emoji: '👋',
         title: '첫 훈련에 놀러오기',
@@ -96,4 +92,5 @@ export const clubInsightsMock: Record<string, ClubInsights> = {
       },
     ],
   },
+  ...showcaseInsights,
 };

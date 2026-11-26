@@ -16,10 +16,12 @@ import {
   ClubKeywordVotes,
   ClubMemberVoices,
   ClubYearTimeline,
+  getApplyStep,
 } from '@/pages/ClubDetailPage/components/ClubInsights/ClubInsights';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
+import { ApplyMethod } from '@/pages/ClubDetailPage/hooks/useApplyMethod';
 import { sortAwardsByLatest } from '@/pages/ClubDetailPage/utils/clubDetailSummary';
-import { DetailedDescription } from '@/types/club';
+import { DetailedDescription, RecruitmentStatus } from '@/types/club';
 import { ClubInsights } from '@/types/clubInsights';
 import { formatSemesterLabel, getAwardKey } from '@/utils/awardHelpers';
 import cdnImage, { fallbackToOriginal } from '@/utils/cdnImage';
@@ -40,6 +42,9 @@ interface ClubDetailBodyProps {
   description: DetailedDescription;
   feeds: string[];
   insights?: ClubInsights;
+  /** 지원서 설정에서 읽은 지원 방법. 불러오기 전에는 지원 과정 섹션을 숨긴다 */
+  applyMethod?: ApplyMethod;
+  recruitmentStatus: RecruitmentStatus;
   scheduleSlot: ReactNode;
   /** 모바일에서만 넘긴다. 데스크톱은 오른쪽 카드에 지도가 있다 */
   locationSlot?: ReactNode;
@@ -100,6 +105,8 @@ const ClubDetailBody = ({
   description,
   feeds,
   insights,
+  applyMethod,
+  recruitmentStatus,
   scheduleSlot,
   locationSlot,
 }: ClubDetailBodyProps) => {
@@ -211,15 +218,18 @@ const ClubDetailBody = ({
   }
 
   // 2. 동아리 이야기
-  if (introDescription?.trim() || activityDescription?.trim()) {
+  if (introDescription?.trim()) {
     story.push(
-      <Section key='intro' title={`${clubName} 이야기`}>
-        {introDescription?.trim() && (
-          <CollapsibleText text={introDescription} />
-        )}
-        {activityDescription?.trim() && (
-          <Styled.Callout>{linkifyText(activityDescription)}</Styled.Callout>
-        )}
+      <Section key='intro' title='동아리 소개'>
+        <CollapsibleText text={introDescription} />
+      </Section>,
+    );
+  }
+
+  if (activityDescription?.trim()) {
+    story.push(
+      <Section key='activity' title='주요 활동'>
+        <CollapsibleText text={activityDescription} />
       </Section>,
     );
   }
@@ -311,19 +321,28 @@ const ClubDetailBody = ({
     );
   }
 
-  // 4. 가입
-  if (benefits?.trim()) {
+  // 4. 가입. 첫 단계(지원 방법)는 실제 지원서 설정에서, 그다음은 동아리가 적은 과정에서 가져온다
+  if (applyMethod) {
     join.push(
-      <Section key='benefits' title='부원이 되면'>
-        <Styled.Callout>{linkifyText(benefits)}</Styled.Callout>
+      <Section
+        key='join'
+        title='지원부터 합류까지'
+        description='아래 지원하기 버튼으로 시작해요'
+      >
+        <ClubJoinSteps
+          steps={[
+            getApplyStep(applyMethod, recruitmentStatus),
+            ...(insights?.afterApplySteps ?? []),
+          ]}
+        />
       </Section>,
     );
   }
 
-  if (insights?.joinSteps && insights.joinSteps.length > 0) {
+  if (benefits?.trim()) {
     join.push(
-      <Section key='join' title='가입은 이렇게 해요'>
-        <ClubJoinSteps steps={insights.joinSteps} />
+      <Section key='benefits' title='부원이 되면'>
+        <Styled.Callout>{linkifyText(benefits)}</Styled.Callout>
       </Section>,
     );
   }

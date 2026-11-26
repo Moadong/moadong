@@ -216,3 +216,15 @@ export const ScheduleFrame = styled.div`
     }
   }
 `;
+
+// 시안 공유용: 구조화 섹션이 예시 데이터라는 걸 알린다
+export const SampleNotice = styled.p`
+  margin-top: 10px;
+  ${setTypography(typography.paragraph.p7)};
+  color: ${colors.gray[600]};
+  word-break: keep-all;
+
+  ${media.tablet} {
+    margin: 8px 20px 0;
+  }
+`;

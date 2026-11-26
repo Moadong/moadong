@@ -24,6 +24,7 @@ import ClubInfoList from '@/pages/ClubDetailPage/components/ClubInfoList/ClubInf
 import ClubPhotoHero from '@/pages/ClubDetailPage/components/ClubPhotoHero/ClubPhotoHero';
 import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
 import ClubSummary from '@/pages/ClubDetailPage/components/ClubSummary/ClubSummary';
+import useApplyMethod from '@/pages/ClubDetailPage/hooks/useApplyMethod';
 import useClubInsights from '@/pages/ClubDetailPage/hooks/useClubInsights';
 import {
   getRecruitmentSummary,
@@ -72,6 +73,7 @@ const ClubDetailPage = () => {
     (clubName ?? clubId) || '',
   );
   const insights = useClubInsights(clubDetail?.id);
+  const { data: applyMethod } = useApplyMethod(clubDetail?.id);
 
   const hasCalendarConnection = clubDetail?.hasCalendarConnection ?? false;
 
@@ -293,6 +295,13 @@ const ClubDetailPage = () => {
                 </Styled.Highlight>
               )}
 
+              {insights && (
+                <Styled.SampleNotice>
+                  시안 · 한눈에 보기, 부원 키워드, 부원 한마디 등은 실제
+                  소개글을 바탕으로 만든 예시 데이터예요
+                </Styled.SampleNotice>
+              )}
+
               {isCompact && (
                 <>
                   <ClubInfoList {...infoListProps} />
@@ -306,6 +315,8 @@ const ClubDetailPage = () => {
                 description={clubDetail.description}
                 feeds={clubDetail.feeds}
                 insights={insights}
+                applyMethod={applyMethod}
+                recruitmentStatus={clubDetail.recruitmentStatus}
                 scheduleSlot={
                   <Styled.ScheduleFrame>
                     <ClubScheduleCalendar

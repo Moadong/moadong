@@ -1,7 +1,9 @@
 // 신입생 판단을 돕는 구조화 섹션들: 한눈에 보기·부원 키워드·나랑 맞을까·1년 활동·가입 과정·부원 한마디
 import { useEffect, useState } from 'react';
 import HorizontalScroller from '@/pages/ClubDetailPage/components/HorizontalScroller/HorizontalScroller';
+import { ApplyMethod } from '@/pages/ClubDetailPage/hooks/useApplyMethod';
 import { Emoji } from '@/pages/IntroducePage/components/Tossface/Tossface';
+import { RecruitmentStatus } from '@/types/club';
 import {
   ClubFacts,
   ClubFit,
@@ -37,11 +39,12 @@ export const ClubAtAGlance = ({ facts }: { facts: ClubFacts }) => {
   if (facts.meetingSchedule) {
     cards.push({ emoji: '🗓️', label: '활동', value: facts.meetingSchedule });
   }
-  if (facts.feePerSemester !== undefined) {
+  if (facts.fee) {
+    const periodLabel = facts.fee.period === 'SEMESTER' ? '학기' : '입회비';
     cards.push({
       emoji: '💰',
       label: '회비',
-      value: `학기 ${formatFee(facts.feePerSemester)}`,
+      value: `${periodLabel} ${formatFee(facts.fee.amount)}`,
       sub: facts.feeNote,
     });
   }
@@ -220,6 +223,70 @@ export const ClubYearTimeline = ({
       </Styled.YearScroller>
     </HorizontalScroller>
   );
+};
+
+/* ── 지원 방법 → 첫 단계 ─────────────────────────────────────────────── */
+
+/** 지원하기 버튼이 실제로 하는 일을 첫 단계 문구로 옮긴다. 모집 기간이 아니면 그 사실을 먼저 알린다 */
+export const getApplyStep = (
+  method: ApplyMethod,
+  status: RecruitmentStatus,
+): ClubJoinStep => {
+  // 모집 기간이 아니어도 '다음엔 어떻게 지원하는지'는 알려준다
+  const howTo = (() => {
+    switch (method.kind) {
+      case 'MOADONG':
+        return '모아동 지원서로';
+      case 'EXTERNAL':
+        return `${method.platform}로`;
+      case 'MULTIPLE':
+        return '모아동에서 지원서를 골라';
+      case 'CONTACT':
+        return '동아리에 직접 연락해';
+    }
+  })();
+
+  if (status === 'CLOSED') {
+    return {
+      emoji: '⏳',
+      title: '지금은 모집 기간이 아니에요',
+      description: `다음 모집 때 ${howTo} 지원해요`,
+    };
+  }
+  if (status === 'UPCOMING') {
+    return {
+      emoji: '⏳',
+      title: '곧 모집이 시작돼요',
+      description: `모집이 열리면 ${howTo} 지원해요`,
+    };
+  }
+
+  switch (method.kind) {
+    case 'MOADONG':
+      return {
+        emoji: '📝',
+        title: '모아동에서 지원서 작성',
+        description: '지원하기를 누르면 바로 작성할 수 있어요',
+      };
+    case 'EXTERNAL':
+      return {
+        emoji: '🔗',
+        title: `${method.platform}로 지원`,
+        description: `지원하기를 누르면 동아리의 ${method.platform}로 이동해요`,
+      };
+    case 'MULTIPLE':
+      return {
+        emoji: '🗂️',
+        title: '지원서 골라서 작성',
+        description: `지원서가 ${method.count}개 있어요. 지원하기를 누르면 고를 수 있어요`,
+      };
+    case 'CONTACT':
+      return {
+        emoji: '💬',
+        title: '동아리에 직접 연락',
+        description: '위쪽 인스타그램이나 연락처로 문의해 주세요',
+      };
+  }
 };
 
 /* ── 가입 과정 ───────────────────────────────────────────────────────── */

@@ -4,8 +4,8 @@
 export interface ClubFacts {
   /** 예: "주 1~2회 · 토요일 시합" */
   meetingSchedule?: string;
-  /** 학기 회비(원). 0이면 무료 */
-  feePerSemester?: number;
+  /** 회비(원). 0이면 무료. 학기마다 내는지 가입할 때 한 번 내는지 구분한다 */
+  fee?: { amount: number; period: 'SEMESTER' | 'ONCE' };
   /** 회비 옆에 붙는 짧은 조건. 예: "신입 남 기준" */
   feeNote?: string;
   memberCount?: number;
@@ -59,6 +59,7 @@ export interface ClubInsights {
   keywords?: ClubKeywordSummary;
   fit?: ClubFit;
   yearlyEvents?: ClubYearlyEvent[];
-  joinSteps?: ClubJoinStep[];
+  /** 지원한 다음 동아리가 진행하는 과정 (면접·발표·첫 모임 등). 지원 방법 자체는 지원서 설정에서 읽는다 */
+  afterApplySteps?: ClubJoinStep[];
   memberVoices?: ClubMemberVoice[];
 }
