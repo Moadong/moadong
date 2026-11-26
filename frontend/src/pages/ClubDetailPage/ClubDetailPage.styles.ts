@@ -1,5 +1,6 @@
 import styled from 'styled-components';
 import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
+import { Container as ScheduleCalendarContainer } from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar.styles';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
@@ -201,4 +202,17 @@ export const ErrorMessage = styled.p`
   text-align: center;
   ${setTypography(typography.paragraph.p3)};
   color: ${colors.gray[700]};
+`;
+
+// 달력은 원래 탭 하나를 통째로 채우던 회색 판이라, 본문 섹션 안에서는 다른 회색 카드처럼 둥글게 줄인다
+export const ScheduleFrame = styled.div`
+  ${ScheduleCalendarContainer} {
+    padding: 20px 16px;
+    border-radius: 20px;
+
+    ${media.tablet} {
+      padding: 16px 12px;
+      border-radius: 16px;
+    }
+  }
 `;

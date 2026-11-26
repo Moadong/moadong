@@ -307,12 +307,14 @@ const ClubDetailPage = () => {
                 feeds={clubDetail.feeds}
                 insights={insights}
                 scheduleSlot={
-                  <ClubScheduleCalendar
-                    key={clubId ?? clubName}
-                    events={calendarEvents}
-                    isLoading={hasCalendarConnection && isCalendarLoading}
-                    clubId={clubDetail.id}
-                  />
+                  <Styled.ScheduleFrame>
+                    <ClubScheduleCalendar
+                      key={clubId ?? clubName}
+                      events={calendarEvents}
+                      isLoading={hasCalendarConnection && isCalendarLoading}
+                      clubId={clubDetail.id}
+                    />
+                  </Styled.ScheduleFrame>
                 }
                 locationSlot={isCompact ? mapCard : undefined}
               />
