@@ -1,4 +1,4 @@
-// 상세 '홈' 탭 섹션(본문·사진 미리보기·칩·타임라인·FAQ) 스타일
+// 상세 본문 섹션(소개·사진·성과 타임라인·FAQ 등) 공통 레이아웃과 본문 스타일
 import styled, { css } from 'styled-components';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
@@ -12,23 +12,13 @@ export const Container = styled.div`
   flex-direction: column;
 `;
 
-export const EmptyState = styled.p`
-  padding: 80px 0;
-  text-align: center;
-  ${setTypography(typography.paragraph.p3)};
-  color: ${colors.gray[700]};
-
-  ${media.tablet} {
-    padding: 60px 20px;
-    ${setTypography(typography.paragraph.p5)};
-  }
-`;
-
 export const Section = styled.section`
   display: flex;
   flex-direction: column;
   gap: 14px;
   padding: 32px 0;
+  /* 바로가기로 이동했을 때 고정 헤더·상단바에 제목이 가리지 않게 */
+  scroll-margin-top: 100px;
 
   & + & {
     border-top: 1px solid ${colors.gray[300]};
@@ -37,6 +27,7 @@ export const Section = styled.section`
   ${media.tablet} {
     gap: 12px;
     padding: 24px 20px;
+    scroll-margin-top: 56px;
 
     /* 모바일은 섹션 사이를 두꺼운 회색 띠로 끊는다 */
     & + & {
@@ -58,22 +49,6 @@ export const SectionTitle = styled.h2`
 
   ${media.tablet} {
     ${setTypography(typography.etc.bold18)};
-  }
-`;
-
-export const HeaderLink = styled.button`
-  display: inline-flex;
-  align-items: center;
-  gap: 2px;
-  padding: 0;
-  border: none;
-  background: none;
-  cursor: pointer;
-  ${setTypography(typography.paragraph.p5)};
-  color: ${colors.gray[700]};
-
-  &:hover {
-    color: ${colors.gray[900]};
   }
 `;
 
@@ -119,27 +94,30 @@ export const MoreButton = styled.button`
   }
 `;
 
-export const PhotoStrip = styled.div`
-  display: grid;
-  grid-template-columns: repeat(6, 1fr);
-  gap: 6px;
+export const SectionDescription = styled.p`
+  margin-top: -8px;
+  ${setTypography(typography.paragraph.p5)};
+  color: ${colors.gray[700]};
 
   ${media.tablet} {
-    display: flex;
-    gap: 6px;
-    margin: 0 -20px;
-    padding: 0 20px;
-    overflow-x: auto;
-    scroll-snap-type: x mandatory;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
+    margin-top: -6px;
+    ${setTypography(typography.paragraph.p7)};
   }
 `;
 
-export const PhotoThumb = styled.button`
+export const PhotoGrid = styled.div`
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
+
+  ${media.tablet} {
+    gap: 3px;
+    margin: 0 -20px;
+  }
+`;
+
+export const PhotoTile = styled.button`
+  position: relative;
   aspect-ratio: 1 / 1;
   padding: 0;
   border: none;
@@ -164,11 +142,19 @@ export const PhotoThumb = styled.button`
   }
 
   ${media.tablet} {
-    flex: 0 0 112px;
-    width: 112px;
-    border-radius: 10px;
-    scroll-snap-align: start;
+    border-radius: 0;
   }
+`;
+
+export const PhotoMore = styled.span`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background-color: rgba(0, 0, 0, 0.5);
+  color: ${colors.base.white};
+  ${setTypography(typography.title.title5)};
 `;
 
 export const ChipList = styled.ul`

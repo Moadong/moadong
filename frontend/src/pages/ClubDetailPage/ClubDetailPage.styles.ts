@@ -135,35 +135,35 @@ export const Divider = styled.div`
   background-color: ${colors.gray[200]};
 `;
 
-export const TabArea = styled.div`
-  margin-top: 28px;
+// 부원 투표 1위 키워드를 요약 바로 아래에 한 줄로 띄운다
+export const Highlight = styled.p<{ $color?: string }>`
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-top: 16px;
+  padding: 14px 16px;
+  border-radius: 14px;
+  background-color: ${({ $color }) => $color ?? colors.primary[500]};
+  ${setTypography(typography.paragraph.p3)};
+  color: ${colors.gray[900]};
+  word-break: keep-all;
 
-  ${media.tablet} {
-    margin-top: 0;
-  }
-`;
-
-// 데스크톱에서는 헤더 아래에 붙어 따라오고, 모바일은 TopBar가 대신 탭을 띄운다
-export const TabsWrapper = styled.div<{ $hidden: boolean }>`
-  position: sticky;
-  top: ${HEADER_HEIGHT.desktop}px;
-  z-index: 2;
-  padding-top: 8px;
-  background-color: ${colors.base.white};
-  box-shadow: inset 0 -1px 0 ${colors.gray[300]};
-  visibility: ${({ $hidden }) => ($hidden ? 'hidden' : 'visible')};
-
-  button {
-    padding-bottom: 12px;
+  > span:first-child {
+    font-size: 24px;
   }
 
-  ${media.tablet} {
-    position: static;
-    padding-top: 14px;
-    box-shadow: none;
+  strong {
+    font-weight: 700;
+    color: ${colors.primary[900]};
+  }
 
-    button {
-      padding-bottom: 10px;
+  ${media.tablet} {
+    margin: 4px 20px 0;
+    padding: 12px 14px;
+    ${setTypography(typography.paragraph.p5)};
+
+    > span:first-child {
+      font-size: 20px;
     }
   }
 `;

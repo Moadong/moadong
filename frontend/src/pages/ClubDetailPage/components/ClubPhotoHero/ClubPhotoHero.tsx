@@ -1,5 +1,5 @@
 // 상세 최상단에 커버·활동사진을 모자이크로 보여주고 눌러서 크게 보는 영역
-import { useState } from 'react';
+import { SyntheticEvent, useState } from 'react';
 import DefaultLogo from '@/assets/images/logos/default_profile_image.svg';
 import PhotoModal from '@/pages/ClubDetailPage/components/PhotoModal/PhotoModal';
 import { TAG_COLORS } from '@/styles/clubTags';
@@ -24,8 +24,23 @@ const ClubPhotoHero = ({
   feeds,
   category,
 }: ClubPhotoHeroProps) => {
-  const photos = [cover, ...feeds].filter((url): url is string => !!url);
   const [openIndex, setOpenIndex] = useState<number | null>(null);
+  // 원본까지 깨진 사진은 모자이크에서 뺀다
+  const [brokenPhotos, setBrokenPhotos] = useState<Set<string>>(
+    () => new Set(),
+  );
+  const photos = [cover, ...feeds].filter(
+    (url): url is string => !!url && !brokenPhotos.has(url),
+  );
+
+  const handleError =
+    (url: string) => (event: SyntheticEvent<HTMLImageElement>) => {
+      if (event.currentTarget.getAttribute('src') === url) {
+        setBrokenPhotos((prev) => new Set(prev).add(url));
+        return;
+      }
+      fallbackToOriginal(url)(event);
+    };
 
   if (photos.length === 0) {
     return (
@@ -60,7 +75,7 @@ const ClubPhotoHero = ({
             >
               <Styled.TileImage
                 src={cdnImage(url, index === 0 ? 'cover' : 'grid')}
-                onError={fallbackToOriginal(url)}
+                onError={handleError(url)}
                 alt=''
                 loading={index === 0 ? 'eager' : 'lazy'}
               />

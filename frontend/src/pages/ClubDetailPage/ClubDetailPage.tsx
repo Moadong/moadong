@@ -1,9 +1,7 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useLocation, useParams, useSearchParams } from 'react-router-dom';
 import Footer from '@/components/common/Footer/Footer';
 import Header from '@/components/common/Header/Header';
-import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
-import UnderlineTabs from '@/components/common/UnderlineTabs/UnderlineTabs';
 import MapModal from '@/components/map/MapModal/MapModal';
 import NaverMap from '@/components/map/NaverMap/NaverMap';
 import { clubLocations } from '@/constants/clubLocation';
@@ -16,85 +14,71 @@ import {
   useGetClubCalendarEvents,
   useGetClubDetail,
 } from '@/hooks/Queries/useClub';
-import { useScrollTo } from '@/hooks/Scroll/useScrollTo';
 import useDevice from '@/hooks/useDevice';
 import useNavigator from '@/hooks/useNavigator';
 import { countClubView } from '@/hooks/useSatisfactionSurvey';
-import ClubFeed from '@/pages/ClubDetailPage/components/ClubFeed/ClubFeed';
-import ClubHomeTab from '@/pages/ClubDetailPage/components/ClubHomeTab/ClubHomeTab';
+import ClubDetailBody, {
+  CLUB_SECTION_ID,
+} from '@/pages/ClubDetailPage/components/ClubDetailBody/ClubDetailBody';
 import ClubInfoList from '@/pages/ClubDetailPage/components/ClubInfoList/ClubInfoList';
 import ClubPhotoHero from '@/pages/ClubDetailPage/components/ClubPhotoHero/ClubPhotoHero';
 import ClubScheduleCalendar from '@/pages/ClubDetailPage/components/ClubScheduleCalendar/ClubScheduleCalendar';
 import ClubSummary from '@/pages/ClubDetailPage/components/ClubSummary/ClubSummary';
+import useClubInsights from '@/pages/ClubDetailPage/hooks/useClubInsights';
 import {
   getRecruitmentSummary,
   getUpdatedLabel,
 } from '@/pages/ClubDetailPage/utils/clubDetailSummary';
+import {
+  Emoji,
+  TossfaceStylesheet,
+} from '@/pages/IntroducePage/components/Tossface/Tossface';
+import { TAG_COLORS } from '@/styles/clubTags';
 import isInAppWebView from '@/utils/isInAppWebView';
 import * as Styled from './ClubDetailPage.styles';
 import ClubApplyButton from './components/ClubApplyButton/ClubApplyButton';
 import ClubDetailTopBar from './components/ClubDetailTopBar/ClubDetailTopBar';
 
-export const TAB_TYPE = {
-  INTRO: 'intro',
-  PHOTOS: 'photos',
-  SCHEDULE: 'schedule',
-} as const;
-
-type TabType = (typeof TAB_TYPE)[keyof typeof TAB_TYPE];
+// 예전 탭 주소(`?tab=photos`, `?tab=schedule`)로 들어오면 해당 섹션으로 내려준다
+const LEGACY_TAB_SECTION: Record<string, string> = {
+  photos: CLUB_SECTION_ID.PHOTOS,
+  schedule: CLUB_SECTION_ID.SCHEDULE,
+};
 
 type SocialPlatform = 'instagram' | 'youtube';
 
-// 탭 클릭 시 스크롤이 탑바 하단에 정확히 위치하도록 하는 높이 값
-const TOP_BAR_HEIGHT = 50;
-// 인라인 탭이 TopBar 뒤로 가려지는 시점을 감지하는 IntersectionObserver rootMargin 값 (TopBarContent 60px + 하단 여백)
-const TOP_BAR_RENDERED_HEIGHT = 73;
+const scrollToSection = (sectionId: string) => {
+  document
+    .getElementById(sectionId)
+    ?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
 
 const ClubDetailPage = () => {
   const location = useLocation();
   const trackEvent = useMixpanelTrack();
   const handleLink = useNavigator();
 
-  const [searchParams, setSearchParams] = useSearchParams();
-  const tabParam = searchParams.get('tab') as TabType | null;
+  const [searchParams] = useSearchParams();
+  const tabParam = searchParams.get('tab');
 
   const { clubId, clubName } = useParams<{
     clubId: string;
     clubName: string;
   }>();
   const { isMobile, isTablet } = useDevice();
-  const showTopBar = isMobile || isTablet;
+  const isCompact = isMobile || isTablet;
 
   const { data: clubDetail, error } = useGetClubDetail(
     (clubName ?? clubId) || '',
   );
+  const insights = useClubInsights(clubDetail?.id);
 
   const hasCalendarConnection = clubDetail?.hasCalendarConnection ?? false;
 
-  const activeTab: TabType = useMemo(() => {
-    if (!tabParam || !Object.values(TAB_TYPE).includes(tabParam)) {
-      return TAB_TYPE.INTRO;
-    }
-    return tabParam;
-  }, [tabParam]);
-
   const { data: calendarEvents = [], isLoading: isCalendarLoading } =
     useGetClubCalendarEvents((clubName ?? clubId) || '', {
-      enabled: hasCalendarConnection && activeTab === TAB_TYPE.SCHEDULE,
+      enabled: hasCalendarConnection,
     });
-
-  const feedCount = clubDetail?.feeds.length ?? 0;
-  const tabs = useMemo(
-    () => [
-      { key: TAB_TYPE.INTRO, label: '홈' },
-      {
-        key: TAB_TYPE.PHOTOS,
-        label: feedCount > 0 ? `사진 ${feedCount}` : '사진',
-      },
-      { key: TAB_TYPE.SCHEDULE, label: '일정' },
-    ],
-    [feedCount],
-  );
 
   useTrackPageView(PAGE_VIEW.CLUB_DETAIL_PAGE, {
     clubId: clubDetail?.id,
@@ -123,16 +107,37 @@ const ClubDetailPage = () => {
       registerClubDetailVisit(clubDetail.id, location.pathname);
   }, [clubDetail?.id, error, location.pathname]);
 
+  // 예전 탭 딥링크는 데이터가 그려진 뒤 한 번만 해당 섹션으로 스크롤한다
+  const deepLinkedRef = useRef(false);
+  useEffect(() => {
+    if (!clubDetail || deepLinkedRef.current || !tabParam) return;
+    const sectionId = LEGACY_TAB_SECTION[tabParam];
+    if (!sectionId) return;
+    deepLinkedRef.current = true;
+    requestAnimationFrame(() => scrollToSection(sectionId));
+  }, [clubDetail, tabParam]);
+
   /**
-   * 일정 탭에 실제로 도달했을 때 볼 일정이 있었는지 남긴다.
-   * 탭 클릭뿐 아니라 `?tab=schedule` 딥링크 진입도 포함해야 해서 탭 클릭 이벤트와 별개로 둔다.
+   * 일정 섹션이 실제로 화면에 들어왔을 때 볼 일정이 있었는지 남긴다.
+   * 탭이 없어졌으니 '일정 탭 도달' 대신 '일정 섹션 노출'로 같은 이벤트를 보낸다.
    */
+  const [isScheduleVisible, setIsScheduleVisible] = useState(false);
+  useEffect(() => {
+    const el = clubDetail
+      ? document.getElementById(CLUB_SECTION_ID.SCHEDULE)
+      : null;
+    if (!el) return;
+    const observer = new IntersectionObserver(([entry]) => {
+      if (entry.isIntersecting) setIsScheduleVisible(true);
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [clubDetail]);
+
   const scheduleViewedClubIdRef = useRef<string | null>(null);
   useEffect(() => {
     const viewedClubId = clubDetail?.id;
-    if (activeTab !== TAB_TYPE.SCHEDULE || !viewedClubId || isCalendarLoading) {
-      return;
-    }
+    if (!isScheduleVisible || !viewedClubId || isCalendarLoading) return;
     if (scheduleViewedClubIdRef.current === viewedClubId) return;
 
     scheduleViewedClubIdRef.current = viewedClubId;
@@ -143,7 +148,7 @@ const ClubDetailPage = () => {
       has_calendar_connection: hasCalendarConnection,
     });
   }, [
-    activeTab,
+    isScheduleVisible,
     clubDetail?.id,
     clubDetail?.name,
     isCalendarLoading,
@@ -151,58 +156,6 @@ const ClubDetailPage = () => {
     hasCalendarConnection,
     trackEvent,
   ]);
-
-  const [showStickyTabs, setShowStickyTabs] = useState(false);
-  const [inlineTabsEl, setInlineTabsEl] = useState<HTMLDivElement | null>(null);
-
-  useEffect(() => {
-    if (!showTopBar || !inlineTabsEl) return;
-
-    // top < TOP_BAR_RENDERED_HEIGHT: viewport가 좁아 탭이 아래에 있는 경우를 제외하고 sticky 활성화
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (
-          !entry.isIntersecting &&
-          entry.boundingClientRect.top < TOP_BAR_RENDERED_HEIGHT
-        ) {
-          setShowStickyTabs(true);
-        } else {
-          setShowStickyTabs(false);
-        }
-      },
-      { rootMargin: `-${TOP_BAR_RENDERED_HEIGHT}px 0px 0px 0px`, threshold: 1 },
-    );
-    observer.observe(inlineTabsEl);
-    return () => observer.disconnect();
-  }, [showTopBar, inlineTabsEl]);
-
-  const contentRef = useRef<HTMLDivElement>(null);
-  const { scrollToElement } = useScrollTo();
-
-  const scrollToContent = useCallback(() => {
-    scrollToElement(
-      contentRef.current,
-      showTopBar ? TOP_BAR_HEIGHT : HEADER_HEIGHT.desktop,
-    );
-  }, [scrollToElement, showTopBar]);
-
-  const handleTabClick = useCallback(
-    (tabKey: TabType) => {
-      setSearchParams({ tab: tabKey }, { replace: true });
-      trackEvent(USER_EVENT.CLUB_DETAIL_TAB_CLICKED, {
-        tab: tabKey,
-        club_id: clubDetail?.id,
-        club_name: clubDetail?.name,
-      });
-    },
-    [setSearchParams, trackEvent, clubDetail?.id, clubDetail?.name],
-  );
-
-  // 요약의 '행사일정'·홈의 '전체보기'처럼 본문 밖에서 탭을 바꿀 때는 탭 위치까지 내려준다
-  const goToTab = (tabKey: TabType) => {
-    handleTabClick(tabKey);
-    scrollToContent();
-  };
 
   const clubLocation = clubLocations.find(
     (loc) => loc.clubName === clubDetail?.name,
@@ -283,18 +236,19 @@ const ClubDetailPage = () => {
     updatedLabel,
   };
 
+  const topKeyword = insights?.keywords?.keywords
+    .slice()
+    .sort((a, b) => b.count - a.count)[0];
+
   return (
     <>
+      <TossfaceStylesheet />
       <Header hideOn={['mobile', 'tablet']} />
-      {showTopBar && (
+      {isCompact && (
         <ClubDetailTopBar
           clubId={clubDetail.id}
           clubName={clubDetail.name}
-          tabs={tabs}
-          activeTab={activeTab}
-          onTabClick={(tabKey) => goToTab(tabKey as TabType)}
           initialIsSubscribed={searchParams.get('is_subscribed') === 'true'}
-          showTabs={showStickyTabs}
         />
       )}
       <Styled.Page>
@@ -322,72 +276,49 @@ const ClubDetailPage = () => {
                 youtubeUrl={youtubeUrl}
                 onSocialClick={handleSocialClick}
                 onLocationClick={clubLocation ? openMap : undefined}
-                onScheduleClick={() => goToTab(TAB_TYPE.SCHEDULE)}
+                onScheduleClick={() =>
+                  scrollToSection(CLUB_SECTION_ID.SCHEDULE)
+                }
               />
 
-              {showTopBar && (
+              {topKeyword && (
+                <Styled.Highlight
+                  $color={TAG_COLORS[clubDetail.category] ?? undefined}
+                >
+                  <Emoji aria-hidden>{topKeyword.emoji}</Emoji>
+                  <span>
+                    부원 <strong>{topKeyword.count}명</strong>이 “
+                    {topKeyword.label}”를 골랐어요
+                  </span>
+                </Styled.Highlight>
+              )}
+
+              {isCompact && (
                 <>
                   <ClubInfoList {...infoListProps} />
                   <Styled.Divider />
                 </>
               )}
 
-              <Styled.TabArea ref={contentRef}>
-                <Styled.TabsWrapper
-                  ref={setInlineTabsEl}
-                  $hidden={showTopBar && showStickyTabs}
-                >
-                  <UnderlineTabs
-                    tabs={tabs}
-                    activeKey={activeTab}
-                    onTabClick={(tabKey) => handleTabClick(tabKey as TabType)}
-                    centerOnMobile
+              <ClubDetailBody
+                clubId={clubDetail.id}
+                clubName={clubDetail.name}
+                description={clubDetail.description}
+                feeds={clubDetail.feeds}
+                insights={insights}
+                scheduleSlot={
+                  <ClubScheduleCalendar
+                    key={clubId ?? clubName}
+                    events={calendarEvents}
+                    isLoading={hasCalendarConnection && isCalendarLoading}
+                    clubId={clubDetail.id}
                   />
-                </Styled.TabsWrapper>
-
-                <Styled.TabContent>
-                  <div
-                    style={{
-                      display: activeTab === TAB_TYPE.INTRO ? 'block' : 'none',
-                    }}
-                  >
-                    <ClubHomeTab
-                      clubId={clubDetail.id}
-                      clubName={clubDetail.name}
-                      description={clubDetail.description}
-                      feeds={clubDetail.feeds}
-                      onShowAllPhotos={() => goToTab(TAB_TYPE.PHOTOS)}
-                      locationSlot={showTopBar ? mapCard : undefined}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display: activeTab === TAB_TYPE.PHOTOS ? 'block' : 'none',
-                    }}
-                  >
-                    <ClubFeed
-                      feed={clubDetail.feeds}
-                      clubName={clubDetail.name}
-                    />
-                  </div>
-                  <div
-                    style={{
-                      display:
-                        activeTab === TAB_TYPE.SCHEDULE ? 'block' : 'none',
-                    }}
-                  >
-                    <ClubScheduleCalendar
-                      key={clubId ?? clubName}
-                      events={calendarEvents}
-                      isLoading={isCalendarLoading}
-                      clubId={clubDetail.id}
-                    />
-                  </div>
-                </Styled.TabContent>
-              </Styled.TabArea>
+                }
+                locationSlot={isCompact ? mapCard : undefined}
+              />
             </Styled.Main>
 
-            {!showTopBar && (
+            {!isCompact && (
               <Styled.Aside>
                 <ClubInfoList {...infoListProps} variant='card' />
                 {mapCard}
