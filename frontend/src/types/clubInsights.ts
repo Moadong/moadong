@@ -28,14 +28,9 @@ export interface ClubKeywordSummary {
   keywords: ClubKeywordVote[];
 }
 
-export interface ClubFitItem {
-  emoji: string;
-  text: string;
-}
-
 export interface ClubFit {
-  goodFor: ClubFitItem[];
-  thinkTwice: ClubFitItem[];
+  goodFor: string[];
+  thinkTwice: string[];
 }
 
 export interface ClubYearlyEvent {

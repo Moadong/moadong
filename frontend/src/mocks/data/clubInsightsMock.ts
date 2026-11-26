@@ -39,13 +39,13 @@ export const clubInsightsMock: Record<string, ClubInsights> = {
     },
     fit: {
       goodFor: [
-        { emoji: '⚾', text: '야구는 좋아하는데 해본 적은 없는 분' },
-        { emoji: '🏟️', text: '사직 직관 같이 갈 친구가 필요한 분' },
-        { emoji: '🙌', text: '학과 밖에서 친구를 만들고 싶은 분' },
+        '야구는 좋아하는데 해본 적은 없는 분',
+        '사직 직관 같이 갈 친구가 필요한 분',
+        '학과 밖에서 친구를 만들고 싶은 분',
       ],
       thinkTwice: [
-        { emoji: '🏆', text: '선수급 실력으로 우승만 노리는 분' },
-        { emoji: '☀️', text: '주말 오전 시합이 부담스러운 분' },
+        '선수급 실력으로 우승만 노리는 분',
+        '주말 오전 시합이 부담스러운 분',
       ],
     },
     yearlyEvents: [

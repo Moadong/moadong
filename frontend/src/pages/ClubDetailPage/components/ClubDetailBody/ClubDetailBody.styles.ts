@@ -12,27 +12,37 @@ export const Container = styled.div`
   flex-direction: column;
 `;
 
-export const Section = styled.section`
+// 성격이 같은 섹션 묶음. 묶음 사이에만 구분선을 둔다 (모바일은 굵은 회색 띠)
+export const Chapter = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 14px;
-  padding: 32px 0;
-  /* 바로가기로 이동했을 때 고정 헤더·상단바에 제목이 가리지 않게 */
-  scroll-margin-top: 100px;
+  padding: 12px 0;
 
   & + & {
     border-top: 1px solid ${colors.gray[300]};
   }
 
   ${media.tablet} {
-    gap: 12px;
-    padding: 24px 20px;
-    scroll-margin-top: 56px;
+    padding: 8px 0;
 
-    /* 모바일은 섹션 사이를 두꺼운 회색 띠로 끊는다 */
     & + & {
       border-top: 8px solid ${colors.gray[200]};
     }
+  }
+`;
+
+export const Section = styled.section`
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 24px 0;
+  /* 바로가기로 이동했을 때 고정 헤더·상단바에 제목이 가리지 않게 */
+  scroll-margin-top: 100px;
+
+  ${media.tablet} {
+    gap: 12px;
+    padding: 18px 20px;
+    scroll-margin-top: 56px;
   }
 `;
 

@@ -1,5 +1,6 @@
 // 신입생 판단을 돕는 구조화 섹션들: 한눈에 보기·부원 키워드·나랑 맞을까·1년 활동·가입 과정·부원 한마디
 import { useEffect, useState } from 'react';
+import HorizontalScroller from '@/pages/ClubDetailPage/components/HorizontalScroller/HorizontalScroller';
 import { Emoji } from '@/pages/IntroducePage/components/Tossface/Tossface';
 import {
   ClubFacts,
@@ -158,12 +159,9 @@ export const ClubFitCheck = ({ fit }: { fit: ClubFit }) => (
         <Styled.FitTitle>
           <Emoji aria-hidden>🙆</Emoji> 이런 분께 잘 맞아요
         </Styled.FitTitle>
-        <Styled.FitList>
-          {fit.goodFor.map((item) => (
-            <li key={item.text}>
-              <Emoji aria-hidden>{item.emoji}</Emoji>
-              <span>{item.text}</span>
-            </li>
+        <Styled.FitList $tone='good'>
+          {fit.goodFor.map((text) => (
+            <li key={text}>{text}</li>
           ))}
         </Styled.FitList>
       </Styled.FitCard>
@@ -173,12 +171,9 @@ export const ClubFitCheck = ({ fit }: { fit: ClubFit }) => (
         <Styled.FitTitle>
           <Emoji aria-hidden>🤔</Emoji> 한 번 더 고민해 보세요
         </Styled.FitTitle>
-        <Styled.FitList>
-          {fit.thinkTwice.map((item) => (
-            <li key={item.text}>
-              <Emoji aria-hidden>{item.emoji}</Emoji>
-              <span>{item.text}</span>
-            </li>
+        <Styled.FitList $tone='caution'>
+          {fit.thinkTwice.map((text) => (
+            <li key={text}>{text}</li>
           ))}
         </Styled.FitList>
       </Styled.FitCard>
@@ -202,26 +197,28 @@ export const ClubYearTimeline = ({
     sorted.find((event) => event.month >= currentMonth) ?? sorted[0];
 
   return (
-    <Styled.YearScroller>
-      {sorted.map((event) => {
-        const isUpcoming = event === upcoming;
-        return (
-          <Styled.MonthCard
-            key={`${event.month}-${event.title}`}
-            $isUpcoming={isUpcoming}
-          >
-            <Styled.MonthLabel $isUpcoming={isUpcoming}>
-              {event.month}월
-              {isUpcoming && <Styled.NextBadge>다음</Styled.NextBadge>}
-            </Styled.MonthLabel>
-            <Styled.MonthEmoji>
-              <Emoji aria-hidden>{event.emoji}</Emoji>
-            </Styled.MonthEmoji>
-            <Styled.MonthTitle>{event.title}</Styled.MonthTitle>
-          </Styled.MonthCard>
-        );
-      })}
-    </Styled.YearScroller>
+    <HorizontalScroller label='1년 활동'>
+      <Styled.YearScroller>
+        {sorted.map((event) => {
+          const isUpcoming = event === upcoming;
+          return (
+            <Styled.MonthCard
+              key={`${event.month}-${event.title}`}
+              $isUpcoming={isUpcoming}
+            >
+              <Styled.MonthLabel $isUpcoming={isUpcoming}>
+                {event.month}월
+                {isUpcoming && <Styled.NextBadge>다음</Styled.NextBadge>}
+              </Styled.MonthLabel>
+              <Styled.MonthEmoji>
+                <Emoji aria-hidden>{event.emoji}</Emoji>
+              </Styled.MonthEmoji>
+              <Styled.MonthTitle>{event.title}</Styled.MonthTitle>
+            </Styled.MonthCard>
+          );
+        })}
+      </Styled.YearScroller>
+    </HorizontalScroller>
   );
 };
 
@@ -249,15 +246,17 @@ export const ClubJoinSteps = ({ steps }: { steps: ClubJoinStep[] }) => (
 /* ── 부원 한마디 ─────────────────────────────────────────────────────── */
 
 export const ClubMemberVoices = ({ voices }: { voices: ClubMemberVoice[] }) => (
-  <Styled.VoiceScroller>
-    {voices.map((voice) => (
-      <Styled.VoiceCard key={voice.quote}>
-        <Styled.VoiceQuote>{voice.quote}</Styled.VoiceQuote>
-        <Styled.VoiceAuthor>
-          {voice.author}
-          {voice.tenure && <span> · {voice.tenure}</span>}
-        </Styled.VoiceAuthor>
-      </Styled.VoiceCard>
-    ))}
-  </Styled.VoiceScroller>
+  <HorizontalScroller label='부원 한마디'>
+    <Styled.VoiceScroller>
+      {voices.map((voice) => (
+        <Styled.VoiceCard key={voice.quote}>
+          <Styled.VoiceQuote>{voice.quote}</Styled.VoiceQuote>
+          <Styled.VoiceAuthor>
+            {voice.author}
+            {voice.tenure && <span> · {voice.tenure}</span>}
+          </Styled.VoiceAuthor>
+        </Styled.VoiceCard>
+      ))}
+    </Styled.VoiceScroller>
+  </HorizontalScroller>
 );

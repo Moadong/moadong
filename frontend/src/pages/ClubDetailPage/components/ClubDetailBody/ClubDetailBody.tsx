@@ -157,11 +157,15 @@ const ClubDetailBody = ({
     });
   };
 
-  const sections: ReactNode[] = [];
+  // 섹션을 네 묶음(판단 정보·동아리 이야기·일정과 성과·가입 안내)으로 모으고, 굵은 구분선은 묶음 사이에만 둔다
+  const decide: ReactNode[] = [];
+  const story: ReactNode[] = [];
+  const time: ReactNode[] = [];
+  const join: ReactNode[] = [];
 
   // 1. 판단에 바로 쓰는 사실
   if (insights?.facts) {
-    sections.push(
+    decide.push(
       <Section key='facts' title='한눈에 보기'>
         <ClubAtAGlance facts={insights.facts} />
       </Section>,
@@ -169,7 +173,7 @@ const ClubDetailBody = ({
   }
 
   if (insights?.keywords && insights.keywords.keywords.length > 0) {
-    sections.push(
+    decide.push(
       <Section
         key='keywords'
         title='부원들이 꼽은 매력'
@@ -182,13 +186,13 @@ const ClubDetailBody = ({
 
   // 구조화된 맞춤 정보가 없으면 동아리가 쓴 인재상 글로 대신한다
   if (hasFit && insights?.fit) {
-    sections.push(
+    decide.push(
       <Section key='fit' title='나랑 잘 맞을까?'>
         <ClubFitCheck fit={insights.fit} />
       </Section>,
     );
   } else if (idealCandidate?.content?.trim() || idealTags.length > 0) {
-    sections.push(
+    decide.push(
       <Section key='ideal' title='이런 분을 찾아요'>
         {idealTags.length > 0 && (
           <Styled.ChipList>
@@ -208,7 +212,7 @@ const ClubDetailBody = ({
 
   // 2. 동아리 이야기
   if (introDescription?.trim() || activityDescription?.trim()) {
-    sections.push(
+    story.push(
       <Section key='intro' title={`${clubName} 이야기`}>
         {introDescription?.trim() && (
           <CollapsibleText text={introDescription} />
@@ -221,7 +225,7 @@ const ClubDetailBody = ({
   }
 
   if (previewPhotos.length > 0) {
-    sections.push(
+    story.push(
       <Section
         key='photos'
         id={CLUB_SECTION_ID.PHOTOS}
@@ -255,7 +259,7 @@ const ClubDetailBody = ({
   }
 
   if (insights?.memberVoices && insights.memberVoices.length > 0) {
-    sections.push(
+    story.push(
       <Section key='voices' title='부원 한마디'>
         <ClubMemberVoices voices={insights.memberVoices} />
       </Section>,
@@ -264,7 +268,7 @@ const ClubDetailBody = ({
 
   // 3. 시간 계획
   if (insights?.yearlyEvents && insights.yearlyEvents.length > 0) {
-    sections.push(
+    time.push(
       <Section
         key='year'
         title='1년 동안 이런 걸 해요'
@@ -275,14 +279,14 @@ const ClubDetailBody = ({
     );
   }
 
-  sections.push(
+  time.push(
     <Section key='schedule' id={CLUB_SECTION_ID.SCHEDULE} title='행사일정'>
       {scheduleSlot}
     </Section>,
   );
 
   if (sortedAwards.length > 0) {
-    sections.push(
+    time.push(
       <Section key='awards' title='활동 성과'>
         <Styled.Timeline>
           {sortedAwards.map((award, index) => {
@@ -309,7 +313,7 @@ const ClubDetailBody = ({
 
   // 4. 가입
   if (benefits?.trim()) {
-    sections.push(
+    join.push(
       <Section key='benefits' title='부원이 되면'>
         <Styled.Callout>{linkifyText(benefits)}</Styled.Callout>
       </Section>,
@@ -317,7 +321,7 @@ const ClubDetailBody = ({
   }
 
   if (insights?.joinSteps && insights.joinSteps.length > 0) {
-    sections.push(
+    join.push(
       <Section key='join' title='가입은 이렇게 해요'>
         <ClubJoinSteps steps={insights.joinSteps} />
       </Section>,
@@ -325,7 +329,7 @@ const ClubDetailBody = ({
   }
 
   if (validFaqs.length > 0) {
-    sections.push(
+    join.push(
       <Section key='faq' title='자주 묻는 질문'>
         <Styled.FaqList>
           {validFaqs.map((faq, index) => {
@@ -361,7 +365,7 @@ const ClubDetailBody = ({
   }
 
   if (locationSlot) {
-    sections.push(
+    join.push(
       <Section key='location' title='동아리방 위치'>
         {locationSlot}
       </Section>,
@@ -370,7 +374,13 @@ const ClubDetailBody = ({
 
   return (
     <>
-      <Styled.Container>{sections}</Styled.Container>
+      <Styled.Container>
+        {[decide, story, time, join]
+          .filter((chapter) => chapter.length > 0)
+          .map((chapter, index) => (
+            <Styled.Chapter key={index}>{chapter}</Styled.Chapter>
+          ))}
+      </Styled.Container>
       <PhotoModal
         isOpen={photoIndex !== null}
         onClose={() => setPhotoIndex(null)}

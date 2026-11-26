@@ -5,25 +5,11 @@ import { colors } from '@/styles/theme/colors';
 import { transitions } from '@/styles/theme/transitions';
 import { setTypography, typography } from '@/styles/theme/typography';
 
-const hideScrollbar = css`
-  scrollbar-width: none;
-  &::-webkit-scrollbar {
-    display: none;
-  }
-`;
-
-// 모바일에서 좌우 여백까지 가로 스크롤을 넓힌다
-const bleedScroller = css`
+// HorizontalScroller 안에서 한 줄로 늘어서는 카드 트랙. 스크롤·흐림은 바깥 래퍼가 맡는다
+const scrollTrack = css`
   display: flex;
-  overflow-x: auto;
-  scroll-snap-type: x mandatory;
-  ${hideScrollbar};
-
-  ${media.tablet} {
-    margin: 0 -20px;
-    padding: 0 20px;
-    scroll-padding: 0 20px;
-  }
+  width: max-content;
+  min-width: 100%;
 `;
 
 /* 한눈에 보기 */
@@ -222,7 +208,7 @@ export const FitTitle = styled.p`
   }
 `;
 
-export const FitList = styled.ul`
+export const FitList = styled.ul<{ $tone: 'good' | 'caution' }>`
   margin: 0;
   padding: 0;
   list-style: none;
@@ -232,11 +218,23 @@ export const FitList = styled.ul`
 
   li {
     display: flex;
-    align-items: flex-start;
-    gap: 8px;
+    align-items: baseline;
+    gap: 10px;
     ${setTypography(typography.paragraph.p3)};
     color: ${colors.gray[900]};
     word-break: keep-all;
+
+    /* 카드 색에 맞춘 작은 점으로 항목을 구분한다 */
+    &::before {
+      content: '';
+      flex-shrink: 0;
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      transform: translateY(-3px);
+      background-color: ${({ $tone }) =>
+        $tone === 'good' ? colors.accent[2][950] : colors.gray[600]};
+    }
 
     ${media.tablet} {
       ${setTypography(typography.paragraph.p5)};
@@ -251,7 +249,7 @@ export const YearScroller = styled.ol`
   padding: 0;
   list-style: none;
   gap: 8px;
-  ${bleedScroller};
+  ${scrollTrack};
 `;
 
 export const MonthCard = styled.li<{ $isUpcoming: boolean }>`
@@ -378,7 +376,7 @@ export const VoiceScroller = styled.ul`
   padding: 0;
   list-style: none;
   gap: 10px;
-  ${bleedScroller};
+  ${scrollTrack};
 `;
 
 export const VoiceCard = styled.li`
