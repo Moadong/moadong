@@ -14,14 +14,17 @@ import * as Styled from './ClubInsights.styles';
 const KEYWORD_PREVIEW_COUNT = 5;
 const WON_PER_MAN = 10000;
 
-const SELECTION_LABEL: Record<NonNullable<ClubFacts['selection']>, string> = {
+export const SELECTION_LABEL: Record<
+  NonNullable<ClubFacts['selection']>,
+  string
+> = {
   NONE: '면접 없이 바로',
   DOCUMENT: '서류 지원',
   INTERVIEW: '서류 + 면접',
   AUDITION: '오디션',
 };
 
-const formatFee = (amount: number) => {
+export const formatFee = (amount: number) => {
   if (amount === 0) return '무료';
   if (amount % WON_PER_MAN === 0) return `${amount / WON_PER_MAN}만원`;
   return `${amount.toLocaleString('ko-KR')}원`;

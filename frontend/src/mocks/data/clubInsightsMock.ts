@@ -66,7 +66,6 @@ export const clubInsightsMock: Record<string, ClubInsights> = {
       ],
       notices: [
         '지원서에 적은 전화번호로 회비 안내 문자가 가요',
-        '회비는 신입 남 2만원 · 여 1만원이에요',
         '장비가 없어도 공용 장비로 바로 참여할 수 있어요',
       ],
     },

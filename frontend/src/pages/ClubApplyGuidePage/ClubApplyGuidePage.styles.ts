@@ -1,31 +1,25 @@
-// 지원 안내 페이지(남은 시간 카드·일정 타임라인·확인할 점·질문 미리보기) 스타일
+// 지원 안내 페이지 스타일. 카드·배지 없이 글자 크기와 가는 선만으로 위계를 만든다
 import styled, { css } from 'styled-components';
 import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
-import { transitions } from '@/styles/theme/transitions';
 import { setTypography, typography } from '@/styles/theme/typography';
-import { RecruitmentStatus } from '@/types/club';
 import { TimelineState } from './applyGuideTimeline';
 
-const CARD_TONE: Record<RecruitmentStatus, { back: string; text: string }> = {
-  OPEN: { back: colors.accent[1][500], text: colors.accent[1][950] },
-  UPCOMING: { back: colors.accent[1][500], text: colors.accent[1][950] },
-  ALWAYS: { back: colors.accent[2][500], text: colors.accent[2][950] },
-  CLOSED: { back: colors.gray[100], text: colors.gray[700] },
-};
+const DATE_COLUMN = 112;
+const DATE_COLUMN_MOBILE = 92;
 
 export const Page = styled.main`
-  max-width: 640px;
+  max-width: 600px;
   margin: 0 auto;
-  padding: ${HEADER_HEIGHT.desktop + 32}px 20px 140px;
+  padding: ${HEADER_HEIGHT.desktop + 32}px 24px 160px;
   display: flex;
   flex-direction: column;
-  gap: 28px;
+  gap: 40px;
 
   ${media.tablet} {
-    padding: 12px 20px 120px;
-    gap: 24px;
+    padding: 12px 20px 130px;
+    gap: 36px;
   }
 `;
 
@@ -33,259 +27,207 @@ export const AppSpacer = styled.div`
   height: calc(87px + env(safe-area-inset-bottom));
 `;
 
-export const TopRow = styled.div`
-  display: flex;
+export const BackLink = styled.button`
+  align-self: flex-start;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
-`;
-
-export const BackButton = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 36px;
-  height: 36px;
-  margin-left: -8px;
-  padding: 0;
+  gap: 2px;
+  margin: 0 0 -24px -6px;
+  padding: 6px 6px 6px 0;
   border: none;
   background: none;
   cursor: pointer;
-  color: ${colors.gray[900]};
+  ${setTypography(typography.paragraph.p5)};
+  color: ${colors.gray[700]};
 
   svg {
     transform: rotate(90deg);
   }
-`;
 
-export const TopTitle = styled.h1`
-  ${setTypography(typography.title.title4)};
-  color: ${colors.base.black};
-
-  ${media.tablet} {
-    ${setTypography(typography.title.title5)};
+  &:hover {
+    color: ${colors.gray[950]};
   }
 `;
 
-export const CountdownCard = styled.section<{
-  $status: RecruitmentStatus;
-  $isUrgent: boolean;
-}>`
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  padding: 24px;
-  border-radius: 20px;
-  background-color: ${({ $status, $isUrgent }) =>
-    $isUrgent ? colors.primary[500] : CARD_TONE[$status].back};
-  color: ${({ $status, $isUrgent }) =>
-    $isUrgent ? colors.primary[900] : CARD_TONE[$status].text};
-
-  ${media.tablet} {
-    padding: 20px;
-    border-radius: 18px;
-  }
-`;
-
-export const CountdownHeadline = styled.p`
-  ${setTypography(typography.title.title2)};
-  word-break: keep-all;
-
-  ${media.tablet} {
-    ${setTypography(typography.title.title3)};
-  }
-`;
-
-export const CountdownSub = styled.p`
-  ${setTypography(typography.paragraph.p3)};
-  color: ${colors.gray[800]};
-
-  ${media.tablet} {
-    ${setTypography(typography.paragraph.p5)};
-  }
-`;
-
-export const FactRows = styled.dl`
+export const Hero = styled.header`
   display: flex;
   flex-direction: column;
   gap: 6px;
-  margin: 14px 0 0;
-  padding-top: 14px;
-  border-top: 1px solid rgba(0, 0, 0, 0.06);
+`;
 
-  &:empty {
-    display: none;
+export const Eyebrow = styled.p`
+  ${setTypography(typography.paragraph.p5)};
+  font-weight: 600;
+  color: ${colors.gray[600]};
+`;
+
+const HEADLINE_COLOR = {
+  default: colors.base.black,
+  urgent: colors.primary[900],
+  muted: colors.gray[700],
+} as const;
+
+export const Headline = styled.h1<{ $tone: keyof typeof HEADLINE_COLOR }>`
+  ${setTypography(typography.title.title2)};
+  letter-spacing: -0.02em;
+  color: ${({ $tone }) => HEADLINE_COLOR[$tone]};
+  word-break: keep-all;
+
+  ${media.tablet} {
+    ${setTypography(typography.etc.bold28)};
   }
+`;
 
-  div {
+export const SubLine = styled.p`
+  ${setTypography(typography.paragraph.p4)};
+  color: ${colors.gray[700]};
+`;
+
+export const FactList = styled.dl`
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  border-top: 1px solid ${colors.gray[950]};
+
+  > div {
     display: grid;
-    grid-template-columns: 64px 1fr;
-    gap: 8px;
-    ${setTypography(typography.paragraph.p5)};
-    word-break: keep-all;
+    grid-template-columns: ${DATE_COLUMN}px 1fr;
+    gap: 12px;
+    padding: 14px 0;
+    border-bottom: 1px solid ${colors.gray[300]};
+
+    ${media.tablet} {
+      grid-template-columns: ${DATE_COLUMN_MOBILE}px 1fr;
+      padding: 13px 0;
+    }
   }
 
   dt {
-    font-weight: 700;
-    color: ${colors.gray[700]};
+    ${setTypography(typography.paragraph.p5)};
+    color: ${colors.gray[600]};
   }
 
   dd {
     margin: 0;
+    ${setTypography(typography.paragraph.p3)};
     font-weight: 600;
     color: ${colors.gray[950]};
+    word-break: keep-all;
+
+    ${media.tablet} {
+      ${setTypography(typography.paragraph.p5)};
+      font-weight: 600;
+    }
   }
+`;
+
+export const ValueNote = styled.span`
+  display: block;
+  margin-top: 2px;
+  ${setTypography(typography.paragraph.p6)};
+  font-weight: 400;
+  color: ${colors.gray[600]};
 `;
 
 export const Section = styled.section`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 14px;
 `;
 
 export const SectionTitle = styled.h2`
-  ${setTypography(typography.title.title5)};
+  ${setTypography(typography.title.title6)};
   color: ${colors.base.black};
-
-  ${media.tablet} {
-    ${setTypography(typography.etc.bold18)};
-  }
 `;
 
-export const SectionHint = styled.p`
-  margin-top: -6px;
-  ${setTypography(typography.paragraph.p6)};
-  color: ${colors.gray[700]};
-`;
+/* 일정: 왼쪽 날짜, 오른쪽 할 일 */
 
-/* 타임라인 */
-
-export const Timeline = styled.ol`
+export const Schedule = styled.ol`
   margin: 0;
   padding: 0;
   list-style: none;
-  display: flex;
-  flex-direction: column;
+  border-top: 1px solid ${colors.gray[300]};
 `;
 
-export const TimelineItem = styled.li<{ $state: TimelineState }>`
-  position: relative;
+export const ScheduleRow = styled.li<{ $state: TimelineState }>`
   display: grid;
-  grid-template-columns: 20px 1fr;
+  grid-template-columns: ${DATE_COLUMN}px 1fr;
   gap: 12px;
-  padding-bottom: 20px;
-  opacity: ${({ $state }) => ($state === 'done' ? 0.55 : 1)};
-
-  &:not(:last-child)::after {
-    content: '';
-    position: absolute;
-    left: 9px;
-    top: 20px;
-    bottom: 0;
-    width: 2px;
-    border-radius: 1px;
-    background-color: ${colors.gray[300]};
-  }
-
-  &:last-child {
-    padding-bottom: 0;
-  }
-`;
-
-export const TimelineDot = styled.span<{ $state: TimelineState }>`
-  width: 12px;
-  height: 12px;
-  margin: 4px 0 0 4px;
-  border-radius: 50%;
-  ${({ $state }) =>
-    $state === 'now'
-      ? css`
-          background-color: ${colors.primary[900]};
-          box-shadow: 0 0 0 4px ${colors.primary[600]};
-        `
-      : css`
-          background-color: ${colors.base.white};
-          border: 2px solid
-            ${$state === 'done' ? colors.gray[500] : colors.gray[600]};
-        `}
-`;
-
-export const TimelineBody = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-`;
-
-export const TimelineHead = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 6px;
-`;
-
-export const TimelineLabel = styled.span`
-  ${setTypography(typography.paragraph.p2)};
-  color: ${colors.gray[950]};
+  padding: 14px 0;
+  border-bottom: 1px solid ${colors.gray[300]};
 
   ${media.tablet} {
-    ${setTypography(typography.paragraph.p5)};
-    font-weight: 700;
+    grid-template-columns: ${DATE_COLUMN_MOBILE}px 1fr;
   }
+
+  ${({ $state }) =>
+    $state === 'done' &&
+    css`
+      color: ${colors.gray[500]};
+
+      strong {
+        color: ${colors.gray[600]};
+      }
+    `}
+
+  ${({ $state }) =>
+    $state === 'now' &&
+    css`
+      > span:first-child {
+        color: ${colors.primary[900]};
+        font-weight: 700;
+      }
+    `}
 `;
 
-export const NowBadge = styled.span`
-  padding: 1px 7px;
-  border-radius: 999px;
-  background-color: ${colors.primary[900]};
-  color: ${colors.base.white};
-  ${setTypography(typography.button.button2)};
-`;
-
-export const TimelineMeta = styled.span`
+export const ScheduleWhen = styled.span`
   ${setTypography(typography.paragraph.p5)};
-  font-weight: 600;
-  color: ${colors.gray[800]};
-  word-break: keep-all;
-`;
-
-export const TimelineDescription = styled.span`
-  ${setTypography(typography.paragraph.p6)};
   color: ${colors.gray[700]};
   word-break: keep-all;
 `;
 
-/* 확인할 점 */
-
-export const NoticeList = styled.ul`
-  margin: 0;
-  padding: 16px 18px;
-  list-style: none;
+export const ScheduleWhat = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  border-radius: 16px;
-  background-color: ${colors.gray[100]};
+  gap: 2px;
+  word-break: keep-all;
+
+  strong {
+    ${setTypography(typography.paragraph.p3)};
+    font-weight: 600;
+    color: ${colors.gray[950]};
+
+    ${media.tablet} {
+      ${setTypography(typography.paragraph.p5)};
+      font-weight: 600;
+    }
+  }
+
+  span {
+    ${setTypography(typography.paragraph.p6)};
+    color: ${colors.gray[600]};
+  }
+`;
+
+/* 알아둘 점 */
+
+export const PlainList = styled.ul`
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border-top: 1px solid ${colors.gray[300]};
 
   li {
-    position: relative;
-    padding-left: 24px;
-    ${setTypography(typography.paragraph.p3)};
+    padding: 13px 0;
+    border-bottom: 1px solid ${colors.gray[300]};
+    ${setTypography(typography.paragraph.p4)};
+    line-height: 160%;
     color: ${colors.gray[900]};
     word-break: keep-all;
 
     ${media.tablet} {
-      ${setTypography(typography.paragraph.p5)};
-    }
-
-    /* 체크 표시 */
-    &::before {
-      content: '';
-      position: absolute;
-      left: 2px;
-      top: 4px;
-      width: 10px;
-      height: 6px;
-      border-left: 2px solid ${colors.primary[900]};
-      border-bottom: 2px solid ${colors.primary[900]};
-      transform: rotate(-45deg);
+      ${setTypography(typography.paragraph.p6)};
+      line-height: 160%;
     }
   }
 `;
@@ -296,69 +238,51 @@ export const QuestionList = styled.ol`
   margin: 0;
   padding: 0;
   list-style: none;
-  display: flex;
-  flex-direction: column;
   border-top: 1px solid ${colors.gray[300]};
 
   li {
-    display: flex;
-    align-items: baseline;
-    gap: 12px;
-    padding: 12px 2px;
+    display: grid;
+    grid-template-columns: 32px 1fr;
+    gap: 8px;
+    padding: 13px 0;
     border-bottom: 1px solid ${colors.gray[300]};
-    ${setTypography(typography.paragraph.p3)};
+    ${setTypography(typography.paragraph.p4)};
     color: ${colors.gray[900]};
     word-break: keep-all;
 
     ${media.tablet} {
-      ${setTypography(typography.paragraph.p5)};
+      ${setTypography(typography.paragraph.p6)};
     }
   }
 `;
 
-export const QuestionIndex = styled.span`
-  flex-shrink: 0;
-  width: 18px;
+export const QuestionNumber = styled.span`
   ${setTypography(typography.paragraph.p5)};
-  font-weight: 700;
   color: ${colors.gray[500]};
   font-variant-numeric: tabular-nums;
 `;
 
-export const Required = styled.span`
-  margin-left: 2px;
-  color: ${colors.primary[900]};
-`;
-
-/* 공고 원문 */
-
-export const OriginalToggle = styled.button`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 14px 16px;
-  border: 1px solid ${colors.gray[300]};
-  border-radius: 14px;
-  background-color: ${colors.base.white};
+export const TextButton = styled.button`
+  align-self: flex-start;
+  padding: 2px 0;
+  border: none;
+  background: none;
   cursor: pointer;
   ${setTypography(typography.paragraph.p5)};
   font-weight: 600;
-  color: ${colors.gray[800]};
-`;
+  color: ${colors.gray[700]};
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-color: ${colors.gray[400]};
 
-export const ToggleChevron = styled.span<{ $isOpen: boolean }>`
-  display: flex;
-  color: ${colors.gray[600]};
-  transform: rotate(${({ $isOpen }) => ($isOpen ? '180deg' : '0deg')});
-  transition: transform ${transitions.duration.normal}
-    ${transitions.easing.easeInOut};
+  &:hover {
+    color: ${colors.gray[950]};
+  }
 `;
 
 export const OriginalText = styled.div`
-  padding: 16px;
-  border-radius: 14px;
-  background-color: ${colors.gray[50]};
+  padding-left: 14px;
+  border-left: 2px solid ${colors.gray[300]};
   ${setTypography(typography.paragraph.p6r)};
   color: ${colors.gray[800]};
   white-space: pre-line;

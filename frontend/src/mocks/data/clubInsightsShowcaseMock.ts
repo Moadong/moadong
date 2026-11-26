@@ -206,10 +206,7 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         },
         { label: '결과 연락', date: '오디션 후 이틀 안에' },
       ],
-      notices: [
-        '떨어져도 다음 차수에 다시 지원할 수 있어요',
-        '입회비는 3만 5천원이에요',
-      ],
+      notices: ['떨어져도 다음 차수에 다시 지원할 수 있어요'],
     },
     memberVoices: [
       {
@@ -278,7 +275,6 @@ export const showcaseInsights: Record<string, ClubInsights> = {
         { label: '오픈워터 교육', date: '합격 후 4월부터' },
       ],
       notices: [
-        '가입비 4만원, 학기 회비 4만원이에요',
         '자격증이 없으면 취득 비용 50만원이 따로 들어요 (2~3회 분납 가능)',
         '수영을 못해도, 시력이 나빠도 괜찮아요',
       ],
@@ -344,7 +340,6 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       notices: [
         '지원서를 낸 뒤 회장 번호로 카톡이나 문자를 꼭 보내 주세요',
         '1·2학년을 먼저 뽑지만 3·4학년도 지원할 수 있어요',
-        '학기 회비는 2만원이에요',
       ],
     },
     memberVoices: [
@@ -400,10 +395,7 @@ export const showcaseInsights: Record<string, ClubInsights> = {
     ],
     recruitmentGuide: {
       schedule: [{ label: '첫 정기 모임', date: '매주 목 18:30' }],
-      notices: [
-        '궁금한 점은 오픈채팅이나 인스타그램 DM으로 물어보세요',
-        '학기 회비는 1만 5천원이에요',
-      ],
+      notices: ['궁금한 점은 오픈채팅이나 인스타그램 DM으로 물어보세요'],
     },
     memberVoices: [
       {
@@ -523,7 +515,6 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       ],
       notices: [
         '부경대 학부 재학생, 98년생 이하만 지원할 수 있어요',
-        '학기 회비는 2만 5천원이에요',
         '카메라가 없어도 괜찮아요',
       ],
     },
@@ -644,7 +635,6 @@ export const showcaseInsights: Record<string, ClubInsights> = {
       ],
       notices: [
         '네이버 폼을 성실히 작성해 주세요',
-        '신입 학기 회비는 1만 5천원이에요',
         '그림 실력은 전혀 상관없어요',
       ],
     },

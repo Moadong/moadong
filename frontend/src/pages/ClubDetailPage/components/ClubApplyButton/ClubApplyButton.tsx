@@ -19,9 +19,14 @@ import * as Styled from './ClubApplyButton.styles';
 interface ClubApplyButtonProps {
   /** 지원 흐름에 들어가기 전에 끼어들 단계. proceed를 부르면 원래 지원 흐름이 이어진다 */
   onBeforeApply?: (proceed: () => void) => void;
+  /** 모집 중일 때 버튼 문구. 기본은 '지원하기' (예: '네이버 폼으로 지원하기') */
+  label?: string;
 }
 
-const ClubApplyButton = ({ onBeforeApply }: ClubApplyButtonProps = {}) => {
+const ClubApplyButton = ({
+  onBeforeApply,
+  label = '지원하기',
+}: ClubApplyButtonProps = {}) => {
   const { clubId, clubName } = useParams<{
     clubId: string;
     clubName: string;
@@ -141,7 +146,7 @@ const ClubApplyButton = ({ onBeforeApply }: ClubApplyButtonProps = {}) => {
 
     return (
       <>
-        지원하기
+        {label}
         {!isAlwaysRecruiting && deadlineText && (
           <>
             <Styled.Separator />
