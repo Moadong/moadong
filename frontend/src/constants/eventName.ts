@@ -210,10 +210,6 @@ export const ADMIN_EVENT = {
   /** 상시모집 버튼 클릭 */
   ALWAYS_OPEN_RECRUITMENT_BUTTON_CLICKED:
     'Always Open Recruitment Button Clicked',
-  /** 모집 시작 날짜 변경 */
-  RECRUITMENT_START_CHANGED: 'Recruitment Start Changed',
-  /** 모집 종료 날짜 변경 */
-  RECRUITMENT_END_CHANGED: 'Recruitment End Changed',
   /** 소개글 미리보기/편집 전환 */
   MARKDOWN_PREVIEW_BUTTON_CLICKED: 'Markdown Preview Button Clicked',
 
