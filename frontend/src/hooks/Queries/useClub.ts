@@ -12,6 +12,7 @@ import {
   updateClubDetail,
 } from '@/apis/club';
 import { queryKeys } from '@/constants/queryKeys';
+import { applyShowcaseOverride } from '@/mocks/showcaseOverride';
 import {
   ClubCalendarEvent,
   ClubDescription,
@@ -37,13 +38,15 @@ export const useGetClubDetail = (
     staleTime: options?.staleTime ?? 60 * 1000,
     gcTime: options?.gcTime,
     enabled: !!clubParam && (options?.enabled ?? true),
-    select: (data) => ({
-      ...data,
-      logo: data.logo ? convertGoogleDriveUrl(data.logo) : '',
-      feeds: Array.isArray(data.feeds)
-        ? data.feeds.map(convertGoogleDriveUrl)
-        : [],
-    }),
+    // 시안 공유용: 두 동아리는 실제 서버 스냅샷·모집 중 상태로 덮어쓴다 (mocks/showcaseOverride)
+    select: (data) =>
+      applyShowcaseOverride({
+        ...data,
+        logo: data.logo ? convertGoogleDriveUrl(data.logo) : '',
+        feeds: Array.isArray(data.feeds)
+          ? data.feeds.map(convertGoogleDriveUrl)
+          : [],
+      }),
   });
 };
 

@@ -1,6 +1,7 @@
 // 동아리가 실제로 어떻게 지원을 받는지(모아동 지원서·외부 폼·여러 지원서·직접 연락)와 지원서 내용을 지원서 설정에서 읽어오는 훅
 import { useQuery } from '@tanstack/react-query';
 import { getApplication, getApplicationOptions } from '@/apis/application';
+import { getShowcaseApplyGuide } from '@/mocks/showcaseOverride';
 import { ApplicationFormData, ApplicationFormMode } from '@/types/application';
 
 export type ApplyMethod =
@@ -67,7 +68,9 @@ const fetchApplyGuide = async (clubId: string): Promise<ApplyGuideData> => {
 const useApplyGuide = (clubId?: string) =>
   useQuery({
     queryKey: ['club', 'applyGuide', clubId],
-    queryFn: () => fetchApplyGuide(clubId as string),
+    // 시안 공유용 두 동아리는 개발 서버에 지원서가 없어 실제 서버 기준 값을 쓴다
+    queryFn: () =>
+      getShowcaseApplyGuide(clubId) ?? fetchApplyGuide(clubId as string),
     enabled: !!clubId,
     staleTime: 5 * 60 * 1000,
   });
