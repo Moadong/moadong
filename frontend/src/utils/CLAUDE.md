@@ -26,7 +26,7 @@
 - **Kakao·Google OAuth**: 학생 로그인(`studentAuth.ts`, `constants/oauthClient.ts`). 카카오 인앱 브라우저 처리는 `useOpenAppFromKakao.ts`. 카카오 SDK(공유 등)는 쓰지 않는다
 - **Naver Map**: 동아리방 위치 지도 (네이버 클라우드 플랫폼)
 
-Mixpanel·Sentry·Clarity는 `initSDK.ts`의 함수로 초기화한다(Mixpanel·Clarity는 `index.tsx`, Sentry는 `instrument.ts`가 호출). Channel.io는 `initializeChannelService`가 정의만 돼 있고 어디서도 호출하지 않는다.
+Mixpanel·Sentry·Clarity는 `initSDK.ts`의 함수로 초기화한다(Mixpanel·Clarity는 `index.tsx`, Sentry는 `instrument.ts`가 호출).
 Sentry만 `src/instrument.ts`를 거쳐 `index.tsx`의 첫 import에서 init한다. `AppRoutes`의 `Sentry.wrapUseRoutesV7`는 init 전에 평가되면 경고 없이 원래 `useRoutes`를 돌려줘서 트랜잭션 이름이 라우트 패턴이 아닌 URL로 남기 때문이다. 연동에 넘기는 `useLocation`은 pathname을 디코딩한 버전이고, `matchRoutes`는 그 location의 원본으로 매칭하는 어댑터다(한글·`%XX`가 든 동아리명 URL 대응, 이유는 `sentryRouting.ts` 주석, 계약은 `sentryRouting.test.ts`). 모든 Sentry 이벤트에는 `webview` 태그가 붙는다. Sentry `environment`는 빌드 MODE가 아니라 접속 도메인으로 정한다(`www.moadong.com`=production, localhost=development, 그 외 Vercel 프리뷰 등=preview). 성능 트랜잭션은 전량 수집한다(`tracesSampleRate: 1.0`, 근거는 `initSDK.ts` 주석).
 슈퍼 속성 등록은 테스트할 수 있게 `registerMixpanelSuperProperties.ts`로 분리돼 있다(`initSDK.ts`는 `import.meta.env` 때문에 Jest로 테스트하지 못함).
 Mixpanel Super Property는 `initializeMixpanel()`에서 `mixpanel.register()`로 1회 등록한다 (`$os_version`, `device_locale`, `is_webview`). `is_webview`는 웹·앱 웹뷰를 구분하는 유일한 값이다(메인 `page_name`을 나누지 않음).

@@ -39,7 +39,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "@channel.io/channel-web-sdk-loader": "^2.0.0",
     "@microsoft/clarity": "^1.0.2",
     "@sentry/react": "^9.18.0",
     "@tanstack/query-async-storage-persister": "^5.101.2",
