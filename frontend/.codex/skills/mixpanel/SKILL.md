@@ -46,21 +46,23 @@ mcp-cli call claude_ai_mixpanel/<tool-name> '{...}'
 
 ### 주요 이벤트
 
-> ⚠️ **2026-09-29 이벤트명·속성 키 변경.** 배포 이후 데이터는 새 이름으로 쌓인다(예: `MainPage Visited` → `Page Viewed` + `page_name: 'main'`, `ClubCard Clicked` → `Club Card Clicked`, `clubName` → `club_name`). 아래 예시는 옛 이름 기준이므로, 기간이 배포일을 걸치면 `frontend/docs/features/analytics/mixpanel-event-rename-map.md`로 새 이름을 확인해 함께 조회한다.
+> ⚠️ **아래 예시는 새 이벤트명·속성 키 기준이다.** 새 이름은 2026-10-05부터 쌓였다(옛 `ClubDetailPage Duration`은 2026-10-05가 마지막, `Page Left`는 2026-10-05가 처음). 그 전 기간은 옛 이름(`MainPage Visited`, `ClubDetailPage Duration`, 속성 `clubName` 등)으로 조회하고, 기간이 그날을 걸치면 두 이름을 함께 조회한다. 대응표는 `frontend/docs/features/analytics/mixpanel-event-rename-map.md`. `Club Card Clicked`는 옛 이름이 Lexicon에서 합쳐져 있어 과거 데이터도 새 이름으로 나온다.
+>
+> 페이지 방문·체류는 `Page Viewed`·`Page Left` 한 쌍이고 페이지는 `page_name`으로 구분한다. `page_name` 필터를 빼면 모든 페이지가 섞인다.
 
 **공통 사용자 플로우** (모든 동아리):
 
-- `MainPage Visited` - 메인 페이지 방문
-- `ClubCard Clicked` - 동아리 카드 클릭
-- `ClubDetailPage Visited` - 상세 페이지 방문
-- `ClubDetailPage Duration` - 상세 페이지 체류시간
+- `Page Viewed` (`page_name: main`) - 메인 페이지 방문
+- `Club Card Clicked` - 동아리 카드 클릭
+- `Page Viewed` (`page_name: club_detail`) - 상세 페이지 방문
+- `Page Left` (`page_name: club_detail`) - 상세 페이지 체류시간
 - `Club Apply Button Clicked` - 지원하기 버튼 클릭
 
 **케이스 A: 내부 지원서 사용 동아리** (일부):
 
 - `Club Apply Button Clicked` 이후:
-  - → `ApplicationFormPage Visited` - 지원서 페이지 방문
-  - → `ApplicationFormPage Duration` - 지원서 페이지 체류시간
+  - → `Page Viewed` (`page_name: application_form`) - 지원서 페이지 방문
+  - → `Page Left` (`page_name: application_form`) - 지원서 페이지 체류시간
   - → `Application Form Submitted` - 지원서 제출
 
 **케이스 B: 외부 폼 사용 동아리** (대부분):
@@ -77,17 +79,18 @@ mcp-cli call claude_ai_mixpanel/<tool-name> '{...}'
 
 **관리자 플로우**:
 
-- `로그인페이지 Visited` - 관리자 로그인 페이지
-- `로그인 버튼클릭` - 로그인 시도
-- `사이드바 탭 클릭` - 관리자 사이드바 탭 이동
-- `동아리 기본 정보 수정 버튼클릭` - 기본 정보 수정
-- `동아리 모집 정보 수정 버튼클릭` - 모집 정보 수정
+- `Page Viewed` (`page_name: admin_login`) - 관리자 로그인 페이지
+- `Login Button Clicked` - 로그인 시도
+- `Admin Tab Clicked` - 관리자 사이드바 탭 이동
+- `Club Update Button Clicked` - 기본 정보·소개 수정 (`section: info | intro`)
+- `Recruitment Update Button Clicked` - 모집 정보 수정
 
 ### 주요 프로퍼티
 
 **이벤트 프로퍼티**:
 
-- `clubName` - 동아리명 (string)
+- `page_name` - 페이지 구분 (string, `Page Viewed`·`Page Left`)
+- `club_name` - 동아리명 (string)
 - `club_id` - 동아리 ID (number/string)
 - `duration_seconds` - 체류시간 (number, seconds)
 - `url` - 페이지 URL (string)
@@ -101,7 +104,7 @@ mcp-cli call claude_ai_mixpanel/<tool-name> '{...}'
 
 **분석 팁**:
 
-- 외부 폼 사용 동아리를 제외하려면 `ApplicationFormPage Visited` 이벤트가 있는 동아리만 필터링
+- 외부 폼 사용 동아리를 제외하려면 `Page Viewed`(`page_name: application_form`) 이벤트가 있는 동아리만 필터링
 - 또는 특정 동아리 리스트로 필터링 (내부 지원서 사용 동아리 화이트리스트)
 
 ---
@@ -151,11 +154,11 @@ mcp-cli call claude_ai_mixpanel/Get-Events '{"project_id": 3611536, "query": "de
 
 ```bash
 # 특정 이벤트의 프로퍼티 확인
-mcp-cli info claude_ai_mixpanel/Get-Property-Names
-mcp-cli call claude_ai_mixpanel/Get-Property-Names '{
+mcp-cli info claude_ai_mixpanel/List-Properties
+mcp-cli call claude_ai_mixpanel/List-Properties '{
   "project_id": 3611536,
   "resource_type": "Event",
-  "event": "ClubDetailPage Duration"
+  "events": ["Page Left"]
 }'
 ```
 
@@ -202,19 +205,27 @@ mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
     },
     "metrics": [
       {
-        "eventName": "ClubDetailPage Duration",
+        "eventName": "Page Left",
         "measurement": {
           "type": "aggregate-property",
           "math": "median",
           "propertyName": "duration_seconds"
-        }
+        },
+        "filters": [
+          {
+            "type": "string",
+            "propertyName": "page_name",
+            "operator": "equals",
+            "value": "club_detail"
+          }
+        ]
       }
     ],
     "breakdowns": [
       {
         "metric": {
           "type": "property",
-          "propertyName": "clubName",
+          "propertyName": "club_name",
           "propertyType": "string",
           "resource": "event"
         }
@@ -244,12 +255,20 @@ mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
     },
     "metrics": [
       {
-        "eventName": "ClubDetailPage Duration",
+        "eventName": "Page Left",
         "measurement": {
           "type": "aggregate-property",
           "math": "median",
           "propertyName": "duration_seconds"
-        }
+        },
+        "filters": [
+          {
+            "type": "string",
+            "propertyName": "page_name",
+            "operator": "equals",
+            "value": "club_detail"
+          }
+        ]
       }
     ],
     "breakdowns": [
@@ -335,7 +354,7 @@ EOF
 ### 패턴 5: 내부 vs 외부 폼 동아리 비교
 
 ```bash
-# 동아리별 ApplicationFormPage Visited 발생 여부로 내부/외부 구분
+# 동아리별 지원서 페이지 방문(Page Viewed, page_name: application_form) 발생 여부로 내부/외부 구분
 mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
 {
   "project_id": 3611536,
@@ -358,18 +377,26 @@ mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
         }
       },
       {
-        "eventName": "ApplicationFormPage Visited",
+        "eventName": "Page Viewed",
         "measurement": {
           "type": "basic",
           "math": "total"
-        }
+        },
+        "filters": [
+          {
+            "type": "string",
+            "propertyName": "page_name",
+            "operator": "equals",
+            "value": "application_form"
+          }
+        ]
       }
     ],
     "breakdowns": [
       {
         "metric": {
           "type": "property",
-          "propertyName": "clubName",
+          "propertyName": "club_name",
           "propertyType": "string",
           "resource": "event"
         }
@@ -379,7 +406,7 @@ mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
   }
 }
 EOF
-# ApplicationFormPage Visited가 0인 동아리 = 외부 폼 사용
+# 지원서 페이지 방문이 0인 동아리 = 외부 폼 사용
 ```
 
 ---
@@ -570,7 +597,7 @@ content: [템플릿 기반으로 작성한 마크다운 내용]
 사용자: /mixpanel 내부 지원서 사용 동아리의 지원 완료율
 ```
 
-→ `ApplicationFormPage Visited` → `Application Form Submitted` 전환율
+→ `Page Viewed`(`page_name: application_form`) → `Application Form Submitted` 전환율
 → ⚠️ 외부 폼 동아리는 제외됨
 
 ### 시나리오 6: 전체 지원 의도 분석 (케이스 A+B)
@@ -579,7 +606,7 @@ content: [템플릿 기반으로 작성한 마크다운 내용]
 사용자: /mixpanel 지원하기 버튼 클릭률 분석
 ```
 
-→ `ClubDetailPage Visited` → `Club Apply Button Clicked` 전환율
+→ `Page Viewed`(`page_name: club_detail`) → `Club Apply Button Clicked` 전환율
 → ✅ 내부/외부 폼 모두 포함하는 실제 지원 의도 지표
 
 ---
