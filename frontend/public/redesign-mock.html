@@ -116,8 +116,10 @@
   .row .tx { flex: 1; min-width: 0; }
   .row .tx b { display: block; font-size: 15px; font-weight: 600; line-height: 1.35; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
   .row .tx span { display: block; font-size: 12px; line-height: 1.4; color: var(--g800); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .md .bell { flex: none; height: 32px; padding: 0 10px 0 8px; border-radius: 16px; border: 1px solid var(--g400); display: inline-flex; align-items: center; gap: 4px; font-size: 12px; font-weight: 600; color: var(--g800); }
-  .md .bell[aria-pressed="true"] { background: #FFECE5; border-color: #FFDED2; color: var(--g950); }
+  .md .bell { flex: none; width: 40px; height: 40px; border-radius: 50%; display: grid; place-items: center; color: var(--g800); }
+  .bell svg { width: 20px; height: 20px; }
+  @media (hover: hover) { .md .bell:hover { background: var(--g100); } }
+  .md .bell[aria-pressed="true"] { background: #FFECE5; }
   .bell[aria-pressed="true"] svg { color: var(--p900); }
   .grp { display: flex; align-items: center; gap: 6px; margin-top: 18px; font-size: 13px; font-weight: 700; color: var(--g950); }
   .grp i { width: 8px; height: 8px; border-radius: 50%; }
@@ -364,7 +366,7 @@ function row(c) {
   const on = subs.has(c.name);
   return `<div class="row"><div class="lg" style="background-image:url(&quot;${logoOf(c)}&quot;)"></div>
     <div class="tx"><b>${esc(c.name)}</b><span>${esc(intro)}</span><span>${esc(lastRecruit(c))}</span></div>
-    <button class="bell" data-sub="${esc(c.name)}" aria-pressed="${on}">${BELL}${on ? '알림 중' : '알림 받기'}</button></div>`;
+    <button class="bell" data-sub="${esc(c.name)}" aria-pressed="${on}" aria-label="${esc(c.name)} 모집 알림 ${on ? '끄기' : '받기'}">${BELL}</button></div>`;
 }
 function parts(desktop) {
   const all = cat === 'all' ? DATA : DATA.filter((c) => c.category === cat);
@@ -385,7 +387,7 @@ function parts(desktop) {
       ? `<div class="bn"><img src="${A.bannerD}" alt="운영 배너"><span class="dots"><i class="on"></i><i></i><i></i></span></div>`
       : `<div class="bn"><img src="${A.bannerM}" alt="운영 배너"><span class="pg">1 / 4</span></div>`,
     closed: `<section class="sec s-closed"><h2>모집이 끝난 곳<small>${closed.length}</small></h2>
-      <p class="sub">알림을 받아 두면 다음 모집이 열릴 때 앱으로 알려 드려요.</p>
+      <p class="sub">종을 눌러 두면 다음 모집이 열릴 때 앱으로 알려 드려요.</p>
       <div class="list">${closed.map((c, i) => (cat === 'all' && c.category !== closed[i - 1]?.category ? `<h3 class="grp"><i style="background:${DOT[c.category] || '#C5C5C5'}"></i>${esc(c.category)}<small>${closed.filter((x) => x.category === c.category).length}</small></h3>` : '') + row(c)).join('')}</div></section>`,
   };
 }
