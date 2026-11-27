@@ -101,4 +101,23 @@ describe('ProfileSetupPage — 에러 상태', () => {
 
     expect(screen.getByText('프로필 설정')).not.toBeNull();
   });
+
+  it('데스크탑 에러 화면에 Header가 표시된다', () => {
+    mockedUseDevice.mockReturnValue({
+      isMobile: false,
+      isTablet: false,
+      isDesktop: true,
+      isLaptop: false,
+    });
+    mockedUseStudentProfile.mockReturnValue({
+      data: undefined,
+      isLoading: false,
+      isError: true,
+      refetch: jest.fn(),
+    });
+
+    renderPage();
+
+    expect(screen.getByTestId('header')).not.toBeNull();
+  });
 });

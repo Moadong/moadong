@@ -12,16 +12,9 @@ jest.mock('@/apis/studentProfile', () => ({
 
 const mockedUpdateStudentProfile = updateStudentProfile as jest.Mock;
 
-const wrapper = ({ children }: { children: React.ReactNode }) => {
-  const queryClient = new QueryClient({
-    defaultOptions: { mutations: { retry: false } },
-  });
-  return React.createElement(
-    QueryClientProvider,
-    { client: queryClient },
-    children,
-  );
-};
+const createWrapper = (queryClient: QueryClient) =>
+  ({ children }: { children: React.ReactNode }) =>
+    React.createElement(QueryClientProvider, { client: queryClient }, children);
 
 describe('useUpdateStudentProfile', () => {
   beforeEach(() => {
@@ -36,15 +29,8 @@ describe('useUpdateStudentProfile', () => {
     });
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
-    const customWrapper = ({ children }: { children: React.ReactNode }) =>
-      React.createElement(
-        QueryClientProvider,
-        { client: queryClient },
-        children,
-      );
-
     const { result } = renderHook(() => useUpdateStudentProfile(), {
-      wrapper: customWrapper,
+      wrapper: createWrapper(queryClient),
     });
 
     result.current.mutate('테스트닉네임');
@@ -64,15 +50,8 @@ describe('useUpdateStudentProfile', () => {
     });
     const invalidateSpy = jest.spyOn(queryClient, 'invalidateQueries');
 
-    const customWrapper = ({ children }: { children: React.ReactNode }) =>
-      React.createElement(
-        QueryClientProvider,
-        { client: queryClient },
-        children,
-      );
-
     const { result } = renderHook(() => useUpdateStudentProfile(), {
-      wrapper: customWrapper,
+      wrapper: createWrapper(queryClient),
     });
 
     result.current.mutate('테스트닉네임');
