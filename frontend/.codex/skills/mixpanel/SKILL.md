@@ -26,6 +26,8 @@ Mixpanel MCP를 사용하여 사용자 행동 데이터를 분석하고 인사�
 
 Mixpanel MCP 도구를 직접 호출합니다. 도구 이름은 `mcp__claude_ai_mixpanel__<도구명>` 형태입니다(예: `mcp__claude_ai_mixpanel__Run-Query`). claude.ai 커넥터로 연결했을 때의 이름이고, 도구가 아직 로드되지 않았으면 ToolSearch로 먼저 불러옵니다. 아래에서는 `<도구명>`만 적습니다.
 
+서버를 다른 이름으로 연결한 환경(Codex 등)에서는 접두사가 달라집니다. 그 세션에 보이는 Mixpanel MCP 도구 가운데 같은 일을 하는 것을 쓰고, Mixpanel MCP가 연결돼 있지 않으면 진행하지 말고 사용자에게 연결을 요청합니다.
+
 1. 대화에서 처음 한 번 `Get-Business-Context`를 호출합니다(`project_id: 3611536`). 다른 Mixpanel 도구가 이 호출을 먼저 요구합니다.
 2. 필터·분해·수식이 들어가는 쿼리는 `Get-Query-Schema`로 스키마를 확인한 뒤 `Run-Query`를 호출합니다.
 
