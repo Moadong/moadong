@@ -1,5 +1,5 @@
 import styled from 'styled-components';
-import OutlinePillButton from '@/pages/AdminPage/components/OutlinePillButton';
+import OutlinePillButton from '@/components/common/OutlinePillButton/OutlinePillButton';
 import { colors } from '@/styles/theme/colors';
 
 export const BannerArea = styled.div<{ $bgColor?: string }>`
