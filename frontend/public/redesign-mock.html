@@ -23,14 +23,6 @@
   .cap b { color: var(--foreground, #111); font-weight: 600; }
   .cap button { height: 24px; padding: 0 10px; }
   .fit { position: relative; flex: none; }
-  .notes { flex: 0 1 380px; min-width: 240px; align-self: stretch; overflow: auto; font-size: 13px; line-height: 1.55; }
-  .notes h1 { font-size: 17px; font-weight: 700; margin-bottom: 4px; }
-  .notes .lead { color: var(--muted-foreground, #666); margin-bottom: 14px; }
-  .notes h2 { font-size: 13px; font-weight: 700; margin: 14px 0 2px; }
-  .notes p { color: var(--foreground, #222); }
-  .notes .fact { margin-top: 14px; padding: 10px 12px; border: 1px solid var(--border, #ddd); border-radius: 8px; font-size: 12px; color: var(--muted-foreground, #555); }
-  .notes .fact b { color: var(--foreground, #111); }
-  body[data-view="m"] .only-d, body[data-view="d"] .only-m { display: none; }
 
   /* ── 모아동 화면 공통: 토큰은 서비스 것을 그대로 쓴다 ── */
   .md {
@@ -229,7 +221,7 @@
   .hint { display: none; }
   @media (max-width: 700px) {
     .stage { height: 100dvh; padding: 0; gap: 0; }
-    .bar, .notes, .cap, .view[data-view="d"], .view[data-view="m"] > .col:first-child { display: none !important; }
+    .bar, .cap, .view[data-view="d"], .view[data-view="m"] > .col:first-child { display: none !important; }
     .view[data-view="m"] { display: block !important; }
     .fit { width: 100vw !important; height: 100dvh !important; }
     .phone { width: 100vw; height: 100dvh; border: 0; border-radius: 0; transform: none !important; }
@@ -290,23 +282,6 @@
           </div>
         </div>
       </div>
-    </div>
-    <div class="notes">
-      <h1>메인 리디자인 제안</h1>
-      <p class="lead">신입생이 첫 화면에서 "각 동아리가 뭘 하는 곳인지"와 "여기서 내가 할 수 있는 일"을 알게 하는 안. 프로덕션 데이터 69곳으로 그렸습니다.</p>
-      <h2>위쪽은 지금 앱과 같다</h2>
-      <p>배너, 분과 줄, "지금 모집 중 18곳" 제목 한 줄입니다. 배너가 이미 큰 문장을 말하고 있어서, 그 아래에 문장을 하나 더 두지 않았습니다. 달라지는 것은 카드와 끝난 곳 구간입니다.</p>
-      <h2>할 수 있는 일은 카드가 말한다</h2>
-      <p>모집 중인 카드에는 지원하기, 끝난 곳에는 알림 받기 버튼이 붙습니다. 기능을 설명하는 문장이나 상자는 위쪽에 두지 않았습니다.</p>
-      <h2>카드 위쪽 절반은 "뭐 하는 곳"</h2>
-      <p>모든 카드가 같은 구조입니다. 위에는 활동 사진(없으면 분과 색 면에 로고), 아래에는 활동 목록을 둡니다. 위의 "활동 글" 버튼으로 두 가지를 비교할 수 있습니다. <b>세 줄 요약</b>은 동아리가 쓴 글이 아니라 활동 설명 원문을 줄여 본 예시이고, <b>원문에서 추출</b>은 원문을 규칙으로 잘라 온 것입니다.</p>
-      <h2>끝난 곳에는 다음 행동을 준다</h2>
-      <p>분과별로 묶고, 지난 모집 시기와 알림 받기 버튼을 둡니다. <span class="only-m">웹에서는 앱 설치로 이어집니다.</span><span class="only-d">데스크톱에서는 구독할 수 없어서 앱 설치 QR 안내로 이어집니다.</span></p>
-      <div class="only-d">
-        <h2>데스크톱에서 달라지는 것</h2>
-        <p>분과 줄은 지금 앱처럼 폭에 맞춰 펼칩니다. 카드는 3열이고 높이가 모두 같습니다. 끝난 곳도 3열 행입니다.</p>
-      </div>
-      <div class="fact" id="fact"></div>
     </div>
   </div>
 </div>
@@ -448,8 +423,6 @@ $('hintClose').onclick = () => { $('hint').hidden = true; };
 $('sheetOk').onclick = () => { if (pending) subs.add(pending); closeAll(); render(); };
 
 $('beforeM').src = A.before; $('beforeD').src = A.beforeD;
-const openN = DATA.filter(isOpen).length, withPhoto = DATA.filter(isOpen).filter((c) => A.photos[c.name]).length;
-$('fact').innerHTML = `<b>데이터</b> 활동 설명을 써 둔 곳 ${DATA.filter((c) => (c.activity || '').trim()).length}/${DATA.length}, 모집 중 ${openN}곳 가운데 활동 사진이 있는 곳 ${withPhoto}곳. 지금 목록 API는 둘 다 내려주지 않아 백엔드 응답에 필드를 더해야 합니다.`;
 render();
 
 // 화면 틀을 남는 자리에 맞춰 줄인다
@@ -458,7 +431,7 @@ function fit() {
   const H = rowx.clientHeight - 36;
   const fits = [...view.querySelectorAll('.fit')];
   const need = fits.reduce((s, f) => s + +f.dataset.w, 0) + 28 * (fits.length - 1);
-  const W = rowx.clientWidth - 240 - 28;
+  const W = rowx.clientWidth;
   const s = Math.min(1, H / +fits[0].dataset.h, W / need);
   for (const f of fits) { f.style.width = f.dataset.w * s + 'px'; f.style.height = f.dataset.h * s + 'px'; f.firstElementChild.style.transform = `scale(${s})`; }
 }
