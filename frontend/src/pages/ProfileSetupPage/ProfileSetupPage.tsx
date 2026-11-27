@@ -56,18 +56,20 @@ const ProfileSetupPage = () => {
     }
   };
 
+  const topBar = isMobileOrTablet ? (
+    <WebviewTopBar
+      title='프로필 설정'
+      onBack={() => navigate('/', { replace: true })}
+    />
+  ) : (
+    <Header />
+  );
+
   if (isLoading) return <Spinner />;
   if (isError)
     return (
       <>
-        {isMobileOrTablet ? (
-          <WebviewTopBar
-            title='프로필 설정'
-            onBack={() => navigate('/', { replace: true })}
-          />
-        ) : (
-          <Header />
-        )}
+        {topBar}
         <Styled.MobileContainer>
           <Styled.DescriptionSection>
             <Styled.PageSubtitle>
@@ -124,10 +126,7 @@ const ProfileSetupPage = () => {
     <>
       {isMobileOrTablet ? (
         <>
-          <WebviewTopBar
-            title='프로필 설정'
-            onBack={() => navigate('/', { replace: true })}
-          />
+          {topBar}
           <Styled.MobileContainer>
             <Styled.DescriptionSection>
               <Styled.PageTitle>
@@ -190,7 +189,7 @@ const ProfileSetupPage = () => {
         </>
       ) : (
         <>
-          <Header />
+          {topBar}
           <Styled.DesktopWrapper>
             <Styled.DesktopCard>
               <Styled.DesktopCardHeader>
