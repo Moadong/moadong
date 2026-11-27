@@ -24,15 +24,12 @@ Mixpanel MCP를 사용하여 사용자 행동 데이터를 분석하고 인사�
 
 ## 필수 사전 작업 ⚠️
 
-**CRITICAL**: MCP 툴 사용 전 반드시 스키마를 확인해야 합니다.
+Mixpanel MCP 도구를 직접 호출합니다. 도구 이름은 `mcp__claude_ai_mixpanel__<도구명>` 형태입니다(예: `mcp__claude_ai_mixpanel__Run-Query`). claude.ai 커넥터로 연결했을 때의 이름이고, 도구가 아직 로드되지 않았으면 ToolSearch로 먼저 불러옵니다. 아래에서는 `<도구명>`만 적습니다.
 
-```bash
-# 1. 항상 먼저 스키마 확인 (MANDATORY)
-mcp-cli info claude_ai_mixpanel/<tool-name>
+서버를 다른 이름으로 연결한 환경(Codex 등)에서는 접두사가 달라집니다. 그 세션에 보이는 Mixpanel MCP 도구 가운데 같은 일을 하는 것을 쓰고, Mixpanel MCP가 연결돼 있지 않으면 진행하지 말고 사용자에게 연결을 요청합니다.
 
-# 2. 그 다음에 호출
-mcp-cli call claude_ai_mixpanel/<tool-name> '{...}'
-```
+1. 대화에서 처음 한 번 `Get-Business-Context`를 호출합니다(`project_id: 3611536`). 다른 Mixpanel 도구가 이 호출을 먼저 요구합니다.
+2. 필터·분해·수식이 들어가는 쿼리는 `Get-Query-Schema`로 스키마를 확인한 뒤 `Run-Query`를 호출합니다.
 
 ---
 
@@ -49,6 +46,8 @@ mcp-cli call claude_ai_mixpanel/<tool-name> '{...}'
 > ⚠️ **아래 예시는 새 이벤트명·속성 키 기준이다.** 새 이름은 2026-10-05부터 쌓였다(옛 `ClubDetailPage Duration`은 2026-10-05가 마지막, `Page Left`는 2026-10-05가 처음). 그 전 기간은 옛 이름(`MainPage Visited`, `ClubDetailPage Duration`, 속성 `clubName` 등)으로 조회하고, 기간이 그날을 걸치면 두 이름을 함께 조회한다. 대응표는 `frontend/docs/features/analytics/mixpanel-event-rename-map.md`. `Club Card Clicked`는 옛 이름이 Lexicon에서 합쳐져 있어 과거 데이터도 새 이름으로 나온다.
 >
 > 페이지 방문·체류는 `Page Viewed`·`Page Left` 한 쌍이고 페이지는 `page_name`으로 구분한다. `page_name` 필터를 빼면 모든 페이지가 섞인다.
+>
+> `page_name: main`은 웹과 앱 웹뷰를 합친 값이다. 옛 `MainPage Visited`는 웹만 셌으므로(앱은 `WebviewMainPage Visited`) 2026-10-05 이전의 메인 수치와 바로 비교하지 않는다. 웹만 보려면 `is_webview=false` 필터를 붙인다.
 
 **공통 사용자 플로우** (모든 동아리):
 
@@ -144,41 +143,37 @@ mcp-cli call claude_ai_mixpanel/<tool-name> '{...}'
 
 ### 2-1. 이벤트 검색
 
-```bash
-# 키워드로 이벤트 검색
-mcp-cli info claude_ai_mixpanel/Get-Events
-mcp-cli call claude_ai_mixpanel/Get-Events '{"project_id": 3611536, "query": "detail"}'
+키워드로 이벤트를 찾습니다. `Get-Events` 입력:
+
+```json
+{ "project_id": 3611536, "query": "detail" }
 ```
 
 ### 2-2. 이벤트 프로퍼티 확인
 
-```bash
-# 특정 이벤트의 프로퍼티 확인
-mcp-cli info claude_ai_mixpanel/List-Properties
-mcp-cli call claude_ai_mixpanel/List-Properties '{
+특정 이벤트의 프로퍼티를 확인합니다. `List-Properties` 입력:
+
+```json
+{
   "project_id": 3611536,
   "resource_type": "Event",
   "events": ["Page Left"]
-}'
+}
 ```
 
 ---
 
 ## Step 3: 쿼리 스키마 확인 (MANDATORY)
 
-분석 타입에 맞는 스키마를 확인합니다:
+분석 타입에 맞는 스키마를 확인합니다. `Get-Query-Schema` 입력의 `report_type`을 바꿔 호출합니다:
 
-```bash
-# Insights 쿼리 스키마 (가장 자주 사용)
-mcp-cli info claude_ai_mixpanel/Get-Query-Schema
-mcp-cli call claude_ai_mixpanel/Get-Query-Schema '{"report_type": "insights"}'
-
-# Funnel 쿼리 스키마
-mcp-cli call claude_ai_mixpanel/Get-Query-Schema '{"report_type": "funnels"}'
-
-# Retention 쿼리 스키마
-mcp-cli call claude_ai_mixpanel/Get-Query-Schema '{"report_type": "retention"}'
+```json
+{ "report_type": "insights" }
 ```
+
+- `insights` - 가장 자주 사용
+- `funnels` - 퍼널
+- `retention` - 리텐션
 
 **주의**: 스키마가 크면 파일로 저장되므로 Read 툴로 읽어야 합니다.
 
@@ -188,9 +183,9 @@ mcp-cli call claude_ai_mixpanel/Get-Query-Schema '{"report_type": "retention"}'
 
 ### 패턴 1: 체류시간 TOP N 분석
 
-```bash
-mcp-cli info claude_ai_mixpanel/Run-Query
-mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
+`Run-Query` 입력:
+
+```json
 {
   "project_id": 3611536,
   "report_type": "insights",
@@ -234,13 +229,13 @@ mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
     "chartType": "table"
   }
 }
-EOF
 ```
 
 ### 패턴 2: 유저 코호트 비교
 
-```bash
-mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
+`Run-Query` 입력:
+
+```json
 {
   "project_id": 3611536,
   "report_type": "insights",
@@ -282,14 +277,15 @@ mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
     "chartType": "bar"
   }
 }
-EOF
 ```
 
 ### 패턴 3: 기간별 트렌드 (케이스 A: 내부 지원서만)
 
-```bash
-# ⚠️ 내부 지원서 사용 동아리만 추적 가능
-mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
+⚠️ 내부 지원서 사용 동아리만 추적 가능
+
+`Run-Query` 입력:
+
+```json
 {
   "project_id": 3611536,
   "report_type": "insights",
@@ -315,14 +311,15 @@ mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
     "unit": "day"
   }
 }
-EOF
 ```
 
 ### 패턴 4: 전체 지원 의도 추이 (케이스 A+B 모두)
 
-```bash
-# ✅ 내부/외부 폼 모두 포함한 실제 지원 의도
-mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
+✅ 내부/외부 폼 모두 포함한 실제 지원 의도
+
+`Run-Query` 입력:
+
+```json
 {
   "project_id": 3611536,
   "report_type": "insights",
@@ -348,14 +345,15 @@ mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
     "unit": "day"
   }
 }
-EOF
 ```
 
 ### 패턴 5: 내부 vs 외부 폼 동아리 비교
 
-```bash
-# 동아리별 지원서 페이지 방문(Page Viewed, page_name: application_form) 발생 여부로 내부/외부 구분
-mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
+동아리별 지원서 페이지 방문(Page Viewed, page_name: application_form) 발생 여부로 내부/외부 구분
+
+`Run-Query` 입력:
+
+```json
 {
   "project_id": 3611536,
   "report_type": "insights",
@@ -405,9 +403,9 @@ mcp-cli call claude_ai_mixpanel/Run-Query - <<'EOF'
     "chartType": "table"
   }
 }
-EOF
-# 지원서 페이지 방문이 0인 동아리 = 외부 폼 사용
 ```
+
+지원서 페이지 방문이 0인 동아리 = 외부 폼 사용
 
 ---
 
@@ -615,7 +613,7 @@ content: [템플릿 기반으로 작성한 마크다운 내용]
 
 ### ⚠️ 필수 규칙
 
-1. **스키마 확인 우선**: `mcp-cli info` 없이 `mcp-cli call` 금지
+1. **스키마 확인 우선**: 필터·분해·수식이 있는 쿼리는 `Get-Query-Schema` 없이 `Run-Query` 금지
 2. **프로젝트 ID 확인**: 3611536(운영) vs 3974708(테스트)
 3. **이벤트명 정확히**: 대소문자, 띄어쓰기 정확히 일치
 4. **날짜 범위 합리적**: 너무 긴 기간은 타임아웃 가능
