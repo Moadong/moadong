@@ -12,7 +12,9 @@ const ChoiceItem = ({ label, selected, onClick }: ChoiceItemProps) => {
       onClick={onClick}
       data-selected={selected ? 'true' : undefined}
     >
-      <Styled.Label>{label || '(빈 항목)'}</Styled.Label>
+      <Styled.Label data-empty={label ? undefined : 'true'}>
+        {label || '(빈 항목)'}
+      </Styled.Label>
     </Styled.ItemWrapper>
   );
 };

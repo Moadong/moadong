@@ -397,6 +397,48 @@ describe('ApplicationEditTabMobile', () => {
     expect(screen.getByText('지원 동기')).toBeInTheDocument();
   });
 
+  it('미리보기는 저장 검증에 걸리는 질문(제목이 비었거나 빈 선택지가 있는 질문)을 보여 주지 않는다', async () => {
+    const user = userEvent.setup();
+    const form = savedForm();
+    form.questions = [
+      {
+        id: 2,
+        title: '',
+        description: '제목을 아직 안 쓴 질문',
+        type: 'SHORT_TEXT',
+        options: { required: true },
+        items: [],
+      },
+      {
+        id: 3,
+        title: '희망 활동',
+        description: '',
+        type: 'CHOICE',
+        options: { required: false },
+        items: [{ value: '운동' }, { value: '' }],
+      },
+      {
+        id: NAME_QUESTION_ID,
+        title: '이름을 입력해주세요',
+        description: '',
+        type: 'SHORT_TEXT',
+        options: { required: true },
+        items: [],
+      },
+    ];
+    renderMobile(form);
+
+    await user.click(screen.getByRole('button', { name: '미리보기' }));
+
+    expect(screen.getByText('이름을 입력해주세요')).toBeInTheDocument();
+    expect(
+      screen.queryByText('제목을 아직 안 쓴 질문'),
+    ).not.toBeInTheDocument();
+    expect(screen.queryByText('희망 활동')).not.toBeInTheDocument();
+    expect(screen.queryByText('운동')).not.toBeInTheDocument();
+    expect(screen.queryByText('(빈 항목)')).not.toBeInTheDocument();
+  });
+
   it('선택지 X는 글자가 있으면 지우고, 비어 있으면 항목을 없애며 최소 1개는 남긴다', async () => {
     const user = userEvent.setup();
     const form = choiceForm();

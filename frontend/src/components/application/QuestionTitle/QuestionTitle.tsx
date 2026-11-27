@@ -1,6 +1,5 @@
 import { useLayoutEffect, useRef } from 'react';
 import { APPLICATION_FORM } from '@/constants/applicationForm';
-import useDevice from '@/hooks/useDevice';
 import * as Styled from './QuestionTitle.styles';
 
 interface QuestionTitleProps {
@@ -18,7 +17,6 @@ const QuestionTitle = ({
   mode,
   onTitleChange,
 }: QuestionTitleProps) => {
-  const { isMobile } = useDevice();
   const textAreaRef = useRef<HTMLTextAreaElement>(null);
 
   // 자동 높이 조절 (builder 모드에서만)
@@ -32,9 +30,7 @@ const QuestionTitle = ({
 
   return (
     <Styled.QuestionTitleRow>
-      {!isMobile && id && (
-        <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>
-      )}
+      {id && <Styled.QuestionTitleId>{id}.</Styled.QuestionTitleId>}
       {mode === 'answer' ? (
         <Styled.QuestionTitleReadOnly>
           {title}
