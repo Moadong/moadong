@@ -23,15 +23,19 @@ public class StudentProfileService {
 
     public void updateProfile(String studentId, String nickname, String imageUrl) {
         StudentUser student = getStudent(studentId);
+        String oldImageUrl = student.getProfileImageUrl();
 
         if (imageUrl != null) {
             studentProfileImageService.validateImageUrl(studentId, imageUrl);
-            studentProfileImageService.deleteImageQuietly(student.getProfileImageUrl());
             student.updateProfileImage(imageUrl);
         }
 
         student.updateNickname(nickname.strip());
         studentUserRepository.save(student);
+
+        if (imageUrl != null && !imageUrl.equals(oldImageUrl)) {
+            studentProfileImageService.deleteImageQuietly(oldImageUrl);
+        }
     }
 
     private StudentUser getStudent(String studentId) {
