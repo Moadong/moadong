@@ -35,6 +35,7 @@ const ProfileSetupPage = () => {
     Array.from({ length: 3 }, generateNickname),
   );
   const [errorToast, setErrorToast] = useState('');
+  const [localImageUrl, setLocalImageUrl] = useState<string | null>(null);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -50,9 +51,13 @@ const ProfileSetupPage = () => {
     const file = e.target.files?.[0];
     if (!file) return;
     e.target.value = '';
+    const previewUrl = URL.createObjectURL(file);
+    setLocalImageUrl(previewUrl);
     try {
       await uploadImage(file);
     } catch {
+      setLocalImageUrl(null);
+      URL.revokeObjectURL(previewUrl);
       setErrorToast('이미지 업로드에 실패했어요. 다시 시도해 주세요.');
     }
   };
@@ -60,6 +65,7 @@ const ProfileSetupPage = () => {
   const handleDeleteImage = async () => {
     try {
       await deleteImage();
+      setLocalImageUrl(null);
     } catch {
       setErrorToast('이미지 삭제에 실패했어요. 다시 시도해 주세요.');
     }
@@ -183,7 +189,11 @@ const ProfileSetupPage = () => {
               >
                 <Styled.ProfileImageBox>
                   <img
-                    src={profile?.profileImageUrl ?? defaultProfileImage}
+                    src={
+                      localImageUrl ??
+                      profile?.profileImageUrl ??
+                      defaultProfileImage
+                    }
                     alt=''
                   />
                 </Styled.ProfileImageBox>
@@ -254,7 +264,11 @@ const ProfileSetupPage = () => {
                 </Styled.DesktopSectionTitle>
                 <Styled.DesktopProfileRow>
                   <Styled.DesktopProfileImage
-                    src={profile?.profileImageUrl ?? defaultProfileImage}
+                    src={
+                      localImageUrl ??
+                      profile?.profileImageUrl ??
+                      defaultProfileImage
+                    }
                     alt=''
                   />
                   <Styled.DesktopProfileRight>
