@@ -1,5 +1,10 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { getStudentProfile, updateStudentProfile } from '@/apis/studentProfile';
+import {
+  deleteProfileImage,
+  getStudentProfile,
+  updateStudentProfile,
+  uploadProfileImage,
+} from '@/apis/studentProfile';
 import { queryKeys } from '@/constants/queryKeys';
 
 export const useStudentProfile = () =>
@@ -13,6 +18,30 @@ export const useUpdateStudentProfile = () => {
   const queryClient = useQueryClient();
   return useMutation({
     mutationFn: updateStudentProfile,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.studentProfile.profile(),
+      });
+    },
+  });
+};
+
+export const useUploadProfileImage = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: uploadProfileImage,
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: queryKeys.studentProfile.profile(),
+      });
+    },
+  });
+};
+
+export const useDeleteProfileImage = () => {
+  const queryClient = useQueryClient();
+  return useMutation({
+    mutationFn: deleteProfileImage,
     onSuccess: () => {
       queryClient.invalidateQueries({
         queryKey: queryKeys.studentProfile.profile(),
