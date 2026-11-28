@@ -15,15 +15,18 @@ public class StudentProfileService {
     private final StudentUserRepository studentUserRepository;
 
     public StudentProfileResponse getProfile(String studentId) {
-        StudentUser student = studentUserRepository.findById(studentId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
+        StudentUser student = getStudent(studentId);
         return new StudentProfileResponse(student.getNickname(), student.getProfileImageUrl());
     }
 
-    public void updateNickname(String studentId, String nickname) {
-        StudentUser student = studentUserRepository.findById(studentId)
-                .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
+    public void updateProfile(String studentId, String nickname) {
+        StudentUser student = getStudent(studentId);
         student.updateNickname(nickname.strip());
         studentUserRepository.save(student);
+    }
+
+    private StudentUser getStudent(String studentId) {
+        return studentUserRepository.findById(studentId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
     }
 }
