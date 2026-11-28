@@ -127,12 +127,11 @@ public class StudentProfileImageService {
         StudentUser student = studentUserRepository.findById(studentId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
 
-        if (student.getProfileImageUrl() != null) {
-            deleteImageQuietly(student.getProfileImageUrl());
-        }
-
+        String oldImageUrl = student.getProfileImageUrl();
         student.updateProfileImage(null);
         studentUserRepository.save(student);
+
+        deleteImageQuietly(oldImageUrl);
     }
 
     public void deleteImageQuietly(String imageUrl) {
