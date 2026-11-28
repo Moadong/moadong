@@ -109,6 +109,20 @@ public class StudentProfileImageService {
         }
     }
 
+    public void completeImageUpload(String studentId, String imageUrl) {
+        StudentUser student = studentUserRepository.findById(studentId)
+                .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
+        String oldImageUrl = student.getProfileImageUrl();
+
+        validateImageUrl(studentId, imageUrl);
+        student.updateProfileImage(imageUrl);
+        studentUserRepository.save(student);
+
+        if (!imageUrl.equals(oldImageUrl)) {
+            deleteImageQuietly(oldImageUrl);
+        }
+    }
+
     public void deleteProfileImage(String studentId) {
         StudentUser student = studentUserRepository.findById(studentId)
                 .orElseThrow(() -> new RestApiException(ErrorCode.STUDENT_USER_NOT_FOUND));
