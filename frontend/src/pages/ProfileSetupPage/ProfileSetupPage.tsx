@@ -276,7 +276,9 @@ const ProfileSetupPage = () => {
                       <OutlinePillButton
                         $tone='gray'
                         onClick={handleDeleteImage}
-                        disabled={isUploading || isDeleting || !profile?.profileImageUrl}
+                        disabled={
+                          isUploading || isDeleting || !profile?.profileImageUrl
+                        }
                       >
                         초기화
                       </OutlinePillButton>
