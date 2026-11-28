@@ -39,7 +39,7 @@ public class StudentProfileController {
     public ResponseEntity<?> updateProfile(
             @AuthenticationPrincipal String studentId,
             @Valid @RequestBody UpdateProfileRequest request) {
-        studentProfileService.updateProfile(studentId, request.nickname(), request.imageUrl());
+        studentProfileService.updateProfile(studentId, request.nickname());
         return Response.ok("success");
     }
 }

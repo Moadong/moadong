@@ -7,8 +7,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import moadong.global.payload.Response;
 import moadong.media.dto.PresignedUploadResponse;
+import moadong.media.dto.UploadCompleteRequest;
 import moadong.media.dto.UploadProfileImageUrlRequest;
 import moadong.media.service.StudentProfileImageService;
+import moadong.user.service.StudentProfileService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -24,6 +26,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class StudentProfileImageController {
 
     private final StudentProfileImageService studentProfileImageService;
+    private final StudentProfileService studentProfileService;
 
     @PostMapping("/upload-url")
     @Operation(summary = "프로필 이미지 업로드 URL 발급", description = "프로필 이미지 업로드를 위한 presigned URL을 발급합니다.")
@@ -34,6 +37,16 @@ public class StudentProfileImageController {
         PresignedUploadResponse response = studentProfileImageService.generateUploadUrl(
                 studentId, request.fileName(), request.contentType());
         return Response.ok(response);
+    }
+
+    @PostMapping("/complete")
+    @Operation(summary = "프로필 이미지 업로드 완료", description = "S3 업로드 완료 후 이미지 URL을 검증하고 프로필에 저장합니다.")
+    @SecurityRequirement(name = "BearerAuth")
+    public ResponseEntity<?> completeImageUpload(
+            @AuthenticationPrincipal String studentId,
+            @Valid @RequestBody UploadCompleteRequest request) {
+        studentProfileService.completeImageUpload(studentId, request.fileUrl());
+        return Response.ok("success");
     }
 
     @DeleteMapping

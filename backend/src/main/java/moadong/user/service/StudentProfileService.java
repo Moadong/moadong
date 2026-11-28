@@ -21,19 +21,21 @@ public class StudentProfileService {
         return new StudentProfileResponse(student.getNickname(), student.getProfileImageUrl());
     }
 
-    public void updateProfile(String studentId, String nickname, String imageUrl) {
+    public void updateProfile(String studentId, String nickname) {
+        StudentUser student = getStudent(studentId);
+        student.updateNickname(nickname.strip());
+        studentUserRepository.save(student);
+    }
+
+    public void completeImageUpload(String studentId, String imageUrl) {
         StudentUser student = getStudent(studentId);
         String oldImageUrl = student.getProfileImageUrl();
 
-        if (imageUrl != null) {
-            studentProfileImageService.validateImageUrl(studentId, imageUrl);
-            student.updateProfileImage(imageUrl);
-        }
-
-        student.updateNickname(nickname.strip());
+        studentProfileImageService.validateImageUrl(studentId, imageUrl);
+        student.updateProfileImage(imageUrl);
         studentUserRepository.save(student);
 
-        if (imageUrl != null && !imageUrl.equals(oldImageUrl)) {
+        if (!imageUrl.equals(oldImageUrl)) {
             studentProfileImageService.deleteImageQuietly(oldImageUrl);
         }
     }
