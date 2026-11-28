@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { ChangeEvent, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import LogoEditIcon from '@/assets/images/icons/logo_edit_icon.svg?react';
 import RefreshIcon from '@/assets/images/icons/refresh_icon.svg?react';
@@ -11,8 +11,10 @@ import Spinner from '@/components/common/Spinner/Spinner';
 import Toast from '@/components/common/Toast/Toast';
 import WebviewTopBar from '@/components/common/WebviewTopBar/WebviewTopBar';
 import {
+  useDeleteProfileImage,
   useStudentProfile,
   useUpdateStudentProfile,
+  useUploadProfileImage,
 } from '@/hooks/Queries/useStudentProfile';
 import useDevice from '@/hooks/useDevice';
 import { colors } from '@/styles/theme/colors';
@@ -34,9 +36,34 @@ const ProfileSetupPage = () => {
   );
   const [errorToast, setErrorToast] = useState('');
 
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
   const { data: profile, isLoading, isError, refetch } = useStudentProfile();
   const { mutateAsync: updateProfile, isPending: isSaving } =
     useUpdateStudentProfile();
+  const { mutateAsync: uploadImage, isPending: isUploading } =
+    useUploadProfileImage();
+  const { mutateAsync: deleteImage, isPending: isDeleting } =
+    useDeleteProfileImage();
+
+  const handleImageChange = async (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    e.target.value = '';
+    try {
+      await uploadImage(file);
+    } catch {
+      setErrorToast('이미지 업로드에 실패했어요. 다시 시도해 주세요.');
+    }
+  };
+
+  const handleDeleteImage = async () => {
+    try {
+      await deleteImage();
+    } catch {
+      setErrorToast('이미지 삭제에 실패했어요. 다시 시도해 주세요.');
+    }
+  };
 
   const nickname = localNickname ?? profile?.nickname ?? '';
 
@@ -141,10 +168,18 @@ const ProfileSetupPage = () => {
             </Styled.DescriptionSection>
 
             <Styled.ProfileSection>
+              <input
+                type='file'
+                accept='image/*'
+                ref={fileInputRef}
+                onChange={handleImageChange}
+                style={{ display: 'none' }}
+              />
               <Styled.ProfileImageButton
                 type='button'
                 aria-label='프로필 사진 수정'
-                disabled
+                onClick={() => fileInputRef.current?.click()}
+                disabled={isUploading || isDeleting}
               >
                 <Styled.ProfileImageBox>
                   <img
@@ -224,10 +259,25 @@ const ProfileSetupPage = () => {
                   />
                   <Styled.DesktopProfileRight>
                     <Styled.DesktopProfileButtons>
-                      <OutlinePillButton $tone='primary' disabled>
+                      <input
+                        type='file'
+                        accept='image/*'
+                        ref={fileInputRef}
+                        onChange={handleImageChange}
+                        style={{ display: 'none' }}
+                      />
+                      <OutlinePillButton
+                        $tone='primary'
+                        onClick={() => fileInputRef.current?.click()}
+                        disabled={isUploading || isDeleting}
+                      >
                         이미지 수정
                       </OutlinePillButton>
-                      <OutlinePillButton $tone='gray' disabled>
+                      <OutlinePillButton
+                        $tone='gray'
+                        onClick={handleDeleteImage}
+                        disabled={isUploading || isDeleting || !profile?.profileImageUrl}
+                      >
                         초기화
                       </OutlinePillButton>
                     </Styled.DesktopProfileButtons>
