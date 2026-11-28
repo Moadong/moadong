@@ -2,7 +2,11 @@
 
 카드 클릭 위치, 스크롤 깊이, 카드 노출 여부를 Mixpanel로 수집해 히트맵 데이터를 구성한다.
 
-백엔드가 카드 순서를 랜덤으로 반환하므로 `card_index` 단독 분석은 의미 없다. 위치 기반 분석은 `scroll_y` + `card_top_in_viewport` 조합을 사용한다.
+둘러보기(검색어 없음)에서 서버는 모집 상태 우선순위(모집중 → 상시모집 → 모집예정 → 모집마감) → 요청마다 섞은 분과 순서 → 이름 순으로 정렬해 내려준다(`ClubSearchService.sortAndBuildBrowseResponse`). 검색어가 있으면 관련도 순이다. 분과 순서가 요청마다 바뀌므로 같은 동아리라도 위치가 매번 달라진다. 위치 기반 분석은 `scroll_y` + `card_top_in_viewport` 조합을 사용한다.
+
+프론트는 둘러보기 응답을 순서를 유지한 채 "지금 모집 중"(상시모집·모집중·모집예정)과 "모집 마감" 두 구간으로 나눠 그린다. 그래서 화면 순서와 서버 순서가 다를 수 있어 `card_index`(화면 순서)와 `server_index`(서버 순서)를 함께 남긴다.
+
+> 2026-11 변경 전의 `card_index`는 서버 응답 순서였다. 이후 값은 화면 순서라 변경 시점 전후의 `card_index`는 직접 비교할 수 없다. 이전 값과 이어 보려면 `server_index`를 쓴다.
 
 ## 수집 이벤트
 
@@ -11,7 +15,8 @@
 | 속성                    | 설명                                                 |
 | ----------------------- | ---------------------------------------------------- |
 | `club_id` / `club_name` | 어떤 클럽이 클릭됐는지                               |
-| `card_index`            | 랜덤 순서이므로 클럽별 분석용으로만 사용             |
+| `card_index`            | 화면에 보인 순서(0부터). 모집 중 구간 → 모집 마감 구간 순으로 이어 센 값. 검색에서는 `server_index`와 같다 |
+| `server_index`          | 서버 응답 배열에서의 순서(0부터)                     |
 | `scroll_y`              | 클릭 시점 페이지 스크롤 Y값 (px)                     |
 | `card_top_in_viewport`  | 클릭 시점 뷰포트 기준 카드 상단 위치 (px)            |
 | `device_type`           | mini_mobile / mobile / tablet / laptop / desktop     |
@@ -61,7 +66,7 @@ Mixpanel Insights에서 `card_top_in_viewport`를 custom bucket으로 breakdown�
 CTR = ClubCard Clicked 수 / ClubCard Viewed 수  (club_id 기준)
 ```
 
-같은 클럽이 여러 유저에게 노출된 횟수 대비 실제 클릭된 횟수로, 카드 순서가 랜덤이어도 클럽 자체의 매력도를 측정할 수 있다.
+같은 클럽이 여러 유저에게 노출된 횟수 대비 실제 클릭된 횟수로, 카드 위치가 요청마다 달라져도 클럽 자체의 매력도를 측정할 수 있다.
 
 Mixpanel Insights에서 두 이벤트를 `club_name`으로 breakdown 후 비율 계산.
 
@@ -101,6 +106,7 @@ Mixpanel Funnels에서 `depth_percent = 25 → 50 → 75 → 100` 순서로 설�
 
 - `src/pages/MainPage/components/ClubCard/ClubCard.tsx` — 클릭 + impression 트래킹
 - `src/hooks/Mixpanel/useScrollTracking.ts` — 스크롤 깊이 트래킹 훅
-- `src/pages/MainPage/MainPage.tsx` — `index` 전달 + `useScrollTracking` 적용
+- `src/pages/MainPage/MainPage.tsx` — `useScrollTracking` 적용
+- `src/pages/MainPage/components/MainContent/MainContent.tsx` — `index`(화면 순서)·`serverIndex`(서버 순서) 전달
 - `src/constants/eventName.ts` — 이벤트명 상수
 - `src/utils/getDeviceType.ts` — BREAKPOINT 기반 device_type 판별

@@ -50,6 +50,7 @@ export const SearchInputStyles = styled.input`
 `;
 
 export const SearchButton = styled.button<{ $isFocused: boolean }>`
+  position: relative;
   flex-shrink: 0;
   border: none;
   background-color: transparent;
@@ -59,6 +60,13 @@ export const SearchButton = styled.button<{ $isFocused: boolean }>`
 
   width: 16px;
   height: 16px;
+
+  /* 보이는 아이콘은 16px(모바일 14px) 그대로 두고 누르는 영역만 넓힌다. 왼쪽은 입력창을 덮지 않게 4px만 */
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -14px -14px -14px -4px;
+  }
 
   img {
     width: 100%;

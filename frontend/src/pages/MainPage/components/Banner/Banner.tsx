@@ -17,6 +17,11 @@ interface BannerProps {
   isWebview?: boolean;
 }
 
+const AUTOPLAY_DELAY_MS = 3000;
+
+const prefersReducedMotion = () =>
+  window.matchMedia?.('(prefers-reduced-motion: reduce)').matches ?? false;
+
 const Banner = ({ isWebview = false }: BannerProps) => {
   const { isMobile } = useDevice();
   const handleLink = useNavigator();
@@ -128,10 +133,11 @@ const Banner = ({ isWebview = false }: BannerProps) => {
           onSlideChange={(swiper) => setCurrentIndex(swiper.realIndex)}
           onSwiper={setSwiperInstance}
           loop={true}
-          autoplay={{
-            delay: 3000,
-            disableOnInteraction: false,
-          }}
+          autoplay={
+            prefersReducedMotion()
+              ? false
+              : { delay: AUTOPLAY_DELAY_MS, disableOnInteraction: false }
+          }
           speed={500}
         >
           {displayBanners?.map((banner, index) => (

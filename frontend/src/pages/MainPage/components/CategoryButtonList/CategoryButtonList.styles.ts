@@ -1,30 +1,35 @@
 import styled from 'styled-components';
+import { HEADER_HEIGHT } from '@/components/common/Header/Header.styles';
 import { media } from '@/styles/mediaQuery';
 import { colors } from '@/styles/theme/colors';
+import { Z_INDEX } from '@/styles/zIndex';
 
-export const CategoryButtonContainer = styled.div<{ $sticky: boolean }>`
+const CHIP_HEIGHT = 36;
+const CHIP_BAR_PADDING_Y = 6;
+const CHIP_BAR_BORDER = 1;
+
+/** 모바일 고정 칩 줄의 높이. 목록 앵커의 scroll-margin-top이 이 값만큼 더 띄운다 */
+export const STUCK_CHIP_BAR_HEIGHT =
+  CHIP_HEIGHT + CHIP_BAR_PADDING_Y * 2 + CHIP_BAR_BORDER;
+
+export const CategoryButtonContainer = styled.div`
   display: flex;
   justify-content: space-between;
   flex-wrap: nowrap;
   margin-top: 24px;
 
   ${media.mobile} {
-    background-color: white;
-    position: ${({ $sticky }) => ($sticky ? 'sticky' : 'static')};
-    top: 56px;
-    z-index: 1;
-
     margin: 0px -20px;
-    padding: 16px 20px;
+    padding: 12px 20px 8px;
   }
 
   ${media.mini_mobile} {
-    margin: -10px -10px;
-    padding: 16px 10px 12px;
+    margin: 0px -10px;
+    padding: 12px 10px 8px;
   }
 `;
 
-export const CategoryButton = styled.button`
+export const CategoryButton = styled.button<{ $active: boolean }>`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -60,7 +65,7 @@ export const CategoryButton = styled.button`
   span {
     font-size: 14px;
     font-weight: 500;
-    color: ${colors.gray[700]};
+    color: ${colors.gray[800]};
     margin-top: 8px;
     line-height: 17px;
     white-space: nowrap;
@@ -82,5 +87,63 @@ export const CategoryButton = styled.button`
       margin-top: 2px;
       line-height: normal;
     }
+
+    ${({ $active }) =>
+      $active &&
+      `
+      color: ${colors.gray[950]};
+      font-weight: 700;
+
+      ${media.mobile} {
+        font-weight: 700;
+      }
+    `}
   }
+`;
+
+/** 아이콘 줄이 헤더 아래로 사라졌을 때만 렌더하는 모바일 전용 고정 칩 줄 */
+export const StuckChipBar = styled.div`
+  display: none;
+
+  ${media.mobile} {
+    position: fixed;
+    top: ${HEADER_HEIGHT.mobile}px;
+    left: 0;
+    right: 0;
+    z-index: ${Z_INDEX.header - 1};
+
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    box-sizing: border-box;
+    height: ${STUCK_CHIP_BAR_HEIGHT}px;
+    padding: 0 20px;
+    overflow-x: auto;
+    background-color: ${colors.base.white};
+    border-bottom: ${CHIP_BAR_BORDER}px solid ${colors.gray[300]};
+
+    scrollbar-width: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  ${media.mini_mobile} {
+    padding: 0 10px;
+  }
+`;
+
+export const Chip = styled.button<{ $active: boolean }>`
+  flex: 1 0 auto;
+  height: ${CHIP_HEIGHT}px;
+  padding: 0 8px;
+  border: none;
+  border-radius: ${CHIP_HEIGHT / 2}px;
+  font-size: 13px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  background-color: ${({ $active }) =>
+    $active ? colors.gray[900] : colors.gray[100]};
+  color: ${({ $active }) => ($active ? colors.base.white : colors.gray[800])};
 `;

@@ -1,7 +1,7 @@
 import styled, { css } from 'styled-components';
 import { colors } from '@/styles/theme/colors';
 
-type LogoVariant = 'main' | 'detail';
+type LogoVariant = 'main' | 'card' | 'detail' | 'compact';
 
 interface ClubLogoProps {
   $imageSrc?: string;
@@ -16,6 +16,16 @@ const presets = {
   detail: {
     desktop: { width: '80px', height: '80px', radius: '10px' },
     mobile: { width: '50px', height: '50px', radius: '6px' },
+  },
+  // 동아리 카드용. 카드 글자 세 줄 높이에 맞춰 로고를 키운다
+  card: {
+    desktop: { width: '80px', height: '80px', radius: '18px' },
+    mobile: { width: '64px', height: '64px', radius: '14px' },
+  },
+  // 메인 모집 마감 구간의 낮은 밀도 행용
+  compact: {
+    desktop: { width: '44px', height: '44px', radius: '10px' },
+    mobile: { width: '40px', height: '40px', radius: '10px' },
   },
 };
 

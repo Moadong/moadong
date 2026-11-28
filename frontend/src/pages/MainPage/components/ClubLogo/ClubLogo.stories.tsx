@@ -17,10 +17,10 @@ const meta = {
   argTypes: {
     $variant: {
       control: 'radio',
-      options: ['main', 'detail'],
+      options: ['main', 'detail', 'compact'],
       description: '로고 크기/라운드 프리셋을 선택합니다.',
       table: {
-        type: { summary: "'main' | 'detail'" },
+        type: { summary: "'main' | 'detail' | 'compact'" },
       },
     },
     $imageSrc: {
@@ -47,5 +47,12 @@ export const Detail: Story = {
   args: {
     $imageSrc: default_profile_image,
     $variant: 'detail',
+  },
+};
+
+export const Compact: Story = {
+  args: {
+    $imageSrc: default_profile_image,
+    $variant: 'compact',
   },
 };

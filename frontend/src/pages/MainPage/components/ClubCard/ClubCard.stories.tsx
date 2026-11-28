@@ -73,3 +73,18 @@ export const Closed: Story = {
     },
   },
 };
+
+export const Compact: Story = {
+  args: {
+    club: {
+      ...sampleClub,
+      id: asClubId('club-3'),
+      recruitmentStatus: 'CLOSED',
+      name: '모아동 사진회',
+      introduction: '정기 출사와 전시를 준비합니다.',
+      tags: ['사진', '전시'],
+      category: '취미교양',
+    },
+    variant: 'compact',
+  },
+};

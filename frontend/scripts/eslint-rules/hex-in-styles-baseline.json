@@ -93,11 +93,5 @@
   },
   "src/pages/MainPage/components/Banner/Banner.styles.ts": {
     "#E4E4E4": 4
-  },
-  "src/pages/MainPage/components/ClubCard/ClubCard.styles.ts": {
-    "#FFFFFF": 1
-  },
-  "src/pages/MainPage/components/MainContent/MainContent.styles.ts": {
-    "#555555": 1
   }
 }
