@@ -3,8 +3,10 @@ import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
+  useDeleteProfileImage,
   useStudentProfile,
   useUpdateStudentProfile,
+  useUploadProfileImage,
 } from '@/hooks/Queries/useStudentProfile';
 import useDevice from '@/hooks/useDevice';
 import ProfileSetupPage from './ProfileSetupPage';
@@ -12,6 +14,8 @@ import ProfileSetupPage from './ProfileSetupPage';
 jest.mock('@/hooks/Queries/useStudentProfile', () => ({
   useStudentProfile: jest.fn(),
   useUpdateStudentProfile: jest.fn(),
+  useUploadProfileImage: jest.fn(),
+  useDeleteProfileImage: jest.fn(),
 }));
 
 jest.mock('@/hooks/useDevice', () => ({
@@ -36,6 +40,8 @@ jest.mock('@/components/common/WebviewTopBar/WebviewTopBar', () => ({
 
 const mockedUseStudentProfile = useStudentProfile as jest.Mock;
 const mockedUseUpdateStudentProfile = useUpdateStudentProfile as jest.Mock;
+const mockedUseUploadProfileImage = useUploadProfileImage as jest.Mock;
+const mockedUseDeleteProfileImage = useDeleteProfileImage as jest.Mock;
 const mockedUseDevice = useDevice as jest.Mock;
 
 const renderPage = () =>
@@ -54,6 +60,14 @@ describe('ProfileSetupPage — 에러 상태', () => {
       isLaptop: false,
     });
     mockedUseUpdateStudentProfile.mockReturnValue({
+      mutateAsync: jest.fn(),
+      isPending: false,
+    });
+    mockedUseUploadProfileImage.mockReturnValue({
+      mutateAsync: jest.fn(),
+      isPending: false,
+    });
+    mockedUseDeleteProfileImage.mockReturnValue({
       mutateAsync: jest.fn(),
       isPending: false,
     });
