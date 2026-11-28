@@ -56,19 +56,31 @@ const ProfileSetupPage = () => {
     }
   };
 
+  const topBar = isMobileOrTablet ? (
+    <WebviewTopBar
+      title='프로필 설정'
+      onBack={() => navigate('/', { replace: true })}
+    />
+  ) : (
+    <Header />
+  );
+
   if (isLoading) return <Spinner />;
   if (isError)
     return (
-      <Styled.MobileContainer>
-        <Styled.DescriptionSection>
-          <Styled.PageSubtitle>
-            프로필 정보를 불러오지 못했어요.
-          </Styled.PageSubtitle>
-        </Styled.DescriptionSection>
-        <OutlinePillButton $tone='primary' onClick={() => refetch()}>
-          다시 시도
-        </OutlinePillButton>
-      </Styled.MobileContainer>
+      <>
+        {topBar}
+        <Styled.MobileContainer>
+          <Styled.DescriptionSection>
+            <Styled.PageSubtitle>
+              프로필 정보를 불러오지 못했어요.
+            </Styled.PageSubtitle>
+          </Styled.DescriptionSection>
+          <OutlinePillButton $tone='primary' onClick={() => refetch()}>
+            다시 시도
+          </OutlinePillButton>
+        </Styled.MobileContainer>
+      </>
     );
 
   const nicknameInputBlock = (
@@ -114,10 +126,7 @@ const ProfileSetupPage = () => {
     <>
       {isMobileOrTablet ? (
         <>
-          <WebviewTopBar
-            title='프로필 설정'
-            onBack={() => navigate('/', { replace: true })}
-          />
+          {topBar}
           <Styled.MobileContainer>
             <Styled.DescriptionSection>
               <Styled.PageTitle>
@@ -180,7 +189,7 @@ const ProfileSetupPage = () => {
         </>
       ) : (
         <>
-          <Header />
+          {topBar}
           <Styled.DesktopWrapper>
             <Styled.DesktopCard>
               <Styled.DesktopCardHeader>
