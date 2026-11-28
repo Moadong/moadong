@@ -12,7 +12,8 @@ jest.mock('@/apis/studentProfile', () => ({
 
 const mockedUpdateStudentProfile = updateStudentProfile as jest.Mock;
 
-const createWrapper = (queryClient: QueryClient) =>
+const createWrapper =
+  (queryClient: QueryClient) =>
   ({ children }: { children: React.ReactNode }) =>
     React.createElement(QueryClientProvider, { client: queryClient }, children);
 
