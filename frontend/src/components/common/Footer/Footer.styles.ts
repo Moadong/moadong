@@ -69,6 +69,25 @@ export const EmailText = styled.p`
   }
 `;
 
+export const SnsLink = styled.a`
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  width: fit-content;
+  margin-left: -4px;
+  color: inherit;
+  text-decoration: none;
+
+  img {
+    width: 24px;
+    height: 24px;
+  }
+
+  &:hover {
+    text-decoration: underline;
+  }
+`;
+
 export const AdminButton = styled.button`
   background: ${colors.base.white};
   border: 1px solid ${colors.gray[400]};
