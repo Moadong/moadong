@@ -1,4 +1,5 @@
 import { MemoryRouter } from 'react-router-dom';
+import '@testing-library/jest-dom';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import {
@@ -56,21 +57,23 @@ describe('ProfileSetupPage — 에러 상태', () => {
       mutateAsync: jest.fn(),
       isPending: false,
     });
-  });
-
-  it('조회 실패 시 안내 문구와 다시 시도 버튼이 표시된다', () => {
-    const mockRefetch = jest.fn();
     mockedUseStudentProfile.mockReturnValue({
       data: undefined,
       isLoading: false,
       isError: true,
-      refetch: mockRefetch,
+      refetch: jest.fn(),
     });
+  });
 
+  it('조회 실패 시 안내 문구와 다시 시도 버튼이 표시된다', () => {
     renderPage();
 
-    expect(screen.getByText('프로필 정보를 불러오지 못했어요.')).not.toBeNull();
-    expect(screen.getByText('다시 시도')).not.toBeNull();
+    expect(
+      screen.getByText('프로필 정보를 불러오지 못했어요.'),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole('button', { name: '다시 시도' }),
+    ).toBeInTheDocument();
   });
 
   it('다시 시도 버튼을 누르면 refetch가 호출된다', async () => {
@@ -84,22 +87,15 @@ describe('ProfileSetupPage — 에러 상태', () => {
 
     renderPage();
 
-    await userEvent.click(screen.getByText('다시 시도'));
+    await userEvent.click(screen.getByRole('button', { name: '다시 시도' }));
 
     expect(mockRefetch).toHaveBeenCalledTimes(1);
   });
 
   it('모바일 에러 화면에 WebviewTopBar가 표시된다', () => {
-    mockedUseStudentProfile.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      refetch: jest.fn(),
-    });
-
     renderPage();
 
-    expect(screen.getByText('프로필 설정')).not.toBeNull();
+    expect(screen.getByText('프로필 설정')).toBeInTheDocument();
   });
 
   it('데스크탑 에러 화면에 Header가 표시된다', () => {
@@ -109,15 +105,9 @@ describe('ProfileSetupPage — 에러 상태', () => {
       isDesktop: true,
       isLaptop: false,
     });
-    mockedUseStudentProfile.mockReturnValue({
-      data: undefined,
-      isLoading: false,
-      isError: true,
-      refetch: jest.fn(),
-    });
 
     renderPage();
 
-    expect(screen.getByTestId('header')).not.toBeNull();
+    expect(screen.getByTestId('header')).toBeInTheDocument();
   });
 });
